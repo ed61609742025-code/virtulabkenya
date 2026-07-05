@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Account — VirtuLab Kenya</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/style.css">
+</head>
+<body class="auth-page">
+<div class="auth-box">
+  <div class="auth-logo">🧪 VirtuLab Kenya</div>
+  <p class="auth-sub">Create your student account. You will need your school's registration code — ask your chemistry teacher.</p>
+
+  <div class="field">
+    <label for="name">Full Name</label>
+    <input type="text" id="name" placeholder="e.g. Amina Odhiambo">
+  </div>
+  <div class="field">
+    <label for="email">Email Address</label>
+    <input type="email" id="email" placeholder="e.g. amina@school.ac.ke">
+  </div>
+  <div class="field">
+    <label for="form">Form / Class</label>
+    <select id="form">
+      <option value="">Select your form</option>
+      <option value="Form 1">Form 1</option>
+      <option value="Form 2">Form 2</option>
+      <option value="Form 3">Form 3</option>
+      <option value="Form 4">Form 4</option>
+    </select>
+  </div>
+  <div class="field">
+    <label for="schoolCode">School Registration Code</label>
+    <input type="text" id="schoolCode" placeholder="Given to you by your teacher" style="text-transform:uppercase;">
+  </div>
+  <div class="field">
+    <label for="password">Create Password</label>
+    <input type="password" id="password" placeholder="At least 6 characters">
+  </div>
+
+  <button class="btn btn-primary btn-full" onclick="doRegister()">Create Account →</button>
+  <div id="msg"></div>
+
+  <p style="font-size:.8rem;color:var(--ink-soft);margin-top:20px;text-align:center;">
+    Already have an account? <a href="login.html" style="color:var(--teal);font-weight:600;">Log in</a>
+  </p>
+</div>
+
+<script src="../shared/api.js"></script>
+<script>
+  async function doRegister() {
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const form = document.getElementById('form').value;
+    const schoolCode = document.getElementById('schoolCode').value.trim().toUpperCase();
+    const password = document.getElementById('password').value;
+    const msg = document.getElementById('msg');
+    msg.innerHTML = '';
+
+    if (!name || !email || !form || !schoolCode || !password) {
+      msg.innerHTML = '<div class="msg msg-err">Please fill in all fields.</div>'; return;
+    }
+    if (password.length < 6) {
+      msg.innerHTML = '<div class="msg msg-err">Password must be at least 6 characters.</div>'; return;
+    }
+    try {
+      msg.innerHTML = '<div class="msg">Creating your account…</div>';
+      await Auth.studentRegister(name, email, password, form, schoolCode);
+      msg.innerHTML = '<div class="msg msg-ok">Account created! Redirecting to login…</div>';
+      setTimeout(() => window.location.href = 'login.html', 1500);
+    } catch (err) {
+      msg.innerHTML = '<div class="msg msg-err">' + (err.message || 'Registration failed. Check your school code and try again.') + '</div>';
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home — VirtuLab Kenya</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/style.css">
+<style>
+  .wrap { max-width: 900px; margin: 0 auto; padding: 24px 16px 60px; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; border-bottom: 2px solid var(--teal); padding-bottom: 12px; }
+  .topbar h1 { font-family: var(--font-d); font-size: 1.3rem; color: var(--teal-deep); }
+  .welcome { font-size: 1rem; color: var(--ink-soft); margin-bottom: 24px; }
+  .welcome b { color: var(--ink); }
+  .coming-soon { background: var(--glass); border: 1px dashed var(--line); border-radius: 10px; padding: 40px; text-align: center; color: var(--ink-soft); }
+  .coming-soon .icon { font-size: 2.5rem; margin-bottom: 12px; }
+  .coming-soon h2 { font-family: var(--font-d); color: var(--teal-deep); margin-bottom: 8px; }
+  .coming-soon p { font-size: 0.87rem; line-height: 1.6; max-width: 400px; margin: 0 auto 16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <h1>🧪 VirtuLab Kenya</h1>
+    <button class="btn" onclick="Auth.logout()">Log out</button>
+  </div>
+
+  <p class="welcome">Welcome back, <b id="studentName">Student</b>! Ready to practise?</p>
+
+  <div class="coming-soon">
+    <div class="icon">🚧</div>
+    <h2>Student Home Screen</h2>
+    <p>This page is being built in <strong>Phase 3 (Months 5–6)</strong> of the project plan. It will show your progress, recent sessions, pending assignments, and a leaderboard.</p>
+    <p>For now, you can go directly to the virtual lab:</p>
+    <a href="lab.html" class="btn btn-primary">Open the Virtual Lab →</a>
+  </div>
+</div>
+
+<script src="../shared/api.js"></script>
+<script>
+  requireStudentLogin();
+  const user = getUser();
+  if (user) document.getElementById('studentName').textContent = user.name;
+</script>
+</body>
+</html>

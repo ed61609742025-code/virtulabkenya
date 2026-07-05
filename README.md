@@ -93,4 +93,4 @@ GitHub: [@ed61609742025-code](https://github.com/ed61609742025-code)
 
 ---
 
-*VirtuLab Kenya · Open University of Kenya · Master's in Learning and Technology*
+*VirtuLab Kenya · Open University of Kenya · Master's in Learning Design and Technology*

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Login — VirtuLab Kenya</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/style.css">
+</head>
+<body class="auth-page">
+<div class="auth-box">
+  <div class="auth-logo">🧪 VirtuLab Kenya</div>
+  <p class="auth-sub">Student login — enter your school email and password to access the virtual lab.</p>
+
+  <div class="field">
+    <label for="email">School Email</label>
+    <input type="email" id="email" placeholder="e.g. amina@school.ac.ke" autocomplete="email">
+  </div>
+  <div class="field">
+    <label for="password">Password</label>
+    <input type="password" id="password" placeholder="Your password" autocomplete="current-password">
+  </div>
+
+  <button class="btn btn-primary btn-full" onclick="doLogin()">Log in →</button>
+
+  <div id="msg"></div>
+
+  <p style="font-size:.8rem;color:var(--ink-soft);margin-top:20px;text-align:center;">
+    New student? <a href="register.html" style="color:var(--teal);font-weight:600;">Create an account</a>
+  </p>
+  <p style="font-size:.8rem;color:var(--ink-soft);margin-top:8px;text-align:center;">
+    Are you a teacher? <a href="../teacher/login.html" style="color:var(--teal);font-weight:600;">Teacher login</a>
+  </p>
+</div>
+
+<script src="../shared/api.js"></script>
+<script>
+  // Redirect if already logged in
+  if (isLoggedIn()) window.location.href = 'home.html';
+
+  async function doLogin() {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const msg = document.getElementById('msg');
+    msg.innerHTML = '';
+
+    if (!email || !password) {
+      msg.innerHTML = '<div class="msg msg-err">Please enter your email and password.</div>';
+      return;
+    }
+    try {
+      msg.innerHTML = '<div class="msg">Logging in…</div>';
+      await Auth.studentLogin(email, password);
+      window.location.href = 'home.html';
+    } catch (err) {
+      msg.innerHTML = '<div class="msg msg-err">Wrong email or password. Please try again.</div>';
+    }
+  }
+
+  document.getElementById('password').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') doLogin();
+  });
+</script>
+</body>
+</html>

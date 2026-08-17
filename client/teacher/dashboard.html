@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Teacher Portal — VirtuLab Kenya</title>
+<script>
+  var t = localStorage.getItem('vlk_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', t);
+</script>
+<meta name="theme-color" content="#0F172A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VirtuLab">
+<link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/style.css">
+<link rel="stylesheet" href="../shared/pwa-installer.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="stylesheet" href="css/dashboard.css">
+
+</head>
+<body>
+
+<nav class="top-navbar">
+  <a href="#" class="nav-brand">
+    <span class="nav-logo-icon"></span>
+    VirtuLab Kenya — Teacher Portal
+  </a>
+  <div class="nav-actions">
+    <a href="/admin/dashboard.html" class="btn" style="background:rgba(245,158,11,0.15);color:#F59E0B;border:1px solid #F59E0B;font-weight:700;text-decoration:none;">🛡️ Admin Portal</a>
+    <button class="btn" style="background:var(--green-bg);color:var(--green-accent);border:1px solid var(--green-accent);font-weight:700;" onclick="window.print()" title="Print or save PDF class performance report">🖨️ Print Class Report</button>
+    
+    <!-- Compact Settings Cog Dropdown -->
+    <div style="position:relative; display:inline-block;">
+      <button type="button" class="btn" onclick="toggleTeacherSettings(event)" style="cursor:pointer; display:flex; align-items:center; gap:6px;" title="Portal Settings">
+        <span>⚙️ Settings</span>
+      </button>
+      
+      <div id="teacherSettingsDropdown" style="display:none; position:absolute; right:0; top:36px; width:240px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; box-shadow:var(--shadow-lg); z-index:10000; padding:12px; flex-direction:column; gap:8px; text-align:left;">
+        <span style="font-size:0.8rem; font-weight:700; color:var(--text-main); margin-bottom:4px; display:block;">Appearance Theme</span>
+        <div class="theme-toggle-group" style="width:100%;">
+          <button class="theme-btn-chip" style="flex:1;" data-theme="dark" onclick="setTheme('dark'); reRenderCharts();">🌙 Dark</button>
+          <button class="theme-btn-chip" style="flex:1;" data-theme="light" onclick="setTheme('light'); reRenderCharts();">☀️ Light</button>
+          <button class="theme-btn-chip" style="flex:1;" data-theme="green" onclick="setTheme('green'); reRenderCharts();">🧪 Lab</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn" onclick="Auth.logout()">Log out</button>
+  </div>
+</nav>
+
+<div class="teacher-layout">
+  <!-- Left Sidebar Navigation -->
+  <aside class="teacher-sidebar">
+    <button class="sidebar-nav-btn active" id="btnTabOverview" onclick="switchTeacherTab('paneOverview')">
+      <span>📊 Class Overview</span>
+    </button>
+    <button class="sidebar-nav-btn" id="btnTabAssignments" onclick="switchTeacherTab('paneAssignments')">
+      <span>📝 Assignments & Grading</span>
+      <span class="badge-count" id="ungradedBadge" style="display:none;">0</span>
+    </button>
+    <button class="sidebar-nav-btn" id="btnTabStudents" onclick="switchTeacherTab('paneStudents')">
+      <span>👥 Student Roster</span>
+    </button>
+    <button class="sidebar-nav-btn" id="btnTabTitration" onclick="switchTeacherTab('paneTitration')">
+      <span>🧪 Volumetric Titrations</span>
+    </button>
+    <button class="sidebar-nav-btn" id="btnTabQualitative" onclick="switchTeacherTab('paneQualitative')">
+      <span>🧂 Qualitative Analysis</span>
+    </button>
+    <button class="sidebar-nav-btn" id="btnTabOrganic" onclick="switchTeacherTab('paneOrganic')">
+      <span>⚗️ Organic Chemistry</span>
+    </button>
+    <button class="sidebar-nav-btn" id="btnTabSolubility" onclick="switchTeacherTab('paneSolubility')">
+      <span>🌡️ Solubility Curves</span>
+    </button>
+    <button class="sidebar-nav-btn" id="btnTabEnergy" onclick="switchTeacherTab('paneEnergy')">
+      <span>🔥 Energy Changes</span>
+    </button>
+    <button class="sidebar-nav-btn" id="btnTabRates" onclick="switchTeacherTab('paneRates')">
+      <span>⚡ Reaction Rates</span>
+    </button>
+    <button class="sidebar-nav-btn" id="btnTabComposite" onclick="switchTeacherTab('paneComposite')">
+      <span>📋 Composite Mock Exams</span>
+    </button>
+    <button class="sidebar-nav-btn" id="btnTabLeaderboard" onclick="switchTeacherTab('paneLeaderboard')">
+      <span>🏆 Leaderboard & Badges</span>
+    </button>
+    <button class="sidebar-nav-btn" id="btnTabSettings" onclick="switchTeacherTab('paneSettings')">
+      <span>⚙️ Account & Security</span>
+    </button>
+  </aside>
+
+  <!-- Main Content Viewport -->
+  <main class="teacher-content">
+    <p class="welcome" style="margin-top:0;">Welcome back, <b id="teacherName">Teacher</b>. Here is your class performance control panel.</p>
+
+    <!-- Tab Pane 1: Overview -->
+    <div id="paneOverview" class="tab-pane active">
+      <h2 class="section-title">📊 Class Performance Overview</h2>
+      <div id="statStrip" class="stat-strip"></div>
+      <div class="charts-row">
+        <div class="chart-card">
+          <h3>Accuracy Over Time <span style="font-weight:400;font-size:0.68rem;color:var(--text-muted);">last 30 days</span></h3>
+          <div id="trendChartWrap"><canvas id="trendChart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>By Practical Type</h3>
+          <div id="typeChartWrap"><canvas id="typeChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Pane 2: Assignments -->
+    <div id="paneAssignments" class="tab-pane">
+      <h2 class="section-title">📥 Submitted Assignments & Grading</h2>
+      <p class="hint" style="margin-bottom:14px;">Review submissions, mark student practical booklets, or download CSV reports.</p>
+      <div id="submittedAssignmentsList"><div class="empty">Loading submitted assignments…</div></div>
+
+      <h2 class="section-title" style="margin-top:32px;">🛠️ Manage & Create Assignments</h2>
+      <div id="assignmentsManageList"><div class="empty">Loading assignments…</div></div>
+
+      <div class="assign-form">
+        <h3 id="formHeading" style="font-family:var(--font-heading);font-size:1rem;color:var(--heading-color);margin-bottom:12px;">Create New Practical Assignment</h3>
+        <input type="hidden" id="aEditingId" value="">
+        <div class="row">
+          <div class="field">
+            <label for="aTitle">Title</label>
+            <input type="text" id="aTitle" class="form-control" placeholder="e.g. KCSE Paper 3 Mock Examination 2026">
+          </div>
+          <div class="field">
+            <label for="aType">Practical Type</label>
+            <select id="aType" class="form-control" onchange="toggleCompositeConfigPanel()">
+              <option value="kcseComposite">🏆 KCSE Composite Practical Exam (40 Marks Total)</option>
+              <option value="acidBase">Acid-Base Titration</option>
+              <option value="redox">Redox Titration</option>
+              <option value="precipitation">Precipitation Titration</option>
+              <option value="complexometric">Complexometric Titration</option>
+              <option value="dibasic">Dibasic Acid Titration</option>
+              <option value="tribasic">Tribasic Acid Titration</option>
+              <option value="weakAcid">Weak Acid – Strong Base</option>
+              <option value="weakBase">Weak Base – Strong Acid</option>
+              <option value="qualitative">🧪 Qualitative Analysis (Unknown Salt ID)</option>
+              <option value="organic">🧫 Organic Chemistry (Functional Group ID)</option>
+              <option value="solubility">🌡️ Solubility Curves & Crystallization</option>
+              <option value="energy">🔥 Energy Changes (Thermochemistry / Enthalpy)</option>
+              <option value="rates">⚡ Reaction Rates & Chemical Kinetics</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- KCSE Composite Exam Question Setter Panel -->
+        <div id="kcseCompositeConfigPanel" style="background:var(--card-bg-hover);border:1px solid var(--amber-accent);border-radius:14px;padding:18px;margin-top:16px;margin-bottom:16px;">
+          <div style="font-family:var(--font-heading);font-weight:800;font-size:1.02rem;color:var(--amber-accent);margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+            <span>⚙️ KCSE Composite Practical Exam Question Setter</span>
+          </div>
+
+          <!-- Q1 Config -->
+          <div style="border-bottom:1px solid var(--card-border);padding-bottom:12px;margin-bottom:14px;">
+            <div style="font-weight:700;font-size:0.86rem;color:var(--heading-color);margin-bottom:8px;">🧪 Question 1: Volumetric Analysis Settings</div>
+            
+            <div class="field" style="margin-bottom:10px;">
+              <label for="cfgQ1Preset">Titration Reaction Preset</label>
+              <select id="cfgQ1Preset" class="form-control" onchange="applyQ1Preset()">
+                <option value="acidBase_monobasic">HCl + NaOH (Monobasic Acid – Monobasic Base 1:1)</option>
+                <option value="acidBase_dibasic">H₂SO₄ + 2NaOH (Dibasic Acid – Sulfuric Acid 1:2)</option>
+                <option value="acidBase_tribasic">H₃PO₄ + 3NaOH (Tribasic Acid – Phosphoric Acid 1:3)</option>
+                <option value="weakAcid">CH₃COOH + NaOH (Weak Organic Acid – Ethanoic Acid 1:1)</option>
+                <option value="weakBase">HCl + NH₃(aq) (Strong Acid – Weak Base Ammonia 1:1)</option>
+                <option value="carbonate">2HCl + Na₂CO₃ (Strong Acid – Sodium Carbonate 2:1)</option>
+                <option value="redox_kmnO4">KMnO₄ + 5FeSO₄ (Redox Titration 1:5)</option>
+                <option value="custom">✏️ Custom Reagents & Manual Ratio</option>
+              </select>
+            </div>
+
+            <div class="row">
+              <div class="field">
+                <label for="cfgQ1SolA">Solution A (Burette Reagent)</label>
+                <input type="text" id="cfgQ1SolA" class="form-control" value="0.10M Hydrochloric Acid (HCl)">
+              </div>
+              <div class="field">
+                <label for="cfgQ1SolB">Solution B (Conical Flask Sample)</label>
+                <input type="text" id="cfgQ1SolB" class="form-control" value="Sodium Hydroxide (NaOH) approx 0.10M">
+              </div>
+            </div>
+
+            <div class="row" style="margin-top:8px;">
+              <div class="field">
+                <label for="cfgQ1RatioA">Moles Solution A (nA)</label>
+                <input type="number" id="cfgQ1RatioA" class="form-control" value="1" min="1" max="10">
+              </div>
+              <div class="field">
+                <label for="cfgQ1RatioB">Moles Solution B (nB)</label>
+                <input type="number" id="cfgQ1RatioB" class="form-control" value="1" min="1" max="10">
+              </div>
+            </div>
+
+            <div class="row" style="margin-top:8px;">
+              <div class="field">
+                <label for="cfgQ1Pipette">Pipette Volume (cm³)</label>
+                <select id="cfgQ1Pipette" class="form-control">
+                  <option value="25.0">25.0 cm³ Pipette (Standard KCSE)</option>
+                  <option value="20.0">20.0 cm³ Pipette</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="cfgQ1Indicator">Indicator Selection</label>
+                <select id="cfgQ1Indicator" class="form-control">
+                  <option value="phenolphthalein">Phenolphthalein Indicator</option>
+                  <option value="methylOrange">Methyl Orange Indicator</option>
+                  <option value="screenedMethylOrange">Screened Methyl Orange</option>
+                  <option value="starch">Starch Indicator (Iodine/Thiosulfate)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Q2 Config -->
+          <div style="border-bottom:1px solid var(--card-border);padding-bottom:12px;margin-bottom:14px;">
+            <div style="font-weight:700;font-size:0.86rem;color:var(--heading-color);margin-bottom:8px;">🧂 Question 2: Inorganic Salt Qualitative Analysis</div>
+            <div class="field">
+              <label for="cfgQ2Salt">Select Target Unknown Salt</label>
+              <select id="cfgQ2Salt" class="form-control">
+                <option value="Pb(NO3)2">Lead(II) Nitrate — Pb(NO₃)₂</option>
+                <option value="CuSO4">Copper(II) Sulfate — CuSO₄</option>
+                <option value="FeSO4">Iron(II) Sulfate — FeSO₄</option>
+                <option value="FeCl3">Iron(III) Chloride — FeCl₃</option>
+                <option value="ZnSO4">Zinc Sulfate — ZnSO₄</option>
+                <option value="Al(NO3)3">Aluminum Nitrate — Al(NO₃)₃</option>
+                <option value="CaCl2">Calcium Chloride — CaCl₂</option>
+                <option value="NH4Cl">Ammonium Chloride — NH₄Cl</option>
+                <option value="Na2CO3">Sodium Carbonate — Na₂CO₃</option>
+                <option value="random">🎲 Random Salt Assignment per Student</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Q3 Config -->
+          <div>
+            <div style="font-weight:700;font-size:0.86rem;color:var(--heading-color);margin-bottom:8px;">🧫 Question 3: Organic Functional Group Analysis</div>
+            <div class="field">
+              <label for="cfgQ3Organic">Select Target Unknown Organic Sample</label>
+              <select id="cfgQ3Organic" class="form-control">
+                <option value="Ethanol">Ethanol — C₂H₅OH (Primary Alcohol)</option>
+                <option value="Ethanoic Acid">Ethanoic Acid — CH₃COOH (Carboxylic Acid)</option>
+                <option value="Cyclohexene">Cyclohexene — C₆H₁₀ (Unsaturated Alkene)</option>
+                <option value="Ethyne">Ethyne — C₂H₂ (Alkyne Gas)</option>
+                <option value="Ethyl Ethanoate">Ethyl Ethanoate — CH₃COOC₂H₅ (Ester)</option>
+                <option value="Hexane">Hexane — C₆H₁₄ (Saturated Alkane)</option>
+                <option value="random">🎲 Random Organic Sample per Student</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="aInstructions">Instructions</label>
+          <input type="text" id="aInstructions" class="form-control" placeholder="e.g. Complete two concordant titres by Friday.">
+        </div>
+        <div class="field" style="margin-top:10px;">
+          <label for="aDue">Due Date</label>
+          <input type="date" id="aDue" class="form-control">
+        </div>
+        <div style="margin-top:14px;display:flex;gap:10px;">
+          <button class="btn btn-primary" id="aSaveBtn" onclick="saveAssignment()">Create Assignment</button>
+          <button class="btn" id="aCancelBtn" onclick="cancelEdit()" style="display:none;">Cancel</button>
+        </div>
+        <div id="assignMsg" style="margin-top:8px;"></div>
+      </div>
+    </div>
+
+    <!-- Tab Pane 3: Students -->
+    <div id="paneStudents" class="tab-pane">
+      <h2 class="section-title">👥 Registered Students & Individual Performance</h2>
+      <p class="hint" style="margin-bottom:14px;">Click any student to inspect their individual practical scorecard, accuracy rate, and trial histories.</p>
+      <div id="studentsList"><div class="empty">Loading students…</div></div>
+    </div>
+
+    <!-- Tab Pane 4: Titration Sessions -->
+    <div id="paneTitration" class="tab-pane">
+      <h2 class="section-title">🧪 Volumetric Titration Sessions</h2>
+      <div class="filters">
+        <select id="filterType">
+          <option value="">All titration types</option>
+          <option value="acidBase">Acid-Base Titration</option>
+          <option value="redox">Redox Titration</option>
+          <option value="precipitation">Precipitation Titration</option>
+          <option value="complexometric">Complexometric Titration</option>
+          <option value="dibasic">Dibasic Acid Titration</option>
+          <option value="tribasic">Tribasic Acid Titration</option>
+          <option value="weakAcid">Weak Acid – Strong Base</option>
+          <option value="weakBase">Weak Base – Strong Acid</option>
+        </select>
+        <input type="text" id="filterClass" placeholder="Filter by form, e.g. Form 3">
+        <button class="btn btn-primary" onclick="applyFilters()">Apply Filter</button>
+      </div>
+      <div id="sessionsBox"><div class="empty">Loading titration sessions…</div></div>
+      <div id="paginationBox" style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:12px;"></div>
+    </div>
+
+    <!-- Tab Pane 5: Qualitative Sessions -->
+    <div id="paneQualitative" class="tab-pane">
+      <h2 class="section-title">🧂 Qualitative Salt Analysis Sessions</h2>
+      <p class="hint" style="margin-bottom:14px;">All unknown-salt cation/anion identification sessions completed by your students.</p>
+      <div id="qualSessionsBox"><div class="empty">Loading qualitative sessions…</div></div>
+    </div>
+
+    <!-- Tab Pane 6: Organic Sessions -->
+    <div id="paneOrganic" class="tab-pane">
+      <h2 class="section-title">⚗️ Organic Chemistry Sessions</h2>
+      <p class="hint" style="margin-bottom:14px;">All functional-group identification sessions completed by your students.</p>
+      <div id="organicSessionsBox"><div class="empty">Loading organic sessions…</div></div>
+    </div>
+
+    <!-- Tab Pane: Solubility Curves -->
+    <div id="paneSolubility" class="tab-pane">
+      <h2 class="section-title">🌡️ Solubility Curves & Crystallization Sessions</h2>
+      <p class="hint" style="margin-bottom:14px;">All crystallization temperature determinations and KNEC graph sessions completed by your students.</p>
+      <div id="solubilitySessionsBox"><div class="empty">Loading solubility sessions…</div></div>
+    </div>
+
+    <!-- Tab Pane: Energy Changes / Thermochemistry -->
+    <div id="paneEnergy" class="tab-pane">
+      <h2 class="section-title">🔥 Energy Changes in Reactions (Thermochemistry)</h2>
+      <p class="hint" style="margin-bottom:14px;">All enthalpy determination sessions (neutralization, displacement, solution, combustion) and 15-mark rubrics.</p>
+      <div id="energySessionsBox"><div class="empty">Loading energy sessions…</div></div>
+    </div>
+
+    <!-- Tab Pane: Reaction Rates & Chemical Kinetics -->
+    <div id="paneRates" class="tab-pane">
+      <h2 class="section-title">⚡ Reaction Rates & Chemical Kinetics Sessions</h2>
+      <p class="hint" style="margin-bottom:14px;">All disappearing cross timing runs, gas syringe kinetics, mass loss, catalysts, and 15-mark KNEC collision theory scorecards.</p>
+      <div id="ratesSessionsBox"><div class="empty">Loading reaction rates sessions…</div></div>
+    </div>
+
+    <!-- Tab Pane 7: Composite Exams -->
+    <div id="paneComposite" class="tab-pane">
+      <h2 class="section-title">📋 KCSE Composite Practical Exams (40 Marks)</h2>
+      <p class="hint" style="margin-bottom:14px;">Full KCSE Paper 3 Mock Examinations completed by your students with Q1 (15m), Q2 (15m), and Q3 (10m) breakdown.</p>
+      <div id="compositeSessionsBox"><div class="empty">Loading composite exam sessions…</div></div>
+    </div>
+
+    <!-- Tab Pane 8: Leaderboard & Badges -->
+    <div id="paneLeaderboard" class="tab-pane">
+      <h2 class="section-title">🏆 Class Leaderboard <span style="font-weight:400;font-size:0.72rem;color:var(--text-muted);">by accuracy, min. 3 sessions</span></h2>
+      <div id="leaderboardBox" style="margin-bottom:32px;"><div class="empty">Loading leaderboard…</div></div>
+
+      <h2 class="section-title">🎖️ Unlocked Class Badges</h2>
+      <div id="classBadgesList"><div class="empty">Loading badges…</div></div>
+    </div>
+
+    <!-- Tab Pane 9: Settings & Profile -->
+    <div id="paneSettings" class="tab-pane">
+      <h2 class="section-title">⚙️ Instructor Profile & Account Settings</h2>
+      
+      <div style="background:var(--card-bg); border:1.5px solid var(--card-border); border-radius:20px; padding:24px; max-width:680px; box-shadow:var(--shadow-sm); margin-bottom:24px;">
+        
+        <!-- Profile Identity Header -->
+        <div style="display:flex; align-items:center; gap:16px; border-bottom:1px solid var(--card-border); padding-bottom:16px; margin-bottom:20px;">
+          <div style="width:54px; height:54px; border-radius:50%; background:linear-gradient(135deg, #10B981 0%, #059669 100%); border:2px solid var(--green-accent); display:flex; align-items:center; justify-content:center; font-size:1.6rem; color:#FFF;">
+            👨‍🏫
+          </div>
+          <div>
+            <div style="font-weight:900; font-size:1.2rem; color:var(--heading-color); font-family:var(--font-heading);" id="tProfHeaderName">Teacher Instructor</div>
+            <div style="font-size:0.8rem; color:var(--green-accent); font-weight:700;">
+              <span>👨‍🏫 Verified Chemistry Instructor</span> · <span id="tProfHeaderEmail" style="color:var(--text-muted);">teacher@virtulab.ke</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Personal Details Inputs -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px;">
+          <div>
+            <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:4px;">Full Name</label>
+            <input type="text" id="tProfInputName" class="form-control" placeholder="e.g. Dr. Jane Mutua" style="font-weight:700;">
+          </div>
+          <div>
+            <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:4px;">School / Institution Code</label>
+            <input type="text" id="tProfInputSchool" class="form-control" placeholder="e.g. KCS-MANGU-8421" style="font-weight:700;">
+          </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="saveTeacherProfileDetails()" style="padding:10px 22px; font-weight:800; border-radius:100px; width:100%; margin-bottom:20px;">Save Profile Information ✓</button>
+        <div id="tProfMsg" style="margin-bottom:14px; text-align:center;"></div>
+
+        <!-- Security & Password -->
+        <h3 style="font-family:var(--font-heading); font-size:1rem; color:var(--heading-color); border-top:1px solid var(--card-border); padding-top:16px; margin-bottom:14px;">🔒 Update Account Security Password</h3>
+        <div class="field" style="margin-bottom:10px;">
+          <label for="pwCurrent" style="font-size:0.8rem; font-weight:700;">Current Password</label>
+          <input type="password" id="pwCurrent" class="form-control" placeholder="Enter current security password">
+        </div>
+        <div class="field" style="margin-bottom:14px;">
+          <label for="pwNew" style="font-size:0.8rem; font-weight:700;">New Password</label>
+          <input type="password" id="pwNew" class="form-control" placeholder="Enter new password (min 6 characters)">
+        </div>
+        <button class="btn btn-primary" onclick="submitChangePassword()" style="padding:10px 22px; font-weight:800; border-radius:100px; width:100%;">Update Security Password 🔐</button>
+        <div id="pwMsg" style="margin-top:10px; text-align:center;"></div>
+
+        <!-- Account Actions -->
+        <div style="border-top:1px solid var(--card-border); padding-top:16px; margin-top:20px; display:flex; gap:12px;">
+          <button class="btn" onclick="exportTeacherClassReportCSV()" style="flex:1; justify-content:center; padding:10px; font-weight:700;">📥 Export Class CSV Report</button>
+          <button class="btn" onclick="Auth.logout()" style="flex:1; justify-content:center; background:rgba(239, 68, 68, 0.15); color:var(--red-accent); border:1px solid var(--red-accent); padding:10px; font-weight:800;">🚪 Log Out</button>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Modal: Student Performance Drill-Down -->
+<div id="studentDrilldownModal" class="modal-overlay" style="display:none;">
+  <div class="modal-card">
+    <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--card-border);padding-bottom:14px;margin-bottom:18px;">
+      <h3 style="margin:0;font-family:var(--font-heading);font-size:1.15rem;color:var(--heading-color);" id="drillStudentName">Student Performance Scorecard</h3>
+      <button class="btn" onclick="closeStudentDrilldownModal()">✕ Close</button>
+    </div>
+    <div id="drillModalBody">
+      <div class="empty">Loading student scorecard…</div>
+    </div>
+  </div>
+</div>
+
+<script src="../shared/api.js"></script>
+<script src="../shared/notifications-engine.js"></script>
+<script src="js/teacher-dashboard.js"></script>
+<script>
+  function switchTeacherTab(tabId) {
+    document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.sidebar-nav-btn').forEach(el => el.classList.remove('active'));
+
+    const pane = document.getElementById(tabId);
+    if (pane) pane.classList.add('active');
+
+    const btnMap = {
+      'paneOverview': 'btnTabOverview',
+      'paneAssignments': 'btnTabAssignments',
+      'paneStudents': 'btnTabStudents',
+      'paneTitration': 'btnTabTitration',
+      'paneQualitative': 'btnTabQualitative',
+      'paneOrganic': 'btnTabOrganic',
+      'paneSolubility': 'btnTabSolubility',
+      'paneEnergy': 'btnTabEnergy',
+      'paneRates': 'btnTabRates',
+      'paneComposite': 'btnTabComposite',
+      'paneLeaderboard': 'btnTabLeaderboard',
+      'paneSettings': 'btnTabSettings'
+    };
+
+    const btnId = btnMap[tabId];
+    if (btnId) {
+      const btn = document.getElementById(btnId);
+      if (btn) btn.classList.add('active');
+    }
+  }
+
+
+
+  function toggleTeacherSettings(e) {
+    if (e) e.stopPropagation();
+    const dropdown = document.getElementById('teacherSettingsDropdown');
+    if (!dropdown) return;
+    const show = dropdown.style.display === 'none' || !dropdown.style.display;
+    dropdown.style.display = show ? 'block' : 'none';
+  }
+  document.addEventListener('click', function(e) {
+    const dropdown = document.getElementById('teacherSettingsDropdown');
+    if (dropdown && dropdown.style.display === 'block') {
+      if (!dropdown.contains(e.target) && !e.target.closest('button[onclick*="toggleTeacherSettings"]')) {
+        dropdown.style.display = 'none';
+      }
+    }
+  });
+</script>
+<script src="../shared/pwa-installer.js"></script>
+</body>
+</html>
+

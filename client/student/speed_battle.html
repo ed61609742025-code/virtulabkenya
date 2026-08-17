@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chemical Speed Battle Quiz Arena — VirtuLab Kenya</title>
+  <link rel="stylesheet" href="../shared/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Outfit:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body { padding-top: 70px; background: var(--bg-dark); }
+    .battle-container { max-width: 680px; margin: 20px auto; padding: 0 16px; }
+    .battle-card { background: var(--card-bg); border: 1.5px solid var(--card-border); border-radius: 24px; padding: 28px; box-shadow: var(--shadow-md); color: var(--text-main); text-align: center; }
+  </style>
+</head>
+<body>
+
+  <!-- Fixed Top Navbar -->
+  <header class="top-navbar">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <a href="home.html" class="btn" style="padding:6px 14px; font-weight:800; text-decoration:none;">← Student Home</a>
+      <span style="font-family:var(--font-heading); font-weight:900; font-size:1.1rem; color:var(--heading-color);">🎮 Chemical Speed Battle Arena</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <button class="theme-btn-chip active" onclick="setTheme('light')" title="Clean Slate Light Mode">☀️ Light</button>
+      <button class="theme-btn-chip" onclick="setTheme('dark')" title="Midnight Dark Mode">🌙 Dark</button>
+      <button class="theme-btn-chip" onclick="setTheme('green')" title="Emerald Lab Mode">🧪 Lab</button>
+    </div>
+  </header>
+
+  <div class="battle-container">
+    
+    <!-- Start Screen Card -->
+    <div id="battleStartCard" class="battle-card">
+      <div style="font-size:3.5rem; margin-bottom:12px;">⚡🧪</div>
+      <h1 style="font-family:var(--font-heading); font-size:1.8rem; font-weight:900; color:var(--heading-color); margin-bottom:8px;">KCSE Practical Speed Battle</h1>
+      <p style="font-size:0.9rem; color:var(--text-muted); line-height:1.6; margin-bottom:24px;">
+        Test your KCSE Paper 3 chemical observations, cation/anion test deductions, and titration precision in a <b>60-second rapid-fire challenge</b>! Build combo streaks to multiply your score!
+      </p>
+
+      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin-bottom:28px; background:var(--card-bg-hover); padding:16px; border-radius:16px; border:1px solid var(--card-border);">
+        <div>
+          <div style="font-size:0.7rem; font-weight:800; color:var(--text-muted);">TIME LIMIT</div>
+          <div style="font-size:1.2rem; font-weight:900; color:var(--cyan-accent); margin-top:2px;">⏱️ 60 Sec</div>
+        </div>
+        <div>
+          <div style="font-size:0.7rem; font-weight:800; color:var(--text-muted);">MULTIPLIER</div>
+          <div style="font-size:1.2rem; font-weight:900; color:var(--amber-accent); margin-top:2px;">🔥 Up to 5x</div>
+        </div>
+        <div>
+          <div style="font-size:0.7rem; font-weight:800; color:var(--text-muted);">TOP RATING</div>
+          <div style="font-size:1.2rem; font-weight:900; color:var(--green-accent); margin-top:2px;">👑 Master A+</div>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-primary" onclick="startChemicalSpeedBattle()" style="width:100%; padding:14px; font-size:1.05rem; font-weight:900; border-radius:100px; box-shadow:0 0 20px rgba(2,132,199,0.3);">
+        🚀 Launch 60s Speed Battle →
+      </button>
+    </div>
+
+    <!-- Battle Arena Card (Active Game) -->
+    <div id="battleArenaCard" class="battle-card" style="display:none; text-align:left;">
+      
+      <!-- HUD Header -->
+      <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:16px; margin-bottom:20px;">
+        <div style="display:flex; align-items:center; gap:16px;">
+          <div>
+            <div style="font-size:0.68rem; font-weight:800; color:var(--text-muted);">SCORE</div>
+            <div id="battleScoreDisplay" style="font-size:1.4rem; font-weight:900; color:var(--cyan-accent); font-family:var(--font-heading);">0</div>
+          </div>
+          <div>
+            <div style="font-size:0.68rem; font-weight:800; color:var(--text-muted);">COMBO STREAK</div>
+            <div id="battleStreakDisplay" style="font-size:1.1rem; font-weight:900; color:var(--amber-accent);">0x Combo 🔥</div>
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:0.68rem; font-weight:800; color:var(--text-muted);">REMAINING TIME</div>
+          <div id="battleTimeDisplay" style="font-size:1.5rem; font-weight:900; color:var(--green-accent); font-family:var(--font-heading);">60s</div>
+        </div>
+      </div>
+
+      <!-- Question Box -->
+      <div style="background:var(--card-bg-hover); border:1.5px solid var(--cyan-accent); border-radius:18px; padding:20px; margin-bottom:20px; font-size:1.05rem; font-weight:800; color:var(--heading-color); line-height:1.5;" id="battleQuestionText">
+        Loading question…
+      </div>
+
+      <!-- Options Container -->
+      <div id="battleOptionsBox"></div>
+
+    </div>
+
+    <!-- Game Over Card -->
+    <div id="battleGameOverCard" class="battle-card" style="display:none;">
+      <div style="font-size:3.5rem; margin-bottom:12px;">🏆</div>
+      <h2 style="font-family:var(--font-heading); font-size:1.6rem; font-weight:900; color:var(--heading-color); margin-bottom:4px;">Speed Battle Finished!</h2>
+      <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:20px;">Great job completing the 60-second KCSE practical sprint!</div>
+
+      <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:20px; padding:20px; margin-bottom:24px;">
+        <div style="font-size:0.75rem; font-weight:800; color:var(--text-muted);">FINAL SCORE</div>
+        <div id="finalScoreDisplay" style="font-size:2.4rem; font-weight:900; color:var(--cyan-accent); font-family:var(--font-heading); margin:4px 0 10px 0;">0</div>
+        
+        <div style="font-size:0.75rem; font-weight:800; color:var(--text-muted);">PRACTICAL IQ RATING</div>
+        <div id="finalRankDisplay" style="font-size:1.15rem; font-weight:900; color:var(--green-accent); margin-top:2px;">🧪 Novice Chemist</div>
+      </div>
+
+      <div style="display:flex; gap:12px;">
+        <button type="button" class="btn btn-primary" onclick="startChemicalSpeedBattle()" style="flex:1; padding:12px; font-weight:800; border-radius:100px;">🔄 Play Again</button>
+        <a href="home.html" class="btn" style="flex:1; padding:12px; font-weight:800; border-radius:100px; text-decoration:none; text-align:center;">🏠 Return Home</a>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="../shared/api.js"></script>
+  <script src="../shared/chemical-safety.js"></script>
+  <script src="js/speed-battle.js"></script>
+</body>
+</html>

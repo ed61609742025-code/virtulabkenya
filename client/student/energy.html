@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Energy Changes Practical Workbench — VirtuLab Kenya</title>
+  <meta name="description" content="Simulate KNEC KCSE Chemistry Paper 3 thermochemistry practicals: enthalpy of neutralization, displacement, solution, combustion, cooling curves, and interactive graph plotting.">
+  <script>
+    var t = localStorage.getItem('vlk_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', t);
+    if (window.location.search.includes('embedded=1')) {
+      const style = document.createElement('style');
+      style.innerHTML = '.top-navbar { display: none !important; } body { padding-top: 0 !important; margin: 0 !important; } .en-page-wrap { padding-top: 10px !important; }';
+      document.head.appendChild(style);
+    }
+  </script>
+  <meta name="theme-color" content="#0B1320">
+  <link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700;800&family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/shared/style.css">
+  <link rel="stylesheet" href="/student/css/energy.css">
+  <link rel="stylesheet" href="/shared/ai-tutor.css">
+  <link rel="stylesheet" href="/shared/pwa-installer.css">
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════
+       TOPBAR — Fixed Navigation Header
+  ══════════════════════════════════════ -->
+  <nav class="top-navbar">
+    <a href="/student/home.html" class="nav-brand" style="text-decoration:none;">
+      <span class="nav-logo-icon">🔥</span>
+      <span>VirtuLab Kenya</span>
+      <span class="knec-tag-pill">KNEC PAPER 3</span>
+    </a>
+
+    <div class="nav-lab-switch">
+      <a href="lab.html" class="theme-btn-chip">🧪 Titration</a>
+      <a href="qualitative.html" class="theme-btn-chip">🔍 Qualitative</a>
+      <a href="organic.html" class="theme-btn-chip">⚗️ Organic</a>
+      <a href="solubility.html" class="theme-btn-chip">🌡️ Solubility</a>
+      <a href="energy.html" class="theme-btn-chip active">🔥 Energy</a>
+      <a href="rates.html" class="theme-btn-chip">⚡ Rates</a>
+      <a href="composite_exam.html" class="theme-btn-chip">📝 Exam</a>
+    </div>
+
+    <div class="nav-actions">
+      <div class="theme-toggle-group">
+        <button type="button" class="theme-btn-chip active" id="btnModePractice" onclick="EnergyEngine.setStudyMode('practice')">🎓 Practice</button>
+        <button type="button" class="theme-btn-chip" id="btnModeExam" onclick="EnergyEngine.setStudyMode('exam')">📝 Exam Mode</button>
+      </div>
+
+      <!-- Theory Page Direct Switcher Link -->
+      <a href="energy_theory.html" class="en-header-theory-btn" title="Open Thermochemistry Theory & Hess's Law Revision Guide">
+        <span>📖 Theory & Cycles →</span>
+      </a>
+
+      <!-- Settings Dropdown -->
+      <div style="position:relative;">
+        <button type="button" class="en-header-btn" onclick="toggleBenchSettings(event)" title="Workbench Settings & Tools">
+          <span>⚙️ Settings</span>
+        </button>
+        
+        <div id="benchSettingsDropdown" class="settings-dropdown-menu">
+          <div class="dropdown-row">
+            <span class="dropdown-label">Audio Metronome & Sound</span>
+            <button type="button" id="soundToggleBtn" onclick="EnergyEngine.toggleSound()" class="dropdown-action-btn">🔊 Sound ON</button>
+          </div>
+
+          <div class="dropdown-row-col">
+            <span class="dropdown-label">Language / Lugha</span>
+            <div class="theme-toggle-group" style="width:100%;">
+              <button class="theme-btn-chip lang-btn-chip active" style="flex:1; padding:4px 8px;" data-lang="en" onclick="EnergyEngine.setLanguage('en')">🇬🇧 EN</button>
+              <button class="theme-btn-chip lang-btn-chip" style="flex:1; padding:4px 8px;" data-lang="sw" onclick="EnergyEngine.setLanguage('sw')">🇰🇪 SW</button>
+            </div>
+          </div>
+
+          <div class="dropdown-row-col">
+            <span class="dropdown-label">Appearance Theme</span>
+            <div class="theme-toggle-group" style="width:100%;">
+              <button class="theme-btn-chip active" style="flex:1; padding:4px 6px;" data-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
+              <button class="theme-btn-chip" style="flex:1; padding:4px 6px;" data-theme="light" onclick="setTheme('light')">☀️ Light</button>
+              <button class="theme-btn-chip" style="flex:1; padding:4px 6px;" data-theme="green" onclick="setTheme('green')">🧪 Lab</button>
+            </div>
+          </div>
+
+          <div class="dropdown-row-col" style="gap:6px; margin-top:4px;">
+            <button onclick="EnergyEngine.openSafetyModal()" class="dropdown-menu-item item-danger">
+              ⚠️ Chemical Safety & SDS
+            </button>
+            <button onclick="window.print()" class="dropdown-menu-item">
+              🖨️ Print KCSE Booklet
+            </button>
+            <button onclick="EnergyEngine.submitWorksheet()" class="dropdown-menu-item item-primary">
+              💾 Submit & Grade (15 Mks)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Back to Dashboard on the Right -->
+      <a href="/student/home.html" class="en-nav-back-btn" title="Back to Student Dashboard / Home">
+        <span style="font-size:1.05rem; line-height:1; display:inline-block;">←</span>
+        <span>Home</span>
+      </a>
+    </div>
+  </nav>
+
+  <main class="en-page-wrap">
+    
+    <!-- Official KNEC Practical Examination Proctor Banner -->
+    <div id="enExamProctorBanner" class="exam-proctor-banner">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="exam-proctor-tag">
+          🔒 KNEC EXAM MODE
+        </div>
+        <div>
+          <div class="exam-proctor-title">Chemistry Paper 3 (233/3) — Question 1: Energy Changes (Thermochemistry)</div>
+          <div class="exam-proctor-sub">Digital thermometers locked · Read directly from magnified thermometer scale · Time strictly enforced</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div id="enExamTimerBadge" class="exam-timer-badge">
+          ⏱️ 20:00
+        </div>
+        <button onclick="EnergyEngine.submitWorksheet()" class="en-btn exam-submit-btn">
+          🚀 Submit Exam (15.0 Marks)
+        </button>
+      </div>
+    </div>
+
+    <!-- KCSE Practical Scenario Selection Strip -->
+    <div class="en-scenario-strip" id="enScenarioStrip">
+      <button class="en-scenario-tab active" data-scenario="KCSE_2022_DISPLACEMENT" onclick="EnergyEngine.applyScenario('KCSE_2022_DISPLACEMENT')">
+        <span>📜 KCSE 2022 (Zn + CuSO₄ Displacement)</span>
+      </button>
+      <button class="en-scenario-tab" data-scenario="KCSE_2023_NEUTRALIZATION" onclick="EnergyEngine.applyScenario('KCSE_2023_NEUTRALIZATION')">
+        <span>📜 KCSE 2023 (NaOH + HCl Neutralization)</span>
+      </button>
+      <button class="en-scenario-tab" data-scenario="KCSE_2024_WEAK_STRONG" onclick="EnergyEngine.applyScenario('KCSE_2024_WEAK_STRONG')">
+        <span>📜 KCSE 2024 (CH₃COOH vs HCl Ionization Enthalpy)</span>
+      </button>
+      <button class="en-scenario-tab" data-scenario="KCSE_2020_SOLUTION_ENDOTHERMIC" onclick="EnergyEngine.applyScenario('KCSE_2020_SOLUTION_ENDOTHERMIC')">
+        <span>📜 KCSE 2020 (NH₄NO₃ Endothermic Solution)</span>
+      </button>
+      <button class="en-scenario-tab" data-scenario="KCSE_2019_HESS_LAW" onclick="EnergyEngine.applyScenario('KCSE_2019_HESS_LAW')">
+        <span>📜 KCSE 2019 (Hess's Law: Anhydrous vs Hydrated CuSO₄)</span>
+      </button>
+      <button class="en-scenario-tab" data-scenario="KCSE_2018_COMBUSTION_ETHANOL" onclick="EnergyEngine.applyScenario('KCSE_2018_COMBUSTION_ETHANOL')">
+        <span>📜 KCSE 2018 (Ethanol Combustion & Heat of Burning)</span>
+      </button>
+      <button class="en-scenario-tab" data-scenario="COOLING_CURVE_STEARIC" onclick="EnergyEngine.applyScenario('COOLING_CURVE_STEARIC')">
+        <span>🧊 Cooling Curves (Stearic Acid Solidification)</span>
+      </button>
+      <button class="en-scenario-tab" data-scenario="THERMO_SANDBOX" onclick="EnergyEngine.applyScenario('THERMO_SANDBOX')">
+        <span>🧪 Custom Sandbox</span>
+      </button>
+    </div>
+
+    <!-- Scenario Briefing & Live Status Strip -->
+    <div class="en-briefing-bar" id="enBriefingBar">
+      <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:260px;">
+        <span class="en-tag-knec" id="briefingTag">KNEC 233/3 SPEC</span>
+        <div id="scenarioDescText" class="scenario-desc-text">
+          Measure 25.0 cm³ of 0.5M CuSO₄ into a polystyrene cup. Record initial temperature every 30s for 2.0 min. At exactly 2.5 min, add Zinc powder, stir continuously and record temperature every 30s up to 6.0 min.
+        </div>
+      </div>
+      <div class="briefing-status-box">
+        <span id="labStatusBanner" class="lab-status-badge">Ready to commence practical.</span>
+        <span id="metronomeIndicator" class="metronome-badge" title="30s Interval Timer Metronome">🔔 30s Chime: Active</span>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         3-COLUMN WORKBENCH GRID (CLEAN & FOCUSED)
+    ══════════════════════════════════════ -->
+    <div class="en-workbench-grid">
+      
+      <!-- LEFT COLUMN: Reagents & Controls -->
+      <div class="en-left-col">
+        
+        <!-- Reagents Shelf -->
+        <div class="en-card-panel">
+          <div class="en-panel-title">
+            <span class="title-with-icon"><span>⚗️</span> Reagent Shelf</span>
+            <button type="button" onclick="EnergyEngine.openSafetyModal()" class="safety-chip-btn" title="View GHS Hazard Safety Data">
+              ⚠️ Safety SDS
+            </button>
+          </div>
+
+          <div class="reagent-select-card active" id="reagentCardA">
+            <div class="reagent-bottle-icon" id="reagentIconA">🧪</div>
+            <div style="flex:1;">
+              <div class="reagent-meta-title" id="reagentTitleA">0.5M CuSO₄ Solution</div>
+              <div class="reagent-meta-sub" id="reagentSubA">Analyte · Volume: 25.0 cm³</div>
+            </div>
+            <span class="reagent-badge-tag" id="reagentTagA">Ready</span>
+          </div>
+
+          <div class="reagent-select-card active" id="reagentCardB">
+            <div class="reagent-bottle-icon" id="reagentIconB">🧂</div>
+            <div style="flex:1;">
+              <div class="reagent-meta-title" id="reagentTitleB">Zinc Powder (Zn)</div>
+              <div class="reagent-meta-sub" id="reagentSubB">Reducing Agent · Mass: 2.00 g</div>
+            </div>
+            <span class="reagent-badge-tag" id="reagentTagB">Ready</span>
+          </div>
+
+          <!-- Dynamic Sandbox Slider Controls (visible only in Sandbox mode) -->
+          <div id="sandboxControlsBox" style="display:none; margin-top:8px; padding-top:8px; border-top:1px dashed var(--card-border);">
+            <div class="en-slider-control">
+              <div class="en-slider-header">
+                <span>Solution A Volume:</span>
+                <span class="en-slider-val" id="valVolA">25.0 cm³</span>
+              </div>
+              <input type="range" min="10" max="100" step="5" value="25" class="en-range-input" id="rngVolA" oninput="EnergyEngine.updateSandboxParam('volA', this.value)">
+            </div>
+
+            <div class="en-slider-control">
+              <div class="en-slider-header">
+                <span>Theoretical ΔH (kJ/mol):</span>
+                <span class="en-slider-val" id="valDeltaH">-217.0</span>
+              </div>
+              <input type="range" min="-600" max="150" step="10" value="-217" class="en-range-input" id="rngDeltaH" oninput="EnergyEngine.updateSandboxParam('deltaH', this.value)">
+            </div>
+          </div>
+        </div>
+
+        <!-- Apparatus & Calorimeter Controls -->
+        <div class="en-card-panel">
+          <div class="en-panel-title">
+            <span class="title-with-icon"><span>🎛️</span> Bench Controls</span>
+            <span class="panel-subtitle-tag" id="apparatusModeTag">Thermometry</span>
+          </div>
+
+          <!-- Calorimetry Controls -->
+          <div id="calorimeterControlsBox">
+            <button type="button" class="en-btn en-btn-primary" id="btnStartTimer" onclick="EnergyEngine.toggleTimer()">
+              ▶️ Start Practical Clock (t = 0s)
+            </button>
+
+            <button type="button" class="en-btn en-btn-mix" id="btnMixReactants" onclick="EnergyEngine.mixReactants()">
+              ⚗️ Mix Reactants (at t = 2.5 min)
+            </button>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-bottom:8px;">
+              <button type="button" class="en-btn en-btn-secondary" id="btnToggleStir" onclick="EnergyEngine.toggleStirrer()" title="Toggle Glass Loop Stirrer">
+                🌀 Stirrer: OFF
+              </button>
+              <button type="button" class="en-btn en-btn-secondary active" id="btnToggleLid" onclick="EnergyEngine.toggleLid()" title="Toggle Polystyrene Lid Insulation">
+                🛡️ Lid: ON
+              </button>
+            </div>
+
+            <button type="button" class="en-btn en-btn-log" id="btnQuickLog" onclick="EnergyEngine.quickLogReading()" title="Log current thermometer reading into active table row">
+              📌 Log Reading at Current Time
+            </button>
+          </div>
+
+          <!-- Combustion Controls (Visible in Combustion Mode) -->
+          <div id="combustionControlsBox" style="display:none;">
+            <button type="button" class="en-btn en-btn-primary" id="btnToggleFlame" onclick="EnergyEngine.toggleFlame()">
+              🕯️ Light Spirit Lamp Burner
+            </button>
+            <button type="button" class="en-btn en-btn-secondary" onclick="EnergyEngine.weighBurner()" style="margin-bottom:8px;">
+              ⚖️ Weigh Spirit Lamp Balance
+            </button>
+          </div>
+
+          <!-- Cooling Curve Controls (Visible in Cooling Mode) -->
+          <div id="coolingControlsBox" style="display:none;">
+            <button type="button" class="en-btn en-btn-primary" id="btnStartCooling" onclick="EnergyEngine.toggleTimer()">
+              ▶️ Start Cooling Curve Clock
+            </button>
+          </div>
+
+          <button type="button" class="en-btn en-btn-secondary" onclick="EnergyEngine.resetExperiment()" style="margin-top:6px; color:var(--text-muted);">
+            🔄 Reset Experiment
+          </button>
+        </div>
+
+        <!-- Mwalimu AI Guidance Card -->
+        <div class="en-card-panel guidance-panel">
+          <div class="guidance-header">
+            <span style="font-size:1.15rem;">👨‍🏫</span>
+            <span style="font-size:0.82rem;font-weight:800;color:var(--heading-color);">Mwalimu AI Guidance</span>
+          </div>
+          <div class="guidance-body" id="mwalimuAdviceText">
+            Remember KNEC rule: Always take initial temperature readings at 30-second intervals for 2.0 minutes. <strong>Do not mix before 2.5 minutes!</strong> Record readings to <strong>1 decimal place</strong> (e.g. 22.0 or 22.5).
+          </div>
+        </div>
+
+      </div>
+
+      <!-- MIDDLE COLUMN: Simulation Rig Canvas & HUDs -->
+      <div class="en-mid-col">
+        
+        <div class="en-stage-wrapper">
+          <div class="en-stage-topbar">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <span class="stage-title" id="stageApparatusTitle">Calorimeter Rig (EPS)</span>
+              <span class="en-timer-display" id="clockDisplay">⏱️ 00:00</span>
+              <button type="button" id="btnToggleLabels" onclick="EnergyEngine.toggleLabels()" class="en-tool-btn active">
+                🏷️ Labels: ON
+              </button>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span style="font-size:0.75rem;font-weight:700;color:var(--text-muted);">Temperature:</span>
+              <span id="digitalTempDisplay" class="digital-temp-badge">22.0 °C</span>
+            </div>
+          </div>
+
+          <div class="en-canvas-box" id="canvasContainerBox">
+            <canvas id="energyRigCanvas"></canvas>
+
+            <!-- Thermometer Magnifying Loupe Overlay -->
+            <div class="en-mag-loupe" id="magLoupeOverlay">
+              <div class="en-mag-header">
+                <span>🔍 Thermometer Zoom</span>
+              </div>
+              <div style="position:relative;flex:1;width:100%;">
+                <canvas id="magLoupeCanvas"></canvas>
+              </div>
+              <div class="en-mag-footer">
+                <span style="font-size:0.65rem;color:var(--text-muted);display:block;">Scale Readout:</span>
+                <span id="magLoupeValue" style="font-size:0.85rem;font-weight:900;color:var(--en-primary);">22.0 °C</span>
+              </div>
+            </div>
+
+            <!-- Reaction Progress Floating HUD -->
+            <div class="reaction-progress-hud" id="reactionProgressHud">
+              <div class="rxn-hud-row">
+                <span class="rxn-hud-label">Extent:</span>
+                <div class="rxn-progress-bar-wrap">
+                  <div class="rxn-progress-fill" id="rxnProgressFill" style="width:0%;"></div>
+                </div>
+                <span class="rxn-hud-val" id="rxnProgressPercent">0%</span>
+              </div>
+              <div class="rxn-hud-row" style="margin-top:3px;">
+                <span class="rxn-hud-label">Heat Q:</span>
+                <span class="rxn-hud-val" id="rxnHeatGenerated">0.00 J</span>
+                <span class="rxn-hud-label" style="margin-left:6px;">ΔT:</span>
+                <span class="rxn-hud-val" id="rxnDeltaTLive">+0.0 °C</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sub-HUDs: Dynamic Energy Profile & Sub-Microscopic Molecular View -->
+        <div class="en-hud-grid">
+          <div class="en-hud-card">
+            <div class="en-hud-title">
+              <span class="title-with-icon"><span>📈</span> Energy Profile Diagram</span>
+              <button type="button" id="btnToggleCatalyst" onclick="EnergyEngine.toggleCatalyzedPathway()" class="en-tool-btn" title="Compare Uncatalyzed vs Catalyzed Pathway">
+                ⚡ Catalyst Ea'
+              </button>
+            </div>
+            <canvas id="energyProfileCanvas"></canvas>
+          </div>
+
+          <div class="en-hud-card">
+            <div class="en-hud-title">
+              <span class="title-with-icon"><span>🔬</span> Sub-Microscopic View</span>
+              <span class="hud-sub-label" id="kineticRateLabel">Maxwell-Boltzmann Rate: 1.00x</span>
+            </div>
+            <canvas id="molecularCanvas"></canvas>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN: KNEC Graph Plotting & 15-Mark Practical Worksheet -->
+      <div class="en-right-col">
+        
+        <!-- Tab Navigation (Clean 2-Tab Workbench) -->
+        <div class="en-tab-nav">
+          <button type="button" class="en-tab-btn active" id="tabBtnGraph" onclick="switchRightTab('graph')">📊 KNEC Graph Board</button>
+          <button type="button" class="en-tab-btn" id="tabBtnWorksheet" onclick="switchRightTab('worksheet')">📝 Q1 Practical Worksheet</button>
+        </div>
+
+        <!-- TAB 1: KNEC GRAPH BOARD -->
+        <div id="tabContentGraph" class="en-graph-card">
+          <div class="en-graph-toolbar">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span style="font-size:0.76rem;font-weight:800;color:var(--heading-color);">Millimeter Grid (2mm/1cm)</span>
+            </div>
+            <div class="graph-btn-group">
+              <button type="button" class="en-tool-btn" onclick="EnergyEngine.autoPlotFromTable()" title="Plot Points automatically from table data">
+                📍 Auto-Plot
+              </button>
+              <button type="button" class="en-tool-btn active" id="btnToggleExtrap" onclick="EnergyEngine.toggleExtrapolation()" title="Extrapolate cooling curve back to mixing time">
+                📐 Extrapolate T_max
+              </button>
+              <button type="button" class="en-tool-btn" id="btnToggleBestFit" onclick="EnergyEngine.toggleBestFit()" title="Draw Line of Best Fit">
+                📈 Best-Fit
+              </button>
+              <button type="button" class="en-tool-btn" onclick="EnergyEngine.clearGraph()" title="Clear Plotted Points">
+                🧹 Clear
+              </button>
+              <button type="button" class="en-tool-btn" onclick="EnergyEngine.exportGraphImage()" title="Download High-Res Plotted Graph">
+                💾 PNG
+              </button>
+            </div>
+          </div>
+
+          <div class="graph-canvas-wrapper">
+            <canvas id="thermGraphCanvas"></canvas>
+          </div>
+
+          <div class="knec-graph-tip-box">
+            💡 <strong>KNEC Paper 3 Graph Rules:</strong> Click anywhere on the millimeter grid to plot points (red 'X'). Toggle <strong>Extrapolate T_max</strong> to construct the cooling extrapolation back to mixing time (<em>t</em> = 150s) to obtain the true maximum temperature change (<strong>ΔT</strong>).
+          </div>
+        </div>
+
+        <!-- TAB 2: KNEC QUESTION 1 WORKSHEET & CALCULATIONS -->
+        <div id="tabContentWorksheet" class="en-card-panel" style="display:none;">
+          <div class="en-panel-title">
+            <span class="title-with-icon"><span>📝</span> KCSE Paper 3 (Question 1)</span>
+            <span class="marks-badge-total">15.0 MARKS</span>
+          </div>
+
+          <!-- Time-Temperature Data Table -->
+          <div class="en-table-container">
+            <table class="en-table">
+              <thead>
+                <tr>
+                  <th>Time (min)</th>
+                  <th>Time (s)</th>
+                  <th>Temp (°C)</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="thermTableBody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Step-by-Step Calculations Form -->
+          <div class="en-calc-step">
+            <div class="en-calc-label">(a) Maximum Temperature Change (ΔT)</div>
+            <div class="en-calc-formula">ΔT = T_extrapolated - T_initial (from graph extrapolation)</div>
+            <div class="en-calc-field-group">
+              <input type="text" class="en-calc-input" id="calc_dt" placeholder="e.g. 18.5">
+              <span class="en-calc-unit">°C</span>
+            </div>
+          </div>
+
+          <div class="en-calc-step">
+            <div class="en-calc-label">(b) Quantity of Heat Evolved / Absorbed (Q)</div>
+            <div class="en-calc-formula">Q = m · c · ΔT (where c = 4.2 J/g/°C, density = 1.0 g/cm³)</div>
+            <div class="en-calc-field-group">
+              <input type="text" class="en-calc-input" id="calc_q" placeholder="e.g. 1942.5">
+              <span class="en-calc-unit">Joules (J)</span>
+            </div>
+          </div>
+
+          <div class="en-calc-step">
+            <div class="en-calc-label">(c) Moles of Limiting Reactant (n)</div>
+            <div class="en-calc-formula">n = (Molarity × Volume) / 1000 or n = mass / RAM</div>
+            <div class="en-calc-field-group">
+              <input type="text" class="en-calc-input" id="calc_moles" placeholder="e.g. 0.0125">
+              <span class="en-calc-unit">moles</span>
+            </div>
+          </div>
+
+          <div class="en-calc-step">
+            <div class="en-calc-label">(d) Molar Enthalpy of Reaction (ΔH)</div>
+            <div class="en-calc-formula">ΔH = ± Q / (n · 1000) [Must include +/- sign!]</div>
+            <div class="en-calc-field-group">
+              <input type="text" class="en-calc-input" id="calc_deltah" placeholder="e.g. -217.0">
+              <span class="en-calc-unit">kJ / mol</span>
+            </div>
+          </div>
+
+          <div class="en-calc-step">
+            <div class="en-calc-label">(e) Thermochemical Equation with State Symbols</div>
+            <div class="en-calc-field-group">
+              <input type="text" class="en-calc-input" id="calc_equation" placeholder="e.g. Zn(s) + Cu²⁺(aq) → Zn²⁺(aq) + Cu(s)  ΔH = -217 kJ/mol">
+            </div>
+          </div>
+
+          <button type="button" class="en-btn en-btn-primary" onclick="EnergyEngine.submitWorksheet()" style="margin-top:10px;">
+            🏁 Evaluate & Grade Booklet (15 Marks)
+          </button>
+
+          <!-- Score Card Modal / Container -->
+          <div id="markingScoreCard" class="en-score-card" style="display:none;">
+            <div class="en-score-header">
+              <span style="font-weight:800;font-size:0.88rem;color:var(--heading-color);">Official KNEC Score Report</span>
+              <span class="en-score-badge" id="totalMarksBadge">15.0 / 15.0</span>
+            </div>
+            <div id="rubricBreakdownList">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ══════════════════════════════════════
+       CHEMICAL SAFETY & SDS MODAL
+  ══════════════════════════════════════ -->
+  <div id="safetyModalContainer" class="en-modal-backdrop" style="display:none;" onclick="EnergyEngine.closeSafetyModal(event)">
+    <div class="en-modal-content" onclick="event.stopPropagation()">
+      <div class="en-modal-header">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:1.25rem;">⚠️</span>
+          <span style="font-size:0.95rem;font-weight:800;color:var(--heading-color);" id="safetyModalTitle">Chemical Safety & GHS Data Sheet</span>
+        </div>
+        <button type="button" class="en-modal-close" onclick="EnergyEngine.closeSafetyModal()">✕</button>
+      </div>
+      <div class="en-modal-body" id="safetyModalBody">
+        <!-- Dynamically injected -->
+      </div>
+    </div>
+  </div>
+
+  <script src="/shared/api.js"></script>
+  <script src="/shared/theme.js"></script>
+  <script src="/shared/i18n.js"></script>
+  <script src="/shared/chemical-safety.js"></script>
+  <script src="/student/js/energy-engine.js"></script>
+  <script>
+    function toggleBenchSettings(e) {
+      if (e) e.stopPropagation();
+      const dd = document.getElementById('benchSettingsDropdown');
+      if (dd) dd.style.display = dd.style.display === 'none' ? 'flex' : 'none';
+    }
+
+    document.addEventListener('click', (e) => {
+      const dd = document.getElementById('benchSettingsDropdown');
+      if (dd && dd.style.display === 'flex' && !dd.contains(e.target)) {
+        dd.style.display = 'none';
+      }
+    });
+
+    function switchRightTab(tab) {
+      const graphCard = document.getElementById('tabContentGraph');
+      const workCard = document.getElementById('tabContentWorksheet');
+      const tabBtnG = document.getElementById('tabBtnGraph');
+      const tabBtnW = document.getElementById('tabBtnWorksheet');
+
+      if (graphCard) graphCard.style.display = (tab === 'graph') ? 'block' : 'none';
+      if (workCard) workCard.style.display = (tab === 'worksheet') ? 'block' : 'none';
+
+      if (tabBtnG) tabBtnG.classList.toggle('active', tab === 'graph');
+      if (tabBtnW) tabBtnW.classList.toggle('active', tab === 'worksheet');
+
+      if (tab === 'graph') {
+        setTimeout(() => EnergyEngine.renderGraph(), 50);
+      }
+    }
+  </script>
+</body>
+</html>

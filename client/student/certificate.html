@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Certificate of Mastery — VirtuLab Kenya</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    background-color: #0F172A;
+    color: #1E293B;
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 15px;
+  }
+
+  .cert-container {
+    width: 100%;
+    max-width: 860px;
+    background: #FFFFFF;
+    border: 12px solid #0B4F4A;
+    border-radius: 12px;
+    padding: 40px 50px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+    position: relative;
+    text-align: center;
+    background-image: radial-gradient(circle at 50% 50%, rgba(224, 151, 44, 0.04) 0%, rgba(255, 255, 255, 0) 70%);
+  }
+
+  .cert-inner-border {
+    border: 2px solid #D6E0DB;
+    padding: 36px 30px;
+    border-radius: 6px;
+    position: relative;
+  }
+
+  .cert-header-icon {
+    font-size: 2.8rem;
+    margin-bottom: 8px;
+    display: inline-block;
+  }
+
+  .cert-org {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0B4F4A;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .cert-title {
+    font-family: 'Cinzel', serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #082E2B;
+    margin-bottom: 24px;
+    letter-spacing: 0.02em;
+  }
+
+  .cert-subtitle {
+    font-size: 0.95rem;
+    color: #64748B;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .cert-name {
+    font-family: 'Cinzel', serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: #0B4F4A;
+    border-bottom: 2px solid #E0972C;
+    display: inline-block;
+    padding: 0 24px 6px;
+    margin-bottom: 20px;
+  }
+
+  .cert-body {
+    font-size: 1rem;
+    color: #334155;
+    line-height: 1.6;
+    max-width: 640px;
+    margin: 0 auto 30px;
+  }
+
+  .cert-body b {
+    color: #0B4F4A;
+  }
+
+  .cert-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #E2E8F0;
+  }
+
+  .cert-seal {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #E0972C, #C97F1F);
+    color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow: 0 4px 12px rgba(224, 151, 44, 0.4);
+  }
+  .cert-seal span { font-size: 1.5rem; margin-bottom: 2px; }
+
+  .cert-sig-box {
+    text-align: center;
+  }
+
+  .cert-sig-line {
+    width: 180px;
+    border-bottom: 1px solid #94A3B8;
+    margin-bottom: 6px;
+    font-family: cursive;
+    font-size: 1.2rem;
+    color: #0B4F4A;
+    padding-bottom: 2px;
+  }
+
+  .cert-sig-label {
+    font-size: 0.75rem;
+    color: #64748B;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Action Bar */
+  .action-bar {
+    margin-top: 24px;
+    display: flex;
+    gap: 12px;
+  }
+
+  .btn-print {
+    background: #0B4F4A;
+    color: #FFFFFF;
+    border: none;
+    padding: 12px 24px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(11, 79, 74, 0.3);
+    transition: transform 0.15s ease;
+  }
+  .btn-print:hover { transform: translateY(-1px); background: #082E2B; }
+
+  .btn-back {
+    background: #334155;
+    color: #FFFFFF;
+    border: none;
+    padding: 12px 20px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  @media print {
+    body { background: none; padding: 0; }
+    .action-bar { display: none; }
+    .cert-container { box-shadow: none; border-width: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cert-container">
+  <div class="cert-inner-border">
+    <div class="cert-header-icon">🧪</div>
+    <div class="cert-org">VirtuLab Kenya</div>
+    <h1 class="cert-title">Certificate of Practical Mastery</h1>
+    
+    <div class="cert-subtitle">This is to certify that</div>
+    <div class="cert-name" id="certStudentName">Learner Name</div>
+    
+    <div class="cert-body">
+      has successfully completed practical chemistry training in accordance with the <b>Kenya Institute of Curriculum Development (KICD)</b> secondary syllabus, achieving <b>KCSE Paper 3 Practical Exam Readiness</b>.
+    </div>
+
+    <div class="cert-footer">
+      <div class="cert-sig-box">
+        <div class="cert-sig-line" id="certDate">Aug 1, 2026</div>
+        <div class="cert-sig-label">Date Awarded</div>
+      </div>
+
+      <div class="cert-seal">
+        <span>🏆</span>
+        KICD Ready
+      </div>
+
+      <div class="cert-sig-box">
+        <div class="cert-sig-line">VirtuLab Academic Team</div>
+        <div class="cert-sig-label">Authorized Verification</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="action-bar">
+  <button class="btn-print" onclick="window.print()">🖨️ Print / Save as PDF</button>
+  <a href="home.html" class="btn-back">← Back to Dashboard</a>
+</div>
+
+<script src="/shared/api.js"></script>
+<script>
+  const user = getUser();
+  if (user && user.name) {
+    document.getElementById('certStudentName').textContent = user.name;
+  }
+  document.getElementById('certDate').textContent = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+</script>
+</body>
+</html>

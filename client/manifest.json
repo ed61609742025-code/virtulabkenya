@@ -1,0 +1,50 @@
+{
+  "id": "virtulab-kenya-app",
+  "short_name": "VirtuLab",
+  "name": "VirtuLab Kenya — KCSE Chemistry Virtual Laboratory",
+  "description": "Interactive KCSE Chemistry Paper 3 virtual lab simulator for titrations and qualitative salt analysis.",
+  "icons": [
+    {
+      "src": "/shared/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "/shared/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "/shared/icon-512-maskable.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ],
+  "start_url": "/student/home.html",
+  "scope": "/",
+  "background_color": "#0F172A",
+  "theme_color": "#0F172A",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "categories": ["education", "science"],
+  "shortcuts": [
+    {
+      "name": "Start Titration Lab",
+      "short_name": "Titration",
+      "description": "Perform KCSE Titration Practical",
+      "url": "/student/lab.html",
+      "icons": [{ "src": "/shared/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Qualitative Analysis",
+      "short_name": "Qualitative",
+      "description": "Perform Salt Analysis Practical",
+      "url": "/student/qualitative.html",
+      "icons": [{ "src": "/shared/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
+

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Reaction Rates & Equilibrium Theory Guide — VirtuLab Kenya</title>
+  <meta name="description" content="Master KNEC KCSE Form 4 Chemistry Topic 1: Collision Theory, Maxwell-Boltzmann Distributions, Activation Energy, Catalysts, Reversible Reactions, and Le Chatelier's Principle.">
+  <script>
+    var t = localStorage.getItem('vlk_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', t);
+  </script>
+  <meta name="theme-color" content="#0B1320">
+  <link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700;800&family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/shared/style.css">
+  <link rel="stylesheet" href="/student/css/rates.css">
+  <style>
+    .theory-section {
+      background: var(--rate-bg-card);
+      border: 1.5px solid var(--rate-border);
+      border-radius: 18px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .theory-section h2 {
+      margin-top: 0;
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      color: var(--rate-amber);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid var(--rate-border);
+      padding-bottom: 10px;
+    }
+    .theory-section h3 {
+      font-family: var(--font-heading);
+      font-size: 1.05rem;
+      color: var(--heading-color);
+      margin-top: 18px;
+    }
+    .knec-box {
+      background: rgba(245, 158, 11, 0.08);
+      border-left: 4px solid var(--rate-amber);
+      padding: 14px 16px;
+      border-radius: 8px;
+      margin: 14px 0;
+      font-size: 0.85rem;
+      line-height: 1.55;
+    }
+    .knec-box-emerald {
+      background: rgba(16, 185, 129, 0.08);
+      border-left: 4px solid var(--rate-emerald);
+      padding: 14px 16px;
+      border-radius: 8px;
+      margin: 14px 0;
+      font-size: 0.85rem;
+      line-height: 1.55;
+    }
+    .formula-chip {
+      background: var(--bg-dark);
+      border: 1px solid var(--rate-border);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--rate-cyan);
+      display: inline-block;
+      margin: 6px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Topbar -->
+  <nav class="top-navbar">
+    <a href="/student/home.html" class="nav-brand">
+      <span class="nav-logo-icon">⚡</span>
+      <span>VirtuLab Kenya</span>
+      <span class="knec-tag-pill">THEORY & KCSE REVISION</span>
+    </a>
+
+    <div class="nav-actions">
+      <a href="rates.html" class="rate-btn rate-btn-primary" style="padding:6px 14px; font-size:0.75rem; text-decoration:none;">
+        <span>🔬 Open Lab Workbench →</span>
+      </a>
+      <a href="/student/home.html" class="rate-nav-back-btn" title="Back to Dashboard">←</a>
+    </div>
+  </nav>
+
+  <main class="rate-page-wrap" style="max-width:980px;">
+
+    <!-- Header -->
+    <div class="rate-hero-banner">
+      <div class="rate-hero-left">
+        <div class="rate-hero-badge-icon">📖</div>
+        <div>
+          <h1 class="rate-hero-title">Rates of Reaction & Reversible Reactions</h1>
+          <p class="rate-hero-subtitle">KNEC KCSE Chemistry Form 4 Topic 1 • Complete Revision Guide & Marking Schemes</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 1: Collision Theory -->
+    <section class="theory-section">
+      <h2><span>⚛️</span> 1. Collision Theory & Activation Energy</h2>
+      <p>Chemical reactions occur when reactant particles collide. However, not all collisions result in a chemical reaction. For a collision to be <strong>effective</strong> (successful), two fundamental conditions must be met:</p>
+      
+      <div class="knec-box">
+        <strong>KNEC KCSE Definition — Effective Collision Criteria:</strong>
+        <ol style="margin:6px 0 0 18px; padding:0;">
+          <li><strong>Sufficient Energy:</strong> Colliding particles must possess energy equal to or greater than the <strong>Activation Energy (\(E_a\))</strong>.</li>
+          <li><strong>Correct Steric Orientation:</strong> Colliding particles must collide with the proper geometry/alignment to allow bond breaking and bond formation.</li>
+        </ol>
+      </div>
+
+      <div class="formula-chip">
+        Rate of Reaction = (Frequency of Collisions) × (Fraction of Effective Collisions)
+      </div>
+
+      <h3>Activation Energy (\(E_a\))</h3>
+      <p>The minimum amount of energy required by colliding reactant particles to break existing bonds and form the unstable, high-energy <strong>activated complex</strong>.</p>
+    </section>
+
+    <!-- Section 2: Maxwell-Boltzmann Distribution -->
+    <section class="theory-section">
+      <h2><span>📈</span> 2. Maxwell-Boltzmann Energy Distribution</h2>
+      <p>At any given temperature, molecules in a sample do not all have the same kinetic energy. Their kinetic energies are distributed according to the Maxwell-Boltzmann distribution curve:</p>
+
+      <div class="knec-box-emerald">
+        <strong>Effect of Temperature on the Curve (KCSE Paper 2 Common Question):</strong>
+        <ul>
+          <li>When temperature is increased from \(T_1\) to \(T_2\):</li>
+          <li>The peak of the curve shifts to the <strong>right</strong> and is <strong>lower/flatter</strong>.</li>
+          <li>The total area under the curve remains constant (same total number of particles).</li>
+          <li>A significantly larger fraction of molecules have kinetic energy \(\ge E_a\) (area to the right of \(E_a\) increases).</li>
+          <li><strong>Conclusion:</strong> Frequency of effective collisions increases dramatically, leading to an exponential increase in the rate of reaction.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Section 3: Factors Affecting Rates -->
+    <section class="theory-section">
+      <h2><span>🔬</span> 3. Five Factors Affecting Reaction Rates</h2>
+      
+      <h3>1. Concentration / Pressure</h3>
+      <p>Increasing concentration of solutions (or pressure of gases) increases the number of particles per unit volume \(\rightarrow\) particles are closer together \(\rightarrow\) <strong>collision frequency per unit time increases</strong> \(\rightarrow\) rate increases.</p>
+
+      <h3>2. Temperature</h3>
+      <p>Increases average kinetic energy and velocity of particles \(\rightarrow\) larger proportion of particles exceed \(E_a\) \(\rightarrow\) frequency of effective collisions increases.</p>
+
+      <h3>3. Surface Area (Particle Size)</h3>
+      <p>Fine powders have a much greater total surface area exposed to acid compared to large marble chips \(\rightarrow\) more contact points for collisions \(\rightarrow\) higher initial reaction rate. (Note: Total gas yield remains identical if reactant masses are equal).</p>
+
+      <h3>4. Catalysts</h3>
+      <p>A substance that increases the rate of a chemical reaction by providing an <strong>alternative pathway with a lower activation energy (\(E_a\))</strong>, without itself being consumed. Biological catalysts are called <strong>enzymes</strong> (e.g. catalase), which denature at high temperatures (\(>45^\circ\text{C}\)).</p>
+
+      <h3>5. Light Intensity (Photochemical Reactions)</h3>
+      <p>Light photons provide the necessary activation energy to dissociate bonds (e.g. silver halide photographic darkening, reaction of methane with chlorine in UV light).</p>
+    </section>
+
+    <!-- Section 4: Reversible Reactions & Equilibrium -->
+    <section class="theory-section">
+      <h2><span>⚖️</span> 4. Reversible Reactions & Le Chatelier's Principle</h2>
+      <p>A reversible reaction is one in which the products can react to reform the original reactants: \(\text{A} + \text{B} \rightleftharpoons \text{C} + \text{D}\).</p>
+      
+      <div class="knec-box">
+        <strong>Le Chatelier's Principle:</strong> When a system in dynamic chemical equilibrium is subjected to a change in condition (concentration, temperature, pressure), the system shifts in such a direction as to oppose or neutralize the effect of that change.
+      </div>
+
+      <h3>Industrial Applications in KCSE:</h3>
+      <ol style="margin-left:18px;">
+        <li><strong>The Haber Process (Ammonia):</strong> \(\text{N}_2(g) + 3\text{H}_2(g) \rightleftharpoons 2\text{NH}_3(g) \quad (\Delta H = -92\,\text{kJ/mol})\)
+          <br><em>Optimum Conditions:</em> \(450^\circ\text{C}\), \(200\,\text{atm}\), Finely divided Iron (\(\text{Fe}\)) catalyst.
+        </li>
+        <li><strong>The Contact Process (Sulfur Trioxide):</strong> \(2\text{SO}_2(g) + \text{O}_2(g) \rightleftharpoons 2\text{SO}_3(g) \quad (\Delta H = -197\,\text{kJ/mol})\)
+          <br><em>Optimum Conditions:</em> \(450^\circ\text{C}\), \(1-2\,\text{atm}\), Vanadium(V) oxide (\(\text{V}_2\text{O}_5\)) catalyst.
+        </li>
+      </ol>
+    </section>
+
+    <!-- Section 5: KNEC Paper 3 Graphing & Tangent Rules -->
+    <section class="theory-section">
+      <h2><span>📐</span> 5. KNEC Paper 3 Graphing Secrets (SAPC Rubric)</h2>
+      <div class="knec-box-emerald">
+        <strong>Examiner Scoring Breakdown (4.0 Marks Total):</strong>
+        <ul>
+          <li><strong>Scale (S) — 1.0m:</strong> Must occupy at least half of the grid in both dimensions. Use standard intervals (1:1, 1:2, 1:5, 1:10). Avoid awkward scales like 1:3 or 1:7!</li>
+          <li><strong>Axes (A) — 0.5m:</strong> Must have correct labels with physical units on both axes (e.g. \(1/t \, (\text{s}^{-1})\) on y-axis and \(\text{Volume} \, (\text{cm}^3)\) on x-axis).</li>
+          <li><strong>Plotting (P) — 1.0m:</strong> Plot points with neat small crosses ('x') within \(\pm \frac{1}{2}\) small square.</li>
+          <li><strong>Curve/Line (C) — 1.5m:</strong> For \(1/t\) vs. Volume, draw a straight line <strong>passing through the origin \((0,0)\)</strong>. For Volume vs. Time, draw a smooth continuous curve (never use a ruler to connect curved points).</li>
+        </ul>
+      </div>
+
+      <div class="knec-box">
+        <strong>Instantaneous Rate Tangent Calculation:</strong>
+        <p>To find the rate at \(t = 60\,\text{s}\):</p>
+        <ol style="margin-left:18px;">
+          <li>Draw a straight tangent touching the curve only at \(t = 60\,\text{s}\).</li>
+          <li>Construct a large right-angled triangle on the tangent line.</li>
+          <li>Show dashed projection lines to the axes.</li>
+          <li>Calculate slope: \(\text{Rate} = \frac{\Delta V}{\Delta t} = \frac{V_2 - V_1}{t_2 - t_1} \, \text{cm}^3/\text{s}\).</li>
+        </ol>
+      </div>
+
+      <div style="text-align:center; margin-top:20px;">
+        <a href="rates.html" class="rate-btn rate-btn-primary" style="padding:10px 24px; font-size:0.9rem; text-decoration:none;">
+          🧪 Practice on Virtual Lab Workbench →
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="/shared/theme.js"></script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+/* ============================================================
+   VirtuLab Kenya — Mobile PWA Install Banner Styles
+   ============================================================ */
+
+.vlk-pwa-banner {
+  position: fixed;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%) translateY(120%);
+  width: calc(100% - 32px);
+  max-width: 440px;
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 242, 254, 0.25);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 242, 254, 0.15);
+  padding: 16px;
+  z-index: 99999;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #F8FAFC;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.vlk-pwa-banner.active {
+  transform: translateX(-50%) translateY(0);
+}
+
+.vlk-pwa-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.vlk-pwa-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.vlk-pwa-details {
+  flex: 1;
+}
+
+.vlk-pwa-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #FFFFFF;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vlk-pwa-desc {
+  font-size: 0.8rem;
+  color: #94A3B8;
+  margin: 2px 0 0 0;
+  line-height: 1.3;
+}
+
+.vlk-pwa-close {
+  background: transparent;
+  border: none;
+  color: #64748B;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  border-radius: 6px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.vlk-pwa-close:hover {
+  color: #F8FAFC;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.vlk-pwa-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.vlk-pwa-btn-install {
+  flex: 1;
+  background: linear-gradient(135deg, #0284C7 0%, #00F2FE 100%);
+  color: #0F172A;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+.vlk-pwa-btn-install:active {
+  transform: scale(0.98);
+}
+
+.vlk-pwa-btn-dismiss {
+  background: rgba(255, 255, 255, 0.06);
+  color: #CBD5E1;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.vlk-pwa-ios-instructions {
+  background: rgba(2, 132, 199, 0.15);
+  border: 1px dashed rgba(0, 242, 254, 0.4);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.8rem;
+  color: #E2E8F0;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

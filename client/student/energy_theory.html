@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Thermochemistry & Energy Changes Guide — VirtuLab Kenya</title>
+  <meta name="description" content="Complete KNEC KCSE Chemistry Form 4 revision guide for Energy Changes in Chemical Reactions: Hess's Law, Enthalpy Profiles, Dual Extrapolation, and Paper 3 Calculations.">
+  <script>
+    var t = localStorage.getItem('vlk_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', t);
+  </script>
+  <meta name="theme-color" content="#0B1320">
+  <link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700;800&family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/shared/style.css">
+  <link rel="stylesheet" href="/student/css/energy.css">
+  <link rel="stylesheet" href="/shared/ai-tutor.css">
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════
+       TOPBAR — Fixed Navigation Header
+  ══════════════════════════════════════ -->
+  <nav class="top-navbar">
+    <a href="/student/home.html" class="nav-brand" style="text-decoration:none;">
+      <span class="nav-logo-icon">🔥</span>
+      <span>VirtuLab Kenya</span>
+      <span class="knec-tag-pill">THEORY GUIDE</span>
+    </a>
+
+    <div class="nav-lab-switch">
+      <a href="lab.html" class="theme-btn-chip">🧪 Titration</a>
+      <a href="qualitative.html" class="theme-btn-chip">🔍 Qualitative</a>
+      <a href="organic.html" class="theme-btn-chip">⚗️ Organic</a>
+      <a href="solubility.html" class="theme-btn-chip">🌡️ Solubility</a>
+      <a href="energy.html" class="theme-btn-chip active">🔥 Energy</a>
+      <a href="composite_exam.html" class="theme-btn-chip">📝 Exam</a>
+    </div>
+
+    <div class="nav-actions">
+      <!-- Direct Switcher to Interactive Workbench -->
+      <a href="energy.html" class="en-btn en-btn-primary" style="width:auto; padding:5px 12px; font-size:0.74rem; margin:0;" title="Launch the Virtual Simulation Workbench">
+        <span>🔬 Virtual Practical Lab →</span>
+      </a>
+
+      <!-- Theme Switcher -->
+      <div class="theme-toggle-group">
+        <button class="theme-btn-chip active" data-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
+        <button class="theme-btn-chip" data-theme="light" onclick="setTheme('light')">☀️ Light</button>
+        <button class="theme-btn-chip" data-theme="green" onclick="setTheme('green')">🧪 Lab</button>
+      </div>
+
+      <a href="/student/home.html" class="en-nav-back-btn" title="Back to Dashboard">
+        <span>← Home</span>
+      </a>
+    </div>
+  </nav>
+
+  <main class="theory-page-wrap">
+    
+    <!-- Hero Banner -->
+    <header class="theory-hero-card">
+      <div class="hero-badge-strip">
+        <span class="en-tag-knec">KCSE FORM 4 CHEMISTRY</span>
+        <span class="hero-sub-tag">Topic 1: Energy Changes in Chemical & Physical Processes</span>
+      </div>
+      <h1 class="theory-main-title">Thermochemistry, Reaction Profiles & Hess's Law Masterclass</h1>
+      <p class="theory-lead-text">
+        Master the theoretical concepts, reaction coordinate diagrams, thermochemical cycles, millimeter graph extrapolation techniques, and official KNEC Paper 3 marking schemes.
+      </p>
+
+      <!-- Jump Navigation Pills -->
+      <nav class="theory-jump-nav" aria-label="Topic navigation">
+        <a href="#sec-fundamentals" class="jump-pill">⚡ 1. Exo vs Endo</a>
+        <a href="#sec-profiles" class="jump-pill">📈 2. Reaction Profiles & Ea</a>
+        <a href="#sec-enthalpies" class="jump-pill">⚗️ 3. Standard Enthalpy Types</a>
+        <a href="#sec-hess" class="jump-pill">🔄 4. Hess's Law & Cycles</a>
+        <a href="#sec-extrapolation" class="jump-pill">📊 5. KNEC Graph Extrapolation</a>
+        <a href="#sec-calculations" class="jump-pill">📝 6. Paper 3 Step-by-Step Calculations</a>
+      </nav>
+    </header>
+
+    <div class="theory-content-grid">
+      
+      <!-- MAIN THEORY COLUMN -->
+      <div class="theory-main-col">
+        
+        <!-- SECTION 1: EXOTHERMIC VS ENDOTHERMIC -->
+        <section id="sec-fundamentals" class="theory-card">
+          <div class="theory-card-header">
+            <span class="sec-num-badge">01</span>
+            <div>
+              <h2 class="sec-heading">Exothermic & Endothermic Fundamentals</h2>
+              <div class="sec-sub">Thermodynamic energy balance and temperature effects</div>
+            </div>
+          </div>
+
+          <p class="theory-body-p">
+            In every chemical reaction, chemical bonds in the reactants are <strong>broken</strong> (an endothermic process that absorbs energy) and new chemical bonds in the products are <strong>formed</strong> (an exothermic process that releases energy). The overall enthalpy change (<strong>ΔH</strong>) is the net difference between these two quantities.
+          </p>
+
+          <div class="theory-formula-callout">
+            <div style="font-size:1.05rem; font-weight:800; color:var(--en-primary); font-family:var(--font-mono);">
+              ΔH = H<sub>products</sub> − H<sub>reactants</sub>
+            </div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">
+              Measured under standard conditions: <strong>298 K (25°C)</strong> and <strong>1 atmosphere (101.3 kPa)</strong>.
+            </div>
+          </div>
+
+          <div class="theory-comparison-grid">
+            <div class="compare-card exo">
+              <div class="compare-card-title">🔥 Exothermic Reactions (ΔH &lt; 0)</div>
+              <ul class="compare-list">
+                <li>Heat energy is <strong>released</strong> to the surroundings.</li>
+                <li>Temperature of the reaction mixture <strong>increases</strong> (ΔT &gt; 0).</li>
+                <li>Products have <em>lower</em> enthalpy than reactants (H<sub>p</sub> &lt; H<sub>r</sub>).</li>
+                <li>Enthalpy change carries a <strong>negative sign</strong> (e.g. ΔH = −217.0 kJ/mol).</li>
+                <li><strong>Examples:</strong> Neutralization of acids and bases, combustion of fuels, metal displacement reactions (Zn + CuSO₄), dissolving anhydrous CuSO₄ or CaCl₂.</li>
+              </ul>
+            </div>
+
+            <div class="compare-card endo">
+              <div class="compare-card-title">🧊 Endothermic Reactions (ΔH &gt; 0)</div>
+              <ul class="compare-list">
+                <li>Heat energy is <strong>absorbed</strong> from the surroundings.</li>
+                <li>Temperature of the reaction mixture <strong>decreases</strong> (ΔT &lt; 0).</li>
+                <li>Products have <em>higher</em> enthalpy than reactants (H<sub>p</sub> &gt; H<sub>r</sub>).</li>
+                <li>Enthalpy change carries a <strong>positive sign</strong> (e.g. ΔH = +25.7 kJ/mol).</li>
+                <li><strong>Examples:</strong> Dissolving Ammonium Nitrate (NH₄NO₃) or Potassium Nitrate (KNO₃) in water, photosynthesis, thermal decomposition of carbonates (CaCO₃ → CaO + CO₂).</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 2: REACTION PROFILES & ACTIVATION ENERGY -->
+        <section id="sec-profiles" class="theory-card">
+          <div class="theory-card-header">
+            <span class="sec-num-badge">02</span>
+            <div>
+              <h2 class="sec-heading">Reaction Coordinate Profiles & Activation Energy (E<sub>a</sub>)</h2>
+              <div class="sec-sub">Visualizing enthalpy plateaus, transition states, and catalytic pathways</div>
+            </div>
+          </div>
+
+          <p class="theory-body-p">
+            An <strong>Energy Level Diagram / Reaction Profile</strong> represents the energetic trajectory of reacting particles as they collide, form an unstable high-energy <strong>Activated Complex (Transition State ‡)</strong>, and transform into products.
+          </p>
+
+          <!-- Interactive Profile Visualizer Box -->
+          <div class="theory-interactive-box">
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+              <span style="font-weight:800; font-size:0.85rem; color:var(--heading-color);">Interactive Enthalpy Profile Visualizer</span>
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button type="button" class="theory-ctrl-chip active" id="btnTheoryExo" onclick="TheoryGuide.setProfileType('exo')">Exothermic Profile</button>
+                <button type="button" class="theory-ctrl-chip" id="btnTheoryEndo" onclick="TheoryGuide.setProfileType('endo')">Endothermic Profile</button>
+                <button type="button" class="theory-ctrl-chip" id="btnTheoryCat" onclick="TheoryGuide.toggleCatalyst()">Toggle Catalyst (E'a)</button>
+              </div>
+            </div>
+
+            <canvas id="theoryProfileCanvas" style="width:100%; height:200px; background:var(--card-bg); border-radius:10px; border:1px solid var(--card-border); display:block;"></canvas>
+
+            <div id="theoryProfileDesc" style="font-size:0.75rem; color:var(--text-muted); margin-top:8px; line-height:1.4;">
+              <strong>Exothermic Trajectory:</strong> Reactants overcome the Activation Energy (E<sub>a</sub>) barrier to reach the transition state. As products form, more energy is released in bond-making than was absorbed in bond-breaking, resulting in a net negative ΔH.
+            </div>
+          </div>
+
+          <div class="key-definitions-box">
+            <div class="def-item">
+              <span class="def-term">Activation Energy (E<sub>a</sub>):</span>
+              <span class="def-text">The minimum quantity of kinetic energy colliding reactant particles must possess for a collision to be effective (lead to chemical reaction).</span>
+            </div>
+            <div class="def-item">
+              <span class="def-term">Activated Complex (‡):</span>
+              <span class="def-text">An unstable, short-lived, high-energy intermediate state in which old bonds are partially broken and new bonds are partially formed.</span>
+            </div>
+            <div class="def-item">
+              <span class="def-term">Role of a Catalyst:</span>
+              <span class="def-text">Provides an alternative reaction mechanism with a <strong>lower Activation Energy (E'<sub>a</sub>)</strong>. It increases the reaction rate without altering the overall enthalpy change (ΔH).</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 3: TYPES OF ENTHALPIES IN KCSE PAPER 3 -->
+        <section id="sec-enthalpies" class="theory-card">
+          <div class="theory-card-header">
+            <span class="sec-num-badge">03</span>
+            <div>
+              <h2 class="sec-heading">Standard Enthalpy Types in KCSE Chemistry</h2>
+              <div class="sec-sub">Precise definitions, thermochemical equations, and practical aspects</div>
+            </div>
+          </div>
+
+          <div class="enthalpy-type-card">
+            <div class="enthalpy-header">
+              <span class="enthalpy-badge">1. Enthalpy of Neutralization (ΔH<sub>neut</sub>)</span>
+              <span class="enthalpy-val">~ −57.1 kJ/mol</span>
+            </div>
+            <p class="theory-body-p">
+              The enthalpy change that occurs when <strong>one mole of water (H₂O)</strong> is formed from the reaction between an acid and a base under standard conditions.
+            </p>
+            <div class="equation-box">
+              H⁺(aq) + OH⁻(aq) → H₂O(l) &nbsp;&nbsp;&nbsp;&nbsp; ΔH<sub>neut</sub> = −57.1 kJ/mol
+            </div>
+            <div class="knec-note-pill">
+              💡 <strong>KNEC Key Examiner Note:</strong> For reactions between any <em>strong monobasic acid</em> (HCl, HNO₃) and <em>strong base</em> (NaOH, KOH), ΔH<sub>neut</sub> is constant (≈ −57.1 kJ/mol) because both are completely dissociated into ions. When a <em>weak acid</em> (CH₃COOH) is used, ΔH<sub>neut</sub> is slightly less negative (≈ −55.2 kJ/mol) because part of the heat evolved is absorbed to completely ionize the weak acid molecules!
+            </div>
+          </div>
+
+          <div class="enthalpy-type-card">
+            <div class="enthalpy-header">
+              <span class="enthalpy-badge">2. Enthalpy of Displacement (ΔH<sub>disp</sub>)</span>
+              <span class="enthalpy-val">−217.0 kJ/mol (Zn + Cu²⁺)</span>
+            </div>
+            <p class="theory-body-p">
+              The enthalpy change that occurs when <strong>one mole of a substance</strong> is displaced from an aqueous solution of its salt by a more reactive metal.
+            </p>
+            <div class="equation-box">
+              Zn(s) + Cu²⁺(aq) → Zn²⁺(aq) + Cu(s) &nbsp;&nbsp;&nbsp;&nbsp; ΔH<sub>disp</sub> = −217.0 kJ/mol
+            </div>
+          </div>
+
+          <div class="enthalpy-type-card">
+            <div class="enthalpy-header">
+              <span class="enthalpy-badge">3. Enthalpy of Solution (ΔH<sub>sol</sub>)</span>
+              <span class="enthalpy-val">ΔH<sub>sol</sub> = ΔH<sub>latt</sub> + ΔH<sub>hyd</sub></span>
+            </div>
+            <p class="theory-body-p">
+              The enthalpy change when <strong>one mole of a solute</strong> is completely dissolved in excess solvent (water) such that further dilution causes no further heat change.
+            </p>
+            <div class="equation-box">
+              NH₄NO₃(s) + aq → NH₄⁺(aq) + NO₃⁻(aq) &nbsp;&nbsp;&nbsp;&nbsp; ΔH<sub>sol</sub> = +25.7 kJ/mol
+            </div>
+          </div>
+
+          <div class="enthalpy-type-card">
+            <div class="enthalpy-header">
+              <span class="enthalpy-badge">4. Enthalpy of Combustion (ΔH<sub>c</sub>)</span>
+              <span class="enthalpy-val">−1368.0 kJ/mol (Ethanol)</span>
+            </div>
+            <p class="theory-body-p">
+              The enthalpy change that occurs when <strong>one mole of a substance</strong> is burned completely in excess oxygen under standard conditions.
+            </p>
+            <div class="equation-box">
+              C₂H₅OH(l) + 3O₂(g) → 2CO₂(g) + 3H₂O(l) &nbsp;&nbsp;&nbsp;&nbsp; ΔH<sub>c</sub> = −1368.0 kJ/mol
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 4: HESS'S LAW & THERMOCHEMICAL CYCLES -->
+        <section id="sec-hess" class="theory-card">
+          <div class="theory-card-header">
+            <span class="sec-num-badge">04</span>
+            <div>
+              <h2 class="sec-heading">Hess's Law of Constant Heat Summation</h2>
+              <div class="sec-sub">Constructing energy cycles to calculate indirect enthalpy changes</div>
+            </div>
+          </div>
+
+          <div class="law-quote-box">
+            <div style="font-weight:900; font-size:0.9rem; color:var(--en-primary); margin-bottom:4px;">📜 The Law:</div>
+            <p style="font-size:0.85rem; line-height:1.5; color:var(--text-main); margin:0;">
+              <em>"The enthalpy change accompanying a chemical reaction is independent of the pathway taken, provided the initial and final states of the reactants and products are identical."</em>
+            </p>
+          </div>
+
+          <p class="theory-body-p">
+            Hess's Law is invaluable because many enthalpy changes cannot be determined directly by experiment (e.g. anhydrous CuSO₄ cannot be hydrated to form solid pentahydrate crystals without dissolving in water).
+          </p>
+
+          <!-- Thermochemical Cycle Diagram Card -->
+          <div class="cycle-visual-card">
+            <div style="font-weight:800; font-size:0.88rem; color:var(--heading-color); margin-bottom:8px;">
+              Hydration Enthalpy Energy Cycle for Copper(II) Sulfate:
+            </div>
+
+            <div class="cycle-flow-container">
+              <div class="cycle-node node-a">
+                <div class="node-title">CuSO₄(s) + 5H₂O(l)</div>
+                <div class="node-sub">Anhydrous Salt + Water</div>
+              </div>
+
+              <div class="cycle-arrow-direct">
+                <span class="arrow-label">ΔH₁ (Hydration Target — Indirect)</span>
+                <span class="arrow-line">────────────────────────►</span>
+              </div>
+
+              <div class="cycle-node node-b">
+                <div class="node-title">CuSO₄·5H₂O(s)</div>
+                <div class="node-sub">Hydrated Crystals</div>
+              </div>
+            </div>
+
+            <div class="cycle-bottom-row">
+              <div class="cycle-arrow-down">
+                <span class="arrow-label">ΔH₂ (Dissolving Anhydrous) = −66.5 kJ/mol</span>
+                <span class="arrow-line">▼</span>
+              </div>
+              <div class="cycle-node node-c">
+                <div class="node-title">Cu²⁺(aq) + SO₄²⁻(aq) + 5H₂O(l)</div>
+                <div class="node-sub">Aqueous Solution State</div>
+              </div>
+              <div class="cycle-arrow-up">
+                <span class="arrow-label">ΔH₃ (Dissolving Hydrated) = +11.7 kJ/mol</span>
+                <span class="arrow-line">▲</span>
+              </div>
+            </div>
+
+            <div class="cycle-calc-result">
+              <div style="font-weight:800; color:var(--en-emerald); font-size:0.85rem;">Hess's Law Calculation:</div>
+              <div style="font-family:var(--font-mono); font-size:0.82rem; margin-top:2px; color:var(--heading-color);">
+                ΔH₁ = ΔH₂ − ΔH₃ = (−66.5) − (+11.7) = <strong>−78.2 kJ/mol</strong>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SECTION 5: KNEC GRAPH PLOTTING & EXTRAPOLATION -->
+        <section id="sec-extrapolation" class="theory-card">
+          <div class="theory-card-header">
+            <span class="sec-num-badge">05</span>
+            <div>
+              <h2 class="sec-heading">KNEC Paper 3 Graphing & Dual-Line Extrapolation</h2>
+              <div class="sec-sub">Why extrapolation is essential and how examiners grade candidate graphs</div>
+            </div>
+          </div>
+
+          <p class="theory-body-p">
+            In any school calorimetry practical, the reaction does not happen instantaneously. As heat is released, some heat is simultaneously <strong>lost to the surroundings</strong> (conduction through the polystyrene cup walls and convection from the open top). Therefore, the highest recorded thermometer reading is always slightly <em>lower</em> than the true theoretical maximum.
+          </p>
+
+          <div class="extrap-steps-card">
+            <div style="font-weight:800; font-size:0.85rem; color:var(--heading-color); margin-bottom:8px;">
+              The 4-Step KNEC Dual Extrapolation Procedure:
+            </div>
+            <ol class="extrap-ol">
+              <li><strong>Step 1 (Baseline):</strong> Draw a horizontal line through initial readings (0s to 120s). Extrapolate this line forward to the mixing time (t = 150s / 2.5 min).</li>
+              <li><strong>Step 2 (Cooling Curve):</strong> Draw a straight line of best fit through the cooling region points (t ≥ 210s to 360s).</li>
+              <li><strong>Step 3 (Backward Extrapolation):</strong> Extrapolate the cooling line <em>backward</em> to intersect the vertical line corresponding to the mixing time (t = 150s).</li>
+              <li><strong>Step 4 (Determine ΔT):</strong> The vertical distance between the extrapolated maximum temperature (T<sub>max, extrapolated</sub>) and the baseline temperature (T<sub>initial</sub>) gives the true ΔT.</li>
+            </ol>
+          </div>
+
+          <div class="knec-rubric-table-wrap">
+            <table class="theory-rubric-table">
+              <thead>
+                <tr>
+                  <th>Rubric Code</th>
+                  <th>Description</th>
+                  <th>Examiner Requirement</th>
+                  <th>Marks</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Scale (S)</strong></td>
+                  <td>Axes scaling</td>
+                  <td>Plotted area must cover ≥ 50% of the millimeter grid; simple uniform multiples (e.g. 1 cm = 5°C or 30 s).</td>
+                  <td>1.0 Mk</td>
+                </tr>
+                <tr>
+                  <td><strong>Axes (A)</strong></td>
+                  <td>Axes labeling</td>
+                  <td>Both axes clearly labeled with quantities and correct units: <code>Time (seconds)</code> on x-axis and <code>Temperature (°C)</code> on y-axis.</td>
+                  <td>1.0 Mk</td>
+                </tr>
+                <tr>
+                  <td><strong>Plotting (P)</strong></td>
+                  <td>Data accuracy</td>
+                  <td>All points plotted accurately with a small cross ('X') or dot within ± 1/2 small grid square.</td>
+                  <td>1.0 Mk</td>
+                </tr>
+                <tr>
+                  <td><strong>Curve / Line (C)</strong></td>
+                  <td>Smooth construction</td>
+                  <td>Clean straight lines through steady initial points and cooling points. No multiple overlapping fuzzy lines.</td>
+                  <td>1.0 Mk</td>
+                </tr>
+                <tr>
+                  <td><strong>Extrapolation (E)</strong></td>
+                  <td>Intersection at t<sub>mix</sub></td>
+                  <td>Clear dashed or solid extrapolation line meeting vertically at t = 2.5 min (150 s).</td>
+                  <td>1.0 Mk</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- SECTION 6: PAPER 3 STEP-BY-STEP CALCULATIONS -->
+        <section id="sec-calculations" class="theory-card">
+          <div class="theory-card-header">
+            <span class="sec-num-badge">06</span>
+            <div>
+              <h2 class="sec-heading">Step-by-Step KCSE Paper 3 Calculation Suite</h2>
+              <div class="sec-sub">Standard formulae, unit conversions, and sign conventions</div>
+            </div>
+          </div>
+
+          <div class="calc-formula-step-card">
+            <div class="step-num-pill">Step (a)</div>
+            <div class="step-content">
+              <div class="step-title">Determine Temperature Change (ΔT)</div>
+              <div class="step-eq">ΔT = T<sub>extrapolated, max</sub> − T<sub>initial</sub> &nbsp;&nbsp;(°C)</div>
+              <div class="step-tip">Read directly from the vertical extrapolation bracket on your millimeter graph. Record to 1 decimal place.</div>
+            </div>
+          </div>
+
+          <div class="calc-formula-step-card">
+            <div class="step-num-pill">Step (b)</div>
+            <div class="step-content">
+              <div class="step-title">Calculate Quantity of Heat Evolved (Q)</div>
+              <div class="step-eq">Q = m · c · ΔT &nbsp;&nbsp;(Joules)</div>
+              <div class="step-tip">Assume density of solution = 1.0 g/cm³ (so 25.0 cm³ = 25.0 g) and c = 4.2 J/g/°C.</div>
+            </div>
+          </div>
+
+          <div class="calc-formula-step-card">
+            <div class="step-num-pill">Step (c)</div>
+            <div class="step-content">
+              <div class="step-title">Calculate Moles of Limiting Reactant (n)</div>
+              <div class="step-eq">n = (M × V) / 1000 &nbsp;&nbsp;or&nbsp;&nbsp; n = mass / RAM &nbsp;&nbsp;(moles)</div>
+              <div class="step-tip">Always calculate moles of the <em>limiting reactant</em> (not the reactant in excess, such as excess Zinc powder).</div>
+            </div>
+          </div>
+
+          <div class="calc-formula-step-card">
+            <div class="step-num-pill">Step (d)</div>
+            <div class="step-content">
+              <div class="step-title">Calculate Molar Enthalpy of Reaction (ΔH)</div>
+              <div class="step-eq">ΔH = ± Q / (n × 1000) &nbsp;&nbsp;(kJ/mol)</div>
+              <div class="step-tip"><strong>CRITICAL KNEC PENALTY RULE:</strong> Divide by 1000 to convert Joules to kilojoules. You <strong>MUST</strong> include the sign: negative (−) for temperature rise, positive (+) for temperature drop!</div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- SIDEBAR: QUICK REFERENCE & WORKBENCH CTA -->
+      <aside class="theory-side-col">
+        
+        <!-- CTA Workbench Card -->
+        <div class="theory-cta-card">
+          <div style="font-size:2rem; margin-bottom:6px;">🔬</div>
+          <h3 style="font-size:0.95rem; font-weight:800; color:var(--heading-color); margin:0 0 6px 0;">Ready to Run Practicals?</h3>
+          <p style="font-size:0.75rem; color:var(--text-muted); line-height:1.4; margin:0 0 12px 0;">
+            Experience the real-time polystyrene calorimeter simulation, metronome timer, and interactive graph plotting tool.
+          </p>
+          <a href="energy.html" class="en-btn en-btn-primary" style="text-decoration:none; margin:0;">
+            🚀 Open Virtual Lab Workbench
+          </a>
+        </div>
+
+        <!-- Common Student Pitfalls Card -->
+        <div class="en-card-panel" style="border-left:4px solid var(--en-rose);">
+          <div class="en-panel-title" style="color:var(--en-rose);">
+            <span>⚠️ 5 Common Exam Mistakes</span>
+          </div>
+          <ul class="pitfall-list">
+            <li><strong>Mixing Too Early:</strong> Mixing solid before t = 2.5 min spoils the initial baseline.</li>
+            <li><strong>Missing Sign on ΔH:</strong> Writing 217 kJ/mol instead of −217 kJ/mol loses full marks.</li>
+            <li><strong>Units Mismatch:</strong> Forgetting to divide Q in Joules by 1000 to give ΔH in kJ/mol.</li>
+            <li><strong>Inconsistent Decimals:</strong> Table temperatures must all be to 1 decimal place (e.g. 22.0, 22.5).</li>
+            <li><strong>Wrong Mass in mcΔT:</strong> In neutralization (25 cm³ HCl + 25 cm³ NaOH), total volume is 50 g, not 25 g!</li>
+          </ul>
+        </div>
+
+        <!-- Official KNEC Formula Reference Card -->
+        <div class="en-card-panel">
+          <div class="en-panel-title">
+            <span>📐 Formula Quick Card</span>
+          </div>
+          <div class="formula-mini-row">
+            <span class="f-name">Heat Evolved:</span>
+            <span class="f-code">Q = m · c · ΔT</span>
+          </div>
+          <div class="formula-mini-row">
+            <span class="f-name">Solution Mass:</span>
+            <span class="f-code">m = V × ρ</span>
+          </div>
+          <div class="formula-mini-row">
+            <span class="f-name">Moles:</span>
+            <span class="f-code">n = (M × V) / 1000</span>
+          </div>
+          <div class="formula-mini-row">
+            <span class="f-name">Molar Enthalpy:</span>
+            <span class="f-code">ΔH = ± Q / (n × 1000)</span>
+          </div>
+          <div class="formula-mini-row">
+            <span class="f-name">Hess's Law:</span>
+            <span class="f-code">ΔH₁ = ΔH₂ − ΔH₃</span>
+          </div>
+        </div>
+
+      </aside>
+
+    </div>
+  </main>
+
+  <script src="/shared/api.js"></script>
+  <script src="/shared/theme.js"></script>
+  <script>
+    const TheoryGuide = (() => {
+      let canvas, ctx;
+      let profileType = 'exo';
+      let showCatalyst = false;
+
+      function init() {
+        canvas = document.getElementById('theoryProfileCanvas');
+        if (canvas) {
+          ctx = canvas.getContext('2d');
+          drawProfile();
+          window.addEventListener('resize', drawProfile);
+        }
+      }
+
+      function setProfileType(type) {
+        profileType = type;
+        document.getElementById('btnTheoryExo')?.classList.toggle('active', type === 'exo');
+        document.getElementById('btnTheoryEndo')?.classList.toggle('active', type === 'endo');
+
+        const desc = document.getElementById('theoryProfileDesc');
+        if (desc) {
+          if (type === 'exo') {
+            desc.innerHTML = '<strong>Exothermic Trajectory:</strong> Energy released in bond formation > energy absorbed in bond breaking. Enthalpy of products is lower than reactants (ΔH < 0).';
+          } else {
+            desc.innerHTML = '<strong>Endothermic Trajectory:</strong> Energy absorbed in bond breaking > energy released in bond formation. Enthalpy of products is higher than reactants (ΔH > 0).';
+          }
+        }
+        drawProfile();
+      }
+
+      function toggleCatalyst() {
+        showCatalyst = !showCatalyst;
+        document.getElementById('btnTheoryCat')?.classList.toggle('active', showCatalyst);
+        drawProfile();
+      }
+
+      function drawProfile() {
+        if (!canvas || !ctx) return;
+        const w = canvas.width = canvas.parentElement.clientWidth;
+        const h = canvas.height = 200;
+        ctx.clearRect(0, 0, w, h);
+
+        const isExo = (profileType === 'exo');
+        const rY = isExo ? h * 0.45 : h * 0.75;
+        const pY = isExo ? h * 0.80 : h * 0.35;
+        const peakY = isExo ? h * 0.15 : h * 0.12;
+        const catPeakY = peakY + (rY - peakY) * 0.45;
+
+        // Axes
+        ctx.strokeStyle = '#64748B';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(35, 15);
+        ctx.lineTo(35, h - 25);
+        ctx.lineTo(w - 20, h - 25);
+        ctx.stroke();
+
+        ctx.font = '700 10px Plus Jakarta Sans';
+        ctx.fillStyle = '#94A3B8';
+        ctx.fillText('Enthalpy (H)', 42, 22);
+        ctx.fillText('Reaction Pathway →', w - 125, h - 10);
+
+        // Main Curve
+        ctx.strokeStyle = isExo ? '#EA580C' : '#06B6D4';
+        ctx.lineWidth = 2.8;
+        ctx.beginPath();
+        ctx.moveTo(45, rY);
+        ctx.lineTo(85, rY);
+        ctx.bezierCurveTo(w * 0.4, rY, w * 0.45, peakY, w * 0.52, peakY);
+        ctx.bezierCurveTo(w * 0.6, peakY, w * 0.65, pY, w * 0.75, pY);
+        ctx.lineTo(w - 30, pY);
+        ctx.stroke();
+
+        // Catalyzed Curve
+        if (showCatalyst) {
+          ctx.strokeStyle = '#10B981';
+          ctx.lineWidth = 2;
+          ctx.setLineDash([4, 4]);
+          ctx.beginPath();
+          ctx.moveTo(85, rY);
+          ctx.bezierCurveTo(w * 0.4, rY, w * 0.45, catPeakY, w * 0.52, catPeakY);
+          ctx.bezierCurveTo(w * 0.6, catPeakY, w * 0.65, pY, w * 0.75, pY);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          ctx.font = '700 10px JetBrains Mono';
+          ctx.fillStyle = '#10B981';
+          ctx.fillText("Catalyzed E'a (Lower barrier)", w * 0.55, catPeakY - 6);
+        }
+
+        // Reactants & Products Labels
+        ctx.font = '800 11px Plus Jakarta Sans';
+        ctx.fillStyle = '#F1F5F9';
+        ctx.fillText('Reactants (Hr)', 45, rY - 8);
+        ctx.fillText('Products (Hp)', w - 95, pY - 8);
+
+        // Ea Arrow
+        ctx.strokeStyle = '#F59E0B';
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        ctx.moveTo(w * 0.48, rY);
+        ctx.lineTo(w * 0.48, peakY);
+        ctx.stroke();
+
+        ctx.font = '800 10px JetBrains Mono';
+        ctx.fillStyle = '#F59E0B';
+        ctx.fillText('Ea', w * 0.43, (rY + peakY) * 0.5);
+
+        // Delta H Arrow
+        ctx.strokeStyle = isExo ? '#EF4444' : '#10B981';
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.moveTo(w - 60, rY);
+        ctx.lineTo(w - 60, pY);
+        ctx.stroke();
+
+        ctx.font = '800 11px JetBrains Mono';
+        ctx.fillStyle = isExo ? '#EF4444' : '#10B981';
+        ctx.fillText(`ΔH ${isExo ? '< 0 (Negative)' : '> 0 (Positive)'}`, w * 0.38, (rY + pY) * 0.5 + 4);
+      }
+
+      return {
+        init,
+        setProfileType,
+        toggleCatalyst
+      };
+    })();
+
+    document.addEventListener('DOMContentLoaded', () => {
+      TheoryGuide.init();
+    });
+  </script>
+</body>
+</html>

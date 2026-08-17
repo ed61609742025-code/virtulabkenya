@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>VirtuLab Kenya — Student Home</title>
+<script>
+  var t = localStorage.getItem('vlk_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+</script>
+<meta name="theme-color" content="#0A121D">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VirtuLab">
+<link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/style.css">
+<link rel="stylesheet" href="../shared/pwa-installer.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<!-- Topbar Navigation Bar -->
+<nav class="top-navbar">
+  <a href="#" class="nav-brand" aria-label="VirtuLab Kenya Student Home">
+    <span class="nav-logo-icon"></span>
+    <div style="display:flex; flex-direction:column;">
+      <span style="font-weight:800; line-height:1.1; font-family:'Outfit', sans-serif;">VirtuLab Kenya</span>
+      <span class="brand-subtagline" style="font-size:0.68rem; font-weight:700; color:var(--cyan-accent); letter-spacing:0.02em;">Every student deserves a laboratory</span>
+    </div>
+  </a>
+
+  <!-- Central Welcome Header (Desktop Only) -->
+  <div class="navbar-welcome-message" style="font-family:'Outfit', sans-serif; display:flex; flex-direction:column; align-items:center; gap:2px;">
+    <div style="font-size:0.92rem; font-weight:800; color:var(--heading-color);">
+      Welcome back, <span id="studentName">Test Student</span>!
+    </div>
+    <div style="display:flex; align-items:center; gap:6px; font-size:0.7rem; font-weight:600; margin-top:2px;">
+      <span style="color:#F59E0B; background:rgba(245, 158, 11, 0.1); padding:2px 8px; border-radius:100px; border:1px solid rgba(245, 158, 11, 0.2); display:inline-flex; align-items:center; gap:3px;">
+        🔥 <span id="streakCount">1</span>-Day Streak
+      </span>
+      <span style="color:var(--text-muted);" id="todayDate">Today: Aug 7, 2028</span>
+    </div>
+  </div>
+
+  <div class="nav-actions">
+    <!-- Language Switcher Controls -->
+    <div class="theme-toggle-group" title="Switch language / Lugha" aria-label="Language selector">
+      <button class="theme-btn-chip lang-btn-chip active" data-lang="en" onclick="setLanguage('en')" aria-label="Switch to English">🇬🇧 EN</button>
+      <button class="theme-btn-chip lang-btn-chip" data-lang="sw" onclick="setLanguage('sw')" aria-label="Badilisha kwenda Swahili">🇰🇪 SW</button>
+    </div>
+
+    <!-- Theme Switcher Controls -->
+    <div class="theme-toggle-group" title="Switch appearance theme" aria-label="Theme selector">
+      <button class="theme-btn-chip" data-theme="dark" onclick="setTheme('dark')" aria-label="Dark mode">🌙 Dark</button>
+      <button class="theme-btn-chip" data-theme="light" onclick="setTheme('light')" aria-label="Light mode">☀️ Light</button>
+      <button class="theme-btn-chip" data-theme="green" onclick="setTheme('green')" aria-label="Lab mode">🧪 Lab</button>
+    </div>
+
+    <div style="position:relative;">
+      <button class="nav-icon-btn notif-bell-btn" id="notifBellBtn" onclick="toggleNotifDropdown(event)" title="Notifications" aria-label="Notifications Drawer" style="position:relative;background:var(--card-bg);border:1px solid var(--card-border);color:var(--text-main);padding:6px 12px;border-radius:100px;cursor:pointer;display:flex;align-items:center;gap:6px;">
+        <span class="bell-icon">🔔</span>
+        <span id="notifBadge" class="notif-badge" style="display:none;">0</span>
+      </button>
+
+      <!-- Notification Dropdown Drawer -->
+      <div id="notifDropdown" style="display:none;position:absolute;right:0;top:42px;width:320px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;box-shadow:var(--shadow-lg);z-index:10000;padding:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--card-border);padding-bottom:8px;margin-bottom:8px;">
+          <span style="font-weight:800;font-size:0.85rem;color:var(--heading-color);">Notifications</span>
+          <button style="font-size:0.72rem;color:var(--cyan-accent);background:none;border:none;cursor:pointer;" onclick="markAllNotificationsRead()">Mark all read</button>
+        </div>
+        <div id="notifList" style="max-height:260px;overflow-y:auto;">
+          <div style="font-size:0.8rem;color:var(--text-muted);text-align:center;padding:12px;">No unread notifications</div>
+        </div>
+      </div>
+    </div>
+    
+    <button class="user-avatar-btn" onclick="togglePasswordPanel()" title="Account Settings" aria-label="Account Settings & Security">
+      <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<!-- Main Streamlined Dashboard Layout Container -->
+<div class="dashboard-container">
+
+  <!-- System Broadcast Announcement Banner -->
+  <div id="systemBroadcastBanner" style="display:none;"></div>
+  
+  <div class="dashboard-grid">
+    
+    <!-- LEFT COLUMN: Your Badges -->
+    <aside class="badges-sidebar">
+      
+      <!-- Premium Hero Badge Widget -->
+      <div class="leaderboard-glass-card" style="margin-bottom: 20px; padding: 16px 14px; border-color: rgba(56, 189, 248, 0.35); background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.85) 100%); text-align: center; border-radius: 20px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25); backdrop-filter: blur(12px);">
+        <span style="font-size:0.62rem; font-weight:800; text-transform:uppercase; color:var(--cyan-accent); letter-spacing:0.08em; display:block; margin-bottom:10px;">★ Hero Badge ★</span>
+        <img src="../shared/chemistry_hero_badge.jpg" alt="Chemistry Prodigy Hero Badge" style="width: 100%; max-width: 110px; aspect-ratio: 1/1; object-fit: contain; border-radius: 50%; filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.45)); margin-bottom: 12px; border: 2px solid rgba(56, 189, 248, 0.35);">
+        <div style="font-weight: 800; font-size: 0.95rem; color: var(--heading-color); margin-bottom: 3px;">Chemistry Prodigy</div>
+        <div style="font-size: 0.72rem; color: var(--text-muted); line-height: 1.35;">Unlocked for achieving 80%+ overall lab accuracy!</div>
+      </div>
+
+      <h2 class="section-heading" data-i18n="your_badges" style="margin-bottom: 14px;">Your Badges</h2>
+      <div id="badgeGrid" class="badges-sidebar-container">
+        <!-- Mock/Fallback badges, will be populated dynamically by loadBadges() -->
+        <div class="badge-card">
+          <div class="badge-icon-box teal">🚀</div>
+          <div class="badge-title-text">First Steps</div>
+          <div class="badge-progress-text">Achieved</div>
+          <div class="badge-progress-bar-track">
+            <div class="badge-progress-bar-fill teal" style="width: 100%;"></div>
+          </div>
+        </div>
+        <div class="badge-card">
+          <div class="badge-icon-box orange">🎯</div>
+          <div class="badge-title-text">Concordant!</div>
+          <div class="badge-progress-text">Achieved</div>
+          <div class="badge-progress-bar-track">
+            <div class="badge-progress-bar-fill orange" style="width: 100%;"></div>
+          </div>
+        </div>
+        <div class="badge-card">
+          <div class="badge-icon-box blue">⚡</div>
+          <div class="badge-title-text">Precision</div>
+          <div class="badge-progress-text">Achieved</div>
+          <div class="badge-progress-bar-track">
+            <div class="badge-progress-bar-fill blue" style="width: 100%;"></div>
+          </div>
+        </div>
+        <div class="badge-card">
+          <div class="badge-icon-box purple">🧬</div>
+          <div class="badge-title-text">All-Rounder</div>
+          <div class="badge-progress-text">Achieved</div>
+          <div class="badge-progress-bar-track">
+            <div class="badge-progress-bar-fill purple" style="width: 100%;"></div>
+          </div>
+        </div>
+        <div class="badge-card">
+          <div class="badge-icon-box fire">🔥</div>
+          <div class="badge-title-text">On a Roll</div>
+          <div class="badge-progress-text">Achieved</div>
+          <div class="badge-progress-bar-track">
+            <div class="badge-progress-bar-fill fire" style="width: 100%;"></div>
+          </div>
+        </div>
+        <div class="badge-card">
+          <div class="badge-icon-box silver">🏆</div>
+          <div class="badge-title-text">Sharpshooter</div>
+          <div class="badge-progress-text">39% accuracy</div>
+          <div class="badge-progress-bar-track">
+            <div class="badge-progress-bar-fill silver" style="width: 39%;"></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MIDDLE COLUMN: Welcome, Assignments, Advisors, Readiness, Sessions, Practice Grid -->
+    <main class="main-content-col">
+      
+      <!-- Mobile Welcome Header (Mobile Only) -->
+      <section class="mobile-welcome-section" style="margin-bottom: 20px;">
+        <h1 class="welcome-title">Welcome back, <span id="studentNameMobile">Test Student</span>!</h1>
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:6px;">
+          <div class="streak-badge" style="background:rgba(245, 158, 11, 0.15); border:1px solid #F59E0B; color:#F59E0B; padding:4px 12px; border-radius:100px; font-size:0.8rem; font-weight:800; display:inline-flex; align-items:center; gap:4px;">
+            <span>🔥</span>
+            <span id="streakCountMobile">1</span>-Day Lab Streak
+          </div>
+          <div style="font-size:0.8rem; font-weight:600; color:var(--text-muted); padding:4px 10px; background:var(--card-bg); border-radius:100px; border:1px solid var(--card-border);" id="todayDateMobile">Today: Aug 7, 2028</div>
+        </div>
+      </section>
+
+      <!-- Password Update Panel (Hidden by default) -->
+      <div id="passwordPanel" class="modal-pw" style="display:none; margin-bottom: 20px;">
+        <h3 style="font-size:0.92rem;color:var(--heading-color);margin-bottom:12px;">Change Password</h3>
+        <div class="field" style="margin-bottom: 10px;">
+          <label for="pwCurrent" style="font-size:0.8rem; display:block; margin-bottom:4px;">Current Password</label>
+          <input type="password" id="pwCurrent" style="width:100%; padding:6px; border-radius:6px; border:1.5px solid var(--card-border); background:var(--card-bg-hover); color:var(--text-main);">
+        </div>
+        <div class="field" style="margin-bottom: 12px;">
+          <label for="pwNew" style="font-size:0.8rem; display:block; margin-bottom:4px;">New Password</label>
+          <input type="password" id="pwNew" style="width:100%; padding:6px; border-radius:6px; border:1.5px solid var(--card-border); background:var(--card-bg-hover); color:var(--text-main);">
+        </div>
+        <button class="btn btn-primary" onclick="submitChangePassword()" style="padding:6px 14px; border-radius:100px; border:none; background:var(--blue-accent); color:#FFF; cursor:pointer;">Update Password</button>
+        <button class="btn" onclick="Auth.logout()" style="margin-left:8px; padding:6px 14px; border-radius:100px; border:1px solid var(--card-border); background:transparent; color:var(--text-muted); cursor:pointer;">Log out</button>
+        <div id="pwMsg" style="margin-top: 8px;"></div>
+      </div>
+
+      <!-- FEATURE: Your Assignments -->
+      <section style="margin-bottom: 24px;">
+        <h2 class="section-heading" data-i18n="your_assignments">Your Assignments</h2>
+        <div id="assignmentsList" class="assignments-grid-container">
+          
+          <div class="assignment-card-box" style="display:flex; flex-direction:column; justify-content:space-between; min-height:165px;">
+            <div>
+              <div class="assign-card-title">test 6</div>
+              <div class="assign-card-desc" style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px; line-height:1.3; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">No instructions</div>
+              <div class="assign-card-due" style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px;">Due Jul 31, 2026</div>
+            </div>
+            <span class="submitted-pill" style="cursor:pointer; background:var(--green-bg); color:var(--green-accent); border:1px solid var(--green-accent); justify-content:center; width:100%;">🟢 Marked (View Grade)</span>
+          </div>
+
+          <div class="assignment-card-box" style="display:flex; flex-direction:column; justify-content:space-between; min-height:165px;">
+            <div>
+              <div class="assign-card-title">TEST 4</div>
+              <div class="assign-card-desc" style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px; line-height:1.3; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">COMPLETE THIS ASSIGNMENT TO TEST...</div>
+              <div class="assign-card-due" style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px;">Due Jul 31, 2026</div>
+            </div>
+            <span class="submitted-pill" style="cursor:pointer; background:rgba(245, 158, 11, 0.15); color:#F59E0B; border:1px solid #F59E0B; justify-content:center; width:100%;">🟡 Under Review</span>
+          </div>
+
+          <div class="assignment-card-box" style="display:flex; flex-direction:column; justify-content:space-between; min-height:165px;">
+            <div>
+              <div class="assign-card-title">Test 7</div>
+              <div class="assign-card-desc" style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px; line-height:1.3; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">Complete this assignment by Friday...</div>
+              <div class="assign-card-due" style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px;">Due Aug 1, 2026</div>
+            </div>
+            <span class="submitted-pill" style="cursor:pointer; background:rgba(245, 158, 11, 0.15); color:#F59E0B; border:1px solid #F59E0B; justify-content:center; width:100%;">🟡 Under Review</span>
+          </div>
+
+        </div>
+      </section>
+
+
+
+      <!-- FEATURE: Recent Sessions Timeline -->
+      <section class="recent-sessions-card">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+          <h2 class="section-heading" style="font-size:1.05rem; margin:0;">Recent Sessions</h2>
+          <a href="history.html" class="see-all-link" style="font-size:0.78rem;">View Full History →</a>
+        </div>
+        <div id="sessionsList" class="session-timeline-list">
+          <!-- Populated dynamically -->
+        </div>
+      </section>
+
+      <!-- FEATURE: Practise Outside an Assignment -->
+      <section style="margin-top: 28px; margin-bottom: 28px; clear: both;">
+        <h2 class="section-heading" style="margin-top: 0; margin-bottom: 16px; font-size: 1.15rem; font-weight: 800; color: var(--heading-color); display: flex; align-items: center; gap: 8px;">
+          <span>🎯 Practise Outside an Assignment</span>
+        </h2>
+        
+        <!-- Dual Mwalimu AI Advisor & Recommended Practice Grid -->
+        <div id="adaptiveRecCard" style="display:none; margin-bottom: 20px;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+            
+            <!-- Card 1: Smart Advice Tip -->
+            <div class="mwalimu-card" style="margin-bottom: 0; border: 1.5px solid var(--card-border); border-left: 4px solid var(--blue-accent); background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(37, 99, 235, 0.03) 100%); padding: 18px; border-radius: 16px; box-shadow: var(--shadow-sm); display: flex; gap: 14px; align-items: flex-start;">
+              <div class="mwalimu-avatar" style="background: linear-gradient(135deg, #0284C7, #2563EB); color: #FFF; border: none; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);">👨‍🏫</div>
+              <div class="mwalimu-content" style="flex: 1; min-width: 0;">
+                <div class="mwalimu-header" style="margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
+                  <div class="mwalimu-title" style="font-weight: 800; font-size: 0.92rem; color: var(--heading-color); display: flex; align-items: center; gap: 6px;">
+                    <span>Mwalimu AI Advisor</span>
+                  </div>
+                  <span class="mwalimu-chip" style="background: rgba(59, 130, 246, 0.15); color: var(--blue-accent); font-size: 0.68rem; font-weight: 800; padding: 3px 10px; border-radius: 100px;">Smart Tip</span>
+                </div>
+                <div class="mwalimu-message" id="mwalimuMessage" style="font-weight: 500; font-size: 0.83rem; line-height: 1.5; color: var(--text-main);">
+                  Analyzing your practical performance to generate personalized recommendations…
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: Next Recommended Action -->
+            <div class="mwalimu-card" style="margin-bottom: 0; border: 1.5px solid var(--card-border); border-left: 4px solid var(--green-accent); background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(6, 182, 212, 0.04) 100%); padding: 18px; border-radius: 16px; box-shadow: var(--shadow-sm); display: flex; gap: 14px; align-items: flex-start;">
+              <div class="mwalimu-avatar" id="recIcon" style="background: rgba(16, 185, 129, 0.15); color: var(--green-accent); border: 1.5px solid var(--green-accent); font-size: 1.3rem; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;">🎯</div>
+              <div class="mwalimu-content" style="flex: 1; min-width: 0;">
+                <div class="mwalimu-header" style="margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+                  <span style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--green-accent); letter-spacing: 0.05em;">Recommended Practice</span>
+                  <span class="mwalimu-chip" id="recReasonBadge" style="background: rgba(16, 185, 129, 0.2); color: var(--green-accent); font-weight: 800; font-size: 0.68rem;">New Syllabus Topic</span>
+                </div>
+                <div style="font-weight: 800; color: var(--heading-color); font-size: 0.98rem; margin-bottom: 4px;" id="recTitle">Redox Titration (Fe²⁺ vs KMnO₄)</div>
+                <div class="mwalimu-message" id="recDesc" style="margin-bottom: 12px; font-size: 0.8rem; line-height: 1.45; color: var(--text-muted);">
+                  You haven't practiced Redox Titration yet. Explore this topic to build balanced KCSE Paper 3 coverage!
+                </div>
+                <a id="recActionBtn" href="lab.html?studyMode=guided" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; font-size: 0.78rem; font-weight: 800; border-radius: 100px; text-decoration: none; background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: #FFF; border: none; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35); transition: transform 0.2s ease, box-shadow 0.2s ease;">
+                  <span>Start Recommended Session →</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Card 3: Chemical Speed Battle Arena -->
+            <div class="mwalimu-card" style="margin-bottom: 0; border: 1.5px solid var(--amber-accent); border-left: 4px solid var(--amber-accent); background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(217, 119, 6, 0.04) 100%); padding: 18px; border-radius: 16px; box-shadow: var(--shadow-sm); display: flex; gap: 14px; align-items: flex-start;">
+              <div class="mwalimu-avatar" style="background: rgba(245, 158, 11, 0.15); color: var(--amber-accent); border: 1.5px solid var(--amber-accent); font-size: 1.3rem; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;">⚡</div>
+              <div class="mwalimu-content" style="flex: 1; min-width: 0;">
+                <div class="mwalimu-header" style="margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+                  <span style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--amber-accent); letter-spacing: 0.05em;">Gamified Practical Challenge</span>
+                  <span class="mwalimu-chip" style="background: rgba(245, 158, 11, 0.2); color: var(--amber-accent); font-weight: 800; font-size: 0.68rem;">60s Sprint</span>
+                </div>
+                <div style="font-weight: 800; color: var(--heading-color); font-size: 0.98rem; margin-bottom: 4px;">Chemical Speed Battle Quiz Arena</div>
+                <div class="mwalimu-message" style="margin-bottom: 12px; font-size: 0.8rem; line-height: 1.45; color: var(--text-muted);">
+                  Test your chemical deductions, observations, and salt analysis knowledge in a 60-second rapid-fire sprint with combo multipliers!
+                </div>
+                <a href="speed_battle.html" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; font-size: 0.78rem; font-weight: 800; border-radius: 100px; text-decoration: none; background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: #FFF; border: none; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35); transition: transform 0.2s ease, box-shadow 0.2s ease;">
+                  <span>Enter Speed Battle Arena ⚡ →</span>
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Search and Filter Bar -->
+        <div class="search-filter-bar">
+          <div class="search-input-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="experimentSearchInput" oninput="filterPractices()" placeholder="Search practicals (e.g. Acid-Base, Titration, Qualitative...)">
+          </div>
+          <div class="filter-chips">
+            <button class="filter-chip active" data-filter="all" onclick="setPracticeFilter('all')">All</button>
+            <button class="filter-chip" data-filter="acidBase" onclick="setPracticeFilter('acidBase')">Acid-Base</button>
+            <button class="filter-chip" data-filter="redox" onclick="setPracticeFilter('redox')">Redox</button>
+            <button class="filter-chip" data-filter="precipitation" onclick="setPracticeFilter('precipitation')">Precipitation</button>
+            <button class="filter-chip" data-filter="complexometric" onclick="setPracticeFilter('complexometric')">Complexometric</button>
+            <button class="filter-chip" data-filter="qualitative" onclick="setPracticeFilter('qualitative')">Qualitative</button>
+            <button class="filter-chip" data-filter="organic" onclick="setPracticeFilter('organic')">Organic</button>
+            <button class="filter-chip" data-filter="solubility" onclick="setPracticeFilter('solubility')">Solubility</button>
+            <button class="filter-chip" data-filter="energy" onclick="setPracticeFilter('energy')">Energy Changes</button>
+            <button class="filter-chip" data-filter="rates" onclick="setPracticeFilter('rates')">Reaction Rates</button>
+          </div>
+        </div>
+
+        <!-- Practice Grid -->
+        <div class="practice-2col-grid">
+          
+          <a href="lab.html?studyMode=guided" class="practice-banner-card guided" data-type="acidBase">
+            <div class="practice-icon-circle green">🧭</div>
+            <div>
+              <div class="practice-text-title">Guided Practice (Acid-Base)</div>
+              <div class="practice-text-desc">Guided walks you through Acid-Base titration step by step</div>
+            </div>
+          </a>
+
+          <div class="practice-banner-card self-paced" data-type="acidBase" onclick="openVolumetricModal()" style="cursor:pointer;">
+            <div class="practice-icon-circle blue">▶️</div>
+            <div>
+              <div class="practice-text-title">Self-Paced Titration Lab</div>
+              <div class="practice-text-desc">Full access to Acid-Base, Redox, Precipitation, and Complexometric titrations</div>
+            </div>
+          </div>
+
+          <a href="qualitative.html" class="practice-banner-card qualitative" data-type="qualitative">
+            <div class="practice-icon-circle cyan">🔍</div>
+            <div>
+              <div class="practice-text-title">Qualitative Analysis</div>
+              <div class="practice-text-desc">Identify unknown cations and anions through systematic salt testing</div>
+            </div>
+          </a>
+
+          <a href="organic.html" class="practice-banner-card organic" data-type="organic">
+            <div class="practice-icon-circle purple">⚗️</div>
+            <div>
+              <div class="practice-text-title">Organic Chemistry Lab</div>
+              <div class="practice-text-desc">Test functional groups (alkenes, alcohols, carboxylic acids, alkanes) using chemical reagents</div>
+            </div>
+          </a>
+
+          <a href="solubility.html" class="practice-banner-card guided" data-type="solubility" style="border-left: 4px solid #F59E0B;">
+            <div class="practice-icon-circle orange">🌡️</div>
+            <div>
+              <div class="practice-text-title">Solubility Curves & Crystallization</div>
+              <div class="practice-text-desc">Heat, dissolve, and determine crystallization temperatures with interactive KNEC graph plotting</div>
+            </div>
+          </a>
+
+          <a href="energy.html" class="practice-banner-card guided" data-type="energy" style="border-left: 4px solid #EA580C;">
+            <div class="practice-icon-circle orange" style="background:rgba(234,88,12,0.15);color:#EA580C;border:1.5px solid #EA580C;">🔥</div>
+            <div>
+              <div class="practice-text-title">Energy Changes in Reactions (Thermochemistry)</div>
+              <div class="practice-text-desc">Determine enthalpies of neutralization, displacement, solution & combustion with cooling curve extrapolation</div>
+            </div>
+          </a>
+
+          <a href="rates.html" class="practice-banner-card guided" data-type="rates" style="border-left: 4px solid #F59E0B;">
+            <div class="practice-icon-circle orange" style="background:rgba(245,158,11,0.15);color:#F59E0B;border:1.5px solid #F59E0B;">⚡</div>
+            <div>
+              <div class="practice-text-title">Reaction Rates & Chemical Kinetics</div>
+              <div class="practice-text-desc">Simulate disappearing cross, gas syringe evolution, mass loss on balance, and collision theory with tangent tools</div>
+            </div>
+          </a>
+
+          <a href="composite_exam.html" class="practice-banner-card exam" data-type="acidBase" style="border-left: 4px solid #EF4444;">
+            <div class="practice-icon-circle red">🏆</div>
+            <div>
+              <div class="practice-text-title">KCSE Paper 3 Practical Examination (40 Marks)</div>
+              <div class="practice-text-desc">Full 45-minute timed examination covering Q1 Volumetric (15m), Q2 Salt Analysis (15m), and Q3 Organic Analysis (10m)</div>
+            </div>
+          </a>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- RIGHT COLUMN: Leaderboard -->
+    <aside class="leaderboard-column">
+      
+      <!-- Leaderboard Card -->
+      <div class="leaderboard-glass-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <h2 class="section-heading" style="font-size:1rem; margin:0;">🏆 Class Leaderboard</h2>
+          <a href="history.html" class="see-all-link" style="font-size:0.78rem;">View Full →</a>
+        </div>
+        <div id="leaderboardBox">
+          <div class="empty-box">Loading leaderboard...</div>
+        </div>
+      </div>
+
+      <!-- Card 1: KNEC Indicators Reference -->
+      <div class="leaderboard-glass-card" style="margin-top: 14px;">
+        <h2 class="section-heading" style="font-size:1rem; margin:0 0 12px 0; display:flex; align-items:center; gap:8px;">
+          <span>💧 KNEC Indicators Reference</span>
+        </h2>
+        <div style="font-size:0.76rem; line-height:1.5;">
+          <table style="width:100%; border-collapse:collapse;">
+            <thead>
+              <tr style="border-bottom:1px solid var(--card-border); color:var(--text-muted); font-size:0.7rem;">
+                <th style="text-align:left; padding:4px 0;">Indicator</th>
+                <th style="text-align:center; padding:4px 0;">Acid</th>
+                <th style="text-align:center; padding:4px 0;">Endpoint</th>
+                <th style="text-align:center; padding:4px 0;">Base</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                <td style="padding:6px 0; font-weight:700;">Phenolphthalein</td>
+                <td style="text-align:center; color:#94A3B8;">Colorless</td>
+                <td style="text-align:center; color:#EC4899; font-weight:700;">Pale Pink</td>
+                <td style="text-align:center; color:#DB2777;">Pink</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                <td style="padding:6px 0; font-weight:700;">Methyl Orange</td>
+                <td style="text-align:center; color:#EF4444;">Pink/Red</td>
+                <td style="text-align:center; color:#F59E0B; font-weight:700;">Orange</td>
+                <td style="text-align:center; color:#FBBF24;">Yellow</td>
+              </tr>
+              <tr>
+                <td style="padding:6px 0; font-weight:700;">Litmus Paper</td>
+                <td style="text-align:center; color:#EF4444;">Red</td>
+                <td style="text-align:center; color:#94A3B8;">Purple</td>
+                <td style="text-align:center; color:#3B82F6;">Blue</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Card 2: KNEC Salt ID Reference -->
+      <div class="leaderboard-glass-card" style="margin-top: 14px;">
+        <h2 class="section-heading" style="font-size:1rem; margin:0 0 12px 0; display:flex; align-items:center; gap:8px;">
+          <span>🧪 KNEC Salt ID Reference</span>
+        </h2>
+        <div style="font-size:0.76rem; line-height:1.5;">
+          <div style="margin-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:6px;">
+            <b style="color:var(--cyan-accent);">Cu²⁺ (Copper)</b>: Blue precipitate with NaOH or Ammonia. Dissolves in excess Ammonia to form **deep blue solution**.
+          </div>
+          <div style="margin-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:6px;">
+            <b style="color:#10B981;">Fe²⁺ (Iron II)</b>: **Dirty green** precipitate with NaOH or Ammonia, insoluble in excess. Turns brown at surface.
+          </div>
+          <div style="margin-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:6px;">
+            <b style="color:#F59E0B;">Fe³⁺ (Iron III)</b>: **Rust brown** precipitate with NaOH or Ammonia, insoluble in excess.
+          </div>
+          <div>
+            <b style="color:#94A3B8;">Pb²⁺, Zn²⁺, Al³⁺</b>: **White** precipitate with NaOH, dissolves in excess to form colorless solutions. Zinc also dissolves in excess Ammonia.
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: KNEC Gas Tests Reference -->
+      <div class="leaderboard-glass-card" style="margin-top: 14px;">
+        <h2 class="section-heading" style="font-size:1rem; margin:0 0 12px 0; display:flex; align-items:center; gap:8px;">
+          <span>💨 KNEC Gas Tests Reference</span>
+        </h2>
+        <div style="font-size:0.76rem; line-height:1.5;">
+          <table style="width:100%; border-collapse:collapse;">
+            <thead>
+              <tr style="border-bottom:1px solid var(--card-border); color:var(--text-muted); font-size:0.7rem;">
+                <th style="text-align:left; padding:4px 0;">Gas</th>
+                <th style="text-align:left; padding:4px 0;">Test Method</th>
+                <th style="text-align:left; padding:4px 0;">Observation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                <td style="padding:6px 0; font-weight:700; color:var(--cyan-accent);">CO₂</td>
+                <td style="padding:6px 0; color:var(--text-muted);">Pass through limewater</td>
+                <td style="padding:6px 0;">White precipitate (turbidity)</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                <td style="padding:6px 0; font-weight:700; color:#EF4444;">SO₂</td>
+                <td style="padding:6px 0; color:var(--text-muted);">Acidified KMnO₄ paper</td>
+                <td style="padding:6px 0;">Purple decolourises to colorless</td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
+                <td style="padding:6px 0; font-weight:700; color:#10B981;">Cl₂</td>
+                <td style="padding:6px 0; color:var(--text-muted);">Damp litmus paper</td>
+                <td style="padding:6px 0;">Bleaches to white</td>
+              </tr>
+              <tr>
+                <td style="padding:6px 0; font-weight:700; color:#8B5CF6;">NH₃</td>
+                <td style="padding:6px 0; color:var(--text-muted);">Damp red litmus</td>
+                <td style="padding:6px 0;">Turns blue (alkaline gas)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+
+</div>
+
+<!-- Mobile & Tablet Bottom Navigation Dock Bar -->
+<nav class="mobile-bottom-nav">
+  <button class="bottom-tab-item active" onclick="switchMobileTab('home')">
+    <span class="bottom-tab-icon">🏠</span>
+    <span>Home</span>
+  </button>
+  <button class="bottom-tab-item" onclick="switchMobileTab('assignments')">
+    <span class="bottom-tab-icon">📋</span>
+    <span>Assignments</span>
+  </button>
+  <button class="bottom-tab-item" onclick="switchMobileTab('lab')">
+    <span class="bottom-tab-icon">🧪</span>
+    <span>Lab</span>
+  </button>
+  <button class="bottom-tab-item" onclick="switchMobileTab('grades')">
+    <span class="bottom-tab-icon">📊</span>
+    <span>Grades</span>
+  </button>
+  <button class="bottom-tab-item" onclick="switchMobileTab('profile')">
+    <span class="bottom-tab-icon">👤</span>
+    <span>Profile</span>
+  </button>
+</nav>
+
+<!-- Student Assignment Feedback Modal -->
+<div id="assignmentFeedbackModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);z-index:20000;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--card-bg);border:2px solid var(--green-accent);border-radius:20px;max-width:500px;width:100%;padding:24px;box-shadow:var(--shadow-lg);color:var(--text-main);">
+    <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--card-border);padding-bottom:12px;margin-bottom:16px;">
+      <div>
+        <span style="background:var(--green-accent);color:#FFF;padding:2px 8px;border-radius:100px;font-size:0.7rem;font-weight:800;">MARKED & RELEASED</span>
+        <h3 id="afTitle" style="font-size:1.15rem;font-weight:800;margin-top:4px;color:var(--heading-color);">Assignment Title</h3>
+      </div>
+      <div id="afDate" style="font-size:0.78rem;color:var(--text-muted);">Marked recently</div>
+    </div>
+
+    <div style="text-align:center;margin-bottom:20px;" id="afStatus"></div>
+
+    <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:14px;font-size:0.85rem;line-height:1.7;margin-bottom:16px;">
+      <div><b>Your Submitted Answer:</b> <span id="afStudentAns" style="font-family:monospace;font-weight:700;color:var(--cyan-accent);">—</span></div>
+      <div><b>True Target Value:</b> <span id="afTrueVal" style="font-family:monospace;font-weight:700;">—</span></div>
+    </div>
+
+    <div id="afDetails" style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:12px 14px;font-size:0.84rem;line-height:1.6;color:var(--text-main);margin-bottom:20px;"></div>
+
+    <div id="afComments" style="background:var(--green-bg);border:1px solid var(--green-accent);border-radius:12px;padding:12px 14px;font-size:0.84rem;line-height:1.6;color:var(--text-main);margin-bottom:20px;"></div>
+
+    <div style="display:flex;justify-content:flex-end;">
+      <button class="btn btn-primary" style="padding:8px 22px;border-radius:100px;" onclick="document.getElementById('assignmentFeedbackModal').style.display='none'">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Quick-Start Experiment Preview Modal -->
+<div id="experimentPreviewModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);z-index:20000;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:20px;max-width:520px;width:100%;padding:26px;box-shadow:var(--shadow-lg);color:var(--text-main);">
+    <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--card-border);padding-bottom:14px;margin-bottom:16px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span id="prevIcon" style="font-size:1.6rem;background:var(--card-bg-hover);padding:8px 12px;border-radius:12px;">🧪</span>
+        <div>
+          <h3 id="prevTitle" style="font-size:1.1rem;font-family:var(--font-heading);margin:0;color:var(--heading-color);">Experiment Preview</h3>
+          <span id="prevCategory" style="font-size:0.75rem;color:var(--cyan-accent);font-weight:700;">Volumetric Analysis</span>
+        </div>
+      </div>
+      <button class="btn" onclick="closeExperimentPreview()" style="padding:4px 10px;font-size:0.8rem;">✕</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;">
+      <div style="background:var(--card-bg-hover);padding:10px;border-radius:10px;text-align:center;border:1px solid var(--card-border);">
+        <small style="color:var(--text-muted);font-size:0.7rem;font-weight:700;">DURATION</small>
+        <div id="prevDuration" style="font-weight:800;font-size:0.95rem;color:var(--heading-color);margin-top:2px;">15 Mins</div>
+      </div>
+      <div style="background:var(--card-bg-hover);padding:10px;border-radius:10px;text-align:center;border:1px solid var(--card-border);">
+        <small style="color:var(--text-muted);font-size:0.7rem;font-weight:700;">MARKS</small>
+        <div id="prevMarks" style="font-weight:800;font-size:0.95rem;color:var(--green-accent);margin-top:2px;">15 Marks</div>
+      </div>
+      <div style="background:var(--card-bg-hover);padding:10px;border-radius:10px;text-align:center;border:1px solid var(--card-border);">
+        <small style="color:var(--text-muted);font-size:0.7rem;font-weight:700;">SYLLABUS</small>
+        <div id="prevSyllabus" style="font-weight:800;font-size:0.95rem;color:var(--blue-accent);margin-top:2px;">Form 3 / 4</div>
+      </div>
+    </div>
+
+    <div style="font-size:0.85rem;line-height:1.6;color:var(--text-muted);margin-bottom:20px;background:var(--card-bg-hover);padding:14px;border-radius:12px;border:1px solid var(--card-border);" id="prevDesc">
+      Prepare standard solutions, determine end-points with indicator color shifts, and complete KCSE volumetric calculations.
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+      <span style="font-size:0.75rem;color:var(--text-muted);">Shortcuts: <kbd style="background:var(--card-bg-hover);padding:2px 6px;border-radius:4px;border:1px solid var(--card-border);font-family:monospace;">Alt+1</kbd> Titration &nbsp; <kbd style="background:var(--card-bg-hover);padding:2px 6px;border-radius:4px;border:1px solid var(--card-border);font-family:monospace;">Alt+2</kbd> Salt ID</span>
+      <a id="prevLaunchBtn" href="#" class="btn btn-primary" style="padding:10px 22px;font-size:0.88rem;font-weight:800;text-decoration:none;border-radius:100px;">Launch Virtual Lab →</a>
+    </div>
+  </div>
+</div>
+<!-- Volumetric Analysis Practical Selection Modal -->
+<div id="volumetricSelectModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);z-index:25000;align-items:center;justify-content:center;padding:20px;overflow-y:auto;">
+  <div style="background:var(--card-bg);border:1.5px solid var(--cyan-accent);border-radius:20px;max-width:560px;width:100%;padding:26px;box-shadow:var(--shadow-lg);color:var(--text-main);position:relative;">
+    
+    <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--card-border);padding-bottom:14px;margin-bottom:18px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:1.6rem;background:rgba(6,182,212,0.15);border:1px solid var(--cyan-accent);padding:8px 12px;border-radius:12px;">🧪</span>
+        <div>
+          <h3 style="font-size:1.15rem;font-family:var(--font-heading);margin:0;color:var(--heading-color);">Volumetric Analysis — Select Options</h3>
+          <span style="font-size:0.75rem;color:var(--cyan-accent);font-weight:700;">KCSE Paper 3 (Q1) Volumetric Analysis</span>
+        </div>
+      </div>
+      <button class="btn" onclick="closeVolumetricModal()" style="padding:4px 10px;font-size:0.8rem;cursor:pointer;">✕</button>
+    </div>
+
+    <!-- Step 1: Select Experiment / Titration Type -->
+    <div style="margin-bottom:18px;">
+      <label style="font-size:0.82rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.04em;">
+        1. Select Titration Practical
+      </label>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:10px;">
+        <label style="background:var(--card-bg-hover);border:1.5px solid var(--card-border);border-radius:12px;padding:10px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;">
+          <input type="radio" name="volType" value="acidBase" checked style="accent-color:var(--cyan-accent);">
+          <div>
+            <div style="font-weight:800;font-size:0.88rem;color:var(--heading-color);">Acid–Base Titration</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);">HCl vs NaOH (Phenolphthalein / MO)</div>
+          </div>
+        </label>
+
+        <label style="background:var(--card-bg-hover);border:1.5px solid var(--card-border);border-radius:12px;padding:10px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;">
+          <input type="radio" name="volType" value="redox" style="accent-color:var(--cyan-accent);">
+          <div>
+            <div style="font-weight:800;font-size:0.88rem;color:var(--heading-color);">Redox Titration</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);">Fe²⁺ vs KMnO₄ (Self-indicating)</div>
+          </div>
+        </label>
+
+        <label style="background:var(--card-bg-hover);border:1.5px solid var(--card-border);border-radius:12px;padding:10px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;">
+          <input type="radio" name="volType" value="precipitation" style="accent-color:var(--cyan-accent);">
+          <div>
+            <div style="font-weight:800;font-size:0.88rem;color:var(--heading-color);">Precipitation Titration</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);">Cl⁻ vs AgNO₃ (Mohr's Method)</div>
+          </div>
+        </label>
+
+        <label style="background:var(--card-bg-hover);border:1.5px solid var(--card-border);border-radius:12px;padding:10px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;">
+          <input type="radio" name="volType" value="complexometric" style="accent-color:var(--cyan-accent);">
+          <div>
+            <div style="font-weight:800;font-size:0.88rem;color:var(--heading-color);">Complexometric EDTA</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);">Ca²⁺/Mg²⁺ vs EDTA (Water Hardness)</div>
+          </div>
+        </label>
+
+        <label style="background:var(--card-bg-hover);border:1.5px solid var(--card-border);border-radius:12px;padding:10px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;">
+          <input type="radio" name="volType" value="dibasic" style="accent-color:var(--cyan-accent);">
+          <div>
+            <div style="font-weight:800;font-size:0.88rem;color:var(--heading-color);">Dibasic Acid Titration</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);">H₂SO₄ vs NaOH (2:1 Mole Ratio)</div>
+          </div>
+        </label>
+
+        <label style="background:var(--card-bg-hover);border:1.5px solid var(--card-border);border-radius:12px;padding:10px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;">
+          <input type="radio" name="volType" value="weakAcid" style="accent-color:var(--cyan-accent);">
+          <div>
+            <div style="font-weight:800;font-size:0.88rem;color:var(--heading-color);">Weak Acid – Strong Base</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);">CH₃COOH vs NaOH</div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Step 2: Select Study Mode -->
+    <div style="margin-bottom:20px;">
+      <label style="font-size:0.82rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.04em;">
+        2. Select Practice Mode
+      </label>
+
+      <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;">
+        <label style="background:var(--card-bg-hover);border:1.5px solid var(--cyan-accent);border-radius:12px;padding:12px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;">
+          <input type="radio" name="volMode" value="guided" checked style="accent-color:var(--cyan-accent);">
+          <div style="font-size:1.2rem;margin-top:2px;">🧭</div>
+          <div style="font-weight:800;font-size:0.8rem;color:var(--heading-color);">Guided</div>
+          <div style="font-size:0.68rem;color:var(--text-muted);">Step-by-Step</div>
+        </label>
+
+        <label style="background:var(--card-bg-hover);border:1.5px solid var(--card-border);border-radius:12px;padding:12px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;">
+          <input type="radio" name="volMode" value="selfPaced" style="accent-color:var(--cyan-accent);">
+          <div style="font-size:1.2rem;margin-top:2px;">⏱️</div>
+          <div style="font-weight:800;font-size:0.8rem;color:var(--heading-color);">Self-Paced</div>
+          <div style="font-size:0.68rem;color:var(--text-muted);">Unassisted Lab</div>
+        </label>
+
+        <label style="background:var(--card-bg-hover);border:1.5px solid var(--card-border);border-radius:12px;padding:12px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;">
+          <input type="radio" name="volMode" value="exam" style="accent-color:var(--cyan-accent);">
+          <div style="font-size:1.2rem;margin-top:2px;">🎯</div>
+          <div style="font-weight:800;font-size:0.8rem;color:var(--heading-color);">15-Min Exam</div>
+          <div style="font-size:0.68rem;color:var(--text-muted);">Timed 15 Marks</div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div style="display:flex;align-items:center;justify-content:flex-end;gap:12px;">
+      <button class="btn" type="button" onclick="document.getElementById('volumetricSelectModal').style.display='none';" style="padding:8px 18px;font-size:0.82rem;cursor:pointer;">Cancel</button>
+      <button class="btn btn-primary" type="button" onclick="var t=(document.querySelector('input[name=\'volType\']:checked')||{}).value||'acidBase'; var m=(document.querySelector('input[name=\'volMode\']:checked')||{}).value||'guided'; window.location.href='lab.html?type='+encodeURIComponent(t)+'&studyMode='+encodeURIComponent(m);" style="padding:10px 24px;font-size:0.88rem;font-weight:800;border-radius:100px;cursor:pointer;">Launch Bench →</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     COMPREHENSIVE ACCOUNT SETTINGS & PROFILE MODAL
+══════════════════════════════════════ -->
+<div id="profileSettingsModal" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:25000; align-items:center; justify-content:center; backdrop-filter:blur(12px); padding:20px;">
+  <div style="background:var(--card-bg); border:1.5px solid var(--cyan-accent); border-radius:24px; max-width:640px; width:100%; max-height:90vh; overflow-y:auto; padding:28px; box-shadow:0 24px 60px rgba(0,0,0,0.5); position:relative; color:var(--text-main);">
+    
+    <!-- Modal Header with Avatar & Identity -->
+    <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:16px; margin-bottom:20px;">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <div style="width:58px; height:58px; border-radius:50%; background:linear-gradient(135deg, #0284C7 0%, #2563EB 100%); border:2.5px solid var(--cyan-accent); display:flex; align-items:center; justify-content:center; font-size:1.75rem; color:#FFF; box-shadow:0 0 20px rgba(2,132,199,0.35);">
+          👤
+        </div>
+        <div>
+          <div style="font-weight:900; font-size:1.25rem; color:var(--heading-color); font-family:var(--font-heading);" id="profHeaderName">Student Profile</div>
+          <div style="font-size:0.8rem; color:var(--cyan-accent); font-weight:700; display:flex; align-items:center; gap:8px; margin-top:2px;">
+            <span class="mwalimu-chip" style="font-size:0.68rem; padding:3px 10px; border-radius:100px; background:rgba(2,132,199,0.15); border:1px solid var(--cyan-accent);" id="profHeaderRole">🎓 Student Candidate</span>
+            <span id="profHeaderEmail" style="color:var(--text-muted);">student@virtulab.ke</span>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn" onclick="closeProfileModal()" style="padding:6px 14px; font-size:0.85rem; border-radius:100px; cursor:pointer;" title="Close settings">✕</button>
+    </div>
+
+    <!-- Vibrant Glassmorphic Stat Cards -->
+    <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-bottom:24px;">
+      <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-top:3.5px solid var(--cyan-accent); border-radius:16px; padding:12px 10px; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+        <div style="font-size:0.65rem; font-weight:900; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em;">🧪 SESSIONS</div>
+        <div style="font-weight:900; font-size:1.2rem; color:var(--cyan-accent); margin-top:4px;" id="profStatSessions">⏳ --</div>
+      </div>
+
+      <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-top:3.5px solid var(--green-accent); border-radius:16px; padding:12px 10px; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+        <div style="font-size:0.65rem; font-weight:900; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em;">🎯 ACCURACY</div>
+        <div style="font-weight:900; font-size:1.2rem; color:var(--green-accent); margin-top:4px;" id="profStatAccuracy">⏳ --%</div>
+      </div>
+
+      <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-top:3.5px solid var(--amber-accent); border-radius:16px; padding:12px 10px; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+        <div style="font-size:0.65rem; font-weight:900; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em;">🔥 STREAK</div>
+        <div style="font-weight:900; font-size:1.2rem; color:var(--amber-accent); margin-top:4px;" id="profStatStreak">1 Day</div>
+      </div>
+
+      <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-top:3.5px solid var(--violet-accent); border-radius:16px; padding:12px 10px; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+        <div style="font-size:0.65rem; font-weight:900; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em;">🎖️ BADGES</div>
+        <div style="font-weight:900; font-size:1.2rem; color:var(--violet-accent); margin-top:4px;" id="profStatBadges">⏳ -- / 6</div>
+      </div>
+    </div>
+
+    <!-- Navigation Chips Tabs -->
+    <div style="display:flex; gap:8px; border-bottom:1px solid var(--card-border); padding-bottom:12px; margin-bottom:20px;">
+      <button type="button" class="theme-btn-chip active" id="tabProfDetails" onclick="switchProfTab('details')" style="flex:1; padding:10px 14px; font-weight:800; border-radius:12px;">👤 Personal Details</button>
+      <button type="button" class="theme-btn-chip" id="tabProfSecurity" onclick="switchProfTab('security')" style="flex:1; padding:10px 14px; font-weight:800; border-radius:12px;">🔒 Security & Password</button>
+      <button type="button" class="theme-btn-chip" id="tabProfPrefs" onclick="switchProfTab('prefs')" style="flex:1; padding:10px 14px; font-weight:800; border-radius:12px;">⚙️ App Preferences</button>
+    </div>
+
+    <!-- Tab 1: Personal Details -->
+    <div id="profPaneDetails">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
+        <div>
+          <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Full Name</label>
+          <input type="text" id="profInputName" placeholder="e.g. John Kamau" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
+        </div>
+        <div>
+          <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Email Address</label>
+          <input type="email" id="profInputEmail" readonly placeholder="e.g. student@virtulab.ke" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--card-bg-hover); color:var(--text-muted); font-weight:700; cursor:not-allowed;">
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:22px;">
+        <div>
+          <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Form / Grade Level</label>
+          <select id="profInputForm" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
+            <option value="Form 1">Form 1 Secondary (KCSE 2029)</option>
+            <option value="Form 2">Form 2 Secondary (KCSE 2028)</option>
+            <option value="Form 3">Form 3 Secondary (KCSE 2027)</option>
+            <option value="Form 4" selected>Form 4 KCSE Candidate (Class of 2026)</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">School / Teacher Code</label>
+          <input type="text" id="profInputSchool" placeholder="e.g. KCS-MANGU-8421 (Optional)" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-primary" onclick="saveProfileDetails()" style="padding:12px 24px; font-weight:800; border-radius:100px; width:100%; font-size:0.92rem;">Save Profile Details ✓</button>
+      <div id="profDetailsMsg" style="margin-top:12px; text-align:center;"></div>
+    </div>
+
+    <!-- Tab 2: Security & Password -->
+    <div id="profPaneSecurity" style="display:none;">
+      <div style="margin-bottom:16px;">
+        <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Current Password</label>
+        <input type="password" id="pwCurrent" placeholder="Enter current security password" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
+      </div>
+      <div style="margin-bottom:16px;">
+        <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">New Password</label>
+        <input type="password" id="pwNew" placeholder="Enter new password (min 6 characters)" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
+      </div>
+      <div style="margin-bottom:20px;">
+        <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Confirm New Password</label>
+        <input type="password" id="pwConfirm" placeholder="Re-type new password to confirm" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
+      </div>
+
+      <button type="button" class="btn btn-primary" onclick="submitChangePassword()" style="padding:12px 24px; font-weight:800; border-radius:100px; width:100%; font-size:0.92rem;">Update Security Password 🔐</button>
+      <div id="pwMsg" style="margin-top:12px; text-align:center;"></div>
+    </div>
+
+    <!-- Tab 3: Preferences & Actions -->
+    <div id="profPanePrefs" style="display:none;">
+      <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:14px; margin-bottom:16px;">
+        <div>
+          <div style="font-size:0.88rem; font-weight:800; color:var(--heading-color);">Sound Effects & Acoustics</div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">Play realistic lab acoustic feedback during titrations and reactions</div>
+        </div>
+        <button type="button" class="btn" id="profSoundToggleBtn" onclick="toggleSound()" style="padding:8px 16px; font-size:0.82rem; font-weight:700; border-radius:100px;">🔊 Sound ON</button>
+      </div>
+
+      <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:14px; margin-bottom:24px;">
+        <div>
+          <div style="font-size:0.88rem; font-weight:800; color:var(--heading-color);">Export Lab History</div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">Download a complete CSV copy of all recorded practical trials</div>
+        </div>
+        <button type="button" class="btn" onclick="exportLabHistoryCSV()" style="padding:8px 16px; font-size:0.82rem; font-weight:700; border-radius:100px;">📥 Export CSV</button>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end;">
+        <button type="button" class="btn" onclick="Auth.logout()" style="background:rgba(239, 68, 68, 0.15); color:var(--red-accent); border:1px solid var(--red-accent); padding:12px 24px; border-radius:100px; font-weight:800; width:100%; font-size:0.92rem;">🚪 Log Out of VirtuLab</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="../shared/api.js"></script>
+<script src="../shared/chemical-safety.js"></script>
+<script src="../shared/i18n.js"></script>
+<script src="../shared/notifications-engine.js"></script>
+<script src="js/student-dashboard.js"></script>
+<script>
+  window.openVolumetricModal = function() {
+    var modal = document.getElementById('volumetricSelectModal');
+    if (modal) {
+      modal.style.display = 'flex';
+    } else {
+      window.location.href = 'lab.html?studyMode=guided';
+    }
+  };
+
+  window.closeVolumetricModal = function() {
+    var modal = document.getElementById('volumetricSelectModal');
+    if (modal) modal.style.display = 'none';
+  };
+
+  window.launchVolumetricExperiment = function() {
+    var typeEl = document.querySelector('input[name="volType"]:checked');
+    var modeEl = document.querySelector('input[name="volMode"]:checked');
+    var type = typeEl ? typeEl.value : 'acidBase';
+    var mode = modeEl ? modeEl.value : 'guided';
+
+    window.location.href = 'lab.html?type=' + encodeURIComponent(type) + '&studyMode=' + encodeURIComponent(mode);
+  };
+
+  function closeExperimentPreview() {
+    var modal = document.getElementById('experimentPreviewModal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  function switchMobileTab(tabName, evt) {
+    document.querySelectorAll('.bottom-tab-item').forEach(function(btn) { btn.classList.remove('active'); });
+    if (evt && evt.currentTarget) {
+      evt.currentTarget.classList.add('active');
+    }
+    
+    if (tabName === 'lab') {
+      window.openVolumetricModal();
+    } else if (tabName === 'assignments') {
+      var el = document.getElementById('assignmentsList');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    } else if (tabName === 'grades') {
+      window.location.href = 'history.html';
+    } else if (tabName === 'profile') {
+      if (typeof togglePasswordPanel === 'function') togglePasswordPanel();
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+</script>
+<script src="../shared/pwa-installer.js"></script>
+</body>
+</html>

@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Grades & Performance Analytics — VirtuLab Kenya</title>
+<script>
+  var t = localStorage.getItem('vlk_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+</script>
+<meta name="theme-color" content="#0A121D">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="stylesheet" href="css/dashboard.css">
+<style>
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 20px 16px 90px; }
+  .history-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+  
+  .history-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 12px;
+  }
+  .tab-btn {
+    padding: 8px 20px;
+    border-radius: 100px;
+    font-size: 0.84rem;
+    font-weight: 700;
+    border: 1px solid var(--card-border);
+    background: var(--card-bg);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .tab-btn.active {
+    background: linear-gradient(135deg, var(--blue-accent), #0284C7);
+    color: #FFF;
+    border-color: var(--blue-accent);
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  }
+
+  .filters { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; align-items: center; }
+  .filters select { padding: 10px 14px; border: 1.5px solid var(--card-border); border-radius: 12px; font-size: 0.85rem; background: var(--card-bg); color: var(--text-main); outline: none; }
+
+  .session-list-wrapper {
+    background: var(--card-bg);
+    backdrop-filter: blur(16px);
+    border: 1.5px solid var(--card-border);
+    border-radius: 20px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 380px; /* Limits maximum vertical height */
+    box-shadow: var(--shadow-sm);
+  }
+  .session-list-wrapper::-webkit-scrollbar {
+    width: 6px;
+  }
+  .session-list-wrapper::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .session-list-wrapper::-webkit-scrollbar-thumb {
+    background: var(--card-border);
+    border-radius: 10px;
+  }
+  .session-list-wrapper::-webkit-scrollbar-thumb:hover {
+    background: var(--blue-accent);
+  }
+  .session-row {
+    padding: 10px 16px;
+    border-bottom: 1.5px solid var(--card-border);
+    font-size: 0.82rem;
+    transition: background-color 0.15s ease;
+    margin-bottom: 0;
+  }
+  .session-row:last-child {
+    border-bottom: none;
+  }
+  .session-row:hover {
+    background: var(--card-bg-hover);
+  }
+  .session-row-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .session-row .s-title { font-weight: 700; font-size: 0.88rem; color: var(--heading-color); }
+  .session-row .s-meta { font-size: 0.74rem; color: var(--text-muted); margin-top: 3px; }
+  
+  .result-pill { font-size: 0.72rem; font-weight: 800; padding: 3px 12px; border-radius: 100px; white-space: nowrap; }
+  .result-correct { background: var(--green-bg); color: var(--green-accent); border: 1px solid var(--green-accent); }
+  .result-incorrect { background: var(--red-bg); color: var(--red-accent); border: 1px solid var(--red-accent); }
+
+  .qual-detail-box {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--card-border);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    font-size: 0.82rem;
+  }
+  @media (max-width: 600px) { .qual-detail-box { grid-template-columns: 1fr; } }
+
+  .obs-toggle-btn {
+    background: none;
+    border: none;
+    color: var(--cyan-accent);
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0;
+    margin-top: 8px;
+    text-decoration: underline;
+  }
+
+  .obs-log-list {
+    margin-top: 8px;
+    background: var(--card-bg-hover);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 0.78rem;
+    line-height: 1.5;
+  }
+
+  .empty { color: var(--text-muted); font-size: 0.88rem; padding: 32px; text-align: center; background: var(--card-bg); border: 1px dashed var(--card-border); border-radius: 16px; }
+  
+  /* 2-Column Analytics Grid Layout */
+  .analytics-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 330px;
+    gap: 24px;
+    align-items: start;
+  }
+  @media (max-width: 1023px) {
+    .analytics-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Topbar Navigation Bar -->
+<nav class="top-navbar">
+  <a href="home.html" class="nav-brand" aria-label="VirtuLab Kenya Student Home">
+    <span class="nav-logo-icon"></span>
+    <div style="display:flex; flex-direction:column;">
+      <span style="font-weight:800; line-height:1.1; font-family:'Outfit', sans-serif;">VirtuLab Kenya</span>
+      <span class="brand-subtagline" style="font-size:0.68rem; font-weight:700; color:var(--cyan-accent); letter-spacing:0.02em;">Every student deserves a laboratory</span>
+    </div>
+  </a>
+
+  <!-- Central Welcome Header (Desktop Only) -->
+  <div class="navbar-welcome-message" style="font-family:'Outfit', sans-serif; display:flex; flex-direction:column; align-items:center; gap:2px;">
+    <div style="font-size:0.92rem; font-weight:800; color:var(--heading-color);">
+      Welcome back, <span id="studentName">Test Student</span>!
+    </div>
+    <div style="display:flex; align-items:center; gap:6px; font-size:0.7rem; font-weight:600; margin-top:2px;">
+      <span style="color:#F59E0B; background:rgba(245, 158, 11, 0.1); padding:2px 8px; border-radius:100px; border:1px solid rgba(245, 158, 11, 0.2); display:inline-flex; align-items:center; gap:3px;">
+        🔥 <span id="streakCount">1</span>-Day Streak
+      </span>
+      <span style="color:var(--text-muted);" id="todayDate">Today: Aug 7, 2028</span>
+    </div>
+  </div>
+
+  <div class="nav-actions">
+    <!-- Language Switcher Controls -->
+    <div class="theme-toggle-group" title="Switch language / Lugha" aria-label="Language selector">
+      <button class="theme-btn-chip lang-btn-chip active" data-lang="en" onclick="setLanguage('en')" aria-label="Switch to English">🇬🇧 EN</button>
+      <button class="theme-btn-chip lang-btn-chip" data-lang="sw" onclick="setLanguage('sw')" aria-label="Badilisha kwenda Swahili">🇰🇪 SW</button>
+    </div>
+
+    <!-- Theme Switcher Controls -->
+    <div class="theme-toggle-group" title="Switch appearance theme" aria-label="Theme selector">
+      <button class="theme-btn-chip" data-theme="dark" onclick="setTheme('dark')" aria-label="Dark mode">🌙 Dark</button>
+      <button class="theme-btn-chip" data-theme="light" onclick="setTheme('light')" aria-label="Light mode">☀️ Light</button>
+      <button class="theme-btn-chip" data-theme="green" onclick="setTheme('green')" aria-label="Lab mode">🧪 Lab</button>
+    </div>
+
+    <div style="position:relative;">
+      <button class="nav-icon-btn" id="notifBellBtn" onclick="toggleNotifDropdown(event)" title="Notifications" aria-label="Notifications Drawer" style="position:relative;background:var(--card-bg);border:1px solid var(--card-border);color:var(--text-main);padding:6px 12px;border-radius:100px;cursor:pointer;display:flex;align-items:center;gap:6px;">
+        <span style="font-size:0.95rem;">🔔</span>
+        <span id="notifBadge" style="display:none;background:#EF4444;color:#FFF;font-size:0.7rem;font-weight:800;padding:2px 7px;border-radius:100px;line-height:1;">0</span>
+      </button>
+
+      <!-- Notification Dropdown Drawer -->
+      <div id="notifDropdown" style="display:none;position:absolute;right:0;top:42px;width:320px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;box-shadow:var(--shadow-lg);z-index:10000;padding:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--card-border);padding-bottom:8px;margin-bottom:8px;">
+          <span style="font-weight:800;font-size:0.85rem;color:var(--heading-color);">Notifications</span>
+          <button style="font-size:0.72rem;color:var(--cyan-accent);background:none;border:none;cursor:pointer;" onclick="markAllNotificationsRead()">Mark all read</button>
+        </div>
+        <div id="notifList" style="max-height:260px;overflow-y:auto;">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Avatar Dropdown Trigger Button -->
+    <button class="user-avatar-btn" onclick="togglePasswordPanel()" title="Update Password / Logout" aria-label="User Account Settings" style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(16, 185, 129, 0.2));border:1.5px solid var(--card-border);color:var(--heading-color);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.2s ease;">
+      <svg style="width:16px;height:16px;fill:currentColor;" viewBox="0 0 24 24">
+        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+      </svg>
+    </button>
+  </div>
+</nav>
+
+<div class="wrap">
+  <!-- Header Bar -->
+  <div class="history-header">
+    <div>
+      <h1 style="font-size:1.7rem;font-weight:800;color:var(--heading-color);margin:0 0 4px 0;letter-spacing:-0.02em;">📊 Grades & Performance Analytics</h1>
+      <div style="font-size:0.82rem;color:var(--text-muted);">Track your KCSE Paper 3 readiness, exam scores, and detailed practical attempt history</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <a href="home.html" class="btn btn-primary" style="padding:8px 18px;border-radius:100px;font-size:0.82rem;text-decoration:none;">← Home Dashboard</a>
+    </div>
+  </div>
+
+  <!-- FEATURE 1: KCSE Paper 3 Exam Readiness Widget -->
+  <section class="readiness-card">
+    <div class="readiness-header">
+      <div>
+        <div class="readiness-title">🎯 KCSE Paper 3 Readiness Score</div>
+        <div class="readiness-sub">Calculated from lab accuracy, concordant titres, and syllabus coverage.</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <a href="certificate.html" id="certClaimBtn" class="btn btn-primary" style="font-size:0.75rem;padding:5px 12px;border-radius:100px;text-decoration:none;display:none;">📜 Claim Certificate</a>
+        <div class="readiness-score-badge">
+          <span class="score-num" id="readinessScoreNum">0%</span>
+          <span class="score-status" id="readinessStatus">Novice</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="readiness-progress-bar-wrap">
+      <div class="readiness-progress-bar-fill" id="readinessBarFill" style="width: 0%;"></div>
+    </div>
+
+    <div class="readiness-topics-grid">
+      <div class="topic-item" data-topic="acidBase">
+        <div class="topic-icon">🧪</div>
+        <div>
+          <div class="topic-name">Acid–Base</div>
+          <div class="topic-status" id="topicStatus-acidBase">Not started</div>
+        </div>
+      </div>
+
+      <div class="topic-item" data-topic="redox">
+        <div class="topic-icon">⚗️</div>
+        <div>
+          <div class="topic-name">Redox</div>
+          <div class="topic-status" id="topicStatus-redox">Not started</div>
+        </div>
+      </div>
+
+      <div class="topic-item" data-topic="precipitation">
+        <div class="topic-icon">💧</div>
+        <div>
+          <div class="topic-name">Precipitation</div>
+          <div class="topic-status" id="topicStatus-precipitation">Not started</div>
+        </div>
+      </div>
+
+      <div class="topic-item" data-topic="complexometric">
+        <div class="topic-icon">🧬</div>
+        <div>
+          <div class="topic-name">Complexometric</div>
+          <div class="topic-status" id="topicStatus-complexometric">Not started</div>
+        </div>
+      </div>
+
+      <div class="topic-item" data-topic="qualitative">
+        <div class="topic-icon">🧫</div>
+        <div>
+          <div class="topic-name">Qualitative</div>
+          <div class="topic-status" id="topicStatus-qualitative">Not started</div>
+        </div>
+      </div>
+
+      <div class="topic-item" data-topic="organic">
+        <div class="topic-icon">⚗️</div>
+        <div>
+          <div class="topic-name">Organic</div>
+          <div class="topic-status" id="topicStatus-organic">Not started</div>
+        </div>
+      </div>
+
+      <div class="topic-item" data-topic="solubility">
+        <div class="topic-icon">🌡️</div>
+        <div>
+          <div class="topic-name">Solubility</div>
+          <div class="topic-status" id="topicStatus-solubility">Not started</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURE 2: Personal Performance Analytics Charts & Achievements -->
+  <div class="analytics-grid" style="margin-bottom:28px;">
+    <div>
+      <section class="student-charts-section" style="margin-bottom:0;">
+        <h2 class="section-heading" style="font-size:1.05rem; margin-bottom:12px;">📈 Performance Analytics</h2>
+        <div class="student-charts-row">
+          <div class="student-chart-card">
+            <h3 style="font-size:0.88rem;font-weight:700;color:var(--heading-color);margin:0 0 10px 0;">30-Day Accuracy Trend</h3>
+            <div style="height: 180px; width: 100%; position: relative;">
+              <canvas id="studentTrendChart"></canvas>
+            </div>
+          </div>
+          <div class="student-chart-card">
+            <h3 style="font-size:0.88rem;font-weight:700;color:var(--heading-color);margin:0 0 10px 0;">By Practical Type</h3>
+            <div style="height: 180px; width: 100%; position: relative;">
+              <canvas id="studentTypeChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="leaderboard-column">
+      <!-- My Achievements Widget -->
+      <div class="widget-card">
+        <div class="widget-title">My Achievements</div>
+        
+        <div class="stat-row-item">
+          <div class="stat-icon-circle green">✓</div>
+          <div>
+            <div class="stat-text-label">Completed Labs</div>
+            <div class="stat-text-val">12 / 15</div>
+          </div>
+        </div>
+
+        <div class="stat-row-item">
+          <div class="stat-icon-circle purple">🏅</div>
+          <div>
+            <div class="stat-text-label">Badges Earned</div>
+            <div class="stat-text-val">5 Badges</div>
+          </div>
+        </div>
+
+        <div class="stat-row-item">
+          <div class="stat-icon-circle blue">🧬</div>
+          <div>
+            <div class="stat-text-label">Top Skill</div>
+            <div class="stat-text-val">Molecular Biology</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leaderboard Card -->
+      <div class="leaderboard-glass-card">
+        <h2 class="section-heading" style="font-size:1rem; margin-bottom:12px;">Leaderboard</h2>
+        <div id="leaderboardBox">
+          <div class="empty-box">Loading leaderboard...</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- FEATURE 3: Detailed Session Attempt History Logs -->
+  <h2 class="section-heading" style="font-size:1.15rem; margin-bottom:14px;">📜 Detailed Attempt Logs</h2>
+  
+  <!-- Navigation Tabs -->
+  <div class="history-tabs">
+    <button class="tab-btn active" id="tabTitration" onclick="switchTab('titration')">🧪 Titration</button>
+    <button class="tab-btn" id="tabQualitative" onclick="switchTab('qualitative')">🧫 Qualitative Salt</button>
+    <button class="tab-btn" id="tabOrganic" onclick="switchTab('organic')">⚗️ Organic Chemistry</button>
+    <button class="tab-btn" id="tabSolubility" onclick="switchTab('solubility')">🌡️ Solubility Curves</button>
+  </div>
+
+  <div class="filters" id="titrationFilters">
+    <select id="filterType" onchange="applyFilter()">
+      <option value="">All practicals</option>
+      <option value="acidBase">Acid-Base Titration</option>
+      <option value="redox">Redox Titration</option>
+      <option value="precipitation">Precipitation Titration</option>
+      <option value="complexometric">Complexometric Titration</option>
+    </select>
+  </div>
+
+  <div id="sessionsBox" class="session-list-wrapper"><div class="empty" style="border:none; background:transparent;">Loading sessions…</div></div>
+  <div id="paginationBox" style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:16px;"></div>
+</div>
+
+<!-- Mobile & Tablet Bottom Navigation Dock Bar -->
+<nav class="mobile-bottom-nav">
+  <button class="bottom-tab-item" onclick="window.location.href='home.html'">
+    <span class="bottom-tab-icon">🏠</span>
+    <span>Home</span>
+  </button>
+  <button class="bottom-tab-item" onclick="window.location.href='home.html#assignmentsList'">
+    <span class="bottom-tab-icon">📋</span>
+    <span>Assignments</span>
+  </button>
+  <button class="bottom-tab-item" onclick="window.location.href='lab.html?studyMode=guided'">
+    <span class="bottom-tab-icon">🧪</span>
+    <span>Lab</span>
+  </button>
+  <button class="bottom-tab-item active" onclick="window.location.href='history.html'">
+    <span class="bottom-tab-icon">📊</span>
+    <span>Grades</span>
+  </button>
+  <button class="bottom-tab-item" onclick="window.location.href='home.html?profile=true'">
+    <span class="bottom-tab-icon">👤</span>
+    <span>Profile</span>
+  </button>
+</nav>
+
+<!-- ══════════════════════════════════════
+     COMPREHENSIVE ACCOUNT SETTINGS & PROFILE MODAL
+══════════════════════════════════════ -->
+<div id="profileSettingsModal" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:25000; align-items:center; justify-content:center; backdrop-filter:blur(12px); padding:20px;">
+  <div style="background:var(--card-bg); border:1.5px solid var(--cyan-accent); border-radius:24px; max-width:640px; width:100%; max-height:90vh; overflow-y:auto; padding:28px; box-shadow:0 24px 60px rgba(0,0,0,0.5); position:relative; color:var(--text-main);">
+    
+    <!-- Modal Header with Avatar & Identity -->
+    <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:16px; margin-bottom:20px;">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <div style="width:58px; height:58px; border-radius:50%; background:linear-gradient(135deg, #0284C7 0%, #2563EB 100%); border:2.5px solid var(--cyan-accent); display:flex; align-items:center; justify-content:center; font-size:1.75rem; color:#FFF; box-shadow:0 0 20px rgba(2,132,199,0.35);">
+          👤
+        </div>
+        <div>
+          <div style="font-weight:900; font-size:1.25rem; color:var(--heading-color); font-family:var(--font-heading);" id="profHeaderName">Student Profile</div>
+          <div style="font-size:0.8rem; color:var(--cyan-accent); font-weight:700; display:flex; align-items:center; gap:8px; margin-top:2px;">
+            <span class="mwalimu-chip" style="font-size:0.68rem; padding:3px 10px; border-radius:100px; background:rgba(2,132,199,0.15); border:1px solid var(--cyan-accent);" id="profHeaderRole">🎓 Student Candidate</span>
+            <span id="profHeaderEmail" style="color:var(--text-muted);">student@virtulab.ke</span>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn" onclick="closeProfileModal()" style="padding:6px 14px; font-size:0.85rem; border-radius:100px; cursor:pointer;" title="Close settings">✕</button>
+    </div>
+
+    <!-- Vibrant Glassmorphic Stat Cards -->
+    <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-bottom:24px;">
+      <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-top:3.5px solid var(--cyan-accent); border-radius:16px; padding:12px 10px; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+        <div style="font-size:0.65rem; font-weight:900; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em;">🧪 SESSIONS</div>
+        <div style="font-weight:900; font-size:1.2rem; color:var(--cyan-accent); margin-top:4px;" id="profStatSessions">⏳ --</div>
+      </div>
+
+      <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-top:3.5px solid var(--green-accent); border-radius:16px; padding:12px 10px; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+        <div style="font-size:0.65rem; font-weight:900; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em;">🎯 ACCURACY</div>
+        <div style="font-weight:900; font-size:1.2rem; color:var(--green-accent); margin-top:4px;" id="profStatAccuracy">⏳ --%</div>
+      </div>
+
+      <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-top:3.5px solid var(--amber-accent); border-radius:16px; padding:12px 10px; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+        <div style="font-size:0.65rem; font-weight:900; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em;">🔥 STREAK</div>
+        <div style="font-weight:900; font-size:1.2rem; color:var(--amber-accent); margin-top:4px;" id="profStatStreak">1 Day</div>
+      </div>
+
+      <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-top:3.5px solid var(--violet-accent); border-radius:16px; padding:12px 10px; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+        <div style="font-size:0.65rem; font-weight:900; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em;">🎖️ BADGES</div>
+        <div style="font-weight:900; font-size:1.2rem; color:var(--violet-accent); margin-top:4px;" id="profStatBadges">⏳ -- / 6</div>
+      </div>
+    </div>
+
+    <!-- Navigation Chips Tabs -->
+    <div style="display:flex; gap:8px; border-bottom:1px solid var(--card-border); padding-bottom:12px; margin-bottom:20px;">
+      <button type="button" class="theme-btn-chip active" id="tabProfDetails" onclick="switchProfTab('details')" style="flex:1; padding:10px 14px; font-weight:800; border-radius:12px;">👤 Personal Details</button>
+      <button type="button" class="theme-btn-chip" id="tabProfSecurity" onclick="switchProfTab('security')" style="flex:1; padding:10px 14px; font-weight:800; border-radius:12px;">🔒 Security & Password</button>
+      <button type="button" class="theme-btn-chip" id="tabProfPrefs" onclick="switchProfTab('prefs')" style="flex:1; padding:10px 14px; font-weight:800; border-radius:12px;">⚙️ App Preferences</button>
+    </div>
+
+    <!-- Tab 1: Personal Details -->
+    <div id="profPaneDetails">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
+        <div>
+          <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Full Name</label>
+          <input type="text" id="profInputName" placeholder="e.g. John Kamau" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
+        </div>
+        <div>
+          <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Email Address</label>
+          <input type="email" id="profInputEmail" readonly placeholder="e.g. student@virtulab.ke" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--card-bg-hover); color:var(--text-muted); font-weight:700; cursor:not-allowed;">
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:22px;">
+        <div>
+          <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Form / Grade Level</label>
+          <select id="profInputForm" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
+            <option value="Form 1">Form 1 Secondary (KCSE 2029)</option>
+            <option value="Form 2">Form 2 Secondary (KCSE 2028)</option>
+            <option value="Form 3">Form 3 Secondary (KCSE 2027)</option>
+            <option value="Form 4" selected>Form 4 KCSE Candidate (Class of 2026)</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">School / Teacher Code</label>
+          <input type="text" id="profInputSchool" placeholder="e.g. KCS-MANGU-8421 (Optional)" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-primary" onclick="saveProfileDetails()" style="padding:12px 24px; font-weight:800; border-radius:100px; width:100%; font-size:0.92rem;">Save Profile Details ✓</button>
+      <div id="profDetailsMsg" style="margin-top:12px; text-align:center;"></div>
+    </div>
+
+    <!-- Tab 2: Security & Password -->
+    <div id="profPaneSecurity" style="display:none;">
+      <div style="margin-bottom:16px;">
+        <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Current Password</label>
+        <input type="password" id="pwCurrent" placeholder="Enter current security password" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
+      </div>
+      <div style="margin-bottom:16px;">
+        <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">New Password</label>
+        <input type="password" id="pwNew" placeholder="Enter new password (min 6 characters)" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
+      </div>
+      <div style="margin-bottom:20px;">
+        <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Confirm New Password</label>
+        <input type="password" id="pwConfirm" placeholder="Re-type new password to confirm" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
+      </div>
+
+      <button type="button" class="btn btn-primary" onclick="submitChangePassword()" style="padding:12px 24px; font-weight:800; border-radius:100px; width:100%; font-size:0.92rem;">Update Security Password 🔐</button>
+      <div id="pwMsg" style="margin-top:12px; text-align:center;"></div>
+    </div>
+
+    <!-- Tab 3: Preferences & Actions -->
+    <div id="profPanePrefs" style="display:none;">
+      <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:14px; margin-bottom:16px;">
+        <div>
+          <div style="font-size:0.88rem; font-weight:800; color:var(--heading-color);">Sound Effects & Acoustics</div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">Play realistic lab acoustic feedback during titrations and reactions</div>
+        </div>
+        <button type="button" class="btn" id="profSoundToggleBtn" onclick="toggleSound()" style="padding:8px 16px; font-size:0.82rem; font-weight:700; border-radius:100px;">🔊 Sound ON</button>
+      </div>
+
+      <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:14px; margin-bottom:24px;">
+        <div>
+          <div style="font-size:0.88rem; font-weight:800; color:var(--heading-color);">Export Lab History</div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">Download a complete CSV copy of all recorded practical trials</div>
+        </div>
+        <button type="button" class="btn" onclick="exportLabHistoryCSV()" style="padding:8px 16px; font-size:0.82rem; font-weight:700; border-radius:100px;">📥 Export CSV</button>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end;">
+        <button type="button" class="btn" onclick="Auth.logout()" style="background:rgba(239, 68, 68, 0.15); color:var(--red-accent); border:1px solid var(--red-accent); padding:12px 24px; border-radius:100px; font-weight:800; width:100%; font-size:0.92rem;">🚪 Log Out of VirtuLab</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="../shared/api.js"></script>
+<script src="../shared/notifications-engine.js"></script>
+<script src="js/student-dashboard.js"></script>
+<script>
+  requireStudentLogin();
+  if (typeof updateProfileStatsUI === 'function') updateProfileStatsUI();
+
+  let activeTab = 'titration';
+  let currentPage = 1;
+
+  function switchTab(tab) {
+    activeTab = tab;
+    currentPage = 1;
+    document.getElementById('tabTitration').classList.toggle('active', tab === 'titration');
+    document.getElementById('tabQualitative').classList.toggle('active', tab === 'qualitative');
+    document.getElementById('tabOrganic').classList.toggle('active', tab === 'organic');
+    document.getElementById('tabSolubility').classList.toggle('active', tab === 'solubility');
+    document.getElementById('titrationFilters').style.display = tab === 'titration' ? 'flex' : 'none';
+
+    if (tab === 'titration') loadTitrationSessions();
+    else if (tab === 'qualitative') loadQualitativeSessions();
+    else if (tab === 'organic') loadOrganicSessions();
+    else if (tab === 'solubility') loadSolubilitySessions();
+  }
+
+  function applyFilter() {
+    currentPage = 1;
+    loadTitrationSessions();
+  }
+
+  function goToPage(page) {
+    currentPage = page;
+    if (activeTab === 'titration') loadTitrationSessions();
+    else if (activeTab === 'qualitative') loadQualitativeSessions();
+    else if (activeTab === 'organic') loadOrganicSessions();
+    else if (activeTab === 'solubility') loadSolubilitySessions();
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str == null ? '' : String(str);
+    return div.innerHTML;
+  }
+
+  async function loadTitrationSessions() {
+    const box = document.getElementById('sessionsBox');
+    const pagBox = document.getElementById('paginationBox');
+    box.innerHTML = '<div class="empty">Loading titration sessions…</div>';
+    pagBox.innerHTML = '';
+
+    try {
+      const type = document.getElementById('filterType').value;
+      const data = await Sessions.getMine({ type, page: currentPage, limit: 10 });
+      const sessions = data.sessions || [];
+      const pagination = data.pagination || { page: 1, totalPages: 1, totalCount: sessions.length, limit: 10 };
+
+      if (sessions.length === 0) {
+        box.innerHTML = '<div class="empty">No titration sessions recorded yet.</div>';
+        return;
+      }
+
+      box.innerHTML = sessions.map(s => `
+        <div class="session-row">
+          <div class="session-row-header">
+            <div>
+              <div class="s-title">${escapeHtml(s.titration_title || s.titration_type)}</div>
+              <div class="s-meta">${new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · ${s.trials_count ?? 0} trial(s) · ${s.concordant_found ? 'Concordant' : 'Not concordant'} · ${escapeHtml(s.mode || 'free')}</div>
+            </div>
+            <span class="result-pill ${s.correct ? 'result-correct' : 'result-incorrect'}">${s.correct ? '✓ Correct' : '✗ Incorrect'}</span>
+          </div>
+        </div>
+      `).join('');
+
+      renderPagination(pagination);
+    } catch (err) {
+      box.innerHTML = '<div class="empty">Could not load titration sessions: ' + escapeHtml(err.message) + '</div>';
+    }
+  }
+
+  async function loadQualitativeSessions() {
+    const box = document.getElementById('sessionsBox');
+    const pagBox = document.getElementById('paginationBox');
+    box.innerHTML = '<div class="empty">Loading qualitative analysis sessions…</div>';
+    pagBox.innerHTML = '';
+
+    try {
+      const data = await Qualitative.getMine({ page: currentPage, limit: 10 });
+      const sessions = data.sessions || [];
+      const pagination = data.pagination || { page: 1, totalPages: 1, totalCount: sessions.length, limit: 10 };
+
+      if (sessions.length === 0) {
+        box.innerHTML = '<div class="empty">No qualitative analysis sessions recorded yet. Start testing unknown salts in Qualitative Analysis!</div>';
+        return;
+      }
+
+      box.innerHTML = sessions.map((s, idx) => {
+        let obsList = [];
+        try {
+          if (typeof s.observations === 'string') obsList = JSON.parse(s.observations);
+          else if (Array.isArray(s.observations)) obsList = s.observations;
+        } catch (e) {}
+
+        const catBadge = s.cation_correct ? '<span style="color:var(--green-accent);">✓ Correct</span>' : '<span style="color:var(--red-accent);">✗ Incorrect</span>';
+        const aniBadge = s.anion_correct ? '<span style="color:var(--green-accent);">✓ Correct</span>' : '<span style="color:var(--red-accent);">✗ Incorrect</span>';
+
+        return `
+          <div class="session-row">
+            <div class="session-row-header">
+              <div>
+                <div class="s-title">🧫 ${escapeHtml(s.salt_name || 'Qualitative Salt Test')}</div>
+                <div class="s-meta">${new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · ${s.tests_performed || 0} reagent test(s) · ${escapeHtml(s.mode || 'selfPaced')}</div>
+              </div>
+              <span class="result-pill ${s.correct ? 'result-correct' : 'result-incorrect'}">${s.correct ? '✓ Salt Identified' : '✗ Identification Error'}</span>
+            </div>
+
+            <div class="qual-detail-box">
+              <div>
+                <b>Cation Identified:</b> ${escapeHtml(s.student_cation)} (${catBadge})<br>
+                <small style="color:var(--text-muted);">True Cation: ${escapeHtml(s.true_cation || '—')}</small>
+              </div>
+              <div>
+                <b>Anion Identified:</b> ${escapeHtml(s.student_anion)} (${aniBadge})<br>
+                <small style="color:var(--text-muted);">True Anion: ${escapeHtml(s.true_anion || '—')}</small>
+              </div>
+            </div>
+
+            ${obsList.length > 0 ? `
+              <button class="obs-toggle-btn" onclick="toggleObsLog(${idx})">📋 View Reagent Observations Log (${obsList.length})</button>
+              <div id="obsLog-${idx}" class="obs-log-list" style="display:none;">
+                ${obsList.map((o, i) => `<div><b>Test ${i+1}:</b> ${escapeHtml(typeof o === 'string' ? o : (o.test || '') + ' → ' + (o.observation || ''))}</div>`).join('')}
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+
+      renderPagination(pagination);
+    } catch (err) {
+      box.innerHTML = '<div class="empty">Could not load qualitative sessions: ' + escapeHtml(err.message) + '</div>';
+    }
+  }
+
+  async function loadOrganicSessions() {
+    const box = document.getElementById('sessionsBox');
+    const pagBox = document.getElementById('paginationBox');
+    box.innerHTML = '<div class="empty">Loading organic chemistry sessions…</div>';
+    pagBox.innerHTML = '';
+
+    try {
+      const data = await Organic.getMine();
+      const sessions = data.sessions || [];
+
+      if (sessions.length === 0) {
+        box.innerHTML = '<div class="empty">No organic chemistry practical sessions recorded yet. Start investigating functional groups in Organic Lab!</div>';
+        return;
+      }
+
+      box.innerHTML = sessions.map(s => `
+        <div class="session-row">
+          <div class="session-row-header">
+            <div>
+              <div class="s-title">⚗️ ${escapeHtml(s.compound_name || 'Organic Functional Group Test')}</div>
+              <div class="s-meta">${new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · Functional Group: ${escapeHtml(s.student_functional_group || '—')} · ${escapeHtml(s.mode || 'selfPaced')}</div>
+            </div>
+            <span class="result-pill ${s.overall_correct ? 'result-correct' : 'result-incorrect'}">${s.overall_correct ? '✓ Correct' : '✗ Identification Error'}</span>
+          </div>
+        </div>
+      `).join('');
+    } catch (err) {
+      box.innerHTML = '<div class="empty">Could not load organic sessions: ' + escapeHtml(err.message) + '</div>';
+    }
+  }
+
+  async function loadSolubilitySessions() {
+    const box = document.getElementById('sessionsBox');
+    const pagBox = document.getElementById('paginationBox');
+    box.innerHTML = '<div class="empty">Loading solubility curve sessions…</div>';
+    pagBox.innerHTML = '';
+
+    try {
+      const data = await Solubility.getMine();
+      const sessions = data.sessions || [];
+
+      if (sessions.length === 0) {
+        box.innerHTML = '<div class="empty">No solubility curve practical sessions recorded yet. Start heating and crystallizing salts in Solubility Curves!</div>';
+        return;
+      }
+
+      box.innerHTML = sessions.map(s => `
+        <div class="session-row">
+          <div class="session-row-header">
+            <div>
+              <div class="s-title">🌡️ ${escapeHtml(s.solute_name || s.experiment_title || 'Solubility Curve')}</div>
+              <div class="s-meta">${new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} · Solute: ${s.solute_mass}g in ${s.solvent_volume}cm³ H₂O · Crystallization: ${s.crystallization_temp}°C (Theor: ${s.theoretical_temp}°C)</div>
+            </div>
+            <span class="result-pill result-correct">${parseFloat(s.total_score || 0).toFixed(1)} / 5.0 Marks</span>
+          </div>
+        </div>
+      `).join('');
+    } catch (err) {
+      box.innerHTML = '<div class="empty">Could not load solubility sessions: ' + escapeHtml(err.message) + '</div>';
+    }
+  }
+
+  function toggleObsLog(idx) {
+    const el = document.getElementById('obsLog-' + idx);
+    if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+  }
+
+  function renderPagination(p) {
+    const pagBox = document.getElementById('paginationBox');
+    if (!p || p.totalPages <= 1) return;
+
+    const startItem = (p.page - 1) * p.limit + 1;
+    const endItem = Math.min(p.page * p.limit, p.totalCount);
+    pagBox.innerHTML = `
+      <button class="btn" ${p.page <= 1 ? 'disabled' : ''} onclick="goToPage(${p.page - 1})">← Prev</button>
+      <span style="font-size:0.82rem;color:var(--text-muted);">
+        Showing ${startItem}–${endItem} of ${p.totalCount} · page ${p.page} of ${p.totalPages}
+      </span>
+      <button class="btn" ${p.page >= p.totalPages ? 'disabled' : ''} onclick="goToPage(${p.page + 1})">Next →</button>
+    `;
+  }
+
+  loadTitrationSessions();
+  loadSessions();
+  loadLeaderboard();
+</script>
+</body>
+</html>

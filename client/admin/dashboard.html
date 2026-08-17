@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Portal — VirtuLab Kenya</title>
+<script>
+  var t = localStorage.getItem('vlk_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+</script>
+<meta name="theme-color" content="#0F172A">
+<link rel="manifest" href="/manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared/style.css">
+<style>
+  :root, [data-theme="dark"] {
+    --bg-dark: #0B1320;
+    --card-bg: #111A2E;
+    --card-bg-hover: #17233B;
+    --card-border: #1E2D4A;
+    --text-main: #F1F5F9;
+    --text-muted: #94A3B8;
+    --amber-accent: #F59E0B;
+    --cyan-accent: #00F2FE;
+    --cyan-btn-bg: #06B6D4;
+    --heading-color: #FFFFFF;
+  }
+  
+  [data-theme="light"] {
+    --bg-dark: #F8FAFC;
+    --card-bg: #FFFFFF;
+    --card-bg-hover: #F1F5F9;
+    --card-border: #E2E8F0;
+    --text-main: #0F172A;
+    --text-muted: #64748B;
+    --amber-accent: #D97706;
+    --cyan-accent: #0284C7;
+    --cyan-btn-bg: #0284C7;
+    --heading-color: #0F172A;
+  }
+
+  body {
+    background: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+  }
+
+  .admin-navbar {
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--card-border);
+    padding: 14px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .admin-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--heading-color);
+    text-decoration: none;
+  }
+  .admin-badge {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--amber-accent);
+    border: 1px solid var(--amber-accent);
+    padding: 2px 8px;
+    border-radius: 100px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .admin-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 24px;
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .metric-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .metric-label {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .metric-val {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--heading-color);
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  .tab-strip {
+    display: flex;
+    gap: 8px;
+    border-bottom: 1px solid var(--card-border);
+    margin-bottom: 20px;
+    overflow-x: auto;
+  }
+  .tab-btn {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-muted);
+    padding: 10px 18px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab-btn.active {
+    color: var(--cyan-accent);
+    border-bottom-color: var(--cyan-accent);
+  }
+
+  .card-panel {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+  }
+  .admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.86rem;
+    text-align: left;
+  }
+  .admin-table th {
+    background: var(--card-bg-hover);
+    color: var(--text-muted);
+    padding: 12px 14px;
+    font-weight: 700;
+    border-bottom: 1px solid var(--card-border);
+    white-space: nowrap;
+  }
+  .admin-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--card-border);
+    color: var(--text-main);
+  }
+  .admin-table tr:hover td {
+    background: var(--card-bg-hover);
+  }
+
+  .role-badge {
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+  .role-badge.teacher {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10B981;
+    border: 1px solid #10B981;
+  }
+  .role-badge.student {
+    background: rgba(6, 182, 212, 0.15);
+    color: var(--cyan-accent);
+    border: 1px solid var(--cyan-accent);
+  }
+
+  .form-group {
+    margin-bottom: 14px;
+  }
+  .form-group label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--heading-color);
+  }
+  .form-control {
+    width: 100%;
+    padding: 10px 14px;
+    background: var(--card-bg-hover);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 0.88rem;
+    box-sizing: border-box;
+  }
+
+  .btn-gold {
+    background: var(--amber-accent);
+    color: #000;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: opacity 0.2s;
+  }
+  .btn-gold:hover { opacity: 0.9; }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 16px;
+  }
+</style>
+</head>
+<body>
+
+<nav class="admin-navbar">
+  <a href="/admin/dashboard.html" class="admin-brand">
+    <span style="font-size:1.3rem;">🛡️</span>
+    VirtuLab Kenya
+    <span class="admin-badge">Admin Portal</span>
+  </a>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <button class="btn-gold" style="background:var(--cyan-btn-bg);color:#FFF;" onclick="openAnnouncementModal()">📢 Post Broadcast</button>
+    <button class="btn-gold" onclick="openRegisterSchoolModal()">+ Register School</button>
+    <a href="/teacher/dashboard.html" class="btn-back-link" style="color:var(--text-muted);text-decoration:none;font-size:0.83rem;">Teacher View →</a>
+    <button class="btn-gold" style="background:rgba(239,68,68,0.15);color:#EF4444;border:1px solid #EF4444;" onclick="Auth.logout()">🚪 Logout</button>
+  </div>
+</nav>
+
+<div class="admin-container">
+  
+  <!-- Metrics Banner -->
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-label">🏛️ Registered Schools</div>
+      <div class="metric-val" id="metricSchools">--</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">👨‍🏫 Active Teachers</div>
+      <div class="metric-val" id="metricTeachers">--</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">🎓 Active Students</div>
+      <div class="metric-val" id="metricStudents">--</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">🧪 Experiments Completed</div>
+      <div class="metric-val" id="metricExperiments">--</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">🏆 KCSE Pass Benchmark</div>
+      <div class="metric-val" id="metricPassRate" style="color:var(--amber-accent);">88%</div>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="tab-strip">
+    <button class="tab-btn active" onclick="switchTab('schoolsTab', this)">🏛️ Schools Directory</button>
+    <button class="tab-btn" onclick="switchTab('usersTab', this)">👥 User Roster (Teachers & Students)</button>
+    <button class="tab-btn" onclick="switchTab('announcementsTab', this)">📢 Broadcast Announcements</button>
+    <button class="tab-btn" onclick="switchTab('analyticsTab', this)">📊 KCSE Practical Module Analytics</button>
+    <button class="tab-btn" onclick="switchTab('telemetryTab', this)">⚙️ System Health & Error Logs</button>
+  </div>
+
+  <!-- Tab 1: Schools Directory -->
+  <div id="schoolsTab" class="card-panel">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+      <h3 style="margin:0;font-family:'Space Grotesk';">Registered Kenyan Schools</h3>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <input type="text" id="schoolSearch" class="form-control" placeholder="Search school or county..." oninput="filterSchools()" style="max-width:240px;">
+        <button class="btn-gold" onclick="Admin.exportSchoolsReport()" style="background:var(--card-bg-hover);color:var(--text-main);border:1px solid var(--card-border);padding:8px 14px;white-space:nowrap;">📥 Export CSV</button>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>School Name</th>
+            <th>County</th>
+            <th>Admin Code</th>
+            <th>Teachers</th>
+            <th>Students</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="schoolsTableBody">
+          <tr><td colspan="7" style="text-align:center;color:var(--text-muted);">Loading schools...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab 2: User Roster -->
+  <div id="usersTab" class="card-panel" style="display:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+      <h3 style="margin:0;font-family:'Space Grotesk';">Platform User Directory</h3>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <input type="text" id="userSearch" class="form-control" placeholder="Search user name or email..." oninput="filterUsers()" style="max-width:240px;">
+        <button class="btn-gold" onclick="Admin.exportUsersReport()" style="background:var(--card-bg-hover);color:var(--text-main);border:1px solid var(--card-border);padding:8px 14px;white-space:nowrap;">📥 Export CSV</button>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>School</th>
+            <th>County</th>
+            <th>Form</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="usersTableBody">
+          <tr><td colspan="8" style="text-align:center;color:var(--text-muted);">Loading users...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab 3: Broadcast Announcements -->
+  <div id="announcementsTab" class="card-panel" style="display:none;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+      <h3 style="margin:0;font-family:'Space Grotesk';">📢 Published System Broadcast Announcements</h3>
+      <button class="btn-gold" style="background:var(--cyan-btn-bg);color:#FFF;" onclick="openAnnouncementModal()">+ Create New Announcement</button>
+    </div>
+    <div class="table-responsive">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Message Details</th>
+            <th>Status</th>
+            <th>Date Posted</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="announcementsTableBody">
+          <tr><td colspan="6" style="text-align:center;color:var(--text-muted);">Loading announcements...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab 3: Analytics -->
+  <div id="analyticsTab" class="card-panel" style="display:none;">
+    <h3 style="margin-top:0;font-family:'Space Grotesk';">KCSE Practical Paper 3 Performance & Module Analytics</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:16px;margin-bottom:24px;">
+      <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:16px;">
+        <h4 style="margin-top:0;color:var(--cyan-accent);">🧪 Volumetric Analysis (Titrations)</h4>
+        <p style="font-size:0.83rem;color:var(--text-muted);margin-bottom:8px;">Acid-Base, Redox Manganate VII, Dibasic, Tribasic titrations.</p>
+        <div style="font-size:1.6rem;font-weight:800;" id="statTitrationAccuracy">--%</div>
+        <small style="color:var(--text-muted);" id="statTitrationMeta">Total Sessions: --</small>
+      </div>
+      <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:16px;">
+        <h4 style="margin-top:0;color:var(--amber-accent);">🧂 Qualitative Salt Analysis</h4>
+        <p style="font-size:0.83rem;color:var(--text-muted);margin-bottom:8px;">Cation (Fe²⁺, Cu²⁺, Zn²⁺, Al³⁺, Pb²⁺, Ba²⁺) & Anion identification.</p>
+        <div style="font-size:1.6rem;font-weight:800;" id="statQualAccuracy">--%</div>
+        <small style="color:var(--text-muted);" id="statQualMeta">Total Sessions: --</small>
+      </div>
+      <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:16px;">
+        <h4 style="margin-top:0;color:#10B981;">⚗️ Organic Chemistry Lab</h4>
+        <p style="font-size:0.83rem;color:var(--text-muted);margin-bottom:8px;">Alkanes, Alkenes, Alkanols, Alkanoic acids, KMnO₄, NaHCO₃ tests.</p>
+        <div style="font-size:1.6rem;font-weight:800;" id="statOrgAccuracy">--%</div>
+        <small style="color:var(--text-muted);" id="statOrgMeta">Total Sessions: --</small>
+      </div>
+      <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:16px;">
+        <h4 style="margin-top:0;color:#A855F7;">📋 Composite Exam Mock (40 Marks)</h4>
+        <p style="font-size:0.83rem;color:var(--text-muted);margin-bottom:8px;">KNEC Paper 3 3-Question Timed Composite Exams.</p>
+        <div style="font-size:1.6rem;font-weight:800;" id="statCompositeAvg">-- / 40.0</div>
+        <small style="color:var(--text-muted);" id="statCompositeMeta">Completed Exams: --</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 4: System Telemetry & Audit Logs -->
+  <div id="telemetryTab" class="card-panel" style="display:none;">
+    <h3 style="margin-top:0;font-family:'Space Grotesk';">🛡️ Security Audit Logs & System Activity</h3>
+    <div class="table-responsive" style="margin-bottom:24px;">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Admin Account</th>
+            <th>Action Event</th>
+            <th>Details</th>
+            <th>IP Address</th>
+          </tr>
+        </thead>
+        <tbody id="auditLogsTableBody">
+          <tr><td colspan="5" style="text-align:center;color:var(--text-muted);">Loading audit logs...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-top:16px;font-family:'Space Grotesk';">⚙️ System Telemetry & Client Exception Logs</h3>
+    <div class="table-responsive">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Error Message</th>
+            <th>Location</th>
+            <th>User Agent</th>
+          </tr>
+        </thead>
+        <tbody id="telemetryTableBody">
+          <tr><td colspan="4" style="text-align:center;color:var(--text-muted);">Loading telemetry logs...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal: Register School -->
+<div id="registerSchoolModal" class="modal-overlay" style="display:none;">
+  <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:24px;width:100%;max-width:440px;">
+    <h3 style="margin-top:0;font-family:'Space Grotesk';">Register New School</h3>
+    <form onsubmit="submitRegisterSchool(event)">
+      <div class="form-group">
+        <label for="schoolNameInput">School Name</label>
+        <input type="text" id="schoolNameInput" class="form-control" placeholder="e.g. Alliance High School" required>
+      </div>
+      <div class="form-group">
+        <label for="countySelect">County</label>
+        <select id="countySelect" class="form-control">
+          <option value="Nairobi">Nairobi</option>
+          <option value="Kiambu">Kiambu</option>
+          <option value="Mombasa">Mombasa</option>
+          <option value="Nakuru">Nakuru</option>
+          <option value="Kisumu">Kisumu</option>
+          <option value="Uasin Gishu">Uasin Gishu</option>
+          <option value="Machakos">Machakos</option>
+          <option value="Nyeri">Nyeri</option>
+          <option value="Kakamega">Kakamega</option>
+          <option value="Baringo">Baringo</option>
+          <option value="Bomet">Bomet</option>
+          <option value="Bungoma">Bungoma</option>
+          <option value="Busia">Busia</option>
+          <option value="Elgeyo-Marakwet">Elgeyo-Marakwet</option>
+          <option value="Embu">Embu</option>
+          <option value="Garissa">Garissa</option>
+          <option value="Homa Bay">Homa Bay</option>
+          <option value="Isiolo">Isiolo</option>
+          <option value="Kajiado">Kajiado</option>
+          <option value="Kericho">Kericho</option>
+          <option value="Kilifi">Kilifi</option>
+          <option value="Kirinyaga">Kirinyaga</option>
+          <option value="Kisii">Kisii</option>
+          <option value="Kitui">Kitui</option>
+          <option value="Kwale">Kwale</option>
+          <option value="Laikipia">Laikipia</option>
+          <option value="Lamu">Lamu</option>
+          <option value="Makueni">Makueni</option>
+          <option value="Mandera">Mandera</option>
+          <option value="Marsabit">Marsabit</option>
+          <option value="Meru">Meru</option>
+          <option value="Migori">Migori</option>
+          <option value="Murang'a">Murang'a</option>
+          <option value="Nandi">Nandi</option>
+          <option value="Narok">Narok</option>
+          <option value="Nyamira">Nyamira</option>
+          <option value="Nyandarua">Nyandarua</option>
+          <option value="Samburu">Samburu</option>
+          <option value="Siaya">Siaya</option>
+          <option value="Taita-Taveta">Taita-Taveta</option>
+          <option value="Tana River">Tana River</option>
+          <option value="Tharaka-Nithi">Tharaka-Nithi</option>
+          <option value="Trans-Nzoia">Trans-Nzoia</option>
+          <option value="Turkana">Turkana</option>
+          <option value="Vihiga">Vihiga</option>
+          <option value="Wajir">Wajir</option>
+          <option value="West Pokot">West Pokot</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="adminCodeInput">School Admin Code</label>
+        <input type="text" id="adminCodeInput" class="form-control" placeholder="e.g. SCH-ALN-001" required>
+      </div>
+      <div id="modalMsg" style="margin-bottom:12px;"></div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;">
+        <button type="button" class="form-control" style="width:auto;cursor:pointer;" onclick="closeRegisterSchoolModal()">Cancel</button>
+        <button type="submit" class="btn-gold">Save School</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: Edit School -->
+<div id="editSchoolModal" class="modal-overlay" style="display:none;">
+  <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:24px;width:100%;max-width:440px;">
+    <h3 style="margin-top:0;font-family:'Space Grotesk';">✏️ Edit School Registration</h3>
+    <form onsubmit="submitEditSchool(event)">
+      <input type="hidden" id="editSchoolIdInput">
+      <div class="form-group">
+        <label for="editSchoolNameInput">School Name</label>
+        <input type="text" id="editSchoolNameInput" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="editCountySelect">County</label>
+        <select id="editCountySelect" class="form-control">
+          <option value="Nairobi">Nairobi</option>
+          <option value="Kiambu">Kiambu</option>
+          <option value="Mombasa">Mombasa</option>
+          <option value="Nakuru">Nakuru</option>
+          <option value="Kisumu">Kisumu</option>
+          <option value="Uasin Gishu">Uasin Gishu</option>
+          <option value="Machakos">Machakos</option>
+          <option value="Nyeri">Nyeri</option>
+          <option value="Kakamega">Kakamega</option>
+          <option value="Baringo">Baringo</option>
+          <option value="Bomet">Bomet</option>
+          <option value="Bungoma">Bungoma</option>
+          <option value="Busia">Busia</option>
+          <option value="Elgeyo-Marakwet">Elgeyo-Marakwet</option>
+          <option value="Embu">Embu</option>
+          <option value="Garissa">Garissa</option>
+          <option value="Homa Bay">Homa Bay</option>
+          <option value="Isiolo">Isiolo</option>
+          <option value="Kajiado">Kajiado</option>
+          <option value="Kericho">Kericho</option>
+          <option value="Kilifi">Kilifi</option>
+          <option value="Kirinyaga">Kirinyaga</option>
+          <option value="Kisii">Kisii</option>
+          <option value="Kitui">Kitui</option>
+          <option value="Kwale">Kwale</option>
+          <option value="Laikipia">Laikipia</option>
+          <option value="Lamu">Lamu</option>
+          <option value="Makueni">Makueni</option>
+          <option value="Mandera">Mandera</option>
+          <option value="Marsabit">Marsabit</option>
+          <option value="Meru">Meru</option>
+          <option value="Migori">Migori</option>
+          <option value="Murang'a">Murang'a</option>
+          <option value="Nandi">Nandi</option>
+          <option value="Narok">Narok</option>
+          <option value="Nyamira">Nyamira</option>
+          <option value="Nyandarua">Nyandarua</option>
+          <option value="Samburu">Samburu</option>
+          <option value="Siaya">Siaya</option>
+          <option value="Taita-Taveta">Taita-Taveta</option>
+          <option value="Tana River">Tana River</option>
+          <option value="Tharaka-Nithi">Tharaka-Nithi</option>
+          <option value="Trans-Nzoia">Trans-Nzoia</option>
+          <option value="Turkana">Turkana</option>
+          <option value="Vihiga">Vihiga</option>
+          <option value="Wajir">Wajir</option>
+          <option value="West Pokot">West Pokot</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="editAdminCodeInput">School Admin Code</label>
+        <input type="text" id="editAdminCodeInput" class="form-control" required>
+      </div>
+      <div id="editModalMsg" style="margin-bottom:12px;"></div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;">
+        <button type="button" class="form-control" style="width:auto;cursor:pointer;" onclick="closeEditSchoolModal()">Cancel</button>
+        <button type="submit" class="btn-gold">Update School</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: Broadcast Announcement -->
+<div id="announcementModal" class="modal-overlay" style="display:none;">
+  <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:24px;width:100%;max-width:480px;">
+    <h3 style="margin-top:0;font-family:'Space Grotesk';">📢 Create System Broadcast Announcement</h3>
+    <form onsubmit="submitAnnouncement(event)">
+      <div class="form-group">
+        <label for="annTitleInput">Announcement Title</label>
+        <input type="text" id="annTitleInput" class="form-control" placeholder="e.g. KCSE Chemistry Paper 3 Mock Practical Schedule" required>
+      </div>
+      <div class="form-group">
+        <label for="annTypeSelect">Alert Category</label>
+        <select id="annTypeSelect" class="form-control">
+          <option value="info">ℹ️ General Info</option>
+          <option value="exam">🧪 Exam / Practical Mock Notice</option>
+          <option value="warning">⚠️ Maintenance Alert</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="annMessageInput">Message Details</label>
+        <textarea id="annMessageInput" class="form-control" rows="3" placeholder="Write full details for students and teachers..." required></textarea>
+      </div>
+      <div id="annModalMsg" style="margin-bottom:12px;"></div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;">
+        <button type="button" class="form-control" style="width:auto;cursor:pointer;" onclick="closeAnnouncementModal()">Cancel</button>
+        <button type="submit" class="btn-gold" style="background:var(--cyan-btn-bg);color:#FFF;">Broadcast Alert</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal 3: Admin Login Modal -->
+<div id="adminLoginModal" class="modal-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(11,19,32,0.95);z-index:99999;align-items:center;justify-content:center;backdrop-filter:blur(8px);">
+  <div class="card-panel" style="max-width:440px;width:90%;margin:0 auto;box-shadow:0 12px 40px rgba(0,0,0,0.5);border:1.5px solid var(--card-border);">
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="font-size:2.5rem;margin-bottom:8px;">🛡️</div>
+      <h2 style="margin:0;font-family:'Space Grotesk',sans-serif;color:var(--heading-color);">Admin Portal Login</h2>
+      <p style="margin:6px 0 0;font-size:0.85rem;color:var(--text-muted);">Please enter your system administrator credentials to continue.</p>
+    </div>
+    <form id="adminLoginForm" onsubmit="submitAdminLogin(event)">
+      <div class="form-group" style="margin-bottom:14px;">
+        <label for="adminEmailInput" style="display:block;font-size:0.8rem;font-weight:700;color:var(--text-muted);margin-bottom:6px;">Admin Email</label>
+        <input type="email" id="adminEmailInput" class="form-control" placeholder="admin@virtulab.co.ke" required autocomplete="username" style="width:100%;box-sizing:border-box;">
+      </div>
+      <div class="form-group" style="margin-bottom:16px;">
+        <label for="adminPasswordInput" style="display:block;font-size:0.8rem;font-weight:700;color:var(--text-muted);margin-bottom:6px;">Master Password</label>
+        <input type="password" id="adminPasswordInput" class="form-control" placeholder="••••••••••••" required autocomplete="current-password" style="width:100%;box-sizing:border-box;">
+      </div>
+      <div id="adminLoginMsg" style="margin-bottom:14px;font-size:0.85rem;text-align:center;"></div>
+      <button type="submit" class="btn-gold" style="width:100%;padding:10px;font-size:0.95rem;font-weight:700;cursor:pointer;">Unlock Admin Console 🔐</button>
+      <div style="text-align:center;margin-top:14px;">
+        <a href="/teacher/dashboard.html" style="font-size:0.8rem;color:var(--text-muted);text-decoration:none;">← Return to Teacher Dashboard</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="/shared/api.js"></script>
+<script>
+  let allSchools = [];
+  let allUsers = [];
+
+  async function checkAdminAuth() {
+    const user = getUser();
+    if (!isLoggedIn() || user?.role !== 'admin') {
+      document.getElementById('adminLoginModal').style.display = 'flex';
+      return false;
+    }
+    document.getElementById('adminLoginModal').style.display = 'none';
+    return true;
+  }
+
+  async function submitAdminLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('adminEmailInput').value;
+    const password = document.getElementById('adminPasswordInput').value;
+    const msg = document.getElementById('adminLoginMsg');
+    msg.innerHTML = '<span style="color:var(--cyan-accent);font-weight:600;">Authenticating...</span>';
+
+    try {
+      await Auth.adminLogin(email, password);
+      document.getElementById('adminLoginModal').style.display = 'none';
+      initAdminDashboard();
+    } catch (err) {
+      msg.innerHTML = '<span style="color:#EF4444;font-weight:600;">' + (err.message || 'Invalid admin credentials.') + '</span>';
+    }
+  }
+
+  async function initAdminDashboard() {
+    const authenticated = await checkAdminAuth();
+    if (!authenticated) return;
+
+    try {
+      const overviewRes = await Admin.getOverview();
+      if (overviewRes.success) {
+        document.getElementById('metricSchools').textContent = overviewRes.metrics.totalSchools;
+        document.getElementById('metricTeachers').textContent = overviewRes.metrics.totalTeachers;
+        document.getElementById('metricStudents').textContent = overviewRes.metrics.totalStudents;
+        document.getElementById('metricExperiments').textContent = overviewRes.metrics.totalExperiments;
+        document.getElementById('metricPassRate').textContent = overviewRes.metrics.kcsePassRate + '%';
+      }
+
+      const schoolsRes = await Admin.getSchools();
+      if (schoolsRes.success) {
+        allSchools = schoolsRes.schools;
+        renderSchools(allSchools);
+      }
+
+      const usersRes = await Admin.getUsers();
+      if (usersRes.success) {
+        allUsers = usersRes.users;
+        renderUsers(allUsers);
+      }
+
+      const annRes = await Admin.getAnnouncements();
+      if (annRes.success) {
+        renderAnnouncements(annRes.announcements);
+      }
+
+      const auditRes = await Admin.getAuditLogs();
+      if (auditRes.success) {
+        renderAuditLogs(auditRes.logs);
+      }
+
+      const analyticsRes = await Admin.getAnalytics();
+      if (analyticsRes.success) {
+        renderAnalytics(analyticsRes.analytics);
+      }
+
+      const errorLogs = await ErrorTracker.getRecentErrors();
+      renderTelemetry(errorLogs);
+
+    } catch (err) {
+      console.error('Failed to load admin dashboard data:', err);
+    }
+  }
+
+  function renderAnalytics(data) {
+    if (!data) return;
+    if (data.titration) {
+      document.getElementById('statTitrationAccuracy').textContent = data.titration.accuracy + '%';
+      document.getElementById('statTitrationMeta').textContent = `Total Sessions: ${data.titration.total} | Avg Score: ${data.titration.avgScore}`;
+    }
+    if (data.qualitative) {
+      document.getElementById('statQualAccuracy').textContent = data.qualitative.accuracy + '%';
+      document.getElementById('statQualMeta').textContent = `Total Sessions: ${data.qualitative.total} | Avg Tests: ${data.qualitative.avgTests}`;
+    }
+    if (data.organic) {
+      document.getElementById('statOrgAccuracy').textContent = data.organic.accuracy + '%';
+      document.getElementById('statOrgMeta').textContent = `Total Sessions: ${data.organic.total} | Avg Score: ${data.organic.avgPct}%`;
+    }
+    if (data.composite) {
+      document.getElementById('statCompositeAvg').textContent = `${data.composite.avgTotalScore} / 40.0`;
+      document.getElementById('statCompositeMeta').textContent = `Completed Exams: ${data.composite.total} (Q1: ${data.composite.avgQ1Score}, Q2: ${data.composite.avgQ2Score}, Q3: ${data.composite.avgQ3Score})`;
+    }
+  }
+
+  function renderAnnouncements(list) {
+    const tbody = document.getElementById('announcementsTableBody');
+    if (!list || list.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);">No broadcast announcements published yet.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = list.map(a => {
+      const isActive = a.is_active !== false;
+      const statusBadge = isActive
+        ? '<span style="background:rgba(16,185,129,0.15);color:#10B981;border:1px solid #10B981;padding:2px 8px;border-radius:100px;font-size:0.72rem;font-weight:700;">🟢 Active</span>'
+        : '<span style="background:rgba(239,68,68,0.15);color:#EF4444;border:1px solid #EF4444;padding:2px 8px;border-radius:100px;font-size:0.72rem;font-weight:700;">🔴 Inactive</span>';
+
+      const actionText = isActive ? 'Deactivate' : 'Activate';
+      const newStatus = !isActive;
+      const btnStyle = isActive
+        ? 'background:rgba(239,68,68,0.15);color:#EF4444;border:1px solid #EF4444;'
+        : 'background:rgba(16,185,129,0.15);color:#10B981;border:1px solid #10B981;';
+
+      return `
+        <tr>
+          <td><b>${escapeHtml(a.title)}</b></td>
+          <td><span style="background:var(--card-bg-hover);border:1px solid var(--card-border);padding:2px 8px;border-radius:6px;font-size:0.75rem;font-weight:700;">${escapeHtml(a.type || 'info')}</span></td>
+          <td style="font-size:0.83rem;color:var(--text-muted);">${escapeHtml(a.message)}</td>
+          <td>${statusBadge}</td>
+          <td><small style="color:var(--text-muted);">${new Date(a.created_at || Date.now()).toLocaleDateString()}</small></td>
+          <td>
+            <button onclick="toggleAnnouncementStatus(${a.id}, ${newStatus})" style="${btnStyle}border-radius:6px;padding:3px 10px;font-size:0.76rem;font-weight:700;cursor:pointer;">${actionText}</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  async function toggleAnnouncementStatus(id, newStatus) {
+    try {
+      await Admin.toggleAnnouncement(id, newStatus);
+      initAdminDashboard();
+    } catch (err) {
+      alert('Failed to toggle announcement: ' + err.message);
+    }
+  }
+
+  function renderAuditLogs(logs) {
+    const tbody = document.getElementById('auditLogsTableBody');
+    if (!logs || logs.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);">No audit log events recorded yet.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = logs.map(l => `
+      <tr>
+        <td><small style="color:var(--text-muted);">${new Date(l.created_at || Date.now()).toLocaleString()}</small></td>
+        <td><b>${escapeHtml(l.admin_email)}</b></td>
+        <td><span style="background:rgba(245,158,11,0.15);color:var(--amber-accent);border:1px solid var(--amber-accent);padding:2px 8px;border-radius:100px;font-size:0.72rem;font-weight:700;">${escapeHtml(l.action)}</span></td>
+        <td>${escapeHtml(l.details)}</td>
+        <td><code style="color:var(--cyan-accent);">${escapeHtml(l.ip_address || '127.0.0.1')}</code></td>
+      </tr>
+    `).join('');
+  }
+
+  function renderSchools(list) {
+    const tbody = document.getElementById('schoolsTableBody');
+    if (!list || list.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);">No schools registered yet.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = list.map(s => `
+      <tr>
+        <td><b>${escapeHtml(s.name)}</b></td>
+        <td>${escapeHtml(s.county || 'Nairobi')}</td>
+        <td><code style="color:var(--cyan-accent);">${escapeHtml(s.admin_code)}</code></td>
+        <td>${s.teacher_count || 0}</td>
+        <td>${s.student_count || 0}</td>
+        <td><span class="role-badge teacher">Active</span></td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <button onclick="editSchool(${s.id}, '${escapeHtml(s.name).replace(/'/g, "\\'")}', '${escapeHtml(s.county || 'Nairobi')}', '${escapeHtml(s.admin_code)}')" style="background:var(--card-bg-hover);color:var(--text-main);border:1px solid var(--card-border);border-radius:6px;padding:3px 8px;font-size:0.75rem;font-weight:700;cursor:pointer;">✏️ Edit</button>
+            <button onclick="deleteSchool(${s.id}, '${escapeHtml(s.name).replace(/'/g, "\\'")}')" style="background:rgba(239,68,68,0.15);color:#EF4444;border:1px solid #EF4444;border-radius:6px;padding:3px 8px;font-size:0.75rem;font-weight:700;cursor:pointer;">🗑️ Delete</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function editSchool(id, name, county, adminCode) {
+    document.getElementById('editSchoolIdInput').value = id;
+    document.getElementById('editSchoolNameInput').value = name;
+    document.getElementById('editCountySelect').value = county || 'Nairobi';
+    document.getElementById('editAdminCodeInput').value = adminCode;
+    document.getElementById('editModalMsg').innerHTML = '';
+    document.getElementById('editSchoolModal').style.display = 'flex';
+  }
+
+  function closeEditSchoolModal() {
+    document.getElementById('editSchoolModal').style.display = 'none';
+  }
+
+  async function submitEditSchool(e) {
+    e.preventDefault();
+    const id = document.getElementById('editSchoolIdInput').value;
+    const name = document.getElementById('editSchoolNameInput').value;
+    const county = document.getElementById('editCountySelect').value;
+    const adminCode = document.getElementById('editAdminCodeInput').value;
+    const msg = document.getElementById('editModalMsg');
+
+    try {
+      const res = await Admin.updateSchool(id, name, county, adminCode);
+      if (res.success) {
+        msg.innerHTML = '<div style="color:#10B981;font-size:0.85rem;font-weight:700;">✓ School updated successfully!</div>';
+        setTimeout(() => {
+          closeEditSchoolModal();
+          initAdminDashboard();
+        }, 800);
+      }
+    } catch (err) {
+      msg.innerHTML = '<div style="color:#EF4444;font-size:0.85rem;">Error: ' + (err.message || 'Failed to update school') + '</div>';
+    }
+  }
+
+  async function deleteSchool(id, name) {
+    if (!confirm(`Are you sure you want to delete ${name}? This will unlink its teachers and students.`)) return;
+    try {
+      await Admin.deleteSchool(id);
+      initAdminDashboard();
+    } catch (err) {
+      alert('Failed to delete school: ' + err.message);
+    }
+  }
+
+  function filterSchools() {
+    const q = document.getElementById('schoolSearch').value.toLowerCase();
+    const filtered = allSchools.filter(s =>
+      (s.name && s.name.toLowerCase().includes(q)) ||
+      (s.county && s.county.toLowerCase().includes(q)) ||
+      (s.admin_code && s.admin_code.toLowerCase().includes(q))
+    );
+    renderSchools(filtered);
+  }
+
+  function renderUsers(list) {
+    const tbody = document.getElementById('usersTableBody');
+    if (!list || list.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-muted);">No users found.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = list.map(u => {
+      const isSuspended = u.status === 'suspended';
+      const statusBadge = isSuspended
+        ? '<span style="background:rgba(239,68,68,0.15);color:#EF4444;border:1px solid #EF4444;padding:2px 8px;border-radius:100px;font-size:0.72rem;font-weight:700;">Suspended</span>'
+        : '<span style="background:rgba(16,185,129,0.15);color:#10B981;border:1px solid #10B981;padding:2px 8px;border-radius:100px;font-size:0.72rem;font-weight:700;">Active</span>';
+
+      const toggleActionText = isSuspended ? 'Activate' : 'Suspend';
+      const newStatus = isSuspended ? 'active' : 'suspended';
+      const toggleBtnClass = isSuspended ? 'background:rgba(16,185,129,0.15);color:#10B981;border:1px solid #10B981;' : 'background:rgba(239,68,68,0.15);color:#EF4444;border:1px solid #EF4444;';
+
+      return `
+        <tr>
+          <td><b>${escapeHtml(u.name)}</b></td>
+          <td>${escapeHtml(u.email)}</td>
+          <td><span class="role-badge ${u.role.toLowerCase()}">${u.role}</span></td>
+          <td>${escapeHtml(u.school_name || 'VirtuLab Academy')}</td>
+          <td>${escapeHtml(u.county || 'Nairobi')}</td>
+          <td>${u.form ? 'Form ' + u.form : 'N/A'}</td>
+          <td>${statusBadge}</td>
+          <td>
+            <div style="display:flex;gap:6px;">
+              <button onclick="toggleUserStatus(${u.id}, '${u.role}', '${newStatus}')" style="${toggleBtnClass}border-radius:6px;padding:3px 8px;font-size:0.75rem;font-weight:700;cursor:pointer;">${toggleActionText}</button>
+              <button onclick="resetUserPw(${u.id}, '${u.role}', '${escapeHtml(u.name).replace(/'/g, "\\'")}')" style="background:var(--card-bg-hover);color:var(--text-main);border:1px solid var(--card-border);border-radius:6px;padding:3px 8px;font-size:0.75rem;font-weight:700;cursor:pointer;">🔑 Reset PW</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  async function toggleUserStatus(userId, role, status) {
+    if (!confirm(`Are you sure you want to change this user's status to ${status}?`)) return;
+    try {
+      await Admin.updateUserStatus(userId, role, status);
+      initAdminDashboard();
+    } catch (err) {
+      alert('Failed to update status: ' + err.message);
+    }
+  }
+
+  async function resetUserPw(userId, role, userName) {
+    if (!confirm(`Reset password for ${userName}? A new temporary password will be generated.`)) return;
+    try {
+      const res = await Admin.resetUserPassword(userId, role);
+      alert(`Password for ${userName} reset successfully.\n\nTemporary Password: ${res.temporaryPassword}\n\nPlease share this temporary password with the user.`);
+    } catch (err) {
+      alert('Failed to reset password: ' + err.message);
+    }
+  }
+
+  function filterUsers() {
+    const q = document.getElementById('userSearch').value.toLowerCase();
+    const filtered = allUsers.filter(u =>
+      (u.name && u.name.toLowerCase().includes(q)) ||
+      (u.email && u.email.toLowerCase().includes(q)) ||
+      (u.school_name && u.school_name.toLowerCase().includes(q))
+    );
+    renderUsers(filtered);
+  }
+
+  function renderTelemetry(logs) {
+    const tbody = document.getElementById('telemetryTableBody');
+    if (!logs || logs.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);">No errors logged — system healthy.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = logs.slice(0, 10).map(l => `
+      <tr>
+        <td><small style="color:var(--text-muted);">${new Date(l.created_at || Date.now()).toLocaleTimeString()}</small></td>
+        <td style="color:#EF4444;font-family:monospace;font-size:0.8rem;">${escapeHtml(l.message)}</td>
+        <td style="font-size:0.8rem;color:var(--text-muted);">${escapeHtml(l.url || 'Internal')}</td>
+        <td style="font-size:0.75rem;color:var(--text-muted);">${escapeHtml(l.user_agent ? l.user_agent.substring(0, 40) + '...' : 'System')}</td>
+      </tr>
+    `).join('');
+  }
+
+  function switchTab(tabId, btn) {
+    document.querySelectorAll('.tab-strip .tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    ['schoolsTab', 'usersTab', 'announcementsTab', 'analyticsTab', 'telemetryTab'].forEach(id => {
+      document.getElementById(id).style.display = (id === tabId) ? 'block' : 'none';
+    });
+  }
+
+  function openRegisterSchoolModal() {
+    document.getElementById('registerSchoolModal').style.display = 'flex';
+  }
+
+  function closeRegisterSchoolModal() {
+    document.getElementById('registerSchoolModal').style.display = 'none';
+  }
+
+  async function submitRegisterSchool(e) {
+    e.preventDefault();
+    const name = document.getElementById('schoolNameInput').value;
+    const county = document.getElementById('countySelect').value;
+    const adminCode = document.getElementById('adminCodeInput').value;
+    const msg = document.getElementById('modalMsg');
+
+    try {
+      const res = await Admin.createSchool(name, county, adminCode);
+      if (res.success) {
+        msg.innerHTML = '<div style="color:#10B981;font-size:0.85rem;font-weight:700;">✓ School registered successfully!</div>';
+        setTimeout(() => {
+          closeRegisterSchoolModal();
+          initAdminDashboard();
+        }, 1000);
+      }
+    } catch (err) {
+      msg.innerHTML = '<div style="color:#EF4444;font-size:0.85rem;">Error: ' + (err.message || 'Failed to register school') + '</div>';
+    }
+  }
+
+  function openAnnouncementModal() {
+    document.getElementById('announcementModal').style.display = 'flex';
+  }
+
+  function closeAnnouncementModal() {
+    document.getElementById('announcementModal').style.display = 'none';
+  }
+
+  async function submitAnnouncement(e) {
+    e.preventDefault();
+    const title = document.getElementById('annTitleInput').value;
+    const type = document.getElementById('annTypeSelect').value;
+    const message = document.getElementById('annMessageInput').value;
+    const msg = document.getElementById('annModalMsg');
+
+    try {
+      const res = await Admin.createAnnouncement(title, message, type);
+      if (res.success) {
+        msg.innerHTML = '<div style="color:#10B981;font-size:0.85rem;font-weight:700;">✓ Broadcast announcement published!</div>';
+        setTimeout(() => {
+          closeAnnouncementModal();
+          initAdminDashboard();
+        }, 1000);
+      }
+    } catch (err) {
+      msg.innerHTML = '<div style="color:#EF4444;font-size:0.85rem;">Error: ' + (err.message || 'Failed to publish announcement') + '</div>';
+    }
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str == null ? '' : String(str);
+    return div.innerHTML;
+  }
+
+  document.addEventListener('DOMContentLoaded', initAdminDashboard);
+</script>
+</body>
+</html>

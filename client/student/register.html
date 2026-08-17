@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Registration — VirtuLab Kenya</title>
+<script>
+  var t = localStorage.getItem('vlk_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/shared/auth.css">
+</head>
+<body class="auth-page">
+
+<!-- Theme Controls -->
+<div class="theme-toggle-float" title="Switch appearance theme">
+  <button class="theme-btn" data-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
+  <button class="theme-btn" data-theme="light" onclick="setTheme('light')">☀️ Light</button>
+  <button class="theme-btn" data-theme="green" onclick="setTheme('green')">🧪 Lab</button>
+</div>
+
+<!-- Student Register Box -->
+<div class="auth-card">
+  <div class="auth-header">
+    <h1 class="auth-logo-title">
+      <span>⚗️</span>
+      <span>VirtuLab Kenya</span>
+    </h1>
+    <div class="slogan-badge">
+      <span>✨</span>
+      <span>Every student deserves a laboratory</span>
+    </div>
+    <p class="auth-sub">Student Registration — create your account to run virtual lab practicals and track your KCSE progress.</p>
+  </div>
+
+  <div class="auth-form-group">
+    <!-- Full Name -->
+    <div>
+      <label for="name" class="field-label">Full Name</label>
+      <div class="input-wrapper">
+        <span class="input-icon-left">👤</span>
+        <input type="text" id="name" class="auth-input" placeholder="e.g. Amina Hassan">
+      </div>
+    </div>
+
+    <!-- School Email Address -->
+    <div>
+      <label for="email" class="field-label">School Email Address</label>
+      <div class="input-wrapper">
+        <span class="input-icon-left">✉️</span>
+        <input type="email" id="email" class="auth-input" placeholder="e.g. amina@school.ac.ke" autocomplete="email">
+      </div>
+    </div>
+
+    <!-- Form / Class -->
+    <div>
+      <label for="form" class="field-label">Form / Class</label>
+      <div class="input-wrapper">
+        <span class="input-icon-left">🎓</span>
+        <select id="form" class="auth-select">
+          <option value="">Select your Form / Class</option>
+          <option value="Form 1">Form 1</option>
+          <option value="Form 2">Form 2</option>
+          <option value="Form 3">Form 3</option>
+          <option value="Form 4">Form 4</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- School Registration Code -->
+    <div>
+      <label for="schoolCode" class="field-label">School Registration Code</label>
+      <div class="input-wrapper">
+        <span class="input-icon-left">🏫</span>
+        <input type="text" id="schoolCode" class="auth-input" placeholder="e.g. SCH001 (Ask your chemistry teacher)" style="text-transform:uppercase;">
+      </div>
+    </div>
+
+    <!-- Teacher Code (Optional) -->
+    <div>
+      <label for="teacherCode" class="field-label">Teacher Code <span style="font-weight:400; text-transform:none; color:var(--text-muted);">(Optional)</span></label>
+      <div class="input-wrapper">
+        <span class="input-icon-left">👨‍🏫</span>
+        <input type="text" id="teacherCode" class="auth-input" placeholder="e.g. TCH001 (Links to teacher dashboard)" style="text-transform:uppercase;">
+      </div>
+    </div>
+
+    <!-- Create Password -->
+    <div>
+      <label for="password" class="field-label">Create Password</label>
+      <div class="input-wrapper">
+        <span class="input-icon-left">🔒</span>
+        <input type="password" id="password" class="auth-input" placeholder="At least 6 characters" autocomplete="new-password">
+        <button type="button" class="toggle-pw-btn" onclick="togglePasswordVisibility()" title="Toggle password visibility">👁️</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submit Registration Button -->
+  <button type="button" class="btn-submit-login" onclick="doRegister()">
+    <span>Create Student Account</span>
+    <span>→</span>
+  </button>
+
+  <!-- Error / Status Feedback Box -->
+  <div id="msg"></div>
+
+  <!-- Footer Navigation Links -->
+  <div class="auth-footer">
+    <p style="margin: 0 0 8px 0;">Already have an account? <a href="login.html">Log in →</a></p>
+    <p style="margin: 0;">Are you a teacher? <a href="../teacher/register.html">Teacher Registration</a></p>
+  </div>
+</div>
+
+<script src="/shared/api.js"></script>
+<script>
+  function setTheme(theme) {
+    localStorage.setItem('vlk_theme', theme);
+    document.documentElement.setAttribute('data-theme', theme);
+    updateThemeButtons();
+  }
+
+  function updateThemeButtons() {
+    const currentTheme = localStorage.getItem('vlk_theme') || 'dark';
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-theme') === currentTheme);
+    });
+  }
+  updateThemeButtons();
+
+  function togglePasswordVisibility() {
+    const pwInput = document.getElementById('password');
+    if (pwInput.type === 'password') {
+      pwInput.type = 'text';
+    } else {
+      pwInput.type = 'password';
+    }
+  }
+
+  async function doRegister() {
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const form = document.getElementById('form').value;
+    const schoolCode = document.getElementById('schoolCode').value.trim().toUpperCase();
+    const teacherCode = document.getElementById('teacherCode').value.trim().toUpperCase();
+    const password = document.getElementById('password').value;
+    const msg = document.getElementById('msg');
+    msg.innerHTML = '';
+
+    if (!name || !email || !form || !schoolCode || !password) {
+      msg.innerHTML = '<div class="msg-alert err">⚠️ Please fill in all required registration fields.</div>';
+      return;
+    }
+    if (password.length < 6) {
+      msg.innerHTML = '<div class="msg-alert err">⚠️ Password must be at least 6 characters long.</div>';
+      return;
+    }
+    try {
+      msg.innerHTML = '<div class="msg-alert info">⚗️ Creating your student account…</div>';
+      await Auth.studentRegister(name, email, password, form, schoolCode, teacherCode || undefined);
+      msg.innerHTML = '<div class="msg-alert info">🎉 Account created successfully! Redirecting to login…</div>';
+      setTimeout(() => window.location.href = 'login.html', 1500);
+    } catch (err) {
+      msg.innerHTML = '<div class="msg-alert err">❌ ' + (err.message || 'Registration failed. Please check your school code and try again.') + '</div>';
+    }
+  }
+
+  document.getElementById('password').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') doRegister();
+  });
+</script>
+</body>
+</html>

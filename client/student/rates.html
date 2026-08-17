@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Reaction Rates & Chemical Kinetics Workbench — VirtuLab Kenya</title>
+  <meta name="description" content="Simulate KNEC KCSE Chemistry Paper 3 reaction rate practicals: Disappearing cross (Na2S2O3 + HCl), gas syringe kinetics, mass loss, catalysts, and collision theory.">
+  <script>
+    var t = localStorage.getItem('vlk_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', t);
+    if (window.location.search.includes('embedded=1')) {
+      const style = document.createElement('style');
+      style.innerHTML = '.top-navbar { display: none !important; } body { padding-top: 0 !important; margin: 0 !important; } .rate-page-wrap { padding-top: 10px !important; }';
+      document.head.appendChild(style);
+    }
+  </script>
+  <meta name="theme-color" content="#0B1320">
+  <link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700;800&family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/shared/style.css">
+  <link rel="stylesheet" href="/student/css/rates.css">
+  <link rel="stylesheet" href="/shared/ai-tutor.css">
+  <link rel="stylesheet" href="/shared/pwa-installer.css">
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════
+       TOPBAR — Fixed Navigation Header
+  ══════════════════════════════════════ -->
+  <nav class="top-navbar">
+    <a href="/student/home.html" class="nav-brand">
+      <span class="nav-logo-icon">⚡</span>
+      <span>VirtuLab Kenya</span>
+      <span class="knec-tag-pill">KNEC PAPER 3</span>
+    </a>
+
+    <div class="nav-lab-switch">
+      <a href="lab.html" class="theme-btn-chip">🧪 Titration</a>
+      <a href="qualitative.html" class="theme-btn-chip">🔍 Qualitative</a>
+      <a href="organic.html" class="theme-btn-chip">⚗️ Organic</a>
+      <a href="solubility.html" class="theme-btn-chip">🌡️ Solubility</a>
+      <a href="energy.html" class="theme-btn-chip">🔥 Energy</a>
+      <a href="rates.html" class="theme-btn-chip active">⚡ Rates</a>
+      <a href="composite_exam.html" class="theme-btn-chip">📝 Exam</a>
+    </div>
+
+    <div class="nav-actions">
+      <div class="theme-toggle-group">
+        <button type="button" class="theme-btn-chip active" id="btnModePractice" onclick="RatesEngine.setStudyMode('practice')">🎓 Practice</button>
+        <button type="button" class="theme-btn-chip" id="btnModeExam" onclick="RatesEngine.setStudyMode('exam')">📝 Exam Mode</button>
+      </div>
+
+      <a href="rates_theory.html" class="rate-header-theory-btn" title="Open Reaction Rates & Collision Theory Revision Guide">
+        <span>📖 Theory & Kinetics →</span>
+      </a>
+
+      <!-- Settings Dropdown -->
+      <div style="position:relative;">
+        <button type="button" class="rate-header-btn" onclick="toggleSettingsMenu(event)" title="Workbench Settings">
+          <span>⚙️ Settings</span>
+        </button>
+        
+        <div id="settingsDropdownMenu" style="display:none; position:absolute; right:0; top:36px; width:240px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; box-shadow:var(--shadow-lg); z-index:10000; padding:12px; flex-direction:column; gap:10px; text-align:left;">
+          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Sound Effects</span>
+            <button type="button" id="soundToggleBtn" onclick="RatesEngine.toggleSound()" style="background:var(--card-bg); border:1px solid var(--card-border); color:var(--text-main); padding:4px 10px; font-size:0.75rem; border-radius:6px; cursor:pointer;">🔊 Sound ON</button>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:6px; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Language / Lugha</span>
+            <div class="theme-toggle-group" style="width:100%;">
+              <button class="theme-btn-chip lang-btn-chip active" style="flex:1; padding:4px 8px;" data-lang="en" onclick="RatesEngine.setLanguage('en')">🇬🇧 EN</button>
+              <button class="theme-btn-chip lang-btn-chip" style="flex:1; padding:4px 8px;" data-lang="sw" onclick="RatesEngine.setLanguage('sw')">🇰🇪 SW</button>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:6px; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Appearance Theme</span>
+            <div class="theme-toggle-group" style="width:100%;">
+              <button class="theme-btn-chip active" style="flex:1; padding:4px 6px;" data-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
+              <button class="theme-btn-chip" style="flex:1; padding:4px 6px;" data-theme="light" onclick="setTheme('light')">☀️ Light</button>
+              <button class="theme-btn-chip" style="flex:1; padding:4px 6px;" data-theme="green" onclick="setTheme('green')">🧪 Lab</button>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <button onclick="openSafetyModal()" style="background:rgba(239, 68, 68, 0.12);border:1px solid var(--rate-rose);color:var(--rate-rose);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
+              ⚠️ Chemical Safety & SDS
+            </button>
+            <button onclick="window.print()" style="background:var(--card-bg-hover);border:1px solid var(--card-border);color:var(--text-main);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
+              🖨️ Print KCSE Booklet
+            </button>
+            <button onclick="RatesEngine.gradeKnecWorksheet()" style="background:linear-gradient(135deg,#F59E0B,#D97706);border:none;color:#FFF;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
+              💾 Submit & Grade (15 Mks)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <a href="/student/home.html" class="rate-nav-back-btn" title="Back to Dashboard">←</a>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════
+       MAIN WORKBENCH CONTENT
+  ══════════════════════════════════════ -->
+  <main class="rate-page-wrap">
+
+    <!-- Hero Banner & Syllabus Badge -->
+    <div class="rate-hero-banner">
+      <div class="rate-hero-left">
+        <div class="rate-hero-badge-icon">⚡</div>
+        <div>
+          <h1 class="rate-hero-title">Rates of Reaction & Chemical Kinetics</h1>
+          <p class="rate-hero-subtitle">KNEC KCSE Form 4 Chemistry Topic 1 • Quantitative Practical Investigation</p>
+        </div>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <span class="rate-stage-chip" id="rateStageChip">Na₂S₂O₃ + HCl Precipitation</span>
+      </div>
+    </div>
+
+    <!-- 5-Experiment Segmented Switcher -->
+    <div class="rate-experiment-tabs">
+      <button class="rate-exp-tab active" data-exp="cross" onclick="RatesEngine.setExperiment('cross')">
+        <span class="tab-indicator"></span> 🧪 1. Disappearing Cross
+      </button>
+      <button class="rate-exp-tab" data-exp="syringe" onclick="RatesEngine.setExperiment('syringe')">
+        <span class="tab-indicator"></span> ⚗️ 2. Gas Syringe (CaCO₃)
+      </button>
+      <button class="rate-exp-tab" data-exp="mass" onclick="RatesEngine.setExperiment('mass')">
+        <span class="tab-indicator"></span> ⚖️ 3. Loss in Mass
+      </button>
+      <button class="rate-exp-tab" data-exp="catalyst" onclick="RatesEngine.setExperiment('catalyst')">
+        <span class="tab-indicator"></span> 🚀 4. Catalysts (H₂O₂)
+      </button>
+      <button class="rate-exp-tab" data-exp="collision" onclick="RatesEngine.setExperiment('collision')">
+        <span class="tab-indicator"></span> ⚛️ 5. Collision Theory
+      </button>
+    </div>
+
+    <!-- 2-Column Workbench Grid -->
+    <div class="rate-workbench-grid">
+
+      <!-- Left Column: Simulation Viewport & Apparatus -->
+      <div class="rate-apparatus-card">
+        <div class="rate-card-header">
+          <h2 class="rate-card-title"><span>🔬</span> Real-Time Kinetic Apparatus</h2>
+          <div style="display:flex; gap:6px;">
+            <button class="theme-btn-chip speed-btn-chip active" data-speed="1" onclick="RatesEngine.setSimSpeed(1)">1x</button>
+            <button class="theme-btn-chip speed-btn-chip" data-speed="2" onclick="RatesEngine.setSimSpeed(2)">2x</button>
+            <button class="theme-btn-chip speed-btn-chip" data-speed="5" onclick="RatesEngine.setSimSpeed(5)">5x</button>
+          </div>
+        </div>
+
+        <!-- Simulation Viewport -->
+        <div class="rate-sim-viewport">
+          <canvas id="rateSimCanvas" class="rate-sim-canvas"></canvas>
+
+          <!-- Floating HUD Pill -->
+          <div class="rate-hud-overlay">
+            <div class="rate-hud-pill">
+              <span>⏱️ Time:</span>
+              <span class="rate-hud-val" id="rateHudTime">0.0 s</span>
+            </div>
+            <div class="rate-hud-pill">
+              <span id="rateHudMetric">Turbidity: 0%</span>
+            </div>
+          </div>
+
+          <!-- Disappearing Cross Inset Box (Exp 1) -->
+          <div class="rate-cross-box" id="rateCrossBox">
+            <span class="rate-cross-label">Top-Down View</span>
+            <div class="rate-cross-graphic">
+              <div class="rate-cross-line-1"></div>
+              <div class="rate-cross-line-2"></div>
+              <div class="rate-cross-cloud-cover" id="rateCrossCloudCover"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Controls -->
+        <div style="display:flex; gap:10px; margin-top:16px;">
+          <button id="btnStartSim" class="rate-btn rate-btn-primary" style="flex:1.5;" onclick="RatesEngine.toggleSimulation()">
+            <span>▶ Start Mixing & Timer</span>
+          </button>
+          <button class="rate-btn rate-btn-record" style="flex:1;" onclick="RatesEngine.recordReading()">
+            <span>📝 Record Reading</span>
+          </button>
+          <button class="rate-btn" style="flex:0.8;" onclick="RatesEngine.resetCurrentExperiment()">
+            <span>🔄 Reset</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Column: Interactive Controls & Parameters -->
+      <div class="rate-controls-card">
+        
+        <!-- SECTION 1: EXP 1 DISAPPEARING CROSS CONTROLS -->
+        <div id="ctrlSecCross" class="rate-ctrl-section">
+          <div class="rate-ctrl-sec-header">
+            <span class="rate-sec-num">1</span>
+            <span class="rate-sec-title">Thiosulfate Dilution & Temperature</span>
+          </div>
+
+          <div class="rate-param-row">
+            <div class="rate-slider-group">
+              <div class="rate-slider-header">
+                <span>Vol Na₂S₂O₃</span>
+                <span id="crossThioVal" class="rate-slider-val">50.0 cm³</span>
+              </div>
+              <input type="range" class="rate-slider" min="10" max="50" step="10" value="50" oninput="RatesEngine.setVolumeThio(this.value)">
+            </div>
+
+            <div class="rate-slider-group">
+              <div class="rate-slider-header">
+                <span>Distilled Water</span>
+                <span id="crossWaterVal" class="rate-slider-val">0.0 cm³</span>
+              </div>
+              <div class="rate-calc-chip">
+                <span>💧</span> <span id="crossWaterChipText">0.0 cm³ (Auto: 50 − V)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="rate-slider-group" style="margin-top:12px;">
+            <div class="rate-slider-header">
+              <span>Reaction Temperature</span>
+              <span id="crossTempVal" class="rate-slider-val">25 °C</span>
+            </div>
+            <input type="range" class="rate-slider" min="20" max="60" step="5" value="25" oninput="RatesEngine.setCrossTemp(this.value)">
+          </div>
+        </div>
+
+        <!-- SECTION 2: EXP 2 GAS SYRINGE CONTROLS -->
+        <div id="ctrlSecSyringe" class="rate-ctrl-section" style="display:none;">
+          <div class="rate-ctrl-sec-header">
+            <span class="rate-sec-num">2</span>
+            <span class="rate-sec-title">Gas Evolution Parameters</span>
+          </div>
+
+          <div style="margin-bottom:10px;">
+            <select class="rate-select" onchange="RatesEngine.setSyringeReactant(this.value)">
+              <option value="CaCO3">Calcium Carbonate (CaCO₃ + 2HCl → CO₂)</option>
+              <option value="Mg">Magnesium Ribbon (Mg + 2HCl → H₂)</option>
+            </select>
+          </div>
+
+          <div class="rate-slider-group">
+            <div class="rate-slider-header">
+              <span>Hydrochloric Acid Concentration</span>
+              <span id="syringeAcidConcVal" class="rate-slider-val">2.0 M</span>
+            </div>
+            <input type="range" class="rate-slider" min="0.5" max="3.0" step="0.5" value="2.0" oninput="RatesEngine.setSyringeAcidConc(this.value)">
+          </div>
+        </div>
+
+        <!-- SECTION 3: EXP 3 MASS LOSS CONTROLS -->
+        <div id="ctrlSecMass" class="rate-ctrl-section" style="display:none;">
+          <div class="rate-ctrl-sec-header">
+            <span class="rate-sec-num">3</span>
+            <span class="rate-sec-title">Surface Area / Particle Size</span>
+          </div>
+
+          <div class="rate-btn-group" style="margin-top:8px;">
+            <button class="rate-btn mass-form-btn active" data-form="CHIPS" style="flex:1;" onclick="RatesEngine.setMassLossForm('CHIPS')">🪨 Large Chips</button>
+            <button class="rate-btn mass-form-btn" data-form="GRANULES" style="flex:1;" onclick="RatesEngine.setMassLossForm('GRANULES')">🌾 Granules</button>
+            <button class="rate-btn mass-form-btn" data-form="POWDER" style="flex:1;" onclick="RatesEngine.setMassLossForm('POWDER')">✨ Fine Powder</button>
+          </div>
+        </div>
+
+        <!-- SECTION 4: EXP 4 CATALYSTS CONTROLS -->
+        <div id="ctrlSecCatalyst" class="rate-ctrl-section" style="display:none;">
+          <div class="rate-ctrl-sec-header">
+            <span class="rate-sec-num">4</span>
+            <span class="rate-sec-title">Catalyst Selection (H₂O₂ Decomposition)</span>
+          </div>
+
+          <div>
+            <select class="rate-select" onchange="RatesEngine.setCatalyst(this.value)">
+              <option value="MnO2">Manganese(IV) Oxide (MnO₂) — Fast Black Solid</option>
+              <option value="CuO">Copper(II) Oxide (CuO) — Moderate</option>
+              <option value="Fe2O3">Iron(III) Oxide (Fe₂O₃) — Slow</option>
+              <option value="KI">Potassium Iodide (KI) — Homogeneous</option>
+              <option value="CATALASE">Catalase Enzyme (Liver / Potato extract)</option>
+              <option value="NONE">No Catalyst (Uncatalysed Control)</option>
+            </select>
+          </div>
+
+          <div class="rate-slider-group" style="margin-top:12px;">
+            <div class="rate-slider-header">
+              <span>Solution Temperature</span>
+              <span id="catalystTempVal" class="rate-slider-val">25 °C</span>
+            </div>
+            <input type="range" class="rate-slider" min="15" max="65" step="5" value="25" oninput="RatesEngine.setCatalystTemp(this.value)">
+          </div>
+        </div>
+
+        <!-- SECTION 5: EXP 5 COLLISION THEORY CONTROLS -->
+        <div id="ctrlSecCollision" class="rate-ctrl-section" style="display:none;">
+          <div class="rate-ctrl-sec-header">
+            <span class="rate-sec-num">5</span>
+            <span class="rate-sec-title">Maxwell-Boltzmann & Activation Energy</span>
+          </div>
+
+          <div class="rate-param-row">
+            <div class="rate-slider-group">
+              <div class="rate-slider-header">
+                <span>Temperature (K)</span>
+                <span id="collisionTempVal" class="rate-slider-val">300 K</span>
+              </div>
+              <input type="range" class="rate-slider" min="250" max="500" step="25" value="300" oninput="RatesEngine.setCollisionTemp(this.value)">
+            </div>
+
+            <div class="rate-slider-group">
+              <div class="rate-slider-header">
+                <span>Activation Energy (Ea)</span>
+                <span id="collisionEaVal" class="rate-slider-val">45 kJ/mol</span>
+              </div>
+              <input type="range" class="rate-slider" min="20" max="80" step="5" value="45" oninput="RatesEngine.setCollisionEa(this.value)">
+            </div>
+          </div>
+
+          <button id="btnCollisionCatalyst" class="rate-btn" style="width:100%; margin-top:10px;" onclick="RatesEngine.toggleCollisionCatalyst()">
+            ➕ Add Catalyst (Lower Ea Pathway)
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- KNEC Table & Interactive Graph Grid -->
+    <div class="rate-analysis-grid">
+      
+      <!-- Left: KNEC Data Table -->
+      <div class="rate-table-card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h3 style="font-size:0.95rem; font-family:'Outfit',sans-serif; margin:0;">KNEC Table 1: Experimental Readings</h3>
+          <span style="font-size:0.75rem; color:var(--text-muted);">5.0 Marks</span>
+        </div>
+        <table class="rate-table">
+          <thead id="knecTableHead"></thead>
+          <tbody id="knecTableBody"></tbody>
+        </table>
+      </div>
+
+      <!-- Right: Interactive SAPC Graph -->
+      <div class="rate-graph-card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <h3 style="font-size:0.95rem; font-family:'Outfit',sans-serif; margin:0;">KNEC Rate Graph (SAPC Rubric)</h3>
+          <div class="rate-graph-toolbar">
+            <button id="btnTangentTool" class="rate-tangent-chip" onclick="RatesEngine.toggleTangent()">
+              📐 Tangent Tool (dy/dx)
+            </button>
+          </div>
+        </div>
+        <div class="rate-graph-container">
+          <canvas id="rateGraphCanvas" class="rate-graph-canvas"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- KNEC Exam Questions Worksheet -->
+    <div class="rate-knec-exam-card" id="knecExamCard">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1.5px solid var(--rate-border); padding-bottom:12px;">
+        <div>
+          <span style="background:var(--rate-amber); color:#FFF; padding:3px 10px; border-radius:100px; font-size:0.7rem; font-weight:800;">KNEC PAPER 3</span>
+          <h2 style="margin:4px 0 0; font-size:1.15rem; font-family:'Outfit',sans-serif; color:var(--heading-color);">Question 2: Quantitative Reaction Rates Examination (15.0 Marks)</h2>
+        </div>
+        <button class="rate-btn rate-btn-primary" style="padding:8px 18px;" onclick="RatesEngine.gradeKnecWorksheet()">
+          ✓ Grade Worksheet (15 Marks)
+        </button>
+      </div>
+
+      <div id="knecQuestionsList"></div>
+    </div>
+
+  </main>
+
+  <!-- ══════════════════════════════════════
+       MODALS: Result & Safety
+  ══════════════════════════════════════ -->
+
+  <!-- Result Modal -->
+  <div id="rateExamResultModal" class="rate-modal-overlay">
+    <div class="rate-modal-dialog">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; border-bottom:1px solid var(--rate-border); padding-bottom:12px;">
+        <div>
+          <span style="background:var(--rate-amber); color:#FFF; padding:3px 10px; border-radius:100px; font-size:0.7rem; font-weight:800;">OFFICIAL KNEC SCORECARD</span>
+          <h2 style="font-size:1.2rem; font-weight:800; margin-top:4px; color:var(--heading-color);">Question 2: Rates Score Card</h2>
+        </div>
+        <div style="text-align:right;">
+          <div id="rateExamFinalGrade" style="font-size:1.75rem; font-weight:900; color:var(--rate-amber);">Grade A</div>
+          <div id="rateExamFinalScore" style="font-size:0.88rem; color:var(--text-muted); font-weight:800;">14.0 / 15.0 Marks</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <table class="rate-table" style="width:100%;">
+          <thead>
+            <tr>
+              <th>Marking Criterion</th>
+              <th style="text-align:center;">Max</th>
+              <th style="text-align:center;">Awarded</th>
+            </tr>
+          </thead>
+          <tbody id="rateExamBreakdownTableBody"></tbody>
+        </table>
+      </div>
+
+      <div id="rateExamFeedbackNotes" style="background:var(--card-bg-hover); border:1px solid var(--rate-border); border-left:4px solid var(--rate-amber); border-radius:8px; padding:12px 14px; font-size:0.82rem; line-height:1.55; color:var(--text-muted); margin-bottom:18px;"></div>
+
+      <div style="display:flex; gap:10px; justify-content:space-between;">
+        <button class="rate-btn" onclick="RatesEngine.closeResultModal()">✕ Close</button>
+        <button class="rate-btn rate-btn-record" onclick="window.print()">🖨️ Print Report</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chemical Safety SDS Modal -->
+  <div id="safetyModal" class="rate-modal-overlay">
+    <div class="rate-modal-dialog">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid var(--rate-border); padding-bottom:12px;">
+        <h3 style="margin:0; font-family:'Outfit',sans-serif; color:var(--rate-rose);">⚠️ Chemical Safety & SDS</h3>
+        <button class="rate-btn" style="padding:4px 10px;" onclick="closeSafetyModal()">✕</button>
+      </div>
+      <div style="font-size:0.84rem; line-height:1.6; color:var(--text-main);">
+        <p><strong>1. Sodium Thiosulfate (Na₂S₂O₃):</strong> Low acute toxicity. Reaction with HCl produces sulfur precipitate and sulfur dioxide gas.</p>
+        <p><strong>2. Hydrochloric Acid (HCl 2.0M):</strong> Corrosive. Causes skin and eye irritation. In virtual lab, handled safely without chemical contact.</p>
+        <p><strong>3. Sulfur Dioxide (SO₂ Gas Hazard):</strong> Choking, pungent gas released in the disappearing cross practical. In physical labs, rooms must be well ventilated. In VirtuLab, zero environmental or health hazard.</p>
+        <p><strong>4. Hydrogen Peroxide (H₂O₂ 20 vol):</strong> Strong oxidizer. Rapid exothermic decomposition with MnO₂ catalyst producing oxygen gas.</p>
+      </div>
+      <button class="rate-btn rate-btn-primary" style="width:100%; margin-top:14px;" onclick="closeSafetyModal()">Understood ✓</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/shared/theme.js"></script>
+  <script src="/shared/api.js"></script>
+  <script src="/shared/knec-grading.js"></script>
+  <script src="/student/js/rates-engine.js"></script>
+  <script>
+    function toggleSettingsMenu(e) {
+      e.stopPropagation();
+      const menu = document.getElementById('settingsDropdownMenu');
+      if (menu) menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+    }
+    document.addEventListener('click', () => {
+      const menu = document.getElementById('settingsDropdownMenu');
+      if (menu) menu.style.display = 'none';
+    });
+    function openSafetyModal() {
+      const m = document.getElementById('safetyModal');
+      if (m) m.style.display = 'flex';
+    }
+    function closeSafetyModal() {
+      const m = document.getElementById('safetyModal');
+      if (m) m.style.display = 'none';
+    }
+  </script>
+</body>
+</html>

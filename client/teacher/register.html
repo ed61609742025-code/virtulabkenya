@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teacher Registration — VirtuLab Kenya</title>
+<script>
+  var t = localStorage.getItem('vlk_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/shared/auth.css">
+</head>
+<body class="auth-page">
+
+<!-- Theme Controls -->
+<div class="theme-toggle-float" title="Switch appearance theme">
+  <button class="theme-btn" data-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
+  <button class="theme-btn" data-theme="light" onclick="setTheme('light')">☀️ Light</button>
+  <button class="theme-btn" data-theme="green" onclick="setTheme('green')">🧪 Lab</button>
+</div>
+
+<!-- Teacher Register Box -->
+<div class="auth-card">
+  <div class="auth-header">
+    <h1 class="auth-logo-title">
+      <span>👨‍🏫</span>
+      <span>VirtuLab Kenya</span>
+    </h1>
+    <div class="slogan-badge">
+      <span>✨</span>
+      <span>Every student deserves a laboratory</span>
+    </div>
+    <p class="auth-sub">Teacher Registration — set up your profile to manage student practicals, issue assignments, and track class metrics.</p>
+  </div>
+
+  <div id="registerForm">
+    <div class="auth-form-group">
+      <!-- Full Name -->
+      <div>
+        <label for="name" class="field-label">Full Name</label>
+        <div class="input-wrapper">
+          <span class="input-icon-left">👤</span>
+          <input type="text" id="name" class="auth-input" placeholder="e.g. Mr. Joseph Omondi">
+        </div>
+      </div>
+
+      <!-- School Email Address -->
+      <div>
+        <label for="email" class="field-label">School Email Address</label>
+        <div class="input-wrapper">
+          <span class="input-icon-left">✉️</span>
+          <input type="email" id="email" class="auth-input" placeholder="e.g. mwalimu@school.ac.ke" autocomplete="email">
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div>
+        <label for="password" class="field-label">Password</label>
+        <div class="input-wrapper">
+          <span class="input-icon-left">🔒</span>
+          <input type="password" id="password" class="auth-input" placeholder="At least 6 characters" autocomplete="new-password">
+          <button type="button" class="toggle-pw-btn" onclick="togglePasswordVisibility()" title="Toggle password visibility">👁️</button>
+        </div>
+      </div>
+
+      <!-- School Code -->
+      <div>
+        <label for="schoolCode" class="field-label">School Registration Code</label>
+        <div class="input-wrapper">
+          <span class="input-icon-left">🏫</span>
+          <input type="text" id="schoolCode" class="auth-input" placeholder="e.g. SCH001" style="text-transform:uppercase;">
+        </div>
+        <small style="display:block; margin-top:6px; font-size:0.76rem; color:var(--text-muted);">Provided by your school administrator (default: SCH001)</small>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="button" class="btn-submit-teacher" onclick="doRegister()">
+      <span>Register Teacher Account</span>
+      <span>→</span>
+    </button>
+
+    <!-- Error Alert Box -->
+    <div id="msg"></div>
+  </div>
+
+  <!-- Success Card -->
+  <div id="successCard" style="display:none;">
+    <div class="teacher-code-card">
+      <div style="font-size:0.95rem; color:var(--heading-color); font-weight:800;">🎉 Account Created Successfully!</div>
+      <div style="font-size:0.82rem; color:var(--text-muted); margin-top:6px; line-height:1.5;">
+        Share this unique Teacher Code with your students during registration so they link directly to your class roster:
+      </div>
+      <div class="teacher-code-val" id="dispTeacherCode">TCH-XXXX</div>
+      <button type="button" class="btn-submit-teacher" onclick="window.location.href='dashboard.html'" style="margin-top:12px;">
+        Go to Teacher Dashboard →
+      </button>
+    </div>
+  </div>
+
+  <!-- Footer Navigation Links -->
+  <div class="auth-footer">
+    <p style="margin: 0 0 8px 0;">Already have a teacher account? <a href="login.html">Teacher Login →</a></p>
+    <p style="margin: 0;">Are you a student? <a href="../student/register.html">Student Registration</a></p>
+  </div>
+</div>
+
+<script src="/shared/api.js"></script>
+<script>
+  function setTheme(theme) {
+    localStorage.setItem('vlk_theme', theme);
+    document.documentElement.setAttribute('data-theme', theme);
+    updateThemeButtons();
+  }
+
+  function updateThemeButtons() {
+    const currentTheme = localStorage.getItem('vlk_theme') || 'dark';
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-theme') === currentTheme);
+    });
+  }
+  updateThemeButtons();
+
+  // Redirect if already logged in
+  if (isLoggedIn()) window.location.href = 'dashboard.html';
+
+  function togglePasswordVisibility() {
+    const pwInput = document.getElementById('password');
+    if (pwInput.type === 'password') {
+      pwInput.type = 'text';
+    } else {
+      pwInput.type = 'password';
+    }
+  }
+
+  async function doRegister() {
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const schoolCode = document.getElementById('schoolCode').value.trim().toUpperCase();
+
+    const msg = document.getElementById('msg');
+    msg.innerHTML = '';
+
+    if (!name || !email || !password || !schoolCode) {
+      msg.innerHTML = '<div class="msg-alert err">⚠️ Please fill in all required registration fields.</div>';
+      return;
+    }
+
+    if (password.length < 6) {
+      msg.innerHTML = '<div class="msg-alert err">⚠️ Password must be at least 6 characters.</div>';
+      return;
+    }
+
+    try {
+      msg.innerHTML = '<div class="msg-alert info">🧪 Registering teacher account…</div>';
+      const res = await Auth.teacherRegister(name, email, password, schoolCode);
+
+      document.getElementById('registerForm').style.display = 'none';
+      document.getElementById('dispTeacherCode').textContent = res.user.teacherCode || 'TCH001';
+      document.getElementById('successCard').style.display = 'block';
+    } catch (err) {
+      msg.innerHTML = '<div class="msg-alert err">❌ ' + (err.message || 'Registration failed. Please try again.') + '</div>';
+    }
+  }
+
+  document.getElementById('password').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') doRegister();
+  });
+</script>
+</body>
+</html>

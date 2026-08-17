@@ -1,0 +1,257 @@
+// ============================================================
+//  VirtuLab Kenya — Students Route
+// ============================================================
+//
+// GET /api/students/class — requires teacher token. Returns the
+// students linked to this teacher (students.teacher_id), for
+// display on the dashboard and as a prerequisite for teacher-
+// initiated password resets.
+
+const express = require('express');
+const bcrypt = require('bcrypt');
+const authMiddleware = require('../middleware/auth');
+const pool = require('../db/pool');
+
+const router = express.Router();
+
+router.get('/class', authMiddleware, authMiddleware.requireRole('teacher'), async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, name, email, form, created_at
+       FROM students
+       WHERE teacher_id = $1
+       ORDER BY name ASC`,
+      [req.user.id]
+    );
+    return res.json({ students: result.rows });
+  } catch (err) {
+    console.error('Get class students error:', err.message);
+    return res.status(500).json({ error: 'Could not load your students.' });
+  }
+});
+
+// POST /api/students/bulk-import — Bulk register students from CSV data (Teacher only)
+router.post('/bulk-import', authMiddleware, authMiddleware.requireRole('teacher'), async (req, res) => {
+  try {
+    const teacherId = req.user.id;
+    const { students } = req.body;
+
+    if (!Array.isArray(students) || students.length === 0) {
+      return res.status(400).json({ error: 'Please provide an array of students to import.' });
+    }
+
+    if (students.length > 100) {
+      return res.status(400).json({ error: 'Bulk import is limited to a maximum of 100 students per batch.' });
+    }
+
+    // Get teacher's school_id
+    const teacherRes = await pool.query(`SELECT school_id, name FROM teachers WHERE id = $1`, [teacherId]);
+    if (teacherRes.rows.length === 0) {
+      return res.status(404).json({ error: 'Teacher profile not found.' });
+    }
+    const schoolId = teacherRes.rows[0].school_id;
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const defaultPassword = 'VirtuLab2026!';
+    const defaultHash = await bcrypt.hash(defaultPassword, 10);
+
+    let importedCount = 0;
+    let skippedCount = 0;
+    const results = [];
+
+    for (let i = 0; i < students.length; i++) {
+      const row = students[i];
+      const rawName = (row.name || '').trim();
+      const rawEmail = (row.email || '').toLowerCase().trim();
+      const rawForm = (row.form || 'Form 4').trim();
+      const rawPassword = (row.password || '').trim();
+
+      // Validation
+      if (!rawName || rawName.length < 2) {
+        skippedCount++;
+        results.push({ row: i + 1, name: rawName, email: rawEmail, status: 'skipped', reason: 'Invalid or missing name (min 2 characters).' });
+        continue;
+      }
+
+      if (!rawEmail || !emailRegex.test(rawEmail)) {
+        skippedCount++;
+        results.push({ row: i + 1, name: rawName, email: rawEmail, status: 'skipped', reason: 'Invalid email address format.' });
+        continue;
+      }
+
+      // Check for existing email in students or teachers
+      const existingStudent = await pool.query(`SELECT id FROM students WHERE email = $1`, [rawEmail]);
+      if (existingStudent.rows.length > 0) {
+        skippedCount++;
+        results.push({ row: i + 1, name: rawName, email: rawEmail, status: 'skipped', reason: 'Email already registered in system.' });
+        continue;
+      }
+
+      try {
+        const passwordHash = rawPassword && rawPassword.length >= 6
+          ? await bcrypt.hash(rawPassword, 10)
+          : defaultHash;
+
+        const insertRes = await pool.query(
+          `INSERT INTO students (school_id, teacher_id, name, email, password_hash, form, status)
+           VALUES ($1, $2, $3, $4, $5, $6, 'active')
+           RETURNING id, name, email, form, created_at`,
+          [schoolId, teacherId, rawName, rawEmail, passwordHash, rawForm]
+        );
+
+        importedCount++;
+        results.push({ row: i + 1, id: insertRes.rows[0].id, name: rawName, email: rawEmail, status: 'imported', form: rawForm });
+      } catch (insertErr) {
+        skippedCount++;
+        results.push({ row: i + 1, name: rawName, email: rawEmail, status: 'skipped', reason: insertErr.message });
+      }
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `Bulk import finished: ${importedCount} imported, ${skippedCount} skipped.`,
+      importedCount,
+      skippedCount,
+      totalCount: students.length,
+      defaultPasswordUsed: defaultPassword,
+      results
+    });
+  } catch (err) {
+    console.error('Bulk student import error:', err.message);
+    return res.status(500).json({ error: 'Could not process bulk student import.' });
+  }
+});
+
+// GET /api/students/:id/drilldown — detailed performance profile for a specific student
+router.get('/:id/drilldown', authMiddleware, authMiddleware.requireRole('teacher'), async (req, res) => {
+  try {
+    const studentId = req.params.id;
+
+    // Verify student belongs to this teacher
+    const studentResult = await pool.query(
+      `SELECT id, name, email, form, created_at FROM students WHERE id = $1 AND teacher_id = $2`,
+      [studentId, req.user.id]
+    );
+
+    if (studentResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Student not found in your class.' });
+    }
+    const student = studentResult.rows[0];
+
+    // Fetch Titration sessions
+    const titrationResult = await pool.query(
+      `SELECT * FROM practical_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`,
+      [studentId]
+    );
+
+    // Fetch Qualitative sessions
+    const qualitativeResult = await pool.query(
+      `SELECT * FROM qualitative_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`,
+      [studentId]
+    );
+
+    // Fetch Organic sessions
+    const organicResult = await pool.query(
+      `SELECT * FROM organic_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`,
+      [studentId]
+    );
+
+    // Fetch Solubility sessions
+    const solubilityResult = await pool.query(
+      `SELECT * FROM solubility_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`,
+      [studentId]
+    );
+
+    // Fetch Composite exam sessions
+    const compositeResult = await pool.query(
+      `SELECT * FROM composite_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`,
+      [studentId]
+    );
+
+    // Fetch Energy practical sessions
+    const energyResult = await pool.query(
+      `SELECT * FROM energy_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`,
+      [studentId]
+    );
+
+    const ratesResult = await pool.query(
+      `SELECT * FROM rates_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`,
+      [studentId]
+    );
+
+    const titrationSessions = titrationResult.rows;
+    const qualitativeSessions = qualitativeResult.rows;
+    const organicSessions = organicResult.rows;
+    const solubilitySessions = solubilityResult.rows;
+    const compositeSessions = compositeResult.rows;
+    const energySessions = energyResult.rows;
+    const ratesSessions = ratesResult.rows;
+
+    // Compute badges dynamically
+    const badgeRoutes = require('./badges');
+    const { badges } = badgeRoutes.computeBadges ? badgeRoutes.computeBadges(titrationSessions) : { badges: [] };
+    const unlockedBadges = badges.filter(b => b.unlocked).map(b => ({
+      badge_key: b.key,
+      badge_title: b.name,
+      icon: b.icon,
+      description: b.description
+    }));
+
+    const totalTitration = titrationSessions.length;
+    const correctTitration = titrationSessions.filter(s => s.correct).length;
+
+    const totalQualitative = qualitativeSessions.length;
+    const correctQualitative = qualitativeSessions.filter(s => s.correct).length;
+
+    const totalOrganic = organicSessions.length;
+    const correctOrganic = organicSessions.filter(s => s.correct || s.functional_group_correct || s.score_pct >= 60).length;
+
+    const totalSolubility = solubilitySessions.length;
+    const correctSolubility = solubilitySessions.filter(s => parseFloat(s.total_score || 0) >= 3.0).length;
+
+    const totalEnergy = energySessions.length;
+    const correctEnergy = energySessions.filter(s => parseFloat(s.total_score || 0) >= 8.0).length;
+
+    const totalRates = ratesSessions.length;
+    const correctRates = ratesSessions.filter(s => parseFloat(s.total_score || 0) >= 8.0).length;
+
+    const totalComposite = compositeSessions.length;
+    const correctComposite = compositeSessions.filter(s => parseFloat(s.total_score || 0) >= 20.0).length;
+
+    const totalSessions = totalTitration + totalQualitative + totalOrganic + totalSolubility + totalEnergy + totalRates + totalComposite;
+    const totalCorrect = correctTitration + correctQualitative + correctOrganic + correctSolubility + correctEnergy + correctRates + correctComposite;
+    const overallAccuracy = totalSessions > 0 ? Math.round((totalCorrect / totalSessions) * 100) : 0;
+    const totalDuration = titrationSessions.reduce((acc, s) => acc + (s.duration_seconds || 0), 0) +
+                          compositeSessions.reduce((acc, s) => acc + (s.duration_seconds || 0), 0);
+
+    return res.json({
+      student,
+      metrics: {
+        totalSessions,
+        totalTitration,
+        totalQualitative,
+        totalOrganic,
+        totalSolubility,
+        totalEnergy,
+        totalRates,
+        totalComposite,
+        overallAccuracy,
+        totalDurationSeconds: totalDuration,
+        badgesCount: unlockedBadges.length
+      },
+      titrationSessions,
+      qualitativeSessions,
+      organicSessions,
+      solubilitySessions,
+      energySessions,
+      ratesSessions,
+      compositeSessions,
+      badges: unlockedBadges
+    });
+  } catch (err) {
+    console.error('Student drilldown error:', err.message);
+    return res.status(500).json({ error: 'Could not load student performance details.' });
+  }
+});
+
+module.exports = router;

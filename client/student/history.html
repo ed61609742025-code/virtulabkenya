@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<<<<<<< HEAD
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Grades & Performance Analytics — VirtuLab Kenya</title>
 <script>
@@ -376,6 +377,51 @@
   </div>
 
   <div class="filters" id="titrationFilters">
+=======
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session History — VirtuLab Kenya</title>
+<script>
+  var t = localStorage.getItem('vlk_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', t);
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared/style.css">
+<style>
+  .wrap { max-width: 800px; margin: 0 auto; padding: 24px 16px 60px; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; border-bottom: 2px solid var(--teal); padding-bottom: 12px; flex-wrap: wrap; gap: 10px; }
+  .topbar h1 { font-family: var(--font-d); font-size: 1.2rem; color: var(--teal-deep); }
+  .topbar-actions { display: flex; align-items: center; gap: 8px; }
+
+  .filters { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+  .filters select { padding: 9px 12px; border: 1px solid var(--line); border-radius: 7px; font-family: var(--font-b); font-size: 0.85rem; background: var(--panel); color: var(--ink); }
+
+  .session-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 8px; font-size: 0.87rem; flex-wrap: wrap; gap: 10px; }
+  .session-row .s-title { font-weight: 700; color: var(--ink); }
+  .session-row .s-meta { font-size: 0.78rem; color: var(--ink-soft); margin-top: 2px; }
+  .result-pill { font-size: 0.74rem; font-weight: 700; padding: 4px 10px; border-radius: 100px; white-space: nowrap; }
+  .result-correct { background: #E6F7EE; color: var(--ok); }
+  .result-incorrect { background: #FFF0EE; color: var(--warn); }
+
+  .empty { color: var(--ink-soft); font-size: 0.87rem; padding: 30px; text-align: center; background: var(--glass); border: 1px dashed var(--line); border-radius: 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <h1>🧪 Session History</h1>
+    <div class="topbar-actions">
+      <div class="theme-toggle" title="Change appearance">
+        <button class="theme-btn" data-theme="dark" onclick="setTheme('dark')">🌙</button>
+        <button class="theme-btn active" data-theme="light" onclick="setTheme('light')">☀️</button>
+        <button class="theme-btn" data-theme="green" onclick="setTheme('green')">🧪</button>
+      </div>
+      <a href="home.html" class="btn">← Back to Home</a>
+    </div>
+  </div>
+
+  <div class="filters">
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
     <select id="filterType" onchange="applyFilter()">
       <option value="">All practicals</option>
       <option value="acidBase">Acid-Base Titration</option>
@@ -385,6 +431,7 @@
     </select>
   </div>
 
+<<<<<<< HEAD
   <div id="sessionsBox" class="session-list-wrapper"><div class="empty" style="border:none; background:transparent;">Loading sessions…</div></div>
   <div id="paginationBox" style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:16px;"></div>
 </div>
@@ -572,14 +619,34 @@
   function applyFilter() {
     currentPage = 1;
     loadTitrationSessions();
+=======
+  <div id="sessionsBox"><div class="empty">Loading sessions…</div></div>
+  <div id="paginationBox" style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:14px;"></div>
+</div>
+
+<script src="/shared/api.js"></script>
+<script>
+  requireStudentLogin();
+  updateThemeButtons();
+
+  let currentPage = 1;
+
+  function applyFilter() {
+    currentPage = 1;
+    loadSessions();
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
   }
 
   function goToPage(page) {
     currentPage = page;
+<<<<<<< HEAD
     if (activeTab === 'titration') loadTitrationSessions();
     else if (activeTab === 'qualitative') loadQualitativeSessions();
     else if (activeTab === 'organic') loadOrganicSessions();
     else if (activeTab === 'solubility') loadSolubilitySessions();
+=======
+    loadSessions();
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
   }
 
   function escapeHtml(str) {
@@ -588,25 +655,42 @@
     return div.innerHTML;
   }
 
+<<<<<<< HEAD
   async function loadTitrationSessions() {
     const box = document.getElementById('sessionsBox');
     const pagBox = document.getElementById('paginationBox');
     box.innerHTML = '<div class="empty">Loading titration sessions…</div>';
+=======
+  async function loadSessions() {
+    const box = document.getElementById('sessionsBox');
+    const pagBox = document.getElementById('paginationBox');
+    box.innerHTML = '<div class="empty">Loading sessions…</div>';
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
     pagBox.innerHTML = '';
 
     try {
       const type = document.getElementById('filterType').value;
+<<<<<<< HEAD
       const data = await Sessions.getMine({ type, page: currentPage, limit: 10 });
       const sessions = data.sessions || [];
       const pagination = data.pagination || { page: 1, totalPages: 1, totalCount: sessions.length, limit: 10 };
 
       if (sessions.length === 0) {
         box.innerHTML = '<div class="empty">No titration sessions recorded yet.</div>';
+=======
+      const data = await Sessions.getMine({ type, page: currentPage, limit: 15 });
+      const sessions = data.sessions || [];
+      const pagination = data.pagination || { page: 1, totalPages: 1, totalCount: sessions.length, limit: 15 };
+
+      if (sessions.length === 0) {
+        box.innerHTML = '<div class="empty">No sessions match yet.</div>';
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
         return;
       }
 
       box.innerHTML = sessions.map(s => `
         <div class="session-row">
+<<<<<<< HEAD
           <div class="session-row-header">
             <div>
               <div class="s-title">${escapeHtml(s.titration_title || s.titration_type)}</div>
@@ -771,6 +855,32 @@
   loadTitrationSessions();
   loadSessions();
   loadLeaderboard();
+=======
+          <div>
+            <div class="s-title">${escapeHtml(s.titration_title || s.titration_type)}</div>
+            <div class="s-meta">${new Date(s.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })} · ${s.trials_count ?? 0} trial(s) · ${s.concordant_found ? 'Concordant' : 'Not concordant'} · ${escapeHtml(s.mode || 'free')}</div>
+          </div>
+          <span class="result-pill ${s.correct ? 'result-correct' : 'result-incorrect'}">${s.correct ? 'Correct' : 'Incorrect'}</span>
+        </div>
+      `).join('');
+
+      const p = pagination;
+      const startItem = (p.page - 1) * p.limit + 1;
+      const endItem = Math.min(p.page * p.limit, p.totalCount);
+      pagBox.innerHTML = `
+        <button class="btn" ${p.page <= 1 ? 'disabled' : ''} onclick="goToPage(${p.page - 1})">← Prev</button>
+        <span style="font-size:0.82rem;color:var(--ink-soft);">
+          Showing ${startItem}–${endItem} of ${p.totalCount} · page ${p.page} of ${p.totalPages}
+        </span>
+        <button class="btn" ${p.page >= p.totalPages ? 'disabled' : ''} onclick="goToPage(${p.page + 1})">Next →</button>
+      `;
+    } catch (err) {
+      box.innerHTML = '<div class="empty">Could not load sessions: ' + escapeHtml(err.message) + '</div>';
+    }
+  }
+
+  loadSessions();
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
 </script>
 </body>
 </html>

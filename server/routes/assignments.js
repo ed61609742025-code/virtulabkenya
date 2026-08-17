@@ -1,5 +1,6 @@
 // ============================================================
 //  VirtuLab Kenya — Assignment Routes
+<<<<<<< HEAD
 // ============================================================
 
 const express = require('express');
@@ -211,5 +212,270 @@ router.get('/:id/export', authMiddleware, authMiddleware.requireRole('teacher'),
 
   sendCsv(res, filename, headerRow, dataRows);
 }));
+=======
+//  Phase 4, Week 25
+// ============================================================
+//
+// POST   /api/assignments        — create an assignment (teacher)
+// GET    /api/assignments/mine   — student's assignments, with
+//                                   submission status
+// GET    /api/assignments/teacher — teacher's own created
+//                                    assignments, with submission
+//                                    counts across their class
+// PUT    /api/assignments/:id    — edit an assignment (teacher,
+//                                   must be the creator)
+// DELETE /api/assignments/:id    — delete an assignment (teacher,
+//                                   must be the creator)
+// GET    /api/assignments/:id/export — download all submissions
+//                                       for this assignment as CSV
+//                                       (teacher, must be creator)
+
+const express = require('express');
+const authMiddleware = require('../middleware/auth');
+const pool = require('../db/pool');
+
+const router = express.Router();
+
+// ── POST /api/assignments ───────────────────────────────────────
+// Requires a teacher token. Creates an assignment for the
+// teacher's school.
+router.post('/', authMiddleware, authMiddleware.requireRole('teacher'), async (req, res) => {
+  const { title, titrationType, instructions, dueDate } = req.body;
+
+  if (!title) {
+    return res.status(400).json({ error: 'title is required.' });
+  }
+
+  try {
+    // Look up the teacher's school so the assignment is scoped
+    // correctly without trusting a school_id from the client.
+    const teacherResult = await pool.query(
+      'SELECT school_id FROM teachers WHERE id = $1',
+      [req.user.id]
+    );
+    if (teacherResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Teacher account not found.' });
+    }
+    const schoolId = teacherResult.rows[0].school_id;
+
+    const result = await pool.query(
+      `INSERT INTO assignments (teacher_id, school_id, title, titration_type, instructions, due_date)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING *`,
+      [req.user.id, schoolId, title, titrationType || null, instructions || null, dueDate || null]
+    );
+
+    return res.status(201).json({ assignment: result.rows[0] });
+  } catch (err) {
+    console.error('Create assignment error:', err.message);
+    return res.status(500).json({ error: 'Could not create assignment. Please try again.' });
+  }
+});
+
+// ── GET /api/assignments/mine ───────────────────────────────────
+// Requires a student token. Returns assignments for the student's
+// school, each flagged with whether this student has submitted it.
+router.get('/mine', authMiddleware, authMiddleware.requireRole('student'), async (req, res) => {
+  try {
+    const studentResult = await pool.query(
+      'SELECT school_id FROM students WHERE id = $1',
+      [req.user.id]
+    );
+    if (studentResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Student account not found.' });
+    }
+    const schoolId = studentResult.rows[0].school_id;
+
+    const result = await pool.query(
+      `SELECT a.*,
+              (sub.id IS NOT NULL) AS submitted,
+              sub.submitted_at
+       FROM assignments a
+       LEFT JOIN assignment_submissions sub
+         ON sub.assignment_id = a.id AND sub.student_id = $1
+       WHERE a.school_id = $2
+       ORDER BY a.due_date ASC NULLS LAST, a.created_at DESC`,
+      [req.user.id, schoolId]
+    );
+
+    return res.json({ assignments: result.rows });
+  } catch (err) {
+    console.error('Get assignments error:', err.message);
+    return res.status(500).json({ error: 'Could not load assignments.' });
+  }
+});
+
+// ── GET /api/assignments/teacher ─────────────────────────────────
+// Requires a teacher token. Returns assignments this teacher
+// created, each with a submission count out of their total
+// linked students — useful for "who's still pending" at a glance.
+router.get('/teacher', authMiddleware, authMiddleware.requireRole('teacher'), async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT a.*,
+              COUNT(DISTINCT sub.student_id) AS submitted_count,
+              (SELECT COUNT(*) FROM students s WHERE s.teacher_id = $1) AS total_students
+       FROM assignments a
+       LEFT JOIN assignment_submissions sub ON sub.assignment_id = a.id
+       WHERE a.teacher_id = $1
+       GROUP BY a.id
+       ORDER BY a.due_date ASC NULLS LAST, a.created_at DESC`,
+      [req.user.id]
+    );
+    return res.json({ assignments: result.rows });
+  } catch (err) {
+    console.error('Get teacher assignments error:', err.message);
+    return res.status(500).json({ error: 'Could not load your assignments.' });
+  }
+});
+
+// ── PUT /api/assignments/:id ─────────────────────────────────────
+// Requires a teacher token. Only the teacher who created the
+// assignment can edit it.
+router.put('/:id', authMiddleware, authMiddleware.requireRole('teacher'), async (req, res) => {
+  const { title, titrationType, instructions, dueDate } = req.body;
+
+  if (!title) {
+    return res.status(400).json({ error: 'title is required.' });
+  }
+
+  try {
+    const result = await pool.query(
+      `UPDATE assignments
+       SET title = $1, titration_type = $2, instructions = $3, due_date = $4
+       WHERE id = $5 AND teacher_id = $6
+       RETURNING *`,
+      [title, titrationType || null, instructions || null, dueDate || null, req.params.id, req.user.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Assignment not found, or you do not have permission to edit it.' });
+    }
+
+    return res.json({ assignment: result.rows[0] });
+  } catch (err) {
+    console.error('Update assignment error:', err.message);
+    return res.status(500).json({ error: 'Could not update assignment. Please try again.' });
+  }
+});
+
+// ── DELETE /api/assignments/:id ──────────────────────────────────
+// Requires a teacher token. Only the teacher who created the
+// assignment can delete it. Deleting cascades to remove any
+// submissions tied to it (see schema.sql ON DELETE CASCADE),
+// but does not touch the underlying practical_sessions rows —
+// a student's completed titration data is preserved either way.
+router.delete('/:id', authMiddleware, authMiddleware.requireRole('teacher'), async (req, res) => {
+  try {
+    const result = await pool.query(
+      'DELETE FROM assignments WHERE id = $1 AND teacher_id = $2 RETURNING id',
+      [req.params.id, req.user.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Assignment not found, or you do not have permission to delete it.' });
+    }
+
+    return res.json({ deleted: true });
+  } catch (err) {
+    console.error('Delete assignment error:', err.message);
+    return res.status(500).json({ error: 'Could not delete assignment. Please try again.' });
+  }
+});
+
+// ── GET /api/assignments/:id/export ─────────────────────────────
+// Requires a teacher token, and the assignment must belong to
+// them. Returns a CSV of every student's submission for this
+// assignment — one row per submission, including their full trial
+// readings and calculated answer, not just correct/incorrect.
+router.get('/:id/export', authMiddleware, authMiddleware.requireRole('teacher'), async (req, res) => {
+  try {
+    const assignmentResult = await pool.query(
+      'SELECT id, title FROM assignments WHERE id = $1 AND teacher_id = $2',
+      [req.params.id, req.user.id]
+    );
+    if (assignmentResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Assignment not found, or you do not have permission to export it.' });
+    }
+    const assignment = assignmentResult.rows[0];
+
+    const rowsResult = await pool.query(
+      `SELECT
+         s.name AS student_name,
+         s.email AS student_email,
+         s.form AS student_form,
+         ps.titration_type,
+         ps.titration_title,
+         ps.indicator_used,
+         ps.trials_count,
+         ps.trial_readings,
+         ps.concordant_found,
+         ps.true_value,
+         ps.student_answer,
+         ps.correct,
+         ps.mode,
+         sub.submitted_at
+       FROM assignment_submissions sub
+       JOIN students s ON s.id = sub.student_id
+       JOIN practical_sessions ps ON ps.id = sub.session_id
+       WHERE sub.assignment_id = $1
+       ORDER BY s.name ASC`,
+      [req.params.id]
+    );
+
+    // Build CSV manually rather than pulling in a dependency —
+    // the column set is small and fixed, so a hand-rolled escaper
+    // is simpler than adding a library for this one endpoint.
+    const escapeCsv = (val) => {
+      if (val === null || val === undefined) return '';
+      const str = String(val);
+      if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+        return '"' + str.replace(/"/g, '""') + '"';
+      }
+      return str;
+    };
+
+    const headers = [
+      'Student Name', 'Email', 'Form', 'Titration Type', 'Titration Title',
+      'Indicator', 'Trials Count', 'Trial Readings (cm3)', 'Concordant Found',
+      'True Concentration (mol/dm3)', 'Student Answer (mol/dm3)', 'Correct',
+      'Mode', 'Submitted At'
+    ];
+
+    const lines = [headers.map(escapeCsv).join(',')];
+    rowsResult.rows.forEach(row => {
+      const readings = Array.isArray(row.trial_readings)
+        ? row.trial_readings.map(r => Number(r).toFixed(2)).join(' | ')
+        : '';
+      lines.push([
+        row.student_name,
+        row.student_email,
+        row.student_form,
+        row.titration_type,
+        row.titration_title,
+        row.indicator_used,
+        row.trials_count,
+        readings,
+        row.concordant_found ? 'Yes' : 'No',
+        row.true_value,
+        row.student_answer,
+        row.correct ? 'Yes' : 'No',
+        row.mode,
+        row.submitted_at ? new Date(row.submitted_at).toISOString() : ''
+      ].map(escapeCsv).join(','));
+    });
+
+    const csv = lines.join('\r\n');
+    const safeFilename = assignment.title.replace(/[^a-z0-9]+/gi, '_').toLowerCase();
+
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="${safeFilename}_results.csv"`);
+    return res.send(csv);
+  } catch (err) {
+    console.error('Export assignment error:', err.message);
+    return res.status(500).json({ error: 'Could not export results. Please try again.' });
+  }
+});
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
 
 module.exports = router;

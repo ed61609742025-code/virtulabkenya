@@ -20,7 +20,10 @@ CREATE TABLE IF NOT EXISTS teachers (
   email VARCHAR(200) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   teacher_code VARCHAR(20) UNIQUE,
+<<<<<<< HEAD
   status VARCHAR(20) DEFAULT 'active',
+=======
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
   created_at TIMESTAMP DEFAULT NOW()
 );
 
@@ -33,7 +36,10 @@ CREATE TABLE IF NOT EXISTS students (
   email VARCHAR(200) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   form VARCHAR(10),
+<<<<<<< HEAD
   status VARCHAR(20) DEFAULT 'active',
+=======
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
   created_at TIMESTAMP DEFAULT NOW()
 );
 
@@ -41,8 +47,12 @@ CREATE TABLE IF NOT EXISTS students (
 CREATE TABLE IF NOT EXISTS practical_sessions (
   id SERIAL PRIMARY KEY,
   student_id INTEGER REFERENCES students(id) ON DELETE CASCADE,
+<<<<<<< HEAD
   assignment_id INTEGER REFERENCES assignments(id) ON DELETE SET NULL,
   titration_type VARCHAR(50),
+=======
+  titration_type VARCHAR(50) NOT NULL,
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
   titration_title VARCHAR(150),
   indicator_used VARCHAR(100),
   indicator_correct BOOLEAN,
@@ -51,6 +61,7 @@ CREATE TABLE IF NOT EXISTS practical_sessions (
   trial_readings JSONB,
   student_answer DECIMAL(10,4),
   true_value DECIMAL(10,4),
+<<<<<<< HEAD
   type VARCHAR(50),
   true_conc DECIMAL(10,4),
   difference DECIMAL(10,4),
@@ -59,6 +70,11 @@ CREATE TABLE IF NOT EXISTS practical_sessions (
   duration_seconds INTEGER,
   mode VARCHAR(20) DEFAULT 'free',
   details JSONB,
+=======
+  correct BOOLEAN DEFAULT FALSE,
+  duration_seconds INTEGER,
+  mode VARCHAR(20) DEFAULT 'free',
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
   created_at TIMESTAMP DEFAULT NOW()
 );
 
@@ -71,7 +87,10 @@ CREATE TABLE IF NOT EXISTS assignments (
   titration_type VARCHAR(50),
   instructions TEXT,
   due_date TIMESTAMP,
+<<<<<<< HEAD
   exam_config JSONB,
+=======
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
   created_at TIMESTAMP DEFAULT NOW()
 );
 
@@ -81,6 +100,7 @@ CREATE TABLE IF NOT EXISTS assignment_submissions (
   assignment_id INTEGER REFERENCES assignments(id) ON DELETE CASCADE,
   student_id INTEGER REFERENCES students(id) ON DELETE CASCADE,
   session_id INTEGER REFERENCES practical_sessions(id),
+<<<<<<< HEAD
   status VARCHAR(20) DEFAULT 'pending',
   teacher_feedback TEXT,
   marked_at TIMESTAMP,
@@ -245,3 +265,7 @@ CREATE TABLE IF NOT EXISTS student_notifications (
   created_at TIMESTAMP DEFAULT NOW()
 );
 
+=======
+  submitted_at TIMESTAMP DEFAULT NOW()
+);
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8

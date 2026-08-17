@@ -13,8 +13,11 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const authMiddleware = require('../middleware/auth');
 const pool = require('../db/pool');
+<<<<<<< HEAD
 const { authLimiter } = require('../middleware/rateLimiter');
 const { validateStudentRegister, validateTeacherRegister, validateLogin } = require('../middleware/validators');
+=======
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
 
 const router = express.Router();
 
@@ -26,7 +29,11 @@ function signToken(payload) {
 }
 
 // ── POST /api/auth/student/register ────────────────────────────
+<<<<<<< HEAD
 router.post('/student/register', authLimiter, validateStudentRegister, async (req, res) => {
+=======
+router.post('/student/register', async (req, res) => {
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
   const { name, email, password, form, schoolCode, teacherCode } = req.body;
 
   if (!name || !email || !password || !form || !schoolCode) {
@@ -82,6 +89,7 @@ router.post('/student/register', authLimiter, validateStudentRegister, async (re
   }
 });
 
+<<<<<<< HEAD
 // ── POST /api/auth/teacher/register ────────────────────────────
 router.post('/teacher/register', authLimiter, validateTeacherRegister, async (req, res) => {
   const { name, email, password, schoolCode } = req.body;
@@ -151,6 +159,14 @@ router.post('/teacher/register', authLimiter, validateTeacherRegister, async (re
 // ── POST /api/auth/student/login ───────────────────────────────
 router.post('/student/login', authLimiter, validateLogin, async (req, res) => {
   const { email, password } = req.body;
+=======
+// ── POST /api/auth/student/login ───────────────────────────────
+router.post('/student/login', async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required.' });
+  }
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
 
   try {
     const result = await pool.query(
@@ -191,7 +207,11 @@ router.post('/student/login', authLimiter, validateLogin, async (req, res) => {
 });
 
 // ── POST /api/auth/teacher/login ───────────────────────────────
+<<<<<<< HEAD
 router.post('/teacher/login', authLimiter, validateLogin, async (req, res) => {
+=======
+router.post('/teacher/login', async (req, res) => {
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(400).json({ error: 'Email and password are required.' });
@@ -256,6 +276,7 @@ router.post('/change-password', authMiddleware, async (req, res) => {
     return res.status(400).json({ error: 'New password must be at least 6 characters.' });
   }
 
+<<<<<<< HEAD
   try {
     const isTeacher = req.user.role === 'teacher';
     const querySelect = isTeacher
@@ -263,6 +284,15 @@ router.post('/change-password', authMiddleware, async (req, res) => {
       : 'SELECT password_hash FROM students WHERE id = $1';
 
     const result = await pool.query(querySelect, [req.user.id]);
+=======
+  const table = req.user.role === 'teacher' ? 'teachers' : 'students';
+
+  try {
+    const result = await pool.query(
+      `SELECT password_hash FROM ${table} WHERE id = $1`,
+      [req.user.id]
+    );
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Account not found.' });
     }
@@ -273,11 +303,18 @@ router.post('/change-password', authMiddleware, async (req, res) => {
     }
 
     const newHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
+<<<<<<< HEAD
     const queryUpdate = isTeacher
       ? 'UPDATE teachers SET password_hash = $1 WHERE id = $2'
       : 'UPDATE students SET password_hash = $1 WHERE id = $2';
 
     await pool.query(queryUpdate, [newHash, req.user.id]);
+=======
+    await pool.query(
+      `UPDATE ${table} SET password_hash = $1 WHERE id = $2`,
+      [newHash, req.user.id]
+    );
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
 
     return res.json({ success: true });
   } catch (err) {
@@ -330,6 +367,7 @@ router.post('/student/:id/reset-password', authMiddleware, authMiddleware.requir
   }
 });
 
+<<<<<<< HEAD
 // ── POST /api/auth/admin/login ─────────────────────────────────
 // System Administrator authentication endpoint
 const config = require('../config');
@@ -368,3 +406,6 @@ router.post('/admin/login', authLimiter, validateLogin, async (req, res) => {
 
 module.exports = router;
 
+=======
+module.exports = router;
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8

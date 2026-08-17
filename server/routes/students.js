@@ -8,7 +8,10 @@
 // initiated password resets.
 
 const express = require('express');
+<<<<<<< HEAD
 const bcrypt = require('bcrypt');
+=======
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
 const authMiddleware = require('../middleware/auth');
 const pool = require('../db/pool');
 
@@ -30,6 +33,7 @@ router.get('/class', authMiddleware, authMiddleware.requireRole('teacher'), asyn
   }
 });
 
+<<<<<<< HEAD
 // POST /api/students/bulk-import — Bulk register students from CSV data (Teacher only)
 router.post('/bulk-import', authMiddleware, authMiddleware.requireRole('teacher'), async (req, res) => {
   try {
@@ -254,4 +258,6 @@ router.get('/:id/drilldown', authMiddleware, authMiddleware.requireRole('teacher
   }
 });
 
+=======
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
 module.exports = router;

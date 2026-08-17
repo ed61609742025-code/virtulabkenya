@@ -2,12 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<<<<<<< HEAD
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Teacher Portal — VirtuLab Kenya</title>
+=======
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — VirtuLab Kenya</title>
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
 <script>
   var t = localStorage.getItem('vlk_theme') || 'light';
   document.documentElement.setAttribute('data-theme', t);
 </script>
+<<<<<<< HEAD
 <meta name="theme-color" content="#0F172A">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -481,3 +487,683 @@
 </body>
 </html>
 
+=======
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 24px 16px 60px; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; border-bottom: 2px solid var(--teal); padding-bottom: 12px; flex-wrap: wrap; gap: 10px; }
+  .topbar h1 { font-family: var(--font-d); font-size: 1.3rem; color: var(--teal-deep); }
+  .topbar-actions { display: flex; align-items: center; gap: 8px; }
+  .welcome { font-size: 1rem; color: var(--ink-soft); margin-bottom: 24px; }
+  .welcome b { color: var(--ink); }
+  .section-title { font-family: var(--font-d); color: var(--teal-deep); font-size: 1.05rem; margin: 32px 0 12px; }
+  table { width: 100%; border-collapse: collapse; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  th, td { text-align: left; padding: 10px 12px; font-size: 0.85rem; border-bottom: 1px solid var(--line); }
+  th { background: var(--glass); color: var(--ink-soft); font-weight: 600; }
+  tr:last-child td { border-bottom: none; }
+  .pill { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+  .pill-ok { background: #E6F7EE; color: var(--ok); }
+  .pill-warn { background: #FFF0EE; color: var(--warn); }
+  .empty { color: var(--ink-soft); font-size: 0.87rem; padding: 24px; text-align: center; }
+
+  .stat-strip { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  .stat-card { flex: 1; min-width: 130px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .stat-card .stat-value { font-family: var(--font-d); font-size: 1.5rem; font-weight: 700; color: var(--teal-deep); }
+  [data-theme="dark"] .stat-card .stat-value, [data-theme="green"] .stat-card .stat-value { color: var(--amber); }
+  .stat-card .stat-label { font-size: 0.72rem; color: var(--ink-soft); margin-top: 2px; }
+
+  .charts-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+  .chart-card { flex: 1; min-width: 320px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+  .chart-card h3 { font-family: var(--font-d); font-size: 0.9rem; color: var(--teal-deep); margin-bottom: 12px; }
+  [data-theme="dark"] .chart-card h3, [data-theme="green"] .chart-card h3 { color: var(--amber); }
+  .chart-card canvas { max-height: 240px; }
+  .assign-form { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 20px; margin-top: 12px; }
+  .assign-form .row { display: flex; gap: 12px; }
+  .assign-form .row .field { flex: 1; }
+  .assign-item { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .assign-item .info { flex: 1; min-width: 200px; }
+  .assign-item .title { font-weight: 700; color: var(--ink); font-size: 0.9rem; margin-bottom: 3px; }
+  .assign-item .meta { font-size: 0.76rem; color: var(--ink-soft); }
+  .assign-item .actions { display: flex; gap: 6px; }
+  .assign-item .actions button { padding: 6px 12px; font-size: 0.78rem; }
+  .btn-danger { border-color: var(--warn); color: var(--warn); }
+  .btn-danger:hover { background: var(--warn); color: #fff; }
+  .filters { display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+  .filters select, .filters input { padding: 8px 10px; border: 1px solid var(--line); border-radius: 7px; font-family: var(--font-b); font-size: 0.85rem; }
+  .lb-rank { font-family: var(--font-m); font-weight: 700; color: var(--teal-deep); }
+  [data-theme="dark"] .lb-rank, [data-theme="green"] .lb-rank { color: var(--amber); }
+
+  .student-item { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .student-item .info { flex: 1; min-width: 180px; }
+  .student-item .s-name { font-weight: 700; color: var(--ink); font-size: 0.88rem; }
+  .student-item .s-meta { font-size: 0.75rem; color: var(--ink-soft); }
+
+  .password-panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px; max-width: 380px; }
+  .temp-pw-banner { background: var(--panel2); border: 1px solid var(--teal); border-radius: 8px; padding: 12px 14px; margin-top: 10px; font-size: 0.85rem; }
+  .temp-pw-banner .pw-value { font-family: var(--font-m); font-size: 1.1rem; font-weight: 700; color: var(--teal-deep); letter-spacing: 0.03em; margin: 4px 0; }
+  [data-theme="dark"] .temp-pw-banner .pw-value, [data-theme="green"] .temp-pw-banner .pw-value { color: var(--amber); }
+
+  .cb-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+  .cb-name { font-weight: 700; font-size: 0.85rem; color: var(--ink); min-width: 140px; }
+  .cb-icons { display: flex; gap: 4px; }
+  .cb-icons span { font-size: 1rem; opacity: 0.25; }
+  .cb-icons span.unlocked { opacity: 1; }
+  .cb-count { font-family: var(--font-m); font-size: 0.78rem; font-weight: 700; color: var(--teal); white-space: nowrap; }
+  [data-theme="dark"] .cb-count, [data-theme="green"] .cb-count { color: var(--amber); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <h1>🧑‍🏫 VirtuLab Kenya — Dashboard</h1>
+    <div class="topbar-actions">
+      <div class="theme-toggle" title="Change appearance">
+        <button class="theme-btn" data-theme="dark" onclick="setTheme('dark'); reRenderCharts();">🌙</button>
+        <button class="theme-btn active" data-theme="light" onclick="setTheme('light'); reRenderCharts();">☀️</button>
+        <button class="theme-btn" data-theme="green" onclick="setTheme('green'); reRenderCharts();">🧪</button>
+      </div>
+      <button class="btn" onclick="togglePasswordPanel()">Change Password</button>
+      <button class="btn" onclick="Auth.logout()">Log out</button>
+    </div>
+  </div>
+
+  <p class="welcome">Welcome, <b id="teacherName">Teacher</b>. Here's what your class has been up to.</p>
+
+  <div id="passwordPanel" class="password-panel" style="display:none;margin-bottom:20px;">
+    <h3 style="font-family:var(--font-d);font-size:0.9rem;color:var(--teal-deep);margin-bottom:12px;">Change Your Password</h3>
+    <div class="field">
+      <label for="pwCurrent">Current Password</label>
+      <input type="password" id="pwCurrent">
+    </div>
+    <div class="field">
+      <label for="pwNew">New Password</label>
+      <input type="password" id="pwNew" placeholder="At least 6 characters">
+    </div>
+    <button class="btn btn-primary" onclick="submitChangePassword()">Update Password</button>
+    <div id="pwMsg"></div>
+  </div>
+
+  <h2 class="section-title">Class Overview</h2>
+  <div id="statStrip" class="stat-strip"></div>
+  <div class="charts-row">
+    <div class="chart-card">
+      <h3>Accuracy Over Time <span style="font-weight:400;font-size:0.68rem;color:var(--ink-soft);">last 30 days</span></h3>
+      <div id="trendChartWrap"><canvas id="trendChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <h3>By Practical Type</h3>
+      <div id="typeChartWrap"><canvas id="typeChart"></canvas></div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Your Students</h2>
+  <div id="studentsList"><div class="empty">Loading students…</div></div>
+
+  <h2 class="section-title">Class Badges</h2>
+  <div id="classBadgesList"><div class="empty">Loading badges…</div></div>
+
+  <h2 class="section-title">Class Sessions</h2>
+  <div class="filters">
+    <select id="filterType">
+      <option value="">All practicals</option>
+      <option value="acidBase">Acid-Base Titration</option>
+      <option value="redox">Redox Titration</option>
+      <option value="precipitation">Precipitation Titration</option>
+      <option value="complexometric">Complexometric Titration</option>
+      <option value="dibasic">Dibasic Acid Titration</option>
+      <option value="tribasic">Tribasic Acid Titration</option>
+      <option value="weakAcid">Weak Acid – Strong Base</option>
+      <option value="weakBase">Weak Base – Strong Acid</option>
+    </select>
+    <input type="text" id="filterClass" placeholder="Filter by form, e.g. Form 3">
+    <button class="btn" onclick="applyFilters()">Apply</button>
+  </div>
+  <div id="sessionsBox"><div class="empty">Loading sessions…</div></div>
+  <div id="paginationBox" style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:12px;"></div>
+
+  <h2 class="section-title">Class Leaderboard <span style="font-weight:400;font-size:0.72rem;color:var(--ink-soft);">by accuracy, min. 3 sessions</span></h2>
+  <div id="leaderboardBox"><div class="empty">Loading leaderboard…</div></div>
+
+  <h2 class="section-title">Assignments</h2>
+  <div id="assignmentsManageList"><div class="empty">Loading assignments…</div></div>
+
+  <div class="assign-form">
+    <h3 id="formHeading" style="font-family:var(--font-d);font-size:0.9rem;color:var(--teal-deep);margin-bottom:12px;">Create Assignment</h3>
+    <input type="hidden" id="aEditingId" value="">
+    <div class="row">
+      <div class="field">
+        <label for="aTitle">Title</label>
+        <input type="text" id="aTitle" placeholder="e.g. Acid-Base Titration Practice">
+      </div>
+      <div class="field">
+        <label for="aType">Titration Type</label>
+        <select id="aType">
+          <option value="acidBase">Acid-Base</option>
+          <option value="redox">Redox</option>
+          <option value="precipitation">Precipitation</option>
+          <option value="complexometric">Complexometric</option>
+          <option value="dibasic">Dibasic Acid</option>
+          <option value="tribasic">Tribasic Acid</option>
+          <option value="weakAcid">Weak Acid – Strong Base</option>
+          <option value="weakBase">Weak Base – Strong Acid</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label for="aInstructions">Instructions</label>
+      <input type="text" id="aInstructions" placeholder="e.g. Complete two concordant titres by Friday.">
+    </div>
+    <div class="field">
+      <label for="aDue">Due Date</label>
+      <input type="date" id="aDue">
+    </div>
+    <button class="btn btn-primary" id="aSaveBtn" onclick="saveAssignment()">Create Assignment</button>
+    <button class="btn" id="aCancelBtn" onclick="cancelEdit()" style="display:none;">Cancel</button>
+    <div id="assignMsg"></div>
+  </div>
+</div>
+
+<script src="/shared/api.js"></script>
+<script>
+  requireTeacherLogin();
+  updateThemeButtons();
+  const user = getUser();
+  if (user) document.getElementById('teacherName').textContent = user.name;
+
+  let currentPage = 1;
+
+  function applyFilters() {
+    currentPage = 1;
+    loadSessions();
+  }
+
+  function goToPage(page) {
+    currentPage = page;
+    loadSessions();
+  }
+
+  async function loadSessions() {
+    const box = document.getElementById('sessionsBox');
+    const pagBox = document.getElementById('paginationBox');
+    box.innerHTML = '<div class="empty">Loading sessions…</div>';
+    pagBox.innerHTML = '';
+    try {
+      const type = document.getElementById('filterType').value;
+      const form = document.getElementById('filterClass').value.trim();
+
+      const data = await Sessions.getClass({ type, class: form, page: currentPage, limit: 20 });
+      const sessions = data.sessions || [];
+      const pagination = data.pagination || { page: 1, totalPages: 1, totalCount: sessions.length };
+
+      if (sessions.length === 0) {
+        box.innerHTML = '<div class="empty">No sessions match yet. Once students complete practicals, they\'ll show up here.</div>';
+        return;
+      }
+
+      let rows = sessions.map(s => {
+        const trueVal = parseFloat(s.true_value);
+        const studentVal = parseFloat(s.student_answer);
+        const hasValues = !isNaN(trueVal) && !isNaN(studentVal);
+        const delta = hasValues ? (studentVal - trueVal) : null;
+        const deltaPct = hasValues && trueVal !== 0 ? (Math.abs(delta) / trueVal) * 100 : null;
+        const readings = Array.isArray(s.trial_readings) ? s.trial_readings : null;
+
+        const readingsHtml = readings && readings.length > 0
+          ? `<div style="margin-top:8px;"><b style="font-size:0.78rem;">Trial readings (cm³):</b> ${readings.map(r => Number(r).toFixed(2)).join(', ')}</div>`
+          : '';
+
+        const detailHtml = `
+          <tr id="detail-${s.id}" style="display:none;">
+            <td colspan="8" style="background:var(--panel2);">
+              <div style="padding:10px 6px;font-size:0.82rem;line-height:1.7;">
+                <div><b>True concentration:</b> ${hasValues ? trueVal.toFixed(4) : '—'} mol/dm³ &nbsp;·&nbsp; <b>Student's answer:</b> ${hasValues ? studentVal.toFixed(4) : '—'} mol/dm³</div>
+                ${hasValues ? `<div><b>Difference:</b> ${delta >= 0 ? '+' : ''}${delta.toFixed(4)} mol/dm³ (${deltaPct.toFixed(1)}% off)</div>` : ''}
+                <div><b>Indicator used:</b> ${escapeHtml(s.indicator_used || '—')} &nbsp;·&nbsp; <b>Mode:</b> ${escapeHtml(s.mode || '—')}</div>
+                ${readingsHtml}
+              </div>
+            </td>
+          </tr>
+        `;
+
+        return `
+          <tr>
+            <td>${escapeHtml(s.student_name || '—')}</td>
+            <td>${escapeHtml(s.student_form || '—')}</td>
+            <td>${escapeHtml(s.titration_title || s.titration_type)}</td>
+            <td>${s.trials_count ?? 0}</td>
+            <td>${s.concordant_found ? '<span class="pill pill-ok">Yes</span>' : '<span class="pill pill-warn">No</span>'}</td>
+            <td>${s.correct ? '<span class="pill pill-ok">Correct</span>' : '<span class="pill pill-warn">Incorrect</span>'}</td>
+            <td>${new Date(s.created_at).toLocaleDateString()}</td>
+            <td><button class="btn" onclick="toggleDetail(${s.id})" style="padding:4px 10px;font-size:0.76rem;">Details</button></td>
+          </tr>
+          ${detailHtml}
+        `;
+      }).join('');
+
+      box.innerHTML = `
+        <table>
+          <thead>
+            <tr><th>Student</th><th>Form</th><th>Practical</th><th>Trials</th><th>Concordant</th><th>Result</th><th>Date</th><th></th></tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+
+      const p = pagination;
+      const startItem = (p.page - 1) * p.limit + 1;
+      const endItem = Math.min(p.page * p.limit, p.totalCount);
+      pagBox.innerHTML = `
+        <button class="btn" ${p.page <= 1 ? 'disabled' : ''} onclick="goToPage(${p.page - 1})">← Prev</button>
+        <span style="font-size:0.82rem;color:var(--ink-soft);">
+          Showing ${startItem}–${endItem} of ${p.totalCount} · page ${p.page} of ${p.totalPages}
+        </span>
+        <button class="btn" ${p.page >= p.totalPages ? 'disabled' : ''} onclick="goToPage(${p.page + 1})">Next →</button>
+      `;
+    } catch (err) {
+      box.innerHTML = '<div class="empty">Could not load sessions: ' + escapeHtml(err.message) + '</div>';
+    }
+  }
+
+  function toggleDetail(sessionId) {
+    const row = document.getElementById('detail-' + sessionId);
+    if (row) row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
+  }
+
+  async function loadTeacherAssignments() {
+    const box = document.getElementById('assignmentsManageList');
+    try {
+      const data = await Assignments.getTeacherList();
+      const assignments = data.assignments || [];
+
+      if (assignments.length === 0) {
+        box.innerHTML = '<div class="empty">No assignments created yet. Use the form below to create one.</div>';
+        return;
+      }
+
+      box.innerHTML = assignments.map(a => {
+        const exportBtn = `<button class="btn" onclick="exportAssignmentCsv(${a.id}, '${escapeHtml(a.title).replace(/'/g, "\\'")}')">Download CSV</button>`;
+
+        return `
+        <div class="assign-item">
+          <div class="info">
+            <div class="title">${escapeHtml(a.title)}</div>
+            <div class="meta">${escapeHtml(a.titration_type || '—')} · Due ${a.due_date ? new Date(a.due_date).toLocaleDateString() : 'no due date'} · ${a.submitted_count}/${a.total_students} students submitted</div>
+          </div>
+          <div class="actions">
+            ${exportBtn}
+            <button class="btn" onclick='editAssignment(${JSON.stringify(a).replace(/'/g, "&apos;")})'>Edit</button>
+            <button class="btn btn-danger" onclick="deleteAssignment(${a.id}, '${escapeHtml(a.title).replace(/'/g, "\\'")}')">Delete</button>
+          </div>
+        </div>
+      `;
+      }).join('');
+    } catch (err) {
+      box.innerHTML = '<div class="empty">Could not load assignments: ' + escapeHtml(err.message) + '</div>';
+    }
+  }
+
+  async function exportAssignmentCsv(id, title) {
+    const safeName = title.replace(/[^a-z0-9]+/gi, '_').toLowerCase();
+    try {
+      await Assignments.exportCsv(id, safeName + '_results.csv');
+    } catch (err) {
+      alert('Could not download results: ' + (err.message || 'unknown error'));
+    }
+  }
+
+  function editAssignment(a) {
+    document.getElementById('aEditingId').value = a.id;
+    document.getElementById('aTitle').value = a.title;
+    document.getElementById('aType').value = a.titration_type || 'acidBase';
+    document.getElementById('aInstructions').value = a.instructions || '';
+    document.getElementById('aDue').value = a.due_date ? a.due_date.slice(0, 10) : '';
+    document.getElementById('formHeading').textContent = 'Edit Assignment';
+    document.getElementById('aSaveBtn').textContent = 'Update Assignment';
+    document.getElementById('aCancelBtn').style.display = 'inline-block';
+    document.getElementById('assignMsg').innerHTML = '';
+    window.scrollTo({ top: document.querySelector('.assign-form').offsetTop - 20, behavior: 'smooth' });
+  }
+
+  function cancelEdit() {
+    document.getElementById('aEditingId').value = '';
+    document.getElementById('aTitle').value = '';
+    document.getElementById('aInstructions').value = '';
+    document.getElementById('aDue').value = '';
+    document.getElementById('formHeading').textContent = 'Create Assignment';
+    document.getElementById('aSaveBtn').textContent = 'Create Assignment';
+    document.getElementById('aCancelBtn').style.display = 'none';
+    document.getElementById('assignMsg').innerHTML = '';
+  }
+
+  async function deleteAssignment(id, title) {
+    if (!confirm('Delete "' + title + '"? This cannot be undone. Students\' completed session data will not be affected.')) {
+      return;
+    }
+    try {
+      await Assignments.remove(id);
+      loadTeacherAssignments();
+    } catch (err) {
+      alert('Could not delete assignment: ' + (err.message || 'unknown error'));
+    }
+  }
+
+  async function saveAssignment() {
+    const editingId = document.getElementById('aEditingId').value;
+    const title = document.getElementById('aTitle').value.trim();
+    const titrationType = document.getElementById('aType').value;
+    const instructions = document.getElementById('aInstructions').value.trim();
+    const dueDate = document.getElementById('aDue').value;
+    const msg = document.getElementById('assignMsg');
+    msg.innerHTML = '';
+
+    if (!title) {
+      msg.innerHTML = '<div class="msg msg-err">Please enter a title.</div>';
+      return;
+    }
+    const payload = {
+      title,
+      titrationType,
+      instructions,
+      dueDate: dueDate ? new Date(dueDate).toISOString() : null
+    };
+    try {
+      msg.innerHTML = '<div class="msg">' + (editingId ? 'Updating…' : 'Creating…') + '</div>';
+      if (editingId) {
+        await Assignments.update(editingId, payload);
+        msg.innerHTML = '<div class="msg msg-ok">Assignment updated.</div>';
+      } else {
+        await Assignments.create(payload);
+        msg.innerHTML = '<div class="msg msg-ok">Assignment created.</div>';
+      }
+      cancelEdit();
+      loadTeacherAssignments();
+    } catch (err) {
+      msg.innerHTML = '<div class="msg msg-err">' + escapeHtml(err.message || 'Could not save assignment.') + '</div>';
+    }
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str == null ? '' : String(str);
+    return div.innerHTML;
+  }
+
+  async function loadLeaderboard() {
+    const box = document.getElementById('leaderboardBox');
+    try {
+      const data = await Leaderboard.getClass();
+      const ranked = data.ranked || [];
+
+      if (ranked.length === 0) {
+        box.innerHTML = `<div class="empty">No students have reached ${data.minSessionsRequired}+ sessions yet.</div>`;
+        return;
+      }
+
+      const rows = ranked.map(r => `
+        <tr>
+          <td class="lb-rank">#${r.rank}</td>
+          <td>${escapeHtml(r.name)}</td>
+          <td>${escapeHtml(r.form || '—')}</td>
+          <td>${r.accuracyPct}%</td>
+          <td>${r.totalSessions}</td>
+        </tr>
+      `).join('');
+
+      box.innerHTML = `
+        <table>
+          <thead><tr><th>Rank</th><th>Student</th><th>Form</th><th>Accuracy</th><th>Sessions</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    } catch (err) {
+      box.innerHTML = '<div class="empty">Could not load leaderboard: ' + escapeHtml(err.message) + '</div>';
+    }
+  }
+
+  loadSessions();
+  async function loadStudents() {
+    const box = document.getElementById('studentsList');
+    try {
+      const data = await Students.getClass();
+      const students = data.students || [];
+
+      if (students.length === 0) {
+        box.innerHTML = '<div class="empty">No students linked yet. Share your teacher code so students can link their accounts at registration.</div>';
+        return;
+      }
+
+      box.innerHTML = students.map(s => `
+        <div class="student-item">
+          <div class="info">
+            <div class="s-name">${escapeHtml(s.name)}</div>
+            <div class="s-meta">${escapeHtml(s.email)} · ${escapeHtml(s.form || '—')}</div>
+          </div>
+          <button class="btn" onclick="resetStudentPw(${s.id}, '${escapeHtml(s.name).replace(/'/g, "\\'")}')">Reset Password</button>
+        </div>
+      `).join('');
+    } catch (err) {
+      box.innerHTML = '<div class="empty">Could not load students: ' + escapeHtml(err.message) + '</div>';
+    }
+  }
+
+  async function resetStudentPw(studentId, studentName) {
+    if (!confirm('Reset the password for ' + studentName + '? Their old password will stop working immediately.')) {
+      return;
+    }
+    try {
+      const result = await Auth.resetStudentPassword(studentId);
+      alert(
+        'Password reset for ' + result.studentName + '.\n\n' +
+        'Temporary password: ' + result.temporaryPassword + '\n\n' +
+        'Give this to the student directly. They can change it themselves after logging in.'
+      );
+    } catch (err) {
+      alert('Could not reset password: ' + (err.message || 'unknown error'));
+    }
+  }
+
+  function togglePasswordPanel() {
+    const panel = document.getElementById('passwordPanel');
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  }
+
+  async function submitChangePassword() {
+    const currentPassword = document.getElementById('pwCurrent').value;
+    const newPassword = document.getElementById('pwNew').value;
+    const msg = document.getElementById('pwMsg');
+    msg.innerHTML = '';
+
+    if (!currentPassword || !newPassword) {
+      msg.innerHTML = '<div class="msg msg-err">Both fields are required.</div>';
+      return;
+    }
+    try {
+      msg.innerHTML = '<div class="msg">Updating…</div>';
+      await Auth.changePassword(currentPassword, newPassword);
+      msg.innerHTML = '<div class="msg msg-ok">Password updated.</div>';
+      document.getElementById('pwCurrent').value = '';
+      document.getElementById('pwNew').value = '';
+    } catch (err) {
+      msg.innerHTML = '<div class="msg msg-err">' + escapeHtml(err.message || 'Could not update password.') + '</div>';
+    }
+  }
+
+  async function loadClassBadges() {
+    const box = document.getElementById('classBadgesList');
+    try {
+      const data = await Badges.getClass();
+      const classBadges = data.classBadges || [];
+
+      if (classBadges.length === 0) {
+        box.innerHTML = '<div class="empty">No students linked yet.</div>';
+        return;
+      }
+
+      box.innerHTML = classBadges.map(c => `
+        <div class="cb-row">
+          <div class="cb-name">${escapeHtml(c.name)}</div>
+          <div class="cb-icons" title="${c.badges.filter(b => b.unlocked).map(b => b.name).join(', ') || 'No badges yet'}">
+            ${c.badges.map(b => `<span class="${b.unlocked ? 'unlocked' : ''}">${b.icon}</span>`).join('')}
+          </div>
+          <div class="cb-count">${c.unlockedCount}/${c.totalBadges}</div>
+        </div>
+      `).join('');
+    } catch (err) {
+      box.innerHTML = '<div class="empty">Could not load class badges: ' + escapeHtml(err.message) + '</div>';
+    }
+  }
+
+  loadStudents();
+  let trendChartInstance = null;
+  let typeChartInstance = null;
+  let lastAnalyticsData = null;
+
+  // Reads current theme's actual colors from CSS variables so chart
+  // colors match whichever of the three themes is active, rather
+  // than hardcoding one palette that would look wrong in dark/green.
+  function themeColor(varName) {
+    return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+  }
+
+  async function loadAnalytics() {
+    const statStrip = document.getElementById('statStrip');
+    try {
+      const data = await Analytics.getClass();
+      lastAnalyticsData = data;
+
+      const s = data.summary;
+      statStrip.innerHTML = `
+        <div class="stat-card"><div class="stat-value">${s.totalSessions}</div><div class="stat-label">Total sessions</div></div>
+        <div class="stat-card"><div class="stat-value">${s.overallAccuracyPct}%</div><div class="stat-label">Overall accuracy</div></div>
+        <div class="stat-card"><div class="stat-value">${s.activeStudents}</div><div class="stat-label">Active students</div></div>
+      `;
+
+      renderTrendChart(data.accuracyOverTime);
+      renderTypeChart(data.byType);
+    } catch (err) {
+      statStrip.innerHTML = '<div class="empty">Could not load analytics: ' + escapeHtml(err.message) + '</div>';
+    }
+  }
+
+  function renderTrendChart(accuracyOverTime) {
+    const wrap = document.getElementById('trendChartWrap');
+    if (trendChartInstance) { trendChartInstance.destroy(); trendChartInstance = null; }
+
+    if (!accuracyOverTime || accuracyOverTime.length === 0) {
+      wrap.innerHTML = '<div class="empty">No sessions in the last 30 days yet.</div>';
+      return;
+    }
+    if (!wrap.querySelector('canvas')) {
+      wrap.innerHTML = '<canvas id="trendChart"></canvas>';
+    }
+
+    const ink = themeColor('--ink-soft');
+    const line = themeColor('--line');
+    const teal = themeColor('--teal');
+
+    const ctx = document.getElementById('trendChart').getContext('2d');
+    trendChartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: accuracyOverTime.map(d => new Date(d.day).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })),
+        datasets: [{
+          label: 'Accuracy %',
+          data: accuracyOverTime.map(d => d.accuracyPct),
+          borderColor: teal,
+          backgroundColor: teal + '33',
+          fill: true,
+          tension: 0.3,
+          pointRadius: 3
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { min: 0, max: 100, ticks: { color: ink }, grid: { color: line } },
+          x: { ticks: { color: ink }, grid: { color: line } }
+        }
+      }
+    });
+  }
+
+  function renderTypeChart(byType) {
+    const wrap = document.getElementById('typeChartWrap');
+    if (typeChartInstance) { typeChartInstance.destroy(); typeChartInstance = null; }
+
+    if (!byType || byType.length === 0) {
+      wrap.innerHTML = '<div class="empty">No sessions recorded yet.</div>';
+      return;
+    }
+    if (!wrap.querySelector('canvas')) {
+      wrap.innerHTML = '<canvas id="typeChart"></canvas>';
+    }
+
+    const typeLabels = {
+      acidBase: 'Acid-Base',
+      redox: 'Redox',
+      precipitation: 'Precipitation',
+      complexometric: 'Complexometric',
+      dibasic: 'Dibasic Acid',
+      tribasic: 'Tribasic Acid',
+      weakAcid: 'Weak Acid',
+      weakBase: 'Weak Base'
+    };
+
+    const ink = themeColor('--ink-soft');
+    const line = themeColor('--line');
+    const teal = themeColor('--teal');
+    const amber = themeColor('--amber');
+
+    const ctx = document.getElementById('typeChart').getContext('2d');
+    typeChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: byType.map(d => typeLabels[d.titrationType] || d.titrationType),
+        datasets: [
+          {
+            label: 'Sessions',
+            data: byType.map(d => d.totalSessions),
+            backgroundColor: teal,
+            yAxisID: 'y'
+          },
+          {
+            label: 'Accuracy %',
+            data: byType.map(d => d.accuracyPct),
+            backgroundColor: amber,
+            yAxisID: 'y1'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { labels: { color: ink } } },
+        scales: {
+          y: { position: 'left', beginAtZero: true, ticks: { color: ink }, grid: { color: line } },
+          y1: { position: 'right', beginAtZero: true, max: 100, ticks: { color: ink }, grid: { display: false } },
+          x: { ticks: { color: ink }, grid: { display: false } }
+        }
+      }
+    });
+  }
+
+  function reRenderCharts() {
+    // Called after a theme switch. Colors are read fresh from CSS
+    // variables, so this just needs to re-run the render functions
+    // with the data already fetched — no need to re-hit the API.
+    if (lastAnalyticsData) {
+      renderTrendChart(lastAnalyticsData.accuracyOverTime);
+      renderTypeChart(lastAnalyticsData.byType);
+    }
+  }
+
+  loadAnalytics();
+  loadClassBadges();
+  loadLeaderboard();
+</script>
+</body>
+</html>
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8

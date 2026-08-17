@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<<<<<<< HEAD
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>VirtuLab Kenya — Student Home</title>
 <script>
@@ -903,5 +904,326 @@
   }
 </script>
 <script src="../shared/pwa-installer.js"></script>
+=======
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home — VirtuLab Kenya</title>
+<script>
+  var t = localStorage.getItem('vlk_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', t);
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared/style.css">
+<style>
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 24px 16px 60px; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; border-bottom: 2px solid var(--teal); padding-bottom: 12px; flex-wrap: wrap; gap: 10px; }
+  .topbar h1 { font-family: var(--font-d); font-size: 1.3rem; color: var(--teal-deep); }
+  .topbar-actions { display: flex; align-items: center; gap: 8px; }
+  .welcome { font-size: 1rem; color: var(--ink-soft); margin-bottom: 20px; }
+  .welcome b { color: var(--ink); }
+
+  .home-grid { display: grid; grid-template-columns: 250px 1fr 280px; grid-template-areas: "left center right"; gap: 20px; align-items: start; }
+  .col-left, .col-right { position: sticky; top: 20px; }
+  @media (max-width: 980px) {
+    .home-grid { grid-template-columns: 1fr; grid-template-areas: "center" "left" "right"; }
+    .col-left, .col-right { position: static; }
+  }
+
+  .section-title { font-family: var(--font-d); color: var(--teal-deep); font-size: 0.98rem; margin: 0 0 12px; display: flex; align-items: center; justify-content: space-between; }
+  .col-center .section-title { margin-top: 24px; }
+  .col-center .section-title:first-child { margin-top: 0; }
+
+  .assign-card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+  .assign-card .info { flex: 1; min-width: 200px; }
+  .assign-card .title { font-weight: 700; color: var(--ink); font-size: 0.92rem; margin-bottom: 4px; }
+  .assign-card .meta { font-size: 0.78rem; color: var(--ink-soft); }
+  .status-pill { font-size: 0.72rem; font-weight: 700; padding: 4px 10px; border-radius: 100px; white-space: nowrap; }
+  .status-pending { background: #FFF3E0; color: var(--amber); }
+  .status-done { background: #E6F7EE; color: var(--ok); }
+
+  .session-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; margin-bottom: 6px; font-size: 0.85rem; flex-wrap: wrap; gap: 8px; }
+  .session-row .s-title { font-weight: 600; color: var(--ink); }
+  .session-row .s-date { color: var(--ink-soft); font-size: 0.78rem; }
+  .result-pill { font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 100px; }
+  .result-correct { background: #E6F7EE; color: var(--ok); }
+  .result-incorrect { background: #FFF0EE; color: var(--warn); }
+
+  .empty { color: var(--ink-soft); font-size: 0.85rem; padding: 20px; text-align: center; background: var(--glass); border: 1px dashed var(--line); border-radius: 10px; }
+
+  .practice-cta { background: var(--glass); border: 1px solid var(--line); border-radius: 10px; padding: 20px; text-align: center; margin-top: 24px; }
+  .practice-cta p { font-size: 0.85rem; color: var(--ink-soft); margin-bottom: 12px; }
+  .hint { font-size: 0.75rem; color: var(--ink-soft); line-height: 1.4; }
+  .password-panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px; max-width: 380px; margin-bottom: 20px; }
+
+  .badge-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .badge-card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 8px; text-align: center; }
+  .badge-card.locked { opacity: 0.45; }
+  .badge-card .b-icon { font-size: 1.5rem; margin-bottom: 5px; filter: grayscale(0); }
+  .badge-card.locked .b-icon { filter: grayscale(1); }
+  .badge-card .b-name { font-weight: 700; font-size: 0.72rem; color: var(--ink); margin-bottom: 3px; }
+  .badge-card .b-desc { font-size: 0.62rem; color: var(--ink-soft); line-height: 1.35; margin-bottom: 5px; min-height: 32px; }
+  .badge-card .b-progress { font-size: 0.6rem; font-weight: 600; color: var(--teal); }
+  [data-theme="dark"] .badge-card .b-progress, [data-theme="green"] .badge-card .b-progress { color: var(--amber); }
+  .badge-card.locked .b-progress { color: var(--ink-soft); }
+  .badge-summary { font-size: 0.76rem; color: var(--ink-soft); margin-bottom: 10px; line-height: 1.5; }
+  .badge-summary b { color: var(--ink); }
+  .sidebar-panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+
+  .lb-table { width: 100%; border-collapse: collapse; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; font-size: 0.74rem; margin-bottom: 10px; }
+  .lb-table th, .lb-table td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line); }
+  .lb-table th { background: var(--glass); color: var(--ink-soft); font-weight: 600; font-size: 0.66rem; }
+  .lb-table tr:last-child td { border-bottom: none; }
+  .lb-table tr.you-row { background: var(--panel2); font-weight: 700; }
+  .lb-rank { font-family: var(--font-m); font-weight: 700; color: var(--teal-deep); }
+  [data-theme="dark"] .lb-rank, [data-theme="green"] .lb-rank { color: var(--amber); }
+  .you-card { background: var(--panel2); border: 1px solid var(--teal); border-radius: 8px; padding: 9px 12px; font-size: 0.76rem; margin-bottom: 10px; line-height: 1.4; }
+  .you-card b { color: var(--teal-deep); }
+  [data-theme="dark"] .you-card b, [data-theme="green"] .you-card b { color: var(--amber); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <h1>🧪 VirtuLab Kenya</h1>
+    <div class="topbar-actions">
+      <div class="theme-toggle" title="Change appearance">
+        <button class="theme-btn" data-theme="dark" onclick="setTheme('dark')">🌙</button>
+        <button class="theme-btn active" data-theme="light" onclick="setTheme('light')">☀️</button>
+        <button class="theme-btn" data-theme="green" onclick="setTheme('green')">🧪</button>
+      </div>
+      <button class="btn" onclick="togglePasswordPanel()">Change Password</button>
+      <button class="btn" onclick="Auth.logout()">Log out</button>
+    </div>
+  </div>
+
+  <p class="welcome">Welcome back, <b id="studentName">Student</b>! Ready to practise?</p>
+
+  <div id="passwordPanel" class="password-panel" style="display:none;">
+    <h3 style="font-family:var(--font-d);font-size:0.9rem;color:var(--teal-deep);margin-bottom:12px;">Change Your Password</h3>
+    <div class="field">
+      <label for="pwCurrent">Current Password</label>
+      <input type="password" id="pwCurrent">
+    </div>
+    <div class="field">
+      <label for="pwNew">New Password</label>
+      <input type="password" id="pwNew" placeholder="At least 6 characters">
+    </div>
+    <button class="btn btn-primary" onclick="submitChangePassword()">Update Password</button>
+    <div id="pwMsg"></div>
+  </div>
+
+  <div class="home-grid">
+    <aside class="col-left">
+      <div class="sidebar-panel">
+        <div class="section-title">Your Badges</div>
+        <div id="badgeSummary" class="badge-summary"></div>
+        <div id="badgeGrid" class="badge-grid"><div class="empty">Loading badges…</div></div>
+      </div>
+    </aside>
+
+    <main class="col-center">
+      <div class="section-title">Your Assignments</div>
+      <div id="assignmentsList"><div class="empty">Loading assignments…</div></div>
+
+      <div class="section-title">Recent Sessions <a href="history.html" style="font-weight:400;font-size:0.75rem;">View Full History →</a></div>
+      <div id="sessionsList"><div class="empty">Loading sessions…</div></div>
+
+      <div class="practice-cta">
+        <p>Practise outside an assignment — choose how you'd like to work:</p>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+          <a href="lab.html?studyMode=guided" class="btn btn-primary">🎯 Guided Practice</a>
+          <a href="lab.html?studyMode=selfPaced" class="btn">🔬 Self-Paced Practice</a>
+        </div>
+        <p class="hint" style="margin-top:10px;">Guided walks you through Acid-Base titration step by step. Self-Paced gives you free choice of all 8 practicals.</p>
+      </div>
+    </main>
+
+    <aside class="col-right">
+      <div class="sidebar-panel">
+        <div class="section-title">Leaderboard <span style="font-weight:400;font-size:0.68rem;color:var(--ink-soft);">by accuracy</span></div>
+        <div id="leaderboardBox"><div class="empty">Loading leaderboard…</div></div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script src="/shared/api.js"></script>
+<script>
+  requireStudentLogin();
+  updateThemeButtons();
+  const user = getUser();
+  if (user) document.getElementById('studentName').textContent = user.name;
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str == null ? '' : String(str);
+    return div.innerHTML;
+  }
+
+  function formatDate(dateStr) {
+    if (!dateStr) return 'No due date';
+    return new Date(dateStr).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  async function loadAssignments() {
+    const box = document.getElementById('assignmentsList');
+    try {
+      const data = await Assignments.getMine();
+      const assignments = data.assignments || [];
+
+      if (assignments.length === 0) {
+        box.innerHTML = '<div class="empty">No assignments yet. Your teacher will assign practicals here.</div>';
+        return;
+      }
+
+      box.innerHTML = assignments.map(a => {
+        const isSubmitted = !!a.submitted;
+        const statusHtml = isSubmitted
+          ? '<span class="status-pill status-done">✓ Submitted</span>'
+          : '<span class="status-pill status-pending">Pending</span>';
+        const actionHtml = isSubmitted
+          ? ''
+          : `<a href="lab.html?assignment=${a.id}&type=${encodeURIComponent(a.titration_type || 'acidBase')}" class="btn btn-primary">Start →</a>`;
+
+        return `
+          <div class="assign-card">
+            <div class="info">
+              <div class="title">${escapeHtml(a.title)}</div>
+              <div class="meta">${escapeHtml(a.instructions || 'No additional instructions.')} · Due ${formatDate(a.due_date)}</div>
+            </div>
+            ${statusHtml}
+            ${actionHtml}
+          </div>
+        `;
+      }).join('');
+    } catch (err) {
+      box.innerHTML = '<div class="empty">Could not load assignments: ' + escapeHtml(err.message) + '</div>';
+    }
+  }
+
+  async function loadSessions() {
+    const box = document.getElementById('sessionsList');
+    try {
+      const data = await Sessions.getMine({ limit: 5 });
+      const sessions = data.sessions || [];
+
+      if (sessions.length === 0) {
+        box.innerHTML = '<div class="empty">No sessions yet. Open the lab below to run your first titration.</div>';
+        return;
+      }
+
+      box.innerHTML = sessions.map(s => `
+        <div class="session-row">
+          <div>
+            <div class="s-title">${escapeHtml(s.titration_title || s.titration_type)}</div>
+            <div class="s-date">${new Date(s.created_at).toLocaleDateString()} · ${s.trials_count ?? 0} trial(s)</div>
+          </div>
+          <span class="result-pill ${s.correct ? 'result-correct' : 'result-incorrect'}">${s.correct ? 'Correct' : 'Incorrect'}</span>
+        </div>
+      `).join('');
+    } catch (err) {
+      box.innerHTML = '<div class="empty">Could not load sessions: ' + escapeHtml(err.message) + '</div>';
+    }
+  }
+
+  async function loadBadges() {
+    const summary = document.getElementById('badgeSummary');
+    const grid = document.getElementById('badgeGrid');
+    try {
+      const data = await Badges.getMine();
+      const badges = data.badges || [];
+      const unlockedCount = badges.filter(b => b.unlocked).length;
+
+      summary.innerHTML = `<b>${unlockedCount}/${badges.length}</b> badges unlocked · <b>${data.stats.totalSessions}</b> sessions completed · <b>${data.stats.accuracyPct}%</b> accuracy`;
+
+      grid.innerHTML = badges.map(b => `
+        <div class="badge-card ${b.unlocked ? '' : 'locked'}">
+          <div class="b-icon">${b.icon}</div>
+          <div class="b-name">${escapeHtml(b.name)}</div>
+          <div class="b-desc">${escapeHtml(b.description)}</div>
+          <div class="b-progress">${escapeHtml(b.progress)}</div>
+        </div>
+      `).join('');
+    } catch (err) {
+      grid.innerHTML = '<div class="empty">Could not load badges: ' + escapeHtml(err.message) + '</div>';
+    }
+  }
+
+  async function loadLeaderboard() {
+    const box = document.getElementById('leaderboardBox');
+    try {
+      const data = await Leaderboard.getClass();
+
+      if (data.message) {
+        box.innerHTML = '<div class="empty">' + escapeHtml(data.message) + '</div>';
+        return;
+      }
+
+      if (!data.top || data.top.length === 0) {
+        box.innerHTML = `<div class="empty">Not enough sessions yet — you and your classmates need at least ${data.minSessionsRequired} completed sessions each to appear on the leaderboard.</div>`;
+        return;
+      }
+
+      const rows = data.top.map(r => `
+        <tr class="${data.you && r.studentId === data.you.studentId ? 'you-row' : ''}">
+          <td class="lb-rank">#${r.rank}</td>
+          <td>${escapeHtml(r.name)}${data.you && r.studentId === data.you.studentId ? ' (you)' : ''}</td>
+          <td>${escapeHtml(r.form || '—')}</td>
+          <td>${r.accuracyPct}%</td>
+          <td>${r.totalSessions}</td>
+        </tr>
+      `).join('');
+
+      let youCardHtml = '';
+      const inTop5 = data.you && data.top.some(r => r.studentId === data.you.studentId);
+      if (data.you && !inTop5) {
+        youCardHtml = `<div class="you-card">Your rank: <b>#${data.you.rank}</b> · ${data.you.accuracyPct}% accuracy over ${data.you.totalSessions} sessions</div>`;
+      } else if (!data.you) {
+        youCardHtml = `<div class="you-card">Complete ${data.minSessionsRequired}+ sessions to appear on the leaderboard yourself.</div>`;
+      }
+
+      box.innerHTML = youCardHtml + `
+        <table class="lb-table">
+          <thead><tr><th>Rank</th><th>Student</th><th>Form</th><th>Accuracy</th><th>Sessions</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    } catch (err) {
+      box.innerHTML = '<div class="empty">Could not load leaderboard: ' + escapeHtml(err.message) + '</div>';
+    }
+  }
+
+  function togglePasswordPanel() {
+    const panel = document.getElementById('passwordPanel');
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+  }
+
+  async function submitChangePassword() {
+    const currentPassword = document.getElementById('pwCurrent').value;
+    const newPassword = document.getElementById('pwNew').value;
+    const msg = document.getElementById('pwMsg');
+    msg.innerHTML = '';
+
+    if (!currentPassword || !newPassword) {
+      msg.innerHTML = '<div class="msg msg-err">Both fields are required.</div>';
+      return;
+    }
+    try {
+      msg.innerHTML = '<div class="msg">Updating…</div>';
+      await Auth.changePassword(currentPassword, newPassword);
+      msg.innerHTML = '<div class="msg msg-ok">Password updated.</div>';
+      document.getElementById('pwCurrent').value = '';
+      document.getElementById('pwNew').value = '';
+    } catch (err) {
+      msg.innerHTML = '<div class="msg msg-err">' + escapeHtml(err.message || 'Could not update password.') + '</div>';
+    }
+  }
+
+  loadBadges();
+  loadLeaderboard();
+  loadAssignments();
+  loadSessions();
+</script>
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
 </body>
 </html>

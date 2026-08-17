@@ -3,6 +3,7 @@
 //  All API calls go through this file
 // ============================================================
 
+<<<<<<< HEAD
 const isLocalHost = typeof window !== 'undefined' && (
   ['localhost', '127.0.0.1'].includes(window.location.hostname) ||
   window.location.hostname.startsWith('192.168.') ||
@@ -63,12 +64,42 @@ function setUser(user) {
   const serialized = JSON.stringify(user);
   if (store) store.setItem('vlk_user', serialized);
   try { sessionStorage.setItem('vlk_user', serialized); } catch(e) {}
+=======
+const API_BASE = window.location.hostname === 'localhost'
+  ? 'http://localhost:3000/api'
+  : '/api'; // same domain in production
+
+// ── Token helpers ─────────────────────────────────────────────
+function getToken() {
+  return sessionStorage.getItem('vlk_token');
+}
+function setToken(token) {
+  sessionStorage.setItem('vlk_token', token);
+}
+function clearToken() {
+  sessionStorage.removeItem('vlk_token');
+  sessionStorage.removeItem('vlk_user');
+}
+function getUser() {
+  try { return JSON.parse(sessionStorage.getItem('vlk_user')); }
+  catch(e) { return null; }
+}
+function setUser(user) {
+  sessionStorage.setItem('vlk_user', JSON.stringify(user));
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
 }
 function isLoggedIn() {
   return !!getToken();
 }
 
 // ── Theme helpers ───────────────────────────────────────────────
+<<<<<<< HEAD
+=======
+// Three themes: 'light', 'dark', 'green' (Lab Green). Applied via
+// [data-theme] on <html> rather than <body>, so a tiny inline
+// script in each page's <head> can set it before first paint,
+// avoiding a flash of the wrong theme on load.
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
 function applyStoredTheme() {
   const theme = localStorage.getItem('vlk_theme') || 'light';
   document.documentElement.setAttribute('data-theme', theme);
@@ -86,6 +117,15 @@ function updateThemeButtons() {
 }
 
 // ── Core fetch wrapper ────────────────────────────────────────
+<<<<<<< HEAD
+=======
+// ── File download helper ────────────────────────────────────────
+// Plain <a href> links can't carry the Authorization header a
+// token-secured download endpoint needs, so this fetches the file
+// with the token attached, then triggers a save via a temporary
+// blob URL — reusable for any future CSV/file export, not just
+// assignment results.
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
 async function downloadFile(endpoint, filename) {
   const headers = {};
   const token = getToken();
@@ -109,6 +149,7 @@ async function downloadFile(endpoint, filename) {
   URL.revokeObjectURL(url);
 }
 
+<<<<<<< HEAD
 // ── IndexedDB Offline Queue & Auto-Sync ─────────────────────────
 const DB_NAME = 'virtulab_offline_db';
 const DB_VERSION = 1;
@@ -292,6 +333,9 @@ function isOfflineQueueable(endpoint, method) {
 }
 
 async function apiRequest(method, endpoint, body, retries = 2) {
+=======
+async function apiRequest(method, endpoint, body) {
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
   const headers = { 'Content-Type': 'application/json' };
   const token = getToken();
   if (token) headers['Authorization'] = 'Bearer ' + token;
@@ -299,6 +343,7 @@ async function apiRequest(method, endpoint, body, retries = 2) {
   const options = { method, headers };
   if (body) options.body = JSON.stringify(body);
 
+<<<<<<< HEAD
   let attempt = 0;
   while (attempt <= retries) {
     try {
@@ -357,6 +402,16 @@ async function apiRequest(method, endpoint, body, retries = 2) {
       console.error('API error:', err.message);
       throw err;
     }
+=======
+  try {
+    const res = await fetch(API_BASE + endpoint, options);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Request failed');
+    return data;
+  } catch (err) {
+    console.error('API error:', err.message);
+    throw err;
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
   }
 }
 
@@ -372,18 +427,22 @@ const Auth = {
     setUser(data.user);
     return data;
   },
+<<<<<<< HEAD
   async teacherRegister(name, email, password, schoolCode) {
     const data = await apiRequest('POST', '/auth/teacher/register', { name, email, password, schoolCode });
     setToken(data.token);
     setUser(data.user);
     return data;
   },
+=======
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
   async teacherLogin(email, password) {
     const data = await apiRequest('POST', '/auth/teacher/login', { email, password });
     setToken(data.token);
     setUser(data.user);
     return data;
   },
+<<<<<<< HEAD
   async adminLogin(email, password) {
     const data = await apiRequest('POST', '/auth/admin/login', { email, password });
     setToken(data.token);
@@ -400,6 +459,11 @@ const Auth = {
     } else {
       window.location.href = '/student/login.html';
     }
+=======
+  logout() {
+    clearToken();
+    window.location.href = '/student/login.html';
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
   },
   async changePassword(currentPassword, newPassword) {
     return apiRequest('POST', '/auth/change-password', { currentPassword, newPassword });
@@ -451,6 +515,7 @@ const Assignments = {
   async remove(id) {
     return apiRequest('DELETE', '/assignments/' + id);
   },
+<<<<<<< HEAD
   async markSubmission(submissionId, teacherFeedback) {
     return apiRequest('POST', '/assignments/submissions/' + submissionId + '/mark', { teacherFeedback });
   },
@@ -461,6 +526,8 @@ const Assignments = {
     const qs = query.toString();
     return apiRequest('GET', '/assignments/submissions/all' + (qs ? '?' + qs : ''));
   },
+=======
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
   async exportCsv(id, filename) {
     return downloadFile('/assignments/' + id + '/export', filename);
   }
@@ -487,9 +554,12 @@ const Leaderboard = {
 const Students = {
   async getClass() {
     return apiRequest('GET', '/students/class');
+<<<<<<< HEAD
   },
   async getDrilldown(id) {
     return apiRequest('GET', '/students/' + id + '/drilldown');
+=======
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
   }
 };
 
@@ -507,6 +577,7 @@ const AiFeedback = {
   }
 };
 
+<<<<<<< HEAD
 // ── Qualitative analysis endpoints ──────────────────────────────
 const Qualitative = {
   async save(data) {
@@ -724,3 +795,16 @@ if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
     });
   });
 }
+=======
+// ── Guard: redirect to login if not authenticated ─────────────
+function requireStudentLogin() {
+  if (!isLoggedIn()) {
+    window.location.href = '/student/login.html';
+  }
+}
+function requireTeacherLogin() {
+  if (!isLoggedIn()) {
+    window.location.href = '/teacher/login.html';
+  }
+}
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8

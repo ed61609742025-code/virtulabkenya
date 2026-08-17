@@ -34,6 +34,7 @@ module.exports = (req, res, next) => {
 };
 
 // ── Optional: role-restricted guard ────────────────────────────
+<<<<<<< HEAD
 // Use after the middleware above on routes that are teacher-only,
 // student-only, or admin-only, e.g.:
 //   router.get('/class', requireAuth, requireRole('teacher'), handler)
@@ -48,8 +49,20 @@ module.exports.requireRole = function requireRole(role) {
     if (!roles.includes(req.user.role)) {
       const roleStr = roles.join(' or ');
       return res.status(403).json({ error: `This action requires a ${roleStr} account.` });
+=======
+// Use after the middleware above on routes that are teacher-only
+// or student-only, e.g.:
+//   router.get('/class', requireAuth, requireRole('teacher'), handler)
+module.exports.requireRole = function requireRole(role) {
+  return (req, res, next) => {
+    if (!req.user || req.user.role !== role) {
+      return res.status(403).json({ error: `This action requires a ${role} account.` });
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
     }
     next();
   };
 };
+<<<<<<< HEAD
 
+=======
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8

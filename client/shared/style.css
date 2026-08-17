@@ -6,6 +6,7 @@
    ============================================================ */
 
 /* ── CLEAN WHITE (default / light) ── */
+<<<<<<< HEAD
 /* ── CLEAN WHITE (default / light) ── */
 :root, [data-theme="light"] {
   --bg: #F8FAFC;
@@ -39,10 +40,35 @@
   --btn-gradient-primary: linear-gradient(135deg, #0284C7 0%, #2563EB 100%);
   --btn-gradient-success: linear-gradient(135deg, #059669 0%, #10B981 100%);
   --btn-gradient-purple: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%);
+=======
+:root, [data-theme="light"] {
+  --bg: #EEF3F1;
+  --bg2: #FFFFFF;
+  --panel: #FFFFFF;
+  --panel2: #F1F5F9;
+  --ink: #14231F;
+  --ink-soft: #4B615B;
+  --line: #D6E0DB;
+  --teal: #0B4F4A;
+  --teal-deep: #082E2B;
+  --amber: #E0972C;
+  --amber-dark: #C97F1F;
+  --glass: #EAF1EF;
+  --glass-tint: #EAF1EF;
+  --ok: #1F8A4C;
+  --warn: #C24A2B;
+  --rig-body: #FFFFFF;
+  --rig-line: #082E2B;
+  --rig-stand: #94A3B8;
+  --font-d: 'Space Grotesk', sans-serif;
+  --font-b: 'Inter', sans-serif;
+  --font-m: 'IBM Plex Mono', monospace;
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
 }
 
 /* ── SLATE BLUE DARK MODE ── */
 [data-theme="dark"] {
+<<<<<<< HEAD
   --bg: #090E17;
   --bg2: #111A2E;
   --panel: #111A2E;
@@ -71,10 +97,31 @@
   --btn-gradient-primary: linear-gradient(135deg, #0284C7 0%, #3B82F6 100%);
   --btn-gradient-success: linear-gradient(135deg, #10B981 0%, #059669 100%);
   --btn-gradient-purple: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);
+=======
+  --bg: #0F172A;
+  --bg2: #1E293B;
+  --panel: #1E293B;
+  --panel2: #0F172A;
+  --ink: #F1F5F9;
+  --ink-soft: #94A3B8;
+  --line: #334155;
+  --teal: #0B4F4A;
+  --teal-deep: #4FBFA8;
+  --amber: #38BDF8;
+  --amber-dark: #0EA5E9;
+  --glass: #1E293B;
+  --glass-tint: #1E293B;
+  --ok: #4ADE80;
+  --warn: #F87171;
+  --rig-body: #1E293B;
+  --rig-line: #334155;
+  --rig-stand: #334155;
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
 }
 
 /* ── LAB GREEN MODE ── */
 [data-theme="green"] {
+<<<<<<< HEAD
   --bg: #051209;
   --bg2: #0B2112;
   --panel: #102617;
@@ -103,6 +150,26 @@
   --btn-gradient-primary: linear-gradient(135deg, #16A34A 0%, #15803D 100%);
   --btn-gradient-success: linear-gradient(135deg, #39E87A 0%, #16A34A 100%);
   --btn-gradient-purple: linear-gradient(135deg, #A855F7 0%, #7E22CE 100%);
+=======
+  --bg: #0A1A0F;
+  --bg2: #0F2415;
+  --panel: #142D1A;
+  --panel2: #183520;
+  --ink: #D4EDD8;
+  --ink-soft: #7AB885;
+  --line: #1F4A2A;
+  --teal: #1A6B30;
+  --teal-deep: #39E87A;
+  --amber: #39E87A;
+  --amber-dark: #28C45C;
+  --glass: #0F2415;
+  --glass-tint: #0F2415;
+  --ok: #39E87A;
+  --warn: #E74C3C;
+  --rig-body: #061008;
+  --rig-line: #1A4A22;
+  --rig-stand: #1F4A2A;
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -224,7 +291,11 @@ body, .panel, .card, .auth-box, .btn, .bench, .rig-panel {
   background: var(--teal-deep);
   box-shadow: 0 5px 14px rgba(11,79,74,0.3);
 }
+<<<<<<< HEAD
 [data-theme="dark"] .btn-primary, [data-theme="green"] .btn-primary { color: #fff; }
+=======
+[data-theme="dark"] .btn-primary, [data-theme="green"] .btn-primary { color: #0F172A; }
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
 [data-theme="dark"] .btn-primary, [data-theme="green"] .btn-primary { box-shadow: 0 2px 8px rgba(0,0,0,0.35); }
 .btn-full { width: 100%; }
 
@@ -302,6 +373,7 @@ body, .panel, .card, .auth-box, .btn, .bench, .rig-panel {
 .msg-err { background: #FFF0EE; color: var(--warn); border: 1px solid #F5C4BB; }
 [data-theme="dark"] .msg-ok, [data-theme="green"] .msg-ok { background: #143824; }
 [data-theme="dark"] .msg-err, [data-theme="green"] .msg-err { background: #3A1F17; }
+<<<<<<< HEAD
 
 /* ── MOBILE PWA & TOUCH UX OPTIMIZATIONS ── */
 body {
@@ -422,3 +494,5 @@ body {
   margin-top: 6px;
 }
 
+=======
+>>>>>>> 74e471700462c14fcb25509826ece705e831d8d8

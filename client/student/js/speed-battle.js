@@ -334,61 +334,61 @@
   ];
 
   /* ══════════════════════════════════════
-     GAME MODES CONFIGURATION
+     GAME MODES CONFIGURATION (ACADEMIC DOMAINS)
   ══════════════════════════════════════ */
   const GAME_MODES = {
     'blitz': {
       key: 'blitz',
-      name: '60s Blitz',
-      icon: '⚡',
+      name: 'Comprehensive Review',
+      icon: '📚',
       duration: 60,
       isSurvival: false,
-      launchText: '🚀 Launch 60s Blitz Battle →',
+      launchText: '🚀 Begin Comprehensive Diagnostic (60s) →',
       filter: () => true
     },
     'survival': {
       key: 'survival',
-      name: 'Sudden Death',
-      icon: '💀',
+      name: 'High-Precision Drill',
+      icon: '🎯',
       duration: 15,
       isSurvival: true,
-      launchText: '💀 Launch Sudden Death Survival →',
+      launchText: '🎯 Begin High-Precision Drill (Zero-Error) →',
       filter: () => true
     },
     'qualitative': {
       key: 'qualitative',
-      name: 'Qualitative Drill',
+      name: 'Qualitative Salt Analysis',
       icon: '🔬',
       duration: 45,
       isSurvival: false,
-      launchText: '🔬 Launch Qualitative Drill (45s) →',
+      launchText: '🔬 Begin Qualitative Diagnostic (45s) →',
       filter: (q) => q.category.includes('Cation') || q.category.includes('Anion') || q.category.includes('Flame') || q.category.includes('Gas')
     },
     'organic': {
       key: 'organic',
-      name: 'Organic Diagnostic',
+      name: 'Organic Functional Groups',
       icon: '⚗️',
       duration: 45,
       isSurvival: false,
-      launchText: '⚗️ Launch Organic Diagnostic (45s) →',
+      launchText: '⚗️ Begin Organic Diagnostic (45s) →',
       filter: (q) => q.category.includes('Organic')
     },
     'titration': {
       key: 'titration',
-      name: 'Titration Mastery',
+      name: 'Volumetric Titrations',
       icon: '⚖️',
       duration: 45,
       isSurvival: false,
-      launchText: '⚖️ Launch Titration Mastery (45s) →',
+      launchText: '⚖️ Begin Volumetric Titration Drill (45s) →',
       filter: (q) => q.category.includes('Volumetric')
     },
     'energy': {
       key: 'energy',
-      name: 'Energy & Kinetics',
+      name: 'Kinetics & Energetics',
       icon: '🌡️',
       duration: 45,
       isSurvival: false,
-      launchText: '🌡️ Launch Energy & Kinetics (45s) →',
+      launchText: '🌡️ Begin Kinetics & Energetics Drill (45s) →',
       filter: (q) => q.category.includes('Energy') || q.category.includes('Rates')
     }
   };
@@ -930,20 +930,20 @@
     if (statStrk) statStrk.textContent = `${maxStreak}x`;
     if (statSpd) statSpd.textContent = `${Math.abs(avgSpeed)}s`;
 
-    // Ranking Tier Evaluation
-    let rank = '🧪 Novice Chemist';
+    // Ranking Tier Evaluation (Academic KNEC Practical Performance Standards)
+    let rank = '🧪 Foundational: Practical Learner (Grade C)';
     let isHighRank = false;
 
     if (currentScore >= 3500 || (modeConfig.isSurvival && maxStreak >= 10)) {
-      rank = '👑 Master KCSE Chemist (A+)';
+      rank = '👑 Distinction: Master KCSE Chemist (Grade A)';
       isHighRank = true;
     } else if (currentScore >= 2200 || (modeConfig.isSurvival && maxStreak >= 7)) {
-      rank = '🔥 Senior Lab Expert (A)';
+      rank = '🌟 Merit: Senior Analytical Chemist (Grade A-)';
       isHighRank = true;
     } else if (currentScore >= 1200 || (modeConfig.isSurvival && maxStreak >= 4)) {
-      rank = '🎯 Skilled Analyst (B+)';
+      rank = '🎯 Proficient: Practical Analyst (Grade B+)';
     } else if (currentScore >= 600 || (modeConfig.isSurvival && maxStreak >= 2)) {
-      rank = '⚗️ Junior Apprentice (B)';
+      rank = '⚗️ Developing: Chemistry Apprentice (Grade B)';
     }
 
     const rankElem = document.getElementById('finalRankDisplay');

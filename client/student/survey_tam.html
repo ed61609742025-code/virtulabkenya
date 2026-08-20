@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Technology Acceptance Survey (TAM 3) — VirtuLab Kenya</title>
+<script>
+  var t = localStorage.getItem('vlk_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', t);
+</script>
+<meta name="theme-color" content="#0B2545">
+<link rel="stylesheet" href="../shared/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  .survey-container {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 0 16px;
+  }
+  .survey-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 20px;
+  }
+  .tam-construct-heading {
+    font-family: 'Cinzel', serif;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--blue-accent);
+    margin: 20px 0 10px;
+    border-bottom: 1px dashed var(--card-border);
+    padding-bottom: 4px;
+  }
+  .tam-row {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .likert-scale-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    background: var(--card-bg-hover);
+    padding: 8px 12px;
+    border-radius: 8px;
+  }
+  .likert-opt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<nav class="top-navbar">
+  <a href="home.html" class="nav-brand">
+    <span class="nav-logo-icon">VL</span>
+    <span>Technology Acceptance (TAM)</span>
+  </a>
+  <div class="nav-actions">
+    <a href="home.html" class="theme-btn-chip">← Back to Dashboard</a>
+  </div>
+</nav>
+
+<div class="survey-container">
+  <div class="survey-card" id="formCard">
+    <div style="font-size:0.75rem; font-family:'JetBrains Mono', monospace; font-weight:700; color:var(--acad-gold); margin-bottom:6px;">
+      TECHNOLOGY ACCEPTANCE MODEL (TAM 3) • RESEARCH QUESTIONNAIRE
+    </div>
+    <h1 style="font-family:'Cinzel', serif; font-size:1.3rem; color:var(--heading-color); margin:0 0 10px;">
+      VirtuLab Kenya Acceptance Evaluation
+    </h1>
+    <p style="font-size:0.84rem; color:var(--text-muted); line-height:1.5; margin-bottom:18px;">
+      Rate your perceptions regarding usefulness, ease of use, and willingness to adopt VirtuLab Kenya (1 = Strongly Disagree, 5 = Strongly Agree).
+    </p>
+
+    <form id="tamForm" onsubmit="submitTAM(event)">
+      <div id="tamItemsList"></div>
+
+      <div style="margin-top:20px;">
+        <label style="font-size:0.84rem; font-weight:700; color:var(--heading-color); display:block; margin-bottom:6px;">
+          💬 General Comments / Implementation Recommendations:
+        </label>
+        <textarea id="feedbackText" class="form-control" rows="3" placeholder="Any additional thoughts for curriculum planners or chemistry teachers..."></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width:100%; margin-top:20px; padding:12px; font-weight:800;">
+        Submit TAM Evaluation
+      </button>
+    </form>
+  </div>
+
+  <div class="survey-card" id="successCard" style="display:none; text-align:center; padding:36px;">
+    <div style="font-size:2.5rem; margin-bottom:12px;">✅</div>
+    <h2 style="font-family:'Cinzel', serif; color:var(--heading-color); margin-bottom:8px;">Evaluation Submitted!</h2>
+    <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:20px;">
+      Your responses have been successfully logged to the MSc research dataset.
+    </p>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:10px; max-width:600px; margin:0 auto 24px;">
+      <div style="background:var(--card-bg-hover); padding:10px; border-radius:8px; border:1px solid var(--card-border);">
+        <div style="font-size:0.7rem; color:var(--text-muted);">Usefulness (PU)</div>
+        <div style="font-size:1.2rem; font-weight:800; color:var(--blue-accent);" id="outPU">-- / 5.0</div>
+      </div>
+      <div style="background:var(--card-bg-hover); padding:10px; border-radius:8px; border:1px solid var(--card-border);">
+        <div style="font-size:0.7rem; color:var(--text-muted);">Ease of Use (PEOU)</div>
+        <div style="font-size:1.2rem; font-weight:800; color:var(--green-accent);" id="outPEOU">-- / 5.0</div>
+      </div>
+      <div style="background:var(--card-bg-hover); padding:10px; border-radius:8px; border:1px solid var(--card-border);">
+        <div style="font-size:0.7rem; color:var(--text-muted);">Conditions (FC)</div>
+        <div style="font-size:1.2rem; font-weight:800; color:var(--amber-accent);" id="outFC">-- / 5.0</div>
+      </div>
+      <div style="background:var(--card-bg-hover); padding:10px; border-radius:8px; border:1px solid var(--card-border);">
+        <div style="font-size:0.7rem; color:var(--text-muted);">Intention (BI)</div>
+        <div style="font-size:1.2rem; font-weight:800; color:var(--violet-accent);" id="outBI">-- / 5.0</div>
+      </div>
+    </div>
+
+    <a href="home.html" class="btn btn-primary" style="text-decoration:none; padding:10px 24px;">
+      Return to Practical Workstation →
+    </a>
+  </div>
+</div>
+
+<script src="../shared/api.js"></script>
+<script src="../shared/theme.js"></script>
+<script src="../shared/survey-tam.js"></script>
+
+<script>
+  const constructLabels = {
+    PU: '1. Perceived Usefulness (PU)',
+    PEOU: '2. Perceived Ease of Use (PEOU)',
+    FC: '3. Facilitating Conditions (FC)',
+    BI: '4. Behavioral Intention to Use (BI)'
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const list = document.getElementById('tamItemsList');
+    let lastConstruct = null;
+
+    TAM_ITEMS.forEach((item, idx) => {
+      if (item.construct !== lastConstruct) {
+        lastConstruct = item.construct;
+        const head = document.createElement('div');
+        head.className = 'tam-construct-heading';
+        head.innerText = constructLabels[item.construct] || item.construct;
+        list.appendChild(head);
+      }
+
+      const row = document.createElement('div');
+      row.className = 'tam-row';
+      row.innerHTML = `
+        <div style="font-size:0.86rem; font-weight:600; color:var(--heading-color);">
+          ${item.id}. ${item.text}
+        </div>
+        <div class="likert-scale-group">
+          <span style="font-size:0.7rem; font-weight:700; color:var(--text-muted);">Strongly Disagree</span>
+          ${[1, 2, 3, 4, 5].map(v => `
+            <label class="likert-opt">
+              <input type="radio" name="tam_${item.id}" value="${v}" ${v === 5 ? 'checked' : ''} required>
+              <span>${v}</span>
+            </label>
+          `).join('')}
+          <span style="font-size:0.7rem; font-weight:700; color:var(--text-muted);">Strongly Agree</span>
+        </div>
+      `;
+      list.appendChild(row);
+    });
+  });
+
+  async function submitTAM(e) {
+    e.preventDefault();
+    const keyed = {};
+    TAM_ITEMS.forEach(item => {
+      const checked = document.querySelector(`input[name="tam_${item.id}"]:checked`);
+      keyed[item.id] = checked ? parseInt(checked.value, 10) : 4;
+    });
+
+    const feedback = document.getElementById('feedbackText').value;
+    const computed = calculateTAM(keyed);
+
+    try {
+      if (window.API && API.submitTAM) {
+        await API.submitTAM({ responses: keyed, feedback_text: feedback });
+      } else {
+        localStorage.setItem('vlk_tam_response', JSON.stringify({ keyed, feedback, computed }));
+      }
+    } catch (err) {
+      console.warn('TAM fallback save:', err);
+      localStorage.setItem('vlk_tam_response', JSON.stringify({ keyed, feedback, computed }));
+    }
+
+    document.getElementById('formCard').style.display = 'none';
+    document.getElementById('successCard').style.display = 'block';
+    document.getElementById('outPU').innerText = `${computed.PU.toFixed(1)} / 5.0`;
+    document.getElementById('outPEOU').innerText = `${computed.PEOU.toFixed(1)} / 5.0`;
+    document.getElementById('outFC').innerText = `${computed.FC.toFixed(1)} / 5.0`;
+    document.getElementById('outBI').innerText = `${computed.BI.toFixed(1)} / 5.0`;
+  }
+</script>
+</body>
+</html>

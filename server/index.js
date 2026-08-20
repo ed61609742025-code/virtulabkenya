@@ -3,37 +3,35 @@
 //  Phase 1, Week 1: Basic server with health check
 // ============================================================
 
-<<<<<<< HEAD
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
-require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
 const compression = require('compression');
-=======
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
->>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ── Middleware ────────────────────────────────────────────────
-<<<<<<< HEAD
 const { enforceHttps, securityHeaders } = require('./middleware/security');
+const { apiLimiter } = require('./middleware/rateLimiter');
+
 app.use(enforceHttps);
 app.use(securityHeaders);
 app.use(compression());  // gzip/brotli — critical for slow connections
-app.use(cors());
+
+// Configure CORS
+const corsOptions = process.env.CORS_ORIGIN
+  ? { origin: process.env.CORS_ORIGIN.split(',').map(s => s.trim()), credentials: true }
+  : { origin: true, credentials: true };
+app.use(cors(corsOptions));
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../client')));
-=======
-app.use(cors());
-app.use(express.json());
-app.use(express.static('../client'));
->>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
+
+// Apply general API rate limiter to all /api/ routes
+app.use('/api/', apiLimiter);
 
 // ── Health Check ──────────────────────────────────────────────
 // This is the first endpoint — visit it to confirm the server is live
@@ -80,7 +78,6 @@ app.use('/api/analytics', analyticsRoutes);
 const feedbackRoutes = require('./routes/feedback');
 app.use('/api/feedback', feedbackRoutes);
 
-<<<<<<< HEAD
 // Qualitative analysis sessions
 const qualitativeRoutes = require('./routes/qualitative');
 app.use('/api/qualitative', qualitativeRoutes);
@@ -105,6 +102,14 @@ app.use('/api/energy', energyRoutes);
 const ratesRoutes = require('./routes/rates');
 app.use('/api/rates', ratesRoutes);
 
+// KCSE Gas Preparation & Collection Module (Paper 3 Inorganic Practical)
+const gasRoutes = require('./routes/gas');
+app.use('/api/gas', gasRoutes);
+
+// Academic Research & Evaluation Suite (CPCAT Pre/Post, SUS, TAM & Statistics)
+const researchRoutes = require('./routes/research');
+app.use('/api/research', researchRoutes);
+
 // Admin portal routes (System Administration & Analytics)
 const adminRoutes = require('./routes/admin');
 app.use('/api/admin', adminRoutes);
@@ -128,14 +133,11 @@ app.get('/api/announcements/active', async (req, res) => {
   }
 });
 
-=======
->>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
 // ── 404 Handler ───────────────────────────────────────────────
 app.use((req, res) => {
   res.status(404).json({ error: 'Endpoint not found' });
 });
 
-<<<<<<< HEAD
 // ── Error Tracker Handler ──────────────────────────────────────
 const { errorMiddleware } = require('./middleware/errorTracker');
 app.use(errorMiddleware);
@@ -168,16 +170,3 @@ if (require.main === module) {
 }
 
 module.exports = app;
-=======
-// ── Error Handler ─────────────────────────────────────────────
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Something went wrong on the server.' });
-});
-
-// ── Start ─────────────────────────────────────────────────────
-app.listen(PORT, () => {
-  console.log(`VirtuLab Kenya server running on port ${PORT}`);
-  console.log(`Health check: http://localhost:${PORT}/api/health`);
-});
->>>>>>> 74e471700462c14fcb25509826ece705e831d8d8

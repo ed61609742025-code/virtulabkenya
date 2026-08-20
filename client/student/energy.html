@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Energy Changes Practical Workbench — VirtuLab Kenya</title>
+  <title>Energy Changes & Thermochemistry (KCSE Paper 3) — VirtuLab Kenya</title>
   <meta name="description" content="Simulate KNEC KCSE Chemistry Paper 3 thermochemistry practicals: enthalpy of neutralization, displacement, solution, combustion, cooling curves, and interactive graph plotting.">
   <script>
     var t = localStorage.getItem('vlk_theme') || 'dark';
@@ -14,12 +14,12 @@
       document.head.appendChild(style);
     }
   </script>
-  <meta name="theme-color" content="#0B1320">
+  <meta name="theme-color" content="#090E17">
   <link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
   <link rel="manifest" href="/manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700;800&family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/shared/style.css">
   <link rel="stylesheet" href="/student/css/energy.css">
   <link rel="stylesheet" href="/shared/ai-tutor.css">
@@ -31,7 +31,7 @@
        TOPBAR — Fixed Navigation Header
   ══════════════════════════════════════ -->
   <nav class="top-navbar">
-    <a href="/student/home.html" class="nav-brand" style="text-decoration:none;">
+    <a href="/student/home.html" class="nav-brand">
       <span class="nav-logo-icon">🔥</span>
       <span>VirtuLab Kenya</span>
       <span class="knec-tag-pill">KNEC PAPER 3</span>
@@ -175,7 +175,7 @@
     </div>
 
     <!-- ══════════════════════════════════════
-         3-COLUMN WORKBENCH GRID (CLEAN & FOCUSED)
+         3-COLUMN WORKBENCH GRID
     ══════════════════════════════════════ -->
     <div class="en-workbench-grid">
       
@@ -191,7 +191,7 @@
             </button>
           </div>
 
-          <div class="reagent-select-card active" id="reagentCardA">
+          <div class="reagent-select-card" id="reagentCardA">
             <div class="reagent-bottle-icon" id="reagentIconA">🧪</div>
             <div style="flex:1;">
               <div class="reagent-meta-title" id="reagentTitleA">0.5M CuSO₄ Solution</div>
@@ -200,7 +200,7 @@
             <span class="reagent-badge-tag" id="reagentTagA">Ready</span>
           </div>
 
-          <div class="reagent-select-card active" id="reagentCardB">
+          <div class="reagent-select-card" id="reagentCardB">
             <div class="reagent-bottle-icon" id="reagentIconB">🧂</div>
             <div style="flex:1;">
               <div class="reagent-meta-title" id="reagentTitleB">Zinc Powder (Zn)</div>
@@ -211,20 +211,20 @@
 
           <!-- Dynamic Sandbox Slider Controls (visible only in Sandbox mode) -->
           <div id="sandboxControlsBox" style="display:none; margin-top:8px; padding-top:8px; border-top:1px dashed var(--card-border);">
-            <div class="en-slider-control">
-              <div class="en-slider-header">
+            <div class="en-slider-control" style="margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;font-size:0.75rem;font-weight:700;margin-bottom:4px;">
                 <span>Solution A Volume:</span>
-                <span class="en-slider-val" id="valVolA">25.0 cm³</span>
+                <span id="valVolA" style="font-family:var(--font-mono);color:var(--en-amber);">25.0 cm³</span>
               </div>
-              <input type="range" min="10" max="100" step="5" value="25" class="en-range-input" id="rngVolA" oninput="EnergyEngine.updateSandboxParam('volA', this.value)">
+              <input type="range" min="10" max="100" step="5" value="25" class="form-control" id="rngVolA" oninput="EnergyEngine.updateSandboxParam('volA', this.value)">
             </div>
 
             <div class="en-slider-control">
-              <div class="en-slider-header">
+              <div style="display:flex;justify-content:space-between;font-size:0.75rem;font-weight:700;margin-bottom:4px;">
                 <span>Theoretical ΔH (kJ/mol):</span>
-                <span class="en-slider-val" id="valDeltaH">-217.0</span>
+                <span id="valDeltaH" style="font-family:var(--font-mono);color:var(--en-amber);">-217.0</span>
               </div>
-              <input type="range" min="-600" max="150" step="10" value="-217" class="en-range-input" id="rngDeltaH" oninput="EnergyEngine.updateSandboxParam('deltaH', this.value)">
+              <input type="range" min="-600" max="150" step="10" value="-217" class="form-control" id="rngDeltaH" oninput="EnergyEngine.updateSandboxParam('deltaH', this.value)">
             </div>
           </div>
         </div>
@@ -527,6 +527,7 @@
   <script src="/shared/theme.js"></script>
   <script src="/shared/i18n.js"></script>
   <script src="/shared/chemical-safety.js"></script>
+  <script src="/shared/page-transitions.js"></script>
   <script src="/student/js/energy-engine.js"></script>
   <script>
     function toggleBenchSettings(e) {

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Gas Preparation & Collection — VirtuLab Kenya</title>
+<meta name="description" content="Simulate the preparation, drying, collection, and confirmatory testing of essential inorganic gases for KCSE Chemistry Paper 3.">
+<script>
+  var t = localStorage.getItem('vlk_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+</script>
+<meta name="theme-color" content="#0F172A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VirtuLab">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="manifest" href="../manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/style.css">
+<link rel="stylesheet" href="css/gas-prep.css">
+<link rel="stylesheet" href="../shared/ai-tutor.css">
+<link rel="stylesheet" href="../shared/pwa-installer.css">
+</head>
+<body>
+
+<!-- TOPBAR NAVIGATION -->
+<nav class="top-navbar">
+  <a href="home.html" class="nav-brand">
+    <span class="nav-logo-icon">VL</span>
+    <span>Gas Prep Bench</span>
+  </a>
+
+  <div class="nav-modules-pill">
+    <a href="lab.html" class="theme-btn-chip">🧪 Titration</a>
+    <a href="qualitative.html" class="theme-btn-chip">🔍 Qualitative</a>
+    <a href="organic.html" class="theme-btn-chip">⚗️ Organic</a>
+    <a href="solubility.html" class="theme-btn-chip">🌡️ Solubility</a>
+    <a href="energy.html" class="theme-btn-chip">🔥 Energy</a>
+    <a href="rates.html" class="theme-btn-chip">⚡ Rates</a>
+    <a href="gas_prep.html" class="theme-btn-chip active">💨 Gas Prep</a>
+    <a href="composite_exam.html" class="theme-btn-chip">📝 Exam</a>
+  </div>
+
+  <div class="nav-actions">
+    <button class="nav-btn nav-btn-safety" onclick="window.VLKSafety && window.VLKSafety.openSDSModal('HCl')" title="View Chemical Safety & SDS Hazards">
+      ⚠️ Reagent Safety (SDS)
+    </button>
+    <button class="nav-btn" onclick="window.print()" title="Print Practical Record">
+      🖨️ Print
+    </button>
+
+    <div class="theme-toggle-group">
+      <button class="theme-btn-chip active" data-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
+      <button class="theme-btn-chip" data-theme="light" onclick="setTheme('light')">☀️ Light</button>
+      <button class="theme-btn-chip" data-theme="green" onclick="setTheme('green')">🧪 Lab</button>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN WORKBENCH LAYOUT -->
+<main class="gas-workbench-layout">
+
+  <!-- LEFT COLUMN: Gas Selection & Apparatus Configuration -->
+  <section class="gas-card-panel">
+    <div class="gas-panel-header">
+      <h2 class="gas-panel-title"><span>💨</span> 1. Select Gas to Prepare</h2>
+      <span class="knec-badge-pill">KCSE Paper 3</span>
+    </div>
+
+    <!-- Gas Selector Chips -->
+    <div class="gas-selector-grid">
+      <button class="gas-select-chip active" data-gas="O2" onclick="selectGas('O2')">O₂ (Oxygen)</button>
+      <button class="gas-select-chip" data-gas="CO2" onclick="selectGas('CO2')">CO₂ (Carbon)</button>
+      <button class="gas-select-chip" data-gas="Cl2" onclick="selectGas('Cl2')">Cl₂ (Chlorine)</button>
+      <button class="gas-select-chip" data-gas="NH3" onclick="selectGas('NH3')">NH₃ (Ammonia)</button>
+      <button class="gas-select-chip" data-gas="SO2" onclick="selectGas('SO2')">SO₂ (Sulphur)</button>
+      <button class="gas-select-chip" data-gas="H2" onclick="selectGas('H2')">H₂ (Hydrogen)</button>
+    </div>
+
+    <!-- Chemical Equation Display -->
+    <div class="chem-equation-box" id="eqBox">
+      2H₂O₂(aq)  —[MnO₂]→  2H₂O(l) + O₂(g)
+    </div>
+
+    <!-- Reagents & Properties Summary -->
+    <div style="font-size: 0.82rem; line-height: 1.5; color: var(--text-main);">
+      <p style="margin: 0 0 6px;"><b>🧪 Reactants:</b> <span id="reactantsText">Hydrogen Peroxide + Manganese(IV) Oxide</span></p>
+      <p style="margin: 0 0 6px;"><b>⚖️ Density vs Air:</b> <span id="densityText">Slightly denser than air</span></p>
+      <p style="margin: 0 0 6px;"><b>💧 Solubility in H₂O:</b> <span id="solubilityText">Slightly soluble in water</span></p>
+    </div>
+
+    <!-- Configuration: Drying Agent Selection -->
+    <div style="margin-top: 8px;">
+      <label style="font-size: 0.82rem; font-weight: 700; color: var(--heading-color); display: block; margin-bottom: 6px;">
+        🧴 2. Select Drying Agent:
+      </label>
+      <select id="dryingSelect" class="form-control" onchange="onDryingChange(this.value)">
+        <option value="concH2SO4">Concentrated Sulphuric Acid (H₂SO₄)</option>
+        <option value="anhydrousCaCl2">Anhydrous Calcium Chloride (CaCl₂)</option>
+        <option value="quicklimeCaO">Quicklime / Calcium Oxide (CaO)</option>
+      </select>
+      <div id="dryingFeedback" style="font-size: 0.76rem; color: var(--text-muted); margin-top: 4px;"></div>
+    </div>
+
+    <!-- Configuration: Collection Method Selection -->
+    <div style="margin-top: 8px;">
+      <label style="font-size: 0.82rem; font-weight: 700; color: var(--heading-color); display: block; margin-bottom: 6px;">
+        🏺 3. Select Collection Method:
+      </label>
+      <select id="collectionSelect" class="form-control" onchange="onCollectionChange(this.value)">
+        <option value="overWater">Over Water (Downward displacement of water)</option>
+        <option value="downwardDelivery">Downward Delivery (Upward displacement of air)</option>
+        <option value="upwardDelivery">Upward Delivery (Downward displacement of air)</option>
+      </select>
+      <div id="collectionFeedback" style="font-size: 0.76rem; color: var(--text-muted); margin-top: 4px;"></div>
+    </div>
+
+    <!-- Heat Requirement Toggle -->
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: var(--card-bg-hover); border-radius: 8px;">
+      <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-main);">🔥 Bunsen Burner Heating</span>
+      <button id="heatBtn" class="theme-btn-chip" onclick="toggleHeating()">Heating: OFF</button>
+    </div>
+
+    <!-- Generation Trigger Button -->
+    <button id="runReactionBtn" class="btn btn-primary" style="width: 100%; padding: 12px; font-weight: 800; font-size: 0.9rem;" onclick="generateGas()">
+      ⚡ Generate & Collect Gas
+    </button>
+  </section>
+
+  <!-- CENTER COLUMN: Visual Laboratory Apparatus Simulation -->
+  <section class="gas-card-panel" style="display: flex; flex-direction: column;">
+    <div class="gas-panel-header">
+      <h2 class="gas-panel-title"><span>🔬</span> Simulation Stage</h2>
+      <span id="reactionStatusBadge" class="knec-badge-pill" style="background: var(--blue-bg); color: var(--blue-accent); border-color: var(--blue-border);">Ready</span>
+    </div>
+
+    <!-- Interactive SVG Apparatus -->
+    <div class="apparatus-stage">
+      <svg class="apparatus-svg" viewBox="0 0 600 380" xmlns="http://www.w3.org/2000/svg">
+        <!-- Workbench Tabletop -->
+        <rect x="20" y="340" width="560" height="20" fill="#334155" rx="4" />
+        
+        <!-- Retort Stands -->
+        <rect x="90" y="80" width="8" height="260" fill="#64748B" />
+        <rect x="60" y="336" width="70" height="6" fill="#475569" />
+        <rect x="420" y="80" width="8" height="260" fill="#64748B" />
+        <rect x="390" y="336" width="70" height="6" fill="#475569" />
+
+        <!-- Bunsen Burner & Flame -->
+        <g id="bunsenGroup" style="display: none;">
+          <rect x="135" y="310" width="20" height="30" fill="#94A3B8" />
+          <path id="svgFlame" class="bunsen-flame" d="M145 310 C140 290 142 275 145 260 C148 275 150 290 145 310 Z" fill="#38BDF8" opacity="0.85" />
+          <path d="M145 310 C142 295 143 285 145 272 C147 285 148 295 145 310 Z" fill="#F59E0B" />
+        </g>
+
+        <!-- Round Bottom / Conical Generation Flask -->
+        <g id="flaskGroup">
+          <!-- Glass Outline -->
+          <path d="M130 180 L130 240 L110 310 Q110 325 145 325 Q180 325 180 310 L160 240 L160 180 Z" fill="rgba(255,255,255,0.15)" stroke="#94A3B8" stroke-width="3" />
+          <!-- Liquid Content -->
+          <path id="flaskLiquid" d="M115 290 Q145 285 175 290 L178 312 Q178 322 145 322 Q112 322 112 312 Z" fill="#38BDF8" opacity="0.65" />
+          <!-- Thistle / Tap Funnel -->
+          <path d="M138 100 L144 100 L144 260 L138 260 Z" fill="rgba(255,255,255,0.4)" stroke="#94A3B8" stroke-width="2" />
+          <polygon points="130,70 152,70 144,100 138,100" fill="rgba(255,255,255,0.3)" stroke="#94A3B8" stroke-width="2" />
+        </g>
+
+        <!-- Delivery Tube from Flask to Drying Bottle -->
+        <path d="M152 185 L152 160 L260 160 L260 250" fill="none" stroke="#94A3B8" stroke-width="4" stroke-linecap="round" />
+
+        <!-- Drying Wash Bottle -->
+        <g id="dryingBottle">
+          <rect x="240" y="220" width="50" height="100" rx="8" fill="rgba(255,255,255,0.15)" stroke="#94A3B8" stroke-width="3" />
+          <rect id="dryingReagentFill" x="243" y="270" width="44" height="47" rx="4" fill="#F59E0B" opacity="0.5" />
+          <text x="265" y="335" font-size="10" fill="#94A3B8" text-anchor="middle" font-family="monospace">Drying</text>
+        </g>
+
+        <!-- Delivery Tube to Collection Jar -->
+        <path d="M275 230 L275 170 L430 170 L430 220" fill="none" stroke="#94A3B8" stroke-width="4" stroke-linecap="round" />
+
+        <!-- Gas Collection Assembly -->
+        <g id="collectionGroup">
+          <!-- Over Water Trough (Default) -->
+          <g id="troughOverWater">
+            <rect x="390" y="290" width="100" height="45" rx="4" fill="#0284C7" opacity="0.35" stroke="#38BDF8" stroke-width="2" />
+            <!-- Inverted Gas Jar -->
+            <rect x="420" y="190" width="40" height="100" rx="4" fill="rgba(255,255,255,0.2)" stroke="#94A3B8" stroke-width="2.5" />
+            <!-- Gas Layer in Jar -->
+            <rect id="gasLayerJar" x="422" y="192" width="36" height="0" rx="2" fill="#10B981" opacity="0.5" />
+          </g>
+        </g>
+
+        <!-- Animated Bubbles in Flask -->
+        <g id="bubbleLayer" style="display: none;">
+          <circle cx="135" cy="300" r="3" fill="#FFF" class="gas-bubble" />
+          <circle cx="150" cy="305" r="4" fill="#FFF" class="gas-bubble-fast" />
+          <circle cx="140" cy="295" r="2.5" fill="#FFF" class="gas-bubble" />
+          <circle cx="155" cy="298" r="3.5" fill="#FFF" class="gas-bubble-fast" />
+        </g>
+      </svg>
+    </div>
+
+    <!-- Live Reaction Telemetry Banner -->
+    <div id="telemetryBanner" style="margin-top: 12px; padding: 10px 14px; background: var(--card-bg-hover); border-radius: 8px; font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-main);">
+      Status: Ready to assemble and generate gas.
+    </div>
+  </section>
+
+  <!-- RIGHT COLUMN: Confirmatory Gas Testing & KNEC Marks -->
+  <section class="gas-card-panel">
+    <div class="gas-panel-header">
+      <h2 class="gas-panel-title"><span>🧪</span> 4. Gas Testing Station</h2>
+      <span class="knec-badge-pill">Paper 3 (Q3)</span>
+    </div>
+
+    <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0 0 10px;">
+      Apply confirmatory test reagents to the collected gas jar to verify gas identity:
+    </p>
+
+    <!-- Test Tools Grid -->
+    <div class="test-reagent-grid">
+      <button class="test-tool-btn" id="btnTestGlowing" onclick="runTest('glowingSplint')">
+        <span>🪵</span> Glowing Splint
+      </button>
+      <button class="test-tool-btn" id="btnTestBurning" onclick="runTest('burningSplint')">
+        <span>🔥</span> Burning Splint
+      </button>
+      <button class="test-tool-btn" id="btnTestLitmus" onclick="runTest('dampLitmus')">
+        <span>📑</span> Moist Litmus
+      </button>
+      <button class="test-tool-btn" id="btnTestLime" onclick="runTest('limeWater')">
+        <span>🥛</span> Lime Water
+      </button>
+      <button class="test-tool-btn" id="btnTestDichromate" onclick="runTest('dichromate')">
+        <span>🟠</span> K₂Cr₂O₇ Paper
+      </button>
+      <button class="test-tool-btn" id="btnTestStarch" onclick="runTest('starchIodide')">
+        <span>📜</span> Starch-Iodide
+      </button>
+      <button class="test-tool-btn" id="btnTestHcl" onclick="runTest('hclRod')">
+        <span>🧪</span> Conc HCl Rod
+      </button>
+    </div>
+
+    <!-- Observation Log Feed -->
+    <div style="margin-top: 10px;">
+      <h3 style="font-size: 0.82rem; font-weight: 700; color: var(--heading-color); margin-bottom: 6px;">
+        📝 Practical Observation Record:
+      </h3>
+      <div id="obsFeed" class="observation-log">
+        <div style="color: var(--text-muted); text-align: center; padding: 16px;">
+          No tests performed yet. Collect gas and apply a test above.
+        </div>
+      </div>
+    </div>
+
+    <!-- KNEC Theory Practical Questions -->
+    <div id="theoryQuestionSection" style="margin-top: 10px; border-top: 1px dashed var(--card-border); padding-top: 10px;">
+      <h3 style="font-size: 0.85rem; font-weight: 700; color: var(--heading-color); margin-bottom: 8px;">
+        📋 KNEC Examiner Questions
+      </h3>
+      <div id="questionsContainer"></div>
+    </div>
+
+    <!-- Final Score and Save Button -->
+    <div style="margin-top: auto; padding-top: 14px; border-top: 1.5px solid var(--card-border);">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+        <span style="font-weight: 700; font-size: 0.85rem; color: var(--heading-color);">Total Practical Score:</span>
+        <span class="score-badge-large" id="scoreDisplay">0.0 / 10.0</span>
+      </div>
+
+      <button id="saveGasSessionBtn" class="btn btn-primary" style="width: 100%; padding: 12px; font-weight: 800;" onclick="saveSession()">
+        💾 Submit & Save Practical Session
+      </button>
+    </div>
+  </section>
+
+</main>
+
+<script src="../shared/api.js"></script>
+<script src="../shared/theme.js"></script>
+<script src="../shared/audio-synth.js"></script>
+<script src="../shared/chemical-safety.js"></script>
+<script src="js/gas-prep-engine.js"></script>
+
+<script>
+  let engine = new GasPrepEngine();
+
+  function selectGas(gasKey) {
+    document.querySelectorAll('.gas-select-chip').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-gas') === gasKey);
+    });
+
+    const gas = engine.selectGas(gasKey);
+    document.getElementById('eqBox').innerText = gas.equation;
+    document.getElementById('reactantsText').innerText = gas.reactants;
+    document.getElementById('densityText').innerText = gas.densityVsAir;
+    document.getElementById('solubilityText').innerText = gas.solubilityInWater;
+    
+    document.getElementById('dryingSelect').value = engine.selectedDrying;
+    document.getElementById('collectionSelect').value = engine.selectedCollection;
+    
+    updateHeatingUI();
+    resetObservationUI();
+    renderQuestions();
+    updateScoreUI();
+  }
+
+  function onDryingChange(val) {
+    engine.setDryingAgent(val);
+    const feedback = engine.validateConfiguration().dryingExpl;
+    document.getElementById('dryingFeedback').innerText = feedback;
+    resetObservationUI();
+  }
+
+  function onCollectionChange(val) {
+    engine.setCollectionMethod(val);
+    const feedback = engine.validateConfiguration().collectionExpl;
+    document.getElementById('collectionFeedback').innerText = feedback;
+    resetObservationUI();
+  }
+
+  function toggleHeating() {
+    engine.toggleHeating();
+    updateHeatingUI();
+  }
+
+  function updateHeatingUI() {
+    const btn = document.getElementById('heatBtn');
+    const bunsen = document.getElementById('bunsenGroup');
+    if (engine.heatingEnabled) {
+      btn.innerText = 'Heating: ON 🔥';
+      btn.classList.add('active');
+      bunsen.style.display = 'block';
+    } else {
+      btn.innerText = 'Heating: OFF';
+      btn.classList.remove('active');
+      bunsen.style.display = 'none';
+    }
+  }
+
+  function generateGas() {
+    const res = engine.runReaction();
+    document.getElementById('bubbleLayer').style.display = 'block';
+    document.getElementById('gasLayerJar').setAttribute('height', '80');
+    document.getElementById('reactionStatusBadge').innerText = 'Gas Collected';
+    document.getElementById('reactionStatusBadge').style.background = 'var(--green-bg)';
+    document.getElementById('reactionStatusBadge').style.color = 'var(--green-accent)';
+
+    document.getElementById('telemetryBanner').innerHTML = 
+      `<b>Evolving:</b> ${res.gas.formula} (${res.gas.name}) — <i>${res.validation.isFullyCorrect ? 'Optimal setup verified.' : 'Setup has chemical discrepancies!'}</i>`;
+
+    if (window.AudioSynth) {
+      AudioSynth.playTone(440, 0.2);
+    }
+    updateScoreUI();
+  }
+
+  function runTest(testKey) {
+    const res = engine.performTest(testKey);
+    if (res.error) {
+      alert(res.error);
+      return;
+    }
+
+    const obs = res.observation;
+    const feed = document.getElementById('obsFeed');
+    if (feed.innerText.includes('No tests performed')) {
+      feed.innerHTML = '';
+    }
+
+    const entry = document.createElement('div');
+    entry.className = `obs-entry ${obs.status === 'success' ? 'success' : 'warn'}`;
+    entry.innerHTML = `<b>[${obs.timestamp}]</b> ${obs.result}<br><span style="color:var(--text-muted);font-size:0.75rem;">Inference: ${obs.inference}</span>`;
+    feed.prepend(entry);
+
+    if (window.AudioSynth) {
+      AudioSynth.playTone(obs.status === 'success' ? 660 : 330, 0.15);
+    }
+
+    updateScoreUI();
+  }
+
+  function renderQuestions() {
+    const container = document.getElementById('questionsContainer');
+    container.innerHTML = '';
+    const qList = engine.currentGas.questions || [];
+
+    qList.forEach((q, idx) => {
+      const qBox = document.createElement('div');
+      qBox.style.marginBottom = '12px';
+      qBox.innerHTML = `
+        <p style="font-size:0.8rem;font-weight:700;color:var(--text-main);margin:0 0 6px;">Q${idx + 1}. ${q.prompt}</p>
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          ${q.options.map((opt, oIdx) => `
+            <label style="font-size:0.76rem;color:var(--text-main);display:flex;align-items:center;gap:6px;cursor:pointer;">
+              <input type="radio" name="${q.id}" value="${oIdx}" onchange="onAnswerSelected('${q.id}', ${oIdx})">
+              <span>${opt}</span>
+            </label>
+          `).join('')}
+        </div>
+      `;
+      container.appendChild(qBox);
+    });
+  }
+
+  function onAnswerSelected(qId, oIdx) {
+    engine.answerQuestion(qId, oIdx);
+    updateScoreUI();
+  }
+
+  function updateScoreUI() {
+    const rubric = engine.calculateRubric();
+    document.getElementById('scoreDisplay').innerText = `${rubric.totalScore.toFixed(1)} / 10.0`;
+  }
+
+  function resetObservationUI() {
+    document.getElementById('bubbleLayer').style.display = 'none';
+    document.getElementById('gasLayerJar').setAttribute('height', '0');
+    document.getElementById('reactionStatusBadge').innerText = 'Ready';
+    document.getElementById('reactionStatusBadge').style.background = 'var(--blue-bg)';
+    document.getElementById('reactionStatusBadge').style.color = 'var(--blue-accent)';
+  }
+
+  async function saveSession() {
+    const payload = engine.buildSessionPayload();
+    try {
+      if (window.API && API.saveGasSession) {
+        await API.saveGasSession(payload);
+        alert('Practical session recorded successfully to your student log!');
+      } else {
+        localStorage.setItem('vlk_last_gas_session', JSON.stringify(payload));
+        alert('Session saved to local storage (Offline Mode)!');
+      }
+    } catch (err) {
+      console.warn('Session save fallback:', err);
+      localStorage.setItem('vlk_last_gas_session', JSON.stringify(payload));
+      alert('Session saved to local device!');
+    }
+  }
+
+  // Initialize workbench
+  selectGas('O2');
+</script>
+</body>
+</html>

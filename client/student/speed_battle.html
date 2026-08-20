@@ -6,24 +6,26 @@
   <title>Chemical Speed Battle Quiz Arena — VirtuLab Kenya</title>
   <link rel="stylesheet" href="../shared/style.css">
   <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/speed-battle.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Outfit:wght@500;700;800;900&display=swap" rel="stylesheet">
-  <style>
-    body { padding-top: 70px; background: var(--bg-dark); }
-    .battle-container { max-width: 680px; margin: 20px auto; padding: 0 16px; }
-    .battle-card { background: var(--card-bg); border: 1.5px solid var(--card-border); border-radius: 24px; padding: 28px; box-shadow: var(--shadow-md); color: var(--text-main); text-align: center; }
-  </style>
 </head>
 <body>
+
+  <!-- Confetti Canvas for High Score Celebration -->
+  <canvas id="confettiCanvas" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:999; display:none;"></canvas>
 
   <!-- Fixed Top Navbar -->
   <header class="top-navbar">
     <div style="display:flex; align-items:center; gap:12px;">
-      <a href="home.html" class="btn" style="padding:6px 14px; font-weight:800; text-decoration:none;">← Student Home</a>
+      <a href="home.html" class="btn" style="padding:6px 14px; font-weight:800; text-decoration:none;">← Student Workstation</a>
       <span style="font-family:var(--font-heading); font-weight:900; font-size:1.1rem; color:var(--heading-color);">🎮 Chemical Speed Battle Arena</span>
     </div>
     <div style="display:flex; align-items:center; gap:10px;">
+      <button class="btn-sound-toggle" id="soundToggleBtn" onclick="toggleBattleSound()" title="Toggle Sound FX">
+        <span id="soundIcon">🔊</span> <span id="soundText">Sound ON</span>
+      </button>
       <button class="theme-btn-chip active" onclick="setTheme('light')" title="Clean Slate Light Mode">☀️ Light</button>
       <button class="theme-btn-chip" onclick="setTheme('dark')" title="Midnight Dark Mode">🌙 Dark</button>
       <button class="theme-btn-chip" onclick="setTheme('green')" title="Emerald Lab Mode">🧪 Lab</button>
@@ -32,82 +34,242 @@
 
   <div class="battle-container">
     
-    <!-- Start Screen Card -->
-    <div id="battleStartCard" class="battle-card">
-      <div style="font-size:3.5rem; margin-bottom:12px;">⚡🧪</div>
-      <h1 style="font-family:var(--font-heading); font-size:1.8rem; font-weight:900; color:var(--heading-color); margin-bottom:8px;">KCSE Practical Speed Battle</h1>
-      <p style="font-size:0.9rem; color:var(--text-muted); line-height:1.6; margin-bottom:24px;">
-        Test your KCSE Paper 3 chemical observations, cation/anion test deductions, and titration precision in a <b>60-second rapid-fire challenge</b>! Build combo streaks to multiply your score!
+    <!-- ══════════════════════════════════════
+         START SCREEN CARD WITH MODE SELECTOR
+    ══════════════════════════════════════ -->
+    <div id="battleStartCard" class="battle-card" style="text-align:center;">
+      
+      <!-- Pre-Lab Warm Up Banner (Visible when arriving from login or workbench link) -->
+      <div id="warmupHeroBanner" style="display:none; background: linear-gradient(135deg, rgba(2, 132, 199, 0.16), rgba(16, 185, 129, 0.14)); border: 2px solid var(--cyan-accent); border-radius: 16px; padding: 14px 18px; margin-bottom: 20px; text-align: left;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+          <div style="display:flex; align-items:center; gap:8px; font-weight:900; font-size:1.02rem; color:var(--heading-color);">
+            <span id="warmupBannerIcon">🔥</span>
+            <span id="warmupBannerTitle">Pre-Lab Practical Warm-Up Challenge</span>
+          </div>
+          <span id="warmupBannerBadge" style="font-size:0.7rem; font-weight:800; padding:2px 8px; border-radius:100px; background:rgba(2,132,199,0.2); color:var(--cyan-accent); letter-spacing:0.04em;">PRE-LAB REFLEX DRILL</span>
+        </div>
+        <p id="warmupBannerDesc" style="font-size:0.84rem; color:var(--text-muted); margin:0; line-height:1.45;">
+          Get your chemistry deduction reflexes fired up before entering the virtual lab! Complete this 45s sprint to unlock and activate your session.
+        </p>
+      </div>
+
+      <div style="font-size:3.4rem; margin-bottom:8px; animation:streakFlamePulse 2s infinite ease-in-out;">⚡🧪</div>
+      <h1 style="font-family:var(--font-heading); font-size:1.85rem; font-weight:900; color:var(--heading-color); margin-bottom:6px;">KCSE Practical Speed Battle</h1>
+      <p style="font-size:0.9rem; color:var(--text-muted); line-height:1.55; margin-bottom:20px; max-width:560px; margin-left:auto; margin-right:auto;">
+        Select your challenge arena below! Rapidly deduce KCSE Paper 3 observations, qualitative ions, titration rules, and organic reactions.
       </p>
 
-      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin-bottom:28px; background:var(--card-bg-hover); padding:16px; border-radius:16px; border:1px solid var(--card-border);">
-        <div>
-          <div style="font-size:0.7rem; font-weight:800; color:var(--text-muted);">TIME LIMIT</div>
-          <div style="font-size:1.2rem; font-weight:900; color:var(--cyan-accent); margin-top:2px;">⏱️ 60 Sec</div>
+      <!-- Best High Score Banner -->
+      <div id="highScoreBanner" style="display:none; background:rgba(245,158,11,0.12); border:1.5px solid rgba(245,158,11,0.35); border-radius:14px; padding:10px 16px; margin-bottom:18px; font-size:0.88rem; font-weight:800; color:var(--amber-accent);">
+        🏆 Personal Best (<span id="startBestModeLabel">60s Blitz</span>): <span id="startBestScore">0 pts</span> (<span id="startBestRank">Novice</span>)
+      </div>
+
+      <!-- 🎮 GAME MODE SELECTOR GRID -->
+      <div class="game-mode-section">
+        <div class="game-mode-section-title">
+          <span>🎯 Select Battle Mode</span>
         </div>
-        <div>
-          <div style="font-size:0.7rem; font-weight:800; color:var(--text-muted);">MULTIPLIER</div>
-          <div style="font-size:1.2rem; font-weight:900; color:var(--amber-accent); margin-top:2px;">🔥 Up to 5x</div>
-        </div>
-        <div>
-          <div style="font-size:0.7rem; font-weight:800; color:var(--text-muted);">TOP RATING</div>
-          <div style="font-size:1.2rem; font-weight:900; color:var(--green-accent); margin-top:2px;">👑 Master A+</div>
+
+        <div class="game-mode-grid">
+          <!-- 1. 60s Blitz (Standard) -->
+          <div class="game-mode-card active" id="modeCard_blitz" onclick="selectGameMode('blitz')">
+            <div class="game-mode-header">
+              <div class="game-mode-icon-title">
+                <span class="game-mode-icon">⚡</span>
+                <span class="game-mode-title">60s Blitz</span>
+              </div>
+              <span class="game-mode-badge" style="color:var(--cyan-accent); border-color:rgba(2,132,199,0.3);">All Topics</span>
+            </div>
+            <div class="game-mode-desc">60s sprint across all 45 questions with up to 5x streak multipliers.</div>
+          </div>
+
+          <!-- 2. Sudden Death (Survival) -->
+          <div class="game-mode-card survival" id="modeCard_survival" onclick="selectGameMode('survival')">
+            <div class="game-mode-header">
+              <div class="game-mode-icon-title">
+                <span class="game-mode-icon">💀</span>
+                <span class="game-mode-title">Sudden Death</span>
+              </div>
+              <span class="game-mode-badge" style="color:#EF4444; border-color:rgba(239,68,68,0.3);">1-Life Hard</span>
+            </div>
+            <div class="game-mode-desc">15s per question clock. One single mistake ends the game immediately!</div>
+          </div>
+
+          <!-- 3. Qualitative Ions (Paper 3 Q2) -->
+          <div class="game-mode-card qualitative" id="modeCard_qualitative" onclick="selectGameMode('qualitative')">
+            <div class="game-mode-header">
+              <div class="game-mode-icon-title">
+                <span class="game-mode-icon">🔬</span>
+                <span class="game-mode-title">Qualitative Drill</span>
+              </div>
+              <span class="game-mode-badge" style="color:#10B981; border-color:rgba(16,185,129,0.3);">Paper 3 Q2</span>
+            </div>
+            <div class="game-mode-desc">45s sprint strictly on Cation/Anion precipitation, Flame tests & Gases.</div>
+          </div>
+
+          <!-- 4. Organic Tests (Paper 3 Q3) -->
+          <div class="game-mode-card organic" id="modeCard_organic" onclick="selectGameMode('organic')">
+            <div class="game-mode-header">
+              <div class="game-mode-icon-title">
+                <span class="game-mode-icon">⚗️</span>
+                <span class="game-mode-title">Organic Diagnostic</span>
+              </div>
+              <span class="game-mode-badge" style="color:#8B5CF6; border-color:rgba(139,92,246,0.3);">Paper 3 Q3</span>
+            </div>
+            <div class="game-mode-desc">45s sprint on Bromine, Dichromate, Carbonate effervescence & Esters.</div>
+          </div>
+
+          <!-- 5. Volumetric Titration (Paper 3 Q1) -->
+          <div class="game-mode-card titration" id="modeCard_titration" onclick="selectGameMode('titration')">
+            <div class="game-mode-header">
+              <div class="game-mode-icon-title">
+                <span class="game-mode-icon">⚖️</span>
+                <span class="game-mode-title">Titration Mastery</span>
+              </div>
+              <span class="game-mode-badge" style="color:#F59E0B; border-color:rgba(245,158,11,0.3);">Paper 3 Q1</span>
+            </div>
+            <div class="game-mode-desc">45s sprint on Indicators, Concordant Titres & Apparatus Precision.</div>
+          </div>
+
+          <!-- 6. Thermochemistry & Kinetics -->
+          <div class="game-mode-card energy" id="modeCard_energy" onclick="selectGameMode('energy')">
+            <div class="game-mode-header">
+              <div class="game-mode-icon-title">
+                <span class="game-mode-icon">🌡️</span>
+                <span class="game-mode-title">Energy & Kinetics</span>
+              </div>
+              <span class="game-mode-badge" style="color:#EC4899; border-color:rgba(236,72,153,0.3);">Physical Q</span>
+            </div>
+            <div class="game-mode-desc">45s sprint on Calorimetry ΔH, Cooling Curves & Reaction Rates.</div>
+          </div>
         </div>
       </div>
 
-      <button type="button" class="btn btn-primary" onclick="startChemicalSpeedBattle()" style="width:100%; padding:14px; font-size:1.05rem; font-weight:900; border-radius:100px; box-shadow:0 0 20px rgba(2,132,199,0.3);">
-        🚀 Launch 60s Speed Battle →
+      <!-- Launch Action Button -->
+      <button type="button" id="launchBattleBtn" class="btn btn-primary" onclick="startChemicalSpeedBattle()" style="width:100%; padding:15px; font-size:1.08rem; font-weight:900; border-radius:100px; box-shadow:0 0 24px var(--sb-primary-glow); cursor:pointer;">
+        🚀 Launch 60s Blitz Battle →
       </button>
+
+      <!-- Keyboard controls shortcut reminder -->
+      <div class="kb-hint-strip">
+        <span>💡 Lightning answers: Press <span class="kb-key-tag">A</span> <span class="kb-key-tag">B</span> <span class="kb-key-tag">C</span> <span class="kb-key-tag">D</span> or <span class="kb-key-tag">1</span> <span class="kb-key-tag">2</span> <span class="kb-key-tag">3</span> <span class="kb-key-tag">4</span></span>
+      </div>
+
+      <!-- Skip Warm Up Link -->
+      <div id="skipWarmupRow" style="margin-top:14px; text-align:center;">
+        <a id="skipWarmupLink" href="home.html" style="font-size:0.8rem; color:var(--text-muted); text-decoration:underline; font-weight:600;">
+          Skip warm-up & enter workstation directly →
+        </a>
+      </div>
     </div>
 
-    <!-- Battle Arena Card (Active Game) -->
+    <!-- ══════════════════════════════════════
+         ACTIVE BATTLE ARENA CARD
+    ══════════════════════════════════════ -->
     <div id="battleArenaCard" class="battle-card" style="display:none; text-align:left;">
       
-      <!-- HUD Header -->
-      <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:16px; margin-bottom:20px;">
-        <div style="display:flex; align-items:center; gap:16px;">
-          <div>
-            <div style="font-size:0.68rem; font-weight:800; color:var(--text-muted);">SCORE</div>
-            <div id="battleScoreDisplay" style="font-size:1.4rem; font-weight:900; color:var(--cyan-accent); font-family:var(--font-heading);">0</div>
+      <!-- Interactive HUD Header -->
+      <div class="arena-hud">
+        <div class="hud-stat-box">
+          <div style="display:flex; align-items:center; gap:8px; margin-bottom:2px;">
+            <span class="hud-stat-label">Score</span>
+            <span id="arenaActiveModePill" class="mode-badge-pill">⚡ 60s Blitz</span>
           </div>
-          <div>
-            <div style="font-size:0.68rem; font-weight:800; color:var(--text-muted);">COMBO STREAK</div>
-            <div id="battleStreakDisplay" style="font-size:1.1rem; font-weight:900; color:var(--amber-accent);">0x Combo 🔥</div>
-          </div>
+          <span id="battleScoreDisplay" class="hud-score-val">0</span>
         </div>
-        <div style="text-align:right;">
-          <div style="font-size:0.68rem; font-weight:800; color:var(--text-muted);">REMAINING TIME</div>
-          <div id="battleTimeDisplay" style="font-size:1.5rem; font-weight:900; color:var(--green-accent); font-family:var(--font-heading);">60s</div>
+        
+        <div class="hud-streak-container">
+          <span id="battleStreakBadge" class="streak-badge streak-tier-0">
+            <span id="battleStreakIcon">⚡</span>
+            <span id="battleStreakText">0x Normal</span>
+          </span>
+        </div>
+
+        <div class="hud-stat-box hud-time-box">
+          <span class="hud-stat-label" id="hudTimerLabel">Remaining Time</span>
+          <span id="battleTimeDisplay" class="hud-time-val">60s</span>
         </div>
       </div>
 
-      <!-- Question Box -->
-      <div style="background:var(--card-bg-hover); border:1.5px solid var(--cyan-accent); border-radius:18px; padding:20px; margin-bottom:20px; font-size:1.05rem; font-weight:800; color:var(--heading-color); line-height:1.5;" id="battleQuestionText">
-        Loading question…
+      <!-- Precision Gradient Timer Bar -->
+      <div class="timer-bar-track">
+        <div id="battleTimerBar" class="timer-bar-fill"></div>
       </div>
 
-      <!-- Options Container -->
-      <div id="battleOptionsBox"></div>
+      <!-- Question Box & Category Tag -->
+      <div>
+        <div id="battleCatBadge" class="battle-q-badge">🔬 Qualitative Analysis</div>
+        <div id="battleQuestionText" class="battle-q-box">
+          Loading question…
+        </div>
+      </div>
+
+      <!-- Dynamic Interactive Options Container -->
+      <div id="battleOptionsBox" class="battle-options-list"></div>
+
+      <!-- Keyboard Shortcut Helper below options -->
+      <div class="kb-hint-strip" style="margin-top:16px;">
+        <span>Press <span class="kb-key-tag">A</span> <span class="kb-key-tag">B</span> <span class="kb-key-tag">C</span> <span class="kb-key-tag">D</span> for instant rapid responses</span>
+      </div>
 
     </div>
 
-    <!-- Game Over Card -->
-    <div id="battleGameOverCard" class="battle-card" style="display:none;">
-      <div style="font-size:3.5rem; margin-bottom:12px;">🏆</div>
-      <h2 style="font-family:var(--font-heading); font-size:1.6rem; font-weight:900; color:var(--heading-color); margin-bottom:4px;">Speed Battle Finished!</h2>
-      <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:20px;">Great job completing the 60-second KCSE practical sprint!</div>
+    <!-- ══════════════════════════════════════
+         GAME OVER & ANALYTICS SUMMARY CARD
+    ══════════════════════════════════════ -->
+    <div id="battleGameOverCard" class="battle-card" style="display:none; text-align:center;">
+      <div id="gameOverIcon" style="font-size:3.8rem; margin-bottom:8px; animation:streakFlamePulse 1.8s infinite;">🏆</div>
+      <h2 id="gameOverHeading" style="font-family:var(--font-heading); font-size:1.75rem; font-weight:900; color:var(--heading-color); margin-bottom:4px;">Speed Battle Finished!</h2>
+      <p id="gameOverSubtitle" style="font-size:0.88rem; color:var(--text-muted); margin-bottom:20px;">
+        <span id="finalModeDisplay">60s Blitz</span> challenge completed.
+      </p>
 
-      <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:20px; padding:20px; margin-bottom:24px;">
-        <div style="font-size:0.75rem; font-weight:800; color:var(--text-muted);">FINAL SCORE</div>
-        <div id="finalScoreDisplay" style="font-size:2.4rem; font-weight:900; color:var(--cyan-accent); font-family:var(--font-heading); margin:4px 0 10px 0;">0</div>
+      <!-- Final Score & Rating Box -->
+      <div class="final-score-panel">
+        <div style="font-size:0.72rem; font-weight:800; color:var(--text-muted); letter-spacing:0.06em; text-transform:uppercase;">TOTAL ACCUMULATED SCORE</div>
+        <div id="finalScoreDisplay" class="final-score-big">0</div>
         
-        <div style="font-size:0.75rem; font-weight:800; color:var(--text-muted);">PRACTICAL IQ RATING</div>
-        <div id="finalRankDisplay" style="font-size:1.15rem; font-weight:900; color:var(--green-accent); margin-top:2px;">🧪 Novice Chemist</div>
+        <div id="newHighScoreNotice" style="display:none; color:var(--amber-accent); font-weight:800; font-size:0.9rem; margin-bottom:12px;">
+          🎉 NEW PERSONAL HIGH SCORE IN THIS MODE! 🌟
+        </div>
+
+        <div style="font-size:0.72rem; font-weight:800; color:var(--text-muted); margin-bottom:6px; letter-spacing:0.06em; text-transform:uppercase;">PRACTICAL IQ RATING</div>
+        <div id="finalRankDisplay" class="final-rank-badge">🧪 Novice Chemist</div>
       </div>
 
-      <div style="display:flex; gap:12px;">
-        <button type="button" class="btn btn-primary" onclick="startChemicalSpeedBattle()" style="flex:1; padding:12px; font-weight:800; border-radius:100px;">🔄 Play Again</button>
-        <a href="home.html" class="btn" style="flex:1; padding:12px; font-weight:800; border-radius:100px; text-decoration:none; text-align:center;">🏠 Return Home</a>
+      <!-- Performance Stats 4-Grid Breakdown -->
+      <div class="stat-summary-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom:24px;">
+        <div class="stat-summary-card">
+          <div class="stat-summary-title">Answered</div>
+          <div id="statAnswered" class="stat-summary-val" style="color:var(--text-main);">0</div>
+        </div>
+        <div class="stat-summary-card">
+          <div class="stat-summary-title">Accuracy</div>
+          <div id="statAccuracy" class="stat-summary-val" style="color:var(--green-accent);">0%</div>
+        </div>
+        <div class="stat-summary-card">
+          <div class="stat-summary-title">Max Streak</div>
+          <div id="statMaxStreak" class="stat-summary-val" style="color:var(--amber-accent);">0x</div>
+        </div>
+        <div class="stat-summary-card">
+          <div class="stat-summary-title">Speed / Q</div>
+          <div id="statAvgSpeed" class="stat-summary-val" style="color:var(--cyan-accent);">0.0s</div>
+        </div>
+      </div>
+
+      <!-- Actions Grid with direct Workstation Enter -->
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <a id="gameOverProceedBtn" href="home.html" class="btn btn-primary" style="width:100%; padding:15px; font-size:1.05rem; font-weight:900; border-radius:100px; text-decoration:none; text-align:center; box-shadow:0 0 20px var(--sb-primary-glow);">
+          🚀 Enter Laboratory Workstation →
+        </a>
+        <div style="display:flex; gap:10px;">
+          <button type="button" class="btn" onclick="startChemicalSpeedBattle()" style="flex:1; padding:12px; font-weight:800; border-radius:100px; cursor:pointer;">
+            🔄 Play Again
+          </button>
+          <button type="button" class="btn" onclick="backToModeSelect()" style="flex:1; padding:12px; font-weight:800; border-radius:100px; cursor:pointer; background:var(--card-bg-hover); border:1px solid var(--card-border);">
+            🎯 Change Mode
+          </button>
+        </div>
       </div>
     </div>
 
@@ -115,6 +277,7 @@
 
   <script src="../shared/api.js"></script>
   <script src="../shared/chemical-safety.js"></script>
+  <script src="../shared/page-transitions.js"></script>
   <script src="js/speed-battle.js"></script>
 </body>
 </html>

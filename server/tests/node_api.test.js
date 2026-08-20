@@ -46,7 +46,7 @@ describe('VirtuLab Kenya — Backend API Test Suite', () => {
       await new Promise((resolve) => server.close(resolve));
     }
     await pool.end().catch(() => {});
-    setTimeout(() => process.exit(0), 100);
+    setTimeout(() => process.exit(0), 200).unref();
   });
 
   beforeEach(() => {
@@ -144,6 +144,56 @@ describe('VirtuLab Kenya — Backend API Test Suite', () => {
     assert.strictEqual(body.error, 'Invalid email or password.');
   });
 
+  it('POST /api/auth/student/login — should return 403 if student account is suspended', async () => {
+    pool.query = async () => ({
+      rows: [{
+        id: 99,
+        name: 'Suspended Student',
+        email: 'suspended@example.com',
+        password_hash: '$2b$10$xyz',
+        status: 'suspended'
+      }]
+    });
+
+    const res = await fetch(url('/api/auth/student/login'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: 'suspended@example.com',
+        password: 'password123'
+      })
+    });
+    const body = await res.json();
+
+    assert.strictEqual(res.status, 403);
+    assert.strictEqual(body.error, 'Your account is suspended. Please contact your school administrator.');
+  });
+
+  it('POST /api/auth/teacher/login — should return 403 if teacher account is suspended', async () => {
+    pool.query = async () => ({
+      rows: [{
+        id: 98,
+        name: 'Suspended Teacher',
+        email: 'suspended.teacher@example.com',
+        password_hash: '$2b$10$xyz',
+        status: 'suspended'
+      }]
+    });
+
+    const res = await fetch(url('/api/auth/teacher/login'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: 'suspended.teacher@example.com',
+        password: 'password123'
+      })
+    });
+    const body = await res.json();
+
+    assert.strictEqual(res.status, 403);
+    assert.strictEqual(body.error, 'Your account is suspended. Please contact the platform administrator.');
+  });
+
   it('POST /api/auth/teacher/login — should return 400 if payload empty', async () => {
     const res = await fetch(url('/api/auth/teacher/login'), {
       method: 'POST',
@@ -217,6 +267,35 @@ describe('VirtuLab Kenya — Backend API Test Suite', () => {
 
     assert.strictEqual(res.status, 401);
     assert.strictEqual(body.error, 'Invalid admin credentials.');
+  });
+
+  it('POST /api/auth/admin/login — should verify against ADMIN_PASSWORD_HASH when set', async () => {
+    const bcrypt = require('bcrypt');
+    const prevHash = process.env.ADMIN_PASSWORD_HASH;
+    const prevPass = process.env.ADMIN_PASSWORD;
+
+    delete process.env.ADMIN_PASSWORD;
+    process.env.ADMIN_PASSWORD_HASH = await bcrypt.hash('CustomHashedPass2026!', 10);
+
+    try {
+      const res = await fetch(url('/api/auth/admin/login'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: 'admin@virtulab.co.ke',
+          password: 'CustomHashedPass2026!'
+        })
+      });
+      const body = await res.json();
+
+      assert.strictEqual(res.status, 200);
+      assert.ok(body.token);
+      assert.strictEqual(body.user.role, 'admin');
+    } finally {
+      process.env.ADMIN_PASSWORD = prevPass;
+      if (prevHash) process.env.ADMIN_PASSWORD_HASH = prevHash;
+      else delete process.env.ADMIN_PASSWORD_HASH;
+    }
   });
 
   it('GET /api/students/:id/drilldown — should return student performance drilldown for teacher', async () => {
@@ -1222,5 +1301,237 @@ describe('VirtuLab Kenya — Backend API Test Suite', () => {
     assert.strictEqual(getBody.sessions.length, 1);
   });
 
+  /* 13. SECURITY REGRESSION TESTS */
+  it('CSV Sanitizer — should neutralize formula injection characters (=, +, -, @, \\t, \\r)', () => {
+    const { escapeCsv } = require('../utils/csv');
+    assert.strictEqual(escapeCsv('=SUM(A1:A10)'), "'=SUM(A1:A10)");
+    assert.strictEqual(escapeCsv('+cmd|calc!A0'), "'+cmd|calc!A0");
+    assert.strictEqual(escapeCsv('-123'), "'-123");
+    assert.strictEqual(escapeCsv('@SUM(1)'), "'@SUM(1)");
+    assert.strictEqual(escapeCsv('Normal text, with comma'), '"Normal text, with comma"');
+  });
+
+  /* 14. GAS PREPARATION & COLLECTION MODULE TESTS */
+  it('POST & GET /api/gas — should record and fetch gas preparation sessions', async () => {
+    pool.query = async (queryText, values) => {
+      const q = typeof queryText === 'string' ? queryText.replace(/\s+/g, ' ') : '';
+      if (q.includes('INSERT INTO gas_sessions')) {
+        return {
+          rows: [{
+            id: 201,
+            student_id: 1,
+            gas_key: 'O2',
+            gas_name: 'Oxygen Gas (O2)',
+            drying_agent: 'concH2SO4',
+            collection_method: 'overWater',
+            drying_correct: true,
+            collection_correct: true,
+            total_score: 9.5,
+            correct: true
+          }]
+        };
+      }
+      if (q.includes('FROM gas_sessions gs')) {
+        return {
+          rows: [{
+            id: 201,
+            student_id: 1,
+            student_name: 'Test Student',
+            gas_key: 'O2',
+            total_score: 9.5
+          }]
+        };
+      }
+      if (q.includes('FROM gas_sessions WHERE student_id')) {
+        return {
+          rows: [{
+            id: 201,
+            student_id: 1,
+            gas_key: 'O2',
+            total_score: 9.5
+          }]
+        };
+      }
+      return { rows: [] };
+    };
+
+    const postRes = await fetch(url('/api/gas'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${studentToken}`
+      },
+      body: JSON.stringify({
+        gas_key: 'O2',
+        gas_name: 'Oxygen Gas (O2)',
+        drying_agent: 'concH2SO4',
+        collection_method: 'overWater',
+        drying_correct: true,
+        collection_correct: true,
+        tests_performed: 2,
+        tests_correct: 2,
+        total_score: 9.5,
+        correct: true
+      })
+    });
+    const postBody = await postRes.json();
+    assert.strictEqual(postRes.status, 201);
+    assert.strictEqual(postBody.session.gas_key, 'O2');
+    assert.strictEqual(postBody.session.total_score, 9.5);
+
+    const getMineRes = await fetch(url('/api/gas/mine'), {
+      headers: { 'Authorization': `Bearer ${studentToken}` }
+    });
+    const getMineBody = await getMineRes.json();
+    assert.strictEqual(getMineRes.status, 200);
+    assert.strictEqual(getMineBody.sessions.length, 1);
+
+    const getClassRes = await fetch(url('/api/gas/class'), {
+      headers: { 'Authorization': `Bearer ${teacherToken}` }
+    });
+    const getClassBody = await getClassRes.json();
+    assert.strictEqual(getClassRes.status, 200);
+    assert.strictEqual(getClassBody.sessions.length, 1);
+  });
+
+  /* 15. ACADEMIC RESEARCH SUITE (CPCAT, SUS, TAM & STATS) */
+  it('POST & GET /api/research — should record CPCAT, SUS, TAM and return research summary', async () => {
+    pool.query = async (queryText, values) => {
+      const q = typeof queryText === 'string' ? queryText.replace(/\s+/g, ' ') : '';
+      if (q.includes('INSERT INTO research_assessments')) {
+        return {
+          rows: [{
+            id: 301,
+            student_id: 1,
+            assessment_type: 'pre_test',
+            total_score: 28.0,
+            percentage: 70.0
+          }]
+        };
+      }
+      if (q.includes('FROM research_assessments WHERE student_id')) {
+        return {
+          rows: [
+            { id: 301, student_id: 1, assessment_type: 'pre_test', total_score: 20.0, percentage: 50.0 },
+            { id: 302, student_id: 1, assessment_type: 'post_test', total_score: 34.0, percentage: 85.0 }
+          ]
+        };
+      }
+      if (q.includes('INSERT INTO research_surveys')) {
+        return {
+          rows: [{
+            id: 401,
+            user_id: 1,
+            survey_type: values[3] || 'SUS',
+            score: 85.0
+          }]
+        };
+      }
+      if (q.includes('pre.assessment_type = \'pre_test\'')) {
+        return {
+          rows: [{
+            student_id: 1,
+            student_name: 'Test Student',
+            student_form: 'Form 4',
+            school_name: 'Alliance High School',
+            pre_score: 20.0,
+            pre_percentage: 50.0,
+            post_score: 34.0,
+            post_percentage: 85.0
+          }]
+        };
+      }
+      if (q.includes('FROM research_surveys WHERE survey_type = $1')) {
+        if (values[0] === 'SUS') {
+          return { rows: [{ id: 401, user_id: 1, score: 85.0 }] };
+        }
+        if (values[0] === 'TAM') {
+          return { rows: [{ id: 402, user_id: 1, construct_scores: { PU: 4.5, PEOU: 4.5, FC: 4.0, BI: 4.8 } }] };
+        }
+      }
+      return { rows: [] };
+    };
+
+    // 1. Submit CPCAT
+    const cpcatRes = await fetch(url('/api/research/cpcat/submit'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${studentToken}`
+      },
+      body: JSON.stringify({
+        assessment_type: 'pre_test',
+        section_a_score: 10,
+        section_b_score: 8,
+        section_c_score: 6,
+        section_d_score: 4,
+        total_score: 28.0
+      })
+    });
+    const cpcatBody = await cpcatRes.json();
+    assert.strictEqual(cpcatRes.status, 201);
+    assert.strictEqual(cpcatBody.assessment.total_score, 28.0);
+
+    // 2. Check CPCAT Status
+    const statusRes = await fetch(url('/api/research/cpcat/status'), {
+      headers: { 'Authorization': `Bearer ${studentToken}` }
+    });
+    const statusBody = await statusRes.json();
+    assert.strictEqual(statusRes.status, 200);
+    assert.strictEqual(statusBody.hasPreTest, true);
+    assert.strictEqual(statusBody.hasPostTest, true);
+    assert.strictEqual(statusBody.hakesGain.g, 0.7);
+
+    // 3. Submit SUS Survey
+    const susRes = await fetch(url('/api/research/sus/submit'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${studentToken}`
+      },
+      body: JSON.stringify({
+        responses: [5, 1, 5, 1, 5, 1, 5, 1, 5, 1], // Perfect 100 score
+        feedback_text: 'Excellent virtual chemistry platform.'
+      })
+    });
+    const susBody = await susRes.json();
+    assert.strictEqual(susRes.status, 201);
+    assert.strictEqual(susBody.susScore.score, 100);
+
+    // 4. Submit TAM Survey
+    const tamRes = await fetch(url('/api/research/tam/submit'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${studentToken}`
+      },
+      body: JSON.stringify({
+        responses: { PU: [5, 5, 5, 5], PEOU: [4, 4, 4, 4], FC: [4, 4, 4], BI: [5, 5, 5] },
+        feedback_text: 'Highly recommended for all sub-county schools.'
+      })
+    });
+    const tamBody = await tamRes.json();
+    assert.strictEqual(tamRes.status, 201);
+    assert.strictEqual(tamBody.constructScores.PU, 5.0);
+
+    // 5. Research Summary & Analytics
+    const summaryRes = await fetch(url('/api/research/analytics/summary'), {
+      headers: { 'Authorization': `Bearer ${teacherToken}` }
+    });
+    const summaryBody = await summaryRes.json();
+    assert.strictEqual(summaryRes.status, 200);
+    assert.strictEqual(summaryBody.summary.pairedCount, 1);
+
+    // 6. Research CSV Export
+    const csvRes = await fetch(url('/api/research/export/csv'), {
+      headers: { 'Authorization': `Bearer ${teacherToken}` }
+    });
+    assert.strictEqual(csvRes.status, 200);
+    const csvText = await csvRes.text();
+    assert.ok(csvText.includes('Student_ID,School_Name,Form_Level'));
+    assert.ok(csvText.includes('STU-0001'));
+  });
+
 });
+
 

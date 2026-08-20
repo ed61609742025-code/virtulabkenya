@@ -78,20 +78,14 @@ async function getStudentSessions(studentId) {
 }
 
 async function getClassSessions(teacherId) {
-  const teacherResult = await pool.query(
-    'SELECT school_id FROM teachers WHERE id = $1',
-    [teacherId]
-  );
-  const schoolId = teacherResult.rows[0] ? teacherResult.rows[0].school_id : null;
-
   const result = await pool.query(`
     SELECT os.*, s.name AS student_name, s.form AS student_form
     FROM organic_sessions os
     JOIN students s ON os.student_id = s.id
-    WHERE s.teacher_id = $1 OR s.school_id = $2
+    WHERE s.teacher_id = $1
     ORDER BY os.created_at DESC
     LIMIT 50
-  `, [teacherId, schoolId]);
+  `, [teacherId]);
 
   return result.rows;
 }

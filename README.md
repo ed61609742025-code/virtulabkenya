@@ -2,7 +2,6 @@
 
 > *"Every student deserves a laboratory."*
 
-<<<<<<< HEAD
 A web-based virtual chemistry laboratory for KCSE learners in Kenya — built to make high-quality practical science education accessible to every secondary school student, regardless of whether their school has a functioning physical laboratory.
 
 ---
@@ -47,7 +46,12 @@ Over 60% of Kenyan secondary schools lack adequately equipped chemistry laborato
 | **Qualitative Salt Analysis** (10 Unknown Salts) | Inorganic Chemistry | Paper 3 (Q2) | ✅ Built & Verified |
 | **Flame Test Bench** (Cation Emission Identification) | Inorganic Chemistry | Paper 3 (Q2) | ✅ Built & Verified |
 | **Organic Chemistry Functional Group Lab** | Organic Chemistry | Paper 3 (Q3) | ✅ Built & Verified |
-| **Gas Preparation Lab** (Simulated gas collection) | Inorganic Practical | Paper 3 | 🔄 Planned (Phase 6) |
+| **Gas Preparation Lab** (O₂, CO₂, Cl₂, NH₃, SO₂, H₂) | Inorganic Practical | Paper 3 (Q3) | ✅ Built & Verified |
+| **Reaction Rates & Kinetics** (Disappearing cross) | Chemical Kinetics | Paper 3 (Q3) | ✅ Built & Verified |
+| **Thermochemistry & Energetics** (Enthalpies) | Thermochemistry | Paper 3 (Q3) | ✅ Built & Verified |
+| **Solubility Curves & Crystallization** | Physical Chemistry | Form 3 Topic 4 | ✅ Built & Verified |
+| **CPCAT Standardized Pre/Post-Test Engine** | Research Evaluation | Paper 3 (40 Mks) | ✅ Built & Verified |
+| **SUS & TAM Usability Survey Suite** | Usability / Adoption | Research Framework | ✅ Built & Verified |
 
 ---
 
@@ -58,59 +62,18 @@ Over 60% of Kenyan secondary schools lack adequately equipped chemistry laborato
 | **Frontend** | HTML5, CSS3 (Vanilla CSS design system), Vanilla JavaScript (ES6+) |
 | **Backend** | Node.js + Express REST API |
 | **Database** | PostgreSQL with automated schema migration safety |
-| **Security & Middleware** | JWT (JSON Web Tokens), bcryptjs, Helmet headers, Rate Limiting, Input Sanitization, Gzip/Brotli Compression |
-| **Testing** | Node.js Test Runner (28 Automated Unit & Integration Tests) |
+| **Security & Middleware** | JWT (JSON Web Tokens), bcrypt, Helmet headers, Rate Limiting, Input Sanitization, Gzip/Brotli Compression |
+| **Testing** | Node.js Test Runner (50+ Automated Unit & Integration Tests) |
 | **PWA & Offline** | Service Worker (`sw.js`), Web App Manifest (`manifest.json`) |
 | **Bilingual Engine** | Custom client-side dictionary (`i18n.js`) with English & Kiswahili |
 
 ---
 
 ## 📁 Project Structure
-=======
-A web-based virtual chemistry laboratory for KCSE learners in Kenya — built to make high-quality practical science education accessible to every secondary school student, regardless of whether their school has a functioning lab.
-
----
-
-## The Problem
-
-Over 60% of Kenyan secondary schools lack adequately equipped chemistry laboratories. Students sit the KCSE Paper 3 practical exam having never performed the actual experiments. VirtuLab Kenya changes that.
-
-## What It Does
-
-- **Students** log in from any browser or smartphone and perform realistic virtual chemistry practicals — titrations, qualitative analysis, gas preparation — mapped directly to the KCSE/KICD syllabus
-- **Teachers** get a real-time dashboard showing every student's results, accuracy, and struggles — without being in the same room
-- **Works offline** — built as a Progressive Web App so it functions even with poor connectivity
-- **Bilingual** — full English and Kiswahili support
-
-## Current Practicals
-
-| Practical | Type | KCSE Paper | Status |
-|---|---|---|---|
-| Acid–Base Titration | Titration | Paper 3 | ✅ Built |
-| Redox Titration | Titration | Paper 3 | ✅ Built |
-| Precipitation Titration | Titration | Paper 3 | ✅ Built |
-| Complexometric Titration | Titration | Paper 3 | ✅ Built |
-| Qualitative Analysis | Salt analysis | Paper 3 | 🔄 Phase 5 |
-| Gas Preparation | Practical | Paper 3 | 🔄 Phase 5 |
-
-## Technology Stack
-
-| Layer | Technology |
-|---|---|
-| Frontend | HTML, CSS, Vanilla JavaScript |
-| Backend | Node.js + Express |
-| Database | PostgreSQL |
-| Authentication | JWT (JSON Web Tokens) |
-| Hosting | Railway (pilot) |
-| Offline support | Progressive Web App (PWA) |
-
-## Project Structure
->>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
 
 ```
 virtulabkenya/
 ├── client/
-<<<<<<< HEAD
 │   ├── student/          # Student portal (home, lab, qualitative, organic, history, login)
 │   ├── teacher/          # Teacher analytics dashboard and login
 │   ├── admin/            # National system administration portal
@@ -121,7 +84,7 @@ virtulabkenya/
 │   ├── routes/           # REST endpoints (auth, sessions, assignments, qualitative, organic, admin, errors)
 │   ├── middleware/       # JWT verification, rate limiting, error tracking
 │   ├── db/               # Database pool connection and schema.sql
-│   ├── tests/            # Automated node API test suite (28 test cases)
+│   ├── tests/            # Automated node API test suite (50+ test cases)
 │   └── index.js          # Express app entrypoint
 ├── docs/                 # Curriculum alignment and deployment guides
 └── README.md
@@ -146,7 +109,7 @@ npm install
 ### 3. Run Automated Tests
 ```bash
 npm test
-# Runs node --test tests/node_api.test.js (28/28 tests passing)
+# Runs node --test tests/node_api.test.js (50+ tests passing)
 ```
 
 ### 4. Start the Application
@@ -187,148 +150,6 @@ All laboratory experiments and mark schemes strictly adhere to the **Kenya Insti
 ---
 
 ## 📬 Contact & Contribution
-=======
-│   ├── student/          # Student-facing pages (login, home, lab, history)
-│   ├── teacher/          # Teacher dashboard pages
-│   └── shared/           # Shared CSS and API utility functions
-├── server/
-│   ├── routes/           # API route handlers (auth, sessions, assignments)
-│   ├── middleware/        # JWT authentication middleware
-│   └── db/               # Database schema and query functions
-├── docs/                 # API documentation, KICD alignment, deployment guide
-├── research/             # Questionnaires, pre/post tests, pilot study materials
-└── README.md
-```
-
-## Development Roadmap
-
-| Phase | Focus | Timeline |
-|---|---|---|
-| 1 | Server, database, login system | Months 1–2 |
-| 2 | Connect lab to server (live data) | Months 3–4 |
-| 3 | Student platform (progress, history, certificates) | Months 5–6 |
-| 4 | Teacher tools (assignments, reporting) | Months 7–8 |
-| 5 | New practicals (qualitative analysis, gas preparation) | Months 9–10 |
-| 6 | Pilot study, evaluation, dissertation | Months 11–12 |
-
-## Academic Context
-
-This project is the capstone for a **Master's in Learning and Technology** at the **Open University of Kenya**. The evaluation framework uses:
-- Technology Acceptance Model (TAM) — teacher questionnaires
-- System Usability Scale (SUS) — student questionnaires  
-- Pre/post knowledge tests — measuring learning gain
-- Usage logs — objective session data from the database
-
-## Curriculum Alignment
-
-All practicals are aligned to the **Kenya Institute of Curriculum Development (KICD)** Chemistry Syllabus and the **KCSE Paper 3** practical examination format.
-
-## Future Plans
-
-VirtuLab Kenya is designed to expand beyond chemistry:
-- **Physics** — circuits, optics, Hooke's law, radioactivity
-- **Biology** — photosynthesis, osmosis, enzyme activity
-- **All Forms** — covering Forms 1 through 4 across all three sciences
-
-## Contact
-
-Built by a Kenyan learner, for Kenyan learners.  
-GitHub: [@ed61609742025-code](https://github.com/ed61609742025-code)
-
----
-
-*VirtuLab Kenya · Open University of Kenya · Master's in Learning and Technology*
-
-# VirtuLab Kenya 🧪
-
-> *"Every student deserves a laboratory."*
-
-A web-based virtual chemistry laboratory for KCSE learners in Kenya — built to make high-quality practical science education accessible to every secondary school student, regardless of whether their school has a functioning lab.
-
----
-
-## The Problem
-
-Over 60% of Kenyan secondary schools lack adequately equipped chemistry laboratories. Students sit the KCSE Paper 3 practical exam having never performed the actual experiments. VirtuLab Kenya changes that.
-
-## What It Does
-
-- **Students** log in from any browser or smartphone and perform realistic virtual chemistry practicals — titrations, qualitative analysis, gas preparation — mapped directly to the KCSE/KICD syllabus
-- **Teachers** get a real-time dashboard showing every student's results, accuracy, and struggles — without being in the same room
-- **Works offline** — built as a Progressive Web App so it functions even with poor connectivity
-- **Bilingual** — full English and Kiswahili support
-
-## Current Practicals
-
-| Practical | Type | KCSE Paper | Status |
-|---|---|---|---|
-| Acid–Base Titration | Titration | Paper 3 | ✅ Built |
-| Redox Titration | Titration | Paper 3 | ✅ Built |
-| Precipitation Titration | Titration | Paper 3 | ✅ Built |
-| Complexometric Titration | Titration | Paper 3 | ✅ Built |
-| Qualitative Analysis | Salt analysis | Paper 3 | 🔄 Phase 5 |
-| Gas Preparation | Practical | Paper 3 | 🔄 Phase 5 |
-
-## Technology Stack
-
-| Layer | Technology |
-|---|---|
-| Frontend | HTML, CSS, Vanilla JavaScript |
-| Backend | Node.js + Express |
-| Database | PostgreSQL |
-| Authentication | JWT (JSON Web Tokens) |
-| Hosting | Railway (pilot) |
-| Offline support | Progressive Web App (PWA) |
-
-## Project Structure
-
-```
-virtulabkenya/
-├── client/
-│   ├── student/          # Student-facing pages (login, home, lab, history)
-│   ├── teacher/          # Teacher dashboard pages
-│   └── shared/           # Shared CSS and API utility functions
-├── server/
-│   ├── routes/           # API route handlers (auth, sessions, assignments)
-│   ├── middleware/        # JWT authentication middleware
-│   └── db/               # Database schema and query functions
-├── docs/                 # API documentation, KICD alignment, deployment guide
-├── research/             # Questionnaires, pre/post tests, pilot study materials
-└── README.md
-```
-
-## Development Roadmap
-
-| Phase | Focus | Timeline |
-|---|---|---|
-| 1 | Server, database, login system | Months 1–2 |
-| 2 | Connect lab to server (live data) | Months 3–4 |
-| 3 | Student platform (progress, history, certificates) | Months 5–6 |
-| 4 | Teacher tools (assignments, reporting) | Months 7–8 |
-| 5 | New practicals (qualitative analysis, gas preparation) | Months 9–10 |
-| 6 | Pilot study, evaluation, dissertation | Months 11–12 |
-
-## Academic Context
-
-This project is the capstone for a **Master's in Learning and Technology** at the **Open University of Kenya**. The evaluation framework uses:
-- Technology Acceptance Model (TAM) — teacher questionnaires
-- System Usability Scale (SUS) — student questionnaires  
-- Pre/post knowledge tests — measuring learning gain
-- Usage logs — objective session data from the database
-
-## Curriculum Alignment
-
-All practicals are aligned to the **Kenya Institute of Curriculum Development (KICD)** Chemistry Syllabus and the **KCSE Paper 3** practical examination format.
-
-## Future Plans
-
-VirtuLab Kenya is designed to expand beyond chemistry:
-- **Physics** — circuits, optics, Hooke's law, radioactivity
-- **Biology** — photosynthesis, osmosis, enzyme activity
-- **All Forms** — covering Forms 1 through 4 across all three sciences
-
-## Contact
->>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
 
 Built by a Kenyan learner, for Kenyan learners.  
 GitHub: [@ed61609742025-code](https://github.com/ed61609742025-code)

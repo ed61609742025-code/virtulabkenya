@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<<<<<<< HEAD
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Titration Bench — VirtuLab Kenya</title>
 <script>
@@ -15,702 +14,110 @@
   }
 </script>
 <meta name="theme-color" content="#0F172A">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="VirtuLab">
 <link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../shared/style.css">
-<link rel="stylesheet" href="../shared/pwa-installer.css">
-
-<style>
-  /* ── DARK WORKBENCH THEME (default) ── */
-  :root, [data-theme="dark"] {
-    --bg-dark: #0B1320;
-    --card-bg: #111A2E;
-    --card-bg-hover: #17233B;
-    --card-border: #1E2D4A;
-    --card-border-glow: #38BDF8;
-    --text-main: #F1F5F9;
-    --text-muted: #94A3B8;
-    --cyan-accent: #00F2FE;
-    --cyan-btn-bg: #06B6D4;
-    --cyan-btn-hover: #0891B2;
-    --green-accent: #10B981;
-    --green-bg: rgba(16, 185, 129, 0.15);
-    --red-accent: #EF4444;
-    --red-bg: rgba(239, 68, 68, 0.15);
-    --topbar-bg: #0A101C;
-    --heading-color: #FFFFFF;
-    --rig-stand: #1E293B;
-    --rig-body: rgba(255, 255, 255, 0.12);
-    --rig-line: #38BDF8;
-  }
-
-  /* ── LAB GREEN THEME ── */
-  [data-theme="green"] {
-    --bg-dark: #0A1A0F;
-    --card-bg: #102617;
-    --card-bg-hover: #15331F;
-    --card-border: #1B4529;
-    --card-border-glow: #39E87A;
-    --text-main: #E2F5E6;
-    --text-muted: #7AB885;
-    --cyan-accent: #39E87A;
-    --cyan-btn-bg: #22C55E;
-    --cyan-btn-hover: #16A34A;
-    --green-accent: #39E87A;
-    --green-bg: rgba(57, 232, 122, 0.15);
-    --red-accent: #F87171;
-    --red-bg: rgba(248, 113, 113, 0.15);
-    --topbar-bg: #07140B;
-    --heading-color: #39E87A;
-    --rig-stand: #15331F;
-    --rig-body: rgba(57, 232, 122, 0.12);
-    --rig-line: #39E87A;
-  }
-
-  /* ── LIGHT THEME ── */
-  [data-theme="light"] {
-    --bg-dark: #F8FAFC;
-    --card-bg: #FFFFFF;
-    --card-bg-hover: #F1F5F9;
-    --card-border: #CBD5E1;
-    --card-border-glow: #0284C7;
-    --text-main: #0F172A;
-    --text-muted: #64748B;
-    --cyan-accent: #0284C7;
-    --cyan-btn-bg: #0284C7;
-    --cyan-btn-hover: #0369A1;
-    --green-accent: #059669;
-    --green-bg: #ECFDF5;
-    --red-accent: #DC2626;
-    --red-bg: #FEF2F2;
-    --topbar-bg: #FFFFFF;
-    --heading-color: #0F172A;
-    --rig-stand: #64748B;
-    --rig-body: rgba(15, 23, 42, 0.08);
-    --rig-line: #0284C7;
-  }
-
-  * { box-sizing: border-box; }
-
-  html, body {
-    background-color: var(--bg-dark);
-    color: var(--text-main);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* Top Navigation Bar */
-  .top-navbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 24px;
-    background: var(--topbar-bg);
-    border-bottom: 1px solid var(--card-border);
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
-  .nav-brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: var(--heading-color);
-    text-decoration: none;
-  }
-
-  .nav-logo-icon {
-    font-size: 1.3rem;
-  }
-
-  .nav-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .theme-toggle-group {
-    display: flex;
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 8px;
-    padding: 3px;
-    gap: 2px;
-  }
-
-  .theme-btn-chip {
-    font-family: inherit;
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 5px 12px;
-    border-radius: 6px;
-    border: none;
-    background: transparent;
-    color: var(--text-muted);
-    cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.15s ease;
-  }
-  .theme-btn-chip:hover { color: var(--text-main); }
-  .theme-btn-chip.active {
-    background: var(--cyan-btn-bg);
-    color: #FFFFFF;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  }
-
-  .btn-back-link {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    color: var(--text-main);
-    padding: 6px 14px;
-    border-radius: 8px;
-    font-size: 0.82rem;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.15s ease;
-  }
-  .btn-back-link:hover { border-color: var(--cyan-accent); }
-
-  /* 2-Column Responsive Workbench Grid Layout */
-  .workbench-container {
-    max-width: 1560px;
-    width: 96%;
-    margin: 16px auto;
-    padding: 0 12px;
-  }
-
-  .workbench-grid {
-    display: grid;
-    grid-template-columns: 310px 1fr;
-    gap: 22px;
-    align-items: start;
-  }
-
-  @media (max-width: 1100px) {
-    .workbench-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  /* Mobile Responsive Fixes (360px–540px) */
-  @media (max-width: 540px) {
-    .top-navbar {
-      padding: 10px 14px;
-      gap: 8px;
-    }
-    .nav-brand {
-      font-size: 0.95rem;
-    }
-    .nav-actions {
-      width: 100%;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-    .workbench-container {
-      padding: 10px;
-    }
-    .apparatus-card {
-      flex-direction: column;
-      gap: 16px;
-      padding: 14px;
-    }
-    .buret-lens-card {
-      min-width: unset;
-      width: 100%;
-    }
-    .add-titrant-row {
-      flex-wrap: wrap;
-    }
-    .btn-pill-action {
-      min-width: 65px;
-    }
-    .tutorial-tooltip {
-      width: calc(100vw - 32px) !important;
-      left: 16px !important;
-    }
-  }
-
-  /* Workbench Cards */
-  .wb-card {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 14px;
-    padding: 18px 20px;
-    margin-bottom: 16px;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .wb-card.glow-card {
-    border-color: rgba(56, 189, 248, 0.4);
-    box-shadow: 0 4px 20px rgba(0, 242, 254, 0.05);
-  }
-
-  .wb-card-title {
-    font-size: 0.92rem;
-    font-weight: 700;
-    color: var(--heading-color);
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  /* Select Input */
-  .wb-select {
-    width: 100%;
-    background: var(--card-bg-hover);
-    border: 1px solid var(--card-border);
-    border-radius: 8px;
-    padding: 10px 12px;
-    color: var(--text-main);
-    font-family: inherit;
-    font-size: 0.88rem;
-    font-weight: 600;
-    outline: none;
-  }
-  .wb-select:focus { border-color: var(--cyan-accent); }
-
-  /* Scrollable Task Brief */
-  .task-brief-box {
-    background: var(--card-bg-hover);
-    border: 1px solid var(--card-border);
-    border-radius: 8px;
-    padding: 12px 14px;
-    font-size: 0.82rem;
-    line-height: 1.55;
-    color: var(--text-muted);
-    max-height: 160px;
-    overflow-y: auto;
-  }
-  .task-brief-box b { color: var(--text-main); }
-
-  /* Reagents Strip */
-  .reagent-info-item {
-    font-size: 0.82rem;
-    color: var(--text-muted);
-    margin-bottom: 6px;
-  }
-  .reagent-info-item b { color: var(--text-main); }
-
-  /* Center Main Visualizer */
-  .apparatus-card {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 14px;
-    padding: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    gap: 20px;
-    flex-wrap: wrap;
-    position: relative;
-    border-color: rgba(56, 189, 248, 0.35);
-  }
-
-  .rig-svg {
-    width: 180px;
-    height: 310px;
-  }
-
-  .readout-panel {
-    text-align: center;
-  }
-
-  .readout-label {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--text-main);
-    margin-bottom: 8px;
-  }
-
-  .readout-box {
-    background: #061122;
-    border: 2px solid var(--card-border);
-    border-radius: 12px;
-    padding: 12px 28px;
-    display: inline-block;
-    box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
-  }
-
-  .readout-number {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 2.4rem;
-    font-weight: 700;
-    color: var(--heading-color);
-    letter-spacing: 0.02em;
-  }
-
-  .readout-sub {
-    font-size: 0.82rem;
-    color: var(--text-muted);
-    margin-top: 10px;
-  }
-
-  /* Indicator Pills */
-  .indicator-pills-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-
-  .indicator-pill-btn {
-    background: var(--card-bg-hover);
-    border: 1px solid var(--card-border);
-    color: var(--text-main);
-    font-size: 0.78rem;
-    font-weight: 600;
-    padding: 8px 10px;
-    border-radius: 100px;
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.15s ease;
-  }
-  .indicator-pill-btn:hover { border-color: var(--cyan-accent); }
-  .indicator-pill-btn.selected {
-    background: rgba(6, 184, 212, 0.2);
-    border-color: var(--cyan-accent);
-    color: var(--cyan-accent);
-    box-shadow: 0 0 12px rgba(6, 184, 212, 0.3);
-  }
-
-  /* Action Buttons */
-  .btn-cyan {
-    width: 100%;
-    background: var(--cyan-btn-bg);
-    color: #FFFFFF;
-    border: none;
-    padding: 11px 16px;
-    font-size: 0.86rem;
-    font-weight: 700;
-    border-radius: 100px;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    box-shadow: 0 4px 14px rgba(6, 182, 212, 0.3);
-  }
-  .btn-cyan:hover { background: var(--cyan-btn-hover); transform: translateY(-1px); }
-  .btn-cyan:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
-
-  .add-titrant-row {
-    display: flex;
-    gap: 8px;
-  }
-
-  .btn-pill-action {
-    flex: 1;
-    background: var(--card-bg-hover);
-    border: 1px solid var(--card-border);
-    color: var(--text-main);
-    font-size: 0.8rem;
-    font-weight: 600;
-    padding: 8px 10px;
-    border-radius: 100px;
-    cursor: pointer;
-    transition: all 0.15s ease;
-  }
-  .btn-pill-action:hover { border-color: var(--cyan-accent); color: var(--cyan-accent); }
-
-  /* Scientific Tooltip Component */
-  .sci-tooltip {
-    position: relative;
-    display: inline-block;
-    border-bottom: 1.5px dashed var(--cyan-accent);
-    cursor: help;
-    color: var(--cyan-accent);
-    font-weight: 700;
-  }
-  .sci-tooltip .sci-tip-text {
-    visibility: hidden;
-    width: 240px;
-    background: #090E17;
-    color: #F8FAFC;
-    text-align: left;
-    border-radius: 10px;
-    padding: 10px 14px;
-    position: absolute;
-    z-index: 1000;
-    bottom: 125%;
-    left: 50%;
-    transform: translateX(-50%);
-    opacity: 0;
-    transition: opacity 0.25s ease, transform 0.25s ease;
-    font-size: 0.78rem;
-    font-weight: 500;
-    line-height: 1.45;
-    border: 1px solid var(--cyan-accent);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 12px rgba(0, 242, 254, 0.2);
-    pointer-events: none;
-  }
-  .sci-tooltip:hover .sci-tip-text {
-    visibility: visible;
-    opacity: 1;
-    transform: translateX(-50%) translateY(-2px);
-  }
-
-  /* Responsive Bench Layout Grid & Controls (All screens) */
-  .bench-layout-grid {
-    display: grid;
-    grid-template-columns: 190px 1fr 190px;
-    gap: 16px;
-    align-items: center;
-    width: 100%;
-  }
-
-  .bench-left-wing,
-  .bench-right-wing {
-    display: flex !important;
-    flex-direction: column;
-  }
-
-  @media (max-width: 900px) {
-    .bench-layout-grid {
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-    .bench-center-rig {
-      grid-column: 1 / -1;
-      order: -1;
-    }
-  }
-
-  @media (max-width: 500px) {
-    .bench-layout-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-    .wb-right-col {
-      display: none !important;
-    }
-  }
-
-  /* Trial Action Buttons */
-  .btn-action-swirl {
-    background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);
-    color: #FFFFFF;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    font-size: 0.88rem;
-    font-weight: 800;
-    height: 42px;
-    width: 100%;
-    border-radius: 10px;
-    cursor: pointer;
-    box-shadow: 0 4px 14px rgba(139, 92, 246, 0.4);
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-  }
-  .btn-action-swirl:hover {
-    background: linear-gradient(135deg, #7C3AED 0%, #4F46E5 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.6);
-  }
-
-  /* Small Screens: Reagents Placement after Titration Results Table */
-  @media (max-width: 1100px) {
-    .workbench-grid,
-    .wb-left-col,
-    .wb-center-col {
-      display: contents !important;
-    }
-    .workbench-container {
-      display: flex !important;
-      flex-direction: column !important;
-    }
-    .card-exp-select { order: 1; }
-    .card-task { order: 2; }
-    .card-apparatus { order: 3; }
-    .card-results-table { order: 4; }
-    .card-reagents { order: 5; } /* Reagents placed after Titration Results Table on small screens */
-    .card-calc { order: 6; }
-  }
-
-  .btn-action-record {
-    flex: 1;
-    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-    color: #FFFFFF;
-    border: none;
-    font-size: 0.88rem;
-    font-weight: 800;
-    height: 42px;
-    border-radius: 10px;
-    cursor: pointer;
-    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-  }
-  .btn-action-record:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
-  }
-
-  .btn-action-reset {
-    flex: 1;
-    background: rgba(239, 68, 68, 0.12);
-    color: #EF4444;
-    border: 1.5px solid #EF4444;
-    font-size: 0.84rem;
-    font-weight: 700;
-    height: 42px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  .btn-action-reset:hover {
-    background: rgba(239, 68, 68, 0.22);
-    transform: translateY(-1px);
-  }
-
-  /* Prominent Calculation Buttons */
-  .btn-check-avg {
-    width: 100%;
-    height: 44px;
-    background: linear-gradient(135deg, #0284C7 0%, #2563EB 100%);
-    color: #FFFFFF;
-    border: none;
-    border-radius: 10px;
-    font-size: 0.9rem;
-    font-weight: 800;
-    cursor: pointer;
-    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-  }
-  .btn-check-avg:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(2, 132, 199, 0.5);
-  }
-
-  .btn-submit-titration {
-    width: 100%;
-    height: 46px;
-    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-    color: #FFFFFF;
-    border: none;
-    border-radius: 10px;
-    font-size: 0.95rem;
-    font-weight: 800;
-    cursor: pointer;
-    box-shadow: 0 4px 18px rgba(16, 185, 129, 0.45);
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-  }
-  .btn-submit-titration:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6);
-  }
-
-  /* High Contrast Results Table */
-  .kcse-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.84rem;
-    border: 1.5px solid var(--card-border);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  .kcse-table th, .kcse-table td {
-    padding: 11px 14px;
-    text-align: center;
-    border-bottom: 1px solid var(--card-border);
-    border-left: 1px solid var(--card-border);
-  }
-</style>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400..800;1,6..72,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared/style.css">
 <link rel="stylesheet" href="css/lab.css">
-  <link rel="stylesheet" href="../shared/ai-tutor.css">
+<link rel="stylesheet" href="/shared/ai-tutor.css">
+<link rel="stylesheet" href="/shared/pwa-installer.css">
 </head>
 <body>
 
-<nav class="top-navbar">
-  <a href="home.html" class="nav-brand" title="Back to Dashboard">
-    <span class="nav-logo-icon">🧪</span>
-    Titration Bench
-  </a>
-
-  <div style="display:flex; align-items:center; gap:3px; background:var(--card-bg); border:1px solid var(--card-border); padding:2px 4px; border-radius:100px; overflow-x:auto;">
-    <a href="lab.html" class="theme-btn-chip active" style="text-decoration:none; font-size:0.72rem; padding:3px 8px;">🧪 Titration</a>
-    <a href="qualitative.html" class="theme-btn-chip" style="text-decoration:none; font-size:0.72rem; padding:3px 8px;">🔍 Qualitative</a>
-    <a href="organic.html" class="theme-btn-chip" style="text-decoration:none; font-size:0.72rem; padding:3px 8px;">⚗️ Organic</a>
-    <a href="solubility.html" class="theme-btn-chip" style="text-decoration:none; font-size:0.72rem; padding:3px 8px;">🌡️ Solubility</a>
-    <a href="energy.html" class="theme-btn-chip" style="text-decoration:none; font-size:0.72rem; padding:3px 8px;">🔥 Energy</a>
-    <a href="rates.html" class="theme-btn-chip" style="text-decoration:none; font-size:0.72rem; padding:3px 8px;">⚡ Rates</a>
-    <a href="composite_exam.html" class="theme-btn-chip" style="text-decoration:none; font-size:0.72rem; padding:3px 8px;">📝 Exam</a>
+<!-- Unified Sticky Academic Header -->
+<header class="academic-top-header">
+  <!-- Institutional Candidate Ribbon -->
+  <div class="candidate-top-ribbon">
+    <span>🇰🇪 REPUBLIC OF KENYA • KCSE CHEMISTRY PRACTICAL WORKSTATION</span>
+    <span>•</span>
+    <span>KNEC CODE: <span class="code-tag">CHEMISTRY 233/3</span></span>
+    <span>•</span>
+    <span>QUESTION 1: VOLUMETRIC ANALYSIS BENCH</span>
   </div>
 
-  <div class="nav-actions">
-    <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:8px;padding:4px 10px;font-size:0.75rem;font-weight:700;color:var(--cyan-accent);display:flex;align-items:center;gap:6px;">
-      <span>⏱️</span>
-      <span id="sessionTimerText">00:00</span>
-    </div>
-
-    <button type="button" class="btn-back-link" style="cursor:pointer;" onclick="toggleScratchpad()">📝 Scratchpad</button>
-
-    <!-- Compact Settings Cog Dropdown -->
-    <div style="position:relative;">
-      <button type="button" class="btn-back-link" onclick="toggleBenchSettings(event)" style="cursor:pointer; display:flex; align-items:center; gap:6px;" title="Workbench Settings">
-        <span>⚙️ Settings</span>
-      </button>
-      
-      <div id="benchSettingsDropdown" style="display:none; position:absolute; right:0; top:36px; width:240px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; box-shadow:var(--shadow-lg); z-index:10000; padding:12px; flex-direction:column; gap:10px; text-align:left;">
-        <!-- Sound Toggle Row -->
-        <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
-          <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Sound Effects</span>
-          <button type="button" class="btn-back-link" id="soundToggleBtn" onclick="toggleSound()" style="padding:4px 10px; font-size:0.75rem; border-radius:6px;">🔊 Sound ON</button>
-        </div>
-
-        <!-- Language Selector Row -->
-        <div style="display:flex; flex-direction:column; gap:6px; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
-          <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Language / Lugha</span>
-          <div class="theme-toggle-group" style="width:100%;">
-            <button class="theme-btn-chip lang-btn-chip active" style="flex:1; padding:4px 8px;" data-lang="en" onclick="setLanguage('en')">🇬🇧 EN</button>
-            <button class="theme-btn-chip lang-btn-chip" style="flex:1; padding:4px 8px;" data-lang="sw" onclick="setLanguage('sw')">🇰🇪 SW</button>
-          </div>
-        </div>
-
-        <!-- Theme Selector Row -->
-        <div style="display:flex; flex-direction:column; gap:6px;">
-          <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Appearance Theme</span>
-          <div class="theme-toggle-group" style="width:100%;">
-            <button class="theme-btn-chip active" style="flex:1; padding:4px 6px;" data-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
-            <button class="theme-btn-chip" style="flex:1; padding:4px 6px;" data-theme="light" onclick="setTheme('light')">☀️ Light</button>
-            <button class="theme-btn-chip" style="flex:1; padding:4px 6px;" data-theme="green" onclick="setTheme('green')">🧪 Lab</button>
-          </div>
-        </div>
+  <!-- Topbar Navigation Bar -->
+  <nav class="top-navbar">
+    <a href="/student/home.html" class="nav-brand-academic" title="Back to Student Workstation">
+      <div class="seal-crest-small" title="VirtuLab Kenya Seal">⚗️</div>
+      <div style="display:flex; flex-direction:column;">
+        <span style="font-weight:800; font-family:'Cinzel', serif; font-size:1.05rem; line-height:1.1; color:var(--heading-color);">VirtuLab Kenya</span>
+        <span class="brand-subtagline" style="font-size:0.65rem; font-family:'Newsreader', serif; font-style:italic; color:var(--cyan-accent); letter-spacing:0.01em;">National Practical Chemistry Workstation</span>
       </div>
+    </a>
+
+    <div style="display:flex; align-items:center; gap:3px; background:var(--card-bg); border:1px solid var(--card-border); padding:2px 4px; border-radius:6px; overflow-x:auto;">
+      <a href="lab.html" class="nav-btn-chip active" style="text-decoration:none; font-size:0.72rem; padding:3px 8px; border-radius:4px; background:var(--blue-accent); color:#FFF; font-weight:700; font-family:'Plus Jakarta Sans', sans-serif;">🧪 Titration</a>
+      <a href="qualitative.html" class="nav-btn-chip" style="text-decoration:none; font-size:0.72rem; padding:3px 8px; border-radius:4px; color:var(--text-muted); font-weight:600; font-family:'Plus Jakarta Sans', sans-serif;">🔍 Qualitative</a>
+      <a href="organic.html" class="nav-btn-chip" style="text-decoration:none; font-size:0.72rem; padding:3px 8px; border-radius:4px; color:var(--text-muted); font-weight:600; font-family:'Plus Jakarta Sans', sans-serif;">⚗️ Organic</a>
+      <a href="solubility.html" class="nav-btn-chip" style="text-decoration:none; font-size:0.72rem; padding:3px 8px; border-radius:4px; color:var(--text-muted); font-weight:600; font-family:'Plus Jakarta Sans', sans-serif;">🌡️ Solubility</a>
+      <a href="energy.html" class="nav-btn-chip" style="text-decoration:none; font-size:0.72rem; padding:3px 8px; border-radius:4px; color:var(--text-muted); font-weight:600; font-family:'Plus Jakarta Sans', sans-serif;">🔥 Energy</a>
+      <a href="rates.html" class="nav-btn-chip" style="text-decoration:none; font-size:0.72rem; padding:3px 8px; border-radius:4px; color:var(--text-muted); font-weight:600; font-family:'Plus Jakarta Sans', sans-serif;">⚡ Rates</a>
+      <a href="composite_exam.html" class="nav-btn-chip" style="text-decoration:none; font-size:0.72rem; padding:3px 8px; border-radius:4px; color:var(--text-muted); font-weight:600; font-family:'Plus Jakarta Sans', sans-serif;">📝 Exam</a>
     </div>
 
-    <a href="/student/home.html" class="btn-back-link">← Back</a>
+    <div class="nav-actions">
+      <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:6px;padding:4px 10px;font-size:0.75rem;font-weight:700;color:var(--cyan-accent);display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;">
+        <span>⏱️</span>
+        <span id="sessionTimerText">00:00</span>
+      </div>
+
+      <!-- Language Selector Controls -->
+      <div class="theme-toggle-group" title="Switch language / Lugha">
+        <button type="button" class="theme-btn-chip lang-btn-chip active" data-lang="en" onclick="setLanguage('en')">🇬🇧 EN</button>
+        <button type="button" class="theme-btn-chip lang-btn-chip" data-lang="sw" onclick="setLanguage('sw')">🇰🇪 SW</button>
+      </div>
+
+      <!-- Theme Switcher Controls -->
+      <div class="theme-toggle-group" title="Switch appearance theme">
+        <button type="button" class="theme-btn-chip" data-theme="light" onclick="setTheme('light')" title="Paper Theme">☀️ Paper</button>
+        <button type="button" class="theme-btn-chip" data-theme="dark" onclick="setTheme('dark')" title="Dark Theme">🌙 Dark</button>
+        <button type="button" class="theme-btn-chip" data-theme="green" onclick="setTheme('green')" title="Lab Theme">🧪 Lab</button>
+      </div>
+
+      <button type="button" class="btn-back-link" id="soundToggleBtn" onclick="toggleSound()" style="cursor:pointer; padding:4px 8px; font-size:0.75rem; border-radius:6px;">🔊 Sound</button>
+      <button type="button" class="btn-back-link" style="cursor:pointer; padding:4px 8px; font-size:0.75rem; border-radius:6px;" onclick="toggleScratchpad()" data-i18n="scratchpad">📝 Scratchpad</button>
+      <a href="/student/home.html" class="btn-back-link" style="padding:4px 8px; font-size:0.75rem; border-radius:6px;" data-i18n="back">← Exit</a>
+    </div>
+  </nav>
+
+  <!-- Official KNEC Practical Ledger Sub-Header -->
+  <div class="knec-exam-subbar">
+    <div class="knec-subbar-item">
+      <span class="knec-subbar-label">Examination:</span>
+      <span class="knec-subbar-val">KCSE Chemistry 233/3 Practical</span>
+    </div>
+    <div class="knec-subbar-item">
+      <span class="knec-subbar-label">Burette:</span>
+      <span class="knec-subbar-val">50.0 cm³</span>
+    </div>
+    <div class="knec-subbar-item">
+      <span class="knec-subbar-label">Aliquot Volume:</span>
+      <span class="knec-subbar-val" id="knecSubbarAliquot">25.00 cm³ Pipette</span>
+    </div>
+    <div class="knec-subbar-item">
+      <span class="knec-subbar-label">Concordance Rule:</span>
+      <span class="knec-subbar-val">±0.10 cm³ Precision</span>
+    </div>
+    <div class="knec-subbar-item" style="margin-left:auto;">
+      <span class="knec-subbar-label">Section 1 Marks:</span>
+      <span class="knec-subbar-val" style="color:var(--amber-accent); font-weight:800;">15.0 KCSE Marks</span>
+    </div>
   </div>
-</nav>
+</header>
 
 <!-- Collapsible Scratchpad Drawer (Hidden by default) -->
 <div id="scratchpadDrawer" style="display:none;background:var(--card-bg);border:1px solid var(--cyan-accent);border-radius:12px;padding:16px;margin:16px 20px 0;box-shadow:0 4px 20px rgba(0,0,0,0.4);">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-    <div style="font-size:0.88rem;font-weight:700;color:var(--heading-color);">📝 Rough Work Scratchpad</div>
+    <div style="font-size:0.88rem;font-weight:700;color:var(--heading-color);font-family:'Cinzel', serif;">📝 Rough Work Scratchpad (KNEC Candidate Working)</div>
     <button type="button" class="btn-pill-action" style="padding:2px 8px;font-size:0.7rem;" onclick="toggleScratchpad()">✕ Close</button>
   </div>
-  <textarea id="scratchpadText" placeholder="Draft your raw buret readings, trial math, or C1V1=C2V2 working here..." style="width:100%;height:90px;background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:8px;padding:10px;color:var(--text-main);font-family:monospace;font-size:0.82rem;outline:none;resize:vertical;"></textarea>
+  <textarea id="scratchpadText" placeholder="Draft your raw buret readings, trial math, or C1V1=C2V2 working here..." style="width:100%;height:90px;background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:8px;padding:10px;color:var(--text-main);font-family:'JetBrains Mono',monospace;font-size:0.82rem;outline:none;resize:vertical;"></textarea>
 </div>
 
 <!-- Main Workbench Grid Container -->
@@ -726,7 +133,7 @@
       <span style="background:#EF4444;color:#FFF;padding:3px 10px;border-radius:100px;font-size:0.72rem;font-weight:800;letter-spacing:0.04em;">KCSE EXAM MODE</span>
       <span>Paper 3 Practical Exam — Timed 15:00 countdown. Scored out of 15 KCSE marks.</span>
     </div>
-    <div style="font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:1.1rem;color:#EF4444;white-space:nowrap;" id="examTimerText">⏱️ 15:00</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:1.1rem;color:#EF4444;white-space:nowrap;" id="examTimerText">⏱️ 15:00</div>
   </div>
 
   <div id="guidedBanner" style="display:none;align-items:center;gap:8px;background:var(--card-bg-hover);border:1px solid var(--cyan-accent);border-radius:10px;padding:10px 16px;margin-bottom:16px;font-size:0.83rem;color:var(--text-main);">
@@ -742,200 +149,9 @@
       
       <!-- Card 1: Experiment Selection -->
       <div class="wb-card card-exp-select">
-        <div class="wb-card-title">Experiment Selection</div>
+        <div class="wb-card-title">🔬 Practical Examination Selection</div>
         <select id="practicalSelect" class="wb-select" onchange="loadPractical(this.value)">
           <option value="acidBase">Acid-Base Titration (HCl vs NaOH)</option>
-=======
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Titration Bench — VirtuLab Kenya</title>
-<script>
-  var t = localStorage.getItem('vlk_theme') || 'light';
-  document.documentElement.setAttribute('data-theme', t);
-</script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/shared/style.css">
-<style>
-  .wrap { max-width: 1180px; margin: 0 auto; padding: 20px 16px 70px; }
-
-  header.top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; border-bottom: 2px solid var(--teal); padding-bottom: 12px; margin-bottom: 18px; }
-  .brand { display: flex; align-items: baseline; gap: 10px; }
-  .brand h1 { font-family: var(--font-d); font-size: 1.15rem; font-weight: 700; color: var(--teal-deep); }
-  .brand .tag { font-family: var(--font-m); font-size: 0.6rem; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.08em; }
-  .top-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-
-  .lab-grid { display: grid; grid-template-columns: 300px 1fr; grid-template-areas: "left main"; gap: 20px; align-items: start; }
-  .lab-col-left { position: sticky; top: 20px; }
-  @media (max-width: 860px) {
-    .lab-grid { grid-template-columns: 1fr; grid-template-areas: "main" "left"; }
-    .lab-col-left { position: static; }
-  }
-
-  .sidebar-panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 14px; }
-  .sidebar-title { font-family: var(--font-d); font-size: 0.85rem; color: var(--teal-deep); margin-bottom: 10px; }
-  [data-theme="dark"] .sidebar-title, [data-theme="green"] .sidebar-title { color: var(--amber); }
-
-  .brief { background: var(--panel2); border: 1px solid var(--line); border-left: 3px solid var(--teal); border-radius: 6px; padding: 12px 14px; font-size: 0.83rem; line-height: 1.55; color: var(--ink-soft); }
-  .brief b { color: var(--ink); }
-  .eyebrow { font-family: var(--font-m); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--teal); display: block; margin-bottom: 4px; }
-  [data-theme="dark"] .eyebrow, [data-theme="green"] .eyebrow { color: var(--amber); }
-
-  .reagent-strip { display: flex; flex-direction: column; gap: 6px; }
-  .reagent-strip .pill { display: block; text-align: left; }
-
-  /* ── Apparatus + controls, unified in one box ──────────────────── */
-  .rig-panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 26px 24px 24px; margin-bottom: 18px; }
-  .rig-top { display: flex; gap: 28px; align-items: flex-start; flex-wrap: wrap; }
-  .rig-visual { flex: 0 0 auto; text-align: center; }
-  .rig-svg { width: 200px; max-width: 100%; height: auto; }
-  .rig-stand-part { fill: var(--rig-stand); }
-  .rig-body-part { fill: var(--rig-body); stroke: var(--rig-line); }
-  .rig-line-part { stroke: var(--rig-line); }
-  .rig-tick { stroke: var(--ink-soft); }
-  .rig-num text { font-family: var(--font-m); font-size: 7px; fill: var(--ink-soft); }
-  .drip { animation: dropFall 0.45s ease-in forwards; }
-  @keyframes dropFall {
-    0% { opacity: 1; transform: translateY(0); }
-    80% { opacity: 1; }
-    100% { opacity: 0; transform: translateY(20px); }
-  }
-  .flask-before { fill: var(--rig-body); }
-  .flask-near { fill: #fbe4ee; }
-  .flask-past { fill: #f6b8d2; }
-  .flask-over { fill: #e8659f; }
-  .readout-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; font-family: var(--font-m); }
-  .readout-row .r-val { font-size: 1.05rem; font-weight: 700; color: var(--teal-deep); }
-  [data-theme="dark"] .readout-row .r-val, [data-theme="green"] .readout-row .r-val { color: var(--amber); }
-  .flask-label { font-size: 0.76rem; color: var(--ink-soft); margin-top: 6px; }
-
-  .rig-controls { flex: 1; min-width: 220px; }
-  .controls-title { font-size: 0.75rem; color: var(--ink-soft); font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.03em; }
-  .row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
-  .row:last-of-type { margin-bottom: 0; }
-  .row button { flex: 1; min-width: 90px; }
-  .status-line { display: flex; align-items: center; gap: 8px; padding: 9px 12px; background: var(--panel2); border: 1px solid var(--line); border-radius: 7px; font-size: 0.8rem; margin-top: 12px; }
-
-  .indicator-btn { flex: 1; min-width: 110px; }
-  .indicator-btn.selected { background: var(--teal); color: #fff; border-color: var(--teal); }
-  [data-theme="dark"] .indicator-btn.selected, [data-theme="green"] .indicator-btn.selected { background: var(--amber); color: #0F172A; border-color: var(--amber); }
-  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ink-soft); flex-shrink: 0; }
-  .dot.ok { background: var(--ok); }
-
-  /* ── Results table ───────────────────────────────────────────── */
-  .below-rig { display: flex; gap: 18px; flex-wrap: wrap; align-items: flex-start; }
-  .below-rig > div { flex: 1; min-width: 280px; }
-
-  .trials h3 { font-family: var(--font-d); font-size: 0.92rem; color: var(--teal-deep); margin-bottom: 10px; }
-  [data-theme="dark"] .trials h3, [data-theme="green"] .trials h3 { color: var(--amber); }
-  .kcse-table { width: 100%; border-collapse: collapse; font-family: var(--font-m); font-size: 0.8rem; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
-  #trialsList { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  #trialsList .kcse-table { min-width: 340px; }
-  .kcse-table th, .kcse-table td { text-align: center; padding: 9px 8px; border-bottom: 1px solid var(--line); border-left: 1px solid var(--line); }
-  .kcse-table th:first-child, .kcse-table td:first-child { text-align: left; border-left: none; font-family: var(--font-b); font-size: 0.74rem; color: var(--ink-soft); background: var(--panel2); white-space: nowrap; }
-  .kcse-table th { font-family: var(--font-b); font-weight: 700; font-size: 0.72rem; color: var(--amber); background: var(--panel2); }
-  .kcse-table td.concordant-cell { position: relative; color: var(--ok); font-weight: 700; }
-  .kcse-table td.concordant-cell::after {
-    content: ''; position: absolute; top: 4px; left: 4px; right: 4px; bottom: 4px;
-    border: 2px solid var(--ok); border-radius: 50%; pointer-events: none;
-  }
-  .avg-row { margin-top: 10px; }
-
-  /* ── Calculation ─────────────────────────────────────────────── */
-  .answer-box label { display: block; font-size: 0.82rem; color: var(--ink); margin-bottom: 10px; }
-  .calc-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-  .calc-row input[type=number] { font-family: var(--font-m); font-size: 1rem; padding: 11px 11px; border: 1px solid var(--line); border-radius: 6px; width: 150px; background: var(--panel2); color: var(--ink); }
-  .hint { font-size: 0.72rem; color: var(--ink-soft); line-height: 1.45; margin-top: 8px; }
-  .result-banner { padding: 14px 16px; border-radius: 8px; font-size: 0.87rem; margin-top: 14px; }
-  .result-ok { background: #E6F7EE; color: var(--ok); border: 1px solid #A8D9BB; }
-  .result-warn { background: #FFF0EE; color: var(--warn); border: 1px solid #F5C4BB; }
-  [data-theme="dark"] .result-ok, [data-theme="green"] .result-ok { background: #143824; }
-  [data-theme="dark"] .result-warn, [data-theme="green"] .result-warn { background: #3A1F17; }
-
-  .ai-loading { font-size: 0.83rem; color: var(--ink-soft); margin-top: 12px; padding: 10px 14px; }
-  .ai-tutor-card {
-    margin-top: 12px; padding: 14px 16px; border-radius: 10px;
-    background: var(--panel2); border: 1px solid var(--teal); border-left: 3px solid var(--teal);
-  }
-  [data-theme="dark"] .ai-tutor-card, [data-theme="green"] .ai-tutor-card { border-color: var(--amber); border-left-color: var(--amber); }
-  .ai-tutor-label { font-family: var(--font-m); font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--teal); margin-bottom: 6px; }
-  [data-theme="dark"] .ai-tutor-label, [data-theme="green"] .ai-tutor-label { color: var(--amber); }
-  .ai-tutor-text { font-size: 0.85rem; color: var(--ink); line-height: 1.55; }
-
-  /* Step-by-step working card: intentionally distinct from the AI
-     Tutor explanation card above — a violet accent instead of
-     teal/amber, and a monospace font throughout, since this card
-     shows numeric calculations rather than conversational text. */
-  .ai-working-card {
-    margin-top: 12px; padding: 14px 16px; border-radius: 10px;
-    background: #F5F0FF; border: 1px solid #8B5CF6; border-left: 3px solid #8B5CF6;
-  }
-  [data-theme="dark"] .ai-working-card, [data-theme="green"] .ai-working-card {
-    background: #241B3D; border-color: #A78BFA; border-left-color: #A78BFA;
-  }
-  .ai-working-label {
-    font-family: var(--font-m); font-size: 0.68rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.06em; color: #7C3AED; margin-bottom: 8px;
-  }
-  [data-theme="dark"] .ai-working-label, [data-theme="green"] .ai-working-label { color: #C4B5FD; }
-  .ai-working-text {
-    font-family: var(--font-m); font-size: 0.82rem; color: var(--ink);
-    line-height: 1.9; white-space: pre-wrap;
-  }
-
-  @media (max-width: 480px) {
-    .rig-svg { width: 160px; }
-    .wrap { padding: 14px 12px 60px; }
-    header.top { padding: 10px 12px; }
-    .brand h1 { font-size: 1.05rem; }
-    .brand .tag { display: none; }
-    /* Enlarge touch targets on mobile — the default sizing from
-       style.css is comfortable with a mouse but under the ~44px
-       minimum recommended for reliable finger taps. */
-    .theme-btn { padding: 9px 11px; font-size: 0.85rem; min-height: 40px; }
-    .row button, .controls-primary button { min-height: 46px; font-size: 0.88rem; }
-    .top-right { gap: 6px; }
-    .reagent-strip .badge { display: none; }
-    .rig-top { flex-direction: column; align-items: center; }
-    .rig-visual { width: 100%; }
-    .below-rig { flex-direction: column; }
-  }
-</style>
-</head>
-<body>
-<div class="wrap">
-  <header class="top">
-    <div class="brand">
-      <h1>🧪 Titration Bench</h1>
-      <span class="tag">VirtuLab Kenya · KCSE Paper 3</span>
-    </div>
-    <div class="top-right">
-      <div class="theme-toggle" title="Change appearance">
-        <button class="theme-btn" data-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
-        <button class="theme-btn active" data-theme="light" onclick="setTheme('light')">☀️ Light</button>
-        <button class="theme-btn" data-theme="green" onclick="setTheme('green')">🧪 Lab</button>
-      </div>
-      <a href="/student/home.html" class="btn">← Back</a>
-    </div>
-  </header>
-
-  <div id="assignmentBanner" style="display:none;align-items:center;gap:8px;background:var(--panel2);border:1px solid var(--teal);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:0.83rem;color:var(--ink);">
-    <span class="badge">ASSIGNMENT</span>
-    <span>This attempt is linked to an assignment from your teacher — the practical type is locked to match it. You get <b>one submission only</b>, so double-check before submitting.</span>
-  </div>
-
-  <div id="guidedBanner" style="display:none;align-items:center;gap:8px;background:var(--panel2);border:1px solid var(--teal);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:0.83rem;color:var(--ink);">
-    <span class="badge">GUIDED</span>
-    <span>Guided Practice walks you through Acid-Base titration step by step: smaller titrant increments, at least 2 trials required, and coaching feedback on every attempt.</span>
-  </div>
-
-  <div class="lab-grid">
-    <!-- LEFT: practical picker, task brief, reagents -->
-    <aside class="lab-col-left">
-      <div class="sidebar-panel">
-        <div class="sidebar-title">Choose Practical</div>
-        <select id="practicalSelect" aria-label="Choose which titration practical to perform" onchange="loadPractical(this.value)" style="width:100%;font-family:var(--font-b);font-size:1rem;padding:11px 12px;border:1px solid var(--line);border-radius:7px;background:var(--panel2);color:var(--ink);">
-          <option value="acidBase">Acid–Base Titration (HCl vs NaOH)</option>
->>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
           <option value="redox">Redox Titration (Fe²⁺ vs KMnO₄)</option>
           <option value="precipitation">Precipitation Titration (Cl⁻ vs AgNO₃, Mohr's method)</option>
           <option value="complexometric">Complexometric Titration (Ca²⁺/Mg²⁺ vs EDTA)</option>
@@ -946,10 +162,9 @@
         </select>
       </div>
 
-<<<<<<< HEAD
       <!-- Card 2: Your Task -->
       <div class="wb-card card-task">
-        <div class="wb-card-title">Your Task</div>
+        <div class="wb-card-title">📜 Question 1 Instructions & Task Brief</div>
         <div class="task-brief-box" id="briefText">
           Loading task details...
         </div>
@@ -957,15 +172,15 @@
 
       <!-- Card 3: Reagents -->
       <div class="wb-card card-reagents">
-        <div class="wb-card-title">Reagents</div>
+        <div class="wb-card-title">🧪 Prescribed Reagents Ledger</div>
         <div class="reagent-info-item">
-          <span class="sci-tooltip">Analyte <span class="sci-tip-text">Analyte: The chemical solution of unknown concentration placed in the conical flask.</span></span>: <b id="pillAnalyte">HCl(aq)</b>
+          <span class="sci-tooltip">Analyte (Solution A) <span class="sci-tip-text">Analyte: The chemical solution of unknown concentration placed in the conical flask.</span></span>: <b id="pillAnalyte">HCl(aq)</b>
         </div>
         <div class="reagent-info-item">
-          <span class="sci-tooltip">Titrant <span class="sci-tip-text">Titrant: The standard solution of known concentration delivered drop-wise from the burette.</span></span>: <b id="pillTitrant">0.12 M NaOH</b>
+          <span class="sci-tooltip">Titrant (Solution B) <span class="sci-tip-text">Titrant: The standard solution of known concentration delivered drop-wise from the burette.</span></span>: <b id="pillTitrant">0.12 M NaOH</b>
         </div>
         <div class="reagent-info-item">
-          <span class="sci-tooltip">Indicator <span class="sci-tip-text">Indicator: A chemical dye that changes color sharply at the neutralization endpoint.</span></span>: <b id="pillIndicator">? (choose below)</b>
+          <span class="sci-tooltip">Acid-Base Indicator <span class="sci-tip-text">Indicator: A chemical dye that changes color sharply at the neutralization endpoint.</span></span>: <b id="pillIndicator">? (choose below)</b>
         </div>
       </div>
 
@@ -976,12 +191,13 @@
       
       <!-- Card 4: Interactive Apparatus Simulation & Bench Controls -->
       <div class="apparatus-card wb-card glow-card card-apparatus">
+        <div class="wb-card-title" style="margin-bottom:12px; font-family:'Cinzel', serif;">🔬 Interactive Volumetric Apparatus & Buret Assembly</div>
         
         <div class="bench-layout-grid">
           
           <!-- LEFT SIDE: Indicator & Swirl Controls -->
-          <div class="bench-left-wing" style="display:flex;flex-direction:column;gap:10px;background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:10px;">
-            <div style="font-weight:800;font-size:0.75rem;color:var(--cyan-accent);text-transform:uppercase;letter-spacing:0.04em;display:flex;align-items:center;gap:4px;">
+          <div class="bench-left-wing" style="display:flex;flex-direction:column;gap:10px;background:var(--card-bg-hover);border:1.5px solid var(--card-border);border-radius:10px;padding:12px;">
+            <div style="font-weight:800;font-size:0.76rem;color:var(--cyan-accent);text-transform:uppercase;letter-spacing:0.04em;display:flex;align-items:center;gap:4px;font-family:'Cinzel', serif;">
               <span>💧 Indicator</span>
             </div>
             <button class="btn-cyan" id="addIndicatorBtn" onclick="addIndicatorDrops()" style="width:100%;font-weight:700;padding:8px 8px;font-size:0.78rem;line-height:1.3;">💧 Add Drop 1 of 3 (Phenolphthalein)</button>
@@ -989,7 +205,7 @@
 
             <div style="border-top:1px dashed var(--card-border);margin:2px 0;"></div>
 
-            <div style="font-weight:800;font-size:0.75rem;color:var(--text-main);text-transform:uppercase;letter-spacing:0.04em;display:flex;align-items:center;gap:4px;">
+            <div style="font-weight:800;font-size:0.76rem;color:var(--text-main);text-transform:uppercase;letter-spacing:0.04em;display:flex;align-items:center;gap:4px;font-family:'Cinzel', serif;">
               <span>🌀 Flask Motion</span>
             </div>
             <button class="btn-action-swirl" onclick="swirlFlask()" style="width:100%;padding:8px 8px;font-size:0.78rem;font-weight:700;height:38px;" data-i18n="swirl_flask">🌀 Swirl Flask</button>
@@ -1047,7 +263,7 @@
                     <line x1="108" y1="153" x2="114" y2="153"/>
                     <line x1="108" y1="185" x2="114" y2="185"/>
                   </g>
-                  <g font-family="monospace" font-size="6.5" fill="rgba(255,255,255,0.9)">
+                  <g font-family="'JetBrains Mono', monospace" font-size="6.5" fill="rgba(255,255,255,0.9)">
                     <text x="116" y="27">0</text>
                     <text x="116" y="59">10</text>
                     <text x="116" y="91">20</text>
@@ -1074,17 +290,17 @@
 
               <!-- Magnified Buret Reading Lens -->
               <div class="buret-lens-card" style="background:transparent;border:none;padding:0;text-align:center;min-width:170px;">
-                <div style="font-size:0.74rem;font-weight:700;color:#38BDF8;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.06em;">
+                <div style="font-size:0.74rem;font-weight:800;color:var(--blue-accent);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.06em;font-family:'Cinzel', serif;">
                   🔍 Buret Reading Lens
                 </div>
                 
-                <div class="lens-viewfinder" style="position:relative;width:165px;height:150px;margin:0 auto;background:#091426;border:2px solid #38BDF8;border-radius:12px;overflow:hidden;box-shadow:0 0 16px rgba(56,189,248,0.2), inset 0 0 20px rgba(0,0,0,0.8);">
+                <div class="lens-viewfinder" style="position:relative;width:165px;height:150px;margin:0 auto;background:#091426;border:2px solid #38BDF8;border-radius:10px;overflow:hidden;box-shadow:0 0 16px rgba(56,189,248,0.2), inset 0 0 20px rgba(0,0,0,0.8);">
                   <div style="position:absolute;top:50%;left:0;right:0;height:1.5px;background:rgba(239,68,68,0.9);z-index:10;pointer-events:none;"></div>
-                  <div style="position:absolute;top:50%;left:4px;font-size:0.58rem;color:#EF4444;font-weight:800;z-index:11;transform:translateY(-100%);">EYE LEVEL</div>
+                  <div style="position:absolute;top:50%;left:4px;font-size:0.58rem;color:#EF4444;font-weight:800;z-index:11;transform:translateY(-100%);font-family:'JetBrains Mono',monospace;">EYE LEVEL</div>
                   <svg id="lensSvg" viewBox="0 0 180 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;"></svg>
                 </div>
                 
-                <div style="font-size:0.7rem;color:var(--text-muted);margin-top:4px;line-height:1.2;">
+                <div style="font-size:0.7rem;color:var(--text-muted);margin-top:4px;line-height:1.2;font-family:'Newsreader', serif;font-style:italic;">
                   Read volume at <b>bottom of meniscus</b>.<br>Subdivision = 0.10 cm³.
                 </div>
               </div>
@@ -1092,21 +308,21 @@
             </div>
 
             <div class="readout-panel" style="margin-top:6px;text-align:center;width:100%;">
-              <div class="readout-sub" id="flaskLabel" style="font-size:0.82rem;color:var(--text-muted);">25.00 cm³ HCl(aq)</div>
+              <div class="readout-sub" id="flaskLabel" style="font-size:0.85rem;color:var(--text-muted);font-family:'JetBrains Mono',monospace;font-weight:600;">25.00 cm³ HCl(aq)</div>
             </div>
           </div>
 
           <!-- RIGHT SIDE: Titrant Stopcock & Trial Actions -->
-          <div class="bench-right-wing" style="display:flex;flex-direction:column;gap:10px;background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:10px;">
+          <div class="bench-right-wing" style="display:flex;flex-direction:column;gap:10px;background:var(--card-bg-hover);border:1.5px solid var(--card-border);border-radius:10px;padding:12px;">
             
             <!-- Stopcock Titrant Controls -->
             <div id="titrationControls" style="opacity:0.4;pointer-events:none;display:flex;flex-direction:column;gap:6px;">
-              <div style="font-weight:800;font-size:0.75rem;color:var(--amber-accent);text-transform:uppercase;letter-spacing:0.04em;">🚰 Add Titrant</div>
+              <div style="font-weight:800;font-size:0.76rem;color:var(--amber-accent);text-transform:uppercase;letter-spacing:0.04em;font-family:'Cinzel', serif;">🚰 Add Titrant</div>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
-                <button class="btn-pill-action" onclick="addVolume(1.0)" style="padding:6px 2px;font-size:0.76rem;font-weight:700;">+1 cm³</button>
-                <button class="btn-pill-action" onclick="addVolume(0.5)" style="padding:6px 2px;font-size:0.76rem;font-weight:700;">+0.5 cm³</button>
+                <button class="btn-pill-action" onclick="addVolume(1.0)" style="padding:6px 2px;font-size:0.76rem;font-weight:700;font-family:'JetBrains Mono',monospace;">+1 cm³</button>
+                <button class="btn-pill-action" onclick="addVolume(0.5)" style="padding:6px 2px;font-size:0.76rem;font-weight:700;font-family:'JetBrains Mono',monospace;">+0.5 cm³</button>
               </div>
-              <button class="btn-pill-action" onclick="addVolume(0.1)" style="width:100%;padding:6px 4px;font-size:0.76rem;font-weight:700;">+0.1 drop-wise</button>
+              <button class="btn-pill-action" onclick="addVolume(0.1)" style="width:100%;padding:6px 4px;font-size:0.76rem;font-weight:700;font-family:'JetBrains Mono',monospace;">+0.1 drop-wise</button>
             </div>
 
             <div style="border-top:1px dashed var(--card-border);margin:2px 0;"></div>
@@ -1117,7 +333,7 @@
               <button class="btn-action-reset" onclick="resetBurette()" style="width:100%;padding:6px 4px;font-size:0.76rem;font-weight:700;height:34px;" data-i18n="reset_burette">🔄 Reset Burette</button>
             </div>
             
-            <div id="statusText" style="font-size:0.72rem;color:var(--text-muted);text-align:center;font-weight:600;">Waiting to start…</div>
+            <div id="statusText" style="font-size:0.72rem;color:var(--text-muted);text-align:center;font-weight:600;font-family:'Newsreader', serif;font-style:italic;">Waiting to start…</div>
           </div>
 
         </div>
@@ -1125,7 +341,10 @@
 
       <!-- Card 5: Results Table (KCSE Format) -->
       <div class="wb-card card-results-table" style="margin-top:16px;">
-        <div class="wb-card-title" data-i18n="results_table_title">Results Table (KCSE format)</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1.5px solid var(--card-border);padding-bottom:10px;margin-bottom:12px;">
+          <div class="wb-card-title" data-i18n="results_table_title" style="margin:0; font-family:'Cinzel', serif;">📊 Table 1: Titre Volume Determination (KCSE Format) [5.0 Marks]</div>
+          <span style="font-size:0.72rem; font-family:'Newsreader', serif; font-style:italic; color:var(--text-muted);">KNEC Rubric: Concordant within ±0.10 cm³ · Complete Table & Accuracy</span>
+        </div>
         <div id="trialsList">
           <div class="empty" style="text-align:center;padding:16px;color:var(--text-muted);font-size:0.85rem;">No trials recorded yet.</div>
         </div>
@@ -1133,79 +352,23 @@
 
       <!-- Card 9: KCSE Volumetric Analysis Calculations (5 Questions) -->
       <div class="wb-card card-calc" id="kcseCalcCard" style="margin-top:16px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;border-bottom:1px solid var(--card-border);padding-bottom:10px;">
-          <div class="wb-card-title" style="margin:0;">🧫 KCSE Volumetric Calculations</div>
-          <span style="font-size:0.75rem;font-weight:700;color:var(--cyan-accent);background:rgba(6,182,212,0.12);padding:4px 10px;border-radius:100px;border:1px solid var(--cyan-accent);">Questions (a) – (e)</span>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;border-bottom:1.5px solid var(--card-border);padding-bottom:10px;">
+          <div>
+            <div class="wb-card-title" id="calcSectionTitle" style="margin:0; font-family:'Cinzel', serif;">🧮 Section 1 Calculations: Stoichiometry & Analysis</div>
+            <div id="calcSectionSub" style="font-size:0.72rem; font-family:'Newsreader', serif; font-style:italic; color:var(--text-muted); margin-top:2px;">KNEC Examination Standard: 10.0 Marks Total (2.0 Marks per Sub-Question) · Section Total: 15.0 Marks</div>
+          </div>
+          <span id="calcSectionBadge" style="font-size:0.75rem;font-weight:800;color:var(--acad-gold, #D97706);background:rgba(217,119,6,0.12);padding:4px 10px;border-radius:4px;border:1px solid var(--acad-gold, #D97706);font-family:'JetBrains Mono',monospace;">5 Sub-Questions · [10.0 Marks]</span>
         </div>
         
-        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));gap:14px;">
-          
-          <!-- Question (a): Average Titre -->
-          <div class="calc-field-group" style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:14px;">
-            <label for="avgInput" id="avgLabel" style="font-weight:700;color:var(--heading-color);font-size:0.85rem;display:block;margin-bottom:8px;">
-              (a) Average Titre V_avg of Solution B (cm³)
-            </label>
-            <div class="calc-input-row" style="flex-direction:column;gap:10px;width:100%;">
-              <input type="number" step="0.01" id="avgInput" placeholder="e.g., 24.60" oninput="saveDraft()" style="width:100%;">
-              <button class="btn-check-avg" id="btnCheckAverage" onclick="checkAverage()" style="width:100%;">Check (a) Average Titre</button>
-            </div>
-            <div id="avgMsg"></div>
-          </div>
-
-          <!-- Question (b): Moles of Titrant Used -->
-          <div class="calc-field-group" id="stepBBox" style="opacity:0.4;pointer-events:none;background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:14px;">
-            <label for="molesTitrantInput" id="labelStepB" style="font-weight:700;color:var(--heading-color);font-size:0.85rem;display:block;margin-bottom:8px;">
-              (b) Moles of titrant used (n₁)
-            </label>
-            <div class="calc-input-row" style="flex-direction:column;gap:10px;width:100%;">
-              <input type="number" step="0.00001" id="molesTitrantInput" placeholder="e.g., 0.00250" oninput="saveDraft()" style="width:100%;">
-              <button class="btn-cyan" id="btnCheckMolesTitrant" onclick="checkMolesTitrant()" style="width:100%;height:42px;font-weight:700;">Check (b) Moles of Titrant</button>
-            </div>
-            <div id="molesTitrantMsg"></div>
-          </div>
-
-          <!-- Question (c): Moles of Analyte Reacted -->
-          <div class="calc-field-group" id="stepCBox" style="opacity:0.4;pointer-events:none;background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:14px;">
-            <label for="molesAnalyteInput" id="labelStepC" style="font-weight:700;color:var(--heading-color);font-size:0.85rem;display:block;margin-bottom:8px;">
-              (c) Moles of analyte in 25.0 cm³ (n₂)
-            </label>
-            <div class="calc-input-row" style="flex-direction:column;gap:10px;width:100%;">
-              <input type="number" step="0.00001" id="molesAnalyteInput" placeholder="e.g., 0.00250" oninput="saveDraft()" style="width:100%;">
-              <button class="btn-cyan" id="btnCheckMolesAnalyte" onclick="checkMolesAnalyte()" style="width:100%;height:42px;font-weight:700;">Check (c) Moles of Analyte</button>
-            </div>
-            <div id="molesAnalyteMsg"></div>
-          </div>
-
-          <!-- Question (d): Molar Concentration (M) -->
-          <div class="calc-field-group" id="stepDBox" style="opacity:0.4;pointer-events:none;background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:14px;">
-            <label for="calcConc" id="answerLabel" style="font-weight:700;color:var(--heading-color);font-size:0.85rem;display:block;margin-bottom:8px;">
-              (d) Molar concentration of analyte (mol/dm³)
-            </label>
-            <div class="calc-input-row" style="flex-direction:column;gap:10px;width:100%;">
-              <input type="number" step="0.0001" id="calcConc" placeholder="e.g., 0.1000" oninput="saveDraft()" style="width:100%;">
-              <button class="btn-cyan" id="btnCheckMolarity" onclick="checkMolarity()" style="width:100%;height:42px;font-weight:700;">Check (d) Molarity</button>
-            </div>
-            <div id="molarityMsg"></div>
-          </div>
-
-          <!-- Question (e): Mass Concentration (g/dm³) -->
-          <div class="calc-field-group" id="stepEBox" style="opacity:0.4;pointer-events:none;background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:14px;">
-            <label for="massConcInput" id="labelStepE" style="font-weight:700;color:var(--heading-color);font-size:0.85rem;display:block;margin-bottom:8px;">
-              (e) Concentration of analyte in g/dm³ (g/L)
-            </label>
-            <div class="calc-input-row" style="flex-direction:column;gap:10px;width:100%;">
-              <input type="number" step="0.01" id="massConcInput" placeholder="e.g., 3.65" oninput="saveDraft()" style="width:100%;">
-              <button class="btn-cyan" id="btnCheckMassConc" onclick="checkMassConcentration()" style="width:100%;height:42px;font-weight:700;">Check (e) Mass Concentration</button>
-            </div>
-            <div id="massConcMsg"></div>
-          </div>
-
+        <!-- Dynamic Questions Grid: Automatically populated by loadPractical() -->
+        <div id="questionsGrid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));gap:14px;">
+          <!-- Rendered dynamically per practical -->
         </div>
 
         <!-- Final KCSE Titration Submission Box -->
-        <div class="calc-field-group" id="submitCardBox" style="opacity:0.4;pointer-events:none;background:var(--card-bg-hover);border:1.5px solid var(--cyan-accent);border-radius:12px;padding:16px;margin-top:14px;">
+        <div class="calc-field-group" id="submitCardBox" style="opacity:0.4;pointer-events:none;background:var(--card-bg-hover);border:1.5px solid var(--cyan-accent);border-radius:10px;padding:16px;margin-top:14px;">
           <div class="calc-input-row" style="flex-direction:column;gap:12px;width:100%;">
-            <button class="btn-submit-titration" id="btnSubmitTitration" onclick="submitSession()" style="width:100%;height:48px;font-weight:800;font-size:0.95rem;" data-i18n="submit_titration">Submit Full KCSE Titration →</button>
+            <button class="btn-submit-titration" id="btnSubmitTitration" onclick="submitSession()" style="width:100%;height:48px;font-weight:800;font-size:0.95rem;font-family:'Cinzel', serif;" data-i18n="submit_titration">Submit Full KCSE Titration →</button>
           </div>
           <div id="resultMsg"></div>
           <div id="aiFeedbackBox" style="display:none;"></div>
@@ -1286,14 +449,19 @@
 <script src="js/titration-workbench.js"></script>
 <script src="../shared/ai-tutor.js"></script>
 <script src="../shared/pwa-installer.js"></script>
+<script src="../shared/page-transitions.js"></script>
 <script>
-  function toggleBenchSettings(e) {
-    if (e) e.stopPropagation();
+  window.toggleBenchSettings = function(e) {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
     const dropdown = document.getElementById('benchSettingsDropdown');
     if (!dropdown) return;
-    const show = dropdown.style.display === 'none' || !dropdown.style.display;
-    dropdown.style.display = show ? 'flex' : 'none';
-  }
+    const isHidden = dropdown.style.display === 'none' || !dropdown.style.display;
+    dropdown.style.display = isHidden ? 'flex' : 'none';
+  };
+
   document.addEventListener('click', function(e) {
     const dropdown = document.getElementById('benchSettingsDropdown');
     if (dropdown && dropdown.style.display === 'flex') {
@@ -1306,998 +474,3 @@
 </body>
 </html>
 
-=======
-      <div class="sidebar-panel">
-        <div class="sidebar-title">Your Task</div>
-        <div class="brief">
-          <span class="eyebrow">Procedure</span>
-          <span id="briefText">
-            Titrate <b>25.00 cm³</b> of unknown hydrochloric acid (HCl) with <b>0.1000 M sodium
-            hydroxide (NaOH)</b>, using <b>phenolphthalein</b> as the indicator, until the solution
-            just turns permanently pale pink. Run at least two trials and check they're concordant
-            (within 0.10 cm³ of each other) before calculating the unknown concentration.
-          </span>
-        </div>
-      </div>
-
-      <div class="sidebar-panel">
-        <div class="sidebar-title">Reagents <span class="badge" style="margin-left:6px;">KCSE</span></div>
-        <div class="reagent-strip">
-          <span class="pill">Analyte: <b id="pillAnalyte">HCl(aq)</b></span>
-          <span class="pill">Titrant: <b id="pillTitrant">0.1000 M NaOH</b></span>
-          <span class="pill">Indicator: <b id="pillIndicator">Phenolphthalein</b></span>
-        </div>
-      </div>
-    </aside>
-
-    <!-- CENTER: apparatus with controls unified in one box -->
-    <main>
-      <div class="rig-panel">
-        <div class="rig-top">
-          <div class="rig-visual">
-            <svg class="rig-svg" viewBox="0 0 220 340" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="glassShine" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stop-color="#ffffff" stop-opacity="0.55"/>
-                  <stop offset="18%" stop-color="#ffffff" stop-opacity="0.08"/>
-                  <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
-                </linearGradient>
-                <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.18"/>
-                </filter>
-              </defs>
-
-              <g filter="url(#softShadow)">
-                <!-- Retort stand: base, rod, boss-head clamp -->
-                <rect class="rig-stand-part" x="6" y="298" width="70" height="7" rx="2"/>
-                <rect class="rig-stand-part" x="10" y="14" width="7" height="290" rx="2"/>
-                <rect class="rig-stand-part" x="10" y="56" width="52" height="6" rx="2"/>
-                <rect class="rig-stand-part" x="58" y="48" width="16" height="20" rx="3"/>
-                <rect class="rig-stand-part" x="70" y="52" width="16" height="4" rx="1"/>
-                <rect class="rig-stand-part" x="70" y="62" width="16" height="4" rx="1"/>
-
-                <!-- Burette -->
-                <rect class="rig-body-part" x="85" y="20" width="30" height="180" rx="4" stroke-width="2"/>
-                <rect id="buretteFill" x="87" y="196" width="26" height="0" rx="2" fill="#8fcabf"/>
-                <rect x="85" y="20" width="30" height="180" rx="4" fill="url(#glassShine)"/>
-
-                <!-- Graduation marks, 0 at top counting down to 50 (as read on a real burette) -->
-                <g class="rig-tick">
-                  <line x1="115" y1="20"  x2="121" y2="20"  stroke-width="1"/>
-                  <line x1="115" y1="56"  x2="121" y2="56"  stroke-width="1"/>
-                  <line x1="115" y1="92"  x2="121" y2="92"  stroke-width="1"/>
-                  <line x1="115" y1="128" x2="121" y2="128" stroke-width="1"/>
-                  <line x1="115" y1="164" x2="121" y2="164" stroke-width="1"/>
-                  <line x1="115" y1="200" x2="121" y2="200" stroke-width="1"/>
-                </g>
-                <g class="rig-num">
-                  <text x="124" y="23">0</text>
-                  <text x="124" y="59">10</text>
-                  <text x="124" y="95">20</text>
-                  <text x="124" y="131">30</text>
-                  <text x="124" y="167">40</text>
-                  <text x="124" y="203">50</text>
-                </g>
-
-                <!-- Stopcock + tip -->
-                <path d="M93,200 L107,200 L102,210 L98,210 Z" style="fill:var(--rig-line)"/>
-                <line class="rig-line-part" x1="100" y1="210" x2="100" y2="230" stroke-width="3"/>
-
-                <!-- Flask neck + stopper -->
-                <rect class="rig-body-part" x="88" y="230" width="24" height="18" stroke-width="2"/>
-                <ellipse cx="100" cy="230" rx="13" ry="3" style="fill:var(--rig-line)" opacity="0.5"/>
-
-                <!-- Flask body (conical) -->
-                <path id="flask" class="flask-before" d="M88,248 L112,248 L150,320 Q100,335 50,320 Z"
-                      style="stroke:var(--rig-line)" stroke-width="2" stroke-linejoin="round"/>
-                <path d="M92,252 L108,252 L118,290 Q108,286 100,286 Z" fill="url(#glassShine)"/>
-              </g>
-            </svg>
-            <div class="readout-row">Volume added: <span class="r-val"><span id="volumeReading">0.00</span> cm³</span></div>
-            <div class="flask-label" id="flaskLabel">25.00 cm³ HCl(aq) + phenolphthalein</div>
-          </div>
-
-          <div class="rig-controls">
-            <div class="controls-title">Step 0 · Choose Indicator</div>
-            <p class="hint" style="margin-bottom:8px;">Select the indicator you'd use for this titration, based on the reaction described in Your Task.</p>
-            <div class="row" id="indicatorOptionsBox"></div>
-            <button class="btn" id="addIndicatorBtn" onclick="addIndicatorDrops()" disabled style="margin-top:4px;">💧 Add 2-3 Drops of Indicator</button>
-            <div id="indicatorMsg"></div>
-
-            <div id="titrationControls" style="opacity:0.4;pointer-events:none;margin-top:14px;">
-              <div class="controls-title">Add titrant</div>
-              <div class="row">
-                <button class="btn" onclick="addVolume(1.0)">+ 1 cm³</button>
-                <button class="btn" onclick="addVolume(0.5)">+ 0.5 cm³</button>
-                <button class="btn" onclick="addVolume(0.1)">+ 0.1 drop-wise</button>
-              </div>
-              <div class="controls-title">Trial actions</div>
-              <div class="row">
-                <button class="btn btn-primary" onclick="recordTrial()">Record Endpoint →</button>
-                <button class="btn" onclick="resetBurette()">Reset Burette (new trial)</button>
-              </div>
-              <div class="status-line">
-                <span class="dot" id="statusDot"></span>
-                <span id="statusText">Waiting to start…</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="below-rig">
-        <div class="sidebar-panel trials">
-          <h3>Results Table <span style="font-weight:400;font-size:0.72rem;color:var(--ink-soft);">(KCSE format)</span></h3>
-          <div id="trialsList"><p style="font-size:0.85rem;color:var(--ink-soft);">No trials recorded yet.</p></div>
-        </div>
-
-        <div class="sidebar-panel answer-box">
-          <h3 style="font-family:var(--font-d);color:var(--teal-deep);margin-bottom:4px;font-size:0.92rem;">Step 1 · Average Titre</h3>
-          <label for="avgInput">Calculate the average of your concordant titres (cm³)</label>
-          <div class="calc-row">
-            <input type="number" step="0.01" id="avgInput" placeholder="e.g. 24.60" oninput="saveDraft()">
-            <button class="btn" onclick="checkAverage()">Check Average</button>
-          </div>
-          <div id="avgMsg"></div>
-        </div>
-
-        <div class="sidebar-panel answer-box" id="step2Box" style="opacity:0.4;pointer-events:none;">
-          <h3 style="font-family:var(--font-d);color:var(--teal-deep);margin-bottom:4px;font-size:0.92rem;">Step 2 · Concentration</h3>
-          <label for="calcConc" id="answerLabel">Using your average titre, calculate the concentration of HCl (mol/dm³)</label>
-          <div class="calc-row">
-            <input type="number" step="0.0001" id="calcConc" placeholder="e.g. 0.0980" oninput="saveDraft()">
-            <button class="btn btn-primary" onclick="submitSession()">Submit Titration</button>
-          </div>
-          <p class="hint">Use C₁V₁ = C₂V₂ with the average titre you entered in Step 1 — complete Step 1 first.</p>
-          <div id="resultMsg"></div>
-          <div id="aiFeedbackBox" style="display:none;"></div>
-          <div id="workingBox" style="display:none;"></div>
-          <button class="btn" id="showWorkingBtn" style="display:none;margin-top:10px;" onclick="requestWorking()">🧮 Show me the calculation</button>
-        </div>
-      </div>
-    </main>
-  </div>
-</div>
-
-<script src="/shared/api.js"></script>
-<script>
-  requireStudentLogin();
-  applyStoredTheme();
-  updateThemeButtons();
-
-  // ── Assignment linking ─────────────────────────────────────────
-  // If this page was opened from an assignment (e.g. lab.html?assignment=12&type=redox),
-  // capture the assignment ID so it's attached to the saved session,
-  // and default the practical dropdown to the assigned type.
-  const urlParams = new URLSearchParams(window.location.search);
-  const linkedAssignmentId = urlParams.get('assignment');
-  const linkedType = urlParams.get('type');
-  const studyModeParam = urlParams.get('studyMode');
-
-  // The effective mode for this session: assignment always wins if
-  // linked (a student can't opt out of assignment rules by editing
-  // the URL's studyMode param), otherwise it's whichever the student
-  // picked on the home page, defaulting to selfPaced for direct or
-  // old-style links that don't specify one.
-  const sessionMode = linkedAssignmentId ? 'assignment' : (studyModeParam === 'guided' ? 'guided' : 'selfPaced');
-  const isGuided = sessionMode === 'guided';
-
-  // ── Titration configurations ────────────────────────────────
-  // Each config drives the whole simulation: reagent names, the
-  // known standard, the stoichiometric ratio (mol analyte per mol
-  // titrant — used in true-concentration back-calculation), the
-  // realistic concentration range to randomize per session, and
-  // the flask color sequence as titrant is added.
-  const PRACTICALS = {
-    acidBase: {
-      key: 'acidBase',
-      title: 'Acid-Base Titration',
-      analyteName: 'HCl(aq)',
-      indicatorName: 'Phenolphthalein',
-      indicatorOptions: ['Phenolphthalein', 'Methyl orange', 'Methyl red', 'Universal indicator'],
-      indicatorAnswer: 'Phenolphthalein',
-      titrantName: 'NaOH',
-      titrantConcOptions: [0.0800, 0.1000, 0.1200],
-      ratio: 1, // n(analyte) = ratio × n(titrant)
-      concRange: [0.08, 0.14],
-      briefTemplate: (vol, tc) => `Titrate <b>${vol.toFixed(2)} cm³</b> of unknown hydrochloric acid (HCl) with <b>${tc} M sodium hydroxide (NaOH)</b>, using <b>phenolphthalein</b> as the indicator, until the solution just turns permanently pale pink. Run at least two trials and check they're concordant (within 0.10 cm³ of each other) before calculating the unknown concentration.`,
-      flaskColors: ['var(--rig-body)', '#fbe4ee', '#f6b8d2', '#e8659f'],
-      answerSymbol: 'HCl',
-      equation: 'HCl(aq) + NaOH(aq) → NaCl(aq) + H2O(l)'
-    },
-    redox: {
-      key: 'redox',
-      title: 'Redox Titration',
-      analyteName: 'Fe²⁺(aq), acidified with dilute H₂SO₄',
-      indicatorName: 'Self-indicating (KMnO₄ is its own indicator)',
-      indicatorOptions: ['No indicator needed (self-indicating)', 'Starch', 'Phenolphthalein', 'Potassium chromate'],
-      indicatorAnswer: 'No indicator needed (self-indicating)',
-      titrantName: 'KMnO₄',
-      titrantConcOptions: [0.0180, 0.0200, 0.0220],
-      ratio: 5, // MnO4- + 5Fe2+ + 8H+ -> Mn2+ + 5Fe3+ + 4H2O
-      concRange: [0.06, 0.14],
-      briefTemplate: (vol, tc) => `Titrate <b>${vol.toFixed(2)} cm³</b> of acidified iron(II) solution with <b>${tc} M potassium manganate(VII) (KMnO₄)</b> until the first permanent pale pink/violet tinge appears. No separate indicator is added — KMnO₄ is self-indicating. Run at least two trials and check they're concordant before calculating the unknown concentration.`,
-      flaskColors: ['var(--rig-body)', '#f3d9f5', '#dba3e6', '#8e2fa8'],
-      answerSymbol: 'Fe²⁺',
-      equation: 'MnO4-(aq) + 5Fe2+(aq) + 8H+(aq) → Mn2+(aq) + 5Fe3+(aq) + 4H2O(l)'
-    },
-    precipitation: {
-      key: 'precipitation',
-      title: 'Precipitation Titration',
-      analyteName: 'Unknown chloride solution, NaCl(aq)',
-      indicatorName: 'Potassium chromate, K₂CrO₄ (Mohr\'s method)',
-      indicatorOptions: ['Potassium chromate', 'Phenolphthalein', 'Methyl orange', 'Eriochrome Black T'],
-      indicatorAnswer: 'Potassium chromate',
-      titrantName: 'AgNO₃',
-      titrantConcOptions: [0.0800, 0.1000, 0.1200],
-      ratio: 1, // Ag+ + Cl- -> AgCl
-      concRange: [0.06, 0.12],
-      briefTemplate: (vol, tc) => `Titrate <b>${vol.toFixed(2)} cm³</b> of unknown chloride solution with <b>${tc} M silver nitrate (AgNO₃)</b>, using potassium chromate as indicator, until a permanent red-brown tinge appears against the white precipitate. Run at least two trials and check they're concordant before calculating the unknown concentration.`,
-      flaskColors: ['#f2f1ec', '#fdf3c4', '#f5c98a', '#b5651d'],
-      answerSymbol: 'Cl⁻',
-      equation: 'Ag+(aq) + Cl-(aq) → AgCl(s)'
-    },
-    complexometric: {
-      key: 'complexometric',
-      title: 'Complexometric Titration',
-      analyteName: 'Hard water sample (Ca²⁺/Mg²⁺), buffered to pH 10',
-      indicatorName: 'Eriochrome Black T (EBT)',
-      indicatorOptions: ['Eriochrome Black T', 'Phenolphthalein', 'Methyl orange', 'Potassium chromate'],
-      indicatorAnswer: 'Eriochrome Black T',
-      titrantName: 'EDTA',
-      titrantConcOptions: [0.0090, 0.0100, 0.0110],
-      ratio: 1, // metal2+ + EDTA4- -> [metal-EDTA] complex
-      concRange: [0.008, 0.014],
-      briefTemplate: (vol, tc) => `Titrate <b>${vol.toFixed(2)} cm³</b> of a hard water sample, buffered to pH 10 with Eriochrome Black T indicator, using <b>${tc} M EDTA</b> until the colour changes permanently from wine-red to blue. Run at least two trials and check they're concordant before calculating the unknown concentration.`,
-      flaskColors: ['#8e2a4a', '#8a5a9a', '#5a6aa8', '#2b4a9e'],
-      answerSymbol: 'Ca²⁺',
-      equation: 'Ca2+(aq) + EDTA4-(aq) → [Ca-EDTA]2-(aq)'
-    },
-    dibasic: {
-      key: 'dibasic',
-      title: 'Dibasic Acid Titration',
-      analyteName: 'Unknown dibasic acid, H₂SO₄(aq)',
-      indicatorName: 'Phenolphthalein',
-      indicatorOptions: ['Phenolphthalein', 'Methyl orange', 'Methyl red', 'Eriochrome Black T'],
-      indicatorAnswer: 'Phenolphthalein',
-      titrantName: 'NaOH',
-      titrantConcOptions: [0.0900, 0.1000, 0.1100],
-      ratio: 0.5, // H2SO4 + 2NaOH -> Na2SO4 + 2H2O: 1 mol acid needs 2 mol base
-      concRange: [0.04, 0.07],
-      briefTemplate: (vol, tc) => `Titrate <b>${vol.toFixed(2)} cm³</b> of unknown dibasic (diprotic) sulfuric acid (H₂SO₄) with <b>${tc} M sodium hydroxide (NaOH)</b>, using <b>phenolphthalein</b> as the indicator, until the solution just turns permanently pale pink. Remember each mole of H₂SO₄ needs two moles of NaOH for complete neutralisation. Run at least two trials and check they're concordant before calculating the unknown concentration.`,
-      flaskColors: ['var(--rig-body)', '#fbe4ee', '#f6b8d2', '#e8659f'],
-      answerSymbol: 'H₂SO₄',
-      equation: 'H2SO4(aq) + 2NaOH(aq) → Na2SO4(aq) + 2H2O(l)'
-    },
-    tribasic: {
-      key: 'tribasic',
-      title: 'Tribasic Acid Titration',
-      analyteName: 'Unknown tribasic acid, H₃PO₄(aq)',
-      indicatorName: 'Phenolphthalein',
-      indicatorOptions: ['Phenolphthalein', 'Methyl orange', 'Methyl red', 'Potassium chromate'],
-      indicatorAnswer: 'Phenolphthalein',
-      titrantName: 'NaOH',
-      titrantConcOptions: [0.0900, 0.1000, 0.1100],
-      ratio: 1 / 3, // H3PO4 + 3NaOH -> Na3PO4 + 3H2O: 1 mol acid needs 3 mol base
-      concRange: [0.03, 0.05],
-      briefTemplate: (vol, tc) => `Titrate <b>${vol.toFixed(2)} cm³</b> of unknown tribasic (triprotic) phosphoric acid (H₃PO₄) with <b>${tc} M sodium hydroxide (NaOH)</b>, using <b>phenolphthalein</b> as the indicator, until the solution just turns permanently pale pink. This exercise treats the reaction as full neutralisation: each mole of H₃PO₄ needs three moles of NaOH. Run at least two trials and check they're concordant before calculating the unknown concentration.`,
-      flaskColors: ['var(--rig-body)', '#fbe4ee', '#f6b8d2', '#e8659f'],
-      answerSymbol: 'H₃PO₄',
-      equation: 'H3PO4(aq) + 3NaOH(aq) → Na3PO4(aq) + 3H2O(l)'
-    },
-    weakAcid: {
-      key: 'weakAcid',
-      title: 'Weak Acid – Strong Base Titration',
-      analyteName: 'Unknown ethanoic (acetic) acid, CH₃COOH(aq)',
-      indicatorName: 'Phenolphthalein',
-      indicatorOptions: ['Phenolphthalein', 'Methyl orange', 'Methyl red', 'Universal indicator'],
-      indicatorAnswer: 'Phenolphthalein',
-      titrantName: 'NaOH',
-      titrantConcOptions: [0.0800, 0.1000, 0.1200],
-      ratio: 1, // CH3COOH + NaOH -> CH3COONa + H2O
-      concRange: [0.08, 0.14],
-      briefTemplate: (vol, tc) => `Titrate <b>${vol.toFixed(2)} cm³</b> of unknown ethanoic (acetic) acid, a weak acid, with <b>${tc} M sodium hydroxide (NaOH)</b>, a strong base. Use <b>phenolphthalein</b> as the indicator — the salt formed is slightly basic, so the colour change happens on the basic side of neutral. Run at least two trials and check they're concordant before calculating the unknown concentration.`,
-      flaskColors: ['var(--rig-body)', '#fbe4ee', '#f6b8d2', '#e8659f'],
-      answerSymbol: 'CH₃COOH',
-      equation: 'CH3COOH(aq) + NaOH(aq) → CH3COONa(aq) + H2O(l)'
-    },
-    weakBase: {
-      key: 'weakBase',
-      title: 'Weak Base – Strong Acid Titration',
-      analyteName: 'Unknown ammonia solution, NH₃(aq)',
-      indicatorName: 'Methyl orange',
-      indicatorOptions: ['Methyl orange', 'Phenolphthalein', 'Methyl red', 'Universal indicator'],
-      indicatorAnswer: 'Methyl orange',
-      titrantName: 'HCl',
-      titrantConcOptions: [0.0800, 0.1000, 0.1200],
-      ratio: 1, // NH3 + HCl -> NH4Cl
-      concRange: [0.08, 0.14],
-      briefTemplate: (vol, tc) => `Titrate <b>${vol.toFixed(2)} cm³</b> of unknown ammonia solution, a weak base, with <b>${tc} M hydrochloric acid (HCl)</b>, a strong acid. Use <b>methyl orange</b> as the indicator — the salt formed is slightly acidic, so the colour change happens on the acidic side of neutral, turning from yellow to a permanent orange/red. Run at least two trials and check they're concordant before calculating the unknown concentration.`,
-      flaskColors: ['#fdf6a3', '#fcae7c', '#f4845f', '#e2523d'],
-      answerSymbol: 'NH₃',
-      equation: 'NH3(aq) + HCl(aq) → NH4Cl(aq)'
-    }
-  };
-
-  // Common KCSE pipette sizes — the analyte volume is drawn from
-  // these each session rather than fixed at 25.00 cm³ every time,
-  // so the visible "givens" of the practical actually vary, not
-  // just the hidden unknown concentration.
-  const ANALYTE_VOLUME_OPTIONS = [20.00, 25.00];
-  const MAX_BURETTE = 50.0; // cm³
-
-  let current = null;       // the active PRACTICALS config
-  let sessionAnalyteVolume = 25.00; // randomized per session, see loadPractical
-  let sessionTitrantConc = 0;       // randomized per session, see loadPractical
-  let trueConc = 0;
-  let equivalenceVolume = 0;
-  let currentVolume = 0;
-  let trials = [];
-  let sessionSubmitted = false;
-  let selectedIndicator = null;
-  let indicatorAdded = false;
-  let indicatorCorrect = false;
-
-  // ── Draft auto-save ──────────────────────────────────────────
-  // Protects against a dropped connection or accidental refresh
-  // losing a student's in-progress titration. Saved to localStorage
-  // (not the server) after every state-changing action, scoped to
-  // this user and this specific assignment/practical context so it
-  // can't bleed across accounts on a shared device or restore stale
-  // progress for the wrong assignment.
-  function draftKey() {
-    const user = getUser();
-    return 'vlk_lab_draft_' + (user ? user.id : 'anon');
-  }
-
-  function saveDraft() {
-    try {
-      localStorage.setItem(draftKey(), JSON.stringify({
-        practicalKey: current.key,
-        assignmentId: linkedAssignmentId || null,
-        sessionAnalyteVolume,
-        sessionTitrantConc,
-        trueConc,
-        equivalenceVolume,
-        currentVolume,
-        trials,
-        selectedIndicator,
-        indicatorAdded,
-        indicatorCorrect,
-        avgInputValue: document.getElementById('avgInput') ? document.getElementById('avgInput').value : '',
-        studentAverageChecked,
-        studentAverageCorrect,
-        calcConcValue: document.getElementById('calcConc').value,
-        savedAt: Date.now()
-      }));
-    } catch (e) {
-      // localStorage can fail in private browsing on some browsers —
-      // draft protection is a nice-to-have, not worth surfacing an
-      // error to the student over.
-    }
-  }
-
-  function loadDraft(forKey) {
-    try {
-      const raw = localStorage.getItem(draftKey());
-      if (!raw) return null;
-      const draft = JSON.parse(raw);
-      if (draft.practicalKey !== forKey) return null;
-      if ((draft.assignmentId || null) !== (linkedAssignmentId || null)) return null;
-      return draft;
-    } catch (e) {
-      return null;
-    }
-  }
-
-  function clearDraft() {
-    try { localStorage.removeItem(draftKey()); } catch (e) {}
-  }
-
-  function loadPractical(key) {
-    current = PRACTICALS[key];
-
-    const draft = loadDraft(key);
-
-    if (draft) {
-      // A saved draft matches this exact practical + assignment
-      // context — restore everything, including the randomized
-      // volume and titrant concentration, not just the true value.
-      // Restoring only the hidden answer while re-randomizing the
-      // visible givens would silently change the question mid-attempt.
-      sessionAnalyteVolume = draft.sessionAnalyteVolume;
-      sessionTitrantConc = draft.sessionTitrantConc;
-      trueConc = draft.trueConc;
-      equivalenceVolume = draft.equivalenceVolume;
-      currentVolume = draft.currentVolume;
-      trials = draft.trials || [];
-      selectedIndicator = draft.selectedIndicator || null;
-      indicatorAdded = !!draft.indicatorAdded;
-      indicatorCorrect = !!draft.indicatorCorrect;
-    } else {
-      // Randomize the visible "givens" for this session — which
-      // pipette volume was used, and which standard titrant
-      // concentration is being titrated against — not just the
-      // hidden unknown. Without this, every attempt at a given
-      // practical looked identical on the surface even though the
-      // answer secretly differed, which is what made the exercise
-      // feel repetitive.
-      sessionAnalyteVolume = ANALYTE_VOLUME_OPTIONS[Math.floor(Math.random() * ANALYTE_VOLUME_OPTIONS.length)];
-      sessionTitrantConc = current.titrantConcOptions[Math.floor(Math.random() * current.titrantConcOptions.length)];
-
-      // Randomize a realistic "true" concentration for this session,
-      // then derive the equivalence volume from the stoichiometric
-      // ratio: n(analyte) = ratio × n(titrant), so
-      // titreVolume = (analyteConc × analyteVolume) / (ratio × titrantConc).
-      // Guided mode uses a small set of round, "nice" values instead
-      // of a continuous random range, so a beginner's arithmetic
-      // isn't complicated by messy decimals while they're still
-      // learning the technique itself.
-      if (isGuided) {
-        const GUIDED_CONC_OPTIONS = [0.0800, 0.1000, 0.1200];
-        trueConc = GUIDED_CONC_OPTIONS[Math.floor(Math.random() * GUIDED_CONC_OPTIONS.length)];
-      } else {
-        const [lo, hi] = current.concRange;
-        trueConc = +(lo + Math.random() * (hi - lo)).toFixed(4);
-      }
-      equivalenceVolume = (trueConc * sessionAnalyteVolume) / (current.ratio * sessionTitrantConc);
-      currentVolume = 0;
-      trials = [];
-      selectedIndicator = null;
-      indicatorAdded = false;
-      indicatorCorrect = false;
-    }
-
-    const titrantConcStr = sessionTitrantConc.toFixed(4).replace(/0+$/, '').replace(/\.$/, '');
-
-    document.getElementById('briefText').innerHTML = current.briefTemplate(sessionAnalyteVolume, titrantConcStr);
-    document.getElementById('pillAnalyte').textContent = current.analyteName;
-    document.getElementById('pillTitrant').textContent = titrantConcStr + ' M ' + current.titrantName;
-    document.getElementById('pillIndicator').textContent = indicatorAdded ? current.indicatorName : '? (choose below)';
-    document.getElementById('flaskLabel').textContent = sessionAnalyteVolume.toFixed(2) + ' cm³ ' + current.analyteName.split(',')[0] + (indicatorAdded ? ' + ' + current.indicatorName.split(' ')[0] : '');
-    document.getElementById('avgInput').value = draft ? (draft.avgInputValue || '') : '';
-    document.getElementById('calcConc').value = draft ? (draft.calcConcValue || '') : '';
-    document.getElementById('answerLabel').textContent = 'Using your average titre, calculate the concentration of ' + current.answerSymbol + ' (mol/dm³)';
-    document.getElementById('resultMsg').innerHTML = '';
-    document.getElementById('avgMsg').innerHTML = '';
-
-    studentAverageChecked = draft ? !!draft.studentAverageChecked : false;
-    studentAverageCorrect = draft ? !!draft.studentAverageCorrect : false;
-    const step2Box = document.getElementById('step2Box');
-    if (studentAverageChecked) {
-      step2Box.style.opacity = '1';
-      step2Box.style.pointerEvents = 'auto';
-    } else {
-      step2Box.style.opacity = '0.4';
-      step2Box.style.pointerEvents = 'none';
-    }
-
-    renderIndicatorOptions();
-    document.getElementById('indicatorMsg').innerHTML = '';
-    const titrationControls = document.getElementById('titrationControls');
-    const confirmBtn = document.getElementById('addIndicatorBtn');
-    const isNoIndicatorChoice = selectedIndicator === 'No indicator needed (self-indicating)';
-    if (indicatorAdded) {
-      titrationControls.style.opacity = '1';
-      titrationControls.style.pointerEvents = 'auto';
-      confirmBtn.disabled = true;
-      // Reflect the restored choice visually — renderIndicatorOptions
-      // rebuilds fresh buttons with no memory of a prior selection,
-      // so on draft restore we re-apply the selected/disabled state.
-      document.querySelectorAll('.indicator-btn').forEach(b => {
-        b.disabled = true;
-        if (b.textContent === selectedIndicator) b.classList.add('selected');
-      });
-      const msg = document.getElementById('indicatorMsg');
-      if (isNoIndicatorChoice) {
-        msg.innerHTML = indicatorCorrect
-          ? '<div class="result-banner result-ok" style="margin-top:8px;padding:10px 12px;font-size:0.82rem;">Correct — this titrant is self-indicating, so no separate indicator is needed.</div>'
-          : `<div class="result-banner result-warn" style="margin-top:8px;padding:10px 12px;font-size:0.82rem;">Not quite — this titration actually needs an indicator. The correct choice was ${escapeHtmlLab(current.indicatorAnswer)}.</div>`;
-      } else {
-        msg.innerHTML = indicatorCorrect
-          ? `<div class="result-banner result-ok" style="margin-top:8px;padding:10px 12px;font-size:0.82rem;">Good choice — ${escapeHtmlLab(selectedIndicator)} suits this titration.</div>`
-          : `<div class="result-banner result-warn" style="margin-top:8px;padding:10px 12px;font-size:0.82rem;">${escapeHtmlLab(selectedIndicator)} isn't the ideal indicator here, but you can still continue — the correct choice for this titration is ${escapeHtmlLab(current.indicatorAnswer)}.</div>`;
-      }
-    } else {
-      titrationControls.style.opacity = '0.4';
-      titrationControls.style.pointerEvents = 'none';
-      confirmBtn.disabled = !selectedIndicator;
-      confirmBtn.textContent = isNoIndicatorChoice
-        ? '✅ Confirm — No Indicator Added'
-        : '💧 Add 2-3 Drops of Indicator';
-      // Restore the visual highlight on a previously chosen but
-      // not-yet-confirmed indicator — reachable after a burette
-      // reset mid-session, not just on a fresh page load.
-      if (selectedIndicator) {
-        document.querySelectorAll('.indicator-btn').forEach(b => {
-          b.classList.toggle('selected', b.textContent === selectedIndicator);
-        });
-      }
-    }
-
-    updateRig();
-    renderTrials();
-
-    if (draft) {
-      setStatus('Restored your progress — ' + trials.length + ' trial(s) recovered', true);
-    } else {
-      setStatus('Waiting to start…', false);
-    }
-  }
-
-  function spawnDrop() {
-    const svg = document.querySelector('.rig-svg');
-    if (!svg) return;
-    const ns = 'http://www.w3.org/2000/svg';
-    const drop = document.createElementNS(ns, 'circle');
-    drop.setAttribute('cx', '100');
-    drop.setAttribute('cy', '214');
-    drop.setAttribute('r', '3');
-    drop.setAttribute('fill', '#8fcabf');
-    drop.setAttribute('class', 'drip');
-    svg.appendChild(drop);
-    setTimeout(() => drop.remove(), 480);
-  }
-
-  // ── Indicator selection ─────────────────────────────────────────
-  // A real KCSE skill this exercise previously skipped entirely:
-  // choosing the appropriate indicator for a given titration, based
-  // on the reaction described, rather than the app just adding the
-  // "right" one automatically. The correct indicator is deliberately
-  // withheld from the Reagents sidebar and flask label until the
-  // student has made their choice (see loadPractical), otherwise
-  // this step would be trivially answerable by reading the sidebar.
-  function renderIndicatorOptions() {
-    const box = document.getElementById('indicatorOptionsBox');
-    // Shuffle once per load so the correct answer isn't always in
-    // the same position — otherwise position alone becomes a tell.
-    const shuffled = [...current.indicatorOptions].sort(() => Math.random() - 0.5);
-    box.innerHTML = shuffled.map(opt => {
-      const isSelected = opt === selectedIndicator;
-      // onclick is single-quoted so JSON.stringify's double quotes
-      // don't prematurely close the attribute (they conflicted when
-      // both used double quotes, silently breaking every button).
-      const safeOptForJs = JSON.stringify(opt).replace(/'/g, "\\'");
-      return `<button class="btn indicator-btn ${isSelected ? 'selected' : ''}" onclick='selectIndicator(${safeOptForJs}, this)' ${indicatorAdded ? 'disabled' : ''}>${escapeHtmlLab(opt)}</button>`;
-    }).join('');
-  }
-
-  function selectIndicator(name, btnEl) {
-    if (indicatorAdded) return; // locked in once drops are added
-    selectedIndicator = name;
-    document.querySelectorAll('.indicator-btn').forEach(b => b.classList.remove('selected'));
-    btnEl.classList.add('selected');
-    const confirmBtn = document.getElementById('addIndicatorBtn');
-    confirmBtn.disabled = false;
-    // "No indicator needed" (the correct choice for self-indicating
-    // titrants like KMnO4) shouldn't say "Add Drops" — nothing is
-    // actually added, so the button and the resulting action need
-    // to reflect that instead of forcing a chemically nonsensical step.
-    confirmBtn.textContent = name === 'No indicator needed (self-indicating)'
-      ? '✅ Confirm — No Indicator Added'
-      : '💧 Add 2-3 Drops of Indicator';
-    saveDraft();
-  }
-
-  function addIndicatorDrops() {
-    if (!selectedIndicator || indicatorAdded) return;
-
-    indicatorAdded = true;
-    indicatorCorrect = selectedIndicator === current.indicatorAnswer;
-    const isNoIndicatorChoice = selectedIndicator === 'No indicator needed (self-indicating)';
-
-    // Small visual confirmation distinct from the titrant drop
-    // animation — a few paler, quicker drops (matching real
-    // procedure of adding 2-3 drops of indicator, not just one)
-    // at a slightly different position than titrant drops. Skipped
-    // entirely when the student correctly chooses "no indicator" —
-    // nothing is actually being added to the flask in that case.
-    if (!isNoIndicatorChoice) {
-      const svg = document.querySelector('.rig-svg');
-      if (svg) {
-        const ns = 'http://www.w3.org/2000/svg';
-        const dropCount = 3;
-        for (let i = 0; i < dropCount; i++) {
-          setTimeout(() => {
-            const drop = document.createElementNS(ns, 'circle');
-            drop.setAttribute('cx', String(96 + i * 4)); // slight horizontal spread so they don't perfectly overlap
-            drop.setAttribute('cy', '236');
-            drop.setAttribute('r', '2.5');
-            drop.setAttribute('fill', '#c9a8e0');
-            drop.setAttribute('class', 'drip');
-            svg.appendChild(drop);
-            setTimeout(() => drop.remove(), 480);
-          }, i * 180); // staggered so they visibly fall one after another
-        }
-      }
-    }
-
-    document.getElementById('addIndicatorBtn').disabled = true;
-    document.querySelectorAll('.indicator-btn').forEach(b => b.disabled = true);
-
-    const msg = document.getElementById('indicatorMsg');
-    if (isNoIndicatorChoice) {
-      msg.innerHTML = indicatorCorrect
-        ? '<div class="result-banner result-ok" style="margin-top:8px;">Correct — this titrant is self-indicating, so no separate indicator is needed. You\'ll judge the endpoint from the titrant\'s own colour change.</div>'
-        : `<div class="result-banner result-warn" style="margin-top:8px;">Not quite — this titration actually needs an indicator. The correct choice was ${escapeHtmlLab(current.indicatorAnswer)}, but you can still continue.</div>`;
-    } else {
-      msg.innerHTML = indicatorCorrect
-        ? '<div class="result-banner result-ok" style="margin-top:8px;">Good choice — that\'s the right indicator for this titration.</div>'
-        : `<div class="result-banner result-warn" style="margin-top:8px;">Not the ideal choice here, but you can still continue — the correct indicator was ${escapeHtmlLab(current.indicatorAnswer)}.</div>`;
-    }
-
-    // Reveal the actual indicator now that a choice has been made,
-    // and unlock the titration controls.
-    document.getElementById('pillIndicator').textContent = current.indicatorName;
-    document.getElementById('flaskLabel').textContent = sessionAnalyteVolume.toFixed(2) + ' cm³ ' + current.analyteName.split(',')[0] + ' + ' + current.indicatorName.split(' ')[0];
-
-    const titrationControls = document.getElementById('titrationControls');
-    titrationControls.style.opacity = '1';
-    titrationControls.style.pointerEvents = 'auto';
-
-    saveDraft();
-  }
-
-  function addVolume(amount) {
-    if (!indicatorAdded) return; // belt-and-suspenders — UI already blocks this via pointer-events
-    currentVolume = Math.min(MAX_BURETTE, +(currentVolume + amount).toFixed(2));
-    updateRig();
-    setStatus('Titrating…', false);
-    saveDraft();
-    spawnDrop();
-  }
-
-  function resetBurette() {
-    currentVolume = 0;
-    updateRig();
-
-    // Each trial in real procedure uses a fresh flask of sample, so
-    // the indicator needs to be added again for the new flask — it
-    // isn't a one-time step for the whole session. The student's
-    // previous choice is remembered (no need to re-pick which
-    // indicator), they just need to confirm adding it again.
-    indicatorAdded = false;
-    const titrationControls = document.getElementById('titrationControls');
-    titrationControls.style.opacity = '0.4';
-    titrationControls.style.pointerEvents = 'none';
-
-    const confirmBtn = document.getElementById('addIndicatorBtn');
-    confirmBtn.disabled = !selectedIndicator;
-    confirmBtn.textContent = selectedIndicator === 'No indicator needed (self-indicating)'
-      ? '✅ Confirm — No Indicator Added'
-      : '💧 Add 2-3 Drops of Indicator';
-
-    document.querySelectorAll('.indicator-btn').forEach(b => {
-      b.disabled = false;
-      b.classList.toggle('selected', b.textContent === selectedIndicator);
-    });
-
-    document.getElementById('indicatorMsg').innerHTML =
-      '<p class="hint" style="margin-top:6px;">New trial, fresh flask — add the indicator again before titrating.</p>';
-
-    setStatus('New trial — add indicator to begin', false);
-    saveDraft();
-  }
-
-  function setStatus(text, ok) {
-    document.getElementById('statusText').textContent = text;
-    document.getElementById('statusDot').classList.toggle('ok', !!ok);
-  }
-
-  function updateRig() {
-    document.getElementById('volumeReading').textContent = currentVolume.toFixed(2);
-    const buretteInnerHeight = 180;
-    const usedFraction = Math.min(1, currentVolume / MAX_BURETTE);
-    const fillHeight = buretteInnerHeight * (1 - usedFraction);
-    const fill = document.getElementById('buretteFill');
-    fill.setAttribute('height', Math.max(0, fillHeight));
-    fill.setAttribute('y', 20 + (buretteInnerHeight - fillHeight));
-
-    const flask = document.getElementById('flask');
-    const diff = currentVolume - equivalenceVolume;
-    let stageColor;
-    if (diff < -0.15) stageColor = current.flaskColors[0];
-    else if (diff < 0.05) stageColor = current.flaskColors[1];
-    else if (diff < 0.4) stageColor = current.flaskColors[2];
-    else stageColor = current.flaskColors[3];
-    flask.setAttribute('style', 'fill:' + stageColor + ';stroke:var(--rig-line)');
-  }
-
-  function recordTrial() {
-    if (!indicatorAdded) return;
-    trials.push(currentVolume);
-    renderTrials();
-    setStatus(trials.length + ' trial' + (trials.length > 1 ? 's' : '') + ' recorded', true);
-    saveDraft();
-  }
-
-  function renderTrials() {
-    const list = document.getElementById('trialsList');
-    if (trials.length === 0) {
-      list.innerHTML = '<p style="font-size:0.85rem;color:var(--ink-soft);">No trials recorded yet.</p>';
-      return;
-    }
-    const isConcordant = (v, i) => trials.some((other, j) => j !== i && Math.abs(other - v) <= 0.10);
-    const romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
-    const headerCells = trials.map((_, i) => `<th>${romanNumerals[i] || (i + 1)}</th>`).join('');
-    const finalCells = trials.map(v => `<td>${v.toFixed(2)}</td>`).join('');
-    const initialCells = trials.map(() => `<td>0.00</td>`).join('');
-    const titreCells = trials.map((v, i) => {
-      const cls = isConcordant(v, i) ? 'concordant-cell' : '';
-      return `<td class="${cls}">${v.toFixed(2)}</td>`;
-    }).join('');
-
-    list.innerHTML = `
-      <table class="kcse-table">
-        <thead><tr><th>Trial</th>${headerCells}</tr></thead>
-        <tbody>
-          <tr><td>Final burette reading (cm³)</td>${finalCells}</tr>
-          <tr><td>Initial burette reading (cm³)</td>${initialCells}</tr>
-          <tr><td>Volume of ${current.titrantName} used, titre (cm³)</td>${titreCells}</tr>
-        </tbody>
-      </table>
-      <p class="hint" style="margin-top:8px;">Concordant readings (within 0.10 cm³ of each other) are circled. Use these to calculate your average titre in Step 1 below.</p>
-    `;
-  }
-
-  // The "system average" is what the student's own concordant
-  // readings actually average to — used only to mark their Step 1
-  // answer, never shown to them directly. If no two readings are
-  // concordant, we fall back to averaging every recorded trial so
-  // the student can still proceed, matching how a real practical
-  // exam still expects a best-available titre even without a
-  // concordant pair (at the cost of technique marks elsewhere).
-  function systemAverage() {
-    const isConcordant = (v, i) => trials.some((other, j) => j !== i && Math.abs(other - v) <= 0.10);
-    const concordantValues = trials.filter((v, i) => isConcordant(v, i));
-    const usable = concordantValues.length > 0 ? concordantValues : trials;
-    return usable.reduce((a, b) => a + b, 0) / usable.length;
-  }
-
-  function isConcordantSet() {
-    for (let i = 0; i < trials.length; i++) {
-      for (let j = i + 1; j < trials.length; j++) {
-        if (Math.abs(trials[i] - trials[j]) <= 0.10) return true;
-      }
-    }
-    return false;
-  }
-
-  let studentAverageChecked = false;
-  let studentAverageCorrect = false;
-  let lastFeedbackPayload = null;
-
-  function checkAverage() {
-    const avgMsg = document.getElementById('avgMsg');
-    const studentAvg = parseFloat(document.getElementById('avgInput').value);
-
-    if (trials.length === 0) {
-      avgMsg.innerHTML = '<div class="result-banner result-warn">Record at least one trial first.</div>';
-      return;
-    }
-    if (isGuided && trials.length < 2) {
-      avgMsg.innerHTML = '<div class="result-banner result-warn">Guided Practice requires at least 2 trials before calculating an average — this reflects real KCSE technique, where a single reading can\'t be checked for concordance. Record another trial first.</div>';
-      return;
-    }
-    if (isNaN(studentAvg)) {
-      avgMsg.innerHTML = '<div class="result-banner result-warn">Enter your calculated average titre.</div>';
-      return;
-    }
-
-    const expected = systemAverage();
-    // Tight tolerance here — this is pure arithmetic on the student's
-    // own visible readings, not an experimental estimate, so ±0.02 cm³
-    // only allows for rounding, not calculation error.
-    studentAverageCorrect = Math.abs(studentAvg - expected) <= 0.02;
-    studentAverageChecked = true;
-
-    avgMsg.innerHTML = studentAverageCorrect
-      ? '<div class="result-banner result-ok">Correct average titre. Step 2 is now unlocked.</div>'
-      : `<div class="result-banner result-warn">That doesn't match your own recorded readings — expected around ${expected.toFixed(2)} cm³ from your concordant trials. You can still continue to Step 2 using the average you entered; it will be marked against your own value.</div>`;
-
-    const step2Box = document.getElementById('step2Box');
-    step2Box.style.opacity = '1';
-    step2Box.style.pointerEvents = 'auto';
-    saveDraft();
-  }
-
-  async function submitSession() {
-    const avgInput = document.getElementById('avgInput');
-    const studentAverage = parseFloat(avgInput.value);
-    const studentAnswer = parseFloat(document.getElementById('calcConc').value);
-    const msg = document.getElementById('resultMsg');
-    msg.innerHTML = '';
-
-    if (trials.length === 0) {
-      msg.innerHTML = '<div class="result-banner result-warn">Add your indicator and record at least one trial before submitting.</div>';
-      return;
-    }
-    if (!indicatorAdded) {
-      msg.innerHTML = '<div class="result-banner result-warn">Choose and add an indicator before submitting.</div>';
-      return;
-    }
-    if (!studentAverageChecked || isNaN(studentAverage)) {
-      msg.innerHTML = '<div class="result-banner result-warn">Complete Step 1 (average titre) before submitting.</div>';
-      return;
-    }
-    if (isNaN(studentAnswer)) {
-      msg.innerHTML = '<div class="result-banner result-warn">Enter your calculated concentration.</div>';
-      return;
-    }
-
-    const concordantFound = isConcordantSet();
-
-    // Error-carried-forward marking, matching how KCSE Paper 3 is
-    // actually scored: the concentration step is checked against
-    // what the STUDENT'S OWN average titre implies, not against a
-    // hidden ideal value they never saw. A student who miscalculated
-    // Step 1 but correctly applies C1V1=C2V2 to their own (wrong)
-    // average still gets Step 2 marked correct.
-    const expectedConcFromStudentAvg = (current.ratio * sessionTitrantConc * studentAverage) / sessionAnalyteVolume;
-    const tolerance = Math.max(0.0005, expectedConcFromStudentAvg * 0.025);
-    const correct = Math.abs(studentAnswer - expectedConcFromStudentAvg) <= tolerance;
-
-    try {
-      const saveResult = await Sessions.save({
-        titrationKey: current.key,
-        titrationTitle: current.title,
-        indicatorLabel: selectedIndicator || current.indicatorName,
-        isSuitable: indicatorCorrect,
-        trueConc: trueConc,
-        studentAnswer: studentAnswer,
-        correct: correct,
-        trialsCount: trials.length,
-        trialReadings: trials,
-        concordantFound: concordantFound,
-        mode: sessionMode,
-        assignmentId: linkedAssignmentId || undefined
-      });
-
-      clearDraft();
-      sessionSubmitted = true;
-
-      const assignmentNote = linkedAssignmentId
-        ? (saveResult.submissionWarning
-            ? ` <br><small>${saveResult.submissionWarning}</small>`
-            : ' This counts toward your assignment.')
-        : '';
-
-      const avgNote = studentAverageCorrect
-        ? 'Your average titre was correct.'
-        : `Your average titre (${studentAverage.toFixed(2)} cm³) didn't match your own readings, but your Step 2 calculation is marked against the average you entered.`;
-
-      const indicatorNote = indicatorCorrect
-        ? 'Good indicator choice too.'
-        : `Note: ${escapeHtmlLab(selectedIndicator)} wasn't the ideal indicator here — ${escapeHtmlLab(current.indicatorAnswer)} would have given a sharper endpoint.`;
-
-      msg.innerHTML = correct
-        ? `<div class="result-banner result-ok">Correct! Using your average titre of ${studentAverage.toFixed(2)} cm³, the expected concentration was ${expectedConcFromStudentAvg.toFixed(4)} mol/dm³ — your answer of ${studentAnswer.toFixed(4)} matches. ${avgNote} ${indicatorNote} Session saved.${assignmentNote}</div>`
-        : `<div class="result-banner result-warn">Not quite. Using your average titre of ${studentAverage.toFixed(2)} cm³, the expected concentration was ${expectedConcFromStudentAvg.toFixed(4)} mol/dm³ — your answer was ${studentAnswer.toFixed(4)}. ${avgNote} ${indicatorNote} Session saved — you can review it from your history.${assignmentNote}</div>`;
-
-      // Stored so the "Show me the calculation" button (available
-      // after every submission, correct or not) can reuse the same
-      // numbers without asking the student to re-enter anything.
-      lastFeedbackPayload = {
-        titrationTitle: current.title,
-        trials: trials,
-        studentAverage: studentAverage.toFixed(2),
-        correctAverage: systemAverage().toFixed(2),
-        averageCorrect: studentAverageCorrect,
-        studentAnswer: studentAnswer.toFixed(4),
-        expectedAnswer: expectedConcFromStudentAvg.toFixed(4),
-        concentrationCorrect: correct,
-        answerSymbol: current.answerSymbol,
-        equation: current.equation,
-        sessionAnalyteVolume: sessionAnalyteVolume.toFixed(2),
-        sessionTitrantConc: sessionTitrantConc,
-        titrantName: current.titrantName,
-        ratio: current.ratio,
-        studyMode: sessionMode
-      };
-      document.getElementById('showWorkingBtn').style.display = 'inline-block';
-
-      // AI feedback normally only fires when something was wrong —
-      // no point spending an API call explaining a correct answer.
-      // Guided mode is the exception: it's meant to actively coach,
-      // so it gets a reinforcing response even on a fully correct
-      // attempt, not just error diagnosis.
-      if (!correct || !studentAverageCorrect || isGuided) {
-        requestAiFeedback(lastFeedbackPayload);
-      }
-    } catch (err) {
-      msg.innerHTML = '<div class="result-banner result-warn">Could not save this session: ' + (err.message || 'unknown error') + '</div>';
-    }
-  }
-
-  async function requestAiFeedback(payload) {
-    const box = document.getElementById('aiFeedbackBox');
-    box.style.display = 'block';
-    box.innerHTML = '<div class="ai-loading">🧪 Your Lab Coach is checking your work…</div>';
-    try {
-      const result = await AiFeedback.explain(payload);
-      if (!result.feedback) {
-        box.style.display = 'none';
-        return;
-      }
-      box.innerHTML = `
-        <div class="ai-tutor-card">
-          <div class="ai-tutor-label">🧪 Lab Coach</div>
-          <div class="ai-tutor-text">${escapeHtmlLab(result.feedback).replace(/\n/g, '<br>')}</div>
-        </div>
-      `;
-    } catch (err) {
-      // AI feedback is an enhancement, not core functionality — if
-      // it's unavailable (not configured, API down, etc.), just
-      // hide the box quietly rather than showing an error the
-      // student can't do anything about.
-      box.style.display = 'none';
-    }
-  }
-
-  async function requestWorking() {
-    if (!lastFeedbackPayload) return;
-    const box = document.getElementById('workingBox');
-    const btn = document.getElementById('showWorkingBtn');
-    btn.disabled = true;
-    box.style.display = 'block';
-    box.innerHTML = '<div class="ai-loading">🧮 Working out the full calculation…</div>';
-    try {
-      const result = await AiFeedback.explain({ ...lastFeedbackPayload, mode: 'working' });
-      if (!result.feedback) {
-        box.innerHTML = '<div class="ai-loading">Could not generate the working right now — try again in a moment.</div>';
-        btn.disabled = false;
-        return;
-      }
-      box.innerHTML = `
-        <div class="ai-working-card">
-          <div class="ai-working-label">🧮 Step-by-Step Working</div>
-          <div class="ai-working-text">${escapeHtmlLab(result.feedback).replace(/\n/g, '<br>')}</div>
-        </div>
-      `;
-      btn.style.display = 'none';
-    } catch (err) {
-      box.innerHTML = '<div class="ai-loading">Could not generate the working right now — try again in a moment.</div>';
-      btn.disabled = false;
-    }
-  }
-
-  function escapeHtmlLab(str) {
-    const div = document.createElement('div');
-    div.textContent = str == null ? '' : String(str);
-    return div.innerHTML;
-  }
-
-  const initialType = linkedAssignmentId
-    ? (PRACTICALS[linkedType] ? linkedType : 'acidBase')
-    : (isGuided ? 'acidBase' : (PRACTICALS[linkedType] ? linkedType : 'acidBase'));
-  document.getElementById('practicalSelect').value = initialType;
-  loadPractical(initialType);
-
-  // Warn before leaving if there's recorded but unsubmitted trial
-  // work. The draft itself is already safe in localStorage even if
-  // this is ignored — this is just a courtesy nudge against losing
-  // an in-progress attempt to an accidental tab close or back-button
-  // press before it's actually been submitted to the server.
-  window.addEventListener('beforeunload', function (e) {
-    if (trials.length > 0 && !sessionSubmitted) {
-      e.preventDefault();
-      e.returnValue = '';
-    }
-  });
-
-  if (linkedAssignmentId) {
-    document.getElementById('assignmentBanner').style.display = 'flex';
-    document.getElementById('practicalSelect').disabled = true;
-  } else if (isGuided) {
-    document.getElementById('guidedBanner').style.display = 'flex';
-    document.getElementById('practicalSelect').disabled = true;
-    // Guided mode encourages careful, deliberate additions rather
-    // than large jumps toward the endpoint — remove the coarsest
-    // titrant increment, leaving only the smaller, more careful ones.
-    const coarseBtn = document.querySelector('.row button[onclick="addVolume(1.0)"]');
-    if (coarseBtn) coarseBtn.style.display = 'none';
-  }
-</script>
-</body>
-</html>
->>>>>>> 74e471700462c14fcb25509826ece705e831d8d8

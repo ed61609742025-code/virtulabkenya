@@ -3,7 +3,7 @@
 //  Feature #1: Offline Support, Smart Caching & Sync
 // ============================================================
 
-const CACHE_NAME = 'virtulab-kenya-v13';
+const CACHE_NAME = 'virtulab-kenya-v15';
 
 const PRECACHE_ASSETS = [
   '/',
@@ -23,6 +23,7 @@ const PRECACHE_ASSETS = [
   '/shared/knec-grading.js',
   '/shared/audio-synth.js',
   '/shared/notifications-engine.js',
+  '/shared/survey-tam.js',
   '/shared/ai-tutor.css',
   '/shared/ai-tutor.js',
   '/shared/icon-192.png',
@@ -34,6 +35,14 @@ const PRECACHE_ASSETS = [
   '/student/qualitative.html',
   '/student/organic.html',
   '/student/solubility.html',
+  '/student/energy.html',
+  '/student/energy_theory.html',
+  '/student/rates.html',
+  '/student/rates_theory.html',
+  '/student/gas_prep.html',
+  '/student/cpcat_assessment.html',
+  '/student/survey_sus.html',
+  '/student/survey_tam.html',
   '/student/history.html',
   '/student/login.html',
   '/student/register.html',
@@ -44,19 +53,29 @@ const PRECACHE_ASSETS = [
   '/student/css/dashboard.css',
   '/student/css/organic.css',
   '/student/css/qualitative.css',
-  '/student/css/speed-battle.css',
   '/student/css/solubility.css',
+  '/student/css/energy.css',
+  '/student/css/rates.css',
+  '/student/css/gas-prep.css',
   '/student/js/titration-workbench.js',
   '/student/js/qualitative-engine.js',
   '/student/js/organic-engine.js',
   '/student/js/solubility-engine.js',
+  '/student/js/energy-engine.js',
+  '/student/js/rates-engine.js',
+  '/student/js/gas-prep-engine.js',
+  '/student/js/cpcat-engine.js',
+  '/student/js/survey-sus.js',
   '/student/js/student-dashboard.js',
   '/student/js/speed-battle.js',
   '/teacher/login.html',
   '/teacher/register.html',
   '/teacher/dashboard.html',
+  '/teacher/research_portal.html',
+  '/teacher/survey_tam.html',
   '/teacher/css/dashboard.css',
   '/teacher/js/teacher-dashboard.js',
+  '/teacher/js/research-portal.js',
   '/admin/dashboard.html'
 ];
 
@@ -93,34 +112,55 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+// Trim cache if it exceeds maximum allowable items
+const MAX_DYNAMIC_CACHE_ITEMS = 120;
+async function trimCache(cacheName, maxItems) {
+  const cache = await caches.open(cacheName);
+  const keys = await cache.keys();
+  if (keys.length > maxItems) {
+    await cache.delete(keys[0]);
+    await trimCache(cacheName, maxItems);
+  }
+}
+
 // Fetch Event — Cache-First for static assets, Network-First for API requests with offline fallback
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  // Bypass cache for API calls (/api/*) — try network first
-  if (url.pathname.startsWith('/api/')) {
-    event.respondWith(
-      fetch(event.request).catch(() => {
-        return new Response(
-          JSON.stringify({
-            error: 'Offline Mode: Your submission will be synchronized when connection is restored.',
-            offline: true
-          }),
-          { headers: { 'Content-Type': 'application/json' }, status: 503 }
-        );
-      })
-    );
+  // Bypass cache for non-GET requests and API calls (/api/*)
+  if (event.request.method !== 'GET' || url.pathname.startsWith('/api/')) {
+    if (url.pathname.startsWith('/api/')) {
+      event.respondWith(
+        fetch(event.request).catch(() => {
+          return new Response(
+            JSON.stringify({
+              error: 'Offline Mode: Your submission will be synchronized when connection is restored.',
+              offline: true
+            }),
+            { headers: { 'Content-Type': 'application/json' }, status: 503 }
+          );
+        })
+      );
+    }
     return;
   }
 
-  // Cache-first strategy for HTML, CSS, JS, and image static assets
+  // Only handle same-origin static assets
+  if (url.origin !== self.location.origin) {
+    return;
+  }
+
+  // Cache-first strategy for same-origin static assets
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
-        // Return cached asset, update cache silently in background
+        // Return cached asset, update cache in background
         fetch(event.request).then((networkResponse) => {
           if (networkResponse && networkResponse.status === 200) {
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, networkResponse.clone()));
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, networkResponse.clone());
+              trimCache(CACHE_NAME, MAX_DYNAMIC_CACHE_ITEMS).catch(() => {});
+            });
           }
         }).catch(() => {});
         return cachedResponse;
@@ -128,15 +168,28 @@ self.addEventListener('fetch', (event) => {
 
       // If asset is not in cache, fetch over network, then cache
       return fetch(event.request).then((networkResponse) => {
-        if (networkResponse && networkResponse.status === 200 && event.request.method === 'GET') {
+        if (networkResponse && networkResponse.status === 200) {
           const responseClone = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
+            trimCache(CACHE_NAME, MAX_DYNAMIC_CACHE_ITEMS).catch(() => {});
+          });
         }
         return networkResponse;
       }).catch(() => {
         // Fallback for navigation HTML requests when completely offline
         if (event.request.mode === 'navigate') {
-          return caches.match('/student/home.html');
+          const reqPath = url.pathname.toLowerCase();
+          if (reqPath.startsWith('/teacher/')) {
+            return caches.match('/teacher/dashboard.html').then(res => res || caches.match('/teacher/login.html'));
+          }
+          if (reqPath.startsWith('/admin/')) {
+            return caches.match('/admin/dashboard.html');
+          }
+          if (reqPath.startsWith('/student/')) {
+            return caches.match('/student/home.html');
+          }
+          return caches.match('/index.html').then(res => res || caches.match('/student/home.html'));
         }
       });
     })

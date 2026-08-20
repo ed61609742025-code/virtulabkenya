@@ -74,6 +74,18 @@ const translations = {
     collision_theory: "Collision Theory Sandbox",
     draw_tangent: "Draw Tangent (dy/dx)",
 
+    // Gas Preparation & Collection
+    gas_lab_title: "Gas Preparation & Collection Lab",
+    generate_gas: "⚡ Generate & Collect Gas",
+    dry_agent: "Drying Agent",
+    collect_method: "Collection Method",
+    test_station: "Gas Testing Station",
+
+    // Research & Standardized Assessment
+    cpcat_title: "Chemistry Practical Competency Achievement Test (CPCAT)",
+    sus_title: "System Usability Evaluation",
+    tam_title: "Technology Acceptance Survey",
+
     // Common Buttons & Topbar
     logout: "Log out",
     scratchpad: "📝 Scratchpad",
@@ -154,6 +166,18 @@ const translations = {
     collision_theory: "Nadharia ya Mgongano wa Chembe",
     draw_tangent: "Chora Mstari Mguso (dy/dx)",
 
+    // Gas Preparation & Collection
+    gas_lab_title: "Maabara ya Kutengeneza na Kukusanya Gesi",
+    generate_gas: "⚡ Tengeneza na Kusanya Gesi",
+    dry_agent: "Dawa ya Kukaushia Gesi",
+    collect_method: "Njia ya Kukusanyia",
+    test_station: "Kituo cha Kupimia Gesi",
+
+    // Research & Standardized Assessment
+    cpcat_title: "Mtihani wa Umahiri wa Vitendo vya Kemia (CPCAT)",
+    sus_title: "Tathmini ya Utumiaji wa Mfumo (SUS)",
+    tam_title: "Utafiti wa Kukubalika kwa Teknolojia (TAM)",
+
     // Common Buttons & Topbar
     logout: "Ondoka",
     scratchpad: "📝 Karatasi ya Kazi",
@@ -210,3 +234,11 @@ document.addEventListener('DOMContentLoaded', () => {
   applyTranslations();
   updateLanguageButtons();
 });
+
+if (typeof window !== 'undefined') {
+  window.setLanguage = setLanguage;
+  window.getLanguage = getLanguage;
+  window.t = t;
+  window.applyTranslations = applyTranslations;
+  window.updateLanguageButtons = updateLanguageButtons;
+}

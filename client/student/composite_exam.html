@@ -2,192 +2,37 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>KCSE Chemistry Paper 3 Composite Examination (40 Marks) | VirtuLab Kenya</title>
+<meta name="description" content="Simulate complete KNEC KCSE Chemistry Paper 3 (233/3) composite mock practical examination: Volumetric Titration, Qualitative Inorganic Analysis, and Organic Chemistry.">
 <script>
   var t = localStorage.getItem('vlk_theme') || 'dark';
   document.documentElement.setAttribute('data-theme', t);
 </script>
+<meta name="theme-color" content="#090E17">
+<link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/shared/style.css">
-<style>
-  :root {
-    --gold-accent: #F59E0B;
-    --gold-bg: rgba(245, 158, 11, 0.14);
-  }
-  body {
-    background-color: var(--bg-dark);
-    color: var(--text-main);
-    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-    margin: 0;
-    padding: 0;
-    padding-top: 60px;
-    min-height: 100vh;
-  }
-  
-  /* Sleek Top Navbar — Fixed Pinned Header */
-  .top-navbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 24px;
-    background: var(--topbar-bg);
-    border-bottom: 1.5px solid var(--card-border);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    z-index: 10000;
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    flex-wrap: wrap;
-    gap: 14px;
-  }
-  .nav-brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-family: 'Outfit', sans-serif;
-    font-size: 1.15rem;
-    font-weight: 800;
-    color: var(--heading-color);
-    text-decoration: none;
-  }
-  .nav-brand-badge {
-    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
-    color: #FFFFFF;
-    padding: 3px 10px;
-    border-radius: 100px;
-    font-size: 0.72rem;
-    font-weight: 800;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
-  .nav-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .top-action-btn {
-    background: var(--card-bg-hover);
-    border: 1.5px solid var(--card-border);
-    color: var(--text-main);
-    padding: 7px 16px;
-    border-radius: 100px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    text-decoration: none;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  }
-  .top-action-btn:hover {
-    border-color: var(--gold-accent);
-    color: var(--heading-color);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);
-  }
-
-  .wrap { max-width: 1400px; margin: 0 auto; padding: 20px 24px 24px; }
-  
-  /* KNEC Official Examination Header Banner */
-  .exam-header {
-    background: linear-gradient(135deg, rgba(245,158,11,0.18) 0%, rgba(139,92,246,0.18) 100%);
-    border: 2px solid var(--gold-accent);
-    border-radius: 18px;
-    padding: 22px 28px;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    flex-wrap: wrap;
-    box-shadow: 0 8px 32px rgba(245,158,11,0.2);
-    position: relative;
-    overflow: hidden;
-  }
-  .exam-header::before {
-    content: '';
-    position: absolute;
-    top: -50px; right: -50px;
-    width: 150px; height: 150px;
-    background: radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  
-  .exam-tab-btn {
-    font-family: 'Outfit', sans-serif;
-    padding: 11px 24px;
-    border-radius: 100px;
-    font-size: 0.88rem;
-    font-weight: 800;
-    cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1.5px solid var(--card-border);
-    background: var(--card-bg);
-    color: var(--text-main);
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .exam-tab-btn:hover {
-    transform: translateY(-2px);
-    border-color: var(--gold-accent);
-  }
-  .exam-tab-btn.active {
-    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
-    color: #FFFFFF;
-    border-color: #F59E0B;
-    box-shadow: 0 4px 18px rgba(245, 158, 11, 0.45);
-  }
-  
-  .exam-frame-card {
-    background: var(--card-bg);
-    border: 1.5px solid var(--card-border);
-    border-radius: 18px;
-    overflow: hidden;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-  }
-
-  iframe.lab-frame {
-    width: 100%;
-    height: calc(100vh - 220px);
-    min-height: 650px;
-    border: none;
-    background: var(--card-bg);
-  }
-
-  @media screen {
-    .knec-booklet-print-only { display: none !important; }
-  }
-
-  @media print {
-    .top-navbar, .nav-actions, button, .exam-tab-btn, .exam-header, .exam-frame-card, #btnPrevQ, #btnNextQ, #qProgressText, #compositeSubmitMsg { display: none !important; }
-    body { background: #FFF !important; color: #000 !important; font-family: 'Times New Roman', serif !important; padding: 0 !important; margin: 0 !important; }
-    .wrap { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
-    .knec-booklet-print-only { display: block !important; padding: 20px; }
-  }
-</style>
+<link rel="stylesheet" href="css/composite_exam.css">
 </head>
 <body>
 
+<!-- ══════════════════════════════════════
+     TOPBAR — Navigation & Actions
+══════════════════════════════════════ -->
 <nav class="top-navbar">
   <a href="/student/home.html" class="nav-brand">
-    <span style="font-size:1.3rem;">🏆</span>
+    <span style="font-size:1.25rem;">🏆</span>
     <span>VirtuLab Kenya</span>
     <span class="nav-brand-badge">KCSE 233/3 PORTAL</span>
   </a>
   <div class="nav-actions">
-    <!-- Compact Settings Cog Dropdown -->
+    <!-- Compact Settings Dropdown -->
     <div style="position:relative; display:inline-block;">
-      <button type="button" onclick="toggleBenchSettings(event)" style="background:var(--card-bg); border:1.5px solid var(--card-border); color:var(--text-main); padding:6px 12px; border-radius:100px; font-size:0.8rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px;" title="Workbench Settings">
+      <button type="button" onclick="toggleBenchSettings(event)" class="top-action-btn" title="Workbench Settings">
         <span>⚙️ Settings</span>
       </button>
       
@@ -218,30 +63,30 @@
   <!-- Official Examination Header -->
   <div class="exam-header">
     <div>
-      <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:900;color:var(--heading-color);letter-spacing:-0.02em;margin-bottom:3px;display:flex;align-items:center;gap:8px;">
+      <div class="exam-header-title">
         <span>🇰🇪 KENYA NATIONAL EXAMINATIONS COUNCIL (KNEC)</span>
       </div>
-      <div style="font-size:0.98rem;font-weight:800;color:var(--gold-accent);" id="examSubTitle">
+      <div class="exam-header-sub" id="examSubTitle">
         KCSE Chemistry Paper 3 (Practical) Mock Examination — Code 233/3
       </div>
-      <div style="font-size:0.82rem;color:var(--text-muted);margin-top:6px;">
-        Candidate: <b id="candidateName" style="color:var(--heading-color);">Student</b> &nbsp;·&nbsp; Target Weighting: <b style="color:var(--gold-accent);">40.0 Marks Total</b>
+      <div class="exam-header-meta">
+        Candidate: <b id="candidateName" style="color:var(--heading-color);">Student</b> &nbsp;·&nbsp; Target Weighting: <b style="color:var(--amber-accent);">40.0 Marks Total</b>
       </div>
     </div>
     
     <div style="text-align:right;">
-      <div id="examTimerDisplay" style="font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:800;color:var(--gold-accent);background:var(--bg-dark);padding:6px 18px;border-radius:12px;border:1.5px solid var(--gold-accent);display:inline-block;margin-bottom:4px;">
+      <div id="examTimerDisplay" class="exam-timer-chip">
         ⏱️ 45:00
       </div>
-      <div style="font-size:0.82rem;font-weight:800;color:var(--text-muted);">
-        Live Score: <span id="compositeMarkCounter" style="color:var(--green-accent);font-size:1rem;">0.0 / 40.0 Marks</span>
+      <div class="live-score-chip">
+        Live Score: <span id="compositeMarkCounter" style="color:var(--green-accent);font-size:0.95rem;">0.0 / 40.0 Marks</span>
       </div>
     </div>
   </div>
 
   <!-- Question Navigation Tabs -->
   <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
-    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
       <button class="exam-tab-btn active" id="btnQ1" onclick="switchQTab(1)">
         🧪 Q1: Titration Analysis (15.0 Marks)
       </button>
@@ -253,7 +98,7 @@
       </button>
     </div>
 
-    <button onclick="submitCompositeExam()" style="padding:10px 22px;font-size:0.88rem;font-weight:800;background:linear-gradient(135deg,#F59E0B 0%,#D97706 100%);border:none;border-radius:100px;color:#FFF;cursor:pointer;box-shadow:0 4px 16px rgba(245,158,11,0.4);">
+    <button onclick="submitCompositeExam()" class="btn-submit-exam">
       🚀 Submit KCSE Exam Booklet
     </button>
   </div>
@@ -266,16 +111,16 @@
   </div>
 
   <!-- Step-by-Step Question Navigation Bar -->
-  <div style="display:flex;align-items:center;justify-content:space-between;background:var(--card-bg);border:1.5px solid var(--card-border);border-radius:16px;padding:14px 24px;margin-top:16px;box-shadow:0 4px 16px rgba(0,0,0,0.1);">
-    <button id="btnPrevQ" onclick="prevQTab()" class="top-action-btn" style="padding:10px 20px;font-size:0.88rem;visibility:hidden;">
+  <div class="exam-nav-footer">
+    <button id="btnPrevQ" onclick="prevQTab()" class="top-action-btn" style="visibility:hidden;">
       ← Previous Question
     </button>
     
-    <div style="font-family:'Outfit',sans-serif;font-size:0.92rem;font-weight:800;color:var(--gold-accent);" id="qProgressText">
+    <div class="q-progress-indicator" id="qProgressText">
       Question 1 of 3: Volumetric Titration Analysis (15.0 Marks)
     </div>
 
-    <button id="btnNextQ" onclick="nextQTab()" style="padding:10px 24px;font-size:0.9rem;font-weight:800;background:linear-gradient(135deg,#0284C7 0%,#2563EB 100%);border:none;border-radius:100px;color:#FFF;cursor:pointer;box-shadow:0 4px 16px rgba(2,132,199,0.4);transition:all 0.2s ease;">
+    <button id="btnNextQ" onclick="nextQTab()" class="btn-next-step">
       Next Question: Q2 Salt Analysis →
     </button>
   </div>
@@ -410,71 +255,72 @@
 </div>
 
 <!-- Official KCSE 40-Mark Composite Examination Result Modal -->
-<div id="compositeResultModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:20000;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px);">
-  <div style="background:var(--card-bg);border:2px solid var(--gold-accent);border-radius:20px;max-width:620px;width:100%;padding:28px;box-shadow:0 16px 50px rgba(245,158,11,0.25);color:var(--text-main);">
+<div id="compositeResultModal" class="kcse-modal-overlay">
+  <div class="kcse-modal-box">
     
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;border-bottom:1px solid var(--card-border);padding-bottom:14px;">
       <div>
-        <span style="background:var(--gold-accent);color:#FFF;padding:3px 10px;border-radius:100px;font-size:0.72rem;font-weight:800;letter-spacing:0.04em;">OFFICIAL KCSE PAPER 3 RESULT</span>
-        <h2 style="font-size:1.3rem;font-weight:800;margin-top:6px;color:var(--heading-color);font-family:'Outfit',sans-serif;">KCSE Paper 3 Comprehensive Score Card</h2>
+        <span style="background:var(--amber-accent);color:#FFF;padding:3px 10px;border-radius:6px;font-size:0.7rem;font-weight:800;font-family:var(--font-mono);letter-spacing:0.04em;">OFFICIAL KCSE PAPER 3 RESULT</span>
+        <h2 style="font-size:1.25rem;font-weight:800;margin-top:6px;color:var(--heading-color);font-family:var(--font-heading);">KCSE Paper 3 Comprehensive Score Card</h2>
         <small style="color:var(--text-muted);">Chemistry Practical Examination (40.0 Marks Total)</small>
       </div>
       <div style="text-align:right;">
-        <div id="modalCompositeGrade" style="font-size:2.2rem;font-weight:900;color:var(--gold-accent);line-height:1;">Grade A</div>
-        <div id="modalCompositeScore" style="font-size:0.92rem;color:var(--text-muted);font-weight:700;margin-top:4px;">36.0 / 40.0 Marks (90%)</div>
+        <div id="modalCompositeGrade" style="font-size:2rem;font-weight:900;color:var(--amber-accent);line-height:1;font-family:var(--font-heading);">Grade A</div>
+        <div id="modalCompositeScore" style="font-size:0.88rem;color:var(--text-muted);font-weight:700;margin-top:4px;font-family:var(--font-mono);">36.0 / 40.0 Marks (90%)</div>
       </div>
     </div>
 
     <!-- 3 Questions Comprehensive Performance Table -->
     <div style="margin-bottom:18px;">
-      <table class="kcse-table" style="width:100%;font-size:0.85rem;border-collapse:collapse;">
+      <table class="kcse-table">
         <thead>
-          <tr style="background:rgba(15,23,42,0.6);">
-            <th style="padding:10px;text-align:left;border-bottom:1px solid var(--card-border);">Practical Examination Question</th>
-            <th style="padding:10px;text-align:center;border-bottom:1px solid var(--card-border);width:80px;">Max</th>
-            <th style="padding:10px;text-align:center;border-bottom:1px solid var(--card-border);width:100px;">Awarded</th>
+          <tr>
+            <th style="text-align:left;">Practical Examination Question</th>
+            <th style="text-align:center;width:80px;">Max</th>
+            <th style="text-align:center;width:100px;">Awarded</th>
           </tr>
         </thead>
         <tbody>
-          <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
-            <td style="padding:10px;">🧪 <b>Question 1:</b> Volumetric Titration / Solubility</td>
-            <td style="padding:10px;text-align:center;color:var(--text-muted);">15.0</td>
-            <td style="padding:10px;text-align:center;font-weight:800;color:var(--green-accent);" id="modalScoreQ1">14.0</td>
+          <tr>
+            <td>🧪 <b>Question 1:</b> Volumetric Titration / Solubility</td>
+            <td style="text-align:center;color:var(--text-muted);font-family:var(--font-mono);">15.0</td>
+            <td style="text-align:center;font-weight:800;color:var(--green-accent);font-family:var(--font-mono);" id="modalScoreQ1">14.0</td>
           </tr>
-          <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
-            <td style="padding:10px;">🧂 <b>Question 2:</b> Inorganic Salt Qualitative Analysis</td>
-            <td style="padding:10px;text-align:center;color:var(--text-muted);">15.0</td>
-            <td style="padding:10px;text-align:center;font-weight:800;color:var(--green-accent);" id="modalScoreQ2">13.0</td>
+          <tr>
+            <td>🧂 <b>Question 2:</b> Inorganic Salt Qualitative Analysis</td>
+            <td style="text-align:center;color:var(--text-muted);font-family:var(--font-mono);">15.0</td>
+            <td style="text-align:center;font-weight:800;color:var(--green-accent);font-family:var(--font-mono);" id="modalScoreQ2">13.0</td>
           </tr>
-          <tr style="border-bottom:1px solid rgba(255,255,255,0.05);">
-            <td style="padding:10px;">🧫 <b>Question 3:</b> Organic Functional Group ID</td>
-            <td style="padding:10px;text-align:center;color:var(--text-muted);">10.0</td>
-            <td style="padding:10px;text-align:center;font-weight:800;color:var(--green-accent);" id="modalScoreQ3">9.0</td>
+          <tr>
+            <td>🧫 <b>Question 3:</b> Organic Functional Group ID</td>
+            <td style="text-align:center;color:var(--text-muted);font-family:var(--font-mono);">10.0</td>
+            <td style="text-align:center;font-weight:800;color:var(--green-accent);font-family:var(--font-mono);" id="modalScoreQ3">9.0</td>
           </tr>
-          <tr style="background:rgba(245,158,11,0.08);font-weight:800;">
-            <td style="padding:10px;color:var(--heading-color);">🏆 Total Composite Practical Mark</td>
-            <td style="padding:10px;text-align:center;">40.0</td>
-            <td style="padding:10px;text-align:center;font-size:1.05rem;color:var(--gold-accent);" id="modalScoreTotal">36.0</td>
+          <tr style="background:var(--amber-bg);font-weight:800;">
+            <td style="color:var(--heading-color);">🏆 Total Composite Practical Mark</td>
+            <td style="text-align:center;font-family:var(--font-mono);">40.0</td>
+            <td style="text-align:center;font-size:1.05rem;color:var(--amber-accent);font-family:var(--font-mono);" id="modalScoreTotal">36.0</td>
           </tr>
         </tbody>
       </table>
     </div>
 
     <!-- Pedagogical Feedback Box -->
-    <div id="modalCompositeFeedback" style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-left:4px solid var(--gold-accent);border-radius:8px;padding:12px 16px;font-size:0.82rem;line-height:1.55;color:var(--text-muted);margin-bottom:20px;">
+    <div id="modalCompositeFeedback" style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-left:4px solid var(--amber-accent);border-radius:8px;padding:12px 16px;font-size:0.82rem;line-height:1.55;color:var(--text-muted);margin-bottom:20px;">
     </div>
 
     <!-- Action Buttons -->
     <div style="display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;">
-      <button class="btn" onclick="window.location.href='/student/home.html'" style="border-radius:100px;font-size:0.84rem;font-weight:700;">🏠 Return to Dashboard</button>
-      <button class="btn" onclick="printKCSEBooklet()" style="border-radius:100px;font-size:0.84rem;font-weight:700;background:var(--card-bg-hover);border:1px solid var(--card-border);color:var(--heading-color);">🖨️ Print Final Booklet</button>
-      <button class="btn btn-primary" onclick="window.location.href='/student/history.html'" style="border-radius:100px;font-size:0.84rem;font-weight:700;background:linear-gradient(135deg,#10B981,#059669);color:#FFF;">📊 View Full History →</button>
+      <button class="top-action-btn" onclick="window.location.href='/student/home.html'">🏠 Return to Dashboard</button>
+      <button class="top-action-btn" onclick="printKCSEBooklet()">🖨️ Print Final Booklet</button>
+      <button class="btn-submit-exam" onclick="window.location.href='/student/history.html'">📊 View Full History →</button>
     </div>
 
   </div>
 </div>
 
 <script src="/shared/api.js"></script>
+<script src="/shared/page-transitions.js"></script>
 <script>
   requireStudentLogin();
   const user = getUser();
@@ -506,21 +352,21 @@
       if (nextBtn) {
         nextBtn.textContent = 'Next Question: Q2 Salt Analysis →';
         nextBtn.onclick = () => nextQTab();
-        nextBtn.style.background = 'linear-gradient(135deg,#0284C7 0%,#2563EB 100%)';
+        nextBtn.className = 'btn-next-step';
       }
     } else if (qNum === 2) {
       if (progText) progText.textContent = 'Question 2 of 3: Inorganic Salt Analysis (15.0 Marks)';
       if (nextBtn) {
         nextBtn.textContent = 'Next Question: Q3 Organic Analysis →';
         nextBtn.onclick = () => nextQTab();
-        nextBtn.style.background = 'linear-gradient(135deg,#0284C7 0%,#2563EB 100%)';
+        nextBtn.className = 'btn-next-step';
       }
     } else if (qNum === 3) {
       if (progText) progText.textContent = 'Question 3 of 3: Organic Functional Group Analysis (10.0 Marks)';
       if (nextBtn) {
         nextBtn.textContent = '🚀 Submit Complete KCSE Exam Booklet (40 Marks)';
         nextBtn.onclick = () => submitCompositeExam();
-        nextBtn.style.background = 'linear-gradient(135deg,#F59E0B 0%,#D97706 100%)';
+        nextBtn.className = 'btn-submit-exam';
       }
     }
   }
@@ -552,9 +398,6 @@
           if (frame.contentDocument && frame.contentDocument.documentElement) {
             frame.contentDocument.documentElement.setAttribute('data-theme', themeName);
           }
-          if (frame.contentWindow && typeof frame.contentWindow.setTheme === 'function') {
-            frame.contentWindow.setTheme(themeName);
-          }
         } catch(e) {}
       }
     });
@@ -562,278 +405,138 @@
 
   function setTheme(theme) {
     syncFramesTheme(theme);
+    document.querySelectorAll('.theme-btn-chip').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-theme') === theme);
+    });
   }
 
-  /* Listen for score updates from child frame labs */
+  // Cross-iframe message receiver for auto-scoring updates
   window.addEventListener('message', (event) => {
-    const data = event.data;
-    if (!data) return;
-    if (data.type === 'VLK_NEXT_TAB') {
-      if (data.tab) switchQTab(data.tab);
-      return;
-    }
-    if (data.type === 'VLK_Q_SCORED' || data.type === 'PRACTICAL_EXAM_SUBMITTED') {
-      const q = data.qNum || (data.question === 'q1' ? 1 : data.question === 'q2' ? 2 : data.question === 'q3' ? 3 : 1);
-      if (q === 1) {
-        qScores.q1 = parseFloat(data.score) || 0;
-        qDetails.q1 = data.details || null;
+    if (!event.data || typeof event.data !== 'object') return;
+    const { type, question, score, details } = event.data;
+    if (type === 'VLK_EXAM_SUBMISSION') {
+      if (question === 'Q1') {
+        qScores.q1 = parseFloat(score) || 0.0;
+        qDetails.q1 = details;
+      } else if (question === 'Q2') {
+        qScores.q2 = parseFloat(score) || 0.0;
+        qDetails.q2 = details;
+      } else if (question === 'Q3') {
+        qScores.q3 = parseFloat(score) || 0.0;
+        qDetails.q3 = details;
       }
-      if (q === 2) {
-        qScores.q2 = parseFloat(data.score) || 0;
-        qDetails.q2 = data.details || null;
-      }
-      if (q === 3) {
-        qScores.q3 = parseFloat(data.score) || 0;
-        qDetails.q3 = data.details || null;
-      }
-
-      const total = Math.min(40.0, Math.round((qScores.q1 + qScores.q2 + qScores.q3) * 10) / 10);
-      document.getElementById('compositeMarkCounter').textContent = `${total.toFixed(1)} / 40.0 Marks`;
+      updateLiveScoreDisplay();
     }
   });
 
-  /* 45-Minute Exam Countdown Timer with localStorage recovery */
-  let savedSeconds = null;
-  try { savedSeconds = parseInt(localStorage.getItem('vlk_composite_timer'), 10); } catch(e) {}
-  let examSeconds = (savedSeconds && !isNaN(savedSeconds) && savedSeconds > 0) ? savedSeconds : 45 * 60;
+  function updateLiveScoreDisplay() {
+    const total = (qScores.q1 + qScores.q2 + qScores.q3).toFixed(1);
+    const badge = document.getElementById('compositeMarkCounter');
+    if (badge) badge.textContent = `${total} / 40.0 Marks`;
+  }
 
-  const timerElem = document.getElementById('examTimerDisplay');
+  // Exam Countdown Timer (45:00)
+  let timeLeft = 45 * 60;
+  const timerEl = document.getElementById('examTimerDisplay');
   const timerInterval = setInterval(() => {
-    if (examSeconds <= 0) {
+    if (timeLeft <= 0) {
       clearInterval(timerInterval);
-      try { localStorage.removeItem('vlk_composite_timer'); } catch(e) {}
-      alert('⏰ KCSE 45-Minute Practical Examination Time is UP! Submitting your booklet now...');
+      if (timerEl) timerEl.textContent = '⏱️ 00:00 (Time Up)';
       submitCompositeExam();
       return;
     }
-    examSeconds--;
-    try { localStorage.setItem('vlk_composite_timer', examSeconds); } catch(e) {}
-
-    const mins = Math.floor(examSeconds / 60);
-    const secs = examSeconds % 60;
-    if (timerElem) {
-      timerElem.textContent = `⏱️ ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    timeLeft--;
+    const mins = Math.floor(timeLeft / 60);
+    const secs = timeLeft % 60;
+    if (timerEl) {
+      timerEl.textContent = `⏱️ ${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
+      if (timeLeft < 300) {
+        timerEl.style.color = 'var(--red-accent)';
+        timerEl.style.borderColor = 'var(--red-border)';
+      }
     }
   }, 1000);
 
-  /* Submit Full Composite Exam */
   async function submitCompositeExam() {
-    const msg = document.getElementById('compositeSubmitMsg');
-
-    // Attempt to compute latest scores from child frames if not yet received via postMessage
-    try {
-      const f1 = document.getElementById('frameQ1').contentWindow;
-      const f2 = document.getElementById('frameQ2').contentWindow;
-      const f3 = document.getElementById('frameQ3').contentWindow;
-
-      if (f1 && f1.currentTitrationScore != null) qScores.q1 = Math.min(15.0, Math.max(0, f1.currentTitrationScore));
-      if (f2 && f2.currentQualScore != null) qScores.q2 = Math.min(15.0, Math.max(0, f2.currentQualScore));
-      if (f3 && f3.currentOrganicScore != null) qScores.q3 = Math.min(10.0, Math.max(0, f3.currentOrganicScore));
-    } catch(e) {}
-
-    const total = Math.min(40.0, Math.round((qScores.q1 + qScores.q2 + qScores.q3) * 10) / 10);
-    const pct = Math.round((total / 40.0) * 100);
+    clearInterval(timerInterval);
+    const totalScore = (qScores.q1 + qScores.q2 + qScores.q3);
+    const pct = Math.round((totalScore / 40.0) * 100);
 
     let grade = 'E';
     if (pct >= 80) grade = 'A';
-    else if (pct >= 70) grade = 'A-';
-    else if (pct >= 60) grade = 'B+';
-    else if (pct >= 55) grade = 'B';
-    else if (pct >= 50) grade = 'C+';
-    else if (pct >= 45) grade = 'C';
+    else if (pct >= 75) grade = 'A-';
+    else if (pct >= 70) grade = 'B+';
+    else if (pct >= 65) grade = 'B';
+    else if (pct >= 60) grade = 'B-';
+    else if (pct >= 55) grade = 'C+';
+    else if (pct >= 50) grade = 'C';
+    else if (pct >= 45) grade = 'C-';
     else if (pct >= 40) grade = 'D+';
     else if (pct >= 35) grade = 'D';
+    else if (pct >= 30) grade = 'D-';
 
-    let feedbackTips = [];
-    if (qScores.q1 < 12.0) feedbackTips.push('Q1 Volumetric Titration: Ensure burette readings are recorded to 2 d.p. ending in .00 or .50, and titres are concordant within ±0.10 cm³.');
-    if (qScores.q2 < 12.0) feedbackTips.push('Q2 Inorganic Salt Analysis: Use standard KNEC observation terms (e.g. "White ppt soluble in excess to form a colorless solution").');
-    if (qScores.q3 < 8.0) feedbackTips.push('Q3 Organic Analysis: Distinguish between >C=C< unsaturation (KMnO₄/Br₂) and -COOH effervescence (NaHCO₃).');
+    document.getElementById('modalCompositeGrade').textContent = `Grade ${grade}`;
+    document.getElementById('modalCompositeScore').textContent = `${totalScore.toFixed(1)} / 40.0 Marks (${pct}%)`;
+    document.getElementById('modalScoreQ1').textContent = qScores.q1.toFixed(1);
+    document.getElementById('modalScoreQ2').textContent = qScores.q2.toFixed(1);
+    document.getElementById('modalScoreQ3').textContent = qScores.q3.toFixed(1);
+    document.getElementById('modalScoreTotal').textContent = totalScore.toFixed(1);
 
-    msg.innerHTML = `
-      <div style="background:var(--gold-bg);border:2px solid var(--gold-accent);padding:22px;border-radius:16px;color:var(--text-main);">
-        <div style="font-family:'Outfit',sans-serif;font-weight:900;font-size:1.2rem;color:var(--gold-accent);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
-          <span>🎉 Official KCSE Composite Examination Submitted!</span>
-          <span style="background:var(--gold-accent);color:#FFF;padding:4px 14px;border-radius:100px;font-size:0.85rem;font-weight:800;">KNEC Grade: ${grade}</span>
-        </div>
-        <div style="font-size:1.05rem;font-weight:800;color:var(--heading-color);margin-bottom:12px;">
-          Total Mark: <span style="color:var(--gold-accent);">${total.toFixed(1)} / 40.0 Marks (${pct}%)</span>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;background:var(--bg-dark);padding:14px 18px;border-radius:12px;border:1px solid var(--card-border);font-size:0.88rem;margin-bottom:14px;">
-          <div>🧪 <b>Q1 Titration:</b> <span style="color:var(--green-accent);font-weight:800;">${qScores.q1.toFixed(1)} / 15.0</span> Marks</div>
-          <div>🧂 <b>Q2 Salt Analysis:</b> <span style="color:var(--green-accent);font-weight:800;">${qScores.q2.toFixed(1)} / 15.0</span> Marks</div>
-          <div>🧫 <b>Q3 Organic Analysis:</b> <span style="color:var(--green-accent);font-weight:800;">${qScores.q3.toFixed(1)} / 10.0</span> Marks</div>
-        </div>
-        ${feedbackTips.length > 0 ? `
-          <div style="background:rgba(245,158,11,0.08);border-left:4px solid var(--gold-accent);padding:10px 14px;border-radius:6px;font-size:0.84rem;line-height:1.5;">
-            <b>💡 Pedagogical Feedback for Revision:</b>
-            <ul style="margin:4px 0 0 18px;padding:0;">
-              ${feedbackTips.map(t => `<li>${t}</li>`).join('')}
-            </ul>
-          </div>
-        ` : `
-          <div style="color:var(--green-accent);font-size:0.85rem;font-weight:700;">
-            🌟 Perfect mastery across all 3 practical questions! Excellent KNEC Paper 3 exam readiness.
-          </div>
-        `}
-        <div style="font-size:0.82rem;color:var(--text-muted);margin-top:12px;display:flex;align-items:center;justify-content:space-between;">
-          <span>✓ Examination booklet securely logged & released to teacher dashboard.</span>
-          <button onclick="printKCSEBooklet()" style="padding:6px 14px;background:var(--card-bg-hover);border:1px solid var(--card-border);color:var(--heading-color);border-radius:100px;font-size:0.8rem;font-weight:700;cursor:pointer;">🖨️ Print Final Booklet</button>
-        </div>
-      </div>
-    `;
-
-    // Populate and open official 40-mark score card modal
-    const modal = document.getElementById('compositeResultModal');
-    if (modal) {
-      const gEl = document.getElementById('modalCompositeGrade');
-      if (gEl) gEl.textContent = `Grade ${grade}`;
-      const sEl = document.getElementById('modalCompositeScore');
-      if (sEl) sEl.textContent = `${total.toFixed(1)} / 40.0 Marks (${pct}%)`;
-      const q1El = document.getElementById('modalScoreQ1');
-      if (q1El) q1El.textContent = qScores.q1.toFixed(1);
-      const q2El = document.getElementById('modalScoreQ2');
-      if (q2El) q2El.textContent = qScores.q2.toFixed(1);
-      const q3El = document.getElementById('modalScoreQ3');
-      if (q3El) q3El.textContent = qScores.q3.toFixed(1);
-      const totEl = document.getElementById('modalScoreTotal');
-      if (totEl) totEl.textContent = `${total.toFixed(1)} / 40.0`;
-
-      const fb = document.getElementById('modalCompositeFeedback');
-      if (fb) {
-        if (feedbackTips.length > 0) {
-          fb.innerHTML = `<b>💡 Pedagogical Recommendations for KCSE Revision:</b><ul style="margin:6px 0 0 18px;padding:0;">${feedbackTips.map(t => `<li>${t}</li>`).join('')}</ul>`;
-        } else {
-          fb.innerHTML = `<b>🌟 Outstanding Mastery:</b> Perfect score across all 3 practical exam questions! Full readiness for KCSE Paper 3.`;
-        }
-      }
-      modal.style.display = 'flex';
+    const feedbackEl = document.getElementById('modalCompositeFeedback');
+    if (pct >= 75) {
+      feedbackEl.innerHTML = '<b>🏆 Exemplary KCSE Paper 3 Mastery!</b> You demonstrated excellent procedural rigor across volumetric analysis, cation/anion ledger inferences, and organic functional group identification.';
+    } else if (pct >= 50) {
+      feedbackEl.innerHTML = '<b>👍 Competent KCSE Performance!</b> Good understanding of fundamental techniques. Review titrimetric indicator accuracy and confirming tests for organic unsaturation.';
+    } else {
+      feedbackEl.innerHTML = '<b>📖 Revision Recommended.</b> Focus on recording observations precisely to 1 decimal place, mastering the solubility table, and confirming tests with acidified KMnO₄ and NaHCO₃.';
     }
 
-    document.getElementById('compositeMarkCounter').textContent = `${total.toFixed(1)} / 40.0 Marks`;
+    document.getElementById('compositeResultModal').style.display = 'flex';
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const assignmentId = urlParams.get('assignment') ? parseInt(urlParams.get('assignment'), 10) : null;
+    // Update Print Booklet fields
+    const pName = document.getElementById('printName');
+    if (pName && user) pName.textContent = user.name;
+    const pTotal = document.getElementById('printTotalScore');
+    if (pTotal) pTotal.textContent = `${totalScore.toFixed(1)} / 40.0 Marks`;
+    const pScoreQ1 = document.getElementById('pScoreQ1');
+    if (pScoreQ1) pScoreQ1.textContent = `${qScores.q1.toFixed(1)} / 15.0`;
+    const pScoreQ2 = document.getElementById('pScoreQ2');
+    if (pScoreQ2) pScoreQ2.textContent = `${qScores.q2.toFixed(1)} / 15.0`;
+    const pScoreQ3 = document.getElementById('pScoreQ3');
+    if (pScoreQ3) pScoreQ3.textContent = `${qScores.q3.toFixed(1)} / 10.0`;
+    const pGrade = document.getElementById('pGrade');
+    if (pGrade) pGrade.textContent = `${grade} (${totalScore.toFixed(1)} / 40.0 Marks)`;
 
     try {
-      await Composite.save({
-        assignment_id: assignmentId,
-        exam_title: currentAssignmentTitle || 'KCSE Chemistry Paper 3 Composite Mock Exam',
-        q1_score: qScores.q1,
-        q2_score: qScores.q2,
-        q3_score: qScores.q3,
-        total_score: total,
-        duration_seconds: (45 * 60) - examSeconds,
-        details: { qScores, qDetails }
-      });
+      if (window.API) {
+        await API.post('/experiments/composite', {
+          score_q1: qScores.q1,
+          score_q2: qScores.q2,
+          score_q3: qScores.q3,
+          total_score: totalScore,
+          grade: grade,
+          completed_at: new Date().toISOString()
+        });
+      }
     } catch(e) {
-      console.log('Error saving composite exam session:', e);
-    }
-  }
-
-  // Read assignment parameter from URL if opened from an assignment
-  let currentAssignmentTitle = '';
-  async function initAssignmentContext() {
-    // Restore tab if saved
-    try {
-      const savedTab = parseInt(localStorage.getItem('vlk_composite_tab'), 10);
-      if (savedTab >= 1 && savedTab <= 3) switchQTab(savedTab);
-    } catch(e) {}
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const assignId = urlParams.get('assignment');
-    if (assignId) {
-      try {
-        const res = await Assignments.getMine();
-        const found = (res.assignments || []).find(a => String(a.id) === String(assignId));
-        if (found) {
-          currentAssignmentTitle = found.title;
-          const subTitle = document.getElementById('examSubTitle');
-          if (subTitle) {
-            subTitle.textContent = `Assignment: ${found.title} (KCSE 40 Marks Total)`;
-          }
-
-          // Apply teacher's configured exam_config to child frames if set
-          if (found.exam_config) {
-            const cfg = typeof found.exam_config === 'string' ? JSON.parse(found.exam_config) : found.exam_config;
-            const f1 = document.getElementById('frameQ1');
-            const f2 = document.getElementById('frameQ2');
-            const f3 = document.getElementById('frameQ3');
-
-            if (cfg.q1 && f1) {
-              if (cfg.q1.type === 'solubility') {
-                f1.src = `/student/solubility.html?embedded=1&assignment=${assignId}&solute=${encodeURIComponent(cfg.q1.solute || 'KNO3')}`;
-              } else {
-                f1.src = `/student/lab.html?studyMode=exam&embedded=1&assignment=${assignId}&solA=${encodeURIComponent(cfg.q1.solutionA || '')}&solB=${encodeURIComponent(cfg.q1.solutionB || '')}&ratioA=${cfg.q1.ratioA || 1}&ratioB=${cfg.q1.ratioB || 1}&pipette=${cfg.q1.pipetteVolume || 25.0}&indicator=${cfg.q1.indicator || ''}`;
-              }
-            }
-            if (cfg.q2 && f2) {
-              f2.src = `/student/qualitative.html?embedded=1&assignment=${assignId}&salt=${encodeURIComponent(cfg.q2.salt || '')}`;
-            }
-            if (cfg.q3 && f3) {
-              f3.src = `/student/organic.html?embedded=1&assignment=${assignId}&sample=${encodeURIComponent(cfg.q3.organic || '')}`;
-            }
-          }
-        }
-      } catch(e) {
-        console.log('Could not fetch assignment context:', e);
-      }
+      console.warn('Could not post exam results to server:', e);
     }
   }
 
   function printKCSEBooklet() {
-    const user = getUser() || { name: 'Candidate Student', form: 'Form 4' };
-    const dateStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-
-    const elName = document.getElementById('printName');
-    const elDate = document.getElementById('printDate');
-    const elScoreQ1 = document.getElementById('pScoreQ1');
-    const elScoreQ2 = document.getElementById('pScoreQ2');
-    const elScoreQ3 = document.getElementById('pScoreQ3');
-    const elTotal = document.getElementById('printTotalScore');
-    const elGrade = document.getElementById('pGrade');
-
-    if (elName) elName.textContent = user.name || 'Candidate Student';
-    if (elDate) elDate.textContent = dateStr;
-
-    const tot = Math.min(40.0, Math.round((qScores.q1 + qScores.q2 + qScores.q3) * 10) / 10);
-    const pct = Math.round((tot / 40.0) * 100);
-
-    let gr = 'E';
-    if (pct >= 80) gr = 'A';
-    else if (pct >= 70) gr = 'A-';
-    else if (pct >= 60) gr = 'B+';
-    else if (pct >= 55) gr = 'B';
-    else if (pct >= 50) gr = 'C+';
-    else if (pct >= 45) gr = 'C';
-    else if (pct >= 40) gr = 'D+';
-    else if (pct >= 35) gr = 'D';
-
-    if (elScoreQ1) elScoreQ1.textContent = `${qScores.q1.toFixed(1)} / 15.0 Marks`;
-    if (elScoreQ2) elScoreQ2.textContent = `${qScores.q2.toFixed(1)} / 15.0 Marks`;
-    if (elScoreQ3) elScoreQ3.textContent = `${qScores.q3.toFixed(1)} / 10.0 Marks`;
-    if (elTotal) elTotal.textContent = `${tot.toFixed(1)} / 40.0 Marks (${pct}%)`;
-    if (elGrade) elGrade.textContent = `${gr} (${tot.toFixed(1)} / 40.0 Marks)`;
-
     window.print();
   }
 
-  // Initialize assignment context & state
-  initAssignmentContext();
-</script>
-<script>
   function toggleBenchSettings(e) {
     if (e) e.stopPropagation();
-    const dropdown = document.getElementById('benchSettingsDropdown');
-    if (!dropdown) return;
-    const show = dropdown.style.display === 'none' || !dropdown.style.display;
-    dropdown.style.display = show ? 'flex' : 'none';
+    const dd = document.getElementById('benchSettingsDropdown');
+    if (dd) dd.style.display = dd.style.display === 'none' ? 'flex' : 'none';
   }
-  document.addEventListener('click', function(e) {
-    const dropdown = document.getElementById('benchSettingsDropdown');
-    if (dropdown && dropdown.style.display === 'flex') {
-      if (!dropdown.contains(e.target) && !e.target.closest('button[onclick*="toggleBenchSettings"]')) {
-        dropdown.style.display = 'none';
-      }
+
+  document.addEventListener('click', (e) => {
+    const dd = document.getElementById('benchSettingsDropdown');
+    if (dd && dd.style.display === 'flex' && !dd.contains(e.target)) {
+      dd.style.display = 'none';
     }
   });
 </script>

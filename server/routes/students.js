@@ -8,128 +8,126 @@
 // initiated password resets.
 
 const express = require('express');
-<<<<<<< HEAD
 const bcrypt = require('bcrypt');
-=======
->>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
 const authMiddleware = require('../middleware/auth');
+const { apiLimiter } = require('../middleware/rateLimiter');
+const asyncHandler = require('../utils/asyncHandler');
 const pool = require('../db/pool');
 
 const router = express.Router();
 
-router.get('/class', authMiddleware, authMiddleware.requireRole('teacher'), async (req, res) => {
-  try {
-    const result = await pool.query(
-      `SELECT id, name, email, form, created_at
-       FROM students
-       WHERE teacher_id = $1
-       ORDER BY name ASC`,
-      [req.user.id]
-    );
-    return res.json({ students: result.rows });
-  } catch (err) {
-    console.error('Get class students error:', err.message);
-    return res.status(500).json({ error: 'Could not load your students.' });
-  }
-});
+router.get('/class', authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
+  const result = await pool.query(
+    `SELECT id, name, email, form, created_at
+     FROM students
+     WHERE teacher_id = $1
+     ORDER BY name ASC`,
+    [req.user.id]
+  );
+  return res.json({ students: result.rows });
+}));
 
-<<<<<<< HEAD
 // POST /api/students/bulk-import — Bulk register students from CSV data (Teacher only)
-router.post('/bulk-import', authMiddleware, authMiddleware.requireRole('teacher'), async (req, res) => {
-  try {
-    const teacherId = req.user.id;
-    const { students } = req.body;
+router.post('/bulk-import', apiLimiter, authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
+  const teacherId = req.user.id;
+  const { students } = req.body;
 
-    if (!Array.isArray(students) || students.length === 0) {
-      return res.status(400).json({ error: 'Please provide an array of students to import.' });
-    }
-
-    if (students.length > 100) {
-      return res.status(400).json({ error: 'Bulk import is limited to a maximum of 100 students per batch.' });
-    }
-
-    // Get teacher's school_id
-    const teacherRes = await pool.query(`SELECT school_id, name FROM teachers WHERE id = $1`, [teacherId]);
-    if (teacherRes.rows.length === 0) {
-      return res.status(404).json({ error: 'Teacher profile not found.' });
-    }
-    const schoolId = teacherRes.rows[0].school_id;
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const defaultPassword = 'VirtuLab2026!';
-    const defaultHash = await bcrypt.hash(defaultPassword, 10);
-
-    let importedCount = 0;
-    let skippedCount = 0;
-    const results = [];
-
-    for (let i = 0; i < students.length; i++) {
-      const row = students[i];
-      const rawName = (row.name || '').trim();
-      const rawEmail = (row.email || '').toLowerCase().trim();
-      const rawForm = (row.form || 'Form 4').trim();
-      const rawPassword = (row.password || '').trim();
-
-      // Validation
-      if (!rawName || rawName.length < 2) {
-        skippedCount++;
-        results.push({ row: i + 1, name: rawName, email: rawEmail, status: 'skipped', reason: 'Invalid or missing name (min 2 characters).' });
-        continue;
-      }
-
-      if (!rawEmail || !emailRegex.test(rawEmail)) {
-        skippedCount++;
-        results.push({ row: i + 1, name: rawName, email: rawEmail, status: 'skipped', reason: 'Invalid email address format.' });
-        continue;
-      }
-
-      // Check for existing email in students or teachers
-      const existingStudent = await pool.query(`SELECT id FROM students WHERE email = $1`, [rawEmail]);
-      if (existingStudent.rows.length > 0) {
-        skippedCount++;
-        results.push({ row: i + 1, name: rawName, email: rawEmail, status: 'skipped', reason: 'Email already registered in system.' });
-        continue;
-      }
-
-      try {
-        const passwordHash = rawPassword && rawPassword.length >= 6
-          ? await bcrypt.hash(rawPassword, 10)
-          : defaultHash;
-
-        const insertRes = await pool.query(
-          `INSERT INTO students (school_id, teacher_id, name, email, password_hash, form, status)
-           VALUES ($1, $2, $3, $4, $5, $6, 'active')
-           RETURNING id, name, email, form, created_at`,
-          [schoolId, teacherId, rawName, rawEmail, passwordHash, rawForm]
-        );
-
-        importedCount++;
-        results.push({ row: i + 1, id: insertRes.rows[0].id, name: rawName, email: rawEmail, status: 'imported', form: rawForm });
-      } catch (insertErr) {
-        skippedCount++;
-        results.push({ row: i + 1, name: rawName, email: rawEmail, status: 'skipped', reason: insertErr.message });
-      }
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: `Bulk import finished: ${importedCount} imported, ${skippedCount} skipped.`,
-      importedCount,
-      skippedCount,
-      totalCount: students.length,
-      defaultPasswordUsed: defaultPassword,
-      results
-    });
-  } catch (err) {
-    console.error('Bulk student import error:', err.message);
-    return res.status(500).json({ error: 'Could not process bulk student import.' });
+  if (!Array.isArray(students) || students.length === 0) {
+    return res.status(400).json({ error: 'Please provide an array of students to import.' });
   }
-});
+
+  if (students.length > 100) {
+    return res.status(400).json({ error: 'Bulk import is limited to a maximum of 100 students per batch.' });
+  }
+
+  // Get teacher's school_id
+  const teacherRes = await pool.query(`SELECT school_id, name FROM teachers WHERE id = $1`, [teacherId]);
+  if (teacherRes.rows.length === 0) {
+    return res.status(404).json({ error: 'Teacher profile not found.' });
+  }
+  const schoolId = teacherRes.rows[0].school_id;
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const defaultPassword = 'VirtuLab2026!';
+  const defaultHash = await bcrypt.hash(defaultPassword, 10);
+
+  // Check existing emails in a single query
+  const rawEmails = students.map(s => (s.email || '').toLowerCase().trim()).filter(e => e.length > 0);
+  let existingEmailSet = new Set();
+  if (rawEmails.length > 0) {
+    const existingRes = await pool.query(
+      `SELECT email FROM students WHERE email = ANY($1::text[])`,
+      [rawEmails]
+    );
+    existingEmailSet = new Set(existingRes.rows.map(r => r.email.toLowerCase()));
+  }
+
+  let importedCount = 0;
+  let skippedCount = 0;
+  const results = [];
+
+  // Batch process rows with concurrency control for custom bcrypt hashes
+  for (let i = 0; i < students.length; i++) {
+    const row = students[i];
+    const rawName = (row.name || '').trim();
+    const rawEmail = (row.email || '').toLowerCase().trim();
+    const rawForm = (row.form || 'Form 4').trim();
+    const rawPassword = (row.password || '').trim();
+
+    // Validation
+    if (!rawName || rawName.length < 2) {
+      skippedCount++;
+      results.push({ row: i + 1, name: rawName, email: rawEmail, status: 'skipped', reason: 'Invalid or missing name (min 2 characters).' });
+      continue;
+    }
+
+    if (!rawEmail || !emailRegex.test(rawEmail)) {
+      skippedCount++;
+      results.push({ row: i + 1, name: rawName, email: rawEmail, status: 'skipped', reason: 'Invalid email address format.' });
+      continue;
+    }
+
+    if (existingEmailSet.has(rawEmail)) {
+      skippedCount++;
+      results.push({ row: i + 1, name: rawName, email: rawEmail, status: 'skipped', reason: 'Email already registered in system.' });
+      continue;
+    }
+
+    try {
+      const passwordHash = rawPassword && rawPassword.length >= 6
+        ? await bcrypt.hash(rawPassword, 10)
+        : defaultHash;
+
+      const insertRes = await pool.query(
+        `INSERT INTO students (school_id, teacher_id, name, email, password_hash, form, status)
+         VALUES ($1, $2, $3, $4, $5, $6, 'active')
+         RETURNING id, name, email, form, created_at`,
+        [schoolId, teacherId, rawName, rawEmail, passwordHash, rawForm]
+      );
+
+      existingEmailSet.add(rawEmail);
+      importedCount++;
+      results.push({ row: i + 1, id: insertRes.rows[0].id, name: rawName, email: rawEmail, status: 'imported', form: rawForm });
+    } catch (insertErr) {
+      skippedCount++;
+      results.push({ row: i + 1, name: rawName, email: rawEmail, status: 'skipped', reason: insertErr.message });
+    }
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: `Bulk import finished: ${importedCount} imported, ${skippedCount} skipped.`,
+    importedCount,
+    skippedCount,
+    totalCount: students.length,
+    defaultPasswordUsed: defaultPassword,
+    results
+  });
+}));
 
 // GET /api/students/:id/drilldown — detailed performance profile for a specific student
-router.get('/:id/drilldown', authMiddleware, authMiddleware.requireRole('teacher'), async (req, res) => {
-  try {
-    const studentId = req.params.id;
+router.get('/:id/drilldown', authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
+  const studentId = req.params.id;
 
     // Verify student belongs to this teacher
     const studentResult = await pool.query(
@@ -252,12 +250,6 @@ router.get('/:id/drilldown', authMiddleware, authMiddleware.requireRole('teacher
       compositeSessions,
       badges: unlockedBadges
     });
-  } catch (err) {
-    console.error('Student drilldown error:', err.message);
-    return res.status(500).json({ error: 'Could not load student performance details.' });
-  }
-});
+}));
 
-=======
->>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
 module.exports = router;

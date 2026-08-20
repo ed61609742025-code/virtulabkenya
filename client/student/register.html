@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<<<<<<< HEAD
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
@@ -114,76 +113,11 @@
     <p style="margin: 0 0 8px 0;">Already have an account? <a href="login.html">Log in →</a></p>
     <p style="margin: 0;">Are you a teacher? <a href="../teacher/register.html">Teacher Registration</a></p>
   </div>
-=======
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Create Account — VirtuLab Kenya</title>
-<script>
-  var t = localStorage.getItem('vlk_theme') || 'light';
-  document.documentElement.setAttribute('data-theme', t);
-</script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/shared/style.css">
-<style>
-  .theme-toggle-float { position: fixed; top: 16px; right: 16px; z-index: 10; }
-</style>
-</head>
-<body class="auth-page">
-<div class="theme-toggle-float theme-toggle" title="Change appearance">
-  <button class="theme-btn" data-theme="dark" onclick="setTheme('dark')">🌙</button>
-  <button class="theme-btn active" data-theme="light" onclick="setTheme('light')">☀️</button>
-  <button class="theme-btn" data-theme="green" onclick="setTheme('green')">🧪</button>
-</div>
-<div class="auth-box">
-  <div class="auth-logo">🧪 VirtuLab Kenya</div>
-  <p class="auth-sub">Create your student account. You will need your school's registration code — ask your chemistry teacher.</p>
-
-  <div class="field">
-    <label for="name">Full Name</label>
-    <input type="text" id="name" placeholder="e.g. Amina Odhiambo">
-  </div>
-  <div class="field">
-    <label for="email">Email Address</label>
-    <input type="email" id="email" placeholder="e.g. amina@school.ac.ke">
-  </div>
-  <div class="field">
-    <label for="form">Form / Class</label>
-    <select id="form">
-      <option value="">Select your form</option>
-      <option value="Form 1">Form 1</option>
-      <option value="Form 2">Form 2</option>
-      <option value="Form 3">Form 3</option>
-      <option value="Form 4">Form 4</option>
-    </select>
-  </div>
-  <div class="field">
-    <label for="schoolCode">School Registration Code</label>
-    <input type="text" id="schoolCode" placeholder="Given to you by your teacher" style="text-transform:uppercase;">
-  </div>
-  <div class="field">
-    <label for="teacherCode">Teacher Code <span style="font-weight:400;color:var(--ink-soft);">(optional)</span></label>
-    <input type="text" id="teacherCode" placeholder="Links you to your teacher's dashboard" style="text-transform:uppercase;">
-  </div>
-  <div class="field">
-    <label for="password">Create Password</label>
-    <input type="password" id="password" placeholder="At least 6 characters">
-  </div>
-
-  <button class="btn btn-primary btn-full" onclick="doRegister()">Create Account →</button>
-  <div id="msg"></div>
-
-  <p style="font-size:.8rem;color:var(--ink-soft);margin-top:20px;text-align:center;">
-    Already have an account? <a href="login.html" style="color:var(--teal);font-weight:600;">Log in</a>
-  </p>
->>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
 </div>
 
 <script src="/shared/api.js"></script>
+<script src="/shared/page-transitions.js"></script>
 <script>
-<<<<<<< HEAD
   function setTheme(theme) {
     localStorage.setItem('vlk_theme', theme);
     document.documentElement.setAttribute('data-theme', theme);
@@ -207,10 +141,6 @@
     }
   }
 
-=======
-  updateThemeButtons();
-
->>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
   async function doRegister() {
     const name = document.getElementById('name').value.trim();
     const email = document.getElementById('email').value.trim();
@@ -222,7 +152,6 @@
     msg.innerHTML = '';
 
     if (!name || !email || !form || !schoolCode || !password) {
-<<<<<<< HEAD
       msg.innerHTML = '<div class="msg-alert err">⚠️ Please fill in all required registration fields.</div>';
       return;
     }
@@ -243,22 +172,6 @@
   document.getElementById('password').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') doRegister();
   });
-=======
-      msg.innerHTML = '<div class="msg msg-err">Please fill in all fields.</div>'; return;
-    }
-    if (password.length < 6) {
-      msg.innerHTML = '<div class="msg msg-err">Password must be at least 6 characters.</div>'; return;
-    }
-    try {
-      msg.innerHTML = '<div class="msg">Creating your account…</div>';
-      await Auth.studentRegister(name, email, password, form, schoolCode, teacherCode || undefined);
-      msg.innerHTML = '<div class="msg msg-ok">Account created! Redirecting to login…</div>';
-      setTimeout(() => window.location.href = 'login.html', 1500);
-    } catch (err) {
-      msg.innerHTML = '<div class="msg msg-err">' + (err.message || 'Registration failed. Check your school code and try again.') + '</div>';
-    }
-  }
->>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
 </script>
 </body>
 </html>

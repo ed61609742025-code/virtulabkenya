@@ -11,6 +11,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 const MAX_BUFFER_SIZE = 50;
 const errorBuffer = [];
@@ -33,7 +34,7 @@ if (process.env.SENTRY_DSN) {
  */
 function captureError(err, req = null, extraContext = {}) {
   const errorEvent = {
-    id: 'err_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+    id: 'err_' + Date.now() + '_' + crypto.randomBytes(4).toString('hex'),
     timestamp: new Date().toISOString(),
     message: err.message || String(err),
     stack: err.stack || null,

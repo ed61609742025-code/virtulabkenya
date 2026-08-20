@@ -1,0 +1,38 @@
+# ============================================================
+#  VirtuLab Kenya — Render Infrastructure Blueprint (render.yaml)
+#  1-Click Zero-Config Deployment of Web Service + PostgreSQL
+# ============================================================
+
+databases:
+  - name: virtulab-db
+    databaseName: virtulabkenya
+    user: virtulab_user
+    plan: starter # Free / Starter tier for academic pilot
+    region: frankfurt # Low latency to East Africa (Kenya)
+
+services:
+  - type: web
+    name: virtulab-web
+    env: node
+    region: frankfurt
+    plan: starter
+    rootDir: server
+    buildCommand: npm install
+    startCommand: node index.js
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: virtulab-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_EMAIL
+        value: admin@virtulab.co.ke
+      - key: ADMIN_PASSWORD
+        generateValue: true
+      - key: CORS_ORIGIN
+        value: "https://virtulab.co.ke,https://virtulab-web.onrender.com"

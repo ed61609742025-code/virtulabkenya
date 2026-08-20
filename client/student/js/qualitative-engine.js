@@ -380,19 +380,19 @@ requireStudentLogin();
     grid.innerHTML = TESTS.map((test, idx) => {
       const st = testStates[test.key] || { performed: false, stage: 'idle' };
       const testLetter = String.fromCharCode(97 + idx); // a, b, c, d, e, f, g, h
-      const isMultiStage = test.key === 'naoh' || test.key === 'nh3' || test.key === 'ki';
 
       let actionButtonsHtml = '';
       if (test.key === 'naoh' || test.key === 'nh3') {
+        const reagentName = test.key === 'naoh' ? 'NaOH' : 'NH₃';
         if (!st.performed || st.stage === 'idle') {
           actionButtonsHtml = `
             <button class="btn-perform-test" onclick="performTestStage('${test.key}', 'few_drops')">
-              💧 Step 1: Add Few Drops (2–3 drops)
+              💧 Step 1: Add Dropwise (2–3 drops ${reagentName})
             </button>`;
         } else if (st.stage === 'few_drops') {
           actionButtonsHtml = `
             <button class="btn-perform-test btn-step-excess" onclick="performTestStage('${test.key}', 'excess')">
-              🧪 Step 2: Add in Excess (~5 cm³)
+              🧪 Step 2: Add in Excess (~5 cm³ ${reagentName})
             </button>
             <button class="btn-redo-test" onclick="redoTest('${test.key}')" title="Wash test tube and redo test">
               <span class="redo-icon">↺</span> Redo Test
@@ -403,6 +403,106 @@ requireStudentLogin();
               ✅ Test Completed
             </button>
             <button class="btn-redo-test" onclick="redoTest('${test.key}')" title="Wash test tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        }
+      } else if (test.key === 'agno3') {
+        if (!st.performed || st.stage === 'idle') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test btn-step-acid" onclick="performTestStage('agno3', 'step1_hno3')">
+              💧 Step 1: Add Dilute Nitric Acid (HNO₃)
+            </button>`;
+        } else if (st.stage === 'step1_hno3') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test btn-step-reagent" onclick="performTestStage('agno3', 'step2_agno3')">
+              🔬 Step 2: Follow with Silver Nitrate (AgNO₃)
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('agno3')" title="Wash tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        } else if (st.stage === 'step2_agno3') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test btn-step-ammonia" onclick="performTestStage('agno3', 'step3_nh3')">
+              🫧 Step 3: Test Precipitate with Aqueous NH₃
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('agno3')" title="Wash tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        } else {
+          actionButtonsHtml = `
+            <button class="btn-perform-test done" disabled>
+              ✅ Test Completed
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('agno3')" title="Wash tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        }
+      } else if (test.key === 'bacl2') {
+        if (!st.performed || st.stage === 'idle') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test btn-step-acid" onclick="performTestStage('bacl2', 'step1_acid')">
+              💧 Step 1: Add Dilute Acid (HCl / HNO₃)
+            </button>`;
+        } else if (st.stage === 'step1_acid') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test btn-step-reagent" onclick="performTestStage('bacl2', 'step2_bacl2')">
+              🧫 Step 2: Follow with Barium Chloride (BaCl₂)
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('bacl2')" title="Wash tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        } else {
+          actionButtonsHtml = `
+            <button class="btn-perform-test done" disabled>
+              ✅ Test Completed
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('bacl2')" title="Wash tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        }
+      } else if (test.key === 'brown_ring') {
+        if (!st.performed || st.stage === 'idle') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test btn-step-reagent" onclick="performTestStage('brown_ring', 'step1_feso4')">
+              🧪 Step 1: Add Fresh FeSO₄(aq) Solution
+            </button>`;
+        } else if (st.stage === 'step1_feso4') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test btn-step-heat" onclick="performTestStage('brown_ring', 'step2_h2so4')">
+              🟤 Step 2: Trickle Conc. H₂SO₄ down the side
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('brown_ring')" title="Wash tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        } else {
+          actionButtonsHtml = `
+            <button class="btn-perform-test done" disabled>
+              ✅ Test Completed
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('brown_ring')" title="Wash tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        }
+      } else if (test.key === 'hcl') {
+        if (!st.performed || st.stage === 'idle') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test btn-step-acid" onclick="performTestStage('hcl', 'step1_hcl')">
+              💧 Step 1: Add 2M HCl(aq)
+            </button>`;
+        } else if (st.stage === 'step1_hcl') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test btn-step-gas" onclick="performTestStage('hcl', 'step2_gas_warm')">
+              🧪 Step 2: Test Gas (Limewater) / Warm Gently
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('hcl')" title="Wash tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        } else {
+          actionButtonsHtml = `
+            <button class="btn-perform-test done" disabled>
+              ✅ Test Completed
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('hcl')" title="Wash tube and redo test">
               <span class="redo-icon">↺</span> Redo Test
             </button>`;
         }
@@ -423,7 +523,7 @@ requireStudentLogin();
         } else if (st.stage === 'heated') {
           actionButtonsHtml = `
             <button class="btn-perform-test btn-step-cool" onclick="performTestStage('ki', 'cooled')">
-              ❄️ Step 3: Cool under Tap Water
+              ❄️ Step 3: Cool under Tap Water (Spangles)
             </button>
             <button class="btn-redo-test" onclick="redoTest('ki')" title="Wash tube and redo test">
               <span class="redo-icon">↺</span> Redo Test
@@ -470,71 +570,76 @@ requireStudentLogin();
       }
 
       return `
-        <div class="kcse-question-block" style="display: grid; grid-template-columns: 140px 1fr; gap: 20px; margin-bottom: 28px; border-bottom: 1px dashed var(--card-border); padding-bottom: 24px; align-items: start;">
-          <!-- Left Column: Tube / Flame Visualizer -->
-          <div style="background: var(--bg-dark); border: 1px solid var(--card-border); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 185px; position: relative;">
-            ${test.key === 'flame' ? getFlameVisual(st) : getTubeVisual(test, st)}
-            <div id="status_${test.key}" style="font-size: 0.7rem; font-weight: 800; color: ${st.performed ? 'var(--green-accent)' : 'var(--text-muted)'}; margin-top: 6px; text-align: center; max-width: 130px; line-height: 1.2;">
-              ${!st.performed ? 'Awaiting Test' : (st.statusLabel || 'Test Performed')}
+        <div class="kcse-question-block">
+          <div class="test-card-top">
+            <div class="test-header-left">
+              <span class="test-step-badge">(${testLetter})</span>
+              <h3 class="test-title-text">${test.label}</h3>
             </div>
+            <span class="timer-chip" style="font-size:0.75rem; padding:2px 8px;">1.4 Marks</span>
           </div>
 
-          <!-- Right Column: Procedure & 2-Column KCSE Table -->
-          <div>
-            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
-              <div style="font-family:var(--font-heading); font-size:1.05rem; font-weight:800; color:var(--heading-color);">
-                (${testLetter}) ${test.label}
+          <div class="test-layout-grid">
+            <!-- Left Column: Tube / Flame Stage -->
+            <div class="apparatus-stage">
+              <div class="apparatus-view">
+                ${test.key === 'flame' ? getFlameVisual(st) : getTubeVisual(test, st)}
               </div>
-              <span style="font-family:var(--font-mono); font-size:0.75rem; font-weight:700; color:var(--purple-accent); background:var(--blue-bg); padding:2px 8px; border-radius:100px;">1.4 Marks</span>
+              <div class="apparatus-status-tag" id="status_${test.key}">
+                ${!st.performed ? 'Awaiting Reagent' : (st.statusLabel || 'Test Performed')}
+              </div>
             </div>
 
-            <!-- Official KCSE Procedure / Question Callout Box -->
-            <div style="font-size:0.84rem; color:var(--text-main); line-height:1.55; margin-bottom:12px; background:var(--bg-dark); padding:10px 14px; border-radius:8px; border-left:3.5px solid var(--violet-accent); border:1px solid var(--card-border);">
-              <span style="font-weight:800; color:var(--heading-color); display:flex; align-items:center; gap:6px; margin-bottom:3px;">
-                📋 Procedure / Instructions:
-              </span>
-              <span>${test.procedure}</span>
+            <!-- Right Column: Procedure & 2-Column KCSE Table -->
+            <div>
+              <!-- Official KCSE Procedure Callout -->
+              <div style="font-size:0.84rem; color:var(--text-main); line-height:1.5; margin-bottom:12px; background:var(--bg-dark); padding:10px 14px; border-radius:8px; border-left:3px solid var(--blue-accent); border:1px solid var(--card-border); border-left-width:3px;">
+                <span style="font-weight:800; color:var(--heading-color); display:flex; align-items:center; gap:6px; margin-bottom:3px;">
+                  📋 Procedure / Instructions:
+                </span>
+                <span>${test.procedure}</span>
+              </div>
+
+              <!-- Action Buttons with Multi-Step Transition & Redo -->
+              <div class="action-buttons-row">
+                ${actionButtonsHtml}
+              </div>
+
+              <!-- KCSE Observation & Inference Table -->
+              <table class="knec-table">
+                <thead>
+                  <tr>
+                    <th style="width:50%;">
+                      <span class="sci-tooltip">Observations <span class="sci-tip-text">Observations: Record sharp visual changes — color, effervescence, precipitate formation, or dissolving in excess.</span></span> (0.7 Mark)
+                    </th>
+                    <th style="width:50%;">
+                      <span class="sci-tooltip">Inferences <span class="sci-tip-text">Inferences: Deduce present/absent ions (e.g. Cu²⁺, Fe²⁺, Fe³⁺, Al³⁺, Zn²⁺, Pb²⁺, SO₄²⁻, CO₃²⁻, Cl⁻, NO₃⁻).</span></span> (0.7 Mark)
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <textarea class="kcse-input" id="obs_${test.key}" placeholder="Write exact observations (e.g. White ppt soluble in excess NaOH)..." oninput="saveTextState('${test.key}')">${st.obsText || ''}</textarea>
+                      
+                      <!-- Suggestion Chips -->
+                      <div class="suggestion-chips-container">
+                        ${getObsSuggestionChips(test.key)}
+                      </div>
+                    </td>
+
+                    <td>
+                      <textarea class="kcse-input" id="inf_${test.key}" placeholder="Write deductions (e.g. Zn²⁺, Al³⁺, Pb²⁺ present)..." oninput="saveTextState('${test.key}')">${st.infText || ''}</textarea>
+                      
+                      <!-- Suggestion Chips -->
+                      <div class="suggestion-chips-container">
+                        ${getInfSuggestionChips(test.key)}
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-
-            <!-- Action Buttons with Multi-Step Transition & Redo -->
-            <div class="action-buttons-row">
-              ${actionButtonsHtml}
-            </div>
-
-            <!-- KCSE Observation & Inference Table -->
-            <table class="kcse-table" style="width:100%; border-collapse:collapse; font-size:0.84rem;">
-              <thead>
-                <tr>
-                  <th style="width:50%; background:var(--card-bg-hover); padding:10px 14px; font-family:var(--font-heading); font-weight:800; border-bottom:1.5px solid var(--card-border);">
-                    <span class="sci-tooltip">Observations <span class="sci-tip-text">Observations: Record sharp visual changes — color, effervescence, precipitate formation, or dissolving in excess.</span></span> (0.7 Mark)
-                  </th>
-                  <th style="width:50%; background:var(--card-bg-hover); padding:10px 14px; font-family:var(--font-heading); font-weight:800; border-bottom:1.5px solid var(--card-border);">
-                    <span class="sci-tooltip">Inferences <span class="sci-tip-text">Inferences: Deduce present/absent ions (e.g. Cu²⁺, Fe²⁺, Fe³⁺, Al³⁺, Zn²⁺, Pb²⁺, SO₄²⁻, CO₃²⁻, Cl⁻, NO₃⁻).</span></span> (0.7 Mark)
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td style="padding:10px; border-bottom:1px solid var(--card-border); vertical-align:top;">
-                    <textarea class="kcse-input" id="obs_${test.key}" placeholder="Write exact observations (e.g. White ppt soluble in excess NaOH)..." oninput="saveTextState('${test.key}')">${st.obsText || ''}</textarea>
-                    
-                    <!-- Suggestion Chips -->
-                    <div style="display:flex; flex-wrap:wrap; gap:4px; margin-top:6px;">
-                      ${getObsSuggestionChips(test.key)}
-                    </div>
-                  </td>
-
-                  <td style="padding:10px; border-bottom:1px solid var(--card-border); vertical-align:top;">
-                    <textarea class="kcse-input" id="inf_${test.key}" placeholder="Write deductions (e.g. Zn²⁺, Al³⁺, Pb²⁺ present)..." oninput="saveTextState('${test.key}')">${st.infText || ''}</textarea>
-                    
-                    <!-- Suggestion Chips -->
-                    <div style="display:flex; flex-wrap:wrap; gap:4px; margin-top:6px;">
-                      ${getInfSuggestionChips(test.key)}
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
           </div>
         </div>`;
     }).join('');
@@ -546,13 +651,13 @@ requireStudentLogin();
   function getTubeVisual(test, st) {
     const performed = st && st.performed;
     const stage = st ? (st.stage || 'idle') : 'idle';
-    const isExcess = stage === 'excess';
-    const isFewDrops = stage === 'few_drops';
+    const isExcess = stage === 'excess' || stage === 'step3_nh3' || stage === 'step2_bacl2' || stage === 'step2_gas_warm';
+    const isStep1 = stage === 'few_drops' || stage === 'step1_hno3' || stage === 'step1_acid' || stage === 'step1_hcl' || stage === 'step1_feso4';
     const isHeated = stage === 'heated';
     const isCooled = stage === 'cooled';
     
-    // Liquid level: low (y=80) for few drops, higher (y=54) for excess or standard tests
-    const liquidTopY = isFewDrops ? 80 : 54;
+    // Liquid level: low (y=80) for initial dropwise/step 1, higher (y=54) for subsequent steps/excess
+    const liquidTopY = isStep1 ? 80 : 54;
     const liquid = performed ? (st.color || 'rgba(56, 189, 248, 0.4)') : 'transparent';
     const bubbles = performed && st.bubbling;
     const isBrownRing = test.isBrownRing;
@@ -562,7 +667,9 @@ requireStudentLogin();
 
     // Special Case 1: Brown Ring Test (NO3- with FeSO4 + conc H2SO4)
     if (performed && isBrownRing) {
-      const hasBrownRing = salt.anion === 'NO3-';
+      const isStep2 = stage === 'step2_h2so4' || stage === 'done';
+      const hasBrownRing = isStep2 && salt.anion === 'NO3-';
+
       return `<svg width="86" height="136" viewBox="0 0 86 136">
         <defs>
           <linearGradient id="h2so4Grad" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -588,13 +695,15 @@ requireStudentLogin();
         <rect x="23" y="32" width="40" height="4" rx="2" fill="rgba(255,255,255,0.18)" stroke="#94A3B8" stroke-width="1.2"/>
         <path d="M 26,36 L 26,112 Q 26,130 43,130 Q 60,130 60,112 L 60,36 Z" fill="rgba(255,255,255,0.05)" stroke="#94A3B8" stroke-width="1.5"/>
 
-        <!-- Lower Dense Layer (Conc. H2SO4) -->
-        <path d="M 27,94 L 27,112 Q 27,128 43,128 Q 59,128 59,112 L 59,94 Z" fill="url(#h2so4Grad)"/>
-        <ellipse cx="43" cy="94" rx="16" ry="3.5" fill="rgba(203, 213, 225, 0.95)"/>
+        ${isStep2 ? `
+          <!-- Lower Dense Layer (Conc. H2SO4) -->
+          <path d="M 27,94 L 27,112 Q 27,128 43,128 Q 59,128 59,112 L 59,94 Z" fill="url(#h2so4Grad)"/>
+          <ellipse cx="43" cy="94" rx="16" ry="3.5" fill="rgba(203, 213, 225, 0.95)"/>
+        ` : ''}
 
         <!-- Upper Layer (Fresh FeSO4 Solution - pale green) -->
-        <path d="M 27,66 L 27,94 L 59,94 L 59,66 Z" fill="rgba(16, 185, 129, 0.22)"/>
-        <ellipse cx="43" cy="66" rx="16" ry="3.5" fill="rgba(16, 185, 129, 0.35)"/>
+        <path d="M 27,${isStep2 ? 66 : 78} L 27,${isStep2 ? 94 : 112} ${isStep2 ? '' : 'Q 27,128 43,128 Q 59,128 59,112'} L 59,${isStep2 ? 94 : 78} L 59,${isStep2 ? 66 : 78} Z" fill="rgba(16, 185, 129, 0.28)"/>
+        <ellipse cx="43" cy="${isStep2 ? 66 : 78}" rx="16" ry="3.5" fill="rgba(16, 185, 129, 0.4)"/>
 
         <!-- Brown Ring [Fe(H2O)5(NO)]2+ Interface -->
         ${hasBrownRing ? `
@@ -956,17 +1065,125 @@ requireStudentLogin();
           st.statusLabel = 'In Excess: No precipitate';
         }
       }
+    } else if (testKey === 'agno3') {
+      if (targetStage === 'step1_hno3') {
+        if (salt.anion === 'CO3^2-') {
+          playEffervescenceSound();
+          st.bubbling = true;
+          st.color = '#CBD5E1';
+          st.statusLabel = 'Step 1: Dil. HNO₃ added — Effervescence (CO₂ gas evolved)';
+        } else {
+          playDropSplashSound();
+          st.bubbling = false;
+          st.ppt = false;
+          st.color = 'rgba(56, 189, 248, 0.2)';
+          st.statusLabel = 'Step 1: Dil. HNO₃ added — Solution acidified (no effervescence)';
+        }
+      } else if (targetStage === 'step2_agno3') {
+        playDropSplashSound();
+        if (salt.anion === 'Cl-') {
+          st.ppt = true;
+          st.pptDissolved = false;
+          st.color = '#F8FAFC';
+          st.statusLabel = 'Step 2: AgNO₃ added — Dense curdy white ppt (AgCl) formed';
+        } else {
+          st.ppt = false;
+          st.color = 'rgba(56, 189, 248, 0.2)';
+          st.statusLabel = 'Step 2: AgNO₃ added — No precipitate formed';
+        }
+      } else if (targetStage === 'step3_nh3') {
+        playDropSplashSound();
+        if (salt.anion === 'Cl-') {
+          st.ppt = false;
+          st.pptDissolved = true;
+          st.color = 'rgba(56, 189, 248, 0.18)';
+          st.statusLabel = 'Step 3: Dil. NH₃ added — White ppt dissolves completely (diamminesilver complex)';
+        } else {
+          st.statusLabel = 'Step 3: Dil. NH₃ added — Solution remains clear';
+        }
+      }
+    } else if (testKey === 'bacl2') {
+      if (targetStage === 'step1_acid') {
+        if (salt.anion === 'CO3^2-') {
+          playEffervescenceSound();
+          st.bubbling = true;
+          st.color = '#CBD5E1';
+          st.statusLabel = 'Step 1: Dil. Acid added — Effervescence of CO₂ gas';
+        } else {
+          playDropSplashSound();
+          st.bubbling = false;
+          st.ppt = false;
+          st.color = 'rgba(56, 189, 248, 0.2)';
+          st.statusLabel = 'Step 1: Dil. Acid added — Solution acidified';
+        }
+      } else if (targetStage === 'step2_bacl2') {
+        playDropSplashSound();
+        if (salt.anion === 'SO4^2-') {
+          st.ppt = true;
+          st.color = '#F8FAFC';
+          st.statusLabel = 'Step 2: BaCl₂ added — Dense white ppt (BaSO₄), insoluble in acid';
+        } else {
+          st.ppt = false;
+          st.color = 'rgba(56, 189, 248, 0.2)';
+          st.statusLabel = 'Step 2: BaCl₂ added — No precipitate formed';
+        }
+      }
+    } else if (testKey === 'brown_ring') {
+      if (targetStage === 'step1_feso4') {
+        playDropSplashSound();
+        st.color = 'rgba(16, 185, 129, 0.25)';
+        st.statusLabel = 'Step 1: Fresh FeSO₄(aq) added — Pale green upper solution layer';
+      } else if (targetStage === 'step2_h2so4') {
+        playDropSplashSound();
+        if (salt.anion === 'NO3-') {
+          st.isBrownRing = true;
+          st.statusLabel = 'Step 2: Conc. H₂SO₄ trickled — Distinct brown ring at junction [Fe(H₂O)₅(NO)]²⁺';
+        } else {
+          st.isBrownRing = false;
+          st.statusLabel = 'Step 2: Conc. H₂SO₄ trickled — No brown ring formed at junction';
+        }
+      }
+    } else if (testKey === 'hcl') {
+      if (targetStage === 'step1_hcl') {
+        if (salt.anion === 'CO3^2-') {
+          playEffervescenceSound();
+          st.bubbling = true;
+          st.statusLabel = 'Step 1: 2M HCl added — Brisk effervescence of colorless gas';
+        } else if (salt.cation === 'Pb2+') {
+          playDropSplashSound();
+          st.ppt = true;
+          st.color = '#E2E8F0';
+          st.statusLabel = 'Step 1: 2M HCl added — White ppt (PbCl₂)';
+        } else {
+          playDropSplashSound();
+          st.ppt = false;
+          st.bubbling = false;
+          st.color = 'rgba(56, 189, 248, 0.2)';
+          st.statusLabel = 'Step 1: 2M HCl added — No visible reaction';
+        }
+      } else if (targetStage === 'step2_gas_warm') {
+        if (salt.anion === 'CO3^2-') {
+          st.statusLabel = 'Step 2: Gas tested — Colorless gas turns limewater milky (CO₂)';
+        } else if (salt.cation === 'Pb2+') {
+          st.ppt = false;
+          st.pptDissolved = true;
+          st.color = 'rgba(56, 189, 248, 0.2)';
+          st.statusLabel = 'Step 2: Warmed — White ppt (PbCl₂) dissolves in hot water';
+        } else {
+          st.statusLabel = 'Step 2: Warmed — No visible change';
+        }
+      }
     } else if (testKey === 'ki') {
       if (targetStage === 'few_drops') {
         playDropSplashSound();
         if (salt.cation === 'Pb2+') {
           st.ppt = true;
           st.color = '#EAB308';
-          st.statusLabel = 'KI Added: Bright canary-yellow ppt';
+          st.statusLabel = 'Step 1: KI Added — Bright canary-yellow ppt (PbI₂)';
         } else {
           st.ppt = false;
           st.color = '#334155';
-          st.statusLabel = 'KI Added: No precipitate';
+          st.statusLabel = 'Step 1: KI Added — No precipitate';
         }
       } else if (targetStage === 'heated') {
         playFlameSound();
@@ -974,19 +1191,19 @@ requireStudentLogin();
           st.ppt = false;
           st.heated = true;
           st.color = 'rgba(234, 179, 8, 0.45)';
-          st.statusLabel = 'Warmed: Yellow ppt dissolves in hot water';
+          st.statusLabel = 'Step 2: Warmed — Yellow ppt dissolves in hot water';
         } else {
           st.heated = true;
-          st.statusLabel = 'Warmed: No change';
+          st.statusLabel = 'Step 2: Warmed — No change';
         }
       } else if (targetStage === 'cooled') {
         playDropSplashSound();
         if (salt.cation === 'Pb2+') {
           st.spangles = true;
           st.color = '#EAB308';
-          st.statusLabel = 'Cooled: Golden spangles sparkle!';
+          st.statusLabel = 'Step 3: Cooled — Golden crystalline spangles sparkle!';
         } else {
-          st.statusLabel = 'Cooled: No precipitate';
+          st.statusLabel = 'Step 3: Cooled — No precipitate';
         }
       }
     }

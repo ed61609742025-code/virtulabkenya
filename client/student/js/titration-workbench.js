@@ -32,10 +32,11 @@ requireStudentLogin();
       indicatorOptions: ['Phenolphthalein', 'Methyl orange', 'Methyl red', 'Universal indicator'],
       indicatorAnswer: 'Phenolphthalein',
       titrantName: 'NaOH — Solution B',
-      titrantConcOptions: [0.0800, 0.1000, 0.1200],
+      titrantRange: [0.0750, 0.1450],
+      titrantConcOptions: [0.0800, 0.0920, 0.1000, 0.1150, 0.1280],
       ratio: 1,
       rfm: 36.5,
-      concRange: [0.08, 0.14],
+      concRange: [0.0700, 0.1450],
       briefTemplate: (vol, tc) => `
         <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--cyan-accent);font-weight:800;margin-bottom:6px;">🇰🇪 KCSE CHEMISTRY PAPER 3 (PRACTICAL) · VOLUMETRIC ANALYSIS</div>
         <div style="margin-bottom:8px;line-height:1.5;">
@@ -46,12 +47,99 @@ requireStudentLogin();
         </div>
         <div style="line-height:1.5;">
           <b>Procedure:</b><br>
-          Pipette <b>${vol.toFixed(2)} cm³</b> of Solution A into a conical flask. Fill the burette with Solution B (${tc} M NaOH). Add 2–3 drops of phenolphthalein indicator and titrate until a permanent pale pink end-point is obtained. Record your burette readings in the table and repeat to obtain at least two concordant readings (within 0.10 cm³).
+          Pipette an aliquot volume of <b>${vol.toFixed(2)} cm³</b> of Solution A into a conical flask. Fill the burette with Solution B (${tc} M NaOH). Add 2–3 drops of phenolphthalein indicator and titrate until a permanent pale pink end-point is obtained. Record your burette readings in the table and repeat to obtain at least two concordant readings (within 0.10 cm³).
         </div>
       `,
       flaskColors: ['var(--rig-body)', '#fbe4ee', '#f6b8d2', '#e8659f'],
       answerSymbol: 'HCl',
-      equation: 'HCl(aq) + NaOH(aq) → NaCl(aq) + H2O(l)'
+      equation: 'HCl(aq) + NaOH(aq) → NaCl(aq) + H2O(l)',
+      questions: [
+        {
+          letter: 'a',
+          boxId: 'stepABox',
+          inputId: 'avgInput',
+          btnId: 'btnCheckAverage',
+          msgId: 'avgMsg',
+          label: '(a) Average Titre V_avg of Solution B (NaOH) (cm³)',
+          buttonLabel: 'Check (a) Average Titre',
+          marks: '[2.0 Marks]',
+          step: '0.01',
+          placeholder: 'e.g., 24.60',
+          calcExpected: (ctx) => systemAverage(),
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.02,
+          feedbackSuccess: (exp, ctx) => `Average titre = ${exp.toFixed(2)} cm³. Question (b) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toFixed(2)} cm³ from your concordant trials.`,
+          workingStep: (exp, ctx) => `<b>(a) Average Titre:</b> V_avg = <b>${exp.toFixed(2)} cm³</b>`
+        },
+        {
+          letter: 'b',
+          boxId: 'stepBBox',
+          inputId: 'molesTitrantInput',
+          btnId: 'btnCheckMolesTitrant',
+          msgId: 'molesTitrantMsg',
+          label: '(b) Moles of NaOH in average volume used (n₁)',
+          buttonLabel: 'Check (b) Moles of NaOH',
+          marks: '[2.0 Marks]',
+          step: '0.00001',
+          placeholder: 'e.g., 0.00250',
+          calcExpected: (ctx) => (ctx.sessionTitrantConc * ctx.studentAvg) / 1000,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.0001 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! n₁ = ${exp.toExponential(3)} moles. Question (c) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toExponential(3)} moles (${ctx.sessionTitrantConc} M × ${ctx.studentAvg.toFixed(2)} cm³ / 1000).`,
+          workingStep: (exp, ctx) => `<b>(b) Moles of NaOH (n₁):</b> (${ctx.sessionTitrantConc} M × ${ctx.studentAvg.toFixed(2)} cm³) / 1000 = <b>${exp.toExponential(4)} mol</b>`
+        },
+        {
+          letter: 'c',
+          boxId: 'stepCBox',
+          inputId: 'molesAnalyteInput',
+          btnId: 'btnCheckMolesAnalyte',
+          msgId: 'molesAnalyteMsg',
+          label: '(c) Moles of HCl in aliquot volume of Solution A (n₂)',
+          buttonLabel: 'Check (c) Moles of HCl',
+          marks: '[2.0 Marks]',
+          step: '0.00001',
+          placeholder: 'e.g., 0.00250',
+          calcExpected: (ctx) => ((ctx.sessionTitrantConc * ctx.studentAvg) / 1000) * 1.0,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.0001 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! HCl : NaOH = 1 : 1, n₂ = ${exp.toExponential(3)} moles. Question (d) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toExponential(3)} moles in ${ctx.sessionAnalyteVolume} cm³.`,
+          workingStep: (exp, ctx) => `<b>(c) Moles of HCl in ${ctx.sessionAnalyteVolume.toFixed(1)} cm³ (n₂):</b> Mole ratio HCl:NaOH = 1:1 → n₂ = <b>${exp.toExponential(4)} mol</b>`
+        },
+        {
+          letter: 'd',
+          boxId: 'stepDBox',
+          inputId: 'calcConc',
+          btnId: 'btnCheckMolarity',
+          msgId: 'molarityMsg',
+          label: '(d) Molar concentration of HCl in Solution A (mol/dm³)',
+          buttonLabel: 'Check (d) Molarity',
+          marks: '[2.0 Marks]',
+          step: '0.0001',
+          placeholder: 'e.g., 0.1000',
+          calcExpected: (ctx) => (((ctx.sessionTitrantConc * ctx.studentAvg) / 1000) * 1000) / ctx.sessionAnalyteVolume,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.0015 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! Molarity = ${exp.toFixed(4)} M. Question (e) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toFixed(4)} M (${ctx.studentAvg.toFixed(2)} cm³ × ${ctx.sessionTitrantConc} M / ${ctx.sessionAnalyteVolume} cm³).`,
+          workingStep: (exp, ctx) => `<b>(d) Molarity of HCl:</b> (${exp * ctx.sessionAnalyteVolume / 1000} mol × 1000) / ${ctx.sessionAnalyteVolume.toFixed(1)} cm³ = <b>${exp.toFixed(4)} M</b>`
+        },
+        {
+          letter: 'e',
+          boxId: 'stepEBox',
+          inputId: 'massConcInput',
+          btnId: 'btnCheckMassConc',
+          msgId: 'massConcMsg',
+          label: '(e) Mass concentration of HCl in Solution A in g/dm³ (H = 1.0, Cl = 35.5)',
+          buttonLabel: 'Check (e) Mass Concentration',
+          marks: '[2.0 Marks]',
+          step: '0.01',
+          placeholder: 'e.g., 3.65',
+          calcExpected: (ctx) => ((((ctx.sessionTitrantConc * ctx.studentAvg) / 1000) * 1000) / ctx.sessionAnalyteVolume) * 36.5,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.15 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! Mass conc = ${exp.toFixed(2)} g/dm³. Full submission unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toFixed(2)} g/dm³ (Molarity × RFM of HCl where H = 1.0, Cl = 35.5).`,
+          workingStep: (exp, ctx) => `<b>(e) Mass Concentration of HCl:</b><br>RFM of HCl = (1.0 + 35.5) = 36.5 g/mol<br>Mass conc = Molarity × 36.5 = <b>${exp.toFixed(2)} g/dm³</b>`
+        }
+      ]
     },
     redox: {
       key: 'redox',
@@ -61,10 +149,11 @@ requireStudentLogin();
       indicatorOptions: ['No indicator needed (self-indicating)', 'Starch', 'Phenolphthalein', 'Potassium chromate'],
       indicatorAnswer: 'No indicator needed (self-indicating)',
       titrantName: 'KMnO₄ — Solution B',
-      titrantConcOptions: [0.0180, 0.0200, 0.0220],
+      titrantRange: [0.0150, 0.0260],
+      titrantConcOptions: [0.0180, 0.0200, 0.0220, 0.0240],
       ratio: 5,
       rfm: 278.0,
-      concRange: [0.06, 0.14],
+      concRange: [0.0600, 0.1350],
       briefTemplate: (vol, tc) => `
         <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--cyan-accent);font-weight:800;margin-bottom:6px;">🇰🇪 KCSE CHEMISTRY PAPER 3 (PRACTICAL) · REDOX VOLUMETRIC ANALYSIS</div>
         <div style="margin-bottom:8px;line-height:1.5;">
@@ -75,7 +164,7 @@ requireStudentLogin();
         </div>
         <div style="margin-bottom:8px;line-height:1.5;">
           <b>Procedure:</b><br>
-          Pipette <b>${vol.toFixed(2)} cm³</b> of solution A into a conical flask. Fill the burette with solution B (KMnO₄). Titrate solution A against solution B until the first permanent faint pink tinge persists in the flask. Record your results in the table and repeat to obtain consistent readings.
+          Pipette an aliquot volume of <b>${vol.toFixed(2)} cm³</b> of solution A into a conical flask. Fill the burette with solution B (KMnO₄). Titrate solution A against solution B until the first permanent faint pink tinge persists in the flask. Record your results in the table and repeat to obtain consistent readings.
         </div>
         <div style="font-size:0.8rem;background:var(--card-bg-hover);padding:6px 10px;border-radius:6px;border-left:3px solid var(--cyan-accent);">
           <b>Ionic Equation:</b> MnO₄⁻(aq) + 5Fe²⁺(aq) + 8H⁺(aq) → Mn²⁺(aq) + 5Fe³⁺(aq) + 4H₂O(l) (1 Mole KMnO₄ : 5 Moles Fe²⁺)
@@ -83,7 +172,94 @@ requireStudentLogin();
       `,
       flaskColors: ['var(--rig-body)', '#f3d9f5', '#dba3e6', '#8e2fa8'],
       answerSymbol: 'Fe²⁺',
-      equation: 'MnO4-(aq) + 5Fe2+(aq) + 8H+(aq) → Mn2+(aq) + 5Fe3+(aq) + 4H2O(l)'
+      equation: 'MnO4-(aq) + 5Fe2+(aq) + 8H+(aq) → Mn2+(aq) + 5Fe3+(aq) + 4H2O(l)',
+      questions: [
+        {
+          letter: 'a',
+          boxId: 'stepABox',
+          inputId: 'avgInput',
+          btnId: 'btnCheckAverage',
+          msgId: 'avgMsg',
+          label: '(a) Average Titre V_avg of Solution B (KMnO₄) (cm³)',
+          buttonLabel: 'Check (a) Average Titre',
+          marks: '[2.0 Marks]',
+          step: '0.01',
+          placeholder: 'e.g., 22.40',
+          calcExpected: (ctx) => systemAverage(),
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.02,
+          feedbackSuccess: (exp, ctx) => `Average titre = ${exp.toFixed(2)} cm³. Question (b) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toFixed(2)} cm³ from your concordant trials.`,
+          workingStep: (exp, ctx) => `<b>(a) Average Titre:</b> V_avg = <b>${exp.toFixed(2)} cm³</b>`
+        },
+        {
+          letter: 'b',
+          boxId: 'stepBBox',
+          inputId: 'molesTitrantInput',
+          btnId: 'btnCheckMolesTitrant',
+          msgId: 'molesTitrantMsg',
+          label: '(b) Moles of KMnO₄ in average volume used (n₁)',
+          buttonLabel: 'Check (b) Moles of KMnO₄',
+          marks: '[2.0 Marks]',
+          step: '0.00001',
+          placeholder: 'e.g., 0.00045',
+          calcExpected: (ctx) => (ctx.sessionTitrantConc * ctx.studentAvg) / 1000,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.00005 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! n₁ = ${exp.toExponential(3)} moles. Question (c) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toExponential(3)} moles (${ctx.sessionTitrantConc} M × ${ctx.studentAvg.toFixed(2)} cm³ / 1000).`,
+          workingStep: (exp, ctx) => `<b>(b) Moles of KMnO₄ (n₁):</b> (${ctx.sessionTitrantConc} M × ${ctx.studentAvg.toFixed(2)} cm³) / 1000 = <b>${exp.toExponential(4)} mol</b>`
+        },
+        {
+          letter: 'c',
+          boxId: 'stepCBox',
+          inputId: 'molesAnalyteInput',
+          btnId: 'btnCheckMolesAnalyte',
+          msgId: 'molesAnalyteMsg',
+          label: '(c) Moles of Fe²⁺ in aliquot volume of Solution A (Mole ratio 1 KMnO₄ : 5 Fe²⁺)',
+          buttonLabel: 'Check (c) Moles of Fe²⁺',
+          marks: '[2.0 Marks]',
+          step: '0.00001',
+          placeholder: 'e.g., 0.00225',
+          calcExpected: (ctx) => ((ctx.sessionTitrantConc * ctx.studentAvg) / 1000) * 5.0,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.0001 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! 5 × n₁ = ${exp.toExponential(3)} moles. Question (d) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toExponential(3)} moles (5 × moles of KMnO₄).`,
+          workingStep: (exp, ctx) => `<b>(c) Moles of Fe²⁺ in ${ctx.sessionAnalyteVolume.toFixed(1)} cm³ (n₂):</b> 5 × n₁ = <b>${exp.toExponential(4)} mol</b>`
+        },
+        {
+          letter: 'd',
+          boxId: 'stepDBox',
+          inputId: 'calcConc',
+          btnId: 'btnCheckMolarity',
+          msgId: 'molarityMsg',
+          label: '(d) Molar concentration of Fe²⁺ in Solution A (mol/dm³)',
+          buttonLabel: 'Check (d) Fe²⁺ Molarity',
+          marks: '[2.0 Marks]',
+          step: '0.0001',
+          placeholder: 'e.g., 0.0900',
+          calcExpected: (ctx) => ((((ctx.sessionTitrantConc * ctx.studentAvg) / 1000) * 5.0) * 1000) / ctx.sessionAnalyteVolume,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.0015 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! [Fe²⁺] = ${exp.toFixed(4)} M. Question (e) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toFixed(4)} M (Moles of Fe²⁺ × 1000 / ${ctx.sessionAnalyteVolume} cm³).`,
+          workingStep: (exp, ctx) => `<b>(d) Molarity of Fe²⁺:</b> (Moles of Fe²⁺ × 1000) / ${ctx.sessionAnalyteVolume.toFixed(1)} cm³ = <b>${exp.toFixed(4)} M</b>`
+        },
+        {
+          letter: 'e',
+          boxId: 'stepEBox',
+          inputId: 'massConcInput',
+          btnId: 'btnCheckMassConc',
+          msgId: 'massConcMsg',
+          label: '(e) Mass of Iron (Fe) in 1.0 dm³ of Solution A in g (RAM: Fe = 56.0)',
+          buttonLabel: 'Check (e) Mass of Iron',
+          marks: '[2.0 Marks]',
+          step: '0.01',
+          placeholder: 'e.g., 5.04',
+          calcExpected: (ctx) => (((((ctx.sessionTitrantConc * ctx.studentAvg) / 1000) * 5.0) * 1000) / ctx.sessionAnalyteVolume) * 56.0,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.15 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! Mass of Fe = ${exp.toFixed(2)} g/dm³. Full submission unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toFixed(2)} g (Molarity of Fe²⁺ × RAM of Fe where Fe = 56.0).`,
+          workingStep: (exp, ctx) => `<b>(e) Mass of Iron in 1 dm³:</b><br>RAM of Fe = 56.0 g/mol<br>Mass of Fe = [Fe²⁺] × 56.0 = <b>${exp.toFixed(2)} g/dm³</b>`
+        }
+      ]
     },
     precipitation: {
       key: 'precipitation',
@@ -93,10 +269,11 @@ requireStudentLogin();
       indicatorOptions: ['Potassium chromate', 'Phenolphthalein', 'Methyl orange', 'Eriochrome Black T'],
       indicatorAnswer: 'Potassium chromate',
       titrantName: 'AgNO₃ — Solution B',
-      titrantConcOptions: [0.0800, 0.1000, 0.1200],
+      titrantRange: [0.0750, 0.1400],
+      titrantConcOptions: [0.0800, 0.0950, 0.1050, 0.1200],
       ratio: 1,
       rfm: 58.5,
-      concRange: [0.06, 0.12],
+      concRange: [0.0650, 0.1350],
       briefTemplate: (vol, tc) => `
         <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--cyan-accent);font-weight:800;margin-bottom:6px;">🇰🇪 KCSE CHEMISTRY PAPER 3 (PRACTICAL) · PRECIPITATION ANALYSIS</div>
         <div style="margin-bottom:8px;line-height:1.5;">
@@ -107,12 +284,99 @@ requireStudentLogin();
         </div>
         <div style="line-height:1.5;">
           <b>Procedure:</b><br>
-          Pipette <b>${vol.toFixed(2)} cm³</b> of solution A into a conical flask. Add 1 cm³ of Potassium Chromate indicator. Titrate with solution B (AgNO₃) from the burette until the yellow mixture just turns to a permanent red-brown precipitate (Ag₂CrO₄). Record your burette readings.
+          Pipette an aliquot volume of <b>${vol.toFixed(2)} cm³</b> of solution A into a conical flask. Add 1 cm³ of Potassium Chromate indicator. Titrate with solution B (AgNO₃) from the burette until the yellow mixture just turns to a permanent red-brown precipitate (Ag₂CrO₄). Record your burette readings.
         </div>
       `,
       flaskColors: ['#f2f1ec', '#fdf3c4', '#f5c98a', '#b5651d'],
       answerSymbol: 'Cl⁻',
-      equation: 'Ag+(aq) + Cl-(aq) → AgCl(s)'
+      equation: 'Ag+(aq) + Cl-(aq) → AgCl(s)',
+      questions: [
+        {
+          letter: 'a',
+          boxId: 'stepABox',
+          inputId: 'avgInput',
+          btnId: 'btnCheckAverage',
+          msgId: 'avgMsg',
+          label: '(a) Average Titre V_avg of Solution B (AgNO₃) (cm³)',
+          buttonLabel: 'Check (a) Average Titre',
+          marks: '[2.0 Marks]',
+          step: '0.01',
+          placeholder: 'e.g., 21.30',
+          calcExpected: (ctx) => systemAverage(),
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.02,
+          feedbackSuccess: (exp, ctx) => `Average titre = ${exp.toFixed(2)} cm³. Question (b) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toFixed(2)} cm³ from your concordant trials.`,
+          workingStep: (exp, ctx) => `<b>(a) Average Titre:</b> V_avg = <b>${exp.toFixed(2)} cm³</b>`
+        },
+        {
+          letter: 'b',
+          boxId: 'stepBBox',
+          inputId: 'molesTitrantInput',
+          btnId: 'btnCheckMolesTitrant',
+          msgId: 'molesTitrantMsg',
+          label: '(b) Moles of AgNO₃ in average volume used (n₁)',
+          buttonLabel: 'Check (b) Moles of AgNO₃',
+          marks: '[2.0 Marks]',
+          step: '0.00001',
+          placeholder: 'e.g., 0.00213',
+          calcExpected: (ctx) => (ctx.sessionTitrantConc * ctx.studentAvg) / 1000,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.0001 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! n₁ = ${exp.toExponential(3)} moles. Question (c) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toExponential(3)} moles (${ctx.sessionTitrantConc} M × ${ctx.studentAvg.toFixed(2)} cm³ / 1000).`,
+          workingStep: (exp, ctx) => `<b>(b) Moles of AgNO₃ (n₁):</b> (${ctx.sessionTitrantConc} M × ${ctx.studentAvg.toFixed(2)} cm³) / 1000 = <b>${exp.toExponential(4)} mol</b>`
+        },
+        {
+          letter: 'c',
+          boxId: 'stepCBox',
+          inputId: 'molesAnalyteInput',
+          btnId: 'btnCheckMolesAnalyte',
+          msgId: 'molesAnalyteMsg',
+          label: '(c) Moles of Cl⁻ ions in aliquot volume of Solution A (n₂)',
+          buttonLabel: 'Check (c) Moles of Cl⁻',
+          marks: '[2.0 Marks]',
+          step: '0.00001',
+          placeholder: 'e.g., 0.00213',
+          calcExpected: (ctx) => ((ctx.sessionTitrantConc * ctx.studentAvg) / 1000) * 1.0,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.0001 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! Ag⁺ : Cl⁻ = 1 : 1, n₂ = ${exp.toExponential(3)} moles. Question (d) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toExponential(3)} moles in ${ctx.sessionAnalyteVolume} cm³.`,
+          workingStep: (exp, ctx) => `<b>(c) Moles of Cl⁻ in ${ctx.sessionAnalyteVolume.toFixed(1)} cm³ (n₂):</b> Mole ratio 1:1 → n₂ = <b>${exp.toExponential(4)} mol</b>`
+        },
+        {
+          letter: 'd',
+          boxId: 'stepDBox',
+          inputId: 'calcConc',
+          btnId: 'btnCheckMolarity',
+          msgId: 'molarityMsg',
+          label: '(d) Molar concentration of NaCl in Solution A (mol/dm³)',
+          buttonLabel: 'Check (d) NaCl Molarity',
+          marks: '[2.0 Marks]',
+          step: '0.0001',
+          placeholder: 'e.g., 0.0852',
+          calcExpected: (ctx) => (((ctx.sessionTitrantConc * ctx.studentAvg) / 1000) * 1000) / ctx.sessionAnalyteVolume,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.0015 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! [NaCl] = ${exp.toFixed(4)} M. Question (e) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toFixed(4)} M.`,
+          workingStep: (exp, ctx) => `<b>(d) Molarity of NaCl:</b> <b>${exp.toFixed(4)} M</b>`
+        },
+        {
+          letter: 'e',
+          boxId: 'stepEBox',
+          inputId: 'massConcInput',
+          btnId: 'btnCheckMassConc',
+          msgId: 'massConcMsg',
+          label: '(e) Mass of pure NaCl dissolved in 250.0 cm³ flask in g (Na = 23.0, Cl = 35.5)',
+          buttonLabel: 'Check (e) Mass in 250 cm³',
+          marks: '[2.0 Marks]',
+          step: '0.01',
+          placeholder: 'e.g., 1.25',
+          calcExpected: (ctx) => ((((ctx.sessionTitrantConc * ctx.studentAvg) / 1000) * 1000) / ctx.sessionAnalyteVolume) * (250 / 1000) * 58.5,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.10 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! Mass in 250 cm³ = ${exp.toFixed(2)} g. Full submission unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toFixed(2)} g (Molarity × 0.25 dm³ × RFM of NaCl where Na = 23.0, Cl = 35.5).`,
+          workingStep: (exp, ctx) => `<b>(e) Mass of NaCl in 250 cm³:</b><br>RFM of NaCl = (23.0 + 35.5) = 58.5 g/mol<br>Mass in 250 cm³ = Molarity × (250/1000) × 58.5 = <b>${exp.toFixed(2)} g</b>`
+        }
+      ]
     },
     complexometric: {
       key: 'complexometric',
@@ -122,10 +386,11 @@ requireStudentLogin();
       indicatorOptions: ['Eriochrome Black T', 'Phenolphthalein', 'Methyl orange', 'Potassium chromate'],
       indicatorAnswer: 'Eriochrome Black T',
       titrantName: 'EDTA — Solution B',
-      titrantConcOptions: [0.0090, 0.0100, 0.0110],
+      titrantRange: [0.0075, 0.0145],
+      titrantConcOptions: [0.0090, 0.0100, 0.0115, 0.0130],
       ratio: 1,
       rfm: 100.0,
-      concRange: [0.008, 0.014],
+      concRange: [0.0075, 0.0145],
       briefTemplate: (vol, tc) => `
         <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--cyan-accent);font-weight:800;margin-bottom:6px;">🇰🇪 KCSE CHEMISTRY PAPER 3 (PRACTICAL) · WATER HARDNESS ESTIMATION</div>
         <div style="margin-bottom:8px;line-height:1.5;">
@@ -136,12 +401,99 @@ requireStudentLogin();
         </div>
         <div style="line-height:1.5;">
           <b>Procedure:</b><br>
-          Pipette <b>${vol.toFixed(2)} cm³</b> of hard water solution A into a conical flask. Add 2 cm³ of pH 10 ammonia buffer solution and 2 drops of EBT indicator. Titrate with EDTA solution B until the solution turns from wine-red to clear sky-blue.
+          Pipette an aliquot volume of <b>${vol.toFixed(2)} cm³</b> of hard water solution A into a conical flask. Add 2 cm³ of pH 10 ammonia buffer solution and 2 drops of EBT indicator. Titrate with EDTA solution B until the solution turns from wine-red to clear sky-blue.
         </div>
       `,
       flaskColors: ['#8e2a4a', '#8a5a9a', '#5a6aa8', '#2b4a9e'],
       answerSymbol: 'Ca²⁺',
-      equation: 'Ca2+(aq) + EDTA4-(aq) → [Ca-EDTA]2-(aq)'
+      equation: 'Ca2+(aq) + EDTA4-(aq) → [Ca-EDTA]2-(aq)',
+      questions: [
+        {
+          letter: 'a',
+          boxId: 'stepABox',
+          inputId: 'avgInput',
+          btnId: 'btnCheckAverage',
+          msgId: 'avgMsg',
+          label: '(a) Average Titre V_avg of Solution B (EDTA) (cm³)',
+          buttonLabel: 'Check (a) Average Titre',
+          marks: '[2.0 Marks]',
+          step: '0.01',
+          placeholder: 'e.g., 25.00',
+          calcExpected: (ctx) => systemAverage(),
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.02,
+          feedbackSuccess: (exp, ctx) => `Average titre = ${exp.toFixed(2)} cm³. Question (b) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toFixed(2)} cm³ from your concordant trials.`,
+          workingStep: (exp, ctx) => `<b>(a) Average Titre:</b> V_avg = <b>${exp.toFixed(2)} cm³</b>`
+        },
+        {
+          letter: 'b',
+          boxId: 'stepBBox',
+          inputId: 'molesTitrantInput',
+          btnId: 'btnCheckMolesTitrant',
+          msgId: 'molesTitrantMsg',
+          label: '(b) Moles of EDTA in average volume used (n₁)',
+          buttonLabel: 'Check (b) Moles of EDTA',
+          marks: '[2.0 Marks]',
+          step: '0.00001',
+          placeholder: 'e.g., 0.00025',
+          calcExpected: (ctx) => (ctx.sessionTitrantConc * ctx.studentAvg) / 1000,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.00005 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! n₁ = ${exp.toExponential(3)} moles. Question (c) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toExponential(3)} moles (${ctx.sessionTitrantConc} M × ${ctx.studentAvg.toFixed(2)} cm³ / 1000).`,
+          workingStep: (exp, ctx) => `<b>(b) Moles of EDTA (n₁):</b> (${ctx.sessionTitrantConc} M × ${ctx.studentAvg.toFixed(2)} cm³) / 1000 = <b>${exp.toExponential(4)} mol</b>`
+        },
+        {
+          letter: 'c',
+          boxId: 'stepCBox',
+          inputId: 'molesAnalyteInput',
+          btnId: 'btnCheckMolesAnalyte',
+          msgId: 'molesAnalyteMsg',
+          label: '(c) Moles of Ca²⁺/Mg²⁺ in aliquot volume (1:1 chelate ratio)',
+          buttonLabel: 'Check (c) Moles of Ca²⁺',
+          marks: '[2.0 Marks]',
+          step: '0.00001',
+          placeholder: 'e.g., 0.00025',
+          calcExpected: (ctx) => ((ctx.sessionTitrantConc * ctx.studentAvg) / 1000) * 1.0,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.00005 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! 1:1 Chelate ratio, n₂ = ${exp.toExponential(3)} moles. Question (d) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toExponential(3)} moles in ${ctx.sessionAnalyteVolume} cm³.`,
+          workingStep: (exp, ctx) => `<b>(c) Moles of Ca²⁺ in ${ctx.sessionAnalyteVolume.toFixed(1)} cm³ (n₂):</b> 1:1 ratio → n₂ = <b>${exp.toExponential(4)} mol</b>`
+        },
+        {
+          letter: 'd',
+          boxId: 'stepDBox',
+          inputId: 'calcConc',
+          btnId: 'btnCheckMolarity',
+          msgId: 'molarityMsg',
+          label: '(d) Molar concentration of Ca²⁺ in water sample (mol/dm³)',
+          buttonLabel: 'Check (d) Ca²⁺ Molarity',
+          marks: '[2.0 Marks]',
+          step: '0.0001',
+          placeholder: 'e.g., 0.0100',
+          calcExpected: (ctx) => (((ctx.sessionTitrantConc * ctx.studentAvg) / 1000) * 1000) / ctx.sessionAnalyteVolume,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.0005 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! [Ca²⁺] = ${exp.toFixed(4)} M. Question (e) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toFixed(4)} M.`,
+          workingStep: (exp, ctx) => `<b>(d) Molarity of Ca²⁺:</b> <b>${exp.toFixed(4)} M</b>`
+        },
+        {
+          letter: 'e',
+          boxId: 'stepEBox',
+          inputId: 'massConcInput',
+          btnId: 'btnCheckMassConc',
+          msgId: 'massConcMsg',
+          label: '(e) Total Water Hardness as CaCO₃ in mg/dm³ (ppm) (Ca = 40.0, C = 12.0, O = 16.0)',
+          buttonLabel: 'Check (e) Hardness (ppm)',
+          marks: '[2.0 Marks]',
+          step: '0.1',
+          placeholder: 'e.g., 1000.0',
+          calcExpected: (ctx) => ((((ctx.sessionTitrantConc * ctx.studentAvg) / 1000) * 1000) / ctx.sessionAnalyteVolume) * 100.0 * 1000,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 15.0 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! Total Hardness = ${exp.toFixed(1)} ppm CaCO₃. Full submission unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toFixed(1)} ppm (Molarity × RFM of CaCO₃ × 1000 mg/g where Ca = 40.0, C = 12.0, O = 16.0).`,
+          workingStep: (exp, ctx) => `<b>(e) Hardness as CaCO₃ (ppm):</b><br>RFM of CaCO₃ = (40.0 + 12.0 + 3 × 16.0) = 100.0 g/mol<br>Hardness = Molarity × 100.0 × 1000 = <b>${exp.toFixed(1)} mg/dm³ (ppm)</b>`
+        }
+      ]
     },
     dibasic: {
       key: 'dibasic',
@@ -151,26 +503,122 @@ requireStudentLogin();
       indicatorOptions: ['Phenolphthalein', 'Methyl orange', 'Methyl red', 'Eriochrome Black T'],
       indicatorAnswer: 'Phenolphthalein',
       titrantName: 'NaOH — Solution B',
-      titrantConcOptions: [0.0900, 0.1000, 0.1100],
+      titrantRange: [0.0750, 0.1350],
+      titrantConcOptions: [0.0880, 0.0950, 0.1080, 0.1200],
       ratio: 0.5,
       rfm: 98.0,
-      concRange: [0.04, 0.07],
-      briefTemplate: (vol, tc) => `
+      concRange: [0.0380, 0.0720],
+      briefTemplate: (vol, tc, massConc) => `
         <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--cyan-accent);font-weight:800;margin-bottom:6px;">🇰🇪 KCSE CHEMISTRY PAPER 3 (PRACTICAL) · DIBASIC ACID ANALYSIS</div>
         <div style="margin-bottom:8px;line-height:1.5;">
           <b>You are provided with:</b><br>
-          • <b>Solution A</b>: Unknown Dibasic Sulfuric acid (H₂SO₄).<br>
+          • <b>Solution A</b>: Unknown Dibasic Sulfuric acid (H₂X) containing <b>${massConc || '4.90'} g/dm³</b>.<br>
           • <b>Solution B</b>: <b>${tc} M</b> Sodium Hydroxide (NaOH).<br>
           • <b>Indicator</b>: Phenolphthalein indicator.
         </div>
         <div style="line-height:1.5;">
           <b>Procedure:</b><br>
-          Pipette <b>${vol.toFixed(2)} cm³</b> of dibasic acid solution A into a conical flask. Fill the burette with solution B (NaOH). Titrate using phenolphthalein indicator until a permanent pale pink color is obtained.
+          Pipette an aliquot volume of <b>${vol.toFixed(2)} cm³</b> of dibasic acid solution A into a conical flask. Fill the burette with solution B (NaOH). Titrate using phenolphthalein indicator until a permanent pale pink color is obtained.
         </div>
       `,
       flaskColors: ['var(--rig-body)', '#fbe4ee', '#f6b8d2', '#e8659f'],
       answerSymbol: 'H₂SO₄',
-      equation: 'H2SO4(aq) + 2NaOH(aq) → Na2SO4(aq) + 2H2O(l)'
+      equation: 'H2SO4(aq) + 2NaOH(aq) → Na2SO4(aq) + 2H2O(l)',
+      questions: [
+        {
+          letter: 'a',
+          boxId: 'stepABox',
+          inputId: 'avgInput',
+          btnId: 'btnCheckAverage',
+          msgId: 'avgMsg',
+          label: '(a) Average Titre V_avg of Solution B (NaOH) (cm³)',
+          buttonLabel: 'Check (a) Average Titre',
+          marks: '[2.0 Marks]',
+          step: '0.01',
+          placeholder: 'e.g., 24.50',
+          calcExpected: (ctx) => systemAverage(),
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.02,
+          feedbackSuccess: (exp, ctx) => `Average titre = ${exp.toFixed(2)} cm³. Question (b) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toFixed(2)} cm³ from your concordant trials.`,
+          workingStep: (exp, ctx) => `<b>(a) Average Titre:</b> V_avg = <b>${exp.toFixed(2)} cm³</b>`
+        },
+        {
+          letter: 'b',
+          boxId: 'stepBBox',
+          inputId: 'molesTitrantInput',
+          btnId: 'btnCheckMolesTitrant',
+          msgId: 'molesTitrantMsg',
+          label: '(b) Moles of NaOH in average volume used (n₁)',
+          buttonLabel: 'Check (b) Moles of NaOH',
+          marks: '[2.0 Marks]',
+          step: '0.00001',
+          placeholder: 'e.g., 0.00245',
+          calcExpected: (ctx) => (ctx.sessionTitrantConc * ctx.studentAvg) / 1000,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.0001 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! n₁ = ${exp.toExponential(3)} moles. Question (c) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toExponential(3)} moles (${ctx.sessionTitrantConc} M × ${ctx.studentAvg.toFixed(2)} cm³ / 1000).`,
+          workingStep: (exp, ctx) => `<b>(b) Moles of NaOH (n₁):</b> (${ctx.sessionTitrantConc} M × ${ctx.studentAvg.toFixed(2)} cm³) / 1000 = <b>${exp.toExponential(4)} mol</b>`
+        },
+        {
+          letter: 'c',
+          boxId: 'stepCBox',
+          inputId: 'molesAnalyteInput',
+          btnId: 'btnCheckMolesAnalyte',
+          msgId: 'molesAnalyteMsg',
+          label: '(c) Moles of dibasic acid H₂X in aliquot (Mole ratio 1 H₂X : 2 NaOH)',
+          buttonLabel: 'Check (c) Moles of H₂X',
+          marks: '[2.0 Marks]',
+          step: '0.00001',
+          placeholder: 'e.g., 0.00123',
+          calcExpected: (ctx) => ((ctx.sessionTitrantConc * ctx.studentAvg) / 1000) * 0.5,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.0001 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! n₂ = 0.5 × n₁ = ${exp.toExponential(3)} moles. Question (d) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toExponential(3)} moles (0.5 × moles of NaOH).`,
+          workingStep: (exp, ctx) => `<b>(c) Moles of H₂X in ${ctx.sessionAnalyteVolume.toFixed(1)} cm³ (n₂):</b> 0.5 × n₁ = <b>${exp.toExponential(4)} mol</b>`
+        },
+        {
+          letter: 'd',
+          boxId: 'stepDBox',
+          inputId: 'calcConc',
+          btnId: 'btnCheckMolarity',
+          msgId: 'molarityMsg',
+          label: '(d) Molar concentration of dibasic acid Solution A (mol/dm³)',
+          buttonLabel: 'Check (d) Acid Molarity',
+          marks: '[2.0 Marks]',
+          step: '0.0001',
+          placeholder: 'e.g., 0.0490',
+          calcExpected: (ctx) => ((((ctx.sessionTitrantConc * ctx.studentAvg) / 1000) * 0.5) * 1000) / ctx.sessionAnalyteVolume,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.0010 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! Molarity = ${exp.toFixed(4)} M. Question (e) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toFixed(4)} M.`,
+          workingStep: (exp, ctx) => `<b>(d) Molarity of H₂X:</b> <b>${exp.toFixed(4)} M</b>`
+        },
+        {
+          letter: 'e',
+          boxId: 'stepEBox',
+          inputId: 'massConcInput',
+          btnId: 'btnCheckMassConc',
+          msgId: 'massConcMsg',
+          label: (ctx) => `(e) Relative Formula Mass (RFM) of acid H₂X (Solution A contains ${(ctx && ctx.sessionMassConc ? ctx.sessionMassConc : 4.90).toFixed(2)} g/dm³)`,
+          buttonLabel: 'Check (e) RFM of Acid',
+          marks: '[2.0 Marks]',
+          step: '0.1',
+          placeholder: 'e.g., 98.0',
+          calcExpected: (ctx) => {
+            const molarity = ((((ctx.sessionTitrantConc * ctx.studentAvg) / 1000) * 0.5) * 1000) / ctx.sessionAnalyteVolume;
+            const mass = (ctx && ctx.sessionMassConc) ? ctx.sessionMassConc : 4.90;
+            return molarity > 0 ? (mass / molarity) : 98.0;
+          },
+          checkOk: (val, exp) => Math.abs(val - exp) <= 4.0 || (exp > 0 && Math.abs(val - exp) / exp <= 0.04),
+          feedbackSuccess: (exp, ctx) => `Correct! RFM of H₂X = ${exp.toFixed(1)} g/mol (consistent with H₂SO₄ = 98.0). Full submission unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toFixed(1)} (${((ctx && ctx.sessionMassConc) ? ctx.sessionMassConc : 4.90).toFixed(2)} g/dm³ / Molarity of H₂X).`,
+          workingStep: (exp, ctx) => {
+            const mass = (ctx && ctx.sessionMassConc) ? ctx.sessionMassConc : 4.90;
+            const molarity = ((((ctx.sessionTitrantConc * ctx.studentAvg) / 1000) * 0.5) * 1000 / ctx.sessionAnalyteVolume);
+            return `<b>(e) Relative Formula Mass (RFM) of H₂X:</b><br>RFM = Mass conc / Molarity = ${mass.toFixed(2)} / ${molarity.toFixed(4)} = <b>${exp.toFixed(1)} g/mol</b>`;
+          }
+        }
+      ]
     },
     tribasic: {
       key: 'tribasic',
@@ -180,10 +628,11 @@ requireStudentLogin();
       indicatorOptions: ['Phenolphthalein', 'Methyl orange', 'Methyl red', 'Potassium chromate'],
       indicatorAnswer: 'Phenolphthalein',
       titrantName: 'NaOH — Solution B',
-      titrantConcOptions: [0.0900, 0.1000, 0.1100],
+      titrantRange: [0.0750, 0.1350],
+      titrantConcOptions: [0.0880, 0.0950, 0.1080, 0.1200],
       ratio: 1 / 3,
       rfm: 98.0,
-      concRange: [0.03, 0.05],
+      concRange: [0.0260, 0.0520],
       briefTemplate: (vol, tc) => `
         <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--cyan-accent);font-weight:800;margin-bottom:6px;">🇰🇪 KCSE CHEMISTRY PAPER 3 (PRACTICAL) · TRIBASIC ACID ANALYSIS</div>
         <div style="margin-bottom:8px;line-height:1.5;">
@@ -194,12 +643,99 @@ requireStudentLogin();
         </div>
         <div style="line-height:1.5;">
           <b>Procedure:</b><br>
-          Pipette <b>${vol.toFixed(2)} cm³</b> of solution A into a conical flask. Titrate against solution B (NaOH) using phenolphthalein indicator until a permanent faint pink endpoint is reached.
+          Pipette an aliquot volume of <b>${vol.toFixed(2)} cm³</b> of solution A into a conical flask. Titrate against solution B (NaOH) using phenolphthalein indicator until a permanent faint pink endpoint is reached.
         </div>
       `,
       flaskColors: ['var(--rig-body)', '#fbe4ee', '#f6b8d2', '#e8659f'],
       answerSymbol: 'H₃PO₄',
-      equation: 'H3PO4(aq) + 3NaOH(aq) → Na3PO4(aq) + 3H2O(l)'
+      equation: 'H3PO4(aq) + 3NaOH(aq) → Na3PO4(aq) + 3H2O(l)',
+      questions: [
+        {
+          letter: 'a',
+          boxId: 'stepABox',
+          inputId: 'avgInput',
+          btnId: 'btnCheckAverage',
+          msgId: 'avgMsg',
+          label: '(a) Average Titre V_avg of Solution B (NaOH) (cm³)',
+          buttonLabel: 'Check (a) Average Titre',
+          marks: '[2.0 Marks]',
+          step: '0.01',
+          placeholder: 'e.g., 27.00',
+          calcExpected: (ctx) => systemAverage(),
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.02,
+          feedbackSuccess: (exp, ctx) => `Average titre = ${exp.toFixed(2)} cm³. Question (b) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toFixed(2)} cm³ from your concordant trials.`,
+          workingStep: (exp, ctx) => `<b>(a) Average Titre:</b> V_avg = <b>${exp.toFixed(2)} cm³</b>`
+        },
+        {
+          letter: 'b',
+          boxId: 'stepBBox',
+          inputId: 'molesTitrantInput',
+          btnId: 'btnCheckMolesTitrant',
+          msgId: 'molesTitrantMsg',
+          label: '(b) Moles of NaOH in average volume used (n₁)',
+          buttonLabel: 'Check (b) Moles of NaOH',
+          marks: '[2.0 Marks]',
+          step: '0.00001',
+          placeholder: 'e.g., 0.00270',
+          calcExpected: (ctx) => (ctx.sessionTitrantConc * ctx.studentAvg) / 1000,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.0001 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! n₁ = ${exp.toExponential(3)} moles. Question (c) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toExponential(3)} moles.`,
+          workingStep: (exp, ctx) => `<b>(b) Moles of NaOH (n₁):</b> (${ctx.sessionTitrantConc} M × ${ctx.studentAvg.toFixed(2)} cm³) / 1000 = <b>${exp.toExponential(4)} mol</b>`
+        },
+        {
+          letter: 'c',
+          boxId: 'stepCBox',
+          inputId: 'molesAnalyteInput',
+          btnId: 'btnCheckMolesAnalyte',
+          msgId: 'molesAnalyteMsg',
+          label: '(c) Moles of H₃PO₄ in aliquot (Mole ratio 1 H₃PO₄ : 3 NaOH)',
+          buttonLabel: 'Check (c) Moles of H₃PO₄',
+          marks: '[2.0 Marks]',
+          step: '0.00001',
+          placeholder: 'e.g., 0.00090',
+          calcExpected: (ctx) => ((ctx.sessionTitrantConc * ctx.studentAvg) / 1000) * (1 / 3),
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.0001 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! n₂ = n₁ / 3 = ${exp.toExponential(3)} moles. Question (d) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toExponential(3)} moles (moles of NaOH / 3).`,
+          workingStep: (exp, ctx) => `<b>(c) Moles of H₃PO₄ in ${ctx.sessionAnalyteVolume.toFixed(1)} cm³ (n₂):</b> n₁ / 3 = <b>${exp.toExponential(4)} mol</b>`
+        },
+        {
+          letter: 'd',
+          boxId: 'stepDBox',
+          inputId: 'calcConc',
+          btnId: 'btnCheckMolarity',
+          msgId: 'molarityMsg',
+          label: '(d) Molar concentration of H₃PO₄ in Solution A (mol/dm³)',
+          buttonLabel: 'Check (d) H₃PO₄ Molarity',
+          marks: '[2.0 Marks]',
+          step: '0.0001',
+          placeholder: 'e.g., 0.0360',
+          calcExpected: (ctx) => ((((ctx.sessionTitrantConc * ctx.studentAvg) / 1000) * (1 / 3)) * 1000) / ctx.sessionAnalyteVolume,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.0010 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! [H₃PO₄] = ${exp.toFixed(4)} M. Question (e) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toFixed(4)} M.`,
+          workingStep: (exp, ctx) => `<b>(d) Molarity of H₃PO₄:</b> <b>${exp.toFixed(4)} M</b>`
+        },
+        {
+          letter: 'e',
+          boxId: 'stepEBox',
+          inputId: 'massConcInput',
+          btnId: 'btnCheckMassConc',
+          msgId: 'massConcMsg',
+          label: '(e) Mass of pure H₃PO₄ in 500.0 cm³ bottle in g (H = 1.0, P = 31.0, O = 16.0)',
+          buttonLabel: 'Check (e) Mass in 500 cm³',
+          marks: '[2.0 Marks]',
+          step: '0.01',
+          placeholder: 'e.g., 1.76',
+          calcExpected: (ctx) => ((((ctx.sessionTitrantConc * ctx.studentAvg) / 1000) * (1 / 3) * 1000) / ctx.sessionAnalyteVolume) * (500 / 1000) * 98.0,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.10 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! Mass in 500 cm³ = ${exp.toFixed(2)} g. Full submission unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toFixed(2)} g (Molarity × 0.50 dm³ × RFM of H₃PO₄ where H = 1.0, P = 31.0, O = 16.0).`,
+          workingStep: (exp, ctx) => `<b>(e) Mass of H₃PO₄ in 500 cm³:</b><br>RFM of H₃PO₄ = (3 × 1.0 + 31.0 + 4 × 16.0) = 98.0 g/mol<br>Mass in 500 cm³ = Molarity × (500/1000) × 98.0 = <b>${exp.toFixed(2)} g</b>`
+        }
+      ]
     },
     weakAcid: {
       key: 'weakAcid',
@@ -209,26 +745,118 @@ requireStudentLogin();
       indicatorOptions: ['Phenolphthalein', 'Methyl orange', 'Methyl red', 'Universal indicator'],
       indicatorAnswer: 'Phenolphthalein',
       titrantName: 'NaOH — Solution B',
-      titrantConcOptions: [0.0800, 0.1000, 0.1200],
+      titrantRange: [0.0750, 0.1450],
+      titrantConcOptions: [0.0800, 0.0950, 0.1050, 0.1200],
       ratio: 1,
       rfm: 60.0,
-      concRange: [0.08, 0.14],
+      concRange: [0.0700, 0.1450],
       briefTemplate: (vol, tc) => `
         <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--cyan-accent);font-weight:800;margin-bottom:6px;">🇰🇪 KCSE CHEMISTRY PAPER 3 (PRACTICAL) · ALKANOIC ACID ESTIMATION</div>
         <div style="margin-bottom:8px;line-height:1.5;">
           <b>You are provided with:</b><br>
-          • <b>Solution A</b>: Commercial vinegar containing Ethanoic acid (CH₃COOH).<br>
+          • <b>Solution A</b>: Commercial vinegar sample diluted 10-fold containing Ethanoic acid (CH₃COOH).<br>
           • <b>Solution B</b>: <b>${tc} M</b> Sodium Hydroxide (NaOH).<br>
           • <b>Indicator</b>: Phenolphthalein indicator.
         </div>
         <div style="line-height:1.5;">
           <b>Procedure:</b><br>
-          Pipette <b>${vol.toFixed(2)} cm³</b> of alkanoic acid solution A into a conical flask. Titrate with NaOH solution B using phenolphthalein indicator until a faint pink end-point is reached.
+          Pipette an aliquot volume of <b>${vol.toFixed(2)} cm³</b> of diluted alkanoic acid solution A into a conical flask. Titrate with NaOH solution B using phenolphthalein indicator until a faint pink end-point is reached.
         </div>
       `,
       flaskColors: ['var(--rig-body)', '#fbe4ee', '#f6b8d2', '#e8659f'],
       answerSymbol: 'CH₃COOH',
-      equation: 'CH3COOH(aq) + NaOH(aq) → CH3COONa(aq) + H2O(l)'
+      equation: 'CH3COOH(aq) + NaOH(aq) → CH3COONa(aq) + H2O(l)',
+      questions: [
+        {
+          letter: 'a',
+          boxId: 'stepABox',
+          inputId: 'avgInput',
+          btnId: 'btnCheckAverage',
+          msgId: 'avgMsg',
+          label: '(a) Average Titre V_avg of Solution B (NaOH) (cm³)',
+          buttonLabel: 'Check (a) Average Titre',
+          marks: '[2.0 Marks]',
+          step: '0.01',
+          placeholder: 'e.g., 25.00',
+          calcExpected: (ctx) => systemAverage(),
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.02,
+          feedbackSuccess: (exp, ctx) => `Average titre = ${exp.toFixed(2)} cm³. Question (b) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toFixed(2)} cm³ from your concordant trials.`,
+          workingStep: (exp, ctx) => `<b>(a) Average Titre:</b> V_avg = <b>${exp.toFixed(2)} cm³</b>`
+        },
+        {
+          letter: 'b',
+          boxId: 'stepBBox',
+          inputId: 'molesTitrantInput',
+          btnId: 'btnCheckMolesTitrant',
+          msgId: 'molesTitrantMsg',
+          label: '(b) Moles of NaOH in average volume used (n₁)',
+          buttonLabel: 'Check (b) Moles of NaOH',
+          marks: '[2.0 Marks]',
+          step: '0.00001',
+          placeholder: 'e.g., 0.00250',
+          calcExpected: (ctx) => (ctx.sessionTitrantConc * ctx.studentAvg) / 1000,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.0001 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! n₁ = ${exp.toExponential(3)} moles. Question (c) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toExponential(3)} moles.`,
+          workingStep: (exp, ctx) => `<b>(b) Moles of NaOH (n₁):</b> (${ctx.sessionTitrantConc} M × ${ctx.studentAvg.toFixed(2)} cm³) / 1000 = <b>${exp.toExponential(4)} mol</b>`
+        },
+        {
+          letter: 'c',
+          boxId: 'stepCBox',
+          inputId: 'molesAnalyteInput',
+          btnId: 'btnCheckMolesAnalyte',
+          msgId: 'molesAnalyteMsg',
+          label: '(c) Moles of CH₃COOH in aliquot of diluted Solution A (n₂)',
+          buttonLabel: 'Check (c) Moles of CH₃COOH',
+          marks: '[2.0 Marks]',
+          step: '0.00001',
+          placeholder: 'e.g., 0.00250',
+          calcExpected: (ctx) => ((ctx.sessionTitrantConc * ctx.studentAvg) / 1000) * 1.0,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.0001 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! 1:1 Mole ratio, n₂ = ${exp.toExponential(3)} moles. Question (d) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toExponential(3)} moles in ${ctx.sessionAnalyteVolume} cm³.`,
+          workingStep: (exp, ctx) => `<b>(c) Moles of CH₃COOH in ${ctx.sessionAnalyteVolume.toFixed(1)} cm³ (n₂):</b> 1:1 ratio → n₂ = <b>${exp.toExponential(4)} mol</b>`
+        },
+        {
+          letter: 'd',
+          boxId: 'stepDBox',
+          inputId: 'calcConc',
+          btnId: 'btnCheckMolarity',
+          msgId: 'molarityMsg',
+          label: '(d) Molar concentration of diluted vinegar Solution A (mol/dm³)',
+          buttonLabel: 'Check (d) Diluted Molarity',
+          marks: '[2.0 Marks]',
+          step: '0.0001',
+          placeholder: 'e.g., 0.1000',
+          calcExpected: (ctx) => (((ctx.sessionTitrantConc * ctx.studentAvg) / 1000) * 1000) / ctx.sessionAnalyteVolume,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.0015 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! Diluted Molarity = ${exp.toFixed(4)} M. Question (e) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toFixed(4)} M.`,
+          workingStep: (exp, ctx) => `<b>(d) Molarity of Diluted Vinegar:</b> <b>${exp.toFixed(4)} M</b>`
+        },
+        {
+          letter: 'e',
+          boxId: 'stepEBox',
+          inputId: 'massConcInput',
+          btnId: 'btnCheckMassConc',
+          msgId: 'massConcMsg',
+          label: '(e) Percentage (% w/v) Acidity of original vinegar (10× diluted sample; C = 12.0, H = 1.0, O = 16.0)',
+          buttonLabel: 'Check (e) % Acidity',
+          marks: '[2.0 Marks]',
+          step: '0.01',
+          placeholder: 'e.g., 6.00',
+          calcExpected: (ctx) => {
+            const dilutedMolarity = (((ctx.sessionTitrantConc * ctx.studentAvg) / 1000) * 1000) / ctx.sessionAnalyteVolume;
+            const originalMolarity = dilutedMolarity * 10.0;
+            return (originalMolarity * 60.0) / 10.0; // g/100mL = % w/v
+          },
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.25 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! Percentage Acidity = ${exp.toFixed(2)}% (w/v). Full submission unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toFixed(2)}% (Original Molarity × RFM of CH₃COOH / 10 where C = 12.0, H = 1.0, O = 16.0).`,
+          workingStep: (exp, ctx) => `<b>(e) Percentage Acidity (% w/v):</b><br>RFM of CH₃COOH = (2 × 12.0 + 4 × 1.0 + 2 × 16.0) = 60.0 g/mol<br>Original Molarity (10×) × 60.0 / 10 = <b>${exp.toFixed(2)}%</b>`
+        }
+      ]
     },
     weakBase: {
       key: 'weakBase',
@@ -238,10 +866,11 @@ requireStudentLogin();
       indicatorOptions: ['Methyl orange', 'Phenolphthalein', 'Methyl red', 'Universal indicator'],
       indicatorAnswer: 'Methyl orange',
       titrantName: 'HCl — Solution B',
-      titrantConcOptions: [0.0800, 0.1000, 0.1200],
+      titrantRange: [0.0750, 0.1450],
+      titrantConcOptions: [0.0800, 0.0950, 0.1050, 0.1200],
       ratio: 1,
       rfm: 17.0,
-      concRange: [0.08, 0.14],
+      concRange: [0.0700, 0.1450],
       briefTemplate: (vol, tc) => `
         <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--cyan-accent);font-weight:800;margin-bottom:6px;">🇰🇪 KCSE CHEMISTRY PAPER 3 (PRACTICAL) · WEAK BASE VOLUMETRIC ANALYSIS</div>
         <div style="margin-bottom:8px;line-height:1.5;">
@@ -252,12 +881,99 @@ requireStudentLogin();
         </div>
         <div style="line-height:1.5;">
           <b>Procedure:</b><br>
-          Pipette <b>${vol.toFixed(2)} cm³</b> of ammonia solution A into a conical flask. Titrate with HCl solution B using methyl orange indicator until the solution changes from yellow to permanent orange/red.
+          Pipette an aliquot volume of <b>${vol.toFixed(2)} cm³</b> of ammonia solution A into a conical flask. Titrate with HCl solution B using methyl orange indicator until the solution changes from yellow to permanent orange/red.
         </div>
       `,
       flaskColors: ['#fdf6a3', '#fcae7c', '#f4845f', '#e2523d'],
       answerSymbol: 'NH₃',
-      equation: 'NH3(aq) + HCl(aq) → NH4Cl(aq)'
+      equation: 'NH3(aq) + HCl(aq) → NH4Cl(aq)',
+      questions: [
+        {
+          letter: 'a',
+          boxId: 'stepABox',
+          inputId: 'avgInput',
+          btnId: 'btnCheckAverage',
+          msgId: 'avgMsg',
+          label: '(a) Average Titre V_avg of Solution B (HCl) (cm³)',
+          buttonLabel: 'Check (a) Average Titre',
+          marks: '[2.0 Marks]',
+          step: '0.01',
+          placeholder: 'e.g., 23.80',
+          calcExpected: (ctx) => systemAverage(),
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.02,
+          feedbackSuccess: (exp, ctx) => `Average titre = ${exp.toFixed(2)} cm³. Question (b) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toFixed(2)} cm³ from your concordant trials.`,
+          workingStep: (exp, ctx) => `<b>(a) Average Titre:</b> V_avg = <b>${exp.toFixed(2)} cm³</b>`
+        },
+        {
+          letter: 'b',
+          boxId: 'stepBBox',
+          inputId: 'molesTitrantInput',
+          btnId: 'btnCheckMolesTitrant',
+          msgId: 'molesTitrantMsg',
+          label: '(b) Moles of HCl in average volume used (n₁)',
+          buttonLabel: 'Check (b) Moles of HCl',
+          marks: '[2.0 Marks]',
+          step: '0.00001',
+          placeholder: 'e.g., 0.00238',
+          calcExpected: (ctx) => (ctx.sessionTitrantConc * ctx.studentAvg) / 1000,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.0001 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! n₁ = ${exp.toExponential(3)} moles. Question (c) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toExponential(3)} moles.`,
+          workingStep: (exp, ctx) => `<b>(b) Moles of HCl (n₁):</b> (${ctx.sessionTitrantConc} M × ${ctx.studentAvg.toFixed(2)} cm³) / 1000 = <b>${exp.toExponential(4)} mol</b>`
+        },
+        {
+          letter: 'c',
+          boxId: 'stepCBox',
+          inputId: 'molesAnalyteInput',
+          btnId: 'btnCheckMolesAnalyte',
+          msgId: 'molesAnalyteMsg',
+          label: '(c) Moles of NH₃ in aliquot volume of Solution A (n₂)',
+          buttonLabel: 'Check (c) Moles of NH₃',
+          marks: '[2.0 Marks]',
+          step: '0.00001',
+          placeholder: 'e.g., 0.00238',
+          calcExpected: (ctx) => ((ctx.sessionTitrantConc * ctx.studentAvg) / 1000) * 1.0,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.0001 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! NH₃ : HCl = 1 : 1, n₂ = ${exp.toExponential(3)} moles. Question (d) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toExponential(3)} moles in ${ctx.sessionAnalyteVolume} cm³.`,
+          workingStep: (exp, ctx) => `<b>(c) Moles of NH₃ in ${ctx.sessionAnalyteVolume.toFixed(1)} cm³ (n₂):</b> 1:1 ratio → n₂ = <b>${exp.toExponential(4)} mol</b>`
+        },
+        {
+          letter: 'd',
+          boxId: 'stepDBox',
+          inputId: 'calcConc',
+          btnId: 'btnCheckMolarity',
+          msgId: 'molarityMsg',
+          label: '(d) Molar concentration of ammonia Solution A (mol/dm³)',
+          buttonLabel: 'Check (d) NH₃ Molarity',
+          marks: '[2.0 Marks]',
+          step: '0.0001',
+          placeholder: 'e.g., 0.0952',
+          calcExpected: (ctx) => (((ctx.sessionTitrantConc * ctx.studentAvg) / 1000) * 1000) / ctx.sessionAnalyteVolume,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.0015 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! [NH₃] = ${exp.toFixed(4)} M. Question (e) unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toFixed(4)} M.`,
+          workingStep: (exp, ctx) => `<b>(d) Molarity of NH₃:</b> <b>${exp.toFixed(4)} M</b>`
+        },
+        {
+          letter: 'e',
+          boxId: 'stepEBox',
+          inputId: 'massConcInput',
+          btnId: 'btnCheckMassConc',
+          msgId: 'massConcMsg',
+          label: '(e) Volume of dry NH₃ gas at s.t.p. in 1.0 dm³ Solution A in dm³ (Molar gas volume at s.t.p. = 22.4 dm³)',
+          buttonLabel: 'Check (e) Gas Volume at s.t.p.',
+          marks: '[2.0 Marks]',
+          step: '0.01',
+          placeholder: 'e.g., 2.13',
+          calcExpected: (ctx) => ((((ctx.sessionTitrantConc * ctx.studentAvg) / 1000) * 1000) / ctx.sessionAnalyteVolume) * 22.4,
+          checkOk: (val, exp) => Math.abs(val - exp) <= 0.10 || (exp > 0 && Math.abs(val - exp) / exp <= 0.03),
+          feedbackSuccess: (exp, ctx) => `Correct! Gas Volume = ${exp.toFixed(2)} dm³ at s.t.p. Full submission unlocked.`,
+          feedbackFail: (exp, ctx) => `Expected around ${exp.toFixed(2)} dm³ (Molarity × 22.4 dm³/mol).`,
+          workingStep: (exp, ctx) => `<b>(e) Volume of NH₃ Gas at s.t.p.:</b><br>Molarity of NH₃ × 22.4 dm³/mol = <b>${exp.toFixed(2)} dm³</b>`
+        }
+      ]
     }
   };
 
@@ -268,9 +984,10 @@ requireStudentLogin();
   let sessionAnalyteVolume = 25.00;
   let sessionTitrantConc = 0;
   let trueConc = 0;
+  let sessionMassConc = 0;
   let equivalenceVolume = 0;
   let currentVolume = 0;
-  let trials = [];
+  trials = [];
   let sessionSubmitted = false;
   let selectedIndicator = null;
   let indicatorAdded = false;
@@ -290,13 +1007,17 @@ requireStudentLogin();
   function saveDraft() {
     try {
       const avgEl = document.getElementById('avgInput');
+      const molesTEl = document.getElementById('molesTitrantInput');
+      const molesAEl = document.getElementById('molesAnalyteInput');
       const calcEl = document.getElementById('calcConc');
+      const massEl = document.getElementById('massConcInput');
       localStorage.setItem(draftKey(), JSON.stringify({
         practicalKey: current ? current.key : 'acidBase',
         assignmentId: linkedAssignmentId || null,
         sessionAnalyteVolume,
         sessionTitrantConc,
         trueConc,
+        sessionMassConc,
         equivalenceVolume,
         currentVolume,
         trials,
@@ -304,9 +1025,12 @@ requireStudentLogin();
         indicatorAdded,
         indicatorCorrect,
         avgInputValue: avgEl ? avgEl.value : '',
+        molesTitrantValue: molesTEl ? molesTEl.value : '',
+        molesAnalyteValue: molesAEl ? molesAEl.value : '',
+        calcConcValue: calcEl ? calcEl.value : '',
+        massConcValue: massEl ? massEl.value : '',
         studentAverageChecked: !!studentAverageChecked,
         studentAverageCorrect: !!studentAverageCorrect,
-        calcConcValue: calcEl ? calcEl.value : '',
         savedAt: Date.now()
       }));
     } catch (e) {}
@@ -337,6 +1061,7 @@ requireStudentLogin();
       sessionAnalyteVolume = draft.sessionAnalyteVolume;
       sessionTitrantConc = draft.sessionTitrantConc;
       trueConc = draft.trueConc;
+      sessionMassConc = draft.sessionMassConc || +(trueConc * (current.rfm || 98.0)).toFixed(2);
       equivalenceVolume = draft.equivalenceVolume;
       currentVolume = draft.currentVolume;
       trials = draft.trials || [];
@@ -345,15 +1070,32 @@ requireStudentLogin();
       indicatorCorrect = !!draft.indicatorCorrect;
     } else {
       sessionAnalyteVolume = ANALYTE_VOLUME_OPTIONS[Math.floor(Math.random() * ANALYTE_VOLUME_OPTIONS.length)];
-      sessionTitrantConc = current.titrantConcOptions[Math.floor(Math.random() * current.titrantConcOptions.length)];
-
-      if (isGuided) {
-        trueConc = 0.1000;
+      
+      // Dynamic continuous random titrant concentration (e.g. 0.0864 M, 0.1145 M, 0.0195 M)
+      if (current.titrantRange) {
+        const [tLo, tHi] = current.titrantRange;
+        const rawT = tLo + Math.random() * (tHi - tLo);
+        sessionTitrantConc = +(rawT.toFixed(4));
+      } else if (current.titrantConcOptions && current.titrantConcOptions.length > 0) {
+        sessionTitrantConc = current.titrantConcOptions[Math.floor(Math.random() * current.titrantConcOptions.length)];
       } else {
-        const [lo, hi] = current.concRange;
-        trueConc = +(lo + Math.random() * (hi - lo)).toFixed(4);
+        sessionTitrantConc = 0.1000;
       }
+
+      // Dynamic continuous random analyte concentration
+      const [lo, hi] = current.concRange || [0.06, 0.14];
+      const rawC = lo + Math.random() * (hi - lo);
+      trueConc = +(rawC.toFixed(4));
+
+      // Calculate equivalence volume and ensure it fits a realistic KCSE titre window (16.00 to 36.00 cm³)
       equivalenceVolume = (trueConc * sessionAnalyteVolume) / (current.ratio * sessionTitrantConc);
+      if (equivalenceVolume < 16.0 || equivalenceVolume > 38.0) {
+        const targetEq = +(18.0 + Math.random() * 16.0).toFixed(2);
+        trueConc = +((targetEq * current.ratio * sessionTitrantConc) / sessionAnalyteVolume).toFixed(4);
+        equivalenceVolume = (trueConc * sessionAnalyteVolume) / (current.ratio * sessionTitrantConc);
+      }
+
+      sessionMassConc = +(trueConc * (current.rfm || 98.0)).toFixed(2);
       currentVolume = 0;
       trials = [];
       selectedIndicator = current.indicatorAnswer;
@@ -363,59 +1105,57 @@ requireStudentLogin();
     }
 
     const titrantConcStr = sessionTitrantConc.toFixed(4).replace(/0+$/, '').replace(/\.$/, '');
+    const massConcStr = sessionMassConc ? sessionMassConc.toFixed(2) : '';
 
-    document.getElementById('briefText').innerHTML = current.briefTemplate(sessionAnalyteVolume, titrantConcStr);
+    document.getElementById('briefText').innerHTML = current.briefTemplate(sessionAnalyteVolume, titrantConcStr, massConcStr);
     document.getElementById('pillAnalyte').textContent = current.analyteName;
     document.getElementById('pillTitrant').textContent = titrantConcStr + ' M ' + current.titrantName;
     document.getElementById('pillIndicator').textContent = indicatorAdded ? `${current.indicatorName} (${indicatorDropsCount}/3 drops)` : '? (click button below)';
     document.getElementById('flaskLabel').textContent = sessionAnalyteVolume.toFixed(2) + ' cm³ ' + current.analyteName.split(',')[0];
-    const titrantShortName = current.titrantName.split('—')[0].trim();
-    const analyteSymbol = current.answerSymbol;
 
-    const labelA = document.getElementById('avgLabel');
-    if (labelA) labelA.textContent = `(a) Average Titre V_avg of Solution B (${titrantShortName}) used (cm³)`;
+    const aliquotEl = document.getElementById('knecSubbarAliquot');
+    if (aliquotEl) {
+      aliquotEl.textContent = `${sessionAnalyteVolume.toFixed(2)} cm³ Pipette`;
+    }
+    const apparatusEl = document.getElementById('knecSubbarApparatus');
+    if (apparatusEl) {
+      apparatusEl.textContent = `50.0 cm³ Burette · ${sessionAnalyteVolume.toFixed(2)} cm³ Aliquot Volume`;
+    }
 
-    const labelB = document.getElementById('labelStepB');
-    if (labelB) labelB.textContent = `(b) Moles of ${titrantShortName} in Solution B used (n₁)`;
-
-    const labelC = document.getElementById('labelStepC');
-    if (labelC) labelC.textContent = `(c) Moles of ${analyteSymbol} in ${sessionAnalyteVolume.toFixed(1)} cm³ of Solution A (n₂)`;
-
-    const labelD = document.getElementById('answerLabel');
-    if (labelD) labelD.textContent = `(d) Molar concentration of ${analyteSymbol} in Solution A (mol/dm³)`;
-
-    const labelE = document.getElementById('labelStepE');
-    if (labelE) labelE.textContent = `(e) Concentration of ${analyteSymbol} in Solution A in g/dm³ (g/L)`;
+    // Dynamically render the 5 practical-specific questions
+    renderQuestions();
 
     studentAverageChecked = draft ? !!draft.studentAverageChecked : false;
     studentAverageCorrect = draft ? !!draft.studentAverageCorrect : false;
 
+    if (draft) {
+      if (draft.avgInputValue) {
+        const el = document.getElementById('avgInput');
+        if (el) el.value = draft.avgInputValue;
+      }
+      if (draft.molesTitrantValue) {
+        const el = document.getElementById('molesTitrantInput');
+        if (el) el.value = draft.molesTitrantValue;
+      }
+      if (draft.molesAnalyteValue) {
+        const el = document.getElementById('molesAnalyteInput');
+        if (el) el.value = draft.molesAnalyteValue;
+      }
+      if (draft.calcConcValue) {
+        const el = document.getElementById('calcConc');
+        if (el) el.value = draft.calcConcValue;
+      }
+      if (draft.massConcValue) {
+        const el = document.getElementById('massConcInput');
+        if (el) el.value = draft.massConcValue;
+      }
+    }
+
     const isExamMode = isExam || sessionMode === 'assignment' || sessionMode === 'exam';
 
-    const checkBtns = [
-      document.getElementById('btnCheckAverage'),
-      document.getElementById('btnCheckMolesTitrant'),
-      document.getElementById('btnCheckMolesAnalyte'),
-      document.getElementById('btnCheckMolarity'),
-      document.getElementById('btnCheckMassConc')
-    ];
-
-    checkBtns.forEach(btn => {
-      if (btn) btn.style.display = isExamMode ? 'none' : 'block';
-    });
-
-    ['stepBBox', 'stepCBox', 'stepDBox', 'stepEBox', 'submitCardBox'].forEach(boxId => {
-      const box = document.getElementById(boxId);
-      if (box) {
-        if (isExamMode) {
-          box.style.opacity = '1';
-          box.style.pointerEvents = 'auto';
-        } else if (boxId === 'stepBBox') {
-          box.style.opacity = studentAverageChecked ? '1' : '0.4';
-          box.style.pointerEvents = studentAverageChecked ? 'auto' : 'none';
-        }
-      }
-    });
+    if (studentAverageChecked) {
+      unlockNextStep(1);
+    }
 
     document.querySelectorAll('#indicatorMsg, .indicatorMsg').forEach(msg => {
       msg.innerHTML = '';
@@ -443,6 +1183,48 @@ requireStudentLogin();
 
     updateRig();
     renderTrials();
+  }
+
+  function renderQuestions() {
+    const grid = document.getElementById('questionsGrid');
+    if (!grid || !current || !current.questions) return;
+
+    const isExamMode = isExam || sessionMode === 'assignment' || sessionMode === 'exam';
+    const studentAvg = parseFloat(document.getElementById('avgInput')?.value) || systemAverage();
+    const ctx = {
+      studentAvg,
+      sessionTitrantConc,
+      sessionAnalyteVolume,
+      sessionMassConc,
+      current,
+      trueConc,
+      equivalenceVolume
+    };
+
+    grid.innerHTML = current.questions.map((q, idx) => {
+      const isStepA = idx === 0;
+      const boxId = q.boxId;
+      const inputId = q.inputId;
+      const btnId = q.btnId;
+      const msgId = q.msgId;
+      const labelText = typeof q.label === 'function' ? q.label(ctx) : q.label;
+
+      return `
+        <div class="calc-field-group" id="${boxId}" style="${isStepA || isExamMode ? 'opacity:1;pointer-events:auto;' : 'opacity:0.4;pointer-events:none;'}background:var(--card-bg-hover);border:1.5px solid var(--card-border);border-radius:10px;padding:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <label for="${inputId}" id="${inputId}Label" style="font-weight:700;color:var(--heading-color);font-size:0.84rem;font-family:'Plus Jakarta Sans', sans-serif;">
+              ${labelText}
+            </label>
+            <span style="font-size:0.68rem; font-weight:700; color:var(--cyan-accent); font-family:'JetBrains Mono', monospace;">${q.marks}</span>
+          </div>
+          <div class="calc-input-row" style="flex-direction:column;gap:10px;width:100%;">
+            <input type="number" step="${q.step}" id="${inputId}" placeholder="${q.placeholder}" oninput="saveDraft()" style="width:100%; font-family:'JetBrains Mono', monospace;">
+            <button class="btn-cyan" id="${btnId}" onclick="checkQuestionStep(${idx})" style="width:100%;height:42px;font-weight:700;display:${isExamMode ? 'none' : 'block'};">${q.buttonLabel}</button>
+          </div>
+          <div id="${msgId}"></div>
+        </div>
+      `;
+    }).join('');
   }
 
 
@@ -838,154 +1620,96 @@ requireStudentLogin();
     spawnMultipleDrops(amount);
   }
 
-  function checkAverage() {
-    const avgMsg = document.getElementById('avgMsg');
-    const rawVal = document.getElementById('avgInput').value;
-    const studentAvg = parseFloat(rawVal);
+  function checkQuestionStep(idx) {
+    if (!current || !current.questions || !current.questions[idx]) return;
+    const q = current.questions[idx];
+    const input = document.getElementById(q.inputId);
+    const msgBox = document.getElementById(q.msgId);
+    const rawVal = input ? input.value : '';
+    const val = parseFloat(rawVal);
 
-    if (trials.length === 0) {
-      avgMsg.innerHTML = '<div class="result-banner result-warn">Record at least one trial first.</div>';
+    if (idx === 0) {
+      if (trials.length === 0) {
+        if (msgBox) msgBox.innerHTML = '<div class="result-banner result-warn">Record at least one trial first.</div>';
+        return;
+      }
+      if (isNaN(val)) {
+        if (msgBox) msgBox.innerHTML = '<div class="result-banner result-warn">Enter your calculated average titre.</div>';
+        return;
+      }
+      let decimalNote = '';
+      if (rawVal.includes('.') && rawVal.split('.')[1].length === 1) {
+        decimalNote = '<br><small>💡 <b>KCSE Exam Tip:</b> Always record burette readings to 2 decimal places (e.g. 24.60 cm³ instead of 24.6).</small>';
+      }
+      const expected = systemAverage();
+      studentAverageCorrect = Math.abs(val - expected) <= 0.02;
+      studentAverageChecked = true;
+
+      if (studentAverageCorrect) playAudioTone('chime');
+
+      msgBox.innerHTML = studentAverageCorrect
+        ? `<div class="result-banner result-ok">✓ <b>(a) Correct average titre!</b> Next question unlocked.${decimalNote}</div>`
+        : `<div class="result-banner result-warn">✗ <b>(a) Not quite:</b> Expected around ${expected.toFixed(2)} cm³ from your concordant trials.${decimalNote}</div>`;
+
+      unlockNextStep(1);
+      saveDraft();
       return;
     }
-    if (isNaN(studentAvg)) {
-      avgMsg.innerHTML = '<div class="result-banner result-warn">Enter your calculated average titre.</div>';
-      return;
-    }
-
-    let decimalNote = '';
-    if (rawVal.includes('.') && rawVal.split('.')[1].length === 1) {
-      decimalNote = '<br><small>💡 <b>KCSE Exam Tip:</b> Always record burette readings to 2 decimal places (e.g. 24.60 cm³ instead of 24.6).</small>';
-    }
-
-    const expected = systemAverage();
-    studentAverageCorrect = Math.abs(studentAvg - expected) <= 0.02;
-    studentAverageChecked = true;
-
-    if (studentAverageCorrect) playAudioTone('chime');
-
-    avgMsg.innerHTML = studentAverageCorrect
-      ? `<div class="result-banner result-ok">✓ (a) Correct average titre! Question (b) unlocked.${decimalNote}</div>`
-      : `<div class="result-banner result-warn">Expected around ${expected.toFixed(2)} cm³ from your concordant trials.${decimalNote}</div>`;
-
-    const stepBBox = document.getElementById('stepBBox');
-    if (stepBBox) {
-      stepBBox.style.opacity = '1';
-      stepBBox.style.pointerEvents = 'auto';
-    }
-    saveDraft();
-  }
-
-  function checkMolesTitrant() {
-    const msgBox = document.getElementById('molesTitrantMsg');
-    const studentAvg = parseFloat(document.getElementById('avgInput').value);
-    const val = parseFloat(document.getElementById('molesTitrantInput').value);
 
     if (isNaN(val)) {
-      msgBox.innerHTML = '<div class="result-banner result-warn">Enter calculated moles of titrant.</div>';
+      if (msgBox) msgBox.innerHTML = `<div class="result-banner result-warn">⚠️ Enter your calculated numerical value for question (${q.letter}).</div>`;
       return;
     }
 
-    const expectedMoles = (sessionTitrantConc * studentAvg) / 1000;
-    const isOk = Math.abs(val - expectedMoles) <= 0.0001 || (expectedMoles > 0 && Math.abs(val - expectedMoles) / expectedMoles <= 0.03);
+    const studentAvg = parseFloat(document.getElementById('avgInput')?.value) || systemAverage();
+    const ctx = {
+      studentAvg,
+      sessionTitrantConc,
+      sessionAnalyteVolume,
+      sessionMassConc,
+      current,
+      trueConc,
+      equivalenceVolume
+    };
 
-    if (isOk) playAudioTone('chime');
-
-    msgBox.innerHTML = isOk
-      ? `<div class="result-banner result-ok">✓ (b) Correct moles of titrant! Question (c) unlocked.</div>`
-      : `<div class="result-banner result-warn">Expected around ${expectedMoles.toExponential(3)} moles (${sessionTitrantConc} M × ${studentAvg.toFixed(2)} cm³ / 1000).</div>`;
-
-    const stepCBox = document.getElementById('stepCBox');
-    if (stepCBox) {
-      stepCBox.style.opacity = '1';
-      stepCBox.style.pointerEvents = 'auto';
-    }
-    saveDraft();
-  }
-
-  function checkMolesAnalyte() {
-    const msgBox = document.getElementById('molesAnalyteMsg');
-    const studentAvg = parseFloat(document.getElementById('avgInput').value);
-    const val = parseFloat(document.getElementById('molesAnalyteInput').value);
-
-    if (isNaN(val)) {
-      msgBox.innerHTML = '<div class="result-banner result-warn">Enter calculated moles of analyte.</div>';
-      return;
-    }
-
-    const molesTitrant = (sessionTitrantConc * studentAvg) / 1000;
-    const expectedMolesAnalyte = molesTitrant * current.ratio;
-    const isOk = Math.abs(val - expectedMolesAnalyte) <= 0.0001 || (expectedMolesAnalyte > 0 && Math.abs(val - expectedMolesAnalyte) / expectedMolesAnalyte <= 0.03);
-
-    if (isOk) playAudioTone('chime');
-
-    msgBox.innerHTML = isOk
-      ? `<div class="result-banner result-ok">✓ (c) Correct moles of analyte! Question (d) unlocked.</div>`
-      : `<div class="result-banner result-warn">Expected around ${expectedMolesAnalyte.toExponential(3)} moles in ${sessionAnalyteVolume} cm³.</div>`;
-
-    const stepDBox = document.getElementById('stepDBox');
-    if (stepDBox) {
-      stepDBox.style.opacity = '1';
-      stepDBox.style.pointerEvents = 'auto';
-    }
-    saveDraft();
-  }
-
-  function checkMolarity() {
-    const msgBox = document.getElementById('molarityMsg');
-    const studentAvg = parseFloat(document.getElementById('avgInput').value);
-    const val = parseFloat(document.getElementById('calcConc').value);
-
-    if (isNaN(val)) {
-      msgBox.innerHTML = '<div class="result-banner result-warn">Enter calculated molar concentration.</div>';
-      return;
-    }
-
-    const expectedConc = (current.ratio * sessionTitrantConc * studentAvg) / sessionAnalyteVolume;
-    const isOk = Math.abs(val - expectedConc) <= 0.0015 || (expectedConc > 0 && Math.abs(val - expectedConc) / expectedConc <= 0.03);
-
-    if (isOk) playAudioTone('chime');
-
-    msgBox.innerHTML = isOk
-      ? `<div class="result-banner result-ok">✓ (d) Correct molarity! Question (e) unlocked.</div>`
-      : `<div class="result-banner result-warn">Expected around ${expectedConc.toFixed(4)} M.</div>`;
-
-    const stepEBox = document.getElementById('stepEBox');
-    if (stepEBox) {
-      stepEBox.style.opacity = '1';
-      stepEBox.style.pointerEvents = 'auto';
-    }
-    saveDraft();
-  }
-
-  function checkMassConcentration() {
-    const msgBox = document.getElementById('massConcMsg');
-    const studentAvg = parseFloat(document.getElementById('avgInput').value);
-    const val = parseFloat(document.getElementById('massConcInput').value);
-
-    if (isNaN(val)) {
-      if (msgBox) msgBox.innerHTML = '<div class="result-banner result-warn">Enter calculated mass concentration in g/dm³.</div>';
-      return;
-    }
-
-    const expectedMolarity = (current.ratio * sessionTitrantConc * studentAvg) / sessionAnalyteVolume;
-    const expectedMassConc = expectedMolarity * (current.rfm || 36.5);
-    const isOk = Math.abs(val - expectedMassConc) <= 0.15 || (expectedMassConc > 0 && Math.abs(val - expectedMassConc) / expectedMassConc <= 0.03);
+    const expected = q.calcExpected(ctx);
+    const isOk = q.checkOk(val, expected);
 
     if (isOk) playAudioTone('chime');
 
     if (msgBox) {
       msgBox.innerHTML = isOk
-        ? `<div class="result-banner result-ok">✓ (e) Correct mass concentration! Final submission unlocked.</div>`
-        : `<div class="result-banner result-warn">Expected around ${expectedMassConc.toFixed(2)} g/dm³.</div>`;
+        ? `<div class="result-banner result-ok">✓ <b>(${q.letter}) Correct!</b> ${q.feedbackSuccess(expected, ctx)}</div>`
+        : `<div class="result-banner result-warn">✗ <b>(${q.letter}) Incorrect:</b> ${q.feedbackFail(expected, ctx)}</div>`;
     }
 
-    const submitCardBox = document.getElementById('submitCardBox');
-    if (submitCardBox) {
-      submitCardBox.style.opacity = '1';
-      submitCardBox.style.pointerEvents = 'auto';
+    if (idx < current.questions.length - 1) {
+      unlockNextStep(idx + 1);
+    } else {
+      const submitCardBox = document.getElementById('submitCardBox');
+      if (submitCardBox) {
+        submitCardBox.style.opacity = '1';
+        submitCardBox.style.pointerEvents = 'auto';
+      }
     }
     saveDraft();
   }
+
+  function unlockNextStep(nextIdx) {
+    if (!current || !current.questions || !current.questions[nextIdx]) return;
+    const q = current.questions[nextIdx];
+    const box = document.getElementById(q.boxId);
+    if (box) {
+      box.style.opacity = '1';
+      box.style.pointerEvents = 'auto';
+    }
+  }
+
+  function checkAverage() { checkQuestionStep(0); }
+  function checkMolesTitrant() { checkQuestionStep(1); }
+  function checkMolesAnalyte() { checkQuestionStep(2); }
+  function checkMolarity() { checkQuestionStep(3); }
+  function checkMassConcentration() { checkQuestionStep(4); }
 
   function calculateKcseExamMarks(studentAverage, studentAnswer) {
     const eqVol = equivalenceVolume;
@@ -1239,27 +1963,42 @@ requireStudentLogin();
 
   function requestWorking() {
     const box = document.getElementById('workingBox');
-    if (!box || !current) return;
+    if (!box || !current || !current.questions) return;
     const avg = systemAverage();
-    const molesT = (sessionTitrantConc * avg) / 1000;
-    const molesA = molesT * current.ratio;
-    const conc = (molesA * 1000) / sessionAnalyteVolume;
-    const massConc = conc * current.rfm;
+    const ctx = {
+      studentAvg: avg,
+      sessionTitrantConc,
+      sessionAnalyteVolume,
+      sessionMassConc,
+      current,
+      trueConc,
+      equivalenceVolume
+    };
+
+    const stepsHtml = current.questions.map((q) => {
+      const exp = q.calcExpected(ctx);
+      const stepText = q.workingStep ? q.workingStep(exp, ctx) : `<b>(${q.letter})</b> Calculated = ${exp}`;
+      return `<div style="margin-bottom:8px;padding:8px 12px;background:var(--card-bg);border-radius:6px;border-left:3px solid var(--blue-accent);font-size:0.83rem;">
+        ${stepText}
+      </div>`;
+    }).join('');
+
     box.style.display = 'block';
-    box.innerHTML = `<div class="result-banner result-ok" style="text-align:left;line-height:1.7;">
-      <b>Step-by-step Calculation</b><br>
-      (a) Average titre = ${avg.toFixed(2)} cm³<br>
-      (b) Moles of titrant = (${sessionTitrantConc} × ${avg.toFixed(2)}) / 1000 = ${molesT.toFixed(6)} mol<br>
-      (c) Moles of analyte = ${molesT.toFixed(6)} × ${current.ratio} = ${molesA.toFixed(6)} mol<br>
-      (d) Molarity = (${molesA.toFixed(6)} × 1000) / ${sessionAnalyteVolume.toFixed(2)} = <b>${conc.toFixed(4)} M</b><br>
-      (e) Mass concentration = ${conc.toFixed(4)} × ${current.rfm} = <b>${massConc.toFixed(2)} g/dm³</b>
+    box.innerHTML = `<div class="result-banner result-ok" style="text-align:left;line-height:1.6;padding:16px;">
+      <div style="font-weight:800;font-family:'Cinzel', serif;margin-bottom:10px;font-size:0.95rem;color:var(--heading-color);">🧮 KCSE Step-by-Step Examiner Working · ${escapeHtmlLab(current.title)}</div>
+      ${stepsHtml}
     </div>`;
   }
 
   function escapeHtmlLab(str) {
-    const div = document.createElement('div');
-    div.textContent = str == null ? '' : String(str);
-    return div.innerHTML;
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;')
+      .replace(/`/g, '&#96;');
   }
 
   let tutCleanup = null;
@@ -1489,8 +2228,33 @@ requireStudentLogin();
     const overlay = document.getElementById('tutorialOverlay');
     if (overlay) overlay.classList.remove('active');
     localStorage.setItem('vlk_tutorial_completed', 'true');
-    
+  }
 
+  // Explicit window exports for inline HTML event handlers
+  if (typeof window !== 'undefined') {
+    window.setTheme = setTheme;
+    window.updateThemeButtons = updateThemeButtons;
+    window.toggleScratchpad = toggleScratchpad;
+    window.toggleSound = toggleSound;
+    window.updateSoundButton = updateSoundButton;
+    window.startTutorial = startTutorial;
+    window.endTutorial = endTutorial;
+    window.nextTutorialStep = nextTutorialStep;
+    window.loadPractical = loadPractical;
+    window.addIndicatorDrops = addIndicatorDrops;
+    window.swirlFlask = swirlFlask;
+    window.addVolume = addVolume;
+    window.recordTrial = recordTrial;
+    window.resetBurette = resetBurette;
+    window.checkQuestionStep = checkQuestionStep;
+    window.checkAverage = checkAverage;
+    window.checkMolesTitrant = checkMolesTitrant;
+    window.checkMolesAnalyte = checkMolesAnalyte;
+    window.checkMolarity = checkMolarity;
+    window.checkMassConcentration = checkMassConcentration;
+    window.requestWorking = requestWorking;
+    window.submitSession = submitSession;
+    window.saveDraft = saveDraft;
   }
 
   initTutorial();

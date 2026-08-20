@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Research & Learning Gain Analytics — VirtuLab Kenya</title>
+<script>
+  var t = localStorage.getItem('vlk_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+</script>
+<meta name="theme-color" content="#0F172A">
+<link rel="stylesheet" href="../shared/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  .research-layout {
+    max-width: 1360px;
+    margin: 20px auto 50px;
+    padding: 0 20px;
+  }
+  .res-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .res-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .res-metric-val {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--heading-color);
+    font-family: 'JetBrains Mono', monospace;
+    margin: 8px 0 4px;
+  }
+  .res-metric-sub {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+  }
+  .charts-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 900px) {
+    .charts-grid-2 { grid-template-columns: 1fr; }
+  }
+  .data-table-academic {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+  }
+  .data-table-academic th {
+    background: var(--card-bg-hover);
+    color: var(--heading-color);
+    text-align: left;
+    padding: 10px 12px;
+    border: 1px solid var(--card-border);
+    font-weight: 700;
+  }
+  .data-table-academic td {
+    padding: 10px 12px;
+    border: 1px solid var(--card-border);
+    color: var(--text-main);
+  }
+</style>
+</head>
+<body>
+
+<nav class="top-navbar">
+  <a href="dashboard.html" class="nav-brand">
+    <span class="nav-logo-icon">VL</span>
+    <span>Teacher Research Portal</span>
+  </a>
+  <div class="nav-actions">
+    <button class="btn" style="background:var(--green-bg); color:var(--green-accent); border:1px solid var(--green-accent);" onclick="downloadResearchCSV()">
+      📥 Export CSV (SPSS/R Dataset)
+    </button>
+    <a href="dashboard.html" class="btn btn-secondary" style="text-decoration:none;">← Class Dashboard</a>
+    <button class="btn" onclick="Auth.logout()">Log out</button>
+  </div>
+</nav>
+
+<div class="research-layout">
+
+  <div style="margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+    <div>
+      <div style="font-size:0.75rem; font-family:'JetBrains Mono', monospace; font-weight:700; color:var(--amber-accent);">
+        OUK MSC IN LEARNING DESIGN & TECHNOLOGY • RESEARCH EVALUATION SUITE
+      </div>
+      <h1 style="font-family:'Outfit', sans-serif; font-size:1.6rem; color:var(--heading-color); margin:4px 0 0;">
+        Pedagogical Efficacy & Statistical Triangulation Portal
+      </h1>
+    </div>
+    <div style="font-size:0.8rem; color:var(--text-muted);">
+      Target Examination: <b>KCSE Paper 3 (233/3)</b>
+    </div>
+  </div>
+
+  <!-- KPI SUMMARY METRICS -->
+  <div class="res-metrics-grid">
+    <div class="res-card">
+      <div class="res-metric-sub">👥 Paired Cohort (N)</div>
+      <div class="res-metric-val" id="metricSample">--</div>
+      <div class="res-metric-sub">Completing Pre & Post Tests</div>
+    </div>
+
+    <div class="res-card">
+      <div class="res-metric-sub">📉 Baseline Pre-Test (M ± SD)</div>
+      <div class="res-metric-val" style="color:var(--blue-accent);" id="metricPreMean">--</div>
+      <div class="res-metric-sub">Out of 40.0 Marks</div>
+    </div>
+
+    <div class="res-card">
+      <div class="res-metric-sub">📈 Post-Intervention (M ± SD)</div>
+      <div class="res-metric-val" style="color:var(--green-accent);" id="metricPostMean">--</div>
+      <div class="res-metric-sub">Out of 40.0 Marks</div>
+    </div>
+
+    <div class="res-card">
+      <div class="res-metric-sub">🎯 Hake's Gain (Normalized g)</div>
+      <div class="res-metric-val" style="color:var(--amber-accent);" id="metricHakeG">g = --</div>
+      <div class="res-metric-sub" id="metricHakeCategory">Calculating...</div>
+    </div>
+
+    <div class="res-card">
+      <div class="res-metric-sub">📐 Cohen's d Effect Size</div>
+      <div class="res-metric-val" id="metricCohensD">d = --</div>
+      <div class="res-metric-sub" id="metricCohensInterp">Calculating...</div>
+    </div>
+
+    <div class="res-card">
+      <div class="res-metric-sub">⭐ System Usability Scale (SUS)</div>
+      <div class="res-metric-val" style="color:var(--violet-accent);" id="metricSUS">-- / 100</div>
+      <div class="res-metric-sub" id="metricSUSGrade">Benchmark Score</div>
+    </div>
+  </div>
+
+  <!-- CHARTS SECTION -->
+  <div class="charts-grid-2">
+    <div class="res-card">
+      <h3 style="font-size:0.92rem; font-weight:700; color:var(--heading-color); margin:0 0 12px;">
+        📊 Pre-Test vs Post-Test Competency Comparison
+      </h3>
+      <div style="height:260px; position:relative;">
+        <canvas id="chartPrePostCanvas"></canvas>
+      </div>
+    </div>
+
+    <div class="res-card">
+      <h3 style="font-size:0.92rem; font-weight:700; color:var(--heading-color); margin:0 0 12px;">
+        🕸️ Technology Acceptance Model (TAM 3) Construct Radar
+      </h3>
+      <div style="height:260px; position:relative;">
+        <canvas id="chartTAMCanvas"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAIRED STUDENT GAINS TABLE -->
+  <div class="res-card">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+      <h3 style="font-size:0.95rem; font-weight:700; color:var(--heading-color); margin:0;">
+        📋 Student-Level Paired Achievement & Learning Gains
+      </h3>
+      <span style="font-size:0.75rem; color:var(--text-muted); font-family:'JetBrains Mono', monospace;">
+        Hake's g = (%Post - %Pre) / (100% - %Pre)
+      </span>
+    </div>
+
+    <div style="overflow-x:auto;">
+      <table class="data-table-academic">
+        <thead>
+          <tr>
+            <th>Student ID</th>
+            <th>Name</th>
+            <th>Form Level</th>
+            <th>Pre-Test Score (40)</th>
+            <th>Post-Test Score (40)</th>
+            <th>Normalized Gain (g)</th>
+            <th>Gain Level</th>
+          </tr>
+        </thead>
+        <tbody id="pairedTableBody">
+          <tr><td colspan="7" style="text-align:center; padding:20px;">Loading paired student data…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script src="../shared/api.js"></script>
+<script src="../shared/theme.js"></script>
+<script src="js/research-portal.js"></script>
+</body>
+</html>

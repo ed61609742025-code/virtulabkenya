@@ -3,17 +3,7 @@
 //  All API calls go through this file
 // ============================================================
 
-<<<<<<< HEAD
-const isLocalHost = typeof window !== 'undefined' && (
-  ['localhost', '127.0.0.1'].includes(window.location.hostname) ||
-  window.location.hostname.startsWith('192.168.') ||
-  window.location.hostname.startsWith('10.') ||
-  window.location.hostname.endsWith('.local')
-);
-
-const API_BASE = isLocalHost
-  ? `${window.location.protocol}//${window.location.hostname}:${window.location.port || 3000}/api`
-  : '/api';
+const API_BASE = '/api';
 
 
 // ── Token helpers (localStorage with sessionStorage fallback) ─────────────
@@ -64,45 +54,16 @@ function setUser(user) {
   const serialized = JSON.stringify(user);
   if (store) store.setItem('vlk_user', serialized);
   try { sessionStorage.setItem('vlk_user', serialized); } catch(e) {}
-=======
-const API_BASE = window.location.hostname === 'localhost'
-  ? 'http://localhost:3000/api'
-  : '/api'; // same domain in production
-
-// ── Token helpers ─────────────────────────────────────────────
-function getToken() {
-  return sessionStorage.getItem('vlk_token');
-}
-function setToken(token) {
-  sessionStorage.setItem('vlk_token', token);
-}
-function clearToken() {
-  sessionStorage.removeItem('vlk_token');
-  sessionStorage.removeItem('vlk_user');
-}
-function getUser() {
-  try { return JSON.parse(sessionStorage.getItem('vlk_user')); }
-  catch(e) { return null; }
-}
-function setUser(user) {
-  sessionStorage.setItem('vlk_user', JSON.stringify(user));
->>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
 }
 function isLoggedIn() {
   return !!getToken();
 }
 
 // ── Theme helpers ───────────────────────────────────────────────
-<<<<<<< HEAD
-=======
-// Three themes: 'light', 'dark', 'green' (Lab Green). Applied via
-// [data-theme] on <html> rather than <body>, so a tiny inline
-// script in each page's <head> can set it before first paint,
-// avoiding a flash of the wrong theme on load.
->>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
 function applyStoredTheme() {
   const theme = localStorage.getItem('vlk_theme') || 'light';
   document.documentElement.setAttribute('data-theme', theme);
+  updateThemeButtons();
 }
 function setTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
@@ -111,21 +72,32 @@ function setTheme(theme) {
 }
 function updateThemeButtons() {
   const current = document.documentElement.getAttribute('data-theme') || 'light';
-  document.querySelectorAll('.theme-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.theme === current);
+  document.querySelectorAll('.theme-btn, .theme-btn-chip[data-theme]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.theme === current || btn.getAttribute('data-theme') === current);
   });
+}
+if (typeof window !== 'undefined') {
+  window.setTheme = setTheme;
+  window.applyStoredTheme = applyStoredTheme;
+  window.updateThemeButtons = updateThemeButtons;
+}
+
+// ── HTML Escaping Helper (XSS Mitigation) ──────────────────────
+function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+    .replace(/`/g, '&#96;');
+}
+if (typeof window !== 'undefined') {
+  window.escapeHtml = escapeHtml;
 }
 
 // ── Core fetch wrapper ────────────────────────────────────────
-<<<<<<< HEAD
-=======
-// ── File download helper ────────────────────────────────────────
-// Plain <a href> links can't carry the Authorization header a
-// token-secured download endpoint needs, so this fetches the file
-// with the token attached, then triggers a save via a temporary
-// blob URL — reusable for any future CSV/file export, not just
-// assignment results.
->>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
 async function downloadFile(endpoint, filename) {
   const headers = {};
   const token = getToken();
@@ -149,7 +121,6 @@ async function downloadFile(endpoint, filename) {
   URL.revokeObjectURL(url);
 }
 
-<<<<<<< HEAD
 // ── IndexedDB Offline Queue & Auto-Sync ─────────────────────────
 const DB_NAME = 'virtulab_offline_db';
 const DB_VERSION = 1;
@@ -252,18 +223,29 @@ const OfflineQueue = {
     }
 
     console.log(`[OfflineQueue] Replaying ${items.length} queued offline submissions...`);
+    const currentToken = getToken();
     for (const item of items) {
       try {
         const headers = { 'Content-Type': 'application/json' };
-        if (item.token) headers['Authorization'] = 'Bearer ' + item.token;
+        const tokenToUse = currentToken || item.token;
+        if (tokenToUse) headers['Authorization'] = 'Bearer ' + tokenToUse;
         const res = await fetch(API_BASE + item.endpoint, {
           method: item.method || 'POST',
           headers,
           body: item.body ? JSON.stringify(item.body) : undefined
         });
-        if (res.ok || res.status === 400 || res.status === 409) {
+        if (res.ok || res.status === 400 || res.status === 409 || res.status === 422) {
           // If saved or rejected as duplicate/invalid, remove from queue
           await OfflineQueue.remove(item.id);
+        } else if (res.status === 401) {
+          // Token expired or unauthenticated
+          if (!currentToken) {
+            console.warn('[OfflineQueue] Awaiting user login before flushing queued items.');
+            break;
+          } else {
+            // Even current token was rejected, remove stale item
+            await OfflineQueue.remove(item.id);
+          }
         }
       } catch (err) {
         console.warn(`[OfflineQueue] Sync failed for item ${item.id}, will retry:`, err.message);
@@ -333,9 +315,6 @@ function isOfflineQueueable(endpoint, method) {
 }
 
 async function apiRequest(method, endpoint, body, retries = 2) {
-=======
-async function apiRequest(method, endpoint, body) {
->>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
   const headers = { 'Content-Type': 'application/json' };
   const token = getToken();
   if (token) headers['Authorization'] = 'Bearer ' + token;
@@ -343,7 +322,6 @@ async function apiRequest(method, endpoint, body) {
   const options = { method, headers };
   if (body) options.body = JSON.stringify(body);
 
-<<<<<<< HEAD
   let attempt = 0;
   while (attempt <= retries) {
     try {
@@ -368,6 +346,8 @@ async function apiRequest(method, endpoint, body) {
           if (path.includes('/student/') && !path.endsWith('login.html')) {
             window.location.href = '/student/login.html';
           } else if (path.includes('/teacher/') && !path.endsWith('login.html')) {
+            window.location.href = '/teacher/login.html';
+          } else if (path.includes('/admin/')) {
             window.location.href = '/teacher/login.html';
           }
           throw new Error(data.error || 'Session expired. Please log in again.');
@@ -402,16 +382,6 @@ async function apiRequest(method, endpoint, body) {
       console.error('API error:', err.message);
       throw err;
     }
-=======
-  try {
-    const res = await fetch(API_BASE + endpoint, options);
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Request failed');
-    return data;
-  } catch (err) {
-    console.error('API error:', err.message);
-    throw err;
->>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
   }
 }
 
@@ -427,22 +397,18 @@ const Auth = {
     setUser(data.user);
     return data;
   },
-<<<<<<< HEAD
   async teacherRegister(name, email, password, schoolCode) {
     const data = await apiRequest('POST', '/auth/teacher/register', { name, email, password, schoolCode });
     setToken(data.token);
     setUser(data.user);
     return data;
   },
-=======
->>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
   async teacherLogin(email, password) {
     const data = await apiRequest('POST', '/auth/teacher/login', { email, password });
     setToken(data.token);
     setUser(data.user);
     return data;
   },
-<<<<<<< HEAD
   async adminLogin(email, password) {
     const data = await apiRequest('POST', '/auth/admin/login', { email, password });
     setToken(data.token);
@@ -459,11 +425,6 @@ const Auth = {
     } else {
       window.location.href = '/student/login.html';
     }
-=======
-  logout() {
-    clearToken();
-    window.location.href = '/student/login.html';
->>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
   },
   async changePassword(currentPassword, newPassword) {
     return apiRequest('POST', '/auth/change-password', { currentPassword, newPassword });
@@ -515,7 +476,6 @@ const Assignments = {
   async remove(id) {
     return apiRequest('DELETE', '/assignments/' + id);
   },
-<<<<<<< HEAD
   async markSubmission(submissionId, teacherFeedback) {
     return apiRequest('POST', '/assignments/submissions/' + submissionId + '/mark', { teacherFeedback });
   },
@@ -526,8 +486,6 @@ const Assignments = {
     const qs = query.toString();
     return apiRequest('GET', '/assignments/submissions/all' + (qs ? '?' + qs : ''));
   },
-=======
->>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
   async exportCsv(id, filename) {
     return downloadFile('/assignments/' + id + '/export', filename);
   }
@@ -554,12 +512,9 @@ const Leaderboard = {
 const Students = {
   async getClass() {
     return apiRequest('GET', '/students/class');
-<<<<<<< HEAD
   },
   async getDrilldown(id) {
     return apiRequest('GET', '/students/' + id + '/drilldown');
-=======
->>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
   }
 };
 
@@ -577,7 +532,6 @@ const AiFeedback = {
   }
 };
 
-<<<<<<< HEAD
 // ── Qualitative analysis endpoints ──────────────────────────────
 const Qualitative = {
   async save(data) {
@@ -646,6 +600,61 @@ const Rates = {
     return apiRequest('GET', '/rates/class');
   }
 };
+
+// ── Gas Preparation & Collection API ─────────────────────────
+const Gas = {
+  async save(data) {
+    return apiRequest('POST', '/gas', data);
+  },
+  async getMine() {
+    return apiRequest('GET', '/gas/mine');
+  },
+  async getClass() {
+    return apiRequest('GET', '/gas/class');
+  }
+};
+
+// ── Academic Research, CPCAT & Usability Suite API ───────────
+const Research = {
+  async submitCPCAT(data) {
+    return apiRequest('POST', '/research/cpcat/submit', data);
+  },
+  async getCPCATStatus() {
+    return apiRequest('GET', '/research/cpcat/status');
+  },
+  async getCPCATMine() {
+    return apiRequest('GET', '/research/cpcat/mine');
+  },
+  async submitSUS(data) {
+    return apiRequest('POST', '/research/sus/submit', data);
+  },
+  async submitTAM(data) {
+    return apiRequest('POST', '/research/tam/submit', data);
+  },
+  async getSummary() {
+    return apiRequest('GET', '/research/analytics/summary');
+  },
+  exportCSV() {
+    return downloadFile('/research/export/csv', 'virtulab_kenya_research_dataset.csv');
+  }
+};
+
+// Top-level API convenience object
+const API = {
+  saveGasSession: (data) => Gas.save(data),
+  getMyGasSessions: () => Gas.getMine(),
+  submitCPCAT: (data) => Research.submitCPCAT(data),
+  getCPCATStatus: () => Research.getCPCATStatus(),
+  submitSUS: (data) => Research.submitSUS(data),
+  submitTAM: (data) => Research.submitTAM(data),
+  getResearchSummary: () => Research.getSummary(),
+  exportResearchCSV: () => Research.exportCSV()
+};
+if (typeof window !== 'undefined') {
+  window.Gas = Gas;
+  window.Research = Research;
+  window.API = API;
+}
 
 // ── System Admin Portal API ─────────────────────────────────
 const Admin = {
@@ -795,16 +804,3 @@ if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
     });
   });
 }
-=======
-// ── Guard: redirect to login if not authenticated ─────────────
-function requireStudentLogin() {
-  if (!isLoggedIn()) {
-    window.location.href = '/student/login.html';
-  }
-}
-function requireTeacherLogin() {
-  if (!isLoggedIn()) {
-    window.location.href = '/teacher/login.html';
-  }
-}
->>>>>>> 74e471700462c14fcb25509826ece705e831d8d8

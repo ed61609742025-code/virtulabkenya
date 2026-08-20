@@ -34,9 +34,14 @@ requireStudentLogin();
   }
 
   function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str == null ? '' : String(str);
-    return div.innerHTML;
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;')
+      .replace(/`/g, '&#96;');
   }
 
   function formatDate(dateStr) {
@@ -75,7 +80,7 @@ requireStudentLogin();
     }));
 
     // Add milestone notification if streak >= 1
-    const streakEl = document.getElementById('streakCount');
+    const streakEl = document.getElementById('streakCountMobile') || document.getElementById('streakCount');
     const streakVal = streakEl ? parseInt(streakEl.textContent, 10) : 1;
     if (streakVal > 0) {
       rawList.push({
@@ -178,28 +183,47 @@ requireStudentLogin();
 
       updateNotificationsUI(assignments);
 
-      if (assignments.length === 0) return; // Retain styled fallback assignments if array empty
+      if (assignments.length === 0) {
+        box.innerHTML = `
+          <div class="empty-box" style="width: 100%; flex: 1 1 100%; padding: 24px 16px; text-align: center; border-radius: 8px; border: 1.5px dashed var(--card-border); color: var(--text-muted);">
+            <div style="font-size: 1.4rem; margin-bottom: 6px;">📝</div>
+            <div style="font-weight: 700; font-size: 0.88rem; color: var(--heading-color); margin-bottom: 4px;">No Pending Assignments</div>
+            <div style="font-size: 0.76rem;">You're all caught up! Prescribed lab assignments from your teacher will appear here.</div>
+          </div>
+        `;
+        return;
+      }
 
-      const displayAssignments = assignments.slice(0, 3);
+      const displayAssignments = assignments.slice(0, 2);
       box.innerHTML = displayAssignments.map(a => {
         const isSubmitted = !!a.submitted;
         const score = a.score || (a.evaluation && a.evaluation.score);
         const isGraded = typeof score === 'number';
 
         let targetUrl = `lab.html?assignment=${a.id}&type=${encodeURIComponent(a.titration_type || 'acidBase')}`;
+        let battleMode = 'titration';
+
         if (a.titration_type === 'qualitative') {
           targetUrl = `qualitative.html?assignment=${a.id}`;
+          battleMode = 'qualitative';
         } else if (a.titration_type === 'organic') {
           targetUrl = `organic.html?assignment=${a.id}`;
+          battleMode = 'organic';
         } else if (a.titration_type === 'solubility') {
           targetUrl = `solubility.html?assignment=${a.id}`;
+          battleMode = 'titration';
         } else if (a.titration_type === 'energy' || a.titration_type === 'displacement' || a.titration_type === 'neutralization' || a.titration_type === 'solution' || a.titration_type === 'combustion') {
           targetUrl = `energy.html?assignment=${a.id}`;
+          battleMode = 'energy';
         } else if (a.titration_type === 'rates' || a.titration_type === 'kinetics') {
           targetUrl = `rates.html?assignment=${a.id}`;
+          battleMode = 'energy';
         } else if (a.titration_type === 'kcseComposite') {
           targetUrl = `composite_exam.html?assignment=${a.id}`;
+          battleMode = 'blitz';
         }
+
+        const warmupUrl = a.titration_type === 'kcseComposite' ? targetUrl : `speed_battle.html?mode=${battleMode}&target=${encodeURIComponent(targetUrl)}`;
 
         let statusHtml = '';
         if (isSubmitted) {
@@ -209,18 +233,20 @@ requireStudentLogin();
             statusHtml = `<span class="submitted-pill" style="cursor:pointer; background:rgba(245, 158, 11, 0.15); color:#F59E0B; border:1px solid #F59E0B; justify-content:center; width:100%;" onclick='openAssignmentFeedbackModal(${JSON.stringify(a).replace(/'/g, "&apos;")})'>🟡 Under Review</span>`;
           }
         } else {
-          statusHtml = `<a href="${targetUrl}" class="pending-pill-btn" style="text-align:center; width:100%; display:block;">Start →</a>`;
+          statusHtml = `<a href="${warmupUrl}" class="pending-pill-btn" style="text-align:center; width:100%;">Start Practical →</a>`;
         }
 
+        const dueLabel = a.due_date ? `Due ${formatDate(a.due_date)}` : 'No set deadline';
+
         return `
-          <div class="assignment-card-box" style="display:flex; flex-direction:column; justify-content:space-between; min-height:165px;">
+          <div class="assignment-card-box" style="flex: 1 1 240px; display:flex; flex-direction:column; justify-content:space-between; min-height:165px;">
             <div>
               <div class="assign-card-title">${escapeHtml(a.title)}</div>
               <div class="assign-card-desc" style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px; line-height:1.3; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">
-                ${escapeHtml(a.description || a.instructions || 'No instructions')}
+                ${escapeHtml(a.description || a.instructions || 'No instructions provided.')}
               </div>
               <div class="assign-card-due" style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px;">
-                Due ${formatDate(a.due_date)}
+                ${dueLabel}
               </div>
             </div>
             ${statusHtml}
@@ -229,6 +255,13 @@ requireStudentLogin();
       }).join('');
     } catch (err) {
       console.warn('Could not load assignments dynamically:', err);
+      if (box) {
+        box.innerHTML = `
+          <div class="empty-box" style="grid-column: 1 / -1; padding: 20px; text-align: center; color: var(--text-muted); font-size: 0.8rem;">
+            Unable to load assignments right now.
+          </div>
+        `;
+      }
     }
   }
 
@@ -1124,7 +1157,7 @@ requireStudentLogin();
       }
 
       // Streak calculation
-      const streakText = document.getElementById('streakCount')?.textContent || '1';
+      const streakText = (document.getElementById('streakCountMobile') || document.getElementById('streakCount'))?.textContent || '1';
       const formattedStreak = streakText.includes('Day') ? streakText : (streakText + ' Day' + (streakText === '1' ? '' : 's'));
 
       if (sessEl) sessEl.textContent = totalCount;
@@ -1298,6 +1331,18 @@ requireStudentLogin();
     sessionStorage.setItem('vlk_dismiss_ann_' + id, 'true');
     const el = document.getElementById('ann-card-' + id);
     if (el) el.remove();
+  }
+
+  // Explicit window exports for inline HTML event handlers
+  if (typeof window !== 'undefined') {
+    window.setTheme = setTheme;
+    window.toggleNotifDropdown = toggleNotifDropdown;
+    window.markAllNotificationsRead = markAllNotificationsRead;
+    window.switchKnecRefTab = switchKnecRefTab;
+    window.saveProfileDetails = saveProfileDetails;
+    window.submitChangePassword = submitChangePassword;
+    window.exportLabHistoryCSV = exportLabHistoryCSV;
+    window.dismissAnnouncement = dismissAnnouncement;
   }
 
   loadBadges();

@@ -1,0 +1,483 @@
+/* ══════════════════════════════════════════════════════════════
+   VirtuLab Kenya — 40-Mark Composite KCSE Mock Exam Stylesheet
+   KNEC KCSE Chemistry Paper 3 (Composite Practical 233/3)
+   Academic Design System & Craftsmanship
+══════════════════════════════════════════════════════════════ */
+
+/* ── 1. THEME TOKENS ── */
+:root, [data-theme="light"] {
+  --bg-dark: #F8FAFC;
+  --card-bg: #FFFFFF;
+  --card-bg-hover: #F1F5F9;
+  --card-border: #E2E8F0;
+  --text-main: #0F172A;
+  --text-muted: #475569;
+  --heading-color: #0F172A;
+  --topbar-bg: rgba(255, 255, 255, 0.95);
+
+  --blue-accent: #0284C7;
+  --blue-bg: #F0F9FF;
+  --blue-border: #BAE6FD;
+
+  --green-accent: #059669;
+  --green-bg: #ECFDF5;
+  --green-border: #A7F3D0;
+
+  --red-accent: #DC2626;
+  --red-bg: #FEF2F2;
+  --red-border: #FECACA;
+
+  --amber-accent: #D97706;
+  --amber-bg: #FFFBEB;
+  --amber-border: #FDE68A;
+
+  --violet-accent: #7C3AED;
+  --violet-bg: #F5F3FF;
+  --violet-border: #DDD6FE;
+
+  --gold-accent: #D97706;
+  --gold-bg: #FFFBEB;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.08);
+
+  --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+[data-theme="dark"] {
+  --bg-dark: #090E17;
+  --card-bg: #111A2E;
+  --card-bg-hover: #17233B;
+  --card-border: #1E2D4A;
+  --text-main: #F8FAFC;
+  --text-muted: #94A3B8;
+  --heading-color: #FFFFFF;
+  --topbar-bg: rgba(10, 16, 28, 0.95);
+
+  --blue-accent: #38BDF8;
+  --blue-bg: rgba(56, 189, 248, 0.12);
+  --blue-border: rgba(56, 189, 248, 0.3);
+
+  --green-accent: #10B981;
+  --green-bg: rgba(16, 185, 129, 0.12);
+  --green-border: rgba(16, 185, 129, 0.3);
+
+  --red-accent: #EF4444;
+  --red-bg: rgba(239, 68, 68, 0.12);
+  --red-border: rgba(239, 68, 68, 0.3);
+
+  --amber-accent: #F59E0B;
+  --amber-bg: rgba(245, 158, 11, 0.12);
+  --amber-border: rgba(245, 158, 11, 0.3);
+
+  --violet-accent: #A855F7;
+  --violet-bg: rgba(168, 85, 247, 0.12);
+  --violet-border: rgba(168, 85, 247, 0.3);
+
+  --gold-accent: #F59E0B;
+  --gold-bg: rgba(245, 158, 11, 0.12);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.5);
+
+  --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+[data-theme="green"] {
+  --bg-dark: #051209;
+  --card-bg: #0D2315;
+  --card-bg-hover: #133320;
+  --card-border: #1B4A2B;
+  --text-main: #F0FDF4;
+  --text-muted: #86EFAC;
+  --heading-color: #34D399;
+  --topbar-bg: rgba(6, 20, 11, 0.95);
+
+  --blue-accent: #38BDF8;
+  --blue-bg: rgba(56, 189, 248, 0.12);
+  --blue-border: rgba(56, 189, 248, 0.3);
+
+  --green-accent: #34D399;
+  --green-bg: rgba(52, 211, 153, 0.12);
+  --green-border: rgba(52, 211, 153, 0.3);
+
+  --red-accent: #F87171;
+  --red-bg: rgba(248, 113, 113, 0.12);
+  --red-border: rgba(248, 113, 113, 0.3);
+
+  --amber-accent: #FBBF24;
+  --amber-bg: rgba(251, 191, 36, 0.12);
+  --amber-border: rgba(251, 191, 36, 0.3);
+
+  --violet-accent: #C084FC;
+  --violet-bg: rgba(192, 132, 252, 0.12);
+  --violet-border: rgba(192, 132, 252, 0.3);
+
+  --gold-accent: #FBBF24;
+  --gold-bg: rgba(251, 191, 36, 0.12);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
+
+  --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* ── 2. GLOBAL RESET ── */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  margin: 0;
+  padding: 0;
+  padding-top: 60px;
+  min-height: 100vh;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── 3. TOPBAR & NAVIGATION ── */
+.top-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 24px;
+  background: var(--topbar-bg);
+  border-bottom: 1px solid var(--card-border);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 10000;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-sm);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--heading-color);
+  text-decoration: none;
+}
+
+.nav-brand-badge {
+  background: var(--amber-bg);
+  color: var(--amber-accent);
+  border: 1px solid var(--amber-border);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.top-action-btn {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-main);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+.top-action-btn:hover {
+  background: var(--card-bg-hover);
+}
+
+.theme-toggle-group {
+  display: flex;
+  background: var(--bg-dark);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.theme-btn-chip {
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.12s ease;
+}
+.theme-btn-chip:hover {
+  color: var(--text-main);
+}
+.theme-btn-chip.active {
+  background: var(--blue-accent);
+  color: #FFFFFF;
+}
+
+/* ── 4. PAGE WRAP & EXAM HEADER BANNER ── */
+.wrap {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px 20px 80px;
+}
+
+.exam-header {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  box-shadow: var(--shadow-sm);
+}
+
+.exam-header-title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--heading-color);
+  letter-spacing: -0.01em;
+  margin: 0 0 4px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.exam-header-sub {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--amber-accent);
+}
+
+.exam-header-meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.exam-timer-chip {
+  font-family: var(--font-mono);
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--amber-accent);
+  background: var(--bg-dark);
+  padding: 6px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--amber-border);
+  display: inline-block;
+  margin-bottom: 4px;
+}
+
+.live-score-chip {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+/* ── 5. QUESTION TABS & ACTION BUTTONS ── */
+.exam-tab-btn {
+  font-family: var(--font-heading);
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.exam-tab-btn:hover {
+  color: var(--text-main);
+  background: var(--card-bg-hover);
+}
+.exam-tab-btn.active {
+  background: var(--amber-bg);
+  border-color: var(--amber-border);
+  color: var(--amber-accent);
+}
+
+.btn-submit-exam {
+  padding: 10px 20px;
+  font-size: 0.84rem;
+  font-weight: 800;
+  background: var(--amber-accent);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+.btn-submit-exam:hover {
+  filter: brightness(1.08);
+}
+
+/* ── 6. EMBEDDED IFRAME CARD & NAVIGATION FOOTER ── */
+.exam-frame-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+iframe.lab-frame {
+  width: 100%;
+  height: calc(100vh - 220px);
+  min-height: 650px;
+  border: none;
+  background: var(--card-bg);
+}
+
+.exam-nav-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: 14px 20px;
+  margin-top: 16px;
+  box-shadow: var(--shadow-sm);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.q-progress-indicator {
+  font-family: var(--font-heading);
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--amber-accent);
+}
+
+.btn-next-step {
+  padding: 9px 20px;
+  font-size: 0.84rem;
+  font-weight: 800;
+  background: var(--blue-accent);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+.btn-next-step:hover {
+  filter: brightness(1.08);
+}
+
+/* ── 7. SCORECARD MODAL ── */
+.kcse-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  z-index: 20000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.kcse-modal-box {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  max-width: 620px;
+  width: 100%;
+  padding: 24px;
+  box-shadow: var(--shadow-lg);
+  color: var(--text-main);
+}
+
+.kcse-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+}
+.kcse-table th {
+  background: var(--card-bg-hover);
+  color: var(--heading-color);
+  font-family: var(--font-heading);
+  padding: 10px 12px;
+  font-weight: 800;
+  border-bottom: 1px solid var(--card-border);
+}
+.kcse-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--card-border);
+}
+
+/* ── 8. PRINT BOOKLET ONLY STYLES ── */
+@media screen {
+  .knec-booklet-print-only {
+    display: none !important;
+  }
+}
+
+@media print {
+  .top-navbar, .nav-actions, button, .exam-tab-btn, .exam-header, .exam-frame-card, #btnPrevQ, #btnNextQ, #qProgressText, #compositeSubmitMsg {
+    display: none !important;
+  }
+  body {
+    background: #FFF !important;
+    color: #000 !important;
+    font-family: 'Times New Roman', serif !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .wrap {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .knec-booklet-print-only {
+    display: block !important;
+    padding: 20px;
+  }
+}

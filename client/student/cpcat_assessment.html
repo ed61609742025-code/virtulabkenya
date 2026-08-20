@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>CPCAT Standardized Chemistry Assessment — VirtuLab Kenya</title>
+<meta name="description" content="Standardized Chemistry Practical Competency Achievement Test (CPCAT) Pre-Test and Post-Test evaluation for KCSE Paper 3 practicals.">
+<script>
+  var t = localStorage.getItem('vlk_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', t);
+</script>
+<meta name="theme-color" content="#0B2545">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VirtuLab">
+<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
+<link rel="manifest" href="../manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400..800;1,6..72,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/style.css">
+<link rel="stylesheet" href="../shared/pwa-installer.css">
+
+<style>
+  :root {
+    --acad-oxford: #0B2545;
+    --acad-navy: #134074;
+    --acad-gold: #B8860B;
+    --acad-emerald: #0F5132;
+  }
+  .cpcat-exam-container {
+    max-width: 960px;
+    margin: 20px auto 50px;
+    padding: 0 16px;
+  }
+  .exam-header-card {
+    background: var(--card-bg);
+    border: 2px solid var(--card-border);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  .exam-timer-bar {
+    position: sticky;
+    top: 64px;
+    z-index: 99;
+    background: var(--topbar-bg);
+    backdrop-filter: blur(10px);
+    border: 1.5px solid var(--card-border);
+    border-radius: 10px;
+    padding: 10px 18px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: var(--shadow-sm);
+  }
+  .section-tab-nav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .sec-tab-btn {
+    flex: 1;
+    min-width: 140px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1.5px solid var(--card-border);
+    background: var(--card-bg);
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: var(--text-main);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .sec-tab-btn.active {
+    background: var(--blue-bg);
+    border-color: var(--blue-accent);
+    color: var(--blue-accent);
+  }
+  .question-item-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow-sm);
+  }
+  .q-meta-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 8px;
+  }
+  .q-prompt-text {
+    font-size: 0.94rem;
+    line-height: 1.6;
+    color: var(--heading-color);
+    margin-bottom: 14px;
+    white-space: pre-line;
+  }
+  .option-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 1.5px solid var(--card-border);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: var(--text-main);
+    transition: all 0.15s;
+  }
+  .option-label:hover {
+    background: var(--card-bg-hover);
+    border-color: var(--blue-accent);
+  }
+  .option-label.selected {
+    background: var(--blue-bg);
+    border-color: var(--blue-accent);
+    color: var(--blue-accent);
+    font-weight: 600;
+  }
+  .results-score-box {
+    text-align: center;
+    padding: 28px;
+    background: var(--card-bg-hover);
+    border-radius: 12px;
+    border: 2px solid var(--acad-gold);
+    margin-bottom: 24px;
+  }
+</style>
+</head>
+<body>
+
+<nav class="top-navbar">
+  <a href="home.html" class="nav-brand">
+    <span class="nav-logo-icon">VL</span>
+    <span>VirtuLab Assessment</span>
+  </a>
+  <div class="nav-actions">
+    <a href="home.html" class="theme-btn-chip">← Exit to Dashboard</a>
+    <div class="theme-toggle-group">
+      <button class="theme-btn-chip" data-theme="light" onclick="setTheme('light')">☀️ Paper</button>
+      <button class="theme-btn-chip active" data-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
+      <button class="theme-btn-chip" data-theme="green" onclick="setTheme('green')">🧪 Lab</button>
+    </div>
+  </div>
+</nav>
+
+<div class="cpcat-exam-container">
+
+  <!-- EXAM TITLE & INSTRUCTIONS CARD -->
+  <header class="exam-header-card" id="introCard">
+    <div style="font-size:0.78rem; font-family:'JetBrains Mono', monospace; font-weight:700; color:var(--blue-accent); margin-bottom:6px;">
+      KENYA CERTIFICATE OF SECONDARY EDUCATION • RESEARCH EVALUATION INSTRUMENT
+    </div>
+    <h1 style="font-family:'Cinzel', serif; font-size:1.4rem; color:var(--heading-color); margin:0 0 10px;" id="examTitle">
+      Chemistry Practical Competency Achievement Test (CPCAT)
+    </h1>
+    <p style="font-size:0.86rem; color:var(--text-muted); max-width:700px; margin:0 auto 16px; line-height:1.5;">
+      Standardized 40-mark assessment covering Titration Stoichiometry, Qualitative Inference Logic, Reaction Kinetics & Energetics Calculations, and Organic Functional Groups.
+    </p>
+
+    <div style="display:flex; justify-content:center; gap:20px; flex-wrap:wrap; font-family:'JetBrains Mono', monospace; font-size:0.82rem; margin-bottom:16px;">
+      <span>⏳ <b>Duration:</b> 45 Minutes</span>
+      <span>📊 <b>Total Marks:</b> 40.0</span>
+      <span>📋 <b>Sections:</b> 4 (A, B, C, D)</span>
+    </div>
+
+    <button class="btn btn-primary" style="padding:10px 24px; font-weight:800; font-size:0.9rem;" onclick="startAssessment()">
+      🚀 Begin Standardized Assessment
+    </button>
+  </header>
+
+  <!-- ACTIVE ASSESSMENT SECTION -->
+  <div id="assessmentView" style="display:none;">
+
+    <!-- STICKY TIMER & PROGRESS BAR -->
+    <div class="exam-timer-bar">
+      <div style="font-family:'Cinzel', serif; font-weight:800; color:var(--heading-color); font-size:0.95rem;">
+        <span id="activeAssessmentLabel">CPCAT Assessment</span>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:16px;">
+        <span style="font-family:'JetBrains Mono', monospace; font-size:0.82rem; color:var(--text-muted);">
+          Answered: <b id="progressCount">0</b> / 16
+        </span>
+        <div style="font-family:'JetBrains Mono', monospace; font-weight:800; font-size:0.96rem; color:var(--red-accent);" id="timerDisplay">
+          ⏱️ 45:00
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION NAVIGATION TABS -->
+    <div class="section-tab-nav">
+      <button class="sec-tab-btn active" onclick="showSection('A', this)">Section A: Titration (14 Mks)</button>
+      <button class="sec-tab-btn" onclick="showSection('B', this)">Section B: Qualitative (10 Mks)</button>
+      <button class="sec-tab-btn" onclick="showSection('C', this)">Section C: Kinetics & Heat (10 Mks)</button>
+      <button class="sec-tab-btn" onclick="showSection('D', this)">Section D: Organic & Safety (6 Mks)</button>
+    </div>
+
+    <!-- QUESTIONS CONTAINER -->
+    <div id="questionsList"></div>
+
+    <!-- SUBMIT BAR -->
+    <div style="background:var(--card-bg); border:1.5px solid var(--card-border); border-radius:10px; padding:18px; display:flex; align-items:center; justify-content:space-between; margin-top:24px;">
+      <span style="font-size:0.82rem; color:var(--text-muted);">
+        Review all questions across all 4 sections before final submission.
+      </span>
+      <button class="btn btn-primary" style="padding:10px 22px; font-weight:800;" onclick="submitAssessment()">
+        📥 Submit Assessment Booklet
+      </button>
+    </div>
+  </div>
+
+  <!-- RESULTS & DIAGNOSTIC CARD -->
+  <div id="resultsCard" style="display:none;">
+    <div class="results-score-box">
+      <div style="font-size:0.8rem; font-family:'JetBrains Mono', monospace; font-weight:700; color:var(--acad-gold); margin-bottom:6px;">
+        OFFICIAL KNEC STANDARDIZED ASSESSMENT RESULT
+      </div>
+      <h2 style="font-family:'Cinzel', serif; font-size:1.8rem; color:var(--heading-color); margin:0 0 10px;">
+        Assessment Complete
+      </h2>
+      <div style="font-size:3rem; font-weight:900; color:var(--green-accent); font-family:'Cinzel', serif; margin-bottom:10px;" id="finalScoreVal">
+        -- / 40.0
+      </div>
+      <div style="font-size:1.1rem; font-weight:700; color:var(--text-main); margin-bottom:16px;" id="finalPctVal">
+        -- %
+      </div>
+
+      <!-- Section Scores Grid -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px; max-width:700px; margin:0 auto 20px;">
+        <div style="background:var(--card-bg); padding:10px; border-radius:8px; border:1px solid var(--card-border);">
+          <div style="font-size:0.72rem; color:var(--text-muted);">Section A (Titration)</div>
+          <div style="font-size:1.1rem; font-weight:800; color:var(--heading-color);" id="scoreSecA">-- / 14</div>
+        </div>
+        <div style="background:var(--card-bg); padding:10px; border-radius:8px; border:1px solid var(--card-border);">
+          <div style="font-size:0.72rem; color:var(--text-muted);">Section B (Qualitative)</div>
+          <div style="font-size:1.1rem; font-weight:800; color:var(--heading-color);" id="scoreSecB">-- / 10</div>
+        </div>
+        <div style="background:var(--card-bg); padding:10px; border-radius:8px; border:1px solid var(--card-border);">
+          <div style="font-size:0.72rem; color:var(--text-muted);">Section C (Kinetics/Heat)</div>
+          <div style="font-size:1.1rem; font-weight:800; color:var(--heading-color);" id="scoreSecC">-- / 10</div>
+        </div>
+        <div style="background:var(--card-bg); padding:10px; border-radius:8px; border:1px solid var(--card-border);">
+          <div style="font-size:0.72rem; color:var(--text-muted);">Section D (Organic/Safety)</div>
+          <div style="font-size:1.1rem; font-weight:800; color:var(--heading-color);" id="scoreSecD">-- / 6</div>
+        </div>
+      </div>
+
+      <div id="hakesGainBanner" style="display:none; padding:12px; background:var(--blue-bg); border:1px solid var(--blue-border); border-radius:8px; margin-bottom:20px; font-size:0.88rem; color:var(--blue-accent);">
+        <!-- Hake's Gain filled dynamically -->
+      </div>
+
+      <div style="display:flex; justify-content:center; gap:14px; flex-wrap:wrap;">
+        <a href="survey_sus.html" class="btn btn-primary" style="padding:10px 20px; text-decoration:none;">
+          ⭐ Take 2-Minute Usability Survey (SUS) →
+        </a>
+        <a href="home.html" class="btn btn-secondary" style="padding:10px 20px; text-decoration:none;">
+          Return to Lab Workbench
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="../shared/api.js"></script>
+<script src="../shared/theme.js"></script>
+<script src="js/cpcat-engine.js"></script>
+
+<script>
+  let mode = new URLSearchParams(window.location.search).get('type') || 'pre_test';
+  let engine = new CPCATEngine(mode);
+  let activeSection = 'A';
+  let timerInterval = null;
+  let remainingSeconds = 45 * 60;
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    document.getElementById('examTitle').innerText = mode === 'pre_test'
+      ? 'CPCAT Baseline Pre-Test Examination (40 Marks)'
+      : 'CPCAT Post-Intervention Achievement Examination (40 Marks)';
+    document.getElementById('activeAssessmentLabel').innerText = mode === 'pre_test'
+      ? '📋 CPCAT Baseline Pre-Test'
+      : '🏆 CPCAT Post-Intervention Test';
+  });
+
+  function startAssessment() {
+    document.getElementById('introCard').style.display = 'none';
+    document.getElementById('assessmentView').style.display = 'block';
+    renderSectionQuestions();
+    startTimer();
+  }
+
+  function startTimer() {
+    timerInterval = setInterval(() => {
+      remainingSeconds--;
+      const m = Math.floor(remainingSeconds / 60);
+      const s = remainingSeconds % 60;
+      document.getElementById('timerDisplay').innerText = `⏱️ ${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      if (remainingSeconds <= 0) {
+        clearInterval(timerInterval);
+        alert('Time is up! Submitting your assessment booklet.');
+        submitAssessment();
+      }
+    }, 1000);
+  }
+
+  function showSection(sec, btn) {
+    activeSection = sec;
+    document.querySelectorAll('.sec-tab-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderSectionQuestions();
+  }
+
+  function renderSectionQuestions() {
+    const list = document.getElementById('questionsList');
+    list.innerHTML = '';
+
+    const items = engine.items.filter(i => i.section === activeSection);
+    items.forEach((item, idx) => {
+      const card = document.createElement('div');
+      card.className = 'question-item-card';
+      card.innerHTML = `
+        <div class="q-meta-strip">
+          <span style="font-family:'Cinzel', serif; font-weight:800; font-size:0.86rem; color:var(--heading-color);">
+            Item ${item.id.toUpperCase()} • ${item.sectionTitle}
+          </span>
+          <span class="theme-btn-chip" style="font-size:0.72rem; font-weight:700;">${item.marks} Marks</span>
+        </div>
+        <div class="q-prompt-text">${item.prompt}</div>
+        <div class="options-group">
+          ${item.options.map((opt, oIdx) => {
+            const isSel = engine.userAnswers[item.id] === oIdx;
+            return `
+              <label class="option-label ${isSel ? 'selected' : ''}" onclick="selectOption('${item.id}', ${oIdx})">
+                <input type="radio" name="${item.id}" value="${oIdx}" ${isSel ? 'checked' : ''} style="margin-top:2px;">
+                <span>${opt}</span>
+              </label>
+            `;
+          }).join('')}
+        </div>
+      `;
+      list.appendChild(card);
+    });
+
+    updateProgress();
+  }
+
+  function selectOption(itemId, oIdx) {
+    engine.recordAnswer(itemId, oIdx);
+    renderSectionQuestions();
+  }
+
+  function updateProgress() {
+    const count = Object.keys(engine.userAnswers).length;
+    document.getElementById('progressCount').innerText = count;
+  }
+
+  async function submitAssessment() {
+    if (timerInterval) clearInterval(timerInterval);
+
+    const score = engine.calculateScore();
+    const payload = engine.buildPayload();
+
+    try {
+      if (window.API && API.submitCPCAT) {
+        const res = await API.submitCPCAT(payload);
+        console.log('CPCAT Saved:', res);
+      } else {
+        localStorage.setItem(`vlk_cpcat_${mode}`, JSON.stringify(payload));
+      }
+    } catch (err) {
+      console.warn('Fallback save:', err);
+      localStorage.setItem(`vlk_cpcat_${mode}`, JSON.stringify(payload));
+    }
+
+    // Display results
+    document.getElementById('assessmentView').style.display = 'none';
+    document.getElementById('resultsCard').style.display = 'block';
+    document.getElementById('finalScoreVal').innerText = `${score.totalScore.toFixed(1)} / 40.0`;
+    document.getElementById('finalPctVal').innerText = `${score.percentage.toFixed(1)}% Standardized Competency`;
+    document.getElementById('scoreSecA').innerText = `${score.sectionA} / 14`;
+    document.getElementById('scoreSecB').innerText = `${score.sectionB} / 10`;
+    document.getElementById('scoreSecC').innerText = `${score.sectionC} / 10`;
+    document.getElementById('scoreSecD').innerText = `${score.sectionD} / 6`;
+  }
+</script>
+</body>
+</html>

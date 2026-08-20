@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Solubility Curves & Crystallization Lab — VirtuLab Kenya</title>
+  <title>Solubility Curves & Crystallization Lab (KCSE Paper 3) — VirtuLab Kenya</title>
   <meta name="description" content="Simulate KNEC KCSE Chemistry Paper 3 solubility curves, crystallization temperatures, serial water dilutions, and interactive graph plotting.">
   <script>
     var t = localStorage.getItem('vlk_theme') || 'dark';
@@ -14,12 +14,12 @@
       document.head.appendChild(style);
     }
   </script>
-  <meta name="theme-color" content="#0B1320">
+  <meta name="theme-color" content="#090E17">
   <link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
   <link rel="manifest" href="/manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/shared/style.css">
   <link rel="stylesheet" href="/student/css/solubility.css">
   <link rel="stylesheet" href="/shared/ai-tutor.css">
@@ -31,35 +31,35 @@
        TOPBAR — Fixed Navigation Header
   ══════════════════════════════════════ -->
   <nav class="top-navbar">
-    <a href="/student/home.html" class="nav-brand" style="text-decoration:none;">
+    <a href="/student/home.html" class="nav-brand">
       <span class="nav-logo-icon">🌡️</span>
       <span>VirtuLab Kenya</span>
-      <span style="background:linear-gradient(135deg,#06B6D4,#0284C7);color:#FFF;padding:2px 8px;border-radius:100px;font-size:0.68rem;font-weight:800;letter-spacing:0.04em;">KNEC PAPER 3</span>
+      <span class="knec-tag-pill">KNEC PAPER 3</span>
     </a>
 
-    <div style="display:flex; align-items:center; gap:3px; background:var(--card-bg); border:1px solid var(--card-border); padding:2px 4px; border-radius:100px; overflow-x:auto;">
-      <a href="lab.html" class="theme-btn-chip" style="text-decoration:none; font-size:0.72rem; padding:3px 8px;">🧪 Titration</a>
-      <a href="qualitative.html" class="theme-btn-chip" style="text-decoration:none; font-size:0.72rem; padding:3px 8px;">🔍 Qualitative</a>
-      <a href="organic.html" class="theme-btn-chip" style="text-decoration:none; font-size:0.72rem; padding:3px 8px;">⚗️ Organic</a>
-      <a href="solubility.html" class="theme-btn-chip active" style="text-decoration:none; font-size:0.72rem; padding:3px 8px;">🌡️ Solubility</a>
-      <a href="energy.html" class="theme-btn-chip" style="text-decoration:none; font-size:0.72rem; padding:3px 8px;">🔥 Energy</a>
-      <a href="rates.html" class="theme-btn-chip" style="text-decoration:none; font-size:0.72rem; padding:3px 8px;">⚡ Rates</a>
-      <a href="composite_exam.html" class="theme-btn-chip" style="text-decoration:none; font-size:0.72rem; padding:3px 8px;">📝 Exam</a>
+    <div class="nav-lab-switch">
+      <a href="lab.html" class="theme-btn-chip">🧪 Titration</a>
+      <a href="qualitative.html" class="theme-btn-chip">🔍 Qualitative</a>
+      <a href="organic.html" class="theme-btn-chip">⚗️ Organic</a>
+      <a href="solubility.html" class="theme-btn-chip active">🌡️ Solubility</a>
+      <a href="energy.html" class="theme-btn-chip">🔥 Energy</a>
+      <a href="rates.html" class="theme-btn-chip">⚡ Rates</a>
+      <a href="composite_exam.html" class="theme-btn-chip">📝 Exam</a>
     </div>
 
     <div class="nav-actions">
-      <div class="theme-toggle-group" style="margin-right:2px;">
-        <button type="button" class="theme-btn-chip active" id="btnModePractice" onclick="SolubilityEngine.setStudyMode('practice')" style="padding:4px 9px;font-size:0.72rem;font-weight:700;">🎓 Practice</button>
-        <button type="button" class="theme-btn-chip" id="btnModeExam" onclick="SolubilityEngine.setStudyMode('exam')" style="padding:4px 9px;font-size:0.72rem;font-weight:700;">📝 Exam Mode</button>
+      <div class="theme-toggle-group">
+        <button type="button" class="theme-btn-chip active" id="btnModePractice" onclick="SolubilityEngine.setStudyMode('practice')">🎓 Practice</button>
+        <button type="button" class="theme-btn-chip" id="btnModeExam" onclick="SolubilityEngine.setStudyMode('exam')">📝 Exam Mode</button>
       </div>
 
       <!-- Settings Dropdown -->
       <div style="position:relative;">
-        <button type="button" onclick="toggleBenchSettings(event)" style="background:var(--card-bg); border:1.5px solid var(--card-border); color:var(--text-main); padding:4px 9px; border-radius:8px; font-size:0.74rem; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:4px;" title="Workbench Settings & Tools">
+        <button type="button" class="sol-mini-btn" onclick="toggleBenchSettings(event)" title="Workbench Settings & Tools">
           <span>⚙️ Settings</span>
         </button>
         
-        <div id="benchSettingsDropdown" style="display:none; position:absolute; right:0; top:32px; width:240px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; box-shadow:var(--shadow-lg); z-index:10000; padding:12px; flex-direction:column; gap:10px; text-align:left;">
+        <div id="benchSettingsDropdown" style="display:none; position:absolute; right:0; top:36px; width:240px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; box-shadow:var(--shadow-lg); z-index:10000; padding:12px; flex-direction:column; gap:10px; text-align:left;">
           <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
             <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Sound Effects</span>
             <button type="button" id="soundToggleBtn" onclick="SolubilityEngine.toggleSound()" style="background:var(--card-bg); border:1px solid var(--card-border); color:var(--text-main); padding:4px 10px; font-size:0.75rem; border-radius:6px; cursor:pointer;">🔊 Sound ON</button>
@@ -83,45 +83,41 @@
           </div>
 
           <div style="display:flex; flex-direction:column; gap:6px;">
-            <button onclick="openCurrentSaltSafety()" style="background:rgba(239, 68, 68, 0.12);border:1px solid var(--red-accent);color:var(--red-accent);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
+            <button onclick="openCurrentSaltSafety()" style="background:var(--red-bg);border:1px solid var(--red-border);color:var(--red-accent);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
               ⚠️ Reagent Safety (SDS)
             </button>
             <button onclick="window.print()" style="background:var(--card-bg-hover);border:1px solid var(--card-border);color:var(--text-main);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
               🖨️ Print KCSE Booklet
             </button>
-            <button onclick="SolubilityEngine.submitSession()" style="background:linear-gradient(135deg,#10B981,#059669);border:none;color:#FFF;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
+            <button onclick="SolubilityEngine.submitSession()" style="background:var(--blue-accent);border:none;color:#FFF;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
               💾 Save Session
             </button>
           </div>
         </div>
       </div>
 
-      <!-- Back to Dashboard on the Right -->
-      <a href="/student/home.html" class="sol-nav-back-btn" title="Back to Student Dashboard / Home">
-        <span style="font-size:1.05rem; line-height:1; display:inline-block;">←</span>
-        <span>Home</span>
-      </a>
+      <a href="/student/home.html" class="sol-nav-back-btn" title="Back to Dashboard">←</a>
     </div>
   </nav>
 
   <main class="sol-page-wrap">
     
     <!-- Official KNEC Practical Examination Proctor Banner -->
-    <div id="solExamProctorBanner" style="display:none;background:linear-gradient(135deg,rgba(239,68,68,0.15),rgba(185,28,28,0.08));border:1.5px solid #EF4444;border-radius:14px;padding:10px 16px;margin-bottom:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;box-shadow:0 4px 20px rgba(239,68,68,0.2);">
+    <div id="solExamProctorBanner" style="display:none;background:var(--red-bg);border:1px solid var(--red-border);border-radius:12px;padding:12px 18px;margin-bottom:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
       <div style="display:flex;align-items:center;gap:10px;">
-        <div style="background:#EF4444;color:#FFF;padding:3px 8px;border-radius:6px;font-weight:900;font-size:0.72rem;letter-spacing:0.04em;">
+        <div style="background:var(--red-accent);color:#FFF;padding:4px 8px;border-radius:6px;font-weight:800;font-size:0.72rem;font-family:var(--font-mono);letter-spacing:0.05em;">
           🔒 KNEC EXAM MODE
         </div>
         <div>
-          <div style="font-size:0.88rem;font-weight:800;color:var(--heading-color);">Chemistry Paper 3 (233/3) — Question 1: Solubility Determination</div>
-          <div style="font-size:0.72rem;color:var(--text-muted);">Candidate Unknown: Solid W (5.00g) · Digital thermometers, spoilers & answer keys locked</div>
+          <div style="font-size:0.95rem;font-weight:800;color:var(--heading-color);font-family:var(--font-heading);">Chemistry Paper 3 (233/3) — Question 1: Solubility Determination</div>
+          <div style="font-size:0.8rem;color:var(--text-muted);">Candidate Unknown: Solid W (5.00g) · Digital thermometers, spoilers & answer keys locked</div>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;">
-        <div id="solExamTimerBadge" style="font-family:'JetBrains Mono',monospace;font-size:1.05rem;font-weight:900;color:#EF4444;background:var(--card-bg);padding:3px 10px;border-radius:6px;border:1.5px solid #EF4444;">
+        <div id="solExamTimerBadge" style="font-family:var(--font-mono);font-size:0.95rem;font-weight:800;color:var(--red-accent);background:var(--card-bg);padding:4px 12px;border-radius:6px;border:1px solid var(--red-border);">
           ⏱️ 20:00
         </div>
-        <button onclick="SolubilityEngine.submitExamBooklet()" class="sol-btn" style="background:linear-gradient(135deg,#EF4444,#DC2626);color:#FFF;padding:6px 14px;font-weight:800;border-radius:100px;font-size:0.78rem;box-shadow:0 4px 14px rgba(239,68,68,0.35);">
+        <button onclick="SolubilityEngine.submitExamBooklet()" class="sol-btn" style="background:var(--red-accent);color:#FFF;border-color:transparent;font-weight:800;">
           🚀 Submit Exam (15.0 Marks)
         </button>
       </div>
@@ -143,11 +139,11 @@
       </button>
     </div>
 
-    <!-- Streamlined Scenario Briefing & Tools Strip -->
+    <!-- Scenario Briefing & Tools Strip -->
     <div class="sol-briefing-bar" id="solBriefingBar">
       <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:240px;">
         <span class="sol-tag-knec">KNEC BRIEF</span>
-        <div id="scenarioDescText" style="font-size:0.8rem;font-weight:600;color:var(--text-main);line-height:1.3;">
+        <div id="scenarioDescText" style="font-size:0.84rem;color:var(--text-main);line-height:1.45;">
           Weigh 5.00g of salt W into a boiling tube. Add 10.0 cm³ water, heat to dissolve, cool and record crystallization temp T₁. Successively add 2.0 cm³ water.
         </div>
       </div>
@@ -163,18 +159,18 @@
       <!-- Left Column: Virtual Apparatus Canvas -->
       <div class="sol-canvas-card">
         <div class="sol-canvas-header">
-          <h2 style="font-size:0.92rem;margin:0;color:var(--text-muted,#94A3B8);text-transform:uppercase;letter-spacing:0.05em;">Virtual Apparatus Setup</h2>
+          <h2 style="font-size:0.95rem;margin:0;color:var(--heading-color);font-family:var(--font-heading);font-weight:800;">Virtual Apparatus Setup</h2>
           <div style="display:flex;align-items:center;gap:8px;">
-            <button id="btnToggleDigitalTemp" onclick="SolubilityEngine.toggleDigitalTemp()" title="Toggle Digital Readout to practice reading the analogue thermometer stem" style="background:var(--card-bg);border:1px solid var(--card-border);color:var(--text-muted);padding:4px 10px;border-radius:8px;font-size:0.72rem;font-weight:700;cursor:pointer;transition:all 0.2s ease;">
+            <button id="btnToggleDigitalTemp" onclick="SolubilityEngine.toggleDigitalTemp()" title="Toggle Digital Readout" class="sol-mini-btn">
               👁️ Digital: ON
             </button>
-            <div id="solThermometerBadge" style="font-size:1.05rem;font-weight:800;color:#EF4444;background:rgba(239,68,68,0.15);padding:4px 12px;border-radius:8px;border:1px solid rgba(239,68,68,0.3);font-family:'JetBrains Mono',monospace;">
+            <div id="solThermometerBadge" style="font-size:0.95rem;font-weight:800;color:var(--red-accent);background:var(--red-bg);padding:4px 10px;border-radius:6px;border:1px solid var(--red-border);font-family:var(--font-mono);">
               🌡️ <span id="solThermometerVal">24.5 °C</span>
             </div>
           </div>
         </div>
 
-        <div class="sol-apparatus-viewport-row" style="display:flex;gap:10px;width:100%;align-items:stretch;">
+        <div style="display:flex;gap:10px;width:100%;align-items:stretch;">
           <!-- Main Apparatus Canvas -->
           <div class="sol-canvas-wrapper" style="flex:1;height:265px;position:relative;">
             <canvas id="solLabCanvas"></canvas>
@@ -185,17 +181,17 @@
           </div>
 
           <!-- Magnified Precision Thermometer Stem View -->
-          <div class="sol-mag-thermometer-box" style="width:115px;height:265px;background:var(--card-bg-hover);border:1.5px solid var(--card-border);border-radius:12px;display:flex;flex-direction:column;align-items:center;padding:6px 5px;position:relative;box-shadow:inset 0 2px 6px rgba(0,0,0,0.15);flex-shrink:0;">
-            <div style="font-size:0.68rem;font-weight:800;color:var(--sol-cyan);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:3px;display:flex;align-items:center;gap:4px;">
+          <div style="width:115px;height:265px;background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;display:flex;flex-direction:column;align-items:center;padding:6px 5px;position:relative;flex-shrink:0;">
+            <div style="font-size:0.68rem;font-weight:800;color:var(--blue-accent);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:3px;font-family:var(--font-mono);">
               <span>🔍 0.1°C Magnifier</span>
             </div>
-            <div style="flex:1;width:100%;position:relative;overflow:hidden;border-radius:8px;background:#090E17;border:1px solid rgba(255,255,255,0.1);">
+            <div style="flex:1;width:100%;position:relative;overflow:hidden;border-radius:6px;background:var(--bg-dark);border:1px solid var(--card-border);">
               <canvas id="solMagThermometerCanvas" style="width:100%;height:100%;display:block;"></canvas>
-              <!-- Glowing Eye-Level Sightline -->
-              <div style="position:absolute;top:50%;left:0;right:0;height:1.5px;background:#38BDF8;box-shadow:0 0 6px #38BDF8;transform:translateY(-50%);pointer-events:none;opacity:0.85;"></div>
+              <!-- Eye-Level Sightline -->
+              <div style="position:absolute;top:50%;left:0;right:0;height:1px;background:var(--blue-accent);transform:translateY(-50%);pointer-events:none;opacity:0.85;"></div>
             </div>
-            <div style="margin-top:3px;font-size:0.62rem;font-weight:700;color:var(--text-muted);text-align:center;line-height:1.1;">
-              👁️ Eye-Level Sightline
+            <div style="margin-top:3px;font-size:0.62rem;font-weight:700;color:var(--text-muted);text-align:center;">
+              👁️ Sightline
             </div>
           </div>
         </div>
@@ -241,7 +237,7 @@
 
           <div class="sol-conc-chip">
             <span style="color:var(--text-muted);font-weight:700;">Concentration:</span>
-            <strong id="solConcVal">50.0 g/100g H₂O</strong>
+            <strong id="solConcVal" style="color:var(--blue-accent);">50.0 g/100g H₂O</strong>
           </div>
         </div>
 
@@ -260,7 +256,7 @@
             <button id="btnStateOff" class="sol-seg-btn active-off" onclick="SolubilityEngine.setBurnerMode('OFF')">⏹️ Off</button>
           </div>
 
-          <button class="sol-btn sol-btn-stir" onclick="SolubilityEngine.stirSolution()" style="width:100%;padding:5px 8px;font-size:0.75rem;margin-top:2px;">
+          <button class="sol-btn sol-btn-stir" onclick="SolubilityEngine.stirSolution()" style="width:100%;margin-top:2px;">
             🥄 Stir Solution (Prevent Supercooling)
           </button>
         </div>
@@ -273,15 +269,15 @@
           </div>
 
           <div style="display:flex;gap:6px;">
-            <button class="sol-btn sol-btn-record" style="flex:1.4;padding:7px 8px;font-size:0.8rem;font-weight:800;" onclick="SolubilityEngine.recordReading()">
+            <button class="sol-btn sol-btn-record" style="flex:1.4;font-weight:800;" onclick="SolubilityEngine.recordReading()">
               📝 Record Point
             </button>
-            <button id="btnAddWater" class="sol-btn sol-btn-add-water" style="flex:1;padding:7px 6px;font-size:0.76rem;" onclick="SolubilityEngine.addWaterBurette(2.0)">
+            <button id="btnAddWater" class="sol-btn sol-btn-add-water" style="flex:1;" onclick="SolubilityEngine.addWaterBurette(2.0)">
               💧 +2.0 cm³ Water
             </button>
           </div>
 
-          <button class="sol-btn sol-btn-reset" style="width:100%;padding:4px 6px;font-size:0.7rem;margin-top:1px;" onclick="SolubilityEngine.resetSimulation()">
+          <button class="sol-btn sol-btn-reset" style="width:100%;margin-top:4px;" onclick="SolubilityEngine.resetSimulation()">
             🔄 Reset Tube & Start Fresh
           </button>
         </div>
@@ -291,15 +287,15 @@
     </div>
 
     <!-- Data Table & Graph Analysis Grid -->
-    <div style="margin-top:28px;">
-      <h2 style="font-size:1.15rem;margin:0 0 14px;font-family:'Outfit',sans-serif;font-weight:800;">KNEC Experimental Table & Interactive Solubility Curve</h2>
+    <div style="margin-top:24px;">
+      <h2 style="font-size:1.15rem;margin:0 0 14px;font-family:var(--font-heading);font-weight:800;color:var(--heading-color);">KNEC Experimental Table & Interactive Solubility Curve</h2>
       
       <div style="display:grid;grid-template-columns:1fr 1.25fr;gap:20px;">
         <!-- Left: Table -->
-        <div style="background:var(--sol-bg-card);border:1.5px solid var(--sol-border);border-radius:18px;padding:18px;">
+        <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:18px;box-shadow:var(--shadow-sm);">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-            <h3 style="font-size:0.9rem;margin:0;color:var(--text-muted,#94A3B8);text-transform:uppercase;letter-spacing:0.04em;">Recorded Temperature Readings</h3>
-            <span style="font-size:0.75rem;color:var(--sol-cyan);font-weight:800;">Table Score: 5.0 / 5.0 Marks</span>
+            <h3 style="font-size:0.9rem;margin:0;color:var(--heading-color);font-family:var(--font-heading);font-weight:800;">Recorded Temperature Readings</h3>
+            <span style="font-size:0.75rem;color:var(--blue-accent);font-weight:800;font-family:var(--font-mono);">Table Score: 5.0 / 5.0 Marks</span>
           </div>
           <div style="overflow-x:auto;">
             <table class="sol-table">
@@ -325,7 +321,7 @@
         <div class="sol-graph-card">
           <div class="sol-graph-toolbar">
             <div>
-              <h3 style="font-size:0.9rem;margin:0;color:var(--text-muted,#94A3B8);text-transform:uppercase;letter-spacing:0.04em;">Solubility Curve (KNEC Graph Grid)</h3>
+              <h3 style="font-size:0.9rem;margin:0;color:var(--heading-color);font-family:var(--font-heading);font-weight:800;">Solubility Curve (KNEC Graph Grid)</h3>
             </div>
             <div class="sol-graph-btn-group">
               <button id="btnGraphTool-curve" class="sol-graph-tool-btn active" onclick="SolubilityEngine.setGraphTool('curve')">📈 Standard Curve</button>
@@ -345,11 +341,11 @@
     <div class="sol-calc-section">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
         <div>
-          <h2 style="font-size:1.15rem;margin:0;font-family:'Outfit',sans-serif;font-weight:800;">KNEC Post-Practical Calculations & Questions</h2>
+          <h2 style="font-size:1.15rem;margin:0;font-family:var(--font-heading);font-weight:800;color:var(--heading-color);">KNEC Post-Practical Calculations & Questions</h2>
           <div style="font-size:0.82rem;color:var(--text-muted);margin-top:2px;">Answer the questions below using data from your plotted solubility curve.</div>
         </div>
         <div style="display:flex;align-items:center;gap:12px;">
-          <div style="font-size:1.1rem;font-weight:800;color:var(--gold-accent);background:rgba(245,158,11,0.15);padding:4px 14px;border-radius:100px;border:1.5px solid var(--gold-accent);" id="solCalcTotalScore">
+          <div style="font-size:0.95rem;font-weight:800;color:var(--amber-accent);background:var(--amber-bg);padding:4px 12px;border-radius:6px;border:1px solid var(--amber-border);font-family:var(--font-mono);" id="solCalcTotalScore">
             0.0 / 4.0 Marks
           </div>
           <button onclick="SolubilityEngine.checkCalculations()" class="sol-btn sol-btn-record" style="padding:8px 18px;">
@@ -372,46 +368,46 @@
   <!-- Microscope Crystal Habit Modal -->
   <div id="solMicroscopeModal" class="sol-modal-overlay">
     <div class="sol-modal-dialog">
-      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:12px;margin-bottom:16px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--card-border);padding-bottom:12px;margin-bottom:16px;">
         <div style="display:flex;align-items:center;gap:10px;">
           <span style="font-size:1.5rem;">🔬</span>
           <div>
-            <h3 id="microSaltName" style="margin:0;font-size:1.1rem;font-family:'Outfit',sans-serif;">Crystal Habit Inspection</h3>
-            <span id="microHabitTitle" style="font-size:0.78rem;color:var(--sol-cyan);font-weight:700;">Crystal System</span>
+            <h3 id="microSaltName" style="margin:0;font-size:1.1rem;font-family:var(--font-heading);font-weight:800;">Crystal Habit Inspection</h3>
+            <span id="microHabitTitle" style="font-size:0.78rem;color:var(--blue-accent);font-weight:700;font-family:var(--font-mono);">Crystal System</span>
           </div>
         </div>
-        <button onclick="SolubilityEngine.closeMicroscopeModal()" class="sol-btn sol-btn-reset" style="padding:4px 12px;border-radius:100px;">✕ Close</button>
+        <button onclick="SolubilityEngine.closeMicroscopeModal()" class="sol-btn sol-btn-reset">✕ Close</button>
       </div>
 
       <div style="display:flex;justify-content:center;margin-bottom:16px;">
-        <canvas id="solMicroCanvas" style="width:100%;max-width:400px;height:240px;border-radius:14px;border:1px solid rgba(255,255,255,0.1);background:#0F172A;"></canvas>
+        <canvas id="solMicroCanvas" style="width:100%;max-width:400px;height:240px;border-radius:10px;border:1px solid var(--card-border);background:var(--bg-dark);"></canvas>
       </div>
 
-      <div style="background:rgba(6,182,212,0.08);border-left:4px solid var(--sol-cyan);padding:12px 16px;border-radius:8px;margin-bottom:16px;">
-        <div style="font-weight:800;font-size:0.85rem;color:var(--sol-cyan);margin-bottom:4px;">Crystallographic Description:</div>
+      <div style="background:var(--blue-bg);border-left:4px solid var(--blue-accent);padding:12px 16px;border-radius:8px;margin-bottom:16px;">
+        <div style="font-weight:800;font-size:0.85rem;color:var(--blue-accent);margin-bottom:4px;">Crystallographic Description:</div>
         <div id="microHabitDesc" style="font-size:0.82rem;line-height:1.45;color:var(--text-main);"></div>
       </div>
 
-      <button onclick="SolubilityEngine.closeMicroscopeModal()" class="sol-btn sol-btn-heat" style="width:100%;padding:10px;">Return to Experiment ✓</button>
+      <button onclick="SolubilityEngine.closeMicroscopeModal()" class="sol-btn sol-btn-record" style="width:100%;padding:10px;">Return to Experiment ✓</button>
     </div>
   </div>
 
   <!-- KNEC Examiner Tips Modal -->
   <div id="examinerTipsModal" class="sol-modal-overlay">
     <div class="sol-modal-dialog" style="max-width:640px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:12px;margin-bottom:16px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--card-border);padding-bottom:12px;margin-bottom:16px;">
         <div style="display:flex;align-items:center;gap:10px;">
           <span style="font-size:1.5rem;">💡</span>
           <div>
-            <h3 style="margin:0;font-size:1.1rem;font-family:'Outfit',sans-serif;color:var(--amber-accent);">KNEC Examiner Marking Rubric</h3>
+            <h3 style="margin:0;font-size:1.1rem;font-family:var(--font-heading);color:var(--amber-accent);font-weight:800;">KNEC Examiner Marking Rubric</h3>
             <span style="font-size:0.78rem;color:var(--text-muted);">Paper 3 Solubility Practical Advice</span>
           </div>
         </div>
-        <button onclick="document.getElementById('examinerTipsModal').style.display='none'" class="sol-btn sol-btn-reset" style="padding:4px 12px;border-radius:100px;">✕ Close</button>
+        <button onclick="document.getElementById('examinerTipsModal').style.display='none'" class="sol-btn sol-btn-reset">✕ Close</button>
       </div>
 
       <div style="display:flex;flex-direction:column;gap:12px;font-size:0.84rem;line-height:1.5;">
-        <div style="background:rgba(245,158,11,0.08);border-left:4px solid var(--amber-accent);padding:12px 14px;border-radius:8px;">
+        <div style="background:var(--amber-bg);border-left:4px solid var(--amber-accent);padding:12px 14px;border-radius:8px;">
           <b>1. Table Marks (5.0 Marks Total):</b><br>
           • <b>Complete Table (1m):</b> All 4–5 trials recorded.<br>
           • <b>Decimals Consistency (1m):</b> Temperature readings given consistently to 1 decimal place (e.g. 64.0°C).<br>
@@ -419,36 +415,36 @@
           • <b>Trend (1m):</b> Decreasing crystallization temperature with increasing water volume.
         </div>
 
-        <div style="background:rgba(6,182,212,0.08);border-left:4px solid var(--sol-cyan);padding:12px 14px;border-radius:8px;">
+        <div style="background:var(--blue-bg);border-left:4px solid var(--blue-accent);padding:12px 14px;border-radius:8px;">
           <b>2. Graph Marks (3.0 Marks Total):</b><br>
           • <b>Scale (1m):</b> Occupies at least half of the grid in both directions with simple uniform intervals.<br>
           • <b>Plotting (1m):</b> Correct 'x' marks plotted accurately.<br>
           • <b>Curve (1m):</b> Smooth continuous best-fit curve drawn through points (do NOT use a ruler).
         </div>
 
-        <div style="background:rgba(16,185,129,0.08);border-left:4px solid var(--green-accent);padding:12px 14px;border-radius:8px;">
+        <div style="background:var(--green-bg);border-left:4px solid var(--green-accent);padding:12px 14px;border-radius:8px;">
           <b>3. Common Student Mistakes:</b><br>
           • Overheating leading to water evaporation and higher apparent solubility.<br>
           • Failure to stir while cooling, causing supercooling where crystallization is delayed by 1–3°C.
         </div>
       </div>
 
-      <button onclick="document.getElementById('examinerTipsModal').style.display='none'" class="sol-btn sol-btn-heat" style="width:100%;padding:10px;margin-top:16px;">Got It — Back to Workbench ✓</button>
+      <button onclick="document.getElementById('examinerTipsModal').style.display='none'" class="sol-btn sol-btn-record" style="width:100%;padding:10px;margin-top:16px;">Got It — Back to Workbench ✓</button>
     </div>
   </div>
 
   <!-- KCSE Question 1 Solubility Exam Results Modal -->
   <div id="solExamResultModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:26000;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px);">
-    <div style="background:var(--card-bg);border:2px solid #EF4444;border-radius:18px;max-width:580px;width:100%;padding:26px 28px;box-shadow:0 12px 40px rgba(239,68,68,0.35);color:var(--text-main);max-height:90vh;overflow-y:auto;">
+    <div style="background:var(--card-bg);border:1px solid var(--red-border);border-radius:16px;max-width:580px;width:100%;padding:24px 26px;box-shadow:var(--shadow-lg);color:var(--text-main);max-height:90vh;overflow-y:auto;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;border-bottom:1px solid var(--card-border);padding-bottom:12px;">
         <div>
-          <span style="background:#EF4444;color:#FFF;padding:3px 10px;border-radius:100px;font-size:0.7rem;font-weight:800;">OFFICIAL KNEC RESULT</span>
-          <h2 style="font-size:1.2rem;font-weight:800;margin-top:4px;color:var(--heading-color);">Q1: Solubility & Crystallization Score Card</h2>
+          <span style="background:var(--red-accent);color:#FFF;padding:3px 10px;border-radius:6px;font-size:0.7rem;font-weight:800;font-family:var(--font-mono);">OFFICIAL KNEC RESULT</span>
+          <h2 style="font-size:1.2rem;font-weight:800;margin-top:4px;color:var(--heading-color);font-family:var(--font-heading);">Q1: Solubility & Crystallization Score Card</h2>
           <small style="color:var(--text-muted);">KNEC Chemistry Paper 3 Section 1 (15.0 Marks Total)</small>
         </div>
         <div style="text-align:right;">
-          <div id="solExamFinalGrade" style="font-size:1.75rem;font-weight:900;color:#EF4444;">Grade A</div>
-          <div id="solExamFinalScore" style="font-size:0.88rem;color:var(--text-muted);font-weight:800;">14.0 / 15.0 Marks</div>
+          <div id="solExamFinalGrade" style="font-size:1.75rem;font-weight:900;color:var(--red-accent);font-family:var(--font-heading);">Grade A</div>
+          <div id="solExamFinalScore" style="font-size:0.88rem;color:var(--text-muted);font-weight:800;font-family:var(--font-mono);">14.0 / 15.0 Marks</div>
         </div>
       </div>
 
@@ -467,14 +463,14 @@
         </table>
       </div>
 
-      <div id="solExamFeedbackNotes" style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-left:4px solid #EF4444;border-radius:8px;padding:12px 14px;font-size:0.82rem;line-height:1.55;color:var(--text-muted);margin-bottom:18px;">
+      <div id="solExamFeedbackNotes" style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-left:4px solid var(--red-accent);border-radius:8px;padding:12px 14px;font-size:0.82rem;line-height:1.55;color:var(--text-muted);margin-bottom:18px;">
       </div>
 
       <!-- Action Buttons -->
       <div style="display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;">
-        <button class="sol-btn" onclick="window.location.href='/student/home.html'" style="border-radius:100px;font-size:0.82rem;font-weight:700;">🏠 Dashboard</button>
-        <button class="sol-btn sol-btn-record" onclick="window.print()" style="border-radius:100px;font-size:0.82rem;font-weight:700;">🖨️ Print Final Booklet</button>
-        <a href="/student/composite_exam.html" class="sol-btn" style="border-radius:100px;font-size:0.82rem;font-weight:700;background:linear-gradient(135deg,#F59E0B,#D97706);color:#FFF;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">🏆 40-Mark Paper 3 Exam →</a>
+        <button class="sol-btn" onclick="window.location.href='/student/home.html'">🏠 Dashboard</button>
+        <button class="sol-btn sol-btn-record" onclick="window.print()">🖨️ Print Final Booklet</button>
+        <a href="/student/composite_exam.html" class="sol-btn" style="background:var(--amber-accent);color:#FFF;border-color:transparent;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">🏆 40-Mark Paper 3 Exam →</a>
       </div>
     </div>
   </div>
@@ -482,9 +478,9 @@
   <!-- Printable Official KNEC Practical Candidate Booklet -->
   <div class="sol-print-booklet-only">
     <div style="text-align:center;border-bottom:2px solid #000;padding-bottom:8px;margin-bottom:14px;">
-      <h1 style="font-size:1.3rem;margin:0;">THE KENYA NATIONAL EXAMINATIONS COUNCIL</h1>
-      <h2 style="font-size:1.05rem;margin:4px 0;">KENYA CERTIFICATE OF SECONDARY EDUCATION (KCSE)</h2>
-      <h3 style="font-size:0.95rem;margin:2px 0;">CHEMISTRY PAPER 3 (PRACTICAL) — CODE 233/3</h3>
+      <h1 style="font-size:1.3rem;margin:0;font-family:var(--font-heading);">THE KENYA NATIONAL EXAMINATIONS COUNCIL</h1>
+      <h2 style="font-size:1.05rem;margin:4px 0;font-family:var(--font-heading);">KENYA CERTIFICATE OF SECONDARY EDUCATION (KCSE)</h2>
+      <h3 style="font-size:0.95rem;margin:2px 0;font-family:var(--font-heading);">CHEMISTRY PAPER 3 (PRACTICAL) — CODE 233/3</h3>
       <p style="font-size:0.82rem;font-style:italic;margin:2px 0;">Candidate Response & Solubility Examination Booklet</p>
     </div>
   </div>
@@ -495,6 +491,7 @@
   <script src="/shared/audio-synth.js"></script>
   <script src="/shared/chemical-safety.js"></script>
   <script src="/shared/ai-tutor.js"></script>
+  <script src="/shared/page-transitions.js"></script>
   <script src="/student/js/solubility-engine.js"></script>
   <script>
     function toggleBenchSettings(e) {

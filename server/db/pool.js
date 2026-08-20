@@ -12,7 +12,6 @@
 
 const { Pool } = require('pg');
 
-<<<<<<< HEAD
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   min: 1,
@@ -64,14 +63,3 @@ process.on('SIGINT', async () => {
 
 module.exports = pool;
 
-=======
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-
-pool.on('error', (err) => {
-  // Handles errors on idle clients in the pool (e.g. connection
-  // dropped by the DB host) so they don't crash the process.
-  console.error('Unexpected error on idle database client:', err.message);
-});
-
-module.exports = pool;
->>>>>>> 74e471700462c14fcb25509826ece705e831d8d8

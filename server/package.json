@@ -5,18 +5,13 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-<<<<<<< HEAD
     "dev": "nodemon index.js",
     "test": "node --test tests/node_api.test.js"
-=======
-    "dev": "nodemon index.js"
->>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
   },
   "author": "VirtuLab Kenya",
   "license": "MIT",
   "dependencies": {
     "bcrypt": "^5.1.1",
-<<<<<<< HEAD
     "compression": "^1.8.1",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -24,21 +19,11 @@
     "express-rate-limit": "^8.6.2",
     "express-validator": "^7.3.2",
     "helmet": "^8.3.0",
-=======
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
->>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.12.0"
   },
   "devDependencies": {
-<<<<<<< HEAD
-    "jest": "^30.4.2",
     "nodemon": "^3.1.4",
     "supertest": "^7.2.2"
-=======
-    "nodemon": "^3.1.4"
->>>>>>> 74e471700462c14fcb25509826ece705e831d8d8
   }
 }

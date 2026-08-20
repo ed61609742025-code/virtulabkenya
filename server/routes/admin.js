@@ -4,6 +4,7 @@
 
 const express = require('express');
 const router = express.Router();
+const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const pool = require('../db/pool');
 const asyncHandler = require('../utils/asyncHandler');
@@ -69,7 +70,8 @@ router.get('/schools', asyncHandler(async (req, res) => {
 
 // GET /api/admin/audit-logs — Retrieve system audit log history
 router.get('/audit-logs', asyncHandler(async (req, res) => {
-  const logs = await auditRepo.getRecentAuditLogs(50);
+  const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 50, 1), 200);
+  const logs = await auditRepo.getRecentAuditLogs(limit);
   return res.json({ success: true, logs });
 }));
 
@@ -142,9 +144,18 @@ router.get('/users', asyncHandler(async (req, res) => {
     LEFT JOIN schools s ON s.id = st.school_id
   `);
 
-  const allUsers = [...teachersRes.rows, ...studentsRes.rows].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  let allUsers = [...teachersRes.rows, ...studentsRes.rows].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-  return res.json({ success: true, users: allUsers });
+  const total = allUsers.length;
+  if (req.query.page || req.query.limit) {
+    const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+    const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 50, 1), 200);
+    const offset = (page - 1) * limit;
+    allUsers = allUsers.slice(offset, offset + limit);
+    return res.json({ success: true, users: allUsers, total, page, limit });
+  }
+
+  return res.json({ success: true, users: allUsers, total });
 }));
 
 // PATCH /api/admin/users/:id/status — Toggle user active/suspended status
@@ -178,7 +189,7 @@ router.post('/users/:id/reset-password', asyncHandler(async (req, res) => {
   const table = role && role.toLowerCase() === 'teacher' ? 'teachers' : 'students';
 
   // Generate random 8-char temporary password
-  const tempPassword = 'VLK-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+  const tempPassword = 'VLK-' + crypto.randomBytes(4).toString('hex').toUpperCase().substring(0, 6);
   const hashedPassword = await bcrypt.hash(tempPassword, 10);
 
   const result = await pool.query(

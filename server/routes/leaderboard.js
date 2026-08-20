@@ -18,6 +18,7 @@
 
 const express = require('express');
 const authMiddleware = require('../middleware/auth');
+const asyncHandler = require('../utils/asyncHandler');
 const pool = require('../db/pool');
 
 const router = express.Router();
@@ -51,42 +52,37 @@ async function getRankedClass(teacherId) {
   }));
 }
 
-router.get('/class', authMiddleware, async (req, res) => {
-  try {
-    if (req.user.role === 'teacher') {
-      const ranked = await getRankedClass(req.user.id);
-      return res.json({ scope: 'class', minSessionsRequired: MIN_SESSIONS, ranked });
-    }
-
-    if (req.user.role === 'student') {
-      const studentResult = await pool.query(
-        'SELECT teacher_id FROM students WHERE id = $1',
-        [req.user.id]
-      );
-      const teacherId = studentResult.rows[0] ? studentResult.rows[0].teacher_id : null;
-
-      if (!teacherId) {
-        return res.json({
-          scope: 'class',
-          minSessionsRequired: MIN_SESSIONS,
-          top: [],
-          you: null,
-          message: 'No teacher linked to your account, so a class leaderboard isn\'t available. Ask your teacher for a teacher code to link your account.'
-        });
-      }
-
-      const ranked = await getRankedClass(teacherId);
-      const top = ranked.slice(0, 5);
-      const you = ranked.find(r => r.studentId === req.user.id) || null;
-
-      return res.json({ scope: 'class', minSessionsRequired: MIN_SESSIONS, top, you });
-    }
-
-    return res.status(403).json({ error: 'Unrecognized account role.' });
-  } catch (err) {
-    console.error('Get leaderboard error:', err.message);
-    res.status(500).json({ error: 'Could not load leaderboard.' });
+router.get('/class', authMiddleware, asyncHandler(async (req, res) => {
+  if (req.user.role === 'teacher') {
+    const ranked = await getRankedClass(req.user.id);
+    return res.json({ scope: 'class', minSessionsRequired: MIN_SESSIONS, ranked });
   }
-});
+
+  if (req.user.role === 'student') {
+    const studentResult = await pool.query(
+      'SELECT teacher_id FROM students WHERE id = $1',
+      [req.user.id]
+    );
+    const teacherId = studentResult.rows[0] ? studentResult.rows[0].teacher_id : null;
+
+    if (!teacherId) {
+      return res.json({
+        scope: 'class',
+        minSessionsRequired: MIN_SESSIONS,
+        top: [],
+        you: null,
+        message: 'No teacher linked to your account, so a class leaderboard isn\'t available. Ask your teacher for a teacher code to link your account.'
+      });
+    }
+
+    const ranked = await getRankedClass(teacherId);
+    const top = ranked.slice(0, 5);
+    const you = ranked.find(r => r.studentId === req.user.id) || null;
+
+    return res.json({ scope: 'class', minSessionsRequired: MIN_SESSIONS, top, you });
+  }
+
+  return res.status(403).json({ error: 'Unrecognized account role.' });
+}));
 
 module.exports = router;

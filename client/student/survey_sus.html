@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>System Usability Scale (SUS) — VirtuLab Kenya</title>
+<script>
+  var t = localStorage.getItem('vlk_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', t);
+</script>
+<meta name="theme-color" content="#0B2545">
+<link rel="stylesheet" href="../shared/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  .survey-container {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 0 16px;
+  }
+  .survey-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 20px;
+  }
+  .sus-row {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .likert-scale-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    background: var(--card-bg-hover);
+    padding: 10px 14px;
+    border-radius: 8px;
+  }
+  .likert-opt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<nav class="top-navbar">
+  <a href="home.html" class="nav-brand">
+    <span class="nav-logo-icon">VL</span>
+    <span>Research Evaluation</span>
+  </a>
+  <div class="nav-actions">
+    <a href="home.html" class="theme-btn-chip">← Back to Dashboard</a>
+  </div>
+</nav>
+
+<div class="survey-container">
+  <div class="survey-card" id="formCard">
+    <div style="font-size:0.75rem; font-family:'JetBrains Mono', monospace; font-weight:700; color:var(--blue-accent); margin-bottom:6px;">
+      SYSTEM USABILITY SCALE (SUS) • RESEARCH INSTRUMENT
+    </div>
+    <h1 style="font-family:'Cinzel', serif; font-size:1.3rem; color:var(--heading-color); margin:0 0 10px;">
+      VirtuLab Kenya Usability Evaluation
+    </h1>
+    <p style="font-size:0.84rem; color:var(--text-muted); line-height:1.5; margin-bottom:18px;">
+      Please indicate your honest level of agreement with each statement based on your experience using the virtual laboratory. (1 = Strongly Disagree, 5 = Strongly Agree).
+    </p>
+
+    <form id="susForm" onsubmit="submitSUS(event)">
+      <div id="susItemsList"></div>
+
+      <div style="margin-top:20px;">
+        <label style="font-size:0.84rem; font-weight:700; color:var(--heading-color); display:block; margin-bottom:6px;">
+          💬 Additional Qualitative Feedback / Suggestions:
+        </label>
+        <textarea id="feedbackText" class="form-control" rows="3" placeholder="Share any specific features you liked or areas for improvement..."></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width:100%; margin-top:20px; padding:12px; font-weight:800;">
+        Submit Usability Feedback
+      </button>
+    </form>
+  </div>
+
+  <div class="survey-card" id="successCard" style="display:none; text-align:center; padding:36px;">
+    <div style="font-size:2.5rem; margin-bottom:12px;">🎉</div>
+    <h2 style="font-family:'Cinzel', serif; color:var(--heading-color); margin-bottom:8px;">Thank You!</h2>
+    <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:20px;">
+      Your usability feedback has been recorded into the research dataset.
+    </p>
+    <div style="padding:16px; background:var(--blue-bg); border-radius:8px; border:1px solid var(--blue-border); max-width:400px; margin:0 auto 24px;">
+      <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Calculated SUS Score</div>
+      <div style="font-size:2rem; font-weight:900; color:var(--blue-accent); font-family:'Cinzel', serif;" id="scoreOutput">-- / 100</div>
+      <div style="font-size:0.82rem; font-weight:700; color:var(--text-main);" id="gradeOutput">--</div>
+    </div>
+    <div style="display:flex; justify-content:center; gap:12px;">
+      <a href="survey_tam.html" class="btn btn-primary" style="text-decoration:none; padding:10px 18px;">Next: 2-Min TAM Survey →</a>
+      <a href="home.html" class="btn btn-secondary" style="text-decoration:none; padding:10px 18px;">Return to Home</a>
+    </div>
+  </div>
+</div>
+
+<script src="../shared/api.js"></script>
+<script src="../shared/theme.js"></script>
+<script src="js/survey-sus.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const list = document.getElementById('susItemsList');
+    SUS_ITEMS.forEach((item, idx) => {
+      const row = document.createElement('div');
+      row.className = 'sus-row';
+      row.innerHTML = `
+        <div style="font-size:0.88rem; font-weight:600; color:var(--heading-color);">
+          ${idx + 1}. ${item.text}
+        </div>
+        <div class="likert-scale-group">
+          <span style="font-size:0.7rem; font-weight:700; color:var(--text-muted);">Strongly Disagree</span>
+          ${[1, 2, 3, 4, 5].map(v => `
+            <label class="likert-opt">
+              <input type="radio" name="sus_${idx}" value="${v}" ${v === 4 ? 'checked' : ''} required>
+              <span>${v}</span>
+            </label>
+          `).join('')}
+          <span style="font-size:0.7rem; font-weight:700; color:var(--text-muted);">Strongly Agree</span>
+        </div>
+      `;
+      list.appendChild(row);
+    });
+  });
+
+  async function submitSUS(e) {
+    e.preventDefault();
+    const responses = [];
+    for (let i = 0; i < 10; i++) {
+      const checked = document.querySelector(`input[name="sus_${i}"]:checked`);
+      responses.push(checked ? parseInt(checked.value, 10) : 3);
+    }
+    const feedback = document.getElementById('feedbackText').value;
+    const computed = calculateSUS(responses);
+
+    try {
+      if (window.API && API.submitSUS) {
+        await API.submitSUS({ responses, feedback_text: feedback });
+      } else {
+        localStorage.setItem('vlk_sus_response', JSON.stringify({ responses, feedback, computed }));
+      }
+    } catch (err) {
+      console.warn('SUS fallback save:', err);
+      localStorage.setItem('vlk_sus_response', JSON.stringify({ responses, feedback, computed }));
+    }
+
+    document.getElementById('formCard').style.display = 'none';
+    document.getElementById('successCard').style.display = 'block';
+    document.getElementById('scoreOutput').innerText = `${computed.score.toFixed(1)} / 100`;
+    document.getElementById('gradeOutput').innerText = `${computed.grade} • ${computed.adjective}`;
+  }
+</script>
+</body>
+</html>

@@ -9,7 +9,7 @@ module.exports = {
     teacherCodeLength: 8,
     tempPasswordPrefix: 'VLK-',
     adminEmail: process.env.ADMIN_EMAIL || 'admin@virtulab.co.ke',
-    adminPassword: process.env.ADMIN_PASSWORD || 'VirtuLabAdmin2025!'
+    adminPassword: process.env.ADMIN_PASSWORD || ''
   },
   pagination: {
     defaultLimit: 20,

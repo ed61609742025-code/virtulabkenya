@@ -225,12 +225,28 @@
 </div>
 
 <script src="/shared/api.js"></script>
+<script src="/shared/page-transitions.js"></script>
 <script>
   const user = getUser();
   if (user && user.name) {
     document.getElementById('certStudentName').textContent = user.name;
   }
   document.getElementById('certDate').textContent = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+  // Custom discipline / score handling
+  const params = new URLSearchParams(window.location.search);
+  const customTitle = params.get('title');
+  const customBody = params.get('desc');
+  const examScore = params.get('score');
+
+  if (customTitle) {
+    document.querySelector('.cert-title').textContent = customTitle;
+  }
+  if (customBody) {
+    document.querySelector('.cert-body').innerHTML = customBody;
+  } else if (examScore) {
+    document.querySelector('.cert-body').innerHTML = `has successfully demonstrated outstanding practical competence in the <b>KCSE Chemistry Practical Examination</b>, achieving a verified score of <b>${examScore} / 40.0 Marks</b> in accordance with <b>KICD & KNEC Standards</b>.`;
+  }
 </script>
 </body>
 </html>

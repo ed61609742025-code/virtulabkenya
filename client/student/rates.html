@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Reaction Rates & Chemical Kinetics Workbench — VirtuLab Kenya</title>
+  <title>Reaction Rates & Chemical Kinetics (KCSE Paper 3) — VirtuLab Kenya</title>
   <meta name="description" content="Simulate KNEC KCSE Chemistry Paper 3 reaction rate practicals: Disappearing cross (Na2S2O3 + HCl), gas syringe kinetics, mass loss, catalysts, and collision theory.">
   <script>
     var t = localStorage.getItem('vlk_theme') || 'dark';
@@ -14,12 +14,12 @@
       document.head.appendChild(style);
     }
   </script>
-  <meta name="theme-color" content="#0B1320">
+  <meta name="theme-color" content="#090E17">
   <link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
   <link rel="manifest" href="/manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700;800&family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/shared/style.css">
   <link rel="stylesheet" href="/student/css/rates.css">
   <link rel="stylesheet" href="/shared/ai-tutor.css">
@@ -87,13 +87,13 @@
           </div>
 
           <div style="display:flex; flex-direction:column; gap:6px;">
-            <button onclick="openSafetyModal()" style="background:rgba(239, 68, 68, 0.12);border:1px solid var(--rate-rose);color:var(--rate-rose);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
+            <button onclick="openSafetyModal()" style="background:var(--red-bg);border:1px solid var(--red-border);color:var(--red-accent);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
               ⚠️ Chemical Safety & SDS
             </button>
             <button onclick="window.print()" style="background:var(--card-bg-hover);border:1px solid var(--card-border);color:var(--text-main);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
               🖨️ Print KCSE Booklet
             </button>
-            <button onclick="RatesEngine.gradeKnecWorksheet()" style="background:linear-gradient(135deg,#F59E0B,#D97706);border:none;color:#FFF;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
+            <button onclick="RatesEngine.gradeKnecWorksheet()" style="background:var(--rate-amber);border:none;color:#FFF;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
               💾 Submit & Grade (15 Mks)
             </button>
           </div>
@@ -126,19 +126,19 @@
     <!-- 5-Experiment Segmented Switcher -->
     <div class="rate-experiment-tabs">
       <button class="rate-exp-tab active" data-exp="cross" onclick="RatesEngine.setExperiment('cross')">
-        <span class="tab-indicator"></span> 🧪 1. Disappearing Cross
+        🧪 1. Disappearing Cross
       </button>
       <button class="rate-exp-tab" data-exp="syringe" onclick="RatesEngine.setExperiment('syringe')">
-        <span class="tab-indicator"></span> ⚗️ 2. Gas Syringe (CaCO₃)
+        ⚗️ 2. Gas Syringe (CaCO₃)
       </button>
       <button class="rate-exp-tab" data-exp="mass" onclick="RatesEngine.setExperiment('mass')">
-        <span class="tab-indicator"></span> ⚖️ 3. Loss in Mass
+        ⚖️ 3. Loss in Mass
       </button>
       <button class="rate-exp-tab" data-exp="catalyst" onclick="RatesEngine.setExperiment('catalyst')">
-        <span class="tab-indicator"></span> 🚀 4. Catalysts (H₂O₂)
+        🚀 4. Catalysts (H₂O₂)
       </button>
       <button class="rate-exp-tab" data-exp="collision" onclick="RatesEngine.setExperiment('collision')">
-        <span class="tab-indicator"></span> ⚛️ 5. Collision Theory
+        ⚛️ 5. Collision Theory
       </button>
     </div>
 
@@ -338,8 +338,8 @@
       <!-- Left: KNEC Data Table -->
       <div class="rate-table-card">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-          <h3 style="font-size:0.95rem; font-family:'Outfit',sans-serif; margin:0;">KNEC Table 1: Experimental Readings</h3>
-          <span style="font-size:0.75rem; color:var(--text-muted);">5.0 Marks</span>
+          <h3 style="font-size:0.95rem; font-family:var(--font-heading); margin:0;">KNEC Table 1: Experimental Readings</h3>
+          <span style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono);">5.0 Marks</span>
         </div>
         <table class="rate-table">
           <thead id="knecTableHead"></thead>
@@ -350,7 +350,7 @@
       <!-- Right: Interactive SAPC Graph -->
       <div class="rate-graph-card">
         <div style="display:flex; justify-content:space-between; align-items:center;">
-          <h3 style="font-size:0.95rem; font-family:'Outfit',sans-serif; margin:0;">KNEC Rate Graph (SAPC Rubric)</h3>
+          <h3 style="font-size:0.95rem; font-family:var(--font-heading); margin:0;">KNEC Rate Graph (SAPC Rubric)</h3>
           <div class="rate-graph-toolbar">
             <button id="btnTangentTool" class="rate-tangent-chip" onclick="RatesEngine.toggleTangent()">
               📐 Tangent Tool (dy/dx)
@@ -366,10 +366,10 @@
 
     <!-- KNEC Exam Questions Worksheet -->
     <div class="rate-knec-exam-card" id="knecExamCard">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1.5px solid var(--rate-border); padding-bottom:12px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid var(--card-border); padding-bottom:12px;">
         <div>
-          <span style="background:var(--rate-amber); color:#FFF; padding:3px 10px; border-radius:100px; font-size:0.7rem; font-weight:800;">KNEC PAPER 3</span>
-          <h2 style="margin:4px 0 0; font-size:1.15rem; font-family:'Outfit',sans-serif; color:var(--heading-color);">Question 2: Quantitative Reaction Rates Examination (15.0 Marks)</h2>
+          <span style="background:var(--rate-amber); color:#FFF; padding:3px 10px; border-radius:6px; font-size:0.7rem; font-weight:800; font-family:var(--font-mono);">KNEC PAPER 3</span>
+          <h2 style="margin:4px 0 0; font-size:1.15rem; font-family:var(--font-heading); color:var(--heading-color);">Question 2: Quantitative Reaction Rates Examination (15.0 Marks)</h2>
         </div>
         <button class="rate-btn rate-btn-primary" style="padding:8px 18px;" onclick="RatesEngine.gradeKnecWorksheet()">
           ✓ Grade Worksheet (15 Marks)
@@ -388,14 +388,14 @@
   <!-- Result Modal -->
   <div id="rateExamResultModal" class="rate-modal-overlay">
     <div class="rate-modal-dialog">
-      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; border-bottom:1px solid var(--rate-border); padding-bottom:12px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; border-bottom:1px solid var(--card-border); padding-bottom:12px;">
         <div>
-          <span style="background:var(--rate-amber); color:#FFF; padding:3px 10px; border-radius:100px; font-size:0.7rem; font-weight:800;">OFFICIAL KNEC SCORECARD</span>
-          <h2 style="font-size:1.2rem; font-weight:800; margin-top:4px; color:var(--heading-color);">Question 2: Rates Score Card</h2>
+          <span style="background:var(--rate-amber); color:#FFF; padding:3px 10px; border-radius:6px; font-size:0.7rem; font-weight:800; font-family:var(--font-mono);">OFFICIAL KNEC SCORECARD</span>
+          <h2 style="font-size:1.2rem; font-weight:800; margin-top:4px; color:var(--heading-color); font-family:var(--font-heading);">Question 2: Rates Score Card</h2>
         </div>
         <div style="text-align:right;">
-          <div id="rateExamFinalGrade" style="font-size:1.75rem; font-weight:900; color:var(--rate-amber);">Grade A</div>
-          <div id="rateExamFinalScore" style="font-size:0.88rem; color:var(--text-muted); font-weight:800;">14.0 / 15.0 Marks</div>
+          <div id="rateExamFinalGrade" style="font-size:1.75rem; font-weight:900; color:var(--rate-amber); font-family:var(--font-heading);">Grade A</div>
+          <div id="rateExamFinalScore" style="font-size:0.88rem; color:var(--text-muted); font-weight:800; font-family:var(--font-mono);">14.0 / 15.0 Marks</div>
         </div>
       </div>
 
@@ -412,7 +412,7 @@
         </table>
       </div>
 
-      <div id="rateExamFeedbackNotes" style="background:var(--card-bg-hover); border:1px solid var(--rate-border); border-left:4px solid var(--rate-amber); border-radius:8px; padding:12px 14px; font-size:0.82rem; line-height:1.55; color:var(--text-muted); margin-bottom:18px;"></div>
+      <div id="rateExamFeedbackNotes" style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-left:4px solid var(--rate-amber); border-radius:8px; padding:12px 14px; font-size:0.82rem; line-height:1.55; color:var(--text-muted); margin-bottom:18px;"></div>
 
       <div style="display:flex; gap:10px; justify-content:space-between;">
         <button class="rate-btn" onclick="RatesEngine.closeResultModal()">✕ Close</button>
@@ -424,8 +424,8 @@
   <!-- Chemical Safety SDS Modal -->
   <div id="safetyModal" class="rate-modal-overlay">
     <div class="rate-modal-dialog">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid var(--rate-border); padding-bottom:12px;">
-        <h3 style="margin:0; font-family:'Outfit',sans-serif; color:var(--rate-rose);">⚠️ Chemical Safety & SDS</h3>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid var(--card-border); padding-bottom:12px;">
+        <h3 style="margin:0; font-family:var(--font-heading); color:var(--red-accent);">⚠️ Chemical Safety & SDS</h3>
         <button class="rate-btn" style="padding:4px 10px;" onclick="closeSafetyModal()">✕</button>
       </div>
       <div style="font-size:0.84rem; line-height:1.6; color:var(--text-main);">
@@ -442,6 +442,7 @@
   <script src="/shared/theme.js"></script>
   <script src="/shared/api.js"></script>
   <script src="/shared/knec-grading.js"></script>
+  <script src="/shared/page-transitions.js"></script>
   <script src="/student/js/rates-engine.js"></script>
   <script>
     function toggleSettingsMenu(e) {

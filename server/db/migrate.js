@@ -133,7 +133,84 @@ const migrations = [
      link VARCHAR(255),
      is_read BOOLEAN DEFAULT FALSE,
      created_at TIMESTAMP DEFAULT NOW()
-   )`
+   )`,
+  // Ensure gas_sessions exists for Gas Preparation and Collection practicals
+  `CREATE TABLE IF NOT EXISTS gas_sessions (
+     id SERIAL PRIMARY KEY,
+     student_id INTEGER REFERENCES students(id) ON DELETE CASCADE,
+     assignment_id INTEGER REFERENCES assignments(id) ON DELETE SET NULL,
+     gas_key VARCHAR(50) NOT NULL,
+     gas_name VARCHAR(150),
+     reactants VARCHAR(200),
+     drying_agent VARCHAR(100),
+     collection_method VARCHAR(100),
+     drying_correct BOOLEAN DEFAULT FALSE,
+     collection_correct BOOLEAN DEFAULT FALSE,
+     tests_performed INTEGER DEFAULT 0,
+     tests_correct INTEGER DEFAULT 0,
+     test_observations JSONB,
+     questions_score DECIMAL(5,2) DEFAULT 0.0,
+     total_score DECIMAL(5,2) DEFAULT 0.0,
+     rubric_breakdown JSONB,
+     correct BOOLEAN DEFAULT FALSE,
+     mode VARCHAR(20) DEFAULT 'selfPaced',
+     duration_seconds INTEGER DEFAULT 0,
+     created_at TIMESTAMP DEFAULT NOW()
+   )`,
+  // Ensure research_assessments exists for CPCAT Pre/Post assessments
+  `CREATE TABLE IF NOT EXISTS research_assessments (
+     id SERIAL PRIMARY KEY,
+     student_id INTEGER REFERENCES students(id) ON DELETE CASCADE,
+     assessment_type VARCHAR(20) NOT NULL,
+     title VARCHAR(200) DEFAULT 'Chemistry Practical Competency Achievement Test (CPCAT)',
+     section_a_score DECIMAL(5,2) DEFAULT 0.0,
+     section_b_score DECIMAL(5,2) DEFAULT 0.0,
+     section_c_score DECIMAL(5,2) DEFAULT 0.0,
+     section_d_score DECIMAL(5,2) DEFAULT 0.0,
+     total_score DECIMAL(5,2) DEFAULT 0.0,
+     max_score DECIMAL(5,2) DEFAULT 40.0,
+     percentage DECIMAL(5,2) DEFAULT 0.0,
+     answers JSONB,
+     rubric_breakdown JSONB,
+     duration_seconds INTEGER DEFAULT 0,
+     created_at TIMESTAMP DEFAULT NOW()
+   )`,
+  // Ensure research_surveys exists for SUS & TAM 3 instruments
+  `CREATE TABLE IF NOT EXISTS research_surveys (
+     id SERIAL PRIMARY KEY,
+     user_id INTEGER,
+     user_role VARCHAR(20) NOT NULL,
+     school_id INTEGER REFERENCES schools(id) ON DELETE SET NULL,
+     survey_type VARCHAR(20) NOT NULL,
+     responses JSONB NOT NULL,
+     score DECIMAL(5,2),
+     construct_scores JSONB,
+     feedback_text TEXT,
+     created_at TIMESTAMP DEFAULT NOW()
+   )`,
+  // Ensure performance indexes exist
+  `CREATE INDEX IF NOT EXISTS idx_students_school_id ON students(school_id)`,
+  `CREATE INDEX IF NOT EXISTS idx_students_teacher_id ON students(teacher_id)`,
+  `CREATE INDEX IF NOT EXISTS idx_teachers_school_id ON teachers(school_id)`,
+  `CREATE INDEX IF NOT EXISTS idx_practical_sessions_student_id ON practical_sessions(student_id)`,
+  `CREATE INDEX IF NOT EXISTS idx_practical_sessions_created_at ON practical_sessions(created_at DESC)`,
+  `CREATE INDEX IF NOT EXISTS idx_qualitative_sessions_student_id ON qualitative_sessions(student_id)`,
+  `CREATE INDEX IF NOT EXISTS idx_organic_sessions_student_id ON organic_sessions(student_id)`,
+  `CREATE INDEX IF NOT EXISTS idx_composite_sessions_student_id ON composite_sessions(student_id)`,
+  `CREATE INDEX IF NOT EXISTS idx_solubility_sessions_student_id ON solubility_sessions(student_id)`,
+  `CREATE INDEX IF NOT EXISTS idx_energy_sessions_student_id ON energy_sessions(student_id)`,
+  `CREATE INDEX IF NOT EXISTS idx_rates_sessions_student_id ON rates_sessions(student_id)`,
+  `CREATE INDEX IF NOT EXISTS idx_gas_sessions_student_id ON gas_sessions(student_id)`,
+  `CREATE INDEX IF NOT EXISTS idx_gas_sessions_gas_key ON gas_sessions(gas_key)`,
+  `CREATE INDEX IF NOT EXISTS idx_research_assessments_student_id ON research_assessments(student_id)`,
+  `CREATE INDEX IF NOT EXISTS idx_research_assessments_type ON research_assessments(assessment_type)`,
+  `CREATE INDEX IF NOT EXISTS idx_research_surveys_type ON research_surveys(survey_type)`,
+  `CREATE INDEX IF NOT EXISTS idx_research_surveys_user_role ON research_surveys(user_role)`,
+  `CREATE INDEX IF NOT EXISTS idx_assignments_teacher_id ON assignments(teacher_id)`,
+  `CREATE INDEX IF NOT EXISTS idx_assignments_school_id ON assignments(school_id)`,
+  `CREATE INDEX IF NOT EXISTS idx_assignment_submissions_student_id ON assignment_submissions(student_id)`,
+  `CREATE INDEX IF NOT EXISTS idx_assignment_submissions_assignment_id ON assignment_submissions(assignment_id)`,
+  `CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(created_at DESC)`
 ];
 
 async function migrate() {

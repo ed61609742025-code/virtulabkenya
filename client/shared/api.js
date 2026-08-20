@@ -337,7 +337,19 @@ async function apiRequest(method, endpoint, body, retries = 2) {
         }
       }
       const res = await fetch(API_BASE + endpoint, options);
-      const data = await res.json();
+      let data = {};
+      const contentType = res.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        try {
+          data = await res.json();
+        } catch (e) {
+          data = { error: 'Invalid JSON response from server' };
+        }
+      } else {
+        const text = await res.text();
+        data = { error: text || `HTTP ${res.status} ${res.statusText}` };
+      }
+
       if (!res.ok) {
         // If 401 Unauthorized, clear stale token
         if (res.status === 401) {
@@ -359,7 +371,7 @@ async function apiRequest(method, endpoint, body, retries = 2) {
           await new Promise(r => setTimeout(r, attempt * 500));
           continue;
         }
-        throw new Error(data.error || 'Request failed');
+        throw new Error(data.error || `Request failed with status ${res.status}`);
       }
       updateOfflineBanner(true);
       return data;

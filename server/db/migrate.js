@@ -8,6 +8,73 @@ require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') }
 const { Pool } = require('pg');
 
 const migrations = [
+  // Base Tables (Idempotent creation for fresh databases)
+  `CREATE TABLE IF NOT EXISTS schools (
+     id SERIAL PRIMARY KEY,
+     name VARCHAR(200) NOT NULL,
+     county VARCHAR(100),
+     admin_code VARCHAR(20) UNIQUE NOT NULL,
+     created_at TIMESTAMP DEFAULT NOW()
+   )`,
+  `CREATE TABLE IF NOT EXISTS teachers (
+     id SERIAL PRIMARY KEY,
+     school_id INTEGER REFERENCES schools(id) ON DELETE CASCADE,
+     name VARCHAR(150) NOT NULL,
+     email VARCHAR(200) UNIQUE NOT NULL,
+     password_hash VARCHAR(255) NOT NULL,
+     teacher_code VARCHAR(20) UNIQUE,
+     status VARCHAR(20) DEFAULT 'active',
+     created_at TIMESTAMP DEFAULT NOW()
+   )`,
+  `CREATE TABLE IF NOT EXISTS students (
+     id SERIAL PRIMARY KEY,
+     school_id INTEGER REFERENCES schools(id) ON DELETE CASCADE,
+     teacher_id INTEGER REFERENCES teachers(id) ON DELETE SET NULL,
+     name VARCHAR(150) NOT NULL,
+     email VARCHAR(200) UNIQUE NOT NULL,
+     password_hash VARCHAR(255) NOT NULL,
+     form VARCHAR(10),
+     status VARCHAR(20) DEFAULT 'active',
+     created_at TIMESTAMP DEFAULT NOW()
+   )`,
+  `CREATE TABLE IF NOT EXISTS assignments (
+     id SERIAL PRIMARY KEY,
+     teacher_id INTEGER REFERENCES teachers(id) ON DELETE CASCADE,
+     school_id INTEGER REFERENCES schools(id) ON DELETE CASCADE,
+     title VARCHAR(200) NOT NULL,
+     titration_type VARCHAR(50),
+     instructions TEXT,
+     due_date TIMESTAMP,
+     exam_config JSONB,
+     created_at TIMESTAMP DEFAULT NOW()
+   )`,
+  `CREATE TABLE IF NOT EXISTS practical_sessions (
+     id SERIAL PRIMARY KEY,
+     student_id INTEGER REFERENCES students(id) ON DELETE CASCADE,
+     assignment_id INTEGER REFERENCES assignments(id) ON DELETE SET NULL,
+     titration_type VARCHAR(50),
+     titration_title VARCHAR(150),
+     indicator_used VARCHAR(100),
+     indicator_correct BOOLEAN,
+     trials_count INTEGER DEFAULT 0,
+     concordant_found BOOLEAN DEFAULT FALSE,
+     trial_readings JSONB,
+     student_answer DECIMAL(10,4),
+     true_conc DECIMAL(10,4),
+     difference DECIMAL(10,4),
+     score INTEGER DEFAULT 0,
+     details JSONB,
+     mode VARCHAR(20) DEFAULT 'free',
+     created_at TIMESTAMP DEFAULT NOW()
+   )`,
+  // Default Pilot Schools Seeding
+  `INSERT INTO schools (name, county, admin_code) VALUES
+     ('Alliance High School', 'Kiambu', 'KCS-ALLIANCE-001'),
+     ('The Kenya High School', 'Nairobi', 'KCS-KENYAHI-002'),
+     ('Nairobi School', 'Nairobi', 'KCS-NAIROBI-003'),
+     ('Mang''u High School', 'Kiambu', 'KCS-MANGU-004'),
+     ('Machakos Boys Secondary', 'Machakos', 'KCS-MACHAKOS-005')
+   ON CONFLICT (admin_code) DO NOTHING`,
   // Add exam_config to assignments if missing
   `ALTER TABLE assignments
      ADD COLUMN IF NOT EXISTS exam_config JSONB`,

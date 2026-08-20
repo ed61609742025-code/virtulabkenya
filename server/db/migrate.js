@@ -281,7 +281,13 @@ const migrations = [
 ];
 
 async function migrate() {
-  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  const dbUrl = process.env.DATABASE_URL || '';
+  const isCloudDb = dbUrl.includes('.neon.tech') || dbUrl.includes('.supabase.co') || dbUrl.includes('.pooler.supabase.com') || dbUrl.includes('render.com') || dbUrl.includes('railway.app') || (process.env.NODE_ENV === 'production' && !dbUrl.includes('localhost') && !dbUrl.includes('127.0.0.1'));
+
+  const pool = new Pool({
+    connectionString: dbUrl,
+    ssl: isCloudDb ? { rejectUnauthorized: false } : false
+  });
 
   for (const sql of migrations) {
     try {

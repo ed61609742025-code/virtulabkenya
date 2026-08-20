@@ -12,8 +12,12 @@
 
 const { Pool } = require('pg');
 
+const dbUrl = process.env.DATABASE_URL || '';
+const isCloudDb = dbUrl.includes('.neon.tech') || dbUrl.includes('.supabase.co') || dbUrl.includes('.pooler.supabase.com') || dbUrl.includes('render.com') || dbUrl.includes('railway.app') || (process.env.NODE_ENV === 'production' && !dbUrl.includes('localhost') && !dbUrl.includes('127.0.0.1'));
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: dbUrl,
+  ssl: isCloudDb ? { rejectUnauthorized: false } : false,
   min: 1,
   max: 20,
   idleTimeoutMillis: 30000,

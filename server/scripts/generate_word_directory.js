@@ -1,0 +1,358 @@
+const fs = require('fs');
+const path = require('path');
+
+const wordDocContent = `<!DOCTYPE html>
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+  <meta charset="utf-8">
+  <title>VirtuLab Kenya — Official Live Platform Links & Testing Directory</title>
+  <!--[if gte mso 9]>
+  <xml>
+    <w:WordDocument>
+      <w:View>Print</w:View>
+      <w:Zoom>100</w:Zoom>
+      <w:DoNotOptimizeForBrowser/>
+    </w:WordDocument>
+  </xml>
+  <![endif]-->
+  <style>
+    body {
+      font-family: 'Calibri', 'Segoe UI', Arial, sans-serif;
+      font-size: 11pt;
+      line-height: 1.5;
+      color: #1a202c;
+      margin: 40px;
+    }
+    h1 {
+      color: #0b63b6;
+      font-size: 20pt;
+      border-bottom: 2px solid #0b63b6;
+      padding-bottom: 6px;
+      margin-bottom: 4px;
+    }
+    h2 {
+      color: #2b6cb0;
+      font-size: 14pt;
+      margin-top: 24px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid #cbd5e0;
+      padding-bottom: 4px;
+    }
+    p.lead {
+      color: #4a5568;
+      font-size: 11pt;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      margin-bottom: 20px;
+    }
+    th {
+      background-color: #ebf8ff;
+      color: #2b6cb0;
+      font-weight: bold;
+      text-align: left;
+      padding: 8px 12px;
+      border: 1px solid #cbd5e0;
+      font-size: 10.5pt;
+    }
+    td {
+      padding: 8px 12px;
+      border: 1px solid #cbd5e0;
+      font-size: 10pt;
+      vertical-align: middle;
+    }
+    tr:nth-child(even) td {
+      background-color: #f7fafc;
+    }
+    a {
+      color: #3182ce;
+      text-decoration: underline;
+      font-weight: 600;
+    }
+    code {
+      font-family: 'Consolas', 'Courier New', monospace;
+      background-color: #edf2f7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 9.5pt;
+      color: #805ad5;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      font-size: 9pt;
+      font-weight: bold;
+      border-radius: 4px;
+      background-color: #c6f6d5;
+      color: #22543d;
+    }
+    .card {
+      background-color: #f7fafc;
+      border-left: 4px solid #3182ce;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+    }
+    .footer {
+      margin-top: 40px;
+      padding-top: 10px;
+      border-top: 1px solid #e2e8f0;
+      font-size: 9pt;
+      color: #718096;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🧪 VirtuLab Kenya — Live Testing & Deployment Directory</h1>
+  <p class="lead"><b>Project:</b> VirtuLab Kenya (MSc Thesis Research Platform & Virtual Chemistry Laboratory)<br>
+  <b>Production Base URL:</b> <a href="https://virtulab-web.onrender.com">https://virtulab-web.onrender.com</a><br>
+  <b>Date Generated:</b> August 2026</p>
+
+  <div class="card">
+    <b>🔐 Master Administrator Credentials:</b><br>
+    • <b>Portal URL:</b> <a href="https://virtulab-web.onrender.com/admin/dashboard.html">https://virtulab-web.onrender.com/admin/dashboard.html</a><br>
+    • <b>Admin Email:</b> <code>admin@virtulab.co.ke</code><br>
+    • <b>Admin Password:</b> <code>VirtuLabAdmin2026!</code>
+  </div>
+
+  <h2>1. 👥 User Portals & Authentication</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Portal / Feature</th>
+        <th style="width: 35%;">Purpose</th>
+        <th style="width: 40%;">Direct Link</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><b>Student Login</b></td>
+        <td>Student authentication + Speed Battle warm-up</td>
+        <td><a href="https://virtulab-web.onrender.com/student/login.html">https://virtulab-web.onrender.com/student/login.html</a></td>
+      </tr>
+      <tr>
+        <td><b>Student Registration</b></td>
+        <td>Create student account linked to secondary school</td>
+        <td><a href="https://virtulab-web.onrender.com/student/register.html">https://virtulab-web.onrender.com/student/register.html</a></td>
+      </tr>
+      <tr>
+        <td><b>Student Dashboard</b></td>
+        <td>Practical module cards, badges & progress</td>
+        <td><a href="https://virtulab-web.onrender.com/student/home.html">https://virtulab-web.onrender.com/student/home.html</a></td>
+      </tr>
+      <tr>
+        <td><b>Teacher Login / Register</b></td>
+        <td>Educator account access & class management</td>
+        <td><a href="https://virtulab-web.onrender.com/teacher/login.html">https://virtulab-web.onrender.com/teacher/login.html</a></td>
+      </tr>
+      <tr>
+        <td><b>Teacher Dashboard</b></td>
+        <td>Assignment creator, student roster & analytics</td>
+        <td><a href="https://virtulab-web.onrender.com/teacher/dashboard.html">https://virtulab-web.onrender.com/teacher/dashboard.html</a></td>
+      </tr>
+      <tr>
+        <td><b>Master Admin Portal</b></td>
+        <td>School onboarding, broadcast alerts & audit logs</td>
+        <td><a href="https://virtulab-web.onrender.com/admin/dashboard.html">https://virtulab-web.onrender.com/admin/dashboard.html</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>2. 🧪 8 KCSE Chemistry Practical Simulation Benches</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Module Name</th>
+        <th style="width: 35%;">Practical Description</th>
+        <th style="width: 40%;">Direct Link</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><b>🧭 Volumetric Titration</b></td>
+        <td>Acid-Base, Redox KMnO4, Precipitation & EDTA</td>
+        <td><a href="https://virtulab-web.onrender.com/student/lab.html">https://virtulab-web.onrender.com/student/lab.html</a></td>
+      </tr>
+      <tr>
+        <td><b>🔍 Qualitative Analysis</b></td>
+        <td>10 Unknown Salts, NaOH, NH3, Ba(NO3)2, Flame Tests</td>
+        <td><a href="https://virtulab-web.onrender.com/student/qualitative.html">https://virtulab-web.onrender.com/student/qualitative.html</a></td>
+      </tr>
+      <tr>
+        <td><b>⚗️ Organic Chemistry</b></td>
+        <td>Functional group classification & esterification</td>
+        <td><a href="https://virtulab-web.onrender.com/student/organic.html">https://virtulab-web.onrender.com/student/organic.html</a></td>
+      </tr>
+      <tr>
+        <td><b>🌡️ Solubility Curves</b></td>
+        <td>Crystallization temperature & KNEC graph plotting</td>
+        <td><a href="https://virtulab-web.onrender.com/student/solubility.html">https://virtulab-web.onrender.com/student/solubility.html</a></td>
+      </tr>
+      <tr>
+        <td><b>🔥 Thermochemistry</b></td>
+        <td>Enthalpy changes: Neutralization, Solution & Displacement</td>
+        <td><a href="https://virtulab-web.onrender.com/student/energy.html">https://virtulab-web.onrender.com/student/energy.html</a></td>
+      </tr>
+      <tr>
+        <td><b>⚡ Reaction Kinetics</b></td>
+        <td>Na2S2O3 + HCl disappearing cross & rate graphs</td>
+        <td><a href="https://virtulab-web.onrender.com/student/rates.html">https://virtulab-web.onrender.com/student/rates.html</a></td>
+      </tr>
+      <tr>
+        <td><b>💨 Gas Preparation</b></td>
+        <td>Lab prep & collection of O2, CO2, Cl2, NH3, SO2, H2</td>
+        <td><a href="https://virtulab-web.onrender.com/student/gas_prep.html">https://virtulab-web.onrender.com/student/gas_prep.html</a></td>
+      </tr>
+      <tr>
+        <td><b>🏆 Composite Mock Exam</b></td>
+        <td>Full 40-Mark KCSE Paper 3 practical exam booklet</td>
+        <td><a href="https://virtulab-web.onrender.com/student/composite_exam.html">https://virtulab-web.onrender.com/student/composite_exam.html</a></td>
+      </tr>
+      <tr>
+        <td><b>⚡ Speed Battle Game</b></td>
+        <td>60-second chemical valency & formula warm-up</td>
+        <td><a href="https://virtulab-web.onrender.com/student/speed_battle.html">https://virtulab-web.onrender.com/student/speed_battle.html</a></td>
+      </tr>
+      <tr>
+        <td><b>📜 Student Session History</b></td>
+        <td>Student attempts, accuracy breakdowns & PDF certificates</td>
+        <td><a href="https://virtulab-web.onrender.com/student/history.html">https://virtulab-web.onrender.com/student/history.html</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>3. 📊 Academic Research, CPCAT & Psychometric Suite</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Evaluation Tool</th>
+        <th style="width: 35%;">Research Purpose</th>
+        <th style="width: 40%;">Direct Link</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><b>📝 CPCAT Pre-Test</b></td>
+        <td>Standardized 40-mark baseline practical competence test</td>
+        <td><a href="https://virtulab-web.onrender.com/student/cpcat_assessment.html?type=pre_test">https://virtulab-web.onrender.com/student/cpcat_assessment.html?type=pre_test</a></td>
+      </tr>
+      <tr>
+        <td><b>📝 CPCAT Post-Test</b></td>
+        <td>Standardized 40-mark post-intervention competence test</td>
+        <td><a href="https://virtulab-web.onrender.com/student/cpcat_assessment.html?type=post_test">https://virtulab-web.onrender.com/student/cpcat_assessment.html?type=post_test</a></td>
+      </tr>
+      <tr>
+        <td><b>📋 Student SUS Survey</b></td>
+        <td>10-Item System Usability Scale for learners</td>
+        <td><a href="https://virtulab-web.onrender.com/student/survey_sus.html">https://virtulab-web.onrender.com/student/survey_sus.html</a></td>
+      </tr>
+      <tr>
+        <td><b>📋 Student TAM Survey</b></td>
+        <td>Technology Acceptance Model 3 for students</td>
+        <td><a href="https://virtulab-web.onrender.com/student/survey_tam.html">https://virtulab-web.onrender.com/student/survey_tam.html</a></td>
+      </tr>
+      <tr>
+        <td><b>📋 Teacher TAM Survey</b></td>
+        <td>Technology Acceptance Model 3 for teachers</td>
+        <td><a href="https://virtulab-web.onrender.com/teacher/survey_tam.html">https://virtulab-web.onrender.com/teacher/survey_tam.html</a></td>
+      </tr>
+      <tr>
+        <td><b>📈 Research Portal</b></td>
+        <td>Hake's Gain (g), Cohen's d & 1-click SPSS/R CSV export</td>
+        <td><a href="https://virtulab-web.onrender.com/teacher/research_portal.html">https://virtulab-web.onrender.com/teacher/research_portal.html</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>4. 🏫 Pre-Configured Pilot Secondary Schools</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>School Name</th>
+        <th>County</th>
+        <th>Admin Code (For Registration)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><b>Alliance High School</b></td>
+        <td>Kiambu</td>
+        <td><code>KCS-ALLIANCE-001</code></td>
+      </tr>
+      <tr>
+        <td><b>The Kenya High School</b></td>
+        <td>Nairobi</td>
+        <td><code>KCS-KENYAHI-002</code></td>
+      </tr>
+      <tr>
+        <td><b>Nairobi School</b></td>
+        <td>Nairobi</td>
+        <td><code>KCS-NAIROBI-003</code></td>
+      </tr>
+      <tr>
+        <td><b>Mang'u High School</b></td>
+        <td>Kiambu</td>
+        <td><code>KCS-MANGU-004</code></td>
+      </tr>
+      <tr>
+        <td><b>Machakos Boys Secondary</b></td>
+        <td>Machakos</td>
+        <td><code>KCS-MACHAKOS-005</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>5. ⚙️ Health & System Endpoints</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Endpoint</th>
+        <th style="width: 35%;">Description</th>
+        <th style="width: 40%;">Direct Link</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><b>API Health Check</b></td>
+        <td>System status, uptime & version JSON</td>
+        <td><a href="https://virtulab-web.onrender.com/api/health">https://virtulab-web.onrender.com/api/health</a></td>
+      </tr>
+      <tr>
+        <td><b>PWA Manifest</b></td>
+        <td>Progressive Web App installation metadata</td>
+        <td><a href="https://virtulab-web.onrender.com/manifest.json">https://virtulab-web.onrender.com/manifest.json</a></td>
+      </tr>
+      <tr>
+        <td><b>Service Worker</b></td>
+        <td>Offline caching script</td>
+        <td><a href="https://virtulab-web.onrender.com/sw.js">https://virtulab-web.onrender.com/sw.js</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="footer">
+    VirtuLab Kenya &copy; 2026 &bull; Developed for the Ministry of Education &amp; Open University of Kenya (OUK) Research Pilot.
+  </div>
+
+</body>
+</html>`;
+
+// Ensure directory exists
+const clientDocsDir = path.join(__dirname, '../../client/docs');
+if (!fs.existsSync(clientDocsDir)) {
+  fs.mkdirSync(clientDocsDir, { recursive: true });
+}
+
+// Write .doc and .html versions
+const docPath = path.join(clientDocsDir, 'VirtuLab_Kenya_Live_Testing_Directory.doc');
+fs.writeFileSync(docPath, wordDocContent, 'utf8');
+
+const htmlDocPath = path.join(clientDocsDir, 'VirtuLab_Kenya_Live_Testing_Directory.html');
+fs.writeFileSync(htmlDocPath, wordDocContent, 'utf8');
+
+console.log('✅ Word document created at:', docPath);
+console.log('✅ HTML printable version created at:', htmlDocPath);

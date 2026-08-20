@@ -300,11 +300,24 @@ async function migrate() {
 
 async function runMigrationsAsync(poolInstance) {
   const targetPool = poolInstance || require('./pool');
+  const fs = require('fs');
+  const path = require('path');
+
+  // Step 1: Execute complete base schema
+  try {
+    const schemaSql = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
+    await targetPool.query(schemaSql);
+    console.log('[Migrate] Base schema.sql synchronized successfully.');
+  } catch (err) {
+    console.warn('[Migrate] Base schema note:', err.message);
+  }
+
+  // Step 2: Execute incremental column migrations and seed updates
   for (const sql of migrations) {
     try {
       await targetPool.query(sql);
     } catch (err) {
-      console.warn('[Migrate] Boot step note:', err.message);
+      console.warn('[Migrate] Step note:', err.message);
     }
   }
 }

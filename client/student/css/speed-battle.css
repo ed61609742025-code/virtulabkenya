@@ -28,7 +28,7 @@ body {
    CONTAINER & CARDS
    ══════════════════════════════════════ */
 .battle-container {
-  max-width: 720px;
+  max-width: 860px;
   margin: 18px auto 40px auto;
   padding: 0 16px;
   position: relative;
@@ -519,8 +519,14 @@ body {
 
 .game-mode-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+@media (max-width: 600px) {
+  .game-mode-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .game-mode-card {

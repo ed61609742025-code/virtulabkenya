@@ -694,60 +694,133 @@ body {
   border-color: rgba(239, 68, 68, 0.35);
 }
 
-/* Responsive adjustments */
-@media (max-width: 640px) {
-  body {
-    height: auto;
-    min-height: 100vh;
-    overflow-y: auto;
+/* ══════════════════════════════════════
+   MOBILE PHONE RESPONSIVE STYLES
+   ══════════════════════════════════════ */
+@media (max-width: 768px) {
+  html, body {
+    height: auto !important;
+    min-height: 100vh !important;
+    max-height: none !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
   }
-  .battle-container {
-    height: auto;
-    min-height: auto;
-    padding: 12px 10px;
-    overflow: visible;
-  }
-  .battle-card {
-    padding: 16px 12px;
-    max-height: none;
-    border-radius: 14px;
-  }
-  .arena-hud {
-    grid-template-columns: 1fr 1fr;
-    row-gap: 10px;
-  }
-  .hud-streak-container {
-    grid-column: 1 / -1;
-    order: 3;
-  }
-  .stat-summary-grid {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-  .game-mode-grid {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-  .game-mode-card {
-    padding: 10px 12px;
-  }
-  .game-mode-title {
-    font-size: 0.84rem;
-    white-space: normal;
-  }
-  .hud-score-val, .hud-time-val {
-    font-size: 1.35rem;
-  }
-  .final-score-big {
-    font-size: 2.2rem;
-  }
-  .kb-hint-strip {
-    display: none;
-  }
+
   .top-navbar {
-    height: auto;
-    padding: 6px 12px;
-    flex-wrap: wrap;
-    gap: 6px;
+    height: auto !important;
+    min-height: 42px !important;
+    padding: 6px 10px !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+
+  .top-navbar .nav-title {
+    display: none !important;
+  }
+
+  .battle-container {
+    flex: none !important;
+    display: block !important;
+    height: auto !important;
+    min-height: calc(100vh - 50px) !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding: 8px 8px 32px 8px !important;
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
+  }
+
+  .battle-card {
+    max-height: none !important;
+    height: auto !important;
+    padding: 12px 10px !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    margin: 0 auto 16px auto !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+  }
+
+  .game-mode-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 6px !important;
+  }
+
+  .game-mode-card {
+    padding: 6px 8px !important;
+    border-radius: 8px !important;
+    gap: 2px !important;
+    border-width: 1.5px !important;
+  }
+
+  .game-mode-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 4px !important;
+    margin-bottom: 2px !important;
+  }
+
+  .game-mode-icon-title {
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    min-width: 0 !important;
+  }
+
+  .game-mode-icon {
+    font-size: 0.85rem !important;
+  }
+
+  .game-mode-title {
+    font-size: 0.74rem !important;
+    font-weight: 800 !important;
+    white-space: normal !important;
+    line-height: 1.15 !important;
+  }
+
+  .game-mode-badge {
+    font-size: 0.54rem !important;
+    padding: 1px 3px !important;
+  }
+
+  .game-mode-desc {
+    font-size: 0.63rem !important;
+    line-height: 1.2 !important;
+    color: var(--text-muted) !important;
+    margin-top: 1px !important;
+  }
+
+  .arena-hud {
+    grid-template-columns: 1fr 1fr !important;
+    row-gap: 8px !important;
+    padding-bottom: 8px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .hud-streak-container {
+    grid-column: 1 / -1 !important;
+    order: 3 !important;
+  }
+
+  .stat-summary-grid {
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+  }
+
+  .hud-score-val, .hud-time-val {
+    font-size: 1.25rem !important;
+  }
+
+  .final-score-big {
+    font-size: 2rem !important;
+  }
+
+  .kb-hint-strip {
+    display: none !important;
   }
 }

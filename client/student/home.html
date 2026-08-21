@@ -183,11 +183,9 @@
 
   <!-- Top Academic Ribbon -->
   <div class="candidate-top-ribbon">
-    <span>🇰🇪 REPUBLIC OF KENYA &bull; KCSE CHEMISTRY PRACTICAL WORKSTATION</span>
-    <span>&bull;</span>
-    <span>KNEC CODE: <span class="code-tag">CHEMISTRY 233/3</span></span>
-    <span>&bull;</span>
-    <span>CANDIDATE PRACTICAL LEDGER</span>
+    <span>🇰🇪 REPUBLIC OF KENYA &bull; KCSE CHEMISTRY 233/3</span>
+    <span class="ribbon-sep">&bull;</span>
+    <span class="ribbon-extra">CANDIDATE PRACTICAL LEDGER</span>
   </div>
 
   <!-- Primary Top Navbar -->
@@ -203,16 +201,16 @@
 
       <div class="nav-actions">
         <!-- Language Switcher -->
-        <div class="lang-toggle-group" style="display:flex; background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:6px; padding:2px; gap:2px;">
-          <button class="lang-btn-chip active" id="btnLangEN" onclick="setLanguage('en')" style="font-size:0.72rem; font-weight:700; padding:4px 8px; border-radius:4px; border:none; background:var(--card-bg); color:var(--heading-color); cursor:pointer;">GB EN</button>
-          <button class="lang-btn-chip" id="btnLangSW" onclick="setLanguage('sw')" style="font-size:0.72rem; font-weight:700; padding:4px 8px; border-radius:4px; border:none; background:transparent; color:var(--text-muted); cursor:pointer;">KE SW</button>
+        <div class="lang-toggle-group">
+          <button class="lang-btn-chip active" id="btnLangEN" data-lang="en" onclick="setLanguage('en')" title="English"><span class="lang-flag">GB </span>EN</button>
+          <button class="lang-btn-chip" id="btnLangSW" data-lang="sw" onclick="setLanguage('sw')" title="Kiswahili"><span class="lang-flag">KE </span>SW</button>
         </div>
 
         <!-- Academic Theme Toggle -->
         <div class="theme-toggle-group">
-          <button class="theme-btn-chip active" data-theme-val="light" onclick="setTheme('light')" title="Clean Slate Light Mode">☀️ Light</button>
-          <button class="theme-btn-chip" data-theme-val="dark" onclick="setTheme('dark')" title="Research Obsidian Dark Mode">🌙 Dark</button>
-          <button class="theme-btn-chip" data-theme-val="green" onclick="setTheme('green')" title="Emerald Laboratory Mode">🧪 Lab</button>
+          <button class="theme-btn-chip active" data-theme-val="light" onclick="setTheme('light')" title="Clean Slate Light Mode">☀️<span class="theme-label"> Light</span></button>
+          <button class="theme-btn-chip" data-theme-val="dark" onclick="setTheme('dark')" title="Research Obsidian Dark Mode">🌙<span class="theme-label"> Dark</span></button>
+          <button class="theme-btn-chip" data-theme-val="green" onclick="setTheme('green')" title="Emerald Laboratory Mode">🧪<span class="theme-label"> Lab</span></button>
         </div>
 
         <!-- Notification Bell -->

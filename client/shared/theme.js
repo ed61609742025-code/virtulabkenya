@@ -20,8 +20,8 @@ function setTheme(theme) {
 
 function updateThemeButtons() {
   const current = document.documentElement.getAttribute('data-theme') || 'dark';
-  document.querySelectorAll('.theme-btn, .theme-chip').forEach(btn => {
-    const themeVal = btn.dataset.theme || btn.getAttribute('data-theme');
+  document.querySelectorAll('.theme-btn, .theme-chip, .theme-btn-chip').forEach(btn => {
+    const themeVal = btn.dataset.theme || btn.dataset.themeVal || btn.getAttribute('data-theme') || btn.getAttribute('data-theme-val');
     btn.classList.toggle('active', themeVal === current);
   });
 }

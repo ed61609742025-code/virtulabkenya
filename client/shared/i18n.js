@@ -225,7 +225,8 @@ function applyTranslations() {
 function updateLanguageButtons() {
   const currentLang = getLanguage();
   document.querySelectorAll('.lang-btn-chip').forEach(btn => {
-    btn.classList.toggle('active', btn.getAttribute('data-lang') === currentLang);
+    const lang = btn.getAttribute('data-lang') || (btn.id === 'btnLangSW' ? 'sw' : 'en');
+    btn.classList.toggle('active', lang === currentLang);
   });
 }
 

@@ -5,12 +5,24 @@
 (function () {
   'use strict';
 
-  // 1. Service Worker Registration
+  // 1. Service Worker Registration & Auto-Update Check
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/sw.js')
-        .then((reg) => console.log('[VirtuLab PWA] Service Worker registered with scope:', reg.scope))
+        .then((reg) => {
+          console.log('[VirtuLab PWA] Service Worker registered with scope:', reg.scope);
+          // Check for immediate updates
+          if (reg.update) reg.update().catch(() => {});
+        })
         .catch((err) => console.warn('[VirtuLab PWA] Service Worker registration failed:', err));
+    });
+
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!refreshing) {
+        refreshing = true;
+        window.location.reload();
+      }
     });
   }
 

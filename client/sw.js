@@ -3,7 +3,7 @@
 //  Feature #1: Offline Support, Smart Caching & Sync
 // ============================================================
 
-const CACHE_NAME = 'virtulab-kenya-v16';
+const CACHE_NAME = 'virtulab-kenya-v17';
 
 const PRECACHE_ASSETS = [
   '/',
@@ -150,24 +150,12 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Cache-first strategy for same-origin static assets
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        // Return cached asset, update cache in background
-        fetch(event.request).then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, networkResponse.clone());
-              trimCache(CACHE_NAME, MAX_DYNAMIC_CACHE_ITEMS).catch(() => {});
-            });
-          }
-        }).catch(() => {});
-        return cachedResponse;
-      }
+  const isHtmlOrScript = event.request.mode === 'navigate' || url.pathname.endsWith('.html') || url.pathname.endsWith('.js') || url.pathname.endsWith('.css');
 
-      // If asset is not in cache, fetch over network, then cache
-      return fetch(event.request).then((networkResponse) => {
+  if (isHtmlOrScript) {
+    // Network-First Strategy for HTML, JS and CSS (always fresh online, fallback to cache when offline)
+    event.respondWith(
+      fetch(event.request).then((networkResponse) => {
         if (networkResponse && networkResponse.status === 200) {
           const responseClone = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
@@ -176,23 +164,52 @@ self.addEventListener('fetch', (event) => {
           });
         }
         return networkResponse;
-      }).catch(() => {
-        // Fallback for navigation HTML requests when completely offline
+      }).catch(async () => {
+        const cached = await caches.match(event.request);
+        if (cached) return cached;
         if (event.request.mode === 'navigate') {
           const reqPath = url.pathname.toLowerCase();
           if (reqPath.startsWith('/teacher/')) {
-            return caches.match('/teacher/dashboard.html').then(res => res || caches.match('/teacher/login.html'));
+            return (await caches.match('/teacher/dashboard.html')) || (await caches.match('/teacher/login.html'));
           }
           if (reqPath.startsWith('/admin/')) {
-            return caches.match('/admin/dashboard.html');
+            return await caches.match('/admin/dashboard.html');
           }
           if (reqPath.startsWith('/student/')) {
-            return caches.match('/student/home.html');
+            return await caches.match('/student/home.html');
           }
-          return caches.match('/index.html').then(res => res || caches.match('/student/home.html'));
+          return (await caches.match('/index.html')) || (await caches.match('/student/home.html'));
         }
-      });
-    })
-  );
+      })
+    );
+  } else {
+    // Cache-First Strategy for static media/fonts/icons
+    event.respondWith(
+      caches.match(event.request).then((cachedResponse) => {
+        if (cachedResponse) {
+          fetch(event.request).then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200) {
+              caches.open(CACHE_NAME).then((cache) => {
+                cache.put(event.request, networkResponse.clone());
+                trimCache(CACHE_NAME, MAX_DYNAMIC_CACHE_ITEMS).catch(() => {});
+              });
+            }
+          }).catch(() => {});
+          return cachedResponse;
+        }
+
+        return fetch(event.request).then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseClone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseClone);
+              trimCache(CACHE_NAME, MAX_DYNAMIC_CACHE_ITEMS).catch(() => {});
+            });
+          }
+          return networkResponse;
+        });
+      })
+    );
+  }
 });
 

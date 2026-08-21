@@ -738,3 +738,88 @@ html, body {
   padding: 22px;
   box-shadow: var(--shadow-lg);
 }
+
+/* ── 8. QUESTIONS & CALCULATIONS STYLES ── */
+.sol-question-card {
+  background: var(--card-bg-hover);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+}
+
+.sol-question-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.sol-question-title {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--heading-color);
+}
+
+.sol-question-marks {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 800;
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--amber-accent);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.sol-input-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.sol-calc-input {
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: var(--text-main);
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  font-weight: 700;
+  outline: none;
+  transition: border-color 0.15s ease;
+  min-width: 140px;
+}
+
+.sol-calc-input:focus {
+  border-color: var(--blue-accent);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+}
+
+.sol-calc-feedback {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  border-radius: 6px;
+  display: none;
+}
+
+.sol-calc-feedback.correct {
+  display: block;
+  background: rgba(16, 185, 129, 0.1);
+  border-left: 3px solid var(--green-accent);
+  color: var(--green-accent);
+  padding: 8px 12px;
+}
+
+.sol-calc-feedback.incorrect {
+  display: block;
+  background: rgba(239, 68, 68, 0.1);
+  border-left: 3px solid var(--red-accent);
+  color: var(--red-accent);
+  padding: 8px 12px;
+}

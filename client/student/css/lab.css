@@ -496,6 +496,15 @@ html, body {
 }
 
 @media (max-width: 640px) {
+  .candidate-top-ribbon {
+    font-size: 0.66rem;
+    padding: 3px 8px;
+    gap: 4px;
+    line-height: 1.25;
+  }
+  .brand-subtagline {
+    display: none !important;
+  }
   .bench-layout-grid {
     grid-template-columns: 1fr;
   }

@@ -50,9 +50,19 @@
     bannerDiv.className = 'vlk-pwa-banner';
     bannerDiv.id = 'vlkPwaBanner';
 
+    // Resolve robust icon path for relative or root-hosted deployments
+    const isNestedPath = window.location.pathname.includes('/student/') || 
+                         window.location.pathname.includes('/teacher/') || 
+                         window.location.pathname.includes('/admin/');
+    const iconSrc = isNestedPath ? '../shared/icon-192.png' : 'shared/icon-192.png';
+
     bannerDiv.innerHTML = `
       <div class="vlk-pwa-header">
-        <img src="/shared/icon-192.png" alt="VirtuLab Kenya" class="vlk-pwa-icon">
+        <img src="${iconSrc}" 
+             onerror="this.onerror=null; this.src='../shared/icon-192.png'; if(!this.complete || this.naturalWidth === 0) { this.style.display='none'; const fb = this.nextElementSibling; if(fb) fb.style.display='flex'; }" 
+             alt="VirtuLab Kenya" 
+             class="vlk-pwa-icon">
+        <div class="vlk-pwa-icon-fallback" style="display:none; width:44px; height:44px; border-radius:10px; background:#0B2545; color:#FFF; font-size:1.4rem; align-items:center; justify-content:center; border:1px solid #B8860B;">⚗️</div>
         <div class="vlk-pwa-details">
           <h4 class="vlk-pwa-title">VirtuLab Kenya 🧪</h4>
           <p class="vlk-pwa-desc">Install for offline lab simulations & fast access</p>

@@ -517,21 +517,9 @@ html, body {
   color: var(--rate-amber);
 }
 
-/* Disappearing Cross Box */
+/* Disappearing Cross Box (Rendered in Canvas) */
 .rate-cross-box {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  width: 90px;
-  height: 100px;
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 8px;
-  padding: 6px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  box-shadow: var(--shadow-md);
+  display: none !important;
 }
 .rate-cross-label {
   font-size: 0.62rem;

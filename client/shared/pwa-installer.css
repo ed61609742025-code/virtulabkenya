@@ -4,22 +4,28 @@
 
 .vlk-pwa-banner {
   position: fixed;
-  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(76px + env(safe-area-inset-bottom, 0px));
   left: 50%;
-  transform: translateX(-50%) translateY(120%);
-  width: calc(100% - 32px);
+  transform: translateX(-50%) translateY(140%);
+  width: calc(100% - 24px);
   max-width: 440px;
-  background: rgba(15, 23, 42, 0.94);
+  background: rgba(15, 23, 42, 0.96);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(0, 242, 254, 0.25);
+  border: 1px solid rgba(0, 242, 254, 0.3);
   border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 242, 254, 0.15);
-  padding: 16px;
-  z-index: 99999;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 242, 254, 0.15);
+  padding: 14px 16px;
+  z-index: 100000;
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   color: #F8FAFC;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+@media (min-width: 769px) {
+  .vlk-pwa-banner {
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  }
 }
 
 .vlk-pwa-banner.active {

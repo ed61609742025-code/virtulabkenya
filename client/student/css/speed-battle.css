@@ -695,14 +695,26 @@ body {
 }
 
 /* Responsive adjustments */
-@media (max-width: 580px) {
+@media (max-width: 640px) {
+  body {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+  .battle-container {
+    height: auto;
+    min-height: auto;
+    padding: 12px 10px;
+    overflow: visible;
+  }
   .battle-card {
-    padding: 20px 16px;
-    border-radius: 18px;
+    padding: 16px 12px;
+    max-height: none;
+    border-radius: 14px;
   }
   .arena-hud {
     grid-template-columns: 1fr 1fr;
-    row-gap: 12px;
+    row-gap: 10px;
   }
   .hud-streak-container {
     grid-column: 1 / -1;
@@ -714,14 +726,28 @@ body {
   }
   .game-mode-grid {
     grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .game-mode-card {
+    padding: 10px 12px;
+  }
+  .game-mode-title {
+    font-size: 0.84rem;
+    white-space: normal;
   }
   .hud-score-val, .hud-time-val {
     font-size: 1.35rem;
   }
   .final-score-big {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
   }
   .kb-hint-strip {
     display: none;
+  }
+  .top-navbar {
+    height: auto;
+    padding: 6px 12px;
+    flex-wrap: wrap;
+    gap: 6px;
   }
 }

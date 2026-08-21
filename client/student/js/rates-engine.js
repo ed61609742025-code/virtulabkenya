@@ -768,130 +768,298 @@ const RatesEngine = (function () {
   }
 
   function drawDisappearingCrossApparatus(ctx, w, h) {
-    const cx = w / 2;
-    const benchY = h - 35;
-    const tileY = benchY - 12;
-    const flaskBaseY = tileY; // Flask sits directly on tile
+    const cx = w * 0.42;
+    const benchY = h - 38;
+    const tileY = benchY - 14;
+    const tileW = 180;
+    const tileH = 12;
+    const flaskBaseY = tileY; // Flask sits on top of white tile
+    const turb = Math.min(1, Math.max(0, state.cross.turbidity));
 
-    // 1. Bench Surface
-    ctx.fillStyle = '#1E293B';
-    ctx.fillRect(0, benchY, w, 35);
+    // ── 1. Lab Bench Surface (Dark Slate with Front Edge) ──
+    const benchGrad = ctx.createLinearGradient(0, benchY, 0, h);
+    benchGrad.addColorStop(0, '#1E293B');
+    benchGrad.addColorStop(0.3, '#0F172A');
+    benchGrad.addColorStop(1, '#020617');
+    ctx.fillStyle = benchGrad;
+    ctx.fillRect(0, benchY, w, 38);
+
     ctx.strokeStyle = '#334155';
-    ctx.lineWidth = 1.5;
+    ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(0, benchY);
     ctx.lineTo(w, benchY);
     ctx.stroke();
 
-    // 2. White Ceramic Tile on Bench
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillRect(cx - 110, tileY, 220, 12);
-    ctx.strokeStyle = '#CBD5E1';
+    // ── 2. White Glazed Ceramic Tile with 3D Depth ──
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    ctx.fillRect(cx - tileW/2 + 4, tileY + 4, tileW, tileH); // Drop shadow
+
+    // Tile body
+    const tileGrad = ctx.createLinearGradient(0, tileY, 0, tileY + tileH);
+    tileGrad.addColorStop(0, '#FFFFFF');
+    tileGrad.addColorStop(0.7, '#F8FAFC');
+    tileGrad.addColorStop(1, '#E2E8F0');
+    ctx.fillStyle = tileGrad;
+    ctx.fillRect(cx - tileW/2, tileY, tileW, tileH);
+
+    ctx.strokeStyle = '#94A3B8';
     ctx.lineWidth = 1.5;
-    ctx.strokeRect(cx - 110, tileY, 220, 12);
+    ctx.strokeRect(cx - tileW/2, tileY, tileW, tileH);
 
-    // 3. Black Cross 'X' on White Tile (Under Flask)
-    ctx.strokeStyle = '#0F172A';
-    ctx.lineWidth = 5;
+    // Tile Label
+    ctx.font = '700 8.5px "JetBrains Mono", monospace';
+    ctx.fillStyle = '#64748B';
+    ctx.textAlign = 'center';
+    ctx.fillText('WHITE CERAMIC TILE', cx, tileY + tileH - 3);
+
+    // ── 3. Bold Black KNEC Cross on Tile (Directly Under Flask) ──
+    // Cross opacity fades when viewed through turbid solution in side view
+    const crossAlpha = Math.max(0.08, 1 - turb * 0.9);
+    ctx.save();
+    ctx.strokeStyle = `rgba(15, 23, 42, ${crossAlpha})`;
+    ctx.lineWidth = 6;
+    ctx.lineCap = 'round';
     ctx.beginPath();
-    ctx.moveTo(cx - 22, tileY + 6);
-    ctx.lineTo(cx + 22, tileY + 6);
-    ctx.moveTo(cx, tileY + 1);
-    ctx.lineTo(cx, tileY + 11);
+    ctx.moveTo(cx - 24, tileY + 1);
+    ctx.lineTo(cx + 24, tileY + 1);
+    ctx.moveTo(cx, tileY - 4);
+    ctx.lineTo(cx, tileY + 6);
     ctx.stroke();
+    ctx.restore();
 
-    // 4. Conical Flask Body Path
-    const flaskH = 155;
+    // ── 4. Conical Flask Geometry ──
+    const flaskH = 160;
     const neckTopY = flaskBaseY - flaskH;
-    const neckBaseY = flaskBaseY - 95;
-    const liquidTopY = flaskBaseY - 60;
+    const neckBaseY = flaskBaseY - 100;
+    const liquidTopY = flaskBaseY - 65;
+    const neckHalfW = 20;
+    const baseHalfW = 75;
 
+    // Define Flask Path
+    function createFlaskPath(c) {
+      c.beginPath();
+      // Lip Rim
+      c.moveTo(cx - neckHalfW - 4, neckTopY);
+      c.lineTo(cx + neckHalfW + 4, neckTopY);
+      c.lineTo(cx + neckHalfW, neckTopY + 5);
+      // Neck right wall
+      c.lineTo(cx + neckHalfW, neckBaseY);
+      // Conical sloped body right wall
+      c.lineTo(cx + baseHalfW + 4, flaskBaseY - 10);
+      // Rounded bottom right corner
+      c.quadraticCurveTo(cx + baseHalfW + 6, flaskBaseY, cx + baseHalfW - 8, flaskBaseY);
+      // Flat bottom
+      c.lineTo(cx - baseHalfW + 8, flaskBaseY);
+      // Rounded bottom left corner
+      c.quadraticCurveTo(cx - baseHalfW - 6, flaskBaseY, cx - baseHalfW - 4, flaskBaseY - 10);
+      // Conical sloped body left wall
+      c.lineTo(cx - neckHalfW, neckBaseY);
+      // Neck left wall
+      c.lineTo(cx - neckHalfW, neckTopY + 5);
+      c.closePath();
+    }
+
+    // ── 5. Liquid Fill with Dynamic Colloidal Sulfur Opacity ──
     ctx.save();
-    ctx.beginPath();
-    // Neck Lip Rim
-    ctx.moveTo(cx - 24, neckTopY);
-    ctx.lineTo(cx + 24, neckTopY);
-    ctx.lineTo(cx + 20, neckTopY + 5);
-    // Neck right
-    ctx.lineTo(cx + 20, neckBaseY);
-    // Sloped wall right
-    ctx.lineTo(cx + 80, flaskBaseY - 10);
-    // Bottom right corner
-    ctx.quadraticCurveTo(cx + 84, flaskBaseY, cx + 74, flaskBaseY);
-    // Flat bottom
-    ctx.lineTo(cx - 74, flaskBaseY);
-    // Bottom left corner
-    ctx.quadraticCurveTo(cx - 84, flaskBaseY, cx - 80, flaskBaseY - 10);
-    // Sloped wall left
-    ctx.lineTo(cx - 20, neckBaseY);
-    // Neck left
-    ctx.lineTo(cx - 20, neckTopY + 5);
-    ctx.closePath();
+    createFlaskPath(ctx);
+    ctx.clip(); // Clip everything to inside the flask
 
-    // 5. Fill Liquid with Colloidal Sulfur Turbidity
-    ctx.save();
-    ctx.clip();
+    // Liquid base color transitions: Crystal Clear (#38BDF8 / #E0F2FE) -> Colloidal Sulfur Milk Yellow (#FEF08A / #FDE047)
+    const redCh = Math.round(224 + turb * (254 - 224));
+    const grnCh = Math.round(242 + turb * (240 - 242));
+    const bluCh = Math.round(254 - turb * 140);
+    const liqAlpha = 0.35 + turb * 0.62;
 
-    const turb = state.cross.turbidity;
-    const baseR = 240;
-    const baseG = Math.round(245 - turb * 25);
-    const baseB = Math.round(250 - turb * 110);
-    const baseA = 0.25 + turb * 0.7;
+    const liqGrad = ctx.createLinearGradient(0, liquidTopY, 0, flaskBaseY);
+    liqGrad.addColorStop(0, `rgba(${redCh}, ${grnCh}, ${bluCh}, ${liqAlpha * 0.85})`);
+    liqGrad.addColorStop(0.6, `rgba(${redCh}, ${grnCh}, ${bluCh}, ${liqAlpha})`);
+    liqGrad.addColorStop(1, `rgba(${Math.max(0, redCh - 20)}, ${Math.max(0, grnCh - 20)}, ${Math.max(0, bluCh - 30)}, ${liqAlpha})`);
+    ctx.fillStyle = liqGrad;
+    ctx.fillRect(cx - baseHalfW - 10, liquidTopY, (baseHalfW + 10) * 2, flaskBaseY - liquidTopY + 10);
 
-    // Liquid gradient
-    const lGrad = ctx.createLinearGradient(0, liquidTopY, 0, flaskBaseY);
-    lGrad.addColorStop(0, `rgba(${baseR}, ${baseG}, ${baseB}, ${baseA * 0.8})`);
-    lGrad.addColorStop(1, `rgba(${baseR}, ${baseG}, ${baseB}, ${baseA})`);
-    ctx.fillStyle = lGrad;
-    ctx.fillRect(cx - 90, liquidTopY, 180, 70);
+    // Cross visible through the bottom of the flask (fades out as turbidity increases)
+    if (turb < 0.95) {
+      const bottomCrossAlpha = (1 - turb) * 0.8;
+      ctx.strokeStyle = `rgba(15, 23, 42, ${bottomCrossAlpha})`;
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(cx - 20, flaskBaseY - 3);
+      ctx.lineTo(cx + 20, flaskBaseY - 3);
+      ctx.stroke();
+    }
 
-    // Dynamic Colloidal Micro-Particles when reacting
-    if (turb > 0.05) {
-      ctx.fillStyle = `rgba(254, 240, 138, ${turb * 0.6})`;
-      for (let i = 0; i < 20; i++) {
-        const px = cx - 65 + (Math.sin(i * 99 + state.timer) * 0.5 + 0.5) * 130;
-        const py = liquidTopY + 10 + (Math.cos(i * 33 + state.timer) * 0.5 + 0.5) * 45;
+    // Animated Colloidal Sulfur Particles (S8 precipitation)
+    if (turb > 0.04) {
+      const particleCount = Math.round(turb * 45);
+      ctx.fillStyle = `rgba(254, 240, 138, ${Math.min(0.9, 0.3 + turb * 0.6)})`;
+      for (let i = 0; i < particleCount; i++) {
+        const timeOffset = (state.timer || 0) * 1.5;
+        const px = cx - baseHalfW + 15 + ((Math.sin(i * 47.3 + timeOffset) * 0.5 + 0.5) * (baseHalfW * 2 - 30));
+        const py = liquidTopY + 10 + ((Math.cos(i * 29.1 + timeOffset * 0.7) * 0.5 + 0.5) * (flaskBaseY - liquidTopY - 16));
+        const pr = 1.2 + (Math.sin(i * 13) * 0.5 + 0.5) * 2.2;
         ctx.beginPath();
-        ctx.arc(px, py, 1.5 + Math.random() * 2, 0, Math.PI * 2);
+        ctx.arc(px, py, pr, 0, Math.PI * 2);
         ctx.fill();
       }
     }
-    ctx.restore();
 
-    // 6. Glass Reflections & Volume Ticks
-    // Graduations
-    ctx.strokeStyle = 'rgba(56, 189, 248, 0.45)';
-    ctx.lineWidth = 1;
-    [liquidTopY + 30, liquidTopY + 15, liquidTopY, liquidTopY - 15].forEach((gy, idx) => {
-      const gw = 12 + idx * 4;
-      ctx.beginPath();
-      ctx.moveTo(cx - 45 - idx * 6, gy);
-      ctx.lineTo(cx - 45 - idx * 6 + gw, gy);
-      ctx.stroke();
-    });
+    ctx.restore(); // Exit clip
 
-    // Flask Glass Wall Stroke
-    ctx.strokeStyle = '#38BDF8';
-    ctx.lineWidth = 2.5;
-    ctx.stroke();
-
-    // Liquid Meniscus
+    // ── 6. Liquid Meniscus (Top Surface Ellipse) ──
+    ctx.save();
     ctx.beginPath();
-    ctx.ellipse(cx, liquidTopY, 48, 5, 0, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(56, 189, 248, 0.7)';
+    ctx.ellipse(cx, liquidTopY, 44, 4.5, 0, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${redCh}, ${grnCh}, ${bluCh}, ${0.5 + turb * 0.45})`;
+    ctx.fill();
+    ctx.strokeStyle = turb > 0.4 ? 'rgba(234, 179, 8, 0.7)' : 'rgba(56, 189, 248, 0.7)';
     ctx.lineWidth = 1.5;
     ctx.stroke();
+    ctx.restore();
 
-    // Glass Highlight Sheen
-    ctx.beginPath();
-    ctx.moveTo(cx - 16, neckTopY + 10);
-    ctx.lineTo(cx - 16, neckBaseY);
-    ctx.lineTo(cx - 72, flaskBaseY - 12);
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-    ctx.lineWidth = 2;
+    // ── 7. Glassware Outlines, Graduations & Volume Markings ──
+    ctx.save();
+    
+    // Flask Glass Wall
+    createFlaskPath(ctx);
+    ctx.strokeStyle = '#38BDF8';
+    ctx.lineWidth = 2.2;
     ctx.stroke();
 
+    // Glass Thickness Highlight (Inner Wall Shading)
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.55)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(cx - neckHalfW + 3, neckTopY + 8);
+    ctx.lineTo(cx - neckHalfW + 3, neckBaseY);
+    ctx.lineTo(cx - baseHalfW + 6, flaskBaseY - 12);
+    ctx.stroke();
+
+    // Secondary Glass Specular Reflection (Right Wall)
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(cx + neckHalfW - 3, neckTopY + 8);
+    ctx.lineTo(cx + neckHalfW - 3, neckBaseY);
+    ctx.lineTo(cx + baseHalfW - 6, flaskBaseY - 12);
+    ctx.stroke();
+
+    // Volume Graduations & Labels (50ml, 100ml, 150ml, 200ml)
+    ctx.font = '600 7px "JetBrains Mono", monospace';
+    ctx.fillStyle = 'rgba(56, 189, 248, 0.8)';
+    ctx.strokeStyle = 'rgba(56, 189, 248, 0.6)';
+    ctx.lineWidth = 1;
+
+    const gradMarks = [
+      { y: flaskBaseY - 20, vol: '50ml', w: 10 },
+      { y: flaskBaseY - 38, vol: '100ml', w: 14 },
+      { y: flaskBaseY - 54, vol: '150ml', w: 12 },
+      { y: flaskBaseY - 70, vol: '200ml', w: 16 }
+    ];
+
+    gradMarks.forEach(gm => {
+      const gx = cx - 40 - (flaskBaseY - gm.y) * 0.15;
+      ctx.beginPath();
+      ctx.moveTo(gx, gm.y);
+      ctx.lineTo(gx + gm.w, gm.y);
+      ctx.stroke();
+      ctx.textAlign = 'right';
+      ctx.fillText(gm.vol, gx - 3, gm.y + 2.5);
+    });
+
+    // Flask Brand Tag
+    ctx.font = '700 8px "JetBrains Mono", monospace';
+    ctx.fillStyle = 'rgba(56, 189, 248, 0.65)';
+    ctx.textAlign = 'center';
+    ctx.fillText('PYREX® 250ml', cx, flaskBaseY - 80);
+
     ctx.restore();
+
+    // ── 8. Top-Down Observer Inset Lens (Right Side of Canvas) ──
+    const eyeX = w - 75;
+    const eyeY = 85;
+    const eyeR = 48;
+
+    // Eyepiece Shadow & Outer Rim
+    ctx.save();
+    ctx.fillStyle = 'rgba(0,0,0,0.4)';
+    ctx.beginPath();
+    ctx.arc(eyeX + 3, eyeY + 4, eyeR, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Metallic Brass / Titanium Eyepiece Rim
+    const rimGrad = ctx.createLinearGradient(eyeX - eyeR, eyeY - eyeR, eyeX + eyeR, eyeY + eyeR);
+    rimGrad.addColorStop(0, '#CBD5E1');
+    rimGrad.addColorStop(0.5, '#475569');
+    rimGrad.addColorStop(1, '#0F172A');
+    ctx.fillStyle = rimGrad;
+    ctx.beginPath();
+    ctx.arc(eyeX, eyeY, eyeR + 4, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Lens Interior (Top-Down View of Flask Mouth & Liquid)
+    ctx.beginPath();
+    ctx.arc(eyeX, eyeY, eyeR, 0, Math.PI * 2);
+    ctx.fillStyle = '#FFFFFF'; // White tile bottom background
+    ctx.fill();
+    ctx.clip(); // Clip to lens circle
+
+    // Black Cross at bottom of lens
+    const topCrossAlpha = Math.max(0, 1 - turb * 1.05); // Completely fades out at 95%+ turbidity
+    ctx.strokeStyle = `rgba(15, 23, 42, ${topCrossAlpha})`;
+    ctx.lineWidth = 7;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(eyeX - 22, eyeY);
+    ctx.lineTo(eyeX + 22, eyeY);
+    ctx.moveTo(eyeX, eyeY - 22);
+    ctx.lineTo(eyeX, eyeY + 22);
+    ctx.stroke();
+
+    // Colloidal Sulfur Cloud Overlay in Lens
+    const lensLiqGrad = ctx.createRadialGradient(eyeX, eyeY, 5, eyeX, eyeY, eyeR);
+    lensLiqGrad.addColorStop(0, `rgba(${redCh}, ${grnCh}, ${bluCh}, ${turb * 0.95})`);
+    lensLiqGrad.addColorStop(0.7, `rgba(${redCh}, ${grnCh}, ${bluCh}, ${turb * 0.92})`);
+    lensLiqGrad.addColorStop(1, `rgba(${Math.max(0, redCh - 20)}, ${Math.max(0, grnCh - 20)}, ${Math.max(0, bluCh - 30)}, ${Math.min(1, turb * 0.98)})`);
+    ctx.fillStyle = lensLiqGrad;
+    ctx.fillRect(eyeX - eyeR, eyeY - eyeR, eyeR * 2, eyeR * 2);
+
+    // Micro-sulfur particles in lens
+    if (turb > 0.05) {
+      ctx.fillStyle = `rgba(254, 240, 138, ${turb * 0.85})`;
+      for (let j = 0; j < Math.round(turb * 30); j++) {
+        const lx = eyeX - eyeR + 10 + (Math.sin(j * 17.3 + (state.timer || 0)) * 0.5 + 0.5) * (eyeR * 2 - 20);
+        const ly = eyeY - eyeR + 10 + (Math.cos(j * 31.7 + (state.timer || 0)) * 0.5 + 0.5) * (eyeR * 2 - 20);
+        ctx.beginPath();
+        ctx.arc(lx, ly, 1.2 + Math.sin(j) * 1.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Circular Flask Rim & Glass Sheen inside lens
+    ctx.strokeStyle = 'rgba(56, 189, 248, 0.6)';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(eyeX, eyeY, eyeR - 2, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(eyeX - 4, eyeY - 4, eyeR - 8, Math.PI * 1.1, Math.PI * 1.6);
+    ctx.stroke();
+
+    ctx.restore(); // Exit lens clip
+
+    // Eyepiece Labels
+    ctx.font = '800 8.5px "JetBrains Mono", monospace';
+    ctx.fillStyle = 'var(--heading-color, #FFFFFF)';
+    ctx.textAlign = 'center';
+    ctx.fillText('TOP-DOWN SIGHTLINE', eyeX, eyeY + eyeR + 14);
+
+    ctx.font = '700 7.5px "Plus Jakarta Sans", sans-serif';
+    ctx.fillStyle = turb >= 0.95 ? '#EF4444' : (turb > 0.4 ? '#F59E0B' : '#10B981');
+    ctx.fillText(turb >= 0.95 ? '● CROSS OBSCURED (STOP)' : (turb > 0 ? `Obscured: ${Math.round(turb * 100)}%` : '● Cross Visible'), eyeX, eyeY + eyeR + 25);
   }
 
   function drawGasSyringeApparatus(ctx, w, h) {

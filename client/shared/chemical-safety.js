@@ -343,8 +343,23 @@ window.VLKSafety = {
     return REAGENT_SAFETY_DB[reagentKey] || null;
   },
 
+  getLabReagents(labKey) {
+    const map = {
+      'lab': ['HCl', 'NaOH', 'KMnO4'],
+      'titration': ['HCl', 'NaOH', 'KMnO4'],
+      'qualitative': ['NaOH', 'NH3', 'HNO3', 'BaNO32', 'AgNO3'],
+      'rates': ['Na2S2O3', 'HCl', 'SO2'],
+      'energy': ['HCl', 'NaOH', 'CuSO4', 'Zn', 'NH4NO3'],
+      'solubility': ['KNO3', 'KClO3', 'CuSO4', 'PbNO3'],
+      'organic': ['Br2', 'KMnO4', 'K2Cr2O7', 'Ethanol', 'CH3COOH'],
+      'gas_prep': ['HCl', 'H2O2', 'MnO2', 'CaCO3', 'NH3'],
+      'composite_exam': ['HCl', 'NaOH', 'KMnO4', 'BaNO32', 'AgNO3', 'Br2']
+    };
+    return map[labKey] || ['HCl', 'NaOH'];
+  },
+
   openSDSModal(reagentKey) {
-    const data = REAGENT_SAFETY_DB[reagentKey];
+    const data = REAGENT_SAFETY_DB[reagentKey] || REAGENT_SAFETY_DB['NaOH'];
     if (!data) return;
 
     let modal = document.getElementById('ghsSdsModal');
@@ -352,59 +367,239 @@ window.VLKSafety = {
       modal = document.createElement('div');
       modal.id = 'ghsSdsModal';
       modal.className = 'modal-overlay';
-      modal.style.cssText = 'display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.82); z-index:30000; align-items:center; justify-content:center; backdrop-filter:blur(10px); padding:20px;';
+      modal.style.cssText = 'display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:35000; align-items:center; justify-content:center; backdrop-filter:blur(10px); padding:20px;';
       document.body.appendChild(modal);
     }
 
     modal.innerHTML = `
-      <div style="background:var(--card-bg); border:2px solid #EF4444; border-radius:24px; max-width:620px; width:100%; max-height:90vh; overflow-y:auto; padding:28px; box-shadow:0 24px 60px rgba(239,68,68,0.3); position:relative; color:var(--text-main);">
+      <div style="background:var(--card-bg, #111A2E); border:2px solid #EF4444; border-radius:20px; max-width:620px; width:100%; max-height:90vh; overflow-y:auto; padding:26px; box-shadow:0 24px 60px rgba(239,68,68,0.3); position:relative; color:var(--text-main, #F8FAFC);">
         
-        <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:14px; margin-bottom:18px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border, #1E2D4A); padding-bottom:14px; margin-bottom:16px;">
           <div style="display:flex; align-items:center; gap:12px;">
-            <div style="font-size:2rem; background:rgba(239,68,68,0.15); border:1.5px solid #EF4444; padding:8px 12px; border-radius:14px;">
+            <div style="font-size:2rem; background:rgba(239,68,68,0.15); border:1.5px solid #EF4444; padding:8px 12px; border-radius:12px;">
               ⚠️
             </div>
             <div>
-              <div style="font-weight:900; font-size:1.2rem; color:var(--heading-color); font-family:var(--font-heading);">${data.name}</div>
-              <div style="font-size:0.8rem; color:#EF4444; font-weight:800; display:flex; align-items:center; gap:8px;">
+              <div style="font-weight:900; font-size:1.15rem; color:var(--heading-color, #FFF); font-family:var(--font-heading, sans-serif);">${data.name}</div>
+              <div style="font-size:0.8rem; color:#EF4444; font-weight:800; display:flex; align-items:center; gap:8px; margin-top:2px;">
                 <span>Formula: <code>${data.formula}</code></span> · 
                 <span style="background:#EF4444; color:#FFF; padding:2px 8px; border-radius:100px; font-size:0.68rem;">GHS ${data.signalWord}</span>
               </div>
             </div>
           </div>
-          <button type="button" class="btn" onclick="document.getElementById('ghsSdsModal').style.display='none'" style="padding:6px 14px; font-size:0.85rem; border-radius:100px; cursor:pointer;">✕ Close</button>
+          <button type="button" class="btn" onclick="document.getElementById('ghsSdsModal').style.display='none'" style="padding:6px 14px; font-size:0.85rem; border-radius:100px; cursor:pointer; background:var(--card-bg-hover, #17233B); color:var(--text-main, #FFF); border:1px solid var(--card-border, #1E2D4A);">✕ Close</button>
         </div>
 
-        <div style="margin-bottom:18px;">
-          <div style="font-size:0.75rem; font-weight:900; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px;">GHS Hazard Pictograms</div>
+        <div style="margin-bottom:16px;">
+          <div style="font-size:0.75rem; font-weight:900; color:var(--text-muted, #94A3B8); text-transform:uppercase; margin-bottom:6px;">GHS Hazard Pictograms</div>
           <div style="display:flex; gap:10px; font-size:1.6rem;">
-            ${data.pictograms.map(p => `<span style="background:var(--card-bg-hover); border:1px solid var(--card-border); padding:6px 14px; border-radius:12px;">${p}</span>`).join('')}
+            ${data.pictograms.map(p => `<span style="background:var(--card-bg-hover, #17233B); border:1px solid var(--card-border, #1E2D4A); padding:6px 14px; border-radius:10px;">${p}</span>`).join('')}
           </div>
         </div>
 
-        <div style="background:rgba(239,68,68,0.08); border-left:4px solid #EF4444; padding:12px 16px; border-radius:8px; margin-bottom:18px;">
+        <div style="background:rgba(239,68,68,0.08); border-left:4px solid #EF4444; padding:12px 16px; border-radius:8px; margin-bottom:16px;">
           <div style="font-weight:800; font-size:0.85rem; color:#EF4444; margin-bottom:4px;">🚨 Primary Safety Hazards:</div>
-          <ul style="margin:0; padding-left:18px; font-size:0.82rem; line-height:1.5; color:var(--text-main);">
+          <ul style="margin:0; padding-left:18px; font-size:0.82rem; line-height:1.5; color:var(--text-main, #F8FAFC);">
             ${data.hazards.map(h => `<li>${h}</li>`).join('')}
           </ul>
         </div>
 
-        <div style="background:rgba(6,182,212,0.08); border-left:4px solid var(--cyan-accent); padding:12px 16px; border-radius:8px; margin-bottom:18px;">
-          <div style="font-weight:800; font-size:0.85rem; color:var(--cyan-accent); margin-bottom:4px;">🥼 Mandatory Personal Protective Equipment (PPE):</div>
+        <div style="background:rgba(6,182,212,0.08); border-left:4px solid var(--cyan-accent, #06B6D4); padding:12px 16px; border-radius:8px; margin-bottom:16px;">
+          <div style="font-weight:800; font-size:0.85rem; color:var(--cyan-accent, #06B6D4); margin-bottom:4px;">🥼 Mandatory Personal Protective Equipment (PPE):</div>
           <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:6px;">
-            ${data.ppe.map(item => `<span style="background:var(--card-bg-hover); border:1px solid var(--card-border); font-size:0.78rem; font-weight:700; padding:4px 10px; border-radius:100px; color:var(--heading-color);">${item}</span>`).join('')}
+            ${data.ppe.map(item => `<span style="background:var(--card-bg-hover, #17233B); border:1px solid var(--card-border, #1E2D4A); font-size:0.78rem; font-weight:700; padding:4px 10px; border-radius:100px; color:var(--heading-color, #FFF);">${item}</span>`).join('')}
           </div>
         </div>
 
-        <div style="background:rgba(16,185,129,0.08); border-left:4px solid var(--green-accent); padding:12px 16px; border-radius:8px; margin-bottom:22px;">
-          <div style="font-weight:800; font-size:0.85rem; color:var(--green-accent); margin-bottom:4px;">💡 KNEC Chemistry Paper 3 Practical Advice:</div>
-          <div style="font-size:0.82rem; line-height:1.5; color:var(--text-main);">${data.knecAdvice}</div>
+        <div style="background:rgba(16,185,129,0.08); border-left:4px solid var(--green-accent, #10B981); padding:12px 16px; border-radius:8px; margin-bottom:20px;">
+          <div style="font-weight:800; font-size:0.85rem; color:var(--green-accent, #10B981); margin-bottom:4px;">💡 KNEC Practical Technique & First Aid:</div>
+          <div style="font-size:0.82rem; line-height:1.5; color:var(--text-main, #F8FAFC); margin-bottom:4px;">${data.knecAdvice}</div>
+          <div style="font-size:0.78rem; color:var(--text-muted, #94A3B8); font-style:italic;">${data.firstAid}</div>
         </div>
 
-        <button type="button" class="btn btn-primary" onclick="document.getElementById('ghsSdsModal').style.display='none'" style="width:100%; padding:12px; font-weight:800; border-radius:100px;">Understood — Back to Practical Lab ✓</button>
+        <button type="button" onclick="document.getElementById('ghsSdsModal').style.display='none'" style="width:100%; padding:12px; font-weight:800; border-radius:10px; background:#EF4444; color:#FFF; border:none; cursor:pointer; font-size:0.9rem;">
+          Understood — Continue Working ✓
+        </button>
       </div>
     `;
 
     modal.style.display = 'flex';
+  },
+
+  /**
+   * Enforces a mandatory Pre-Lab Safety Briefing Modal before students can start a practical
+   */
+  enforcePreLabSDS(labKey, onProceed) {
+    const reagents = this.getLabReagents(labKey);
+    let activeIndex = 0;
+
+    let gateway = document.getElementById('vlkPreLabGatewayModal');
+    if (!gateway) {
+      gateway = document.createElement('div');
+      gateway.id = 'vlkPreLabGatewayModal';
+      gateway.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(4,9,20,0.92); z-index:40000; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(12px); padding:16px;';
+      document.body.appendChild(gateway);
+    }
+
+    const render = () => {
+      const activeKey = reagents[activeIndex] || reagents[0];
+      const data = REAGENT_SAFETY_DB[activeKey] || REAGENT_SAFETY_DB['NaOH'];
+
+      gateway.innerHTML = `
+        <div style="background:var(--card-bg, #111A2E); border:2px solid var(--acad-gold-border, #F59E0B); border-radius:20px; max-width:680px; width:100%; max-height:92vh; overflow-y:auto; padding:24px 28px; box-shadow:0 24px 60px rgba(0,0,0,0.7); position:relative; color:var(--text-main, #F8FAFC); font-family:var(--font-body, 'Plus Jakarta Sans', sans-serif);">
+          
+          <!-- Institutional Header Badge -->
+          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border, #1E2D4A); padding-bottom:12px; margin-bottom:16px;">
+            <div>
+              <div style="font-family:var(--font-mono, monospace); font-size:0.7rem; font-weight:800; color:var(--acad-gold, #F59E0B); letter-spacing:0.05em; text-transform:uppercase;">
+                🇰🇪 REPUBLIC OF KENYA • KICD / KNEC LABORATORY SAFETY PROTOCOL
+              </div>
+              <h2 style="font-size:1.25rem; font-weight:800; color:var(--heading-color, #FFF); margin:4px 0 0 0; font-family:var(--font-heading, sans-serif); display:flex; align-items:center; gap:8px;">
+                <span>🛡️</span> Mandatory Pre-Lab Chemical Safety (SDS)
+              </h2>
+            </div>
+            <span style="background:rgba(239,68,68,0.15); color:#EF4444; border:1px solid rgba(239,68,68,0.3); font-size:0.72rem; font-weight:800; padding:4px 10px; border-radius:6px; font-family:var(--font-mono, monospace);">
+              SAFETY GATEWAY
+            </span>
+          </div>
+
+          <p style="font-size:0.82rem; color:var(--text-muted, #94A3B8); line-height:1.45; margin:0 0 14px 0;">
+            Before operating this laboratory workbench, review the chemical hazard classifications, mandatory Personal Protective Equipment (PPE), and first aid procedures for the reagents used in this practical:
+          </p>
+
+          <!-- Reagent Switcher Tabs -->
+          <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:16px;">
+            ${reagents.map((rk, idx) => {
+              const rData = REAGENT_SAFETY_DB[rk] || { name: rk };
+              const isActive = idx === activeIndex;
+              return `
+                <button type="button" onclick="window.VLKSafety._switchReagent(${idx})" style="padding:6px 12px; border-radius:8px; font-size:0.78rem; font-weight:700; cursor:pointer; font-family:var(--font-mono, monospace); transition:all 0.15s ease; border:1px solid ${isActive ? '#F59E0B' : 'var(--card-border, #1E2D4A)'}; background:${isActive ? 'rgba(245,158,11,0.15)' : 'var(--card-bg-hover, #17233B)'}; color:${isActive ? '#F59E0B' : 'var(--text-muted, #94A3B8)'};">
+                  ${rData.name.split(' (')[0]}
+                </button>
+              `;
+            }).join('')}
+          </div>
+
+          <!-- Active Reagent Details Card -->
+          <div style="background:var(--card-bg-hover, #17233B); border:1px solid var(--card-border, #1E2D4A); border-radius:12px; padding:16px; margin-bottom:16px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+              <div>
+                <b style="font-size:1.02rem; color:var(--heading-color, #FFF);">${data.name}</b>
+                <span style="font-family:var(--font-mono, monospace); font-size:0.8rem; color:var(--text-muted, #94A3B8); margin-left:6px;">(${data.formula})</span>
+              </div>
+              <span style="background:${data.signalWord === 'DANGER' ? '#EF4444' : '#F59E0B'}; color:#FFF; font-size:0.7rem; font-weight:900; padding:2px 8px; border-radius:4px; font-family:var(--font-mono, monospace);">
+                GHS ${data.signalWord}
+              </span>
+            </div>
+
+            <!-- Pictograms & Hazards -->
+            <div style="display:flex; align-items:flex-start; gap:12px; margin-bottom:12px; flex-wrap:wrap;">
+              <div style="display:flex; gap:6px; font-size:1.4rem;">
+                ${data.pictograms.map(p => `<span style="background:var(--card-bg, #111A2E); border:1px solid var(--card-border, #1E2D4A); padding:4px 10px; border-radius:8px;">${p}</span>`).join('')}
+              </div>
+              <div style="flex:1; min-width:200px;">
+                <ul style="margin:0; padding-left:16px; font-size:0.8rem; line-height:1.45; color:#F87171;">
+                  ${data.hazards.map(h => `<li>${h}</li>`).join('')}
+                </ul>
+              </div>
+            </div>
+
+            <!-- Mandatory PPE Strip -->
+            <div style="border-top:1px solid var(--card-border, #1E2D4A); padding-top:10px; margin-top:8px;">
+              <div style="font-size:0.75rem; font-weight:800; color:var(--cyan-accent, #38BDF8); margin-bottom:4px;">Required PPE for this Reagent:</div>
+              <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                ${data.ppe.map(item => `<span style="background:var(--card-bg, #111A2E); border:1px solid var(--card-border, #1E2D4A); font-size:0.74rem; font-weight:700; padding:2px 8px; border-radius:6px; color:var(--heading-color, #FFF);">${item}</span>`).join('')}
+              </div>
+            </div>
+          </div>
+
+          <!-- Mandatory Acknowledgment Checkbox -->
+          <div style="background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.3); border-radius:10px; padding:12px 14px; margin-bottom:18px;">
+            <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-size:0.82rem; line-height:1.4; color:var(--text-main, #F8FAFC);">
+              <input type="checkbox" id="preLabSafetyCheck" onchange="window.VLKSafety._toggleProceedBtn(this.checked)" style="width:18px; height:18px; accent-color:#F59E0B; cursor:pointer; flex-shrink:0;">
+              <span>I confirm that I have reviewed the <b>Safety Data Sheet (SDS) hazards</b>, know the emergency first aid protocols, and will maintain standard KNEC laboratory safety rules.</span>
+            </label>
+          </div>
+
+          <!-- Action Button -->
+          <div style="display:flex; gap:10px;">
+            <button type="button" id="btnProceedToBench" onclick="window.VLKSafety._proceed('${labKey}')" disabled style="flex:1; padding:12px 20px; font-weight:800; font-size:0.88rem; border-radius:10px; background:#475569; color:#94A3B8; border:none; cursor:not-allowed; transition:all 0.2s ease;">
+              Equip PPE &amp; Enter Laboratory Workbench →
+            </button>
+          </div>
+
+        </div>
+      `;
+      gateway.style.display = 'flex';
+    };
+
+    window.VLKSafety._switchReagent = (idx) => {
+      activeIndex = idx;
+      render();
+    };
+
+    window.VLKSafety._toggleProceedBtn = (checked) => {
+      const btn = document.getElementById('btnProceedToBench');
+      if (!btn) return;
+      if (checked) {
+        btn.disabled = false;
+        btn.style.background = '#F59E0B';
+        btn.style.color = '#000';
+        btn.style.cursor = 'pointer';
+        btn.style.boxShadow = '0 0 18px rgba(245,158,11,0.4)';
+      } else {
+        btn.disabled = true;
+        btn.style.background = '#475569';
+        btn.style.color = '#94A3B8';
+        btn.style.cursor = 'not-allowed';
+        btn.style.boxShadow = 'none';
+      }
+    };
+
+    window.VLKSafety._proceed = (lk) => {
+      sessionStorage.setItem('vlk_sds_cleared_' + lk, 'true');
+      const g = document.getElementById('vlkPreLabGatewayModal');
+      if (g) g.style.display = 'none';
+      if (typeof onProceed === 'function') onProceed();
+    };
+
+    render();
+  },
+
+  /**
+   * Auto-guard initialization on page load
+   */
+  initPreLabGuard() {
+    // Check if on a student workbench page
+    const path = window.location.pathname.toLowerCase();
+    let labKey = null;
+
+    if (path.includes('lab.html')) labKey = 'titration';
+    else if (path.includes('qualitative.html')) labKey = 'qualitative';
+    else if (path.includes('rates.html')) labKey = 'rates';
+    else if (path.includes('energy.html') && !path.includes('theory')) labKey = 'energy';
+    else if (path.includes('solubility.html')) labKey = 'solubility';
+    else if (path.includes('organic.html')) labKey = 'organic';
+    else if (path.includes('gas_prep.html')) labKey = 'gas_prep';
+    else if (path.includes('composite_exam.html')) labKey = 'composite_exam';
+
+    if (!labKey) return;
+
+    // Check if query param overrides (e.g. ?sds=skip for tests)
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('sds') === 'skip') return;
+
+    // Trigger pre-lab SDS gateway
+    setTimeout(() => {
+      this.enforcePreLabSDS(labKey);
+    }, 150);
   }
 };
+
+// Auto-run pre-lab guard when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => window.VLKSafety.initPreLabGuard());
+} else {
+  window.VLKSafety.initPreLabGuard();
+}
+

@@ -150,7 +150,7 @@
     },
     {
       category: "🔥 Flame Emission Tests",
-      q: "Which acid is traditionally used to clean the platinum/nichrome wire before a flame test?",
+      q: "Which acid is used to clean the glass rod / apparatus before performing a flame test?",
       options: ["Dilute Sulfuric Acid", "Concentrated Hydrochloric Acid (HCl)", "Dilute Nitric Acid", "Acetic Acid"],
       ans: 1,
       exp: "Concentrated HCl converts metallic impurities into volatile metal chlorides that burn off cleanly."

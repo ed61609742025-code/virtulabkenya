@@ -162,11 +162,11 @@ requireStudentLogin();
     },
     {
       key:'flame',
-      label:'Platinum Wire Flame Emission Test',
+      label:'Clean Glass Rod Flame Emission Test (KICD Standard)',
       icon:'🔥',
-      reagent:'Pt loop + conc. HCl',
+      reagent:'Glass rod + conc. HCl',
       isFlame:true,
-      procedure:'Clean a platinum wire loop in concentrated hydrochloric acid and heat it in a non-luminous Bunsen flame until no colour is imparted. Dip the clean wire into the solid salt sample, introduce it into the non-luminous Bunsen flame, and observe the characteristic flame emission colour (and through cobalt blue glass).',
+      procedure:'Clean a glass rod in concentrated hydrochloric acid and heat the tip in a non-luminous Bunsen flame until no colour is imparted. Dip the moist clean rod tip into the solid salt sample, introduce it into the non-luminous Bunsen flame, and observe the characteristic flame emission colour (and through cobalt blue glass).',
       options: [
         { key:'A', text:'Golden yellow flame', color:'#F59E0B' },
         { key:'B', text:'Lilac / pale violet flame', color:'#A855F7' },

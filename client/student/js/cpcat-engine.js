@@ -117,7 +117,7 @@ const CPCAT_ITEMS = [
     section: 'B',
     sectionTitle: 'Section B: Qualitative Analysis',
     marks: 2,
-    prompt: 'During a platinum wire flame test in a non-luminous Bunsen flame, solid Salt Z produces a persistent LILAC / PURPLE flame. What metal cation is present?',
+    prompt: 'During a flame test using a clean glass rod in a non-luminous Bunsen flame, solid Salt Z produces a persistent LILAC / PURPLE flame. What metal cation is present?',
     options: [
       'Potassium ion [K⁺]',
       'Sodium ion [Na⁺]',

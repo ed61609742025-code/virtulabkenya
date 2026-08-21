@@ -345,12 +345,12 @@ html, body {
 }
 
 .student-tab-panel {
-  display: none;
-  animation: fadeInTab 0.22s ease-out;
+  display: none !important;
 }
 
 .student-tab-panel.active {
-  display: block;
+  display: block !important;
+  animation: fadeInTab 0.22s ease-out;
 }
 
 @keyframes fadeInTab {

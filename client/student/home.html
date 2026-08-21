@@ -124,300 +124,285 @@
     justify-content: center;
     font-size: 1.25rem;
     border: 1.5px solid var(--acad-gold);
+    box-shadow: var(--shadow-sm);
   }
-  [data-theme="dark"] .seal-crest-small {
-    background: #1E293B;
-    color: var(--acad-oxford);
-  }
-  [data-theme="green"] .seal-crest-small {
-    background: #102617;
-    color: #34D399;
-  }
+  [data-theme="dark"] .seal-crest-small { background: #162238; color: var(--acad-oxford); }
+  [data-theme="green"] .seal-crest-small { background: #0E2415; color: #34D399; }
 
-  .section-heading-academic {
-    font-family: 'Cinzel', serif;
-    font-size: 1.12rem;
-    font-weight: 800;
-    color: var(--heading-color);
-    letter-spacing: 0.02em;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .scholarly-badge-card {
+  /* Candidate Profile Header Card */
+  .candidate-hero-bar {
     background: var(--card-bg);
     border: 1.5px solid var(--card-border);
-    border-radius: 12px;
-    padding: 16px;
-    transition: all 0.2s ease;
-  }
-  .scholarly-badge-card:hover {
-    border-color: var(--acad-gold);
-    transform: translateY(-2px);
+    border-radius: 14px;
+    padding: 18px 24px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
     box-shadow: var(--shadow-sm);
   }
 
-  .knec-ref-table-academic {
+  .knec-reference-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .knec-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.78rem;
-    font-family: 'JetBrains Mono', monospace;
+    margin-top: 10px;
   }
-  .knec-ref-table-academic th {
+  .knec-table th {
     background: var(--card-bg-hover);
     color: var(--heading-color);
-    font-weight: 700;
-    padding: 6px 8px;
-    border: 1px solid var(--card-border);
+    font-family: 'Cinzel', serif;
+    font-size: 0.78rem;
+    font-weight: 800;
     text-align: left;
-  }
-  .knec-ref-table-academic td {
-    padding: 6px 8px;
+    padding: 9px 12px;
     border: 1px solid var(--card-border);
-    color: var(--text-main);
+  }
+  .knec-table td {
+    padding: 9px 12px;
+    border: 1px solid var(--card-border);
+    font-size: 0.84rem;
+    line-height: 1.5;
+  }
+  .knec-table tr:nth-child(even) td {
+    background: var(--card-bg-hover);
   }
 </style>
 </head>
 <body>
-<!-- Unified Sticky Academic Header -->
-<header class="academic-top-header">
-  <!-- Institutional Candidate Ribbon -->
+
+  <!-- Top Academic Ribbon -->
   <div class="candidate-top-ribbon">
-    <span>🇰🇪 REPUBLIC OF KENYA • KCSE CHEMISTRY PRACTICAL WORKSTATION</span>
-    <span>•</span>
+    <span>🇰🇪 REPUBLIC OF KENYA &bull; KCSE CHEMISTRY PRACTICAL WORKSTATION</span>
+    <span>&bull;</span>
     <span>KNEC CODE: <span class="code-tag">CHEMISTRY 233/3</span></span>
-    <span>•</span>
+    <span>&bull;</span>
     <span>CANDIDATE PRACTICAL LEDGER</span>
   </div>
 
-  <!-- Topbar Navigation Bar -->
-  <nav class="top-navbar">
-    <a href="#" class="nav-brand-academic" aria-label="VirtuLab Kenya Student Home">
-      <div class="seal-crest-small" title="VirtuLab Kenya Seal">⚗️</div>
-      <div style="display:flex; flex-direction:column;">
-        <span style="font-weight:800; font-family:'Cinzel', serif; font-size:1.1rem; line-height:1.1; color:var(--heading-color);">VirtuLab Kenya</span>
-        <span class="brand-subtagline" style="font-size:0.68rem; font-family:'Newsreader', serif; font-style:italic; color:var(--cyan-accent); letter-spacing:0.01em;">National Practical Chemistry Workstation</span>
-      </div>
-    </a>
+  <!-- Primary Top Navbar -->
+  <nav class="top-nav" aria-label="Main Navigation">
+    <div class="top-navbar">
+      <a href="home.html" class="nav-brand-academic">
+        <div class="seal-crest-small">⚗️</div>
+        <div>
+          <div style="font-family:'Cinzel', serif; font-size:1.15rem; font-weight:800; letter-spacing:0.02em; color:var(--heading-color); line-height:1.1;">VirtuLab Kenya</div>
+          <div style="font-family:'Newsreader', serif; font-style:italic; font-size:0.75rem; color:var(--text-muted);">National Practical Chemistry Workstation</div>
+        </div>
+      </a>
 
-    <div class="nav-actions">
-      <!-- Language Switcher Controls -->
-      <div class="theme-toggle-group" title="Switch language / Lugha" aria-label="Language selector">
-        <button class="theme-btn-chip lang-btn-chip active" data-lang="en" onclick="setLanguage('en')" aria-label="Switch to English">🇬🇧 EN</button>
-        <button class="theme-btn-chip lang-btn-chip" data-lang="sw" onclick="setLanguage('sw')" aria-label="Badilisha kwenda Swahili">🇰🇪 SW</button>
-      </div>
+      <div class="nav-actions">
+        <!-- Language Switcher -->
+        <div class="lang-toggle-group" style="display:flex; background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:6px; padding:2px; gap:2px;">
+          <button class="lang-btn-chip active" id="btnLangEN" onclick="setLanguage('en')" style="font-size:0.72rem; font-weight:700; padding:4px 8px; border-radius:4px; border:none; background:var(--card-bg); color:var(--heading-color); cursor:pointer;">GB EN</button>
+          <button class="lang-btn-chip" id="btnLangSW" onclick="setLanguage('sw')" style="font-size:0.72rem; font-weight:700; padding:4px 8px; border-radius:4px; border:none; background:transparent; color:var(--text-muted); cursor:pointer;">KE SW</button>
+        </div>
 
-      <!-- Theme Switcher Controls -->
-      <div class="theme-toggle-group" title="Switch appearance theme" aria-label="Theme selector">
-        <button class="theme-btn-chip" data-theme="light" onclick="setTheme('light')" aria-label="Clean Paper mode">☀️ Paper</button>
-        <button class="theme-btn-chip" data-theme="dark" onclick="setTheme('dark')" aria-label="Dark Obsidian mode">🌙 Dark</button>
-        <button class="theme-btn-chip" data-theme="green" onclick="setTheme('green')" aria-label="Emerald Lab mode">🧪 Lab</button>
-      </div>
+        <!-- Academic Theme Toggle -->
+        <div class="theme-toggle-group">
+          <button class="theme-btn-chip active" data-theme-val="light" onclick="setTheme('light')" title="Clean Slate Light Mode">☀️ Light</button>
+          <button class="theme-btn-chip" data-theme-val="dark" onclick="setTheme('dark')" title="Research Obsidian Dark Mode">🌙 Dark</button>
+          <button class="theme-btn-chip" data-theme-val="green" onclick="setTheme('green')" title="Emerald Laboratory Mode">🧪 Lab</button>
+        </div>
 
-      <div style="position:relative;">
-        <button class="nav-icon-btn notif-bell-btn" id="notifBellBtn" onclick="toggleNotifDropdown(event)" title="Notifications" aria-label="Notifications Drawer" style="position:relative; background:var(--card-bg); border:1px solid var(--card-border); color:var(--text-main); padding:6px 12px; border-radius:6px; cursor:pointer; display:flex; align-items:center; gap:6px;">
-          <span class="bell-icon">🔔</span>
-          <span id="notifBadge" class="notif-badge" style="display:none;">0</span>
-        </button>
-
-        <!-- Notification Dropdown Drawer -->
-        <div id="notifDropdown" style="display:none; position:absolute; right:0; top:42px; width:320px; background:var(--card-bg); border:1.5px solid var(--card-border); border-radius:10px; box-shadow:var(--shadow-lg); z-index:10000; padding:14px;">
-          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px; margin-bottom:8px;">
-            <span style="font-family:'Cinzel', serif; font-weight:800; font-size:0.85rem; color:var(--heading-color);">Official Notices</span>
-            <button style="font-size:0.72rem; color:var(--cyan-accent); background:none; border:none; cursor:pointer; font-weight:700;" onclick="markAllNotificationsRead()">Mark all read</button>
+        <!-- Notification Bell -->
+        <div style="position:relative;">
+          <button class="user-avatar-btn" id="notifBellBtn" onclick="toggleNotifDropdown(event)" title="Notifications" aria-label="Notifications">
+            🔔<span class="notif-badge" id="notifCount" style="display:none; position:absolute; top:-4px; right:-4px; background:#EF4444; color:#FFF; font-size:0.65rem; font-weight:800; border-radius:100px; width:16px; height:16px; display:none; align-items:center; justify-content:center;">0</span>
+          </button>
+          <!-- Notification Dropdown -->
+          <div id="notifDropdown" class="notif-dropdown" style="display:none; position:absolute; right:0; top:42px; width:300px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:8px; box-shadow:var(--shadow-md); z-index:1000; padding:12px;">
+            <div style="font-family:'Cinzel', serif; font-size:0.85rem; font-weight:800; color:var(--heading-color); margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+              <span>Notices &amp; Feedback</span>
+              <span id="notifUnreadLabel" style="font-size:0.68rem; color:var(--cyan-accent); font-family:'JetBrains Mono', monospace;">0 new</span>
+            </div>
+            <div id="notifList" style="max-height:220px; overflow-y:auto; font-size:0.8rem; color:var(--text-muted);">
+              <div style="padding:10px 0; text-align:center; font-family:'JetBrains Mono', monospace; font-size:0.75rem;">No unread notifications</div>
+            </div>
           </div>
-          <div id="notifList" style="max-height:260px; overflow-y:auto;">
-            <div style="font-size:0.8rem; color:var(--text-muted); text-align:center; padding:12px;">No unread notifications</div>
+        </div>
+
+        <!-- User Profile Dropdown -->
+        <div style="position:relative;">
+          <button class="user-avatar-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)" title="Candidate Profile" aria-label="Candidate Profile">
+            👤
+          </button>
+          <div id="userDropdown" class="notif-dropdown" style="display:none; position:absolute; right:0; top:42px; width:220px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:8px; box-shadow:var(--shadow-md); z-index:1000; padding:10px;">
+            <div style="padding:6px 8px; border-bottom:1px solid var(--card-border); margin-bottom:6px;">
+              <div style="font-weight:800; font-size:0.85rem; color:var(--heading-color);" id="dropdownUserName">Candidate</div>
+              <div style="font-size:0.72rem; color:var(--text-muted); font-family:'JetBrains Mono', monospace;" id="dropdownUserRole">KCSE Student</div>
+            </div>
+            <a href="composite_exam.html" style="display:flex; align-items:center; gap:8px; padding:7px 8px; font-size:0.8rem; color:var(--text-main); text-decoration:none; border-radius:4px;" class="dropdown-link-hover">
+              <span>⏱️</span> 40-Mark Mock Exam
+            </a>
+            <a href="certificate.html" style="display:flex; align-items:center; gap:8px; padding:7px 8px; font-size:0.8rem; color:var(--text-main); text-decoration:none; border-radius:4px;" class="dropdown-link-hover">
+              <span>📜</span> Certificate of Mastery
+            </a>
+            <a href="history.html" style="display:flex; align-items:center; gap:8px; padding:7px 8px; font-size:0.8rem; color:var(--text-main); text-decoration:none; border-radius:4px;" class="dropdown-link-hover">
+              <span>📑</span> Full Assessment Ledger
+            </a>
+            <button onclick="togglePasswordPanel()" style="width:100%; text-align:left; display:flex; align-items:center; gap:8px; padding:7px 8px; font-size:0.8rem; color:var(--text-main); background:none; border:none; cursor:pointer; border-radius:4px;" class="dropdown-link-hover">
+              <span>🔒</span> Security &amp; Password
+            </button>
+            <div style="border-top:1px solid var(--card-border); margin-top:6px; padding-top:6px;">
+              <button onclick="Auth.logout()" style="width:100%; text-align:left; display:flex; align-items:center; gap:8px; padding:7px 8px; font-size:0.8rem; color:#EF4444; background:none; border:none; cursor:pointer; border-radius:4px; font-weight:700;">
+                <span>🚪</span> Sign Out
+              </button>
+            </div>
           </div>
         </div>
       </div>
-      
-      <button class="user-avatar-btn" onclick="togglePasswordPanel()" title="Account Settings" aria-label="Account Settings & Security" style="border-radius:6px;">
-        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
-        </svg>
-      </button>
     </div>
   </nav>
-</header>
 
-<!-- Main Streamlined Dashboard Layout Container -->
-<div class="dashboard-container">
-
-  <!-- System Broadcast Announcement Banner -->
-  <div id="systemBroadcastBanner" style="display:none;"></div>
-  
-  <div class="dashboard-grid">
-    
-    <!-- LEFT COLUMN: Your Badges & Honors -->
-    <aside class="badges-sidebar">
-      
-      <!-- Academic Honors Seal Card -->
-      <div class="leaderboard-glass-card" style="margin-bottom: 20px; padding: 18px 14px; border-color: var(--acad-gold-border); border-top: 4px solid var(--acad-gold); text-align: center; border-radius: 12px; box-shadow: var(--shadow-sm);">
-        <span style="font-family:'Cinzel', serif; font-size:0.68rem; font-weight:800; text-transform:uppercase; color:var(--acad-gold); letter-spacing:0.1em; display:block; margin-bottom:10px;">★ ACADEMIC HONORS ★</span>
-        <img src="../shared/chemistry_hero_badge.jpg" alt="Chemistry Prodigy Hero Badge" style="width: 100%; max-width: 100px; aspect-ratio: 1/1; object-fit: contain; border-radius: 50%; margin-bottom: 12px; border: 2px solid var(--acad-gold);">
-        <div style="font-family:'Cinzel', serif; font-weight: 800; font-size: 0.98rem; color: var(--heading-color); margin-bottom: 4px;">Chemistry Prodigy</div>
-        <div style="font-family:'Newsreader', serif; font-style:italic; font-size: 0.78rem; color: var(--text-muted); line-height: 1.4;">Attained for achieving ≥80% KCSE Paper 3 practical accuracy.</div>
+  <!-- Password Update Panel (Toggled from User Menu) -->
+  <div class="dashboard-container" id="passwordPanelWrap" style="display:none; padding-bottom:0;">
+    <div id="passwordPanel" style="background:var(--card-bg); border:1.5px solid var(--card-border); border-radius:12px; padding:20px; margin-bottom:20px; box-shadow:var(--shadow-md);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <h3 style="font-family:'Cinzel', serif; font-size:1.05rem; color:var(--heading-color); margin:0;">Candidate Security &amp; Password Update</h3>
+        <button class="btn" onclick="togglePasswordPanel()" style="padding:4px 10px; font-size:0.75rem;">✕ Close</button>
       </div>
-
-      <h2 class="section-heading-academic" data-i18n="your_badges" style="margin-bottom: 14px;">
-        <span>🎖️</span> Competency Badges
-      </h2>
-      <div id="badgeGrid" class="badges-sidebar-container">
-        <!-- Badges populated dynamically by loadBadges() -->
-        <div class="badge-card">
-          <div class="badge-icon-box teal">🚀</div>
-          <div class="badge-title-text">First Steps</div>
-          <div class="badge-progress-text">Achieved</div>
-          <div class="badge-progress-bar-track">
-            <div class="badge-progress-bar-fill teal" style="width: 100%;"></div>
-          </div>
-        </div>
-        <div class="badge-card">
-          <div class="badge-icon-box orange">🎯</div>
-          <div class="badge-title-text">Concordant!</div>
-          <div class="badge-progress-text">Achieved</div>
-          <div class="badge-progress-bar-track">
-            <div class="badge-progress-bar-fill orange" style="width: 100%;"></div>
-          </div>
-        </div>
-        <div class="badge-card">
-          <div class="badge-icon-box blue">⚡</div>
-          <div class="badge-title-text">Precision</div>
-          <div class="badge-progress-text">Achieved</div>
-          <div class="badge-progress-bar-track">
-            <div class="badge-progress-bar-fill blue" style="width: 100%;"></div>
-          </div>
-        </div>
-        <div class="badge-card">
-          <div class="badge-icon-box purple">🧬</div>
-          <div class="badge-title-text">All-Rounder</div>
-          <div class="badge-progress-text">Achieved</div>
-          <div class="badge-progress-bar-track">
-            <div class="badge-progress-bar-fill purple" style="width: 100%;"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Quick Examination Shortcuts -->
-      <div style="margin-top: 24px;">
-        <div style="font-family:'Cinzel', serif; font-size:0.75rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:10px;">Institutional Links</div>
-        <a href="composite_exam.html" class="btn" style="width:100%; display:flex; align-items:center; gap:8px; padding:10px 12px; margin-bottom:8px; font-size:0.78rem; font-weight:700; border-radius:6px; text-decoration:none; background:var(--card-bg); border:1px solid var(--card-border); color:var(--heading-color);">
-          <span>⏱️</span> 40-Mark Mock Booklet
-        </a>
-        <a href="certificate.html" class="btn" style="width:100%; display:flex; align-items:center; gap:8px; padding:10px 12px; margin-bottom:8px; font-size:0.78rem; font-weight:700; border-radius:6px; text-decoration:none; background:var(--card-bg); border:1px solid var(--card-border); color:var(--heading-color);">
-          <span>📜</span> Certificate of Mastery
-        </a>
-        <a href="speed_battle.html" class="btn" style="width:100%; display:flex; align-items:center; gap:8px; padding:10px 12px; font-size:0.78rem; font-weight:700; border-radius:6px; text-decoration:none; background:var(--card-bg); border:1px solid var(--card-border); color:var(--heading-color);">
-          <span>⚡</span> 60s Chemical Battle
-        </a>
-      </div>
-    </aside>
-
-    <!-- MIDDLE COLUMN: Welcome, Assignments, Advisors, Readiness, Sessions, Practice Grid -->
-    <main class="main-content-col">
-      
-      <!-- Mobile Welcome Header (Mobile Only) -->
-      <section class="mobile-welcome-section" style="margin-bottom: 20px;">
-        <h1 class="welcome-title" style="font-family:'Cinzel', serif;">Candidate: <span id="studentNameMobile">Test Student</span></h1>
-        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:6px;">
-          <div class="streak-badge" style="background:rgba(245, 158, 11, 0.15); border:1px solid #F59E0B; color:#F59E0B; padding:4px 12px; border-radius:4px; font-size:0.78rem; font-weight:800; display:inline-flex; align-items:center; gap:4px; font-family:'JetBrains Mono', monospace;">
-            <span>🔥</span>
-            <span id="streakCountMobile">1</span>-Day Practical Streak
-          </div>
-          <div style="font-size:0.78rem; font-weight:600; color:var(--text-muted); padding:4px 10px; background:var(--card-bg); border-radius:4px; border:1px solid var(--card-border); font-family:'JetBrains Mono', monospace;" id="todayDateMobile">Today: Aug 7, 2028</div>
-        </div>
-      </section>
-
-      <!-- Password Update Panel (Hidden by default) -->
-      <div id="passwordPanel" class="modal-pw" style="display:none; margin-bottom: 20px; border-radius:10px; border:1px solid var(--card-border);">
-        <h3 style="font-family:'Cinzel', serif; font-size:0.95rem; color:var(--heading-color); margin-bottom:12px;">Candidate Security & Password</h3>
-        <div class="field" style="margin-bottom: 10px;">
-          <label for="pwCurrent" style="font-size:0.8rem; font-weight:700; display:block; margin-bottom:4px;">Current Security Password</label>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:14px; margin-bottom:14px;">
+        <div>
+          <label for="pwCurrent" style="font-size:0.8rem; font-weight:700; display:block; margin-bottom:4px;">Current Password</label>
           <input type="password" id="pwCurrent" style="width:100%; padding:8px 12px; border-radius:6px; border:1.5px solid var(--card-border); background:var(--card-bg-hover); color:var(--text-main);">
         </div>
-        <div class="field" style="margin-bottom: 12px;">
+        <div>
           <label for="pwNew" style="font-size:0.8rem; font-weight:700; display:block; margin-bottom:4px;">New Security Password</label>
           <input type="password" id="pwNew" style="width:100%; padding:8px 12px; border-radius:6px; border:1.5px solid var(--card-border); background:var(--card-bg-hover); color:var(--text-main);">
         </div>
-        <button class="btn btn-primary" onclick="submitChangePassword()" style="padding:8px 18px; border-radius:6px; font-weight:700;">Update Password</button>
-        <button class="btn" onclick="Auth.logout()" style="margin-left:8px; padding:8px 18px; border-radius:6px; border:1px solid var(--card-border); background:transparent; color:var(--text-muted);">Log out</button>
-        <div id="pwMsg" style="margin-top: 8px;"></div>
+      </div>
+      <button class="btn btn-primary" onclick="submitChangePassword()" style="padding:8px 20px; font-weight:800; border-radius:6px;">Update Password</button>
+      <div id="pwMsg" style="margin-top:10px; font-size:0.82rem;"></div>
+    </div>
+  </div>
+
+  <!-- Main Modular Dashboard Workspace -->
+  <main class="dashboard-container">
+
+    <!-- ══════════════════════════════════════════════════════
+         CANDIDATE PROFILE & QUICK STATUS HERO BAR
+    ══════════════════════════════════════════════════════ -->
+    <header class="candidate-hero-bar">
+      <div>
+        <div style="font-family:'Cinzel', serif; font-size:1.35rem; font-weight:900; color:var(--heading-color); line-height:1.2;">
+          Candidate: <span id="studentName">Tecla Rice</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:6px;">
+          <span style="font-family:'JetBrains Mono', monospace; font-size:0.78rem; font-weight:700; color:var(--acad-gold); background:var(--acad-gold-subtle); padding:3px 10px; border-radius:4px; border:1px solid var(--acad-gold-border);">
+            🇰🇪 KCSE CANDIDATE 2026
+          </span>
+          <span style="font-size:0.8rem; color:var(--text-muted); font-family:'JetBrains Mono', monospace;" id="todayDate">Today: Aug 21, 2026</span>
+          <span id="studentNameMobile" style="display:none;">Tecla Rice</span>
+          <span id="todayDateMobile" style="display:none;"></span>
+        </div>
       </div>
 
-      <!-- FEATURE: Formative Pre-Lab Diagnostic Assessment Banner -->
-      <section style="margin-bottom: 20px;">
-        <div style="background: linear-gradient(135deg, rgba(2, 132, 199, 0.12), rgba(16, 185, 129, 0.1)); border: 1.5px solid var(--cyan-accent); border-radius: 10px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; box-shadow: 0 4px 14px rgba(2, 132, 199, 0.08);">
-          <div style="display: flex; align-items: center; gap: 14px;">
-            <div style="font-size: 2.2rem; line-height: 1;">🧪 📐</div>
-            <div>
-              <div style="font-weight: 800; font-size: 0.96rem; color: var(--heading-color); display: flex; align-items: center; gap: 8px; font-family: 'Cinzel', serif;">
-                <span>Formative Pre-Lab Practical Diagnostic</span>
-                <span style="font-size: 0.68rem; font-weight: 800; padding: 2px 8px; border-radius: 100px; background: rgba(245, 158, 11, 0.2); color: var(--amber-accent); font-family: 'JetBrains Mono', monospace;">KNEC PAPER 3 STANDARDS</span>
-              </div>
-              <p style="font-size: 0.82rem; color: var(--text-muted); margin: 3px 0 0 0; line-height: 1.4;">
-                Reinforce chemical principles and observational deduction reflexes across qualitative ions, titration concordancy & organic reactions before entering the lab!
-              </p>
+      <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+        <!-- Streak Badge -->
+        <div style="background:rgba(245, 158, 11, 0.14); border:1.5px solid #F59E0B; color:#F59E0B; padding:6px 14px; border-radius:8px; font-size:0.84rem; font-weight:800; display:inline-flex; align-items:center; gap:6px; font-family:'JetBrains Mono', monospace;">
+          <span>🔥</span>
+          <span id="streakCount">1</span>-Day Practical Streak
+          <span id="streakCountMobile" style="display:none;">1</span>
+        </div>
+
+        <!-- Pre-Lab Reflex Drill Quick Launch -->
+        <a href="speed_battle.html?warmup=true" class="btn btn-primary" style="padding:8px 18px; font-size:0.84rem; font-weight:800; border-radius:8px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; box-shadow:var(--shadow-sm);">
+          <span>⚡</span> Pre-Lab Diagnostic Drill →
+        </a>
+      </div>
+    </header>
+
+    <!-- ══════════════════════════════════════════════════════
+         MODULAR SUB-TABS NAVIGATION BAR
+    ══════════════════════════════════════════════════════ -->
+    <nav class="student-subtabs-nav" aria-label="Workstation Views">
+      <button class="student-subtab-btn active" id="tabBtn_benches" onclick="switchStudentSubTab('benches')">
+        <span>🧪</span> Laboratory Benches
+      </button>
+      <button class="student-subtab-btn" id="tabBtn_reference" onclick="switchStudentSubTab('reference')">
+        <span>📚</span> KCSE Revision &amp; Reference Guide
+      </button>
+      <button class="student-subtab-btn" id="tabBtn_achievements" onclick="switchStudentSubTab('achievements')">
+        <span>🏆</span> Badges &amp; Performance Ledger
+      </button>
+      <button class="student-subtab-btn" id="tabBtn_research" onclick="switchStudentSubTab('research')">
+        <span>🔬</span> Academic Research Suite
+      </button>
+    </nav>
+
+    <!-- ══════════════════════════════════════════════════════
+         TAB 1: 🧪 LABORATORY BENCHES & ACTIVE ASSIGNMENTS
+    ══════════════════════════════════════════════════════ -->
+    <div class="student-tab-panel active" id="panel_benches">
+      
+      <!-- Prescribed Homework & Socratic AI Advice Row -->
+      <section style="margin-bottom: 24px;">
+        
+        <!-- Prescribed Assignments Card -->
+        <div style="background:var(--card-bg); border:1.5px solid var(--card-border); border-radius:12px; padding:18px 20px; margin-bottom:18px; box-shadow:var(--shadow-sm);">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-size:1.2rem;">📋</span>
+              <h2 class="section-heading-academic" style="margin:0; font-size:1.02rem;" data-i18n="your_assignments">
+                Prescribed Continuous Assessment
+              </h2>
+            </div>
+            <span style="font-family:'JetBrains Mono', monospace; font-size:0.74rem; color:var(--text-muted); background:var(--card-bg-hover); padding:2px 8px; border-radius:4px; border:1px solid var(--card-border);">
+              KNEC Paper 3 Target
+            </span>
+          </div>
+
+          <div id="assignmentsList" class="assignments-grid-container">
+            <div class="empty-box" style="width:100%; padding:20px; text-align:center; font-family:'JetBrains Mono', monospace; font-size:0.82rem; color:var(--text-muted); border-radius:8px;">
+              Loading prescribed assignments…
             </div>
           </div>
-          <a href="speed_battle.html?warmup=true" class="btn btn-primary" style="padding: 9px 18px; font-size: 0.85rem; font-weight: 800; border-radius: 100px; text-decoration: none; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px;">
-            <span>🚀</span> Begin Diagnostic Drill →
-          </a>
-        </div>
-      </section>
-
-      <!-- FEATURE: Continuous Assessment Assignments -->
-      <section style="margin-bottom: 24px;">
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
-          <h2 class="section-heading-academic" data-i18n="your_assignments" style="margin:0;">
-            <span>📋</span> Prescribed Laboratory Assignments
-          </h2>
-          <span style="font-family:'JetBrains Mono', monospace; font-size:0.75rem; color:var(--text-muted);">KNEC Continuous Assessment</span>
         </div>
 
-        <div id="assignmentsList" class="assignments-grid-container">
-          <!-- Populated dynamically via student-dashboard.js -->
-          <div class="empty-box" style="width:100%; flex: 1 1 100%; padding: 24px; text-align: center; border-radius: 8px; font-family:'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-muted);">
-            Loading prescribed assignments…
-          </div>
-        </div>
-      </section>
-
-      <!-- FEATURE: Socratic AI Advisor & Adaptive Remediation -->
-      <section style="margin-top: 24px; margin-bottom: 24px; clear: both;">
+        <!-- Mwalimu AI Socratic Diagnostic & Targeted Recommendation -->
         <div id="adaptiveRecCard" style="display:none; margin-bottom: 20px;">
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
             
-            <!-- Card 1: Smart Advice Tip -->
-            <div class="mwalimu-card" style="margin-bottom: 0; border: 1.5px solid var(--card-border); border-left: 4px solid var(--acad-oxford); background: var(--card-bg); padding: 18px; border-radius: 10px; box-shadow: var(--shadow-sm); display: flex; gap: 14px; align-items: flex-start;">
-              <div class="mwalimu-avatar" style="background: var(--acad-oxford); color: #FFF; border: none; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 8px; flex-shrink: 0;">👨‍🏫</div>
-              <div class="mwalimu-content" style="flex: 1; min-width: 0;">
-                <div class="mwalimu-header" style="margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between;">
-                  <div class="mwalimu-title" style="font-family:'Cinzel', serif; font-weight: 800; font-size: 0.92rem; color: var(--heading-color);">
+            <!-- Smart Advice Tip -->
+            <div class="mwalimu-card" style="margin-bottom:0; border:1.5px solid var(--card-border); border-left:4px solid var(--acad-oxford); background:var(--card-bg); padding:18px; border-radius:10px; box-shadow:var(--shadow-sm); display:flex; gap:14px; align-items:flex-start;">
+              <div class="mwalimu-avatar" style="background:var(--acad-oxford); color:#FFF; font-size:1.2rem; display:flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:8px; flex-shrink:0;">👨‍🏫</div>
+              <div class="mwalimu-content" style="flex:1; min-width:0;">
+                <div style="margin-bottom:6px; display:flex; align-items:center; justify-content:space-between;">
+                  <div style="font-family:'Cinzel', serif; font-weight:800; font-size:0.92rem; color:var(--heading-color);">
                     Mwalimu Socratic Diagnostic
                   </div>
-                  <span class="mwalimu-chip" style="background: var(--acad-gold-subtle); color: var(--acad-gold); font-size: 0.68rem; font-weight: 800; padding: 2px 8px; border-radius: 4px; font-family:'JetBrains Mono', monospace;">Pedagogical Hint</span>
+                  <span style="background:var(--acad-gold-subtle); color:var(--acad-gold); font-size:0.68rem; font-weight:800; padding:2px 8px; border-radius:4px; font-family:'JetBrains Mono', monospace;">Pedagogical Hint</span>
                 </div>
-                <div class="mwalimu-message" id="mwalimuMessage" style="font-family:'Newsreader', serif; font-size: 0.92rem; line-height: 1.5; color: var(--text-main);">
+                <div id="mwalimuMessage" style="font-family:'Newsreader', serif; font-size:0.92rem; line-height:1.5; color:var(--text-main);">
                   Analyzing your practical examination logs to identify targeted weak areas…
                 </div>
               </div>
             </div>
 
-            <!-- Card 2: Next Recommended Action -->
-            <div class="mwalimu-card" style="margin-bottom: 0; border: 1.5px solid var(--card-border); border-left: 4px solid var(--acad-emerald); background: var(--card-bg); padding: 18px; border-radius: 10px; box-shadow: var(--shadow-sm); display: flex; gap: 14px; align-items: flex-start;">
-              <div class="mwalimu-avatar" id="recIcon" style="background: var(--acad-emerald-subtle); color: var(--acad-emerald); border: 1px solid var(--acad-emerald); font-size: 1.2rem; display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 8px; flex-shrink: 0;">🎯</div>
-              <div class="mwalimu-content" style="flex: 1; min-width: 0;">
-                <div class="mwalimu-header" style="margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
-                  <span style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; color: var(--acad-emerald); letter-spacing: 0.05em; font-family:'JetBrains Mono', monospace;">Prescribed Practical</span>
-                  <span class="mwalimu-chip" id="recReasonBadge" style="background: var(--acad-emerald-subtle); color: var(--acad-emerald); font-weight: 800; font-size: 0.68rem; border-radius:4px;">Syllabus Focus</span>
+            <!-- Targeted Next Recommendation -->
+            <div class="mwalimu-card" style="margin-bottom:0; border:1.5px solid var(--card-border); border-left:4px solid var(--acad-emerald); background:var(--card-bg); padding:18px; border-radius:10px; box-shadow:var(--shadow-sm); display:flex; gap:14px; align-items:flex-start;">
+              <div class="mwalimu-avatar" id="recIcon" style="background:var(--acad-emerald-subtle); color:var(--acad-emerald); border:1px solid var(--acad-emerald); font-size:1.2rem; display:flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:8px; flex-shrink:0;">🎯</div>
+              <div class="mwalimu-content" style="flex:1; min-width:0;">
+                <div style="margin-bottom:4px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px;">
+                  <span style="font-size:0.7rem; font-weight:800; text-transform:uppercase; color:var(--acad-emerald); letter-spacing:0.05em; font-family:'JetBrains Mono', monospace;">Prescribed Practical</span>
+                  <span class="mwalimu-chip" id="recReasonBadge" style="background:var(--acad-emerald-subtle); color:var(--acad-emerald); font-weight:800; font-size:0.68rem; border-radius:4px;">Syllabus Focus</span>
                 </div>
-                <div style="font-family:'Cinzel', serif; font-weight: 800; color: var(--heading-color); font-size: 0.98rem; margin-bottom: 4px;" id="recTitle">Redox Titration (Fe²⁺ vs KMnO₄)</div>
-                <div class="mwalimu-message" id="recDesc" style="margin-bottom: 12px; font-size: 0.8rem; line-height: 1.45; color: var(--text-muted);">
+                <div style="font-family:'Cinzel', serif; font-weight:800; color:var(--heading-color); font-size:0.98rem; margin-bottom:4px;" id="recTitle">Redox Titration (Fe²⁺ vs KMnO₄)</div>
+                <div class="mwalimu-message" id="recDesc" style="margin-bottom:12px; font-size:0.8rem; line-height:1.45; color:var(--text-muted);">
                   Reinforce self-indicating titration transitions without external indicators to maximize Paper 3 Q1 marks.
                 </div>
-                <a id="recActionBtn" href="lab.html?studyMode=guided" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; font-size: 0.78rem; font-weight: 800; border-radius: 6px; text-decoration: none; background: var(--acad-emerald); color: #FFF; border: none;">
+                <a id="recActionBtn" href="lab.html?studyMode=guided" class="btn btn-primary" style="display:inline-flex; align-items:center; gap:6px; padding:7px 16px; font-size:0.78rem; font-weight:800; border-radius:6px; text-decoration:none; background:var(--acad-emerald); color:#FFF; border:none;">
                   <span>Launch Prescribed Session →</span>
                 </a>
               </div>
@@ -425,22 +410,26 @@
 
           </div>
         </div>
+      </section>
 
-        <!-- Section Header for KCSE Practical Disciplines -->
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
-          <h2 class="section-heading-academic" style="margin:0;">
+      <!-- Section Header for KCSE Practical Chemistry Disciplines -->
+      <section style="margin-bottom: 24px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
+          <h2 class="section-heading-academic" style="margin:0; font-size:1.15rem;">
             <span>🔬</span> KCSE Practical Chemistry Disciplines
           </h2>
-          <span style="font-family:'JetBrains Mono', monospace; font-size:0.75rem; color:var(--text-muted);">6 Laboratory Benches</span>
+          <span style="font-family:'JetBrains Mono', monospace; font-size:0.76rem; color:var(--text-muted); background:var(--card-bg); border:1px solid var(--card-border); padding:3px 10px; border-radius:6px;">
+            8 Active Simulation Workbenches + 1 Mock Exam
+          </span>
         </div>
 
         <!-- Search and Filter Bar -->
-        <div class="search-filter-bar" style="border-radius:8px; margin-bottom:16px;">
+        <div class="search-filter-bar" style="border-radius:10px; margin-bottom:20px; background:var(--card-bg); border:1.5px solid var(--card-border); padding:12px 16px;">
           <div class="search-input-wrap">
             <span class="search-icon">🔍</span>
-            <input type="text" id="experimentSearchInput" oninput="filterPractices()" placeholder="Filter practicals (e.g. Titration, Qualitative, Thermochemistry, Kinetics...)">
+            <input type="text" id="experimentSearchInput" oninput="filterPractices()" placeholder="Filter practicals (e.g. Titration, Qualitative, Thermochemistry, Kinetics, Organic...)">
           </div>
-          <div class="filter-chips">
+          <div class="filter-chips" style="margin-top:10px;">
             <button class="filter-chip active" data-filter="all" onclick="setPracticeFilter('all')">All</button>
             <button class="filter-chip" data-filter="acidBase" onclick="setPracticeFilter('acidBase')">Volumetric</button>
             <button class="filter-chip" data-filter="qualitative" onclick="setPracticeFilter('qualitative')">Qualitative Salt</button>
@@ -448,589 +437,529 @@
             <button class="filter-chip" data-filter="energy" onclick="setPracticeFilter('energy')">Thermochemistry</button>
             <button class="filter-chip" data-filter="solubility" onclick="setPracticeFilter('solubility')">Solubility Curves</button>
             <button class="filter-chip" data-filter="organic" onclick="setPracticeFilter('organic')">Organic Chemistry</button>
-            <button class="filter-chip" data-filter="gas" onclick="setPracticeFilter('gas')">Gas Preparation</button>
           </div>
         </div>
 
-        <!-- Practice Grid Matrix -->
-        <div class="practice-2col-grid">
+        <!-- Full-Width Interactive Laboratory Bench Cards -->
+        <div class="practice-grid" id="practiceGrid">
           
-          <!-- Module 1: Guided Titration -->
-          <a href="speed_battle.html?mode=titration&target=lab.html%3FstudyMode%3Dguided" class="practice-banner-card guided" data-type="acidBase" style="border-radius:8px; border-left:4px solid var(--acad-oxford);">
-            <div class="practice-icon-circle green" style="border-radius:8px;">🧭</div>
-            <div>
-              <div class="practice-text-title" style="font-family:'Cinzel', serif; font-size:0.95rem;">Guided Volumetric Analysis</div>
-              <div class="practice-text-desc">Step-by-step meniscus alignment, indicator selection, and stoichiometric calculations.</div>
+          <!-- 1. Guided Volumetric Analysis -->
+          <a href="lab.html?studyMode=guided" class="practice-card practice-card-academic" data-category="acidBase" style="text-decoration:none; border-left:4px solid var(--acad-gold);">
+            <div class="card-top-academic">
+              <div class="card-icon-box orange">🧭</div>
+              <div>
+                <h3 class="card-title-academic">Guided Volumetric Analysis</h3>
+                <div class="card-desc-academic">Step-by-step meniscus alignment, indicator selection, and stoichiometric calculations.</div>
+              </div>
             </div>
           </a>
 
-          <!-- Module 1: Self-Paced Volumetric -->
-          <div class="practice-banner-card self-paced" data-type="acidBase" onclick="openVolumetricModal()" style="cursor:pointer; border-radius:8px; border-left:4px solid var(--acad-navy);">
-            <div class="practice-icon-circle blue" style="border-radius:8px;">▶️</div>
-            <div>
-              <div class="practice-text-title" style="font-family:'Cinzel', serif; font-size:0.95rem;">Self-Paced Volumetric Workbench</div>
-              <div class="practice-text-desc">Acid-Base, KMnO₄ Redox, Mohr's Precipitation, and EDTA Complexometry.</div>
-            </div>
-          </div>
-
-          <!-- Module 2: Qualitative Salt -->
-          <a href="speed_battle.html?mode=qualitative&target=qualitative.html" class="practice-banner-card qualitative" data-type="qualitative" style="border-radius:8px; border-left:4px solid var(--acad-emerald);">
-            <div class="practice-icon-circle cyan" style="border-radius:8px;">🔍</div>
-            <div>
-              <div class="practice-text-title" style="font-family:'Cinzel', serif; font-size:0.95rem;">Systematic Qualitative Analysis</div>
-              <div class="practice-text-desc">Identify unknown cations and anions via precipitation, flame tests, and gas deduction.</div>
+          <!-- 2. Self-Paced Volumetric Workbench -->
+          <a href="lab.html" class="practice-card practice-card-academic" data-category="acidBase" style="text-decoration:none; border-left:4px solid var(--acad-navy);">
+            <div class="card-top-academic">
+              <div class="card-icon-box blue">▶️</div>
+              <div>
+                <h3 class="card-title-academic">Self-Paced Volumetric Workbench</h3>
+                <div class="card-desc-academic">Acid-Base, KMnO₄ Redox, Mohr's Precipitation, and EDTA Complexometry.</div>
+              </div>
             </div>
           </a>
 
-          <!-- Module 3: Reaction Rates -->
-          <a href="speed_battle.html?mode=energy&target=rates.html" class="practice-banner-card guided" data-type="rates" style="border-radius:8px; border-left:4px solid #F59E0B;">
-            <div class="practice-icon-circle orange" style="border-radius:8px; background:rgba(245,158,11,0.15); color:#F59E0B;">⚡</div>
-            <div>
-              <div class="practice-text-title" style="font-family:'Cinzel', serif; font-size:0.95rem;">Reaction Rates & Kinetics</div>
-              <div class="practice-text-desc">Na₂S₂O₃ + HCl disappearing cross method, rate graphs, and temperature coefficients.</div>
+          <!-- 3. Qualitative Salt Analysis -->
+          <a href="qualitative.html" class="practice-card practice-card-academic" data-category="qualitative" style="text-decoration:none; border-left:4px solid var(--acad-emerald);">
+            <div class="card-top-academic">
+              <div class="card-icon-box green">🔬</div>
+              <div>
+                <h3 class="card-title-academic">Systematic Qualitative Analysis</h3>
+                <div class="card-desc-academic">Identify 10 unknown cations and anions via NaOH, NH₃, Ba(NO₃)₂, and flame emission tests.</div>
+              </div>
             </div>
           </a>
 
-          <!-- Module 4: Thermochemistry -->
-          <a href="speed_battle.html?mode=energy&target=energy.html" class="practice-banner-card guided" data-type="energy" style="border-radius:8px; border-left:4px solid #EA580C;">
-            <div class="practice-icon-circle orange" style="border-radius:8px; background:rgba(234,88,12,0.15); color:#EA580C;">🔥</div>
-            <div>
-              <div class="practice-text-title" style="font-family:'Cinzel', serif; font-size:0.95rem;">Thermochemistry & Energy Changes</div>
-              <div class="practice-text-desc">Calorimetric measurement of neutralization and displacement enthalpies with cooling curves.</div>
+          <!-- 4. Reaction Rates & Kinetics -->
+          <a href="rates.html" class="practice-card practice-card-academic" data-category="rates" style="text-decoration:none; border-left:4px solid #F59E0B;">
+            <div class="card-top-academic">
+              <div class="card-icon-box orange">⚡</div>
+              <div>
+                <h3 class="card-title-academic">Reaction Rates &amp; Kinetics</h3>
+                <div class="card-desc-academic">Na₂S₂O₃ + HCl disappearing cross method, rate graphs, and temperature coefficients.</div>
+              </div>
             </div>
           </a>
 
-          <!-- Module 5: Solubility Curves -->
-          <a href="speed_battle.html?mode=titration&target=solubility.html" class="practice-banner-card guided" data-type="solubility" style="border-radius:8px; border-left:4px solid #D97706;">
-            <div class="practice-icon-circle orange" style="border-radius:8px;">🌡️</div>
-            <div>
-              <div class="practice-text-title" style="font-family:'Cinzel', serif; font-size:0.95rem;">Solubility Curves & Crystallization</div>
-              <div class="practice-text-desc">Determine crystallization inception points across varying solute masses with KNEC graph plots.</div>
+          <!-- 5. Thermochemistry & Enthalpy -->
+          <a href="energy.html" class="practice-card practice-card-academic" data-category="energy" style="text-decoration:none; border-left:4px solid #EF4444;">
+            <div class="card-top-academic">
+              <div class="card-icon-box red">🔥</div>
+              <div>
+                <h3 class="card-title-academic">Thermochemistry &amp; Energy Changes</h3>
+                <div class="card-desc-academic">Calorimetric measurement of neutralization, solution, and displacement enthalpies (&Delta;H).</div>
+              </div>
             </div>
           </a>
 
-          <!-- Module 6: Organic Chemistry -->
-          <a href="speed_battle.html?mode=organic&target=organic.html" class="practice-banner-card organic" data-type="organic" style="border-radius:8px; border-left:4px solid #8B5CF6;">
-            <div class="practice-icon-circle purple" style="border-radius:8px;">⚗️</div>
-            <div>
-              <div class="practice-text-title" style="font-family:'Cinzel', serif; font-size:0.95rem;">Organic Chemistry Qualitative Bench</div>
-              <div class="practice-text-desc">Unsaturation testing (Bromine/KMnO₄), alkanols, and carboxylic acid esterification.</div>
+          <!-- 6. Solubility Curves -->
+          <a href="solubility.html" class="practice-card practice-card-academic" data-category="solubility" style="text-decoration:none; border-left:4px solid #38BDF8;">
+            <div class="card-top-academic">
+              <div class="card-icon-box teal">🌡️</div>
+              <div>
+                <h3 class="card-title-academic">Solubility Curves &amp; Crystallization</h3>
+                <div class="card-desc-academic">Determine crystallization inception points across solute masses with KNEC graph plots.</div>
+              </div>
             </div>
           </a>
 
-          <!-- Module 7: Gas Preparation & Collection -->
-          <a href="gas_prep.html" class="practice-banner-card guided" data-type="gas" style="border-radius:8px; border-left:4px solid #0284C7;">
-            <div class="practice-icon-circle blue" style="border-radius:8px; background:rgba(2,132,199,0.15); color:#0284C7;">💨</div>
-            <div>
-              <div class="practice-text-title" style="font-family:'Cinzel', serif; font-size:0.95rem;">Gas Preparation & Collection</div>
-              <div class="practice-text-desc">Generate, dry, collect, and test O₂, CO₂, Cl₂, NH₃, SO₂, and H₂ with authentic apparatus.</div>
+          <!-- 7. Organic Chemistry Bench -->
+          <a href="organic.html" class="practice-card practice-card-academic" data-category="organic" style="text-decoration:none; border-left:4px solid var(--violet-accent);">
+            <div class="card-top-academic">
+              <div class="card-icon-box purple">⚗️</div>
+              <div>
+                <h3 class="card-title-academic">Organic Chemistry Qualitative Bench</h3>
+                <div class="card-desc-academic">Unsaturation testing (Bromine/KMnO₄), alkanols, and carboxylic acid esterification.</div>
+              </div>
             </div>
           </a>
 
-          <!-- Module 8: Full 40-Mark Mock -->
-          <a href="composite_exam.html" class="practice-banner-card exam" data-type="acidBase" style="border-radius:8px; border-left:4px solid #DC2626;">
-            <div class="practice-icon-circle red" style="border-radius:8px;">🏆</div>
-            <div>
-              <div class="practice-text-title" style="font-family:'Cinzel', serif; font-size:0.95rem;">KCSE Paper 3 Mock Examination (40 Marks)</div>
-              <div class="practice-text-desc">Full 45-minute timed examination booklet covering Q1 (Volumetric), Q2 (Salts), and Q3 (Organics).</div>
+          <!-- 8. Gas Preparation & Collection -->
+          <a href="gas_prep.html" class="practice-card practice-card-academic" data-category="gasPrep" style="text-decoration:none; border-left:4px solid #0284C7;">
+            <div class="card-top-academic">
+              <div class="card-icon-box blue">💨</div>
+              <div>
+                <h3 class="card-title-academic">Gas Preparation &amp; Collection</h3>
+                <div class="card-desc-academic">Generate, dry, collect, and test O₂, CO₂, Cl₂, NH₃, SO₂, and H₂ with authentic glassware.</div>
+              </div>
+            </div>
+          </a>
+
+          <!-- 9. KCSE 40-Mark Mock Examination -->
+          <a href="composite_exam.html" class="practice-card practice-card-academic" data-category="all" style="text-decoration:none; border-left:4px solid var(--acad-gold); grid-column: 1 / -1; background:linear-gradient(135deg, rgba(184,134,11,0.06), rgba(11,37,69,0.04));">
+            <div class="card-top-academic">
+              <div class="card-icon-box orange">🏆</div>
+              <div>
+                <h3 class="card-title-academic">KCSE Paper 3 Mock Examination (40 Marks)</h3>
+                <div class="card-desc-academic">Full 45-minute timed examination booklet covering Q1 (Volumetric), Q2 (Qualitative Salts), and Q3 (Organics).</div>
+              </div>
             </div>
           </a>
 
         </div>
       </section>
 
-      <!-- FEATURE: Standardized Research Evaluation Suite (CPCAT & Usability) -->
-      <section style="margin-top: 24px; margin-bottom: 24px;">
-        <div style="background: linear-gradient(135deg, rgba(11,37,69,0.08), rgba(184,134,11,0.08)); border: 1.5px solid var(--acad-gold-border); border-radius: 10px; padding: 18px 22px;">
-          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
-            <div>
-              <span style="font-size:0.72rem; font-weight:800; color:var(--acad-gold); font-family:'JetBrains Mono', monospace; text-transform:uppercase;">
-                OUK Master\'s Research Assessment Suite
-              </span>
-              <h3 style="font-family:'Cinzel', serif; font-size:1.1rem; color:var(--heading-color); margin:2px 0 0;">
-                Chemistry Practical Competency & Usability Evaluation
-              </h3>
-            </div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-              <a href="cpcat_assessment.html?type=pre_test" class="btn" style="background:var(--blue-bg); color:var(--blue-accent); border:1px solid var(--blue-border); font-size:0.78rem; font-weight:700; text-decoration:none; padding:6px 12px; border-radius:6px;">
-                📋 Take Pre-Test
-              </a>
-              <a href="cpcat_assessment.html?type=post_test" class="btn" style="background:var(--green-bg); color:var(--green-accent); border:1px solid var(--green-accent); font-size:0.78rem; font-weight:700; text-decoration:none; padding:6px 12px; border-radius:6px;">
-                🏆 Take Post-Test
-              </a>
-              <a href="survey_sus.html" class="btn" style="background:var(--card-bg); border:1px solid var(--card-border); font-size:0.78rem; font-weight:700; text-decoration:none; padding:6px 12px; border-radius:6px;">
-                ⭐ Usability Survey (SUS)
-              </a>
-            </div>
-          </div>
-          <p style="font-size:0.82rem; color:var(--text-muted); margin:0; line-height:1.5;">
-            Take the standardized 40-mark diagnostic pre-test before beginning your virtual practical exercises, and the post-test upon completing revisions to measure your empirical learning gains (\(g\)).
-          </p>
-        </div>
-      </section>
+    </div>
 
-      <!-- FEATURE: Recent Practical Sessions Ledger -->
-      <section class="recent-sessions-card" style="border-radius:10px; margin-top:28px;">
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
-          <h2 class="section-heading-academic" style="margin:0; font-size:1.05rem;">
-            <span>📑</span> Candidate Session History
-          </h2>
-          <a href="history.html" class="see-all-link" style="font-size:0.78rem; font-weight:700;">Full Assessment Log →</a>
-        </div>
-        <div id="sessionsList" class="session-timeline-list">
-          <!-- Populated dynamically by student-dashboard.js -->
-        </div>
-      </section>
-
-    </main>
-
-    <!-- RIGHT COLUMN: Leaderboard & KNEC Reference Standards -->
-    <aside class="leaderboard-column">
+    <!-- ══════════════════════════════════════════════════════
+         TAB 2: 📚 KCSE REVISION & REFERENCE GUIDE (DEDICATED)
+    ══════════════════════════════════════════════════════ -->
+    <div class="student-tab-panel" id="panel_reference">
       
-      <!-- Institutional Leaderboard Card -->
-      <div class="leaderboard-glass-card" style="border-radius:10px;">
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-          <h2 class="section-heading-academic" style="font-size:0.98rem; margin:0;">
-            <span>🏆</span> Institutional Standings
+      <div style="margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+        <div>
+          <h2 class="section-heading-academic" style="margin:0; font-size:1.25rem;">
+            <span>📚</span> KNEC KCSE Practical Reference Standards
           </h2>
-          <a href="history.html" class="see-all-link" style="font-size:0.76rem; font-weight:700;">Class Rank →</a>
-        </div>
-        <div id="leaderboardBox">
-          <div class="empty-box" style="border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:0.78rem;">Loading institutional ledger...</div>
+          <p style="font-size:0.84rem; color:var(--text-muted); margin:4px 0 0 0;">
+            Authoritative KNEC Paper 3 observational criteria, endpoint color standards, and ion deduction reference tables.
+          </p>
         </div>
       </div>
 
-      <!-- KNEC Indicators Reference Ledger -->
-      <div class="leaderboard-glass-card" style="margin-top: 14px; border-radius:10px;">
-        <h2 class="section-heading-academic" style="font-size:0.95rem; margin:0 0 12px 0;">
-          <span>💧</span> KNEC Indicators Ledger
-        </h2>
-        <div style="overflow-x: auto; -webkit-overflow-scrolling: touch; width: 100%;">
-          <table class="knec-ref-table-academic" aria-label="KNEC Indicator Table" style="width: 100%; min-width: 250px;">
+      <div class="modular-2col-grid">
+        
+        <!-- 1. Indicators Reference Card -->
+        <div class="knec-reference-card">
+          <h3 style="font-family:'Cinzel', serif; font-size:1.05rem; color:var(--heading-color); margin:0 0 8px 0; display:flex; align-items:center; gap:8px;">
+            <span>💧</span> Acid-Base Indicators Ledger
+          </h3>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Standard KNEC colour transition endpoints at titration equivalence.</p>
+          <table class="knec-table" aria-label="KNEC Indicator Table">
             <thead>
               <tr>
-                <th style="padding: 5px 6px; font-size: 0.72rem;">Indicator</th>
-                <th style="padding: 5px 6px; font-size: 0.72rem; text-align:center;">Acid</th>
-                <th style="padding: 5px 6px; font-size: 0.72rem; text-align:center;">Endpoint</th>
-                <th style="padding: 5px 6px; font-size: 0.72rem; text-align:center;">Base</th>
+                <th>Indicator</th>
+                <th style="text-align:center;">Acid</th>
+                <th style="text-align:center;">Endpoint</th>
+                <th style="text-align:center;">Base</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td style="padding: 5px 6px; font-size: 0.72rem;"><b>Phenolphthalein</b></td>
-                <td style="padding: 5px 6px; font-size: 0.72rem; text-align:center; color:var(--text-muted);">Colorless</td>
-                <td style="padding: 5px 6px; font-size: 0.72rem; text-align:center; color:#EC4899; font-weight:700;">Pale Pink</td>
-                <td style="padding: 5px 6px; font-size: 0.72rem; text-align:center; color:#DB2777;">Pink</td>
+                <td><b>Phenolphthalein</b></td>
+                <td style="text-align:center; color:var(--text-muted);">Colorless</td>
+                <td style="text-align:center; color:#EC4899; font-weight:700;">Pale Pink</td>
+                <td style="text-align:center; color:#DB2777;">Pink</td>
               </tr>
               <tr>
-                <td style="padding: 5px 6px; font-size: 0.72rem;"><b>Methyl Orange</b></td>
-                <td style="padding: 5px 6px; font-size: 0.72rem; text-align:center; color:#EF4444;">Pink/Red</td>
-                <td style="padding: 5px 6px; font-size: 0.72rem; text-align:center; color:#F59E0B; font-weight:700;">Orange</td>
-                <td style="padding: 5px 6px; font-size: 0.72rem; text-align:center; color:#FBBF24;">Yellow</td>
+                <td><b>Methyl Orange</b></td>
+                <td style="text-align:center; color:#EF4444;">Pink / Red</td>
+                <td style="text-align:center; color:#F59E0B; font-weight:700;">Orange</td>
+                <td style="text-align:center; color:#FBBF24;">Yellow</td>
               </tr>
               <tr>
-                <td style="padding: 5px 6px; font-size: 0.72rem;"><b>Litmus Paper</b></td>
-                <td style="padding: 5px 6px; font-size: 0.72rem; text-align:center; color:#EF4444;">Red</td>
-                <td style="padding: 5px 6px; font-size: 0.72rem; text-align:center; color:var(--text-muted);">Purple</td>
-                <td style="padding: 5px 6px; font-size: 0.72rem; text-align:center; color:#3B82F6;">Blue</td>
+                <td><b>Litmus Paper</b></td>
+                <td style="text-align:center; color:#EF4444;">Red</td>
+                <td style="text-align:center; color:var(--text-muted);">Purple</td>
+                <td style="text-align:center; color:#3B82F6;">Blue</td>
+              </tr>
+              <tr>
+                <td><b>Screened Methyl Orange</b></td>
+                <td style="text-align:center; color:#8B0000;">Violet / Red</td>
+                <td style="text-align:center; color:var(--text-muted); font-weight:700;">Grey</td>
+                <td style="text-align:center; color:#10B981;">Green</td>
               </tr>
             </tbody>
           </table>
         </div>
-      </div>
 
-      <!-- KNEC Qualitative Cation/Anion Reference -->
-      <div class="leaderboard-glass-card" style="margin-top: 14px; border-radius:10px;">
-        <h2 class="section-heading-academic" style="font-size:0.95rem; margin:0 0 12px 0;">
-          <span>🧪</span> Cation Deduction Reference
-        </h2>
-        <div style="font-size:0.78rem; line-height:1.55; color:var(--text-main);">
-          <div style="margin-bottom:8px; border-bottom:1px solid var(--card-border); padding-bottom:6px;">
-            <b style="color:var(--cyan-accent);">Cu²⁺ (Copper)</b>: Blue ppt with NaOH or Ammonia. Soluble in excess NH₃(aq) giving a <b>deep royal blue solution</b>.
-          </div>
-          <div style="margin-bottom:8px; border-bottom:1px solid var(--card-border); padding-bottom:6px;">
-            <b style="color:#10B981;">Fe²⁺ (Iron II)</b>: <b>Dirty green</b> precipitate with NaOH/Ammonia, insoluble in excess.
-          </div>
-          <div style="margin-bottom:8px; border-bottom:1px solid var(--card-border); padding-bottom:6px;">
-            <b style="color:#F59E0B;">Fe³⁺ (Iron III)</b>: <b>Rust brown</b> precipitate with NaOH/Ammonia, insoluble in excess.
-          </div>
-          <div>
-            <b style="color:var(--text-muted);">Pb²⁺, Zn²⁺, Al³⁺</b>: <b>White ppt</b> with NaOH, soluble in excess. Only Zn²⁺ dissolves in excess Ammonia.
+        <!-- 2. Gas Confirmatory Tests Card -->
+        <div class="knec-reference-card">
+          <h3 style="font-family:'Cinzel', serif; font-size:1.05rem; color:var(--heading-color); margin:0 0 8px 0; display:flex; align-items:center; gap:8px;">
+            <span>💨</span> Gas Confirmatory Tests
+          </h3>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Standard confirmatory reagent methods for common laboratory gases.</p>
+          <table class="knec-table" aria-label="Gas Tests Table">
+            <thead>
+              <tr>
+                <th>Gas</th>
+                <th>Reagent Method</th>
+                <th>KNEC Expected Observation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><b>Carbon Dioxide (CO₂)</b></td>
+                <td>Bubble through Limewater</td>
+                <td>White precipitate (turns turbid)</td>
+              </tr>
+              <tr>
+                <td><b>Sulfur Dioxide (SO₂)</b></td>
+                <td>Acidified KMnO₄ or K₂Cr₂O₇</td>
+                <td>Purple decolourises / Orange turns green</td>
+              </tr>
+              <tr>
+                <td><b>Chlorine Gas (Cl₂)</b></td>
+                <td>Damp Coloured Litmus</td>
+                <td>Turns red then bleaches white</td>
+              </tr>
+              <tr>
+                <td><b>Ammonia Gas (NH₃)</b></td>
+                <td>Damp Red Litmus Paper</td>
+                <td>Turns blue (alkaline gas)</td>
+              </tr>
+              <tr>
+                <td><b>Hydrogen Gas (H₂)</b></td>
+                <td>Burning splint at test tube mouth</td>
+                <td>Burns with a characteristic 'pop' sound</td>
+              </tr>
+              <tr>
+                <td><b>Oxygen Gas (O₂)</b></td>
+                <td>Glowing wooden splint</td>
+                <td>Relights a glowing splint</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 3. Qualitative Cation Separation Guide -->
+        <div class="knec-reference-card" style="grid-column:1 / -1;">
+          <h3 style="font-family:'Cinzel', serif; font-size:1.05rem; color:var(--heading-color); margin:0 0 8px 0; display:flex; align-items:center; gap:8px;">
+            <span>🧪</span> Systematic Cation Identification &amp; Separation
+          </h3>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Deduce cations by adding aqueous NaOH followed by aqueous NH₃ dropwise until in excess.</p>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:14px;">
+            
+            <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:8px; padding:12px;">
+              <b style="color:var(--cyan-accent); font-size:0.9rem;">Cu²⁺ (Copper II)</b>
+              <div style="font-size:0.82rem; margin-top:4px; line-height:1.45;">
+                • <b>NaOH:</b> Pale blue precipitate, insoluble in excess.<br>
+                • <b>NH₃(aq):</b> Pale blue precipitate, soluble in excess to form a <b>deep royal blue solution</b> [Cu(NH₃)₄]²⁺.
+              </div>
+            </div>
+
+            <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:8px; padding:12px;">
+              <b style="color:#10B981; font-size:0.9rem;">Fe²⁺ (Iron II)</b>
+              <div style="font-size:0.82rem; margin-top:4px; line-height:1.45;">
+                • <b>NaOH:</b> Dirty green precipitate, insoluble in excess.<br>
+                • <b>NH₃(aq):</b> Dirty green precipitate, insoluble in excess (turns brown on standing in air).
+              </div>
+            </div>
+
+            <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:8px; padding:12px;">
+              <b style="color:#F59E0B; font-size:0.9rem;">Fe³⁺ (Iron III)</b>
+              <div style="font-size:0.82rem; margin-top:4px; line-height:1.45;">
+                • <b>NaOH:</b> Red-brown precipitate, insoluble in excess.<br>
+                • <b>NH₃(aq):</b> Red-brown precipitate, insoluble in excess.
+              </div>
+            </div>
+
+            <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:8px; padding:12px;">
+              <b style="color:var(--heading-color); font-size:0.9rem;">Zn²⁺ (Zinc)</b>
+              <div style="font-size:0.82rem; margin-top:4px; line-height:1.45;">
+                • <b>NaOH:</b> White precipitate, <b>soluble in excess</b> [Zn(OH)₄]²⁻.<br>
+                • <b>NH₃(aq):</b> White precipitate, <b>soluble in excess</b> [Zn(NH₃)₄]²⁺.
+              </div>
+            </div>
+
+            <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:8px; padding:12px;">
+              <b style="color:var(--text-muted); font-size:0.9rem;">Al³⁺ &amp; Pb²⁺</b>
+              <div style="font-size:0.82rem; margin-top:4px; line-height:1.45;">
+                • <b>NaOH:</b> White precipitate, soluble in excess.<br>
+                • <b>NH₃(aq):</b> White precipitate, <b>insoluble in excess</b>.<br>
+                • <i>Distinguish Pb²⁺:</i> Add KI(aq) → Golden yellow ppt (PbI₂).
+              </div>
+            </div>
+
+            <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:8px; padding:12px;">
+              <b style="color:var(--text-muted); font-size:0.9rem;">Ca²⁺ &amp; Mg²⁺</b>
+              <div style="font-size:0.82rem; margin-top:4px; line-height:1.45;">
+                • <b>NaOH:</b> White precipitate, insoluble in excess.<br>
+                • <b>NH₃(aq):</b> Ca²⁺ gives NO precipitate. Mg²⁺ gives slight white precipitate.
+              </div>
+            </div>
+
           </div>
         </div>
+
       </div>
 
-      <!-- KNEC Gas Tests Reference -->
-      <div class="leaderboard-glass-card" style="margin-top: 14px; border-radius:10px;">
-        <h2 class="section-heading-academic" style="font-size:0.95rem; margin:0 0 12px 0;">
-          <span>💨</span> Gas Confirmatory Tests
-        </h2>
-        <table class="knec-ref-table-academic" aria-label="KNEC Gas Confirmatory Tests">
-          <thead>
-            <tr>
-              <th>Gas</th>
-              <th>Reagent Method</th>
-              <th>Observation</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><b>CO₂</b></td>
-              <td>Limewater</td>
-              <td>White precipitate (turbid)</td>
-            </tr>
-            <tr>
-              <td><b>SO₂</b></td>
-              <td>Acidified KMnO₄</td>
-              <td>Purple decolourises</td>
-            </tr>
-            <tr>
-              <td><b>Cl₂</b></td>
-              <td>Damp Litmus</td>
-              <td>Bleaches white</td>
-            </tr>
-            <tr>
-              <td><b>NH₃</b></td>
-              <td>Damp Red Litmus</td>
-              <td>Turns blue (alkaline)</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-    </aside>
-
-  </div>
-
-</div>
-
-<!-- Mobile & Tablet Bottom Navigation Dock Bar -->
-<nav class="mobile-bottom-nav">
-  <button class="bottom-tab-item active" onclick="switchMobileTab('home', event)">
-    <span class="bottom-tab-icon">🏠</span>
-    <span>Workstation</span>
-  </button>
-  <button class="bottom-tab-item" onclick="switchMobileTab('assignments', event)">
-    <span class="bottom-tab-icon">📋</span>
-    <span>Assignments</span>
-  </button>
-  <button class="bottom-tab-item" onclick="switchMobileTab('lab', event)">
-    <span class="bottom-tab-icon">🧪</span>
-    <span>Workbench</span>
-  </button>
-  <button class="bottom-tab-item" onclick="switchMobileTab('grades', event)">
-    <span class="bottom-tab-icon">📊</span>
-    <span>Ledger</span>
-  </button>
-  <button class="bottom-tab-item" onclick="switchMobileTab('profile', event)">
-    <span class="bottom-tab-icon">👤</span>
-    <span>Profile</span>
-  </button>
-</nav>
-
-<!-- Student Assignment Feedback Modal -->
-<div id="assignmentFeedbackModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(8px); z-index:20000; align-items:center; justify-content:center; padding:20px;">
-  <div style="background:var(--card-bg); border:2px solid var(--acad-emerald); border-radius:12px; max-width:500px; width:100%; padding:24px; box-shadow:var(--shadow-lg); color:var(--text-main);">
-    <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:12px; margin-bottom:16px;">
-      <div>
-        <span style="background:var(--acad-emerald); color:#FFF; padding:2px 8px; border-radius:4px; font-size:0.68rem; font-weight:800; font-family:'JetBrains Mono', monospace;">OFFICIALLY GRADED</span>
-        <h3 id="afTitle" style="font-family:'Cinzel', serif; font-size:1.15rem; font-weight:800; margin-top:4px; color:var(--heading-color);">Assignment Title</h3>
-      </div>
-      <div id="afDate" style="font-size:0.75rem; color:var(--text-muted); font-family:'JetBrains Mono', monospace;">Marked recently</div>
     </div>
 
-    <div style="text-align:center; margin-bottom:20px;" id="afStatus"></div>
-
-    <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:8px; padding:14px; font-size:0.85rem; line-height:1.7; margin-bottom:16px;">
-      <div><b>Your Submitted Reading:</b> <span id="afStudentAns" style="font-family:'JetBrains Mono', monospace; font-weight:700; color:var(--cyan-accent);">—</span></div>
-      <div><b>Standard Target Value:</b> <span id="afTrueVal" style="font-family:'JetBrains Mono', monospace; font-weight:700;">—</span></div>
-    </div>
-
-    <div id="afDetails" style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:8px; padding:12px 14px; font-size:0.84rem; line-height:1.6; color:var(--text-main); margin-bottom:16px;"></div>
-
-    <div id="afComments" style="background:var(--acad-emerald-subtle); border:1px solid var(--acad-emerald); border-radius:8px; padding:12px 14px; font-size:0.84rem; line-height:1.6; color:var(--text-main); margin-bottom:20px;"></div>
-
-    <div style="display:flex; justify-content:flex-end;">
-      <button class="btn btn-primary" style="padding:8px 22px; border-radius:6px; font-weight:700;" onclick="document.getElementById('assignmentFeedbackModal').style.display='none'">Close Ledger</button>
-    </div>
-  </div>
-</div>
-
-<!-- Volumetric Analysis Practical Selection Modal -->
-<div id="volumetricSelectModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(8px); z-index:25000; align-items:center; justify-content:center; padding:20px; overflow-y:auto;">
-  <div style="background:var(--card-bg); border:1.5px solid var(--acad-oxford); border-radius:12px; max-width:580px; width:100%; padding:26px; box-shadow:var(--shadow-lg); color:var(--text-main); position:relative;">
-    
-    <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:14px; margin-bottom:18px;">
-      <div style="display:flex; align-items:center; gap:10px;">
-        <span style="font-size:1.5rem; background:var(--card-bg-hover); border:1px solid var(--card-border); padding:6px 10px; border-radius:6px;">🧪</span>
-        <div>
-          <h3 style="font-family:'Cinzel', serif; font-size:1.15rem; margin:0; color:var(--heading-color);">Volumetric Analysis Configuration</h3>
-          <span style="font-size:0.74rem; color:var(--cyan-accent); font-weight:700; font-family:'JetBrains Mono', monospace;">KCSE Paper 3 (Q1) Volumetric Analysis</span>
-        </div>
-      </div>
-      <button class="btn" onclick="closeVolumetricModal()" style="padding:4px 10px; font-size:0.8rem; cursor:pointer;">✕</button>
-    </div>
-
-    <!-- Step 1: Select Experiment / Titration Type -->
-    <div style="margin-bottom:18px;">
-      <label style="font-family:'Cinzel', serif; font-size:0.82rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.04em;">
-        1. Select Volumetric Discipline
-      </label>
-
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:10px;">
-        <label style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:8px; padding:10px 14px; cursor:pointer; display:flex; align-items:center; gap:10px;">
-          <input type="radio" name="volType" value="acidBase" checked style="accent-color:var(--cyan-accent);">
-          <div>
-            <div style="font-weight:800; font-size:0.88rem; color:var(--heading-color);">Acid–Base Titration</div>
-            <div style="font-size:0.75rem; color:var(--text-muted);">HCl vs NaOH (Phenolphthalein / MO)</div>
-          </div>
-        </label>
-
-        <label style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:8px; padding:10px 14px; cursor:pointer; display:flex; align-items:center; gap:10px;">
-          <input type="radio" name="volType" value="redox" style="accent-color:var(--cyan-accent);">
-          <div>
-            <div style="font-weight:800; font-size:0.88rem; color:var(--heading-color);">Redox Titration</div>
-            <div style="font-size:0.75rem; color:var(--text-muted);">Fe²⁺ vs KMnO₄ (Self-indicating)</div>
-          </div>
-        </label>
-
-        <label style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:8px; padding:10px 14px; cursor:pointer; display:flex; align-items:center; gap:10px;">
-          <input type="radio" name="volType" value="precipitation" style="accent-color:var(--cyan-accent);">
-          <div>
-            <div style="font-weight:800; font-size:0.88rem; color:var(--heading-color);">Precipitation Titration</div>
-            <div style="font-size:0.75rem; color:var(--text-muted);">Cl⁻ vs AgNO₃ (Mohr's Method)</div>
-          </div>
-        </label>
-
-        <label style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:8px; padding:10px 14px; cursor:pointer; display:flex; align-items:center; gap:10px;">
-          <input type="radio" name="volType" value="complexometric" style="accent-color:var(--cyan-accent);">
-          <div>
-            <div style="font-weight:800; font-size:0.88rem; color:var(--heading-color);">Complexometric EDTA</div>
-            <div style="font-size:0.75rem; color:var(--text-muted);">Ca²⁺/Mg²⁺ vs EDTA (Water Hardness)</div>
-          </div>
-        </label>
-      </div>
-    </div>
-
-    <!-- Step 2: Select Study Mode -->
-    <div style="margin-bottom:20px;">
-      <label style="font-family:'Cinzel', serif; font-size:0.82rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.04em;">
-        2. Select Execution Mode
-      </label>
-
-      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;">
-        <label style="background:var(--card-bg-hover); border:1.5px solid var(--cyan-accent); border-radius:8px; padding:12px; text-align:center; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px;">
-          <input type="radio" name="volMode" value="guided" checked style="accent-color:var(--cyan-accent);">
-          <div style="font-size:1.2rem; margin-top:2px;">🧭</div>
-          <div style="font-weight:800; font-size:0.82rem; color:var(--heading-color);">Guided</div>
-          <div style="font-size:0.68rem; color:var(--text-muted);">Step-by-Step</div>
-        </label>
-
-        <label style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:8px; padding:12px; text-align:center; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px;">
-          <input type="radio" name="volMode" value="selfPaced" style="accent-color:var(--cyan-accent);">
-          <div style="font-size:1.2rem; margin-top:2px;">⏱️</div>
-          <div style="font-weight:800; font-size:0.82rem; color:var(--heading-color);">Self-Paced</div>
-          <div style="font-size:0.68rem; color:var(--text-muted);">Standard Bench</div>
-        </label>
-
-        <label style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:8px; padding:12px; text-align:center; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px;">
-          <input type="radio" name="volMode" value="exam" style="accent-color:var(--cyan-accent);">
-          <div style="font-size:1.2rem; margin-top:2px;">🎯</div>
-          <div style="font-weight:800; font-size:0.82rem; color:var(--heading-color);">15-Min Exam</div>
-          <div style="font-size:0.68rem; color:var(--text-muted);">Timed (15 Marks)</div>
-        </label>
-      </div>
-    </div>
-
-    <!-- Actions -->
-    <div style="display:flex; align-items:center; justify-content:flex-end; gap:12px;">
-      <button class="btn" type="button" onclick="closeVolumetricModal()" style="padding:8px 18px; font-size:0.82rem; border-radius:6px; cursor:pointer;">Cancel</button>
-      <button class="btn btn-primary" type="button" onclick="launchVolumetricExperiment()" style="padding:10px 24px; font-size:0.88rem; font-weight:800; border-radius:6px; cursor:pointer;">Launch Laboratory Bench →</button>
-    </div>
-
-  </div>
-</div>
-
-<!-- Comprehensive Account Settings & Candidate Profile Modal -->
-<div id="profileSettingsModal" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.75); z-index:25000; align-items:center; justify-content:center; backdrop-filter:blur(8px); padding:20px;">
-  <div style="background:var(--card-bg); border:1.5px solid var(--acad-oxford); border-radius:12px; max-width:640px; width:100%; max-height:90vh; overflow-y:auto; padding:28px; box-shadow:var(--shadow-lg); position:relative; color:var(--text-main);">
-    
-    <!-- Modal Header -->
-    <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:16px; margin-bottom:20px;">
-      <div style="display:flex; align-items:center; gap:14px;">
-        <div style="width:52px; height:52px; border-radius:8px; background:var(--acad-oxford); border:1.5px solid var(--acad-gold); display:flex; align-items:center; justify-content:center; font-size:1.6rem; color:#FFF;">
-          👤
-        </div>
-        <div>
-          <div style="font-family:'Cinzel', serif; font-weight:900; font-size:1.25rem; color:var(--heading-color);" id="profHeaderName">Candidate Profile</div>
-          <div style="font-size:0.8rem; color:var(--cyan-accent); font-weight:700; display:flex; align-items:center; gap:8px; margin-top:2px;">
-            <span style="font-family:'JetBrains Mono', monospace; font-size:0.7rem; padding:2px 8px; border-radius:4px; background:var(--acad-gold-subtle); color:var(--acad-gold); border:1px solid var(--acad-gold-border);" id="profHeaderRole">🎓 Form 4 KCSE Candidate</span>
-            <span id="profHeaderEmail" style="color:var(--text-muted); font-family:'JetBrains Mono', monospace;">student@virtulab.ke</span>
-          </div>
-        </div>
-      </div>
-      <button type="button" class="btn" onclick="closeProfileModal()" style="padding:6px 12px; font-size:0.85rem; border-radius:6px; cursor:pointer;" title="Close settings">✕</button>
-    </div>
-
-    <!-- Candidate Performance KPI Summary -->
-    <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-bottom:24px;">
-      <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-top:3px solid var(--acad-oxford); border-radius:8px; padding:12px 8px; text-align:center;">
-        <div style="font-size:0.65rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; font-family:'JetBrains Mono', monospace;">🧪 SESSIONS</div>
-        <div style="font-family:'JetBrains Mono', monospace; font-weight:900; font-size:1.2rem; color:var(--heading-color); margin-top:4px;" id="profStatSessions">⏳ --</div>
-      </div>
-
-      <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-top:3px solid var(--acad-emerald); border-radius:8px; padding:12px 8px; text-align:center;">
-        <div style="font-size:0.65rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; font-family:'JetBrains Mono', monospace;">🎯 ACCURACY</div>
-        <div style="font-family:'JetBrains Mono', monospace; font-weight:900; font-size:1.2rem; color:var(--acad-emerald); margin-top:4px;" id="profStatAccuracy">⏳ --%</div>
-      </div>
-
-      <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-top:3px solid var(--acad-gold); border-radius:8px; padding:12px 8px; text-align:center;">
-        <div style="font-size:0.65rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; font-family:'JetBrains Mono', monospace;">🔥 STREAK</div>
-        <div style="font-family:'JetBrains Mono', monospace; font-weight:900; font-size:1.2rem; color:var(--acad-gold); margin-top:4px;" id="profStatStreak">1 Day</div>
-      </div>
-
-      <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-top:3px solid #8B5CF6; border-radius:8px; padding:12px 8px; text-align:center;">
-        <div style="font-size:0.65rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; font-family:'JetBrains Mono', monospace;">🎖️ BADGES</div>
-        <div style="font-family:'JetBrains Mono', monospace; font-weight:900; font-size:1.2rem; color:#8B5CF6; margin-top:4px;" id="profStatBadges">⏳ -- / 6</div>
-      </div>
-    </div>
-
-    <!-- Navigation Tabs -->
-    <div style="display:flex; gap:8px; border-bottom:1px solid var(--card-border); padding-bottom:12px; margin-bottom:20px;">
-      <button type="button" class="theme-btn-chip active" id="tabProfDetails" onclick="switchProfTab('details')" style="flex:1; padding:8px 12px; font-weight:800; border-radius:6px;">👤 Candidate Details</button>
-      <button type="button" class="theme-btn-chip" id="tabProfSecurity" onclick="switchProfTab('security')" style="flex:1; padding:8px 12px; font-weight:800; border-radius:6px;">🔒 Security & Pass</button>
-      <button type="button" class="theme-btn-chip" id="tabProfPrefs" onclick="switchProfTab('prefs')" style="flex:1; padding:8px 12px; font-weight:800; border-radius:6px;">⚙️ Preferences</button>
-    </div>
-
-    <!-- Tab 1: Details -->
-    <div id="profPaneDetails">
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
-        <div>
-          <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Candidate Full Name</label>
-          <input type="text" id="profInputName" placeholder="e.g. John Kamau" style="width:100%; padding:10px 12px; border-radius:6px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
-        </div>
-        <div>
-          <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Registered Email</label>
-          <input type="email" id="profInputEmail" readonly placeholder="e.g. student@virtulab.ke" style="width:100%; padding:10px 12px; border-radius:6px; border:1.5px solid var(--card-border); background:var(--card-bg-hover); color:var(--text-muted); font-weight:700; cursor:not-allowed;">
-        </div>
-      </div>
-
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:22px;">
-        <div>
-          <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">KCSE Form Level</label>
-          <select id="profInputForm" style="width:100%; padding:10px 12px; border-radius:6px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
-            <option value="Form 1">Form 1 Secondary (KCSE 2029)</option>
-            <option value="Form 2">Form 2 Secondary (KCSE 2028)</option>
-            <option value="Form 3">Form 3 Secondary (KCSE 2027)</option>
-            <option value="Form 4" selected>Form 4 KCSE Candidate (Class of 2026)</option>
-          </select>
-        </div>
-        <div>
-          <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Institution / Teacher Code</label>
-          <input type="text" id="profInputSchool" placeholder="e.g. KCS-MANGU-8421 (Optional)" style="width:100%; padding:10px 12px; border-radius:6px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
-        </div>
-      </div>
-
-      <button type="button" class="btn btn-primary" onclick="saveProfileDetails()" style="padding:10px 24px; font-weight:800; border-radius:6px; width:100%; font-size:0.9rem;">Save Profile Changes ✓</button>
-      <div id="profDetailsMsg" style="margin-top:12px; text-align:center;"></div>
-    </div>
-
-    <!-- Tab 2: Security -->
-    <div id="profPaneSecurity" style="display:none;">
-      <div style="margin-bottom:14px;">
-        <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Current Password</label>
-        <input type="password" id="pwModalCurrent" placeholder="Enter current security password" style="width:100%; padding:10px 12px; border-radius:6px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
-      </div>
-      <div style="margin-bottom:14px;">
-        <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">New Password</label>
-        <input type="password" id="pwModalNew" placeholder="Enter new password (min 6 characters)" style="width:100%; padding:10px 12px; border-radius:6px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
-      </div>
+    <!-- ══════════════════════════════════════════════════════
+         TAB 3: 🏆 BADGES, HONORS & SESSION HISTORY
+    ══════════════════════════════════════════════════════ -->
+    <div class="student-tab-panel" id="panel_achievements">
+      
       <div style="margin-bottom:20px;">
-        <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Confirm New Password</label>
-        <input type="password" id="pwModalConfirm" placeholder="Re-type new password to confirm" style="width:100%; padding:10px 12px; border-radius:6px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
+        <h2 class="section-heading-academic" style="margin:0; font-size:1.25rem;">
+          <span>🏆</span> Candidate Achievements &amp; Historical Ledger
+        </h2>
+        <p style="font-size:0.84rem; color:var(--text-muted); margin:4px 0 0 0;">
+          Review your earned competency honors, class leaderboard standing, and complete practical examination records.
+        </p>
       </div>
 
-      <button type="button" class="btn btn-primary" onclick="submitChangePassword()" style="padding:10px 24px; font-weight:800; border-radius:6px; width:100%; font-size:0.9rem;">Update Security Password 🔐</button>
-      <div id="pwModalMsg" style="margin-top:12px; text-align:center;"></div>
+      <div class="modular-2col-grid">
+        
+        <!-- Left Column: Honors Medal & Badges -->
+        <div>
+          <!-- Academic Honors Seal Card -->
+          <div class="knec-reference-card" style="border-color:var(--acad-gold-border); border-top:4px solid var(--acad-gold); text-align:center;">
+            <span style="font-family:'Cinzel', serif; font-size:0.72rem; font-weight:800; text-transform:uppercase; color:var(--acad-gold); letter-spacing:0.1em; display:block; margin-bottom:10px;">★ ACADEMIC HONORS ★</span>
+            <img src="../shared/chemistry_hero_badge.jpg" alt="Chemistry Prodigy Hero Badge" style="width:100%; max-width:110px; aspect-ratio:1/1; object-fit:contain; border-radius:50%; margin-bottom:12px; border:2px solid var(--acad-gold);">
+            <div style="font-family:'Cinzel', serif; font-weight:800; font-size:1.05rem; color:var(--heading-color); margin-bottom:4px;">Chemistry Prodigy</div>
+            <div style="font-family:'Newsreader', serif; font-style:italic; font-size:0.84rem; color:var(--text-muted); line-height:1.45;">Attained for achieving &ge;80% KCSE Paper 3 practical accuracy across all syllabus disciplines.</div>
+          </div>
+
+          <!-- Competency Badges List -->
+          <div class="knec-reference-card">
+            <h3 style="font-family:'Cinzel', serif; font-size:1.05rem; color:var(--heading-color); margin:0 0 14px 0; display:flex; align-items:center; gap:8px;">
+              <span>🎖️</span> Practical Competency Badges
+            </h3>
+            <div id="badgeGrid" class="badges-sidebar-container" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px;">
+              <!-- Badges populated dynamically by loadBadges() in student-dashboard.js -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Standings & Session Log -->
+        <div>
+          <!-- Institutional Standings Card -->
+          <div class="knec-reference-card">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+              <h3 style="font-family:'Cinzel', serif; font-size:1.05rem; color:var(--heading-color); margin:0; display:flex; align-items:center; gap:8px;">
+                <span>📊</span> Institutional Standings
+              </h3>
+              <a href="history.html" class="see-all-link" style="font-size:0.78rem; font-weight:700;">Class Rank →</a>
+            </div>
+            <div id="leaderboardBox">
+              <div class="empty-box" style="border-radius:6px; font-family:'JetBrains Mono', monospace; font-size:0.8rem; padding:16px; text-align:center;">Loading institutional ledger...</div>
+            </div>
+          </div>
+
+          <!-- Recent Practical Sessions Ledger -->
+          <div class="knec-reference-card">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+              <h3 style="font-family:'Cinzel', serif; font-size:1.05rem; color:var(--heading-color); margin:0; display:flex; align-items:center; gap:8px;">
+                <span>📑</span> Recent Practical Sessions
+              </h3>
+              <a href="history.html" class="see-all-link" style="font-size:0.78rem; font-weight:700;">Full Assessment Log →</a>
+            </div>
+            <div id="sessionsList" class="session-timeline-list">
+              <!-- Populated dynamically by student-dashboard.js -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+
     </div>
 
-    <!-- Tab 3: Preferences -->
-    <div id="profPanePrefs" style="display:none;">
-      <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:14px; margin-bottom:16px;">
-        <div>
-          <div style="font-size:0.88rem; font-weight:800; color:var(--heading-color);">Laboratory Acoustics</div>
-          <div style="font-size:0.75rem; color:var(--text-muted);">Realistic sound effects during pipetting, bubbling, and reactions</div>
-        </div>
-        <button type="button" class="btn" id="profSoundToggleBtn" onclick="toggleSound()" style="padding:6px 14px; font-size:0.8rem; font-weight:700; border-radius:6px;">🔊 Sound ON</button>
+    <!-- ══════════════════════════════════════════════════════
+         TAB 4: 🔬 ACADEMIC RESEARCH & ASSESSMENT SUITE
+    ══════════════════════════════════════════════════════ -->
+    <div class="student-tab-panel" id="panel_research">
+      
+      <div style="margin-bottom:20px;">
+        <h2 class="section-heading-academic" style="margin:0; font-size:1.25rem;">
+          <span>🔬</span> Chemistry Practical Competency Assessment &amp; Research Suite
+        </h2>
+        <p style="font-size:0.84rem; color:var(--text-muted); margin:4px 0 0 0;">
+          Standardized psychometric instruments and diagnostic evaluations for empirical efficacy measurement.
+        </p>
       </div>
 
-      <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:14px; margin-bottom:24px;">
-        <div>
-          <div style="font-size:0.88rem; font-weight:800; color:var(--heading-color);">Export Assessment History</div>
-          <div style="font-size:0.75rem; color:var(--text-muted);">Download a complete CSV ledger of all your practical sessions</div>
+      <div class="knec-reference-card" style="border-color:var(--cyan-accent); border-top:4px solid var(--cyan-accent);">
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+          <div>
+            <span style="font-family:'JetBrains Mono', monospace; font-size:0.72rem; font-weight:800; color:var(--cyan-accent); text-transform:uppercase; letter-spacing:0.06em;">STANDARDIZED EMPIRICAL STUDY INSTRUMENTS</span>
+            <h3 style="font-family:'Cinzel', serif; font-size:1.2rem; color:var(--heading-color); margin:4px 0 0 0;">
+              Practical Competency &amp; Usability Evaluation
+            </h3>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <a href="cpcat_assessment.html?type=pre_test" class="btn btn-primary" style="background:var(--acad-navy); color:#FFF; font-size:0.82rem; font-weight:800; text-decoration:none; padding:8px 16px; border-radius:6px;">
+              📋 Take CPCAT Pre-Test
+            </a>
+            <a href="cpcat_assessment.html?type=post_test" class="btn btn-primary" style="background:var(--acad-emerald); color:#FFF; font-size:0.82rem; font-weight:800; text-decoration:none; padding:8px 16px; border-radius:6px;">
+              🏆 Take CPCAT Post-Test
+            </a>
+            <a href="survey_sus.html" class="btn" style="background:var(--card-bg); border:1.5px solid var(--card-border); font-size:0.82rem; font-weight:800; text-decoration:none; padding:8px 16px; border-radius:6px; color:var(--heading-color);">
+              ⭐ System Usability Survey (SUS)
+            </a>
+            <a href="survey_tam.html" class="btn" style="background:var(--card-bg); border:1.5px solid var(--card-border); font-size:0.82rem; font-weight:800; text-decoration:none; padding:8px 16px; border-radius:6px; color:var(--heading-color);">
+              📊 Student TAM 3 Survey
+            </a>
+          </div>
         </div>
-        <button type="button" class="btn" onclick="exportLabHistoryCSV()" style="padding:6px 14px; font-size:0.8rem; font-weight:700; border-radius:6px;">📥 Export CSV</button>
+
+        <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:8px; padding:16px; font-size:0.84rem; line-height:1.6; color:var(--text-main);">
+          <b>📋 Instructions for Study Participants:</b><br>
+          1. <b>CPCAT Pre-Test:</b> Complete the standardized 40-mark diagnostic baseline assessment prior to starting your practical simulation sessions.<br>
+          2. <b>Virtual Laboratory Revisions:</b> Practice across all 8 KCSE practical workbenches (Volumetric, Qualitative, Organic, Kinetics, Thermochemistry, Solubility).<br>
+          3. <b>CPCAT Post-Test:</b> Take the standardized post-test upon completing revisions to calculate your empirical learning gain (\(g\)).<br>
+          4. <b>SUS &amp; TAM Surveys:</b> Provide your evaluation on user experience, perceived usefulness, and ease of use.
+        </div>
       </div>
 
-      <div style="display:flex; justify-content:flex-end;">
-        <button type="button" class="btn" onclick="Auth.logout()" style="background:rgba(239, 68, 68, 0.15); color:var(--red-accent); border:1px solid var(--red-accent); padding:10px 20px; border-radius:6px; font-weight:800; width:100%; font-size:0.9rem;">🚪 Log Out of VirtuLab</button>
-      </div>
     </div>
 
+  </main>
+
+  <!-- Mobile & Tablet Bottom Navigation Dock Bar -->
+  <nav class="mobile-bottom-nav">
+    <button class="bottom-tab-item active" id="mTabBtn_benches" onclick="switchStudentSubTab('benches')">
+      <span class="bottom-tab-icon">🧪</span>
+      <span>Workbenches</span>
+    </button>
+    <button class="bottom-tab-item" id="mTabBtn_reference" onclick="switchStudentSubTab('reference')">
+      <span class="bottom-tab-icon">📚</span>
+      <span>Revision</span>
+    </button>
+    <button class="bottom-tab-item" id="mTabBtn_achievements" onclick="switchStudentSubTab('achievements')">
+      <span class="bottom-tab-icon">🏆</span>
+      <span>Badges</span>
+    </button>
+    <button class="bottom-tab-item" id="mTabBtn_research" onclick="switchStudentSubTab('research')">
+      <span class="bottom-tab-icon">🔬</span>
+      <span>Research</span>
+    </button>
+  </nav>
+
+  <!-- Student Assignment Feedback Modal -->
+  <div id="assignmentFeedbackModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(8px); z-index:20000; align-items:center; justify-content:center; padding:20px;">
+    <div style="background:var(--card-bg); border:2px solid var(--acad-emerald); border-radius:12px; max-width:500px; width:100%; padding:24px; box-shadow:var(--shadow-lg); color:var(--text-main);">
+      <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:12px; margin-bottom:16px;">
+        <div>
+          <span style="background:var(--acad-emerald); color:#FFF; padding:2px 8px; border-radius:4px; font-size:0.68rem; font-weight:800; font-family:'JetBrains Mono', monospace;">OFFICIALLY GRADED</span>
+          <h3 id="afTitle" style="font-family:'Cinzel', serif; font-size:1.15rem; font-weight:800; margin-top:4px; color:var(--heading-color);">Assignment Title</h3>
+        </div>
+        <div id="afDate" style="font-size:0.75rem; color:var(--text-muted); font-family:'JetBrains Mono', monospace;">Marked recently</div>
+      </div>
+
+      <div style="text-align:center; margin-bottom:20px;" id="afStatus"></div>
+
+      <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:8px; padding:14px; font-size:0.85rem; line-height:1.7; margin-bottom:16px;">
+        <div><b>Your Submitted Reading:</b> <span id="afStudentAns" style="font-family:'JetBrains Mono', monospace; font-weight:700; color:var(--cyan-accent);">—</span></div>
+        <div><b>Standard Target Value:</b> <span id="afTrueVal" style="font-family:'JetBrains Mono', monospace; font-weight:700;">—</span></div>
+      </div>
+
+      <div id="afDetails" style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:8px; padding:12px 14px; font-size:0.84rem; line-height:1.6; color:var(--text-main); margin-bottom:16px;"></div>
+
+      <div style="text-align:right;">
+        <button class="btn btn-primary" onclick="closeFeedbackModal()" style="padding:8px 20px; font-weight:800; border-radius:6px;">Close Feedback</button>
+      </div>
+    </div>
   </div>
-</div>
 
-<script src="../shared/api.js"></script>
-<script src="../shared/chemical-safety.js"></script>
-<script src="../shared/i18n.js"></script>
-<script src="../shared/notifications-engine.js"></script>
-<script src="js/student-dashboard.js"></script>
-<script>
-  window.openVolumetricModal = function() {
-    var modal = document.getElementById('volumetricSelectModal');
-    if (modal) {
-      modal.style.display = 'flex';
-    } else {
-      window.location.href = 'lab.html?studyMode=guided';
+  <script src="../shared/api.js"></script>
+  <script src="../shared/auth-forms.js"></script>
+  <script src="../shared/i18n.js"></script>
+  <script src="../shared/theme.js"></script>
+  <script src="../shared/chemical-safety.js"></script>
+  <script src="../shared/knec-grading.js"></script>
+  <script src="../shared/notifications-engine.js"></script>
+  <script src="../shared/page-transitions.js"></script>
+  <script src="../shared/pwa-installer.js"></script>
+  <script src="js/student-dashboard.js"></script>
+
+  <script>
+    // Tab switching handler
+    function switchStudentSubTab(tabId) {
+      const tabs = ['benches', 'reference', 'achievements', 'research'];
+      if (!tabs.includes(tabId)) tabId = 'benches';
+
+      tabs.forEach(t => {
+        const btn = document.getElementById(`tabBtn_${t}`);
+        const mBtn = document.getElementById(`mTabBtn_${t}`);
+        const panel = document.getElementById(`panel_${t}`);
+
+        if (btn) btn.classList.toggle('active', t === tabId);
+        if (mBtn) mBtn.classList.toggle('active', t === tabId);
+        if (panel) panel.classList.toggle('active', t === tabId);
+      });
+
+      // Update URL hash without jumping
+      history.replaceState(null, null, `#${tabId}`);
     }
-  };
 
-  window.closeVolumetricModal = function() {
-    var modal = document.getElementById('volumetricSelectModal');
-    if (modal) modal.style.display = 'none';
-  };
-
-  window.launchVolumetricExperiment = function() {
-    var typeEl = document.querySelector('input[name="volType"]:checked');
-    var modeEl = document.querySelector('input[name="volMode"]:checked');
-    var type = typeEl ? typeEl.value : 'acidBase';
-    var mode = modeEl ? modeEl.value : 'guided';
-
-    var targetUrl = 'lab.html?type=' + encodeURIComponent(type) + '&studyMode=' + encodeURIComponent(mode);
-    window.location.href = 'speed_battle.html?mode=titration&target=' + encodeURIComponent(targetUrl);
-  };
-
-  function switchMobileTab(tabName, evt) {
-    document.querySelectorAll('.bottom-tab-item').forEach(function(btn) { btn.classList.remove('active'); });
-    if (evt && evt.currentTarget) {
-      evt.currentTarget.classList.add('active');
+    // Toggle user dropdown
+    function toggleUserDropdown(e) {
+      if (e) e.stopPropagation();
+      const dropdown = document.getElementById('userDropdown');
+      if (dropdown) {
+        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+      }
     }
-    
-    if (tabName === 'lab') {
-      window.openVolumetricModal();
-    } else if (tabName === 'assignments') {
-      var el = document.getElementById('assignmentsList');
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
-    } else if (tabName === 'grades') {
-      window.location.href = 'history.html';
-    } else if (tabName === 'profile') {
-      if (typeof togglePasswordPanel === 'function') togglePasswordPanel();
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Toggle password update panel
+    function togglePasswordPanel() {
+      const wrap = document.getElementById('passwordPanelWrap');
+      if (wrap) {
+        wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
+        if (wrap.style.display === 'block') {
+          wrap.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+      const dropdown = document.getElementById('userDropdown');
+      if (dropdown) dropdown.style.display = 'none';
     }
-  }
-</script>
-<script src="../shared/pwa-installer.js"></script>
-<script src="../shared/page-transitions.js"></script>
+
+    // Close user dropdown on outer click
+    document.addEventListener('click', (e) => {
+      const userDropdown = document.getElementById('userDropdown');
+      const userMenuBtn = document.getElementById('userMenuBtn');
+      if (userDropdown && userDropdown.style.display === 'block') {
+        if (!userDropdown.contains(e.target) && (!userMenuBtn || !userMenuBtn.contains(e.target))) {
+          userDropdown.style.display = 'none';
+        }
+      }
+    });
+
+    // Handle initial tab hash on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && ['benches', 'reference', 'achievements', 'research'].includes(hash)) {
+        switchStudentSubTab(hash);
+      }
+    });
+  </script>
 </body>
 </html>

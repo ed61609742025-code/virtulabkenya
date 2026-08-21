@@ -40,125 +40,120 @@
     <div id="battleStartCard" class="battle-card" style="text-align:center;">
       
       <!-- Pre-Lab Warm Up Banner (Visible when arriving from login or workbench link) -->
-      <div id="warmupHeroBanner" style="display:none; background: linear-gradient(135deg, rgba(2, 132, 199, 0.12), rgba(16, 185, 129, 0.12)); border: 1.5px solid var(--cyan-accent); border-radius: 16px; padding: 14px 18px; margin-bottom: 20px; text-align: left;">
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
-          <div style="display:flex; align-items:center; gap:8px; font-weight:900; font-size:1.02rem; color:var(--heading-color);">
+      <div id="warmupHeroBanner" style="display:none; background: linear-gradient(135deg, rgba(2, 132, 199, 0.1), rgba(16, 185, 129, 0.1)); border: 1px solid var(--cyan-accent); border-radius: 8px; padding: 6px 12px; margin-bottom: 8px; text-align: left;">
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div style="display:flex; align-items:center; gap:6px; font-weight:800; font-size:0.84rem; color:var(--heading-color);">
             <span id="warmupBannerIcon">📘</span>
             <span id="warmupBannerTitle">Formative Pre-Lab Diagnostic Assessment</span>
           </div>
-          <span id="warmupBannerBadge" style="font-size:0.7rem; font-weight:800; padding:2px 10px; border-radius:100px; background:rgba(2,132,199,0.2); color:var(--cyan-accent); letter-spacing:0.04em;">KNEC PAPER 3 STANDARDS</span>
+          <span id="warmupBannerBadge" style="font-size:0.65rem; font-weight:800; padding:1px 6px; border-radius:100px; background:rgba(2,132,199,0.2); color:var(--cyan-accent); letter-spacing:0.04em;">KNEC PAPER 3</span>
         </div>
-        <p id="warmupBannerDesc" style="font-size:0.84rem; color:var(--text-muted); margin:0; line-height:1.45;">
-          Reinforce chemical principles, reagent choices, and observational deduction reflexes prior to entering the virtual laboratory benches.
-        </p>
       </div>
 
-      <div style="font-size:3.2rem; margin-bottom:6px;">🧪 📐</div>
-      <h1 style="font-family:var(--font-heading); font-size:1.85rem; font-weight:900; color:var(--heading-color); margin-bottom:8px;">KCSE Practical Diagnostic Drill</h1>
-      <p style="font-size:0.92rem; color:var(--text-muted); line-height:1.6; margin-bottom:22px; max-width:620px; margin-left:auto; margin-right:auto;">
-        Select your formative assessment domain below. Rapidly deduce qualitative ion reactions, titration stoichiometry, organic reaction pathways, and thermochemical observations.
+      <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:2px;">
+        <span style="font-size:1.6rem;">🧪 📐</span>
+        <h1 style="font-family:var(--font-heading); font-size:1.4rem; font-weight:900; color:var(--heading-color); margin:0;">KCSE Practical Diagnostic Drill</h1>
+      </div>
+      <p style="font-size:0.8rem; color:var(--text-muted); line-height:1.35; margin:0 auto 10px auto; max-width:580px;">
+        Select your formative assessment domain below. Rapidly deduce qualitative ion reactions, titration stoichiometry, organic pathways, and thermochemical observations.
       </p>
 
       <!-- Best High Score Banner -->
-      <div id="highScoreBanner" style="display:none; background:rgba(245,158,11,0.12); border:1.5px solid rgba(245,158,11,0.35); border-radius:14px; padding:10px 16px; margin-bottom:18px; font-size:0.88rem; font-weight:800; color:var(--amber-accent);">
+      <div id="highScoreBanner" style="display:none; background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.35); border-radius:6px; padding:4px 10px; margin-bottom:8px; font-size:0.78rem; font-weight:800; color:var(--amber-accent);">
         🏆 Highest Competency Record (<span id="startBestModeLabel">Comprehensive Review</span>): <span id="startBestScore">0 pts</span> (<span id="startBestRank">Foundational</span>)
       </div>
 
       <!-- 🎮 GAME MODE SELECTOR GRID -->
-      <div class="game-mode-section">
-        <div class="game-mode-section-title">
+      <div class="game-mode-section" style="margin-bottom:8px;">
+        <div class="game-mode-section-title" style="margin-bottom:4px; font-size:0.7rem;">
           <span>📋 Select Assessment Domain</span>
         </div>
 
-        <div class="game-mode-grid">
+        <div class="game-mode-grid" style="grid-template-columns:repeat(2, 1fr); gap:6px;">
           <!-- 1. Comprehensive Review (Standard) -->
-          <div class="game-mode-card active" id="modeCard_blitz" onclick="selectGameMode('blitz')">
+          <div class="game-mode-card active" id="modeCard_blitz" onclick="selectGameMode('blitz')" style="padding:6px 10px; border-radius:8px;">
             <div class="game-mode-header">
               <div class="game-mode-icon-title">
-                <span class="game-mode-icon">📚</span>
-                <span class="game-mode-title">Comprehensive Review</span>
+                <span class="game-mode-icon" style="font-size:0.95rem;">📚</span>
+                <span class="game-mode-title" style="font-size:0.82rem; font-weight:800;">Comprehensive Review</span>
               </div>
-              <span class="game-mode-badge" style="color:var(--cyan-accent); border-color:rgba(2,132,199,0.3);">All Disciplines</span>
+              <span class="game-mode-badge" style="font-size:0.62rem; padding:1px 5px; color:var(--cyan-accent); border-color:rgba(2,132,199,0.3);">All Topics</span>
             </div>
-            <div class="game-mode-desc">60s timed assessment spanning all 45 syllabus practical competencies with cognitive multiplier scoring.</div>
+            <div class="game-mode-desc" style="font-size:0.71rem; line-height:1.2; margin-top:2px;">60s timed assessment spanning all 45 syllabus practical competencies.</div>
           </div>
 
           <!-- 2. High-Precision Diagnostic (Survival) -->
-          <div class="game-mode-card survival" id="modeCard_survival" onclick="selectGameMode('survival')">
+          <div class="game-mode-card survival" id="modeCard_survival" onclick="selectGameMode('survival')" style="padding:6px 10px; border-radius:8px;">
             <div class="game-mode-header">
               <div class="game-mode-icon-title">
-                <span class="game-mode-icon">🎯</span>
-                <span class="game-mode-title">High-Precision Drill</span>
+                <span class="game-mode-icon" style="font-size:0.95rem;">🎯</span>
+                <span class="game-mode-title" style="font-size:0.82rem; font-weight:800;">High-Precision Drill</span>
               </div>
-              <span class="game-mode-badge" style="color:#EF4444; border-color:rgba(239,68,68,0.3);">Zero-Error Standard</span>
+              <span class="game-mode-badge" style="font-size:0.62rem; padding:1px 5px; color:#EF4444; border-color:rgba(239,68,68,0.3);">Zero-Error</span>
             </div>
-            <div class="game-mode-desc">15s per-question deduction clock. Evaluates strict observational accuracy under examination pressure.</div>
+            <div class="game-mode-desc" style="font-size:0.71rem; line-height:1.2; margin-top:2px;">15s per-question clock evaluating strict observational accuracy.</div>
           </div>
 
           <!-- 3. Qualitative Ions (Paper 3 Q2) -->
-          <div class="game-mode-card qualitative" id="modeCard_qualitative" onclick="selectGameMode('qualitative')">
+          <div class="game-mode-card qualitative" id="modeCard_qualitative" onclick="selectGameMode('qualitative')" style="padding:6px 10px; border-radius:8px;">
             <div class="game-mode-header">
               <div class="game-mode-icon-title">
-                <span class="game-mode-icon">🔬</span>
-                <span class="game-mode-title">Qualitative Salt Analysis</span>
+                <span class="game-mode-icon" style="font-size:0.95rem;">🔬</span>
+                <span class="game-mode-title" style="font-size:0.82rem; font-weight:800;">Qualitative Salt Analysis</span>
               </div>
-              <span class="game-mode-badge" style="color:#10B981; border-color:rgba(16,185,129,0.3);">Paper 3 Q2</span>
+              <span class="game-mode-badge" style="font-size:0.62rem; padding:1px 5px; color:#10B981; border-color:rgba(16,185,129,0.3);">Paper 3 Q2</span>
             </div>
-            <div class="game-mode-desc">45s focused drill on Cation/Anion precipitation, excess reagent solubility, flame emissions & gases.</div>
+            <div class="game-mode-desc" style="font-size:0.71rem; line-height:1.2; margin-top:2px;">45s drill on Cation/Anion precipitation, excess reagents &amp; flame tests.</div>
           </div>
 
           <!-- 4. Organic Tests (Paper 3 Q3) -->
-          <div class="game-mode-card organic" id="modeCard_organic" onclick="selectGameMode('organic')">
+          <div class="game-mode-card organic" id="modeCard_organic" onclick="selectGameMode('organic')" style="padding:6px 10px; border-radius:8px;">
             <div class="game-mode-header">
               <div class="game-mode-icon-title">
-                <span class="game-mode-icon">⚗️</span>
-                <span class="game-mode-title">Organic Functional Groups</span>
+                <span class="game-mode-icon" style="font-size:0.95rem;">⚗️</span>
+                <span class="game-mode-title" style="font-size:0.82rem; font-weight:800;">Organic Functional Groups</span>
               </div>
-              <span class="game-mode-badge" style="color:#8B5CF6; border-color:rgba(139,92,246,0.3);">Paper 3 Q3</span>
+              <span class="game-mode-badge" style="font-size:0.62rem; padding:1px 5px; color:#8B5CF6; border-color:rgba(139,92,246,0.3);">Paper 3 Q3</span>
             </div>
-            <div class="game-mode-desc">45s drill on Bromine water unsaturation, acidified dichromate oxidation, esterification & carbonates.</div>
+            <div class="game-mode-desc" style="font-size:0.71rem; line-height:1.2; margin-top:2px;">45s drill on Bromine water unsaturation, dichromate &amp; esterification.</div>
           </div>
 
           <!-- 5. Volumetric Titration (Paper 3 Q1) -->
-          <div class="game-mode-card titration" id="modeCard_titration" onclick="selectGameMode('titration')">
+          <div class="game-mode-card titration" id="modeCard_titration" onclick="selectGameMode('titration')" style="padding:6px 10px; border-radius:8px;">
             <div class="game-mode-header">
               <div class="game-mode-icon-title">
-                <span class="game-mode-icon">⚖️</span>
-                <span class="game-mode-title">Volumetric Titrations</span>
+                <span class="game-mode-icon" style="font-size:0.95rem;">⚖️</span>
+                <span class="game-mode-title" style="font-size:0.82rem; font-weight:800;">Volumetric Titrations</span>
               </div>
-              <span class="game-mode-badge" style="color:#F59E0B; border-color:rgba(245,158,11,0.3);">Paper 3 Q1</span>
+              <span class="game-mode-badge" style="font-size:0.62rem; padding:1px 5px; color:#F59E0B; border-color:rgba(245,158,11,0.3);">Paper 3 Q1</span>
             </div>
-            <div class="game-mode-desc">45s drill on indicator endpoints, concordant titre standards (&plusmn;0.20 cm³), and stoichiometric calculations.</div>
+            <div class="game-mode-desc" style="font-size:0.71rem; line-height:1.2; margin-top:2px;">45s drill on indicator endpoints, concordancy (&plusmn;0.20 cm³) &amp; stoichiometry.</div>
           </div>
 
           <!-- 6. Thermochemistry & Kinetics -->
-          <div class="game-mode-card energy" id="modeCard_energy" onclick="selectGameMode('energy')">
+          <div class="game-mode-card energy" id="modeCard_energy" onclick="selectGameMode('energy')" style="padding:6px 10px; border-radius:8px;">
             <div class="game-mode-header">
               <div class="game-mode-icon-title">
-                <span class="game-mode-icon">🌡️</span>
-                <span class="game-mode-title">Kinetics & Energetics</span>
+                <span class="game-mode-icon" style="font-size:0.95rem;">🌡️</span>
+                <span class="game-mode-title" style="font-size:0.82rem; font-weight:800;">Kinetics &amp; Energetics</span>
               </div>
-              <span class="game-mode-badge" style="color:#EC4899; border-color:rgba(236,72,153,0.3);">Physical Chemistry</span>
+              <span class="game-mode-badge" style="font-size:0.62rem; padding:1px 5px; color:#EC4899; border-color:rgba(236,72,153,0.3);">Physical Q</span>
             </div>
-            <div class="game-mode-desc">45s drill on calorimetric enthalpy changes (&Delta;H), cooling curve crystallization & rate-law factors.</div>
+            <div class="game-mode-desc" style="font-size:0.71rem; line-height:1.2; margin-top:2px;">45s drill on calorimetric enthalpy (&Delta;H), cooling curves &amp; reaction rates.</div>
           </div>
         </div>
       </div>
 
       <!-- Launch Action Button -->
-      <button type="button" id="launchBattleBtn" class="btn btn-primary" onclick="startChemicalSpeedBattle()" style="width:100%; padding:15px; font-size:1.08rem; font-weight:900; border-radius:100px; box-shadow:0 0 24px var(--sb-primary-glow); cursor:pointer;">
+      <button type="button" id="launchBattleBtn" class="btn btn-primary" onclick="startChemicalSpeedBattle()" style="width:100%; padding:10px 18px; font-size:0.95rem; font-weight:800; border-radius:8px; box-shadow:0 0 16px var(--sb-primary-glow); cursor:pointer;">
         🚀 Begin Practical Diagnostic Drill →
       </button>
 
-      <!-- Keyboard controls shortcut reminder -->
-      <div class="kb-hint-strip">
-        <span>💡 Keyboard response shortcuts: Press <span class="kb-key-tag">A</span> <span class="kb-key-tag">B</span> <span class="kb-key-tag">C</span> <span class="kb-key-tag">D</span> or <span class="kb-key-tag">1</span> <span class="kb-key-tag">2</span> <span class="kb-key-tag">3</span> <span class="kb-key-tag">4</span></span>
-      </div>
-
-      <!-- Skip Warm Up Link -->
-      <div id="skipWarmupRow" style="margin-top:14px; text-align:center;">
-        <a id="skipWarmupLink" href="home.html" style="font-size:0.84rem; color:var(--text-muted); text-decoration:underline; font-weight:600;">
-          Proceed directly to Virtual Laboratory Workbench →
+      <!-- Keyboard controls shortcut reminder & Navigation in a single sleek line -->
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-top:6px; font-size:0.73rem; color:var(--text-muted); flex-wrap:wrap; gap:4px;">
+        <span>⌨️ Press <span class="kb-key-tag" style="padding:1px 4px; font-size:0.68rem;">A</span> <span class="kb-key-tag" style="padding:1px 4px; font-size:0.68rem;">B</span> <span class="kb-key-tag" style="padding:1px 4px; font-size:0.68rem;">C</span> <span class="kb-key-tag" style="padding:1px 4px; font-size:0.68rem;">D</span> or <span class="kb-key-tag" style="padding:1px 4px; font-size:0.68rem;">1</span> <span class="kb-key-tag" style="padding:1px 4px; font-size:0.68rem;">2</span> <span class="kb-key-tag" style="padding:1px 4px; font-size:0.68rem;">3</span> <span class="kb-key-tag" style="padding:1px 4px; font-size:0.68rem;">4</span></span>
+        <a id="skipWarmupLink" href="home.html" style="color:var(--text-muted); text-decoration:underline; font-weight:600;">
+          Proceed to Virtual Workbench →
         </a>
       </div>
     </div>
@@ -169,47 +164,47 @@
     <div id="battleArenaCard" class="battle-card" style="display:none; text-align:left;">
       
       <!-- Interactive HUD Header -->
-      <div class="arena-hud">
+      <div class="arena-hud" style="padding-bottom:10px; margin-bottom:10px;">
         <div class="hud-stat-box">
-          <div style="display:flex; align-items:center; gap:8px; margin-bottom:2px;">
-            <span class="hud-stat-label">Score</span>
-            <span id="arenaActiveModePill" class="mode-badge-pill">⚡ 60s Blitz</span>
+          <div style="display:flex; align-items:center; gap:6px; margin-bottom:1px;">
+            <span class="hud-stat-label" style="font-size:0.65rem;">Score</span>
+            <span id="arenaActiveModePill" class="mode-badge-pill" style="font-size:0.68rem; padding:1px 6px;">⚡ Comprehensive</span>
           </div>
-          <span id="battleScoreDisplay" class="hud-score-val">0</span>
+          <span id="battleScoreDisplay" class="hud-score-val" style="font-size:1.35rem;">0</span>
         </div>
         
         <div class="hud-streak-container">
-          <span id="battleStreakBadge" class="streak-badge streak-tier-0">
+          <span id="battleStreakBadge" class="streak-badge streak-tier-0" style="font-size:0.75rem; padding:4px 10px;">
             <span id="battleStreakIcon">⚡</span>
             <span id="battleStreakText">0x Normal</span>
           </span>
         </div>
 
         <div class="hud-stat-box hud-time-box">
-          <span class="hud-stat-label" id="hudTimerLabel">Remaining Time</span>
-          <span id="battleTimeDisplay" class="hud-time-val">60s</span>
+          <span class="hud-stat-label" id="hudTimerLabel" style="font-size:0.65rem;">Remaining Time</span>
+          <span id="battleTimeDisplay" class="hud-time-val" style="font-size:1.35rem;">60s</span>
         </div>
       </div>
 
       <!-- Precision Gradient Timer Bar -->
-      <div class="timer-bar-track">
+      <div class="timer-bar-track" style="margin-bottom:10px;">
         <div id="battleTimerBar" class="timer-bar-fill"></div>
       </div>
 
       <!-- Question Box & Category Tag -->
       <div>
-        <div id="battleCatBadge" class="battle-q-badge">🔬 Qualitative Analysis</div>
-        <div id="battleQuestionText" class="battle-q-box">
+        <div id="battleCatBadge" class="battle-q-badge" style="font-size:0.68rem; padding:2px 8px; margin-bottom:4px;">🔬 Qualitative Analysis</div>
+        <div id="battleQuestionText" class="battle-q-box" style="padding:10px 14px; font-size:0.92rem; min-height:50px; margin-bottom:10px; line-height:1.4;">
           Loading question…
         </div>
       </div>
 
       <!-- Dynamic Interactive Options Container -->
-      <div id="battleOptionsBox" class="battle-options-list"></div>
+      <div id="battleOptionsBox" class="battle-options-list" style="gap:6px;"></div>
 
       <!-- Keyboard Shortcut Helper below options -->
-      <div class="kb-hint-strip" style="margin-top:16px;">
-        <span>Press <span class="kb-key-tag">A</span> <span class="kb-key-tag">B</span> <span class="kb-key-tag">C</span> <span class="kb-key-tag">D</span> for instant rapid responses</span>
+      <div class="kb-hint-strip" style="margin-top:10px; font-size:0.72rem;">
+        <span>Press <span class="kb-key-tag" style="padding:1px 4px;">A</span> <span class="kb-key-tag" style="padding:1px 4px;">B</span> <span class="kb-key-tag" style="padding:1px 4px;">C</span> <span class="kb-key-tag" style="padding:1px 4px;">D</span> for instant rapid responses</span>
       </div>
 
     </div>
@@ -218,55 +213,55 @@
          DIAGNOSTIC ASSESSMENT SUMMARY CARD
     ══════════════════════════════════════ -->
     <div id="battleGameOverCard" class="battle-card" style="display:none; text-align:center;">
-      <div id="gameOverIcon" style="font-size:3.8rem; margin-bottom:8px;">📊</div>
-      <h2 id="gameOverHeading" style="font-family:var(--font-heading); font-size:1.75rem; font-weight:900; color:var(--heading-color); margin-bottom:4px;">Diagnostic Assessment Complete</h2>
-      <p id="gameOverSubtitle" style="font-size:0.88rem; color:var(--text-muted); margin-bottom:20px;">
+      <div id="gameOverIcon" style="font-size:2.4rem; margin-bottom:4px;">📊</div>
+      <h2 id="gameOverHeading" style="font-family:var(--font-heading); font-size:1.35rem; font-weight:900; color:var(--heading-color); margin:0 0 2px 0;">Diagnostic Assessment Complete</h2>
+      <p id="gameOverSubtitle" style="font-size:0.8rem; color:var(--text-muted); margin:0 0 10px 0;">
         <span id="finalModeDisplay">Comprehensive Review</span> evaluation recorded.
       </p>
 
       <!-- Final Score & Rating Box -->
-      <div class="final-score-panel">
-        <div style="font-size:0.72rem; font-weight:800; color:var(--text-muted); letter-spacing:0.06em; text-transform:uppercase;">TOTAL COMPETENCY SCORE</div>
-        <div id="finalScoreDisplay" class="final-score-big">0</div>
+      <div class="final-score-panel" style="padding:10px 14px; margin-bottom:10px;">
+        <div style="font-size:0.65rem; font-weight:800; color:var(--text-muted); letter-spacing:0.06em; text-transform:uppercase;">TOTAL COMPETENCY SCORE</div>
+        <div id="finalScoreDisplay" class="final-score-big" style="font-size:1.8rem; margin:2px 0;">0</div>
         
-        <div id="newHighScoreNotice" style="display:none; color:var(--amber-accent); font-weight:800; font-size:0.9rem; margin-bottom:12px;">
+        <div id="newHighScoreNotice" style="display:none; color:var(--amber-accent); font-weight:800; font-size:0.8rem; margin-bottom:6px;">
           🌟 HIGHEST COMPETENCY SCORE RECORDED IN THIS DOMAIN! 🌟
         </div>
 
-        <div style="font-size:0.72rem; font-weight:800; color:var(--text-muted); margin-bottom:6px; letter-spacing:0.06em; text-transform:uppercase;">EVALUATED KNEC PERFORMANCE TIER</div>
-        <div id="finalRankDisplay" class="final-rank-badge">🧪 Foundational Practical Learner</div>
+        <div style="font-size:0.65rem; font-weight:800; color:var(--text-muted); margin-bottom:3px; letter-spacing:0.06em; text-transform:uppercase;">EVALUATED KNEC PERFORMANCE TIER</div>
+        <div id="finalRankDisplay" class="final-rank-badge" style="font-size:0.82rem; padding:3px 12px;">🧪 Foundational Practical Learner</div>
       </div>
 
       <!-- Performance Stats 4-Grid Breakdown -->
-      <div class="stat-summary-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom:24px;">
-        <div class="stat-summary-card">
-          <div class="stat-summary-title">Deductions</div>
-          <div id="statAnswered" class="stat-summary-val" style="color:var(--text-main);">0</div>
+      <div class="stat-summary-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom:12px; gap:6px;">
+        <div class="stat-summary-card" style="padding:6px 8px;">
+          <div class="stat-summary-title" style="font-size:0.65rem;">Deductions</div>
+          <div id="statAnswered" class="stat-summary-val" style="color:var(--text-main); font-size:1rem;">0</div>
         </div>
-        <div class="stat-summary-card">
-          <div class="stat-summary-title">Accuracy</div>
-          <div id="statAccuracy" class="stat-summary-val" style="color:var(--green-accent);">0%</div>
+        <div class="stat-summary-card" style="padding:6px 8px;">
+          <div class="stat-summary-title" style="font-size:0.65rem;">Accuracy</div>
+          <div id="statAccuracy" class="stat-summary-val" style="color:var(--green-accent); font-size:1rem;">0%</div>
         </div>
-        <div class="stat-summary-card">
-          <div class="stat-summary-title">Max Streak</div>
-          <div id="statMaxStreak" class="stat-summary-val" style="color:var(--amber-accent);">0x</div>
+        <div class="stat-summary-card" style="padding:6px 8px;">
+          <div class="stat-summary-title" style="font-size:0.65rem;">Max Streak</div>
+          <div id="statMaxStreak" class="stat-summary-val" style="color:var(--amber-accent); font-size:1rem;">0x</div>
         </div>
-        <div class="stat-summary-card">
-          <div class="stat-summary-title">Mean Latency</div>
-          <div id="statAvgSpeed" class="stat-summary-val" style="color:var(--cyan-accent);">0.0s</div>
+        <div class="stat-summary-card" style="padding:6px 8px;">
+          <div class="stat-summary-title" style="font-size:0.65rem;">Mean Latency</div>
+          <div id="statAvgSpeed" class="stat-summary-val" style="color:var(--cyan-accent); font-size:1rem;">0.0s</div>
         </div>
       </div>
 
       <!-- Actions Grid with direct Workstation Enter -->
-      <div style="display:flex; flex-direction:column; gap:10px;">
-        <a id="gameOverProceedBtn" href="home.html" class="btn btn-primary" style="width:100%; padding:15px; font-size:1.05rem; font-weight:900; border-radius:100px; text-decoration:none; text-align:center; box-shadow:0 0 20px var(--sb-primary-glow);">
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <a id="gameOverProceedBtn" href="home.html" class="btn btn-primary" style="width:100%; padding:10px; font-size:0.92rem; font-weight:800; border-radius:8px; text-decoration:none; text-align:center; box-shadow:0 0 16px var(--sb-primary-glow);">
           🧪 Proceed to Laboratory Workbench →
         </a>
-        <div style="display:flex; gap:10px;">
-          <button type="button" class="btn" onclick="startChemicalSpeedBattle()" style="flex:1; padding:12px; font-weight:800; border-radius:100px; cursor:pointer;">
-            🔄 Retake Diagnostic Drill
+        <div style="display:flex; gap:8px;">
+          <button type="button" class="btn" onclick="startChemicalSpeedBattle()" style="flex:1; padding:8px; font-size:0.82rem; font-weight:800; border-radius:6px; cursor:pointer;">
+            🔄 Retake Drill
           </button>
-          <button type="button" class="btn" onclick="backToModeSelect()" style="flex:1; padding:12px; font-weight:800; border-radius:100px; cursor:pointer; background:var(--card-bg-hover); border:1px solid var(--card-border);">
+          <button type="button" class="btn" onclick="backToModeSelect()" style="flex:1; padding:8px; font-size:0.82rem; font-weight:800; border-radius:6px; cursor:pointer; background:var(--card-bg-hover); border:1px solid var(--card-border);">
             📋 Switch Domain
           </button>
         </div>

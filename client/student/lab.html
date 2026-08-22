@@ -335,20 +335,24 @@
                 </g>
               </svg>
 
-              <!-- Magnified Buret Reading Lens -->
-              <div class="buret-lens-card" style="background:transparent;border:none;padding:0;text-align:center;min-width:170px;">
-                <div style="font-size:0.74rem;font-weight:800;color:var(--blue-accent);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.06em;font-family:'Cinzel', serif;">
-                  🔍 Buret Reading Lens
+              <!-- Magnified Buret Reading Lens (Positioned Beside Apparatus) -->
+              <div class="buret-lens-card" style="background:transparent;border:none;padding:0;text-align:center;">
+                <div style="font-size:0.75rem;font-weight:800;color:var(--cyan-accent);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.04em;font-family:'Cinzel', serif;">
+                  🔍 Burette Meniscus Lens
                 </div>
                 
-                <div class="lens-viewfinder" style="position:relative;width:165px;height:150px;margin:0 auto;background:#091426;border:2px solid #38BDF8;border-radius:10px;overflow:hidden;box-shadow:0 0 16px rgba(56,189,248,0.2), inset 0 0 20px rgba(0,0,0,0.8);">
-                  <div style="position:absolute;top:50%;left:0;right:0;height:1.5px;background:rgba(239,68,68,0.9);z-index:10;pointer-events:none;"></div>
-                  <div style="position:absolute;top:50%;left:4px;font-size:0.58rem;color:#EF4444;font-weight:800;z-index:11;transform:translateY(-100%);font-family:'JetBrains Mono',monospace;">EYE LEVEL</div>
+                <div class="lens-viewfinder" style="position:relative;width:100%;max-width:165px;height:148px;margin:0 auto;background:#06101E;border:2px solid #00F2FE;border-radius:12px;overflow:hidden;box-shadow:0 0 20px rgba(0,242,254,0.25), inset 0 0 25px rgba(0,0,0,0.85);">
+                  <div style="position:absolute;top:50%;left:0;right:0;height:1.5px;background:rgba(239,68,68,0.95);box-shadow:0 0 6px rgba(239,68,68,0.8);z-index:10;pointer-events:none;"></div>
+                  <div style="position:absolute;top:50%;left:4px;font-size:0.56rem;color:#EF4444;font-weight:800;z-index:11;transform:translateY(-100%);font-family:'JetBrains Mono',monospace;">EYE LEVEL</div>
+                  <div style="position:absolute;top:50%;right:4px;font-size:0.56rem;color:#00F2FE;font-weight:800;z-index:11;transform:translateY(-100%);font-family:'JetBrains Mono',monospace;">±0.05 cm³</div>
                   <svg id="lensSvg" viewBox="0 0 180 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;"></svg>
                 </div>
                 
-                <div style="font-size:0.7rem;color:var(--text-muted);margin-top:4px;line-height:1.2;font-family:'Newsreader', serif;font-style:italic;">
-                  Read volume at <b>bottom of meniscus</b>.<br>Subdivision = 0.10 cm³.
+                <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:6px;">
+                  <span id="lensReadoutPill" style="background:var(--bg-dark);border:1px solid var(--card-border);padding:2px 10px;border-radius:100px;font-family:'JetBrains Mono',monospace;font-size:0.75rem;font-weight:800;color:var(--cyan-accent);box-shadow:var(--shadow-sm);">0.00 cm³</span>
+                </div>
+                <div style="font-size:0.68rem;color:var(--text-muted);margin-top:2px;line-height:1.2;font-family:'Newsreader', serif;font-style:italic;">
+                  Read at <b>bottom of meniscus</b>.
                 </div>
               </div>
 

@@ -1332,40 +1332,84 @@ requireStudentLogin();
     const lensSvg = document.getElementById('lensSvg');
     if (!lensSvg) return;
 
-    const pcm = 38;
+    const pcm = 42; // Higher resolution pixels per cm³
     const centerY = 80;
     
     const minVol = Math.max(0, Math.floor(volume - 2.5));
     const maxVol = Math.min(50, Math.ceil(volume + 2.5));
 
+    // Dynamic defs for glass tube & liquid refraction
+    const defsSvg = `
+      <defs>
+        <linearGradient id="lensTubeGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#0F172A" stop-opacity="0.9"/>
+          <stop offset="8%" stop-color="#38BDF8" stop-opacity="0.3"/>
+          <stop offset="20%" stop-color="#FFFFFF" stop-opacity="0.15"/>
+          <stop offset="80%" stop-color="#0284C7" stop-opacity="0.1"/>
+          <stop offset="92%" stop-color="#38BDF8" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#0F172A" stop-opacity="0.9"/>
+        </linearGradient>
+        <linearGradient id="lensLiquidColumn" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#0284C7" stop-opacity="0.65"/>
+          <stop offset="15%" stop-color="#0369A1" stop-opacity="0.8"/>
+          <stop offset="100%" stop-color="#0C4A6E" stop-opacity="0.9"/>
+        </linearGradient>
+        <linearGradient id="glassReflection" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.35"/>
+          <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.0"/>
+        </linearGradient>
+      </defs>
+    `;
+
+    // Glass Tube Body
+    const tubeBacking = `
+      <rect x="16" y="0" width="148" height="160" rx="6" fill="url(#lensTubeGrad)"/>
+      <rect x="18" y="0" width="14" height="160" fill="url(#glassReflection)"/>
+    `;
+
+    // Liquid Column below meniscus (surface at centerY)
+    const liquidColumn = `
+      <path d="M 16 ${centerY - 4} Q 90 ${centerY + 8} 164 ${centerY - 4} L 164 160 L 16 160 Z" fill="url(#lensLiquidColumn)"/>
+    `;
+
     let ticksSvg = '';
     for (let v = minVol; v <= maxVol; v += 0.1) {
       const vRounded = Math.round(v * 10) / 10;
       const y = centerY + (vRounded - volume) * pcm;
-      if (y < -10 || y > 170) continue;
+      if (y < -12 || y > 172) continue;
 
       const isMajor = Math.abs(vRounded - Math.round(vRounded)) < 0.01;
       const isMedium = !isMajor && Math.abs((vRounded * 10) % 5) < 0.01;
 
       if (isMajor) {
-        ticksSvg += `<line x1="20" y1="${y}" x2="55" y2="${y}" stroke="#F8FAFC" stroke-width="1.5"/>`;
-        ticksSvg += `<line x1="125" y1="${y}" x2="160" y2="${y}" stroke="#F8FAFC" stroke-width="1.5"/>`;
-        ticksSvg += `<text x="70" y="${y + 4}" fill="#38BDF8" font-size="11" font-family="'JetBrains Mono', monospace" font-weight="700">${Math.round(vRounded)}</text>`;
+        ticksSvg += `<line x1="16" y1="${y}" x2="56" y2="${y}" stroke="#FFFFFF" stroke-width="1.8"/>`;
+        ticksSvg += `<line x1="124" y1="${y}" x2="164" y2="${y}" stroke="#FFFFFF" stroke-width="1.8"/>`;
+        ticksSvg += `<text x="66" y="${y + 4.5}" fill="#38BDF8" font-size="12" font-family="'JetBrains Mono', monospace" font-weight="800">${Math.round(vRounded)}.0</text>`;
       } else if (isMedium) {
-        ticksSvg += `<line x1="20" y1="${y}" x2="45" y2="${y}" stroke="#94A3B8" stroke-width="1.2"/>`;
-        ticksSvg += `<line x1="135" y1="${y}" x2="160" y2="${y}" stroke="#94A3B8" stroke-width="1.2"/>`;
+        ticksSvg += `<line x1="16" y1="${y}" x2="44" y2="${y}" stroke="#38BDF8" stroke-width="1.4"/>`;
+        ticksSvg += `<line x1="136" y1="${y}" x2="164" y2="${y}" stroke="#38BDF8" stroke-width="1.4"/>`;
       } else {
-        ticksSvg += `<line x1="20" y1="${y}" x2="35" y2="${y}" stroke="#64748B" stroke-width="0.8"/>`;
-        ticksSvg += `<line x1="145" y1="${y}" x2="160" y2="${y}" stroke="#64748B" stroke-width="0.8"/>`;
+        ticksSvg += `<line x1="16" y1="${y}" x2="32" y2="${y}" stroke="#94A3B8" stroke-width="0.95"/>`;
+        ticksSvg += `<line x1="148" y1="${y}" x2="164" y2="${y}" stroke="#94A3B8" stroke-width="0.95"/>`;
       }
     }
 
+    // Realistic Concave Meniscus Curve with Optics
     const meniscusSvg = `
-      <path d="M 20 ${centerY} Q 90 ${centerY + 6} 160 ${centerY}" stroke="#38BDF8" stroke-width="2.5" fill="none"/>
-      <ellipse cx="90" cy="${centerY + 6}" rx="3" ry="3" fill="#EF4444"/>
+      <!-- Secondary depth shadow arc -->
+      <path d="M 16 ${centerY - 2} Q 90 ${centerY + 10} 164 ${centerY - 2}" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/>
+      <!-- Main illuminated meniscus arc -->
+      <path d="M 16 ${centerY - 4} Q 90 ${centerY + 8} 164 ${centerY - 4}" stroke="#00F2FE" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+      <!-- Bottom of Meniscus Reading Focal Dot -->
+      <circle cx="90" cy="${centerY + 8}" r="4" fill="#EF4444" stroke="#FFFFFF" stroke-width="1.5"/>
     `;
 
-    lensSvg.innerHTML = ticksSvg + meniscusSvg;
+    lensSvg.innerHTML = defsSvg + tubeBacking + liquidColumn + ticksSvg + meniscusSvg;
+
+    const readoutPill = document.getElementById('lensReadoutPill');
+    if (readoutPill) {
+      readoutPill.textContent = `${volume.toFixed(2)} cm³`;
+    }
   }
 
   function updateRig() {

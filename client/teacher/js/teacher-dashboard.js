@@ -1600,6 +1600,59 @@ requireTeacherLogin();
     }
   }
 
+  function applySeriesPreset() {
+    const sel = document.getElementById('cfgSeriesPreset').value;
+    if (sel === 'series_1') {
+      document.getElementById('cfgQ1SolA').value = '0.100 M Hydrochloric Acid (HCl)';
+      document.getElementById('cfgQ1SolB').value = 'Sodium Hydroxide (NaOH) 4.00 g/dm³';
+      document.getElementById('cfgQ1RatioA').value = 1;
+      document.getElementById('cfgQ1RatioB').value = 1;
+      document.getElementById('cfgQ1Indicator').value = 'phenolphthalein';
+      document.getElementById('cfgQ2Salt').value = 'Pb(NO3)2';
+      document.getElementById('cfgQ3Organic').value = 'Ethanol';
+    } else if (sel === 'series_2') {
+      document.getElementById('cfgQ1SolA').value = '0.100 M Hydrochloric Acid (HCl)';
+      document.getElementById('cfgQ1SolB').value = 'Sodium Carbonate (Na₂CO₃) 5.30 g/dm³';
+      document.getElementById('cfgQ1RatioA').value = 2;
+      document.getElementById('cfgQ1RatioB').value = 1;
+      document.getElementById('cfgQ1Indicator').value = 'methylOrange';
+      document.getElementById('cfgQ2Salt').value = 'FeSO4';
+      document.getElementById('cfgQ3Organic').value = 'Ethanoic Acid';
+    } else if (sel === 'series_3') {
+      document.getElementById('cfgQ1SolA').value = '0.020 M Potassium Manganate(VII) (KMnO₄)';
+      document.getElementById('cfgQ1SolB').value = 'Acidified Iron(II) Sulfate 39.2 g/dm³';
+      document.getElementById('cfgQ1RatioA').value = 1;
+      document.getElementById('cfgQ1RatioB').value = 5;
+      document.getElementById('cfgQ1Indicator').value = 'phenolphthalein';
+      document.getElementById('cfgQ2Salt').value = 'ZnSO4';
+      document.getElementById('cfgQ3Organic').value = 'Ethanol';
+    } else if (sel === 'series_4') {
+      document.getElementById('cfgQ1SolA').value = '1.00 M Nitric Acid (HNO₃)';
+      document.getElementById('cfgQ1SolB').value = '1.00 M Potassium Hydroxide (KOH)';
+      document.getElementById('cfgQ1RatioA').value = 1;
+      document.getElementById('cfgQ1RatioB').value = 1;
+      document.getElementById('cfgQ1Indicator').value = 'phenolphthalein';
+      document.getElementById('cfgQ2Salt').value = 'CuSO4';
+      document.getElementById('cfgQ3Organic').value = 'Ethanol';
+    } else if (sel === 'series_5') {
+      document.getElementById('cfgQ1SolA').value = '0.050 M Sulfuric Acid (H₂SO₄)';
+      document.getElementById('cfgQ1SolB').value = '0.100 M Sodium Hydroxide (NaOH)';
+      document.getElementById('cfgQ1RatioA').value = 1;
+      document.getElementById('cfgQ1RatioB').value = 2;
+      document.getElementById('cfgQ1Indicator').value = 'phenolphthalein';
+      document.getElementById('cfgQ2Salt').value = 'ZnSO4';
+      document.getElementById('cfgQ3Organic').value = 'Ethanoic Acid';
+    } else if (sel === 'series_6') {
+      document.getElementById('cfgQ1SolA').value = '0.100 M Ethanedioic Acid (H₂C₂O₄)';
+      document.getElementById('cfgQ1SolB').value = '0.200 M Sodium Hydroxide (NaOH)';
+      document.getElementById('cfgQ1RatioA').value = 1;
+      document.getElementById('cfgQ1RatioB').value = 2;
+      document.getElementById('cfgQ1Indicator').value = 'phenolphthalein';
+      document.getElementById('cfgQ2Salt').value = 'CaCl2';
+      document.getElementById('cfgQ3Organic').value = 'Ethanoic Acid';
+    }
+  }
+
   async function saveAssignment() {
     const editingId = document.getElementById('aEditingId').value;
     const title = document.getElementById('aTitle').value.trim();
@@ -1616,7 +1669,9 @@ requireTeacherLogin();
 
     let examConfig = null;
     if (titrationType === 'kcseComposite') {
+      const seriesSelect = document.getElementById('cfgSeriesPreset');
       examConfig = {
+        presetKey: seriesSelect ? seriesSelect.value : 'series_1',
         q1: {
           solutionA: document.getElementById('cfgQ1SolA').value,
           solutionB: document.getElementById('cfgQ1SolB').value,

@@ -112,6 +112,35 @@
   }
   .step-feedback-success { color: var(--green-accent); }
   .step-feedback-fail { color: var(--red-accent); }
+
+  /* Chief Examiner Report Tabs & Sections */
+  .examiner-tab-btn {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .examiner-tab-btn.active {
+    background: var(--amber-accent);
+    color: #FFFFFF;
+    border-color: var(--amber-accent);
+  }
+  .rubric-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--card-border);
+    font-size: 0.8rem;
+  }
+  .rubric-item-row:last-child {
+    border-bottom: none;
+  }
 </style>
 </head>
 <body>
@@ -123,7 +152,7 @@
   <a href="/student/home.html" class="nav-brand">
     <span style="font-size:1.25rem;">🏆</span>
     <span>VirtuLab Kenya</span>
-    <span class="nav-brand-badge">KCSE 233/3 PORTAL</span>
+    <span class="nav-brand-badge" id="navExamBadge">KCSE 233/3 PORTAL</span>
   </a>
   <div class="nav-actions">
     <div style="position:relative; display:inline-block;">
@@ -148,6 +177,7 @@
       </div>
     </div>
 
+    <a href="/student/mock_exams.html" class="top-action-btn">📚 Mock Hub</a>
     <a href="/student/home.html" class="top-action-btn">← Exit Exam</a>
   </div>
 </nav>
@@ -163,7 +193,7 @@
         KCSE Chemistry Paper 3 (Practical) Mock Examination — Code 233/3
       </div>
       <div class="exam-header-meta">
-        Candidate: <b id="candidateName" style="color:var(--heading-color);">Student Candidate</b> &nbsp;·&nbsp; Target Weighting: <b style="color:var(--amber-accent);">40.0 Marks Total</b> &nbsp;·&nbsp; Time: <b>2 Hours 15 Minutes</b>
+        Candidate: <b id="candidateName" style="color:var(--heading-color);">Student Candidate</b> &nbsp;·&nbsp; Target Weighting: <b style="color:var(--amber-accent);">40.0 Marks Total</b> &nbsp;·&nbsp; Mode: <b id="modeIndicator" style="color:var(--cyan-accent);">Official Timed</b>
       </div>
     </div>
     
@@ -209,20 +239,20 @@
 
     <div class="exam-prompt-box">
       <b>You are provided with:</b><br>
-      • <b id="q1SolAName">Solution A: 0.100 M Hydrochloric Acid (HCl)</b> in the burette.<br>
-      • <b id="q1SolBName">Solution B: Sodium Hydroxide (NaOH) containing 4.00 g per dm³</b>.<br>
-      • <b>Phenolphthalein Indicator</b>.<br><br>
-      <b>Instructions & Procedure:</b><br>
-      1. Pipette <b>25.0 cm³</b> of Solution B into a clean 250 cm³ conical flask. Add 2–3 drops of Phenolphthalein indicator.<br>
+      • <b id="q1SolAName">Solution A</b> in the burette.<br>
+      • <b id="q1SolBName">Solution B</b>.<br>
+      • <b id="q1IndicatorName">Indicator</b>.<br><br>
+      <b>Instructions &amp; Procedure:</b><br>
+      1. Pipette <b>25.0 cm³</b> of Solution B into a clean 250 cm³ conical flask. Add 2–3 drops of indicator (or titrate as self-indicating).<br>
       2. Fill the burette with Solution A and adjust the meniscus level to 0.00 cm³.<br>
-      3. Titrate Solution B with Solution A until the pink color just disappears (colorless endpoint).<br>
+      3. Titrate Solution B with Solution A until the characteristic endpoint is observed.<br>
       4. Repeat the titration procedure to complete <b>Table 1</b> below with concordant titres (within ±0.10 cm³).
     </div>
 
     <!-- Spacious Volumetric Workbench Assembly -->
     <div class="titration-rig-workbench">
       <div style="font-weight:800;font-size:0.84rem;color:var(--cyan-accent);margin-bottom:14px;text-transform:uppercase;letter-spacing:0.04em;text-align:center;">
-        🔬 Interactive Volumetric Workbench & Assembly
+        🔬 Interactive Volumetric Workbench &amp; Assembly
       </div>
 
       <div class="bench-3col-layout">
@@ -262,8 +292,8 @@
                   <stop offset="100%" stop-color="#0284C7" stop-opacity="0.4"/>
                 </linearGradient>
                 <linearGradient id="liquidGradRig" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.9"/>
-                  <stop offset="100%" stop-color="#0284C7" stop-opacity="0.8"/>
+                  <stop id="gradStop1" offset="0%" stop-color="#38BDF8" stop-opacity="0.9"/>
+                  <stop id="gradStop2" offset="100%" stop-color="#0284C7" stop-opacity="0.8"/>
                 </linearGradient>
                 <linearGradient id="standRodGradRig" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stop-color="#1E293B"/>
@@ -339,7 +369,7 @@
 
         <!-- RIGHT WING: Stopcock & Speed Addition -->
         <div style="display:flex;flex-direction:column;gap:8px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;padding:14px;">
-          <div style="font-weight:800;font-size:0.75rem;color:var(--amber-accent);text-transform:uppercase;letter-spacing:0.03em;">3. Add Acid</div>
+          <div style="font-weight:800;font-size:0.75rem;color:var(--amber-accent);text-transform:uppercase;letter-spacing:0.03em;">3. Add Titrant</div>
           <button class="btn-perform-test" onclick="addTitrantDirect(1.0)" style="font-size:0.78rem;padding:6px;width:100%;justify-content:center;">+1.0 cm³</button>
           <button class="btn-perform-test" onclick="addTitrantDirect(0.5)" style="font-size:0.78rem;padding:6px;width:100%;justify-content:center;">+0.5 cm³</button>
           <button class="btn-perform-test" onclick="addTitrantDirect(0.1)" style="font-size:0.78rem;padding:6px;width:100%;justify-content:center;">+0.1 cm³</button>
@@ -387,7 +417,7 @@
             <td><input type="number" step="0.05" id="t3Init" class="calc-input" style="text-align:center;" value="0.00" onchange="onTableInputChanged()"></td>
           </tr>
           <tr style="background:var(--card-bg-hover);">
-            <td><b>Volume of Sol. A Used (cm³)</b></td>
+            <td><b>Volume of Solution A Used (cm³)</b></td>
             <td id="t1Used" style="text-align:center;font-weight:800;font-family:var(--font-mono);">0.00</td>
             <td id="t2Used" style="text-align:center;font-weight:800;font-family:var(--font-mono);">0.00</td>
             <td id="t3Used" style="text-align:center;font-weight:800;font-family:var(--font-mono);">0.00</td>
@@ -413,32 +443,32 @@
         <div style="display:flex;align-items:center;gap:10px;">
           <input type="number" step="0.01" id="ansAvgTitre" class="calc-input" placeholder="e.g. 25.00" onchange="onQ1CalculationsChanged()">
           <span style="font-weight:700;color:var(--text-muted);">cm³</span>
-          <button type="button" class="btn-perform-test" style="padding:6px 14px;font-size:0.78rem;" onclick="checkQ1Step('a')">Check (a)</button>
+          <button type="button" class="btn-perform-test btn-check-step" style="padding:6px 14px;font-size:0.78rem;" onclick="checkQ1Step('a')">Check (a)</button>
         </div>
         <div id="stepFeedback_a" class="step-feedback-msg"></div>
       </div>
 
       <div class="calc-step-card">
         <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
-          (b) Calculate the number of moles of Sodium Hydroxide in 25.0 cm³ of Solution B (2.0 Marks)
+          (b) Calculate the number of moles of solute in 25.0 cm³ of Solution B (2.0 Marks)
         </div>
         <div style="display:flex;align-items:center;gap:10px;">
           <input type="number" step="0.0001" id="ansMolesB" class="calc-input" placeholder="e.g. 0.00250" onchange="onQ1CalculationsChanged()">
           <span style="font-weight:700;color:var(--text-muted);">moles</span>
-          <button type="button" class="btn-perform-test" style="padding:6px 14px;font-size:0.78rem;" onclick="checkQ1Step('b')">Check (b)</button>
+          <button type="button" class="btn-perform-test btn-check-step" style="padding:6px 14px;font-size:0.78rem;" onclick="checkQ1Step('b')">Check (b)</button>
         </div>
         <div id="stepFeedback_b" class="step-feedback-msg"></div>
       </div>
 
       <div class="calc-step-card">
         <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
-          (c) Write the chemical equation for the reaction and calculate moles of Solution A in the average titre (2.0 Marks)<br>
+          (c) Chemical reaction equation and stoichiometric moles of Solution A (2.0 Marks)<br>
           <small style="color:var(--cyan-accent);font-family:var(--font-mono);font-size:0.8rem;" id="q1EquationDisplay">HCl(aq) + NaOH(aq) → NaCl(aq) + H₂O(l)</small>
         </div>
         <div style="display:flex;align-items:center;gap:10px;">
           <input type="number" step="0.0001" id="ansMolesA" class="calc-input" placeholder="e.g. 0.00250" onchange="onQ1CalculationsChanged()">
-          <span style="font-weight:700;color:var(--text-muted);">moles of Acid</span>
-          <button type="button" class="btn-perform-test" style="padding:6px 14px;font-size:0.78rem;" onclick="checkQ1Step('c')">Check (c)</button>
+          <span style="font-weight:700;color:var(--text-muted);">moles of Solution A</span>
+          <button type="button" class="btn-perform-test btn-check-step" style="padding:6px 14px;font-size:0.78rem;" onclick="checkQ1Step('c')">Check (c)</button>
         </div>
         <div id="stepFeedback_c" class="step-feedback-msg"></div>
       </div>
@@ -450,7 +480,7 @@
         <div style="display:flex;align-items:center;gap:10px;">
           <input type="number" step="0.001" id="ansMolarityA" class="calc-input" placeholder="e.g. 0.100" onchange="onQ1CalculationsChanged()">
           <span style="font-weight:700;color:var(--text-muted);">mol/dm³ (M)</span>
-          <button type="button" class="btn-perform-test" style="padding:6px 14px;font-size:0.78rem;" onclick="checkQ1Step('d')">Check (d)</button>
+          <button type="button" class="btn-perform-test btn-check-step" style="padding:6px 14px;font-size:0.78rem;" onclick="checkQ1Step('d')">Check (d)</button>
         </div>
         <div id="stepFeedback_d" class="step-feedback-msg"></div>
       </div>
@@ -462,7 +492,7 @@
         <div style="display:flex;align-items:center;gap:10px;">
           <input type="number" step="0.01" id="ansConcGrams" class="calc-input" placeholder="e.g. 3.65" onchange="onQ1CalculationsChanged()">
           <span style="font-weight:700;color:var(--text-muted);">g/dm³</span>
-          <button type="button" class="btn-perform-test" style="padding:6px 14px;font-size:0.78rem;" onclick="checkQ1Step('e')">Check (e)</button>
+          <button type="button" class="btn-perform-test btn-check-step" style="padding:6px 14px;font-size:0.78rem;" onclick="checkQ1Step('e')">Check (e)</button>
         </div>
         <div id="stepFeedback_e" class="step-feedback-msg"></div>
       </div>
@@ -483,9 +513,9 @@
 
     <div class="exam-prompt-box">
       <b>You are provided with:</b><br>
-      • <b id="q2SampleName">Solid Y</b>: A pure inorganic salt sample.<br>
-      • Reagents: Distilled water, 2M Aqueous Sodium Hydroxide (NaOH), 2M Aqueous Ammonia (NH₃), Dilute Nitric Acid (HNO₃), Barium Nitrate Solution Ba(NO₃)₂, and Potassium Iodide (KI) solution.<br><br>
-      <b>Instructions:</b> Carry out the systematic tests below on Solid Y and record your observations and inferences in the spaces provided.
+      • <b id="q2SampleName">Solid Y</b>: <span id="q2SampleDescText">An inorganic salt sample.</span><br>
+      • Standard Bench Reagents: Distilled water, 2M Aqueous Sodium Hydroxide (NaOH), 2M Aqueous Ammonia (NH₃), Dilute Nitric Acid (HNO₃), Barium Nitrate Solution Ba(NO₃)₂, and Potassium Iodide (KI) / Silver Nitrate (AgNO₃) solution.<br><br>
+      <b>Instructions:</b> Carry out the systematic tests below on the provided sample and record your observations and inferences in the spaces provided.
     </div>
 
     <!-- Test Cards Grid Rendering Realistic Test Tubes with Clamps & Droppers -->
@@ -498,7 +528,7 @@
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
         <div>
-          <label style="font-size:0.78rem;font-weight:700;display:block;margin-bottom:4px;">Cation Present in Solid Y (1.5 Marks):</label>
+          <label style="font-size:0.78rem;font-weight:700;display:block;margin-bottom:4px;">Cation Present (1.5 Marks):</label>
           <select id="q2CationSelect" class="calc-input" style="max-width:100%;" onchange="onQ2DeductionsChanged()">
             <option value="">-- Select Cation --</option>
             <option value="Pb2+">Lead(II) ion — Pb²⁺</option>
@@ -509,10 +539,11 @@
             <option value="Cu2+">Copper(II) ion — Cu²⁺</option>
             <option value="Ca2+">Calcium ion — Ca²⁺</option>
             <option value="NH4+">Ammonium ion — NH₄⁺</option>
+            <option value="Ba2+">Barium ion — Ba²⁺</option>
           </select>
         </div>
         <div>
-          <label style="font-size:0.78rem;font-weight:700;display:block;margin-bottom:4px;">Anion Present in Solid Y (1.5 Marks):</label>
+          <label style="font-size:0.78rem;font-weight:700;display:block;margin-bottom:4px;">Anion Present (1.5 Marks):</label>
           <select id="q2AnionSelect" class="calc-input" style="max-width:100%;" onchange="onQ2DeductionsChanged()">
             <option value="">-- Select Anion --</option>
             <option value="NO3-">Nitrate ion — NO₃⁻</option>
@@ -539,9 +570,9 @@
 
     <div class="exam-prompt-box">
       <b>You are provided with:</b><br>
-      • <b id="q3SampleName">Liquid Z</b>: A pure organic liquid sample.<br>
-      • Reagents: Metallic spatula &amp; Bunsen burner, Blue and Red litmus paper, Acidified Potassium Manganate(VII) (KMnO₄) solution, and Solid Sodium Hydrogen Carbonate (NaHCO₃).<br><br>
-      <b>Instructions:</b> Carry out the systematic organic tests below on Liquid Z and record your observations and inferences in the spaces provided.
+      • <b id="q3SampleName">Liquid Z</b>: <span id="q3SampleDescText">An organic sample.</span><br>
+      • Reagents: Metallic spatula &amp; Bunsen burner, Blue and Red litmus paper, Acidified Potassium Manganate(VII) (KMnO₄) / Bromine water, and Solid Sodium Hydrogen Carbonate (NaHCO₃).<br><br>
+      <b>Instructions:</b> Carry out the systematic organic tests below on the provided sample and record your observations and inferences in the spaces provided.
     </div>
 
     <!-- Test Cards Grid Rendering Realistic Organic Testing Setups -->
@@ -553,7 +584,7 @@
         (v) Functional Group Deduction (2.0 Marks)
       </div>
       <div>
-        <label style="font-size:0.78rem;font-weight:700;display:block;margin-bottom:4px;">Functional Group Present in Liquid Z (2.0 Marks):</label>
+        <label style="font-size:0.78rem;font-weight:700;display:block;margin-bottom:4px;">Functional Group Present in Sample (2.0 Marks):</label>
         <select id="q3FGSelect" class="calc-input" style="max-width:100%;" onchange="onQ3DeductionChanged()">
           <option value="">-- Select Functional Group --</option>
           <option value="Alkanol (-OH)">Alkanol / Hydroxyl group (—OH)</option>
@@ -588,8 +619,8 @@
     <div style="text-align:center;border-bottom:2px solid #000;padding-bottom:10px;margin-bottom:14px;">
       <div style="font-size:1.3rem;font-weight:900;letter-spacing:0.04em;">THE KENYA NATIONAL EXAMINATIONS COUNCIL</div>
       <div style="font-size:1.05rem;font-weight:800;margin-top:2px;">KENYA CERTIFICATE OF SECONDARY EDUCATION (K.C.S.E.)</div>
-      <div style="font-size:0.95rem;font-weight:700;margin-top:2px;">CHEMISTRY PAPER 3 (PRACTICAL) — CODE 233/3</div>
-      <div style="font-size:0.82rem;font-style:italic;margin-top:2px;">Official Candidate Response & Examination Booklet</div>
+      <div style="font-size:0.95rem;font-weight:700;margin-top:2px;" id="printExamTitle">CHEMISTRY PAPER 3 (PRACTICAL) — CODE 233/3</div>
+      <div style="font-size:0.82rem;font-style:italic;margin-top:2px;">Official Candidate Response &amp; Examination Booklet</div>
     </div>
 
     <table style="width:100%;border-collapse:collapse;margin-bottom:14px;font-size:0.85rem;">
@@ -634,24 +665,26 @@
   </div>
 </div>
 
-<!-- Official KCSE 40-Mark Composite Examination Result Modal -->
+<!-- ══════════════════════════════════════════════════════════════
+     OFFICIAL KNEC CHIEF EXAMINER'S INTERACTIVE REPORT MODAL
+══════════════════════════════════════════════════════════════ -->
 <div id="compositeResultModal" class="kcse-modal-overlay">
-  <div class="kcse-modal-box">
+  <div class="kcse-modal-box" style="max-width:850px; max-height:90vh; overflow-y:auto;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;border-bottom:1px solid var(--card-border);padding-bottom:14px;">
       <div>
-        <span style="background:var(--amber-accent);color:#FFF;padding:3px 10px;border-radius:6px;font-size:0.7rem;font-weight:800;font-family:var(--font-mono);letter-spacing:0.04em;">OFFICIAL KCSE PAPER 3 RESULT</span>
-        <h2 style="font-size:1.25rem;font-weight:800;margin-top:6px;color:var(--heading-color);font-family:var(--font-heading);">KCSE Paper 3 Comprehensive Score Card</h2>
-        <small style="color:var(--text-muted);">Chemistry Practical Examination (40.0 Marks Total)</small>
+        <span style="background:var(--amber-accent);color:#FFF;padding:3px 10px;border-radius:6px;font-size:0.7rem;font-weight:800;font-family:var(--font-mono);letter-spacing:0.04em;">KNEC CHIEF EXAMINER'S REPORT</span>
+        <h2 style="font-size:1.25rem;font-weight:800;margin-top:6px;color:var(--heading-color);font-family:var(--font-heading);" id="modalExamTitle">KCSE Paper 3 Comprehensive Score Card</h2>
+        <small style="color:var(--text-muted);" id="modalExamSub">Chemistry Practical Examination (40.0 Marks Total)</small>
       </div>
       <div style="text-align:right;">
-        <div id="modalCompositeGrade" style="font-size:2rem;font-weight:900;color:var(--amber-accent);line-height:1;font-family:var(--font-heading);">Grade E</div>
+        <div id="modalCompositeGrade" style="font-size:2.2rem;font-weight:900;color:var(--amber-accent);line-height:1;font-family:var(--font-heading);">Grade E</div>
         <div id="modalCompositeScore" style="font-size:0.88rem;color:var(--text-muted);font-weight:700;margin-top:4px;font-family:var(--font-mono);">0.0 / 40.0 Marks (0%)</div>
       </div>
     </div>
 
-    <!-- 3 Questions Comprehensive Performance Table -->
-    <div style="margin-bottom:18px;">
-      <table class="kcse-table">
+    <!-- 3 Questions Performance Overview Table -->
+    <div style="margin-bottom:16px;">
+      <table class="kcse-table" style="width:100%;">
         <thead>
           <tr>
             <th style="text-align:left;">Practical Examination Question</th>
@@ -671,7 +704,7 @@
             <td style="text-align:center;font-weight:800;color:var(--green-accent);font-family:var(--font-mono);" id="modalScoreQ2">0.0</td>
           </tr>
           <tr>
-            <td>🧫 <b>Question 3:</b> Organic Functional Group ID</td>
+            <td>🧫 <b>Question 3:</b> Organic Functional Group Analysis</td>
             <td style="text-align:center;color:var(--text-muted);font-family:var(--font-mono);">10.0</td>
             <td style="text-align:center;font-weight:800;color:var(--green-accent);font-family:var(--font-mono);" id="modalScoreQ3">0.0</td>
           </tr>
@@ -684,15 +717,30 @@
       </table>
     </div>
 
-    <!-- Pedagogical Feedback Box -->
-    <div id="modalCompositeFeedback" style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-left:4px solid var(--amber-accent);border-radius:8px;padding:12px 16px;font-size:0.82rem;line-height:1.55;color:var(--text-muted);margin-bottom:20px;">
+    <!-- Chief Examiner Feedback & Diagnostic Insights -->
+    <div id="modalCompositeFeedback" style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-left:4px solid var(--amber-accent);border-radius:8px;padding:12px 16px;font-size:0.84rem;line-height:1.55;color:var(--text-main);margin-bottom:16px;">
     </div>
 
-    <!-- Action Buttons -->
+    <!-- Diagnostic Remediation Checklist -->
+    <div style="margin-bottom:20px; background:var(--bg-dark); border:1px solid var(--card-border); border-radius:10px; padding:14px;">
+      <div style="font-weight:800; font-size:0.88rem; color:var(--heading-color); margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+        <span>📋</span> Detailed KNEC Rubric Evaluation &amp; Worked Solutions:
+      </div>
+      <div id="modalDetailedRubricBox" style="font-size:0.8rem; display:flex; flex-direction:column; gap:6px;">
+      </div>
+    </div>
+
+    <!-- Action Buttons & Targeted Remediation Links -->
     <div style="display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;">
-      <button class="top-action-btn" onclick="window.location.href='/student/home.html'">🏠 Return to Dashboard</button>
-      <button class="top-action-btn" onclick="printKCSEBooklet()">🖨️ Print Final Booklet</button>
-      <button class="btn-submit-exam" onclick="window.location.href='/student/history.html'">📊 View Full History →</button>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="top-action-btn" onclick="window.location.href='/student/mock_exams.html'">📚 Mock Hub</button>
+        <button class="top-action-btn" onclick="printKCSEBooklet()">🖨️ Print Booklet</button>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <a href="/student/lab.html" class="top-action-btn" style="background:rgba(56,189,248,0.1); color:#38BDF8; border-color:#38BDF8;">🧪 Practice Volumetric</a>
+        <a href="/student/qualitative.html" class="top-action-btn" style="background:rgba(16,185,129,0.1); color:#10B981; border-color:#10B981;">🧂 Practice Salts</a>
+        <button class="btn-submit-exam" onclick="window.location.href='/student/history.html'">📊 View History →</button>
+      </div>
     </div>
   </div>
 </div>
@@ -710,8 +758,14 @@
 
   const urlParams = new URLSearchParams(window.location.search);
   const assignmentId = urlParams.get('assignment') ? parseInt(urlParams.get('assignment'), 10) : null;
+  const seriesParam = urlParams.get('series') || 'series_1';
+  const modeParam = urlParams.get('mode') || 'strict';
 
-  let engine = new CompositeExamEngine();
+  let engine = new CompositeExamEngine({
+    presetKey: seriesParam,
+    mode: modeParam
+  });
+
   let activeTab = 1;
   let titrateInterval = null;
   let activeTrial = 1;
@@ -719,7 +773,6 @@
   // Q1 Flask Chemistry State
   let isPipetted = false;
   let indicatorDrops = 0;
-  let isFlaskPink = false;
 
   // Track dynamic stages for Question 2 & 3 test cards
   let q2TestStates = {};
@@ -728,13 +781,35 @@
   function initExamUI() {
     const p = engine.preset;
     document.getElementById('examSubTitle').textContent = p.title + ' — Code 233/3';
+    document.getElementById('printExamTitle').textContent = p.title.toUpperCase();
+    document.getElementById('modeIndicator').textContent = (engine.mode === 'strict') ? 'Official Timed (135m)' : 'Guided Practice';
+
+    // Hide or adjust step check buttons in strict exam mode
+    if (engine.mode === 'strict') {
+      document.querySelectorAll('.btn-check-step').forEach(btn => btn.style.display = 'none');
+    }
+
     document.getElementById('q1SolAName').textContent = 'Solution A: ' + p.q1.solutionA;
     document.getElementById('q1SolBName').textContent = 'Solution B: ' + p.q1.solutionB;
+    document.getElementById('q1IndicatorName').textContent = p.q1.indicator || 'Phenolphthalein Indicator';
     document.getElementById('q1EquationDisplay').textContent = p.q1.equation;
     document.getElementById('q1RfmDisplay').textContent = p.q1.acidRfm || 36.5;
 
-    document.getElementById('q2SampleName').textContent = p.q2.sampleName + ' (' + p.q2.trueSaltName + ')';
-    document.getElementById('q3SampleName').textContent = p.q3.sampleName + ' (' + p.q3.trueOrganicName + ')';
+    // Fixed integrity leak: Never expose true salt name or organic formula in candidate prompt!
+    document.getElementById('q2SampleName').textContent = p.q2.sampleName;
+    document.getElementById('q2SampleDescText').textContent = p.q2.sampleDesc || 'An inorganic salt sample.';
+    document.getElementById('q3SampleName').textContent = p.q3.sampleName;
+    document.getElementById('q3SampleDescText').textContent = p.q3.sampleDesc || 'An organic sample.';
+
+    // Update apparatus fill colors based on titrant
+    if (p.q1.titrantColor) {
+      const stop1 = document.getElementById('gradStop1');
+      const stop2 = document.getElementById('gradStop2');
+      if (stop1 && stop2) {
+        stop1.setAttribute('stop-color', p.q1.titrantColor);
+        stop2.setAttribute('stop-color', p.q1.titrantColor);
+      }
+    }
 
     renderQ2TestsGrid();
     renderQ3TestsGrid();
@@ -760,7 +835,6 @@
       document.getElementById('btnAddIndicator').textContent = `💧 Add Indicator (${indicatorDrops}/3)`;
       document.getElementById('indicatorStatus').textContent = `${indicatorDrops} of 3 Drops Added`;
       document.getElementById('indicatorStatus').style.color = 'var(--cyan-accent)';
-      isFlaskPink = true;
       updateFlaskAppearance();
     }
   }
@@ -768,6 +842,7 @@
   function updateFlaskAppearance() {
     const flask = document.getElementById('flaskRigBody');
     const label = document.getElementById('flaskContentsLabel');
+    const p = engine.preset.q1;
     if (!flask) return;
 
     if (!isPipetted) {
@@ -776,24 +851,24 @@
       return;
     }
 
-    if (indicatorDrops === 0) {
-      flask.setAttribute('fill', 'rgba(56,189,248,0.25)');
-      if (label) label.textContent = 'Conical Flask: 25.0 cm³ NaOH (Colorless)';
+    if (indicatorDrops === 0 && p.indicator !== 'Self-indicating (KMnO₄)') {
+      flask.setAttribute('fill', p.flaskBaseColor || 'rgba(56,189,248,0.25)');
+      if (label) label.textContent = 'Conical Flask: 25.0 cm³ Solution B (Unindicated)';
     } else {
-      const trueTitre = engine.preset.q1.trueTitre || 25.00;
+      const trueTitre = p.trueTitre || 25.00;
       if (engine.q1BuretteReading >= trueTitre) {
-        flask.setAttribute('fill', 'rgba(255,255,255,0.35)');
-        if (label) label.textContent = 'Conical Flask: Endpoint Reached (Colorless)';
+        flask.setAttribute('fill', p.endpointColor || 'rgba(255,255,255,0.35)');
+        if (label) label.textContent = 'Conical Flask: Characteristic Endpoint Reached';
       } else {
-        flask.setAttribute('fill', 'rgba(236,72,153,0.85)');
-        if (label) label.textContent = 'Conical Flask: 25.0 cm³ NaOH + Indicator (Pink)';
+        flask.setAttribute('fill', p.flaskIndicatorColor || 'rgba(236,72,153,0.85)');
+        if (label) label.textContent = 'Conical Flask: 25.0 cm³ Solution B + Indicator';
       }
     }
   }
 
   function addTitrantDirect(vol) {
-    if (!isPipetted || indicatorDrops === 0) {
-      alert('Please pipette Solution B and add indicator drops before titrating!');
+    if (!isPipetted) {
+      alert('Please pipette Solution B into the conical flask before titrating!');
       return;
     }
     engine.q1BuretteReading = Math.min(50.0, parseFloat((engine.q1BuretteReading + vol).toFixed(2)));
@@ -801,8 +876,8 @@
   }
 
   function startContinuousTitration() {
-    if (!isPipetted || indicatorDrops === 0) {
-      alert('Please pipette Solution B and add indicator drops before titrating!');
+    if (!isPipetted) {
+      alert('Please pipette Solution B into the conical flask before titrating!');
       return;
     }
     stopTitrate();
@@ -975,7 +1050,7 @@
       const exp = (p.trueBaseMolarity * p.pipetteVolume) / 1000.0;
       if (!isNaN(val) && Math.abs(val - exp) / exp <= 0.08) {
         fb.className = 'step-feedback-msg step-feedback-success';
-        fb.textContent = `✓ Correct! Moles of NaOH = ${val} mol.`;
+        fb.textContent = `✓ Correct! Moles = ${val} mol.`;
       } else {
         fb.className = 'step-feedback-msg step-feedback-fail';
         fb.textContent = `Formula: (Molarity × 25.0 cm³) / 1000 = ${exp.toFixed(5)} mol.`;
@@ -988,7 +1063,7 @@
         fb.textContent = `✓ Correct! Stoichiometric moles of acid = ${val} mol.`;
       } else {
         fb.className = 'step-feedback-msg step-feedback-fail';
-        fb.textContent = `Expected around ${exp.toFixed(5)} mol based on balanced equation.`;
+        fb.textContent = `Expected around ${exp.toFixed(5)} mol based on mole ratio ${p.moleRatioAcid}:${p.moleRatioBase}.`;
       }
     } else if (letter === 'd') {
       const val = parseFloat(document.getElementById('ansMolarityA').value);
@@ -1025,7 +1100,7 @@
 
       let actionBtn = '';
       if (!st.performed) {
-        actionBtn = `<button class="btn-perform-test" onclick="performQ2TestStage('${t.id}', 'stage1')">🧪 Add Reagent & Perform Test</button>`;
+        actionBtn = `<button class="btn-perform-test" onclick="performQ2TestStage('${t.id}', 'stage1')">🧪 Add Reagent &amp; Perform Test</button>`;
       } else if (st.stage === 'stage1' && (t.id === 'q2_naoh' || t.id === 'q2_nh3')) {
         actionBtn = `
           <button class="btn-perform-test btn-step-excess" onclick="performQ2TestStage('${t.id}', 'excess')">💧 Add in Excess</button>
@@ -1193,7 +1268,7 @@
 
     const p = engine.preset.q2;
     if (testId === 'q2_appearance') {
-      st.statusLabel = 'Solubility: Dissolves to form clear solution';
+      st.statusLabel = 'Appearance / Solubility Observed';
     } else if (testId === 'q2_naoh') {
       if (stage === 'stage1') {
         st.statusLabel = 'Few Drops: Precipitate formed';
@@ -1227,6 +1302,7 @@
       'Dirty green ppt formed',
       'Pale blue ppt formed',
       'Yellow ppt formed with KI',
+      'Dense white ppt with Ba(NO₃)₂',
       'Dissolves to form colorless solution'
     ];
     return items.map(txt => `<span class="sugg-chip" onclick="insertSuggestion('q2Obs_${testId}', '${txt}')">+ ${txt}</span>`).join('');
@@ -1236,11 +1312,12 @@
     const items = [
       'Pb²⁺, Al³⁺ or Zn²⁺ present',
       'Pb²⁺ confirmed',
-      'Fe²⁺ present',
-      'Cu²⁺ present',
+      'Zn²⁺ confirmed',
+      'Fe²⁺ confirmed',
+      'Cu²⁺ confirmed',
       'SO₄²⁻ confirmed present',
       'NO₃⁻ present',
-      'Ca²⁺ or Mg²⁺ present'
+      'Cl⁻ confirmed present'
     ];
     return items.map(txt => `<span class="sugg-chip" onclick="insertSuggestion('q2Inf_${testId}', '${txt}')">+ ${txt}</span>`).join('');
   }
@@ -1340,7 +1417,7 @@
     const orgKey = p.trueOrganicKey || 'Ethanol';
 
     if (testId === 'q3_ignition') {
-      const isSooty = orgKey.includes('Cyclo') || orgKey.includes('Ethyne');
+      const isSooty = orgKey.includes('Cyclo') || orgKey.includes('Benzoic');
       return `
         <svg width="100" height="136" viewBox="0 0 100 136">
           <rect x="10" y="80" width="80" height="8" rx="2" fill="#94A3B8" />
@@ -1371,11 +1448,11 @@
     const p = engine.preset.q3;
 
     if (testId === 'q3_ignition') {
-      st.statusLabel = p.trueOrganicKey.includes('Cyclo') ? 'Ignition: Smoky sooty flame' : 'Ignition: Clear non-sooty blue flame';
+      st.statusLabel = (p.trueOrganicKey.includes('Cyclo') || p.trueOrganicKey.includes('Benzoic')) ? 'Ignition: Smoky sooty flame' : 'Ignition: Clear non-sooty blue flame';
     } else if (testId === 'q3_litmus') {
       st.statusLabel = p.trueOrganicKey.includes('Acid') ? 'Litmus: Turns moist blue litmus red' : 'Litmus: Neutral, no color change';
     } else if (testId === 'q3_kmno4') {
-      st.statusLabel = 'KMnO₄ Added: Decolorization observed';
+      st.statusLabel = 'Reaction: Decolorization / change observed';
     } else if (testId === 'q3_nahco3') {
       st.statusLabel = p.trueOrganicKey.includes('Acid') ? 'NaHCO₃: Vigorous effervescence of CO₂' : 'NaHCO₃: No effervescence';
     }
@@ -1396,6 +1473,7 @@
       'Moist blue litmus turns red',
       'No effect on red or blue litmus',
       'Purple KMnO₄ decolorized',
+      'Bromine water rapidly decolorized',
       'Vigorous effervescence of gas'
     ];
     return items.map(txt => `<span class="sugg-chip" onclick="insertSuggestion('q3Obs_${testId}', '${txt}')">+ ${txt}</span>`).join('');
@@ -1519,11 +1597,12 @@
     }
   }, 1000);
 
-  // ── Exam Submission ──────────────────────────────────────────────────
+  // ── Exam Submission & Chief Examiner Interactive Review ─────────────
   async function submitCompositeExam() {
     clearInterval(timerInterval);
     const evalData = engine.evaluateExam();
 
+    document.getElementById('modalExamTitle').textContent = evalData.examTitle;
     document.getElementById('modalCompositeGrade').textContent = `Grade ${evalData.grade}`;
     document.getElementById('modalCompositeScore').textContent = `${evalData.totalScore.toFixed(1)} / 40.0 Marks (${evalData.percentage}%)`;
     document.getElementById('modalScoreQ1').textContent = evalData.q1Score.toFixed(1);
@@ -1532,12 +1611,53 @@
     document.getElementById('modalScoreTotal').textContent = evalData.totalScore.toFixed(1);
 
     const feedbackEl = document.getElementById('modalCompositeFeedback');
+    let summaryMsg = '';
     if (evalData.percentage >= 75) {
-      feedbackEl.innerHTML = '<b>🏆 Exemplary KCSE Paper 3 Mastery!</b> You demonstrated excellent procedural rigor across volumetric analysis, cation/anion ledger inferences, and organic functional group identification.';
+      summaryMsg = '<b>🏆 Exemplary KCSE Paper 3 Performance!</b> You demonstrated excellent procedural rigor across volumetric analysis, cation/anion ledger inferences, and organic functional group identification.';
     } else if (evalData.percentage >= 50) {
-      feedbackEl.innerHTML = '<b>👍 Competent KCSE Performance!</b> Good understanding of fundamental techniques. Review titrimetric indicator accuracy and confirming tests for organic functional groups.';
+      summaryMsg = '<b>👍 Competent KCSE Practical Performance!</b> Good understanding of fundamental techniques. Review titrimetric indicator accuracy, concordant titre rules, and confirming tests for functional groups.';
     } else {
-      feedbackEl.innerHTML = '<b>📖 Revision Recommended.</b> Focus on recording observations precisely to 1 decimal place, mastering the solubility table, and confirming tests with acidified KMnO₄ and NaHCO₃.';
+      summaryMsg = '<b>📖 Intensive Practical Revision Recommended.</b> Focus on recording observations to 2 decimal places, mastering the cation/anion solubility table, and confirming tests with acidified KMnO₄ and NaHCO₃.';
+    }
+
+    if (evalData.diagnosticNotes && evalData.diagnosticNotes.length > 0) {
+      summaryMsg += '<div style="margin-top:8px; font-weight:700; color:var(--amber-accent);">Chief Examiner Diagnostic Advice:</div><ul style="margin:4px 0 0 16px; padding:0;">' +
+        evalData.diagnosticNotes.map(n => `<li>${n}</li>`).join('') + '</ul>';
+    }
+    feedbackEl.innerHTML = summaryMsg;
+
+    // Populate Detailed Item-by-Item Rubric Box
+    const rubricBox = document.getElementById('modalDetailedRubricBox');
+    if (rubricBox) {
+      const q1Rubric = evalData.q1Details.rubric || [];
+      const q2Rubric = evalData.q2Details.rubric || [];
+      const q3Rubric = evalData.q3Details.rubric || [];
+
+      let rubricHtml = '<div style="font-weight:800; color:var(--cyan-accent); margin-top:4px;">🧪 Q1 Volumetric Analysis:</div>';
+      rubricHtml += q1Rubric.map(r => `
+        <div class="rubric-item-row">
+          <span>${r.pass ? '✅' : '❌'} ${r.item}</span>
+          <span style="font-family:var(--font-mono); font-weight:700; color:${r.pass ? 'var(--green-accent)' : 'var(--red-accent)'};">${r.mark.toFixed(1)} / ${r.max.toFixed(1)}</span>
+        </div>
+      `).join('');
+
+      rubricHtml += '<div style="font-weight:800; color:var(--cyan-accent); margin-top:8px;">🧂 Q2 Qualitative Analysis:</div>';
+      rubricHtml += q2Rubric.map(r => `
+        <div class="rubric-item-row">
+          <span>${r.pass ? '✅' : '❌'} ${r.item}</span>
+          <span style="font-family:var(--font-mono); font-weight:700; color:${r.pass ? 'var(--green-accent)' : 'var(--red-accent)'};">${r.mark.toFixed(1)} / ${r.max.toFixed(1)}</span>
+        </div>
+      `).join('');
+
+      rubricHtml += '<div style="font-weight:800; color:var(--cyan-accent); margin-top:8px;">🧫 Q3 Organic Analysis:</div>';
+      rubricHtml += q3Rubric.map(r => `
+        <div class="rubric-item-row">
+          <span>${r.pass ? '✅' : '❌'} ${r.item}</span>
+          <span style="font-family:var(--font-mono); font-weight:700; color:${r.pass ? 'var(--green-accent)' : 'var(--red-accent)'};">${r.mark.toFixed(1)} / ${r.max.toFixed(1)}</span>
+        </div>
+      `).join('');
+
+      rubricBox.innerHTML = rubricHtml;
     }
 
     document.getElementById('compositeResultModal').style.display = 'flex';

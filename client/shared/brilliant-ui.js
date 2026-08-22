@@ -147,10 +147,10 @@
         },
         {
           id: 'nav-exam',
-          href: `${basePath}composite_exam.html`,
+          href: `${basePath}mock_exams.html`,
           icon: '📝',
-          label: 'KCSE Exam',
-          match: ['composite_exam.html', 'cpcat_assessment.html']
+          label: 'KCSE Mocks',
+          match: ['mock_exams.html', 'composite_exam.html', 'cpcat_assessment.html']
         },
         {
           id: 'nav-history',

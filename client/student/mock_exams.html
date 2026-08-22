@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>KCSE Chemistry Paper 3 Mock Examination Center | VirtuLab Kenya</title>
+<meta name="description" content="Simulate official KNEC KCSE Chemistry Paper 3 (233/3) national mock practical exams with timed simulations, comprehensive marking rubrics, and detailed examiner reports.">
+<script>
+  var t = localStorage.getItem('vlk_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', t);
+</script>
+<meta name="theme-color" content="#0F172A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VirtuLab">
+<link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.json">
+
+<!-- Academic & Technical Typography -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/style.css">
+<link rel="stylesheet" href="../shared/brilliant-theme.css">
+<link rel="stylesheet" href="css/dashboard.css">
+<link rel="stylesheet" href="css/composite_exam.css">
+
+<style>
+  :root, [data-theme="light"] {
+    --acad-oxford: #0B2545;
+    --acad-navy: #134074;
+    --acad-gold: #B8860B;
+    --acad-gold-subtle: rgba(184, 134, 11, 0.12);
+    --acad-gold-border: rgba(184, 134, 11, 0.35);
+    --acad-emerald: #0F5132;
+    --acad-paper: #FFFFFF;
+    --acad-paper-subtle: #F8FAFC;
+    --acad-border: #E2E8F0;
+    --text-primary: #0F172A;
+    --text-muted: #64748B;
+  }
+  [data-theme="dark"] {
+    --acad-oxford: #38BDF8;
+    --acad-navy: #60A5FA;
+    --acad-gold: #F59E0B;
+    --acad-gold-subtle: rgba(245, 158, 11, 0.15);
+    --acad-gold-border: rgba(245, 158, 11, 0.4);
+    --acad-emerald: #10B981;
+    --acad-paper: #0F172A;
+    --acad-paper-subtle: #1E293B;
+    --acad-border: #334155;
+    --text-primary: #F8FAFC;
+    --text-muted: #94A3B8;
+  }
+  [data-theme="green"] {
+    --acad-oxford: #34D399;
+    --acad-navy: #10B981;
+    --acad-gold: #EAB308;
+    --acad-gold-subtle: rgba(234, 179, 8, 0.15);
+    --acad-gold-border: rgba(234, 179, 8, 0.4);
+    --acad-emerald: #34D399;
+    --acad-paper: #061F10;
+    --acad-paper-subtle: #0E2E1A;
+    --acad-border: #1B4D2B;
+    --text-primary: #F0FDF4;
+    --text-muted: #86C198;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-main);
+    min-height: 100vh;
+    margin: 0;
+  }
+
+  .mock-hub-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 20px 60px;
+  }
+
+  .hero-banner-mock {
+    background: linear-gradient(135deg, rgba(184, 134, 11, 0.12), rgba(11, 37, 69, 0.08));
+    border: 1.5px solid var(--acad-gold-border);
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .mode-selector-pill {
+    display: inline-flex;
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    border-radius: 50px;
+    padding: 4px;
+    gap: 4px;
+  }
+
+  .mode-pill-btn {
+    border: none;
+    background: transparent;
+    padding: 8px 18px;
+    border-radius: 50px;
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .mode-pill-btn.active {
+    background: var(--acad-gold);
+    color: #FFFFFF;
+    box-shadow: 0 2px 8px rgba(184, 134, 11, 0.35);
+  }
+
+  .series-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+    margin-bottom: 36px;
+  }
+
+  .series-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .series-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--acad-gold);
+  }
+
+  .series-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 3px 10px;
+    border-radius: 6px;
+    background: var(--acad-gold-subtle);
+    color: var(--acad-gold);
+    border: 1px solid var(--acad-gold-border);
+    margin-bottom: 12px;
+  }
+
+  .series-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.12rem;
+    font-weight: 800;
+    color: var(--heading-color);
+    margin: 0 0 10px 0;
+    line-height: 1.35;
+  }
+
+  .series-questions-list {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0 18px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.84rem;
+    color: var(--text-main);
+  }
+
+  .series-q-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.4;
+  }
+
+  .series-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--card-border);
+    padding-top: 14px;
+    margin-top: 6px;
+  }
+
+  .btn-start-series {
+    background: linear-gradient(135deg, var(--acad-gold), #9A7B0C);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 18px;
+    font-size: 0.86rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+
+  .btn-start-series:hover {
+    opacity: 0.95;
+    transform: translateY(-1px);
+  }
+
+  .mini-mocks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+
+  .mini-mock-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 18px;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.15s ease;
+  }
+
+  .mini-mock-card:hover {
+    border-color: var(--blue-accent);
+    transform: translateY(-2px);
+  }
+
+  .mini-mock-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+
+  .history-table-container {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+</style>
+</head>
+<body>
+
+<!-- Academic Top Navigation -->
+<nav class="top-navbar">
+  <a href="/student/home.html" class="nav-brand">
+    <span style="font-size:1.25rem;">🏆</span>
+    <span>VirtuLab Kenya</span>
+    <span class="nav-brand-badge">KCSE PAPER 3 MOCK CENTER</span>
+  </a>
+  <div class="nav-actions">
+    <a href="/student/home.html" class="top-action-btn">🏠 Student Workstation</a>
+    <a href="/student/history.html" class="top-action-btn">📜 Full History</a>
+  </div>
+</nav>
+
+<div class="mock-hub-wrap">
+
+  <!-- Header & Mode Switcher -->
+  <div class="hero-banner-mock">
+    <div>
+      <div style="font-family:'Cinzel', serif; font-size:1.45rem; font-weight:900; color:var(--heading-color); margin-bottom:6px;">
+        🇰🇪 KNEC KCSE Chemistry Paper 3 Mock Examinations
+      </div>
+      <div style="font-size:0.9rem; color:var(--text-muted); max-width:650px; line-height:1.5;">
+        Standardized 40-Mark composite practical examinations mapped directly to the KNEC Paper 3 (233/3) syllabus. Complete full-length papers or targeted section sprints with precision virtual glassware.
+      </div>
+    </div>
+
+    <!-- Mode Selector Controls -->
+    <div>
+      <div style="font-size:0.75rem; font-weight:800; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px; letter-spacing:0.04em;">
+        Select Examination Mode:
+      </div>
+      <div class="mode-selector-pill">
+        <button type="button" class="mode-pill-btn active" id="btnModeStrict" onclick="setExamMode('strict')">
+          ⏱️ Official Timed (135m)
+        </button>
+        <button type="button" class="mode-pill-btn" id="btnModeGuided" onclick="setExamMode('guided')">
+          💡 Guided Practice
+        </button>
+      </div>
+      <div id="modeHelpText" style="font-size:0.75rem; color:var(--text-muted); margin-top:6px;">
+        Strict Mode: 2h 15m timer, locked hints, official KNEC marking rubric.
+      </div>
+    </div>
+  </div>
+
+  <!-- Adaptive Random Mock Banner -->
+  <div style="background:linear-gradient(135deg, rgba(56,189,248,0.1), rgba(16,185,129,0.08)); border:1.5px dashed var(--blue-accent); border-radius:14px; padding:20px 24px; margin-bottom:28px; display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;">
+    <div style="display:flex; align-items:center; gap:14px;">
+      <div style="font-size:2rem;">🎲</div>
+      <div>
+        <div style="font-weight:800; font-size:1.05rem; color:var(--heading-color);">
+          Adaptive Randomized KCSE National Mock Generator
+        </div>
+        <div style="font-size:0.84rem; color:var(--text-muted); margin-top:2px;">
+          Dynamically samples 1 Quantitative Titration, 1 Qualitative Salt, and 1 Organic module with randomized concentrations.
+        </div>
+      </div>
+    </div>
+    <button type="button" class="btn-start-series" style="background:linear-gradient(135deg, #0284C7, #0369A1);" onclick="launchSeries('random')">
+      ⚡ Generate &amp; Start Adaptive Paper →
+    </button>
+  </div>
+
+  <!-- 6 National Mock Exam Series Grid -->
+  <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:16px;">
+    <div>
+      <h2 style="font-family:'Cinzel', serif; font-size:1.25rem; font-weight:800; color:var(--heading-color); margin:0;">
+        National KCSE Mock Examination Series (40.0 Marks Each)
+      </h2>
+      <p style="font-size:0.84rem; color:var(--text-muted); margin:4px 0 0 0;">
+        6 standardized examination series reflecting KNEC Paper 3 past trends and curriculum variations.
+      </p>
+    </div>
+  </div>
+
+  <div class="series-grid" id="seriesContainer">
+    <!-- Series cards populated dynamically -->
+  </div>
+
+  <!-- Modular Section Sprints -->
+  <div style="margin-bottom:16px;">
+    <h2 style="font-family:'Cinzel', serif; font-size:1.2rem; font-weight:800; color:var(--heading-color); margin:0;">
+      ⚡ Modular Paper 3 Section Sprints
+    </h2>
+    <p style="font-size:0.84rem; color:var(--text-muted); margin:4px 0 0 0;">
+      Targeted single-question practice sessions to master specific practical competencies.
+    </p>
+  </div>
+
+  <div class="mini-mocks-grid">
+    <a href="/student/lab.html" class="mini-mock-card">
+      <div class="mini-mock-icon" style="background:rgba(56,189,248,0.15); color:#0284C7;">🧪</div>
+      <div>
+        <div style="font-weight:800; font-size:0.92rem; color:var(--heading-color);">Volumetric Analysis Sprint</div>
+        <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">Question 1 Focus · 15.0 Marks · Titration table &amp; stoichiometry</div>
+      </div>
+    </a>
+
+    <a href="/student/qualitative.html" class="mini-mock-card">
+      <div class="mini-mock-icon" style="background:rgba(16,185,129,0.15); color:#059669;">🧂</div>
+      <div>
+        <div style="font-weight:800; font-size:0.92rem; color:var(--heading-color);">Qualitative Salt Analysis Sprint</div>
+        <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">Question 2 Focus · 15.0 Marks · Cation &amp; anion observation ledger</div>
+      </div>
+    </a>
+
+    <a href="/student/organic.html" class="mini-mock-card">
+      <div class="mini-mock-icon" style="background:rgba(245,158,11,0.15); color:#D97706;">🧫</div>
+      <div>
+        <div style="font-weight:800; font-size:0.92rem; color:var(--heading-color);">Organic Chemistry Sprint</div>
+        <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">Question 3 Focus · 10.0 Marks · Flame, unsaturation &amp; functional groups</div>
+      </div>
+    </a>
+
+    <a href="/student/energy.html" class="mini-mock-card">
+      <div class="mini-mock-icon" style="background:rgba(239,68,68,0.15); color:#DC2626;">🔥</div>
+      <div>
+        <div style="font-weight:800; font-size:0.92rem; color:var(--heading-color);">Thermochemistry Sprint</div>
+        <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">Enthalpy of Neutralization &amp; Displacement calorimetry</div>
+      </div>
+    </a>
+  </div>
+
+  <!-- Past Mock Exam Attempts History -->
+  <div style="margin-top:36px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+      <h2 style="font-family:'Cinzel', serif; font-size:1.2rem; font-weight:800; color:var(--heading-color); margin:0;">
+        📜 Your Mock Examination History &amp; Grade Ledger
+      </h2>
+      <button class="top-action-btn" onclick="loadExamHistory()">🔄 Refresh</button>
+    </div>
+
+    <div class="history-table-container">
+      <div id="mockHistoryBox" style="padding:16px;">
+        <div class="empty">Loading your KCSE mock practical examination attempts…</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="/shared/api.js"></script>
+<script src="/shared/page-transitions.js"></script>
+<script src="js/composite-engine.js"></script>
+<script>
+  requireStudentLogin();
+  let currentExamMode = 'strict';
+
+  const SERIES_DATA = [
+    {
+      key: 'series_1',
+      num: 1,
+      title: 'Series 1: National Classic Mock',
+      badge: 'National Standard · Acid-Base & Heavy Metals',
+      q1: '0.100 M HCl vs NaOH (4.00 g/dm³)',
+      q2: 'Solid Y: Lead(II) Nitrate Analysis (Pb²⁺ / NO₃⁻)',
+      q3: 'Liquid Z: Ethanol Alkanol Analysis (C₂H₅OH)'
+    },
+    {
+      key: 'series_2',
+      num: 2,
+      title: 'Series 2: Carbonate Stoichiometry Mock',
+      badge: 'Carbonate Stoichiometry & Iron(II) Vitriol',
+      q1: '0.100 M HCl vs Na₂CO₃ (5.30 g/dm³)',
+      q2: 'Solid Y: Iron(II) Sulfate Analysis (Fe²⁺ / SO₄²⁻)',
+      q3: 'Liquid Z: Ethanoic Acid Carboxylic Group (CH₃COOH)'
+    },
+    {
+      key: 'series_3',
+      num: 3,
+      title: 'Series 3: Redox & Hydrocarbon Mock',
+      badge: 'Redox Volumetric Analysis & Alkene Decolorization',
+      q1: '0.020 M KMnO₄ vs Acidified Fe²⁺ (39.2 g/dm³)',
+      q2: 'Solid Y: Zinc Sulfate Analysis (Zn²⁺ / SO₄²⁻)',
+      q3: 'Liquid Z: Cyclohexene Unsaturated Double Bond (>C=C<)'
+    },
+    {
+      key: 'series_4',
+      num: 4,
+      title: 'Series 4: Thermochemistry & Transition Metal',
+      badge: 'Thermochemistry Enthalpy & Transition Metals',
+      q1: '1.00 M HNO₃ vs 1.00 M KOH (Neutralization Enthalpy)',
+      q2: 'Solid Y: Copper(II) Sulfate Analysis (Cu²⁺ / SO₄²⁻)',
+      q3: 'Liquid Z: Propan-1-ol Alkanol Oxidation (C₃H₇OH)'
+    },
+    {
+      key: 'series_5',
+      num: 5,
+      title: 'Series 5: Two-Salt Mixture Separation Mock',
+      badge: 'Dibasic Volumetric & Two-Salt Mixture Separation',
+      q1: '0.050 M H₂SO₄ vs 0.100 M NaOH (Dibasic Titration)',
+      q2: 'Solid Mixture P: Separation & Filtrate/Residue Testing (ZnSO₄ + BaSO₄)',
+      q3: 'Liquid Z: Methanoic Acid Reduction & Effervescence (HCOOH)'
+    },
+    {
+      key: 'series_6',
+      num: 6,
+      title: 'Series 6: Reaction Kinetics & Ammonium Salt',
+      badge: 'Reaction Kinetics & Ammonium Sublimation',
+      q1: '0.100 M Ethanedioic Acid vs 0.200 M NaOH',
+      q2: 'Solid Y: Ammonium Chloride Sublimation & Gas Test (NH₄Cl)',
+      q3: 'Solid Z: Benzoic Acid Aromatic Carboxylic Acid'
+    }
+  ];
+
+  function renderSeriesCards() {
+    const container = document.getElementById('seriesContainer');
+    if (!container) return;
+
+    container.innerHTML = SERIES_DATA.map(s => `
+      <div class="series-card">
+        <div>
+          <div class="series-badge">${s.badge}</div>
+          <h3 class="series-title">${s.title}</h3>
+          
+          <ul class="series-questions-list">
+            <li class="series-q-item">
+              <span>🧪</span>
+              <div><b>Q1 (15M):</b> ${s.q1}</div>
+            </li>
+            <li class="series-q-item">
+              <span>🧂</span>
+              <div><b>Q2 (15M):</b> ${s.q2}</div>
+            </li>
+            <li class="series-q-item">
+              <span>🧫</span>
+              <div><b>Q3 (10M):</b> ${s.q3}</div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="series-card-footer">
+          <span style="font-size:0.8rem; font-weight:700; color:var(--text-muted); font-family:var(--font-mono);">
+            ⏱️ 135 Mins · 40 Marks
+          </span>
+          <button type="button" class="btn-start-series" onclick="launchSeries('${s.key}')">
+            Start Paper 3 →
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function setExamMode(mode) {
+    currentExamMode = mode;
+    const btnStrict = document.getElementById('btnModeStrict');
+    const btnGuided = document.getElementById('btnModeGuided');
+    const help = document.getElementById('modeHelpText');
+
+    if (mode === 'strict') {
+      btnStrict.className = 'mode-pill-btn active';
+      btnGuided.className = 'mode-pill-btn';
+      help.textContent = 'Strict Mode: 2h 15m timer, locked hints, official KNEC marking rubric.';
+    } else {
+      btnStrict.className = 'mode-pill-btn';
+      btnGuided.className = 'mode-pill-btn active';
+      help.textContent = 'Guided Mode: Self-paced practice, step checks, and AI chemistry tutor hints enabled.';
+    }
+  }
+
+  function launchSeries(seriesKey) {
+    window.location.href = `/student/composite_exam.html?series=${encodeURIComponent(seriesKey)}&mode=${encodeURIComponent(currentExamMode)}`;
+  }
+
+  async function loadExamHistory() {
+    const box = document.getElementById('mockHistoryBox');
+    if (!box) return;
+
+    try {
+      let sessions = [];
+      if (window.Composite && Composite.getMine) {
+        const res = await Composite.getMine();
+        sessions = res.sessions || [];
+      } else {
+        const res = await apiRequest('GET', '/composite/mine');
+        sessions = res.sessions || [];
+      }
+
+      if (sessions.length === 0) {
+        // Check local storage fallback
+        const last = localStorage.getItem('vlk_last_composite_session');
+        if (last) {
+          sessions = [JSON.parse(last)];
+        }
+      }
+
+      if (sessions.length === 0) {
+        box.innerHTML = '<div class="empty" style="padding:24px; text-align:center; color:var(--text-muted);">No KCSE mock examination attempts recorded yet. Choose a series above to take your first 40-mark paper!</div>';
+        return;
+      }
+
+      box.innerHTML = `
+        <table class="knec-table" style="width:100%; border-collapse:collapse;">
+          <thead>
+            <tr>
+              <th style="text-align:left;">Mock Examination Paper</th>
+              <th style="text-align:center;">Q1 (15M)</th>
+              <th style="text-align:center;">Q2 (15M)</th>
+              <th style="text-align:center;">Q3 (10M)</th>
+              <th style="text-align:center;">Total (40M)</th>
+              <th style="text-align:center;">KNEC Grade</th>
+              <th style="text-align:center;">Duration</th>
+              <th style="text-align:center;">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${sessions.map(s => {
+              const dt = s.created_at ? new Date(s.created_at).toLocaleDateString('en-GB') : 'Recent';
+              const mins = Math.round((s.duration_seconds || 0) / 60);
+              return `
+                <tr>
+                  <td><b>${escapeHtml(s.exam_title || 'KCSE Paper 3 Mock Practical')}</b></td>
+                  <td style="text-align:center; font-family:var(--font-mono); font-weight:700;">${Number(s.q1_score || 0).toFixed(1)}</td>
+                  <td style="text-align:center; font-family:var(--font-mono); font-weight:700;">${Number(s.q2_score || 0).toFixed(1)}</td>
+                  <td style="text-align:center; font-family:var(--font-mono); font-weight:700;">${Number(s.q3_score || 0).toFixed(1)}</td>
+                  <td style="text-align:center; font-family:var(--font-mono); font-weight:800; color:var(--amber-accent);">${Number(s.total_score || 0).toFixed(1)}</td>
+                  <td style="text-align:center;"><span class="knec-grade-chip grade-${(s.grade || 'E').toLowerCase()}">${escapeHtml(s.grade || 'E')}</span></td>
+                  <td style="text-align:center; color:var(--text-muted); font-size:0.8rem;">${mins} mins</td>
+                  <td style="text-align:center; color:var(--text-muted); font-size:0.8rem;">${dt}</td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      `;
+    } catch (e) {
+      box.innerHTML = `<div class="empty" style="color:var(--text-muted);">Could not load past sessions: ${escapeHtml(e.message)}</div>`;
+    }
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  renderSeriesCards();
+  loadExamHistory();
+</script>
+<script src="/shared/brilliant-ui.js"></script>
+</body>
+</html>

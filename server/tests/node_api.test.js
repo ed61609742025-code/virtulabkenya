@@ -1206,6 +1206,64 @@ describe('VirtuLab Kenya — Backend API Test Suite', () => {
     assert.strictEqual(submitBody.session.grade, 'A');
   });
 
+  it('CompositeExamEngine — should instantiate all 6 national series and evaluate 40-mark KNEC scoring correctly', () => {
+    const { COMPOSITE_EXAM_PRESETS, CompositeExamEngine, generateRandomCompositePreset } = require('../../client/student/js/composite-engine');
+
+    // 1. Verify all 6 series exist with Q1, Q2, Q3
+    const seriesKeys = ['series_1', 'series_2', 'series_3', 'series_4', 'series_5', 'series_6'];
+    seriesKeys.forEach(k => {
+      assert.ok(COMPOSITE_EXAM_PRESETS[k], `Series ${k} must exist`);
+      assert.ok(COMPOSITE_EXAM_PRESETS[k].q1, `Series ${k} Q1 must exist`);
+      assert.ok(COMPOSITE_EXAM_PRESETS[k].q2, `Series ${k} Q2 must exist`);
+      assert.ok(COMPOSITE_EXAM_PRESETS[k].q3, `Series ${k} Q3 must exist`);
+    });
+
+    // 2. Verify randomized paper generator
+    const randomPaper = generateRandomCompositePreset();
+    assert.ok(randomPaper);
+    assert.strictEqual(randomPaper.durationMinutes, 135);
+    assert.ok(randomPaper.q1 && randomPaper.q2 && randomPaper.q3);
+
+    // 3. Test Series 3 (Redox Titration) engine evaluation
+    const engine = new CompositeExamEngine({ presetKey: 'series_3' });
+    
+    // Simulate candidate recording 3 concordant trials
+    engine.recordTrial(1, 25.00, 0.00);
+    engine.recordTrial(2, 25.00, 0.00);
+    engine.recordTrial(3, 25.00, 0.00);
+    engine.setConcordant(1, true);
+    engine.setConcordant(2, true);
+    engine.setConcordant(3, true);
+
+    engine.setQ1Answer('avgTitre', '25.00');
+    engine.setQ1Answer('molesB', '0.00250');
+    engine.setQ1Answer('molesA', '0.00050');
+    engine.setQ1Answer('molarityA', '0.020');
+    engine.setQ1Answer('concGrams', '3.16');
+
+    // Simulate candidate Q2 deductions
+    engine.setQ2Response('q2_appearance', 'White crystalline solid, dissolves to clear solution', 'Soluble salt');
+    engine.setQ2Response('q2_naoh', 'White precipitate formed, dissolves in excess', 'Zn2+ or Al3+ present');
+    engine.setQ2Response('q2_nh3', 'White precipitate formed, dissolves completely in excess aqueous ammonia', 'Zn2+ confirmed');
+    engine.setQ2Response('q2_anion', 'Dense white precipitate insoluble in nitric acid', 'SO42- confirmed');
+    engine.setQ2Deduction('Zn2+', 'SO42-');
+
+    // Simulate candidate Q3 deductions
+    engine.setQ3Response('q3_ignition', 'Burns with luminous smoky yellow sooty flame', 'Unsaturated compound');
+    engine.setQ3Response('q3_litmus', 'No change on litmus paper', 'Neutral hydrocarbon');
+    engine.setQ3Response('q3_kmno4', 'Purple KMnO4 solution rapidly decolorized', 'Alkene present');
+    engine.setQ3Response('q3_nahco3', 'Bromine water rapidly decolorized in dark', 'Double bond confirmed');
+    engine.setQ3Deduction('Alkene (>C=C<)');
+
+    const evaluation = engine.evaluateExam();
+    assert.strictEqual(evaluation.grade, 'A');
+    assert.ok(evaluation.totalScore >= 35.0, `Evaluation total score was ${evaluation.totalScore}`);
+    assert.strictEqual(evaluation.maxScore, 40.0);
+    assert.ok(evaluation.q1Details.rubric.length > 0);
+    assert.ok(evaluation.q2Details.rubric.length > 0);
+    assert.ok(evaluation.q3Details.rubric.length > 0);
+  });
+
   /* 23. SOLUBILITY CURVES & TEACHER CLASS VIEW */
   it('GET /api/solubility/class — should allow teacher to view class solubility sessions', async () => {
     pool.query = async (queryText) => {

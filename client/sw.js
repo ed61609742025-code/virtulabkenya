@@ -53,6 +53,7 @@ const PRECACHE_ASSETS = [
   '/student/login.html',
   '/student/register.html',
   '/student/composite_exam.html',
+  '/student/mock_exams.html',
   '/student/certificate.html',
   '/student/speed_battle.html',
   '/student/css/lab.css',

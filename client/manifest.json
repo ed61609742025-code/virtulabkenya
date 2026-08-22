@@ -93,10 +93,10 @@
       "icons": [{ "src": "/shared/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "40-Mark KCSE Mock Exam",
-      "short_name": "Mock Exam",
-      "description": "Complete 40-Mark Paper 3 Practical Mock Exam",
-      "url": "/student/composite_exam.html",
+      "name": "KCSE Paper 3 Mock Exams",
+      "short_name": "Mock Exams",
+      "description": "Standardized 40-Mark Paper 3 Mock Practical Examinations",
+      "url": "/student/mock_exams.html",
       "icons": [{ "src": "/shared/icon-192.png", "sizes": "192x192" }]
     }
   ]

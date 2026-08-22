@@ -651,10 +651,12 @@
     const modeQuestions = QUESTIONS_POOL.filter(modeConfig.filter);
     shuffledQuestions = [...(modeQuestions.length > 0 ? modeQuestions : QUESTIONS_POOL)].sort(() => Math.random() - 0.5);
     currentQIndex = 0;
-
-    document.getElementById('battleStartCard').style.display = 'none';
-    document.getElementById('battleGameOverCard').style.display = 'none';
-    document.getElementById('battleArenaCard').style.display = 'block';
+    const startCard = document.getElementById('battleStartCard');
+    if (startCard) startCard.style.display = 'none';
+    const overCard = document.getElementById('battleGameOverCard');
+    if (overCard) overCard.style.display = 'none';
+    const arenaCard = document.getElementById('battleArenaCard');
+    if (arenaCard) arenaCard.style.display = 'block';
 
     // Update active mode pill in HUD
     const modePill = document.getElementById('arenaActiveModePill');
@@ -909,8 +911,10 @@
     if (timerInterval) clearInterval(timerInterval);
     const modeConfig = GAME_MODES[currentModeKey] || GAME_MODES['blitz'];
 
-    document.getElementById('battleArenaCard').style.display = 'none';
-    document.getElementById('battleGameOverCard').style.display = 'block';
+    const arenaCard = document.getElementById('battleArenaCard');
+    if (arenaCard) arenaCard.style.display = 'none';
+    const overCard = document.getElementById('battleGameOverCard');
+    if (overCard) overCard.style.display = 'block';
 
     const finalScoreElem = document.getElementById('finalScoreDisplay');
     if (finalScoreElem) finalScoreElem.textContent = currentScore.toLocaleString();

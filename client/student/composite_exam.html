@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>KCSE Chemistry Paper 3 Composite Examination (40 Marks) | VirtuLab Kenya</title>
-<meta name="description" content="Simulate complete KNEC KCSE Chemistry Paper 3 (233/3) composite mock practical examination: Volumetric Titration, Qualitative Inorganic Analysis, and Organic Chemistry.">
+<meta name="description" content="Simulate complete KNEC KCSE Chemistry Paper 3 (233/3) composite mock practical examination with realistic lab glassware, precision volumetric titrations, qualitative test-tubes, and organic analysis.">
 <script>
   var t = localStorage.getItem('vlk_theme') || 'dark';
   document.documentElement.setAttribute('data-theme', t);
@@ -17,15 +17,18 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/shared/style.css">
 <link rel="stylesheet" href="/shared/brilliant-theme.css">
+<link rel="stylesheet" href="css/lab.css">
+<link rel="stylesheet" href="css/qualitative.css">
+<link rel="stylesheet" href="css/organic.css">
 <link rel="stylesheet" href="css/composite_exam.css">
 <style>
-  /* Extra Workbench & Interactive Exam Styles */
+  /* Composite Exam Enhancements */
   .exam-section-card {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
     border-radius: 14px;
     padding: 24px;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     box-shadow: var(--shadow-sm);
   }
   .exam-prompt-box {
@@ -38,17 +41,17 @@
     line-height: 1.6;
     color: var(--text-main);
   }
-  .exam-grid-2col {
+  .exam-grid-titration {
     display: grid;
-    grid-template-columns: 1fr 1.3fr;
-    gap: 20px;
+    grid-template-columns: 360px 1fr;
+    gap: 22px;
   }
   @media (max-width: 1024px) {
-    .exam-grid-2col {
+    .exam-grid-titration {
       grid-template-columns: 1fr;
     }
   }
-  .workbench-panel {
+  .titration-rig-box {
     background: var(--bg-dark);
     border: 1.5px solid var(--card-border);
     border-radius: 12px;
@@ -56,14 +59,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    position: relative;
-    min-height: 380px;
-  }
-  .apparatus-svg {
-    width: 100%;
-    max-width: 280px;
-    height: 300px;
   }
   .calc-step-card {
     background: var(--card-bg);
@@ -89,65 +84,27 @@
   .calc-input:focus {
     border-color: var(--blue-accent);
   }
-  .exam-obs-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 16px 0;
-    font-size: 0.84rem;
+  .suggestion-chips-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
   }
-  .exam-obs-table th {
+  .sugg-chip {
+    font-size: 0.72rem;
     background: var(--card-bg-hover);
-    color: var(--heading-color);
-    padding: 10px 12px;
-    font-weight: 800;
     border: 1px solid var(--card-border);
-    text-align: left;
-  }
-  .exam-obs-table td {
-    padding: 10px 12px;
-    border: 1px solid var(--card-border);
-    vertical-align: top;
-  }
-  .obs-textarea {
-    width: 100%;
-    min-height: 60px;
-    background: var(--bg-dark);
-    border: 1px solid var(--card-border);
-    border-radius: 6px;
-    color: var(--text-main);
-    font-family: inherit;
-    font-size: 0.82rem;
-    padding: 8px;
-    resize: vertical;
-  }
-  .obs-textarea:focus {
-    border-color: var(--amber-accent);
-    outline: none;
-  }
-  .btn-action-tactile {
-    background: var(--blue-accent);
-    color: #FFF;
-    border: none;
-    border-radius: 8px;
-    padding: 8px 16px;
-    font-size: 0.82rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: transform 0.1s ease, filter 0.15s ease;
-  }
-  .btn-action-tactile:active {
-    transform: scale(0.97);
-  }
-  .badge-mark {
-    display: inline-block;
-    padding: 2px 8px;
     border-radius: 4px;
-    font-family: var(--font-mono);
-    font-weight: 800;
-    font-size: 0.75rem;
+    padding: 3px 8px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.12s ease;
   }
-  .badge-mark-amber { background: var(--amber-bg); color: var(--amber-accent); border: 1px solid var(--amber-border); }
-  .badge-mark-green { background: var(--green-bg); color: var(--green-accent); border: 1px solid var(--green-border); }
+  .sugg-chip:hover {
+    background: var(--blue-bg);
+    border-color: var(--blue-accent);
+    color: var(--blue-accent);
+  }
 </style>
 </head>
 <body>
@@ -240,7 +197,7 @@
       <h2 style="font-size:1.2rem;font-weight:800;color:var(--heading-color);margin:0;font-family:var(--font-heading);">
         🧪 QUESTION 1: Volumetric Analysis
       </h2>
-      <span class="badge-mark badge-mark-amber">15.0 MARKS</span>
+      <span class="timer-chip" style="font-size:0.78rem;padding:3px 10px;background:var(--amber-bg);color:var(--amber-accent);border:1px solid var(--amber-border);">15.0 MARKS</span>
     </div>
 
     <div class="exam-prompt-box">
@@ -249,70 +206,128 @@
       • <b id="q1SolBName">Solution B: Sodium Hydroxide (NaOH) containing 4.00 g per dm³</b>.<br>
       • <b>Phenolphthalein Indicator</b>.<br><br>
       <b>Instructions & Procedure:</b><br>
-      1. Pipette <b>25.0 cm³</b> of Solution B into a 250 cm³ conical flask. Add 2–3 drops of Phenolphthalein indicator (solution turns pink).<br>
+      1. Pipette <b>25.0 cm³</b> of Solution B into a clean 250 cm³ conical flask. Add 2–3 drops of Phenolphthalein indicator.<br>
       2. Fill the burette with Solution A and adjust the meniscus level to 0.00 cm³.<br>
       3. Titrate Solution B with Solution A until the pink color just disappears (colorless endpoint).<br>
       4. Repeat the titration procedure to complete <b>Table 1</b> below with concordant titres (within ±0.10 cm³).
     </div>
 
-    <div class="exam-grid-2col">
-      <!-- Interactive Titration Workbench -->
-      <div class="workbench-panel">
-        <div style="font-weight:800;font-size:0.85rem;color:var(--heading-color);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.04em;">
-          Virtual Titration Apparatus
+    <div class="exam-grid-titration">
+      <!-- Complete Realistic Titration Rig & Magnifier Lens -->
+      <div class="titration-rig-box">
+        <div style="font-weight:800;font-size:0.8rem;color:var(--cyan-accent);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.04em;">
+          🔬 Precision Volumetric Burette & Conical Assembly
         </div>
 
-        <!-- Burette & Conical Flask Simulation Graphic -->
-        <svg class="apparatus-svg" viewBox="0 0 240 280">
-          <!-- Stand -->
-          <rect x="30" y="260" width="180" height="12" rx="4" fill="#334155" />
-          <rect x="50" y="20" width="8" height="245" fill="#475569" />
-          <rect x="50" y="50" width="60" height="6" fill="#64748B" />
-          <rect x="50" y="140" width="60" height="6" fill="#64748B" />
+        <div style="display:flex; align-items:center; justify-content:center; gap:14px; width:100%;">
+          <!-- Apparatus SVG Rig -->
+          <svg viewBox="0 0 200 350" style="width:130px; height:240px; flex-shrink:0;">
+            <defs>
+              <linearGradient id="glassBodyRig" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.3"/>
+                <stop offset="25%" stop-color="#FFFFFF" stop-opacity="0.5"/>
+                <stop offset="70%" stop-color="#38BDF8" stop-opacity="0.1"/>
+                <stop offset="100%" stop-color="#0284C7" stop-opacity="0.4"/>
+              </linearGradient>
+              <linearGradient id="liquidGradRig" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.9"/>
+                <stop offset="100%" stop-color="#0284C7" stop-opacity="0.8"/>
+              </linearGradient>
+              <linearGradient id="standRodGradRig" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#1E293B"/>
+                <stop offset="50%" stop-color="#475569"/>
+                <stop offset="100%" stop-color="#0F172A"/>
+              </linearGradient>
+            </defs>
 
-          <!-- Burette Body -->
-          <rect x="100" y="20" width="16" height="150" rx="3" fill="rgba(255,255,255,0.15)" stroke="#94A3B8" stroke-width="1.5" />
-          <!-- Burette Liquid Level -->
-          <rect id="svgBuretteLiquid" x="102" y="22" width="12" height="146" fill="#38BDF8" opacity="0.75" />
-          
-          <!-- Stopcock -->
-          <circle cx="108" cy="175" r="5" fill="#EF4444" id="svgStopcock" />
-          <line x1="108" y1="180" x2="108" y2="195" stroke="#94A3B8" stroke-width="2" />
-          
-          <!-- Animated Drip -->
-          <circle id="svgDrip" cx="108" cy="205" r="2.5" fill="#38BDF8" style="display:none;" />
+            <!-- Metallic Stand Base & Vertical Rod -->
+            <rect x="20" y="325" width="130" height="10" rx="3" fill="url(#standRodGradRig)"/>
+            <rect x="42" y="10" width="8" height="318" rx="2" fill="url(#standRodGradRig)"/>
+            
+            <!-- Clamp Bosshead & Arms -->
+            <rect x="42" y="70" width="48" height="10" rx="2" fill="#334155"/>
+            <circle cx="46" cy="75" r="5" fill="#0EA5E9"/>
+            <path d="M90,65 L108,65 L108,85 L90,85 Z" fill="#1E293B" stroke="#38BDF8" stroke-width="1.5"/>
 
-          <!-- Conical Flask -->
-          <polygon points="108,198 85,255 131,255" fill="none" stroke="#94A3B8" stroke-width="2" />
-          <!-- Conical Flask Liquid -->
-          <polygon id="svgFlaskLiquid" points="108,225 88,253 128,253" fill="#EC4899" opacity="0.8" />
-        </svg>
+            <!-- Glass Buret Tube -->
+            <rect x="94" y="20" width="20" height="180" rx="4" fill="url(#glassBodyRig)" stroke="#38BDF8" stroke-width="1.8"/>
+            <rect id="buretteFill" x="96" y="22" width="16" height="176" rx="1" fill="url(#liquidGradRig)"/>
 
-        <!-- Titration Controls -->
-        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;justify-content:center;">
-          <button type="button" class="btn-action-tactile" onclick="startTitrate('dropwise')" id="btnDropwise">💧 Dropwise</button>
-          <button type="button" class="btn-action-tactile" onclick="startTitrate('fast')" id="btnFast">🌊 Continuous</button>
-          <button type="button" class="btn-action-tactile" style="background:#EF4444;" onclick="stopTitrate()">🛑 Stop Tap</button>
-          <button type="button" class="btn-action-tactile" style="background:#475569;" onclick="resetTitrationApparatus()">🔄 Reset</button>
+            <g stroke="rgba(255,255,255,0.7)" stroke-width="0.8">
+              <line x1="108" y1="25" x2="114" y2="25"/>
+              <line x1="108" y1="57" x2="114" y2="57"/>
+              <line x1="108" y1="89" x2="114" y2="89"/>
+              <line x1="108" y1="121" x2="114" y2="121"/>
+              <line x1="108" y1="153" x2="114" y2="153"/>
+              <line x1="108" y1="185" x2="114" y2="185"/>
+            </g>
+            <g font-family="'JetBrains Mono', monospace" font-size="6.5" fill="rgba(255,255,255,0.9)">
+              <text x="116" y="27">0</text>
+              <text x="116" y="59">10</text>
+              <text x="116" y="91">20</text>
+              <text x="116" y="123">30</text>
+              <text x="116" y="155">40</text>
+              <text x="116" y="187">50</text>
+            </g>
+
+            <!-- Stopcock Valve -->
+            <g id="stopcockValve" style="transform-origin: 104px 206px; transition: transform 0.2s ease;">
+              <path d="M96,206 L112,206" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+              <circle cx="104" cy="206" r="6" fill="#06B6D4" stroke="#FFFFFF" stroke-width="1.5"/>
+            </g>
+            <line x1="104" y1="212" x2="104" y2="232" stroke="#38BDF8" stroke-width="2.5"/>
+
+            <!-- Animated Drip -->
+            <circle id="rigDrip" cx="104" cy="226" r="2.5" fill="#38BDF8" style="display:none;" />
+
+            <!-- Conical Flask (Erlenmeyer Flask) -->
+            <g id="flaskContainer" style="transform-origin: 104px 300px; transition: transform 0.4s ease;">
+              <rect x="94" y="232" width="20" height="8" rx="2" fill="url(#glassBodyRig)" stroke="#38BDF8" stroke-width="1.5"/>
+              <path id="flaskRigBody" d="M96,240 L112,240 L152,312 Q104,324 56,312 Z" fill="rgba(236,72,153,0.75)" stroke="#38BDF8" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M98,244 L108,244 L118,290 Q106,286 100,286 Z" fill="rgba(255,255,255,0.25)"/>
+            </g>
+          </svg>
+
+          <!-- Magnified Eye-Level Reading Lens -->
+          <div style="flex:1; text-align:center;">
+            <div style="font-size:0.72rem; font-weight:800; color:var(--cyan-accent); margin-bottom:4px; text-transform:uppercase; font-family:var(--font-mono);">
+              🔍 Burette Lens
+            </div>
+            
+            <div class="lens-viewfinder" style="position:relative; width:100%; height:130px; background:#06101E; border:2px solid #00F2FE; border-radius:10px; overflow:hidden; box-shadow:0 0 16px rgba(0,242,254,0.25), inset 0 0 20px rgba(0,0,0,0.85);">
+              <div style="position:absolute; top:50%; left:0; right:0; height:1.5px; background:rgba(239,68,68,0.95); box-shadow:0 0 6px rgba(239,68,68,0.8); z-index:10;"></div>
+              <div style="position:absolute; top:50%; left:4px; font-size:0.55rem; color:#EF4444; font-weight:800; z-index:11; transform:translateY(-100%); font-family:var(--font-mono);">EYE LEVEL</div>
+              <svg id="lensSvg" viewBox="0 0 180 140" style="width:100%; height:100%;"></svg>
+            </div>
+          </div>
         </div>
 
-        <div style="margin-top:12px;font-family:var(--font-mono);font-size:0.85rem;text-align:center;">
-          Burette Reading: <b id="liveBuretteVol" style="color:var(--cyan-accent);">0.00 cm³</b> &nbsp;|&nbsp;
+        <!-- Controls -->
+        <div style="display:flex;gap:6px;margin-top:14px;flex-wrap:wrap;justify-content:center;width:100%;">
+          <button type="button" class="btn-perform-test" onclick="startTitrate('dropwise')">💧 Dropwise</button>
+          <button type="button" class="btn-perform-test btn-step-excess" onclick="startTitrate('fast')">🌊 Continuous</button>
+          <button type="button" class="btn-perform-test" style="background:#EF4444;" onclick="stopTitrate()">🛑 Stop Tap</button>
+          <button type="button" class="btn-perform-test btn-step-heat" onclick="swirlFlask()">🌀 Swirl</button>
+          <button type="button" class="btn-perform-test" style="background:#475569;" onclick="resetTitrationApparatus()">🔄 Reset</button>
+        </div>
+
+        <div style="margin-top:10px;font-family:var(--font-mono);font-size:0.84rem;text-align:center;">
+          Current Burette: <b id="liveBuretteVol" style="color:var(--cyan-accent);">0.00 cm³</b> &nbsp;|&nbsp;
           Titre Used: <b id="liveTitreUsed" style="color:var(--green-accent);">0.00 cm³</b>
         </div>
 
-        <button type="button" class="btn-action-tactile" style="margin-top:10px;background:var(--green-accent);width:100%;" onclick="transferReadingToTable()">
+        <button type="button" class="btn-perform-test" style="margin-top:10px;background:var(--green-accent);width:100%;justify-content:center;" onclick="transferReadingToTable()">
           📥 Record Current Reading in Table 1
         </button>
       </div>
 
-      <!-- Candidate Results Table & Step-by-Step Questions -->
+      <!-- Candidate Results Table & Step-by-Step Calculations -->
       <div>
         <div style="font-weight:800;font-size:0.92rem;color:var(--heading-color);margin-bottom:8px;">
           Table 1: Titration Results (5.0 Marks)
         </div>
 
-        <table class="exam-obs-table">
+        <table class="knec-table" style="margin-bottom:14px;">
           <thead>
             <tr>
               <th>Burette Reading (cm³)</th>
@@ -417,104 +432,50 @@
       <h2 style="font-size:1.2rem;font-weight:800;color:var(--heading-color);margin:0;font-family:var(--font-heading);">
         🧂 QUESTION 2: Qualitative Inorganic Analysis
       </h2>
-      <span class="badge-mark badge-mark-amber">15.0 MARKS</span>
+      <span class="timer-chip" style="font-size:0.78rem;padding:3px 10px;background:var(--amber-bg);color:var(--amber-accent);border:1px solid var(--amber-border);">15.0 MARKS</span>
     </div>
 
     <div class="exam-prompt-box">
       <b>You are provided with:</b><br>
       • <b id="q2SampleName">Solid Y</b>: A pure inorganic salt sample.<br>
       • Reagents: Distilled water, 2M Aqueous Sodium Hydroxide (NaOH), 2M Aqueous Ammonia (NH₃), Dilute Nitric Acid (HNO₃), Barium Nitrate Solution Ba(NO₃)₂, and Potassium Iodide (KI) solution.<br><br>
-      <b>Instructions:</b> Carry out the tests below on Solid Y and record your observations and inferences in the spaces provided.
+      <b>Instructions:</b> Carry out the systematic tests below on Solid Y and record your observations and inferences in the spaces provided.
     </div>
 
-    <div class="exam-grid-2col">
-      <!-- Interactive Qualitative Workbench -->
-      <div class="workbench-panel">
-        <div style="font-weight:800;font-size:0.85rem;color:var(--heading-color);margin-bottom:10px;text-transform:uppercase;">
-          Qualitative Test-Tube Rack
-        </div>
+    <!-- Test Cards Grid Rendering Realistic Test Tubes with Clamps & Droppers -->
+    <div class="tests-grid" id="q2TestsGrid"></div>
 
-        <svg class="apparatus-svg" viewBox="0 0 240 280">
-          <!-- Test Tube Rack -->
-          <rect x="20" y="240" width="200" height="14" rx="4" fill="#334155" />
-          <rect x="40" y="100" width="10" height="140" fill="#475569" />
-          <rect x="190" y="100" width="10" height="140" fill="#475569" />
-          <rect x="20" y="100" width="200" height="10" fill="#64748B" />
-
-          <!-- Main Test Tube -->
-          <rect x="105" y="40" width="30" height="190" rx="15" fill="rgba(255,255,255,0.12)" stroke="#94A3B8" stroke-width="2" />
-          <!-- Test Tube Solution -->
-          <path id="svgQualLiquid" d="M107,150 Q120,152 133,150 L133,215 Q120,228 107,215 Z" fill="#38BDF8" opacity="0.8" />
-          <!-- Precipitate Layer -->
-          <path id="svgQualPrecipitate" d="M107,195 Q120,198 133,195 L133,215 Q120,228 107,215 Z" fill="#FFFFFF" opacity="0.9" style="display:none;" />
-        </svg>
-
-        <div style="margin-top:12px;width:100%;">
-          <label style="font-size:0.78rem;font-weight:700;color:var(--text-muted);display:block;margin-bottom:4px;">Add Reagent to Test Tube:</label>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;">
-            <button type="button" class="btn-action-tactile" onclick="runQualTest('water')">💧 Water</button>
-            <button type="button" class="btn-action-tactile" onclick="runQualTest('naoh_drop')">🧪 NaOH (Dropwise)</button>
-            <button type="button" class="btn-action-tactile" onclick="runQualTest('naoh_excess')">🧪 NaOH (Excess)</button>
-            <button type="button" class="btn-action-tactile" onclick="runQualTest('nh3_drop')">🧪 NH₃ (Dropwise)</button>
-            <button type="button" class="btn-action-tactile" onclick="runQualTest('nh3_excess')">🧪 NH₃ (Excess)</button>
-            <button type="button" class="btn-action-tactile" onclick="runQualTest('anion_test')">🧪 Ba(NO₃)₂ / KI</button>
-          </div>
-        </div>
-
-        <div id="qualWorkbenchMsg" style="margin-top:12px;font-size:0.82rem;line-height:1.4;background:var(--card-bg);border:1px solid var(--card-border);border-radius:8px;padding:10px;width:100%;color:var(--heading-color);">
-          Ready. Select a test reagent to observe chemical reactions.
-        </div>
+    <!-- Final Deductions -->
+    <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:16px;margin-top:16px;">
+      <div style="font-weight:800;font-size:0.88rem;color:var(--heading-color);margin-bottom:10px;">
+        (v) Final Identity Deductions (3.0 Marks)
       </div>
-
-      <!-- Candidate Observations & Inferences Table -->
-      <div>
-        <table class="exam-obs-table">
-          <thead>
-            <tr>
-              <th style="width:30%;">Test / Procedure</th>
-              <th style="width:35%;">Observations</th>
-              <th style="width:35%;">Inferences</th>
-            </tr>
-          </thead>
-          <tbody id="q2TableBody">
-            <!-- Dynamically populated from preset -->
-          </tbody>
-        </table>
-
-        <!-- Final Deductions -->
-        <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:16px;margin-top:16px;">
-          <div style="font-weight:800;font-size:0.88rem;color:var(--heading-color);margin-bottom:10px;">
-            (v) Final Identity Deductions (3.0 Marks)
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-            <div>
-              <label style="font-size:0.78rem;font-weight:700;display:block;margin-bottom:4px;">Cation Present in Solid Y (1.5 Marks):</label>
-              <select id="q2CationSelect" class="calc-input" style="max-width:100%;" onchange="onQ2DeductionsChanged()">
-                <option value="">-- Select Cation --</option>
-                <option value="Pb2+">Lead(II) ion — Pb²⁺</option>
-                <option value="Fe2+">Iron(II) ion — Fe²⁺</option>
-                <option value="Fe3+">Iron(III) ion — Fe³⁺</option>
-                <option value="Zn2+">Zinc ion — Zn²⁺</option>
-                <option value="Al3+">Aluminium ion — Al³⁺</option>
-                <option value="Cu2+">Copper(II) ion — Cu²⁺</option>
-                <option value="Ca2+">Calcium ion — Ca²⁺</option>
-                <option value="NH4+">Ammonium ion — NH₄⁺</option>
-              </select>
-            </div>
-            <div>
-              <label style="font-size:0.78rem;font-weight:700;display:block;margin-bottom:4px;">Anion Present in Solid Y (1.5 Marks):</label>
-              <select id="q2AnionSelect" class="calc-input" style="max-width:100%;" onchange="onQ2DeductionsChanged()">
-                <option value="">-- Select Anion --</option>
-                <option value="NO3-">Nitrate ion — NO₃⁻</option>
-                <option value="SO42-">Sulfate ion — SO₄²⁻</option>
-                <option value="Cl-">Chloride ion — Cl⁻</option>
-                <option value="CO32-">Carbonate ion — CO₃²⁻</option>
-                <option value="SO32-">Sulfite ion — SO₃²⁻</option>
-              </select>
-            </div>
-          </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <label style="font-size:0.78rem;font-weight:700;display:block;margin-bottom:4px;">Cation Present in Solid Y (1.5 Marks):</label>
+          <select id="q2CationSelect" class="calc-input" style="max-width:100%;" onchange="onQ2DeductionsChanged()">
+            <option value="">-- Select Cation --</option>
+            <option value="Pb2+">Lead(II) ion — Pb²⁺</option>
+            <option value="Fe2+">Iron(II) ion — Fe²⁺</option>
+            <option value="Fe3+">Iron(III) ion — Fe³⁺</option>
+            <option value="Zn2+">Zinc ion — Zn²⁺</option>
+            <option value="Al3+">Aluminium ion — Al³⁺</option>
+            <option value="Cu2+">Copper(II) ion — Cu²⁺</option>
+            <option value="Ca2+">Calcium ion — Ca²⁺</option>
+            <option value="NH4+">Ammonium ion — NH₄⁺</option>
+          </select>
         </div>
-
+        <div>
+          <label style="font-size:0.78rem;font-weight:700;display:block;margin-bottom:4px;">Anion Present in Solid Y (1.5 Marks):</label>
+          <select id="q2AnionSelect" class="calc-input" style="max-width:100%;" onchange="onQ2DeductionsChanged()">
+            <option value="">-- Select Anion --</option>
+            <option value="NO3-">Nitrate ion — NO₃⁻</option>
+            <option value="SO42-">Sulfate ion — SO₄²⁻</option>
+            <option value="Cl-">Chloride ion — Cl⁻</option>
+            <option value="CO32-">Carbonate ion — CO₃²⁻</option>
+            <option value="SO32-">Sulfite ion — SO₃²⁻</option>
+          </select>
+        </div>
       </div>
     </div>
   </div>
@@ -527,7 +488,7 @@
       <h2 style="font-size:1.2rem;font-weight:800;color:var(--heading-color);margin:0;font-family:var(--font-heading);">
         🧫 QUESTION 3: Organic Functional Group Analysis
       </h2>
-      <span class="badge-mark badge-mark-amber">10.0 MARKS</span>
+      <span class="timer-chip" style="font-size:0.78rem;padding:3px 10px;background:var(--amber-bg);color:var(--amber-accent);border:1px solid var(--amber-border);">10.0 MARKS</span>
     </div>
 
     <div class="exam-prompt-box">
@@ -537,73 +498,24 @@
       <b>Instructions:</b> Carry out the systematic organic tests below on Liquid Z and record your observations and inferences in the spaces provided.
     </div>
 
-    <div class="exam-grid-2col">
-      <!-- Interactive Organic Workbench -->
-      <div class="workbench-panel">
-        <div style="font-weight:800;font-size:0.85rem;color:var(--heading-color);margin-bottom:10px;text-transform:uppercase;">
-          Organic Testing Station
-        </div>
+    <!-- Test Cards Grid Rendering Realistic Organic Testing Setups -->
+    <div class="tests-grid" id="q3TestsGrid"></div>
 
-        <svg class="apparatus-svg" viewBox="0 0 240 280">
-          <!-- Spatula / Burner Animation Area -->
-          <g id="svgOrganicSpatulaGroup">
-            <rect x="30" y="140" width="140" height="8" rx="2" fill="#94A3B8" />
-            <polygon points="170,138 200,144 170,150" fill="#CBD5E1" />
-            <!-- Spatula Liquid Drop -->
-            <circle cx="185" cy="144" r="4" fill="#38BDF8" />
-            <!-- Spatula Flame (Active on Ignition) -->
-            <path id="svgOrganicFlame" d="M185,140 Q190,105 185,90 Q180,105 185,140 Z" fill="#F59E0B" style="display:none;" />
-          </g>
-        </svg>
-
-        <div style="margin-top:12px;width:100%;">
-          <label style="font-size:0.78rem;font-weight:700;color:var(--text-muted);display:block;margin-bottom:4px;">Perform Organic Test:</label>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;">
-            <button type="button" class="btn-action-tactile" onclick="runOrganicTest('ignition')">🔥 Spatula Ignition</button>
-            <button type="button" class="btn-action-tactile" onclick="runOrganicTest('litmus')">📑 Litmus Paper</button>
-            <button type="button" class="btn-action-tactile" onclick="runOrganicTest('kmno4')">🧪 Acidified KMnO₄</button>
-            <button type="button" class="btn-action-tactile" onclick="runOrganicTest('nahco3')">🫧 Solid NaHCO₃</button>
-          </div>
-        </div>
-
-        <div id="organicWorkbenchMsg" style="margin-top:12px;font-size:0.82rem;line-height:1.4;background:var(--card-bg);border:1px solid var(--card-border);border-radius:8px;padding:10px;width:100%;color:var(--heading-color);">
-          Ready. Select an organic test to observe reaction behavior.
-        </div>
+    <!-- Final Organic Deduction -->
+    <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:16px;margin-top:16px;">
+      <div style="font-weight:800;font-size:0.88rem;color:var(--heading-color);margin-bottom:10px;">
+        (v) Functional Group Deduction (2.0 Marks)
       </div>
-
-      <!-- Candidate Observations & Inferences Table -->
       <div>
-        <table class="exam-obs-table">
-          <thead>
-            <tr>
-              <th style="width:30%;">Test / Procedure</th>
-              <th style="width:35%;">Observations</th>
-              <th style="width:35%;">Inferences</th>
-            </tr>
-          </thead>
-          <tbody id="q3TableBody">
-            <!-- Dynamically populated from preset -->
-          </tbody>
-        </table>
-
-        <!-- Final Organic Deduction -->
-        <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:16px;margin-top:16px;">
-          <div style="font-weight:800;font-size:0.88rem;color:var(--heading-color);margin-bottom:10px;">
-            (v) Functional Group Deduction (2.0 Marks)
-          </div>
-          <div>
-            <label style="font-size:0.78rem;font-weight:700;display:block;margin-bottom:4px;">Functional Group Present in Liquid Z (2.0 Marks):</label>
-            <select id="q3FGSelect" class="calc-input" style="max-width:100%;" onchange="onQ3DeductionChanged()">
-              <option value="">-- Select Functional Group --</option>
-              <option value="Alkanol (-OH)">Alkanol / Hydroxyl group (—OH)</option>
-              <option value="Carboxylic Acid (-COOH)">Carboxylic Acid group (—COOH)</option>
-              <option value="Alkene (>C=C<)">Alkene / Carbon-Carbon Double Bond (>C=C<)</option>
-              <option value="Alkyne (-C#C-)">Alkyne / Carbon-Carbon Triple Bond (—C≡C—)</option>
-              <option value="Alkane (C-C)">Alkane / Saturated Hydrocarbon</option>
-            </select>
-          </div>
-        </div>
-
+        <label style="font-size:0.78rem;font-weight:700;display:block;margin-bottom:4px;">Functional Group Present in Liquid Z (2.0 Marks):</label>
+        <select id="q3FGSelect" class="calc-input" style="max-width:100%;" onchange="onQ3DeductionChanged()">
+          <option value="">-- Select Functional Group --</option>
+          <option value="Alkanol (-OH)">Alkanol / Hydroxyl group (—OH)</option>
+          <option value="Carboxylic Acid (-COOH)">Carboxylic Acid group (—COOH)</option>
+          <option value="Alkene (>C=C<)">Alkene / Carbon-Carbon Double Bond (>C=C<)</option>
+          <option value="Alkyne (-C#C-)">Alkyne / Carbon-Carbon Triple Bond (—C≡C—)</option>
+          <option value="Alkane (C-C)">Alkane / Saturated Hydrocarbon</option>
+        </select>
       </div>
     </div>
   </div>
@@ -757,7 +669,10 @@
   let activeTab = 1;
   let titrateInterval = null;
 
-  // Initialize UI with preset data
+  // Track dynamic stages for Question 2 & 3 test cards
+  let q2TestStates = {};
+  let q3TestStates = {};
+
   function initExamUI() {
     const p = engine.preset;
     document.getElementById('examSubTitle').textContent = p.title + ' — Code 233/3';
@@ -769,34 +684,610 @@
     document.getElementById('q2SampleName').textContent = p.q2.sampleName + ' (' + p.q2.trueSaltName + ')';
     document.getElementById('q3SampleName').textContent = p.q3.sampleName + ' (' + p.q3.trueOrganicName + ')';
 
-    // Render Q2 Table Rows
-    const q2Body = document.getElementById('q2TableBody');
-    q2Body.innerHTML = p.q2.tests.map((t, idx) => `
-      <tr>
-        <td><b>Test (${idx + 1}):</b><br>${t.prompt}</td>
-        <td>
-          <textarea class="obs-textarea" id="q2Obs_${t.id}" placeholder="Record your observations here..." onchange="onQ2ResponseChanged('${t.id}')"></textarea>
-        </td>
-        <td>
-          <textarea class="obs-textarea" id="q2Inf_${t.id}" placeholder="Write deductions / inferences here..." onchange="onQ2ResponseChanged('${t.id}')"></textarea>
-        </td>
-      </tr>
-    `).join('');
+    renderQ2TestsGrid();
+    renderQ3TestsGrid();
+    drawLens();
+    updateLiveScoreDisplay();
+  }
 
-    // Render Q3 Table Rows
-    const q3Body = document.getElementById('q3TableBody');
-    q3Body.innerHTML = p.q3.tests.map((t, idx) => `
-      <tr>
-        <td><b>Test (${idx + 1}):</b><br>${t.prompt}</td>
-        <td>
-          <textarea class="obs-textarea" id="q3Obs_${t.id}" placeholder="Record observations..." onchange="onQ3ResponseChanged('${t.id}')"></textarea>
-        </td>
-        <td>
-          <textarea class="obs-textarea" id="q3Inf_${t.id}" placeholder="Write inferences..." onchange="onQ3ResponseChanged('${t.id}')"></textarea>
-        </td>
-      </tr>
-    `).join('');
+  // ── Render Q2 Question Cards with Realistic SVG Test Tubes ───────────
+  function renderQ2TestsGrid() {
+    const p = engine.preset.q2;
+    const grid = document.getElementById('q2TestsGrid');
+    if (!grid) return;
 
+    grid.innerHTML = p.tests.map((t, idx) => {
+      const st = q2TestStates[t.id] || { performed: false, stage: 'idle' };
+      const letter = String.fromCharCode(97 + idx); // a, b, c, d
+
+      let actionBtn = '';
+      if (!st.performed) {
+        actionBtn = `<button class="btn-perform-test" onclick="performQ2TestStage('${t.id}', 'stage1')">🧪 Add Reagent & Perform Test</button>`;
+      } else if (st.stage === 'stage1' && (t.id === 'q2_naoh' || t.id === 'q2_nh3')) {
+        actionBtn = `
+          <button class="btn-perform-test btn-step-excess" onclick="performQ2TestStage('${t.id}', 'excess')">💧 Add in Excess</button>
+          <button class="btn-redo-test" onclick="redoQ2Test('${t.id}')">↺ Redo</button>
+        `;
+      } else {
+        actionBtn = `
+          <button class="btn-perform-test done" disabled>✅ Test Completed</button>
+          <button class="btn-redo-test" onclick="redoQ2Test('${t.id}')">↺ Redo</button>
+        `;
+      }
+
+      return `
+        <div class="kcse-question-block">
+          <div class="test-card-top">
+            <div class="test-header-left">
+              <span class="test-step-badge">(${letter})</span>
+              <h3 class="test-title-text">${t.prompt.split(') ')[1] || t.prompt}</h3>
+            </div>
+            <span class="timer-chip" style="font-size:0.75rem; padding:2px 8px;">3.0 Marks</span>
+          </div>
+
+          <div class="test-layout-grid">
+            <!-- Left: Realistic Test Tube Apparatus Stage -->
+            <div class="apparatus-stage">
+              <div class="apparatus-view">
+                ${getTubeVisualHtml(t.id, st)}
+              </div>
+              <div class="apparatus-status-tag" id="status_${t.id}">
+                ${!st.performed ? 'Awaiting Reagent' : (st.statusLabel || 'Reaction Observed')}
+              </div>
+            </div>
+
+            <!-- Right: Procedures, Action Buttons & Observations Table -->
+            <div>
+              <div style="font-size:0.84rem; color:var(--text-main); line-height:1.5; margin-bottom:12px; background:var(--bg-dark); padding:10px 14px; border-radius:8px; border-left:3px solid var(--blue-accent); border:1px solid var(--card-border); border-left-width:3px;">
+                <span style="font-weight:800; color:var(--heading-color); display:flex; align-items:center; gap:6px; margin-bottom:3px;">📋 Procedure:</span>
+                <span>${t.prompt}</span>
+              </div>
+
+              <div class="action-buttons-row">
+                ${actionBtn}
+              </div>
+
+              <table class="knec-table">
+                <thead>
+                  <tr>
+                    <th style="width:50%;">Observations (1.5 Marks)</th>
+                    <th style="width:50%;">Inferences / Deductions (1.5 Marks)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <textarea class="kcse-input" id="q2Obs_${t.id}" placeholder="Write exact observations..." oninput="onQ2TextChange('${t.id}')">${engine.q2Obs[t.id] || ''}</textarea>
+                      <div class="suggestion-chips-container">
+                        ${getQ2ObsSuggestions(t.id)}
+                      </div>
+                    </td>
+                    <td>
+                      <textarea class="kcse-input" id="q2Inf_${t.id}" placeholder="Write deductions / inferences..." oninput="onQ2TextChange('${t.id}')">${engine.q2Inf[t.id] || ''}</textarea>
+                      <div class="suggestion-chips-container">
+                        ${getQ2InfSuggestions(t.id)}
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Realistic SVG Test Tube with Wooden Clamp, Meniscus & Precipitants
+  function getTubeVisualHtml(testId, st) {
+    const performed = st && st.performed;
+    const isExcess = st && st.stage === 'excess';
+    const p = engine.preset.q2;
+    const saltKey = p.trueSaltKey || 'Pb(NO3)2';
+
+    let liquidColor = performed ? (saltKey.includes('Fe') ? 'rgba(16, 185, 129, 0.4)' : saltKey.includes('Cu') ? 'rgba(56, 189, 248, 0.6)' : 'rgba(255,255,255,0.25)') : 'transparent';
+    let pptColor = '#FFFFFF';
+    let showPpt = false;
+    let showPptDissolved = false;
+
+    if (performed) {
+      if (testId === 'q2_appearance') {
+        showPpt = false;
+      } else if (testId === 'q2_naoh') {
+        if (!isExcess) {
+          showPpt = true;
+          pptColor = saltKey.includes('Fe') ? '#15803D' : saltKey.includes('Cu') ? '#38BDF8' : '#FFFFFF';
+        } else {
+          if (saltKey.includes('Pb') || saltKey.includes('Zn') || saltKey.includes('Al')) {
+            showPptDissolved = true;
+            showPpt = false;
+          } else {
+            showPpt = true;
+            pptColor = saltKey.includes('Fe') ? '#15803D' : saltKey.includes('Cu') ? '#38BDF8' : '#FFFFFF';
+          }
+        }
+      } else if (testId === 'q2_nh3') {
+        if (!isExcess) {
+          showPpt = true;
+          pptColor = saltKey.includes('Fe') ? '#15803D' : saltKey.includes('Cu') ? '#38BDF8' : '#FFFFFF';
+        } else {
+          if (saltKey.includes('Zn')) {
+            showPptDissolved = true;
+          } else if (saltKey.includes('Cu')) {
+            liquidColor = '#1D4ED8'; // Deep blue
+          } else {
+            showPpt = true;
+          }
+        }
+      } else if (testId === 'q2_anion') {
+        if (saltKey.includes('SO4') || saltKey.includes('Cl')) {
+          showPpt = true;
+          pptColor = '#FFFFFF';
+        } else if (saltKey.includes('Pb')) {
+          showPpt = true;
+          pptColor = '#FACC15'; // Bright yellow PbI2
+        }
+      }
+    }
+
+    return `
+      <svg width="86" height="136" viewBox="0 0 86 136">
+        <!-- Wooden Test Tube Clamp -->
+        <g transform="translate(0, 48)">
+          <rect x="2" y="3" width="24" height="8" rx="2" fill="#78350F" stroke="#451A03" stroke-width="0.8"/>
+          <rect x="60" y="3" width="24" height="8" rx="2" fill="#78350F" stroke="#451A03" stroke-width="0.8"/>
+          <circle cx="14" cy="7" r="2.5" fill="#64748B"/>
+          <circle cx="72" cy="7" r="2.5" fill="#64748B"/>
+        </g>
+
+        <!-- Glass Test Tube Body & Lip -->
+        <rect x="23" y="32" width="40" height="4" rx="2" fill="rgba(255,255,255,0.18)" stroke="#94A3B8" stroke-width="1.2"/>
+        <path d="M 26,36 L 26,112 Q 26,130 43,130 Q 60,130 60,112 L 60,36 Z" fill="rgba(255,255,255,0.05)" stroke="#94A3B8" stroke-width="1.5"/>
+
+        <!-- Liquid Column -->
+        ${performed ? `
+          <path d="M 27,${isExcess ? 54 : 76} L 27,112 Q 27,128 43,128 Q 59,128 59,112 L 59,${isExcess ? 54 : 76} Z" fill="${liquidColor}"/>
+          <ellipse cx="43" cy="${isExcess ? 54 : 76}" rx="16" ry="3.5" fill="${liquidColor}" opacity="0.9"/>
+        ` : ''}
+
+        <!-- Precipitate Mass -->
+        ${showPpt ? `
+          <g class="anim-ppt-form">
+            <ellipse cx="43" cy="120" rx="14.5" ry="7" fill="${pptColor}" opacity="0.95"/>
+            <circle cx="34" cy="116" r="2.8" fill="${pptColor}"/>
+            <circle cx="48" cy="118" r="3.2" fill="${pptColor}"/>
+            <circle cx="41" cy="113" r="2.5" fill="${pptColor}"/>
+          </g>
+        ` : ''}
+
+        ${showPptDissolved ? `
+          <g class="anim-ppt-dissolve">
+            <ellipse cx="43" cy="120" rx="12" ry="5" fill="#E2E8F0" opacity="0.3"/>
+          </g>
+        ` : ''}
+
+        <!-- Specular Highlight -->
+        <path d="M 29,38 L 29,112 Q 29,126 43,126" fill="none" stroke="#FFF" stroke-width="1.2" stroke-linecap="round" opacity="0.25"/>
+      </svg>
+    `;
+  }
+
+  function performQ2TestStage(testId, stage) {
+    if (!q2TestStates[testId]) q2TestStates[testId] = {};
+    const st = q2TestStates[testId];
+    st.performed = true;
+    st.stage = stage;
+
+    const p = engine.preset.q2;
+    if (testId === 'q2_appearance') {
+      st.statusLabel = 'Solubility: Dissolves to form clear solution';
+    } else if (testId === 'q2_naoh') {
+      if (stage === 'stage1') {
+        st.statusLabel = 'Few Drops: Precipitate formed';
+      } else {
+        st.statusLabel = p.trueSaltKey.includes('Pb') || p.trueSaltKey.includes('Zn') ? 'In Excess: White ppt dissolves' : 'In Excess: Precipitate insoluble';
+      }
+    } else if (testId === 'q2_nh3') {
+      if (stage === 'stage1') {
+        st.statusLabel = 'Few Drops: Precipitate formed';
+      } else {
+        st.statusLabel = p.trueSaltKey.includes('Zn') ? 'In Excess: White ppt dissolves' : p.trueSaltKey.includes('Cu') ? 'In Excess: Deep blue solution' : 'In Excess: Precipitate insoluble';
+      }
+    } else if (testId === 'q2_anion') {
+      st.statusLabel = 'Reagent Added: Characteristic reaction observed';
+    }
+
+    renderQ2TestsGrid();
+    updateLiveScoreDisplay();
+  }
+
+  function redoQ2Test(testId) {
+    q2TestStates[testId] = { performed: false, stage: 'idle' };
+    renderQ2TestsGrid();
+  }
+
+  function getQ2ObsSuggestions(testId) {
+    const items = [
+      'White precipitate formed',
+      'White ppt soluble in excess',
+      'White ppt insoluble in excess',
+      'Dirty green ppt formed',
+      'Pale blue ppt formed',
+      'Yellow ppt formed with KI',
+      'Dissolves to form colorless solution'
+    ];
+    return items.map(txt => `<span class="sugg-chip" onclick="insertSuggestion('q2Obs_${testId}', '${txt}')">+ ${txt}</span>`).join('');
+  }
+
+  function getQ2InfSuggestions(testId) {
+    const items = [
+      'Pb²⁺, Al³⁺ or Zn²⁺ present',
+      'Pb²⁺ confirmed',
+      'Fe²⁺ present',
+      'Cu²⁺ present',
+      'SO₄²⁻ confirmed present',
+      'NO₃⁻ present',
+      'Ca²⁺ or Mg²⁺ present'
+    ];
+    return items.map(txt => `<span class="sugg-chip" onclick="insertSuggestion('q2Inf_${testId}', '${txt}')">+ ${txt}</span>`).join('');
+  }
+
+  function onQ2TextChange(testId) {
+    const obs = document.getElementById(`q2Obs_${testId}`)?.value || '';
+    const inf = document.getElementById(`q2Inf_${testId}`)?.value || '';
+    engine.setQ2Response(testId, obs, inf);
+    updateLiveScoreDisplay();
+  }
+
+  function onQ2DeductionsChanged() {
+    const cat = document.getElementById('q2CationSelect')?.value || '';
+    const ani = document.getElementById('q2AnionSelect')?.value || '';
+    engine.setQ2Deduction(cat, ani);
+    updateLiveScoreDisplay();
+  }
+
+  // ── Render Q3 Question Cards with Realistic Spatula / Burner / Tubes ─
+  function renderQ3TestsGrid() {
+    const p = engine.preset.q3;
+    const grid = document.getElementById('q3TestsGrid');
+    if (!grid) return;
+
+    grid.innerHTML = p.tests.map((t, idx) => {
+      const st = q3TestStates[t.id] || { performed: false };
+      const letter = String.fromCharCode(97 + idx);
+
+      let actionBtn = !st.performed
+        ? `<button class="btn-perform-test" onclick="performQ3Test('${t.id}')">🧪 Perform Organic Test</button>`
+        : `<button class="btn-perform-test done" disabled>✅ Test Observed</button><button class="btn-redo-test" onclick="redoQ3Test('${t.id}')">↺ Redo</button>`;
+
+      return `
+        <div class="kcse-question-block">
+          <div class="test-card-top">
+            <div class="test-header-left">
+              <span class="test-step-badge">(${letter})</span>
+              <h3 class="test-title-text">${t.prompt.split(') ')[1] || t.prompt}</h3>
+            </div>
+            <span class="timer-chip" style="font-size:0.75rem; padding:2px 8px;">2.0 Marks</span>
+          </div>
+
+          <div class="test-layout-grid">
+            <!-- Left: Realistic Organic Testing Apparatus -->
+            <div class="apparatus-stage">
+              <div class="apparatus-view">
+                ${getOrganicVisualHtml(t.id, st)}
+              </div>
+              <div class="apparatus-status-tag" id="status_org_${t.id}">
+                ${!st.performed ? 'Ready to Test' : (st.statusLabel || 'Reaction Recorded')}
+              </div>
+            </div>
+
+            <!-- Right: Procedures & Observations Table -->
+            <div>
+              <div style="font-size:0.84rem; color:var(--text-main); line-height:1.5; margin-bottom:12px; background:var(--bg-dark); padding:10px 14px; border-radius:8px; border-left:3px solid var(--blue-accent); border:1px solid var(--card-border); border-left-width:3px;">
+                <span style="font-weight:800; color:var(--heading-color); display:flex; align-items:center; gap:6px; margin-bottom:3px;">📋 Procedure:</span>
+                <span>${t.prompt}</span>
+              </div>
+
+              <div class="action-buttons-row">
+                ${actionBtn}
+              </div>
+
+              <table class="knec-table">
+                <thead>
+                  <tr>
+                    <th style="width:50%;">Observations (1.0 Mark)</th>
+                    <th style="width:50%;">Inferences / Deductions (1.0 Mark)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <textarea class="kcse-input" id="q3Obs_${t.id}" placeholder="Record observations..." oninput="onQ3TextChange('${t.id}')">${engine.q3Obs[t.id] || ''}</textarea>
+                      <div class="suggestion-chips-container">
+                        ${getQ3ObsSuggestions(t.id)}
+                      </div>
+                    </td>
+                    <td>
+                      <textarea class="kcse-input" id="q3Inf_${t.id}" placeholder="Write inferences..." oninput="onQ3TextChange('${t.id}')">${engine.q3Inf[t.id] || ''}</textarea>
+                      <div class="suggestion-chips-container">
+                        ${getQ3InfSuggestions(t.id)}
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function getOrganicVisualHtml(testId, st) {
+    const performed = st && st.performed;
+    const p = engine.preset.q3;
+    const orgKey = p.trueOrganicKey || 'Ethanol';
+
+    if (testId === 'q3_ignition') {
+      const isSooty = orgKey.includes('Cyclo') || orgKey.includes('Ethyne');
+      return `
+        <svg width="100" height="136" viewBox="0 0 100 136">
+          <rect x="10" y="80" width="80" height="8" rx="2" fill="#94A3B8" />
+          <polygon points="75,78 95,84 75,90" fill="#CBD5E1" />
+          ${performed ? `
+            <path d="M 85,80 C 80,60 82,45 85,45 C 88,45 90,60 85,80 Z" fill="${isSooty ? '#F59E0B' : '#38BDF8'}" class="anim-flame"/>
+          ` : '<circle cx="85" cy="82" r="3" fill="#38BDF8"/>'}
+        </svg>
+      `;
+    }
+
+    // Default Organic Tube Visual
+    return `
+      <svg width="86" height="136" viewBox="0 0 86 136">
+        <rect x="23" y="32" width="40" height="4" rx="2" fill="rgba(255,255,255,0.18)" stroke="#94A3B8" stroke-width="1.2"/>
+        <path d="M 26,36 L 26,112 Q 26,130 43,130 Q 60,130 60,112 L 60,36 Z" fill="rgba(255,255,255,0.05)" stroke="#94A3B8" stroke-width="1.5"/>
+        ${performed ? `
+          <path d="M 27,70 L 27,112 Q 27,128 43,128 Q 59,128 59,112 L 59,70 Z" fill="${testId === 'q3_kmno4' ? 'rgba(255,255,255,0.3)' : 'rgba(56,189,248,0.35)'}"/>
+          <ellipse cx="43" cy="70" rx="16" ry="3.5" fill="rgba(255,255,255,0.4)"/>
+        ` : ''}
+      </svg>
+    `;
+  }
+
+  function performQ3Test(testId) {
+    if (!q3TestStates[testId]) q3TestStates[testId] = {};
+    const st = q3TestStates[testId];
+    st.performed = true;
+    const p = engine.preset.q3;
+
+    if (testId === 'q3_ignition') {
+      st.statusLabel = p.trueOrganicKey.includes('Cyclo') ? 'Ignition: Smoky sooty flame' : 'Ignition: Clear non-sooty blue flame';
+    } else if (testId === 'q3_litmus') {
+      st.statusLabel = p.trueOrganicKey.includes('Acid') ? 'Litmus: Turns moist blue litmus red' : 'Litmus: Neutral, no color change';
+    } else if (testId === 'q3_kmno4') {
+      st.statusLabel = 'KMnO₄ Added: Decolorization observed';
+    } else if (testId === 'q3_nahco3') {
+      st.statusLabel = p.trueOrganicKey.includes('Acid') ? 'NaHCO₃: Vigorous effervescence of CO₂' : 'NaHCO₃: No effervescence';
+    }
+
+    renderQ3TestsGrid();
+    updateLiveScoreDisplay();
+  }
+
+  function redoQ3Test(testId) {
+    q3TestStates[testId] = { performed: false };
+    renderQ3TestsGrid();
+  }
+
+  function getQ3ObsSuggestions(testId) {
+    const items = [
+      'Burns with clean non-sooty pale blue flame',
+      'Burns with yellow smoky sooty flame',
+      'Moist blue litmus turns red',
+      'No effect on red or blue litmus',
+      'Purple KMnO₄ decolorized',
+      'Vigorous effervescence of gas'
+    ];
+    return items.map(txt => `<span class="sugg-chip" onclick="insertSuggestion('q3Obs_${testId}', '${txt}')">+ ${txt}</span>`).join('');
+  }
+
+  function getQ3InfSuggestions(testId) {
+    const items = [
+      'Saturated compound / Alkanol present',
+      'Unsaturated compound (>C=C<) present',
+      'Carboxylic acid (-COOH) present',
+      'Neutral organic substance',
+      'Reducing group / Alkanol (-OH) present'
+    ];
+    return items.map(txt => `<span class="sugg-chip" onclick="insertSuggestion('q3Inf_${testId}', '${txt}')">+ ${txt}</span>`).join('');
+  }
+
+  function onQ3TextChange(testId) {
+    const obs = document.getElementById(`q3Obs_${testId}`)?.value || '';
+    const inf = document.getElementById(`q3Inf_${testId}`)?.value || '';
+    engine.setQ3Response(testId, obs, inf);
+    updateLiveScoreDisplay();
+  }
+
+  function onQ3DeductionChanged() {
+    const fg = document.getElementById('q3FGSelect')?.value || '';
+    engine.setQ3Deduction(fg);
+    updateLiveScoreDisplay();
+  }
+
+  function insertSuggestion(fieldId, text) {
+    const el = document.getElementById(fieldId);
+    if (!el) return;
+    el.value = el.value ? el.value + '; ' + text : text;
+    el.dispatchEvent(new Event('input'));
+  }
+
+  // ── Q1 Burette Lens & Titration Operations ────────────────────────────
+  function drawLens() {
+    const svg = document.getElementById('lensSvg');
+    if (!svg) return;
+    const vol = engine.q1BuretteReading;
+    const whole = Math.floor(vol);
+    const frac = vol - whole;
+    const centerY = 70;
+    const pxPerUnit = 28;
+
+    let linesHtml = '';
+    for (let mark = whole - 2; mark <= whole + 3; mark++) {
+      if (mark < 0 || mark > 50) continue;
+      const y = centerY + (mark - vol) * pxPerUnit;
+      linesHtml += `
+        <line x1="20" y1="${y}" x2="80" y2="${y}" stroke="rgba(255,255,255,0.85)" stroke-width="1.8"/>
+        <text x="92" y="${y + 4}" font-size="12" font-weight="700" fill="#38BDF8" font-family="'JetBrains Mono',monospace">${mark}.00</text>
+      `;
+      for (let sub = 1; sub <= 9; sub++) {
+        const subY = y + (sub * 0.1) * pxPerUnit;
+        const isHalf = (sub === 5);
+        linesHtml += `
+          <line x1="20" y1="${subY}" x2="${isHalf ? 60 : 42}" y2="${subY}" stroke="rgba(255,255,255,0.5)" stroke-width="${isHalf ? 1.4 : 1}"/>
+        `;
+      }
+    }
+
+    svg.innerHTML = `
+      <!-- Burette Glass Tube Profile -->
+      <rect x="18" y="0" width="144" height="140" fill="rgba(15,23,42,0.6)" stroke="#0284C7" stroke-width="1.5"/>
+      <!-- Fluid Meniscus Curve -->
+      <path d="M 20,${centerY} Q 50,${centerY + 7} 80,${centerY} L 80,140 L 20,140 Z" fill="rgba(56,189,248,0.4)"/>
+      <path d="M 20,${centerY} Q 50,${centerY + 7} 80,${centerY}" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+      ${linesHtml}
+    `;
+  }
+
+  function startTitrate(speed = 'dropwise') {
+    stopTitrate();
+    const rate = speed === 'fast' ? 0.35 : 0.08;
+    const drip = document.getElementById('rigDrip');
+    if (drip) drip.style.display = 'block';
+
+    const stopcock = document.getElementById('stopcockValve');
+    if (stopcock) stopcock.style.transform = 'rotate(90deg)';
+
+    titrateInterval = setInterval(() => {
+      engine.q1BuretteReading += rate;
+      if (engine.q1BuretteReading >= 50.0) {
+        engine.q1BuretteReading = 50.0;
+        stopTitrate();
+      }
+
+      document.getElementById('liveBuretteVol').textContent = engine.q1BuretteReading.toFixed(2) + ' cm³';
+      document.getElementById('liveTitreUsed').textContent = engine.q1BuretteReading.toFixed(2) + ' cm³';
+
+      // Update Apparatus Liquid Height
+      const bHeight = Math.max(0, 176 - (engine.q1BuretteReading / 50.0) * 176);
+      const bFill = document.getElementById('buretteFill');
+      if (bFill) {
+        bFill.setAttribute('y', 22 + (176 - bHeight));
+        bFill.setAttribute('height', bHeight);
+      }
+
+      // Check Endpoint Transition
+      const trueTitre = engine.preset.q1.trueTitre || 25.00;
+      const flaskBody = document.getElementById('flaskRigBody');
+      if (engine.q1BuretteReading >= trueTitre) {
+        if (flaskBody) flaskBody.setAttribute('fill', 'rgba(255,255,255,0.4)'); // Pink -> Colorless
+        engine.q1ReachedEndpoint = true;
+      } else {
+        if (flaskBody) flaskBody.setAttribute('fill', 'rgba(236,72,153,0.75)');
+      }
+
+      drawLens();
+    }, 100);
+  }
+
+  function stopTitrate() {
+    if (titrateInterval) {
+      clearInterval(titrateInterval);
+      titrateInterval = null;
+    }
+    const drip = document.getElementById('rigDrip');
+    if (drip) drip.style.display = 'none';
+    const stopcock = document.getElementById('stopcockValve');
+    if (stopcock) stopcock.style.transform = 'rotate(0deg)';
+  }
+
+  function swirlFlask() {
+    const flask = document.getElementById('flaskContainer');
+    if (!flask) return;
+    flask.style.transform = 'rotate(-8deg)';
+    setTimeout(() => { flask.style.transform = 'rotate(8deg)'; }, 150);
+    setTimeout(() => { flask.style.transform = 'rotate(0deg)'; }, 300);
+  }
+
+  function resetTitrationApparatus() {
+    stopTitrate();
+    engine.q1BuretteReading = 0.00;
+    engine.q1ReachedEndpoint = false;
+    document.getElementById('liveBuretteVol').textContent = '0.00 cm³';
+    document.getElementById('liveTitreUsed').textContent = '0.00 cm³';
+    const bFill = document.getElementById('buretteFill');
+    if (bFill) {
+      bFill.setAttribute('y', 22);
+      bFill.setAttribute('height', 176);
+    }
+    const flaskBody = document.getElementById('flaskRigBody');
+    if (flaskBody) flaskBody.setAttribute('fill', 'rgba(236,72,153,0.75)');
+    drawLens();
+  }
+
+  let currentTrialRecording = 1;
+  function transferReadingToTable() {
+    const reading = parseFloat(engine.q1BuretteReading.toFixed(2));
+    if (currentTrialRecording === 1) {
+      document.getElementById('t1Final').value = reading.toFixed(2);
+      currentTrialRecording = 2;
+    } else if (currentTrialRecording === 2) {
+      document.getElementById('t2Final').value = reading.toFixed(2);
+      currentTrialRecording = 3;
+    } else {
+      document.getElementById('t3Final').value = reading.toFixed(2);
+      currentTrialRecording = 1;
+    }
+    onTableInputChanged();
+    alert(`Reading of ${reading.toFixed(2)} cm³ transferred to Table 1!`);
+    resetTitrationApparatus();
+  }
+
+  function onTableInputChanged() {
+    [1, 2, 3].forEach(n => {
+      const fin = parseFloat(document.getElementById(`t${n}Final`).value) || 0;
+      const init = parseFloat(document.getElementById(`t${n}Init`).value) || 0;
+      const used = parseFloat(Math.max(0, fin - init).toFixed(2));
+      document.getElementById(`t${n}Used`).textContent = used.toFixed(2);
+      engine.recordTrial(n, fin, init);
+    });
+
+    const t1 = engine.q1Trials[0].used;
+    const t2 = engine.q1Trials[1].used;
+    const t3 = engine.q1Trials[2].used;
+    const valid = [t1, t2, t3].filter(v => v > 0);
+    if (valid.length >= 2 && !document.getElementById('ansAvgTitre').value) {
+      const avg = (valid.reduce((a, b) => a + b, 0) / valid.length).toFixed(2);
+      document.getElementById('ansAvgTitre').value = avg;
+      engine.setQ1Answer('avgTitre', avg);
+    }
+    updateLiveScoreDisplay();
+  }
+
+  function onConcordantChanged() {
+    [1, 2, 3].forEach(n => {
+      const cb = document.getElementById(`t${n}Concordant`);
+      engine.setConcordant(n, cb ? cb.checked : false);
+    });
+    updateLiveScoreDisplay();
+  }
+
+  function onQ1CalculationsChanged() {
+    engine.setQ1Answer('avgTitre', document.getElementById('ansAvgTitre').value);
+    engine.setQ1Answer('molesB', document.getElementById('ansMolesB').value);
+    engine.setQ1Answer('molesA', document.getElementById('ansMolesA').value);
+    engine.setQ1Answer('molarityA', document.getElementById('ansMolarityA').value);
+    engine.setQ1Answer('concGrams', document.getElementById('ansConcGrams').value);
     updateLiveScoreDisplay();
   }
 
@@ -856,243 +1347,6 @@
     }
   }
 
-  // ── Q1 Titration Simulation ──────────────────────────────────────────
-  function startTitrate(speed = 'dropwise') {
-    stopTitrate();
-    const rate = speed === 'fast' ? 0.35 : 0.08;
-    const drip = document.getElementById('svgDrip');
-    if (drip) drip.style.display = 'block';
-
-    titrateInterval = setInterval(() => {
-      engine.q1BuretteReading += rate;
-      if (engine.q1BuretteReading >= 50.0) {
-        engine.q1BuretteReading = 50.0;
-        stopTitrate();
-      }
-
-      document.getElementById('liveBuretteVol').textContent = engine.q1BuretteReading.toFixed(2) + ' cm³';
-      document.getElementById('liveTitreUsed').textContent = engine.q1BuretteReading.toFixed(2) + ' cm³';
-
-      // Update SVG heights
-      const liquidHeight = Math.max(0, 146 - (engine.q1BuretteReading / 50.0) * 146);
-      const svgLiq = document.getElementById('svgBuretteLiquid');
-      if (svgLiq) {
-        svgLiq.setAttribute('y', 22 + (146 - liquidHeight));
-        svgLiq.setAttribute('height', liquidHeight);
-      }
-
-      // Check Endpoint Transition
-      const trueTitre = engine.preset.q1.trueTitre || 25.00;
-      const flaskLiq = document.getElementById('svgFlaskLiquid');
-      if (engine.q1BuretteReading >= trueTitre) {
-        if (flaskLiq) flaskLiq.setAttribute('fill', 'rgba(255,255,255,0.4)'); // Pink disappears -> Colorless
-        engine.q1ReachedEndpoint = true;
-      } else {
-        if (flaskLiq) flaskLiq.setAttribute('fill', '#EC4899'); // Pink
-      }
-    }, 100);
-  }
-
-  function stopTitrate() {
-    if (titrateInterval) {
-      clearInterval(titrateInterval);
-      titrateInterval = null;
-    }
-    const drip = document.getElementById('svgDrip');
-    if (drip) drip.style.display = 'none';
-  }
-
-  function resetTitrationApparatus() {
-    stopTitrate();
-    engine.q1BuretteReading = 0.00;
-    engine.q1ReachedEndpoint = false;
-    document.getElementById('liveBuretteVol').textContent = '0.00 cm³';
-    document.getElementById('liveTitreUsed').textContent = '0.00 cm³';
-    const svgLiq = document.getElementById('svgBuretteLiquid');
-    if (svgLiq) {
-      svgLiq.setAttribute('y', 22);
-      svgLiq.setAttribute('height', 146);
-    }
-    const flaskLiq = document.getElementById('svgFlaskLiquid');
-    if (flaskLiq) flaskLiq.setAttribute('fill', '#EC4899');
-  }
-
-  let currentTrialRecording = 1;
-  function transferReadingToTable() {
-    const reading = parseFloat(engine.q1BuretteReading.toFixed(2));
-    if (currentTrialRecording === 1) {
-      document.getElementById('t1Final').value = reading.toFixed(2);
-      currentTrialRecording = 2;
-    } else if (currentTrialRecording === 2) {
-      document.getElementById('t2Final').value = reading.toFixed(2);
-      currentTrialRecording = 3;
-    } else {
-      document.getElementById('t3Final').value = reading.toFixed(2);
-      currentTrialRecording = 1;
-    }
-    onTableInputChanged();
-    alert(`Reading of ${reading.toFixed(2)} cm³ transferred to Table 1!`);
-    resetTitrationApparatus();
-  }
-
-  function onTableInputChanged() {
-    [1, 2, 3].forEach(n => {
-      const fin = parseFloat(document.getElementById(`t${n}Final`).value) || 0;
-      const init = parseFloat(document.getElementById(`t${n}Init`).value) || 0;
-      const used = parseFloat(Math.max(0, fin - init).toFixed(2));
-      document.getElementById(`t${n}Used`).textContent = used.toFixed(2);
-      engine.recordTrial(n, fin, init);
-    });
-
-    // Auto-calculate suggested average if concordant
-    const t1 = engine.q1Trials[0].used;
-    const t2 = engine.q1Trials[1].used;
-    const t3 = engine.q1Trials[2].used;
-    const valid = [t1, t2, t3].filter(v => v > 0);
-    if (valid.length >= 2 && !document.getElementById('ansAvgTitre').value) {
-      const avg = (valid.reduce((a, b) => a + b, 0) / valid.length).toFixed(2);
-      document.getElementById('ansAvgTitre').value = avg;
-      engine.setQ1Answer('avgTitre', avg);
-    }
-
-    updateLiveScoreDisplay();
-  }
-
-  function onConcordantChanged() {
-    [1, 2, 3].forEach(n => {
-      const cb = document.getElementById(`t${n}Concordant`);
-      engine.setConcordant(n, cb ? cb.checked : false);
-    });
-    updateLiveScoreDisplay();
-  }
-
-  function onQ1CalculationsChanged() {
-    engine.setQ1Answer('avgTitre', document.getElementById('ansAvgTitre').value);
-    engine.setQ1Answer('molesB', document.getElementById('ansMolesB').value);
-    engine.setQ1Answer('molesA', document.getElementById('ansMolesA').value);
-    engine.setQ1Answer('molarityA', document.getElementById('ansMolarityA').value);
-    engine.setQ1Answer('concGrams', document.getElementById('ansConcGrams').value);
-    updateLiveScoreDisplay();
-  }
-
-  // ── Q2 Qualitative Handlers ──────────────────────────────────────────
-  function runQualTest(testType) {
-    const p = engine.preset.q2;
-    const msg = document.getElementById('qualWorkbenchMsg');
-    const ppt = document.getElementById('svgQualPrecipitate');
-    const liq = document.getElementById('svgQualLiquid');
-
-    if (testType === 'water') {
-      liq.setAttribute('fill', p.trueSaltKey.includes('Cu') ? '#0284C7' : p.trueSaltKey.includes('Fe') ? '#10B981' : 'rgba(255,255,255,0.4)');
-      ppt.style.display = 'none';
-      msg.innerHTML = `💧 <b>Distilled Water Added:</b> Solid Y dissolves completely to give a clear ${p.trueSaltKey.includes('Cu') ? 'blue' : p.trueSaltKey.includes('Fe') ? 'pale green' : 'colorless'} solution.`;
-    } else if (testType === 'naoh_drop') {
-      ppt.style.display = 'block';
-      ppt.setAttribute('fill', p.trueSaltKey.includes('Fe') ? '#15803D' : p.trueSaltKey.includes('Cu') ? '#38BDF8' : '#FFFFFF');
-      msg.innerHTML = `🧪 <b>NaOH Dropwise:</b> A distinct precipitate forms in the test tube.`;
-    } else if (testType === 'naoh_excess') {
-      if (p.trueSaltKey.includes('Pb') || p.trueSaltKey.includes('Zn') || p.trueSaltKey.includes('Al')) {
-        ppt.style.display = 'none';
-        msg.innerHTML = `🧪 <b>NaOH in Excess:</b> Precipitate DISSOLVES in excess NaOH to form a clear colorless solution.`;
-      } else {
-        ppt.style.display = 'block';
-        msg.innerHTML = `🧪 <b>NaOH in Excess:</b> Precipitate remains INSOLUBLE in excess NaOH.`;
-      }
-    } else if (testType === 'nh3_drop') {
-      ppt.style.display = 'block';
-      msg.innerHTML = `🧪 <b>Aqueous NH₃ Dropwise:</b> Precipitate forms in the test tube.`;
-    } else if (testType === 'nh3_excess') {
-      if (p.trueSaltKey.includes('Zn')) {
-        ppt.style.display = 'none';
-        msg.innerHTML = `🧪 <b>Aqueous NH₃ in Excess:</b> Precipitate dissolves in excess aqueous ammonia to form a colorless solution.`;
-      } else if (p.trueSaltKey.includes('Cu')) {
-        ppt.style.display = 'none';
-        liq.setAttribute('fill', '#1D4ED8'); // Deep blue tetraamminecopper
-        msg.innerHTML = `🧪 <b>Aqueous NH₃ in Excess:</b> Precipitate dissolves in excess to form a characteristic DEEP BLUE solution.`;
-      } else {
-        ppt.style.display = 'block';
-        msg.innerHTML = `🧪 <b>Aqueous NH₃ in Excess:</b> Precipitate remains INSOLUBLE in excess aqueous ammonia.`;
-      }
-    } else if (testType === 'anion_test') {
-      if (p.trueAnion.includes('SO4')) {
-        ppt.style.display = 'block';
-        ppt.setAttribute('fill', '#FFFFFF');
-        msg.innerHTML = `🧪 <b>Ba(NO₃)₂ Added:</b> Dense white precipitate of BaSO₄ forms, insoluble in dilute HNO₃.`;
-      } else if (p.trueSaltKey.includes('Pb')) {
-        ppt.style.display = 'block';
-        ppt.setAttribute('fill', '#FACC15'); // Yellow PbI2
-        msg.innerHTML = `🧪 <b>KI Solution Added:</b> Characteristic BRIGHT YELLOW precipitate of Lead(II) Iodide (PbI₂) forms.`;
-      } else {
-        msg.innerHTML = `🧪 <b>Reagent Added:</b> Solution remains clear without precipitate.`;
-      }
-    }
-  }
-
-  function onQ2ResponseChanged(testId) {
-    const obs = document.getElementById(`q2Obs_${testId}`)?.value || '';
-    const inf = document.getElementById(`q2Inf_${testId}`)?.value || '';
-    engine.setQ2Response(testId, obs, inf);
-    updateLiveScoreDisplay();
-  }
-
-  function onQ2DeductionsChanged() {
-    const cat = document.getElementById('q2CationSelect')?.value || '';
-    const ani = document.getElementById('q2AnionSelect')?.value || '';
-    engine.setQ2Deduction(cat, ani);
-    updateLiveScoreDisplay();
-  }
-
-  // ── Q3 Organic Handlers ──────────────────────────────────────────────
-  function runOrganicTest(testType) {
-    const p = engine.preset.q3;
-    const msg = document.getElementById('organicWorkbenchMsg');
-    const flame = document.getElementById('svgOrganicFlame');
-
-    if (testType === 'ignition') {
-      flame.style.display = 'block';
-      if (p.trueOrganicKey.includes('Cyclo') || p.trueOrganicKey.includes('Ethyne')) {
-        flame.setAttribute('fill', '#F59E0B');
-        msg.innerHTML = `🔥 <b>Ignition Test:</b> Liquid Z ignites readily and burns with a luminous, VERY SMOKY / SOOTY flame leaving black carbon soot.`;
-      } else {
-        flame.setAttribute('fill', '#38BDF8');
-        msg.innerHTML = `🔥 <b>Ignition Test:</b> Liquid Z burns with a clean, non-sooty pale blue flame leaving no residue.`;
-      }
-      setTimeout(() => { flame.style.display = 'none'; }, 4000);
-    } else if (testType === 'litmus') {
-      if (p.trueOrganicKey.includes('Acid')) {
-        msg.innerHTML = `📑 <b>Litmus Test:</b> Moist blue litmus paper turns RED; red litmus paper remains red (Acidic pH ~ 3).`;
-      } else {
-        msg.innerHTML = `📑 <b>Litmus Test:</b> No color change on red or blue litmus paper (Neutral pH ~ 7).`;
-      }
-    } else if (testType === 'kmno4') {
-      if (p.trueOrganicKey.includes('Ethanol') || p.trueOrganicKey.includes('Cyclo')) {
-        msg.innerHTML = `🧪 <b>Acidified KMnO₄ Added:</b> The purple color of KMnO₄ is DECOLORIZED (turns clear colorless).`;
-      } else {
-        msg.innerHTML = `🧪 <b>Acidified KMnO₄ Added:</b> Purple color of KMnO₄ remains UNCHANGED.`;
-      }
-    } else if (testType === 'nahco3') {
-      if (p.trueOrganicKey.includes('Acid')) {
-        msg.innerHTML = `🫧 <b>Solid NaHCO₃ Added:</b> VIGOROUS EFFERVESCENCE / bubbling of a colorless gas that forms a white precipitate with calcium hydroxide solution (lime water).`;
-      } else {
-        msg.innerHTML = `🫧 <b>Solid NaHCO₃ Added:</b> No effervescence / no gas evolved.`;
-      }
-    }
-  }
-
-  function onQ3ResponseChanged(testId) {
-    const obs = document.getElementById(`q3Obs_${testId}`)?.value || '';
-    const inf = document.getElementById(`q3Inf_${testId}`)?.value || '';
-    engine.setQ3Response(testId, obs, inf);
-    updateLiveScoreDisplay();
-  }
-
-  function onQ3DeductionChanged() {
-    const fg = document.getElementById('q3FGSelect')?.value || '';
-    engine.setQ3Deduction(fg);
-    updateLiveScoreDisplay();
-  }
-
-  // ── Score Display & Exam Countdown ───────────────────────────────────
   function updateLiveScoreDisplay() {
     const evaluation = engine.evaluateExam();
     const badge = document.getElementById('compositeMarkCounter');
@@ -1124,7 +1378,7 @@
     }
   }, 1000);
 
-  // ── Submission Handler ───────────────────────────────────────────────
+  // ── Exam Submission ──────────────────────────────────────────────────
   async function submitCompositeExam() {
     clearInterval(timerInterval);
     const evalData = engine.evaluateExam();
@@ -1154,7 +1408,6 @@
     document.getElementById('pScoreQ3').textContent = `${evalData.q3Score.toFixed(1)} / 10.0`;
     document.getElementById('pGrade').textContent = `${evalData.grade} (${evalData.totalScore.toFixed(1)} / 40.0 Marks)`;
 
-    // Post session to backend
     const payload = engine.buildSubmissionPayload(assignmentId);
     try {
       if (window.Composite && Composite.save) {
@@ -1194,7 +1447,6 @@
     }
   });
 
-  // Initialize on page load
   initExamUI();
 </script>
 <script src="/shared/chemical-safety.js"></script>

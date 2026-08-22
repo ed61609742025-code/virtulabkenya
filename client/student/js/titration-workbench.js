@@ -1332,44 +1332,53 @@ requireStudentLogin();
     const lensSvg = document.getElementById('lensSvg');
     if (!lensSvg) return;
 
-    const pcm = 42; // Higher resolution pixels per cm³
+    const pcm = 42; // Pixels per cm³
     const centerY = 80;
     
     const minVol = Math.max(0, Math.floor(volume - 2.5));
     const maxVol = Math.min(50, Math.ceil(volume + 2.5));
 
-    // Dynamic defs for glass tube & liquid refraction
+    // Dynamic defs for glass tube, liquid refraction & meniscus
     const defsSvg = `
       <defs>
-        <linearGradient id="lensTubeGrad" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stop-color="#0F172A" stop-opacity="0.9"/>
-          <stop offset="8%" stop-color="#38BDF8" stop-opacity="0.3"/>
-          <stop offset="20%" stop-color="#FFFFFF" stop-opacity="0.15"/>
-          <stop offset="80%" stop-color="#0284C7" stop-opacity="0.1"/>
-          <stop offset="92%" stop-color="#38BDF8" stop-opacity="0.3"/>
-          <stop offset="100%" stop-color="#0F172A" stop-opacity="0.9"/>
+        <!-- Glass Tube Interior (Above Meniscus) -->
+        <linearGradient id="lensTubeGlass" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#0B132B" stop-opacity="0.95"/>
+          <stop offset="12%" stop-color="#1C2541" stop-opacity="0.85"/>
+          <stop offset="50%" stop-color="#0B132B" stop-opacity="0.95"/>
+          <stop offset="88%" stop-color="#1C2541" stop-opacity="0.85"/>
+          <stop offset="100%" stop-color="#0B132B" stop-opacity="0.95"/>
         </linearGradient>
-        <linearGradient id="lensLiquidColumn" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#0284C7" stop-opacity="0.65"/>
-          <stop offset="15%" stop-color="#0369A1" stop-opacity="0.8"/>
-          <stop offset="100%" stop-color="#0C4A6E" stop-opacity="0.9"/>
+        
+        <!-- Highly visible luminous chemical liquid solution fill (Below Meniscus) -->
+        <linearGradient id="luminousLiquidFill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#00F2FE" stop-opacity="0.88"/>
+          <stop offset="10%" stop-color="#0284C7" stop-opacity="0.82"/>
+          <stop offset="50%" stop-color="#0369A1" stop-opacity="0.88"/>
+          <stop offset="100%" stop-color="#075985" stop-opacity="0.95"/>
         </linearGradient>
-        <linearGradient id="glassReflection" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.35"/>
+
+        <!-- Specular Glass Wall Highlight -->
+        <linearGradient id="tubeSpecularHighlight" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.5"/>
+          <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.1"/>
           <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.0"/>
         </linearGradient>
       </defs>
     `;
 
-    // Glass Tube Body
-    const tubeBacking = `
-      <rect x="16" y="0" width="148" height="160" rx="6" fill="url(#lensTubeGrad)"/>
-      <rect x="18" y="0" width="14" height="160" fill="url(#glassReflection)"/>
+    // 1. Dry Glass Tube (Above Meniscus: 0 to centerY)
+    const dryGlassTop = `
+      <rect x="14" y="0" width="152" height="${centerY}" rx="6" fill="url(#lensTubeGlass)"/>
+      <rect x="18" y="0" width="16" height="${centerY}" fill="url(#tubeSpecularHighlight)"/>
+      <line x1="14" y1="0" x2="14" y2="160" stroke="#00F2FE" stroke-width="2.5" stroke-opacity="0.7"/>
+      <line x1="166" y1="0" x2="166" y2="160" stroke="#00F2FE" stroke-width="2.5" stroke-opacity="0.7"/>
     `;
 
-    // Liquid Column below meniscus (surface at centerY)
-    const liquidColumn = `
-      <path d="M 16 ${centerY - 4} Q 90 ${centerY + 8} 164 ${centerY - 4} L 164 160 L 16 160 Z" fill="url(#lensLiquidColumn)"/>
+    // 2. Clear Liquid Column (Below Meniscus: centerY to 160)
+    const liquidBody = `
+      <path d="M 14 ${centerY} Q 90 ${centerY + 10} 166 ${centerY} L 166 160 L 14 160 Z" fill="url(#luminousLiquidFill)"/>
+      <rect x="18" y="${centerY + 4}" width="16" height="${160 - (centerY + 4)}" fill="url(#tubeSpecularHighlight)"/>
     `;
 
     let ticksSvg = '';
@@ -1382,29 +1391,29 @@ requireStudentLogin();
       const isMedium = !isMajor && Math.abs((vRounded * 10) % 5) < 0.01;
 
       if (isMajor) {
-        ticksSvg += `<line x1="16" y1="${y}" x2="56" y2="${y}" stroke="#FFFFFF" stroke-width="1.8"/>`;
-        ticksSvg += `<line x1="124" y1="${y}" x2="164" y2="${y}" stroke="#FFFFFF" stroke-width="1.8"/>`;
-        ticksSvg += `<text x="66" y="${y + 4.5}" fill="#38BDF8" font-size="12" font-family="'JetBrains Mono', monospace" font-weight="800">${Math.round(vRounded)}.0</text>`;
+        ticksSvg += `<line x1="14" y1="${y}" x2="56" y2="${y}" stroke="#FFFFFF" stroke-width="2.2"/>`;
+        ticksSvg += `<line x1="124" y1="${y}" x2="166" y2="${y}" stroke="#FFFFFF" stroke-width="2.2"/>`;
+        ticksSvg += `<text x="66" y="${y + 4.5}" fill="#FFFFFF" font-size="12" font-family="'JetBrains Mono', monospace" font-weight="900" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.9))">${Math.round(vRounded)}.0</text>`;
       } else if (isMedium) {
-        ticksSvg += `<line x1="16" y1="${y}" x2="44" y2="${y}" stroke="#38BDF8" stroke-width="1.4"/>`;
-        ticksSvg += `<line x1="136" y1="${y}" x2="164" y2="${y}" stroke="#38BDF8" stroke-width="1.4"/>`;
+        ticksSvg += `<line x1="14" y1="${y}" x2="44" y2="${y}" stroke="#E0F2FE" stroke-width="1.6"/>`;
+        ticksSvg += `<line x1="136" y1="${y}" x2="166" y2="${y}" stroke="#E0F2FE" stroke-width="1.6"/>`;
       } else {
-        ticksSvg += `<line x1="16" y1="${y}" x2="32" y2="${y}" stroke="#94A3B8" stroke-width="0.95"/>`;
-        ticksSvg += `<line x1="148" y1="${y}" x2="164" y2="${y}" stroke="#94A3B8" stroke-width="0.95"/>`;
+        ticksSvg += `<line x1="14" y1="${y}" x2="32" y2="${y}" stroke="#CBD5E1" stroke-width="1.1"/>`;
+        ticksSvg += `<line x1="148" y1="${y}" x2="166" y2="${y}" stroke="#CBD5E1" stroke-width="1.1"/>`;
       }
     }
 
-    // Realistic Concave Meniscus Curve with Optics
+    // 3. Concave Curved Meniscus Surface (Liquid Interface)
     const meniscusSvg = `
-      <!-- Secondary depth shadow arc -->
-      <path d="M 16 ${centerY - 2} Q 90 ${centerY + 10} 164 ${centerY - 2}" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/>
-      <!-- Main illuminated meniscus arc -->
-      <path d="M 16 ${centerY - 4} Q 90 ${centerY + 8} 164 ${centerY - 4}" stroke="#00F2FE" stroke-width="2.8" stroke-linecap="round" fill="none"/>
-      <!-- Bottom of Meniscus Reading Focal Dot -->
-      <circle cx="90" cy="${centerY + 8}" r="4" fill="#EF4444" stroke="#FFFFFF" stroke-width="1.5"/>
+      <!-- Meniscus refraction shadow band -->
+      <path d="M 14 ${centerY - 1} Q 90 ${centerY + 9} 166 ${centerY - 1}" stroke="#032B44" stroke-width="2.5" fill="none"/>
+      <!-- Luminous meniscus surface arc -->
+      <path d="M 14 ${centerY} Q 90 ${centerY + 10} 166 ${centerY}" stroke="#E0F2FE" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+      <!-- Bottom of Meniscus Reading Focal Bead -->
+      <circle cx="90" cy="${centerY + 10}" r="4.5" fill="#EF4444" stroke="#FFFFFF" stroke-width="1.8"/>
     `;
 
-    lensSvg.innerHTML = defsSvg + tubeBacking + liquidColumn + ticksSvg + meniscusSvg;
+    lensSvg.innerHTML = defsSvg + dryGlassTop + liquidBody + ticksSvg + meniscusSvg;
 
     const readoutPill = document.getElementById('lensReadoutPill');
     if (readoutPill) {

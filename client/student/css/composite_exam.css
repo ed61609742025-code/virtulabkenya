@@ -142,7 +142,6 @@ html, body {
   font-family: var(--font-body);
   margin: 0;
   padding: 0;
-  padding-top: 60px;
   min-height: 100vh;
   transition: background-color 0.15s ease, color 0.15s ease;
   -webkit-font-smoothing: antialiased;
@@ -154,17 +153,12 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 24px;
+  padding: 12px 24px;
   background: var(--topbar-bg);
   border-bottom: 1px solid var(--card-border);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  position: relative;
   width: 100%;
-  z-index: 10000;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  z-index: 1000;
   box-shadow: var(--shadow-sm);
   transition: background-color 0.15s ease, border-color 0.15s ease;
   flex-wrap: wrap;

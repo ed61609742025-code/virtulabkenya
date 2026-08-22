@@ -1262,6 +1262,40 @@ describe('VirtuLab Kenya — Backend API Test Suite', () => {
     assert.ok(evaluation.q1Details.rubric.length > 0);
     assert.ok(evaluation.q2Details.rubric.length > 0);
     assert.ok(evaluation.q3Details.rubric.length > 0);
+    assert.ok(evaluation.workedSolutions.stepA);
+    assert.ok(evaluation.workedSolutions.stepB);
+    assert.ok(evaluation.workedSolutions.stepC);
+    assert.ok(evaluation.workedSolutions.stepD);
+    assert.ok(evaluation.workedSolutions.stepE);
+  });
+
+  it('CompositeExamEngine — should correctly enforce KNEC technical penalty rules', () => {
+    const { CompositeExamEngine } = require('../../client/student/js/composite-engine');
+    const engine = new CompositeExamEngine({ presetKey: 'series_1' });
+
+    // 1. Decimal place precision violation (.33 instead of .00 or .50/.05)
+    engine.recordTrial(1, 24.33, 0.00);
+    engine.recordTrial(2, 24.37, 0.00);
+    const q1Res1 = engine.calculateQ1Score();
+    const decimalPenalty = q1Res1.rubric.find(r => r.item.includes('Decimal Place Penalty'));
+    assert.ok(decimalPenalty, 'Must detect and penalize decimal place precision violation');
+    assert.strictEqual(decimalPenalty.mark, 0.5);
+
+    // 2. Non-concordant averaging penalty (averaging 24.00 and 25.50 which is >0.20 cm³ apart)
+    engine.recordTrial(1, 24.00, 0.00);
+    engine.recordTrial(2, 25.50, 0.00);
+    engine.setConcordant(1, true);
+    engine.setConcordant(2, true);
+    engine.setQ1Answer('avgTitre', '24.75');
+    const q1Res2 = engine.calculateQ1Score();
+    const concPenalty = q1Res2.rubric.find(r => r.item.includes('Non-Concordant Penalty'));
+    assert.ok(concPenalty, 'Must detect and penalize non-concordant averaging');
+
+    // 3. Missing ionic charge penalty (deducing plain 'Pb' instead of 'Pb2+')
+    engine.setQ2Deduction('Pb', 'NO3-');
+    const q2Res = engine.calculateQ2Score();
+    const chargePenalty = q2Res.rubric.find(r => r.item.includes('Charge Penalty'));
+    assert.ok(chargePenalty, 'Must detect and penalize missing charge superscripts');
   });
 
   /* 23. SOLUBILITY CURVES & TEACHER CLASS VIEW */

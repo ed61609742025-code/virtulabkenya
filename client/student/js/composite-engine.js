@@ -736,7 +736,7 @@ class CompositeExamEngine {
     this.q1Answers[field] = value;
   }
 
-  // ── Q1 KNEC Scoring Algorithm with Rigorous Decimal & Concordance ───
+  // ── KNEC Scoring Algorithm with Technical Penalties ───────────────────
   calculateQ1Score() {
     let tableScore = 0.0;
     let calcScore = 0.0;
@@ -748,33 +748,35 @@ class CompositeExamEngine {
     // 1. Table 1 Completeness (1.0 Mark)
     if (recordedTrials.length >= 3) {
       tableScore += 1.0;
-      rubric.push({ item: 'Table 1 Complete (3 trials recorded)', max: 1.0, mark: 1.0, pass: true, detail: 'Candidate completed all 3 titration trials.' });
+      rubric.push({ item: 'Table 1 Completeness (3 trials recorded)', max: 1.0, mark: 1.0, pass: true, detail: 'Candidate completed all 3 titration trials.' });
     } else if (recordedTrials.length >= 2) {
       tableScore += 0.5;
-      rubric.push({ item: 'Table 1 Partially Complete (2 trials recorded)', max: 1.0, mark: 0.5, pass: true, detail: 'Candidate completed 2 trials.' });
+      rubric.push({ item: 'Table 1 Completeness (2 trials recorded)', max: 1.0, mark: 0.5, pass: true, detail: 'Candidate completed 2 trials.' });
     } else {
-      rubric.push({ item: 'Table 1 Incomplete (less than 2 trials)', max: 1.0, mark: 0.0, pass: false, detail: 'At least 2 trials are required for KNEC mark.' });
+      rubric.push({ item: 'Table 1 Completeness', max: 1.0, mark: 0.0, pass: false, detail: 'Incomplete: At least 2 trials are required for KNEC mark.' });
     }
 
-    // 2. Decimal Place & Use of Pipette / Burette Precision (1.0 Mark)
-    let decimalCompliant = true;
+    // 2. Decimal Place Precision Penalty (1.0 Mark)
+    // KNEC Rule: Readings must be recorded to 2 decimal places ending in .00 or .50 / .05
+    let decimalViolations = 0;
     this.q1Trials.forEach(t => {
       if (t.recorded) {
         const finStr = t.final.toFixed(2);
         const lastDigit = finStr.slice(-1);
         if (lastDigit !== '0' && lastDigit !== '5') {
-          decimalCompliant = false;
+          decimalViolations++;
         }
       }
     });
-    if (decimalCompliant && recordedTrials.length >= 2) {
+
+    if (decimalViolations === 0 && recordedTrials.length >= 2) {
       tableScore += 1.0;
-      rubric.push({ item: 'Decimal Place Precision (consistent to 2 d.p. ending in .00 or .05)', max: 1.0, mark: 1.0, pass: true, detail: 'All burette readings conform to KNEC 2 d.p. rule.' });
+      rubric.push({ item: 'Decimal Place Precision (consistent to 2 d.p. ending in .00 or .05)', max: 1.0, mark: 1.0, pass: true, detail: 'Full mark: All burette readings follow KNEC 2 d.p. rule.' });
     } else if (recordedTrials.length >= 2) {
       tableScore += 0.5;
-      rubric.push({ item: 'Decimal Place Precision', max: 1.0, mark: 0.5, pass: false, detail: 'Some readings did not follow KNEC .00 or .05 precision standard.' });
+      rubric.push({ item: 'Decimal Place Penalty (-0.5 Mark)', max: 1.0, mark: 0.5, pass: false, detail: 'Penalized: Readings did not adhere strictly to .00 or .05 precision standard.' });
     } else {
-      rubric.push({ item: 'Decimal Place Precision', max: 1.0, mark: 0.0, pass: false, detail: 'Incomplete data.' });
+      rubric.push({ item: 'Decimal Place Precision', max: 1.0, mark: 0.0, pass: false, detail: 'Incomplete titration data.' });
     }
 
     // 3. Accuracy vs True Value (3.0 Marks)
@@ -788,29 +790,43 @@ class CompositeExamEngine {
 
     if (diff <= 0.15 && recordedTrials.length >= 2) {
       tableScore += 3.0;
-      rubric.push({ item: 'Burette Titre Accuracy (within ±0.15 cm³ of true value)', max: 3.0, mark: 3.0, pass: true, detail: `Deviation is ${diff.toFixed(2)} cm³ (Target: ${trueTitre.toFixed(2)} cm³).` });
+      rubric.push({ item: 'Burette Titre Accuracy (within ±0.15 cm³ of true value)', max: 3.0, mark: 3.0, pass: true, detail: `Excellent: Deviation is ${diff.toFixed(2)} cm³ (Target: ${trueTitre.toFixed(2)} cm³).` });
     } else if (diff <= 0.30 && recordedTrials.length >= 2) {
       tableScore += 2.0;
-      rubric.push({ item: 'Burette Titre Accuracy (within ±0.30 cm³ of true value)', max: 3.0, mark: 2.0, pass: true, detail: `Deviation is ${diff.toFixed(2)} cm³ (Target: ${trueTitre.toFixed(2)} cm³).` });
+      rubric.push({ item: 'Burette Titre Accuracy (within ±0.30 cm³ of true value)', max: 3.0, mark: 2.0, pass: true, detail: `Competent: Deviation is ${diff.toFixed(2)} cm³ (Target: ${trueTitre.toFixed(2)} cm³).` });
     } else if (diff <= 0.50 && recordedTrials.length >= 2) {
       tableScore += 1.0;
-      rubric.push({ item: 'Burette Titre Accuracy (within ±0.50 cm³ of true value)', max: 3.0, mark: 1.0, pass: true, detail: `Deviation is ${diff.toFixed(2)} cm³ (Target: ${trueTitre.toFixed(2)} cm³).` });
+      rubric.push({ item: 'Burette Titre Accuracy (within ±0.50 cm³ of true value)', max: 3.0, mark: 1.0, pass: true, detail: `Pass: Deviation is ${diff.toFixed(2)} cm³ (Target: ${trueTitre.toFixed(2)} cm³).` });
     } else {
       rubric.push({ item: 'Burette Titre Accuracy (>0.50 cm³ deviation)', max: 3.0, mark: 0.0, pass: false, detail: `Titre deviated by ${diff.toFixed(2)} cm³ from true value (${trueTitre.toFixed(2)} cm³).` });
     }
 
     // 4. Calculations (10.0 Marks)
-    // (a) Average Titre (1.0 Mark)
+    // (a) Average Titre & Concordance Penalty (1.0 Mark)
     const candidateAvg = parseFloat(this.q1Answers.avgTitre);
-    const concordantTrials = this.q1Trials.filter(t => t.recorded && t.concordant && t.used > 0);
-    const expAvg = concordantTrials.length > 0
-      ? concordantTrials.reduce((a, b) => a + b.used, 0) / concordantTrials.length
+    const checkedConcordant = this.q1Trials.filter(t => t.recorded && t.concordant && t.used > 0);
+    
+    // Check if candidate checked non-concordant titres (>0.20 cm³ apart)
+    let nonConcordantChecked = false;
+    if (checkedConcordant.length >= 2) {
+      const vols = checkedConcordant.map(t => t.used);
+      const spread = Math.max(...vols) - Math.min(...vols);
+      if (spread > 0.20) nonConcordantChecked = true;
+    }
+
+    const expAvg = checkedConcordant.length > 0
+      ? checkedConcordant.reduce((a, b) => a + b.used, 0) / checkedConcordant.length
       : (recordedTrials.length > 0 ? avgRecorded : trueTitre);
     modelAnswers.avgTitre = parseFloat(expAvg.toFixed(2));
 
     if (!isNaN(candidateAvg) && Math.abs(candidateAvg - expAvg) <= 0.15) {
-      calcScore += 1.0;
-      rubric.push({ item: '(a) Average Titre Calculation V₁ (1.0 Mark)', max: 1.0, mark: 1.0, pass: true, detail: `Correct: V₁ = ${candidateAvg.toFixed(2)} cm³.` });
+      if (nonConcordantChecked) {
+        calcScore += 0.5;
+        rubric.push({ item: '(a) Average Titre V₁ (-0.5 Non-Concordant Penalty)', max: 1.0, mark: 0.5, pass: false, detail: 'Averaged titres that deviate by more than ±0.20 cm³ from each other.' });
+      } else {
+        calcScore += 1.0;
+        rubric.push({ item: '(a) Average Titre Calculation V₁ (1.0 Mark)', max: 1.0, mark: 1.0, pass: true, detail: `Correct: V₁ = ${candidateAvg.toFixed(2)} cm³.` });
+      }
     } else {
       rubric.push({ item: '(a) Average Titre Calculation V₁', max: 1.0, mark: 0.0, pass: false, detail: `Expected ${expAvg.toFixed(2)} cm³ from candidate trials.` });
     }
@@ -875,7 +891,7 @@ class CompositeExamEngine {
     };
   }
 
-  // ── Q2 Qualitative Operations ────────────────────────────────────────
+  // ── Q2 Qualitative Operations & Ionic Charge Enforcement ─────────────
   setQ2Response(testId, obsText, infText) {
     this.q2Obs[testId] = obsText;
     this.q2Inf[testId] = infText;
@@ -905,13 +921,18 @@ class CompositeExamEngine {
         testMark += 0.5;
       }
 
-      // Inference keywords check
+      // Inference keywords & charge check
       const infKeywords = (t.correctInf || '').toLowerCase().split(/[,; ]+/).filter(w => w.length > 2);
       const infMatches = infKeywords.filter(w => candidateInf.includes(w)).length;
       if (candidateInf.length > 3 && infMatches >= 1) {
         testMark += 1.5;
       } else if (candidateInf.length > 2) {
         testMark += 0.5;
+      }
+
+      // Contradictory inference penalty check
+      if (candidateObs.includes('insoluble in excess') && (candidateInf.includes('zn') || candidateInf.includes('zinc'))) {
+        testMark = Math.max(0, testMark - 0.5);
       }
 
       score += testMark;
@@ -928,9 +949,15 @@ class CompositeExamEngine {
     const trueCation = (this.preset.q2.trueCation || '').toLowerCase().replace(/[^a-z0-9]/g, '');
     const candidateCation = (this.q2CationChoice || '').toLowerCase().replace(/[^a-z0-9]/g, '');
     const cationCorrect = candidateCation.length > 0 && (candidateCation.includes(trueCation) || trueCation.includes(candidateCation));
-    if (cationCorrect) {
+    
+    // Check if ionic charge is present in choice
+    const hasCharge = this.q2CationChoice.includes('+') || this.q2CationChoice.includes('²') || this.q2CationChoice.includes('³');
+    if (cationCorrect && hasCharge) {
       score += 1.5;
-      rubric.push({ item: `Cation Deduction (${this.preset.q2.trueCation})`, max: 1.5, mark: 1.5, pass: true, detail: 'Correct cation identified.' });
+      rubric.push({ item: `Cation Deduction (${this.preset.q2.trueCation})`, max: 1.5, mark: 1.5, pass: true, detail: 'Correct cation with valid ionic charge.' });
+    } else if (cationCorrect) {
+      score += 1.0;
+      rubric.push({ item: 'Cation Deduction (-0.5 Charge Penalty)', max: 1.5, mark: 1.0, pass: false, detail: 'Element identified but missing ionic charge superscript.' });
     } else {
       rubric.push({ item: 'Cation Deduction', max: 1.5, mark: 0.0, pass: false, detail: `Expected: ${this.preset.q2.trueCation}` });
     }
@@ -1012,11 +1039,55 @@ class CompositeExamEngine {
     };
   }
 
+  // ── Step-by-Step Mathematical Worked Solution Model ──────────────────
+  generateWorkedSolutions() {
+    const p = this.preset.q1;
+    const v1 = p.trueTitre || 25.00;
+    const molesB = (p.trueBaseMolarity * p.pipetteVolume) / 1000.0;
+    const molesA = molesB * ((p.moleRatioAcid || 1) / (p.moleRatioBase || 1));
+    const molarityA = p.trueAcidMolarity || 0.100;
+    const concG = molarityA * (p.acidRfm || 36.5);
+
+    return {
+      stepA: {
+        title: '(a) Average Titre V₁',
+        formula: 'V₁ = (Titre II + Titre III) / 2',
+        substitution: `(${v1.toFixed(2)} + ${v1.toFixed(2)}) / 2`,
+        result: `${v1.toFixed(2)} cm³`
+      },
+      stepB: {
+        title: '(b) Moles of Solute in Pipette Volume (Solution B)',
+        formula: 'Moles = (Molarity × Pipette Volume) / 1000',
+        substitution: `(${p.trueBaseMolarity.toFixed(3)} × ${p.pipetteVolume.toFixed(1)}) / 1000`,
+        result: `${molesB.toFixed(5)} mol`
+      },
+      stepC: {
+        title: '(c) Reaction Stoichiometry & Moles of Acid (Solution A)',
+        formula: `Moles of Acid = Moles of Base × (${p.moleRatioAcid}/${p.moleRatioBase})`,
+        substitution: `${molesB.toFixed(5)} × (${p.moleRatioAcid}/${p.moleRatioBase})`,
+        result: `${molesA.toFixed(5)} mol`
+      },
+      stepD: {
+        title: '(d) Molar Concentration of Solution A (M)',
+        formula: 'Molarity = (Moles of Acid × 1000) / Average Titre V₁',
+        substitution: `(${molesA.toFixed(5)} × 1000) / ${v1.toFixed(2)}`,
+        result: `${molarityA.toFixed(3)} mol/dm³`
+      },
+      stepE: {
+        title: '(e) Concentration in g/dm³',
+        formula: 'Concentration = Molarity × Relative Formula Mass (RFM)',
+        substitution: `${molarityA.toFixed(3)} × ${p.acidRfm || 36.5}`,
+        result: `${concG.toFixed(2)} g/dm³`
+      }
+    };
+  }
+
   // ── Comprehensive 40-Mark Evaluation & KNEC Examiner Diagnosis ──────
   evaluateExam() {
     const q1Res = this.calculateQ1Score();
     const q2Res = this.calculateQ2Score();
     const q3Res = this.calculateQ3Score();
+    const workedSolutions = this.generateWorkedSolutions();
 
     const total = parseFloat((q1Res.totalScore + q2Res.totalScore + q3Res.totalScore).toFixed(1));
     const percentage = Math.round((total / 40.0) * 100);
@@ -1060,6 +1131,7 @@ class CompositeExamEngine {
       q1Details: q1Res,
       q2Details: q2Res,
       q3Details: q3Res,
+      workedSolutions,
       diagnosticNotes,
       durationSeconds: Math.round((Date.now() - this.startTime) / 1000)
     };
@@ -1082,6 +1154,7 @@ class CompositeExamEngine {
         q1: evalData.q1Details,
         q2: evalData.q2Details,
         q3: evalData.q3Details,
+        workedSolutions: evalData.workedSolutions,
         diagnosticNotes: evalData.diagnosticNotes,
         candidateTrials: this.q1Trials,
         candidateQ1Answers: this.q1Answers,

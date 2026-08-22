@@ -260,10 +260,9 @@
 
           <!-- CENTER: Photorealistic Apparatus Rig + Precision Lens + Reagents Shelf -->
           <div class="bench-center-rig">
-            <div class="rig-visual" style="display:flex; flex-direction:row; align-items:center; justify-content:center; gap:12px; width:100%; max-width:100%; box-sizing:border-box;">
-              
+            <div style="display:flex;align-items:center;justify-content:center;gap:18px;width:100%;">
               <!-- Realistic Glass & Metal Apparatus SVG -->
-              <svg class="rig-svg" viewBox="0 0 240 380" xmlns="http://www.w3.org/2000/svg" style="width:145px; height:290px; flex-shrink:0;">
+              <svg class="rig-svg" viewBox="0 0 240 380" xmlns="http://www.w3.org/2000/svg" style="width:155px; height:305px; flex-shrink:0;">
                 <defs>
                   <!-- Realistic Glass Sheen -->
                   <linearGradient id="glassSheenLab" x1="0" y1="0" x2="1" y2="0">
@@ -418,21 +417,21 @@
               </svg>
 
               <!-- Magnified Buret Reading Lens (Right Side Beside Apparatus) -->
-              <div class="buret-lens-card" style="background:transparent; border:none; padding:0; text-align:center; flex:1; max-width:175px; min-width:125px;">
-                <div style="font-size:0.75rem; font-weight:800; color:var(--cyan-accent); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.04em; font-family:'Cinzel', serif;">
+              <div class="buret-lens-card">
+                <div style="font-size:0.75rem; font-weight:800; color:var(--cyan-accent); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.04em; font-family:'Cinzel', serif;">
                   🔍 Burette Lens
                 </div>
                 
-                <div class="lens-viewfinder" style="position:relative; width:100%; max-width:175px; height:152px; margin:0 auto; background:#FFFFFF; border:2.5px solid #00F2FE; border-radius:12px; overflow:hidden; box-shadow:0 0 20px rgba(0,242,254,0.35);">
-                  <div style="position:absolute; top:50%; left:0; right:0; height:1.5px; background:rgba(239,68,68,0.95); box-shadow:0 0 6px rgba(239,68,68,0.8); z-index:10; pointer-events:none;"></div>
-                  <div style="position:absolute; top:50%; left:4px; font-size:0.56rem; color:#EF4444; font-weight:800; z-index:11; transform:translateY(-100%); font-family:'JetBrains Mono',monospace;">EYE LEVEL</div>
-                  <svg id="lensSvg" viewBox="0 0 180 160" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;"></svg>
+                <div class="lens-viewfinder">
+                  <div class="lens-crosshair-line"></div>
+                  <div class="lens-eye-level-tag">EYE LEVEL</div>
+                  <svg id="lensSvg" viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;"></svg>
                 </div>
                 
-                <div style="display:flex; align-items:center; justify-content:center; gap:6px; margin-top:6px;">
-                  <span id="lensReadoutPill" style="background:var(--bg-dark); border:1px solid var(--card-border); padding:2px 10px; border-radius:100px; font-family:'JetBrains Mono',monospace; font-size:0.75rem; font-weight:800; color:var(--cyan-accent); box-shadow:var(--shadow-sm);">0.00 cm³</span>
+                <div class="lens-readout-badge" id="lensReadoutPill">
+                  <span>🎯</span> 0.00 cm³
                 </div>
-                <div style="font-size:0.68rem; color:var(--text-muted); margin-top:2px; line-height:1.2; font-family:'Newsreader', serif; font-style:italic;">
+                <div style="font-size:0.68rem; color:var(--text-muted); margin-top:3px; line-height:1.2; font-family:'Newsreader', serif; font-style:italic;">
                   Read at <b>bottom of meniscus</b>.
                 </div>
               </div>

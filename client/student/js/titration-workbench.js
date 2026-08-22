@@ -1346,11 +1346,11 @@ requireStudentLogin();
     const lensSvg = document.getElementById('lensSvg');
     if (!lensSvg) return;
 
-    const pcm = 52; // Higher magnification: 52 pixels per cm³
-    const centerY = 80; // Centerline of 160px viewfinder (exactly matches the red Eye Level line)
+    const pcm = 60; // 60px per cm³ magnification
+    const centerY = 90; // Centerline of 180px viewfinder (matches the red Eye Level line)
     
-    const minVol = Math.max(0, Math.floor((volume - 1.6) * 10) / 10);
-    const maxVol = Math.min(50, Math.ceil((volume + 1.6) * 10) / 10);
+    const minVol = Math.max(0, Math.floor((volume - 1.4) * 10) / 10);
+    const maxVol = Math.min(50, Math.ceil((volume + 1.4) * 10) / 10);
 
     // High-contrast defs: White ceramic enamel backing + crystal clear glass highlights
     const defsSvg = `
@@ -1384,23 +1384,23 @@ requireStudentLogin();
       </defs>
     `;
 
-    // 1. Dry Upper Tube (Empty Burette Cylinder Above Meniscus: y = 0 to 160)
+    // 1. Dry Upper Tube (Empty Burette Cylinder Above Meniscus: y = 0 to 180)
     const dryGlassTop = `
       <!-- White Ceramic Contrast Backing Plate -->
-      <rect x="12" y="0" width="156" height="160" rx="6" fill="url(#lensTubeCeramic)"/>
+      <rect x="12" y="0" width="176" height="180" rx="6" fill="url(#lensTubeCeramic)"/>
       <!-- Blue Schellbach Central Vertical Guide Stripe -->
-      <rect x="85" y="0" width="10" height="160" fill="#0284C7" opacity="0.25"/>
+      <rect x="94" y="0" width="12" height="180" fill="#0284C7" opacity="0.25"/>
       <!-- Outer Glass Tube Refraction Borders -->
-      <line x1="12" y1="0" x2="12" y2="160" stroke="#00F2FE" stroke-width="3" stroke-opacity="0.8"/>
-      <line x1="168" y1="0" x2="168" y2="160" stroke="#00F2FE" stroke-width="3" stroke-opacity="0.8"/>
+      <line x1="12" y1="0" x2="12" y2="180" stroke="#00F2FE" stroke-width="3" stroke-opacity="0.8"/>
+      <line x1="188" y1="0" x2="188" y2="180" stroke="#00F2FE" stroke-width="3" stroke-opacity="0.8"/>
       <!-- Left Glass Glare Highlight -->
-      <rect x="16" y="0" width="12" height="160" fill="url(#tubeSpecularHighlight)"/>
+      <rect x="16" y="0" width="14" height="180" fill="url(#tubeSpecularHighlight)"/>
     `;
 
-    // 2. Liquid Column (Below Meniscus: Bottom of concave meniscus touches centerY = 80)
+    // 2. Liquid Column (Below Meniscus: Bottom of concave meniscus touches centerY = 90)
     const liquidBody = `
-      <path d="M 12 ${centerY - 10} Q 90 ${centerY} 168 ${centerY - 10} L 168 160 L 12 160 Z" fill="url(#luminousLiquidFill)"/>
-      <rect x="16" y="${centerY}" width="12" height="${160 - centerY}" fill="url(#tubeSpecularHighlight)"/>
+      <path d="M 12 ${centerY - 10} Q 100 ${centerY} 188 ${centerY - 10} L 188 180 L 12 180 Z" fill="url(#luminousLiquidFill)"/>
+      <rect x="16" y="${centerY}" width="14" height="${180 - centerY}" fill="url(#tubeSpecularHighlight)"/>
     `;
 
     // 3. High-Contrast Laser-Etched Graduation Ticks & Bold Numbers
@@ -1408,42 +1408,42 @@ requireStudentLogin();
     for (let v = minVol; v <= maxVol + 0.05; v += 0.1) {
       const vRounded = Math.round(v * 10) / 10;
       const y = centerY + (vRounded - volume) * pcm;
-      if (y < -15 || y > 175) continue;
+      if (y < -15 || y > 195) continue;
 
       const isMajor = Math.abs(vRounded - Math.round(vRounded)) < 0.01;
       const isMedium = !isMajor && Math.abs((vRounded * 10) % 5) < 0.01;
 
       if (isMajor) {
         // Longest high-contrast black tick mark with bold number
-        ticksSvg += `<line x1="12" y1="${y}" x2="60" y2="${y}" stroke="#0F172A" stroke-width="2.6" stroke-linecap="round"/>`;
-        ticksSvg += `<line x1="120" y1="${y}" x2="168" y2="${y}" stroke="#0F172A" stroke-width="2.6" stroke-linecap="round"/>`;
-        ticksSvg += `<text x="68" y="${y + 5}" fill="#0F172A" font-size="13.5" font-family="'JetBrains Mono', monospace" font-weight="900" letter-spacing="-0.02em">${Math.round(vRounded)}.0</text>`;
+        ticksSvg += `<line x1="12" y1="${y}" x2="68" y2="${y}" stroke="#0F172A" stroke-width="2.6" stroke-linecap="round"/>`;
+        ticksSvg += `<line x1="132" y1="${y}" x2="188" y2="${y}" stroke="#0F172A" stroke-width="2.6" stroke-linecap="round"/>`;
+        ticksSvg += `<text x="76" y="${y + 5}" fill="#0F172A" font-size="14" font-family="'JetBrains Mono', monospace" font-weight="900">${Math.round(vRounded)}.0</text>`;
       } else if (isMedium) {
         // 0.5 cm³ half-way tick mark
-        ticksSvg += `<line x1="12" y1="${y}" x2="48" y2="${y}" stroke="#1E293B" stroke-width="2.0" stroke-linecap="round"/>`;
-        ticksSvg += `<line x1="132" y1="${y}" x2="168" y2="${y}" stroke="#1E293B" stroke-width="2.0" stroke-linecap="round"/>`;
+        ticksSvg += `<line x1="12" y1="${y}" x2="52" y2="${y}" stroke="#1E293B" stroke-width="2.0" stroke-linecap="round"/>`;
+        ticksSvg += `<line x1="148" y1="${y}" x2="188" y2="${y}" stroke="#1E293B" stroke-width="2.0" stroke-linecap="round"/>`;
       } else {
         // 0.1 cm³ millimeter tick mark
-        ticksSvg += `<line x1="12" y1="${y}" x2="36" y2="${y}" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>`;
-        ticksSvg += `<line x1="144" y1="${y}" x2="168" y2="${y}" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>`;
+        ticksSvg += `<line x1="12" y1="${y}" x2="38" y2="${y}" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>`;
+        ticksSvg += `<line x1="162" y1="${y}" x2="188" y2="${y}" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>`;
       }
     }
 
-    // 4. Physical Curved Meniscus Boundary (Bottom touches centerY = 80 precisely)
+    // 4. Physical Curved Meniscus Boundary (Bottom touches centerY = 90 precisely)
     const meniscusSvg = `
       <!-- Meniscus refraction shadow band -->
-      <path d="M 12 ${centerY - 11} Q 90 ${centerY - 1} 168 ${centerY - 11}" stroke="#032B44" stroke-width="3" fill="none" opacity="0.85"/>
+      <path d="M 12 ${centerY - 11} Q 100 ${centerY - 1} 188 ${centerY - 11}" stroke="#032B44" stroke-width="3" fill="none" opacity="0.85"/>
       <!-- Luminous white surface arc -->
-      <path d="M 12 ${centerY - 10} Q 90 ${centerY} 168 ${centerY - 10}" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+      <path d="M 12 ${centerY - 10} Q 100 ${centerY} 188 ${centerY - 10}" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" fill="none"/>
       <!-- Bottom of Meniscus Focal Target Bead (Red Glowing Marker) -->
-      <circle cx="90" cy="${centerY}" r="5" fill="#EF4444" stroke="#FFFFFF" stroke-width="2" filter="url(#lensBeadGlow)"/>
+      <circle cx="100" cy="${centerY}" r="5" fill="#EF4444" stroke="#FFFFFF" stroke-width="2" filter="url(#lensBeadGlow)"/>
     `;
 
     lensSvg.innerHTML = defsSvg + dryGlassTop + liquidBody + ticksSvg + meniscusSvg;
 
     const readoutPill = document.getElementById('lensReadoutPill');
     if (readoutPill) {
-      readoutPill.textContent = `${volume.toFixed(2)} cm³`;
+      readoutPill.innerHTML = `<span>🎯</span> ${volume.toFixed(2)} cm³`;
     }
   }
 

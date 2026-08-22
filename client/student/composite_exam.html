@@ -22,7 +22,7 @@
 <link rel="stylesheet" href="css/organic.css">
 <link rel="stylesheet" href="css/composite_exam.css">
 <style>
-  /* Composite Exam Enhancements */
+  /* Composite Exam Layout & Craftsmanship */
   .exam-section-card {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
@@ -43,10 +43,10 @@
   }
   .exam-grid-titration {
     display: grid;
-    grid-template-columns: 360px 1fr;
+    grid-template-columns: 420px 1fr;
     gap: 22px;
   }
-  @media (max-width: 1024px) {
+  @media (max-width: 1100px) {
     .exam-grid-titration {
       grid-template-columns: 1fr;
     }
@@ -58,7 +58,18 @@
     padding: 18px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+  }
+  .bench-3col-layout {
+    display: grid;
+    grid-template-columns: 110px 1fr 110px;
+    gap: 10px;
+    align-items: start;
+    width: 100%;
+  }
+  @media (max-width: 480px) {
+    .bench-3col-layout {
+      grid-template-columns: 1fr;
+    }
   }
   .calc-step-card {
     background: var(--card-bg);
@@ -105,6 +116,13 @@
     border-color: var(--blue-accent);
     color: var(--blue-accent);
   }
+  .step-feedback-msg {
+    font-size: 0.78rem;
+    font-weight: 700;
+    margin-top: 6px;
+  }
+  .step-feedback-success { color: var(--green-accent); }
+  .step-feedback-fail { color: var(--red-accent); }
 </style>
 </head>
 <body>
@@ -213,112 +231,143 @@
     </div>
 
     <div class="exam-grid-titration">
-      <!-- Complete Realistic Titration Rig & Magnifier Lens -->
+      <!-- Complete Realistic Titration Workbench (3-Column Layout) -->
       <div class="titration-rig-box">
-        <div style="font-weight:800;font-size:0.8rem;color:var(--cyan-accent);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.04em;">
-          🔬 Precision Volumetric Burette & Conical Assembly
+        <div style="font-weight:800;font-size:0.8rem;color:var(--cyan-accent);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.04em;text-align:center;">
+          🔬 Interactive Volumetric Workbench & Assembly
         </div>
 
-        <div style="display:flex; align-items:center; justify-content:center; gap:14px; width:100%;">
-          <!-- Apparatus SVG Rig -->
-          <svg viewBox="0 0 200 350" style="width:130px; height:240px; flex-shrink:0;">
-            <defs>
-              <linearGradient id="glassBodyRig" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.3"/>
-                <stop offset="25%" stop-color="#FFFFFF" stop-opacity="0.5"/>
-                <stop offset="70%" stop-color="#38BDF8" stop-opacity="0.1"/>
-                <stop offset="100%" stop-color="#0284C7" stop-opacity="0.4"/>
-              </linearGradient>
-              <linearGradient id="liquidGradRig" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.9"/>
-                <stop offset="100%" stop-color="#0284C7" stop-opacity="0.8"/>
-              </linearGradient>
-              <linearGradient id="standRodGradRig" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stop-color="#1E293B"/>
-                <stop offset="50%" stop-color="#475569"/>
-                <stop offset="100%" stop-color="#0F172A"/>
-              </linearGradient>
-            </defs>
+        <div class="bench-3col-layout">
+          <!-- LEFT WING: Pipette & Indicator Addition -->
+          <div style="display:flex;flex-direction:column;gap:8px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:8px;padding:8px;">
+            <div style="font-weight:800;font-size:0.7rem;color:var(--cyan-accent);text-transform:uppercase;">1. Reagent Prep</div>
+            <button class="btn-perform-test" id="btnPipette" onclick="pipetteSolutionB()" style="font-size:0.72rem;padding:6px;width:100%;justify-content:center;">
+              🧪 Pipette 25.0 cm³
+            </button>
+            <div id="pipetteStatus" style="font-size:0.68rem;color:var(--text-muted);line-height:1.2;">Not Pipetted</div>
 
-            <!-- Metallic Stand Base & Vertical Rod -->
-            <rect x="20" y="325" width="130" height="10" rx="3" fill="url(#standRodGradRig)"/>
-            <rect x="42" y="10" width="8" height="318" rx="2" fill="url(#standRodGradRig)"/>
-            
-            <!-- Clamp Bosshead & Arms -->
-            <rect x="42" y="70" width="48" height="10" rx="2" fill="#334155"/>
-            <circle cx="46" cy="75" r="5" fill="#0EA5E9"/>
-            <path d="M90,65 L108,65 L108,85 L90,85 Z" fill="#1E293B" stroke="#38BDF8" stroke-width="1.5"/>
+            <div style="border-top:1px dashed var(--card-border);margin:2px 0;"></div>
 
-            <!-- Glass Buret Tube -->
-            <rect x="94" y="20" width="20" height="180" rx="4" fill="url(#glassBodyRig)" stroke="#38BDF8" stroke-width="1.8"/>
-            <rect id="buretteFill" x="96" y="22" width="16" height="176" rx="1" fill="url(#liquidGradRig)"/>
+            <div style="font-weight:800;font-size:0.7rem;color:var(--cyan-accent);text-transform:uppercase;">2. Indicator</div>
+            <button class="btn-perform-test btn-step-excess" id="btnAddIndicator" onclick="addIndicatorDrop()" style="font-size:0.72rem;padding:6px;width:100%;justify-content:center;">
+              💧 Add Indicator (0/3)
+            </button>
+            <div id="indicatorStatus" style="font-size:0.68rem;color:var(--text-muted);line-height:1.2;">0 Drops Added</div>
 
-            <g stroke="rgba(255,255,255,0.7)" stroke-width="0.8">
-              <line x1="108" y1="25" x2="114" y2="25"/>
-              <line x1="108" y1="57" x2="114" y2="57"/>
-              <line x1="108" y1="89" x2="114" y2="89"/>
-              <line x1="108" y1="121" x2="114" y2="121"/>
-              <line x1="108" y1="153" x2="114" y2="153"/>
-              <line x1="108" y1="185" x2="114" y2="185"/>
-            </g>
-            <g font-family="'JetBrains Mono', monospace" font-size="6.5" fill="rgba(255,255,255,0.9)">
-              <text x="116" y="27">0</text>
-              <text x="116" y="59">10</text>
-              <text x="116" y="91">20</text>
-              <text x="116" y="123">30</text>
-              <text x="116" y="155">40</text>
-              <text x="116" y="187">50</text>
-            </g>
+            <div style="border-top:1px dashed var(--card-border);margin:2px 0;"></div>
 
-            <!-- Stopcock Valve -->
-            <g id="stopcockValve" style="transform-origin: 104px 206px; transition: transform 0.2s ease;">
-              <path d="M96,206 L112,206" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
-              <circle cx="104" cy="206" r="6" fill="#06B6D4" stroke="#FFFFFF" stroke-width="1.5"/>
-            </g>
-            <line x1="104" y1="212" x2="104" y2="232" stroke="#38BDF8" stroke-width="2.5"/>
+            <button class="btn-perform-test btn-step-heat" onclick="swirlFlask()" style="font-size:0.72rem;padding:6px;width:100%;justify-content:center;">
+              🌀 Swirl Flask
+            </button>
+          </div>
 
-            <!-- Animated Drip -->
-            <circle id="rigDrip" cx="104" cy="226" r="2.5" fill="#38BDF8" style="display:none;" />
+          <!-- CENTER: SVG Apparatus Rig + Magnified Lens -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;">
+              <!-- Apparatus SVG -->
+              <svg viewBox="0 0 200 350" style="width:115px; height:220px; flex-shrink:0;">
+                <defs>
+                  <linearGradient id="glassBodyRig" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.3"/>
+                    <stop offset="25%" stop-color="#FFFFFF" stop-opacity="0.5"/>
+                    <stop offset="70%" stop-color="#38BDF8" stop-opacity="0.1"/>
+                    <stop offset="100%" stop-color="#0284C7" stop-opacity="0.4"/>
+                  </linearGradient>
+                  <linearGradient id="liquidGradRig" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.9"/>
+                    <stop offset="100%" stop-color="#0284C7" stop-opacity="0.8"/>
+                  </linearGradient>
+                  <linearGradient id="standRodGradRig" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#1E293B"/>
+                    <stop offset="50%" stop-color="#475569"/>
+                    <stop offset="100%" stop-color="#0F172A"/>
+                  </linearGradient>
+                </defs>
 
-            <!-- Conical Flask (Erlenmeyer Flask) -->
-            <g id="flaskContainer" style="transform-origin: 104px 300px; transition: transform 0.4s ease;">
-              <rect x="94" y="232" width="20" height="8" rx="2" fill="url(#glassBodyRig)" stroke="#38BDF8" stroke-width="1.5"/>
-              <path id="flaskRigBody" d="M96,240 L112,240 L152,312 Q104,324 56,312 Z" fill="rgba(236,72,153,0.75)" stroke="#38BDF8" stroke-width="2" stroke-linejoin="round"/>
-              <path d="M98,244 L108,244 L118,290 Q106,286 100,286 Z" fill="rgba(255,255,255,0.25)"/>
-            </g>
-          </svg>
+                <!-- Metallic Stand Base & Vertical Rod -->
+                <rect x="20" y="325" width="130" height="10" rx="3" fill="url(#standRodGradRig)"/>
+                <rect x="42" y="10" width="8" height="318" rx="2" fill="url(#standRodGradRig)"/>
+                
+                <!-- Clamp Bosshead & Arms -->
+                <rect x="42" y="70" width="48" height="10" rx="2" fill="#334155"/>
+                <circle cx="46" cy="75" r="5" fill="#0EA5E9"/>
+                <path d="M90,65 L108,65 L108,85 L90,85 Z" fill="#1E293B" stroke="#38BDF8" stroke-width="1.5"/>
 
-          <!-- Magnified Eye-Level Reading Lens -->
-          <div style="flex:1; text-align:center;">
-            <div style="font-size:0.72rem; font-weight:800; color:var(--cyan-accent); margin-bottom:4px; text-transform:uppercase; font-family:var(--font-mono);">
-              🔍 Burette Lens
+                <!-- Glass Buret Tube -->
+                <rect x="94" y="20" width="20" height="180" rx="4" fill="url(#glassBodyRig)" stroke="#38BDF8" stroke-width="1.8"/>
+                <rect id="buretteFill" x="96" y="22" width="16" height="176" rx="1" fill="url(#liquidGradRig)"/>
+
+                <g stroke="rgba(255,255,255,0.7)" stroke-width="0.8">
+                  <line x1="108" y1="25" x2="114" y2="25"/>
+                  <line x1="108" y1="57" x2="114" y2="57"/>
+                  <line x1="108" y1="89" x2="114" y2="89"/>
+                  <line x1="108" y1="121" x2="114" y2="121"/>
+                  <line x1="108" y1="153" x2="114" y2="153"/>
+                  <line x1="108" y1="185" x2="114" y2="185"/>
+                </g>
+                <g font-family="'JetBrains Mono', monospace" font-size="6.5" fill="rgba(255,255,255,0.9)">
+                  <text x="116" y="27">0</text>
+                  <text x="116" y="59">10</text>
+                  <text x="116" y="91">20</text>
+                  <text x="116" y="123">30</text>
+                  <text x="116" y="155">40</text>
+                  <text x="116" y="187">50</text>
+                </g>
+
+                <!-- Stopcock Valve -->
+                <g id="stopcockValve" style="transform-origin: 104px 206px; transition: transform 0.2s ease;">
+                  <path d="M96,206 L112,206" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+                  <circle cx="104" cy="206" r="6" fill="#06B6D4" stroke="#FFFFFF" stroke-width="1.5"/>
+                </g>
+                <line x1="104" y1="212" x2="104" y2="232" stroke="#38BDF8" stroke-width="2.5"/>
+
+                <!-- Animated Drip -->
+                <circle id="rigDrip" cx="104" cy="226" r="2.5" fill="#38BDF8" style="display:none;" />
+
+                <!-- Conical Flask (Erlenmeyer Flask) -->
+                <g id="flaskContainer" style="transform-origin: 104px 300px; transition: transform 0.4s ease;">
+                  <rect x="94" y="232" width="20" height="8" rx="2" fill="url(#glassBodyRig)" stroke="#38BDF8" stroke-width="1.5"/>
+                  <path id="flaskRigBody" d="M96,240 L112,240 L152,312 Q104,324 56,312 Z" fill="rgba(255,255,255,0.08)" stroke="#38BDF8" stroke-width="2" stroke-linejoin="round"/>
+                  <path d="M98,244 L108,244 L118,290 Q106,286 100,286 Z" fill="rgba(255,255,255,0.25)"/>
+                </g>
+              </svg>
+
+              <!-- Magnified Reading Lens -->
+              <div style="flex:1; text-align:center;">
+                <div style="font-size:0.68rem; font-weight:800; color:var(--cyan-accent); margin-bottom:2px; text-transform:uppercase;">
+                  🔍 Reading Lens
+                </div>
+                <div class="lens-viewfinder" style="position:relative; width:100%; height:110px; background:#06101E; border:2px solid #00F2FE; border-radius:8px; overflow:hidden;">
+                  <div style="position:absolute; top:50%; left:0; right:0; height:1.5px; background:rgba(239,68,68,0.95); z-index:10;"></div>
+                  <div style="position:absolute; top:50%; left:4px; font-size:0.5rem; color:#EF4444; font-weight:800; z-index:11; transform:translateY(-100%);">EYE LEVEL</div>
+                  <svg id="lensSvg" viewBox="0 0 180 140" style="width:100%; height:100%;"></svg>
+                </div>
+                <div style="margin-top:4px; font-family:var(--font-mono); font-size:0.75rem; font-weight:800; color:var(--cyan-accent);" id="lensDigitalReadout">0.00 cm³</div>
+              </div>
             </div>
-            
-            <div class="lens-viewfinder" style="position:relative; width:100%; height:130px; background:#06101E; border:2px solid #00F2FE; border-radius:10px; overflow:hidden; box-shadow:0 0 16px rgba(0,242,254,0.25), inset 0 0 20px rgba(0,0,0,0.85);">
-              <div style="position:absolute; top:50%; left:0; right:0; height:1.5px; background:rgba(239,68,68,0.95); box-shadow:0 0 6px rgba(239,68,68,0.8); z-index:10;"></div>
-              <div style="position:absolute; top:50%; left:4px; font-size:0.55rem; color:#EF4444; font-weight:800; z-index:11; transform:translateY(-100%); font-family:var(--font-mono);">EYE LEVEL</div>
-              <svg id="lensSvg" viewBox="0 0 180 140" style="width:100%; height:100%;"></svg>
-            </div>
+
+            <div id="flaskContentsLabel" style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono);">Conical Flask: Empty</div>
+          </div>
+
+          <!-- RIGHT WING: Stopcock & Speed Addition -->
+          <div style="display:flex;flex-direction:column;gap:6px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:8px;padding:8px;">
+            <div style="font-weight:800;font-size:0.7rem;color:var(--amber-accent);text-transform:uppercase;">3. Add Acid</div>
+            <button class="btn-perform-test" onclick="addTitrantDirect(1.0)" style="font-size:0.72rem;padding:5px;width:100%;justify-content:center;">+1.0 cm³</button>
+            <button class="btn-perform-test" onclick="addTitrantDirect(0.5)" style="font-size:0.72rem;padding:5px;width:100%;justify-content:center;">+0.5 cm³</button>
+            <button class="btn-perform-test" onclick="addTitrantDirect(0.1)" style="font-size:0.72rem;padding:5px;width:100%;justify-content:center;">+0.1 cm³</button>
+            <button class="btn-perform-test btn-step-excess" onclick="startContinuousTitration()" id="btnContinuous" style="font-size:0.72rem;padding:5px;width:100%;justify-content:center;">Continuous</button>
+            <button class="btn-perform-test" style="background:#EF4444;font-size:0.72rem;padding:5px;width:100%;justify-content:center;" onclick="stopTitrate()">Stop Tap</button>
           </div>
         </div>
 
-        <!-- Controls -->
-        <div style="display:flex;gap:6px;margin-top:14px;flex-wrap:wrap;justify-content:center;width:100%;">
-          <button type="button" class="btn-perform-test" onclick="startTitrate('dropwise')">💧 Dropwise</button>
-          <button type="button" class="btn-perform-test btn-step-excess" onclick="startTitrate('fast')">🌊 Continuous</button>
-          <button type="button" class="btn-perform-test" style="background:#EF4444;" onclick="stopTitrate()">🛑 Stop Tap</button>
-          <button type="button" class="btn-perform-test btn-step-heat" onclick="swirlFlask()">🌀 Swirl</button>
-          <button type="button" class="btn-perform-test" style="background:#475569;" onclick="resetTitrationApparatus()">🔄 Reset</button>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button type="button" class="btn-perform-test" style="background:var(--green-accent);flex:1;justify-content:center;" onclick="transferReadingToTable()">
+            📥 Record in Table 1 (Trial <span id="lblActiveTrial">1</span>)
+          </button>
+          <button type="button" class="btn-perform-test" style="background:#475569;" onclick="resetTitrationApparatus()">
+            🔄 Reset
+          </button>
         </div>
-
-        <div style="margin-top:10px;font-family:var(--font-mono);font-size:0.84rem;text-align:center;">
-          Current Burette: <b id="liveBuretteVol" style="color:var(--cyan-accent);">0.00 cm³</b> &nbsp;|&nbsp;
-          Titre Used: <b id="liveTitreUsed" style="color:var(--green-accent);">0.00 cm³</b>
-        </div>
-
-        <button type="button" class="btn-perform-test" style="margin-top:10px;background:var(--green-accent);width:100%;justify-content:center;" onclick="transferReadingToTable()">
-          📥 Record Current Reading in Table 1
-        </button>
       </div>
 
       <!-- Candidate Results Table & Step-by-Step Calculations -->
@@ -376,7 +425,9 @@
           <div style="display:flex;align-items:center;gap:8px;">
             <input type="number" step="0.01" id="ansAvgTitre" class="calc-input" placeholder="e.g. 25.00" onchange="onQ1CalculationsChanged()">
             <span style="font-weight:700;color:var(--text-muted);">cm³</span>
+            <button type="button" class="btn-perform-test" style="padding:6px 12px;font-size:0.75rem;" onclick="checkQ1Step('a')">Check (a)</button>
           </div>
+          <div id="stepFeedback_a" class="step-feedback-msg"></div>
         </div>
 
         <div class="calc-step-card">
@@ -386,7 +437,9 @@
           <div style="display:flex;align-items:center;gap:8px;">
             <input type="number" step="0.0001" id="ansMolesB" class="calc-input" placeholder="e.g. 0.00250" onchange="onQ1CalculationsChanged()">
             <span style="font-weight:700;color:var(--text-muted);">moles</span>
+            <button type="button" class="btn-perform-test" style="padding:6px 12px;font-size:0.75rem;" onclick="checkQ1Step('b')">Check (b)</button>
           </div>
+          <div id="stepFeedback_b" class="step-feedback-msg"></div>
         </div>
 
         <div class="calc-step-card">
@@ -397,7 +450,9 @@
           <div style="display:flex;align-items:center;gap:8px;">
             <input type="number" step="0.0001" id="ansMolesA" class="calc-input" placeholder="e.g. 0.00250" onchange="onQ1CalculationsChanged()">
             <span style="font-weight:700;color:var(--text-muted);">moles of Acid</span>
+            <button type="button" class="btn-perform-test" style="padding:6px 12px;font-size:0.75rem;" onclick="checkQ1Step('c')">Check (c)</button>
           </div>
+          <div id="stepFeedback_c" class="step-feedback-msg"></div>
         </div>
 
         <div class="calc-step-card">
@@ -407,7 +462,9 @@
           <div style="display:flex;align-items:center;gap:8px;">
             <input type="number" step="0.001" id="ansMolarityA" class="calc-input" placeholder="e.g. 0.100" onchange="onQ1CalculationsChanged()">
             <span style="font-weight:700;color:var(--text-muted);">mol/dm³ (M)</span>
+            <button type="button" class="btn-perform-test" style="padding:6px 12px;font-size:0.75rem;" onclick="checkQ1Step('d')">Check (d)</button>
           </div>
+          <div id="stepFeedback_d" class="step-feedback-msg"></div>
         </div>
 
         <div class="calc-step-card">
@@ -417,7 +474,9 @@
           <div style="display:flex;align-items:center;gap:8px;">
             <input type="number" step="0.01" id="ansConcGrams" class="calc-input" placeholder="e.g. 3.65" onchange="onQ1CalculationsChanged()">
             <span style="font-weight:700;color:var(--text-muted);">g/dm³</span>
+            <button type="button" class="btn-perform-test" style="padding:6px 12px;font-size:0.75rem;" onclick="checkQ1Step('e')">Check (e)</button>
           </div>
+          <div id="stepFeedback_e" class="step-feedback-msg"></div>
         </div>
 
       </div>
@@ -668,6 +727,12 @@
   let engine = new CompositeExamEngine();
   let activeTab = 1;
   let titrateInterval = null;
+  let activeTrial = 1;
+
+  // Q1 Flask Chemistry State
+  let isPipetted = false;
+  let indicatorDrops = 0;
+  let isFlaskPink = false;
 
   // Track dynamic stages for Question 2 & 3 test cards
   let q2TestStates = {};
@@ -690,6 +755,279 @@
     updateLiveScoreDisplay();
   }
 
+  // ── Q1 Titration Workbench Interactive Actions ───────────────────────
+  function pipetteSolutionB() {
+    isPipetted = true;
+    document.getElementById('pipetteStatus').textContent = '25.0 cm³ Pipetted ✓';
+    document.getElementById('pipetteStatus').style.color = 'var(--green-accent)';
+    updateFlaskAppearance();
+  }
+
+  function addIndicatorDrop() {
+    if (!isPipetted) {
+      alert('Pipette 25.0 cm³ of Solution B into the conical flask first!');
+      return;
+    }
+    if (indicatorDrops < 3) {
+      indicatorDrops++;
+      document.getElementById('btnAddIndicator').textContent = `💧 Add Indicator (${indicatorDrops}/3)`;
+      document.getElementById('indicatorStatus').textContent = `${indicatorDrops} of 3 Drops Added`;
+      document.getElementById('indicatorStatus').style.color = 'var(--cyan-accent)';
+      isFlaskPink = true;
+      updateFlaskAppearance();
+    }
+  }
+
+  function updateFlaskAppearance() {
+    const flask = document.getElementById('flaskRigBody');
+    const label = document.getElementById('flaskContentsLabel');
+    if (!flask) return;
+
+    if (!isPipetted) {
+      flask.setAttribute('fill', 'rgba(255,255,255,0.08)');
+      if (label) label.textContent = 'Conical Flask: Empty';
+      return;
+    }
+
+    if (indicatorDrops === 0) {
+      flask.setAttribute('fill', 'rgba(56,189,248,0.25)'); // Clear alkaline base
+      if (label) label.textContent = 'Conical Flask: 25.0 cm³ NaOH (Colorless)';
+    } else {
+      const trueTitre = engine.preset.q1.trueTitre || 25.00;
+      if (engine.q1BuretteReading >= trueTitre) {
+        flask.setAttribute('fill', 'rgba(255,255,255,0.35)'); // Colorless endpoint!
+        if (label) label.textContent = 'Conical Flask: Endpoint Reached (Colorless)';
+      } else {
+        flask.setAttribute('fill', 'rgba(236,72,153,0.85)'); // Bright pink
+        if (label) label.textContent = 'Conical Flask: 25.0 cm³ NaOH + Indicator (Pink)';
+      }
+    }
+  }
+
+  function addTitrantDirect(vol) {
+    if (!isPipetted || indicatorDrops === 0) {
+      alert('Please pipette Solution B and add indicator drops before titrating!');
+      return;
+    }
+    engine.q1BuretteReading = Math.min(50.0, parseFloat((engine.q1BuretteReading + vol).toFixed(2)));
+    updateBuretteRig();
+  }
+
+  function startContinuousTitration() {
+    if (!isPipetted || indicatorDrops === 0) {
+      alert('Please pipette Solution B and add indicator drops before titrating!');
+      return;
+    }
+    stopTitrate();
+    const drip = document.getElementById('rigDrip');
+    if (drip) drip.style.display = 'block';
+    const stopcock = document.getElementById('stopcockValve');
+    if (stopcock) stopcock.style.transform = 'rotate(90deg)';
+
+    titrateInterval = setInterval(() => {
+      engine.q1BuretteReading += 0.20;
+      if (engine.q1BuretteReading >= 50.0) {
+        engine.q1BuretteReading = 50.0;
+        stopTitrate();
+      }
+      updateBuretteRig();
+    }, 100);
+  }
+
+  function stopTitrate() {
+    if (titrateInterval) {
+      clearInterval(titrateInterval);
+      titrateInterval = null;
+    }
+    const drip = document.getElementById('rigDrip');
+    if (drip) drip.style.display = 'none';
+    const stopcock = document.getElementById('stopcockValve');
+    if (stopcock) stopcock.style.transform = 'rotate(0deg)';
+  }
+
+  function updateBuretteRig() {
+    const reading = engine.q1BuretteReading;
+    document.getElementById('liveBuretteVol').textContent = reading.toFixed(2) + ' cm³';
+    document.getElementById('liveTitreUsed').textContent = reading.toFixed(2) + ' cm³';
+    document.getElementById('lensDigitalReadout').textContent = reading.toFixed(2) + ' cm³';
+
+    const bHeight = Math.max(0, 176 - (reading / 50.0) * 176);
+    const bFill = document.getElementById('buretteFill');
+    if (bFill) {
+      bFill.setAttribute('y', 22 + (176 - bHeight));
+      bFill.setAttribute('height', bHeight);
+    }
+
+    updateFlaskAppearance();
+    drawLens();
+  }
+
+  function swirlFlask() {
+    const flask = document.getElementById('flaskContainer');
+    if (!flask) return;
+    flask.style.transform = 'rotate(-8deg)';
+    setTimeout(() => { flask.style.transform = 'rotate(8deg)'; }, 150);
+    setTimeout(() => { flask.style.transform = 'rotate(0deg)'; }, 300);
+  }
+
+  function resetTitrationApparatus() {
+    stopTitrate();
+    engine.q1BuretteReading = 0.00;
+    isPipetted = false;
+    indicatorDrops = 0;
+    document.getElementById('pipetteStatus').textContent = 'Not Pipetted';
+    document.getElementById('pipetteStatus').style.color = 'var(--text-muted)';
+    document.getElementById('btnAddIndicator').textContent = '💧 Add Indicator (0/3)';
+    document.getElementById('indicatorStatus').textContent = '0 Drops Added';
+    document.getElementById('indicatorStatus').style.color = 'var(--text-muted)';
+    updateBuretteRig();
+  }
+
+  function transferReadingToTable() {
+    const reading = parseFloat(engine.q1BuretteReading.toFixed(2));
+    if (reading === 0) {
+      alert('Please perform titration before recording reading in Table 1!');
+      return;
+    }
+    document.getElementById(`t${activeTrial}Final`).value = reading.toFixed(2);
+    onTableInputChanged();
+    alert(`Trial ${activeTrial} reading (${reading.toFixed(2)} cm³) transferred to Table 1!`);
+
+    activeTrial = activeTrial < 3 ? activeTrial + 1 : 1;
+    document.getElementById('lblActiveTrial').textContent = activeTrial;
+    resetTitrationApparatus();
+  }
+
+  function drawLens() {
+    const svg = document.getElementById('lensSvg');
+    if (!svg) return;
+    const vol = engine.q1BuretteReading;
+    const whole = Math.floor(vol);
+    const centerY = 55;
+    const pxPerUnit = 24;
+
+    let linesHtml = '';
+    for (let mark = whole - 2; mark <= whole + 3; mark++) {
+      if (mark < 0 || mark > 50) continue;
+      const y = centerY + (mark - vol) * pxPerUnit;
+      linesHtml += `
+        <line x1="20" y1="${y}" x2="80" y2="${y}" stroke="rgba(255,255,255,0.85)" stroke-width="1.8"/>
+        <text x="90" y="${y + 4}" font-size="11" font-weight="700" fill="#38BDF8" font-family="'JetBrains Mono',monospace">${mark}.00</text>
+      `;
+      for (let sub = 1; sub <= 9; sub++) {
+        const subY = y + (sub * 0.1) * pxPerUnit;
+        const isHalf = (sub === 5);
+        linesHtml += `
+          <line x1="20" y1="${subY}" x2="${isHalf ? 58 : 40}" y2="${subY}" stroke="rgba(255,255,255,0.5)" stroke-width="${isHalf ? 1.3 : 0.9}"/>
+        `;
+      }
+    }
+
+    svg.innerHTML = `
+      <rect x="18" y="0" width="144" height="140" fill="rgba(15,23,42,0.6)" stroke="#0284C7" stroke-width="1.5"/>
+      <path d="M 20,${centerY} Q 50,${centerY + 6} 80,${centerY} L 80,140 L 20,140 Z" fill="rgba(56,189,248,0.4)"/>
+      <path d="M 20,${centerY} Q 50,${centerY + 6} 80,${centerY}" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+      ${linesHtml}
+    `;
+  }
+
+  function onTableInputChanged() {
+    [1, 2, 3].forEach(n => {
+      const fin = parseFloat(document.getElementById(`t${n}Final`).value) || 0;
+      const init = parseFloat(document.getElementById(`t${n}Init`).value) || 0;
+      const used = parseFloat(Math.max(0, fin - init).toFixed(2));
+      document.getElementById(`t${n}Used`).textContent = used.toFixed(2);
+      engine.recordTrial(n, fin, init);
+    });
+
+    const t1 = engine.q1Trials[0].used;
+    const t2 = engine.q1Trials[1].used;
+    const t3 = engine.q1Trials[2].used;
+    const valid = [t1, t2, t3].filter(v => v > 0);
+    if (valid.length >= 2 && !document.getElementById('ansAvgTitre').value) {
+      const avg = (valid.reduce((a, b) => a + b, 0) / valid.length).toFixed(2);
+      document.getElementById('ansAvgTitre').value = avg;
+      engine.setQ1Answer('avgTitre', avg);
+    }
+    updateLiveScoreDisplay();
+  }
+
+  function onConcordantChanged() {
+    [1, 2, 3].forEach(n => {
+      const cb = document.getElementById(`t${n}Concordant`);
+      engine.setConcordant(n, cb ? cb.checked : false);
+    });
+    updateLiveScoreDisplay();
+  }
+
+  function onQ1CalculationsChanged() {
+    engine.setQ1Answer('avgTitre', document.getElementById('ansAvgTitre').value);
+    engine.setQ1Answer('molesB', document.getElementById('ansMolesB').value);
+    engine.setQ1Answer('molesA', document.getElementById('ansMolesA').value);
+    engine.setQ1Answer('molarityA', document.getElementById('ansMolarityA').value);
+    engine.setQ1Answer('concGrams', document.getElementById('ansConcGrams').value);
+    updateLiveScoreDisplay();
+  }
+
+  function checkQ1Step(letter) {
+    const p = engine.preset.q1;
+    const fb = document.getElementById(`stepFeedback_${letter}`);
+    if (!fb) return;
+
+    if (letter === 'a') {
+      const val = parseFloat(document.getElementById('ansAvgTitre').value);
+      const valid = engine.q1Trials.filter(t => t.recorded && t.used > 0);
+      const expAvg = valid.length > 0 ? valid.reduce((a, b) => a + b.used, 0) / valid.length : 25.00;
+      if (!isNaN(val) && Math.abs(val - expAvg) <= 0.15) {
+        fb.className = 'step-feedback-msg step-feedback-success';
+        fb.textContent = `✓ Correct! Average titre = ${val.toFixed(2)} cm³.`;
+      } else {
+        fb.className = 'step-feedback-msg step-feedback-fail';
+        fb.textContent = `Check your average from concordant titres (expected around ${expAvg.toFixed(2)} cm³).`;
+      }
+    } else if (letter === 'b') {
+      const val = parseFloat(document.getElementById('ansMolesB').value);
+      const exp = (p.trueBaseMolarity * p.pipetteVolume) / 1000.0;
+      if (!isNaN(val) && Math.abs(val - exp) / exp <= 0.08) {
+        fb.className = 'step-feedback-msg step-feedback-success';
+        fb.textContent = `✓ Correct! Moles of NaOH = ${val} mol.`;
+      } else {
+        fb.className = 'step-feedback-msg step-feedback-fail';
+        fb.textContent = `Formula: (Molarity × 25.0 cm³) / 1000 = ${exp.toFixed(5)} mol.`;
+      }
+    } else if (letter === 'c') {
+      const val = parseFloat(document.getElementById('ansMolesA').value);
+      const exp = (p.trueBaseMolarity * p.pipetteVolume) / 1000.0 * (p.moleRatioAcid / p.moleRatioBase);
+      if (!isNaN(val) && Math.abs(val - exp) / exp <= 0.08) {
+        fb.className = 'step-feedback-msg step-feedback-success';
+        fb.textContent = `✓ Correct! Stoichiometric moles of acid = ${val} mol.`;
+      } else {
+        fb.className = 'step-feedback-msg step-feedback-fail';
+        fb.textContent = `Expected around ${exp.toFixed(5)} mol based on balanced equation.`;
+      }
+    } else if (letter === 'd') {
+      const val = parseFloat(document.getElementById('ansMolarityA').value);
+      const exp = p.trueAcidMolarity;
+      if (!isNaN(val) && Math.abs(val - exp) / exp <= 0.08) {
+        fb.className = 'step-feedback-msg step-feedback-success';
+        fb.textContent = `✓ Correct! Molarity of Solution A = ${val} M.`;
+      } else {
+        fb.className = 'step-feedback-msg step-feedback-fail';
+        fb.textContent = `Formula: (Moles of Acid × 1000) / Average Titre = ${exp.toFixed(3)} M.`;
+      }
+    } else if (letter === 'e') {
+      const val = parseFloat(document.getElementById('ansConcGrams').value);
+      const exp = p.trueAcidMolarity * (p.acidRfm || 36.5);
+      if (!isNaN(val) && Math.abs(val - exp) / exp <= 0.08) {
+        fb.className = 'step-feedback-msg step-feedback-success';
+        fb.textContent = `✓ Correct! Concentration = ${val} g/dm³.`;
+      } else {
+        fb.className = 'step-feedback-msg step-feedback-fail';
+        fb.textContent = `Formula: Molarity × RFM (${p.acidRfm || 36.5}) = ${exp.toFixed(2)} g/dm³.`;
+      }
+    }
+  }
+
   // ── Render Q2 Question Cards with Realistic SVG Test Tubes ───────────
   function renderQ2TestsGrid() {
     const p = engine.preset.q2;
@@ -698,7 +1036,7 @@
 
     grid.innerHTML = p.tests.map((t, idx) => {
       const st = q2TestStates[t.id] || { performed: false, stage: 'idle' };
-      const letter = String.fromCharCode(97 + idx); // a, b, c, d
+      const letter = String.fromCharCode(97 + idx);
 
       let actionBtn = '';
       if (!st.performed) {
@@ -726,7 +1064,6 @@
           </div>
 
           <div class="test-layout-grid">
-            <!-- Left: Realistic Test Tube Apparatus Stage -->
             <div class="apparatus-stage">
               <div class="apparatus-view">
                 ${getTubeVisualHtml(t.id, st)}
@@ -736,7 +1073,6 @@
               </div>
             </div>
 
-            <!-- Right: Procedures, Action Buttons & Observations Table -->
             <div>
               <div style="font-size:0.84rem; color:var(--text-main); line-height:1.5; margin-bottom:12px; background:var(--bg-dark); padding:10px 14px; border-radius:8px; border-left:3px solid var(--blue-accent); border:1px solid var(--card-border); border-left-width:3px;">
                 <span style="font-weight:800; color:var(--heading-color); display:flex; align-items:center; gap:6px; margin-bottom:3px;">📋 Procedure:</span>
@@ -778,7 +1114,6 @@
     }).join('');
   }
 
-  // Realistic SVG Test Tube with Wooden Clamp, Meniscus & Precipitants
   function getTubeVisualHtml(testId, st) {
     const performed = st && st.performed;
     const isExcess = st && st.stage === 'excess';
@@ -800,7 +1135,6 @@
         } else {
           if (saltKey.includes('Pb') || saltKey.includes('Zn') || saltKey.includes('Al')) {
             showPptDissolved = true;
-            showPpt = false;
           } else {
             showPpt = true;
             pptColor = saltKey.includes('Fe') ? '#15803D' : saltKey.includes('Cu') ? '#38BDF8' : '#FFFFFF';
@@ -814,7 +1148,7 @@
           if (saltKey.includes('Zn')) {
             showPptDissolved = true;
           } else if (saltKey.includes('Cu')) {
-            liquidColor = '#1D4ED8'; // Deep blue
+            liquidColor = '#1D4ED8';
           } else {
             showPpt = true;
           }
@@ -825,32 +1159,27 @@
           pptColor = '#FFFFFF';
         } else if (saltKey.includes('Pb')) {
           showPpt = true;
-          pptColor = '#FACC15'; // Bright yellow PbI2
+          pptColor = '#FACC15';
         }
       }
     }
 
     return `
       <svg width="86" height="136" viewBox="0 0 86 136">
-        <!-- Wooden Test Tube Clamp -->
         <g transform="translate(0, 48)">
           <rect x="2" y="3" width="24" height="8" rx="2" fill="#78350F" stroke="#451A03" stroke-width="0.8"/>
           <rect x="60" y="3" width="24" height="8" rx="2" fill="#78350F" stroke="#451A03" stroke-width="0.8"/>
           <circle cx="14" cy="7" r="2.5" fill="#64748B"/>
           <circle cx="72" cy="7" r="2.5" fill="#64748B"/>
         </g>
-
-        <!-- Glass Test Tube Body & Lip -->
         <rect x="23" y="32" width="40" height="4" rx="2" fill="rgba(255,255,255,0.18)" stroke="#94A3B8" stroke-width="1.2"/>
         <path d="M 26,36 L 26,112 Q 26,130 43,130 Q 60,130 60,112 L 60,36 Z" fill="rgba(255,255,255,0.05)" stroke="#94A3B8" stroke-width="1.5"/>
 
-        <!-- Liquid Column -->
         ${performed ? `
           <path d="M 27,${isExcess ? 54 : 76} L 27,112 Q 27,128 43,128 Q 59,128 59,112 L 59,${isExcess ? 54 : 76} Z" fill="${liquidColor}"/>
           <ellipse cx="43" cy="${isExcess ? 54 : 76}" rx="16" ry="3.5" fill="${liquidColor}" opacity="0.9"/>
         ` : ''}
 
-        <!-- Precipitate Mass -->
         ${showPpt ? `
           <g class="anim-ppt-form">
             <ellipse cx="43" cy="120" rx="14.5" ry="7" fill="${pptColor}" opacity="0.95"/>
@@ -866,7 +1195,6 @@
           </g>
         ` : ''}
 
-        <!-- Specular Highlight -->
         <path d="M 29,38 L 29,112 Q 29,126 43,126" fill="none" stroke="#FFF" stroke-width="1.2" stroke-linecap="round" opacity="0.25"/>
       </svg>
     `;
@@ -971,7 +1299,6 @@
           </div>
 
           <div class="test-layout-grid">
-            <!-- Left: Realistic Organic Testing Apparatus -->
             <div class="apparatus-stage">
               <div class="apparatus-view">
                 ${getOrganicVisualHtml(t.id, st)}
@@ -981,7 +1308,6 @@
               </div>
             </div>
 
-            <!-- Right: Procedures & Observations Table -->
             <div>
               <div style="font-size:0.84rem; color:var(--text-main); line-height:1.5; margin-bottom:12px; background:var(--bg-dark); padding:10px 14px; border-radius:8px; border-left:3px solid var(--blue-accent); border:1px solid var(--card-border); border-left-width:3px;">
                 <span style="font-weight:800; color:var(--heading-color); display:flex; align-items:center; gap:6px; margin-bottom:3px;">📋 Procedure:</span>
@@ -1041,7 +1367,6 @@
       `;
     }
 
-    // Default Organic Tube Visual
     return `
       <svg width="86" height="136" viewBox="0 0 86 136">
         <rect x="23" y="32" width="40" height="4" rx="2" fill="rgba(255,255,255,0.18)" stroke="#94A3B8" stroke-width="1.2"/>
@@ -1120,175 +1445,6 @@
     if (!el) return;
     el.value = el.value ? el.value + '; ' + text : text;
     el.dispatchEvent(new Event('input'));
-  }
-
-  // ── Q1 Burette Lens & Titration Operations ────────────────────────────
-  function drawLens() {
-    const svg = document.getElementById('lensSvg');
-    if (!svg) return;
-    const vol = engine.q1BuretteReading;
-    const whole = Math.floor(vol);
-    const frac = vol - whole;
-    const centerY = 70;
-    const pxPerUnit = 28;
-
-    let linesHtml = '';
-    for (let mark = whole - 2; mark <= whole + 3; mark++) {
-      if (mark < 0 || mark > 50) continue;
-      const y = centerY + (mark - vol) * pxPerUnit;
-      linesHtml += `
-        <line x1="20" y1="${y}" x2="80" y2="${y}" stroke="rgba(255,255,255,0.85)" stroke-width="1.8"/>
-        <text x="92" y="${y + 4}" font-size="12" font-weight="700" fill="#38BDF8" font-family="'JetBrains Mono',monospace">${mark}.00</text>
-      `;
-      for (let sub = 1; sub <= 9; sub++) {
-        const subY = y + (sub * 0.1) * pxPerUnit;
-        const isHalf = (sub === 5);
-        linesHtml += `
-          <line x1="20" y1="${subY}" x2="${isHalf ? 60 : 42}" y2="${subY}" stroke="rgba(255,255,255,0.5)" stroke-width="${isHalf ? 1.4 : 1}"/>
-        `;
-      }
-    }
-
-    svg.innerHTML = `
-      <!-- Burette Glass Tube Profile -->
-      <rect x="18" y="0" width="144" height="140" fill="rgba(15,23,42,0.6)" stroke="#0284C7" stroke-width="1.5"/>
-      <!-- Fluid Meniscus Curve -->
-      <path d="M 20,${centerY} Q 50,${centerY + 7} 80,${centerY} L 80,140 L 20,140 Z" fill="rgba(56,189,248,0.4)"/>
-      <path d="M 20,${centerY} Q 50,${centerY + 7} 80,${centerY}" fill="none" stroke="#FFFFFF" stroke-width="2"/>
-      ${linesHtml}
-    `;
-  }
-
-  function startTitrate(speed = 'dropwise') {
-    stopTitrate();
-    const rate = speed === 'fast' ? 0.35 : 0.08;
-    const drip = document.getElementById('rigDrip');
-    if (drip) drip.style.display = 'block';
-
-    const stopcock = document.getElementById('stopcockValve');
-    if (stopcock) stopcock.style.transform = 'rotate(90deg)';
-
-    titrateInterval = setInterval(() => {
-      engine.q1BuretteReading += rate;
-      if (engine.q1BuretteReading >= 50.0) {
-        engine.q1BuretteReading = 50.0;
-        stopTitrate();
-      }
-
-      document.getElementById('liveBuretteVol').textContent = engine.q1BuretteReading.toFixed(2) + ' cm³';
-      document.getElementById('liveTitreUsed').textContent = engine.q1BuretteReading.toFixed(2) + ' cm³';
-
-      // Update Apparatus Liquid Height
-      const bHeight = Math.max(0, 176 - (engine.q1BuretteReading / 50.0) * 176);
-      const bFill = document.getElementById('buretteFill');
-      if (bFill) {
-        bFill.setAttribute('y', 22 + (176 - bHeight));
-        bFill.setAttribute('height', bHeight);
-      }
-
-      // Check Endpoint Transition
-      const trueTitre = engine.preset.q1.trueTitre || 25.00;
-      const flaskBody = document.getElementById('flaskRigBody');
-      if (engine.q1BuretteReading >= trueTitre) {
-        if (flaskBody) flaskBody.setAttribute('fill', 'rgba(255,255,255,0.4)'); // Pink -> Colorless
-        engine.q1ReachedEndpoint = true;
-      } else {
-        if (flaskBody) flaskBody.setAttribute('fill', 'rgba(236,72,153,0.75)');
-      }
-
-      drawLens();
-    }, 100);
-  }
-
-  function stopTitrate() {
-    if (titrateInterval) {
-      clearInterval(titrateInterval);
-      titrateInterval = null;
-    }
-    const drip = document.getElementById('rigDrip');
-    if (drip) drip.style.display = 'none';
-    const stopcock = document.getElementById('stopcockValve');
-    if (stopcock) stopcock.style.transform = 'rotate(0deg)';
-  }
-
-  function swirlFlask() {
-    const flask = document.getElementById('flaskContainer');
-    if (!flask) return;
-    flask.style.transform = 'rotate(-8deg)';
-    setTimeout(() => { flask.style.transform = 'rotate(8deg)'; }, 150);
-    setTimeout(() => { flask.style.transform = 'rotate(0deg)'; }, 300);
-  }
-
-  function resetTitrationApparatus() {
-    stopTitrate();
-    engine.q1BuretteReading = 0.00;
-    engine.q1ReachedEndpoint = false;
-    document.getElementById('liveBuretteVol').textContent = '0.00 cm³';
-    document.getElementById('liveTitreUsed').textContent = '0.00 cm³';
-    const bFill = document.getElementById('buretteFill');
-    if (bFill) {
-      bFill.setAttribute('y', 22);
-      bFill.setAttribute('height', 176);
-    }
-    const flaskBody = document.getElementById('flaskRigBody');
-    if (flaskBody) flaskBody.setAttribute('fill', 'rgba(236,72,153,0.75)');
-    drawLens();
-  }
-
-  let currentTrialRecording = 1;
-  function transferReadingToTable() {
-    const reading = parseFloat(engine.q1BuretteReading.toFixed(2));
-    if (currentTrialRecording === 1) {
-      document.getElementById('t1Final').value = reading.toFixed(2);
-      currentTrialRecording = 2;
-    } else if (currentTrialRecording === 2) {
-      document.getElementById('t2Final').value = reading.toFixed(2);
-      currentTrialRecording = 3;
-    } else {
-      document.getElementById('t3Final').value = reading.toFixed(2);
-      currentTrialRecording = 1;
-    }
-    onTableInputChanged();
-    alert(`Reading of ${reading.toFixed(2)} cm³ transferred to Table 1!`);
-    resetTitrationApparatus();
-  }
-
-  function onTableInputChanged() {
-    [1, 2, 3].forEach(n => {
-      const fin = parseFloat(document.getElementById(`t${n}Final`).value) || 0;
-      const init = parseFloat(document.getElementById(`t${n}Init`).value) || 0;
-      const used = parseFloat(Math.max(0, fin - init).toFixed(2));
-      document.getElementById(`t${n}Used`).textContent = used.toFixed(2);
-      engine.recordTrial(n, fin, init);
-    });
-
-    const t1 = engine.q1Trials[0].used;
-    const t2 = engine.q1Trials[1].used;
-    const t3 = engine.q1Trials[2].used;
-    const valid = [t1, t2, t3].filter(v => v > 0);
-    if (valid.length >= 2 && !document.getElementById('ansAvgTitre').value) {
-      const avg = (valid.reduce((a, b) => a + b, 0) / valid.length).toFixed(2);
-      document.getElementById('ansAvgTitre').value = avg;
-      engine.setQ1Answer('avgTitre', avg);
-    }
-    updateLiveScoreDisplay();
-  }
-
-  function onConcordantChanged() {
-    [1, 2, 3].forEach(n => {
-      const cb = document.getElementById(`t${n}Concordant`);
-      engine.setConcordant(n, cb ? cb.checked : false);
-    });
-    updateLiveScoreDisplay();
-  }
-
-  function onQ1CalculationsChanged() {
-    engine.setQ1Answer('avgTitre', document.getElementById('ansAvgTitre').value);
-    engine.setQ1Answer('molesB', document.getElementById('ansMolesB').value);
-    engine.setQ1Answer('molesA', document.getElementById('ansMolesA').value);
-    engine.setQ1Answer('molarityA', document.getElementById('ansMolarityA').value);
-    engine.setQ1Answer('concGrams', document.getElementById('ansConcGrams').value);
-    updateLiveScoreDisplay();
   }
 
   // ── Tab Navigation ───────────────────────────────────────────────────

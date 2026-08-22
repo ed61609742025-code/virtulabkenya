@@ -440,10 +440,7 @@
 
   window.backToModeSelect = function() {
     if (timerInterval) clearInterval(timerInterval);
-    document.getElementById('battleGameOverCard').style.display = 'none';
-    document.getElementById('battleArenaCard').style.display = 'none';
-    document.getElementById('battleStartCard').style.display = 'block';
-    updateStartCardBest();
+    window.location.href = 'home.html';
   };
 
   /* ══════════════════════════════════════
@@ -1023,15 +1020,19 @@
     const urlParams = new URLSearchParams(window.location.search);
     const modeParam = urlParams.get('mode');
     const targetParam = urlParams.get('target');
-    const isWarmup = urlParams.get('warmup') === 'true' || !!targetParam;
 
     if (modeParam && GAME_MODES[modeParam]) {
-      selectGameMode(modeParam);
+      currentModeKey = modeParam;
     } else {
-      selectGameMode('blitz');
+      currentModeKey = 'blitz';
     }
 
     const modeConfig = GAME_MODES[currentModeKey] || GAME_MODES['blitz'];
+
+    const navTitle = document.querySelector('.nav-title');
+    if (navTitle) {
+      navTitle.textContent = `${modeConfig.icon} ${modeConfig.name} Drill`;
+    }
 
     if (targetParam) {
       try {
@@ -1041,29 +1042,8 @@
       }
     }
 
-    // Configure workbench pre-lab warmup hero banner
-    const warmupBanner = document.getElementById('warmupHeroBanner');
-    const bannerIcon = document.getElementById('warmupBannerIcon');
-    const bannerTitle = document.getElementById('warmupBannerTitle');
-    const bannerDesc = document.getElementById('warmupBannerDesc');
-    const bannerBadge = document.getElementById('warmupBannerBadge');
-    const skipLink = document.getElementById('skipWarmupLink');
-    const launchBtn = document.getElementById('launchBattleBtn');
-
-    if (isWarmup && warmupBanner) {
-      warmupBanner.style.display = 'block';
-      if (targetWorkbenchUrl) {
-        if (bannerIcon) bannerIcon.textContent = modeConfig.icon;
-        if (bannerTitle) bannerTitle.textContent = `${modeConfig.name} Pre-Lab Warm-Up`;
-        if (bannerDesc) bannerDesc.textContent = `Sharpen your ${modeConfig.name} deduction reflexes before entering the workbench! Complete this 45-second sprint to start your practical.`;
-        if (bannerBadge) bannerBadge.textContent = 'BENCH WARM-UP';
-        if (launchBtn) launchBtn.textContent = `🚀 Launch 45s ${modeConfig.name} Warm-Up →`;
-        if (skipLink) {
-          skipLink.href = targetWorkbenchUrl;
-          skipLink.textContent = `Skip warm-up & enter ${modeConfig.name} Workbench directly →`;
-        }
-      }
-    }
+    // Direct auto-start of drill questions on dedicated screen
+    startChemicalSpeedBattle();
   }
 
   if (document.readyState === 'loading') {

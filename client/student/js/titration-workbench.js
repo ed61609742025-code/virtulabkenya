@@ -1183,6 +1183,24 @@ requireStudentLogin();
 
     updateRig();
     renderTrials();
+
+    if (trials.length >= 2) {
+      updateStepProgress(3, 'Calculate Molarity & Mass');
+    } else if (trials.length > 0) {
+      updateStepProgress(2, 'Record Concordant Trials');
+    } else if (indicatorAdded) {
+      updateStepProgress(1, 'Add Titrant & Swirl');
+    } else {
+      updateStepProgress(0, 'Setup & Indicator');
+    }
+  }
+
+  function updateStepProgress(step, text) {
+    const badge = document.getElementById('labStepBadge');
+    if (badge) badge.textContent = `Step ${step + 1} of 5: ${text}`;
+    if (window.BrilliantUI) {
+      window.BrilliantUI.renderSegmentedProgress('titrationStepProgress', 5, step);
+    }
   }
 
   function renderQuestions() {
@@ -1269,6 +1287,7 @@ requireStudentLogin();
     });
 
     updateRig();
+    updateStepProgress(1, 'Add Titrant & Swirl');
     saveDraft();
   }
 
@@ -1320,32 +1339,30 @@ requireStudentLogin();
     const maxVol = Math.min(50, Math.ceil(volume + 2.5));
 
     let ticksSvg = '';
-    
-    for (let v = minVol; v <= maxVol; v = +(v + 0.1).toFixed(1)) {
-      const y = centerY + (v - volume) * pcm;
+    for (let v = minVol; v <= maxVol; v += 0.1) {
+      const vRounded = Math.round(v * 10) / 10;
+      const y = centerY + (vRounded - volume) * pcm;
       if (y < -10 || y > 170) continue;
 
-      const isMajor = Math.abs(v - Math.round(v)) < 0.01;
-      const isMedium = Math.abs(v * 10 % 5) < 0.01 && !isMajor;
-
-      let lineLen = 10;
-      let strokeW = 0.9;
-      if (isMajor) { lineLen = 26; strokeW = 1.8; }
-      else if (isMedium) { lineLen = 18; strokeW = 1.3; }
-
-      ticksSvg += `<line x1="120" y1="${y}" x2="${120 - lineLen}" y2="${y}" stroke="rgba(255,255,255,0.85)" stroke-width="${strokeW}"/>`;
+      const isMajor = Math.abs(vRounded - Math.round(vRounded)) < 0.01;
+      const isMedium = !isMajor && Math.abs((vRounded * 10) % 5) < 0.01;
 
       if (isMajor) {
-        const wholeNum = Math.round(v);
-        ticksSvg += `<text x="74" y="${y + 4}" font-family="monospace" font-size="12" font-weight="700" fill="#38BDF8">${wholeNum}</text>`;
+        ticksSvg += `<line x1="20" y1="${y}" x2="55" y2="${y}" stroke="#F8FAFC" stroke-width="1.5"/>`;
+        ticksSvg += `<line x1="125" y1="${y}" x2="160" y2="${y}" stroke="#F8FAFC" stroke-width="1.5"/>`;
+        ticksSvg += `<text x="70" y="${y + 4}" fill="#38BDF8" font-size="11" font-family="'JetBrains Mono', monospace" font-weight="700">${Math.round(vRounded)}</text>`;
+      } else if (isMedium) {
+        ticksSvg += `<line x1="20" y1="${y}" x2="45" y2="${y}" stroke="#94A3B8" stroke-width="1.2"/>`;
+        ticksSvg += `<line x1="135" y1="${y}" x2="160" y2="${y}" stroke="#94A3B8" stroke-width="1.2"/>`;
+      } else {
+        ticksSvg += `<line x1="20" y1="${y}" x2="35" y2="${y}" stroke="#64748B" stroke-width="0.8"/>`;
+        ticksSvg += `<line x1="145" y1="${y}" x2="160" y2="${y}" stroke="#64748B" stroke-width="0.8"/>`;
       }
     }
 
     const meniscusSvg = `
-      <path d="M 120,80 Q 140,88 160,80 L 160,200 L 120,200 Z" fill="rgba(56, 189, 248, 0.4)" />
-      <path d="M 120,80 Q 140,88 160,80" stroke="#00F2FE" stroke-width="2.5" fill="none" />
-      <line x1="120" y1="0" x2="120" y2="160" stroke="#38BDF8" stroke-width="2"/>
-      <line x1="160" y1="0" x2="160" y2="160" stroke="#38BDF8" stroke-width="2"/>
+      <path d="M 20 ${centerY} Q 90 ${centerY + 6} 160 ${centerY}" stroke="#38BDF8" stroke-width="2.5" fill="none"/>
+      <ellipse cx="90" cy="${centerY + 6}" rx="3" ry="3" fill="#EF4444"/>
     `;
 
     lensSvg.innerHTML = ticksSvg + meniscusSvg;
@@ -1377,6 +1394,11 @@ requireStudentLogin();
     if (!indicatorAdded) return;
     trials.push(currentVolume);
     renderTrials();
+    if (trials.length >= 2) {
+      updateStepProgress(3, 'Calculate Molarity & Mass');
+    } else {
+      updateStepProgress(2, 'Record Concordant Trials');
+    }
     saveDraft();
   }
 

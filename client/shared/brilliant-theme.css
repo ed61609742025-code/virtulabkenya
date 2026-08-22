@@ -1,0 +1,590 @@
+/* ============================================================
+   VirtuLab Kenya — Brilliant Design System (brilliant-theme.css)
+   Tactile 3D Buttons, Interactive Cards, Segmented Progress & Nav
+   ============================================================ */
+
+/* ── 1. BRILLIANT THEME TOKENS ── */
+:root, [data-theme="light"] {
+  --b-bg: #F8FAFC;
+  --b-surface: #FFFFFF;
+  --b-surface-subtle: #F1F5F9;
+  --b-surface-hover: #E2E8F0;
+  --b-border: #E2E8F0;
+  --b-border-strong: #CBD5E1;
+  
+  --b-text: #0F172A;
+  --b-text-subtle: #475569;
+  --b-text-muted: #64748B;
+  
+  /* Vibrant Accents */
+  --b-primary: #0284C7;
+  --b-primary-dark: #0369A1;
+  --b-primary-shadow: #075985;
+  --b-primary-light: #E0F2FE;
+  
+  --b-emerald: #10B981;
+  --b-emerald-dark: #059669;
+  --b-emerald-shadow: #047857;
+  --b-emerald-light: #D1FAE5;
+  
+  --b-amber: #F59E0B;
+  --b-amber-dark: #D97706;
+  --b-amber-shadow: #B45309;
+  --b-amber-light: #FEF3C7;
+  
+  --b-violet: #8B5CF6;
+  --b-violet-dark: #7C3AED;
+  --b-violet-shadow: #6D28D9;
+  --b-violet-light: #EDE9FE;
+  
+  --b-crimson: #EF4444;
+  --b-crimson-dark: #DC2626;
+  --b-crimson-shadow: #B91C1C;
+  --b-crimson-light: #FEE2E2;
+  
+  --b-card-depth: #CBD5E1;
+  --b-card-shadow: 0 4px 0 #CBD5E1;
+  --b-card-shadow-hover: 0 6px 0 #94A3B8;
+  --b-card-shadow-active: 0 1px 0 #CBD5E1;
+  
+  --b-nav-bg: rgba(255, 255, 255, 0.92);
+  --b-nav-border: #E2E8F0;
+}
+
+[data-theme="dark"] {
+  --b-bg: #0B1322;
+  --b-surface: #111D33;
+  --b-surface-subtle: #182845;
+  --b-surface-hover: #1E3357;
+  --b-border: #1E3357;
+  --b-border-strong: #2A4470;
+  
+  --b-text: #F8FAFC;
+  --b-text-subtle: #94A3B8;
+  --b-text-muted: #64748B;
+  
+  /* Vibrant Accents */
+  --b-primary: #38BDF8;
+  --b-primary-dark: #0284C7;
+  --b-primary-shadow: #0369A1;
+  --b-primary-light: rgba(56, 189, 248, 0.15);
+  
+  --b-emerald: #10B981;
+  --b-emerald-dark: #059669;
+  --b-emerald-shadow: #047857;
+  --b-emerald-light: rgba(16, 185, 129, 0.15);
+  
+  --b-amber: #F59E0B;
+  --b-amber-dark: #D97706;
+  --b-amber-shadow: #B45309;
+  --b-amber-light: rgba(245, 158, 11, 0.15);
+  
+  --b-violet: #A855F7;
+  --b-violet-dark: #8B5CF6;
+  --b-violet-shadow: #6D28D9;
+  --b-violet-light: rgba(168, 85, 247, 0.15);
+  
+  --b-crimson: #F87171;
+  --b-crimson-dark: #EF4444;
+  --b-crimson-shadow: #DC2626;
+  --b-crimson-light: rgba(239, 68, 68, 0.15);
+  
+  --b-card-depth: #070D18;
+  --b-card-shadow: 0 4px 0 #070D18;
+  --b-card-shadow-hover: 0 6px 0 #04070D;
+  --b-card-shadow-active: 0 1px 0 #070D18;
+  
+  --b-nav-bg: rgba(17, 29, 51, 0.94);
+  --b-nav-border: #1E3357;
+}
+
+[data-theme="green"] {
+  --b-bg: #06150C;
+  --b-surface: #0E2416;
+  --b-surface-subtle: #143320;
+  --b-surface-hover: #1A4028;
+  --b-border: #1B442B;
+  --b-border-strong: #27623E;
+  
+  --b-text: #F0FDF4;
+  --b-text-subtle: #A7F3D0;
+  --b-text-muted: #6EE7B7;
+  
+  /* Vibrant Accents */
+  --b-primary: #34D399;
+  --b-primary-dark: #10B981;
+  --b-primary-shadow: #059669;
+  --b-primary-light: rgba(52, 211, 153, 0.15);
+  
+  --b-emerald: #34D399;
+  --b-emerald-dark: #10B981;
+  --b-emerald-shadow: #059669;
+  --b-emerald-light: rgba(52, 211, 153, 0.15);
+  
+  --b-amber: #FBBF24;
+  --b-amber-dark: #F59E0B;
+  --b-amber-shadow: #D97706;
+  --b-amber-light: rgba(251, 191, 36, 0.15);
+  
+  --b-violet: #C084FC;
+  --b-violet-dark: #A855F7;
+  --b-violet-shadow: #7E22CE;
+  --b-violet-light: rgba(192, 132, 252, 0.15);
+  
+  --b-crimson: #F87171;
+  --b-crimson-dark: #EF4444;
+  --b-crimson-shadow: #DC2626;
+  --b-crimson-light: rgba(248, 113, 113, 0.15);
+  
+  --b-card-depth: #030A06;
+  --b-card-shadow: 0 4px 0 #030A06;
+  --b-card-shadow-hover: 0 6px 0 #010402;
+  --b-card-shadow-active: 0 1px 0 #030A06;
+  
+  --b-nav-bg: rgba(14, 36, 22, 0.94);
+  --b-nav-border: #1B442B;
+}
+
+/* ── 2. BRILLIANT TACTILE 3D BUTTONS ── */
+.btn-brilliant,
+.btn-tactile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+  font-weight: 700;
+  font-size: 0.92rem;
+  letter-spacing: 0.02em;
+  padding: 12px 22px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.08s ease, background 0.15s ease;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* Push-down effect on :active */
+.btn-brilliant:active,
+.btn-tactile:active {
+  transform: translateY(3px) !important;
+}
+
+/* Primary Button (Blue / Cyan) */
+.btn-tactile-primary,
+.btn-brilliant-primary {
+  background: var(--b-primary);
+  color: #FFFFFF !important;
+  border-color: var(--b-primary-dark);
+  box-shadow: 0 4px 0 var(--b-primary-shadow);
+}
+[data-theme="dark"] .btn-tactile-primary,
+[data-theme="dark"] .btn-brilliant-primary {
+  color: #0B1322 !important;
+  font-weight: 800;
+}
+.btn-tactile-primary:hover,
+.btn-brilliant-primary:hover {
+  filter: brightness(1.06);
+}
+.btn-tactile-primary:active,
+.btn-brilliant-primary:active {
+  box-shadow: 0 1px 0 var(--b-primary-shadow);
+}
+
+/* Success / Emerald Button (Green) */
+.btn-tactile-success,
+.btn-brilliant-success {
+  background: var(--b-emerald);
+  color: #FFFFFF !important;
+  border-color: var(--b-emerald-dark);
+  box-shadow: 0 4px 0 var(--b-emerald-shadow);
+}
+[data-theme="green"] .btn-tactile-success,
+[data-theme="green"] .btn-brilliant-success {
+  color: #06150C !important;
+  font-weight: 800;
+}
+.btn-tactile-success:hover,
+.btn-brilliant-success:hover {
+  filter: brightness(1.06);
+}
+.btn-tactile-success:active,
+.btn-brilliant-success:active {
+  box-shadow: 0 1px 0 var(--b-emerald-shadow);
+}
+
+/* Amber / Gold Button (Yellow / Orange) */
+.btn-tactile-amber,
+.btn-brilliant-amber {
+  background: var(--b-amber);
+  color: #0F172A !important;
+  font-weight: 800;
+  border-color: var(--b-amber-dark);
+  box-shadow: 0 4px 0 var(--b-amber-shadow);
+}
+.btn-tactile-amber:hover,
+.btn-brilliant-amber:hover {
+  filter: brightness(1.06);
+}
+.btn-tactile-amber:active,
+.btn-brilliant-amber:active {
+  box-shadow: 0 1px 0 var(--b-amber-shadow);
+}
+
+/* Violet / Purple Button */
+.btn-tactile-violet,
+.btn-brilliant-violet {
+  background: var(--b-violet);
+  color: #FFFFFF !important;
+  border-color: var(--b-violet-dark);
+  box-shadow: 0 4px 0 var(--b-violet-shadow);
+}
+.btn-tactile-violet:hover,
+.btn-brilliant-violet:hover {
+  filter: brightness(1.06);
+}
+.btn-tactile-violet:active,
+.btn-brilliant-violet:active {
+  box-shadow: 0 1px 0 var(--b-violet-shadow);
+}
+
+/* Danger / Crimson Button */
+.btn-tactile-danger,
+.btn-brilliant-danger {
+  background: var(--b-crimson);
+  color: #FFFFFF !important;
+  border-color: var(--b-crimson-dark);
+  box-shadow: 0 4px 0 var(--b-crimson-shadow);
+}
+.btn-tactile-danger:hover,
+.btn-brilliant-danger:hover {
+  filter: brightness(1.06);
+}
+.btn-tactile-danger:active,
+.btn-brilliant-danger:active {
+  box-shadow: 0 1px 0 var(--b-crimson-shadow);
+}
+
+/* Neutral / Surface Button */
+.btn-tactile-surface,
+.btn-brilliant-surface {
+  background: var(--b-surface);
+  color: var(--b-text) !important;
+  border-color: var(--b-border-strong);
+  box-shadow: 0 4px 0 var(--b-card-depth);
+}
+.btn-tactile-surface:hover,
+.btn-brilliant-surface:hover {
+  background: var(--b-surface-hover);
+}
+.btn-tactile-surface:active,
+.btn-brilliant-surface:active {
+  box-shadow: 0 1px 0 var(--b-card-depth);
+}
+
+/* Ghost Button */
+.btn-tactile-ghost {
+  background: transparent;
+  color: var(--b-text-subtle) !important;
+  border: 2px solid transparent;
+  box-shadow: none;
+}
+.btn-tactile-ghost:hover {
+  background: var(--b-surface-subtle);
+  color: var(--b-text) !important;
+}
+.btn-tactile-ghost:active {
+  transform: translateY(1px) !important;
+}
+
+/* Sizing Modifiers */
+.btn-tactile-sm {
+  padding: 8px 14px;
+  font-size: 0.8rem;
+  border-radius: 8px;
+  border-width: 1.5px;
+  box-shadow: 0 3px 0 var(--b-card-depth);
+}
+.btn-tactile-sm.btn-tactile-primary { box-shadow: 0 3px 0 var(--b-primary-shadow); }
+.btn-tactile-sm.btn-tactile-success { box-shadow: 0 3px 0 var(--b-emerald-shadow); }
+.btn-tactile-sm.btn-tactile-amber { box-shadow: 0 3px 0 var(--b-amber-shadow); }
+.btn-tactile-sm.btn-tactile-danger { box-shadow: 0 3px 0 var(--b-crimson-shadow); }
+
+.btn-tactile-lg {
+  padding: 15px 28px;
+  font-size: 1.05rem;
+  border-radius: 14px;
+  box-shadow: 0 5px 0 var(--b-card-depth);
+}
+.btn-tactile-lg.btn-tactile-primary { box-shadow: 0 5px 0 var(--b-primary-shadow); }
+.btn-tactile-lg.btn-tactile-success { box-shadow: 0 5px 0 var(--b-emerald-shadow); }
+.btn-tactile-lg.btn-tactile-amber { box-shadow: 0 5px 0 var(--b-amber-shadow); }
+
+.btn-tactile-full {
+  width: 100%;
+}
+
+.btn-tactile:disabled,
+.btn-tactile[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: 0 2px 0 var(--b-card-depth) !important;
+  filter: grayscale(0.6);
+}
+
+/* ── 3. BRILLIANT CARDS & DEPTH ── */
+.b-card {
+  background: var(--b-surface);
+  border: 2px solid var(--b-border);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: var(--b-card-shadow);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.b-card-interactive {
+  cursor: pointer;
+}
+.b-card-interactive:hover {
+  transform: translateY(-2px);
+  border-color: var(--b-primary);
+  box-shadow: var(--b-card-shadow-hover);
+}
+.b-card-interactive:active {
+  transform: translateY(2px);
+  box-shadow: var(--b-card-shadow-active);
+}
+
+/* Choice Cards (Multiple Choice / Prediction Cards) */
+.b-choice-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--b-surface);
+  border: 2px solid var(--b-border);
+  border-radius: 14px;
+  padding: 14px 18px;
+  box-shadow: 0 3px 0 var(--b-card-depth);
+  cursor: pointer;
+  transition: all 0.12s ease;
+  user-select: none;
+  box-sizing: border-box;
+}
+.b-choice-card:hover {
+  border-color: var(--b-primary);
+  background: var(--b-surface-subtle);
+  transform: translateY(-1px);
+}
+.b-choice-card:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--b-card-depth);
+}
+.b-choice-card.selected {
+  border-color: var(--b-primary);
+  background: var(--b-primary-light);
+  box-shadow: 0 3px 0 var(--b-primary-dark);
+}
+.b-choice-card.correct {
+  border-color: var(--b-emerald) !important;
+  background: var(--b-emerald-light) !important;
+  box-shadow: 0 3px 0 var(--b-emerald-dark) !important;
+}
+.b-choice-card.incorrect {
+  border-color: var(--b-crimson) !important;
+  background: var(--b-crimson-light) !important;
+  box-shadow: 0 3px 0 var(--b-crimson-dark) !important;
+}
+
+.b-choice-letter {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--b-surface-subtle);
+  border: 1.5px solid var(--b-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.88rem;
+  color: var(--b-text);
+  flex-shrink: 0;
+  font-family: 'JetBrains Mono', monospace;
+}
+.b-choice-card.selected .b-choice-letter {
+  background: var(--b-primary);
+  color: #FFFFFF;
+  border-color: var(--b-primary-dark);
+}
+.b-choice-card.correct .b-choice-letter {
+  background: var(--b-emerald);
+  color: #FFFFFF;
+  border-color: var(--b-emerald-dark);
+}
+.b-choice-card.incorrect .b-choice-letter {
+  background: var(--b-crimson);
+  color: #FFFFFF;
+  border-color: var(--b-crimson-dark);
+}
+
+/* ── 4. SEGMENTED STEP PROGRESS BAR ── */
+.b-progress-segmented {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 6px 0;
+}
+
+.b-segment {
+  flex: 1;
+  height: 8px;
+  background: var(--b-surface-subtle);
+  border: 1px solid var(--b-border);
+  border-radius: 100px;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.b-segment-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--b-emerald);
+  border-radius: 100px;
+  transition: width 0.35s ease;
+}
+
+.b-segment.active .b-segment-fill {
+  width: 50%;
+  background: var(--b-primary);
+}
+.b-segment.completed .b-segment-fill {
+  width: 100%;
+  background: var(--b-emerald);
+}
+
+/* ── 5. STICKY BOTTOM ACTION BAR (DRAWER) ── */
+.b-bottom-action-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--b-nav-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 2px solid var(--b-border);
+  padding: 12px 20px calc(12px + env(safe-area-inset-bottom, 0px));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  z-index: 999;
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.b-bottom-action-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+/* ── 6. BRILLIANT MOBILE BOTTOM NAVIGATION BAR ── */
+.b-mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--b-nav-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 2px solid var(--b-nav-border);
+  padding: 6px 12px calc(6px + env(safe-area-inset-bottom, 0px));
+  z-index: 9999;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
+}
+
+.b-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 6px 10px;
+  border-radius: 12px;
+  color: var(--b-text-muted);
+  text-decoration: none;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  transition: all 0.15s ease;
+  position: relative;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+.b-nav-icon {
+  font-size: 1.25rem;
+  line-height: 1;
+  transition: transform 0.15s ease;
+}
+
+.b-nav-item:hover {
+  color: var(--b-text);
+}
+
+.b-nav-item:active .b-nav-icon {
+  transform: scale(0.88);
+}
+
+.b-nav-item.active {
+  color: var(--b-primary) !important;
+  background: var(--b-primary-light);
+}
+.b-nav-item.active .b-nav-icon {
+  transform: scale(1.1);
+}
+
+/* Badge dot on nav item (e.g. Daily challenge ready) */
+.b-nav-badge-dot {
+  position: absolute;
+  top: 4px;
+  right: 14px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--b-amber);
+  border: 2px solid var(--b-surface);
+}
+
+/* ── 7. RESPONSIVE MEDIA QUERIES ── */
+@media (max-width: 768px) {
+  .b-mobile-bottom-nav {
+    display: flex;
+  }
+  
+  /* Add bottom clearance for page content so nav doesn't overlap */
+  body.has-bottom-nav {
+    padding-bottom: 76px !important;
+  }
+  
+  .dashboard-container,
+  .workbench-container,
+  .organic-workbench,
+  .qual-workbench {
+    padding-bottom: 84px !important;
+  }
+}

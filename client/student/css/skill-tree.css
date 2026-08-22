@@ -1,0 +1,452 @@
+/* ============================================================
+   VirtuLab Kenya — Visual Skill Tree & Learning Pathway (skill-tree.css)
+   Brilliant-style interactive node roadmap & branch progressions
+   ============================================================ */
+
+/* ── 1. VIEW TOGGLE BAR ── */
+.pathway-view-toggle {
+  display: inline-flex;
+  background: var(--b-surface-subtle);
+  border: 1.5px solid var(--b-border);
+  border-radius: 12px;
+  padding: 3px;
+  gap: 3px;
+}
+
+.view-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 9px;
+  border: none;
+  background: transparent;
+  color: var(--b-text-muted);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.view-toggle-btn:hover {
+  color: var(--b-text);
+}
+
+.view-toggle-btn.active {
+  background: var(--b-surface);
+  color: var(--b-primary);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* ── 2. SKILL TREE HEADER & STATS BANNER ── */
+.st-stats-banner {
+  background: var(--b-surface);
+  border: 2px solid var(--b-border);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  box-shadow: var(--b-card-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.st-stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--b-text);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.st-stat-stars {
+  color: var(--b-amber);
+  background: var(--b-amber-light);
+  padding: 4px 12px;
+  border-radius: 100px;
+  border: 1px solid var(--b-amber);
+}
+
+.st-stat-progress {
+  flex: 1;
+  max-width: 260px;
+  min-width: 140px;
+}
+
+/* ── 3. SKILL TREE PATHWAY CONTAINER ── */
+.skill-tree-pathway {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  position: relative;
+  padding: 10px 0 30px;
+}
+
+/* Branch Section Container */
+.st-branch {
+  position: relative;
+  background: var(--b-surface);
+  border: 2px solid var(--b-border);
+  border-radius: 20px;
+  padding: 22px 24px;
+  box-shadow: var(--b-card-shadow);
+}
+
+.st-branch-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1.5px solid var(--b-border);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.st-branch-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--b-text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.st-branch-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 6px;
+  background: var(--b-surface-subtle);
+  color: var(--b-text-muted);
+  border: 1px solid var(--b-border);
+}
+
+/* ── 4. NODE TRACK & CONNECTORS ── */
+.st-nodes-track {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 16px;
+  position: relative;
+  flex-wrap: wrap;
+  padding: 10px 0;
+}
+
+/* Connecting Line between nodes on desktop */
+.st-node-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+  text-align: center;
+  max-width: 140px;
+  transition: transform 0.15s ease;
+}
+
+.st-node-wrapper:hover {
+  transform: translateY(-3px);
+}
+
+/* The Circular Node */
+.st-node-circle {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: var(--b-surface);
+  border: 3px solid var(--b-border-strong);
+  box-shadow: 0 5px 0 var(--b-card-depth);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.7rem;
+  position: relative;
+  transition: all 0.12s ease;
+  user-select: none;
+}
+
+.st-node-wrapper:active .st-node-circle {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--b-card-depth);
+}
+
+/* Node State: Active (Next Recommended Node) */
+.st-node-wrapper.active .st-node-circle {
+  border-color: var(--b-primary);
+  background: var(--b-primary-light);
+  box-shadow: 0 5px 0 var(--b-primary-shadow), 0 0 20px rgba(56, 189, 248, 0.35);
+  animation: stNodePulse 2s infinite ease-in-out;
+}
+
+@keyframes stNodePulse {
+  0%, 100% {
+    box-shadow: 0 5px 0 var(--b-primary-shadow), 0 0 12px rgba(56, 189, 248, 0.3);
+  }
+  50% {
+    box-shadow: 0 5px 0 var(--b-primary-shadow), 0 0 24px rgba(56, 189, 248, 0.6);
+  }
+}
+
+/* Node State: Completed */
+.st-node-wrapper.completed .st-node-circle {
+  border-color: var(--b-emerald);
+  background: var(--b-emerald-light);
+  box-shadow: 0 5px 0 var(--b-emerald-shadow);
+}
+
+/* Node State: Locked */
+.st-node-wrapper.locked {
+  opacity: 0.65;
+  filter: grayscale(0.7);
+  cursor: not-allowed;
+}
+
+.st-node-wrapper.locked:hover {
+  transform: none;
+}
+
+.st-node-wrapper.locked .st-node-circle {
+  background: var(--b-surface-subtle);
+  border-color: var(--b-border);
+  box-shadow: 0 3px 0 var(--b-card-depth);
+}
+
+/* Beacon Pill above active node */
+.st-node-beacon {
+  position: absolute;
+  top: -14px;
+  background: var(--b-primary);
+  color: #FFFFFF;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 100px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 10;
+}
+[data-theme="dark"] .st-node-beacon {
+  color: #0B1322;
+}
+
+/* Stars rating badge below node */
+.st-node-stars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: 0.75rem;
+  color: var(--b-amber);
+  min-height: 16px;
+}
+
+.st-star-empty {
+  opacity: 0.25;
+  filter: grayscale(1);
+}
+
+/* Node label below circle */
+.st-node-label {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--b-text);
+  line-height: 1.25;
+}
+
+.st-node-sublabel {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--b-text-muted);
+}
+
+/* ── 5. CAPSTONE EXAM NODE (SPECIAL GOLD HIGHLIGHT) ── */
+.st-capstone-branch {
+  background: linear-gradient(135deg, var(--b-surface) 0%, var(--b-amber-light) 100%);
+  border-color: var(--b-amber);
+}
+
+.st-node-wrapper.capstone .st-node-circle {
+  width: 82px;
+  height: 82px;
+  font-size: 2.1rem;
+  border-color: var(--b-amber);
+  background: var(--b-amber-light);
+  box-shadow: 0 6px 0 var(--b-amber-shadow);
+}
+
+/* ── 6. INTERACTIVE NODE DETAILS POPOVER / MODAL ── */
+.st-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.st-modal-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.st-modal-card {
+  background: var(--b-surface);
+  border: 2px solid var(--b-border);
+  border-radius: 20px;
+  max-width: 440px;
+  width: 100%;
+  padding: 24px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+  transform: translateY(12px) scale(0.97);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  box-sizing: border-box;
+}
+
+.st-modal-backdrop.open .st-modal-card {
+  transform: translateY(0) scale(1);
+}
+
+.st-modal-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--b-border);
+  background: var(--b-surface-subtle);
+  color: var(--b-text-muted);
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.st-modal-close-btn:hover {
+  background: var(--b-surface-hover);
+  color: var(--b-text);
+}
+
+.st-modal-icon-badge {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: var(--b-surface-subtle);
+  border: 2px solid var(--b-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  margin-bottom: 12px;
+}
+
+.st-modal-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--b-text);
+  margin-bottom: 6px;
+  line-height: 1.25;
+}
+
+.st-modal-syllabus {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--b-primary);
+  margin-bottom: 12px;
+}
+
+.st-modal-desc {
+  font-size: 0.84rem;
+  color: var(--b-text-subtle);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.st-modal-skills-list {
+  background: var(--b-surface-subtle);
+  border: 1px solid var(--b-border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  font-size: 0.78rem;
+  color: var(--b-text);
+}
+
+.st-modal-skills-list ul {
+  margin: 6px 0 0 16px;
+  padding: 0;
+}
+
+.st-modal-skills-list li {
+  margin-bottom: 4px;
+}
+
+.st-modal-stats-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1.5px solid var(--b-border);
+  font-size: 0.82rem;
+}
+
+/* ── 7. RESPONSIVE MOBILE TWEAKS ── */
+@media (max-width: 640px) {
+  .st-branch {
+    padding: 16px 14px;
+  }
+
+  .st-nodes-track {
+    gap: 20px 12px;
+  }
+
+  .st-node-circle {
+    width: 60px;
+    height: 60px;
+    font-size: 1.45rem;
+  }
+
+  .st-node-wrapper {
+    max-width: 100px;
+  }
+
+  .st-node-label {
+    font-size: 0.74rem;
+  }
+
+  .st-modal-card {
+    padding: 20px 16px;
+  }
+}

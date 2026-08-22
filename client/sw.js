@@ -3,7 +3,7 @@
 //  Feature #1: Offline Support, Smart Caching & Sync
 // ============================================================
 
-const CACHE_NAME = 'virtulab-kenya-v36';
+const CACHE_NAME = 'virtulab-kenya-v37';
 
 const PRECACHE_ASSETS = [
   '/',
@@ -53,12 +53,14 @@ const PRECACHE_ASSETS = [
   '/student/speed_battle.html',
   '/student/css/lab.css',
   '/student/css/dashboard.css',
+  '/student/css/skill-tree.css',
   '/student/css/organic.css',
   '/student/css/qualitative.css',
   '/student/css/solubility.css',
   '/student/css/energy.css',
   '/student/css/rates.css',
   '/student/css/gas-prep.css',
+  '/student/js/skill-tree.js',
   '/student/js/titration-workbench.js',
   '/student/js/qualitative-engine.js',
   '/student/js/organic-engine.js',

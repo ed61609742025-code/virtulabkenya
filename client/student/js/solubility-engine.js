@@ -338,6 +338,11 @@ const SolubilityEngine = (() => {
     const descEl = document.getElementById('scenarioDescText');
     if (descEl) descEl.textContent = scen.description;
 
+    const subbarSol = document.getElementById('knecSubbarSolute');
+    if (subbarSol) {
+      subbarSol.textContent = (SALT_MODELS[state.solute] && SALT_MODELS[state.solute].name) || state.solute;
+    }
+
     const addWaterBtn = document.getElementById('btnAddWater');
     if (addWaterBtn) {
       addWaterBtn.style.display = scen.modeType === 'serialDilution' || scen.modeType === 'sandbox' ? 'inline-flex' : 'none';
@@ -361,6 +366,10 @@ const SolubilityEngine = (() => {
   function setSolute(key) {
     if (SALT_MODELS[key]) {
       state.solute = key;
+      const subbarSol = document.getElementById('knecSubbarSolute');
+      if (subbarSol) {
+        subbarSol.textContent = SALT_MODELS[key].name || key;
+      }
       resetSimulation();
       generatePostLabQuestions();
     }

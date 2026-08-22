@@ -429,6 +429,9 @@ const EnergyEngine = (() => {
     const descEl = document.getElementById('scenarioDescText');
     if (descEl) descEl.textContent = currentScenario.briefing;
 
+    const subbarScen = document.getElementById('knecSubbarScenario');
+    if (subbarScen) subbarScen.textContent = currentScenario.name || currentScenario.knecYear;
+
     const titleEl = document.getElementById('stageApparatusTitle');
     if (titleEl) {
       if (currentScenario.apparatusType === 'COMBUSTION') titleEl.textContent = 'Copper Can Calorimeter & Spirit Lamp';

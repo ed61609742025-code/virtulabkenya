@@ -19,7 +19,7 @@
   <link rel="manifest" href="/manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400..800;1,6..72,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/shared/style.css">
   <link rel="stylesheet" href="/shared/brilliant-theme.css">
   <link rel="stylesheet" href="/shared/tutorial-engine.css">
@@ -29,91 +29,144 @@
 </head>
 <body>
 
-  <!-- ══════════════════════════════════════
-       TOPBAR — Fixed Navigation Header
-  ══════════════════════════════════════ -->
-  <nav class="top-navbar">
-    <a href="/student/home.html" class="nav-brand">
-      <span class="nav-logo-icon">🔥</span>
-      <span>VirtuLab Kenya</span>
-      <span class="knec-tag-pill">KNEC PAPER 3</span>
-    </a>
-
-    <div class="nav-lab-switch">
-      <a href="lab.html" class="theme-btn-chip">🧪 Titration</a>
-      <a href="qualitative.html" class="theme-btn-chip">🔍 Qualitative</a>
-      <a href="organic.html" class="theme-btn-chip">⚗️ Organic</a>
-      <a href="solubility.html" class="theme-btn-chip">🌡️ Solubility</a>
-      <a href="energy.html" class="theme-btn-chip active">🔥 Energy</a>
-      <a href="rates.html" class="theme-btn-chip">⚡ Rates</a>
-      <a href="composite_exam.html" class="theme-btn-chip">📝 Exam</a>
+  <!-- Unified Sticky Academic Header (Matches Titration & Organic Benches) -->
+  <header class="academic-top-header">
+    <!-- Institutional Candidate Ribbon -->
+    <div class="candidate-top-ribbon">
+      <span class="ribbon-full">🇰🇪 REPUBLIC OF KENYA • KCSE CHEMISTRY PRACTICAL WORKSTATION • KNEC 233/3 • Q1: THERMOCHEMISTRY & ENERGY CHANGES</span>
+      <span class="ribbon-mobile">🇰🇪 KCSE 233/3 · Thermochemistry Bench</span>
     </div>
 
-    <div class="nav-actions">
-      <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm" onclick="TutorialEngine.start('energy')" style="padding:4px 10px; font-size:0.75rem;">
-        🧭 Guided Tutorial
-      </button>
-
-      <div class="theme-toggle-group">
-        <button type="button" class="theme-btn-chip active" id="btnModePractice" onclick="EnergyEngine.setStudyMode('practice')">🎓 Practice</button>
-        <button type="button" class="theme-btn-chip" id="btnModeExam" onclick="EnergyEngine.setStudyMode('exam')">📝 Exam Mode</button>
-      </div>
-
-      <!-- Theory Page Direct Switcher Link -->
-      <a href="energy_theory.html" class="en-header-theory-btn" title="Open Thermochemistry Theory & Hess's Law Revision Guide">
-        <span>📖 Theory & Cycles →</span>
+    <!-- Topbar Navigation Bar -->
+    <nav class="top-navbar">
+      <a href="/student/home.html" class="nav-brand-academic" title="Back to Student Workstation">
+        <div class="seal-crest-small" title="VirtuLab Kenya Seal">🔥</div>
+        <div style="display:flex; flex-direction:column;">
+          <span style="font-weight:800; font-family:'Cinzel', serif; font-size:1.05rem; line-height:1.1; color:var(--heading-color);">VirtuLab</span>
+          <span class="brand-subtagline" style="font-size:0.65rem; font-family:'Newsreader', serif; font-style:italic; color:var(--en-amber); letter-spacing:0.01em;">Thermochemistry Bench</span>
+        </div>
       </a>
 
-      <!-- Settings Dropdown -->
-      <div style="position:relative;">
-        <button type="button" class="en-header-btn" onclick="toggleBenchSettings(event)" title="Workbench Settings & Tools">
-          <span>⚙️ Settings</span>
+      <!-- Desktop Workbench Switcher (Hidden on Mobile) -->
+      <div class="nav-modules-pill">
+        <a href="lab.html" class="theme-btn-chip">🧪 Titration</a>
+        <a href="qualitative.html" class="theme-btn-chip">🔍 Qualitative</a>
+        <a href="organic.html" class="theme-btn-chip">⚗️ Organic</a>
+        <a href="solubility.html" class="theme-btn-chip">🌡️ Solubility</a>
+        <a href="energy.html" class="theme-btn-chip active">🔥 Energy</a>
+        <a href="rates.html" class="theme-btn-chip">⚡ Rates</a>
+        <a href="composite_exam.html" class="theme-btn-chip">📝 Exam</a>
+      </div>
+
+      <div class="nav-actions">
+        <!-- Session Timer Badge -->
+        <div class="session-timer-badge" style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:6px;padding:4px 8px;font-size:0.75rem;font-weight:700;color:var(--en-amber);display:flex;align-items:center;gap:4px;font-family:'JetBrains Mono',monospace;">
+          <span>⏱️</span>
+          <span id="sessionTimerText">00:00</span>
+        </div>
+
+        <!-- Guided Tutorial Button -->
+        <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm" onclick="TutorialEngine.start('energy')" style="padding:4px 8px; font-size:0.75rem; white-space:nowrap;">
+          🧭 <span class="btn-text-full">Guided Tutorial</span><span class="btn-text-short">Tutorial</span>
         </button>
-        
-        <div id="benchSettingsDropdown" class="settings-dropdown-menu">
-          <div class="dropdown-row">
-            <span class="dropdown-label">Audio Metronome & Sound</span>
-            <button type="button" id="soundToggleBtn" onclick="EnergyEngine.toggleSound()" class="dropdown-action-btn">🔊 Sound ON</button>
-          </div>
 
-          <div class="dropdown-row-col">
-            <span class="dropdown-label">Language / Lugha</span>
-            <div class="theme-toggle-group" style="width:100%;">
-              <button class="theme-btn-chip lang-btn-chip active" style="flex:1; padding:4px 8px;" data-lang="en" onclick="EnergyEngine.setLanguage('en')">🇬🇧 EN</button>
-              <button class="theme-btn-chip lang-btn-chip" style="flex:1; padding:4px 8px;" data-lang="sw" onclick="EnergyEngine.setLanguage('sw')">🇰🇪 SW</button>
+        <!-- Study Mode Toggle -->
+        <div class="theme-toggle-group">
+          <button type="button" class="theme-btn-chip active" id="btnModePractice" onclick="EnergyEngine.setStudyMode('practice')">🎓 <span class="btn-text-full">Practice</span></button>
+          <button type="button" class="theme-btn-chip" id="btnModeExam" onclick="EnergyEngine.setStudyMode('exam')">📝 <span class="btn-text-full">Exam</span></button>
+        </div>
+
+        <!-- Theory Guide Link -->
+        <a href="energy_theory.html" class="nav-btn" style="padding:4px 8px; font-size:0.75rem;" title="Open Thermochemistry Theory & Hess's Law Revision Guide">
+          📖 <span class="btn-text-full">Theory</span>
+        </a>
+
+        <!-- Settings Dropdown -->
+        <div style="position:relative;">
+          <button type="button" class="nav-btn nav-btn-settings" onclick="toggleBenchSettings(event)" title="Workbench Settings & Tools" style="padding:4px 8px; font-size:0.75rem;">
+            ⚙️ <span class="btn-text-full">Settings</span>
+          </button>
+          
+          <div id="benchSettingsDropdown" style="display:none; position:absolute; right:0; top:36px; width:250px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; box-shadow:var(--shadow-lg); z-index:100000; padding:12px; flex-direction:column; gap:10px; text-align:left;">
+            <!-- Sound Toggle -->
+            <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+              <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Metronome & Sound</span>
+              <button type="button" id="soundToggleBtn" onclick="EnergyEngine.toggleSound()" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border);">🔊 Sound ON</button>
             </div>
-          </div>
 
-          <div class="dropdown-row-col">
-            <span class="dropdown-label">Appearance Theme</span>
-            <div class="theme-toggle-group" style="width:100%;">
-              <button class="theme-btn-chip active" style="flex:1; padding:4px 6px;" data-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
-              <button class="theme-btn-chip" style="flex:1; padding:4px 6px;" data-theme="light" onclick="setTheme('light')">☀️ Light</button>
-              <button class="theme-btn-chip" style="flex:1; padding:4px 6px;" data-theme="green" onclick="setTheme('green')">🧪 Lab</button>
+            <!-- Scratchpad Toggle -->
+            <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+              <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Scratchpad</span>
+              <button type="button" onclick="toggleScratchpad()" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border);">📝 Rough Work</button>
             </div>
-          </div>
 
-          <div class="dropdown-row-col" style="gap:6px; margin-top:4px;">
-            <button onclick="EnergyEngine.openSafetyModal()" class="dropdown-menu-item item-danger">
-              ⚠️ Chemical Safety & SDS
-            </button>
-            <button onclick="window.print()" class="dropdown-menu-item">
-              🖨️ Print KCSE Booklet
-            </button>
-            <button onclick="EnergyEngine.submitWorksheet()" class="dropdown-menu-item item-primary">
-              💾 Submit & Grade (15 Mks)
-            </button>
+            <!-- Language Selector Row -->
+            <div style="display:flex; flex-direction:column; gap:6px; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+              <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Language / Lugha</span>
+              <div class="theme-toggle-group" style="width:100%;">
+                <button class="theme-btn-chip lang-btn-chip active" style="flex:1;" data-lang="en" onclick="EnergyEngine.setLanguage('en')">🇬🇧 EN</button>
+                <button class="theme-btn-chip lang-btn-chip" style="flex:1;" data-lang="sw" onclick="EnergyEngine.setLanguage('sw')">🇰🇪 SW</button>
+              </div>
+            </div>
+
+            <!-- Theme Selector Row -->
+            <div style="display:flex; flex-direction:column; gap:6px; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+              <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Appearance Theme</span>
+              <div class="theme-toggle-group" style="width:100%;">
+                <button class="theme-btn-chip" style="flex:1;" data-theme="light" onclick="setTheme('light')">☀️ Light</button>
+                <button class="theme-btn-chip active" style="flex:1;" data-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
+                <button class="theme-btn-chip" style="flex:1;" data-theme="green" onclick="setTheme('green')">🧪 Lab</button>
+              </div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <button onclick="EnergyEngine.openSafetyModal()" style="background:var(--red-bg);border:1px solid var(--red-border);color:var(--red-accent);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
+                ⚠️ Reagent Safety (SDS)
+              </button>
+              <button onclick="window.print()" style="background:var(--card-bg-hover);border:1px solid var(--card-border);color:var(--text-main);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
+                🖨️ Print KCSE Booklet
+              </button>
+              <button onclick="EnergyEngine.submitWorksheet()" style="background:var(--en-amber);border:none;color:#FFF;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
+                💾 Submit & Grade (15 Mks)
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Back to Dashboard on the Right -->
-      <a href="/student/home.html" class="en-nav-back-btn" title="Back to Student Dashboard / Home">
-        <span style="font-size:1.05rem; line-height:1; display:inline-block;">←</span>
-        <span>Home</span>
-      </a>
+        <!-- Exit Button -->
+        <a href="/student/home.html" class="btn-back-link" style="padding:4px 8px; font-size:0.75rem; border-radius:6px;" title="Exit to Workstation" data-i18n="back">← Exit</a>
+      </div>
+    </nav>
+
+    <!-- Official KNEC Practical Ledger Sub-Header -->
+    <div class="knec-exam-subbar">
+      <div class="knec-subbar-item">
+        <span class="knec-subbar-label">Examination:</span>
+        <span class="knec-subbar-val">KCSE Chemistry Paper 3</span>
+      </div>
+      <div class="knec-subbar-item">
+        <span class="knec-subbar-label">Section:</span>
+        <span class="knec-subbar-val">Question 1 (Energy Changes)</span>
+      </div>
+      <div class="knec-subbar-item">
+        <span class="knec-subbar-label">Reaction:</span>
+        <span class="knec-subbar-val" id="knecSubbarScenario">Displacement (Zn + CuSO₄)</span>
+      </div>
+      <div class="knec-subbar-item" style="margin-left:auto;">
+        <span class="knec-subbar-label">Max Score:</span>
+        <span class="knec-subbar-val" style="color:var(--en-amber); font-weight:800;">15.0 Marks</span>
+      </div>
     </div>
-  </nav>
+  </header>
+
+  <!-- Collapsible Scratchpad Drawer -->
+  <div id="scratchpadDrawer" style="display:none;background:var(--card-bg);border:1px solid var(--en-amber);border-radius:12px;padding:16px;margin:16px 20px 0;box-shadow:0 4px 20px rgba(0,0,0,0.4);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+      <div style="font-size:0.88rem;font-weight:700;color:var(--heading-color);font-family:'Cinzel', serif;">📝 Rough Work Scratchpad (KNEC Candidate Working)</div>
+      <button type="button" class="btn-pill-action" style="padding:2px 8px;font-size:0.7rem;" onclick="toggleScratchpad()">✕ Close</button>
+    </div>
+    <textarea id="scratchpadText" placeholder="Draft your heat calculation notes, ΔH formulas, extrapolation scratch work, or ΔT checks here..." style="width:100%;height:90px;background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:8px;padding:10px;color:var(--text-main);font-family:'JetBrains Mono',monospace;font-size:0.82rem;outline:none;resize:vertical;"></textarea>
+  </div>
 
   <main class="en-page-wrap">
     
@@ -559,24 +612,23 @@
       if (dd && dd.style.display === 'flex' && !dd.contains(e.target)) {
         dd.style.display = 'none';
       }
-    });
-
-    function switchRightTab(tab) {
-      const graphCard = document.getElementById('tabContentGraph');
-      const workCard = document.getElementById('tabContentWorksheet');
-      const tabBtnG = document.getElementById('tabBtnGraph');
-      const tabBtnW = document.getElementById('tabBtnWorksheet');
-
-      if (graphCard) graphCard.style.display = (tab === 'graph') ? 'block' : 'none';
-      if (workCard) workCard.style.display = (tab === 'worksheet') ? 'block' : 'none';
-
-      if (tabBtnG) tabBtnG.classList.toggle('active', tab === 'graph');
-      if (tabBtnW) tabBtnW.classList.toggle('active', tab === 'worksheet');
-
-      if (tab === 'graph') {
-        setTimeout(() => EnergyEngine.renderGraph(), 50);
+    function toggleScratchpad() {
+      const drawer = document.getElementById('scratchpadDrawer');
+      if (!drawer) return;
+      drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
+      if (drawer.style.display === 'block') {
+        document.getElementById('scratchpadText')?.focus();
       }
     }
+
+    let energySeconds = 0;
+    setInterval(() => {
+      energySeconds++;
+      const m = String(Math.floor(energySeconds / 60)).padStart(2, '0');
+      const s = String(energySeconds % 60).padStart(2, '0');
+      const t = document.getElementById('sessionTimerText');
+      if (t) t.textContent = `${m}:${s}`;
+    }, 1000);
   </script>
 </body>
 </html>

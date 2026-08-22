@@ -6,14 +6,20 @@
 
 /* ── 1. THEME TOKENS ── */
 :root, [data-theme="light"] {
-  --bg-dark: #F8FAFC;
+  --bg-dark: #F6F3EE;
   --card-bg: #FFFFFF;
-  --card-bg-hover: #F1F5F9;
-  --card-border: #E2E8F0;
-  --text-main: #0F172A;
-  --text-muted: #475569;
+  --card-bg-hover: #F8F5F0;
+  --card-border: #E2DDD5;
+  --card-border-glow: #D97706;
+  --text-main: #1C2434;
+  --text-muted: #57657A;
   --heading-color: #0F172A;
-  --topbar-bg: rgba(255, 255, 255, 0.95);
+  --topbar-bg: rgba(255, 255, 255, 0.97);
+
+  --acad-oxford: #0F172A;
+  --acad-gold: #D97706;
+  --acad-gold-bg: rgba(217, 119, 6, 0.1);
+  --acad-crimson: #991B1B;
 
   --en-primary: #D97706;
   --en-flame: #EA580C;
@@ -48,24 +54,32 @@
   --grid-major: rgba(217, 119, 6, 0.35);
   --grid-minor: rgba(217, 119, 6, 0.12);
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.08);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.09);
 
-  --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-academic: 'Cinzel', Georgia, serif;
+  --font-editorial: 'Newsreader', Georgia, serif;
+  --font-heading: 'Cinzel', Georgia, serif;
   --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
 
 [data-theme="dark"] {
-  --bg-dark: #090E17;
-  --card-bg: #111A2E;
-  --card-bg-hover: #17233B;
+  --bg-dark: #080D1A;
+  --card-bg: #0F172A;
+  --card-bg-hover: #162238;
   --card-border: #1E2D4A;
-  --text-main: #F8FAFC;
+  --card-border-glow: #F59E0B;
+  --text-main: #F1F5F9;
   --text-muted: #94A3B8;
   --heading-color: #FFFFFF;
-  --topbar-bg: rgba(10, 16, 28, 0.95);
+  --topbar-bg: rgba(15, 23, 42, 0.97);
+
+  --acad-oxford: #08101A;
+  --acad-gold: #F59E0B;
+  --acad-gold-bg: rgba(245, 158, 11, 0.14);
+  --acad-crimson: #EF4444;
 
   --en-primary: #F59E0B;
   --en-flame: #F97316;
@@ -100,24 +114,32 @@
   --grid-major: rgba(245, 158, 11, 0.38);
   --grid-minor: rgba(245, 158, 11, 0.12);
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.5);
 
-  --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-academic: 'Cinzel', Georgia, serif;
+  --font-editorial: 'Newsreader', Georgia, serif;
+  --font-heading: 'Cinzel', Georgia, serif;
   --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
 
 [data-theme="green"] {
-  --bg-dark: #051209;
-  --card-bg: #0D2315;
-  --card-bg-hover: #133320;
-  --card-border: #1B4A2B;
+  --bg-dark: #041008;
+  --card-bg: #0B1F13;
+  --card-bg-hover: #102B1B;
+  --card-border: #164024;
+  --card-border-glow: #34D399;
   --text-main: #F0FDF4;
   --text-muted: #86EFAC;
   --heading-color: #34D399;
-  --topbar-bg: rgba(6, 20, 11, 0.95);
+  --topbar-bg: rgba(11, 31, 19, 0.97);
+
+  --acad-oxford: #05140A;
+  --acad-gold: #FBBF24;
+  --acad-gold-bg: rgba(251, 191, 36, 0.14);
+  --acad-crimson: #F87171;
 
   --en-primary: #34D399;
   --en-flame: #FBBF24;
@@ -152,16 +174,18 @@
   --grid-major: rgba(52, 211, 153, 0.38);
   --grid-minor: rgba(52, 211, 153, 0.12);
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
 
-  --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-academic: 'Cinzel', Georgia, serif;
+  --font-editorial: 'Newsreader', Georgia, serif;
+  --font-heading: 'Cinzel', Georgia, serif;
   --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
 
-/* ── 2. GLOBAL RESET ── */
+/* ── 2. GLOBAL RESET & VIEWPORT FIXING ── */
 * {
   box-sizing: border-box;
 }
@@ -172,81 +196,272 @@ html, body {
   font-family: var(--font-body);
   margin: 0;
   padding: 0;
-  padding-top: 60px;
   min-height: 100vh;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  position: relative;
   transition: background-color 0.15s ease, color 0.15s ease;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ── 3. TOPBAR NAVIGATION ── */
-.top-navbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 24px;
-  background: var(--topbar-bg);
-  border-bottom: 1px solid var(--card-border);
-  position: fixed;
+/* ── 3. UNIFIED ACADEMIC STICKY TOPBAR ── */
+.academic-top-header {
+  position: -webkit-sticky;
+  position: sticky;
   top: 0;
   left: 0;
   right: 0;
   width: 100%;
   z-index: 10000;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: var(--topbar-bg);
+  border-bottom: 1.5px solid var(--card-border);
   box-shadow: var(--shadow-sm);
-  transition: background-color 0.15s ease, border-color 0.15s ease;
-  flex-wrap: wrap;
-  gap: 12px;
 }
 
-.nav-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--font-heading);
-  font-size: 1.05rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: var(--heading-color);
-  text-decoration: none;
-}
+.ribbon-full { display: inline; }
+.ribbon-mobile { display: none; }
+.btn-text-full { display: inline; }
+.btn-text-short { display: none; }
 
-.nav-logo-icon {
-  width: 22px;
-  height: 22px;
-  background: var(--en-amber);
-  border-radius: 6px;
+.candidate-top-ribbon {
+  background: var(--acad-oxford);
+  color: #FFFFFF;
+  font-size: 0.73rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-align: center;
+  padding: 5px 16px;
+  border-bottom: 1.5px solid var(--acad-gold);
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-family: var(--font-body);
+}
+[data-theme="dark"] .candidate-top-ribbon { background: #08101A; color: #E2E8F0; }
+[data-theme="green"] .candidate-top-ribbon { background: #05140A; color: #D1FAE5; }
+
+.top-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 20px;
+  max-width: 1440px;
+  margin: 0 auto;
+  gap: 10px;
+  flex-wrap: nowrap;
+}
+
+.nav-brand-academic {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--heading-color);
+  flex-shrink: 0;
+}
+
+.seal-crest-small {
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  background: var(--acad-oxford);
   color: #FFFFFF;
-  font-size: 0.8rem;
-  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  border: 1px solid var(--acad-gold);
+  flex-shrink: 0;
 }
+[data-theme="dark"] .seal-crest-small { background: #162238; border-color: var(--acad-gold); }
+[data-theme="green"] .seal-crest-small { background: #0E2415; border-color: var(--acad-gold); }
 
-.knec-tag-pill {
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  font-weight: 800;
-  color: var(--en-amber);
-  background: var(--amber-bg);
-  border: 1px solid var(--amber-border);
-  padding: 2px 6px;
-  border-radius: 4px;
-  letter-spacing: 0.05em;
-}
-
-.nav-lab-switch {
+.nav-modules-pill {
   display: flex;
   align-items: center;
   gap: 3px;
   background: var(--card-bg);
   border: 1px solid var(--card-border);
-  padding: 3px 4px;
-  border-radius: 100px;
+  padding: 2px 4px;
+  border-radius: 6px;
   overflow-x: auto;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg-hover);
+  color: var(--text-main);
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.nav-btn:hover {
+  background: var(--card-bg);
+  border-color: var(--en-amber);
+  color: var(--en-amber);
+}
+
+.theme-toggle-group {
+  display: flex;
+  background: var(--card-bg-hover);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.theme-btn-chip {
+  font-family: inherit;
+  font-size: 0.70rem;
+  font-weight: 600;
+  padding: 3px 6px;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.12s ease;
+  text-decoration: none;
+}
+.theme-btn-chip:hover {
+  color: var(--text-main);
+}
+.theme-btn-chip.active {
+  background: var(--en-amber);
+  color: #000000;
+  font-weight: 800;
+}
+[data-theme="dark"] .theme-btn-chip.active { color: #000; }
+[data-theme="green"] .theme-btn-chip.active { color: #000; }
+
+.btn-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: var(--card-bg-hover);
+  border: 1px solid var(--card-border);
+  color: var(--text-muted);
+  font-family: inherit;
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
+}
+.btn-back-link:hover {
+  background: var(--card-bg);
+  color: var(--text-main);
+}
+
+/* KNEC Practical Ledger Sub-Bar */
+.knec-exam-subbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 5px 20px;
+  background: var(--card-bg-hover);
+  border-top: 1px solid var(--card-border);
+  font-size: 0.72rem;
+  max-width: 1440px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+.knec-subbar-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.knec-subbar-label {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-family: var(--font-body);
+}
+.knec-subbar-val {
+  color: var(--heading-color);
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+/* Mobile Topbar Adjustments */
+@media (max-width: 768px) {
+  .ribbon-full { display: none !important; }
+  .ribbon-mobile { display: inline !important; }
+  .btn-text-full { display: none !important; }
+  .btn-text-short { display: inline !important; }
+
+  .candidate-top-ribbon {
+    font-size: 0.68rem;
+    padding: 3px 8px;
+    gap: 4px;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .top-navbar {
+    padding: 6px 10px;
+    gap: 6px;
+  }
+
+  .nav-modules-pill {
+    display: none !important;
+  }
+
+  .seal-crest-small {
+    width: 28px;
+    height: 28px;
+    font-size: 0.95rem;
+  }
+
+  .nav-brand-academic span {
+    font-size: 0.92rem !important;
+  }
+
+  .brand-subtagline {
+    display: none !important;
+  }
+
+  .nav-actions {
+    gap: 4px;
+  }
+
+  .session-timer-badge {
+    padding: 3px 6px !important;
+    font-size: 0.72rem !important;
+  }
+
+  .knec-exam-subbar {
+    padding: 4px 10px;
+    gap: 10px;
+    font-size: 0.68rem;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 .nav-actions {

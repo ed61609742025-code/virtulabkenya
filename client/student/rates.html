@@ -22,6 +22,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/shared/style.css">
   <link rel="stylesheet" href="/shared/brilliant-theme.css">
+  <link rel="stylesheet" href="/shared/tutorial-engine.css">
   <link rel="stylesheet" href="/student/css/rates.css">
   <link rel="stylesheet" href="/shared/ai-tutor.css">
   <link rel="stylesheet" href="/shared/pwa-installer.css">
@@ -49,6 +50,10 @@
     </div>
 
     <div class="nav-actions">
+      <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm" onclick="TutorialEngine.start('rates')" style="padding:4px 10px; font-size:0.75rem;">
+        🧭 Guided Tutorial
+      </button>
+
       <div class="theme-toggle-group">
         <button type="button" class="theme-btn-chip active" id="btnModePractice" onclick="RatesEngine.setStudyMode('practice')">🎓 Practice</button>
         <button type="button" class="theme-btn-chip" id="btnModeExam" onclick="RatesEngine.setStudyMode('exam')">📝 Exam Mode</button>
@@ -58,45 +63,41 @@
         <span>📖 Theory & Kinetics →</span>
       </a>
 
+      <!-- Safety SDS Button -->
+      <button type="button" class="rate-header-safety-btn" onclick="openSafetyModal()" title="View Chemical Safety Data Sheets">
+        <span>⚠️ Reagent Safety (SDS)</span>
+      </button>
+
       <!-- Settings Dropdown -->
       <div style="position:relative;">
-        <button type="button" class="rate-header-btn" onclick="toggleSettingsMenu(event)" title="Workbench Settings">
+        <button type="button" class="rate-header-settings-btn" onclick="toggleSettingsMenu(event)" title="Workbench Settings">
           <span>⚙️ Settings</span>
         </button>
         
         <div id="settingsDropdownMenu" style="display:none; position:absolute; right:0; top:36px; width:240px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; box-shadow:var(--shadow-lg); z-index:10000; padding:12px; flex-direction:column; gap:10px; text-align:left;">
+          <!-- Sound Toggle Row -->
           <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
             <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Sound Effects</span>
-            <button type="button" id="soundToggleBtn" onclick="RatesEngine.toggleSound()" style="background:var(--card-bg); border:1px solid var(--card-border); color:var(--text-main); padding:4px 10px; font-size:0.75rem; border-radius:6px; cursor:pointer;">🔊 Sound ON</button>
+            <button type="button" id="soundToggleBtnRates" onclick="RatesEngine.toggleSound()" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border);">🔊 Sound ON</button>
           </div>
 
+          <!-- Language Selector -->
           <div style="display:flex; flex-direction:column; gap:6px; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
             <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Language / Lugha</span>
             <div class="theme-toggle-group" style="width:100%;">
-              <button class="theme-btn-chip lang-btn-chip active" style="flex:1; padding:4px 8px;" data-lang="en" onclick="RatesEngine.setLanguage('en')">🇬🇧 EN</button>
-              <button class="theme-btn-chip lang-btn-chip" style="flex:1; padding:4px 8px;" data-lang="sw" onclick="RatesEngine.setLanguage('sw')">🇰🇪 SW</button>
+              <button class="theme-btn-chip lang-btn-chip active" style="flex:1;" data-lang="en" onclick="setLanguage('en')">🇬🇧 EN</button>
+              <button class="theme-btn-chip lang-btn-chip" style="flex:1;" data-lang="sw" onclick="setLanguage('sw')">🇰🇪 SW</button>
             </div>
           </div>
 
-          <div style="display:flex; flex-direction:column; gap:6px; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+          <!-- Theme Selector -->
+          <div style="display:flex; flex-direction:column; gap:6px;">
             <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Appearance Theme</span>
             <div class="theme-toggle-group" style="width:100%;">
-              <button class="theme-btn-chip active" style="flex:1; padding:4px 6px;" data-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
-              <button class="theme-btn-chip" style="flex:1; padding:4px 6px;" data-theme="light" onclick="setTheme('light')">☀️ Light</button>
-              <button class="theme-btn-chip" style="flex:1; padding:4px 6px;" data-theme="green" onclick="setTheme('green')">🧪 Lab</button>
+              <button class="theme-btn-chip active" style="flex:1;" data-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
+              <button class="theme-btn-chip" style="flex:1;" data-theme="light" onclick="setTheme('light')">☀️ Light</button>
+              <button class="theme-btn-chip" style="flex:1;" data-theme="green" onclick="setTheme('green')">🧪 Lab</button>
             </div>
-          </div>
-
-          <div style="display:flex; flex-direction:column; gap:6px;">
-            <button onclick="openSafetyModal()" style="background:var(--red-bg);border:1px solid var(--red-border);color:var(--red-accent);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
-              ⚠️ Chemical Safety & SDS
-            </button>
-            <button onclick="window.print()" style="background:var(--card-bg-hover);border:1px solid var(--card-border);color:var(--text-main);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
-              🖨️ Print KCSE Booklet
-            </button>
-            <button onclick="RatesEngine.gradeKnecWorksheet()" style="background:var(--rate-amber);border:none;color:#FFF;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
-              💾 Submit & Grade (15 Mks)
-            </button>
           </div>
         </div>
       </div>
@@ -109,6 +110,9 @@
        MAIN WORKBENCH CONTENT
   ══════════════════════════════════════ -->
   <main class="rate-page-wrap">
+
+    <!-- Interactive Step-by-Step Tutorial Container -->
+    <div id="tutorialDrawer" style="display:none; max-width:1300px; margin:0 auto 16px auto;"></div>
 
     <!-- Hero Banner & Syllabus Badge -->
     <div class="rate-hero-banner">
@@ -446,8 +450,16 @@
   <script src="/shared/knec-grading.js"></script>
   <script src="/shared/page-transitions.js"></script>
   <script src="/shared/brilliant-ui.js"></script>
+  <script src="/shared/tutorial-engine.js"></script>
   <script src="/student/js/rates-engine.js"></script>
   <script>
+    if (window.TutorialEngine) {
+      window.TutorialEngine.init({
+        discipline: 'rates',
+        containerId: 'tutorialDrawer'
+      });
+    }
+
     function toggleSettingsMenu(e) {
       e.stopPropagation();
       const menu = document.getElementById('settingsDropdownMenu');

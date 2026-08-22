@@ -21,6 +21,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/style.css">
 <link rel="stylesheet" href="../shared/brilliant-theme.css">
+<link rel="stylesheet" href="../shared/tutorial-engine.css">
 <link rel="stylesheet" href="css/gas-prep.css">
 <link rel="stylesheet" href="../shared/ai-tutor.css">
 <link rel="stylesheet" href="../shared/pwa-installer.css">
@@ -46,6 +47,9 @@
   </div>
 
   <div class="nav-actions">
+    <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm" onclick="TutorialEngine.start('gas_prep')" style="padding:4px 10px; font-size:0.75rem;">
+      🧭 Guided Tutorial
+    </button>
     <button class="nav-btn nav-btn-safety" onclick="window.VLKSafety && window.VLKSafety.openSDSModal('HCl')" title="View Chemical Safety & SDS Hazards">
       ⚠️ Reagent Safety (SDS)
     </button>
@@ -63,6 +67,9 @@
 
 <!-- MAIN WORKBENCH LAYOUT -->
 <main class="gas-workbench-layout">
+
+  <!-- Interactive Step-by-Step Tutorial Container -->
+  <div id="tutorialDrawer" style="display:none; grid-column: 1 / -1; margin-bottom: 14px;"></div>
 
   <!-- LEFT COLUMN: Gas Selection & Apparatus Configuration -->
   <section class="gas-card-panel">
@@ -285,10 +292,18 @@
 <script src="../shared/audio-synth.js"></script>
 <script src="../shared/chemical-safety.js"></script>
 <script src="../shared/brilliant-ui.js"></script>
+<script src="../shared/tutorial-engine.js"></script>
 <script src="js/gas-prep-engine.js"></script>
 
 <script>
   let engine = new GasPrepEngine();
+
+  if (window.TutorialEngine) {
+    window.TutorialEngine.init({
+      discipline: 'gas_prep',
+      containerId: 'tutorialDrawer'
+    });
+  }
 
   function selectGas(gasKey) {
     document.querySelectorAll('.gas-select-chip').forEach(btn => {

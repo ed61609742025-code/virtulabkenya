@@ -1,0 +1,365 @@
+/* ============================================================
+   VirtuLab Kenya — Interactive Tutorial Engine Stylesheet
+   Brilliant-style step-by-step guidance, prediction cards & spotlights
+   ============================================================ */
+
+/* ── 1. SPOTLIGHT & PULSING TARGET ANIMATION ── */
+@keyframes tutPulseRing {
+  0% {
+    box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(14, 165, 233, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(14, 165, 233, 0);
+  }
+}
+
+.tut-spotlight-target {
+  position: relative !important;
+  z-index: 1050 !important;
+  animation: tutPulseRing 1.8s infinite cubic-bezier(0.4, 0, 0.6, 1) !important;
+  outline: 2.5px solid var(--b-primary, #0284C7) !important;
+  outline-offset: 3px !important;
+  border-radius: inherit;
+}
+
+/* ── 2. FLOATING TUTORIAL DRAWER / DOCKED BANNER ── */
+.tut-banner-wrap {
+  position: relative;
+  background: var(--b-surface, #FFFFFF);
+  border: 2px solid var(--b-primary, #0284C7);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 24px rgba(2, 132, 199, 0.12), 0 2px 6px rgba(0,0,0,0.06);
+  transition: all 0.25s ease;
+  z-index: 1000;
+}
+
+[data-theme="dark"] .tut-banner-wrap {
+  background: #1E293B;
+  border-color: #38BDF8;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="green"] .tut-banner-wrap {
+  background: #0B2518;
+  border-color: #10B981;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+}
+
+.tut-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.tut-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(2, 132, 199, 0.12);
+  color: var(--b-primary, #0284C7);
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+[data-theme="dark"] .tut-badge-pill {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38BDF8;
+}
+
+[data-theme="green"] .tut-badge-pill {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34D399;
+}
+
+.tut-step-counter {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--b-text-muted, #64748B);
+}
+
+.tut-step-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--b-text, #0F172A);
+  margin: 0 0 6px 0;
+  line-height: 1.35;
+}
+
+.tut-step-instruction {
+  font-size: 0.88rem;
+  color: var(--b-text-secondary, #334155);
+  line-height: 1.55;
+  margin: 0 0 14px 0;
+}
+
+[data-theme="dark"] .tut-step-instruction {
+  color: #CBD5E1;
+}
+
+[data-theme="green"] .tut-step-instruction {
+  color: #D1FAE5;
+}
+
+/* ── 3. PREDICTION & CHECKPOINT CARDS ── */
+.tut-checkpoint-card {
+  background: var(--b-surface-subtle, #F8FAFC);
+  border: 1.5px dashed var(--b-border, #E2E8F0);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin: 12px 0 16px 0;
+}
+
+[data-theme="dark"] .tut-checkpoint-card {
+  background: #0F172A;
+  border-color: #334155;
+}
+
+[data-theme="green"] .tut-checkpoint-card {
+  background: #061910;
+  border-color: #134E34;
+}
+
+.tut-checkpoint-q {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--b-text, #0F172A);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tut-choice-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+@media (min-width: 600px) {
+  .tut-choice-grid.cols-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.tut-choice-btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: left;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--b-surface, #FFFFFF);
+  border: 2px solid var(--b-border, #E2E8F0);
+  border-radius: 10px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--b-text, #0F172A);
+  cursor: pointer;
+  box-shadow: 0 2px 0 var(--b-border, #E2E8F0);
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+[data-theme="dark"] .tut-choice-btn {
+  background: #1E293B;
+  border-color: #334155;
+  box-shadow: 0 2px 0 #334155;
+  color: #F8FAFC;
+}
+
+[data-theme="green"] .tut-choice-btn {
+  background: #0B2518;
+  border-color: #134E34;
+  box-shadow: 0 2px 0 #134E34;
+  color: #ECFDF5;
+}
+
+.tut-choice-btn:hover:not(:disabled) {
+  border-color: var(--b-primary, #0284C7);
+  transform: translateY(-1px);
+}
+
+.tut-choice-btn:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+.tut-choice-btn.correct {
+  background: rgba(16, 185, 129, 0.12) !important;
+  border-color: #10B981 !important;
+  color: #047857 !important;
+  box-shadow: 0 2px 0 #059669 !important;
+}
+
+[data-theme="dark"] .tut-choice-btn.correct,
+[data-theme="green"] .tut-choice-btn.correct {
+  color: #34D399 !important;
+}
+
+.tut-choice-btn.incorrect {
+  background: rgba(239, 68, 68, 0.12) !important;
+  border-color: #EF4444 !important;
+  color: #B91C1C !important;
+  box-shadow: 0 2px 0 #DC2626 !important;
+}
+
+[data-theme="dark"] .tut-choice-btn.incorrect,
+[data-theme="green"] .tut-choice-btn.incorrect {
+  color: #F87171 !important;
+}
+
+.tut-feedback-box {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  display: none;
+}
+
+.tut-feedback-box.show {
+  display: block;
+  animation: tutFadeIn 0.2s ease;
+}
+
+.tut-feedback-box.correct {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #065F46;
+}
+
+[data-theme="dark"] .tut-feedback-box.correct,
+[data-theme="green"] .tut-feedback-box.correct {
+  color: #6EE7B7;
+}
+
+.tut-feedback-box.incorrect {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #991B1B;
+}
+
+[data-theme="dark"] .tut-feedback-box.incorrect,
+[data-theme="green"] .tut-feedback-box.incorrect {
+  color: #FCA5A5;
+}
+
+/* ── 4. TUTORIAL FOOTER & CONTROLS ── */
+.tut-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.tut-hint-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  color: var(--b-primary, #0284C7);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+.tut-hint-btn:hover {
+  background: rgba(2, 132, 199, 0.08);
+}
+
+.tut-hint-text {
+  display: none;
+  background: rgba(245, 158, 11, 0.1);
+  border-left: 3px solid #F59E0B;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: var(--b-text, #0F172A);
+  margin-top: 8px;
+}
+
+/* ── 5. CELEBRATION MODAL ── */
+.tut-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 16px;
+}
+
+.tut-modal-overlay.active {
+  display: flex;
+  animation: tutFadeIn 0.25s ease;
+}
+
+.tut-modal-card {
+  background: var(--b-surface, #FFFFFF);
+  border: 2px solid var(--b-primary, #0284C7);
+  border-radius: 20px;
+  padding: 28px 24px;
+  max-width: 440px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  transform: scale(0.95);
+  animation: tutPopIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+[data-theme="dark"] .tut-modal-card {
+  background: #1E293B;
+  border-color: #38BDF8;
+}
+
+[data-theme="green"] .tut-modal-card {
+  background: #0B2518;
+  border-color: #10B981;
+}
+
+.tut-stars-row {
+  font-size: 2.2rem;
+  letter-spacing: 4px;
+  margin: 12px 0 8px 0;
+  animation: tutStarsBounce 0.6s ease;
+}
+
+@keyframes tutFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes tutPopIn {
+  to { transform: scale(1); }
+}
+
+@keyframes tutStarsBounce {
+  0% { transform: scale(0.5); opacity: 0; }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); opacity: 1; }
+}

@@ -22,6 +22,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/shared/style.css">
   <link rel="stylesheet" href="/shared/brilliant-theme.css">
+  <link rel="stylesheet" href="/shared/tutorial-engine.css">
   <link rel="stylesheet" href="/student/css/solubility.css">
   <link rel="stylesheet" href="/shared/ai-tutor.css">
   <link rel="stylesheet" href="/shared/pwa-installer.css">
@@ -49,6 +50,10 @@
     </div>
 
     <div class="nav-actions">
+      <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm" onclick="TutorialEngine.start('solubility')" style="padding:4px 10px; font-size:0.75rem;">
+        🧭 Guided Tutorial
+      </button>
+
       <div class="theme-toggle-group">
         <button type="button" class="theme-btn-chip active" id="btnModePractice" onclick="SolubilityEngine.setStudyMode('practice')">🎓 Practice</button>
         <button type="button" class="theme-btn-chip" id="btnModeExam" onclick="SolubilityEngine.setStudyMode('exam')">📝 Exam Mode</button>
@@ -102,6 +107,9 @@
   </nav>
 
   <main class="sol-page-wrap">
+    
+    <!-- Interactive Step-by-Step Tutorial Container -->
+    <div id="tutorialDrawer" style="display:none; max-width:1300px; margin:0 auto 16px auto;"></div>
     
     <!-- Official KNEC Practical Examination Proctor Banner -->
     <div id="solExamProctorBanner" style="display:none;background:var(--red-bg);border:1px solid var(--red-border);border-radius:12px;padding:12px 18px;margin-bottom:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
@@ -494,8 +502,16 @@
   <script src="/shared/ai-tutor.js"></script>
   <script src="/shared/page-transitions.js"></script>
   <script src="/shared/brilliant-ui.js"></script>
+  <script src="/shared/tutorial-engine.js"></script>
   <script src="/student/js/solubility-engine.js"></script>
   <script>
+    if (window.TutorialEngine) {
+      window.TutorialEngine.init({
+        discipline: 'solubility',
+        containerId: 'tutorialDrawer'
+      });
+    }
+
     function toggleBenchSettings(e) {
       if (e) e.stopPropagation();
       const dd = document.getElementById('benchSettingsDropdown');

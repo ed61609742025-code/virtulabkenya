@@ -22,6 +22,7 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/shared/style.css">
   <link rel="stylesheet" href="/shared/brilliant-theme.css">
+  <link rel="stylesheet" href="/shared/tutorial-engine.css">
   <link rel="stylesheet" href="/student/css/energy.css">
   <link rel="stylesheet" href="/shared/ai-tutor.css">
   <link rel="stylesheet" href="/shared/pwa-installer.css">
@@ -49,6 +50,10 @@
     </div>
 
     <div class="nav-actions">
+      <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm" onclick="TutorialEngine.start('energy')" style="padding:4px 10px; font-size:0.75rem;">
+        🧭 Guided Tutorial
+      </button>
+
       <div class="theme-toggle-group">
         <button type="button" class="theme-btn-chip active" id="btnModePractice" onclick="EnergyEngine.setStudyMode('practice')">🎓 Practice</button>
         <button type="button" class="theme-btn-chip" id="btnModeExam" onclick="EnergyEngine.setStudyMode('exam')">📝 Exam Mode</button>
@@ -111,6 +116,9 @@
   </nav>
 
   <main class="en-page-wrap">
+    
+    <!-- Interactive Step-by-Step Tutorial Container -->
+    <div id="tutorialDrawer" style="display:none; max-width:1300px; margin:0 auto 16px auto;"></div>
     
     <!-- Official KNEC Practical Examination Proctor Banner -->
     <div id="enExamProctorBanner" class="exam-proctor-banner">
@@ -530,8 +538,16 @@
   <script src="/shared/chemical-safety.js"></script>
   <script src="/shared/page-transitions.js"></script>
   <script src="/shared/brilliant-ui.js"></script>
+  <script src="/shared/tutorial-engine.js"></script>
   <script src="/student/js/energy-engine.js"></script>
   <script>
+    if (window.TutorialEngine) {
+      window.TutorialEngine.init({
+        discipline: 'energy',
+        containerId: 'tutorialDrawer'
+      });
+    }
+
     function toggleBenchSettings(e) {
       if (e) e.stopPropagation();
       const dd = document.getElementById('benchSettingsDropdown');

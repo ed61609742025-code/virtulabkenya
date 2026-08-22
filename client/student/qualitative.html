@@ -25,6 +25,7 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/style.css">
 <link rel="stylesheet" href="../shared/brilliant-theme.css">
+<link rel="stylesheet" href="../shared/tutorial-engine.css">
 <link rel="stylesheet" href="css/qualitative.css">
 <link rel="stylesheet" href="../shared/ai-tutor.css">
 <link rel="stylesheet" href="../shared/pwa-installer.css">
@@ -51,6 +52,10 @@
   </div>
 
   <div class="nav-actions">
+    <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm" onclick="TutorialEngine.start('qualitative')" style="padding:4px 10px; font-size:0.75rem;">
+      🧭 Guided Tutorial
+    </button>
+
     <button class="nav-btn nav-btn-tips" onclick="openExaminerTipsModal()" title="View KNEC marking tips and examiner advice">
       💡 Examiner Tips
     </button>
@@ -129,6 +134,9 @@
      MAIN PAGE CONTENT
 ══════════════════════════════════════ -->
 <div class="page-container">
+
+  <!-- Interactive Step-by-Step Tutorial Container -->
+  <div id="tutorialDrawer" style="display:none;"></div>
 
   <!-- Page Header -->
   <div class="page-header">
@@ -425,11 +433,19 @@
 <script src="../shared/i18n.js"></script>
 <script src="../shared/notifications-engine.js"></script>
 <script src="../shared/brilliant-ui.js"></script>
+<script src="../shared/tutorial-engine.js"></script>
 <script src="js/qualitative-engine.js"></script>
 <script src="../shared/ai-tutor.js"></script>
 <script src="../shared/pwa-installer.js"></script>
 <script src="../shared/page-transitions.js"></script>
 <script>
+  if (window.TutorialEngine) {
+    window.TutorialEngine.init({
+      discipline: 'qualitative',
+      containerId: 'tutorialDrawer'
+    });
+  }
+
   function toggleBenchSettings(e) {
     if (e) e.stopPropagation();
     const dropdown = document.getElementById('benchSettingsDropdown');

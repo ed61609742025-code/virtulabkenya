@@ -390,6 +390,15 @@
       isSurvival: false,
       launchText: '🌡️ Begin Kinetics & Energetics Drill (45s) →',
       filter: (q) => q.category.includes('Energy') || q.category.includes('Rates')
+    },
+    'daily_bite': {
+      key: 'daily_bite',
+      name: 'Daily Chemistry Bite',
+      icon: '🔥',
+      duration: 40,
+      isSurvival: false,
+      launchText: '🔥 Begin Daily Chemistry Bite (40s) →',
+      filter: (q) => true
     }
   };
 
@@ -811,6 +820,17 @@
 
       playCorrectSound(currentStreak);
 
+      // Trigger escalating gamification streak sound cues
+      if (window.GamificationEngine && window.GamificationEngine.audio) {
+        if (currentStreak === 3) {
+          window.GamificationEngine.audio.playStreakMultiplier(1);
+        } else if (currentStreak === 5) {
+          window.GamificationEngine.audio.playStreakMultiplier(2);
+        } else if (currentStreak >= 10 && currentStreak % 5 === 0) {
+          window.GamificationEngine.audio.playStreakMultiplier(3);
+        }
+      }
+
       // In Sudden Death mode, reset question clock on each correct answer
       if (modeConfig.isSurvival) {
         timeLeft = modeConfig.duration;
@@ -965,6 +985,17 @@
       sessionStorage.setItem(`virtulab_warmed_up_${currentModeKey}`, 'true');
     } catch(e) {}
 
+    // Gamification XP & Streak Logging
+    if (window.GamificationEngine) {
+      window.GamificationEngine.logActivity();
+      const xpEarned = Math.max(15, Math.round(currentScore / 10) + (correctCount * 5));
+      if (currentModeKey === 'daily_bite') {
+        window.GamificationEngine.completeDailyChallenge();
+      } else {
+        window.GamificationEngine.addXP(xpEarned, `${modeConfig.name} Drill`);
+      }
+    }
+
     // Update the proceed button target if launched from a workbench
     const proceedBtn = document.getElementById('gameOverProceedBtn');
     if (proceedBtn) {
@@ -1016,6 +1047,12 @@
 
   function init() {
     updateSoundButtonUI();
+
+    if (window.GamificationEngine) {
+      const streak = window.GamificationEngine.getStreak();
+      const streakEl = document.getElementById('navStreakText');
+      if (streakEl) streakEl.textContent = `${streak.count}-Day Streak`;
+    }
 
     const urlParams = new URLSearchParams(window.location.search);
     const modeParam = urlParams.get('mode');

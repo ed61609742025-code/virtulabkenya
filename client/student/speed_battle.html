@@ -6,6 +6,7 @@
   <title>Chemical Speed Battle Quiz Arena — VirtuLab Kenya</title>
   <link rel="stylesheet" href="../shared/style.css?v=33">
   <link rel="stylesheet" href="../shared/brilliant-theme.css">
+  <link rel="stylesheet" href="../shared/gamification-engine.css">
   <link rel="stylesheet" href="css/speed-battle.css?v=33">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,6 +24,10 @@
       <span class="nav-title" style="font-family:var(--font-heading); font-weight:900; font-size:1.02rem; color:var(--heading-color);">🧪 KCSE Practical Diagnostic Drill</span>
     </div>
     <div style="display:flex; align-items:center; gap:10px;">
+      <div id="navStreakBadge" class="streak-pill-interactive" style="padding:4px 10px; font-size:0.75rem;">
+        <span class="streak-flame-icon">🔥</span>
+        <span id="navStreakText">1-Day Streak</span>
+      </div>
       <button class="btn-sound-toggle" id="soundToggleBtn" onclick="toggleBattleSound()" title="Toggle Audio Feedback">
         <span id="soundIcon">🔊</span> <span id="soundText">Audio ON</span>
       </button>
@@ -152,6 +157,7 @@
   <script src="../shared/chemical-safety.js"></script>
   <script src="../shared/page-transitions.js"></script>
   <script src="../shared/brilliant-ui.js"></script>
+  <script src="../shared/gamification-engine.js"></script>
   <script src="js/speed-battle.js"></script>
 </body>
 </html>

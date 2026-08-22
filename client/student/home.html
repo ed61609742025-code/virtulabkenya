@@ -23,6 +23,7 @@
 <link rel="stylesheet" href="../shared/style.css">
 <link rel="stylesheet" href="../shared/pwa-installer.css">
 <link rel="stylesheet" href="../shared/brilliant-theme.css">
+<link rel="stylesheet" href="../shared/gamification-engine.css">
 <link rel="stylesheet" href="css/dashboard.css">
 <link rel="stylesheet" href="css/skill-tree.css">
 
@@ -309,17 +310,33 @@
       </div>
 
       <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-        <!-- Streak Badge -->
-        <div style="background:rgba(245, 158, 11, 0.14); border:1.5px solid #F59E0B; color:#F59E0B; padding:6px 14px; border-radius:8px; font-size:0.84rem; font-weight:800; display:inline-flex; align-items:center; gap:6px; font-family:'JetBrains Mono', monospace;">
-          <span>🔥</span>
-          <span id="streakCount">1</span>-Day Practical Streak
-          <span id="streakCountMobile" style="display:none;">1</span>
-        </div>
-
         <!-- Pre-Lab Reflex Drill Quick Launch -->
         <a href="speed_battle.html?warmup=true" class="btn-tactile btn-tactile-amber" style="padding:8px 18px; font-size:0.84rem; font-weight:800; border-radius:10px; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
           <span>⚡</span> Pre-Lab Diagnostic Drill →
         </a>
+      </div>
+
+      <!-- Streak & XP Level Bar -->
+      <div id="gamificationHeroWidget" class="gamification-hero-bar" style="margin-top: 14px; width: 100%;">
+        <div id="heroStreakPill" class="streak-pill-interactive" onclick="window.GamificationEngine && window.GamificationEngine.showStreakToast('Keep practicing daily to build your KCSE Paper 3 momentum!')">
+          <span class="streak-flame-icon">🔥</span>
+          <span id="streakCount">1</span>-Day Streak
+          <span id="streakCountMobile" style="display:none;">1</span>
+        </div>
+
+        <div class="xp-progress-wrap">
+          <div class="xp-label-row">
+            <span id="heroLevelTitle">Level 1: Form 1 Apprentice</span>
+            <span id="heroXPText">120 / 250 XP</span>
+          </div>
+          <div class="xp-track">
+            <div class="xp-fill" id="heroXPBar" style="width: 48%;"></div>
+          </div>
+        </div>
+
+        <div class="level-badge-chip" id="heroLevelBadge">
+          <span id="heroLevelIcon">🧪</span> <span id="heroTierName">Apprentice</span>
+        </div>
       </div>
     </header>
 
@@ -345,6 +362,28 @@
          TAB 1: 🧪 LABORATORY BENCHES & ACTIVE ASSIGNMENTS
     ══════════════════════════════════════════════════════ -->
     <div class="student-tab-panel active" id="panel_benches">
+
+      <!-- 🌟 Daily Chemistry Bite (Today's Mini-Challenge) -->
+      <div id="dailyChallengeCard" class="daily-challenge-card">
+        <div style="flex: 1; min-width: 240px;">
+          <div class="daily-tag-row">
+            <span style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: var(--cyan-accent, #0284C7); letter-spacing: 0.05em;">🌟 Daily Chemistry Bite</span>
+            <span class="daily-xp-badge" id="dailyChallengeXP">+100 Bonus XP</span>
+            <span class="daily-timer-text" id="dailyChallengeTimer">Resets at midnight</span>
+          </div>
+          <h3 id="dailyChallengeTitle" style="font-family: var(--font-heading); font-size: 1.02rem; font-weight: 900; color: var(--heading-color); margin: 2px 0 4px 0;">
+            Daily Practical Diagnostic Sprint
+          </h3>
+          <p id="dailyChallengeDesc" style="font-size: 0.8rem; color: var(--text-muted); margin: 0; line-height: 1.4;">
+            3-question timed reflex drill on observation speed and KNEC calculations.
+          </p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <a id="dailyChallengeLaunchBtn" href="speed_battle.html?mode=daily_bite" class="btn-tactile btn-tactile-primary btn-tactile-sm" style="text-decoration: none; padding: 8px 18px; font-weight: 800;">
+            <span>⚡</span> Start Daily Bite →
+          </a>
+        </div>
+      </div>
       
       <!-- ⚡ KCSE Practical Diagnostic Drills Hub -->
       <section style="background:var(--card-bg); border:1.5px solid var(--card-border); border-radius:14px; padding:18px 20px; margin-bottom:20px; box-shadow:var(--shadow-sm);">
@@ -1326,6 +1365,7 @@
   <script src="../shared/page-transitions.js"></script>
   <script src="../shared/pwa-installer.js"></script>
   <script src="../shared/brilliant-ui.js"></script>
+  <script src="../shared/gamification-engine.js"></script>
   <script src="js/skill-tree.js"></script>
   <script src="js/student-dashboard.js"></script>
 

@@ -1343,6 +1343,53 @@ requireStudentLogin();
     window.submitChangePassword = submitChangePassword;
     window.exportLabHistoryCSV = exportLabHistoryCSV;
     window.dismissAnnouncement = dismissAnnouncement;
+    window.updateGamificationDashboardUI = updateGamificationDashboardUI;
+  }
+
+  function updateGamificationDashboardUI() {
+    if (!window.GamificationEngine) return;
+    
+    // 1. Streak
+    const streak = window.GamificationEngine.getStreak();
+    const streakCountEl = document.getElementById('streakCount');
+    const streakCountMobileEl = document.getElementById('streakCountMobile');
+    if (streakCountEl) streakCountEl.textContent = streak.count;
+    if (streakCountMobileEl) streakCountMobileEl.textContent = streak.count;
+    
+    // 2. XP & Level
+    const xp = window.GamificationEngine.getXP();
+    const levelTitleEl = document.getElementById('heroLevelTitle');
+    const xpTextEl = document.getElementById('heroXPText');
+    const xpBarEl = document.getElementById('heroXPBar');
+    const tierNameEl = document.getElementById('heroTierName');
+    const levelIconEl = document.getElementById('heroLevelIcon');
+    
+    if (levelTitleEl) levelTitleEl.textContent = `Level ${xp.level}: ${xp.title}`;
+    if (xpTextEl) xpTextEl.textContent = `${xp.totalXP} / ${xp.nextLevelXP} XP`;
+    if (xpBarEl) xpBarEl.style.width = `${xp.progressPercent}%`;
+    if (tierNameEl) tierNameEl.textContent = xp.title.replace('Form ', 'F').replace('KCSE ', '');
+    if (levelIconEl) levelIconEl.textContent = xp.icon;
+
+    // 3. Daily Challenge Card
+    const daily = window.GamificationEngine.getDailyChallenge();
+    const dailyCard = document.getElementById('dailyChallengeCard');
+    const dailyTitle = document.getElementById('dailyChallengeTitle');
+    const dailyDesc = document.getElementById('dailyChallengeDesc');
+    const dailyXP = document.getElementById('dailyChallengeXP');
+    const launchBtn = document.getElementById('dailyChallengeLaunchBtn');
+
+    if (dailyTitle) dailyTitle.textContent = `${daily.icon} ${daily.title}`;
+    if (dailyDesc) dailyDesc.textContent = `${daily.description} (${daily.topic})`;
+    if (dailyXP) dailyXP.textContent = `+${daily.xpReward} Bonus XP`;
+
+    if (daily.isCompleted) {
+      if (dailyCard) dailyCard.classList.add('completed');
+      if (launchBtn) {
+        launchBtn.innerHTML = `<span>✅</span> Daily Challenge Completed!`;
+        launchBtn.style.background = '#10B981';
+        launchBtn.style.borderColor = '#10B981';
+      }
+    }
   }
 
   loadBadges();
@@ -1350,3 +1397,4 @@ requireStudentLogin();
   loadAssignments();
   loadSessions();
   loadSystemAnnouncements();
+  updateGamificationDashboardUI();

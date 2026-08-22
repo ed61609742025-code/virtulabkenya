@@ -1,7 +1,9 @@
 /* ============================================================
-   VirtuLab Kenya — Mobile PWA Install Banner Styles
+   VirtuLab Kenya — Mobile & Desktop PWA Installer Styles
+   Install Prompts, iOS Guide, Network Status & Storage Inspector
    ============================================================ */
 
+/* ── 1. FLOATING INSTALL BANNER ── */
 .vlk-pwa-banner {
   position: fixed;
   bottom: calc(76px + env(safe-area-inset-bottom, 0px));
@@ -12,9 +14,9 @@
   background: rgba(15, 23, 42, 0.96);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(0, 242, 254, 0.3);
+  border: 1px solid rgba(0, 242, 254, 0.35);
   border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 242, 254, 0.15);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 24px rgba(2, 132, 199, 0.25);
   padding: 14px 16px;
   z-index: 100000;
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -52,8 +54,8 @@
 }
 
 .vlk-pwa-title {
-  font-weight: 700;
-  font-size: 0.95rem;
+  font-weight: 800;
+  font-size: 0.96rem;
   color: #FFFFFF;
   margin: 0;
   display: flex;
@@ -65,7 +67,7 @@
   font-size: 0.8rem;
   color: #94A3B8;
   margin: 2px 0 0 0;
-  line-height: 1.3;
+  line-height: 1.35;
 }
 
 .vlk-pwa-close {
@@ -95,8 +97,8 @@
   flex: 1;
   background: linear-gradient(135deg, #0284C7 0%, #00F2FE 100%);
   color: #0F172A;
-  font-weight: 700;
-  font-size: 0.85rem;
+  font-weight: 800;
+  font-size: 0.86rem;
   padding: 10px 14px;
   border: none;
   border-radius: 10px;
@@ -105,34 +107,157 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  transition: opacity 0.2s, transform 0.1s;
+  transition: transform 0.15s, box-shadow 0.15s;
 }
 
-.vlk-pwa-btn-install:active {
-  transform: scale(0.98);
+.vlk-pwa-btn-install:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 242, 254, 0.4);
 }
 
 .vlk-pwa-btn-dismiss {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.08);
   color: #CBD5E1;
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   padding: 10px 14px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 10px;
   cursor: pointer;
   transition: background 0.2s;
 }
 
-.vlk-pwa-ios-instructions {
-  background: rgba(2, 132, 199, 0.15);
-  border: 1px dashed rgba(0, 242, 254, 0.4);
-  border-radius: 8px;
-  padding: 10px 12px;
-  font-size: 0.8rem;
-  color: #E2E8F0;
-  margin-top: 8px;
+.vlk-pwa-btn-dismiss:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #FFFFFF;
+}
+
+/* ── 2. LIVE ONLINE / OFFLINE STATUS TOAST ── */
+.vlk-network-toast {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100px);
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(12px);
+  border-radius: 100px;
+  padding: 8px 18px;
   display: flex;
   align-items: center;
   gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  z-index: 1000000;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  pointer-events: none;
+  max-width: 90vw;
+  text-align: center;
+}
+
+.vlk-network-toast.active {
+  transform: translateX(-50%) translateY(0);
+}
+
+.vlk-network-toast.offline {
+  border: 1.5px solid #F59E0B;
+  color: #FBBF24;
+}
+
+.vlk-network-toast.online {
+  border: 1.5px solid #10B981;
+  color: #34D399;
+}
+
+/* ── 3. RICH INSTALL MODAL & IOS SHEET ── */
+.vlk-install-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  z-index: 200000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.vlk-install-modal-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.vlk-install-modal-card {
+  background: var(--b-surface, #0F172A);
+  color: var(--b-text, #F8FAFC);
+  border: 1.5px solid var(--b-border, #334155);
+  border-radius: 20px;
+  padding: 24px;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+  position: relative;
+  text-align: center;
+  transform: scale(0.95);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.vlk-install-modal-backdrop.active .vlk-install-modal-card {
+  transform: scale(1);
+}
+
+.vlk-perks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 18px 0;
+  text-align: left;
+}
+
+.vlk-perk-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.82rem;
+}
+
+.vlk-perk-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.vlk-ios-step-box {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px dashed #0284C7;
+  border-radius: 12px;
+  padding: 14px;
+  margin: 16px 0;
+  text-align: left;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+/* ── 4. AUTO-UPDATE TOAST ── */
+.vlk-update-toast {
+  position: fixed;
+  bottom: 80px;
+  left: 20px;
+  background: #0284C7;
+  color: #FFFFFF;
+  padding: 12px 18px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 10px 25px rgba(2, 132, 199, 0.4);
+  z-index: 100000;
+  font-size: 0.84rem;
+  font-weight: 700;
 }

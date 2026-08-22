@@ -258,80 +258,162 @@
             <button class="btn-tactile btn-tactile-surface btn-tactile-sm btn-action-swirl" onclick="swirlFlask()" style="width:100%;padding:8px 8px;font-size:0.78rem;font-weight:700;height:38px;" data-i18n="swirl_flask">🌀 Swirl Flask</button>
           </div>
 
-          <!-- CENTER: Apparatus SVG Rig + Lens + Flask Label -->
-          <div class="bench-center-rig" style="display:flex;flex-direction:column;align-items:center;width:100%;">
-            <div class="rig-visual" style="display:flex; flex-direction:row; align-items:center; justify-content:center; gap:8px; width:100%; max-width:100%; box-sizing:border-box;">
+          <!-- CENTER: Photorealistic Apparatus Rig + Precision Lens + Reagents Shelf -->
+          <div class="bench-center-rig">
+            <div class="rig-visual" style="display:flex; flex-direction:row; align-items:center; justify-content:center; gap:12px; width:100%; max-width:100%; box-sizing:border-box;">
               
-              <!-- Realistic Glass & Metal Apparatus SVG (Left Side) -->
-              <svg class="rig-svg" viewBox="0 0 200 350" xmlns="http://www.w3.org/2000/svg" style="width:115px; height:230px; flex-shrink:0;">
+              <!-- Realistic Glass & Metal Apparatus SVG -->
+              <svg class="rig-svg" viewBox="0 0 240 380" xmlns="http://www.w3.org/2000/svg" style="width:145px; height:290px; flex-shrink:0;">
                 <defs>
-                  <linearGradient id="glassBody" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.3"/>
-                    <stop offset="25%" stop-color="#FFFFFF" stop-opacity="0.5"/>
-                    <stop offset="70%" stop-color="#38BDF8" stop-opacity="0.1"/>
-                    <stop offset="100%" stop-color="#0284C7" stop-opacity="0.4"/>
-                  </linearGradient>
-                  
-                  <linearGradient id="liquidGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.9"/>
-                    <stop offset="100%" stop-color="#0284C7" stop-opacity="0.8"/>
+                  <!-- Realistic Glass Sheen -->
+                  <linearGradient id="glassSheenLab" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.65"/>
+                    <stop offset="15%" stop-color="#BAE6FD" stop-opacity="0.25"/>
+                    <stop offset="60%" stop-color="#0284C7" stop-opacity="0.08"/>
+                    <stop offset="85%" stop-color="#38BDF8" stop-opacity="0.3"/>
+                    <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.75"/>
                   </linearGradient>
 
-                  <linearGradient id="standRodGrad" x1="0" y1="0" x2="1" y2="0">
-                    <stop offset="0%" stop-color="#1E293B"/>
-                    <stop offset="50%" stop-color="#475569"/>
+                  <!-- Chrome Steel Rod & Cast Iron Stand Base -->
+                  <linearGradient id="metalChromeLab" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#334155"/>
+                    <stop offset="25%" stop-color="#94A3B8"/>
+                    <stop offset="50%" stop-color="#F8FAFC"/>
+                    <stop offset="75%" stop-color="#64748B"/>
+                    <stop offset="100%" stop-color="#1E293B"/>
+                  </linearGradient>
+                  
+                  <linearGradient id="castIronBaseLab" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#475569"/>
+                    <stop offset="20%" stop-color="#334155"/>
+                    <stop offset="80%" stop-color="#1E293B"/>
                     <stop offset="100%" stop-color="#0F172A"/>
                   </linearGradient>
 
-                  <filter id="glowEffect" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#38BDF8" flood-opacity="0.3"/>
+                  <linearGradient id="brassScrewLab" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#B45309"/>
+                    <stop offset="50%" stop-color="#FDE047"/>
+                    <stop offset="100%" stop-color="#78350F"/>
+                  </linearGradient>
+
+                  <!-- Liquid Gradient -->
+                  <linearGradient id="liquidGradLab" x1="0" y1="0" x2="1" y2="0">
+                    <stop id="gradStop1" offset="0%" stop-color="#38BDF8" stop-opacity="0.95"/>
+                    <stop offset="30%" stop-color="#7DD3FC" stop-opacity="0.75"/>
+                    <stop id="gradStop2" offset="70%" stop-color="#0284C7" stop-opacity="0.85"/>
+                    <stop offset="100%" stop-color="#0369A1" stop-opacity="0.95"/>
+                  </linearGradient>
+
+                  <!-- Porcelain White Titration Tile -->
+                  <linearGradient id="porcelainTileLab" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#FFFFFF"/>
+                    <stop offset="70%" stop-color="#F1F5F9"/>
+                    <stop offset="100%" stop-color="#E2E8F0"/>
+                  </linearGradient>
+
+                  <!-- Realistic Drop Shadow -->
+                  <filter id="apparatusShadowLab" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="rgba(0,0,0,0.5)"/>
                   </filter>
                 </defs>
 
-                <!-- Metallic Stand Base & Vertical Rod -->
-                <rect x="20" y="325" width="130" height="10" rx="3" fill="url(#standRodGrad)"/>
-                <rect x="42" y="10" width="8" height="318" rx="2" fill="url(#standRodGrad)"/>
-                
-                <!-- Clamp Bosshead & Arms -->
-                <rect x="42" y="70" width="48" height="10" rx="2" fill="#334155"/>
-                <circle cx="46" cy="75" r="5" fill="#0EA5E9"/>
-                <path d="M90,65 L108,65 L108,85 L90,85 Z" fill="#1E293B" stroke="#38BDF8" stroke-width="1.5" rx="2"/>
-
-                <!-- Glass Buret Tube -->
-                <g filter="url(#glowEffect)">
-                  <rect x="94" y="20" width="20" height="180" rx="4" fill="url(#glassBody)" stroke="#38BDF8" stroke-width="1.8"/>
-                  <rect id="buretteFill" x="96" y="196" width="16" height="0" rx="1" fill="url(#liquidGrad)"/>
-
-                  <g stroke="rgba(255,255,255,0.7)" stroke-width="0.8">
-                    <line x1="108" y1="25" x2="114" y2="25"/>
-                    <line x1="108" y1="57" x2="114" y2="57"/>
-                    <line x1="108" y1="89" x2="114" y2="89"/>
-                    <line x1="108" y1="121" x2="114" y2="121"/>
-                    <line x1="108" y1="153" x2="114" y2="153"/>
-                    <line x1="108" y1="185" x2="114" y2="185"/>
-                  </g>
-                  <g font-family="'JetBrains Mono', monospace" font-size="6.5" fill="rgba(255,255,255,0.9)">
-                    <text x="116" y="27">0</text>
-                    <text x="116" y="59">10</text>
-                    <text x="116" y="91">20</text>
-                    <text x="116" y="123">30</text>
-                    <text x="116" y="155">40</text>
-                    <text x="116" y="187">50</text>
-                  </g>
-
-                  <g id="stopcockValve" style="transform-origin: 104px 206px; transition: transform 0.2s ease;">
-                    <path d="M96,206 L112,206" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
-                    <circle cx="104" cy="206" r="6" fill="#06B6D4" stroke="#FFFFFF" stroke-width="1.5"/>
-                  </g>
-                  <line x1="104" y1="212" x2="104" y2="232" stroke="#38BDF8" stroke-width="2.5"/>
+                <!-- 1. Cast-Iron Retort Stand Base -->
+                <g filter="url(#apparatusShadowLab)">
+                  <rect x="25" y="348" width="160" height="14" rx="4" fill="url(#castIronBaseLab)" stroke="#64748B" stroke-width="1"/>
+                  <rect x="27" y="349" width="156" height="2" fill="rgba(255,255,255,0.4)" rx="1"/>
+                  <rect x="32" y="362" width="16" height="3" rx="1" fill="#000000"/>
+                  <rect x="162" y="362" width="16" height="3" rx="1" fill="#000000"/>
                 </g>
 
-                <!-- Conical Flask (Erlenmeyer Flask with Swirl Animation) -->
-                <g id="flaskContainer" style="transform-origin: 104px 300px; transition: transform 0.4s ease;">
-                  <rect x="94" y="232" width="20" height="8" rx="2" fill="url(#glassBody)" stroke="#38BDF8" stroke-width="1.5"/>
-                  <path id="flask" d="M96,240 L112,240 L152,312 Q104,324 56,312 Z"
-                        fill="var(--rig-body)" stroke="#38BDF8" stroke-width="2" stroke-linejoin="round"/>
-                  <path d="M98,244 L108,244 L118,290 Q106,286 100,286 Z" fill="rgba(255,255,255,0.2)"/>
+                <!-- 2. Porcelain White Titration Tile (Under Flask) -->
+                <g filter="url(#apparatusShadowLab)">
+                  <rect x="80" y="338" width="95" height="12" rx="3" fill="url(#porcelainTileLab)" stroke="#CBD5E1" stroke-width="1.2"/>
+                  <rect x="82" y="339" width="91" height="2" fill="#FFFFFF" rx="1"/>
+                  <ellipse cx="129" cy="344" rx="26" ry="3" fill="rgba(56,189,248,0.15)"/>
+                </g>
+
+                <!-- 3. Vertical Chrome Steel Stand Rod -->
+                <rect x="42" y="15" width="10" height="335" rx="3" fill="url(#metalChromeLab)" stroke="#475569" stroke-width="0.8"/>
+                <rect x="45" y="15" width="2" height="335" fill="rgba(255,255,255,0.6)"/>
+
+                <!-- 4. Bosshead & Dual-Prong Articulated Clamp -->
+                <g id="clampAssembly">
+                  <rect x="38" y="90" width="18" height="24" rx="3" fill="#1E293B" stroke="#475569" stroke-width="1"/>
+                  <circle cx="34" cy="102" r="5" fill="url(#brassScrewLab)" stroke="#78350F" stroke-width="0.8"/>
+                  <line x1="34" y1="99" x2="34" y2="105" stroke="#451A03" stroke-width="1.2"/>
+                  <rect x="56" y="98" width="56" height="8" rx="2" fill="url(#metalChromeLab)" stroke="#475569" stroke-width="0.8"/>
+                  <path d="M 112,86 L 118,92 L 118,112 L 112,118" fill="none" stroke="#334155" stroke-width="4" stroke-linecap="round"/>
+                  <rect x="115" y="88" width="6" height="28" rx="2" fill="#DC2626" stroke="#991B1B" stroke-width="0.8"/>
+                  <circle cx="112" cy="102" r="4" fill="url(#brassScrewLab)"/>
+                </g>
+
+                <!-- 5. Precision 50 cm³ Borosilicate Glass Burette -->
+                <g id="buretteGlassRig">
+                  <rect x="120" y="10" width="18" height="200" rx="3" fill="url(#glassSheenLab)" stroke="#38BDF8" stroke-width="1.4" opacity="0.9"/>
+                  <rect id="buretteFill" x="122" y="10" width="14" height="196" rx="1" fill="url(#liquidGradLab)"/>
+                  <ellipse id="buretteMeniscusCap" cx="129" cy="10" rx="7" ry="1.8" fill="#7DD3FC" opacity="0.9"/>
+
+                  <!-- Millimeter Graduation Marks -->
+                  <g stroke="rgba(255,255,255,0.85)" stroke-width="0.75">
+                    <line x1="130" y1="18" x2="137" y2="18"/>
+                    <line x1="132" y1="36" x2="137" y2="36"/>
+                    <line x1="130" y1="54" x2="137" y2="54"/>
+                    <line x1="132" y1="72" x2="137" y2="72"/>
+                    <line x1="130" y1="90" x2="137" y2="90"/>
+                    <line x1="132" y1="108" x2="137" y2="108"/>
+                    <line x1="130" y1="126" x2="137" y2="126"/>
+                    <line x1="132" y1="144" x2="137" y2="144"/>
+                    <line x1="130" y1="162" x2="137" y2="162"/>
+                    <line x1="132" y1="180" x2="137" y2="180"/>
+                    <line x1="130" y1="198" x2="137" y2="198"/>
+                  </g>
+                  <g font-family="'JetBrains Mono', monospace" font-size="6" fill="#FFFFFF" font-weight="700">
+                    <text x="139" y="20">0</text>
+                    <text x="139" y="56">10</text>
+                    <text x="139" y="92">20</text>
+                    <text x="139" y="128">30</text>
+                    <text x="139" y="164">40</text>
+                    <text x="139" y="200">50</text>
+                  </g>
+                  <line x1="122" y1="12" x2="122" y2="208" stroke="#FFFFFF" stroke-width="1" opacity="0.65"/>
+                  <line x1="136" y1="12" x2="136" y2="208" stroke="#0284C7" stroke-width="0.8" opacity="0.5"/>
+
+                  <!-- Stopcock Valve Assembly -->
+                  <g id="stopcockAssembly">
+                    <rect x="117" y="210" width="24" height="12" rx="3" fill="url(#glassSheenLab)" stroke="#0284C7" stroke-width="1.2"/>
+                    <g id="stopcockValve" style="transform-origin: 129px 216px; transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);">
+                      <rect x="126" y="208" width="6" height="16" rx="2" fill="#0284C7" stroke="#38BDF8" stroke-width="0.8"/>
+                      <rect x="120" y="206" width="18" height="4" rx="1.5" fill="#F8FAFC" stroke="#94A3B8" stroke-width="0.8"/>
+                    </g>
+                    <path d="M 126,222 L 127,242 L 131,242 L 132,222 Z" fill="url(#glassSheenLab)" stroke="#38BDF8" stroke-width="1.2"/>
+                    <line x1="129" y1="222" x2="129" y2="242" stroke="#38BDF8" stroke-width="1.8"/>
+                  </g>
+                </g>
+
+                <!-- 6. Erlenmeyer Conical Flask (250 cm³) -->
+                <g id="flaskContainer" style="transform-origin: 129px 310px; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);">
+                  <ellipse cx="129" cy="254" rx="15" ry="4" fill="url(#glassSheenLab)" stroke="#38BDF8" stroke-width="1.5"/>
+                  <ellipse cx="129" cy="254" rx="11" ry="2.8" fill="rgba(15,23,42,0.6)" stroke="#0284C7" stroke-width="0.8"/>
+
+                  <!-- Flask Body -->
+                  <path id="flask" d="M 118,256 L 118,268 L 94,334 Q 129,346 164,334 L 140,268 L 140,256 Z"
+                        fill="var(--rig-body, rgba(56,189,248,0.12))" stroke="#38BDF8" stroke-width="1.8" stroke-linejoin="round"/>
+
+                  <!-- Meniscus & Graduations -->
+                  <ellipse id="flaskLiquidSurface" cx="129" cy="308" rx="28" ry="4.5" fill="rgba(255,255,255,0.25)"/>
+                  <g stroke="rgba(255,255,255,0.7)" stroke-width="0.8">
+                    <line x1="110" y1="318" x2="118" y2="318"/>
+                    <line x1="114" y1="304" x2="120" y2="304"/>
+                    <line x1="118" y1="290" x2="124" y2="290"/>
+                  </g>
+                  <g font-family="'JetBrains Mono', monospace" font-size="5" fill="rgba(255,255,255,0.85)">
+                    <text x="100" y="320">100</text>
+                    <text x="104" y="306">150</text>
+                    <text x="108" y="292">200</text>
+                  </g>
+                  <rect x="134" y="296" width="18" height="12" rx="2" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.4)" stroke-width="0.5"/>
+                  <path d="M 120,264 L 102,328 Q 112,334 122,332 L 132,270 Z" fill="rgba(255,255,255,0.18)" opacity="0.75"/>
+                  <path d="M 137,264 L 154,324" stroke="rgba(255,255,255,0.5)" stroke-width="1.2" stroke-linecap="round" fill="none"/>
                 </g>
               </svg>
 
@@ -357,8 +439,20 @@
 
             </div>
 
-            <div class="readout-panel" style="margin-top:6px;text-align:center;width:100%;">
-              <div class="readout-sub" id="flaskLabel" style="font-size:0.85rem;color:var(--text-muted);font-family:'JetBrains Mono',monospace;font-weight:600;">25.00 cm³ HCl(aq)</div>
+            <!-- Authentic Chemistry Laboratory Reagent Bottles Shelf -->
+            <div class="bench-reagents-shelf">
+              <div class="bench-bottle-chip" title="Stock Titrant Solution B">
+                <span>🫙</span>
+                <span id="pillTitrantChip">Titrant Stock (Sol. B)</span>
+              </div>
+              <div class="bench-bottle-chip" title="Analyte Solution A Aliquot">
+                <span>🧪</span>
+                <span id="flaskLabel">25.00 cm³ HCl(aq)</span>
+              </div>
+              <div class="bench-bottle-chip" title="Indicator Dropper Bottle">
+                <span>💧</span>
+                <span id="pillIndicatorChip">Indicator Dropper</span>
+              </div>
             </div>
           </div>
 

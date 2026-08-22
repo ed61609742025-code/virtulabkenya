@@ -1113,6 +1113,15 @@ requireStudentLogin();
     document.getElementById('pillIndicator').textContent = indicatorAdded ? `${current.indicatorName} (${indicatorDropsCount}/3 drops)` : '? (click button below)';
     document.getElementById('flaskLabel').textContent = sessionAnalyteVolume.toFixed(2) + ' cm³ ' + current.analyteName.split(',')[0];
 
+    const titrantChip = document.getElementById('pillTitrantChip');
+    if (titrantChip) {
+      titrantChip.textContent = `Titrant: ${titrantConcStr} M ${current.titrantName.split('—')[0].split('(')[0]}`;
+    }
+    const indicatorChip = document.getElementById('pillIndicatorChip');
+    if (indicatorChip) {
+      indicatorChip.textContent = indicatorAdded ? `Indicator: ${current.indicatorName.split(' ')[0]} (${indicatorDropsCount}d)` : `Indicator: Unindicated`;
+    }
+
     const aliquotEl = document.getElementById('knecSubbarAliquot');
     if (aliquotEl) {
       aliquotEl.textContent = `${sessionAnalyteVolume.toFixed(2)} cm³ Pipette`;
@@ -1276,6 +1285,11 @@ requireStudentLogin();
     const pillInd = document.getElementById('pillIndicator');
     if (pillInd) pillInd.textContent = `${current.indicatorName} (${indicatorDropsCount}/3 drops)`;
 
+    const indicatorChip = document.getElementById('pillIndicatorChip');
+    if (indicatorChip) {
+      indicatorChip.textContent = `Indicator: ${current.indicatorName.split(' ')[0]} (${indicatorDropsCount}d)`;
+    }
+
     const flaskLabel = document.getElementById('flaskLabel');
     if (flaskLabel) {
       flaskLabel.textContent = sessionAnalyteVolume.toFixed(2) + ' cm³ ' + current.analyteName.split(',')[0] + ' + ' + current.indicatorName.split(' ')[0] + ` (${indicatorDropsCount}d)`;
@@ -1297,13 +1311,13 @@ requireStudentLogin();
     if (!svg) return;
     const ns = 'http://www.w3.org/2000/svg';
     const drop = document.createElementNS(ns, 'circle');
-    drop.setAttribute('cx', '104');
-    drop.setAttribute('cy', '224');
+    drop.setAttribute('cx', '129');
+    drop.setAttribute('cy', '242');
     drop.setAttribute('r', '3.5');
     drop.setAttribute('fill', '#00F2FE');
     drop.setAttribute('class', 'drip');
     svg.appendChild(drop);
-    setTimeout(() => drop.remove(), 1050);
+    setTimeout(() => drop.remove(), 750);
   }
 
   function resetBurette() {
@@ -1422,13 +1436,17 @@ requireStudentLogin();
   }
 
   function updateRig() {
-    const buretteInnerHeight = 180;
+    const buretteInnerHeight = 196;
     const usedFraction = Math.min(1, currentVolume / MAX_BURETTE);
     const fillHeight = buretteInnerHeight * (1 - usedFraction);
     const fill = document.getElementById('buretteFill');
+    const cap = document.getElementById('buretteMeniscusCap');
     if (fill) {
       fill.setAttribute('height', Math.max(0, fillHeight));
-      fill.setAttribute('y', 20 + (buretteInnerHeight - fillHeight));
+      fill.setAttribute('y', 10 + (buretteInnerHeight - fillHeight));
+    }
+    if (cap) {
+      cap.setAttribute('cy', 10 + (buretteInnerHeight - fillHeight));
     }
 
     updateLensView(currentVolume);

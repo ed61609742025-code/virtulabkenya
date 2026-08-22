@@ -458,50 +458,109 @@ html, body {
 /* ── 5. APPARATUS STAGE & BURETTE LENS ── */
 .apparatus-card {
   background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 14px;
-  padding: 18px;
-  margin-bottom: 16px;
-  box-shadow: var(--shadow-sm);
+  border: 1.5px solid var(--card-border);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-md);
   width: 100%;
+  position: relative;
+  background-image: radial-gradient(circle at 50% 30%, rgba(56, 189, 248, 0.05) 0%, transparent 70%);
 }
 
 .bench-layout-grid {
   display: grid;
-  grid-template-columns: minmax(180px, 200px) 1fr minmax(180px, 200px);
-  gap: 16px;
-  align-items: center;
+  grid-template-columns: minmax(180px, 220px) 1fr minmax(180px, 220px);
+  gap: 18px;
+  align-items: stretch;
   width: 100%;
 }
 
 .bench-left-wing {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   background: var(--card-bg-hover);
   border: 1px solid var(--card-border);
-  border-radius: 12px;
-  padding: 12px;
+  border-radius: 14px;
+  padding: 14px;
   width: 100%;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.03);
 }
 
 .bench-center-rig {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   width: 100%;
+  background: radial-gradient(circle at 50% 20%, rgba(56, 189, 248, 0.07) 0%, rgba(15, 23, 42, 0.4) 75%),
+              linear-gradient(180deg, rgba(15, 23, 42, 0.7) 0%, rgba(11, 19, 43, 0.85) 100%);
+  border: 1.5px solid var(--card-border);
+  border-radius: 16px;
+  padding: 16px 12px 14px;
+  box-shadow: inset 0 2px 16px rgba(0, 0, 0, 0.6), 0 4px 20px rgba(0, 0, 0, 0.3);
+  position: relative;
 }
 
 .bench-right-wing {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   background: var(--card-bg-hover);
   border: 1px solid var(--card-border);
-  border-radius: 12px;
-  padding: 12px;
+  border-radius: 14px;
+  padding: 14px;
   width: 100%;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.03);
+}
+
+/* ── Bench Reagents Shelf ── */
+.bench-reagents-shelf {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  flex-wrap: wrap;
+}
+
+.bench-bottle-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--text-main);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  transition: all 0.2s ease;
+}
+
+.bench-bottle-chip:hover {
+  border-color: var(--cyan-accent);
+  background: var(--card-bg-hover);
+  transform: translateY(-1px);
+}
+
+/* ── Falling Droplet Physics ── */
+.drip {
+  animation: dripAnimation 0.65s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+}
+
+@keyframes dripAnimation {
+  0% { transform: translateY(0) scaleY(1); opacity: 1; }
+  75% { transform: translateY(58px) scaleY(1.35); opacity: 0.95; }
+  100% { transform: translateY(64px) scaleY(0.4) scaleX(1.6); opacity: 0; }
 }
 
 @media (max-width: 1200px) {

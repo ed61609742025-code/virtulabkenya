@@ -1346,85 +1346,97 @@ requireStudentLogin();
     const lensSvg = document.getElementById('lensSvg');
     if (!lensSvg) return;
 
-    const pcm = 42; // Pixels per cm³
-    const centerY = 80;
+    const pcm = 52; // Higher magnification: 52 pixels per cm³
+    const centerY = 80; // Centerline of 160px viewfinder (exactly matches the red Eye Level line)
     
-    const minVol = Math.max(0, Math.floor(volume - 2.5));
-    const maxVol = Math.min(50, Math.ceil(volume + 2.5));
+    const minVol = Math.max(0, Math.floor((volume - 1.6) * 10) / 10);
+    const maxVol = Math.min(50, Math.ceil((volume + 1.6) * 10) / 10);
 
-    // Dynamic defs for glass tube, liquid refraction & meniscus
+    // High-contrast defs: White ceramic enamel backing + crystal clear glass highlights
     const defsSvg = `
       <defs>
-        <!-- Glass Tube Interior (Above Meniscus) -->
-        <linearGradient id="lensTubeGlass" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stop-color="#0B132B" stop-opacity="0.95"/>
-          <stop offset="12%" stop-color="#1C2541" stop-opacity="0.85"/>
-          <stop offset="50%" stop-color="#0B132B" stop-opacity="0.95"/>
-          <stop offset="88%" stop-color="#1C2541" stop-opacity="0.85"/>
-          <stop offset="100%" stop-color="#0B132B" stop-opacity="0.95"/>
+        <!-- High-Contrast Schellbach White Ceramic Backing -->
+        <linearGradient id="lensTubeCeramic" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#E2E8F0"/>
+          <stop offset="10%" stop-color="#FFFFFF"/>
+          <stop offset="90%" stop-color="#FFFFFF"/>
+          <stop offset="100%" stop-color="#CBD5E1"/>
         </linearGradient>
         
-        <!-- Highly visible luminous chemical liquid solution fill (Below Meniscus) -->
+        <!-- Crystal Clear Luminous Aqueous Solution with Glass Depth -->
         <linearGradient id="luminousLiquidFill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#00F2FE" stop-opacity="0.88"/>
-          <stop offset="10%" stop-color="#0284C7" stop-opacity="0.82"/>
-          <stop offset="50%" stop-color="#0369A1" stop-opacity="0.88"/>
-          <stop offset="100%" stop-color="#075985" stop-opacity="0.95"/>
+          <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.92"/>
+          <stop offset="15%" stop-color="#0284C7" stop-opacity="0.88"/>
+          <stop offset="60%" stop-color="#0369A1" stop-opacity="0.92"/>
+          <stop offset="100%" stop-color="#0C4A6E" stop-opacity="0.98"/>
         </linearGradient>
 
-        <!-- Specular Glass Wall Highlight -->
+        <!-- Specular Highlight for Glass Walls -->
         <linearGradient id="tubeSpecularHighlight" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.5"/>
-          <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.1"/>
+          <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.8"/>
+          <stop offset="15%" stop-color="#FFFFFF" stop-opacity="0.2"/>
           <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.0"/>
         </linearGradient>
+
+        <filter id="lensBeadGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#EF4444" flood-opacity="0.9"/>
+        </filter>
       </defs>
     `;
 
-    // 1. Dry Glass Tube (Above Meniscus: 0 to centerY)
+    // 1. Dry Upper Tube (Empty Burette Cylinder Above Meniscus: y = 0 to 160)
     const dryGlassTop = `
-      <rect x="14" y="0" width="152" height="${centerY}" rx="6" fill="url(#lensTubeGlass)"/>
-      <rect x="18" y="0" width="16" height="${centerY}" fill="url(#tubeSpecularHighlight)"/>
-      <line x1="14" y1="0" x2="14" y2="160" stroke="#00F2FE" stroke-width="2.5" stroke-opacity="0.7"/>
-      <line x1="166" y1="0" x2="166" y2="160" stroke="#00F2FE" stroke-width="2.5" stroke-opacity="0.7"/>
+      <!-- White Ceramic Contrast Backing Plate -->
+      <rect x="12" y="0" width="156" height="160" rx="6" fill="url(#lensTubeCeramic)"/>
+      <!-- Blue Schellbach Central Vertical Guide Stripe -->
+      <rect x="85" y="0" width="10" height="160" fill="#0284C7" opacity="0.25"/>
+      <!-- Outer Glass Tube Refraction Borders -->
+      <line x1="12" y1="0" x2="12" y2="160" stroke="#00F2FE" stroke-width="3" stroke-opacity="0.8"/>
+      <line x1="168" y1="0" x2="168" y2="160" stroke="#00F2FE" stroke-width="3" stroke-opacity="0.8"/>
+      <!-- Left Glass Glare Highlight -->
+      <rect x="16" y="0" width="12" height="160" fill="url(#tubeSpecularHighlight)"/>
     `;
 
-    // 2. Clear Liquid Column (Below Meniscus: centerY to 160)
+    // 2. Liquid Column (Below Meniscus: Bottom of concave meniscus touches centerY = 80)
     const liquidBody = `
-      <path d="M 14 ${centerY} Q 90 ${centerY + 10} 166 ${centerY} L 166 160 L 14 160 Z" fill="url(#luminousLiquidFill)"/>
-      <rect x="18" y="${centerY + 4}" width="16" height="${160 - (centerY + 4)}" fill="url(#tubeSpecularHighlight)"/>
+      <path d="M 12 ${centerY - 10} Q 90 ${centerY} 168 ${centerY - 10} L 168 160 L 12 160 Z" fill="url(#luminousLiquidFill)"/>
+      <rect x="16" y="${centerY}" width="12" height="${160 - centerY}" fill="url(#tubeSpecularHighlight)"/>
     `;
 
+    // 3. High-Contrast Laser-Etched Graduation Ticks & Bold Numbers
     let ticksSvg = '';
-    for (let v = minVol; v <= maxVol; v += 0.1) {
+    for (let v = minVol; v <= maxVol + 0.05; v += 0.1) {
       const vRounded = Math.round(v * 10) / 10;
       const y = centerY + (vRounded - volume) * pcm;
-      if (y < -12 || y > 172) continue;
+      if (y < -15 || y > 175) continue;
 
       const isMajor = Math.abs(vRounded - Math.round(vRounded)) < 0.01;
       const isMedium = !isMajor && Math.abs((vRounded * 10) % 5) < 0.01;
 
       if (isMajor) {
-        ticksSvg += `<line x1="14" y1="${y}" x2="56" y2="${y}" stroke="#FFFFFF" stroke-width="2.2"/>`;
-        ticksSvg += `<line x1="124" y1="${y}" x2="166" y2="${y}" stroke="#FFFFFF" stroke-width="2.2"/>`;
-        ticksSvg += `<text x="66" y="${y + 4.5}" fill="#FFFFFF" font-size="12" font-family="'JetBrains Mono', monospace" font-weight="900" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.9))">${Math.round(vRounded)}.0</text>`;
+        // Longest high-contrast black tick mark with bold number
+        ticksSvg += `<line x1="12" y1="${y}" x2="60" y2="${y}" stroke="#0F172A" stroke-width="2.6" stroke-linecap="round"/>`;
+        ticksSvg += `<line x1="120" y1="${y}" x2="168" y2="${y}" stroke="#0F172A" stroke-width="2.6" stroke-linecap="round"/>`;
+        ticksSvg += `<text x="68" y="${y + 5}" fill="#0F172A" font-size="13.5" font-family="'JetBrains Mono', monospace" font-weight="900" letter-spacing="-0.02em">${Math.round(vRounded)}.0</text>`;
       } else if (isMedium) {
-        ticksSvg += `<line x1="14" y1="${y}" x2="44" y2="${y}" stroke="#E0F2FE" stroke-width="1.6"/>`;
-        ticksSvg += `<line x1="136" y1="${y}" x2="166" y2="${y}" stroke="#E0F2FE" stroke-width="1.6"/>`;
+        // 0.5 cm³ half-way tick mark
+        ticksSvg += `<line x1="12" y1="${y}" x2="48" y2="${y}" stroke="#1E293B" stroke-width="2.0" stroke-linecap="round"/>`;
+        ticksSvg += `<line x1="132" y1="${y}" x2="168" y2="${y}" stroke="#1E293B" stroke-width="2.0" stroke-linecap="round"/>`;
       } else {
-        ticksSvg += `<line x1="14" y1="${y}" x2="32" y2="${y}" stroke="#CBD5E1" stroke-width="1.1"/>`;
-        ticksSvg += `<line x1="148" y1="${y}" x2="166" y2="${y}" stroke="#CBD5E1" stroke-width="1.1"/>`;
+        // 0.1 cm³ millimeter tick mark
+        ticksSvg += `<line x1="12" y1="${y}" x2="36" y2="${y}" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>`;
+        ticksSvg += `<line x1="144" y1="${y}" x2="168" y2="${y}" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>`;
       }
     }
 
-    // 3. Concave Curved Meniscus Surface (Liquid Interface)
+    // 4. Physical Curved Meniscus Boundary (Bottom touches centerY = 80 precisely)
     const meniscusSvg = `
       <!-- Meniscus refraction shadow band -->
-      <path d="M 14 ${centerY - 1} Q 90 ${centerY + 9} 166 ${centerY - 1}" stroke="#032B44" stroke-width="2.5" fill="none"/>
-      <!-- Luminous meniscus surface arc -->
-      <path d="M 14 ${centerY} Q 90 ${centerY + 10} 166 ${centerY}" stroke="#E0F2FE" stroke-width="3.2" stroke-linecap="round" fill="none"/>
-      <!-- Bottom of Meniscus Reading Focal Bead -->
-      <circle cx="90" cy="${centerY + 10}" r="4.5" fill="#EF4444" stroke="#FFFFFF" stroke-width="1.8"/>
+      <path d="M 12 ${centerY - 11} Q 90 ${centerY - 1} 168 ${centerY - 11}" stroke="#032B44" stroke-width="3" fill="none" opacity="0.85"/>
+      <!-- Luminous white surface arc -->
+      <path d="M 12 ${centerY - 10} Q 90 ${centerY} 168 ${centerY - 10}" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+      <!-- Bottom of Meniscus Focal Target Bead (Red Glowing Marker) -->
+      <circle cx="90" cy="${centerY}" r="5" fill="#EF4444" stroke="#FFFFFF" stroke-width="2" filter="url(#lensBeadGlow)"/>
     `;
 
     lensSvg.innerHTML = defsSvg + dryGlassTop + liquidBody + ticksSvg + meniscusSvg;

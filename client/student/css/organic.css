@@ -1,19 +1,25 @@
 /* ══════════════════════════════════════════════════════════════
    VirtuLab Kenya — Organic Chemistry Analysis Stylesheet
    KNEC KCSE Chemistry Paper 3 (Question 3 Practical)
-   Academic Design System & Craftsmanship
+   Prestigious Kenyan Academic Examination Design System
 ══════════════════════════════════════════════════════════════ */
 
 /* ── 1. THEME TOKENS ── */
 :root, [data-theme="light"] {
-  --bg-dark: #F8FAFC;
+  --bg-dark: #F6F3EE;
   --card-bg: #FFFFFF;
-  --card-bg-hover: #F1F5F9;
-  --card-border: #E2E8F0;
-  --text-main: #0F172A;
-  --text-muted: #475569;
+  --card-bg-hover: #F8F5F0;
+  --card-border: #E2DDD5;
+  --card-border-glow: #D97706;
+  --text-main: #1C2434;
+  --text-muted: #57657A;
   --heading-color: #0F172A;
-  --topbar-bg: rgba(255, 255, 255, 0.95);
+  --topbar-bg: rgba(255, 255, 255, 0.97);
+
+  --acad-oxford: #0F172A;
+  --acad-gold: #D97706;
+  --acad-gold-bg: rgba(217, 119, 6, 0.1);
+  --acad-crimson: #991B1B;
 
   --blue-accent: #0284C7;
   --blue-bg: #F0F9FF;
@@ -35,24 +41,36 @@
   --violet-bg: #F5F3FF;
   --violet-border: #DDD6FE;
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.08);
+  --cyan-accent: #0284C7;
+  --cyan-btn-bg: #0284C7;
+  --cyan-btn-hover: #0369A1;
 
-  --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.09);
+
+  --font-academic: 'Cinzel', Georgia, serif;
+  --font-editorial: 'Newsreader', Georgia, serif;
+  --font-heading: 'Cinzel', Georgia, serif;
   --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
 
 [data-theme="dark"] {
-  --bg-dark: #090E17;
-  --card-bg: #111A2E;
-  --card-bg-hover: #17233B;
+  --bg-dark: #080D1A;
+  --card-bg: #0F172A;
+  --card-bg-hover: #162238;
   --card-border: #1E2D4A;
-  --text-main: #F8FAFC;
+  --card-border-glow: #38BDF8;
+  --text-main: #F1F5F9;
   --text-muted: #94A3B8;
   --heading-color: #FFFFFF;
-  --topbar-bg: rgba(10, 16, 28, 0.95);
+  --topbar-bg: rgba(15, 23, 42, 0.97);
+
+  --acad-oxford: #08101A;
+  --acad-gold: #F59E0B;
+  --acad-gold-bg: rgba(245, 158, 11, 0.14);
+  --acad-crimson: #EF4444;
 
   --blue-accent: #38BDF8;
   --blue-bg: rgba(56, 189, 248, 0.12);
@@ -74,24 +92,36 @@
   --violet-bg: rgba(168, 85, 247, 0.12);
   --violet-border: rgba(168, 85, 247, 0.3);
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --cyan-accent: #38BDF8;
+  --cyan-btn-bg: #0284C7;
+  --cyan-btn-hover: #0369A1;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.5);
 
-  --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-academic: 'Cinzel', Georgia, serif;
+  --font-editorial: 'Newsreader', Georgia, serif;
+  --font-heading: 'Cinzel', Georgia, serif;
   --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
 
 [data-theme="green"] {
-  --bg-dark: #051209;
-  --card-bg: #0D2315;
-  --card-bg-hover: #133320;
-  --card-border: #1B4A2B;
+  --bg-dark: #041008;
+  --card-bg: #0B1F13;
+  --card-bg-hover: #102B1B;
+  --card-border: #164024;
+  --card-border-glow: #34D399;
   --text-main: #F0FDF4;
   --text-muted: #86EFAC;
   --heading-color: #34D399;
-  --topbar-bg: rgba(6, 20, 11, 0.95);
+  --topbar-bg: rgba(11, 31, 19, 0.97);
+
+  --acad-oxford: #05140A;
+  --acad-gold: #FBBF24;
+  --acad-gold-bg: rgba(251, 191, 36, 0.14);
+  --acad-crimson: #F87171;
 
   --blue-accent: #38BDF8;
   --blue-bg: rgba(56, 189, 248, 0.12);
@@ -113,16 +143,22 @@
   --violet-bg: rgba(192, 132, 252, 0.12);
   --violet-border: rgba(192, 132, 252, 0.3);
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --cyan-accent: #34D399;
+  --cyan-btn-bg: #059669;
+  --cyan-btn-hover: #047857;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
 
-  --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-academic: 'Cinzel', Georgia, serif;
+  --font-editorial: 'Newsreader', Georgia, serif;
+  --font-heading: 'Cinzel', Georgia, serif;
   --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
 
-/* ── 2. GLOBAL RESET & BASE ── */
+/* ── 2. GLOBAL RESET & VIEWPORT FIXING ── */
 * {
   box-sizing: border-box;
 }
@@ -133,58 +169,63 @@ html, body {
   font-family: var(--font-body);
   margin: 0;
   padding: 0;
-  padding-top: 60px;
   min-height: 100vh;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  position: relative;
   transition: background-color 0.15s ease, color 0.15s ease;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ── 3. TOPBAR & NAVIGATION ── */
-.top-navbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 24px;
-  background: var(--topbar-bg);
-  border-bottom: 1px solid var(--card-border);
-  position: fixed;
+/* ── 3. UNIFIED ACADEMIC STICKY TOPBAR ── */
+.academic-top-header {
+  position: -webkit-sticky;
+  position: sticky;
   top: 0;
   left: 0;
   right: 0;
   width: 100%;
   z-index: 10000;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: var(--topbar-bg);
+  border-bottom: 1.5px solid var(--card-border);
   box-shadow: var(--shadow-sm);
-  transition: background-color 0.15s ease, border-color 0.15s ease;
-  flex-wrap: wrap;
-  gap: 12px;
 }
 
-.nav-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--font-heading);
-  font-size: 1.05rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: var(--heading-color);
-  text-decoration: none;
-}
+.ribbon-full { display: inline; }
+.ribbon-mobile { display: none; }
+.btn-text-full { display: inline; }
+.btn-text-short { display: none; }
 
-.nav-logo-icon {
-  width: 22px;
-  height: 22px;
-  background: var(--violet-accent);
-  border-radius: 6px;
+.candidate-top-ribbon {
+  background: var(--acad-oxford);
+  color: #FFFFFF;
+  font-size: 0.73rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-align: center;
+  padding: 5px 16px;
+  border-bottom: 1.5px solid var(--acad-gold);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #FFFFFF;
-  font-size: 0.8rem;
-  font-weight: 800;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-family: var(--font-body);
+}
+[data-theme="dark"] .candidate-top-ribbon { background: #08101A; color: #E2E8F0; }
+[data-theme="green"] .candidate-top-ribbon { background: #05140A; color: #D1FAE5; }
+
+.top-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 20px;
+  max-width: 1440px;
+  margin: 0 auto;
+  gap: 10px;
+  flex-wrap: nowrap;
 }
 
 .nav-modules-pill {
@@ -193,30 +234,63 @@ html, body {
   gap: 3px;
   background: var(--card-bg);
   border: 1px solid var(--card-border);
-  padding: 3px 4px;
-  border-radius: 100px;
+  padding: 2px 4px;
+  border-radius: 6px;
   overflow-x: auto;
 }
+
+.nav-brand-academic {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--heading-color);
+  flex-shrink: 0;
+}
+
+.seal-crest-small {
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  background: var(--acad-oxford);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  border: 1px solid var(--acad-gold);
+  flex-shrink: 0;
+}
+[data-theme="dark"] .seal-crest-small { background: #162238; border-color: var(--acad-gold); }
+[data-theme="green"] .seal-crest-small { background: #0E2415; border-color: var(--acad-gold); }
 
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
 .nav-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
-  border-radius: 8px;
+  padding: 5px 10px;
+  border-radius: 6px;
   font-family: inherit;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 700;
   cursor: pointer;
-  border: 1px solid transparent;
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg-hover);
+  color: var(--text-main);
+  transition: all 0.15s ease;
   white-space: nowrap;
+}
+.nav-btn:hover {
+  background: var(--card-bg);
+  border-color: var(--violet-accent);
+  color: var(--violet-accent);
 }
 
 .nav-btn-tips {
@@ -239,40 +313,21 @@ html, body {
   color: #FFFFFF;
 }
 
-.nav-btn-print {
-  background: var(--card-bg);
-  border-color: var(--card-border);
-  color: var(--text-main);
-}
-.nav-btn-print:hover {
-  background: var(--card-bg-hover);
-  border-color: var(--text-muted);
-}
-
-.nav-btn-settings {
-  background: var(--card-bg);
-  border-color: var(--card-border);
-  color: var(--text-main);
-}
-.nav-btn-settings:hover {
-  background: var(--card-bg-hover);
-}
-
 .theme-toggle-group {
   display: flex;
-  background: var(--bg-dark);
+  background: var(--card-bg-hover);
   border: 1px solid var(--card-border);
-  border-radius: 8px;
+  border-radius: 6px;
   padding: 2px;
   gap: 2px;
 }
 
 .theme-btn-chip {
   font-family: inherit;
-  font-size: 0.72rem;
+  font-size: 0.70rem;
   font-weight: 600;
-  padding: 4px 8px;
-  border-radius: 6px;
+  padding: 3px 6px;
+  border-radius: 4px;
   border: none;
   background: transparent;
   color: var(--text-muted);
@@ -289,38 +344,72 @@ html, body {
   color: #FFFFFF;
 }
 
-.user-avatar-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: var(--card-bg);
+.btn-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: var(--card-bg-hover);
   border: 1px solid var(--card-border);
   color: var(--text-muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-decoration: none;
   transition: background-color 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
 }
-.user-avatar-btn:hover {
-  background: var(--card-bg-hover);
+.btn-back-link:hover {
+  background: var(--card-bg);
   color: var(--text-main);
 }
 
-/* ── 4. PAGE CONTAINER & HEADER ── */
+/* KNEC Practical Ledger Sub-Bar */
+.knec-exam-subbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 5px 20px;
+  background: var(--card-bg-hover);
+  border-top: 1px solid var(--card-border);
+  font-size: 0.72rem;
+  max-width: 1440px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+.knec-subbar-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.knec-subbar-label {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-family: var(--font-body);
+}
+.knec-subbar-val {
+  color: var(--heading-color);
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+/* ── 4. PAGE CONTAINER & CARDS ── */
 .page-container {
   width: 100%;
-  max-width: 1240px;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 24px 20px 80px;
+  padding: 20px 20px 80px;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .page-header {
   background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 14px;
-  padding: 20px 24px;
-  margin-bottom: 20px;
+  border: 1.5px solid var(--card-border);
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin-bottom: 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -331,36 +420,22 @@ html, body {
 
 .page-header-title {
   font-family: var(--font-heading);
-  font-size: 1.35rem;
+  font-size: 1.25rem;
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   color: var(--heading-color);
-  margin: 0 0 6px 0;
+  margin: 0 0 4px 0;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .page-header-subtitle {
   margin: 0;
-  font-size: 0.84rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
-  max-width: 680px;
+  max-width: 720px;
   line-height: 1.5;
-}
-
-.timer-chip {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: 0.84rem;
-  font-feature-settings: "tnum";
-  font-variant-numeric: tabular-nums;
-  color: var(--violet-accent);
-  background: var(--violet-bg);
-  border: 1px solid var(--violet-border);
-  padding: 4px 10px;
-  border-radius: 100px;
-  letter-spacing: 0.02em;
 }
 
 .header-actions {
@@ -383,14 +458,11 @@ html, body {
   font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
-  transition: background-color 0.15s ease, transform 0.1s ease;
+  transition: all 0.15s ease;
   box-shadow: var(--shadow-sm);
 }
 .btn-primary-solid:hover {
   filter: brightness(1.08);
-}
-.btn-primary-solid:active {
-  transform: translateY(1px);
 }
 
 .btn-secondary {
@@ -406,8 +478,7 @@ html, body {
   font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
-  text-decoration: none;
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  transition: all 0.15s ease;
 }
 .btn-secondary:hover {
   background: var(--card-bg-hover);
@@ -415,13 +486,13 @@ html, body {
   color: var(--violet-accent);
 }
 
-/* ── 5. SPECIMEN TASK CARD ── */
+/* Specimen Task Card */
 .task-card {
   background: var(--card-bg);
-  border: 1px solid var(--card-border);
+  border: 1.5px solid var(--card-border);
   border-radius: 12px;
   padding: 16px 20px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -452,7 +523,7 @@ html, body {
 }
 
 .task-text h2 {
-  font-size: 0.98rem;
+  font-size: 0.96rem;
   font-weight: 800;
   letter-spacing: -0.01em;
   color: var(--heading-color);
@@ -478,71 +549,25 @@ html, body {
   letter-spacing: 0.02em;
 }
 
-/* ── 6. PROGRESS BAR ── */
-.progress-strip {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 22px;
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 10px;
-  padding: 12px 18px;
-}
-
-.progress-label {
-  font-size: 0.76rem;
-  color: var(--text-muted);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  white-space: nowrap;
-}
-
-.progress-track {
-  flex: 1;
-  height: 6px;
-  border-radius: 100px;
-  background: var(--card-border);
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  border-radius: 100px;
-  background: var(--violet-accent);
-  transition: width 0.4s ease;
-  width: 0%;
-}
-
-.progress-count {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--violet-accent);
-  white-space: nowrap;
-  font-feature-settings: "tnum";
-}
-
-/* ── 7. TEST CARDS & LABORATORY WORKBENCH GRID ── */
+/* ── 5. TEST CARDS & WORKBENCH GRID ── */
 .tests-grid {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
   width: 100%;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 
 .kcse-question-block {
   background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 14px;
-  padding: 22px;
+  border: 1.5px solid var(--card-border);
+  border-radius: 12px;
+  padding: 20px;
   box-shadow: var(--shadow-sm);
   transition: border-color 0.15s ease;
 }
 .kcse-question-block:hover {
-  border-color: var(--card-border);
+  border-color: var(--card-border-glow);
 }
 
 .test-card-top {
@@ -550,9 +575,9 @@ html, body {
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 16px;
-  border-bottom: 1px solid var(--card-border);
-  padding-bottom: 12px;
+  margin-bottom: 14px;
+  border-bottom: 1.5px solid var(--card-border);
+  padding-bottom: 10px;
 }
 
 .test-header-left {
@@ -565,8 +590,8 @@ html, body {
   font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: 800;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   border-radius: 6px;
   background: var(--card-bg-hover);
   border: 1px solid var(--card-border);
@@ -589,14 +614,8 @@ html, body {
 .test-layout-grid {
   display: grid;
   grid-template-columns: 280px 1fr;
-  gap: 22px;
+  gap: 20px;
   align-items: stretch;
-}
-
-@media (max-width: 860px) {
-  .test-layout-grid {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* Glassware & Apparatus Stage */
@@ -685,7 +704,7 @@ html, body {
   font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  transition: all 0.15s ease;
 }
 .btn-redo-test:hover {
   background: var(--card-bg-hover);
@@ -693,12 +712,18 @@ html, body {
   color: var(--violet-accent);
 }
 
-/* ── 8. OFFICIAL KNEC 2-COLUMN OBSERVATION & INFERENCE TABLE ── */
+/* ── 6. KNEC 2-COLUMN OBSERVATION & INFERENCE TABLE ── */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .knec-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.84rem;
-  border: 1px solid var(--card-border);
+  border: 1.5px solid var(--card-border);
   border-radius: 8px;
   overflow: hidden;
   margin-top: 4px;
@@ -714,10 +739,10 @@ html, body {
 
 .knec-table th {
   color: var(--heading-color);
-  font-family: var(--font-heading);
-  font-size: 0.8rem;
+  font-family: var(--font-academic);
+  font-size: 0.78rem;
   font-weight: 800;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.03em;
   background: var(--card-bg-hover);
   text-transform: uppercase;
   border-right: 1px solid var(--card-border);
@@ -737,7 +762,7 @@ html, body {
   width: 100%;
   min-height: 64px;
   background: var(--bg-dark);
-  border: 1px solid var(--card-border);
+  border: 1.5px solid var(--card-border);
   border-radius: 8px;
   color: var(--text-main);
   padding: 10px;
@@ -751,6 +776,7 @@ html, body {
 }
 .kcse-input:focus {
   border-color: var(--violet-accent);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
 }
 
 .suggestion-chips-container {
@@ -770,7 +796,7 @@ html, body {
   padding: 4px 8px;
   border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+  transition: all 0.12s ease;
   text-align: left;
 }
 .suggestion-chip:hover {
@@ -798,10 +824,10 @@ html, body {
   border: 1px solid var(--red-border);
 }
 
-/* ── 9. IDENTIFICATION PANEL ── */
+/* ── 7. IDENTIFICATION PANEL ── */
 .id-panel {
   background: var(--card-bg);
-  border: 1px solid var(--card-border);
+  border: 1.5px solid var(--card-border);
   border-radius: 14px;
   padding: 24px;
   box-shadow: var(--shadow-sm);
@@ -820,6 +846,8 @@ html, body {
   font-size: 0.82rem;
   color: var(--text-muted);
   margin-bottom: 20px;
+  font-family: var(--font-editorial);
+  font-style: italic;
 }
 
 .id-row {
@@ -827,11 +855,6 @@ html, body {
   grid-template-columns: 1fr 1fr auto;
   gap: 16px;
   align-items: flex-end;
-}
-@media (max-width: 720px) {
-  .id-row {
-    grid-template-columns: 1fr;
-  }
 }
 
 .id-group label {
@@ -848,7 +871,7 @@ html, body {
   width: 100%;
   padding: 10px 14px;
   background: var(--bg-dark);
-  border: 1px solid var(--card-border);
+  border: 1.5px solid var(--card-border);
   border-radius: 8px;
   color: var(--text-main);
   font-family: var(--font-mono);
@@ -859,6 +882,7 @@ html, body {
 }
 .id-select:focus {
   border-color: var(--violet-accent);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
 }
 .id-select option {
   background: var(--card-bg);
@@ -867,20 +891,21 @@ html, body {
 
 .btn-submit-id {
   padding: 11px 24px;
-  background: var(--green-accent);
+  background: linear-gradient(135deg, #059669, #047857);
   border: 1px solid transparent;
   border-radius: 8px;
   color: #FFFFFF;
-  font-family: inherit;
+  font-family: var(--font-academic);
   font-size: 0.88rem;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
-  transition: background-color 0.15s ease;
+  transition: all 0.15s ease;
   white-space: nowrap;
   width: 100%;
 }
 .btn-submit-id:hover {
   filter: brightness(1.08);
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35);
 }
 
 .id-result-box {
@@ -897,11 +922,11 @@ html, body {
 }
 .id-result-card.correct {
   background: var(--green-bg);
-  border: 1px solid var(--green-border);
+  border: 1.5px solid var(--green-border);
 }
 .id-result-card.incorrect {
   background: var(--red-bg);
-  border: 1px solid var(--red-border);
+  border: 1.5px solid var(--red-border);
 }
 .id-result-icon {
   font-size: 1.8rem;
@@ -918,7 +943,7 @@ html, body {
   margin: 0;
 }
 
-/* ── 10. MODAL DIALOGUES ── */
+/* ── 8. MODALS & DIALOGUES ── */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -927,13 +952,13 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10000;
+  z-index: 20000;
   padding: 20px;
 }
 
 .modal-box {
   background: var(--card-bg);
-  border: 1px solid var(--card-border);
+  border: 1.5px solid var(--card-border);
   border-radius: 16px;
   width: 100%;
   max-width: 820px;
@@ -946,7 +971,7 @@ html, body {
   align-items: center;
   justify-content: space-between;
   padding: 16px 22px;
-  border-bottom: 1px solid var(--card-border);
+  border-bottom: 1.5px solid var(--card-border);
 }
 .modal-header h2 {
   font-family: var(--font-heading);
@@ -972,14 +997,14 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition: all 0.15s ease;
 }
 .modal-close-btn:hover {
   background: var(--card-bg);
   color: var(--text-main);
 }
 
-/* ── 11. TOOLTIP & PRINT STYLES ── */
+/* ── 9. SCIENTIFIC TOOLTIP ── */
 .sci-tooltip {
   position: relative;
   display: inline-block;
@@ -1013,34 +1038,124 @@ html, body {
   opacity: 1;
 }
 
-@media print {
-  .top-navbar, .nav-actions, .theme-toggle-group, #soundToggleBtn, #examTimerBtn, button, .modal-overlay, .header-actions {
+/* ── 10. MOBILE RESPONSIVE RULES ── */
+@media (max-width: 768px) {
+  .ribbon-full {
     display: none !important;
   }
-  body {
-    background: #FFFFFF !important;
-    color: #000000 !important;
-    font-size: 10pt;
-    padding-top: 0 !important;
+  .ribbon-mobile {
+    display: inline !important;
   }
+  .btn-text-full {
+    display: none !important;
+  }
+  .btn-text-short {
+    display: inline !important;
+  }
+
+  .candidate-top-ribbon {
+    font-size: 0.68rem;
+    padding: 3px 8px;
+    gap: 4px;
+    line-height: 1.25;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .top-navbar {
+    padding: 6px 10px;
+    gap: 6px;
+  }
+
+  .nav-modules-pill {
+    display: none !important;
+  }
+
+  .seal-crest-small {
+    width: 28px;
+    height: 28px;
+    font-size: 0.95rem;
+  }
+
+  .nav-brand-academic span {
+    font-size: 0.92rem !important;
+  }
+
+  .brand-subtagline {
+    display: none !important;
+  }
+
+  .nav-actions {
+    gap: 4px;
+  }
+
+  .session-timer-badge {
+    padding: 3px 6px !important;
+    font-size: 0.72rem !important;
+  }
+
+  .knec-exam-subbar {
+    padding: 4px 10px;
+    gap: 10px;
+    font-size: 0.68rem;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .page-container {
-    max-width: 100% !important;
-    padding: 0 !important;
+    padding: 10px 8px 90px !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
   }
-  .page-header, .task-card, .kcse-question-block, .id-panel {
-    border: 1px solid #000000 !important;
-    background: #FFFFFF !important;
-    color: #000000 !important;
-    box-shadow: none !important;
-    page-break-inside: avoid;
+
+  .page-header {
+    padding: 12px !important;
+    margin-bottom: 12px !important;
   }
+
+  .page-header-title {
+    font-size: 1.05rem !important;
+  }
+
+  .task-card {
+    padding: 12px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .test-layout-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .kcse-question-block {
+    padding: 12px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .apparatus-stage {
+    min-height: 180px !important;
+    padding: 10px !important;
+  }
+
+  .id-row {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .knec-table {
+    font-size: 0.76rem !important;
+    min-width: 290px !important;
+  }
+
   .knec-table th, .knec-table td {
-    border: 1px solid #000000 !important;
-    color: #000000 !important;
+    padding: 6px 8px !important;
   }
 }
 
-/* ── 12. ORGANIC ANIMATIONS ── */
+/* ── 11. ANIMATIONS ── */
 @keyframes sootRise {
   0% { transform: translateY(0) scale(0.6); opacity: 0.9; }
   35% { transform: translateY(-16px) scale(1.05) translateX(3px); opacity: 0.75; }

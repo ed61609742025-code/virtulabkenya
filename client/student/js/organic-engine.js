@@ -404,6 +404,14 @@
     const txt = document.getElementById('progressCount');
     if (fill) fill.style.width = `${pct}%`;
     if (txt) txt.textContent = `${performedCount} / ${totalTests} Tests Performed (${filledCount} Recorded)`;
+
+    if (window.BrilliantUI) {
+      window.BrilliantUI.renderSegmentedProgress('organicStepProgress', totalTests, performedCount);
+    }
+    const badge = document.getElementById('organicStepBadge');
+    if (badge) {
+      badge.textContent = `${performedCount} of ${totalTests} Tests Done`;
+    }
   }
 
   /* ══════════════════════════════════════
@@ -958,34 +966,36 @@
               </div>
 
               <!-- KCSE Observation & Inference Table -->
-              <table class="knec-table">
-                <thead>
-                  <tr>
-                    <th style="width:50%;">
-                      <span class="sci-tooltip">Observations <span class="sci-tip-text">Observations: Record clear sensory evidence — colour changes, sooty flame, effervescence, or fruity scent.</span></span> (0.7 Mark)
-                    </th>
-                    <th style="width:50%;">
-                      <span class="sci-tooltip">Inferences <span class="sci-tip-text">Inferences: Deduce active functional groups (e.g. -C=C-, R-OH, R-COOH, Polar/Non-polar).</span></span> (0.7 Mark)
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <textarea class="kcse-input" id="obs_${test.key}" placeholder="Write exact observations (e.g. Reddish-brown bromine water is decolourized)..." oninput="saveTextState('${test.key}')">${st.obsText || ''}</textarea>
-                      <div class="suggestion-chips-container">
-                        ${getObsSuggestionChips(test.key)}
-                      </div>
-                    </td>
-                    <td>
-                      <textarea class="kcse-input" id="inf_${test.key}" placeholder="Write deductions (e.g. -C=C- or -C≡C- present)..." oninput="saveTextState('${test.key}')">${st.infText || ''}</textarea>
-                      <div class="suggestion-chips-container">
-                        ${getInfSuggestionChips(test.key)}
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div class="table-responsive">
+                <table class="knec-table">
+                  <thead>
+                    <tr>
+                      <th style="width:50%;">
+                        <span class="sci-tooltip">Observations <span class="sci-tip-text">Observations: Record clear sensory evidence — colour changes, sooty flame, effervescence, or fruity scent.</span></span> (0.7 Mark)
+                      </th>
+                      <th style="width:50%;">
+                        <span class="sci-tooltip">Inferences <span class="sci-tip-text">Inferences: Deduce active functional groups (e.g. -C=C-, R-OH, R-COOH, Polar/Non-polar).</span></span> (0.7 Mark)
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <textarea class="kcse-input" id="obs_${test.key}" placeholder="Write exact observations (e.g. Reddish-brown bromine water is decolourized)..." oninput="saveTextState('${test.key}')">${st.obsText || ''}</textarea>
+                        <div class="suggestion-chips-container">
+                          ${getObsSuggestionChips(test.key)}
+                        </div>
+                      </td>
+                      <td>
+                        <textarea class="kcse-input" id="inf_${test.key}" placeholder="Write deductions (e.g. -C=C- or -C≡C- present)..." oninput="saveTextState('${test.key}')">${st.infText || ''}</textarea>
+                        <div class="suggestion-chips-container">
+                          ${getInfSuggestionChips(test.key)}
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>`;
@@ -1037,6 +1047,8 @@
     const sample = SAMPLES[currentSampleKey];
     const badge = document.getElementById('sampleIdBadge');
     if (badge) badge.textContent = `Sample: ${sample.label}`;
+    const subbarSample = document.getElementById('knecSubbarSample');
+    if (subbarSample) subbarSample.textContent = sample.label;
 
     testStates = {};
     const fgSelect = document.getElementById('fgSelect');
@@ -1255,6 +1267,8 @@
     const sample = SAMPLES[currentSampleKey];
     const badge = document.getElementById('sampleIdBadge');
     if (badge) badge.textContent = `Sample: ${sample.label}`;
+    const subbarSample = document.getElementById('knecSubbarSample');
+    if (subbarSample) subbarSample.textContent = sample.label;
 
     renderGrid();
     updateProgress();

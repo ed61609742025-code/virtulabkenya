@@ -36,11 +36,8 @@
 <header class="academic-top-header">
   <!-- Institutional Candidate Ribbon -->
   <div class="candidate-top-ribbon">
-    <span>🇰🇪 REPUBLIC OF KENYA • KCSE CHEMISTRY PRACTICAL WORKSTATION</span>
-    <span>•</span>
-    <span>KNEC CODE: <span class="code-tag">CHEMISTRY 233/3</span></span>
-    <span>•</span>
-    <span>QUESTION 1: VOLUMETRIC ANALYSIS BENCH</span>
+    <span class="ribbon-full">🇰🇪 REPUBLIC OF KENYA • KCSE CHEMISTRY PRACTICAL WORKSTATION • KNEC 233/3 • Q1: VOLUMETRIC ANALYSIS</span>
+    <span class="ribbon-mobile">🇰🇪 KCSE 233/3 · Volumetric Analysis (Titration)</span>
   </div>
 
   <!-- Topbar Navigation Bar -->
@@ -48,68 +45,105 @@
     <a href="/student/home.html" class="nav-brand-academic" title="Back to Student Workstation">
       <div class="seal-crest-small" title="VirtuLab Kenya Seal">⚗️</div>
       <div style="display:flex; flex-direction:column;">
-        <span style="font-weight:800; font-family:'Cinzel', serif; font-size:1.05rem; line-height:1.1; color:var(--heading-color);">VirtuLab Kenya</span>
-        <span class="brand-subtagline" style="font-size:0.65rem; font-family:'Newsreader', serif; font-style:italic; color:var(--cyan-accent); letter-spacing:0.01em;">National Practical Chemistry Workstation</span>
+        <span style="font-weight:800; font-family:'Cinzel', serif; font-size:1.05rem; line-height:1.1; color:var(--heading-color);">VirtuLab</span>
+        <span class="brand-subtagline" style="font-size:0.65rem; font-family:'Newsreader', serif; font-style:italic; color:var(--cyan-accent); letter-spacing:0.01em;">Titration Bench</span>
       </div>
     </a>
 
-    <div style="display:flex; align-items:center; gap:3px; background:var(--card-bg); border:1px solid var(--card-border); padding:2px 4px; border-radius:6px; overflow-x:auto;">
-      <a href="lab.html" class="nav-btn-chip active" style="text-decoration:none; font-size:0.72rem; padding:3px 8px; border-radius:4px; background:var(--blue-accent); color:#FFF; font-weight:700; font-family:'Plus Jakarta Sans', sans-serif;">🧪 Titration</a>
-      <a href="qualitative.html" class="nav-btn-chip" style="text-decoration:none; font-size:0.72rem; padding:3px 8px; border-radius:4px; color:var(--text-muted); font-weight:600; font-family:'Plus Jakarta Sans', sans-serif;">🔍 Qualitative</a>
-      <a href="organic.html" class="nav-btn-chip" style="text-decoration:none; font-size:0.72rem; padding:3px 8px; border-radius:4px; color:var(--text-muted); font-weight:600; font-family:'Plus Jakarta Sans', sans-serif;">⚗️ Organic</a>
-      <a href="solubility.html" class="nav-btn-chip" style="text-decoration:none; font-size:0.72rem; padding:3px 8px; border-radius:4px; color:var(--text-muted); font-weight:600; font-family:'Plus Jakarta Sans', sans-serif;">🌡️ Solubility</a>
-      <a href="energy.html" class="nav-btn-chip" style="text-decoration:none; font-size:0.72rem; padding:3px 8px; border-radius:4px; color:var(--text-muted); font-weight:600; font-family:'Plus Jakarta Sans', sans-serif;">🔥 Energy</a>
-      <a href="rates.html" class="nav-btn-chip" style="text-decoration:none; font-size:0.72rem; padding:3px 8px; border-radius:4px; color:var(--text-muted); font-weight:600; font-family:'Plus Jakarta Sans', sans-serif;">⚡ Rates</a>
-      <a href="composite_exam.html" class="nav-btn-chip" style="text-decoration:none; font-size:0.72rem; padding:3px 8px; border-radius:4px; color:var(--text-muted); font-weight:600; font-family:'Plus Jakarta Sans', sans-serif;">📝 Exam</a>
+    <!-- Desktop Workbench Switcher (Hidden on Mobile) -->
+    <div class="nav-modules-pill">
+      <a href="lab.html" class="theme-btn-chip active">🧪 Titration</a>
+      <a href="qualitative.html" class="theme-btn-chip">🔍 Qualitative</a>
+      <a href="organic.html" class="theme-btn-chip">⚗️ Organic</a>
+      <a href="solubility.html" class="theme-btn-chip">🌡️ Solubility</a>
+      <a href="energy.html" class="theme-btn-chip">🔥 Energy</a>
+      <a href="rates.html" class="theme-btn-chip">⚡ Rates</a>
+      <a href="composite_exam.html" class="theme-btn-chip">📝 Exam</a>
     </div>
 
     <div class="nav-actions">
-      <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:6px;padding:4px 10px;font-size:0.75rem;font-weight:700;color:var(--cyan-accent);display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;">
+      <!-- Session Timer Badge -->
+      <div class="session-timer-badge" style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:6px;padding:4px 8px;font-size:0.75rem;font-weight:700;color:var(--cyan-accent);display:flex;align-items:center;gap:4px;font-family:'JetBrains Mono',monospace;">
         <span>⏱️</span>
         <span id="sessionTimerText">00:00</span>
       </div>
 
-      <!-- Language Selector Controls -->
-      <div class="theme-toggle-group" title="Switch language / Lugha">
-        <button type="button" class="theme-btn-chip lang-btn-chip active" data-lang="en" onclick="setLanguage('en')">🇬🇧 EN</button>
-        <button type="button" class="theme-btn-chip lang-btn-chip" data-lang="sw" onclick="setLanguage('sw')">🇰🇪 SW</button>
+      <!-- Guided Tutorial Button -->
+      <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm" onclick="TutorialEngine.start('titration')" style="padding:4px 8px; font-size:0.75rem; white-space:nowrap;">
+        🧭 <span class="btn-text-full">Guided Tutorial</span><span class="btn-text-short">Tutorial</span>
+      </button>
+
+      <!-- Reagent Safety (SDS) Button -->
+      <button class="nav-btn nav-btn-safety" onclick="window.VLKSafety && window.VLKSafety.openSDSModal('HCl')" title="View Chemical Safety & SDS Hazards" style="padding:4px 8px; font-size:0.75rem;">
+        ⚠️ <span class="btn-text-full">SDS</span>
+      </button>
+
+      <!-- Settings Dropdown Button -->
+      <div style="position:relative;">
+        <button type="button" class="nav-btn nav-btn-settings" onclick="toggleBenchSettings(event)" title="Workbench Settings & Tools" style="padding:4px 8px; font-size:0.75rem;">
+          ⚙️ <span class="btn-text-full">Settings</span>
+        </button>
+        
+        <div id="benchSettingsDropdown" style="display:none; position:absolute; right:0; top:36px; width:240px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; box-shadow:var(--shadow-lg); z-index:100000; padding:12px; flex-direction:column; gap:10px; text-align:left;">
+          <!-- Sound Toggle -->
+          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Sound Effects</span>
+            <button type="button" id="soundToggleBtn" onclick="toggleSound()" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border);">🔊 Sound ON</button>
+          </div>
+
+          <!-- Scratchpad Toggle -->
+          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Scratchpad</span>
+            <button type="button" onclick="toggleScratchpad()" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border);">📝 Rough Work</button>
+          </div>
+
+          <!-- Language Selector Row -->
+          <div style="display:flex; flex-direction:column; gap:6px; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Language / Lugha</span>
+            <div class="theme-toggle-group" style="width:100%;">
+              <button class="theme-btn-chip lang-btn-chip active" style="flex:1;" data-lang="en" onclick="setLanguage('en')">🇬🇧 EN</button>
+              <button class="theme-btn-chip lang-btn-chip" style="flex:1;" data-lang="sw" onclick="setLanguage('sw')">🇰🇪 SW</button>
+            </div>
+          </div>
+
+          <!-- Theme Selector Row -->
+          <div style="display:flex; flex-direction:column; gap:6px; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Appearance Theme</span>
+            <div class="theme-toggle-group" style="width:100%;">
+              <button class="theme-btn-chip" style="flex:1;" data-theme="light" onclick="setTheme('light')">☀️ Light</button>
+              <button class="theme-btn-chip active" style="flex:1;" data-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
+              <button class="theme-btn-chip" style="flex:1;" data-theme="green" onclick="setTheme('green')">🧪 Lab</button>
+            </div>
+          </div>
+
+          <button onclick="window.print()" style="background:var(--card-bg-hover);border:1px solid var(--card-border);color:var(--text-main);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
+            🖨️ Print Practical Booklet
+          </button>
+        </div>
       </div>
 
-      <!-- Theme Switcher Controls -->
-      <div class="theme-toggle-group" title="Switch appearance theme">
-        <button type="button" class="theme-btn-chip" data-theme="light" onclick="setTheme('light')" title="Paper Theme">☀️ Paper</button>
-        <button type="button" class="theme-btn-chip" data-theme="dark" onclick="setTheme('dark')" title="Dark Theme">🌙 Dark</button>
-        <button type="button" class="theme-btn-chip" data-theme="green" onclick="setTheme('green')" title="Lab Theme">🧪 Lab</button>
-      </div>
-
-      <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm" onclick="TutorialEngine.start('titration')" style="padding:4px 10px; font-size:0.75rem;">🧭 Guided Tutorial</button>
-      <button type="button" class="btn-back-link" id="soundToggleBtn" onclick="toggleSound()" style="cursor:pointer; padding:4px 8px; font-size:0.75rem; border-radius:6px;">🔊 Sound</button>
-      <button type="button" class="btn-back-link" style="cursor:pointer; padding:4px 8px; font-size:0.75rem; border-radius:6px;" onclick="toggleScratchpad()" data-i18n="scratchpad">📝 Scratchpad</button>
-      <a href="/student/home.html" class="btn-back-link" style="padding:4px 8px; font-size:0.75rem; border-radius:6px;" data-i18n="back">← Exit</a>
+      <!-- Exit Button -->
+      <a href="/student/home.html" class="btn-back-link" style="padding:4px 8px; font-size:0.75rem; border-radius:6px;" title="Exit to Workstation" data-i18n="back">← Exit</a>
     </div>
   </nav>
 
   <!-- Official KNEC Practical Ledger Sub-Header -->
   <div class="knec-exam-subbar">
     <div class="knec-subbar-item">
-      <span class="knec-subbar-label">Examination:</span>
-      <span class="knec-subbar-val">KCSE Chemistry 233/3 Practical</span>
-    </div>
-    <div class="knec-subbar-item">
       <span class="knec-subbar-label">Burette:</span>
       <span class="knec-subbar-val">50.0 cm³</span>
     </div>
     <div class="knec-subbar-item">
-      <span class="knec-subbar-label">Aliquot Volume:</span>
-      <span class="knec-subbar-val" id="knecSubbarAliquot">25.00 cm³ Pipette</span>
+      <span class="knec-subbar-label">Aliquot:</span>
+      <span class="knec-subbar-val" id="knecSubbarAliquot">25.00 cm³</span>
     </div>
     <div class="knec-subbar-item">
-      <span class="knec-subbar-label">Concordance Rule:</span>
-      <span class="knec-subbar-val">±0.10 cm³ Precision</span>
+      <span class="knec-subbar-label">Concordance:</span>
+      <span class="knec-subbar-val">±0.10 cm³</span>
     </div>
     <div class="knec-subbar-item" style="margin-left:auto;">
-      <span class="knec-subbar-label">Section 1 Marks:</span>
-      <span class="knec-subbar-val" style="color:var(--amber-accent); font-weight:800;">15.0 KCSE Marks</span>
+      <span class="knec-subbar-label">Max Score:</span>
+      <span class="knec-subbar-val" style="color:var(--amber-accent); font-weight:800;">15.0 Marks</span>
     </div>
   </div>
 </header>
@@ -358,8 +392,10 @@
           <div class="wb-card-title" data-i18n="results_table_title" style="margin:0; font-family:'Cinzel', serif;">📊 Table 1: Titre Volume Determination (KCSE Format) [5.0 Marks]</div>
           <span style="font-size:0.72rem; font-family:'Newsreader', serif; font-style:italic; color:var(--text-muted);">KNEC Rubric: Concordant within ±0.10 cm³ · Complete Table & Accuracy</span>
         </div>
-        <div id="trialsList">
-          <div class="empty" style="text-align:center;padding:16px;color:var(--text-muted);font-size:0.85rem;">No trials recorded yet.</div>
+        <div class="table-responsive">
+          <div id="trialsList">
+            <div class="empty" style="text-align:center;padding:16px;color:var(--text-muted);font-size:0.85rem;">No trials recorded yet.</div>
+          </div>
         </div>
       </div>
 

@@ -954,6 +954,154 @@ requireTeacherLogin();
   window.viewRatesCard = viewRatesCard;
   window.loadRatesSessions = loadRatesSessions;
 
+  // ── Gas Preparation & Collection Sessions ───────────────────────────
+  let gasSessionsStore = [];
+  async function loadGasSessions() {
+    const box = document.getElementById('gasSessionsBox');
+    if (!box) return;
+    box.innerHTML = '<div class="empty">Loading gas preparation sessions…</div>';
+    try {
+      const data = typeof Gas !== 'undefined' ? await Gas.getClass() : (await apiRequest('GET', '/gas/class'));
+      gasSessionsStore = data.sessions || [];
+
+      if (gasSessionsStore.length === 0) {
+        box.innerHTML = '<div class="empty">No gas preparation practical sessions recorded yet.</div>';
+        return;
+      }
+
+      const rows = gasSessionsStore.map((s, idx) => {
+        const gasName = s.gas_name || s.gas_key || '—';
+        const drying = s.drying_agent || '—';
+        const collection = s.collection_method || '—';
+        const score = s.total_score != null ? Number(s.total_score).toFixed(1) + ' / 10.0' : '—';
+        const isGood = parseFloat(s.total_score || 0) >= 7.0;
+
+        return `
+          <tr>
+            <td><b>${escapeHtml(s.student_name || '—')}</b></td>
+            <td>${escapeHtml(s.student_form || 'Form 4')}</td>
+            <td><span style="font-weight:700;color:var(--heading-color);">${escapeHtml(gasName)}</span></td>
+            <td>${escapeHtml(drying)} ${s.drying_correct ? '✅' : '❌'}</td>
+            <td>${escapeHtml(collection)} ${s.collection_correct ? '✅' : '❌'}</td>
+            <td><span class="pill ${isGood ? 'pill-ok' : 'pill-warn'}">${score}</span></td>
+            <td>${new Date(s.created_at).toLocaleDateString()}</td>
+            <td>
+              <button class="btn btn-primary" style="padding:6px 14px;font-size:0.8rem;font-weight:700;" onclick="viewGasCard(${idx})">
+                👁️ View Card
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      box.innerHTML = `
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr><th>Student</th><th>Form</th><th>Gas Synthesized</th><th>Drying Agent</th><th>Collection Method</th><th>Score</th><th>Date</th><th>Action</th></tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      `;
+    } catch (err) {
+      box.innerHTML = '<div class="empty">Could not load gas preparation sessions: ' + escapeHtml(err.message) + '</div>';
+    }
+  }
+
+  function viewGasCard(idx) {
+    const s = gasSessionsStore[idx];
+    if (!s) return;
+
+    let modal = document.getElementById('gasCardModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'gasCardModal';
+      modal.className = 'modal-overlay';
+      modal.style.display = 'none';
+      document.body.appendChild(modal);
+    }
+
+    let rubrics = s.rubric_breakdown;
+    if (typeof rubrics === 'string') {
+      try { rubrics = JSON.parse(rubrics); } catch (e) { rubrics = {}; }
+    }
+    if (!rubrics || typeof rubrics !== 'object') rubrics = {};
+
+    let observations = s.test_observations;
+    if (typeof observations === 'string') {
+      try { observations = JSON.parse(observations); } catch (e) { observations = []; }
+    }
+    if (!Array.isArray(observations)) observations = [];
+
+    const rubricsHtml = Object.keys(rubrics).length > 0 ? `
+      <div style="margin-top:14px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;padding:14px;">
+        <div style="font-weight:800;font-size:0.88rem;color:var(--heading-color);margin-bottom:10px;">📋 KNEC Paper 3 10-Mark Rubric Breakdown:</div>
+        <div style="display:grid;grid-template-columns:1fr;gap:6px;">
+          ${Object.entries(rubrics).map(([k, v]) => `
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 10px;background:var(--card-bg-hover);border-radius:6px;font-size:0.82rem;">
+              <span style="font-weight:600;text-transform:capitalize;">${escapeHtml(k.replace(/([A-Z])/g, ' $1'))}</span>
+              <span style="font-family:var(--font-mono);font-weight:800;color:${v > 0 ? 'var(--green-accent)' : 'var(--red-accent)'};">${v} pts</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    ` : '';
+
+    modal.innerHTML = `
+      <div class="modal-card" style="max-width:800px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--card-border);padding-bottom:12px;margin-bottom:16px;">
+          <div>
+            <h2 style="font-size:1.15rem;margin:0;color:var(--heading-color);font-family:var(--font-heading);font-weight:800;">💨 Gas Preparation & Confirmatory Testing Candidate Card</h2>
+            <div style="font-size:0.82rem;color:var(--text-muted);">
+              Student: <b>${escapeHtml(s.student_name || 'Student')}</b> (${escapeHtml(s.student_form || 'Form 4')}) &nbsp;·&nbsp; Submitted: ${new Date(s.created_at).toLocaleString()}
+            </div>
+          </div>
+          <button class="btn" onclick="document.getElementById('gasCardModal').style.display='none'" style="padding:4px 12px;">✕ Close</button>
+        </div>
+
+        <div style="background:var(--card-bg-hover);border:1.5px solid var(--cyan-accent);border-radius:12px;padding:16px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+          <div>
+            <div style="font-size:0.78rem;color:var(--text-muted);text-transform:uppercase;font-weight:800;">Gas Synthesized</div>
+            <div style="font-size:1.2rem;font-weight:900;color:var(--heading-color);margin-top:2px;">${escapeHtml(s.gas_name || s.gas_key)}</div>
+          </div>
+          <div>
+            <span class="pill pill-ok" style="font-size:0.95rem;padding:6px 16px;font-weight:800;">
+              Total Score: ${Number(s.total_score || 0).toFixed(1)} / 10.0 Marks
+            </span>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:12px;margin-bottom:16px;">
+          <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;padding:12px;text-align:center;">
+            <div style="font-size:0.75rem;color:var(--text-muted);">Drying Agent Choice</div>
+            <div style="font-size:1rem;font-weight:800;color:${s.drying_correct ? 'var(--green-accent)' : 'var(--red-accent)'};margin-top:4px;">
+              ${escapeHtml(s.drying_agent || 'None')} ${s.drying_correct ? '✓' : '✗'}
+            </div>
+          </div>
+          <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;padding:12px;text-align:center;">
+            <div style="font-size:0.75rem;color:var(--text-muted);">Collection Method</div>
+            <div style="font-size:1rem;font-weight:800;color:${s.collection_correct ? 'var(--green-accent)' : 'var(--red-accent)'};margin-top:4px;">
+              ${escapeHtml(s.collection_method || 'None')} ${s.collection_correct ? '✓' : '✗'}
+            </div>
+          </div>
+          <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;padding:12px;text-align:center;">
+            <div style="font-size:0.75rem;color:var(--text-muted);">Confirmatory Tests</div>
+            <div style="font-size:1rem;font-weight:800;color:var(--cyan-accent);margin-top:4px;">
+              ${s.tests_correct || 0} / ${s.tests_performed || 0} Correct
+            </div>
+          </div>
+        </div>
+
+        ${rubricsHtml}
+      </div>
+    `;
+
+    modal.style.display = 'flex';
+  }
+  window.viewGasCard = viewGasCard;
+  window.loadGasSessions = loadGasSessions;
+
   function toggleDetail(sessionId) {
     const row = document.getElementById('detail-' + sessionId);
     if (row) row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
@@ -2233,6 +2381,7 @@ requireTeacherLogin();
   loadSolubilitySessions();
   loadEnergySessions();
   loadRatesSessions();
+  loadGasSessions();
   loadCompositeSessions();
   loadLeaderboard();
   loadAnalytics();

@@ -293,15 +293,26 @@
 <script src="../shared/chemical-safety.js"></script>
 <script src="../shared/brilliant-ui.js"></script>
 <script src="../shared/tutorial-engine.js"></script>
+<script src="../shared/ai-tutor.js"></script>
 <script src="js/gas-prep-engine.js"></script>
 
 <script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const assignmentId = urlParams.get('assignment') ? parseInt(urlParams.get('assignment'), 10) : null;
+
   let engine = new GasPrepEngine();
 
   if (window.TutorialEngine) {
     window.TutorialEngine.init({
       discipline: 'gas_prep',
       containerId: 'tutorialDrawer'
+    });
+  }
+
+  if (window.AITutor) {
+    AITutor.init({
+      module: 'gas_prep',
+      assignmentId: assignmentId
     });
   }
 
@@ -443,6 +454,7 @@
 
   async function saveSession() {
     const payload = engine.buildSessionPayload();
+    if (assignmentId) payload.assignment_id = assignmentId;
     try {
       if (window.API && API.saveGasSession) {
         await API.saveGasSession(payload);

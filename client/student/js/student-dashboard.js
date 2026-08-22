@@ -218,6 +218,9 @@ requireStudentLogin();
         } else if (a.titration_type === 'rates' || a.titration_type === 'kinetics') {
           targetUrl = `rates.html?assignment=${a.id}`;
           battleMode = 'energy';
+        } else if (a.titration_type === 'gas' || a.titration_type === 'gasPrep') {
+          targetUrl = `gas_prep.html?assignment=${a.id}`;
+          battleMode = 'qualitative';
         } else if (a.titration_type === 'kcseComposite') {
           targetUrl = `composite_exam.html?assignment=${a.id}`;
           battleMode = 'blitz';
@@ -457,26 +460,32 @@ requireStudentLogin();
       complexometric: 0,
       qualitative: 0,
       organic: 0,
-      solubility: 0
+      solubility: 0,
+      energy: 0,
+      rates: 0,
+      gas: 0
     };
 
     let correctCount = 0;
 
     sessions.forEach(s => {
-      const type = (s.titration_title || s.titration_type || s.titrationKey || s.salt_key || s.compound_name || s.solute_key || s.experiment_title || '').toLowerCase();
+      const type = (s.titration_title || s.titration_type || s.titrationKey || s.salt_key || s.compound_name || s.solute_key || s.experiment_title || s.gas_key || '').toLowerCase();
       if (type.includes('redox')) topicCounts.redox++;
       else if (type.includes('precipit')) topicCounts.precipitation++;
       else if (type.includes('complex')) topicCounts.complexometric++;
       else if (type.includes('qualitative') || s.salt_key) topicCounts.qualitative++;
       else if (type.includes('organic') || s.compound_name) topicCounts.organic++;
       else if (type.includes('solubility') || s.solute_key) topicCounts.solubility++;
+      else if (type.includes('energy') || s.system_id || s.reaction_category) topicCounts.energy++;
+      else if (type.includes('rate') || s.experiment_type) topicCounts.rates++;
+      else if (type.includes('gas') || s.gas_key) topicCounts.gas++;
       else topicCounts.acidBase++;
 
-      if (s.correct || (s.total_score != null && s.total_score >= 3.0)) correctCount++;
+      if (s.correct || (s.total_score != null && s.total_score >= 3.0) || (s.score_pct != null && s.score_pct >= 50)) correctCount++;
     });
 
     const coveredTopics = Object.values(topicCounts).filter(cnt => cnt > 0).length;
-    const topicScore = (coveredTopics / 7) * 50;
+    const topicScore = (coveredTopics / 10) * 50;
     const accuracyPct = sessions.length > 0 ? (correctCount / sessions.length) * 100 : 0;
     const accuracyScore = (accuracyPct / 100) * 30;
     const volumeScore = Math.min(sessions.length, 10) * 2;
@@ -1114,11 +1123,14 @@ requireStudentLogin();
 
     try {
       // Parallel fetch across all student modules for complete performance aggregation
-      const [titrationRes, qualRes, organicRes, solubilityRes, compositeRes, badgesRes] = await Promise.allSettled([
+      const [titrationRes, qualRes, organicRes, solubilityRes, energyRes, ratesRes, gasRes, compositeRes, badgesRes] = await Promise.allSettled([
         typeof Sessions !== 'undefined' ? Sessions.getMine({ limit: 100 }) : Promise.resolve({ sessions: [] }),
         typeof Qualitative !== 'undefined' ? Qualitative.getMine({ limit: 100 }) : Promise.resolve({ sessions: [] }),
         typeof Organic !== 'undefined' ? Organic.getMine() : Promise.resolve({ sessions: [] }),
         typeof Solubility !== 'undefined' ? Solubility.getMine() : Promise.resolve({ sessions: [] }),
+        typeof Energy !== 'undefined' ? Energy.getMine() : Promise.resolve({ sessions: [] }),
+        typeof Rates !== 'undefined' ? Rates.getMine() : Promise.resolve({ sessions: [] }),
+        typeof Gas !== 'undefined' ? Gas.getMine() : Promise.resolve({ sessions: [] }),
         typeof Composite !== 'undefined' ? Composite.getMine() : Promise.resolve({ sessions: [] }),
         typeof Badges !== 'undefined' ? Badges.getMine() : Promise.resolve({ badges: [] })
       ]);
@@ -1127,9 +1139,12 @@ requireStudentLogin();
       const qualSessions = qualRes.status === 'fulfilled' ? (qualRes.value?.sessions || qualRes.value?.history || []) : [];
       const organicSessions = organicRes.status === 'fulfilled' ? (organicRes.value?.sessions || []) : [];
       const solubilitySessions = solubilityRes.status === 'fulfilled' ? (solubilityRes.value?.sessions || []) : [];
+      const energySessions = energyRes.status === 'fulfilled' ? (energyRes.value?.sessions || []) : [];
+      const ratesSessions = ratesRes.status === 'fulfilled' ? (ratesRes.value?.sessions || []) : [];
+      const gasSessions = gasRes.status === 'fulfilled' ? (gasRes.value?.sessions || []) : [];
       const compositeSessions = compositeRes.status === 'fulfilled' ? (compositeRes.value?.sessions || []) : [];
 
-      const allSessions = [...titrationSessions, ...qualSessions, ...organicSessions, ...solubilitySessions, ...compositeSessions];
+      const allSessions = [...titrationSessions, ...qualSessions, ...organicSessions, ...solubilitySessions, ...energySessions, ...ratesSessions, ...gasSessions, ...compositeSessions];
       window.latestSessions = allSessions;
 
       const totalCount = allSessions.length;

@@ -181,6 +181,11 @@ router.get('/:id/drilldown', authMiddleware, authMiddleware.requireRole('teacher
       [studentId]
     );
 
+    const gasResult = await pool.query(
+      `SELECT * FROM gas_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`,
+      [studentId]
+    );
+
     const titrationSessions = titrationResult.rows;
     const qualitativeSessions = qualitativeResult.rows;
     const organicSessions = organicResult.rows;
@@ -188,6 +193,7 @@ router.get('/:id/drilldown', authMiddleware, authMiddleware.requireRole('teacher
     const compositeSessions = compositeResult.rows;
     const energySessions = energyResult.rows;
     const ratesSessions = ratesResult.rows;
+    const gasSessions = gasResult.rows;
 
     // Compute badges dynamically
     const badgeRoutes = require('./badges');
@@ -220,11 +226,15 @@ router.get('/:id/drilldown', authMiddleware, authMiddleware.requireRole('teacher
     const totalComposite = compositeSessions.length;
     const correctComposite = compositeSessions.filter(s => parseFloat(s.total_score || 0) >= 20.0).length;
 
-    const totalSessions = totalTitration + totalQualitative + totalOrganic + totalSolubility + totalEnergy + totalRates + totalComposite;
-    const totalCorrect = correctTitration + correctQualitative + correctOrganic + correctSolubility + correctEnergy + correctRates + correctComposite;
+    const totalGas = gasSessions.length;
+    const correctGas = gasSessions.filter(s => s.correct || parseFloat(s.total_score || 0) >= 6.0).length;
+
+    const totalSessions = totalTitration + totalQualitative + totalOrganic + totalSolubility + totalEnergy + totalRates + totalComposite + totalGas;
+    const totalCorrect = correctTitration + correctQualitative + correctOrganic + correctSolubility + correctEnergy + correctRates + correctComposite + correctGas;
     const overallAccuracy = totalSessions > 0 ? Math.round((totalCorrect / totalSessions) * 100) : 0;
     const totalDuration = titrationSessions.reduce((acc, s) => acc + (s.duration_seconds || 0), 0) +
-                          compositeSessions.reduce((acc, s) => acc + (s.duration_seconds || 0), 0);
+                          compositeSessions.reduce((acc, s) => acc + (s.duration_seconds || 0), 0) +
+                          gasSessions.reduce((acc, s) => acc + (s.duration_seconds || 0), 0);
 
     return res.json({
       student,
@@ -237,6 +247,7 @@ router.get('/:id/drilldown', authMiddleware, authMiddleware.requireRole('teacher
         totalEnergy,
         totalRates,
         totalComposite,
+        totalGas,
         overallAccuracy,
         totalDurationSeconds: totalDuration,
         badgesCount: unlockedBadges.length
@@ -248,6 +259,7 @@ router.get('/:id/drilldown', authMiddleware, authMiddleware.requireRole('teacher
       energySessions,
       ratesSessions,
       compositeSessions,
+      gasSessions,
       badges: unlockedBadges
     });
 }));

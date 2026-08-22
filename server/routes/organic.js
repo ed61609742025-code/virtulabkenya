@@ -61,10 +61,6 @@ router.post('/', apiLimiter, authMiddleware, asyncHandler(async (req, res) => {
     mode
   });
 
-  if (assignment_id) {
-    await organicRepo.linkAssignmentSubmission(assignment_id, student_id);
-  }
-
   return res.status(201).json({
     message: 'Organic chemistry session saved successfully.',
     session: savedSession

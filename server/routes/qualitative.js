@@ -61,10 +61,6 @@ router.post('/', apiLimiter, authMiddleware, validateQualitativeSave, asyncHandl
     assignmentId
   });
 
-  if (assignmentId) {
-    await qualitativeRepo.linkAssignmentSubmission(assignmentId, studentId);
-  }
-
   return res.status(201).json({
     message: 'Qualitative analysis session saved successfully.',
     session: savedSession

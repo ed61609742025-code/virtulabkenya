@@ -58,10 +58,6 @@ router.post('/', apiLimiter, authMiddleware, validateSessionSave, asyncHandler(a
     assignmentId
   });
 
-  if (assignmentId) {
-    await sessionRepo.linkAssignmentSubmission(assignmentId, studentId);
-  }
-
   return res.status(201).json({ session });
 }));
 

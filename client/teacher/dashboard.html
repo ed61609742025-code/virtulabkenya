@@ -86,6 +86,9 @@
     <button class="sidebar-nav-btn" id="btnTabRates" onclick="switchTeacherTab('paneRates')">
       <span>⚡ Reaction Rates</span>
     </button>
+    <button class="sidebar-nav-btn" id="btnTabGas" onclick="switchTeacherTab('paneGas')">
+      <span>💨 Gas Preparation</span>
+    </button>
     <button class="sidebar-nav-btn" id="btnTabComposite" onclick="switchTeacherTab('paneComposite')">
       <span>📋 Composite Mock Exams</span>
     </button>
@@ -340,6 +343,13 @@
       <div id="ratesSessionsBox"><div class="empty">Loading reaction rates sessions…</div></div>
     </div>
 
+    <!-- Tab Pane: Gas Preparation & Collection -->
+    <div id="paneGas" class="tab-pane">
+      <h2 class="section-title">💨 Gas Preparation & Collection Sessions</h2>
+      <p class="hint" style="margin-bottom:14px;">All inorganic gas synthesis, drying agent selections, collection apparatus setups, and confirmatory testing scorecards.</p>
+      <div id="gasSessionsBox"><div class="empty">Loading gas preparation sessions…</div></div>
+    </div>
+
     <!-- Tab Pane 7: Composite Exams -->
     <div id="paneComposite" class="tab-pane">
       <h2 class="section-title">📋 KCSE Composite Practical Exams (40 Marks)</h2>
@@ -449,6 +459,7 @@
       'paneSolubility': 'btnTabSolubility',
       'paneEnergy': 'btnTabEnergy',
       'paneRates': 'btnTabRates',
+      'paneGas': 'btnTabGas',
       'paneComposite': 'btnTabComposite',
       'paneLeaderboard': 'btnTabLeaderboard',
       'paneSettings': 'btnTabSettings'

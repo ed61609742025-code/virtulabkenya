@@ -50,24 +50,12 @@ async function saveRatesSession(data) {
 
   const result = await pool.query(query, values);
   if (assignment_id && result.rows[0]) {
-    await linkAssignmentSubmission(assignment_id, studentId, result.rows[0].id);
+    await linkAssignmentSubmission({ assignmentId: assignment_id, studentId, ratesSessionId: result.rows[0].id });
   }
   return result.rows[0];
 }
 
-async function linkAssignmentSubmission(assignmentId, studentId, sessionId = null) {
-  try {
-    await pool.query(
-      `INSERT INTO assignment_submissions (assignment_id, student_id, session_id, status, submitted_at)
-       VALUES ($1, $2, $3, 'submitted', NOW())
-       ON CONFLICT (assignment_id, student_id)
-       DO UPDATE SET session_id = COALESCE(EXCLUDED.session_id, assignment_submissions.session_id), status = 'submitted', submitted_at = NOW()`,
-      [assignmentId, studentId, sessionId]
-    );
-  } catch (subErr) {
-    console.warn('Could not record rates assignment submission:', subErr.message);
-  }
-}
+const { linkAssignmentSubmission } = require('./assignmentRepo');
 
 async function getStudentSessions(studentId) {
   const result = await pool.query(

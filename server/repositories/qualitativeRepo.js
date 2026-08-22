@@ -45,24 +45,12 @@ async function saveQualitativeSession(data) {
     ]
   );
   if (assignmentId && result.rows[0]) {
-    await linkAssignmentSubmission(assignmentId, studentId, result.rows[0].id);
+    await linkAssignmentSubmission({ assignmentId, studentId, qualitativeSessionId: result.rows[0].id });
   }
   return result.rows[0];
 }
 
-async function linkAssignmentSubmission(assignmentId, studentId, sessionId = null) {
-  try {
-    await pool.query(
-      `INSERT INTO assignment_submissions (assignment_id, student_id, session_id, status, submitted_at)
-       VALUES ($1, $2, $3, 'submitted', NOW())
-       ON CONFLICT (assignment_id, student_id)
-       DO UPDATE SET session_id = COALESCE(EXCLUDED.session_id, assignment_submissions.session_id), submitted_at = NOW()`,
-      [assignmentId, studentId, sessionId]
-    );
-  } catch (subErr) {
-    console.warn('Could not record qualitative assignment submission:', subErr.message);
-  }
-}
+const { linkAssignmentSubmission } = require('./assignmentRepo');
 
 async function getStudentSessions(studentId, { page = 1, limit = 10 } = {}) {
   const offset = (page - 1) * limit;

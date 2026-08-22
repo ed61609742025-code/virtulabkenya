@@ -58,7 +58,7 @@ async function saveSession(data) {
       ]
     );
     if (assignmentId && rows[0]) {
-      await linkAssignmentSubmission(assignmentId, studentId, rows[0].id);
+      await linkAssignmentSubmission({ assignmentId, studentId, sessionId: rows[0].id });
     }
     return rows[0];
   } catch (err) {
@@ -86,7 +86,7 @@ async function saveSession(data) {
         ]
       );
       if (assignmentId && rows[0]) {
-        await linkAssignmentSubmission(assignmentId, studentId, rows[0].id);
+        await linkAssignmentSubmission({ assignmentId, studentId, sessionId: rows[0].id });
       }
       return rows[0];
     }
@@ -94,19 +94,7 @@ async function saveSession(data) {
   }
 }
 
-async function linkAssignmentSubmission(assignmentId, studentId, sessionId = null) {
-  try {
-    await pool.query(
-      `INSERT INTO assignment_submissions (assignment_id, student_id, session_id, status, submitted_at)
-       VALUES ($1, $2, $3, 'submitted', NOW())
-       ON CONFLICT (assignment_id, student_id)
-       DO UPDATE SET session_id = COALESCE(EXCLUDED.session_id, assignment_submissions.session_id), submitted_at = NOW()`,
-      [assignmentId, studentId, sessionId]
-    );
-  } catch (subErr) {
-    console.warn('Could not record assignment submission:', subErr.message);
-  }
-}
+const { linkAssignmentSubmission } = require('./assignmentRepo');
 
 async function getStudentSessions(studentId, { page = 1, limit = 5, type } = {}) {
   const offset = (page - 1) * limit;

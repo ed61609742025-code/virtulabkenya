@@ -64,6 +64,9 @@ const PRECACHE_ASSETS = [
   '/student/css/energy.css',
   '/student/css/rates.css',
   '/student/css/gas-prep.css',
+  '/student/css/composite_exam.css',
+  '/student/css/speed-battle.css',
+  '/shared/page-transitions.js',
   '/student/js/skill-tree.js',
   '/student/js/titration-workbench.js',
   '/student/js/qualitative-engine.js',
@@ -84,7 +87,8 @@ const PRECACHE_ASSETS = [
   '/teacher/css/dashboard.css',
   '/teacher/js/teacher-dashboard.js',
   '/teacher/js/research-portal.js',
-  '/admin/dashboard.html'
+  '/admin/dashboard.html',
+  '/admin/css/admin.css'
 ];
 
 // Install Event — precache core offline assets with individual error tolerance

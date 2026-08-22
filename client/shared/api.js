@@ -310,7 +310,7 @@ if (typeof window !== 'undefined') {
 
 function isOfflineQueueable(endpoint, method) {
   if (method !== 'POST' && method !== 'PUT') return false;
-  const queueable = ['/sessions', '/qualitative', '/organic', '/composite', '/errors/client'];
+  const queueable = ['/sessions', '/qualitative', '/organic', '/composite', '/solubility', '/energy', '/rates', '/gas', '/research', '/errors/client'];
   return queueable.some(p => endpoint.startsWith(p));
 }
 

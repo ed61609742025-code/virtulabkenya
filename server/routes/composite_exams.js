@@ -58,10 +58,6 @@ router.post('/', apiLimiter, authMiddleware, validateCompositeSave, asyncHandler
     duration_seconds
   });
 
-  if (assignment_id) {
-    await compositeRepo.linkAssignmentSubmission(assignment_id, studentId);
-  }
-
   return res.status(201).json({
     message: 'Composite practical exam saved successfully.',
     session: savedSession,

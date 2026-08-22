@@ -103,6 +103,8 @@ router.post('/:id/remind', authMiddleware, authMiddleware.requireRole('teacher')
          SELECT es.student_id FROM energy_sessions es WHERE es.assignment_id = $2
          UNION
          SELECT rs.student_id FROM rates_sessions rs WHERE rs.assignment_id = $2
+         UNION
+         SELECT gs.student_id FROM gas_sessions gs WHERE gs.assignment_id = $2
        )`,
     [teacherId, assignmentId]
   );

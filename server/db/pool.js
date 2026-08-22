@@ -18,7 +18,7 @@ const isCloudDb = dbUrl.includes('.neon.tech') || dbUrl.includes('.supabase.co')
 const pool = new Pool({
   connectionString: dbUrl,
   ssl: isCloudDb ? { rejectUnauthorized: false } : false,
-  min: 1,
+  min: process.env.NODE_ENV === 'test' ? 0 : 1,
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 10000,

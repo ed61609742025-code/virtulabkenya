@@ -77,6 +77,17 @@ async function getClassAnalytics(teacherId) {
       FROM composite_sessions cs
       JOIN students s ON s.id = cs.student_id
       WHERE s.teacher_id = $1
+
+      UNION ALL
+
+      SELECT
+        gs.student_id,
+        gs.created_at,
+        'gas' AS practical_type,
+        (gs.total_score >= 6.0 OR gs.correct IS TRUE) AS is_correct
+      FROM gas_sessions gs
+      JOIN students s ON s.id = gs.student_id
+      WHERE s.teacher_id = $1
     )
   `;
 

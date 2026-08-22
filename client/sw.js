@@ -76,6 +76,7 @@ const PRECACHE_ASSETS = [
   '/student/js/rates-engine.js',
   '/student/js/gas-prep-engine.js',
   '/student/js/cpcat-engine.js',
+  '/student/js/composite-engine.js',
   '/student/js/survey-sus.js',
   '/student/js/student-dashboard.js',
   '/student/js/speed-battle.js',

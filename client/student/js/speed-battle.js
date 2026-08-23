@@ -1,6 +1,6 @@
 // ============================================================
-//  VirtuLab Kenya — Chemical Speed Battle Arena Engine
-//  Modern Arcade HUD, Precision Timers, Audio FX & Keyboard Shortcuts
+//  VirtuLab Kenya — Chemical Speed Battle & Diagnostic Arena Engine
+//  Modern Arcade Gamification, Rich Web Audio FX, Haptics & Precision Timers
 // ============================================================
 
 (function() {
@@ -334,7 +334,7 @@
   ];
 
   /* ══════════════════════════════════════
-     GAME MODES CONFIGURATION (ACADEMIC DOMAINS)
+     GAME MODES CONFIGURATION
   ══════════════════════════════════════ */
   const GAME_MODES = {
     'blitz': {
@@ -343,34 +343,30 @@
       icon: '📚',
       duration: 60,
       isSurvival: false,
-      launchText: '🚀 Begin Comprehensive Diagnostic (60s) →',
       filter: () => true
     },
     'survival': {
       key: 'survival',
-      name: 'High-Precision Drill',
+      name: 'Sudden Death',
       icon: '🎯',
       duration: 15,
       isSurvival: true,
-      launchText: '🎯 Begin High-Precision Drill (Zero-Error) →',
       filter: () => true
     },
     'qualitative': {
       key: 'qualitative',
-      name: 'Qualitative Salt Analysis',
+      name: 'Qualitative Analysis',
       icon: '🔬',
       duration: 45,
       isSurvival: false,
-      launchText: '🔬 Begin Qualitative Diagnostic (45s) →',
       filter: (q) => q.category.includes('Cation') || q.category.includes('Anion') || q.category.includes('Flame') || q.category.includes('Gas')
     },
     'organic': {
       key: 'organic',
-      name: 'Organic Functional Groups',
+      name: 'Organic Chemistry',
       icon: '⚗️',
       duration: 45,
       isSurvival: false,
-      launchText: '⚗️ Begin Organic Diagnostic (45s) →',
       filter: (q) => q.category.includes('Organic')
     },
     'titration': {
@@ -379,7 +375,6 @@
       icon: '⚖️',
       duration: 45,
       isSurvival: false,
-      launchText: '⚖️ Begin Volumetric Titration Drill (45s) →',
       filter: (q) => q.category.includes('Volumetric')
     },
     'energy': {
@@ -388,7 +383,6 @@
       icon: '🌡️',
       duration: 45,
       isSurvival: false,
-      launchText: '🌡️ Begin Kinetics & Energetics Drill (45s) →',
       filter: (q) => q.category.includes('Energy') || q.category.includes('Rates')
     },
     'daily_bite': {
@@ -397,8 +391,7 @@
       icon: '🔥',
       duration: 40,
       isSurvival: false,
-      launchText: '🔥 Begin Daily Chemistry Bite (40s) →',
-      filter: (q) => true
+      filter: () => true
     }
   };
 
@@ -417,48 +410,24 @@
   let shuffledQuestions = [];
   let isAnswerLocked = false;
   let isSoundEnabled = localStorage.getItem('virtulab_battle_sound') !== 'muted';
+  let targetWorkbenchUrl = null;
 
   /* ══════════════════════════════════════
-     MODE SELECTOR HANDLER
+     ENHANCED WEB AUDIO SYNTHESIZER
   ══════════════════════════════════════ */
-  window.selectGameMode = function(modeKey) {
-    if (!GAME_MODES[modeKey]) return;
-    currentModeKey = modeKey;
-
-    // Update active mode cards UI
-    Object.keys(GAME_MODES).forEach(k => {
-      const card = document.getElementById(`modeCard_${k}`);
-      if (card) {
-        if (k === modeKey) {
-          card.classList.add('active');
-        } else {
-          card.classList.remove('active');
-        }
-      }
-    });
-
-    // Update launch button text
-    const launchBtn = document.getElementById('launchBattleBtn');
-    if (launchBtn) {
-      launchBtn.textContent = GAME_MODES[modeKey].launchText;
-    }
-
-    updateStartCardBest();
-    playTone(680, 'sine', 0.08);
-  };
-
-  window.backToModeSelect = function() {
-    if (timerInterval) clearInterval(timerInterval);
-    window.location.href = 'home.html';
-  };
-
-  /* ══════════════════════════════════════
-     WEB AUDIO SYNTHESIZER SOUND FX
-  ══════════════════════════════════════ */
+  let audioCtx = null;
   function getAudioContext() {
     try {
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      return AudioCtx ? new AudioCtx() : null;
+      if (!audioCtx) {
+        const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtxClass) {
+          audioCtx = new AudioCtxClass();
+        }
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume().catch(() => {});
+      }
+      return audioCtx;
     } catch(e) {
       return null;
     }
@@ -482,25 +451,55 @@
     } catch(e) {}
   }
 
-  function playCorrectSound(streak) {
+  function playClickSound() {
     if (!isSoundEnabled) return;
     try {
       const ctx = getAudioContext();
       if (!ctx) return;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1100, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.04);
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.04);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.04);
+    } catch(e) {}
+  }
+
+  function playCorrectSound(streak = 1) {
+    if (!isSoundEnabled) return;
+    try {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+      const now = ctx.currentTime;
+      // Cheerful multi-note chime arpeggio (C5 -> E5 -> G5 -> C6)
       const baseFreq = 523.25; // C5
-      const notes = [baseFreq, baseFreq * 1.25, baseFreq * 1.5, baseFreq * (1 + streak * 0.2)];
-      
-      notes.forEach((freq, i) => {
+      const notes = [
+        baseFreq,
+        baseFreq * 1.25, // E5
+        baseFreq * 1.5,  // G5
+        baseFreq * 2.0   // C6
+      ];
+
+      if (streak >= 3) {
+        notes.push(baseFreq * 2.5); // High E6 sparkle
+      }
+
+      notes.forEach((freq, idx) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = 'triangle';
-        osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.05);
-        gain.gain.setValueAtTime(0.1, ctx.currentTime + i * 0.05);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.05 + 0.18);
+        osc.frequency.setValueAtTime(freq, now + idx * 0.045);
+        gain.gain.setValueAtTime(0.12, now + idx * 0.045);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.045 + 0.22);
         osc.connect(gain);
         gain.connect(ctx.destination);
-        osc.start(ctx.currentTime + i * 0.05);
-        osc.stop(ctx.currentTime + i * 0.05 + 0.18);
+        osc.start(now + idx * 0.045);
+        osc.stop(now + idx * 0.045 + 0.22);
       });
     } catch(e) {}
   }
@@ -510,23 +509,48 @@
     try {
       const ctx = getAudioContext();
       if (!ctx) return;
+      const now = ctx.currentTime;
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(220, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(110, ctx.currentTime + 0.25);
-      gain.gain.setValueAtTime(0.14, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+      osc.frequency.setValueAtTime(190, now);
+      osc.frequency.exponentialRampToValueAtTime(75, now + 0.32);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.32);
       osc.connect(gain);
       gain.connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.25);
+      osc.start(now);
+      osc.stop(now + 0.32);
     } catch(e) {}
   }
 
-  function playTickSound() {
+  function playStreakPowerup(tier = 1) {
     if (!isSoundEnabled) return;
-    playTone(800, 'sine', 0.04, 0.05);
+    try {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+      const now = ctx.currentTime;
+      const baseFreq = tier >= 4 ? 880 : (tier >= 3 ? 659.25 : 523.25);
+      const chords = [baseFreq, baseFreq * 1.25, baseFreq * 1.5, baseFreq * 2];
+      chords.forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + i * 0.06);
+        osc.frequency.exponentialRampToValueAtTime(freq * 1.3, now + i * 0.06 + 0.25);
+        gain.gain.setValueAtTime(0.1, now + i * 0.06);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.06 + 0.25);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + i * 0.06);
+        osc.stop(now + i * 0.06 + 0.25);
+      });
+    } catch(e) {}
+  }
+
+  function playTickSound(isUrgent = false) {
+    if (!isSoundEnabled) return;
+    playTone(isUrgent ? 950 : 750, 'sine', 0.04, isUrgent ? 0.08 : 0.04);
   }
 
   function playFanfare() {
@@ -534,49 +558,106 @@
     try {
       const ctx = getAudioContext();
       if (!ctx) return;
-      const chords = [523.25, 659.25, 783.99, 1046.50]; // C - E - G - C6
-      chords.forEach((freq, idx) => {
+      const now = ctx.currentTime;
+      // Majestic 5-note brass fanfare
+      const notes = [
+        { f: 523.25, d: 0.12 }, // C5
+        { f: 659.25, d: 0.12 }, // E5
+        { f: 783.99, d: 0.12 }, // G5
+        { f: 1046.5, d: 0.18 }, // C6
+        { f: 1318.5, d: 0.45 }  // E6 triumphant hold
+      ];
+      let offset = 0;
+      notes.forEach((item) => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = 'triangle';
-        osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.09);
-        gain.gain.setValueAtTime(0.12, ctx.currentTime + idx * 0.09);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.09 + 0.35);
+        osc.frequency.setValueAtTime(item.f, now + offset);
+        gain.gain.setValueAtTime(0.14, now + offset);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + offset + item.d);
         osc.connect(gain);
         gain.connect(ctx.destination);
-        osc.start(ctx.currentTime + idx * 0.09);
-        osc.stop(ctx.currentTime + idx * 0.09 + 0.35);
+        osc.start(now + offset);
+        osc.stop(now + offset + item.d);
+        offset += item.d * 0.75;
       });
     } catch(e) {}
+  }
+
+  function playTallyTick() {
+    if (!isSoundEnabled) return;
+    playTone(850, 'sine', 0.025, 0.03);
   }
 
   window.toggleBattleSound = function() {
     isSoundEnabled = !isSoundEnabled;
     localStorage.setItem('virtulab_battle_sound', isSoundEnabled ? 'active' : 'muted');
     updateSoundButtonUI();
-    if (isSoundEnabled) playTone(600, 'sine', 0.1);
+    if (isSoundEnabled) {
+      playCorrectSound(1);
+    }
   };
 
   function updateSoundButtonUI() {
     const icon = document.getElementById('soundIcon');
     const text = document.getElementById('soundText');
-    if (icon && text) {
-      icon.textContent = isSoundEnabled ? '🔊' : '🔇';
-      text.textContent = isSoundEnabled ? 'Sound ON' : 'Sound OFF';
-    }
+    if (icon) icon.textContent = isSoundEnabled ? '🔊' : '🔇';
+    if (text) text.textContent = isSoundEnabled ? 'Sound ON' : 'Sound OFF';
   }
+
+  /* ══════════════════════════════════════
+     THEME SWITCHING & PERSISTENCE
+  ══════════════════════════════════════ */
+  window.setAppTheme = function(theme) {
+    playClickSound();
+    document.documentElement.setAttribute('data-theme', theme);
+    try {
+      localStorage.setItem('vlk_theme', theme);
+    } catch(e) {}
+  };
+
+  /* ══════════════════════════════════════
+     TOPIC MODAL CONTROLS
+  ══════════════════════════════════════ */
+  window.openTopicModal = function() {
+    playClickSound();
+    const modal = document.getElementById('battleTopicModal');
+    if (modal) modal.style.display = 'flex';
+    
+    // Highlight currently active mode in modal
+    Object.keys(GAME_MODES).forEach(k => {
+      const card = document.getElementById(`modeCard_${k}`);
+      if (card) {
+        if (k === currentModeKey) card.classList.add('active');
+        else card.classList.remove('active');
+      }
+    });
+  };
+
+  window.closeTopicModal = function() {
+    playClickSound();
+    const modal = document.getElementById('battleTopicModal');
+    if (modal) modal.style.display = 'none';
+  };
+
+  window.selectAndStartMode = function(modeKey) {
+    if (!GAME_MODES[modeKey]) return;
+    currentModeKey = modeKey;
+    closeTopicModal();
+    startChemicalSpeedBattle();
+  };
 
   /* ══════════════════════════════════════
      FLOATING POINTS ANIMATION
   ══════════════════════════════════════ */
-  function spawnFloatingPoints(targetElem, text, isBonus) {
+  function spawnFloatingPoints(targetElem, text, isBonus, isPenalty) {
     if (!targetElem) return;
     const rect = targetElem.getBoundingClientRect();
     const popup = document.createElement('div');
-    popup.className = `floating-points ${isBonus ? 'bonus' : ''}`;
+    popup.className = `floating-points ${isBonus ? 'bonus' : (isPenalty ? 'penalty' : '')}`;
     popup.textContent = text;
-    popup.style.left = `${rect.left + rect.width / 2 - 30}px`;
-    popup.style.top = `${rect.top}px`;
+    popup.style.left = `${rect.left + rect.width / 2 - 40}px`;
+    popup.style.top = `${rect.top - 10}px`;
     document.body.appendChild(popup);
     setTimeout(() => popup.remove(), 900);
   }
@@ -593,18 +674,18 @@
     canvas.style.display = 'block';
 
     const particles = [];
-    const colors = ['#06B6D4', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#38BDF8'];
+    const colors = ['#06B6D4', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#38BDF8', '#F472B6'];
 
-    for (let i = 0; i < 90; i++) {
+    for (let i = 0; i < 95; i++) {
       particles.push({
         x: Math.random() * canvas.width,
-        y: Math.random() * -canvas.height * 0.5,
+        y: Math.random() * -canvas.height * 0.4,
         size: Math.random() * 8 + 4,
         color: colors[Math.floor(Math.random() * colors.length)],
-        velX: (Math.random() - 0.5) * 5,
-        velY: Math.random() * 4 + 3,
+        velX: (Math.random() - 0.5) * 6,
+        velY: Math.random() * 4 + 3.5,
         rot: Math.random() * 360,
-        rotSpeed: (Math.random() - 0.5) * 6
+        rotSpeed: (Math.random() - 0.5) * 7
       });
     }
 
@@ -624,7 +705,7 @@
       });
 
       frames++;
-      if (frames < 140) {
+      if (frames < 150) {
         requestAnimationFrame(render);
       } else {
         canvas.style.display = 'none';
@@ -651,28 +732,26 @@
     const modeQuestions = QUESTIONS_POOL.filter(modeConfig.filter);
     shuffledQuestions = [...(modeQuestions.length > 0 ? modeQuestions : QUESTIONS_POOL)].sort(() => Math.random() - 0.5);
     currentQIndex = 0;
-    const startCard = document.getElementById('battleStartCard');
-    if (startCard) startCard.style.display = 'none';
+
     const overCard = document.getElementById('battleGameOverCard');
     if (overCard) overCard.style.display = 'none';
     const arenaCard = document.getElementById('battleArenaCard');
     if (arenaCard) arenaCard.style.display = 'block';
 
-    // Update active mode pill in HUD
-    const modePill = document.getElementById('arenaActiveModePill');
-    if (modePill) {
-      modePill.textContent = `${modeConfig.icon} ${modeConfig.name}`;
-      if (modeConfig.isSurvival) {
-        modePill.className = 'mode-badge-pill survival';
-      } else {
-        modePill.className = 'mode-badge-pill';
-      }
-    }
+    // Update Nav bar mode name & icon
+    const navModeIcon = document.getElementById('navModeIcon');
+    const navModeName = document.getElementById('navModeName');
+    if (navModeIcon) navModeIcon.textContent = modeConfig.icon;
+    if (navModeName) navModeName.textContent = modeConfig.name;
 
     const timerLabel = document.getElementById('hudTimerLabel');
     if (timerLabel) {
-      timerLabel.textContent = modeConfig.isSurvival ? 'Question Clock' : 'Remaining Time';
+      timerLabel.textContent = modeConfig.isSurvival ? 'SURVIVAL CLOCK' : 'TIME LEFT';
     }
+
+    // Hide any explanation fact strip from previous games
+    const factStrip = document.getElementById('battleFactStrip');
+    if (factStrip) factStrip.style.display = 'none';
 
     updateBattleHUD();
     renderQuestion();
@@ -682,7 +761,7 @@
       timeLeft--;
       updateBattleTimer();
       if (timeLeft <= 5 && timeLeft > 0) {
-        playTickSound();
+        playTickSound(timeLeft <= 3);
       }
       if (timeLeft <= 0) {
         endChemicalSpeedBattle(modeConfig.isSurvival ? 'Time expired in Sudden Death!' : 'Time up!');
@@ -707,12 +786,12 @@
     if (timerBar) {
       const pct = Math.max(0, (timeLeft / modeConfig.duration) * 100);
       timerBar.style.width = pct + '%';
-      if (timeLeft <= (modeConfig.isSurvival ? 4 : 12)) {
-        timerBar.className = 'timer-bar-fill critical';
-      } else if (timeLeft <= (modeConfig.isSurvival ? 8 : 25)) {
-        timerBar.className = 'timer-bar-fill warning';
+      if (timeLeft <= (modeConfig.isSurvival ? 4 : 10)) {
+        timerBar.className = 'timer-fill critical';
+      } else if (timeLeft <= (modeConfig.isSurvival ? 7 : 22)) {
+        timerBar.className = 'timer-fill warning';
       } else {
-        timerBar.className = 'timer-bar-fill';
+        timerBar.className = 'timer-fill';
       }
     }
   }
@@ -729,7 +808,7 @@
 
     if (streakBadge && streakIcon && streakText) {
       const tier = Math.min(currentStreak, 5);
-      streakBadge.className = `streak-badge streak-tier-${tier}`;
+      streakBadge.className = `combo-badge tier-${tier}`;
 
       if (tier === 0) {
         streakIcon.textContent = '⚡';
@@ -767,25 +846,34 @@
     const catBadge = document.getElementById('battleCatBadge');
     if (catBadge) catBadge.textContent = qData.category || '🔬 Qualitative Analysis';
 
+    const qCounter = document.getElementById('battleQCounter');
+    if (qCounter) qCounter.textContent = `Question ${totalAnswered + 1}`;
+
     const qText = document.getElementById('battleQuestionText');
     if (qText) qText.textContent = qData.q;
+
+    // Reset explanation fact strip
+    const factStrip = document.getElementById('battleFactStrip');
+    if (factStrip) factStrip.style.display = 'none';
 
     const optionsBox = document.getElementById('battleOptionsBox');
     if (!optionsBox) return;
     optionsBox.innerHTML = '';
 
+    const badgeClasses = ['badge-a', 'badge-b', 'badge-c', 'badge-d'];
+
     qData.options.forEach((optText, idx) => {
       const keyLetter = String.fromCharCode(65 + idx); // A, B, C, D
       const btn = document.createElement('button');
       btn.type = 'button';
-      btn.className = 'battle-option-btn';
+      btn.className = 'btn-game-opt';
       btn.setAttribute('data-idx', idx);
       btn.innerHTML = `
-        <div class="battle-opt-left">
-          <span class="keycap-badge">${keyLetter}</span>
+        <div class="opt-main">
+          <span class="opt-badge ${badgeClasses[idx] || 'badge-a'}">${keyLetter}</span>
           <span>${optText}</span>
         </div>
-        <span style="font-size:0.8rem; opacity:0.35;">↵</span>
+        <span class="opt-enter-icon">↵</span>
       `;
       btn.onclick = () => handleAnswerClick(idx, qData, btn);
       optionsBox.appendChild(btn);
@@ -800,6 +888,16 @@
     const modeConfig = GAME_MODES[currentModeKey] || GAME_MODES['blitz'];
     const isCorrect = selectedIdx === qData.ans;
     const scoreDisp = document.getElementById('battleScoreDisplay');
+    const factStrip = document.getElementById('battleFactStrip');
+    const factText = document.getElementById('factText');
+    const factIcon = document.getElementById('factIcon');
+
+    // Show micro-learning explanation
+    if (factStrip && factText && qData.exp) {
+      factText.textContent = qData.exp;
+      if (factIcon) factIcon.textContent = isCorrect ? '✨' : '💡';
+      factStrip.style.display = 'flex';
+    }
 
     if (isCorrect) {
       correctCount++;
@@ -812,7 +910,7 @@
 
       if (clickedBtn) {
         clickedBtn.classList.add('correct');
-        spawnFloatingPoints(clickedBtn, `+${points} ${multiplier > 1 ? '🔥 ' + multiplier + 'x' : ''}`, multiplier >= 3);
+        spawnFloatingPoints(clickedBtn, `+${points} ${multiplier > 1 ? '🔥 ' + multiplier + 'x' : ''}`, multiplier >= 3, false);
       }
 
       if (scoreDisp) {
@@ -822,15 +920,8 @@
 
       playCorrectSound(currentStreak);
 
-      // Trigger escalating gamification streak sound cues
-      if (window.GamificationEngine && window.GamificationEngine.audio) {
-        if (currentStreak === 3) {
-          window.GamificationEngine.audio.playStreakMultiplier(1);
-        } else if (currentStreak === 5) {
-          window.GamificationEngine.audio.playStreakMultiplier(2);
-        } else if (currentStreak >= 10 && currentStreak % 5 === 0) {
-          window.GamificationEngine.audio.playStreakMultiplier(3);
-        }
+      if (currentStreak === 3 || currentStreak === 5 || currentStreak === 10) {
+        playStreakPowerup(Math.min(5, currentStreak));
       }
 
       // In Sudden Death mode, reset question clock on each correct answer
@@ -843,18 +934,18 @@
       currentQIndex++;
       setTimeout(() => {
         if (timeLeft > 0) renderQuestion();
-      }, 240);
+      }, 380);
 
     } else {
       // Wrong Answer
       currentStreak = 0;
       if (clickedBtn) {
         clickedBtn.classList.add('incorrect');
-        spawnFloatingPoints(clickedBtn, modeConfig.isSurvival ? '💀 ELIMINATED!' : 'MISS!', false);
+        spawnFloatingPoints(clickedBtn, modeConfig.isSurvival ? '💀 ELIMINATED!' : 'INCORRECT', false, true);
       }
 
-      // Highlight the correct answer
-      const allBtns = document.querySelectorAll('.battle-option-btn');
+      // Highlight the correct answer in green
+      const allBtns = document.querySelectorAll('.btn-game-opt');
       allBtns.forEach(b => {
         if (parseInt(b.getAttribute('data-idx'), 10) === qData.ans) {
           b.classList.add('correct');
@@ -865,15 +956,15 @@
       updateBattleHUD();
 
       if (modeConfig.isSurvival) {
-        // Instant elimination in sudden death mode
+        // Sudden death elimination
         setTimeout(() => {
-          endChemicalSpeedBattle('Eliminated by incorrect deduction!');
-        }, 550);
+          endChemicalSpeedBattle('Eliminated by incorrect deduction in Sudden Death!');
+        }, 750);
       } else {
         currentQIndex++;
         setTimeout(() => {
           if (timeLeft > 0) renderQuestion();
-        }, 480);
+        }, 700);
       }
     }
   }
@@ -896,7 +987,7 @@
 
     if (selectedIdx >= 0) {
       const qData = shuffledQuestions[currentQIndex];
-      const allBtns = document.querySelectorAll('.battle-option-btn');
+      const allBtns = document.querySelectorAll('.btn-game-opt');
       const targetBtn = allBtns[selectedIdx];
       if (qData && targetBtn) {
         handleAnswerClick(selectedIdx, qData, targetBtn);
@@ -916,54 +1007,80 @@
     const overCard = document.getElementById('battleGameOverCard');
     if (overCard) overCard.style.display = 'block';
 
-    const finalScoreElem = document.getElementById('finalScoreDisplay');
-    if (finalScoreElem) finalScoreElem.textContent = currentScore.toLocaleString();
-
-    const modeDisplay = document.getElementById('finalModeDisplay');
-    if (modeDisplay) modeDisplay.textContent = `${modeConfig.icon} ${modeConfig.name}`;
-
-    const subtitleElem = document.getElementById('gameOverSubtitle');
-    if (subtitleElem && reason) {
-      subtitleElem.innerHTML = `<b>${reason}</b> (${modeConfig.name} challenge ended)`;
-    }
-
-    const headingElem = document.getElementById('gameOverHeading');
-    const iconElem = document.getElementById('gameOverIcon');
-    if (modeConfig.isSurvival && correctCount < 5) {
-      if (headingElem) headingElem.textContent = 'Eliminated!';
-      if (iconElem) iconElem.textContent = '💀';
-    } else {
-      if (headingElem) headingElem.textContent = 'Speed Battle Finished!';
-      if (iconElem) iconElem.textContent = '🏆';
-    }
-
-    // Accuracy Calculation
     const accuracy = totalAnswered > 0 ? Math.round((correctCount / totalAnswered) * 100) : 0;
     const avgSpeed = totalAnswered > 0 ? ((modeConfig.duration - Math.max(0, timeLeft)) / totalAnswered).toFixed(1) : '0.0';
 
-    const statAns = document.getElementById('statAnswered');
+    // Update Star Rating (1, 2, or 3 stars)
+    const starElems = document.querySelectorAll('#resultsStarRating .star');
+    let starsEarned = 1;
+    if (accuracy >= 80 && currentScore >= 1500) {
+      starsEarned = 3;
+    } else if (accuracy >= 50 || currentScore >= 800) {
+      starsEarned = 2;
+    }
+
+    starElems.forEach((st, i) => {
+      if (i < starsEarned) st.classList.add('filled');
+      else st.classList.remove('filled');
+    });
+
+    const subtitleElem = document.getElementById('gameOverSubtitle');
+    if (subtitleElem && reason) {
+      subtitleElem.innerHTML = `<b>${reason}</b> (${modeConfig.name} evaluation recorded)`;
+    }
+
+    const headingElem = document.getElementById('gameOverHeading');
+    const trophyElem = document.getElementById('resultsTrophy');
+    if (modeConfig.isSurvival && correctCount < 4) {
+      if (headingElem) headingElem.textContent = 'Eliminated!';
+      if (trophyElem) trophyElem.textContent = '💀';
+    } else {
+      if (headingElem) headingElem.textContent = 'Diagnostic Assessment Complete';
+      if (trophyElem) trophyElem.textContent = starsEarned === 3 ? '👑' : (starsEarned === 2 ? '🏆' : '⭐');
+    }
+
+    // Rolling score tally counter animation
+    const finalScoreElem = document.getElementById('finalScoreDisplay');
+    if (finalScoreElem) {
+      let currentVal = 0;
+      const targetVal = currentScore;
+      const step = Math.max(15, Math.floor(targetVal / 25));
+      const tallyInterval = setInterval(() => {
+        currentVal += step;
+        if (currentVal >= targetVal) {
+          currentVal = targetVal;
+          clearInterval(tallyInterval);
+        }
+        finalScoreElem.textContent = currentVal.toLocaleString();
+        playTallyTick();
+      }, 30);
+    }
+
     const statAcc = document.getElementById('statAccuracy');
     const statStrk = document.getElementById('statMaxStreak');
     const statSpd = document.getElementById('statAvgSpeed');
+    const statXP = document.getElementById('statXPEarned');
 
-    if (statAns) statAns.textContent = `${correctCount}/${totalAnswered}`;
+    const xpEarned = Math.max(25, Math.round(currentScore / 10) + (correctCount * 5));
+
     if (statAcc) statAcc.textContent = `${accuracy}%`;
     if (statStrk) statStrk.textContent = `${maxStreak}x`;
     if (statSpd) statSpd.textContent = `${Math.abs(avgSpeed)}s`;
+    if (statXP) statXP.textContent = `+${xpEarned} XP`;
 
-    // Ranking Tier Evaluation (Academic KNEC Practical Performance Standards)
+    // Ranking Tier Evaluation
     let rank = '🧪 Foundational: Practical Learner (Grade C)';
     let isHighRank = false;
 
-    if (currentScore >= 3500 || (modeConfig.isSurvival && maxStreak >= 10)) {
+    if (currentScore >= 3000 || (modeConfig.isSurvival && maxStreak >= 8)) {
       rank = '👑 Distinction: Master KCSE Chemist (Grade A)';
       isHighRank = true;
-    } else if (currentScore >= 2200 || (modeConfig.isSurvival && maxStreak >= 7)) {
+    } else if (currentScore >= 1800 || (modeConfig.isSurvival && maxStreak >= 5)) {
       rank = '🌟 Merit: Senior Analytical Chemist (Grade A-)';
       isHighRank = true;
-    } else if (currentScore >= 1200 || (modeConfig.isSurvival && maxStreak >= 4)) {
+    } else if (currentScore >= 1000 || (modeConfig.isSurvival && maxStreak >= 3)) {
       rank = '🎯 Proficient: Practical Analyst (Grade B+)';
-    } else if (currentScore >= 600 || (modeConfig.isSurvival && maxStreak >= 2)) {
+    } else if (currentScore >= 500 || (modeConfig.isSurvival && maxStreak >= 2)) {
       rank = '⚗️ Developing: Chemistry Apprentice (Grade B)';
     }
 
@@ -975,10 +1092,10 @@
     const prevBest = parseInt(localStorage.getItem(storageKey) || '0', 10);
     const newNotice = document.getElementById('newHighScoreNotice');
 
-    if (currentScore > prevBest) {
+    if (currentScore > prevBest && currentScore > 0) {
       localStorage.setItem(storageKey, currentScore.toString());
       localStorage.setItem(`${storageKey}_rank`, rank);
-      if (newNotice) newNotice.style.display = 'block';
+      if (newNotice) newNotice.style.display = 'inline-block';
     } else {
       if (newNotice) newNotice.style.display = 'none';
     }
@@ -992,7 +1109,6 @@
     // Gamification XP & Streak Logging
     if (window.GamificationEngine) {
       window.GamificationEngine.logActivity();
-      const xpEarned = Math.max(15, Math.round(currentScore / 10) + (correctCount * 5));
       if (currentModeKey === 'daily_bite') {
         window.GamificationEngine.completeDailyChallenge();
       } else {
@@ -1005,50 +1121,24 @@
     if (proceedBtn) {
       if (targetWorkbenchUrl) {
         proceedBtn.href = targetWorkbenchUrl;
-        proceedBtn.innerHTML = `🚀 Enter ${modeConfig.name} Workbench →`;
+        proceedBtn.innerHTML = `<span>🧪 Enter ${modeConfig.name} Workbench</span> <span class="btn-arrow">→</span>`;
       } else {
         proceedBtn.href = 'home.html';
-        proceedBtn.innerHTML = `🚀 Enter Laboratory Workstation →`;
+        proceedBtn.innerHTML = `<span>🧪 Proceed to Laboratory Workbench</span> <span class="btn-arrow">→</span>`;
       }
     }
 
-    updateStartCardBest();
-
-    if (isHighRank) {
+    if (isHighRank || starsEarned >= 2) {
       playFanfare();
       launchConfetti();
     } else {
-      playTone(523.25, 'sine', 0.4);
-    }
-  }
-
-  function updateStartCardBest() {
-    const modeConfig = GAME_MODES[currentModeKey] || GAME_MODES['blitz'];
-    const storageKey = `virtulab_battle_best_${currentModeKey}`;
-    const best = parseInt(localStorage.getItem(storageKey) || '0', 10);
-    const bestRank = localStorage.getItem(`${storageKey}_rank`) || 'Novice';
-    
-    const banner = document.getElementById('highScoreBanner');
-    const bestModeLabel = document.getElementById('startBestModeLabel');
-    const bestScoreText = document.getElementById('startBestScore');
-    const bestRankText = document.getElementById('startBestRank');
-
-    if (bestModeLabel) bestModeLabel.textContent = `${modeConfig.icon} ${modeConfig.name}`;
-
-    if (best > 0 && banner && bestScoreText && bestRankText) {
-      banner.style.display = 'block';
-      bestScoreText.textContent = `${best.toLocaleString()} pts`;
-      bestRankText.textContent = bestRank;
-    } else if (banner) {
-      banner.style.display = 'none';
+      playTone(523.25, 'triangle', 0.4);
     }
   }
 
   /* ══════════════════════════════════════
      INITIALIZATION
   ══════════════════════════════════════ */
-  let targetWorkbenchUrl = null;
-
   function init() {
     updateSoundButtonUI();
 
@@ -1068,13 +1158,6 @@
       currentModeKey = 'blitz';
     }
 
-    const modeConfig = GAME_MODES[currentModeKey] || GAME_MODES['blitz'];
-
-    const navTitle = document.querySelector('.nav-title');
-    if (navTitle) {
-      navTitle.textContent = `${modeConfig.icon} ${modeConfig.name} Drill`;
-    }
-
     if (targetParam) {
       try {
         targetWorkbenchUrl = decodeURIComponent(targetParam);
@@ -1083,7 +1166,7 @@
       }
     }
 
-    // Direct auto-start of drill questions on dedicated screen
+    // Direct auto-start drill questions
     startChemicalSpeedBattle();
   }
 

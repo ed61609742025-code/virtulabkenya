@@ -132,6 +132,31 @@
   [data-theme="dark"] .seal-crest-small { background: #162238; color: var(--acad-oxford); }
   [data-theme="green"] .seal-crest-small { background: #0E2415; color: #34D399; }
 
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+  }
+
+  .dashboard-container {
+    width: 100%;
+    max-width: 1200px;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
+  .student-tab-panel {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
   /* Candidate Profile Header Card */
   .candidate-hero-bar {
     background: var(--card-bg);
@@ -145,6 +170,9 @@
     flex-wrap: wrap;
     gap: 16px;
     box-shadow: var(--shadow-sm);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .knec-reference-card {
@@ -154,40 +182,48 @@
     padding: 20px;
     margin-bottom: 20px;
     box-shadow: var(--shadow-sm);
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
-  .knec-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
   .knec-table-wrap {
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     border-radius: 8px;
     margin-top: 10px;
     border: 1px solid var(--card-border);
+    box-sizing: border-box;
   }
-  .knec-table-wrap .knec-table {
-    margin-top: 0;
-    min-width: 480px;
+  .knec-table {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    border-collapse: collapse;
+    font-size: 0.82rem;
   }
   .knec-table th {
     background: var(--card-bg-hover);
     color: var(--heading-color);
     font-family: 'Cinzel', serif;
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     font-weight: 800;
     text-align: left;
-    padding: 9px 12px;
+    padding: 8px 10px;
     border: 1px solid var(--card-border);
     white-space: nowrap;
   }
   .knec-table td {
-    padding: 9px 12px;
+    padding: 8px 10px;
     border: 1px solid var(--card-border);
-    font-size: 0.84rem;
-    line-height: 1.5;
+    font-size: 0.8rem;
+    line-height: 1.45;
   }
   .knec-table tr:nth-child(even) td {
     background: var(--card-bg-hover);
@@ -195,14 +231,23 @@
 
   .flame-procedure-grid {
     display: grid;
-    grid-template-columns: minmax(260px, 320px) 1fr;
+    grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
     gap: 16px;
     margin-bottom: 18px;
     align-items: stretch;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  .flame-procedure-grid > * {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   @media (max-width: 768px) {
     .flame-procedure-grid {
-      grid-template-columns: 1fr !important;
+      grid-template-columns: minmax(0, 1fr) !important;
+      gap: 12px;
     }
     .knec-reference-card {
       padding: 14px;
@@ -836,9 +881,9 @@
             <span>🧪</span> <span data-i18n="cation_title">Systematic Cation Identification &amp; Separation</span>
           </h3>
           <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Deduce cations by adding aqueous NaOH followed by aqueous NH₃ dropwise until in excess.</p>
-          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:14px;">
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap:12px; width:100%; box-sizing:border-box;">
             
-            <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:8px; padding:12px;">
+            <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:8px; padding:12px; min-width:0; box-sizing:border-box;">
               <b style="color:var(--cyan-accent); font-size:0.9rem;">Cu²⁺ (Copper II)</b>
               <div style="font-size:0.82rem; margin-top:4px; line-height:1.45;">
                 • <b>NaOH:</b> Pale blue precipitate, insoluble in excess.<br>
@@ -961,10 +1006,10 @@
           </div>
 
           <!-- Flame Colors & Emission Spectra 6-Grid with Custom Glowing Vector Flames -->
-          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px;">
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 140px), 1fr)); gap:10px; width:100%; box-sizing:border-box;">
             
             <!-- 1. Sodium (Na+) -->
-            <div style="background:var(--card-bg-hover); border:1.5px solid rgba(245,158,11,0.4); border-radius:8px; padding:12px; display:flex; gap:10px; align-items:center;">
+            <div style="background:var(--card-bg-hover); border:1.5px solid rgba(245,158,11,0.4); border-radius:8px; padding:10px; display:flex; gap:8px; align-items:center; min-width:0; box-sizing:border-box;">
               <svg viewBox="0 0 32 44" style="width:28px; height:38px; flex-shrink:0;">
                 <path d="M16,42 Q4,30 8,18 Q12,24 16,6 Q20,24 24,18 Q28,30 16,42 Z" fill="url(#flameNa)" filter="drop-shadow(0 0 6px rgba(245,158,11,0.8))"/>
                 <defs>
@@ -1173,9 +1218,9 @@
             <span>📐</span> <span data-i18n="phys_title">Physical Chemistry Formulae &amp; Volumetric Concordancy Rubric</span>
           </h3>
           <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:14px;">Essential mathematical relationships and examiner marking standards for KCSE Paper 3.</p>
-          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px;">
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap:12px; width:100%; box-sizing:border-box;">
             
-            <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:8px; padding:14px;">
+            <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:8px; padding:14px; min-width:0; box-sizing:border-box;">
               <b style="color:var(--acad-gold); font-size:0.92rem;">⚖️ Titration Concordancy Standard</b>
               <div style="font-size:0.82rem; margin-top:6px; line-height:1.5;">
                 • <b>Concordancy Criterion:</b> Titres must agree within <b>±0.10 cm³</b> (acceptable ±0.20 cm³).<br>

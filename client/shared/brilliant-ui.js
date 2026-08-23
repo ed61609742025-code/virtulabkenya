@@ -105,8 +105,8 @@
     const isStudentPage = window.location.pathname.includes('/student/') || 
                           (window.location.pathname === '/' || window.location.pathname.endsWith('/index.html'));
     
-    // Avoid double injection
-    if (document.getElementById('vlkBrilliantBottomNav')) return;
+    // Avoid double injection if hardcoded or already inserted
+    if (document.getElementById('vlkBrilliantBottomNav') || document.querySelector('.mobile-bottom-nav')) return;
     
     if (isStudentPage) {
       document.body.classList.add('has-bottom-nav');
@@ -124,39 +124,31 @@
 
       const navItems = [
         {
-          id: 'nav-home',
+          id: 'nav-workbenches',
           href: `${basePath}home.html`,
-          icon: '🏠',
-          label: 'Home',
+          icon: '🧪',
+          label: 'Workbenches',
           match: ['home.html', '/client/index.html', '/index.html', '/']
         },
         {
-          id: 'nav-labs',
-          href: `${basePath}lab.html`,
-          icon: '🧪',
-          label: 'Labs',
-          match: ['lab.html', 'qualitative.html', 'organic.html', 'solubility.html', 'energy.html', 'rates.html', 'gas_prep.html']
+          id: 'nav-revision',
+          href: `${basePath}home.html#reference`,
+          icon: '📚',
+          label: 'Revision',
+          match: ['#reference']
         },
         {
-          id: 'nav-challenge',
-          href: `${basePath}speed_battle.html`,
-          icon: '⚡',
-          label: 'Daily Bite',
-          badge: true,
-          match: ['speed_battle.html']
+          id: 'nav-badges',
+          href: `${basePath}home.html#achievements`,
+          icon: '🏆',
+          label: 'Badges',
+          match: ['#achievements']
         },
         {
-          id: 'nav-exam',
-          href: `${basePath}mock_exams.html`,
-          icon: '📝',
-          label: 'KCSE Mocks',
-          match: ['mock_exams.html', 'composite_exam.html', 'cpcat_assessment.html']
-        },
-        {
-          id: 'nav-history',
+          id: 'nav-analytics',
           href: `${basePath}history.html`,
-          icon: '👤',
-          label: 'Progress',
+          icon: '📊',
+          label: 'Analytics',
           match: ['history.html', 'certificate.html']
         }
       ];

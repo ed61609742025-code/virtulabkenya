@@ -17,6 +17,15 @@
   --sb-cyan: #06B6D4;
   --font-game: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Default theme fallbacks (Dark Cyber-Lab) */
+  --bg-dark: #090E17;
+  --card-bg: #111A2E;
+  --card-bg-hover: #19253F;
+  --card-border: #233554;
+  --heading-color: #F8FAFC;
+  --text-main: #E2E8F0;
+  --text-muted: #94A3B8;
 }
 
 *, *::before, *::after {
@@ -30,8 +39,8 @@ html, body {
   max-width: 100vw;
   overflow-x: hidden;
   font-family: var(--font-sans);
-  background: var(--bg-dark, #0B132B);
-  color: var(--text-main, #E2E8F0);
+  background: var(--bg-dark);
+  color: var(--text-main);
   -webkit-tap-highlight-color: transparent;
   user-select: none;
 }

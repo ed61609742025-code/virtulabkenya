@@ -610,10 +610,14 @@
   ══════════════════════════════════════ */
   window.setAppTheme = function(theme) {
     playClickSound();
-    document.documentElement.setAttribute('data-theme', theme);
-    try {
-      localStorage.setItem('vlk_theme', theme);
-    } catch(e) {}
+    if (window.setTheme) {
+      window.setTheme(theme);
+    } else {
+      document.documentElement.setAttribute('data-theme', theme);
+      try {
+        localStorage.setItem('vlk_theme', theme);
+      } catch(e) {}
+    }
   };
 
   /* ══════════════════════════════════════

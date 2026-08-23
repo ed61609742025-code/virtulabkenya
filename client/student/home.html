@@ -188,7 +188,7 @@
   <div class="candidate-top-ribbon">
     <span>🇰🇪 REPUBLIC OF KENYA &bull; KCSE CHEMISTRY 233/3</span>
     <span class="ribbon-sep">&bull;</span>
-    <span class="ribbon-extra">CANDIDATE PRACTICAL LEDGER</span>
+    <span class="ribbon-extra" data-i18n="candidate_ledger">CANDIDATE PRACTICAL LEDGER</span>
   </div>
 
   <!-- Primary Top Navbar -->
@@ -259,7 +259,7 @@
               <span>📲</span> Install VirtuLab PWA
             </button>
             <div style="border-top:1px solid var(--card-border); margin-top:6px; padding-top:6px;">
-              <button onclick="Auth.logout()" style="width:100%; text-align:left; display:flex; align-items:center; gap:8px; padding:7px 8px; font-size:0.8rem; color:#EF4444; background:none; border:none; cursor:pointer; border-radius:4px; font-weight:700;">
+              <button onclick="Auth.logout()" style="width:100%; text-align:left; display:flex; align-items:center; gap:8px; padding:7px 8px; font-size:0.8rem; color:#EF4444; background:none; border:none; cursor:pointer; border-radius:4px; font-weight:700;" data-i18n="logout">
                 <span>🚪</span> Sign Out
               </button>
             </div>
@@ -315,7 +315,7 @@
       <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
         <!-- Pre-Lab Reflex Drill Quick Launch -->
         <a href="speed_battle.html?warmup=true" class="btn-tactile btn-tactile-amber" style="padding:8px 18px; font-size:0.84rem; font-weight:800; border-radius:10px; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
-          <span>⚡</span> Pre-Lab Diagnostic Drill →
+          <span data-i18n="pre_lab_drill">⚡ Pre-Lab Diagnostic Drill →</span>
         </a>
       </div>
 
@@ -348,16 +348,16 @@
     ══════════════════════════════════════════════════════ -->
     <nav class="student-subtabs-nav" aria-label="Workstation Views">
       <button class="student-subtab-btn active" id="tabBtn_benches" onclick="switchStudentSubTab('benches')">
-        <span>🧪</span> Laboratory Benches
+        <span data-i18n="tab_benches">🧪 Laboratory Benches</span>
       </button>
       <button class="student-subtab-btn" id="tabBtn_reference" onclick="switchStudentSubTab('reference')">
-        <span>📚</span> KCSE Revision &amp; Reference Guide
+        <span data-i18n="tab_reference">📚 KCSE Revision &amp; Reference Guide</span>
       </button>
       <button class="student-subtab-btn" id="tabBtn_achievements" onclick="switchStudentSubTab('achievements')">
-        <span>🏆</span> Badges &amp; Performance Ledger
+        <span data-i18n="tab_achievements">🏆 Badges &amp; Performance Ledger</span>
       </button>
       <button class="student-subtab-btn" id="tabBtn_research" onclick="switchStudentSubTab('research')">
-        <span>🔬</span> Academic Research Suite
+        <span data-i18n="tab_research">🔬 Academic Research Suite</span>
       </button>
     </nav>
 
@@ -370,20 +370,20 @@
       <div id="dailyChallengeCard" class="daily-challenge-card">
         <div style="flex: 1; min-width: 240px;">
           <div class="daily-tag-row">
-            <span style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: var(--cyan-accent, #0284C7); letter-spacing: 0.05em;">🌟 Daily Chemistry Bite</span>
-            <span class="daily-xp-badge" id="dailyChallengeXP">+100 Bonus XP</span>
-            <span class="daily-timer-text" id="dailyChallengeTimer">Resets at midnight</span>
+            <span style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: var(--cyan-accent, #0284C7); letter-spacing: 0.05em;" data-i18n="daily_bite_tag">🌟 Daily Chemistry Bite</span>
+            <span class="daily-xp-badge" id="dailyChallengeXP" data-i18n="daily_bite_bonus">+100 Bonus XP</span>
+            <span class="daily-timer-text" id="dailyChallengeTimer" data-i18n="daily_bite_timer">Resets at midnight</span>
           </div>
-          <h3 id="dailyChallengeTitle" style="font-family: var(--font-heading); font-size: 1.02rem; font-weight: 900; color: var(--heading-color); margin: 2px 0 4px 0;">
+          <h3 id="dailyChallengeTitle" style="font-family: var(--font-heading); font-size: 1.02rem; font-weight: 900; color: var(--heading-color); margin: 2px 0 4px 0;" data-i18n="daily_bite_title">
             Daily Practical Diagnostic Sprint
           </h3>
-          <p id="dailyChallengeDesc" style="font-size: 0.8rem; color: var(--text-muted); margin: 0; line-height: 1.4;">
+          <p id="dailyChallengeDesc" style="font-size: 0.8rem; color: var(--text-muted); margin: 0; line-height: 1.4;" data-i18n="daily_bite_desc">
             3-question timed reflex drill on observation speed and KNEC calculations.
           </p>
         </div>
         <div style="display: flex; align-items: center; gap: 10px;">
           <a id="dailyChallengeLaunchBtn" href="speed_battle.html?mode=daily_bite" class="btn-tactile btn-tactile-primary btn-tactile-sm" style="text-decoration: none; padding: 8px 18px; font-weight: 800;">
-            <span>⚡</span> Start Daily Bite →
+            <span data-i18n="daily_bite_launch">⚡ Start Daily Bite →</span>
           </a>
         </div>
       </div>
@@ -394,15 +394,15 @@
           <div style="display:flex; align-items:center; gap:8px;">
             <span style="font-size:1.3rem;">⚡</span>
             <div>
-              <h2 style="font-family:var(--font-heading); font-size:1.05rem; font-weight:900; color:var(--heading-color); margin:0;">
+              <h2 style="font-family:var(--font-heading); font-size:1.05rem; font-weight:900; color:var(--heading-color); margin:0;" data-i18n="drills_title">
                 KCSE Practical Diagnostic Drills
               </h2>
-              <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">
+              <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;" data-i18n="drills_sub">
                 Choose a topic for a fast-paced timed assessment on observation reflexes:
               </div>
             </div>
           </div>
-          <span style="font-family:'JetBrains Mono', monospace; font-size:0.72rem; color:var(--acad-gold); background:var(--acad-gold-subtle); padding:2px 8px; border-radius:4px; border:1px solid var(--acad-gold-border);">
+          <span style="font-family:'JetBrains Mono', monospace; font-size:0.72rem; color:var(--acad-gold); background:var(--acad-gold-subtle); padding:2px 8px; border-radius:4px; border:1px solid var(--acad-gold-border);" data-i18n="drills_badge">
             Formative Reflex Drills
           </span>
         </div>
@@ -413,8 +413,8 @@
             <div style="display:flex; align-items:center; gap:10px;">
               <span style="font-size:1.4rem;">📚</span>
               <div>
-                <div style="font-weight:800; font-size:0.86rem; color:var(--heading-color);">Comprehensive Review</div>
-                <div style="font-size:0.72rem; color:var(--text-muted);">All 45 practical competencies</div>
+                <div style="font-weight:800; font-size:0.86rem; color:var(--heading-color);" data-i18n="drill_comp_title">Comprehensive Review</div>
+                <div style="font-size:0.72rem; color:var(--text-muted);" data-i18n="drill_comp_desc">All 45 practical competencies</div>
               </div>
             </div>
             <span style="background:rgba(2,132,199,0.15); color:var(--cyan-accent); font-size:0.68rem; font-weight:800; padding:2px 6px; border-radius:4px;">60s</span>
@@ -425,8 +425,8 @@
             <div style="display:flex; align-items:center; gap:10px;">
               <span style="font-size:1.4rem;">🔬</span>
               <div>
-                <div style="font-weight:800; font-size:0.86rem; color:var(--heading-color);">Qualitative Salts (Q2)</div>
-                <div style="font-size:0.72rem; color:var(--text-muted);">Cations, anions &amp; flame tests</div>
+                <div style="font-weight:800; font-size:0.86rem; color:var(--heading-color);" data-i18n="drill_qual_title">Qualitative Salts (Q2)</div>
+                <div style="font-size:0.72rem; color:var(--text-muted);" data-i18n="drill_qual_desc">Cations, anions &amp; flame tests</div>
               </div>
             </div>
             <span style="background:rgba(16,185,129,0.15); color:#10B981; font-size:0.68rem; font-weight:800; padding:2px 6px; border-radius:4px;">45s</span>
@@ -437,8 +437,8 @@
             <div style="display:flex; align-items:center; gap:10px;">
               <span style="font-size:1.4rem;">⚖️</span>
               <div>
-                <div style="font-weight:800; font-size:0.86rem; color:var(--heading-color);">Volumetric Titration (Q1)</div>
-                <div style="font-size:0.72rem; color:var(--text-muted);">Indicators &amp; concordancy</div>
+                <div style="font-weight:800; font-size:0.86rem; color:var(--heading-color);" data-i18n="drill_vol_title">Volumetric Titration (Q1)</div>
+                <div style="font-size:0.72rem; color:var(--text-muted);" data-i18n="drill_vol_desc">Indicators &amp; concordancy</div>
               </div>
             </div>
             <span style="background:rgba(245,158,11,0.15); color:#F59E0B; font-size:0.68rem; font-weight:800; padding:2px 6px; border-radius:4px;">45s</span>
@@ -449,8 +449,8 @@
             <div style="display:flex; align-items:center; gap:10px;">
               <span style="font-size:1.4rem;">⚗️</span>
               <div>
-                <div style="font-weight:800; font-size:0.86rem; color:var(--heading-color);">Organic Groups (Q3)</div>
-                <div style="font-size:0.72rem; color:var(--text-muted);">Unsaturation &amp; alcohols</div>
+                <div style="font-weight:800; font-size:0.86rem; color:var(--heading-color);" data-i18n="drill_org_title">Organic Groups (Q3)</div>
+                <div style="font-size:0.72rem; color:var(--text-muted);" data-i18n="drill_org_desc">Unsaturation &amp; alcohols</div>
               </div>
             </div>
             <span style="background:rgba(139,92,246,0.15); color:#8B5CF6; font-size:0.68rem; font-weight:800; padding:2px 6px; border-radius:4px;">45s</span>
@@ -461,8 +461,8 @@
             <div style="display:flex; align-items:center; gap:10px;">
               <span style="font-size:1.4rem;">🌡️</span>
               <div>
-                <div style="font-weight:800; font-size:0.86rem; color:var(--heading-color);">Kinetics &amp; Energetics</div>
-                <div style="font-size:0.72rem; color:var(--text-muted);">&Delta;H, rate &amp; cooling curves</div>
+                <div style="font-weight:800; font-size:0.86rem; color:var(--heading-color);" data-i18n="drill_kin_title">Kinetics &amp; Energetics</div>
+                <div style="font-size:0.72rem; color:var(--text-muted);" data-i18n="drill_kin_desc">&Delta;H, rate &amp; cooling curves</div>
               </div>
             </div>
             <span style="background:rgba(236,72,153,0.15); color:#EC4899; font-size:0.68rem; font-weight:800; padding:2px 6px; border-radius:4px;">45s</span>
@@ -473,8 +473,8 @@
             <div style="display:flex; align-items:center; gap:10px;">
               <span style="font-size:1.4rem;">🎯</span>
               <div>
-                <div style="font-weight:800; font-size:0.86rem; color:var(--heading-color);">Zero-Error Precision</div>
-                <div style="font-size:0.72rem; color:var(--text-muted);">15s sudden-death clock</div>
+                <div style="font-weight:800; font-size:0.86rem; color:var(--heading-color);" data-i18n="drill_surv_title">Zero-Error Precision</div>
+                <div style="font-size:0.72rem; color:var(--text-muted);" data-i18n="drill_surv_desc">15s sudden-death clock</div>
               </div>
             </div>
             <span style="background:rgba(239,68,68,0.15); color:#EF4444; font-size:0.68rem; font-weight:800; padding:2px 6px; border-radius:4px;">15s</span>
@@ -490,11 +490,11 @@
           <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
             <div style="display:flex; align-items:center; gap:8px;">
               <span style="font-size:1.2rem;">📋</span>
-              <h2 class="section-heading-academic" style="margin:0; font-size:1.02rem;" data-i18n="your_assignments">
+              <h2 class="section-heading-academic" style="margin:0; font-size:1.02rem;" data-i18n="prescribed_ca">
                 Prescribed Continuous Assessment
               </h2>
             </div>
-            <span style="font-family:'JetBrains Mono', monospace; font-size:0.74rem; color:var(--text-muted); background:var(--card-bg-hover); padding:2px 8px; border-radius:4px; border:1px solid var(--card-border);">
+            <span style="font-family:'JetBrains Mono', monospace; font-size:0.74rem; color:var(--text-muted); background:var(--card-bg-hover); padding:2px 8px; border-radius:4px; border:1px solid var(--card-border);" data-i18n="knec_paper3_target">
               KNEC Paper 3 Target
             </span>
           </div>
@@ -515,10 +515,10 @@
               <div class="mwalimu-avatar" style="background:var(--acad-oxford); color:#FFF; font-size:1.2rem; display:flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:8px; flex-shrink:0;">👨‍🏫</div>
               <div class="mwalimu-content" style="flex:1; min-width:0;">
                 <div style="margin-bottom:6px; display:flex; align-items:center; justify-content:space-between;">
-                  <div style="font-family:'Cinzel', serif; font-weight:800; font-size:0.92rem; color:var(--heading-color);">
+                  <div style="font-family:'Cinzel', serif; font-weight:800; font-size:0.92rem; color:var(--heading-color);" data-i18n="mwalimu_diag_title">
                     Mwalimu Socratic Diagnostic
                   </div>
-                  <span style="background:var(--acad-gold-subtle); color:var(--acad-gold); font-size:0.68rem; font-weight:800; padding:2px 8px; border-radius:4px; font-family:'JetBrains Mono', monospace;">Pedagogical Hint</span>
+                  <span style="background:var(--acad-gold-subtle); color:var(--acad-gold); font-size:0.68rem; font-weight:800; padding:2px 8px; border-radius:4px; font-family:'JetBrains Mono', monospace;" data-i18n="pedagogical_hint">Pedagogical Hint</span>
                 </div>
                 <div id="mwalimuMessage" style="font-family:'Newsreader', serif; font-size:0.92rem; line-height:1.5; color:var(--text-main);">
                   Analyzing your practical examination logs to identify targeted weak areas…
@@ -531,15 +531,15 @@
               <div class="mwalimu-avatar" id="recIcon" style="background:var(--acad-emerald-subtle); color:var(--acad-emerald); border:1px solid var(--acad-emerald); font-size:1.2rem; display:flex; align-items:center; justify-content:center; width:42px; height:42px; border-radius:8px; flex-shrink:0;">🎯</div>
               <div class="mwalimu-content" style="flex:1; min-width:0;">
                 <div style="margin-bottom:4px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px;">
-                  <span style="font-size:0.7rem; font-weight:800; text-transform:uppercase; color:var(--acad-emerald); letter-spacing:0.05em; font-family:'JetBrains Mono', monospace;">Prescribed Practical</span>
-                  <span class="mwalimu-chip" id="recReasonBadge" style="background:var(--acad-emerald-subtle); color:var(--acad-emerald); font-weight:800; font-size:0.68rem; border-radius:4px;">Syllabus Focus</span>
+                  <span style="font-size:0.7rem; font-weight:800; text-transform:uppercase; color:var(--acad-emerald); letter-spacing:0.05em; font-family:'JetBrains Mono', monospace;" data-i18n="prescribed_practical">Prescribed Practical</span>
+                  <span class="mwalimu-chip" id="recReasonBadge" style="background:var(--acad-emerald-subtle); color:var(--acad-emerald); font-weight:800; font-size:0.68rem; border-radius:4px;" data-i18n="syllabus_focus">Syllabus Focus</span>
                 </div>
                 <div style="font-family:'Cinzel', serif; font-weight:800; color:var(--heading-color); font-size:0.98rem; margin-bottom:4px;" id="recTitle">Redox Titration (Fe²⁺ vs KMnO₄)</div>
                 <div class="mwalimu-message" id="recDesc" style="margin-bottom:12px; font-size:0.8rem; line-height:1.45; color:var(--text-muted);">
                   Reinforce self-indicating titration transitions without external indicators to maximize Paper 3 Q1 marks.
                 </div>
                 <a id="recActionBtn" href="lab.html?studyMode=guided" class="btn btn-primary" style="display:inline-flex; align-items:center; gap:6px; padding:7px 16px; font-size:0.78rem; font-weight:800; border-radius:6px; text-decoration:none; background:var(--acad-emerald); color:#FFF; border:none;">
-                  <span>Launch Prescribed Session →</span>
+                  <span data-i18n="launch_prescribed">Launch Prescribed Session →</span>
                 </a>
               </div>
             </div>
@@ -553,9 +553,9 @@
         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
           <div>
             <h2 class="section-heading-academic" style="margin:0; font-size:1.15rem;">
-              <span>🔬</span> KCSE Practical Chemistry Learning Pathway
+              <span>🔬</span> <span data-i18n="pathway_heading">KCSE Practical Chemistry Learning Pathway</span>
             </h2>
-            <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">
+            <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;" data-i18n="pathway_sub">
               Follow the guided mastery pathway or explore individual laboratory benches:
             </div>
           </div>
@@ -563,10 +563,10 @@
           <!-- View Toggle Switcher -->
           <div class="pathway-view-toggle">
             <button type="button" class="view-toggle-btn active" id="btnViewTree" onclick="SkillTree.switchView('tree')">
-              <span>🗺️</span> <span>Learning Pathway</span>
+              <span>🗺️</span> <span data-i18n="btn_learning_pathway">Learning Pathway</span>
             </button>
             <button type="button" class="view-toggle-btn" id="btnViewGrid" onclick="SkillTree.switchView('grid')">
-              <span>📋</span> <span>Discipline Grid</span>
+              <span>📋</span> <span data-i18n="btn_discipline_grid">Discipline Grid</span>
             </button>
           </div>
         </div>
@@ -695,9 +695,9 @@
       <div style="margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
         <div>
           <h2 class="section-heading-academic" style="margin:0; font-size:1.25rem;">
-            <span>📚</span> KNEC KCSE Practical Reference Standards
+            <span>📚</span> <span data-i18n="ref_title">KNEC KCSE Practical Reference Standards</span>
           </h2>
-          <p style="font-size:0.84rem; color:var(--text-muted); margin:4px 0 0 0;">
+          <p style="font-size:0.84rem; color:var(--text-muted); margin:4px 0 0 0;" data-i18n="ref_sub">
             Authoritative KNEC Paper 3 observational criteria, endpoint color standards, and ion deduction reference tables.
           </p>
         </div>
@@ -708,7 +708,7 @@
         <!-- 1. Indicators Reference Card -->
         <div class="knec-reference-card">
           <h3 style="font-family:'Cinzel', serif; font-size:1.05rem; color:var(--heading-color); margin:0 0 8px 0; display:flex; align-items:center; gap:8px;">
-            <span>💧</span> Acid-Base Indicators Ledger
+            <span>💧</span> <span data-i18n="ind_title">Acid-Base Indicators Ledger</span>
           </h3>
           <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Standard KNEC colour transition endpoints at titration equivalence.</p>
           <table class="knec-table" aria-label="KNEC Indicator Table">
@@ -752,7 +752,7 @@
         <!-- 2. Gas Confirmatory Tests Card -->
         <div class="knec-reference-card">
           <h3 style="font-family:'Cinzel', serif; font-size:1.05rem; color:var(--heading-color); margin:0 0 8px 0; display:flex; align-items:center; gap:8px;">
-            <span>💨</span> Gas Confirmatory Tests
+            <span>💨</span> <span data-i18n="gas_title">Gas Confirmatory Tests</span>
           </h3>
           <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Standard confirmatory reagent methods for common laboratory gases.</p>
           <table class="knec-table" aria-label="Gas Tests Table">
@@ -801,7 +801,7 @@
         <!-- 3. Qualitative Cation Separation Guide -->
         <div class="knec-reference-card" style="grid-column:1 / -1;">
           <h3 style="font-family:'Cinzel', serif; font-size:1.05rem; color:var(--heading-color); margin:0 0 8px 0; display:flex; align-items:center; gap:8px;">
-            <span>🧪</span> Systematic Cation Identification &amp; Separation
+            <span>🧪</span> <span data-i18n="cation_title">Systematic Cation Identification &amp; Separation</span>
           </h3>
           <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Deduce cations by adding aqueous NaOH followed by aqueous NH₃ dropwise until in excess.</p>
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:14px;">
@@ -862,7 +862,7 @@
         <div class="knec-reference-card" style="grid-column:1 / -1; border-top:3px solid #F59E0B;">
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
             <h3 style="font-family:'Cinzel', serif; font-size:1.05rem; color:var(--heading-color); margin:0; display:flex; align-items:center; gap:8px;">
-              <span>🔥</span> KNEC Flame Emission Spectroscopy &amp; Cation Confirmatory Tests
+              <span>🔥</span> <span data-i18n="flame_title">KNEC Flame Emission Spectroscopy &amp; Cation Confirmatory Tests</span>
             </h3>
             <span style="font-family:'JetBrains Mono', monospace; font-size:0.72rem; background:rgba(245,158,11,0.12); color:#F59E0B; border:1px solid rgba(245,158,11,0.3); padding:2px 8px; border-radius:4px; font-weight:700;">
               KNEC Paper 3 Qualitative Standard
@@ -1051,7 +1051,7 @@
         <!-- 4. Anion Systematic Confirmation Guide -->
         <div class="knec-reference-card">
           <h3 style="font-family:'Cinzel', serif; font-size:1.05rem; color:var(--heading-color); margin:0 0 8px 0; display:flex; align-items:center; gap:8px;">
-            <span>🔬</span> Systematic Anion Identification Ledger
+            <span>🔬</span> <span data-i18n="anion_title">Systematic Anion Identification Ledger</span>
           </h3>
           <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Distinguish and confirm common Paper 3 inorganic anions with acidified test reagents.</p>
           <table class="knec-table" aria-label="Anion Identification Table">
@@ -1095,7 +1095,7 @@
         <!-- 5. Organic Chemistry Functional Group Identification Ledger -->
         <div class="knec-reference-card">
           <h3 style="font-family:'Cinzel', serif; font-size:1.05rem; color:var(--heading-color); margin:0 0 8px 0; display:flex; align-items:center; gap:8px;">
-            <span>⚗️</span> Organic Chemistry Functional Group Reactions
+            <span>⚗️</span> <span data-i18n="org_title">Organic Chemistry Functional Group Reactions</span>
           </h3>
           <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Official KNEC Paper 3 Question 3 organic qualitative deduction tests.</p>
           <table class="knec-table" aria-label="Organic Reactions Table">
@@ -1134,7 +1134,7 @@
         <!-- 6. Physical Chemistry & Titration Standards Master Card -->
         <div class="knec-reference-card" style="grid-column:1 / -1; border-top:3px solid var(--acad-gold);">
           <h3 style="font-family:'Cinzel', serif; font-size:1.05rem; color:var(--heading-color); margin:0 0 8px 0; display:flex; align-items:center; gap:8px;">
-            <span>📐</span> Physical Chemistry Formulae &amp; Volumetric Concordancy Rubric
+            <span>📐</span> <span data-i18n="phys_title">Physical Chemistry Formulae &amp; Volumetric Concordancy Rubric</span>
           </h3>
           <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:14px;">Essential mathematical relationships and examiner marking standards for KCSE Paper 3.</p>
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:14px;">
@@ -1180,9 +1180,9 @@
       
       <div style="margin-bottom:20px;">
         <h2 class="section-heading-academic" style="margin:0; font-size:1.25rem;">
-          <span>🏆</span> Candidate Achievements &amp; Historical Ledger
+          <span>🏆</span> <span data-i18n="achieve_title">Candidate Achievements &amp; Historical Ledger</span>
         </h2>
-        <p style="font-size:0.84rem; color:var(--text-muted); margin:4px 0 0 0;">
+        <p style="font-size:0.84rem; color:var(--text-muted); margin:4px 0 0 0;" data-i18n="achieve_sub">
           Review your earned competency honors, class leaderboard standing, and complete practical examination records.
         </p>
       </div>
@@ -1193,16 +1193,16 @@
         <div>
           <!-- Academic Honors Seal Card -->
           <div class="knec-reference-card" style="border-color:var(--acad-gold-border); border-top:4px solid var(--acad-gold); text-align:center;">
-            <span style="font-family:'Cinzel', serif; font-size:0.72rem; font-weight:800; text-transform:uppercase; color:var(--acad-gold); letter-spacing:0.1em; display:block; margin-bottom:10px;">★ ACADEMIC HONORS ★</span>
+            <span style="font-family:'Cinzel', serif; font-size:0.72rem; font-weight:800; text-transform:uppercase; color:var(--acad-gold); letter-spacing:0.1em; display:block; margin-bottom:10px;" data-i18n="honors_title">★ ACADEMIC HONORS ★</span>
             <img src="../shared/chemistry_hero_badge.jpg" alt="Chemistry Prodigy Hero Badge" style="width:100%; max-width:110px; aspect-ratio:1/1; object-fit:contain; border-radius:50%; margin-bottom:12px; border:2px solid var(--acad-gold);">
-            <div style="font-family:'Cinzel', serif; font-weight:800; font-size:1.05rem; color:var(--heading-color); margin-bottom:4px;">Chemistry Prodigy</div>
-            <div style="font-family:'Newsreader', serif; font-style:italic; font-size:0.84rem; color:var(--text-muted); line-height:1.45;">Attained for achieving &ge;80% KCSE Paper 3 practical accuracy across all syllabus disciplines.</div>
+            <div style="font-family:'Cinzel', serif; font-weight:800; font-size:1.05rem; color:var(--heading-color); margin-bottom:4px;" data-i18n="prodigy_title">Chemistry Prodigy</div>
+            <div style="font-family:'Newsreader', serif; font-style:italic; font-size:0.84rem; color:var(--text-muted); line-height:1.45;" data-i18n="prodigy_desc">Attained for achieving &ge;80% KCSE Paper 3 practical accuracy across all syllabus disciplines.</div>
           </div>
 
           <!-- Competency Badges List -->
           <div class="knec-reference-card">
             <h3 style="font-family:'Cinzel', serif; font-size:1.05rem; color:var(--heading-color); margin:0 0 14px 0; display:flex; align-items:center; gap:8px;">
-              <span>🎖️</span> Practical Competency Badges
+              <span>🎖️</span> <span data-i18n="badges_title">Practical Competency Badges</span>
             </h3>
             <div id="badgeGrid" class="badges-sidebar-container" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px;">
               <!-- Badges populated dynamically by loadBadges() in student-dashboard.js -->
@@ -1216,7 +1216,7 @@
           <div class="knec-reference-card">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
               <h3 style="font-family:'Cinzel', serif; font-size:1.05rem; color:var(--heading-color); margin:0; display:flex; align-items:center; gap:8px;">
-                <span>📊</span> Institutional Standings
+                <span>📊</span> <span data-i18n="leaderboard_title">Institutional Standings</span>
               </h3>
               <a href="history.html" class="see-all-link" style="font-size:0.78rem; font-weight:700;">Class Rank →</a>
             </div>
@@ -1229,7 +1229,7 @@
           <div class="knec-reference-card">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
               <h3 style="font-family:'Cinzel', serif; font-size:1.05rem; color:var(--heading-color); margin:0; display:flex; align-items:center; gap:8px;">
-                <span>📑</span> Recent Practical Sessions
+                <span>📑</span> <span data-i18n="recent_title">Recent Practical Sessions</span>
               </h3>
               <a href="history.html" class="see-all-link" style="font-size:0.78rem; font-weight:700;">Full Assessment Log →</a>
             </div>
@@ -1250,9 +1250,9 @@
       
       <div style="margin-bottom:20px;">
         <h2 class="section-heading-academic" style="margin:0; font-size:1.25rem;">
-          <span>🔬</span> Chemistry Practical Competency Assessment &amp; Research Suite
+          <span>🔬</span> <span data-i18n="research_heading">Chemistry Practical Competency Assessment &amp; Research Suite</span>
         </h2>
-        <p style="font-size:0.84rem; color:var(--text-muted); margin:4px 0 0 0;">
+        <p style="font-size:0.84rem; color:var(--text-muted); margin:4px 0 0 0;" data-i18n="research_sub">
           Standardized psychometric instruments and diagnostic evaluations for empirical efficacy measurement.
         </p>
       </div>
@@ -1266,16 +1266,16 @@
             </h3>
           </div>
           <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <a href="cpcat_assessment.html?type=pre_test" class="btn btn-primary" style="background:var(--acad-navy); color:#FFF; font-size:0.82rem; font-weight:800; text-decoration:none; padding:8px 16px; border-radius:6px;">
+            <a href="cpcat_assessment.html?type=pre_test" class="btn btn-primary" style="background:var(--acad-navy); color:#FFF; font-size:0.82rem; font-weight:800; text-decoration:none; padding:8px 16px; border-radius:6px;" data-i18n="btn_pre_test">
               📋 Take CPCAT Pre-Test
             </a>
-            <a href="cpcat_assessment.html?type=post_test" class="btn btn-primary" style="background:var(--acad-emerald); color:#FFF; font-size:0.82rem; font-weight:800; text-decoration:none; padding:8px 16px; border-radius:6px;">
+            <a href="cpcat_assessment.html?type=post_test" class="btn btn-primary" style="background:var(--acad-emerald); color:#FFF; font-size:0.82rem; font-weight:800; text-decoration:none; padding:8px 16px; border-radius:6px;" data-i18n="btn_post_test">
               🏆 Take CPCAT Post-Test
             </a>
-            <a href="survey_sus.html" class="btn" style="background:var(--card-bg); border:1.5px solid var(--card-border); font-size:0.82rem; font-weight:800; text-decoration:none; padding:8px 16px; border-radius:6px; color:var(--heading-color);">
+            <a href="survey_sus.html" class="btn" style="background:var(--card-bg); border:1.5px solid var(--card-border); font-size:0.82rem; font-weight:800; text-decoration:none; padding:8px 16px; border-radius:6px; color:var(--heading-color);" data-i18n="btn_sus">
               ⭐ System Usability Survey (SUS)
             </a>
-            <a href="survey_tam.html" class="btn" style="background:var(--card-bg); border:1.5px solid var(--card-border); font-size:0.82rem; font-weight:800; text-decoration:none; padding:8px 16px; border-radius:6px; color:var(--heading-color);">
+            <a href="survey_tam.html" class="btn" style="background:var(--card-bg); border:1.5px solid var(--card-border); font-size:0.82rem; font-weight:800; text-decoration:none; padding:8px 16px; border-radius:6px; color:var(--heading-color);" data-i18n="btn_tam">
               📊 Student TAM 3 Survey
             </a>
           </div>
@@ -1298,19 +1298,19 @@
   <nav class="mobile-bottom-nav">
     <button class="bottom-tab-item active" id="mTabBtn_benches" onclick="switchStudentSubTab('benches')">
       <span class="bottom-tab-icon">🧪</span>
-      <span>Workbenches</span>
+      <span data-i18n="m_workbenches">Workbenches</span>
     </button>
     <button class="bottom-tab-item" id="mTabBtn_reference" onclick="switchStudentSubTab('reference')">
       <span class="bottom-tab-icon">📚</span>
-      <span>Revision</span>
+      <span data-i18n="m_revision">Revision</span>
     </button>
     <button class="bottom-tab-item" id="mTabBtn_achievements" onclick="switchStudentSubTab('achievements')">
       <span class="bottom-tab-icon">🏆</span>
-      <span>Badges</span>
+      <span data-i18n="m_badges">Badges</span>
     </button>
     <button class="bottom-tab-item" id="mTabBtn_research" onclick="switchStudentSubTab('research')">
       <span class="bottom-tab-icon">🔬</span>
-      <span>Research</span>
+      <span data-i18n="m_research">Research</span>
     </button>
   </nav>
 
@@ -1377,6 +1377,11 @@
     function switchStudentSubTab(tabId) {
       const tabs = ['benches', 'reference', 'achievements', 'research'];
       if (!tabs.includes(tabId)) tabId = 'benches';
+
+      if (window.BrilliantUI) {
+        window.BrilliantUI.audio.playClick();
+        window.BrilliantUI.vibrate(10);
+      }
 
       tabs.forEach(t => {
         const btn = document.getElementById(`tabBtn_${t}`);

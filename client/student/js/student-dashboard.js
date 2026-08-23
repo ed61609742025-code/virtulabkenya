@@ -1011,24 +1011,32 @@ requireStudentLogin();
   async function loadBadges() {
     const grid = document.getElementById('badgeGrid');
     if (!grid) return;
+
+    const DEFAULT_KCSE_BADGES = [
+      { id: 'b_burette', name: 'Burette Accuracy Master', icon: '⚖️', desc: 'Titre concordancy within ±0.10 cm³', progress: 'In Progress', progress_pct: 65, colorClass: 'teal' },
+      { id: 'b_flame', name: 'Flame Emission Specialist', icon: '🔥', desc: 'Identify 5 metal cations by flame color', progress: 'In Progress', progress_pct: 40, colorClass: 'fire' },
+      { id: 'b_cation', name: 'Cation Qualitative Sleuth', icon: '🔬', desc: 'Systematic NaOH & NH₃ precipitation', progress: 'In Progress', progress_pct: 50, colorClass: 'blue' },
+      { id: 'b_kinetics', name: 'Reaction Rates & Kinetics Ace', icon: '⚡', desc: 'Disappearing cross & rate tangents', progress: 'In Progress', progress_pct: 35, colorClass: 'orange' },
+      { id: 'b_organic', name: 'Organic Functional Group Pro', icon: '🌿', desc: 'Bromine water & alkanol oxidation', progress: 'In Progress', progress_pct: 20, colorClass: 'purple' },
+      { id: 'b_precision', name: 'Zero-Error KCSE Champion', icon: '🎯', desc: 'Score 100% on Paper 3 composite test', progress: 'Locked', progress_pct: 10, colorClass: 'silver' }
+    ];
+
     try {
       const data = await Badges.getMine();
-      const badges = data.badges || [];
-
-      if (badges.length === 0) return; // Keep fallback pre-rendered mockup badges if no backend data
+      let badges = data && Array.isArray(data.badges) && data.badges.length > 0 ? data.badges : DEFAULT_KCSE_BADGES;
 
       const neonClasses = ['teal', 'orange', 'blue', 'purple', 'fire', 'silver'];
 
       grid.innerHTML = badges.map((b, idx) => {
-        const colorClass = neonClasses[idx % neonClasses.length];
+        const colorClass = b.colorClass || neonClasses[idx % neonClasses.length];
         const isUnlocked = !!b.unlocked;
-        const progressPct = isUnlocked ? 100 : (b.progress_pct || 50);
+        const progressPct = isUnlocked ? 100 : (b.progress_pct != null ? b.progress_pct : 45);
 
         return `
           <div class="badge-card">
             <div class="badge-icon-box ${colorClass}">${b.icon || '🎯'}</div>
             <div class="badge-title-text">${escapeHtml(b.name)}</div>
-            <div class="badge-progress-text">${escapeHtml(b.unlocked ? 'Achieved' : (b.progress || 'In Progress'))}</div>
+            <div class="badge-progress-text">${escapeHtml(b.unlocked ? 'Achieved ★' : (b.progress || b.desc || 'In Progress'))}</div>
             <div class="badge-progress-bar-track">
               <div class="badge-progress-bar-fill ${colorClass}" style="width: ${progressPct}%;"></div>
             </div>
@@ -1036,7 +1044,17 @@ requireStudentLogin();
         `;
       }).join('');
     } catch (err) {
-      console.warn('Could not load badges dynamically:', err);
+      console.warn('Using offline default badges:', err);
+      grid.innerHTML = DEFAULT_KCSE_BADGES.map((b) => `
+        <div class="badge-card">
+          <div class="badge-icon-box ${b.colorClass}">${b.icon}</div>
+          <div class="badge-title-text">${escapeHtml(b.name)}</div>
+          <div class="badge-progress-text">${escapeHtml(b.desc)}</div>
+          <div class="badge-progress-bar-track">
+            <div class="badge-progress-bar-fill ${b.colorClass}" style="width: ${b.progress_pct}%;"></div>
+          </div>
+        </div>
+      `).join('');
     }
   }
 

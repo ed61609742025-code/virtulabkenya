@@ -159,7 +159,18 @@
   .knec-table {
     width: 100%;
     border-collapse: collapse;
+  }
+  .knec-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
     margin-top: 10px;
+    border: 1px solid var(--card-border);
+  }
+  .knec-table-wrap .knec-table {
+    margin-top: 0;
+    min-width: 480px;
   }
   .knec-table th {
     background: var(--card-bg-hover);
@@ -170,6 +181,7 @@
     text-align: left;
     padding: 9px 12px;
     border: 1px solid var(--card-border);
+    white-space: nowrap;
   }
   .knec-table td {
     padding: 9px 12px;
@@ -179,6 +191,22 @@
   }
   .knec-table tr:nth-child(even) td {
     background: var(--card-bg-hover);
+  }
+
+  .flame-procedure-grid {
+    display: grid;
+    grid-template-columns: minmax(260px, 320px) 1fr;
+    gap: 16px;
+    margin-bottom: 18px;
+    align-items: stretch;
+  }
+  @media (max-width: 768px) {
+    .flame-procedure-grid {
+      grid-template-columns: 1fr !important;
+    }
+    .knec-reference-card {
+      padding: 14px;
+    }
   }
 </style>
 </head>
@@ -711,42 +739,44 @@
             <span>💧</span> <span data-i18n="ind_title">Acid-Base Indicators Ledger</span>
           </h3>
           <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Standard KNEC colour transition endpoints at titration equivalence.</p>
-          <table class="knec-table" aria-label="KNEC Indicator Table">
-            <thead>
-              <tr>
-                <th>Indicator</th>
-                <th style="text-align:center;">Acid</th>
-                <th style="text-align:center;">Endpoint</th>
-                <th style="text-align:center;">Base</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><b>Phenolphthalein</b></td>
-                <td style="text-align:center; color:var(--text-muted);">Colorless</td>
-                <td style="text-align:center; color:#EC4899; font-weight:700;">Pale Pink</td>
-                <td style="text-align:center; color:#DB2777;">Pink</td>
-              </tr>
-              <tr>
-                <td><b>Methyl Orange</b></td>
-                <td style="text-align:center; color:#EF4444;">Pink / Red</td>
-                <td style="text-align:center; color:#F59E0B; font-weight:700;">Orange</td>
-                <td style="text-align:center; color:#FBBF24;">Yellow</td>
-              </tr>
-              <tr>
-                <td><b>Litmus Paper</b></td>
-                <td style="text-align:center; color:#EF4444;">Red</td>
-                <td style="text-align:center; color:var(--text-muted);">Purple</td>
-                <td style="text-align:center; color:#3B82F6;">Blue</td>
-              </tr>
-              <tr>
-                <td><b>Screened Methyl Orange</b></td>
-                <td style="text-align:center; color:#8B0000;">Violet / Red</td>
-                <td style="text-align:center; color:var(--text-muted); font-weight:700;">Grey</td>
-                <td style="text-align:center; color:#10B981;">Green</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="knec-table-wrap">
+            <table class="knec-table" aria-label="KNEC Indicator Table">
+              <thead>
+                <tr>
+                  <th>Indicator</th>
+                  <th style="text-align:center;">Acid</th>
+                  <th style="text-align:center;">Endpoint</th>
+                  <th style="text-align:center;">Base</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>Phenolphthalein</b></td>
+                  <td style="text-align:center; color:var(--text-muted);">Colorless</td>
+                  <td style="text-align:center; color:#EC4899; font-weight:700;">Pale Pink</td>
+                  <td style="text-align:center; color:#DB2777;">Pink</td>
+                </tr>
+                <tr>
+                  <td><b>Methyl Orange</b></td>
+                  <td style="text-align:center; color:#EF4444;">Pink / Red</td>
+                  <td style="text-align:center; color:#F59E0B; font-weight:700;">Orange</td>
+                  <td style="text-align:center; color:#FBBF24;">Yellow</td>
+                </tr>
+                <tr>
+                  <td><b>Litmus Paper</b></td>
+                  <td style="text-align:center; color:#EF4444;">Red</td>
+                  <td style="text-align:center; color:var(--text-muted);">Purple</td>
+                  <td style="text-align:center; color:#3B82F6;">Blue</td>
+                </tr>
+                <tr>
+                  <td><b>Screened Methyl Orange</b></td>
+                  <td style="text-align:center; color:#8B0000;">Violet / Red</td>
+                  <td style="text-align:center; color:var(--text-muted); font-weight:700;">Grey</td>
+                  <td style="text-align:center; color:#10B981;">Green</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <!-- 2. Gas Confirmatory Tests Card -->
@@ -755,47 +785,49 @@
             <span>💨</span> <span data-i18n="gas_title">Gas Confirmatory Tests</span>
           </h3>
           <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Standard confirmatory reagent methods for common laboratory gases.</p>
-          <table class="knec-table" aria-label="Gas Tests Table">
-            <thead>
-              <tr>
-                <th>Gas</th>
-                <th>Reagent Method</th>
-                <th>KNEC Expected Observation</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><b>Carbon Dioxide (CO₂)</b></td>
-                <td>Bubble through Limewater</td>
-                <td>White precipitate (turns turbid)</td>
-              </tr>
-              <tr>
-                <td><b>Sulfur Dioxide (SO₂)</b></td>
-                <td>Acidified KMnO₄ or K₂Cr₂O₇</td>
-                <td>Purple decolourises / Orange turns green</td>
-              </tr>
-              <tr>
-                <td><b>Chlorine Gas (Cl₂)</b></td>
-                <td>Damp Coloured Litmus</td>
-                <td>Turns red then bleaches white</td>
-              </tr>
-              <tr>
-                <td><b>Ammonia Gas (NH₃)</b></td>
-                <td>Damp Red Litmus Paper</td>
-                <td>Turns blue (alkaline gas)</td>
-              </tr>
-              <tr>
-                <td><b>Hydrogen Gas (H₂)</b></td>
-                <td>Burning splint at test tube mouth</td>
-                <td>Burns with a characteristic 'pop' sound</td>
-              </tr>
-              <tr>
-                <td><b>Oxygen Gas (O₂)</b></td>
-                <td>Glowing wooden splint</td>
-                <td>Relights a glowing splint</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="knec-table-wrap">
+            <table class="knec-table" aria-label="Gas Tests Table">
+              <thead>
+                <tr>
+                  <th>Gas</th>
+                  <th>Reagent Method</th>
+                  <th>KNEC Expected Observation</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>Carbon Dioxide (CO₂)</b></td>
+                  <td>Bubble through Limewater</td>
+                  <td>White precipitate (turns turbid)</td>
+                </tr>
+                <tr>
+                  <td><b>Sulfur Dioxide (SO₂)</b></td>
+                  <td>Acidified KMnO₄ or K₂Cr₂O₇</td>
+                  <td>Purple decolourises / Orange turns green</td>
+                </tr>
+                <tr>
+                  <td><b>Chlorine Gas (Cl₂)</b></td>
+                  <td>Damp Coloured Litmus</td>
+                  <td>Turns red then bleaches white</td>
+                </tr>
+                <tr>
+                  <td><b>Ammonia Gas (NH₃)</b></td>
+                  <td>Damp Red Litmus Paper</td>
+                  <td>Turns blue (alkaline gas)</td>
+                </tr>
+                <tr>
+                  <td><b>Hydrogen Gas (H₂)</b></td>
+                  <td>Burning splint at test tube mouth</td>
+                  <td>Burns with a characteristic 'pop' sound</td>
+                </tr>
+                <tr>
+                  <td><b>Oxygen Gas (O₂)</b></td>
+                  <td>Glowing wooden splint</td>
+                  <td>Relights a glowing splint</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <!-- 3. Qualitative Cation Separation Guide -->
@@ -873,7 +905,7 @@
           </p>
 
           <!-- Flame Test Procedure Diagram & Guidelines Row -->
-          <div style="display:grid; grid-template-columns:minmax(280px, 340px) 1fr; gap:16px; margin-bottom:18px; align-items:stretch;">
+          <div class="flame-procedure-grid">
             
             <!-- SVG Flame Test Experimental Apparatus Diagram -->
             <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:10px; padding:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
@@ -1054,42 +1086,44 @@
             <span>🔬</span> <span data-i18n="anion_title">Systematic Anion Identification Ledger</span>
           </h3>
           <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Distinguish and confirm common Paper 3 inorganic anions with acidified test reagents.</p>
-          <table class="knec-table" aria-label="Anion Identification Table">
-            <thead>
-              <tr>
-                <th>Anion</th>
-                <th>Test Reagent</th>
-                <th>Observation &amp; Deduction</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><b>Sulfate (SO₄²⁻)</b></td>
-                <td>Ba(NO₃)₂ followed by dil. HNO₃</td>
-                <td>White precipitate, <b>insoluble in dilute HNO₃</b> (BaSO₄)</td>
-              </tr>
-              <tr>
-                <td><b>Sulfite (SO₃²⁻)</b></td>
-                <td>Ba(NO₃)₂ followed by dil. HNO₃</td>
-                <td>White precipitate, <b>soluble in dilute HNO₃</b> with choking SO₂ gas</td>
-              </tr>
-              <tr>
-                <td><b>Carbonate (CO₃²⁻)</b></td>
-                <td>Dilute HNO₃ or HCl</td>
-                <td>Effervescence; gas turns <b>calcium hydroxide (limewater) milky</b></td>
-              </tr>
-              <tr>
-                <td><b>Chloride (Cl⁻)</b></td>
-                <td>AgNO₃ followed by dil. HNO₃</td>
-                <td>White precipitate (AgCl), insoluble in HNO₃, soluble in excess NH₃(aq)</td>
-              </tr>
-              <tr>
-                <td><b>Nitrate (NO₃⁻)</b></td>
-                <td>Devarda's alloy + NaOH &amp; warm</td>
-                <td>Pungent ammonia gas evolved; turns <b>moist red litmus paper blue</b></td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="knec-table-wrap">
+            <table class="knec-table" aria-label="Anion Identification Table">
+              <thead>
+                <tr>
+                  <th>Anion</th>
+                  <th>Test Reagent</th>
+                  <th>Observation &amp; Deduction</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>Sulfate (SO₄²⁻)</b></td>
+                  <td>Ba(NO₃)₂ followed by dil. HNO₃</td>
+                  <td>White precipitate, <b>insoluble in dilute HNO₃</b> (BaSO₄)</td>
+                </tr>
+                <tr>
+                  <td><b>Sulfite (SO₃²⁻)</b></td>
+                  <td>Ba(NO₃)₂ followed by dil. HNO₃</td>
+                  <td>White precipitate, <b>soluble in dilute HNO₃</b> with choking SO₂ gas</td>
+                </tr>
+                <tr>
+                  <td><b>Carbonate (CO₃²⁻)</b></td>
+                  <td>Dilute HNO₃ or HCl</td>
+                  <td>Effervescence; gas turns <b>calcium hydroxide (limewater) milky</b></td>
+                </tr>
+                <tr>
+                  <td><b>Chloride (Cl⁻)</b></td>
+                  <td>AgNO₃ followed by dil. HNO₃</td>
+                  <td>White precipitate (AgCl), insoluble in HNO₃, soluble in excess NH₃(aq)</td>
+                </tr>
+                <tr>
+                  <td><b>Nitrate (NO₃⁻)</b></td>
+                  <td>Devarda's alloy + NaOH &amp; warm</td>
+                  <td>Pungent ammonia gas evolved; turns <b>moist red litmus paper blue</b></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <!-- 5. Organic Chemistry Functional Group Identification Ledger -->
@@ -1098,37 +1132,39 @@
             <span>⚗️</span> <span data-i18n="org_title">Organic Chemistry Functional Group Reactions</span>
           </h3>
           <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Official KNEC Paper 3 Question 3 organic qualitative deduction tests.</p>
-          <table class="knec-table" aria-label="Organic Reactions Table">
-            <thead>
-              <tr>
-                <th>Class / Group</th>
-                <th>Diagnostic Test</th>
-                <th>Expected Observation &amp; Inference</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><b>Alkenes &amp; Alkynes</b> (C=C / C≡C)</td>
-                <td>Bromine Water / Acidified KMnO₄</td>
-                <td>Bromine water decolourised immediately; KMnO₄ purple turns colourless (Unsaturation)</td>
-              </tr>
-              <tr>
-                <td><b>Alkanols (–OH)</b></td>
-                <td>Acidified K₂Cr₂O₇ &amp; warm / Sodium metal</td>
-                <td>Orange dichromate turns green (Cr³⁺); Na metal dissolves with 'pop' H₂ gas effervescence</td>
-              </tr>
-              <tr>
-                <td><b>Carboxylic Acids (–COOH)</b></td>
-                <td>Blue Litmus / Solid NaHCO₃ or Na₂CO₃</td>
-                <td>Blue litmus turns red (pH 3–5); rapid effervescence of CO₂ gas turning limewater milky</td>
-              </tr>
-              <tr>
-                <td><b>Esterification Reaction</b></td>
-                <td>Alkanol + Carboxylic Acid + Conc. H₂SO₄</td>
-                <td>Fruity, pleasant-smelling ester liquid formed upon warming and pouring into water</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="knec-table-wrap">
+            <table class="knec-table" aria-label="Organic Reactions Table">
+              <thead>
+                <tr>
+                  <th>Class / Group</th>
+                  <th>Diagnostic Test</th>
+                  <th>Expected Observation &amp; Inference</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><b>Alkenes &amp; Alkynes</b> (C=C / C≡C)</td>
+                  <td>Bromine Water / Acidified KMnO₄</td>
+                  <td>Bromine water decolourised immediately; KMnO₄ purple turns colourless (Unsaturation)</td>
+                </tr>
+                <tr>
+                  <td><b>Alkanols (–OH)</b></td>
+                  <td>Acidified K₂Cr₂O₇ &amp; warm / Sodium metal</td>
+                  <td>Orange dichromate turns green (Cr³⁺); Na metal dissolves with 'pop' H₂ gas effervescence</td>
+                </tr>
+                <tr>
+                  <td><b>Carboxylic Acids (–COOH)</b></td>
+                  <td>Blue Litmus / Solid NaHCO₃ or Na₂CO₃</td>
+                  <td>Blue litmus turns red (pH 3–5); rapid effervescence of CO₂ gas turning limewater milky</td>
+                </tr>
+                <tr>
+                  <td><b>Esterification Reaction</b></td>
+                  <td>Alkanol + Carboxylic Acid + Conc. H₂SO₄</td>
+                  <td>Fruity, pleasant-smelling ester liquid formed upon warming and pouring into water</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <!-- 6. Physical Chemistry & Titration Standards Master Card -->

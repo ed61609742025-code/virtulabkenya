@@ -242,13 +242,13 @@ requireStudentLogin();
         const dueLabel = a.due_date ? `Due ${formatDate(a.due_date)}` : 'No set deadline';
 
         return `
-          <div class="assignment-card-box" style="flex: 1 1 240px; display:flex; flex-direction:column; justify-content:space-between; min-height:165px;">
+          <div class="assignment-card-box" data-tooltip="${isSubmitted ? (isGraded ? 'Marked by teacher. Click to view grade &amp; feedback' : 'Submitted and pending teacher marking') : 'Active continuous assessment assignment'}" data-tooltip-pos="top" style="flex: 1 1 260px; display:flex; flex-direction:column; justify-content:space-between; min-height:175px;">
             <div>
               <div class="assign-card-title">${escapeHtml(a.title)}</div>
-              <div class="assign-card-desc" style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px; line-height:1.3; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">
+              <div class="assign-card-desc" style="font-size:0.82rem; color:var(--text-muted); margin-bottom:8px; line-height:1.4; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">
                 ${escapeHtml(a.description || a.instructions || 'No instructions provided.')}
               </div>
-              <div class="assign-card-due" style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px;">
+              <div class="assign-card-due" style="font-size:0.78rem; font-family:'JetBrains Mono', monospace; font-weight:700; color:var(--text-muted); margin-bottom:12px;">
                 ${dueLabel}
               </div>
             </div>
@@ -993,10 +993,10 @@ requireStudentLogin();
 
       const displaySessions = sessions.slice(0, 2);
       box.innerHTML = displaySessions.map(s => `
-        <div class="session-card-item">
+        <div class="session-card-item" data-tooltip="${s.correct ? 'Verified practical passing standard on official rubric' : 'Review suggested to improve concordance / observations'}" data-tooltip-pos="top">
           <div style="min-width:0;">
             <div class="session-info-title">${escapeHtml(s.titration_title || s.titration_type || 'Lab Session')}</div>
-            <div class="session-info-meta">${new Date(s.created_at).toLocaleDateString()} - ${s.trials_count ?? 0} trial(s)</div>
+            <div class="session-info-meta">${new Date(s.created_at).toLocaleDateString()} &bull; ${s.trials_count ?? 0} trial(s)</div>
           </div>
           <span class="${s.correct ? 'pill-correct' : 'pill-incorrect'}">${s.correct ? 'Correct' : 'Incorrect'}</span>
         </div>
@@ -1011,10 +1011,10 @@ requireStudentLogin();
       renderStudentCharts(fallbackSessions);
       if (box) {
         box.innerHTML = fallbackSessions.map(s => `
-          <div class="session-card-item">
+          <div class="session-card-item" data-tooltip="${s.correct ? 'Verified practical passing standard on official rubric' : 'Review suggested to improve concordance / observations'}" data-tooltip-pos="top">
             <div style="min-width:0;">
               <div class="session-info-title">${escapeHtml(s.titration_title || 'Lab Session')}</div>
-              <div class="session-info-meta">${new Date(s.created_at).toLocaleDateString()} - ${s.trials_count ?? 0} trial(s)</div>
+              <div class="session-info-meta">${new Date(s.created_at).toLocaleDateString()} &bull; ${s.trials_count ?? 0} trial(s)</div>
             </div>
             <span class="${s.correct ? 'pill-correct' : 'pill-incorrect'}">${s.correct ? 'Correct' : 'Incorrect'}</span>
           </div>
@@ -1032,7 +1032,7 @@ requireStudentLogin();
       { id: 'b_flame', name: 'Flame Emission Specialist', icon: '🔥', desc: 'Identify 5 metal cations by flame color', progress: 'In Progress', progress_pct: 40, colorClass: 'fire' },
       { id: 'b_cation', name: 'Cation Qualitative Sleuth', icon: '🔬', desc: 'Systematic NaOH & NH₃ precipitation', progress: 'In Progress', progress_pct: 50, colorClass: 'blue' },
       { id: 'b_kinetics', name: 'Reaction Rates & Kinetics Ace', icon: '⚡', desc: 'Disappearing cross & rate tangents', progress: 'In Progress', progress_pct: 35, colorClass: 'orange' },
-      { id: 'b_organic', name: 'Organic Functional Group Pro', icon: '🌿', desc: 'Bromine water & alkanol oxidation', progress: 'In Progress', progress_pct: 20, colorClass: 'purple' },
+      { id: 'b_organic', name: 'Organic Functional Group Pro', icon: '⚗️', desc: 'Bromine water & alkanol oxidation', progress: 'In Progress', progress_pct: 20, colorClass: 'purple' },
       { id: 'b_precision', name: 'Zero-Error KCSE Champion', icon: '🎯', desc: 'Score 100% on Paper 3 composite test', progress: 'Locked', progress_pct: 10, colorClass: 'silver' }
     ];
 
@@ -1048,12 +1048,14 @@ requireStudentLogin();
         const progressPct = isUnlocked ? 100 : (b.progress_pct != null ? b.progress_pct : 45);
 
         return `
-          <div class="badge-card">
+          <div class="badge-card" data-tooltip="${escapeHtml(b.desc || b.name)}" data-tooltip-pos="top">
             <div class="badge-icon-box ${colorClass}">${b.icon || '🎯'}</div>
-            <div class="badge-title-text">${escapeHtml(b.name)}</div>
-            <div class="badge-progress-text">${escapeHtml(b.unlocked ? 'Achieved ★' : (b.progress || b.desc || 'In Progress'))}</div>
-            <div class="badge-progress-bar-track">
-              <div class="badge-progress-bar-fill ${colorClass}" style="width: ${progressPct}%;"></div>
+            <div style="flex:1; min-width:0;">
+              <div class="badge-title-text">${escapeHtml(b.name)}</div>
+              <div class="badge-progress-text">${escapeHtml(b.unlocked ? 'Achieved ★' : (b.progress || b.desc || 'In Progress'))}</div>
+              <div class="badge-progress-bar-track">
+                <div class="badge-progress-bar-fill ${colorClass}" style="width: ${progressPct}%;"></div>
+              </div>
             </div>
           </div>
         `;
@@ -1061,12 +1063,14 @@ requireStudentLogin();
     } catch (err) {
       console.warn('Using offline default badges:', err);
       grid.innerHTML = DEFAULT_KCSE_BADGES.map((b) => `
-        <div class="badge-card">
+        <div class="badge-card" data-tooltip="${escapeHtml(b.desc || b.name)}" data-tooltip-pos="top">
           <div class="badge-icon-box ${b.colorClass}">${b.icon}</div>
-          <div class="badge-title-text">${escapeHtml(b.name)}</div>
-          <div class="badge-progress-text">${escapeHtml(b.desc)}</div>
-          <div class="badge-progress-bar-track">
-            <div class="badge-progress-bar-fill ${b.colorClass}" style="width: ${b.progress_pct}%;"></div>
+          <div style="flex:1; min-width:0;">
+            <div class="badge-title-text">${escapeHtml(b.name)}</div>
+            <div class="badge-progress-text">${escapeHtml(b.desc)}</div>
+            <div class="badge-progress-bar-track">
+              <div class="badge-progress-bar-fill ${b.colorClass}" style="width: ${b.progress_pct}%;"></div>
+            </div>
           </div>
         </div>
       `).join('');

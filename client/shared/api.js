@@ -365,6 +365,11 @@ async function apiRequest(method, endpoint, body, retries = 2) {
           throw new Error(data.error || 'Session expired. Please log in again.');
         }
 
+        // If 429 Too Many Requests, do not spam retries
+        if (res.status === 429) {
+          throw new Error(data.error || 'Server rate limit reached. Please wait a few moments before refreshing.');
+        }
+
         // If 5xx server error and we have retries left, retry with backoff
         if (res.status >= 500 && attempt < retries) {
           attempt++;

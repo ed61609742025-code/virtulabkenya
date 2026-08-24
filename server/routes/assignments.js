@@ -11,33 +11,139 @@ const { sendCsv, toCsvRow } = require('../utils/csv');
 
 const router = express.Router();
 
-const CSV_HEADERS = [
-  'Student Name', 'Email', 'Form', 'Titration Type', 'Titration Title',
-  'Indicator', 'Trials Count', 'Trial Readings (cm3)', 'Concordant Found',
-  'True Concentration (mol/dm3)', 'Student Answer (mol/dm3)', 'Correct',
-  'Mode', 'Submitted At'
-];
+function getCsvConfigForAssignment(assignment, rows) {
+  const type = assignment.titration_type || 'acidBase';
 
-function submissionRowToValues(row) {
-  const readings = Array.isArray(row.trial_readings)
-    ? row.trial_readings.map(r => Number(r).toFixed(2)).join(' | ')
-    : '';
-  return [
-    row.student_name,
-    row.student_email,
-    row.student_form,
-    row.titration_type,
-    row.titration_title,
-    row.indicator_used,
-    row.trials_count,
-    readings,
-    row.concordant_found ? 'Yes' : 'No',
-    row.true_value,
-    row.student_answer,
-    row.correct ? 'Yes' : 'No',
-    row.mode,
-    row.submitted_at ? new Date(row.submitted_at).toISOString() : ''
+  if (type === 'qualitative') {
+    const headers = [
+      'Student Name', 'Email', 'Form', 'Salt Key', 'Salt Name',
+      'Student Cation', 'Student Anion', 'Cation Correct', 'Anion Correct',
+      'Tests Performed', 'Tests Correct', 'Overall Correct', 'Status', 'Teacher Feedback', 'Submitted At'
+    ];
+    const dataRows = rows.map(r => [
+      r.student_name, r.student_email, r.student_form, r.salt_key || '—', r.salt_name || '—',
+      r.student_cation || '—', r.student_anion || '—', r.cation_correct ? 'Yes' : 'No', r.anion_correct ? 'Yes' : 'No',
+      r.q_tests_performed ?? 0, r.q_tests_correct ?? 0, r.correct ? 'Yes' : 'No', r.submission_status || 'submitted',
+      r.teacher_feedback || '', r.submitted_at ? new Date(r.submitted_at).toISOString() : ''
+    ]);
+    return { headers, dataRows };
+  }
+
+  if (type === 'organic') {
+    const headers = [
+      'Student Name', 'Email', 'Form', 'Sample Key', 'Sample Name',
+      'Identified Functional Group', 'Functional Group Correct',
+      'Tests Performed', 'Tests Correct', 'Overall Correct', 'Status', 'Teacher Feedback', 'Submitted At'
+    ];
+    const dataRows = rows.map(r => [
+      r.student_name, r.student_email, r.student_form, r.compound_key || '—', r.compound_name || '—',
+      r.student_functional_group || '—', r.functional_group_correct ? 'Yes' : 'No',
+      r.o_tests_performed ?? 0, r.o_tests_correct ?? 0, r.correct ? 'Yes' : 'No', r.submission_status || 'submitted',
+      r.teacher_feedback || '', r.submitted_at ? new Date(r.submitted_at).toISOString() : ''
+    ]);
+    return { headers, dataRows };
+  }
+
+  if (type === 'solubility') {
+    const headers = [
+      'Student Name', 'Email', 'Form', 'Solute', 'Crystallization Temp (°C)', 'Theoretical Temp (°C)',
+      'Temp Difference (°C)', 'Accuracy Mark (2.0)', 'Graph Mark (3.0)', 'Total Score (5.0)',
+      'Result', 'Status', 'Teacher Feedback', 'Submitted At'
+    ];
+    const dataRows = rows.map(r => [
+      r.student_name, r.student_email, r.student_form, r.solute_name || r.solute_key || '—',
+      r.crystallization_temp ?? '', r.theoretical_temp ?? '', r.temp_difference ?? '',
+      r.sol_accuracy_score ?? 0, r.sol_graph_score ?? 0, r.sol_total_score ?? 0,
+      r.correct ? 'Pass' : 'Review Needed', r.submission_status || 'submitted',
+      r.teacher_feedback || '', r.submitted_at ? new Date(r.submitted_at).toISOString() : ''
+    ]);
+    return { headers, dataRows };
+  }
+
+  if (type === 'energy' || type === 'displacement' || type === 'neutralization' || type === 'solution' || type === 'combustion') {
+    const headers = [
+      'Student Name', 'Email', 'Form', 'System Name', 'Category', 'Initial Temp (°C)', 'Final Temp (°C)',
+      'Temp Change (°C)', 'Heat Quantity Q (J)', 'Moles (mol)', 'Molar Enthalpy ΔH (kJ/mol)', 'Theoretical ΔH (kJ/mol)',
+      'Total Score (15.0)', 'Result', 'Status', 'Teacher Feedback', 'Submitted At'
+    ];
+    const dataRows = rows.map(r => [
+      r.student_name, r.student_email, r.student_form, r.en_system_name || r.en_system_id || '—', r.en_category || '—',
+      r.en_initial_temp ?? '', r.en_final_temp ?? '', r.en_temp_change ?? '', r.en_heat_quantity ?? '',
+      r.en_moles ?? '', r.en_molar_enthalpy ?? '', r.theoretical_enthalpy ?? '',
+      r.en_total_score ?? 0, r.correct ? 'Pass' : 'Review Needed', r.submission_status || 'submitted',
+      r.teacher_feedback || '', r.submitted_at ? new Date(r.submitted_at).toISOString() : ''
+    ]);
+    return { headers, dataRows };
+  }
+
+  if (type === 'rates' || type === 'kinetics') {
+    const headers = [
+      'Student Name', 'Email', 'Form', 'Experiment Type', 'Table Score (5.0)', 'Graph Score (4.0)',
+      'Calculation Score (6.0)', 'Total Score (15.0)', 'KNEC Grade', 'Result', 'Status', 'Teacher Feedback', 'Submitted At'
+    ];
+    const dataRows = rows.map(r => [
+      r.student_name, r.student_email, r.student_form, r.rate_exp_title || r.rate_exp_type || '—',
+      r.rate_table_score ?? 0, r.rate_graph_score ?? 0, r.rate_calc_score ?? 0, r.rate_total_score ?? 0,
+      r.rate_grade || '—', r.correct ? 'Pass' : 'Review Needed', r.submission_status || 'submitted',
+      r.teacher_feedback || '', r.submitted_at ? new Date(r.submitted_at).toISOString() : ''
+    ]);
+    return { headers, dataRows };
+  }
+
+  if (type === 'gas' || type === 'gasPrep') {
+    const headers = [
+      'Student Name', 'Email', 'Form', 'Gas Key', 'Gas Name', 'Drying Agent', 'Collection Method',
+      'Drying Correct', 'Collection Correct', 'Tests Performed', 'Tests Correct', 'Total Score (10.0)',
+      'Result', 'Status', 'Teacher Feedback', 'Submitted At'
+    ];
+    const dataRows = rows.map(r => [
+      r.student_name, r.student_email, r.student_form, r.gas_key || '—', r.gas_name || '—',
+      r.gas_drying_agent || '—', r.gas_collection_method || '—', r.gas_drying_correct ? 'Yes' : 'No',
+      r.gas_collection_correct ? 'Yes' : 'No', r.gas_tests_performed ?? 0, r.gas_tests_correct ?? 0,
+      r.gas_total_score ?? 0, r.correct ? 'Pass' : 'Review Needed', r.submission_status || 'submitted',
+      r.teacher_feedback || '', r.submitted_at ? new Date(r.submitted_at).toISOString() : ''
+    ]);
+    return { headers, dataRows };
+  }
+
+  if (type === 'kcseComposite') {
+    const headers = [
+      'Student Name', 'Email', 'Form', 'Exam Title', 'Q1 Titration (15.0)', 'Q2 Salt Analysis (15.0)',
+      'Q3 Organic Analysis (10.0)', 'Total Score (40.0)', 'KNEC Grade', 'Result', 'Status', 'Teacher Feedback', 'Submitted At'
+    ];
+    const dataRows = rows.map(r => [
+      r.student_name, r.student_email, r.student_form, r.exam_title || 'KCSE Chemistry Paper 3 Mock',
+      r.q1_score ?? 0, r.q2_score ?? 0, r.q3_score ?? 0, r.composite_total_score ?? 0,
+      r.composite_grade || '—', r.correct ? 'Pass' : 'Review Needed', r.submission_status || 'submitted',
+      r.teacher_feedback || '', r.submitted_at ? new Date(r.submitted_at).toISOString() : ''
+    ]);
+    return { headers, dataRows };
+  }
+
+  // Default: Volumetric Titrations
+  const headers = [
+    'Student Name', 'Email', 'Form', 'Titration Type', 'Titration Title',
+    'Indicator', 'Trials Count', 'Trial Readings (cm3)', 'Concordant Found',
+    'True Concentration (mol/dm3)', 'Student Answer (mol/dm3)', 'Correct',
+    'Mode', 'Status', 'Teacher Feedback', 'Submitted At'
   ];
+  const dataRows = rows.map(row => {
+    let readings = '';
+    if (Array.isArray(row.trial_readings)) {
+      readings = row.trial_readings.map(v => Number(v).toFixed(2)).join(' | ');
+    } else if (row.trial_readings && Array.isArray(row.trial_readings.readings)) {
+      readings = row.trial_readings.readings.map(v => Number(v).toFixed(2)).join(' | ');
+    }
+    return [
+      row.student_name, row.student_email, row.student_form,
+      row.titration_type || type, row.titration_title || '—', row.indicator_used || '—',
+      row.trials_count ?? 0, readings, row.concordant_found ? 'Yes' : 'No',
+      row.true_value ?? '', row.student_answer ?? '', row.correct ? 'Yes' : 'No',
+      row.practical_mode || 'assignment', row.submission_status || 'submitted',
+      row.teacher_feedback || '', row.submitted_at ? new Date(row.submitted_at).toISOString() : ''
+    ];
+  });
+  return { headers, dataRows };
 }
 
 const pool = require('../db/pool');
@@ -204,11 +310,12 @@ router.get('/:id/export', authMiddleware, authMiddleware.requireRole('teacher'),
     return res.status(404).json({ error: 'Assignment not found or permission denied.' });
   }
 
-  const headerRow = toCsvRow(CSV_HEADERS);
-  const dataRows = data.rows.map(row => toCsvRow(submissionRowToValues(row)));
+  const { headers, dataRows } = getCsvConfigForAssignment(data.assignment, data.rows);
+  const headerRow = toCsvRow(headers);
+  const formattedRows = dataRows.map(row => toCsvRow(row));
   const filename = `assignment_${data.assignment.id}_submissions.csv`;
 
-  sendCsv(res, filename, headerRow, dataRows);
+  sendCsv(res, filename, headerRow, formattedRows);
 }));
 
 module.exports = router;

@@ -1,9 +1,45 @@
 requireTeacherLogin();
-  updateThemeButtons();
-  const user = getUser();
-  if (user) document.getElementById('teacherName').textContent = user.name;
+updateThemeButtons();
+let currentUser = getUser();
 
-  let currentPage = 1;
+function updateTeacherCodeElements(code) {
+  const p1 = document.getElementById('teacherCodePill');
+  const p2 = document.getElementById('teacherCodeRosterPill');
+  if (p1) p1.textContent = code || '—';
+  if (p2) p2.textContent = code || '—';
+}
+
+function copyTeacherCode() {
+  const code = (currentUser && currentUser.teacherCode) || (document.getElementById('teacherCodePill') && document.getElementById('teacherCodePill').textContent);
+  if (!code || code === '—') return alert('No teacher code available yet.');
+  navigator.clipboard.writeText(code).then(() => {
+    alert('✓ Teacher Code "' + code + '" copied to clipboard! Share this code with your students so they can join your class.');
+  }).catch(() => {
+    prompt('Copy your Teacher Code:', code);
+  });
+}
+window.copyTeacherCode = copyTeacherCode;
+
+async function initTeacherProfile() {
+  if (currentUser) {
+    if (currentUser.name) document.getElementById('teacherName').textContent = currentUser.name;
+    if (currentUser.teacherCode) updateTeacherCodeElements(currentUser.teacherCode);
+  }
+  try {
+    const res = await Auth.me();
+    if (res && res.user) {
+      currentUser = res.user;
+      setUser(currentUser);
+      if (currentUser.name) document.getElementById('teacherName').textContent = currentUser.name;
+      if (currentUser.teacherCode) updateTeacherCodeElements(currentUser.teacherCode);
+    }
+  } catch (e) {
+    console.warn('Could not refresh teacher profile:', e);
+  }
+}
+initTeacherProfile();
+
+let currentPage = 1;
 
   function applyFilters() {
     currentPage = 1;
@@ -1120,6 +1156,7 @@ requireTeacherLogin();
 
       box.innerHTML = assignments.map(a => {
         const exportBtn = `<button class="btn" onclick="exportAssignmentCsv(${a.id}, '${escapeHtml(a.title).replace(/'/g, "\\'")}')">Download CSV</button>`;
+        const remindBtn = `<button class="btn" style="color:var(--amber-accent);" onclick="sendAssignmentReminder(${a.id}, '${escapeHtml(a.title).replace(/'/g, "\\'")}')" title="Send due date notification to unsubmitted students">⏱️ Remind</button>`;
 
         return `
         <div class="assign-item">
@@ -1128,6 +1165,7 @@ requireTeacherLogin();
             <div class="meta">${escapeHtml(a.titration_type || '—')} · Due ${a.due_date ? new Date(a.due_date).toLocaleDateString() : 'no due date'} · ${a.submitted_count}/${a.total_students} students submitted</div>
           </div>
           <div class="actions">
+            ${remindBtn}
             ${exportBtn}
             <button class="btn" onclick='editAssignment(${JSON.stringify(a).replace(/'/g, "&apos;")})'>Edit</button>
             <button class="btn btn-danger" onclick="deleteAssignment(${a.id}, '${escapeHtml(a.title).replace(/'/g, "\\'")}')">Delete</button>
@@ -1139,6 +1177,19 @@ requireTeacherLogin();
       box.innerHTML = '<div class="empty">Could not load assignments: ' + escapeHtml(err.message) + '</div>';
     }
   }
+
+  async function sendAssignmentReminder(id, title) {
+    if (!confirm('Send a due date reminder notification to all students who have not yet submitted "' + title + '"?')) {
+      return;
+    }
+    try {
+      const res = await Assignments.remind(id);
+      alert(res.message || '✓ Due date reminder sent to unsubmitted students!');
+    } catch (err) {
+      alert('Could not send reminder: ' + (err.message || 'unknown error'));
+    }
+  }
+  window.sendAssignmentReminder = sendAssignmentReminder;
 
   async function exportAssignmentCsv(id, title) {
     const safeName = title.replace(/[^a-z0-9]+/gi, '_').toLowerCase();
@@ -1216,7 +1267,25 @@ requireTeacherLogin();
           ? `<div style="font-size:0.75rem;color:var(--cyan-accent);margin-top:4px;"><b>Teacher Comment:</b> "${escapeHtml(sub.teacher_feedback)}"</div>`
           : '';
 
-        const answerText = sub.student_answer != null ? Number(sub.student_answer).toFixed(4) + ' M' : '—';
+        let answerText = '—';
+        if (sub.composite_total_score != null || sub.q1_score != null) {
+          answerText = (sub.composite_total_score != null ? Number(sub.composite_total_score).toFixed(1) : Number(sub.total_score || 0).toFixed(1)) + ' / 40';
+        } else if (sub.gas_total_score != null) {
+          answerText = Number(sub.gas_total_score).toFixed(1) + ' / 10';
+        } else if (sub.en_total_score != null) {
+          answerText = Number(sub.en_total_score).toFixed(1) + ' / 15';
+        } else if (sub.rate_total_score != null) {
+          answerText = Number(sub.rate_total_score).toFixed(1) + ' / 15';
+        } else if (sub.sol_total_score != null) {
+          answerText = Number(sub.sol_total_score).toFixed(1) + ' / 5';
+        } else if (sub.salt_key) {
+          answerText = escapeHtml(sub.student_cation || '—') + ' / ' + escapeHtml(sub.student_anion || '—');
+        } else if (sub.compound_key) {
+          answerText = escapeHtml(sub.student_functional_group || '—');
+        } else if (sub.student_answer != null) {
+          answerText = Number(sub.student_answer).toFixed(4) + ' M';
+        }
+
         const resultText = sub.correct === true
           ? '<span class="pill pill-ok">Correct</span>'
           : sub.correct === false
@@ -1482,6 +1551,17 @@ requireTeacherLogin();
             <div>SAPC Graph Score: <b>${sub.rate_graph_score != null ? Number(sub.rate_graph_score).toFixed(1) + ' / 4.0' : '—'}</b></div>
             <div>Collision Theory & Calcs: <b>${sub.rate_calc_score != null ? Number(sub.rate_calc_score).toFixed(1) + ' / 6.0' : '—'}</b></div>
             <div style="margin-top:4px;color:var(--cyan-accent);font-weight:800;">Total Score: <b>${sub.rate_total_score != null ? Number(sub.rate_total_score).toFixed(1) + ' / 15.0 Marks' : '—'} (Grade: ${escapeHtml(sub.rate_grade || '—')})</b></div>
+          `);
+        }
+
+        if (sub.gas_key || sub.gas_total_score != null) {
+          detailBlocks.push(`
+            <div style="margin-bottom:8px;font-weight:800;color:var(--heading-color);"><b>Gas Preparation & Confirmatory Testing Details:</b></div>
+            <div>Gas Synthesized: <b>${escapeHtml(sub.gas_name || sub.gas_key || '—')}</b></div>
+            <div>Drying Agent: <b>${escapeHtml(sub.gas_drying_agent || '—')}</b> (${sub.gas_drying_correct ? '✓ Correct' : '✗ Incorrect'})</div>
+            <div>Collection Method: <b>${escapeHtml(sub.gas_collection_method || '—')}</b> (${sub.gas_collection_correct ? '✓ Correct' : '✗ Incorrect'})</div>
+            <div>Tests Performed: <b>${sub.gas_tests_performed ?? '—'}</b> &nbsp;·&nbsp; Tests Correct: <b>${sub.gas_tests_correct ?? '—'}</b></div>
+            <div style="margin-top:4px;color:var(--cyan-accent);font-weight:800;">Total Score: <b>${sub.gas_total_score != null ? Number(sub.gas_total_score).toFixed(1) + ' / 10.0 Marks' : '—'}</b></div>
           `);
         }
 
@@ -1818,6 +1898,7 @@ requireTeacherLogin();
       const solubility = data.solubilitySessions || [];
       const energy = data.energySessions || [];
       const rates = data.ratesSessions || [];
+      const gas = data.gasSessions || [];
       const composite = data.compositeSessions || [];
       const badges = data.badges || [];
       const durationMins = Math.round(metrics.totalDurationSeconds / 60);
@@ -1954,6 +2035,25 @@ requireTeacherLogin();
                     <td style="padding:8px 12px;font-size:0.75rem;">Table: ${Number(r.table_score || 0).toFixed(1)}/5 · Graph: ${Number(r.graph_score || 0).toFixed(1)}/4 · Calc: ${Number(r.calc_score || 0).toFixed(1)}/6</td>
                     <td style="padding:8px 12px;font-weight:700;color:${parseFloat(r.total_score || 0) >= 8 ? 'var(--green-accent)' : 'var(--red-accent)'};">${Number(r.total_score || 0).toFixed(1)} / 15.0 (${escapeHtml(r.grade || '—')})</td>
                     <td style="padding:8px 12px;">${new Date(r.created_at).toLocaleDateString()}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `}
+
+        <h3 style="font-size:0.95rem;color:var(--heading-color);margin:16px 0 10px;">💨 Gas Preparation & Confirmatory Practicals (${gas.length})</h3>
+        ${gas.length === 0 ? '<div class="empty" style="padding:12px;">No gas preparation sessions recorded</div>' : `
+          <div style="max-height:160px;overflow-y:auto;border:1px solid var(--card-border);border-radius:10px;margin-bottom:20px;">
+            <table style="width:100%;font-size:0.8rem;border-collapse:collapse;">
+              <thead><tr style="background:var(--card-bg-hover);text-align:left;"><th style="padding:8px 12px;">Gas Synthesized</th><th style="padding:8px 12px;">Drying / Collection</th><th style="padding:8px 12px;">Score (10m)</th><th style="padding:8px 12px;">Date</th></tr></thead>
+              <tbody>
+                ${gas.map(g => `
+                  <tr style="border-bottom:1px solid var(--card-border);">
+                    <td style="padding:8px 12px;font-weight:700;">${escapeHtml(g.gas_name || g.gas_key || '—')}</td>
+                    <td style="padding:8px 12px;font-size:0.75rem;">Drying: ${escapeHtml(g.drying_agent || '—')} (${g.drying_correct ? '✓' : '✗'}) · Coll: ${escapeHtml(g.collection_method || '—')} (${g.collection_correct ? '✓' : '✗'})</td>
+                    <td style="padding:8px 12px;font-weight:700;color:${parseFloat(g.total_score || 0) >= 6 ? 'var(--green-accent)' : 'var(--red-accent)'};">${Number(g.total_score || 0).toFixed(1)} / 10.0</td>
+                    <td style="padding:8px 12px;">${new Date(g.created_at).toLocaleDateString()}</td>
                   </tr>
                 `).join('')}
               </tbody>

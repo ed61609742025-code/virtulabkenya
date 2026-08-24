@@ -488,6 +488,9 @@ const Assignments = {
   async remove(id) {
     return apiRequest('DELETE', '/assignments/' + id);
   },
+  async remind(id) {
+    return apiRequest('POST', '/assignments/' + id + '/remind');
+  },
   async markSubmission(submissionId, teacherFeedback) {
     return apiRequest('POST', '/assignments/submissions/' + submissionId + '/mark', { teacherFeedback });
   },
@@ -527,6 +530,12 @@ const Students = {
   },
   async getDrilldown(id) {
     return apiRequest('GET', '/students/' + id + '/drilldown');
+  },
+  async linkTeacher(teacherCode) {
+    return apiRequest('POST', '/students/link-teacher', { teacherCode });
+  },
+  async getProfile() {
+    return apiRequest('GET', '/students/profile');
   }
 };
 

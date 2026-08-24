@@ -163,7 +163,13 @@ router.post('/student/login', authLimiter, validateLogin, asyncHandler(async (re
   const { email, password } = req.body;
 
   const result = await pool.query(
-    'SELECT id, name, email, password_hash, form, school_id, status FROM students WHERE email = $1',
+    `SELECT s.id, s.name, s.email, s.password_hash, s.form, s.school_id, s.teacher_id, s.status,
+            sc.name AS school_name, sc.admin_code AS school_code,
+            t.name AS teacher_name, t.teacher_code
+     FROM students s
+     LEFT JOIN schools sc ON sc.id = s.school_id
+     LEFT JOIN teachers t ON t.id = s.teacher_id
+     WHERE s.email = $1`,
     [email]
   );
   const student = result.rows[0];
@@ -194,7 +200,13 @@ router.post('/student/login', authLimiter, validateLogin, asyncHandler(async (re
       name: student.name,
       email: student.email,
       form: student.form,
-      role: 'student'
+      role: 'student',
+      schoolId: student.school_id,
+      schoolName: student.school_name,
+      schoolCode: student.school_code,
+      teacherId: student.teacher_id,
+      teacherName: student.teacher_name,
+      teacherCode: student.teacher_code
     }
   });
 }));
@@ -207,7 +219,11 @@ router.post('/teacher/login', authLimiter, validateLogin, asyncHandler(async (re
   }
 
   const result = await pool.query(
-    'SELECT id, name, email, password_hash, school_id, status FROM teachers WHERE email = $1',
+    `SELECT t.id, t.name, t.email, t.password_hash, t.school_id, t.status, t.teacher_code,
+            sc.name AS school_name, sc.admin_code AS school_code
+     FROM teachers t
+     LEFT JOIN schools sc ON sc.id = t.school_id
+     WHERE t.email = $1`,
     [email]
   );
   const teacher = result.rows[0];
@@ -237,15 +253,75 @@ router.post('/teacher/login', authLimiter, validateLogin, asyncHandler(async (re
       id: teacher.id,
       name: teacher.name,
       email: teacher.email,
-      role: 'teacher'
+      role: 'teacher',
+      teacherCode: teacher.teacher_code,
+      schoolId: teacher.school_id,
+      schoolName: teacher.school_name,
+      schoolCode: teacher.school_code
     }
   });
 }));
 
 // ── GET /api/auth/me ────────────────────────────────────────────
-router.get('/me', authMiddleware, (req, res) => {
-  res.json({ user: req.user });
-});
+router.get('/me', authMiddleware, asyncHandler(async (req, res) => {
+  const { id, role } = req.user;
+
+  if (role === 'teacher') {
+    const tRes = await pool.query(
+      `SELECT t.id, t.name, t.email, t.teacher_code, t.school_id, sc.name AS school_name, sc.admin_code AS school_code
+       FROM teachers t
+       LEFT JOIN schools sc ON sc.id = t.school_id
+       WHERE t.id = $1`,
+      [id]
+    );
+    if (tRes.rows.length > 0) {
+      const t = tRes.rows[0];
+      return res.json({
+        user: {
+          id: t.id,
+          name: t.name,
+          email: t.email,
+          role: 'teacher',
+          teacherCode: t.teacher_code,
+          schoolId: t.school_id,
+          schoolName: t.school_name,
+          schoolCode: t.school_code
+        }
+      });
+    }
+  } else if (role === 'student') {
+    const sRes = await pool.query(
+      `SELECT s.id, s.name, s.email, s.form, s.school_id, s.teacher_id,
+              sc.name AS school_name, sc.admin_code AS school_code,
+              t.name AS teacher_name, t.teacher_code
+       FROM students s
+       LEFT JOIN schools sc ON sc.id = s.school_id
+       LEFT JOIN teachers t ON t.id = s.teacher_id
+       WHERE s.id = $1`,
+      [id]
+    );
+    if (sRes.rows.length > 0) {
+      const s = sRes.rows[0];
+      return res.json({
+        user: {
+          id: s.id,
+          name: s.name,
+          email: s.email,
+          form: s.form,
+          role: 'student',
+          schoolId: s.school_id,
+          schoolName: s.school_name,
+          schoolCode: s.school_code,
+          teacherId: s.teacher_id,
+          teacherName: s.teacher_name,
+          teacherCode: s.teacher_code
+        }
+      });
+    }
+  }
+
+  return res.json({ user: req.user });
+}));
 
 // ── POST /api/auth/change-password ──────────────────────────────
 router.post('/change-password', authLimiter, authMiddleware, asyncHandler(async (req, res) => {

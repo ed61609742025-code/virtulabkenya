@@ -27,6 +27,93 @@ router.get('/class', authMiddleware, authMiddleware.requireRole('teacher'), asyn
   return res.json({ students: result.rows });
 }));
 
+// GET /api/students/profile — Student fetches their own detailed profile including linked teacher
+router.get('/profile', authMiddleware, authMiddleware.requireRole('student'), asyncHandler(async (req, res) => {
+  const studentId = req.user.id;
+  const result = await pool.query(
+    `SELECT s.id, s.name, s.email, s.form, s.school_id, s.teacher_id, s.created_at,
+            sc.name AS school_name, sc.admin_code AS school_code,
+            t.name AS teacher_name, t.email AS teacher_email, t.teacher_code
+     FROM students s
+     LEFT JOIN schools sc ON sc.id = s.school_id
+     LEFT JOIN teachers t ON t.id = s.teacher_id
+     WHERE s.id = $1`,
+    [studentId]
+  );
+
+  if (result.rows.length === 0) {
+    return res.status(404).json({ error: 'Student profile not found.' });
+  }
+
+  return res.json({
+    success: true,
+    student: result.rows[0]
+  });
+}));
+
+// POST /api/students/link-teacher — Student links or changes their teacher using a teacher code
+router.post('/link-teacher', apiLimiter, authMiddleware, authMiddleware.requireRole('student'), asyncHandler(async (req, res) => {
+  const studentId = req.user.id;
+  const { teacherCode } = req.body;
+
+  if (!teacherCode || typeof teacherCode !== 'string' || !teacherCode.trim()) {
+    return res.status(400).json({ error: 'Please enter a valid Teacher Code.' });
+  }
+
+  const cleanCode = teacherCode.trim().toUpperCase();
+
+  // Find teacher by code
+  const teacherRes = await pool.query(
+    `SELECT t.id, t.name, t.email, t.teacher_code, t.school_id, sc.name AS school_name
+     FROM teachers t
+     LEFT JOIN schools sc ON sc.id = t.school_id
+     WHERE UPPER(t.teacher_code) = $1`,
+    [cleanCode]
+  );
+
+  if (teacherRes.rows.length === 0) {
+    return res.status(404).json({ error: `No teacher found with code "${cleanCode}". Please verify the code with your instructor.` });
+  }
+
+  const teacher = teacherRes.rows[0];
+
+  // Update student's teacher_id and synchronize school_id
+  const updatedRes = await pool.query(
+    `UPDATE students
+     SET teacher_id = $1,
+         school_id = COALESCE($2, school_id)
+     WHERE id = $3
+     RETURNING id, name, email, form, school_id, teacher_id`,
+    [teacher.id, teacher.school_id, studentId]
+  );
+
+  // Send a welcome / linkage notification to the student
+  try {
+    await pool.query(
+      `INSERT INTO student_notifications (student_id, title, message, type, link)
+       VALUES ($1, $2, $3, 'announcement', '/student/home.html')`,
+      [
+        studentId,
+        `👨‍🏫 Classroom Linked: ${teacher.name}`,
+        `You have successfully connected to ${teacher.name}'s class (${teacher.school_name || 'Chemistry Class'}). Your assignments, scores, and mock exams are now synchronized.`
+      ]
+    );
+  } catch (notifErr) {
+    console.warn('[Student Link Notification Warning]:', notifErr.message);
+  }
+
+  return res.json({
+    success: true,
+    message: `Successfully linked to ${teacher.name}'s class!`,
+    student: {
+      ...updatedRes.rows[0],
+      teacherName: teacher.name,
+      teacherCode: teacher.teacher_code,
+      schoolName: teacher.school_name
+    }
+  });
+}));
+
 // POST /api/students/bulk-import — Bulk register students from CSV data (Teacher only)
 router.post('/bulk-import', apiLimiter, authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
   const teacherId = req.user.id;

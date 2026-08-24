@@ -38,6 +38,7 @@ async function getStudentAssignments(studentId) {
   const query = `
     SELECT a.*,
            t.name AS teacher_name,
+           t.teacher_code AS teacher_code,
            (sub.id IS NOT NULL OR ps.id IS NOT NULL OR qs.id IS NOT NULL OR os.id IS NOT NULL OR cs.id IS NOT NULL OR ss.id IS NOT NULL OR es.id IS NOT NULL OR rs.id IS NOT NULL OR gs.id IS NOT NULL) AS submitted,
            COALESCE(sub.status, 
              CASE WHEN (sub.id IS NOT NULL OR ps.id IS NOT NULL OR qs.id IS NOT NULL OR os.id IS NOT NULL OR cs.id IS NOT NULL OR ss.id IS NOT NULL OR es.id IS NOT NULL OR rs.id IS NOT NULL OR gs.id IS NOT NULL) 
@@ -48,8 +49,24 @@ async function getStudentAssignments(studentId) {
            COALESCE(sub.submitted_at, ps.created_at, qs.created_at, os.created_at, cs.created_at, ss.created_at, es.created_at, rs.created_at, gs.created_at) AS submitted_at,
            sub.teacher_feedback,
            sub.marked_at,
+           ps.student_answer AS ps_student_answer, ps.true_value AS ps_true_value, ps.titration_type AS ps_titration_type, ps.titration_title AS ps_titration_title, ps.indicator_used, ps.trials_count, ps.trial_readings, ps.mode AS practical_mode, ps.details AS ps_details,
+           qs.salt_key, qs.salt_name, qs.true_cation, qs.true_anion, qs.student_cation, qs.student_anion, qs.cation_correct, qs.anion_correct, qs.tests_performed AS q_tests_performed, qs.tests_correct AS q_tests_correct,
+           os.compound_key, os.compound_name, os.true_functional_group, os.student_functional_group, os.functional_group_correct, os.tests_performed AS o_tests_performed, os.tests_correct AS o_tests_correct,
+           cs.exam_title, cs.q1_score, cs.q2_score, cs.q3_score, cs.total_score AS cs_total_score, cs.grade AS cs_grade,
+           ss.solute_key, ss.solute_name, ss.crystallization_temp, ss.theoretical_temp, ss.temp_difference, ss.accuracy_score AS sol_accuracy_score, ss.graph_score AS sol_graph_score, ss.total_score AS sol_total_score, ss.trials_data AS sol_trials_data,
+           es.system_id AS en_system_id, es.system_name AS en_system_name, es.reaction_category AS en_category, es.initial_temp AS en_initial_temp, es.final_temp AS en_final_temp, es.temp_change AS en_temp_change, es.heat_quantity AS en_heat_quantity, es.moles AS en_moles, es.molar_enthalpy AS en_molar_enthalpy, es.theoretical_enthalpy AS en_theoretical_enthalpy, es.total_score AS en_total_score, es.rubric_breakdown AS en_rubrics, es.equation_text AS en_equation,
+           rs.experiment_type AS rate_exp_type, rs.experiment_title AS rate_exp_title, rs.dilution_readings AS rate_readings, rs.table_score AS rate_table_score, rs.graph_score AS rate_graph_score, rs.calc_score AS rate_calc_score, rs.total_score AS rate_total_score, rs.grade AS rate_grade, rs.rubric_breakdown AS rate_rubrics,
+           gs.gas_key, gs.gas_name, gs.drying_agent AS gas_drying_agent, gs.collection_method AS gas_collection_method, gs.drying_correct AS gas_drying_correct, gs.collection_correct AS gas_collection_correct, gs.tests_performed AS gas_tests_performed, gs.tests_correct AS gas_tests_correct, gs.total_score AS gas_total_score, gs.rubric_breakdown AS gas_rubrics,
            COALESCE(ps.student_answer, cs.total_score, ss.total_score, es.total_score, rs.total_score, gs.total_score) AS student_answer,
-           COALESCE(ps.true_value, 40.0, 5.0, 15.0, 15.0, 10.0) AS true_value,
+           CASE 
+             WHEN ps.id IS NOT NULL THEN ps.true_value
+             WHEN cs.id IS NOT NULL THEN 40.0
+             WHEN ss.id IS NOT NULL THEN 5.0
+             WHEN es.id IS NOT NULL THEN 15.0
+             WHEN rs.id IS NOT NULL THEN 15.0
+             WHEN gs.id IS NOT NULL THEN 10.0
+             ELSE NULL
+           END AS true_value,
            COALESCE(ps.correct, qs.correct, os.correct, (cs.total_score >= 20), (ss.total_score >= 3.0), (es.total_score >= 8.0), (rs.total_score >= 8.0), (gs.total_score >= 6.0)) AS correct
     FROM assignments a
     JOIN teachers t ON a.teacher_id = t.id
@@ -102,7 +119,7 @@ async function getStudentAssignments(studentId) {
       WHERE student_id = $1 AND assignment_id IS NOT NULL
       ORDER BY assignment_id, student_id, created_at DESC
     ) gs ON gs.assignment_id = a.id
-    WHERE (a.teacher_id = $2 OR (a.teacher_id IS NULL AND a.school_id = $3))
+    WHERE (a.teacher_id = $2 OR (a.school_id = $3))
     ORDER BY a.created_at DESC
   `;
   const result = await pool.query(query, [studentId, teacherId, schoolId]);
@@ -176,17 +193,43 @@ async function deleteAssignment(assignmentId, teacherId) {
 
 async function getAssignmentExportData(assignmentId, teacherId) {
   const assignResult = await pool.query(
-    'SELECT id, title FROM assignments WHERE id = $1 AND teacher_id = $2',
+    'SELECT id, title, titration_type FROM assignments WHERE id = $1 AND teacher_id = $2',
     [assignmentId, teacherId]
   );
   if (assignResult.rows.length === 0) return null;
 
   const result = await pool.query(
-    `SELECT ps.*, s.name AS student_name, s.email AS student_email, s.form AS student_form
-     FROM practical_sessions ps
-     JOIN students s ON s.id = ps.student_id
-     WHERE ps.assignment_id = $1
-     ORDER BY s.name ASC, ps.created_at DESC`,
+    `SELECT DISTINCT ON (s.id)
+       s.id AS student_id,
+       s.name AS student_name,
+       s.email AS student_email,
+       s.form AS student_form,
+       sub.status AS submission_status,
+       sub.teacher_feedback,
+       sub.marked_at,
+       COALESCE(sub.submitted_at, ps.created_at, qs.created_at, os.created_at, cs.created_at, ss.created_at, es.created_at, rs.created_at, gs.created_at) AS submitted_at,
+       COALESCE(ps.student_answer, cs.total_score, ss.total_score, es.total_score, rs.total_score, gs.total_score) AS student_answer,
+       COALESCE(ps.correct, qs.correct, os.correct, (cs.total_score >= 20), (ss.total_score >= 3.0), (es.total_score >= 8.0), (rs.total_score >= 8.0), (gs.total_score >= 6.0)) AS correct,
+       ps.titration_type, ps.titration_title, ps.indicator_used, ps.trials_count, ps.trial_readings, ps.true_value, ps.mode AS practical_mode,
+       qs.salt_key, qs.salt_name, qs.true_cation, qs.true_anion, qs.student_cation, qs.student_anion, qs.cation_correct, qs.anion_correct, qs.tests_performed AS q_tests_performed, qs.tests_correct AS q_tests_correct,
+       os.compound_key, os.compound_name, os.true_functional_group, os.student_functional_group, os.functional_group_correct, os.tests_performed AS o_tests_performed, os.tests_correct AS o_tests_correct,
+       cs.exam_title, cs.q1_score, cs.q2_score, cs.q3_score, cs.total_score AS composite_total_score, cs.grade AS composite_grade,
+       ss.solute_key, ss.solute_name, ss.crystallization_temp, ss.theoretical_temp, ss.temp_difference, ss.accuracy_score AS sol_accuracy_score, ss.graph_score AS sol_graph_score, ss.total_score AS sol_total_score,
+       es.system_id AS en_system_id, es.system_name AS en_system_name, es.reaction_category AS en_category, es.initial_temp AS en_initial_temp, es.final_temp AS en_final_temp, es.temp_change AS en_temp_change, es.heat_quantity AS en_heat_quantity, es.moles AS en_moles, es.molar_enthalpy AS en_molar_enthalpy, es.theoretical_enthalpy AS en_theoretical_enthalpy, es.total_score AS en_total_score,
+       rs.experiment_type AS rate_exp_type, rs.experiment_title AS rate_exp_title, rs.table_score AS rate_table_score, rs.graph_score AS rate_graph_score, rs.calc_score AS rate_calc_score, rs.total_score AS rate_total_score, rs.grade AS rate_grade,
+       gs.gas_key, gs.gas_name, gs.drying_agent AS gas_drying_agent, gs.collection_method AS gas_collection_method, gs.drying_correct AS gas_drying_correct, gs.collection_correct AS gas_collection_correct, gs.tests_performed AS gas_tests_performed, gs.tests_correct AS gas_tests_correct, gs.total_score AS gas_total_score
+     FROM students s
+     LEFT JOIN assignment_submissions sub ON sub.assignment_id = $1 AND sub.student_id = s.id
+     LEFT JOIN practical_sessions ps ON ps.assignment_id = $1 AND ps.student_id = s.id
+     LEFT JOIN qualitative_sessions qs ON qs.assignment_id = $1 AND qs.student_id = s.id
+     LEFT JOIN organic_sessions os ON os.assignment_id = $1 AND os.student_id = s.id
+     LEFT JOIN composite_sessions cs ON cs.assignment_id = $1 AND cs.student_id = s.id
+     LEFT JOIN solubility_sessions ss ON ss.assignment_id = $1 AND ss.student_id = s.id
+     LEFT JOIN energy_sessions es ON es.assignment_id = $1 AND es.student_id = s.id
+     LEFT JOIN rates_sessions rs ON rs.assignment_id = $1 AND rs.student_id = s.id
+     LEFT JOIN gas_sessions gs ON gs.assignment_id = $1 AND gs.student_id = s.id
+     WHERE (sub.id IS NOT NULL OR ps.id IS NOT NULL OR qs.id IS NOT NULL OR os.id IS NOT NULL OR cs.id IS NOT NULL OR ss.id IS NOT NULL OR es.id IS NOT NULL OR rs.id IS NOT NULL OR gs.id IS NOT NULL)
+     ORDER BY s.id, COALESCE(sub.submitted_at, ps.created_at, qs.created_at, os.created_at, cs.created_at, ss.created_at, es.created_at, rs.created_at, gs.created_at) DESC`,
     [assignmentId]
   );
 
@@ -200,43 +243,46 @@ async function getAllSubmissions(teacherId, { page = 1, limit = 50 } = {}) {
   const offset = (page - 1) * limit;
 
   const query = `
-    SELECT DISTINCT ON (sub_key)
-      CONCAT(COALESCE(sub.assignment_id, ps.assignment_id, qs.assignment_id, os.assignment_id, cs.assignment_id, ss.assignment_id, es.assignment_id, rs.assignment_id, gs.assignment_id), '_', COALESCE(sub.student_id, ps.student_id, qs.student_id, os.student_id, cs.student_id, ss.student_id, es.student_id, rs.student_id, gs.student_id)) AS sub_key,
-      COALESCE(sub.id, ps.id, qs.id, os.id, cs.id, ss.id, es.id, rs.id, gs.id) AS submission_id,
-      COALESCE(sub.assignment_id, ps.assignment_id, qs.assignment_id, os.assignment_id, cs.assignment_id, ss.assignment_id, es.assignment_id, rs.assignment_id, gs.assignment_id) AS assignment_id,
-      COALESCE(sub.student_id, ps.student_id, qs.student_id, os.student_id, cs.student_id, ss.student_id, es.student_id, rs.student_id, gs.student_id) AS student_id,
-      COALESCE(sub.status, 'submitted') AS submission_status,
-      COALESCE(sub.submitted_at, ps.created_at, qs.created_at, os.created_at, cs.created_at, ss.created_at, es.created_at, rs.created_at, gs.created_at) AS submitted_at,
-      sub.teacher_feedback,
-      sub.marked_at,
-      s.name AS student_name,
-      s.email AS student_email,
-      s.form AS student_form,
-      a.title AS assignment_title,
-      a.titration_type AS assignment_type,
-      ps.titration_type, ps.titration_title, ps.indicator_used, ps.trials_count, ps.trial_readings, ps.student_answer, ps.true_value, ps.correct, ps.mode AS practical_mode, ps.details,
-      qs.salt_key, qs.salt_name, qs.true_cation, qs.true_anion, qs.student_cation, qs.student_anion, qs.cation_correct, qs.anion_correct, qs.tests_performed AS q_tests_performed, qs.tests_correct AS q_tests_correct,
-      os.compound_key, os.compound_name, os.true_functional_group, os.student_functional_group, os.functional_group_correct, os.tests_performed AS o_tests_performed, os.tests_correct AS o_tests_correct,
-      cs.exam_title, cs.q1_score, cs.q2_score, cs.q3_score, cs.total_score, cs.grade,
-      ss.solute_key, ss.solute_name, ss.crystallization_temp, ss.theoretical_temp, ss.temp_difference, ss.accuracy_score AS sol_accuracy_score, ss.graph_score AS sol_graph_score, ss.total_score AS sol_total_score, ss.trials_data AS sol_trials_data,
-      es.system_id AS en_system_id, es.system_name AS en_system_name, es.reaction_category AS en_category, es.initial_temp AS en_initial_temp, es.final_temp AS en_final_temp, es.temp_change AS en_temp_change, es.heat_quantity AS en_heat_quantity, es.moles AS en_moles, es.molar_enthalpy AS en_molar_enthalpy, es.theoretical_enthalpy AS en_theoretical_enthalpy, es.total_score AS en_total_score, es.rubric_breakdown AS en_rubrics, es.equation_text AS en_equation,
-      rs.experiment_type AS rate_exp_type, rs.experiment_title AS rate_exp_title, rs.dilution_readings AS rate_readings, rs.table_score AS rate_table_score, rs.graph_score AS rate_graph_score, rs.calc_score AS rate_calc_score, rs.total_score AS rate_total_score, rs.grade AS rate_grade, rs.rubric_breakdown AS rate_rubrics, rs.answers AS rate_answers,
-      gs.gas_key, gs.gas_name, gs.drying_agent AS gas_drying_agent, gs.collection_method AS gas_collection_method, gs.drying_correct AS gas_drying_correct, gs.collection_correct AS gas_collection_correct, gs.tests_performed AS gas_tests_performed, gs.tests_correct AS gas_tests_correct, gs.total_score AS gas_total_score, gs.rubric_breakdown AS gas_rubrics
-    FROM assignments a
-    JOIN teachers t ON a.teacher_id = t.id
-    LEFT JOIN assignment_submissions sub ON sub.assignment_id = a.id
-    LEFT JOIN practical_sessions ps ON ps.assignment_id = a.id
-    LEFT JOIN qualitative_sessions qs ON qs.assignment_id = a.id
-    LEFT JOIN organic_sessions os ON os.assignment_id = a.id
-    LEFT JOIN composite_sessions cs ON cs.assignment_id = a.id
-    LEFT JOIN solubility_sessions ss ON ss.assignment_id = a.id
-    LEFT JOIN energy_sessions es ON es.assignment_id = a.id
-    LEFT JOIN rates_sessions rs ON rs.assignment_id = a.id
-    LEFT JOIN gas_sessions gs ON gs.assignment_id = a.id
-    JOIN students s ON s.id = COALESCE(sub.student_id, ps.student_id, qs.student_id, os.student_id, cs.student_id, ss.student_id, es.student_id, rs.student_id, gs.student_id)
-    WHERE (a.teacher_id = $1 OR s.teacher_id = $1)
-      AND (sub.id IS NOT NULL OR ps.id IS NOT NULL OR qs.id IS NOT NULL OR os.id IS NOT NULL OR cs.id IS NOT NULL OR ss.id IS NOT NULL OR es.id IS NOT NULL OR rs.id IS NOT NULL OR gs.id IS NOT NULL)
-    ORDER BY sub_key, COALESCE(sub.submitted_at, ps.created_at, qs.created_at, os.created_at, cs.created_at, ss.created_at, es.created_at, rs.created_at, gs.created_at) DESC
+    SELECT * FROM (
+      SELECT DISTINCT ON (sub_key)
+        CONCAT(COALESCE(sub.assignment_id, ps.assignment_id, qs.assignment_id, os.assignment_id, cs.assignment_id, ss.assignment_id, es.assignment_id, rs.assignment_id, gs.assignment_id), '_', COALESCE(sub.student_id, ps.student_id, qs.student_id, os.student_id, cs.student_id, ss.student_id, es.student_id, rs.student_id, gs.student_id)) AS sub_key,
+        COALESCE(sub.id, ps.id, qs.id, os.id, cs.id, ss.id, es.id, rs.id, gs.id) AS submission_id,
+        COALESCE(sub.assignment_id, ps.assignment_id, qs.assignment_id, os.assignment_id, cs.assignment_id, ss.assignment_id, es.assignment_id, rs.assignment_id, gs.assignment_id) AS assignment_id,
+        COALESCE(sub.student_id, ps.student_id, qs.student_id, os.student_id, cs.student_id, ss.student_id, es.student_id, rs.student_id, gs.student_id) AS student_id,
+        COALESCE(sub.status, 'submitted') AS submission_status,
+        COALESCE(sub.submitted_at, ps.created_at, qs.created_at, os.created_at, cs.created_at, ss.created_at, es.created_at, rs.created_at, gs.created_at) AS submitted_at,
+        sub.teacher_feedback,
+        sub.marked_at,
+        s.name AS student_name,
+        s.email AS student_email,
+        s.form AS student_form,
+        a.title AS assignment_title,
+        a.titration_type AS assignment_type,
+        ps.titration_type, ps.titration_title, ps.indicator_used, ps.trials_count, ps.trial_readings, ps.student_answer, ps.true_value, ps.correct, ps.mode AS practical_mode, ps.details,
+        qs.salt_key, qs.salt_name, qs.true_cation, qs.true_anion, qs.student_cation, qs.student_anion, qs.cation_correct, qs.anion_correct, qs.tests_performed AS q_tests_performed, qs.tests_correct AS q_tests_correct,
+        os.compound_key, os.compound_name, os.true_functional_group, os.student_functional_group, os.functional_group_correct, os.tests_performed AS o_tests_performed, os.tests_correct AS o_tests_correct,
+        cs.exam_title, cs.q1_score, cs.q2_score, cs.q3_score, cs.total_score, cs.grade,
+        ss.solute_key, ss.solute_name, ss.crystallization_temp, ss.theoretical_temp, ss.temp_difference, ss.accuracy_score AS sol_accuracy_score, ss.graph_score AS sol_graph_score, ss.total_score AS sol_total_score, ss.trials_data AS sol_trials_data,
+        es.system_id AS en_system_id, es.system_name AS en_system_name, es.reaction_category AS en_category, es.initial_temp AS en_initial_temp, es.final_temp AS en_final_temp, es.temp_change AS en_temp_change, es.heat_quantity AS en_heat_quantity, es.moles AS en_moles, es.molar_enthalpy AS en_molar_enthalpy, es.theoretical_enthalpy AS en_theoretical_enthalpy, es.total_score AS en_total_score, es.rubric_breakdown AS en_rubrics, es.equation_text AS en_equation,
+        rs.experiment_type AS rate_exp_type, rs.experiment_title AS rate_exp_title, rs.dilution_readings AS rate_readings, rs.table_score AS rate_table_score, rs.graph_score AS rate_graph_score, rs.calc_score AS rate_calc_score, rs.total_score AS rate_total_score, rs.grade AS rate_grade, rs.rubric_breakdown AS rate_rubrics, rs.answers AS rate_answers,
+        gs.gas_key, gs.gas_name, gs.drying_agent AS gas_drying_agent, gs.collection_method AS gas_collection_method, gs.drying_correct AS gas_drying_correct, gs.collection_correct AS gas_collection_correct, gs.tests_performed AS gas_tests_performed, gs.tests_correct AS gas_tests_correct, gs.total_score AS gas_total_score, gs.rubric_breakdown AS gas_rubrics
+      FROM assignments a
+      JOIN teachers t ON a.teacher_id = t.id
+      LEFT JOIN assignment_submissions sub ON sub.assignment_id = a.id
+      LEFT JOIN practical_sessions ps ON ps.assignment_id = a.id
+      LEFT JOIN qualitative_sessions qs ON qs.assignment_id = a.id
+      LEFT JOIN organic_sessions os ON os.assignment_id = a.id
+      LEFT JOIN composite_sessions cs ON cs.assignment_id = a.id
+      LEFT JOIN solubility_sessions ss ON ss.assignment_id = a.id
+      LEFT JOIN energy_sessions es ON es.assignment_id = a.id
+      LEFT JOIN rates_sessions rs ON rs.assignment_id = a.id
+      LEFT JOIN gas_sessions gs ON gs.assignment_id = a.id
+      JOIN students s ON s.id = COALESCE(sub.student_id, ps.student_id, qs.student_id, os.student_id, cs.student_id, ss.student_id, es.student_id, rs.student_id, gs.student_id)
+      WHERE (a.teacher_id = $1 OR s.teacher_id = $1)
+        AND (sub.id IS NOT NULL OR ps.id IS NOT NULL OR qs.id IS NOT NULL OR os.id IS NOT NULL OR cs.id IS NOT NULL OR ss.id IS NOT NULL OR es.id IS NOT NULL OR rs.id IS NOT NULL OR gs.id IS NOT NULL)
+      ORDER BY sub_key, COALESCE(sub.submitted_at, ps.created_at, qs.created_at, os.created_at, cs.created_at, ss.created_at, es.created_at, rs.created_at, gs.created_at) DESC
+    ) unified_submissions
+    ORDER BY submitted_at DESC
     LIMIT $2 OFFSET $3
   `;
 

@@ -102,7 +102,14 @@
 
   <!-- Main Content Viewport -->
   <main class="teacher-content">
-    <p class="welcome" style="margin-top:0;">Welcome back, <b id="teacherName">Teacher</b>. Here is your class performance control panel.</p>
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:18px;">
+      <p class="welcome" style="margin:0;">Welcome back, <b id="teacherName">Teacher</b>. Here is your class performance control panel.</p>
+      <div id="teacherCodeBanner" style="display:inline-flex; align-items:center; gap:8px; background:var(--card-bg); border:1.5px solid var(--blue-border, var(--card-border)); border-radius:12px; padding:6px 14px; box-shadow:var(--shadow-sm);">
+        <span style="font-size:0.8rem; font-weight:700; color:var(--text-muted);">Teacher Code:</span>
+        <code id="teacherCodePill" style="font-size:0.92rem; font-weight:800; color:var(--blue-accent); font-family:var(--font-mono, monospace); letter-spacing:0.04em;">—</code>
+        <button class="btn" onclick="copyTeacherCode()" style="padding:3px 8px; font-size:0.75rem; font-weight:700;" title="Copy teacher code to share with students">📋 Copy</button>
+      </div>
+    </div>
 
     <!-- Tab Pane 1: Overview -->
     <div id="paneOverview" class="tab-pane active">
@@ -294,8 +301,15 @@
 
     <!-- Tab Pane 3: Students -->
     <div id="paneStudents" class="tab-pane">
-      <h2 class="section-title">👥 Registered Students & Individual Performance</h2>
-      <p class="hint" style="margin-bottom:14px;">Click any student to inspect their individual practical scorecard, accuracy rate, and trial histories.</p>
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:10px;">
+        <h2 class="section-title" style="margin:0;">👥 Registered Students & Individual Performance</h2>
+        <div style="display:inline-flex; align-items:center; gap:8px; background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:10px; padding:6px 12px;">
+          <span style="font-size:0.8rem; font-weight:700; color:var(--text-muted);">Share Code with Students:</span>
+          <code id="teacherCodeRosterPill" style="font-size:0.92rem; font-weight:800; color:var(--blue-accent); font-family:var(--font-mono, monospace);">—</code>
+          <button class="btn" onclick="copyTeacherCode()" style="padding:2px 8px; font-size:0.75rem;">📋 Copy</button>
+        </div>
+      </div>
+      <p class="hint" style="margin-bottom:14px;">Students linked using your Teacher Code appear in this roster. Click any student to inspect their comprehensive practical scorecard.</p>
       <div id="studentsList"><div class="empty">Loading students…</div></div>
     </div>
 

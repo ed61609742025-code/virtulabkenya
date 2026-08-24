@@ -25,13 +25,103 @@ requireStudentLogin();
     if (el) el.textContent = dateStr;
   });
 
-  const user = getUser();
-  if (user) {
-    ['studentName', 'studentNameMobile'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.textContent = user.name;
-    });
+  let currentStudentUser = getUser();
+
+  function updateStudentTeacherUI(user) {
+    if (!user) return;
+    const nameDisplay = document.getElementById('studentTeacherNameDisplay');
+    const linkBtn = document.getElementById('linkTeacherBtn');
+    const statusName = document.getElementById('linkedTeacherStatusName');
+    const schoolName = document.getElementById('linkedTeacherSchoolName');
+    const codeBadge = document.getElementById('linkedTeacherCodeBadge');
+    const codeVal = document.getElementById('linkedTeacherCodeVal');
+
+    if (user.teacherName) {
+      if (nameDisplay) nameDisplay.textContent = 'Instructor: ' + user.teacherName;
+      if (linkBtn) linkBtn.textContent = 'Change';
+      if (statusName) statusName.textContent = user.teacherName + (user.teacherCode ? ` (${user.teacherCode})` : '');
+      if (schoolName) schoolName.textContent = user.schoolName ? `School: ${user.schoolName}` : '';
+      if (codeBadge) codeBadge.style.display = user.teacherCode ? 'block' : 'none';
+      if (codeVal) codeVal.textContent = user.teacherCode || '—';
+    } else {
+      if (nameDisplay) nameDisplay.textContent = 'Instructor: Not linked';
+      if (linkBtn) linkBtn.textContent = 'Link Code';
+      if (statusName) statusName.textContent = 'None (Independent Candidate)';
+      if (schoolName) schoolName.textContent = user.schoolName ? `School: ${user.schoolName}` : 'Enter your teacher code below to connect.';
+      if (codeBadge) codeBadge.style.display = 'none';
+    }
   }
+
+  async function initStudentProfile() {
+    if (currentStudentUser) {
+      ['studentName', 'studentNameMobile'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = currentStudentUser.name;
+      });
+      updateStudentTeacherUI(currentStudentUser);
+    }
+    try {
+      const res = await Auth.me();
+      if (res && res.user) {
+        currentStudentUser = res.user;
+        setUser(currentStudentUser);
+        ['studentName', 'studentNameMobile'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = currentStudentUser.name;
+        });
+        updateStudentTeacherUI(currentStudentUser);
+      }
+    } catch (e) {
+      console.warn('Could not refresh student profile from server:', e);
+    }
+  }
+  initStudentProfile();
+
+  function toggleTeacherLinkPanel() {
+    const wrap = document.getElementById('teacherLinkPanelWrap');
+    if (!wrap) return;
+    const isHidden = wrap.style.display === 'none';
+    wrap.style.display = isHidden ? 'block' : 'none';
+    if (isHidden) {
+      const input = document.getElementById('studentTeacherCodeInput');
+      if (input) input.focus();
+      const msg = document.getElementById('teacherLinkMsg');
+      if (msg) msg.innerHTML = '';
+    }
+  }
+  window.toggleTeacherLinkPanel = toggleTeacherLinkPanel;
+
+  async function submitLinkTeacher() {
+    const input = document.getElementById('studentTeacherCodeInput');
+    const msg = document.getElementById('teacherLinkMsg');
+    if (!input || !msg) return;
+
+    const teacherCode = input.value.trim();
+    if (!teacherCode) {
+      msg.innerHTML = '<span style="color:var(--red-accent);">Please enter your Teacher Code (e.g. TCH8X2).</span>';
+      return;
+    }
+
+    msg.innerHTML = '<span style="color:var(--cyan-accent);">Connecting to teacher…</span>';
+
+    try {
+      const data = await Students.linkTeacher(teacherCode);
+      msg.innerHTML = `<span style="color:var(--green-accent);">✓ ${escapeHtml(data.message || 'Successfully linked to teacher!')}</span>`;
+      input.value = '';
+      
+      if (data.student) {
+        currentStudentUser = { ...currentStudentUser, ...data.student };
+        setUser(currentStudentUser);
+        updateStudentTeacherUI(currentStudentUser);
+      }
+
+      if (typeof loadAssignments === 'function') loadAssignments();
+      if (typeof loadStudentNotifications === 'function') loadStudentNotifications();
+    } catch (err) {
+      msg.innerHTML = `<span style="color:var(--red-accent);">✗ ${escapeHtml(err.message || 'Failed to link teacher. Check code and try again.')}</span>`;
+    }
+  }
+  window.submitLinkTeacher = submitLinkTeacher;
 
   function escapeHtml(str) {
     if (str === null || str === undefined) return '';
@@ -278,26 +368,58 @@ requireStudentLogin();
     const isCorrect = !!a.correct;
     document.getElementById('afStatus').innerHTML = isCorrect
       ? '<span class="pill pill-ok" style="font-size:1.1rem;padding:6px 14px;">✓ Correct (Pass)</span>'
-      : '<span class="pill pill-warn" style="font-size:1.1rem;padding:6px 14px;">✗ Incorrect (Review Needed)</span>';
+      : '<span class="pill pill-warn" style="font-size:1.1rem;padding:6px 14px;">✗ Review Needed</span>';
 
-    const sAns = a.student_answer != null ? Number(a.student_answer).toFixed(4) + ' mol/dm³' : '—';
-    const tVal = a.true_value != null ? Number(a.true_value).toFixed(4) + ' mol/dm³' : '—';
+    // Polymorphic answer and benchmark formatting
+    let sAns = '—';
+    let tVal = '—';
+
+    if (a.cs_total_score != null || a.q1_score != null || a.composite_total_score != null) {
+      sAns = Number(a.cs_total_score || a.composite_total_score || a.total_score || a.student_answer || 0).toFixed(1) + ' / 40.0 Marks' + (a.cs_grade || a.grade ? ` (${a.cs_grade || a.grade})` : '');
+      tVal = '40.0 Marks (Passing: 20.0)';
+    } else if (a.gas_total_score != null || a.gas_key) {
+      sAns = Number(a.gas_total_score != null ? a.gas_total_score : (a.student_answer || 0)).toFixed(1) + ' / 10.0 Marks';
+      tVal = '10.0 Marks (Passing: 6.0)';
+    } else if (a.en_total_score != null || a.en_system_id) {
+      sAns = Number(a.en_total_score != null ? a.en_total_score : (a.student_answer || 0)).toFixed(1) + ' / 15.0 Marks';
+      tVal = '15.0 Marks (Passing: 8.0)';
+    } else if (a.rate_total_score != null || a.rate_exp_type) {
+      sAns = Number(a.rate_total_score != null ? a.rate_total_score : (a.student_answer || 0)).toFixed(1) + ' / 15.0 Marks' + (a.rate_grade ? ` (${a.rate_grade})` : '');
+      tVal = '15.0 Marks (Passing: 8.0)';
+    } else if (a.sol_total_score != null || a.solute_key) {
+      sAns = Number(a.sol_total_score != null ? a.sol_total_score : (a.student_answer || 0)).toFixed(1) + ' / 5.0 Marks';
+      tVal = '5.0 Marks (Passing: 3.0)';
+    } else if (a.salt_key || a.true_cation || a.student_cation) {
+      sAns = `${escapeHtml(a.student_cation || '—')} / ${escapeHtml(a.student_anion || '—')}`;
+      tVal = a.true_cation ? `${escapeHtml(a.true_cation)} / ${escapeHtml(a.true_anion)}` : 'Standard Salt Confirmation';
+    } else if (a.compound_key || a.true_functional_group || a.student_functional_group) {
+      sAns = `${escapeHtml(a.student_functional_group || '—')}`;
+      tVal = a.true_functional_group ? `${escapeHtml(a.true_functional_group)}` : 'Standard Functional Group';
+    } else {
+      sAns = a.student_answer != null ? Number(a.student_answer).toFixed(4) + ' mol/dm³' : '—';
+      tVal = a.true_value != null ? Number(a.true_value).toFixed(4) + ' mol/dm³' : '—';
+    }
+
     document.getElementById('afStudentAns').textContent = sAns;
     document.getElementById('afTrueVal').textContent = tVal;
 
     const details = [];
-    if (a.q1_score != null || a.q2_score != null || a.q3_score != null || a.total_score != null) {
+
+    // 1. Composite Exam
+    if (a.q1_score != null || a.q2_score != null || a.q3_score != null || a.cs_total_score != null) {
       details.push(`
-        <div style="margin-bottom:10px;"><b>KCSE Composite Exam Breakdown</b></div>
-        <div>Q1: <b>${a.q1_score != null ? Number(a.q1_score).toFixed(1) + ' / 15' : '—'}</b></div>
-        <div>Q2: <b>${a.q2_score != null ? Number(a.q2_score).toFixed(1) + ' / 15' : '—'}</b></div>
-        <div>Q3: <b>${a.q3_score != null ? Number(a.q3_score).toFixed(1) + ' / 10' : '—'}</b></div>
-        <div>Total: <b>${a.total_score != null ? Number(a.total_score).toFixed(1) + ' / 40' : '—'}</b></div>
-        <div>Grade: <b>${escapeHtml(a.grade || '—')}</b></div>
+        <div style="margin-bottom:10px;font-weight:800;color:var(--heading-color);">📋 KCSE Paper 3 Composite Exam Mark Breakdown</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:0.84rem;margin-bottom:8px;">
+          <div>Q1 Volumetric Titration: <b>${a.q1_score != null ? Number(a.q1_score).toFixed(1) + ' / 15' : '—'}</b></div>
+          <div>Q2 Qualitative Salt ID: <b>${a.q2_score != null ? Number(a.q2_score).toFixed(1) + ' / 15' : '—'}</b></div>
+          <div>Q3 Organic Chemistry ID: <b>${a.q3_score != null ? Number(a.q3_score).toFixed(1) + ' / 10' : '—'}</b></div>
+          <div>KNEC Score: <b>${Number(a.cs_total_score || a.total_score || 0).toFixed(1)} / 40 (${escapeHtml(a.cs_grade || a.grade || '—')})</b></div>
+        </div>
       `);
     }
 
-    if (a.titration_type) {
+    // 2. Volumetric Titrations
+    if (a.ps_titration_type || a.titration_type || a.trial_readings) {
       const trialReadings = a.trial_readings;
       const readingsArray = Array.isArray(trialReadings)
         ? trialReadings
@@ -306,51 +428,87 @@ requireStudentLogin();
       const examMarks = trialReadings && trialReadings.examMarks ? trialReadings.examMarks : null;
 
       details.push(`
-        <div style="margin-bottom:10px;"><b>Practical Session Details</b></div>
-        <div>Practical type: <b>${escapeHtml(a.titration_type)}</b></div>
-        <div>Title: <b>${escapeHtml(a.titration_title || '—')}</b></div>
-        <div>Your answer: <b>${sAns}</b></div>
-        <div>True value: <b>${tVal}</b></div>
-        <div>Indicator used: <b>${escapeHtml(a.indicator_used || '—')}</b></div>
-        <div>Trials count: <b>${a.trials_count ?? '—'}</b></div>
-        <div>Trial readings: <b>${readings || '—'}</b></div>
-        <div>Mode: <b>${escapeHtml(a.practical_mode || a.mode || '—')}</b></div>
+        <div style="margin-bottom:10px;font-weight:800;color:var(--heading-color);">🧪 Volumetric Analysis Details</div>
+        <div>Practical: <b>${escapeHtml(a.ps_titration_title || a.titration_title || a.ps_titration_type || a.titration_type || 'Titration')}</b></div>
+        <div>Indicator Used: <b>${escapeHtml(a.indicator_used || '—')}</b></div>
+        <div>Trials Conducted: <b>${a.trials_count ?? (readingsArray.length || '—')}</b> (Readings: ${readings || '—'} cm³)</div>
       `);
 
       if (examMarks) {
         details.push(`
-          <div style="margin-bottom:10px;"><b>Practical Question Marks</b></div>
-          <div>1) Burette Accuracy & Meniscus: <b>${examMarks.accuracyMarks ?? '—'} / 5</b></div>
-          <div>2) Concordance of Titres: <b>${examMarks.concordanceMarks ?? '—'} / 3</b></div>
-          <div>3) Average Titre Accuracy: <b>${examMarks.averageMarks ?? '—'} / 2</b></div>
-          <div>4) Concentration Calculation: <b>${examMarks.concMarks ?? '—'} / 5</b></div>
-          <div>Total Practical Marks: <b>${examMarks.totalMarks ?? '—'} / 15</b></div>
-          <div>Expected Average Titre: <b>${examMarks.expectedAvg != null ? Number(examMarks.expectedAvg).toFixed(2) + ' cm³' : '—'}</b></div>
-          <div>Expected Concentration: <b>${examMarks.expectedConc != null ? Number(examMarks.expectedConc).toFixed(4) + ' mol/dm³' : '—'}</b></div>
+          <div style="margin:10px 0;background:var(--card-bg);padding:10px;border-radius:8px;border:1px solid var(--card-border);">
+            <div style="font-weight:800;margin-bottom:6px;"><b>Official 15-Mark Examination Breakdown:</b></div>
+            <div>• Burette Accuracy (±0.10 cm³): <b>${examMarks.accuracyMarks ?? '—'} / 5</b></div>
+            <div>• Concordance of Titres (±0.20 cm³): <b>${examMarks.concordanceMarks ?? '—'} / 3</b></div>
+            <div>• Average Titre Computation: <b>${examMarks.averageMarks ?? '—'} / 2</b></div>
+            <div>• Molar/Mass Concentration Calculation: <b>${examMarks.concMarks ?? '—'} / 5</b></div>
+            <div style="margin-top:4px;color:var(--cyan-accent);font-weight:800;">Total Practical Mark: ${examMarks.totalMarks ?? '—'} / 15</div>
+          </div>
         `);
       }
     }
 
+    // 3. Qualitative Salt Analysis
     if (a.salt_key || a.cation_correct != null || a.anion_correct != null) {
       details.push(`
-        <div style="margin-bottom:10px;"><b>Qualitative Analysis Details</b></div>
-        <div>Salt key: <b>${escapeHtml(a.salt_key || '—')}</b></div>
-        <div>Cation: <b>${escapeHtml(a.student_cation || '—')}</b> (${a.cation_correct ? 'Correct' : 'Incorrect'})</div>
-        <div>Anion: <b>${escapeHtml(a.student_anion || '—')}</b> (${a.anion_correct ? 'Correct' : 'Incorrect'})</div>
-        <div>Tests performed: <b>${a.q_tests_performed ?? '—'}</b></div>
-        <div>Tests correct: <b>${a.q_tests_correct ?? '—'}</b></div>
+        <div style="margin-bottom:10px;font-weight:800;color:var(--heading-color);">🧫 Qualitative Salt Analysis Details</div>
+        <div>Salt Analyzed: <b>${escapeHtml(a.salt_name || a.salt_key || '—')}</b></div>
+        <div>Cation Identified: <b>${escapeHtml(a.student_cation || '—')}</b> (${a.cation_correct ? '✓ Correct' : '✗ Incorrect'})</div>
+        <div>Anion Identified: <b>${escapeHtml(a.student_anion || '—')}</b> (${a.anion_correct ? '✓ Correct' : '✗ Incorrect'})</div>
+        <div>Observations Performed: <b>${a.q_tests_performed ?? '—'} tests (${a.q_tests_correct ?? '—'} accurate)</b></div>
       `);
     }
 
+    // 4. Organic Chemistry
     if (a.compound_key || a.functional_group_correct != null) {
       details.push(`
-        <div style="margin-bottom:10px;"><b>Organic Chemistry Details</b></div>
-        <div>Organic sample: <b>${escapeHtml(a.compound_name || a.compound_key || '—')}</b></div>
-        <div>True functional group: <b>${escapeHtml(a.true_functional_group || '—')}</b></div>
-        <div>Your group: <b>${escapeHtml(a.student_functional_group || '—')}</b></div>
-        <div>Correct: <b>${a.functional_group_correct ? 'Yes' : 'No'}</b></div>
-        <div>Tests performed: <b>${a.o_tests_performed ?? '—'}</b></div>
-        <div>Tests correct: <b>${a.o_tests_correct ?? '—'}</b></div>
+        <div style="margin-bottom:10px;font-weight:800;color:var(--heading-color);">⚗️ Organic Chemistry Identification</div>
+        <div>Organic Sample: <b>${escapeHtml(a.compound_name || a.compound_key || '—')}</b></div>
+        <div>Identified Functional Group: <b>${escapeHtml(a.student_functional_group || '—')}</b> (${a.functional_group_correct ? '✓ Correct' : '✗ Mismatch'})</div>
+        <div>Confirmatory Tests: <b>${a.o_tests_performed ?? '—'} performed (${a.o_tests_correct ?? '—'} correct)</b></div>
+      `);
+    }
+
+    // 5. Solubility Curves
+    if (a.solute_key || a.sol_total_score != null) {
+      details.push(`
+        <div style="margin-bottom:10px;font-weight:800;color:var(--heading-color);">🌡️ Solubility Curves & Crystallization</div>
+        <div>Target Solute: <b>${escapeHtml(a.solute_name || a.solute_key || '—')}</b></div>
+        <div>Crystallization Temp: <b>${a.crystallization_temp != null ? a.crystallization_temp + ' °C' : '—'}</b> (Theoretical: ${a.theoretical_temp != null ? a.theoretical_temp + ' °C' : '—'}, Δ ${a.temp_difference != null ? a.temp_difference + ' °C' : '—'})</div>
+        <div>Mark Breakdown: Accuracy <b>${a.sol_accuracy_score ?? 0}/2.0</b> · Graph <b>${a.sol_graph_score ?? 0}/3.0</b> · Total: <b>${Number(a.sol_total_score || 0).toFixed(1)} / 5.0 Marks</b></div>
+      `);
+    }
+
+    // 6. Thermochemistry Energy Changes
+    if (a.en_system_id || a.en_total_score != null) {
+      details.push(`
+        <div style="margin-bottom:10px;font-weight:800;color:var(--heading-color);">🔥 Thermochemistry & Energy Changes</div>
+        <div>Reaction System: <b>${escapeHtml(a.en_system_name || a.en_system_id || '—')}</b></div>
+        <div>Temp Change (ΔT): <b>${a.en_temp_change != null ? a.en_temp_change + ' °C' : '—'}</b> (Initial: ${a.en_initial_temp || 0}°C → Peak: ${a.en_final_temp || 0}°C)</div>
+        <div>Heat Energy Q: <b>${a.en_heat_quantity != null ? a.en_heat_quantity + ' J' : '—'}</b> · Moles: <b>${a.en_moles != null ? a.en_moles + ' mol' : '—'}</b></div>
+        <div>Molar Enthalpy (ΔH): <b>${a.en_molar_enthalpy != null ? a.en_molar_enthalpy + ' kJ/mol' : '—'}</b></div>
+        <div>Total Score: <b>${Number(a.en_total_score || 0).toFixed(1)} / 15.0 Marks</b></div>
+      `);
+    }
+
+    // 7. Reaction Rates & Kinetics
+    if (a.rate_exp_type || a.rate_total_score != null) {
+      details.push(`
+        <div style="margin-bottom:10px;font-weight:800;color:var(--heading-color);">⚡ Reaction Rates & Chemical Kinetics</div>
+        <div>Experiment: <b>${escapeHtml(a.rate_exp_title || a.rate_exp_type || '—')}</b></div>
+        <div>Dilution Table 1: <b>${Number(a.rate_table_score || 0).toFixed(1)} / 5.0</b> · Rate Graph: <b>${Number(a.rate_graph_score || 0).toFixed(1)} / 4.0</b> · Calculations: <b>${Number(a.rate_calc_score || 0).toFixed(1)} / 6.0</b></div>
+        <div>Total Score: <b>${Number(a.rate_total_score || 0).toFixed(1)} / 15.0 Marks (${escapeHtml(a.rate_grade || '—')})</b></div>
+      `);
+    }
+
+    // 8. Gas Preparation
+    if (a.gas_key || a.gas_total_score != null) {
+      details.push(`
+        <div style="margin-bottom:10px;font-weight:800;color:var(--heading-color);">💨 Gas Preparation & Confirmatory Testing</div>
+        <div>Gas Synthesized: <b>${escapeHtml(a.gas_name || a.gas_key || '—')}</b></div>
+        <div>Drying Agent: <b>${escapeHtml(a.gas_drying_agent || '—')}</b> (${a.gas_drying_correct ? '✓ Correct' : '✗ Incorrect'})</div>
+        <div>Collection Method: <b>${escapeHtml(a.gas_collection_method || '—')}</b> (${a.gas_collection_correct ? '✓ Correct' : '✗ Incorrect'})</div>
+        <div>Tests Performed: <b>${a.gas_tests_performed ?? 0} (${a.gas_tests_correct ?? 0} correct)</b> · Total: <b>${Number(a.gas_total_score || 0).toFixed(1)} / 10.0 Marks</b></div>
       `);
     }
 
@@ -358,10 +516,13 @@ requireStudentLogin();
       ? details.join('')
       : '<i>No additional session details available.</i>';
 
-    const comment = a.teacher_feedback
-      ? `💬 <b>Teacher Comments:</b><br>"${escapeHtml(a.teacher_feedback)}"`
-      : '<i>No written comments added by teacher.</i>';
-    document.getElementById('afComments').innerHTML = comment;
+    const commentEl = document.getElementById('afComments');
+    if (commentEl) {
+      const comment = a.teacher_feedback
+        ? `💬 <b>Teacher Comments & Guidance:</b><br>"${escapeHtml(a.teacher_feedback)}"`
+        : '<i>No written comments added by teacher.</i>';
+      commentEl.innerHTML = comment;
+    }
 
     modal.style.display = 'flex';
   }

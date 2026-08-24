@@ -1624,6 +1624,208 @@ describe('VirtuLab Kenya — Backend API Test Suite', () => {
     assert.ok(csvText.includes('STU-0001'));
   });
 
+  /* 23. TEACHER-STUDENT COMPREHENSIVE LINKAGE TESTS */
+  it('GET /api/auth/me — should return teacher_code and school info for teacher', async () => {
+    pool.query = async (q) => {
+      if (q.includes('FROM teachers t')) {
+        return {
+          rows: [{
+            id: 1,
+            name: 'Mwalimu Maina',
+            email: 'maina@school.ke',
+            teacher_code: 'TCH8X2',
+            school_id: 1,
+            school_name: 'Alliance High School',
+            school_code: 'ALL001'
+          }]
+        };
+      }
+      return { rows: [] };
+    };
+
+    const res = await fetch(url('/api/auth/me'), {
+      headers: { 'Authorization': `Bearer ${teacherToken}` }
+    });
+    const body = await res.json();
+    assert.strictEqual(res.status, 200);
+    assert.strictEqual(body.user.teacherCode, 'TCH8X2');
+    assert.strictEqual(body.user.schoolName, 'Alliance High School');
+  });
+
+  it('POST /api/students/link-teacher — should link student to teacher using valid teacher code', async () => {
+    pool.query = async (q, params) => {
+      if (q.includes('WHERE UPPER(t.teacher_code) = $1')) {
+        return {
+          rows: [{
+            id: 2,
+            name: 'Madam Wanjiku',
+            email: 'wanjiku@school.ke',
+            teacher_code: 'TCH999',
+            school_id: 1,
+            school_name: 'Nairobi Academy'
+          }]
+        };
+      }
+      if (q.includes('UPDATE students')) {
+        return {
+          rows: [{
+            id: 1,
+            name: 'Test Student',
+            email: 'student@example.com',
+            form: 'Form 4',
+            school_id: 1,
+            teacher_id: 2
+          }]
+        };
+      }
+      if (q.includes('INSERT INTO student_notifications')) {
+        return { rows: [] };
+      }
+      return { rows: [] };
+    };
+
+    const res = await fetch(url('/api/students/link-teacher'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${studentToken}`
+      },
+      body: JSON.stringify({ teacherCode: 'TCH999' })
+    });
+    const body = await res.json();
+    assert.strictEqual(res.status, 200);
+    assert.strictEqual(body.success, true);
+    assert.strictEqual(body.student.teacherName, 'Madam Wanjiku');
+    assert.strictEqual(body.student.teacherCode, 'TCH999');
+  });
+
+  it('POST /api/students/link-teacher — should return 404 for non-existent teacher code', async () => {
+    pool.query = async () => ({ rows: [] });
+
+    const res = await fetch(url('/api/students/link-teacher'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${studentToken}`
+      },
+      body: JSON.stringify({ teacherCode: 'NONEXISTENT' })
+    });
+    const body = await res.json();
+    assert.strictEqual(res.status, 404);
+    assert.ok(body.error.includes('No teacher found with code'));
+  });
+
+  it('GET /api/students/profile — should return student profile with linked teacher', async () => {
+    pool.query = async (q) => {
+      if (q.includes('FROM students s')) {
+        return {
+          rows: [{
+            id: 1,
+            name: 'Test Student',
+            email: 'student@example.com',
+            form: 'Form 4',
+            school_id: 1,
+            teacher_id: 2,
+            school_name: 'Nairobi Academy',
+            teacher_name: 'Madam Wanjiku',
+            teacher_code: 'TCH999'
+          }]
+        };
+      }
+      return { rows: [] };
+    };
+
+    const res = await fetch(url('/api/students/profile'), {
+      headers: { 'Authorization': `Bearer ${studentToken}` }
+    });
+    const body = await res.json();
+    assert.strictEqual(res.status, 200);
+    assert.strictEqual(body.student.name, 'Test Student');
+    assert.strictEqual(body.student.teacher_name, 'Madam Wanjiku');
+    assert.strictEqual(body.student.teacher_code, 'TCH999');
+  });
+
+  it('POST /api/assignments/:id/remind — should dispatch notifications to unsubmitted students', async () => {
+    pool.query = async (q) => {
+      if (q.includes('SELECT id, title, due_date FROM assignments')) {
+        return {
+          rows: [{
+            id: 10,
+            title: 'KCSE Mock Exam Paper 3',
+            due_date: new Date(Date.now() + 86400000).toISOString()
+          }]
+        };
+      }
+      if (q.includes('SELECT s.id, s.name FROM students s')) {
+        return {
+          rows: [
+            { id: 1, name: 'Student 1' },
+            { id: 2, name: 'Student 2' }
+          ]
+        };
+      }
+      if (q.includes('INSERT INTO student_notifications')) {
+        return { rows: [] };
+      }
+      return { rows: [] };
+    };
+
+    const res = await fetch(url('/api/assignments/10/remind'), {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${teacherToken}` }
+    });
+    const body = await res.json();
+    assert.strictEqual(res.status, 200);
+    assert.strictEqual(body.success, true);
+    assert.strictEqual(body.notifiedCount, 2);
+  });
+
+  it('GET /api/assignments/:id/export — should return formatted CSV for qualitative assignment', async () => {
+    pool.query = async (q) => {
+      if (q.includes('SELECT id, title, titration_type FROM assignments')) {
+        return {
+          rows: [{
+            id: 12,
+            title: 'Qualitative Analysis Assessment',
+            titration_type: 'qualitative'
+          }]
+        };
+      }
+      if (q.includes('SELECT DISTINCT ON (s.id)')) {
+        return {
+          rows: [{
+            student_id: 1,
+            student_name: 'Tecla Rice',
+            student_email: 'tecla@virtulab.ke',
+            student_form: 'Form 4',
+            submission_status: 'submitted',
+            teacher_feedback: 'Well done',
+            submitted_at: new Date().toISOString(),
+            salt_key: 'pb_no3',
+            salt_name: 'Lead(II) Nitrate',
+            student_cation: 'Pb2+',
+            student_anion: 'NO3-',
+            cation_correct: true,
+            anion_correct: true,
+            q_tests_performed: 4,
+            q_tests_correct: 4,
+            correct: true
+          }]
+        };
+      }
+      return { rows: [] };
+    };
+
+    const res = await fetch(url('/api/assignments/12/export'), {
+      headers: { 'Authorization': `Bearer ${teacherToken}` }
+    });
+    assert.strictEqual(res.status, 200);
+    const csv = await res.text();
+    assert.ok(csv.includes('Salt Key'));
+    assert.ok(csv.includes('Lead(II) Nitrate'));
+    assert.ok(csv.includes('Tecla Rice'));
+  });
+
 });
 
 

@@ -49,7 +49,7 @@ async function getStudentAssignments(studentId) {
            COALESCE(sub.submitted_at, ps.created_at, qs.created_at, os.created_at, cs.created_at, ss.created_at, es.created_at, rs.created_at, gs.created_at) AS submitted_at,
            sub.teacher_feedback,
            sub.marked_at,
-           ps.student_answer AS ps_student_answer, ps.true_value AS ps_true_value, ps.titration_type AS ps_titration_type, ps.titration_title AS ps_titration_title, ps.indicator_used, ps.trials_count, ps.trial_readings, ps.mode AS practical_mode, ps.details AS ps_details,
+           ps.student_answer AS ps_student_answer, COALESCE(ps.true_conc, 0) AS ps_true_value, ps.titration_type AS ps_titration_type, ps.titration_title AS ps_titration_title, ps.indicator_used, ps.trials_count, ps.trial_readings, ps.mode AS practical_mode, ps.details AS ps_details,
            qs.salt_key, qs.salt_name, qs.true_cation, qs.true_anion, qs.student_cation, qs.student_anion, qs.cation_correct, qs.anion_correct, qs.tests_performed AS q_tests_performed, qs.tests_correct AS q_tests_correct,
            os.compound_key, os.compound_name, os.true_functional_group, os.student_functional_group, os.functional_group_correct, os.tests_performed AS o_tests_performed, os.tests_correct AS o_tests_correct,
            cs.exam_title, cs.q1_score, cs.q2_score, cs.q3_score, cs.total_score AS cs_total_score, cs.grade AS cs_grade,
@@ -59,7 +59,7 @@ async function getStudentAssignments(studentId) {
            gs.gas_key, gs.gas_name, gs.drying_agent AS gas_drying_agent, gs.collection_method AS gas_collection_method, gs.drying_correct AS gas_drying_correct, gs.collection_correct AS gas_collection_correct, gs.tests_performed AS gas_tests_performed, gs.tests_correct AS gas_tests_correct, gs.total_score AS gas_total_score, gs.rubric_breakdown AS gas_rubrics,
            COALESCE(ps.student_answer, cs.total_score, ss.total_score, es.total_score, rs.total_score, gs.total_score) AS student_answer,
            CASE 
-             WHEN ps.id IS NOT NULL THEN ps.true_value
+             WHEN ps.id IS NOT NULL THEN COALESCE(ps.true_conc, 0)
              WHEN cs.id IS NOT NULL THEN 40.0
              WHEN ss.id IS NOT NULL THEN 5.0
              WHEN es.id IS NOT NULL THEN 15.0
@@ -67,7 +67,7 @@ async function getStudentAssignments(studentId) {
              WHEN gs.id IS NOT NULL THEN 10.0
              ELSE NULL
            END AS true_value,
-           COALESCE(ps.correct, qs.correct, os.correct, (cs.total_score >= 20), (ss.total_score >= 3.0), (es.total_score >= 8.0), (rs.total_score >= 8.0), (gs.total_score >= 6.0)) AS correct
+           COALESCE((ps.score >= 8 OR ps.concordant_found = true), qs.correct, os.correct, (cs.total_score >= 20), (ss.total_score >= 3.0), (es.total_score >= 8.0), (rs.total_score >= 8.0), (gs.total_score >= 6.0)) AS correct
     FROM assignments a
     JOIN teachers t ON a.teacher_id = t.id
     LEFT JOIN assignment_submissions sub ON sub.assignment_id = a.id AND sub.student_id = $1
@@ -119,7 +119,9 @@ async function getStudentAssignments(studentId) {
       WHERE student_id = $1 AND assignment_id IS NOT NULL
       ORDER BY assignment_id, student_id, created_at DESC
     ) gs ON gs.assignment_id = a.id
-    WHERE (a.teacher_id = $2 OR (a.school_id = $3))
+    WHERE ($2::int IS NOT NULL AND (a.teacher_id = $2 OR ($3::int IS NOT NULL AND a.school_id = $3)))
+       OR ($2::int IS NULL AND $3::int IS NOT NULL AND (a.school_id = $3 OR a.school_id IS NULL))
+       OR ($2::int IS NULL AND $3::int IS NULL)
     ORDER BY a.created_at DESC
   `;
   const result = await pool.query(query, [studentId, teacherId, schoolId]);
@@ -209,8 +211,8 @@ async function getAssignmentExportData(assignmentId, teacherId) {
        sub.marked_at,
        COALESCE(sub.submitted_at, ps.created_at, qs.created_at, os.created_at, cs.created_at, ss.created_at, es.created_at, rs.created_at, gs.created_at) AS submitted_at,
        COALESCE(ps.student_answer, cs.total_score, ss.total_score, es.total_score, rs.total_score, gs.total_score) AS student_answer,
-       COALESCE(ps.correct, qs.correct, os.correct, (cs.total_score >= 20), (ss.total_score >= 3.0), (es.total_score >= 8.0), (rs.total_score >= 8.0), (gs.total_score >= 6.0)) AS correct,
-       ps.titration_type, ps.titration_title, ps.indicator_used, ps.trials_count, ps.trial_readings, ps.true_value, ps.mode AS practical_mode,
+       COALESCE((ps.score >= 8 OR ps.concordant_found = true), qs.correct, os.correct, (cs.total_score >= 20), (ss.total_score >= 3.0), (es.total_score >= 8.0), (rs.total_score >= 8.0), (gs.total_score >= 6.0)) AS correct,
+       ps.titration_type, ps.titration_title, ps.indicator_used, ps.trials_count, ps.trial_readings, COALESCE(ps.true_conc, 0) AS true_value, ps.mode AS practical_mode,
        qs.salt_key, qs.salt_name, qs.true_cation, qs.true_anion, qs.student_cation, qs.student_anion, qs.cation_correct, qs.anion_correct, qs.tests_performed AS q_tests_performed, qs.tests_correct AS q_tests_correct,
        os.compound_key, os.compound_name, os.true_functional_group, os.student_functional_group, os.functional_group_correct, os.tests_performed AS o_tests_performed, os.tests_correct AS o_tests_correct,
        cs.exam_title, cs.q1_score, cs.q2_score, cs.q3_score, cs.total_score AS composite_total_score, cs.grade AS composite_grade,
@@ -258,7 +260,7 @@ async function getAllSubmissions(teacherId, { page = 1, limit = 50 } = {}) {
         s.form AS student_form,
         a.title AS assignment_title,
         a.titration_type AS assignment_type,
-        ps.titration_type, ps.titration_title, ps.indicator_used, ps.trials_count, ps.trial_readings, ps.student_answer, ps.true_value, ps.correct, ps.mode AS practical_mode, ps.details,
+        ps.titration_type, ps.titration_title, ps.indicator_used, ps.trials_count, ps.trial_readings, ps.student_answer, COALESCE(ps.true_conc, 0) AS true_value, (ps.score >= 8 OR ps.concordant_found = true) AS correct, ps.mode AS practical_mode, ps.details,
         qs.salt_key, qs.salt_name, qs.true_cation, qs.true_anion, qs.student_cation, qs.student_anion, qs.cation_correct, qs.anion_correct, qs.tests_performed AS q_tests_performed, qs.tests_correct AS q_tests_correct,
         os.compound_key, os.compound_name, os.true_functional_group, os.student_functional_group, os.functional_group_correct, os.tests_performed AS o_tests_performed, os.tests_correct AS o_tests_correct,
         cs.exam_title, cs.q1_score, cs.q2_score, cs.q3_score, cs.total_score, cs.grade,

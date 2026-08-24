@@ -7,7 +7,7 @@ async function getClassAnalytics(teacherId) {
         ps.student_id,
         ps.created_at,
         COALESCE(ps.titration_type, 'acidBase') AS practical_type,
-        (ps.correct IS TRUE) AS is_correct
+        (COALESCE(ps.score >= 8, ps.concordant_found, false)) AS is_correct
       FROM practical_sessions ps
       JOIN students s ON s.id = ps.student_id
       WHERE s.teacher_id = $1

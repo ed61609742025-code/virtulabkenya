@@ -27,7 +27,7 @@ const MIN_SESSIONS = 3;
 async function getRankedClass(teacherId) {
   const result = await pool.query(
     `WITH all_class_sessions AS (
-       SELECT ps.student_id, ps.correct AS is_correct
+       SELECT ps.student_id, (COALESCE(ps.score >= 8, ps.concordant_found, false)) AS is_correct
        FROM practical_sessions ps
        JOIN students s ON s.id = ps.student_id
        WHERE s.teacher_id = $1

@@ -137,10 +137,12 @@ const migrations = [
   // Add assignment_id to qualitative_sessions if missing
   `ALTER TABLE qualitative_sessions
      ADD COLUMN IF NOT EXISTS assignment_id INTEGER REFERENCES assignments(id) ON DELETE SET NULL`,
-  // Add missing columns to practical_sessions if missing (type, true_conc, difference, score, details, assignment_id)
+  // Add missing columns to practical_sessions if missing (type, true_conc, true_value, correct, difference, score, details, assignment_id)
   `ALTER TABLE practical_sessions
      ADD COLUMN IF NOT EXISTS type VARCHAR(50),
      ADD COLUMN IF NOT EXISTS true_conc DECIMAL(10,4),
+     ADD COLUMN IF NOT EXISTS true_value DECIMAL(10,4),
+     ADD COLUMN IF NOT EXISTS correct BOOLEAN DEFAULT FALSE,
      ADD COLUMN IF NOT EXISTS difference DECIMAL(10,4),
      ADD COLUMN IF NOT EXISTS score INTEGER DEFAULT 0,
      ADD COLUMN IF NOT EXISTS details JSONB,

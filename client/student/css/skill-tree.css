@@ -110,19 +110,20 @@
 }
 
 .st-branch-title {
-  font-family: 'Cinzel', serif;
-  font-size: 1.05rem;
+  font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+  font-size: 1.02rem;
   font-weight: 800;
   color: var(--b-text);
   display: flex;
   align-items: center;
   gap: 8px;
+  letter-spacing: -0.01em;
 }
 
 .st-branch-tag {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-size: 0.74rem;
+  font-weight: 800;
   padding: 3px 10px;
   border-radius: 6px;
   background: var(--b-surface-subtle);
@@ -425,25 +426,54 @@
 /* ── 7. RESPONSIVE MOBILE TWEAKS ── */
 @media (max-width: 640px) {
   .st-branch {
-    padding: 16px 14px;
+    padding: 14px 12px;
+    border-radius: 14px;
+  }
+
+  .st-branch-header {
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    gap: 6px;
+  }
+
+  .st-branch-title {
+    font-size: 0.94rem;
+  }
+
+  .st-branch-tag {
+    font-size: 0.68rem;
+    padding: 2px 8px;
   }
 
   .st-nodes-track {
-    gap: 20px 12px;
+    gap: 16px 8px;
+    padding: 4px 0;
   }
 
   .st-node-circle {
-    width: 60px;
-    height: 60px;
-    font-size: 1.45rem;
+    width: 56px;
+    height: 56px;
+    font-size: 1.35rem;
   }
 
   .st-node-wrapper {
-    max-width: 100px;
+    max-width: 88px;
+    gap: 6px;
   }
 
   .st-node-label {
-    font-size: 0.74rem;
+    font-size: 0.72rem;
+    line-height: 1.2;
+  }
+
+  .st-node-sublabel {
+    font-size: 0.64rem;
+  }
+
+  .st-node-wrapper.capstone .st-node-circle {
+    width: 68px;
+    height: 68px;
+    font-size: 1.6rem;
   }
 
   .st-modal-card {

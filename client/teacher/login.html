@@ -113,6 +113,16 @@
     clearToken(); // Clear stale/mismatched session
   }
 
+  // Display role mismatch alert if redirected from student session
+  const urlParams = new URLSearchParams(window.location.search);
+  const mismatch = urlParams.get('mismatch');
+  if (mismatch) {
+    const msgEl = document.getElementById('msg');
+    if (msgEl) {
+      msgEl.innerHTML = `<div class="msg-alert warn" style="margin-bottom:14px;">⚠️ You were signed in with a <b>${escapeHtml(mismatch)}</b> account. Please log in with your <b>Teacher</b> account to access the Teacher Portal.</div>`;
+    }
+  }
+
   function togglePasswordVisibility() {
     const pwInput = document.getElementById('password');
     pwInput.type = pwInput.type === 'password' ? 'text' : 'password';

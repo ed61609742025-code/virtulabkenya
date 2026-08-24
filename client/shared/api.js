@@ -39,15 +39,43 @@ function clearToken() {
     sessionStorage.removeItem('vlk_user');
   } catch(e) {}
 }
-function getUser() {
-  const store = getStorage();
-  if (!store) return null;
+function decodeTokenPayload(token) {
+  if (!token) return null;
   try {
-    const raw = store.getItem('vlk_user') || (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('vlk_user') : null);
-    return raw ? JSON.parse(raw) : null;
-  } catch(e) {
+    const parts = token.split('.');
+    if (parts.length < 2) return null;
+    const base64Url = parts[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(jsonPayload);
+  } catch (e) {
     return null;
   }
+}
+
+function getUser() {
+  const store = getStorage();
+  let user = null;
+  if (store) {
+    try {
+      const raw = store.getItem('vlk_user') || (typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('vlk_user') : null);
+      user = raw ? JSON.parse(raw) : null;
+    } catch(e) {}
+  }
+  const token = getToken();
+  if (token) {
+    const payload = decodeTokenPayload(token);
+    if (payload && payload.role) {
+      if (!user) {
+        user = { id: payload.id, role: payload.role, name: payload.name, email: payload.email };
+      } else {
+        user.role = payload.role; // Always trust the signed token role
+      }
+    }
+  }
+  return user;
 }
 function setUser(user) {
   const store = getStorage();
@@ -792,21 +820,29 @@ if (typeof window !== 'undefined') {
 // ── Guard: redirect to login if not authenticated ─────────────
 function requireStudentLogin() {
   const user = getUser();
-  if (!isLoggedIn() || user?.role !== 'student') {
+  const token = getToken();
+  const payload = decodeTokenPayload(token);
+  const role = payload?.role || user?.role;
+  if (!isLoggedIn() || role !== 'student') {
     clearToken();
     const path = (window.location.pathname || '').toLowerCase();
     if (!path.endsWith('/student/login.html') && !path.endsWith('login.html')) {
-      window.location.href = '/student/login.html';
+      const qs = role ? `?mismatch=${encodeURIComponent(role)}` : '';
+      window.location.href = '/student/login.html' + qs;
     }
   }
 }
 function requireTeacherLogin() {
   const user = getUser();
-  if (!isLoggedIn() || user?.role !== 'teacher') {
+  const token = getToken();
+  const payload = decodeTokenPayload(token);
+  const role = payload?.role || user?.role;
+  if (!isLoggedIn() || role !== 'teacher') {
     clearToken();
     const path = (window.location.pathname || '').toLowerCase();
     if (!path.endsWith('/teacher/login.html') && !path.endsWith('login.html')) {
-      window.location.href = '/teacher/login.html';
+      const qs = role ? `?mismatch=${encodeURIComponent(role)}` : '';
+      window.location.href = '/teacher/login.html' + qs;
     }
   }
 }

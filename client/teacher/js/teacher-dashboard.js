@@ -22,12 +22,22 @@ window.copyTeacherCode = copyTeacherCode;
 
 async function initTeacherProfile() {
   if (currentUser) {
+    if (currentUser.role && currentUser.role !== 'teacher') {
+      clearToken();
+      window.location.href = `/teacher/login.html?mismatch=${encodeURIComponent(currentUser.role)}`;
+      return;
+    }
     if (currentUser.name) document.getElementById('teacherName').textContent = currentUser.name;
     if (currentUser.teacherCode) updateTeacherCodeElements(currentUser.teacherCode);
   }
   try {
     const res = await Auth.me();
     if (res && res.user) {
+      if (res.user.role && res.user.role !== 'teacher') {
+        clearToken();
+        window.location.href = `/teacher/login.html?mismatch=${encodeURIComponent(res.user.role)}`;
+        return;
+      }
       currentUser = res.user;
       setUser(currentUser);
       if (currentUser.name) document.getElementById('teacherName').textContent = currentUser.name;
@@ -1789,6 +1799,16 @@ let currentPage = 1;
       loadTeacherAssignments();
       loadSubmittedAssignments();
     } catch (err) {
+      if (err.message && err.message.includes('requires a teacher account')) {
+        msg.innerHTML = `
+          <div class="msg msg-err" style="display:flex; flex-direction:column; gap:8px; padding:12px 14px; text-align:left;">
+            <div>❌ <b>Session Mismatch:</b> Your browser currently has a <b>Student</b> session active.</div>
+            <div style="font-size:0.84rem; color:var(--text-muted);">Please log out and sign in with your <b>Teacher</b> account credentials to create practical assignments.</div>
+            <button type="button" class="btn" style="background:var(--blue-bg); color:var(--blue-accent); border:1px solid var(--blue-border); font-weight:700; width:fit-content; margin-top:4px;" onclick="Auth.logout()">Log out &amp; Open Teacher Login →</button>
+          </div>
+        `;
+        return;
+      }
       msg.innerHTML = '<div class="msg msg-err">' + escapeHtml(err.message || 'Could not save assignment.') + '</div>';
     }
   }

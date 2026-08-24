@@ -237,10 +237,15 @@ router.post('/:id/remind', authMiddleware, authMiddleware.requireRole('teacher')
   });
 }));
 
-// GET /api/assignments/mine — Student's assignments
-router.get('/mine', authMiddleware, authMiddleware.requireRole('student'), asyncHandler(async (req, res) => {
-  const assignments = await assignmentRepo.getStudentAssignments(req.user.id);
-  return res.json({ assignments });
+// GET /api/assignments/mine — Student's assignments (or teacher/admin preview)
+router.get('/mine', authMiddleware, asyncHandler(async (req, res) => {
+  let assignments = [];
+  if (req.user.role === 'teacher') {
+    assignments = await assignmentRepo.getTeacherAssignments(req.user.id);
+  } else {
+    assignments = await assignmentRepo.getStudentAssignments(req.user.id);
+  }
+  return res.json({ assignments: assignments || [] });
 }));
 
 // GET /api/assignments/teacher — Teacher's assignments

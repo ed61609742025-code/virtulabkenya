@@ -69,7 +69,7 @@ async function getStudentAssignments(studentId) {
            END AS true_value,
            COALESCE((ps.score >= 8 OR ps.concordant_found = true), qs.correct, os.correct, (cs.total_score >= 20), (ss.total_score >= 3.0), (es.total_score >= 8.0), (rs.total_score >= 8.0), (gs.total_score >= 6.0)) AS correct
     FROM assignments a
-    JOIN teachers t ON a.teacher_id = t.id
+    LEFT JOIN teachers t ON a.teacher_id = t.id
     LEFT JOIN assignment_submissions sub ON sub.assignment_id = a.id AND sub.student_id = $1
     LEFT JOIN (
       SELECT DISTINCT ON (assignment_id, student_id) *

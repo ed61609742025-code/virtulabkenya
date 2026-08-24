@@ -33,7 +33,8 @@ async function getStudentAssignments(studentId) {
     [studentId]
   );
   if (studentResult.rows.length === 0) return [];
-  const { teacher_id: teacherId, school_id: schoolId } = studentResult.rows[0];
+  const teacherId = studentResult.rows[0].teacher_id ?? null;
+  const schoolId = studentResult.rows[0].school_id ?? null;
 
   const query = `
     SELECT a.*,
@@ -119,8 +120,8 @@ async function getStudentAssignments(studentId) {
       WHERE student_id = $1 AND assignment_id IS NOT NULL
       ORDER BY assignment_id, student_id, created_at DESC
     ) gs ON gs.assignment_id = a.id
-    WHERE ($2::int IS NOT NULL AND (a.teacher_id = $2 OR ($3::int IS NOT NULL AND a.school_id = $3)))
-       OR ($2::int IS NULL AND $3::int IS NOT NULL AND (a.school_id = $3 OR a.school_id IS NULL))
+    WHERE ($2::int IS NOT NULL AND (a.teacher_id = $2 OR ($3::int IS NOT NULL AND a.school_id = $3) OR (a.teacher_id IS NULL AND a.school_id IS NULL)))
+       OR ($2::int IS NULL AND $3::int IS NOT NULL AND (a.school_id = $3 OR a.school_id IS NULL OR a.teacher_id IS NULL))
        OR ($2::int IS NULL AND $3::int IS NULL)
     ORDER BY a.created_at DESC
   `;

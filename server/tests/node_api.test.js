@@ -1747,7 +1747,7 @@ describe('VirtuLab Kenya — Backend API Test Suite', () => {
 
   it('POST /api/assignments/:id/remind — should dispatch notifications to unsubmitted students', async () => {
     pool.query = async (q) => {
-      if (q.includes('SELECT id, title, due_date FROM assignments')) {
+      if (q.includes('FROM assignments WHERE id =')) {
         return {
           rows: [{
             id: 10,
@@ -1756,7 +1756,7 @@ describe('VirtuLab Kenya — Backend API Test Suite', () => {
           }]
         };
       }
-      if (q.includes('SELECT s.id, s.name FROM students s')) {
+      if (q.includes('FROM students s')) {
         return {
           rows: [
             { id: 1, name: 'Student 1' },

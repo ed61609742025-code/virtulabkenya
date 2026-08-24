@@ -270,6 +270,7 @@ requireStudentLogin();
     try {
       const data = await Assignments.getMine();
       const assignments = data.assignments || [];
+      window._vlk_student_assignments = assignments;
 
       updateNotificationsUI(assignments);
 
@@ -284,11 +285,10 @@ requireStudentLogin();
         return;
       }
 
-      const displayAssignments = assignments.slice(0, 2);
-      box.innerHTML = displayAssignments.map(a => {
+      box.innerHTML = assignments.map(a => {
         const isSubmitted = !!a.submitted;
-        const score = a.score || (a.evaluation && a.evaluation.score);
-        const isGraded = typeof score === 'number';
+        const score = a.score || (a.evaluation && a.evaluation.score) || a.cs_total_score || a.gas_total_score || a.en_total_score || a.rate_total_score || a.sol_total_score;
+        const isGraded = typeof score === 'number' || a.submission_status === 'marked' || a.marked_at != null || a.status === 'marked';
 
         let targetUrl = `lab.html?assignment=${a.id}&type=${encodeURIComponent(a.titration_type || 'acidBase')}`;
         let battleMode = 'titration';
@@ -321,9 +321,9 @@ requireStudentLogin();
         let statusHtml = '';
         if (isSubmitted) {
           if (isGraded) {
-            statusHtml = `<span class="submitted-pill" style="cursor:pointer; background:var(--green-bg); color:var(--green-accent); border:1px solid var(--green-accent); justify-content:center; width:100%;" onclick='openAssignmentFeedbackModal(${JSON.stringify(a).replace(/'/g, "&apos;")})'>🟢 Marked (View Grade)</span>`;
+            statusHtml = `<button type="button" class="submitted-pill" style="cursor:pointer; background:var(--green-bg); color:var(--green-accent); border:1px solid var(--green-accent); justify-content:center; width:100%;" onclick="openAssignmentFeedbackModalById(${a.id})">🟢 Marked (View Grade)</button>`;
           } else {
-            statusHtml = `<span class="submitted-pill" style="cursor:pointer; background:rgba(245, 158, 11, 0.15); color:#F59E0B; border:1px solid #F59E0B; justify-content:center; width:100%;" onclick='openAssignmentFeedbackModal(${JSON.stringify(a).replace(/'/g, "&apos;")})'>🟡 Under Review</span>`;
+            statusHtml = `<button type="button" class="submitted-pill" style="cursor:pointer; background:rgba(245, 158, 11, 0.15); color:#F59E0B; border:1px solid #F59E0B; justify-content:center; width:100%;" onclick="openAssignmentFeedbackModalById(${a.id})">🟡 Under Review</button>`;
           }
         } else {
           statusHtml = `<a href="${warmupUrl}" class="pending-pill-btn" style="text-align:center; width:100%;">Start Practical →</a>`;
@@ -350,13 +350,32 @@ requireStudentLogin();
       console.warn('Could not load assignments dynamically:', err);
       if (box) {
         box.innerHTML = `
-          <div class="empty-box" style="grid-column: 1 / -1; padding: 20px; text-align: center; color: var(--text-muted); font-size: 0.8rem;">
-            Unable to load assignments right now.
+          <div class="empty-box" style="grid-column: 1 / -1; padding: 24px 16px; text-align: center; color: var(--text-muted); font-size: 0.85rem; border: 1.5px dashed var(--card-border); border-radius: 8px;">
+            <div style="font-size: 1.3rem; margin-bottom: 6px;">⚠️</div>
+            <div style="font-weight: 700; color: var(--heading-color); margin-bottom: 4px;">Unable to load assignments right now</div>
+            <div style="font-size: 0.78rem; margin-bottom: 12px;">${escapeHtml(err.message || 'Please check your connection or link your teacher code.')}</div>
+            <button class="btn btn-secondary" onclick="loadAssignments()" style="padding: 6px 16px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; cursor: pointer;">🔄 Retry</button>
           </div>
         `;
       }
     }
   }
+
+  function openAssignmentFeedbackModalById(id) {
+    const list = window._vlk_student_assignments || [];
+    const match = list.find(item => item.id == id);
+    if (match) {
+      openAssignmentFeedbackModal(match);
+    }
+  }
+  window.openAssignmentFeedbackModalById = openAssignmentFeedbackModalById;
+
+  function closeFeedbackModal() {
+    const modal = document.getElementById('assignmentFeedbackModal');
+    if (modal) modal.style.display = 'none';
+  }
+  window.closeFeedbackModal = closeFeedbackModal;
+  window.loadAssignments = loadAssignments;
 
   function openAssignmentFeedbackModal(a) {
     const modal = document.getElementById('assignmentFeedbackModal');

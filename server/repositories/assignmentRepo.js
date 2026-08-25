@@ -33,8 +33,24 @@ async function getStudentAssignments(studentId) {
     [studentId]
   );
   if (studentResult.rows.length === 0) return [];
-  const teacherId = studentResult.rows[0].teacher_id ?? null;
-  const schoolId = studentResult.rows[0].school_id ?? null;
+  const teacherId = studentResult.rows[0].teacher_id || null;
+  const schoolId = studentResult.rows[0].school_id || null;
+
+  let whereClause = '';
+  const params = [studentId];
+
+  if (teacherId && schoolId) {
+    params.push(teacherId, schoolId);
+    whereClause = `WHERE (a.teacher_id = $2 OR a.school_id = $3 OR (a.teacher_id IS NULL AND a.school_id IS NULL))`;
+  } else if (teacherId) {
+    params.push(teacherId);
+    whereClause = `WHERE (a.teacher_id = $2 OR (a.teacher_id IS NULL AND a.school_id IS NULL))`;
+  } else if (schoolId) {
+    params.push(schoolId);
+    whereClause = `WHERE (a.school_id = $2 OR a.school_id IS NULL OR a.teacher_id IS NULL)`;
+  } else {
+    whereClause = '';
+  }
 
   const query = `
     SELECT a.*,
@@ -120,12 +136,10 @@ async function getStudentAssignments(studentId) {
       WHERE student_id = $1 AND assignment_id IS NOT NULL
       ORDER BY assignment_id, student_id, created_at DESC
     ) gs ON gs.assignment_id = a.id
-    WHERE ($2::int IS NOT NULL AND (a.teacher_id = $2 OR ($3::int IS NOT NULL AND a.school_id = $3) OR (a.teacher_id IS NULL AND a.school_id IS NULL)))
-       OR ($2::int IS NULL AND $3::int IS NOT NULL AND (a.school_id = $3 OR a.school_id IS NULL OR a.teacher_id IS NULL))
-       OR ($2::int IS NULL AND $3::int IS NULL)
+    ${whereClause}
     ORDER BY a.created_at DESC
   `;
-  const result = await pool.query(query, [studentId, teacherId, schoolId]);
+  const result = await pool.query(query, params);
   return result.rows;
 }
 
@@ -207,7 +221,7 @@ async function getAssignmentExportData(assignmentId, teacherId) {
        s.name AS student_name,
        s.email AS student_email,
        s.form AS student_form,
-       sub.status AS submission_status,
+       COALESCE(sub.status, 'submitted') AS submission_status,
        sub.teacher_feedback,
        sub.marked_at,
        COALESCE(sub.submitted_at, ps.created_at, qs.created_at, os.created_at, cs.created_at, ss.created_at, es.created_at, rs.created_at, gs.created_at) AS submitted_at,
@@ -246,64 +260,312 @@ async function getAllSubmissions(teacherId, { page = 1, limit = 50 } = {}) {
   const offset = (page - 1) * limit;
 
   const query = `
-    SELECT * FROM (
-      SELECT DISTINCT ON (sub_key)
-        CONCAT(COALESCE(sub.assignment_id, ps.assignment_id, qs.assignment_id, os.assignment_id, cs.assignment_id, ss.assignment_id, es.assignment_id, rs.assignment_id, gs.assignment_id), '_', COALESCE(sub.student_id, ps.student_id, qs.student_id, os.student_id, cs.student_id, ss.student_id, es.student_id, rs.student_id, gs.student_id)) AS sub_key,
-        COALESCE(sub.id, ps.id, qs.id, os.id, cs.id, ss.id, es.id, rs.id, gs.id) AS submission_id,
-        COALESCE(sub.assignment_id, ps.assignment_id, qs.assignment_id, os.assignment_id, cs.assignment_id, ss.assignment_id, es.assignment_id, rs.assignment_id, gs.assignment_id) AS assignment_id,
-        COALESCE(sub.student_id, ps.student_id, qs.student_id, os.student_id, cs.student_id, ss.student_id, es.student_id, rs.student_id, gs.student_id) AS student_id,
-        COALESCE(sub.status, 'submitted') AS submission_status,
-        COALESCE(sub.submitted_at, ps.created_at, qs.created_at, os.created_at, cs.created_at, ss.created_at, es.created_at, rs.created_at, gs.created_at) AS submitted_at,
+    WITH all_candidates AS (
+      SELECT
+        sub.id AS submission_id,
+        sub.assignment_id,
+        sub.student_id,
+        sub.status AS submission_status,
+        sub.submitted_at,
         sub.teacher_feedback,
         sub.marked_at,
-        s.name AS student_name,
-        s.email AS student_email,
-        s.form AS student_form,
-        a.title AS assignment_title,
-        a.titration_type AS assignment_type,
-        ps.titration_type, ps.titration_title, ps.indicator_used, ps.trials_count, ps.trial_readings, ps.student_answer, COALESCE(ps.true_conc, 0) AS true_value, (ps.score >= 8 OR ps.concordant_found = true) AS correct, ps.mode AS practical_mode, ps.details,
-        qs.salt_key, qs.salt_name, qs.true_cation, qs.true_anion, qs.student_cation, qs.student_anion, qs.cation_correct, qs.anion_correct, qs.tests_performed AS q_tests_performed, qs.tests_correct AS q_tests_correct,
-        os.compound_key, os.compound_name, os.true_functional_group, os.student_functional_group, os.functional_group_correct, os.tests_performed AS o_tests_performed, os.tests_correct AS o_tests_correct,
-        cs.exam_title, cs.q1_score, cs.q2_score, cs.q3_score, cs.total_score, cs.grade,
-        ss.solute_key, ss.solute_name, ss.crystallization_temp, ss.theoretical_temp, ss.temp_difference, ss.accuracy_score AS sol_accuracy_score, ss.graph_score AS sol_graph_score, ss.total_score AS sol_total_score, ss.trials_data AS sol_trials_data,
-        es.system_id AS en_system_id, es.system_name AS en_system_name, es.reaction_category AS en_category, es.initial_temp AS en_initial_temp, es.final_temp AS en_final_temp, es.temp_change AS en_temp_change, es.heat_quantity AS en_heat_quantity, es.moles AS en_moles, es.molar_enthalpy AS en_molar_enthalpy, es.theoretical_enthalpy AS en_theoretical_enthalpy, es.total_score AS en_total_score, es.rubric_breakdown AS en_rubrics, es.equation_text AS en_equation,
-        rs.experiment_type AS rate_exp_type, rs.experiment_title AS rate_exp_title, rs.dilution_readings AS rate_readings, rs.table_score AS rate_table_score, rs.graph_score AS rate_graph_score, rs.calc_score AS rate_calc_score, rs.total_score AS rate_total_score, rs.grade AS rate_grade, rs.rubric_breakdown AS rate_rubrics, rs.answers AS rate_answers,
-        gs.gas_key, gs.gas_name, gs.drying_agent AS gas_drying_agent, gs.collection_method AS gas_collection_method, gs.drying_correct AS gas_drying_correct, gs.collection_correct AS gas_collection_correct, gs.tests_performed AS gas_tests_performed, gs.tests_correct AS gas_tests_correct, gs.total_score AS gas_total_score, gs.rubric_breakdown AS gas_rubrics
-      FROM assignments a
-      JOIN teachers t ON a.teacher_id = t.id
-      LEFT JOIN assignment_submissions sub ON sub.assignment_id = a.id
-      LEFT JOIN practical_sessions ps ON ps.assignment_id = a.id
-      LEFT JOIN qualitative_sessions qs ON qs.assignment_id = a.id
-      LEFT JOIN organic_sessions os ON os.assignment_id = a.id
-      LEFT JOIN composite_sessions cs ON cs.assignment_id = a.id
-      LEFT JOIN solubility_sessions ss ON ss.assignment_id = a.id
-      LEFT JOIN energy_sessions es ON es.assignment_id = a.id
-      LEFT JOIN rates_sessions rs ON rs.assignment_id = a.id
-      LEFT JOIN gas_sessions gs ON gs.assignment_id = a.id
-      JOIN students s ON s.id = COALESCE(sub.student_id, ps.student_id, qs.student_id, os.student_id, cs.student_id, ss.student_id, es.student_id, rs.student_id, gs.student_id)
-      WHERE (a.teacher_id = $1 OR s.teacher_id = $1)
-        AND (sub.id IS NOT NULL OR ps.id IS NOT NULL OR qs.id IS NOT NULL OR os.id IS NOT NULL OR cs.id IS NOT NULL OR ss.id IS NOT NULL OR es.id IS NOT NULL OR rs.id IS NOT NULL OR gs.id IS NOT NULL)
-      ORDER BY sub_key, COALESCE(sub.submitted_at, ps.created_at, qs.created_at, os.created_at, cs.created_at, ss.created_at, es.created_at, rs.created_at, gs.created_at) DESC
-    ) unified_submissions
-    ORDER BY submitted_at DESC
+        sub.session_id,
+        sub.qualitative_session_id,
+        sub.organic_session_id,
+        sub.composite_session_id,
+        sub.solubility_session_id,
+        sub.energy_session_id,
+        sub.rates_session_id,
+        sub.gas_session_id
+      FROM assignment_submissions sub
+      JOIN assignments a ON a.id = sub.assignment_id
+      WHERE a.teacher_id = $1
+      
+      UNION
+      
+      SELECT
+        NULL AS submission_id,
+        ps.assignment_id,
+        ps.student_id,
+        'submitted' AS submission_status,
+        ps.created_at AS submitted_at,
+        NULL AS teacher_feedback,
+        NULL AS marked_at,
+        ps.id AS session_id,
+        NULL AS qualitative_session_id,
+        NULL AS organic_session_id,
+        NULL AS composite_session_id,
+        NULL AS solubility_session_id,
+        NULL AS energy_session_id,
+        NULL AS rates_session_id,
+        NULL AS gas_session_id
+      FROM practical_sessions ps
+      JOIN assignments a ON a.id = ps.assignment_id
+      WHERE a.teacher_id = $1 AND ps.assignment_id IS NOT NULL
+        AND NOT EXISTS (SELECT 1 FROM assignment_submissions sub WHERE sub.assignment_id = ps.assignment_id AND sub.student_id = ps.student_id)
+
+      UNION
+      
+      SELECT
+        NULL AS submission_id,
+        qs.assignment_id,
+        qs.student_id,
+        'submitted' AS submission_status,
+        qs.created_at AS submitted_at,
+        NULL AS teacher_feedback,
+        NULL AS marked_at,
+        NULL AS session_id,
+        qs.id AS qualitative_session_id,
+        NULL AS organic_session_id,
+        NULL AS composite_session_id,
+        NULL AS solubility_session_id,
+        NULL AS energy_session_id,
+        NULL AS rates_session_id,
+        NULL AS gas_session_id
+      FROM qualitative_sessions qs
+      JOIN assignments a ON a.id = qs.assignment_id
+      WHERE a.teacher_id = $1 AND qs.assignment_id IS NOT NULL
+        AND NOT EXISTS (SELECT 1 FROM assignment_submissions sub WHERE sub.assignment_id = qs.assignment_id AND sub.student_id = qs.student_id)
+
+      UNION
+      
+      SELECT
+        NULL AS submission_id,
+        os.assignment_id,
+        os.student_id,
+        'submitted' AS submission_status,
+        os.created_at AS submitted_at,
+        NULL AS teacher_feedback,
+        NULL AS marked_at,
+        NULL AS session_id,
+        NULL AS qualitative_session_id,
+        os.id AS organic_session_id,
+        NULL AS composite_session_id,
+        NULL AS solubility_session_id,
+        NULL AS energy_session_id,
+        NULL AS rates_session_id,
+        NULL AS gas_session_id
+      FROM organic_sessions os
+      JOIN assignments a ON a.id = os.assignment_id
+      WHERE a.teacher_id = $1 AND os.assignment_id IS NOT NULL
+        AND NOT EXISTS (SELECT 1 FROM assignment_submissions sub WHERE sub.assignment_id = os.assignment_id AND sub.student_id = os.student_id)
+
+      UNION
+      
+      SELECT
+        NULL AS submission_id,
+        cs.assignment_id,
+        cs.student_id,
+        'submitted' AS submission_status,
+        cs.created_at AS submitted_at,
+        NULL AS teacher_feedback,
+        NULL AS marked_at,
+        NULL AS session_id,
+        NULL AS qualitative_session_id,
+        NULL AS organic_session_id,
+        cs.id AS composite_session_id,
+        NULL AS solubility_session_id,
+        NULL AS energy_session_id,
+        NULL AS rates_session_id,
+        NULL AS gas_session_id
+      FROM composite_sessions cs
+      JOIN assignments a ON a.id = cs.assignment_id
+      WHERE a.teacher_id = $1 AND cs.assignment_id IS NOT NULL
+        AND NOT EXISTS (SELECT 1 FROM assignment_submissions sub WHERE sub.assignment_id = cs.assignment_id AND sub.student_id = cs.student_id)
+
+      UNION
+      
+      SELECT
+        NULL AS submission_id,
+        ss.assignment_id,
+        ss.student_id,
+        'submitted' AS submission_status,
+        ss.created_at AS submitted_at,
+        NULL AS teacher_feedback,
+        NULL AS marked_at,
+        NULL AS session_id,
+        NULL AS qualitative_session_id,
+        NULL AS organic_session_id,
+        NULL AS composite_session_id,
+        ss.id AS solubility_session_id,
+        NULL AS energy_session_id,
+        NULL AS rates_session_id,
+        NULL AS gas_session_id
+      FROM solubility_sessions ss
+      JOIN assignments a ON a.id = ss.assignment_id
+      WHERE a.teacher_id = $1 AND ss.assignment_id IS NOT NULL
+        AND NOT EXISTS (SELECT 1 FROM assignment_submissions sub WHERE sub.assignment_id = ss.assignment_id AND sub.student_id = ss.student_id)
+
+      UNION
+      
+      SELECT
+        NULL AS submission_id,
+        es.assignment_id,
+        es.student_id,
+        'submitted' AS submission_status,
+        es.created_at AS submitted_at,
+        NULL AS teacher_feedback,
+        NULL AS marked_at,
+        NULL AS session_id,
+        NULL AS qualitative_session_id,
+        NULL AS organic_session_id,
+        NULL AS composite_session_id,
+        NULL AS solubility_session_id,
+        es.id AS energy_session_id,
+        NULL AS rates_session_id,
+        NULL AS gas_session_id
+      FROM energy_sessions es
+      JOIN assignments a ON a.id = es.assignment_id
+      WHERE a.teacher_id = $1 AND es.assignment_id IS NOT NULL
+        AND NOT EXISTS (SELECT 1 FROM assignment_submissions sub WHERE sub.assignment_id = es.assignment_id AND sub.student_id = es.student_id)
+
+      UNION
+      
+      SELECT
+        NULL AS submission_id,
+        rs.assignment_id,
+        rs.student_id,
+        'submitted' AS submission_status,
+        rs.created_at AS submitted_at,
+        NULL AS teacher_feedback,
+        NULL AS marked_at,
+        NULL AS session_id,
+        NULL AS qualitative_session_id,
+        NULL AS organic_session_id,
+        NULL AS composite_session_id,
+        NULL AS solubility_session_id,
+        NULL AS energy_session_id,
+        rs.id AS rates_session_id,
+        NULL AS gas_session_id
+      FROM rates_sessions rs
+      JOIN assignments a ON a.id = rs.assignment_id
+      WHERE a.teacher_id = $1 AND rs.assignment_id IS NOT NULL
+        AND NOT EXISTS (SELECT 1 FROM assignment_submissions sub WHERE sub.assignment_id = rs.assignment_id AND sub.student_id = rs.student_id)
+
+      UNION
+      
+      SELECT
+        NULL AS submission_id,
+        gs.assignment_id,
+        gs.student_id,
+        'submitted' AS submission_status,
+        gs.created_at AS submitted_at,
+        NULL AS teacher_feedback,
+        NULL AS marked_at,
+        NULL AS session_id,
+        NULL AS qualitative_session_id,
+        NULL AS organic_session_id,
+        NULL AS composite_session_id,
+        NULL AS solubility_session_id,
+        NULL AS energy_session_id,
+        NULL AS rates_session_id,
+        gs.id AS gas_session_id
+      FROM gas_sessions gs
+      JOIN assignments a ON a.id = gs.assignment_id
+      WHERE a.teacher_id = $1 AND gs.assignment_id IS NOT NULL
+        AND NOT EXISTS (SELECT 1 FROM assignment_submissions sub WHERE sub.assignment_id = gs.assignment_id AND sub.student_id = gs.student_id)
+    )
+    SELECT
+      CONCAT(c.assignment_id, '_', c.student_id) AS sub_key,
+      COALESCE(c.submission_id, c.session_id, c.qualitative_session_id, c.organic_session_id, c.composite_session_id, c.solubility_session_id, c.energy_session_id, c.rates_session_id, c.gas_session_id) AS submission_id,
+      c.assignment_id,
+      c.student_id,
+      c.submission_status,
+      c.submitted_at,
+      c.teacher_feedback,
+      c.marked_at,
+      s.name AS student_name,
+      s.email AS student_email,
+      s.form AS student_form,
+      a.title AS assignment_title,
+      a.titration_type AS assignment_type,
+      ps.titration_type, ps.titration_title, ps.indicator_used, ps.trials_count, ps.trial_readings, ps.student_answer, COALESCE(ps.true_conc, 0) AS true_value, (ps.score >= 8 OR ps.concordant_found = true) AS correct, ps.mode AS practical_mode, ps.details,
+      qs.salt_key, qs.salt_name, qs.true_cation, qs.true_anion, qs.student_cation, qs.student_anion, qs.cation_correct, qs.anion_correct, qs.tests_performed AS q_tests_performed, qs.tests_correct AS q_tests_correct,
+      os.compound_key, os.compound_name, os.true_functional_group, os.student_functional_group, os.functional_group_correct, os.tests_performed AS o_tests_performed, os.tests_correct AS o_tests_correct,
+      cs.exam_title, cs.q1_score, cs.q2_score, cs.q3_score, cs.total_score, cs.grade,
+      ss.solute_key, ss.solute_name, ss.crystallization_temp, ss.theoretical_temp, ss.temp_difference, ss.accuracy_score AS sol_accuracy_score, ss.graph_score AS sol_graph_score, ss.total_score AS sol_total_score, ss.trials_data AS sol_trials_data,
+      es.system_id AS en_system_id, es.system_name AS en_system_name, es.reaction_category AS en_category, es.initial_temp AS en_initial_temp, es.final_temp AS en_final_temp, es.temp_change AS en_temp_change, es.heat_quantity AS en_heat_quantity, es.moles AS en_moles, es.molar_enthalpy AS en_molar_enthalpy, es.theoretical_enthalpy AS en_theoretical_enthalpy, es.total_score AS en_total_score, es.rubric_breakdown AS en_rubrics, es.equation_text AS en_equation,
+      rs.experiment_type AS rate_exp_type, rs.experiment_title AS rate_exp_title, rs.dilution_readings AS rate_readings, rs.table_score AS rate_table_score, rs.graph_score AS rate_graph_score, rs.calc_score AS rate_calc_score, rs.total_score AS rate_total_score, rs.grade AS rate_grade, rs.rubric_breakdown AS rate_rubrics, rs.answers AS rate_answers,
+      gs.gas_key, gs.gas_name, gs.drying_agent AS gas_drying_agent, gs.collection_method AS gas_collection_method, gs.drying_correct AS gas_drying_correct, gs.collection_correct AS gas_collection_correct, gs.tests_performed AS gas_tests_performed, gs.tests_correct AS gas_tests_correct, gs.total_score AS gas_total_score, gs.rubric_breakdown AS gas_rubrics
+    FROM all_candidates c
+    JOIN students s ON s.id = c.student_id
+    JOIN assignments a ON a.id = c.assignment_id
+    LEFT JOIN practical_sessions ps ON ps.id = c.session_id
+    LEFT JOIN qualitative_sessions qs ON qs.id = c.qualitative_session_id
+    LEFT JOIN organic_sessions os ON os.id = c.organic_session_id
+    LEFT JOIN composite_sessions cs ON cs.id = c.composite_session_id
+    LEFT JOIN solubility_sessions ss ON ss.id = c.solubility_session_id
+    LEFT JOIN energy_sessions es ON es.id = c.energy_session_id
+    LEFT JOIN rates_sessions rs ON rs.id = c.rates_session_id
+    LEFT JOIN gas_sessions gs ON gs.id = c.gas_session_id
+    ORDER BY c.submitted_at DESC
     LIMIT $2 OFFSET $3
   `;
 
   const countQuery = `
-    SELECT COUNT(DISTINCT CONCAT(COALESCE(sub.assignment_id, ps.assignment_id, qs.assignment_id, os.assignment_id, cs.assignment_id, ss.assignment_id, es.assignment_id, rs.assignment_id, gs.assignment_id), '_', COALESCE(sub.student_id, ps.student_id, qs.student_id, os.student_id, cs.student_id, ss.student_id, es.student_id, rs.student_id, gs.student_id)))
-    FROM assignments a
-    LEFT JOIN assignment_submissions sub ON sub.assignment_id = a.id
-    LEFT JOIN practical_sessions ps ON ps.assignment_id = a.id
-    LEFT JOIN qualitative_sessions qs ON qs.assignment_id = a.id
-    LEFT JOIN organic_sessions os ON os.assignment_id = a.id
-    LEFT JOIN composite_sessions cs ON cs.assignment_id = a.id
-    LEFT JOIN solubility_sessions ss ON ss.assignment_id = a.id
-    LEFT JOIN energy_sessions es ON es.assignment_id = a.id
-    LEFT JOIN rates_sessions rs ON rs.assignment_id = a.id
-    LEFT JOIN gas_sessions gs ON gs.assignment_id = a.id
-    JOIN students s ON s.id = COALESCE(sub.student_id, ps.student_id, qs.student_id, os.student_id, cs.student_id, ss.student_id, es.student_id, rs.student_id, gs.student_id)
-    WHERE (a.teacher_id = $1 OR s.teacher_id = $1)
-      AND (sub.id IS NOT NULL OR ps.id IS NOT NULL OR qs.id IS NOT NULL OR os.id IS NOT NULL OR cs.id IS NOT NULL OR ss.id IS NOT NULL OR es.id IS NOT NULL OR rs.id IS NOT NULL OR gs.id IS NOT NULL)
+    WITH all_candidates AS (
+      SELECT sub.assignment_id, sub.student_id
+      FROM assignment_submissions sub
+      JOIN assignments a ON a.id = sub.assignment_id
+      WHERE a.teacher_id = $1
+      
+      UNION
+      
+      SELECT ps.assignment_id, ps.student_id
+      FROM practical_sessions ps
+      JOIN assignments a ON a.id = ps.assignment_id
+      WHERE a.teacher_id = $1 AND ps.assignment_id IS NOT NULL
+
+      UNION
+      
+      SELECT qs.assignment_id, qs.student_id
+      FROM qualitative_sessions qs
+      JOIN assignments a ON a.id = qs.assignment_id
+      WHERE a.teacher_id = $1 AND qs.assignment_id IS NOT NULL
+
+      UNION
+      
+      SELECT os.assignment_id, os.student_id
+      FROM organic_sessions os
+      JOIN assignments a ON a.id = os.assignment_id
+      WHERE a.teacher_id = $1 AND os.assignment_id IS NOT NULL
+
+      UNION
+      
+      SELECT cs.assignment_id, cs.student_id
+      FROM composite_sessions cs
+      JOIN assignments a ON a.id = cs.assignment_id
+      WHERE a.teacher_id = $1 AND cs.assignment_id IS NOT NULL
+
+      UNION
+      
+      SELECT ss.assignment_id, ss.student_id
+      FROM solubility_sessions ss
+      JOIN assignments a ON a.id = ss.assignment_id
+      WHERE a.teacher_id = $1 AND ss.assignment_id IS NOT NULL
+
+      UNION
+      
+      SELECT es.assignment_id, es.student_id
+      FROM energy_sessions es
+      JOIN assignments a ON a.id = es.assignment_id
+      WHERE a.teacher_id = $1 AND es.assignment_id IS NOT NULL
+
+      UNION
+      
+      SELECT rs.assignment_id, rs.student_id
+      FROM rates_sessions rs
+      JOIN assignments a ON a.id = rs.assignment_id
+      WHERE a.teacher_id = $1 AND rs.assignment_id IS NOT NULL
+
+      UNION
+      
+      SELECT gs.assignment_id, gs.student_id
+      FROM gas_sessions gs
+      JOIN assignments a ON a.id = gs.assignment_id
+      WHERE a.teacher_id = $1 AND gs.assignment_id IS NOT NULL
+    )
+    SELECT COUNT(*)::int AS count FROM all_candidates
   `;
 
   const [rowsRes, countRes] = await Promise.all([
@@ -311,7 +573,7 @@ async function getAllSubmissions(teacherId, { page = 1, limit = 50 } = {}) {
     pool.query(countQuery, [teacherId])
   ]);
 
-  const total = parseInt(countRes.rows[0].count, 10);
+  const total = parseInt(countRes.rows[0] ? countRes.rows[0].count : 0, 10) || 0;
   return {
     submissions: rowsRes.rows,
     total,

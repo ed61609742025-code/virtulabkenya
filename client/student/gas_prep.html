@@ -71,6 +71,18 @@
   <!-- Interactive Step-by-Step Tutorial Container -->
   <div id="tutorialDrawer" style="display:none; grid-column: 1 / -1; margin-bottom: 14px;"></div>
 
+  <!-- Prescribed Continuous Assessment Banner (Shown when assignmentId is present) -->
+  <div id="assignmentHeaderBanner" style="display:none; grid-column: 1 / -1; background:rgba(6,182,212,0.15); border:1.5px solid var(--cyan-accent); border-radius:12px; padding:12px 18px; margin-bottom:14px; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <span style="font-size:1.3rem;">📋</span>
+      <div>
+        <div style="font-size:0.75rem; font-weight:800; text-transform:uppercase; color:var(--cyan-accent); letter-spacing:0.04em;">PRESCRIBED CONTINUOUS ASSESSMENT ASSIGNMENT</div>
+        <div id="assignBannerTitle" style="font-size:0.95rem; font-weight:800; color:var(--heading-color);">Gas Preparation &amp; Collection Practical Assignment</div>
+      </div>
+    </div>
+    <span style="font-size:0.76rem; font-family:var(--font-mono); font-weight:700; background:var(--card-bg); padding:4px 10px; border-radius:6px; border:1px solid var(--card-border);" id="assignBannerDue">Active Practical Assignment</span>
+  </div>
+
   <!-- LEFT COLUMN: Gas Selection & Apparatus Configuration -->
   <section class="gas-card-panel">
     <div class="gas-panel-header">
@@ -301,6 +313,25 @@
   const assignmentId = urlParams.get('assignment') ? parseInt(urlParams.get('assignment'), 10) : null;
 
   let engine = new GasPrepEngine();
+
+  if (assignmentId) {
+    const banner = document.getElementById('assignmentHeaderBanner');
+    const bannerTitle = document.getElementById('assignBannerTitle');
+    const bannerDue = document.getElementById('assignBannerDue');
+    if (banner) banner.style.display = 'flex';
+    if (typeof Assignments !== 'undefined' && Assignments.getMine) {
+      Assignments.getMine().then(data => {
+        const list = data.assignments || [];
+        const match = list.find(a => a.id === assignmentId);
+        if (match) {
+          if (bannerTitle) bannerTitle.textContent = match.title + (match.instructions ? ` — ${match.instructions}` : '');
+          if (bannerDue && match.due_date) {
+            bannerDue.textContent = `Due ${new Date(match.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+          }
+        }
+      }).catch(err => console.warn('Could not fetch gas assignment banner info:', err.message));
+    }
+  }
 
   if (window.TutorialEngine) {
     window.TutorialEngine.init({

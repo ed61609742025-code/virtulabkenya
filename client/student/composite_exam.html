@@ -266,6 +266,18 @@
 </nav>
 
 <div class="wrap">
+  <!-- Prescribed Continuous Assessment Banner (Shown when assignmentId is present) -->
+  <div id="assignmentHeaderBanner" style="display:none; background:rgba(6,182,212,0.15); border:1.5px solid var(--cyan-accent); border-radius:12px; padding:12px 18px; margin-bottom:16px; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <span style="font-size:1.3rem;">📋</span>
+      <div>
+        <div style="font-size:0.75rem; font-weight:800; text-transform:uppercase; color:var(--cyan-accent); letter-spacing:0.04em;">PRESCRIBED CONTINUOUS ASSESSMENT ASSIGNMENT</div>
+        <div id="assignBannerTitle" style="font-size:0.95rem; font-weight:800; color:var(--heading-color);">KCSE Chemistry Paper 3 Practical Assignment</div>
+      </div>
+    </div>
+    <span style="font-size:0.76rem; font-family:var(--font-mono); font-weight:700; background:var(--card-bg); padding:4px 10px; border-radius:6px; border:1px solid var(--card-border);" id="assignBannerDue">Active Practical Assignment</span>
+  </div>
+
   <!-- Official Examination Header -->
   <div class="exam-header">
     <div>
@@ -1054,6 +1066,28 @@
     if (titrantChip) titrantChip.textContent = `Titrant: Sol. A (${p.q1.solutionA.split(' ')[0]})`;
     const indicatorChip = document.getElementById('q1IndicatorChip');
     if (indicatorChip) indicatorChip.textContent = `Indicator: ${p.q1.indicator || 'Phenolphthalein'}`;
+
+    // Handle Linked Assignment Header Banner
+    if (assignmentId) {
+      const banner = document.getElementById('assignmentHeaderBanner');
+      const bannerTitle = document.getElementById('assignBannerTitle');
+      const bannerDue = document.getElementById('assignBannerDue');
+      if (banner) {
+        banner.style.display = 'flex';
+      }
+      if (typeof Assignments !== 'undefined' && Assignments.getMine) {
+        Assignments.getMine().then(data => {
+          const list = data.assignments || [];
+          const match = list.find(a => a.id === assignmentId);
+          if (match) {
+            if (bannerTitle) bannerTitle.textContent = match.title + (match.instructions ? ` — ${match.instructions}` : '');
+            if (bannerDue && match.due_date) {
+              bannerDue.textContent = `Due ${new Date(match.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+            }
+          }
+        }).catch(err => console.warn('Could not fetch assignment details for exam banner:', err.message));
+      }
+    }
   }
 
   // ── Q1 Titration Workbench Interactive Actions ───────────────────────

@@ -1168,6 +1168,13 @@
       } catch(e) {
         targetWorkbenchUrl = targetParam;
       }
+
+      const banner = document.getElementById('battleAssignmentBanner');
+      const skipBtn = document.getElementById('battleSkipToTargetBtn');
+      if (banner && skipBtn && targetWorkbenchUrl) {
+        skipBtn.href = targetWorkbenchUrl;
+        banner.style.display = 'flex';
+      }
     }
 
     // Direct auto-start drill questions

@@ -257,6 +257,22 @@ const SolubilityEngine = (() => {
     }
     if (params.get('assignment')) {
       state.assignmentId = parseInt(params.get('assignment'), 10);
+      const banner = document.getElementById('assignmentHeaderBanner');
+      const bannerTitle = document.getElementById('assignBannerTitle');
+      const bannerDue = document.getElementById('assignBannerDue');
+      if (banner) banner.style.display = 'flex';
+      if (typeof Assignments !== 'undefined' && Assignments.getMine) {
+        Assignments.getMine().then(data => {
+          const list = data.assignments || [];
+          const match = list.find(a => a.id === state.assignmentId);
+          if (match) {
+            if (bannerTitle) bannerTitle.textContent = match.title + (match.instructions ? ` — ${match.instructions}` : '');
+            if (bannerDue && match.due_date) {
+              bannerDue.textContent = `Due ${new Date(match.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+            }
+          }
+        }).catch(err => console.warn('Could not fetch solubility assignment banner info:', err.message));
+      }
     }
     if (params.get('embedded') === '1') {
       state.isEmbedded = true;

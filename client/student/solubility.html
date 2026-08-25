@@ -168,6 +168,18 @@
     <!-- Interactive Step-by-Step Tutorial Container -->
     <div id="tutorialDrawer" style="display:none; max-width:1300px; margin:0 auto 16px auto;"></div>
     
+    <!-- Prescribed Continuous Assessment Banner (Shown when assignmentId is present) -->
+  <div id="assignmentHeaderBanner" style="display:none; background:rgba(6,182,212,0.15); border:1.5px solid var(--cyan-accent); border-radius:12px; padding:12px 18px; margin-bottom:16px; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <span style="font-size:1.3rem;">📋</span>
+      <div>
+        <div style="font-size:0.75rem; font-weight:800; text-transform:uppercase; color:var(--cyan-accent); letter-spacing:0.04em;">PRESCRIBED CONTINUOUS ASSESSMENT ASSIGNMENT</div>
+        <div id="assignBannerTitle" style="font-size:0.95rem; font-weight:800; color:var(--heading-color);">Solubility &amp; Solubility Curves Practical Assignment</div>
+      </div>
+    </div>
+    <span style="font-size:0.76rem; font-family:var(--font-mono); font-weight:700; background:var(--card-bg); padding:4px 10px; border-radius:6px; border:1px solid var(--card-border);" id="assignBannerDue">Active Practical Assignment</span>
+  </div>
+
     <!-- Official KNEC Practical Examination Proctor Banner -->
     <div id="solExamProctorBanner" style="display:none;background:var(--red-bg);border:1px solid var(--red-border);border-radius:12px;padding:12px 18px;margin-bottom:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
       <div style="display:flex;align-items:center;gap:10px;">

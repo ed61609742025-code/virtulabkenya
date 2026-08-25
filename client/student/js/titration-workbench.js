@@ -2129,6 +2129,26 @@ requireStudentLogin();
     } catch(e) {
       console.warn('Auth check notice:', e);
     }
+
+    if (linkedAssignmentId) {
+      const banner = document.getElementById('assignmentHeaderBanner');
+      const bannerTitle = document.getElementById('assignBannerTitle');
+      const bannerDue = document.getElementById('assignBannerDue');
+      if (banner) banner.style.display = 'flex';
+      if (typeof Assignments !== 'undefined' && Assignments.getMine) {
+        Assignments.getMine().then(data => {
+          const list = data.assignments || [];
+          const aId = parseInt(linkedAssignmentId, 10);
+          const match = list.find(a => a.id === aId);
+          if (match) {
+            if (bannerTitle) bannerTitle.textContent = match.title + (match.instructions ? ` — ${match.instructions}` : '');
+            if (bannerDue && match.due_date) {
+              bannerDue.textContent = `Due ${new Date(match.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+            }
+          }
+        }).catch(err => console.warn('Could not fetch assignment details for banner:', err.message));
+      }
+    }
   }
 
   if (document.readyState === 'loading') {

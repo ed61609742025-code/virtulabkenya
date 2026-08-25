@@ -158,18 +158,71 @@ requireStudentLogin();
     }
   });
 
-  function updateNotificationsUI(assignments) {
-    let rawList = (assignments || []).filter(a => a.submitted && a.submission_status === 'marked').map(a => ({
-      id: 'asgn_' + a.id,
-      assignmentId: a.id,
-      title: a.title || 'Practical Assignment Marked',
-      message: a.score != null ? `Grade: ${a.score}/15. Click to view teacher comments.` : 'Assignment evaluated by teacher.',
-      timestamp: a.marked_at || Date.now(),
-      type: 'assignment',
-      rawAssignment: a
-    }));
+  function getAssignmentTargetUrl(a) {
+    let targetUrl = `lab.html?assignment=${a.id}&type=${encodeURIComponent(a.titration_type || 'acidBase')}`;
+    let battleMode = 'titration';
 
-    // Add milestone notification if streak >= 1
+    if (a.titration_type === 'qualitative') {
+      targetUrl = `qualitative.html?assignment=${a.id}`;
+      battleMode = 'qualitative';
+    } else if (a.titration_type === 'organic') {
+      targetUrl = `organic.html?assignment=${a.id}`;
+      battleMode = 'organic';
+    } else if (a.titration_type === 'solubility') {
+      targetUrl = `solubility.html?assignment=${a.id}`;
+      battleMode = 'titration';
+    } else if (a.titration_type === 'energy' || a.titration_type === 'displacement' || a.titration_type === 'neutralization' || a.titration_type === 'solution' || a.titration_type === 'combustion') {
+      targetUrl = `energy.html?assignment=${a.id}`;
+      battleMode = 'energy';
+    } else if (a.titration_type === 'rates' || a.titration_type === 'kinetics') {
+      targetUrl = `rates.html?assignment=${a.id}`;
+      battleMode = 'energy';
+    } else if (a.titration_type === 'gas' || a.titration_type === 'gasPrep') {
+      targetUrl = `gas_prep.html?assignment=${a.id}`;
+      battleMode = 'qualitative';
+    } else if (a.titration_type === 'kcseComposite') {
+      targetUrl = `composite_exam.html?assignment=${a.id}`;
+      battleMode = 'blitz';
+    }
+    return { targetUrl, battleMode };
+  }
+
+  function updateNotificationsUI(assignments) {
+    let rawList = [];
+
+    // 1. Pending Prescribed Continuous Assessments
+    (assignments || []).filter(a => !a.submitted).forEach(a => {
+      const { targetUrl } = getAssignmentTargetUrl(a);
+      const dueText = a.due_date ? `Due ${formatDate(a.due_date)}` : 'No set deadline';
+      rawList.push({
+        id: 'asgn_pending_' + a.id,
+        assignmentId: a.id,
+        title: '📝 Prescribed Assignment: ' + (a.title || 'Continuous Assessment'),
+        message: `${dueText} — ${a.instructions || 'Click to open practical workbench and submit responses.'}`,
+        timestamp: a.created_at ? new Date(a.created_at).getTime() : Date.now(),
+        type: 'pending_assignment',
+        targetUrl,
+        rawAssignment: a
+      });
+    });
+
+    // 2. Marked / Evaluated Assignments
+    (assignments || []).filter(a => a.submitted && a.submission_status === 'marked').forEach(a => {
+      const score = a.score || (a.evaluation && a.evaluation.score) || a.cs_total_score || a.gas_total_score || a.en_total_score || a.rate_total_score || a.sol_total_score;
+      const scoreText = typeof score === 'number' ? `Grade: ${score.toFixed(1)} marks. ` : '';
+      rawList.push({
+        id: 'asgn_marked_' + a.id,
+        assignmentId: a.id,
+        title: '🏆 Graded: ' + (a.title || 'Practical Assignment Marked'),
+        message: `${scoreText}Your teacher marked this session. Click to view feedback & rubric.`,
+        timestamp: a.marked_at ? new Date(a.marked_at).getTime() : Date.now(),
+        type: 'marked_assignment',
+        targetUrl: null,
+        rawAssignment: a
+      });
+    });
+
+    // 3. Add milestone notification if streak >= 1
     const streakEl = document.getElementById('streakCountMobile') || document.getElementById('streakCount');
     const streakVal = streakEl ? parseInt(streakEl.textContent, 10) : 1;
     if (streakVal > 0) {
@@ -179,7 +232,8 @@ requireStudentLogin();
         title: '🔥 Active Practice Streak',
         message: `${streakVal}-Day Lab Practice Streak active! Keep up the momentum for KCSE Paper 3.`,
         timestamp: Date.now() - 3600000,
-        type: 'streak'
+        type: 'streak',
+        targetUrl: null
       });
     }
 
@@ -189,14 +243,14 @@ requireStudentLogin();
     const activeNotifs = window.VLKNotifs ? window.VLKNotifs.filterActiveNotifications(rawList) : rawList;
     const unreadNotifs = activeNotifs.filter(n => !window.VLKNotifs || !window.VLKNotifs.isRead(n.id));
 
-    const badge = document.getElementById('notifBadge');
+    const badge = document.getElementById('notifBadge') || document.getElementById('notifCount');
     const bellBtn = document.getElementById('notifBellBtn');
     const list = document.getElementById('notifList');
 
     if (badge) {
       if (unreadNotifs.length > 0) {
         badge.textContent = unreadNotifs.length;
-        badge.style.display = 'inline-block';
+        badge.style.display = 'inline-flex';
       } else {
         badge.style.display = 'none';
       }
@@ -226,12 +280,19 @@ requireStudentLogin();
         return `
           <div class="notif-item ${isRead ? 'read-active' : 'unread'}" onclick="clickNotifItem('${n.id}', ${n.assignmentId ? n.assignmentId : 'null'})">
             <div style="font-size:0.84rem; font-weight:800; color:var(--heading-color); display:flex; align-items:center; justify-content:space-between; margin-bottom:3px;">
-              <span>${isRead ? '📜' : '🟢'} ${escapeHtml(n.title)}</span>
+              <span>${isRead ? '📜' : (n.type === 'pending_assignment' ? '📝' : '🟢')} ${escapeHtml(n.title)}</span>
               <span style="font-size:0.7rem; color:var(--text-muted); font-weight:600;">${timeAgo}</span>
             </div>
             <div style="font-size:0.78rem; color:var(--text-muted); line-height:1.4;">
               ${escapeHtml(n.message)}
             </div>
+            ${n.targetUrl ? `
+              <div style="margin-top:6px;">
+                <a href="${n.targetUrl}" style="font-size:0.75rem; font-weight:800; color:var(--cyan-accent); text-decoration:none; display:inline-flex; align-items:center; gap:4px;">
+                  Open Assignment Practical →
+                </a>
+              </div>
+            ` : ''}
             ${isRead && hoursLeft != null ? `
               <div class="notif-expire-tag">
                 ⏳ Read — Disappears in ${hoursLeft}h
@@ -246,9 +307,15 @@ requireStudentLogin();
   function clickNotifItem(notifId, assignmentId) {
     if (window.VLKNotifs) window.VLKNotifs.markAsRead(notifId);
     if (assignmentId && studentNotificationsList) {
-      const match = studentNotificationsList.find(item => item.assignmentId === assignmentId);
-      if (match && match.rawAssignment) {
-        openAssignmentFeedbackModal(match.rawAssignment);
+      const match = studentNotificationsList.find(item => item.assignmentId === assignmentId && item.id === notifId) ||
+                    studentNotificationsList.find(item => item.assignmentId === assignmentId);
+      if (match) {
+        if (match.type === 'pending_assignment' && match.targetUrl) {
+          window.location.href = match.targetUrl;
+          return;
+        } else if (match.rawAssignment && match.rawAssignment.submitted) {
+          openAssignmentFeedbackModal(match.rawAssignment);
+        }
       }
     }
     const dropdown = document.getElementById('notifDropdown');
@@ -290,43 +357,37 @@ requireStudentLogin();
         const score = a.score || (a.evaluation && a.evaluation.score) || a.cs_total_score || a.gas_total_score || a.en_total_score || a.rate_total_score || a.sol_total_score;
         const isGraded = typeof score === 'number' || a.submission_status === 'marked' || a.marked_at != null || a.status === 'marked';
 
-        let targetUrl = `lab.html?assignment=${a.id}&type=${encodeURIComponent(a.titration_type || 'acidBase')}`;
-        let battleMode = 'titration';
-
-        if (a.titration_type === 'qualitative') {
-          targetUrl = `qualitative.html?assignment=${a.id}`;
-          battleMode = 'qualitative';
-        } else if (a.titration_type === 'organic') {
-          targetUrl = `organic.html?assignment=${a.id}`;
-          battleMode = 'organic';
-        } else if (a.titration_type === 'solubility') {
-          targetUrl = `solubility.html?assignment=${a.id}`;
-          battleMode = 'titration';
-        } else if (a.titration_type === 'energy' || a.titration_type === 'displacement' || a.titration_type === 'neutralization' || a.titration_type === 'solution' || a.titration_type === 'combustion') {
-          targetUrl = `energy.html?assignment=${a.id}`;
-          battleMode = 'energy';
-        } else if (a.titration_type === 'rates' || a.titration_type === 'kinetics') {
-          targetUrl = `rates.html?assignment=${a.id}`;
-          battleMode = 'energy';
-        } else if (a.titration_type === 'gas' || a.titration_type === 'gasPrep') {
-          targetUrl = `gas_prep.html?assignment=${a.id}`;
-          battleMode = 'qualitative';
-        } else if (a.titration_type === 'kcseComposite') {
-          targetUrl = `composite_exam.html?assignment=${a.id}`;
-          battleMode = 'blitz';
-        }
-
-        const warmupUrl = a.titration_type === 'kcseComposite' ? targetUrl : `speed_battle.html?mode=${battleMode}&target=${encodeURIComponent(targetUrl)}`;
+        const { targetUrl, battleMode } = getAssignmentTargetUrl(a);
+        const warmupUrl = `speed_battle.html?mode=${battleMode}&target=${encodeURIComponent(targetUrl)}`;
 
         let statusHtml = '';
         if (isSubmitted) {
           if (isGraded) {
-            statusHtml = `<button type="button" class="submitted-pill" style="cursor:pointer; background:var(--green-bg); color:var(--green-accent); border:1px solid var(--green-accent); justify-content:center; width:100%;" onclick="openAssignmentFeedbackModalById(${a.id})">🟢 Marked (View Grade)</button>`;
+            statusHtml = `
+              <div style="display:flex; flex-direction:column; gap:6px; width:100%;">
+                <button type="button" class="submitted-pill" style="cursor:pointer; background:var(--green-bg); color:var(--green-accent); border:1px solid var(--green-accent); justify-content:center; width:100%; font-weight:800;" onclick="openAssignmentFeedbackModalById(${a.id})">🟢 Marked (View Grade &amp; Rubric)</button>
+                <a href="${targetUrl}" style="text-align:center; font-size:0.75rem; font-weight:700; color:var(--text-muted); text-decoration:underline;">Revisit Experiment Bench →</a>
+              </div>
+            `;
           } else {
-            statusHtml = `<button type="button" class="submitted-pill" style="cursor:pointer; background:rgba(245, 158, 11, 0.15); color:#F59E0B; border:1px solid #F59E0B; justify-content:center; width:100%;" onclick="openAssignmentFeedbackModalById(${a.id})">🟡 Under Review</button>`;
+            statusHtml = `
+              <div style="display:flex; flex-direction:column; gap:6px; width:100%;">
+                <button type="button" class="submitted-pill" style="cursor:pointer; background:rgba(245, 158, 11, 0.15); color:#F59E0B; border:1px solid #F59E0B; justify-content:center; width:100%; font-weight:800;" onclick="openAssignmentFeedbackModalById(${a.id})">🟡 Under Review (Teacher Marking)</button>
+                <a href="${targetUrl}" style="text-align:center; font-size:0.75rem; font-weight:700; color:var(--text-muted); text-decoration:underline;">Revisit Experiment Bench →</a>
+              </div>
+            `;
           }
         } else {
-          statusHtml = `<a href="${warmupUrl}" class="pending-pill-btn" style="text-align:center; width:100%;">Start Practical →</a>`;
+          statusHtml = `
+            <div style="display:flex; flex-direction:column; gap:6px; width:100%;">
+              <a href="${targetUrl}" class="pending-pill-btn" style="text-align:center; width:100%; display:flex; align-items:center; justify-content:center; gap:6px; font-weight:800;">
+                <span>🧪</span> <span>Start Assignment →</span>
+              </a>
+              <a href="${warmupUrl}" style="text-align:center; font-size:0.74rem; font-weight:700; color:var(--cyan-accent); text-decoration:underline; padding:2px 0;" title="Take an optional 45s diagnostic warmup drill before opening the lab workbench">
+                ⚡ Optional Pre-Lab Diagnostic Drill
+              </a>
+            </div>
+          `;
         }
 
         const dueLabel = a.due_date ? `Due ${formatDate(a.due_date)}` : 'No set deadline';

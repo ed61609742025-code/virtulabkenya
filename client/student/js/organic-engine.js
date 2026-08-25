@@ -1272,6 +1272,27 @@
 
     renderGrid();
     updateProgress();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const assignmentId = urlParams.get('assignment') ? parseInt(urlParams.get('assignment'), 10) : null;
+    if (assignmentId) {
+      const banner = document.getElementById('assignmentHeaderBanner');
+      const bannerTitle = document.getElementById('assignBannerTitle');
+      const bannerDue = document.getElementById('assignBannerDue');
+      if (banner) banner.style.display = 'flex';
+      if (typeof Assignments !== 'undefined' && Assignments.getMine) {
+        Assignments.getMine().then(data => {
+          const list = data.assignments || [];
+          const match = list.find(a => a.id === assignmentId);
+          if (match) {
+            if (bannerTitle) bannerTitle.textContent = match.title + (match.instructions ? ` — ${match.instructions}` : '');
+            if (bannerDue && match.due_date) {
+              bannerDue.textContent = `Due ${new Date(match.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+            }
+          }
+        }).catch(err => console.warn('Could not fetch organic assignment banner info:', err.message));
+      }
+    }
   }
 
   if (document.readyState === 'loading') {

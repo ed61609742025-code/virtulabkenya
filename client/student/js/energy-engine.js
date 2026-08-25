@@ -361,6 +361,28 @@ const EnergyEngine = (() => {
     applyScenario('KCSE_2022_DISPLACEMENT');
     requestAnimationFrame(simulationLoop);
     renderGraph();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const assignmentId = urlParams.get('assignment') || urlParams.get('assignmentId');
+    if (assignmentId) {
+      const banner = document.getElementById('assignmentHeaderBanner');
+      const bannerTitle = document.getElementById('assignBannerTitle');
+      const bannerDue = document.getElementById('assignBannerDue');
+      if (banner) banner.style.display = 'flex';
+      if (typeof Assignments !== 'undefined' && Assignments.getMine) {
+        Assignments.getMine().then(data => {
+          const list = data.assignments || [];
+          const aId = parseInt(assignmentId, 10);
+          const match = list.find(a => a.id === aId);
+          if (match) {
+            if (bannerTitle) bannerTitle.textContent = match.title + (match.instructions ? ` — ${match.instructions}` : '');
+            if (bannerDue && match.due_date) {
+              bannerDue.textContent = `Due ${new Date(match.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+            }
+          }
+        }).catch(err => console.warn('Could not fetch energy assignment banner info:', err.message));
+      }
+    }
   }
 
   // ============================================================

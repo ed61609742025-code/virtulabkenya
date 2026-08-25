@@ -261,6 +261,9 @@
               <div style="font-weight:800; font-size:0.92rem; color:var(--heading-color);" id="dropdownUserName">Candidate</div>
               <div style="font-size:0.76rem; color:var(--text-muted); font-family:'JetBrains Mono', monospace; font-weight:700;" id="dropdownUserRole">KCSE Student</div>
             </div>
+            <a href="#assignments" onclick="focusAssignmentsSection(event)" style="display:flex; align-items:center; gap:10px; padding:8px 10px; font-size:0.84rem; font-weight:700; color:var(--cyan-accent); text-decoration:none; border-radius:6px;" class="dropdown-link-hover">
+              <span>📋</span> Prescribed Continuous Assessment
+            </a>
             <a href="mock_exams.html" style="display:flex; align-items:center; gap:10px; padding:8px 10px; font-size:0.84rem; font-weight:700; color:var(--text-main); text-decoration:none; border-radius:6px;" class="dropdown-link-hover">
               <span>⏱️</span> KCSE Mock Exams Hub
             </a>
@@ -424,7 +427,7 @@
     <div class="student-tab-panel active" id="panel_benches">
 
       <!-- ── ZONE 1: 🎯 PRIORITY ACTION CENTER (Active Tasks & Daily Targets) ── -->
-      <section class="activity-zone-wrap" style="border-left: 5px solid var(--cyan-accent);">
+      <section id="zone_assignments" class="activity-zone-wrap" style="border-left: 5px solid var(--cyan-accent);">
         <div class="activity-zone-header">
           <div class="activity-zone-title-box">
             <div class="icon-circle-badge" style="color:var(--cyan-accent); font-size:1.4rem;">🎯</div>
@@ -1532,10 +1535,26 @@
       }
     });
 
+    // Focus assignments section helper
+    function focusAssignmentsSection(e) {
+      if (e) e.preventDefault();
+      switchStudentSubTab('benches');
+      const targetEl = document.getElementById('zone_assignments');
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      const dropdown = document.getElementById('userDropdown');
+      if (dropdown) dropdown.style.display = 'none';
+      history.replaceState(null, null, '#assignments');
+    }
+    window.focusAssignmentsSection = focusAssignmentsSection;
+
     // Handle initial tab hash on page load
     window.addEventListener('DOMContentLoaded', () => {
       const hash = window.location.hash.replace('#', '');
-      if (hash && ['benches', 'reference', 'achievements', 'research'].includes(hash)) {
+      if (hash === 'assignments') {
+        focusAssignmentsSection();
+      } else if (hash && ['benches', 'reference', 'achievements', 'research'].includes(hash)) {
         switchStudentSubTab(hash);
       }
 
@@ -1543,7 +1562,9 @@
       document.querySelectorAll('.quick-jump-chip').forEach(chip => {
         chip.addEventListener('click', (e) => {
           const targetId = chip.getAttribute('href');
-          if (targetId && targetId.startsWith('#')) {
+          if (targetId === '#assignments') {
+            focusAssignmentsSection(e);
+          } else if (targetId && targetId.startsWith('#')) {
             const targetEl = document.querySelector(targetId);
             if (targetEl) {
               e.preventDefault();

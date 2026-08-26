@@ -474,6 +474,9 @@ const Auth = {
   async changePassword(currentPassword, newPassword) {
     return apiRequest('POST', '/auth/change-password', { currentPassword, newPassword });
   },
+  async me() {
+    return apiRequest('GET', '/auth/me');
+  },
   async resetStudentPassword(studentId) {
     return apiRequest('POST', '/auth/student/' + studentId + '/reset-password');
   }

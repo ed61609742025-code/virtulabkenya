@@ -28,10 +28,11 @@ async function createAssignment(teacherId, data) {
 }
 
 async function getStudentAssignments(studentId) {
-  const studentResult = await pool.query(
-    'SELECT teacher_id, school_id FROM students WHERE id = $1',
-    [studentId]
-  );
+  try {
+    const studentResult = await pool.query(
+      'SELECT teacher_id, school_id FROM students WHERE id = $1',
+      [studentId]
+    );
   if (studentResult.rows.length === 0) return [];
   const teacherId = studentResult.rows[0].teacher_id || null;
   const schoolId = studentResult.rows[0].school_id || null;
@@ -139,8 +140,33 @@ async function getStudentAssignments(studentId) {
     ${whereClause}
     ORDER BY a.created_at DESC
   `;
-  const result = await pool.query(query, params);
-  return result.rows;
+    try {
+      const result = await pool.query(query, params);
+      return result.rows;
+    } catch (queryErr) {
+      console.warn('[getStudentAssignments Warning - Query Failed, Falling back to resilient core query]:', queryErr.message);
+      const safeQuery = `
+        SELECT a.*,
+               t.name AS teacher_name,
+               t.teacher_code AS teacher_code,
+               (sub.id IS NOT NULL) AS submitted,
+               sub.status AS submission_status,
+               sub.submitted_at AS submitted_at,
+               sub.teacher_feedback,
+               sub.marked_at
+        FROM assignments a
+        LEFT JOIN teachers t ON a.teacher_id = t.id
+        LEFT JOIN assignment_submissions sub ON sub.assignment_id = a.id AND sub.student_id = $1
+        ${whereClause}
+        ORDER BY a.created_at DESC
+      `;
+      const fallbackResult = await pool.query(safeQuery, params);
+      return fallbackResult.rows;
+    }
+  } catch (outerErr) {
+    console.error('[getStudentAssignments Fatal Error]:', outerErr.message);
+    return [];
+  }
 }
 
 async function getTeacherAssignments(teacherId) {

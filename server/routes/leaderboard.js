@@ -25,86 +25,119 @@ const router = express.Router();
 const MIN_SESSIONS = 3;
 
 async function getRankedClass(teacherId) {
-  const result = await pool.query(
-    `WITH all_class_sessions AS (
-       SELECT ps.student_id, (COALESCE(ps.score >= 8, ps.concordant_found, false)) AS is_correct
-       FROM practical_sessions ps
-       JOIN students s ON s.id = ps.student_id
+  try {
+    const result = await pool.query(
+      `WITH all_class_sessions AS (
+         SELECT ps.student_id, (COALESCE(ps.score >= 8, ps.concordant_found, ps.correct, false)) AS is_correct
+         FROM practical_sessions ps
+         JOIN students s ON s.id = ps.student_id
+         WHERE s.teacher_id = $1
+
+         UNION ALL
+
+         SELECT qs.student_id, (qs.correct IS TRUE OR (qs.cation_correct IS TRUE AND qs.anion_correct IS TRUE)) AS is_correct
+         FROM qualitative_sessions qs
+         JOIN students s ON s.id = qs.student_id
+         WHERE s.teacher_id = $1
+
+         UNION ALL
+
+         SELECT os.student_id, (os.correct IS TRUE OR os.functional_group_correct IS TRUE OR os.score_pct >= 60) AS is_correct
+         FROM organic_sessions os
+         JOIN students s ON s.id = os.student_id
+         WHERE s.teacher_id = $1
+
+         UNION ALL
+
+         SELECT ss.student_id, (ss.total_score >= 3.0 OR ss.temp_difference <= 2.5) AS is_correct
+         FROM solubility_sessions ss
+         JOIN students s ON s.id = ss.student_id
+         WHERE s.teacher_id = $1
+
+         UNION ALL
+
+         SELECT es.student_id, (es.total_score >= 8.0) AS is_correct
+         FROM energy_sessions es
+         JOIN students s ON s.id = es.student_id
+         WHERE s.teacher_id = $1
+
+         UNION ALL
+
+         SELECT rs.student_id, (rs.total_score >= 8.0) AS is_correct
+         FROM rates_sessions rs
+         JOIN students s ON s.id = rs.student_id
+         WHERE s.teacher_id = $1
+
+         UNION ALL
+
+         SELECT cs.student_id, (cs.total_score >= 20.0) AS is_correct
+         FROM composite_sessions cs
+         JOIN students s ON s.id = cs.student_id
+         WHERE s.teacher_id = $1
+
+         UNION ALL
+
+         SELECT gs.student_id, (gs.total_score >= 6.0 OR gs.correct IS TRUE) AS is_correct
+         FROM gas_sessions gs
+         JOIN students s ON s.id = gs.student_id
+         WHERE s.teacher_id = $1
+       )
+       SELECT s.id, s.name, s.form,
+              COUNT(acs.student_id) AS total_sessions,
+              COUNT(acs.student_id) FILTER (WHERE acs.is_correct) AS correct_count
+       FROM students s
+       JOIN all_class_sessions acs ON acs.student_id = s.id
        WHERE s.teacher_id = $1
+       GROUP BY s.id, s.name, s.form
+       HAVING COUNT(acs.student_id) >= $2
+       ORDER BY
+         (COUNT(acs.student_id) FILTER (WHERE acs.is_correct))::float / NULLIF(COUNT(acs.student_id), 0) DESC,
+         COUNT(acs.student_id) DESC`,
+      [teacherId, MIN_SESSIONS]
+    );
 
-       UNION ALL
-
-       SELECT qs.student_id, (qs.correct IS TRUE OR (qs.cation_correct IS TRUE AND qs.anion_correct IS TRUE)) AS is_correct
-       FROM qualitative_sessions qs
-       JOIN students s ON s.id = qs.student_id
-       WHERE s.teacher_id = $1
-
-       UNION ALL
-
-       SELECT os.student_id, (os.correct IS TRUE OR os.functional_group_correct IS TRUE OR os.score_pct >= 60) AS is_correct
-       FROM organic_sessions os
-       JOIN students s ON s.id = os.student_id
-       WHERE s.teacher_id = $1
-
-       UNION ALL
-
-       SELECT ss.student_id, (ss.total_score >= 3.0 OR ss.temp_difference <= 2.5) AS is_correct
-       FROM solubility_sessions ss
-       JOIN students s ON s.id = ss.student_id
-       WHERE s.teacher_id = $1
-
-       UNION ALL
-
-       SELECT es.student_id, (es.total_score >= 8.0) AS is_correct
-       FROM energy_sessions es
-       JOIN students s ON s.id = es.student_id
-       WHERE s.teacher_id = $1
-
-       UNION ALL
-
-       SELECT rs.student_id, (rs.total_score >= 8.0) AS is_correct
-       FROM rates_sessions rs
-       JOIN students s ON s.id = rs.student_id
-       WHERE s.teacher_id = $1
-
-       UNION ALL
-
-       SELECT cs.student_id, (cs.total_score >= 20.0) AS is_correct
-       FROM composite_sessions cs
-       JOIN students s ON s.id = cs.student_id
-       WHERE s.teacher_id = $1
-
-       UNION ALL
-
-       SELECT gs.student_id, (gs.total_score >= 6.0 OR gs.correct IS TRUE) AS is_correct
-       FROM gas_sessions gs
-       JOIN students s ON s.id = gs.student_id
-       WHERE s.teacher_id = $1
-     )
-     SELECT s.id, s.name, s.form,
-            COUNT(acs.student_id) AS total_sessions,
-            COUNT(acs.student_id) FILTER (WHERE acs.is_correct) AS correct_count
-     FROM students s
-     JOIN all_class_sessions acs ON acs.student_id = s.id
-     WHERE s.teacher_id = $1
-     GROUP BY s.id, s.name, s.form
-     HAVING COUNT(acs.student_id) >= $2
-     ORDER BY
-       (COUNT(acs.student_id) FILTER (WHERE acs.is_correct))::float / NULLIF(COUNT(acs.student_id), 0) DESC,
-       COUNT(acs.student_id) DESC`,
-    [teacherId, MIN_SESSIONS]
-  );
-
-  return result.rows.map((row, i) => ({
-    rank: i + 1,
-    studentId: row.id,
-    name: row.name,
-    form: row.form,
-    totalSessions: Number(row.total_sessions),
-    accuracyPct: row.total_sessions > 0
-      ? +((row.correct_count / row.total_sessions) * 100).toFixed(1)
-      : 0
-  }));
+    return result.rows.map((row, i) => ({
+      rank: i + 1,
+      studentId: row.id,
+      name: row.name,
+      form: row.form,
+      totalSessions: Number(row.total_sessions),
+      accuracyPct: row.total_sessions > 0
+        ? +((row.correct_count / row.total_sessions) * 100).toFixed(1)
+        : 0
+    }));
+  } catch (err) {
+    console.warn('[Leaderboard] Full query failed, falling back to core practical_sessions:', err.message);
+    try {
+      const fallback = await pool.query(
+        `SELECT s.id, s.name, s.form,
+                COUNT(ps.id) AS total_sessions,
+                COUNT(ps.id) FILTER (WHERE ps.correct IS TRUE OR ps.concordant_found IS TRUE) AS correct_count
+         FROM students s
+         JOIN practical_sessions ps ON ps.student_id = s.id
+         WHERE s.teacher_id = $1
+         GROUP BY s.id, s.name, s.form
+         HAVING COUNT(ps.id) >= $2
+         ORDER BY
+           (COUNT(ps.id) FILTER (WHERE ps.correct IS TRUE OR ps.concordant_found IS TRUE))::float / NULLIF(COUNT(ps.id), 0) DESC,
+           COUNT(ps.id) DESC`,
+        [teacherId, MIN_SESSIONS]
+      );
+      return fallback.rows.map((row, i) => ({
+        rank: i + 1,
+        studentId: row.id,
+        name: row.name,
+        form: row.form,
+        totalSessions: Number(row.total_sessions),
+        accuracyPct: row.total_sessions > 0
+          ? +((row.correct_count / row.total_sessions) * 100).toFixed(1)
+          : 0
+      }));
+    } catch (fallbackErr) {
+      console.error('[Leaderboard] Critical fallback failed:', fallbackErr.message);
+      return [];
+    }
+  }
 }
 
 router.get('/class', authMiddleware, asyncHandler(async (req, res) => {

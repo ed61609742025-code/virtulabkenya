@@ -61,7 +61,9 @@ requireStudentLogin();
       updateStudentTeacherUI(currentStudentUser);
     }
     try {
-      const res = await Auth.me();
+      const res = (typeof Auth !== 'undefined' && typeof Auth.me === 'function')
+        ? await Auth.me()
+        : (typeof apiRequest === 'function' ? await apiRequest('GET', '/auth/me') : null);
       if (res && res.user) {
         currentStudentUser = res.user;
         setUser(currentStudentUser);

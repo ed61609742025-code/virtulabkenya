@@ -31,7 +31,9 @@ async function initTeacherProfile() {
     if (currentUser.teacherCode) updateTeacherCodeElements(currentUser.teacherCode);
   }
   try {
-    const res = await Auth.me();
+    const res = (typeof Auth !== 'undefined' && typeof Auth.me === 'function')
+      ? await Auth.me()
+      : (typeof apiRequest === 'function' ? await apiRequest('GET', '/auth/me') : null);
     if (res && res.user) {
       if (res.user.role && res.user.role !== 'teacher') {
         clearToken();

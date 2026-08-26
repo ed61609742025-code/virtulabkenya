@@ -594,19 +594,78 @@ async function getAllSubmissions(teacherId, { page = 1, limit = 50 } = {}) {
     SELECT COUNT(*)::int AS count FROM all_candidates
   `;
 
-  const [rowsRes, countRes] = await Promise.all([
-    pool.query(query, [teacherId, limit, offset]),
-    pool.query(countQuery, [teacherId])
-  ]);
+  try {
+    const [rowsRes, countRes] = await Promise.all([
+      pool.query(query, [teacherId, limit, offset]),
+      pool.query(countQuery, [teacherId])
+    ]);
 
-  const total = parseInt(countRes.rows[0] ? countRes.rows[0].count : 0, 10) || 0;
-  return {
-    submissions: rowsRes.rows,
-    total,
-    page,
-    limit,
-    totalPages: Math.ceil(total / limit)
-  };
+    const total = parseInt(countRes.rows[0] ? countRes.rows[0].count : 0, 10) || 0;
+    return {
+      submissions: rowsRes.rows,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit)
+    };
+  } catch (err) {
+    console.warn('[getAllSubmissions] Multi-discipline query failed, falling back to core submissions:', err.message);
+    try {
+      const fallbackQuery = `
+        SELECT 
+          sub.id AS submission_id,
+          sub.assignment_id,
+          sub.student_id,
+          COALESCE(sub.status, 'submitted') AS submission_status,
+          COALESCE(sub.submitted_at, NOW()) AS submitted_at,
+          sub.teacher_feedback,
+          sub.marked_at,
+          s.name AS student_name,
+          s.email AS student_email,
+          s.form AS student_form,
+          a.title AS assignment_title,
+          a.titration_type AS assignment_type,
+          ps.titration_type,
+          ps.titration_title,
+          ps.indicator_used,
+          ps.trials_count,
+          ps.trial_readings,
+          ps.student_answer,
+          COALESCE(ps.true_conc, 0) AS true_value,
+          (ps.score >= 8 OR ps.concordant_found = true OR ps.correct = true) AS correct,
+          ps.mode AS practical_mode,
+          ps.details
+        FROM assignment_submissions sub
+        JOIN students s ON s.id = sub.student_id
+        JOIN assignments a ON a.id = sub.assignment_id
+        LEFT JOIN practical_sessions ps ON ps.id = sub.session_id
+        WHERE a.teacher_id = $1
+        ORDER BY sub.submitted_at DESC
+        LIMIT $2 OFFSET $3
+      `;
+      const fallbackCount = `
+        SELECT COUNT(*)::int AS count
+        FROM assignment_submissions sub
+        JOIN assignments a ON a.id = sub.assignment_id
+        WHERE a.teacher_id = $1
+      `;
+      const [fRows, fCount] = await Promise.all([
+        pool.query(fallbackQuery, [teacherId, limit, offset]),
+        pool.query(fallbackCount, [teacherId])
+      ]);
+      const total = parseInt(fCount.rows[0] ? fCount.rows[0].count : 0, 10) || 0;
+      return {
+        submissions: fRows.rows,
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit)
+      };
+    } catch (fErr) {
+      console.error('[getAllSubmissions] Critical fallback error:', fErr.message);
+      return { submissions: [], total: 0, page, limit, totalPages: 1 };
+    }
+  }
 }
 
 async function linkAssignmentSubmission({

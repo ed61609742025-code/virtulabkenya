@@ -536,12 +536,12 @@
                 <path d="M 118,256 L 118,268 L 94,334 Q 129,346 164,334 L 140,268 L 140,256 Z"
                       fill="rgba(255,255,255,0.05)" stroke="none"/>
 
-                <!-- Chemical Liquid Layer at Bottom -->
-                <path id="flaskRigBody" d="M 97.3,325 L 94,334 Q 129,346 164,334 L 160.7,325 Q 129,322 97.3,325 Z"
-                      fill="rgba(56,189,248,0.15)" stroke="none" style="display:none; transition: fill 0.35s ease; opacity: 0.88;"/>
+                <!-- Chemical Liquid Layer (above half flask height ~55-65%) -->
+                <path id="flaskRigBody" d="M 107.1,298 L 94,334 Q 129,346 164,334 L 150.9,298 Q 129,294 107.1,298 Z"
+                      fill="rgba(56,189,248,0.15)" stroke="none" style="display:none; transition: fill 0.35s ease; opacity: 0.9;"/>
 
                 <!-- Meniscus Surface Ellipse -->
-                <ellipse id="flaskLiquidSurface" cx="129" cy="325" rx="31.7" ry="4.5" fill="rgba(255,255,255,0.28)" style="display:none; transition: fill 0.35s ease, cy 0.2s ease, rx 0.2s ease;"/>
+                <ellipse id="flaskLiquidSurface" cx="129" cy="298" rx="22" ry="4" fill="rgba(255,255,255,0.3)" style="display:none; transition: fill 0.35s ease, cy 0.2s ease, rx 0.2s ease;"/>
 
                 <!-- Flask Volume Graduations (100, 150, 200 cm³) -->
                 <g stroke="rgba(255,255,255,0.7)" stroke-width="0.8">
@@ -1151,7 +1151,8 @@
 
     const buretteVol = engine.q1BuretteReading || 0;
     const totalVol = 25.0 + buretteVol;
-    const yLiquid = Math.max(310, 326 - ((totalVol - 25.0) / 25.0) * 7);
+    // Map volume: starts comfortably above half-height at y = 298 (~58% flask height), rising to y = 290 (~69%)
+    const yLiquid = Math.max(286, 298 - ((totalVol - 25.0) / 25.0) * 8);
     const t = Math.max(0, Math.min(1, (yLiquid - 268) / 66));
     const xLeft = 118 - t * 24;
     const xRight = 140 + t * 24;

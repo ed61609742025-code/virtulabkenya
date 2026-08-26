@@ -407,12 +407,12 @@
                   <path d="M 118,256 L 118,268 L 94,334 Q 129,346 164,334 L 140,268 L 140,256 Z"
                         fill="rgba(255,255,255,0.05)" stroke="none"/>
 
-                  <!-- Chemical Liquid Layer (~25-50 cm³ sitting realistically at bottom of 250 cm³ flask) -->
-                  <path id="flask" d="M 97.3,325 L 94,334 Q 129,346 164,334 L 160.7,325 Q 129,322 97.3,325 Z"
-                        fill="var(--rig-body, rgba(56,189,248,0.12))" stroke="none" style="transition: fill 0.35s ease, opacity 0.35s ease; opacity: 0.88;"/>
+                  <!-- Chemical Liquid Layer (filled above half the flask height ~55-65%) -->
+                  <path id="flask" d="M 107.1,298 L 94,334 Q 129,346 164,334 L 150.9,298 Q 129,294 107.1,298 Z"
+                        fill="var(--rig-body, rgba(56,189,248,0.14))" stroke="none" style="transition: fill 0.35s ease, opacity 0.35s ease; opacity: 0.9;"/>
 
                   <!-- Meniscus Surface Ellipse -->
-                  <ellipse id="flaskLiquidSurface" cx="129" cy="325" rx="31.7" ry="4.5" fill="rgba(255,255,255,0.28)" style="transition: fill 0.35s ease, cy 0.2s ease, rx 0.2s ease;"/>
+                  <ellipse id="flaskLiquidSurface" cx="129" cy="298" rx="22" ry="4" fill="rgba(255,255,255,0.3)" style="transition: fill 0.35s ease, cy 0.2s ease, rx 0.2s ease;"/>
 
                   <!-- Flask Volume Graduations (100, 150, 200 cm³) - naturally above the 25-50 cm³ liquid -->
                   <g stroke="rgba(255,255,255,0.7)" stroke-width="0.8">

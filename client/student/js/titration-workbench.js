@@ -1472,11 +1472,11 @@ requireStudentLogin();
     else if (diff < 0.4) stageColor = current.flaskColors[2];
     else stageColor = current.flaskColors[3];
 
-    // Realistic non-full liquid volume in 250 cm³ conical flask:
+    // Liquid volume modeled above half of the flask height (~55% to 65% height):
     // Analyte volume (sessionAnalyteVolume, ~25 cm³) + delivered titrant (0 to ~30 cm³)
     const totalFlaskVol = (sessionAnalyteVolume || 25.0) + currentVolume;
-    // Map volume: 25 cm³ sits at y=326 (below 100 cm³ mark at 318), 50 cm³ rises to y=319
-    const yLiquid = Math.max(310, 326 - ((totalFlaskVol - 25.0) / 25.0) * 7);
+    // Map volume: starts comfortably above half-height at y = 298 (~58% flask height), rising to y = 290 (~69%)
+    const yLiquid = Math.max(286, 298 - ((totalFlaskVol - 25.0) / 25.0) * 8);
     const t = Math.max(0, Math.min(1, (yLiquid - 268) / 66));
     const xLeft = 118 - t * 24;
     const xRight = 140 + t * 24;

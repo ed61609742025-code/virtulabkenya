@@ -1464,13 +1464,35 @@ requireStudentLogin();
     updateLensView(currentVolume);
 
     const flask = document.getElementById('flask');
+    const surface = document.getElementById('flaskLiquidSurface');
     const diff = currentVolume - equivalenceVolume;
     let stageColor;
     if (diff < -0.15) stageColor = current.flaskColors[0];
     else if (diff < 0.05) stageColor = current.flaskColors[1];
     else if (diff < 0.4) stageColor = current.flaskColors[2];
     else stageColor = current.flaskColors[3];
-    if (flask) flask.setAttribute('style', 'fill:' + stageColor + ';stroke:#38BDF8');
+
+    // Realistic non-full liquid volume in 250 cm³ conical flask:
+    // Analyte volume (sessionAnalyteVolume, ~25 cm³) + delivered titrant (0 to ~30 cm³)
+    const totalFlaskVol = (sessionAnalyteVolume || 25.0) + currentVolume;
+    // Map volume: 25 cm³ sits at y=326 (below 100 cm³ mark at 318), 50 cm³ rises to y=319
+    const yLiquid = Math.max(310, 326 - ((totalFlaskVol - 25.0) / 25.0) * 7);
+    const t = Math.max(0, Math.min(1, (yLiquid - 268) / 66));
+    const xLeft = 118 - t * 24;
+    const xRight = 140 + t * 24;
+    const rx = (xRight - xLeft) / 2;
+
+    if (flask) {
+      const d = `M ${xLeft.toFixed(1)},${yLiquid.toFixed(1)} L 94,334 Q 129,346 164,334 L ${xRight.toFixed(1)},${yLiquid.toFixed(1)} Q 129,${(yLiquid - 3).toFixed(1)} ${xLeft.toFixed(1)},${yLiquid.toFixed(1)} Z`;
+      flask.setAttribute('d', d);
+      flask.setAttribute('style', 'fill:' + stageColor + '; stroke:none; opacity:0.88; transition: fill 0.35s ease;');
+    }
+    if (surface) {
+      surface.setAttribute('cy', yLiquid.toFixed(1));
+      surface.setAttribute('rx', rx.toFixed(1));
+      surface.setAttribute('fill', stageColor);
+      surface.setAttribute('opacity', '0.92');
+    }
   }
 
   function recordTrial() {

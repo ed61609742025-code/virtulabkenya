@@ -115,6 +115,66 @@ describe('VirtuLab Kenya — Backend API Test Suite', () => {
     assert.strictEqual(body.error, 'Invalid school registration code.');
   });
 
+  it('POST /api/auth/student/register — should register student and link teacher code case-insensitively', async () => {
+    pool.query = async (text, params) => {
+      if (text.includes('SELECT id FROM schools')) {
+        return { rows: [{ id: 1 }] };
+      }
+      if (text.includes('SELECT id, school_id FROM teachers')) {
+        return { rows: [{ id: 5, school_id: 2 }] };
+      }
+      if (text.includes('SELECT id FROM students WHERE email')) {
+        return { rows: [] };
+      }
+      if (text.includes('INSERT INTO students')) {
+        return { rows: [{ id: 10, name: 'Student With Teacher', email: 'linked@example.com', form: 'Form 3' }] };
+      }
+      return { rows: [] };
+    };
+
+    const res = await fetch(url('/api/auth/student/register'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: 'Student With Teacher',
+        email: 'linked@example.com',
+        password: 'password123',
+        form: 'Form 3',
+        schoolCode: 'SCH001',
+        teacherCode: 'tch-5abc'
+      })
+    });
+    const body = await res.json();
+
+    assert.strictEqual(res.status, 201);
+    assert.strictEqual(body.user.name, 'Student With Teacher');
+  });
+
+  it('POST /api/auth/student/register — should return 400 if teacher code does not exist', async () => {
+    pool.query = async (text) => {
+      if (text.includes('SELECT id FROM schools')) return { rows: [{ id: 1 }] };
+      if (text.includes('SELECT id, school_id FROM teachers')) return { rows: [] };
+      return { rows: [] };
+    };
+
+    const res = await fetch(url('/api/auth/student/register'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: 'Student Fail',
+        email: 'fail@example.com',
+        password: 'password123',
+        form: 'Form 3',
+        schoolCode: 'SCH001',
+        teacherCode: 'NONEXISTENT'
+      })
+    });
+    const body = await res.json();
+
+    assert.strictEqual(res.status, 400);
+    assert.ok(body.error.includes('No teacher found with code'));
+  });
+
   it('POST /api/auth/student/login — should return 400 if credentials missing', async () => {
     const res = await fetch(url('/api/auth/student/login'), {
       method: 'POST',

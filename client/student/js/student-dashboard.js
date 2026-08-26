@@ -342,13 +342,29 @@ requireStudentLogin();
       updateNotificationsUI(assignments);
 
       if (assignments.length === 0) {
-        box.innerHTML = `
-          <div class="empty-box" style="width: 100%; flex: 1 1 100%; padding: 24px 16px; text-align: center; border-radius: 8px; border: 1.5px dashed var(--card-border); color: var(--text-muted);">
-            <div style="font-size: 1.4rem; margin-bottom: 6px;">📝</div>
-            <div style="font-weight: 700; font-size: 0.88rem; color: var(--heading-color); margin-bottom: 4px;">No Pending Assignments</div>
-            <div style="font-size: 0.76rem;">You're all caught up! Prescribed lab assignments from your teacher will appear here.</div>
-          </div>
-        `;
+        const isLinked = !!(currentStudentUser && (currentStudentUser.teacherName || currentStudentUser.teacherId || currentStudentUser.teacherCode));
+        if (!isLinked) {
+          box.innerHTML = `
+            <div class="empty-box" style="width: 100%; flex: 1 1 100%; padding: 22px 18px; text-align: center; border-radius: 12px; border: 1.5px dashed var(--cyan-accent); background: var(--card-bg); color: var(--text-muted);">
+              <div style="font-size: 1.5rem; margin-bottom: 6px;">👨‍🏫</div>
+              <div style="font-weight: 800; font-size: 0.94rem; color: var(--heading-color); margin-bottom: 4px;">Connect Your Chemistry Teacher</div>
+              <div style="font-size: 0.82rem; margin-bottom: 14px; max-width: 420px; margin-left: auto; margin-right: auto; line-height: 1.45;">
+                Link your teacher's code to automatically receive continuous assessment practicals, KCSE mock exams, and teacher evaluations.
+              </div>
+              <button type="button" class="btn btn-primary" onclick="toggleTeacherLinkPanel()" style="font-size: 0.82rem; font-weight: 800; padding: 8px 20px; border-radius: 8px; cursor: pointer;">
+                🔗 Enter Teacher Code →
+              </button>
+            </div>
+          `;
+        } else {
+          box.innerHTML = `
+            <div class="empty-box" style="width: 100%; flex: 1 1 100%; padding: 24px 16px; text-align: center; border-radius: 8px; border: 1.5px dashed var(--card-border); color: var(--text-muted);">
+              <div style="font-size: 1.4rem; margin-bottom: 6px;">📝</div>
+              <div style="font-weight: 700; font-size: 0.88rem; color: var(--heading-color); margin-bottom: 4px;">No Pending Assignments</div>
+              <div style="font-size: 0.76rem;">You're all caught up! Prescribed lab assignments from ${escapeHtml(currentStudentUser?.teacherName || 'your teacher')} will appear here.</div>
+            </div>
+          `;
+        }
         return;
       }
 

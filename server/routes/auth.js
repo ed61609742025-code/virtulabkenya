@@ -68,19 +68,23 @@ router.post('/student/register', authLimiter, validateStudentRegister, asyncHand
   }
   const schoolId = schoolResult.rows[0].id;
 
-  // teacherCode is optional. If given, it must belong to a teacher
-  // at the same school — otherwise reject so a student can't
-  // accidentally (or deliberately) attach to the wrong class.
+  // teacherCode is optional. If provided, lookup teacher by code
+  // and link the student to the teacher and teacher's school.
   let teacherId = null;
-  if (teacherCode) {
+  let finalSchoolId = schoolId;
+  if (teacherCode && typeof teacherCode === 'string' && teacherCode.trim()) {
+    const cleanTeacherCode = teacherCode.trim().toUpperCase();
     const teacherResult = await pool.query(
-      'SELECT id FROM teachers WHERE teacher_code = $1 AND school_id = $2',
-      [teacherCode, schoolId]
+      'SELECT id, school_id FROM teachers WHERE UPPER(teacher_code) = $1',
+      [cleanTeacherCode]
     );
     if (teacherResult.rows.length === 0) {
-      return res.status(400).json({ error: 'Invalid teacher code for this school.' });
+      return res.status(400).json({ error: `No teacher found with code "${cleanTeacherCode}". Please verify the code with your instructor.` });
     }
     teacherId = teacherResult.rows[0].id;
+    if (teacherResult.rows[0].school_id) {
+      finalSchoolId = teacherResult.rows[0].school_id;
+    }
   }
 
   const existing = await pool.query('SELECT id FROM students WHERE email = $1', [email]);
@@ -94,7 +98,7 @@ router.post('/student/register', authLimiter, validateStudentRegister, asyncHand
     `INSERT INTO students (school_id, teacher_id, name, email, password_hash, form)
      VALUES ($1, $2, $3, $4, $5, $6)
      RETURNING id, name, email, form`,
-    [schoolId, teacherId, name, email, passwordHash, form]
+    [finalSchoolId, teacherId, name, email, passwordHash, form]
   );
 
   return res.status(201).json({ user: insertResult.rows[0] });

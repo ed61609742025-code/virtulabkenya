@@ -209,7 +209,7 @@
       <!-- Card 1: Experiment Selection -->
       <div class="wb-card card-exp-select">
         <div class="wb-card-title">🔬 Practical Examination Selection</div>
-        <select id="practicalSelect" class="wb-select" onchange="loadPractical(this.value)">
+        <select id="practicalSelect" class="wb-select" onchange="resetWorkbench(this.value)">
           <option value="acidBase">Acid-Base Titration (HCl vs NaOH)</option>
           <option value="redox">Redox Titration (Fe²⁺ vs KMnO₄)</option>
           <option value="precipitation">Precipitation Titration (Cl⁻ vs AgNO₃, Mohr's method)</option>
@@ -219,6 +219,9 @@
           <option value="weakAcid">Weak Acid – Strong Base (CH₃COOH vs NaOH)</option>
           <option value="weakBase">Weak Base – Strong Acid (NH₃ vs HCl)</option>
         </select>
+        <button type="button" onclick="resetWorkbench()" class="btn-pill-action" style="width:100%; margin-top:10px; height:36px; font-size:0.78rem; font-weight:700; display:flex; align-items:center; justify-content:center; gap:6px;" title="Flush burette, wash conical flask, and reset trials">
+          🔄 Wash Apparatus & Reset Setup
+        </button>
       </div>
 
       <!-- Card 2: Your Task -->

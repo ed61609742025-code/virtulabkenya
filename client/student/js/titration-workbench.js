@@ -1053,9 +1053,19 @@ requireStudentLogin();
     try { localStorage.removeItem(draftKey()); } catch (e) {}
   }
 
-  function loadPractical(key) {
+  function loadPractical(key, forceFresh = false) {
     current = PRACTICALS[key] || PRACTICALS.acidBase;
-    const draft = loadDraft(key);
+    const draft = forceFresh ? null : loadDraft(key);
+
+    // Reset submission lock and calculation states when loading fresh
+    if (!draft) {
+      sessionSubmitted = false;
+      studentAverageChecked = false;
+      studentAverageCorrect = false;
+      concentrationCorrect = false;
+      sessionSeconds = 0;
+      examRemainingSeconds = 900;
+    }
 
     if (draft) {
       sessionAnalyteVolume = draft.sessionAnalyteVolume;
@@ -1068,6 +1078,7 @@ requireStudentLogin();
       selectedIndicator = draft.selectedIndicator || null;
       indicatorAdded = !!draft.indicatorAdded;
       indicatorCorrect = !!draft.indicatorCorrect;
+      indicatorDropsCount = draft.indicatorAdded ? 3 : 0;
     } else {
       sessionAnalyteVolume = ANALYTE_VOLUME_OPTIONS[Math.floor(Math.random() * ANALYTE_VOLUME_OPTIONS.length)];
       
@@ -1107,11 +1118,16 @@ requireStudentLogin();
     const titrantConcStr = sessionTitrantConc.toFixed(4).replace(/0+$/, '').replace(/\.$/, '');
     const massConcStr = sessionMassConc ? sessionMassConc.toFixed(2) : '';
 
-    document.getElementById('briefText').innerHTML = current.briefTemplate(sessionAnalyteVolume, titrantConcStr, massConcStr);
-    document.getElementById('pillAnalyte').textContent = current.analyteName;
-    document.getElementById('pillTitrant').textContent = titrantConcStr + ' M ' + current.titrantName;
-    document.getElementById('pillIndicator').textContent = indicatorAdded ? `${current.indicatorName} (${indicatorDropsCount}/3 drops)` : '? (click button below)';
-    document.getElementById('flaskLabel').textContent = sessionAnalyteVolume.toFixed(2) + ' cm³ ' + current.analyteName.split(',')[0];
+    const briefEl = document.getElementById('briefText');
+    if (briefEl) briefEl.innerHTML = current.briefTemplate(sessionAnalyteVolume, titrantConcStr, massConcStr);
+    const pillA = document.getElementById('pillAnalyte');
+    if (pillA) pillA.textContent = current.analyteName;
+    const pillT = document.getElementById('pillTitrant');
+    if (pillT) pillT.textContent = titrantConcStr + ' M ' + current.titrantName;
+    const pillI = document.getElementById('pillIndicator');
+    if (pillI) pillI.textContent = indicatorAdded ? `${current.indicatorName} (${indicatorDropsCount}/3 drops)` : '? (click button below)';
+    const flaskLbl = document.getElementById('flaskLabel');
+    if (flaskLbl) flaskLbl.textContent = sessionAnalyteVolume.toFixed(2) + ' cm³ ' + current.analyteName.split(',')[0];
 
     const titrantChip = document.getElementById('pillTitrantChip');
     if (titrantChip) {
@@ -1157,6 +1173,53 @@ requireStudentLogin();
       if (draft.massConcValue) {
         const el = document.getElementById('massConcInput');
         if (el) el.value = draft.massConcValue;
+      }
+    } else {
+      // Clean up previous practical inputs, validation feedback and unlock controls
+      ['avgInput', 'molesTitrantInput', 'molesAnalyteInput', 'calcConc', 'massConcInput'].forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+          input.value = '';
+          input.disabled = false;
+          input.style.opacity = '1';
+        }
+      });
+
+      ['btnCheckAverage', 'btnCheckMolesTitrant', 'btnCheckMolesAnalyte', 'btnCheckMolarity', 'btnCheckMassConc'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+          btn.disabled = false;
+          btn.style.opacity = '1';
+          btn.style.cursor = 'pointer';
+        }
+      });
+
+      ['resultMsg', 'workingBox', 'aiFeedbackBox', 'step1Msg', 'step2Msg', 'step3Msg', 'step4Msg', 'step5Msg'].forEach(id => {
+        const box = document.getElementById(id);
+        if (box) {
+          box.innerHTML = '';
+          box.style.display = 'none';
+        }
+      });
+
+      const showWorkingBtn = document.getElementById('showWorkingBtn');
+      if (showWorkingBtn) showWorkingBtn.style.display = 'none';
+
+      // Restore and unlock submit button
+      const submitBtn = document.getElementById('btnSubmitTitration');
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+        submitBtn.style.cursor = 'pointer';
+        submitBtn.style.background = '';
+        submitBtn.innerHTML = 'Submit Full KCSE Titration →';
+      }
+
+      const submitCardBox = document.getElementById('submitCardBox');
+      if (submitCardBox) {
+        const isExamMode = isExam || sessionMode === 'assignment' || sessionMode === 'exam';
+        submitCardBox.style.opacity = isExamMode ? '1' : '0.4';
+        submitCardBox.style.pointerEvents = isExamMode ? 'auto' : 'none';
       }
     }
 
@@ -1465,12 +1528,19 @@ requireStudentLogin();
 
     const flask = document.getElementById('flask');
     const surface = document.getElementById('flaskLiquidSurface');
-    const diff = currentVolume - equivalenceVolume;
     let stageColor;
-    if (diff < -0.15) stageColor = current.flaskColors[0];
-    else if (diff < 0.05) stageColor = current.flaskColors[1];
-    else if (diff < 0.4) stageColor = current.flaskColors[2];
-    else stageColor = current.flaskColors[3];
+    if (!indicatorAdded) {
+      // Clean, unindicated fresh analyte solution
+      stageColor = 'rgba(56,189,248,0.12)';
+    } else if (diff < -0.15) {
+      stageColor = current.flaskColors[0];
+    } else if (diff < 0.05) {
+      stageColor = current.flaskColors[1];
+    } else if (diff < 0.4) {
+      stageColor = current.flaskColors[2];
+    } else {
+      stageColor = current.flaskColors[3];
+    }
 
     // Liquid volume modeled above half of the flask height (~55% to 65% height):
     // Analyte volume (sessionAnalyteVolume, ~25 cm³) + delivered titrant (0 to ~30 cm³)
@@ -2056,29 +2126,55 @@ requireStudentLogin();
 
       clearDraft();
 
+      const practicalKeys = Object.keys(PRACTICALS);
+      const currentIndex = practicalKeys.indexOf(current.key);
+      const nextKey = practicalKeys[(currentIndex + 1) % practicalKeys.length];
+      const nextPractical = PRACTICALS[nextKey];
+
       if (linkedAssignmentId) {
-        msg.innerHTML = `<div class="result-banner result-ok" style="border-color:var(--cyan-accent);background:rgba(6,182,212,0.12);color:var(--text-main);padding:16px;">
+        msg.innerHTML = `<div class="result-banner result-ok" style="border-color:var(--cyan-accent);background:rgba(6,182,212,0.12);color:var(--text-main);padding:18px;border-radius:10px;">
           <b style="color:var(--cyan-accent);font-size:1.05rem;">🎉 Assignment Submitted Successfully!</b><br>
-          <span style="font-size:0.85rem;color:var(--text-main);display:block;margin-top:6px;line-height:1.5;">
+          <span style="font-size:0.86rem;color:var(--text-main);display:block;margin-top:6px;line-height:1.5;">
             Your titration practical response has been recorded and submitted to your teacher. You will be notified on your student dashboard once your score is marked and released.
           </span>
+          <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:16px;">
+            <button type="button" class="btn-cyan" onclick="window.location.href='/student/home.html'" style="flex:1; min-width:180px; height:42px; font-weight:800; font-size:0.85rem;">
+              🏠 Return to Dashboard
+            </button>
+            <button type="button" class="btn-pill-action" onclick="requestWorking()" style="flex:1; min-width:160px; height:42px; font-weight:800; font-size:0.85rem;">
+              🧮 View Examiner Working
+            </button>
+          </div>
         </div>`;
       } else if (isExam && examData) {
         showExamResultModal(examData);
       } else {
-        msg.innerHTML = correct
-          ? `<div class="result-banner result-ok" style="padding:16px;">
-              <b style="font-size:1.05rem;">🎉 Titration Work Submitted Successfully!</b><br>
-              <span style="font-size:0.85rem;display:block;margin-top:6px;line-height:1.5;">
-                <b>Correct Concentration!</b> Expected concentration: ${expectedConcFromStudentAvg.toFixed(4)} M. Session saved to your history.
-              </span>
-            </div>`
-          : `<div class="result-banner result-warn" style="padding:16px;">
-              <b style="font-size:1.05rem;">✓ Titration Work Submitted!</b><br>
-              <span style="font-size:0.85rem;display:block;margin-top:6px;line-height:1.5;">
-                <b>Not quite.</b> Expected concentration: ${expectedConcFromStudentAvg.toFixed(4)} M. Session saved to your history.
-              </span>
-            </div>`;
+        const headerText = correct
+          ? '🎉 Titration Work Submitted Successfully!'
+          : '✓ Titration Work Submitted!';
+        const bannerClass = correct ? 'result-ok' : 'result-warn';
+
+        msg.innerHTML = `
+          <div class="result-banner ${bannerClass}" style="padding:18px; border-radius:10px;">
+            <b style="font-size:1.05rem;">${headerText}</b><br>
+            <span style="font-size:0.86rem;display:block;margin-top:6px;line-height:1.5;">
+              ${correct ? '<b>Excellent precision!</b> Your concentration matches the KNEC standard.' : '<b>Session saved.</b> Your calculated concentration deviated from the standard.'}
+              Expected concentration: <b>${expectedConcFromStudentAvg.toFixed(4)} M</b>. Your practical session has been recorded.
+            </span>
+
+            <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:16px;">
+              <button type="button" class="btn-cyan" onclick="startNextPractical('${nextKey}')" style="flex:1.2; min-width:200px; height:44px; font-weight:800; font-size:0.88rem; display:flex; align-items:center; justify-content:center; gap:6px;">
+                🧪 Next Practical: ${nextPractical ? nextPractical.title.split('(')[0] : 'Next'} →
+              </button>
+              <button type="button" class="btn-pill-action" onclick="resetWorkbench('${current.key}')" style="flex:1; min-width:160px; height:44px; font-weight:800; font-size:0.85rem; display:flex; align-items:center; justify-content:center; gap:6px;">
+                🔄 Clean Apparatus & Redo
+              </button>
+              <button type="button" class="btn-pill-action" onclick="requestWorking()" style="flex:1; min-width:160px; height:44px; font-weight:800; font-size:0.85rem;">
+                🧮 Examiner Working
+              </button>
+            </div>
+          </div>
+        `;
       }
 
       msg.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -2086,6 +2182,21 @@ requireStudentLogin();
     } catch (err) {
       msg.innerHTML = '<div class="result-banner result-warn">Error: ' + (err.message || 'Failed to save submission. Please try again.') + '</div>';
     }
+  }
+
+  function resetWorkbench(targetKey) {
+    const key = targetKey || (current ? current.key : 'acidBase');
+    clearDraft();
+    const pSel = document.getElementById('practicalSelect');
+    if (pSel) pSel.value = key;
+    loadPractical(key, true);
+    playAudioTone('pour');
+  }
+
+  function startNextPractical(nextKey) {
+    resetWorkbench(nextKey);
+    const topBar = document.querySelector('.wb-title-bar') || document.body;
+    topBar.scrollIntoView({ behavior: 'smooth' });
   }
 
   function requestWorking() {
@@ -2402,6 +2513,8 @@ requireStudentLogin();
     window.requestWorking = requestWorking;
     window.submitSession = submitSession;
     window.saveDraft = saveDraft;
+    window.resetWorkbench = resetWorkbench;
+    window.startNextPractical = startNextPractical;
   }
 
   initTutorial();

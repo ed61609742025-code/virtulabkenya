@@ -1081,6 +1081,8 @@ html, body {
   font-family: 'JetBrains Mono', monospace;
   padding: 4px 12px;
   border-radius: 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .pill-incorrect {
@@ -1092,6 +1094,8 @@ html, body {
   font-family: 'JetBrains Mono', monospace;
   padding: 4px 12px;
   border-radius: 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .empty-box {
@@ -1118,12 +1122,14 @@ html, body {
   border-bottom: 1.5px solid var(--card-border);
   font-size: 0.76rem;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 .lb-table-custom td {
   padding: 9px 6px;
   border-bottom: 1px solid var(--card-border);
   color: var(--text-main);
   font-weight: 600;
+  white-space: nowrap;
 }
 .lb-row-you {
   background: var(--card-bg-hover);

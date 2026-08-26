@@ -1366,18 +1366,20 @@ requireStudentLogin();
       }).join('');
 
       box.innerHTML = `
-        <table class="lb-table-custom" style="width:100%;border-collapse:collapse;font-size:0.82rem;">
-          <thead>
-            <tr style="border-bottom:1px solid var(--card-border);text-align:left;color:var(--text-muted);">
-              <th style="padding:6px;">Rank</th>
-              <th style="padding:6px;">Student</th>
-              <th style="padding:6px;">Form</th>
-              <th style="padding:6px;">Accuracy</th>
-              <th style="padding:6px;">Sessions</th>
-            </tr>
-          </thead>
-          <tbody>${rows}</tbody>
-        </table>
+        <div style="width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;">
+          <table class="lb-table-custom" style="width:100%;min-width:320px;border-collapse:collapse;font-size:0.82rem;">
+            <thead>
+              <tr style="border-bottom:1.5px solid var(--card-border);text-align:left;color:var(--text-muted);">
+                <th style="padding:6px 8px;white-space:nowrap;">Rank</th>
+                <th style="padding:6px 8px;white-space:nowrap;">Student</th>
+                <th style="padding:6px 8px;white-space:nowrap;">Form</th>
+                <th style="padding:6px 8px;white-space:nowrap;">Accuracy</th>
+                <th style="padding:6px 8px;white-space:nowrap;">Sessions</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
       `;
     } catch (err) {
       box.innerHTML = '<div class="empty-box">Could not load leaderboard</div>';

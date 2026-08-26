@@ -43,6 +43,11 @@ app.use(express.static(path.join(__dirname, '../client'), {
 // Apply general API rate limiter to all /api/ routes
 app.use('/api/', apiLimiter);
 
+// ── Favicon Route ─────────────────────────────────────────────
+app.get('/favicon.ico', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/shared/icon-192.png'));
+});
+
 // ── Health Check ──────────────────────────────────────────────
 // This is the first endpoint — visit it to confirm the server is live
 app.get('/api/health', (req, res) => {

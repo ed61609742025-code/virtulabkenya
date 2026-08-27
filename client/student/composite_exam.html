@@ -1005,7 +1005,7 @@
 
 <script src="/shared/api.js"></script>
 <script src="/shared/page-transitions.js"></script>
-<script src="js/composite-engine.js"></script>
+<script src="js/composite-engine.js?v=51"></script>
 <script>
   requireStudentLogin();
   const user = getUser();
@@ -1181,9 +1181,11 @@
     }
 
     flask.setAttribute('fill', fillColor);
+    flask.style.fill = fillColor;
     flask.setAttribute('opacity', '0.88');
     if (surface) {
       surface.setAttribute('fill', fillColor);
+      surface.style.fill = fillColor;
       surface.setAttribute('opacity', '0.92');
     }
   }

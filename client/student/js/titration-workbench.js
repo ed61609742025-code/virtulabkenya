@@ -1528,18 +1528,29 @@ requireStudentLogin();
 
     const flask = document.getElementById('flask');
     const surface = document.getElementById('flaskLiquidSurface');
+
+    // Equivalence delta: delivered titrant volume minus target equivalence volume
+    const eqVol = (typeof equivalenceVolume === 'number' && equivalenceVolume > 0) ? equivalenceVolume : 25.0;
+    const diff = currentVolume - eqVol;
+
     let stageColor;
     if (!indicatorAdded) {
       // Clean, unindicated fresh analyte solution
-      stageColor = 'rgba(56,189,248,0.12)';
-    } else if (diff < -0.15) {
-      stageColor = current.flaskColors[0];
-    } else if (diff < 0.05) {
-      stageColor = current.flaskColors[1];
-    } else if (diff < 0.4) {
-      stageColor = current.flaskColors[2];
+      stageColor = 'rgba(56, 189, 248, 0.12)';
+    } else if (diff < -0.25) {
+      // Stage 0: Initial solution color before transition
+      stageColor = (current && current.flaskColors && current.flaskColors[0] !== 'var(--rig-body)')
+        ? current.flaskColors[0]
+        : 'rgba(224, 242, 254, 0.28)';
+    } else if (diff < 0.00) {
+      // Stage 1: Approaching endpoint (within 0.25 cm³), transient color flashes
+      stageColor = (current && current.flaskColors && current.flaskColors[1]) || '#fbe4ee';
+    } else if (diff < 0.40) {
+      // Stage 2: Permanent equivalence endpoint reached (0.00 to 0.40 cm³)
+      stageColor = (current && current.flaskColors && current.flaskColors[2]) || '#f6b8d2';
     } else {
-      stageColor = current.flaskColors[3];
+      // Stage 3: Over-titrated
+      stageColor = (current && current.flaskColors && current.flaskColors[3]) || '#e8659f';
     }
 
     // Liquid volume modeled above half of the flask height (~55% to 65% height):
@@ -1555,13 +1566,31 @@ requireStudentLogin();
     if (flask) {
       const d = `M ${xLeft.toFixed(1)},${yLiquid.toFixed(1)} L 94,334 Q 129,346 164,334 L ${xRight.toFixed(1)},${yLiquid.toFixed(1)} Q 129,${(yLiquid - 3).toFixed(1)} ${xLeft.toFixed(1)},${yLiquid.toFixed(1)} Z`;
       flask.setAttribute('d', d);
+      flask.setAttribute('fill', stageColor);
+      flask.style.fill = stageColor;
       flask.setAttribute('style', 'fill:' + stageColor + '; stroke:none; opacity:0.88; transition: fill 0.35s ease;');
     }
     if (surface) {
       surface.setAttribute('cy', yLiquid.toFixed(1));
       surface.setAttribute('rx', rx.toFixed(1));
       surface.setAttribute('fill', stageColor);
+      surface.style.fill = stageColor;
       surface.setAttribute('opacity', '0.92');
+    }
+
+    const flaskLabel = document.getElementById('flaskLabel');
+    if (flaskLabel && indicatorAdded && current) {
+      const baseName = current.analyteName ? current.analyteName.split(',')[0].split('—')[0].trim() : 'Analyte';
+      const indName = current.indicatorName ? current.indicatorName.split(' ')[0] : 'Indicator';
+      if (diff >= 0.40) {
+        flaskLabel.innerHTML = `<span style="color:#F43F5E;font-weight:700;">⚠️ Over-titrated</span> (${currentVolume.toFixed(2)} cm³) · Dark end`;
+      } else if (diff >= 0.00) {
+        flaskLabel.innerHTML = `<span style="color:#10B981;font-weight:700;">🎯 Endpoint Reached!</span> (${currentVolume.toFixed(2)} cm³) · Permanent`;
+      } else if (diff >= -0.25) {
+        flaskLabel.innerHTML = `<span style="color:#F59E0B;font-weight:700;">⏳ Near Endpoint</span> (${currentVolume.toFixed(2)} cm³) · Swirl to mix`;
+      } else {
+        flaskLabel.textContent = `${sessionAnalyteVolume.toFixed(2)} cm³ ${baseName} + ${indName} (${indicatorDropsCount}d)`;
+      }
     }
   }
 
@@ -1786,6 +1815,30 @@ requireStudentLogin();
       setTimeout(() => {
         container.style.transform = 'rotate(0deg)';
       }, 700);
+    }
+
+    // In KCSE practical titration, swirling mixes localized drops:
+    // If just before endpoint (within 0.25 cm³), transient tinge dissipates upon swirling
+    const eqVol = (typeof equivalenceVolume === 'number' && equivalenceVolume > 0) ? equivalenceVolume : 25.0;
+    const diff = currentVolume - eqVol;
+    if (indicatorAdded && diff >= -0.25 && diff < 0.00) {
+      const flask = document.getElementById('flask');
+      const surface = document.getElementById('flaskLiquidSurface');
+      const baseColor = (current && current.flaskColors && current.flaskColors[0] !== 'var(--rig-body)')
+        ? current.flaskColors[0]
+        : 'rgba(224, 242, 254, 0.28)';
+      if (flask) {
+        flask.setAttribute('fill', baseColor);
+        flask.style.fill = baseColor;
+      }
+      if (surface) {
+        surface.setAttribute('fill', baseColor);
+        surface.style.fill = baseColor;
+      }
+      const flaskLabel = document.getElementById('flaskLabel');
+      if (flaskLabel) {
+        flaskLabel.innerHTML = `<span style="color:var(--cyan-accent);font-weight:700;">🌀 Swirled:</span> Transient tinge mixed away. Add next drop!`;
+      }
     }
   }
 

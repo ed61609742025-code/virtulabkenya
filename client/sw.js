@@ -3,7 +3,7 @@
 //  Feature #1: Offline Support, Smart Caching & Sync
 // ============================================================
 
-const CACHE_NAME = 'virtulab-kenya-v51';
+const CACHE_NAME = 'virtulab-kenya-v52';
 
 const PRECACHE_ASSETS = [
   '/',

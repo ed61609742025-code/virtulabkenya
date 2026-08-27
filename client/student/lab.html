@@ -491,7 +491,10 @@
                 <button class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(1.0)" style="padding:6px 2px;font-size:0.76rem;font-weight:700;font-family:'JetBrains Mono',monospace;">+1 cm³</button>
                 <button class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(0.5)" style="padding:6px 2px;font-size:0.76rem;font-weight:700;font-family:'JetBrains Mono',monospace;">+0.5 cm³</button>
               </div>
-              <button class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(0.1)" style="width:100%;padding:6px 4px;font-size:0.76rem;font-weight:700;font-family:'JetBrains Mono',monospace;">+0.1 drop-wise</button>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
+                <button class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(0.1)" style="padding:6px 2px;font-size:0.76rem;font-weight:700;font-family:'JetBrains Mono',monospace;">+0.1 cm³</button>
+                <button class="btn-tactile btn-tactile-cyan btn-tactile-sm btn-pill-action" onclick="addVolume(0.05)" style="padding:6px 2px;font-size:0.76rem;font-weight:700;font-family:'JetBrains Mono',monospace;" title="Single drop (0.05 cm³)">💧 +0.05 cm³</button>
+              </div>
             </div>
 
             <div style="border-top:1px dashed var(--card-border);margin:2px 0;"></div>
@@ -619,7 +622,7 @@
 <script src="../shared/i18n.js"></script>
 <script src="../shared/brilliant-ui.js"></script>
 <script src="../shared/tutorial-engine.js"></script>
-<script src="js/titration-workbench.js?v=51"></script>
+<script src="js/titration-workbench.js?v=52"></script>
 <script src="../shared/ai-tutor.js"></script>
 <script src="../shared/pwa-installer.js"></script>
 <script src="../shared/page-transitions.js"></script>

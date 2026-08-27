@@ -1004,6 +1004,13 @@ requireStudentLogin();
     return 'vlk_lab_draft_' + (user ? user.id : 'anon');
   }
 
+  function isSelfIndicatingExp(exp) {
+    if (!exp) return false;
+    const name = (exp.indicatorName || '').toLowerCase();
+    const ans = (exp.indicatorAnswer || '').toLowerCase();
+    return name.includes('self-indicating') || ans.includes('no indicator') || ans.includes('self-indicating');
+  }
+
   function saveDraft() {
     try {
       const avgEl = document.getElementById('avgInput');
@@ -1110,7 +1117,8 @@ requireStudentLogin();
       currentVolume = 0;
       trials = [];
       selectedIndicator = current.indicatorAnswer;
-      indicatorAdded = false;
+      const selfInd = isSelfIndicatingExp(current);
+      indicatorAdded = selfInd;
       indicatorCorrect = true;
       indicatorDropsCount = 0;
     }
@@ -1124,10 +1132,19 @@ requireStudentLogin();
     if (pillA) pillA.textContent = current.analyteName;
     const pillT = document.getElementById('pillTitrant');
     if (pillT) pillT.textContent = titrantConcStr + ' M ' + current.titrantName;
+    const selfInd = isSelfIndicatingExp(current);
     const pillI = document.getElementById('pillIndicator');
-    if (pillI) pillI.textContent = indicatorAdded ? `${current.indicatorName} (${indicatorDropsCount}/3 drops)` : '? (click button below)';
+    if (pillI) {
+      pillI.textContent = selfInd
+        ? 'Self-indicating (KMnO₄)'
+        : (indicatorAdded ? `${current.indicatorName} (${indicatorDropsCount}/3 drops)` : '? (click button below)');
+    }
     const flaskLbl = document.getElementById('flaskLabel');
-    if (flaskLbl) flaskLbl.textContent = sessionAnalyteVolume.toFixed(2) + ' cm³ ' + current.analyteName.split(',')[0];
+    if (flaskLbl) {
+      flaskLbl.textContent = selfInd
+        ? `${sessionAnalyteVolume.toFixed(2)} cm³ ${current.analyteName.split(',')[0]} · Self-indicating`
+        : `${sessionAnalyteVolume.toFixed(2)} cm³ ${current.analyteName.split(',')[0]}`;
+    }
 
     const titrantChip = document.getElementById('pillTitrantChip');
     if (titrantChip) {
@@ -1135,7 +1152,9 @@ requireStudentLogin();
     }
     const indicatorChip = document.getElementById('pillIndicatorChip');
     if (indicatorChip) {
-      indicatorChip.textContent = indicatorAdded ? `Indicator: ${current.indicatorName.split(' ')[0]} (${indicatorDropsCount}d)` : `Indicator: Unindicated`;
+      indicatorChip.textContent = selfInd
+        ? 'Indicator: Self-indicating'
+        : (indicatorAdded ? `Indicator: ${current.indicatorName.split(' ')[0]} (${indicatorDropsCount}d)` : `Indicator: Unindicated`);
     }
 
     const aliquotEl = document.getElementById('knecSubbarAliquot');
@@ -1229,12 +1248,25 @@ requireStudentLogin();
       unlockNextStep(1);
     }
 
+    const selfIndControls = isSelfIndicatingExp(current);
     document.querySelectorAll('#indicatorMsg, .indicatorMsg').forEach(msg => {
-      msg.innerHTML = '';
+      if (selfIndControls) {
+        msg.innerHTML = `<div class="result-banner result-ok" style="font-size:0.78rem;">⚡ <b>Self-Indicating Titration:</b> KMnO₄ acts as its own indicator (first permanent faint pink is endpoint). No external drops needed!</div>`;
+      } else if (indicatorDropsCount > 0) {
+        const dropWord = indicatorDropsCount === 1 ? 'drop' : 'drops';
+        const maxNote = indicatorDropsCount >= 3 ? ' (Maximum 3 drops reached)' : '';
+        msg.innerHTML = `<div class="result-banner result-ok">💧 Added ${indicatorDropsCount} ${dropWord} of ${escapeHtmlLab(current.indicatorAnswer)}${maxNote}.</div>`;
+      } else {
+        msg.innerHTML = '';
+      }
     });
 
     document.querySelectorAll('#addIndicatorBtn, .addIndicatorBtn').forEach(btn => {
-      if (indicatorDropsCount >= 3) {
+      if (selfIndControls) {
+        btn.textContent = `⚡ Self-Indicating (${current.indicatorName.split(' ')[0]})`;
+        btn.disabled = true;
+        btn.title = 'KMnO₄ acts as its own indicator.';
+      } else if (indicatorDropsCount >= 3) {
         btn.textContent = `✅ 3 Drops Added (${current.indicatorAnswer})`;
         btn.disabled = true;
       } else {
@@ -1244,7 +1276,7 @@ requireStudentLogin();
     });
 
     document.querySelectorAll('#titrationControls, .titrationControls').forEach(ctrl => {
-      if (indicatorAdded) {
+      if (indicatorAdded || selfIndControls) {
         ctrl.style.opacity = '1';
         ctrl.style.pointerEvents = 'auto';
       } else {
@@ -1385,23 +1417,39 @@ requireStudentLogin();
 
   function resetBurette() {
     currentVolume = 0;
-    updateRig();
-    indicatorAdded = false;
+    const selfInd = isSelfIndicatingExp(current);
+    indicatorAdded = selfInd;
     indicatorDropsCount = 0;
 
     document.querySelectorAll('#titrationControls, .titrationControls').forEach(titrationControls => {
-      titrationControls.style.opacity = '0.4';
-      titrationControls.style.pointerEvents = 'none';
+      if (selfInd) {
+        titrationControls.style.opacity = '1';
+        titrationControls.style.pointerEvents = 'auto';
+      } else {
+        titrationControls.style.opacity = '0.4';
+        titrationControls.style.pointerEvents = 'none';
+      }
     });
 
     document.querySelectorAll('#addIndicatorBtn, .addIndicatorBtn').forEach(confirmBtn => {
-      confirmBtn.textContent = `💧 Add Drop 1 of 3 (${current.indicatorAnswer})`;
-      confirmBtn.disabled = false;
+      if (selfInd) {
+        confirmBtn.textContent = `⚡ Self-Indicating (${current.indicatorName.split(' ')[0]})`;
+        confirmBtn.disabled = true;
+      } else {
+        confirmBtn.textContent = `💧 Add Drop 1 of 3 (${current.indicatorAnswer})`;
+        confirmBtn.disabled = false;
+      }
     });
 
     document.querySelectorAll('#indicatorMsg, .indicatorMsg').forEach(msg => {
-      msg.innerHTML = '<p style="font-size:0.78rem;color:var(--text-muted);margin-top:6px;">Add 1 to 3 drops of indicator to begin new trial.</p>';
+      if (selfInd) {
+        msg.innerHTML = '<div class="result-banner result-ok" style="font-size:0.78rem;">⚡ <b>Self-Indicating:</b> Burette refilled to 0.00 cm³. Ready to titrate next trial!</div>';
+      } else {
+        msg.innerHTML = '<p style="font-size:0.78rem;color:var(--text-muted);margin-top:6px;">Add 1 to 3 drops of indicator to begin new trial.</p>';
+      }
     });
+
+    updateRig();
     saveDraft();
   }
 
@@ -1414,6 +1462,12 @@ requireStudentLogin();
     
     const minVol = Math.max(0, Math.floor((volume - 1.4) * 10) / 10);
     const maxVol = Math.min(50, Math.ceil((volume + 1.4) * 10) / 10);
+
+    const isKmno4 = current && current.titrantName && (current.titrantName.includes('KMnO4') || current.titrantName.includes('KMnO₄'));
+    const liquidColor0 = isKmno4 ? '#c084fc' : '#38BDF8';
+    const liquidColor1 = isKmno4 ? '#9333ea' : '#0284C7';
+    const liquidColor2 = isKmno4 ? '#6b21a8' : '#0369A1';
+    const liquidColor3 = isKmno4 ? '#3b0764' : '#0C4A6E';
 
     // High-contrast defs: White ceramic enamel backing + crystal clear glass highlights
     const defsSvg = `
@@ -1428,10 +1482,10 @@ requireStudentLogin();
         
         <!-- Crystal Clear Luminous Aqueous Solution with Glass Depth -->
         <linearGradient id="luminousLiquidFill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.92"/>
-          <stop offset="15%" stop-color="#0284C7" stop-opacity="0.88"/>
-          <stop offset="60%" stop-color="#0369A1" stop-opacity="0.92"/>
-          <stop offset="100%" stop-color="#0C4A6E" stop-opacity="0.98"/>
+          <stop offset="0%" stop-color="${liquidColor0}" stop-opacity="0.95"/>
+          <stop offset="15%" stop-color="${liquidColor1}" stop-opacity="0.92"/>
+          <stop offset="60%" stop-color="${liquidColor2}" stop-opacity="0.95"/>
+          <stop offset="100%" stop-color="${liquidColor3}" stop-opacity="0.98"/>
         </linearGradient>
 
         <!-- Specular Highlight for Glass Walls -->
@@ -1508,6 +1562,11 @@ requireStudentLogin();
     if (readoutPill) {
       readoutPill.innerHTML = `<span>🎯</span> ${volume.toFixed(2)} cm³`;
     }
+
+    const lensSubtitle = document.querySelector('.lens-readout-sub');
+    if (lensSubtitle) {
+      lensSubtitle.textContent = isKmno4 ? 'Read at top of meniscus (opaque KMnO₄).' : 'Read at bottom of meniscus.';
+    }
   }
 
   function updateRig() {
@@ -1516,12 +1575,25 @@ requireStudentLogin();
     const fillHeight = buretteInnerHeight * (1 - usedFraction);
     const fill = document.getElementById('buretteFill');
     const cap = document.getElementById('buretteMeniscusCap');
+    const isKmno4 = current && current.titrantName && (current.titrantName.includes('KMnO4') || current.titrantName.includes('KMnO₄'));
     if (fill) {
       fill.setAttribute('height', Math.max(0, fillHeight));
       fill.setAttribute('y', 10 + (buretteInnerHeight - fillHeight));
+      if (isKmno4) {
+        fill.setAttribute('fill', '#7e22ce');
+        fill.style.fill = '#7e22ce';
+      } else {
+        fill.setAttribute('fill', 'url(#liquidGradLab)');
+        fill.style.fill = '';
+      }
     }
     if (cap) {
       cap.setAttribute('cy', 10 + (buretteInnerHeight - fillHeight));
+      if (isKmno4) {
+        cap.setAttribute('fill', '#9333ea');
+      } else {
+        cap.setAttribute('fill', '#38BDF8');
+      }
     }
 
     updateLensView(currentVolume);
@@ -1534,7 +1606,7 @@ requireStudentLogin();
     const diff = currentVolume - eqVol;
 
     let stageColor;
-    if (!indicatorAdded) {
+    if (!indicatorAdded && !isSelfIndicatingExp(current)) {
       // Clean, unindicated fresh analyte solution
       stageColor = 'rgba(56, 189, 248, 0.12)';
     } else if (diff < -0.25) {
@@ -1579,7 +1651,7 @@ requireStudentLogin();
     }
 
     const flaskLabel = document.getElementById('flaskLabel');
-    if (flaskLabel && indicatorAdded && current) {
+    if (flaskLabel && current) {
       const baseName = current.analyteName ? current.analyteName.split(',')[0].split('—')[0].trim() : 'Analyte';
       const indName = current.indicatorName ? current.indicatorName.split(' ')[0] : 'Indicator';
       if (diff >= 0.40) {
@@ -1588,20 +1660,43 @@ requireStudentLogin();
         flaskLabel.innerHTML = `<span style="color:#10B981;font-weight:700;">🎯 Endpoint Reached!</span> (${currentVolume.toFixed(2)} cm³) · Permanent`;
       } else if (diff >= -0.25) {
         flaskLabel.innerHTML = `<span style="color:#F59E0B;font-weight:700;">⏳ Near Endpoint</span> (${currentVolume.toFixed(2)} cm³) · Swirl to mix`;
-      } else {
+      } else if (isSelfIndicatingExp(current)) {
+        flaskLabel.textContent = `${sessionAnalyteVolume.toFixed(2)} cm³ ${baseName} · Self-indicating`;
+      } else if (indicatorAdded) {
         flaskLabel.textContent = `${sessionAnalyteVolume.toFixed(2)} cm³ ${baseName} + ${indName} (${indicatorDropsCount}d)`;
+      }
+    }
+
+    const statusEl = document.getElementById('statusText');
+    if (statusEl) {
+      if (!indicatorAdded && !isSelfIndicatingExp(current)) {
+        statusEl.innerHTML = 'Add indicator to unlock burette.';
+      } else if (currentVolume === 0) {
+        statusEl.innerHTML = 'Burette at <b>0.00 cm³</b>. Click buttons to add titrant.';
+      } else if (diff >= 0.40) {
+        statusEl.innerHTML = `<span style="color:#F43F5E;font-weight:700;">⚠️ Over-titrated (${currentVolume.toFixed(2)} cm³)!</span> Click "Record Endpoint" or "Reset Burette".`;
+      } else if (diff >= 0.00) {
+        statusEl.innerHTML = `<span style="color:#10B981;font-weight:700;">🎯 Endpoint reached (${currentVolume.toFixed(2)} cm³)!</span> Click "Record Endpoint".`;
+      } else if (diff >= -0.25) {
+        statusEl.innerHTML = `<span style="color:#F59E0B;font-weight:700;">⏳ Near endpoint (${currentVolume.toFixed(2)} cm³).</span> Add drop-wise (+0.05 cm³) & swirl.`;
+      } else {
+        statusEl.innerHTML = `Delivered: <b>${currentVolume.toFixed(2)} cm³</b>. Keep adding titrant.`;
       }
     }
   }
 
   function recordTrial() {
-    if (!indicatorAdded) return;
+    if (!indicatorAdded && !isSelfIndicatingExp(current)) return;
     trials.push(currentVolume);
     renderTrials();
     if (trials.length >= 2) {
       updateStepProgress(3, 'Calculate Molarity & Mass');
     } else {
       updateStepProgress(2, 'Record Concordant Trials');
+    }
+    const statusEl = document.getElementById('statusText');
+    if (statusEl) {
+      statusEl.innerHTML = `<span style="color:#10B981;font-weight:700;">✅ Trial ${trials.length} recorded (${currentVolume.toFixed(2)} cm³)!</span> Click "Reset Burette" to refill.`;
     }
     saveDraft();
   }

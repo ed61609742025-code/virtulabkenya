@@ -27,7 +27,12 @@ router.post('/', apiLimiter, authMiddleware, validateSessionSave, asyncHandler(a
     mode = 'free',
     details = {},
     durationSeconds = 0,
-    assignmentId = null
+    assignmentId = null,
+    trialsCount,
+    trialReadings,
+    concordantFound,
+    isSuitable,
+    indicatorCorrect
   } = req.body;
 
   if (studentAnswer == null || trueConc == null) {
@@ -39,7 +44,6 @@ router.post('/', apiLimiter, authMiddleware, validateSessionSave, asyncHandler(a
   const isCorrect = numDiff <= 0.02; // KNEC 0.02 mol/dm3 precision threshold
   const sessionScore = isCorrect ? 100 : Math.max(0, Math.round((1 - Math.min(1, numDiff / 0.10)) * 100));
 
-
   const session = await sessionRepo.saveSession({
     studentId,
     type: titrationKey,
@@ -49,6 +53,11 @@ router.post('/', apiLimiter, authMiddleware, validateSessionSave, asyncHandler(a
     correct: isCorrect,
     score: sessionScore,
     mode,
+    indicatorLabel,
+    indicatorCorrect: indicatorCorrect ?? isSuitable ?? true,
+    trialsCount: trialsCount ?? (details && Array.isArray(details.readings) ? details.readings.length : 0),
+    concordantFound: concordantFound ?? false,
+    trialReadings: trialReadings || (details && details.readings) || null,
     details: {
       titrationTitle,
       indicatorLabel,

@@ -468,6 +468,15 @@ requireStudentLogin();
       ? '<span class="pill pill-ok" style="font-size:1.1rem;padding:6px 14px;">✓ Correct (Pass)</span>'
       : '<span class="pill pill-warn" style="font-size:1.1rem;padding:6px 14px;">✗ Review Needed</span>';
 
+    // Polymorphic details object
+    let d = {};
+    try {
+      if (a.details && typeof a.details === 'object') d = a.details;
+      else if (typeof a.details === 'string') d = JSON.parse(a.details);
+      else if (a.ps_details && typeof a.ps_details === 'object') d = a.ps_details;
+      else if (typeof a.ps_details === 'string') d = JSON.parse(a.ps_details);
+    } catch (e) {}
+
     // Polymorphic answer and benchmark formatting
     let sAns = '—';
     let tVal = '—';
@@ -494,8 +503,10 @@ requireStudentLogin();
       sAns = `${escapeHtml(a.student_functional_group || '—')}`;
       tVal = a.true_functional_group ? `${escapeHtml(a.true_functional_group)}` : 'Standard Functional Group';
     } else {
-      sAns = a.student_answer != null ? Number(a.student_answer).toFixed(4) + ' mol/dm³' : '—';
-      tVal = a.true_value != null ? Number(a.true_value).toFixed(4) + ' mol/dm³' : '—';
+      const studentMolarity = a.student_answer ?? a.ps_student_answer ?? d.studentAnswer;
+      const targetMolarity = a.true_value ?? a.ps_true_value ?? d.expectedConc;
+      sAns = studentMolarity != null ? Number(studentMolarity).toFixed(4) + ' mol/dm³' : '—';
+      tVal = targetMolarity != null ? Number(targetMolarity).toFixed(4) + ' mol/dm³' : '—';
     }
 
     document.getElementById('afStudentAns').textContent = sAns;
@@ -517,19 +528,94 @@ requireStudentLogin();
     }
 
     // 2. Volumetric Titrations
-    if (a.ps_titration_type || a.titration_type || a.trial_readings) {
-      const trialReadings = a.trial_readings;
+    if (a.ps_titration_type || a.titration_type || a.trial_readings || d.titrationKey || d.studentAnswer != null) {
+      const trialReadings = a.trial_readings || d.readings || [];
       const readingsArray = Array.isArray(trialReadings)
         ? trialReadings
         : (trialReadings && Array.isArray(trialReadings.readings) ? trialReadings.readings : []);
-      const readings = readingsArray.map(r => Number(r).toFixed(2)).join(', ');
+      const readings = readingsArray.length > 0
+        ? readingsArray.map(r => Number(r).toFixed(2)).join(', ')
+        : (d.studentAverage ? Number(d.studentAverage).toFixed(2) : '—');
       const examMarks = trialReadings && trialReadings.examMarks ? trialReadings.examMarks : null;
+
+      const titType = a.ps_titration_type || a.titration_type || d.titrationKey || 'acidBase';
+      const titTitle = a.ps_titration_title || a.titration_title || d.titrationTitle || (
+        titType === 'redox' ? 'Redox Titration (KMnO₄ vs Fe²⁺)' :
+        titType === 'precipitation' ? 'Precipitation Titration (Mohr Method)' :
+        titType === 'complexometric' ? 'Complexometric Titration (EDTA Water Hardness)' :
+        titType === 'dibasic' ? 'Standardisation of Dibasic Acid (H₂X)' :
+        titType === 'tribasic' ? 'Standardisation of Phosphoric Acid (H₃PO₄)' :
+        titType === 'weakAcid' ? 'Standardisation of Commercial Vinegar' :
+        titType === 'weakBase' ? 'Back Titration of Aqueous Ammonia' : 'Acid-Base Titration (HCl vs NaOH)'
+      );
+
+      const indUsed = a.indicator_used || d.indicatorLabel || (
+        titType === 'redox' ? 'No indicator needed (self-indicating KMnO₄)' :
+        titType === 'precipitation' ? 'Potassium Chromate (K₂CrO₄)' :
+        titType === 'complexometric' ? 'Erichrome Black T (EBT)' : 'Phenolphthalein'
+      );
+
+      const trialsCount = a.trials_count ?? (readingsArray.length || (d.studentAverage ? 1 : '—'));
+      const avgTitre = d.studentAverage ? Number(d.studentAverage).toFixed(2) + ' cm³' : (readingsArray.length > 0 ? Number(readingsArray[0]).toFixed(2) + ' cm³' : '—');
+
+      const studentMolarity = a.student_answer ?? a.ps_student_answer ?? d.studentAnswer;
+      const targetMolarity = a.true_value ?? a.ps_true_value ?? d.expectedConc;
+
+      // Question E Step Calculation
+      let stepELabel = d.stepELabel;
+      let stepEUnit = d.stepEUnit || 'g/dm³';
+      let stepEVal = d.massConc;
+
+      if (!stepELabel) {
+        if (titType === 'redox') {
+          stepELabel = 'Mass of Iron (Fe) in 1.0 dm³ of Solution A (RAM: Fe = 56.0)';
+          stepEUnit = 'g';
+          if (stepEVal == null && studentMolarity != null) stepEVal = (Number(studentMolarity) * 56.0).toFixed(4);
+        } else if (titType === 'precipitation') {
+          stepELabel = 'Mass of pure NaCl in 250.0 cm³ flask';
+          stepEUnit = 'g';
+          if (stepEVal == null && studentMolarity != null) stepEVal = (Number(studentMolarity) * 0.25 * 58.5).toFixed(4);
+        } else if (titType === 'complexometric') {
+          stepELabel = 'Total Water Hardness as CaCO₃';
+          stepEUnit = 'mg/dm³ (ppm)';
+          if (stepEVal == null && studentMolarity != null) stepEVal = (Number(studentMolarity) * 100.0 * 1000).toFixed(1);
+        } else if (titType === 'dibasic') {
+          stepELabel = 'Relative Formula Mass (RFM) of acid H₂X';
+          stepEUnit = 'g/mol';
+        } else if (titType === 'tribasic') {
+          stepELabel = 'Mass of pure H₃PO₄ in 500.0 cm³ bottle';
+          stepEUnit = 'g';
+          if (stepEVal == null && studentMolarity != null) stepEVal = (Number(studentMolarity) * 0.50 * 98.0).toFixed(4);
+        } else if (titType === 'weakAcid') {
+          stepELabel = 'Percentage (% w/v) Acidity of Vinegar';
+          stepEUnit = '% (w/v)';
+        } else if (titType === 'weakBase') {
+          stepELabel = 'Volume of dry NH₃ gas at s.t.p.';
+          stepEUnit = 'dm³';
+          if (stepEVal == null && studentMolarity != null) stepEVal = (Number(studentMolarity) * 22.4).toFixed(3);
+        } else {
+          stepELabel = 'Mass Concentration of HCl in Solution A';
+          stepEUnit = 'g/dm³';
+          if (stepEVal == null && studentMolarity != null) stepEVal = (Number(studentMolarity) * 36.5).toFixed(4);
+        }
+      }
 
       details.push(`
         <div style="margin-bottom:10px;font-weight:800;color:var(--heading-color);">🧪 Volumetric Analysis Details</div>
-        <div>Practical: <b>${escapeHtml(a.ps_titration_title || a.titration_title || a.ps_titration_type || a.titration_type || 'Titration')}</b></div>
-        <div>Indicator Used: <b>${escapeHtml(a.indicator_used || '—')}</b></div>
-        <div>Trials Conducted: <b>${a.trials_count ?? (readingsArray.length || '—')}</b> (Readings: ${readings || '—'} cm³)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:0.83rem;margin-bottom:10px;background:var(--card-bg);padding:8px 10px;border-radius:8px;border:1px solid var(--card-border);">
+          <div>Practical: <b>${escapeHtml(titTitle)}</b></div>
+          <div>Indicator: <b>${escapeHtml(indUsed)}</b></div>
+          <div>Trials Conducted: <b>${trialsCount}</b> (${readings} cm³)</div>
+          <div>Average Titre: <b>${avgTitre}</b></div>
+        </div>
+
+        <div style="margin:10px 0;background:var(--card-bg);padding:10px 12px;border-radius:8px;border:1px solid var(--card-border);font-size:0.82rem;line-height:1.65;">
+          <div style="font-weight:800;margin-bottom:6px;color:var(--heading-color);">📊 KCSE Volumetric Calculations Breakdown:</div>
+          ${d.molesTitrant != null ? `<div>• (b) Moles of titrant in average titre: <b>${Number(d.molesTitrant).toExponential(4)} mol</b></div>` : ''}
+          ${d.molesAnalyte != null ? `<div>• (c) Moles of analyte reacted: <b>${Number(d.molesAnalyte).toExponential(4)} mol</b></div>` : ''}
+          <div>• (d) Molar concentration: <b>${studentMolarity != null ? Number(studentMolarity).toFixed(4) + ' mol/dm³' : '—'}</b> ${targetMolarity != null ? `<span style="color:var(--text-muted);font-size:0.76rem;">(Standard: ${Number(targetMolarity).toFixed(4)} M)</span>` : ''}</div>
+          ${stepEVal != null ? `<div>• (e) ${escapeHtml(stepELabel)}: <b>${stepEVal} ${escapeHtml(stepEUnit)}</b></div>` : ''}
+        </div>
       `);
 
       if (examMarks) {

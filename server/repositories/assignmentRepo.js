@@ -90,11 +90,14 @@ async function getStudentAssignments(studentId) {
     LEFT JOIN teachers t ON a.teacher_id = t.id
     LEFT JOIN assignment_submissions sub ON sub.assignment_id = a.id AND sub.student_id = $1
     LEFT JOIN (
-      SELECT DISTINCT ON (assignment_id, student_id) *
-      FROM practical_sessions
-      WHERE student_id = $1 AND assignment_id IS NOT NULL
-      ORDER BY assignment_id, student_id, created_at DESC
-    ) ps ON ps.assignment_id = a.id
+      SELECT DISTINCT ON (coalesced_aid, student_id)
+        ps_inner.*,
+        COALESCE(ps_inner.assignment_id, sub_inner.assignment_id) AS coalesced_aid
+      FROM practical_sessions ps_inner
+      LEFT JOIN assignment_submissions sub_inner ON sub_inner.session_id = ps_inner.id
+      WHERE ps_inner.student_id = $1
+      ORDER BY coalesced_aid, ps_inner.student_id, ps_inner.created_at DESC
+    ) ps ON (ps.assignment_id = a.id OR ps.coalesced_aid = a.id OR ps.id = sub.session_id OR (ps.titration_type = a.titration_type AND ps.student_id = $1))
     LEFT JOIN (
       SELECT DISTINCT ON (assignment_id, student_id) *
       FROM qualitative_sessions
@@ -149,14 +152,28 @@ async function getStudentAssignments(studentId) {
         SELECT a.*,
                t.name AS teacher_name,
                t.teacher_code AS teacher_code,
-               (sub.id IS NOT NULL) AS submitted,
-               sub.status AS submission_status,
-               sub.submitted_at AS submitted_at,
+               (sub.id IS NOT NULL OR ps.id IS NOT NULL) AS submitted,
+               COALESCE(sub.status, CASE WHEN ps.id IS NOT NULL THEN 'submitted' ELSE NULL END) AS submission_status,
+               COALESCE(sub.submitted_at, ps.created_at) AS submitted_at,
                sub.teacher_feedback,
-               sub.marked_at
+               sub.marked_at,
+               ps.student_answer AS ps_student_answer,
+               COALESCE(ps.true_conc, ps.true_value, 0) AS ps_true_value,
+               ps.titration_type AS ps_titration_type,
+               ps.titration_title AS ps_titration_title,
+               ps.indicator_used,
+               ps.trials_count,
+               ps.trial_readings,
+               ps.mode AS practical_mode,
+               ps.details AS ps_details,
+               ps.details,
+               ps.student_answer,
+               COALESCE(ps.true_conc, ps.true_value, 0) AS true_value,
+               COALESCE((ps.score >= 8 OR ps.concordant_found = true), false) AS correct
         FROM assignments a
         LEFT JOIN teachers t ON a.teacher_id = t.id
         LEFT JOIN assignment_submissions sub ON sub.assignment_id = a.id AND sub.student_id = $1
+        LEFT JOIN practical_sessions ps ON (ps.assignment_id = a.id OR ps.id = sub.session_id OR (ps.titration_type = a.titration_type AND ps.student_id = $1))
         ${whereClause}
         ORDER BY a.created_at DESC
       `;
@@ -516,7 +533,7 @@ async function getAllSubmissions(teacherId, { page = 1, limit = 50 } = {}) {
     FROM all_candidates c
     JOIN students s ON s.id = c.student_id
     JOIN assignments a ON a.id = c.assignment_id
-    LEFT JOIN practical_sessions ps ON ps.id = c.session_id
+    LEFT JOIN practical_sessions ps ON (ps.id = c.session_id OR (ps.assignment_id = a.id AND ps.student_id = c.student_id))
     LEFT JOIN qualitative_sessions qs ON qs.id = c.qualitative_session_id
     LEFT JOIN organic_sessions os ON os.id = c.organic_session_id
     LEFT JOIN composite_sessions cs ON cs.id = c.composite_session_id
@@ -734,15 +751,31 @@ async function markSubmission(submissionId, teacherId, teacherFeedback) {
   if (typeof submissionId === 'string' && submissionId.includes('_')) {
     const [aId, sId] = submissionId.split('_').map(x => parseInt(x, 10));
     if (aId && sId) {
+      let foundSessionId = null;
+      try {
+        const pRes = await pool.query(
+          `SELECT id FROM practical_sessions WHERE student_id = $1 AND (assignment_id = $2 OR titration_type = (SELECT titration_type FROM assignments WHERE id = $2)) ORDER BY created_at DESC LIMIT 1`,
+          [sId, aId]
+        );
+        foundSessionId = pRes.rows[0]?.id || null;
+        if (foundSessionId) {
+          await pool.query('UPDATE practical_sessions SET assignment_id = $1 WHERE id = $2 AND assignment_id IS NULL', [aId, foundSessionId]);
+        }
+      } catch (e) {}
+
       const upsertQuery = `
-        INSERT INTO assignment_submissions (assignment_id, student_id, status, teacher_feedback, marked_at)
-        VALUES ($1, $2, 'marked', $3, NOW())
+        INSERT INTO assignment_submissions (assignment_id, student_id, session_id, status, teacher_feedback, marked_at)
+        VALUES ($1, $2, $3, 'marked', $4, NOW())
         ON CONFLICT (assignment_id, student_id)
-        DO UPDATE SET status = 'marked', teacher_feedback = COALESCE($3, assignment_submissions.teacher_feedback), marked_at = NOW()
+        DO UPDATE SET
+          status = 'marked',
+          session_id = COALESCE(assignment_submissions.session_id, EXCLUDED.session_id),
+          teacher_feedback = COALESCE($4, assignment_submissions.teacher_feedback),
+          marked_at = NOW()
         RETURNING *
       `;
       try {
-        const result = await pool.query(upsertQuery, [aId, sId, teacherFeedback || null]);
+        const result = await pool.query(upsertQuery, [aId, sId, foundSessionId, teacherFeedback || null]);
         if (result.rows[0]) return result.rows[0];
       } catch (e) {}
     }

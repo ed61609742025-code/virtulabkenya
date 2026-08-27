@@ -1161,30 +1161,86 @@ let currentPage = 1;
       const data = await Assignments.getTeacherList();
       const assignments = data.assignments || [];
 
+      const elTotalAssn = document.getElementById('statAssignmentsCount');
+      if (elTotalAssn) elTotalAssn.textContent = assignments.length;
+
       if (assignments.length === 0) {
-        box.innerHTML = '<div class="empty">No assignments created yet. Use the form below to create one.</div>';
+        box.innerHTML = '<div class="empty">No assignments created yet. Use the authoring studio below to publish your first KCSE practical.</div>';
         return;
       }
 
-      box.innerHTML = assignments.map(a => {
-        const exportBtn = `<button class="btn" onclick="exportAssignmentCsv(${a.id}, '${escapeHtml(a.title).replace(/'/g, "\\'")}')">Download CSV</button>`;
-        const remindBtn = `<button class="btn" style="color:var(--amber-accent);" onclick="sendAssignmentReminder(${a.id}, '${escapeHtml(a.title).replace(/'/g, "\\'")}')" title="Send due date notification to unsubmitted students">⏱️ Remind</button>`;
+      const typeLabels = {
+        kcseComposite: '🏆 KCSE Paper 3 (40m)',
+        acidBase: 'Acid-Base Titration',
+        redox: 'Redox Titration',
+        precipitation: 'Precipitation Titration',
+        complexometric: 'Complexometric',
+        dibasic: 'Dibasic Acid (H₂SO₄)',
+        tribasic: 'Tribasic Acid (H₃PO₄)',
+        weakAcid: 'Weak Acid – Strong Base',
+        weakBase: 'Weak Base – Strong Acid',
+        qualitative: '🧪 Qualitative Salt ID',
+        organic: '🧫 Organic Chemistry',
+        solubility: '🌡️ Solubility Curves',
+        energy: '🔥 Energy Changes',
+        rates: '⚡ Reaction Rates',
+        gas: '💨 Gas Preparation'
+      };
+
+      const cardsHtml = assignments.map(a => {
+        const total = Number(a.total_students) || 0;
+        const submitted = Number(a.submitted_count) || 0;
+        const pct = total > 0 ? Math.min(100, Math.round((submitted / total) * 100)) : 0;
+
+        let dueDateText = 'No deadline set';
+        let isPastDue = false;
+        if (a.due_date) {
+          const d = new Date(a.due_date);
+          dueDateText = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+          if (d.getTime() < Date.now()) {
+            isPastDue = true;
+          }
+        }
+
+        const typeBadge = typeLabels[a.titration_type] || a.titration_type || 'Practical';
 
         return `
-        <div class="assign-item">
-          <div class="info">
-            <div class="title">${escapeHtml(a.title)}</div>
-            <div class="meta">${escapeHtml(a.titration_type || '—')} · Due ${a.due_date ? new Date(a.due_date).toLocaleDateString() : 'no due date'} · ${a.submitted_count}/${a.total_students} students submitted</div>
+          <div class="assign-item">
+            <div>
+              <div class="assign-card-header">
+                <div class="assign-card-title">${escapeHtml(a.title)}</div>
+                <span class="assign-type-pill">${escapeHtml(typeBadge)}</span>
+              </div>
+              
+              ${a.instructions ? `<div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:8px;line-height:1.4;">${escapeHtml(a.instructions)}</div>` : ''}
+
+              <div class="assign-progress-box">
+                <div class="assign-progress-label">
+                  <span>Student Submissions</span>
+                  <b style="color:var(--heading-color);">${submitted} / ${total} submitted (${pct}%)</b>
+                </div>
+                <div class="assign-progress-track">
+                  <div class="assign-progress-bar" style="width: ${pct}%;"></div>
+                </div>
+              </div>
+
+              <div class="assign-card-meta">
+                <span>📅 <b>Due Date:</b> ${dueDateText}</span>
+                ${isPastDue ? '<span class="pill pill-danger" style="font-size:0.68rem;padding:1px 6px;">Overdue</span>' : '<span class="pill pill-ok" style="font-size:0.68rem;padding:1px 6px;">Active</span>'}
+              </div>
+            </div>
+
+            <div class="assign-actions-bar">
+              <button class="btn btn-sm btn-secondary" onclick="sendAssignmentReminder(${a.id}, '${escapeHtml(a.title).replace(/'/g, "\\'")}')" title="Send due date notification to unsubmitted students">⏱️ Remind</button>
+              <button class="btn btn-sm btn-secondary" onclick="exportAssignmentCsv(${a.id}, '${escapeHtml(a.title).replace(/'/g, "\\'")}')" title="Download CSV scorecard">📊 CSV</button>
+              <button class="btn btn-sm btn-primary" onclick='editAssignment(${JSON.stringify(a).replace(/'/g, "&apos;")})'>✏️ Edit</button>
+              <button class="btn btn-sm btn-danger" onclick="deleteAssignment(${a.id}, '${escapeHtml(a.title).replace(/'/g, "\\'")}')" style="margin-left:auto;">🗑️ Delete</button>
+            </div>
           </div>
-          <div class="actions">
-            ${remindBtn}
-            ${exportBtn}
-            <button class="btn" onclick='editAssignment(${JSON.stringify(a).replace(/'/g, "&apos;")})'>Edit</button>
-            <button class="btn btn-danger" onclick="deleteAssignment(${a.id}, '${escapeHtml(a.title).replace(/'/g, "\\'")}')">Delete</button>
-          </div>
-        </div>
-      `;
+        `;
       }).join('');
+
+      box.innerHTML = `<div class="assignments-desktop-grid">${cardsHtml}</div>`;
     } catch (err) {
       box.innerHTML = '<div class="empty">Could not load assignments: ' + escapeHtml(err.message) + '</div>';
     }
@@ -1218,11 +1274,50 @@ let currentPage = 1;
     document.getElementById('aType').value = a.titration_type || 'acidBase';
     document.getElementById('aInstructions').value = a.instructions || '';
     document.getElementById('aDue').value = a.due_date ? a.due_date.slice(0, 10) : '';
-    document.getElementById('formHeading').textContent = 'Edit Assignment';
-    document.getElementById('aSaveBtn').textContent = 'Update Assignment';
-    document.getElementById('aCancelBtn').style.display = 'inline-block';
+    document.getElementById('formHeading').textContent = 'Edit Practical Assignment';
+    document.getElementById('aSaveBtn').innerHTML = '<span>💾 Update Assignment</span>';
+    
+    const cancelBtn = document.getElementById('aCancelBtn');
+    if (cancelBtn) cancelBtn.style.display = 'inline-flex';
+
+    const modeBadge = document.getElementById('studioModeBadge');
+    if (modeBadge) {
+      modeBadge.textContent = 'Editing Mode';
+      modeBadge.style.background = 'var(--amber-bg)';
+      modeBadge.style.color = 'var(--amber-accent)';
+      modeBadge.style.borderColor = 'var(--amber-border)';
+    }
+
+    if (typeof toggleCompositeConfigPanel === 'function') {
+      toggleCompositeConfigPanel();
+    }
+
+    if (a.titration_type === 'kcseComposite' && a.exam_config) {
+      try {
+        const cfg = typeof a.exam_config === 'string' ? JSON.parse(a.exam_config) : a.exam_config;
+        if (cfg.presetKey && document.getElementById('cfgSeriesPreset')) {
+          document.getElementById('cfgSeriesPreset').value = cfg.presetKey;
+        }
+        if (cfg.q1) {
+          if (cfg.q1.solutionA && document.getElementById('cfgQ1SolA')) document.getElementById('cfgQ1SolA').value = cfg.q1.solutionA;
+          if (cfg.q1.solutionB && document.getElementById('cfgQ1SolB')) document.getElementById('cfgQ1SolB').value = cfg.q1.solutionB;
+          if (cfg.q1.ratioA && document.getElementById('cfgQ1RatioA')) document.getElementById('cfgQ1RatioA').value = cfg.q1.ratioA;
+          if (cfg.q1.ratioB && document.getElementById('cfgQ1RatioB')) document.getElementById('cfgQ1RatioB').value = cfg.q1.ratioB;
+          if (cfg.q1.pipetteVolume && document.getElementById('cfgQ1Pipette')) document.getElementById('cfgQ1Pipette').value = String(cfg.q1.pipetteVolume);
+          if (cfg.q1.indicator && document.getElementById('cfgQ1Indicator')) document.getElementById('cfgQ1Indicator').value = cfg.q1.indicator;
+        }
+        if (cfg.q2 && cfg.q2.salt && document.getElementById('cfgQ2Salt')) {
+          document.getElementById('cfgQ2Salt').value = cfg.q2.salt;
+        }
+        if (cfg.q3 && cfg.q3.organic && document.getElementById('cfgQ3Organic')) {
+          document.getElementById('cfgQ3Organic').value = cfg.q3.organic;
+        }
+      } catch (e) {}
+    }
+
     document.getElementById('assignMsg').innerHTML = '';
-    window.scrollTo({ top: document.querySelector('.assign-form').offsetTop - 20, behavior: 'smooth' });
+    const studio = document.getElementById('assignmentStudioCard') || document.querySelector('.assign-form');
+    if (studio) studio.scrollIntoView({ behavior: 'smooth' });
   }
 
   function cancelEdit() {
@@ -1230,11 +1325,28 @@ let currentPage = 1;
     document.getElementById('aTitle').value = '';
     document.getElementById('aInstructions').value = '';
     document.getElementById('aDue').value = '';
-    document.getElementById('formHeading').textContent = 'Create Assignment';
-    document.getElementById('aSaveBtn').textContent = 'Create Assignment';
-    document.getElementById('aCancelBtn').style.display = 'none';
+    document.getElementById('formHeading').textContent = 'Create Practical Assignment';
+    document.getElementById('aSaveBtn').innerHTML = '<span>🚀 Publish Practical Assignment</span>';
+    
+    const cancelBtn = document.getElementById('aCancelBtn');
+    if (cancelBtn) cancelBtn.style.display = 'none';
+
+    const modeBadge = document.getElementById('studioModeBadge');
+    if (modeBadge) {
+      modeBadge.textContent = 'Authoring Mode';
+      modeBadge.style.background = 'var(--blue-bg)';
+      modeBadge.style.color = 'var(--blue-accent)';
+      modeBadge.style.borderColor = 'var(--blue-border)';
+    }
+
     document.getElementById('assignMsg').innerHTML = '';
   }
+
+  window.scrollToCreateAssignment = function() {
+    cancelEdit();
+    const el = document.getElementById('assignmentStudioCard') || document.querySelector('.assign-form');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  };
 
   async function deleteAssignment(id, title) {
     if (!confirm('Delete "' + title + '"? This cannot be undone. Students\' completed session data will not be affected.')) {
@@ -1251,21 +1363,62 @@ let currentPage = 1;
 
   async function loadSubmittedAssignments() {
     const box = document.getElementById('submittedAssignmentsList');
-    const typeLabels = {
-      acidBase: 'Acid-Base', redox: 'Redox', precipitation: 'Precipitation',
-      complexometric: 'Complexometric', dibasic: 'Dibasic Acid', tribasic: 'Tribasic Acid',
-      weakAcid: 'Weak Acid', weakBase: 'Weak Base'
-    };
     try {
-      const data = await Assignments.getAllSubmissions({ limit: 50 });
+      const data = await Assignments.getAllSubmissions({ limit: 100 });
       const submissions = data.submissions || [];
+      window._allTeacherSubmissions = submissions;
 
-      if (submissions.length === 0) {
-        box.innerHTML = '<div class="empty">No student assignment submissions yet.</div>';
-        return;
+      const pendingCount = submissions.filter(s => s.submission_status !== 'marked').length;
+      const markedCount = submissions.length - pendingCount;
+      const badge = document.getElementById('ungradedBadge');
+      if (badge) {
+        badge.textContent = pendingCount;
+        badge.style.display = pendingCount > 0 ? 'inline-block' : 'none';
       }
 
-      const rows = submissions.flatMap(sub => {
+      const elPending = document.getElementById('statPendingCount');
+      if (elPending) elPending.textContent = pendingCount;
+      const elMarked = document.getElementById('statMarkedCount');
+      if (elMarked) elMarked.textContent = markedCount;
+      const elTotalSubs = document.getElementById('statSubmissionsTotal');
+      if (elTotalSubs) elTotalSubs.textContent = submissions.length;
+
+      renderFilteredSubmissions(window._activeSubmissionsFilter || 'all');
+    } catch (err) {
+      box.innerHTML = '<div class="empty">Could not load submitted assignments: ' + escapeHtml(err.message) + '</div>';
+    }
+  }
+
+  window.filterSubmissionsTab = function(filter, btnEl) {
+    if (btnEl) {
+      document.querySelectorAll('#submissionFilterTabs .filter-pill-btn').forEach(b => b.classList.remove('active'));
+      btnEl.classList.add('active');
+    }
+    window._activeSubmissionsFilter = filter;
+    renderFilteredSubmissions(filter);
+  };
+
+  function renderFilteredSubmissions(filter) {
+    const box = document.getElementById('submittedAssignmentsList');
+    const allSubs = window._allTeacherSubmissions || [];
+    let submissions = allSubs;
+    if (filter === 'pending') {
+      submissions = allSubs.filter(s => s.submission_status !== 'marked');
+    } else if (filter === 'marked') {
+      submissions = allSubs.filter(s => s.submission_status === 'marked');
+    }
+
+    if (submissions.length === 0) {
+      const emptyText = filter === 'pending'
+        ? '🎉 All student practical submissions have been marked and released!'
+        : (filter === 'marked'
+          ? 'No student submissions have been approved & released yet.'
+          : 'No student assignment submissions yet.');
+      box.innerHTML = `<div class="empty">${emptyText}</div>`;
+      return;
+    }
+
+    const rows = submissions.flatMap(sub => {
         const isMarked = sub.submission_status === 'marked';
         const statusBadge = isMarked
           ? '<span class="pill pill-ok">🟢 Marked & Released</span>'
@@ -1608,16 +1761,23 @@ let currentPage = 1;
       }).join('');
 
       box.innerHTML = `
-        <table>
-          <thead>
-            <tr><th>Student</th><th>Assignment</th><th>Status</th><th>Student Answer</th><th>Result</th><th>Submitted</th><th>Action</th></tr>
-          </thead>
-          <tbody>${rows}</tbody>
-        </table>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:20%;">Student & Form</th>
+                <th style="width:22%;">Assignment Title</th>
+                <th style="width:14%;">Status</th>
+                <th style="width:14%;">Student Score / Answer</th>
+                <th style="width:10%;">Result</th>
+                <th style="width:10%;">Submitted</th>
+                <th style="width:10%;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
       `;
-    } catch (err) {
-      box.innerHTML = '<div class="empty">Could not load submitted assignments: ' + escapeHtml(err.message) + '</div>';
-    }
   }
 
   async function markStudentSubmission(submissionId, studentName) {

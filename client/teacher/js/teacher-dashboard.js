@@ -1502,17 +1502,107 @@ let currentPage = 1;
 
           const trueConcVal = sub.true_value != null ? parseFloat(sub.true_value) : (detailsObj.expectedConc != null ? parseFloat(detailsObj.expectedConc) : null);
           const rfm = detailsObj.rfm || 40;
-          const ratio = detailsObj.ratio || 1;
+
+          const titrKey = detailsObj.titrationKey || sub.titration_type || (sub.assignment_type && sub.assignment_type !== 'titration' ? sub.assignment_type : 'acidBase');
+          
+          const TITRATION_SPECS = {
+            acidBase: {
+              titrantLabel: 'NaOH (Solution B)',
+              analyteLabel: 'HCl (Solution A)',
+              ratio: 1,
+              stepBLabel: '(b) Moles of NaOH in Solution B (n₁):',
+              stepCLabel: '(c) Moles of HCl in flask aliquot (n₂ = n₁):',
+              stepDLabel: '(d) Molar concentration of HCl in Solution A (mol/dm³):',
+              stepELabel: '(e) Mass concentration of HCl in Solution A (H = 1.0, Cl = 35.5):',
+              stepEUnit: 'g/dm³',
+              calcStepE: (m) => m * 36.5
+            },
+            redox: {
+              titrantLabel: 'KMnO₄ (Solution B)',
+              analyteLabel: 'Fe²⁺ (Solution A)',
+              ratio: 5,
+              stepBLabel: '(b) Moles of KMnO₄ in Solution B (n₁):',
+              stepCLabel: '(c) Moles of Fe²⁺ in flask aliquot (Mole ratio 1 KMnO₄ : 5 Fe²⁺, n₂ = 5 × n₁):',
+              stepDLabel: '(d) Molar concentration of Fe²⁺ in Solution A (mol/dm³):',
+              stepELabel: '(e) Mass of Iron (Fe) in 1.0 dm³ of Solution A in g (RAM: Fe = 56.0):',
+              stepEUnit: 'g',
+              calcStepE: (m) => m * 56.0
+            },
+            precipitation: {
+              titrantLabel: 'AgNO₃ (Solution B)',
+              analyteLabel: 'NaCl (Solution A)',
+              ratio: 1,
+              stepBLabel: '(b) Moles of AgNO₃ in Solution B (n₁):',
+              stepCLabel: '(c) Moles of NaCl in flask aliquot (n₂ = n₁):',
+              stepDLabel: '(d) Molar concentration of NaCl in Solution A (mol/dm³):',
+              stepELabel: '(e) Mass of pure NaCl dissolved in 250.0 cm³ flask in g (Na = 23.0, Cl = 35.5):',
+              stepEUnit: 'g',
+              calcStepE: (m) => m * (250 / 1000) * 58.5
+            },
+            complexometric: {
+              titrantLabel: 'EDTA (Solution B)',
+              analyteLabel: 'Hard water Ca²⁺ (Solution A)',
+              ratio: 1,
+              stepBLabel: '(b) Moles of EDTA in Solution B (n₁):',
+              stepCLabel: '(c) Moles of Ca²⁺ in flask aliquot (n₂ = n₁):',
+              stepDLabel: '(d) Molar concentration of Ca²⁺ in Solution A (mol/dm³):',
+              stepELabel: '(e) Total Water Hardness as CaCO₃ in mg/dm³ (ppm) (Ca = 40.0, C = 12.0, O = 16.0):',
+              stepEUnit: 'mg/dm³ (ppm)',
+              calcStepE: (m) => m * 100.0 * 1000
+            },
+            dibasic: {
+              titrantLabel: 'NaOH (Solution B)',
+              analyteLabel: 'H₂X (Solution A)',
+              ratio: 0.5,
+              stepBLabel: '(b) Moles of NaOH in Solution B (n₁):',
+              stepCLabel: '(c) Moles of H₂X in flask aliquot (Mole ratio 2 NaOH : 1 H₂X, n₂ = 0.5 × n₁):',
+              stepDLabel: '(d) Molar concentration of acid H₂X in Solution A (mol/dm³):',
+              stepELabel: '(e) Relative Formula Mass (RFM) of acid H₂X (Solution A):',
+              stepEUnit: 'g/mol',
+              calcStepE: (m) => m > 0 ? ((detailsObj.massConc || 4.90) / m) : 98.0
+            },
+            tribasic: {
+              titrantLabel: 'NaOH (Solution B)',
+              analyteLabel: 'H₃PO₄ (Solution A)',
+              ratio: 1 / 3,
+              stepBLabel: '(b) Moles of NaOH in Solution B (n₁):',
+              stepCLabel: '(c) Moles of H₃PO₄ in flask aliquot (Mole ratio 3 NaOH : 1 H₃PO₄, n₂ = 1/3 × n₁):',
+              stepDLabel: '(d) Molar concentration of H₃PO₄ in Solution A (mol/dm³):',
+              stepELabel: '(e) Mass of pure H₃PO₄ in 500.0 cm³ bottle in g (H = 1.0, P = 31.0, O = 16.0):',
+              stepEUnit: 'g',
+              calcStepE: (m) => m * (500 / 1000) * 98.0
+            },
+            weakAcid: {
+              titrantLabel: 'NaOH (Solution B)',
+              analyteLabel: 'Diluted vinegar (Solution A)',
+              ratio: 1,
+              stepBLabel: '(b) Moles of NaOH in Solution B (n₁):',
+              stepCLabel: '(c) Moles of CH₃COOH in flask aliquot (n₂ = n₁):',
+              stepDLabel: '(d) Molar concentration of diluted vinegar in Solution A (mol/dm³):',
+              stepELabel: '(e) Percentage (% w/v) Acidity of original vinegar (10× diluted sample; C = 12.0, H = 1.0, O = 16.0):',
+              stepEUnit: '% (w/v)',
+              calcStepE: (m) => (m * 10.0 * 60.0) / 10.0
+            },
+            weakBase: {
+              titrantLabel: 'HCl (Solution B)',
+              analyteLabel: 'NH₃ (Solution A)',
+              ratio: 1,
+              stepBLabel: '(b) Moles of HCl in Solution B (n₁):',
+              stepCLabel: '(c) Moles of NH₃ in flask aliquot (n₂ = n₁):',
+              stepDLabel: '(d) Molar concentration of NH₃ in Solution A (mol/dm³):',
+              stepELabel: '(e) Volume of dry NH₃ gas at s.t.p. in 1.0 dm³ Solution A in dm³ (Molar vol = 22.4 dm³):',
+              stepEUnit: 'dm³',
+              calcStepE: (m) => m * 22.4
+            }
+          };
+
+          const spec = TITRATION_SPECS[titrKey] || TITRATION_SPECS.acidBase;
+          const ratio = (detailsObj.ratio != null) ? detailsObj.ratio : spec.ratio;
           const analyteVol = detailsObj.analyteVolume || 25.0;
           const titrantConc = detailsObj.titrantConc || 0.1;
 
-          // Calculate expected values for marking
+          // Determine student's average titre V_avg
           let expectedAvg = null;
-          let expectedMolesT = null;
-          let expectedMolesA = null;
-          let expectedMolarity = trueConcVal;
-          let expectedMassConc = trueConcVal != null ? trueConcVal * rfm : null;
-
           if (readingsArray.length > 0) {
             let concordantReadings = [];
             for (let i = 0; i < readingsArray.length; i++) {
@@ -1525,12 +1615,43 @@ let currentPage = 1;
             }
             if (concordantReadings.length === 0) concordantReadings = readingsArray;
             expectedAvg = concordantReadings.reduce((a, b) => a + b, 0) / concordantReadings.length;
-            
-            if (expectedMolarity != null) {
-              expectedMolesT = (titrantConc * expectedAvg) / 1000;
-              expectedMolesA = expectedMolesT * ratio;
-            }
+          } else if (studentAvg != null) {
+            expectedAvg = studentAvg;
           }
+
+          // Consequential base average
+          const baseAvg = (studentAvg != null && !isNaN(studentAvg)) ? studentAvg : expectedAvg;
+
+          // Calculate expected values based on student's own average titre
+          let expectedMolesT = null;
+          let expectedMolesA = null;
+          let expectedMolarityFromAvg = null;
+          let expectedStepEFromAvg = null;
+
+          if (baseAvg != null) {
+            expectedMolesT = (titrantConc * baseAvg) / 1000;
+            expectedMolesA = expectedMolesT * ratio;
+            expectedMolarityFromAvg = (expectedMolesA * 1000) / analyteVol;
+            expectedStepEFromAvg = spec.calcStepE(expectedMolarityFromAvg);
+          }
+
+          // True benchmark values from database (if available)
+          const benchmarkMolarity = trueConcVal != null ? trueConcVal : (detailsObj.expectedConc != null ? parseFloat(detailsObj.expectedConc) : expectedMolarityFromAvg);
+          const benchmarkStepE = (detailsObj.expectedStepE != null) ? parseFloat(detailsObj.expectedStepE) : (benchmarkMolarity != null ? spec.calcStepE(benchmarkMolarity) : null);
+
+          // Values to display as primary expected
+          const displayExpectedMolesT = (detailsObj.expectedStepB != null) ? parseFloat(detailsObj.expectedStepB) : expectedMolesT;
+          const displayExpectedMolesA = (detailsObj.expectedStepC != null) ? parseFloat(detailsObj.expectedStepC) : expectedMolesA;
+          const displayExpectedMolarity = (detailsObj.expectedStepD != null) ? parseFloat(detailsObj.expectedStepD) : (benchmarkMolarity || expectedMolarityFromAvg);
+          const displayExpectedStepE = (detailsObj.expectedStepE != null) ? parseFloat(detailsObj.expectedStepE) : (benchmarkStepE || expectedStepEFromAvg);
+
+          // Consequential expected values from student's OWN preceding input
+          const conseqMolesA = (studentMolesT != null && !isNaN(studentMolesT)) ? studentMolesT * ratio : null;
+          const conseqMolarity = (studentMolesA != null && !isNaN(studentMolesA)) ? (studentMolesA * 1000) / analyteVol : ((conseqMolesA != null) ? (conseqMolesA * 1000) / analyteVol : null);
+          const conseqStepE = (studentMolarity != null && !isNaN(studentMolarity)) ? spec.calcStepE(studentMolarity) : null;
+
+          const stepELabel = detailsObj.stepELabel || spec.stepELabel;
+          const stepEUnit = detailsObj.stepEUnit || spec.stepEUnit;
 
           // Build Titration Readings Table
           let tableRowsHtml = '';
@@ -1577,26 +1698,41 @@ let currentPage = 1;
             </div>
           ` : '';
 
-          // Helper function for marking student answers
-          function markAnswer(studentVal, expectedVal, unit = '', tolPct = 0.025, absTol = 0.20) {
+          // Helper function for marking student answers with consequential marking support
+          function markAnswer(studentVal, expectedVal, unit = '', tolPct = 0.03, absTol = 0.20, consequentialVal = null) {
             if (studentVal == null || isNaN(studentVal)) {
               return '<span class="pill pill-warn" style="font-size:0.74rem;">⚠️ Not Answered</span>';
             }
             if (expectedVal == null || isNaN(expectedVal)) {
               return `<b style="color:var(--heading-color);">${studentVal} ${unit}</b>`;
             }
-            const diff = Math.abs(studentVal - expectedVal);
-            const isOk = unit === 'cm³' ? diff <= absTol : diff <= Math.max(0.0005, expectedVal * tolPct);
+            const diffPrimary = Math.abs(studentVal - expectedVal);
+            const isPrimaryOk = unit === 'cm³' ? diffPrimary <= absTol : diffPrimary <= Math.max(0.0005, expectedVal * tolPct);
             
+            let isConsequentialOk = false;
+            if (!isPrimaryOk && consequentialVal != null && !isNaN(consequentialVal) && consequentialVal > 0) {
+              const diffConseq = Math.abs(studentVal - consequentialVal);
+              isConsequentialOk = diffConseq <= Math.max(0.0005, consequentialVal * tolPct);
+            }
+
+            const isOk = isPrimaryOk || isConsequentialOk;
             const badgeClass = isOk ? 'pill-ok' : 'pill-warn';
-            const icon = isOk ? '✓ Correct' : '✗ Incorrect';
+            const icon = isPrimaryOk ? '✓ Correct' : (isConsequentialOk ? '✓ Consequential Mark' : '✗ Incorrect');
             const color = isOk ? 'var(--green-accent)' : 'var(--red-accent)';
+
+            const decimals = unit === 'cm³' ? 2 : (unit === 'mol' ? 6 : (unit === 'mg/dm³ (ppm)' ? 1 : 4));
+            const expFormatted = expectedVal.toFixed(decimals);
+
+            let extraNote = `(Expected: ${expFormatted} ${unit})`;
+            if (isConsequentialOk) {
+              extraNote = `(Consequential credit from previous step: ${consequentialVal.toFixed(decimals)} ${unit} · Benchmark: ${expFormatted} ${unit})`;
+            }
 
             return `
               <div style="display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;">
                 <b style="font-size:0.88rem;color:${color};">${studentVal} ${unit}</b>
                 <span class="pill ${badgeClass}" style="font-size:0.72rem;padding:2px 8px;font-weight:700;">${icon}</span>
-                <span style="font-size:0.75rem;color:var(--text-muted);">(Expected: ${expectedVal.toFixed(unit === 'cm³' ? 2 : (unit === 'mol' ? 6 : 4))} ${unit})</span>
+                <span style="font-size:0.75rem;color:var(--text-muted);">${extraNote}</span>
               </div>
             `;
           }
@@ -1621,23 +1757,23 @@ let currentPage = 1;
                 </div>
 
                 <div style="background:var(--card-bg);padding:8px 12px;border-radius:8px;border:1px solid var(--card-border);">
-                  <span style="color:var(--text-muted);font-weight:600;">(b) Moles of Titrant in Solution B (n₁):</span> &nbsp;
-                  ${markAnswer(studentMolesT, expectedMolesT, 'mol')}
+                  <span style="color:var(--text-muted);font-weight:600;">${spec.stepBLabel}</span> &nbsp;
+                  ${markAnswer(studentMolesT, displayExpectedMolesT, 'mol')}
                 </div>
 
                 <div style="background:var(--card-bg);padding:8px 12px;border-radius:8px;border:1px solid var(--card-border);">
-                  <span style="color:var(--text-muted);font-weight:600;">(c) Moles of Analyte in Flask (n₂):</span> &nbsp;
-                  ${markAnswer(studentMolesA, expectedMolesA, 'mol')}
+                  <span style="color:var(--text-muted);font-weight:600;">${spec.stepCLabel}</span> &nbsp;
+                  ${markAnswer(studentMolesA, displayExpectedMolesA, 'mol', 0.03, 0.20, conseqMolesA)}
                 </div>
 
                 <div style="background:var(--card-bg);padding:8px 12px;border-radius:8px;border:1px solid var(--card-border);">
-                  <span style="color:var(--text-muted);font-weight:600;">(d) Molar Concentration (mol/dm³):</span> &nbsp;
-                  ${markAnswer(studentMolarity, expectedMolarity, 'M')}
+                  <span style="color:var(--text-muted);font-weight:600;">${spec.stepDLabel}</span> &nbsp;
+                  ${markAnswer(studentMolarity, displayExpectedMolarity, 'M', 0.03, 0.20, conseqMolarity)}
                 </div>
 
                 <div style="background:var(--card-bg);padding:8px 12px;border-radius:8px;border:1px solid var(--card-border);">
-                  <span style="color:var(--text-muted);font-weight:600;">(e) Mass Concentration (g/dm³):</span> &nbsp;
-                  ${markAnswer(studentMassConc, expectedMassConc, 'g/dm³')}
+                  <span style="color:var(--text-muted);font-weight:600;">${stepELabel}</span> &nbsp;
+                  ${markAnswer(studentMassConc, displayExpectedStepE, stepEUnit, 0.03, 0.20, conseqStepE)}
                 </div>
 
                 <div style="margin-top:6px;font-size:0.78rem;color:var(--text-muted);display:flex;gap:16px;">
@@ -1648,7 +1784,6 @@ let currentPage = 1;
               </div>
             </div>
           `);
-
           if (examMarks) {
             detailBlocks.push(`
               <div style="margin-top:12px;background:var(--card-bg);padding:12px;border-radius:10px;border:1px solid var(--card-border);">

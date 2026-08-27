@@ -152,7 +152,7 @@ requireStudentLogin();
       titrantRange: [0.0150, 0.0260],
       titrantConcOptions: [0.0180, 0.0200, 0.0220, 0.0240],
       ratio: 5,
-      rfm: 278.0,
+      rfm: 56.0, // RAM of Iron (Fe) = 56.0 for Question (e)
       concRange: [0.0600, 0.1350],
       briefTemplate: (vol, tc) => `
         <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--cyan-accent);font-weight:800;margin-bottom:6px;">🇰🇪 KCSE CHEMISTRY PAPER 3 (PRACTICAL) · REDOX VOLUMETRIC ANALYSIS</div>
@@ -2223,6 +2223,7 @@ requireStudentLogin();
         durationSeconds: isExam ? (900 - Math.max(0, examRemainingSeconds)) : sessionSeconds,
         assignmentId: linkedAssignmentId || undefined,
         details: {
+          titrationKey: current.key,
           titrationTitle: current.title,
           indicatorLabel: selectedIndicator || current.indicatorName,
           studentAverage: studentAverage,
@@ -2235,7 +2236,19 @@ requireStudentLogin();
           titrantConc: sessionTitrantConc,
           rfm: current.rfm,
           ratio: current.ratio,
-          readings: trials
+          readings: trials,
+          stepELabel: typeof current.questions[4].label === 'function' ? current.questions[4].label({ sessionMassConc }) : current.questions[4].label,
+          stepEUnit: (current.key === 'complexometric') ? 'mg/dm³ (ppm)' : (current.key === 'dibasic' ? 'g/mol' : (current.key === 'weakAcid' ? '% (w/v)' : (current.key === 'weakBase' ? 'dm³' : 'g'))),
+          expectedStepB: (sessionTitrantConc * studentAverage) / 1000,
+          expectedStepC: ((sessionTitrantConc * studentAverage) / 1000) * current.ratio,
+          expectedStepD: expectedConcFromStudentAvg,
+          expectedStepE: current.questions[4].calcExpected({
+            studentAvg: studentAverage,
+            sessionTitrantConc,
+            sessionAnalyteVolume,
+            sessionMassConc,
+            current
+          })
         }
       });
 

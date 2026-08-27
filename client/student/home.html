@@ -25,7 +25,7 @@
 <link rel="stylesheet" href="../shared/pwa-installer.css">
 <link rel="stylesheet" href="../shared/brilliant-theme.css">
 <link rel="stylesheet" href="../shared/gamification-engine.css">
-<link rel="stylesheet" href="css/dashboard.css">
+<link rel="stylesheet" href="css/dashboard.css?v=57">
 <link rel="stylesheet" href="css/skill-tree.css">
 
 <style>
@@ -1419,29 +1419,37 @@
   </nav>
 
   <!-- Student Assignment Feedback Modal -->
-  <div id="assignmentFeedbackModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(8px); z-index:20000; align-items:center; justify-content:center; padding:20px;">
-    <div style="background:var(--card-bg); border:2px solid var(--acad-emerald); border-radius:14px; max-width:520px; width:100%; padding:26px; box-shadow:var(--shadow-lg); color:var(--text-main);">
-      <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1.5px solid var(--card-border); padding-bottom:14px; margin-bottom:18px;">
-        <div>
-          <span style="background:var(--acad-emerald); color:#FFF; padding:3px 10px; border-radius:4px; font-size:0.72rem; font-weight:800; font-family:'JetBrains Mono', monospace;">OFFICIALLY GRADED</span>
-          <h3 id="afTitle" style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.15rem; font-weight:800; margin-top:6px; color:var(--heading-color);">Assignment Title</h3>
+  <div id="assignmentFeedbackModal" class="af-modal-backdrop" onclick="if(event.target === this) closeFeedbackModal()" style="display:none;">
+    <div class="af-modal-card" role="dialog" aria-modal="true" aria-labelledby="afTitle">
+      <!-- Fixed / Sticky Modal Header -->
+      <div class="af-modal-header">
+        <div class="af-modal-header-left">
+          <div class="af-badge-row">
+            <span class="af-badge-pill">OFFICIALLY GRADED</span>
+            <span id="afDate" class="af-date-text">Marked recently</span>
+          </div>
+          <h3 id="afTitle" class="af-modal-title">Assignment Title</h3>
         </div>
-        <div id="afDate" style="font-size:0.78rem; color:var(--text-muted); font-family:'JetBrains Mono', monospace; font-weight:700;">Marked recently</div>
+        <button type="button" class="af-modal-close-btn" onclick="closeFeedbackModal()" aria-label="Close modal" title="Close (Esc)">✕</button>
       </div>
 
-      <div style="text-align:center; margin-bottom:20px;" id="afStatus"></div>
+      <!-- Scrollable Modal Body -->
+      <div class="af-modal-body">
+        <div style="text-align:center; margin-bottom:18px;" id="afStatus"></div>
 
-      <div style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:10px; padding:16px; font-size:0.88rem; line-height:1.7; margin-bottom:18px;">
-        <div><b>Your Submitted Reading:</b> <span id="afStudentAns" style="font-family:'JetBrains Mono', monospace; font-weight:800; color:var(--cyan-accent);">—</span></div>
-        <div><b>Standard Target Value:</b> <span id="afTrueVal" style="font-family:'JetBrains Mono', monospace; font-weight:800;">—</span></div>
+        <div class="af-readings-card">
+          <div><b>Your Submitted Reading:</b> <span id="afStudentAns" style="font-family:'JetBrains Mono', monospace; font-weight:800; color:var(--cyan-accent);">—</span></div>
+          <div><b>Standard Target Value:</b> <span id="afTrueVal" style="font-family:'JetBrains Mono', monospace; font-weight:800;">—</span></div>
+        </div>
+
+        <div id="afDetails" class="af-details-card"></div>
+
+        <div id="afComments" class="af-comments-card"></div>
       </div>
 
-      <div id="afDetails" style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:10px; padding:14px 16px; font-size:0.86rem; line-height:1.6; color:var(--text-main); margin-bottom:18px;"></div>
-
-      <div id="afComments" style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:10px; padding:14px 16px; font-size:0.86rem; line-height:1.6; color:var(--cyan-accent); margin-bottom:18px;"></div>
-
-      <div style="text-align:right;">
-        <button class="btn btn-primary" onclick="closeFeedbackModal()" style="padding:10px 24px; font-weight:800; border-radius:8px;">Close Feedback</button>
+      <!-- Pinned / Sticky Modal Footer -->
+      <div class="af-modal-footer">
+        <button type="button" class="btn btn-primary af-close-action-btn" onclick="closeFeedbackModal()">Close Feedback</button>
       </div>
     </div>
   </div>
@@ -1476,7 +1484,7 @@
   <script src="../shared/brilliant-ui.js"></script>
   <script src="../shared/gamification-engine.js"></script>
   <script src="js/skill-tree.js"></script>
-  <script src="js/student-dashboard.js?v=56"></script>
+  <script src="js/student-dashboard.js?v=57"></script>
 
   <script>
     // Tab switching handler

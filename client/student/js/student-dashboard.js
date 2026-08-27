@@ -462,9 +462,19 @@ requireStudentLogin();
   function closeFeedbackModal() {
     const modal = document.getElementById('assignmentFeedbackModal');
     if (modal) modal.style.display = 'none';
+    document.body.style.overflow = '';
   }
   window.closeFeedbackModal = closeFeedbackModal;
   window.loadAssignments = loadAssignments;
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const modal = document.getElementById('assignmentFeedbackModal');
+      if (modal && modal.style.display !== 'none') {
+        closeFeedbackModal();
+      }
+    }
+  });
 
   function openAssignmentFeedbackModal(a) {
     const modal = document.getElementById('assignmentFeedbackModal');
@@ -719,6 +729,7 @@ requireStudentLogin();
     }
 
     modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
   }
 
   function updateMwalimuAdvice(sessions) {

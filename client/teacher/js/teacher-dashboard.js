@@ -1158,8 +1158,15 @@ let currentPage = 1;
   async function loadTeacherAssignments() {
     const box = document.getElementById('assignmentsManageList');
     try {
-      const data = await Assignments.getTeacherList();
-      const assignments = data.assignments || [];
+      const rawAssignments = data.assignments || [];
+      const seen = new Set();
+      const assignments = [];
+      for (const a of rawAssignments) {
+        if (a && a.id != null && !seen.has(a.id)) {
+          seen.add(a.id);
+          assignments.push(a);
+        }
+      }
 
       const elTotalAssn = document.getElementById('statAssignmentsCount');
       if (elTotalAssn) elTotalAssn.textContent = assignments.length;
@@ -1364,8 +1371,16 @@ let currentPage = 1;
   async function loadSubmittedAssignments() {
     const box = document.getElementById('submittedAssignmentsList');
     try {
-      const data = await Assignments.getAllSubmissions({ limit: 100 });
-      const submissions = data.submissions || [];
+      const rawSubs = data.submissions || [];
+      const seenSub = new Set();
+      const submissions = [];
+      for (const s of rawSubs) {
+        const subKey = s.sub_key || (s.assignment_id + '_' + s.student_id);
+        if (subKey && !seenSub.has(subKey)) {
+          seenSub.add(subKey);
+          submissions.push(s);
+        }
+      }
       window._allTeacherSubmissions = submissions;
 
       const pendingCount = submissions.filter(s => s.submission_status !== 'marked').length;

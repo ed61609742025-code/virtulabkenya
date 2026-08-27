@@ -337,8 +337,17 @@ requireStudentLogin();
     const box = document.getElementById('assignmentsList');
     if (!box) return;
     try {
-      const data = await Assignments.getMine();
-      const assignments = data.assignments || [];
+      const rawAssignments = data.assignments || [];
+      const seen = new Set();
+      const assignments = [];
+      for (const item of rawAssignments) {
+        if (item && item.id != null) {
+          if (!seen.has(item.id)) {
+            seen.add(item.id);
+            assignments.push(item);
+          }
+        }
+      }
       window._vlk_student_assignments = assignments;
 
       updateNotificationsUI(assignments);

@@ -4,8 +4,25 @@
 // ============================================================
 
 let audioCtx = null;
+let hasUserInteractedAudio = false;
+
+function markUserAudioInteraction() {
+  hasUserInteractedAudio = true;
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume().catch(() => {});
+  }
+  window.removeEventListener('pointerdown', markUserAudioInteraction, true);
+  window.removeEventListener('keydown', markUserAudioInteraction, true);
+  window.removeEventListener('touchstart', markUserAudioInteraction, true);
+}
+if (typeof window !== 'undefined') {
+  window.addEventListener('pointerdown', markUserAudioInteraction, { capture: true, passive: true });
+  window.addEventListener('keydown', markUserAudioInteraction, { capture: true, passive: true });
+  window.addEventListener('touchstart', markUserAudioInteraction, { capture: true, passive: true });
+}
 
 function getAudioContext() {
+  if (!hasUserInteractedAudio) return null;
   if (!audioCtx) {
     const AudioContextClass = window.AudioContext || window.webkitAudioContext;
     if (AudioContextClass) {
@@ -13,7 +30,7 @@ function getAudioContext() {
     }
   }
   if (audioCtx && audioCtx.state === 'suspended') {
-    audioCtx.resume();
+    audioCtx.resume().catch(() => {});
   }
   return audioCtx;
 }

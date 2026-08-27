@@ -8,7 +8,23 @@
 
   // ── 1. Web Audio Micro-Synth (100% Offline Cues) ─────────────
   let bAudioCtx = null;
+  let hasUserInteracted = false;
+
+  function markUserInteraction() {
+    hasUserInteracted = true;
+    if (bAudioCtx && bAudioCtx.state === 'suspended') {
+      bAudioCtx.resume().catch(() => {});
+    }
+    window.removeEventListener('pointerdown', markUserInteraction, true);
+    window.removeEventListener('keydown', markUserInteraction, true);
+    window.removeEventListener('touchstart', markUserInteraction, true);
+  }
+  window.addEventListener('pointerdown', markUserInteraction, { capture: true, passive: true });
+  window.addEventListener('keydown', markUserInteraction, { capture: true, passive: true });
+  window.addEventListener('touchstart', markUserInteraction, { capture: true, passive: true });
+
   function getBAudioCtx() {
+    if (!hasUserInteracted) return null;
     if (!bAudioCtx) {
       const AudioContextClass = window.AudioContext || window.webkitAudioContext;
       if (AudioContextClass) {
@@ -83,6 +99,7 @@
 
   // ── 2. Haptic Vibration ───────────────────────────────────────
   function triggerHaptic(pattern = 10) {
+    if (!hasUserInteracted) return;
     if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
       try {
         navigator.vibrate(pattern);

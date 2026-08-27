@@ -1488,11 +1488,11 @@
 
   <script>
     // Tab switching handler
-    function switchStudentSubTab(tabId) {
+    function switchStudentSubTab(tabId, isUserGesture = true) {
       const tabs = ['benches', 'reference', 'achievements', 'research'];
       if (!tabs.includes(tabId)) tabId = 'benches';
 
-      if (window.BrilliantUI) {
+      if (isUserGesture && window.BrilliantUI) {
         window.BrilliantUI.audio.playClick();
         window.BrilliantUI.vibrate(10);
       }
@@ -1547,7 +1547,7 @@
     // Focus assignments section helper
     function focusAssignmentsSection(e) {
       if (e) e.preventDefault();
-      switchStudentSubTab('benches');
+      switchStudentSubTab('benches', !!e);
       const targetEl = document.getElementById('zone_assignments');
       if (targetEl) {
         targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1564,7 +1564,7 @@
       if (hash === 'assignments') {
         focusAssignmentsSection();
       } else if (hash && ['benches', 'reference', 'achievements', 'research'].includes(hash)) {
-        switchStudentSubTab(hash);
+        switchStudentSubTab(hash, false);
       }
 
       // Smooth scroll for quick-jump navigation

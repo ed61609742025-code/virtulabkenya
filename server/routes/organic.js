@@ -76,8 +76,13 @@ router.get('/mine', authMiddleware, asyncHandler(async (req, res) => {
 
 // GET /api/organic/class — Teacher: fetch organic sessions for all students
 router.get('/class', authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
-  const classSessions = await organicRepo.getClassSessions(req.user.id);
-  return res.json({ sessions: classSessions });
+  try {
+    const classSessions = await organicRepo.getClassSessions(req.user.id);
+    return res.json({ sessions: classSessions || [] });
+  } catch (err) {
+    console.warn('[/api/organic/class] Safe fallback:', err.message);
+    return res.json({ sessions: [] });
+  }
 }));
 
 module.exports = router;

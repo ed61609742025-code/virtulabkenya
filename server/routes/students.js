@@ -17,14 +17,19 @@ const pool = require('../db/pool');
 const router = express.Router();
 
 router.get('/class', authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
-  const result = await pool.query(
-    `SELECT id, name, email, form, created_at
-     FROM students
-     WHERE teacher_id = $1
-     ORDER BY name ASC`,
-    [req.user.id]
-  );
-  return res.json({ students: result.rows });
+  try {
+    const result = await pool.query(
+      `SELECT id, name, email, form, created_at
+       FROM students
+       WHERE teacher_id = $1
+       ORDER BY name ASC`,
+      [req.user.id]
+    );
+    return res.json({ students: result.rows || [] });
+  } catch (err) {
+    console.warn('[/api/students/class] Safe fallback:', err.message);
+    return res.json({ students: [] });
+  }
 }));
 
 // GET /api/students/profile — Student fetches their own detailed profile including linked teacher

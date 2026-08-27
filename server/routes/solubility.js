@@ -137,10 +137,10 @@ router.get('/class', authMiddleware, authMiddleware.requireRole('teacher'), asyn
   try {
     const teacherId = req.user.id;
     const sessions = await solubilityRepo.getClassSolubilitySessions(teacherId);
-    return res.json({ success: true, sessions });
+    return res.json({ success: true, sessions: sessions || [] });
   } catch (err) {
-    console.error('Error fetching class solubility sessions:', err.message);
-    return res.status(500).json({ error: 'Could not fetch class solubility practical sessions.' });
+    console.warn('[/api/solubility/class] Safe fallback:', err.message);
+    return res.json({ success: true, sessions: [] });
   }
 });
 

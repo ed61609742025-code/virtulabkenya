@@ -99,10 +99,10 @@ router.get('/class', authMiddleware, async (req, res) => {
     }
     const teacherId = req.user.id;
     const sessions = await ratesRepo.getClassRatesSessions(teacherId);
-    res.json({ success: true, sessions });
+    res.json({ success: true, sessions: sessions || [] });
   } catch (err) {
-    console.error('Error fetching class reaction rates sessions:', err.message);
-    res.status(500).json({ error: 'Failed to fetch class reaction rates sessions.' });
+    console.warn('[/api/rates/class] Safe fallback:', err.message);
+    res.json({ success: true, sessions: [] });
   }
 });
 

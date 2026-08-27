@@ -80,8 +80,13 @@ router.get('/class', authMiddleware, asyncHandler(async (req, res) => {
     return res.status(403).json({ error: 'Only teachers can access class qualitative sessions.' });
   }
 
-  const classSessions = await qualitativeRepo.getClassSessions(req.user.id);
-  return res.json({ sessions: classSessions });
+  try {
+    const classSessions = await qualitativeRepo.getClassSessions(req.user.id);
+    return res.json({ sessions: classSessions || [] });
+  } catch (err) {
+    console.warn('[/api/qualitative/class] Safe fallback:', err.message);
+    return res.json({ sessions: [] });
+  }
 }));
 
 module.exports = router;

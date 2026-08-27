@@ -85,18 +85,23 @@ router.get('/mine', authMiddleware, authMiddleware.requireRole('student'), async
 
 // GET /api/badges/class — Teacher class badges
 router.get('/class', authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
-  const classData = await badgeRepo.getClassBadgeData(req.user.id);
-  const summary = classData.map(({ student, sessions }) => {
-    const computed = computeBadges(sessions);
-    return {
-      student,
-      unlockedCount: computed.badges.filter(b => b.unlocked).length,
-      totalBadges: computed.badges.length,
-      badges: computed.badges,
-      stats: computed.stats
-    };
-  });
-  return res.json({ students: summary });
+  try {
+    const classData = await badgeRepo.getClassBadgeData(req.user.id);
+    const summary = (classData || []).map(({ student, sessions }) => {
+      const computed = computeBadges(sessions || []);
+      return {
+        student,
+        unlockedCount: computed.badges.filter(b => b.unlocked).length,
+        totalBadges: computed.badges.length,
+        badges: computed.badges,
+        stats: computed.stats
+      };
+    });
+    return res.json({ students: summary });
+  } catch (err) {
+    console.warn('[/api/badges/class] Safe fallback:', err.message);
+    return res.json({ students: [] });
+  }
 }));
 
 module.exports = router;

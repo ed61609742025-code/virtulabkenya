@@ -75,14 +75,19 @@ router.get('/mine', authMiddleware, asyncHandler(async (req, res) => {
 // GET /api/sessions/class — Teacher: fetch class session history
 router.get('/class', authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
   const { page, limit } = parsePagination(req.query);
-  const result = await sessionRepo.getClassSessions(req.user.id, {
-    page,
-    limit,
-    type: req.query.type,
-    studentClass: req.query.class,
-    from: req.query.from
-  });
-  return res.json(result);
+  try {
+    const result = await sessionRepo.getClassSessions(req.user.id, {
+      page,
+      limit,
+      type: req.query.type,
+      studentClass: req.query.class,
+      from: req.query.from
+    });
+    return res.json(result);
+  } catch (err) {
+    console.warn('[/api/sessions/class] Safe fallback:', err.message);
+    return res.json({ sessions: [], total: 0, page, limit, totalPages: 1 });
+  }
 }));
 
 module.exports = router;

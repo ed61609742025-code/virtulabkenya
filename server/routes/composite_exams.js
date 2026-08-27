@@ -78,8 +78,13 @@ router.get('/teacher', authMiddleware, asyncHandler(async (req, res) => {
     return res.status(403).json({ error: 'Only teachers can access class composite exam results.' });
   }
 
-  const sessions = await compositeRepo.getTeacherSessions(req.user.id);
-  return res.json({ sessions });
+  try {
+    const sessions = await compositeRepo.getTeacherSessions(req.user.id);
+    return res.json({ sessions: sessions || [] });
+  } catch (err) {
+    console.warn('[/api/composite/teacher] Safe fallback:', err.message);
+    return res.json({ sessions: [] });
+  }
 }));
 
 // GET /api/composite/export/:assignmentId — Export CSV of assignment composite results

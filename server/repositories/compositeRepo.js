@@ -1,6 +1,34 @@
 const pool = require('../db/pool');
 
+let compositeTableEnsured = false;
+async function ensureCompositeTable() {
+  if (compositeTableEnsured) return;
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS composite_sessions (
+        id SERIAL PRIMARY KEY,
+        student_id INTEGER REFERENCES students(id) ON DELETE CASCADE,
+        assignment_id INTEGER REFERENCES assignments(id) ON DELETE SET NULL,
+        exam_title VARCHAR(200) DEFAULT 'KCSE Chemistry Paper 3 Practical Exam',
+        q1_score DECIMAL(5,2) DEFAULT 0.0,
+        q2_score DECIMAL(5,2) DEFAULT 0.0,
+        q3_score DECIMAL(5,2) DEFAULT 0.0,
+        total_score DECIMAL(5,2) DEFAULT 0.0,
+        grade VARCHAR(10) DEFAULT 'E',
+        details JSONB,
+        duration_seconds INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+      CREATE INDEX IF NOT EXISTS idx_composite_sessions_student_id ON composite_sessions(student_id);
+    `);
+    compositeTableEnsured = true;
+  } catch (e) {
+    console.warn('[compositeRepo] ensureCompositeTable note:', e.message);
+  }
+}
+
 async function saveCompositeSession(data) {
+  await ensureCompositeTable();
   const {
     studentId,
     assignment_id,
@@ -41,30 +69,42 @@ async function saveCompositeSession(data) {
 const { linkAssignmentSubmission } = require('./assignmentRepo');
 
 async function getStudentSessions(studentId) {
-  const result = await pool.query(
-    `SELECT * FROM composite_sessions
-     WHERE student_id = $1
-     ORDER BY created_at DESC`,
-    [studentId]
-  );
-  return result.rows;
+  await ensureCompositeTable();
+  try {
+    const result = await pool.query(
+      `SELECT * FROM composite_sessions
+       WHERE student_id = $1
+       ORDER BY created_at DESC`,
+      [studentId]
+    );
+    return result.rows || [];
+  } catch (err) {
+    console.warn('[compositeRepo] getStudentSessions error:', err.message);
+    return [];
+  }
 }
 
 async function getTeacherSessions(teacherId) {
-  const result = await pool.query(
-    `SELECT cs.*,
-            s.name AS student_name,
-            s.email AS student_email,
-            s.form AS student_form,
-            a.title AS assignment_title
-     FROM composite_sessions cs
-     JOIN students s ON s.id = cs.student_id
-     LEFT JOIN assignments a ON a.id = cs.assignment_id
-     WHERE s.teacher_id = $1
-     ORDER BY cs.created_at DESC`,
-    [teacherId]
-  );
-  return result.rows;
+  await ensureCompositeTable();
+  try {
+    const result = await pool.query(
+      `SELECT cs.*,
+              s.name AS student_name,
+              s.email AS student_email,
+              s.form AS student_form,
+              a.title AS assignment_title
+       FROM composite_sessions cs
+       JOIN students s ON s.id = cs.student_id
+       LEFT JOIN assignments a ON a.id = cs.assignment_id
+       WHERE s.teacher_id = $1
+       ORDER BY cs.created_at DESC`,
+      [teacherId]
+    );
+    return result.rows || [];
+  } catch (err) {
+    console.warn('[compositeRepo] getTeacherSessions error:', err.message);
+    return [];
+  }
 }
 
 async function getExportData(assignmentId, teacherId) {

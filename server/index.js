@@ -139,14 +139,11 @@ app.use('/api/notifications', notificationsRoutes);
 
 // Public announcements endpoint
 const announcementRepo = require('./repositories/announcementRepo');
-app.get('/api/announcements/active', async (req, res) => {
-  try {
-    const announcements = await announcementRepo.getActiveAnnouncements('all');
-    res.json({ success: true, announcements });
-  } catch (err) {
-    res.status(500).json({ error: 'Could not fetch announcements' });
-  }
-});
+const asyncHandler = require('./utils/asyncHandler');
+app.get('/api/announcements/active', asyncHandler(async (req, res) => {
+  const announcements = await announcementRepo.getActiveAnnouncements('all');
+  res.json({ success: true, announcements });
+}));
 
 // ── 404 Handler ───────────────────────────────────────────────
 app.use((req, res) => {

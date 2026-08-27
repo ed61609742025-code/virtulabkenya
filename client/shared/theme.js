@@ -3,7 +3,7 @@
 // ============================================================
 
 function getStoredTheme() {
-  return localStorage.getItem('vlk_theme') || 'dark';
+  return localStorage.getItem('vlk_theme') || 'light';
 }
 
 function initTheme() {
@@ -19,7 +19,7 @@ function setTheme(theme) {
 }
 
 function updateThemeButtons() {
-  const current = document.documentElement.getAttribute('data-theme') || 'dark';
+  const current = document.documentElement.getAttribute('data-theme') || 'light';
   document.querySelectorAll('.theme-btn, .theme-chip, .theme-btn-chip').forEach(btn => {
     const themeVal = btn.dataset.theme || btn.dataset.themeVal || btn.getAttribute('data-theme') || btn.getAttribute('data-theme-val');
     btn.classList.toggle('active', themeVal === current);

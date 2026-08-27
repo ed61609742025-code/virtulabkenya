@@ -130,32 +130,55 @@ router.post('/announcements', asyncHandler(async (req, res) => {
   return res.status(201).json({ success: true, announcement });
 }));
 
-// GET /api/admin/users — List all system users (teachers + students)
+// GET /api/admin/users — List all system users (teachers + students) with DB-level pagination
 router.get('/users', asyncHandler(async (req, res) => {
-  const teachersRes = await pool.query(`
-    SELECT t.id, t.name, t.email, 'Teacher' as role, t.status, s.name as school_name, s.county, NULL as form, t.created_at
-    FROM teachers t
-    LEFT JOIN schools s ON s.id = t.school_id
-  `);
+  const isPaged = req.query.page || req.query.limit;
 
-  const studentsRes = await pool.query(`
-    SELECT st.id, st.name, st.email, 'Student' as role, st.status, s.name as school_name, s.county, st.form, st.created_at
-    FROM students st
-    LEFT JOIN schools s ON s.id = st.school_id
-  `);
-
-  let allUsers = [...teachersRes.rows, ...studentsRes.rows].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
-  const total = allUsers.length;
-  if (req.query.page || req.query.limit) {
+  if (isPaged) {
     const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
     const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 50, 1), 200);
     const offset = (page - 1) * limit;
-    allUsers = allUsers.slice(offset, offset + limit);
-    return res.json({ success: true, users: allUsers, total, page, limit });
+
+    const countRes = await pool.query(`
+      SELECT (
+        (SELECT COUNT(*) FROM teachers) + (SELECT COUNT(*) FROM students)
+      )::int AS total
+    `);
+    const total = parseInt(countRes.rows[0]?.total, 10) || 0;
+
+    const usersRes = await pool.query(`
+      SELECT id, name, email, role, status, school_name, county, form, created_at
+      FROM (
+        SELECT t.id, t.name, t.email, 'Teacher' as role, t.status, s.name as school_name, s.county, NULL as form, t.created_at
+        FROM teachers t
+        LEFT JOIN schools s ON s.id = t.school_id
+        UNION ALL
+        SELECT st.id, st.name, st.email, 'Student' as role, st.status, s.name as school_name, s.county, st.form, st.created_at
+        FROM students st
+        LEFT JOIN schools s ON s.id = st.school_id
+      ) u
+      ORDER BY created_at DESC
+      LIMIT $1 OFFSET $2
+    `, [limit, offset]);
+
+    return res.json({ success: true, users: usersRes.rows, total, page, limit });
   }
 
-  return res.json({ success: true, users: allUsers, total });
+  const usersRes = await pool.query(`
+    SELECT id, name, email, role, status, school_name, county, form, created_at
+    FROM (
+      SELECT t.id, t.name, t.email, 'Teacher' as role, t.status, s.name as school_name, s.county, NULL as form, t.created_at
+      FROM teachers t
+      LEFT JOIN schools s ON s.id = t.school_id
+      UNION ALL
+      SELECT st.id, st.name, st.email, 'Student' as role, st.status, s.name as school_name, s.county, st.form, st.created_at
+      FROM students st
+      LEFT JOIN schools s ON s.id = st.school_id
+    ) u
+    ORDER BY created_at DESC
+  `);
+
+  return res.json({ success: true, users: usersRes.rows, total: usersRes.rows.length });
 }));
 
 // PATCH /api/admin/users/:id/status — Toggle user active/suspended status

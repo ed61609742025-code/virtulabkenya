@@ -157,8 +157,10 @@ router.post('/bulk-import', apiLimiter, authMiddleware, authMiddleware.requireRo
   let importedCount = 0;
   let skippedCount = 0;
   const results = [];
+  const seenInBatch = new Set();
+  const validRows = [];
 
-  // Batch process rows with concurrency control for custom bcrypt hashes
+  // 1. Validate rows and deduplicate
   for (let i = 0; i < students.length; i++) {
     const row = students[i];
     const rawName = (row.name || '').trim();
@@ -179,32 +181,80 @@ router.post('/bulk-import', apiLimiter, authMiddleware, authMiddleware.requireRo
       continue;
     }
 
-    if (existingEmailSet.has(rawEmail)) {
+    if (existingEmailSet.has(rawEmail) || seenInBatch.has(rawEmail)) {
       skippedCount++;
       results.push({ row: i + 1, name: rawName, email: rawEmail, status: 'skipped', reason: 'Email already registered in system.' });
       continue;
     }
 
+    seenInBatch.add(rawEmail);
+    validRows.push({
+      rowIndex: i + 1,
+      name: rawName,
+      email: rawEmail,
+      form: rawForm,
+      password: rawPassword
+    });
+  }
+
+  // 2. Precompute custom password hashes in parallel (defaultHash reused for others)
+  const rowsWithHashes = await Promise.all(validRows.map(async (r) => {
+    const passwordHash = r.password && r.password.length >= 6
+      ? await bcrypt.hash(r.password, 10)
+      : defaultHash;
+    return { ...r, passwordHash };
+  }));
+
+  // 3. Batch insert valid students in a single query for fast classroom onboarding
+  if (rowsWithHashes.length > 0) {
     try {
-      const passwordHash = rawPassword && rawPassword.length >= 6
-        ? await bcrypt.hash(rawPassword, 10)
-        : defaultHash;
+      const valuePlaceholders = [];
+      const queryParams = [];
+      let pIdx = 1;
+
+      for (const r of rowsWithHashes) {
+        valuePlaceholders.push(`($${pIdx}, $${pIdx + 1}, $${pIdx + 2}, $${pIdx + 3}, $${pIdx + 4}, $${pIdx + 5}, 'active')`);
+        queryParams.push(schoolId, teacherId, r.name, r.email, r.passwordHash, r.form);
+        pIdx += 6;
+      }
 
       const insertRes = await pool.query(
         `INSERT INTO students (school_id, teacher_id, name, email, password_hash, form, status)
-         VALUES ($1, $2, $3, $4, $5, $6, 'active')
+         VALUES ${valuePlaceholders.join(', ')}
          RETURNING id, name, email, form, created_at`,
-        [schoolId, teacherId, rawName, rawEmail, passwordHash, rawForm]
+        queryParams
       );
 
-      existingEmailSet.add(rawEmail);
-      importedCount++;
-      results.push({ row: i + 1, id: insertRes.rows[0].id, name: rawName, email: rawEmail, status: 'imported', form: rawForm });
-    } catch (insertErr) {
-      skippedCount++;
-      results.push({ row: i + 1, name: rawName, email: rawEmail, status: 'skipped', reason: insertErr.message });
+      for (let k = 0; k < insertRes.rows.length; k++) {
+        const inserted = insertRes.rows[k];
+        const r = rowsWithHashes[k];
+        existingEmailSet.add(r.email);
+        importedCount++;
+        results.push({ row: r.rowIndex, id: inserted.id, name: r.name, email: r.email, status: 'imported', form: r.form });
+      }
+    } catch (batchErr) {
+      // Safe fallback: insert sequentially if batch fails
+      for (const r of rowsWithHashes) {
+        try {
+          const singleRes = await pool.query(
+            `INSERT INTO students (school_id, teacher_id, name, email, password_hash, form, status)
+             VALUES ($1, $2, $3, $4, $5, $6, 'active')
+             RETURNING id, name, email, form, created_at`,
+            [schoolId, teacherId, r.name, r.email, r.passwordHash, r.form]
+          );
+          existingEmailSet.add(r.email);
+          importedCount++;
+          results.push({ row: r.rowIndex, id: singleRes.rows[0].id, name: r.name, email: r.email, status: 'imported', form: r.form });
+        } catch (singleErr) {
+          skippedCount++;
+          results.push({ row: r.rowIndex, name: r.name, email: r.email, status: 'skipped', reason: singleErr.message });
+        }
+      }
     }
   }
+
+  // Ensure results maintain row ordering
+  results.sort((a, b) => a.row - b.row);
 
   return res.status(200).json({
     success: true,

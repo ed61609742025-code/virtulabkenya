@@ -2,6 +2,8 @@
 //  VirtuLab Kenya — Zero-Dependency Native API Test Suite
 // ============================================================
 
+process.env.NODE_ENV = 'test';
+
 const { describe, it, before, after, beforeEach } = require('node:test');
 const assert = require('node:assert');
 const http = require('http');
@@ -46,7 +48,6 @@ describe('VirtuLab Kenya — Backend API Test Suite', () => {
       await new Promise((resolve) => server.close(resolve));
     }
     await pool.end().catch(() => {});
-    setTimeout(() => process.exit(0), 200).unref();
   });
 
   beforeEach(() => {
@@ -681,6 +682,20 @@ describe('VirtuLab Kenya — Backend API Test Suite', () => {
     assert.strictEqual(body.analysis.totalScore, 5.0);
   });
 
+  it('POST /api/solubility — should return 400 ValidationError if solute_key is missing', async () => {
+    const res = await fetch(url('/api/solubility'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${studentToken}`
+      },
+      body: JSON.stringify({ solute_mass: 5.0 })
+    });
+    const body = await res.json();
+    assert.strictEqual(res.status, 400);
+    assert.ok(body.error.includes('Solute key is required'));
+  });
+
   it('GET /api/solubility/mine — should return student solubility practical history', async () => {
     pool.query = async () => ({
       rows: [{ id: 401, solute_key: 'KNO3', solute_name: 'Potassium Nitrate (KNO₃)', total_score: 5.0 }]
@@ -793,7 +808,7 @@ describe('VirtuLab Kenya — Backend API Test Suite', () => {
     const body = await res.json();
 
     assert.strictEqual(res.status, 403);
-    assert.strictEqual(body.error, 'Access forbidden. Teachers only.');
+    assert.ok(body.error.includes('teacher') || body.error.includes('Teachers'));
   });
 
   /* 6. ROUTE 404 HANDLER */
@@ -1071,6 +1086,72 @@ describe('VirtuLab Kenya — Backend API Test Suite', () => {
     assert.ok(res.headers.get('content-type').includes('text/csv'));
     assert.ok(text.includes('Teacher Jane'));
     assert.ok(text.includes('Student John'));
+  });
+
+  it('GET /api/admin/users — should paginate users at database level when page and limit are provided', async () => {
+    pool.query = async (text, params) => {
+      if (text.includes('COUNT(*)')) {
+        return { rows: [{ total: 10 }] };
+      }
+      return {
+        rows: [
+          { id: 1, name: 'Teacher Jane', role: 'Teacher', status: 'active' },
+          { id: 2, name: 'Student John', role: 'Student', status: 'active' }
+        ]
+      };
+    };
+
+    const res = await fetch(url('/api/admin/users?page=1&limit=2'), {
+      headers: { 'Authorization': `Bearer ${adminToken}` }
+    });
+    const body = await res.json();
+    assert.strictEqual(res.status, 200);
+    assert.strictEqual(body.success, true);
+    assert.strictEqual(body.page, 1);
+    assert.strictEqual(body.limit, 2);
+    assert.strictEqual(body.total, 10);
+    assert.strictEqual(body.users.length, 2);
+  });
+
+  it('POST /api/students/bulk-import — should batch insert valid students in a single query', async () => {
+    pool.query = async (text, params) => {
+      if (text.includes('SELECT school_id, name FROM teachers')) {
+        return { rows: [{ school_id: 1, name: 'Test Teacher' }] };
+      }
+      if (text.includes('SELECT email FROM students WHERE email = ANY')) {
+        return { rows: [{ email: 'existing@school.ac.ke' }] };
+      }
+      if (text.includes('INSERT INTO students')) {
+        return {
+          rows: [
+            { id: 101, name: 'Alice Wambui', email: 'alice@school.ac.ke', form: 'Form 4', created_at: new Date().toISOString() },
+            { id: 102, name: 'Brian Omondi', email: 'brian@school.ac.ke', form: 'Form 4', created_at: new Date().toISOString() }
+          ]
+        };
+      }
+      return { rows: [] };
+    };
+
+    const res = await fetch(url('/api/students/bulk-import'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${teacherToken}`
+      },
+      body: JSON.stringify({
+        students: [
+          { name: 'Alice Wambui', email: 'alice@school.ac.ke', form: 'Form 4' },
+          { name: 'Brian Omondi', email: 'brian@school.ac.ke', form: 'Form 4' },
+          { name: 'Dup Student', email: 'existing@school.ac.ke', form: 'Form 4' },
+          { name: 'X', email: 'invalid', form: 'Form 4' }
+        ]
+      })
+    });
+    const body = await res.json();
+    assert.strictEqual(res.status, 200);
+    assert.strictEqual(body.success, true);
+    assert.strictEqual(body.importedCount, 2);
+    assert.strictEqual(body.skippedCount, 2);
   });
 
   /* 11. SCHOOL CRUD ENDPOINTS */

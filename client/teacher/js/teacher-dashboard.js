@@ -1158,6 +1158,7 @@ let currentPage = 1;
   async function loadTeacherAssignments() {
     const box = document.getElementById('assignmentsManageList');
     try {
+      const data = await Assignments.getTeacherList();
       const rawAssignments = data.assignments || [];
       const seen = new Set();
       const assignments = [];
@@ -1371,6 +1372,7 @@ let currentPage = 1;
   async function loadSubmittedAssignments() {
     const box = document.getElementById('submittedAssignmentsList');
     try {
+      const data = await Assignments.getAllSubmissions({ limit: 100 });
       const rawSubs = data.submissions || [];
       const seenSub = new Set();
       const submissions = [];

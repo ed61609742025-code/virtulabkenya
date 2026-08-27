@@ -337,6 +337,7 @@ requireStudentLogin();
     const box = document.getElementById('assignmentsList');
     if (!box) return;
     try {
+      const data = await Assignments.getMine();
       const rawAssignments = data.assignments || [];
       const seen = new Set();
       const assignments = [];

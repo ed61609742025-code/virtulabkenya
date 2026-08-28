@@ -32,8 +32,8 @@ router.post('/client', (req, res) => {
 });
 
 // ── GET /api/errors/recent ──────────────────────────────────────
-// Protected endpoint for retrieving the recent error logs
-router.get('/recent', authMiddleware, authMiddleware.requireRole('teacher'), (req, res) => {
+// Protected endpoint for retrieving the recent error logs (teachers & admins)
+router.get('/recent', authMiddleware, authMiddleware.requireRole(['teacher', 'admin']), (req, res) => {
   const errors = getRecentErrors();
   return res.json({ errors, count: errors.length });
 });

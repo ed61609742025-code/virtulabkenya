@@ -668,8 +668,13 @@
         renderAnalytics(analyticsRes.analytics);
       }
 
-      const errorLogs = await ErrorTracker.getRecentErrors();
-      renderTelemetry(errorLogs);
+      try {
+        const errorLogs = await ErrorTracker.getRecentErrors();
+        renderTelemetry(errorLogs);
+      } catch (telErr) {
+        console.warn('Telemetry logs unavailable:', telErr);
+        renderTelemetry([]);
+      }
 
     } catch (err) {
       console.error('Failed to load admin dashboard data:', err);

@@ -907,13 +907,15 @@
   }
 
   function renderTelemetry(logs) {
+    const list = Array.isArray(logs) ? logs : (logs && Array.isArray(logs.errors) ? logs.errors : []);
     const tbody = document.getElementById('telemetryTableBody');
-    if (!logs || logs.length === 0) {
+    if (!tbody) return;
+    if (!list || list.length === 0) {
       tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:18px;">No errors logged — system healthy.</td></tr>';
       return;
     }
 
-    tbody.innerHTML = logs.slice(0, 10).map(l => `
+    tbody.innerHTML = list.slice(0, 10).map(l => `
       <tr>
         <td><small style="font-family:var(--font-mono);color:var(--text-muted);">${new Date(l.created_at || Date.now()).toLocaleTimeString()}</small></td>
         <td style="color:var(--red-accent);font-family:var(--font-mono);font-size:0.8rem;">${escapeHtml(l.message)}</td>

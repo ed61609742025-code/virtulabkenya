@@ -28,14 +28,15 @@
      TOPBAR — Navigation & Actions
 ══════════════════════════════════════ -->
 <nav class="admin-navbar">
-  <div style="display:flex; align-items:center; gap:12px;">
+  <div style="display:flex; align-items:center; gap:14px;">
     <a href="/admin/dashboard.html" class="admin-brand">
-      <span style="font-size:1.25rem;">🛡️</span>
+      <span style="font-size:1.35rem;">🛡️</span>
       VirtuLab Kenya
       <span class="admin-badge" id="adminRoleBadge">Admin Portal</span>
     </a>
-    <div id="adminIdentityPill" style="display:none; align-items:center; gap:6px; font-size:0.75rem; font-family:var(--font-mono); background:var(--card-bg-hover); padding:3px 10px; border-radius:100px; border:1px solid var(--card-border); color:var(--text-main); font-weight:700;">
-      <span>👤</span> <span id="adminNameDisplay">Admin</span>
+    <div id="adminIdentityPill" style="display:none; align-items:center; gap:8px; padding:3px 10px 3px 4px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:100px; font-size:0.75rem; font-family:var(--font-mono); font-weight:700; color:var(--text-main); box-shadow:var(--shadow-sm);">
+      <span id="adminAvatarCircle" class="avatar-circle admin" style="width:24px; height:24px; font-size:0.68rem;">AD</span>
+      <span id="adminNameDisplay">Admin</span>
     </div>
   </div>
 
@@ -62,44 +63,71 @@
   
   <!-- KPI Metrics Grid -->
   <div class="metrics-grid">
-    <div class="metric-card">
+    <div class="metric-card accent-blue">
       <div class="metric-label">🏛️ Registered Schools</div>
       <div class="metric-val" id="metricSchools">--</div>
+      <div class="metric-subtitle">Across 47 Counties</div>
     </div>
-    <div class="metric-card">
+    <div class="metric-card accent-green">
       <div class="metric-label">👨‍🏫 Active Teachers</div>
       <div class="metric-val" id="metricTeachers">--</div>
+      <div class="metric-subtitle">Verified STEM Instructors</div>
     </div>
-    <div class="metric-card">
+    <div class="metric-card accent-violet">
       <div class="metric-label">🎓 Active Students</div>
       <div class="metric-val" id="metricStudents">--</div>
+      <div class="metric-subtitle">Secondary Lab Learners</div>
     </div>
-    <div class="metric-card">
+    <div class="metric-card accent-fuchsia">
       <div class="metric-label">🧪 Experiments Completed</div>
       <div class="metric-val" id="metricExperiments">--</div>
+      <div class="metric-subtitle">Paper 3 Virtual Practical Sessions</div>
     </div>
-    <div class="metric-card">
-      <div class="metric-label">🏆 KCSE Pass Benchmark</div>
+    <div class="metric-card accent-amber">
+      <div class="metric-label">🏆 KCSE Benchmark</div>
       <div class="metric-val" id="metricPassRate" style="color:var(--amber-accent);">88%</div>
+      <div class="metric-subtitle">National Target Pass Rate</div>
     </div>
   </div>
 
   <!-- Tab Navigation -->
   <div class="tab-strip">
-    <button class="tab-btn active" onclick="switchTab('schoolsTab', this)">🏛️ Schools Directory</button>
-    <button class="tab-btn" onclick="switchTab('usersTab', this)">👥 User Roster (Teachers & Students)</button>
-    <button class="tab-btn" onclick="switchTab('adminsTab', this)">🛡️ Admin Team</button>
-    <button class="tab-btn" onclick="switchTab('announcementsTab', this)">📢 Broadcast Announcements</button>
-    <button class="tab-btn" onclick="switchTab('analyticsTab', this)">📊 KCSE Practical Module Analytics</button>
-    <button class="tab-btn" onclick="switchTab('telemetryTab', this)">⚙️ System Health & Error Logs</button>
+    <button class="tab-btn active" onclick="switchTab('schoolsTab', this)">
+      <span>🏛️ Schools</span>
+      <span class="tab-counter" id="tabCountSchools">0</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('usersTab', this)">
+      <span>👥 User Roster</span>
+      <span class="tab-counter" id="tabCountUsers">0</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('adminsTab', this)">
+      <span>🛡️ Admin Team</span>
+      <span class="tab-counter" id="tabCountAdmins">0</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('announcementsTab', this)">
+      <span>📢 Broadcasts</span>
+      <span class="tab-counter" id="tabCountAnn">0</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('analyticsTab', this)">
+      <span>📊 KCSE Analytics</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('telemetryTab', this)">
+      <span>⚙️ Health & Logs</span>
+    </button>
   </div>
 
   <!-- Tab 1: Schools Directory -->
   <div id="schoolsTab" class="card-panel">
     <div class="panel-header">
-      <h3 class="panel-title">Registered Kenyan Secondary Schools</h3>
-      <div style="display:flex;gap:10px;align-items:center;">
+      <div>
+        <h3 class="panel-title">🏛️ Registered Kenyan Secondary Schools</h3>
+        <p style="margin:4px 0 0 0; font-size:0.8rem; color:var(--text-muted);">
+          Institutional directory of secondary schools across Kenya participating in virtual chemistry practicals.
+        </p>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
         <input type="text" id="schoolSearch" class="form-control search-control" placeholder="Search school or county..." oninput="filterSchools()">
+        <button class="btn-primary-solid" onclick="openRegisterSchoolModal()">+ Register School</button>
         <button class="btn-secondary" onclick="Admin.exportSchoolsReport()">📥 Export CSV</button>
       </div>
     </div>
@@ -109,7 +137,7 @@
           <tr>
             <th>School Name</th>
             <th>County</th>
-            <th>Admin Code</th>
+            <th>Admin Registration Code</th>
             <th>Teachers</th>
             <th>Students</th>
             <th>Status</th>
@@ -117,7 +145,7 @@
           </tr>
         </thead>
         <tbody id="schoolsTableBody">
-          <tr><td colspan="7" style="text-align:center;color:var(--text-muted);">Loading registered schools...</td></tr>
+          <tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:18px;">Loading registered schools...</td></tr>
         </tbody>
       </table>
     </div>
@@ -126,9 +154,21 @@
   <!-- Tab 2: User Roster -->
   <div id="usersTab" class="card-panel" style="display:none;">
     <div class="panel-header">
-      <h3 class="panel-title">Platform User Directory</h3>
-      <div style="display:flex;gap:10px;align-items:center;">
-        <input type="text" id="userSearch" class="form-control search-control" placeholder="Search user name or email..." oninput="filterUsers()">
+      <div>
+        <h3 class="panel-title">👥 Platform User Directory</h3>
+        <p style="margin:4px 0 0 0; font-size:0.8rem; color:var(--text-muted);">
+          Verified chemistry educators and enrolled secondary school candidates.
+        </p>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+        <div class="filter-chip-group">
+          <button class="filter-chip active" data-filter="all" onclick="filterUserRole('all', this)">All</button>
+          <button class="filter-chip" data-filter="teacher" onclick="filterUserRole('teacher', this)">Teachers</button>
+          <button class="filter-chip" data-filter="student" onclick="filterUserRole('student', this)">Students</button>
+          <button class="filter-chip" data-filter="active" onclick="filterUserRole('active', this)">Active</button>
+          <button class="filter-chip" data-filter="suspended" onclick="filterUserRole('suspended', this)">Suspended</button>
+        </div>
+        <input type="text" id="userSearch" class="form-control search-control" placeholder="Search user, email or school..." oninput="filterUsers()">
         <button class="btn-secondary" onclick="Admin.exportUsersReport()">📥 Export CSV</button>
       </div>
     </div>
@@ -136,7 +176,7 @@
       <table class="admin-table">
         <thead>
           <tr>
-            <th>Full Name</th>
+            <th>User</th>
             <th>Email</th>
             <th>Role</th>
             <th>School</th>
@@ -147,7 +187,7 @@
           </tr>
         </thead>
         <tbody id="usersTableBody">
-          <tr><td colspan="8" style="text-align:center;color:var(--text-muted);">Loading platform users...</td></tr>
+          <tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:18px;">Loading platform users...</td></tr>
         </tbody>
       </table>
     </div>
@@ -209,35 +249,95 @@
     </div>
   </div>
 
-  <!-- Tab 4: Analytics -->
+  <!-- Tab 5: Analytics -->
   <div id="analyticsTab" class="card-panel" style="display:none;">
     <div class="panel-header">
-      <h3 class="panel-title">📊 KCSE Practical Paper 3 Performance & Module Analytics</h3>
+      <div>
+        <h3 class="panel-title">📊 KCSE Practical Paper 3 Performance & Module Analytics</h3>
+        <p style="margin:4px 0 0 0; font-size:0.8rem; color:var(--text-muted);">
+          Real-time performance indicators and accuracy benchmarks aligned with KNEC Paper 3 standards.
+        </p>
+      </div>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));gap:16px;margin-bottom:24px;">
-      <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:18px;">
-        <h4 style="margin:0 0 6px 0;color:var(--blue-accent);font-family:var(--font-heading);">🧪 Volumetric Analysis (Titrations)</h4>
-        <p style="font-size:0.82rem;color:var(--text-muted);margin:0 0 12px 0;">Acid-Base, Redox Manganate VII, Dibasic, Tribasic titrations.</p>
-        <div style="font-size:1.8rem;font-weight:800;font-family:var(--font-mono);" id="statTitrationAccuracy">--%</div>
-        <small style="color:var(--text-muted);font-family:var(--font-mono);" id="statTitrationMeta">Total Sessions: --</small>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:16px;margin-bottom:24px;">
+      <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:18px;display:flex;flex-direction:column;justify-content:space-between;">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <h4 style="margin:0 0 6px 0;color:var(--blue-accent);font-family:var(--font-heading);">🧪 Volumetric Analysis</h4>
+            <span class="role-badge" style="background:var(--blue-bg);color:var(--blue-accent);border:1px solid var(--blue-border);">Titrations</span>
+          </div>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin:0 0 12px 0;">Acid-Base, Redox Manganate VII, Dibasic, Tribasic titrations.</p>
+          <div style="font-size:2rem;font-weight:800;font-family:var(--font-mono);" id="statTitrationAccuracy">--%</div>
+        </div>
+        <div>
+          <div class="progress-bar-wrap">
+            <div id="barTitrationFill" class="progress-bar-fill blue" style="width:0%;"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:var(--text-muted);font-family:var(--font-mono);margin-top:4px;">
+            <span id="statTitrationMeta">Total Sessions: --</span>
+            <span>Target: 80%</span>
+          </div>
+        </div>
       </div>
-      <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:18px;">
-        <h4 style="margin:0 0 6px 0;color:var(--amber-accent);font-family:var(--font-heading);">🧂 Qualitative Salt Analysis</h4>
-        <p style="font-size:0.82rem;color:var(--text-muted);margin:0 0 12px 0;">Cation (Fe²⁺, Cu²⁺, Zn²⁺, Al³⁺, Pb²⁺, Ba²⁺) & Anion identification.</p>
-        <div style="font-size:1.8rem;font-weight:800;font-family:var(--font-mono);" id="statQualAccuracy">--%</div>
-        <small style="color:var(--text-muted);font-family:var(--font-mono);" id="statQualMeta">Total Sessions: --</small>
+
+      <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:18px;display:flex;flex-direction:column;justify-content:space-between;">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <h4 style="margin:0 0 6px 0;color:var(--amber-accent);font-family:var(--font-heading);">🧂 Qualitative Analysis</h4>
+            <span class="role-badge" style="background:var(--amber-bg);color:var(--amber-accent);border:1px solid var(--amber-border);">Salts & Ions</span>
+          </div>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin:0 0 12px 0;">Cation (Fe²⁺, Cu²⁺, Zn²⁺, Al³⁺, Pb²⁺, Ba²⁺) & Anion tests.</p>
+          <div style="font-size:2rem;font-weight:800;font-family:var(--font-mono);" id="statQualAccuracy">--%</div>
+        </div>
+        <div>
+          <div class="progress-bar-wrap">
+            <div id="barQualFill" class="progress-bar-fill amber" style="width:0%;"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:var(--text-muted);font-family:var(--font-mono);margin-top:4px;">
+            <span id="statQualMeta">Total Sessions: --</span>
+            <span>Target: 80%</span>
+          </div>
+        </div>
       </div>
-      <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:18px;">
-        <h4 style="margin:0 0 6px 0;color:var(--green-accent);font-family:var(--font-heading);">⚗️ Organic Chemistry Lab</h4>
-        <p style="font-size:0.82rem;color:var(--text-muted);margin:0 0 12px 0;">Alkanes, Alkenes, Alkanols, Alkanoic acids, KMnO₄, NaHCO₃ tests.</p>
-        <div style="font-size:1.8rem;font-weight:800;font-family:var(--font-mono);" id="statOrgAccuracy">--%</div>
-        <small style="color:var(--text-muted);font-family:var(--font-mono);" id="statOrgMeta">Total Sessions: --</small>
+
+      <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:18px;display:flex;flex-direction:column;justify-content:space-between;">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <h4 style="margin:0 0 6px 0;color:var(--green-accent);font-family:var(--font-heading);">⚗️ Organic Chemistry</h4>
+            <span class="role-badge" style="background:var(--green-bg);color:var(--green-accent);border:1px solid var(--green-border);">Synthetics</span>
+          </div>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin:0 0 12px 0;">Alkanes, Alkenes, Alkanols, Alkanoic acids, KMnO₄, NaHCO₃ tests.</p>
+          <div style="font-size:2rem;font-weight:800;font-family:var(--font-mono);" id="statOrgAccuracy">--%</div>
+        </div>
+        <div>
+          <div class="progress-bar-wrap">
+            <div id="barOrgFill" class="progress-bar-fill green" style="width:0%;"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:var(--text-muted);font-family:var(--font-mono);margin-top:4px;">
+            <span id="statOrgMeta">Total Sessions: --</span>
+            <span>Target: 80%</span>
+          </div>
+        </div>
       </div>
-      <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:18px;">
-        <h4 style="margin:0 0 6px 0;color:var(--violet-accent);font-family:var(--font-heading);">📋 Composite Exam Mock (40 Marks)</h4>
-        <p style="font-size:0.82rem;color:var(--text-muted);margin:0 0 12px 0;">KNEC Paper 3 3-Question Timed Composite Exams.</p>
-        <div style="font-size:1.8rem;font-weight:800;font-family:var(--font-mono);" id="statCompositeAvg">-- / 40.0</div>
-        <small style="color:var(--text-muted);font-family:var(--font-mono);" id="statCompositeMeta">Completed Exams: --</small>
+
+      <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:18px;display:flex;flex-direction:column;justify-content:space-between;">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <h4 style="margin:0 0 6px 0;color:var(--violet-accent);font-family:var(--font-heading);">📋 Composite Exams</h4>
+            <span class="role-badge" style="background:var(--violet-bg);color:var(--violet-accent);border:1px solid var(--violet-border);">KNEC Mock</span>
+          </div>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin:0 0 12px 0;">Timed 40-mark Paper 3 comprehensive mock practicals.</p>
+          <div style="font-size:2rem;font-weight:800;font-family:var(--font-mono);" id="statCompositeAvg">-- / 40.0</div>
+        </div>
+        <div>
+          <div class="progress-bar-wrap">
+            <div id="barCompositeFill" class="progress-bar-fill violet" style="width:0%;"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:var(--text-muted);font-family:var(--font-mono);margin-top:4px;">
+            <span id="statCompositeMeta">Completed: --</span>
+            <span>KNEC Dist: 32/40</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -553,6 +653,9 @@
   </div>
 </div>
 
+<!-- Toast Container -->
+<div id="vlkToastContainer" class="vlk-toast-container"></div>
+
 <!-- ══════════════════════════════════════
      SCRIPTS
 ══════════════════════════════════════ -->
@@ -561,6 +664,7 @@
   let allSchools = [];
   let allUsers = [];
   let allAdmins = [];
+  let activeUserRole = 'all';
 
   function setTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
@@ -578,6 +682,49 @@
     document.querySelectorAll('.theme-btn-chip').forEach(btn => {
       btn.classList.toggle('active', btn.getAttribute('data-theme') === currentTheme);
     });
+  }
+
+  function getInitials(name) {
+    if (!name) return '??';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+
+  function showToast(message, type = 'info', duration = 3500) {
+    const container = document.getElementById('vlkToastContainer');
+    if (!container) return;
+    const toast = document.createElement('div');
+    toast.className = `vlk-toast ${type}`;
+    const icon = type === 'success' ? '✓' : (type === 'error' ? '✕' : 'ℹ');
+    toast.innerHTML = `<span style="font-size:1.1rem;font-weight:800;">${icon}</span> <span>${escapeHtml(message)}</span>`;
+    container.appendChild(toast);
+    setTimeout(() => {
+      toast.style.animation = 'vlkToastOut 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+      setTimeout(() => toast.remove(), 250);
+    }, duration);
+  }
+
+  function copyToClipboard(text, label = 'Copied to clipboard!') {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast(label, 'success', 2500);
+      }).catch(() => {
+        fallbackCopy(text, label);
+      });
+    } else {
+      fallbackCopy(text, label);
+    }
+  }
+
+  function fallbackCopy(text, label) {
+    const el = document.createElement('textarea');
+    el.value = text;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    showToast(label, 'success', 2500);
   }
 
   async function checkAdminAuth() {
@@ -600,6 +747,7 @@
     try {
       await Auth.adminLogin(email, password);
       document.getElementById('adminLoginModal').style.display = 'none';
+      showToast('Welcome back to Admin Portal!', 'success');
       initAdminDashboard();
     } catch (err) {
       msg.innerHTML = '<span style="color:var(--red-accent);font-weight:600;">' + (err.message || 'Invalid admin credentials.') + '</span>';
@@ -616,9 +764,14 @@
       const pill = document.getElementById('adminIdentityPill');
       const nameDisp = document.getElementById('adminNameDisplay');
       const roleBadge = document.getElementById('adminRoleBadge');
+      const avatarCircle = document.getElementById('adminAvatarCircle');
+      if (avatarCircle) {
+        avatarCircle.textContent = getInitials(currentUser.name);
+        avatarCircle.className = `avatar-circle ${currentUser.adminRole === 'superadmin' ? 'superadmin' : 'admin'}`;
+      }
       if (pill && nameDisp) {
         pill.style.display = 'inline-flex';
-        nameDisp.textContent = `${currentUser.name || 'Admin'} (${currentUser.adminRole === 'superadmin' ? 'Super Admin' : 'Admin'})`;
+        nameDisp.textContent = `${currentUser.name || 'Admin'}`;
       }
       if (roleBadge) {
         roleBadge.textContent = (currentUser.adminRole === 'superadmin') ? 'Super Admin' : 'Admin Portal';
@@ -639,23 +792,31 @@
       if (schoolsRes.success) {
         allSchools = schoolsRes.schools;
         renderSchools(allSchools);
+        const countEl = document.getElementById('tabCountSchools');
+        if (countEl) countEl.textContent = allSchools.length;
       }
 
       const usersRes = await Admin.getUsers();
       if (usersRes.success) {
         allUsers = usersRes.users;
         renderUsers(allUsers);
+        const countEl = document.getElementById('tabCountUsers');
+        if (countEl) countEl.textContent = allUsers.length;
       }
 
       const adminsRes = await Admin.getTeam();
       if (adminsRes && adminsRes.success) {
         allAdmins = adminsRes.admins;
         renderAdmins(allAdmins);
+        const countEl = document.getElementById('tabCountAdmins');
+        if (countEl) countEl.textContent = allAdmins.length;
       }
 
       const annRes = await Admin.getAnnouncements();
       if (annRes.success) {
         renderAnnouncements(annRes.announcements);
+        const countEl = document.getElementById('tabCountAnn');
+        if (countEl) countEl.textContent = annRes.announcements.length;
       }
 
       const auditRes = await Admin.getAuditLogs();
@@ -684,27 +845,40 @@
   function renderAnalytics(data) {
     if (!data) return;
     if (data.titration) {
-      document.getElementById('statTitrationAccuracy').textContent = data.titration.accuracy + '%';
-      document.getElementById('statTitrationMeta').textContent = `Total Sessions: ${data.titration.total} | Avg Score: ${data.titration.avgScore}`;
+      const acc = Math.min(100, Math.max(0, parseFloat(data.titration.accuracy) || 0));
+      document.getElementById('statTitrationAccuracy').textContent = acc + '%';
+      document.getElementById('statTitrationMeta').textContent = `Total: ${data.titration.total} | Avg: ${data.titration.avgScore}`;
+      const bar = document.getElementById('barTitrationFill');
+      if (bar) bar.style.width = acc + '%';
     }
     if (data.qualitative) {
-      document.getElementById('statQualAccuracy').textContent = data.qualitative.accuracy + '%';
-      document.getElementById('statQualMeta').textContent = `Total Sessions: ${data.qualitative.total} | Avg Tests: ${data.qualitative.avgTests}`;
+      const acc = Math.min(100, Math.max(0, parseFloat(data.qualitative.accuracy) || 0));
+      document.getElementById('statQualAccuracy').textContent = acc + '%';
+      document.getElementById('statQualMeta').textContent = `Total: ${data.qualitative.total} | Tests: ${data.qualitative.avgTests}`;
+      const bar = document.getElementById('barQualFill');
+      if (bar) bar.style.width = acc + '%';
     }
     if (data.organic) {
-      document.getElementById('statOrgAccuracy').textContent = data.organic.accuracy + '%';
-      document.getElementById('statOrgMeta').textContent = `Total Sessions: ${data.organic.total} | Avg Score: ${data.organic.avgPct}%`;
+      const acc = Math.min(100, Math.max(0, parseFloat(data.organic.accuracy) || 0));
+      document.getElementById('statOrgAccuracy').textContent = acc + '%';
+      document.getElementById('statOrgMeta').textContent = `Total: ${data.organic.total} | Score: ${data.organic.avgPct}%`;
+      const bar = document.getElementById('barOrgFill');
+      if (bar) bar.style.width = acc + '%';
     }
     if (data.composite) {
-      document.getElementById('statCompositeAvg').textContent = `${data.composite.avgTotalScore} / 40.0`;
-      document.getElementById('statCompositeMeta').textContent = `Completed Exams: ${data.composite.total} (Q1: ${data.composite.avgQ1Score}, Q2: ${data.composite.avgQ2Score}, Q3: ${data.composite.avgQ3Score})`;
+      const avg = parseFloat(data.composite.avgTotalScore) || 0;
+      const pct = Math.min(100, Math.max(0, Math.round((avg / 40.0) * 100)));
+      document.getElementById('statCompositeAvg').textContent = `${avg} / 40.0`;
+      document.getElementById('statCompositeMeta').textContent = `Exams: ${data.composite.total} | ${pct}% benchmark`;
+      const bar = document.getElementById('barCompositeFill');
+      if (bar) bar.style.width = pct + '%';
     }
   }
 
   function renderAnnouncements(list) {
     const tbody = document.getElementById('announcementsTableBody');
     if (!list || list.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:18px;">No broadcast announcements published yet.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:24px;">No broadcast announcements published yet.</td></tr>';
       return;
     }
 
@@ -716,7 +890,6 @@
 
       const actionText = isActive ? 'Deactivate' : 'Activate';
       const newStatus = !isActive;
-      const btnClass = isActive ? 'btn-table-action' : 'btn-table-action';
 
       return `
         <tr>
@@ -726,7 +899,7 @@
           <td>${statusBadge}</td>
           <td><small style="font-family:var(--font-mono);color:var(--text-muted);">${new Date(a.created_at || Date.now()).toLocaleDateString()}</small></td>
           <td>
-            <button onclick="toggleAnnouncementStatus(${a.id}, ${newStatus})" class="${btnClass}">${actionText}</button>
+            <button onclick="toggleAnnouncementStatus(${a.id}, ${newStatus})" class="btn-table-action">${actionText}</button>
           </td>
         </tr>
       `;
@@ -736,16 +909,17 @@
   async function toggleAnnouncementStatus(id, newStatus) {
     try {
       await Admin.toggleAnnouncement(id, newStatus);
+      showToast(`Announcement ${newStatus ? 'activated' : 'deactivated'} successfully.`, 'info');
       initAdminDashboard();
     } catch (err) {
-      alert('Failed to toggle announcement: ' + err.message);
+      showToast('Failed to toggle announcement: ' + err.message, 'error');
     }
   }
 
   function renderAuditLogs(logs) {
     const tbody = document.getElementById('auditLogsTableBody');
     if (!logs || logs.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:18px;">No audit log events recorded yet.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:24px;">No audit log events recorded yet.</td></tr>';
       return;
     }
 
@@ -763,26 +937,42 @@
   function renderSchools(list) {
     const tbody = document.getElementById('schoolsTableBody');
     if (!list || list.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:18px;">No schools registered yet.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">No schools registered yet.</td></tr>';
       return;
     }
 
-    tbody.innerHTML = list.map(s => `
-      <tr>
-        <td><b>${escapeHtml(s.name)}</b></td>
-        <td>${escapeHtml(s.county || 'Nairobi')}</td>
-        <td><code style="color:var(--blue-accent);font-family:var(--font-mono);font-weight:700;">${escapeHtml(s.admin_code)}</code></td>
-        <td style="font-family:var(--font-mono);">${s.teacher_count || 0}</td>
-        <td style="font-family:var(--font-mono);">${s.student_count || 0}</td>
-        <td><span class="role-badge teacher">Active</span></td>
-        <td>
-          <div style="display:flex;gap:6px;">
-            <button onclick="editSchool(${s.id}, '${escapeHtml(s.name).replace(/'/g, "\\'")}', '${escapeHtml(s.county || 'Nairobi')}', '${escapeHtml(s.admin_code)}')" class="btn-table-action">✏️ Edit</button>
-            <button onclick="deleteSchool(${s.id}, '${escapeHtml(s.name).replace(/'/g, "\\'")}')" class="btn-table-action" style="color:var(--red-accent);">🗑️ Delete</button>
-          </div>
-        </td>
-      </tr>
-    `).join('');
+    tbody.innerHTML = list.map(s => {
+      const adminCode = escapeHtml(s.admin_code || 'N/A');
+      return `
+        <tr>
+          <td>
+            <div class="user-cell">
+              <span class="avatar-circle" style="background:linear-gradient(135deg, #0284C7, #0369A1);">${getInitials(s.name)}</span>
+              <div>
+                <b style="color:var(--heading-color);">${escapeHtml(s.name)}</b>
+                <div style="font-size:0.74rem;color:var(--text-muted);">Registered Institution</div>
+              </div>
+            </div>
+          </td>
+          <td><span style="font-weight:600;">${escapeHtml(s.county || 'Nairobi')}</span></td>
+          <td>
+            <span class="code-chip" onclick="copyToClipboard('${adminCode}', 'Admin Code copied: ${adminCode}')" title="Click to copy registration code">
+              <code>${adminCode}</code>
+              <span class="copy-icon">📋</span>
+            </span>
+          </td>
+          <td style="font-family:var(--font-mono);font-weight:700;">${s.teacher_count || 0}</td>
+          <td style="font-family:var(--font-mono);font-weight:700;">${s.student_count || 0}</td>
+          <td><span class="status-badge active">Active</span></td>
+          <td>
+            <div style="display:flex;gap:6px;">
+              <button onclick="editSchool(${s.id}, '${escapeHtml(s.name).replace(/'/g, "\\'")}', '${escapeHtml(s.county || 'Nairobi')}', '${adminCode}')" class="btn-table-action">✏️ Edit</button>
+              <button onclick="deleteSchool(${s.id}, '${escapeHtml(s.name).replace(/'/g, "\\'")}')" class="btn-table-action" style="color:var(--red-accent);">🗑️ Delete</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
   }
 
   function editSchool(id, name, county, adminCode) {
@@ -810,6 +1000,7 @@
       const res = await Admin.updateSchool(id, name, county, adminCode);
       if (res.success) {
         msg.innerHTML = '<div style="color:var(--green-accent);font-size:0.85rem;font-weight:700;">✓ School updated successfully!</div>';
+        showToast('School updated successfully!', 'success');
         setTimeout(() => {
           closeEditSchoolModal();
           initAdminDashboard();
@@ -824,14 +1015,15 @@
     if (!confirm(`Are you sure you want to delete ${name}? This will unlink its teachers and students.`)) return;
     try {
       await Admin.deleteSchool(id);
+      showToast(`School ${name} removed.`, 'info');
       initAdminDashboard();
     } catch (err) {
-      alert('Failed to delete school: ' + err.message);
+      showToast('Failed to delete school: ' + err.message, 'error');
     }
   }
 
   function filterSchools() {
-    const q = document.getElementById('schoolSearch').value.toLowerCase();
+    const q = document.getElementById('schoolSearch').value.toLowerCase().trim();
     const filtered = allSchools.filter(s =>
       (s.name && s.name.toLowerCase().includes(q)) ||
       (s.county && s.county.toLowerCase().includes(q)) ||
@@ -840,10 +1032,39 @@
     renderSchools(filtered);
   }
 
+  function filterUserRole(role, btn) {
+    activeUserRole = role;
+    document.querySelectorAll('.filter-chip-group .filter-chip').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    filterUsers();
+  }
+
+  function filterUsers() {
+    const q = document.getElementById('userSearch').value.toLowerCase().trim();
+    const filtered = allUsers.filter(u => {
+      const matchesQuery = !q ||
+        (u.name && u.name.toLowerCase().includes(q)) ||
+        (u.email && u.email.toLowerCase().includes(q)) ||
+        (u.school_name && u.school_name.toLowerCase().includes(q)) ||
+        (u.county && u.county.toLowerCase().includes(q));
+
+      if (!matchesQuery) return false;
+
+      if (activeUserRole === 'all') return true;
+      if (activeUserRole === 'teacher') return (u.role || '').toLowerCase() === 'teacher';
+      if (activeUserRole === 'student') return (u.role || '').toLowerCase() === 'student';
+      if (activeUserRole === 'active') return u.status !== 'suspended';
+      if (activeUserRole === 'suspended') return u.status === 'suspended';
+      return true;
+    });
+
+    renderUsers(filtered);
+  }
+
   function renderUsers(list) {
     const tbody = document.getElementById('usersTableBody');
     if (!list || list.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:18px;">No users found.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:24px;">No users found matching current filters.</td></tr>';
       return;
     }
 
@@ -855,15 +1076,24 @@
 
       const toggleActionText = isSuspended ? 'Activate' : 'Suspend';
       const newStatus = isSuspended ? 'active' : 'suspended';
+      const roleLower = (u.role || 'student').toLowerCase();
+      const initials = getInitials(u.name);
 
       return `
         <tr>
-          <td><b>${escapeHtml(u.name)}</b></td>
+          <td>
+            <div class="user-cell">
+              <span class="avatar-circle ${roleLower}">${initials}</span>
+              <div>
+                <b style="color:var(--heading-color);">${escapeHtml(u.name)}</b>
+              </div>
+            </div>
+          </td>
           <td style="font-family:var(--font-mono);font-size:0.8rem;">${escapeHtml(u.email)}</td>
-          <td><span class="role-badge ${u.role.toLowerCase()}">${u.role}</span></td>
+          <td><span class="role-badge ${roleLower}">${escapeHtml(u.role)}</span></td>
           <td>${escapeHtml(u.school_name || 'VirtuLab Academy')}</td>
           <td>${escapeHtml(u.county || 'Nairobi')}</td>
-          <td>${u.form ? 'Form ' + u.form : 'N/A'}</td>
+          <td><span style="font-family:var(--font-mono);font-size:0.8rem;">${u.form ? 'Form ' + u.form : '—'}</span></td>
           <td>${statusBadge}</td>
           <td>
             <div style="display:flex;gap:6px;">
@@ -880,9 +1110,10 @@
     if (!confirm(`Are you sure you want to change this user's status to ${status}?`)) return;
     try {
       await Admin.updateUserStatus(userId, role, status);
+      showToast(`User status updated to ${status}.`, 'success');
       initAdminDashboard();
     } catch (err) {
-      alert('Failed to update status: ' + err.message);
+      showToast('Failed to update status: ' + err.message, 'error');
     }
   }
 
@@ -890,20 +1121,10 @@
     if (!confirm(`Reset password for ${userName}? A new temporary password will be generated.`)) return;
     try {
       const res = await Admin.resetUserPassword(userId, role);
-      alert(`Password for ${userName} reset successfully.\n\nTemporary Password: ${res.temporaryPassword}\n\nPlease share this temporary password with the user.`);
+      showToast(`Password reset for ${userName}. Temporary PW: ${res.temporaryPassword}`, 'success', 9000);
     } catch (err) {
-      alert('Failed to reset password: ' + err.message);
+      showToast('Failed to reset password: ' + err.message, 'error');
     }
-  }
-
-  function filterUsers() {
-    const q = document.getElementById('userSearch').value.toLowerCase();
-    const filtered = allUsers.filter(u =>
-      (u.name && u.name.toLowerCase().includes(q)) ||
-      (u.email && u.email.toLowerCase().includes(q)) ||
-      (u.school_name && u.school_name.toLowerCase().includes(q))
-    );
-    renderUsers(filtered);
   }
 
   function renderTelemetry(logs) {
@@ -911,7 +1132,7 @@
     const tbody = document.getElementById('telemetryTableBody');
     if (!tbody) return;
     if (!list || list.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:18px;">No errors logged — system healthy.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:24px;">No errors logged — system healthy.</td></tr>';
       return;
     }
 
@@ -929,7 +1150,7 @@
     const tbody = document.getElementById('adminsTableBody');
     if (!tbody) return;
     if (!list || list.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:18px;">No administrators registered.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">No administrators registered.</td></tr>';
       return;
     }
 
@@ -943,20 +1164,26 @@
 
       const isSuper = a.role === 'superadmin';
       const roleBadge = isSuper
-        ? '<span class="role-badge superadmin">Super Admin</span>'
-        : '<span class="role-badge admin">Admin</span>';
+        ? '<span class="role-badge superadmin">👑 Super Admin</span>'
+        : '<span class="role-badge admin">🛡️ Admin</span>';
 
       const toggleActionText = isSuspended ? 'Activate' : 'Suspend';
       const newStatus = isSuspended ? 'active' : 'suspended';
       const isMe = current && current.id === a.id;
       const lastLoginText = a.last_login ? new Date(a.last_login).toLocaleString() : 'Never';
       const createdText = a.created_at ? new Date(a.created_at).toLocaleDateString() : '—';
+      const initials = getInitials(a.name);
 
       return `
         <tr>
           <td>
-            <div style="font-weight:700;">${escapeHtml(a.name)} ${isMe ? '<small style="color:var(--blue-accent);">(You)</small>' : ''}</div>
-            ${a.created_by_name ? `<small style="color:var(--text-muted);font-size:0.72rem;">Invited by ${escapeHtml(a.created_by_name)}</small>` : ''}
+            <div class="user-cell">
+              <span class="avatar-circle ${isSuper ? 'superadmin' : 'admin'}">${initials}</span>
+              <div>
+                <div style="font-weight:800;color:var(--heading-color);">${escapeHtml(a.name)} ${isMe ? '<small style="color:var(--blue-accent);font-weight:700;">(You)</small>' : ''}</div>
+                ${a.created_by_name ? `<small style="color:var(--text-muted);font-size:0.72rem;">Invited by ${escapeHtml(a.created_by_name)}</small>` : ''}
+              </div>
+            </div>
           </td>
           <td style="font-family:var(--font-mono);font-size:0.82rem;">${escapeHtml(a.email)}</td>
           <td>${roleBadge}</td>
@@ -965,7 +1192,7 @@
           <td style="font-family:var(--font-mono);font-size:0.78rem;color:var(--text-muted);">${createdText}</td>
           <td>
             <div style="display:flex;gap:6px;">
-              ${isMe ? '<span style="font-size:0.75rem;color:var(--text-muted);padding:4px;">Current Session</span>' : `
+              ${isMe ? '<span style="font-size:0.74rem;color:var(--text-muted);padding:4px;font-weight:600;">Active Session</span>' : `
                 <button onclick="toggleAdminStatus(${a.id}, '${newStatus}')" class="btn-table-action">${toggleActionText}</button>
                 <button onclick="resetAdminPw(${a.id}, '${escapeHtml(a.name).replace(/'/g, "\\'")}')" class="btn-table-action">🔑 Reset PW</button>
               `}
@@ -992,6 +1219,7 @@
       pwd += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     document.getElementById('newAdminPasswordInput').value = pwd;
+    showToast('Secure temporary password generated!', 'info');
   }
 
   async function submitCreateAdmin(e) {
@@ -1007,6 +1235,7 @@
       const res = await Admin.createAdmin({ name, email, password, role });
       if (res.success) {
         msg.innerHTML = '<div style="color:var(--green-accent);font-size:0.85rem;font-weight:700;">✓ Administrator account created successfully!</div>';
+        showToast(`Administrator ${name} invited successfully!`, 'success');
         setTimeout(() => {
           closeAddAdminModal();
           initAdminDashboard();
@@ -1021,9 +1250,10 @@
     if (!confirm(`Are you sure you want to change this administrator's status to ${newStatus}?`)) return;
     try {
       await Admin.updateAdminStatus(adminId, newStatus);
+      showToast(`Admin status updated to ${newStatus}.`, 'success');
       initAdminDashboard();
     } catch (err) {
-      alert('Failed to update admin status: ' + err.message);
+      showToast('Failed to update admin status: ' + err.message, 'error');
     }
   }
 
@@ -1031,9 +1261,9 @@
     if (!confirm(`Reset password for administrator ${adminName}? A new temporary master password will be generated.`)) return;
     try {
       const res = await Admin.resetAdminPassword(adminId);
-      alert(`Temporary password generated for ${adminName}:\n\n${res.temporaryPassword}\n\nPlease share this password securely with the administrator.`);
+      showToast(`Password generated for ${adminName}: ${res.temporaryPassword}`, 'success', 10000);
     } catch (err) {
-      alert('Failed to reset admin password: ' + err.message);
+      showToast('Failed to reset admin password: ' + err.message, 'error');
     }
   }
 
@@ -1065,6 +1295,7 @@
       const res = await Admin.createSchool(name, county, adminCode);
       if (res.success) {
         msg.innerHTML = '<div style="color:var(--green-accent);font-size:0.85rem;font-weight:700;">✓ School registered successfully!</div>';
+        showToast(`School ${name} registered successfully!`, 'success');
         setTimeout(() => {
           closeRegisterSchoolModal();
           initAdminDashboard();
@@ -1094,6 +1325,7 @@
       const res = await Admin.createAnnouncement(title, message, type);
       if (res.success) {
         msg.innerHTML = '<div style="color:var(--green-accent);font-size:0.85rem;font-weight:700;">✓ Broadcast announcement published!</div>';
+        showToast(`Broadcast "${title}" published!`, 'success');
         setTimeout(() => {
           closeAnnouncementModal();
           initAdminDashboard();

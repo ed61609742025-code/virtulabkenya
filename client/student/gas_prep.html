@@ -5,9 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Gas Preparation & Collection — VirtuLab Kenya</title>
 <meta name="description" content="Simulate the preparation, drying, collection, and confirmatory testing of essential inorganic gases for KCSE Chemistry Paper 3.">
+<script src="/shared/auth-guard.js"></script>
 <script>
   var t = localStorage.getItem('vlk_theme') || 'dark';
   document.documentElement.setAttribute('data-theme', t);
+  if (window.VLKAuthGuard) {
+    VLKAuthGuard.guardPage('student');
+  }
 </script>
 <meta name="theme-color" content="#0F172A">
 <meta name="mobile-web-app-capable" content="yes">

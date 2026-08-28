@@ -4,9 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Student Login — VirtuLab Kenya</title>
+<script src="/shared/auth-guard.js"></script>
 <script>
   var t = localStorage.getItem('vlk_theme') || 'dark';
   document.documentElement.setAttribute('data-theme', t);
+  if (window.VLKAuthGuard) {
+    VLKAuthGuard.guardLoginPage('student');
+  }
 </script>
 <meta name="theme-color" content="#0F172A">
 <meta name="mobile-web-app-capable" content="yes">
@@ -44,6 +48,9 @@
     </div>
     <p class="auth-sub">Enter your school email and password to access your virtual chemistry laboratory.</p>
   </div>
+
+  <!-- Dynamic Authentication Lead Notice -->
+  <div id="loginLeadNotice" style="display:none; margin: 0 0 16px 0; padding: 11px 14px; border-radius: 8px; font-size: 0.84rem; line-height: 1.45;"></div>
 
   <form id="studentLoginForm" onsubmit="event.preventDefault(); doLogin();">
     <div class="auth-form-group">
@@ -114,12 +121,33 @@
 <script src="/shared/auth-forms.js"></script>
 <script src="/shared/api.js"></script>
 <script>
-  // Redirect if already logged in as a student
-  const currentUser = getUser();
-  if (isLoggedIn() && currentUser && currentUser.role === 'student') {
-    window.location.href = 'home.html';
-  } else if (isLoggedIn() && (!currentUser || currentUser.role !== 'student')) {
-    clearToken(); // Clear stale/mismatched session
+  // Dynamic Authentication Lead Notices
+  const urlParams = new URLSearchParams(window.location.search);
+  const returnUrl = urlParams.get('returnUrl');
+  const expired = urlParams.get('expired');
+  const mismatch = urlParams.get('mismatch');
+  const noticeEl = document.getElementById('loginLeadNotice');
+
+  if (noticeEl) {
+    if (expired) {
+      noticeEl.style.display = 'block';
+      noticeEl.style.background = 'rgba(239, 68, 68, 0.12)';
+      noticeEl.style.border = '1px solid rgba(239, 68, 68, 0.35)';
+      noticeEl.style.color = '#EF4444';
+      noticeEl.innerHTML = '⏱️ <b>Session Expired:</b> Please log in again to continue your laboratory session.';
+    } else if (mismatch) {
+      noticeEl.style.display = 'block';
+      noticeEl.style.background = 'rgba(245, 158, 11, 0.12)';
+      noticeEl.style.border = '1px solid rgba(245, 158, 11, 0.35)';
+      noticeEl.style.color = '#F59E0B';
+      noticeEl.innerHTML = `⚠️ You were signed in with a <b>${escapeHtml(mismatch)}</b> account. Please sign in with your <b>Student</b> account.`;
+    } else if (returnUrl) {
+      noticeEl.style.display = 'block';
+      noticeEl.style.background = 'rgba(56, 189, 248, 0.12)';
+      noticeEl.style.border = '1px solid rgba(56, 189, 248, 0.35)';
+      noticeEl.style.color = 'var(--teal, #38BDF8)';
+      noticeEl.innerHTML = '🔐 <b>Authentication Required:</b> Please log in to enter your laboratory workbench.';
+    }
   }
 
   function togglePasswordVisibility() {
@@ -161,8 +189,15 @@
     try {
       msg.innerHTML = '<div class="msg-alert info">⚗️ Authenticating student credentials…</div>';
       await Auth.studentLogin(email, password);
-      // Direct student to the 60-second Chemical Speed Battle Warm-Up before entering the lab benches
-      window.location.href = 'speed_battle.html?warmup=true';
+
+      // Check for returnUrl destination
+      const params = new URLSearchParams(window.location.search);
+      const target = params.get('returnUrl');
+      if (target && target.startsWith('/') && !target.includes('login.html')) {
+        window.location.href = target;
+      } else {
+        window.location.href = 'home.html';
+      }
     } catch (err) {
       msg.innerHTML = '<div class="msg-alert err">❌ ' + escapeHtml(err.message || 'Invalid credentials') + '</div>';
     }

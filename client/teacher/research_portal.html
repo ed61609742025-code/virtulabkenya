@@ -4,9 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Research & Learning Gain Analytics — VirtuLab Kenya</title>
+<script src="/shared/auth-guard.js"></script>
 <script>
   var t = localStorage.getItem('vlk_theme') || 'dark';
   document.documentElement.setAttribute('data-theme', t);
+  if (window.VLKAuthGuard) {
+    VLKAuthGuard.guardPage('teacher');
+  }
 </script>
 <meta name="theme-color" content="#0F172A">
 <link rel="stylesheet" href="../shared/style.css">

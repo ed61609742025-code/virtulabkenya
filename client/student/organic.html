@@ -5,9 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Organic Chemistry Analysis (KCSE Paper 3) — VirtuLab Kenya</title>
 <meta name="description" content="Systematically identify unknown organic compounds through reagent tests, combustion, unsaturation testing, and oxidation in this interactive KCSE organic analysis simulator.">
+<script src="/shared/auth-guard.js"></script>
 <script>
   var t = localStorage.getItem('vlk_theme') || 'dark';
   document.documentElement.setAttribute('data-theme', t);
+  if (window.VLKAuthGuard) {
+    VLKAuthGuard.guardPage('student');
+  }
   if (window.location.search.includes('embedded=1')) {
     const style = document.createElement('style');
     style.innerHTML = '.top-navbar { display: none !important; } body { padding-top: 0 !important; margin: 0 !important; } .page-container { padding-top: 10px !important; }';

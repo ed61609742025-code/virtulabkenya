@@ -14,6 +14,7 @@
 <title>VirtuLab Kenya — Every Student Deserves a Laboratory | KCSE Chemistry Simulation</title>
 <meta name="description" content="Every student deserves a laboratory. VirtuLab Kenya is an authoritative digital laboratory engineered for Kenyan secondary school scholars and teachers for KCSE Paper 3 practicals.">
 
+<script src="/shared/auth-guard.js"></script>
 <script>
   var t = localStorage.getItem('vlk_theme') || 'light';
   document.documentElement.setAttribute('data-theme', t);
@@ -1756,6 +1757,47 @@
       }, 500);
     }
   };
+
+  // Smart Dynamic Link Leads based on Auth State
+  function updateNavAuthLeads() {
+    if (!window.VLKAuthGuard) return;
+    const auth = VLKAuthGuard.getAuthState();
+
+    if (auth.isLoggedIn && auth.role === 'student') {
+      // Student is already authenticated: lead directly into workstation
+      document.querySelectorAll('a[href="/student/login.html"]').forEach(el => {
+        el.setAttribute('href', '/student/home.html');
+        if (el.textContent.includes('Student Access')) {
+          el.textContent = 'Student Workstation';
+        }
+      });
+      const quickStudent = document.querySelector('.mobile-quickstrip-btn.primary');
+      if (quickStudent) quickStudent.setAttribute('href', '/student/home.html');
+    } else if (auth.isLoggedIn && auth.role === 'teacher') {
+      // Teacher is already authenticated: lead directly into teacher dashboard
+      document.querySelectorAll('a[href="/teacher/login.html"]').forEach(el => {
+        el.setAttribute('href', '/teacher/dashboard.html');
+      });
+      const quickTeacher = document.querySelector('.mobile-quickstrip-btn.outline');
+      if (quickTeacher) quickTeacher.setAttribute('href', '/teacher/dashboard.html');
+    } else {
+      // Unauthenticated visitor: lead direct lab links seamlessly through login with returnUrl
+      const directStudentLinks = [
+        { selector: 'a[href="/student/lab.html"]', target: '/student/lab.html' },
+        { selector: 'a[href="/student/qualitative.html"]', target: '/student/qualitative.html' },
+        { selector: 'a[href="/student/rates.html"]', target: '/student/rates.html' },
+        { selector: 'a[href="/student/composite_exam.html"]', target: '/student/composite_exam.html' },
+        { selector: 'a[href="/student/home.html#reference"]', target: '/student/home.html#reference' },
+        { selector: 'a[href="/student/lab.html?studyMode=guided"]', target: '/student/lab.html?studyMode=guided' }
+      ];
+      directStudentLinks.forEach(item => {
+        document.querySelectorAll(item.selector).forEach(el => {
+          el.setAttribute('href', '/student/login.html?returnUrl=' + encodeURIComponent(item.target));
+        });
+      });
+    }
+  }
+  updateNavAuthLeads();
 </script>
 <script src="/shared/pwa-installer.js"></script>
 </body>

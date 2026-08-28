@@ -5,9 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>KCSE Chemistry Paper 3 Composite Examination (40 Marks) | VirtuLab Kenya</title>
 <meta name="description" content="Simulate complete KNEC KCSE Chemistry Paper 3 (233/3) composite mock practical examination with realistic lab glassware, precision volumetric titrations, qualitative test-tubes, and organic analysis.">
+<script src="/shared/auth-guard.js"></script>
 <script>
   var t = localStorage.getItem('vlk_theme') || 'dark';
   document.documentElement.setAttribute('data-theme', t);
+  if (window.VLKAuthGuard) {
+    VLKAuthGuard.guardPage('student');
+  }
 </script>
 <meta name="theme-color" content="#090E17">
 <link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">

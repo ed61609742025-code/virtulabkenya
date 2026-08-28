@@ -383,12 +383,13 @@ async function apiRequest(method, endpoint, body, retries = 2) {
         if (res.status === 401) {
           clearToken();
           const path = (window.location.pathname || '').toLowerCase();
+          const currentTarget = encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
           if (path.includes('/student/') && !path.endsWith('login.html')) {
-            window.location.href = '/student/login.html';
+            window.location.replace('/student/login.html?expired=1&returnUrl=' + currentTarget);
           } else if (path.includes('/teacher/') && !path.endsWith('login.html')) {
-            window.location.href = '/teacher/login.html';
+            window.location.replace('/teacher/login.html?expired=1&returnUrl=' + currentTarget);
           } else if (path.includes('/admin/')) {
-            window.location.href = '/teacher/login.html';
+            window.location.replace('/teacher/login.html?expired=1&returnUrl=' + currentTarget);
           }
           throw new Error(data.error || 'Session expired. Please log in again.');
         }
@@ -842,8 +843,9 @@ function requireStudentLogin() {
     clearToken();
     const path = (window.location.pathname || '').toLowerCase();
     if (!path.endsWith('/student/login.html') && !path.endsWith('login.html')) {
-      const qs = role ? `?mismatch=${encodeURIComponent(role)}` : '';
-      window.location.href = '/student/login.html' + qs;
+      const returnUrl = encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
+      const qs = role ? `?mismatch=${encodeURIComponent(role)}&returnUrl=${returnUrl}` : `?returnUrl=${returnUrl}`;
+      window.location.replace('/student/login.html' + qs);
     }
   }
 }
@@ -856,8 +858,9 @@ function requireTeacherLogin() {
     clearToken();
     const path = (window.location.pathname || '').toLowerCase();
     if (!path.endsWith('/teacher/login.html') && !path.endsWith('login.html')) {
-      const qs = role ? `?mismatch=${encodeURIComponent(role)}` : '';
-      window.location.href = '/teacher/login.html' + qs;
+      const returnUrl = encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
+      const qs = role ? `?mismatch=${encodeURIComponent(role)}&returnUrl=${returnUrl}` : `?returnUrl=${returnUrl}`;
+      window.location.replace('/teacher/login.html' + qs);
     }
   }
 }

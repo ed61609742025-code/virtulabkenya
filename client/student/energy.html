@@ -5,9 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
   <title>Thermochemistry & Energy Changes (KCSE Paper 3) — VirtuLab Kenya</title>
   <meta name="description" content="Simulate KNEC KCSE Chemistry Paper 3 thermochemistry practicals: enthalpy of neutralization, displacement, solution, combustion, cooling curves, and interactive graph plotting.">
+  <script src="/shared/auth-guard.js"></script>
   <script>
     var t = localStorage.getItem('vlk_theme') || 'dark';
     document.documentElement.setAttribute('data-theme', t);
+    if (window.VLKAuthGuard) {
+      VLKAuthGuard.guardPage('student');
+    }
   </script>
   <meta name="theme-color" content="#090E17">
   <link rel="preconnect" href="https://fonts.googleapis.com">

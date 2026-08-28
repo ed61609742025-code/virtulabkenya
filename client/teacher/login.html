@@ -4,9 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Teacher Login — VirtuLab Kenya</title>
+<script src="/shared/auth-guard.js"></script>
 <script>
   var t = localStorage.getItem('vlk_theme') || 'dark';
   document.documentElement.setAttribute('data-theme', t);
+  if (window.VLKAuthGuard) {
+    VLKAuthGuard.guardLoginPage('teacher');
+  }
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -105,21 +109,20 @@
 <script src="/shared/auth-forms.js"></script>
 <script src="/shared/api.js"></script>
 <script>
-  // Redirect if already logged in as a teacher
-  const currentUser = getUser();
-  if (isLoggedIn() && currentUser && currentUser.role === 'teacher') {
-    window.location.href = 'dashboard.html';
-  } else if (isLoggedIn() && (!currentUser || currentUser.role !== 'teacher')) {
-    clearToken(); // Clear stale/mismatched session
-  }
-
-  // Display role mismatch alert if redirected from student session
+  // Display role mismatch or returnUrl alert
   const urlParams = new URLSearchParams(window.location.search);
   const mismatch = urlParams.get('mismatch');
-  if (mismatch) {
-    const msgEl = document.getElementById('msg');
-    if (msgEl) {
+  const returnUrl = urlParams.get('returnUrl');
+  const expired = urlParams.get('expired');
+  const msgEl = document.getElementById('msg');
+
+  if (msgEl) {
+    if (expired) {
+      msgEl.innerHTML = `<div class="msg-alert err" style="margin-bottom:14px;">⏱️ Your session has expired. Please log in again to continue.</div>`;
+    } else if (mismatch) {
       msgEl.innerHTML = `<div class="msg-alert warn" style="margin-bottom:14px;">⚠️ You were signed in with a <b>${escapeHtml(mismatch)}</b> account. Please log in with your <b>Teacher</b> account to access the Teacher Portal.</div>`;
+    } else if (returnUrl) {
+      msgEl.innerHTML = `<div class="msg-alert info" style="margin-bottom:14px;">🔐 <b>Authentication Required:</b> Please sign in to access the Teacher Console.</div>`;
     }
   }
 
@@ -162,7 +165,14 @@
     try {
       msg.innerHTML = '<div class="msg-alert info">🧪 Authenticating teacher credentials…</div>';
       await Auth.teacherLogin(email, password);
-      window.location.href = 'dashboard.html';
+
+      const params = new URLSearchParams(window.location.search);
+      const target = params.get('returnUrl');
+      if (target && target.startsWith('/') && !target.includes('login.html')) {
+        window.location.href = target;
+      } else {
+        window.location.href = 'dashboard.html';
+      }
     } catch (err) {
       msg.innerHTML = '<div class="msg-alert err">❌ ' + escapeHtml(err.message || 'Wrong email or password') + '</div>';
     }

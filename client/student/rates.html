@@ -5,9 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Reaction Rates & Chemical Kinetics (KCSE Paper 3) — VirtuLab Kenya</title>
   <meta name="description" content="Simulate KNEC KCSE Chemistry Paper 3 reaction rate practicals: Disappearing cross (Na2S2O3 + HCl), gas syringe kinetics, mass loss, catalysts, and collision theory.">
+  <script src="/shared/auth-guard.js"></script>
   <script>
     var t = localStorage.getItem('vlk_theme') || 'dark';
     document.documentElement.setAttribute('data-theme', t);
+    if (window.VLKAuthGuard) {
+      VLKAuthGuard.guardPage('student');
+    }
     if (window.location.search.includes('embedded=1')) {
       const style = document.createElement('style');
       style.innerHTML = '.top-navbar { display: none !important; } body { padding-top: 0 !important; margin: 0 !important; } .rate-page-wrap { padding-top: 10px !important; }';

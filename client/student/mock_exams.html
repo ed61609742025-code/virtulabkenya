@@ -5,9 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>KCSE Chemistry Paper 3 Mock Examination Center | VirtuLab Kenya</title>
 <meta name="description" content="Simulate official KNEC KCSE Chemistry Paper 3 (233/3) national mock practical exams with timed simulations, comprehensive marking rubrics, and detailed examiner reports.">
+<script src="/shared/auth-guard.js"></script>
 <script>
   var t = localStorage.getItem('vlk_theme') || 'light';
   document.documentElement.setAttribute('data-theme', t);
+  if (window.VLKAuthGuard) {
+    VLKAuthGuard.guardPage('student');
+  }
 </script>
 <meta name="theme-color" content="#0F172A">
 <meta name="mobile-web-app-capable" content="yes">

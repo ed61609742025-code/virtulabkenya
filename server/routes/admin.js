@@ -244,6 +244,9 @@ router.post('/users/:id/reset-password', asyncHandler(async (req, res) => {
     success: true,
     message: `Password reset successfully for ${result.rows[0].name}`,
     temporaryPassword: tempPassword
+  });
+}));
+
 // ── Admin Team Management (Multi-Admin & RBAC) ──────────────────
 
 // GET /api/admin/team — List all administrators

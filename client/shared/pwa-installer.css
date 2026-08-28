@@ -261,3 +261,321 @@
   font-size: 0.84rem;
   font-weight: 700;
 }
+
+/* ── 5. MAIN PAGE DIRECT INSTALL UI COMPONENTS ── */
+
+/* Hero Install Button */
+.btn-acad-install-hero {
+  background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
+  color: #FFFFFF !important;
+  border: 1.5px solid rgba(56, 189, 248, 0.4);
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 22px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-acad-install-hero:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.45);
+  border-color: #38BDF8;
+}
+
+[data-theme="dark"] .btn-acad-install-hero {
+  background: linear-gradient(135deg, #0284C7 0%, #0C4A6E 100%);
+  border-color: rgba(56, 189, 248, 0.5);
+  box-shadow: 0 4px 16px rgba(2, 132, 199, 0.45);
+}
+
+[data-theme="green"] .btn-acad-install-hero {
+  background: linear-gradient(135deg, #059669 0%, #064E3B 100%);
+  border-color: rgba(52, 211, 153, 0.5);
+  box-shadow: 0 4px 16px rgba(5, 150, 105, 0.4);
+}
+
+.install-pill-badge {
+  background: #B8860B;
+  color: #FFFFFF;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 999px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Nav Bar Install Button */
+.btn-acad-install-nav {
+  background: rgba(2, 132, 199, 0.1);
+  border: 1.5px solid #0284C7;
+  color: #0284C7;
+  font-weight: 700;
+  font-size: 0.84rem;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.18s ease;
+}
+
+.btn-acad-install-nav:hover {
+  background: #0284C7;
+  color: #FFFFFF;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+}
+
+[data-theme="dark"] .btn-acad-install-nav {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: #38BDF8;
+  color: #38BDF8;
+}
+
+[data-theme="dark"] .btn-acad-install-nav:hover {
+  background: #38BDF8;
+  color: #0F172A;
+}
+
+[data-theme="green"] .btn-acad-install-nav {
+  background: rgba(52, 211, 153, 0.12);
+  border-color: #10B981;
+  color: #34D399;
+}
+
+[data-theme="green"] .btn-acad-install-nav:hover {
+  background: #10B981;
+  color: #06140B;
+}
+
+/* Dedicated Student Offline Installation Showcase Section */
+.student-offline-section {
+  max-width: 1300px;
+  margin: 40px auto 0;
+  padding: 0 28px;
+}
+
+.student-offline-card {
+  background: linear-gradient(135deg, rgba(11, 37, 69, 0.04) 0%, rgba(2, 132, 199, 0.07) 100%);
+  border: 2px solid var(--acad-border);
+  border-left: 6px solid #0284C7;
+  border-radius: 12px;
+  padding: 36px 32px;
+  box-shadow: var(--shadow-scholarly);
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 32px;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .student-offline-card {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(12, 74, 110, 0.35) 100%);
+  border-color: #1E3A5F;
+  border-left-color: #38BDF8;
+}
+
+[data-theme="green"] .student-offline-card {
+  background: linear-gradient(135deg, rgba(6, 20, 11, 0.95) 0%, rgba(6, 78, 59, 0.35) 100%);
+  border-color: #1E4D2B;
+  border-left-color: #10B981;
+}
+
+.student-offline-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: rgba(2, 132, 199, 0.12);
+  color: #0284C7;
+  border: 1px solid rgba(2, 132, 199, 0.3);
+  padding: 4px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+[data-theme="dark"] .student-offline-badge {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38BDF8;
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+[data-theme="green"] .student-offline-badge {
+  background: rgba(52, 211, 153, 0.15);
+  color: #34D399;
+  border-color: rgba(52, 211, 153, 0.4);
+}
+
+.student-offline-heading {
+  font-family: 'Cinzel', serif;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0 0 10px;
+  line-height: 1.25;
+}
+
+.student-offline-desc {
+  font-size: 0.94rem;
+  color: var(--text-body);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.student-offline-perks-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.student-offline-perk-box {
+  background: var(--acad-paper);
+  border: 1px solid var(--acad-border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.student-offline-perk-box strong {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  display: block;
+}
+
+.student-offline-perk-box span.perk-sub {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+  display: block;
+  margin-top: 2px;
+}
+
+.student-offline-action-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--acad-paper);
+  border: 1.5px solid var(--acad-border);
+  border-radius: 12px;
+  padding: 28px 24px;
+  text-align: center;
+  box-shadow: var(--shadow-scholarly);
+}
+
+.btn-student-install-big {
+  width: 100%;
+  background: linear-gradient(135deg, #0284C7 0%, #00F2FE 100%);
+  color: #0F172A;
+  font-weight: 800;
+  font-size: 1.05rem;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 4px 18px rgba(0, 242, 254, 0.4);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-bottom: 12px;
+}
+
+.btn-student-install-big:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 242, 254, 0.6);
+}
+
+.device-support-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.device-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--acad-paper-subtle);
+  border: 1px solid var(--acad-border);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+@media (max-width: 900px) {
+  .student-offline-card {
+    grid-template-columns: 1fr;
+    padding: 24px 20px;
+  }
+  .student-offline-perks-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .student-offline-section {
+    padding: 0 14px;
+    margin: 24px auto 0;
+  }
+  .student-offline-card {
+    padding: 20px 14px;
+    gap: 18px;
+    border-radius: 10px;
+    border-left-width: 4px;
+  }
+  .student-offline-heading {
+    font-size: 1.3rem;
+    line-height: 1.28;
+    margin-bottom: 8px;
+  }
+  .student-offline-desc {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+  .student-offline-perk-box {
+    padding: 10px 12px;
+  }
+  .student-offline-action-wrap {
+    padding: 18px 12px;
+    border-radius: 10px;
+  }
+  .btn-student-install-big {
+    font-size: 0.94rem;
+    padding: 12px 14px;
+    width: 100%;
+  }
+  .vlk-install-modal-card {
+    padding: 20px 16px;
+    max-width: min(440px, 94vw);
+    border-radius: 14px;
+  }
+  .vlk-pwa-banner {
+    width: calc(100% - 16px);
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    padding: 12px 14px;
+  }
+}

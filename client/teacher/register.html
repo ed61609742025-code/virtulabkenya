@@ -73,7 +73,14 @@
           <span class="input-icon-left">🏫</span>
           <input type="text" id="schoolCode" class="auth-input" placeholder="e.g. SCH001" style="text-transform:uppercase;">
         </div>
-        <small style="display:block; margin-top:6px; font-size:0.76rem; color:var(--text-muted);">Provided by your school administrator (default: SCH001)</small>
+        <!-- Teacher / School Authorization Agreement -->
+      <div style="margin-top: 14px; padding: 12px 14px; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 8px; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
+        <label style="display: flex; align-items: flex-start; gap: 9px; cursor: pointer; text-align: left;">
+          <input type="checkbox" id="teacherLegalConsent" style="margin-top: 3px; accent-color: var(--teal, #38BDF8); width: 16px; height: 16px; flex-shrink: 0;" required>
+          <span>
+            I agree to the <a href="/terms.html" target="_blank" style="color: var(--teal, #38BDF8); text-decoration: underline;">Terms of Service</a> and <a href="/privacy.html" target="_blank" style="color: var(--teal, #38BDF8); text-decoration: underline;">Privacy Policy</a>. As an educator, I certify that I have authority from my secondary school to manage student academic practical records (KDPA 2019).
+          </span>
+        </label>
       </div>
     </div>
 
@@ -145,6 +152,8 @@
     const msg = document.getElementById('msg');
     msg.innerHTML = '';
 
+    const teacherLegalConsent = document.getElementById('teacherLegalConsent');
+
     if (!name || !email || !password || !schoolCode) {
       msg.innerHTML = '<div class="msg-alert err">⚠️ Please fill in all required registration fields.</div>';
       return;
@@ -152,6 +161,11 @@
 
     if (password.length < 6) {
       msg.innerHTML = '<div class="msg-alert err">⚠️ Password must be at least 6 characters.</div>';
+      return;
+    }
+
+    if (!teacherLegalConsent || !teacherLegalConsent.checked) {
+      msg.innerHTML = '<div class="msg-alert err">⚠️ Please agree to the Terms of Service &amp; Privacy Policy to register as an authorized educator.</div>';
       return;
     }
 

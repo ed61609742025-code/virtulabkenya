@@ -101,6 +101,27 @@
     return isNested ? '../shared/icon-192.png' : 'shared/icon-192.png';
   }
 
+  function showPwaStatusToast(message, type) {
+    const existing = document.getElementById('vlkPwaStatusToast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.id = 'vlkPwaStatusToast';
+    toast.className = `vlk-network-toast active ${type === 'success' ? 'online' : 'offline'}`;
+    toast.style.pointerEvents = 'auto';
+    toast.style.cursor = 'pointer';
+    toast.onclick = () => toast.remove();
+    toast.innerHTML = `<span>${type === 'success' ? '🚀' : '💡'}</span> <span>${message}</span>`;
+
+    document.body.appendChild(toast);
+    setTimeout(() => {
+      if (toast && toast.parentNode) {
+        toast.classList.remove('active');
+        setTimeout(() => toast.remove(), 400);
+      }
+    }, 4500);
+  }
+
   function showInstallModal() {
     const existing = document.getElementById('vlkInstallModal');
     if (existing) existing.remove();
@@ -113,45 +134,64 @@
     };
 
     const iconSrc = getAppIconSrc();
+    const isAndroid = /Android/.test(navigator.userAgent);
 
     modal.innerHTML = `
       <div class="vlk-install-modal-card">
-        <button class="vlk-pwa-close" style="position:absolute; top:14px; right:14px;" onclick="document.getElementById('vlkInstallModal').remove()">&times;</button>
-        <img src="${iconSrc}" alt="VirtuLab Kenya" class="vlk-pwa-icon" style="width:54px; height:54px; margin-bottom:8px;">
-        <h3 style="font-family:'Cinzel', serif; font-size:1.25rem; font-weight:800; margin:0;">Install VirtuLab Kenya</h3>
+        <button class="vlk-pwa-close" style="position:absolute; top:14px; right:14px;" onclick="document.getElementById('vlkInstallModal').remove()" aria-label="Close dialog">&times;</button>
+        <img src="${iconSrc}" alt="VirtuLab Kenya" class="vlk-pwa-icon" style="width:56px; height:56px; margin-bottom:8px; border-radius:12px;">
+        <h3 style="font-family:'Cinzel', serif; font-size:1.28rem; font-weight:800; margin:0; color:#F8FAFC;">Install VirtuLab Kenya</h3>
         <p style="font-size:0.84rem; color:#94A3B8; margin:4px 0 14px 0;">Official Offline-First KCSE Chemistry Practical Laboratory</p>
         
         <div class="vlk-perks-list">
           <div class="vlk-perk-item">
             <span class="vlk-perk-icon">⚡</span>
-            <div><strong>100% Offline Capable</strong><br>Run all 7 chemistry benches without internet connection or mobile data bundles.</div>
+            <div><strong>100% Offline Practical Lab</strong><br>Run all 8 KCSE chemistry practical benches with zero mobile data bundles required.</div>
           </div>
           <div class="vlk-perk-item">
             <span class="vlk-perk-icon">🚀</span>
-            <div><strong>Instant Home Screen Launcher</strong><br>Launches full screen with zero browser URL bar distractions.</div>
+            <div><strong>Instant Home Screen Access</strong><br>Launches full screen like a native app with no browser address bar distractions.</div>
           </div>
           <div class="vlk-perk-item">
             <span class="vlk-perk-icon">💾</span>
-            <div><strong>Offline Cloud Sync</strong><br>Practical marks and reports sync automatically when reconnected.</div>
+            <div><strong>Local Save &amp; Cloud Auto-Sync</strong><br>Titration ledgers, salt analysis, and mock scores save offline and sync when online.</div>
           </div>
         </div>
 
         ${isIOS ? `
           <div class="vlk-ios-step-box">
             <strong>📲 How to install on iPhone &amp; iPad:</strong>
-            <ol style="margin:6px 0 0 16px; padding:0; font-size:0.8rem;">
-              <li>Tap the <strong>Share</strong> icon in Safari at bottom of screen.</li>
-              <li>Scroll down and tap <strong>"Add to Home Screen"</strong>.</li>
+            <ol style="margin:8px 0 0 16px; padding:0; font-size:0.82rem; line-height:1.6;">
+              <li>Tap the <strong>Share</strong> button <svg style="display:inline-block; vertical-align:middle;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> in Safari at the bottom bar.</li>
+              <li>Scroll down and tap <strong>"Add to Home Screen"</strong> ⊞.</li>
               <li>Tap <strong>"Add"</strong> in the top right corner.</li>
             </ol>
           </div>
           <button type="button" class="vlk-pwa-btn-install" style="width:100%;" onclick="document.getElementById('vlkInstallModal').remove()">
             Got It! 👍
           </button>
+        ` : deferredPrompt ? `
+          <button type="button" class="vlk-pwa-btn-install" style="width:100%; font-size:0.95rem; padding:12px 16px;" id="vlkModalInstallBtn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Install VirtuLab App Directly Now
+          </button>
         ` : `
-          <button type="button" class="vlk-pwa-btn-install" style="width:100%;" id="vlkModalInstallBtn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Install VirtuLab App Now
+          <div class="vlk-ios-step-box" style="border-color:#0284C7; background:rgba(2, 132, 199, 0.08);">
+            <strong>📲 Quick Install Instructions:</strong>
+            <ol style="margin:8px 0 0 16px; padding:0; font-size:0.82rem; line-height:1.6;">
+              ${isAndroid ? `
+                <li>Tap the <strong>browser menu (⋮)</strong> at top right.</li>
+                <li>Tap <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.</li>
+                <li>Confirm <strong>"Install"</strong> to add to your app drawer.</li>
+              ` : `
+                <li>Look for the <strong>Install icon (⊕ or 💻↓)</strong> in the right of your browser's address bar.</li>
+                <li>Or open the browser menu (⋮ / ⋯) &gt; <strong>"Install VirtuLab Kenya..."</strong>.</li>
+                <li>Click <strong>Install</strong> to launch as a standalone desktop app.</li>
+              `}
+            </ol>
+          </div>
+          <button type="button" class="vlk-pwa-btn-install" style="width:100%;" onclick="document.getElementById('vlkInstallModal').remove()">
+            Understood 👍
           </button>
         `}
       </div>
@@ -166,12 +206,54 @@
           deferredPrompt.prompt();
           const res = await deferredPrompt.userChoice;
           console.log('[VirtuLab PWA] Install choice:', res.outcome);
-          deferredPrompt = null;
+          if (res.outcome === 'accepted') {
+            showPwaStatusToast('✅ VirtuLab installed successfully! Open it from your home screen.', 'success');
+            deferredPrompt = null;
+          }
         }
         modal.remove();
       };
     }
   }
+
+  async function installDirectly() {
+    isStandaloneMode = checkStandalone();
+    if (isStandaloneMode) {
+      showPwaStatusToast('🎉 VirtuLab Kenya is already installed and running on your device!', 'success');
+      return;
+    }
+
+    if (deferredPrompt) {
+      try {
+        deferredPrompt.prompt();
+        const res = await deferredPrompt.userChoice;
+        console.log('[VirtuLab PWA] Direct install choice:', res.outcome);
+        if (res.outcome === 'accepted') {
+          showPwaStatusToast('✅ VirtuLab installed successfully! Open it from your home screen.', 'success');
+          deferredPrompt = null;
+        } else {
+          showPwaStatusToast('Installation dismissed. You can install anytime from the main page.', 'info');
+        }
+        return;
+      } catch (err) {
+        console.warn('[VirtuLab PWA] Direct prompt invocation error:', err);
+      }
+    }
+
+    // If deferred prompt is not immediately available or on iOS/Desktop manual, show guided modal
+    showInstallModal();
+  }
+
+  window.addEventListener('appinstalled', () => {
+    console.log('[VirtuLab PWA] VirtuLab application was installed successfully.');
+    deferredPrompt = null;
+    isStandaloneMode = true;
+    const modal = document.getElementById('vlkInstallModal');
+    if (modal) modal.remove();
+    const banner = document.getElementById('vlkPwaBanner');
+    if (banner) banner.remove();
+    showPwaStatusToast('🎉 VirtuLab Kenya installed! Ready for 100% offline chemistry practicals.', 'success');
+  });
 
   function createFloatingBanner() {
     if (isStandaloneMode || document.getElementById('vlkPwaBanner')) return;
@@ -264,9 +346,13 @@
 
   // ── 6. EXPOSE GLOBAL PWA API ───────────────────────────────
   window.VLKPwa = {
-    promptInstall: showInstallModal,
+    installDirectly,
+    promptInstall: installDirectly,
     showInstallModal,
     isStandalone: () => isStandaloneMode,
     getStorageEstimate
   };
+
+  // Expose global convenience function for direct HTML onclick handlers
+  window.installVirtuLabApp = installDirectly;
 })();

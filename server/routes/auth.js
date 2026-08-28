@@ -18,6 +18,7 @@ const { authLimiter } = require('../middleware/rateLimiter');
 const { validateStudentRegister, validateTeacherRegister, validateLogin } = require('../middleware/validators');
 const asyncHandler = require('../utils/asyncHandler');
 const config = require('../config');
+const adminRepo = require('../repositories/adminRepo');
 
 const router = express.Router();
 
@@ -270,7 +271,32 @@ router.post('/teacher/login', authLimiter, validateLogin, asyncHandler(async (re
 router.get('/me', authMiddleware, asyncHandler(async (req, res) => {
   const { id, role } = req.user;
 
-  if (role === 'teacher') {
+  if (role === 'admin') {
+    if (id > 0) {
+      const admin = await adminRepo.findAdminById(id);
+      if (admin) {
+        return res.json({
+          user: {
+            id: admin.id,
+            name: admin.name,
+            email: admin.email,
+            role: 'admin',
+            adminRole: admin.role,
+            status: admin.status
+          }
+        });
+      }
+    }
+    return res.json({
+      user: {
+        id: req.user.id || 0,
+        name: req.user.name || 'System Administrator',
+        email: req.user.email,
+        role: 'admin',
+        adminRole: req.user.adminRole || 'superadmin'
+      }
+    });
+  } else if (role === 'teacher') {
     const tRes = await pool.query(
       `SELECT t.id, t.name, t.email, t.teacher_code, t.school_id, sc.name AS school_name, sc.admin_code AS school_code
        FROM teachers t
@@ -338,10 +364,18 @@ router.post('/change-password', authLimiter, authMiddleware, asyncHandler(async 
     return res.status(400).json({ error: 'New password must be at least 6 characters.' });
   }
 
-  const isTeacher = req.user.role === 'teacher';
-  const querySelect = isTeacher
-    ? 'SELECT password_hash FROM teachers WHERE id = $1'
-    : 'SELECT password_hash FROM students WHERE id = $1';
+  let querySelect;
+  let queryUpdate;
+  if (req.user.role === 'admin') {
+    querySelect = 'SELECT password_hash FROM admins WHERE id = $1';
+    queryUpdate = 'UPDATE admins SET password_hash = $1 WHERE id = $2';
+  } else if (req.user.role === 'teacher') {
+    querySelect = 'SELECT password_hash FROM teachers WHERE id = $1';
+    queryUpdate = 'UPDATE teachers SET password_hash = $1 WHERE id = $2';
+  } else {
+    querySelect = 'SELECT password_hash FROM students WHERE id = $1';
+    queryUpdate = 'UPDATE students SET password_hash = $1 WHERE id = $2';
+  }
 
   const result = await pool.query(querySelect, [req.user.id]);
   if (result.rows.length === 0) {
@@ -354,10 +388,6 @@ router.post('/change-password', authLimiter, authMiddleware, asyncHandler(async 
   }
 
   const newHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
-  const queryUpdate = isTeacher
-    ? 'UPDATE teachers SET password_hash = $1 WHERE id = $2'
-    : 'UPDATE students SET password_hash = $1 WHERE id = $2';
-
   await pool.query(queryUpdate, [newHash, req.user.id]);
 
   return res.json({ success: true });
@@ -391,53 +421,119 @@ router.post('/student/:id/reset-password', authLimiter, authMiddleware, authMidd
 }));
 
 // ── POST /api/auth/admin/login ─────────────────────────────────
-// System Administrator authentication endpoint
+// System Administrator authentication endpoint with multi-admin support & DB verification
 router.post('/admin/login', authLimiter, validateLogin, asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(400).json({ error: 'Email and password are required.' });
   }
 
+  const cleanEmail = email.toLowerCase().trim();
+
+  // 1. Try finding administrator in PostgreSQL database
+  try {
+    const dbAdmin = await adminRepo.findAdminByEmail(cleanEmail);
+    if (dbAdmin) {
+      if (dbAdmin.status && dbAdmin.status !== 'active') {
+        return res.status(403).json({ error: 'Your administrator account has been suspended. Please contact a Super Admin.' });
+      }
+
+      const isPasswordMatch = await bcrypt.compare(password, dbAdmin.password_hash);
+      if (isPasswordMatch) {
+        await adminRepo.updateLastLogin(dbAdmin.id);
+
+        const token = signToken({
+          id: dbAdmin.id,
+          role: 'admin',
+          adminRole: dbAdmin.role || 'admin',
+          name: dbAdmin.name,
+          email: dbAdmin.email
+        });
+
+        return res.json({
+          token,
+          user: {
+            id: dbAdmin.id,
+            name: dbAdmin.name,
+            email: dbAdmin.email,
+            role: 'admin',
+            adminRole: dbAdmin.role || 'admin',
+            status: dbAdmin.status
+          }
+        });
+      }
+    }
+  } catch (err) {
+    console.warn('[Admin Auth] Database lookup note:', err.message);
+  }
+
+  // 2. Fallback check against environment variables (auto-bootstrap / disaster recovery)
   const configuredAdminEmail = (process.env.ADMIN_EMAIL || config.auth.adminEmail || '').toLowerCase().trim();
   const configuredAdminHash = process.env.ADMIN_PASSWORD_HASH || config.auth.adminPasswordHash || '';
   const configuredAdminPassword = process.env.ADMIN_PASSWORD || config.auth.adminPassword || '';
 
-  if (!configuredAdminEmail || (!configuredAdminHash && !configuredAdminPassword)) {
-    return res.status(500).json({ error: 'Administrator access is not configured on this server.' });
-  }
+  if (configuredAdminEmail && (configuredAdminHash || configuredAdminPassword)) {
+    const isEmailMatch = safeTimingCompare(cleanEmail, configuredAdminEmail);
+    let isPasswordMatch = false;
 
-  const inputEmail = email.toLowerCase().trim();
-  const isEmailMatch = safeTimingCompare(inputEmail, configuredAdminEmail);
-
-  let isPasswordMatch = false;
-  if (configuredAdminHash) {
-    isPasswordMatch = await bcrypt.compare(password, configuredAdminHash);
-  } else if (configuredAdminPassword.startsWith('$2a$') || configuredAdminPassword.startsWith('$2b$')) {
-    isPasswordMatch = await bcrypt.compare(password, configuredAdminPassword);
-  } else {
-    isPasswordMatch = safeTimingCompare(password, configuredAdminPassword);
-  }
-
-  if (!isEmailMatch || !isPasswordMatch) {
-    return res.status(401).json({ error: 'Invalid admin credentials.' });
-  }
-
-  const token = signToken({
-    id: 0,
-    role: 'admin',
-    name: 'System Administrator',
-    email: configuredAdminEmail
-  });
-
-  return res.json({
-    token,
-    user: {
-      id: 0,
-      name: 'System Administrator',
-      email: configuredAdminEmail,
-      role: 'admin'
+    if (configuredAdminHash) {
+      isPasswordMatch = await bcrypt.compare(password, configuredAdminHash);
+    } else if (configuredAdminPassword.startsWith('$2a$') || configuredAdminPassword.startsWith('$2b$')) {
+      isPasswordMatch = await bcrypt.compare(password, configuredAdminPassword);
+    } else {
+      isPasswordMatch = safeTimingCompare(password, configuredAdminPassword);
     }
-  });
+
+    if (isEmailMatch && isPasswordMatch) {
+      // Auto-upsert into admins table as superadmin if missing
+      let adminRecord = null;
+      try {
+        let seededHash = configuredAdminHash;
+        if (!seededHash) {
+          seededHash = (configuredAdminPassword.startsWith('$2a$') || configuredAdminPassword.startsWith('$2b$'))
+            ? configuredAdminPassword
+            : await bcrypt.hash(configuredAdminPassword, 10);
+        }
+        adminRecord = await adminRepo.createAdmin({
+          name: 'System Administrator',
+          email: configuredAdminEmail,
+          passwordHash: seededHash,
+          role: 'superadmin'
+        });
+      } catch (e) {
+        adminRecord = await adminRepo.findAdminByEmail(configuredAdminEmail);
+      }
+
+      const adminId = adminRecord ? adminRecord.id : 0;
+      const adminRole = adminRecord ? adminRecord.role : 'superadmin';
+      const adminName = adminRecord ? adminRecord.name : 'System Administrator';
+
+      if (adminRecord) {
+        await adminRepo.updateLastLogin(adminRecord.id);
+      }
+
+      const token = signToken({
+        id: adminId,
+        role: 'admin',
+        adminRole,
+        name: adminName,
+        email: configuredAdminEmail
+      });
+
+      return res.json({
+        token,
+        user: {
+          id: adminId,
+          name: adminName,
+          email: configuredAdminEmail,
+          role: 'admin',
+          adminRole
+        }
+      });
+    }
+  }
+
+  return res.status(401).json({ error: 'Invalid admin credentials.' });
 }));
 
 module.exports = router;

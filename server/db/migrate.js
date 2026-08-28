@@ -6,6 +6,7 @@
 require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 
 const { Pool } = require('pg');
+const bcrypt = require('bcrypt');
 
 const migrations = [
   // Base Tables (Idempotent creation for fresh databases)
@@ -37,6 +38,18 @@ const migrations = [
      status VARCHAR(20) DEFAULT 'active',
      created_at TIMESTAMP DEFAULT NOW()
    )`,
+  `CREATE TABLE IF NOT EXISTS admins (
+     id SERIAL PRIMARY KEY,
+     name VARCHAR(150) NOT NULL,
+     email VARCHAR(200) UNIQUE NOT NULL,
+     password_hash VARCHAR(255) NOT NULL,
+     role VARCHAR(50) DEFAULT 'admin',
+     status VARCHAR(20) DEFAULT 'active',
+     created_by INTEGER REFERENCES admins(id) ON DELETE SET NULL,
+     last_login TIMESTAMP,
+     created_at TIMESTAMP DEFAULT NOW()
+   )`,
+  `CREATE INDEX IF NOT EXISTS idx_admins_email ON admins(email)`,
   `CREATE TABLE IF NOT EXISTS assignments (
      id SERIAL PRIMARY KEY,
      teacher_id INTEGER REFERENCES teachers(id) ON DELETE CASCADE,
@@ -359,6 +372,34 @@ const migrations = [
   `ALTER TABLE assignment_submissions ADD COLUMN IF NOT EXISTS marked_at TIMESTAMP`
 ];
 
+async function seedInitialAdmin(targetPool) {
+  try {
+    const adminCheck = await targetPool.query('SELECT COUNT(*) AS cnt FROM admins');
+    const count = parseInt(adminCheck.rows[0]?.cnt, 10) || 0;
+    if (count === 0) {
+      const email = (process.env.ADMIN_EMAIL || 'admin@virtulab.co.ke').toLowerCase().trim();
+      const rawPassword = process.env.ADMIN_PASSWORD || 'VirtuLabAdmin2025!';
+      let hash = process.env.ADMIN_PASSWORD_HASH;
+      if (!hash) {
+        if (rawPassword.startsWith('$2a$') || rawPassword.startsWith('$2b$')) {
+          hash = rawPassword;
+        } else {
+          hash = await bcrypt.hash(rawPassword, 10);
+        }
+      }
+      await targetPool.query(
+        `INSERT INTO admins (name, email, password_hash, role, status)
+         VALUES ($1, $2, $3, 'superadmin', 'active')
+         ON CONFLICT (email) DO NOTHING`,
+        ['System Administrator', email, hash]
+      );
+      console.log(`[Migrate] Primary Super Admin initialized: ${email}`);
+    }
+  } catch (err) {
+    console.warn('[Migrate] Admin seeding note:', err.message);
+  }
+}
+
 async function migrate() {
   const dbUrl = process.env.DATABASE_URL || '';
   const isCloudDb = dbUrl.includes('.neon.tech') || dbUrl.includes('.supabase.co') || dbUrl.includes('.pooler.supabase.com') || dbUrl.includes('render.com') || dbUrl.includes('railway.app') || (process.env.NODE_ENV === 'production' && !dbUrl.includes('localhost') && !dbUrl.includes('127.0.0.1'));
@@ -378,6 +419,8 @@ async function migrate() {
       process.exitCode = 1;
     }
   }
+
+  await seedInitialAdmin(pool);
 
   await pool.end();
   console.log('Migration complete.');
@@ -405,6 +448,9 @@ async function runMigrationsAsync(poolInstance) {
       console.warn('[Migrate] Step note:', err.message);
     }
   }
+
+  // Step 3: Ensure primary super admin account exists
+  await seedInitialAdmin(targetPool);
 }
 
 if (require.main === module) {

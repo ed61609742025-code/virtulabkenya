@@ -37,6 +37,19 @@ CREATE TABLE IF NOT EXISTS students (
   created_at TIMESTAMP DEFAULT NOW()
 );
 
+-- System administrators table for multi-admin support & RBAC
+CREATE TABLE IF NOT EXISTS admins (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(150) NOT NULL,
+  email VARCHAR(200) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  role VARCHAR(50) DEFAULT 'admin',        -- 'superadmin' | 'admin'
+  status VARCHAR(20) DEFAULT 'active',     -- 'active' | 'suspended'
+  created_by INTEGER REFERENCES admins(id) ON DELETE SET NULL,
+  last_login TIMESTAMP,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
 -- Assignments table (created before sessions to satisfy foreign key references)
 CREATE TABLE IF NOT EXISTS assignments (
   id SERIAL PRIMARY KEY,
@@ -325,4 +338,5 @@ CREATE INDEX IF NOT EXISTS idx_assignments_school_id ON assignments(school_id);
 CREATE INDEX IF NOT EXISTS idx_assignment_submissions_student_id ON assignment_submissions(student_id);
 CREATE INDEX IF NOT EXISTS idx_assignment_submissions_assignment_id ON assignment_submissions(assignment_id);
 CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_admins_email ON admins(email);
 

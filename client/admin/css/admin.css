@@ -405,6 +405,11 @@ html, body {
   color: var(--violet-accent);
   border: 1px solid var(--violet-border);
 }
+.role-badge.superadmin {
+  background: var(--amber-bg);
+  color: var(--amber-accent);
+  border: 1px solid var(--amber-border);
+}
 
 .status-badge {
   padding: 3px 8px;

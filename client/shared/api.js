@@ -754,6 +754,18 @@ const Admin = {
   async getAnalytics() {
     return apiRequest('GET', '/admin/analytics');
   },
+  async getTeam() {
+    return apiRequest('GET', '/admin/team');
+  },
+  async createAdmin(data) {
+    return apiRequest('POST', '/admin/team', data);
+  },
+  async updateAdminStatus(adminId, status) {
+    return apiRequest('PATCH', '/admin/team/' + adminId + '/status', { status });
+  },
+  async resetAdminPassword(adminId) {
+    return apiRequest('POST', '/admin/team/' + adminId + '/reset-password');
+  },
   exportSchoolsReport() {
     return downloadFile('/admin/export/schools', 'virtulab_schools_report.csv');
   },

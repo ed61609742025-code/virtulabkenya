@@ -13,6 +13,7 @@ const { validateSchoolCreate } = require('../middleware/validators');
 const schoolRepo = require('../repositories/schoolRepo');
 const announcementRepo = require('../repositories/announcementRepo');
 const auditRepo = require('../repositories/auditRepo');
+const adminRepo = require('../repositories/adminRepo');
 const { sendCsv, toCsvRow } = require('../utils/csv');
 
 // Guard all admin routes: Requires valid JWT token with role === 'admin'
@@ -81,8 +82,10 @@ router.post('/schools', validateSchoolCreate, asyncHandler(async (req, res) => {
   const school = await schoolRepo.createSchool({ name, county, adminCode });
 
   await auditRepo.logAuditEvent({
+    adminEmail: req.user.email,
     action: `Registered new school: ${school.name}`,
-    details: { school }
+    details: { school },
+    ipAddress: req.ip
   });
 
   return res.status(201).json({ success: true, school });
@@ -96,8 +99,10 @@ router.put('/schools/:id', asyncHandler(async (req, res) => {
   }
 
   await auditRepo.logAuditEvent({
+    adminEmail: req.user.email,
     action: `Updated school: ${school.name}`,
-    details: { school }
+    details: { school },
+    ipAddress: req.ip
   });
 
   return res.json({ success: true, school });
@@ -111,8 +116,10 @@ router.delete('/schools/:id', asyncHandler(async (req, res) => {
   }
 
   await auditRepo.logAuditEvent({
+    adminEmail: req.user.email,
     action: `Deleted school ID: ${req.params.id}`,
-    details: { schoolId: req.params.id }
+    details: { schoolId: req.params.id },
+    ipAddress: req.ip
   });
 
   return res.json({ success: true, message: 'School removed successfully' });
@@ -198,8 +205,10 @@ router.patch('/users/:id/status', asyncHandler(async (req, res) => {
   }
 
   await auditRepo.logAuditEvent({
+    adminEmail: req.user.email,
     action: `Updated user status: ${result.rows[0].email} to ${newStatus}`,
-    details: { userId, role, status: newStatus }
+    details: { userId, role, status: newStatus },
+    ipAddress: req.ip
   });
 
   return res.json({ success: true, user: result.rows[0] });
@@ -225,13 +234,136 @@ router.post('/users/:id/reset-password', asyncHandler(async (req, res) => {
   }
 
   await auditRepo.logAuditEvent({
+    adminEmail: req.user.email,
     action: `Reset password for user: ${result.rows[0].email}`,
-    details: { userId, role }
+    details: { userId, role },
+    ipAddress: req.ip
   });
 
   return res.json({
     success: true,
     message: `Password reset successfully for ${result.rows[0].name}`,
+    temporaryPassword: tempPassword
+// ── Admin Team Management (Multi-Admin & RBAC) ──────────────────
+
+// GET /api/admin/team — List all administrators
+router.get('/team', asyncHandler(async (req, res) => {
+  const admins = await adminRepo.getAllAdmins();
+  return res.json({ success: true, admins });
+}));
+
+// POST /api/admin/team — Create a new administrator
+router.post('/team', asyncHandler(async (req, res) => {
+  const { name, email, password, role } = req.body;
+
+  if (!name || !email || !password) {
+    return res.status(400).json({ error: 'Name, email, and password are required.' });
+  }
+
+  if (password.length < 6) {
+    return res.status(400).json({ error: 'Password must be at least 6 characters.' });
+  }
+
+  const cleanEmail = email.toLowerCase().trim();
+  const existing = await adminRepo.findAdminByEmail(cleanEmail);
+  if (existing) {
+    return res.status(409).json({ error: 'An administrator with this email already exists.' });
+  }
+
+  const validRole = (role === 'superadmin') ? 'superadmin' : 'admin';
+
+  if (validRole === 'superadmin' && req.user.adminRole !== 'superadmin') {
+    return res.status(403).json({ error: 'Only a Super Administrator can assign the Super Admin role.' });
+  }
+
+  const passwordHash = await bcrypt.hash(password, 10);
+  const newAdmin = await adminRepo.createAdmin({
+    name: name.trim(),
+    email: cleanEmail,
+    passwordHash,
+    role: validRole,
+    createdBy: req.user.id || null
+  });
+
+  await auditRepo.logAuditEvent({
+    adminEmail: req.user.email,
+    action: `Created new administrator: ${newAdmin.name} (${newAdmin.email}) as ${newAdmin.role}`,
+    details: { adminId: newAdmin.id, role: newAdmin.role },
+    ipAddress: req.ip
+  });
+
+  return res.status(201).json({ success: true, admin: newAdmin });
+}));
+
+// PATCH /api/admin/team/:id/status — Toggle admin status (active/suspended)
+router.patch('/team/:id/status', asyncHandler(async (req, res) => {
+  const adminId = parseInt(req.params.id, 10);
+  const { status } = req.body;
+
+  if (!['active', 'suspended'].includes(status)) {
+    return res.status(400).json({ error: 'Status must be active or suspended.' });
+  }
+
+  if (adminId === req.user.id) {
+    return res.status(400).json({ error: 'You cannot suspend your own administrator account.' });
+  }
+
+  const targetAdmin = await adminRepo.findAdminById(adminId);
+  if (!targetAdmin) {
+    return res.status(404).json({ error: 'Administrator not found.' });
+  }
+
+  if (targetAdmin.role === 'superadmin' && status === 'suspended') {
+    const superCount = await adminRepo.countSuperAdmins();
+    if (superCount <= 1) {
+      return res.status(400).json({ error: 'Cannot suspend the only remaining active Super Administrator.' });
+    }
+  }
+
+  if (targetAdmin.role === 'superadmin' && req.user.adminRole !== 'superadmin') {
+    return res.status(403).json({ error: 'Only a Super Administrator can suspend another Super Administrator.' });
+  }
+
+  const updated = await adminRepo.updateAdminStatus(adminId, status);
+
+  await auditRepo.logAuditEvent({
+    adminEmail: req.user.email,
+    action: `Updated administrator status: ${targetAdmin.email} to ${status}`,
+    details: { adminId, status },
+    ipAddress: req.ip
+  });
+
+  return res.json({ success: true, admin: updated });
+}));
+
+// POST /api/admin/team/:id/reset-password — Reset administrator password
+router.post('/team/:id/reset-password', asyncHandler(async (req, res) => {
+  const adminId = parseInt(req.params.id, 10);
+  const targetAdmin = await adminRepo.findAdminById(adminId);
+  if (!targetAdmin) {
+    return res.status(404).json({ error: 'Administrator not found.' });
+  }
+
+  if (targetAdmin.role === 'superadmin' && req.user.adminRole !== 'superadmin' && adminId !== req.user.id) {
+    return res.status(403).json({ error: 'Only a Super Administrator can reset password for another Super Administrator.' });
+  }
+
+  const tempPassword = 'VLK-ADM-' + crypto.randomBytes(4).toString('hex').toUpperCase().substring(0, 6);
+  const passwordHash = await bcrypt.hash(tempPassword, 10);
+
+  await adminRepo.updateAdminPassword(adminId, passwordHash);
+
+  await auditRepo.logAuditEvent({
+    adminEmail: req.user.email,
+    action: `Reset password for administrator: ${targetAdmin.email}`,
+    details: { adminId },
+    ipAddress: req.ip
+  });
+
+  return res.json({
+    success: true,
+    message: `Password reset successfully for ${targetAdmin.name}`,
+    adminName: targetAdmin.name,
     temporaryPassword: tempPassword
   });
 }));

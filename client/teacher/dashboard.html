@@ -75,6 +75,9 @@
       <span>📝 Assignments & Grading</span>
       <span class="badge-count" id="ungradedBadge" style="display:none;">0</span>
     </button>
+    <button class="sidebar-nav-btn" id="btnTabAiAssistant" onclick="switchTeacherTab('paneAiAssistant')">
+      <span style="display:flex;align-items:center;gap:6px;">🤖 AI Exam Assistant <span class="pill pill-info" style="font-size:0.62rem;padding:2px 6px;margin-left:auto;">AI</span></span>
+    </button>
     <button class="sidebar-nav-btn" id="btnTabStudents" onclick="switchTeacherTab('paneStudents')">
       <span>👥 Student Roster</span>
     </button>
@@ -149,6 +152,20 @@
 
     <!-- Tab Pane 2: Assignments & Grading -->
     <div id="paneAssignments" class="tab-pane">
+
+      <!-- AI Exam Assistant Hero Quick Launch Banner -->
+      <div class="ai-hero-banner" style="margin-bottom:22px;">
+        <div class="ai-hero-title-group">
+          <div class="ai-hero-icon">🤖</div>
+          <div>
+            <h3 style="margin:0 0 4px;font-family:var(--font-heading);font-size:1.1rem;color:var(--heading-color);">Set Practical Exams in Seconds with Walimu AI Assistant</h3>
+            <p style="margin:0;font-size:0.84rem;color:var(--text-muted);">Have an exam paper? Upload it (PDF/Image/Text). Or just share an idea — our AI examiner configures the complete simulation bench, chemical stoichiometry, and KNEC marking scheme.</p>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="switchTeacherTab('paneAiAssistant')" style="background:linear-gradient(135deg, #10B981, #059669);border:none;font-weight:800;padding:10px 22px;border-radius:100px;display:flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(16,185,129,0.3);flex-shrink:0;">
+          <span>✨ Launch AI Exam Assistant →</span>
+        </button>
+      </div>
 
       <!-- Quick Metric Counters for Assignments -->
       <div class="stat-strip" id="assignmentStatStrip" style="margin-bottom:20px;">
@@ -433,6 +450,223 @@
 
     </div>
 
+    <!-- Tab Pane: Walimu AI Exam Assistant Studio -->
+    <div id="paneAiAssistant" class="tab-pane">
+      <div class="ai-hero-banner">
+        <div class="ai-hero-title-group">
+          <div class="ai-hero-icon">🤖</div>
+          <div>
+            <h2 style="margin:0 0 4px;font-family:var(--font-heading);font-size:1.4rem;color:var(--heading-color);">Walimu AI Exam Assistant</h2>
+            <p style="margin:0;font-size:0.88rem;color:var(--text-muted);">AI-powered KNEC KCSE Chemistry practical exam setter, question extractor &amp; curriculum co-pilot</p>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-sm btn-secondary" onclick="openInManualStudio()" title="Switch to manual form editor">✏️ Open Manual Studio</button>
+        </div>
+      </div>
+
+      <!-- Mode Selector Pills -->
+      <div class="ai-mode-toggle-group">
+        <button class="ai-mode-btn active" id="aiModeBtnIdea" onclick="setAiExamMode('idea')">
+          <span>💡 From an Idea or Syllabus Topic</span>
+        </button>
+        <button class="ai-mode-btn" id="aiModeBtnUpload" onclick="setAiExamMode('upload')">
+          <span>📄 Upload Exam Paper (PDF / Image / Text)</span>
+        </button>
+      </div>
+
+      <!-- Container 1: Idea Mode -->
+      <div id="aiIdeaSection" class="ai-input-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+          <h3 style="margin:0;font-family:var(--font-heading);font-size:1.05rem;color:var(--heading-color);">Describe the Exam You Want to Set</h3>
+          <span style="font-size:0.75rem;color:var(--text-muted);font-weight:700;">Prompt in English or Kiswahili</span>
+        </div>
+
+        <textarea id="aiPromptInput" class="form-control" rows="3" placeholder="e.g. Set a challenging Form 4 Term 2 mock exam testing Redox titration of KMnO₄ with Mohr's salt, an unknown zinc sulfate salt, and an organic alkene test with bromine water..."></textarea>
+
+        <!-- Instant Template Chips -->
+        <div style="margin-top:12px;">
+          <span style="font-size:0.75rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;">Or pick an instant national curriculum template:</span>
+          <div class="ai-chips-wrap">
+            <button type="button" class="ai-chip" onclick="selectAiTemplate('classic')">🧪 Neutralization Classic (HCl/NaOH · Pb²⁺ · Ethanol)</button>
+            <button type="button" class="ai-chip" onclick="selectAiTemplate('redox')">⚡ Redox Practical (KMnO₄/Fe²⁺ · ZnSO₄ · Alkene)</button>
+            <button type="button" class="ai-chip" onclick="selectAiTemplate('energy')">🔥 Thermochemistry &amp; Neutralization Enthalpy</button>
+            <button type="button" class="ai-chip" onclick="selectAiTemplate('rates')">⏱️ Reaction Rates (Disappearing Cross &amp; Gas)</button>
+            <button type="button" class="ai-chip" onclick="selectAiTemplate('gas')">💨 Gas Preparation &amp; Confirmatory Tests</button>
+            <button type="button" class="ai-chip" onclick="selectAiTemplate('twosalt')">🧂 Advanced Two-Salt Separation (Merit Challenge)</button>
+          </div>
+        </div>
+
+        <!-- Options Grid -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:14px;margin-top:14px;border-top:1px solid var(--card-border);padding-top:16px;">
+          <div>
+            <label style="font-size:0.78rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Target Form Level</label>
+            <select id="aiFormSelect" class="form-control">
+              <option value="Form 4" selected>Form 4 (KCSE Candidate)</option>
+              <option value="Form 3">Form 3 (Senior Secondary)</option>
+              <option value="Form 2">Form 2</option>
+              <option value="Form 1">Form 1</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:0.78rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Exam Format</label>
+            <select id="aiTypeSelect" class="form-control">
+              <option value="kcseComposite" selected>🏆 KCSE Composite Mock (40 Marks, 3 Questions)</option>
+              <option value="acidBase">Acid-Base Volumetric Titration</option>
+              <option value="redox">Redox Volumetric Titration</option>
+              <option value="qualitative">🧂 Qualitative Salt Analysis</option>
+              <option value="organic">⚗️ Organic Chemistry Tests</option>
+              <option value="energy">🔥 Thermochemistry / Enthalpy</option>
+              <option value="rates">⚡ Reaction Rates &amp; Kinetics</option>
+              <option value="gas">💨 Gas Preparation &amp; Collection</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:0.78rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Difficulty Standard</label>
+            <select id="aiDiffSelect" class="form-control">
+              <option value="standard" selected>KNEC National Standard</option>
+              <option value="foundational">Foundational Revision (Supportive)</option>
+              <option value="challenge">National School Challenge (Advanced)</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:0.78rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Allocated Duration</label>
+            <input type="number" id="aiDurationInput" class="form-control" value="135" min="30" max="180">
+          </div>
+        </div>
+
+        <div style="margin-top:20px;display:flex;justify-content:flex-end;">
+          <button type="button" class="btn btn-primary ai-action-btn" onclick="submitAiIdeaExam()" style="padding:12px 28px;font-size:0.92rem;font-weight:800;border-radius:100px;background:linear-gradient(135deg, #10B981, #059669);box-shadow:0 4px 14px rgba(16,185,129,0.35);">
+            <span>🚀 Generate Exam with AI</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Container 2: Document Upload Mode -->
+      <div id="aiUploadSection" class="ai-input-card" style="display:none;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <h3 style="margin:0;font-family:var(--font-heading);font-size:1.05rem;color:var(--heading-color);">Upload Physical or Digital Exam Paper</h3>
+          <span style="font-size:0.75rem;color:var(--text-muted);font-weight:700;">Multimodal Vision &amp; PDF Extraction</span>
+        </div>
+
+        <div class="ai-drop-zone" id="aiDropZone" onclick="document.getElementById('aiFileInput').click()" ondragover="handleAiDragOver(event)" ondragleave="handleAiDragLeave(event)" ondrop="handleAiFileDrop(event)">
+          <input type="file" id="aiFileInput" style="display:none;" accept=".pdf,.png,.jpg,.jpeg,.webp,.txt" onchange="handleAiFileSelect(event)">
+          <div id="aiDropZoneNotice">
+            <span class="ai-drop-icon">📑</span>
+            <div style="font-weight:800;font-size:0.95rem;color:var(--heading-color);margin-bottom:4px;">Drag and drop exam paper PDF, photo scan, or text file here</div>
+            <div style="font-size:0.8rem;color:var(--text-muted);">Supports PDF, PNG, JPG, JPEG, WEBP, and TXT files up to 20MB · or click to browse</div>
+          </div>
+          <div id="aiFilePreviewWrap" class="ai-file-preview-card" style="display:none;" onclick="event.stopPropagation()">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span id="aiFileIcon" style="font-size:1.8rem;">📄</span>
+              <div style="text-align:left;">
+                <div id="aiFileName" style="font-weight:800;font-size:0.88rem;color:var(--heading-color);">paper.pdf</div>
+                <div id="aiFileSize" style="font-size:0.75rem;color:var(--text-muted);">1.2 MB</div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-sm btn-danger" onclick="removeSelectedAiFile()">✕ Remove</button>
+          </div>
+        </div>
+
+        <div style="margin-bottom:14px;">
+          <label style="font-size:0.8rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Or Paste Raw Exam Text (Optional):</label>
+          <textarea id="aiPastedText" class="form-control" rows="3" placeholder="Paste questions, titration tables, or qualitative procedures directly if you prefer..."></textarea>
+        </div>
+
+        <div style="margin-bottom:18px;">
+          <label style="font-size:0.8rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Teacher Notes or Special Constraints (Optional):</label>
+          <input type="text" id="aiUploadNotes" class="form-control" placeholder="e.g. Prioritize Q1 and Q2 from this paper, or adjust titration to 0.1M">
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;">
+          <button type="button" class="btn btn-primary ai-action-btn" onclick="submitAiPaperUpload()" style="padding:12px 28px;font-size:0.92rem;font-weight:800;border-radius:100px;background:linear-gradient(135deg, #10B981, #059669);box-shadow:0 4px 14px rgba(16,185,129,0.35);">
+            <span>⚡ Analyze Paper &amp; Set Exam</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Animated Generating State -->
+      <div id="aiGeneratingState" class="ai-generating-overlay" style="display:none;">
+        <div class="ai-pulse-spinner"></div>
+        <div style="font-weight:800;font-size:1.1rem;font-family:var(--font-heading);color:var(--heading-color);" id="aiGenStatusText">Synthesizing KNEC Chemistry Exam...</div>
+        <div style="font-size:0.82rem;color:var(--text-muted);">Walimu AI is calculating balanced chemical stoichiometry, unknown salt tests, and official mark rubrics</div>
+      </div>
+
+      <!-- Exam Results & Interactive Studio -->
+      <div id="aiResultsSection" class="ai-results-wrapper" style="display:none;">
+        
+        <!-- Summary & Actions Header -->
+        <div class="ai-results-header">
+          <div style="flex:1;min-width:280px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;">
+              <span class="pill pill-ok" id="resBadgeType">🏆 KCSE Composite Mock</span>
+              <span class="pill pill-info" id="resBadgeForm">Form 4</span>
+              <span class="pill" style="background:var(--card-bg-hover);color:var(--text-muted);" id="resBadgeDuration">135 Mins</span>
+            </div>
+            <input type="text" id="resExamTitle" class="form-control" style="font-weight:800;font-size:1.15rem;font-family:var(--font-heading);color:var(--heading-color);background:transparent;border-color:transparent;padding-left:0;" value="KCSE Chemistry Paper 3 Practical Exam">
+            <div id="resExamInstructions" style="font-size:0.8rem;color:var(--text-muted);margin-top:2px;"></div>
+          </div>
+          
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <button type="button" class="btn btn-secondary" onclick="openInManualStudio()" title="Transfer configuration to manual assignment form">✏️ Edit in Studio</button>
+            <button type="button" class="btn btn-secondary" onclick="printAiExamBooklet()" title="Print student exam paper and marking scheme">🖨️ Print Booklet</button>
+            <button type="button" class="btn btn-secondary" onclick="exportAiExamJson()" title="Download JSON blueprint">📋 Export JSON</button>
+            <button type="button" id="btnPublishAiExam" class="btn btn-primary" onclick="publishAiExamToClass()" style="background:linear-gradient(135deg, #10B981, #059669);font-weight:800;padding:10px 20px;border-radius:100px;box-shadow:0 4px 14px rgba(16,185,129,0.3);">
+              <span>🚀 Publish Exam to Class</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 Sub-Tabs Strip -->
+        <div class="ai-subtab-strip">
+          <button type="button" class="ai-subtab-btn active" id="subTabBtn_blueprint" onclick="switchAiResultSubTab('blueprint')">
+            <span>⚙️ Simulation Blueprint</span>
+          </button>
+          <button type="button" class="ai-subtab-btn" id="subTabBtn_studentPaper" onclick="switchAiResultSubTab('studentPaper')">
+            <span>📜 Student Question Paper</span>
+          </button>
+          <button type="button" class="ai-subtab-btn" id="subTabBtn_markingScheme" onclick="switchAiResultSubTab('markingScheme')">
+            <span>🎯 KNEC Marking Scheme</span>
+          </button>
+          <button type="button" class="ai-subtab-btn" id="subTabBtn_technicianGuide" onclick="switchAiResultSubTab('technicianGuide')">
+            <span>🧪 Lab Technician Instructions</span>
+          </button>
+        </div>
+
+        <!-- Tab Contents -->
+        <div id="subTabPane_blueprint"></div>
+        <div id="subTabPane_studentPaper" style="display:none;"></div>
+        <div id="subTabPane_markingScheme" style="display:none;"></div>
+        <div id="subTabPane_technicianGuide" style="display:none;"></div>
+
+        <!-- Conversational Refinement Drawer ("Walimu AI Co-Pilot") -->
+        <div class="ai-refine-drawer">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <span style="font-size:1.1rem;">💬</span>
+            <span style="font-weight:800;font-size:0.88rem;color:var(--heading-color);">Refine with Walimu AI Co-Pilot</span>
+            <span style="font-size:0.75rem;color:var(--text-muted);margin-left:auto;">Need modifications? Describe changes below:</span>
+          </div>
+          
+          <div class="ai-refine-input-row">
+            <input type="text" id="aiRefineInput" class="ai-refine-input" placeholder="e.g. 'Use 20 cm³ pipette instead', 'Change indicator to methyl orange', 'Replace lead with zinc'...">
+            <button type="button" class="btn btn-primary" onclick="submitAiRefinement()" style="padding:9px 18px;font-weight:800;border-radius:8px;">
+              <span>Refine ⚡</span>
+            </button>
+          </div>
+
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;">
+            <span style="font-size:0.72rem;font-weight:700;color:var(--text-muted);align-self:center;">Quick suggestions:</span>
+            <button type="button" class="ai-chip" style="font-size:0.72rem;padding:3px 10px;" onclick="applyRefineChip('Change pipette to 20 cm³')">20 cm³ Pipette</button>
+            <button type="button" class="ai-chip" style="font-size:0.72rem;padding:3px 10px;" onclick="applyRefineChip('Use Methyl Orange indicator')">Methyl Orange</button>
+            <button type="button" class="ai-chip" style="font-size:0.72rem;padding:3px 10px;" onclick="applyRefineChip('Change unknown salt to Zinc Sulfate')">Zinc Sulfate</button>
+            <button type="button" class="ai-chip" style="font-size:0.72rem;padding:3px 10px;" onclick="applyRefineChip('Add strict warning about safety goggles')">Safety Caution</button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
     <!-- Tab Pane 3: Students -->
     <div id="paneStudents" class="tab-pane">
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:10px;">
@@ -602,6 +836,7 @@
 <script src="../shared/api.js?v=50"></script>
 <script src="../shared/notifications-engine.js?v=50"></script>
 <script src="js/teacher-dashboard.js?v=56"></script>
+<script src="js/ai-exam-assistant.js?v=50"></script>
 <script>
   function switchTeacherTab(tabId) {
     document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
@@ -613,6 +848,7 @@
     const btnMap = {
       'paneOverview': 'btnTabOverview',
       'paneAssignments': 'btnTabAssignments',
+      'paneAiAssistant': 'btnTabAiAssistant',
       'paneStudents': 'btnTabStudents',
       'paneTitration': 'btnTabTitration',
       'paneQualitative': 'btnTabQualitative',

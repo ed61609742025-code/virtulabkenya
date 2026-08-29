@@ -1200,10 +1200,438 @@ tr:hover td {
 }
 
 @media print {
-  .top-navbar, .teacher-sidebar, .btn, .theme-toggle-group, .filters, .assign-form, .modal-overlay {
+  .top-navbar, .teacher-sidebar, .btn, .theme-toggle-group, .filters, .assign-form, .modal-overlay, .ai-refine-bar, .ai-mode-toggle-group, .ai-hero-banner {
     display: none !important;
   }
   .teacher-layout { display: block !important; }
   .teacher-content { padding: 0 !important; max-width: 100% !important; }
   .tab-pane { display: block !important; page-break-after: always; }
+  .exam-paper-preview { box-shadow: none !important; border: none !important; padding: 0 !important; }
 }
+
+/* ============================================================
+   Walimu AI Teacher Exam Assistant Styles
+   ============================================================ */
+
+.ai-hero-banner {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.14) 0%, rgba(14, 165, 233, 0.08) 100%);
+  border: 1.5px solid rgba(16, 185, 129, 0.35);
+  border-radius: 18px;
+  padding: 24px 28px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  box-shadow: var(--shadow-sm);
+}
+
+.ai-hero-title-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ai-hero-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #10B981, #0284C7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  color: #FFF;
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+  flex-shrink: 0;
+}
+
+.ai-mode-toggle-group {
+  display: inline-flex;
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 100px;
+  padding: 4px;
+  gap: 4px;
+  margin-bottom: 22px;
+}
+
+.ai-mode-btn {
+  background: transparent;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 100px;
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.ai-mode-btn.active {
+  background: linear-gradient(135deg, var(--green-accent), #059669);
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+}
+
+.ai-input-card {
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 18px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Template Chips */
+.ai-chips-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 18px;
+}
+
+.ai-chip {
+  background: var(--card-bg-hover);
+  border: 1px solid var(--card-border);
+  border-radius: 100px;
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-main);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.ai-chip:hover {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: var(--green-accent);
+  color: var(--green-accent);
+  transform: translateY(-1px);
+}
+
+/* Drag-and-drop file upload */
+.ai-drop-zone {
+  border: 2px dashed var(--card-border);
+  border-radius: 16px;
+  padding: 36px 20px;
+  text-align: center;
+  background: var(--bg-dark);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 18px;
+}
+
+.ai-drop-zone:hover, .ai-drop-zone.dragover {
+  border-color: var(--green-accent);
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.ai-drop-icon {
+  font-size: 2.6rem;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.ai-file-preview-card {
+  background: var(--card-bg);
+  border: 1.5px solid var(--green-accent);
+  border-radius: 12px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+/* Animated Loading State */
+.ai-generating-overlay {
+  background: var(--card-bg);
+  border: 1.5px solid rgba(16, 185, 129, 0.4);
+  border-radius: 18px;
+  padding: 40px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.15);
+}
+
+.ai-pulse-spinner {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 4px solid rgba(16, 185, 129, 0.2);
+  border-top-color: var(--green-accent);
+  animation: aiSpin 1s linear infinite;
+}
+
+@keyframes aiSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Results Section & Studio Tabs */
+.ai-results-wrapper {
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 30px;
+}
+
+.ai-results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  border-bottom: 1.5px solid var(--card-border);
+  padding-bottom: 18px;
+  margin-bottom: 20px;
+}
+
+.ai-subtab-strip {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1.5px solid var(--card-border);
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.ai-subtab-btn {
+  background: transparent;
+  border: 1.5px solid transparent;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.ai-subtab-btn:hover {
+  color: var(--text-main);
+  background: var(--card-bg-hover);
+}
+
+.ai-subtab-btn.active {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: var(--green-accent);
+  color: var(--green-accent);
+}
+
+/* Blueprint Grid */
+.ai-blueprint-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.blueprint-card {
+  background: var(--bg-dark);
+  border: 1.5px solid var(--card-border);
+  border-radius: 14px;
+  padding: 18px 20px;
+}
+
+.blueprint-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.blueprint-card-header h4 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  color: var(--heading-color);
+}
+
+.q-badge {
+  background: rgba(56, 189, 248, 0.15);
+  color: var(--blue-accent);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.bp-param {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  margin-bottom: 6px;
+}
+
+.bp-label {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-right: 6px;
+}
+
+.bp-param-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 8px 0;
+  font-size: 0.84rem;
+}
+
+.bp-equation {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-top: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--amber-accent);
+}
+
+.bp-mini-tests {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bp-test-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.bp-test-idx {
+  background: var(--card-bg-hover);
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Exam Paper Preview */
+.exam-paper-preview {
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 14px;
+  padding: 32px 36px;
+}
+
+.paper-header {
+  text-align: center;
+  border-bottom: 2px solid var(--card-border);
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+}
+
+.paper-section {
+  margin-bottom: 28px;
+}
+
+.paper-section h4 {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  letter-spacing: 0.03em;
+  color: var(--heading-color);
+  margin-bottom: 8px;
+}
+
+.paper-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+  font-size: 0.82rem;
+}
+
+.paper-table th, .paper-table td {
+  border: 1.5px solid var(--card-border);
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.paper-table th {
+  background: var(--bg-dark);
+  font-weight: 800;
+}
+
+/* Markdown preview & seal */
+.markdown-preview-box {
+  background: var(--bg-dark);
+  border: 1.5px solid var(--card-border);
+  border-radius: 12px;
+  padding: 24px;
+  font-size: 0.88rem;
+  line-height: 1.7;
+}
+
+.confidential-seal {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1.5px solid var(--red-accent);
+  color: var(--red-accent);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-weight: 900;
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+  margin-bottom: 16px;
+  display: inline-block;
+}
+
+/* Floating Refinement Co-Pilot Bar */
+.ai-refine-drawer {
+  background: var(--card-bg);
+  border: 1.5px solid var(--green-accent);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-top: 24px;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.15);
+}
+
+.ai-refine-input-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.ai-refine-input {
+  flex: 1;
+  background: var(--bg-dark);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: var(--text-main);
+  font-size: 0.88rem;
+  outline: none;
+}
+
+.ai-refine-input:focus {
+  border-color: var(--green-accent);
+}

@@ -27,7 +27,7 @@ const corsOptions = process.env.CORS_ORIGIN
   : { origin: true, credentials: true };
 app.use(cors(corsOptions));
 
-app.use(express.json());
+app.use(express.json({ limit: '20mb' }));
 app.use(express.static(path.join(__dirname, '../client'), {
   setHeaders: (res, filePath) => {
     if (filePath.endsWith('.html') || filePath.endsWith('sw.js')) {
@@ -136,6 +136,10 @@ app.use('/api/errors', errorRoutes);
 // Student notifications & assignment reminders
 const notificationsRoutes = require('./routes/notifications');
 app.use('/api/notifications', notificationsRoutes);
+
+// AI Teacher Exam Assistant routes (multimodal paper parsing, idea generation & refinement)
+const aiAssistantRoutes = require('./routes/ai_assistant');
+app.use('/api/ai-assistant', aiAssistantRoutes);
 
 // Public announcements endpoint
 const announcementRepo = require('./repositories/announcementRepo');

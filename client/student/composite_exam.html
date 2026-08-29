@@ -1101,6 +1101,25 @@
             if (bannerDue && match.due_date) {
               bannerDue.textContent = `Due ${new Date(match.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
             }
+
+            if (match.exam_config) {
+              try {
+                const cfg = typeof match.exam_config === 'string' ? JSON.parse(match.exam_config) : match.exam_config;
+                engine.applyConfig(cfg);
+                const pCustom = engine.preset;
+                if (document.getElementById('examSubTitle')) document.getElementById('examSubTitle').textContent = match.title + ' — Code 233/3';
+                if (document.getElementById('printExamTitle')) document.getElementById('printExamTitle').textContent = match.title.toUpperCase();
+                if (document.getElementById('q1SolAName')) document.getElementById('q1SolAName').textContent = 'Solution A: ' + (pCustom.q1.solutionA || '');
+                if (document.getElementById('q1SolBName')) document.getElementById('q1SolBName').textContent = 'Solution B: ' + (pCustom.q1.solutionB || '');
+                if (document.getElementById('q1IndicatorName')) document.getElementById('q1IndicatorName').textContent = pCustom.q1.indicator || 'Phenolphthalein Indicator';
+                if (document.getElementById('q1EquationDisplay')) document.getElementById('q1EquationDisplay').textContent = pCustom.q1.equation || '';
+                if (document.getElementById('q1IndicatorChip')) document.getElementById('q1IndicatorChip').textContent = `Indicator: ${pCustom.q1.indicator || 'Phenolphthalein'}`;
+                renderQ2TestsGrid();
+                renderQ3TestsGrid();
+              } catch (cfgErr) {
+                console.warn('[Composite Exam] Could not hydrate assignment exam_config:', cfgErr);
+              }
+            }
           }
         }).catch(err => console.warn('Could not fetch assignment details for exam banner:', err.message));
       }

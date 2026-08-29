@@ -712,8 +712,14 @@ class CompositeExamEngine {
     }
 
     if (config.q1) Object.assign(this.preset.q1, config.q1);
-    if (config.q2) Object.assign(this.preset.q2, config.q2);
-    if (config.q3) Object.assign(this.preset.q3, config.q3);
+    if (config.q2) {
+      Object.assign(this.preset.q2, config.q2);
+      if (config.q2.salt && !config.q2.trueSaltKey) this.preset.q2.trueSaltKey = config.q2.salt;
+    }
+    if (config.q3) {
+      Object.assign(this.preset.q3, config.q3);
+      if (config.q3.organic && !config.q3.trueOrganicKey) this.preset.q3.trueOrganicKey = config.q3.organic;
+    }
   }
 
   // ── Q1 Titration Workbench Operations ────────────────────────────────

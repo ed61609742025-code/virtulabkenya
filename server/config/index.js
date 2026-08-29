@@ -45,7 +45,8 @@ module.exports = {
   gemini: {
     defaultModel: 'gemini-2.5-flash-lite',
     maxOutputTokens: 3000,
-    temperature: 0.6
+    temperature: 0.6,
+    examAssistantMaxTokens: 4000
   },
   errorTracking: {
     maxBufferSize: 50

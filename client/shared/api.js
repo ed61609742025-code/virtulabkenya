@@ -590,6 +590,22 @@ const AiFeedback = {
   }
 };
 
+// ── AI Teacher Exam Assistant endpoints ─────────────────────────
+const AiExamAssistant = {
+  async parsePaper(data) {
+    return apiRequest('POST', '/ai-assistant/parse-paper', data);
+  },
+  async generateFromIdea(data) {
+    return apiRequest('POST', '/ai-assistant/generate-exam', data);
+  },
+  async refineDraft(data) {
+    return apiRequest('POST', '/ai-assistant/refine-exam', data);
+  }
+};
+if (typeof window !== 'undefined') {
+  window.AiExamAssistant = AiExamAssistant;
+}
+
 // ── Qualitative analysis endpoints ──────────────────────────────
 const Qualitative = {
   async save(data) {

@@ -52,6 +52,7 @@
 - [x] **Teacher Platform**
   - [x] Teacher portal & class creation
   - [x] Assignment builder with custom due dates & titration parameters
+  - [x] Walimu AI Teacher Exam Assistant (Multimodal Exam Paper Upload, Idea-to-Exam Generator & Conversational Co-Pilot)
   - [x] Real-time student session analytics, score distribution, and error telemetry
   - [x] Gradebook export to CSV for school reporting
   - [x] Dedicated Teacher Research & Statistical Triangulation Portal (`/teacher/research_portal.html`)

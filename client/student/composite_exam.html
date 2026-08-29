@@ -580,12 +580,72 @@
               <div class="lens-viewfinder">
                 <div class="lens-crosshair-line"></div>
                 <div class="lens-eye-level-tag">EYE LEVEL</div>
-                <svg id="lensSvg" viewBox="0 0 200 180" style="width:100%; height:100%;"></svg>
+                <svg id="lensSvg" viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+                  <!-- Default Initial Burette Lens Rendering at 0.00 cm³ -->
+                  <defs>
+                    <linearGradient id="lensTubeCeramicExam" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stop-color="#E2E8F0"/>
+                      <stop offset="10%" stop-color="#FFFFFF"/>
+                      <stop offset="90%" stop-color="#FFFFFF"/>
+                      <stop offset="100%" stop-color="#CBD5E1"/>
+                    </linearGradient>
+                    <linearGradient id="luminousLiquidFillExam" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.92"/>
+                      <stop offset="15%" stop-color="#0284C7" stop-opacity="0.88"/>
+                      <stop offset="60%" stop-color="#0369A1" stop-opacity="0.92"/>
+                      <stop offset="100%" stop-color="#0C4A6E" stop-opacity="0.98"/>
+                    </linearGradient>
+                    <linearGradient id="tubeSpecularExam" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.8"/>
+                      <stop offset="15%" stop-color="#FFFFFF" stop-opacity="0.2"/>
+                      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.0"/>
+                    </linearGradient>
+                    <filter id="lensBeadGlowExam" x="-50%" y="-50%" width="200%" height="200%">
+                      <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#EF4444" flood-opacity="0.9"/>
+                    </filter>
+                  </defs>
+                  <rect x="12" y="0" width="176" height="180" rx="6" fill="url(#lensTubeCeramicExam)"/>
+                  <rect x="94" y="0" width="12" height="180" fill="#0284C7" opacity="0.25"/>
+                  <line x1="12" y1="0" x2="12" y2="180" stroke="#00F2FE" stroke-width="3" stroke-opacity="0.8"/>
+                  <line x1="188" y1="0" x2="188" y2="180" stroke="#00F2FE" stroke-width="3" stroke-opacity="0.8"/>
+                  <rect x="16" y="0" width="14" height="180" fill="url(#tubeSpecularExam)"/>
+                  <path d="M 12 80 Q 100 90 188 80 L 188 180 L 12 180 Z" fill="url(#luminousLiquidFillExam)"/>
+                  <rect x="16" y="90" width="14" height="90" fill="url(#tubeSpecularExam)"/>
+                  <!-- Initial Graduation Marks at 0.00 cm³ -->
+                  <line x1="12" y1="90" x2="68" y2="90" stroke="#0F172A" stroke-width="2.6" stroke-linecap="round"/>
+                  <line x1="132" y1="90" x2="188" y2="90" stroke="#0F172A" stroke-width="2.6" stroke-linecap="round"/>
+                  <text x="76" y="95" fill="#0F172A" font-size="14" font-family="'JetBrains Mono', monospace" font-weight="900">0.0</text>
+                  <line x1="12" y1="96" x2="38" y2="96" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                  <line x1="162" y1="96" x2="188" y2="96" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                  <line x1="12" y1="102" x2="38" y2="102" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                  <line x1="162" y1="102" x2="188" y2="102" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                  <line x1="12" y1="108" x2="38" y2="108" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                  <line x1="162" y1="108" x2="188" y2="108" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                  <line x1="12" y1="114" x2="38" y2="114" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                  <line x1="162" y1="114" x2="188" y2="114" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                  <line x1="12" y1="120" x2="52" y2="120" stroke="#1E293B" stroke-width="2.0" stroke-linecap="round"/>
+                  <line x1="148" y1="120" x2="188" y2="120" stroke="#1E293B" stroke-width="2.0" stroke-linecap="round"/>
+                  <line x1="12" y1="126" x2="38" y2="126" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                  <line x1="162" y1="126" x2="188" y2="126" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                  <line x1="12" y1="132" x2="38" y2="132" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                  <line x1="162" y1="132" x2="188" y2="132" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                  <line x1="12" y1="138" x2="38" y2="138" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                  <line x1="162" y1="138" x2="188" y2="138" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                  <line x1="12" y1="144" x2="38" y2="144" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                  <line x1="162" y1="144" x2="188" y2="144" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                  <line x1="12" y1="150" x2="68" y2="150" stroke="#0F172A" stroke-width="2.6" stroke-linecap="round"/>
+                  <line x1="132" y1="150" x2="188" y2="150" stroke="#0F172A" stroke-width="2.6" stroke-linecap="round"/>
+                  <text x="76" y="155" fill="#0F172A" font-size="14" font-family="'JetBrains Mono', monospace" font-weight="900">1.0</text>
+                  <!-- Meniscus Boundary -->
+                  <path d="M 12 79 Q 100 89 188 79" stroke="#032B44" stroke-width="3" fill="none" opacity="0.85"/>
+                  <path d="M 12 80 Q 100 90 188 80" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+                  <circle cx="100" cy="90" r="5" fill="#EF4444" stroke="#FFFFFF" stroke-width="2" filter="url(#lensBeadGlowExam)"/>
+                </svg>
               </div>
               <div class="lens-readout-badge" id="lensDigitalReadout">
                 <span>🎯</span> 0.00 cm³
               </div>
-              <div style="font-size:0.68rem; color:var(--text-muted); margin-top:3px; font-family:'Newsreader', serif; font-style:italic;">
+              <div style="font-size:0.68rem; color:var(--text-muted); margin-top:3px; font-family:'Newsreader', serif; font-style:italic;" id="lensReadoutSubText">
                 Read at <b>bottom of meniscus</b>.
               </div>
             </div>
@@ -1009,7 +1069,7 @@
 
 <script src="/shared/api.js"></script>
 <script src="/shared/page-transitions.js"></script>
-<script src="js/composite-engine.js?v=66"></script>
+<script src="js/composite-engine.js?v=67"></script>
 <script>
   requireStudentLogin();
   const user = getUser();
@@ -1042,29 +1102,34 @@
 
   function initExamUI() {
     const p = engine.preset;
-    document.getElementById('examSubTitle').textContent = p.title + ' — Code 233/3';
-    document.getElementById('printExamTitle').textContent = p.title.toUpperCase();
-    document.getElementById('modeIndicator').textContent = (engine.mode === 'strict') ? 'Official Timed (135m)' : 'Guided Practice';
+    const setElemText = (id, text) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = text;
+    };
+
+    setElemText('examSubTitle', p.title + ' — Code 233/3');
+    setElemText('printExamTitle', p.title.toUpperCase());
+    setElemText('modeIndicator', (engine.mode === 'strict') ? 'Official Timed (135m)' : 'Guided Practice');
 
     // Hide or adjust step check buttons in strict exam mode
     if (engine.mode === 'strict') {
       document.querySelectorAll('.btn-check-step').forEach(btn => btn.style.display = 'none');
     }
 
-    document.getElementById('q1SolAName').textContent = 'Solution A: ' + p.q1.solutionA;
-    document.getElementById('q1SolBName').textContent = 'Solution B: ' + p.q1.solutionB;
-    document.getElementById('q1IndicatorName').textContent = p.q1.indicator || 'Phenolphthalein Indicator';
-    document.getElementById('q1EquationDisplay').textContent = p.q1.equation;
-    document.getElementById('q1RfmDisplay').textContent = p.q1.acidRfm || 36.5;
+    setElemText('q1SolAName', 'Solution A: ' + (p.q1?.solutionA || ''));
+    setElemText('q1SolBName', 'Solution B: ' + (p.q1?.solutionB || ''));
+    setElemText('q1IndicatorName', p.q1?.indicator || 'Phenolphthalein Indicator');
+    setElemText('q1EquationDisplay', p.q1?.equation || '');
+    setElemText('q1RfmDisplay', p.q1?.acidRfm || 36.5);
 
     // Fixed integrity leak: Never expose true salt name or organic formula in candidate prompt!
-    document.getElementById('q2SampleName').textContent = p.q2.sampleName;
-    document.getElementById('q2SampleDescText').textContent = p.q2.sampleDesc || 'An inorganic salt sample.';
-    document.getElementById('q3SampleName').textContent = p.q3.sampleName;
-    document.getElementById('q3SampleDescText').textContent = p.q3.sampleDesc || 'An organic sample.';
+    setElemText('q2SampleName', p.q2?.sampleName || 'Solid Y');
+    setElemText('q2SampleDescText', p.q2?.sampleDesc || 'An inorganic salt sample.');
+    setElemText('q3SampleName', p.q3?.sampleName || 'Liquid Z');
+    setElemText('q3SampleDescText', p.q3?.sampleDesc || 'An organic sample.');
 
     // Update apparatus fill colors based on titrant
-    if (p.q1.titrantColor) {
+    if (p.q1?.titrantColor) {
       const stop1 = document.getElementById('gradStop1');
       const stop2 = document.getElementById('gradStop2');
       if (stop1 && stop2) {
@@ -1073,11 +1138,11 @@
       }
     }
 
-    renderQ1Calculations();
-    renderQ2TestsGrid();
-    renderQ3TestsGrid();
-    drawLens();
-    updateLiveScoreDisplay();
+    try { renderQ1Calculations(); } catch(e) { console.error('renderQ1Calculations error:', e); }
+    try { renderQ2TestsGrid(); } catch(e) { console.error('renderQ2TestsGrid error:', e); }
+    try { renderQ3TestsGrid(); } catch(e) { console.error('renderQ3TestsGrid error:', e); }
+    try { drawLens(); } catch(e) { console.error('drawLens error:', e); }
+    try { updateLiveScoreDisplay(); } catch(e) { console.error('updateLiveScoreDisplay error:', e); }
 
     // Reagents shelf initialization
     const titrantChip = document.getElementById('q1TitrantChip');
@@ -1346,12 +1411,18 @@
   function drawLens() {
     const lensSvg = document.getElementById('lensSvg');
     if (!lensSvg) return;
-    const volume = engine.q1BuretteReading;
+    const volume = typeof engine?.q1BuretteReading === 'number' ? engine.q1BuretteReading : 0.00;
     const pcm = 60; // 60px per cm³ magnification
     const centerY = 90; // Centerline of 180px viewbox
 
     const minVol = Math.max(0, Math.floor((volume - 1.4) * 10) / 10);
     const maxVol = Math.min(50, Math.ceil((volume + 1.4) * 10) / 10);
+
+    const isKmno4 = engine?.preset?.q1?.solutionA?.includes('KMnO') || engine?.preset?.q1?.titrantColor === '#7C3AED';
+    const liquidColor0 = isKmno4 ? '#c084fc' : (engine?.preset?.q1?.titrantColor || '#38BDF8');
+    const liquidColor1 = isKmno4 ? '#9333ea' : '#0284C7';
+    const liquidColor2 = isKmno4 ? '#6b21a8' : '#0369A1';
+    const liquidColor3 = isKmno4 ? '#3b0764' : '#0C4A6E';
 
     const defsSvg = `
       <defs>
@@ -1363,10 +1434,10 @@
         </linearGradient>
         
         <linearGradient id="luminousLiquidFillExam" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.92"/>
-          <stop offset="15%" stop-color="#0284C7" stop-opacity="0.88"/>
-          <stop offset="60%" stop-color="#0369A1" stop-opacity="0.92"/>
-          <stop offset="100%" stop-color="#0C4A6E" stop-opacity="0.98"/>
+          <stop offset="0%" stop-color="${liquidColor0}" stop-opacity="0.92"/>
+          <stop offset="15%" stop-color="${liquidColor1}" stop-opacity="0.88"/>
+          <stop offset="60%" stop-color="${liquidColor2}" stop-opacity="0.92"/>
+          <stop offset="100%" stop-color="${liquidColor3}" stop-opacity="0.98"/>
         </linearGradient>
 
         <linearGradient id="tubeSpecularExam" x1="0" y1="0" x2="1" y2="0">
@@ -1426,6 +1497,11 @@
 
     const readout = document.getElementById('lensDigitalReadout');
     if (readout) readout.innerHTML = `<span>🎯</span> ${volume.toFixed(2)} cm³`;
+
+    const subText = document.getElementById('lensReadoutSubText');
+    if (subText) {
+      subText.innerHTML = isKmno4 ? 'Read at <b>top of meniscus</b> (opaque KMnO₄).' : 'Read at <b>bottom of meniscus</b>.';
+    }
   }
 
   function onTableInputChanged() {

@@ -780,94 +780,125 @@ html, body {
   transform: translateY(-1px);
 }
 
-/* ── Precision Optical Burette Lens & Viewfinder ── */
-.buret-lens-card {
+/* ── Attached Circular Optical Burette Loupe ── */
+.apparatus-interactive-stage {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 330px;
+}
+
+.burette-loupe-mount {
+  display: flex;
+  align-items: center;
+  position: relative;
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.25, 1);
+  will-change: transform;
+  margin-top: 6px;
+  z-index: 20;
+}
+
+/* Mechanical Mounting Arm / Dual-Prong Collar connecting to burette tube */
+.loupe-clamp-arm {
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin-right: -3px;
+  z-index: 5;
+}
+
+.loupe-clamp-collar {
+  width: 12px;
+  height: 32px;
+  background: linear-gradient(90deg, #1E293B 0%, #334155 50%, #475569 100%);
+  border: 1.5px solid #64748B;
+  border-radius: 5px 0 0 5px;
+  box-shadow: -3px 3px 8px rgba(0, 0, 0, 0.45);
+  position: relative;
+}
+.loupe-clamp-collar::after {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 20px;
+  background: #0284C7;
+  border-radius: 1px;
+  opacity: 0.85;
+}
+
+.loupe-clamp-bar {
+  width: 24px;
+  height: 8px;
+  background: linear-gradient(180deg, #F8FAFC 0%, #CBD5E1 30%, #94A3B8 60%, #475569 100%);
+  border-top: 1px solid #FFFFFF;
+  border-bottom: 1px solid #334155;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
+}
+
+.loupe-knurled-screw {
+  width: 9px;
+  height: 18px;
+  background: radial-gradient(circle, #F59E0B 30%, #B45309 80%);
+  border: 1px solid #78350F;
+  border-radius: 3px;
+  margin-left: -3px;
+  margin-right: -3px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  z-index: 6;
+}
+
+/* Circular Optical Loupe Chassis */
+.circular-loupe-chassis {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  background: var(--card-bg);
-  border: 1.5px solid var(--card-border);
-  border-radius: 16px;
-  padding: 14px 16px;
-  box-shadow: var(--shadow-md);
-  flex: 1;
-  max-width: 230px;
-  min-width: 180px;
-  transition: all 0.2s ease;
-}
-[data-theme="dark"] .buret-lens-card {
-  background: linear-gradient(180deg, #1E293B 0%, #0F172A 100%);
-  border-color: #334E7B;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  z-index: 7;
 }
 
-.buret-lens-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  margin-bottom: 8px;
-  gap: 6px;
-}
-
-.buret-lens-title {
-  font-size: 0.78rem;
-  font-weight: 800;
-  color: var(--heading-color);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-family: 'Cinzel', serif;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-[data-theme="dark"] .buret-lens-title {
-  color: #F8FAFC;
-}
-
-.lens-spec-tag {
-  font-size: 0.65rem;
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 800;
-  color: var(--cyan-accent);
-  background: rgba(2, 132, 199, 0.10);
-  border: 1px solid rgba(2, 132, 199, 0.25);
-  border-radius: 4px;
-  padding: 2px 6px;
-  white-space: nowrap;
-}
-[data-theme="dark"] .lens-spec-tag {
-  color: #38BDF8;
-  background: rgba(56, 189, 248, 0.15);
-  border-color: rgba(56, 189, 248, 0.35);
-}
-
-.lens-viewfinder {
+.loupe-metallic-bezel {
+  width: 154px;
+  height: 154px;
+  border-radius: 50%;
+  padding: 6px;
+  background: linear-gradient(135deg, #FFFFFF 0%, #CBD5E1 25%, #F8FAFC 45%, #64748B 70%, #94A3B8 100%);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6),
+              0 2px 8px rgba(0, 0, 0, 0.3),
+              inset 0 2px 4px rgba(255, 255, 255, 0.8),
+              inset 0 -2px 5px rgba(0, 0, 0, 0.4);
   position: relative;
-  width: 100%;
-  max-width: 200px;
-  height: 180px;
-  margin: 0 auto;
-  background: #F8FAFC;
-  border: 2.5px solid #94A3B8;
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12), inset 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-[data-theme="dark"] .lens-viewfinder {
-  background: #0B132B;
-  border-color: #475569;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5), inset 0 2px 10px rgba(0, 0, 0, 0.35);
+.loupe-metallic-bezel:hover {
+  transform: scale(1.03);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.7), 0 0 16px rgba(56, 189, 248, 0.4);
+}
+
+.loupe-lens-viewport {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  background: #FFFFFF;
+  border: 2.5px solid #334155;
+  box-shadow: inset 0 0 18px rgba(15, 23, 42, 0.4),
+              inset 0 3px 8px rgba(0, 0, 0, 0.3);
 }
 
 .lens-glass-glare {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 45%;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.08) 45%, transparent 70%);
+  top: 3px;
+  left: 12px;
+  right: 12px;
+  height: 46%;
+  border-radius: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.12) 60%, transparent 100%);
   pointer-events: none;
   z-index: 12;
 }
@@ -879,7 +910,7 @@ html, body {
   right: 0;
   height: 1.5px;
   background: #EF4444;
-  box-shadow: 0 0 6px rgba(239, 68, 68, 0.65);
+  box-shadow: 0 0 6px rgba(239, 68, 68, 0.85);
   z-index: 10;
   pointer-events: none;
 }
@@ -888,50 +919,53 @@ html, body {
   position: absolute;
   top: 50%;
   left: 6px;
-  font-size: 0.58rem;
+  font-size: 0.52rem;
   font-weight: 800;
   color: #FFFFFF;
   background: #DC2626;
   border-radius: 3px;
-  padding: 1px 5px;
+  padding: 1px 4px;
   z-index: 11;
   transform: translateY(-100%);
   font-family: 'JetBrains Mono', monospace;
   letter-spacing: 0.02em;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   pointer-events: none;
 }
 
+/* Telemetry Pod Underneath Loupe */
+.loupe-telemetry-pod {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 6px;
+}
+
 .lens-readout-badge {
-  background: var(--card-bg-hover);
-  border: 1.5px solid var(--card-border);
-  padding: 6px 16px;
+  background: #0B132B;
+  border: 1.5px solid #0284C7;
+  padding: 4px 14px;
   border-radius: 999px;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.92rem;
+  font-size: 0.86rem;
   font-weight: 800;
-  color: var(--cyan-accent);
-  box-shadow: var(--shadow-sm);
-  margin-top: 10px;
+  color: #38BDF8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), 0 0 10px rgba(2, 132, 199, 0.25);
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-}
-[data-theme="dark"] .lens-readout-badge {
-  background: #0B132B;
-  border-color: #0284C7;
-  color: #38BDF8;
-  box-shadow: 0 0 12px rgba(2, 132, 199, 0.25);
+  gap: 5px;
+  white-space: nowrap;
 }
 
 .lens-readout-sub {
-  font-size: 0.74rem;
+  font-size: 0.68rem;
   color: var(--text-muted);
-  margin-top: 6px;
-  line-height: 1.35;
+  margin-top: 4px;
+  line-height: 1.25;
   font-family: var(--font-body);
   font-weight: 600;
   text-align: center;
+  max-width: 160px;
 }
 
 @media (max-width: 1200px) {
@@ -1057,18 +1091,14 @@ html, body {
     flex-shrink: 0 !important;
   }
 
-  .buret-lens-card {
-    flex: 1 !important;
-    max-width: 185px !important;
-    min-width: 130px !important;
-    margin: 0 !important;
+  .burette-loupe-mount {
+    margin-left: -4px !important;
   }
 
-  .lens-viewfinder {
-    width: 100% !important;
-    max-width: 160px !important;
-    height: 138px !important;
-    margin: 0 auto !important;
+  .loupe-metallic-bezel {
+    width: 126px !important;
+    height: 126px !important;
+    padding: 4px !important;
   }
 
   .table-responsive {

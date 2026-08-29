@@ -30,7 +30,7 @@
 <link rel="stylesheet" href="/shared/style.css">
 <link rel="stylesheet" href="/shared/brilliant-theme.css">
 <link rel="stylesheet" href="/shared/tutorial-engine.css">
-<link rel="stylesheet" href="css/lab.css?v=71">
+<link rel="stylesheet" href="css/lab.css?v=72">
 <link rel="stylesheet" href="/shared/ai-tutor.css">
 <link rel="stylesheet" href="/shared/pwa-installer.css">
 </head>
@@ -351,7 +351,7 @@
 
           <!-- CENTER: Photorealistic Apparatus Rig + Precision Lens + Reagents Shelf -->
           <div class="bench-center-rig">
-            <div style="display:flex;align-items:center;justify-content:center;gap:18px;width:100%;">
+            <div class="apparatus-interactive-stage">
               <!-- Realistic Glass & Metal Apparatus SVG -->
               <svg class="rig-svg" viewBox="0 0 240 380" xmlns="http://www.w3.org/2000/svg" style="width:155px; height:305px; flex-shrink:0;">
                 <defs>
@@ -518,27 +518,32 @@
                 </g>
               </svg>
 
-              <!-- Magnified Buret Reading Lens (Right Side Beside Apparatus) -->
-              <div class="buret-lens-card">
-                <div class="buret-lens-header">
-                  <div class="buret-lens-title">
-                    <span>🔍</span> Precision Burette Lens
+              <!-- Attached Circular Burette Magnifying Loupe (Directly tracks meniscus on burette) -->
+              <div class="burette-loupe-mount" id="buretteLoupeMount">
+                <div class="loupe-clamp-arm" title="Loupe mounting collar attached directly to burette tube">
+                  <div class="loupe-clamp-collar"></div>
+                  <div class="loupe-clamp-bar"></div>
+                  <div class="loupe-knurled-screw"></div>
+                </div>
+
+                <div class="circular-loupe-chassis">
+                  <div class="loupe-metallic-bezel">
+                    <div class="loupe-lens-viewport" role="img" aria-label="Magnified burette scale showing liquid meniscus level at eye level">
+                      <div class="lens-glass-glare"></div>
+                      <div class="lens-crosshair-line"></div>
+                      <div class="lens-eye-level-tag">0° PARALLAX</div>
+                      <svg id="lensSvg" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;"></svg>
+                    </div>
                   </div>
-                  <span class="lens-spec-tag">Class-A ±0.05 cm³</span>
-                </div>
-                
-                <div class="lens-viewfinder" role="img" aria-label="Magnified burette scale showing liquid meniscus level at eye level">
-                  <div class="lens-glass-glare"></div>
-                  <div class="lens-crosshair-line"></div>
-                  <div class="lens-eye-level-tag">0° PARALLAX · EYE LEVEL</div>
-                  <svg id="lensSvg" viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;"></svg>
-                </div>
-                
-                <div class="lens-readout-badge" id="lensReadoutPill" aria-live="polite">
-                  <span>🎯</span> 0.00 cm³
-                </div>
-                <div class="lens-readout-sub" id="lensGuidanceSub">
-                  Read at <b style="color:var(--text-main);">bottom of meniscus</b> at eye level.
+
+                  <div class="loupe-telemetry-pod">
+                    <div class="lens-readout-badge" id="lensReadoutPill" aria-live="polite">
+                      <span>🎯</span> 0.00 cm³
+                    </div>
+                    <div class="lens-readout-sub" id="lensGuidanceSub">
+                      Read at <b style="color:var(--text-main);">bottom of meniscus</b>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -713,7 +718,7 @@
 <script src="../shared/i18n.js"></script>
 <script src="../shared/brilliant-ui.js"></script>
 <script src="../shared/tutorial-engine.js"></script>
-<script src="js/titration-workbench.js?v=71"></script>
+<script src="js/titration-workbench.js?v=72"></script>
 <script src="../shared/ai-tutor.js"></script>
 <script src="../shared/pwa-installer.js"></script>
 <script src="../shared/page-transitions.js"></script>

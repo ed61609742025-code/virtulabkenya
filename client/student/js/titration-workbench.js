@@ -1605,10 +1605,10 @@ requireStudentLogin();
     if (!lensSvg) return;
 
     const pcm = 60; // 60px per cm³ magnification
-    const centerY = 90; // Centerline of 180px viewfinder (aligned with red eye-level reticle)
+    const centerY = 80; // Center of 160x160 circular loupe (aligned with red eye-level reticle)
 
-    const minVol = Math.max(0, Math.floor((volume - 1.4) * 10) / 10);
-    const maxVol = Math.min(50, Math.ceil((volume + 1.4) * 10) / 10);
+    const minVol = Math.max(0, Math.floor((volume - 1.3) * 10) / 10);
+    const maxVol = Math.min(50, Math.ceil((volume + 1.3) * 10) / 10);
 
     const isKmno4 = (current && current.titrantName && (current.titrantName.includes('KMnO4') || current.titrantName.includes('KMnO₄'))) || (current && current.id && current.id.includes('kmno4'));
 
@@ -1663,26 +1663,26 @@ requireStudentLogin();
       </defs>
     `;
 
-    // 1. Physical Glass Cylinder & Schellbach Contrast Stripe
-    // Outer tube: x=28 to x=172 (width 144px). Inner bore: x=38 to x=162 (width 124px).
+    // 1. Physical Glass Cylinder & Schellbach Contrast Stripe in 160x160 circle
+    // Outer tube: x=24 to x=136 (width 112px). Inner bore: x=32 to x=128 (width 96px). Center: x=80.
     const tubeGeometry = `
       <!-- Porcelain Milk-Glass White Background for Scale Contrast -->
-      <rect x="38" y="0" width="124" height="180" fill="url(#lensTubeCeramic)"/>
+      <rect x="32" y="0" width="96" height="160" fill="url(#lensTubeCeramic)"/>
 
       <!-- Authentic Schellbach Backing Band (White Enamel) -->
-      <rect x="86" y="0" width="28" height="180" fill="#F8FAFC" opacity="0.9"/>
-      <!-- Schellbach Central Cobalt Blue Guide Line (Straight above meniscus) -->
-      <rect x="97" y="0" width="6" height="${isKmno4 ? 180 : Math.max(0, centerY - 12)}" fill="#0284C7" opacity="${isKmno4 ? '0.2' : '0.85'}"/>
+      <rect x="68" y="0" width="24" height="160" fill="#F8FAFC" opacity="0.9"/>
+      <!-- Schellbach Central Cobalt Blue Guide Line -->
+      <rect x="77" y="0" width="6" height="${isKmno4 ? 160 : Math.max(0, centerY - 12)}" fill="#0284C7" opacity="${isKmno4 ? '0.2' : '0.85'}"/>
 
       ${!isKmno4 ? `
         <!-- Schellbach Optical Pointer Convergence at Meniscus -->
-        <path d="M 97 ${Math.max(0, centerY - 12)} L 103 ${Math.max(0, centerY - 12)} L 100 ${centerY} Z" fill="#0284C7"/>
-        <path d="M 100 ${centerY} L 103 ${centerY + 14} L 97 ${centerY + 14} Z" fill="#0369A1"/>
-        <rect x="97" y="${centerY + 14}" width="6" height="${Math.max(0, 180 - (centerY + 14))}" fill="#0369A1" opacity="0.7"/>
+        <path d="M 77 ${Math.max(0, centerY - 12)} L 83 ${Math.max(0, centerY - 12)} L 80 ${centerY} Z" fill="#0284C7"/>
+        <path d="M 80 ${centerY} L 83 ${centerY + 14} L 77 ${centerY + 14} Z" fill="#0369A1"/>
+        <rect x="77" y="${centerY + 14}" width="6" height="${Math.max(0, 160 - (centerY + 14))}" fill="#0369A1" opacity="0.7"/>
       ` : ''}
 
       <!-- Inner Bore Cylindrical Depth Shadow -->
-      <rect x="38" y="0" width="124" height="180" fill="url(#boreInnerShadow)" pointer-events="none"/>
+      <rect x="32" y="0" width="96" height="160" fill="url(#boreInnerShadow)" pointer-events="none"/>
     `;
 
     // 2. Liquid Column & Realistic Meniscus Arc
@@ -1690,27 +1690,21 @@ requireStudentLogin();
     let meniscusArc = '';
 
     if (isKmno4) {
-      // Opaque dark purple liquid: Read at top edge of meniscus (contact line with glass at centerY)
       liquidBody = `
-        <path d="M 38 ${centerY} Q 100 ${centerY + 6} 162 ${centerY} L 162 180 L 38 180 Z" fill="url(#luminousLiquidFill)"/>
+        <path d="M 32 ${centerY} Q 80 ${centerY + 6} 128 ${centerY} L 128 160 L 32 160 Z" fill="url(#luminousLiquidFill)"/>
       `;
       meniscusArc = `
-        <!-- Top contact line of opaque meniscus at eye-level -->
-        <path d="M 38 ${centerY} Q 100 ${centerY + 6} 162 ${centerY}" stroke="#C084FC" stroke-width="2.2" fill="none" opacity="0.95"/>
-        <path d="M 38 ${centerY} Q 100 ${centerY + 4} 162 ${centerY}" stroke="#FFFFFF" stroke-width="1.2" fill="none" opacity="0.7" stroke-dasharray="4,6"/>
+        <path d="M 32 ${centerY} Q 80 ${centerY + 6} 128 ${centerY}" stroke="#C084FC" stroke-width="2.2" fill="none" opacity="0.95"/>
+        <path d="M 32 ${centerY} Q 80 ${centerY + 4} 128 ${centerY}" stroke="#FFFFFF" stroke-width="1.2" fill="none" opacity="0.7" stroke-dasharray="4,6"/>
       `;
     } else {
-      // Clear aqueous liquid: Read at bottom of concave meniscus (tangent touches centerY)
       liquidBody = `
-        <path d="M 38 ${centerY - 12} Q 100 ${centerY} 162 ${centerY - 12} L 162 180 L 38 180 Z" fill="url(#luminousLiquidFill)"/>
+        <path d="M 32 ${centerY - 12} Q 80 ${centerY} 128 ${centerY - 12} L 128 160 L 32 160 Z" fill="url(#luminousLiquidFill)"/>
       `;
       meniscusArc = `
-        <!-- Total internal reflection dark refraction crescent (the bottom curve chemists read) -->
-        <path d="M 38 ${centerY - 13} Q 100 ${centerY - 1} 162 ${centerY - 13}" stroke="#0F172A" stroke-width="3.2" fill="none" opacity="0.85"/>
-        <!-- Silvery specular surface meniscus arc -->
-        <path d="M 38 ${centerY - 12} Q 100 ${centerY} 162 ${centerY - 12}" stroke="#FFFFFF" stroke-width="2.6" fill="none" stroke-linecap="round" opacity="0.95"/>
-        <!-- Sub-surface specular gleam -->
-        <path d="M 52 ${centerY - 6} Q 100 ${centerY + 3} 148 ${centerY - 6}" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/>
+        <path d="M 32 ${centerY - 13} Q 80 ${centerY - 1} 128 ${centerY - 13}" stroke="#0F172A" stroke-width="3.2" fill="none" opacity="0.85"/>
+        <path d="M 32 ${centerY - 12} Q 80 ${centerY} 128 ${centerY - 12}" stroke="#FFFFFF" stroke-width="2.6" fill="none" stroke-linecap="round" opacity="0.95"/>
+        <path d="M 44 ${centerY - 6} Q 80 ${centerY + 3} 116 ${centerY - 6}" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/>
       `;
     }
 
@@ -1719,45 +1713,42 @@ requireStudentLogin();
     for (let v = minVol; v <= maxVol + 0.05; v += 0.1) {
       const vRounded = Math.round(v * 10) / 10;
       const y = centerY + (vRounded - volume) * pcm;
-      if (y < -12 || y > 192) continue;
+      if (y < -12 || y > 172) continue;
 
       const isMajor = Math.abs(vRounded - Math.round(vRounded)) < 0.01;
       const isMedium = !isMajor && Math.abs((vRounded * 10) % 5) < 0.01;
 
       if (isMajor) {
-        // Major 1.0 cm³ line (left tick, right tick, crisp side number)
-        ticksSvg += `<line x1="38" y1="${y}" x2="78" y2="${y}" stroke="#0F172A" stroke-width="2.2" stroke-linecap="round"/>`;
-        ticksSvg += `<line x1="122" y1="${y}" x2="162" y2="${y}" stroke="#0F172A" stroke-width="2.2" stroke-linecap="round"/>`;
-        ticksSvg += `<text x="142" y="${y + 4}" fill="#0F172A" font-size="11.5" font-family="'JetBrains Mono', monospace" font-weight="900" text-anchor="middle" paint-order="stroke" stroke="#FFFFFF" stroke-width="3" stroke-linejoin="round">${Math.round(vRounded)}</text>`;
+        ticksSvg += `<line x1="32" y1="${y}" x2="64" y2="${y}" stroke="#0F172A" stroke-width="2.2" stroke-linecap="round"/>`;
+        ticksSvg += `<line x1="96" y1="${y}" x2="128" y2="${y}" stroke="#0F172A" stroke-width="2.2" stroke-linecap="round"/>`;
+        ticksSvg += `<text x="112" y="${y + 4}" fill="#0F172A" font-size="11" font-family="'JetBrains Mono', monospace" font-weight="900" text-anchor="middle" paint-order="stroke" stroke="#FFFFFF" stroke-width="3" stroke-linejoin="round">${Math.round(vRounded)}</text>`;
       } else if (isMedium) {
-        // 0.5 cm³ mid tick
-        ticksSvg += `<line x1="38" y1="${y}" x2="66" y2="${y}" stroke="#1E293B" stroke-width="1.6" stroke-linecap="round"/>`;
-        ticksSvg += `<line x1="134" y1="${y}" x2="162" y2="${y}" stroke="#1E293B" stroke-width="1.6" stroke-linecap="round"/>`;
+        ticksSvg += `<line x1="32" y1="${y}" x2="55" y2="${y}" stroke="#1E293B" stroke-width="1.6" stroke-linecap="round"/>`;
+        ticksSvg += `<line x1="105" y1="${y}" x2="128" y2="${y}" stroke="#1E293B" stroke-width="1.6" stroke-linecap="round"/>`;
       } else {
-        // 0.1 cm³ minor tick
-        ticksSvg += `<line x1="38" y1="${y}" x2="52" y2="${y}" stroke="#475569" stroke-width="1.1" stroke-linecap="round"/>`;
-        ticksSvg += `<line x1="148" y1="${y}" x2="162" y2="${y}" stroke="#475569" stroke-width="1.1" stroke-linecap="round"/>`;
+        ticksSvg += `<line x1="32" y1="${y}" x2="45" y2="${y}" stroke="#475569" stroke-width="1.1" stroke-linecap="round"/>`;
+        ticksSvg += `<line x1="115" y1="${y}" x2="128" y2="${y}" stroke="#475569" stroke-width="1.1" stroke-linecap="round"/>`;
       }
     }
 
-    // 4. Glass Cylinder Walls & Specular Reflections
+    // 4. Glass Cylinder Walls & Reticle Notches
     const glassOverlays = `
       <!-- Left Glass Cylinder Wall -->
-      <rect x="28" y="0" width="10" height="180" fill="url(#glassWallLeft)"/>
-      <line x1="28" y1="0" x2="28" y2="180" stroke="#94A3B8" stroke-width="1.5" stroke-opacity="0.8"/>
-      <line x1="38" y1="0" x2="38" y2="180" stroke="#64748B" stroke-width="1.2" stroke-opacity="0.7"/>
+      <rect x="24" y="0" width="8" height="160" fill="url(#glassWallLeft)"/>
+      <line x1="24" y1="0" x2="24" y2="160" stroke="#94A3B8" stroke-width="1.5" stroke-opacity="0.8"/>
+      <line x1="32" y1="0" x2="32" y2="160" stroke="#64748B" stroke-width="1.2" stroke-opacity="0.7"/>
 
       <!-- Right Glass Cylinder Wall -->
-      <rect x="162" y="0" width="10" height="180" fill="url(#glassWallRight)"/>
-      <line x1="162" y1="0" x2="162" y2="180" stroke="#64748B" stroke-width="1.2" stroke-opacity="0.7"/>
-      <line x1="172" y1="0" x2="172" y2="180" stroke="#94A3B8" stroke-width="1.5" stroke-opacity="0.8"/>
+      <rect x="128" y="0" width="8" height="160" fill="url(#glassWallRight)"/>
+      <line x1="128" y1="0" x2="128" y2="160" stroke="#64748B" stroke-width="1.2" stroke-opacity="0.7"/>
+      <line x1="136" y1="0" x2="136" y2="160" stroke="#94A3B8" stroke-width="1.5" stroke-opacity="0.8"/>
 
       <!-- Specular Highlight Stripe on Left of Bore -->
-      <rect x="42" y="0" width="5" height="180" fill="#FFFFFF" opacity="0.35"/>
+      <rect x="36" y="0" width="4" height="160" fill="#FFFFFF" opacity="0.35"/>
 
-      <!-- Optical Reticle Precision Center Notch at eye level (y = 90) -->
-      <line x1="97" y1="${centerY - 4}" x2="97" y2="${centerY + 4}" stroke="#EF4444" stroke-width="1.4" stroke-linecap="round"/>
-      <line x1="103" y1="${centerY - 4}" x2="103" y2="${centerY + 4}" stroke="#EF4444" stroke-width="1.4" stroke-linecap="round"/>
+      <!-- Optical Reticle Precision Center Notch at eye level (y = 80) -->
+      <line x1="77" y1="${centerY - 4}" x2="77" y2="${centerY + 4}" stroke="#EF4444" stroke-width="1.4" stroke-linecap="round"/>
+      <line x1="83" y1="${centerY - 4}" x2="83" y2="${centerY + 4}" stroke="#EF4444" stroke-width="1.4" stroke-linecap="round"/>
     `;
 
     lensSvg.innerHTML = defsSvg + tubeGeometry + liquidBody + ticksSvg + meniscusArc + glassOverlays;
@@ -1770,8 +1761,8 @@ requireStudentLogin();
     const lensSubtitle = document.getElementById('lensGuidanceSub') || document.querySelector('.lens-readout-sub');
     if (lensSubtitle) {
       lensSubtitle.innerHTML = isKmno4
-        ? 'Read at <b style="color:var(--heading-color);">top edge of meniscus</b> (opaque KMnO₄).'
-        : 'Read at <b style="color:var(--heading-color);">bottom of meniscus</b> at eye level.';
+        ? 'Read at <b style="color:var(--heading-color);">top edge</b> (opaque KMnO₄).'
+        : 'Read at <b style="color:var(--heading-color);">bottom of meniscus</b>';
     }
   }
 
@@ -1803,6 +1794,13 @@ requireStudentLogin();
     }
 
     updateLensView(currentVolume);
+
+    // Physically glide the attached circular loupe mount alongside the meniscus down the burette tube
+    const loupeMount = document.getElementById('buretteLoupeMount');
+    if (loupeMount) {
+      const targetOffset = Math.round(usedFraction * 148);
+      loupeMount.style.transform = `translateY(${targetOffset}px)`;
+    }
 
     const flask = document.getElementById('flask');
     const surface = document.getElementById('flaskLiquidSurface');

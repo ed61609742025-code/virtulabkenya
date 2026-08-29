@@ -26,8 +26,8 @@
       navigator.serviceWorker.register('/sw.js')
         .then((reg) => {
           console.log('[VirtuLab PWA] Service Worker active with scope:', reg.scope);
-
-          // Listen for new service worker installations
+          // Check for service worker updates immediately on page load
+          reg.update().catch(() => {});
           reg.addEventListener('updatefound', () => {
             const newWorker = reg.installing;
             if (newWorker) {

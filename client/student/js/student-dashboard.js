@@ -353,7 +353,10 @@ requireStudentLogin();
 
       updateNotificationsUI(assignments);
 
+      const progressHeader = document.getElementById('caProgressHeader');
+
       if (assignments.length === 0) {
+        if (progressHeader) progressHeader.style.display = 'none';
         const isLinked = !!(currentStudentUser && (currentStudentUser.teacherName || currentStudentUser.teacherId || currentStudentUser.teacherCode));
         if (!isLinked) {
           box.innerHTML = `
@@ -380,6 +383,54 @@ requireStudentLogin();
         return;
       }
 
+      // Calculate Continuous Assessment Task Completion Statistics
+      const totalCount = assignments.length;
+      let markedCount = 0;
+      let reviewCount = 0;
+      let pendingCount = 0;
+
+      assignments.forEach(a => {
+        const isSubmitted = !!a.submitted;
+        const score = a.score || (a.evaluation && a.evaluation.score) || a.cs_total_score || a.gas_total_score || a.en_total_score || a.rate_total_score || a.sol_total_score;
+        const isGraded = typeof score === 'number' || a.submission_status === 'marked' || a.marked_at != null || a.status === 'marked';
+        if (isSubmitted) {
+          if (isGraded) markedCount++;
+          else reviewCount++;
+        } else {
+          pendingCount++;
+        }
+      });
+
+      const submittedCount = markedCount + reviewCount;
+      const percentComplete = totalCount > 0 ? Math.round((submittedCount / totalCount) * 100) : 0;
+
+      // Update Continuous Assessment Progress Header
+      if (progressHeader) {
+        progressHeader.style.display = 'flex';
+      }
+      const progressFill = document.getElementById('caProgressFill');
+      const progressBadge = document.getElementById('caProgressPercentBadge');
+      const statMarked = document.getElementById('statChipMarked');
+      const statReview = document.getElementById('statChipReview');
+      const statPending = document.getElementById('statChipPending');
+
+      if (progressFill) {
+        progressFill.style.width = percentComplete + '%';
+      }
+      if (progressBadge) {
+        progressBadge.textContent = `${percentComplete}% Complete (${submittedCount} / ${totalCount} Submitted)`;
+        if (percentComplete === 100) {
+          progressBadge.className = 'dash-section-badge badge-green';
+        } else if (percentComplete > 0) {
+          progressBadge.className = 'dash-section-badge badge-blue';
+        } else {
+          progressBadge.className = 'dash-section-badge badge-amber';
+        }
+      }
+      if (statMarked) statMarked.innerHTML = `🟢 <b>${markedCount}</b> Marked &amp; Graded`;
+      if (statReview) statReview.innerHTML = `🟡 <b>${reviewCount}</b> Under Review`;
+      if (statPending) statPending.innerHTML = `⏳ <b>${pendingCount}</b> Pending Action`;
+
       box.innerHTML = assignments.map(a => {
         const isSubmitted = !!a.submitted;
         const score = a.score || (a.evaluation && a.evaluation.score) || a.cs_total_score || a.gas_total_score || a.en_total_score || a.rate_total_score || a.sol_total_score;
@@ -388,31 +439,39 @@ requireStudentLogin();
         const { targetUrl, battleMode } = getAssignmentTargetUrl(a);
         const warmupUrl = `speed_battle.html?mode=${battleMode}&target=${encodeURIComponent(targetUrl)}`;
 
+        let statusChipHtml = '';
         let statusHtml = '';
         if (isSubmitted) {
           if (isGraded) {
+            statusChipHtml = `<span class="assign-status-chip is-marked">✅ Marked &amp; Graded</span>`;
             statusHtml = `
               <div style="display:flex; flex-direction:column; gap:6px; width:100%;">
-                <button type="button" class="submitted-pill" style="cursor:pointer; background:var(--green-bg); color:var(--green-accent); border:1px solid var(--green-accent); justify-content:center; width:100%; font-weight:800;" onclick="openAssignmentFeedbackModalById(${a.id})">🟢 Marked (View Grade &amp; Rubric)</button>
-                <a href="${targetUrl}" style="text-align:center; font-size:0.75rem; font-weight:700; color:var(--text-muted); text-decoration:underline;">Revisit Experiment Bench →</a>
+                <button type="button" class="submitted-pill" style="cursor:pointer; background:var(--green-bg); color:var(--green-accent); border:1.5px solid var(--green-accent); justify-content:center; width:100%; font-weight:800; min-height:44px;" onclick="openAssignmentFeedbackModalById(${a.id})">
+                  <span>🟢</span> <span>Marked (View Grade &amp; Rubric)</span>
+                </button>
+                <a href="${targetUrl}" style="text-align:center; font-size:0.75rem; font-weight:700; color:var(--text-muted); text-decoration:underline; min-height:30px; display:flex; align-items:center; justify-content:center;">Revisit Experiment Bench →</a>
               </div>
             `;
           } else {
+            statusChipHtml = `<span class="assign-status-chip is-review">🟡 Under Teacher Review</span>`;
             statusHtml = `
               <div style="display:flex; flex-direction:column; gap:6px; width:100%;">
-                <button type="button" class="submitted-pill" style="cursor:pointer; background:rgba(245, 158, 11, 0.15); color:#F59E0B; border:1px solid #F59E0B; justify-content:center; width:100%; font-weight:800;" onclick="openAssignmentFeedbackModalById(${a.id})">🟡 Under Review (Teacher Marking)</button>
-                <a href="${targetUrl}" style="text-align:center; font-size:0.75rem; font-weight:700; color:var(--text-muted); text-decoration:underline;">Revisit Experiment Bench →</a>
+                <button type="button" class="submitted-pill" style="cursor:pointer; background:rgba(245, 158, 11, 0.15); color:#854D0E; border:1.5px solid #F59E0B; justify-content:center; width:100%; font-weight:800; min-height:44px;" onclick="openAssignmentFeedbackModalById(${a.id})">
+                  <span>🟡</span> <span>Under Review (Teacher Marking)</span>
+                </button>
+                <a href="${targetUrl}" style="text-align:center; font-size:0.75rem; font-weight:700; color:var(--text-muted); text-decoration:underline; min-height:30px; display:flex; align-items:center; justify-content:center;">Revisit Experiment Bench →</a>
               </div>
             `;
           }
         } else {
+          statusChipHtml = `<span class="assign-status-chip is-pending">⏳ Action Required</span>`;
           statusHtml = `
-            <div style="display:flex; flex-direction:column; gap:6px; width:100%;">
-              <a href="${targetUrl}" class="pending-pill-btn" style="text-align:center; width:100%; display:flex; align-items:center; justify-content:center; gap:6px; font-weight:800;">
+            <div style="display:flex; flex-direction:column; gap:8px; width:100%;">
+              <a href="${targetUrl}" class="pending-pill-btn" style="text-align:center; width:100%; display:flex; align-items:center; justify-content:center; gap:8px; font-weight:800; min-height:44px;" aria-label="Start assignment: ${escapeHtml(a.title)}">
                 <span>🧪</span> <span>Start Assignment →</span>
               </a>
-              <a href="${warmupUrl}" style="text-align:center; font-size:0.74rem; font-weight:700; color:var(--cyan-accent); text-decoration:underline; padding:2px 0;" title="Take an optional 45s diagnostic warmup drill before opening the lab workbench">
-                ⚡ Optional Pre-Lab Diagnostic Drill
+              <a href="${warmupUrl}" style="text-align:center; font-size:0.75rem; font-weight:700; color:var(--cyan-accent); text-decoration:underline; padding:4px 0; min-height:32px; display:flex; align-items:center; justify-content:center; gap:4px;" title="Take an optional 45s diagnostic warmup drill before opening the lab workbench">
+                <span>⚡</span> <span>Optional Pre-Lab Diagnostic Drill</span>
               </a>
             </div>
           `;
@@ -421,14 +480,15 @@ requireStudentLogin();
         const dueLabel = a.due_date ? `Due ${formatDate(a.due_date)}` : 'No set deadline';
 
         return `
-          <div class="assignment-card-box" data-tooltip="${isSubmitted ? (isGraded ? 'Marked by teacher. Click to view grade &amp; feedback' : 'Submitted and pending teacher marking') : 'Active continuous assessment assignment'}" data-tooltip-pos="top" style="flex: 1 1 260px; display:flex; flex-direction:column; justify-content:space-between; min-height:175px;">
+          <div class="assignment-card-box" data-tooltip="${isSubmitted ? (isGraded ? 'Marked by teacher. Click to view grade &amp; feedback' : 'Submitted and pending teacher marking') : 'Active continuous assessment assignment'}" data-tooltip-pos="top" style="flex: 1 1 260px; display:flex; flex-direction:column; justify-content:space-between; min-height:185px;">
             <div>
+              ${statusChipHtml}
               <div class="assign-card-title">${escapeHtml(a.title)}</div>
-              <div class="assign-card-desc" style="font-size:0.82rem; color:var(--text-muted); margin-bottom:8px; line-height:1.4; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;">
+              <div class="assign-card-desc" style="font-size:0.82rem; color:var(--text-muted); margin-bottom:8px; line-height:1.45; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; font-weight:500;">
                 ${escapeHtml(a.description || a.instructions || 'No instructions provided.')}
               </div>
               <div class="assign-card-due" style="font-size:0.78rem; font-family:'JetBrains Mono', monospace; font-weight:700; color:var(--text-muted); margin-bottom:12px;">
-                ${dueLabel}
+                📅 ${dueLabel}
               </div>
             </div>
             ${statusHtml}

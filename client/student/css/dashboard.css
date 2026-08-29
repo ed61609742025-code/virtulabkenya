@@ -809,38 +809,49 @@ html, body {
 }
 
 .submitted-pill {
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 800;
   font-family: 'JetBrains Mono', monospace;
-  padding: 8px 14px;
-  border-radius: 8px;
+  padding: 10px 16px;
+  min-height: 44px;
+  border-radius: 10px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   box-sizing: border-box;
+  transition: all 0.18s ease;
 }
 
 .pending-pill-btn {
-  font-size: 0.82rem;
+  font-size: 0.90rem;
   font-weight: 800;
   font-family: 'Plus Jakarta Sans', sans-serif;
-  padding: 8px 14px;
-  border-radius: 8px;
-  background: var(--cyan-accent, #0284C7);
+  padding: 10px 18px;
+  min-height: 44px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
   color: #FFFFFF !important;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  border: 1.5px solid var(--cyan-btn-bg, #0B2545);
-  transition: all 0.15s ease;
+  gap: 8px;
+  border: 1.5px solid #0284C7;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3);
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
   box-sizing: border-box;
+  letter-spacing: 0.01em;
 }
 .pending-pill-btn:hover {
-  background: #0369A1;
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, #0369A1 0%, #075985 100%);
+  border-color: #38BDF8;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.45);
+}
+.pending-pill-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
 }
 
 /* ── 11. SEARCH & FILTER CHIPS ── */
@@ -1667,4 +1678,259 @@ html, body {
   .af-close-action-btn {
     width: 100%;
   }
+}
+
+/* ── 16. ACRONYM TOOLTIP SYSTEM (.sci-abbr) ── */
+.sci-abbr {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  text-decoration: underline dotted 1.5px var(--cyan-accent, #0284C7);
+  text-underline-offset: 3px;
+  cursor: help;
+  font-weight: inherit;
+  color: inherit;
+  outline: none;
+  transition: color 0.15s ease;
+}
+.sci-abbr:hover,
+.sci-abbr:focus-visible {
+  color: var(--cyan-accent, #0284C7);
+}
+.sci-abbr:focus-visible {
+  outline: 2px solid var(--cyan-accent, #0284C7);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+.sci-abbr .sci-abbr-tip {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: var(--tooltip-bg, #0F172A);
+  color: var(--tooltip-text, #F8FAFC);
+  border: 1px solid var(--tooltip-border, #334155);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.76rem;
+  font-weight: 500;
+  font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+  line-height: 1.45;
+  white-space: normal;
+  width: max-content;
+  max-width: 260px;
+  z-index: 10000;
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+  text-align: left;
+}
+.sci-abbr:hover .sci-abbr-tip,
+.sci-abbr:focus-visible .sci-abbr-tip {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.sci-abbr-title {
+  display: block;
+  font-weight: 800;
+  color: #38BDF8;
+  font-size: 0.78rem;
+  margin-bottom: 2px;
+  letter-spacing: 0.02em;
+}
+
+/* ── 17. CONTINUOUS ASSESSMENT TASK PROGRESS & STATS ── */
+.ca-progress-header {
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ca-progress-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.ca-progress-title {
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: var(--heading-color);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ca-progress-bar-wrap {
+  width: 100%;
+  height: 9px;
+  background: var(--card-bg-hover);
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.ca-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #0284C7, #10B981);
+  border-radius: 999px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.ca-stat-chips {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.ca-stat-chip {
+  font-size: 0.74rem;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 4px 10px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+}
+.ca-stat-chip.chip-marked {
+  background: var(--green-bg);
+  color: var(--green-accent);
+  border-color: var(--green-accent);
+}
+.ca-stat-chip.chip-review {
+  background: rgba(245, 158, 11, 0.12);
+  color: #B45309;
+  border-color: #F59E0B;
+}
+.ca-stat-chip.chip-pending {
+  background: rgba(2, 132, 199, 0.08);
+  color: #0284C7;
+  border-color: #0284C7;
+}
+
+/* Card Status Badges */
+.assign-status-chip {
+  font-size: 0.72rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 6px;
+  width: fit-content;
+}
+.assign-status-chip.is-pending {
+  background: rgba(2, 132, 199, 0.12);
+  color: #0369A1;
+  border: 1px solid rgba(2, 132, 199, 0.3);
+}
+[data-theme="dark"] .assign-status-chip.is-pending {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38BDF8;
+  border-color: rgba(56, 189, 248, 0.4);
+}
+.assign-status-chip.is-marked {
+  background: rgba(6, 95, 70, 0.12);
+  color: #065F46;
+  border: 1px solid rgba(6, 95, 70, 0.3);
+}
+[data-theme="dark"] .assign-status-chip.is-marked {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34D399;
+  border-color: rgba(16, 185, 129, 0.4);
+}
+.assign-status-chip.is-review {
+  background: rgba(180, 83, 9, 0.12);
+  color: #854D0E;
+  border: 1px solid rgba(180, 83, 9, 0.35);
+}
+[data-theme="dark"] .assign-status-chip.is-review {
+  background: rgba(245, 158, 11, 0.18);
+  color: #FBBF24;
+  border-color: rgba(245, 158, 11, 0.45);
+}
+
+/* ── 18. SECTION CATEGORY BADGES & ZONE BORDERS ── */
+.dash-section-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 6px;
+  letter-spacing: 0.03em;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.dash-section-badge.badge-blue {
+  background: rgba(11, 37, 69, 0.08);
+  color: #0B2545;
+  border: 1.5px solid rgba(11, 37, 69, 0.25);
+}
+[data-theme="dark"] .dash-section-badge.badge-blue {
+  background: rgba(56, 189, 248, 0.12);
+  color: #38BDF8;
+  border-color: rgba(56, 189, 248, 0.35);
+}
+.dash-section-badge.badge-cyan {
+  background: rgba(2, 132, 199, 0.10);
+  color: #0369A1;
+  border: 1.5px solid rgba(2, 132, 199, 0.3);
+}
+[data-theme="dark"] .dash-section-badge.badge-cyan {
+  background: rgba(6, 182, 212, 0.12);
+  color: #22D3EE;
+  border-color: rgba(6, 182, 212, 0.35);
+}
+.dash-section-badge.badge-green {
+  background: rgba(6, 95, 70, 0.10);
+  color: #065F46;
+  border: 1.5px solid rgba(6, 95, 70, 0.3);
+}
+[data-theme="dark"] .dash-section-badge.badge-green {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34D399;
+  border-color: rgba(16, 185, 129, 0.35);
+}
+.dash-section-badge.badge-amber {
+  background: rgba(180, 83, 9, 0.12);
+  color: #854D0E;
+  border: 1.5px solid rgba(180, 83, 9, 0.35);
+}
+[data-theme="dark"] .dash-section-badge.badge-amber {
+  background: rgba(245, 158, 11, 0.18);
+  color: #FBBF24;
+  border-color: rgba(245, 158, 11, 0.45);
+}
+.dash-section-badge.badge-purple {
+  background: rgba(88, 28, 135, 0.10);
+  color: #6B21A8;
+  border: 1.5px solid rgba(88, 28, 135, 0.3);
+}
+[data-theme="dark"] .dash-section-badge.badge-purple {
+  background: rgba(168, 85, 247, 0.15);
+  color: #C084FC;
+  border-color: rgba(168, 85, 247, 0.4);
+}
+
+.zone-priority {
+  border-top: 3.5px solid var(--cyan-accent, #0284C7) !important;
+}
+.zone-pathway {
+  border-top: 3.5px solid #10B981 !important;
+}
+.zone-drills {
+  border-top: 3.5px solid #F59E0B !important;
 }

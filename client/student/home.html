@@ -209,7 +209,7 @@
 
   <!-- Top Academic Ribbon -->
   <div class="candidate-top-ribbon">
-    <span>🇰🇪 REPUBLIC OF KENYA &bull; KCSE CHEMISTRY 233/3</span>
+    <span>🇰🇪 REPUBLIC OF KENYA &bull; <abbr class="sci-abbr" tabindex="0">KCSE<span class="sci-abbr-tip"><span class="sci-abbr-title">KCSE (Kenya Certificate of Secondary Education)</span>National secondary qualification administered by KNEC.</span></abbr> CHEMISTRY <abbr class="sci-abbr" tabindex="0">233/3<span class="sci-abbr-tip"><span class="sci-abbr-title">KNEC 233/3</span>Chemistry Paper 3 Practical Examination Syllabus Code.</span></abbr></span>
     <span class="ribbon-sep">&bull;</span>
     <span class="ribbon-extra" data-i18n="candidate_ledger">CANDIDATE PRACTICAL LEDGER</span>
   </div>
@@ -365,7 +365,7 @@
         </div>
         <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:8px;">
           <span style="font-family:'JetBrains Mono', monospace; font-size:0.82rem; font-weight:800; color:var(--acad-gold); background:var(--acad-gold-subtle); padding:4px 12px; border-radius:6px; border:1px solid var(--acad-gold-border);" data-tooltip="Official 2026 KCSE Chemistry Paper 3 Registered Student" data-tooltip-pos="bottom">
-            🇰🇪 KCSE CANDIDATE 2026
+            🇰🇪 <abbr class="sci-abbr" tabindex="0">KCSE<span class="sci-abbr-tip"><span class="sci-abbr-title">KCSE Candidate</span>Kenya Certificate of Secondary Education practical examination candidate.</span></abbr> CANDIDATE 2026
           </span>
           <span id="studentTeacherHeroBadge" style="font-family:'JetBrains Mono', monospace; font-size:0.82rem; font-weight:700; color:var(--cyan-accent); background:var(--card-bg-hover); padding:4px 12px; border-radius:6px; border:1px solid var(--card-border); display:inline-flex; align-items:center; gap:6px;">
             <span>👨‍🏫</span> <span id="studentTeacherNameDisplay">Instructor: Not linked</span>
@@ -379,7 +379,7 @@
 
       <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
         <!-- Pre-Lab Reflex Drill Quick Launch -->
-        <a href="speed_battle.html?warmup=true" class="btn-tactile btn-tactile-amber" style="padding:10px 20px; font-size:0.88rem; font-weight:800; border-radius:10px; text-decoration:none; display:inline-flex; align-items:center; gap:8px;" data-tooltip="Fast-paced 3-question diagnostic warmup before entering lab benches" data-tooltip-pos="bottom">
+        <a href="speed_battle.html?warmup=true" class="btn-tactile btn-tactile-amber" style="padding:10px 20px; font-size:0.88rem; font-weight:800; border-radius:10px; text-decoration:none; display:inline-flex; align-items:center; gap:8px; min-height:44px;" data-tooltip="Fast-paced 3-question diagnostic warmup before entering lab benches" data-tooltip-pos="bottom">
           <span data-i18n="pre_lab_drill">⚡ Pre-Lab Diagnostic Drill →</span>
         </a>
       </div>
@@ -395,7 +395,7 @@
         <div class="xp-progress-wrap" data-tooltip="Progress to next practical competency tier. Earn XP across all benches &amp; drills!" data-tooltip-pos="top">
           <div class="xp-label-row">
             <span id="heroLevelTitle" style="font-weight:800;">Level 1: Form 1 Apprentice</span>
-            <span id="heroXPText" style="font-family:'JetBrains Mono', monospace; font-weight:800;">120 / 250 XP</span>
+            <span id="heroXPText" style="font-family:'JetBrains Mono', monospace; font-weight:800;">120 / 250 <abbr class="sci-abbr" tabindex="0">XP<span class="sci-abbr-tip"><span class="sci-abbr-title">Experience Points (XP)</span>Practical competency score earned through verified titration, qualitative, and thermochemistry benchmarks.</span></abbr></span>
           </div>
           <div class="xp-track">
             <div class="xp-fill" id="heroXPBar" style="width: 48%;"></div>
@@ -403,7 +403,7 @@
         </div>
 
         <div class="level-badge-chip" id="heroLevelBadge" data-tooltip="Candidate Mastery Tier based on verified practical marks" data-tooltip-pos="top">
-          <span id="heroLevelIcon">🧪</span> <span id="heroTierName" style="font-weight:800;">Apprentice</span>
+          <span id="heroLevelIcon">🧪</span> <span id="heroTierName" style="font-weight:800;"><abbr class="sci-abbr" tabindex="0">P3<span class="sci-abbr-tip"><span class="sci-abbr-title">Paper 3 (P3)</span>Official KCSE Chemistry Practical Examination.</span></abbr> Analytical Chemist</span>
         </div>
       </div>
     </header>
@@ -432,7 +432,7 @@
     <div class="student-tab-panel active" id="panel_benches">
 
       <!-- ── ZONE 1: 🎯 PRIORITY ACTION CENTER (Active Tasks & Daily Targets) ── -->
-      <section id="zone_assignments" class="activity-zone-wrap" style="border-left: 5px solid var(--cyan-accent);">
+      <section id="zone_assignments" class="activity-zone-wrap zone-priority" style="border-left: 5px solid var(--cyan-accent);">
         <div class="activity-zone-header">
           <div class="activity-zone-title-box">
             <div class="icon-circle-badge" style="color:var(--cyan-accent); font-size:1.4rem;">🎯</div>
@@ -445,7 +445,7 @@
               </div>
             </div>
           </div>
-          <span class="activity-zone-badge">Targeted Practice</span>
+          <span class="dash-section-badge badge-blue">Targeted Continuous Assessment</span>
         </div>
 
         <!-- 🌟 Daily Chemistry Bite (Today's Mini-Challenge) -->
@@ -460,11 +460,11 @@
               Daily Practical Diagnostic Sprint
             </h3>
             <p id="dailyChallengeDesc" style="font-size: 0.84rem; color: var(--text-muted); margin: 0; line-height: 1.45; font-weight: 500;" data-i18n="daily_bite_desc">
-              3-question timed reflex drill on observation speed and KNEC calculations.
+              3-question timed reflex drill on observation speed and <abbr class="sci-abbr" tabindex="0">KNEC<span class="sci-abbr-tip"><span class="sci-abbr-title">KNEC</span>Kenya National Examinations Council</span></abbr> calculations.
             </p>
           </div>
           <div style="display: flex; align-items: center; gap: 10px;">
-            <a id="dailyChallengeLaunchBtn" href="speed_battle.html?mode=daily_bite" class="btn-tactile btn-tactile-primary btn-tactile-sm" style="text-decoration: none; padding: 10px 20px; font-weight: 800; font-size:0.86rem;">
+            <a id="dailyChallengeLaunchBtn" href="speed_battle.html?mode=daily_bite" class="btn-tactile btn-tactile-primary btn-tactile-sm" style="text-decoration: none; padding: 10px 20px; font-weight: 800; font-size:0.86rem; min-height:44px; display:inline-flex; align-items:center; justify-content:center;">
               <span data-i18n="daily_bite_launch">⚡ Start Daily Bite →</span>
             </a>
           </div>
@@ -482,9 +482,27 @@
                   Teacher Prescribed Continuous Assessment
                 </h3>
               </div>
-              <span style="font-family:'JetBrains Mono', monospace; font-size:0.74rem; font-weight:700; color:var(--text-muted); background:var(--card-bg); padding:2px 8px; border-radius:4px; border:1px solid var(--card-border);" data-i18n="knec_paper3_target">
-                KNEC Paper 3 Target
+              <span class="dash-section-badge badge-cyan" data-i18n="knec_paper3_target">
+                <abbr class="sci-abbr" tabindex="0">KNEC<span class="sci-abbr-tip"><span class="sci-abbr-title">KNEC Paper 3 Target</span>Continuous assessment mapped to Paper 3 exam questions.</span></abbr> Paper 3 Target
               </span>
+            </div>
+
+            <!-- Continuous Assessment Task Progress Header -->
+            <div class="ca-progress-header" id="caProgressHeader">
+              <div class="ca-progress-meta-row">
+                <div class="ca-progress-title">
+                  <span>📊</span> Assignment Completion Tracker
+                </div>
+                <span class="dash-section-badge badge-green" id="caProgressPercentBadge">0% Complete (0/0 Done)</span>
+              </div>
+              <div class="ca-progress-bar-wrap" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                <div class="ca-progress-fill" id="caProgressFill" style="width: 0%;"></div>
+              </div>
+              <div class="ca-stat-chips" id="caStatChips">
+                <div class="ca-stat-chip chip-marked" id="statChipMarked">🟢 0 Marked &amp; Graded</div>
+                <div class="ca-stat-chip chip-review" id="statChipReview">🟡 0 Under Review</div>
+                <div class="ca-stat-chip chip-pending" id="statChipPending">⏳ 0 Pending Submission</div>
+              </div>
             </div>
 
             <div id="assignmentsList" class="assignments-grid-container">
@@ -538,14 +556,14 @@
         </div>
       </section>
 
-      <!-- ── ZONE 2: 🧪 KCSE PRACTICAL CHEMISTRY WORKBENCHES & GUIDED PATHWAYS ── -->
-      <section class="activity-zone-wrap" style="border-left: 5px solid var(--acad-oxford);">
+      <!-- ── ZONE 2: 🗺️ GUIDED PRACTICAL CHEMISTRY LEARNING PATHWAY (SKILL TREE) ── -->
+      <section class="activity-zone-wrap zone-pathway" style="border-left: 5px solid var(--acad-oxford);">
         <div class="activity-zone-header">
           <div class="activity-zone-title-box">
             <div class="icon-circle-badge" style="color:var(--acad-oxford); font-size:1.4rem;">🔬</div>
             <div>
               <h2 class="section-heading-academic">
-                <span data-i18n="pathway_heading">KCSE Practical Chemistry Learning Pathway</span>
+                <span data-i18n="pathway_heading"><abbr class="sci-abbr" tabindex="0">KCSE<span class="sci-abbr-tip"><span class="sci-abbr-title">KCSE Paper 3</span>Kenya Certificate of Secondary Education practical examination syllabus.</span></abbr> Practical Chemistry Learning Pathway</span>
               </h2>
               <div class="section-subheading" data-i18n="pathway_sub">
                 Follow the guided mastery pathway or explore individual laboratory benches:
@@ -554,7 +572,7 @@
           </div>
           
           <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-            <span class="activity-zone-badge">Syllabus Core (40 Marks)</span>
+            <span class="dash-section-badge badge-green">Syllabus Core (40 Marks)</span>
             <!-- View Toggle Switcher -->
             <div class="pathway-view-toggle">
               <button type="button" class="view-toggle-btn active" id="btnViewTree" onclick="SkillTree.switchView('tree')" data-tooltip="Interactive Node-based Pathway Map" data-tooltip-pos="bottom">
@@ -650,21 +668,21 @@
               </div>
             </a>
 
-            <!-- 7. Organic Chemistry Bench -->
-            <a href="organic.html" class="practice-banner-card" data-type="organic" style="border-left:5px solid var(--violet-accent);" data-tooltip="Paper 3 Q3: Unsaturation testing (Bromine/KMnO₄), alkanol oxidation, and carboxylic acid esterification." data-tooltip-pos="top">
-              <div class="practice-icon-circle" style="color:var(--violet-accent); font-size:1.35rem;">⚗️</div>
+            <!-- 7. Organic Chemistry Lab -->
+            <a href="organic.html" class="practice-banner-card" data-type="organic" style="border-left:5px solid #10B981;" data-tooltip="Paper 3 Q3: Test for unsaturation (Br₂/KMnO₄), combustion sootiness, and sodium esterification." data-tooltip-pos="top">
+              <div class="practice-icon-circle" style="color:#10B981; font-size:1.35rem;">🍃</div>
               <div style="flex:1; min-width:0;">
-                <div class="practice-text-title">Organic Chemistry Qualitative Bench</div>
-                <div class="practice-text-desc">Unsaturation testing (Bromine/KMnO₄), alkanols, and carboxylic acid esterification.</div>
+                <div class="practice-text-title">Organic Chemistry &amp; Functional Groups</div>
+                <div class="practice-text-desc">Test for unsaturation (Br₂/KMnO₄), combustion sootiness, and functional esterification.</div>
               </div>
             </a>
 
-            <!-- 8. Gas Preparation & Collection -->
-            <a href="gas_prep.html" class="practice-banner-card" data-type="gasPrep" style="border-left:5px solid #0284C7;" data-tooltip="Forms 2-3 Core: Generate, dry, collect, and confirm O₂, CO₂, Cl₂, NH₃, SO₂, and H₂." data-tooltip-pos="top">
-              <div class="practice-icon-circle" style="color:#0284C7; font-size:1.35rem;">💨</div>
+            <!-- 8. Gas Preparation & Identification -->
+            <a href="gas.html" class="practice-banner-card" data-type="gas" style="border-left:5px solid #8B5CF6;" data-tooltip="Paper 3 Q3: Generate and identify H₂, O₂, CO₂, Cl₂, NH₃, and SO₂ with confirmatory splint &amp; litmus tests." data-tooltip-pos="top">
+              <div class="practice-icon-circle" style="color:#8B5CF6; font-size:1.35rem;">💨</div>
               <div style="flex:1; min-width:0;">
-                <div class="practice-text-title">Gas Preparation &amp; Collection</div>
-                <div class="practice-text-desc">Generate, dry, collect, and test O₂, CO₂, Cl₂, NH₃, SO₂, and H₂ with authentic glassware.</div>
+                <div class="practice-text-title">Gas Preparation &amp; Analysis</div>
+                <div class="practice-text-desc">Generate and test H₂, O₂, CO₂, Cl₂, NH₃, and SO₂ with confirmatory tests.</div>
               </div>
             </a>
 
@@ -682,20 +700,20 @@
       </section>
 
       <!-- ── ZONE 3: ⚡ KCSE PRACTICAL DIAGNOSTIC DRILLS HUB ── -->
-      <section class="activity-zone-wrap" style="border-left: 5px solid #F59E0B;">
+      <section class="activity-zone-wrap zone-drills" style="border-left: 5px solid #F59E0B;">
         <div class="activity-zone-header">
           <div class="activity-zone-title-box">
             <div class="icon-circle-badge" style="color:#F59E0B; font-size:1.4rem;">⚡</div>
             <div>
               <h2 class="section-heading-academic" data-i18n="drills_title">
-                KCSE Practical Diagnostic Drills
+                <abbr class="sci-abbr" tabindex="0">KCSE<span class="sci-abbr-tip"><span class="sci-abbr-title">KCSE Practical Drills</span>Rapid formative assessments for Paper 3 laboratory skills.</span></abbr> Practical Diagnostic Drills
               </h2>
               <div class="section-subheading" data-i18n="drills_sub">
                 Choose a topic for a fast-paced timed assessment on observation reflexes:
               </div>
             </div>
           </div>
-          <span class="activity-zone-badge" data-i18n="drills_badge">Formative Reflex Drills</span>
+          <span class="dash-section-badge badge-amber" data-i18n="drills_badge">Formative Reflex Drills</span>
         </div>
 
         <div class="drill-card-grid">

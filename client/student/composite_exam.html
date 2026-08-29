@@ -678,7 +678,65 @@
       </div>
 
       <div id="q1CalculationsContainer">
-        <!-- Rendered dynamically by renderQ1Calculations() -->
+        <!-- Default Step (a) -->
+        <div class="calc-step-card" id="card_avgTitre">
+          <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
+            (a) Calculate the average volume of Solution A used, V₁ <span style="color:var(--cyan-accent);">(1.0 Mark)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <input type="number" step="0.01" id="ansAvgTitre" class="calc-input dynamic-calc-input" data-field="avgTitre" data-step-id="step_a" placeholder="e.g. 25.00" oninput="onDynamicQ1CalculationChanged('avgTitre', this.value)">
+            <span style="font-weight:700;color:var(--text-muted);">cm³</span>
+          </div>
+          <div id="stepFeedback_step_a" class="step-feedback-msg"></div>
+        </div>
+
+        <!-- Default Step (b) -->
+        <div class="calc-step-card" id="card_molesB">
+          <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
+            (b) Calculate the number of moles of solute in 25.0 cm³ of Solution B <span style="color:var(--cyan-accent);">(2.0 Marks)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <input type="number" step="0.0001" id="ansMolesB" class="calc-input dynamic-calc-input" data-field="molesB" data-step-id="step_b" placeholder="e.g. 0.00250" oninput="onDynamicQ1CalculationChanged('molesB', this.value)">
+            <span style="font-weight:700;color:var(--text-muted);">moles</span>
+          </div>
+          <div id="stepFeedback_step_b" class="step-feedback-msg"></div>
+        </div>
+
+        <!-- Default Step (c) -->
+        <div class="calc-step-card" id="card_molesA">
+          <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
+            (c) Chemical reaction stoichiometry and moles of Solution A reacted in V₁ <span style="color:var(--cyan-accent);">(2.0 Marks)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <input type="number" step="0.0001" id="ansMolesA" class="calc-input dynamic-calc-input" data-field="molesA" data-step-id="step_c" placeholder="e.g. 0.00250" oninput="onDynamicQ1CalculationChanged('molesA', this.value)">
+            <span style="font-weight:700;color:var(--text-muted);">moles of Solution A</span>
+          </div>
+          <div id="stepFeedback_step_c" class="step-feedback-msg"></div>
+        </div>
+
+        <!-- Default Step (d) -->
+        <div class="calc-step-card" id="card_molarityA">
+          <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
+            (d) Calculate the molar concentration (molarity) of Solution A in mol/dm³ <span style="color:var(--cyan-accent);">(3.0 Marks)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <input type="number" step="0.001" id="ansMolarityA" class="calc-input dynamic-calc-input" data-field="molarityA" data-step-id="step_d" placeholder="e.g. 0.100" oninput="onDynamicQ1CalculationChanged('molarityA', this.value)">
+            <span style="font-weight:700;color:var(--text-muted);">mol/dm³ (M)</span>
+          </div>
+          <div id="stepFeedback_step_d" class="step-feedback-msg"></div>
+        </div>
+
+        <!-- Default Step (e) -->
+        <div class="calc-step-card" id="card_concGrams">
+          <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
+            (e) Calculate the concentration of Solution A in g/dm³ (RFM = 36.5) <span style="color:var(--cyan-accent);">(2.0 Marks)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <input type="number" step="0.01" id="ansConcGrams" class="calc-input dynamic-calc-input" data-field="concGrams" data-step-id="step_e" placeholder="e.g. 3.65" oninput="onDynamicQ1CalculationChanged('concGrams', this.value)">
+            <span style="font-weight:700;color:var(--text-muted);">g/dm³</span>
+          </div>
+          <div id="stepFeedback_step_e" class="step-feedback-msg"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -951,7 +1009,7 @@
 
 <script src="/shared/api.js"></script>
 <script src="/shared/page-transitions.js"></script>
-<script src="js/composite-engine.js?v=51"></script>
+<script src="js/composite-engine.js?v=66"></script>
 <script>
   requireStudentLogin();
   const user = getUser();
@@ -1401,16 +1459,47 @@
     updateLiveScoreDisplay();
   }
 
+  function getQ1CalculationQuestions() {
+    if (Array.isArray(engine?.preset?.q1?.questions) && engine.preset.q1.questions.length > 0) {
+      return engine.preset.q1.questions;
+    }
+    const q1 = engine?.preset?.q1 || {};
+    const calcType = q1.calcType || 'standard_molarity';
+    if (typeof createWaterOfCrystallizationQuestions === 'function' && calcType === 'water_of_crystallization') {
+      return createWaterOfCrystallizationQuestions(q1);
+    }
+    if (typeof createPercentagePurityQuestions === 'function' && calcType === 'percentage_purity') {
+      return createPercentagePurityQuestions(q1);
+    }
+    if (typeof createRamMetalQuestions === 'function' && calcType === 'ram_metal') {
+      return createRamMetalQuestions(q1);
+    }
+    if (typeof createStandardTitrationQuestions === 'function') {
+      return createStandardTitrationQuestions(q1);
+    }
+    // Hardcoded bulletproof KNEC fallback questions
+    return [
+      { id: 'step_a', letter: 'a', field: 'avgTitre', label: 'Calculate the average volume of Solution A used, V₁', marks: 1.0, marksLabel: '(1.0 Mark)', placeholder: 'e.g. 25.00', step: '0.01', unit: 'cm³' },
+      { id: 'step_b', letter: 'b', field: 'molesB', label: `Calculate the number of moles of solute in ${Number(q1?.pipetteVolume || 25.0).toFixed(1)} cm³ of Solution B`, marks: 2.0, marksLabel: '(2.0 Marks)', placeholder: 'e.g. 0.00250', step: '0.0001', unit: 'moles' },
+      { id: 'step_c', letter: 'c', field: 'molesA', label: 'Chemical reaction stoichiometry and moles of Solution A reacted in V₁', marks: 2.0, marksLabel: '(2.0 Marks)', placeholder: 'e.g. 0.00250', step: '0.0001', unit: 'moles of Solution A' },
+      { id: 'step_d', letter: 'd', field: 'molarityA', label: 'Calculate the molar concentration (molarity) of Solution A in mol/dm³', marks: 3.0, marksLabel: '(3.0 Marks)', placeholder: 'e.g. 0.100', step: '0.001', unit: 'mol/dm³ (M)' },
+      { id: 'step_e', letter: 'e', field: 'concGrams', label: `Calculate the concentration of Solution A in g/dm³ (RFM = ${q1?.acidRfm || 36.5})`, marks: 2.0, marksLabel: '(2.0 Marks)', placeholder: 'e.g. 3.65', step: '0.01', unit: 'g/dm³' }
+    ];
+  }
+
   function renderQ1Calculations() {
     const container = document.getElementById('q1CalculationsContainer');
-    if (!container || !engine?.preset?.q1) return;
-    const questions = engine.preset.q1.questions || (typeof createStandardTitrationQuestions === 'function' ? createStandardTitrationQuestions(engine.preset.q1) : []);
-    const isStrict = engine.mode === 'strict';
+    if (!container) return;
+    const questions = getQ1CalculationQuestions();
+    if (engine?.preset?.q1 && (!engine.preset.q1.questions || engine.preset.q1.questions.length === 0)) {
+      engine.preset.q1.questions = questions;
+    }
+    const isStrict = engine?.mode === 'strict';
 
     container.innerHTML = questions.map(q => {
       const fieldId = q.field || q.id;
       const inputId = fieldId === 'avgTitre' ? 'ansAvgTitre' : (fieldId === 'molesB' ? 'ansMolesB' : (fieldId === 'molesA' ? 'ansMolesA' : (fieldId === 'molarityA' ? 'ansMolarityA' : (fieldId === 'concGrams' ? 'ansConcGrams' : `ans_${fieldId}`))));
-      const currentVal = engine.q1Answers[fieldId] !== undefined ? engine.q1Answers[fieldId] : (engine.q1Answers[q.id] || '');
+      const currentVal = (engine?.q1Answers && engine.q1Answers[fieldId] !== undefined) ? engine.q1Answers[fieldId] : (engine?.q1Answers ? engine.q1Answers[q.id] || '' : '');
 
       return `
         <div class="calc-step-card" id="card_${fieldId}">
@@ -1435,7 +1524,7 @@
   }
 
   function checkDynamicQ1Step(stepId) {
-    const questions = engine.preset.q1.questions || (typeof createStandardTitrationQuestions === 'function' ? createStandardTitrationQuestions(engine.preset.q1) : []);
+    const questions = getQ1CalculationQuestions();
     const q = questions.find(item => item.id === stepId || item.letter === stepId);
     if (!q) return;
 

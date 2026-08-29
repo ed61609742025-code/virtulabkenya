@@ -67,19 +67,21 @@
 <div class="teacher-layout">
   <!-- Left Sidebar Navigation -->
   <aside class="teacher-sidebar">
-    <div class="sidebar-group-title">Dashboard & Management</div>
+    <div class="sidebar-group-title">Dashboard &amp; Classroom</div>
     <button class="sidebar-nav-btn active" id="btnTabOverview" onclick="switchTeacherTab('paneOverview')">
       <span>📊 Class Overview</span>
     </button>
-    <button class="sidebar-nav-btn" id="btnTabAssignments" onclick="switchTeacherTab('paneAssignments')">
-      <span>📝 Assignments & Grading</span>
-      <span class="badge-count" id="ungradedBadge" style="display:none;">0</span>
-    </button>
-    <button class="sidebar-nav-btn" id="btnTabAiAssistant" onclick="switchTeacherTab('paneAiAssistant')">
-      <span style="display:flex;align-items:center;gap:6px;">🤖 AI Exam Assistant <span class="pill pill-info" style="font-size:0.62rem;padding:2px 6px;margin-left:auto;">AI</span></span>
-    </button>
     <button class="sidebar-nav-btn" id="btnTabStudents" onclick="switchTeacherTab('paneStudents')">
       <span>👥 Student Roster</span>
+    </button>
+
+    <div class="sidebar-group-title">Exam Studio</div>
+    <button class="sidebar-nav-btn" id="btnTabAiAssistant" onclick="switchTeacherTab('paneAiAssistant')">
+      <span style="display:flex;align-items:center;gap:6px;">🤖 Walimu AI Exam Setter <span class="pill pill-info" style="font-size:0.62rem;padding:2px 6px;margin-left:auto;">AI</span></span>
+    </button>
+    <button class="sidebar-nav-btn" id="btnTabAssignments" onclick="switchTeacherTab('paneAssignments')">
+      <span>📝 Assignments &amp; Grading</span>
+      <span class="badge-count" id="ungradedBadge" style="display:none;">0</span>
     </button>
 
     <div class="sidebar-group-title">KCSE Lab Modules</div>
@@ -236,9 +238,14 @@
             <h2>🛠️ Active Practical Assignments</h2>
             <p>Monitor student completion rates, issue due date reminders, download CSV scorecards, or modify exam parameters.</p>
           </div>
-          <button class="btn btn-primary btn-sm" onclick="scrollToCreateAssignment()">
-            <span>➕ Create New Assignment</span>
-          </button>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-outline btn-sm" onclick="switchTeacherTab('paneAiAssistant')">
+              <span>🤖 Walimu AI Exam Setter</span>
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="scrollToCreateAssignment()">
+              <span>➕ Create New Assignment</span>
+            </button>
+          </div>
         </div>
 
         <div id="assignmentsManageList">
@@ -456,7 +463,7 @@
         <div class="ai-hero-title-group">
           <div class="ai-hero-icon">🤖</div>
           <div>
-            <h2 style="margin:0 0 4px;font-family:var(--font-heading);font-size:1.4rem;color:var(--heading-color);">Walimu AI Exam Assistant</h2>
+            <h2 style="margin:0 0 4px;font-family:var(--font-heading);font-size:1.4rem;color:var(--heading-color);">Walimu AI Exam Studio</h2>
             <p style="margin:0;font-size:0.88rem;color:var(--text-muted);">AI-powered KNEC KCSE Chemistry practical exam setter, question extractor &amp; curriculum co-pilot</p>
           </div>
         </div>

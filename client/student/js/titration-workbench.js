@@ -1199,12 +1199,17 @@ requireStudentLogin();
       }
     } else {
       // Clean up previous practical inputs, validation feedback and unlock controls
-      ['avgInput', 'molesTitrantInput', 'molesAnalyteInput', 'calcConc', 'massConcInput'].forEach(id => {
+      const isExamModeEarly = isExam || sessionMode === 'assignment' || sessionMode === 'exam';
+      ['avgInput', 'molesTitrantInput', 'molesAnalyteInput', 'calcConc', 'massConcInput'].forEach((id, i) => {
         const input = document.getElementById(id);
         if (input) {
           input.value = '';
-          input.disabled = false;
-          input.style.opacity = '1';
+          const shouldEnable = i === 0 || isExamModeEarly;
+          input.disabled = !shouldEnable;
+          if (shouldEnable) {
+            input.removeAttribute('disabled');
+            if (input.dataset.placeholder) input.placeholder = input.dataset.placeholder;
+          }
         }
       });
 
@@ -1440,6 +1445,7 @@ requireStudentLogin();
       const prevLetter = String.fromCharCode(97 + idx - 1);
       // Strip any duplicate leading "(a) ", "(b) ", etc. from the label string
       const cleanLabel = rawLabel.replace(/^\([a-z]\)\s*/i, '');
+      const inputPlaceholder = isUnlocked ? q.placeholder : `🔒 Locked until (${prevLetter}) is verified`;
       const hintData = formulaHints[letter] || {
         title: `Question (${letter}) Stoichiometry Guide`,
         body: 'Follow the balanced reaction equation and apply stoichiometric principles.',
@@ -1477,7 +1483,7 @@ requireStudentLogin();
           </div>
 
           <div class="calc-input-row" style="flex-direction:column;gap:8px;width:100%;margin-top:auto;">
-            <input type="number" step="${q.step}" id="${inputId}" placeholder="${q.placeholder}" oninput="saveDraft()" ${isUnlocked ? '' : 'disabled'} aria-label="${cleanLabel}" style="width:100%; font-family:'JetBrains Mono', monospace; font-size:0.88rem; padding:10px 12px;">
+            <input type="number" step="${q.step}" id="${inputId}" data-placeholder="${q.placeholder}" placeholder="${inputPlaceholder}" oninput="saveDraft()" ${isUnlocked ? '' : 'disabled'} aria-label="${cleanLabel}" style="width:100%; font-family:'JetBrains Mono', monospace; font-size:0.88rem; padding:10px 12px;">
             <div class="calc-input-hint">${hintData.hint}</div>
             <button class="btn-cyan" id="${btnId}" onclick="checkQuestionStep(${idx})" style="width:100%;height:40px;font-weight:700;display:${isExamMode ? 'none' : 'block'};">${q.buttonLabel}</button>
           </div>
@@ -2194,7 +2200,11 @@ requireStudentLogin();
       box.style.opacity = '1';
       box.style.pointerEvents = 'auto';
       const input = document.getElementById(q.inputId);
-      if (input) input.removeAttribute('disabled');
+      if (input) {
+        input.removeAttribute('disabled');
+        input.disabled = false;
+        if (q.placeholder) input.placeholder = q.placeholder;
+      }
       const btn = document.getElementById(q.btnId);
       if (btn && !isExam) btn.style.display = 'block';
       const lockBadge = box.querySelector('.calc-lock-badge');

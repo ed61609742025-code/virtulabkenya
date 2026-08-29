@@ -1605,114 +1605,173 @@ requireStudentLogin();
     if (!lensSvg) return;
 
     const pcm = 60; // 60px per cm³ magnification
-    const centerY = 90; // Centerline of 180px viewfinder (matches the red Eye Level line)
-    
+    const centerY = 90; // Centerline of 180px viewfinder (aligned with red eye-level reticle)
+
     const minVol = Math.max(0, Math.floor((volume - 1.4) * 10) / 10);
     const maxVol = Math.min(50, Math.ceil((volume + 1.4) * 10) / 10);
 
-    const isKmno4 = current && current.titrantName && (current.titrantName.includes('KMnO4') || current.titrantName.includes('KMnO₄'));
-    const liquidColor0 = isKmno4 ? '#c084fc' : '#38BDF8';
-    const liquidColor1 = isKmno4 ? '#9333ea' : '#0284C7';
-    const liquidColor2 = isKmno4 ? '#6b21a8' : '#0369A1';
-    const liquidColor3 = isKmno4 ? '#3b0764' : '#0C4A6E';
+    const isKmno4 = (current && current.titrantName && (current.titrantName.includes('KMnO4') || current.titrantName.includes('KMnO₄'))) || (current && current.id && current.id.includes('kmno4'));
 
-    // High-contrast defs: White ceramic enamel backing + crystal clear glass highlights
+    // Color definitions for solution:
+    // KMnO4 = rich deep purple; Standard acids/bases = realistic clear aqueous tint
+    const liquidColor0 = isKmno4 ? '#A855F7' : '#BAE6FD';
+    const liquidColor1 = isKmno4 ? '#7E22CE' : '#38BDF8';
+    const liquidColor2 = isKmno4 ? '#581C87' : '#0284C7';
+    const liquidColor3 = isKmno4 ? '#3B0764' : '#0369A1';
+
     const defsSvg = `
       <defs>
-        <!-- High-Contrast Schellbach White Ceramic Backing -->
+        <!-- Porcelain Enamel Backing Plate Gradient -->
         <linearGradient id="lensTubeCeramic" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stop-color="#E2E8F0"/>
-          <stop offset="10%" stop-color="#FFFFFF"/>
-          <stop offset="90%" stop-color="#FFFFFF"/>
+          <stop offset="8%" stop-color="#FFFFFF"/>
+          <stop offset="92%" stop-color="#FFFFFF"/>
           <stop offset="100%" stop-color="#CBD5E1"/>
         </linearGradient>
-        
-        <!-- Crystal Clear Luminous Aqueous Solution with Glass Depth -->
+
+        <!-- Volumetric Solution Fill Gradient -->
         <linearGradient id="luminousLiquidFill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="${liquidColor0}" stop-opacity="0.95"/>
-          <stop offset="15%" stop-color="${liquidColor1}" stop-opacity="0.92"/>
-          <stop offset="60%" stop-color="${liquidColor2}" stop-opacity="0.95"/>
-          <stop offset="100%" stop-color="${liquidColor3}" stop-opacity="0.98"/>
+          <stop offset="0%" stop-color="${liquidColor0}" stop-opacity="${isKmno4 ? '0.96' : '0.45'}"/>
+          <stop offset="15%" stop-color="${liquidColor1}" stop-opacity="${isKmno4 ? '0.96' : '0.65'}"/>
+          <stop offset="55%" stop-color="${liquidColor2}" stop-opacity="${isKmno4 ? '0.98' : '0.80'}"/>
+          <stop offset="100%" stop-color="${liquidColor3}" stop-opacity="${isKmno4 ? '1.0' : '0.90'}"/>
         </linearGradient>
 
-        <!-- Specular Highlight for Glass Walls -->
-        <linearGradient id="tubeSpecularHighlight" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.8"/>
-          <stop offset="15%" stop-color="#FFFFFF" stop-opacity="0.2"/>
-          <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.0"/>
+        <!-- Glass Cylinder Outer Wall Shadow (Left) -->
+        <linearGradient id="glassWallLeft" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#94A3B8" stop-opacity="0.6"/>
+          <stop offset="40%" stop-color="#FFFFFF" stop-opacity="0.8"/>
+          <stop offset="80%" stop-color="#CBD5E1" stop-opacity="0.2"/>
+          <stop offset="100%" stop-color="#0F172A" stop-opacity="0.1"/>
         </linearGradient>
 
-        <filter id="lensBeadGlow" x="-50%" y="-50%" width="200%" height="200%">
-          <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#EF4444" flood-opacity="0.9"/>
-        </filter>
+        <!-- Glass Cylinder Outer Wall Shadow (Right) -->
+        <linearGradient id="glassWallRight" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#0F172A" stop-opacity="0.1"/>
+          <stop offset="20%" stop-color="#CBD5E1" stop-opacity="0.2"/>
+          <stop offset="60%" stop-color="#FFFFFF" stop-opacity="0.7"/>
+          <stop offset="100%" stop-color="#94A3B8" stop-opacity="0.6"/>
+        </linearGradient>
+
+        <!-- Internal Cylindrical Shadow on Bore -->
+        <linearGradient id="boreInnerShadow" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#0F172A" stop-opacity="0.18"/>
+          <stop offset="6%" stop-color="#0F172A" stop-opacity="0.0"/>
+          <stop offset="94%" stop-color="#0F172A" stop-opacity="0.0"/>
+          <stop offset="100%" stop-color="#0F172A" stop-opacity="0.18"/>
+        </linearGradient>
       </defs>
     `;
 
-    // 1. Dry Upper Tube (Empty Burette Cylinder Above Meniscus: y = 0 to 180)
-    const dryGlassTop = `
-      <!-- White Ceramic Contrast Backing Plate -->
-      <rect x="12" y="0" width="176" height="180" rx="6" fill="url(#lensTubeCeramic)"/>
-      <!-- Blue Schellbach Central Vertical Guide Stripe -->
-      <rect x="94" y="0" width="12" height="180" fill="#0284C7" opacity="0.25"/>
-      <!-- Outer Glass Tube Refraction Borders -->
-      <line x1="12" y1="0" x2="12" y2="180" stroke="#00F2FE" stroke-width="3" stroke-opacity="0.8"/>
-      <line x1="188" y1="0" x2="188" y2="180" stroke="#00F2FE" stroke-width="3" stroke-opacity="0.8"/>
-      <!-- Left Glass Glare Highlight -->
-      <rect x="16" y="0" width="14" height="180" fill="url(#tubeSpecularHighlight)"/>
+    // 1. Physical Glass Cylinder & Schellbach Contrast Stripe
+    // Outer tube: x=28 to x=172 (width 144px). Inner bore: x=38 to x=162 (width 124px).
+    const tubeGeometry = `
+      <!-- Porcelain Milk-Glass White Background for Scale Contrast -->
+      <rect x="38" y="0" width="124" height="180" fill="url(#lensTubeCeramic)"/>
+
+      <!-- Authentic Schellbach Backing Band (White Enamel) -->
+      <rect x="86" y="0" width="28" height="180" fill="#F8FAFC" opacity="0.9"/>
+      <!-- Schellbach Central Cobalt Blue Guide Line (Straight above meniscus) -->
+      <rect x="97" y="0" width="6" height="${isKmno4 ? 180 : Math.max(0, centerY - 12)}" fill="#0284C7" opacity="${isKmno4 ? '0.2' : '0.85'}"/>
+
+      ${!isKmno4 ? `
+        <!-- Schellbach Optical Pointer Convergence at Meniscus -->
+        <path d="M 97 ${Math.max(0, centerY - 12)} L 103 ${Math.max(0, centerY - 12)} L 100 ${centerY} Z" fill="#0284C7"/>
+        <path d="M 100 ${centerY} L 103 ${centerY + 14} L 97 ${centerY + 14} Z" fill="#0369A1"/>
+        <rect x="97" y="${centerY + 14}" width="6" height="${Math.max(0, 180 - (centerY + 14))}" fill="#0369A1" opacity="0.7"/>
+      ` : ''}
+
+      <!-- Inner Bore Cylindrical Depth Shadow -->
+      <rect x="38" y="0" width="124" height="180" fill="url(#boreInnerShadow)" pointer-events="none"/>
     `;
 
-    // 2. Liquid Column (Below Meniscus: Bottom of concave meniscus touches centerY = 90)
-    const liquidBody = `
-      <path d="M 12 ${centerY - 10} Q 100 ${centerY} 188 ${centerY - 10} L 188 180 L 12 180 Z" fill="url(#luminousLiquidFill)"/>
-      <rect x="16" y="${centerY}" width="14" height="${180 - centerY}" fill="url(#tubeSpecularHighlight)"/>
-    `;
+    // 2. Liquid Column & Realistic Meniscus Arc
+    let liquidBody = '';
+    let meniscusArc = '';
 
-    // 3. High-Contrast Laser-Etched Graduation Ticks & Bold Numbers
+    if (isKmno4) {
+      // Opaque dark purple liquid: Read at top edge of meniscus (contact line with glass at centerY)
+      liquidBody = `
+        <path d="M 38 ${centerY} Q 100 ${centerY + 6} 162 ${centerY} L 162 180 L 38 180 Z" fill="url(#luminousLiquidFill)"/>
+      `;
+      meniscusArc = `
+        <!-- Top contact line of opaque meniscus at eye-level -->
+        <path d="M 38 ${centerY} Q 100 ${centerY + 6} 162 ${centerY}" stroke="#C084FC" stroke-width="2.2" fill="none" opacity="0.95"/>
+        <path d="M 38 ${centerY} Q 100 ${centerY + 4} 162 ${centerY}" stroke="#FFFFFF" stroke-width="1.2" fill="none" opacity="0.7" stroke-dasharray="4,6"/>
+      `;
+    } else {
+      // Clear aqueous liquid: Read at bottom of concave meniscus (tangent touches centerY)
+      liquidBody = `
+        <path d="M 38 ${centerY - 12} Q 100 ${centerY} 162 ${centerY - 12} L 162 180 L 38 180 Z" fill="url(#luminousLiquidFill)"/>
+      `;
+      meniscusArc = `
+        <!-- Total internal reflection dark refraction crescent (the bottom curve chemists read) -->
+        <path d="M 38 ${centerY - 13} Q 100 ${centerY - 1} 162 ${centerY - 13}" stroke="#0F172A" stroke-width="3.2" fill="none" opacity="0.85"/>
+        <!-- Silvery specular surface meniscus arc -->
+        <path d="M 38 ${centerY - 12} Q 100 ${centerY} 162 ${centerY - 12}" stroke="#FFFFFF" stroke-width="2.6" fill="none" stroke-linecap="round" opacity="0.95"/>
+        <!-- Sub-surface specular gleam -->
+        <path d="M 52 ${centerY - 6} Q 100 ${centerY + 3} 148 ${centerY - 6}" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/>
+      `;
+    }
+
+    // 3. Laser-Etched Graduation Scale Marks & Side Numbers
     let ticksSvg = '';
     for (let v = minVol; v <= maxVol + 0.05; v += 0.1) {
       const vRounded = Math.round(v * 10) / 10;
       const y = centerY + (vRounded - volume) * pcm;
-      if (y < -15 || y > 195) continue;
+      if (y < -12 || y > 192) continue;
 
       const isMajor = Math.abs(vRounded - Math.round(vRounded)) < 0.01;
       const isMedium = !isMajor && Math.abs((vRounded * 10) % 5) < 0.01;
 
       if (isMajor) {
-        // Longest high-contrast black tick mark with bold number
-        ticksSvg += `<line x1="12" y1="${y}" x2="68" y2="${y}" stroke="#0F172A" stroke-width="2.6" stroke-linecap="round"/>`;
-        ticksSvg += `<line x1="132" y1="${y}" x2="188" y2="${y}" stroke="#0F172A" stroke-width="2.6" stroke-linecap="round"/>`;
-        ticksSvg += `<text x="76" y="${y + 5}" fill="#0F172A" font-size="14" font-family="'JetBrains Mono', monospace" font-weight="900">${Math.round(vRounded)}.0</text>`;
+        // Major 1.0 cm³ line (left tick, right tick, crisp side number)
+        ticksSvg += `<line x1="38" y1="${y}" x2="78" y2="${y}" stroke="#0F172A" stroke-width="2.2" stroke-linecap="round"/>`;
+        ticksSvg += `<line x1="122" y1="${y}" x2="162" y2="${y}" stroke="#0F172A" stroke-width="2.2" stroke-linecap="round"/>`;
+        ticksSvg += `<text x="142" y="${y + 4}" fill="#0F172A" font-size="11.5" font-family="'JetBrains Mono', monospace" font-weight="900" text-anchor="middle" paint-order="stroke" stroke="#FFFFFF" stroke-width="3" stroke-linejoin="round">${Math.round(vRounded)}</text>`;
       } else if (isMedium) {
-        // 0.5 cm³ half-way tick mark
-        ticksSvg += `<line x1="12" y1="${y}" x2="52" y2="${y}" stroke="#1E293B" stroke-width="2.0" stroke-linecap="round"/>`;
-        ticksSvg += `<line x1="148" y1="${y}" x2="188" y2="${y}" stroke="#1E293B" stroke-width="2.0" stroke-linecap="round"/>`;
+        // 0.5 cm³ mid tick
+        ticksSvg += `<line x1="38" y1="${y}" x2="66" y2="${y}" stroke="#1E293B" stroke-width="1.6" stroke-linecap="round"/>`;
+        ticksSvg += `<line x1="134" y1="${y}" x2="162" y2="${y}" stroke="#1E293B" stroke-width="1.6" stroke-linecap="round"/>`;
       } else {
-        // 0.1 cm³ millimeter tick mark
-        ticksSvg += `<line x1="12" y1="${y}" x2="38" y2="${y}" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>`;
-        ticksSvg += `<line x1="162" y1="${y}" x2="188" y2="${y}" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>`;
+        // 0.1 cm³ minor tick
+        ticksSvg += `<line x1="38" y1="${y}" x2="52" y2="${y}" stroke="#475569" stroke-width="1.1" stroke-linecap="round"/>`;
+        ticksSvg += `<line x1="148" y1="${y}" x2="162" y2="${y}" stroke="#475569" stroke-width="1.1" stroke-linecap="round"/>`;
       }
     }
 
-    // 4. Physical Curved Meniscus Boundary (Bottom touches centerY = 90 precisely)
-    const meniscusSvg = `
-      <!-- Meniscus refraction shadow band -->
-      <path d="M 12 ${centerY - 11} Q 100 ${centerY - 1} 188 ${centerY - 11}" stroke="#032B44" stroke-width="3" fill="none" opacity="0.85"/>
-      <!-- Luminous white surface arc -->
-      <path d="M 12 ${centerY - 10} Q 100 ${centerY} 188 ${centerY - 10}" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-      <!-- Bottom of Meniscus Focal Target Bead (Red Glowing Marker) -->
-      <circle cx="100" cy="${centerY}" r="5" fill="#EF4444" stroke="#FFFFFF" stroke-width="2" filter="url(#lensBeadGlow)"/>
+    // 4. Glass Cylinder Walls & Specular Reflections
+    const glassOverlays = `
+      <!-- Left Glass Cylinder Wall -->
+      <rect x="28" y="0" width="10" height="180" fill="url(#glassWallLeft)"/>
+      <line x1="28" y1="0" x2="28" y2="180" stroke="#94A3B8" stroke-width="1.5" stroke-opacity="0.8"/>
+      <line x1="38" y1="0" x2="38" y2="180" stroke="#64748B" stroke-width="1.2" stroke-opacity="0.7"/>
+
+      <!-- Right Glass Cylinder Wall -->
+      <rect x="162" y="0" width="10" height="180" fill="url(#glassWallRight)"/>
+      <line x1="162" y1="0" x2="162" y2="180" stroke="#64748B" stroke-width="1.2" stroke-opacity="0.7"/>
+      <line x1="172" y1="0" x2="172" y2="180" stroke="#94A3B8" stroke-width="1.5" stroke-opacity="0.8"/>
+
+      <!-- Specular Highlight Stripe on Left of Bore -->
+      <rect x="42" y="0" width="5" height="180" fill="#FFFFFF" opacity="0.35"/>
+
+      <!-- Optical Reticle Precision Center Notch at eye level (y = 90) -->
+      <line x1="97" y1="${centerY - 4}" x2="97" y2="${centerY + 4}" stroke="#EF4444" stroke-width="1.4" stroke-linecap="round"/>
+      <line x1="103" y1="${centerY - 4}" x2="103" y2="${centerY + 4}" stroke="#EF4444" stroke-width="1.4" stroke-linecap="round"/>
     `;
 
-    lensSvg.innerHTML = defsSvg + dryGlassTop + liquidBody + ticksSvg + meniscusSvg;
+    lensSvg.innerHTML = defsSvg + tubeGeometry + liquidBody + ticksSvg + meniscusArc + glassOverlays;
 
     const readoutPill = document.getElementById('lensReadoutPill');
     if (readoutPill) {
       readoutPill.innerHTML = `<span>🎯</span> ${volume.toFixed(2)} cm³`;
     }
 
-    const lensSubtitle = document.querySelector('.lens-readout-sub');
+    const lensSubtitle = document.getElementById('lensGuidanceSub') || document.querySelector('.lens-readout-sub');
     if (lensSubtitle) {
-      lensSubtitle.textContent = isKmno4 ? 'Read at top of meniscus (opaque KMnO₄).' : 'Read at bottom of meniscus.';
+      lensSubtitle.innerHTML = isKmno4
+        ? 'Read at <b style="color:var(--heading-color);">top edge of meniscus</b> (opaque KMnO₄).'
+        : 'Read at <b style="color:var(--heading-color);">bottom of meniscus</b> at eye level.';
     }
   }
 

@@ -1435,9 +1435,11 @@ requireStudentLogin();
       const msgId = q.msgId;
       const hintDrawerId = `calcHintDrawer_${idx}`;
       const isUnlocked = isStepA || isExamMode;
-      const labelText = typeof q.label === 'function' ? q.label(ctx) : q.label;
+      const rawLabel = typeof q.label === 'function' ? q.label(ctx) : q.label;
       const letter = q.letter || String.fromCharCode(97 + idx);
       const prevLetter = String.fromCharCode(97 + idx - 1);
+      // Strip any duplicate leading "(a) ", "(b) ", etc. from the label string
+      const cleanLabel = rawLabel.replace(/^\([a-z]\)\s*/i, '');
       const hintData = formulaHints[letter] || {
         title: `Question (${letter}) Stoichiometry Guide`,
         body: 'Follow the balanced reaction equation and apply stoichiometric principles.',
@@ -1446,22 +1448,24 @@ requireStudentLogin();
       };
 
       return `
-        <div class="calc-field-group ${isUnlocked ? '' : 'is-locked'}" id="${boxId}" style="background:var(--card-bg-hover);border:1.5px solid var(--card-border);border-radius:12px;padding:16px;" ${isUnlocked ? '' : 'aria-disabled="true"'}>
-          <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; gap:8px;">
-            <div style="display:flex; align-items:flex-start; gap:8px;">
+        <div class="calc-field-group ${isUnlocked ? '' : 'is-locked'}" id="${boxId}" style="background:var(--card-bg-hover);border:1.5px solid var(--card-border);border-radius:12px;padding:16px;display:flex;flex-direction:column;" ${isUnlocked ? '' : 'aria-disabled="true"'}>
+          
+          <!-- Top Card Meta Row -->
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:8px;">
+            <div style="display:flex; align-items:center; gap:8px;">
               <span class="calc-q-badge">(${letter})</span>
-              <label for="${inputId}" id="${inputId}Label" style="font-weight:700;color:var(--heading-color);font-size:0.86rem;font-family:'Plus Jakarta Sans', sans-serif;line-height:1.4;">
-                ${labelText}
-              </label>
-            </div>
-            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px; flex-shrink:0;">
               <span class="calc-marks-pill">${q.marks}</span>
-              <span class="calc-lock-badge">🔒 Q(${prevLetter}) Required</span>
             </div>
+            <span class="calc-lock-badge" style="${isUnlocked ? 'display:none;' : 'display:inline-flex;'}">🔒 Q(${prevLetter}) Required</span>
           </div>
 
+          <!-- Question Title (Full Width) -->
+          <label for="${inputId}" id="${inputId}Label" style="font-weight:700;color:var(--heading-color);font-size:0.86rem;font-family:'Plus Jakarta Sans', sans-serif;line-height:1.45;margin-bottom:10px;display:block;">
+            ${cleanLabel}
+          </label>
+
           <!-- Expandable Formula Guide & Concept Hint -->
-          <div style="margin-bottom:8px;">
+          <div style="margin-bottom:10px;">
             <button type="button" class="calc-hint-btn" onclick="toggleCalcHint('${hintDrawerId}', event)" aria-expanded="false" aria-controls="${hintDrawerId}" title="Toggle mathematical formula and concept hint">
               <span>💡</span> Formula &amp; Working Guide
             </button>
@@ -1473,7 +1477,7 @@ requireStudentLogin();
           </div>
 
           <div class="calc-input-row" style="flex-direction:column;gap:8px;width:100%;margin-top:auto;">
-            <input type="number" step="${q.step}" id="${inputId}" placeholder="${q.placeholder}" oninput="saveDraft()" ${isUnlocked ? '' : 'disabled'} aria-label="${labelText}" style="width:100%; font-family:'JetBrains Mono', monospace; font-size:0.88rem; padding:10px 12px;">
+            <input type="number" step="${q.step}" id="${inputId}" placeholder="${q.placeholder}" oninput="saveDraft()" ${isUnlocked ? '' : 'disabled'} aria-label="${cleanLabel}" style="width:100%; font-family:'JetBrains Mono', monospace; font-size:0.88rem; padding:10px 12px;">
             <div class="calc-input-hint">${hintData.hint}</div>
             <button class="btn-cyan" id="${btnId}" onclick="checkQuestionStep(${idx})" style="width:100%;height:40px;font-weight:700;display:${isExamMode ? 'none' : 'block'};">${q.buttonLabel}</button>
           </div>
@@ -2193,6 +2197,8 @@ requireStudentLogin();
       if (input) input.removeAttribute('disabled');
       const btn = document.getElementById(q.btnId);
       if (btn && !isExam) btn.style.display = 'block';
+      const lockBadge = box.querySelector('.calc-lock-badge');
+      if (lockBadge) lockBadge.style.display = 'none';
     }
   }
 

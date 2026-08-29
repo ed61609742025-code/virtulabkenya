@@ -1296,7 +1296,6 @@ html, body {
 .is-locked {
   background: var(--locked-bg) !important;
   border: 1.5px dashed var(--locked-border) !important;
-  pointer-events: none;
   position: relative;
 }
 
@@ -1326,7 +1325,7 @@ html, body {
   opacity: 0.7;
 }
 
-.calc-field-group.is-locked button {
+.calc-field-group.is-locked .btn-cyan {
   display: none !important;
 }
 

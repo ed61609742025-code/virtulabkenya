@@ -194,6 +194,111 @@ describe('VirtuLab Kenya — AI Teacher Exam Assistant Suite', () => {
     assert.strictEqual(body.exam.examConfig.q1.indicator, 'methylOrange');
   });
 
+  it('POST /api/ai-assistant/refine-exam — should change concentration and recalculate trueTitre', async () => {
+    const initialDraft = {
+      title: 'KCSE Chemistry Practical Exam',
+      formLevel: 'Form 4',
+      titrationType: 'kcseComposite',
+      instructions: 'Complete all questions.',
+      durationMinutes: 135,
+      examConfig: {
+        presetKey: 'custom',
+        q1: {
+          solutionA: '0.100 M Hydrochloric Acid (HCl)',
+          solutionB: '0.100 M Sodium Hydroxide (NaOH)',
+          ratioA: 1,
+          ratioB: 1,
+          pipetteVolume: 25.0,
+          trueAcidMolarity: 0.100,
+          trueBaseMolarity: 0.100,
+          trueTitre: 25.00,
+          indicator: 'phenolphthalein'
+        },
+        q2: { sampleName: 'Solid Y', trueSaltKey: 'Pb(NO3)2', trueCation: 'Pb2+', trueAnion: 'NO3-' },
+        q3: { sampleName: 'Liquid Z', trueOrganicKey: 'Ethanol', trueFunctionalGroup: 'Alkanol (-OH)' }
+      },
+      markingScheme: 'Initial Marking Scheme',
+      confidentialPrepGuide: 'Initial Prep Guide'
+    };
+
+    const res = await fetch(url('/api/ai-assistant/refine-exam'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${teacherToken}`
+      },
+      body: JSON.stringify({
+        currentDraft: initialDraft,
+        instruction: 'change the concentration to 0.05M'
+      })
+    });
+
+    assert.strictEqual(res.status, 200);
+    const body = await res.json();
+    assert.strictEqual(body.success, true);
+    assert.ok(body.exam);
+    assert.strictEqual(body.exam.examConfig.q1.trueAcidMolarity, 0.05);
+    assert.match(body.exam.examConfig.q1.solutionA, /0\.05/);
+    assert.strictEqual(body.exam.examConfig.q1.trueTitre, 50.00);
+    assert.match(body.exam.markingScheme, /50\.00/);
+  });
+
+  it('POST /api/ai-assistant/refine-exam — should handle Solution B concentration, salt and organic updates', async () => {
+    const initialDraft = {
+      title: 'KCSE Chemistry Practical Exam',
+      formLevel: 'Form 4',
+      titrationType: 'kcseComposite',
+      instructions: 'Complete all questions.',
+      durationMinutes: 135,
+      examConfig: {
+        presetKey: 'custom',
+        q1: {
+          solutionA: '0.100 M Hydrochloric Acid (HCl)',
+          solutionB: '0.100 M Sodium Hydroxide (NaOH)',
+          ratioA: 1,
+          ratioB: 1,
+          pipetteVolume: 25.0,
+          trueAcidMolarity: 0.100,
+          trueBaseMolarity: 0.100,
+          trueTitre: 25.00,
+          indicator: 'phenolphthalein'
+        },
+        q2: { sampleName: 'Solid Y', trueSaltKey: 'Pb(NO3)2', trueCation: 'Pb2+', trueAnion: 'NO3-' },
+        q3: { sampleName: 'Liquid Z', trueOrganicKey: 'Ethanol', trueFunctionalGroup: 'Alkanol (-OH)' }
+      },
+      markingScheme: 'Initial Marking Scheme',
+      confidentialPrepGuide: 'Initial Prep Guide'
+    };
+
+    const res = await fetch(url('/api/ai-assistant/refine-exam'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${teacherToken}`
+      },
+      body: JSON.stringify({
+        currentDraft: initialDraft,
+        instruction: 'change Solution B concentration to 0.2M, change salt to zinc sulfate, and organic to ethanoic acid'
+      })
+    });
+
+    assert.strictEqual(res.status, 200);
+    const body = await res.json();
+    assert.strictEqual(body.success, true);
+    assert.ok(body.exam);
+    // Solution B should now be 0.200 M
+    assert.strictEqual(body.exam.examConfig.q1.trueBaseMolarity, 0.2);
+    assert.match(body.exam.examConfig.q1.solutionB, /0\.2/);
+    // Titre with 0.1M Acid and 0.2M Base: (1 * 0.2 * 25) / (1 * 0.1) = 50.00 cm3
+    assert.strictEqual(body.exam.examConfig.q1.trueTitre, 50.00);
+    // Salt should be ZnSO4
+    assert.strictEqual(body.exam.examConfig.q2.trueSaltKey, 'ZnSO4');
+    assert.strictEqual(body.exam.examConfig.q2.trueCation, 'Zn2+');
+    // Organic should be Ethanoic Acid
+    assert.strictEqual(body.exam.examConfig.q3.trueOrganicKey, 'Ethanoic Acid');
+    assert.strictEqual(body.exam.examConfig.q3.trueFunctionalGroup, 'Carboxylic Acid (-COOH)');
+  });
+
   /* 6. SERVICE PRESET INTEGRITY */
   it('aiExamAssistantService — should provide verified fallback presets', () => {
     assert.ok(aiExamService.FALLBACK_PRESETS.redox);

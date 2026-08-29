@@ -290,7 +290,13 @@
       if (resp && resp.exam) {
         renderExamResults(resp.exam);
         if (input) input.value = '';
-        showTemporaryToast('✓ Exam refined successfully!');
+        const meta = resp.exam._meta;
+        const changes = meta?.appliedChanges || [];
+        if (changes.length > 0) {
+          showTemporaryToast('✓ ' + changes.join(' · '));
+        } else {
+          showTemporaryToast(`✓ Exam refined with: "${instruction}"`);
+        }
       } else {
         throw new Error(resp.error || 'Could not refine draft.');
       }
@@ -307,6 +313,153 @@
       input.value = text;
       input.focus();
     }
+  };
+
+  // ── Client-side Direct Quick-Update Functions ───────────────────
+  function recalculateAndSyncExam() {
+    if (!currentExamDraft?.examConfig?.q1) return;
+    const q1 = currentExamDraft.examConfig.q1;
+    const nA = q1.ratioA || 1;
+    const nB = q1.ratioB || 1;
+    const cA = parseFloat(q1.trueAcidMolarity) || 0.1;
+    const cB = parseFloat(q1.trueBaseMolarity) || 0.1;
+    const vB = parseFloat(q1.pipetteVolume) || 25.0;
+
+    q1.trueTitre = Number(((nA * cB * vB) / (nB * cA)).toFixed(2));
+    q1.instructions = `You are provided with ${q1.solutionA} and ${q1.solutionB}. Pipette ${vB.toFixed(1)} cm³ of Solution B into a conical flask and titrate with Solution A using ${q1.indicator} indicator.`;
+
+    // Re-render other tabs
+    renderStudentPaperTab(currentExamDraft);
+    renderMarkingSchemeTab(currentExamDraft);
+    renderTechnicianGuideTab(currentExamDraft);
+  }
+
+  window.quickSetConcA = function(conc) {
+    if (!currentExamDraft?.examConfig?.q1) return;
+    const q1 = currentExamDraft.examConfig.q1;
+    q1.trueAcidMolarity = parseFloat(conc);
+    const formatted = parseFloat(conc).toFixed(3) + ' M';
+    if (q1.solutionA && /\d+(?:\.\d+)?\s*M/i.test(q1.solutionA)) {
+      q1.solutionA = q1.solutionA.replace(/\d+(?:\.\d+)?\s*M/i, formatted);
+    } else {
+      q1.solutionA = `${formatted} ${q1.solutionA || 'Hydrochloric Acid (HCl)'}`;
+    }
+    recalculateAndSyncExam();
+    renderBlueprintTab(currentExamDraft);
+    showTemporaryToast(`✓ Solution A set to ${formatted} · Target titre: ${q1.trueTitre.toFixed(2)} cm³`);
+  };
+
+  window.quickSetConcB = function(conc) {
+    if (!currentExamDraft?.examConfig?.q1) return;
+    const q1 = currentExamDraft.examConfig.q1;
+    q1.trueBaseMolarity = parseFloat(conc);
+    const formatted = parseFloat(conc).toFixed(3) + ' M';
+    if (q1.solutionB && /\d+(?:\.\d+)?\s*M/i.test(q1.solutionB)) {
+      q1.solutionB = q1.solutionB.replace(/\d+(?:\.\d+)?\s*M/i, formatted);
+    } else {
+      q1.solutionB = `${formatted} ${q1.solutionB || 'Sodium Hydroxide (NaOH)'}`;
+    }
+    recalculateAndSyncExam();
+    renderBlueprintTab(currentExamDraft);
+    showTemporaryToast(`✓ Solution B set to ${formatted} · Target titre: ${q1.trueTitre.toFixed(2)} cm³`);
+  };
+
+  window.updateBlueprintSolA = function(val) {
+    if (!currentExamDraft?.examConfig?.q1) return;
+    const q1 = currentExamDraft.examConfig.q1;
+    q1.solutionA = val;
+    const match = val.match(/(\d+(?:\.\d+)?)\s*M/i);
+    if (match && match[1]) {
+      q1.trueAcidMolarity = parseFloat(match[1]);
+    }
+    recalculateAndSyncExam();
+    renderBlueprintTab(currentExamDraft);
+    showTemporaryToast(`✓ Solution A updated · Target titre: ${q1.trueTitre.toFixed(2)} cm³`);
+  };
+
+  window.updateBlueprintSolB = function(val) {
+    if (!currentExamDraft?.examConfig?.q1) return;
+    const q1 = currentExamDraft.examConfig.q1;
+    q1.solutionB = val;
+    const match = val.match(/(\d+(?:\.\d+)?)\s*M/i);
+    if (match && match[1]) {
+      q1.trueBaseMolarity = parseFloat(match[1]);
+    }
+    recalculateAndSyncExam();
+    renderBlueprintTab(currentExamDraft);
+    showTemporaryToast(`✓ Solution B updated · Target titre: ${q1.trueTitre.toFixed(2)} cm³`);
+  };
+
+  window.updateBlueprintPipette = function(val) {
+    if (!currentExamDraft?.examConfig?.q1) return;
+    currentExamDraft.examConfig.q1.pipetteVolume = parseFloat(val) || 25.0;
+    recalculateAndSyncExam();
+    renderBlueprintTab(currentExamDraft);
+    showTemporaryToast(`✓ Pipette volume set to ${val} cm³ · Target titre: ${currentExamDraft.examConfig.q1.trueTitre.toFixed(2)} cm³`);
+  };
+
+  window.updateBlueprintIndicator = function(val) {
+    if (!currentExamDraft?.examConfig?.q1) return;
+    currentExamDraft.examConfig.q1.indicator = val;
+    recalculateAndSyncExam();
+    renderBlueprintTab(currentExamDraft);
+    showTemporaryToast(`✓ Indicator set to ${val}`);
+  };
+
+  window.updateBlueprintSalt = function(val) {
+    if (!currentExamDraft?.examConfig?.q2) return;
+    const q2 = currentExamDraft.examConfig.q2;
+    q2.trueSaltKey = val;
+    const saltNames = {
+      'ZnSO4': { name: 'Zinc Sulfate — ZnSO₄', cation: 'Zn²⁺', anion: 'SO₄²⁻', desc: 'White crystalline solid' },
+      'Pb(NO3)2': { name: 'Lead(II) Nitrate — Pb(NO₃)₂', cation: 'Pb²⁺', anion: 'NO₃⁻', desc: 'White crystalline solid' },
+      'CuSO4': { name: 'Copper(II) Sulfate — CuSO₄', cation: 'Cu²⁺', anion: 'SO₄²⁻', desc: 'Blue crystalline powder' },
+      'FeSO4': { name: 'Iron(II) Sulfate — FeSO₄', cation: 'Fe²⁺', anion: 'SO₄²⁻', desc: 'Pale green crystalline solid' },
+      'FeCl3': { name: 'Iron(III) Chloride — FeCl₃', cation: 'Fe³⁺', anion: 'Cl⁻', desc: 'Reddish-brown crystalline solid' },
+      'CaCl2': { name: 'Calcium Chloride — CaCl₂', cation: 'Ca²⁺', anion: 'Cl⁻', desc: 'White deliquescent crystals' }
+    };
+    const s = saltNames[val] || { name: val, cation: 'Zn²⁺', anion: 'SO₄²⁻', desc: 'Inorganic solid' };
+    q2.trueSaltName = s.name;
+    q2.trueCation = s.cation;
+    q2.trueAnion = s.anion;
+    q2.sampleDesc = s.desc;
+
+    // Trigger AI sync to get tests
+    AiExamAssistant.refineDraft({
+      currentDraft: currentExamDraft,
+      instruction: `Change unknown salt to ${s.name}`
+    }).then(res => {
+      if (res?.exam) renderExamResults(res.exam);
+      showTemporaryToast(`✓ Salt changed to ${s.name}`);
+    }).catch(() => {
+      renderBlueprintTab(currentExamDraft);
+    });
+  };
+
+  window.updateBlueprintOrganic = function(val) {
+    if (!currentExamDraft?.examConfig?.q3) return;
+    const q3 = currentExamDraft.examConfig.q3;
+    q3.trueOrganicKey = val;
+    const orgNames = {
+      'Ethanol': { name: 'Ethanol — C₂H₅OH', fg: 'Alkanol (-OH)', desc: 'Clear neutral volatile liquid' },
+      'Ethanoic Acid': { name: 'Ethanoic Acid — CH₃COOH', fg: 'Carboxylic Acid (-COOH)', desc: 'Pungent acidic liquid' },
+      'Cyclohexene': { name: 'Cyclohexene — C₆H₁₀', fg: 'Alkene (>C=C<)', desc: 'Clear volatile hydrocarbon' },
+      'Hexane': { name: 'Hexane — C₆H₁₄', fg: 'Saturated Alkane', desc: 'Neutral immiscible hydrocarbon' }
+    };
+    const o = orgNames[val] || { name: val, fg: 'Organic Group', desc: 'Organic compound' };
+    q3.trueOrganicName = o.name;
+    q3.trueFunctionalGroup = o.fg;
+    q3.sampleDesc = o.desc;
+
+    AiExamAssistant.refineDraft({
+      currentDraft: currentExamDraft,
+      instruction: `Change organic compound to ${o.name}`
+    }).then(res => {
+      if (res?.exam) renderExamResults(res.exam);
+      showTemporaryToast(`✓ Organic sample changed to ${o.name}`);
+    }).catch(() => {
+      renderBlueprintTab(currentExamDraft);
+    });
   };
 
   // ── Render Generated Exam Results Studio ───────────────────────
@@ -359,7 +512,7 @@
     });
   };
 
-  // ── 1. Render Simulation Blueprint Tab ────────────────────────
+  // ── 1. Render Simulation Blueprint Tab (Interactive & Direct Editing) ────────────────────────
   function renderBlueprintTab(exam) {
     const cfg = exam.examConfig || {};
     const q1 = cfg.q1 || {};
@@ -379,15 +532,60 @@
             <h4>🧪 Volumetric Analysis Rig</h4>
           </div>
           <div class="blueprint-card-body">
-            <div class="bp-param"><span class="bp-label">Burette Solution A:</span> <b>${escapeHtml(q1.solutionA || '0.100 M Acid')}</b></div>
-            <div class="bp-param"><span class="bp-label">Conical Flask Solution B:</span> <b>${escapeHtml(q1.solutionB || '0.100 M Base')}</b></div>
-            <div class="bp-param-row">
-              <div><span class="bp-label">Pipette:</span> <b>${q1.pipetteVolume || 25.0} cm³</b></div>
-              <div><span class="bp-label">Indicator:</span> <span class="pill pill-info">${q1.indicator || 'phenolphthalein'}</span></div>
-              <div><span class="bp-label">Mole Ratio (A:B):</span> <b>${q1.ratioA || 1} : ${q1.ratioB || 1}</b></div>
-              <div><span class="bp-label">Target Titre:</span> <b style="color:var(--green-accent);">${Number(q1.trueTitre || 25.0).toFixed(2)} cm³</b></div>
+            
+            <!-- Solution A Reagent & Concentration Row -->
+            <div style="margin-bottom:12px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                <span class="bp-label">Burette Solution A:</span>
+                <div style="display:flex;gap:4px;">
+                  <button type="button" class="btn btn-sm btn-secondary" style="font-size:0.72rem;padding:2px 8px;" onclick="quickSetConcA(0.02)">0.02M</button>
+                  <button type="button" class="btn btn-sm btn-secondary" style="font-size:0.72rem;padding:2px 8px;" onclick="quickSetConcA(0.05)">0.05M</button>
+                  <button type="button" class="btn btn-sm btn-secondary" style="font-size:0.72rem;padding:2px 8px;" onclick="quickSetConcA(0.10)">0.10M</button>
+                  <button type="button" class="btn btn-sm btn-secondary" style="font-size:0.72rem;padding:2px 8px;" onclick="quickSetConcA(0.20)">0.20M</button>
+                </div>
+              </div>
+              <input type="text" class="form-control form-control-sm" style="font-weight:700;" value="${escapeHtml(q1.solutionA || '0.100 M Hydrochloric Acid (HCl)')}" onchange="updateBlueprintSolA(this.value)">
             </div>
-            <div class="bp-equation"><code>${escapeHtml(q1.equation || 'Acid(aq) + Base(aq) → Salt(aq) + H₂O(l)')}</code></div>
+
+            <!-- Solution B Reagent & Concentration Row -->
+            <div style="margin-bottom:14px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                <span class="bp-label">Conical Flask Solution B:</span>
+                <div style="display:flex;gap:4px;">
+                  <button type="button" class="btn btn-sm btn-secondary" style="font-size:0.72rem;padding:2px 8px;" onclick="quickSetConcB(0.05)">0.05M</button>
+                  <button type="button" class="btn btn-sm btn-secondary" style="font-size:0.72rem;padding:2px 8px;" onclick="quickSetConcB(0.10)">0.10M</button>
+                  <button type="button" class="btn btn-sm btn-secondary" style="font-size:0.72rem;padding:2px 8px;" onclick="quickSetConcB(0.20)">0.20M</button>
+                </div>
+              </div>
+              <input type="text" class="form-control form-control-sm" style="font-weight:700;" value="${escapeHtml(q1.solutionB || '0.100 M Sodium Hydroxide (NaOH)')}" onchange="updateBlueprintSolB(this.value)">
+            </div>
+
+            <div class="bp-param-row" style="align-items:center;">
+              <div>
+                <span class="bp-label">Pipette:</span>
+                <select class="form-control form-control-sm" style="display:inline-block;width:auto;font-weight:700;" onchange="updateBlueprintPipette(this.value)">
+                  <option value="25" ${q1.pipetteVolume == 25 ? 'selected' : ''}>25.0 cm³</option>
+                  <option value="20" ${q1.pipetteVolume == 20 ? 'selected' : ''}>20.0 cm³</option>
+                  <option value="10" ${q1.pipetteVolume == 10 ? 'selected' : ''}>10.0 cm³</option>
+                </select>
+              </div>
+
+              <div>
+                <span class="bp-label">Indicator:</span>
+                <select class="form-control form-control-sm" style="display:inline-block;width:auto;font-weight:700;" onchange="updateBlueprintIndicator(this.value)">
+                  <option value="phenolphthalein" ${q1.indicator === 'phenolphthalein' ? 'selected' : ''}>Phenolphthalein</option>
+                  <option value="methylOrange" ${q1.indicator === 'methylOrange' ? 'selected' : ''}>Methyl Orange</option>
+                  <option value="screenedMethylOrange" ${q1.indicator === 'screenedMethylOrange' ? 'selected' : ''}>Screened Methyl Orange</option>
+                  <option value="starch" ${q1.indicator === 'starch' ? 'selected' : ''}>Starch</option>
+                  <option value="none" ${q1.indicator === 'none' ? 'selected' : ''}>Self-Indicating (Redox)</option>
+                </select>
+              </div>
+
+              <div><span class="bp-label">Mole Ratio (A:B):</span> <b>${q1.ratioA || 1} : ${q1.ratioB || 1}</b></div>
+              <div><span class="bp-label">Calculated Titre:</span> <b style="color:var(--green-accent);font-size:1.05rem;">${Number(q1.trueTitre || 25.0).toFixed(2)} cm³</b></div>
+            </div>
+
+            <div class="bp-equation" style="margin-top:12px;"><code>${escapeHtml(q1.equation || 'Acid(aq) + Base(aq) → Salt(aq) + H₂O(l)')}</code></div>
           </div>
         </div>
 
@@ -398,14 +596,25 @@
             <h4>🧂 Inorganic Salt Analysis</h4>
           </div>
           <div class="blueprint-card-body">
-            <div class="bp-param"><span class="bp-label">Target Unknown Sample:</span> <b>${escapeHtml(q2.sampleName || 'Solid Y')} (${escapeHtml(q2.trueSaltName || 'Unknown Salt')})</b></div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
+              <span class="bp-label">Target Unknown Salt:</span>
+              <select class="form-control form-control-sm" style="font-weight:700;max-width:320px;" onchange="updateBlueprintSalt(this.value)">
+                <option value="ZnSO4" ${q2.trueSaltKey === 'ZnSO4' ? 'selected' : ''}>Zinc Sulfate — ZnSO₄ (Zn²⁺ / SO₄²⁻)</option>
+                <option value="Pb(NO3)2" ${q2.trueSaltKey === 'Pb(NO3)2' ? 'selected' : ''}>Lead(II) Nitrate — Pb(NO₃)₂ (Pb²⁺ / NO₃⁻)</option>
+                <option value="CuSO4" ${q2.trueSaltKey === 'CuSO4' ? 'selected' : ''}>Copper(II) Sulfate — CuSO₄ (Cu²⁺ / SO₄²⁻)</option>
+                <option value="FeSO4" ${q2.trueSaltKey === 'FeSO4' ? 'selected' : ''}>Iron(II) Sulfate — FeSO₄ (Fe²⁺ / SO₄²⁻)</option>
+                <option value="FeCl3" ${q2.trueSaltKey === 'FeCl3' ? 'selected' : ''}>Iron(III) Chloride — FeCl₃ (Fe³⁺ / Cl⁻)</option>
+                <option value="CaCl2" ${q2.trueSaltKey === 'CaCl2' ? 'selected' : ''}>Calcium Chloride — CaCl₂ (Ca²⁺ / Cl⁻)</option>
+              </select>
+            </div>
+
             <div class="bp-param-row">
               <div><span class="bp-label">Confirmed Cation:</span> <span class="pill pill-ok">${escapeHtml(q2.trueCation || 'Zn²⁺')}</span></div>
               <div><span class="bp-label">Confirmed Anion:</span> <span class="pill pill-ok">${escapeHtml(q2.trueAnion || 'SO₄²⁻')}</span></div>
+              <div><span class="bp-label">Appearance:</span> <i>${escapeHtml(q2.sampleDesc || 'White crystalline solid')}</i></div>
             </div>
-            <div class="bp-param"><span class="bp-label">Appearance / State:</span> <i>${escapeHtml(q2.sampleDesc || 'White crystalline solid')}</i></div>
             
-            <div style="margin-top:10px;">
+            <div style="margin-top:12px;">
               <div style="font-size:0.75rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">Diagnostic Procedure (${(q2.tests || []).length} Tests):</div>
               <div class="bp-mini-tests">
                 ${(q2.tests || []).map((t, i) => `
@@ -429,11 +638,22 @@
             <h4>⚗️ Organic Chemistry Functional Group</h4>
           </div>
           <div class="blueprint-card-body">
-            <div class="bp-param"><span class="bp-label">Target Unknown Sample:</span> <b>${escapeHtml(q3.sampleName || 'Liquid Z')} (${escapeHtml(q3.trueOrganicName || 'Ethanol')})</b></div>
-            <div class="bp-param"><span class="bp-label">Confirmed Functional Group:</span> <span class="pill pill-warn">${escapeHtml(q3.trueFunctionalGroup || 'Alkanol (-OH)')}</span></div>
-            <div class="bp-param"><span class="bp-label">Sample Description:</span> <i>${escapeHtml(q3.sampleDesc || 'Clear neutral organic liquid')}</i></div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
+              <span class="bp-label">Target Unknown Organic:</span>
+              <select class="form-control form-control-sm" style="font-weight:700;max-width:320px;" onchange="updateBlueprintOrganic(this.value)">
+                <option value="Ethanol" ${q3.trueOrganicKey === 'Ethanol' ? 'selected' : ''}>Ethanol — C₂H₅OH (Alkanol -OH)</option>
+                <option value="Ethanoic Acid" ${q3.trueOrganicKey === 'Ethanoic Acid' ? 'selected' : ''}>Ethanoic Acid — CH₃COOH (Carboxylic Acid -COOH)</option>
+                <option value="Cyclohexene" ${q3.trueOrganicKey === 'Cyclohexene' ? 'selected' : ''}>Cyclohexene — C₆H₁₀ (Alkene >C=C<)</option>
+                <option value="Hexane" ${q3.trueOrganicKey === 'Hexane' ? 'selected' : ''}>Hexane — C₆H₁₄ (Saturated Alkane)</option>
+              </select>
+            </div>
 
-            <div style="margin-top:10px;">
+            <div class="bp-param-row">
+              <div><span class="bp-label">Confirmed Functional Group:</span> <span class="pill pill-warn">${escapeHtml(q3.trueFunctionalGroup || 'Alkanol (-OH)')}</span></div>
+              <div><span class="bp-label">Appearance:</span> <i>${escapeHtml(q3.sampleDesc || 'Clear neutral organic liquid')}</i></div>
+            </div>
+
+            <div style="margin-top:12px;">
               <div style="font-size:0.75rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">Testing Sequence (${(q3.tests || []).length} Tests):</div>
               <div class="bp-mini-tests">
                 ${(q3.tests || []).map((t, i) => `

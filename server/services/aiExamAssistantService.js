@@ -544,6 +544,474 @@ Respond in exact valid JSON matching this schema:
 }
 
 /**
+ * Diagnostic procedures generator for unknown inorganic salts
+ */
+function getSaltTestSequence(saltKey) {
+  switch (saltKey) {
+    case 'ZnSO4':
+      return [
+        { id: 't1', prompt: '(i) Describe the physical appearance of Solid Y', correctObs: 'White crystalline solid', correctInf: 'Absence of transition metal ions (Cu²⁺, Fe²⁺, Fe³⁺)' },
+        { id: 't2', prompt: '(ii) Dissolve 1 spatula of Solid Y in 10 cm³ distilled water, divide into 4 portions. Test portion 1 with litmus paper', correctObs: 'Both blue and red litmus papers remain unchanged / neutral', correctInf: 'Neutral aqueous solution' },
+        { id: 't3', prompt: '(iii) To portion 2, add 2M NaOH dropwise until in excess', correctObs: 'White precipitate formed, soluble in excess to form a colourless solution', correctInf: 'Zn²⁺, Al³⁺, or Pb²⁺ present' },
+        { id: 't4', prompt: '(iv) To portion 3, add 2M Aqueous Ammonia (NH₃) dropwise until in excess', correctObs: 'White precipitate formed, soluble in excess aqueous ammonia to form a colourless solution', correctInf: 'Zn²⁺ confirmed' },
+        { id: 't5', prompt: '(v) To portion 4, add 3 drops of Ba(NO₃)₂ solution followed by dilute HNO₃', correctObs: 'White precipitate formed, insoluble in dilute HNO₃', correctInf: 'SO₄²⁻ confirmed' }
+      ];
+    case 'Pb(NO3)2':
+      return [
+        { id: 't1', prompt: '(i) Describe the physical appearance of Solid Y', correctObs: 'White crystalline solid / powder', correctInf: 'Absence of coloured transition ions' },
+        { id: 't2', prompt: '(ii) Dissolve 1 spatula in 10 cm³ water and divide into 4 portions. Test portion 1 with litmus', correctObs: 'Faintly acidic pH 5–6', correctInf: 'Salt of weak base/strong acid' },
+        { id: 't3', prompt: '(iii) To portion 2, add 2M NaOH dropwise until in excess', correctObs: 'White precipitate, soluble in excess NaOH to form colourless solution', correctInf: 'Pb²⁺, Al³⁺, or Zn²⁺ present' },
+        { id: 't4', prompt: '(iv) To portion 3, add 2M NH₃ dropwise until in excess', correctObs: 'White precipitate, insoluble in excess aqueous ammonia', correctInf: 'Pb²⁺ or Al³⁺ present' },
+        { id: 't5', prompt: '(v) To portion 4, add 3 drops of potassium iodide (KI) solution and warm gently', correctObs: 'Bright yellow precipitate of PbI₂ formed, dissolves on boiling and recrystallizes as golden spangles on cooling', correctInf: 'Pb²⁺ confirmed' }
+      ];
+    case 'CuSO4':
+      return [
+        { id: 't1', prompt: '(i) Describe the physical appearance of Solid Y', correctObs: 'Blue crystalline solid / powder', correctInf: 'Hydrated Cu²⁺ ion present' },
+        { id: 't2', prompt: '(ii) Dissolve 1 spatula in water and divide into 3 portions', correctObs: 'Forms a clear blue solution', correctInf: 'Soluble Cu²⁺ salt' },
+        { id: 't3', prompt: '(iii) To portion 1, add 2M NaOH dropwise until in excess', correctObs: 'Pale blue precipitate, insoluble in excess NaOH', correctInf: 'Cu²⁺ present' },
+        { id: 't4', prompt: '(iv) To portion 2, add 2M NH₃ dropwise until in excess', correctObs: 'Pale blue precipitate, dissolves in excess to form a deep royal blue solution', correctInf: 'Cu²⁺ confirmed' },
+        { id: 't5', prompt: '(v) To portion 3, add Ba(NO₃)₂ followed by dilute HNO₃', correctObs: 'White precipitate, insoluble in dilute HNO₃', correctInf: 'SO₄²⁻ confirmed' }
+      ];
+    case 'FeSO4':
+      return [
+        { id: 't1', prompt: '(i) Describe the physical appearance of Solid Y', correctObs: 'Pale green crystalline solid', correctInf: 'Hydrated Fe²⁺ ion present' },
+        { id: 't2', prompt: '(ii) To portion 1, add 2M NaOH dropwise until in excess', correctObs: 'Dirty-green gelatinous precipitate, insoluble in excess, turns brown at surface on standing', correctInf: 'Fe²⁺ present' },
+        { id: 't3', prompt: '(iii) To portion 2, add 2M NH₃ dropwise until in excess', correctObs: 'Dirty-green precipitate, insoluble in excess', correctInf: 'Fe²⁺ confirmed' },
+        { id: 't4', prompt: '(iv) To portion 3, add Ba(NO₃)₂ followed by dilute HNO₃', correctObs: 'White precipitate, insoluble in dilute acid', correctInf: 'SO₄²⁻ confirmed' }
+      ];
+    case 'FeCl3':
+      return [
+        { id: 't1', prompt: '(i) Describe physical appearance of Solid Y', correctObs: 'Yellow-brown / reddish crystalline solid', correctInf: 'Fe³⁺ ion present' },
+        { id: 't2', prompt: '(ii) Dissolve in water, add 2M NaOH dropwise until in excess', correctObs: 'Red-brown / rust-brown precipitate, insoluble in excess', correctInf: 'Fe³⁺ confirmed' },
+        { id: 't3', prompt: '(iii) To portion 2, add 2M NH₃ dropwise until in excess', correctObs: 'Red-brown precipitate, insoluble in excess', correctInf: 'Fe³⁺ confirmed' },
+        { id: 't4', prompt: '(iv) To portion 3, add dilute HNO₃ followed by AgNO₃ solution', correctObs: 'White precipitate of AgCl, insoluble in dilute HNO₃, soluble in aqueous ammonia', correctInf: 'Cl⁻ confirmed' }
+      ];
+    case 'CaCl2':
+      return [
+        { id: 't1', prompt: '(i) Describe physical appearance of Solid Y', correctObs: 'White deliquescent solid / crystals', correctInf: 'Non-transition metal salt' },
+        { id: 't2', prompt: '(ii) Dissolve in water, add 2M NaOH dropwise until in excess', correctObs: 'White precipitate, insoluble in excess NaOH', correctInf: 'Ca²⁺ or Mg²⁺ present' },
+        { id: 't3', prompt: '(iii) To portion 2, add 2M NH₃ dropwise until in excess', correctObs: 'No precipitate formed with aqueous ammonia', correctInf: 'Ca²⁺ confirmed' },
+        { id: 't4', prompt: '(iv) Flame test with clean nichrome wire in non-luminous flame', correctObs: 'Brick-red / orange-red flame', correctInf: 'Ca²⁺ confirmed' },
+        { id: 't5', prompt: '(v) To portion 3, add dilute HNO₃ followed by AgNO₃', correctObs: 'White precipitate formed, soluble in aqueous NH₃', correctInf: 'Cl⁻ confirmed' }
+      ];
+    default:
+      return [
+        { id: 't1', prompt: '(i) Physical appearance of Solid Y', correctObs: 'White solid', correctInf: 'Non-transition metal compound' },
+        { id: 't2', prompt: '(ii) Add 2M NaOH dropwise until in excess', correctObs: 'White precipitate formed, soluble in excess', correctInf: 'Zn²⁺, Al³⁺, or Pb²⁺ present' },
+        { id: 't3', prompt: '(iii) Add 2M aqueous ammonia dropwise until in excess', correctObs: 'White precipitate formed', correctInf: 'Cation confirmed' },
+        { id: 't4', prompt: '(iv) Add Ba(NO₃)₂ followed by dilute acid', correctObs: 'White precipitate formed', correctInf: 'Anion confirmed' }
+      ];
+  }
+}
+
+/**
+ * Organic functional group test sequence generator
+ */
+function getOrganicTestSequence(organicKey) {
+  switch (organicKey) {
+    case 'Ethanoic Acid':
+      return [
+        { id: 'o1', prompt: '(a) Place 2 cm³ of Liquid Z in a test tube and test with both red and blue litmus paper', correctObs: 'Blue litmus paper turns red; red litmus paper remains red', correctInf: 'Liquid Z is acidic / contains H⁺ ions / -COOH group' },
+        { id: 'o2', prompt: '(b) To 2 cm³ of Liquid Z, add half a spatula of solid Sodium Hydrogen Carbonate (NaHCO₃)', correctObs: 'Rapid effervescence / bubbling of a colourless gas that turns lime water cloudy', correctInf: '-COOH / Carboxylic acid group confirmed' },
+        { id: 'o3', prompt: '(c) To 2 cm³ of Liquid Z, add 3 drops of acidified Potassium Manganate(VII) (KMnO₄) and warm gently', correctObs: 'Purple colour of acidified KMnO₄ persists / does not decolourise', correctInf: 'Absence of readily oxidisable -OH group / unsaturation' },
+        { id: 'o4', prompt: '(d) Ignite 3 drops of Liquid Z on a clean metallic spatula using a Bunsen burner flame', correctObs: 'Burns with a non-luminous, clear blue flame without smoke', correctInf: 'Short-chain saturated aliphatic compound with low carbon-to-hydrogen ratio' }
+      ];
+    case 'Cyclohexene':
+      return [
+        { id: 'o1', prompt: '(a) Test 2 cm³ of Liquid Z with red and blue litmus paper', correctObs: 'Both red and blue litmus papers remain unchanged', correctInf: 'Neutral organic substance' },
+        { id: 'o2', prompt: '(b) To 2 cm³ of Liquid Z, add 3 drops of Bromine Water and shake vigorously', correctObs: 'Red-brown / yellow colour of bromine water is rapidly decolourised', correctInf: 'Unsaturated organic compound containing >C=C< or -C≡C- bond' },
+        { id: 'o3', prompt: '(c) To 2 cm³ of Liquid Z, add 3 drops of acidified Potassium Manganate(VII) (KMnO₄)', correctObs: 'Purple colour of acidified KMnO₄ is rapidly decolourised to colourless', correctInf: '>C=C< alkene group confirmed' },
+        { id: 'o4', prompt: '(d) Ignite 3 drops of Liquid Z on a metallic spatula in a Bunsen flame', correctObs: 'Burns with a smoky, yellow, luminous, sooty flame', correctInf: 'High carbon-to-hydrogen ratio / unsaturated compound' }
+      ];
+    case 'Hexane':
+      return [
+        { id: 'o1', prompt: '(a) Test Liquid Z with moist litmus paper', correctObs: 'No colour change on red or blue litmus', correctInf: 'Neutral hydrocarbon' },
+        { id: 'o2', prompt: '(b) Add 3 drops of Bromine Water in the absence of direct sunlight', correctObs: 'Red-brown colour of bromine water persists / is not decolourised', correctInf: 'Saturated hydrocarbon / alkane' },
+        { id: 'o3', prompt: '(c) Add 3 drops of acidified KMnO₄', correctObs: 'Purple colour persists / no decolourisation', correctInf: 'Resistant to mild oxidation / alkane' },
+        { id: 'o4', prompt: '(d) Ignite 3 drops on a spatula', correctObs: 'Burns with a slightly luminous flame with minimal soot', correctInf: 'Saturated alkane' }
+      ];
+    case 'Ethanol':
+    default:
+      return [
+        { id: 'o1', prompt: '(a) Place 2 cm³ of Liquid Z in a test tube and test with both red and blue litmus paper', correctObs: 'Both red and blue litmus paper remain unchanged / neutral', correctInf: 'Neutral organic substance; absence of -COOH or basic amine' },
+        { id: 'o2', prompt: '(b) To 2 cm³ of Liquid Z, add half a spatula of solid Sodium Hydrogen Carbonate (NaHCO₃)', correctObs: 'No effervescence / no bubbles formed', correctInf: 'Absence of -COOH / carboxylic acid' },
+        { id: 'o3', prompt: '(c) To 2 cm³ of Liquid Z, add 3 drops of acidified Potassium Manganate(VII) (KMnO₄) and warm gently', correctObs: 'Purple colour of acidified KMnO₄ is decolourised to colourless', correctInf: 'Primary or secondary alkanol (-OH group) present / easily oxidised' },
+        { id: 'o4', prompt: '(d) Ignite 3 drops of Liquid Z on a clean metallic spatula using a Bunsen burner flame', correctObs: 'Burns with a clear, non-sooty, pale-blue flame', correctInf: 'Short-chain saturated aliphatic compound with low carbon ratio (Alkanol)' }
+      ];
+  }
+}
+
+/**
+ * Synchronize markdown marking scheme with updated exam parameters
+ */
+function generateSynchronizedMarkingScheme(exam) {
+  const cfg = exam.examConfig || {};
+  const q1 = cfg.q1 || {};
+  const q2 = cfg.q2 || {};
+  const q3 = cfg.q3 || {};
+
+  const molesB = (Number(q1.trueBaseMolarity || 0.1) * Number(q1.pipetteVolume || 25.0)) / 1000;
+  const molesA = molesB * (Number(q1.ratioA || 1) / Number(q1.ratioB || 1));
+
+  return `# KNEC KCSE CHEMISTRY PRACTICAL MARKING SCHEME (233/3)
+**Paper Title:** ${exam.title || 'KCSE Chemistry Practical Mock'}  
+**Target Level:** ${exam.formLevel || 'Form 4'} · **Time:** ${exam.durationMinutes || 135} Minutes  
+
+---
+
+### QUESTION 1: VOLUMETRIC ANALYSIS (15 MARKS)
+- **Reagents:** ${q1.solutionA || 'Solution A'} (Burette) vs ${q1.solutionB || 'Solution B'} (Conical Flask)
+- **Pipette Volume:** ${Number(q1.pipetteVolume || 25.0).toFixed(1)} cm³ · **Indicator:** ${q1.indicator || 'phenolphthalein'}
+- **Expected Concordant Titre:** **${Number(q1.trueTitre || 25.0).toFixed(2)} cm³**
+
+#### 1. Table 1 Scoring Criteria (5 Marks):
+| Parameter | Mark Breakdown |
+|---|---|
+| Complete Table | 1 Mark (3 trials completed within realistic volume boundaries) |
+| Use of Decimals | 1 Mark (Readings recorded consistently to 1 or 2 decimal places) |
+| Accuracy | 1 Mark (Within $\\pm 0.20\\text{ cm}^3$ of teacher / theoretical titre: **${Number(q1.trueTitre || 25.0).toFixed(2)} cm³**) |
+| Concordancy | 1 Mark (Student selects concordant readings within $\\pm 0.20\\text{ cm}^3$) |
+| Average Titre Calculation | 1 Mark (Correct algebraic average calculation shown) |
+
+#### 2. Calculations (10 Marks):
+- **(a) Moles of Solution B pipetted:**
+  $$\\text{Moles of B} = \\frac{${Number(q1.trueBaseMolarity || 0.1).toFixed(3)}\\text{ M} \\times ${Number(q1.pipetteVolume || 25.0).toFixed(1)}\\text{ cm}^3}{1000} = ${molesB.toExponential(3)}\\text{ moles}$$  (2 Marks)
+- **(b) Reaction Stoichiometry & Balanced Equation:**
+  \`${q1.equation || 'Acid + Base -> Salt + Water'}\`
+  - Mole ratio Solution A : Solution B = **${q1.ratioA || 1} : ${q1.ratioB || 1}**  (1 Mark)
+- **(c) Moles of Solution A used:**
+  $$\\text{Moles of A} = \\text{Moles of B} \\times \\frac{${q1.ratioA || 1}}{${q1.ratioB || 1}} = ${molesA.toExponential(3)}\\text{ moles}$$  (2 Marks)
+- **(d) Concentration / Molarity of Solution A:**
+  $$\\text{Molarity of A} = \\frac{\\text{Moles of A} \\times 1000}{\\text{Average Titre (${Number(q1.trueTitre || 25.0).toFixed(2)} cm³)}} = ${Number(q1.trueAcidMolarity || 0.1).toFixed(3)}\\text{ M}$$  (3 Marks)
+
+---
+
+### QUESTION 2: INORGANIC QUALITATIVE SALT ANALYSIS (15 MARKS)
+**Sample:** ${q2.sampleName || 'Solid Y'} (${q2.trueSaltName || 'Unknown Salt'})  
+**Confirmed Cation:** \`${q2.trueCation || 'Zn²⁺'}\` · **Confirmed Anion:** \`${q2.trueAnion || 'SO₄²⁻'}\`  
+
+| Step & Procedure | Expected Observation | Deduction / Inference | Marks |
+|---|---|---|:---:|
+${(q2.tests || []).map(t => `| ${t.prompt} | ${t.correctObs} | ${t.correctInf} | 2-3 Marks |`).join('\n')}
+
+---
+
+### QUESTION 3: ORGANIC CHEMISTRY TESTING (10 MARKS)
+**Sample:** ${q3.sampleName || 'Liquid Z'} (${q3.trueOrganicName || 'Ethanol'})  
+**Functional Group:** \`${q3.trueFunctionalGroup || 'Alkanol (-OH)'}\`  
+
+| Step & Procedure | Expected Observation | Deduction / Inference | Marks |
+|---|---|---|:---:|
+${(q3.tests || []).map(t => `| ${t.prompt} | ${t.correctObs} | ${t.correctInf} | 2-3 Marks |`).join('\n')}
+`;
+}
+
+/**
+ * Synchronize laboratory technician confidential instructions with updated exam parameters
+ */
+function generateSynchronizedPrepGuide(exam) {
+  const cfg = exam.examConfig || {};
+  const q1 = cfg.q1 || {};
+  const q2 = cfg.q2 || {};
+  const q3 = cfg.q3 || {};
+
+  return `# CONFIDENTIAL INSTRUCTIONS TO LABORATORY TECHNICIANS
+**Paper:** ${exam.title || 'KCSE Chemistry Paper 3 Mock'}  
+**Target Level:** ${exam.formLevel || 'Form 4'} · **Time:** ${exam.durationMinutes || 135} Minutes  
+
+> **CONFIDENTIAL:** These instructions must not fall into candidate hands prior to examination commencement.
+
+---
+
+### 1. QUESTION 1 PREPARATIONS (VOLUMETRIC ANALYSIS)
+- **Solution A (${q1.solutionA}):**
+  - Allocate **150 cm³** per candidate in a clean, dry plastic or glass reagent bottle labelled "SOLUTION A".
+  - Prepared at **${Number(q1.trueAcidMolarity || 0.1).toFixed(3)} M**.
+- **Solution B (${q1.solutionB}):**
+  - Allocate **150 cm³** per candidate in a bottle labelled "SOLUTION B".
+  - Prepared at **${Number(q1.trueBaseMolarity || 0.1).toFixed(3)} M**.
+- **Indicator:** ${q1.indicator || 'phenolphthalein'} indicator supplied with dropper.
+- **Expected Titre Range:** **${(Number(q1.trueTitre || 25.0) - 0.2).toFixed(2)} cm³ to ${(Number(q1.trueTitre || 25.0) + 0.2).toFixed(2)} cm³**.
+
+### 2. QUESTION 2 PREPARATIONS (SALT ANALYSIS)
+- **Target Substance:** ${q2.trueSaltName || 'Unknown Salt'} (${q2.trueSaltKey})
+- **Quantity per candidate:** **2.0 g** of ${q2.sampleName || 'Solid Y'} in a dry stoppered container.
+- **Reagents on bench:** 2M NaOH, 2M Aqueous Ammonia (NH₃), Ba(NO₃)₂ solution, dilute HNO₃, distilled water wash bottle.
+
+### 3. QUESTION 3 PREPARATIONS (ORGANIC ANALYSIS)
+- **Target Substance:** ${q3.trueOrganicName || 'Ethanol'} (${q3.trueFunctionalGroup})
+- **Quantity per candidate:** **10 cm³** of ${q3.sampleName || 'Liquid Z'} in a small specimen bottle.
+- **Reagents on bench:** Red & blue litmus paper, solid NaHCO₃, acidified KMnO₄ (0.01M in 1M H₂SO₄), Bunsen burner, metallic spatula.
+
+### 4. APPARATUS CHECKLIST PER CANDIDATE
+- 1 × Burette (50 cm³) with retort stand and clamp
+- 1 × Pipette (${Number(q1.pipetteVolume || 25.0).toFixed(0)} cm³) and pipette filler
+- 2 × Conical flasks (250 cm³)
+- 1 × White tile and 100 cm³ beaker
+- 6 × Clean, dry test tubes in a test tube rack
+- 1 × Test tube holder and Bunsen burner
+`;
+}
+
+/**
+ * Intelligent Smart Refinement Engine (Offline & Fallback Resilience)
+ * Reliably processes all teacher instructions including:
+ * - Concentration & molarity (Solution A, Solution B, specific numbers)
+ * - Pipette volumes (20, 25, 10 cm³)
+ * - Indicator choices
+ * - Acid/base types and stoichiometry ratios
+ * - Unknown inorganic salts with full diagnostic test sequences
+ * - Organic functional groups with testing sequences
+ * - Title, duration, form level, and recalculates concordant titre
+ */
+function applySmartRefinement(currentDraft, instruction) {
+  const updated = JSON.parse(JSON.stringify(currentDraft));
+  const raw = instruction || '';
+  const lower = raw.toLowerCase();
+
+  if (!updated.examConfig) updated.examConfig = {};
+  if (!updated.examConfig.q1) updated.examConfig.q1 = {};
+  if (!updated.examConfig.q2) updated.examConfig.q2 = {};
+  if (!updated.examConfig.q3) updated.examConfig.q3 = {};
+
+  const q1 = updated.examConfig.q1;
+  const q2 = updated.examConfig.q2;
+  const q3 = updated.examConfig.q3;
+
+  const changes = [];
+
+  // ============================================================
+  // 1. CONCENTRATION & MOLARITY ADJUSTMENTS
+  // ============================================================
+  const solAPattern = /(?:solution\s*a|acid|burette|titrant|hcl|kmno4|h2so4)[^0-9\n]*?(\d+(?:\.\d+)?)\s*(?:m\b|molar|mol\/dm|mol\/l)?/i;
+  const solBPattern = /(?:solution\s*b|base|flask|analyte|naoh|alkali|carbonate)[^0-9\n]*?(\d+(?:\.\d+)?)\s*(?:m\b|molar|mol\/dm|mol\/l)?/i;
+
+  let newConcA = null;
+  let newConcB = null;
+
+  if (solAPattern.test(lower)) {
+    const match = lower.match(solAPattern);
+    if (match && match[1]) newConcA = parseFloat(match[1]);
+  }
+  if (solBPattern.test(lower)) {
+    const match = lower.match(solBPattern);
+    if (match && match[1]) newConcB = parseFloat(match[1]);
+  }
+
+  // General concentration pattern: e.g. "change the concentration to 0.05M", "change concentration to 0.05", "set concentration 0.05"
+  if (newConcA === null && newConcB === null) {
+    const generalMatch = lower.match(/(?:concentration|conc|molarity|molar|to|make it|is|=|set to)\s*[:=]?\s*(\d+(?:\.\d+)?)\s*(?:m\b|molar|mol\/dm|mol\/l)?/i)
+                      || lower.match(/(\d+(?:\.\d+)?)\s*(?:m\b|molar|mol\/dm3|mol\/l)/i);
+    if (generalMatch && generalMatch[1]) {
+      const val = parseFloat(generalMatch[1]);
+      if (lower.includes('solution b') || lower.includes('base') || lower.includes('flask') || lower.includes('naoh')) {
+        newConcB = val;
+      } else {
+        newConcA = val;
+      }
+    }
+  }
+
+  if (newConcA !== null && !isNaN(newConcA) && newConcA > 0) {
+    q1.trueAcidMolarity = newConcA;
+    const formattedA = newConcA.toFixed(3) + ' M';
+    if (q1.solutionA && /\d+(?:\.\d+)?\s*M/i.test(q1.solutionA)) {
+      q1.solutionA = q1.solutionA.replace(/\d+(?:\.\d+)?\s*M/i, formattedA);
+    } else {
+      q1.solutionA = `${formattedA} ${q1.solutionA || 'Hydrochloric Acid (HCl)'}`;
+    }
+    changes.push(`Solution A concentration updated to ${formattedA}`);
+  }
+
+  if (newConcB !== null && !isNaN(newConcB) && newConcB > 0) {
+    q1.trueBaseMolarity = newConcB;
+    const formattedB = newConcB.toFixed(3) + ' M';
+    if (q1.solutionB && /\d+(?:\.\d+)?\s*M/i.test(q1.solutionB)) {
+      q1.solutionB = q1.solutionB.replace(/\d+(?:\.\d+)?\s*M/i, formattedB);
+    } else {
+      q1.solutionB = `${formattedB} ${q1.solutionB || 'Sodium Hydroxide (NaOH)'}`;
+    }
+    changes.push(`Solution B concentration updated to ${formattedB}`);
+  }
+
+  // ============================================================
+  // 2. PIPETTE VOLUME
+  // ============================================================
+  if (lower.includes('20') && (lower.includes('pipette') || lower.includes('cm') || lower.includes('volume') || lower.includes('aliquot'))) {
+    q1.pipetteVolume = 20.0;
+    changes.push('Pipette volume set to 20.0 cm³');
+  } else if (lower.includes('25') && (lower.includes('pipette') || lower.includes('cm') || lower.includes('volume') || lower.includes('aliquot'))) {
+    q1.pipetteVolume = 25.0;
+    changes.push('Pipette volume set to 25.0 cm³');
+  } else if (lower.includes('10') && (lower.includes('pipette') || lower.includes('cm') || lower.includes('volume') || lower.includes('aliquot'))) {
+    q1.pipetteVolume = 10.0;
+    changes.push('Pipette volume set to 10.0 cm³');
+  }
+
+  // ============================================================
+  // 3. INDICATOR
+  // ============================================================
+  if (lower.includes('screened methyl orange')) {
+    q1.indicator = 'screenedMethylOrange';
+    changes.push('Indicator changed to Screened Methyl Orange');
+  } else if (lower.includes('methyl orange')) {
+    q1.indicator = 'methylOrange';
+    changes.push('Indicator changed to Methyl Orange');
+  } else if (lower.includes('phenolphthalein') || lower.includes('pop')) {
+    q1.indicator = 'phenolphthalein';
+    changes.push('Indicator changed to Phenolphthalein');
+  } else if (lower.includes('starch')) {
+    q1.indicator = 'starch';
+    changes.push('Indicator changed to Starch');
+  }
+
+  // ============================================================
+  // 4. REAGENT / REACTION TYPE (ACIDS & BASES)
+  // ============================================================
+  if (lower.includes('sulfuric') || lower.includes('h2so4') || lower.includes('dibasic')) {
+    q1.ratioA = 1;
+    q1.ratioB = 2;
+    q1.equation = 'H₂SO₄(aq) + 2NaOH(aq) → Na₂SO₄(aq) + 2H₂O(l)';
+    q1.solutionA = (q1.solutionA || '0.100 M').replace(/Hydrochloric Acid.*|\(HCl\)/i, '') + ' Sulfuric(VI) Acid (H₂SO₄)';
+    changes.push('Titration configured as dibasic Sulfuric Acid (1:2 mole ratio)');
+  } else if (lower.includes('carbonate') || lower.includes('na2co3')) {
+    q1.ratioA = 2;
+    q1.ratioB = 1;
+    q1.equation = '2HCl(aq) + Na₂CO₃(aq) → 2NaCl(aq) + CO₂(g) + H₂O(l)';
+    q1.solutionB = (q1.solutionB || '0.100 M').replace(/Sodium Hydroxide.*|\(NaOH\)/i, '') + ' Sodium Carbonate (Na₂CO₃)';
+    changes.push('Titration configured as Sodium Carbonate neutralization (2:1 mole ratio)');
+  }
+
+  // Recalculate concordant titre with updated concentrations / stoichiometry / pipette
+  const nA = q1.ratioA || 1;
+  const nB = q1.ratioB || 1;
+  const cA = q1.trueAcidMolarity || 0.100;
+  const cB = q1.trueBaseMolarity || 0.100;
+  const vB = q1.pipetteVolume || 25.0;
+  q1.trueTitre = Number(((nA * cB * vB) / (nB * cA)).toFixed(2));
+  if (newConcA !== null || newConcB !== null) {
+    changes.push(`Target concordant titre recalculated: ${q1.trueTitre.toFixed(2)} cm³`);
+  }
+
+  // ============================================================
+  // 5. UNKNOWN INORGANIC SALT (QUESTION 2)
+  // ============================================================
+  let matchedSaltKey = null;
+  if (lower.includes('zinc') || lower.includes('zn')) {
+    matchedSaltKey = 'ZnSO4';
+    q2.trueSaltKey = 'ZnSO4';
+    q2.trueSaltName = 'Zinc Sulfate — ZnSO₄';
+    q2.trueCation = 'Zn2+';
+    q2.trueAnion = 'SO42-';
+    q2.sampleDesc = 'Pure white inorganic crystalline salt';
+  } else if (lower.includes('lead') || lower.includes('pb')) {
+    matchedSaltKey = 'Pb(NO3)2';
+    q2.trueSaltKey = 'Pb(NO3)2';
+    q2.trueSaltName = 'Lead(II) Nitrate — Pb(NO₃)₂';
+    q2.trueCation = 'Pb2+';
+    q2.trueAnion = 'NO3-';
+    q2.sampleDesc = 'White crystalline solid, soluble in cold water';
+  } else if (lower.includes('copper') || lower.includes('cu')) {
+    matchedSaltKey = 'CuSO4';
+    q2.trueSaltKey = 'CuSO4';
+    q2.trueSaltName = 'Copper(II) Sulfate — CuSO₄';
+    q2.trueCation = 'Cu2+';
+    q2.trueAnion = 'SO42-';
+    q2.sampleDesc = 'Blue crystalline solid / powder';
+  } else if (lower.includes('iron(ii)') || lower.includes('iron 2') || lower.includes('feso4') || (lower.includes('iron') && lower.includes('green'))) {
+    matchedSaltKey = 'FeSO4';
+    q2.trueSaltKey = 'FeSO4';
+    q2.trueSaltName = 'Iron(II) Sulfate — FeSO₄';
+    q2.trueCation = 'Fe2+';
+    q2.trueAnion = 'SO42-';
+    q2.sampleDesc = 'Pale green crystalline solid';
+  } else if (lower.includes('iron(iii)') || lower.includes('iron 3') || lower.includes('fecl3') || (lower.includes('iron') && lower.includes('brown'))) {
+    matchedSaltKey = 'FeCl3';
+    q2.trueSaltKey = 'FeCl3';
+    q2.trueSaltName = 'Iron(III) Chloride — FeCl₃';
+    q2.trueCation = 'Fe3+';
+    q2.trueAnion = 'Cl-';
+    q2.sampleDesc = 'Reddish-brown crystalline deliquescent solid';
+  } else if (lower.includes('calcium') || lower.includes('cacl2')) {
+    matchedSaltKey = 'CaCl2';
+    q2.trueSaltKey = 'CaCl2';
+    q2.trueSaltName = 'Calcium Chloride — CaCl₂';
+    q2.trueCation = 'Ca2+';
+    q2.trueAnion = 'Cl-';
+    q2.sampleDesc = 'White deliquescent crystals';
+  }
+
+  if (matchedSaltKey) {
+    q2.tests = getSaltTestSequence(matchedSaltKey);
+    changes.push(`Unknown salt set to ${q2.trueSaltName} with updated KNEC test procedures`);
+  }
+
+  // ============================================================
+  // 6. ORGANIC COMPOUND (QUESTION 3)
+  // ============================================================
+  let matchedOrganicKey = null;
+  if (lower.includes('ethanoic') || lower.includes('acetic') || lower.includes('carboxylic')) {
+    matchedOrganicKey = 'Ethanoic Acid';
+    q3.trueOrganicKey = 'Ethanoic Acid';
+    q3.trueOrganicName = 'Ethanoic Acid — CH₃COOH';
+    q3.trueFunctionalGroup = 'Carboxylic Acid (-COOH)';
+    q3.sampleDesc = 'Colourless liquid with sharp pungent vinegar odour';
+  } else if (lower.includes('cyclohexene') || lower.includes('alkene') || lower.includes('unsaturated') || lower.includes('double bond')) {
+    matchedOrganicKey = 'Cyclohexene';
+    q3.trueOrganicKey = 'Cyclohexene';
+    q3.trueOrganicName = 'Cyclohexene — C₆H₁₀';
+    q3.trueFunctionalGroup = 'Alkene (>C=C<)';
+    q3.sampleDesc = 'Clear volatile organic liquid with hydrocarbon odour';
+  } else if (lower.includes('hexane') || lower.includes('alkane') || lower.includes('saturated')) {
+    matchedOrganicKey = 'Hexane';
+    q3.trueOrganicKey = 'Hexane';
+    q3.trueOrganicName = 'Hexane — C₆H₁₄';
+    q3.trueFunctionalGroup = 'Saturated Alkane';
+    q3.sampleDesc = 'Colourless neutral liquid, immiscible with water';
+  } else if (lower.includes('ethanol') || lower.includes('alcohol') || lower.includes('alkanol')) {
+    matchedOrganicKey = 'Ethanol';
+    q3.trueOrganicKey = 'Ethanol';
+    q3.trueOrganicName = 'Ethanol — C₂H₅OH';
+    q3.trueFunctionalGroup = 'Alkanol (-OH)';
+    q3.sampleDesc = 'Clear neutral volatile liquid with characteristic sweet odour';
+  }
+
+  if (matchedOrganicKey) {
+    q3.tests = getOrganicTestSequence(matchedOrganicKey);
+    changes.push(`Organic sample set to ${q3.trueOrganicName} with updated functional group tests`);
+  }
+
+  // ============================================================
+  // 7. EXAM TITLE, FORM LEVEL, DURATION
+  // ============================================================
+  const titleMatch = raw.match(/(?:title to|rename to|call it)\s*[:=]?\s*["']?([^"'\n,]+)["']?/i);
+  if (titleMatch && titleMatch[1]) {
+    updated.title = titleMatch[1].trim();
+    changes.push(`Title updated to "${updated.title}"`);
+  }
+
+  if (lower.includes('form 3')) updated.formLevel = 'Form 3';
+  if (lower.includes('form 4')) updated.formLevel = 'Form 4';
+  if (lower.includes('form 2')) updated.formLevel = 'Form 2';
+  if (lower.includes('form 1')) updated.formLevel = 'Form 1';
+
+  const durationMatch = lower.match(/(?:duration|time|mins?|minutes?)\s*[:=]?\s*(\d+)/i);
+  if (durationMatch && durationMatch[1]) {
+    updated.durationMinutes = parseInt(durationMatch[1], 10);
+    changes.push(`Duration set to ${updated.durationMinutes} minutes`);
+  }
+
+  // ============================================================
+  // 8. SYNCHRONIZE MARKING SCHEME & TECHNICIAN GUIDE
+  // ============================================================
+  q1.instructions = `You are provided with ${q1.solutionA} and ${q1.solutionB}. Pipette ${Number(q1.pipetteVolume || 25.0).toFixed(1)} cm³ of Solution B into a conical flask and titrate with Solution A using ${q1.indicator} indicator.`;
+  updated.markingScheme = generateSynchronizedMarkingScheme(updated);
+  updated.confidentialPrepGuide = generateSynchronizedPrepGuide(updated);
+
+  return { updated, changes };
+}
+
+/**
  * 3. Conversational Refinement of an existing exam draft
  */
 async function refineExamDraft({ currentDraft, instruction }) {
@@ -551,7 +1019,7 @@ async function refineExamDraft({ currentDraft, instruction }) {
     throw new Error('CURRENT_DRAFT_REQUIRED');
   }
 
-  const prompt = `You are a KNEC Chemistry Practical Examiner assisting a secondary school teacher who wants to adjust an existing exam draft.
+  const prompt = `You are a Senior KNEC Chemistry Practical Examiner assisting a secondary school teacher who wants to adjust an existing exam draft.
 
 Teacher's Instruction / Change Request:
 "${instruction}"
@@ -559,9 +1027,17 @@ Teacher's Instruction / Change Request:
 Current Exam Draft:
 ${JSON.stringify(currentDraft, null, 2)}
 
-Task:
-Apply the teacher's modifications faithfully while preserving the valid chemical stoichiometry, equations, and KNEC marking rubric.
-Respond with the updated exam JSON with the EXACT SAME structure:
+STRICT REQUIREMENTS FOR ADJUSTMENTS:
+1. Carefully inspect the teacher's instruction and update all affected fields in the exam JSON.
+2. CONCENTRATION & MOLARITY:
+   If the teacher asks to change concentration (e.g. "change the concentration to 0.05M", "make Solution A 0.2M", "change molarity"):
+   - Update q1.solutionA and/or q1.solutionB with the exact new concentration string (e.g. "0.050 M Hydrochloric Acid (HCl)").
+   - Update q1.trueAcidMolarity and/or q1.trueBaseMolarity to the numeric value.
+   - Recalculate trueTitre accurately based on stoichiometry: trueTitre = (ratioA * trueBaseMolarity * pipetteVolume) / (ratioB * trueAcidMolarity).
+   - Update the markingScheme calculation steps and confidentialPrepGuide with the new concentration!
+3. PIPETTE, INDICATOR, UNKNOWN SALTS, ORGANIC SAMPLES, TITLE, DURATION:
+   Update all corresponding fields in examConfig, markingScheme, and confidentialPrepGuide.
+4. Respond with ONLY the updated valid JSON object matching the exact schema:
 {
   "title": "<updated or preserved title>",
   "formLevel": "<form level>",
@@ -576,49 +1052,26 @@ Respond with the updated exam JSON with the EXACT SAME structure:
   try {
     const rawResult = await callGeminiAssistant({ prompt, maxTokens: EXAM_MAX_TOKENS });
     const parsed = cleanAndParseJson(rawResult);
-    return normalizeExamStructure(parsed, { source: 'ai_refinement', lastInstruction: instruction });
+    
+    // Double-check if the instruction requested a concentration/salt change that Gemini might have omitted
+    const smartCheck = applySmartRefinement(parsed, instruction);
+    const finalDraft = smartCheck.changes.length > 0 ? smartCheck.updated : parsed;
+    const appliedChanges = smartCheck.changes;
+
+    return normalizeExamStructure(finalDraft, {
+      source: 'ai_refinement',
+      lastInstruction: instruction,
+      appliedChanges
+    });
   } catch (err) {
-    console.warn('[refineExamDraft] AI refinement failed or not configured, applying heuristic patch:', err.message);
-    // Graceful offline heuristic modification
-    const updated = JSON.parse(JSON.stringify(currentDraft));
-    const lower = (instruction || '').toLowerCase();
-
-    if (lower.includes('20') && lower.includes('pipette')) {
-      if (updated.examConfig?.q1) updated.examConfig.q1.pipetteVolume = 20.0;
-    } else if (lower.includes('25') && lower.includes('pipette')) {
-      if (updated.examConfig?.q1) updated.examConfig.q1.pipetteVolume = 25.0;
-    }
-
-    if (lower.includes('methyl orange')) {
-      if (updated.examConfig?.q1) updated.examConfig.q1.indicator = 'methylOrange';
-    } else if (lower.includes('phenolphthalein')) {
-      if (updated.examConfig?.q1) updated.examConfig.q1.indicator = 'phenolphthalein';
-    }
-
-    if (lower.includes('lead') || lower.includes('pb')) {
-      if (updated.examConfig?.q2) {
-        updated.examConfig.q2.trueSaltKey = 'Pb(NO3)2';
-        updated.examConfig.q2.trueSaltName = 'Lead(II) Nitrate — Pb(NO₃)₂';
-        updated.examConfig.q2.trueCation = 'Pb2+';
-        updated.examConfig.q2.trueAnion = 'NO3-';
-      }
-    } else if (lower.includes('zinc') || lower.includes('zn')) {
-      if (updated.examConfig?.q2) {
-        updated.examConfig.q2.trueSaltKey = 'ZnSO4';
-        updated.examConfig.q2.trueSaltName = 'Zinc Sulfate — ZnSO₄';
-        updated.examConfig.q2.trueCation = 'Zn2+';
-        updated.examConfig.q2.trueAnion = 'SO42-';
-      }
-    } else if (lower.includes('iron') || lower.includes('fe')) {
-      if (updated.examConfig?.q2) {
-        updated.examConfig.q2.trueSaltKey = 'FeSO4';
-        updated.examConfig.q2.trueSaltName = 'Iron(II) Sulfate — FeSO₄';
-        updated.examConfig.q2.trueCation = 'Fe2+';
-        updated.examConfig.q2.trueAnion = 'SO42-';
-      }
-    }
-
-    return normalizeExamStructure(updated, { source: 'smart_fallback', lastInstruction: instruction, errorReason: err.message });
+    console.warn('[refineExamDraft] AI refinement failed or not configured, applying smart heuristic engine:', err.message);
+    const { updated, changes } = applySmartRefinement(currentDraft, instruction);
+    return normalizeExamStructure(updated, {
+      source: 'smart_fallback',
+      lastInstruction: instruction,
+      appliedChanges: changes,
+      errorReason: err.message
+    });
   }
 }
 

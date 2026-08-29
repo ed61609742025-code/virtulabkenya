@@ -1631,6 +1631,44 @@ tr:hover td {
   line-height: 1.7;
 }
 
+.markdown-preview-box .paper-table {
+  background: var(--card-bg);
+  border-collapse: collapse;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+}
+
+.markdown-preview-box .paper-table th {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--heading-color);
+  font-weight: 800;
+  font-size: 0.82rem;
+  border-bottom: 2px solid var(--card-border);
+}
+
+.markdown-preview-box .paper-table td {
+  border-bottom: 1px solid var(--card-border);
+  color: var(--text-main);
+  font-size: 0.84rem;
+}
+
+.math-display-block {
+  background: rgba(16, 185, 129, 0.05);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin: 12px 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.92rem;
+  color: var(--heading-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .confidential-seal {
   background: rgba(239, 68, 68, 0.12);
   border: 1.5px solid var(--red-accent);

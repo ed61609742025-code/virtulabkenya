@@ -287,6 +287,12 @@
       return;
     }
 
+    const refineBtn = document.querySelector('.ai-refine-input-row button');
+    if (refineBtn) {
+      refineBtn.disabled = true;
+      refineBtn.innerHTML = '<span>Refining ⏳</span>';
+    }
+
     setGeneratingState(true, `Refining exam: "${instruction}"...`);
 
     try {
@@ -312,6 +318,10 @@
       showTemporaryToast('Refinement Note: ' + (err.message || 'Could not apply refinement.'), 'error');
     } finally {
       setGeneratingState(false);
+      if (refineBtn) {
+        refineBtn.disabled = false;
+        refineBtn.innerHTML = '<span>Refine ⚡</span>';
+      }
     }
   };
 
@@ -529,9 +539,11 @@
     renderMarkingSchemeTab(exam);
     renderTechnicianGuideTab(exam);
 
+    // Maintain currently active sub-tab (or default to blueprint)
+    window.switchAiResultSubTab(activeResultSubTab || 'blueprint');
+
     // Only scroll to top of results on initial generation / paper parse
     if (isInitial) {
-      window.switchAiResultSubTab('blueprint');
       resSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
@@ -1068,24 +1080,142 @@
       .replace(/Cl\-/g, 'Cl⁻');
   }
 
+  function formatMathFormula(expr) {
+    if (!expr) return '';
+    let m = String(expr).trim();
+    m = m.replace(/\\text\{([^}]+)\}/g, '$1');
+    m = m.replace(/\\frac\{([^}]+)\}\{([^}]+)\}/g, '<span style="display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 4px; font-size:0.9em; line-height:1.1;"><span style="border-bottom:1.5px solid currentColor; padding:0 3px;">$1</span><span style="padding:0 3px;">$2</span></span>');
+    m = m.replace(/\\times/g, '×');
+    m = m.replace(/\\pm/g, '±');
+    m = m.replace(/\\cdot/g, '·');
+    m = m.replace(/(\d+(?:\.\d+)?)e(-?\d+)/g, (match, base, exp) => {
+      const expSup = exp.replace(/-/g, '⁻').replace(/1/g, '¹').replace(/2/g, '²').replace(/3/g, '³').replace(/4/g, '⁴').replace(/5/g, '⁵').replace(/6/g, '⁶').replace(/7/g, '⁷').replace(/8/g, '⁸').replace(/9/g, '⁹').replace(/0/g, '⁰');
+      return `${base} × 10${expSup}`;
+    });
+    m = m.replace(/\^3/g, '³').replace(/\^2/g, '²').replace(/\^1/g, '¹');
+    m = m.replace(/\\rightarrow|\\to/g, '→');
+    return m;
+  }
+
+  function formatInlineMarkdown(str) {
+    if (!str) return '';
+    let s = String(str);
+    s = s.replace(/`([^`]+)`/g, '<code style="background:var(--card-bg-hover); border:1px solid var(--card-border); padding:2px 6px; border-radius:4px; font-family:\'JetBrains Mono\',monospace; font-size:0.86em; color:var(--green-accent); font-weight:600;">$1</code>');
+    s = s.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    s = s.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    s = s.replace(/\$([^$\n]+)\$/g, (m, f) => `<span style="font-family:'JetBrains Mono',monospace; font-weight:700; color:var(--green-accent);">${formatMathFormula(f)}</span>`);
+    s = formatChemicalFormula(s);
+    return s;
+  }
+
+  function parseMarkdownTables(text) {
+    const lines = text.split(/\r?\n/);
+    const result = [];
+    let inTable = false;
+    let tableLines = [];
+
+    const flushTable = () => {
+      if (tableLines.length >= 2) {
+        const parseRow = (line) => {
+          const trimmed = line.trim().replace(/^\|/, '').replace(/\|$/, '');
+          return trimmed.split('|').map(c => c.trim());
+        };
+
+        const headers = parseRow(tableLines[0]);
+        const bodyRows = tableLines.slice(2);
+
+        let html = '<div style="overflow-x:auto; margin:14px 0; border-radius:8px; border:1.5px solid var(--card-border);"><table class="paper-table" style="margin:0; width:100%; min-width:480px;">';
+        html += '<thead><tr style="background:rgba(16,185,129,0.12);">';
+        headers.forEach(h => {
+          html += `<th style="padding:9px 12px; font-weight:800; color:var(--heading-color);">${formatInlineMarkdown(h)}</th>`;
+        });
+        html += '</tr></thead><tbody>';
+
+        bodyRows.forEach((r, idx) => {
+          const cells = parseRow(r);
+          const bg = idx % 2 === 1 ? 'background:rgba(0,0,0,0.02);' : '';
+          html += `<tr style="${bg}">`;
+          cells.forEach(c => {
+            html += `<td style="padding:8px 12px; vertical-align:top;">${formatInlineMarkdown(c)}</td>`;
+          });
+          html += '</tr>';
+        });
+
+        html += '</tbody></table></div>';
+        result.push(html);
+      } else if (tableLines.length === 1) {
+        result.push(tableLines[0]);
+      }
+      tableLines = [];
+      inTable = false;
+    };
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const trimmed = line.trim();
+      const isTableRow = trimmed.startsWith('|') && trimmed.endsWith('|') && trimmed.includes('|');
+      const isDivider = trimmed.startsWith('|') && /^\|[\s\-:|]+\|$/.test(trimmed);
+
+      if (isTableRow || (inTable && isDivider)) {
+        inTable = true;
+        tableLines.push(line);
+      } else {
+        if (inTable) flushTable();
+        result.push(line);
+      }
+    }
+    if (inTable) flushTable();
+    return result.join('\n');
+  }
+
   function formatMarkdownText(text) {
     if (!text) return '';
-    let html = escapeHtml(text);
-    // Headings
-    html = html.replace(/^### (.*$)/gim, '<h3 style="font-family:var(--font-heading); margin:14px 0 6px; color:var(--heading-color); font-size:1rem;">$1</h3>');
-    html = html.replace(/^## (.*$)/gim, '<h2 style="font-family:var(--font-heading); margin:16px 0 8px; color:var(--heading-color); font-size:1.15rem;">$1</h2>');
-    html = html.replace(/^# (.*$)/gim, '<h1 style="font-family:var(--font-heading); margin:18px 0 10px; color:var(--heading-color); font-size:1.3rem;">$1</h1>');
-    // Bold
-    html = html.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-    // Italics
-    html = html.replace(/\*(.*?)\*/g, '<i>$1</i>');
-    // Non-greedy line-by-line list parsing
-    html = html.replace(/(?:^|\n)((?:[\t ]*[-*] .+(?:\n|$))+)/g, (match, list) => {
-      const items = list.trim().split('\n').map(li => `<li style="margin-bottom:4px;">${li.replace(/^[\t ]*[-*] /, '')}</li>`).join('');
-      return `\n<ul style="margin:8px 0 12px 20px; line-height:1.6;">${items}</ul>\n`;
+    let raw = String(text);
+
+    // 1. Block equations $$...$$ (with optional (Marks) badge)
+    raw = raw.replace(/\$\$([\s\S]*?)\$\$\s*(?:\(([0-9]+(?:\.[0-9]+)?\s*Marks?)\))?/g, (match, formula, marks) => {
+      const markBadge = marks ? `<span class="badge" style="background:rgba(16,185,129,0.18); color:var(--green-accent); font-weight:800; font-size:0.78rem; margin-left:auto;">${marks}</span>` : '';
+      return `\n<div class="math-display-block" style="background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.22); border-radius:8px; padding:10px 16px; margin:10px 0; font-family:'JetBrains Mono',monospace; font-size:0.92rem; color:var(--heading-color); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;"><div>${formatMathFormula(formula)}</div>${markBadge}</div>\n`;
     });
-    // Line breaks
-    html = html.replace(/\n\n/g, '<div style="height:8px;"></div>');
+
+    // 2. Parse Markdown tables
+    raw = parseMarkdownTables(raw);
+
+    // 3. Headings
+    raw = raw.replace(/^# (.*$)/gm, '<h2 style="font-family:var(--font-heading); margin:0 0 10px 0; color:var(--heading-color); font-size:1.3rem; font-weight:900; border-bottom:2px solid var(--green-accent); padding-bottom:8px;">$1</h2>');
+    raw = raw.replace(/^## (.*$)/gm, '<h3 style="font-family:var(--font-heading); margin:18px 0 8px 0; color:var(--heading-color); font-size:1.15rem; font-weight:800;">$1</h3>');
+    raw = raw.replace(/^### (.*$)/gm, (m, title) => {
+      return `<div style="background:rgba(16,185,129,0.08); border-left:4px solid var(--green-accent); padding:10px 14px; margin:20px 0 12px; border-radius:0 8px 8px 0;"><h3 style="margin:0; font-family:var(--font-heading); font-size:1.05rem; font-weight:800; color:var(--heading-color);">${formatInlineMarkdown(title)}</h3></div>`;
+    });
+    raw = raw.replace(/^##### (.*$)/gm, '<h5 style="font-family:var(--font-heading); margin:14px 0 6px 0; color:var(--heading-color); font-size:0.92rem; font-weight:800;">$1</h5>');
+    raw = raw.replace(/^#### (.*$)/gm, '<h4 style="font-family:var(--font-heading); margin:16px 0 6px 0; color:var(--heading-color); font-size:0.98rem; font-weight:800;">$1</h4>');
+
+    // 4. Horizontal rules
+    raw = raw.replace(/^(?:---|___|\*\*\*)$/gm, '<hr style="border:0; border-top:1.5px solid var(--card-border); margin:20px 0;">');
+
+    // 5. Blockquotes
+    raw = raw.replace(/^>\s*(.*$)/gm, '<blockquote style="border-left:3px solid var(--amber-accent); padding:8px 14px; margin:12px 0; background:rgba(245,158,11,0.06); border-radius:0 8px 8px 0; color:var(--text-main); font-style:italic;">$1</blockquote>');
+
+    // 6. Bullet lists
+    raw = raw.replace(/(?:^|\n)((?:[\t ]*[-*] .+(?:\r?\n|$))+)/g, (match, list) => {
+      const items = list.trim().split(/\r?\n/).map(li => {
+        const content = li.replace(/^[\t ]*[-*] /, '');
+        return `<li style="margin-bottom:6px; line-height:1.6;">${formatInlineMarkdown(content)}</li>`;
+      }).join('');
+      return `\n<ul style="margin:8px 0 14px 22px; line-height:1.6;">${items}</ul>\n`;
+    });
+
+    // 7. General inline formatting for remaining lines
+    const lines = raw.split(/\r?\n/).map(line => {
+      if (line.startsWith('<div') || line.startsWith('<h') || line.startsWith('<ul') || line.startsWith('<hr') || line.startsWith('<blockquote') || line.startsWith('<table')) {
+        return line;
+      }
+      return formatInlineMarkdown(line);
+    });
+
+    let html = lines.join('\n');
+    html = html.replace(/([^\n>])\n([^\n<])/g, '$1<br>$2');
+    html = html.replace(/\n\n/g, '<div style="height:10px;"></div>');
     return html;
   }
 

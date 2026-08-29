@@ -58,6 +58,28 @@ describe('KNEC Paper 3 Examination Suite Standards', () => {
     assert.ok(ecfSteps.length >= 1, 'At least one step must explicitly record e.c.f. credit');
   });
 
+  it('should ensure Series 1 standard titration logically calculates moles of A, moles of B, and molarity of unknown Solution B', () => {
+    const engineS1 = new CompositeExamEngine({ presetKey: 'series_1' });
+    const questions = engineS1.preset.q1.questions;
+    assert.strictEqual(questions[0].field, 'avgTitre');
+    assert.strictEqual(questions[1].field, 'molesA');
+    assert.strictEqual(questions[2].field, 'molesB');
+    assert.strictEqual(questions[3].field, 'molarityB');
+    assert.strictEqual(questions[4].field, 'concGrams');
+
+    // Verify candidate calculates unknown Solution B correctly
+    engineS1.recordTrial(1, 25.00, 0.00);
+    engineS1.recordTrial(2, 25.00, 0.00);
+    engineS1.setQ1Answer('avgTitre', '25.00'); // Step a
+    engineS1.setQ1Answer('molesA', '0.00250'); // Step b
+    engineS1.setQ1Answer('molesB', '0.00250'); // Step c
+    engineS1.setQ1Answer('molarityB', '0.100'); // Step d (unknown Solution B)
+    engineS1.setQ1Answer('concGrams', '4.00'); // Step e (NaOH mass conc)
+
+    const score = engineS1.calculateQ1Score();
+    assert.strictEqual(score.calcScore, 10.0, 'Full 10.0 marks for Series 1 stoichiometric calculation');
+  });
+
   it('should validate CPCAT Engine with 40 authentic items and 25% balanced keys', () => {
     const cpcatPath = path.join(rootDir, 'client', 'student', 'js', 'cpcat-engine.js');
     const { CPCAT_ITEMS, CPCATEngine } = require(cpcatPath);

@@ -751,36 +751,36 @@
         </div>
 
         <!-- Default Step (b) -->
-        <div class="calc-step-card" id="card_molesB">
+        <div class="calc-step-card" id="card_molesA">
           <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
-            (b) Calculate the number of moles of solute in 25.0 cm³ of Solution B <span style="color:var(--cyan-accent);">(2.0 Marks)</span>
+            (b) Calculate the number of moles of Solution A (acid) in the average volume V₁ used <span style="color:var(--cyan-accent);">(2.0 Marks)</span>
           </div>
           <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-            <input type="number" step="0.0001" id="ansMolesB" class="calc-input dynamic-calc-input" data-field="molesB" data-step-id="step_b" placeholder="e.g. 0.00250" oninput="onDynamicQ1CalculationChanged('molesB', this.value)">
-            <span style="font-weight:700;color:var(--text-muted);">moles</span>
+            <input type="number" step="0.0001" id="ansMolesA" class="calc-input dynamic-calc-input" data-field="molesA" data-step-id="step_b" placeholder="e.g. 0.00250" oninput="onDynamicQ1CalculationChanged('molesA', this.value)">
+            <span style="font-weight:700;color:var(--text-muted);">moles of acid</span>
           </div>
           <div id="stepFeedback_step_b" class="step-feedback-msg"></div>
         </div>
 
         <!-- Default Step (c) -->
-        <div class="calc-step-card" id="card_molesA">
+        <div class="calc-step-card" id="card_molesB">
           <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
-            (c) Chemical reaction stoichiometry and moles of Solution A reacted in V₁ <span style="color:var(--cyan-accent);">(2.0 Marks)</span>
+            (c) Determine the number of moles of Solution B (base) in 25.0 cm³ of solution used <span style="color:var(--cyan-accent);">(2.0 Marks)</span>
           </div>
           <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-            <input type="number" step="0.0001" id="ansMolesA" class="calc-input dynamic-calc-input" data-field="molesA" data-step-id="step_c" placeholder="e.g. 0.00250" oninput="onDynamicQ1CalculationChanged('molesA', this.value)">
-            <span style="font-weight:700;color:var(--text-muted);">moles of Solution A</span>
+            <input type="number" step="0.0001" id="ansMolesB" class="calc-input dynamic-calc-input" data-field="molesB" data-step-id="step_c" placeholder="e.g. 0.00250" oninput="onDynamicQ1CalculationChanged('molesB', this.value)">
+            <span style="font-weight:700;color:var(--text-muted);">moles of base</span>
           </div>
           <div id="stepFeedback_step_c" class="step-feedback-msg"></div>
         </div>
 
         <!-- Default Step (d) -->
-        <div class="calc-step-card" id="card_molarityA">
+        <div class="calc-step-card" id="card_molarityB">
           <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
-            (d) Calculate the molar concentration (molarity) of Solution A in mol/dm³ <span style="color:var(--cyan-accent);">(3.0 Marks)</span>
+            (d) Calculate the molar concentration (molarity) of Solution B in mol/dm³ <span style="color:var(--cyan-accent);">(3.0 Marks)</span>
           </div>
           <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-            <input type="number" step="0.001" id="ansMolarityA" class="calc-input dynamic-calc-input" data-field="molarityA" data-step-id="step_d" placeholder="e.g. 0.100" oninput="onDynamicQ1CalculationChanged('molarityA', this.value)">
+            <input type="number" step="0.001" id="ansMolarityB" class="calc-input dynamic-calc-input" data-field="molarityB" data-step-id="step_d" placeholder="e.g. 0.100" oninput="onDynamicQ1CalculationChanged('molarityB', this.value)">
             <span style="font-weight:700;color:var(--text-muted);">mol/dm³ (M)</span>
           </div>
           <div id="stepFeedback_step_d" class="step-feedback-msg"></div>
@@ -789,10 +789,10 @@
         <!-- Default Step (e) -->
         <div class="calc-step-card" id="card_concGrams">
           <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
-            (e) Calculate the concentration of Solution A in g/dm³ (RFM = 36.5) <span style="color:var(--cyan-accent);">(2.0 Marks)</span>
+            (e) Calculate the concentration of Solution B in g/dm³ (RFM = 40.0) <span style="color:var(--cyan-accent);">(2.0 Marks)</span>
           </div>
           <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-            <input type="number" step="0.01" id="ansConcGrams" class="calc-input dynamic-calc-input" data-field="concGrams" data-step-id="step_e" placeholder="e.g. 3.65" oninput="onDynamicQ1CalculationChanged('concGrams', this.value)">
+            <input type="number" step="0.01" id="ansConcGrams" class="calc-input dynamic-calc-input" data-field="concGrams" data-step-id="step_e" placeholder="e.g. 4.00" oninput="onDynamicQ1CalculationChanged('concGrams', this.value)">
             <span style="font-weight:700;color:var(--text-muted);">g/dm³</span>
           </div>
           <div id="stepFeedback_step_e" class="step-feedback-msg"></div>
@@ -1069,7 +1069,7 @@
 
 <script src="/shared/api.js"></script>
 <script src="/shared/page-transitions.js"></script>
-<script src="js/composite-engine.js?v=68"></script>
+<script src="js/composite-engine.js?v=69"></script>
 <script>
   requireStudentLogin();
   const user = getUser();
@@ -1556,10 +1556,10 @@
     // Hardcoded bulletproof KNEC fallback questions
     return [
       { id: 'step_a', letter: 'a', field: 'avgTitre', label: 'Calculate the average volume of Solution A used, V₁', marks: 1.0, marksLabel: '(1.0 Mark)', placeholder: 'e.g. 25.00', step: '0.01', unit: 'cm³' },
-      { id: 'step_b', letter: 'b', field: 'molesB', label: `Calculate the number of moles of solute in ${Number(q1?.pipetteVolume || 25.0).toFixed(1)} cm³ of Solution B`, marks: 2.0, marksLabel: '(2.0 Marks)', placeholder: 'e.g. 0.00250', step: '0.0001', unit: 'moles' },
-      { id: 'step_c', letter: 'c', field: 'molesA', label: 'Chemical reaction stoichiometry and moles of Solution A reacted in V₁', marks: 2.0, marksLabel: '(2.0 Marks)', placeholder: 'e.g. 0.00250', step: '0.0001', unit: 'moles of Solution A' },
-      { id: 'step_d', letter: 'd', field: 'molarityA', label: 'Calculate the molar concentration (molarity) of Solution A in mol/dm³', marks: 3.0, marksLabel: '(3.0 Marks)', placeholder: 'e.g. 0.100', step: '0.001', unit: 'mol/dm³ (M)' },
-      { id: 'step_e', letter: 'e', field: 'concGrams', label: `Calculate the concentration of Solution A in g/dm³ (RFM = ${q1?.acidRfm || 36.5})`, marks: 2.0, marksLabel: '(2.0 Marks)', placeholder: 'e.g. 3.65', step: '0.01', unit: 'g/dm³' }
+      { id: 'step_b', letter: 'b', field: 'molesA', label: 'Calculate the number of moles of Solution A (acid) in the average volume V₁ used', marks: 2.0, marksLabel: '(2.0 Marks)', placeholder: 'e.g. 0.00250', step: '0.0001', unit: 'moles of acid' },
+      { id: 'step_c', letter: 'c', field: 'molesB', label: `Determine the number of moles of Solution B (base) in ${Number(q1?.pipetteVolume || 25.0).toFixed(1)} cm³ of solution used`, marks: 2.0, marksLabel: '(2.0 Marks)', placeholder: 'e.g. 0.00250', step: '0.0001', unit: 'moles of base' },
+      { id: 'step_d', letter: 'd', field: 'molarityB', label: 'Calculate the molar concentration (molarity) of Solution B in mol/dm³', marks: 3.0, marksLabel: '(3.0 Marks)', placeholder: 'e.g. 0.100', step: '0.001', unit: 'mol/dm³ (M)' },
+      { id: 'step_e', letter: 'e', field: 'concGrams', label: `Calculate the concentration of Solution B in g/dm³ (RFM = ${q1?.baseRfm || 40.0})`, marks: 2.0, marksLabel: '(2.0 Marks)', placeholder: 'e.g. 4.00', step: '0.01', unit: 'g/dm³' }
     ];
   }
 

@@ -8,7 +8,7 @@
  * Standard KNEC Question 1 Calculation Schema Generators
  */
 function createStandardTitrationQuestions(q1Config) {
-  const rfmAcid = q1Config.acidRfm || 36.5;
+  const rfmBase = q1Config.baseRfm || 40.0;
   return [
     {
       id: 'step_a',
@@ -30,80 +30,82 @@ function createStandardTitrationQuestions(q1Config) {
     {
       id: 'step_b',
       letter: 'b',
-      field: 'molesB',
-      label: `Calculate the number of moles of solute in ${Number(q1Config.pipetteVolume || 25.0).toFixed(1)} cm³ of Solution B`,
+      field: 'molesA',
+      label: 'Calculate the number of moles of Solution A (acid) in the average volume V₁ used',
       marks: 2.0,
       marksLabel: '(2.0 Marks)',
       placeholder: 'e.g. 0.00250',
       step: '0.0001',
-      unit: 'moles',
-      calcTheoretical: (ctx) => (ctx.trueBaseMolarity * ctx.pipetteVol) / 1000.0,
-      calcEcf: (ctx) => (ctx.trueBaseMolarity * ctx.pipetteVol) / 1000.0,
-      check: (val, ctx, exp) => Math.abs(val - exp) / (exp || 1) <= 0.08,
-      feedbackSuccess: (val) => `✓ Correct: ${val} moles.`,
-      feedbackFail: (ctx, exp) => `Formula: (Molarity of Base × Pipette Volume) / 1000 = ${exp.toFixed(5)} mol.`,
-      working: (ctx) => `<b>(b) Moles of Solute in ${ctx.pipetteVol.toFixed(1)} cm³:</b> (${ctx.trueBaseMolarity.toFixed(3)} × ${ctx.pipetteVol.toFixed(1)}) / 1000 = <b>${((ctx.trueBaseMolarity * ctx.pipetteVol) / 1000.0).toFixed(5)} mol</b>`
+      unit: 'moles of acid',
+      calcTheoretical: (ctx) => (ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0,
+      calcEcf: (ctx) => {
+        const v1 = parseFloat(ctx.answers.avgTitre) || ctx.trueTitre;
+        return (ctx.trueAcidMolarity * v1) / 1000.0;
+      },
+      check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+      feedbackSuccess: (val) => `✓ Correct: ${val} moles of acid.`,
+      feedbackFail: (ctx, expTheo) => `Formula: (Molarity of Acid × V₁) / 1000 = ${expTheo.toFixed(5)} mol.`,
+      working: (ctx) => `<b>(b) Moles of Acid in V₁:</b> (${ctx.trueAcidMolarity.toFixed(3)} × ${ctx.v1.toFixed(2)}) / 1000 = <b>${((ctx.trueAcidMolarity * ctx.v1) / 1000.0).toFixed(5)} mol</b>`
     },
     {
       id: 'step_c',
       letter: 'c',
-      field: 'molesA',
-      label: `Chemical reaction stoichiometry and moles of Solution A reacted in V₁`,
+      field: 'molesB',
+      label: `Determine the number of moles of Solution B (base) in ${Number(q1Config.pipetteVolume || 25.0).toFixed(1)} cm³ of solution used`,
       marks: 2.0,
       marksLabel: '(2.0 Marks)',
       placeholder: 'e.g. 0.00250',
       step: '0.0001',
-      unit: 'moles of Solution A',
-      calcTheoretical: (ctx) => ((ctx.trueBaseMolarity * ctx.pipetteVol) / 1000.0) * (ctx.ratioA / ctx.ratioB),
+      unit: 'moles of base',
+      calcTheoretical: (ctx) => ((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0) * (ctx.ratioB / ctx.ratioA),
       calcEcf: (ctx) => {
-        const mb = parseFloat(ctx.answers.molesB) || ((ctx.trueBaseMolarity * ctx.pipetteVol) / 1000.0);
-        return mb * (ctx.ratioA / ctx.ratioB);
+        const ma = parseFloat(ctx.answers.molesA) || ((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0);
+        return ma * (ctx.ratioB / ctx.ratioA);
       },
       check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
-      feedbackSuccess: (val) => `✓ Correct: ${val} moles of Solution A.`,
-      feedbackFail: (ctx, expTheo) => `Expected around ${expTheo.toFixed(5)} mol based on mole ratio ${ctx.ratioA}:${ctx.ratioB}.`,
-      working: (ctx) => `<b>(c) Moles of Solution A:</b> Moles of B × (${ctx.ratioA}/${ctx.ratioB}) = <b>${(((ctx.trueBaseMolarity * ctx.pipetteVol) / 1000.0) * (ctx.ratioA / ctx.ratioB)).toFixed(5)} mol</b>`
+      feedbackSuccess: (val) => `✓ Correct: ${val} moles of base.`,
+      feedbackFail: (ctx, expTheo) => `Expected around ${expTheo.toFixed(5)} mol based on mole ratio ${ctx.ratioB}:${ctx.ratioA}.`,
+      working: (ctx) => `<b>(c) Moles of Solution B in pipette:</b> Moles of Acid × (${ctx.ratioB}/${ctx.ratioA}) = <b>${(((ctx.trueAcidMolarity * ctx.v1) / 1000.0) * (ctx.ratioB / ctx.ratioA)).toFixed(5)} mol</b>`
     },
     {
       id: 'step_d',
       letter: 'd',
-      field: 'molarityA',
-      label: 'Calculate the molar concentration (molarity) of Solution A in mol/dm³',
+      field: 'molarityB',
+      label: 'Calculate the molar concentration (molarity) of Solution B in mol/dm³',
       marks: 3.0,
       marksLabel: '(3.0 Marks)',
       placeholder: 'e.g. 0.100',
       step: '0.001',
       unit: 'mol/dm³ (M)',
-      calcTheoretical: (ctx) => ctx.trueAcidMolarity,
+      calcTheoretical: (ctx) => ctx.trueBaseMolarity,
       calcEcf: (ctx) => {
-        const ma = parseFloat(ctx.answers.molesA) || (((ctx.trueBaseMolarity * ctx.pipetteVol) / 1000.0) * (ctx.ratioA / ctx.ratioB));
-        const v1 = parseFloat(ctx.answers.avgTitre) || ctx.trueTitre;
-        return (ma * 1000.0) / (v1 || 25.0);
+        const mb = parseFloat(ctx.answers.molesB) || (((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0) * (ctx.ratioB / ctx.ratioA));
+        return (mb * 1000.0) / (ctx.pipetteVol || 25.0);
       },
       check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
-      feedbackSuccess: (val) => `✓ Correct: Molarity = ${val} mol/dm³.`,
-      feedbackFail: (ctx, expTheo) => `Formula: (Moles of Acid × 1000) / V₁ = ${expTheo.toFixed(3)} M.`,
-      working: (ctx) => `<b>(d) Molar Concentration of Acid:</b> (Moles of Acid × 1000) / V₁ = <b>${ctx.trueAcidMolarity.toFixed(3)} mol/dm³</b>`
+      feedbackSuccess: (val) => `✓ Correct: Molarity of Solution B = ${val} mol/dm³.`,
+      feedbackFail: (ctx, expTheo) => `Formula: (Moles of Base × 1000) / ${ctx.pipetteVol || 25.0} = ${expTheo.toFixed(3)} M.`,
+      working: (ctx) => `<b>(d) Molar Concentration of Base:</b> (Moles of Base × 1000) / ${ctx.pipetteVol || 25.0} = <b>${ctx.trueBaseMolarity.toFixed(3)} mol/dm³</b>`
     },
     {
       id: 'step_e',
       letter: 'e',
       field: 'concGrams',
-      label: `Calculate the concentration of Solution A in g/dm³ (RFM = ${rfmAcid})`,
+      label: `Calculate the concentration of Solution B in g/dm³ (RFM = ${rfmBase})`,
       marks: 2.0,
       marksLabel: '(2.0 Marks)',
-      placeholder: 'e.g. 3.65',
+      placeholder: 'e.g. 4.00',
       step: '0.01',
       unit: 'g/dm³',
-      calcTheoretical: (ctx) => ctx.trueAcidMolarity * rfmAcid,
+      calcTheoretical: (ctx) => ctx.trueBaseMolarity * rfmBase,
       calcEcf: (ctx) => {
-        const molarity = parseFloat(ctx.answers.molarityA) || ctx.trueAcidMolarity;
-        return molarity * rfmAcid;
+        const molarity = parseFloat(ctx.answers.molarityB) || ctx.trueBaseMolarity;
+        return molarity * rfmBase;
       },
       check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
       feedbackSuccess: (val) => `✓ Correct: Concentration = ${val} g/dm³.`,
-      feedbackFail: (ctx, expTheo) => `Formula: Molarity × RFM (${rfmAcid}) = ${expTheo.toFixed(2)} g/dm³.`,
-      working: (ctx) => `<b>(e) Mass Concentration of Acid:</b> ${ctx.trueAcidMolarity.toFixed(3)} M × ${rfmAcid} = <b>${(ctx.trueAcidMolarity * rfmAcid).toFixed(2)} g/dm³</b>`
+      feedbackFail: (ctx, expTheo) => `Formula: Molarity × RFM (${rfmBase}) = ${expTheo.toFixed(2)} g/dm³.`,
+      working: (ctx) => `<b>(e) Mass Concentration of Base:</b> ${ctx.trueBaseMolarity.toFixed(3)} M × ${rfmBase} = <b>${(ctx.trueBaseMolarity * rfmBase).toFixed(2)} g/dm³</b>`
     }
   ];
 }

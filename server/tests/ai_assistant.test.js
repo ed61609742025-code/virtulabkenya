@@ -11,6 +11,7 @@ const jwt = require('jsonwebtoken');
 
 const app = require('../index');
 const aiExamService = require('../services/aiExamAssistantService');
+const { CompositeExamEngine } = require('../../client/student/js/composite-engine.js');
 
 let server;
 let port = 0;
@@ -305,6 +306,65 @@ describe('VirtuLab Kenya — AI Teacher Exam Assistant Suite', () => {
     assert.ok(aiExamService.FALLBACK_PRESETS.classic);
     assert.strictEqual(aiExamService.FALLBACK_PRESETS.redox.examConfig.q1.ratioB, 5);
     assert.strictEqual(aiExamService.FALLBACK_PRESETS.classic.examConfig.q1.pipetteVolume, 25.0);
+  });
+
+  /* 7. STUDENT ENGINE INTEGRATION & STOICHIOMETRY SCORING */
+  it('CompositeExamEngine — should map ratioA/ratioB, backfill tests, and score non-1:1 ratios accurately', () => {
+    const engine = new CompositeExamEngine();
+    
+    // 1. Ratio mapping & acidRfm derivation
+    engine.applyConfig({
+      presetKey: 'custom',
+      q1: {
+        solutionA: '0.050 M Sulfuric(VI) Acid (H₂SO₄)',
+        solutionB: '0.100 M Sodium Hydroxide (NaOH)',
+        ratioA: 1,
+        ratioB: 2,
+        pipetteVolume: 25.0,
+        trueAcidMolarity: 0.050,
+        trueBaseMolarity: 0.100,
+        trueTitre: 25.00
+      },
+      q2: {
+        trueSaltKey: 'ZnSO4'
+      },
+      q3: {
+        trueOrganicKey: 'Ethanoic Acid'
+      }
+    });
+
+    assert.strictEqual(engine.preset.q1.moleRatioAcid, 1);
+    assert.strictEqual(engine.preset.q1.moleRatioBase, 2);
+    assert.strictEqual(engine.preset.q1.acidRfm, 98.0);
+    assert.strictEqual(engine.preset.q2.trueCation, 'Zn2+');
+    assert.strictEqual(engine.preset.q2.trueAnion, 'SO42-');
+    assert.strictEqual(engine.preset.q2.tests.length, 4);
+    assert.strictEqual(engine.preset.q3.trueFunctionalGroup, 'Carboxylic Acid (-COOH)');
+    assert.strictEqual(engine.preset.q3.tests.length, 4);
+
+    // 2. Worked solutions generation
+    const solutions = engine.generateWorkedSolutions();
+    assert.strictEqual(solutions.stepB.result, '0.00250 mol');
+    assert.strictEqual(solutions.stepC.result, '0.00125 mol');
+
+    // 3. Scoring accuracy
+    engine.q1Answers = {
+      avgTitre: '25.00',
+      molesB: '0.00250',
+      molesA: '0.00125',
+      molarityA: '0.050',
+      concGrams: '4.90'
+    };
+    engine.recordTrial(1, 25.00, 0.00);
+    engine.recordTrial(2, 25.00, 0.00);
+    engine.recordTrial(3, 25.00, 0.00);
+    engine.setConcordant(1, true);
+    engine.setConcordant(2, true);
+    engine.setConcordant(3, true);
+
+    const scoreResult = engine.calculateQ1Score();
+    assert.strictEqual(scoreResult.calcScore, 10.0);
+    assert.strictEqual(scoreResult.totalScore, 15.0);
   });
 
 });

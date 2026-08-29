@@ -482,7 +482,8 @@
           <span style="font-size:0.75rem;color:var(--text-muted);font-weight:700;">Prompt in English or Kiswahili</span>
         </div>
 
-        <textarea id="aiPromptInput" class="form-control" rows="3" placeholder="e.g. Set a challenging Form 4 Term 2 mock exam testing Redox titration of KMnO₄ with Mohr's salt, an unknown zinc sulfate salt, and an organic alkene test with bromine water..."></textarea>
+        <label for="aiPromptInput" class="sr-only" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;">Exam prompt instructions</label>
+        <textarea id="aiPromptInput" class="form-control" rows="3" aria-label="Exam prompt instructions" placeholder="e.g. Set a challenging Form 4 Term 2 mock exam testing Redox titration of KMnO₄ with Mohr's salt, an unknown zinc sulfate salt, and an organic alkene test with bromine water..."></textarea>
 
         <!-- Instant Template Chips -->
         <div style="margin-top:12px;">
@@ -500,7 +501,7 @@
         <!-- Options Grid -->
         <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:14px;margin-top:14px;border-top:1px solid var(--card-border);padding-top:16px;">
           <div>
-            <label style="font-size:0.78rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Target Form Level</label>
+            <label for="aiFormSelect" style="font-size:0.78rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Target Form Level</label>
             <select id="aiFormSelect" class="form-control">
               <option value="Form 4" selected>Form 4 (KCSE Candidate)</option>
               <option value="Form 3">Form 3 (Senior Secondary)</option>
@@ -509,7 +510,7 @@
             </select>
           </div>
           <div>
-            <label style="font-size:0.78rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Exam Format</label>
+            <label for="aiTypeSelect" style="font-size:0.78rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Exam Format</label>
             <select id="aiTypeSelect" class="form-control">
               <option value="kcseComposite" selected>🏆 KCSE Composite Mock (40 Marks, 3 Questions)</option>
               <option value="acidBase">Acid-Base Volumetric Titration</option>
@@ -522,7 +523,7 @@
             </select>
           </div>
           <div>
-            <label style="font-size:0.78rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Difficulty Standard</label>
+            <label for="aiDiffSelect" style="font-size:0.78rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Difficulty Standard</label>
             <select id="aiDiffSelect" class="form-control">
               <option value="standard" selected>KNEC National Standard</option>
               <option value="foundational">Foundational Revision (Supportive)</option>
@@ -530,7 +531,7 @@
             </select>
           </div>
           <div>
-            <label style="font-size:0.78rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Allocated Duration</label>
+            <label for="aiDurationInput" style="font-size:0.78rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Allocated Duration</label>
             <input type="number" id="aiDurationInput" class="form-control" value="135" min="30" max="180">
           </div>
         </div>
@@ -549,12 +550,12 @@
           <span style="font-size:0.75rem;color:var(--text-muted);font-weight:700;">Multimodal Vision &amp; PDF Extraction</span>
         </div>
 
-        <div class="ai-drop-zone" id="aiDropZone" onclick="document.getElementById('aiFileInput').click()" ondragover="handleAiDragOver(event)" ondragleave="handleAiDragLeave(event)" ondrop="handleAiFileDrop(event)">
+        <div class="ai-drop-zone" id="aiDropZone" role="button" tabindex="0" aria-label="Upload exam paper PDF, photo scan, or text file" onclick="document.getElementById('aiFileInput').click()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('aiFileInput').click();}" ondragover="handleAiDragOver(event)" ondragleave="handleAiDragLeave(event)" ondrop="handleAiFileDrop(event)">
           <input type="file" id="aiFileInput" style="display:none;" accept=".pdf,.png,.jpg,.jpeg,.webp,.txt" onchange="handleAiFileSelect(event)">
           <div id="aiDropZoneNotice">
             <span class="ai-drop-icon">📑</span>
             <div style="font-weight:800;font-size:0.95rem;color:var(--heading-color);margin-bottom:4px;">Drag and drop exam paper PDF, photo scan, or text file here</div>
-            <div style="font-size:0.8rem;color:var(--text-muted);">Supports PDF, PNG, JPG, JPEG, WEBP, and TXT files up to 20MB · or click to browse</div>
+            <div style="font-size:0.8rem;color:var(--text-muted);">Supports PDF, PNG, JPG, JPEG, WEBP, and TXT files up to 20MB · or click / press Enter to browse</div>
           </div>
           <div id="aiFilePreviewWrap" class="ai-file-preview-card" style="display:none;" onclick="event.stopPropagation()">
             <div style="display:flex;align-items:center;gap:12px;">
@@ -569,12 +570,12 @@
         </div>
 
         <div style="margin-bottom:14px;">
-          <label style="font-size:0.8rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Or Paste Raw Exam Text (Optional):</label>
+          <label for="aiPastedText" style="font-size:0.8rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Or Paste Raw Exam Text (Optional):</label>
           <textarea id="aiPastedText" class="form-control" rows="3" placeholder="Paste questions, titration tables, or qualitative procedures directly if you prefer..."></textarea>
         </div>
 
         <div style="margin-bottom:18px;">
-          <label style="font-size:0.8rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Teacher Notes or Special Constraints (Optional):</label>
+          <label for="aiUploadNotes" style="font-size:0.8rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Teacher Notes or Special Constraints (Optional):</label>
           <input type="text" id="aiUploadNotes" class="form-control" placeholder="e.g. Prioritize Q1 and Q2 from this paper, or adjust titration to 0.1M">
         </div>
 
@@ -586,7 +587,7 @@
       </div>
 
       <!-- Animated Generating State -->
-      <div id="aiGeneratingState" class="ai-generating-overlay" style="display:none;">
+      <div id="aiGeneratingState" class="ai-generating-overlay" role="status" aria-live="polite" style="display:none;">
         <div class="ai-pulse-spinner"></div>
         <div style="font-weight:800;font-size:1.1rem;font-family:var(--font-heading);color:var(--heading-color);" id="aiGenStatusText">Synthesizing KNEC Chemistry Exam...</div>
         <div style="font-size:0.82rem;color:var(--text-muted);">Walimu AI is calculating balanced chemical stoichiometry, unknown salt tests, and official mark rubrics</div>
@@ -598,57 +599,59 @@
         <!-- Summary & Actions Header -->
         <div class="ai-results-header">
           <div style="flex:1;min-width:280px;">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap;">
-              <span class="pill pill-ok" id="resBadgeType">🏆 KCSE Composite Mock</span>
-              <span class="pill pill-info" id="resBadgeForm">Form 4</span>
-              <span class="pill" style="background:var(--card-bg-hover);color:var(--text-muted);" id="resBadgeDuration">135 Mins</span>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap;">
+              <span class="badge" style="background:#10B981;color:#fff;" id="resBadgeForm">Form 4</span>
+              <span class="badge" style="background:rgba(14,165,233,0.2);color:#0284C7;" id="resBadgeType">🏆 Composite 40M</span>
+              <span class="badge" style="background:rgba(245,158,11,0.2);color:#D97706;" id="resBadgeDuration">135 Mins</span>
             </div>
-            <input type="text" id="resExamTitle" class="form-control" style="font-weight:800;font-size:1.15rem;font-family:var(--font-heading);color:var(--heading-color);background:transparent;border-color:transparent;padding-left:0;" value="KCSE Chemistry Paper 3 Practical Exam">
-            <div id="resExamInstructions" style="font-size:0.8rem;color:var(--text-muted);margin-top:2px;"></div>
+            <input type="text" id="resExamTitle" class="form-control" aria-label="Exam Title" style="font-size:1.15rem;font-weight:800;font-family:var(--font-heading);color:var(--heading-color);background:transparent;border:1px dashed var(--card-border);padding:6px 10px;" value="KCSE Chemistry Practical Examination">
           </div>
           
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-            <button type="button" class="btn btn-secondary" onclick="openInManualStudio()" title="Transfer configuration to manual assignment form">✏️ Edit in Studio</button>
-            <button type="button" class="btn btn-secondary" onclick="printAiExamBooklet()" title="Print student exam paper and marking scheme">🖨️ Print Booklet</button>
-            <button type="button" class="btn btn-secondary" onclick="exportAiExamJson()" title="Download JSON blueprint">📋 Export JSON</button>
-            <button type="button" id="btnPublishAiExam" class="btn btn-primary" onclick="publishAiExamToClass()" style="background:linear-gradient(135deg, #10B981, #059669);font-weight:800;padding:10px 20px;border-radius:100px;box-shadow:0 4px 14px rgba(16,185,129,0.3);">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button type="button" class="btn btn-outline" onclick="exportAiExamJson()" title="Download JSON blueprint">
+              <span>💾 Export JSON</span>
+            </button>
+            <button type="button" class="btn btn-outline" onclick="printAiExamBooklet()" title="Print complete exam booklet">
+              <span>🖨️ Print Booklet</span>
+            </button>
+            <button type="button" class="btn btn-primary" onclick="publishAiExamToClass()" style="background:linear-gradient(135deg, #10B981, #059669);font-weight:800;box-shadow:0 4px 12px rgba(16,185,129,0.35);">
               <span>🚀 Publish Exam to Class</span>
             </button>
           </div>
         </div>
 
         <!-- 4 Sub-Tabs Strip -->
-        <div class="ai-subtab-strip">
-          <button type="button" class="ai-subtab-btn active" id="subTabBtn_blueprint" onclick="switchAiResultSubTab('blueprint')">
+        <div class="ai-subtab-strip" role="tablist" aria-label="AI Exam Assistant View Tabs">
+          <button type="button" class="ai-subtab-btn active" id="subTabBtn_blueprint" role="tab" aria-selected="true" aria-controls="subTabPane_blueprint" onclick="switchAiResultSubTab('blueprint')">
             <span>⚙️ Simulation Blueprint</span>
           </button>
-          <button type="button" class="ai-subtab-btn" id="subTabBtn_studentPaper" onclick="switchAiResultSubTab('studentPaper')">
+          <button type="button" class="ai-subtab-btn" id="subTabBtn_studentPaper" role="tab" aria-selected="false" aria-controls="subTabPane_studentPaper" onclick="switchAiResultSubTab('studentPaper')">
             <span>📜 Student Question Paper</span>
           </button>
-          <button type="button" class="ai-subtab-btn" id="subTabBtn_markingScheme" onclick="switchAiResultSubTab('markingScheme')">
+          <button type="button" class="ai-subtab-btn" id="subTabBtn_markingScheme" role="tab" aria-selected="false" aria-controls="subTabPane_markingScheme" onclick="switchAiResultSubTab('markingScheme')">
             <span>🎯 KNEC Marking Scheme</span>
           </button>
-          <button type="button" class="ai-subtab-btn" id="subTabBtn_technicianGuide" onclick="switchAiResultSubTab('technicianGuide')">
+          <button type="button" class="ai-subtab-btn" id="subTabBtn_technicianGuide" role="tab" aria-selected="false" aria-controls="subTabPane_technicianGuide" onclick="switchAiResultSubTab('technicianGuide')">
             <span>🧪 Lab Technician Instructions</span>
           </button>
         </div>
 
         <!-- Tab Contents -->
-        <div id="subTabPane_blueprint"></div>
-        <div id="subTabPane_studentPaper" style="display:none;"></div>
-        <div id="subTabPane_markingScheme" style="display:none;"></div>
-        <div id="subTabPane_technicianGuide" style="display:none;"></div>
+        <div id="subTabPane_blueprint" role="tabpanel" aria-labelledby="subTabBtn_blueprint"></div>
+        <div id="subTabPane_studentPaper" role="tabpanel" aria-labelledby="subTabBtn_studentPaper" style="display:none;"></div>
+        <div id="subTabPane_markingScheme" role="tabpanel" aria-labelledby="subTabBtn_markingScheme" style="display:none;"></div>
+        <div id="subTabPane_technicianGuide" role="tabpanel" aria-labelledby="subTabBtn_technicianGuide" style="display:none;"></div>
 
         <!-- Conversational Refinement Drawer ("Walimu AI Co-Pilot") -->
         <div class="ai-refine-drawer">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
             <span style="font-size:1.1rem;">💬</span>
             <span style="font-weight:800;font-size:0.88rem;color:var(--heading-color);">Refine with Walimu AI Co-Pilot</span>
-            <span style="font-size:0.75rem;color:var(--text-muted);margin-left:auto;">Need modifications? Describe changes below:</span>
+            <span style="font-size:0.75rem;color:var(--text-muted);margin-left:auto;">Need modifications? Press Enter to refine:</span>
           </div>
           
           <div class="ai-refine-input-row">
-            <input type="text" id="aiRefineInput" class="ai-refine-input" placeholder="e.g. 'Use 20 cm³ pipette instead', 'Change indicator to methyl orange', 'Replace lead with zinc'...">
+            <input type="text" id="aiRefineInput" class="ai-refine-input" aria-label="Walimu AI Co-Pilot instructions" placeholder="e.g. 'Use 20 cm³ pipette instead', 'Change indicator to methyl orange', 'Replace lead with zinc'..." onkeydown="if(event.key==='Enter'){event.preventDefault();submitAiRefinement();}">
             <button type="button" class="btn btn-primary" onclick="submitAiRefinement()" style="padding:9px 18px;font-weight:800;border-radius:8px;">
               <span>Refine ⚡</span>
             </button>

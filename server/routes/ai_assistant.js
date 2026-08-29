@@ -8,11 +8,16 @@ const asyncHandler = require('../utils/asyncHandler');
 const { ValidationError } = require('../utils/AppError');
 const aiExamService = require('../services/aiExamAssistantService');
 
+const { aiAssistantLimiter } = require('../middleware/rateLimiter');
+
 const router = express.Router();
 
-// Require teacher role for all exam setting assistant routes
+// Apply AI rate limiter to protect Gemini quota
+router.use(aiAssistantLimiter);
+
+// Require teacher or admin role for all exam setting assistant routes
 router.use(authMiddleware);
-router.use(authMiddleware.requireRole('teacher'));
+router.use(authMiddleware.requireRole(['teacher', 'admin']));
 
 /**
  * POST /api/ai-assistant/parse-paper
@@ -20,6 +25,10 @@ router.use(authMiddleware.requireRole('teacher'));
  */
 router.post('/parse-paper', asyncHandler(async (req, res) => {
   const { fileData, mimeType, textContent, teacherNotes } = req.body;
+
+  if (fileData && typeof fileData !== 'string') {
+    throw new ValidationError('Invalid file data format.');
+  }
 
   if (!fileData && !textContent) {
     throw new ValidationError('Please provide an exam paper file or paste the exam text.');

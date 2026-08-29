@@ -191,7 +191,7 @@ const FALLBACK_PRESETS = {
             id: 'q2_anion',
             prompt: '(iv) To 2 cm³ of solution Y, add 3 drops of dilute HNO₃ followed by 3 drops of Potassium Iodide (KI) solution.',
             correctObs: 'Bright yellow precipitate formed on addition of potassium iodide',
-            correctInf: 'Pb²⁺ confirmed; NO₃⁻ inferred present'
+            correctInf: 'Pb²⁺ confirmed present'
           }
         ]
       },
@@ -207,7 +207,7 @@ const FALLBACK_PRESETS = {
             id: 'q3_ignition',
             prompt: '(i) Place 2 drops of Liquid Z on a metallic spatula and ignite in a non-luminous Bunsen flame.',
             correctObs: 'Burns with a clean, non-sooty pale blue flame; leaves no carbon residue',
-            correctInf: 'Saturated organic compound / low carbon-to-hydrogen ratio; alkanol present'
+            correctInf: 'Saturated organic compound / low carbon-to-hydrogen ratio'
           },
           {
             id: 'q3_litmus',
@@ -252,15 +252,15 @@ async function callGeminiAssistant({ prompt, fileData = null, mimeType = null, m
   }
 
   const model = process.env.GEMINI_MODEL || DEFAULT_MODEL;
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 
   const parts = [{ text: prompt }];
 
-  if (fileData && mimeType) {
+  if (fileData && mimeType && typeof fileData === 'string') {
     // Strip data URL header if present (e.g. data:image/png;base64,...)
     const cleanBase64 = fileData.includes('base64,')
-      ? fileData.split('base64,')[1]
-      : fileData;
+      ? fileData.split('base64,')[1].replace(/[\r\n\s]/g, '')
+      : fileData.replace(/[\r\n\s]/g, '');
 
     parts.push({
       inlineData: {
@@ -272,7 +272,11 @@ async function callGeminiAssistant({ prompt, fileData = null, mimeType = null, m
 
   const response = await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': apiKey
+    },
+    signal: AbortSignal.timeout(30000),
     body: JSON.stringify({
       contents: [{ parts }],
       generationConfig: {
@@ -306,11 +310,11 @@ async function callGeminiAssistant({ prompt, fileData = null, mimeType = null, m
  * Clean and parse JSON safely from Gemini output.
  */
 function cleanAndParseJson(rawText) {
+  if (!rawText || typeof rawText !== 'string') return {};
   let cleaned = rawText.trim();
-  if (cleaned.startsWith('```json')) {
-    cleaned = cleaned.replace(/^```json\s*/i, '').replace(/```$/i, '').trim();
-  } else if (cleaned.startsWith('```')) {
-    cleaned = cleaned.replace(/^```\s*/i, '').replace(/```$/i, '').trim();
+  const match = cleaned.match(/```(?:json)?\s*([\s\S]*?)\s*```/) || cleaned.match(/(\{[\s\S]*\})/);
+  if (match && match[1]) {
+    cleaned = match[1].trim();
   }
   return JSON.parse(cleaned);
 }
@@ -329,13 +333,16 @@ function normalizeExamStructure(parsed, sourceMeta = {}) {
     durationMinutes: Number(parsed.durationMinutes) || (isComposite ? 135 : 60),
     examConfig: parsed.examConfig || {},
     markingScheme: parsed.markingScheme || '',
-    confidentialPrepGuide: parsed.confidentialPrepGuide || '',
-    meta: {
-      generatedAt: new Date().toISOString(),
-      source: sourceMeta.source || 'ai_generated',
-      ...sourceMeta
-    }
+    confidentialPrepGuide: parsed.confidentialPrepGuide || ''
   };
+
+  const metaObj = {
+    generatedAt: new Date().toISOString(),
+    source: sourceMeta.source || 'ai_generated',
+    ...sourceMeta
+  };
+  normalized.meta = metaObj;
+  normalized._meta = metaObj;
 
   // Ensure examConfig has proper defaults for composite exams
   if (isComposite) {
@@ -441,7 +448,12 @@ ${textContent ? `Extracted Paper Text:\n${textContent}` : ''}`;
       ? FALLBACK_PRESETS.redox
       : FALLBACK_PRESETS.classic;
 
-    return normalizeExamStructure(fallback, { source: 'smart_fallback', errorReason: err.message });
+    return normalizeExamStructure(fallback, {
+      source: 'smart_fallback',
+      isFallback: true,
+      errorReason: err.message,
+      warning: 'AI cloud parsing was unavailable. VirtuLab loaded a standard KNEC-aligned examination blueprint.'
+    });
   }
 }
 
@@ -454,69 +466,68 @@ async function generateExamFromIdea({ prompt, formLevel = 'Form 4', moduleType =
 Teacher's Idea / Request:
 "${prompt}"
 
-Exam Specifications:
-- Form Level: ${formLevel}
-- Target Format: ${moduleType}
-- Difficulty Level: ${difficulty} (standard KNEC, foundational revision, or merit challenge)
-- Allocated Time: ${durationMinutes} minutes
+Form Level: ${formLevel}
+Exam Module: ${moduleType}
+Target Difficulty: ${difficulty}
+Allotted Time: ${durationMinutes} minutes
 
-Requirements:
-1. Ensure all chemical equations are 100% balanced.
-2. Ensure titration stoichiometry and expected titre volumes are realistic (between 15.00 cm³ and 30.00 cm³).
-3. Select valid KNEC secondary syllabus qualitative ions (Cations: Pb²⁺, Cu²⁺, Fe²⁺, Fe³⁺, Al³⁺, Zn²⁺, Ca²⁺, NH₄⁺; Anions: SO₄²⁻, Cl⁻, CO₃²⁻, NO₃⁻).
-4. Select valid organic substances (Ethanol, Ethanoic acid, Cyclohexene, Hexane, Ethyl Ethanoate).
-5. Provide a comprehensive KNEC scoring scheme and a laboratory technician confidential prep guide.
+Generate a comprehensive KNEC Paper 3 (Chemistry Practical - 233/3) Examination Blueprint in valid JSON format.
+The exam must strictly follow the KNEC 40-mark composite syllabus:
+- Question 1 (15 Marks): Volumetric Analysis (Titration)
+- Question 2 (15 Marks): Inorganic Qualitative Analysis (Unknown Salt Solid Y)
+- Question 3 (10 Marks): Organic Chemistry Qualitative Analysis (Unknown Liquid Z)
 
-Respond in exact valid JSON matching this schema:
+Strict Response JSON Schema:
 {
-  "title": "<Exam Title>",
+  "title": "<Concise official title, e.g. Form 4 Chemistry Paper 3 Term 2 Mock Practical>",
   "formLevel": "${formLevel}",
-  "titrationType": "${moduleType}",
-  "instructions": "<General candidate instructions>",
+  "titrationType": "kcseComposite",
+  "instructions": "<Standard KNEC examination laboratory instructions>",
   "durationMinutes": ${durationMinutes},
   "examConfig": {
     "presetKey": "custom",
     "q1": {
-      "solutionA": "<Solution A name & conc>",
-      "solutionB": "<Solution B name & conc>",
-      "ratioA": <integer>,
-      "ratioB": <integer>,
-      "pipetteVolume": <25.0 or 20.0>,
-      "indicator": "<'phenolphthalein', 'methylOrange', 'screenedMethylOrange', or 'starch'>",
-      "equation": "<balanced equation>",
-      "trueAcidMolarity": <number>,
-      "trueBaseMolarity": <number>,
-      "trueTitre": <number>,
-      "marks": 15,
-      "instructions": "<Q1 instructions>"
+      "solutionA": "<e.g. 0.050 M Sulfuric(VI) Acid>",
+      "solutionB": "<e.g. 0.100 M Sodium Hydroxide>",
+      "pipetteVolume": 25.0,
+      "indicator": "phenolphthalein",
+      "ratioA": 1,
+      "ratioB": 2,
+      "acidRfm": 98.0,
+      "trueAcidMolarity": 0.050,
+      "trueBaseMolarity": 0.100,
+      "trueTitre": 25.00,
+      "instructions": "<Laboratory instructions for Question 1>"
     },
     "q2": {
-      "sampleName": "<e.g. 'Solid Y'>",
-      "sampleDesc": "<description>",
-      "trueSaltKey": "<chemical key>",
-      "trueSaltName": "<full salt name>",
-      "trueCation": "<cation>",
-      "trueAnion": "<anion>",
+      "sampleName": "Solid Y",
+      "sampleDesc": "<Physical appearance & description>",
+      "trueSaltKey": "<e.g. ZnSO4, Pb(NO3)2, CuSO4, FeSO4, FeCl3, CaCl2, NH4Cl>",
+      "trueCation": "<e.g. Zn2+>",
+      "trueAnion": "<e.g. SO42->",
       "marks": 15,
       "tests": [
-        { "id": "q2_t1", "prompt": "<procedure>", "correctObs": "<obs>", "correctInf": "<inf>" },
-        { "id": "q2_t2", "prompt": "<procedure>", "correctObs": "<obs>", "correctInf": "<inf>" },
-        { "id": "q2_t3", "prompt": "<procedure>", "correctObs": "<obs>", "correctInf": "<inf>" },
-        { "id": "q2_t4", "prompt": "<procedure>", "correctObs": "<obs>", "correctInf": "<inf>" }
+        {
+          "id": "<e.g. q2_appearance, q2_naoh, q2_nh3, q2_anion>",
+          "prompt": "<Full KNEC procedure instruction>",
+          "correctObs": "<Expected laboratory observation>",
+          "correctInf": "<Correct chemical deduction / inference>"
+        }
       ]
     },
     "q3": {
-      "sampleName": "<e.g. 'Liquid Z'>",
-      "sampleDesc": "<description>",
-      "trueOrganicKey": "<organic key>",
-      "trueOrganicName": "<full name>",
-      "trueFunctionalGroup": "<functional group>",
+      "sampleName": "Liquid Z",
+      "sampleDesc": "<Physical appearance & description>",
+      "trueOrganicKey": "<e.g. Ethanol, Ethanoic Acid, Cyclohexene, Hexane>",
+      "trueFunctionalGroup": "<e.g. Alkanol (-OH), Carboxylic Acid (-COOH), Alkene (>C=C<)>",
       "marks": 10,
       "tests": [
-        { "id": "q3_t1", "prompt": "<procedure>", "correctObs": "<obs>", "correctInf": "<inf>" },
-        { "id": "q3_t2", "prompt": "<procedure>", "correctObs": "<obs>", "correctInf": "<inf>" },
-        { "id": "q3_t3", "prompt": "<procedure>", "correctObs": "<obs>", "correctInf": "<inf>" },
-        { "id": "q3_t4", "prompt": "<procedure>", "correctObs": "<obs>", "correctInf": "<inf>" }
+        {
+          "id": "<e.g. q3_ignition, q3_litmus, q3_kmno4, q3_nahco3>",
+          "prompt": "<Full KNEC procedure instruction>",
+          "correctObs": "<Expected observation>",
+          "correctInf": "<Correct inference>"
+        }
       ]
     }
   },
@@ -539,7 +550,13 @@ Respond in exact valid JSON matching this schema:
     modified.durationMinutes = durationMinutes;
     if (prompt) modified.title = `KCSE Chemistry Practical Exam — ${prompt.slice(0, 45)}...`;
 
-    return normalizeExamStructure(modified, { source: 'smart_fallback', promptText: prompt, errorReason: err.message });
+    return normalizeExamStructure(modified, {
+      source: 'smart_fallback',
+      isFallback: true,
+      promptText: prompt,
+      errorReason: err.message,
+      warning: 'AI cloud synthesis was unavailable. VirtuLab generated a standard KNEC-aligned examination blueprint.'
+    });
   }
 }
 
@@ -590,7 +607,7 @@ function getSaltTestSequence(saltKey) {
       return [
         { id: 't1', prompt: '(i) Describe physical appearance of Solid Y', correctObs: 'White deliquescent solid / crystals', correctInf: 'Non-transition metal salt' },
         { id: 't2', prompt: '(ii) Dissolve in water, add 2M NaOH dropwise until in excess', correctObs: 'White precipitate, insoluble in excess NaOH', correctInf: 'Ca²⁺ or Mg²⁺ present' },
-        { id: 't3', prompt: '(iii) To portion 2, add 2M NH₃ dropwise until in excess', correctObs: 'No precipitate formed with aqueous ammonia', correctInf: 'Ca²⁺ confirmed' },
+        { id: 't3', prompt: '(iii) To portion 2, add 2M NH₃ dropwise until in excess', correctObs: 'No precipitate formed with aqueous ammonia', correctInf: 'Ca²⁺ present (or group 1/2; transition metal ions absent)' },
         { id: 't4', prompt: '(iv) Flame test with clean nichrome wire in non-luminous flame', correctObs: 'Brick-red / orange-red flame', correctInf: 'Ca²⁺ confirmed' },
         { id: 't5', prompt: '(v) To portion 3, add dilute HNO₃ followed by AgNO₃', correctObs: 'White precipitate formed, soluble in aqueous NH₃', correctInf: 'Cl⁻ confirmed' }
       ];
@@ -871,24 +888,34 @@ function applySmartRefinement(currentDraft, instruction) {
   if (lower.includes('sulfuric') || lower.includes('h2so4') || lower.includes('dibasic')) {
     q1.ratioA = 1;
     q1.ratioB = 2;
+    q1.acidRfm = 98.0;
     q1.equation = 'H₂SO₄(aq) + 2NaOH(aq) → Na₂SO₄(aq) + 2H₂O(l)';
-    q1.solutionA = (q1.solutionA || '0.100 M').replace(/Hydrochloric Acid.*|\(HCl\)/i, '') + ' Sulfuric(VI) Acid (H₂SO₄)';
+    const concMatch = (q1.solutionA || '').match(/\d+(?:\.\d+)?\s*M/i);
+    const conc = concMatch ? concMatch[0] : `${(q1.trueAcidMolarity || 0.050).toFixed(3)} M`;
+    q1.solutionA = `${conc} Sulfuric(VI) Acid (H₂SO₄)`;
     changes.push('Titration configured as dibasic Sulfuric Acid (1:2 mole ratio)');
   } else if (lower.includes('carbonate') || lower.includes('na2co3')) {
     q1.ratioA = 2;
     q1.ratioB = 1;
+    q1.baseRfm = 106.0;
     q1.equation = '2HCl(aq) + Na₂CO₃(aq) → 2NaCl(aq) + CO₂(g) + H₂O(l)';
-    q1.solutionB = (q1.solutionB || '0.100 M').replace(/Sodium Hydroxide.*|\(NaOH\)/i, '') + ' Sodium Carbonate (Na₂CO₃)';
+    const concMatch = (q1.solutionB || '').match(/\d+(?:\.\d+)?\s*M/i);
+    const conc = concMatch ? concMatch[0] : `${(q1.trueBaseMolarity || 0.050).toFixed(3)} M`;
+    q1.solutionB = `${conc} Sodium Carbonate (Na₂CO₃)`;
     changes.push('Titration configured as Sodium Carbonate neutralization (2:1 mole ratio)');
   }
 
   // Recalculate concordant titre with updated concentrations / stoichiometry / pipette
-  const nA = q1.ratioA || 1;
-  const nB = q1.ratioB || 1;
-  const cA = q1.trueAcidMolarity || 0.100;
-  const cB = q1.trueBaseMolarity || 0.100;
-  const vB = q1.pipetteVolume || 25.0;
-  q1.trueTitre = Number(((nA * cB * vB) / (nB * cA)).toFixed(2));
+  const nA = Number(q1.ratioA) || 1;
+  const nB = Number(q1.ratioB) || 1;
+  const cA = Number(q1.trueAcidMolarity) || 0.100;
+  const cB = Number(q1.trueBaseMolarity) || 0.100;
+  const vB = Number(q1.pipetteVolume) || 25.0;
+  if (nB > 0 && cA > 0) {
+    q1.trueTitre = Number(((nA * cB * vB) / (nB * cA)).toFixed(2));
+  } else {
+    q1.trueTitre = 25.00;
+  }
   if (newConcA !== null || newConcB !== null) {
     changes.push(`Target concordant titre recalculated: ${q1.trueTitre.toFixed(2)} cm³`);
   }

@@ -1080,9 +1080,12 @@
 
     // Reagents shelf initialization
     const titrantChip = document.getElementById('q1TitrantChip');
-    if (titrantChip) titrantChip.textContent = `Titrant: Sol. A (${p.q1.solutionA.split(' ')[0]})`;
+    if (titrantChip) {
+      const solA = p.q1?.solutionA || '';
+      titrantChip.textContent = `Titrant: Sol. A (${solA ? solA.split(' ')[0] : 'Acid'})`;
+    }
     const indicatorChip = document.getElementById('q1IndicatorChip');
-    if (indicatorChip) indicatorChip.textContent = `Indicator: ${p.q1.indicator || 'Phenolphthalein'}`;
+    if (indicatorChip) indicatorChip.textContent = `Indicator: ${p.q1?.indicator || 'Phenolphthalein'}`;
 
     // Handle Linked Assignment Header Banner
     if (assignmentId) {
@@ -1109,11 +1112,30 @@
                 const pCustom = engine.preset;
                 if (document.getElementById('examSubTitle')) document.getElementById('examSubTitle').textContent = match.title + ' — Code 233/3';
                 if (document.getElementById('printExamTitle')) document.getElementById('printExamTitle').textContent = match.title.toUpperCase();
-                if (document.getElementById('q1SolAName')) document.getElementById('q1SolAName').textContent = 'Solution A: ' + (pCustom.q1.solutionA || '');
-                if (document.getElementById('q1SolBName')) document.getElementById('q1SolBName').textContent = 'Solution B: ' + (pCustom.q1.solutionB || '');
-                if (document.getElementById('q1IndicatorName')) document.getElementById('q1IndicatorName').textContent = pCustom.q1.indicator || 'Phenolphthalein Indicator';
-                if (document.getElementById('q1EquationDisplay')) document.getElementById('q1EquationDisplay').textContent = pCustom.q1.equation || '';
-                if (document.getElementById('q1IndicatorChip')) document.getElementById('q1IndicatorChip').textContent = `Indicator: ${pCustom.q1.indicator || 'Phenolphthalein'}`;
+                if (document.getElementById('q1SolAName')) document.getElementById('q1SolAName').textContent = 'Solution A: ' + (pCustom.q1?.solutionA || '');
+                if (document.getElementById('q1SolBName')) document.getElementById('q1SolBName').textContent = 'Solution B: ' + (pCustom.q1?.solutionB || '');
+                if (document.getElementById('q1IndicatorName')) document.getElementById('q1IndicatorName').textContent = pCustom.q1?.indicator || 'Phenolphthalein Indicator';
+                if (document.getElementById('q1EquationDisplay')) document.getElementById('q1EquationDisplay').textContent = pCustom.q1?.equation || '';
+                if (document.getElementById('q1IndicatorChip')) document.getElementById('q1IndicatorChip').textContent = `Indicator: ${pCustom.q1?.indicator || 'Phenolphthalein'}`;
+                if (document.getElementById('q1TitrantChip')) {
+                  const solACust = pCustom.q1?.solutionA || '';
+                  document.getElementById('q1TitrantChip').textContent = `Titrant: Sol. A (${solACust ? solACust.split(' ')[0] : 'Acid'})`;
+                }
+
+                // Hydrate Q2 & Q3 sample labels
+                if (document.getElementById('q2SampleName') && pCustom.q2?.sampleName) {
+                  document.getElementById('q2SampleName').textContent = pCustom.q2.sampleName;
+                }
+                if (document.getElementById('q2SampleDescText') && pCustom.q2?.sampleDesc) {
+                  document.getElementById('q2SampleDescText').textContent = pCustom.q2.sampleDesc;
+                }
+                if (document.getElementById('q3SampleName') && pCustom.q3?.sampleName) {
+                  document.getElementById('q3SampleName').textContent = pCustom.q3.sampleName;
+                }
+                if (document.getElementById('q3SampleDescText') && pCustom.q3?.sampleDesc) {
+                  document.getElementById('q3SampleDescText').textContent = pCustom.q3.sampleDesc;
+                }
+
                 renderQ2TestsGrid();
                 renderQ3TestsGrid();
               } catch (cfgErr) {
@@ -1503,13 +1525,20 @@
 
   // ── Render Q2 Question Cards with Realistic SVG Test Tubes ───────────
   function renderQ2TestsGrid() {
-    const p = engine.preset.q2;
+    const p = engine?.preset?.q2 || {};
     const grid = document.getElementById('q2TestsGrid');
     if (!grid) return;
 
-    grid.innerHTML = p.tests.map((t, idx) => {
+    const tests = Array.isArray(p.tests) ? p.tests : [];
+    if (!tests.length) {
+      grid.innerHTML = '<div style="padding:20px; color:var(--text-muted); text-align:center;">No qualitative tests configured for this sample.</div>';
+      return;
+    }
+
+    grid.innerHTML = tests.map((t, idx) => {
       const st = q2TestStates[t.id] || { performed: false, stage: 'idle' };
       const letter = String.fromCharCode(97 + idx);
+      const promptTitle = t?.prompt ? (t.prompt.includes(') ') ? t.prompt.split(') ')[1] : t.prompt) : `Test Procedure (${letter})`;
 
       let actionBtn = '';
       if (!st.performed) {
@@ -1531,7 +1560,7 @@
           <div class="test-card-top">
             <div class="test-header-left">
               <span class="test-step-badge">(${letter})</span>
-              <h3 class="test-title-text">${t.prompt.split(') ')[1] || t.prompt}</h3>
+              <h3 class="test-title-text">${promptTitle}</h3>
             </div>
             <span class="timer-chip" style="font-size:0.75rem; padding:2px 8px;">3.0 Marks</span>
           </div>
@@ -1753,13 +1782,20 @@
 
   // ── Render Q3 Question Cards with Organic Quick-Palette ──────────────
   function renderQ3TestsGrid() {
-    const p = engine.preset.q3;
+    const p = engine?.preset?.q3 || {};
     const grid = document.getElementById('q3TestsGrid');
     if (!grid) return;
 
-    grid.innerHTML = p.tests.map((t, idx) => {
+    const tests = Array.isArray(p.tests) ? p.tests : [];
+    if (!tests.length) {
+      grid.innerHTML = '<div style="padding:20px; color:var(--text-muted); text-align:center;">No organic tests configured for this sample.</div>';
+      return;
+    }
+
+    grid.innerHTML = tests.map((t, idx) => {
       const st = q3TestStates[t.id] || { performed: false };
       const letter = String.fromCharCode(97 + idx);
+      const promptTitle = t?.prompt ? (t.prompt.includes(') ') ? t.prompt.split(') ')[1] : t.prompt) : `Test Procedure (${letter})`;
 
       let actionBtn = !st.performed
         ? `<button class="btn-perform-test" onclick="performQ3Test('${t.id}')">🧪 Perform Organic Test</button>`
@@ -1770,7 +1806,7 @@
           <div class="test-card-top">
             <div class="test-header-left">
               <span class="test-step-badge">(${letter})</span>
-              <h3 class="test-title-text">${t.prompt.split(') ')[1] || t.prompt}</h3>
+              <h3 class="test-title-text">${promptTitle}</h3>
             </div>
             <span class="timer-chip" style="font-size:0.75rem; padding:2px 8px;">2.0 Marks</span>
           </div>
@@ -1882,16 +1918,17 @@
     if (!q3TestStates[testId]) q3TestStates[testId] = {};
     const st = q3TestStates[testId];
     st.performed = true;
-    const p = engine.preset.q3;
+    const p = engine?.preset?.q3 || {};
+    const orgKey = String(p.trueOrganicKey || '');
 
     if (testId === 'q3_ignition') {
-      st.statusLabel = (p.trueOrganicKey.includes('Cyclo') || p.trueOrganicKey.includes('Benzoic')) ? 'Ignition: Smoky sooty flame' : 'Ignition: Clear non-sooty blue flame';
+      st.statusLabel = (orgKey.includes('Cyclo') || orgKey.includes('Benzoic') || orgKey.includes('Alkene')) ? 'Ignition: Smoky sooty flame' : 'Ignition: Clear non-sooty blue flame';
     } else if (testId === 'q3_litmus') {
-      st.statusLabel = p.trueOrganicKey.includes('Acid') ? 'Litmus: Turns moist blue litmus red' : 'Litmus: Neutral, no color change';
+      st.statusLabel = orgKey.includes('Acid') ? 'Litmus: Turns moist blue litmus red' : 'Litmus: Neutral, no color change';
     } else if (testId === 'q3_kmno4') {
       st.statusLabel = 'Reaction: Decolorization / change observed';
     } else if (testId === 'q3_nahco3') {
-      st.statusLabel = p.trueOrganicKey.includes('Acid') ? 'NaHCO₃: Vigorous effervescence of CO₂' : 'NaHCO₃: No effervescence';
+      st.statusLabel = orgKey.includes('Acid') ? 'NaHCO₃: Vigorous effervescence of CO₂' : 'NaHCO₃: No effervescence';
     }
 
     renderQ3TestsGrid();

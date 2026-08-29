@@ -38,7 +38,24 @@ const apiLimiter = process.env.NODE_ENV === 'test'
       message: { error: 'Too many requests from this IP. Please slow down and try again later.' }
     });
 
+// Dedicated rate limiter for AI Assistant endpoints (LLM synthesis & multimodal parsing)
+// Limits to 30 requests per 15 minutes per IP/teacher to protect quotas and prevent abuse
+const aiAssistantLimiter = process.env.NODE_ENV === 'test'
+  ? (req, res, next) => next()
+  : rateLimit({
+      windowMs: 15 * 60 * 1000, // 15 minutes
+      max: 30,
+      standardHeaders: true,
+      legacyHeaders: false,
+      skip: (req) => {
+        const ip = req.ip || (req.socket && req.socket.remoteAddress) || '';
+        return ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
+      },
+      message: { success: false, error: 'AI Assistant rate limit reached. Please wait a few minutes before submitting more requests.' }
+    });
+
 module.exports = {
   authLimiter,
-  apiLimiter
+  apiLimiter,
+  aiAssistantLimiter
 };

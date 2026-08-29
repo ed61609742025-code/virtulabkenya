@@ -1200,13 +1200,52 @@ tr:hover td {
 }
 
 @media print {
-  .top-navbar, .teacher-sidebar, .btn, .theme-toggle-group, .filters, .assign-form, .modal-overlay, .ai-refine-bar, .ai-mode-toggle-group, .ai-hero-banner {
+  .top-navbar,
+  .teacher-sidebar,
+  .btn,
+  .theme-toggle-group,
+  .filters,
+  .assign-form,
+  .modal-overlay,
+  .ai-refine-bar,
+  .ai-refine-drawer,
+  .ai-results-header,
+  .ai-subtab-strip,
+  .ai-input-card,
+  .ai-hero-banner,
+  .ai-mode-toggle-group,
+  .ai-generating-overlay,
+  #aiGeneratingState,
+  #vlkAiToast {
     display: none !important;
   }
   .teacher-layout { display: block !important; }
   .teacher-content { padding: 0 !important; max-width: 100% !important; }
-  .tab-pane { display: block !important; page-break-after: always; }
-  .exam-paper-preview { box-shadow: none !important; border: none !important; padding: 0 !important; }
+  /* ONLY print the active tab pane so other dashboard tabs remain private */
+  .tab-pane:not(.active) { display: none !important; }
+  .tab-pane.active { display: block !important; }
+
+  /* Force crisp black on white for printer ink economy */
+  body,
+  .teacher-layout,
+  .teacher-content,
+  .tab-pane,
+  .exam-paper-preview,
+  .markdown-preview-box,
+  .paper-table th,
+  .paper-table td,
+  .blueprint-card {
+    background: #FFFFFF !important;
+    color: #111827 !important;
+    box-shadow: none !important;
+    border-color: #D1D5DB !important;
+  }
+  .paper-section,
+  .paper-table,
+  .blueprint-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
 }
 
 /* ============================================================

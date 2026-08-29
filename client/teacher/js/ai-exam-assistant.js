@@ -221,12 +221,16 @@
       });
 
       if (resp && resp.exam) {
-        renderExamResults(resp.exam);
+        renderExamResults(resp.exam, true);
+        const meta = resp.exam._meta || resp.exam.meta;
+        if (meta?.isFallback) {
+          showTemporaryToast('⚠️ ' + (meta.warning || 'Standard KNEC curriculum template loaded.'), 'error');
+        }
       } else {
         throw new Error(resp.error || 'Could not generate exam.');
       }
     } catch (err) {
-      alert('AI Generation note: ' + (err.message || 'Could not connect to AI service. Using verified KNEC template.'));
+      showTemporaryToast('AI Note: ' + (err.message || 'Could not connect to AI service. Using verified KNEC template.'), 'error');
     } finally {
       setGeneratingState(false);
     }
@@ -238,7 +242,7 @@
     const teacherNotes = (document.getElementById('aiUploadNotes')?.value || '').trim();
 
     if (!uploadedFile && !textContent) {
-      alert('Please upload an exam paper (PDF or image) or paste the exam text.');
+      showTemporaryToast('Please upload an exam paper (PDF or image) or paste the exam text.', 'error');
       return;
     }
 
@@ -253,12 +257,16 @@
       });
 
       if (resp && resp.exam) {
-        renderExamResults(resp.exam);
+        renderExamResults(resp.exam, true);
+        const meta = resp.exam._meta || resp.exam.meta;
+        if (meta?.isFallback) {
+          showTemporaryToast('⚠️ ' + (meta.warning || 'Standard KNEC curriculum template loaded.'), 'error');
+        }
       } else {
         throw new Error(resp.error || 'Could not parse exam paper.');
       }
     } catch (err) {
-      alert('AI Parsing note: ' + (err.message || 'Failed to parse paper. Using standard KNEC layout.'));
+      showTemporaryToast('AI Parsing Note: ' + (err.message || 'Failed to parse paper. Using standard KNEC layout.'), 'error');
     } finally {
       setGeneratingState(false);
     }
@@ -267,14 +275,14 @@
   // ── Conversational Refinement ("Walimu Co-Pilot") ─────────────
   window.submitAiRefinement = async function() {
     if (!currentExamDraft) {
-      alert('Generate or upload an exam first before refining.');
+      showTemporaryToast('Generate or upload an exam first before refining.', 'error');
       return;
     }
 
     const input = document.getElementById('aiRefineInput');
     const instruction = (input?.value || '').trim();
     if (!instruction) {
-      alert('Please enter what you would like to adjust (e.g. "Change pipette to 20 cm³", "Use Methyl Orange").');
+      showTemporaryToast('Please enter what you would like to adjust (e.g. "Change pipette to 20 cm³", "Use Methyl Orange").', 'error');
       input?.focus();
       return;
     }
@@ -288,9 +296,9 @@
       });
 
       if (resp && resp.exam) {
-        renderExamResults(resp.exam);
+        renderExamResults(resp.exam, false);
         if (input) input.value = '';
-        const meta = resp.exam._meta;
+        const meta = resp.exam._meta || resp.exam.meta;
         const changes = meta?.appliedChanges || [];
         if (changes.length > 0) {
           showTemporaryToast('✓ ' + changes.join(' · '));
@@ -301,7 +309,7 @@
         throw new Error(resp.error || 'Could not refine draft.');
       }
     } catch (err) {
-      alert('Refinement note: ' + (err.message || 'Could not apply refinement.'));
+      showTemporaryToast('Refinement Note: ' + (err.message || 'Could not apply refinement.'), 'error');
     } finally {
       setGeneratingState(false);
     }
@@ -462,9 +470,28 @@
     });
   };
 
+  function saveDraftToStorage(exam) {
+    try {
+      if (exam) localStorage.setItem('vlk_ai_exam_draft', JSON.stringify(exam));
+    } catch (e) {
+      console.warn('[Walimu AI] Could not save draft to localStorage:', e);
+    }
+  }
+
+  function loadDraftFromStorage() {
+    try {
+      const saved = localStorage.getItem('vlk_ai_exam_draft');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.warn('[Walimu AI] Could not restore draft from localStorage:', e);
+    }
+    return null;
+  }
+
   // ── Render Generated Exam Results Studio ───────────────────────
-  function renderExamResults(exam) {
+  function renderExamResults(exam, isInitial = false) {
     currentExamDraft = exam;
+    saveDraftToStorage(exam);
     const resSec = document.getElementById('aiResultsSection');
     if (!resSec) return;
 
@@ -472,7 +499,15 @@
 
     // Populate Top Header Badges
     const titleInput = document.getElementById('resExamTitle');
-    if (titleInput) titleInput.value = exam.title || 'KCSE Chemistry Practical Examination';
+    if (titleInput) {
+      titleInput.value = exam.title || 'KCSE Chemistry Practical Examination';
+      titleInput.oninput = function() {
+        if (currentExamDraft) {
+          currentExamDraft.title = this.value;
+          saveDraftToStorage(currentExamDraft);
+        }
+      };
+    }
 
     const badgeForm = document.getElementById('resBadgeForm');
     if (badgeForm) badgeForm.textContent = exam.formLevel || 'Form 4';
@@ -494,11 +529,11 @@
     renderMarkingSchemeTab(exam);
     renderTechnicianGuideTab(exam);
 
-    // Switch to blueprint subtab
-    window.switchAiResultSubTab('blueprint');
-
-    // Smooth scroll down to results
-    resSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Only scroll to top of results on initial generation / paper parse
+    if (isInitial) {
+      window.switchAiResultSubTab('blueprint');
+      resSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
 
   // ── Sub-Tab Switcher ──────────────────────────────────────────
@@ -687,10 +722,42 @@
     container.innerHTML = `
       <div class="exam-paper-preview">
         <div class="paper-header">
-          <div style="font-size:0.8rem; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted);">VirtuLab Kenya · Secondary Chemistry Assessment</div>
+          <div style="font-size:0.8rem; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted);">VirtuLab Kenya · Secondary Chemistry Practical Assessment</div>
           <h2 style="font-family:var(--font-heading); margin:4px 0 6px;">${escapeHtml(exam.title)}</h2>
-          <div style="font-size:0.85rem; font-weight:700; color:var(--amber-accent);">KENYA CERTIFICATE OF SECONDARY EDUCATION — PAPER 3 (PRACTICAL)</div>
+          <div style="font-size:0.85rem; font-weight:700; color:var(--amber-accent);">KENYA CERTIFICATE OF SECONDARY EDUCATION — PAPER 3 (PRACTICAL) — CODE 233/3</div>
           <div style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">Time: ${exam.durationMinutes || 135} Minutes · Maximum Marks: 40</div>
+        </div>
+
+        <!-- KNEC Candidate Identification & Mark Table -->
+        <div class="paper-section" style="border: 1.5px solid var(--card-border); padding: 16px; border-radius: 10px; margin-bottom: 18px; background: rgba(255,255,255,0.02);">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; font-size: 0.85rem; margin-bottom: 14px;">
+            <div><b>Candidate's Name:</b> __________________________________</div>
+            <div><b>Index Number:</b> _______________ / _________</div>
+            <div><b>Candidate's Signature:</b> _______________________</div>
+            <div><b>Date of Exam:</b> _________________________</div>
+          </div>
+          <div style="font-weight: 800; font-size: 0.75rem; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted);">
+            FOR EXAMINER'S USE ONLY:
+          </div>
+          <div style="overflow-x: auto;">
+            <table class="paper-table" style="text-align: center; font-size: 0.82rem; margin: 0; min-width: 320px;">
+              <thead>
+                <tr>
+                  <th style="text-align: left;">Question</th>
+                  <th>Maximum Score</th>
+                  <th>Candidate's Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td style="text-align: left;">1 (Quantitative Volumetric Analysis)</td><td>15.0</td><td></td></tr>
+                <tr><td style="text-align: left;">2 (Inorganic Qualitative Salt Analysis)</td><td>15.0</td><td></td></tr>
+                <tr><td style="text-align: left;">3 (Organic Qualitative Tests)</td><td>10.0</td><td></td></tr>
+                <tr style="font-weight: 800; background: rgba(0,0,0,0.04);">
+                  <td style="text-align: left;">TOTAL SCORE</td><td>40.0</td><td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <div class="paper-section">
@@ -706,30 +773,32 @@
           </div>
           <p style="font-size:0.85rem; line-height:1.6;">You are provided with:</p>
           <ul style="font-size:0.84rem; line-height:1.7; margin-left:20px;">
-            <li><b>Solution A:</b> ${escapeHtml(q1.solutionA || 'Standard Acid')}</li>
-            <li><b>Solution B:</b> ${escapeHtml(q1.solutionB || 'Base Sample')}</li>
+            <li><b>Solution A:</b> ${formatChemicalFormula(escapeHtml(q1.solutionA || 'Standard Acid'))}</li>
+            <li><b>Solution B:</b> ${formatChemicalFormula(escapeHtml(q1.solutionB || 'Base Sample'))}</li>
             <li><b>Indicator:</b> ${escapeHtml(q1.indicator || 'Phenolphthalein')}</li>
           </ul>
           <p style="font-size:0.84rem; line-height:1.6;">${escapeHtml(q1.instructions || 'You are required to titrate Solution B with Solution A and determine its concentration.')}</p>
           
           <div style="margin:14px 0;">
             <div style="font-weight:700; font-size:0.82rem; margin-bottom:6px;">Table 1: Candidate Burette Titration Results</div>
-            <table class="paper-table">
-              <thead>
-                <tr><th>Titration Trial</th><th>I</th><th>II</th><th>III</th></tr>
-              </thead>
-              <tbody>
-                <tr><td>Final Burette Reading (cm³)</td><td></td><td></td><td></td></tr>
-                <tr><td>Initial Burette Reading (cm³)</td><td></td><td></td><td></td></tr>
-                <tr><td>Volume of Solution A Used (cm³)</td><td></td><td></td><td></td></tr>
-              </tbody>
-            </table>
+            <div style="overflow-x: auto;">
+              <table class="paper-table" style="min-width: 320px;">
+                <thead>
+                  <tr><th>Titration Trial</th><th>I</th><th>II</th><th>III</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>Final Burette Reading (cm³)</td><td></td><td></td><td></td></tr>
+                  <tr><td>Initial Burette Reading (cm³)</td><td></td><td></td><td></td></tr>
+                  <tr><td>Volume of Solution A Used (cm³)</td><td></td><td></td><td></td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
           <div style="font-size:0.84rem; line-height:1.8;">
             <div>(a) Calculate the average volume of Solution A used. [1 Mark]</div>
             <div>(b) Calculate the number of moles of Solution B in ${q1.pipetteVolume || 25.0} cm³. [2 Marks]</div>
-            <div>(c) Using the stoichiometric equation: <code>${escapeHtml(q1.equation || '')}</code>, determine moles of Solution A. [2 Marks]</div>
-            <div>(d) Calculate the concentration of Solution A in mol/dm³ and g/dm³. [3 Marks]</div>
+            <div>(c) Using the stoichiometric equation: <code>${formatChemicalFormula(escapeHtml(q1.equation || ''))}</code>, determine moles of Solution A. [2 Marks]</div>
+            <div>(d) Calculate the concentration of Solution A in mol dm⁻³ and g dm⁻³. [3 Marks]</div>
           </div>
         </div>
 
@@ -739,22 +808,24 @@
             <h4 style="margin:0;">QUESTION 2 (15.0 MARKS)</h4>
             <span class="pill pill-info">Inorganic Qualitative Analysis</span>
           </div>
-          <p style="font-size:0.84rem; line-height:1.6;">You are provided with <b>${escapeHtml(q2.sampleName || 'Solid Y')}</b>. Carry out the following tests and record your observations and inferences in the spaces provided below.</p>
+          <p style="font-size:0.84rem; line-height:1.6;">You are provided with <b>${formatChemicalFormula(escapeHtml(q2.sampleName || 'Solid Y'))}</b>. Carry out the following tests and record your observations and inferences in the spaces provided below.</p>
           
-          <table class="paper-table" style="margin-top:10px;">
-            <thead>
-              <tr><th style="width:45%;">Test / Experimental Procedure</th><th style="width:30%;">Observations [1 Mk each]</th><th style="width:25%;">Inferences [1 Mk each]</th></tr>
-            </thead>
-            <tbody>
-              ${(q2.tests || []).map(t => `
-                <tr>
-                  <td>${escapeHtml(t.prompt)}</td>
-                  <td style="background:var(--card-bg-hover);"></td>
-                  <td style="background:var(--card-bg-hover);"></td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
+          <div style="overflow-x: auto;">
+            <table class="paper-table" style="margin-top:10px; min-width: 480px;">
+              <thead>
+                <tr><th style="width:45%;">Test / Experimental Procedure</th><th style="width:30%;">Observations [1 Mk each]</th><th style="width:25%;">Inferences [1 Mk each]</th></tr>
+              </thead>
+              <tbody>
+                ${(q2.tests || []).map(t => `
+                  <tr>
+                    <td>${formatChemicalFormula(escapeHtml(t.prompt))}</td>
+                    <td style="background:var(--card-bg-hover);"></td>
+                    <td style="background:var(--card-bg-hover);"></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
           <div style="margin-top:10px; font-size:0.85rem;">
             <b>Final Deduction:</b> Cation: ____________________ &nbsp;|&nbsp; Anion: ____________________ [2 Marks]
           </div>
@@ -766,22 +837,24 @@
             <h4 style="margin:0;">QUESTION 3 (10.0 MARKS)</h4>
             <span class="pill pill-info">Organic Functional Group Analysis</span>
           </div>
-          <p style="font-size:0.84rem; line-height:1.6;">You are provided with <b>${escapeHtml(q3.sampleName || 'Liquid Z')}</b>. Carry out the following tests to identify the organic functional group present.</p>
+          <p style="font-size:0.84rem; line-height:1.6;">You are provided with <b>${formatChemicalFormula(escapeHtml(q3.sampleName || 'Liquid Z'))}</b>. Carry out the following tests to identify the organic functional group present.</p>
           
-          <table class="paper-table" style="margin-top:10px;">
-            <thead>
-              <tr><th style="width:45%;">Test / Experimental Procedure</th><th style="width:30%;">Observations</th><th style="width:25%;">Inferences</th></tr>
-            </thead>
-            <tbody>
-              ${(q3.tests || []).map(t => `
-                <tr>
-                  <td>${escapeHtml(t.prompt)}</td>
-                  <td style="background:var(--card-bg-hover);"></td>
-                  <td style="background:var(--card-bg-hover);"></td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
+          <div style="overflow-x: auto;">
+            <table class="paper-table" style="margin-top:10px; min-width: 480px;">
+              <thead>
+                <tr><th style="width:45%;">Test / Experimental Procedure</th><th style="width:30%;">Observations</th><th style="width:25%;">Inferences</th></tr>
+              </thead>
+              <tbody>
+                ${(q3.tests || []).map(t => `
+                  <tr>
+                    <td>${formatChemicalFormula(escapeHtml(t.prompt))}</td>
+                    <td style="background:var(--card-bg-hover);"></td>
+                    <td style="background:var(--card-bg-hover);"></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
         </div>
 
       </div>
@@ -964,6 +1037,37 @@
       .replace(/'/g, '&#039;');
   }
 
+  function formatChemicalFormula(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/cm3/g, 'cm³')
+      .replace(/dm3/g, 'dm³')
+      .replace(/mol\/dm3/g, 'mol dm⁻³')
+      .replace(/g\/dm3/g, 'g dm⁻³')
+      .replace(/Pb\(NO3\)2/g, 'Pb(NO₃)₂')
+      .replace(/ZnSO4/g, 'ZnSO₄')
+      .replace(/CuSO4/g, 'CuSO₄')
+      .replace(/FeSO4/g, 'FeSO₄')
+      .replace(/FeCl3/g, 'FeCl₃')
+      .replace(/CaCl2/g, 'CaCl₂')
+      .replace(/NH4Cl/g, 'NH₄Cl')
+      .replace(/H2SO4/g, 'H₂SO₄')
+      .replace(/Na2CO3/g, 'Na₂CO₃')
+      .replace(/KMnO4/g, 'KMnO₄')
+      .replace(/Pb2\+/g, 'Pb²⁺')
+      .replace(/Zn2\+/g, 'Zn²⁺')
+      .replace(/Cu2\+/g, 'Cu²⁺')
+      .replace(/Fe2\+/g, 'Fe²⁺')
+      .replace(/Fe3\+/g, 'Fe³⁺')
+      .replace(/Ca2\+/g, 'Ca²⁺')
+      .replace(/Al3\+/g, 'Al³⁺')
+      .replace(/NH4\+/g, 'NH₄⁺')
+      .replace(/SO42\-/g, 'SO₄²⁻')
+      .replace(/NO3\-/g, 'NO₃⁻')
+      .replace(/CO32\-/g, 'CO₃²⁻')
+      .replace(/Cl\-/g, 'Cl⁻');
+  }
+
   function formatMarkdownText(text) {
     if (!text) return '';
     let html = escapeHtml(text);
@@ -975,40 +1079,72 @@
     html = html.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
     // Italics
     html = html.replace(/\*(.*?)\*/g, '<i>$1</i>');
-    // Bullets
-    html = html.replace(/^\- (.*$)/gim, '<li style="margin-bottom:4px;">$1</li>');
-    html = html.replace(/(<li.*<\/li>)/s, '<ul style="margin:8px 0 12px 20px; line-height:1.6;">$1</ul>');
+    // Non-greedy line-by-line list parsing
+    html = html.replace(/(?:^|\n)((?:[\t ]*[-*] .+(?:\n|$))+)/g, (match, list) => {
+      const items = list.trim().split('\n').map(li => `<li style="margin-bottom:4px;">${li.replace(/^[\t ]*[-*] /, '')}</li>`).join('');
+      return `\n<ul style="margin:8px 0 12px 20px; line-height:1.6;">${items}</ul>\n`;
+    });
     // Line breaks
     html = html.replace(/\n\n/g, '<div style="height:8px;"></div>');
     return html;
   }
 
-  function showTemporaryToast(message) {
+  let toastTimerId = null;
+  function showTemporaryToast(message, type = 'success') {
     let toast = document.getElementById('vlkAiToast');
     if (!toast) {
       toast = document.createElement('div');
       toast.id = 'vlkAiToast';
+      toast.setAttribute('role', 'status');
+      toast.setAttribute('aria-live', 'polite');
       toast.style.position = 'fixed';
       toast.style.bottom = '24px';
       toast.style.right = '24px';
-      toast.style.background = '#10B981';
-      toast.style.color = '#FFFFFF';
-      toast.style.padding = '12px 20px';
+      toast.style.padding = '12px 22px';
       toast.style.borderRadius = '100px';
       toast.style.fontWeight = '800';
       toast.style.fontSize = '0.88rem';
-      toast.style.boxShadow = '0 8px 24px rgba(16, 185, 129, 0.4)';
       toast.style.zIndex = '99999';
       toast.style.transition = 'all 0.3s ease';
       document.body.appendChild(toast);
     }
+    if (type === 'error') {
+      toast.style.background = '#EF4444';
+      toast.style.color = '#FFFFFF';
+      toast.style.boxShadow = '0 8px 24px rgba(239, 68, 68, 0.4)';
+    } else {
+      toast.style.background = '#10B981';
+      toast.style.color = '#FFFFFF';
+      toast.style.boxShadow = '0 8px 24px rgba(16, 185, 129, 0.4)';
+    }
     toast.textContent = message;
     toast.style.opacity = '1';
     toast.style.transform = 'translateY(0)';
-    setTimeout(() => {
+    if (toastTimerId) clearTimeout(toastTimerId);
+    toastTimerId = setTimeout(() => {
       toast.style.opacity = '0';
       toast.style.transform = 'translateY(10px)';
-    }, 3500);
+    }, 4000);
+  }
+
+  // ── Protection Against Unsaved Data Loss ───────────────────────
+  window.addEventListener('beforeunload', function(e) {
+    if (currentExamDraft) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
+
+  // Restore previous draft on session start if available
+  try {
+    const saved = loadDraftFromStorage();
+    if (saved && saved.examConfig) {
+      setTimeout(() => {
+        renderExamResults(saved, false);
+      }, 300);
+    }
+  } catch (e) {
+    console.warn('[Walimu AI] Auto-restore skipped:', e);
   }
 
 })();

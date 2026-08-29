@@ -18,8 +18,9 @@ const FALLBACK_PRESETS = {
     instructions: 'You are provided with 0.020 M Potassium Manganate(VII) (Solution A), Ammonium Iron(II) Sulfate (Solution B), Solid Y, and Liquid Z. Follow all KNEC laboratory instructions carefully.',
     durationMinutes: 135,
     examConfig: {
-      presetKey: 'series_3',
+      presetKey: 'series_4',
       q1: {
+        calcType: 'redox_stoichiometry',
         solutionA: '0.020 M Potassium Manganate(VII) (KMnO₄)',
         solutionB: 'Ammonium Iron(II) Sulfate [(NH₄)₂Fe(SO₄)₂·6H₂O] ~0.100 M',
         ratioA: 1,
@@ -147,6 +148,7 @@ const FALLBACK_PRESETS = {
     examConfig: {
       presetKey: 'series_1',
       q1: {
+        calcType: 'standard_molarity',
         solutionA: '0.100 M Hydrochloric Acid (HCl)',
         solutionB: 'Sodium Hydroxide (NaOH) ~0.100 M',
         ratioA: 1,
@@ -354,6 +356,24 @@ function normalizeExamStructure(parsed, sourceMeta = {}) {
     normalized.examConfig.q1.marks = Number(normalized.examConfig.q1.marks) || 15;
     normalized.examConfig.q2.marks = Number(normalized.examConfig.q2.marks) || 15;
     normalized.examConfig.q3.marks = Number(normalized.examConfig.q3.marks) || 10;
+
+    // Preserve or infer authentic KNEC calcType
+    if (!normalized.examConfig.q1.calcType) {
+      const q1Title = (normalized.examConfig.q1.title || '').toLowerCase();
+      const q1Instr = (normalized.examConfig.q1.instructions || '').toLowerCase();
+      const solA = (normalized.examConfig.q1.solutionA || '').toLowerCase();
+      if (q1Title.includes('water of crystallization') || q1Instr.includes('water of crystallization') || q1Instr.includes('hydrate')) {
+        normalized.examConfig.q1.calcType = 'water_of_crystallization';
+      } else if (q1Title.includes('percentage purity') || q1Instr.includes('purity') || q1Instr.includes('impure')) {
+        normalized.examConfig.q1.calcType = 'percentage_purity';
+      } else if (q1Title.includes('atomic mass') || q1Instr.includes('atomic mass') || q1Instr.includes('relative atomic mass')) {
+        normalized.examConfig.q1.calcType = 'ram_metal';
+      } else if (solA.includes('kmno4') || q1Instr.includes('redox') || solA.includes('manganate')) {
+        normalized.examConfig.q1.calcType = 'redox_stoichiometry';
+      } else {
+        normalized.examConfig.q1.calcType = 'standard_molarity';
+      }
+    }
   }
 
   return normalized;
@@ -364,7 +384,20 @@ function normalizeExamStructure(parsed, sourceMeta = {}) {
  */
 async function parseExamPaper({ fileData = null, mimeType = null, textContent = '', teacherNotes = '' }) {
   const prompt = `You are a Senior Kenya National Examinations Council (KNEC) Chief Chemistry Practical Examiner & Curriculum Specialist.
-Analyze this uploaded chemistry exam paper document/photo and extract all practical experiments, questions, reagent configurations, and marking rubrics.
+Analyze this uploaded chemistry exam paper document/photo and extract all practical experiments, questions, reagent configurations, and marking rubrics according to authentic KNEC KCSE Paper 3 (233/3) standards.
+
+KNEC Examination Setting Standards to Enforce:
+1. Cognitive Taxonomy: Balance questions across Recall (State, Name, Define), Comprehension (Describe, Explain, Account for), Application (Calculate, Determine), and Analysis (Deduce, Compare, Distinguish).
+2. Question 1 (Volumetric Analysis - 15 Marks):
+   - Accurately identify the calculation framework ("calcType"): 'standard_molarity', 'water_of_crystallization', 'percentage_purity', 'ram_metal', 'redox_stoichiometry', or 'dibasic_acid'.
+   - Generate the sequential sub-questions (a) through (e)/(f) with clear method marks (M) and accuracy marks (A).
+3. Question 2 (Inorganic Qualitative Analysis - 15 Marks):
+   - Structured experimental procedures (e.g. heating solid in dry tube, dissolving, portioning, adding 2M NaOH and 2M aqueous NH3 dropwise until in excess, anion confirmatory tests).
+   - Inferences must strictly enforce KNEC grouping notation (e.g. "Pb²⁺, Al³⁺, or Zn²⁺ present" in excess NaOH; "Pb²⁺ or Al³⁺ present" in excess NH3) with correct ionic charges.
+4. Question 3 (Organic Qualitative Analysis - 10 Marks):
+   - Procedural sequence: Spatula ignition flame test, litmus test, unsaturation/redox test (acidified KMnO4 or Bromine water), and carbonate/hydrogen carbonate effervescence.
+5. Marking Scheme:
+   - Provide a rigorous marking guide with point-by-point breakdown and explicit instructions on applying Error Carried Forward (e.c.f.) on calculation steps.
 
 Teacher's Additional Instructions: "${teacherNotes || 'None'}"
 
@@ -379,6 +412,7 @@ Produce a strict JSON object with this exact schema:
   "examConfig": {
     "presetKey": "custom",
     "q1": {
+      "calcType": "<'standard_molarity' | 'water_of_crystallization' | 'percentage_purity' | 'ram_metal' | 'redox_stoichiometry' | 'dibasic_acid'>",
       "solutionA": "<e.g. '0.100 M Hydrochloric Acid (HCl)'>",
       "solutionB": "<e.g. 'Sodium Hydroxide (NaOH) approx 0.100 M'>",
       "ratioA": <integer mole ratio of A, e.g. 1>,
@@ -389,6 +423,8 @@ Produce a strict JSON object with this exact schema:
       "trueAcidMolarity": <decimal number>,
       "trueBaseMolarity": <decimal number>,
       "trueTitre": <expected concordant titre in cm3, e.g. 25.00>,
+      "acidRfm": <number, e.g. 36.5>,
+      "baseRfm": <number, e.g. 40.0>,
       "marks": 15,
       "instructions": "<Specific Question 1 instructions>"
     },
@@ -426,7 +462,7 @@ Produce a strict JSON object with this exact schema:
       ]
     }
   },
-  "markingScheme": "<Detailed Markdown formatted teacher marking guide with point-by-point marks breakdown>",
+  "markingScheme": "<Detailed Markdown formatted teacher marking guide with point-by-point method marks (M), accuracy marks (A), and Error Carried Forward (e.c.f.) notes>",
   "confidentialPrepGuide": "<Detailed Markdown formatted instructions for the school laboratory technician detailing reagent preparation recipes, molarities, volumes per candidate, and apparatus checklist>"
 }
 
@@ -461,7 +497,7 @@ ${textContent ? `Extracted Paper Text:\n${textContent}` : ''}`;
  * 2. Generate complete exam from an idea / prompt
  */
 async function generateExamFromIdea({ prompt, formLevel = 'Form 4', moduleType = 'kcseComposite', difficulty = 'standard', durationMinutes = 135 }) {
-  const aiPrompt = `You are a Senior KNEC Chemistry Examiner & Curriculum Specialist designing a secondary school chemistry practical exam for Kenyan learners.
+  const aiPrompt = `You are a Senior KNEC Chemistry Chief Examiner & Curriculum Specialist designing a secondary school chemistry practical exam for Kenyan learners.
 
 Teacher's Idea / Request:
 "${prompt}"
@@ -471,11 +507,18 @@ Exam Module: ${moduleType}
 Target Difficulty: ${difficulty}
 Allotted Time: ${durationMinutes} minutes
 
-Generate a comprehensive KNEC Paper 3 (Chemistry Practical - 233/3) Examination Blueprint in valid JSON format.
-The exam must strictly follow the KNEC 40-mark composite syllabus:
-- Question 1 (15 Marks): Volumetric Analysis (Titration)
-- Question 2 (15 Marks): Inorganic Qualitative Analysis (Unknown Salt Solid Y)
-- Question 3 (10 Marks): Organic Chemistry Qualitative Analysis (Unknown Liquid Z)
+KNEC Setting & Pedagogical Standards to Enforce:
+1. Cognitive Taxonomy: Balance across Recall, Comprehension, Application, and Analysis. Use authentic KNEC command words (State, Name, Determine, Calculate, Deduce, Explain).
+2. Question 1 (Volumetric Analysis - 15 Marks):
+   - Choose or detect the calculation framework ("calcType"): 'standard_molarity', 'water_of_crystallization', 'percentage_purity', 'ram_metal', 'redox_stoichiometry', or 'dibasic_acid'.
+   - Include realistic stoichiometric parameters, molar concentrations, and balanced equations with state symbols.
+3. Question 2 (Inorganic Qualitative Analysis - 15 Marks):
+   - Multi-step experimental sequence (heating dry solid, dissolving, portioning, 2M NaOH & 2M aqueous NH3 dropwise until in excess, anion confirmatory test).
+   - Inferences must strictly enforce KNEC grouping notation (e.g. "Pb²⁺, Al³⁺, or Zn²⁺ present" in excess NaOH; "Pb²⁺ or Al³⁺ present" in excess NH3).
+4. Question 3 (Organic Qualitative Analysis - 10 Marks):
+   - Sequence: Spatula ignition flame test, litmus test, unsaturation/redox test (acidified KMnO4 or Bromine water), and carbonate/hydrogen carbonate effervescence.
+5. Marking Scheme:
+   - Formatted in Markdown with point-by-point method marks (M) and accuracy marks (A), and explicit Error Carried Forward (e.c.f.) instructions.
 
 Strict Response JSON Schema:
 {
@@ -487,6 +530,7 @@ Strict Response JSON Schema:
   "examConfig": {
     "presetKey": "custom",
     "q1": {
+      "calcType": "<'standard_molarity' | 'water_of_crystallization' | 'percentage_purity' | 'ram_metal' | 'redox_stoichiometry' | 'dibasic_acid'>",
       "solutionA": "<e.g. 0.050 M Sulfuric(VI) Acid>",
       "solutionB": "<e.g. 0.100 M Sodium Hydroxide>",
       "pipetteVolume": 25.0,
@@ -494,15 +538,18 @@ Strict Response JSON Schema:
       "ratioA": 1,
       "ratioB": 2,
       "acidRfm": 98.0,
+      "baseRfm": 40.0,
       "trueAcidMolarity": 0.050,
       "trueBaseMolarity": 0.100,
       "trueTitre": 25.00,
+      "marks": 15,
       "instructions": "<Laboratory instructions for Question 1>"
     },
     "q2": {
       "sampleName": "Solid Y",
       "sampleDesc": "<Physical appearance & description>",
       "trueSaltKey": "<e.g. ZnSO4, Pb(NO3)2, CuSO4, FeSO4, FeCl3, CaCl2, NH4Cl>",
+      "trueSaltName": "<Full name with formula, e.g. 'Zinc Sulfate — ZnSO₄'>",
       "trueCation": "<e.g. Zn2+>",
       "trueAnion": "<e.g. SO42->",
       "marks": 15,
@@ -519,6 +566,7 @@ Strict Response JSON Schema:
       "sampleName": "Liquid Z",
       "sampleDesc": "<Physical appearance & description>",
       "trueOrganicKey": "<e.g. Ethanol, Ethanoic Acid, Cyclohexene, Hexane>",
+      "trueOrganicName": "<Full organic name>",
       "trueFunctionalGroup": "<e.g. Alkanol (-OH), Carboxylic Acid (-COOH), Alkene (>C=C<)>",
       "marks": 10,
       "tests": [
@@ -531,7 +579,7 @@ Strict Response JSON Schema:
       ]
     }
   },
-  "markingScheme": "<Markdown KNEC marking scheme>",
+  "markingScheme": "<Markdown KNEC marking scheme with M and A marks, and e.c.f. instructions>",
   "confidentialPrepGuide": "<Markdown Lab Technician preparation instructions>"
 }`;
 

@@ -672,72 +672,14 @@
         </tbody>
       </table>
 
-      <!-- Calculations (10.0 Marks) -->
+      <!-- Dynamic Calculations & Stoichiometry (10.0 Marks) -->
       <div style="font-weight:800;font-size:0.95rem;color:var(--heading-color);margin:20px 0 10px;">
         Calculations &amp; Stoichiometry (10.0 Marks)
       </div>
 
-      <div class="calc-step-card">
-        <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
-          (a) Calculate the average volume of Solution A used, <b>V₁</b> (1.0 Mark)
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <input type="number" step="0.01" id="ansAvgTitre" class="calc-input" placeholder="e.g. 25.00" onchange="onQ1CalculationsChanged()">
-          <span style="font-weight:700;color:var(--text-muted);">cm³</span>
-          <button type="button" class="btn-perform-test btn-check-step" style="padding:6px 14px;font-size:0.78rem;" onclick="checkQ1Step('a')">Check (a)</button>
-        </div>
-        <div id="stepFeedback_a" class="step-feedback-msg"></div>
+      <div id="q1CalculationsContainer">
+        <!-- Rendered dynamically by renderQ1Calculations() -->
       </div>
-
-      <div class="calc-step-card">
-        <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
-          (b) Calculate the number of moles of solute in 25.0 cm³ of Solution B (2.0 Marks)
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <input type="number" step="0.0001" id="ansMolesB" class="calc-input" placeholder="e.g. 0.00250" onchange="onQ1CalculationsChanged()">
-          <span style="font-weight:700;color:var(--text-muted);">moles</span>
-          <button type="button" class="btn-perform-test btn-check-step" style="padding:6px 14px;font-size:0.78rem;" onclick="checkQ1Step('b')">Check (b)</button>
-        </div>
-        <div id="stepFeedback_b" class="step-feedback-msg"></div>
-      </div>
-
-      <div class="calc-step-card">
-        <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
-          (c) Chemical reaction equation and stoichiometric moles of Solution A (2.0 Marks)<br>
-          <small style="color:var(--cyan-accent);font-family:var(--font-mono);font-size:0.8rem;" id="q1EquationDisplay">HCl(aq) + NaOH(aq) → NaCl(aq) + H₂O(l)</small>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <input type="number" step="0.0001" id="ansMolesA" class="calc-input" placeholder="e.g. 0.00250" onchange="onQ1CalculationsChanged()">
-          <span style="font-weight:700;color:var(--text-muted);">moles of Solution A</span>
-          <button type="button" class="btn-perform-test btn-check-step" style="padding:6px 14px;font-size:0.78rem;" onclick="checkQ1Step('c')">Check (c)</button>
-        </div>
-        <div id="stepFeedback_c" class="step-feedback-msg"></div>
-      </div>
-
-      <div class="calc-step-card">
-        <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
-          (d) Calculate the molar concentration of Solution A in mol/dm³ (3.0 Marks)
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <input type="number" step="0.001" id="ansMolarityA" class="calc-input" placeholder="e.g. 0.100" onchange="onQ1CalculationsChanged()">
-          <span style="font-weight:700;color:var(--text-muted);">mol/dm³ (M)</span>
-          <button type="button" class="btn-perform-test btn-check-step" style="padding:6px 14px;font-size:0.78rem;" onclick="checkQ1Step('d')">Check (d)</button>
-        </div>
-        <div id="stepFeedback_d" class="step-feedback-msg"></div>
-      </div>
-
-      <div class="calc-step-card">
-        <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
-          (e) Calculate the concentration of Solution A in g/dm³ (RFM of Acid = <span id="q1RfmDisplay">36.5</span>) (2.0 Marks)
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <input type="number" step="0.01" id="ansConcGrams" class="calc-input" placeholder="e.g. 3.65" onchange="onQ1CalculationsChanged()">
-          <span style="font-weight:700;color:var(--text-muted);">g/dm³</span>
-          <button type="button" class="btn-perform-test btn-check-step" style="padding:6px 14px;font-size:0.78rem;" onclick="checkQ1Step('e')">Check (e)</button>
-        </div>
-        <div id="stepFeedback_e" class="step-feedback-msg"></div>
-      </div>
-
     </div>
   </div>
 
@@ -1073,6 +1015,7 @@
       }
     }
 
+    renderQ1Calculations();
     renderQ2TestsGrid();
     renderQ3TestsGrid();
     drawLens();
@@ -1136,6 +1079,7 @@
                   document.getElementById('q3SampleDescText').textContent = pCustom.q3.sampleDesc;
                 }
 
+                renderQ1Calculations();
                 renderQ2TestsGrid();
                 renderQ3TestsGrid();
               } catch (cfgErr) {
@@ -1439,10 +1383,12 @@
     const t2 = engine.q1Trials[1].used;
     const t3 = engine.q1Trials[2].used;
     const valid = [t1, t2, t3].filter(v => v > 0);
-    if (valid.length >= 2 && !document.getElementById('ansAvgTitre').value) {
+    const avgInput = document.getElementById('ansAvgTitre') || document.getElementById('ans_avgTitre');
+    if (valid.length >= 2 && avgInput && !avgInput.value) {
       const avg = (valid.reduce((a, b) => a + b, 0) / valid.length).toFixed(2);
-      document.getElementById('ansAvgTitre').value = avg;
+      avgInput.value = avg;
       engine.setQ1Answer('avgTitre', avg);
+      engine.setQ1Answer('step_a', avg);
     }
     updateLiveScoreDisplay();
   }
@@ -1455,72 +1401,114 @@
     updateLiveScoreDisplay();
   }
 
-  function onQ1CalculationsChanged() {
-    engine.setQ1Answer('avgTitre', document.getElementById('ansAvgTitre').value);
-    engine.setQ1Answer('molesB', document.getElementById('ansMolesB').value);
-    engine.setQ1Answer('molesA', document.getElementById('ansMolesA').value);
-    engine.setQ1Answer('molarityA', document.getElementById('ansMolarityA').value);
-    engine.setQ1Answer('concGrams', document.getElementById('ansConcGrams').value);
+  function renderQ1Calculations() {
+    const container = document.getElementById('q1CalculationsContainer');
+    if (!container || !engine?.preset?.q1) return;
+    const questions = engine.preset.q1.questions || (typeof createStandardTitrationQuestions === 'function' ? createStandardTitrationQuestions(engine.preset.q1) : []);
+    const isStrict = engine.mode === 'strict';
+
+    container.innerHTML = questions.map(q => {
+      const fieldId = q.field || q.id;
+      const inputId = fieldId === 'avgTitre' ? 'ansAvgTitre' : (fieldId === 'molesB' ? 'ansMolesB' : (fieldId === 'molesA' ? 'ansMolesA' : (fieldId === 'molarityA' ? 'ansMolarityA' : (fieldId === 'concGrams' ? 'ansConcGrams' : `ans_${fieldId}`))));
+      const currentVal = engine.q1Answers[fieldId] !== undefined ? engine.q1Answers[fieldId] : (engine.q1Answers[q.id] || '');
+
+      return `
+        <div class="calc-step-card" id="card_${fieldId}">
+          <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
+            (${q.letter}) ${q.label} <span style="color:var(--cyan-accent);">${q.marksLabel || ''}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <input type="number" step="${q.step || 'any'}" id="${inputId}" class="calc-input dynamic-calc-input" data-field="${fieldId}" data-step-id="${q.id}" placeholder="${q.placeholder || ''}" value="${currentVal}" oninput="onDynamicQ1CalculationChanged('${fieldId}', this.value)">
+            <span style="font-weight:700;color:var(--text-muted);">${q.unit || ''}</span>
+            ${!isStrict ? `<button type="button" class="btn-perform-test btn-check-step" style="padding:6px 14px;font-size:0.78rem;" onclick="checkDynamicQ1Step('${q.id}')">Check (${q.letter})</button>` : ''}
+          </div>
+          <div id="stepFeedback_${q.id}" class="step-feedback-msg"></div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function onDynamicQ1CalculationChanged(field, value) {
+    engine.setQ1Answer(field, value);
+    if (field === 'avgTitre') engine.setQ1Answer('step_a', value);
     updateLiveScoreDisplay();
   }
 
-  function checkQ1Step(letter) {
-    const p = engine.preset.q1;
-    const fb = document.getElementById(`stepFeedback_${letter}`);
+  function checkDynamicQ1Step(stepId) {
+    const questions = engine.preset.q1.questions || (typeof createStandardTitrationQuestions === 'function' ? createStandardTitrationQuestions(engine.preset.q1) : []);
+    const q = questions.find(item => item.id === stepId || item.letter === stepId);
+    if (!q) return;
+
+    const fb = document.getElementById(`stepFeedback_${q.id}`) || document.getElementById(`stepFeedback_${q.letter}`);
     if (!fb) return;
 
-    if (letter === 'a') {
-      const val = parseFloat(document.getElementById('ansAvgTitre').value);
-      const valid = engine.q1Trials.filter(t => t.recorded && t.used > 0);
-      const expAvg = valid.length > 0 ? valid.reduce((a, b) => a + b.used, 0) / valid.length : 25.00;
-      if (!isNaN(val) && Math.abs(val - expAvg) <= 0.15) {
-        fb.className = 'step-feedback-msg step-feedback-success';
-        fb.textContent = `✓ Correct! Average titre V₁ = ${val.toFixed(2)} cm³.`;
-      } else {
-        fb.className = 'step-feedback-msg step-feedback-fail';
-        fb.textContent = `Check your average from concordant titres (expected around ${expAvg.toFixed(2)} cm³).`;
-      }
-    } else if (letter === 'b') {
-      const val = parseFloat(document.getElementById('ansMolesB').value);
-      const exp = (p.trueBaseMolarity * p.pipetteVolume) / 1000.0;
-      if (!isNaN(val) && Math.abs(val - exp) / exp <= 0.08) {
-        fb.className = 'step-feedback-msg step-feedback-success';
-        fb.textContent = `✓ Correct! Moles = ${val} mol.`;
-      } else {
-        fb.className = 'step-feedback-msg step-feedback-fail';
-        fb.textContent = `Formula: (Molarity × 25.0 cm³) / 1000 = ${exp.toFixed(5)} mol.`;
-      }
-    } else if (letter === 'c') {
-      const val = parseFloat(document.getElementById('ansMolesA').value);
-      const exp = (p.trueBaseMolarity * p.pipetteVolume) / 1000.0 * (p.moleRatioAcid / p.moleRatioBase);
-      if (!isNaN(val) && Math.abs(val - exp) / exp <= 0.08) {
-        fb.className = 'step-feedback-msg step-feedback-success';
-        fb.textContent = `✓ Correct! Stoichiometric moles of acid = ${val} mol.`;
-      } else {
-        fb.className = 'step-feedback-msg step-feedback-fail';
-        fb.textContent = `Expected around ${exp.toFixed(5)} mol based on mole ratio ${p.moleRatioAcid}:${p.moleRatioBase}.`;
-      }
-    } else if (letter === 'd') {
-      const val = parseFloat(document.getElementById('ansMolarityA').value);
-      const exp = p.trueAcidMolarity;
-      if (!isNaN(val) && Math.abs(val - exp) / exp <= 0.08) {
-        fb.className = 'step-feedback-msg step-feedback-success';
-        fb.textContent = `✓ Correct! Molarity of Solution A = ${val} M.`;
-      } else {
-        fb.className = 'step-feedback-msg step-feedback-fail';
-        fb.textContent = `Formula: (Moles of Acid × 1000) / Average Titre = ${exp.toFixed(3)} M.`;
-      }
-    } else if (letter === 'e') {
-      const val = parseFloat(document.getElementById('ansConcGrams').value);
-      const exp = p.trueAcidMolarity * (p.acidRfm || 36.5);
-      if (!isNaN(val) && Math.abs(val - exp) / exp <= 0.08) {
-        fb.className = 'step-feedback-msg step-feedback-success';
-        fb.textContent = `✓ Correct! Concentration = ${val} g/dm³.`;
-      } else {
-        fb.className = 'step-feedback-msg step-feedback-fail';
-        fb.textContent = `Formula: Molarity × RFM (${p.acidRfm || 36.5}) = ${exp.toFixed(2)} g/dm³.`;
+    const fieldId = q.field || q.id;
+    const inputId = fieldId === 'avgTitre' ? 'ansAvgTitre' : (fieldId === 'molesB' ? 'ansMolesB' : (fieldId === 'molesA' ? 'ansMolesA' : (fieldId === 'molarityA' ? 'ansMolarityA' : (fieldId === 'concGrams' ? 'ansConcGrams' : `ans_${fieldId}`))));
+    const el = document.getElementById(inputId);
+    const val = parseFloat(el ? el.value : engine.q1Answers[fieldId]);
+
+    const p = engine.preset.q1;
+    const recordedTrials = engine.q1Trials.filter(t => t.recorded && t.used > 0);
+    const checkedConcordant = engine.q1Trials.filter(t => t.recorded && t.concordant && t.used > 0);
+    const avgRecorded = recordedTrials.length > 0 ? recordedTrials.reduce((a, b) => a + b.used, 0) / recordedTrials.length : p.trueTitre;
+    const expAvgFromTrials = checkedConcordant.length > 0 ? checkedConcordant.reduce((a, b) => a + b.used, 0) / checkedConcordant.length : avgRecorded;
+
+    const evalCtx = {
+      trueTitre: p.trueTitre || 25.00,
+      expAvgFromTrials,
+      trueAcidMolarity: Number(p.trueAcidMolarity) || 0.100,
+      trueBaseMolarity: Number(p.trueBaseMolarity) || 0.100,
+      pipetteVol: Number(p.pipetteVolume) || 25.0,
+      ratioA: Number(p.moleRatioAcid || p.ratioA) || 1,
+      ratioB: Number(p.moleRatioBase || p.ratioB) || 1,
+      acidRfm: Number(p.acidRfm) || 36.5,
+      baseRfm: Number(p.baseRfm) || 40.0,
+      answers: engine.q1Answers,
+      t1: engine.q1Trials[0]?.used || p.trueTitre,
+      t2: engine.q1Trials[1]?.used || p.trueTitre,
+      v1: parseFloat(engine.q1Answers.avgTitre || engine.q1Answers.step_a) || expAvgFromTrials
+    };
+
+    const expTheo = typeof q.calcTheoretical === 'function' ? q.calcTheoretical(evalCtx) : null;
+    const expEcf = typeof q.calcEcf === 'function' ? q.calcEcf(evalCtx) : expTheo;
+
+    let isPassed = false;
+    let usedEcf = false;
+
+    if (!isNaN(val)) {
+      if (typeof q.check === 'function') {
+        isPassed = q.check(val, evalCtx, expTheo, expEcf);
+      } else if (expTheo != null) {
+        isPassed = Math.abs(val - expTheo) / (expTheo || 1) <= 0.08;
+        if (!isPassed && expEcf != null) {
+          isPassed = Math.abs(val - expEcf) / (expEcf || 1) <= 0.08;
+          if (isPassed) usedEcf = true;
+        }
       }
     }
+
+    if (isPassed) {
+      fb.className = 'step-feedback-msg step-feedback-success';
+      fb.textContent = usedEcf
+        ? `✓ Correct via Error Carried Forward (e.c.f.)! Accurately derived from your prior step.`
+        : (typeof q.feedbackSuccess === 'function' ? q.feedbackSuccess(val) : `✓ Correct!`);
+    } else {
+      fb.className = 'step-feedback-msg step-feedback-fail';
+      fb.textContent = typeof q.feedbackFail === 'function' ? q.feedbackFail(evalCtx, expTheo) : `Please recheck your calculation.`;
+    }
+  }
+
+  function checkQ1Step(letter) {
+    checkDynamicQ1Step(`step_${letter}`);
+  }
+
+  function onQ1CalculationsChanged() {
+    const inputs = document.querySelectorAll('.dynamic-calc-input');
+    inputs.forEach(input => {
+      const field = input.getAttribute('data-field');
+      if (field) engine.setQ1Answer(field, input.value);
+    });
+    updateLiveScoreDisplay();
   }
 
   // ── Render Q2 Question Cards with Realistic SVG Test Tubes ───────────
@@ -2152,13 +2140,11 @@
     const workedBox = document.getElementById('modalWorkedSolutionsList');
     if (workedBox && evalData.workedSolutions) {
       const ws = evalData.workedSolutions;
-      const steps = [ws.stepA, ws.stepB, ws.stepC, ws.stepD, ws.stepE];
+      const steps = Object.values(ws);
       workedBox.innerHTML = steps.map(s => `
         <div style="background:var(--card-bg); border:1px solid var(--card-border); border-radius:8px; padding:12px 14px;">
           <div style="font-weight:800; font-size:0.84rem; color:var(--heading-color); margin-bottom:4px;">${s.title}</div>
-          <div style="font-size:0.78rem; color:var(--text-muted); font-family:var(--font-mono); margin-bottom:2px;">• General Formula: <b style="color:var(--text-main);">${s.formula}</b></div>
-          <div style="font-size:0.78rem; color:var(--text-muted); font-family:var(--font-mono); margin-bottom:2px;">• Mathematical Substitution: <span style="color:var(--amber-accent); font-weight:700;">${s.substitution}</span></div>
-          <div style="font-size:0.82rem; color:var(--green-accent); font-weight:800; font-family:var(--font-mono); margin-top:4px;">➔ Expected Model Result = ${s.result}</div>
+          <div style="font-size:0.82rem; color:var(--text-main); font-family:var(--font-mono); margin-top:4px;">${s.workingHtml || ''}</div>
         </div>
       `).join('');
     }
@@ -2219,11 +2205,11 @@
           <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[2].used.toFixed(2)}</td>
         </tr>
       </table>
-      <div style="margin-top:4px;">(a) Average Titre V₁ = <b>${engine.q1Answers.avgTitre || '—'} cm³</b></div>
-      <div>(b) Moles of Solution B = <b>${engine.q1Answers.molesB || '—'} mol</b></div>
-      <div>(c) Moles of Solution A = <b>${engine.q1Answers.molesA || '—'} mol</b></div>
-      <div>(d) Molarity of Solution A = <b>${engine.q1Answers.molarityA || '—'} mol/dm³</b></div>
-      <div>(e) Concentration in g/dm³ = <b>${engine.q1Answers.concGrams || '—'} g/dm³</b></div>
+      ${(p.q1.questions || []).map(q => {
+        const fieldKey = q.field || q.id;
+        const ans = engine.q1Answers[fieldKey] !== undefined ? engine.q1Answers[fieldKey] : (engine.q1Answers[q.id] || '—');
+        return `<div>(${q.letter}) ${q.label}: <b>${ans} ${q.unit || ''}</b></div>`;
+      }).join('')}
     `;
     document.getElementById('printQ1Content').innerHTML = q1Html;
 

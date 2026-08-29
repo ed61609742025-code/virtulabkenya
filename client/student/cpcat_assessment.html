@@ -196,7 +196,7 @@
 
       <div style="display:flex; align-items:center; gap:16px;">
         <span style="font-family:'JetBrains Mono', monospace; font-size:0.82rem; color:var(--text-muted);">
-          Answered: <b id="progressCount">0</b> / 16
+          Answered: <b id="progressCount">0</b> / <span id="totalQuestionsCount">40</span>
         </span>
         <div style="font-family:'JetBrains Mono', monospace; font-weight:800; font-size:0.96rem; color:var(--red-accent);" id="timerDisplay">
           ⏱️ 45:00
@@ -206,10 +206,10 @@
 
     <!-- SECTION NAVIGATION TABS -->
     <div class="section-tab-nav">
-      <button class="sec-tab-btn active" onclick="showSection('A', this)">Section A: Titration (14 Mks)</button>
+      <button class="sec-tab-btn active" onclick="showSection('A', this)">Section A: Titration (10 Mks)</button>
       <button class="sec-tab-btn" onclick="showSection('B', this)">Section B: Qualitative (10 Mks)</button>
       <button class="sec-tab-btn" onclick="showSection('C', this)">Section C: Kinetics & Heat (10 Mks)</button>
-      <button class="sec-tab-btn" onclick="showSection('D', this)">Section D: Organic & Safety (6 Mks)</button>
+      <button class="sec-tab-btn" onclick="showSection('D', this)">Section D: Organic & Safety (10 Mks)</button>
     </div>
 
     <!-- QUESTIONS CONTAINER -->
@@ -297,6 +297,8 @@
     document.getElementById('activeAssessmentLabel').innerText = mode === 'pre_test'
       ? '📋 CPCAT Baseline Pre-Test'
       : '🏆 CPCAT Post-Intervention Test';
+    const totalEl = document.getElementById('totalQuestionsCount');
+    if (totalEl) totalEl.innerText = engine.items.length;
   });
 
   function startAssessment() {

@@ -40,8 +40,8 @@
 <header class="academic-top-header">
   <!-- Institutional Candidate Ribbon -->
   <div class="candidate-top-ribbon">
-    <span class="ribbon-full">🇰🇪 REPUBLIC OF KENYA • <abbr class="sci-abbr" tabindex="0">KCSE<span class="sci-abbr-tip"><span class="sci-abbr-title">KCSE (Kenya Certificate of Secondary Education)</span>The national examination completing secondary school education in Kenya.</span></abbr> CHEMISTRY PRACTICAL WORKSTATION • <abbr class="sci-abbr" tabindex="0">KNEC 233/3<span class="sci-abbr-tip"><span class="sci-abbr-title">KNEC 233/3 (Chemistry Practical Paper 3)</span>Kenya National Examinations Council practical examination syllabus code for Chemistry.</span></abbr> • Q1: VOLUMETRIC ANALYSIS</span>
-    <span class="ribbon-mobile">🇰🇪 <abbr class="sci-abbr" tabindex="0">KCSE<span class="sci-abbr-tip"><span class="sci-abbr-title">KCSE</span>Kenya Certificate of Secondary Education</span></abbr> 233/3 · Volumetric Analysis (Titration)</span>
+    <span class="ribbon-full">🇰🇪 REPUBLIC OF KENYA • KCSE CHEMISTRY PRACTICAL WORKSTATION • KNEC 233/3 • Q1: VOLUMETRIC ANALYSIS</span>
+    <span class="ribbon-mobile">🇰🇪 KCSE 233/3 · Volumetric Analysis (Titration)</span>
   </div>
 
   <!-- Topbar Navigation Bar -->
@@ -138,11 +138,11 @@
       <span class="knec-subbar-val">50.0 cm³</span>
     </div>
     <div class="knec-subbar-item">
-      <span class="knec-subbar-label"><abbr class="sci-abbr" tabindex="0">Aliquot<span class="sci-abbr-tip"><span class="sci-abbr-title">Pipette Aliquot</span>A fixed, precisely measured volume of solution delivered into the conical flask (typically 25.00 cm³).</span></abbr>:</span>
+      <span class="knec-subbar-label">Aliquot:</span>
       <span class="knec-subbar-val" id="knecSubbarAliquot">25.00 cm³</span>
     </div>
     <div class="knec-subbar-item">
-      <span class="knec-subbar-label"><abbr class="sci-abbr" tabindex="0">Concordance<span class="sci-abbr-tip"><span class="sci-abbr-title">KNEC Concordance Rubric</span>Titres that agree within ±0.10 cm³ of each other, demonstrating candidate experimental precision.</span></abbr>:</span>
+      <span class="knec-subbar-label">Concordance:</span>
       <span class="knec-subbar-val">±0.10 cm³</span>
     </div>
     <div class="knec-subbar-item" style="margin-left:auto;">
@@ -254,14 +254,14 @@
 
   <div class="workbench-grid">
     
-    <!-- LEFT COLUMN: Experiment Selection, Your Task, Checklist, Reagents -->
+    <!-- LEFT COLUMN: Experiment Selection, Your Task, Reagents -->
     <aside class="wb-left-col">
       
       <!-- Card 1: Experiment Selection -->
-      <div class="wb-card card-exp-select zone-brief">
+      <div class="wb-card card-exp-select">
         <div class="wb-card-title">
           <span>🔬 Practical Examination Selection</span>
-          <span class="wb-section-badge badge-blue">Paper 3 · Q1</span>
+          <span style="font-size:0.7rem; color:var(--text-tertiary); font-family:var(--font-mono); font-weight:600;">Paper 3 · Q1</span>
         </div>
         <label for="practicalSelect" style="display:block; font-size:0.74rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Choose Examination Practical:</label>
         <select id="practicalSelect" class="wb-select" onchange="resetWorkbench(this.value)" aria-label="Select KCSE practical examination experiment">
@@ -274,77 +274,27 @@
           <option value="weakAcid">Weak Acid – Strong Base (CH₃COOH vs NaOH)</option>
           <option value="weakBase">Weak Base – Strong Acid (NH₃ vs HCl)</option>
         </select>
-        <button type="button" onclick="resetWorkbench()" class="btn-pill-action" style="width:100%; margin-top:10px; min-height:44px; font-size:0.82rem; font-weight:700; display:flex; align-items:center; justify-content:center; gap:6px;" title="Flushes burette, washes conical flask, and resets experimental apparatus" aria-label="Wash apparatus and reset setup">
+        <button type="button" onclick="resetWorkbench()" class="btn-pill-action" style="width:100%; margin-top:10px; height:38px; font-size:0.78rem; font-weight:700; display:flex; align-items:center; justify-content:center; gap:6px;" title="Flushes burette, washes conical flask, and resets experimental apparatus" aria-label="Wash apparatus and reset setup">
           🔄 Wash Apparatus &amp; Reset Setup
         </button>
       </div>
 
       <!-- Card 2: Your Task -->
-      <div class="wb-card card-task zone-brief">
+      <div class="wb-card card-task">
         <div class="wb-card-title">
           <span>📜 Question 1 Instructions &amp; Brief</span>
-          <span class="wb-section-badge badge-blue">KNEC Rubric</span>
+          <span style="font-size:0.7rem; color:var(--text-tertiary); font-family:var(--font-mono); font-weight:600;">KNEC Rubric</span>
         </div>
         <div class="task-brief-box" id="briefText" tabindex="0" role="region" aria-label="KCSE Question 1 Practical Instructions">
           Loading task details...
         </div>
       </div>
 
-      <!-- Practical Task Checklist Card -->
-      <div class="wb-card zone-checklist" id="practicalChecklistCard">
-        <div class="task-checklist-header">
-          <div class="task-checklist-title">
-            <span>📋</span> Practical Task Checklist
-          </div>
-          <span class="wb-section-badge badge-purple" id="checklistProgressBadge">0 / 5 Done (0%)</span>
-        </div>
-        <div class="task-checklist-progress-bar">
-          <div class="task-checklist-progress-fill" id="taskChecklistFill"></div>
-        </div>
-        <div class="task-checklist-items" id="taskChecklistItems">
-          <div class="task-checklist-item is-active" id="chkTask0">
-            <div class="task-checkbox-icon">✓</div>
-            <div class="task-checklist-content">
-              <div class="task-checklist-name">1. Pipette Aliquot &amp; Add Indicator</div>
-              <div class="task-checklist-desc">Pipette 25.0 cm³ of Solution A into flask and add 1–3 drops of indicator.</div>
-            </div>
-          </div>
-          <div class="task-checklist-item" id="chkTask1">
-            <div class="task-checkbox-icon">✓</div>
-            <div class="task-checklist-content">
-              <div class="task-checklist-name">2. Perform Rough Titration (Trial 1)</div>
-              <div class="task-checklist-desc">Deliver titrant from burette with continuous swirling to first color change.</div>
-            </div>
-          </div>
-          <div class="task-checklist-item" id="chkTask2">
-            <div class="task-checkbox-icon">✓</div>
-            <div class="task-checklist-content">
-              <div class="task-checklist-name">3. Record Concordant Trials</div>
-              <div class="task-checklist-desc">Record at least 2 trials agreeing within ±0.10 cm³ of each other in Table 1.</div>
-            </div>
-          </div>
-          <div class="task-checklist-item" id="chkTask3">
-            <div class="task-checkbox-icon">✓</div>
-            <div class="task-checklist-content">
-              <div class="task-checklist-name">4. Calculate Average Titre (V_avg)</div>
-              <div class="task-checklist-desc">Compute the mean of concordant titres and verify Step (a).</div>
-            </div>
-          </div>
-          <div class="task-checklist-item" id="chkTask4">
-            <div class="task-checkbox-icon">✓</div>
-            <div class="task-checklist-content">
-              <div class="task-checklist-name">5. Solve Stoichiometry &amp; Submit</div>
-              <div class="task-checklist-desc">Answer calculation steps (b)–(e) and submit practical for KNEC scoring.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <!-- Card 3: Reagents -->
-      <div class="wb-card card-reagents zone-brief">
+      <div class="wb-card card-reagents">
         <div class="wb-card-title">
           <span>🧪 Prescribed Reagents Ledger</span>
-          <span class="wb-section-badge badge-blue">Specifications</span>
+          <span style="font-size:0.7rem; color:var(--text-tertiary); font-family:var(--font-mono); font-weight:600;">Specifications</span>
         </div>
         <div class="reagent-info-item">
           <span class="sci-tooltip" tabindex="0" role="tooltip" aria-label="Definition of Analyte">Analyte (Solution A) <span class="sci-tip-icon" aria-hidden="true">ℹ️</span><span class="sci-tip-text"><b>Analyte:</b> The chemical solution of unknown concentration placed in the conical flask using a pipette.</span></span>: <b id="pillAnalyte">HCl(aq)</b>
@@ -369,12 +319,10 @@
     <main class="wb-center-col">
       
       <!-- Card 4: Interactive Apparatus Simulation & Bench Controls -->
-      <div class="apparatus-card wb-card glow-card card-apparatus zone-apparatus" id="apparatusCard">
-        <div class="wb-card-title" style="margin-bottom:14px; font-family:'Cinzel', serif; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
-          <div style="display:flex; align-items:center; gap:8px;">
-            <span>🔬 Interactive Volumetric Apparatus &amp; Burette Assembly</span>
-          </div>
-          <span class="wb-section-badge badge-cyan">Class-A Glassware</span>
+      <div class="apparatus-card wb-card glow-card card-apparatus" id="apparatusCard">
+        <div class="wb-card-title" style="margin-bottom:14px; font-family:'Cinzel', serif;">
+          <span>🔬 Interactive Volumetric Apparatus &amp; Burette Assembly</span>
+          <span style="font-size:0.72rem; font-weight:700; color:var(--cyan-accent-strong); font-family:var(--font-mono);">Class-A Glassware</span>
         </div>
         
         <div class="bench-layout-grid">
@@ -387,7 +335,7 @@
             <div style="font-size:0.72rem; color:var(--text-secondary); line-height:1.45; background:var(--card-bg); border:1px solid var(--card-border); border-radius:6px; padding:6px 8px;">
               Add 1 to 3 drops to detect the sharp neutralization endpoint.
             </div>
-            <button class="btn-tactile btn-tactile-cyan btn-tactile-sm btn-cyan" id="addIndicatorBtn" onclick="addIndicatorDrops()" style="width:100%;font-weight:700;padding:8px 8px;font-size:0.80rem;line-height:1.3;min-height:44px;display:flex;align-items:center;justify-content:center;gap:6px;" aria-label="Add drops of chemical indicator to conical flask">💧 Add Drop 1 of 3 (Phenolphthalein)</button>
+            <button class="btn-tactile btn-tactile-cyan btn-tactile-sm btn-cyan" id="addIndicatorBtn" onclick="addIndicatorDrops()" style="width:100%;font-weight:700;padding:8px 8px;font-size:0.78rem;line-height:1.3;" aria-label="Add drops of chemical indicator to conical flask">💧 Add Drop 1 of 3 (Phenolphthalein)</button>
             <div id="indicatorMsg" style="font-size:0.74rem;"></div>
 
             <div style="border-top:1px dashed var(--card-border);margin:4px 0;"></div>
@@ -398,7 +346,7 @@
             <div style="font-size:0.72rem; color:var(--text-secondary); line-height:1.45; background:var(--card-bg); border:1px solid var(--card-border); border-radius:6px; padding:6px 8px;">
               Swirl continuously during titration to verify if color persist.
             </div>
-            <button class="btn-tactile btn-tactile-surface btn-tactile-sm btn-action-swirl" onclick="swirlFlask()" style="width:100%;padding:8px 8px;font-size:0.80rem;font-weight:700;min-height:44px;display:flex;align-items:center;justify-content:center;gap:6px;" data-i18n="swirl_flask" title="Swirl conical flask to thoroughly mix delivered titrant and analyte" aria-label="Swirl conical flask">🌀 Swirl Flask</button>
+            <button class="btn-tactile btn-tactile-surface btn-tactile-sm btn-action-swirl" onclick="swirlFlask()" style="width:100%;padding:8px 8px;font-size:0.78rem;font-weight:700;height:38px;" data-i18n="swirl_flask" title="Swirl conical flask to thoroughly mix delivered titrant and analyte" aria-label="Swirl conical flask">🌀 Swirl Flask</button>
           </div>
 
           <!-- CENTER: Photorealistic Apparatus Rig + Precision Lens + Reagents Shelf -->
@@ -622,12 +570,12 @@
 
             <div id="titrationControls" class="is-locked" style="display:flex;flex-direction:column;gap:6px;">
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-                <button class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(1.0)" style="padding:8px 4px;font-size:0.78rem;font-weight:700;font-family:'JetBrains Mono',monospace;min-height:44px;display:flex;align-items:center;justify-content:center;" title="Add 1.00 cm³ titrant (Coarse delivery)" aria-label="Add 1.00 cm³ titrant">+1 cm³</button>
-                <button class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(0.5)" style="padding:8px 4px;font-size:0.78rem;font-weight:700;font-family:'JetBrains Mono',monospace;min-height:44px;display:flex;align-items:center;justify-content:center;" title="Add 0.50 cm³ titrant" aria-label="Add 0.50 cm³ titrant">+0.5 cm³</button>
+                <button class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(1.0)" style="padding:8px 4px;font-size:0.78rem;font-weight:700;font-family:'JetBrains Mono',monospace;" title="Add 1.00 cm³ titrant (Coarse delivery)" aria-label="Add 1.00 cm³ titrant">+1 cm³</button>
+                <button class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(0.5)" style="padding:8px 4px;font-size:0.78rem;font-weight:700;font-family:'JetBrains Mono',monospace;" title="Add 0.50 cm³ titrant" aria-label="Add 0.50 cm³ titrant">+0.5 cm³</button>
               </div>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-                <button class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(0.1)" style="padding:8px 4px;font-size:0.78rem;font-weight:700;font-family:'JetBrains Mono',monospace;min-height:44px;display:flex;align-items:center;justify-content:center;" title="Add 0.10 cm³ titrant" aria-label="Add 0.10 cm³ titrant">+0.1 cm³</button>
-                <button class="btn-tactile btn-tactile-cyan btn-tactile-sm btn-pill-action" onclick="addVolume(0.05)" style="padding:8px 4px;font-size:0.78rem;font-weight:700;font-family:'JetBrains Mono',monospace;min-height:44px;display:flex;align-items:center;justify-content:center;" title="Add single drop (0.05 cm³) for precision equivalence" aria-label="Add single drop of 0.05 cm³">💧 +0.05 cm³</button>
+                <button class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(0.1)" style="padding:8px 4px;font-size:0.78rem;font-weight:700;font-family:'JetBrains Mono',monospace;" title="Add 0.10 cm³ titrant" aria-label="Add 0.10 cm³ titrant">+0.1 cm³</button>
+                <button class="btn-tactile btn-tactile-cyan btn-tactile-sm btn-pill-action" onclick="addVolume(0.05)" style="padding:8px 4px;font-size:0.78rem;font-weight:700;font-family:'JetBrains Mono',monospace;" title="Add single drop (0.05 cm³) for precision equivalence" aria-label="Add single drop of 0.05 cm³">💧 +0.05 cm³</button>
               </div>
             </div>
 
@@ -635,8 +583,8 @@
 
             <!-- Endpoint & Reset -->
             <div style="display:flex;flex-direction:column;gap:8px;">
-              <button class="btn-tactile btn-tactile-success btn-action-record" onclick="recordTrial()" style="width:100%;padding:8px 6px;font-size:0.84rem;font-weight:800;min-height:44px;display:flex;align-items:center;justify-content:center;gap:6px;" data-i18n="record_endpoint" title="Record the current burette volume in the KCSE Results Table once permanent endpoint is reached" aria-label="Record titration endpoint">🎯 Record Endpoint</button>
-              <button class="btn-tactile btn-tactile-surface btn-action-reset" onclick="resetBurette()" style="width:100%;padding:7px 6px;font-size:0.80rem;font-weight:700;min-height:44px;display:flex;align-items:center;justify-content:center;gap:6px;" data-i18n="reset_burette" title="Refill burette to 0.00 cm³ and prepare a fresh conical flask aliquot for the next trial" aria-label="Reset burette and flask">🔄 Reset Burette</button>
+              <button class="btn-tactile btn-tactile-success btn-action-record" onclick="recordTrial()" style="width:100%;padding:8px 6px;font-size:0.80rem;font-weight:700;height:38px;" data-i18n="record_endpoint" title="Record the current burette volume in the KCSE Results Table once permanent endpoint is reached" aria-label="Record titration endpoint">✅ Record Endpoint</button>
+              <button class="btn-tactile btn-tactile-surface btn-action-reset" onclick="resetBurette()" style="width:100%;padding:7px 6px;font-size:0.78rem;font-weight:700;height:36px;" data-i18n="reset_burette" title="Refill burette to 0.00 cm³ and prepare a fresh conical flask aliquot for the next trial" aria-label="Reset burette and flask">🔄 Reset Burette</button>
             </div>
             
             <div id="statusText" style="font-size:0.75rem;color:var(--text-secondary);text-align:center;font-weight:600;font-family:var(--font-body);padding:2px 0;">Waiting to start…</div>
@@ -646,15 +594,13 @@
       </div>
 
       <!-- Card 5: Results Table (KCSE Format) -->
-      <div class="wb-card card-results-table zone-table" id="resultsTableCard" style="margin-top:20px;">
+      <div class="wb-card card-results-table" id="resultsTableCard" style="margin-top:20px;">
         <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1.5px solid var(--card-border);padding-bottom:12px;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
-          <div style="display:flex; align-items:center; gap:8px;">
-            <div class="wb-card-title" data-i18n="results_table_title" style="margin:0; border:none; padding:0; font-family:'Cinzel', serif;">
-              <span>📊 Table 1: Titre Volume Determination (<abbr class="sci-abbr" tabindex="0">KCSE<span class="sci-abbr-tip"><span class="sci-abbr-title">KCSE (Kenya Certificate of Secondary Education)</span>Practical Chemistry Paper 3 official results recording format.</span></abbr> Format)</span>
-            </div>
-            <span class="wb-section-badge badge-green">[5.0 Marks]</span>
+          <div class="wb-card-title" data-i18n="results_table_title" style="margin:0; border:none; padding:0; font-family:'Cinzel', serif;">
+            <span>📊 Table 1: Titre Volume Determination (KCSE Format)</span>
+            <span style="font-size:0.74rem; font-weight:700; color:var(--cyan-accent-strong); font-family:var(--font-mono); margin-left:8px;">[5.0 Marks]</span>
           </div>
-          <span style="font-size:0.76rem; font-family:var(--font-body); font-weight:600; color:var(--text-secondary);"><abbr class="sci-abbr" tabindex="0">KNEC<span class="sci-abbr-tip"><span class="sci-abbr-title">KNEC Concordance Rubric</span>Official scoring criteria: candidate titres must be concordant within ±0.10 cm³.</span></abbr> Rubric: Concordant within ±0.10 cm³ · Complete Table &amp; Accuracy</span>
+          <span style="font-size:0.76rem; font-family:var(--font-body); font-weight:600; color:var(--text-secondary);">KNEC Rubric: Concordant within ±0.10 cm³ · Complete Table &amp; Accuracy</span>
         </div>
         <div class="table-responsive">
           <div id="trialsList">
@@ -664,15 +610,15 @@
       </div>
 
       <!-- Card 9: KCSE Volumetric Analysis Calculations (5 Questions) -->
-      <div class="wb-card card-calc zone-calc" id="kcseCalcCard" style="margin-top:20px;">
+      <div class="wb-card card-calc" id="kcseCalcCard" style="margin-top:20px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;border-bottom:1.5px solid var(--card-border);padding-bottom:12px;flex-wrap:wrap;gap:10px;">
           <div>
             <div class="wb-card-title" id="calcSectionTitle" style="margin:0; border:none; padding:0; font-family:'Cinzel', serif;">
               <span>🧮 Section 1 Calculations: Stoichiometry &amp; Analysis</span>
             </div>
-            <div id="calcSectionSub" style="font-size:0.76rem; font-family:var(--font-body); font-weight:600; color:var(--text-secondary); margin-top:4px;"><abbr class="sci-abbr" tabindex="0">KNEC<span class="sci-abbr-tip"><span class="sci-abbr-title">KNEC Examination Standard</span>Kenya National Examinations Council grading standard (10 marks calculations + 5 marks table = 15 marks total).</span></abbr> Standard: 10.0 Marks Total (2.0 Marks per Question) · Practical Total: 15.0 Marks</div>
+            <div id="calcSectionSub" style="font-size:0.76rem; font-family:var(--font-body); font-weight:600; color:var(--text-secondary); margin-top:4px;">KNEC Examination Standard: 10.0 Marks Total (2.0 Marks per Question) · Practical Total: 15.0 Marks</div>
           </div>
-          <span class="wb-section-badge badge-amber" id="calcSectionBadge">5 Sub-Questions · [10.0 Marks]</span>
+          <span id="calcSectionBadge" style="font-size:0.76rem;font-weight:800;color:var(--acad-gold);background:var(--acad-gold-bg);padding:5px 12px;border-radius:6px;border:1.5px solid var(--amber-border);font-family:var(--font-mono);">5 Sub-Questions · [10.0 Marks]</span>
         </div>
         
         <!-- Dynamic Questions Grid: Automatically populated by loadPractical() -->
@@ -683,9 +629,7 @@
         <!-- Final KCSE Titration Submission Box -->
         <div class="calc-field-group" id="submitCardBox" style="opacity:0.4;pointer-events:none;background:var(--card-bg-hover);border:1.5px solid var(--cyan-accent);border-radius:10px;padding:16px;margin-top:14px;">
           <div class="calc-input-row" style="flex-direction:column;gap:12px;width:100%;">
-            <button class="btn-submit-titration" id="btnSubmitTitration" onclick="submitSession()" style="width:100%;min-height:48px;font-weight:800;font-size:0.95rem;font-family:'Cinzel', serif;display:flex;align-items:center;justify-content:center;gap:8px;" data-i18n="submit_titration">
-              <span>🚀</span> Submit Full KCSE Titration →
-            </button>
+            <button class="btn-submit-titration" id="btnSubmitTitration" onclick="submitSession()" style="width:100%;height:48px;font-weight:800;font-size:0.95rem;font-family:'Cinzel', serif;" data-i18n="submit_titration">Submit Full KCSE Titration →</button>
           </div>
           <div id="resultMsg"></div>
           <div id="aiFeedbackBox" style="display:none;"></div>

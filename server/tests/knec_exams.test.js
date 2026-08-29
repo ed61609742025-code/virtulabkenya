@@ -98,6 +98,97 @@ describe('KNEC Paper 3 Examination Suite Standards', () => {
     });
   });
 
+  it('should strictly grade Question 1 Table 1 with CT, D, AC, PA, and FA', () => {
+    const engine = new CompositeExamEngine({ presetKey: 'series_1' });
+    const sv = engine.preset.q1.trueTitre; // e.g. 25.00
+
+    // Full 5.0 Marks scenario
+    engine.recordTrial(1, sv, 0.00);
+    engine.recordTrial(2, sv + 0.05, 0.00);
+    engine.recordTrial(3, sv, 0.00);
+    engine.setConcordant(1, true);
+    engine.setConcordant(2, true);
+    engine.setConcordant(3, true);
+    const avg = ((sv + sv + 0.05 + sv) / 3).toFixed(2);
+    engine.setQ1Answer('avgTitre', avg);
+
+    let score = engine.calculateQ1Score();
+    assert.strictEqual(score.tableScore, 5.0, 'Candidate should get full 5.0 marks on Table 1');
+
+    // Decimal penalty scenario (2nd d.p. is .03)
+    const engineDec = new CompositeExamEngine({ presetKey: 'series_1' });
+    engineDec.recordTrial(1, sv + 0.03, 0.00);
+    engineDec.recordTrial(2, sv, 0.00);
+    engineDec.setQ1Answer('avgTitre', sv.toFixed(2));
+    const scoreDec = engineDec.calculateQ1Score();
+    const dRubric = scoreDec.rubric.find(r => r.code === 'D');
+    assert.strictEqual(dRubric.mark, 0.0, 'Readings terminating in non-zero/non-five must get 0 for decimals');
+
+    // Principles of Averaging penalty (3 concordant, but only averaged 2)
+    const enginePa = new CompositeExamEngine({ presetKey: 'series_1' });
+    enginePa.recordTrial(1, 24.90, 0.00);
+    enginePa.recordTrial(2, 25.00, 0.00);
+    enginePa.recordTrial(3, 25.05, 0.00); // all 3 within 0.15 cm³
+    enginePa.setConcordant(1, true);
+    enginePa.setConcordant(2, true);
+    enginePa.setConcordant(3, false); // candidate omitted trial 3
+    enginePa.setQ1Answer('avgTitre', '24.95'); // average of only 1 & 2
+    const scorePa = enginePa.calculateQ1Score();
+    const paRubric = scorePa.rubric.find(r => r.code === 'PA');
+    assert.strictEqual(paRubric.mark, 0.5, 'Failing to average all 3 concordant titres must be penalized 0.5 Mk');
+  });
+
+  it('should enforce Qualitative Analysis Q2 marking, amphoteric grouping, contradictory ion penalty, and charge penalties', () => {
+    const engine = new CompositeExamEngine({ presetKey: 'series_1' });
+
+    // Test NaOH: Full amphoteric grouping (Pb²⁺, Al³⁺, Zn²⁺)
+    engine.setQ2Response('q2_naoh', 'White precipitate formed, soluble in excess to form a colorless solution', 'Pb²⁺, Al³⁺, Zn²⁺ present');
+    let q2Score = engine.calculateQ2Score();
+    const naohRubric = q2Score.rubric.find(r => r.code.includes('Q2_c') || r.item.includes('NaOH'));
+    assert.strictEqual(naohRubric.mark, 3.0, 'Full mark (1.5 obs + 1.5 inf) for correct amphoteric deduction');
+
+    // Contradictory ion penalty: candidate includes Cu²⁺ for white precipitate
+    const engineCi = new CompositeExamEngine({ presetKey: 'series_1' });
+    engineCi.setQ2Response('q2_naoh', 'White precipitate formed, soluble in excess to form a colorless solution', 'Pb²⁺, Al³⁺, Zn²⁺, Cu²⁺ present');
+    let q2CiScore = engineCi.calculateQ2Score();
+    const ciRubric = q2CiScore.rubric.find(r => r.code.includes('Q2_c') || r.item.includes('NaOH'));
+    assert.ok(ciRubric.detail.includes('CI Penalty'), 'Contradictory ion must trigger CI penalty');
+    assert.ok(ciRubric.mark < 3.0, 'Mark must be reduced due to contradictory ion penalty');
+
+    // Ionic charge penalty: candidate writes Pb, Al without charges
+    const engineCp = new CompositeExamEngine({ presetKey: 'series_1' });
+    engineCp.setQ2Response('q2_naoh', 'White precipitate formed, soluble in excess to form a colorless solution', 'Pb, Al present');
+    let q2CpScore = engineCp.calculateQ2Score();
+    const cpRubric = q2CpScore.rubric.find(r => r.code.includes('Q2_c') || r.item.includes('NaOH'));
+    assert.ok(cpRubric.detail.includes('CP Penalty'), 'Missing ionic charge superscripts must trigger CP penalty');
+
+    // Final Cation & Anion Deductions
+    engine.setQ2Deduction('Pb²⁺', 'NO₃⁻');
+    const finalScore = engine.calculateQ2Score();
+    const catRubric = finalScore.rubric.find(r => r.code === 'Q2_CAT');
+    const aniRubric = finalScore.rubric.find(r => r.code === 'Q2_ANI');
+    assert.strictEqual(catRubric.mark, 1.5, 'Cation with charge awarded 1.5 Mks');
+    assert.strictEqual(aniRubric.mark, 1.5, 'Anion identified awarded 1.5 Mks');
+  });
+
+  it('should enforce Organic Analysis Q3 rubrics and functional group deduction', () => {
+    const engine = new CompositeExamEngine({ presetKey: 'series_1' });
+    engine.setQ3Response('q3_ignition', 'Burns with a non-sooty, pale blue flame', 'Low C:H ratio / Saturated compound');
+    engine.setQ3Response('q3_litmus', 'No change on moist red and blue litmus paper', 'Neutral substance');
+    engine.setQ3Response('q3_kmno4', 'Purple acidified KMnO₄ decolorized', 'Alkanol (—OH group) present');
+    engine.setQ3Response('q3_nahco3', 'No effervescence observed', 'R-COOH absent');
+    engine.setQ3Deduction('Alkanol (-OH)');
+
+    const q3Score = engine.calculateQ3Score();
+    assert.strictEqual(q3Score.totalScore, 10.0, 'Candidate should get full 10.0 marks for complete organic diagnosis');
+
+    // Test partial credit for functional group (only class name or only symbol)
+    engine.setQ3Deduction('Alkanol');
+    const q3Partial = engine.calculateQ3Score();
+    const fgRubric = q3Partial.rubric.find(r => r.code === 'Q3_FG');
+    assert.strictEqual(fgRubric.mark, 1.0, 'Partial mark awarded when only class name or symbol is provided');
+  });
+
   it('should validate AI Exam Assistant Service blueprints and fallbacks', () => {
     const assistantService = require(path.join(rootDir, 'server', 'services', 'aiExamAssistantService.js'));
     const { FALLBACK_PRESETS } = assistantService;

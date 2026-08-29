@@ -1069,7 +1069,7 @@
 
 <script src="/shared/api.js"></script>
 <script src="/shared/page-transitions.js"></script>
-<script src="js/composite-engine.js?v=67"></script>
+<script src="js/composite-engine.js?v=68"></script>
 <script>
   requireStudentLogin();
   const user = getUser();
@@ -2274,27 +2274,36 @@
       const q2Rubric = evalData.q2Details.rubric || [];
       const q3Rubric = evalData.q3Details.rubric || [];
 
-      let rubricHtml = '<div style="font-weight:800; color:var(--cyan-accent); margin-top:4px;">🧪 Q1 Volumetric Analysis:</div>';
+      let rubricHtml = '<div style="font-weight:800; color:var(--cyan-accent); margin-top:4px;">🧪 Q1 Volumetric Analysis (15.0 Marks):</div>';
       rubricHtml += q1Rubric.map(r => `
-        <div class="rubric-item-row">
-          <span>${r.pass ? '✅' : '❌'} ${r.item}</span>
-          <span style="font-family:var(--font-mono); font-weight:700; color:${r.pass ? 'var(--green-accent)' : 'var(--red-accent)'};">${r.mark.toFixed(1)} / ${r.max.toFixed(1)}</span>
+        <div style="border-bottom:1px solid var(--border-subtle, rgba(255,255,255,0.06)); padding:6px 0;">
+          <div class="rubric-item-row">
+            <span>${r.pass ? '✅' : '❌'} ${r.code ? `<b>[${r.code}]</b> ` : ''}${r.item}</span>
+            <span style="font-family:var(--font-mono); font-weight:700; color:${r.pass ? 'var(--green-accent)' : 'var(--red-accent)'};">${r.mark.toFixed(1)} / ${r.max.toFixed(1)}</span>
+          </div>
+          ${r.detail ? `<div style="font-size:0.75rem; color:var(--text-muted); padding-left:22px; margin-top:2px;">${r.detail}</div>` : ''}
         </div>
       `).join('');
 
-      rubricHtml += '<div style="font-weight:800; color:var(--cyan-accent); margin-top:8px;">🧂 Q2 Qualitative Analysis:</div>';
+      rubricHtml += '<div style="font-weight:800; color:var(--cyan-accent); margin-top:12px;">🧂 Q2 Qualitative Inorganic Analysis (15.0 Marks):</div>';
       rubricHtml += q2Rubric.map(r => `
-        <div class="rubric-item-row">
-          <span>${r.pass ? '✅' : '❌'} ${r.item}</span>
-          <span style="font-family:var(--font-mono); font-weight:700; color:${r.pass ? 'var(--green-accent)' : 'var(--red-accent)'};">${r.mark.toFixed(1)} / ${r.max.toFixed(1)}</span>
+        <div style="border-bottom:1px solid var(--border-subtle, rgba(255,255,255,0.06)); padding:6px 0;">
+          <div class="rubric-item-row">
+            <span>${r.pass ? '✅' : '❌'} ${r.code ? `<b>[${r.code}]</b> ` : ''}${r.item}</span>
+            <span style="font-family:var(--font-mono); font-weight:700; color:${r.pass ? 'var(--green-accent)' : 'var(--red-accent)'};">${r.mark.toFixed(1)} / ${r.max.toFixed(1)}</span>
+          </div>
+          ${r.detail ? `<div style="font-size:0.75rem; color:var(--text-muted); padding-left:22px; margin-top:2px;">${r.detail}</div>` : ''}
         </div>
       `).join('');
 
-      rubricHtml += '<div style="font-weight:800; color:var(--cyan-accent); margin-top:8px;">🧫 Q3 Organic Analysis:</div>';
+      rubricHtml += '<div style="font-weight:800; color:var(--cyan-accent); margin-top:12px;">🧫 Q3 Qualitative Organic Analysis (10.0 Marks):</div>';
       rubricHtml += q3Rubric.map(r => `
-        <div class="rubric-item-row">
-          <span>${r.pass ? '✅' : '❌'} ${r.item}</span>
-          <span style="font-family:var(--font-mono); font-weight:700; color:${r.pass ? 'var(--green-accent)' : 'var(--red-accent)'};">${r.mark.toFixed(1)} / ${r.max.toFixed(1)}</span>
+        <div style="border-bottom:1px solid var(--border-subtle, rgba(255,255,255,0.06)); padding:6px 0;">
+          <div class="rubric-item-row">
+            <span>${r.pass ? '✅' : '❌'} ${r.code ? `<b>[${r.code}]</b> ` : ''}${r.item}</span>
+            <span style="font-family:var(--font-mono); font-weight:700; color:${r.pass ? 'var(--green-accent)' : 'var(--red-accent)'};">${r.mark.toFixed(1)} / ${r.max.toFixed(1)}</span>
+          </div>
+          ${r.detail ? `<div style="font-size:0.75rem; color:var(--text-muted); padding-left:22px; margin-top:2px;">${r.detail}</div>` : ''}
         </div>
       `).join('');
 

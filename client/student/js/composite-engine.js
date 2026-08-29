@@ -1481,24 +1481,61 @@ class CompositeExamEngine {
     const modelAnswers = {};
 
     const recordedTrials = this.q1Trials.filter(t => t.recorded && t.used > 0);
+    const trueTitre = Number(this.preset.q1.trueTitre) || 25.00;
+    modelAnswers.trueTitre = trueTitre;
 
-    // 1. Table 1 Completeness (1.0 Mark)
-    if (recordedTrials.length >= 3) {
-      tableScore += 1.0;
-      rubric.push({ item: 'Table 1 Completeness (CT - 3 trials recorded)', max: 1.0, mark: 1.0, pass: true, detail: 'Candidate completed all 3 titration trials within realistic boundaries.' });
-    } else if (recordedTrials.length >= 2) {
-      tableScore += 0.5;
-      rubric.push({ item: 'Table 1 Completeness (CT - 2 trials recorded)', max: 1.0, mark: 0.5, pass: true, detail: 'Candidate completed 2 trials.' });
-    } else {
-      rubric.push({ item: 'Table 1 Completeness (CT)', max: 1.0, mark: 0.0, pass: false, detail: 'Incomplete: At least 2 trials are required for KNEC mark.' });
-    }
+    // 1. Complete Table (CT) — 1.0 Mark
+    let ctPenalty = 0.0;
+    let hasInverted = false;
+    let hasArithError = false;
+    let hasImpossible = false;
 
-    // 2. Decimal Place Precision Penalty (1.0 Mark)
-    // KNEC Rule: Readings must be recorded to 2 decimal places ending in .00 or .50 / .05
-    let decimalViolations = 0;
     this.q1Trials.forEach(t => {
       if (t.recorded) {
-        const finStr = t.final.toFixed(2);
+        if (t.initial > t.final) hasInverted = true;
+        const diff = Math.abs(t.used - Math.max(0, t.final - t.initial));
+        if (diff > 0.02) hasArithError = true;
+        if (t.final > 50.0 || t.used > 50.0 || t.used < 1.0) hasImpossible = true;
+      }
+    });
+
+    if (hasInverted || hasArithError || hasImpossible) {
+      ctPenalty = 0.5;
+    }
+
+    let ctMark = 0.0;
+    let ctDetail = '';
+    if (recordedTrials.length >= 3) {
+      ctMark = Math.max(0.0, 1.0 - ctPenalty);
+      ctDetail = ctPenalty > 0
+        ? `Penalized (0.5 Mk): 3 trials recorded but detected ${hasInverted ? 'inverted readings' : (hasArithError ? 'subtraction arithmetic discrepancy' : 'unrealistic values')}.`
+        : 'Full mark (1.0 Mk): All 3 titration trials completely recorded within realistic boundaries.';
+    } else if (recordedTrials.length === 2) {
+      ctMark = Math.max(0.0, 0.5 - ctPenalty);
+      ctDetail = 'Partial mark (0.5 Mk): 2 trials recorded.';
+    } else {
+      ctMark = 0.0;
+      ctDetail = 'Incomplete (0.0 Mk): At least 2 titration trials are required by KNEC.';
+    }
+    tableScore += ctMark;
+    rubric.push({
+      code: 'CT',
+      item: 'Table 1 Completeness (CT)',
+      max: 1.0,
+      mark: ctMark,
+      pass: ctMark >= 1.0,
+      detail: ctDetail
+    });
+
+    // 2. Use of Decimals (D) — 1.0 Mark
+    // KNEC Rule: Readings must be recorded consistently to 1 or 2 decimal places.
+    // If 2 d.p., the 2nd decimal digit MUST strictly be '0' or '5' (e.g. 21.40, 21.45).
+    let decimalViolations = 0;
+    let recordedCount = 0;
+    this.q1Trials.forEach(t => {
+      if (t.recorded) {
+        recordedCount++;
+        const finStr = Number(t.final).toFixed(2);
         const lastDigit = finStr.slice(-1);
         if (lastDigit !== '0' && lastDigit !== '5') {
           decimalViolations++;
@@ -1506,47 +1543,165 @@ class CompositeExamEngine {
       }
     });
 
-    if (decimalViolations === 0 && recordedTrials.length >= 2) {
-      tableScore += 1.0;
-      rubric.push({ item: 'Decimal Place Precision (D - 2 d.p. ending in .00 or .05)', max: 1.0, mark: 1.0, pass: true, detail: 'Full mark: All burette readings follow KNEC 2 d.p. convention (.00 or .05).' });
-    } else if (recordedTrials.length >= 2) {
-      tableScore += 0.5;
-      rubric.push({ item: 'Decimal Place Penalty (D - 0.5 Mark)', max: 1.0, mark: 0.5, pass: false, detail: 'Penalized: Readings did not adhere strictly to .00 or .05 precision standard.' });
+    let dMark = 0.0;
+    let dDetail = '';
+    if (recordedCount >= 2 && decimalViolations === 0) {
+      dMark = 1.0;
+      dDetail = 'Full mark (1.0 Mk): All burette readings consistently adhere to KNEC 2 d.p. convention ending in .00 or .05.';
+    } else if (recordedCount >= 2) {
+      dMark = 0.0;
+      dDetail = `0.0 Mark: ${decimalViolations} reading(s) violated KNEC precision rule (2nd decimal must terminate strictly in .0 or .5).`;
     } else {
-      rubric.push({ item: 'Decimal Place Precision (D)', max: 1.0, mark: 0.0, pass: false, detail: 'Incomplete titration data.' });
+      dMark = 0.0;
+      dDetail = '0.0 Mark: Incomplete titration trials.';
     }
+    tableScore += dMark;
+    rubric.push({
+      code: 'D',
+      item: 'Use of Decimals (D)',
+      max: 1.0,
+      mark: dMark,
+      pass: dMark === 1.0,
+      detail: dDetail
+    });
 
-    // 3. Accuracy vs True Value (3.0 Marks)
-    const trueTitre = this.preset.q1.trueTitre || 25.00;
-    modelAnswers.trueTitre = trueTitre;
+    // 3. Accuracy vs School Value (AC) — 1.0 Mark
+    // Compares individual candidate titres to Teacher's / School Value (S.V.)
+    let minDiff = 999.0;
+    recordedTrials.forEach(t => {
+      const d = Math.abs(t.used - trueTitre);
+      if (d < minDiff) minDiff = d;
+    });
 
-    const avgRecorded = recordedTrials.length > 0
-      ? recordedTrials.reduce((acc, t) => acc + t.used, 0) / recordedTrials.length
-      : 0;
-    const diff = Math.abs(avgRecorded - trueTitre);
-
-    if (diff <= 0.15 && recordedTrials.length >= 2) {
-      tableScore += 3.0;
-      rubric.push({ item: 'Burette Titre Accuracy (A - within ±0.15 cm³ of true value)', max: 3.0, mark: 3.0, pass: true, detail: `Excellent: Deviation is ${diff.toFixed(2)} cm³ (Target: ${trueTitre.toFixed(2)} cm³).` });
-    } else if (diff <= 0.30 && recordedTrials.length >= 2) {
-      tableScore += 2.0;
-      rubric.push({ item: 'Burette Titre Accuracy (A - within ±0.30 cm³ of true value)', max: 3.0, mark: 2.0, pass: true, detail: `Competent: Deviation is ${diff.toFixed(2)} cm³ (Target: ${trueTitre.toFixed(2)} cm³).` });
-    } else if (diff <= 0.50 && recordedTrials.length >= 2) {
-      tableScore += 1.0;
-      rubric.push({ item: 'Burette Titre Accuracy (A - within ±0.50 cm³ of true value)', max: 3.0, mark: 1.0, pass: true, detail: `Pass: Deviation is ${diff.toFixed(2)} cm³ (Target: ${trueTitre.toFixed(2)} cm³).` });
+    let acMark = 0.0;
+    let acDetail = '';
+    if (recordedTrials.length >= 2 && minDiff <= 0.10) {
+      acMark = 1.0;
+      acDetail = `Full mark (1.0 Mk): At least one titre is within ±0.10 cm³ of School Value (deviation: ${minDiff.toFixed(2)} cm³, SV: ${trueTitre.toFixed(2)} cm³).`;
+    } else if (recordedTrials.length >= 2 && minDiff <= 0.20) {
+      acMark = 0.5;
+      acDetail = `Partial mark (0.5 Mk): Closest titre is within ±0.20 cm³ of School Value (deviation: ${minDiff.toFixed(2)} cm³, SV: ${trueTitre.toFixed(2)} cm³).`;
     } else {
-      rubric.push({ item: 'Burette Titre Accuracy (A - >0.50 cm³ deviation)', max: 3.0, mark: 0.0, pass: false, detail: `Titre deviated by ${diff.toFixed(2)} cm³ from true value (${trueTitre.toFixed(2)} cm³).` });
+      acMark = 0.0;
+      acDetail = `0.0 Mark: Titres deviated by > ±0.20 cm³ from School Value (closest deviation: ${minDiff < 900 ? minDiff.toFixed(2) + ' cm³' : 'N/A'}).`;
     }
+    tableScore += acMark;
+    rubric.push({
+      code: 'AC',
+      item: 'Titre Accuracy vs School Value (AC)',
+      max: 1.0,
+      mark: acMark,
+      pass: acMark === 1.0,
+      detail: acDetail
+    });
 
-    // 4. Calculations (10.0 Marks Total) with Error Carried Forward (e.c.f.)
+    // 4. Principles of Averaging (PA) — 1.0 Mark
+    // Titres to average must be concordant (within ±0.20 cm³ of each other)
     const checkedConcordant = this.q1Trials.filter(t => t.recorded && t.concordant && t.used > 0);
-    const expAvgFromTrials = checkedConcordant.length > 0
-      ? checkedConcordant.reduce((a, b) => a + b.used, 0) / checkedConcordant.length
-      : (recordedTrials.length > 0 ? avgRecorded : trueTitre);
+    const candidateAvgTitre = parseFloat(this.q1Answers.avgTitre || this.q1Answers.step_a);
+    
+    // Detect concordant subset
+    let concordantSet = checkedConcordant.length >= 2 ? checkedConcordant : [];
+    if (concordantSet.length === 0 && recordedTrials.length >= 2) {
+      if (recordedTrials.length === 3) {
+        const [a, b, c] = recordedTrials.map(t => t.used);
+        const spreadAll = Math.max(a, b, c) - Math.min(a, b, c);
+        if (spreadAll <= 0.20) {
+          concordantSet = recordedTrials;
+        } else if (Math.abs(a - b) <= 0.20) {
+          concordantSet = [recordedTrials[0], recordedTrials[1]];
+        } else if (Math.abs(b - c) <= 0.20) {
+          concordantSet = [recordedTrials[1], recordedTrials[2]];
+        } else if (Math.abs(a - c) <= 0.20) {
+          concordantSet = [recordedTrials[0], recordedTrials[2]];
+        }
+      } else if (recordedTrials.length === 2 && Math.abs(recordedTrials[0].used - recordedTrials[1].used) <= 0.20) {
+        concordantSet = recordedTrials;
+      }
+    }
+
+    let paMark = 0.0;
+    let paDetail = '';
+    if (concordantSet.length >= 2) {
+      const spread = Math.max(...concordantSet.map(t => t.used)) - Math.min(...concordantSet.map(t => t.used));
+      const arithmeticAvg = concordantSet.reduce((acc, t) => acc + t.used, 0) / concordantSet.length;
+      const arithCorrect = !isNaN(candidateAvgTitre) && Math.abs(candidateAvgTitre - arithmeticAvg) <= 0.02;
+
+      let missedThirdConcordant = false;
+      if (recordedTrials.length === 3) {
+        const spreadAll = Math.max(...recordedTrials.map(t => t.used)) - Math.min(...recordedTrials.map(t => t.used));
+        if (spreadAll <= 0.20 && concordantSet.length === 2) {
+          missedThirdConcordant = true;
+        }
+      }
+
+      if (spread <= 0.20 && arithCorrect) {
+        if (missedThirdConcordant) {
+          paMark = 0.5;
+          paDetail = 'Partial mark (0.5 Mk): 3 consistent titres were available within ±0.20 cm³, but candidate averaged only 2.';
+        } else {
+          paMark = 1.0;
+          paDetail = `Full mark (1.0 Mk): Concordant titres within ±0.20 cm³ selected and correctly averaged to ${candidateAvgTitre.toFixed(2)} cm³.`;
+        }
+      } else if (spread <= 0.20 && !isNaN(candidateAvgTitre)) {
+        paMark = 0.5;
+        paDetail = `Partial mark (0.5 Mk): Concordant titres selected, but arithmetic average error (Expected: ${arithmeticAvg.toFixed(2)} cm³, candidate: ${candidateAvgTitre.toFixed(2)} cm³).`;
+      } else if (spread > 0.20) {
+        paMark = 0.0;
+        paDetail = `0.0 Mark: Selected titres are not concordant (spread: ${spread.toFixed(2)} cm³ > ±0.20 cm³).`;
+      } else {
+        paMark = 0.5;
+        paDetail = 'Partial mark (0.5 Mk): Concordant values present.';
+      }
+    } else {
+      paMark = 0.0;
+      paDetail = '0.0 Mark: No concordant titres within ±0.20 cm³ identified.';
+    }
+    tableScore += paMark;
+    rubric.push({
+      code: 'PA',
+      item: 'Principles of Averaging (PA)',
+      max: 1.0,
+      mark: paMark,
+      pass: paMark >= 1.0,
+      detail: paDetail
+    });
+
+    // 5. Final Accuracy of Averaged Titre (FA) — 1.0 Mark
+    const finalTitreVal = !isNaN(candidateAvgTitre) && candidateAvgTitre > 0
+      ? candidateAvgTitre
+      : (concordantSet.length > 0 ? (concordantSet.reduce((a, b) => a + b.used, 0) / concordantSet.length) : 0);
+    const faDiff = Math.abs(finalTitreVal - trueTitre);
+
+    let faMark = 0.0;
+    let faDetail = '';
+    if (finalTitreVal > 0 && faDiff <= 0.10) {
+      faMark = 1.0;
+      faDetail = `Full mark (1.0 Mk): Candidate final average titre (${finalTitreVal.toFixed(2)} cm³) is within ±0.10 cm³ of School Value (${trueTitre.toFixed(2)} cm³).`;
+    } else if (finalTitreVal > 0 && faDiff <= 0.20) {
+      faMark = 0.5;
+      faDetail = `Partial mark (0.5 Mk): Candidate final average titre (${finalTitreVal.toFixed(2)} cm³) is within ±0.20 cm³ of School Value (${trueTitre.toFixed(2)} cm³).`;
+    } else {
+      faMark = 0.0;
+      faDetail = `0.0 Mark: Candidate average titre (${finalTitreVal.toFixed(2)} cm³) deviated by > ±0.20 cm³ from School Value (${trueTitre.toFixed(2)} cm³).`;
+    }
+    tableScore += faMark;
+    rubric.push({
+      code: 'FA',
+      item: 'Final Accuracy of Averaged Titre (FA)',
+      max: 1.0,
+      mark: faMark,
+      pass: faMark === 1.0,
+      detail: faDetail
+    });
+
+    // 6. Calculations (10.0 Marks Total) with Error Carried Forward (e.c.f.)
+    const expAvgFromTrials = concordantSet.length > 0
+      ? concordantSet.reduce((a, b) => a + b.used, 0) / concordantSet.length
+      : (recordedTrials.length > 0 ? (recordedTrials.reduce((a, b) => a + b.used, 0) / recordedTrials.length) : trueTitre);
 
     const questionsList = this.preset.q1.questions || createStandardTitrationQuestions(this.preset.q1);
     
-    // Evaluation Context passed to each sub-question
     const evalCtx = {
       trueTitre,
       expAvgFromTrials,
@@ -1598,6 +1753,7 @@ class CompositeExamEngine {
         awarded = q.marks;
         calcScore += awarded;
         rubric.push({
+          code: `Q1_${q.letter.toUpperCase()}`,
           item: `(${q.letter}) ${q.label} [${awarded.toFixed(1)} / ${q.marks.toFixed(1)} Marks]`,
           max: q.marks,
           mark: awarded,
@@ -1608,6 +1764,7 @@ class CompositeExamEngine {
         });
       } else {
         rubric.push({
+          code: `Q1_${q.letter.toUpperCase()}`,
           item: `(${q.letter}) ${q.label} [0.0 / ${q.marks.toFixed(1)} Marks]`,
           max: q.marks,
           mark: 0.0,
@@ -1646,42 +1803,150 @@ class CompositeExamEngine {
     const rubric = [];
     const tests = this.preset.q2.tests || [];
 
+    // Helper to extract chemical ions and keywords
+    const extractIons = (text) => {
+      const lower = text.toLowerCase();
+      const ions = [];
+      if (lower.includes('pb') || lower.includes('lead')) ions.push('pb2+');
+      if (lower.includes('al') || lower.includes('aluminium') || lower.includes('aluminum')) ions.push('al3+');
+      if (lower.includes('zn') || lower.includes('zinc')) ions.push('zn2+');
+      if (lower.includes('cu') || lower.includes('copper')) ions.push('cu2+');
+      if (lower.includes('fe2') || lower.includes('iron(ii)') || lower.includes('iron (ii)')) ions.push('fe2+');
+      if (lower.includes('fe3') || lower.includes('iron(iii)') || lower.includes('iron (iii)')) ions.push('fe3+');
+      if (lower.includes('ca') || lower.includes('calcium')) ions.push('ca2+');
+      if (lower.includes('mg') || lower.includes('magnesium')) ions.push('mg2+');
+      if (lower.includes('ba') || lower.includes('barium')) ions.push('ba2+');
+      if (lower.includes('so4') || lower.includes('sulphate') || lower.includes('sulfate')) ions.push('so42-');
+      if (lower.includes('so3') || lower.includes('sulphite') || lower.includes('sulfite')) ions.push('so32-');
+      if (lower.includes('co3') || lower.includes('carbonate')) ions.push('co32-');
+      if (lower.includes('cl') || lower.includes('chloride')) ions.push('cl-');
+      if (lower.includes('no3') || lower.includes('nitrate')) ions.push('no3-');
+      if (lower.includes('i-') || lower.includes('iodide')) ions.push('i-');
+      return ions;
+    };
+
     tests.forEach((t, idx) => {
-      const candidateObs = (this.q2Obs[t.id] || '').toLowerCase().trim();
-      const candidateInf = (this.q2Inf[t.id] || '').toLowerCase().trim();
+      const candidateObs = (this.q2Obs[t.id] || '').trim();
+      const candidateInf = (this.q2Inf[t.id] || '').trim();
+      const obsLower = candidateObs.toLowerCase();
+      const infLower = candidateInf.toLowerCase();
       let testMark = 0.0;
 
       // 1. Observation Keyword Scoring (1.5 Marks)
-      const obsKeywords = (t.correctObs || '').toLowerCase().split(/[,; ]+/).filter(w => w.length > 3);
-      const obsMatches = obsKeywords.filter(w => candidateObs.includes(w)).length;
-      if (candidateObs.length > 5 && obsMatches >= 2) {
-        testMark += 1.5;
-      } else if (candidateObs.length > 3) {
-        testMark += 0.5;
+      let obsMark = 0.0;
+      const hasPpt = obsLower.includes('ppt') || obsLower.includes('precipitate') || obsLower.includes('fumes') || obsLower.includes('residue') || obsLower.includes('decrepit');
+      const expectedObsLower = (t.correctObs || '').toLowerCase();
+      let matchesDropwise = false;
+      let matchesExcess = false;
+
+      if (expectedObsLower.includes('white precipitate') || expectedObsLower.includes('white ppt')) {
+        matchesDropwise = obsLower.includes('white') && hasPpt;
+      } else if (expectedObsLower.includes('yellow precipitate') || expectedObsLower.includes('yellow ppt')) {
+        matchesDropwise = obsLower.includes('yellow') && hasPpt;
+      } else if (expectedObsLower.includes('brown fumes') || expectedObsLower.includes('decrepit')) {
+        matchesDropwise = obsLower.includes('brown') || obsLower.includes('decrepit') || obsLower.includes('rekindl');
+      } else {
+        matchesDropwise = obsLower.length > 5;
       }
 
-      // 2. Inference Keyword & Multiple Ion Grouping (1.5 Marks)
-      // KNEC Rule: Amphoteric test with NaOH requires listing Pb2+, Al3+, Zn2+
-      const infKeywords = (t.correctInf || '').toLowerCase().split(/[,; ]+/).filter(w => w.length > 2);
-      const infMatches = infKeywords.filter(w => candidateInf.includes(w)).length;
-      if (candidateInf.length > 3 && infMatches >= 1) {
-        testMark += 1.5;
-      } else if (candidateInf.length > 2) {
-        testMark += 0.5;
+      if (t.id === 'q2_naoh' || t.id === 'q2_nh3') {
+        if (expectedObsLower.includes('soluble in excess') || expectedObsLower.includes('dissolves in excess')) {
+          matchesExcess = (obsLower.includes('soluble in excess') || obsLower.includes('dissolves in excess') || obsLower.includes('colorless solution') || obsLower.includes('colourless solution')) && !obsLower.includes('insoluble');
+        } else if (expectedObsLower.includes('insoluble in excess')) {
+          matchesExcess = obsLower.includes('insoluble in excess') || (obsLower.includes('insoluble') && !obsLower.includes('dissolves'));
+        }
+        
+        if (matchesDropwise && matchesExcess) {
+          obsMark = 1.5;
+        } else if (matchesDropwise) {
+          obsMark = 0.5;
+        } else if (matchesExcess) {
+          obsMark = 1.0;
+        }
+      } else {
+        const obsKeywords = (t.correctObs || '').toLowerCase().split(/[,; ]+/).filter(w => w.length > 3);
+        const obsMatches = obsKeywords.filter(w => obsLower.includes(w)).length;
+        if (obsMatches >= 2) obsMark = 1.5;
+        else if (obsMatches >= 1 || obsLower.length > 8) obsMark = 1.0;
+        else if (obsLower.length > 3) obsMark = 0.5;
       }
 
-      // 3. Contradictory inference penalty check (-0.5)
-      if (candidateObs.includes('insoluble') && (candidateInf.includes('zn') || candidateInf.includes('zinc') || candidateInf.includes('soluble'))) {
-        testMark = Math.max(0, testMark - 0.5);
+      if (obsLower.includes('dissolves') && obsLower.includes('insoluble in excess')) {
+        obsMark = Math.max(0, obsMark - 0.5);
+      }
+      testMark += obsMark;
+
+      // 2. Inference Keyword Scoring (1.5 Marks)
+      let infMark = 0.0;
+      const inferredIons = extractIons(candidateInf);
+
+      if (t.id === 'q2_naoh') {
+        const hasPb = inferredIons.includes('pb2+');
+        const hasAl = inferredIons.includes('al3+');
+        const hasZn = inferredIons.includes('zn2+');
+        const countAmphoteric = [hasPb, hasAl, hasZn].filter(Boolean).length;
+        
+        if (countAmphoteric === 3) {
+          infMark = 1.5;
+        } else if (countAmphoteric === 2) {
+          infMark = 1.0;
+        } else if (countAmphoteric === 1) {
+          infMark = 0.5;
+        }
+      } else if (t.id === 'q2_nh3') {
+        const hasPb = inferredIons.includes('pb2+');
+        const hasAl = inferredIons.includes('al3+');
+        const hasZn = inferredIons.includes('zn2+');
+        if (t.correctInf.includes('Pb') && (hasPb || hasAl) && !hasZn) {
+          infMark = 1.5;
+        } else if ((hasPb || hasAl) && hasZn) {
+          infMark = 1.0;
+        } else if (hasPb || hasAl) {
+          infMark = 1.0;
+        }
+      } else {
+        const infKeywords = (t.correctInf || '').toLowerCase().split(/[,; ]+/).filter(w => w.length > 2);
+        const infMatches = infKeywords.filter(w => infLower.includes(w)).length;
+        if (infMatches >= 2 || (t.trueCation && infLower.includes(t.trueCation.toLowerCase()))) {
+          infMark = 1.5;
+        } else if (infMatches >= 1) {
+          infMark = 1.0;
+        } else if (infLower.length > 3) {
+          infMark = 0.5;
+        }
       }
 
+      // Contradictory Ion Penalty (-0.5 per contradictory ion, max 1.0)
+      let contradictoryCount = 0;
+      if (expectedObsLower.includes('white') && (inferredIons.includes('cu2+') || inferredIons.includes('fe2+') || inferredIons.includes('fe3+'))) {
+        if (inferredIons.includes('cu2+')) contradictoryCount++;
+        if (inferredIons.includes('fe2+')) contradictoryCount++;
+        if (inferredIons.includes('fe3+')) contradictoryCount++;
+      }
+      if (t.id === 'q2_nh3' && expectedObsLower.includes('insoluble') && inferredIons.includes('zn2+')) {
+        contradictoryCount++;
+      }
+      const ciPenalty = Math.min(1.0, contradictoryCount * 0.5);
+      infMark = Math.max(0.0, infMark - ciPenalty);
+
+      // Ionic Charge Penalty (-0.5 if letters written without charges)
+      let chargePenalty = 0.0;
+      const hasChargeSymbols = candidateInf.includes('+') || candidateInf.includes('-') || candidateInf.includes('²') || candidateInf.includes('³') || candidateInf.includes('ion');
+      if (infMark > 0 && inferredIons.length > 0 && !hasChargeSymbols) {
+        chargePenalty = 0.5;
+        infMark = Math.max(0.0, infMark - chargePenalty);
+      }
+
+      testMark += infMark;
       score += testMark;
+
       rubric.push({
-        item: `Test (${String.fromCharCode(97 + idx)}): ${t.prompt.substring(0, 50)}…`,
+        code: `Q2_${String.fromCharCode(97 + idx)}`,
+        item: `Test (${String.fromCharCode(97 + idx)}): ${t.prompt.substring(0, 45)}… [${testMark.toFixed(1)} / 3.0 Mks]`,
         max: 3.0,
-        mark: testMark,
+        mark: parseFloat(testMark.toFixed(1)),
         pass: testMark >= 2.0,
-        detail: `Expected Obs: "${t.correctObs}" | Infs: "${t.correctInf}"`
+        detail: `Obs: [${obsMark.toFixed(1)}/1.5] "${candidateObs || 'None'}" (Expected: "${t.correctObs}"). Infs: [${infMark.toFixed(1)}/1.5] "${candidateInf || 'None'}" (Expected: "${t.correctInf}").${ciPenalty > 0 ? ` [CI Penalty: -${ciPenalty} Mk for contradictory ion(s)]` : ''}${chargePenalty > 0 ? ' [CP Penalty: -0.5 Mk for missing charge superscripts]' : ''}`
       });
     });
 
@@ -1690,16 +1955,15 @@ class CompositeExamEngine {
     const candidateCation = (this.q2CationChoice || '').toLowerCase().replace(/[^a-z0-9]/g, '');
     const cationCorrect = candidateCation.length > 0 && (candidateCation.includes(trueCation) || trueCation.includes(candidateCation));
     
-    // Check if ionic charge is present in choice
-    const hasCharge = this.q2CationChoice.includes('+') || this.q2CationChoice.includes('²') || this.q2CationChoice.includes('³');
+    const hasCharge = this.q2CationChoice.includes('+') || this.q2CationChoice.includes('²') || this.q2CationChoice.includes('³') || this.q2CationChoice.toLowerCase().includes('ion');
     if (cationCorrect && hasCharge) {
       score += 1.5;
-      rubric.push({ item: `Cation Deduction (${this.preset.q2.trueCation})`, max: 1.5, mark: 1.5, pass: true, detail: 'Correct cation with valid ionic charge.' });
+      rubric.push({ code: 'Q2_CAT', item: `Cation Deduction (${this.preset.q2.trueCation})`, max: 1.5, mark: 1.5, pass: true, detail: 'Full mark (1.5 Mks): Correct cation with valid ionic charge.' });
     } else if (cationCorrect) {
       score += 1.0;
-      rubric.push({ item: 'Cation Deduction (-0.5 Charge Penalty)', max: 1.5, mark: 1.0, pass: false, detail: 'Element identified but missing ionic charge superscript.' });
+      rubric.push({ code: 'Q2_CAT', item: 'Cation Deduction (-0.5 Charge Penalty)', max: 1.5, mark: 1.0, pass: false, detail: 'Element identified but missing ionic charge superscript.' });
     } else {
-      rubric.push({ item: 'Cation Deduction', max: 1.5, mark: 0.0, pass: false, detail: `Expected: ${this.preset.q2.trueCation}` });
+      rubric.push({ code: 'Q2_CAT', item: 'Cation Deduction', max: 1.5, mark: 0.0, pass: false, detail: `Expected: ${this.preset.q2.trueCation}` });
     }
 
     const trueAnion = (this.preset.q2.trueAnion || '').toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -1707,9 +1971,9 @@ class CompositeExamEngine {
     const anionCorrect = candidateAnion.length > 0 && (candidateAnion.includes(trueAnion) || trueAnion.includes(candidateAnion));
     if (anionCorrect) {
       score += 1.5;
-      rubric.push({ item: `Anion Deduction (${this.preset.q2.trueAnion})`, max: 1.5, mark: 1.5, pass: true, detail: 'Correct anion identified.' });
+      rubric.push({ code: 'Q2_ANI', item: `Anion Deduction (${this.preset.q2.trueAnion})`, max: 1.5, mark: 1.5, pass: true, detail: 'Full mark (1.5 Mks): Correct anion identified.' });
     } else {
-      rubric.push({ item: 'Anion Deduction', max: 1.5, mark: 0.0, pass: false, detail: `Expected: ${this.preset.q2.trueAnion}` });
+      rubric.push({ code: 'Q2_ANI', item: 'Anion Deduction', max: 1.5, mark: 0.0, pass: false, detail: `Expected: ${this.preset.q2.trueAnion}` });
     }
 
     return {
@@ -1735,42 +1999,77 @@ class CompositeExamEngine {
     const tests = this.preset.q3.tests || [];
 
     tests.forEach((t, idx) => {
-      const candidateObs = (this.q3Obs[t.id] || '').toLowerCase().trim();
-      const candidateInf = (this.q3Inf[t.id] || '').toLowerCase().trim();
+      const candidateObs = (this.q3Obs[t.id] || '').trim().toLowerCase();
+      const candidateInf = (this.q3Inf[t.id] || '').trim().toLowerCase();
       let testMark = 0.0;
 
+      let obsMark = 0.0;
       const obsKeywords = (t.correctObs || '').toLowerCase().split(/[,; ]+/).filter(w => w.length > 3);
       const obsMatches = obsKeywords.filter(w => candidateObs.includes(w)).length;
       if (candidateObs.length > 4 && obsMatches >= 1) {
-        testMark += 1.0;
+        obsMark = 1.0;
+      } else if (candidateObs.length > 2) {
+        obsMark = 0.5;
       }
 
+      let infMark = 0.0;
       const infKeywords = (t.correctInf || '').toLowerCase().split(/[,; ]+/).filter(w => w.length > 2);
       const infMatches = infKeywords.filter(w => candidateInf.includes(w)).length;
       if (candidateInf.length > 3 && infMatches >= 1) {
-        testMark += 1.0;
+        infMark = 1.0;
+      } else if (candidateInf.length > 2) {
+        infMark = 0.5;
       }
 
+      if (t.correctObs.toLowerCase().includes('no effervescence') && (candidateInf.includes('carboxylic acid present') || candidateInf.includes('r-cooh present'))) {
+        infMark = 0.0;
+      }
+
+      testMark = obsMark + infMark;
       score += testMark;
+
       rubric.push({
-        item: `Test (${String.fromCharCode(97 + idx)}): ${t.prompt.substring(0, 50)}…`,
+        code: `Q3_${String.fromCharCode(97 + idx)}`,
+        item: `Organic Test (${String.fromCharCode(97 + idx)}): ${t.prompt.substring(0, 45)}… [${testMark.toFixed(1)} / 2.0 Mks]`,
         max: 2.0,
-        mark: testMark,
+        mark: parseFloat(testMark.toFixed(1)),
         pass: testMark >= 1.5,
-        detail: `Expected Obs: "${t.correctObs}" | Infs: "${t.correctInf}"`
+        detail: `Obs: [${obsMark.toFixed(1)}/1.0] (Expected: "${t.correctObs}"). Inf: [${infMark.toFixed(1)}/1.0] (Expected: "${t.correctInf}").`
       });
     });
 
     // Functional Group Deduction (2.0 Marks)
-    const trueFG = (this.preset.q3.trueFunctionalGroup || '').toLowerCase().replace(/[^a-z]/g, '');
-    const candidateFG = (this.q3FunctionalGroupChoice || '').toLowerCase().replace(/[^a-z]/g, '');
-    const fgCorrect = candidateFG.length > 0 && (candidateFG.includes(trueFG) || trueFG.includes(candidateFG));
-    if (fgCorrect) {
-      score += 2.0;
-      rubric.push({ item: `Functional Group Deduction (${this.preset.q3.trueFunctionalGroup})`, max: 2.0, mark: 2.0, pass: true, detail: 'Correct functional group deduced.' });
+    const trueFG = (this.preset.q3.trueFunctionalGroup || '').toLowerCase();
+    const candidateFG = (this.q3FunctionalGroupChoice || '').toLowerCase();
+    
+    let fgMark = 0.0;
+    let fgDetail = '';
+    const hasClass = (trueFG.includes('alkanol') && candidateFG.includes('alkanol')) ||
+                     (trueFG.includes('carboxylic') && candidateFG.includes('carboxylic')) ||
+                     (trueFG.includes('alkene') && candidateFG.includes('alkene'));
+    const hasSymbol = (trueFG.includes('oh') && (candidateFG.includes('oh') || candidateFG.includes('—oh') || candidateFG.includes('-oh'))) ||
+                      (trueFG.includes('cooh') && (candidateFG.includes('cooh') || candidateFG.includes('—cooh') || candidateFG.includes('-cooh'))) ||
+                      (trueFG.includes('c=c') && candidateFG.includes('c=c'));
+
+    if (hasClass && hasSymbol) {
+      fgMark = 2.0;
+      fgDetail = `Full mark (2.0 Mks): Both class name and functional group formula correctly identified (${this.preset.q3.trueFunctionalGroup}).`;
+    } else if (hasClass || hasSymbol || candidateFG.includes(trueFG) || trueFG.includes(candidateFG)) {
+      fgMark = 1.0;
+      fgDetail = `Partial mark (1.0 Mk): Identified class or symbol but missing complete KNEC specification (${this.preset.q3.trueFunctionalGroup}).`;
     } else {
-      rubric.push({ item: 'Functional Group Deduction', max: 2.0, mark: 0.0, pass: false, detail: `Expected: ${this.preset.q3.trueFunctionalGroup}` });
+      fgMark = 0.0;
+      fgDetail = `0.0 Mark: Expected ${this.preset.q3.trueFunctionalGroup}.`;
     }
+    score += fgMark;
+    rubric.push({
+      code: 'Q3_FG',
+      item: 'Final Functional Group Deduction (2.0 Marks)',
+      max: 2.0,
+      mark: fgMark,
+      pass: fgMark === 2.0,
+      detail: fgDetail
+    });
 
     return {
       totalScore: Math.min(10.0, parseFloat(score.toFixed(1))),

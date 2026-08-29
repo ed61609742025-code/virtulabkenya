@@ -1345,7 +1345,71 @@ requireStudentLogin();
     if (window.BrilliantUI) {
       window.BrilliantUI.renderSegmentedProgress('titrationStepProgress', 5, step);
     }
+    updateTaskChecklist();
   }
+
+  function updateTaskChecklist() {
+    const card = document.getElementById('practicalChecklistCard');
+    if (!card) return;
+
+    const selfInd = isSelfIndicatingExp(current);
+    const task0Done = indicatorAdded || selfInd;
+    const task1Done = trials.length >= 1;
+    
+    // Check concordance: 2 or more trials agreeing within 0.10 cm³
+    const isConcordant = (v, i) => trials.some((other, j) => j !== i && Math.abs(other - v) <= 0.10);
+    const task2Done = trials.filter((v, i) => isConcordant(v, i)).length >= 2;
+
+    const task3Done = !!studentAverageChecked && !!studentAverageCorrect;
+
+    // Check if submit is done
+    let task4Done = false;
+    const submitBtn = document.getElementById('btnSubmitTitration');
+    if (submitBtn && (submitBtn.disabled || submitBtn.textContent.includes('Submitted') || submitBtn.textContent.includes('✓'))) {
+      task4Done = true;
+    }
+
+    const tasks = [
+      { id: 'chkTask0', isDone: task0Done },
+      { id: 'chkTask1', isDone: task1Done },
+      { id: 'chkTask2', isDone: task2Done },
+      { id: 'chkTask3', isDone: task3Done },
+      { id: 'chkTask4', isDone: task4Done }
+    ];
+
+    let completedCount = 0;
+    let foundFirstActive = false;
+
+    tasks.forEach((t) => {
+      const el = document.getElementById(t.id);
+      if (!el) return;
+
+      el.classList.remove('is-done', 'is-active');
+
+      if (t.isDone) {
+        el.classList.add('is-done');
+        completedCount++;
+      } else if (!foundFirstActive) {
+        el.classList.add('is-active');
+        foundFirstActive = true;
+      }
+    });
+
+    const percent = Math.round((completedCount / tasks.length) * 100);
+    const fill = document.getElementById('taskChecklistFill');
+    if (fill) fill.style.width = percent + '%';
+
+    const badge = document.getElementById('checklistProgressBadge');
+    if (badge) {
+      badge.textContent = `${completedCount} / 5 Done (${percent}%)`;
+      if (percent === 100) {
+        badge.className = 'wb-section-badge badge-green';
+      } else {
+        badge.className = 'wb-section-badge badge-purple';
+      }
+    }
+  }
+  window.updateTaskChecklist = updateTaskChecklist;
 
   window.jumpToWorkflowStep = function(stepIndex) {
     let targetEl = null;
@@ -1402,31 +1466,31 @@ requireStudentLogin();
     const formulaHints = {
       a: {
         title: 'Average Titre Calculation Guide',
-        body: 'Only average your concordant trials (titres agreeing within ±0.10 cm³ of each other). Rough or overshoot trials must be excluded from this calculation.',
+        body: 'Only average your <abbr class="sci-abbr" tabindex="0">concordant<span class="sci-abbr-tip"><span class="sci-abbr-title">Concordant Titres</span>Burette readings agreeing within ±0.10 cm³ of each other.</span></abbr> trials. Rough or overshoot trials must be excluded from this calculation.',
         formula: 'V_avg = (Titre₁ + Titre₂) / 2',
         hint: '💡 Units: cm³ · Record to 2 decimal places (e.g., 22.40)'
       },
       b: {
         title: 'Moles of Standard Titrant (Solution B)',
-        body: `Calculate the moles of ${current.titrantName ? current.titrantName.split(' ')[0] : 'titrant'} delivered from the burette using molar concentration and average volume.`,
+        body: `Calculate the moles of ${current.titrantName ? current.titrantName.split(' ')[0] : 'titrant'} delivered from the burette using <abbr class="sci-abbr" tabindex="0">molar concentration<span class="sci-abbr-tip"><span class="sci-abbr-title">Molar Concentration (M)</span>Moles of solute per 1000 cm³ (mol/dm³).</span></abbr> and average volume.`,
         formula: 'Moles (n₁) = (Molarity × Average Volume in cm³) / 1000',
         hint: '💡 Units: moles · Enter decimal moles (e.g., 0.00045)'
       },
       c: {
         title: 'Moles of Analyte in Pipetted Aliquot (Solution A)',
-        body: `Use the balanced chemical equation (${escapeHtmlLab(current.equation || '')}) to apply the stoichiometric mole ratio.`,
+        body: `Use the balanced chemical equation (${escapeHtmlLab(current.equation || '')}) to apply the stoichiometric mole ratio in the <abbr class="sci-abbr" tabindex="0">aliquot<span class="sci-abbr-tip"><span class="sci-abbr-title">Pipette Aliquot</span>Fixed 25.00 cm³ volume in conical flask.</span></abbr>.`,
         formula: 'Moles (n₂) = n₁ × (Analyte Mole Ratio / Titrant Mole Ratio)',
         hint: '💡 Units: moles · Based on balanced equation mole ratio'
       },
       d: {
         title: 'Molar Concentration (Molarity) of Solution A',
-        body: `Scale up the number of moles in your pipette aliquot (${sessionAnalyteVolume.toFixed(2)} cm³) to 1000 cm³ (1.0 dm³).`,
+        body: `Scale up the number of moles in your pipette <abbr class="sci-abbr" tabindex="0">aliquot<span class="sci-abbr-tip"><span class="sci-abbr-title">Pipette Aliquot</span>Fixed 25.00 cm³ volume.</span></abbr> (${sessionAnalyteVolume.toFixed(2)} cm³) to 1000 cm³ (1.0 dm³).`,
         formula: `Molarity (M) = (Moles (n₂) × 1000) / Aliquot Volume (${sessionAnalyteVolume.toFixed(2)} cm³)`,
         hint: '💡 Units: mol/dm³ (M) · Accurate to 3–4 decimal places'
       },
       e: {
         title: 'Mass Concentration / Mass in 1.0 dm³',
-        body: 'Convert the molar concentration to grams by multiplying by the relative formula/atomic mass (RAM or RMM).',
+        body: 'Convert molar concentration to grams by multiplying by the <abbr class="sci-abbr" tabindex="0">RAM<span class="sci-abbr-tip"><span class="sci-abbr-title">RAM (Relative Atomic Mass)</span>Average mass of an atom compared to 1/12th of Carbon-12.</span></abbr> or <abbr class="sci-abbr" tabindex="0">RMM<span class="sci-abbr-tip"><span class="sci-abbr-title">RMM (Relative Molecular Mass)</span>Sum of atomic masses in compound formula.</span></abbr>.',
         formula: 'Mass (g) = Molarity (mol/dm³) × Formula Mass (g/mol)',
         hint: '💡 Units: grams (g) · Accurate to 2–3 decimal places'
       }
@@ -2448,6 +2512,7 @@ requireStudentLogin();
       });
 
       clearDraft();
+      updateTaskChecklist();
 
       const practicalKeys = Object.keys(PRACTICALS);
       const currentIndex = practicalKeys.indexOf(current.key);

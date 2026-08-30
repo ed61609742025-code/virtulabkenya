@@ -269,10 +269,6 @@ router.post('/team', asyncHandler(async (req, res) => {
   }
 
   const cleanEmail = email.toLowerCase().trim();
-  if (!cleanEmail.endsWith('@virtulab.co.ke')) {
-    return res.status(400).json({ error: 'Administrator email addresses must belong to the official @virtulab.co.ke domain.' });
-  }
-
   const existing = await adminRepo.findAdminByEmail(cleanEmail);
   if (existing) {
     return res.status(409).json({ error: 'An administrator with this email already exists.' });

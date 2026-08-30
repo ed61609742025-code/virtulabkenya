@@ -598,9 +598,8 @@
           <input type="text" id="adminNameInput" class="form-control" placeholder="e.g. Dr. Jane Kamau" required>
         </div>
         <div class="form-group">
-          <label for="newAdminEmailInput">Official Email Address (@virtulab.co.ke)</label>
-          <input type="email" id="newAdminEmailInput" class="form-control" placeholder="e.g. jkamau@virtulab.co.ke" pattern=".+@virtulab\.co\.ke" title="Must end with @virtulab.co.ke" required>
-          <small style="color:var(--text-muted); font-size:0.75rem;">Only @virtulab.co.ke emails are accepted.</small>
+          <label for="newAdminEmailInput">Official Email Address</label>
+          <input type="email" id="newAdminEmailInput" class="form-control" placeholder="e.g. jkamau@school.ac.ke or admin@virtulab.co.ke" required>
         </div>
         <div class="form-group">
           <label for="adminRoleSelect">Access Level / Role</label>
@@ -1230,11 +1229,6 @@
     const role = document.getElementById('adminRoleSelect').value;
     const password = document.getElementById('newAdminPasswordInput').value;
     const msg = document.getElementById('addAdminModalMsg');
-
-    if (!email.endsWith('@virtulab.co.ke')) {
-      msg.innerHTML = '<div style="color:var(--red-accent);font-size:0.85rem;">Error: Admin email must end with @virtulab.co.ke</div>';
-      return;
-    }
 
     msg.innerHTML = '<span style="color:var(--blue-accent);font-weight:600;">Creating administrator account...</span>';
 

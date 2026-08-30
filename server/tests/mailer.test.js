@@ -9,7 +9,7 @@ const mailer = require('../utils/mailer');
 describe('Mailer Utility Unit Tests', () => {
   it('should safely handle unconfigured SMTP without throwing errors', async () => {
     const result = await mailer.sendAdminWelcomeEmail({
-      to: 'jkamau@virtulab.co.ke',
+      to: 'admin@example.com',
       name: 'Dr. Jane Kamau',
       temporaryPassword: 'VLK!TempPass123',
       role: 'admin'

@@ -916,21 +916,7 @@ html, body {
 }
 
 .lens-eye-level-tag {
-  position: absolute;
-  top: 50%;
-  left: 6px;
-  font-size: 0.52rem;
-  font-weight: 800;
-  color: #FFFFFF;
-  background: #DC2626;
-  border-radius: 3px;
-  padding: 1px 4px;
-  z-index: 11;
-  transform: translateY(-100%);
-  font-family: 'JetBrains Mono', monospace;
-  letter-spacing: 0.02em;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  pointer-events: none;
+  display: none !important;
 }
 
 /* Telemetry Pod Underneath Loupe */

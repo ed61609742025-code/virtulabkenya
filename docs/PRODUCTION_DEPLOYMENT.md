@@ -156,7 +156,26 @@ PLATFORM_URL=https://virtulab.co.ke
 
 ---
 
-## 4. Database Backup & Disaster Recovery
+## 4. Google Identity Services (Student Google Sign-In)
+
+VirtuLab Kenya supports Google Sign-In for Kenyan students.
+
+### Setting Up Google OAuth Credentials
+1. Go to [Google Cloud Console Credentials](https://console.cloud.google.com/apis/credentials).
+2. Click **Create Credentials** → **OAuth client ID**.
+3. Select Application type: **Web application**.
+4. Set Name: `VirtuLab Kenya Student Portal`.
+5. Under **Authorized JavaScript origins**, add:
+   - `https://virtulab.co.ke`
+   - `http://localhost:3000` (for local development)
+6. Copy the generated **Client ID** and set it in your environment variables:
+```env
+GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+```
+
+---
+
+## 5. Database Backup & Disaster Recovery
 
 Set up automated daily backups via crontab:
 

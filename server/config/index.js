@@ -59,5 +59,8 @@ module.exports = {
     smtpPass: process.env.SMTP_PASS || '',
     from: process.env.EMAIL_FROM || 'VirtuLab Kenya <admin@virtulab.co.ke>',
     platformUrl: process.env.PLATFORM_URL || 'https://virtulab.co.ke'
+  },
+  google: {
+    clientId: process.env.GOOGLE_CLIENT_ID || ''
   }
 };

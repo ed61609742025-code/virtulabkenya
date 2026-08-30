@@ -369,7 +369,10 @@ const migrations = [
   `ALTER TABLE assignment_submissions ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'submitted'`,
   `ALTER TABLE assignment_submissions ADD COLUMN IF NOT EXISTS teacher_feedback TEXT`,
   `ALTER TABLE assignment_submissions ADD COLUMN IF NOT EXISTS submitted_at TIMESTAMP DEFAULT NOW()`,
-  `ALTER TABLE assignment_submissions ADD COLUMN IF NOT EXISTS marked_at TIMESTAMP`
+  `ALTER TABLE assignment_submissions ADD COLUMN IF NOT EXISTS marked_at TIMESTAMP`,
+  // Google OAuth support for students
+  `ALTER TABLE students ADD COLUMN IF NOT EXISTS google_id VARCHAR(100) UNIQUE`,
+  `CREATE INDEX IF NOT EXISTS idx_students_google_id ON students(google_id)`
 ];
 
 async function seedInitialAdmin(targetPool) {

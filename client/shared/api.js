@@ -433,6 +433,17 @@ async function apiRequest(method, endpoint, body, retries = 2) {
 
 // ── Auth endpoints ────────────────────────────────────────────
 const Auth = {
+  async getAuthConfig() {
+    return apiRequest('GET', '/auth/config');
+  },
+  async studentGoogleAuth(payload) {
+    const data = await apiRequest('POST', '/auth/student/google', payload);
+    if (data.token) {
+      setToken(data.token);
+      setUser(data.user);
+    }
+    return data;
+  },
   async studentRegister(name, email, password, studentClass, schoolCode, teacherCode) {
     return apiRequest('POST', '/auth/student/register',
       { name, email, password, form: studentClass, schoolCode, teacherCode });

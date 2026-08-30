@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS students (
   email VARCHAR(200) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   form VARCHAR(10),
+  google_id VARCHAR(100) UNIQUE,
   status VARCHAR(20) DEFAULT 'active',
   created_at TIMESTAMP DEFAULT NOW()
 );

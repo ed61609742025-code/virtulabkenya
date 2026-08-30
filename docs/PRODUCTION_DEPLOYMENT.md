@@ -119,7 +119,44 @@ sudo certbot --nginx -d virtulab.co.ke -d www.virtulab.co.ke
 
 ---
 
-## 3. Database Backup & Disaster Recovery
+## 3. Official Email & SMTP Configuration (`@virtulab.co.ke`)
+
+VirtuLab Kenya automatically emails administrator welcome credentials and password resets to `@virtulab.co.ke` addresses via SMTP.
+
+### Recommended Email Providers
+1. **Google Workspace for Education / Business**:
+   - `SMTP_HOST`: `smtp.gmail.com`
+   - `SMTP_PORT`: `587`
+   - `SMTP_SECURE`: `false`
+   - `SMTP_USER`: `admin@virtulab.co.ke`
+   - `SMTP_PASS`: Generate an **App Password** from Google Account Security (requires 2-Step Verification).
+2. **Zoho Mail**:
+   - `SMTP_HOST`: `smtp.zoho.com`
+   - `SMTP_PORT`: `587`
+   - `SMTP_SECURE`: `false`
+   - `SMTP_USER`: `admin@virtulab.co.ke`
+   - `SMTP_PASS`: Zoho Account Application-Specific Password.
+3. **cPanel Webmail (Domain Registrar Hosting)**:
+   - `SMTP_HOST`: `mail.virtulab.co.ke`
+   - `SMTP_PORT`: `465` (SSL, `SMTP_SECURE=true`) or `587` (TLS)
+   - `SMTP_USER`: `admin@virtulab.co.ke`
+   - `SMTP_PASS`: Mailbox password.
+
+### Required Environment Variables
+Add these to your production environment (Railway, Render, or Docker `.env`):
+```env
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=admin@virtulab.co.ke
+SMTP_PASS=your_app_password_here
+EMAIL_FROM="VirtuLab Kenya <admin@virtulab.co.ke>"
+PLATFORM_URL=https://virtulab.co.ke
+```
+
+---
+
+## 4. Database Backup & Disaster Recovery
 
 Set up automated daily backups via crontab:
 

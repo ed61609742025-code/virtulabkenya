@@ -50,5 +50,14 @@ module.exports = {
   },
   errorTracking: {
     maxBufferSize: 50
+  },
+  email: {
+    smtpHost: process.env.SMTP_HOST || '',
+    smtpPort: parseInt(process.env.SMTP_PORT, 10) || 587,
+    smtpSecure: process.env.SMTP_SECURE === 'true',
+    smtpUser: process.env.SMTP_USER || '',
+    smtpPass: process.env.SMTP_PASS || '',
+    from: process.env.EMAIL_FROM || 'VirtuLab Kenya <admin@virtulab.co.ke>',
+    platformUrl: process.env.PLATFORM_URL || 'https://virtulab.co.ke'
   }
 };

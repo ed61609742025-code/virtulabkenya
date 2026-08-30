@@ -15,6 +15,7 @@ const announcementRepo = require('../repositories/announcementRepo');
 const auditRepo = require('../repositories/auditRepo');
 const adminRepo = require('../repositories/adminRepo');
 const { sendCsv, toCsvRow } = require('../utils/csv');
+const mailer = require('../utils/mailer');
 
 // Guard all admin routes: Requires valid JWT token with role === 'admin'
 router.use(authMiddleware, authMiddleware.requireRole('admin'));
@@ -268,6 +269,10 @@ router.post('/team', asyncHandler(async (req, res) => {
   }
 
   const cleanEmail = email.toLowerCase().trim();
+  if (!cleanEmail.endsWith('@virtulab.co.ke')) {
+    return res.status(400).json({ error: 'Administrator email addresses must belong to the official @virtulab.co.ke domain.' });
+  }
+
   const existing = await adminRepo.findAdminByEmail(cleanEmail);
   if (existing) {
     return res.status(409).json({ error: 'An administrator with this email already exists.' });
@@ -295,7 +300,20 @@ router.post('/team', asyncHandler(async (req, res) => {
     ipAddress: req.ip
   });
 
-  return res.status(201).json({ success: true, admin: newAdmin });
+  // Automatically send welcome email with credentials to @virtulab.co.ke address
+  const mailResult = await mailer.sendAdminWelcomeEmail({
+    to: newAdmin.email,
+    name: newAdmin.name,
+    temporaryPassword: password,
+    role: newAdmin.role
+  });
+
+  return res.status(201).json({
+    success: true,
+    admin: newAdmin,
+    emailSent: mailResult.emailSent,
+    temporaryPassword: password
+  });
 }));
 
 // PATCH /api/admin/team/:id/status — Toggle admin status (active/suspended)
@@ -363,11 +381,19 @@ router.post('/team/:id/reset-password', asyncHandler(async (req, res) => {
     ipAddress: req.ip
   });
 
+  // Automatically dispatch password reset email to @virtulab.co.ke inbox
+  const mailResult = await mailer.sendAdminPasswordResetEmail({
+    to: targetAdmin.email,
+    name: targetAdmin.name,
+    temporaryPassword: tempPassword
+  });
+
   return res.json({
     success: true,
     message: `Password reset successfully for ${targetAdmin.name}`,
     adminName: targetAdmin.name,
-    temporaryPassword: tempPassword
+    temporaryPassword: tempPassword,
+    emailSent: mailResult.emailSent
   });
 }));
 

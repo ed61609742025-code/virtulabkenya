@@ -56,6 +56,21 @@
   --rig-body: rgba(15, 23, 42, 0.06);
   --rig-line: #0284C7;
 
+  --apparatus-bg: radial-gradient(circle at 50% 20%, rgba(2, 132, 199, 0.04) 0%, rgba(246, 243, 238, 0.7) 75%),
+                  linear-gradient(180deg, #FFFFFF 0%, #F1ECE3 100%);
+  --apparatus-border: #CBD5E1;
+  --apparatus-shelf-bg: rgba(255, 255, 255, 0.92);
+  --apparatus-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.05), 0 2px 8px rgba(0, 0, 0, 0.04);
+  --apparatus-grad-lines: rgba(15, 23, 42, 0.75);
+  --apparatus-grad-color: #0F172A;
+  --apparatus-flask-grad-lines: rgba(30, 41, 59, 0.65);
+  --apparatus-flask-grad-color: #1E293B;
+  --apparatus-flask-rim-inner: rgba(15, 23, 42, 0.12);
+  --apparatus-badge-bg: #FFFFFF;
+  --apparatus-badge-text: #0284C7;
+  --apparatus-badge-border: #BAE6FD;
+  --apparatus-glass-stroke: #0284C7;
+
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
   --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.09);
   --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.12);
@@ -118,6 +133,21 @@
   --rig-body: rgba(255, 255, 255, 0.1);
   --rig-line: #38BDF8;
 
+  --apparatus-bg: radial-gradient(circle at 50% 20%, rgba(56, 189, 248, 0.07) 0%, rgba(15, 23, 42, 0.4) 75%),
+                  linear-gradient(180deg, rgba(15, 23, 42, 0.7) 0%, rgba(11, 19, 43, 0.85) 100%);
+  --apparatus-border: #1E2D4A;
+  --apparatus-shelf-bg: rgba(15, 23, 42, 0.85);
+  --apparatus-shadow: inset 0 2px 16px rgba(0, 0, 0, 0.6), 0 4px 20px rgba(0, 0, 0, 0.3);
+  --apparatus-grad-lines: rgba(255, 255, 255, 0.85);
+  --apparatus-grad-color: #FFFFFF;
+  --apparatus-flask-grad-lines: rgba(255, 255, 255, 0.7);
+  --apparatus-flask-grad-color: rgba(255, 255, 255, 0.85);
+  --apparatus-flask-rim-inner: rgba(15, 23, 42, 0.6);
+  --apparatus-badge-bg: #0B132B;
+  --apparatus-badge-text: #38BDF8;
+  --apparatus-badge-border: #0284C7;
+  --apparatus-glass-stroke: #38BDF8;
+
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.5);
@@ -179,6 +209,21 @@
   --rig-stand: #133320;
   --rig-body: rgba(52, 211, 153, 0.1);
   --rig-line: #34D399;
+
+  --apparatus-bg: radial-gradient(circle at 50% 20%, rgba(52, 211, 153, 0.08) 0%, rgba(11, 31, 19, 0.5) 75%),
+                  linear-gradient(180deg, rgba(11, 31, 19, 0.75) 0%, rgba(4, 16, 8, 0.9) 100%);
+  --apparatus-border: #1D5330;
+  --apparatus-shelf-bg: rgba(11, 31, 19, 0.85);
+  --apparatus-shadow: inset 0 2px 16px rgba(0, 0, 0, 0.6), 0 4px 20px rgba(0, 0, 0, 0.3);
+  --apparatus-grad-lines: rgba(240, 253, 244, 0.85);
+  --apparatus-grad-color: #F0FDF4;
+  --apparatus-flask-grad-lines: rgba(240, 253, 244, 0.7);
+  --apparatus-flask-grad-color: rgba(240, 253, 244, 0.85);
+  --apparatus-flask-rim-inner: rgba(4, 16, 8, 0.7);
+  --apparatus-badge-bg: #0B1F13;
+  --apparatus-badge-text: #34D399;
+  --apparatus-badge-border: #1D5330;
+  --apparatus-glass-stroke: #34D399;
 
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
@@ -722,13 +767,13 @@ html, body {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  background: radial-gradient(circle at 50% 20%, rgba(56, 189, 248, 0.07) 0%, rgba(15, 23, 42, 0.4) 75%),
-              linear-gradient(180deg, rgba(15, 23, 42, 0.7) 0%, rgba(11, 19, 43, 0.85) 100%);
-  border: 1.5px solid var(--card-border);
+  background: var(--apparatus-bg);
+  border: 1.5px solid var(--apparatus-border);
   border-radius: 16px;
   padding: 16px 12px 14px;
-  box-shadow: inset 0 2px 16px rgba(0, 0, 0, 0.6), 0 4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--apparatus-shadow);
   position: relative;
+  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .bench-right-wing {
@@ -751,12 +796,13 @@ html, body {
   gap: 10px;
   margin-top: 12px;
   padding: 8px 12px;
-  background: rgba(15, 23, 42, 0.85);
+  background: var(--apparatus-shelf-bg);
   border: 1px solid var(--card-border);
   border-radius: 10px;
   width: 100%;
   box-sizing: border-box;
   flex-wrap: wrap;
+  transition: background 0.25s ease, border-color 0.25s ease;
 }
 
 .bench-bottle-chip {
@@ -928,19 +974,50 @@ html, body {
 }
 
 .lens-readout-badge {
-  background: #0B132B;
-  border: 1.5px solid #0284C7;
+  background: var(--apparatus-badge-bg);
+  border: 1.5px solid var(--apparatus-badge-border);
   padding: 4px 14px;
   border-radius: 999px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.86rem;
   font-weight: 800;
-  color: #38BDF8;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), 0 0 10px rgba(2, 132, 199, 0.25);
+  color: var(--apparatus-badge-text);
+  box-shadow: var(--shadow-sm);
   display: inline-flex;
   align-items: center;
   gap: 5px;
   white-space: nowrap;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+/* ── Apparatus Glassware & Graduations Theme Rules ── */
+.burette-grad-lines,
+#buretteGlassRig g[stroke="rgba(255,255,255,0.85)"] {
+  stroke: var(--apparatus-grad-lines) !important;
+  transition: stroke 0.25s ease;
+}
+
+.burette-grad-text,
+#buretteGlassRig g[fill="#FFFFFF"] {
+  fill: var(--apparatus-grad-color) !important;
+  transition: fill 0.25s ease;
+}
+
+.flask-grad-lines,
+#flaskContainer g[stroke="rgba(255,255,255,0.7)"] {
+  stroke: var(--apparatus-flask-grad-lines) !important;
+  transition: stroke 0.25s ease;
+}
+
+.flask-grad-text,
+#flaskContainer g[fill="rgba(255,255,255,0.85)"] {
+  fill: var(--apparatus-flask-grad-color) !important;
+  transition: fill 0.25s ease;
+}
+
+#flaskGlassWall {
+  stroke: var(--apparatus-glass-stroke) !important;
+  transition: stroke 0.25s ease;
 }
 
 .lens-readout-sub {

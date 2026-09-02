@@ -955,7 +955,7 @@ requireStudentLogin();
     st.stage = targetStage;
 
     if (testKey === 'naoh') {
-      playDropSplashSound();
+      playDropSplashSound(targetStage === 'excess');
       if (targetStage === 'few_drops') {
         if (['Zn2+', 'Al3+', 'Pb2+', 'Ca2+'].includes(salt.cation)) {
           st.ppt = true;
@@ -1021,7 +1021,7 @@ requireStudentLogin();
         }
       }
     } else if (testKey === 'nh3') {
-      playDropSplashSound();
+      playDropSplashSound(targetStage === 'excess');
       if (targetStage === 'few_drops') {
         if (salt.cation === 'Cu2+') {
           st.ppt = true;
@@ -1610,23 +1610,95 @@ requireStudentLogin();
     } catch(e) {}
   }
 
-  function playDropSplashSound() {
+  function playDropSplashSound(isExcess = false) {
     if (!isSoundEnabled) return;
     initAudio();
     if (!audioCtx) return;
+
+    // 1. Subtle pipette bulb squeeze click at t=0
     try {
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(950, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(320, audioCtx.currentTime + 0.12);
-      gain.gain.setValueAtTime(0.35, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.14);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.15);
+      if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
+      const now = audioCtx.currentTime;
+      const squeezeOsc = audioCtx.createOscillator();
+      const squeezeGain = audioCtx.createGain();
+      squeezeOsc.type = 'sine';
+      squeezeOsc.frequency.setValueAtTime(360, now);
+      squeezeOsc.frequency.exponentialRampToValueAtTime(180, now + 0.035);
+      squeezeGain.gain.setValueAtTime(0.04, now);
+      squeezeGain.gain.exponentialRampToValueAtTime(0.001, now + 0.038);
+      squeezeOsc.connect(squeezeGain);
+      squeezeGain.connect(audioCtx.destination);
+      squeezeOsc.start(now);
+      squeezeOsc.stop(now + 0.04);
     } catch(e) {}
+
+    // Helper: High-fidelity acoustic liquid droplet impact synthesis
+    function triggerSingleDropSplash(pitchBase = 780, volume = 0.28) {
+      if (!isSoundEnabled || !audioCtx) return;
+      try {
+        if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
+        const t = audioCtx.currentTime;
+
+        // A. Minnaert Bubble Cavity Resonance (organic "bloop / plop" upward sweep)
+        const bubbleOsc = audioCtx.createOscillator();
+        const bubbleGain = audioCtx.createGain();
+        bubbleOsc.type = 'sine';
+        bubbleOsc.frequency.setValueAtTime(pitchBase, t);
+        bubbleOsc.frequency.exponentialRampToValueAtTime(pitchBase * 2.35, t + 0.046);
+
+        bubbleGain.gain.setValueAtTime(volume, t);
+        bubbleGain.gain.exponentialRampToValueAtTime(0.001, t + 0.054);
+
+        bubbleOsc.connect(bubbleGain);
+        bubbleGain.connect(audioCtx.destination);
+        bubbleOsc.start(t);
+        bubbleOsc.stop(t + 0.058);
+
+        // B. Surface Tension Rupture Transient Pop (High-Frequency Impact)
+        const popOsc = audioCtx.createOscillator();
+        const popGain = audioCtx.createGain();
+        popOsc.type = 'triangle';
+        popOsc.frequency.setValueAtTime(3200, t);
+        popOsc.frequency.exponentialRampToValueAtTime(1200, t + 0.012);
+
+        popGain.gain.setValueAtTime(volume * 0.5, t);
+        popGain.gain.exponentialRampToValueAtTime(0.001, t + 0.015);
+
+        popOsc.connect(popGain);
+        popGain.connect(audioCtx.destination);
+        popOsc.start(t);
+        popOsc.stop(t + 0.018);
+
+        // C. Glass Vessel Resonant Body Tone (Faint organic test-tube ring)
+        const glassOsc = audioCtx.createOscillator();
+        const glassGain = audioCtx.createGain();
+        glassOsc.type = 'sine';
+        glassOsc.frequency.setValueAtTime(1550, t);
+
+        glassGain.gain.setValueAtTime(volume * 0.16, t);
+        glassGain.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
+
+        glassOsc.connect(glassGain);
+        glassGain.connect(audioCtx.destination);
+        glassOsc.start(t);
+        glassOsc.stop(t + 0.075);
+      } catch(e) {}
+    }
+
+    // 2. Schedule droplet impact at 350ms (synchronously matches 0.36s visual drop impact)
+    setTimeout(() => {
+      triggerSingleDropSplash(780, 0.28);
+    }, 350);
+
+    // If excess reagent added, schedule secondary and tertiary trailing droplets
+    if (isExcess) {
+      setTimeout(() => {
+        triggerSingleDropSplash(920, 0.22);
+      }, 480);
+      setTimeout(() => {
+        triggerSingleDropSplash(1060, 0.16);
+      }, 590);
+    }
   }
 
   /* Systematic Flowchart Handler */

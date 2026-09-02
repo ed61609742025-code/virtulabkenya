@@ -2798,3 +2798,73 @@ html, body {
     font-size: 1.25rem !important;
   }
 }
+
+
+/* ── THEME TOGGLE WITH CRISP SVG ICONS ── */
+.theme-toggle-group {
+  display: inline-flex;
+  align-items: center;
+  background: var(--card-bg-hover);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.theme-btn-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  min-height: 28px;
+}
+
+.theme-btn-chip:hover {
+  color: var(--heading-color);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.theme-btn-chip.active {
+  background: var(--card-bg);
+  color: var(--heading-color);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  border-color: var(--card-border);
+  font-weight: 800;
+}
+
+.theme-icon-svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  flex-shrink: 0;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+@media (max-width: 768px) {
+  .theme-btn-chip {
+    padding: 5px 7px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    gap: 0 !important;
+  }
+  .theme-btn-chip .theme-label {
+    display: none !important;
+  }
+  .theme-btn-chip .theme-icon-svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+}

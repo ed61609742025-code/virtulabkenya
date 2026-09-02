@@ -206,10 +206,19 @@
         </div>
 
         <!-- Theme Toggle -->
-        <div class="theme-toggle-group">
-          <button class="theme-btn-chip active" data-theme-val="light" onclick="setTheme('light')" data-tooltip="Light mode" data-tooltip-pos="bottom"><span class="theme-label">Light</span></button>
-          <button class="theme-btn-chip" data-theme-val="dark" onclick="setTheme('dark')" data-tooltip="Dark mode" data-tooltip-pos="bottom"><span class="theme-label">Dark</span></button>
-          <button class="theme-btn-chip" data-theme-val="green" onclick="setTheme('green')" data-tooltip="Lab mode" data-tooltip-pos="bottom"><span class="theme-label">Lab</span></button>
+        <div class="theme-toggle-group" aria-label="Visual Theme Switcher">
+          <button class="theme-btn-chip active" data-theme="light" data-theme-val="light" onclick="setTheme('light')" data-tooltip="Light mode" data-tooltip-pos="bottom" aria-label="Light Theme">
+            <svg class="theme-icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            <span class="theme-label">Light</span>
+          </button>
+          <button class="theme-btn-chip" data-theme="dark" data-theme-val="dark" onclick="setTheme('dark')" data-tooltip="Dark mode" data-tooltip-pos="bottom" aria-label="Dark Theme">
+            <svg class="theme-icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            <span class="theme-label">Dark</span>
+          </button>
+          <button class="theme-btn-chip" data-theme="green" data-theme-val="green" onclick="setTheme('green')" data-tooltip="Lab mode" data-tooltip-pos="bottom" aria-label="Lab Theme">
+            <svg class="theme-icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31M14 2v7.31M8.5 2h7M14 9.3a6.5 6.5 0 1 1-4 0"></path><line x1="6" y1="16" x2="18" y2="16"></line></svg>
+            <span class="theme-label">Lab</span>
+          </button>
         </div>
 
         <!-- Notification Bell -->

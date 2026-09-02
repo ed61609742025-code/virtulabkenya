@@ -736,7 +736,17 @@ requireStudentLogin();
 
         <!-- Liquid Phase -->
         <path class="${isExcess ? 'anim-liquid-rise' : ''}" d="M 27,${liquidTopY} L 27,112 Q 27,128 43,128 Q 59,128 59,112 L 59,${liquidTopY} Z" fill="${isLead ? (isHeated ? 'rgba(250, 204, 21, 0.45)' : 'rgba(234, 179, 8, 0.35)') : 'rgba(56, 189, 248, 0.18)'}"/>
-        <ellipse cx="43" cy="${liquidTopY}" rx="16" ry="3.5" fill="${isLead ? 'rgba(250, 204, 21, 0.65)' : 'rgba(56, 189, 248, 0.3)'}"/>
+        <ellipse cx="43" cy="${liquidTopY}" rx="16" ry="3.5" fill="${isLead ? 'rgba(250, 204, 21, 0.65)' : 'rgba(56, 189, 248, 0.3)'}" class="anim-meniscus-ripple"/>
+
+        ${stage === 'few_drops' ? `
+          <!-- Precision Dropper -->
+          <g class="anim-dropper" opacity="1" style="transform-origin: 43px 8px;">
+            <path d="M 39,2 L 47,2 L 45,12 L 41,12 Z" fill="#EF4444" rx="2"/>
+            <rect x="41.5" y="12" width="3" height="15" fill="rgba(255,255,255,0.75)" stroke="#94A3B8" stroke-width="0.8"/>
+            <path d="M 41.5,27 L 44.5,27 L 43,35 Z" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
+          </g>
+          <ellipse cx="43" cy="36" rx="2" ry="2.8" fill="#FACC15" class="anim-droplet"/>
+        ` : ''}
 
         <!-- Heat Waves when warmed -->
         ${isLead && isHeated ? `
@@ -786,15 +796,16 @@ requireStudentLogin();
         </radialGradient>
       </defs>
 
-      <!-- Precision Reagent Dropper Pipette (Top Right) -->
-      <g class="${performed ? 'anim-dropper' : ''}" opacity="${performed ? '1' : '0.45'}" transform="translate(18, 0)">
-        <path d="M 38,4 L 46,4 L 44,14 L 40,14 Z" fill="#EF4444" rx="2"/>
-        <rect x="40.5" y="14" width="3" height="16" fill="rgba(255,255,255,0.7)" stroke="#94A3B8" stroke-width="0.8"/>
-        <path d="M 40.5,30 L 43.5,30 L 42,38 Z" fill="rgba(255,255,255,0.7)" stroke="#94A3B8" stroke-width="0.8"/>
-        ${performed ? `
-          <circle cx="42" cy="46" r="2.6" fill="${st.color || '#38BDF8'}" opacity="0.9"/>
-        ` : ''}
+      <!-- Precision Reagent Dropper Pipette (Centered over Mouth) -->
+      <g class="${performed ? 'anim-dropper' : ''}" opacity="${performed ? '1' : '0.45'}" style="transform-origin: 43px 8px;">
+        <path d="M 39,2 L 47,2 L 45,12 L 41,12 Z" fill="#EF4444" rx="2"/>
+        <rect x="41.5" y="12" width="3" height="15" fill="rgba(255,255,255,0.75)" stroke="#94A3B8" stroke-width="0.8"/>
+        <path d="M 41.5,27 L 44.5,27 L 43,35 Z" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
       </g>
+      ${performed ? `
+        <!-- Falling Reagent Droplet -->
+        <ellipse cx="43" cy="36" rx="2" ry="2.8" fill="${st.color && st.color.startsWith('#') ? st.color : '#38BDF8'}" class="anim-droplet"/>
+      ` : ''}
 
       <!-- Wooden Test Tube Clamp -->
       <g transform="translate(0, 48)">
@@ -808,10 +819,10 @@ requireStudentLogin();
       <rect x="23" y="32" width="40" height="4" rx="2" fill="rgba(255,255,255,0.18)" stroke="#94A3B8" stroke-width="1.2"/>
       <path d="M 26,36 L 26,112 Q 26,130 43,130 Q 60,130 60,112 L 60,36 Z" fill="rgba(255,255,255,0.05)" stroke="#94A3B8" stroke-width="1.5"/>
 
-      <!-- Liquid Column with Volume Rise -->
+      <!-- Liquid Column with Volume Rise & Meniscus Ripple -->
       ${performed ? `
         <path class="${isExcess ? 'anim-liquid-rise' : ''}" d="M 27,${liquidTopY} L 27,112 Q 27,128 43,128 Q 59,128 59,112 L 59,${liquidTopY} Z" fill="url(#liquidGlow_${testKey})" opacity="0.9"/>
-        <ellipse cx="43" cy="${liquidTopY}" rx="16" ry="3.5" fill="${isDeepBlue ? '#1E40AF' : liquid}" opacity="0.95"/>
+        <ellipse cx="43" cy="${liquidTopY}" rx="16" ry="3.5" fill="${isDeepBlue ? '#1E40AF' : liquid}" opacity="0.95" class="${performed ? 'anim-meniscus-ripple' : ''}"/>
       ` : ''}
 
       <!-- Precipitate Curd Mass at Base -->

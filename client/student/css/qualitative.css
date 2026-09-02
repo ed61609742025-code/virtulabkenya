@@ -1221,48 +1221,225 @@ html, body {
 
 /* ── 12. LABORATORY SVG ANIMATIONS ── */
 @keyframes flameTestIonGlow {
-  0% { transform: scale(1); opacity: 0.9; }
-  50% { transform: scale(1.1, 1.2); opacity: 1; }
-  100% { transform: scale(1); opacity: 0.9; }
+  0% { transform: scale(1, 1) rotate(0deg); opacity: 0.92; }
+  25% { transform: scale(1.04, 1.08) rotate(0.8deg); opacity: 0.98; }
+  50% { transform: scale(0.97, 0.95) rotate(-0.6deg); opacity: 0.90; }
+  75% { transform: scale(1.02, 1.05) rotate(0.4deg); opacity: 0.96; }
+  100% { transform: scale(1, 1) rotate(0deg); opacity: 0.92; }
 }
 
 @keyframes flameInnerCorePulse {
-  0% { transform: scale(1); opacity: 0.95; }
-  50% { transform: scale(1.05, 1.12); opacity: 0.8; }
-  100% { transform: scale(1); opacity: 0.95; }
+  0% { transform: scale(1, 1); opacity: 0.95; }
+  50% { transform: scale(1.05, 1.1); opacity: 0.82; }
+  100% { transform: scale(1, 1); opacity: 0.95; }
 }
 
 @keyframes pptForm {
-  0% { opacity: 0; transform: scaleY(0.2); }
-  100% { opacity: 1; transform: scaleY(1); }
+  0% {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.65, 0.25);
+    filter: blur(2px);
+  }
+  40% {
+    opacity: 0.85;
+    transform: translateY(-2px) scale(1.05, 1.12);
+    filter: blur(0.6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1, 1);
+    filter: blur(0);
+  }
 }
 
 @keyframes pptDissolve {
-  0% { opacity: 1; transform: scaleY(1); }
-  100% { opacity: 0; transform: scaleY(0); }
+  0% {
+    opacity: 0.95;
+    transform: scale(1, 1);
+    filter: blur(0);
+  }
+  45% {
+    opacity: 0.45;
+    transform: scale(1.2, 0.8);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.4, 0.4);
+    filter: blur(4px);
+  }
 }
 
-@keyframes dropperSqueezeDrop {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(4px); }
-  100% { transform: translateY(0); }
+@keyframes dropperDispense {
+  0% { transform: translate(1px, -8px); opacity: 0.6; }
+  25% { transform: translate(1px, 0px); opacity: 1; }
+  45% { transform: translate(1px, 0px) scale(0.96, 0.92); opacity: 1; }
+  65% { transform: translate(1px, 0px) scale(1, 1); opacity: 1; }
+  85% { transform: translate(1px, -4px); opacity: 0.85; }
+  100% { transform: translate(1px, -8px); opacity: 0.55; }
+}
+
+@keyframes dropletFallIntoTube {
+  0% { transform: translateY(0) scale(0.6); opacity: 0; }
+  15% { transform: translateY(4px) scale(1); opacity: 1; }
+  70% { transform: translateY(34px) scale(1, 1.3); opacity: 0.95; }
+  90% { transform: translateY(44px) scale(1.4, 0.5); opacity: 0.8; }
+  100% { transform: translateY(48px) scale(2, 0.1); opacity: 0; }
+}
+
+@keyframes meniscusRipple {
+  0% { transform: scale(1); opacity: 0.6; }
+  50% { transform: scale(1.06, 1.25); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.6; }
 }
 
 @keyframes liquidColumnRise {
-  0% { transform: scaleY(0.6); transform-origin: bottom center; }
-  100% { transform: scaleY(1); transform-origin: bottom center; }
+  0% { transform: scaleY(0.7); }
+  100% { transform: scaleY(1); }
 }
 
 @keyframes qualitativeBubbleRise {
-  0% { transform: translateY(0); opacity: 0.3; }
-  50% { transform: translateY(-16px); opacity: 0.8; }
-  100% { transform: translateY(-32px); opacity: 0; }
+  0% {
+    transform: translateY(0) translateX(0) scale(0.65);
+    opacity: 0.2;
+  }
+  25% {
+    transform: translateY(-16px) translateX(2px) scale(0.9);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translateY(-32px) translateX(-2px) scale(1.05);
+    opacity: 0.9;
+  }
+  75% {
+    transform: translateY(-48px) translateX(1.5px) scale(1.15);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(-64px) translateX(0) scale(1.25);
+    opacity: 0;
+  }
 }
 
-.anim-flame-ion { animation: flameTestIonGlow 1.2s infinite ease-in-out; transform-origin: bottom center; }
-.anim-flame-inner { animation: flameInnerCorePulse 1.4s infinite ease-in-out; transform-origin: bottom center; }
-.anim-ppt-form { animation: pptForm 1.6s ease-out forwards; }
-.anim-ppt-dissolve { animation: pptDissolve 1.8s ease-in forwards; }
-.anim-dropper { animation: dropperSqueezeDrop 1.2s ease; }
-.anim-liquid-rise { animation: liquidColumnRise 1.4s ease; }
-.anim-qual-bubble { animation: qualitativeBubbleRise 1.8s infinite ease-out; }
+@keyframes qualFrothFizz {
+  0% { transform: scale(1, 1); opacity: 0.75; }
+  50% { transform: scale(1.04, 1.15); opacity: 0.95; }
+  100% { transform: scale(1, 1); opacity: 0.75; }
+}
+
+@keyframes brownRingDevelop {
+  0% {
+    opacity: 0;
+    transform: scale(0.5, 0.2);
+    filter: brightness(1.7);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.08, 1.2);
+    filter: brightness(1.25);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1, 1);
+    filter: brightness(1);
+  }
+}
+
+@keyframes heatWaveConvection {
+  0% { transform: translateY(4px) scaleX(0.85); opacity: 0.15; }
+  50% { transform: translateY(-4px) scaleX(1.15); opacity: 0.85; }
+  100% { transform: translateY(-12px) scaleX(1.3); opacity: 0; }
+}
+
+@keyframes spangleShimmerDrift {
+  0% {
+    transform: translateY(0) scale(0.5) rotate(0deg);
+    opacity: 0.2;
+    filter: brightness(1);
+  }
+  35% {
+    transform: translateY(8px) scale(1.25) rotate(45deg);
+    opacity: 1;
+    filter: brightness(1.7);
+  }
+  70% {
+    transform: translateY(16px) scale(0.9) rotate(90deg);
+    opacity: 0.85;
+    filter: brightness(1.3);
+  }
+  100% {
+    transform: translateY(26px) scale(0.4) rotate(135deg);
+    opacity: 0;
+    filter: brightness(1);
+  }
+}
+
+.anim-flame-ion {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: flameTestIonGlow 0.38s infinite ease-in-out;
+}
+
+.anim-flame-inner {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: flameInnerCorePulse 0.3s infinite ease-in-out;
+}
+
+.anim-ppt-form {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: pptForm 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.anim-ppt-dissolve {
+  transform-box: fill-box;
+  transform-origin: center center;
+  animation: pptDissolve 1.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.anim-dropper {
+  animation: dropperDispense 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.anim-droplet {
+  animation: dropletFallIntoTube 1.2s cubic-bezier(0.45, 0, 0.8, 0.2) forwards;
+}
+
+.anim-meniscus-ripple {
+  transform-box: fill-box;
+  transform-origin: center center;
+  animation: meniscusRipple 1.4s ease-out;
+}
+
+.anim-liquid-rise {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: liquidColumnRise 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.anim-qual-bubble {
+  animation: qualitativeBubbleRise 1.5s infinite cubic-bezier(0.35, 0, 0.65, 1);
+}
+
+.anim-qual-froth {
+  transform-box: fill-box;
+  transform-origin: center center;
+  animation: qualFrothFizz 1.2s infinite ease-in-out;
+}
+
+.anim-brown-ring {
+  transform-box: fill-box;
+  transform-origin: center center;
+  animation: brownRingDevelop 2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.anim-heat-wave {
+  animation: heatWaveConvection 1.6s infinite ease-out;
+}
+
+.anim-spangle {
+  transform-box: fill-box;
+  transform-origin: center center;
+  animation: spangleShimmerDrift 2.2s infinite ease-in-out;
+}

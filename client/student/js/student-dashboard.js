@@ -427,9 +427,9 @@ requireStudentLogin();
           progressBadge.className = 'dash-section-badge badge-amber';
         }
       }
-      if (statMarked) statMarked.innerHTML = `🟢 <b>${markedCount}</b> Marked &amp; Graded`;
-      if (statReview) statReview.innerHTML = `🟡 <b>${reviewCount}</b> Under Review`;
-      if (statPending) statPending.innerHTML = `⏳ <b>${pendingCount}</b> Pending Action`;
+      if (statMarked) statMarked.innerHTML = `<b>${markedCount}</b> Graded`;
+      if (statReview) statReview.innerHTML = `<b>${reviewCount}</b> Under Review`;
+      if (statPending) statPending.innerHTML = `<b>${pendingCount}</b> Pending`;
 
       box.innerHTML = assignments.map(a => {
         const isSubmitted = !!a.submitted;
@@ -443,11 +443,11 @@ requireStudentLogin();
         let statusHtml = '';
         if (isSubmitted) {
           if (isGraded) {
-            statusChipHtml = `<span class="assign-status-chip is-marked">✅ Marked &amp; Graded</span>`;
+            statusChipHtml = `<span class="assign-status-chip is-marked">Graded</span>`;
             statusHtml = `
               <div style="display:flex; flex-direction:column; gap:6px; width:100%;">
                 <button type="button" class="submitted-pill" style="cursor:pointer; background:var(--green-bg); color:var(--green-accent); border:1.5px solid var(--green-accent); justify-content:center; width:100%; font-weight:800; min-height:44px;" onclick="openAssignmentFeedbackModalById(${a.id})">
-                  <span>🟢</span> <span>Marked (View Grade &amp; Rubric)</span>
+                  <span>Marked (View Grade &amp; Rubric)</span>
                 </button>
                 <a href="${targetUrl}" style="text-align:center; font-size:0.75rem; font-weight:700; color:var(--text-muted); text-decoration:underline; min-height:30px; display:flex; align-items:center; justify-content:center;">Revisit Experiment Bench →</a>
               </div>
@@ -1858,14 +1858,14 @@ requireStudentLogin();
     const dailyXP = document.getElementById('dailyChallengeXP');
     const launchBtn = document.getElementById('dailyChallengeLaunchBtn');
 
-    if (dailyTitle) dailyTitle.textContent = `${daily.icon} ${daily.title}`;
+    if (dailyTitle) dailyTitle.textContent = daily.title;
     if (dailyDesc) dailyDesc.textContent = `${daily.description} (${daily.topic})`;
-    if (dailyXP) dailyXP.textContent = `+${daily.xpReward} Bonus XP`;
+    if (dailyXP) dailyXP.textContent = `+${daily.xpReward} XP`;
 
     if (daily.isCompleted) {
       if (dailyCard) dailyCard.classList.add('completed');
       if (launchBtn) {
-        launchBtn.innerHTML = `<span>✅</span> Daily Challenge Completed!`;
+        launchBtn.innerHTML = `Daily Challenge Completed!`;
         launchBtn.style.background = '#10B981';
         launchBtn.style.borderColor = '#10B981';
       }

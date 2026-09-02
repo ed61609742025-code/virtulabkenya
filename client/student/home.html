@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>VirtuLab Kenya — Student Practical Workstation</title>
+<title>VirtuLab Kenya — Student Workstation</title>
 <script src="/shared/auth-guard.js"></script>
 <script>
   var t = localStorage.getItem('vlk_theme') || 'light';
@@ -21,19 +21,18 @@
 <link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.json">
 
-<!-- Academic & Technical Typography -->
+<!-- Typography -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400..800;1,6..72,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/style.css">
 <link rel="stylesheet" href="../shared/pwa-installer.css">
 <link rel="stylesheet" href="../shared/brilliant-theme.css">
 <link rel="stylesheet" href="../shared/gamification-engine.css">
-<link rel="stylesheet" href="css/dashboard.css?v=70">
-<link rel="stylesheet" href="css/skill-tree.css?v=70">
+<link rel="stylesheet" href="css/dashboard.css?v=71">
+<link rel="stylesheet" href="css/skill-tree.css?v=71">
 
 <style>
-  /* Academic Student Workstation Styling */
   :root, [data-theme="light"] {
     --acad-oxford: #0B2545;
     --acad-navy: #134074;
@@ -106,7 +105,6 @@
     overflow-x: hidden;
   }
 
-  /* Candidate Profile Header Card */
   .candidate-hero-bar {
     background: var(--card-bg);
     border: 1.5px solid var(--card-border);
@@ -160,7 +158,7 @@
   .knec-table th {
     background: var(--card-bg-hover);
     color: var(--heading-color);
-    font-family: 'Cinzel', serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 0.82rem;
     font-weight: 800;
     text-align: left;
@@ -203,51 +201,67 @@
       padding: 16px;
     }
   }
+
+  .brand-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--acad-oxford);
+    color: #FFF;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: -0.05em;
+  }
+  [data-theme="dark"] .brand-badge-pill {
+    background: var(--card-border-strong);
+    color: #FFF;
+  }
+  [data-theme="green"] .brand-badge-pill {
+    background: var(--acad-emerald);
+    color: #FFF;
+  }
 </style>
 </head>
 <body>
 
-  <!-- Top Academic Ribbon -->
-  <div class="candidate-top-ribbon">
-    <span>🇰🇪 REPUBLIC OF KENYA &bull; <abbr class="sci-abbr" tabindex="0">KCSE<span class="sci-abbr-tip"><span class="sci-abbr-title">KCSE (Kenya Certificate of Secondary Education)</span>National secondary qualification administered by KNEC.</span></abbr> CHEMISTRY <abbr class="sci-abbr" tabindex="0">233/3<span class="sci-abbr-tip"><span class="sci-abbr-title">KNEC 233/3</span>Chemistry Paper 3 Practical Examination Syllabus Code.</span></abbr></span>
-    <span class="ribbon-sep">&bull;</span>
-    <span class="ribbon-extra" data-i18n="candidate_ledger">CANDIDATE PRACTICAL LEDGER</span>
-  </div>
-
-  <!-- Primary Top Navbar -->
+  <!-- Top Navigation -->
   <nav class="top-nav" aria-label="Main Navigation">
     <div class="top-navbar">
-      <a href="home.html" class="nav-brand-academic" data-tooltip="VirtuLab Kenya KCSE Practical Workstation" data-tooltip-pos="bottom">
-        <div class="seal-crest-small">⚗️</div>
+      <a href="home.html" class="nav-brand-academic" data-tooltip="Home" data-tooltip-pos="bottom">
+        <div class="brand-badge-pill">VLK</div>
         <div>
-          <div class="nav-brand-title" style="font-family:'Cinzel', serif; font-size:1.2rem; font-weight:900; letter-spacing:0.02em; color:var(--heading-color); line-height:1.1;">VirtuLab Kenya</div>
-          <div class="nav-brand-motto" style="font-family:'Newsreader', serif; font-style:italic; font-size:0.8rem; color:var(--acad-gold); font-weight:700;">"Every student deserves a laboratory"</div>
+          <div class="nav-brand-title" style="font-size:1.15rem; font-weight:800; letter-spacing:-0.02em; color:var(--heading-color); line-height:1.1;">VirtuLab Kenya</div>
         </div>
       </a>
 
       <div class="nav-actions">
         <!-- Language Switcher -->
-        <div class="lang-toggle-group" data-tooltip="Language: English / Kiswahili" data-tooltip-pos="bottom">
-          <button class="lang-btn-chip active" id="btnLangEN" data-lang="en" onclick="setLanguage('en')" title="English"><span class="lang-flag">GB </span>EN</button>
-          <button class="lang-btn-chip" id="btnLangSW" data-lang="sw" onclick="setLanguage('sw')" title="Kiswahili"><span class="lang-flag">KE </span>SW</button>
+        <div class="lang-toggle-group" data-tooltip="Language" data-tooltip-pos="bottom">
+          <button class="lang-btn-chip active" id="btnLangEN" data-lang="en" onclick="setLanguage('en')" title="English">EN</button>
+          <button class="lang-btn-chip" id="btnLangSW" data-lang="sw" onclick="setLanguage('sw')" title="Kiswahili">SW</button>
         </div>
 
-        <!-- Academic Theme Toggle -->
+        <!-- Theme Toggle -->
         <div class="theme-toggle-group">
-          <button class="theme-btn-chip active" data-theme-val="light" onclick="setTheme('light')" data-tooltip="Clean Slate Light Mode" data-tooltip-pos="bottom">☀️<span class="theme-label"> Light</span></button>
-          <button class="theme-btn-chip" data-theme-val="dark" onclick="setTheme('dark')" data-tooltip="Research Obsidian Dark Mode" data-tooltip-pos="bottom">🌙<span class="theme-label"> Dark</span></button>
-          <button class="theme-btn-chip" data-theme-val="green" onclick="setTheme('green')" data-tooltip="Emerald Laboratory Mode" data-tooltip-pos="bottom">🧪<span class="theme-label"> Lab</span></button>
+          <button class="theme-btn-chip active" data-theme-val="light" onclick="setTheme('light')" data-tooltip="Light mode" data-tooltip-pos="bottom"><span class="theme-label">Light</span></button>
+          <button class="theme-btn-chip" data-theme-val="dark" onclick="setTheme('dark')" data-tooltip="Dark mode" data-tooltip-pos="bottom"><span class="theme-label">Dark</span></button>
+          <button class="theme-btn-chip" data-theme-val="green" onclick="setTheme('green')" data-tooltip="Lab mode" data-tooltip-pos="bottom"><span class="theme-label">Lab</span></button>
         </div>
 
         <!-- Notification Bell -->
         <div style="position:relative;">
-          <button class="user-avatar-btn" id="notifBellBtn" onclick="toggleNotifDropdown(event)" data-tooltip="Notices, teacher feedback &amp; streak alerts" data-tooltip-pos="bottom" aria-label="Notifications">
-            🔔<span class="notif-badge" id="notifCount" style="display:none; position:absolute; top:-4px; right:-4px; background:#EF4444; color:#FFF; font-size:0.68rem; font-weight:800; border-radius:100px; width:18px; height:18px; display:none; align-items:center; justify-content:center;">0</span>
+          <button class="user-avatar-btn" id="notifBellBtn" onclick="toggleNotifDropdown(event)" data-tooltip="Notifications" data-tooltip-pos="bottom" aria-label="Notifications">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            <span class="notif-badge" id="notifCount" style="display:none; position:absolute; top:-4px; right:-4px; background:#EF4444; color:#FFF; font-size:0.68rem; font-weight:800; border-radius:100px; width:18px; height:18px; display:none; align-items:center; justify-content:center;">0</span>
           </button>
           <!-- Notification Dropdown -->
           <div id="notifDropdown" class="notif-dropdown" style="display:none; position:absolute; right:0; top:46px; width:320px; background:var(--card-bg); border:1.5px solid var(--card-border); border-radius:12px; box-shadow:var(--shadow-lg); z-index:1000; padding:14px;">
             <div style="font-family:'Plus Jakarta Sans', sans-serif; font-size:0.92rem; font-weight:800; color:var(--heading-color); margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
-              <span>Notices &amp; Feedback</span>
+              <span>Notifications &amp; Feedback</span>
               <span id="notifUnreadLabel" style="font-size:0.74rem; color:var(--cyan-accent); font-family:'JetBrains Mono', monospace; font-weight:700;">0 new</span>
             </div>
             <div id="notifList" style="max-height:240px; overflow-y:auto; font-size:0.82rem; color:var(--text-muted);">
@@ -258,38 +272,38 @@
 
         <!-- User Profile Dropdown -->
         <div style="position:relative;">
-          <button class="user-avatar-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)" data-tooltip="Candidate Profile &amp; Settings" data-tooltip-pos="bottom" aria-label="Candidate Profile">
-            👤
+          <button class="user-avatar-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)" data-tooltip="Profile &amp; settings" data-tooltip-pos="bottom" aria-label="Student Profile">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
           </button>
           <div id="userDropdown" class="notif-dropdown" style="display:none; position:absolute; right:0; top:46px; width:240px; background:var(--card-bg); border:1.5px solid var(--card-border); border-radius:12px; box-shadow:var(--shadow-lg); z-index:1000; padding:12px;">
             <div style="padding:8px 10px; border-bottom:1.5px solid var(--card-border); margin-bottom:8px;">
-              <div style="font-weight:800; font-size:0.92rem; color:var(--heading-color);" id="dropdownUserName">Candidate</div>
+              <div style="font-weight:800; font-size:0.92rem; color:var(--heading-color);" id="dropdownUserName">Student</div>
               <div style="font-size:0.76rem; color:var(--text-muted); font-family:'JetBrains Mono', monospace; font-weight:700;" id="dropdownUserRole">KCSE Student</div>
             </div>
             <a href="#assignments" onclick="focusAssignmentsSection(event)" style="display:flex; align-items:center; gap:10px; padding:8px 10px; font-size:0.84rem; font-weight:700; color:var(--cyan-accent); text-decoration:none; border-radius:6px;" class="dropdown-link-hover">
-              <span>📋</span> Prescribed Continuous Assessment
+              Teacher Assignments
             </a>
             <a href="mock_exams.html" style="display:flex; align-items:center; gap:10px; padding:8px 10px; font-size:0.84rem; font-weight:700; color:var(--text-main); text-decoration:none; border-radius:6px;" class="dropdown-link-hover">
-              <span>⏱️</span> KCSE Mock Exams Hub
+              KCSE Mock Exams
             </a>
             <a href="certificate.html" style="display:flex; align-items:center; gap:10px; padding:8px 10px; font-size:0.84rem; font-weight:700; color:var(--text-main); text-decoration:none; border-radius:6px;" class="dropdown-link-hover">
-              <span>📜</span> Certificate of Mastery
+              Certificate of Mastery
             </a>
             <a href="history.html" style="display:flex; align-items:center; gap:10px; padding:8px 10px; font-size:0.84rem; font-weight:700; color:var(--text-main); text-decoration:none; border-radius:6px;" class="dropdown-link-hover">
-              <span>📑</span> Full Assessment Ledger
+              Session History
             </a>
             <button onclick="toggleTeacherLinkPanel()" style="width:100%; text-align:left; display:flex; align-items:center; gap:10px; padding:8px 10px; font-size:0.84rem; font-weight:700; color:var(--text-main); background:none; border:none; cursor:pointer; border-radius:6px;" class="dropdown-link-hover">
-              <span>👨‍🏫</span> Classroom &amp; Teacher
+              Classroom &amp; Teacher
             </button>
             <button onclick="togglePasswordPanel()" style="width:100%; text-align:left; display:flex; align-items:center; gap:10px; padding:8px 10px; font-size:0.84rem; font-weight:700; color:var(--text-main); background:none; border:none; cursor:pointer; border-radius:6px;" class="dropdown-link-hover">
-              <span>🔒</span> Security &amp; Password
+              Account &amp; Password
             </button>
             <button onclick="window.VLKPwa && window.VLKPwa.showInstallModal()" style="width:100%; text-align:left; display:flex; align-items:center; gap:10px; padding:8px 10px; font-size:0.84rem; color:var(--cyan-accent, #0284C7); background:none; border:none; cursor:pointer; border-radius:6px; font-weight:800;" class="dropdown-link-hover">
-              <span>📲</span> Install VirtuLab PWA
+              Install App (PWA)
             </button>
             <div style="border-top:1.5px solid var(--card-border); margin-top:8px; padding-top:8px;">
               <button onclick="Auth.logout()" style="width:100%; text-align:left; display:flex; align-items:center; gap:10px; padding:8px 10px; font-size:0.84rem; color:#EF4444; background:none; border:none; cursor:pointer; border-radius:6px; font-weight:800;" data-i18n="logout">
-                <span>🚪</span> Sign Out
+                Sign Out
               </button>
             </div>
           </div>
@@ -298,15 +312,15 @@
     </div>
   </nav>
 
-  <!-- Classroom & Teacher Connection Panel (Toggled from User Menu or Hero Badge) -->
+  <!-- Classroom & Teacher Connection Panel -->
   <div class="dashboard-container" id="teacherLinkPanelWrap" style="display:none; padding-bottom:0;">
     <div id="teacherLinkPanel" style="background:var(--card-bg); border:1.5px solid var(--card-border); border-radius:14px; padding:22px; margin-bottom:22px; box-shadow:var(--shadow-md);">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-        <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.15rem; font-weight:800; color:var(--heading-color); margin:0;">👨‍🏫 Classroom &amp; Teacher Connection</h3>
-        <button class="btn" onclick="toggleTeacherLinkPanel()" style="padding:5px 12px; font-size:0.8rem; font-weight:700;">✕ Close</button>
+        <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.15rem; font-weight:800; color:var(--heading-color); margin:0;">Classroom &amp; Teacher Connection</h3>
+        <button class="btn" onclick="toggleTeacherLinkPanel()" style="padding:5px 12px; font-size:0.8rem; font-weight:700;">Close</button>
       </div>
       <p style="font-size:0.86rem; color:var(--text-muted); margin-bottom:16px;">
-        Connecting to your teacher synchronizes your chemistry practical assignments, timed mock exams, KNEC rubrics, and class leaderboard.
+        Connecting to your teacher synchronizes assignments, mock exam schedules, and class standings.
       </p>
       <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:10px; padding:14px 18px; margin-bottom:18px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
         <div>
@@ -330,12 +344,12 @@
     </div>
   </div>
 
-  <!-- Password Update Panel (Toggled from User Menu) -->
+  <!-- Password Update Panel -->
   <div class="dashboard-container" id="passwordPanelWrap" style="display:none; padding-bottom:0;">
     <div id="passwordPanel" style="background:var(--card-bg); border:1.5px solid var(--card-border); border-radius:14px; padding:22px; margin-bottom:22px; box-shadow:var(--shadow-md);">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-        <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.15rem; font-weight:800; color:var(--heading-color); margin:0;">Candidate Security &amp; Password Update</h3>
-        <button class="btn" onclick="togglePasswordPanel()" style="padding:5px 12px; font-size:0.8rem; font-weight:700;">✕ Close</button>
+        <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.15rem; font-weight:800; color:var(--heading-color); margin:0;">Security &amp; Password Update</h3>
+        <button class="btn" onclick="togglePasswordPanel()" style="padding:5px 12px; font-size:0.8rem; font-weight:700;">Close</button>
       </div>
       <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px; margin-bottom:16px;">
         <div>
@@ -343,7 +357,7 @@
           <input type="password" id="pwCurrent" style="width:100%; padding:10px 14px; border-radius:8px; border:1.5px solid var(--card-border); background:var(--card-bg-hover); color:var(--text-main);">
         </div>
         <div>
-          <label for="pwNew" style="font-size:0.84rem; font-weight:800; display:block; margin-bottom:6px; color:var(--heading-color);">New Security Password</label>
+          <label for="pwNew" style="font-size:0.84rem; font-weight:800; display:block; margin-bottom:6px; color:var(--heading-color);">New Password</label>
           <input type="password" id="pwNew" style="width:100%; padding:10px 14px; border-radius:8px; border:1.5px solid var(--card-border); background:var(--card-bg-hover); color:var(--text-main);">
         </div>
       </div>
@@ -352,146 +366,138 @@
     </div>
   </div>
 
-  <!-- Main Modular Dashboard Workspace -->
+  <!-- Main Dashboard Workspace -->
   <main class="dashboard-container">
 
-    <!-- ══════════════════════════════════════════════════════
-         CANDIDATE PROFILE & QUICK STATUS HERO BAR
-    ══════════════════════════════════════════════════════ -->
+    <!-- Candidate Profile Header -->
     <header class="candidate-hero-bar">
       <div>
         <div class="candidate-name-title" style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.35rem; font-weight:800; color:var(--heading-color); line-height:1.25; letter-spacing:-0.02em;">
-          Candidate: <span id="studentName">Tecla Rice</span>
+          <span id="studentName">Student</span>
         </div>
         <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:8px;">
-          <span style="font-family:'JetBrains Mono', monospace; font-size:0.82rem; font-weight:800; color:var(--acad-gold); background:var(--acad-gold-subtle); padding:4px 12px; border-radius:6px; border:1px solid var(--acad-gold-border);" data-tooltip="Official 2026 KCSE Chemistry Paper 3 Registered Student" data-tooltip-pos="bottom">
-            🇰🇪 <abbr class="sci-abbr" tabindex="0">KCSE<span class="sci-abbr-tip"><span class="sci-abbr-title">KCSE Candidate</span>Kenya Certificate of Secondary Education practical examination candidate.</span></abbr> CANDIDATE 2026
+          <span style="font-family:'JetBrains Mono', monospace; font-size:0.82rem; font-weight:800; color:var(--acad-gold); background:var(--acad-gold-subtle); padding:4px 12px; border-radius:6px; border:1px solid var(--acad-gold-border);">
+            KCSE Chemistry Candidate
           </span>
           <span id="studentTeacherHeroBadge" style="font-family:'JetBrains Mono', monospace; font-size:0.82rem; font-weight:700; color:var(--cyan-accent); background:var(--card-bg-hover); padding:4px 12px; border-radius:6px; border:1px solid var(--card-border); display:inline-flex; align-items:center; gap:6px;">
-            <span>👨‍🏫</span> <span id="studentTeacherNameDisplay">Instructor: Not linked</span>
-            <button onclick="toggleTeacherLinkPanel()" style="background:none; border:none; color:var(--cyan-accent); font-weight:800; cursor:pointer; text-decoration:underline; padding:0 2px; font-size:0.78rem;" id="linkTeacherBtn">Link Code</button>
+            <span id="studentTeacherNameDisplay">Instructor: Not linked</span>
+            <button onclick="toggleTeacherLinkPanel()" style="background:none; border:none; color:var(--cyan-accent); font-weight:800; cursor:pointer; text-decoration:underline; padding:0 2px; font-size:0.78rem;" id="linkTeacherBtn">Link</button>
           </span>
-          <span style="font-size:0.84rem; font-weight:600; color:var(--text-muted); font-family:'JetBrains Mono', monospace;" id="todayDate" data-tooltip="Today's Session Date" data-tooltip-pos="bottom">Today: Aug 24, 2026</span>
-          <span id="studentNameMobile" style="display:none;">Tecla Rice</span>
+          <span style="font-size:0.84rem; font-weight:600; color:var(--text-muted); font-family:'JetBrains Mono', monospace;" id="todayDate"></span>
+          <span id="studentNameMobile" style="display:none;">Student</span>
           <span id="todayDateMobile" style="display:none;"></span>
         </div>
       </div>
 
       <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-        <!-- Pre-Lab Reflex Drill Quick Launch -->
-        <a href="speed_battle.html?warmup=true" class="btn-tactile btn-tactile-amber" style="padding:10px 20px; font-size:0.88rem; font-weight:800; border-radius:10px; text-decoration:none; display:inline-flex; align-items:center; gap:8px; min-height:44px;" data-tooltip="Fast-paced 3-question diagnostic warmup before entering lab benches" data-tooltip-pos="bottom">
-          <span data-i18n="pre_lab_drill">⚡ Pre-Lab Diagnostic Drill →</span>
+        <!-- Pre-Lab Warmup Drill -->
+        <a href="speed_battle.html?warmup=true" class="btn-tactile btn-tactile-amber" style="padding:10px 20px; font-size:0.88rem; font-weight:800; border-radius:10px; text-decoration:none; display:inline-flex; align-items:center; gap:8px; min-height:44px;" data-tooltip="Quick warmup quiz before lab practice" data-tooltip-pos="bottom">
+          <span data-i18n="pre_lab_drill">Pre-Lab Warmup →</span>
         </a>
       </div>
 
-      <!-- Streak & XP Level Bar -->
+      <!-- Streak & XP Progress Bar -->
       <div id="gamificationHeroWidget" class="gamification-hero-bar" style="margin-top: 14px; width: 100%;">
-        <div id="heroStreakPill" class="streak-pill-interactive" onclick="window.GamificationEngine && window.GamificationEngine.showStreakToast('Keep practicing daily to build your KCSE Paper 3 momentum!')" data-tooltip="Daily Lab Streak: Practice daily to maintain XP multiplier bonus!" data-tooltip-pos="top">
-          <span class="streak-flame-icon">🔥</span>
+        <div id="heroStreakPill" class="streak-pill-interactive" onclick="window.GamificationEngine && window.GamificationEngine.showStreakToast('Keep practicing daily to build your streak!')" data-tooltip="Your practice streak" data-tooltip-pos="top">
           <span id="streakCount">1</span>-Day Streak
           <span id="streakCountMobile" style="display:none;">1</span>
         </div>
 
-        <div class="xp-progress-wrap" data-tooltip="Progress to next practical competency tier. Earn XP across all benches &amp; drills!" data-tooltip-pos="top">
+        <div class="xp-progress-wrap" data-tooltip="XP progress" data-tooltip-pos="top">
           <div class="xp-label-row">
-            <span id="heroLevelTitle" style="font-weight:800;">Level 1: Form 1 Apprentice</span>
-            <span id="heroXPText" style="font-family:'JetBrains Mono', monospace; font-weight:800;">120 / 250 <abbr class="sci-abbr" tabindex="0">XP<span class="sci-abbr-tip"><span class="sci-abbr-title">Experience Points (XP)</span>Practical competency score earned through verified titration, qualitative, and thermochemistry benchmarks.</span></abbr></span>
+            <span id="heroLevelTitle" style="font-weight:800;">Level 1: Apprentice</span>
+            <span id="heroXPText" style="font-family:'JetBrains Mono', monospace; font-weight:800;">120 / 250 XP</span>
           </div>
           <div class="xp-track">
             <div class="xp-fill" id="heroXPBar" style="width: 48%;"></div>
           </div>
         </div>
 
-        <div class="level-badge-chip" id="heroLevelBadge" data-tooltip="Candidate Mastery Tier based on verified practical marks" data-tooltip-pos="top">
-          <span id="heroLevelIcon">🧪</span> <span id="heroTierName" style="font-weight:800;"><abbr class="sci-abbr" tabindex="0">P3<span class="sci-abbr-tip"><span class="sci-abbr-title">Paper 3 (P3)</span>Official KCSE Chemistry Practical Examination.</span></abbr> Analytical Chemist</span>
+        <div class="level-badge-chip" id="heroLevelBadge" data-tooltip="Your level" data-tooltip-pos="top">
+          <span id="heroLevelIcon" style="display:none;"></span>
+          <span id="heroTierName" style="font-weight:800;">Paper 3 Practical</span>
         </div>
       </div>
     </header>
 
-    <!-- ══════════════════════════════════════════════════════
-         MODULAR SUB-TABS NAVIGATION BAR
-    ══════════════════════════════════════════════════════ -->
+    <!-- Sub-tabs Navigation -->
     <nav class="student-subtabs-nav" aria-label="Workstation Views">
-      <button class="student-subtab-btn active" id="tabBtn_benches" onclick="switchStudentSubTab('benches')" data-tooltip="Interactive virtual experiment benches, guided skill pathways &amp; diagnostic drills" data-tooltip-pos="bottom">
-        <span data-i18n="tab_benches">🧪 Laboratory Benches</span>
+      <button class="student-subtab-btn active" id="tabBtn_benches" onclick="switchStudentSubTab('benches')" data-tooltip="Lab workbenches and guided pathways" data-tooltip-pos="bottom">
+        <span data-i18n="tab_benches">Laboratory Benches</span>
       </button>
-      <button class="student-subtab-btn" id="tabBtn_reference" onclick="switchStudentSubTab('reference')" data-tooltip="Official KNEC Paper 3 observational criteria, endpoint color standards &amp; deduction ledgers" data-tooltip-pos="bottom">
-        <span data-i18n="tab_reference">📚 KCSE Revision &amp; Reference Guide</span>
+      <button class="student-subtab-btn" id="tabBtn_reference" onclick="switchStudentSubTab('reference')" data-tooltip="KCSE reference tables and formulas" data-tooltip-pos="bottom">
+        <span data-i18n="tab_reference">Revision &amp; Reference</span>
       </button>
-      <button class="student-subtab-btn" id="tabBtn_achievements" onclick="switchStudentSubTab('achievements')" data-tooltip="View earned competency honors, class leaderboard standing &amp; session records" data-tooltip-pos="bottom">
-        <span data-i18n="tab_achievements">🏆 Badges &amp; Performance Ledger</span>
+      <button class="student-subtab-btn" id="tabBtn_achievements" onclick="switchStudentSubTab('achievements')" data-tooltip="Badges and session history" data-tooltip-pos="bottom">
+        <span data-i18n="tab_achievements">Badges &amp; History</span>
       </button>
-      <button class="student-subtab-btn" id="tabBtn_research" onclick="switchStudentSubTab('research')" data-tooltip="Standardized CPCAT psychometric assessments, SUS usability &amp; TAM surveys" data-tooltip-pos="bottom">
-        <span data-i18n="tab_research">🔬 Academic Research Suite</span>
+      <button class="student-subtab-btn" id="tabBtn_research" onclick="switchStudentSubTab('research')" data-tooltip="Assessments and surveys" data-tooltip-pos="bottom">
+        <span data-i18n="tab_research">Assessments &amp; Surveys</span>
       </button>
     </nav>
 
-    <!-- ══════════════════════════════════════════════════════
-         TAB 1: 🧪 LABORATORY BENCHES & ACTIVE ASSIGNMENTS
-    ══════════════════════════════════════════════════════ -->
+    <!-- Tab 1: Laboratory Benches & Assignments -->
     <div class="student-tab-panel active" id="panel_benches">
 
-      <!-- ── ZONE 1: 🎯 PRIORITY ACTION CENTER (Active Tasks & Daily Targets) ── -->
+      <!-- Zone 1: Priority Tasks & Assignments -->
       <section id="zone_assignments" class="activity-zone-wrap zone-priority" style="border-left: 5px solid var(--cyan-accent);">
         <div class="activity-zone-header">
           <div class="activity-zone-title-box">
-            <div class="icon-circle-badge" style="color:var(--cyan-accent); font-size:1.4rem;">🎯</div>
             <div>
               <h2 class="section-heading-academic">
-                Priority Tasks &amp; Active Continuous Assessment
+                Assignments &amp; Tasks
               </h2>
               <div class="section-subheading">
-                Complete your prescribed teacher assignments, daily reflex challenge, and AI-targeted recommendations:
+                Your current tasks and teacher assignments:
               </div>
             </div>
           </div>
-          <span class="dash-section-badge badge-blue">Targeted Continuous Assessment</span>
+          <span class="dash-section-badge badge-blue">Tasks</span>
         </div>
 
-        <!-- 🌟 Daily Chemistry Bite (Today's Mini-Challenge) -->
-        <div id="dailyChallengeCard" class="daily-challenge-card" style="margin-bottom:16px;" data-tooltip="Daily 3-question practical diagnostic sprint on observation speed and KNEC calculations." data-tooltip-pos="top">
+        <!-- Daily Challenge Card -->
+        <div id="dailyChallengeCard" class="daily-challenge-card" style="margin-bottom:16px;" data-tooltip="Daily 3-question practical diagnostic drill" data-tooltip-pos="top">
           <div style="flex: 1; min-width: 240px;">
             <div class="daily-tag-row">
-              <span style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; color: var(--cyan-accent, #0284C7); letter-spacing: 0.05em;" data-i18n="daily_bite_tag">🌟 Daily Chemistry Bite</span>
-              <span class="daily-xp-badge" id="dailyChallengeXP" data-i18n="daily_bite_bonus">+100 Bonus XP</span>
+              <span style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; color: var(--cyan-accent, #0284C7); letter-spacing: 0.05em;" data-i18n="daily_bite_tag">Daily Challenge</span>
+              <span class="daily-xp-badge" id="dailyChallengeXP" data-i18n="daily_bite_bonus">+100 XP</span>
               <span class="daily-timer-text" id="dailyChallengeTimer" data-i18n="daily_bite_timer" style="font-weight:700;">Resets at midnight</span>
             </div>
             <h3 id="dailyChallengeTitle" style="font-family: var(--font-heading); font-size: 1.12rem; font-weight: 900; color: var(--heading-color); margin: 4px 0 4px 0;" data-i18n="daily_bite_title">
-              Daily Practical Diagnostic Sprint
+              Daily Quick Quiz
             </h3>
             <p id="dailyChallengeDesc" style="font-size: 0.84rem; color: var(--text-muted); margin: 0; line-height: 1.45; font-weight: 500;" data-i18n="daily_bite_desc">
-              3-question timed reflex drill on observation speed and <abbr class="sci-abbr" tabindex="0">KNEC<span class="sci-abbr-tip"><span class="sci-abbr-title">KNEC</span>Kenya National Examinations Council</span></abbr> calculations.
+              3 quick questions to practice observation and calculations.
             </p>
           </div>
           <div style="display: flex; align-items: center; gap: 10px;">
             <a id="dailyChallengeLaunchBtn" href="speed_battle.html?mode=daily_bite" class="btn-tactile btn-tactile-primary btn-tactile-sm" style="text-decoration: none; padding: 10px 20px; font-weight: 800; font-size:0.86rem; min-height:44px; display:inline-flex; align-items:center; justify-content:center;">
-              <span data-i18n="daily_bite_launch">⚡ Start Daily Bite →</span>
+              <span data-i18n="daily_bite_launch">Start Quiz →</span>
             </a>
           </div>
         </div>
 
-        <!-- Prescribed Assignments & Socratic Recommendation Row -->
+        <!-- Assignments & Recommendation Row -->
         <div class="priority-action-grid">
           
-          <!-- Prescribed Assignments Card -->
+          <!-- Teacher Assignments Card -->
           <div style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:14px; padding:18px 20px;">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
               <div style="display:flex; align-items:center; gap:8px;">
-                <span style="font-size:1.3rem;">📋</span>
                 <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.02rem; font-weight:800; color:var(--heading-color); margin:0;" data-i18n="prescribed_ca">
-                  Teacher Prescribed Continuous Assessment
+                  Teacher Assignments
                 </h3>
               </div>
               <span class="dash-section-badge badge-cyan" data-i18n="knec_paper3_target">
-                <abbr class="sci-abbr" tabindex="0">KNEC<span class="sci-abbr-tip"><span class="sci-abbr-title">KNEC Paper 3 Target</span>Continuous assessment mapped to Paper 3 exam questions.</span></abbr> Paper 3 Target
+                Paper 3 Target
               </span>
             </div>
 
-            <!-- Continuous Assessment Task Progress Header -->
+            <!-- Task Progress Header -->
             <div class="ca-progress-header" id="caProgressHeader">
               <div class="ca-progress-meta-row">
                 <div class="ca-progress-title">
-                  <span>📊</span> Assignment Completion Tracker
+                  Progress Tracker
                 </div>
                 <span class="dash-section-badge badge-green" id="caProgressPercentBadge">0% Complete (0/0 Done)</span>
               </div>
@@ -499,53 +505,51 @@
                 <div class="ca-progress-fill" id="caProgressFill" style="width: 0%;"></div>
               </div>
               <div class="ca-stat-chips" id="caStatChips">
-                <div class="ca-stat-chip chip-marked" id="statChipMarked">🟢 0 Marked &amp; Graded</div>
-                <div class="ca-stat-chip chip-review" id="statChipReview">🟡 0 Under Review</div>
-                <div class="ca-stat-chip chip-pending" id="statChipPending">⏳ 0 Pending Submission</div>
+                <div class="ca-stat-chip chip-marked" id="statChipMarked">0 Graded</div>
+                <div class="ca-stat-chip chip-review" id="statChipReview">0 Under Review</div>
+                <div class="ca-stat-chip chip-pending" id="statChipPending">0 Pending</div>
               </div>
             </div>
 
             <div id="assignmentsList" class="assignments-grid-container">
               <div class="empty-box" style="width:100%; padding:20px; text-align:center; font-family:'JetBrains Mono', monospace; font-size:0.84rem; color:var(--text-muted); border-radius:8px;">
-                Loading prescribed assignments…
+                Loading assignments…
               </div>
             </div>
           </div>
 
-          <!-- Mwalimu AI Socratic Diagnostic & Targeted Recommendation -->
+          <!-- Study Tip & Targeted Recommendation -->
           <div id="adaptiveRecCard" style="display:none;">
             <div style="display: grid; grid-template-columns: 1fr; gap: 14px;">
               
-              <!-- Smart Advice Tip -->
+              <!-- Study Tip -->
               <div class="mwalimu-card" style="margin-bottom:0; border:1.5px solid var(--card-border); border-left:5px solid var(--acad-oxford); background:var(--card-bg); padding:18px; border-radius:12px; box-shadow:var(--shadow-sm); display:flex; gap:14px; align-items:flex-start;">
-                <div class="mwalimu-avatar" style="background:var(--acad-oxford); color:#FFF; font-size:1.3rem; display:flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:10px; flex-shrink:0;">👨‍🏫</div>
                 <div class="mwalimu-content" style="flex:1; min-width:0;">
                   <div style="margin-bottom:6px; display:flex; align-items:center; justify-content:space-between;">
                     <div style="font-family:'Plus Jakarta Sans', sans-serif; font-weight:800; font-size:0.96rem; color:var(--heading-color);" data-i18n="mwalimu_diag_title">
-                      Mwalimu Socratic Diagnostic
+                      Study Tip
                     </div>
-                    <span style="background:var(--acad-gold-subtle); color:var(--acad-gold); font-size:0.72rem; font-weight:800; padding:2px 8px; border-radius:4px; font-family:'JetBrains Mono', monospace;" data-i18n="pedagogical_hint">Pedagogical Hint</span>
+                    <span style="background:var(--acad-gold-subtle); color:var(--acad-gold); font-size:0.72rem; font-weight:800; padding:2px 8px; border-radius:4px; font-family:'JetBrains Mono', monospace;" data-i18n="pedagogical_hint">Tip</span>
                   </div>
-                  <div id="mwalimuMessage" style="font-family:'Newsreader', serif; font-size:0.95rem; line-height:1.55; color:var(--text-main); font-weight:500;">
-                    Analyzing your practical examination logs to identify targeted weak areas…
+                  <div id="mwalimuMessage" style="font-size:0.92rem; line-height:1.55; color:var(--text-main); font-weight:500;">
+                    Analyzing your practical logs to suggest focused revision areas…
                   </div>
                 </div>
               </div>
 
-              <!-- Targeted Next Recommendation -->
+              <!-- Targeted Recommendation -->
               <div class="mwalimu-card" style="margin-bottom:0; border:1.5px solid var(--card-border); border-left:5px solid var(--acad-emerald); background:var(--card-bg); padding:18px; border-radius:12px; box-shadow:var(--shadow-sm); display:flex; gap:14px; align-items:flex-start;">
-                <div class="mwalimu-avatar" id="recIcon" style="background:var(--acad-emerald-subtle); color:var(--acad-emerald); border:1.5px solid var(--acad-emerald); font-size:1.3rem; display:flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:10px; flex-shrink:0;">🎯</div>
                 <div class="mwalimu-content" style="flex:1; min-width:0;">
                   <div style="margin-bottom:4px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px;">
-                    <span style="font-size:0.74rem; font-weight:800; text-transform:uppercase; color:var(--acad-emerald); letter-spacing:0.05em; font-family:'JetBrains Mono', monospace;" data-i18n="prescribed_practical">Prescribed Practical</span>
+                    <span style="font-size:0.74rem; font-weight:800; text-transform:uppercase; color:var(--acad-emerald); letter-spacing:0.05em; font-family:'JetBrains Mono', monospace;" data-i18n="prescribed_practical">Suggested Practical</span>
                     <span class="mwalimu-chip" id="recReasonBadge" style="background:var(--acad-emerald-subtle); color:var(--acad-emerald); font-weight:800; font-size:0.72rem; border-radius:4px;" data-i18n="syllabus_focus">Syllabus Focus</span>
                   </div>
                   <div style="font-family:'Plus Jakarta Sans', sans-serif; font-weight:800; color:var(--heading-color); font-size:1.02rem; margin-bottom:4px;" id="recTitle">Redox Titration (Fe²⁺ vs KMnO₄)</div>
                   <div class="mwalimu-message" id="recDesc" style="margin-bottom:12px; font-size:0.84rem; line-height:1.5; color:var(--text-muted); font-weight:500;">
-                    Reinforce self-indicating titration transitions without external indicators to maximize Paper 3 Q1 marks.
+                    Practice self-indicating titration transitions without external indicators.
                   </div>
-                  <a id="recActionBtn" href="lab.html?studyMode=guided" class="btn btn-primary" style="display:inline-flex; align-items:center; gap:8px; padding:8px 18px; font-size:0.82rem; font-weight:800; border-radius:8px; text-decoration:none; background:var(--acad-emerald); color:#FFF; border:none;" data-tooltip="Launch this recommended practical simulation session" data-tooltip-pos="top">
-                    <span data-i18n="launch_prescribed">Launch Prescribed Session →</span>
+                  <a id="recActionBtn" href="lab.html?studyMode=guided" class="btn btn-primary" style="display:inline-flex; align-items:center; gap:8px; padding:8px 18px; font-size:0.82rem; font-weight:800; border-radius:8px; text-decoration:none; background:var(--acad-emerald); color:#FFF; border:none;" data-tooltip="Launch this practical simulation session" data-tooltip-pos="top">
+                    <span data-i18n="launch_prescribed">Start Session →</span>
                   </a>
                 </div>
               </div>
@@ -556,142 +560,131 @@
         </div>
       </section>
 
-      <!-- ── ZONE 2: 🗺️ GUIDED PRACTICAL CHEMISTRY LEARNING PATHWAY (SKILL TREE) ── -->
+      <!-- Zone 2: Practical Chemistry Topics (Pathway & Grid) -->
       <section class="activity-zone-wrap zone-pathway" style="border-left: 5px solid var(--acad-oxford);">
         <div class="activity-zone-header">
           <div class="activity-zone-title-box">
-            <div class="icon-circle-badge" style="color:var(--acad-oxford); font-size:1.4rem;">🔬</div>
             <div>
               <h2 class="section-heading-academic">
-                <span data-i18n="pathway_heading"><abbr class="sci-abbr" tabindex="0">KCSE<span class="sci-abbr-tip"><span class="sci-abbr-title">KCSE Paper 3</span>Kenya Certificate of Secondary Education practical examination syllabus.</span></abbr> Practical Chemistry Learning Pathway</span>
+                <span data-i18n="pathway_heading">Practical Chemistry Topics</span>
               </h2>
               <div class="section-subheading" data-i18n="pathway_sub">
-                Follow the guided mastery pathway or explore individual laboratory benches:
+                Choose a topic or follow the guided pathway:
               </div>
             </div>
           </div>
           
           <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-            <span class="dash-section-badge badge-green">Syllabus Core (40 Marks)</span>
+            <span class="dash-section-badge badge-green">40 Marks Syllabus</span>
             <!-- View Toggle Switcher -->
             <div class="pathway-view-toggle">
-              <button type="button" class="view-toggle-btn active" id="btnViewTree" onclick="SkillTree.switchView('tree')" data-tooltip="Interactive Node-based Pathway Map" data-tooltip-pos="bottom">
-                <span>🗺️</span> <span data-i18n="btn_learning_pathway">Learning Pathway</span>
+              <button type="button" class="view-toggle-btn active" id="btnViewTree" onclick="SkillTree.switchView('tree')" data-tooltip="Pathway view" data-tooltip-pos="bottom">
+                <span data-i18n="btn_learning_pathway">Pathway View</span>
               </button>
-              <button type="button" class="view-toggle-btn" id="btnViewGrid" onclick="SkillTree.switchView('grid')" data-tooltip="Standard Discipline Workbench Grid" data-tooltip-pos="bottom">
-                <span>📋</span> <span data-i18n="btn_discipline_grid">Discipline Grid</span>
+              <button type="button" class="view-toggle-btn" id="btnViewGrid" onclick="SkillTree.switchView('grid')" data-tooltip="Grid view" data-tooltip-pos="bottom">
+                <span data-i18n="btn_discipline_grid">Grid View</span>
               </button>
             </div>
           </div>
         </div>
 
-        <!-- 1. Interactive Visual Skill Tree Pathway View (Default) -->
+        <!-- Interactive Visual Skill Tree Pathway View -->
         <div id="skillTreeContainer">
           <div style="text-align:center; padding:36px; font-family:'JetBrains Mono', monospace; font-size:0.88rem; color:var(--text-muted);">
-            Loading your personalized KCSE practical pathway…
+            Loading practical pathway…
           </div>
         </div>
 
-        <!-- 2. Grid View Wrap (Toggleable) -->
+        <!-- Grid View Wrap -->
         <div id="practiceGridWrap" style="display:none;">
           <!-- Search and Filter Bar -->
           <div class="search-filter-bar" style="border-radius:12px; margin-bottom:20px; background:var(--card-bg-hover); border:1.5px solid var(--card-border); padding:14px 18px;">
             <div class="search-input-wrap">
-              <span class="search-icon">🔍</span>
               <input type="text" id="experimentSearchInput" oninput="filterPractices()" placeholder="Filter practicals (e.g. Titration, Qualitative Salt, Thermochemistry, Kinetics, Organic...)">
             </div>
             <div class="filter-chips" style="margin-top:12px;">
-              <button class="filter-chip active" data-filter="all" onclick="setPracticeFilter('all')" data-tooltip="Show all 8 lab benches and 40-mark mock exam" data-tooltip-pos="bottom">All Practicals</button>
-              <button class="filter-chip" data-filter="acidBase" onclick="setPracticeFilter('acidBase')" data-tooltip="Paper 3 Question 1: Volumetric standardisation &amp; redox" data-tooltip-pos="bottom">Paper 3 Q1: Volumetric</button>
-              <button class="filter-chip" data-filter="qualitative" onclick="setPracticeFilter('qualitative')" data-tooltip="Paper 3 Question 2: Systematic inorganic cation &amp; anion tests" data-tooltip-pos="bottom">Paper 3 Q2: Qualitative Salts</button>
-              <button class="filter-chip" data-filter="rates" onclick="setPracticeFilter('rates')" data-tooltip="Paper 3 Question 3: Reaction kinetics &amp; rate graphs" data-tooltip-pos="bottom">Kinetics</button>
-              <button class="filter-chip" data-filter="energy" onclick="setPracticeFilter('energy')" data-tooltip="Paper 3 Question 3: Enthalpy calorimetry (ΔH)" data-tooltip-pos="bottom">Thermochemistry</button>
-              <button class="filter-chip" data-filter="solubility" onclick="setPracticeFilter('solubility')" data-tooltip="Paper 3 Question 3: Solute solubility &amp; crystallization curves" data-tooltip-pos="bottom">Solubility</button>
-              <button class="filter-chip" data-filter="organic" onclick="setPracticeFilter('organic')" data-tooltip="Paper 3 Question 3: Functional groups &amp; unsaturation" data-tooltip-pos="bottom">Organic Chemistry</button>
+              <button class="filter-chip active" data-filter="all" onclick="setPracticeFilter('all')">All Practicals</button>
+              <button class="filter-chip" data-filter="acidBase" onclick="setPracticeFilter('acidBase')">Volumetric</button>
+              <button class="filter-chip" data-filter="qualitative" onclick="setPracticeFilter('qualitative')">Qualitative Salts</button>
+              <button class="filter-chip" data-filter="rates" onclick="setPracticeFilter('rates')">Kinetics</button>
+              <button class="filter-chip" data-filter="energy" onclick="setPracticeFilter('energy')">Thermochemistry</button>
+              <button class="filter-chip" data-filter="solubility" onclick="setPracticeFilter('solubility')">Solubility</button>
+              <button class="filter-chip" data-filter="organic" onclick="setPracticeFilter('organic')">Organic Chemistry</button>
             </div>
           </div>
 
-          <!-- Full-Width Interactive Laboratory Bench Cards -->
+          <!-- Laboratory Bench Cards Grid -->
           <div class="practice-2col-grid" id="practiceGrid">
             
             <!-- 1. Guided Volumetric Analysis -->
-            <a href="lab.html?studyMode=guided" class="practice-banner-card" data-type="acidBase" style="border-left:5px solid var(--acad-gold);" data-tooltip="Paper 3 Q1: Guided titration standardisation with step-by-step meniscus alignment and calculation rubrics." data-tooltip-pos="top">
-              <div class="practice-icon-circle" style="color:var(--acad-gold); font-size:1.35rem;">🧭</div>
+            <a href="lab.html?studyMode=guided" class="practice-banner-card" data-type="acidBase" style="border-left:5px solid var(--acad-gold);">
               <div style="flex:1; min-width:0;">
                 <div class="practice-text-title">Guided Volumetric Analysis</div>
-                <div class="practice-text-desc">Step-by-step meniscus alignment, indicator selection, and stoichiometric calculations.</div>
+                <div class="practice-text-desc">Step-by-step meniscus alignment, indicator selection, and calculations.</div>
               </div>
             </a>
 
-            <!-- 2. Self-Paced Volumetric Workbench -->
-            <a href="lab.html" class="practice-banner-card" data-type="acidBase" style="border-left:5px solid var(--acad-navy);" data-tooltip="Paper 3 Q1: Independent volumetric standardisation, KMnO₄ redox, Mohr's precipitation &amp; EDTA complexometry." data-tooltip-pos="top">
-              <div class="practice-icon-circle" style="color:var(--acad-navy); font-size:1.35rem;">⚖️</div>
+            <!-- 2. Volumetric Workbench -->
+            <a href="lab.html" class="practice-banner-card" data-type="acidBase" style="border-left:5px solid var(--acad-navy);">
               <div style="flex:1; min-width:0;">
-                <div class="practice-text-title">Self-Paced Volumetric Workbench</div>
+                <div class="practice-text-title">Volumetric Analysis Workbench</div>
                 <div class="practice-text-desc">Acid-Base, KMnO₄ Redox, Mohr's Precipitation, and EDTA Complexometry.</div>
               </div>
             </a>
 
             <!-- 3. Qualitative Salt Analysis -->
-            <a href="qualitative.html" class="practice-banner-card" data-type="qualitative" style="border-left:5px solid var(--acad-emerald);" data-tooltip="Paper 3 Q2: Systematic deduction of 10 unknown cations &amp; anions with aqueous reagents and flame tests." data-tooltip-pos="top">
-              <div class="practice-icon-circle" style="color:var(--acad-emerald); font-size:1.35rem;">🔬</div>
+            <a href="qualitative.html" class="practice-banner-card" data-type="qualitative" style="border-left:5px solid var(--acad-emerald);">
               <div style="flex:1; min-width:0;">
                 <div class="practice-text-title">Systematic Qualitative Analysis</div>
-                <div class="practice-text-desc">Identify 10 unknown cations and anions via NaOH, NH₃, Ba(NO₃)₂, and flame emission tests.</div>
+                <div class="practice-text-desc">Identify 10 unknown cations and anions via aqueous reagents and flame tests.</div>
               </div>
             </a>
 
             <!-- 4. Reaction Rates & Kinetics -->
-            <a href="rates.html" class="practice-banner-card" data-type="rates" style="border-left:5px solid #F59E0B;" data-tooltip="Paper 3 Q3: Disappearing cross optical timing, rate graphs (1/t vs conc), and activation energy analysis." data-tooltip-pos="top">
-              <div class="practice-icon-circle" style="color:#F59E0B; font-size:1.35rem;">⚡</div>
+            <a href="rates.html" class="practice-banner-card" data-type="rates" style="border-left:5px solid #F59E0B;">
               <div style="flex:1; min-width:0;">
                 <div class="practice-text-title">Reaction Rates &amp; Kinetics</div>
-                <div class="practice-text-desc">Na₂S₂O₃ + HCl disappearing cross method, rate graphs, and temperature coefficients.</div>
+                <div class="practice-text-desc">Disappearing cross method, rate graphs (1/t vs conc), and temperature effects.</div>
               </div>
             </a>
 
             <!-- 5. Thermochemistry & Enthalpy -->
-            <a href="energy.html" class="practice-banner-card" data-type="energy" style="border-left:5px solid #EF4444;" data-tooltip="Paper 3 Q3: Polystyrene cup calorimetry measurement of neutralization, displacement, and solution ΔH." data-tooltip-pos="top">
-              <div class="practice-icon-circle" style="color:#EF4444; font-size:1.35rem;">🔥</div>
+            <a href="energy.html" class="practice-banner-card" data-type="energy" style="border-left:5px solid #EF4444;">
               <div style="flex:1; min-width:0;">
                 <div class="practice-text-title">Thermochemistry &amp; Energy Changes</div>
-                <div class="practice-text-desc">Calorimetric measurement of neutralization, solution, and displacement enthalpies (&Delta;H).</div>
+                <div class="practice-text-desc">Calorimetric measurement of neutralization, solution, and displacement enthalpies (ΔH).</div>
               </div>
             </a>
 
             <!-- 6. Solubility Curves -->
-            <a href="solubility.html" class="practice-banner-card" data-type="solubility" style="border-left:5px solid #0284C7;" data-tooltip="Paper 3 Q3: Determine crystallization inception temperatures across serial water additions and KNEC graph plots." data-tooltip-pos="top">
-              <div class="practice-icon-circle" style="color:#0284C7; font-size:1.35rem;">🌡️</div>
+            <a href="solubility.html" class="practice-banner-card" data-type="solubility" style="border-left:5px solid #0284C7;">
               <div style="flex:1; min-width:0;">
                 <div class="practice-text-title">Solubility Curves &amp; Crystallization</div>
-                <div class="practice-text-desc">Determine crystallization inception points across solute masses with KNEC graph plots.</div>
+                <div class="practice-text-desc">Determine crystallization inception points across solute masses and plot curves.</div>
               </div>
             </a>
 
             <!-- 7. Organic Chemistry Lab -->
-            <a href="organic.html" class="practice-banner-card" data-type="organic" style="border-left:5px solid #10B981;" data-tooltip="Paper 3 Q3: Test for unsaturation (Br₂/KMnO₄), combustion sootiness, and sodium esterification." data-tooltip-pos="top">
-              <div class="practice-icon-circle" style="color:#10B981; font-size:1.35rem;">🍃</div>
+            <a href="organic.html" class="practice-banner-card" data-type="organic" style="border-left:5px solid #10B981;">
               <div style="flex:1; min-width:0;">
                 <div class="practice-text-title">Organic Chemistry &amp; Functional Groups</div>
-                <div class="practice-text-desc">Test for unsaturation (Br₂/KMnO₄), combustion sootiness, and functional esterification.</div>
+                <div class="practice-text-desc">Test for unsaturation (Br₂/KMnO₄), combustion sootiness, and esterification.</div>
               </div>
             </a>
 
             <!-- 8. Gas Preparation & Identification -->
-            <a href="gas.html" class="practice-banner-card" data-type="gas" style="border-left:5px solid #8B5CF6;" data-tooltip="Paper 3 Q3: Generate and identify H₂, O₂, CO₂, Cl₂, NH₃, and SO₂ with confirmatory splint &amp; litmus tests." data-tooltip-pos="top">
-              <div class="practice-icon-circle" style="color:#8B5CF6; font-size:1.35rem;">💨</div>
+            <a href="gas.html" class="practice-banner-card" data-type="gas" style="border-left:5px solid #8B5CF6;">
               <div style="flex:1; min-width:0;">
                 <div class="practice-text-title">Gas Preparation &amp; Analysis</div>
                 <div class="practice-text-desc">Generate and test H₂, O₂, CO₂, Cl₂, NH₃, and SO₂ with confirmatory tests.</div>
               </div>
             </a>
 
-            <!-- 9. KCSE 40-Mark Mock Examination -->
-            <a href="mock_exams.html" class="practice-banner-card" data-type="all" style="border-left:5px solid var(--acad-gold); grid-column: 1 / -1; background:linear-gradient(135deg, rgba(184,134,11,0.08), rgba(11,37,69,0.05));" data-tooltip="Official 40-Mark Mock Practical Examination with automated KNEC grading rubric (A–E)." data-tooltip-pos="top">
-              <div class="practice-icon-circle" style="color:var(--acad-gold); font-size:1.4rem;">🏆</div>
+            <!-- 9. KCSE Mock Exam -->
+            <a href="mock_exams.html" class="practice-banner-card" data-type="all" style="border-left:5px solid var(--acad-gold); grid-column: 1 / -1; background:var(--card-bg-hover);">
               <div style="flex:1; min-width:0;">
-                <div class="practice-text-title">KCSE Paper 3 National Mock Examination Center (40 Marks)</div>
-                <div class="practice-text-desc">6 standardized national mock series, adaptive randomized papers, and modular section sprints with official KNEC grading.</div>
+                <div class="practice-text-title">KCSE Paper 3 National Mock Examination (40 Marks)</div>
+                <div class="practice-text-desc">Full 40-mark timed mock exam with automated grading rubric.</div>
               </div>
             </a>
 
@@ -699,40 +692,37 @@
         </div>
       </section>
 
-      <!-- ── ZONE 3: ⚡ KCSE PRACTICAL DIAGNOSTIC DRILLS HUB ── -->
+      <!-- Zone 3: Practical Diagnostic Drills Hub -->
       <section class="activity-zone-wrap zone-drills" style="border-left: 5px solid #F59E0B;">
         <div class="activity-zone-header">
           <div class="activity-zone-title-box">
-            <div class="icon-circle-badge" style="color:#F59E0B; font-size:1.4rem;">⚡</div>
             <div>
               <h2 class="section-heading-academic" data-i18n="drills_title">
-                <abbr class="sci-abbr" tabindex="0">KCSE<span class="sci-abbr-tip"><span class="sci-abbr-title">KCSE Practical Drills</span>Rapid formative assessments for Paper 3 laboratory skills.</span></abbr> Practical Diagnostic Drills
+                Practical Diagnostic Drills
               </h2>
               <div class="section-subheading" data-i18n="drills_sub">
-                Choose a topic for a fast-paced timed assessment on observation reflexes:
+                Timed quizzes by topic:
               </div>
             </div>
           </div>
-          <span class="dash-section-badge badge-amber" data-i18n="drills_badge">Formative Reflex Drills</span>
+          <span class="dash-section-badge badge-amber" data-i18n="drills_badge">Quick Drills</span>
         </div>
 
         <div class="drill-card-grid">
           <!-- 1. All Topics -->
-          <a href="speed_battle.html?mode=blitz" class="drill-item-card" data-tooltip="60s timed assessment testing all 45 KCSE practical competencies across Paper 3 questions" data-tooltip-pos="top">
+          <a href="speed_battle.html?mode=blitz" class="drill-item-card" data-tooltip="60s timed assessment covering all practical competencies" data-tooltip-pos="top">
             <div style="display:flex; align-items:center; gap:12px;">
-              <div class="drill-icon-badge" style="color:var(--cyan-accent);">📚</div>
               <div>
                 <div class="drill-card-title" data-i18n="drill_comp_title">Comprehensive Review</div>
-                <div class="drill-card-desc" data-i18n="drill_comp_desc">All 45 practical competencies</div>
+                <div class="drill-card-desc" data-i18n="drill_comp_desc">All practical competencies</div>
               </div>
             </div>
             <span class="drill-time-chip" style="background:rgba(2,132,199,0.15); color:var(--cyan-accent); border:1px solid var(--cyan-accent);">60s</span>
           </a>
 
           <!-- 2. Qualitative Salt Analysis -->
-          <a href="speed_battle.html?mode=qualitative" class="drill-item-card" data-tooltip="45s drill on cation and anion precipitates, excess NaOH/NH3 solubility, and flame tests" data-tooltip-pos="top">
+          <a href="speed_battle.html?mode=qualitative" class="drill-item-card" data-tooltip="45s drill on cation and anion precipitates and flame tests" data-tooltip-pos="top">
             <div style="display:flex; align-items:center; gap:12px;">
-              <div class="drill-icon-badge" style="color:#10B981;">🔬</div>
               <div>
                 <div class="drill-card-title" data-i18n="drill_qual_title">Qualitative Salts (Q2)</div>
                 <div class="drill-card-desc" data-i18n="drill_qual_desc">Cations, anions &amp; flame tests</div>
@@ -742,9 +732,8 @@
           </a>
 
           <!-- 3. Volumetric Titrations -->
-          <a href="speed_battle.html?mode=titration" class="drill-item-card" data-tooltip="45s sprint on indicator endpoints, burette meniscus alignment, and concordancy calculations" data-tooltip-pos="top">
+          <a href="speed_battle.html?mode=titration" class="drill-item-card" data-tooltip="45s sprint on indicator endpoints and concordancy calculations" data-tooltip-pos="top">
             <div style="display:flex; align-items:center; gap:12px;">
-              <div class="drill-icon-badge" style="color:#F59E0B;">⚖️</div>
               <div>
                 <div class="drill-card-title" data-i18n="drill_vol_title">Volumetric Titration (Q1)</div>
                 <div class="drill-card-desc" data-i18n="drill_vol_desc">Indicators &amp; concordancy</div>
@@ -754,9 +743,8 @@
           </a>
 
           <!-- 4. Organic Functional Groups -->
-          <a href="speed_battle.html?mode=organic" class="drill-item-card" data-tooltip="45s rapid identification of alkenes, alkanols, carboxylic acids, and esters" data-tooltip-pos="top">
+          <a href="speed_battle.html?mode=organic" class="drill-item-card" data-tooltip="45s identification of alkenes, alkanols, and carboxylic acids" data-tooltip-pos="top">
             <div style="display:flex; align-items:center; gap:12px;">
-              <div class="drill-icon-badge" style="color:#8B5CF6;">⚗️</div>
               <div>
                 <div class="drill-card-title" data-i18n="drill_org_title">Organic Groups (Q3)</div>
                 <div class="drill-card-desc" data-i18n="drill_org_desc">Unsaturation &amp; alcohols</div>
@@ -766,24 +754,22 @@
           </a>
 
           <!-- 5. Kinetics & Thermochemistry -->
-          <a href="speed_battle.html?mode=energy" class="drill-item-card" data-tooltip="45s drill on reaction rates, ΔH enthalpy calculations, and cooling crystallization points" data-tooltip-pos="top">
+          <a href="speed_battle.html?mode=energy" class="drill-item-card" data-tooltip="45s drill on reaction rates and enthalpy calculations" data-tooltip-pos="top">
             <div style="display:flex; align-items:center; gap:12px;">
-              <div class="drill-icon-badge" style="color:#EC4899;">🔥</div>
               <div>
                 <div class="drill-card-title" data-i18n="drill_kin_title">Kinetics &amp; Energetics</div>
-                <div class="drill-card-desc" data-i18n="drill_kin_desc">&Delta;H, rate &amp; cooling curves</div>
+                <div class="drill-card-desc" data-i18n="drill_kin_desc">ΔH, rate &amp; cooling curves</div>
               </div>
             </div>
             <span class="drill-time-chip" style="background:rgba(236,72,153,0.15); color:#EC4899; border:1px solid #EC4899;">45s</span>
           </a>
 
-          <!-- 6. Zero-Error Sudden Death -->
-          <a href="speed_battle.html?mode=survival" class="drill-item-card" data-tooltip="15s per question sudden-death sprint: One mistake ends the run! High-pressure exam drill." data-tooltip-pos="top">
+          <!-- 6. Sudden Death Drill -->
+          <a href="speed_battle.html?mode=survival" class="drill-item-card" data-tooltip="15s per question sudden-death sprint" data-tooltip-pos="top">
             <div style="display:flex; align-items:center; gap:12px;">
-              <div class="drill-icon-badge" style="color:#EF4444;">🎯</div>
               <div>
-                <div class="drill-card-title" data-i18n="drill_surv_title">Zero-Error Precision</div>
-                <div class="drill-card-desc" data-i18n="drill_surv_desc">15s sudden-death clock</div>
+                <div class="drill-card-title" data-i18n="drill_surv_title">Sudden Death</div>
+                <div class="drill-card-desc" data-i18n="drill_surv_desc">15s per question</div>
               </div>
             </div>
             <span class="drill-time-chip" style="background:rgba(239,68,68,0.15); color:#EF4444; border:1px solid #EF4444;">15s</span>
@@ -793,44 +779,42 @@
 
     </div>
 
-    <!-- ══════════════════════════════════════════════════════
-         TAB 2: 📚 KCSE REVISION & REFERENCE GUIDE (DEDICATED)
-    ══════════════════════════════════════════════════════ -->
+    <!-- Tab 2: Revision & Reference Guide -->
     <div class="student-tab-panel" id="panel_reference">
       
       <div style="margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
         <div>
           <h2 class="section-heading-academic">
-            <span>📚</span> <span data-i18n="ref_title">KNEC KCSE Practical Reference Standards</span>
+            <span data-i18n="ref_title">Revision Reference</span>
           </h2>
           <p class="section-subheading" data-i18n="ref_sub">
-            Authoritative KNEC Paper 3 observational criteria, endpoint color standards, and ion deduction reference tables.
+            Key observational criteria, flame colors, and chemistry formulas.
           </p>
         </div>
       </div>
 
-      <!-- Quick Jump Reference Pills Bar -->
+      <!-- Quick Jump Pills Bar -->
       <nav class="quick-jump-bar" aria-label="Reference Jump Navigation">
-        <span style="font-size:0.76rem; font-weight:800; font-family:'Cinzel', serif; color:var(--heading-color); margin-right:4px;">Jump to:</span>
-        <a href="#ref-indicators" class="quick-jump-chip"><span>💧</span> Indicators</a>
-        <a href="#ref-gases" class="quick-jump-chip"><span>💨</span> Gas Tests</a>
-        <a href="#ref-cations" class="quick-jump-chip"><span>🧪</span> Cation Tests</a>
-        <a href="#ref-flame" class="quick-jump-chip"><span>🔥</span> Flame Tests</a>
-        <a href="#ref-anions" class="quick-jump-chip"><span>🔬</span> Anion Tests</a>
-        <a href="#ref-organic" class="quick-jump-chip"><span>⚗️</span> Organic Groups</a>
-        <a href="#ref-physical" class="quick-jump-chip"><span>📐</span> Physical Formulas</a>
+        <span style="font-size:0.76rem; font-weight:800; color:var(--heading-color); margin-right:4px;">Jump to:</span>
+        <a href="#ref-indicators" class="quick-jump-chip">Indicators</a>
+        <a href="#ref-gases" class="quick-jump-chip">Gas Tests</a>
+        <a href="#ref-cations" class="quick-jump-chip">Cation Tests</a>
+        <a href="#ref-flame" class="quick-jump-chip">Flame Tests</a>
+        <a href="#ref-anions" class="quick-jump-chip">Anion Tests</a>
+        <a href="#ref-organic" class="quick-jump-chip">Organic Groups</a>
+        <a href="#ref-physical" class="quick-jump-chip">Formulas</a>
       </nav>
 
       <div class="modular-2col-grid">
         
         <!-- 1. Indicators Reference Card -->
         <div class="knec-reference-card" id="ref-indicators">
-          <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0 0 8px 0; display:flex; align-items:center; gap:8px;">
-            <span>💧</span> <span data-i18n="ind_title">Acid-Base Indicators Ledger</span>
+          <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0 0 8px 0;">
+            <span data-i18n="ind_title">Acid-Base Indicators</span>
           </h3>
-          <p style="font-size:0.84rem; font-weight:500; color:var(--text-muted); margin-bottom:12px;">Standard KNEC colour transition endpoints at titration equivalence.</p>
+          <p style="font-size:0.84rem; font-weight:500; color:var(--text-muted); margin-bottom:12px;">Standard colour transition endpoints at titration equivalence.</p>
           <div class="knec-table-wrap">
-            <table class="knec-table" aria-label="KNEC Indicator Table">
+            <table class="knec-table" aria-label="Indicator Table">
               <thead>
                 <tr>
                   <th>Indicator</th>
@@ -843,13 +827,13 @@
                 <tr>
                   <td><b>Phenolphthalein</b></td>
                   <td style="text-align:center; color:var(--text-muted); font-weight:600;">Colorless</td>
-                  <td style="text-align:center; color:#EC4899; font-weight:800;" data-tooltip="Equivalence transition: First persistent pale pink that remains for ≥30 seconds" data-tooltip-pos="top">Pale Pink</td>
+                  <td style="text-align:center; color:#EC4899; font-weight:800;">Pale Pink</td>
                   <td style="text-align:center; color:#DB2777; font-weight:700;">Pink</td>
                 </tr>
                 <tr>
                   <td><b>Methyl Orange</b></td>
                   <td style="text-align:center; color:#EF4444; font-weight:700;">Pink / Red</td>
-                  <td style="text-align:center; color:#F59E0B; font-weight:800;" data-tooltip="Equivalence transition: Distinct orange hue between pink and yellow" data-tooltip-pos="top">Orange</td>
+                  <td style="text-align:center; color:#F59E0B; font-weight:800;">Orange</td>
                   <td style="text-align:center; color:#FBBF24; font-weight:700;">Yellow</td>
                 </tr>
                 <tr>
@@ -861,7 +845,7 @@
                 <tr>
                   <td><b>Screened Methyl Orange</b></td>
                   <td style="text-align:center; color:#991B1B; font-weight:700;">Violet / Red</td>
-                  <td style="text-align:center; color:var(--text-muted); font-weight:800;" data-tooltip="Sharper transition: Grey endpoint eliminates yellow tint ambiguity" data-tooltip-pos="top">Grey</td>
+                  <td style="text-align:center; color:var(--text-muted); font-weight:800;">Grey</td>
                   <td style="text-align:center; color:#10B981; font-weight:700;">Green</td>
                 </tr>
               </tbody>
@@ -871,8 +855,8 @@
 
         <!-- 2. Gas Confirmatory Tests Card -->
         <div class="knec-reference-card" id="ref-gases">
-          <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0 0 8px 0; display:flex; align-items:center; gap:8px;">
-            <span>💨</span> <span data-i18n="gas_title">Gas Confirmatory Tests</span>
+          <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0 0 8px 0;">
+            <span data-i18n="gas_title">Gas Confirmatory Tests</span>
           </h3>
           <p style="font-size:0.84rem; font-weight:500; color:var(--text-muted); margin-bottom:12px;">Standard confirmatory reagent methods for common laboratory gases.</p>
           <div class="knec-table-wrap">
@@ -881,14 +865,14 @@
                 <tr>
                   <th>Gas</th>
                   <th>Reagent Method</th>
-                  <th>KNEC Expected Observation</th>
+                  <th>Expected Observation</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
                   <td><b>Carbon Dioxide (CO₂)</b></td>
                   <td>Bubble through Limewater</td>
-                  <td>White precipitate (turns turbid/milky Ca(OH)₂)</td>
+                  <td>White precipitate (turns milky Ca(OH)₂)</td>
                 </tr>
                 <tr>
                   <td><b>Sulfur Dioxide (SO₂)</b></td>
@@ -908,7 +892,7 @@
                 <tr>
                   <td><b>Hydrogen Gas (H₂)</b></td>
                   <td>Burning splint at test tube mouth</td>
-                  <td>Burns with a characteristic 'pop' sound</td>
+                  <td>Burns with a 'pop' sound</td>
                 </tr>
                 <tr>
                   <td><b>Oxygen Gas (O₂)</b></td>
@@ -922,13 +906,13 @@
 
         <!-- 3. Qualitative Cation Separation Guide -->
         <div class="knec-reference-card" id="ref-cations" style="grid-column:1 / -1;">
-          <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0 0 8px 0; display:flex; align-items:center; gap:8px;">
-            <span>🧪</span> <span data-i18n="cation_title">Systematic Cation Identification &amp; Separation</span>
+          <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0 0 8px 0;">
+            <span data-i18n="cation_title">Cation Tests &amp; Separation</span>
           </h3>
           <p style="font-size:0.84rem; font-weight:500; color:var(--text-muted); margin-bottom:14px;">Deduce cations by adding aqueous NaOH followed by aqueous NH₃ dropwise until in excess.</p>
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap:14px; width:100%; box-sizing:border-box;">
             
-            <div style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:10px; padding:14px; min-width:0; box-sizing:border-box;" data-tooltip="Forms deep royal blue complex [Cu(NH3)4]2+ in excess ammonia" data-tooltip-pos="top">
+            <div style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:10px; padding:14px; min-width:0; box-sizing:border-box;">
               <b style="color:var(--cyan-accent); font-size:0.94rem;">Cu²⁺ (Copper II)</b>
               <div style="font-size:0.84rem; margin-top:6px; line-height:1.5; color:var(--text-main);">
                 • <b>NaOH:</b> Pale blue precipitate, insoluble in excess.<br>
@@ -936,15 +920,15 @@
               </div>
             </div>
 
-            <div style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:10px; padding:14px;" data-tooltip="Readily oxidizes to Fe3+ (brown) when standing in air" data-tooltip-pos="top">
+            <div style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:10px; padding:14px;">
               <b style="color:#10B981; font-size:0.94rem;">Fe²⁺ (Iron II)</b>
               <div style="font-size:0.84rem; margin-top:6px; line-height:1.5; color:var(--text-main);">
                 • <b>NaOH:</b> Dirty green precipitate, insoluble in excess.<br>
-                • <b>NH₃(aq):</b> Dirty green precipitate, insoluble in excess (turns brown on standing in air).
+                • <b>NH₃(aq):</b> Dirty green precipitate, insoluble in excess (turns brown in air).
               </div>
             </div>
 
-            <div style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:10px; padding:14px;" data-tooltip="Forms insoluble gelatinous red-brown Fe(OH)3 precipitate" data-tooltip-pos="top">
+            <div style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:10px; padding:14px;">
               <b style="color:#F59E0B; font-size:0.94rem;">Fe³⁺ (Iron III)</b>
               <div style="font-size:0.84rem; margin-top:6px; line-height:1.5; color:var(--text-main);">
                 • <b>NaOH:</b> Red-brown precipitate, insoluble in excess.<br>
@@ -952,7 +936,7 @@
               </div>
             </div>
 
-            <div style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:10px; padding:14px;" data-tooltip="Amphoteric: Soluble in excess of both NaOH and NH3" data-tooltip-pos="top">
+            <div style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:10px; padding:14px;">
               <b style="color:var(--heading-color); font-size:0.94rem;">Zn²⁺ (Zinc)</b>
               <div style="font-size:0.84rem; margin-top:6px; line-height:1.5; color:var(--text-main);">
                 • <b>NaOH:</b> White precipitate, <b>soluble in excess</b> [Zn(OH)₄]²⁻.<br>
@@ -960,47 +944,47 @@
               </div>
             </div>
 
-            <div style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:10px; padding:14px;" data-tooltip="Distinguish Pb2+ with potassium iodide: gives bright yellow PbI2 precipitate" data-tooltip-pos="top">
+            <div style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:10px; padding:14px;">
               <b style="color:var(--text-muted); font-size:0.94rem;">Al³⁺ &amp; Pb²⁺</b>
               <div style="font-size:0.84rem; margin-top:6px; line-height:1.5; color:var(--text-main);">
                 • <b>NaOH:</b> White precipitate, soluble in excess.<br>
                 • <b>NH₃(aq):</b> White precipitate, <b>insoluble in excess</b>.<br>
-                • <i>Distinguish Pb²⁺:</i> Add KI(aq) → Golden yellow ppt (PbI₂).
+                • <i>Distinguish Pb²⁺:</i> Add KI(aq) → Yellow ppt (PbI₂).
               </div>
             </div>
 
-            <div style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:10px; padding:14px;" data-tooltip="Ca2+ gives no precipitate with NH3; Mg2+ gives slight white precipitate" data-tooltip-pos="top">
+            <div style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:10px; padding:14px;">
               <b style="color:var(--text-muted); font-size:0.94rem;">Ca²⁺ &amp; Mg²⁺</b>
               <div style="font-size:0.84rem; margin-top:6px; line-height:1.5; color:var(--text-main);">
                 • <b>NaOH:</b> White precipitate, insoluble in excess.<br>
-                • <b>NH₃(aq):</b> Ca²⁺ gives NO precipitate. Mg²⁺ gives slight white precipitate.
+                • <b>NH₃(aq):</b> Ca²⁺ gives no precipitate. Mg²⁺ gives slight white precipitate.
               </div>
             </div>
 
           </div>
         </div>
 
-        <!-- 3.5 Flame Emission Spectroscopy & Metal Cation Tests (With Diagrams) -->
+        <!-- 3.5 Flame Emission Spectroscopy Tests -->
         <div class="knec-reference-card" id="ref-flame" style="grid-column:1 / -1; border-top:4px solid #F59E0B;">
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
-            <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0; display:flex; align-items:center; gap:8px;">
-              <span>🔥</span> <span data-i18n="flame_title">KNEC Flame Emission Spectroscopy &amp; Cation Confirmatory Tests</span>
+            <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0;">
+              <span data-i18n="flame_title">Flame Emission Tests</span>
             </h3>
             <span style="font-family:'JetBrains Mono', monospace; font-size:0.76rem; background:rgba(245,158,11,0.15); color:#854D0E; border:1px solid rgba(245,158,11,0.4); padding:3px 10px; border-radius:6px; font-weight:800;">
-              KNEC Paper 3 Qualitative Standard
+              Qualitative Standard
             </span>
           </div>
           <p style="font-size:0.84rem; font-weight:500; color:var(--text-muted); margin-bottom:16px;">
-            Excitation of metal ions in a non-luminous Bunsen burner flame produces characteristic emission spectra due to electrons returning from excited energy levels to ground states.
+            Excitation of metal ions in a non-luminous Bunsen burner flame produces characteristic emission colours.
           </p>
 
           <!-- Flame Test Procedure Diagram & Guidelines Row -->
           <div class="flame-procedure-grid">
             
-            <!-- SVG Flame Test Experimental Apparatus Diagram -->
+            <!-- Flame Test Schematic Diagram -->
             <div style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:12px; padding:16px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
               <div style="font-family:'JetBrains Mono', monospace; font-size:0.76rem; color:var(--text-muted); font-weight:800; margin-bottom:10px;">
-                FIG 2.1 — FLAME TEST APPARATUS SCHEMATIC
+                FLAME TEST APPARATUS SCHEMATIC
               </div>
               <svg viewBox="0 0 280 160" style="width:100%; max-width:280px; height:auto;">
                 <!-- Watch glass with conc HCl -->
@@ -1023,20 +1007,19 @@
                 <!-- Non-Luminous Blue Outer Mantle & Inner Cone -->
                 <path d="M216,70 Q210,35 220,10 Q230,35 224,70 Z" fill="rgba(2,132,199,0.35)" stroke="#0284C7" stroke-width="1.2"/>
                 <path d="M217,70 Q213,48 220,32 Q227,48 223,70 Z" fill="rgba(56,189,248,0.85)"/>
-                <!-- Characteristic emission glow on sample -->
-                <path d="M215,50 Q205,30 220,15 Q235,30 225,50 Z" fill="rgba(245,158,11,0.55)" filter="drop-shadow(0 0 6px #F59E0B)"/>
+                <path d="M215,50 Q205,30 220,15 Q235,30 225,50 Z" fill="rgba(245,158,11,0.55)"/>
 
-                <!-- Clean Glass Rod with Sample entering flame (KICD Standard) -->
+                <!-- Clean Glass Rod -->
                 <rect x="110" y="30" width="105" height="6" rx="3" fill="rgba(56,189,248,0.3)" stroke="#38BDF8" stroke-width="1.2" transform="rotate(-32 162 33)"/>
-                <circle cx="215" cy="35" r="4.5" fill="#FCD34D" stroke="#EA580C" stroke-width="1" filter="drop-shadow(0 0 4px #F59E0B)"/>
+                <circle cx="215" cy="35" r="4.5" fill="#FCD34D" stroke="#EA580C" stroke-width="1"/>
                 <text x="135" y="85" font-size="8" fill="var(--acad-gold)" font-weight="bold" font-family="'JetBrains Mono', monospace">Clean Glass Rod</text>
               </svg>
             </div>
 
-            <!-- Standard Experimental Steps & Key Explanations -->
+            <!-- Standard Experimental Steps -->
             <div style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:12px; padding:16px; display:flex; flex-direction:column; justify-content:center;">
-              <b style="color:var(--heading-color); font-size:0.94rem; margin-bottom:8px; display:flex; align-items:center; gap:8px;">
-                <span>📋</span> KICD Three-Step Flame Test Procedure
+              <b style="color:var(--heading-color); font-size:0.94rem; margin-bottom:8px;">
+                Three-Step Flame Test Procedure
               </b>
               <ol style="margin:0 0 12px 0; padding-left:20px; font-size:0.84rem; line-height:1.5; color:var(--text-main); font-weight:500;">
                 <li><b>Clean Glass Rod:</b> Dip a clean glass rod into concentrated <code>HCl</code> and hold the tip in a non-luminous Bunsen flame until no colour is imparted.</li>
@@ -1044,27 +1027,17 @@
                 <li><b>Observe Flame Emission:</b> Introduce the glass rod tip into the hottest outer zone of the non-luminous flame and observe the persistent characteristic flame colour produced.</li>
               </ol>
               <div style="font-size:0.8rem; font-weight:600; color:var(--text-muted); background:var(--card-bg); border-left:4px solid var(--acad-gold); padding:8px 12px; border-radius:6px;">
-                <b>KICD Syllabus Standard:</b> A clean glass rod is the standard laboratory instrument used in Kenyan schools to test metal cations in a non-luminous flame with concentrated HCl.
+                A clean glass rod is the standard laboratory instrument used to test metal cations in a non-luminous flame with concentrated HCl.
               </div>
             </div>
 
           </div>
 
-          <!-- Flame Colors & Emission Spectra 6-Grid with Custom Glowing Vector Flames -->
+          <!-- Flame Colors 6-Grid -->
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 160px), 1fr)); gap:12px; width:100%; box-sizing:border-box;">
             
             <!-- 1. Sodium (Na+) -->
-            <div style="background:var(--card-bg-hover); border:1.5px solid rgba(245,158,11,0.5); border-radius:10px; padding:12px; display:flex; gap:10px; align-items:center; min-width:0; box-sizing:border-box;" data-tooltip="Intense golden yellow flame; masks other ions" data-tooltip-pos="top">
-              <svg viewBox="0 0 32 44" style="width:30px; height:40px; flex-shrink:0;">
-                <path d="M16,42 Q4,30 8,18 Q12,24 16,6 Q20,24 24,18 Q28,30 16,42 Z" fill="url(#flameNa)" filter="drop-shadow(0 0 6px rgba(245,158,11,0.8))"/>
-                <defs>
-                  <linearGradient id="flameNa" x1="0" y1="1" x2="0" y2="0">
-                    <stop offset="0%" stop-color="#EA580C"/>
-                    <stop offset="60%" stop-color="#F59E0B"/>
-                    <stop offset="100%" stop-color="#FEF08A"/>
-                  </linearGradient>
-                </defs>
-              </svg>
+            <div style="background:var(--card-bg-hover); border:1.5px solid rgba(245,158,11,0.5); border-radius:10px; padding:12px; display:flex; gap:10px; align-items:center; min-width:0; box-sizing:border-box;">
               <div>
                 <b style="color:#854D0E; font-size:0.92rem;">Sodium (Na⁺)</b>
                 <div style="font-size:0.8rem; font-weight:800; color:var(--heading-color);">Persistent Golden Yellow</div>
@@ -1073,17 +1046,7 @@
             </div>
 
             <!-- 2. Potassium (K+) -->
-            <div style="background:var(--card-bg-hover); border:1.5px solid rgba(168,85,247,0.5); border-radius:10px; padding:12px; display:flex; gap:10px; align-items:center;" data-tooltip="View through cobalt glass (pink) if sodium contamination is present" data-tooltip-pos="top">
-              <svg viewBox="0 0 32 44" style="width:30px; height:40px; flex-shrink:0;">
-                <path d="M16,42 Q4,30 8,18 Q12,24 16,6 Q20,24 24,18 Q28,30 16,42 Z" fill="url(#flameK)" filter="drop-shadow(0 0 6px rgba(168,85,247,0.8))"/>
-                <defs>
-                  <linearGradient id="flameK" x1="0" y1="1" x2="0" y2="0">
-                    <stop offset="0%" stop-color="#7C3AED"/>
-                    <stop offset="60%" stop-color="#A855F7"/>
-                    <stop offset="100%" stop-color="#F3E8FF"/>
-                  </linearGradient>
-                </defs>
-              </svg>
+            <div style="background:var(--card-bg-hover); border:1.5px solid rgba(168,85,247,0.5); border-radius:10px; padding:12px; display:flex; gap:10px; align-items:center;">
               <div>
                 <b style="color:#7C3AED; font-size:0.92rem;">Potassium (K⁺)</b>
                 <div style="font-size:0.8rem; font-weight:800; color:var(--heading-color);">Lilac / Pale Violet</div>
@@ -1092,17 +1055,7 @@
             </div>
 
             <!-- 3. Calcium (Ca2+) -->
-            <div style="background:var(--card-bg-hover); border:1.5px solid rgba(239,68,68,0.5); border-radius:10px; padding:12px; display:flex; gap:10px; align-items:center;" data-tooltip="Characteristic brick-red / orange-red flame emission" data-tooltip-pos="top">
-              <svg viewBox="0 0 32 44" style="width:30px; height:40px; flex-shrink:0;">
-                <path d="M16,42 Q4,30 8,18 Q12,24 16,6 Q20,24 24,18 Q28,30 16,42 Z" fill="url(#flameCa)" filter="drop-shadow(0 0 6px rgba(239,68,68,0.8))"/>
-                <defs>
-                  <linearGradient id="flameCa" x1="0" y1="1" x2="0" y2="0">
-                    <stop offset="0%" stop-color="#B91C1C"/>
-                    <stop offset="60%" stop-color="#EF4444"/>
-                    <stop offset="100%" stop-color="#FDBA74"/>
-                  </linearGradient>
-                </defs>
-              </svg>
+            <div style="background:var(--card-bg-hover); border:1.5px solid rgba(239,68,68,0.5); border-radius:10px; padding:12px; display:flex; gap:10px; align-items:center;">
               <div>
                 <b style="color:#B91C1C; font-size:0.92rem;">Calcium (Ca²⁺)</b>
                 <div style="font-size:0.8rem; font-weight:800; color:var(--heading-color);">Brick Red / Orange-Red</div>
@@ -1111,36 +1064,16 @@
             </div>
 
             <!-- 4. Copper II (Cu2+) -->
-            <div style="background:var(--card-bg-hover); border:1.5px solid rgba(16,185,129,0.5); border-radius:10px; padding:12px; display:flex; gap:10px; align-items:center;" data-tooltip="Characteristic persistent blue-green flame" data-tooltip-pos="top">
-              <svg viewBox="0 0 32 44" style="width:30px; height:40px; flex-shrink:0;">
-                <path d="M16,42 Q4,30 8,18 Q12,24 16,6 Q20,24 24,18 Q28,30 16,42 Z" fill="url(#flameCu)" filter="drop-shadow(0 0 6px rgba(16,185,129,0.8))"/>
-                <defs>
-                  <linearGradient id="flameCu" x1="0" y1="1" x2="0" y2="0">
-                    <stop offset="0%" stop-color="#047857"/>
-                    <stop offset="60%" stop-color="#10B981"/>
-                    <stop offset="100%" stop-color="#67E8F9"/>
-                  </linearGradient>
-                </defs>
-              </svg>
+            <div style="background:var(--card-bg-hover); border:1.5px solid rgba(16,185,129,0.5); border-radius:10px; padding:12px; display:flex; gap:10px; align-items:center;">
               <div>
                 <b style="color:#047857; font-size:0.92rem;">Copper II (Cu²⁺)</b>
                 <div style="font-size:0.8rem; font-weight:800; color:var(--heading-color);">Blue-Green Flame</div>
-                <div style="font-size:0.76rem; color:var(--text-muted); margin-top:2px;">Characteristic non-luminous emission.</div>
+                <div style="font-size:0.76rem; color:var(--text-muted); margin-top:2px;">Characteristic emission.</div>
               </div>
             </div>
 
             <!-- 5. Barium (Ba2+) -->
-            <div style="background:var(--card-bg-hover); border:1.5px solid rgba(132,204,22,0.5); border-radius:10px; padding:12px; display:flex; gap:10px; align-items:center;" data-tooltip="Dull yellowish-green / pale apple green flame" data-tooltip-pos="top">
-              <svg viewBox="0 0 32 44" style="width:30px; height:40px; flex-shrink:0;">
-                <path d="M16,42 Q4,30 8,18 Q12,24 16,6 Q20,24 24,18 Q28,30 16,42 Z" fill="url(#flameBa)" filter="drop-shadow(0 0 6px rgba(132,204,22,0.8))"/>
-                <defs>
-                  <linearGradient id="flameBa" x1="0" y1="1" x2="0" y2="0">
-                    <stop offset="0%" stop-color="#4D7C0F"/>
-                    <stop offset="60%" stop-color="#84CC16"/>
-                    <stop offset="100%" stop-color="#D9F99D"/>
-                  </linearGradient>
-                </defs>
-              </svg>
+            <div style="background:var(--card-bg-hover); border:1.5px solid rgba(132,204,22,0.5); border-radius:10px; padding:12px; display:flex; gap:10px; align-items:center;">
               <div>
                 <b style="color:#4D7C0F; font-size:0.92rem;">Barium (Ba²⁺)</b>
                 <div style="font-size:0.8rem; font-weight:800; color:var(--heading-color);">Pale Apple Green</div>
@@ -1149,17 +1082,7 @@
             </div>
 
             <!-- 6. Lead (Pb2+) & Zinc (Zn2+) -->
-            <div style="background:var(--card-bg-hover); border:1.5px solid rgba(148,163,184,0.5); border-radius:10px; padding:12px; display:flex; gap:10px; align-items:center;" data-tooltip="Non-persistent faint flame; always confirm with KI(aq) or NH3 tests" data-tooltip-pos="top">
-              <svg viewBox="0 0 32 44" style="width:30px; height:40px; flex-shrink:0;">
-                <path d="M16,42 Q4,30 8,18 Q12,24 16,6 Q20,24 24,18 Q28,30 16,42 Z" fill="url(#flamePb)" filter="drop-shadow(0 0 6px rgba(148,163,184,0.6))"/>
-                <defs>
-                  <linearGradient id="flamePb" x1="0" y1="1" x2="0" y2="0">
-                    <stop offset="0%" stop-color="#334155"/>
-                    <stop offset="60%" stop-color="#64748B"/>
-                    <stop offset="100%" stop-color="#CBD5E1"/>
-                  </linearGradient>
-                </defs>
-              </svg>
+            <div style="background:var(--card-bg-hover); border:1.5px solid rgba(148,163,184,0.5); border-radius:10px; padding:12px; display:flex; gap:10px; align-items:center;">
               <div>
                 <b style="color:var(--text-muted); font-size:0.92rem;">Lead (Pb²⁺) / Zinc</b>
                 <div style="font-size:0.8rem; font-weight:800; color:var(--heading-color);">Faint Greyish-Blue</div>
@@ -1170,12 +1093,12 @@
           </div>
         </div>
 
-        <!-- 4. Anion Systematic Confirmation Guide -->
+        <!-- 4. Anion Confirmation Guide -->
         <div class="knec-reference-card" id="ref-anions">
-          <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0 0 8px 0; display:flex; align-items:center; gap:8px;">
-            <span>🔬</span> <span data-i18n="anion_title">Systematic Anion Identification Ledger</span>
+          <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0 0 8px 0;">
+            <span data-i18n="anion_title">Anion Identification</span>
           </h3>
-          <p style="font-size:0.84rem; font-weight:500; color:var(--text-muted); margin-bottom:12px;">Distinguish and confirm common Paper 3 inorganic anions with acidified test reagents.</p>
+          <p style="font-size:0.84rem; font-weight:500; color:var(--text-muted); margin-bottom:12px;">Distinguish and confirm common Paper 3 inorganic anions.</p>
           <div class="knec-table-wrap">
             <table class="knec-table" aria-label="Anion Identification Table">
               <thead>
@@ -1199,7 +1122,7 @@
                 <tr>
                   <td><b>Carbonate (CO₃²⁻)</b></td>
                   <td>Dilute HNO₃ or HCl</td>
-                  <td>Effervescence; gas turns <b>calcium hydroxide (limewater) milky</b></td>
+                  <td>Effervescence; gas turns <b>limewater milky</b></td>
                 </tr>
                 <tr>
                   <td><b>Chloride (Cl⁻)</b></td>
@@ -1216,12 +1139,12 @@
           </div>
         </div>
 
-        <!-- 5. Organic Chemistry Functional Group Identification Ledger -->
+        <!-- 5. Organic Chemistry Functional Group Identification -->
         <div class="knec-reference-card" id="ref-organic">
-          <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0 0 8px 0; display:flex; align-items:center; gap:8px;">
-            <span>⚗️</span> <span data-i18n="org_title">Organic Chemistry Functional Group Reactions</span>
+          <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0 0 8px 0;">
+            <span data-i18n="org_title">Organic Chemistry Functional Groups</span>
           </h3>
-          <p style="font-size:0.84rem; font-weight:500; color:var(--text-muted); margin-bottom:12px;">Official KNEC Paper 3 Question 3 organic qualitative deduction tests.</p>
+          <p style="font-size:0.84rem; font-weight:500; color:var(--text-muted); margin-bottom:12px;">Paper 3 Question 3 organic qualitative deduction tests.</p>
           <div class="knec-table-wrap">
             <table class="knec-table" aria-label="Organic Reactions Table">
               <thead>
@@ -1240,42 +1163,42 @@
                 <tr>
                   <td><b>Alkanols (–OH)</b></td>
                   <td>Acidified K₂Cr₂O₇ &amp; warm / Sodium metal</td>
-                  <td>Orange dichromate turns green (Cr³⁺); Na metal dissolves with 'pop' H₂ gas effervescence</td>
+                  <td>Orange dichromate turns green (Cr³⁺); Na metal dissolves with 'pop' H₂ gas</td>
                 </tr>
                 <tr>
                   <td><b>Carboxylic Acids (–COOH)</b></td>
                   <td>Blue Litmus / Solid NaHCO₃ or Na₂CO₃</td>
-                  <td>Blue litmus turns red (pH 3–5); rapid effervescence of CO₂ gas turning limewater milky</td>
+                  <td>Blue litmus turns red; rapid effervescence of CO₂ gas turning limewater milky</td>
                 </tr>
                 <tr>
                   <td><b>Esterification Reaction</b></td>
                   <td>Alkanol + Carboxylic Acid + Conc. H₂SO₄</td>
-                  <td>Fruity, pleasant-smelling ester liquid formed upon warming and pouring into water</td>
+                  <td>Fruity, pleasant-smelling ester liquid formed upon warming</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- 6. Physical Chemistry & Titration Standards Master Card -->
+        <!-- 6. Physical Chemistry & Formulas Master Card -->
         <div class="knec-reference-card" id="ref-physical" style="grid-column:1 / -1; border-top:4px solid var(--acad-gold);">
-          <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0 0 8px 0; display:flex; align-items:center; gap:8px;">
-            <span>📐</span> <span data-i18n="phys_title">Physical Chemistry Formulae &amp; Volumetric Concordancy Rubric</span>
+          <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0 0 8px 0;">
+            <span data-i18n="phys_title">Key Formulas &amp; Volumetric Concordancy</span>
           </h3>
-          <p style="font-size:0.84rem; font-weight:500; color:var(--text-muted); margin-bottom:14px;">Essential mathematical relationships and examiner marking standards for KCSE Paper 3.</p>
+          <p style="font-size:0.84rem; font-weight:500; color:var(--text-muted); margin-bottom:14px;">Essential mathematical relationships for Paper 3 calculations.</p>
           <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap:14px; width:100%; box-sizing:border-box;">
             
-            <div style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:10px; padding:16px; min-width:0; box-sizing:border-box;" data-tooltip="KNEC Concordancy Rule: Reject titre outliers >0.20 cm3 from average" data-tooltip-pos="top">
-              <b style="color:var(--acad-gold); font-size:0.96rem;">⚖️ Titration Concordancy Standard</b>
+            <div style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:10px; padding:16px; min-width:0; box-sizing:border-box;">
+              <b style="color:var(--acad-gold); font-size:0.96rem;">Titration Concordancy Standard</b>
               <div style="font-size:0.84rem; margin-top:6px; line-height:1.55; color:var(--text-main);">
                 • <b>Concordancy Criterion:</b> Titres must agree within <b>±0.10 cm³</b> (acceptable ±0.20 cm³).<br>
-                • <b>Average Titre Calculation:</b> <code>Titre<sub>avg</sub> = (V₁ + V₂) / 2</code> using strictly concordant values.<br>
+                • <b>Average Titre Calculation:</b> <code>Titre<sub>avg</sub> = (V₁ + V₂) / 2</code> using concordant values.<br>
                 • <b>Molarity Equation:</b> <code>(M<sub>a</sub> · V<sub>a</sub>) / n<sub>a</sub> = (M<sub>b</sub> · V<sub>b</sub>) / n<sub>b</sub></code>.
               </div>
             </div>
 
-            <div style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:10px; padding:16px;" data-tooltip="Always remember the negative sign for exothermic enthalpy (-ΔH)" data-tooltip-pos="top">
-              <b style="color:#EF4444; font-size:0.96rem;">🔥 Thermochemistry Enthalpy (ΔH)</b>
+            <div style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:10px; padding:16px;">
+              <b style="color:#EF4444; font-size:0.96rem;">Thermochemistry Enthalpy (ΔH)</b>
               <div style="font-size:0.84rem; margin-top:6px; line-height:1.55; color:var(--text-main);">
                 • <b>Heat Absorbed/Evolved:</b> <code>Q = m · c · ΔT</code> (c = 4.2 J/g·°C, ρ = 1.0 g/cm³).<br>
                 • <b>Molar Enthalpy:</b> <code>ΔH = -(Q / (n × 1000)) kJ/mol</code>.<br>
@@ -1283,12 +1206,12 @@
               </div>
             </div>
 
-            <div style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:10px; padding:16px;" data-tooltip="Reaction rate is the reciprocal of optical extinction time (s-1)" data-tooltip-pos="top">
-              <b style="color:var(--cyan-accent); font-size:0.96rem;">⚡ Reaction Rates &amp; Solubility Curves</b>
+            <div style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:10px; padding:16px;">
+              <b style="color:var(--cyan-accent); font-size:0.96rem;">Reaction Rates &amp; Solubility</b>
               <div style="font-size:0.84rem; margin-top:6px; line-height:1.55; color:var(--text-main);">
                 • <b>Reaction Rate:</b> <code>Rate = 1 / time (s⁻¹)</code>.<br>
                 • <b>Solubility Definition:</b> Max grams of solute dissolved in 100g of H₂O at temperature T.<br>
-                • <b>Crystallization Temperature:</b> First appearance of crystals on gradual cooling.
+                • <b>Crystallization Temperature:</b> First appearance of crystals on cooling.
               </div>
             </div>
 
@@ -1299,36 +1222,34 @@
 
     </div>
 
-    <!-- ══════════════════════════════════════════════════════
-         TAB 3: 🏆 BADGES, HONORS & SESSION HISTORY
-    ══════════════════════════════════════════════════════ -->
+    <!-- Tab 3: Badges, Honors & Session History -->
     <div class="student-tab-panel" id="panel_achievements">
       
       <div style="margin-bottom:20px;">
         <h2 class="section-heading-academic">
-          <span>🏆</span> <span data-i18n="achieve_title">Candidate Achievements &amp; Historical Ledger</span>
+          <span data-i18n="achieve_title">Achievements &amp; History</span>
         </h2>
         <p class="section-subheading" data-i18n="achieve_sub">
-          Review your earned competency honors, class leaderboard standing, and complete practical examination records.
+          Review your earned badges, class leaderboard standing, and practical records.
         </p>
       </div>
 
       <div class="modular-2col-grid">
         
-        <!-- Left Column: Honors Medal & Badges -->
+        <!-- Left Column: Honors & Badges -->
         <div>
-          <!-- Academic Honors Seal Card -->
-          <div class="knec-reference-card" style="border-color:var(--acad-gold-border); border-top:5px solid var(--acad-gold); text-align:center;" data-tooltip="Special Honor: Conferred for achieving ≥80% practical accuracy across all KCSE syllabus disciplines" data-tooltip-pos="top">
-            <span style="font-family:'Cinzel', serif; font-size:0.76rem; font-weight:900; text-transform:uppercase; color:var(--acad-gold); letter-spacing:0.12em; display:block; margin-bottom:10px;" data-i18n="honors_title">★ ACADEMIC HONORS ★</span>
-            <img src="/shared/chemistry_hero_badge.jpg" alt="Chemistry Prodigy Hero Badge" style="width:100%; max-width:120px; aspect-ratio:1/1; object-fit:contain; border-radius:50%; margin-bottom:12px; border:2.5px solid var(--acad-gold); box-shadow:var(--shadow-sm);">
-            <div style="font-family:'Cinzel', serif; font-weight:900; font-size:1.15rem; color:var(--heading-color); margin-bottom:4px;" data-i18n="prodigy_title">Chemistry Prodigy</div>
-            <div style="font-family:'Newsreader', serif; font-style:italic; font-size:0.88rem; color:var(--text-muted); line-height:1.5;" data-i18n="prodigy_desc">Attained for achieving &ge;80% KCSE Paper 3 practical accuracy across all syllabus disciplines.</div>
+          <!-- Honors Seal Card -->
+          <div class="knec-reference-card" style="border-color:var(--acad-gold-border); border-top:5px solid var(--acad-gold); text-align:center;">
+            <span style="font-size:0.76rem; font-weight:800; text-transform:uppercase; color:var(--acad-gold); letter-spacing:0.08em; display:block; margin-bottom:10px;" data-i18n="honors_title">Top Achievement</span>
+            <img src="/shared/chemistry_hero_badge.jpg" alt="Chemistry Prodigy Badge" style="width:100%; max-width:120px; aspect-ratio:1/1; object-fit:contain; border-radius:50%; margin-bottom:12px; border:2.5px solid var(--acad-gold); box-shadow:var(--shadow-sm);">
+            <div style="font-weight:800; font-size:1.15rem; color:var(--heading-color); margin-bottom:4px;" data-i18n="prodigy_title">Chemistry Mastery</div>
+            <div style="font-size:0.88rem; color:var(--text-muted); line-height:1.5;" data-i18n="prodigy_desc">Attained for achieving &ge;80% practical accuracy across all syllabus disciplines.</div>
           </div>
 
           <!-- Competency Badges List -->
           <div class="knec-reference-card">
-            <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0 0 14px 0; display:flex; align-items:center; gap:8px;">
-              <span>🎖️</span> <span data-i18n="badges_title">Practical Competency Badges</span>
+            <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0 0 14px 0;">
+              <span data-i18n="badges_title">Practical Competency Badges</span>
             </h3>
             <div id="badgeGrid" class="badges-sidebar-container">
               <!-- Badges populated dynamically by loadBadges() in student-dashboard.js -->
@@ -1338,26 +1259,26 @@
 
         <!-- Right Column: Standings & Session Log -->
         <div>
-          <!-- Institutional Standings Card -->
+          <!-- Standings Card -->
           <div class="knec-reference-card">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
-              <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0; display:flex; align-items:center; gap:8px;">
-                <span>📊</span> <span data-i18n="leaderboard_title">Institutional Standings</span>
+              <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0;">
+                <span data-i18n="leaderboard_title">Class Standings</span>
               </h3>
-              <a href="history.html" class="see-all-link" style="font-size:0.82rem; font-weight:800;" data-tooltip="View full school class rankings &amp; stats" data-tooltip-pos="bottom">Class Rank →</a>
+              <a href="history.html" class="see-all-link" style="font-size:0.82rem; font-weight:800;">Class Rank →</a>
             </div>
             <div id="leaderboardBox">
-              <div class="empty-box" style="border-radius:8px; font-family:'JetBrains Mono', monospace; font-size:0.82rem; padding:18px; text-align:center;">Loading institutional ledger...</div>
+              <div class="empty-box" style="border-radius:8px; font-family:'JetBrains Mono', monospace; font-size:0.82rem; padding:18px; text-align:center;">Loading standings...</div>
             </div>
           </div>
 
-          <!-- Recent Practical Sessions Ledger -->
+          <!-- Recent Practical Sessions -->
           <div class="knec-reference-card">
             <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
-              <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0; display:flex; align-items:center; gap:8px;">
-                <span>📑</span> <span data-i18n="recent_title">Recent Practical Sessions</span>
+              <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0;">
+                <span data-i18n="recent_title">Recent Practical Sessions</span>
               </h3>
-              <a href="history.html" class="see-all-link" style="font-size:0.82rem; font-weight:800;" data-tooltip="View detailed practical results and teacher comments" data-tooltip-pos="bottom">Full Assessment Log →</a>
+              <a href="history.html" class="see-all-link" style="font-size:0.82rem; font-weight:800;">Full Assessment Log →</a>
             </div>
             <div id="sessionsList" class="session-timeline-list">
               <!-- Populated dynamically by student-dashboard.js -->
@@ -1369,50 +1290,48 @@
 
     </div>
 
-    <!-- ══════════════════════════════════════════════════════
-         TAB 4: 🔬 ACADEMIC RESEARCH & ASSESSMENT SUITE
-    ══════════════════════════════════════════════════════ -->
+    <!-- Tab 4: Assessments & Surveys -->
     <div class="student-tab-panel" id="panel_research">
       
       <div style="margin-bottom:20px;">
         <h2 class="section-heading-academic">
-          <span>🔬</span> <span data-i18n="research_heading">Chemistry Practical Competency Assessment &amp; Research Suite</span>
+          <span data-i18n="research_heading">Assessments &amp; Surveys</span>
         </h2>
         <p class="section-subheading" data-i18n="research_sub">
-          Standardized psychometric instruments and diagnostic evaluations for empirical efficacy measurement.
+          Standardized diagnostic assessments and feedback surveys.
         </p>
       </div>
 
       <div class="knec-reference-card" style="border-color:var(--cyan-accent); border-top:5px solid var(--cyan-accent);">
         <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px; margin-bottom:18px;">
           <div>
-            <span style="font-family:'JetBrains Mono', monospace; font-size:0.76rem; font-weight:900; color:var(--cyan-accent); text-transform:uppercase; letter-spacing:0.08em;">STANDARDIZED EMPIRICAL STUDY INSTRUMENTS</span>
-            <h3 style="font-family:'Cinzel', serif; font-size:1.25rem; font-weight:900; color:var(--heading-color); margin:4px 0 0 0;">
-              Practical Competency &amp; Usability Evaluation
+            <span style="font-family:'JetBrains Mono', monospace; font-size:0.76rem; font-weight:800; color:var(--cyan-accent); text-transform:uppercase; letter-spacing:0.08em;">STUDY ASSESSMENTS</span>
+            <h3 style="font-size:1.2rem; font-weight:800; color:var(--heading-color); margin:4px 0 0 0;">
+              Diagnostic &amp; Usability Evaluation
             </h3>
           </div>
           <div style="display:flex; gap:10px; flex-wrap:wrap;">
-            <a href="cpcat_assessment.html?type=pre_test" class="btn btn-primary" style="background:var(--acad-navy); color:#FFF; font-size:0.84rem; font-weight:800; text-decoration:none; padding:10px 18px; border-radius:8px;" data-tooltip="Standardized 40-mark diagnostic baseline assessment before starting revisions" data-tooltip-pos="top" data-i18n="btn_pre_test">
-              📋 Take CPCAT Pre-Test
+            <a href="cpcat_assessment.html?type=pre_test" class="btn btn-primary" style="background:var(--acad-navy); color:#FFF; font-size:0.84rem; font-weight:800; text-decoration:none; padding:10px 18px; border-radius:8px;" data-i18n="btn_pre_test">
+              Take CPCAT Pre-Test
             </a>
-            <a href="cpcat_assessment.html?type=post_test" class="btn btn-primary" style="background:var(--acad-emerald); color:#FFF; font-size:0.84rem; font-weight:800; text-decoration:none; padding:10px 18px; border-radius:8px;" data-tooltip="Standardized 40-mark diagnostic evaluation upon completing revisions to measure empirical learning gain (g)" data-tooltip-pos="top" data-i18n="btn_post_test">
-              🏆 Take CPCAT Post-Test
+            <a href="cpcat_assessment.html?type=post_test" class="btn btn-primary" style="background:var(--acad-emerald); color:#FFF; font-size:0.84rem; font-weight:800; text-decoration:none; padding:10px 18px; border-radius:8px;" data-i18n="btn_post_test">
+              Take CPCAT Post-Test
             </a>
-            <a href="survey_sus.html" class="btn" style="background:var(--card-bg); border:1.5px solid var(--card-border); font-size:0.84rem; font-weight:800; text-decoration:none; padding:10px 18px; border-radius:8px; color:var(--heading-color);" data-tooltip="Standardized 10-item System Usability Scale (SUS) questionnaire on platform usability" data-tooltip-pos="top" data-i18n="btn_sus">
-              ⭐ System Usability Survey (SUS)
+            <a href="survey_sus.html" class="btn" style="background:var(--card-bg); border:1.5px solid var(--card-border); font-size:0.84rem; font-weight:800; text-decoration:none; padding:10px 18px; border-radius:8px; color:var(--heading-color);" data-i18n="btn_sus">
+              System Usability Survey (SUS)
             </a>
-            <a href="survey_tam.html" class="btn" style="background:var(--card-bg); border:1.5px solid var(--card-border); font-size:0.84rem; font-weight:800; text-decoration:none; padding:10px 18px; border-radius:8px; color:var(--heading-color);" data-tooltip="Technology Acceptance Model (TAM 3) questionnaire on perceived usefulness and ease of use" data-tooltip-pos="top" data-i18n="btn_tam">
-              📊 Student TAM 3 Survey
+            <a href="survey_tam.html" class="btn" style="background:var(--card-bg); border:1.5px solid var(--card-border); font-size:0.84rem; font-weight:800; text-decoration:none; padding:10px 18px; border-radius:8px; color:var(--heading-color);" data-i18n="btn_tam">
+              Student TAM Survey
             </a>
           </div>
         </div>
 
         <div style="background:var(--card-bg-hover); border:1.5px solid var(--card-border); border-radius:10px; padding:18px; font-size:0.88rem; line-height:1.65; color:var(--text-main); font-weight:500;">
-          <b style="color:var(--heading-color); font-size:0.92rem; display:block; margin-bottom:6px;">📋 Instructions for Study Participants:</b>
-          1. <b>CPCAT Pre-Test:</b> Complete the standardized 40-mark diagnostic baseline assessment prior to starting your practical simulation sessions.<br>
-          2. <b>Virtual Laboratory Revisions:</b> Practice across all 8 KCSE practical workbenches (Volumetric, Qualitative, Organic, Kinetics, Thermochemistry, Solubility).<br>
-          3. <b>CPCAT Post-Test:</b> Take the standardized post-test upon completing revisions to calculate your empirical learning gain (\(g\)).<br>
-          4. <b>SUS &amp; TAM Surveys:</b> Provide your evaluation on user experience, perceived usefulness, and ease of use.
+          <b style="color:var(--heading-color); font-size:0.92rem; display:block; margin-bottom:6px;">Instructions for Study Participants:</b>
+          1. <b>CPCAT Pre-Test:</b> Complete the diagnostic baseline assessment prior to starting practical sessions.<br>
+          2. <b>Virtual Laboratory Revisions:</b> Practice across the chemistry workbenches.<br>
+          3. <b>CPCAT Post-Test:</b> Take the post-test upon completing revisions.<br>
+          4. <b>SUS &amp; TAM Surveys:</b> Provide your feedback on platform experience.
         </div>
       </div>
 
@@ -1420,7 +1339,7 @@
 
   </main>
 
-  <!-- Mobile & Tablet Bottom Navigation Dock Bar -->
+  <!-- Mobile & Tablet Bottom Navigation Dock -->
   <nav class="mobile-bottom-nav">
     <button class="bottom-tab-item active" id="mTabBtn_benches" onclick="switchStudentSubTab('benches')">
       <span class="bottom-tab-icon">🧪</span>
@@ -1443,11 +1362,11 @@
   <!-- Student Assignment Feedback Modal -->
   <div id="assignmentFeedbackModal" class="af-modal-backdrop" onclick="if(event.target === this) closeFeedbackModal()" style="display:none;">
     <div class="af-modal-card" role="dialog" aria-modal="true" aria-labelledby="afTitle">
-      <!-- Fixed / Sticky Modal Header -->
+      <!-- Modal Header -->
       <div class="af-modal-header">
         <div class="af-modal-header-left">
           <div class="af-badge-row">
-            <span class="af-badge-pill">OFFICIALLY GRADED</span>
+            <span class="af-badge-pill">GRADED</span>
             <span id="afDate" class="af-date-text">Marked recently</span>
           </div>
           <h3 id="afTitle" class="af-modal-title">Assignment Title</h3>
@@ -1465,26 +1384,23 @@
         </div>
 
         <div id="afDetails" class="af-details-card"></div>
-
         <div id="afComments" class="af-comments-card"></div>
       </div>
 
-      <!-- Pinned / Sticky Modal Footer -->
+      <!-- Modal Footer -->
       <div class="af-modal-footer">
         <button type="button" class="btn btn-primary af-close-action-btn" onclick="closeFeedbackModal()">Close Feedback</button>
       </div>
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════════════════════
-       SKILL TREE NODE DETAILS MODAL / BOTTOM SHEET
-  ══════════════════════════════════════════════════════ -->
+  <!-- Skill Tree Node Details Modal -->
   <div class="st-modal-backdrop" id="skillTreeModal" onclick="if(event.target === this) SkillTree.closeModal()">
     <div class="st-modal-card">
       <button class="st-modal-close-btn" onclick="SkillTree.closeModal()" aria-label="Close">✕</button>
-      <div class="st-modal-icon-badge" id="stModalIcon">🧪</div>
+      <div class="st-modal-icon-badge" id="stModalIcon" style="display:none;"></div>
       <h3 class="st-modal-title" id="stModalTitle">Acid-Base Standardisation</h3>
-      <div class="st-modal-syllabus" id="stModalSyllabus">KNEC Form 4 Volumetric Standardisation</div>
+      <div class="st-modal-syllabus" id="stModalSyllabus">Volumetric Standardisation</div>
       <div class="st-modal-desc" id="stModalDesc"></div>
       <div class="st-modal-skills-list" id="stModalSkillsList"></div>
       <div class="st-modal-stats-row" id="stModalStatsRow"></div>
@@ -1505,8 +1421,8 @@
   <script src="../shared/pwa-installer.js"></script>
   <script src="../shared/brilliant-ui.js"></script>
   <script src="../shared/gamification-engine.js"></script>
-  <script src="js/skill-tree.js?v=70"></script>
-  <script src="js/student-dashboard.js?v=70"></script>
+  <script src="js/skill-tree.js?v=71"></script>
+  <script src="js/student-dashboard.js?v=71"></script>
 
   <script>
     // Tab switching handler

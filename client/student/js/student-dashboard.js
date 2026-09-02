@@ -52,12 +52,26 @@ requireStudentLogin();
     }
   }
 
+  function updateStudentAvatar(name) {
+    if (!name || typeof name !== 'string') return;
+    const parts = name.trim().split(/\s+/).filter(Boolean);
+    let initials = 'ST';
+    if (parts.length === 1) {
+      initials = parts[0].substring(0, 2).toUpperCase();
+    } else if (parts.length >= 2) {
+      initials = (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    const avatarEl = document.getElementById('heroStudentAvatar');
+    if (avatarEl) avatarEl.textContent = initials;
+  }
+
   async function initStudentProfile() {
     if (currentStudentUser) {
       ['studentName', 'studentNameMobile'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.textContent = currentStudentUser.name;
       });
+      updateStudentAvatar(currentStudentUser.name);
       updateStudentTeacherUI(currentStudentUser);
     }
     try {
@@ -71,6 +85,7 @@ requireStudentLogin();
           const el = document.getElementById(id);
           if (el) el.textContent = currentStudentUser.name;
         });
+        updateStudentAvatar(currentStudentUser.name);
         updateStudentTeacherUI(currentStudentUser);
       }
     } catch (e) {
@@ -435,6 +450,7 @@ requireStudentLogin();
         const isSubmitted = !!a.submitted;
         const score = a.score || (a.evaluation && a.evaluation.score) || a.cs_total_score || a.gas_total_score || a.en_total_score || a.rate_total_score || a.sol_total_score;
         const isGraded = typeof score === 'number' || a.submission_status === 'marked' || a.marked_at != null || a.status === 'marked';
+        const isPastDue = !isSubmitted && a.due_date && (new Date(a.due_date).setHours(23, 59, 59, 999) < Date.now());
 
         const { targetUrl, battleMode } = getAssignmentTargetUrl(a);
         const warmupUrl = `speed_battle.html?mode=${battleMode}&target=${encodeURIComponent(targetUrl)}`;
@@ -457,6 +473,18 @@ requireStudentLogin();
               </button>
             `;
           }
+        } else if (isPastDue) {
+          statusChipHtml = `<span class="assign-status-chip is-overdue">Overdue</span>`;
+          statusHtml = `
+            <div class="assign-actions-row">
+              <a href="${targetUrl}" class="pending-pill-btn is-overdue-btn" aria-label="Complete overdue assignment: ${escapeHtml(a.title)}">
+                Complete Now →
+              </a>
+              <a href="${warmupUrl}" class="assign-warmup-icon-btn" title="Take optional 45s pre-lab warmup" aria-label="Warmup Drill">
+                ⚡ Warmup
+              </a>
+            </div>
+          `;
         } else {
           statusChipHtml = `<span class="assign-status-chip is-pending">Pending</span>`;
           statusHtml = `
@@ -471,10 +499,11 @@ requireStudentLogin();
           `;
         }
 
-        const dueLabel = a.due_date ? `Due ${formatDate(a.due_date)}` : 'No deadline';
+        const dueBase = a.due_date ? `Due ${formatDate(a.due_date)}` : 'No deadline';
+        const dueLabel = isPastDue ? `<span style="color:#DC2626; font-weight:700;">⚠️ ${dueBase}</span>` : dueBase;
 
         return `
-          <div class="assignment-card-box" data-tooltip="${isSubmitted ? (isGraded ? 'Marked by teacher. Click to view grade &amp; feedback' : 'Submitted and pending teacher marking') : 'Active practical assignment'}" data-tooltip-pos="top">
+          <div class="assignment-card-box">
             <div class="assign-card-top">
               ${statusChipHtml}
               <span class="assign-card-due">${dueLabel}</span>
@@ -1399,6 +1428,14 @@ requireStudentLogin();
       renderStudentCharts(sessions);
       if (typeof updateProfileStatsUI === 'function') updateProfileStatsUI();
 
+      // Sync sessions with SkillTree & cache
+      try {
+        localStorage.setItem('vlk_cached_sessions', JSON.stringify(sessions));
+      } catch (e) {}
+      if (window.SkillTree && typeof window.SkillTree.render === 'function') {
+        window.SkillTree.render(sessions);
+      }
+
       if (!box) return;
 
       if (sessions.length === 0) {
@@ -1424,6 +1461,12 @@ requireStudentLogin();
       ];
       updateReadinessScore(fallbackSessions);
       renderStudentCharts(fallbackSessions);
+      try {
+        localStorage.setItem('vlk_cached_sessions', JSON.stringify(fallbackSessions));
+      } catch (e) {}
+      if (window.SkillTree && typeof window.SkillTree.render === 'function') {
+        window.SkillTree.render(fallbackSessions);
+      }
       if (box) {
         box.innerHTML = fallbackSessions.map(s => `
           <div class="session-card-item" data-tooltip="${s.correct ? 'Verified practical passing standard on official rubric' : 'Review suggested to improve concordance / observations'}" data-tooltip-pos="top">
@@ -1708,6 +1751,7 @@ requireStudentLogin();
       const el = document.getElementById(id);
       if (el) el.textContent = newName;
     });
+    updateStudentAvatar(newName);
 
     if (msg) msg.innerHTML = '<div class="msg msg-ok">✓ Profile details updated successfully!</div>';
   };

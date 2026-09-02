@@ -80,7 +80,7 @@
           id: 'node-anions',
           title: 'Anion & Gas Evolution',
           sublabel: 'CO₃²⁻, SO₄²⁻, Cl⁻',
-          icon: '🫧',
+          icon: '⚗️',
           url: 'qualitative.html',
           syllabus: 'KNEC Form 4 Anion Confirmatory Testing',
           skills: ['Effervescence & lime water testing for CO₃²⁻', 'Ba(NO₃)₂ precipitation of SO₄²⁻ and SO₃²⁻', 'AgNO₃ confirmation of Cl⁻ / Br⁻ halides', 'Nitrate reduction to NH₃ gas'],
@@ -206,12 +206,28 @@
 
     if (Array.isArray(sessions) && sessions.length > 0) {
       sessions.forEach(s => {
-        const typeMatch = s.experiment_type === node.sessionKey || 
-                          (node.sessionKey === 'acidBase' && s.practical_key === 'acidBase') ||
-                          (node.sessionKey === 'redox' && s.practical_key === 'redox');
-        if (typeMatch) {
+        const sType = (s.experiment_type || s.titration_type || s.type || s.practical_key || '').toLowerCase();
+        const sTitle = (s.titration_title || s.title || '').toLowerCase();
+        
+        let match = false;
+        if (node.sessionKey === 'acidBase' && (sType.includes('acid') || sType.includes('base') || sTitle.includes('acid') || sTitle.includes('hcl') || sTitle.includes('naoh'))) match = true;
+        else if (node.sessionKey === 'redox' && (sType.includes('redox') || sTitle.includes('redox') || sTitle.includes('kmno4') || sTitle.includes('fe2+'))) match = true;
+        else if (node.sessionKey === 'dibasic' && (sType.includes('dibasic') || sType.includes('polyprotic') || sTitle.includes('h2so4') || sTitle.includes('dibasic'))) match = true;
+        else if (node.sessionKey === 'precipitation' && (sType.includes('precipit') || sTitle.includes('agno3') || sTitle.includes('edta') || sTitle.includes('mohr'))) match = true;
+        else if (node.sessionKey === 'qualitative' && (sType.includes('qual') || sType.includes('cation') || sTitle.includes('cation') || s.student_cation)) match = true;
+        else if (node.sessionKey === 'qualitative_anions' && (sType.includes('anion') || sTitle.includes('anion') || s.student_anion)) match = true;
+        else if (node.sessionKey === 'qualitative_flame' && (sType.includes('flame') || sTitle.includes('flame'))) match = true;
+        else if (node.sessionKey === 'rates' && (sType.includes('rate') || sType.includes('kinetic') || sTitle.includes('disappearing') || sTitle.includes('rate'))) match = true;
+        else if (node.sessionKey === 'energy' && (sType.includes('energy') || sType.includes('thermo') || sTitle.includes('enthalpy') || sTitle.includes('heat'))) match = true;
+        else if (node.sessionKey === 'solubility' && (sType.includes('solub') || sTitle.includes('solub') || sTitle.includes('crystal'))) match = true;
+        else if (node.sessionKey === 'gas' && (sType.includes('gas') || sTitle.includes('gas'))) match = true;
+        else if (node.sessionKey === 'organic' && (sType.includes('organic') || sTitle.includes('organic') || sTitle.includes('alkene') || sTitle.includes('alkanol'))) match = true;
+        else if (node.sessionKey === 'composite' && (sType.includes('composite') || sType.includes('mock') || sTitle.includes('mock') || sTitle.includes('paper 3'))) match = true;
+        else if (sType === node.sessionKey.toLowerCase()) match = true;
+
+        if (match) {
           attempts++;
-          const score = parseFloat(s.total_score || s.score || 0);
+          const score = parseFloat(s.total_score || s.score || (s.correct ? node.maxMarks : 0) || 0);
           if (score > maxScore) maxScore = score;
         }
       });
@@ -233,15 +249,17 @@
   }
 
   // ── 2. Render Skill Tree HTML ─────────────────────────────────
-  function renderSkillTree() {
+  function renderSkillTree(sessionsParam) {
     const container = document.getElementById('skillTreeContainer');
     if (!container) return;
 
-    let sessions = [];
-    try {
-      const raw = localStorage.getItem('vlk_cached_sessions');
-      if (raw) sessions = JSON.parse(raw);
-    } catch (e) {}
+    let sessions = Array.isArray(sessionsParam) ? sessionsParam : [];
+    if (!sessions.length) {
+      try {
+        const raw = localStorage.getItem('vlk_cached_sessions');
+        if (raw) sessions = JSON.parse(raw);
+      } catch (e) {}
+    }
 
     let totalEarnedStars = 0;
     let totalPossibleStars = 0;
@@ -439,6 +457,7 @@
   // ── Public API ───────────────────────────────────────────────
   window.SkillTree = {
     render: renderSkillTree,
+    renderSkillTree: renderSkillTree,
     openModal: openNodeModal,
     closeModal: closeNodeModal,
     switchView: switchPathwayView,

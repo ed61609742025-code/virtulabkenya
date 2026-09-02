@@ -29,8 +29,8 @@
 <link rel="stylesheet" href="../shared/pwa-installer.css">
 <link rel="stylesheet" href="../shared/brilliant-theme.css">
 <link rel="stylesheet" href="../shared/gamification-engine.css">
-<link rel="stylesheet" href="css/dashboard.css?v=72">
-<link rel="stylesheet" href="css/skill-tree.css?v=72">
+<link rel="stylesheet" href="css/dashboard.css?v=73">
+<link rel="stylesheet" href="css/skill-tree.css?v=73">
 
 <style>
   :root, [data-theme="light"] {
@@ -194,7 +194,7 @@
       <a href="home.html" class="nav-brand-academic" data-tooltip="Home" data-tooltip-pos="bottom">
         <div class="brand-badge-pill">VLK</div>
         <div>
-          <div class="nav-brand-title" style="font-size:1.15rem; font-weight:800; letter-spacing:-0.02em; color:var(--heading-color); line-height:1.1;">VirtuLab Kenya</div>
+          <div class="nav-brand-title" style="font-size:1.15rem; font-weight:800; letter-spacing:-0.02em; color:var(--heading-color); line-height:1.1;"><span class="brand-word-virtu">VirtuLab</span> <span class="brand-word-kenya">Kenya</span></div>
         </div>
       </a>
 
@@ -341,7 +341,7 @@
     <!-- Modern Hero Command Bar -->
     <header class="candidate-hero-bar">
       <div class="hero-profile-box">
-        <div class="hero-avatar">ST</div>
+        <div class="hero-avatar" id="heroStudentAvatar">ST</div>
         <div class="hero-info">
           <div class="hero-name-row">
             <h1 class="candidate-name-title"><span id="studentName">Student</span></h1>
@@ -361,7 +361,7 @@
 
       <div class="hero-metrics-box">
         <!-- Daily Streak Pill -->
-        <div id="heroStreakPill" class="hero-metric-card" onclick="window.GamificationEngine && window.GamificationEngine.showStreakToast('Keep practicing daily to build your streak!')" data-tooltip="Your practice streak" data-tooltip-pos="top">
+        <div id="heroStreakPill" class="hero-metric-card" onclick="window.GamificationEngine && window.GamificationEngine.showStreakToast('Keep practicing daily to build your streak!')">
           <div class="metric-icon">🔥</div>
           <div class="metric-body">
             <div class="metric-val"><span id="streakCount">1</span>-Day</div>
@@ -371,7 +371,7 @@
         </div>
 
         <!-- XP & Level Progress Card -->
-        <div class="hero-metric-card xp-metric-card" data-tooltip="XP progress" data-tooltip-pos="top">
+        <div class="hero-metric-card xp-metric-card">
           <div class="xp-header-row">
             <span id="heroLevelTitle" class="xp-level-badge">Level 1: Form 1 Apprentice</span>
             <span id="heroXPText" class="xp-points-badge">120 / 250 XP</span>
@@ -1346,8 +1346,8 @@
   <script src="../shared/pwa-installer.js"></script>
   <script src="../shared/brilliant-ui.js"></script>
   <script src="../shared/gamification-engine.js"></script>
-  <script src="js/skill-tree.js?v=72"></script>
-  <script src="js/student-dashboard.js?v=72"></script>
+  <script src="js/skill-tree.js?v=73"></script>
+  <script src="js/student-dashboard.js?v=73"></script>
 
   <script>
     // Tab switching handler

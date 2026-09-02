@@ -619,7 +619,15 @@ html, body {
 [data-tooltip-pos="left"]:hover::after,
 [data-tooltip-pos="left"]:focus-visible::before,
 [data-tooltip-pos="left"]:focus-visible::after {
-  transform: translateX(-50%) translateY(0);
+  transform: translateY(-50%) translateX(0);
+}
+
+/* Disable sticky hover tooltips on touch devices / mobile viewports */
+@media (hover: none), (max-width: 768px) {
+  [data-tooltip]::before,
+  [data-tooltip]::after {
+    display: none !important;
+  }
 }
 
 /* ── 7. UNIFIED ICON CONTAINERS ── */
@@ -1356,6 +1364,10 @@ html, body {
 
   .nav-brand-academic .nav-brand-title {
     font-size: 0.92rem !important;
+  }
+
+  .brand-word-kenya {
+    display: none !important;
   }
 
   .theme-btn-chip {
@@ -2479,6 +2491,17 @@ html, body {
   background: rgba(2, 132, 199, 0.12);
   color: #0284C7;
 }
+.assign-status-chip.is-overdue {
+  background: rgba(239, 68, 68, 0.12);
+  color: #DC2626;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+[data-theme="dark"] .assign-status-chip.is-overdue,
+[data-theme="green"] .assign-status-chip.is-overdue {
+  background: rgba(239, 68, 68, 0.22);
+  color: #F87171;
+  border-color: rgba(239, 68, 68, 0.45);
+}
 
 .pending-pill-btn {
   font-size: 0.84rem;
@@ -2497,6 +2520,12 @@ html, body {
 .pending-pill-btn:hover {
   background: var(--acad-navy);
   transform: translateY(-1px);
+}
+.pending-pill-btn.is-overdue-btn {
+  background: #DC2626 !important;
+}
+.pending-pill-btn.is-overdue-btn:hover {
+  background: #B91C1C !important;
 }
 [data-theme="dark"] .pending-pill-btn {
   background: #0284C7;

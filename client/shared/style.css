@@ -30,15 +30,15 @@
   --font-b: 'Plus Jakarta Sans', 'Inter', sans-serif;
   --font-m: 'JetBrains Mono', monospace;
 
-  /* Premium Vibrant Tokens */
+  /* Clean UI Color Tokens */
   --accent-cyan: #0284C7;
   --accent-purple: #7C3AED;
   --accent-green: #059669;
   --accent-amber: #D97706;
-  --card-shadow: 0 10px 30px rgba(148, 163, 184, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  --btn-gradient-primary: linear-gradient(135deg, #0284C7 0%, #2563EB 100%);
-  --btn-gradient-success: linear-gradient(135deg, #059669 0%, #10B981 100%);
-  --btn-gradient-purple: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%);
+  --card-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+  --btn-gradient-primary: #0284C7;
+  --btn-gradient-success: #059669;
+  --btn-gradient-purple: #7C3AED;
 }
 
 /* ── SLATE BLUE DARK MODE ── */
@@ -50,7 +50,7 @@
   --ink: #F8FAFC;
   --ink-soft: #94A3B8;
   --line: #233554;
-  --teal: #00F2FE;
+  --teal: #38BDF8;
   --teal-deep: #0284C7;
   --amber: #F59E0B;
   --amber-dark: #D97706;
@@ -62,15 +62,15 @@
   --rig-line: #233554;
   --rig-stand: #475569;
 
-  /* Premium Vibrant Tokens */
-  --accent-cyan: #00F2FE;
+  /* Clean UI Color Tokens */
+  --accent-cyan: #38BDF8;
   --accent-purple: #A855F7;
   --accent-green: #10B981;
   --accent-amber: #F59E0B;
-  --card-shadow: 0 12px 36px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  --btn-gradient-primary: linear-gradient(135deg, #0284C7 0%, #3B82F6 100%);
-  --btn-gradient-success: linear-gradient(135deg, #10B981 0%, #059669 100%);
-  --btn-gradient-purple: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);
+  --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --btn-gradient-primary: #0284C7;
+  --btn-gradient-success: #059669;
+  --btn-gradient-purple: #8B5CF6;
 }
 
 /* ── LAB GREEN MODE ── */
@@ -82,27 +82,27 @@
   --ink: #F0FDF4;
   --ink-soft: #A7F3D0;
   --line: #1E4D2B;
-  --teal: #39E87A;
+  --teal: #34D399;
   --teal-deep: #16A34A;
   --amber: #FBBF24;
   --amber-dark: #D97706;
   --glass: rgba(16, 38, 23, 0.85);
   --glass-tint: rgba(21, 51, 31, 0.8);
-  --ok: #39E87A;
+  --ok: #34D399;
   --warn: #F87171;
   --rig-body: #0B2112;
   --rig-line: #1E4D2B;
   --rig-stand: #34D399;
 
-  /* Premium Vibrant Tokens */
-  --accent-cyan: #39E87A;
+  /* Clean UI Color Tokens */
+  --accent-cyan: #34D399;
   --accent-purple: #C084FC;
-  --accent-green: #39E87A;
+  --accent-green: #34D399;
   --accent-amber: #FBBF24;
-  --card-shadow: 0 12px 36px rgba(5, 18, 9, 0.6), inset 0 1px 0 rgba(57, 232, 122, 0.15);
-  --btn-gradient-primary: linear-gradient(135deg, #16A34A 0%, #15803D 100%);
-  --btn-gradient-success: linear-gradient(135deg, #39E87A 0%, #16A34A 100%);
-  --btn-gradient-purple: linear-gradient(135deg, #A855F7 0%, #7E22CE 100%);
+  --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+  --btn-gradient-primary: #059669;
+  --btn-gradient-success: #059669;
+  --btn-gradient-purple: #8B5CF6;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -355,34 +355,19 @@ body {
   box-shadow: 0 4px 15px rgba(2, 132, 199, 0.25);
 }
 
-/* Ringing Bell Animation when unread count > 0 */
+/* Clean Notification Indicator */
 .notif-bell-btn.has-unread .bell-icon {
   display: inline-block;
-  animation: bellRing 2.5s infinite ease-in-out;
-}
-
-@keyframes bellRing {
-  0%, 100% { transform: rotate(0); }
-  10%, 30% { transform: rotate(14deg); }
-  20%, 40% { transform: rotate(-14deg); }
-  50% { transform: rotate(0); }
 }
 
 .notif-badge {
-  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  background: #EF4444;
   color: #FFFFFF;
   font-size: 0.7rem;
-  font-weight: 900;
-  padding: 2px 7px;
-  border-radius: 100px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
   line-height: 1;
-  box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
-  animation: pulseBadge 2s infinite ease-in-out;
-}
-
-@keyframes pulseBadge {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.12); }
 }
 
 .notif-item {
@@ -470,22 +455,21 @@ body.page-transitioning-out {
   pointer-events: none !important;
 }
 
-/* Top Neon Glowing Navigation Progress Bar */
+/* Clean Navigation Progress Bar */
 #vlkGlobalProgressBar {
   position: fixed;
   top: 0;
   left: 0;
   height: 3px;
   width: 0%;
-  background: linear-gradient(90deg, #0284C7, #00F2FE, #10B981, #F59E0B);
+  background: var(--teal);
   z-index: 9999999;
-  box-shadow: 0 0 12px rgba(0, 242, 254, 0.8), 0 0 6px rgba(16, 185, 129, 0.8);
-  transition: width 0.18s cubic-bezier(0.1, 0.8, 0.2, 1), opacity 0.2s ease;
+  transition: width 0.18s ease, opacity 0.2s ease;
   pointer-events: none;
   display: none;
 }
 
-/* Universal Tactile Button & Card Physics */
+/* Button & Interaction Physics */
 .btn, 
 button, 
 .theme-btn-chip, 
@@ -498,48 +482,24 @@ button,
 .user-avatar-btn,
 .assign-card-box,
 .bottom-tab-item {
-  transition: transform 0.14s cubic-bezier(0.34, 1.56, 0.64, 1), 
-              box-shadow 0.14s ease, 
-              background-color 0.14s ease, 
+  transition: background-color 0.14s ease, 
               border-color 0.14s ease,
-              filter 0.14s ease !important;
-  will-change: transform;
+              color 0.14s ease,
+              box-shadow 0.14s ease;
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Responsive Hover Lift */
+/* Accessible Hover & Active States */
 @media (hover: hover) and (pointer: fine) {
   .btn:hover, 
-  button:not(:disabled):hover, 
-  .theme-btn-chip:hover, 
-  .nav-btn-chip:hover {
-    transform: translateY(-2px);
-  }
-  
-  .practice-banner-card:hover,
-  .game-mode-card:hover {
-    transform: translateY(-3px);
+  button:not(:disabled):hover {
+    filter: brightness(0.95);
   }
 }
 
-/* Instant Tactile Spring Press */
 .btn:active, 
-button:not(:disabled):active, 
-.theme-btn-chip:active, 
-.nav-btn-chip:active, 
-.practice-banner-card:active, 
-.game-mode-card:active, 
-.battle-option-btn:active,
-.pending-pill-btn:active,
-.bottom-tab-item:active {
-  transform: scale(0.96) translateY(0) !important;
-  transition-duration: 0.05s !important;
-}
-
-/* Primary Glow Click Flash */
-.btn-primary:active, .btn-submit-login:active {
-  filter: brightness(1.15) !important;
-  box-shadow: 0 0 16px var(--teal) !important;
+button:not(:disabled):active {
+  transform: scale(0.98);
 }
 
 /* ── PHONE & MOBILE RESPONSIVE HYGIENE ── */

@@ -9,7 +9,7 @@
   document.documentElement.setAttribute('data-theme', t);
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800" rel="stylesheet">
 <link rel="stylesheet" href="/shared/style.css">
 <link rel="stylesheet" href="/shared/auth.css">
 </head>
@@ -17,23 +17,16 @@
 
 <!-- Theme Controls -->
 <div class="theme-toggle-float" title="Switch appearance theme">
-  <button class="theme-btn" data-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
-  <button class="theme-btn" data-theme="light" onclick="setTheme('light')">☀️ Light</button>
-  <button class="theme-btn" data-theme="green" onclick="setTheme('green')">🧪 Lab</button>
+  <button class="theme-btn" data-theme="dark" onclick="setTheme('dark')">Dark</button>
+  <button class="theme-btn" data-theme="light" onclick="setTheme('light')">Light</button>
+  <button class="theme-btn" data-theme="green" onclick="setTheme('green')">Lab</button>
 </div>
 
 <!-- Student Register Box -->
 <div class="auth-card">
   <div class="auth-header">
-    <h1 class="auth-logo-title">
-      <span>⚗️</span>
-      <span>VirtuLab Kenya</span>
-    </h1>
-    <div class="slogan-badge">
-      <span>✨</span>
-      <span>Every student deserves a laboratory</span>
-    </div>
-    <p class="auth-sub">Student Registration — create your account to run virtual lab practicals and track your KCSE progress.</p>
+    <h1 class="auth-logo-title">VirtuLab Kenya</h1>
+    <p class="auth-sub">Student Registration — Create an account to run chemistry practicals and track your progress.</p>
   </div>
 
   <div class="auth-form-group">
@@ -41,8 +34,8 @@
     <div>
       <label for="name" class="field-label">Full Name</label>
       <div class="input-wrapper">
-        <span class="input-icon-left">👤</span>
-        <input type="text" id="name" class="auth-input" placeholder="e.g. Amina Hassan">
+        
+        <input type="text" id="name" class="auth-input" placeholder="Full name">
       </div>
     </div>
 
@@ -50,8 +43,8 @@
     <div>
       <label for="email" class="field-label">School Email Address</label>
       <div class="input-wrapper">
-        <span class="input-icon-left">✉️</span>
-        <input type="email" id="email" class="auth-input" placeholder="e.g. amina@school.ac.ke" autocomplete="email">
+        
+        <input type="email" id="email" class="auth-input" placeholder="student@school.ac.ke" autocomplete="email">
       </div>
     </div>
 
@@ -59,7 +52,7 @@
     <div>
       <label for="form" class="field-label">Form / Class</label>
       <div class="input-wrapper">
-        <span class="input-icon-left">🎓</span>
+        
         <select id="form" class="auth-select">
           <option value="">Select your Form / Class</option>
           <option value="Form 1">Form 1</option>
@@ -74,8 +67,8 @@
     <div>
       <label for="schoolCode" class="field-label">School Registration Code</label>
       <div class="input-wrapper">
-        <span class="input-icon-left">🏫</span>
-        <input type="text" id="schoolCode" class="auth-input" placeholder="e.g. SCH001 (Ask your chemistry teacher)" style="text-transform:uppercase;">
+        
+        <input type="text" id="schoolCode" class="auth-input" placeholder="e.g. SCH001" style="text-transform:uppercase;">
       </div>
     </div>
 
@@ -83,8 +76,8 @@
     <div>
       <label for="teacherCode" class="field-label">Teacher Code <span style="font-weight:400; text-transform:none; color:var(--text-muted);">(Optional)</span></label>
       <div class="input-wrapper">
-        <span class="input-icon-left">👨‍🏫</span>
-        <input type="text" id="teacherCode" class="auth-input" placeholder="e.g. TCH001 (Links to teacher dashboard)" style="text-transform:uppercase;">
+        
+        <input type="text" id="teacherCode" class="auth-input" placeholder="e.g. TCH001 (Optional)" style="text-transform:uppercase;">
       </div>
     </div>
 
@@ -92,9 +85,9 @@
     <div>
       <label for="password" class="field-label">Create Password</label>
       <div class="input-wrapper">
-        <span class="input-icon-left">🔒</span>
+        
         <input type="password" id="password" class="auth-input" placeholder="At least 6 characters" autocomplete="new-password">
-        <button type="button" class="toggle-pw-btn" onclick="togglePasswordVisibility()" title="Toggle password visibility">👁️</button>
+        <button type="button" class="toggle-pw-btn" onclick="togglePasswordVisibility()" title="Toggle password">Show</button>
       </div>
     </div>
   </div>
@@ -197,7 +190,7 @@
       msg.innerHTML = '<div class="msg-alert info">🎉 Account created successfully! Redirecting to login…</div>';
       setTimeout(() => window.location.href = 'login.html', 1500);
     } catch (err) {
-      msg.innerHTML = '<div class="msg-alert err">❌ ' + (err.message || 'Registration failed. Please check your school code and try again.') + '</div>';
+      msg.innerHTML = '<div class="msg-alert err">' + (err.message || 'Registration failed. Please check your school code and try again.') + '</div>';
     }
   }
 

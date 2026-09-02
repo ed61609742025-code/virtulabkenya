@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Volumetric Analysis Theory & Revision Guide — VirtuLab Kenya</title>
+  <meta name="description" content="Complete KNEC KCSE Chemistry Paper 3 Question 1 Volumetric Analysis Revision Guide: Standardisation, Water of Crystallization, Back-Titration, KMnO4 Redox, Iodine/Thiosulphate, and Double Indicators.">
+  <script src="/shared/auth-guard.js"></script>
+  <script>
+    var t = localStorage.getItem('vlk_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', t);
+    if (window.VLKAuthGuard) {
+      VLKAuthGuard.guardPage('student');
+    }
+  </script>
+  <meta name="theme-color" content="#0B1320">
+  <link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400..800;1,6..72,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/shared/style.css">
+  <link rel="stylesheet" href="/shared/brilliant-theme.css">
+  <link rel="stylesheet" href="/shared/pwa-installer.css">
+  <style>
+    :root, [data-theme="light"] {
+      --tt-bg: #F8FAFC;
+      --tt-card: #FFFFFF;
+      --tt-card-subtle: #F1F5F9;
+      --tt-border: #E2E8F0;
+      --tt-border-strong: #CBD5E1;
+      --tt-heading: #0F172A;
+      --tt-text: #334155;
+      --tt-text-muted: #64748B;
+      --tt-primary: #0284C7;
+      --tt-primary-dark: #0369A1;
+      --tt-primary-light: #E0F2FE;
+      --tt-amber: #D97706;
+      --tt-amber-light: #FEF3C7;
+      --tt-emerald: #059669;
+      --tt-emerald-light: #D1FAE5;
+      --tt-rose: #DC2626;
+      --tt-rose-light: #FEE2E2;
+      --tt-purple: #7C3AED;
+      --tt-purple-light: #F3E8FF;
+      --tt-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+      --tt-apparatus-bg: #F8FAFC;
+      --tt-apparatus-border: #E2E8F0;
+      --tt-glass: rgba(2, 132, 199, 0.12);
+      --tt-liquid: rgba(2, 132, 199, 0.25);
+    }
+
+    [data-theme="dark"] {
+      --tt-bg: #0B1320;
+      --tt-card: #131F33;
+      --tt-card-subtle: #0F172A;
+      --tt-border: #1E293B;
+      --tt-border-strong: #334155;
+      --tt-heading: #F8FAFC;
+      --tt-text: #CBD5E1;
+      --tt-text-muted: #94A3B8;
+      --tt-primary: #38BDF8;
+      --tt-primary-dark: #0284C7;
+      --tt-primary-light: rgba(56, 189, 248, 0.12);
+      --tt-amber: #F59E0B;
+      --tt-amber-light: rgba(245, 158, 11, 0.12);
+      --tt-emerald: #10B981;
+      --tt-emerald-light: rgba(16, 185, 129, 0.12);
+      --tt-rose: #EF4444;
+      --tt-rose-light: rgba(239, 68, 68, 0.12);
+      --tt-purple: #A855F7;
+      --tt-purple-light: rgba(168, 85, 247, 0.12);
+      --tt-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+      --tt-apparatus-bg: #0B1320;
+      --tt-apparatus-border: #1E293B;
+      --tt-glass: rgba(56, 189, 248, 0.08);
+      --tt-liquid: rgba(56, 189, 248, 0.25);
+    }
+
+    [data-theme="green"] {
+      --tt-bg: #06150D;
+      --tt-card: #0D2619;
+      --tt-card-subtle: #081B12;
+      --tt-border: #16422C;
+      --tt-border-strong: #225C3E;
+      --tt-heading: #ECFDF5;
+      --tt-text: #A7F3D0;
+      --tt-text-muted: #6EE7B7;
+      --tt-primary: #10B981;
+      --tt-primary-dark: #059669;
+      --tt-primary-light: rgba(16, 185, 129, 0.14);
+      --tt-amber: #FBBF24;
+      --tt-amber-light: rgba(251, 191, 36, 0.14);
+      --tt-emerald: #34D399;
+      --tt-emerald-light: rgba(52, 211, 153, 0.14);
+      --tt-rose: #F87171;
+      --tt-rose-light: rgba(248, 113, 113, 0.14);
+      --tt-purple: #C084FC;
+      --tt-purple-light: rgba(192, 132, 252, 0.14);
+      --tt-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      --tt-apparatus-bg: #071910;
+      --tt-apparatus-border: #16422C;
+      --tt-glass: rgba(16, 185, 129, 0.08);
+      --tt-liquid: rgba(16, 185, 129, 0.25);
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--tt-bg);
+      color: var(--tt-text);
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Candidate Ribbon */
+    .candidate-top-ribbon {
+      background: #0B1728;
+      color: #E2E8F0;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-align: center;
+      padding: 6px 14px;
+      border-bottom: 2px solid var(--tt-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    [data-theme="light"] .candidate-top-ribbon {
+      background: #0F172A;
+      color: #F8FAFC;
+    }
+
+    /* Top Navbar */
+    .top-navbar {
+      background: var(--tt-card);
+      border-bottom: 1.5px solid var(--tt-border);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: var(--tt-shadow);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--tt-heading);
+    }
+
+    .nav-logo-crest {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, var(--tt-primary) 0%, var(--tt-primary-dark) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
+    }
+
+    .nav-brand-text {
+      font-family: 'Cinzel', serif;
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: var(--tt-heading);
+    }
+
+    .knec-tag-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 800;
+      background: var(--tt-primary-light);
+      color: var(--tt-primary);
+      border: 1px solid var(--tt-primary);
+      padding: 2px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.04em;
+    }
+
+    .nav-lab-switch {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 2px 0;
+    }
+
+    .theme-btn-chip {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 5px 11px;
+      border-radius: 8px;
+      border: 1px solid var(--tt-border);
+      background: var(--tt-card-subtle);
+      color: var(--tt-text-muted);
+      text-decoration: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .theme-btn-chip:hover {
+      color: var(--tt-heading);
+      border-color: var(--tt-primary);
+    }
+
+    .theme-btn-chip.active {
+      background: var(--tt-primary);
+      color: #FFFFFF;
+      border-color: var(--tt-primary);
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Page Container */
+    .theory-page-wrap {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 20px 16px 100px;
+    }
+
+    /* Hero Banner Card */
+    .theory-hero-card {
+      background: var(--tt-card);
+      border: 1.5px solid var(--tt-border);
+      border-top: 4px solid var(--tt-primary);
+      border-radius: 20px;
+      padding: 26px 28px;
+      margin-bottom: 24px;
+      box-shadow: var(--tt-shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-badge-strip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .tag-paper3 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      background: var(--tt-primary);
+      padding: 3px 10px;
+      border-radius: 6px;
+      letter-spacing: 0.04em;
+    }
+
+    .tag-marks {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--tt-amber);
+      background: var(--tt-amber-light);
+      border: 1px solid var(--tt-amber);
+      padding: 3px 10px;
+      border-radius: 6px;
+    }
+
+    .theory-main-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--tt-heading);
+      margin: 0 0 10px 0;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+    }
+
+    .theory-lead-text {
+      color: var(--tt-text-muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
+      margin: 0 0 18px 0;
+      max-width: 900px;
+    }
+
+    .hero-action-links {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .action-link-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--tt-primary);
+      text-decoration: none;
+      background: var(--tt-primary-light);
+      border: 1px solid var(--tt-primary);
+      padding: 6px 14px;
+      border-radius: 100px;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+
+    .action-link-pill:hover {
+      transform: translateY(-1px);
+      background: var(--tt-primary);
+      color: #FFFFFF;
+    }
+
+    .btn-hero-start {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--tt-primary) 0%, var(--tt-primary-dark) 100%);
+      color: #FFFFFF;
+      font-weight: 800;
+      font-size: 0.88rem;
+      padding: 10px 22px;
+      border-radius: 12px;
+      text-decoration: none;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+      transition: all 0.15s ease;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-hero-start:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.45);
+    }
+
+    /* KNEC Alert Banner */
+    .knec-alert-banner {
+      background: var(--tt-amber-light);
+      border: 1.5px solid var(--tt-amber);
+      border-left: 5px solid var(--tt-amber);
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .knec-alert-icon {
+      font-size: 1.5rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .knec-alert-title {
+      font-weight: 800;
+      font-size: 0.92rem;
+      color: var(--tt-heading);
+      margin-bottom: 4px;
+    }
+
+    .knec-alert-body {
+      font-size: 0.84rem;
+      color: var(--tt-text);
+      line-height: 1.5;
+    }
+
+    /* Quick Jump Pills */
+    .theory-jump-nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 6px 0;
+      border-top: 1px solid var(--tt-border);
+      margin-top: 14px;
+      padding-top: 14px;
+    }
+
+    .jump-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--tt-text-muted);
+      background: var(--tt-card-subtle);
+      border: 1px solid var(--tt-border);
+      padding: 4px 10px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.12s ease;
+    }
+
+    .jump-pill:hover {
+      border-color: var(--tt-primary);
+      color: var(--tt-primary);
+      background: var(--tt-primary-light);
+    }
+
+    /* Practical Cards */
+    .practical-cards-list {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .practical-card {
+      background: var(--tt-card);
+      border: 2px solid var(--tt-border);
+      border-radius: 18px;
+      padding: 22px 24px;
+      box-shadow: var(--tt-shadow);
+      position: relative;
+    }
+
+    .practical-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1.5px solid var(--tt-border);
+      padding-bottom: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .practical-card-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--tt-heading);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+
+    .practical-card-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 800;
+      background: var(--tt-card-subtle);
+      color: var(--tt-primary);
+      border: 1px solid var(--tt-border);
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    /* Apparatus SVG Stage */
+    .apparatus-stage-box {
+      background: var(--tt-apparatus-bg);
+      border: 1.5px solid var(--tt-apparatus-border);
+      border-radius: 14px;
+      padding: 18px 12px;
+      margin-bottom: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .apparatus-svg {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.08));
+    }
+
+    .apparatus-caption {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--tt-text-muted);
+      margin-top: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Practical Notes & Tips */
+    .practical-notes-box {
+      background: var(--tt-card-subtle);
+      border-left: 4px solid var(--tt-primary);
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 18px;
+    }
+
+    .notes-heading {
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--tt-heading);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .notes-text {
+      font-size: 0.88rem;
+      color: var(--tt-text);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* Launch Practical Button */
+    .btn-launch-practical {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--tt-primary);
+      color: #FFFFFF;
+      font-size: 0.82rem;
+      font-weight: 800;
+      padding: 9px 18px;
+      border-radius: 10px;
+      text-decoration: none;
+      margin-bottom: 18px;
+      transition: all 0.15s ease;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
+    }
+
+    .btn-launch-practical:hover {
+      background: var(--tt-primary-dark);
+      transform: translateY(-1px);
+    }
+
+    /* Two-Column Comparison Grid */
+    .practical-2col-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .practical-2col-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+    }
+
+    .col-card {
+      border-radius: 12px;
+      padding: 14px 16px;
+      border: 1px solid;
+    }
+
+    .col-pitfalls {
+      background: var(--tt-rose-light);
+      border-color: var(--tt-rose);
+    }
+
+    .col-formulae {
+      background: var(--tt-emerald-light);
+      border-color: var(--tt-emerald);
+    }
+
+    .col-title {
+      font-size: 0.82rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .col-pitfalls .col-title { color: var(--tt-rose); }
+    .col-formulae .col-title { color: var(--tt-emerald); }
+
+    .pitfall-list, .formulae-list {
+      margin: 0;
+      padding: 0 0 0 16px;
+      font-size: 0.82rem;
+      line-height: 1.55;
+    }
+
+    .pitfall-list li { margin-bottom: 6px; color: var(--tt-text); }
+    .formulae-list li { margin-bottom: 6px; color: var(--tt-text); }
+
+    .formula-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.76rem;
+      background: var(--tt-card);
+      border: 1px solid var(--tt-border-strong);
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-weight: 700;
+      color: var(--tt-heading);
+      display: inline-block;
+      margin: 2px 0;
+    }
+
+    /* KNEC Marking Rubric Box */
+    .knec-rubric-card {
+      background: var(--tt-card);
+      border: 2px solid var(--tt-amber);
+      border-radius: 18px;
+      padding: 24px;
+      margin-top: 24px;
+      box-shadow: var(--tt-shadow);
+    }
+
+    .knec-rubric-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin-top: 14px;
+    }
+
+    .knec-rubric-table th, .knec-rubric-table td {
+      border: 1px solid var(--tt-border);
+      padding: 9px 12px;
+      text-align: left;
+    }
+
+    .knec-rubric-table th {
+      background: var(--tt-card-subtle);
+      color: var(--tt-heading);
+      font-weight: 800;
+    }
+
+    /* Bottom Practice Experiment Card */
+    .practice-launch-card {
+      background: linear-gradient(135deg, var(--tt-card) 0%, var(--tt-primary-light) 100%);
+      border: 2px solid var(--tt-primary);
+      border-radius: 18px;
+      padding: 24px;
+      margin-top: 28px;
+      text-align: center;
+      box-shadow: var(--tt-shadow);
+    }
+
+    .practice-launch-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--tt-heading);
+      margin: 0 0 6px 0;
+    }
+
+    .practice-launch-desc {
+      font-size: 0.86rem;
+      color: var(--tt-text-muted);
+      margin: 0 0 20px 0;
+    }
+
+    .practice-controls-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .practice-select {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.85rem;
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1.5px solid var(--tt-border);
+      background: var(--tt-card);
+      color: var(--tt-heading);
+      font-weight: 700;
+      min-width: 260px;
+      outline: none;
+    }
+
+    .btn-launch-final {
+      background: var(--tt-emerald);
+      color: #FFFFFF;
+      font-size: 0.88rem;
+      font-weight: 800;
+      padding: 10px 24px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+      transition: all 0.15s ease;
+    }
+
+    .btn-launch-final:hover {
+      background: #047857;
+      transform: translateY(-1px);
+    }
+
+    /* Mobile Bottom Navigation Dock */
+    .mobile-bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--tt-card);
+      border-top: 1.5px solid var(--tt-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 8px 12px 14px;
+      z-index: 9999;
+      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    @media (min-width: 769px) {
+      .mobile-bottom-nav {
+        display: none;
+      }
+    }
+
+    .bottom-tab-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      background: none;
+      border: none;
+      color: var(--tt-text-muted);
+      font-size: 0.68rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      padding: 4px 8px;
+      border-radius: 8px;
+    }
+
+    .bottom-tab-item.active {
+      color: var(--tt-primary);
+    }
+
+    .bottom-tab-icon {
+      font-size: 1.25rem;
+    }
+
+    /* Mark Scheme Modal */
+    .modal-backdrop {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 20000;
+    }
+
+    .modal-card {
+      background: var(--tt-card);
+      border: 2px solid var(--tt-primary);
+      border-radius: 20px;
+      max-width: 680px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 24px;
+      box-shadow: var(--tt-shadow);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Candidate Top Ribbon -->
+  <div class="candidate-top-ribbon">
+    <span>🇰🇪 REPUBLIC OF KENYA • KCSE CHEMISTRY PRACTICAL WORKSTATION • KNEC 233/3 • Q1: VOLUMETRIC ANALYSIS</span>
+  </div>
+
+  <!-- Topbar -->
+  <nav class="top-navbar">
+    <a href="home.html" class="nav-brand">
+      <div class="nav-logo-crest">⚗️</div>
+      <div style="display:flex; flex-direction:column;">
+        <span class="nav-brand-text">VirtuLab</span>
+        <span style="font-size:0.62rem; color:var(--tt-primary); font-weight:700; text-transform:uppercase; letter-spacing:0.04em;">KCSE Chemistry Theory</span>
+      </div>
+      <span class="knec-tag-pill">THEORY & REVISION</span>
+    </a>
+
+    <div class="nav-lab-switch">
+      <a href="lab.html" class="theme-btn-chip">🧪 Titration Bench</a>
+      <a href="qualitative.html" class="theme-btn-chip">🔍 Qualitative</a>
+      <a href="organic.html" class="theme-btn-chip">⚗️ Organic</a>
+      <a href="solubility.html" class="theme-btn-chip">🌡️ Solubility</a>
+      <a href="energy.html" class="theme-btn-chip">🔥 Energy</a>
+      <a href="rates.html" class="theme-btn-chip">⚡ Rates</a>
+      <a href="composite_exam.html" class="theme-btn-chip">📝 Exam</a>
+    </div>
+
+    <div class="nav-actions">
+      <!-- Theme Switcher -->
+      <div style="display:flex; gap:3px; background:var(--tt-card-subtle); border:1px solid var(--tt-border); border-radius:8px; padding:2px;">
+        <button type="button" class="theme-btn-chip" data-theme="dark" onclick="setTheme('dark')" style="padding:3px 8px; border:none; background:none;">🌙</button>
+        <button type="button" class="theme-btn-chip" data-theme="light" onclick="setTheme('light')" style="padding:3px 8px; border:none; background:none;">☀️</button>
+        <button type="button" class="theme-btn-chip" data-theme="green" onclick="setTheme('green')" style="padding:3px 8px; border:none; background:none;">🧪</button>
+      </div>
+      <a href="home.html" class="theme-btn-chip" style="font-weight:800;">← Home</a>
+    </div>
+  </nav>
+
+  <main class="theory-page-wrap">
+    
+    <!-- Hero Banner -->
+    <header class="theory-hero-card">
+      <div class="hero-badge-strip">
+        <span class="tag-paper3">KNEC KCSE CHEMISTRY 233/3</span>
+        <span class="tag-marks">QUESTION 1: 15.0 MARKS (37.5% OF EXAM)</span>
+      </div>
+      <h1 class="theory-main-title">Volumetric Analysis (KCSE Paper 3, Question 1)</h1>
+      <p class="theory-lead-text">
+        This revision module covers everything you need to know about Volumetric Analysis as tested by the Kenya National Examinations Council (KNEC) in KCSE Chemistry Paper 3. Complete each section below to master practical skills, concordancy rules, stoichiometric calculations, and avoid common mark deductions.
+      </p>
+
+      <div class="hero-action-links">
+        <button type="button" class="action-link-pill" onclick="openMarkSchemeModal()">
+          📥 Download KNEC Mark Scheme
+        </button>
+        <a href="speed_battle.html?mode=titration&target=lab.html" class="action-link-pill">
+          ⚡ Take Interactive Practice Drill
+        </a>
+        <a href="lab.html?type=acidBase" class="btn-hero-start">
+          ▶ Start Simulation Workbench →
+        </a>
+      </div>
+
+      <!-- Quick Jump Pills -->
+      <nav class="theory-jump-nav" aria-label="Topic navigation">
+        <a href="#prac-1" class="jump-pill">1. HCl + Na₂CO₃ Standardisation</a>
+        <a href="#prac-2" class="jump-pill">2. Water of Crystallization</a>
+        <a href="#prac-3" class="jump-pill">3. Back-Titration (CaCO₃)</a>
+        <a href="#prac-4" class="jump-pill">4. Fe²⁺ + KMnO₄ Redox</a>
+        <a href="#prac-5" class="jump-pill">5. Oxalic Acid Redox</a>
+        <a href="#prac-6" class="jump-pill">6. Iodine / Thiosulphate</a>
+        <a href="#prac-7" class="jump-pill">7. Double Indicator</a>
+        <a href="#prac-8" class="jump-pill">8. Commercial Vinegar</a>
+        <a href="#knec-rules" class="jump-pill">📋 KNEC Marking Rules</a>
+      </nav>
+    </header>
+
+    <!-- KNEC Syllabus Alert -->
+    <div class="knec-alert-banner">
+      <div class="knec-alert-icon">⚠️</div>
+      <div>
+        <div class="knec-alert-title">KCSE Syllabus Alert — Examiner Marking Standards</div>
+        <div class="knec-alert-body">
+          Volumetric analysis carries <strong>15 marks (37.5% of Paper 3)</strong>. Most candidates lose critical marks on <strong>concordancy (titres must be within ±0.10 cm³)</strong>, inconsistent decimal places (all burette readings must have 2 decimal places with the second digit being <strong>0 or 5</strong>), and poor indicator choice.
+        </div>
+      </div>
+    </div>
+
+    <!-- 8 Practical Cards -->
+    <div class="practical-cards-list">
+
+      <!-- ══════════════════════════════════════════════════════════
+           1. STANDARDISATION OF HCl WITH Na2CO3
+      ══════════════════════════════════════════════════════════ -->
+      <section class="practical-card" id="prac-1">
+        <div class="practical-card-header">
+          <h2 class="practical-card-title">
+            <span>🧪</span> 1. Standardisation of HCl with Anhydrous Na₂CO₃
+          </h2>
+          <span class="practical-card-tag">Paper 3 · Question 1 (Core Baseline)</span>
+        </div>
+
+        <!-- Photorealistic SVG Apparatus Rig -->
+        <div class="apparatus-stage-box">
+          <svg class="apparatus-svg" width="340" height="240" viewBox="0 0 340 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Retort Stand Base -->
+            <rect x="70" y="210" width="160" height="12" rx="3" fill="#475569" stroke="#334155" stroke-width="1.5"/>
+            <!-- Upright Rod -->
+            <rect x="100" y="20" width="6" height="190" fill="#94A3B8" stroke="#64748B" stroke-width="1"/>
+            <!-- Clamp Boss Head -->
+            <rect x="94" y="65" width="18" height="14" rx="2" fill="#334155"/>
+            <circle cx="118" cy="72" r="3" fill="#64748B"/>
+            <!-- Clamp Arm extending right -->
+            <rect x="106" y="70" width="45" height="5" fill="#475569"/>
+            <!-- Clamp Jaws holding Burette -->
+            <rect x="148" y="62" width="14" height="20" rx="3" fill="#854D0E" stroke="#713F12" stroke-width="1"/>
+            
+            <!-- Burette Tube -->
+            <rect x="151" y="25" width="8" height="130" rx="1" fill="#BAE6FD" fill-opacity="0.3" stroke="#0284C7" stroke-width="1.5"/>
+            <!-- Burette Graduations -->
+            <line x1="151" y1="40" x2="155" y2="40" stroke="#0284C7" stroke-width="1"/>
+            <line x1="151" y1="55" x2="157" y2="55" stroke="#0284C7" stroke-width="1.5"/>
+            <line x1="151" y1="70" x2="155" y2="70" stroke="#0284C7" stroke-width="1"/>
+            <line x1="151" y1="85" x2="157" y2="85" stroke="#0284C7" stroke-width="1.5"/>
+            <line x1="151" y1="100" x2="155" y2="100" stroke="#0284C7" stroke-width="1"/>
+            <line x1="151" y1="115" x2="157" y2="115" stroke="#0284C7" stroke-width="1.5"/>
+            <line x1="151" y1="130" x2="155" y2="130" stroke="#0284C7" stroke-width="1"/>
+            <!-- Burette Liquid Fill (HCl Solution A) -->
+            <rect x="152" y="55" width="6" height="98" fill="#38BDF8" fill-opacity="0.35"/>
+            <ellipse cx="155" cy="55" rx="3" ry="1" fill="#0284C7"/>
+            
+            <!-- Stopcock Tap Assembly -->
+            <rect x="149" y="153" width="12" height="7" rx="1" fill="#64748B"/>
+            <line x1="145" y1="156.5" x2="165" y2="156.5" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Jet Nozzle -->
+            <polygon points="153,160 157,160 155.5,176 154.5,176" fill="#0284C7"/>
+            <circle cx="155" cy="182" r="1.5" fill="#38BDF8"/>
+            
+            <!-- White Ceramic Titration Tile -->
+            <rect x="120" y="206" width="70" height="4" rx="1" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+            
+            <!-- Conical Flask (Erlenmeyer) -->
+            <polygon points="151,185 159,185 178,206 132,206" fill="#BAE6FD" fill-opacity="0.25" stroke="#0284C7" stroke-width="1.5"/>
+            <rect x="151" y="181" width="8" height="5" fill="#BAE6FD" fill-opacity="0.3" stroke="#0284C7" stroke-width="1"/>
+            <!-- Flask Liquid with Methyl Orange (turns orange/pink at endpoint) -->
+            <polygon points="144,196 166,196 177,205 133,205" fill="#F97316" fill-opacity="0.45"/>
+            
+            <!-- Visual Labels -->
+            <text x="175" y="45" font-family="'JetBrains Mono', monospace" font-size="9" fill="#0284C7" font-weight="700">Burette (0.1M HCl)</text>
+            <text x="175" y="70" font-family="'JetBrains Mono', monospace" font-size="8" fill="#64748B">Clamp Stand</text>
+            <text x="175" y="158" font-family="'JetBrains Mono', monospace" font-size="8" fill="#DC2626">Stopcock Tap</text>
+            <text x="190" y="198" font-family="'JetBrains Mono', monospace" font-size="9" fill="#F97316" font-weight="700">Na₂CO₃ + Methyl Orange</text>
+            <text x="195" y="213" font-family="'JetBrains Mono', monospace" font-size="8" fill="#64748B">White Ceramic Tile</text>
+          </svg>
+          <div class="apparatus-caption">Figure 1.1: Complete KCSE Volumetric Titration Apparatus Setup</div>
+        </div>
+
+        <!-- Key Notes -->
+        <div class="practical-notes-box">
+          <div class="notes-heading">📌 Key Practical Notes &amp; Principles</div>
+          <p class="notes-text">
+            In this standardisation experiment, a standard primary solution of anhydrous sodium carbonate (<strong>Na₂CO₃</strong>, RFM = 106.0 g/mol) is titrated against hydrochloric acid (<strong>HCl</strong>) of unknown concentration. Because Na₂CO₃ is a weak base and HCl is a strong acid, the equivalence point pH is slightly acidic (pH ~3.7 due to dissolved CO₂ forming carbonic acid). Therefore, <strong>Methyl Orange</strong> indicator is used (yellow in alkali → orange/pink at end-point).
+          </p>
+        </div>
+
+        <a href="lab.html?type=acidBase" class="btn-launch-practical">
+          Start Standardisation Simulation →
+        </a>
+
+        <!-- 2 Column Comparison -->
+        <div class="practical-2col-grid">
+          <div class="col-card col-pitfalls">
+            <div class="col-title">❌ Common Exam Pitfalls &amp; Deductions</div>
+            <ul class="pitfall-list">
+              <li><strong>Rinsing error:</strong> Washing the burette with distilled water only without rinsing with the acid causes dilution (-1.0 mark).</li>
+              <li><strong>Funnel left in burette:</strong> Leaving the funnel in the burette during titration causes drops to drip into solution, altering initial and final volume.</li>
+              <li><strong>Indicator choice:</strong> Using phenolphthalein instead of methyl orange (phenolphthalein turns colourless at NaHCO₃ stage, giving half the titre).</li>
+              <li><strong>Meniscus reading:</strong> Reading the top of the meniscus instead of the bottom at eye level.</li>
+              <li><strong>Inconsistent decimal places:</strong> KNEC mandates 2 decimal places ending with .00 or .05 (e.g. 24.50 cm³, not 24.5 cm³).</li>
+            </ul>
+          </div>
+
+          <div class="col-card col-formulae">
+            <div class="col-title">✅ Key Formulae &amp; Stoichiometric Ratios</div>
+            <ul class="formulae-list">
+              <li><span class="formula-tag">Na₂CO₃(aq) + 2HCl(aq) → 2NaCl(aq) + CO₂(g) + H₂O(l)</span></li>
+              <li><strong>Mole Ratio:</strong> <span class="formula-tag">n(Na₂CO₃) : n(HCl) = 1 : 2</span></li>
+              <li><strong>Moles of Na₂CO₃:</strong> <span class="formula-tag">n₁ = (M₁ × V_pipette) / 1000</span></li>
+              <li><strong>Moles of HCl:</strong> <span class="formula-tag">n₂ = 2 × n₁</span></li>
+              <li><strong>Molarity of HCl:</strong> <span class="formula-tag">M_HCl = (n₂ × 1000) / V_average</span></li>
+              <li><strong>Concordancy:</strong> <span class="formula-tag">|Titre₁ − Titre₂| ≤ 0.10 cm³</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════
+           2. WATER OF CRYSTALLIZATION IN HYDRATED Na2CO3
+      ══════════════════════════════════════════════════════════ -->
+      <section class="practical-card" id="prac-2">
+        <div class="practical-card-header">
+          <h2 class="practical-card-title">
+            <span>💎</span> 2. Determination of Water of Crystallization in Hydrated Na₂CO₃·xH₂O
+          </h2>
+          <span class="practical-card-tag">Paper 3 · Question 1 (Formula Deduction)</span>
+        </div>
+
+        <div class="apparatus-stage-box">
+          <svg class="apparatus-svg" width="340" height="230" viewBox="0 0 340 230" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="70" y="200" width="160" height="12" rx="3" fill="#475569" stroke="#334155" stroke-width="1.5"/>
+            <rect x="100" y="15" width="6" height="185" fill="#94A3B8" stroke="#64748B" stroke-width="1"/>
+            <rect x="94" y="60" width="18" height="14" rx="2" fill="#334155"/>
+            <circle cx="118" cy="67" r="3" fill="#64748B"/>
+            <rect x="106" y="65" width="45" height="5" fill="#475569"/>
+            <rect x="148" y="57" width="14" height="20" rx="3" fill="#854D0E" stroke="#713F12" stroke-width="1"/>
+            
+            <rect x="151" y="20" width="8" height="130" rx="1" fill="#BAE6FD" fill-opacity="0.3" stroke="#0284C7" stroke-width="1.5"/>
+            <line x1="151" y1="35" x2="157" y2="35" stroke="#0284C7" stroke-width="1"/>
+            <line x1="151" y1="55" x2="157" y2="55" stroke="#0284C7" stroke-width="1.5"/>
+            <line x1="151" y1="75" x2="157" y2="75" stroke="#0284C7" stroke-width="1"/>
+            <line x1="151" y1="95" x2="157" y2="95" stroke="#0284C7" stroke-width="1.5"/>
+            <line x1="151" y1="115" x2="157" y2="115" stroke="#0284C7" stroke-width="1"/>
+            <rect x="152" y="45" width="6" height="103" fill="#38BDF8" fill-opacity="0.35"/>
+            
+            <rect x="149" y="148" width="12" height="7" rx="1" fill="#64748B"/>
+            <line x1="145" y1="151.5" x2="165" y2="151.5" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round"/>
+            <polygon points="153,155 157,155 155.5,170 154.5,170" fill="#0284C7"/>
+            <circle cx="155" cy="174" r="1.5" fill="#38BDF8"/>
+            
+            <rect x="120" y="196" width="70" height="4" rx="1" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+            <polygon points="151,176 159,176 178,196 132,196" fill="#BAE6FD" fill-opacity="0.25" stroke="#0284C7" stroke-width="1.5"/>
+            <polygon points="144,187 166,187 177,195 133,195" fill="#F97316" fill-opacity="0.4"/>
+            
+            <text x="175" y="38" font-family="'JetBrains Mono', monospace" font-size="9" fill="#0284C7" font-weight="700">Standard HCl in Burette</text>
+            <text x="185" y="188" font-family="'JetBrains Mono', monospace" font-size="9" fill="#F97316" font-weight="700">Na₂CO₃·xH₂O in Flask</text>
+          </svg>
+          <div class="apparatus-caption">Figure 1.2: Hydrated Salt Stoichiometry Determination Rig</div>
+        </div>
+
+        <div class="practical-notes-box">
+          <div class="notes-heading">📌 Key Practical Notes &amp; Principles</div>
+          <p class="notes-text">
+            A known mass of hydrated sodium carbonate crystals (washing soda crystals, <strong>Na₂CO₃·xH₂O</strong>) is dissolved in distilled water and made up to 250 cm³ in a volumetric flask. An aliquot (e.g. 25.0 cm³) is titrated against standard 0.10 M HCl. From the titre volume, the concentration of anhydrous Na₂CO₃ in g/dm³ is calculated and subtracted from the original mass of hydrated crystals to find the mass of water of crystallization, yielding the integer value of <strong>x (usually x = 10 for washing soda decahydrate)</strong>.
+          </p>
+        </div>
+
+        <a href="lab.html?type=acidBase" class="btn-launch-practical">
+          Start Water of Crystallization Practical →
+        </a>
+
+        <div class="practical-2col-grid">
+          <div class="col-card col-pitfalls">
+            <div class="col-title">❌ Common Exam Pitfalls &amp; Deductions</div>
+            <ul class="pitfall-list">
+              <li><strong>Dilution factor omitted:</strong> Forgetting to multiply moles by 10 when calculating total moles in 250 cm³ from a 25.0 cm³ aliquot.</li>
+              <li><strong>Premature rounding:</strong> Rounding intermediate values of molarity or mass before calculating <em>x</em>.</li>
+              <li><strong>Decimal value for x:</strong> Giving <em>x</em> as a decimal (e.g. x = 9.87) instead of the nearest whole integer (x = 10).</li>
+              <li><strong>Air bubble in burette jet:</strong> Air trapped below the stopcock gets displaced during titration, falsely increasing the recorded titre volume.</li>
+            </ul>
+          </div>
+
+          <div class="col-card col-formulae">
+            <div class="col-title">✅ Key Formulae &amp; Stoichiometric Ratios</div>
+            <ul class="formulae-list">
+              <li><span class="formula-tag">Na₂CO₃·xH₂O + 2HCl → 2NaCl + CO₂ + (x+1)H₂O</span></li>
+              <li><strong>Molar mass formula:</strong> <span class="formula-tag">Mr = 106.0 + (18.0 × x)</span></li>
+              <li><strong>Mass of Anhydrous Salt:</strong> <span class="formula-tag">m_anhydrous = moles_Na₂CO₃ × 106.0 g/mol</span></li>
+              <li><strong>Mass of Water of Crystallization:</strong> <span class="formula-tag">m_H₂O = m_total − m_anhydrous</span></li>
+              <li><strong>Value of x:</strong> <span class="formula-tag">x = (m_H₂O / 18.0) / moles_Na₂CO₃</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════
+           3. BACK-TITRATION FOR INSOLUBLE CARBONATE (CaCO3)
+      ══════════════════════════════════════════════════════════ -->
+      <section class="practical-card" id="prac-3">
+        <div class="practical-card-header">
+          <h2 class="practical-card-title">
+            <span>🥚</span> 3. Back-Titration for Insoluble Carbonate (CaCO₃ in Eggshells/Limestone)
+          </h2>
+          <span class="practical-card-tag">Paper 3 · Question 1 (Indirect Titration &amp; Heating)</span>
+        </div>
+
+        <div class="apparatus-stage-box">
+          <svg class="apparatus-svg" width="360" height="230" viewBox="0 0 360 230" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Tripod Stand -->
+            <line x1="80" y1="210" x2="110" y2="135" stroke="#475569" stroke-width="4"/>
+            <line x1="160" y1="210" x2="130" y2="135" stroke="#475569" stroke-width="4"/>
+            <circle cx="120" cy="135" r="32" fill="none" stroke="#475569" stroke-width="4"/>
+            <!-- Wire Gauze with Ceramic Center -->
+            <rect x="90" y="131" width="60" height="4" fill="#CBD5E1" stroke="#94A3B8"/>
+            <circle cx="120" cy="133" r="12" fill="#E2E8F0"/>
+            
+            <!-- Bunsen Burner -->
+            <rect x="110" y="165" width="20" height="45" fill="#334155" rx="2"/>
+            <rect x="102" y="205" width="36" height="8" fill="#1E293B" rx="2"/>
+            <!-- Blue Non-Luminous Flame -->
+            <path d="M120,135 C112,145 114,165 120,165 C126,165 128,145 120,135 Z" fill="#38BDF8" fill-opacity="0.8"/>
+            <path d="M120,145 C116,152 117,165 120,165 C123,165 124,152 120,145 Z" fill="#0284C7"/>
+            
+            <!-- Conical Flask with CaCO3 + Excess HCl -->
+            <polygon points="116,95 124,95 142,130 98,130" fill="#BAE6FD" fill-opacity="0.3" stroke="#0284C7" stroke-width="1.5"/>
+            <rect x="116" y="90" width="8" height="6" fill="#BAE6FD" stroke="#0284C7"/>
+            <!-- Effervescence / CO2 Bubbles -->
+            <circle cx="112" cy="120" r="2" fill="#FFFFFF" fill-opacity="0.7"/>
+            <circle cx="124" cy="115" r="1.5" fill="#FFFFFF" fill-opacity="0.7"/>
+            <circle cx="118" cy="123" r="2.5" fill="#FFFFFF" fill-opacity="0.7"/>
+            
+            <!-- Right side: Back titration setup -->
+            <rect x="230" y="20" width="6" height="120" fill="#38BDF8" fill-opacity="0.3" stroke="#0284C7" stroke-width="1.5"/>
+            <polygon points="230,145 236,145 250,175 216,175" fill="#BAE6FD" fill-opacity="0.3" stroke="#0284C7" stroke-width="1.5"/>
+            <polygon points="222,165 244,165 249,174 217,174" fill="#F43F5E" fill-opacity="0.4"/>
+            <text x="245" y="55" font-family="'JetBrains Mono', monospace" font-size="8" fill="#0284C7" font-weight="700">NaOH Titrant</text>
+            <text x="245" y="165" font-family="'JetBrains Mono', monospace" font-size="8" fill="#F43F5E" font-weight="700">Excess HCl Titration</text>
+            
+            <text x="80" y="80" font-family="'JetBrains Mono', monospace" font-size="9" fill="#0284C7" font-weight="700">Stage 1: Boil to expel CO₂</text>
+          </svg>
+          <div class="apparatus-caption">Figure 1.3: Stage 1 Dissolution &amp; Expulsion of CO₂ followed by Stage 2 Back-Titration</div>
+        </div>
+
+        <div class="practical-notes-box">
+          <div class="notes-heading">📌 Key Practical Notes &amp; Principles</div>
+          <p class="notes-text">
+            Calcium carbonate (<strong>CaCO₃</strong>) is insoluble in water, so it cannot be directly titrated. Instead, a known excess of standard 1.0 M HCl is added to react with the CaCO₃: <br>
+            <code>CaCO₃(s) + 2HCl(aq, excess) → CaCl₂(aq) + CO₂(g) + H₂O(l)</code>.<br>
+            The mixture <strong>must be boiled gently</strong> for 2–3 minutes to expel all dissolved carbon dioxide (which would otherwise react with NaOH as carbonic acid). After cooling, the unreacted excess HCl is back-titrated with standard NaOH using phenolphthalein.
+          </p>
+        </div>
+
+        <a href="lab.html?type=acidBase" class="btn-launch-practical">
+          Start Back-Titration Practical →
+        </a>
+
+        <div class="practical-2col-grid">
+          <div class="col-card col-pitfalls">
+            <div class="col-title">❌ Common Exam Pitfalls &amp; Deductions</div>
+            <ul class="pitfall-list">
+              <li><strong>Failing to boil the solution:</strong> Dissolved CO₂ forms H₂CO₃, consuming extra NaOH and resulting in an underestimation of the CaCO₃ percentage (-2.0 marks).</li>
+              <li><strong>Titrating hot:</strong> Back-titrating while the solution is still boiling causes volatile HCl to evaporate and indicator to degrade. Always cool to room temperature.</li>
+              <li><strong>Reversing subtraction:</strong> Subtracting initial moles from remaining moles instead of <code>Moles reacted = Initial moles − Remaining moles</code>.</li>
+            </ul>
+          </div>
+
+          <div class="col-card col-formulae">
+            <div class="col-title">✅ Key Formulae &amp; Stoichiometric Ratios</div>
+            <ul class="formulae-list">
+              <li><strong>Reaction 1 (Excess):</strong> <span class="formula-tag">CaCO₃ + 2HCl(excess) → CaCl₂ + CO₂ + H₂O</span></li>
+              <li><strong>Reaction 2 (Back-titration):</strong> <span class="formula-tag">HCl(unreacted) + NaOH → NaCl + H₂O</span></li>
+              <li><strong>Moles Initial HCl:</strong> <span class="formula-tag">n_initial = (M_HCl × V_HCl) / 1000</span></li>
+              <li><strong>Moles Unreacted HCl:</strong> <span class="formula-tag">n_unreacted = (M_NaOH × V_titre) / 1000</span></li>
+              <li><strong>Moles Reacted with CaCO₃:</strong> <span class="formula-tag">n_reacted = n_initial − n_unreacted</span></li>
+              <li><strong>Mass of CaCO₃:</strong> <span class="formula-tag">m_CaCO₃ = (n_reacted / 2) × 100.1 g/mol</span></li>
+              <li><strong>Percentage Purity:</strong> <span class="formula-tag">% = (m_CaCO₃ / m_sample) × 100%</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════
+           4. REDOX TITRATION: Fe2+ WITH KMnO4
+      ══════════════════════════════════════════════════════════ -->
+      <section class="practical-card" id="prac-4">
+        <div class="practical-card-header">
+          <h2 class="practical-card-title">
+            <span>🔮</span> 4. Redox Titration: Iron(II) (Fe²⁺) with Acidified KMnO₄
+          </h2>
+          <span class="practical-card-tag">Paper 3 · Question 1 (Redox Standardisation)</span>
+        </div>
+
+        <div class="apparatus-stage-box">
+          <svg class="apparatus-svg" width="340" height="230" viewBox="0 0 340 230" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="70" y="200" width="160" height="12" rx="3" fill="#475569" stroke="#334155" stroke-width="1.5"/>
+            <rect x="100" y="15" width="6" height="185" fill="#94A3B8" stroke="#64748B" stroke-width="1"/>
+            <rect x="94" y="60" width="18" height="14" rx="2" fill="#334155"/>
+            <circle cx="118" cy="67" r="3" fill="#64748B"/>
+            <rect x="106" y="65" width="45" height="5" fill="#475569"/>
+            <rect x="148" y="57" width="14" height="20" rx="3" fill="#854D0E" stroke="#713F12" stroke-width="1"/>
+            
+            <!-- Deep Purple KMnO4 Burette -->
+            <rect x="151" y="20" width="8" height="130" rx="1" fill="#7C3AED" fill-opacity="0.3" stroke="#6D28D9" stroke-width="1.5"/>
+            <rect x="152" y="45" width="6" height="103" fill="#581C87"/>
+            <ellipse cx="155" cy="45" rx="3" ry="1" fill="#3B0764"/>
+            
+            <rect x="149" y="148" width="12" height="7" rx="1" fill="#64748B"/>
+            <line x1="145" y1="151.5" x2="165" y2="151.5" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round"/>
+            <polygon points="153,155 157,155 155.5,170 154.5,170" fill="#6D28D9"/>
+            
+            <!-- Conical Flask: Pale Green Fe2+ turning Pale Pink -->
+            <rect x="120" y="196" width="70" height="4" rx="1" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+            <polygon points="151,176 159,176 178,196 132,196" fill="#BAE6FD" fill-opacity="0.25" stroke="#0284C7" stroke-width="1.5"/>
+            <polygon points="144,187 166,187 177,195 133,195" fill="#F472B6" fill-opacity="0.5"/>
+            
+            <text x="175" y="40" font-family="'JetBrains Mono', monospace" font-size="9" fill="#A855F7" font-weight="700">0.02M KMnO₄ (Deep Purple)</text>
+            <text x="175" y="80" font-family="'JetBrains Mono', monospace" font-size="8" fill="#64748B">Self-Indicating Titrant</text>
+            <text x="185" y="188" font-family="'JetBrains Mono', monospace" font-size="9" fill="#EC4899" font-weight="700">Permanent Pale Pink End-Point</text>
+          </svg>
+          <div class="apparatus-caption">Figure 1.4: Permanganate Redox Titration (Self-Indicating System)</div>
+        </div>
+
+        <div class="practical-notes-box">
+          <div class="notes-heading">📌 Key Practical Notes &amp; Principles</div>
+          <p class="notes-text">
+            Potassium manganate(VII) (<strong>KMnO₄</strong>) is a powerful oxidizing agent. In acidic solution, dark purple manganate(VII) ions (MnO₄⁻) are reduced to colorless manganese(II) ions (Mn²⁺), while iron(II) ions (Fe²⁺) are oxidized to pale yellow iron(III) (Fe³⁺). <strong>No external indicator is needed</strong> because KMnO₄ acts as its own indicator: the very first drop of excess KMnO₄ imparts a permanent pale pink tinge. The solution must be acidified with dilute <strong>H₂SO₄</strong> (never HCl or HNO₃).
+          </p>
+        </div>
+
+        <a href="lab.html?type=redox" class="btn-launch-practical">
+          Start KMnO₄ Redox Practical →
+        </a>
+
+        <div class="practical-2col-grid">
+          <div class="col-card col-pitfalls">
+            <div class="col-title">❌ Common Exam Pitfalls &amp; Deductions</div>
+            <ul class="pitfall-list">
+              <li><strong>Acid choice error:</strong> Acidifying with HCl is penalized heavily! Manganate oxidizes Cl⁻ to toxic chlorine gas (Cl₂), causing an artificially high titre.</li>
+              <li><strong>Using nitric acid:</strong> HNO₃ is a competing oxidizing agent that oxidizes Fe²⁺ before titration begins.</li>
+              <li><strong>Adding indicator:</strong> Adding phenolphthalein or methyl orange to a KMnO₄ titration results in a mark deduction (KMnO₄ is self-indicating).</li>
+              <li><strong>Reading dark meniscus:</strong> Because KMnO₄ is intensely purple, the bottom of the meniscus is obscured; candidates must read the <em>top</em> of the meniscus consistently for initial and final readings.</li>
+            </ul>
+          </div>
+
+          <div class="col-card col-formulae">
+            <div class="col-title">✅ Key Formulae &amp; Stoichiometric Ratios</div>
+            <ul class="formulae-list">
+              <li><span class="formula-tag">MnO₄⁻ + 5Fe²⁺ + 8H⁺ → Mn²⁺ + 5Fe³⁺ + 4H₂O</span></li>
+              <li><strong>Mole Ratio:</strong> <span class="formula-tag">n(MnO₄⁻) : n(Fe²⁺) = 1 : 5</span></li>
+              <li><strong>Moles of KMnO₄ used:</strong> <span class="formula-tag">n₁ = (M_KMnO₄ × V_average) / 1000</span></li>
+              <li><strong>Moles of Fe²⁺ in aliquot:</strong> <span class="formula-tag">n₂ = 5 × n₁</span></li>
+              <li><strong>Concentration of Fe²⁺:</strong> <span class="formula-tag">M_Fe²⁺ = (n₂ × 1000) / V_pipette</span></li>
+              <li><strong>Mass of Fe in g/dm³:</strong> <span class="formula-tag">Conc(g/L) = M_Fe²⁺ × 55.8 g/mol</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════
+           5. REDOX TITRATION: OXALIC ACID WITH KMnO4
+      ══════════════════════════════════════════════════════════ -->
+      <section class="practical-card" id="prac-5">
+        <div class="practical-card-header">
+          <h2 class="practical-card-title">
+            <span>🌿</span> 5. Redox Titration: Ethanedioic (Oxalic) Acid with KMnO₄
+          </h2>
+          <span class="practical-card-tag">Paper 3 · Question 1 (Warm Reaction &amp; Autocatalysis)</span>
+        </div>
+
+        <div class="apparatus-stage-box">
+          <svg class="apparatus-svg" width="340" height="230" viewBox="0 0 340 230" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="70" y="200" width="160" height="12" rx="3" fill="#475569" stroke="#334155" stroke-width="1.5"/>
+            <rect x="100" y="15" width="6" height="185" fill="#94A3B8" stroke="#64748B" stroke-width="1"/>
+            <rect x="94" y="60" width="18" height="14" rx="2" fill="#334155"/>
+            <circle cx="118" cy="67" r="3" fill="#64748B"/>
+            <rect x="106" y="65" width="45" height="5" fill="#475569"/>
+            <rect x="148" y="57" width="14" height="20" rx="3" fill="#854D0E" stroke="#713F12" stroke-width="1"/>
+            
+            <rect x="151" y="20" width="8" height="130" rx="1" fill="#7C3AED" fill-opacity="0.3" stroke="#6D28D9" stroke-width="1.5"/>
+            <rect x="152" y="45" width="6" height="103" fill="#581C87"/>
+            
+            <rect x="149" y="148" width="12" height="7" rx="1" fill="#64748B"/>
+            <line x1="145" y1="151.5" x2="165" y2="151.5" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round"/>
+            <polygon points="153,155 157,155 155.5,170 154.5,170" fill="#6D28D9"/>
+            
+            <!-- Warm Conical Flask (60-70 C) -->
+            <rect x="120" y="196" width="70" height="4" rx="1" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+            <polygon points="151,176 159,176 178,196 132,196" fill="#BAE6FD" fill-opacity="0.25" stroke="#0284C7" stroke-width="1.5"/>
+            <polygon points="144,187 166,187 177,195 133,195" fill="#F472B6" fill-opacity="0.45"/>
+            <!-- Steam vapors -->
+            <path d="M142,168 Q140,160 144,152" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="2,2"/>
+            <path d="M166,168 Q168,160 164,152" stroke="#CBD5E1" stroke-width="1" stroke-dasharray="2,2"/>
+            
+            <text x="175" y="40" font-family="'JetBrains Mono', monospace" font-size="9" fill="#A855F7" font-weight="700">KMnO₄ in Burette</text>
+            <text x="185" y="172" font-family="'JetBrains Mono', monospace" font-size="8" fill="#D97706" font-weight="700">Warm to 60°C–70°C</text>
+            <text x="185" y="190" font-family="'JetBrains Mono', monospace" font-size="8" fill="#EC4899">Pink End-Point (Autocatalyzed)</text>
+          </svg>
+          <div class="apparatus-caption">Figure 1.5: Ethanedioic Acid Redox Titration with Thermal Activation</div>
+        </div>
+
+        <div class="practical-notes-box">
+          <div class="notes-heading">📌 Key Practical Notes &amp; Principles</div>
+          <p class="notes-text">
+            The reaction between oxalic acid (ethanedioic acid, <strong>H₂C₂O₄·2H₂O</strong>) and acidified KMnO₄ has a very high activation energy at room temperature. The initial drops of KMnO₄ decolorize very slowly. However, once the first traces of <strong>Mn²⁺ ions</strong> are generated, they act as an <strong>autocatalyst</strong>, accelerating the reaction drastically. Candidates must warm the conical flask to <strong>60°C–70°C</strong> before titrating.
+          </p>
+        </div>
+
+        <a href="lab.html?type=dibasic" class="btn-launch-practical">
+          Start Oxalic Acid Simulation →
+        </a>
+
+        <div class="practical-2col-grid">
+          <div class="col-card col-pitfalls">
+            <div class="col-title">❌ Common Exam Pitfalls &amp; Deductions</div>
+            <ul class="pitfall-list">
+              <li><strong>Boiling the solution:</strong> Boiling decomposes oxalic acid into CO, CO₂ and H₂O before titration starts (-2.0 marks).</li>
+              <li><strong>Titrating cold:</strong> Titrating at room temperature without warming causes the solution to stay brown/purple for minutes, prompting over-titration.</li>
+              <li><strong>Ratio confusion:</strong> Using a 1:1 or 1:2 ratio instead of the KNEC redox stoichiometry: <code>2 moles KMnO₄ : 5 moles H₂C₂O₄</code>.</li>
+            </ul>
+          </div>
+
+          <div class="col-card col-formulae">
+            <div class="col-title">✅ Key Formulae &amp; Stoichiometric Ratios</div>
+            <ul class="formulae-list">
+              <li><span class="formula-tag">2MnO₄⁻ + 5C₂O₄²⁻ + 16H⁺ → 2Mn²⁺ + 10CO₂ + 8H₂O</span></li>
+              <li><strong>Mole Ratio:</strong> <span class="formula-tag">n(MnO₄⁻) : n(C₂O₄²⁻) = 2 : 5</span></li>
+              <li><strong>Moles of KMnO₄:</strong> <span class="formula-tag">n₁ = (M₁ × V_average) / 1000</span></li>
+              <li><strong>Moles of Oxalic Acid:</strong> <span class="formula-tag">n₂ = (5/2) × n₁ = 2.5 × n₁</span></li>
+              <li><strong>Molarity of Oxalic Acid:</strong> <span class="formula-tag">M = (n₂ × 1000) / V_pipette</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════
+           6. IODOMETRIC TITRATION: I2 WITH THIOSULPHATE
+      ══════════════════════════════════════════════════════════ -->
+      <section class="practical-card" id="prac-6">
+        <div class="practical-card-header">
+          <h2 class="practical-card-title">
+            <span>🧪</span> 6. Iodometric Titration: Iodine with Sodium Thiosulphate
+          </h2>
+          <span class="practical-card-tag">Paper 3 · Question 1 (Starch Indicator Timing)</span>
+        </div>
+
+        <div class="apparatus-stage-box">
+          <svg class="apparatus-svg" width="340" height="230" viewBox="0 0 340 230" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="70" y="200" width="160" height="12" rx="3" fill="#475569" stroke="#334155" stroke-width="1.5"/>
+            <rect x="100" y="15" width="6" height="185" fill="#94A3B8" stroke="#64748B" stroke-width="1"/>
+            <rect x="94" y="60" width="18" height="14" rx="2" fill="#334155"/>
+            <circle cx="118" cy="67" r="3" fill="#64748B"/>
+            <rect x="106" y="65" width="45" height="5" fill="#475569"/>
+            <rect x="148" y="57" width="14" height="20" rx="3" fill="#854D0E" stroke="#713F12" stroke-width="1"/>
+            
+            <!-- Colourless Na2S2O3 in Burette -->
+            <rect x="151" y="20" width="8" height="130" rx="1" fill="#BAE6FD" fill-opacity="0.3" stroke="#0284C7" stroke-width="1.5"/>
+            <rect x="152" y="45" width="6" height="103" fill="#E2E8F0" fill-opacity="0.6"/>
+            
+            <rect x="149" y="148" width="12" height="7" rx="1" fill="#64748B"/>
+            <line x1="145" y1="151.5" x2="165" y2="151.5" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round"/>
+            <polygon points="153,155 157,155 155.5,170 154.5,170" fill="#0284C7"/>
+            
+            <!-- Flask: Deep Blue-Black turning Sharp Colourless -->
+            <rect x="120" y="196" width="70" height="4" rx="1" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+            <polygon points="151,176 159,176 178,196 132,196" fill="#BAE6FD" fill-opacity="0.25" stroke="#0284C7" stroke-width="1.5"/>
+            <polygon points="144,187 166,187 177,195 133,195" fill="#1E1B4B" fill-opacity="0.85"/>
+            
+            <text x="175" y="40" font-family="'JetBrains Mono', monospace" font-size="9" fill="#0284C7" font-weight="700">Na₂S₂O₃ in Burette</text>
+            <text x="185" y="178" font-family="'JetBrains Mono', monospace" font-size="8" fill="#4338CA" font-weight="700">Starch + I₂ (Blue-Black)</text>
+            <text x="185" y="192" font-family="'JetBrains Mono', monospace" font-size="8" fill="#10B981">Sharp Colourless End-Point</text>
+          </svg>
+          <div class="apparatus-caption">Figure 1.6: Starch-Iodine Thiosulphate Titration Rig</div>
+        </div>
+
+        <div class="practical-notes-box">
+          <div class="notes-heading">📌 Key Practical Notes &amp; Principles</div>
+          <p class="notes-text">
+            Iodine (<strong>I₂</strong>) reacts with sodium thiosulphate (<strong>Na₂S₂O₃</strong>) to produce iodide ions (I⁻) and sodium tetrathionate (<strong>Na₂S₄O₆</strong>). The solution starts dark reddish-brown and gradually fades to pale straw-yellow. <strong>CRITICAL RULE:</strong> Freshly prepared <strong>starch indicator must ONLY be added when the solution is pale yellow</strong>! The starch turns deep blue-black with the remaining trace iodine, and titration continues dropwise until exactly one drop produces a sharp change from <strong>blue-black to completely colourless</strong>.
+          </p>
+        </div>
+
+        <a href="lab.html?type=redox" class="btn-launch-practical">
+          Start Iodine Titration Practical →
+        </a>
+
+        <div class="practical-2col-grid">
+          <div class="col-card col-pitfalls">
+            <div class="col-title">❌ Common Exam Pitfalls &amp; Deductions</div>
+            <ul class="pitfall-list">
+              <li><strong>Adding starch too early:</strong> Adding starch while iodine concentration is high traps iodine irreversibly in the starch helix, preventing release and giving inaccurate titres (-2.0 marks).</li>
+              <li><strong>Air oxidation delay:</strong> Leaving the titration flask standing for too long allows atmospheric oxygen to oxidize I⁻ back to I₂, causing the blue colour to return. Titrate immediately!</li>
+              <li><strong>Old starch solution:</strong> Using fermented or expired starch solution gives a sluggish or purple/reddish endpoint instead of sharp deep blue-black to colourless.</li>
+            </ul>
+          </div>
+
+          <div class="col-card col-formulae">
+            <div class="col-title">✅ Key Formulae &amp; Stoichiometric Ratios</div>
+            <ul class="formulae-list">
+              <li><span class="formula-tag">I₂ + 2S₂O₃²⁻ → 2I⁻ + S₄O₆²⁻</span></li>
+              <li><strong>Mole Ratio:</strong> <span class="formula-tag">n(I₂) : n(S₂O₃²⁻) = 1 : 2</span></li>
+              <li><strong>Moles of Thiosulphate:</strong> <span class="formula-tag">n₁ = (M_thio × V_average) / 1000</span></li>
+              <li><strong>Moles of Iodine in Flask:</strong> <span class="formula-tag">n_I₂ = n₁ / 2</span></li>
+              <li><strong>Concentration of I₂:</strong> <span class="formula-tag">M_I₂ = (n_I₂ × 1000) / V_pipette</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════
+           7. DOUBLE INDICATOR TITRATION (NaOH + Na2CO3)
+      ══════════════════════════════════════════════════════════ -->
+      <section class="practical-card" id="prac-7">
+        <div class="practical-card-header">
+          <h2 class="practical-card-title">
+            <span>⚖️</span> 7. Double Indicator Titration: NaOH &amp; Na₂CO₃ Mixture
+          </h2>
+          <span class="practical-card-tag">Paper 3 · Question 1 (Warders Method / Differential Analysis)</span>
+        </div>
+
+        <div class="apparatus-stage-box">
+          <svg class="apparatus-svg" width="340" height="230" viewBox="0 0 340 230" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="70" y="200" width="160" height="12" rx="3" fill="#475569" stroke="#334155" stroke-width="1.5"/>
+            <rect x="100" y="15" width="6" height="185" fill="#94A3B8" stroke="#64748B" stroke-width="1"/>
+            <rect x="94" y="60" width="18" height="14" rx="2" fill="#334155"/>
+            <circle cx="118" cy="67" r="3" fill="#64748B"/>
+            <rect x="106" y="65" width="45" height="5" fill="#475569"/>
+            <rect x="148" y="57" width="14" height="20" rx="3" fill="#854D0E" stroke="#713F12" stroke-width="1"/>
+            
+            <!-- Standard HCl in Burette -->
+            <rect x="151" y="20" width="8" height="130" rx="1" fill="#BAE6FD" fill-opacity="0.3" stroke="#0284C7" stroke-width="1.5"/>
+            <rect x="152" y="45" width="6" height="103" fill="#38BDF8" fill-opacity="0.35"/>
+            
+            <rect x="149" y="148" width="12" height="7" rx="1" fill="#64748B"/>
+            <line x1="145" y1="151.5" x2="165" y2="151.5" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round"/>
+            <polygon points="153,155 157,155 155.5,170 154.5,170" fill="#0284C7"/>
+            
+            <!-- Flask with 2-Stage Indicator System -->
+            <rect x="120" y="196" width="70" height="4" rx="1" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+            <polygon points="151,176 159,176 178,196 132,196" fill="#BAE6FD" fill-opacity="0.25" stroke="#0284C7" stroke-width="1.5"/>
+            <polygon points="144,187 166,187 177,195 133,195" fill="#EC4899" fill-opacity="0.5"/>
+            
+            <text x="175" y="40" font-family="'JetBrains Mono', monospace" font-size="9" fill="#0284C7" font-weight="700">Standard HCl</text>
+            <text x="185" y="176" font-family="'JetBrains Mono', monospace" font-size="8" fill="#EC4899" font-weight="700">Stage 1: Phenolphthalein (V₁)</text>
+            <text x="185" y="190" font-family="'JetBrains Mono', monospace" font-size="8" fill="#F97316" font-weight="700">Stage 2: Methyl Orange (V₂)</text>
+          </svg>
+          <div class="apparatus-caption">Figure 1.7: Sequential Dual Indicator Volumetric System</div>
+        </div>
+
+        <div class="practical-notes-box">
+          <div class="notes-heading">📌 Key Practical Notes &amp; Principles</div>
+          <p class="notes-text">
+            When a mixture of NaOH and Na₂CO₃ is titrated with HCl: <br>
+            • <strong>Stage 1 (Phenolphthalein):</strong> NaOH is 100% neutralized, and Na₂CO₃ is converted to NaHCO₃ (Volume = V₁).<br>
+            • <strong>Stage 2 (Methyl Orange added directly to the same flask):</strong> The resulting NaHCO₃ is neutralized to NaCl + CO₂ + H₂O (Additional volume = V₂ − V₁).<br>
+            Because the volume to convert Na₂CO₃ → NaHCO₃ equals the volume from NaHCO₃ → NaCl, the <strong>volume for total carbonate is 2 × (V₂ − V₁)</strong>, and the <strong>volume for NaOH alone is V₁ − (V₂ − V₁) = 2V₁ − V₂</strong>.
+          </p>
+        </div>
+
+        <a href="lab.html?type=acidBase" class="btn-launch-practical">
+          Start Double Indicator Simulation →
+        </a>
+
+        <div class="practical-2col-grid">
+          <div class="col-card col-pitfalls">
+            <div class="col-title">❌ Common Exam Pitfalls &amp; Deductions</div>
+            <ul class="pitfall-list">
+              <li><strong>Refilling burette between stages:</strong> Leaving candidate confused on cumulative vs differential readings. Keep the same burette reading after Stage 1.</li>
+              <li><strong>Discarding flask after Stage 1:</strong> Discarding the contents instead of adding Methyl Orange directly to the same pale pink/colourless flask.</li>
+              <li><strong>Calculation error:</strong> Failing to recognize that Stage 2 only represents HALF the carbonate titration.</li>
+            </ul>
+          </div>
+
+          <div class="col-card col-formulae">
+            <div class="col-title">✅ Key Formulae &amp; Stoichiometric Ratios</div>
+            <ul class="formulae-list">
+              <li><strong>Stage 1:</strong> <span class="formula-tag">NaOH + HCl → NaCl + H₂O</span> and <span class="formula-tag">Na₂CO₃ + HCl → NaHCO₃ + NaCl</span></li>
+              <li><strong>Stage 2:</strong> <span class="formula-tag">NaHCO₃ + HCl → NaCl + CO₂ + H₂O</span></li>
+              <li><strong>Volume for Carbonate:</strong> <span class="formula-tag">V_carb = 2 × (V₂ − V₁)</span></li>
+              <li><strong>Volume for NaOH:</strong> <span class="formula-tag">V_NaOH = V₁ − (V₂ − V₁) = 2V₁ − V₂</span></li>
+              <li><strong>Mass Concentration:</strong> <span class="formula-tag">Conc = Molarity × Molar Mass (g/dm³)</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════
+           8. COMMERCIAL VINEGAR QUALITY CONTROL
+      ══════════════════════════════════════════════════════════ -->
+      <section class="practical-card" id="prac-8">
+        <div class="practical-card-header">
+          <h2 class="practical-card-title">
+            <span>🍾</span> 8. Quality Control: Acetic Acid in Commercial Vinegar
+          </h2>
+          <span class="practical-card-tag">Paper 3 · Question 1 (Industrial Application &amp; Dilution)</span>
+        </div>
+
+        <div class="apparatus-stage-box">
+          <svg class="apparatus-svg" width="340" height="230" viewBox="0 0 340 230" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="70" y="200" width="160" height="12" rx="3" fill="#475569" stroke="#334155" stroke-width="1.5"/>
+            <rect x="100" y="15" width="6" height="185" fill="#94A3B8" stroke="#64748B" stroke-width="1"/>
+            <rect x="94" y="60" width="18" height="14" rx="2" fill="#334155"/>
+            <circle cx="118" cy="67" r="3" fill="#64748B"/>
+            <rect x="106" y="65" width="45" height="5" fill="#475569"/>
+            <rect x="148" y="57" width="14" height="20" rx="3" fill="#854D0E" stroke="#713F12" stroke-width="1"/>
+            
+            <!-- Standard NaOH in Burette -->
+            <rect x="151" y="20" width="8" height="130" rx="1" fill="#BAE6FD" fill-opacity="0.3" stroke="#0284C7" stroke-width="1.5"/>
+            <rect x="152" y="45" width="6" height="103" fill="#0284C7" fill-opacity="0.25"/>
+            
+            <rect x="149" y="148" width="12" height="7" rx="1" fill="#64748B"/>
+            <line x1="145" y1="151.5" x2="165" y2="151.5" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round"/>
+            <polygon points="153,155 157,155 155.5,170 154.5,170" fill="#0284C7"/>
+            
+            <!-- Flask with Diluted Vinegar + Phenolphthalein -->
+            <rect x="120" y="196" width="70" height="4" rx="1" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+            <polygon points="151,176 159,176 178,196 132,196" fill="#BAE6FD" fill-opacity="0.25" stroke="#0284C7" stroke-width="1.5"/>
+            <polygon points="144,187 166,187 177,195 133,195" fill="#EC4899" fill-opacity="0.45"/>
+            
+            <text x="175" y="40" font-family="'JetBrains Mono', monospace" font-size="9" fill="#0284C7" font-weight="700">0.10M NaOH in Burette</text>
+            <text x="185" y="178" font-family="'JetBrains Mono', monospace" font-size="8" fill="#475569" font-weight="700">Diluted Vinegar in Flask</text>
+            <text x="185" y="192" font-family="'JetBrains Mono', monospace" font-size="8" fill="#EC4899">Pale Pink (pH ~8.7)</text>
+          </svg>
+          <div class="apparatus-caption">Figure 1.8: Vinegar Weak Acid Standardisation Setup</div>
+        </div>
+
+        <div class="practical-notes-box">
+          <div class="notes-heading">📌 Key Practical Notes &amp; Principles</div>
+          <p class="notes-text">
+            Commercial vinegar contains ethanoic acid (acetic acid, <strong>CH₃COOH</strong>, ~1.0 M, 5–6% w/v). Because it is too concentrated to titrate directly with 0.10 M NaOH, it is accurately diluted (e.g. 25.0 cm³ made up to 250.0 cm³ in a volumetric flask, a <strong>10× dilution</strong>). Ethanoic acid is a weak acid and NaOH is a strong base; at equivalence, basic hydrolysis of the ethanoate ion (CH₃COO⁻ + H₂O ⇌ CH₃COOH + OH⁻) makes the solution alkaline (pH ~8.7). Hence, <strong>phenolphthalein</strong> is the mandatory indicator.
+          </p>
+        </div>
+
+        <a href="lab.html?type=weakAcid" class="btn-launch-practical">
+          Start Vinegar Practical →
+        </a>
+
+        <div class="practical-2col-grid">
+          <div class="col-card col-pitfalls">
+            <div class="col-title">❌ Common Exam Pitfalls &amp; Deductions</div>
+            <ul class="pitfall-list">
+              <li><strong>Wrong indicator:</strong> Using methyl orange for weak acid/strong base (methyl orange turns color at pH 3.1–4.4, long before the equivalence point, causing a massive -2.0 mark deduction).</li>
+              <li><strong>Omitting dilution factor:</strong> Calculating the molarity of the diluted solution and forgetting to multiply by 10 (or 20) for original vinegar.</li>
+              <li><strong>Units error:</strong> Failing to convert molarity into percentage concentration (% w/v = g / 100 cm³ = Conc in g/L ÷ 10).</li>
+            </ul>
+          </div>
+
+          <div class="col-card col-formulae">
+            <div class="col-title">✅ Key Formulae &amp; Stoichiometric Ratios</div>
+            <ul class="formulae-list">
+              <li><span class="formula-tag">CH₃COOH(aq) + NaOH(aq) → CH₃COONa(aq) + H₂O(l)</span></li>
+              <li><strong>Mole Ratio:</strong> <span class="formula-tag">n(CH₃COOH) : n(NaOH) = 1 : 1</span></li>
+              <li><strong>Molarity of Diluted Vinegar:</strong> <span class="formula-tag">M_diluted = (M_NaOH × V_average) / V_pipette</span></li>
+              <li><strong>Original Vinegar Molarity:</strong> <span class="formula-tag">M_original = M_diluted × Dilution_Factor (e.g. ×10)</span></li>
+              <li><strong>Mass Concentration:</strong> <span class="formula-tag">Conc = M_original × 60.0 g/mol (g/dm³)</span></li>
+              <li><strong>Percentage (w/v):</strong> <span class="formula-tag">% w/v = Conc(g/dm³) / 10</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         9. KNEC PAPER 3 MARKING SCHEME & SCORING RUBRIC
+    ══════════════════════════════════════════════════════════ -->
+    <section class="knec-rubric-card" id="knec-rules">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+        <span style="font-size:1.6rem;">📋</span>
+        <div>
+          <h2 style="font-size:1.25rem; font-weight:800; color:var(--tt-heading); margin:0;">
+            KNEC Official Paper 3 Volumetric Rubric &amp; Penalty Deductions
+          </h2>
+          <div style="font-size:0.8rem; color:var(--tt-text-muted);">How your 15 marks are awarded and preserved on examination day</div>
+        </div>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table class="knec-rubric-table" aria-label="KNEC Scoring Rubric">
+          <thead>
+            <tr>
+              <th style="width:25%;">Scoring Component</th>
+              <th style="width:15%;">Marks</th>
+              <th style="width:60%;">KNEC Chief Examiner Criteria &amp; Conditions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1. Complete Table</strong></td>
+              <td><strong>5.0 Marks</strong></td>
+              <td>Complete table with 3 trials. Table must show: Final reading, Initial reading, and Titre volume. Penalties: Incomplete trials (-1.0 mark per trial missing); Inverted readings (-1.0 mark).</td>
+            </tr>
+            <tr>
+              <td><strong>2. Use of Decimals</strong></td>
+              <td><strong>1.0 Mark</strong></td>
+              <td>All readings throughout the table must be consistently recorded to <strong>2 decimal places</strong>, and the last digit must be <strong>0 or 5</strong> (e.g. 24.50 or 24.55). Inconsistency forfeits this mark.</td>
+            </tr>
+            <tr>
+              <td><strong>3. Accuracy (Concordancy)</strong></td>
+              <td><strong>1.0 Mark</strong></td>
+              <td>Compare student's average titre with the teacher's/examiner's school value:
+                <br>• Within ±0.10 cm³: <strong>1.0 Mark</strong>
+                <br>• Within ±0.20 cm³: <strong>0.5 Mark</strong>
+                <br>• Differing by &gt;0.20 cm³: <strong>0.0 Mark</strong>
+              </td>
+            </tr>
+            <tr>
+              <td><strong>4. Principle of Averaging</strong></td>
+              <td><strong>1.0 Mark</strong></td>
+              <td>Only <strong>concordant titres (within ±0.10 cm³ of each other)</strong> must be averaged. Averaging non-concordant titres forfeits this mark, even if arithmetic is correct.</td>
+            </tr>
+            <tr>
+              <td><strong>5. Stoichiometric Calculations</strong></td>
+              <td><strong>7.0 Marks</strong></td>
+              <td>
+                • Moles of titrant: <strong>2.0 Marks</strong> (Correct formula + working)
+                <br>• Moles of analyte: <strong>2.0 Marks</strong> (Correct mole ratio applied)
+                <br>• Molarity / Mass concentration: <strong>2.0 Marks</strong> (Correct units: M or g/dm³)
+                <br>• Final evaluation (xH₂O, % purity, RFM): <strong>1.0 Mark</strong>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════════
+         BOTTOM INTERACTIVE PRACTICE EXPERIMENT SELECTOR
+    ══════════════════════════════════════════════════════════ -->
+    <div class="practice-launch-card">
+      <h3 class="practice-launch-title">Practice Experiment Workbench</h3>
+      <p class="practice-launch-desc">
+        Select any volumetric titration to practise with photorealistic glassware, automatic concordancy checking, and instant KNEC rubric scoring:
+      </p>
+
+      <div class="practice-controls-row">
+        <label for="titrationSelect" style="font-weight:700; font-size:0.85rem; color:var(--tt-heading);">Select Practical:</label>
+        <select id="titrationSelect" class="practice-select">
+          <option value="acidBase">1. Standardisation of HCl with Na₂CO₃</option>
+          <option value="acidBase">2. Water of Crystallization in Hydrated Na₂CO₃</option>
+          <option value="acidBase">3. Back-Titration for CaCO₃ in Limestone</option>
+          <option value="redox">4. Redox Titration: Fe²⁺ with KMnO₄</option>
+          <option value="dibasic">5. Redox Titration: Oxalic Acid with KMnO₄</option>
+          <option value="redox">6. Iodine Titration with Sodium Thiosulphate</option>
+          <option value="acidBase">7. Double Indicator Titration: NaOH &amp; Na₂CO₃</option>
+          <option value="weakAcid">8. Quality Control: Acetic Acid in Vinegar</option>
+          <option value="precipitation">9. Mohr's Precipitation: Cl⁻ with AgNO₃</option>
+          <option value="complexometric">10. Complexometry: Hard Water with EDTA</option>
+        </select>
+
+        <label for="difficultySelect" style="font-weight:700; font-size:0.85rem; color:var(--tt-heading);">Mode:</label>
+        <select id="difficultySelect" class="practice-select" style="min-width:180px;">
+          <option value="guided">Guided Step-by-Step</option>
+          <option value="standard" selected>Form 4 Standard Practice</option>
+          <option value="exam">KNEC Exam Simulation (Timed)</option>
+        </select>
+
+        <button type="button" class="btn-launch-final" onclick="launchSelectedPractical()">
+          Start Selected Practical →
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Mobile & Tablet Bottom Navigation Dock -->
+  <nav class="mobile-bottom-nav">
+    <a href="home.html" class="bottom-tab-item">
+      <span class="bottom-tab-icon">🧪</span>
+      <span>Workbenches</span>
+    </a>
+    <a href="titration_theory.html" class="bottom-tab-item active">
+      <span class="bottom-tab-icon">📚</span>
+      <span>Revision</span>
+    </a>
+    <a href="home.html#achievements" class="bottom-tab-item">
+      <span class="bottom-tab-icon">🏆</span>
+      <span>Badges</span>
+    </a>
+    <a href="history.html" class="bottom-tab-item">
+      <span class="bottom-tab-icon">📊</span>
+      <span>Analytics</span>
+    </a>
+  </nav>
+
+  <!-- Mark Scheme Modal -->
+  <div id="markSchemeModal" class="modal-backdrop" style="display:none;" onclick="if(event.target === this) closeMarkSchemeModal()">
+    <div class="modal-card">
+      <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1.5px solid var(--tt-border); padding-bottom:12px; margin-bottom:16px;">
+        <div style="font-weight:800; font-size:1.15rem; color:var(--tt-heading); display:flex; align-items:center; gap:8px;">
+          <span>📋</span> KNEC KCSE Chemistry Paper 3 Volumetric Mark Scheme
+        </div>
+        <button type="button" onclick="closeMarkSchemeModal()" style="background:none; border:none; font-size:1.3rem; color:var(--tt-text-muted); cursor:pointer;">&times;</button>
+      </div>
+
+      <div style="font-size:0.86rem; line-height:1.6; color:var(--tt-text);">
+        <p><strong>Official Marking Protocol for 233/3 (Question 1):</strong></p>
+        <ol style="padding-left:20px; margin:10px 0;">
+          <li><strong>Table Completeness [5 Marks]:</strong> 3 concordant readings within 0.10 cm³.</li>
+          <li><strong>Accuracy [1 Mark]:</strong> Compared against teacher's value from supervisor's confidential report.</li>
+          <li><strong>Decimals [1 Mark]:</strong> All entries to 2 decimal places ending in .00 or .05.</li>
+          <li><strong>Averaging [1 Mark]:</strong> Only concordant values shown in table to be averaged.</li>
+          <li><strong>Calculations [7 Marks]:</strong> Error carried forward (e.c.f.) is awarded if arithmetic follows correct stoichiometric logic from student's average titre.</li>
+        </ol>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px; border-top:1px solid var(--tt-border); padding-top:14px;">
+        <button type="button" onclick="window.print()" class="theme-btn-chip" style="padding:8px 16px; font-weight:700;">🖨️ Print Mark Scheme</button>
+        <button type="button" onclick="closeMarkSchemeModal()" class="theme-btn-chip active" style="padding:8px 16px; font-weight:700;">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function setTheme(theme) {
+      localStorage.setItem('vlk_theme', theme);
+      document.documentElement.setAttribute('data-theme', theme);
+      document.querySelectorAll('[data-theme]').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-theme') === theme);
+      });
+    }
+
+    function openMarkSchemeModal() {
+      document.getElementById('markSchemeModal').style.display = 'flex';
+    }
+
+    function closeMarkSchemeModal() {
+      document.getElementById('markSchemeModal').style.display = 'none';
+    }
+
+    function launchSelectedPractical() {
+      const type = document.getElementById('titrationSelect').value;
+      const difficulty = document.getElementById('difficultySelect').value;
+      const url = `lab.html?type=${encodeURIComponent(type)}&studyMode=${encodeURIComponent(difficulty)}`;
+      window.location.href = url;
+    }
+  </script>
+</body>
+</html>

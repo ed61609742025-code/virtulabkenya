@@ -3,7 +3,7 @@
 //  Feature #1: Offline Support, Smart Caching & Sync
 // ============================================================
 
-const CACHE_NAME = 'virtulab-kenya-v76';
+const CACHE_NAME = 'virtulab-kenya-v77';
 
 const PRECACHE_ASSETS = [
   '/',
@@ -41,6 +41,7 @@ const PRECACHE_ASSETS = [
   '/shared/apple-touch-icon.png',
   '/student/home.html',
   '/student/lab.html',
+  '/student/titration_theory.html',
   '/student/qualitative.html',
   '/student/organic.html',
   '/student/solubility.html',

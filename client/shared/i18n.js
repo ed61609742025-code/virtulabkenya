@@ -312,7 +312,7 @@ const translations = {
     btn_pre_test: "Fanya Mtihani wa Awali",
     btn_post_test: "Fanya Mtihani Mkuu",
     btn_sus: "Utafiti wa Utumiaji (SUS)",
-    btn_tam: "Utafiti wa Wanafunzi wa TAM"
+    btn_tam: "Utafiti wa Wanafunzi wa TAM",
 
     // Common Buttons & Topbar
     logout: "Ondoka",

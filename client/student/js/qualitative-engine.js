@@ -740,8 +740,8 @@ requireStudentLogin();
 
         ${stage === 'few_drops' ? `
           <!-- Precision Dropper -->
-          <g class="anim-dropper" opacity="1" style="transform-origin: 43px 8px;">
-            <path d="M 39,2 L 47,2 L 45,12 L 41,12 Z" fill="#EF4444" rx="2"/>
+          <g class="anim-dropper" opacity="1">
+            <path class="anim-dropper-bulb" d="M 39,2 L 47,2 L 45,12 L 41,12 Z" fill="#EF4444" rx="2"/>
             <rect x="41.5" y="12" width="3" height="15" fill="rgba(255,255,255,0.75)" stroke="#94A3B8" stroke-width="0.8"/>
             <path d="M 41.5,27 L 44.5,27 L 43,35 Z" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
           </g>
@@ -797,13 +797,13 @@ requireStudentLogin();
       </defs>
 
       <!-- Precision Reagent Dropper Pipette (Centered over Mouth) -->
-      <g class="${performed ? 'anim-dropper' : ''}" opacity="${performed ? '1' : '0.45'}" style="transform-origin: 43px 8px;">
-        <path d="M 39,2 L 47,2 L 45,12 L 41,12 Z" fill="#EF4444" rx="2"/>
+      <g class="anim-dropper" opacity="${performed ? '1' : '0.45'}">
+        <path class="${performed ? 'anim-dropper-bulb' : ''}" d="M 39,2 L 47,2 L 45,12 L 41,12 Z" fill="#EF4444" rx="2"/>
         <rect x="41.5" y="12" width="3" height="15" fill="rgba(255,255,255,0.75)" stroke="#94A3B8" stroke-width="0.8"/>
         <path d="M 41.5,27 L 44.5,27 L 43,35 Z" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
       </g>
       ${performed ? `
-        <!-- Falling Reagent Droplet -->
+        <!-- Fast Gravitational Falling Reagent Droplet -->
         <ellipse cx="43" cy="36" rx="2" ry="2.8" fill="${st.color && st.color.startsWith('#') ? st.color : '#38BDF8'}" class="anim-droplet"/>
       ` : ''}
 

@@ -9,7 +9,7 @@
   const PATHWAY_DATA = [
     {
       id: 'branch-volumetric',
-      title: 'Branch 1: Volumetric Analysis Mastery',
+      title: '1. Volumetric Analysis',
       tag: 'Paper 3 · Question 1 (15 Marks)',
       description: 'Master burette reading precision, concordancy, indicator transitions, and stoichiometric calculations.',
       nodes: [
@@ -61,7 +61,7 @@
     },
     {
       id: 'branch-qualitative',
-      title: 'Branch 2: Qualitative Inorganic Salt Analysis',
+      title: '2. Qualitative Salt Analysis',
       tag: 'Paper 3 · Question 2 (15 Marks)',
       description: 'Systematic identification of unknown cations and anions through reagent precipitate testing and flame emissions.',
       nodes: [
@@ -102,8 +102,8 @@
     },
     {
       id: 'branch-kinetics',
-      title: 'Branch 3: Physical Chemistry, Kinetics & Energetics',
-      tag: 'Paper 3 · Question 3 Focus',
+      title: '3. Kinetics & Energetics',
+      tag: 'Paper 3 · Q3 Focus',
       description: 'Quantify reaction rates, activation energies, enthalpy changes, and solubility crystallization curves.',
       nodes: [
         {
@@ -143,7 +143,7 @@
     },
     {
       id: 'branch-organic-gas',
-      title: 'Branch 4: Organic Synthesis & Gas Chemistry',
+      title: '4. Organic & Gas Chemistry',
       tag: 'Paper 3 · Question 3 Focus',
       description: 'Prepare, dry, collect, and test essential inorganic gases and distinguish organic functional groups.',
       nodes: [
@@ -173,8 +173,8 @@
     },
     {
       id: 'branch-capstone',
-      title: '🏆 Capstone Checkpoint: KNEC KCSE Composite Examination',
-      tag: 'Full 40-Mark Mock Practical Examination',
+      title: '5. Capstone Mock Exam',
+      tag: '40-Mark National Mock',
       isCapstone: true,
       description: 'Complete all 3 comprehensive practical questions under timed exam conditions for official KNEC KCSE grading (A–E).',
       nodes: [
@@ -264,25 +264,21 @@
     const syllabusPct = Math.round((totalCompletedNodes / totalNodesCount) * 100);
 
     let html = `
-      <!-- Pathway Stats Banner -->
+      <!-- Compact Pathway Stats Banner -->
       <div class="st-stats-banner">
-        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-          <span class="st-stat-pill st-stat-stars">
-            <span>⭐</span>
-            <span>${totalEarnedStars} / ${totalPossibleStars} Stars</span>
-          </span>
-          <span class="st-stat-pill">
-            <span>🗺️</span>
-            <span>${totalCompletedNodes}/${totalNodesCount} Practicals Mastered</span>
-          </span>
-        </div>
-        <div class="st-stat-progress">
-          <div style="display:flex; justify-content:space-between; font-size:0.72rem; font-weight:800; font-family:'JetBrains Mono',monospace; margin-bottom:4px; color:var(--b-text-muted);">
-            <span>SYLLABUS MASTERY</span>
-            <span style="color:var(--b-emerald);">${syllabusPct}%</span>
+        <div class="st-stats-row-compact">
+          <div class="st-stats-chips-group">
+            <span class="st-stat-pill"><b>${totalCompletedNodes}/${totalNodesCount}</b> Practicals</span>
+            <span class="st-stat-pill st-stat-stars"><b>${totalEarnedStars}/${totalPossibleStars}</b> Stars</span>
           </div>
-          <div style="height:8px; background:var(--b-surface-subtle); border-radius:100px; overflow:hidden; border:1px solid var(--b-border);">
-            <div style="height:100%; width:${syllabusPct}%; background:var(--b-emerald); border-radius:100px; transition:width 0.5s ease;"></div>
+          <div class="st-stat-progress-compact">
+            <div class="st-progress-label-row">
+              <span>Syllabus Mastery</span>
+              <b style="color:var(--green-accent);">${syllabusPct}%</b>
+            </div>
+            <div class="st-progress-track">
+              <div class="st-progress-fill" style="width:${syllabusPct}%;"></div>
+            </div>
           </div>
         </div>
       </div>

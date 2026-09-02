@@ -2868,3 +2868,165 @@ html, body {
     height: 14px !important;
   }
 }
+
+
+/* ── COMPACT ASSIGNMENTS & STREAMLINED HEADERS ── */
+.block-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.ca-progress-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.ca-progress-bar-wrap {
+  width: 100%;
+  height: 5px;
+  background: var(--card-border);
+  border-radius: 100px;
+  overflow: hidden;
+}
+
+.ca-progress-fill {
+  height: 100%;
+  background: #10B981;
+  border-radius: 100px;
+  transition: width 0.3s ease;
+}
+
+.ca-stat-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 0.72rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.ca-stat-chip {
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+.ca-stat-chip.chip-marked {
+  background: rgba(16, 185, 129, 0.12);
+  color: #047857;
+}
+.ca-stat-chip.chip-review {
+  background: rgba(2, 132, 199, 0.12);
+  color: #0284C7;
+}
+.ca-stat-chip.chip-pending {
+  background: rgba(245, 158, 11, 0.12);
+  color: #B45309;
+}
+
+/* Compact Assignment Card Box */
+.assignment-card-box {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: all 0.15s ease;
+  box-sizing: border-box;
+}
+
+.assignment-card-box:hover {
+  border-color: var(--acad-oxford);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+}
+
+.assign-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.assign-card-title {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--heading-color);
+  margin: 0;
+  line-height: 1.25;
+}
+
+.assign-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.pending-pill-btn {
+  flex: 1;
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 7px 12px;
+  border-radius: 8px;
+  background: var(--acad-oxford);
+  color: #FFFFFF !important;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  box-sizing: border-box;
+  transition: all 0.15s ease;
+}
+[data-theme="dark"] .pending-pill-btn { background: #0284C7; }
+[data-theme="green"] .pending-pill-btn { background: #059669; }
+
+.assign-warmup-icon-btn {
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg-hover);
+  color: var(--text-muted);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  box-sizing: border-box;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+.assign-warmup-icon-btn:hover {
+  border-color: var(--acad-oxford);
+  color: var(--heading-color);
+}
+
+.submitted-pill {
+  width: 100%;
+  font-size: 0.8rem;
+  font-weight: 800;
+  padding: 7px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--green-accent);
+  background: var(--green-bg);
+  color: var(--green-accent);
+  cursor: pointer;
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+.submitted-pill.is-review {
+  border-color: #F59E0B;
+  background: rgba(245, 158, 11, 0.12);
+  color: #854D0E;
+}

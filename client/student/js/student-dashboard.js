@@ -445,52 +445,41 @@ requireStudentLogin();
           if (isGraded) {
             statusChipHtml = `<span class="assign-status-chip is-marked">Graded</span>`;
             statusHtml = `
-              <div style="display:flex; flex-direction:column; gap:6px; width:100%;">
-                <button type="button" class="submitted-pill" style="cursor:pointer; background:var(--green-bg); color:var(--green-accent); border:1.5px solid var(--green-accent); justify-content:center; width:100%; font-weight:800; min-height:44px;" onclick="openAssignmentFeedbackModalById(${a.id})">
-                  <span>Marked (View Grade &amp; Rubric)</span>
-                </button>
-                <a href="${targetUrl}" style="text-align:center; font-size:0.75rem; font-weight:700; color:var(--text-muted); text-decoration:underline; min-height:30px; display:flex; align-items:center; justify-content:center;">Revisit Experiment Bench →</a>
-              </div>
+              <button type="button" class="submitted-pill" onclick="openAssignmentFeedbackModalById(${a.id})">
+                View Feedback &amp; Rubric
+              </button>
             `;
           } else {
-            statusChipHtml = `<span class="assign-status-chip is-review">🟡 Under Teacher Review</span>`;
+            statusChipHtml = `<span class="assign-status-chip is-review">Under Review</span>`;
             statusHtml = `
-              <div style="display:flex; flex-direction:column; gap:6px; width:100%;">
-                <button type="button" class="submitted-pill" style="cursor:pointer; background:rgba(245, 158, 11, 0.15); color:#854D0E; border:1.5px solid #F59E0B; justify-content:center; width:100%; font-weight:800; min-height:44px;" onclick="openAssignmentFeedbackModalById(${a.id})">
-                  <span>🟡</span> <span>Under Review (Teacher Marking)</span>
-                </button>
-                <a href="${targetUrl}" style="text-align:center; font-size:0.75rem; font-weight:700; color:var(--text-muted); text-decoration:underline; min-height:30px; display:flex; align-items:center; justify-content:center;">Revisit Experiment Bench →</a>
-              </div>
+              <button type="button" class="submitted-pill is-review" onclick="openAssignmentFeedbackModalById(${a.id})">
+                Under Teacher Marking
+              </button>
             `;
           }
         } else {
-          statusChipHtml = `<span class="assign-status-chip is-pending">⏳ Action Required</span>`;
+          statusChipHtml = `<span class="assign-status-chip is-pending">Pending</span>`;
           statusHtml = `
-            <div style="display:flex; flex-direction:column; gap:8px; width:100%;">
-              <a href="${targetUrl}" class="pending-pill-btn" style="text-align:center; width:100%; display:flex; align-items:center; justify-content:center; gap:8px; font-weight:800; min-height:44px;" aria-label="Start assignment: ${escapeHtml(a.title)}">
-                <span>🧪</span> <span>Start Assignment →</span>
+            <div class="assign-actions-row">
+              <a href="${targetUrl}" class="pending-pill-btn" aria-label="Start assignment: ${escapeHtml(a.title)}">
+                Start Assignment →
               </a>
-              <a href="${warmupUrl}" style="text-align:center; font-size:0.75rem; font-weight:700; color:var(--cyan-accent); text-decoration:underline; padding:4px 0; min-height:32px; display:flex; align-items:center; justify-content:center; gap:4px;" title="Take an optional 45s diagnostic warmup drill before opening the lab workbench">
-                <span>⚡</span> <span>Optional Pre-Lab Diagnostic Drill</span>
+              <a href="${warmupUrl}" class="assign-warmup-icon-btn" title="Take optional 45s pre-lab warmup" aria-label="Warmup Drill">
+                ⚡ Warmup
               </a>
             </div>
           `;
         }
 
-        const dueLabel = a.due_date ? `Due ${formatDate(a.due_date)}` : 'No set deadline';
+        const dueLabel = a.due_date ? `Due ${formatDate(a.due_date)}` : 'No deadline';
 
         return `
-          <div class="assignment-card-box" data-tooltip="${isSubmitted ? (isGraded ? 'Marked by teacher. Click to view grade &amp; feedback' : 'Submitted and pending teacher marking') : 'Active continuous assessment assignment'}" data-tooltip-pos="top" style="flex: 1 1 260px; display:flex; flex-direction:column; justify-content:space-between; min-height:185px;">
-            <div>
+          <div class="assignment-card-box" data-tooltip="${isSubmitted ? (isGraded ? 'Marked by teacher. Click to view grade &amp; feedback' : 'Submitted and pending teacher marking') : 'Active practical assignment'}" data-tooltip-pos="top">
+            <div class="assign-card-top">
               ${statusChipHtml}
-              <div class="assign-card-title">${escapeHtml(a.title)}</div>
-              <div class="assign-card-desc" style="font-size:0.82rem; color:var(--text-muted); margin-bottom:8px; line-height:1.45; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; font-weight:500;">
-                ${escapeHtml(a.description || a.instructions || 'No instructions provided.')}
-              </div>
-              <div class="assign-card-due" style="font-size:0.78rem; font-family:'JetBrains Mono', monospace; font-weight:700; color:var(--text-muted); margin-bottom:12px;">
-                📅 ${dueLabel}
-              </div>
+              <span class="assign-card-due">${dueLabel}</span>
             </div>
+            <div class="assign-card-title">${escapeHtml(a.title)}</div>
             ${statusHtml}
           </div>
         `;

@@ -412,17 +412,6 @@
 
       <!-- Zone 1: Priority Tasks & Assignments -->
       <section id="zone_assignments" class="activity-zone-wrap zone-priority">
-        <div class="activity-zone-header">
-          <div>
-            <h2 class="section-heading-academic">
-              Assignments &amp; Tasks
-            </h2>
-            <div class="section-subheading">
-              Your active tasks, teacher assignments, and daily challenge:
-            </div>
-          </div>
-          <span class="dash-section-badge badge-blue">Tasks</span>
-        </div>
 
         <!-- Daily Challenge Highlight Banner -->
         <div id="dailyChallengeCard" class="daily-challenge-card" data-tooltip="Daily 3-question practical diagnostic drill" data-tooltip-pos="top">
@@ -452,26 +441,20 @@
           <!-- Left: Teacher Assignments Block -->
           <div class="priority-card-block">
             <div class="block-header">
-              <div>
+              <div class="block-title-row">
                 <h3 class="block-title" data-i18n="prescribed_ca">Teacher Assignments</h3>
-                <div class="block-sub">Prescribed practical continuous assessment</div>
+                <span class="dash-section-badge badge-cyan" id="caProgressPercentBadge">0% Complete</span>
               </div>
-              <span class="dash-section-badge badge-cyan" data-i18n="knec_paper3_target">Paper 3 Target</span>
-            </div>
-
-            <!-- Task Progress Header -->
-            <div class="ca-progress-header" id="caProgressHeader">
-              <div class="ca-progress-meta-row">
-                <span class="ca-progress-title">Assignment Progress</span>
-                <span class="dash-section-badge badge-green" id="caProgressPercentBadge">0% Complete</span>
-              </div>
-              <div class="ca-progress-bar-wrap" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                <div class="ca-progress-fill" id="caProgressFill" style="width: 0%;"></div>
-              </div>
-              <div class="ca-stat-chips" id="caStatChips">
-                <div class="ca-stat-chip chip-marked" id="statChipMarked">0 Graded</div>
-                <div class="ca-stat-chip chip-review" id="statChipReview">0 Under Review</div>
-                <div class="ca-stat-chip chip-pending" id="statChipPending">0 Pending</div>
+              <!-- Task Progress Header -->
+              <div class="ca-progress-header" id="caProgressHeader">
+                <div class="ca-progress-bar-wrap" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                  <div class="ca-progress-fill" id="caProgressFill" style="width: 0%;"></div>
+                </div>
+                <div class="ca-stat-chips" id="caStatChips">
+                  <div class="ca-stat-chip chip-marked" id="statChipMarked">0 Graded</div>
+                  <div class="ca-stat-chip chip-review" id="statChipReview">0 Under Review</div>
+                  <div class="ca-stat-chip chip-pending" id="statChipPending">0 Pending</div>
+                </div>
               </div>
             </div>
 

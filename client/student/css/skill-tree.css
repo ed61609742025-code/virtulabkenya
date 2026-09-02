@@ -133,13 +133,28 @@
 
 /* ── 4. NODE TRACK & CONNECTORS ── */
 .st-nodes-track {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
+  display: grid;
+  grid-template-columns: repeat(var(--node-count, 4), minmax(0, 1fr));
+  align-items: start;
   gap: 16px;
   position: relative;
-  flex-wrap: wrap;
-  padding: 10px 0;
+  padding: 16px 6px 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.st-nodes-track.track-count-1 {
+  display: flex;
+  justify-content: center;
+}
+
+.st-nodes-track.track-count-1 .st-node-wrapper {
+  max-width: 200px;
+}
+
+.st-nodes-track.track-count-2 {
+  max-width: 520px;
+  margin: 0 auto;
 }
 
 /* Connecting Line between nodes on desktop */
@@ -147,12 +162,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   position: relative;
   z-index: 2;
   cursor: pointer;
   text-align: center;
-  max-width: 140px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   transition: transform 0.15s ease;
 }
 
@@ -727,92 +744,151 @@
   padding: 2px 6px;
 }
 
-@media (max-width: 768px) {
-  .st-branch {
-    padding: 10px 12px !important;
-    margin-bottom: 8px !important;
-    border-radius: 12px !important;
-  }
-  .st-nodes-track {
-    gap: 10px !important;
-    padding: 4px 2px 6px !important;
-  }
-  .st-node-wrapper {
-    flex: 0 0 76px !important;
-    max-width: 76px !important;
-    min-width: 76px !important;
-    gap: 3px !important;
-  }
-  .st-node-circle {
-    width: 46px !important;
-    height: 46px !important;
-    font-size: 1.15rem !important;
-  }
-  .st-node-label {
-    font-size: 0.7rem !important;
-    line-height: 1.15 !important;
-  }
-  .st-node-sublabel {
-    font-size: 0.62rem !important;
-  }
-  .st-node-stars {
-    font-size: 0.65rem !important;
-  }
-}
-
-
-/* ── EDGE-OPTIMIZED SKILL TREE ON MOBILE ── */
+/* ── RESPONSIVE ADAPTIVE SKILL TREE CARDS ── */
 @media (max-width: 768px) {
   .st-stats-banner {
-    padding: 8px 10px !important;
-    margin-bottom: 8px !important;
-    border-radius: 10px !important;
+    padding: 10px 14px !important;
+    margin-bottom: 12px !important;
+    border-radius: 12px !important;
     width: 100% !important;
     box-sizing: border-box !important;
   }
 
   .st-branch {
-    padding: 10px 10px !important;
-    margin-bottom: 8px !important;
-    border-radius: 12px !important;
+    padding: 14px 12px !important;
+    margin-bottom: 12px !important;
+    border-radius: 14px !important;
     width: 100% !important;
     box-sizing: border-box !important;
+    overflow: hidden !important;
   }
 
   .st-branch-header {
-    margin-bottom: 6px !important;
-    padding-bottom: 4px !important;
+    margin-bottom: 10px !important;
+    padding-bottom: 6px !important;
+    gap: 8px !important;
+  }
+
+  .st-branch-title {
+    font-size: 0.92rem !important;
+  }
+
+  .st-branch-tag {
+    font-size: 0.68rem !important;
+    padding: 2px 6px !important;
   }
 
   .st-nodes-track {
-    gap: 10px !important;
-    padding: 2px 0 6px !important;
     width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 14px 2px 6px !important;
+    align-items: start !important;
+  }
+
+  /* 4 nodes: 2x2 grid on mobile so every node has ample room and fits inside the card cleanly */
+  .st-nodes-track.track-count-4 {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 16px 12px !important;
+  }
+
+  /* 3 nodes: 3 equal fluid columns across the card */
+  .st-nodes-track.track-count-3 {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 10px 4px !important;
+  }
+
+  /* 2 nodes: 2 equal columns */
+  .st-nodes-track.track-count-2 {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 14px 12px !important;
+    max-width: 100% !important;
+  }
+
+  /* 1 node: centered */
+  .st-nodes-track.track-count-1 {
+    display: flex !important;
+    justify-content: center !important;
   }
 
   .st-node-wrapper {
-    flex: 0 0 74px !important;
-    max-width: 74px !important;
-    min-width: 74px !important;
-    gap: 3px !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .st-branch {
-    padding: 8px 8px !important;
-    border-radius: 10px !important;
-  }
-
-  .st-node-wrapper {
-    flex: 0 0 70px !important;
-    max-width: 70px !important;
-    min-width: 70px !important;
+    flex: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    gap: 4px !important;
+    padding: 0 2px !important;
+    box-sizing: border-box !important;
   }
 
   .st-node-circle {
-    width: 44px !important;
-    height: 44px !important;
-    font-size: 1.1rem !important;
+    width: 48px !important;
+    height: 48px !important;
+    font-size: 1.25rem !important;
+    box-shadow: 0 3px 0 var(--b-card-depth) !important;
+  }
+
+  .st-node-wrapper.capstone .st-node-circle {
+    width: 60px !important;
+    height: 60px !important;
+    font-size: 1.6rem !important;
+  }
+
+  .st-node-beacon {
+    top: -12px !important;
+    font-size: 0.58rem !important;
+    padding: 2px 6px !important;
+  }
+
+  .st-node-stars {
+    font-size: 0.7rem !important;
+    gap: 1px !important;
+    min-height: 14px !important;
+  }
+
+  .st-node-label {
+    font-size: 0.74rem !important;
+    line-height: 1.2 !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+    hyphens: auto !important;
+  }
+
+  .st-node-sublabel {
+    font-size: 0.64rem !important;
+    line-height: 1.15 !important;
+    color: var(--b-text-muted) !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .st-branch {
+    padding: 10px 8px !important;
+  }
+
+  .st-nodes-track.track-count-4 {
+    gap: 12px 8px !important;
+  }
+
+  .st-nodes-track.track-count-3 {
+    gap: 8px 3px !important;
+  }
+
+  .st-node-circle {
+    width: 42px !important;
+    height: 42px !important;
+    font-size: 1.12rem !important;
+  }
+
+  .st-node-label {
+    font-size: 0.69rem !important;
+  }
+
+  .st-node-sublabel {
+    font-size: 0.6rem !important;
   }
 }

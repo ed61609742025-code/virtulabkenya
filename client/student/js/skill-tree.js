@@ -306,17 +306,18 @@
 
     PATHWAY_DATA.forEach((branch) => {
       const isCapstoneBranch = !!branch.isCapstone;
+      const nodeCount = branch.nodes.length;
       html += `
         <section class="st-branch ${isCapstoneBranch ? 'st-capstone-branch' : ''}" id="${branch.id}">
-          <div class="st-branch-header">
-            <div class="st-branch-title">
-              <span>${branch.title}</span>
+            <div class="st-branch-header">
+              <div class="st-branch-title">
+                <span>${branch.title}</span>
+              </div>
+              <span class="st-branch-tag">${branch.tag}</span>
             </div>
-            <span class="st-branch-tag">${branch.tag}</span>
-          </div>
 
-          <div class="st-nodes-track">
-      `;
+            <div class="st-nodes-track track-count-${nodeCount}" style="--node-count: ${nodeCount};">
+        `;
 
       branch.nodes.forEach((node) => {
         const prog = node.progress;

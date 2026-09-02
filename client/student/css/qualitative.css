@@ -398,26 +398,28 @@ html, body {
     font-size: 0.78rem;
   }
   .header-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    flex-wrap: wrap;
     gap: 6px;
     width: 100%;
   }
-  .header-actions .btn-secondary,
-  .header-actions .btn-primary-solid {
-    width: 100%;
+  .header-actions .btn-secondary {
+    flex: 1 1 calc(50% - 6px);
     justify-content: center;
     padding: 7px 6px;
-    font-size: 0.72rem;
+    font-size: 0.74rem;
     text-align: center;
     white-space: normal;
     box-sizing: border-box;
   }
-}
-
-@media (max-width: 400px) {
-  .header-actions {
-    grid-template-columns: 1fr;
+  .header-actions .btn-primary-solid {
+    flex: 1 1 100%;
+    justify-content: center;
+    padding: 8px 10px;
+    font-size: 0.78rem;
+    text-align: center;
+    white-space: normal;
+    box-sizing: border-box;
   }
 }
 

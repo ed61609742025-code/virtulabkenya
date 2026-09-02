@@ -1870,7 +1870,8 @@ requireStudentLogin();
       } catch(e) {}
     }
 
-    document.getElementById('knecEvalModal').style.display = 'flex';
+    const modal = document.getElementById('knecEvalModal');
+    if (modal) modal.style.display = 'flex';
     const resBox = document.getElementById('knecEvalResults');
     if (!resBox) return;
 
@@ -1901,7 +1902,8 @@ requireStudentLogin();
   }
 
   window.closeKnecEvalModal = function() {
-    document.getElementById('knecEvalModal').style.display = 'none';
+    const modal = document.getElementById('knecEvalModal');
+    if (modal) modal.style.display = 'none';
   };
 
   function initAssignmentBanner() {

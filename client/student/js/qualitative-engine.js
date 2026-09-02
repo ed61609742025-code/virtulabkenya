@@ -67,13 +67,16 @@ requireStudentLogin();
       const unread = marked.filter(a => !readIds.includes(a.id));
 
       const badge = document.getElementById('notifBadge');
-      badge.textContent = unread.length;
-      badge.style.display = unread.length > 0 ? 'inline-block' : 'none';
+      if (badge) {
+        badge.textContent = unread.length;
+        badge.style.display = unread.length > 0 ? 'inline-block' : 'none';
+      }
 
       const list = document.getElementById('notifList');
-      if (marked.length === 0) {
-        list.innerHTML = '<div style="font-size:0.8rem;color:var(--text-muted);text-align:center;padding:12px;">No notifications yet</div>';
-      } else {
+      if (list) {
+        if (marked.length === 0) {
+          list.innerHTML = '<div style="font-size:0.8rem;color:var(--text-muted);text-align:center;padding:12px;">No notifications yet</div>';
+        } else {
         list.innerHTML = marked.map(a => {
           const isRead = readIds.includes(a.id);
           return `<div style="padding:10px 12px;border-bottom:1px solid var(--card-border);background:${isRead ? 'transparent' : 'rgba(16,185,129,0.12)'};border-radius:8px;margin-bottom:6px;">
@@ -84,6 +87,7 @@ requireStudentLogin();
             <div style="font-size:0.78rem;color:var(--text-muted);margin-top:4px;">Assignment marked by teacher! View grade on Dashboard.</div>
           </div>`;
         }).join('');
+        }
       }
     } catch (err) { /* notifications optional */ }
   }

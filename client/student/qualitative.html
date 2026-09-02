@@ -31,7 +31,7 @@
 <link rel="stylesheet" href="../shared/style.css">
 <link rel="stylesheet" href="../shared/brilliant-theme.css">
 <link rel="stylesheet" href="../shared/tutorial-engine.css">
-<link rel="stylesheet" href="css/qualitative.css?v=80">
+<link rel="stylesheet" href="css/qualitative.css?v=81">
 <link rel="stylesheet" href="../shared/ai-tutor.css">
 <link rel="stylesheet" href="../shared/pwa-installer.css">
 </head>
@@ -61,16 +61,8 @@
       🧭 Guided Tutorial
     </button>
 
-    <button class="nav-btn nav-btn-tips" onclick="openExaminerTipsModal()" title="View KNEC marking tips and examiner advice">
-      💡 Examiner Tips
-    </button>
-
     <button class="nav-btn nav-btn-safety" onclick="window.VLKSafety && window.VLKSafety.openSDSModal('NaOH')" title="View Chemical Safety & SDS Hazards">
       ⚠️ Reagent Safety (SDS)
-    </button>
-
-    <button class="nav-btn nav-btn-print" onclick="window.print()" title="Export / Print KCSE Practical Booklet">
-      🖨️ Print Booklet
     </button>
 
     <!-- Compact Settings Dropdown -->
@@ -106,32 +98,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Notification Bell -->
-    <div style="position:relative;">
-      <button class="user-avatar-btn" id="notifBellBtn" onclick="toggleNotifDropdown(event)" title="Notifications" style="position:relative;">
-        <span style="font-size:0.95rem;">🔔</span>
-        <span id="notifBadge" style="display:none; position:absolute; top:-4px; right:-4px; background:var(--red-accent); color:#FFF; font-size:0.65rem; font-weight:800; padding:1px 5px; border-radius:100px; line-height:1.2;">0</span>
-      </button>
-
-      <!-- Notification Dropdown -->
-      <div id="notifDropdown" style="display:none; position:absolute; right:0; top:40px; width:300px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; box-shadow:var(--shadow-lg); z-index:10000; padding:12px;">
-        <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px; margin-bottom:8px;">
-          <span style="font-weight:700; font-size:0.82rem; color:var(--heading-color);">Notifications</span>
-          <button style="font-size:0.72rem; color:var(--blue-accent); background:none; border:none; cursor:pointer;" onclick="markAllNotificationsRead()">Mark all read</button>
-        </div>
-        <div id="notifList" style="max-height:240px; overflow-y:auto;">
-          <div style="font-size:0.8rem; color:var(--text-muted); text-align:center; padding:12px;">No unread notifications</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- User Avatar -->
-    <button class="user-avatar-btn" title="Account">
-      <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
-      </svg>
-    </button>
   </div>
 </nav>
 
@@ -372,44 +338,6 @@
 </div>
 
 <!-- ══════════════════════════════════════
-     KNEC EXAMINER TIPS MODAL
-══════════════════════════════════════ -->
-<div id="examinerTipsModal" class="modal-overlay" style="display:none;">
-  <div class="modal-box" style="max-width:640px; padding:24px;">
-    <div class="modal-header" style="padding:0 0 14px 0; margin-bottom:16px;">
-      <h2>💡 KNEC Chemistry Paper 3 Inorganic Salt Analysis Tips</h2>
-      <button class="modal-close-btn" onclick="closeExaminerTipsModal()">&times;</button>
-    </div>
-
-    <div style="font-size:0.86rem; color:var(--text-main); line-height:1.6;">
-      <p style="margin-top:0;">Use this guide to avoid common mark penalties in KNEC salt analysis examinations:</p>
-
-      <div style="background:var(--red-bg); border-left:4px solid var(--red-accent); padding:12px 14px; border-radius:6px; margin-bottom:14px; border:1px solid var(--red-border); border-left-width:4px;">
-        <b style="color:var(--red-accent);">❌ Common Penalty Traps:</b>
-        <ul style="margin:6px 0 0 18px; padding:0;">
-          <li><b>Do NOT write "white solution":</b> Write <i>"white precipitate"</i> or <i>"colourless solution"</i>.</li>
-          <li><b>Do NOT write "gas produced":</b> State observations (e.g. <i>"effervescence of a colourless gas that turns moist litmus blue"</i>).</li>
-          <li><b>Do NOT forget excess reagent observation:</b> Always state whether the precipitate is <i>"soluble in excess"</i> or <i>"insoluble in excess"</i>.</li>
-        </ul>
-      </div>
-
-      <div style="background:var(--green-bg); border-left:4px solid var(--green-accent); padding:12px 14px; border-radius:6px; margin-bottom:14px; border:1px solid var(--green-border); border-left-width:4px;">
-        <b style="color:var(--green-accent);">✅ Marking Best Practices:</b>
-        <ul style="margin:6px 0 0 18px; padding:0;">
-          <li><b>Cation Deductions:</b> List ionic charges (e.g. <i>Zn²⁺, Al³⁺, Pb²⁺ present</i> for white precipitate soluble in excess NaOH).</li>
-          <li><b>Confirmatory Tests:</b> Mention specific ions (e.g. <i>Cu²⁺ present</i> for deep blue solution in excess NH₃).</li>
-          <li><b>Anion Deductions:</b> Write exact ionic formulas (e.g. <i>SO₄²⁻ present</i> for white precipitate insoluble in dilute HNO₃).</li>
-        </ul>
-      </div>
-
-      <div style="text-align:right; margin-top:18px;">
-        <button class="btn-primary-solid" onclick="closeExaminerTipsModal()">Got It</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════
      KCSE SYSTEMATIC FLOWCHART MODAL
 ══════════════════════════════════════ -->
 <div id="flowchartModal" class="modal-overlay" style="display:none;">
@@ -448,10 +376,9 @@
 <script src="../shared/api.js"></script>
 <script src="../shared/chemical-safety.js"></script>
 <script src="../shared/i18n.js"></script>
-<script src="../shared/notifications-engine.js"></script>
 <script src="../shared/brilliant-ui.js"></script>
 <script src="../shared/tutorial-engine.js"></script>
-<script src="js/qualitative-engine.js?v=80"></script>
+<script src="js/qualitative-engine.js?v=81"></script>
 <script src="../shared/ai-tutor.js"></script>
 <script src="../shared/pwa-installer.js"></script>
 <script src="../shared/page-transitions.js"></script>

@@ -2587,3 +2587,214 @@ html, body {
   background: #059669;
   transform: translateY(-1px);
 }
+
+
+/* ── ULTRA-CLEAN MOBILE & TABLET RESPONSIVE OVERHAUL ── */
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 90px !important;
+  }
+
+  .dashboard-container {
+    padding: 12px 14px 90px !important;
+  }
+
+  /* Candidate Hero Bar on Mobile */
+  .candidate-hero-bar {
+    padding: 14px 16px !important;
+    gap: 12px !important;
+    border-radius: 14px !important;
+  }
+
+  .hero-profile-box {
+    gap: 12px !important;
+    flex: 1 1 100% !important;
+  }
+
+  .hero-avatar {
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 0.95rem !important;
+    border-radius: 10px !important;
+  }
+
+  .candidate-name-title {
+    font-size: 1.15rem !important;
+  }
+
+  .hero-role-chip {
+    font-size: 0.7rem !important;
+    padding: 2px 8px !important;
+  }
+
+  .hero-meta-row {
+    gap: 8px !important;
+  }
+
+  .hero-meta-chip {
+    font-size: 0.74rem !important;
+  }
+
+  .hero-metrics-box {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+  }
+
+  .hero-metric-card {
+    padding: 8px 12px !important;
+    border-radius: 10px !important;
+  }
+
+  .xp-metric-card {
+    grid-column: 1 / -1 !important;
+    min-width: 0 !important;
+  }
+
+  .hero-warmup-btn {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    min-height: 38px !important;
+    font-size: 0.82rem !important;
+    padding: 8px 14px !important;
+  }
+
+  /* Subtabs Nav on Mobile */
+  .student-subtabs-nav {
+    display: none !important; /* Managed cleanly by mobile bottom navigation dock */
+  }
+
+  /* Daily Challenge on Mobile */
+  .daily-challenge-card {
+    padding: 14px 16px !important;
+    gap: 12px !important;
+  }
+
+  .daily-title {
+    font-size: 1.02rem !important;
+  }
+
+  .daily-desc {
+    font-size: 0.8rem !important;
+  }
+
+  .daily-launch-btn {
+    width: 100% !important;
+    min-height: 38px !important;
+    padding: 8px 14px !important;
+    font-size: 0.84rem !important;
+  }
+
+  /* Priority Action Grid on Mobile */
+  .priority-action-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+
+  .priority-card-block {
+    padding: 14px !important;
+    border-radius: 14px !important;
+  }
+
+  /* Compact Assignment Cards on Mobile */
+  .assignments-grid-container {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .assignment-card-box {
+    padding: 12px 14px !important;
+    border-radius: 10px !important;
+    gap: 8px !important;
+  }
+
+  .assign-card-title {
+    font-size: 0.9rem !important;
+    margin: 2px 0 !important;
+  }
+
+  .assign-card-desc {
+    font-size: 0.76rem !important;
+    margin-bottom: 4px !important;
+  }
+
+  .assign-card-due {
+    font-size: 0.72rem !important;
+    margin-bottom: 8px !important;
+  }
+
+  .pending-pill-btn, .submitted-pill {
+    min-height: 38px !important;
+    font-size: 0.8rem !important;
+    padding: 8px 12px !important;
+  }
+
+  /* Drills Grid on Mobile */
+  .drill-card-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .drill-item-card {
+    padding: 10px !important;
+    border-radius: 10px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+  }
+
+  .drill-card-title {
+    font-size: 0.84rem !important;
+  }
+
+  .drill-card-desc {
+    font-size: 0.72rem !important;
+  }
+
+  .drill-time-chip {
+    align-self: flex-start !important;
+    font-size: 0.68rem !important;
+    padding: 2px 6px !important;
+  }
+
+  /* Bottom Navigation Dock */
+  .mobile-bottom-nav {
+    display: flex !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    background: var(--card-bg) !important;
+    border-top: 1px solid var(--card-border) !important;
+    padding: 6px 10px calc(6px + env(safe-area-inset-bottom, 0px)) !important;
+    z-index: 10000 !important;
+    justify-content: space-around !important;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  .bottom-tab-item {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 2px !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    color: var(--text-muted) !important;
+    background: none !important;
+    border: none !important;
+    cursor: pointer !important;
+    padding: 6px 12px !important;
+    border-radius: 8px !important;
+  }
+
+  .bottom-tab-item.active {
+    color: var(--heading-color) !important;
+    background: var(--card-bg-hover) !important;
+    font-weight: 800 !important;
+  }
+
+  .bottom-tab-icon {
+    font-size: 1.25rem !important;
+  }
+}

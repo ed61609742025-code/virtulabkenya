@@ -584,3 +584,71 @@
   font-weight: 600;
   color: var(--text-muted);
 }
+
+
+/* ── HORIZONTAL SWIPE TRACKS FOR SKILL TREE ON MOBILE ── */
+@media (max-width: 768px) {
+  .st-branch {
+    padding: 14px 16px !important;
+    border-radius: 14px !important;
+    margin-bottom: 14px !important;
+  }
+
+  .st-branch-header {
+    margin-bottom: 10px !important;
+    padding-bottom: 8px !important;
+  }
+
+  .st-branch-title {
+    font-size: 0.92rem !important;
+  }
+
+  .st-branch-tag {
+    font-size: 0.68rem !important;
+    padding: 2px 6px !important;
+  }
+
+  /* Horizontal swipe track: nodes scroll left-to-right smoothly */
+  .st-nodes-track {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    justify-content: flex-start !important;
+    gap: 14px !important;
+    padding: 6px 4px 10px !important;
+  }
+  .st-nodes-track::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .st-node-wrapper {
+    flex: 0 0 88px !important;
+    max-width: 88px !important;
+    min-width: 88px !important;
+    gap: 6px !important;
+  }
+
+  .st-node-circle {
+    width: 52px !important;
+    height: 52px !important;
+    font-size: 1.3rem !important;
+  }
+
+  .st-node-label {
+    font-size: 0.74rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .st-node-sublabel {
+    font-size: 0.65rem !important;
+  }
+
+  .st-node-wrapper.capstone .st-node-circle {
+    width: 60px !important;
+    height: 60px !important;
+    font-size: 1.45rem !important;
+  }
+}

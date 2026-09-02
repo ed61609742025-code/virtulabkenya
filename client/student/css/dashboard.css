@@ -3030,3 +3030,143 @@ html, body {
   background: rgba(245, 158, 11, 0.12);
   color: #854D0E;
 }
+
+
+/* ── EDGE-OPTIMIZED RESPONSIVE LAYOUT (ELIMINATE NESTED PADDING ON SMALL SCREENS) ── */
+@media (max-width: 768px) {
+  /* Container spans full screen with clean 8px gutter */
+  .dashboard-container {
+    padding: 8px 8px 85px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Unnest outer activity zone wrapper: remove outer card shell so content fills screen */
+  .activity-zone-wrap {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    margin-bottom: 12px !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .activity-zone-header {
+    margin-bottom: 8px !important;
+    padding: 0 2px 6px !important;
+    border-bottom: 1px solid var(--card-border) !important;
+  }
+
+  /* Hero command bar: fills screen with 12px padding */
+  .candidate-hero-bar {
+    padding: 12px !important;
+    margin-bottom: 10px !important;
+    border-radius: 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Daily challenge card */
+  .daily-challenge-card {
+    padding: 12px !important;
+    margin-bottom: 10px !important;
+    border-radius: 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Priority Action Grid */
+  .priority-action-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Priority card block */
+  .priority-card-block {
+    padding: 12px 10px !important;
+    border-radius: 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Assignments grid & cards */
+  .assignments-grid-container {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .assignment-card-box {
+    padding: 10px 12px !important;
+    border-radius: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Right column guidance cards */
+  .priority-side-block {
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  .guidance-card {
+    padding: 12px !important;
+    border-radius: 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Reference tab cards */
+  .knec-reference-card {
+    padding: 12px 10px !important;
+    border-radius: 12px !important;
+    margin-bottom: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Drills item card */
+  .drill-card-grid {
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .drill-item-card {
+    padding: 10px !important;
+    border-radius: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Top navbar */
+  .top-navbar {
+    padding: 8px 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-container {
+    padding: 6px 6px 85px !important;
+  }
+
+  .candidate-hero-bar,
+  .daily-challenge-card,
+  .priority-card-block,
+  .guidance-card,
+  .knec-reference-card {
+    padding: 10px !important;
+    border-radius: 10px !important;
+  }
+
+  .assignment-card-box {
+    padding: 9px 10px !important;
+  }
+}

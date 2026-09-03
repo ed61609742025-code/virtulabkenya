@@ -688,14 +688,26 @@ html, body {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  transition: all 0.18s ease;
+  box-shadow: 0 3px 0 var(--card-border);
+  transition: all 0.15s ease;
+  outline: none;
 }
 
 .drill-item-card:hover {
   transform: translateY(-2px);
-  border-color: var(--acad-oxford);
+  border-color: var(--acad-navy);
   background: var(--card-bg);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 5px 0 var(--card-border-strong);
+}
+
+.drill-item-card:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--card-border);
+}
+
+.drill-item-card:focus-visible {
+  outline: none;
+  box-shadow: var(--b-focus-ring, 0 0 0 3px rgba(2, 132, 199, 0.4)), 0 3px 0 var(--card-border);
 }
 
 .drill-card-title {
@@ -2172,11 +2184,11 @@ html, body {
 
 .xp-track-bar {
   width: 100%;
-  height: 6px;
+  height: 8px;
   background: var(--card-border);
   border-radius: 100px;
   overflow: hidden;
-  margin: 2px 0;
+  margin: 3px 0;
 }
 
 .xp-track-fill {
@@ -2190,8 +2202,8 @@ html, body {
 }
 
 .xp-sub-text {
-  font-size: 0.7rem;
-  font-weight: 600;
+  font-size: 0.72rem;
+  font-weight: 700;
   color: var(--text-muted);
 }
 
@@ -2204,27 +2216,38 @@ html, body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: var(--acad-oxford);
+  background: var(--b-primary, #0284C7);
   color: #FFFFFF !important;
-  border: 1px solid var(--acad-oxford);
-  box-shadow: 0 2px 8px rgba(11, 37, 69, 0.15);
-  transition: all 0.18s ease;
+  border: 1.5px solid var(--b-primary-dark, #0369A1);
+  box-shadow: 0 4px 0 var(--b-primary-shadow, #075985);
+  transition: all 0.15s ease;
   min-height: 42px;
   white-space: nowrap;
 }
 .hero-warmup-btn:hover {
-  background: var(--acad-navy);
+  background: var(--b-primary-dark, #0369A1);
   transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(11, 37, 69, 0.25);
+  box-shadow: 0 6px 0 var(--b-primary-shadow, #075985);
+}
+.hero-warmup-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--b-primary-shadow, #075985);
+}
+.hero-warmup-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--b-focus-ring, 0 0 0 3px rgba(2, 132, 199, 0.4)), 0 4px 0 var(--b-primary-shadow, #075985);
 }
 [data-theme="dark"] .hero-warmup-btn {
-  background: #0284C7;
-  border-color: #0284C7;
-  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
+  background: var(--b-primary, #38BDF8);
+  color: #0B1322 !important;
+  border-color: var(--b-primary-dark, #0284C7);
+  box-shadow: 0 4px 0 var(--b-primary-shadow, #0369A1);
 }
 [data-theme="green"] .hero-warmup-btn {
-  background: #059669;
-  border-color: #059669;
+  background: var(--b-primary, #34D399);
+  color: #06150C !important;
+  border-color: var(--b-primary-dark, #10B981);
+  box-shadow: 0 4px 0 var(--b-primary-shadow, #059669);
 }
 
 /* ── 5. SEGMENTED TAB CONTROL ── */
@@ -2269,6 +2292,10 @@ html, body {
   color: var(--heading-color);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 2px 8px rgba(0, 0, 0, 0.03);
   font-weight: 800;
+}
+.student-subtab-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--b-focus-ring, 0 0 0 3px rgba(2, 132, 199, 0.4));
 }
 
 /* ── 6. SECTION ZONES & ACTIVITY CARDS ── */

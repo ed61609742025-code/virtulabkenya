@@ -14,7 +14,7 @@
   
   --b-text: #0F172A;
   --b-text-subtle: #475569;
-  --b-text-muted: #64748B;
+  --b-text-muted: #475569;
   
   /* Vibrant Accents */
   --b-primary: #0284C7;
@@ -31,6 +31,7 @@
   --b-amber-dark: #D97706;
   --b-amber-shadow: #B45309;
   --b-amber-light: #FEF3C7;
+  --b-amber-text: #92400E;
   
   --b-violet: #8B5CF6;
   --b-violet-dark: #7C3AED;
@@ -49,6 +50,7 @@
   
   --b-nav-bg: rgba(255, 255, 255, 0.92);
   --b-nav-border: #E2E8F0;
+  --b-focus-ring: 0 0 0 3px rgba(2, 132, 199, 0.4);
 }
 
 [data-theme="dark"] {
@@ -61,7 +63,7 @@
   
   --b-text: #F8FAFC;
   --b-text-subtle: #94A3B8;
-  --b-text-muted: #64748B;
+  --b-text-muted: #94A3B8;
   
   /* Vibrant Accents */
   --b-primary: #38BDF8;
@@ -78,6 +80,7 @@
   --b-amber-dark: #D97706;
   --b-amber-shadow: #B45309;
   --b-amber-light: rgba(245, 158, 11, 0.15);
+  --b-amber-text: #FBBF24;
   
   --b-violet: #A855F7;
   --b-violet-dark: #8B5CF6;
@@ -96,6 +99,7 @@
   
   --b-nav-bg: rgba(17, 29, 51, 0.94);
   --b-nav-border: #1E3357;
+  --b-focus-ring: 0 0 0 3px rgba(56, 189, 248, 0.45);
 }
 
 [data-theme="green"] {
@@ -125,6 +129,7 @@
   --b-amber-dark: #F59E0B;
   --b-amber-shadow: #D97706;
   --b-amber-light: rgba(251, 191, 36, 0.15);
+  --b-amber-text: #FDE68A;
   
   --b-violet: #C084FC;
   --b-violet-dark: #A855F7;
@@ -143,6 +148,7 @@
   
   --b-nav-bg: rgba(14, 36, 22, 0.94);
   --b-nav-border: #1B442B;
+  --b-focus-ring: 0 0 0 3px rgba(52, 211, 153, 0.45);
 }
 
 /* ── 2. BRILLIANT TACTILE 3D BUTTONS ── */

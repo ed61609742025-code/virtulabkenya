@@ -388,10 +388,15 @@ requireStudentLogin();
           `;
         } else {
           box.innerHTML = `
-            <div class="empty-box" style="width: 100%; flex: 1 1 100%; padding: 24px 16px; text-align: center; border-radius: 8px; border: 1.5px dashed var(--card-border); color: var(--text-muted);">
-              <div style="font-size: 1.4rem; margin-bottom: 6px;">📝</div>
-              <div style="font-weight: 700; font-size: 0.88rem; color: var(--heading-color); margin-bottom: 4px;">No Pending Assignments</div>
-              <div style="font-size: 0.76rem;">You're all caught up! Prescribed lab assignments from ${escapeHtml(currentStudentUser?.teacherName || 'your teacher')} will appear here.</div>
+            <div class="empty-box" style="width: 100%; flex: 1 1 100%; padding: 26px 18px; text-align: center; border-radius: 12px; border: 1.5px dashed var(--card-border); color: var(--text-muted); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
+              <div style="font-size: 1.6rem;" aria-hidden="true">📋</div>
+              <div style="font-weight: 800; font-size: 0.94rem; color: var(--heading-color);">No Pending Assignments</div>
+              <div style="font-size: 0.82rem; line-height: 1.45; max-width: 320px; color: var(--text-muted);">
+                You're all caught up! Prescribed lab assignments from ${escapeHtml(currentStudentUser?.teacherName || 'your instructor')} will appear here.
+              </div>
+              <a href="#skillTreeContainer" class="btn btn-secondary" style="margin-top: 6px; font-size: 0.78rem; font-weight: 700; padding: 7px 16px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                Explore Pathway Practicals ↓
+              </a>
             </div>
           `;
         }

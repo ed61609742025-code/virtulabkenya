@@ -66,11 +66,11 @@
 }
 
 .st-stat-stars {
-  color: var(--b-amber);
+  color: var(--b-amber-text, var(--b-amber));
   background: var(--b-amber-light);
   padding: 4px 12px;
   border-radius: 100px;
-  border: 1px solid var(--b-amber);
+  border: 1px solid var(--b-amber-dark, var(--b-amber));
 }
 
 .st-stat-progress {
@@ -143,6 +143,24 @@
   box-sizing: border-box;
 }
 
+/* Connecting Line between nodes on desktop */
+.st-nodes-track::before {
+  content: '';
+  position: absolute;
+  top: 50px;
+  left: 12%;
+  right: 12%;
+  height: 3px;
+  background: var(--b-border-strong);
+  border-radius: 4px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.st-nodes-track.track-count-1::before {
+  display: none;
+}
+
 .st-nodes-track.track-count-1 {
   display: flex;
   justify-content: center;
@@ -157,7 +175,6 @@
   margin: 0 auto;
 }
 
-/* Connecting Line between nodes on desktop */
 .st-node-wrapper {
   display: flex;
   flex-direction: column;
@@ -171,10 +188,15 @@
   min-width: 0;
   box-sizing: border-box;
   transition: transform 0.15s ease;
+  outline: none;
 }
 
 .st-node-wrapper:hover {
   transform: translateY(-3px);
+}
+
+.st-node-wrapper:focus-visible .st-node-circle {
+  box-shadow: var(--b-focus-ring), 0 5px 0 var(--b-card-depth) !important;
 }
 
 /* The Circular Node */
@@ -289,8 +311,11 @@
 
 .st-node-sublabel {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.68rem;
+  font-size: 0.76rem;
+  font-weight: 600;
   color: var(--b-text-muted);
+  letter-spacing: -0.01em;
+  margin-top: 1px;
 }
 
 /* ── 5. CAPSTONE EXAM NODE (SPECIAL GOLD HIGHLIGHT) ── */
@@ -636,6 +661,9 @@
     justify-content: flex-start !important;
     gap: 14px !important;
     padding: 6px 4px 10px !important;
+  }
+  .st-nodes-track::before {
+    display: none !important;
   }
   .st-nodes-track::-webkit-scrollbar {
     display: none !important;

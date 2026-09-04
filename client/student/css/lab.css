@@ -623,18 +623,8 @@ html, body {
 
 @media (max-width: 1100px) {
   .workbench-grid {
-    display: flex;
-    flex-direction: column;
+    grid-template-columns: 1fr;
     gap: 16px;
-  }
-  .wb-center-col {
-    order: 1;
-    width: 100%;
-  }
-  .wb-left-col {
-    order: 2;
-    width: 100%;
-    margin-top: 14px;
   }
 }
 
@@ -1055,19 +1045,8 @@ html, body {
   }
 
   .workbench-grid {
-    display: flex !important;
-    flex-direction: column !important;
+    grid-template-columns: 1fr !important;
     gap: 12px !important;
-  }
-
-  .wb-center-col {
-    order: 1 !important;
-    width: 100% !important;
-  }
-
-  .wb-left-col {
-    order: 2 !important;
-    width: 100% !important;
   }
 
   .wb-card {

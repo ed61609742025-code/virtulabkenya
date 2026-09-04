@@ -1137,7 +1137,14 @@ requireStudentLogin();
     if (pillI) {
       pillI.textContent = selfInd
         ? 'Self-indicating (KMnO₄)'
-        : (indicatorAdded ? `${current.indicatorName} (${indicatorDropsCount}/3 drops)` : '? (click button below)');
+        : (indicatorAdded ? `${current.indicatorName} (${indicatorDropsCount}/3 drops)` : '? (choose below)');
+      if (selfInd || indicatorAdded) {
+        pillI.classList.add('is-ready');
+        pillI.classList.remove('is-pending');
+      } else {
+        pillI.classList.add('is-pending');
+        pillI.classList.remove('is-ready');
+      }
     }
     const flaskLbl = document.getElementById('flaskLabel');
     if (flaskLbl) {
@@ -1522,7 +1529,11 @@ requireStudentLogin();
     });
 
     const pillInd = document.getElementById('pillIndicator');
-    if (pillInd) pillInd.textContent = `${current.indicatorName} (${indicatorDropsCount}/3 drops)`;
+    if (pillInd) {
+      pillInd.textContent = `${current.indicatorName} (${indicatorDropsCount}/3 drops)`;
+      pillInd.classList.add('is-ready');
+      pillInd.classList.remove('is-pending');
+    }
 
     const indicatorChip = document.getElementById('pillIndicatorChip');
     if (indicatorChip) {

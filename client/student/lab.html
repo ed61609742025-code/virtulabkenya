@@ -30,7 +30,7 @@
 <link rel="stylesheet" href="/shared/style.css">
 <link rel="stylesheet" href="/shared/brilliant-theme.css">
 <link rel="stylesheet" href="/shared/tutorial-engine.css">
-<link rel="stylesheet" href="css/lab.css?v=78">
+<link rel="stylesheet" href="css/lab.css?v=79">
 <link rel="stylesheet" href="/shared/ai-tutor.css">
 <link rel="stylesheet" href="/shared/pwa-installer.css">
 </head>
@@ -275,24 +275,141 @@
 
       <!-- Card 3: Reagents -->
       <div class="wb-card card-reagents">
-        <div class="wb-card-title">
-          <span>🧪 Prescribed Reagents Ledger</span>
-          <span style="font-size:0.7rem; color:var(--text-tertiary); font-family:var(--font-mono); font-weight:600;">Specifications</span>
+        <div class="reagents-header-bar">
+          <div class="wb-card-title" style="margin-bottom:0;">
+            <span>🧪 Prescribed Reagents Ledger</span>
+          </div>
+          <span class="reagents-knec-badge" title="Official KNEC KCSE Chemistry Practical Specifications">
+            <span class="reagents-status-dot"></span> KNEC Spec
+          </span>
         </div>
-        <div class="reagent-info-item">
-          <span class="sci-tooltip" tabindex="0" role="tooltip" aria-label="Definition of Analyte">Analyte (Solution A) <span class="sci-tip-icon" aria-hidden="true">ℹ️</span><span class="sci-tip-text"><b>Analyte:</b> The chemical solution of unknown concentration placed in the conical flask using a pipette.</span></span>: <b id="pillAnalyte">HCl(aq)</b>
+        <div class="reagents-subtitle">
+          Official volumetric standards &amp; analytical parameters for Question 1.
         </div>
-        <div class="reagent-info-item">
-          <span class="sci-tooltip" tabindex="0" role="tooltip" aria-label="Definition of Titrant">Titrant (Solution B) <span class="sci-tip-icon" aria-hidden="true">ℹ️</span><span class="sci-tip-text"><b>Titrant:</b> The standard solution of known concentration delivered accurately from the burette.</span></span>: <b id="pillTitrant">0.12 M NaOH</b>
+
+        <div class="reagents-ledger-grid">
+          
+          <!-- Row 1: Analyte (Solution A) -->
+          <div class="reagent-info-item reagent-item-analyte">
+            <div class="reagent-item-left">
+              <div class="reagent-icon-badge icon-analyte" aria-hidden="true">
+                <span>⚗️</span>
+              </div>
+              <div class="reagent-content">
+                <div class="reagent-label-row">
+                  <span class="sci-tooltip" tabindex="0" role="tooltip" aria-label="Definition of Analyte">
+                    Analyte (Solution A)
+                    <span class="sci-tip-icon" aria-hidden="true">ℹ️</span>
+                    <span class="sci-tip-text"><b>Analyte:</b> The chemical solution of unknown concentration placed in the conical flask using a pipette.</span>
+                  </span>
+                </div>
+                <span class="reagent-meta-tag">Conical Flask · Unknown Conc.</span>
+              </div>
+            </div>
+            <div class="reagent-val-box">
+              <span class="reagent-spec-pill pill-analyte" id="pillAnalyte">HCl(aq)</span>
+            </div>
+          </div>
+
+          <!-- Row 2: Titrant (Solution B) -->
+          <div class="reagent-info-item reagent-item-titrant">
+            <div class="reagent-item-left">
+              <div class="reagent-icon-badge icon-titrant" aria-hidden="true">
+                <span>🧪</span>
+              </div>
+              <div class="reagent-content">
+                <div class="reagent-label-row">
+                  <span class="sci-tooltip" tabindex="0" role="tooltip" aria-label="Definition of Titrant">
+                    Titrant (Solution B)
+                    <span class="sci-tip-icon" aria-hidden="true">ℹ️</span>
+                    <span class="sci-tip-text"><b>Titrant:</b> The standard solution of known concentration delivered accurately from the burette.</span>
+                  </span>
+                </div>
+                <span class="reagent-meta-tag">Burette Standard · Known Conc.</span>
+              </div>
+            </div>
+            <div class="reagent-val-box">
+              <span class="reagent-spec-pill pill-titrant" id="pillTitrant">0.12 M NaOH</span>
+            </div>
+          </div>
+
+          <!-- Row 3: Acid-Base Indicator -->
+          <div class="reagent-info-item reagent-item-indicator">
+            <div class="reagent-item-left">
+              <div class="reagent-icon-badge icon-indicator" aria-hidden="true">
+                <span>💧</span>
+              </div>
+              <div class="reagent-content">
+                <div class="reagent-label-row">
+                  <span class="sci-tooltip" tabindex="0" role="tooltip" aria-label="Definition of Acid-Base Indicator">
+                    Indicator
+                    <span class="sci-tip-icon" aria-hidden="true">ℹ️</span>
+                    <span class="sci-tip-text"><b>Indicator:</b> A dye that exhibits a sharp, distinct color change at the neutralization endpoint.</span>
+                  </span>
+                </div>
+                <span class="reagent-meta-tag">Endpoint Detection Dye</span>
+              </div>
+            </div>
+            <div class="reagent-val-box">
+              <span class="reagent-spec-pill pill-indicator is-pending" id="pillIndicator">? (choose below)</span>
+            </div>
+          </div>
+
+          <!-- Row 4: Pipette Aliquot -->
+          <div class="reagent-info-item reagent-item-aliquot">
+            <div class="reagent-item-left">
+              <div class="reagent-icon-badge icon-aliquot" aria-hidden="true">
+                <span>📏</span>
+              </div>
+              <div class="reagent-content">
+                <div class="reagent-label-row">
+                  <span class="sci-tooltip" tabindex="0" role="tooltip" aria-label="Definition of Pipette Aliquot">
+                    Pipette Aliquot
+                    <span class="sci-tip-icon" aria-hidden="true">ℹ️</span>
+                    <span class="sci-tip-text"><b>Aliquot:</b> The fixed, standard volume (25.00 cm³) of Solution A dispensed into the flask.</span>
+                  </span>
+                </div>
+                <span class="reagent-meta-tag">Class-A Bulb Pipette Vol.</span>
+              </div>
+            </div>
+            <div class="reagent-val-box">
+              <span class="reagent-spec-pill pill-aliquot" id="pillAliquot">25.00 cm³ Pipette</span>
+            </div>
+          </div>
+
+          <!-- Row 5: Concordance Rubric -->
+          <div class="reagent-info-item reagent-item-concordance">
+            <div class="reagent-item-left">
+              <div class="reagent-icon-badge icon-concordance" aria-hidden="true">
+                <span>🎯</span>
+              </div>
+              <div class="reagent-content">
+                <div class="reagent-label-row">
+                  <span class="sci-tooltip" tabindex="0" role="tooltip" aria-label="Definition of Concordance">
+                    Concordance Rubric
+                    <span class="sci-tip-icon" aria-hidden="true">ℹ️</span>
+                    <span class="sci-tip-text"><b>Concordance:</b> Two or more titres that agree within ±0.10 cm³ of each other, required by KNEC for full marks.</span>
+                  </span>
+                </div>
+                <span class="reagent-meta-tag">KNEC Mark Scheme Standard</span>
+              </div>
+            </div>
+            <div class="reagent-val-box">
+              <span class="reagent-spec-pill pill-concordance" id="pillConcordance">±0.10 cm³</span>
+            </div>
+          </div>
+
         </div>
-        <div class="reagent-info-item">
-          <span class="sci-tooltip" tabindex="0" role="tooltip" aria-label="Definition of Acid-Base Indicator">Acid-Base Indicator <span class="sci-tip-icon" aria-hidden="true">ℹ️</span><span class="sci-tip-text"><b>Indicator:</b> A dye that exhibits a sharp, distinct color change at the neutralization endpoint.</span></span>: <b id="pillIndicator">? (choose below)</b>
-        </div>
-        <div class="reagent-info-item">
-          <span class="sci-tooltip" tabindex="0" role="tooltip" aria-label="Definition of Pipette Aliquot">Pipette Aliquot <span class="sci-tip-icon" aria-hidden="true">ℹ️</span><span class="sci-tip-text"><b>Aliquot:</b> The fixed, standard volume (25.00 cm³) of Solution A dispensed into the flask.</span></span>: <b id="pillAliquot">25.00 cm³</b>
-        </div>
-        <div class="reagent-info-item">
-          <span class="sci-tooltip" tabindex="0" role="tooltip" aria-label="Definition of Concordance">Concordance Rubric <span class="sci-tip-icon" aria-hidden="true">ℹ️</span><span class="sci-tip-text"><b>Concordance:</b> Two or more titres that agree within ±0.10 cm³ of each other, required by KNEC for full marks.</span></span>: <b id="pillConcordance">±0.10 cm³</b>
+
+        <!-- Reagents Footer Quality & Safety Strip -->
+        <div class="reagents-footer-bar">
+          <div class="reagents-quality-badge">
+            <span class="quality-shield" aria-hidden="true">🛡️</span>
+            <span>Class-A Glassware · ISO 1042</span>
+          </div>
+          <button type="button" class="btn-reagents-sds" onclick="window.VLKSafety &amp;&amp; window.VLKSafety.openSDSModal()" title="View Chemical Safety &amp; SDS Hazards">
+            <span>⚠️ Safety SDS</span>
+          </button>
         </div>
       </div>
 
@@ -725,7 +842,7 @@
 <script src="../shared/i18n.js"></script>
 <script src="../shared/brilliant-ui.js"></script>
 <script src="../shared/tutorial-engine.js"></script>
-<script src="js/titration-workbench.js?v=78"></script>
+<script src="js/titration-workbench.js?v=79"></script>
 <script src="../shared/ai-tutor.js"></script>
 <script src="../shared/pwa-installer.js"></script>
 <script src="../shared/page-transitions.js"></script>

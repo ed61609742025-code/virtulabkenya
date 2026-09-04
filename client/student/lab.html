@@ -30,7 +30,7 @@
 <link rel="stylesheet" href="/shared/style.css">
 <link rel="stylesheet" href="/shared/brilliant-theme.css">
 <link rel="stylesheet" href="/shared/tutorial-engine.css">
-<link rel="stylesheet" href="css/lab.css?v=73">
+<link rel="stylesheet" href="css/lab.css?v=74">
 <link rel="stylesheet" href="/shared/ai-tutor.css">
 <link rel="stylesheet" href="/shared/pwa-installer.css">
 </head>
@@ -337,7 +337,7 @@
             <div class="bench-wing-title" style="font-weight:800;font-size:0.78rem;color:var(--heading-color);text-transform:uppercase;letter-spacing:0.04em;display:flex;align-items:center;gap:6px;font-family:'Cinzel', serif;border-bottom:1px solid var(--card-border);padding-bottom:6px;">
               <span>💧 Indicator</span>
             </div>
-            <div style="font-size:0.72rem; color:var(--text-secondary); line-height:1.45; background:var(--card-bg); border:1px solid var(--card-border); border-radius:6px; padding:6px 8px;">
+            <div class="bench-wing-helper" style="font-size:0.72rem; color:var(--text-secondary); line-height:1.45; background:var(--card-bg); border:1px solid var(--card-border); border-radius:6px; padding:6px 8px;">
               Add 1 to 3 drops to detect the sharp neutralization endpoint.
             </div>
             <button class="btn-tactile btn-tactile-cyan btn-tactile-sm btn-cyan" id="addIndicatorBtn" onclick="addIndicatorDrops()" style="width:100%;font-weight:700;padding:8px 8px;font-size:0.78rem;line-height:1.3;" aria-label="Add drops of chemical indicator to conical flask">💧 Add Drop 1 of 3 (Phenolphthalein)</button>
@@ -348,7 +348,7 @@
             <div class="bench-wing-title" style="font-weight:800;font-size:0.78rem;color:var(--heading-color);text-transform:uppercase;letter-spacing:0.04em;display:flex;align-items:center;gap:6px;font-family:'Cinzel', serif;border-bottom:1px solid var(--card-border);padding-bottom:6px;">
               <span>🌀 Flask Motion</span>
             </div>
-            <div style="font-size:0.72rem; color:var(--text-secondary); line-height:1.45; background:var(--card-bg); border:1px solid var(--card-border); border-radius:6px; padding:6px 8px;">
+            <div class="bench-wing-helper" style="font-size:0.72rem; color:var(--text-secondary); line-height:1.45; background:var(--card-bg); border:1px solid var(--card-border); border-radius:6px; padding:6px 8px;">
               Swirl continuously during titration to verify if color persist.
             </div>
             <button class="btn-tactile btn-tactile-surface btn-tactile-sm btn-action-swirl" onclick="swirlFlask()" style="width:100%;padding:8px 8px;font-size:0.78rem;font-weight:700;height:38px;" data-i18n="swirl_flask" title="Swirl conical flask to thoroughly mix delivered titrant and analyte" aria-label="Swirl conical flask">🌀 Swirl Flask</button>
@@ -577,7 +577,7 @@
             <div class="bench-wing-title" style="font-weight:800;font-size:0.78rem;color:var(--heading-color);text-transform:uppercase;letter-spacing:0.04em;display:flex;align-items:center;gap:6px;font-family:'Cinzel', serif;border-bottom:1px solid var(--card-border);padding-bottom:6px;">
               <span>🚰 Add Titrant</span>
             </div>
-            <div style="font-size:0.72rem; color:var(--text-secondary); line-height:1.45; background:var(--card-bg); border:1px solid var(--card-border); border-radius:6px; padding:6px 8px;">
+            <div class="bench-wing-helper" style="font-size:0.72rem; color:var(--text-secondary); line-height:1.45; background:var(--card-bg); border:1px solid var(--card-border); border-radius:6px; padding:6px 8px;">
               Coarse additions early; use single drops (+0.05 cm³) near endpoint.
             </div>
 
@@ -717,12 +717,48 @@
   </div>
 </div>
 
+<!-- Mobile Sticky Titration Controller Dock (Fixed at bottom on mobile screens <=768px) -->
+<div id="mobileTitrationDock" class="mobile-titration-dock" aria-label="Mobile Titration Quick Controls">
+  <!-- Live Telemetry Bar -->
+  <div class="mob-dock-telemetry">
+    <div class="mob-dock-reading" title="Live Burette Reading">
+      <span>🎯</span>
+      <span id="mobReadingVal">0.00 cm³</span>
+    </div>
+    <div class="mob-dock-flask-status" title="Conical Flask Color State">
+      <span class="mob-flask-dot" id="mobFlaskDot"></span>
+      <span id="mobFlaskStatusText">No indicator</span>
+    </div>
+    <button type="button" class="btn-tactile btn-tactile-surface mob-dock-swirl-btn" onclick="swirlFlask()" title="Swirl conical flask" aria-label="Swirl conical flask">
+      🌀 Swirl
+    </button>
+  </div>
+
+  <!-- Indicator Prompt Mode (when indicator not yet added) -->
+  <div id="mobDockIndicatorBar" class="mob-dock-action-row" style="display:none;">
+    <button type="button" class="btn-tactile btn-tactile-cyan mob-dock-full-btn" id="mobAddIndicatorBtn" onclick="addIndicatorDrops()" aria-label="Add indicator drops">
+      💧 Add Indicator (Drop 1/3)
+    </button>
+  </div>
+
+  <!-- Titrant Dispensing Mode (when indicator is ready) -->
+  <div id="mobDockTitrateBar" class="mob-dock-action-row">
+    <div class="mob-dock-titrate-grid">
+      <button type="button" class="btn-tactile btn-tactile-amber mob-dock-btn" onclick="addVolume(1.0)" title="Add 1.00 cm³ titrant">+1 cm³</button>
+      <button type="button" class="btn-tactile btn-tactile-amber mob-dock-btn" onclick="addVolume(0.5)" title="Add 0.50 cm³ titrant">+0.5</button>
+      <button type="button" class="btn-tactile btn-tactile-amber mob-dock-btn" onclick="addVolume(0.1)" title="Add 0.10 cm³ titrant">+0.1</button>
+      <button type="button" class="btn-tactile btn-tactile-cyan mob-dock-btn" onclick="addVolume(0.05)" title="Add single drop (0.05 cm³)">💧 0.05</button>
+      <button type="button" class="btn-tactile btn-tactile-success mob-dock-btn mob-dock-record-btn" onclick="recordTrial()" title="Record titration endpoint in Table 1">✅ Record</button>
+    </div>
+  </div>
+</div>
+
 <script src="../shared/api.js"></script>
 <script src="../shared/chemical-safety.js"></script>
 <script src="../shared/i18n.js"></script>
 <script src="../shared/brilliant-ui.js"></script>
 <script src="../shared/tutorial-engine.js"></script>
-<script src="js/titration-workbench.js?v=73"></script>
+<script src="js/titration-workbench.js?v=74"></script>
 <script src="../shared/ai-tutor.js"></script>
 <script src="../shared/pwa-installer.js"></script>
 <script src="../shared/page-transitions.js"></script>

@@ -1887,6 +1887,64 @@ requireStudentLogin();
         statusEl.innerHTML = `Delivered: <b>${currentVolume.toFixed(2)} cm³</b>. Keep adding titrant.`;
       }
     }
+
+    updateMobileDock(stageColor, diff);
+  }
+
+  function updateMobileDock(stageColor, diff) {
+    const mobReading = document.getElementById('mobReadingVal');
+    if (mobReading) {
+      mobReading.textContent = currentVolume.toFixed(2) + ' cm³';
+    }
+
+    const mobDot = document.getElementById('mobFlaskDot');
+    if (mobDot && stageColor) {
+      mobDot.style.backgroundColor = stageColor;
+    }
+
+    const mobStatus = document.getElementById('mobFlaskStatusText');
+    if (mobStatus && current) {
+      if (!indicatorAdded && !isSelfIndicatingExp(current)) {
+        mobStatus.textContent = 'No indicator';
+      } else if (diff >= 0.40) {
+        mobStatus.innerHTML = '<span style="color:#F43F5E;font-weight:700;">⚠️ Over-titrated</span>';
+      } else if (diff >= 0.00) {
+        mobStatus.innerHTML = '<span style="color:#10B981;font-weight:700;">🎯 Endpoint!</span>';
+      } else if (diff >= -0.25) {
+        mobStatus.innerHTML = '<span style="color:#F59E0B;font-weight:700;">⏳ Near endpoint</span>';
+      } else {
+        mobStatus.textContent = currentVolume === 0 ? 'Ready' : `${currentVolume.toFixed(2)} cm³`;
+      }
+    }
+
+    // Toggle indicator prompt vs titration controls in mobile dock
+    const indBar = document.getElementById('mobDockIndicatorBar');
+    const titBar = document.getElementById('mobDockTitrateBar');
+    const selfInd = isSelfIndicatingExp(current);
+
+    if (indBar && titBar) {
+      if (!indicatorAdded && !selfInd) {
+        indBar.style.display = 'flex';
+        titBar.style.display = 'none';
+      } else {
+        indBar.style.display = 'none';
+        titBar.style.display = 'flex';
+      }
+    }
+
+    const mobIndBtn = document.getElementById('mobAddIndicatorBtn');
+    if (mobIndBtn && current) {
+      if (selfInd) {
+        mobIndBtn.textContent = `⚡ Self-Indicating (${current.indicatorName ? current.indicatorName.split(' ')[0] : 'KMnO4'})`;
+        mobIndBtn.disabled = true;
+      } else if (indicatorDropsCount >= 3) {
+        mobIndBtn.textContent = `✅ 3 Drops Added (${current.indicatorAnswer || 'Indicator'})`;
+        mobIndBtn.disabled = true;
+      } else {
+        mobIndBtn.textContent = `💧 Add Drop ${indicatorDropsCount + 1} of 3 (${current.indicatorAnswer || 'Indicator'})`;
+        mobIndBtn.disabled = false;
+      }
+    }
   }
 
   function recordTrial() {
@@ -2138,6 +2196,10 @@ requireStudentLogin();
       if (flaskLabel) {
         flaskLabel.innerHTML = `<span style="color:var(--cyan-accent);font-weight:700;">🌀 Swirled:</span> Transient tinge mixed away. Add next drop!`;
       }
+      const mobDot = document.getElementById('mobFlaskDot');
+      if (mobDot) mobDot.style.backgroundColor = baseColor;
+      const mobStatus = document.getElementById('mobFlaskStatusText');
+      if (mobStatus) mobStatus.innerHTML = '<span style="color:var(--cyan-accent);">🌀 Swirled</span>';
     }
   }
 

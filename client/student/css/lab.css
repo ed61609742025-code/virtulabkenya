@@ -1044,6 +1044,12 @@ html, body {
     overflow-x: hidden !important;
   }
 
+  /* Hide practical workflow stepper on small screens/phones */
+  .workflow-stepper-card,
+  #practicalWorkflowStepper {
+    display: none !important;
+  }
+
   .workbench-grid {
     grid-template-columns: 1fr !important;
     gap: 12px !important;

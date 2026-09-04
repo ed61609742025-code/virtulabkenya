@@ -372,31 +372,33 @@ requireStudentLogin();
 
       if (assignments.length === 0) {
         if (progressHeader) progressHeader.style.display = 'none';
-        const isLinked = !!(currentStudentUser && (currentStudentUser.teacherName || currentStudentUser.teacherId || currentStudentUser.teacherCode));
-        if (!isLinked) {
+        const hasTeacher = !!(currentStudentUser && (currentStudentUser.teacherName || currentStudentUser.teacherId || currentStudentUser.teacherCode));
+        if (!hasTeacher) {
           box.innerHTML = `
-            <div class="empty-box" style="width: 100%; flex: 1 1 100%; padding: 22px 18px; text-align: center; border-radius: 12px; border: 1.5px dashed var(--cyan-accent); background: var(--card-bg); color: var(--text-muted);">
-              <div style="font-size: 1.5rem; margin-bottom: 6px;">👨‍🏫</div>
-              <div style="font-weight: 800; font-size: 0.94rem; color: var(--heading-color); margin-bottom: 4px;">Connect Your Chemistry Teacher</div>
-              <div style="font-size: 0.82rem; margin-bottom: 14px; max-width: 420px; margin-left: auto; margin-right: auto; line-height: 1.45;">
+            <div class="empty-box-celebrate" style="border-style: solid; border-color: rgba(2, 132, 199, 0.3);">
+              <div class="empty-celebrate-badge" style="background: linear-gradient(135deg, #0284C7 0%, #2563EB 100%);" aria-hidden="true">🔗</div>
+              <div style="font-weight: 800; font-size: 1.05rem; color: var(--heading-color);">Connect Your Chemistry Teacher</div>
+              <div style="font-size: 0.84rem; max-width: 400px; line-height: 1.45; color: var(--text-muted);">
                 Link your teacher's code to automatically receive continuous assessment practicals, KCSE mock exams, and teacher evaluations.
               </div>
-              <button type="button" class="btn btn-primary" onclick="toggleTeacherLinkPanel()" style="font-size: 0.82rem; font-weight: 800; padding: 8px 20px; border-radius: 8px; cursor: pointer;">
+              <button type="button" class="hero-warmup-btn" onclick="toggleTeacherLinkPanel()" style="padding: 8px 20px; font-size: 0.84rem; min-height: 38px; border-radius: 10px; cursor: pointer; border: none;">
                 🔗 Enter Teacher Code →
               </button>
             </div>
           `;
         } else {
           box.innerHTML = `
-            <div class="empty-box" style="width: 100%; flex: 1 1 100%; padding: 26px 18px; text-align: center; border-radius: 12px; border: 1.5px dashed var(--card-border); color: var(--text-muted); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;">
-              <div style="font-size: 1.6rem;" aria-hidden="true">📋</div>
-              <div style="font-weight: 800; font-size: 0.94rem; color: var(--heading-color);">No Pending Assignments</div>
-              <div style="font-size: 0.82rem; line-height: 1.45; max-width: 320px; color: var(--text-muted);">
-                You're all caught up! Prescribed lab assignments from ${escapeHtml(currentStudentUser?.teacherName || 'your instructor')} will appear here.
+            <div class="empty-box-celebrate">
+              <div class="empty-celebrate-badge" aria-hidden="true">🎉</div>
+              <div style="font-weight: 800; font-size: 1.05rem; color: var(--heading-color);">All Caught Up! Zero Backlog</div>
+              <div style="font-size: 0.85rem; line-height: 1.5; max-width: 360px; color: var(--text-muted);">
+                Superb work! You've cleared every practical prescribed by <strong>${escapeHtml(currentStudentUser?.teacherName || 'your instructor')}</strong>. Keep your winning momentum alive!
               </div>
-              <a href="#skillTreeContainer" class="btn btn-secondary" style="margin-top: 6px; font-size: 0.78rem; font-weight: 700; padding: 7px 16px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
-                Explore Pathway Practicals ↓
-              </a>
+              <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 4px;">
+                <a href="#skillTreeContainer" class="hero-warmup-btn" style="padding: 8px 20px; font-size: 0.84rem; min-height: 38px; border-radius: 10px;">
+                  🧪 Practice Free Lab Benches →
+                </a>
+              </div>
             </div>
           `;
         }

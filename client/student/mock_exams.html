@@ -23,8 +23,7 @@
 
 <!-- Academic & Technical Typography -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400..800;1,6..72,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/style.css">
 <link rel="stylesheet" href="../shared/brilliant-theme.css">
 <link rel="stylesheet" href="css/dashboard.css">
@@ -274,10 +273,14 @@
 
 <!-- Academic Top Navigation -->
 <nav class="top-navbar">
-  <a href="/student/home.html" class="nav-brand">
-    <span style="font-size:1.25rem;">🏆</span>
-    <span>VirtuLab Kenya</span>
-    <span class="nav-brand-badge">KCSE PAPER 3 MOCK CENTER</span>
+  <a href="/student/home.html" class="nav-brand-academic" title="Back to Student Workstation">
+    <div class="vlk-brand-logo-wrap">
+      <img src="/shared/virtulab-logo.svg" alt="VirtuLab Kenya Logo" class="vlk-brand-logo-img" width="34" height="34">
+    </div>
+    <div style="display:flex; flex-direction:column;">
+      <span class="brand-title" style="font-weight:800; font-family:'Cinzel', serif; font-size:1.05rem; line-height:1.1; color:var(--heading-color);">VirtuLab</span>
+      <span class="brand-subtagline" style="font-size:0.65rem; font-family:'Newsreader', serif; font-style:italic; color:var(--cyan-accent); letter-spacing:0.01em;">Mock Exams Center</span>
+    </div>
   </a>
   <div class="nav-actions">
     <a href="/student/home.html" class="top-action-btn">🏠 Student Workstation</a>

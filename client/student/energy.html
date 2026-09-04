@@ -16,7 +16,7 @@
   <meta name="theme-color" content="#090E17">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400..800;1,6..72,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../shared/style.css">
   <link rel="stylesheet" href="../shared/brilliant-theme.css">
   <link rel="stylesheet" href="../shared/gamification-engine.css">
@@ -32,9 +32,14 @@
   ══════════════════════════════════════ -->
   <header class="game-top-bar">
     <div class="game-bar-left">
-      <a href="home.html" class="game-btn-icon" aria-label="Back to Workstation" title="Return to Workstation">
-        <span class="btn-icon">←</span>
-        <span class="btn-text">Workstation</span>
+      <a href="home.html" class="nav-brand-academic" title="Back to Student Workstation" style="text-decoration:none; display:flex; align-items:center; gap:8px;">
+        <div class="vlk-brand-logo-wrap" style="width:30px; height:30px;">
+          <img src="/shared/virtulab-logo.svg" alt="VirtuLab Kenya Logo" class="vlk-brand-logo-img" width="30" height="30">
+        </div>
+        <div style="display:flex; flex-direction:column;">
+          <span class="brand-title" style="font-weight:800; font-family:'Outfit', serif; font-size:0.95rem; line-height:1.1; color:var(--heading-color, #FFF);">VirtuLab</span>
+          <span class="brand-subtagline" style="font-size:0.62rem; font-family:'Newsreader', serif; font-style:italic; color:var(--cyan-accent, #38BDF8); letter-spacing:0.01em;">Thermochemistry Bench</span>
+        </div>
       </a>
       
       <!-- Session Timer Badge -->

@@ -8,7 +8,7 @@ requireStudentLogin();
     updateThemeChips();
   }
   function updateThemeChips() {
-    const cur = localStorage.getItem('vlk_theme') || 'dark';
+    const cur = localStorage.getItem('vlk_theme') || 'light';
     document.querySelectorAll('.theme-btn-chip').forEach(b => {
       b.classList.toggle('active', b.dataset.theme === cur);
     });
@@ -702,7 +702,7 @@ requireStudentLogin();
             <!-- Right Column: Procedure & 2-Column KCSE Table -->
             <div>
               <!-- Official KCSE Procedure Callout -->
-              <div style="font-size:0.84rem; color:var(--text-main); line-height:1.5; margin-bottom:12px; background:var(--bg-dark); padding:10px 14px; border-radius:8px; border-left:3px solid var(--blue-accent); border:1px solid var(--card-border); border-left-width:3px;">
+              <div style="font-size:0.84rem; color:var(--text-main); line-height:1.5; margin-bottom:12px; background:var(--card-bg-hover); padding:10px 14px; border-radius:8px; border:1px solid var(--card-border); border-left:3.5px solid var(--blue-accent);">
                 <span style="font-weight:800; color:var(--heading-color); display:flex; align-items:center; gap:6px; margin-bottom:3px;">
                   📋 Procedure / Instructions:
                 </span>

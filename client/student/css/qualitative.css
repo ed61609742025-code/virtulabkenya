@@ -6,67 +6,75 @@
 
 /* ── 1. THEME TOKENS ── */
 :root, [data-theme="light"] {
-  --bg-dark: #F8FAFC;
+  --bg-dark: #F6F3EE;
   --card-bg: #FFFFFF;
-  --card-bg-hover: #F1F5F9;
-  --card-border: #E2E8F0;
+  --card-bg-hover: #F8F5F0;
+  --card-border: #CBD5E1;
+  --card-border-glow: #D97706;
   --text-main: #0F172A;
-  --text-muted: #475569;
-  --text-secondary: #64748B;
-  --text-tertiary: #94A3B8;
+  --text-muted: #334155;
+  --text-secondary: #475569;
+  --text-tertiary: #64748B;
   --heading-color: #0F172A;
-  --topbar-bg: rgba(255, 255, 255, 0.95);
+  --topbar-bg: rgba(255, 255, 255, 0.98);
 
-  --acad-oxford: #08101A;
-  --acad-gold: #D97706;
+  --acad-oxford: #0F172A;
+  --acad-gold: #B45309;
   --acad-gold-bg: rgba(217, 119, 6, 0.12);
-  --acad-crimson: #DC2626;
+  --acad-crimson: #991B1B;
 
   --cyan-accent: #0284C7;
   --cyan-accent-strong: #0369A1;
+  --cyan-btn-bg: #0284C7;
+  --cyan-btn-hover: #0369A1;
 
   --blue-accent: #0284C7;
   --blue-bg: #F0F9FF;
   --blue-border: #BAE6FD;
 
-  --green-accent: #059669;
+  --green-accent: #047857;
   --green-bg: #ECFDF5;
   --green-border: #A7F3D0;
 
-  --red-accent: #DC2626;
+  --red-accent: #B91C1C;
   --red-bg: #FEF2F2;
   --red-border: #FECACA;
 
-  --amber-accent: #D97706;
+  --amber-accent: #B45309;
   --amber-bg: #FFFBEB;
   --amber-border: #FDE68A;
 
-  --violet-accent: #7C3AED;
+  --violet-accent: #6D28D9;
   --violet-bg: #F5F3FF;
   --violet-border: #DDD6FE;
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.08);
+  --locked-bg: #F1F5F9;
+  --locked-border: #CBD5E1;
+  --locked-text: #64748B;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.09);
+  --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.12);
 
   --font-academic: 'Cinzel', Georgia, serif;
   --font-editorial: 'Newsreader', Georgia, serif;
-  --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: 'Cinzel', Georgia, serif;
   --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
 
 [data-theme="dark"] {
-  --bg-dark: #090E17;
-  --card-bg: #111A2E;
-  --card-bg-hover: #17233B;
+  --bg-dark: #080D1A;
+  --card-bg: #0F172A;
+  --card-bg-hover: #162238;
   --card-border: #1E2D4A;
+  --card-border-glow: #38BDF8;
   --text-main: #F8FAFC;
   --text-muted: #CBD5E1;
   --text-secondary: #94A3B8;
   --text-tertiary: #64748B;
   --heading-color: #FFFFFF;
-  --topbar-bg: rgba(10, 16, 28, 0.95);
+  --topbar-bg: rgba(15, 23, 42, 0.97);
 
   --acad-oxford: #08101A;
   --acad-gold: #F59E0B;
@@ -102,26 +110,27 @@
 
   --font-academic: 'Cinzel', Georgia, serif;
   --font-editorial: 'Newsreader', Georgia, serif;
-  --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: 'Cinzel', Georgia, serif;
   --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
 
 [data-theme="green"] {
-  --bg-dark: #051209;
-  --card-bg: #0D2315;
-  --card-bg-hover: #133320;
-  --card-border: #1B4A2B;
+  --bg-dark: #041008;
+  --card-bg: #0B1F13;
+  --card-bg-hover: #102B1B;
+  --card-border: #1D5330;
+  --card-border-glow: #34D399;
   --text-main: #F0FDF4;
-  --text-muted: #86EFAC;
-  --text-secondary: #6EE7B7;
-  --text-tertiary: #34D399;
+  --text-muted: #BBF7D0;
+  --text-secondary: #86EFAC;
+  --text-tertiary: #4ADE80;
   --heading-color: #34D399;
-  --topbar-bg: rgba(6, 20, 11, 0.95);
+  --topbar-bg: rgba(11, 31, 19, 0.97);
 
   --acad-oxford: #05140A;
-  --acad-gold: #F59E0B;
-  --acad-gold-bg: rgba(245, 158, 11, 0.16);
+  --acad-gold: #FBBF24;
+  --acad-gold-bg: rgba(251, 191, 36, 0.16);
   --acad-crimson: #F87171;
 
   --cyan-accent: #34D399;
@@ -153,7 +162,7 @@
 
   --font-academic: 'Cinzel', Georgia, serif;
   --font-editorial: 'Newsreader', Georgia, serif;
-  --font-heading: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: 'Cinzel', Georgia, serif;
   --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
@@ -598,13 +607,19 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle at 50% 35%, rgba(56, 189, 248, 0.08) 0%, rgba(15, 23, 42, 0.03) 70%);
+  background: radial-gradient(circle at 50% 35%, rgba(2, 132, 199, 0.05) 0%, rgba(246, 243, 238, 0.6) 70%);
   border: 1.5px solid var(--card-border);
   border-radius: 16px;
   padding: 12px 18px 10px;
   flex-shrink: 0;
   transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
   box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+[data-theme="dark"] .watchglass-viewport {
+  background: radial-gradient(circle at 50% 35%, rgba(56, 189, 248, 0.08) 0%, rgba(15, 23, 42, 0.4) 70%);
+}
+[data-theme="green"] .watchglass-viewport {
+  background: radial-gradient(circle at 50% 35%, rgba(52, 211, 153, 0.08) 0%, rgba(11, 31, 19, 0.4) 70%);
 }
 .watchglass-viewport:hover {
   transform: translateY(-2px);
@@ -1034,9 +1049,9 @@ html, body {
 
 /* Glassware & Apparatus Stage */
 .apparatus-stage {
-  background: var(--bg-dark);
-  border: 1px solid var(--card-border);
-  border-radius: 10px;
+  background: var(--card-bg-hover);
+  border: 1.5px solid var(--card-border);
+  border-radius: 12px;
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -1046,13 +1061,25 @@ html, body {
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="dark"] .apparatus-stage {
+  background: #0B1120;
+  border-color: #1E293B;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="green"] .apparatus-stage {
+  background: #07190D;
+  border-color: #1B4A2B;
 }
 
 @media (max-width: 600px) {
   .apparatus-stage {
     min-height: 175px;
     padding: 10px 4px;
-    border-radius: 8px;
+    border-radius: 10px;
   }
 }
 
@@ -1070,12 +1097,13 @@ html, body {
   font-weight: 700;
   color: var(--text-muted);
   background: var(--card-bg);
-  border: 1px solid var(--card-border);
+  border: 1.5px solid var(--card-border);
   border-radius: 6px;
-  padding: 3px 8px;
+  padding: 4px 8px;
   text-align: center;
   width: 100%;
   margin-top: 10px;
+  box-shadow: var(--shadow-sm);
 }
 
 /* Action Buttons */
@@ -1290,8 +1318,8 @@ html, body {
 .kcse-input {
   width: 100%;
   min-height: 64px;
-  background: var(--bg-dark);
-  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
   border-radius: 8px;
   color: var(--text-main);
   padding: 10px;
@@ -1301,11 +1329,12 @@ html, body {
   font-weight: 500;
   resize: vertical;
   outline: none;
-  transition: border-color 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
   box-sizing: border-box;
 }
 .kcse-input:focus {
   border-color: var(--blue-accent);
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
 }
 
 .suggestion-chips-container {
@@ -1435,18 +1464,19 @@ html, body {
 .id-select {
   width: 100%;
   padding: 10px 14px;
-  background: var(--bg-dark);
-  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
   border-radius: 8px;
   color: var(--text-main);
   font-family: var(--font-mono);
   font-size: 0.85rem;
   outline: none;
-  transition: border-color 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
   cursor: pointer;
 }
 .id-select:focus {
   border-color: var(--blue-accent);
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
 }
 .id-select option {
   background: var(--card-bg);

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -7,7 +7,7 @@
 <meta name="description" content="Systematically identify unknown inorganic salts through reagent and flame tests in this interactive KCSE qualitative analysis laboratory simulator.">
 <script src="/shared/auth-guard.js"></script>
 <script>
-  var t = localStorage.getItem('vlk_theme') || 'dark';
+  var t = localStorage.getItem('vlk_theme') || 'light';
   document.documentElement.setAttribute('data-theme', t);
   if (window.VLKAuthGuard) {
     VLKAuthGuard.guardPage('student');
@@ -18,7 +18,7 @@
     document.head.appendChild(style);
   }
 </script>
-<meta name="theme-color" content="#0F172A">
+<meta name="theme-color" content="#F6F3EE">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -31,7 +31,7 @@
 <link rel="stylesheet" href="../shared/style.css">
 <link rel="stylesheet" href="../shared/brilliant-theme.css">
 <link rel="stylesheet" href="../shared/tutorial-engine.css">
-<link rel="stylesheet" href="css/qualitative.css?v=84">
+<link rel="stylesheet" href="css/qualitative.css?v=85">
 <link rel="stylesheet" href="../shared/ai-tutor.css">
 <link rel="stylesheet" href="../shared/pwa-installer.css">
 </head>
@@ -105,8 +105,8 @@
           <div style="display:flex; flex-direction:column; gap:6px;">
             <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Appearance Theme</span>
             <div class="theme-toggle-group" style="width:100%;">
-              <button class="theme-btn-chip active" style="flex:1;" data-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
-              <button class="theme-btn-chip" style="flex:1;" data-theme="light" onclick="setTheme('light')">☀️ Light</button>
+              <button class="theme-btn-chip active" style="flex:1;" data-theme="light" onclick="setTheme('light')">☀️ Light</button>
+              <button class="theme-btn-chip" style="flex:1;" data-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
               <button class="theme-btn-chip" style="flex:1;" data-theme="green" onclick="setTheme('green')">🧪 Lab</button>
             </div>
           </div>
@@ -182,7 +182,7 @@
           </defs>
 
           <!-- Watch Glass Shadow -->
-          <ellipse cx="65" cy="58" rx="56" ry="24" fill="rgba(0,0,0,0.35)" filter="blur(4px)" />
+          <ellipse cx="65" cy="58" rx="56" ry="24" fill="rgba(15,23,42,0.14)" filter="blur(4px)" />
 
           <!-- Outer Concave Dish -->
           <path d="M 12,42 C 12,74 118,74 118,42" fill="url(#dishGlassGrad)" stroke="url(#dishRimGrad)" stroke-width="1.8"/>
@@ -430,7 +430,7 @@
     </div>
 
     <!-- Dynamic Flowchart Content -->
-    <div id="flowchartContent" style="background:var(--bg-dark); border:1px solid var(--card-border); border-radius:10px; padding:18px; color:var(--text-main); font-size:0.85rem; line-height:1.6;">
+    <div id="flowchartContent" style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:10px; padding:18px; color:var(--text-main); font-size:0.85rem; line-height:1.6;">
     </div>
   </div>
 </div>
@@ -440,7 +440,7 @@
 <script src="../shared/i18n.js"></script>
 <script src="../shared/brilliant-ui.js"></script>
 <script src="../shared/tutorial-engine.js"></script>
-<script src="js/qualitative-engine.js?v=84"></script>
+<script src="js/qualitative-engine.js?v=85"></script>
 <script src="../shared/ai-tutor.js"></script>
 <script src="../shared/pwa-installer.js"></script>
 <script src="../shared/page-transitions.js"></script>

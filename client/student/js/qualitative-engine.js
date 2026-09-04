@@ -109,18 +109,66 @@ requireStudentLogin();
      SALT & TEST DATA BANK
   ══════════════════════════════════════ */
   const SALTS = {
-    ammoniumChloride:  { name:'Ammonium Chloride',    formula:'NH₄Cl',        cation:'NH4+',  anion:'Cl-',    cationDisplay:'NH₄⁺', anionDisplay:'Cl⁻'    },
-    copperSulfate:     { name:'Copper(II) Sulfate',   formula:'CuSO₄',        cation:'Cu2+',  anion:'SO4^2-', cationDisplay:'Cu²⁺', anionDisplay:'SO₄²⁻'  },
-    ironSulfate:       { name:'Iron(II) Sulfate',     formula:'FeSO₄',        cation:'Fe2+',  anion:'SO4^2-', cationDisplay:'Fe²⁺', anionDisplay:'SO₄²⁻'  },
-    sodiumCarbonate:   { name:'Sodium Carbonate',     formula:'Na₂CO₃',       cation:'Na+',   anion:'CO3^2-', cationDisplay:'Na⁺',  anionDisplay:'CO₃²⁻'  },
-    calciumChloride:   { name:'Calcium Chloride',     formula:'CaCl₂',        cation:'Ca2+',  anion:'Cl-',    cationDisplay:'Ca²⁺', anionDisplay:'Cl⁻'    },
-    potassiumChloride: { name:'Potassium Chloride',   formula:'KCl',          cation:'K+',    anion:'Cl-',    cationDisplay:'K⁺',   anionDisplay:'Cl⁻'    },
-    leadNitrate:       { name:'Lead(II) Nitrate',     formula:'Pb(NO₃)₂',     cation:'Pb2+',  anion:'NO3-',   cationDisplay:'Pb²⁺', anionDisplay:'NO₃⁻'   },
-    zincSulfate:       { name:'Zinc Sulfate',         formula:'ZnSO₄',        cation:'Zn2+',  anion:'SO4^2-', cationDisplay:'Zn²⁺', anionDisplay:'SO₄²⁻'  },
-    aluminumNitrate:   { name:'Aluminum Nitrate',     formula:'Al(NO₃)₃',     cation:'Al3+',  anion:'NO3-',   cationDisplay:'Al³⁺', anionDisplay:'NO₃⁻'   },
-    ironChloride:      { name:'Iron(III) Chloride',   formula:'FeCl₃',        cation:'Fe3+',  anion:'Cl-',    cationDisplay:'Fe³⁺', anionDisplay:'Cl⁻'    },
-    ammoniumCarbonate: { name:'Ammonium Carbonate',   formula:'(NH₄)₂CO₃',   cation:'NH4+',  anion:'CO3^2-', cationDisplay:'NH₄⁺', anionDisplay:'CO₃²⁻'  },
-    zincNitrate:       { name:'Zinc Nitrate',         formula:'Zn(NO₃)₂',     cation:'Zn2+',  anion:'NO3-',   cationDisplay:'Zn²⁺', anionDisplay:'NO₃⁻'   }
+    ammoniumChloride: {
+      name:'Ammonium Chloride', formula:'NH₄Cl', cation:'NH4+', anion:'Cl-', cationDisplay:'NH₄⁺', anionDisplay:'Cl⁻',
+      appearance:'White crystalline solid', solubility:'Readily soluble in water; forms a clear, colorless stock solution.',
+      crystalColor:'#F8FAFC', crystalSecondary:'#E2E8F0', crystalHighlight:'#FFFFFF'
+    },
+    copperSulfate: {
+      name:'Copper(II) Sulfate', formula:'CuSO₄', cation:'Cu2+', anion:'SO4^2-', cationDisplay:'Cu²⁺', anionDisplay:'SO₄²⁻',
+      appearance:'Blue hydrated crystalline solid (rhombic crystals)', solubility:'Readily soluble in water; forms a clear sky-blue stock solution.',
+      crystalColor:'#38BDF8', crystalSecondary:'#1D4ED8', crystalHighlight:'#BAE6FD'
+    },
+    ironSulfate: {
+      name:'Iron(II) Sulfate', formula:'FeSO₄', cation:'Fe2+', anion:'SO4^2-', cationDisplay:'Fe²⁺', anionDisplay:'SO₄²⁻',
+      appearance:'Pale-green crystalline solid', solubility:'Readily soluble in water; forms a pale-green stock solution.',
+      crystalColor:'#34D399', crystalSecondary:'#059669', crystalHighlight:'#A7F3D0'
+    },
+    sodiumCarbonate: {
+      name:'Sodium Carbonate', formula:'Na₂CO₃', cation:'Na+', anion:'CO3^2-', cationDisplay:'Na⁺', anionDisplay:'CO₃²⁻',
+      appearance:'White crystalline solid / powder', solubility:'Readily soluble in water; forms a clear, alkaline stock solution.',
+      crystalColor:'#F8FAFC', crystalSecondary:'#CBD5E1', crystalHighlight:'#FFFFFF'
+    },
+    calciumChloride: {
+      name:'Calcium Chloride', formula:'CaCl₂', cation:'Ca2+', anion:'Cl-', cationDisplay:'Ca²⁺', anionDisplay:'Cl⁻',
+      appearance:'White deliquescent crystalline solid', solubility:'Highly soluble in water with slight heat evolution; forms a clear stock solution.',
+      crystalColor:'#F1F5F9', crystalSecondary:'#CBD5E1', crystalHighlight:'#FFFFFF'
+    },
+    potassiumChloride: {
+      name:'Potassium Chloride', formula:'KCl', cation:'K+', anion:'Cl-', cationDisplay:'K⁺', anionDisplay:'Cl⁻',
+      appearance:'White crystalline solid (cubic granules)', solubility:'Readily soluble in water; forms a clear, neutral stock solution.',
+      crystalColor:'#F8FAFC', crystalSecondary:'#CBD5E1', crystalHighlight:'#FFFFFF'
+    },
+    leadNitrate: {
+      name:'Lead(II) Nitrate', formula:'Pb(NO₃)₂', cation:'Pb2+', anion:'NO3-', cationDisplay:'Pb²⁺', anionDisplay:'NO₃⁻',
+      appearance:'White / colorless sparkling crystalline solid', solubility:'Soluble in water; forms a clear, colorless stock solution.',
+      crystalColor:'#F1F5F9', crystalSecondary:'#94A3B8', crystalHighlight:'#FFFFFF'
+    },
+    zincSulfate: {
+      name:'Zinc Sulfate', formula:'ZnSO₄', cation:'Zn2+', anion:'SO4^2-', cationDisplay:'Zn²⁺', anionDisplay:'SO₄²⁻',
+      appearance:'White crystalline solid', solubility:'Readily soluble in water; forms a clear, colorless stock solution.',
+      crystalColor:'#F8FAFC', crystalSecondary:'#CBD5E1', crystalHighlight:'#FFFFFF'
+    },
+    aluminumNitrate: {
+      name:'Aluminum Nitrate', formula:'Al(NO₃)₃', cation:'Al3+', anion:'NO3-', cationDisplay:'Al³⁺', anionDisplay:'NO₃⁻',
+      appearance:'White deliquescent crystalline solid', solubility:'Readily soluble in water; forms a clear, slightly acidic stock solution.',
+      crystalColor:'#F1F5F9', crystalSecondary:'#94A3B8', crystalHighlight:'#FFFFFF'
+    },
+    ironChloride: {
+      name:'Iron(III) Chloride', formula:'FeCl₃', cation:'Fe3+', anion:'Cl-', cationDisplay:'Fe³⁺', anionDisplay:'Cl⁻',
+      appearance:'Yellowish-brown deliquescent crystals / solid', solubility:'Readily soluble in water; forms a yellowish-brown stock solution.',
+      crystalColor:'#D97706', crystalSecondary:'#78350F', crystalHighlight:'#FDE68A'
+    },
+    ammoniumCarbonate: {
+      name:'Ammonium Carbonate', formula:'(NH₄)₂CO₃', cation:'NH4+', anion:'CO3^2-', cationDisplay:'NH₄⁺', anionDisplay:'CO₃²⁻',
+      appearance:'White crystalline solid / translucent lumps', solubility:'Readily soluble in water with faint ammonia odor; forms a clear stock solution.',
+      crystalColor:'#F8FAFC', crystalSecondary:'#CBD5E1', crystalHighlight:'#FFFFFF'
+    },
+    zincNitrate: {
+      name:'Zinc Nitrate', formula:'Zn(NO₃)₂', cation:'Zn2+', anion:'NO3-', cationDisplay:'Zn²⁺', anionDisplay:'NO₃⁻',
+      appearance:'White crystalline solid', solubility:'Readily soluble in water; forms a clear, colorless stock solution.',
+      crystalColor:'#F8FAFC', crystalSecondary:'#CBD5E1', crystalHighlight:'#FFFFFF'
+    }
   };
 
   const TESTS = [
@@ -282,6 +330,48 @@ requireStudentLogin();
   /* ══════════════════════════════════════
      INIT
   ══════════════════════════════════════ */
+  function renderSpecimenWatchglass(salt) {
+    const g = document.getElementById('specimenCrystalsGroup');
+    if (!g || !salt) return;
+
+    const c1 = salt.crystalColor || '#FFFFFF';
+    const c2 = salt.crystalSecondary || '#CBD5E1';
+    const c3 = salt.crystalHighlight || '#FFFFFF';
+
+    // Base crystal cluster polygons situated in center of watch glass dish (centered around x: 65, y: 46)
+    const facets = [
+      // Bottom shadow mound
+      `<ellipse cx="65" cy="48" rx="26" ry="9" fill="${c2}" opacity="0.45" filter="blur(1px)"/>`,
+      // Back facets
+      `<polygon points="48,46 54,40 62,42 56,48" fill="${c2}" stroke="${c3}" stroke-width="0.5" opacity="0.9"/>`,
+      `<polygon points="68,47 76,41 84,43 76,49" fill="${c2}" stroke="${c3}" stroke-width="0.5" opacity="0.9"/>`,
+      `<polygon points="56,42 65,36 74,38 65,44" fill="${c1}" stroke="${c3}" stroke-width="0.6" opacity="0.95"/>`,
+      // Main cluster facets
+      `<polygon points="52,48 59,43 68,45 61,50" fill="${c1}" stroke="${c3}" stroke-width="0.6"/>`,
+      `<polygon points="62,49 71,44 80,46 71,51" fill="${c1}" stroke="${c3}" stroke-width="0.6"/>`,
+      `<polygon points="44,50 51,46 58,49 51,53" fill="${c2}" stroke="${c3}" stroke-width="0.5"/>`,
+      `<polygon points="72,50 79,45 86,48 79,53" fill="${c2}" stroke="${c3}" stroke-width="0.5"/>`,
+      // Top sparkling facets
+      `<polygon points="58,44 65,39 65,44 58,47" fill="${c3}" opacity="0.85"/>`,
+      `<polygon points="65,39 72,41 72,46 65,44" fill="${c1}" stroke="${c3}" stroke-width="0.5"/>`,
+      `<polygon points="60,46 66,42 66,47 60,50" fill="${c3}" opacity="0.9"/>`,
+      // Small crystalline granules scattered
+      `<circle cx="42" cy="49" r="1.6" fill="${c1}" stroke="${c3}" stroke-width="0.4"/>`,
+      `<circle cx="45" cy="52" r="1.3" fill="${c2}"/>`,
+      `<circle cx="87" cy="49" r="1.5" fill="${c1}" stroke="${c3}" stroke-width="0.4"/>`,
+      `<circle cx="84" cy="52" r="1.2" fill="${c2}"/>`,
+      `<circle cx="50" cy="52" r="1.8" fill="${c3}"/>`,
+      `<circle cx="78" cy="52" r="1.6" fill="${c3}"/>`,
+      `<circle cx="65" cy="51" r="2.0" fill="${c3}"/>`,
+      // Glistening sparkles
+      `<path d="M 64,38 L 65,35 L 66,38 L 69,39 L 66,40 L 65,43 L 64,40 L 61,39 Z" fill="#FFFFFF" opacity="0.95"/>`,
+      `<path d="M 54,43 L 55,41 L 56,43 L 58,44 L 56,45 L 55,47 L 54,45 L 52,44 Z" fill="#FFFFFF" opacity="0.85"/>`,
+      `<path d="M 74,42 L 75,40 L 76,42 L 78,43 L 76,44 L 75,46 L 74,44 L 72,43 Z" fill="#FFFFFF" opacity="0.85"/>`
+    ];
+
+    g.innerHTML = facets.join('\n');
+  }
+
   function newSample() {
     const keys = Object.keys(SALTS);
     currentSaltKey = keys[Math.floor(Math.random() * keys.length)];
@@ -289,8 +379,23 @@ requireStudentLogin();
     Object.keys(testStates).forEach(k => delete testStates[k]);
     sessionSaved = false;
 
-    const saltBadge = document.getElementById('saltBadge');
-    if (saltBadge) saltBadge.textContent = `Sample ${sampleCounter}`;
+    const salt = SALTS[currentSaltKey];
+
+    const sampleNumStr = String(sampleCounter).padStart(2, '0');
+    const saltBadge = document.getElementById('sampleIdBadge') || document.getElementById('saltBadge');
+    if (saltBadge) saltBadge.textContent = `Specimen Solid: S-${sampleNumStr}`;
+
+    const titleEl = document.getElementById('specimenTitle');
+    if (titleEl) titleEl.textContent = `Unknown Inorganic Salt Sample S (${salt.appearance})`;
+
+    const appPill = document.getElementById('specimenAppearancePill');
+    if (appPill) appPill.textContent = salt.appearance;
+
+    const solPill = document.getElementById('specimenSolubilityPill');
+    if (solPill) solPill.textContent = salt.solubility;
+
+    renderSpecimenWatchglass(salt);
+
     const cationSelect = document.getElementById('cationSelect');
     if (cationSelect) cationSelect.value = '';
     const anionSelect = document.getElementById('anionSelect');
@@ -320,8 +425,8 @@ requireStudentLogin();
     const filledCount = Object.keys(testStates).filter(k => (testStates[k].obsText || '').trim() && (testStates[k].infText || '').trim()).length;
     const pct = Math.round((performedCount / totalTests) * 100);
 
-    const fill = document.getElementById('qualProgressFill');
-    const txt = document.getElementById('qualProgressCount');
+    const fill = document.getElementById('progressFill') || document.getElementById('qualProgressFill');
+    const txt = document.getElementById('progressCount') || document.getElementById('qualProgressCount');
     if (fill) fill.style.width = `${pct}%`;
     if (txt) txt.textContent = `${performedCount} / ${totalTests} Tests Performed (${filledCount} Recorded)`;
   }

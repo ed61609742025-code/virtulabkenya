@@ -27,69 +27,94 @@
 <link rel="manifest" href="../manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400..800;1,6..72,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared/style.css">
 <link rel="stylesheet" href="../shared/brilliant-theme.css">
 <link rel="stylesheet" href="../shared/tutorial-engine.css">
-<link rel="stylesheet" href="css/qualitative.css?v=83">
+<link rel="stylesheet" href="css/qualitative.css?v=84">
 <link rel="stylesheet" href="../shared/ai-tutor.css">
 <link rel="stylesheet" href="../shared/pwa-installer.css">
 </head>
 <body>
 
-<!-- ══════════════════════════════════════
-     TOPBAR NAVIGATION
-══════════════════════════════════════ -->
-<nav class="top-navbar">
-  <a href="home.html" class="nav-brand">
-    <span class="nav-logo-icon">VL</span>
-    <span>Qualitative Bench</span>
-  </a>
+<!-- Unified Sticky Academic Header -->
+<header class="academic-top-header">
+  <!-- Institutional Candidate Ribbon -->
+  <div class="candidate-top-ribbon">
+    <span class="ribbon-full">🇰🇪 REPUBLIC OF KENYA • KCSE CHEMISTRY PRACTICAL WORKSTATION • KNEC 233/3 • Q2: QUALITATIVE SALT ANALYSIS</span>
+    <span class="ribbon-mobile">🇰🇪 KCSE 233/3 · Qualitative Salt Analysis</span>
+  </div>
 
-  <div class="nav-actions">
-    <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm" onclick="TutorialEngine.start('qualitative')" style="padding:4px 10px; font-size:0.75rem;">
-      🧭 Guided Tutorial
-    </button>
+  <!-- Topbar Navigation Bar -->
+  <nav class="top-navbar">
+    <a href="/student/home.html" class="nav-brand-academic" title="Back to Student Workstation">
+      <div class="vlk-brand-logo-wrap">
+        <img src="/shared/virtulab-logo.svg" alt="VirtuLab Kenya Logo" class="vlk-brand-logo-img" width="34" height="34">
+      </div>
+      <div style="display:flex; flex-direction:column;">
+        <span style="font-weight:800; font-family:'Cinzel', serif; font-size:1.05rem; line-height:1.1; color:var(--heading-color);">VirtuLab</span>
+        <span class="brand-subtagline" style="font-size:0.65rem; font-family:'Newsreader', serif; font-style:italic; color:var(--cyan-accent); letter-spacing:0.01em;">Qualitative Bench</span>
+      </div>
+    </a>
 
-    <button class="nav-btn nav-btn-safety" onclick="window.VLKSafety && window.VLKSafety.openSDSModal('NaOH')" title="View Chemical Safety & SDS Hazards">
-      ⚠️ Reagent Safety (SDS)
-    </button>
+    <!-- Desktop Workbench Switcher (Hidden on Mobile) -->
+    <div class="nav-modules-pill">
+      <a href="lab.html" class="theme-btn-chip">🧪 Titration</a>
+      <a href="qualitative.html" class="theme-btn-chip active">🔍 Qualitative</a>
+      <a href="organic.html" class="theme-btn-chip">⚗️ Organic</a>
+      <a href="solubility.html" class="theme-btn-chip">🌡️ Solubility</a>
+      <a href="energy.html" class="theme-btn-chip">🔥 Energy</a>
+      <a href="rates.html" class="theme-btn-chip">⚡ Rates</a>
+      <a href="composite_exam.html" class="theme-btn-chip">📝 Exam</a>
+    </div>
 
-    <!-- Compact Settings Dropdown -->
-    <div style="position:relative;">
-      <button type="button" class="nav-btn nav-btn-settings" onclick="toggleBenchSettings(event)" title="Workbench Settings">
-        ⚙️ Settings
+    <div class="nav-actions">
+      <!-- Guided Tutorial Button -->
+      <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm" onclick="TutorialEngine.start('qualitative')" style="padding:4px 8px; font-size:0.75rem; white-space:nowrap;">
+        🧭 <span class="btn-text-full">Guided Tutorial</span><span class="btn-text-short">Tutorial</span>
       </button>
-      
-      <div id="benchSettingsDropdown" style="display:none; position:absolute; right:0; top:36px; width:240px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; box-shadow:var(--shadow-lg); z-index:10000; padding:12px; flex-direction:column; gap:10px; text-align:left;">
-        <!-- Sound Toggle Row -->
-        <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
-          <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Sound Effects</span>
-          <button type="button" id="soundToggleBtn" onclick="toggleSound()" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border);">🔊 Sound ON</button>
-        </div>
 
-        <!-- Language Selector Row -->
-        <div style="display:flex; flex-direction:column; gap:6px; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
-          <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Language / Lugha</span>
-          <div class="theme-toggle-group" style="width:100%;">
-            <button class="theme-btn-chip lang-btn-chip active" style="flex:1;" data-lang="en" onclick="setLanguage('en')">🇬🇧 EN</button>
-            <button class="theme-btn-chip lang-btn-chip" style="flex:1;" data-lang="sw" onclick="setLanguage('sw')">🇰🇪 SW</button>
+      <!-- Reagent Safety (SDS) Button -->
+      <button class="nav-btn nav-btn-safety" onclick="window.VLKSafety && window.VLKSafety.openSDSModal('NaOH')" title="View Chemical Safety & SDS Hazards" style="padding:4px 8px; font-size:0.75rem;">
+        ⚠️ <span class="btn-text-full">SDS Hazards</span><span class="btn-text-short">SDS</span>
+      </button>
+
+      <!-- Compact Settings Dropdown -->
+      <div style="position:relative;">
+        <button type="button" class="nav-btn nav-btn-settings" onclick="toggleBenchSettings(event)" title="Workbench Settings" style="padding:4px 8px; font-size:0.75rem;">
+          ⚙️ <span class="btn-text-full">Settings</span><span class="btn-text-short">⚙️</span>
+        </button>
+        
+        <div id="benchSettingsDropdown" style="display:none; position:absolute; right:0; top:36px; width:240px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; box-shadow:var(--shadow-lg); z-index:10000; padding:12px; flex-direction:column; gap:10px; text-align:left;">
+          <!-- Sound Toggle Row -->
+          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Sound Effects</span>
+            <button type="button" id="soundToggleBtn" onclick="toggleSound()" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border);">🔊 Sound ON</button>
           </div>
-        </div>
 
-        <!-- Theme Selector Row -->
-        <div style="display:flex; flex-direction:column; gap:6px;">
-          <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Appearance Theme</span>
-          <div class="theme-toggle-group" style="width:100%;">
-            <button class="theme-btn-chip active" style="flex:1;" data-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
-            <button class="theme-btn-chip" style="flex:1;" data-theme="light" onclick="setTheme('light')">☀️ Light</button>
-            <button class="theme-btn-chip" style="flex:1;" data-theme="green" onclick="setTheme('green')">🧪 Lab</button>
+          <!-- Language Selector Row -->
+          <div style="display:flex; flex-direction:column; gap:6px; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Language / Lugha</span>
+            <div class="theme-toggle-group" style="width:100%;">
+              <button class="theme-btn-chip lang-btn-chip active" style="flex:1;" data-lang="en" onclick="setLanguage('en')">🇬🇧 EN</button>
+              <button class="theme-btn-chip lang-btn-chip" style="flex:1;" data-lang="sw" onclick="setLanguage('sw')">🇰🇪 SW</button>
+            </div>
+          </div>
+
+          <!-- Theme Selector Row -->
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Appearance Theme</span>
+            <div class="theme-toggle-group" style="width:100%;">
+              <button class="theme-btn-chip active" style="flex:1;" data-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
+              <button class="theme-btn-chip" style="flex:1;" data-theme="light" onclick="setTheme('light')">☀️ Light</button>
+              <button class="theme-btn-chip" style="flex:1;" data-theme="green" onclick="setTheme('green')">🧪 Lab</button>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</nav>
+  </nav>
+</header>
 
 <!-- ══════════════════════════════════════
      MAIN PAGE CONTENT
@@ -133,17 +158,81 @@
     <span style="font-size:0.76rem; font-family:var(--font-mono); font-weight:700; background:var(--card-bg); padding:4px 10px; border-radius:6px; border:1px solid var(--card-border);" id="assignBannerDue">Active Practical Assignment</span>
   </div>
 
-  <!-- Task Card -->
-  <div class="task-card">
-    <div class="task-row">
-      <div class="task-icon-box">🧪</div>
-      <div class="task-text">
-        <h2>Unknown Salt Specimen</h2>
-        <p>Perform the reagent tests below to establish physical characteristics, cation identity, and anion identity.</p>
+  <!-- KNEC Question 2 Specimen Solid S Station Card -->
+  <section class="specimen-station-card">
+    <div class="specimen-station-main">
+      <!-- Interactive Watch Glass Viewport -->
+      <div class="watchglass-viewport" title="Watch glass holding solid sample S">
+        <svg id="watchglassSvg" width="130" height="90" viewBox="0 0 130 90" class="watchglass-dish-svg">
+          <defs>
+            <radialGradient id="dishGlassGrad" cx="50%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="rgba(255,255,255,0.4)" />
+              <stop offset="45%" stop-color="rgba(255,255,255,0.08)" />
+              <stop offset="90%" stop-color="rgba(148,163,184,0.3)" />
+              <stop offset="100%" stop-color="rgba(56,189,248,0.35)" />
+            </radialGradient>
+            <linearGradient id="dishRimGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="rgba(255,255,255,0.6)" />
+              <stop offset="50%" stop-color="rgba(255,255,255,0.15)" />
+              <stop offset="100%" stop-color="rgba(255,255,255,0.5)" />
+            </linearGradient>
+            <filter id="crystalShadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="rgba(0,0,0,0.45)"/>
+            </filter>
+          </defs>
+
+          <!-- Watch Glass Shadow -->
+          <ellipse cx="65" cy="58" rx="56" ry="24" fill="rgba(0,0,0,0.35)" filter="blur(4px)" />
+
+          <!-- Outer Concave Dish -->
+          <path d="M 12,42 C 12,74 118,74 118,42" fill="url(#dishGlassGrad)" stroke="url(#dishRimGrad)" stroke-width="1.8"/>
+          <!-- Inner Dish Oval -->
+          <ellipse cx="65" cy="42" rx="53" ry="18" fill="rgba(255,255,255,0.05)" stroke="url(#dishRimGrad)" stroke-width="1.2"/>
+          
+          <!-- Dynamic Salt Crystals Group rendered by JS -->
+          <g id="specimenCrystalsGroup" filter="url(#crystalShadow)">
+            <!-- Rendered by renderSpecimenWatchglass() -->
+          </g>
+
+          <!-- Dish Reflection Sheen -->
+          <path d="M 24,42 C 34,54 96,54 106,42" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+        <span class="watchglass-label">Watch Glass: Solid S</span>
+      </div>
+
+      <!-- Specimen Details & Preliminary Observational Metadata -->
+      <div class="specimen-info-col">
+        <div class="specimen-header-line">
+          <span class="sample-badge specimen-badge" id="sampleIdBadge">Specimen Solid: S-01</span>
+          <span class="knec-q-tag">KNEC 233/3 · Q2(a)</span>
+        </div>
+        <h2 class="specimen-title" id="specimenTitle">Unknown Inorganic Salt Sample S</h2>
+        <p class="specimen-instruction">
+          Observe the physical appearance of solid S on the watch glass. Prepare a stock solution by dissolving the solid in distilled water, then carry out systematic ion-precipitation tests below.
+        </p>
+
+        <!-- Preliminary Physical Properties Grid -->
+        <div class="specimen-props-row">
+          <div class="specimen-prop-chip">
+            <span class="prop-lbl">Appearance (Part a):</span>
+            <span class="prop-val" id="specimenAppearancePill">White crystalline solid</span>
+          </div>
+          <div class="specimen-prop-chip">
+            <span class="prop-lbl">Water Solubility:</span>
+            <span class="prop-val" id="specimenSolubilityPill">Readily soluble (clear stock solution)</span>
+          </div>
+        </div>
       </div>
     </div>
-    <span class="sample-badge" id="sampleIdBadge">Specimen: S-01</span>
-  </div>
+
+    <!-- Stock Solution Quick Preparation Callout -->
+    <div class="specimen-prep-callout">
+      <div class="prep-callout-icon">⚗️</div>
+      <div class="prep-callout-text">
+        <strong>Stock Solution Preparation:</strong> Dissolve the provided solid S in approx. 10 cm³ of distilled water in a boiling tube. Divide the solution into six portions for subsequent tests (b) to (g).
+      </div>
+    </div>
+  </section>
 
   <!-- Progress Strip -->
   <div class="progress-strip">
@@ -351,7 +440,7 @@
 <script src="../shared/i18n.js"></script>
 <script src="../shared/brilliant-ui.js"></script>
 <script src="../shared/tutorial-engine.js"></script>
-<script src="js/qualitative-engine.js?v=83"></script>
+<script src="js/qualitative-engine.js?v=84"></script>
 <script src="../shared/ai-tutor.js"></script>
 <script src="../shared/pwa-installer.js"></script>
 <script src="../shared/page-transitions.js"></script>

@@ -30,7 +30,7 @@
 <link rel="stylesheet" href="/shared/style.css">
 <link rel="stylesheet" href="/shared/brilliant-theme.css">
 <link rel="stylesheet" href="/shared/tutorial-engine.css">
-<link rel="stylesheet" href="css/lab.css?v=77">
+<link rel="stylesheet" href="css/lab.css?v=78">
 <link rel="stylesheet" href="/shared/ai-tutor.css">
 <link rel="stylesheet" href="/shared/pwa-installer.css">
 </head>
@@ -262,28 +262,6 @@
     <!-- LEFT COLUMN: Experiment Selection, Your Task, Reagents -->
     <aside class="wb-left-col">
       
-      <!-- Card 1: Experiment Selection -->
-      <div class="wb-card card-exp-select">
-        <div class="wb-card-title">
-          <span>🔬 Practical Examination Selection</span>
-          <span style="font-size:0.7rem; color:var(--text-tertiary); font-family:var(--font-mono); font-weight:600;">Paper 3 · Q1</span>
-        </div>
-        <label for="practicalSelect" style="display:block; font-size:0.74rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Choose Examination Practical:</label>
-        <select id="practicalSelect" class="wb-select" onchange="resetWorkbench(this.value)" aria-label="Select KCSE practical examination experiment">
-          <option value="acidBase">Acid-Base Titration (HCl vs NaOH)</option>
-          <option value="redox">Redox Titration (Fe²⁺ vs KMnO₄)</option>
-          <option value="precipitation">Precipitation Titration (Cl⁻ vs AgNO₃, Mohr's method)</option>
-          <option value="complexometric">Complexometric Titration (Ca²⁺/Mg²⁺ vs EDTA)</option>
-          <option value="dibasic">Dibasic Acid Titration (H₂SO₄ vs NaOH)</option>
-          <option value="tribasic">Tribasic Acid Titration (H₃PO₄ vs NaOH)</option>
-          <option value="weakAcid">Weak Acid – Strong Base (CH₃COOH vs NaOH)</option>
-          <option value="weakBase">Weak Base – Strong Acid (NH₃ vs HCl)</option>
-        </select>
-        <button type="button" onclick="resetWorkbench()" class="btn-pill-action" style="width:100%; margin-top:10px; height:38px; font-size:0.78rem; font-weight:700; display:flex; align-items:center; justify-content:center; gap:6px;" title="Flushes burette, washes conical flask, and resets experimental apparatus" aria-label="Wash apparatus and reset setup">
-          🔄 Wash Apparatus &amp; Reset Setup
-        </button>
-      </div>
-
       <!-- Card 2: Your Task -->
       <div class="wb-card card-task">
         <div class="wb-card-title">
@@ -652,6 +630,31 @@
 
       </div>
 
+      <!-- Card 1: Practical Examination Selection (Positioned at bottom for next practical selection after submission) -->
+      <div class="wb-card card-exp-select" id="cardExpSelect" style="margin-top:20px;">
+        <div class="wb-card-title">
+          <span>🔬 Select Another Practical Examination</span>
+          <span style="font-size:0.7rem; color:var(--text-tertiary); font-family:var(--font-mono); font-weight:600;">Paper 3 · Q1</span>
+        </div>
+        <p style="font-size:0.76rem; color:var(--text-secondary); margin-bottom:10px; line-height:1.45;">
+          Submitted your practical or ready to practice another volumetric analysis experiment? Choose a new practical below to reset the bench with fresh reagents.
+        </p>
+        <label for="practicalSelect" style="display:block; font-size:0.74rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Choose Examination Practical:</label>
+        <select id="practicalSelect" class="wb-select" onchange="resetWorkbench(this.value)" aria-label="Select KCSE practical examination experiment">
+          <option value="acidBase">Acid-Base Titration (HCl vs NaOH)</option>
+          <option value="redox">Redox Titration (Fe²⁺ vs KMnO₄)</option>
+          <option value="precipitation">Precipitation Titration (Cl⁻ vs AgNO₃, Mohr's method)</option>
+          <option value="complexometric">Complexometric Titration (Ca²⁺/Mg²⁺ vs EDTA)</option>
+          <option value="dibasic">Dibasic Acid Titration (H₂SO₄ vs NaOH)</option>
+          <option value="tribasic">Tribasic Acid Titration (H₃PO₄ vs NaOH)</option>
+          <option value="weakAcid">Weak Acid – Strong Base (CH₃COOH vs NaOH)</option>
+          <option value="weakBase">Weak Base – Strong Acid (NH₃ vs HCl)</option>
+        </select>
+        <button type="button" onclick="resetWorkbench()" class="btn-pill-action" style="width:100%; margin-top:10px; height:40px; font-size:0.80rem; font-weight:700; display:flex; align-items:center; justify-content:center; gap:6px;" title="Flushes burette, washes conical flask, and resets experimental apparatus" aria-label="Wash apparatus and reset setup">
+          🔄 Switch Practical &amp; Reset Setup
+        </button>
+      </div>
+
     </main>
   </div> <!-- workbench-grid -->
 </div> <!-- workbench-container -->
@@ -722,7 +725,7 @@
 <script src="../shared/i18n.js"></script>
 <script src="../shared/brilliant-ui.js"></script>
 <script src="../shared/tutorial-engine.js"></script>
-<script src="js/titration-workbench.js?v=75"></script>
+<script src="js/titration-workbench.js?v=78"></script>
 <script src="../shared/ai-tutor.js"></script>
 <script src="../shared/pwa-installer.js"></script>
 <script src="../shared/page-transitions.js"></script>

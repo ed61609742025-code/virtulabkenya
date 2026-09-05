@@ -3,6 +3,8 @@
 //  Multimodal Exam Paper Parsing & Idea-to-Exam Generation (Gemini)
 // ============================================================
 
+const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 const config = require('../config');
 
 const DEFAULT_MODEL = config.gemini?.defaultModel || 'gemini-3.5-flash-lite';
@@ -298,6 +300,55 @@ function normalizeQuestionsArray(parsed) {
         }
       }
 
+      if (simType === 'qualitative') {
+        if (!cfg) {
+          cfg = {
+            sampleName: (q.title && q.title.match(/Solid\s+[A-Z]/i) ? q.title.match(/Solid\s+[A-Z]/i)[0] : (q.number === 2 ? 'Solid Q' : 'Solid P')),
+            sampleDesc: q.prompt || 'An inorganic salt sample.',
+            marks: Number(q.marks) || 10,
+            tests: []
+          };
+        }
+        cfg.sampleName = cfg.sampleName || (q.title && q.title.match(/Solid\s+[A-Z]/i) ? q.title.match(/Solid\s+[A-Z]/i)[0] : (q.number === 2 ? 'Solid Q' : 'Solid P'));
+        
+        if (Array.isArray(cfg.tests) && cfg.tests.length > 0) {
+          cfg.tests = cfg.tests.map((t, tIdx) => ({
+            id: t.id || `test_${tIdx + 1}`,
+            prompt: t.prompt || t.test || t.procedure || t.text || t.instruction || (typeof t === 'string' ? t : `Test ${tIdx + 1}`),
+            correctObs: t.correctObs || t.observation || t.expectedObservation || t.modelAnswer || '',
+            correctInf: t.correctInf || t.inference || t.expectedInference || '',
+            marks: Number(t.marks) || 1.0
+          }));
+        } else if (Array.isArray(q.subQuestions) && q.subQuestions.length > 0) {
+          cfg.tests = q.subQuestions.map((sq, sqIdx) => ({
+            id: sq.id || `test_${sqIdx + 1}`,
+            prompt: sq.text || sq.prompt || `(${sq.id || String.fromCharCode(97 + sqIdx)}) Carry out test procedure`,
+            correctObs: sq.modelAnswer || '',
+            correctInf: '',
+            marks: Number(sq.marks) || 1.0
+          }));
+        }
+      } else if (simType === 'organic') {
+        if (cfg && Array.isArray(cfg.tests) && cfg.tests.length > 0) {
+          cfg.tests = cfg.tests.map((t, tIdx) => ({
+            id: t.id || `test_${tIdx + 1}`,
+            prompt: t.prompt || t.test || t.procedure || t.text || t.instruction || (typeof t === 'string' ? t : `Test ${tIdx + 1}`),
+            correctObs: t.correctObs || t.observation || t.expectedObservation || t.modelAnswer || '',
+            correctInf: t.correctInf || t.inference || t.expectedInference || '',
+            marks: Number(t.marks) || 1.0
+          }));
+        } else if (Array.isArray(q.subQuestions) && q.subQuestions.length > 0) {
+          if (!cfg) cfg = { sampleName: 'Liquid Z', marks: Number(q.marks) || 10, tests: [] };
+          cfg.tests = q.subQuestions.map((sq, sqIdx) => ({
+            id: sq.id || `test_${sqIdx + 1}`,
+            prompt: sq.text || sq.prompt || `(${sq.id || String.fromCharCode(97 + sqIdx)}) Carry out test procedure`,
+            correctObs: sq.modelAnswer || '',
+            correctInf: '',
+            marks: Number(sq.marks) || 1.0
+          }));
+        }
+      }
+
       return {
         number: q.number || i + 1,
         title: q.title || `Question ${i + 1}`,
@@ -577,12 +628,52 @@ function normalizeExamStructure(parsed, sourceMeta = {}) {
   normalized.meta = metaObj;
   normalized._meta = metaObj;
 
+  // Build flexible questions[] array (new format) first
+  normalized.questions = normalizeQuestionsArray(parsed);
+
+  // Sync questions configuration to examConfig for composite exams
+  if (Array.isArray(normalized.questions) && normalized.questions.length > 0) {
+    const q1Obj = normalized.questions.find(q => q.number === 1);
+    if (q1Obj && q1Obj.config) {
+      normalized.examConfig.q1 = {
+        ...(normalized.examConfig.q1 || {}),
+        ...q1Obj.config,
+        simulationType: q1Obj.simulationType,
+        marks: Number(q1Obj.marks) || normalized.examConfig.q1?.marks || 15
+      };
+      if (q1Obj.config.hasMultipleProcedures && Array.isArray(q1Obj.config.procedures)) {
+        normalized.examConfig.q1.hasMultipleProcedures = true;
+        normalized.examConfig.q1.procedures = q1Obj.config.procedures;
+      }
+    }
+
+    const q2Obj = normalized.questions.find(q => q.number === 2);
+    if (q2Obj && q2Obj.config) {
+      normalized.examConfig.q2 = {
+        ...(normalized.examConfig.q2 || {}),
+        ...q2Obj.config,
+        simulationType: q2Obj.simulationType,
+        marks: Number(q2Obj.marks) || normalized.examConfig.q2?.marks || 15
+      };
+    }
+
+    const q3Obj = normalized.questions.find(q => q.number === 3);
+    if (q3Obj && q3Obj.config) {
+      normalized.examConfig.q3 = {
+        ...(normalized.examConfig.q3 || {}),
+        ...q3Obj.config,
+        simulationType: q3Obj.simulationType,
+        marks: Number(q3Obj.marks) || normalized.examConfig.q3?.marks || 10
+      };
+    }
+  }
+
   // Ensure examConfig has proper defaults for composite exams
   if (isComposite) {
     normalized.examConfig.presetKey = normalized.examConfig.presetKey || 'custom';
-    if (!normalized.examConfig.q1) normalized.examConfig.q1 = FALLBACK_PRESETS.classic.examConfig.q1;
-    if (!normalized.examConfig.q2) normalized.examConfig.q2 = FALLBACK_PRESETS.classic.examConfig.q2;
-    if (!normalized.examConfig.q3) normalized.examConfig.q3 = FALLBACK_PRESETS.classic.examConfig.q3;
+    if (!normalized.examConfig.q1) normalized.examConfig.q1 = { ...FALLBACK_PRESETS.classic.examConfig.q1 };
+    if (!normalized.examConfig.q2) normalized.examConfig.q2 = { ...FALLBACK_PRESETS.classic.examConfig.q2 };
+    if (!normalized.examConfig.q3) normalized.examConfig.q3 = { ...FALLBACK_PRESETS.classic.examConfig.q3 };
 
     normalized.examConfig.q1.marks = Number(normalized.examConfig.q1.marks) || 15;
     normalized.examConfig.q2.marks = Number(normalized.examConfig.q2.marks) || 15;
@@ -604,22 +695,6 @@ function normalizeExamStructure(parsed, sourceMeta = {}) {
       } else {
         normalized.examConfig.q1.calcType = 'standard_molarity';
       }
-    }
-  }
-
-  // Build flexible questions[] array (new format) alongside legacy examConfig (backward compat)
-  normalized.questions = normalizeQuestionsArray(parsed);
-
-  // Sync multi-procedure configuration to examConfig.q1 for composite exams
-  if (Array.isArray(normalized.questions) && normalized.questions.length > 0) {
-    const q1Obj = normalized.questions.find(q => q.number === 1);
-    if (q1Obj && q1Obj.config && q1Obj.config.hasMultipleProcedures && Array.isArray(q1Obj.config.procedures)) {
-      normalized.examConfig.q1 = {
-        ...normalized.examConfig.q1,
-        ...q1Obj.config,
-        hasMultipleProcedures: true,
-        procedures: q1Obj.config.procedures
-      };
     }
   }
 
@@ -662,9 +737,14 @@ KNEC Examination Setting Standards to Enforce:
 3. Question 2 (Inorganic Qualitative Analysis - 10 to 15 Marks):
    - Structured experimental procedures (e.g. heating solid in dry tube, dissolving, portioning, adding 2M NaOH and 2M aqueous NH3 dropwise until in excess, anion confirmatory tests).
    - Inferences must strictly enforce KNEC grouping notation (e.g. "Pb²⁺, Al³⁺, or Zn²⁺ present" in excess NaOH; "Pb²⁺ or Al³⁺ present" in excess NH3) with correct ionic charges.
-4. Question 3 (Organic or Second Inorganic Qualitative Analysis - 10 Marks):
-   - If organic: Spatula ignition flame test, litmus test, unsaturation/redox test (acidified KMnO4 or Bromine water), and carbonate/hydrogen carbonate effervescence.
-   - If inorganic (like Solid P): identify heating test, dissolving and portions with appropriate cations/anions inference.
+4. Question 3 (Organic OR Second Inorganic Qualitative Analysis - 10 Marks):
+   - If the exam has a second inorganic qualitative analysis (e.g. Solid P with dry heating, dissolving, NaOH, Aqueous Ammonia with H2O2, dilute HNO3, Ba(NO3)2 tests):
+     - Set "simulationType": "qualitative".
+     - In "config", populate: { "sampleName": "Solid P", "sampleDesc": "An inorganic salt sample", "marks": 10, "tests": [ { "id": "t1", "prompt": "<exact procedure text from paper, e.g. (a) Place half of solid P in a dry test tube. Heat gently.>", "correctObs": "<expected observation>", "correctInf": "<expected inference>", "marks": 2.0 } ] }.
+     - Also populate "subQuestions" with each sub-question with id, text, marks, modelAnswer.
+   - If the exam has organic functional group analysis (e.g. Liquid Z):
+     - Set "simulationType": "organic".
+     - In "config", populate: { "sampleName": "Liquid Z", "trueOrganicKey": "Ethanol", "sampleDesc": "Clear volatile organic liquid", "marks": 10, "tests": [ ... ] }.
 5. Marking Scheme:
    - Provide a rigorous marking guide with point-by-point breakdown and explicit instructions on applying Error Carried Forward (e.c.f.) on calculation steps.
 
@@ -735,7 +815,7 @@ Produce a strict JSON object with this exact schema:
     "presetKey": "custom",
     "q1": { <copy of questions[0].config for backward compat; required if questions[0] is a simulated type> },
     "q2": { <copy of questions[1].config if qualitative> },
-    "q3": { <copy of questions[2].config if organic> }
+    "q3": { <copy of questions[2].config if simulated, whether qualitative salt analysis or organic functional group analysis> }
   },
   "markingScheme": "<Concise Markdown formatted teacher marking guide with point-by-point method marks (M), accuracy marks (A), and Error Carried Forward (e.c.f.) notes>",
   "confidentialPrepGuide": "<Concise Markdown formatted instructions for the school laboratory technician detailing reagent preparation recipes, molarities, volumes per candidate, and apparatus checklist>"
@@ -849,7 +929,7 @@ Strict Response JSON Schema:
     "presetKey": "custom",
     "q1": { <copy of questions[0].config — required for backward compat with simulation engine> },
     "q2": { <copy of questions[1].config if qualitative> },
-    "q3": { <copy of questions[2].config if organic> }
+    "q3": { <copy of questions[2].config if simulated, whether qualitative salt analysis or organic functional group analysis> }
   },
   "markingScheme": "<Markdown KNEC marking scheme with M and A marks, and e.c.f. instructions>",
   "confidentialPrepGuide": "<Markdown Lab Technician preparation instructions>"

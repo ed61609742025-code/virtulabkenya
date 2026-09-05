@@ -1046,24 +1046,24 @@
   ══════════════════════════════════════════════════════════════ -->
   <div id="paneQ3" class="exam-section-card" style="display:none;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-      <h2 style="font-size:1.2rem;font-weight:800;color:var(--heading-color);margin:0;font-family:var(--font-heading);">
+      <h2 id="q3HeadingTitle" style="font-size:1.2rem;font-weight:800;color:var(--heading-color);margin:0;font-family:var(--font-heading);">
         🧫 QUESTION 3: Organic Functional Group Analysis
       </h2>
-      <span class="timer-chip" style="font-size:0.78rem;padding:3px 10px;background:var(--amber-bg);color:var(--amber-accent);border:1px solid var(--amber-border);">10.0 MARKS</span>
+      <span class="timer-chip" id="q3MarksBadge" style="font-size:0.78rem;padding:3px 10px;background:var(--amber-bg);color:var(--amber-accent);border:1px solid var(--amber-border);">10.0 MARKS</span>
     </div>
 
     <div class="exam-prompt-box">
       <b>You are provided with:</b><br>
       • <b id="q3SampleName">Liquid Z</b>: <span id="q3SampleDescText">An organic sample.</span><br>
-      • Reagents: Metallic spatula &amp; Bunsen burner, Blue and Red litmus paper, Acidified Potassium Manganate(VII) (KMnO₄) / Bromine water, and Solid Sodium Hydrogen Carbonate (NaHCO₃).<br><br>
-      <b>Instructions:</b> Carry out the systematic organic tests below on the provided sample and record your observations and inferences in the spaces provided.
+      <span id="q3ReagentsLine">• Reagents: Metallic spatula &amp; Bunsen burner, Blue and Red litmus paper, Acidified Potassium Manganate(VII) (KMnO₄) / Bromine water, and Solid Sodium Hydrogen Carbonate (NaHCO₃).</span><br><br>
+      <span id="q3InstructionsText"><b>Instructions:</b> Carry out the systematic organic tests below on the provided sample and record your observations and inferences in the spaces provided.</span>
     </div>
 
-    <!-- Test Cards Grid Rendering Realistic Organic Testing Setups -->
+    <!-- Test Cards Grid Rendering Realistic Setups -->
     <div class="tests-grid" id="q3TestsGrid"></div>
 
-    <!-- Final Organic Deduction -->
-    <div class="exam-deductions-card" style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:16px;margin-top:16px;">
+    <!-- Final Deduction Card (Organic or Qualitative) -->
+    <div id="q3DeductionCard" class="exam-deductions-card" style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:16px;margin-top:16px;">
       <div style="font-weight:800;font-size:0.88rem;color:var(--heading-color);margin-bottom:10px;">
         (v) Functional Group Deduction (2.0 Marks)
       </div>
@@ -1188,8 +1188,8 @@
             <td style="text-align:center;font-weight:800;color:var(--green-accent);font-family:var(--font-mono);" id="modalScoreQ2">0.0</td>
           </tr>
           <tr>
-            <td>🧫 <b>Question 3:</b> Organic Functional Group Analysis</td>
-            <td style="text-align:center;color:var(--text-muted);font-family:var(--font-mono);">10.0</td>
+            <td id="modalRowQ3Title">🧫 <b>Question 3:</b> Organic Functional Group Analysis</td>
+            <td style="text-align:center;color:var(--text-muted);font-family:var(--font-mono);" id="modalMaxScoreQ3">10.0</td>
             <td style="text-align:center;font-weight:800;color:var(--green-accent);font-family:var(--font-mono);" id="modalScoreQ3">0.0</td>
           </tr>
           <tr style="background:var(--amber-bg);font-weight:800;">
@@ -1521,6 +1521,32 @@
                 }
                 if (document.getElementById('q3SampleDescText') && pCustom.q3?.sampleDesc) {
                   document.getElementById('q3SampleDescText').textContent = pCustom.q3.sampleDesc;
+                }
+
+                const isQ3Qualitative = Boolean(
+                  pCustom.q3?.simulationType === 'qualitative' ||
+                  pCustom.q3?.trueSaltKey ||
+                  pCustom.q3?.trueCation ||
+                  (pCustom.q3?.sampleName && /solid/i.test(pCustom.q3.sampleName)) ||
+                  (cfg.questions && cfg.questions.some(q => q.number === 3 && q.simulationType === 'qualitative'))
+                );
+                if (isQ3Qualitative) {
+                  const sName = pCustom.q3?.sampleName || 'Solid P';
+                  const sDesc = pCustom.q3?.sampleDesc || 'An inorganic salt sample.';
+                  const pace3 = document.getElementById('paceQ3');
+                  if (pace3) pace3.innerHTML = `<span>🧂 Q3: Qualitative</span>`;
+                  const btn3 = document.getElementById('btnQ3');
+                  if (btn3) btn3.innerHTML = `🧂 Question 3: Inorganic Qualitative Analysis (${escapeHtml(sName)}) (${Number(pCustom.q3?.marks || 10).toFixed(1)} Mks)`;
+                  const h3 = document.getElementById('q3HeadingTitle');
+                  if (h3) h3.innerHTML = `🧂 QUESTION 3: Inorganic Qualitative Analysis · ${escapeHtml(sName)}`;
+                  const mBadge = document.getElementById('q3MarksBadge');
+                  if (mBadge) mBadge.textContent = `${Number(pCustom.q3?.marks || 10).toFixed(1)} MARKS`;
+                  const rLine = document.getElementById('q3ReagentsLine');
+                  if (rLine) rLine.innerHTML = `• Reagents: Distilled water, 2M Sodium Hydroxide (NaOH), 2M Aqueous Ammonia (NH₃), Test tubes & holder, Bunsen burner, Confirmatory reagents.`;
+                  const iText = document.getElementById('q3InstructionsText');
+                  if (iText) iText.innerHTML = `<b>Instructions:</b> Carry out the systematic inorganic tests below on <b>${escapeHtml(sName)}</b> and record your observations and inferences in the spaces provided.`;
+                  const dedCard = document.getElementById('q3DeductionCard');
+                  if (dedCard) dedCard.style.display = 'none';
                 }
 
                 if (pCustom.q1?.hasMultipleProcedures && Array.isArray(pCustom.q1.procedures) && pCustom.q1.procedures.length > 1) {
@@ -2453,11 +2479,11 @@
     }).join('');
   }
 
-  function getTubeVisualHtml(testId, st) {
+  function getTubeVisualHtml(testId, st, qKey = 'q2') {
     const performed = st && st.performed;
     const isExcess = st && st.stage === 'excess';
-    const p = engine.preset?.q2 || {};
-    const saltKey = String(p.trueSaltKey || 'Pb(NO3)2');
+    const p = engine.preset?.[qKey] || {};
+    const saltKey = String(p.trueSaltKey || (qKey === 'q3' ? 'ZnSO4' : 'Pb(NO3)2'));
 
     const isFe3 = saltKey.includes('Fe') && (saltKey.includes('Cl') || saltKey.includes('3'));
     const isFe2 = saltKey.includes('Fe') && !isFe3;
@@ -2640,9 +2666,117 @@
     const grid = document.getElementById('q3TestsGrid');
     if (!grid) return;
 
+    const isQualitative = Boolean(
+      p.simulationType === 'qualitative' ||
+      p.trueSaltKey ||
+      (!p.trueFunctionalGroup && !p.trueOrganicKey) ||
+      (p.sampleName && /solid/i.test(p.sampleName))
+    );
+
     const tests = Array.isArray(p.tests) ? p.tests : [];
     if (!tests.length) {
-      grid.innerHTML = '<div style="padding:20px; color:var(--text-muted); text-align:center;">No organic tests configured for this sample.</div>';
+      grid.innerHTML = `<div style="padding:20px; color:var(--text-muted); text-align:center;">No ${isQualitative ? 'qualitative' : 'organic'} tests configured for this sample.</div>`;
+      return;
+    }
+
+    if (isQualitative) {
+      // ── Render Qualitative Inorganic Question 3 Cards ──
+      const perTestMarks = parseFloat((10.0 / tests.length).toFixed(1));
+      grid.innerHTML = tests.map((t, idx) => {
+        const st = q3TestStates[t.id] || { performed: false };
+        const letter = String.fromCharCode(97 + idx);
+        const promptTitle = t?.prompt ? (t.prompt.includes(') ') ? t.prompt.split(') ')[1] : t.prompt) : `Test Procedure (${letter})`;
+
+        let actionBtn = !st.performed
+          ? `<button class="btn-perform-test" onclick="performQ3Test('${t.id}')">🧪 Perform Qualitative Test</button>`
+          : `<button class="btn-perform-test done" disabled>✅ Test Observed</button><button class="btn-redo-test" onclick="redoQ3Test('${t.id}')">↺ Redo</button>`;
+
+        return `
+          <div class="kcse-question-block">
+            <div class="test-card-top">
+              <div class="test-header-left">
+                <span class="test-step-badge">(${letter})</span>
+                <h3 class="test-title-text">${escapeHtml(promptTitle)}</h3>
+              </div>
+              <span class="timer-chip" style="font-size:0.75rem; padding:2px 8px;">${perTestMarks} Marks</span>
+            </div>
+
+            <div class="test-layout-grid">
+              <div class="apparatus-stage">
+                <div class="apparatus-view">
+                  ${getTubeVisualHtml(t.id, st, 'q3')}
+                </div>
+                <div class="apparatus-status-tag" id="status_q3_${t.id}">
+                  ${!st.performed ? 'Ready to Test' : (st.statusLabel || 'Reaction Recorded')}
+                </div>
+              </div>
+
+              <div>
+                <div style="font-size:0.84rem; color:var(--text-main); line-height:1.5; margin-bottom:12px; background:var(--bg-dark); padding:10px 14px; border-radius:8px; border-left:3px solid var(--blue-accent); border:1px solid var(--card-border); border-left-width:3px;">
+                  <span style="font-weight:800; color:var(--heading-color); display:flex; align-items:center; gap:6px; margin-bottom:3px;">📋 Procedure:</span>
+                  <span>${escapeHtml(t.prompt)}</span>
+                </div>
+
+                <div class="action-buttons-row">
+                  ${actionBtn}
+                </div>
+
+                <!-- Inorganic Qualitative Scientific Quick-Palette -->
+                <div class="chem-palette-box">
+                  <div class="chem-palette-header">
+                    <span>⚡ Inorganic Scientific Quick-Palette</span>
+                    <span style="font-size:0.68rem; color:var(--text-muted); font-weight:normal;">(Tap to insert token into observation or inference)</span>
+                  </div>
+                  <div style="margin-bottom:5px;">
+                    <span style="font-size:0.7rem; color:var(--text-muted); font-weight:700;">Ions: </span>
+                    <span class="chem-token-chip" onclick="insertToken('q3Inf_${t.id}', 'Pb²⁺')">Pb²⁺</span>
+                    <span class="chem-token-chip" onclick="insertToken('q3Inf_${t.id}', 'Al³⁺')">Al³⁺</span>
+                    <span class="chem-token-chip" onclick="insertToken('q3Inf_${t.id}', 'Zn²⁺')">Zn²⁺</span>
+                    <span class="chem-token-chip" onclick="insertToken('q3Inf_${t.id}', 'Fe²⁺')">Fe²⁺</span>
+                    <span class="chem-token-chip" onclick="insertToken('q3Inf_${t.id}', 'Fe³⁺')">Fe³⁺</span>
+                    <span class="chem-token-chip" onclick="insertToken('q3Inf_${t.id}', 'Cu²⁺')">Cu²⁺</span>
+                    <span class="chem-token-chip" onclick="insertToken('q3Inf_${t.id}', 'Ca²⁺')">Ca²⁺</span>
+                    <span class="chem-token-chip" onclick="insertToken('q3Inf_${t.id}', 'Ba²⁺')">Ba²⁺</span>
+                    <span class="chem-token-chip" onclick="insertToken('q3Inf_${t.id}', 'SO₄²⁻')">SO₄²⁻</span>
+                    <span class="chem-token-chip" onclick="insertToken('q3Inf_${t.id}', 'SO₃²⁻')">SO₃²⁻</span>
+                    <span class="chem-token-chip" onclick="insertToken('q3Inf_${t.id}', 'CO₃²⁻')">CO₃²⁻</span>
+                    <span class="chem-token-chip" onclick="insertToken('q3Inf_${t.id}', 'Cl⁻')">Cl⁻</span>
+                  </div>
+                  <div>
+                    <span style="font-size:0.7rem; color:var(--text-muted); font-weight:700;">Observations: </span>
+                    <span class="chem-token-chip" onclick="insertToken('q3Obs_${t.id}', 'White precipitate formed')">White ppt</span>
+                    <span class="chem-token-chip" onclick="insertToken('q3Obs_${t.id}', 'Precipitate dissolves in excess to form colorless solution')">Dissolves in excess</span>
+                    <span class="chem-token-chip" onclick="insertToken('q3Obs_${t.id}', 'Precipitate insoluble in excess')">Insoluble in excess</span>
+                    <span class="chem-token-chip" onclick="insertToken('q3Obs_${t.id}', 'No precipitate formed')">No ppt</span>
+                    <span class="chem-token-chip" onclick="insertToken('q3Obs_${t.id}', 'Effervescence of colorless gas that turns lime water milky')">Effervescence (CO₂)</span>
+                    <span class="chem-token-chip" onclick="insertToken('q3Obs_${t.id}', 'Colorless gas with pungent choking smell that turns moist red litmus blue')">Choking gas (NH₃)</span>
+                    <span class="chem-token-chip" onclick="insertToken('q3Obs_${t.id}', 'Brown fumes of nitrogen dioxide evolved')">Brown fumes (NO₂)</span>
+                  </div>
+                </div>
+
+                <table class="knec-table">
+                  <thead>
+                    <tr>
+                      <th style="width:50%;">Observations [${(perTestMarks/2).toFixed(1)} Mark]</th>
+                      <th style="width:50%;">Inferences / Deductions [${(perTestMarks/2).toFixed(1)} Mark]</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <textarea class="kcse-input" id="q3Obs_${t.id}" placeholder="Record observations..." oninput="onQ3TextChange('${t.id}')">${engine.q3Obs[t.id] || ''}</textarea>
+                      </td>
+                      <td>
+                        <textarea class="kcse-input" id="q3Inf_${t.id}" placeholder="Write deductions / inferences (e.g. Pb²⁺, Al³⁺, Zn²⁺)..." oninput="onQ3TextChange('${t.id}')">${engine.q3Inf[t.id] || ''}</textarea>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
       return;
     }
 
@@ -2799,6 +2933,23 @@
     const st = q3TestStates[testId];
     st.performed = true;
     const p = engine?.preset?.q3 || {};
+    const isQualitative = Boolean(
+      p.simulationType === 'qualitative' ||
+      p.trueSaltKey ||
+      (!p.trueFunctionalGroup && !p.trueOrganicKey) ||
+      (p.sampleName && /solid/i.test(p.sampleName))
+    );
+
+    if (isQualitative) {
+      const tests = Array.isArray(p.tests) ? p.tests : [];
+      const t = tests.find(item => item.id === testId);
+      const obs = t?.correctObs || t?.observation || '';
+      st.statusLabel = obs ? `Observed: ${obs.slice(0, 65)}` : 'Test Performed: Reaction Recorded';
+      renderQ3TestsGrid();
+      updateLiveScoreDisplay();
+      return;
+    }
+
     const orgKey = String(p.trueOrganicKey || '');
     const isButanol = orgKey.includes('Butan');
     const isHexene = orgKey.includes('Hex');
@@ -2994,14 +3145,26 @@
     document.getElementById('modalScoreQ3').textContent = evalData.q3Score.toFixed(1);
     document.getElementById('modalScoreTotal').textContent = evalData.totalScore.toFixed(1);
 
+    const isQ3Qual = Boolean(
+      engine.preset?.q3?.simulationType === 'qualitative' ||
+      engine.preset?.q3?.trueSaltKey ||
+      (engine.preset?.q3?.sampleName && /solid/i.test(engine.preset?.q3?.sampleName))
+    );
+    const modalQ3Title = document.getElementById('modalRowQ3Title');
+    if (modalQ3Title) {
+      modalQ3Title.innerHTML = isQ3Qual
+        ? `🧂 <b>Question 3:</b> Inorganic Qualitative Analysis (${escapeHtml(engine.preset?.q3?.sampleName || 'Solid P')})`
+        : '🧫 <b>Question 3:</b> Organic Functional Group Analysis';
+    }
+
     const feedbackEl = document.getElementById('modalCompositeFeedback');
     let summaryMsg = '';
     if (evalData.percentage >= 75) {
-      summaryMsg = '<b>🏆 Exemplary KCSE Paper 3 Performance!</b> You demonstrated excellent procedural rigor across volumetric analysis, cation/anion ledger inferences, and organic functional group identification.';
+      summaryMsg = `<b>🏆 Exemplary KCSE Paper 3 Performance!</b> You demonstrated excellent procedural rigor across volumetric analysis, qualitative ledger inferences, and ${isQ3Qual ? 'systematic salt analysis' : 'organic functional group identification'}.`;
     } else if (evalData.percentage >= 50) {
-      summaryMsg = '<b>👍 Competent KCSE Practical Performance!</b> Good understanding of fundamental techniques. Review titrimetric indicator accuracy, concordant titre rules, and confirming tests for functional groups.';
+      summaryMsg = `<b>👍 Competent KCSE Practical Performance!</b> Good understanding of fundamental techniques. Review titrimetric indicator accuracy, concordant titre rules, and ${isQ3Qual ? 'confirmatory precipitation reactions' : 'confirming tests for functional groups'}.`;
     } else {
-      summaryMsg = '<b>📖 Intensive Practical Revision Recommended.</b> Focus on recording observations to 2 decimal places, mastering the cation/anion solubility table, and confirming tests with acidified KMnO₄ and NaHCO₃.';
+      summaryMsg = `<b>📖 Intensive Practical Revision Recommended.</b> Focus on recording observations to 2 decimal places, mastering the cation/anion solubility table, and ${isQ3Qual ? 'inorganic qualitative test sequences' : 'confirming tests with acidified KMnO₄ and NaHCO₃'}.`;
     }
 
     if (evalData.diagnosticNotes && evalData.diagnosticNotes.length > 0) {
@@ -3039,7 +3202,10 @@
         </div>
       `).join('');
 
-      rubricHtml += '<div style="font-weight:800; color:var(--cyan-accent); margin-top:12px;">🧫 Q3 Qualitative Organic Analysis (10.0 Marks):</div>';
+      const q3SectionHeader = isQ3Qual
+        ? `🧂 Q3 Qualitative Inorganic Analysis · ${escapeHtml(engine.preset?.q3?.sampleName || 'Solid P')} (10.0 Marks):`
+        : '🧫 Q3 Qualitative Organic Analysis (10.0 Marks):';
+      rubricHtml += `<div style="font-weight:800; color:var(--cyan-accent); margin-top:12px;">${q3SectionHeader}</div>`;
       rubricHtml += q3Rubric.map(r => `
         <div style="border-bottom:1px solid var(--border-subtle, rgba(255,255,255,0.06)); padding:6px 0;">
           <div class="rubric-item-row">
@@ -3195,6 +3361,8 @@
     document.getElementById('printQ2Content').innerHTML = q2Html;
 
     // Populate Q3 Print Table
+    const q3TestsList = (Array.isArray(p.q3?.tests) && p.q3.tests.length > 0) ? p.q3.tests : [];
+    const isQ3Qual = p.q3?.simulationType === 'qualitative' || p.q3?.trueSaltKey || (p.q3?.sampleName && /solid/i.test(p.q3.sampleName));
     let q3Html = `
       <table style="width:100%; border-collapse:collapse; margin-bottom:8px; font-size:0.8rem;">
         <tr style="background:#f1f5f9;">
@@ -3202,7 +3370,7 @@
           <th style="border:1px solid #000; padding:4px; width:30%;">Candidate Observations</th>
           <th style="border:1px solid #000; padding:4px; width:25%;">Candidate Inferences</th>
         </tr>
-        ${p.q3.tests.map(t => `
+        ${q3TestsList.map(t => `
           <tr>
             <td style="border:1px solid #000; padding:4px;">${t.prompt}</td>
             <td style="border:1px solid #000; padding:4px;">${engine.q3Obs[t.id] || '—'}</td>
@@ -3210,7 +3378,7 @@
           </tr>
         `).join('')}
       </table>
-      <div><b>Functional Group Deduction:</b> <u>${engine.q3FunctionalGroupChoice || '—'}</u></div>
+      ${!isQ3Qual && engine.q3FunctionalGroupChoice ? `<div><b>Functional Group Deduction:</b> <u>${engine.q3FunctionalGroupChoice || '—'}</u></div>` : ''}
     `;
     document.getElementById('printQ3Content').innerHTML = q3Html;
 

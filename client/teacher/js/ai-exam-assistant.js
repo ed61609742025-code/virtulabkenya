@@ -483,10 +483,11 @@
     showTemporaryToast(`✓ Indicator set to ${val}`);
   };
 
-  window.updateBlueprintSalt = function(val) {
-    if (!currentExamDraft?.examConfig?.q2) return;
-    const q2 = currentExamDraft.examConfig.q2;
-    q2.trueSaltKey = val;
+  window.updateBlueprintSalt = function(val, qNum = 2) {
+    const qKey = qNum === 3 ? 'q3' : 'q2';
+    if (!currentExamDraft?.examConfig?.[qKey]) return;
+    const targetQ = currentExamDraft.examConfig[qKey];
+    targetQ.trueSaltKey = val;
     const saltNames = {
       'ZnSO4': { name: 'Zinc Sulfate — ZnSO₄', cation: 'Zn²⁺', anion: 'SO₄²⁻', desc: 'White crystalline solid' },
       'Pb(NO3)2': { name: 'Lead(II) Nitrate — Pb(NO₃)₂', cation: 'Pb²⁺', anion: 'NO₃⁻', desc: 'White crystalline solid' },
@@ -496,18 +497,18 @@
       'CaCl2': { name: 'Calcium Chloride — CaCl₂', cation: 'Ca²⁺', anion: 'Cl⁻', desc: 'White deliquescent crystals' }
     };
     const s = saltNames[val] || { name: val, cation: 'Zn²⁺', anion: 'SO₄²⁻', desc: 'Inorganic solid' };
-    q2.trueSaltName = s.name;
-    q2.trueCation = s.cation;
-    q2.trueAnion = s.anion;
-    q2.sampleDesc = s.desc;
+    targetQ.trueSaltName = s.name;
+    targetQ.trueCation = s.cation;
+    targetQ.trueAnion = s.anion;
+    targetQ.sampleDesc = s.desc;
 
     // Trigger AI sync to get tests
     AiExamAssistant.refineDraft({
       currentDraft: currentExamDraft,
-      instruction: `Change unknown salt to ${s.name}`
+      instruction: `Change Question ${qNum} unknown salt to ${s.name}`
     }).then(res => {
       if (res?.exam) renderExamResults(res.exam);
-      showTemporaryToast(`✓ Salt changed to ${s.name}`);
+      showTemporaryToast(`✓ Question ${qNum} salt changed to ${s.name}`);
     }).catch(() => {
       renderBlueprintTab(currentExamDraft);
     });
@@ -731,18 +732,23 @@
       `;
     }
 
-    // Helper: Render Question 2 Salt Card
-    function getQ2CardHtml(qNum = 2, marks = 15, config = q2) {
+    // Helper: Render Qualitative Salt Card (Question 2 or Question 3)
+    function getQ2CardHtml(qNum = 2, marks = 15, config = (qNum === 3 ? q3 : q2)) {
+      const sampleName = config.sampleName || (config.title && config.title.match(/Solid\s+[A-Z]/i) ? config.title.match(/Solid\s+[A-Z]/i)[0] : (qNum === 2 ? 'Solid Q' : 'Solid P'));
+      const tests = (Array.isArray(config.tests) && config.tests.length > 0)
+        ? config.tests
+        : (Array.isArray(config.subQuestions) && config.subQuestions.length > 0 ? config.subQuestions : []);
+
       return `
         <div class="blueprint-card">
           <div class="blueprint-card-header">
             <span class="q-badge" style="background:#0d9488;color:#fff;">🔬 Question ${qNum} · ${marks} Marks (Simulated Salt ID)</span>
-            <h4>🧂 Inorganic Salt Analysis</h4>
+            <h4>🧂 Inorganic Salt Analysis (${escapeHtml(sampleName)})</h4>
           </div>
           <div class="blueprint-card-body">
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
               <span class="bp-label">Target Unknown Salt:</span>
-              <select class="form-control form-control-sm" style="font-weight:700;max-width:320px;" onchange="updateBlueprintSalt(this.value)">
+              <select class="form-control form-control-sm" style="font-weight:700;max-width:320px;" onchange="updateBlueprintSalt(this.value, ${qNum})">
                 <option value="ZnSO4" ${config.trueSaltKey === 'ZnSO4' ? 'selected' : ''}>Zinc Sulfate — ZnSO₄ (Zn²⁺ / SO₄²⁻)</option>
                 <option value="Pb(NO3)2" ${config.trueSaltKey === 'Pb(NO3)2' ? 'selected' : ''}>Lead(II) Nitrate — Pb(NO₃)₂ (Pb²⁺ / NO₃⁻)</option>
                 <option value="CuSO4" ${config.trueSaltKey === 'CuSO4' ? 'selected' : ''}>Copper(II) Sulfate — CuSO₄ (Cu²⁺ / SO₄²⁻)</option>
@@ -755,21 +761,25 @@
             <div class="bp-param-row">
               <div><span class="bp-label">Confirmed Cation:</span> <span class="pill pill-ok">${escapeHtml(config.trueCation || 'Zn²⁺')}</span></div>
               <div><span class="bp-label">Confirmed Anion:</span> <span class="pill pill-ok">${escapeHtml(config.trueAnion || 'SO₄²⁻')}</span></div>
-              <div><span class="bp-label">Appearance:</span> <i>${escapeHtml(config.sampleDesc || 'White crystalline solid')}</i></div>
+              <div><span class="bp-label">Appearance:</span> <i>${escapeHtml(config.sampleDesc || 'Solid sample')}</i></div>
             </div>
             
             <div style="margin-top:12px;">
-              <div style="font-size:0.75rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">Diagnostic Procedure (${(config.tests || []).length} Tests):</div>
+              <div style="font-size:0.75rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">Diagnostic Procedure (${tests.length} Tests):</div>
               <div class="bp-mini-tests">
-                ${(config.tests || []).map((t, i) => `
-                  <div class="bp-test-row">
-                    <span class="bp-test-idx">${i + 1}</span>
-                    <div>
-                      <div style="font-weight:700; font-size:0.8rem;">${escapeHtml(t.prompt || '')}</div>
-                      <div style="font-size:0.75rem; color:var(--green-accent);">✓ Obs: ${escapeHtml(t.correctObs || '')}</div>
+                ${tests.map((t, i) => {
+                  const pText = t.prompt || t.test || t.procedure || t.text || t.instruction || (typeof t === 'string' ? t : `Test ${i + 1}`);
+                  const oText = t.correctObs || t.observation || t.expectedObservation || t.modelAnswer || '';
+                  return `
+                    <div class="bp-test-row">
+                      <span class="bp-test-idx">${i + 1}</span>
+                      <div>
+                        <div style="font-weight:700; font-size:0.8rem;">${escapeHtml(pText)}</div>
+                        <div style="font-size:0.75rem; color:var(--green-accent);">✓ Obs: ${escapeHtml(oText)}</div>
+                      </div>
                     </div>
-                  </div>
-                `).join('')}
+                  `;
+                }).join('')}
               </div>
             </div>
           </div>
@@ -879,7 +889,7 @@
         if (q.simulationType === 'titration') {
           cardsHtml += getQ1CardHtml(q.number, q.marks, q.config || q1);
         } else if (q.simulationType === 'qualitative') {
-          cardsHtml += getQ2CardHtml(q.number, q.marks, q.config || q2);
+          cardsHtml += getQ2CardHtml(q.number, q.marks, q.config || (q.number === 3 ? q3 : q2));
         } else if (q.simulationType === 'organic') {
           cardsHtml += getQ3CardHtml(q.number, q.marks, q.config || q3);
         } else if (q.simulationType === 'written') {
@@ -891,11 +901,18 @@
       container.innerHTML = `<div class="ai-blueprint-grid">${cardsHtml}</div>`;
     } else {
       // Legacy 3-question default fallback
+      const isQ3Inorganic = (
+        q3.simulationType === 'qualitative' ||
+        q3.trueSaltKey ||
+        q3.trueCation ||
+        (q3.sampleName && /solid/i.test(q3.sampleName)) ||
+        (q3.tests && q3.tests.some(t => /naoh|ammonia|nh3|precipitation|cation|anion/i.test(t.prompt || '')))
+      );
       container.innerHTML = `
         <div class="ai-blueprint-grid">
           ${getQ1CardHtml(1, 15, q1)}
           ${getQ2CardHtml(2, 15, q2)}
-          ${getQ3CardHtml(3, 10, q3)}
+          ${isQ3Inorganic ? getQ2CardHtml(3, 10, q3) : getQ3CardHtml(3, 10, q3)}
         </div>
       `;
     }
@@ -1087,45 +1104,29 @@
           `;
         }
       } else if (q.simulationType === 'qualitative') {
-        const c2 = q.config || q2;
+        const c2 = q.config || (q.number === 2 ? q2 : (q.number === 3 ? q3 : {}));
+        const sampleName = c2.sampleName || (q.title && q.title.match(/Solid\s+[A-Z]/i) ? q.title.match(/Solid\s+[A-Z]/i)[0] : (q.number === 2 ? 'Solid Q' : 'Solid P'));
+        let testsList = (Array.isArray(c2.tests) && c2.tests.length > 0)
+          ? c2.tests
+          : (Array.isArray(q.subQuestions) && q.subQuestions.length > 0 ? q.subQuestions : []);
+        if (!testsList || testsList.length === 0) {
+          testsList = [
+            { prompt: `(a) Place about one third of ${sampleName} in a dry test tube and heat gently then strongly.` },
+            { prompt: `(b) Dissolve the remaining ${sampleName} in about 10 cm³ of distilled water and divide into portions.` },
+            { prompt: `(c) To portion 1, add 2M sodium hydroxide (NaOH) dropwise until in excess.` },
+            { prompt: `(d) To portion 2, add 2M aqueous ammonia (NH₃) dropwise until in excess.` },
+            { prompt: `(e) To portion 3, add dilute nitric(V) acid followed by barium nitrate / silver nitrate.` }
+          ];
+        }
+        const hasDeduction = Boolean(c2.trueCation || c2.trueAnion || c2.hasDeduction || Number(q.marks) >= 15);
+
         questionsContentHtml += `
           <div class="paper-section">
             <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid var(--card-border); padding-bottom:6px; margin-bottom:12px;">
-              <h4 style="margin:0;">QUESTION ${q.number} (${Number(q.marks || 15).toFixed(1)} MARKS)</h4>
-              <span class="pill pill-info">Inorganic Qualitative Analysis</span>
+              <h4 style="margin:0;">QUESTION ${q.number} (${Number(q.marks || (q.number === 2 ? 11 : 10)).toFixed(1)} MARKS)</h4>
+              <span class="pill pill-info">Inorganic Qualitative Analysis · ${escapeHtml(sampleName)}</span>
             </div>
-            <p style="font-size:0.84rem; line-height:1.6;">You are provided with <b>${formatChemicalFormula(escapeHtml(c2.sampleName || 'Solid Y'))}</b>. Carry out the following tests and record your observations and inferences in the spaces provided below.</p>
-            
-            <div style="overflow-x: auto;">
-              <table class="paper-table" style="margin-top:10px; min-width: 480px;">
-                <thead>
-                  <tr><th style="width:45%;">Test / Experimental Procedure</th><th style="width:30%;">Observations [1 Mk each]</th><th style="width:25%;">Inferences [1 Mk each]</th></tr>
-                </thead>
-                <tbody>
-                  ${(c2.tests || []).map(t => `
-                    <tr>
-                      <td>${formatChemicalFormula(escapeHtml(t.prompt))}</td>
-                      <td style="background:var(--card-bg-hover);"></td>
-                      <td style="background:var(--card-bg-hover);"></td>
-                    </tr>
-                  `).join('')}
-                </tbody>
-              </table>
-            </div>
-            <div style="margin-top:10px; font-size:0.85rem;">
-              <b>Final Deduction:</b> Cation: ____________________ &nbsp;|&nbsp; Anion: ____________________ [2 Marks]
-            </div>
-          </div>
-        `;
-      } else if (q.simulationType === 'organic') {
-        const c3 = q.config || q3;
-        questionsContentHtml += `
-          <div class="paper-section">
-            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid var(--card-border); padding-bottom:6px; margin-bottom:12px;">
-              <h4 style="margin:0;">QUESTION ${q.number} (${Number(q.marks || 10).toFixed(1)} MARKS)</h4>
-              <span class="pill pill-info">Organic Functional Group Analysis</span>
-            </div>
-            <p style="font-size:0.84rem; line-height:1.6;">You are provided with <b>${formatChemicalFormula(escapeHtml(c3.sampleName || 'Liquid Z'))}</b>. Carry out the following tests to identify the organic functional group present.</p>
+            <p style="font-size:0.84rem; line-height:1.6;">You are provided with <b>${formatChemicalFormula(escapeHtml(sampleName))}</b>. ${escapeHtml(c2.instructions || q.prompt || 'Carry out the following tests and record your observations and inferences in the spaces provided below.')}</p>
             
             <div style="overflow-x: auto;">
               <table class="paper-table" style="margin-top:10px; min-width: 480px;">
@@ -1133,13 +1134,65 @@
                   <tr><th style="width:45%;">Test / Experimental Procedure</th><th style="width:30%;">Observations</th><th style="width:25%;">Inferences</th></tr>
                 </thead>
                 <tbody>
-                  ${(c3.tests || []).map(t => `
-                    <tr>
-                      <td>${formatChemicalFormula(escapeHtml(t.prompt))}</td>
-                      <td style="background:var(--card-bg-hover);"></td>
-                      <td style="background:var(--card-bg-hover);"></td>
-                    </tr>
-                  `).join('')}
+                  ${testsList.map(t => {
+                    const tPrompt = t.prompt || t.test || t.procedure || t.text || t.instruction || (typeof t === 'string' ? t : '');
+                    return `
+                      <tr>
+                        <td>${formatChemicalFormula(escapeHtml(tPrompt))}</td>
+                        <td style="background:var(--card-bg-hover);"></td>
+                        <td style="background:var(--card-bg-hover);"></td>
+                      </tr>
+                    `;
+                  }).join('')}
+                </tbody>
+              </table>
+            </div>
+            ${hasDeduction ? `
+              <div style="margin-top:10px; font-size:0.85rem;">
+                <b>Final Deduction:</b> Cation: ____________________ &nbsp;|&nbsp; Anion: ____________________ [2 Marks]
+              </div>
+            ` : ''}
+          </div>
+        `;
+      } else if (q.simulationType === 'organic') {
+        const c3 = q.config || q3;
+        const sampleName = c3.sampleName || (q.title && q.title.match(/Liquid\s+[A-Z]/i) ? q.title.match(/Liquid\s+[A-Z]/i)[0] : 'Liquid Z');
+        let testsList = (Array.isArray(c3.tests) && c3.tests.length > 0)
+          ? c3.tests
+          : (Array.isArray(q.subQuestions) && q.subQuestions.length > 0 ? q.subQuestions : []);
+        if (!testsList || testsList.length === 0) {
+          testsList = [
+            { prompt: `(i) Place 2 drops of ${sampleName} on a metallic spatula and ignite using a Bunsen burner flame.` },
+            { prompt: `(ii) Test with moist blue and red litmus paper.` },
+            { prompt: `(iii) Add 3 drops of acidified Potassium Manganate(VII) (KMnO₄) / Bromine water.` },
+            { prompt: `(iv) Add a half spatula-end of solid Sodium Hydrogen Carbonate (NaHCO₃).` }
+          ];
+        }
+
+        questionsContentHtml += `
+          <div class="paper-section">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid var(--card-border); padding-bottom:6px; margin-bottom:12px;">
+              <h4 style="margin:0;">QUESTION ${q.number} (${Number(q.marks || 10).toFixed(1)} MARKS)</h4>
+              <span class="pill pill-info">Organic Functional Group Analysis · ${escapeHtml(sampleName)}</span>
+            </div>
+            <p style="font-size:0.84rem; line-height:1.6;">You are provided with <b>${formatChemicalFormula(escapeHtml(sampleName))}</b>. ${escapeHtml(c3.instructions || q.prompt || 'Carry out the following tests to identify the organic functional group present.')}</p>
+            
+            <div style="overflow-x: auto;">
+              <table class="paper-table" style="margin-top:10px; min-width: 480px;">
+                <thead>
+                  <tr><th style="width:45%;">Test / Experimental Procedure</th><th style="width:30%;">Observations</th><th style="width:25%;">Inferences</th></tr>
+                </thead>
+                <tbody>
+                  ${testsList.map(t => {
+                    const tPrompt = t.prompt || t.test || t.procedure || t.text || t.instruction || (typeof t === 'string' ? t : '');
+                    return `
+                      <tr>
+                        <td>${formatChemicalFormula(escapeHtml(tPrompt))}</td>
+                        <td style="background:var(--card-bg-hover);"></td>
+                        <td style="background:var(--card-bg-hover);"></td>
+                      </tr>
+                    `;
+                  }).join('')}
                 </tbody>
               </table>
             </div>

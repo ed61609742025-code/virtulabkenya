@@ -1633,7 +1633,7 @@ function getOrganicPresetDefinition(organicKey) {
 
 class CompositeExamEngine {
   constructor(config = null) {
-    this.preset = COMPOSITE_EXAM_PRESETS.series_1;
+    this.preset = JSON.parse(JSON.stringify(COMPOSITE_EXAM_PRESETS.series_1));
     this.mode = 'strict'; // 'strict' (135 min timed) or 'guided' (with hints)
 
     // Q1 Workbench State
@@ -1769,14 +1769,39 @@ class CompositeExamEngine {
 
     if (config.q3) {
       Object.assign(this.preset.q3, config.q3);
-      const orgKey = config.q3.trueOrganicKey || config.q3.organic;
-      if (orgKey) this.preset.q3.trueOrganicKey = orgKey;
-      if (!Array.isArray(config.q3.tests) || config.q3.tests.length === 0) {
-        const registryOrg = getOrganicPresetDefinition(orgKey);
-        if (registryOrg) {
-          this.preset.q3.trueFunctionalGroup = registryOrg.trueFunctionalGroup;
-          this.preset.q3.sampleDesc = registryOrg.sampleDesc;
-          this.preset.q3.tests = registryOrg.tests;
+      const isQualitative = config.q3.simulationType === 'qualitative' || (
+        config.q3.simulationType !== 'organic' && (
+          Boolean(config.q3.trueSaltKey) ||
+          Boolean(config.q3.trueCation) ||
+          (config.q3.sampleName && /solid/i.test(config.q3.sampleName)) ||
+          (config.q3.tests && config.q3.tests.some(t => /naoh|ammonia|nh3|precipitation|cation|anion|heat|dissolv/i.test(t.prompt || '')))
+        )
+      );
+      if (isQualitative) {
+        this.preset.q3.simulationType = 'qualitative';
+        const saltKey = config.q3.trueSaltKey || config.q3.salt;
+        if (saltKey) this.preset.q3.trueSaltKey = saltKey;
+        if (!Array.isArray(config.q3.tests) || config.q3.tests.length === 0) {
+          const registryTests = getSaltPresetDefinition(saltKey || 'Pb(NO3)2');
+          if (registryTests) {
+            this.preset.q3.trueCation = registryTests.trueCation;
+            this.preset.q3.trueAnion = registryTests.trueAnion;
+            this.preset.q3.trueSaltName = registryTests.trueSaltName;
+            this.preset.q3.sampleDesc = registryTests.sampleDesc;
+            this.preset.q3.tests = registryTests.tests;
+          }
+        }
+      } else {
+        this.preset.q3.simulationType = 'organic';
+        const orgKey = config.q3.trueOrganicKey || config.q3.organic;
+        if (orgKey) this.preset.q3.trueOrganicKey = orgKey;
+        if (!Array.isArray(config.q3.tests) || config.q3.tests.length === 0) {
+          const registryOrg = getOrganicPresetDefinition(orgKey);
+          if (registryOrg) {
+            this.preset.q3.trueFunctionalGroup = registryOrg.trueFunctionalGroup;
+            this.preset.q3.sampleDesc = registryOrg.sampleDesc;
+            this.preset.q3.tests = registryOrg.tests;
+          }
         }
       }
     }
@@ -2414,7 +2439,59 @@ class CompositeExamEngine {
     let score = 0.0;
     const rubric = [];
     const tests = this.preset.q3.tests || [];
+    const isQualitative = this.preset.q3.simulationType === 'qualitative' || this.preset.q3.trueSaltKey || (!this.preset.q3.trueFunctionalGroup && !this.preset.q3.trueOrganicKey);
 
+    if (isQualitative) {
+      // Qualitative Scoring for Question 3 (e.g. Solid P)
+      const perTestMax = tests.length > 0 ? parseFloat((10.0 / tests.length).toFixed(1)) : 2.0;
+      const perHalfMax = parseFloat((perTestMax / 2.0).toFixed(1));
+
+      tests.forEach((t, idx) => {
+        const candidateObs = (this.q3Obs[t.id] || '').trim().toLowerCase();
+        const candidateInf = (this.q3Inf[t.id] || '').trim().toLowerCase();
+        let testMark = 0.0;
+
+        let obsMark = 0.0;
+        const expectedObs = (t.correctObs || t.observation || '').toLowerCase();
+        const obsKeywords = expectedObs.split(/[,; ]+/).filter(w => w.length > 2);
+        const obsMatches = obsKeywords.filter(w => candidateObs.includes(w)).length;
+        if (candidateObs.length > 4 && obsMatches >= 1) {
+          obsMark = perHalfMax;
+        } else if (candidateObs.length > 2) {
+          obsMark = parseFloat((perHalfMax / 2).toFixed(1));
+        }
+
+        let infMark = 0.0;
+        const expectedInf = (t.correctInf || t.inference || '').toLowerCase();
+        const infKeywords = expectedInf.split(/[,; ]+/).filter(w => w.length > 2);
+        const infMatches = infKeywords.filter(w => candidateInf.includes(w)).length;
+        if (candidateInf.length > 2 && (infMatches >= 1 || candidateInf.includes('ion') || candidateInf.includes('+') || candidateInf.includes('-'))) {
+          infMark = perHalfMax;
+        } else if (candidateInf.length > 2) {
+          infMark = parseFloat((perHalfMax / 2).toFixed(1));
+        }
+
+        testMark = parseFloat((obsMark + infMark).toFixed(1));
+        score += testMark;
+
+        rubric.push({
+          code: `Q3_${String.fromCharCode(97 + idx)}`,
+          item: `Inorganic Test (${String.fromCharCode(97 + idx)}): ${(t.prompt || '').substring(0, 45)}… [${testMark.toFixed(1)} / ${perTestMax.toFixed(1)} Mks]`,
+          max: perTestMax,
+          mark: testMark,
+          pass: testMark >= (perTestMax * 0.7),
+          detail: `Obs: [${obsMark.toFixed(1)}/${perHalfMax.toFixed(1)}] "${this.q3Obs[t.id] || 'None'}" (Expected: "${t.correctObs || t.observation || 'Valid observation'}"). Infs: [${infMark.toFixed(1)}/${perHalfMax.toFixed(1)}] "${this.q3Inf[t.id] || 'None'}" (Expected: "${t.correctInf || t.inference || 'Valid inference'}").`
+        });
+      });
+
+      return {
+        totalScore: Math.min(10.0, parseFloat(score.toFixed(1))),
+        maxScore: 10.0,
+        rubric
+      };
+    }
+
+    // Standard Organic Scoring
     tests.forEach((t, idx) => {
       const candidateObs = (this.q3Obs[t.id] || '').trim().toLowerCase();
       const candidateInf = (this.q3Inf[t.id] || '').trim().toLowerCase();
@@ -2438,7 +2515,7 @@ class CompositeExamEngine {
         infMark = 0.5;
       }
 
-      if (t.correctObs.toLowerCase().includes('no effervescence') && (candidateInf.includes('carboxylic acid present') || candidateInf.includes('r-cooh present'))) {
+      if (t.correctObs && t.correctObs.toLowerCase().includes('no effervescence') && (candidateInf.includes('carboxylic acid present') || candidateInf.includes('r-cooh present'))) {
         infMark = 0.0;
       }
 
@@ -2447,7 +2524,7 @@ class CompositeExamEngine {
 
       rubric.push({
         code: `Q3_${String.fromCharCode(97 + idx)}`,
-        item: `Organic Test (${String.fromCharCode(97 + idx)}): ${t.prompt.substring(0, 45)}… [${testMark.toFixed(1)} / 2.0 Mks]`,
+        item: `Organic Test (${String.fromCharCode(97 + idx)}): ${(t.prompt || '').substring(0, 45)}… [${testMark.toFixed(1)} / 2.0 Mks]`,
         max: 2.0,
         mark: parseFloat(testMark.toFixed(1)),
         pass: testMark >= 1.5,

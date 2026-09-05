@@ -265,10 +265,13 @@ async function callGeminiAssistant({ prompt, fileData = null, mimeType = null, m
       resolvedMime = 'application/pdf';
     }
 
-    // Strip data URL header if present (e.g. data:image/png;base64,...)
-    const cleanBase64 = fileData.includes('base64,')
-      ? fileData.split('base64,')[1].replace(/[\r\n\s]/g, '')
-      : fileData.replace(/[\r\n\s]/g, '');
+    // Strip data URL header efficiently without creating multiple multi-megabyte copies in V8
+    let cleanBase64 = fileData;
+    const commaIdx = fileData.indexOf('base64,');
+    if (commaIdx !== -1) {
+      cleanBase64 = fileData.substring(commaIdx + 7);
+    }
+    cleanBase64 = cleanBase64.trim();
 
     parts.push({
       inlineData: {
@@ -278,18 +281,19 @@ async function callGeminiAssistant({ prompt, fileData = null, mimeType = null, m
     });
   }
 
+  // Cap timeout to 45s so cloud proxy (Cloudflare/Render ~60s) never drops the connection
   const response = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'x-goog-api-key': apiKey
     },
-    signal: AbortSignal.timeout(90000),
+    signal: AbortSignal.timeout(45000),
     body: JSON.stringify({
       contents: [{ parts }],
       generationConfig: {
-        maxOutputTokens: maxTokens,
-        temperature: 0.4,
+        maxOutputTokens: Math.min(maxTokens, 3000),
+        temperature: 0.35,
         responseMimeType: 'application/json'
       }
     })

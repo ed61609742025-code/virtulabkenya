@@ -127,12 +127,61 @@
     if (file) processUploadFile(file);
   };
 
-  function processUploadFile(file) {
-    // Limit to 20MB
-    const maxBytes = 20 * 1024 * 1024;
-    if (file.size > maxBytes) {
-      alert('File is too large. Please select an exam paper under 20MB.');
+  function compressImageFile(file, maxWidth = 1600, quality = 0.82) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        img.onload = function() {
+          let { width, height } = img;
+          if (width > maxWidth || height > maxWidth) {
+            if (width > height) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            } else {
+              width = Math.round((width * maxWidth) / height);
+              height = maxWidth;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve({
+            dataUrl: canvas.toDataURL('image/jpeg', quality),
+            type: 'image/jpeg'
+          });
+        };
+        img.onerror = () => resolve({ dataUrl: e.target.result, type: file.type });
+        img.src = e.target.result;
+      };
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function processUploadFile(file) {
+    // 8MB limit ensures cloud upload doesn't hit proxy timeouts or RAM limits on Render
+    const maxBytes = 8 * 1024 * 1024;
+    if (file.size > maxBytes && !file.type.startsWith('image/')) {
+      alert('This PDF scan is ' + (file.size / (1024 * 1024)).toFixed(1) + ' MB. Cloud AI parsing works best with exam papers under 8MB. Please compress the PDF, or paste the question text into the box below.');
       return;
+    }
+
+    // For photo scans (JPEG/PNG), compress client-side on canvas to reduce memory
+    if (file.type.startsWith('image/')) {
+      const compressed = await compressImageFile(file);
+      if (compressed) {
+        uploadedFile = {
+          name: file.name,
+          size: Math.round(compressed.dataUrl.length * 0.75),
+          type: compressed.type,
+          dataUrl: compressed.dataUrl
+        };
+        renderFilePreview();
+        return;
+      }
     }
 
     const reader = new FileReader();
@@ -266,7 +315,17 @@
         throw new Error(resp.error || 'Could not parse exam paper.');
       }
     } catch (err) {
-      showTemporaryToast('AI Parsing Note: ' + (err.message || 'Failed to parse paper. Using standard KNEC layout.'), 'error');
+      console.warn('[AI Paper Upload Warning]:', err.message);
+      const is520OrTimeout = err.message && (err.message.includes('520') || err.message.includes('504') || err.message.includes('timeout') || err.message.includes('failed with status'));
+      if (is520OrTimeout) {
+        showTemporaryToast('⚠️ Cloud parsing timed out or file was large. Loading verified KNEC Paper 3 blueprint for editing...', 'error', 8000);
+        // Automatically select and load the KNEC curriculum template so the teacher is never blocked
+        if (typeof window.selectAiTemplate === 'function') {
+          window.selectAiTemplate('classic');
+        }
+      } else {
+        showTemporaryToast('AI Parsing Note: ' + (err.message || 'Failed to parse paper. Using standard KNEC layout.'), 'error', 6000);
+      }
     } finally {
       setGeneratingState(false);
     }

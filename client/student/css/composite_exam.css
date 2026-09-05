@@ -248,10 +248,9 @@ html, body {
 /* ── 4. PAGE WRAP & EXAM HEADER BANNER ── */
 .wrap {
   width: 100%;
-  max-width: 1440px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 16px 20px 80px;
-  box-sizing: border-box;
+  padding: 20px 20px 80px;
 }
 
 .exam-header {
@@ -492,304 +491,105 @@ iframe.lab-frame {
 /* ── 10. TABLET & MOBILE RESPONSIVENESS (360px - 1024px) ── */
 @media (max-width: 1024px) {
   .wrap {
-    padding: 12px 14px 60px;
+    padding: 16px 14px 60px;
   }
   .bench-3col-layout {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 12px !important;
-  }
-  .bench-center-wing {
-    grid-column: 1 / -1 !important;
-    order: 1 !important;
-    width: 100% !important;
-  }
-  .bench-prep-wing {
-    grid-column: 1 !important;
-    order: 2 !important;
-    width: 100% !important;
-  }
-  .bench-titrant-wing {
-    grid-column: 2 !important;
-    order: 3 !important;
-    width: 100% !important;
+    grid-template-columns: 1fr !important;
+    gap: 16px;
   }
 }
 
 @media (max-width: 768px) {
-  .wrap {
-    padding: 8px 8px 40px !important;
-    width: 100% !important;
-    max-width: 100vw !important;
-    overflow-x: hidden !important;
-    box-sizing: border-box !important;
-  }
-
   .top-navbar {
-    padding: 8px 10px !important;
-    gap: 6px !important;
+    padding: 10px 14px;
   }
-
   .exam-header {
-    padding: 10px 12px !important;
-    margin-bottom: 10px !important;
-    border-radius: 10px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 10px !important;
+    padding: 14px 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
-
   .exam-header > div:last-child {
-    width: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
-
   .pacing-coach-bar {
-    padding: 8px 10px !important;
-    margin-bottom: 10px !important;
-    border-radius: 8px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
+    padding: 10px 12px;
   }
-
   .exam-tab-btn {
-    flex: 1 1 calc(50% - 6px) !important;
-    font-size: 0.76rem !important;
-    padding: 8px 10px !important;
-    justify-content: center !important;
+    flex: 1 1 calc(50% - 8px);
+    font-size: 0.78rem;
+    padding: 8px 12px;
+    justify-content: center;
   }
-
   .btn-submit-exam {
-    width: 100% !important;
-    padding: 11px !important;
-    font-size: 0.88rem !important;
-    text-align: center !important;
-    justify-content: center !important;
+    width: 100%;
+    padding: 12px;
+    font-size: 0.9rem;
+    text-align: center;
+    justify-content: center;
   }
-
-  .exam-section-card {
-    padding: 12px 10px !important;
-    margin-bottom: 12px !important;
-    border-radius: 10px !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  .exam-prompt-box {
-    padding: 10px 12px !important;
-    margin-bottom: 12px !important;
-    font-size: 0.82rem !important;
-    line-height: 1.5 !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  .titration-rig-workbench {
-    padding: 10px 8px !important;
-    margin-bottom: 12px !important;
-    border-radius: 10px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  .bench-3col-layout {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 10px !important;
-    width: 100% !important;
-  }
-
-  .bench-center-wing {
-    grid-column: 1 / -1 !important;
-    order: 1 !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  .bench-prep-wing {
-    grid-column: 1 !important;
-    order: 2 !important;
-    width: 100% !important;
-    padding: 10px 8px !important;
-    gap: 8px !important;
-    box-sizing: border-box !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: space-between !important;
-  }
-
-  .bench-titrant-wing {
-    grid-column: 2 !important;
-    order: 3 !important;
-    width: 100% !important;
-    padding: 10px 8px !important;
-    gap: 8px !important;
-    box-sizing: border-box !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: space-between !important;
-  }
-
-  .apparatus-lens-row {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 10px !important;
-    width: 100% !important;
-  }
-
-  .apparatus-lens-row .rig-svg {
-    width: 120px !important;
-    height: 240px !important;
-    flex-shrink: 0 !important;
-  }
-
-  .apparatus-lens-row .buret-lens-card {
-    min-width: 125px !important;
-    max-width: 155px !important;
-    padding: 8px !important;
-    flex-shrink: 0 !important;
-  }
-
-  .bench-reagents-shelf {
-    gap: 6px !important;
-    padding: 6px 8px !important;
-    margin-top: 8px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  .bench-bottle-chip {
-    padding: 3px 6px !important;
-    font-size: 0.68rem !important;
-  }
-
-  .prep-cluster {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 6px !important;
-    width: 100% !important;
-  }
-
-  .prep-item {
-    width: 100% !important;
-  }
-
-  .titrant-buttons-cluster {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 6px !important;
-    width: 100% !important;
-  }
-
-  .titrant-buttons-cluster #btnContinuous {
-    grid-column: span 2 !important;
-  }
-
-  .bench-action-buttons-row {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 8px !important;
-    margin-top: 12px !important;
-    width: 100% !important;
-  }
-
-  .bench-action-buttons-row button {
-    width: 100% !important;
-  }
-
-  .calc-step-card {
-    padding: 12px 10px !important;
-    margin-bottom: 10px !important;
-    border-radius: 8px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
-  .calc-input-row {
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    flex-wrap: nowrap !important;
-    width: 100% !important;
-  }
-
-  .calc-input-row .calc-input {
-    max-width: 140px !important;
-    flex-shrink: 0 !important;
-  }
-
-  .kcse-question-block {
-    padding: 12px 10px !important;
-    margin-bottom: 12px !important;
-    border-radius: 10px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
   .test-layout-grid {
     grid-template-columns: 1fr !important;
-    gap: 12px !important;
-    width: 100% !important;
+    gap: 14px;
   }
-
   .apparatus-stage {
-    padding: 10px 8px !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
-
+  .apparatus-view {
+    justify-content: center;
+  }
   .btn-perform-test,
   .btn-redo-test,
   .btn-next-step,
   .btn-start-series {
-    min-height: 42px;
+    min-height: 44px; /* Accessible 44px touch target on mobile */
     display: inline-flex;
     align-items: center;
     justify-content: center;
   }
+  .calc-input {
+    max-width: 100%;
+    font-size: 1rem; /* Prevent iOS automatic zoom on focus */
+  }
 }
 
 @media (max-width: 480px) {
-  .wrap {
-    padding: 6px 4px 30px !important;
+  .top-navbar .nav-actions {
+    flex-wrap: wrap;
+    gap: 6px;
   }
   .exam-tab-btn {
-    flex: 1 1 100% !important;
-    width: 100% !important;
+    flex: 1 1 100%;
   }
   .exam-timer-chip {
-    font-size: 1.05rem;
-    padding: 4px 8px;
+    font-size: 1.1rem;
+    padding: 4px 10px;
   }
   .titration-rig-workbench {
-    padding: 8px 6px !important;
+    padding: 12px;
   }
-  .bench-prep-wing,
-  .bench-titrant-wing {
-    padding: 8px 6px !important;
+  .buret-lens-card {
+    min-width: unset;
+    width: 100%;
   }
-  .apparatus-lens-row .rig-svg {
-    width: 110px !important;
-    height: 220px !important;
+  .action-buttons-row {
+    flex-direction: column;
   }
-  .apparatus-lens-row .buret-lens-card {
-    min-width: 115px !important;
-    max-width: 145px !important;
-    padding: 6px !important;
+  .action-buttons-row button {
+    width: 100%;
   }
   .chem-palette-box {
-    padding: 6px;
+    padding: 8px;
   }
   .chem-token-chip {
-    padding: 3px 6px;
-    font-size: 0.72rem;
+    padding: 4px 8px;
+    font-size: 0.76rem;
   }
 }
 
@@ -882,5 +682,52 @@ iframe.lab-frame {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+@media (max-width: 768px) {
+  .titrant-buttons-cluster {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+  }
+  .titrant-buttons-cluster #btnContinuous {
+    grid-column: span 2 !important;
+  }
+
+  .prep-cluster {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+
+  .apparatus-lens-row {
+    flex-direction: row !important;
+    justify-content: center !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  .apparatus-lens-row .rig-svg {
+    width: 120px !important;
+    height: 240px !important;
+  }
+
+  .apparatus-lens-row .buret-lens-card {
+    min-width: 140px !important;
+    max-width: 180px !important;
+    padding: 10px !important;
+  }
+
+  .calc-input-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .calc-input-row .calc-input {
+    max-width: 140px !important;
+    flex-shrink: 0 !important;
+  }
 }
 

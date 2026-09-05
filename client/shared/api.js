@@ -650,6 +650,22 @@ const Organic = {
   }
 };
 
+// ── Composite KCSE Practical Examination API ─────────────────
+const Composite = {
+  async save(data) {
+    return apiRequest('POST', '/composite', data);
+  },
+  async getMine() {
+    return apiRequest('GET', '/composite/mine');
+  },
+  async getTeacherSessions() {
+    return apiRequest('GET', '/composite/teacher');
+  },
+  exportCsv(assignmentId, filename) {
+    return downloadFile(`/composite/export/${assignmentId}`, filename || `composite_exam_${assignmentId}_results.csv`);
+  }
+};
+
 // ── Solubility Curves & Crystallization API ───────────────────
 const Solubility = {
   async save(data) {
@@ -739,6 +755,12 @@ const API = {
   exportResearchCSV: () => Research.exportCSV()
 };
 if (typeof window !== 'undefined') {
+  window.Composite = Composite;
+  window.Qualitative = Qualitative;
+  window.Organic = Organic;
+  window.Solubility = Solubility;
+  window.Energy = Energy;
+  window.Rates = Rates;
   window.Gas = Gas;
   window.Research = Research;
   window.API = API;

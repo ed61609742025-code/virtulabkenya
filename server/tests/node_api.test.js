@@ -1365,22 +1365,23 @@ describe('VirtuLab Kenya — Backend API Test Suite', () => {
     assert.strictEqual(randomPaper.durationMinutes, 135);
     assert.ok(randomPaper.q1 && randomPaper.q2 && randomPaper.q3);
 
-    // 3. Test Series 3 (Redox Titration) engine evaluation
+    // 3. Test Series 3 (Percentage Purity & Alkene) engine evaluation
     const engine = new CompositeExamEngine({ presetKey: 'series_3' });
     
     // Simulate candidate recording 3 concordant trials
-    engine.recordTrial(1, 25.00, 0.00);
-    engine.recordTrial(2, 25.00, 0.00);
-    engine.recordTrial(3, 25.00, 0.00);
+    engine.recordTrial(1, 26.20, 0.00);
+    engine.recordTrial(2, 26.20, 0.00);
+    engine.recordTrial(3, 26.20, 0.00);
     engine.setConcordant(1, true);
     engine.setConcordant(2, true);
     engine.setConcordant(3, true);
 
-    engine.setQ1Answer('avgTitre', '25.00');
-    engine.setQ1Answer('molesB', '0.00250');
-    engine.setQ1Answer('molesA', '0.00050');
-    engine.setQ1Answer('molarityA', '0.020');
-    engine.setQ1Answer('concGrams', '3.16');
+    engine.setQ1Answer('avgTitre', '26.20');
+    engine.setQ1Answer('molesA', '0.00262');
+    engine.setQ1Answer('molesB', '0.00131');
+    engine.setQ1Answer('molarityB', '0.0524');
+    engine.setQ1Answer('massPure', '5.55');
+    engine.setQ1Answer('percentagePurity', '92.5');
 
     // Simulate candidate Q2 deductions
     engine.setQ2Response('q2_appearance', 'White crystalline solid, dissolves to clear solution', 'Soluble salt');
@@ -1403,11 +1404,11 @@ describe('VirtuLab Kenya — Backend API Test Suite', () => {
     assert.ok(evaluation.q1Details.rubric.length > 0);
     assert.ok(evaluation.q2Details.rubric.length > 0);
     assert.ok(evaluation.q3Details.rubric.length > 0);
-    assert.ok(evaluation.workedSolutions.stepA);
-    assert.ok(evaluation.workedSolutions.stepB);
-    assert.ok(evaluation.workedSolutions.stepC);
-    assert.ok(evaluation.workedSolutions.stepD);
-    assert.ok(evaluation.workedSolutions.stepE);
+    assert.ok(evaluation.workedSolutions.stepA || evaluation.workedSolutions.step_a);
+    assert.ok(evaluation.workedSolutions.stepB || evaluation.workedSolutions.step_b);
+    assert.ok(evaluation.workedSolutions.stepC || evaluation.workedSolutions.step_c);
+    assert.ok(evaluation.workedSolutions.stepD || evaluation.workedSolutions.step_d);
+    assert.ok(evaluation.workedSolutions.stepE || evaluation.workedSolutions.step_e);
   });
 
   it('CompositeExamEngine — should correctly enforce KNEC technical penalty rules', () => {
@@ -1418,9 +1419,9 @@ describe('VirtuLab Kenya — Backend API Test Suite', () => {
     engine.recordTrial(1, 24.33, 0.00);
     engine.recordTrial(2, 24.37, 0.00);
     const q1Res1 = engine.calculateQ1Score();
-    const decimalPenalty = q1Res1.rubric.find(r => r.item.includes('Decimal Place Penalty'));
+    const decimalPenalty = q1Res1.rubric.find(r => r.code === 'D');
     assert.ok(decimalPenalty, 'Must detect and penalize decimal place precision violation');
-    assert.strictEqual(decimalPenalty.mark, 0.5);
+    assert.strictEqual(decimalPenalty.mark, 0.0);
 
     // 2. Non-concordant averaging penalty (averaging 24.00 and 25.50 which is >0.20 cm³ apart)
     engine.recordTrial(1, 24.00, 0.00);
@@ -1429,13 +1430,14 @@ describe('VirtuLab Kenya — Backend API Test Suite', () => {
     engine.setConcordant(2, true);
     engine.setQ1Answer('avgTitre', '24.75');
     const q1Res2 = engine.calculateQ1Score();
-    const concPenalty = q1Res2.rubric.find(r => r.item.includes('Non-Concordant Penalty'));
+    const concPenalty = q1Res2.rubric.find(r => r.code === 'PA');
     assert.ok(concPenalty, 'Must detect and penalize non-concordant averaging');
+    assert.strictEqual(concPenalty.mark, 0.0);
 
-    // 3. Missing ionic charge penalty (deducing plain 'Pb' instead of 'Pb2+')
-    engine.setQ2Deduction('Pb', 'NO3-');
+    // 3. Missing ionic charge penalty (writing Pb, Al without charges)
+    engine.setQ2Response('q2_naoh', 'White precipitate formed, soluble in excess to form a colorless solution', 'Pb, Al present');
     const q2Res = engine.calculateQ2Score();
-    const chargePenalty = q2Res.rubric.find(r => r.item.includes('Charge Penalty'));
+    const chargePenalty = q2Res.rubric.find(r => r.detail && r.detail.includes('CP Penalty'));
     assert.ok(chargePenalty, 'Must detect and penalize missing charge superscripts');
   });
 

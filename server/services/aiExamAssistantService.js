@@ -6,7 +6,7 @@
 const config = require('../config');
 
 const DEFAULT_MODEL = config.gemini?.defaultModel || 'gemini-3.5-flash-lite';
-const EXAM_MAX_TOKENS = config.gemini?.examAssistantMaxTokens || 4000;
+const EXAM_MAX_TOKENS = config.gemini?.examAssistantMaxTokens || 8192;
 
 /**
  * Standard KNEC Paper 3 Presets for Fallback / Offline / Test mode
@@ -395,19 +395,20 @@ async function callGeminiAssistant({ prompt, fileData = null, mimeType = null, m
     });
   }
 
-  // Cap timeout to 45s so cloud proxy (Cloudflare/Render ~60s) never drops the connection
+  // Timeout configurable via GEMINI_TIMEOUT_MS, default 75s for multimodal PDF exam paper synthesis
+  const timeoutMs = parseInt(process.env.GEMINI_TIMEOUT_MS, 10) || 75000;
   const response = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'x-goog-api-key': apiKey
     },
-    signal: AbortSignal.timeout(45000),
+    signal: AbortSignal.timeout(timeoutMs),
     body: JSON.stringify({
       contents: [{ parts }],
       generationConfig: {
-        maxOutputTokens: Math.min(maxTokens, 3000),
-        temperature: 0.35,
+        maxOutputTokens: Math.min(maxTokens || EXAM_MAX_TOKENS, 8192),
+        temperature: 0.2,
         responseMimeType: 'application/json'
       }
     })
@@ -440,16 +441,103 @@ async function callGeminiAssistant({ prompt, fileData = null, mimeType = null, m
 }
 
 /**
- * Clean and parse JSON safely from Gemini output.
+ * Clean and parse JSON safely from Gemini output with resilient truncation repair.
  */
 function cleanAndParseJson(rawText) {
   if (!rawText || typeof rawText !== 'string') return {};
   let cleaned = rawText.trim();
-  const match = cleaned.match(/```(?:json)?\s*([\s\S]*?)\s*```/) || cleaned.match(/(\{[\s\S]*\})/);
-  if (match && match[1]) {
-    cleaned = match[1].trim();
+
+  // 1. Direct parse
+  try {
+    return JSON.parse(cleaned);
+  } catch (_) {}
+
+  // 2. Extract from markdown code fences if wrapped
+  const codeBlockMatch = cleaned.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
+  if (codeBlockMatch && codeBlockMatch[1]) {
+    cleaned = codeBlockMatch[1].trim();
+    try {
+      return JSON.parse(cleaned);
+    } catch (_) {}
+  } else {
+    // If there's leading conversational text before the root object, slice from first '{'
+    const firstBrace = cleaned.indexOf('{');
+    if (firstBrace > 0) {
+      cleaned = cleaned.substring(firstBrace);
+      try {
+        return JSON.parse(cleaned);
+      } catch (_) {}
+    }
   }
-  return JSON.parse(cleaned);
+
+  // 3. Remove trailing commas before closing braces/brackets
+  let sanitized = cleaned.replace(/,\s*([\}\]])/g, '$1');
+  try {
+    return JSON.parse(sanitized);
+  } catch (_) {}
+
+  // 4. Resilient repair for truncated output (e.g. token limits reached)
+  let inString = false;
+  let escaped = false;
+  const stack = [];
+  let s = '';
+
+  for (let i = 0; i < sanitized.length; i++) {
+    const ch = sanitized[i];
+    s += ch;
+    if (inString) {
+      if (escaped) {
+        escaped = false;
+      } else if (ch === '\\') {
+        escaped = true;
+      } else if (ch === '"') {
+        inString = false;
+      }
+    } else {
+      if (ch === '"') {
+        inString = true;
+      } else if (ch === '{') {
+        stack.push('}');
+      } else if (ch === '[') {
+        stack.push(']');
+      } else if (ch === '}' || ch === ']') {
+        if (stack.length > 0 && stack[stack.length - 1] === ch) {
+          stack.pop();
+        }
+      }
+    }
+  }
+
+  // If stopped mid-string, close the string
+  if (inString) {
+    s += '"';
+  }
+
+  // Clean trailing comma or dangling colon before closing containers
+  s = s.replace(/,\s*$/, '');
+  s = s.replace(/:\s*$/, ': null');
+
+  // Pop all unclosed braces/brackets in LIFO order
+  while (stack.length > 0) {
+    const closer = stack.pop();
+    s = s.replace(/,\s*$/, '');
+    s += closer;
+  }
+
+  // Clean trailing commas after closing
+  s = s.replace(/,\s*([\}\]])/g, '$1');
+
+  try {
+    return JSON.parse(s);
+  } catch (e2) {
+    // 5. Handle unescaped control characters inside strings
+    try {
+      const fixedControls = s.replace(/[\u0000-\u001F]+/g, (m) => (m === '\n' ? '\\n' : m === '\r' ? '\\r' : m === '\t' ? '\\t' : ''));
+      return JSON.parse(fixedControls);
+    } catch (_) {
+      throw new Error(`Invalid JSON from AI model: ${e2.message}`);
+    }
+  }
 }
 
 /**
@@ -617,9 +705,13 @@ Produce a strict JSON object with this exact schema:
     "q2": { <copy of questions[1].config if qualitative> },
     "q3": { <copy of questions[2].config if organic> }
   },
-  "markingScheme": "<Detailed Markdown formatted teacher marking guide with point-by-point method marks (M), accuracy marks (A), and Error Carried Forward (e.c.f.) notes>",
-  "confidentialPrepGuide": "<Detailed Markdown formatted instructions for the school laboratory technician detailing reagent preparation recipes, molarities, volumes per candidate, and apparatus checklist>"
+  "markingScheme": "<Concise Markdown formatted teacher marking guide with point-by-point method marks (M), accuracy marks (A), and Error Carried Forward (e.c.f.) notes>",
+  "confidentialPrepGuide": "<Concise Markdown formatted instructions for the school laboratory technician detailing reagent preparation recipes, molarities, volumes per candidate, and apparatus checklist>"
 }
+
+CRITICAL JSON RULES:
+- Output 100% valid RFC 8259 JSON only. Escape all double quotes and newlines inside string properties.
+- Keep markingScheme and confidentialPrepGuide concise to guarantee complete JSON generation without hitting length limits.
 
 CRITICAL INSTRUCTIONS FOR simulationType:
 - Use 'titration' for any volumetric/burette experiment (acid-base, redox, back-titration, or multi-procedure double titrations)
@@ -1346,5 +1438,6 @@ module.exports = {
   SUPPORTED_SIMULATION_TYPES,
   isAiConfigured,
   getAiStatus,
+  cleanAndParseJson,
   FALLBACK_PRESETS
 };

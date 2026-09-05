@@ -4,7 +4,7 @@
 
 const config = require('../config');
 
-const DEFAULT_MODEL = config.gemini?.defaultModel || 'gemini-2.5-flash-lite';
+const DEFAULT_MODEL = config.gemini?.defaultModel || 'gemini-3.5-flash-lite';
 
 /**
  * Helper to execute a prompt call against the Gemini API.

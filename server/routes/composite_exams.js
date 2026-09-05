@@ -8,6 +8,7 @@ const authMiddleware = require('../middleware/auth');
 const asyncHandler = require('../utils/asyncHandler');
 const { apiLimiter } = require('../middleware/rateLimiter');
 const { validateCompositeSave } = require('../middleware/validators');
+const pool = require('../db/pool');
 const compositeRepo = require('../repositories/compositeRepo');
 const { sendCsv, toCsvRow } = require('../utils/csv');
 
@@ -39,9 +40,36 @@ router.post('/', apiLimiter, authMiddleware, validateCompositeSave, asyncHandler
     duration_seconds = 0
   } = req.body;
 
-  const q1 = Math.min(15, Math.max(0, Number(q1_score) || 0));
-  const q2 = Math.min(15, Math.max(0, Number(q2_score) || 0));
-  const q3 = Math.min(10, Math.max(0, Number(q3_score) || 0));
+  let q1 = Math.min(15, Math.max(0, Number(q1_score) || 0));
+  let q2 = Math.min(15, Math.max(0, Number(q2_score) || 0));
+  let q3 = Math.min(10, Math.max(0, Number(q3_score) || 0));
+
+  // If this exam has written questions associated with an assignment, integrate their scores
+  if (assignment_id) {
+    try {
+      const writtenRes = await pool.query(
+        `SELECT question_number, sub_question_id,
+                COALESCE(teacher_score, ai_score, 0) AS final_score
+         FROM written_responses
+         WHERE student_id = $1 AND assignment_id = $2`,
+        [studentId, assignment_id]
+      );
+      if (writtenRes.rows.length > 0) {
+        const writtenMap = {};
+        for (const row of writtenRes.rows) {
+          const qNum = row.question_number;
+          writtenMap[qNum] = (writtenMap[qNum] || 0) + Number(row.final_score || 0);
+        }
+        details.written_scores = writtenMap;
+        if (writtenMap[1] !== undefined && q1 === 0) q1 = writtenMap[1];
+        if (writtenMap[2] !== undefined && q2 === 0) q2 = writtenMap[2];
+        if (writtenMap[3] !== undefined && q3 === 0) q3 = writtenMap[3];
+      }
+    } catch (e) {
+      console.warn('[/api/composite] written_responses query note:', e.message);
+    }
+  }
+
   const total = Number((q1 + q2 + q3).toFixed(1));
   const grade = calculateKnecGrade(total);
 

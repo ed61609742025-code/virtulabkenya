@@ -372,7 +372,27 @@ const migrations = [
   `ALTER TABLE assignment_submissions ADD COLUMN IF NOT EXISTS marked_at TIMESTAMP`,
   // Google OAuth support for students
   `ALTER TABLE students ADD COLUMN IF NOT EXISTS google_id VARCHAR(100) UNIQUE`,
-  `CREATE INDEX IF NOT EXISTS idx_students_google_id ON students(google_id)`
+  `CREATE INDEX IF NOT EXISTS idx_students_google_id ON students(google_id)`,
+  // Written responses for 'written' simulationType catch-all questions (flexible exam paper support)
+  `CREATE TABLE IF NOT EXISTS written_responses (
+     id SERIAL PRIMARY KEY,
+     student_id    INTEGER REFERENCES students(id) ON DELETE CASCADE,
+     assignment_id INTEGER REFERENCES assignments(id) ON DELETE CASCADE,
+     question_number INTEGER NOT NULL,
+     sub_question_id VARCHAR(10) NOT NULL,
+     answer_text TEXT,
+     model_answer  TEXT,
+     ai_score      DECIMAL(5,2) DEFAULT NULL,
+     ai_feedback   TEXT,
+     teacher_score DECIMAL(5,2) DEFAULT NULL,
+     teacher_feedback TEXT,
+     max_marks     DECIMAL(5,2) DEFAULT 0,
+     created_at    TIMESTAMP DEFAULT NOW(),
+     updated_at    TIMESTAMP DEFAULT NOW(),
+     CONSTRAINT unique_written_response UNIQUE (assignment_id, student_id, question_number, sub_question_id)
+   )`,
+  `CREATE INDEX IF NOT EXISTS idx_written_responses_student ON written_responses(student_id)`,
+  `CREATE INDEX IF NOT EXISTS idx_written_responses_assignment ON written_responses(assignment_id)`
 ];
 
 async function seedInitialAdmin(targetPool) {

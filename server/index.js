@@ -142,6 +142,10 @@ app.use('/api/notifications', notificationsRoutes);
 const aiAssistantRoutes = require('./routes/ai_assistant');
 app.use('/api/ai-assistant', aiAssistantRoutes);
 
+// Written questions for unsimulated exam questions (paper chromatography, electrolysis, food tests, etc.)
+const writtenQuestionsRoutes = require('./routes/written_questions');
+app.use('/api/written-questions', writtenQuestionsRoutes);
+
 // Public announcements endpoint
 const announcementRepo = require('./repositories/announcementRepo');
 const asyncHandler = require('./utils/asyncHandler');

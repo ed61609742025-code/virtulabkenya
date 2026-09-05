@@ -245,6 +245,94 @@ const FALLBACK_PRESETS = {
 };
 
 /**
+ * Supported simulation types for flexible exam paper parsing.
+ * 'written' is the catch-all for question types without an existing interactive simulation.
+ */
+const SUPPORTED_SIMULATION_TYPES = [
+  'titration',    // acid-base / redox / back-titration volumetric analysis
+  'qualitative',  // inorganic salt identification
+  'organic',      // organic functional group identification
+  'energy',       // thermochemistry / enthalpy
+  'rates',        // reaction kinetics / clock reactions
+  'gas',          // gas preparation and collection
+  'solubility',   // solubility curve / crystallization
+  'written'       // any other question type → structured written response
+];
+
+/**
+ * Converts legacy q1/q2/q3 examConfig format to new flexible questions[] array,
+ * or passes through an existing questions[] array with validation.
+ * Maintains full backward compatibility.
+ */
+function normalizeQuestionsArray(parsed) {
+  // If already has questions array, validate and return it
+  if (Array.isArray(parsed.questions) && parsed.questions.length > 0) {
+    return parsed.questions.map((q, i) => ({
+      number: q.number || i + 1,
+      title: q.title || `Question ${i + 1}`,
+      simulationType: SUPPORTED_SIMULATION_TYPES.includes(q.simulationType) ? q.simulationType : 'written',
+      marks: Number(q.marks) || 10,
+      config: q.config || null,
+      prompt: q.prompt || '',
+      subQuestions: Array.isArray(q.subQuestions) ? q.subQuestions : []
+    }));
+  }
+
+  // Legacy: convert q1/q2/q3 to questions[]
+  const questions = [];
+  const cfg = parsed.examConfig || {};
+
+  if (cfg.q1) {
+    questions.push({
+      number: 1,
+      title: cfg.q1.title || 'Volumetric Analysis',
+      simulationType: (() => {
+        const type = parsed.titrationType || '';
+        if (type === 'qualitative') return 'qualitative';
+        if (type === 'organic') return 'organic';
+        if (type === 'energy' || type === 'displacement' || type === 'neutralization') return 'energy';
+        if (type === 'rates' || type === 'kinetics') return 'rates';
+        if (type === 'gas') return 'gas';
+        if (type === 'solubility') return 'solubility';
+        return 'titration';
+      })(),
+      marks: Number(cfg.q1.marks) || 15,
+      config: cfg.q1,
+      prompt: '',
+      subQuestions: []
+    });
+  }
+  if (cfg.q2) {
+    questions.push({
+      number: 2,
+      title: cfg.q2.title || 'Qualitative Salt Analysis',
+      simulationType: 'qualitative',
+      marks: Number(cfg.q2.marks) || 15,
+      config: cfg.q2,
+      prompt: '',
+      subQuestions: []
+    });
+  }
+  if (cfg.q3) {
+    questions.push({
+      number: 3,
+      title: cfg.q3.title || 'Organic Functional Group Analysis',
+      simulationType: 'organic',
+      marks: Number(cfg.q3.marks) || 10,
+      config: cfg.q3,
+      prompt: '',
+      subQuestions: []
+    });
+  }
+
+  return questions;
+}
+
+// Pre-populate questions[] array on fallback presets
+FALLBACK_PRESETS.classic.questions = normalizeQuestionsArray(FALLBACK_PRESETS.classic);
+FALLBACK_PRESETS.redox.questions = normalizeQuestionsArray(FALLBACK_PRESETS.redox);
+
+/**
  * Call Gemini REST API with optional multimodal parts (base64 documents / images).
  */
 async function callGeminiAssistant({ prompt, fileData = null, mimeType = null, maxTokens = EXAM_MAX_TOKENS }) {
@@ -393,6 +481,9 @@ function normalizeExamStructure(parsed, sourceMeta = {}) {
     }
   }
 
+  // Build flexible questions[] array (new format) alongside legacy examConfig (backward compat)
+  normalized.questions = normalizeQuestionsArray(parsed);
+
   return normalized;
 }
 
@@ -423,65 +514,52 @@ Produce a strict JSON object with this exact schema:
 {
   "title": "<Exam paper title, e.g. 'KCSE Chemistry Paper 3 Term 2 Joint Mock'>",
   "formLevel": "<'Form 3' or 'Form 4'>",
-  "titrationType": "<'kcseComposite' if it contains 3 questions, or specific module like 'acidBase', 'redox', 'qualitative', 'organic', 'energy', 'rates', 'gas'>",
+  "titrationType": "<keep for backward compat: 'kcseComposite' if 3 questions, or specific module like 'acidBase', 'redox', 'qualitative', 'organic', 'energy', 'rates', 'gas'>",
   "instructions": "<General candidate instructions>",
   "durationMinutes": <number, e.g. 135 for composite or 60 for single topic>,
-  "examConfig": {
-    "presetKey": "custom",
-    "q1": {
-      "calcType": "<'standard_molarity' | 'water_of_crystallization' | 'percentage_purity' | 'ram_metal' | 'redox_stoichiometry' | 'dibasic_acid'>",
-      "solutionA": "<e.g. '0.100 M Hydrochloric Acid (HCl)'>",
-      "solutionB": "<e.g. 'Sodium Hydroxide (NaOH) approx 0.100 M'>",
-      "ratioA": <integer mole ratio of A, e.g. 1>,
-      "ratioB": <integer mole ratio of B, e.g. 1>,
-      "pipetteVolume": <25.0 or 20.0>,
-      "indicator": "<'phenolphthalein', 'methylOrange', 'screenedMethylOrange', 'starch', or 'none'>",
-      "equation": "<balanced chemical equation>",
-      "trueAcidMolarity": <decimal number>,
-      "trueBaseMolarity": <decimal number>,
-      "trueTitre": <expected concordant titre in cm3, e.g. 25.00>,
-      "acidRfm": <number, e.g. 36.5>,
-      "baseRfm": <number, e.g. 40.0>,
-      "marks": 15,
-      "instructions": "<Specific Question 1 instructions>"
-    },
-    "q2": {
-      "sampleName": "<e.g. 'Solid Y' or 'Salt Z'>",
-      "sampleDesc": "<physical description, e.g. 'A pure white inorganic crystalline salt'>",
-      "trueSaltKey": "<one of 'Pb(NO3)2', 'FeSO4', 'CuSO4', 'FeCl3', 'ZnSO4', 'Al(NO3)3', 'CaCl2', 'NH4Cl', 'Na2CO3', or chemical formula>",
-      "trueSaltName": "<Full name with formula, e.g. 'Zinc Sulfate — ZnSO₄'>",
-      "trueCation": "<cation formula, e.g. 'Zn2+'>",
-      "trueAnion": "<anion formula, e.g. 'SO42-'>",
-      "marks": 15,
-      "tests": [
+  "questions": [
+    {
+      "number": <integer starting at 1>,
+      "title": "<question title, e.g. 'Volumetric Analysis'>",
+      "simulationType": "<one of: titration, qualitative, organic, energy, rates, gas, solubility, written>",
+      "marks": <number>,
+      "config": { <for simulated types: put the exact same config fields as the old q1/q2/q3 format; for 'written' type, set to null> },
+      "prompt": "<for 'written' type: full question text including all sub-parts; empty string for simulated types>",
+      "subQuestions": [
         {
-          "id": "<test id string>",
-          "prompt": "<procedure text, e.g. '(i) To 2 cm3 of solution Y, add 2M NaOH dropwise until in excess'>",
-          "correctObs": "<accurate KNEC observation keywords>",
-          "correctInf": "<accurate KNEC deduction / inference>"
-        }
-      ]
-    },
-    "q3": {
-      "sampleName": "<e.g. 'Liquid Z' or 'Solid W'>",
-      "sampleDesc": "<description>",
-      "trueOrganicKey": "<one of 'Ethanol', 'Ethanoic Acid', 'Cyclohexene', 'Ethyne', 'Ethyl Ethanoate', 'Hexane'>",
-      "trueOrganicName": "<full organic name>",
-      "trueFunctionalGroup": "<functional group name, e.g. 'Carboxylic Acid (-COOH)' or 'Alkene (>C=C<)'>",
-      "marks": 10,
-      "tests": [
-        {
-          "id": "<test id string>",
-          "prompt": "<procedure text>",
-          "correctObs": "<KNEC observation>",
-          "correctInf": "<KNEC inference>"
+          "id": "<e.g. 'a', 'b', 'i', 'ii'>",
+          "text": "<sub-question text>",
+          "marks": <number>,
+          "modelAnswer": "<detailed model answer a KNEC examiner would accept>"
         }
       ]
     }
+  ],
+  "examConfig": {
+    "presetKey": "custom",
+    "q1": { <copy of questions[0].config for backward compat; required if questions[0] is a simulated type> },
+    "q2": { <copy of questions[1].config if qualitative> },
+    "q3": { <copy of questions[2].config if organic> }
   },
   "markingScheme": "<Detailed Markdown formatted teacher marking guide with point-by-point method marks (M), accuracy marks (A), and Error Carried Forward (e.c.f.) notes>",
   "confidentialPrepGuide": "<Detailed Markdown formatted instructions for the school laboratory technician detailing reagent preparation recipes, molarities, volumes per candidate, and apparatus checklist>"
 }
+
+CRITICAL INSTRUCTIONS FOR simulationType:
+- Use 'titration' for any volumetric/burette experiment (acid-base, redox, back-titration)
+- Use 'qualitative' for inorganic salt identification with NaOH/NH3 tests
+- Use 'organic' for organic functional group identification
+- Use 'energy' for thermochemistry/enthalpy/temperature change experiments
+- Use 'rates' for reaction rate/kinetics experiments
+- Use 'gas' for gas preparation and collection experiments
+- Use 'solubility' for solubility curve/crystallization experiments
+- Use 'written' for ANYTHING ELSE: paper chromatography, electrolysis, food tests,
+  flame tests, plant experiments, graph-reading, data analysis, diagram labelling, etc.
+  For 'written' type, set config to null and populate prompt + subQuestions with
+  complete question text and detailed model answers.
+
+For simulated types (titration/qualitative/organic/energy/rates/gas/solubility), the config field must contain
+the same fields as the old q1/q2/q3 format (calcType, solutionA, trueSaltKey, trueOrganicKey, etc.).
 
 ${textContent ? `Extracted Paper Text:\n${textContent}` : ''}`;
 
@@ -549,57 +627,29 @@ Strict Response JSON Schema:
   "titrationType": "kcseComposite",
   "instructions": "<Standard KNEC examination laboratory instructions>",
   "durationMinutes": ${durationMinutes},
-  "examConfig": {
-    "presetKey": "custom",
-    "q1": {
-      "calcType": "<'standard_molarity' | 'water_of_crystallization' | 'percentage_purity' | 'ram_metal' | 'redox_stoichiometry' | 'dibasic_acid'>",
-      "solutionA": "<e.g. 0.050 M Sulfuric(VI) Acid>",
-      "solutionB": "<e.g. 0.100 M Sodium Hydroxide>",
-      "pipetteVolume": 25.0,
-      "indicator": "phenolphthalein",
-      "ratioA": 1,
-      "ratioB": 2,
-      "acidRfm": 98.0,
-      "baseRfm": 40.0,
-      "trueAcidMolarity": 0.050,
-      "trueBaseMolarity": 0.100,
-      "trueTitre": 25.00,
-      "marks": 15,
-      "instructions": "<Laboratory instructions for Question 1>"
-    },
-    "q2": {
-      "sampleName": "Solid Y",
-      "sampleDesc": "<Physical appearance & description>",
-      "trueSaltKey": "<e.g. ZnSO4, Pb(NO3)2, CuSO4, FeSO4, FeCl3, CaCl2, NH4Cl>",
-      "trueSaltName": "<Full name with formula, e.g. 'Zinc Sulfate — ZnSO₄'>",
-      "trueCation": "<e.g. Zn2+>",
-      "trueAnion": "<e.g. SO42->",
-      "marks": 15,
-      "tests": [
+  "questions": [
+    {
+      "number": <integer starting at 1>,
+      "title": "<question title, e.g. 'Volumetric Analysis'>",
+      "simulationType": "<one of: titration, qualitative, organic, energy, rates, gas, solubility, written>",
+      "marks": <number>,
+      "config": { <for simulated types: include calcType, solutionA, solutionB, ratioA, ratioB, pipetteVolume, indicator, equation, trueAcidMolarity, trueBaseMolarity, trueTitre, marks, instructions for titration; trueSaltKey, trueSaltName, trueCation, trueAnion, sampleName, sampleDesc, marks, tests[] for qualitative; trueOrganicKey, trueOrganicName, trueFunctionalGroup, sampleName, sampleDesc, marks, tests[] for organic. For 'written' set to null.> },
+      "prompt": "<for 'written' type: full question text; empty string for simulated types>",
+      "subQuestions": [
         {
-          "id": "<e.g. q2_appearance, q2_naoh, q2_nh3, q2_anion>",
-          "prompt": "<Full KNEC procedure instruction>",
-          "correctObs": "<Expected laboratory observation>",
-          "correctInf": "<Correct chemical deduction / inference>"
-        }
-      ]
-    },
-    "q3": {
-      "sampleName": "Liquid Z",
-      "sampleDesc": "<Physical appearance & description>",
-      "trueOrganicKey": "<e.g. Ethanol, Ethanoic Acid, Cyclohexene, Hexane>",
-      "trueOrganicName": "<Full organic name>",
-      "trueFunctionalGroup": "<e.g. Alkanol (-OH), Carboxylic Acid (-COOH), Alkene (>C=C<)>",
-      "marks": 10,
-      "tests": [
-        {
-          "id": "<e.g. q3_ignition, q3_litmus, q3_kmno4, q3_nahco3>",
-          "prompt": "<Full KNEC procedure instruction>",
-          "correctObs": "<Expected observation>",
-          "correctInf": "<Correct inference>"
+          "id": "<e.g. 'a', 'b', 'i', 'ii'>",
+          "text": "<sub-question text>",
+          "marks": <number>,
+          "modelAnswer": "<detailed model answer>"
         }
       ]
     }
+  ],
+  "examConfig": {
+    "presetKey": "custom",
+    "q1": { <copy of questions[0].config — required for backward compat with simulation engine> },
+    "q2": { <copy of questions[1].config if qualitative> },
+    "q3": { <copy of questions[2].config if organic> }
   },
   "markingScheme": "<Markdown KNEC marking scheme with M and A marks, and e.c.f. instructions>",
   "confidentialPrepGuide": "<Markdown Lab Technician preparation instructions>"
@@ -1110,6 +1160,25 @@ function applySmartRefinement(currentDraft, instruction) {
   updated.markingScheme = generateSynchronizedMarkingScheme(updated);
   updated.confidentialPrepGuide = generateSynchronizedPrepGuide(updated);
 
+  // ============================================================
+  // 9. REBUILD questions[] ARRAY (keeps both formats in sync)
+  // Patch the questions[] array to reflect any examConfig changes
+  // so the flexible format stays consistent with legacy examConfig.
+  // ============================================================
+  if (Array.isArray(updated.questions) && updated.questions.length > 0) {
+    updated.questions = updated.questions.map(q => {
+      // For simulated type questions, sync config from examConfig
+      const legacyKey = q.number === 1 ? 'q1' : q.number === 2 ? 'q2' : q.number === 3 ? 'q3' : null;
+      if (legacyKey && updated.examConfig[legacyKey] && q.simulationType !== 'written') {
+        return { ...q, config: updated.examConfig[legacyKey] };
+      }
+      return q;
+    });
+  } else {
+    // No questions[] yet — build it now from the updated examConfig
+    updated.questions = normalizeQuestionsArray(updated);
+  }
+
   return { updated, changes };
 }
 
@@ -1196,6 +1265,9 @@ module.exports = {
   parseExamPaper,
   generateExamFromIdea,
   refineExamDraft,
+  normalizeExamStructure,
+  normalizeQuestionsArray,
+  SUPPORTED_SIMULATION_TYPES,
   isAiConfigured,
   getAiStatus,
   FALLBACK_PRESETS

@@ -316,6 +316,28 @@ CREATE TABLE IF NOT EXISTS research_surveys (
   created_at TIMESTAMP DEFAULT NOW()
 );
 
+-- Written responses table for 'written' simulationType questions
+-- Stores student text answers, AI draft scores, and teacher override scores
+CREATE TABLE IF NOT EXISTS written_responses (
+  id SERIAL PRIMARY KEY,
+  student_id    INTEGER REFERENCES students(id) ON DELETE CASCADE,
+  assignment_id INTEGER REFERENCES assignments(id) ON DELETE CASCADE,
+  question_number INTEGER NOT NULL,
+  sub_question_id VARCHAR(10) NOT NULL,
+  answer_text TEXT,
+  model_answer  TEXT,
+  ai_score      DECIMAL(5,2) DEFAULT NULL,
+  ai_feedback   TEXT,
+  teacher_score DECIMAL(5,2) DEFAULT NULL,
+  teacher_feedback TEXT,
+  max_marks     DECIMAL(5,2) DEFAULT 0,
+  created_at    TIMESTAMP DEFAULT NOW(),
+  updated_at    TIMESTAMP DEFAULT NOW(),
+  CONSTRAINT unique_written_response UNIQUE (assignment_id, student_id, question_number, sub_question_id)
+);
+CREATE INDEX IF NOT EXISTS idx_written_responses_student ON written_responses(student_id);
+CREATE INDEX IF NOT EXISTS idx_written_responses_assignment ON written_responses(assignment_id);
+
 -- ── Performance Indexes ──────────────────────────────────────
 CREATE INDEX IF NOT EXISTS idx_students_school_id ON students(school_id);
 CREATE INDEX IF NOT EXISTS idx_students_teacher_id ON students(teacher_id);

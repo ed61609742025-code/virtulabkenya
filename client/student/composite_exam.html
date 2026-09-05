@@ -1393,6 +1393,30 @@
                 renderQ1Calculations();
                 renderQ2TestsGrid();
                 renderQ3TestsGrid();
+
+                // If flexible questions[] array is present, hydrate written questions
+                if (Array.isArray(cfg.questions) && cfg.questions.length > 0) {
+                  window._examQuestionsList = cfg.questions;
+                  cfg.questions.forEach(q => {
+                    const btn = document.getElementById(`btnQ${q.number}`);
+                    if (btn) {
+                      const icon = q.simulationType === 'written' ? '✏️' : (q.simulationType === 'titration' ? '🧪' : (q.simulationType === 'qualitative' ? '🧂' : '🧫'));
+                      btn.innerHTML = `${icon} Question ${q.number}: ${escapeHtml(q.title || 'Question ' + q.number)} (${Number(q.marks || 10).toFixed(1)} Mks)`;
+                    }
+                    if (q.simulationType === 'written') {
+                      let pane = document.getElementById(`paneQ${q.number}`);
+                      if (!pane) {
+                        pane = document.createElement('div');
+                        pane.id = `paneQ${q.number}`;
+                        pane.className = 'exam-section-card';
+                        pane.style.display = 'none';
+                        const p3 = document.getElementById('paneQ3');
+                        if (p3 && p3.parentNode) p3.parentNode.insertBefore(pane, p3.nextSibling);
+                      }
+                      pane.innerHTML = getWrittenQuestionPanelHtml(q);
+                    }
+                  });
+                }
               } catch (cfgErr) {
                 console.warn('[Composite Exam] Could not hydrate assignment exam_config:', cfgErr);
               }
@@ -1402,6 +1426,170 @@
       }
     }
   }
+
+  // ── Written Question Panel Component & Submission ────────────────────
+  function getWrittenQuestionPanelHtml(q) {
+    const subQs = Array.isArray(q.subQuestions) ? q.subQuestions : [];
+    return `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;border-bottom:1.5px solid var(--card-border);padding-bottom:10px;">
+        <div>
+          <span class="badge" style="background:var(--amber-bg);color:var(--amber-accent);font-weight:800;font-size:0.75rem;">✏️ WRITTEN PRACTICAL QUESTION</span>
+          <h2 style="font-size:1.2rem;font-weight:800;color:var(--heading-color);margin:4px 0 0;font-family:var(--font-heading);">
+            QUESTION ${q.number}: ${escapeHtml(q.title || 'Structured Practical Assessment')}
+          </h2>
+        </div>
+        <span class="timer-chip" style="font-size:0.78rem;padding:3px 10px;background:var(--amber-bg);color:var(--amber-accent);border:1px solid var(--amber-border);font-weight:800;">${Number(q.marks || 10).toFixed(1)} MARKS</span>
+      </div>
+
+      <div class="exam-prompt-box" style="margin-bottom:18px;font-size:0.88rem;line-height:1.6;white-space:pre-wrap;">
+        ${escapeHtml(q.prompt || 'Read the instructions and answer the structured sub-questions below based on standard KNEC laboratory criteria.')}
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        ${subQs.map(sq => `
+          <div class="calc-step-card" style="margin-bottom:0;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+              <div style="font-weight:800;font-size:0.88rem;color:var(--heading-color);">
+                <span style="color:var(--cyan-accent);margin-right:6px;">(${escapeHtml(sq.id)})</span>
+                ${escapeHtml(sq.text)}
+              </div>
+              <span class="step-marks-badge" style="font-size:0.75rem;padding:2px 8px;background:var(--blue-bg);color:var(--blue-accent);border-radius:4px;font-weight:700;white-space:nowrap;">${sq.marks} Mark${sq.marks > 1 ? 's' : ''}</span>
+            </div>
+            <textarea
+              class="kcse-input"
+              id="written_input_${q.number}_${sq.id}"
+              placeholder="Record your observation, deduction, or calculation here..."
+              rows="3"
+              style="width:100%;font-size:0.86rem;padding:10px;resize:vertical;line-height:1.5;margin-top:6px;box-sizing:border-box;"
+            ></textarea>
+            <div id="written_feedback_${q.number}_${sq.id}" style="display:none;margin-top:8px;padding:8px 12px;border-radius:6px;font-size:0.8rem;"></div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div style="margin-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;padding:12px 16px;">
+        <div id="written_status_${q.number}" style="font-size:0.82rem;color:var(--text-muted);flex:1;min-width:260px;">
+          Answers are scored with AI assistance against the KNEC marking scheme and recorded for your teacher's review.
+        </div>
+        <button
+          type="button"
+          class="btn-submit-exam"
+          id="btnSubmitWritten_${q.number}"
+          onclick="submitWrittenAnswersForQuestion(${q.number})"
+          style="padding:10px 22px;font-size:0.88rem;font-weight:800;border-radius:8px;"
+        >
+          💾 Save &amp; Score Question ${q.number} Answers
+        </button>
+      </div>
+    `;
+  }
+  window.getWrittenQuestionPanelHtml = getWrittenQuestionPanelHtml;
+
+  async function submitWrittenAnswersForQuestion(qNum) {
+    if (!assignmentId) {
+      alert('This exam is in practice mode. To save written question scores, access it through an assigned task.');
+      return;
+    }
+
+    const q = window._examQuestionsList && window._examQuestionsList.find(x => x.number === qNum);
+    if (!q) return;
+
+    const btn = document.getElementById(`btnSubmitWritten_${qNum}`);
+    const statusEl = document.getElementById(`written_status_${qNum}`);
+
+    const answersPayload = (q.subQuestions || []).map(sq => {
+      const input = document.getElementById(`written_input_${qNum}_${sq.id}`);
+      return {
+        subQuestionId: sq.id,
+        questionText: sq.text,
+        modelAnswer: sq.modelAnswer || '',
+        maxMarks: sq.marks || 2,
+        answerText: input ? input.value.trim() : ''
+      };
+    });
+
+    const filledCount = answersPayload.filter(a => a.answerText).length;
+    if (filledCount === 0) {
+      alert('Please enter your response to at least one sub-question before saving.');
+      return;
+    }
+
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = '⏳ Scoring with AI…';
+    }
+    if (statusEl) {
+      statusEl.textContent = 'Analyzing responses against KNEC marking criteria…';
+      statusEl.style.color = 'var(--cyan-accent)';
+    }
+
+    try {
+      const token = typeof getToken === 'function' ? getToken() : localStorage.getItem('vlk_token');
+      const res = await fetch('/api/written-questions/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify({
+          assignmentId,
+          questionNumber: qNum,
+          answers: answersPayload
+        })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to submit answers.');
+
+      let totalAwarded = 0;
+
+      (data.responses || []).forEach(r => {
+        const fbEl = document.getElementById(`written_feedback_${qNum}_${r.subQuestionId}`);
+        if (fbEl) {
+          fbEl.style.display = 'block';
+          if (r.aiScore != null) {
+            totalAwarded += Number(r.aiScore);
+            fbEl.style.background = 'rgba(16,185,129,0.1)';
+            fbEl.style.border = '1px solid rgba(16,185,129,0.3)';
+            fbEl.style.color = 'var(--green-accent)';
+            fbEl.innerHTML = `<b>✓ AI Draft Score: ${Number(r.aiScore).toFixed(1)} / ${r.maxMarks} Marks</b><br><span style="color:var(--text-main);font-size:0.78rem;">${escapeHtml(r.aiFeedback || '')}</span>`;
+          } else {
+            fbEl.style.background = 'rgba(245,158,11,0.1)';
+            fbEl.style.border = '1px solid rgba(245,158,11,0.3)';
+            fbEl.style.color = 'var(--amber-accent)';
+            fbEl.innerHTML = `<b>⏳ Saved: Pending Teacher Marking</b>`;
+          }
+        }
+      });
+
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = '✓ Answers Saved & Scored';
+        btn.style.background = 'var(--green-accent)';
+        setTimeout(() => {
+          btn.textContent = `💾 Re-save Question ${qNum} Answers`;
+          btn.style.background = '';
+        }, 2500);
+      }
+
+      if (statusEl) {
+        statusEl.textContent = `✅ Saved! Draft score: ${totalAwarded.toFixed(1)}/${q.marks} Marks. Subject to teacher review.`;
+        statusEl.style.color = 'var(--green-accent)';
+      }
+
+    } catch (err) {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = `💾 Save & Score Question ${qNum} Answers`;
+      }
+      if (statusEl) {
+        statusEl.textContent = 'Error: ' + err.message;
+        statusEl.style.color = 'var(--red-accent)';
+      }
+      alert('Submission note: ' + err.message);
+    }
+  }
+  window.submitWrittenAnswersForQuestion = submitWrittenAnswersForQuestion;
 
   // ── Q1 Titration Workbench Interactive Actions ───────────────────────
   function pipetteSolutionB() {
@@ -2506,12 +2694,15 @@
   // ── Tab Navigation & Pacing Coach Update ────────────────────────────
   function switchQTab(qNum) {
     activeTab = qNum;
-    [1, 2, 3].forEach(n => {
+    const questions = window._examQuestionsList || [];
+    const totalTabs = Math.max(3, questions.length);
+
+    for (let n = 1; n <= totalTabs; n++) {
       const pane = document.getElementById(`paneQ${n}`);
       const btn = document.getElementById(`btnQ${n}`);
       if (pane) pane.style.display = n === qNum ? 'block' : 'none';
       if (btn) btn.className = n === qNum ? 'exam-tab-btn active' : 'exam-tab-btn';
-    });
+    }
 
     // Update Pacing Coach Indicators
     const p1 = document.getElementById('paceQ1');
@@ -2521,7 +2712,7 @@
     if (p1 && p2 && p3 && prev) {
       p1.className = qNum === 1 ? 'pacing-milestone active' : (qNum > 1 ? 'pacing-milestone completed' : 'pacing-milestone');
       p2.className = qNum === 2 ? 'pacing-milestone active' : (qNum > 2 ? 'pacing-milestone completed' : 'pacing-milestone');
-      p3.className = qNum === 3 ? 'pacing-milestone active' : 'pacing-milestone';
+      p3.className = qNum === 3 ? 'pacing-milestone active' : (qNum > 3 ? 'pacing-milestone completed' : 'pacing-milestone');
       prev.className = 'pacing-milestone';
     }
 
@@ -2531,24 +2722,19 @@
 
     if (prevBtn) prevBtn.style.visibility = (qNum === 1) ? 'hidden' : 'visible';
 
-    if (qNum === 1) {
-      if (progText) progText.textContent = 'Question 1 of 3: Volumetric Titration Analysis (15.0 Marks)';
-      if (nextBtn) {
-        nextBtn.textContent = 'Next Question: Q2 Salt Analysis →';
+    const currentQ = questions.find(x => x.number === qNum);
+    const qTitle = currentQ ? (currentQ.title || `Question ${qNum}`) : (qNum === 1 ? 'Volumetric Titration Analysis' : (qNum === 2 ? 'Qualitative Inorganic Analysis' : 'Organic Functional Group Analysis'));
+    const qMarks = currentQ ? Number(currentQ.marks).toFixed(1) : (qNum === 3 ? '10.0' : '15.0');
+
+    if (progText) progText.textContent = `Question ${qNum} of ${totalTabs}: ${qTitle} (${qMarks} Marks)`;
+
+    if (nextBtn) {
+      if (qNum < totalTabs) {
+        nextBtn.textContent = `Next Question: Q${qNum + 1} →`;
         nextBtn.onclick = () => nextQTab();
         nextBtn.className = 'btn-next-step';
-      }
-    } else if (qNum === 2) {
-      if (progText) progText.textContent = 'Question 2 of 3: Qualitative Inorganic Analysis (15.0 Marks)';
-      if (nextBtn) {
-        nextBtn.textContent = 'Next Question: Q3 Organic Analysis →';
-        nextBtn.onclick = () => nextQTab();
-        nextBtn.className = 'btn-next-step';
-      }
-    } else if (qNum === 3) {
-      if (progText) progText.textContent = 'Question 3 of 3: Organic Functional Group Analysis (10.0 Marks)';
-      if (nextBtn) {
-        nextBtn.textContent = '🚀 Submit Complete KCSE Exam Booklet (40 Marks)';
+      } else {
+        nextBtn.textContent = '🚀 Submit Complete KCSE Exam Booklet';
         nextBtn.onclick = () => submitCompositeExam();
         nextBtn.className = 'btn-submit-exam';
       }
@@ -2575,7 +2761,8 @@
   }
 
   function nextQTab() {
-    if (activeTab < 3) {
+    const totalTabs = Math.max(3, (window._examQuestionsList || []).length);
+    if (activeTab < totalTabs) {
       switchQTab(activeTab + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {

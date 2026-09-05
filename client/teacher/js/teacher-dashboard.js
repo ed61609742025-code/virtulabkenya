@@ -1898,6 +1898,7 @@ let currentPage = 1;
               <td>
                 ${actionBtn}
                 <button class="btn" onclick="toggleSubmissionDetail(${sub.submission_id})" style="margin-left:6px;padding:4px 10px;font-size:0.76rem;">Details</button>
+                <button class="btn btn-secondary" onclick="openWrittenAnswersModal(${sub.assignment_id}, ${sub.student_id}, '${escapeHtml(sub.student_name).replace(/'/g, "\\'")}')" style="margin-left:6px;padding:4px 10px;font-size:0.76rem;" title="View & Grade Written Questions">✏️ Written Qs</button>
                 ${feedbackText}
               </td>
             </tr>
@@ -1949,6 +1950,151 @@ let currentPage = 1;
     if (!row) return;
     row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
   }
+
+  async function openWrittenAnswersModal(assignmentId, studentId, studentName) {
+    if (!assignmentId || !studentId) {
+      alert('Missing assignment or student identifier.');
+      return;
+    }
+
+    let modal = document.getElementById('writtenAnswersTeacherModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'writtenAnswersTeacherModal';
+      modal.className = 'kcse-modal-overlay';
+      modal.style.cssText = 'display:flex;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.75);z-index:99999;align-items:center;justify-content:center;padding:16px;';
+      document.body.appendChild(modal);
+    }
+
+    modal.style.display = 'flex';
+    modal.innerHTML = `
+      <div class="kcse-modal-box" style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;max-width:800px;width:100%;max-height:88vh;overflow-y:auto;padding:24px;box-shadow:var(--shadow-lg);">
+        <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--card-border);padding-bottom:12px;margin-bottom:16px;">
+          <div>
+            <span class="badge" style="background:var(--amber-bg);color:var(--amber-accent);font-weight:800;">✏️ Written Exam Questions</span>
+            <h3 style="margin:4px 0 0 0;font-size:1.15rem;color:var(--heading-color);">Written Responses: ${escapeHtml(studentName)}</h3>
+          </div>
+          <button class="btn btn-sm btn-secondary" onclick="document.getElementById('writtenAnswersTeacherModal').style.display='none'">✕ Close</button>
+        </div>
+        <div id="writtenModalBodyContent">
+          <div style="padding:20px;text-align:center;color:var(--text-muted);">Loading written responses…</div>
+        </div>
+      </div>
+    `;
+
+    try {
+      const res = await apiRequest('GET', `/written-questions/${assignmentId}/${studentId}`);
+      const bodyEl = document.getElementById('writtenModalBodyContent');
+      if (!bodyEl) return;
+
+      const responses = res && res.responses ? res.responses : [];
+      if (responses.length === 0) {
+        bodyEl.innerHTML = `
+          <div style="padding:32px;text-align:center;color:var(--text-muted);">
+            <div style="font-size:2rem;margin-bottom:8px;">🔬</div>
+            <div style="font-weight:700;">No written questions recorded for this assignment.</div>
+            <div style="font-size:0.8rem;margin-top:4px;">This exam consisted solely of interactive virtual simulations.</div>
+          </div>
+        `;
+        return;
+      }
+
+      bodyEl.innerHTML = `
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          ${responses.map(r => `
+            <div style="background:var(--bg-dark);border:1px solid var(--card-border);border-radius:10px;padding:16px;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+                <b style="color:var(--cyan-accent);font-size:0.9rem;">Question ${r.question_number} · Sub-Question (${escapeHtml(r.sub_question_id)})</b>
+                <span class="badge" style="background:rgba(255,255,255,0.06);color:var(--text-main);font-size:0.75rem;">Max Marks: ${r.max_marks || 0}</span>
+              </div>
+
+              <!-- Student Answer -->
+              <div style="margin-bottom:10px;">
+                <div style="font-size:0.75rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;">Student's Submitted Answer:</div>
+                <div style="font-size:0.88rem;background:var(--card-bg);padding:10px 14px;border-radius:6px;border:1px solid var(--card-border);margin-top:4px;white-space:pre-wrap;font-family:var(--font-mono);">${escapeHtml(r.answer_text || '—')}</div>
+              </div>
+
+              <!-- Model Answer -->
+              <div style="margin-bottom:10px;">
+                <div style="font-size:0.75rem;font-weight:700;color:var(--green-accent);text-transform:uppercase;">KNEC Official Model Answer:</div>
+                <div style="font-size:0.82rem;color:var(--text-main);background:rgba(16,185,129,0.05);border-left:3px solid var(--green-accent);padding:6px 10px;border-radius:4px;margin-top:4px;">${escapeHtml(r.model_answer || 'Standard KNEC key')}</div>
+              </div>
+
+              <!-- AI Draft Evaluation -->
+              <div style="display:flex;gap:12px;align-items:center;background:var(--card-bg);padding:8px 12px;border-radius:6px;margin-bottom:12px;flex-wrap:wrap;">
+                <span class="pill pill-info" style="font-size:0.75rem;">AI Draft Score: ${r.ai_score != null ? Number(r.ai_score).toFixed(1) : 'Pending'} / ${r.max_marks}</span>
+                <span style="font-size:0.78rem;color:var(--text-muted);font-style:italic;">"${escapeHtml(r.ai_feedback || 'No automated commentary.')}"</span>
+              </div>
+
+              <!-- Teacher Grading / Override Controls -->
+              <div style="border-top:1px dashed var(--card-border);padding-top:12px;display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+                <div>
+                  <label style="font-size:0.75rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Teacher Final Mark (0 – ${r.max_marks})</label>
+                  <input type="number" id="tScore_${r.id}" min="0" max="${r.max_marks}" step="0.5" value="${r.teacher_score != null ? r.teacher_score : (r.ai_score != null ? r.ai_score : 0)}" class="form-control form-control-sm" style="width:90px;font-weight:800;color:var(--cyan-accent);">
+                </div>
+                <div style="flex:1;min-width:200px;">
+                  <label style="font-size:0.75rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Teacher Feedback / Examiner Note</label>
+                  <input type="text" id="tFeedback_${r.id}" value="${escapeHtml(r.teacher_feedback || '')}" placeholder="Optional teacher remark..." class="form-control form-control-sm">
+                </div>
+                <button type="button" class="btn btn-sm btn-primary" onclick="saveWrittenTeacherMark(${r.id})" id="btnSaveMark_${r.id}">
+                  💾 Save Mark
+                </button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    } catch (e) {
+      const bodyEl = document.getElementById('writtenModalBodyContent');
+      if (bodyEl) {
+        bodyEl.innerHTML = `<div style="padding:20px;color:var(--red-accent);">Could not load written responses: ${escapeHtml(e.message)}</div>`;
+      }
+    }
+  }
+  window.openWrittenAnswersModal = openWrittenAnswersModal;
+
+  async function saveWrittenTeacherMark(responseId) {
+    const scoreInput = document.getElementById(`tScore_${responseId}`);
+    const feedbackInput = document.getElementById(`tFeedback_${responseId}`);
+    const btn = document.getElementById(`btnSaveMark_${responseId}`);
+    if (!scoreInput) return;
+
+    const teacherScore = parseFloat(scoreInput.value);
+    const teacherFeedback = feedbackInput ? feedbackInput.value.trim() : '';
+
+    if (isNaN(teacherScore)) {
+      alert('Please enter a valid numeric score.');
+      return;
+    }
+
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Saving…';
+    }
+
+    try {
+      await apiRequest('PATCH', `/written-questions/${responseId}/teacher-mark`, {
+        teacherScore,
+        teacherFeedback
+      });
+      if (btn) {
+        btn.textContent = '✓ Saved';
+        btn.style.background = 'var(--green-accent)';
+        setTimeout(() => {
+          btn.disabled = false;
+          btn.textContent = '💾 Save Mark';
+          btn.style.background = '';
+        }, 1500);
+      }
+    } catch (err) {
+      alert('Could not save mark: ' + (err.message || 'Error occurred.'));
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = '💾 Save Mark';
+      }
+    }
+  }
+  window.saveWrittenTeacherMark = saveWrittenTeacherMark;
 
   function applyQ1Preset() {
     const preset = document.getElementById('cfgQ1Preset').value;

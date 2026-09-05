@@ -628,17 +628,15 @@
     const container = document.getElementById('subTabPane_blueprint');
     if (!container) return;
 
-    container.innerHTML = `
-      <div class="ai-blueprint-grid">
-        
-        <!-- Question 1 Card -->
+    // Helper: Render Question 1 Volumetric Rig Card
+    function getQ1CardHtml(qNum = 1, marks = 15, config = q1) {
+      return `
         <div class="blueprint-card">
           <div class="blueprint-card-header">
-            <span class="q-badge">Question 1 · 15 Marks</span>
+            <span class="q-badge" style="background:#0d9488;color:#fff;">🔬 Question ${qNum} · ${marks} Marks (Simulated Titration)</span>
             <h4>🧪 Volumetric Analysis Rig</h4>
           </div>
           <div class="blueprint-card-body">
-            
             <!-- Solution A Reagent & Concentration Row -->
             <div style="margin-bottom:12px;">
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
@@ -650,7 +648,7 @@
                   <button type="button" class="btn btn-sm btn-secondary" style="font-size:0.72rem;padding:2px 8px;" onclick="quickSetConcA(0.20)">0.20M</button>
                 </div>
               </div>
-              <input type="text" class="form-control form-control-sm" style="font-weight:700;" value="${escapeHtml(q1.solutionA || '0.100 M Hydrochloric Acid (HCl)')}" onchange="updateBlueprintSolA(this.value)">
+              <input type="text" class="form-control form-control-sm" style="font-weight:700;" value="${escapeHtml(config.solutionA || '0.100 M Hydrochloric Acid (HCl)')}" onchange="updateBlueprintSolA(this.value)">
             </div>
 
             <!-- Solution B Reagent & Concentration Row -->
@@ -663,67 +661,71 @@
                   <button type="button" class="btn btn-sm btn-secondary" style="font-size:0.72rem;padding:2px 8px;" onclick="quickSetConcB(0.20)">0.20M</button>
                 </div>
               </div>
-              <input type="text" class="form-control form-control-sm" style="font-weight:700;" value="${escapeHtml(q1.solutionB || '0.100 M Sodium Hydroxide (NaOH)')}" onchange="updateBlueprintSolB(this.value)">
+              <input type="text" class="form-control form-control-sm" style="font-weight:700;" value="${escapeHtml(config.solutionB || '0.100 M Sodium Hydroxide (NaOH)')}" onchange="updateBlueprintSolB(this.value)">
             </div>
 
             <div class="bp-param-row" style="align-items:center;">
               <div>
                 <span class="bp-label">Pipette:</span>
                 <select class="form-control form-control-sm" style="display:inline-block;width:auto;font-weight:700;" onchange="updateBlueprintPipette(this.value)">
-                  <option value="25" ${q1.pipetteVolume == 25 ? 'selected' : ''}>25.0 cm³</option>
-                  <option value="20" ${q1.pipetteVolume == 20 ? 'selected' : ''}>20.0 cm³</option>
-                  <option value="10" ${q1.pipetteVolume == 10 ? 'selected' : ''}>10.0 cm³</option>
+                  <option value="25" ${config.pipetteVolume == 25 ? 'selected' : ''}>25.0 cm³</option>
+                  <option value="20" ${config.pipetteVolume == 20 ? 'selected' : ''}>20.0 cm³</option>
+                  <option value="10" ${config.pipetteVolume == 10 ? 'selected' : ''}>10.0 cm³</option>
                 </select>
               </div>
 
               <div>
                 <span class="bp-label">Indicator:</span>
                 <select class="form-control form-control-sm" style="display:inline-block;width:auto;font-weight:700;" onchange="updateBlueprintIndicator(this.value)">
-                  <option value="phenolphthalein" ${q1.indicator === 'phenolphthalein' ? 'selected' : ''}>Phenolphthalein</option>
-                  <option value="methylOrange" ${q1.indicator === 'methylOrange' ? 'selected' : ''}>Methyl Orange</option>
-                  <option value="screenedMethylOrange" ${q1.indicator === 'screenedMethylOrange' ? 'selected' : ''}>Screened Methyl Orange</option>
-                  <option value="starch" ${q1.indicator === 'starch' ? 'selected' : ''}>Starch</option>
-                  <option value="none" ${q1.indicator === 'none' ? 'selected' : ''}>Self-Indicating (Redox)</option>
+                  <option value="phenolphthalein" ${config.indicator === 'phenolphthalein' ? 'selected' : ''}>Phenolphthalein</option>
+                  <option value="methylOrange" ${config.indicator === 'methylOrange' ? 'selected' : ''}>Methyl Orange</option>
+                  <option value="screenedMethylOrange" ${config.indicator === 'screenedMethylOrange' ? 'selected' : ''}>Screened Methyl Orange</option>
+                  <option value="starch" ${config.indicator === 'starch' ? 'selected' : ''}>Starch</option>
+                  <option value="none" ${config.indicator === 'none' ? 'selected' : ''}>Self-Indicating (Redox)</option>
                 </select>
               </div>
 
-              <div><span class="bp-label">Mole Ratio (A:B):</span> <b>${q1.ratioA || 1} : ${q1.ratioB || 1}</b></div>
-              <div><span class="bp-label">Calculated Titre:</span> <b style="color:var(--green-accent);font-size:1.05rem;">${Number(q1.trueTitre || 25.0).toFixed(2)} cm³</b></div>
+              <div><span class="bp-label">Mole Ratio (A:B):</span> <b>${config.ratioA || 1} : ${config.ratioB || 1}</b></div>
+              <div><span class="bp-label">Calculated Titre:</span> <b style="color:var(--green-accent);font-size:1.05rem;">${Number(config.trueTitre || 25.0).toFixed(2)} cm³</b></div>
             </div>
 
-            <div class="bp-equation" style="margin-top:12px;"><code>${escapeHtml(q1.equation || 'Acid(aq) + Base(aq) → Salt(aq) + H₂O(l)')}</code></div>
+            <div class="bp-equation" style="margin-top:12px;"><code>${escapeHtml(config.equation || 'Acid(aq) + Base(aq) → Salt(aq) + H₂O(l)')}</code></div>
           </div>
         </div>
+      `;
+    }
 
-        <!-- Question 2 Card -->
+    // Helper: Render Question 2 Salt Card
+    function getQ2CardHtml(qNum = 2, marks = 15, config = q2) {
+      return `
         <div class="blueprint-card">
           <div class="blueprint-card-header">
-            <span class="q-badge">Question 2 · 15 Marks</span>
+            <span class="q-badge" style="background:#0d9488;color:#fff;">🔬 Question ${qNum} · ${marks} Marks (Simulated Salt ID)</span>
             <h4>🧂 Inorganic Salt Analysis</h4>
           </div>
           <div class="blueprint-card-body">
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
               <span class="bp-label">Target Unknown Salt:</span>
               <select class="form-control form-control-sm" style="font-weight:700;max-width:320px;" onchange="updateBlueprintSalt(this.value)">
-                <option value="ZnSO4" ${q2.trueSaltKey === 'ZnSO4' ? 'selected' : ''}>Zinc Sulfate — ZnSO₄ (Zn²⁺ / SO₄²⁻)</option>
-                <option value="Pb(NO3)2" ${q2.trueSaltKey === 'Pb(NO3)2' ? 'selected' : ''}>Lead(II) Nitrate — Pb(NO₃)₂ (Pb²⁺ / NO₃⁻)</option>
-                <option value="CuSO4" ${q2.trueSaltKey === 'CuSO4' ? 'selected' : ''}>Copper(II) Sulfate — CuSO₄ (Cu²⁺ / SO₄²⁻)</option>
-                <option value="FeSO4" ${q2.trueSaltKey === 'FeSO4' ? 'selected' : ''}>Iron(II) Sulfate — FeSO₄ (Fe²⁺ / SO₄²⁻)</option>
-                <option value="FeCl3" ${q2.trueSaltKey === 'FeCl3' ? 'selected' : ''}>Iron(III) Chloride — FeCl₃ (Fe³⁺ / Cl⁻)</option>
-                <option value="CaCl2" ${q2.trueSaltKey === 'CaCl2' ? 'selected' : ''}>Calcium Chloride — CaCl₂ (Ca²⁺ / Cl⁻)</option>
+                <option value="ZnSO4" ${config.trueSaltKey === 'ZnSO4' ? 'selected' : ''}>Zinc Sulfate — ZnSO₄ (Zn²⁺ / SO₄²⁻)</option>
+                <option value="Pb(NO3)2" ${config.trueSaltKey === 'Pb(NO3)2' ? 'selected' : ''}>Lead(II) Nitrate — Pb(NO₃)₂ (Pb²⁺ / NO₃⁻)</option>
+                <option value="CuSO4" ${config.trueSaltKey === 'CuSO4' ? 'selected' : ''}>Copper(II) Sulfate — CuSO₄ (Cu²⁺ / SO₄²⁻)</option>
+                <option value="FeSO4" ${config.trueSaltKey === 'FeSO4' ? 'selected' : ''}>Iron(II) Sulfate — FeSO₄ (Fe²⁺ / SO₄²⁻)</option>
+                <option value="FeCl3" ${config.trueSaltKey === 'FeCl3' ? 'selected' : ''}>Iron(III) Chloride — FeCl₃ (Fe³⁺ / Cl⁻)</option>
+                <option value="CaCl2" ${config.trueSaltKey === 'CaCl2' ? 'selected' : ''}>Calcium Chloride — CaCl₂ (Ca²⁺ / Cl⁻)</option>
               </select>
             </div>
 
             <div class="bp-param-row">
-              <div><span class="bp-label">Confirmed Cation:</span> <span class="pill pill-ok">${escapeHtml(q2.trueCation || 'Zn²⁺')}</span></div>
-              <div><span class="bp-label">Confirmed Anion:</span> <span class="pill pill-ok">${escapeHtml(q2.trueAnion || 'SO₄²⁻')}</span></div>
-              <div><span class="bp-label">Appearance:</span> <i>${escapeHtml(q2.sampleDesc || 'White crystalline solid')}</i></div>
+              <div><span class="bp-label">Confirmed Cation:</span> <span class="pill pill-ok">${escapeHtml(config.trueCation || 'Zn²⁺')}</span></div>
+              <div><span class="bp-label">Confirmed Anion:</span> <span class="pill pill-ok">${escapeHtml(config.trueAnion || 'SO₄²⁻')}</span></div>
+              <div><span class="bp-label">Appearance:</span> <i>${escapeHtml(config.sampleDesc || 'White crystalline solid')}</i></div>
             </div>
             
             <div style="margin-top:12px;">
-              <div style="font-size:0.75rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">Diagnostic Procedure (${(q2.tests || []).length} Tests):</div>
+              <div style="font-size:0.75rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">Diagnostic Procedure (${(config.tests || []).length} Tests):</div>
               <div class="bp-mini-tests">
-                ${(q2.tests || []).map((t, i) => `
+                ${(config.tests || []).map((t, i) => `
                   <div class="bp-test-row">
                     <span class="bp-test-idx">${i + 1}</span>
                     <div>
@@ -736,33 +738,37 @@
             </div>
           </div>
         </div>
+      `;
+    }
 
-        <!-- Question 3 Card -->
+    // Helper: Render Question 3 Organic Card
+    function getQ3CardHtml(qNum = 3, marks = 10, config = q3) {
+      return `
         <div class="blueprint-card">
           <div class="blueprint-card-header">
-            <span class="q-badge">Question 3 · 10 Marks</span>
+            <span class="q-badge" style="background:#0d9488;color:#fff;">🔬 Question ${qNum} · ${marks} Marks (Simulated Organic)</span>
             <h4>⚗️ Organic Chemistry Functional Group</h4>
           </div>
           <div class="blueprint-card-body">
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
               <span class="bp-label">Target Unknown Organic:</span>
               <select class="form-control form-control-sm" style="font-weight:700;max-width:320px;" onchange="updateBlueprintOrganic(this.value)">
-                <option value="Ethanol" ${q3.trueOrganicKey === 'Ethanol' ? 'selected' : ''}>Ethanol — C₂H₅OH (Alkanol -OH)</option>
-                <option value="Ethanoic Acid" ${q3.trueOrganicKey === 'Ethanoic Acid' ? 'selected' : ''}>Ethanoic Acid — CH₃COOH (Carboxylic Acid -COOH)</option>
-                <option value="Cyclohexene" ${q3.trueOrganicKey === 'Cyclohexene' ? 'selected' : ''}>Cyclohexene — C₆H₁₀ (Alkene >C=C<)</option>
-                <option value="Hexane" ${q3.trueOrganicKey === 'Hexane' ? 'selected' : ''}>Hexane — C₆H₁₄ (Saturated Alkane)</option>
+                <option value="Ethanol" ${config.trueOrganicKey === 'Ethanol' ? 'selected' : ''}>Ethanol — C₂H₅OH (Alkanol -OH)</option>
+                <option value="Ethanoic Acid" ${config.trueOrganicKey === 'Ethanoic Acid' ? 'selected' : ''}>Ethanoic Acid — CH₃COOH (Carboxylic Acid -COOH)</option>
+                <option value="Cyclohexene" ${config.trueOrganicKey === 'Cyclohexene' ? 'selected' : ''}>Cyclohexene — C₆H₁₀ (Alkene >C=C<)</option>
+                <option value="Hexane" ${config.trueOrganicKey === 'Hexane' ? 'selected' : ''}>Hexane — C₆H₁₄ (Saturated Alkane)</option>
               </select>
             </div>
 
             <div class="bp-param-row">
-              <div><span class="bp-label">Confirmed Functional Group:</span> <span class="pill pill-warn">${escapeHtml(q3.trueFunctionalGroup || 'Alkanol (-OH)')}</span></div>
-              <div><span class="bp-label">Appearance:</span> <i>${escapeHtml(q3.sampleDesc || 'Clear neutral organic liquid')}</i></div>
+              <div><span class="bp-label">Confirmed Functional Group:</span> <span class="pill pill-warn">${escapeHtml(config.trueFunctionalGroup || 'Alkanol (-OH)')}</span></div>
+              <div><span class="bp-label">Appearance:</span> <i>${escapeHtml(config.sampleDesc || 'Clear neutral organic liquid')}</i></div>
             </div>
 
             <div style="margin-top:12px;">
-              <div style="font-size:0.75rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">Testing Sequence (${(q3.tests || []).length} Tests):</div>
+              <div style="font-size:0.75rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:4px;">Testing Sequence (${(config.tests || []).length} Tests):</div>
               <div class="bp-mini-tests">
-                ${(q3.tests || []).map((t, i) => `
+                ${(config.tests || []).map((t, i) => `
                   <div class="bp-test-row">
                     <span class="bp-test-idx">${i + 1}</span>
                     <div>
@@ -775,9 +781,88 @@
             </div>
           </div>
         </div>
+      `;
+    }
 
-      </div>
-    `;
+    // Helper: Render Written Question Card (Unsimulated Questions)
+    function getWrittenCardHtml(q) {
+      return `
+        <div class="blueprint-card" style="border: 1.5px solid #F59E0B; background: rgba(245, 158, 11, 0.03);">
+          <div class="blueprint-card-header" style="background: rgba(245, 158, 11, 0.1);">
+            <span class="q-badge" style="background:#f59e0b; color:#1e293b; font-weight:800;">✏️ Question ${q.number} · ${q.marks} Marks (Written Response)</span>
+            <h4 style="margin:4px 0 0 0;">📝 ${escapeHtml(q.title || 'Structured Practical Question')}</h4>
+          </div>
+          <div class="blueprint-card-body">
+            <div style="font-size:0.75rem; font-weight:800; color:var(--amber-accent); text-transform:uppercase; margin-bottom:6px;">
+              ℹ️ Question Mode: Structured Written Response (Chromatography / Electrolysis / Food Tests)
+            </div>
+            <div style="font-size:0.85rem; color:var(--text-main); margin-bottom:12px; background:var(--bg-dark); padding:10px 14px; border-radius:8px; border-left:3px solid #f59e0b;">
+              <b>Extracted Prompt:</b><br>${escapeHtml(q.prompt || 'Answer the sub-questions below based on standard KNEC criteria.')}
+            </div>
+            <div style="font-size:0.75rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px;">
+              Sub-Questions (${(q.subQuestions || []).length}):
+            </div>
+            <div class="bp-mini-tests" style="display:flex; flex-direction:column; gap:8px;">
+              ${(q.subQuestions || []).map(sq => `
+                <div style="background:var(--card-bg); border:1px solid var(--card-border); border-radius:8px; padding:8px 12px;">
+                  <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+                    <span style="font-weight:800; font-size:0.83rem; color:var(--heading-color);">(${escapeHtml(sq.id)}) ${escapeHtml(sq.text)}</span>
+                    <span class="badge" style="background:var(--amber-bg); color:var(--amber-accent); font-size:0.7rem; white-space:nowrap;">${sq.marks} Mks</span>
+                  </div>
+                  <div style="font-size:0.76rem; color:var(--green-accent); margin-top:5px; border-top:1px dashed var(--card-border); padding-top:4px;">
+                    <b>✓ KNEC Model Answer:</b> ${escapeHtml(sq.modelAnswer || 'Expected examiner key')}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Helper: Render Generic Simulated Card (energy/rates/gas/solubility)
+    function getGenericSimCardHtml(q) {
+      return `
+        <div class="blueprint-card" style="border: 1.5px solid #0d9488;">
+          <div class="blueprint-card-header" style="background: rgba(13, 148, 136, 0.1);">
+            <span class="q-badge" style="background:#0d9488; color:#fff;">🔬 Question ${q.number} · ${q.marks} Marks (${escapeHtml(q.simulationType.toUpperCase())})</span>
+            <h4 style="margin:4px 0 0 0;">⚗️ ${escapeHtml(q.title || (q.simulationType.toUpperCase() + ' Simulation'))}</h4>
+          </div>
+          <div class="blueprint-card-body">
+            <div style="font-size:0.85rem; color:var(--text-main); margin-bottom:8px;">
+              This question will launch the interactive <b>${escapeHtml(q.simulationType)}</b> virtual laboratory simulation for the student.
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    if (Array.isArray(exam.questions) && exam.questions.length > 0) {
+      let cardsHtml = '';
+      exam.questions.forEach(q => {
+        if (q.simulationType === 'titration') {
+          cardsHtml += getQ1CardHtml(q.number, q.marks, q.config || q1);
+        } else if (q.simulationType === 'qualitative') {
+          cardsHtml += getQ2CardHtml(q.number, q.marks, q.config || q2);
+        } else if (q.simulationType === 'organic') {
+          cardsHtml += getQ3CardHtml(q.number, q.marks, q.config || q3);
+        } else if (q.simulationType === 'written') {
+          cardsHtml += getWrittenCardHtml(q);
+        } else {
+          cardsHtml += getGenericSimCardHtml(q);
+        }
+      });
+      container.innerHTML = `<div class="ai-blueprint-grid">${cardsHtml}</div>`;
+    } else {
+      // Legacy 3-question default fallback
+      container.innerHTML = `
+        <div class="ai-blueprint-grid">
+          ${getQ1CardHtml(1, 15, q1)}
+          ${getQ2CardHtml(2, 15, q2)}
+          ${getQ3CardHtml(3, 10, q3)}
+        </div>
+      `;
+    }
   }
 
   // ── 2. Render Student Question Paper Tab ───────────────────────
@@ -790,13 +875,165 @@
     const container = document.getElementById('subTabPane_studentPaper');
     if (!container) return;
 
+    const questionsList = (Array.isArray(exam.questions) && exam.questions.length > 0)
+      ? exam.questions
+      : [
+          { number: 1, title: 'Quantitative Volumetric Analysis', marks: 15.0, simulationType: 'titration' },
+          { number: 2, title: 'Inorganic Qualitative Salt Analysis', marks: 15.0, simulationType: 'qualitative' },
+          { number: 3, title: 'Organic Qualitative Tests', marks: 10.0, simulationType: 'organic' }
+        ];
+
+    const totalMarks = questionsList.reduce((sum, q) => sum + (Number(q.marks) || 0), 0) || 40.0;
+
+    let markTableRows = questionsList.map(q => `
+      <tr>
+        <td style="text-align: left;">${q.number} (${escapeHtml(q.title || 'Question ' + q.number)})</td>
+        <td>${Number(q.marks || 10).toFixed(1)}</td>
+        <td></td>
+      </tr>
+    `).join('');
+
+    let questionsContentHtml = '';
+
+    questionsList.forEach(q => {
+      if (q.simulationType === 'written') {
+        questionsContentHtml += `
+          <div class="paper-section">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid var(--card-border); padding-bottom:6px; margin-bottom:12px;">
+              <h4 style="margin:0;">QUESTION ${q.number} (${Number(q.marks || 10).toFixed(1)} MARKS)</h4>
+              <span class="pill pill-warn">Structured Written Practical Question</span>
+            </div>
+            <p style="font-size:0.85rem; line-height:1.6; white-space:pre-wrap;">${escapeHtml(q.prompt || '')}</p>
+            ${(q.subQuestions || []).map(sq => `
+              <div style="margin-bottom:14px; font-size:0.84rem;">
+                <div style="display:flex; justify-content:space-between; font-weight:700;">
+                  <span>(${escapeHtml(sq.id)}) ${escapeHtml(sq.text)}</span>
+                  <span style="color:var(--text-muted);">[${sq.marks} Mark${sq.marks > 1 ? 's' : ''}]</span>
+                </div>
+                <div style="border-bottom:1px dotted var(--card-border); height:28px; margin-top:4px;"></div>
+                <div style="border-bottom:1px dotted var(--card-border); height:28px; margin-top:4px;"></div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } else if (q.simulationType === 'titration') {
+        const c1 = q.config || q1;
+        questionsContentHtml += `
+          <div class="paper-section">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid var(--card-border); padding-bottom:6px; margin-bottom:12px;">
+              <h4 style="margin:0;">QUESTION ${q.number} (${Number(q.marks || 15).toFixed(1)} MARKS)</h4>
+              <span class="pill pill-info">Quantitative Volumetric Analysis</span>
+            </div>
+            <p style="font-size:0.85rem; line-height:1.6;">You are provided with:</p>
+            <ul style="font-size:0.84rem; line-height:1.7; margin-left:20px;">
+              <li><b>Solution A:</b> ${formatChemicalFormula(escapeHtml(c1.solutionA || 'Standard Acid'))}</li>
+              <li><b>Solution B:</b> ${formatChemicalFormula(escapeHtml(c1.solutionB || 'Base Sample'))}</li>
+              <li><b>Indicator:</b> ${escapeHtml(c1.indicator || 'Phenolphthalein')}</li>
+            </ul>
+            <p style="font-size:0.84rem; line-height:1.6;">${escapeHtml(c1.instructions || 'You are required to titrate Solution B with Solution A and determine its concentration.')}</p>
+            
+            <div style="margin:14px 0;">
+              <div style="font-weight:700; font-size:0.82rem; margin-bottom:6px;">Table 1: Candidate Burette Titration Results</div>
+              <div style="overflow-x: auto;">
+                <table class="paper-table" style="min-width: 320px;">
+                  <thead>
+                    <tr><th>Titration Trial</th><th>I</th><th>II</th><th>III</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>Final Burette Reading (cm³)</td><td></td><td></td><td></td></tr>
+                    <tr><td>Initial Burette Reading (cm³)</td><td></td><td></td><td></td></tr>
+                    <tr><td>Volume of Solution A Used (cm³)</td><td></td><td></td><td></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div style="font-size:0.84rem; line-height:1.8;">
+              <div>(a) Calculate the average volume of Solution A used. [1 Mark]</div>
+              <div>(b) Calculate the number of moles of Solution B in ${c1.pipetteVolume || 25.0} cm³. [2 Marks]</div>
+              <div>(c) Using the stoichiometric equation: <code>${formatChemicalFormula(escapeHtml(c1.equation || ''))}</code>, determine moles of Solution A. [2 Marks]</div>
+              <div>(d) Calculate the concentration of Solution A in mol dm⁻³ and g dm⁻³. [3 Marks]</div>
+            </div>
+          </div>
+        `;
+      } else if (q.simulationType === 'qualitative') {
+        const c2 = q.config || q2;
+        questionsContentHtml += `
+          <div class="paper-section">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid var(--card-border); padding-bottom:6px; margin-bottom:12px;">
+              <h4 style="margin:0;">QUESTION ${q.number} (${Number(q.marks || 15).toFixed(1)} MARKS)</h4>
+              <span class="pill pill-info">Inorganic Qualitative Analysis</span>
+            </div>
+            <p style="font-size:0.84rem; line-height:1.6;">You are provided with <b>${formatChemicalFormula(escapeHtml(c2.sampleName || 'Solid Y'))}</b>. Carry out the following tests and record your observations and inferences in the spaces provided below.</p>
+            
+            <div style="overflow-x: auto;">
+              <table class="paper-table" style="margin-top:10px; min-width: 480px;">
+                <thead>
+                  <tr><th style="width:45%;">Test / Experimental Procedure</th><th style="width:30%;">Observations [1 Mk each]</th><th style="width:25%;">Inferences [1 Mk each]</th></tr>
+                </thead>
+                <tbody>
+                  ${(c2.tests || []).map(t => `
+                    <tr>
+                      <td>${formatChemicalFormula(escapeHtml(t.prompt))}</td>
+                      <td style="background:var(--card-bg-hover);"></td>
+                      <td style="background:var(--card-bg-hover);"></td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+            <div style="margin-top:10px; font-size:0.85rem;">
+              <b>Final Deduction:</b> Cation: ____________________ &nbsp;|&nbsp; Anion: ____________________ [2 Marks]
+            </div>
+          </div>
+        `;
+      } else if (q.simulationType === 'organic') {
+        const c3 = q.config || q3;
+        questionsContentHtml += `
+          <div class="paper-section">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid var(--card-border); padding-bottom:6px; margin-bottom:12px;">
+              <h4 style="margin:0;">QUESTION ${q.number} (${Number(q.marks || 10).toFixed(1)} MARKS)</h4>
+              <span class="pill pill-info">Organic Functional Group Analysis</span>
+            </div>
+            <p style="font-size:0.84rem; line-height:1.6;">You are provided with <b>${formatChemicalFormula(escapeHtml(c3.sampleName || 'Liquid Z'))}</b>. Carry out the following tests to identify the organic functional group present.</p>
+            
+            <div style="overflow-x: auto;">
+              <table class="paper-table" style="margin-top:10px; min-width: 480px;">
+                <thead>
+                  <tr><th style="width:45%;">Test / Experimental Procedure</th><th style="width:30%;">Observations</th><th style="width:25%;">Inferences</th></tr>
+                </thead>
+                <tbody>
+                  ${(c3.tests || []).map(t => `
+                    <tr>
+                      <td>${formatChemicalFormula(escapeHtml(t.prompt))}</td>
+                      <td style="background:var(--card-bg-hover);"></td>
+                      <td style="background:var(--card-bg-hover);"></td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+      } else {
+        questionsContentHtml += `
+          <div class="paper-section">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid var(--card-border); padding-bottom:6px; margin-bottom:12px;">
+              <h4 style="margin:0;">QUESTION ${q.number} (${Number(q.marks || 10).toFixed(1)} MARKS)</h4>
+              <span class="pill pill-ok">Interactive Virtual Lab Simulation: ${escapeHtml(q.simulationType)}</span>
+            </div>
+            <p style="font-size:0.84rem; line-height:1.6;">${escapeHtml(q.prompt || 'Complete the interactive virtual experiment and record observations in the workbench.')}</p>
+          </div>
+        `;
+      }
+    });
+
     container.innerHTML = `
       <div class="exam-paper-preview">
         <div class="paper-header">
           <div style="font-size:0.8rem; font-weight:800; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted);">VirtuLab Kenya · Secondary Chemistry Practical Assessment</div>
           <h2 style="font-family:var(--font-heading); margin:4px 0 6px;">${escapeHtml(exam.title)}</h2>
           <div style="font-size:0.85rem; font-weight:700; color:var(--amber-accent);">KENYA CERTIFICATE OF SECONDARY EDUCATION — PAPER 3 (PRACTICAL) — CODE 233/3</div>
-          <div style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">Time: ${exam.durationMinutes || 135} Minutes · Maximum Marks: 40</div>
+          <div style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">Time: ${exam.durationMinutes || 135} Minutes · Maximum Marks: ${totalMarks.toFixed(1)}</div>
         </div>
 
         <!-- KNEC Candidate Identification & Mark Table -->
@@ -820,11 +1057,9 @@
                 </tr>
               </thead>
               <tbody>
-                <tr><td style="text-align: left;">1 (Quantitative Volumetric Analysis)</td><td>15.0</td><td></td></tr>
-                <tr><td style="text-align: left;">2 (Inorganic Qualitative Salt Analysis)</td><td>15.0</td><td></td></tr>
-                <tr><td style="text-align: left;">3 (Organic Qualitative Tests)</td><td>10.0</td><td></td></tr>
+                ${markTableRows}
                 <tr style="font-weight: 800; background: rgba(0,0,0,0.04);">
-                  <td style="text-align: left;">TOTAL SCORE</td><td>40.0</td><td></td>
+                  <td style="text-align: left;">TOTAL SCORE</td><td>${totalMarks.toFixed(1)}</td><td></td>
                 </tr>
               </tbody>
             </table>
@@ -836,98 +1071,7 @@
           <p style="font-size:0.84rem; line-height:1.6; color:var(--text-main);">${escapeHtml(exam.instructions)}</p>
         </div>
 
-        <!-- Question 1 Section -->
-        <div class="paper-section">
-          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid var(--card-border); padding-bottom:6px; margin-bottom:12px;">
-            <h4 style="margin:0;">QUESTION 1 (15.0 MARKS)</h4>
-            <span class="pill pill-info">Quantitative Volumetric Analysis</span>
-          </div>
-          <p style="font-size:0.85rem; line-height:1.6;">You are provided with:</p>
-          <ul style="font-size:0.84rem; line-height:1.7; margin-left:20px;">
-            <li><b>Solution A:</b> ${formatChemicalFormula(escapeHtml(q1.solutionA || 'Standard Acid'))}</li>
-            <li><b>Solution B:</b> ${formatChemicalFormula(escapeHtml(q1.solutionB || 'Base Sample'))}</li>
-            <li><b>Indicator:</b> ${escapeHtml(q1.indicator || 'Phenolphthalein')}</li>
-          </ul>
-          <p style="font-size:0.84rem; line-height:1.6;">${escapeHtml(q1.instructions || 'You are required to titrate Solution B with Solution A and determine its concentration.')}</p>
-          
-          <div style="margin:14px 0;">
-            <div style="font-weight:700; font-size:0.82rem; margin-bottom:6px;">Table 1: Candidate Burette Titration Results</div>
-            <div style="overflow-x: auto;">
-              <table class="paper-table" style="min-width: 320px;">
-                <thead>
-                  <tr><th>Titration Trial</th><th>I</th><th>II</th><th>III</th></tr>
-                </thead>
-                <tbody>
-                  <tr><td>Final Burette Reading (cm³)</td><td></td><td></td><td></td></tr>
-                  <tr><td>Initial Burette Reading (cm³)</td><td></td><td></td><td></td></tr>
-                  <tr><td>Volume of Solution A Used (cm³)</td><td></td><td></td><td></td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div style="font-size:0.84rem; line-height:1.8;">
-            <div>(a) Calculate the average volume of Solution A used. [1 Mark]</div>
-            <div>(b) Calculate the number of moles of Solution B in ${q1.pipetteVolume || 25.0} cm³. [2 Marks]</div>
-            <div>(c) Using the stoichiometric equation: <code>${formatChemicalFormula(escapeHtml(q1.equation || ''))}</code>, determine moles of Solution A. [2 Marks]</div>
-            <div>(d) Calculate the concentration of Solution A in mol dm⁻³ and g dm⁻³. [3 Marks]</div>
-          </div>
-        </div>
-
-        <!-- Question 2 Section -->
-        <div class="paper-section">
-          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid var(--card-border); padding-bottom:6px; margin-bottom:12px;">
-            <h4 style="margin:0;">QUESTION 2 (15.0 MARKS)</h4>
-            <span class="pill pill-info">Inorganic Qualitative Analysis</span>
-          </div>
-          <p style="font-size:0.84rem; line-height:1.6;">You are provided with <b>${formatChemicalFormula(escapeHtml(q2.sampleName || 'Solid Y'))}</b>. Carry out the following tests and record your observations and inferences in the spaces provided below.</p>
-          
-          <div style="overflow-x: auto;">
-            <table class="paper-table" style="margin-top:10px; min-width: 480px;">
-              <thead>
-                <tr><th style="width:45%;">Test / Experimental Procedure</th><th style="width:30%;">Observations [1 Mk each]</th><th style="width:25%;">Inferences [1 Mk each]</th></tr>
-              </thead>
-              <tbody>
-                ${(q2.tests || []).map(t => `
-                  <tr>
-                    <td>${formatChemicalFormula(escapeHtml(t.prompt))}</td>
-                    <td style="background:var(--card-bg-hover);"></td>
-                    <td style="background:var(--card-bg-hover);"></td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          </div>
-          <div style="margin-top:10px; font-size:0.85rem;">
-            <b>Final Deduction:</b> Cation: ____________________ &nbsp;|&nbsp; Anion: ____________________ [2 Marks]
-          </div>
-        </div>
-
-        <!-- Question 3 Section -->
-        <div class="paper-section">
-          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid var(--card-border); padding-bottom:6px; margin-bottom:12px;">
-            <h4 style="margin:0;">QUESTION 3 (10.0 MARKS)</h4>
-            <span class="pill pill-info">Organic Functional Group Analysis</span>
-          </div>
-          <p style="font-size:0.84rem; line-height:1.6;">You are provided with <b>${formatChemicalFormula(escapeHtml(q3.sampleName || 'Liquid Z'))}</b>. Carry out the following tests to identify the organic functional group present.</p>
-          
-          <div style="overflow-x: auto;">
-            <table class="paper-table" style="margin-top:10px; min-width: 480px;">
-              <thead>
-                <tr><th style="width:45%;">Test / Experimental Procedure</th><th style="width:30%;">Observations</th><th style="width:25%;">Inferences</th></tr>
-              </thead>
-              <tbody>
-                ${(q3.tests || []).map(t => `
-                  <tr>
-                    <td>${formatChemicalFormula(escapeHtml(t.prompt))}</td>
-                    <td style="background:var(--card-bg-hover);"></td>
-                    <td style="background:var(--card-bg-hover);"></td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
+        ${questionsContentHtml}
       </div>
     `;
   }
@@ -982,9 +1126,12 @@
     const payload = {
       title: finalTitle || 'KCSE Chemistry Practical Exam',
       titrationType: currentExamDraft.titrationType || 'kcseComposite',
-      instructions: currentExamDraft.instructions || 'Complete all 3 questions within the allocated time.',
+      instructions: currentExamDraft.instructions || 'Complete all questions within the allocated time.',
       dueDate: dueDate.toISOString(),
-      examConfig: currentExamDraft.examConfig
+      examConfig: {
+        ...(currentExamDraft.examConfig || {}),
+        questions: currentExamDraft.questions || []
+      }
     };
 
     try {

@@ -554,6 +554,7 @@ const COMPOSITE_EXAM_PRESETS = {
       trueSaltName: 'Lead(II) Nitrate — Pb(NO₃)₂',
       trueCation: 'Pb2+',
       trueAnion: 'NO3-',
+      hasDeduction: true,
       tests: [
         {
           id: 'q2_heat',
@@ -668,6 +669,7 @@ const COMPOSITE_EXAM_PRESETS = {
       trueSaltName: 'Iron(II) Sulfate — FeSO₄',
       trueCation: 'Fe2+',
       trueAnion: 'SO42-',
+      hasDeduction: true,
       tests: [
         {
           id: 'q2_heat',
@@ -782,6 +784,7 @@ const COMPOSITE_EXAM_PRESETS = {
       trueSaltName: 'Zinc Sulfate — ZnSO₄',
       trueCation: 'Zn2+',
       trueAnion: 'SO42-',
+      hasDeduction: true,
       tests: [
         {
           id: 'q2_heat',
@@ -894,6 +897,7 @@ const COMPOSITE_EXAM_PRESETS = {
       trueSaltName: 'Copper(II) Sulfate — CuSO₄',
       trueCation: 'Cu2+',
       trueAnion: 'SO42-',
+      hasDeduction: true,
       tests: [
         {
           id: 'q2_heat',
@@ -1007,6 +1011,7 @@ const COMPOSITE_EXAM_PRESETS = {
       trueSaltName: 'Zinc Sulfate + Barium Sulfate Mixture',
       trueCation: 'Zn2+',
       trueAnion: 'SO42-',
+      hasDeduction: true,
       tests: [
         {
           id: 'q2_appearance',
@@ -1119,6 +1124,7 @@ const COMPOSITE_EXAM_PRESETS = {
       trueSaltName: 'Ammonium Chloride — NH₄Cl',
       trueCation: 'NH4+',
       trueAnion: 'Cl-',
+      hasDeduction: true,
       tests: [
         {
           id: 'q2_heat',
@@ -1226,6 +1232,7 @@ const COMPOSITE_EXAM_PRESETS = {
       trueSaltName: 'Calcium Nitrate — Ca(NO₃)₂',
       trueCation: 'Ca2+',
       trueAnion: 'NO3-',
+      hasDeduction: true,
       tests: [
         {
           id: 'q2_heat',
@@ -1340,6 +1347,7 @@ const COMPOSITE_EXAM_PRESETS = {
       trueSaltName: 'Iron(III) Chloride — FeCl₃',
       trueCation: 'Fe3+',
       trueAnion: 'Cl-',
+      hasDeduction: true,
       tests: [
         {
           id: 'q2_heat',
@@ -1755,6 +1763,13 @@ class CompositeExamEngine {
       Object.assign(this.preset.q2, config.q2);
       const saltKey = config.q2.trueSaltKey || config.q2.salt;
       if (saltKey) this.preset.q2.trueSaltKey = saltKey;
+      if (config.q2.hasDeduction !== undefined) {
+        this.preset.q2.hasDeduction = Boolean(config.q2.hasDeduction);
+      } else if (config.presetKey === 'custom' || !config.presetKey) {
+        this.preset.q2.hasDeduction = Boolean(
+          Array.isArray(config.q2.tests) && config.q2.tests.some(t => /final deduction|state the (cation|anion|identity)|write the formula/i.test(t.prompt || ''))
+        );
+      }
       if (!Array.isArray(config.q2.tests) || config.q2.tests.length === 0) {
         const registryTests = getSaltPresetDefinition(saltKey);
         if (registryTests) {
@@ -1916,7 +1931,7 @@ class CompositeExamEngine {
     }
     tableScore += ctMark;
     rubric.push({
-      code: `${prefix}_CT`,
+      code: prefix === 'Q1' ? 'CT' : `${prefix}_CT`,
       item: `${tableTitle} Completeness (CT)`,
       max: 1.0,
       mark: ctMark,
@@ -1952,7 +1967,7 @@ class CompositeExamEngine {
     }
     tableScore += dMark;
     rubric.push({
-      code: `${prefix}_D`,
+      code: prefix === 'Q1' ? 'D' : `${prefix}_D`,
       item: `${tableTitle} Decimals (D)`,
       max: 1.0,
       mark: dMark,
@@ -1981,7 +1996,7 @@ class CompositeExamEngine {
     }
     tableScore += acMark;
     rubric.push({
-      code: `${prefix}_AC`,
+      code: prefix === 'Q1' ? 'AC' : `${prefix}_AC`,
       item: `${tableTitle} Accuracy (AC)`,
       max: 1.0,
       mark: acMark,
@@ -2051,7 +2066,7 @@ class CompositeExamEngine {
     }
     tableScore += paMark;
     rubric.push({
-      code: `${prefix}_PA`,
+      code: prefix === 'Q1' ? 'PA' : `${prefix}_PA`,
       item: `${tableTitle} Principles of Averaging (PA)`,
       max: 1.0,
       mark: paMark,
@@ -2060,6 +2075,10 @@ class CompositeExamEngine {
     });
 
     const maxTableMarks = proc.tableMarks != null ? Number(proc.tableMarks) : 5.0;
+
+    const expAvgFromTrials = concordantSet.length > 0
+      ? concordantSet.reduce((acc, b) => acc + b.used, 0) / concordantSet.length
+      : (recordedTrials.length > 0 ? (recordedTrials.reduce((acc, b) => acc + b.used, 0) / recordedTrials.length) : trueTitre);
 
     // 5. Final Accuracy of Averaged Titre (FA) — 1.0 Mark (Standard single-titration KNEC rubric)
     if (maxTableMarks >= 5.0) {
@@ -2079,7 +2098,7 @@ class CompositeExamEngine {
       }
       tableScore += faMark;
       rubric.push({
-        code: `${prefix}_FA`,
+        code: prefix === 'Q1' ? 'FA' : `${prefix}_FA`,
         item: `${tableTitle} Final Accuracy of Averaged Titre (FA)`,
         max: 1.0,
         mark: faMark,
@@ -2091,9 +2110,6 @@ class CompositeExamEngine {
     tableScore = Math.min(maxTableMarks, tableScore);
 
     // 6. Mathematical Sub-Questions with e.c.f.
-    const expAvgFromTrials = concordantSet.length > 0
-      ? concordantSet.reduce((acc, b) => acc + b.used, 0) / concordantSet.length
-      : (recordedTrials.length > 0 ? (recordedTrials.reduce((acc, b) => acc + b.used, 0) / recordedTrials.length) : trueTitre);
 
     const questionsList = proc.questions || [];
     let calcMax = 0;
@@ -2244,6 +2260,13 @@ class CompositeExamEngine {
     let score = 0.0;
     const rubric = [];
     const tests = this.preset.q2.tests || [];
+    const totalMarks = Number(this.preset.q2.marks) || 15.0;
+    const hasDeduction = Boolean(this.preset.q2.hasDeduction === true);
+
+    const perTestMax = hasDeduction
+      ? 3.0
+      : (tests.length > 0 ? parseFloat((totalMarks / tests.length).toFixed(1)) : 2.5);
+    const perHalfMax = parseFloat((perTestMax / 2.0).toFixed(1));
 
     // Helper to extract chemical ions and keywords
     const extractIons = (text) => {
@@ -2274,7 +2297,7 @@ class CompositeExamEngine {
       const infLower = candidateInf.toLowerCase();
       let testMark = 0.0;
 
-      // 1. Observation Keyword Scoring (1.5 Marks)
+      // 1. Observation Keyword Scoring
       let obsMark = 0.0;
       const hasPpt = obsLower.includes('ppt') || obsLower.includes('precipitate') || obsLower.includes('fumes') || obsLower.includes('residue') || obsLower.includes('decrepit');
       const expectedObsLower = (t.correctObs || '').toLowerCase();
@@ -2299,18 +2322,18 @@ class CompositeExamEngine {
         }
         
         if (matchesDropwise && matchesExcess) {
-          obsMark = 1.5;
+          obsMark = perHalfMax;
         } else if (matchesDropwise) {
-          obsMark = 0.5;
+          obsMark = parseFloat((perHalfMax * 0.4).toFixed(1));
         } else if (matchesExcess) {
-          obsMark = 1.0;
+          obsMark = parseFloat((perHalfMax * 0.6).toFixed(1));
         }
       } else {
         const obsKeywords = (t.correctObs || '').toLowerCase().split(/[,; ]+/).filter(w => w.length > 3);
         const obsMatches = obsKeywords.filter(w => obsLower.includes(w)).length;
-        if (obsMatches >= 2) obsMark = 1.5;
-        else if (obsMatches >= 1 || obsLower.length > 8) obsMark = 1.0;
-        else if (obsLower.length > 3) obsMark = 0.5;
+        if (obsMatches >= 2) obsMark = perHalfMax;
+        else if (obsMatches >= 1 || obsLower.length > 8) obsMark = parseFloat((perHalfMax * 0.67).toFixed(1));
+        else if (obsLower.length > 3) obsMark = parseFloat((perHalfMax * 0.33).toFixed(1));
       }
 
       if (obsLower.includes('dissolves') && obsLower.includes('insoluble in excess')) {
@@ -2318,7 +2341,7 @@ class CompositeExamEngine {
       }
       testMark += obsMark;
 
-      // 2. Inference Keyword Scoring (1.5 Marks)
+      // 2. Inference Keyword Scoring
       let infMark = 0.0;
       const inferredIons = extractIons(candidateInf);
 
@@ -2329,32 +2352,32 @@ class CompositeExamEngine {
         const countAmphoteric = [hasPb, hasAl, hasZn].filter(Boolean).length;
         
         if (countAmphoteric === 3) {
-          infMark = 1.5;
+          infMark = perHalfMax;
         } else if (countAmphoteric === 2) {
-          infMark = 1.0;
+          infMark = parseFloat((perHalfMax * 0.67).toFixed(1));
         } else if (countAmphoteric === 1) {
-          infMark = 0.5;
+          infMark = parseFloat((perHalfMax * 0.33).toFixed(1));
         }
       } else if (t.id === 'q2_nh3') {
         const hasPb = inferredIons.includes('pb2+');
         const hasAl = inferredIons.includes('al3+');
         const hasZn = inferredIons.includes('zn2+');
         if (t.correctInf.includes('Pb') && (hasPb || hasAl) && !hasZn) {
-          infMark = 1.5;
+          infMark = perHalfMax;
         } else if ((hasPb || hasAl) && hasZn) {
-          infMark = 1.0;
+          infMark = parseFloat((perHalfMax * 0.67).toFixed(1));
         } else if (hasPb || hasAl) {
-          infMark = 1.0;
+          infMark = parseFloat((perHalfMax * 0.67).toFixed(1));
         }
       } else {
         const infKeywords = (t.correctInf || '').toLowerCase().split(/[,; ]+/).filter(w => w.length > 2);
         const infMatches = infKeywords.filter(w => infLower.includes(w)).length;
         if (infMatches >= 2 || (t.trueCation && infLower.includes(t.trueCation.toLowerCase()))) {
-          infMark = 1.5;
+          infMark = perHalfMax;
         } else if (infMatches >= 1) {
-          infMark = 1.0;
+          infMark = parseFloat((perHalfMax * 0.67).toFixed(1));
         } else if (infLower.length > 3) {
-          infMark = 0.5;
+          infMark = parseFloat((perHalfMax * 0.33).toFixed(1));
         }
       }
 
@@ -2384,43 +2407,47 @@ class CompositeExamEngine {
 
       rubric.push({
         code: `Q2_${String.fromCharCode(97 + idx)}`,
-        item: `Test (${String.fromCharCode(97 + idx)}): ${t.prompt.substring(0, 45)}… [${testMark.toFixed(1)} / 3.0 Mks]`,
-        max: 3.0,
+        item: `Test (${String.fromCharCode(97 + idx)}): ${t.prompt.substring(0, 45)}… [${testMark.toFixed(1)} / ${perTestMax.toFixed(1)} Mks]`,
+        max: perTestMax,
         mark: parseFloat(testMark.toFixed(1)),
-        pass: testMark >= 2.0,
-        detail: `Obs: [${obsMark.toFixed(1)}/1.5] "${candidateObs || 'None'}" (Expected: "${t.correctObs}"). Infs: [${infMark.toFixed(1)}/1.5] "${candidateInf || 'None'}" (Expected: "${t.correctInf}").${ciPenalty > 0 ? ` [CI Penalty: -${ciPenalty} Mk for contradictory ion(s)]` : ''}${chargePenalty > 0 ? ' [CP Penalty: -0.5 Mk for missing charge superscripts]' : ''}`
+        pass: testMark >= (perTestMax * 0.6),
+        detail: `Obs: [${obsMark.toFixed(1)}/${perHalfMax.toFixed(1)}] "${candidateObs || 'None'}" (Expected: "${t.correctObs}"). Infs: [${infMark.toFixed(1)}/${perHalfMax.toFixed(1)}] "${candidateInf || 'None'}" (Expected: "${t.correctInf}").${ciPenalty > 0 ? ` [CI Penalty: -${ciPenalty} Mk for contradictory ion(s)]` : ''}${chargePenalty > 0 ? ' [CP Penalty: -0.5 Mk for missing charge superscripts]' : ''}`
       });
     });
 
-    // Cation & Anion Deductions (3.0 Marks)
-    const trueCation = (this.preset.q2.trueCation || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-    const candidateCation = (this.q2CationChoice || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-    const cationCorrect = candidateCation.length > 0 && (candidateCation.includes(trueCation) || trueCation.includes(candidateCation));
-    
-    const hasCharge = this.q2CationChoice.includes('+') || this.q2CationChoice.includes('²') || this.q2CationChoice.includes('³') || this.q2CationChoice.toLowerCase().includes('ion');
-    if (cationCorrect && hasCharge) {
-      score += 1.5;
-      rubric.push({ code: 'Q2_CAT', item: `Cation Deduction (${this.preset.q2.trueCation})`, max: 1.5, mark: 1.5, pass: true, detail: 'Full mark (1.5 Mks): Correct cation with valid ionic charge.' });
-    } else if (cationCorrect) {
-      score += 1.0;
-      rubric.push({ code: 'Q2_CAT', item: 'Cation Deduction (-0.5 Charge Penalty)', max: 1.5, mark: 1.0, pass: false, detail: 'Element identified but missing ionic charge superscript.' });
-    } else {
-      rubric.push({ code: 'Q2_CAT', item: 'Cation Deduction', max: 1.5, mark: 0.0, pass: false, detail: `Expected: ${this.preset.q2.trueCation}` });
-    }
+    // Cation & Anion Deductions (Only evaluated when hasDeduction is true)
+    if (hasDeduction) {
+      const catMax = 1.5;
+      const aniMax = 1.5;
+      const trueCation = (this.preset.q2.trueCation || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const candidateCation = (this.q2CationChoice || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const cationCorrect = candidateCation.length > 0 && (candidateCation.includes(trueCation) || trueCation.includes(candidateCation));
+      
+      const hasCharge = this.q2CationChoice.includes('+') || this.q2CationChoice.includes('²') || this.q2CationChoice.includes('³') || this.q2CationChoice.toLowerCase().includes('ion');
+      if (cationCorrect && hasCharge) {
+        score += catMax;
+        rubric.push({ code: 'Q2_CAT', item: `Cation Deduction (${this.preset.q2.trueCation})`, max: catMax, mark: catMax, pass: true, detail: 'Full mark (1.5 Mks): Correct cation with valid ionic charge.' });
+      } else if (cationCorrect) {
+        score += 1.0;
+        rubric.push({ code: 'Q2_CAT', item: 'Cation Deduction (-0.5 Charge Penalty)', max: catMax, mark: 1.0, pass: false, detail: 'Element identified but missing ionic charge superscript.' });
+      } else {
+        rubric.push({ code: 'Q2_CAT', item: 'Cation Deduction', max: catMax, mark: 0.0, pass: false, detail: `Expected: ${this.preset.q2.trueCation}` });
+      }
 
-    const trueAnion = (this.preset.q2.trueAnion || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-    const candidateAnion = (this.q2AnionChoice || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-    const anionCorrect = candidateAnion.length > 0 && (candidateAnion.includes(trueAnion) || trueAnion.includes(candidateAnion));
-    if (anionCorrect) {
-      score += 1.5;
-      rubric.push({ code: 'Q2_ANI', item: `Anion Deduction (${this.preset.q2.trueAnion})`, max: 1.5, mark: 1.5, pass: true, detail: 'Full mark (1.5 Mks): Correct anion identified.' });
-    } else {
-      rubric.push({ code: 'Q2_ANI', item: 'Anion Deduction', max: 1.5, mark: 0.0, pass: false, detail: `Expected: ${this.preset.q2.trueAnion}` });
+      const trueAnion = (this.preset.q2.trueAnion || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const candidateAnion = (this.q2AnionChoice || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const anionCorrect = candidateAnion.length > 0 && (candidateAnion.includes(trueAnion) || trueAnion.includes(candidateAnion));
+      if (anionCorrect) {
+        score += aniMax;
+        rubric.push({ code: 'Q2_ANI', item: `Anion Deduction (${this.preset.q2.trueAnion})`, max: aniMax, mark: aniMax, pass: true, detail: 'Full mark (1.5 Mks): Correct anion identified.' });
+      } else {
+        rubric.push({ code: 'Q2_ANI', item: 'Anion Deduction', max: aniMax, mark: 0.0, pass: false, detail: `Expected: ${this.preset.q2.trueAnion}` });
+      }
     }
 
     return {
-      totalScore: Math.min(15.0, parseFloat(score.toFixed(1))),
-      maxScore: 15.0,
+      totalScore: Math.min(totalMarks, parseFloat(score.toFixed(1))),
+      maxScore: totalMarks,
       rubric
     };
   }

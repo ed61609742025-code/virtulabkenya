@@ -1006,7 +1006,7 @@
     <div class="tests-grid" id="q2TestsGrid"></div>
 
     <!-- Final Deductions -->
-    <div class="exam-deductions-card" style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:16px;margin-top:16px;">
+    <div id="q2DeductionCard" class="exam-deductions-card" style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:16px;margin-top:16px;">
       <div style="font-weight:800;font-size:0.88rem;color:var(--heading-color);margin-bottom:10px;">
         (v) Final Identity Deductions (3.0 Marks)
       </div>
@@ -1460,6 +1460,9 @@
     }
 
     try { renderQ2TestsGrid(); } catch(e) { console.error('renderQ2TestsGrid error:', e); }
+    const hasQ2Ded = Boolean(p.q2?.hasDeduction === true);
+    const q2Card = document.getElementById('q2DeductionCard');
+    if (q2Card) q2Card.style.display = hasQ2Ded ? 'block' : 'none';
     try { renderQ3TestsGrid(); } catch(e) { console.error('renderQ3TestsGrid error:', e); }
     try { drawLens(); } catch(e) { console.error('drawLens error:', e); }
     try { updateLiveScoreDisplay(); } catch(e) { console.error('updateLiveScoreDisplay error:', e); }
@@ -1548,6 +1551,10 @@
                   const dedCard = document.getElementById('q3DeductionCard');
                   if (dedCard) dedCard.style.display = 'none';
                 }
+
+                const hasQ2DedCust = Boolean(pCustom.q2?.hasDeduction === true);
+                const q2CardCust = document.getElementById('q2DeductionCard');
+                if (q2CardCust) q2CardCust.style.display = hasQ2DedCust ? 'block' : 'none';
 
                 if (pCustom.q1?.hasMultipleProcedures && Array.isArray(pCustom.q1.procedures) && pCustom.q1.procedures.length > 1) {
                   setupQ1ProcedureNav();
@@ -3356,7 +3363,7 @@
           </tr>
         `).join('')}
       </table>
-      <div><b>Final Deductions:</b> Cation: <u>${engine.q2CationChoice || '—'}</u> &nbsp;|&nbsp; Anion: <u>${engine.q2AnionChoice || '—'}</u></div>
+      ${p.q2?.hasDeduction ? `<div><b>Final Deductions:</b> Cation: <u>${engine.q2CationChoice || '—'}</u> &nbsp;|&nbsp; Anion: <u>${engine.q2AnionChoice || '—'}</u></div>` : ''}
     `;
     document.getElementById('printQ2Content').innerHTML = q2Html;
 

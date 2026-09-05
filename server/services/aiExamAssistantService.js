@@ -328,6 +328,18 @@ function normalizeQuestionsArray(parsed) {
             marks: Number(sq.marks) || 1.0
           }));
         }
+
+        const explicitDeductionInSubQuestions = Array.isArray(q.subQuestions) && q.subQuestions.some(sq =>
+          /cation.*anion|anion.*cation|identity of (the )?salt|formula of (the )?(cation|anion|salt)|final deduction/i.test(sq.text || sq.prompt || '')
+        );
+        const explicitDeductionInTests = Array.isArray(cfg.tests) && cfg.tests.some(t =>
+          /final deduction|state the (cation|anion|identity)|write the formula of (the )?(cation|anion|salt)/i.test(t.prompt || '')
+        );
+        cfg.hasDeduction = Boolean(
+          cfg.hasDeduction === true ||
+          explicitDeductionInSubQuestions ||
+          explicitDeductionInTests
+        );
       } else if (simType === 'organic') {
         if (cfg && Array.isArray(cfg.tests) && cfg.tests.length > 0) {
           cfg.tests = cfg.tests.map((t, tIdx) => ({
@@ -653,6 +665,7 @@ function normalizeExamStructure(parsed, sourceMeta = {}) {
         ...(normalized.examConfig.q2 || {}),
         ...q2Obj.config,
         simulationType: q2Obj.simulationType,
+        hasDeduction: Boolean(q2Obj.config.hasDeduction),
         marks: Number(q2Obj.marks) || normalized.examConfig.q2?.marks || 15
       };
     }
@@ -663,6 +676,7 @@ function normalizeExamStructure(parsed, sourceMeta = {}) {
         ...(normalized.examConfig.q3 || {}),
         ...q3Obj.config,
         simulationType: q3Obj.simulationType,
+        hasDeduction: Boolean(q3Obj.config.hasDeduction),
         marks: Number(q3Obj.marks) || normalized.examConfig.q3?.marks || 10
       };
     }
@@ -737,10 +751,12 @@ KNEC Examination Setting Standards to Enforce:
 3. Question 2 (Inorganic Qualitative Analysis - 10 to 15 Marks):
    - Structured experimental procedures (e.g. heating solid in dry tube, dissolving, portioning, adding 2M NaOH and 2M aqueous NH3 dropwise until in excess, anion confirmatory tests).
    - Inferences must strictly enforce KNEC grouping notation (e.g. "Pb²⁺, Al³⁺, or Zn²⁺ present" in excess NaOH; "Pb²⁺ or Al³⁺ present" in excess NH3) with correct ionic charges.
+   - FINAL DEDUCTION RULE: Set "hasDeduction": true ONLY if the uploaded paper explicitly has a separate question or blank lines asking for the final deduction / identity of cation and anion (e.g. "Cation: _____ | Anion: _____"). If the paper only has test steps with observations and inferences, set "hasDeduction": false. NEVER include final deduction by default.
 4. Question 3 (Organic OR Second Inorganic Qualitative Analysis - 10 Marks):
    - If the exam has a second inorganic qualitative analysis (e.g. Solid P with dry heating, dissolving, NaOH, Aqueous Ammonia with H2O2, dilute HNO3, Ba(NO3)2 tests):
      - Set "simulationType": "qualitative".
-     - In "config", populate: { "sampleName": "Solid P", "sampleDesc": "An inorganic salt sample", "marks": 10, "tests": [ { "id": "t1", "prompt": "<exact procedure text from paper, e.g. (a) Place half of solid P in a dry test tube. Heat gently.>", "correctObs": "<expected observation>", "correctInf": "<expected inference>", "marks": 2.0 } ] }.
+     - Set "hasDeduction": true ONLY if there is an explicit final deduction sub-question in the paper, otherwise false.
+     - In "config", populate: { "sampleName": "Solid P", "sampleDesc": "An inorganic salt sample", "marks": 10, "hasDeduction": false, "tests": [ { "id": "t1", "prompt": "<exact procedure text from paper, e.g. (a) Place half of solid P in a dry test tube. Heat gently.>", "correctObs": "<expected observation>", "correctInf": "<expected inference>", "marks": 2.0 } ] }.
      - Also populate "subQuestions" with each sub-question with id, text, marks, modelAnswer.
    - If the exam has organic functional group analysis (e.g. Liquid Z):
      - Set "simulationType": "organic".
@@ -895,6 +911,7 @@ KNEC Setting & Pedagogical Standards to Enforce:
 3. Question 2 (Inorganic Qualitative Analysis - 15 Marks):
    - Multi-step experimental sequence (heating dry solid, dissolving, portioning, 2M NaOH & 2M aqueous NH3 dropwise until in excess, anion confirmatory test).
    - Inferences must strictly enforce KNEC grouping notation (e.g. "Pb²⁺, Al³⁺, or Zn²⁺ present" in excess NaOH; "Pb²⁺ or Al³⁺ present" in excess NH3).
+   - FINAL DEDUCTION: Set "hasDeduction": true ONLY if the user/teacher prompt explicitly asks for final cation/anion deduction; otherwise false.
 4. Question 3 (Organic Qualitative Analysis - 10 Marks):
    - Sequence: Spatula ignition flame test, litmus test, unsaturation/redox test (acidified KMnO4 or Bromine water), and carbonate/hydrogen carbonate effervescence.
 5. Marking Scheme:

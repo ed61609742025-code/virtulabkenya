@@ -1118,7 +1118,14 @@
             { prompt: `(e) To portion 3, add dilute nitric(V) acid followed by barium nitrate / silver nitrate.` }
           ];
         }
-        const hasDeduction = Boolean(c2.trueCation || c2.trueAnion || c2.hasDeduction || Number(q.marks) >= 15);
+        const hasDeduction = Boolean(
+          c2.hasDeduction === true ||
+          (Array.isArray(q.subQuestions) && q.subQuestions.some(sq => /cation.*anion|anion.*cation|identity of (the )?salt|formula of (the )?(cation|anion|salt)|final deduction/i.test(sq.text || sq.prompt || ''))) ||
+          (Array.isArray(testsList) && testsList.some(t => {
+            const p = t.prompt || t.test || t.procedure || t.text || t.instruction || (typeof t === 'string' ? t : '');
+            return /final deduction|state the (cation|anion|identity)|write the formula of (the )?(cation|anion|salt)/i.test(p);
+          }))
+        );
 
         questionsContentHtml += `
           <div class="paper-section">

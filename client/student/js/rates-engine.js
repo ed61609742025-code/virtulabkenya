@@ -185,6 +185,17 @@ const RatesEngine = (function () {
       setStudyMode('exam');
     }
 
+    window.addEventListener('resize', () => {
+      updateCanvasDimensions();
+      drawGraph();
+    });
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => {
+        updateCanvasDimensions();
+        drawGraph();
+      }, 150);
+    });
+
     requestAnimationFrame(renderLoop);
   }
 
@@ -750,12 +761,27 @@ const RatesEngine = (function () {
   // REAL-TIME CANVAS APPARATUS RENDERING
   // ══════════════════════════════════════════════════════════
   let canvas, ctx;
+
+  function updateCanvasDimensions() {
+    if (canvas && canvas.parentElement) {
+      const cw = canvas.parentElement.clientWidth;
+      const ch = canvas.parentElement.clientHeight;
+      if (cw > 0) canvas.width = cw;
+      if (ch > 0) canvas.height = ch;
+    }
+    if (gCanvas && gCanvas.parentElement) {
+      const gw = gCanvas.parentElement.clientWidth;
+      const gh = gCanvas.parentElement.clientHeight;
+      if (gw > 0) gCanvas.width = gw;
+      if (gh > 0) gCanvas.height = gh;
+    }
+  }
+
   function setupCanvas() {
     canvas = document.getElementById('rateSimCanvas');
     if (canvas) {
       ctx = canvas.getContext('2d');
-      canvas.width = canvas.parentElement.clientWidth || 600;
-      canvas.height = canvas.parentElement.clientHeight || 320;
+      updateCanvasDimensions();
     }
   }
 
@@ -1254,8 +1280,7 @@ const RatesEngine = (function () {
     gCanvas = document.getElementById('rateGraphCanvas');
     if (gCanvas) {
       gCtx = gCanvas.getContext('2d');
-      gCanvas.width = gCanvas.parentElement.clientWidth || 550;
-      gCanvas.height = gCanvas.parentElement.clientHeight || 360;
+      updateCanvasDimensions();
 
       // Click to place tangent point
       gCanvas.addEventListener('click', onGraphClick);
@@ -1657,6 +1682,7 @@ const RatesEngine = (function () {
     toggleCollisionCatalyst,
     toggleTangent,
     drawGraph,
+    updateCanvasDimensions,
     gradeKnecWorksheet,
     closeResultModal
   };

@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="/shared/style.css">
   <link rel="stylesheet" href="/shared/brilliant-theme.css">
   <link rel="stylesheet" href="/shared/tutorial-engine.css">
-  <link rel="stylesheet" href="/student/css/rates.css?v=83">
+  <link rel="stylesheet" href="/student/css/rates.css?v=84">
   <link rel="stylesheet" href="/shared/ai-tutor.css">
   <link rel="stylesheet" href="/shared/pwa-installer.css">
 </head>
@@ -175,22 +175,24 @@
     </div>
 
     <!-- 5-Experiment Segmented Switcher -->
-    <div class="rate-experiment-tabs">
-      <button class="rate-exp-tab active" data-exp="cross" onclick="RatesEngine.setExperiment('cross')">
-        🧪 1. Disappearing Cross
-      </button>
-      <button class="rate-exp-tab" data-exp="syringe" onclick="RatesEngine.setExperiment('syringe')">
-        ⚗️ 2. Gas Syringe (CaCO₃)
-      </button>
-      <button class="rate-exp-tab" data-exp="mass" onclick="RatesEngine.setExperiment('mass')">
-        ⚖️ 3. Loss in Mass
-      </button>
-      <button class="rate-exp-tab" data-exp="catalyst" onclick="RatesEngine.setExperiment('catalyst')">
-        🚀 4. Catalysts (H₂O₂)
-      </button>
-      <button class="rate-exp-tab" data-exp="collision" onclick="RatesEngine.setExperiment('collision')">
-        ⚛️ 5. Collision Theory
-      </button>
+    <div class="rate-exp-nav-wrap">
+      <div class="rate-experiment-tabs">
+        <button class="rate-exp-tab active" data-exp="cross" onclick="RatesEngine.setExperiment('cross')">
+          🧪 1. Disappearing Cross
+        </button>
+        <button class="rate-exp-tab" data-exp="syringe" onclick="RatesEngine.setExperiment('syringe')">
+          ⚗️ 2. Gas Syringe (CaCO₃)
+        </button>
+        <button class="rate-exp-tab" data-exp="mass" onclick="RatesEngine.setExperiment('mass')">
+          ⚖️ 3. Loss in Mass
+        </button>
+        <button class="rate-exp-tab" data-exp="catalyst" onclick="RatesEngine.setExperiment('catalyst')">
+          🚀 4. Catalysts (H₂O₂)
+        </button>
+        <button class="rate-exp-tab" data-exp="collision" onclick="RatesEngine.setExperiment('collision')">
+          ⚛️ 5. Collision Theory
+        </button>
+      </div>
     </div>
 
     <!-- 2-Column Workbench Grid -->
@@ -234,9 +236,9 @@
         </div>
 
         <!-- Action Controls -->
-        <div style="display:flex; gap:10px; margin-top:16px;">
+        <div class="rate-apparatus-actions">
           <button id="btnStartSim" class="rate-btn rate-btn-primary" style="flex:1.5;" onclick="RatesEngine.toggleSimulation()">
-            <span>▶ Start Mixing & Timer</span>
+            <span>▶ Start Mixing &amp; Timer</span>
           </button>
           <button class="rate-btn rate-btn-record" style="flex:1;" onclick="RatesEngine.recordReading()">
             <span>📝 Record Reading</span>
@@ -388,19 +390,24 @@
       
       <!-- Left: KNEC Data Table -->
       <div class="rate-table-card">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
           <h3 style="font-size:0.95rem; font-family:var(--font-heading); margin:0;">KNEC Table 1: Experimental Readings</h3>
-          <span style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono);">5.0 Marks</span>
+          <span style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono); font-weight:700;">5.0 Marks</span>
         </div>
-        <table class="rate-table">
-          <thead id="knecTableHead"></thead>
-          <tbody id="knecTableBody"></tbody>
-        </table>
+        <div class="rate-table-scroll-hint">
+          <span>↔️ Swipe horizontally to view all columns &amp; enter readings</span>
+        </div>
+        <div class="rate-table-responsive">
+          <table class="rate-table">
+            <thead id="knecTableHead"></thead>
+            <tbody id="knecTableBody"></tbody>
+          </table>
+        </div>
       </div>
 
       <!-- Right: Interactive SAPC Graph -->
       <div class="rate-graph-card">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
           <h3 style="font-size:0.95rem; font-family:var(--font-heading); margin:0;">KNEC Rate Graph (SAPC Rubric)</h3>
           <div class="rate-graph-toolbar">
             <button id="btnTangentTool" class="rate-tangent-chip" onclick="RatesEngine.toggleTangent()">
@@ -417,12 +424,12 @@
 
     <!-- KNEC Exam Questions Worksheet -->
     <div class="rate-knec-exam-card" id="knecExamCard">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid var(--card-border); padding-bottom:12px;">
+      <div class="rate-exam-card-header">
         <div>
           <span style="background:var(--rate-amber); color:#FFF; padding:3px 10px; border-radius:6px; font-size:0.7rem; font-weight:800; font-family:var(--font-mono);">KNEC PAPER 3</span>
           <h2 style="margin:4px 0 0; font-size:1.15rem; font-family:var(--font-heading); color:var(--heading-color);">Question 2: Quantitative Reaction Rates Examination (15.0 Marks)</h2>
         </div>
-        <button class="rate-btn rate-btn-primary" style="padding:8px 18px;" onclick="RatesEngine.gradeKnecWorksheet()">
+        <button class="rate-btn rate-btn-primary rate-btn-grade-exam" onclick="RatesEngine.gradeKnecWorksheet()">
           ✓ Grade Worksheet (15 Marks)
         </button>
       </div>
@@ -497,7 +504,7 @@
   <script src="/shared/page-transitions.js"></script>
   <script src="/shared/brilliant-ui.js"></script>
   <script src="/shared/tutorial-engine.js"></script>
-  <script src="/student/js/rates-engine.js?v=83"></script>
+  <script src="/student/js/rates-engine.js?v=84"></script>
   <script>
     if (window.TutorialEngine) {
       window.TutorialEngine.init({

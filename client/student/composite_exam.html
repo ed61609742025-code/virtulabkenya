@@ -1074,15 +1074,17 @@
 
 <script src="/shared/api.js"></script>
 <script src="/shared/page-transitions.js"></script>
-<script src="js/composite-engine.js?v=69"></script>
+<script src="js/composite-engine.js?v=70"></script>
 <script>
   requireStudentLogin();
-  const getAnswerValue = window.getAnswerValue || function(answers, fieldKey, stepId) {
-    if (!answers || typeof answers !== 'object') return undefined;
-    if (fieldKey && answers[fieldKey] !== undefined && answers[fieldKey] !== '') return answers[fieldKey];
-    if (stepId && answers[stepId] !== undefined && answers[stepId] !== '') return answers[stepId];
-    return undefined;
-  };
+  if (typeof window.getAnswerValue !== 'function') {
+    window.getAnswerValue = function(answers, fieldKey, stepId) {
+      if (!answers || typeof answers !== 'object') return undefined;
+      if (fieldKey && answers[fieldKey] !== undefined && answers[fieldKey] !== '') return answers[fieldKey];
+      if (stepId && answers[stepId] !== undefined && answers[stepId] !== '') return answers[stepId];
+      return undefined;
+    };
+  }
   const user = getUser();
   if (user) {
     document.getElementById('candidateName').textContent = user.name;

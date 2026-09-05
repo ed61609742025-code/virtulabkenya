@@ -630,6 +630,42 @@
 
     // Helper: Render Question 1 Volumetric Rig Card
     function getQ1CardHtml(qNum = 1, marks = 15, config = q1) {
+      if (config.hasMultipleProcedures && Array.isArray(config.procedures) && config.procedures.length > 0) {
+        return `
+          <div class="blueprint-card" style="border: 1.5px solid #0d9488;">
+            <div class="blueprint-card-header" style="background: rgba(13, 148, 136, 0.1);">
+              <span class="q-badge" style="background:#0d9488;color:#fff;">🔬 Question ${qNum} · ${marks} Marks (Multi-Procedure Titration)</span>
+              <h4>🧪 Sequential Volumetric Analysis Workbench (${config.procedures.length} Procedures)</h4>
+            </div>
+            <div class="blueprint-card-body">
+              ${config.instructions ? `<div style="font-size:0.83rem; color:var(--text-muted); margin-bottom:12px; font-style:italic;">${escapeHtml(config.instructions)}</div>` : ''}
+              <div style="display:flex; flex-direction:column; gap:16px;">
+                ${config.procedures.map((proc, pIdx) => `
+                  <div style="background:var(--bg-dark); border:1px solid var(--card-border); border-radius:8px; padding:12px 14px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                      <h5 style="margin:0; font-size:0.88rem; font-weight:800; color:var(--heading-color);">
+                        ${escapeHtml(proc.title || `Procedure ${pIdx === 0 ? 'I' : 'II'}`)}
+                      </h5>
+                      <span class="pill pill-info">${proc.tableMarks || 4.0} Marks Table</span>
+                    </div>
+                    ${proc.instructions ? `<p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:8px;">${escapeHtml(proc.instructions)}</p>` : ''}
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:10px; font-size:0.82rem;">
+                      <div><span class="bp-label">Burette Titrant:</span> <b>${formatChemicalFormula(escapeHtml(proc.solutionA || 'Standard Acid'))}</b></div>
+                      <div><span class="bp-label">Conical Flask Analyte:</span> <b>${formatChemicalFormula(escapeHtml(proc.solutionB || 'Analyte'))}</b> (${proc.pipetteVolume || 25.0} cm³)</div>
+                      <div><span class="bp-label">Indicator:</span> <span class="pill pill-ok">${escapeHtml(proc.indicator || 'Phenolphthalein')}</span></div>
+                      <div><span class="bp-label">Calculated Titre:</span> <b style="color:var(--green-accent); font-size:0.95rem;">${Number(proc.trueTitre || 25.0).toFixed(2)} cm³</b></div>
+                    </div>
+                    <div style="margin-top:8px; font-size:0.78rem; color:var(--text-muted);">
+                      Sub-Questions: ${(proc.questions || []).map(sq => `(${sq.letter || sq.id})`).join(' ')}
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
       return `
         <div class="blueprint-card">
           <div class="blueprint-card-header">
@@ -918,43 +954,138 @@
         `;
       } else if (q.simulationType === 'titration') {
         const c1 = q.config || q1;
-        questionsContentHtml += `
-          <div class="paper-section">
-            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid var(--card-border); padding-bottom:6px; margin-bottom:12px;">
-              <h4 style="margin:0;">QUESTION ${q.number} (${Number(q.marks || 15).toFixed(1)} MARKS)</h4>
-              <span class="pill pill-info">Quantitative Volumetric Analysis</span>
+        const isMultiProc = Boolean(c1.hasMultipleProcedures && Array.isArray(c1.procedures) && c1.procedures.length > 0);
+
+        if (isMultiProc) {
+          questionsContentHtml += `
+            <div class="paper-section">
+              <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid var(--card-border); padding-bottom:6px; margin-bottom:12px;">
+                <h4 style="margin:0;">QUESTION ${q.number} (${Number(q.marks || 19).toFixed(1)} MARKS)</h4>
+                <span class="pill pill-info">Quantitative Volumetric Analysis · Multi-Procedure Titration</span>
+              </div>
+              ${c1.instructions ? `<div style="font-size:0.85rem; line-height:1.6; margin-bottom:14px; white-space:pre-wrap;">${formatInlineMarkdown(escapeHtml(c1.instructions))}</div>` : ''}
+              
+              ${c1.procedures.map((proc, pIdx) => {
+                const procNum = proc.procedureIndex || (pIdx === 0 ? 'I' : (pIdx === 1 ? 'II' : pIdx + 1));
+                const procQuestions = Array.isArray(proc.questions) && proc.questions.length > 0
+                  ? proc.questions
+                  : (Array.isArray(proc.subQuestions) ? proc.subQuestions : []);
+
+                return `
+                  <div style="margin-bottom:24px; padding-bottom:18px; ${pIdx < c1.procedures.length - 1 ? 'border-bottom:1.5px dashed var(--card-border);' : ''}">
+                    <h5 style="margin:0 0 8px 0; color:var(--heading-color); font-size:0.92rem; font-weight:800;">
+                      ${escapeHtml(proc.title || `PROCEDURE ${procNum}`)}
+                    </h5>
+                    ${proc.instructions ? `<div style="font-size:0.84rem; line-height:1.6; margin-bottom:12px; white-space:pre-wrap;">${formatInlineMarkdown(escapeHtml(proc.instructions))}</div>` : ''}
+                    
+                    <div style="background:rgba(255,255,255,0.02); border:1px solid var(--card-border); border-radius:6px; padding:10px 14px; margin-bottom:14px; font-size:0.83rem; line-height:1.7;">
+                      <div><b>Burette (Titrant):</b> ${formatChemicalFormula(escapeHtml(proc.solutionA || 'Standard Solution in Burette'))}</div>
+                      <div><b>Conical Flask (Analyte):</b> ${formatChemicalFormula(escapeHtml(proc.solutionB || 'Solution in Conical Flask'))} (${proc.pipetteVolume || 25.0} cm³)</div>
+                      <div><b>Indicator:</b> ${escapeHtml(proc.indicator || 'Phenolphthalein')}</div>
+                    </div>
+
+                    <div style="margin:14px 0;">
+                      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                        <span style="font-weight:700; font-size:0.82rem;">${escapeHtml(proc.tableTitle || `Table ${pIdx + 1}: Candidate Titration Results`)}</span>
+                        <span style="font-size:0.75rem; color:var(--text-muted);">[${proc.tableMarks || 4.0} Marks]</span>
+                      </div>
+                      <div style="overflow-x: auto;">
+                        <table class="paper-table" style="min-width: 320px;">
+                          <thead>
+                            <tr><th>Titration Trial</th><th>I</th><th>II</th><th>III</th></tr>
+                          </thead>
+                          <tbody>
+                            <tr><td>Final Burette Reading (cm³)</td><td></td><td></td><td></td></tr>
+                            <tr><td>Initial Burette Reading (cm³)</td><td></td><td></td><td></td></tr>
+                            <tr><td>Volume of Solution Used (cm³)</td><td></td><td></td><td></td></tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <div style="margin-top:14px; font-size:0.84rem;">
+                      ${procQuestions.map(sq => {
+                        const qLabel = sq.label || sq.text || '';
+                        const qLetter = sq.letter || sq.id || '';
+                        const qMarks = Number(sq.marks) || 1.0;
+                        return `
+                          <div style="margin-bottom:14px;">
+                            <div style="display:flex; justify-content:space-between; font-weight:700; line-height:1.5;">
+                              <span>(${escapeHtml(qLetter)}) ${formatChemicalFormula(escapeHtml(qLabel))}</span>
+                              <span style="color:var(--text-muted); font-size:0.8rem; white-space:nowrap;">[${qMarks.toFixed(1)} Mark${qMarks > 1 ? 's' : ''}]</span>
+                            </div>
+                            <div style="border-bottom:1px dotted var(--card-border); height:26px; margin-top:4px;"></div>
+                            <div style="border-bottom:1px dotted var(--card-border); height:26px; margin-top:4px;"></div>
+                          </div>
+                        `;
+                      }).join('')}
+                    </div>
+                  </div>
+                `;
+              }).join('')}
             </div>
-            <p style="font-size:0.85rem; line-height:1.6;">You are provided with:</p>
-            <ul style="font-size:0.84rem; line-height:1.7; margin-left:20px;">
-              <li><b>Solution A:</b> ${formatChemicalFormula(escapeHtml(c1.solutionA || 'Standard Acid'))}</li>
-              <li><b>Solution B:</b> ${formatChemicalFormula(escapeHtml(c1.solutionB || 'Base Sample'))}</li>
-              <li><b>Indicator:</b> ${escapeHtml(c1.indicator || 'Phenolphthalein')}</li>
-            </ul>
-            <p style="font-size:0.84rem; line-height:1.6;">${escapeHtml(c1.instructions || 'You are required to titrate Solution B with Solution A and determine its concentration.')}</p>
-            
-            <div style="margin:14px 0;">
-              <div style="font-weight:700; font-size:0.82rem; margin-bottom:6px;">Table 1: Candidate Burette Titration Results</div>
-              <div style="overflow-x: auto;">
-                <table class="paper-table" style="min-width: 320px;">
-                  <thead>
-                    <tr><th>Titration Trial</th><th>I</th><th>II</th><th>III</th></tr>
-                  </thead>
-                  <tbody>
-                    <tr><td>Final Burette Reading (cm³)</td><td></td><td></td><td></td></tr>
-                    <tr><td>Initial Burette Reading (cm³)</td><td></td><td></td><td></td></tr>
-                    <tr><td>Volume of Solution A Used (cm³)</td><td></td><td></td><td></td></tr>
-                  </tbody>
-                </table>
+          `;
+        } else {
+          // Single procedure titration
+          const questionsList = Array.isArray(c1.questions) && c1.questions.length > 0
+            ? c1.questions
+            : (Array.isArray(q.subQuestions) && q.subQuestions.length > 0 ? q.subQuestions : []);
+
+          questionsContentHtml += `
+            <div class="paper-section">
+              <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1.5px solid var(--card-border); padding-bottom:6px; margin-bottom:12px;">
+                <h4 style="margin:0;">QUESTION ${q.number} (${Number(q.marks || 15).toFixed(1)} MARKS)</h4>
+                <span class="pill pill-info">Quantitative Volumetric Analysis</span>
+              </div>
+              <p style="font-size:0.85rem; line-height:1.6;">You are provided with:</p>
+              <ul style="font-size:0.84rem; line-height:1.7; margin-left:20px;">
+                <li><b>Solution A:</b> ${formatChemicalFormula(escapeHtml(c1.solutionA || 'Standard Solution A'))}</li>
+                <li><b>Solution B:</b> ${formatChemicalFormula(escapeHtml(c1.solutionB || 'Solution B Sample'))}</li>
+                <li><b>Indicator:</b> ${escapeHtml(c1.indicator || 'Phenolphthalein')}</li>
+              </ul>
+              <p style="font-size:0.84rem; line-height:1.6;">${escapeHtml(c1.instructions || q.prompt || 'You are required to titrate Solution B with Solution A and determine its concentration.')}</p>
+              
+              <div style="margin:14px 0;">
+                <div style="font-weight:700; font-size:0.82rem; margin-bottom:6px;">${escapeHtml(c1.tableTitle || 'Table 1: Candidate Burette Titration Results')} [${c1.tableMarks || 5.0} Marks]</div>
+                <div style="overflow-x: auto;">
+                  <table class="paper-table" style="min-width: 320px;">
+                    <thead>
+                      <tr><th>Titration Trial</th><th>I</th><th>II</th><th>III</th></tr>
+                    </thead>
+                    <tbody>
+                      <tr><td>Final Burette Reading (cm³)</td><td></td><td></td><td></td></tr>
+                      <tr><td>Initial Burette Reading (cm³)</td><td></td><td></td><td></td></tr>
+                      <tr><td>Volume of Solution A Used (cm³)</td><td></td><td></td><td></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div style="font-size:0.84rem; line-height:1.8;">
+                ${questionsList.length > 0 ? questionsList.map(sq => {
+                  const qLabel = sq.label || sq.text || '';
+                  const qLetter = sq.letter || sq.id || '';
+                  const qMarks = Number(sq.marks) || 1.0;
+                  return `
+                    <div style="margin-bottom:14px;">
+                      <div style="display:flex; justify-content:space-between; font-weight:700; line-height:1.5;">
+                        <span>(${escapeHtml(qLetter)}) ${formatChemicalFormula(escapeHtml(qLabel))}</span>
+                        <span style="color:var(--text-muted); font-size:0.8rem; white-space:nowrap;">[${qMarks.toFixed(1)} Mark${qMarks > 1 ? 's' : ''}]</span>
+                      </div>
+                      <div style="border-bottom:1px dotted var(--card-border); height:26px; margin-top:4px;"></div>
+                      <div style="border-bottom:1px dotted var(--card-border); height:26px; margin-top:4px;"></div>
+                    </div>
+                  `;
+                }).join('') : `
+                  <div>(a) Calculate the average volume of Solution A used. [1.0 Mark]</div>
+                  <div>(b) Calculate the number of moles of Solution B in ${c1.pipetteVolume || 25.0} cm³. [2.0 Marks]</div>
+                  <div>(c) Using the stoichiometric equation, determine moles of Solution A. [2.0 Marks]</div>
+                  <div>(d) Calculate the concentration of Solution A in mol dm⁻³ and g dm⁻³. [3.0 Marks]</div>
+                `}
               </div>
             </div>
-            <div style="font-size:0.84rem; line-height:1.8;">
-              <div>(a) Calculate the average volume of Solution A used. [1 Mark]</div>
-              <div>(b) Calculate the number of moles of Solution B in ${c1.pipetteVolume || 25.0} cm³. [2 Marks]</div>
-              <div>(c) Using the stoichiometric equation: <code>${formatChemicalFormula(escapeHtml(c1.equation || ''))}</code>, determine moles of Solution A. [2 Marks]</div>
-              <div>(d) Calculate the concentration of Solution A in mol dm⁻³ and g dm⁻³. [3 Marks]</div>
-            </div>
-          </div>
-        `;
+          `;
+        }
       } else if (q.simulationType === 'qualitative') {
         const c2 = q.config || q2;
         questionsContentHtml += `

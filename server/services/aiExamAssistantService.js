@@ -289,6 +289,12 @@ function normalizeQuestionsArray(parsed) {
             tableMarks: Number(proc.tableMarks) || 4.0,
             questions: Array.isArray(proc.questions) ? proc.questions : []
           }));
+
+          // Backfill top-level solutionA/solutionB/indicator from Procedure I if omitted at root
+          if (!cfg.solutionA && cfg.procedures[0]?.solutionA) cfg.solutionA = cfg.procedures[0].solutionA;
+          if (!cfg.solutionB && cfg.procedures[0]?.solutionB) cfg.solutionB = cfg.procedures[0].solutionB;
+          if (!cfg.indicator && cfg.procedures[0]?.indicator) cfg.indicator = cfg.procedures[0].indicator;
+          if (!cfg.trueTitre && cfg.procedures[0]?.trueTitre) cfg.trueTitre = cfg.procedures[0].trueTitre;
         }
       }
 
@@ -340,10 +346,16 @@ function normalizeQuestionsArray(parsed) {
     });
   }
   if (cfg.q3) {
+    const isQ3Inorganic = Boolean(
+      cfg.q3.trueSaltKey ||
+      cfg.q3.trueCation ||
+      (cfg.q3.sampleName && /solid/i.test(cfg.q3.sampleName)) ||
+      (cfg.q3.tests && cfg.q3.tests.some(t => /naoh|ammonia|nh3|precipitation|cation|anion/i.test(t.prompt || '')))
+    );
     questions.push({
       number: 3,
-      title: cfg.q3.title || 'Organic Functional Group Analysis',
-      simulationType: 'organic',
+      title: cfg.q3.title || (isQ3Inorganic ? 'Inorganic Qualitative Analysis' : 'Organic Functional Group Analysis'),
+      simulationType: isQ3Inorganic ? 'qualitative' : 'organic',
       marks: Number(cfg.q3.marks) || 10,
       config: cfg.q3,
       prompt: '',
@@ -618,6 +630,26 @@ function normalizeExamStructure(parsed, sourceMeta = {}) {
  * 1. Parse uploaded exam paper (PDF, Image photo, or plain text)
  */
 async function parseExamPaper({ fileData = null, mimeType = null, textContent = '', teacherNotes = '' }) {
+  // If PDF file data is provided, automatically extract text layer with pdf-parse to provide verbatim paper text
+  if (fileData && (mimeType === 'application/pdf' || fileData.startsWith('data:application/pdf') || fileData.includes('JVBERi0'))) {
+    try {
+      let b64 = fileData;
+      const commaIdx = fileData.indexOf('base64,');
+      if (commaIdx !== -1) b64 = fileData.substring(commaIdx + 7);
+      const pdfBuf = Buffer.from(b64.trim(), 'base64');
+      const { PDFParse } = require('pdf-parse');
+      const parser = new PDFParse({ data: pdfBuf });
+      const extracted = await parser.getText();
+      await parser.destroy();
+      if (extracted && extracted.text && extracted.text.trim()) {
+        const cleanedText = extracted.text.trim();
+        textContent = textContent ? `${textContent}\n\n${cleanedText}` : cleanedText;
+      }
+    } catch (pdfErr) {
+      console.warn('[parseExamPaper] pdf-parse text extraction note:', pdfErr.message);
+    }
+  }
+
   const prompt = `You are a Senior Kenya National Examinations Council (KNEC) Chief Chemistry Practical Examiner & Curriculum Specialist.
 Analyze this uploaded chemistry exam paper document/photo and extract all practical experiments, questions, reagent configurations, and marking rubrics according to authentic KNEC KCSE Paper 3 (233/3) standards.
 

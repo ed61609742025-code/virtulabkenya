@@ -202,6 +202,12 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Hide generic student bottom navigation bar on reaction rates workbench to prevent obscuring apparatus & controls */
+.b-mobile-bottom-nav,
+#vlkBrilliantBottomNav {
+  display: none !important;
+}
+
 /* ── 3. UNIFIED ACADEMIC STICKY HEADER ── */
 .academic-top-header {
   position: -webkit-sticky;
@@ -280,6 +286,39 @@ html, body {
   padding: 2px 4px;
   border-radius: 6px;
   overflow-x: auto;
+}
+
+.nav-modules-pill a,
+.theme-btn-chip {
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-muted) !important;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.12s ease;
+  text-decoration: none !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-modules-pill a:hover,
+.theme-btn-chip:hover {
+  color: var(--text-main) !important;
+  background: var(--card-bg-hover);
+}
+
+.nav-modules-pill a.active,
+.theme-btn-chip.active {
+  background: var(--rate-amber) !important;
+  color: #FFFFFF !important;
+  font-weight: 700;
+  border-color: transparent;
 }
 
 .nav-actions {

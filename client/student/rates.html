@@ -7,7 +7,15 @@
   <meta name="description" content="Simulate KNEC KCSE Chemistry Paper 3 reaction rate practicals: Disappearing cross (Na2S2O3 + HCl), gas syringe kinetics, mass loss, catalysts, and collision theory.">
   <script src="/shared/auth-guard.js"></script>
   <script>
-    var t = localStorage.getItem('vlk_theme') || 'light';
+    // Ensure signature KNEC KCSE white academic workstation is active by default
+    var t = localStorage.getItem('vlk_theme');
+    if (!localStorage.getItem('vlk_practical_white_init')) {
+      t = 'light';
+      localStorage.setItem('vlk_theme', 'light');
+      localStorage.setItem('vlk_practical_white_init', 'true');
+    } else if (!t) {
+      t = 'light';
+    }
     document.documentElement.setAttribute('data-theme', t);
     if (window.VLKAuthGuard) {
       VLKAuthGuard.guardPage('student');
@@ -27,7 +35,7 @@
   <link rel="stylesheet" href="/shared/style.css">
   <link rel="stylesheet" href="/shared/brilliant-theme.css">
   <link rel="stylesheet" href="/shared/tutorial-engine.css">
-  <link rel="stylesheet" href="/student/css/rates.css?v=82">
+  <link rel="stylesheet" href="/student/css/rates.css?v=83">
   <link rel="stylesheet" href="/shared/ai-tutor.css">
   <link rel="stylesheet" href="/shared/pwa-installer.css">
 </head>
@@ -72,6 +80,11 @@
           <button type="button" class="theme-btn-chip active" id="btnModePractice" onclick="RatesEngine.setStudyMode('practice')">🎓 Practice</button>
           <button type="button" class="theme-btn-chip" id="btnModeExam" onclick="RatesEngine.setStudyMode('exam')">📝 Exam</button>
         </div>
+
+        <!-- Quick Theme Switcher Button (☀️ Light / 🌙 Dark) -->
+        <button type="button" class="theme-btn-chip" id="btnQuickThemeToggle" onclick="toggleQuickTheme()" title="Toggle Theme (☀️ Light / 🌙 Dark)" style="padding:4px 9px; font-size:0.75rem; font-weight:700;">
+          ☀️ Light
+        </button>
 
         <!-- Guided Tutorial Button -->
         <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm" onclick="TutorialEngine.start('rates')" style="padding:4px 8px; font-size:0.75rem; white-space:nowrap;">
@@ -484,7 +497,7 @@
   <script src="/shared/page-transitions.js"></script>
   <script src="/shared/brilliant-ui.js"></script>
   <script src="/shared/tutorial-engine.js"></script>
-  <script src="/student/js/rates-engine.js?v=82"></script>
+  <script src="/student/js/rates-engine.js?v=83"></script>
   <script>
     if (window.TutorialEngine) {
       window.TutorialEngine.init({
@@ -493,10 +506,35 @@
       });
     }
 
+    function toggleQuickTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'light';
+      const next = (current === 'dark' || current === 'green') ? 'light' : 'dark';
+      if (typeof setTheme === 'function') {
+        setTheme(next);
+      } else {
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('vlk_theme', next);
+      }
+      updateQuickThemeIcon(next);
+      if (window.RatesEngine && typeof window.RatesEngine.drawGraph === 'function') {
+        window.RatesEngine.drawGraph();
+      }
+    }
+
+    function updateQuickThemeIcon(theme) {
+      const btn = document.getElementById('btnQuickThemeToggle');
+      if (btn) {
+        btn.textContent = (theme === 'dark' || theme === 'green') ? '🌙 Dark' : '☀️ Light';
+      }
+    }
+    updateQuickThemeIcon(document.documentElement.getAttribute('data-theme') || 'light');
+
     // Observe theme changes to trigger RatesEngine graph re-draw
     const themeObserver = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
+          const curTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          updateQuickThemeIcon(curTheme);
           if (window.RatesEngine && typeof window.RatesEngine.drawGraph === 'function') {
             window.RatesEngine.drawGraph();
           }

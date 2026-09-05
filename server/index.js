@@ -27,7 +27,7 @@ const corsOptions = process.env.CORS_ORIGIN
   : { origin: true, credentials: true };
 app.use(cors(corsOptions));
 
-app.use(express.json({ limit: '20mb' }));
+app.use(express.json({ limit: '50mb' }));
 app.use(express.static(path.join(__dirname, '../client'), {
   setHeaders: (res, filePath) => {
     if (filePath.endsWith('.html') || filePath.endsWith('sw.js')) {
@@ -161,9 +161,8 @@ app.use(errorMiddleware);
 // ── Start ─────────────────────────────────────────────────────
 if (require.main === module) {
   const { runMigrationsAsync } = require('./db/migrate');
-  runMigrationsAsync().catch(err => console.warn('[Boot Migrate] Note:', err.message));
-
   const os = require('os');
+
   function getLocalIp() {
     const interfaces = os.networkInterfaces();
     for (const name of Object.keys(interfaces)) {
@@ -176,13 +175,21 @@ if (require.main === module) {
     return 'localhost';
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
-    const localIp = getLocalIp();
-    console.log(`VirtuLab Kenya server running on port ${PORT}`);
-    console.log(`Local Access:   http://localhost:${PORT}`);
-    console.log(`Mobile Access:  http://${localIp}:${PORT}/student/home.html`);
-    console.log(`Health Check:   http://localhost:${PORT}/api/health`);
-  });
+  (async () => {
+    try {
+      await runMigrationsAsync();
+    } catch (err) {
+      console.warn('[Boot Migrate] Note:', err.message);
+    }
+
+    app.listen(PORT, '0.0.0.0', () => {
+      const localIp = getLocalIp();
+      console.log(`VirtuLab Kenya server running on port ${PORT}`);
+      console.log(`Local Access:   http://localhost:${PORT}`);
+      console.log(`Mobile Access:  http://${localIp}:${PORT}/student/home.html`);
+      console.log(`Health Check:   http://localhost:${PORT}/api/health`);
+    });
+  })();
 }
 
 module.exports = app;

@@ -1409,7 +1409,20 @@ class CompositeExamEngine {
       Object.assign(this.preset.q1, config.q1);
       if (config.q1.ratioA != null) this.preset.q1.moleRatioAcid = Number(config.q1.ratioA);
       if (config.q1.ratioB != null) this.preset.q1.moleRatioBase = Number(config.q1.ratioB);
-      if (config.q1.acidRfm != null) this.preset.q1.acidRfm = Number(config.q1.acidRfm);
+      if (config.q1.acidRfm != null) {
+        this.preset.q1.acidRfm = Number(config.q1.acidRfm);
+      } else if (this.preset.q1.solutionA) {
+        const solALower = this.preset.q1.solutionA.toLowerCase();
+        if (solALower.includes('sulfuric') || solALower.includes('h₂so₄') || solALower.includes('h2so4')) {
+          this.preset.q1.acidRfm = 98.0;
+        } else if (solALower.includes('oxalic') || solALower.includes('ethanedioic')) {
+          this.preset.q1.acidRfm = 126.0;
+        } else if (solALower.includes('nitric') || solALower.includes('hno3') || solALower.includes('hno₃')) {
+          this.preset.q1.acidRfm = 63.0;
+        } else if (solALower.includes('hydrochloric') || solALower.includes('hcl')) {
+          this.preset.q1.acidRfm = 36.5;
+        }
+      }
       if (config.q1.baseRfm != null) this.preset.q1.baseRfm = Number(config.q1.baseRfm);
 
       // Regenerate appropriate calculation questions with bound functions
@@ -2104,11 +2117,27 @@ class CompositeExamEngine {
     const worked = {};
     questionsList.forEach((q, idx) => {
       const stepKey = `step_${q.letter}`;
+      const camelKey = `step${q.letter.toUpperCase()}`;
+      let resultStr = '';
+      if (typeof q.calcTheoretical === 'function') {
+        const val = q.calcTheoretical(evalCtx);
+        if (typeof val === 'number') {
+          if (q.field === 'molesA' || q.field === 'molesB') {
+            resultStr = `${val.toFixed(5)} mol`;
+          } else if (q.field === 'avgTitre') {
+            resultStr = `${val.toFixed(2)} cm³`;
+          } else {
+            resultStr = `${val.toFixed(3)} ${q.unit || ''}`.trim();
+          }
+        }
+      }
       worked[stepKey] = {
         letter: q.letter,
         title: `(${q.letter}) ${q.label}`,
+        result: resultStr,
         workingHtml: typeof q.working === 'function' ? q.working(evalCtx) : `Standard stoichiometric calculation.`
       };
+      worked[camelKey] = worked[stepKey];
     });
 
     return worked;

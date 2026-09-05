@@ -20,6 +20,18 @@ router.use(authMiddleware);
 router.use(authMiddleware.requireRole(['teacher', 'admin']));
 
 /**
+ * GET /api/ai-assistant/status
+ * Check if Gemini AI cloud assistant is configured and active
+ */
+router.get('/status', (req, res) => {
+  const status = aiExamService.getAiStatus();
+  return res.json({
+    success: true,
+    status
+  });
+});
+
+/**
  * POST /api/ai-assistant/parse-paper
  * Uploaded exam paper document/photo parsing (Multimodal)
  */

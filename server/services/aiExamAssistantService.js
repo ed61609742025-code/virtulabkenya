@@ -258,7 +258,13 @@ async function callGeminiAssistant({ prompt, fileData = null, mimeType = null, m
 
   const parts = [{ text: prompt }];
 
-  if (fileData && mimeType && typeof fileData === 'string') {
+  if (fileData && typeof fileData === 'string') {
+    // Normalize mimeType: Gemini requires standard MIME types like application/pdf, image/png, image/jpeg, etc.
+    let resolvedMime = (mimeType || '').trim().toLowerCase();
+    if (!resolvedMime || resolvedMime === 'application/octet-stream' || resolvedMime === 'application/x-pdf') {
+      resolvedMime = 'application/pdf';
+    }
+
     // Strip data URL header if present (e.g. data:image/png;base64,...)
     const cleanBase64 = fileData.includes('base64,')
       ? fileData.split('base64,')[1].replace(/[\r\n\s]/g, '')
@@ -266,7 +272,7 @@ async function callGeminiAssistant({ prompt, fileData = null, mimeType = null, m
 
     parts.push({
       inlineData: {
-        mimeType: mimeType,
+        mimeType: resolvedMime,
         data: cleanBase64
       }
     });
@@ -278,7 +284,7 @@ async function callGeminiAssistant({ prompt, fileData = null, mimeType = null, m
       'Content-Type': 'application/json',
       'x-goog-api-key': apiKey
     },
-    signal: AbortSignal.timeout(30000),
+    signal: AbortSignal.timeout(90000),
     body: JSON.stringify({
       contents: [{ parts }],
       generationConfig: {
@@ -292,7 +298,14 @@ async function callGeminiAssistant({ prompt, fileData = null, mimeType = null, m
   if (!response.ok) {
     const errText = await response.text();
     console.error('[Gemini Exam Assistant Error]:', response.status, errText);
-    throw new Error('GEMINI_API_ERROR');
+    let detailedMsg = `GEMINI_API_ERROR (${response.status})`;
+    try {
+      const errJson = JSON.parse(errText);
+      if (errJson.error && errJson.error.message) {
+        detailedMsg = errJson.error.message;
+      }
+    } catch (_) {}
+    throw new Error(detailedMsg);
   }
 
   const data = await response.json();
@@ -484,11 +497,16 @@ ${textContent ? `Extracted Paper Text:\n${textContent}` : ''}`;
       ? FALLBACK_PRESETS.redox
       : FALLBACK_PRESETS.classic;
 
+    const isNotConfigured = err.message === 'AI_NOT_CONFIGURED';
+    const warning = isNotConfigured
+      ? 'Gemini API key is not configured in server/.env (GEMINI_API_KEY). VirtuLab loaded a standard KNEC-aligned examination blueprint.'
+      : `AI cloud parsing was unavailable (${err.message}). VirtuLab loaded a standard KNEC-aligned examination blueprint.`;
+
     return normalizeExamStructure(fallback, {
       source: 'smart_fallback',
       isFallback: true,
       errorReason: err.message,
-      warning: 'AI cloud parsing was unavailable. VirtuLab loaded a standard KNEC-aligned examination blueprint.'
+      warning
     });
   }
 }
@@ -598,12 +616,17 @@ Strict Response JSON Schema:
     modified.durationMinutes = durationMinutes;
     if (prompt) modified.title = `KCSE Chemistry Practical Exam — ${prompt.slice(0, 45)}...`;
 
+    const isNotConfigured = err.message === 'AI_NOT_CONFIGURED';
+    const warning = isNotConfigured
+      ? 'Gemini API key is not configured in server/.env (GEMINI_API_KEY). VirtuLab generated a standard KNEC-aligned examination blueprint.'
+      : `AI cloud synthesis was unavailable (${err.message}). VirtuLab generated a standard KNEC-aligned examination blueprint.`;
+
     return normalizeExamStructure(modified, {
       source: 'smart_fallback',
       isFallback: true,
       promptText: prompt,
       errorReason: err.message,
-      warning: 'AI cloud synthesis was unavailable. VirtuLab generated a standard KNEC-aligned examination blueprint.'
+      warning
     });
   }
 }
@@ -1150,9 +1173,26 @@ STRICT REQUIREMENTS FOR ADJUSTMENTS:
   }
 }
 
+function isAiConfigured() {
+  return Boolean(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim());
+}
+
+function getAiStatus() {
+  const configured = isAiConfigured();
+  return {
+    configured,
+    model: process.env.GEMINI_MODEL || DEFAULT_MODEL,
+    message: configured
+      ? 'Google Gemini AI engine is ready for multimodal paper parsing and exam synthesis.'
+      : 'GEMINI_API_KEY is not configured in server/.env. Add your Gemini API key to enable live AI multimodal paper parsing.'
+  };
+}
+
 module.exports = {
   parseExamPaper,
   generateExamFromIdea,
   refineExamDraft,
+  isAiConfigured,
+  getAiStatus,
   FALLBACK_PRESETS
 };

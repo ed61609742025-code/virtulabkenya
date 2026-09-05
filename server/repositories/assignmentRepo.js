@@ -1,6 +1,165 @@
 const pool = require('../db/pool');
 
+let assignmentTablesEnsured = false;
+async function ensureAssignmentTables() {
+  if (assignmentTablesEnsured) return;
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS qualitative_sessions (
+        id SERIAL PRIMARY KEY,
+        student_id INTEGER REFERENCES students(id) ON DELETE CASCADE,
+        assignment_id INTEGER REFERENCES assignments(id) ON DELETE SET NULL,
+        salt_key VARCHAR(50) NOT NULL,
+        salt_name VARCHAR(150),
+        true_cation VARCHAR(20),
+        true_anion VARCHAR(20),
+        student_cation VARCHAR(20),
+        student_anion VARCHAR(20),
+        cation_correct BOOLEAN DEFAULT FALSE,
+        anion_correct BOOLEAN DEFAULT FALSE,
+        tests_performed INTEGER DEFAULT 0,
+        tests_correct INTEGER DEFAULT 0,
+        observations JSONB,
+        correct BOOLEAN DEFAULT FALSE,
+        mode VARCHAR(20) DEFAULT 'selfPaced',
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS organic_sessions (
+        id SERIAL PRIMARY KEY,
+        student_id INTEGER REFERENCES students(id) ON DELETE CASCADE,
+        assignment_id INTEGER REFERENCES assignments(id) ON DELETE SET NULL,
+        compound_key VARCHAR(50) NOT NULL,
+        compound_name VARCHAR(150),
+        true_functional_group VARCHAR(50),
+        student_functional_group VARCHAR(50),
+        functional_group_correct BOOLEAN DEFAULT FALSE,
+        tests_performed INTEGER DEFAULT 0,
+        tests_correct INTEGER DEFAULT 0,
+        questions_total INTEGER DEFAULT 4,
+        questions_correct INTEGER DEFAULT 0,
+        score_pct INTEGER DEFAULT 0,
+        observations JSONB,
+        correct BOOLEAN DEFAULT FALSE,
+        mode VARCHAR(20) DEFAULT 'selfPaced',
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS composite_sessions (
+        id SERIAL PRIMARY KEY,
+        student_id INTEGER REFERENCES students(id) ON DELETE CASCADE,
+        assignment_id INTEGER REFERENCES assignments(id) ON DELETE SET NULL,
+        exam_title VARCHAR(200) DEFAULT 'KCSE Chemistry Paper 3 Practical Exam',
+        q1_score DECIMAL(5,2) DEFAULT 0.0,
+        q2_score DECIMAL(5,2) DEFAULT 0.0,
+        q3_score DECIMAL(5,2) DEFAULT 0.0,
+        total_score DECIMAL(5,2) DEFAULT 0.0,
+        grade VARCHAR(10) DEFAULT 'E',
+        details JSONB,
+        duration_seconds INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS solubility_sessions (
+        id SERIAL PRIMARY KEY,
+        student_id INTEGER REFERENCES students(id) ON DELETE CASCADE,
+        assignment_id INTEGER REFERENCES assignments(id) ON DELETE SET NULL,
+        solute_key VARCHAR(50) NOT NULL,
+        solute_name VARCHAR(150),
+        experiment_title VARCHAR(200),
+        solute_mass DECIMAL(6,2),
+        solvent_volume DECIMAL(6,2),
+        crystallization_temp DECIMAL(6,2),
+        theoretical_temp DECIMAL(6,2),
+        temp_difference DECIMAL(6,2),
+        accuracy_score DECIMAL(5,2) DEFAULT 0.0,
+        graph_score DECIMAL(5,2) DEFAULT 0.0,
+        total_score DECIMAL(5,2) DEFAULT 0.0,
+        trials_data JSONB,
+        mode VARCHAR(20) DEFAULT 'selfPaced',
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS energy_sessions (
+        id SERIAL PRIMARY KEY,
+        student_id INTEGER REFERENCES students(id) ON DELETE CASCADE,
+        assignment_id INTEGER REFERENCES assignments(id) ON DELETE SET NULL,
+        system_id VARCHAR(100) NOT NULL,
+        system_name VARCHAR(200),
+        reaction_category VARCHAR(50),
+        initial_temp DECIMAL(6,2),
+        final_temp DECIMAL(6,2),
+        temp_change DECIMAL(6,2),
+        heat_quantity DECIMAL(10,2),
+        moles DECIMAL(10,4),
+        molar_enthalpy DECIMAL(10,2),
+        theoretical_enthalpy DECIMAL(10,2),
+        total_score DECIMAL(5,2) DEFAULT 0.0,
+        rubric_breakdown JSONB,
+        readings_data JSONB,
+        equation_text TEXT,
+        mode VARCHAR(20) DEFAULT 'practice',
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS rates_sessions (
+        id SERIAL PRIMARY KEY,
+        student_id INTEGER REFERENCES students(id) ON DELETE CASCADE,
+        assignment_id INTEGER REFERENCES assignments(id) ON DELETE SET NULL,
+        experiment_type VARCHAR(50) NOT NULL,
+        experiment_title VARCHAR(200),
+        dilution_readings JSONB,
+        table_score DECIMAL(5,2) DEFAULT 0.0,
+        graph_score DECIMAL(5,2) DEFAULT 0.0,
+        calc_score DECIMAL(5,2) DEFAULT 0.0,
+        total_score DECIMAL(5,2) DEFAULT 0.0,
+        grade VARCHAR(20),
+        rubric_breakdown JSONB,
+        answers JSONB,
+        mode VARCHAR(20) DEFAULT 'practice',
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS gas_sessions (
+        id SERIAL PRIMARY KEY,
+        student_id INTEGER REFERENCES students(id) ON DELETE CASCADE,
+        assignment_id INTEGER REFERENCES assignments(id) ON DELETE SET NULL,
+        gas_key VARCHAR(50) NOT NULL,
+        gas_name VARCHAR(150),
+        reactants VARCHAR(200),
+        drying_agent VARCHAR(100),
+        collection_method VARCHAR(100),
+        drying_correct BOOLEAN DEFAULT FALSE,
+        collection_correct BOOLEAN DEFAULT FALSE,
+        tests_performed INTEGER DEFAULT 0,
+        tests_correct INTEGER DEFAULT 0,
+        test_observations JSONB,
+        questions_score DECIMAL(5,2) DEFAULT 0.0,
+        total_score DECIMAL(5,2) DEFAULT 0.0,
+        rubric_breakdown JSONB,
+        correct BOOLEAN DEFAULT FALSE,
+        mode VARCHAR(20) DEFAULT 'selfPaced',
+        duration_seconds INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+
+      ALTER TABLE assignment_submissions ADD COLUMN IF NOT EXISTS qualitative_session_id INTEGER;
+      ALTER TABLE assignment_submissions ADD COLUMN IF NOT EXISTS organic_session_id INTEGER;
+      ALTER TABLE assignment_submissions ADD COLUMN IF NOT EXISTS composite_session_id INTEGER;
+      ALTER TABLE assignment_submissions ADD COLUMN IF NOT EXISTS solubility_session_id INTEGER;
+      ALTER TABLE assignment_submissions ADD COLUMN IF NOT EXISTS energy_session_id INTEGER;
+      ALTER TABLE assignment_submissions ADD COLUMN IF NOT EXISTS rates_session_id INTEGER;
+      ALTER TABLE assignment_submissions ADD COLUMN IF NOT EXISTS gas_session_id INTEGER;
+      ALTER TABLE assignments ADD COLUMN IF NOT EXISTS exam_config JSONB;
+    `);
+    assignmentTablesEnsured = true;
+  } catch (e) {
+    console.warn('[assignmentRepo] ensureAssignmentTables note:', e.message);
+  }
+}
+
 async function createAssignment(teacherId, data) {
+  await ensureAssignmentTables();
   const teacherResult = await pool.query(
     'SELECT school_id FROM teachers WHERE id = $1',
     [teacherId]
@@ -197,6 +356,7 @@ async function getStudentAssignments(studentId) {
 }
 
 async function getTeacherAssignments(teacherId) {
+  await ensureAssignmentTables();
   const query = `
     SELECT a.*,
            (
@@ -225,8 +385,35 @@ async function getTeacherAssignments(teacherId) {
     WHERE a.teacher_id = $1
     ORDER BY a.created_at DESC
   `;
-  const result = await pool.query(query, [teacherId]);
-  return result.rows;
+  try {
+    const result = await pool.query(query, [teacherId]);
+    return result.rows;
+  } catch (err) {
+    console.warn('[getTeacherAssignments] Multi-discipline query failed, falling back to core query:', err.message);
+    try {
+      const fallbackQuery = `
+        SELECT a.*,
+               (
+                 SELECT COUNT(DISTINCT s_id)::int FROM (
+                   SELECT student_id AS s_id FROM assignment_submissions WHERE assignment_id = a.id
+                   UNION
+                   SELECT student_id AS s_id FROM practical_sessions WHERE assignment_id = a.id
+                 ) all_subs
+               ) AS submitted_count,
+               (SELECT COUNT(*)::int FROM students WHERE teacher_id = a.teacher_id) AS total_students
+        FROM assignments a
+        WHERE a.teacher_id = $1
+        ORDER BY a.created_at DESC
+      `;
+      const fallbackResult = await pool.query(fallbackQuery, [teacherId]);
+      return fallbackResult.rows;
+    } catch (fErr) {
+      console.error('[getTeacherAssignments] Critical fallback query failed:', fErr.message);
+      const bareQuery = `SELECT a.*, 0 AS submitted_count, 0 AS total_students FROM assignments a WHERE a.teacher_id = $1 ORDER BY a.created_at DESC`;
+      const bareResult = await pool.query(bareQuery, [teacherId]);
+      return bareResult.rows;
+    }
+  }
 }
 
 async function updateAssignment(assignmentId, teacherId, data) {
@@ -262,51 +449,80 @@ async function deleteAssignment(assignmentId, teacherId) {
 }
 
 async function getAssignmentExportData(assignmentId, teacherId) {
+  await ensureAssignmentTables();
   const assignResult = await pool.query(
     'SELECT id, title, titration_type FROM assignments WHERE id = $1 AND teacher_id = $2',
     [assignmentId, teacherId]
   );
   if (assignResult.rows.length === 0) return null;
 
-  const result = await pool.query(
-    `SELECT DISTINCT ON (s.id)
-       s.id AS student_id,
-       s.name AS student_name,
-       s.email AS student_email,
-       s.form AS student_form,
-       COALESCE(sub.status, 'submitted') AS submission_status,
-       sub.teacher_feedback,
-       sub.marked_at,
-       COALESCE(sub.submitted_at, ps.created_at, qs.created_at, os.created_at, cs.created_at, ss.created_at, es.created_at, rs.created_at, gs.created_at) AS submitted_at,
-       COALESCE(ps.student_answer, cs.total_score, ss.total_score, es.total_score, rs.total_score, gs.total_score) AS student_answer,
-       COALESCE((ps.score >= 8 OR ps.concordant_found = true), qs.correct, os.correct, (cs.total_score >= 20), (ss.total_score >= 3.0), (es.total_score >= 8.0), (rs.total_score >= 8.0), (gs.total_score >= 6.0)) AS correct,
-       ps.titration_type, ps.titration_title, ps.indicator_used, ps.trials_count, ps.trial_readings, COALESCE(ps.true_conc, 0) AS true_value, ps.mode AS practical_mode,
-       qs.salt_key, qs.salt_name, qs.true_cation, qs.true_anion, qs.student_cation, qs.student_anion, qs.cation_correct, qs.anion_correct, qs.tests_performed AS q_tests_performed, qs.tests_correct AS q_tests_correct,
-       os.compound_key, os.compound_name, os.true_functional_group, os.student_functional_group, os.functional_group_correct, os.tests_performed AS o_tests_performed, os.tests_correct AS o_tests_correct,
-       cs.exam_title, cs.q1_score, cs.q2_score, cs.q3_score, cs.total_score AS composite_total_score, cs.grade AS composite_grade,
-       ss.solute_key, ss.solute_name, ss.crystallization_temp, ss.theoretical_temp, ss.temp_difference, ss.accuracy_score AS sol_accuracy_score, ss.graph_score AS sol_graph_score, ss.total_score AS sol_total_score,
-       es.system_id AS en_system_id, es.system_name AS en_system_name, es.reaction_category AS en_category, es.initial_temp AS en_initial_temp, es.final_temp AS en_final_temp, es.temp_change AS en_temp_change, es.heat_quantity AS en_heat_quantity, es.moles AS en_moles, es.molar_enthalpy AS en_molar_enthalpy, es.theoretical_enthalpy AS en_theoretical_enthalpy, es.total_score AS en_total_score,
-       rs.experiment_type AS rate_exp_type, rs.experiment_title AS rate_exp_title, rs.table_score AS rate_table_score, rs.graph_score AS rate_graph_score, rs.calc_score AS rate_calc_score, rs.total_score AS rate_total_score, rs.grade AS rate_grade,
-       gs.gas_key, gs.gas_name, gs.drying_agent AS gas_drying_agent, gs.collection_method AS gas_collection_method, gs.drying_correct AS gas_drying_correct, gs.collection_correct AS gas_collection_correct, gs.tests_performed AS gas_tests_performed, gs.tests_correct AS gas_tests_correct, gs.total_score AS gas_total_score
-     FROM students s
-     LEFT JOIN assignment_submissions sub ON sub.assignment_id = $1 AND sub.student_id = s.id
-     LEFT JOIN practical_sessions ps ON ps.assignment_id = $1 AND ps.student_id = s.id
-     LEFT JOIN qualitative_sessions qs ON qs.assignment_id = $1 AND qs.student_id = s.id
-     LEFT JOIN organic_sessions os ON os.assignment_id = $1 AND os.student_id = s.id
-     LEFT JOIN composite_sessions cs ON cs.assignment_id = $1 AND cs.student_id = s.id
-     LEFT JOIN solubility_sessions ss ON ss.assignment_id = $1 AND ss.student_id = s.id
-     LEFT JOIN energy_sessions es ON es.assignment_id = $1 AND es.student_id = s.id
-     LEFT JOIN rates_sessions rs ON rs.assignment_id = $1 AND rs.student_id = s.id
-     LEFT JOIN gas_sessions gs ON gs.assignment_id = $1 AND gs.student_id = s.id
-     WHERE (sub.id IS NOT NULL OR ps.id IS NOT NULL OR qs.id IS NOT NULL OR os.id IS NOT NULL OR cs.id IS NOT NULL OR ss.id IS NOT NULL OR es.id IS NOT NULL OR rs.id IS NOT NULL OR gs.id IS NOT NULL)
-     ORDER BY s.id, COALESCE(sub.submitted_at, ps.created_at, qs.created_at, os.created_at, cs.created_at, ss.created_at, es.created_at, rs.created_at, gs.created_at) DESC`,
-    [assignmentId]
-  );
+  try {
+    const result = await pool.query(
+      `SELECT DISTINCT ON (s.id)
+         s.id AS student_id,
+         s.name AS student_name,
+         s.email AS student_email,
+         s.form AS student_form,
+         COALESCE(sub.status, 'submitted') AS submission_status,
+         sub.teacher_feedback,
+         sub.marked_at,
+         COALESCE(sub.submitted_at, ps.created_at, qs.created_at, os.created_at, cs.created_at, ss.created_at, es.created_at, rs.created_at, gs.created_at) AS submitted_at,
+         COALESCE(ps.student_answer, cs.total_score, ss.total_score, es.total_score, rs.total_score, gs.total_score) AS student_answer,
+         COALESCE((ps.score >= 8 OR ps.concordant_found = true), qs.correct, os.correct, (cs.total_score >= 20), (ss.total_score >= 3.0), (es.total_score >= 8.0), (rs.total_score >= 8.0), (gs.total_score >= 6.0)) AS correct,
+         ps.titration_type, ps.titration_title, ps.indicator_used, ps.trials_count, ps.trial_readings, COALESCE(ps.true_conc, 0) AS true_value, ps.mode AS practical_mode,
+         qs.salt_key, qs.salt_name, qs.true_cation, qs.true_anion, qs.student_cation, qs.student_anion, qs.cation_correct, qs.anion_correct, qs.tests_performed AS q_tests_performed, qs.tests_correct AS q_tests_correct,
+         os.compound_key, os.compound_name, os.true_functional_group, os.student_functional_group, os.functional_group_correct, os.tests_performed AS o_tests_performed, os.tests_correct AS o_tests_correct,
+         cs.exam_title, cs.q1_score, cs.q2_score, cs.q3_score, cs.total_score AS composite_total_score, cs.grade AS composite_grade,
+         ss.solute_key, ss.solute_name, ss.crystallization_temp, ss.theoretical_temp, ss.temp_difference, ss.accuracy_score AS sol_accuracy_score, ss.graph_score AS sol_graph_score, ss.total_score AS sol_total_score,
+         es.system_id AS en_system_id, es.system_name AS en_system_name, es.reaction_category AS en_category, es.initial_temp AS en_initial_temp, es.final_temp AS en_final_temp, es.temp_change AS en_temp_change, es.heat_quantity AS en_heat_quantity, es.moles AS en_moles, es.molar_enthalpy AS en_molar_enthalpy, es.theoretical_enthalpy AS en_theoretical_enthalpy, es.total_score AS en_total_score,
+         rs.experiment_type AS rate_exp_type, rs.experiment_title AS rate_exp_title, rs.table_score AS rate_table_score, rs.graph_score AS rate_graph_score, rs.calc_score AS rate_calc_score, rs.total_score AS rate_total_score, rs.grade AS rate_grade,
+         gs.gas_key, gs.gas_name, gs.drying_agent AS gas_drying_agent, gs.collection_method AS gas_collection_method, gs.drying_correct AS gas_drying_correct, gs.collection_correct AS gas_collection_correct, gs.tests_performed AS gas_tests_performed, gs.tests_correct AS gas_tests_correct, gs.total_score AS gas_total_score
+       FROM students s
+       LEFT JOIN assignment_submissions sub ON sub.assignment_id = $1 AND sub.student_id = s.id
+       LEFT JOIN practical_sessions ps ON ps.assignment_id = $1 AND ps.student_id = s.id
+       LEFT JOIN qualitative_sessions qs ON qs.assignment_id = $1 AND qs.student_id = s.id
+       LEFT JOIN organic_sessions os ON os.assignment_id = $1 AND os.student_id = s.id
+       LEFT JOIN composite_sessions cs ON cs.assignment_id = $1 AND cs.student_id = s.id
+       LEFT JOIN solubility_sessions ss ON ss.assignment_id = $1 AND ss.student_id = s.id
+       LEFT JOIN energy_sessions es ON es.assignment_id = $1 AND es.student_id = s.id
+       LEFT JOIN rates_sessions rs ON rs.assignment_id = $1 AND rs.student_id = s.id
+       LEFT JOIN gas_sessions gs ON gs.assignment_id = $1 AND gs.student_id = s.id
+       WHERE (sub.id IS NOT NULL OR ps.id IS NOT NULL OR qs.id IS NOT NULL OR os.id IS NOT NULL OR cs.id IS NOT NULL OR ss.id IS NOT NULL OR es.id IS NOT NULL OR rs.id IS NOT NULL OR gs.id IS NOT NULL)
+       ORDER BY s.id, COALESCE(sub.submitted_at, ps.created_at, qs.created_at, os.created_at, cs.created_at, ss.created_at, es.created_at, rs.created_at, gs.created_at) DESC`,
+      [assignmentId]
+    );
 
-  return {
-    assignment: assignResult.rows[0],
-    rows: result.rows
-  };
+    return {
+      assignment: assignResult.rows[0],
+      rows: result.rows
+    };
+  } catch (err) {
+    console.warn('[getAssignmentExportData] Multi-discipline export query failed, falling back to core query:', err.message);
+    const fallbackRes = await pool.query(
+      `SELECT DISTINCT ON (s.id)
+         s.id AS student_id,
+         s.name AS student_name,
+         s.email AS student_email,
+         s.form AS student_form,
+         COALESCE(sub.status, 'submitted') AS submission_status,
+         sub.teacher_feedback,
+         sub.marked_at,
+         COALESCE(sub.submitted_at, ps.created_at) AS submitted_at,
+         ps.student_answer,
+         (ps.score >= 8 OR ps.concordant_found = true) AS correct,
+         ps.titration_type, ps.titration_title, ps.indicator_used, ps.trials_count, ps.trial_readings, COALESCE(ps.true_conc, 0) AS true_value, ps.mode AS practical_mode
+       FROM students s
+       LEFT JOIN assignment_submissions sub ON sub.assignment_id = $1 AND sub.student_id = s.id
+       LEFT JOIN practical_sessions ps ON ps.assignment_id = $1 AND ps.student_id = s.id
+       WHERE (sub.id IS NOT NULL OR ps.id IS NOT NULL)
+       ORDER BY s.id, COALESCE(sub.submitted_at, ps.created_at) DESC`,
+      [assignmentId]
+    );
+    return {
+      assignment: assignResult.rows[0],
+      rows: fallbackRes.rows
+    };
+  }
 }
 
 async function getAllSubmissions(teacherId, { page = 1, limit = 50 } = {}) {

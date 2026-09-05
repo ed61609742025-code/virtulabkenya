@@ -224,7 +224,7 @@
         renderExamResults(resp.exam, true);
         const meta = resp.exam._meta || resp.exam.meta;
         if (meta?.isFallback) {
-          showTemporaryToast('⚠️ ' + (meta.warning || 'Standard KNEC curriculum template loaded.'), 'error');
+          showTemporaryToast('⚠️ ' + (meta.warning || 'Standard KNEC curriculum template loaded.'), 'error', 7000);
         }
       } else {
         throw new Error(resp.error || 'Could not generate exam.');
@@ -260,7 +260,7 @@
         renderExamResults(resp.exam, true);
         const meta = resp.exam._meta || resp.exam.meta;
         if (meta?.isFallback) {
-          showTemporaryToast('⚠️ ' + (meta.warning || 'Standard KNEC curriculum template loaded.'), 'error');
+          showTemporaryToast('⚠️ ' + (meta.warning || 'Standard KNEC curriculum template loaded.'), 'error', 7000);
         }
       } else {
         throw new Error(resp.error || 'Could not parse exam paper.');
@@ -1220,7 +1220,7 @@
   }
 
   let toastTimerId = null;
-  function showTemporaryToast(message, type = 'success') {
+  function showTemporaryToast(message, type = 'success', duration = 4000) {
     let toast = document.getElementById('vlkAiToast');
     if (!toast) {
       toast = document.createElement('div');
@@ -1254,7 +1254,38 @@
     toastTimerId = setTimeout(() => {
       toast.style.opacity = '0';
       toast.style.transform = 'translateY(10px)';
-    }, 4000);
+    }, duration);
+  }
+
+  // ── AI Engine Connectivity Check ──────────────────────────────
+  async function checkAiServiceStatus() {
+    const notice = document.getElementById('aiServiceStatusNotice');
+    if (!notice || typeof AiExamAssistant === 'undefined' || !AiExamAssistant.getStatus) return;
+
+    try {
+      const res = await AiExamAssistant.getStatus();
+      if (res && res.status) {
+        if (!res.status.configured) {
+          notice.style.display = 'block';
+          notice.style.background = 'rgba(245, 158, 11, 0.12)';
+          notice.style.border = '1px solid rgba(245, 158, 11, 0.4)';
+          notice.style.color = '#92400E';
+          notice.innerHTML = `
+            <div style="display:flex;align-items:flex-start;gap:12px;">
+              <span style="font-size:1.4rem;line-height:1;">⚠️</span>
+              <div>
+                <strong style="display:block;margin-bottom:2px;font-size:0.92rem;">Google Gemini API Key Not Configured</strong>
+                <span>Multimodal PDF exam paper parsing and custom exam generation currently run in <em>offline fallback mode</em>. To parse your uploaded PDF exams using Google Gemini AI, add <code>GEMINI_API_KEY=your_key</code> in <code>server/.env</code> and restart the server.</span>
+              </div>
+            </div>
+          `;
+        } else {
+          notice.style.display = 'none';
+        }
+      }
+    } catch (e) {
+      // Quiet fail if not authenticated yet
+    }
   }
 
   // ── Protection Against Unsaved Data Loss ───────────────────────
@@ -1276,5 +1307,8 @@
   } catch (e) {
     console.warn('[Walimu AI] Auto-restore skipped:', e);
   }
+
+  // Check AI connectivity on boot
+  setTimeout(checkAiServiceStatus, 500);
 
 })();

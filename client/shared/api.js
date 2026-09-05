@@ -603,6 +603,9 @@ const AiFeedback = {
 
 // ── AI Teacher Exam Assistant endpoints ─────────────────────────
 const AiExamAssistant = {
+  async getStatus() {
+    return apiRequest('GET', '/ai-assistant/status');
+  },
   async parsePaper(data) {
     return apiRequest('POST', '/ai-assistant/parse-paper', data);
   },

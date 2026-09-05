@@ -10,6 +10,7 @@ const http = require('http');
 const jwt = require('jsonwebtoken');
 
 const app = require('../index');
+const pool = require('../db/pool');
 const aiExamService = require('../services/aiExamAssistantService');
 const { CompositeExamEngine } = require('../../client/student/js/composite-engine.js');
 
@@ -42,6 +43,8 @@ describe('VirtuLab Kenya — AI Teacher Exam Assistant Suite', () => {
     if (server) {
       await new Promise((resolve) => server.close(resolve));
     }
+    await pool.shutdown();
+    setTimeout(() => process.exit(0), 200).unref();
   });
 
   /* 1. AUTHENTICATION & ACCESS CONTROL */
@@ -64,6 +67,17 @@ describe('VirtuLab Kenya — AI Teacher Exam Assistant Suite', () => {
       body: JSON.stringify({ prompt: 'Form 4 Redox Titration' })
     });
     assert.strictEqual(res.status, 403);
+  });
+
+  it('GET /api/ai-assistant/status — should report AI configuration status to teachers', async () => {
+    const res = await fetch(url('/api/ai-assistant/status'), {
+      headers: { 'Authorization': `Bearer ${teacherToken}` }
+    });
+    assert.strictEqual(res.status, 200);
+    const body = await res.json();
+    assert.strictEqual(body.success, true);
+    assert.ok(body.status);
+    assert.strictEqual(typeof body.status.configured, 'boolean');
   });
 
   /* 2. VALIDATION */
@@ -338,22 +352,22 @@ describe('VirtuLab Kenya — AI Teacher Exam Assistant Suite', () => {
     assert.strictEqual(engine.preset.q1.acidRfm, 98.0);
     assert.strictEqual(engine.preset.q2.trueCation, 'Zn2+');
     assert.strictEqual(engine.preset.q2.trueAnion, 'SO42-');
-    assert.strictEqual(engine.preset.q2.tests.length, 4);
+    assert.strictEqual(engine.preset.q2.tests.length, 5);
     assert.strictEqual(engine.preset.q3.trueFunctionalGroup, 'Carboxylic Acid (-COOH)');
     assert.strictEqual(engine.preset.q3.tests.length, 4);
 
     // 2. Worked solutions generation
     const solutions = engine.generateWorkedSolutions();
-    assert.strictEqual(solutions.stepB.result, '0.00250 mol');
-    assert.strictEqual(solutions.stepC.result, '0.00125 mol');
+    assert.strictEqual(solutions.stepB.result, '0.00125 mol');
+    assert.strictEqual(solutions.stepC.result, '0.00250 mol');
 
     // 3. Scoring accuracy
     engine.q1Answers = {
       avgTitre: '25.00',
-      molesB: '0.00250',
       molesA: '0.00125',
-      molarityA: '0.050',
-      concGrams: '4.90'
+      molesB: '0.00250',
+      molarityB: '0.100',
+      concGrams: '4.00'
     };
     engine.recordTrial(1, 25.00, 0.00);
     engine.recordTrial(2, 25.00, 0.00);

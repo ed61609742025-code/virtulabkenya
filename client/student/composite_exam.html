@@ -149,6 +149,82 @@
     .calc-step-card {
       padding: 8px 6px !important;
     }
+    .buret-lens-card {
+      min-width: 140px !important;
+      max-width: 175px !important;
+      padding: 10px 8px !important;
+    }
+    .lens-viewfinder {
+      width: 144px !important;
+      height: 130px !important;
+    }
+  }
+  /* Burette Lens & Eye-Level Viewfinder */
+  .buret-lens-card {
+    position: relative;
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    box-sizing: border-box;
+    width: 190px;
+  }
+  .lens-viewfinder {
+    position: relative;
+    width: 160px;
+    height: 144px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #FFFFFF;
+    border: 2px solid #334155;
+    box-shadow: inset 0 0 18px rgba(15, 23, 42, 0.4), 0 4px 12px rgba(0, 0, 0, 0.2);
+    margin: 0 auto 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+  .lens-viewfinder .lens-crosshair-line {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #EF4444;
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.95);
+    z-index: 10;
+    pointer-events: none;
+    transform: translateY(-50%);
+  }
+  .lens-viewfinder .lens-glass-glare {
+    position: absolute;
+    top: 2px;
+    left: 8px;
+    right: 8px;
+    height: 44%;
+    border-radius: 8px 8px 50% 50%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.1) 60%, transparent 100%);
+    pointer-events: none;
+    z-index: 12;
+  }
+  .lens-readout-badge {
+    background: #0B132B;
+    border: 1.5px solid #0284C7;
+    padding: 4px 14px;
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.86rem;
+    font-weight: 800;
+    color: #38BDF8;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), 0 0 10px rgba(2, 132, 199, 0.25);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
   }
   .calc-step-card {
     background: var(--card-bg);
@@ -667,12 +743,14 @@
 
             <!-- Magnified Reading Lens -->
             <div class="buret-lens-card">
-              <div style="font-size:0.75rem; font-weight:800; color:var(--cyan-accent); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.04em;">
-                🔍 Burette Lens
+              <div style="font-size:0.75rem; font-weight:800; color:var(--cyan-accent); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.04em; display:flex; align-items:center; justify-content:space-between; width:100%;">
+                <span>🔍 Burette Lens</span>
+                <span style="font-size:0.60rem; color:#EF4444; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.35); border-radius:4px; padding:1px 5px; font-weight:800; letter-spacing:0.03em;">EYE LEVEL</span>
               </div>
               <div class="lens-viewfinder">
+                <div class="lens-glass-glare"></div>
                 <div class="lens-crosshair-line"></div>
-                <svg id="lensSvg" viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+                <svg id="lensSvg" viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%; display:block;">
                   <!-- Default Initial Burette Lens Rendering at 0.00 cm³ -->
                   <defs>
                     <linearGradient id="lensTubeCeramicExam" x1="0" y1="0" x2="1" y2="0">
@@ -701,7 +779,7 @@
                   <line x1="12" y1="0" x2="12" y2="180" stroke="#00F2FE" stroke-width="3" stroke-opacity="0.8"/>
                   <line x1="188" y1="0" x2="188" y2="180" stroke="#00F2FE" stroke-width="3" stroke-opacity="0.8"/>
                   <rect x="16" y="0" width="14" height="180" fill="url(#tubeSpecularExam)"/>
-                  <path d="M 12 80 Q 100 90 188 80 L 188 180 L 12 180 Z" fill="url(#luminousLiquidFillExam)"/>
+                  <path d="M 12 80 Q 100 100 188 80 L 188 180 L 12 180 Z" fill="url(#luminousLiquidFillExam)"/>
                   <rect x="16" y="90" width="14" height="90" fill="url(#tubeSpecularExam)"/>
                   <!-- Initial Graduation Marks at 0.00 cm³ -->
                   <line x1="12" y1="90" x2="68" y2="90" stroke="#0F172A" stroke-width="2.6" stroke-linecap="round"/>
@@ -728,10 +806,12 @@
                   <line x1="12" y1="150" x2="68" y2="150" stroke="#0F172A" stroke-width="2.6" stroke-linecap="round"/>
                   <line x1="132" y1="150" x2="188" y2="150" stroke="#0F172A" stroke-width="2.6" stroke-linecap="round"/>
                   <text x="76" y="155" fill="#0F172A" font-size="14" font-family="'JetBrains Mono', monospace" font-weight="900">1.0</text>
-                  <!-- Meniscus Boundary -->
-                  <path d="M 12 79 Q 100 89 188 79" stroke="#032B44" stroke-width="3" fill="none" opacity="0.85"/>
-                  <path d="M 12 80 Q 100 90 188 80" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-                  <circle cx="100" cy="90" r="5" fill="#EF4444" stroke="#FFFFFF" stroke-width="2" filter="url(#lensBeadGlowExam)"/>
+                  <!-- Meniscus Boundary & Center Reticle Bead at y = 90 -->
+                  <path d="M 12 79 Q 100 99 188 79" stroke="#032B44" stroke-width="3" fill="none" opacity="0.85"/>
+                  <path d="M 12 80 Q 100 100 188 80" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+                  <circle cx="100" cy="90" r="4" fill="#EF4444" stroke="#FFFFFF" stroke-width="1.5" filter="url(#lensBeadGlowExam)"/>
+                  <line x1="12" y1="90" x2="32" y2="90" stroke="#EF4444" stroke-width="2" stroke-linecap="round"/>
+                  <line x1="168" y1="90" x2="188" y2="90" stroke="#EF4444" stroke-width="2" stroke-linecap="round"/>
                 </svg>
               </div>
               <div class="lens-readout-badge" id="lensDigitalReadout">
@@ -1640,20 +1720,22 @@
 
     if (isKmno4) {
       liquidBody = `
-        <path d="M 38 ${centerY} Q 100 ${centerY + 6} 162 ${centerY} L 162 180 L 38 180 Z" fill="url(#luminousLiquidFillExam)"/>
+        <path d="M 38 ${centerY + 10} Q 100 ${centerY - 10} 162 ${centerY + 10} L 162 180 L 38 180 Z" fill="url(#luminousLiquidFillExam)"/>
       `;
       meniscusArc = `
-        <path d="M 38 ${centerY} Q 100 ${centerY + 6} 162 ${centerY}" stroke="#C084FC" stroke-width="2.2" fill="none" opacity="0.95"/>
-        <path d="M 38 ${centerY} Q 100 ${centerY + 4} 162 ${centerY}" stroke="#FFFFFF" stroke-width="1.2" fill="none" opacity="0.7" stroke-dasharray="4,6"/>
+        <path d="M 38 ${centerY + 10} Q 100 ${centerY - 10} 162 ${centerY + 10}" stroke="#C084FC" stroke-width="2.4" fill="none" opacity="0.95"/>
+        <path d="M 38 ${centerY + 9} Q 100 ${centerY - 9} 162 ${centerY + 9}" stroke="#FFFFFF" stroke-width="1.4" fill="none" opacity="0.8" stroke-dasharray="4,6"/>
+        <circle cx="100" cy="${centerY}" r="3.5" fill="#FDE047" stroke="#000000" stroke-width="1.2" pointer-events="none"/>
       `;
     } else {
       liquidBody = `
-        <path d="M 38 ${centerY - 12} Q 100 ${centerY} 162 ${centerY - 12} L 162 180 L 38 180 Z" fill="url(#luminousLiquidFillExam)"/>
+        <path d="M 38 ${centerY - 10} Q 100 ${centerY + 10} 162 ${centerY - 10} L 162 180 L 38 180 Z" fill="url(#luminousLiquidFillExam)"/>
       `;
       meniscusArc = `
-        <path d="M 38 ${centerY - 13} Q 100 ${centerY - 1} 162 ${centerY - 13}" stroke="#0F172A" stroke-width="3.2" fill="none" opacity="0.85"/>
-        <path d="M 38 ${centerY - 12} Q 100 ${centerY} 162 ${centerY - 12}" stroke="#FFFFFF" stroke-width="2.6" fill="none" stroke-linecap="round" opacity="0.95"/>
-        <path d="M 52 ${centerY - 6} Q 100 ${centerY + 3} 148 ${centerY - 6}" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/>
+        <path d="M 38 ${centerY - 11} Q 100 ${centerY + 9} 162 ${centerY - 11}" stroke="#0F172A" stroke-width="3.2" fill="none" opacity="0.85"/>
+        <path d="M 38 ${centerY - 10} Q 100 ${centerY + 10} 162 ${centerY - 10}" stroke="#FFFFFF" stroke-width="2.6" fill="none" stroke-linecap="round" opacity="0.95"/>
+        <path d="M 52 ${centerY - 5} Q 100 ${centerY + 5} 148 ${centerY - 5}" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none"/>
+        <circle cx="100" cy="${centerY}" r="3.5" fill="#EF4444" stroke="#FFFFFF" stroke-width="1.5" filter="url(#lensBeadGlowExam)" pointer-events="none"/>
       `;
     }
 
@@ -1695,9 +1777,11 @@
       <!-- Specular Highlight Stripe on Left of Bore -->
       <rect x="42" y="0" width="5" height="180" fill="#FFFFFF" opacity="0.35"/>
 
-      <!-- Optical Reticle Center Notches -->
-      <line x1="97" y1="${centerY - 4}" x2="97" y2="${centerY + 4}" stroke="${isDark ? '#FDE047' : '#EF4444'}" stroke-width="1.4" stroke-linecap="round"/>
-      <line x1="103" y1="${centerY - 4}" x2="103" y2="${centerY + 4}" stroke="${isDark ? '#FDE047' : '#EF4444'}" stroke-width="1.4" stroke-linecap="round"/>
+      <!-- Optical Reticle Precision Center Notch & Eye-Level Horizontal Crosshairs -->
+      <line x1="28" y1="${centerY}" x2="48" y2="${centerY}" stroke="${isDark ? '#FDE047' : '#EF4444'}" stroke-width="2" stroke-linecap="round"/>
+      <line x1="152" y1="${centerY}" x2="172" y2="${centerY}" stroke="${isDark ? '#FDE047' : '#EF4444'}" stroke-width="2" stroke-linecap="round"/>
+      <line x1="96" y1="${centerY - 5}" x2="96" y2="${centerY + 5}" stroke="${isDark ? '#FDE047' : '#EF4444'}" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="104" y1="${centerY - 5}" x2="104" y2="${centerY + 5}" stroke="${isDark ? '#FDE047' : '#EF4444'}" stroke-width="1.5" stroke-linecap="round"/>
     `;
 
     lensSvg.innerHTML = defsSvg + tubeGeometry + liquidBody + ticksSvg + meniscusArc + glassOverlays;

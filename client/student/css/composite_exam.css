@@ -518,6 +518,78 @@ iframe.lab-frame {
   min-width: 520px;
 }
 
+/* ── BURETTE LENS & EYE-LEVEL OPTICAL VIEWFINDER ── */
+.buret-lens-card {
+  position: relative;
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+  width: 190px;
+}
+
+.lens-viewfinder {
+  position: relative;
+  width: 160px;
+  height: 144px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #FFFFFF;
+  border: 2px solid #334155;
+  box-shadow: inset 0 0 18px rgba(15, 23, 42, 0.4), 0 4px 12px rgba(0, 0, 0, 0.2);
+  margin: 0 auto 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.lens-viewfinder .lens-crosshair-line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #EF4444;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.95);
+  z-index: 10;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.lens-viewfinder .lens-glass-glare {
+  position: absolute;
+  top: 2px;
+  left: 8px;
+  right: 8px;
+  height: 44%;
+  border-radius: 8px 8px 50% 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.1) 60%, transparent 100%);
+  pointer-events: none;
+  z-index: 12;
+}
+
+.lens-readout-badge {
+  background: #0B132B;
+  border: 1.5px solid #0284C7;
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: #38BDF8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), 0 0 10px rgba(2, 132, 199, 0.25);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
 /* ── 10. TABLET & MOBILE RESPONSIVENESS (360px - 1024px) ── */
 @media (max-width: 1024px) {
   .wrap {
@@ -728,8 +800,13 @@ iframe.lab-frame {
     padding: 4px 10px;
   }
   .buret-lens-card {
-    min-width: unset;
-    width: 100%;
+    min-width: 140px !important;
+    max-width: 180px !important;
+    padding: 10px 8px !important;
+  }
+  .lens-viewfinder {
+    width: 144px !important;
+    height: 130px !important;
   }
   .action-buttons-row {
     flex-direction: column;

@@ -1048,22 +1048,27 @@ const RatesEngine = (function () {
     ctx.restore(); // Exit lens clip
 
     // Eyepiece Labels
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    const isLight = currentTheme !== 'dark' && currentTheme !== 'green';
+
     ctx.font = `800 ${isMobile ? 7.5 : 8.5}px "JetBrains Mono", monospace`;
-    ctx.fillStyle = 'var(--heading-color, #FFFFFF)';
+    ctx.fillStyle = isLight ? '#0F172A' : '#F8FAFC';
     ctx.textAlign = 'center';
     ctx.fillText('TOP-DOWN SIGHTLINE', eyeX, eyeY + eyeR + (isMobile ? 11 : 14));
 
     ctx.font = `700 ${isMobile ? 7 : 7.5}px "Plus Jakarta Sans", sans-serif`;
-    ctx.fillStyle = turb >= 0.95 ? '#EF4444' : (turb > 0.4 ? '#F59E0B' : '#10B981');
+    ctx.fillStyle = turb >= 0.95 ? '#EF4444' : (turb > 0.4 ? '#D97706' : (isLight ? '#047857' : '#10B981'));
     ctx.fillText(turb >= 0.95 ? '● CROSS OBSCURED' : (turb > 0 ? `${Math.round(turb * 100)}% Obscured` : '● Cross Visible'), eyeX, eyeY + eyeR + (isMobile ? 21 : 25));
   }
 
   function drawGasSyringeApparatus(ctx, w, h) {
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    const isLight = currentTheme !== 'dark' && currentTheme !== 'green';
     const cx = w * 0.35;
     const cy = h / 2 + 25;
 
     // Bench
-    ctx.fillStyle = '#1E293B';
+    ctx.fillStyle = isLight ? '#334155' : '#1E293B';
     ctx.fillRect(0, h - 30, w, 30);
 
     // Conical Flask
@@ -1075,9 +1080,9 @@ const RatesEngine = (function () {
     ctx.lineTo(cx - 65, cy + 45);
     ctx.lineTo(cx - 15, cy - 30);
     ctx.closePath();
-    ctx.fillStyle = 'rgba(56, 189, 248, 0.2)';
+    ctx.fillStyle = isLight ? 'rgba(2, 132, 199, 0.12)' : 'rgba(56, 189, 248, 0.2)';
     ctx.fill();
-    ctx.strokeStyle = '#38BDF8';
+    ctx.strokeStyle = isLight ? '#0284C7' : '#38BDF8';
     ctx.lineWidth = 2.5;
     ctx.stroke();
 
@@ -1087,7 +1092,7 @@ const RatesEngine = (function () {
     ctx.lineTo(cx, cy - 110);
     ctx.lineTo(cx + 120, cy - 110);
     ctx.lineTo(cx + 120, cy - 50);
-    ctx.strokeStyle = '#94A3B8';
+    ctx.strokeStyle = isLight ? '#64748B' : '#94A3B8';
     ctx.lineWidth = 4;
     ctx.stroke();
 
@@ -1095,9 +1100,9 @@ const RatesEngine = (function () {
     const sx = cx + 120;
     const sy = cy - 50;
     const sLen = 160;
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.fillStyle = isLight ? 'rgba(255, 255, 255, 0.9)' : 'rgba(255, 255, 255, 0.1)';
     ctx.fillRect(sx, sy - 15, sLen, 30);
-    ctx.strokeStyle = '#CBD5E1';
+    ctx.strokeStyle = isLight ? '#94A3B8' : '#CBD5E1';
     ctx.lineWidth = 2;
     ctx.strokeRect(sx, sy - 15, sLen, 30);
 
@@ -1106,17 +1111,17 @@ const RatesEngine = (function () {
     const plungerX = sx + volPct * (sLen - 30);
 
     // Gas Fill inside barrel
-    ctx.fillStyle = 'rgba(245, 158, 11, 0.25)';
+    ctx.fillStyle = isLight ? 'rgba(217, 119, 6, 0.2)' : 'rgba(245, 158, 11, 0.25)';
     ctx.fillRect(sx, sy - 13, plungerX - sx, 26);
 
     // Plunger Head & Rod
-    ctx.fillStyle = '#F59E0B';
+    ctx.fillStyle = isLight ? '#D97706' : '#F59E0B';
     ctx.fillRect(plungerX, sy - 14, 10, 28);
-    ctx.fillStyle = '#64748B';
+    ctx.fillStyle = isLight ? '#475569' : '#64748B';
     ctx.fillRect(plungerX + 10, sy - 4, 70, 8);
 
     // Effervescence bubbles in flask
-    ctx.fillStyle = '#FFFFFF';
+    ctx.fillStyle = isLight ? '#0284C7' : '#FFFFFF';
     state.syringe.bubbles.forEach(b => {
       ctx.beginPath();
       ctx.arc(cx - 30 + (b.x % 60), b.y - 40, b.r, 0, Math.PI * 2);
@@ -1125,22 +1130,24 @@ const RatesEngine = (function () {
   }
 
   function drawMassLossApparatus(ctx, w, h) {
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    const isLight = currentTheme !== 'dark' && currentTheme !== 'green';
     const cx = w / 2;
     const cy = h / 2 + 10;
 
     // Bench
-    ctx.fillStyle = '#1E293B';
+    ctx.fillStyle = isLight ? '#334155' : '#1E293B';
     ctx.fillRect(0, h - 30, w, 30);
 
     // Electronic Top-Pan Balance Body
-    ctx.fillStyle = '#334155';
+    ctx.fillStyle = isLight ? '#475569' : '#334155';
     ctx.fillRect(cx - 90, cy + 25, 180, 50);
-    ctx.strokeStyle = '#64748B';
+    ctx.strokeStyle = isLight ? '#64748B' : '#64748B';
     ctx.lineWidth = 2;
     ctx.strokeRect(cx - 90, cy + 25, 180, 50);
 
     // Pan
-    ctx.fillStyle = '#CBD5E1';
+    ctx.fillStyle = isLight ? '#E2E8F0' : '#CBD5E1';
     ctx.fillRect(cx - 70, cy + 18, 140, 7);
 
     // LCD Display on Scale
@@ -1160,25 +1167,30 @@ const RatesEngine = (function () {
     ctx.lineTo(cx - 55, cy + 18);
     ctx.lineTo(cx - 15, cy - 25);
     ctx.closePath();
-    ctx.fillStyle = 'rgba(56, 189, 248, 0.25)';
+    ctx.fillStyle = isLight ? 'rgba(2, 132, 199, 0.15)' : 'rgba(56, 189, 248, 0.25)';
     ctx.fill();
-    ctx.strokeStyle = '#38BDF8';
+    ctx.strokeStyle = isLight ? '#0284C7' : '#38BDF8';
     ctx.lineWidth = 2;
     ctx.stroke();
 
     // Cotton Wool Plug in flask mouth
-    ctx.fillStyle = '#F8FAFC';
+    ctx.fillStyle = '#FFFFFF';
     ctx.beginPath();
     ctx.arc(cx, cy - 60, 16, 0, Math.PI * 2);
     ctx.fill();
+    ctx.strokeStyle = isLight ? '#CBD5E1' : '#64748B';
+    ctx.lineWidth = 1;
+    ctx.stroke();
   }
 
   function drawCatalystApparatus(ctx, w, h) {
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    const isLight = currentTheme !== 'dark' && currentTheme !== 'green';
     const cx = w / 2;
     const cy = h / 2 + 20;
 
     // Bench
-    ctx.fillStyle = '#1E293B';
+    ctx.fillStyle = isLight ? '#334155' : '#1E293B';
     ctx.fillRect(0, h - 30, w, 30);
 
     // Boiling Tube
@@ -1187,21 +1199,21 @@ const RatesEngine = (function () {
     ctx.lineTo(cx - 25, cy - 80);
     ctx.lineTo(cx + 25, cy - 80);
     ctx.closePath();
-    ctx.fillStyle = 'rgba(56, 189, 248, 0.15)';
+    ctx.fillStyle = isLight ? 'rgba(2, 132, 199, 0.12)' : 'rgba(56, 189, 248, 0.15)';
     ctx.fill();
-    ctx.strokeStyle = '#38BDF8';
+    ctx.strokeStyle = isLight ? '#0284C7' : '#38BDF8';
     ctx.lineWidth = 2.5;
     ctx.stroke();
 
     // Solid Catalyst powder at bottom
-    ctx.fillStyle = (state.catalyst.selectedCat === 'MnO2') ? '#0F172A' : '#D97706';
+    ctx.fillStyle = (state.catalyst.selectedCat === 'MnO2') ? '#0F172A' : (isLight ? '#B45309' : '#D97706');
     ctx.beginPath();
     ctx.arc(cx, cy + 30, 20, 0.2, Math.PI - 0.2);
     ctx.fill();
 
     // Bubbles
     if (state.catalyst.gasEvolved > 0.5) {
-      ctx.fillStyle = '#FFFFFF';
+      ctx.fillStyle = isLight ? '#0284C7' : '#FFFFFF';
       for (let i = 0; i < 8; i++) {
         const bx = cx - 15 + Math.random() * 30;
         const by = cy + 20 - Math.random() * 80;
@@ -1279,10 +1291,17 @@ const RatesEngine = (function () {
     const plotW = w - margin * 2;
     const plotH = h - margin * 2;
 
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    const isLight = currentTheme !== 'dark' && currentTheme !== 'green';
+
     gCtx.clearRect(0, 0, w, h);
 
-    // KNEC Grid Background (5mm / 10mm grid lines)
-    gCtx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+    // Canvas Background
+    gCtx.fillStyle = isLight ? '#FFFFFF' : (currentTheme === 'green' ? '#06150B' : '#0B1120');
+    gCtx.fillRect(0, 0, w, h);
+
+    // KNEC Grid Background (5mm / 10mm grid lines like authentic millimeter graph paper)
+    gCtx.strokeStyle = isLight ? 'rgba(15, 23, 42, 0.08)' : 'rgba(255, 255, 255, 0.06)';
     gCtx.lineWidth = 1;
     for (let x = margin; x <= w - margin; x += 20) {
       gCtx.beginPath();
@@ -1298,7 +1317,7 @@ const RatesEngine = (function () {
     }
 
     // Axes Lines
-    gCtx.strokeStyle = '#94A3B8';
+    gCtx.strokeStyle = isLight ? '#334155' : '#94A3B8';
     gCtx.lineWidth = 2;
     gCtx.beginPath();
     gCtx.moveTo(margin, margin);
@@ -1307,7 +1326,7 @@ const RatesEngine = (function () {
     gCtx.stroke();
 
     // Axis Labels with Units (KNEC SAPC criteria)
-    gCtx.fillStyle = '#CBD5E1';
+    gCtx.fillStyle = isLight ? '#0F172A' : '#CBD5E1';
     gCtx.font = 'bold 11px sans-serif';
     gCtx.textAlign = 'center';
 
@@ -1320,11 +1339,11 @@ const RatesEngine = (function () {
       gCtx.restore();
 
       // Plot Origin (0,0) Rule for Rate Curves
-      gCtx.fillStyle = '#F59E0B';
+      gCtx.fillStyle = isLight ? '#B45309' : '#F59E0B';
       gCtx.fillText('(0,0)', margin - 10, h - margin + 14);
 
       // Best Fit Straight Line passing through (0,0)
-      gCtx.strokeStyle = '#F59E0B';
+      gCtx.strokeStyle = isLight ? '#D97706' : '#F59E0B';
       gCtx.lineWidth = 2.5;
       gCtx.beginPath();
       gCtx.moveTo(margin, h - margin);
@@ -1337,7 +1356,7 @@ const RatesEngine = (function () {
         const py = h - margin - (pt.rate / 0.06) * (plotH * 0.9);
 
         // Small cross 'x' mark (KNEC convention)
-        gCtx.strokeStyle = '#38BDF8';
+        gCtx.strokeStyle = isLight ? '#0284C7' : '#38BDF8';
         gCtx.lineWidth = 2;
         gCtx.beginPath();
         gCtx.moveTo(px - 4, py - 4);
@@ -1356,7 +1375,7 @@ const RatesEngine = (function () {
       gCtx.restore();
 
       // Smooth Curve
-      gCtx.strokeStyle = '#10B981';
+      gCtx.strokeStyle = isLight ? '#047857' : '#10B981';
       gCtx.lineWidth = 2.5;
       gCtx.beginPath();
       gCtx.moveTo(margin, h - margin);
@@ -1380,6 +1399,8 @@ const RatesEngine = (function () {
         const px0 = margin + (t0 / 210.0) * plotW;
         const py0 = h - margin - (v0 / 80.0) * plotH;
 
+        const tangentColor = isLight ? '#6D28D9' : '#C084FC';
+
         // Tangent Line
         const dt = 40;
         const x1 = margin + ((t0 - dt) / 210.0) * plotW;
@@ -1387,7 +1408,7 @@ const RatesEngine = (function () {
         const x2 = margin + ((t0 + dt) / 210.0) * plotW;
         const y2 = h - margin - ((v0 + slope * dt) / 80.0) * plotH;
 
-        gCtx.strokeStyle = '#C084FC';
+        gCtx.strokeStyle = tangentColor;
         gCtx.lineWidth = 2.5;
         gCtx.beginPath();
         gCtx.moveTo(x1, y1);
@@ -1395,14 +1416,14 @@ const RatesEngine = (function () {
         gCtx.stroke();
 
         // Tangent Point Circle
-        gCtx.fillStyle = '#C084FC';
+        gCtx.fillStyle = tangentColor;
         gCtx.beginPath();
         gCtx.arc(px0, py0, 5, 0, Math.PI * 2);
         gCtx.fill();
 
         // Dashed Projection Lines (KNEC Mandate)
         gCtx.setLineDash([4, 4]);
-        gCtx.strokeStyle = 'rgba(192, 132, 252, 0.7)';
+        gCtx.strokeStyle = isLight ? 'rgba(109, 40, 217, 0.7)' : 'rgba(192, 132, 252, 0.7)';
         gCtx.beginPath();
         gCtx.moveTo(px0, py0);
         gCtx.lineTo(px0, h - margin); // Down to x-axis
@@ -1412,7 +1433,7 @@ const RatesEngine = (function () {
         gCtx.setLineDash([]);
 
         // Slope Tag
-        gCtx.fillStyle = '#C084FC';
+        gCtx.fillStyle = tangentColor;
         gCtx.fillText(`Tangent at t=${t0.toFixed(0)}s: Rate = ${slope.toFixed(3)} cm³/s`, px0 + 10, py0 - 15);
       }
     }
@@ -1635,6 +1656,7 @@ const RatesEngine = (function () {
     setCollisionEa,
     toggleCollisionCatalyst,
     toggleTangent,
+    drawGraph,
     gradeKnecWorksheet,
     closeResultModal
   };

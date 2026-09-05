@@ -650,22 +650,6 @@ const Organic = {
   }
 };
 
-// ── Composite KCSE Practical Examination API ─────────────────
-const Composite = {
-  async save(data) {
-    return apiRequest('POST', '/composite', data);
-  },
-  async getMine() {
-    return apiRequest('GET', '/composite/mine');
-  },
-  async getTeacherSessions() {
-    return apiRequest('GET', '/composite/teacher');
-  },
-  exportCsv(assignmentId, filename) {
-    return downloadFile(`/composite/export/${assignmentId}`, filename || `composite_exam_${assignmentId}_results.csv`);
-  }
-};
-
 // ── Solubility Curves & Crystallization API ───────────────────
 const Solubility = {
   async save(data) {
@@ -755,7 +739,6 @@ const API = {
   exportResearchCSV: () => Research.exportCSV()
 };
 if (typeof window !== 'undefined') {
-  window.Composite = Composite;
   window.Qualitative = Qualitative;
   window.Organic = Organic;
   window.Solubility = Solubility;
@@ -843,6 +826,9 @@ const Composite = {
   async getTeacherList() {
     return apiRequest('GET', '/composite/teacher');
   },
+  async getTeacherSessions() {
+    return apiRequest('GET', '/composite/teacher');
+  },
   async exportCsv(assignmentId, filename) {
     return downloadFile('/composite/export/' + assignmentId, filename);
   }
@@ -924,6 +910,21 @@ function requireAdminLogin(onSuccess) {
   }
   if (typeof onSuccess === 'function') onSuccess(user);
   return true;
+}
+
+// ── Global Window Exports (Cross-frame and non-module compatibility) ──
+if (typeof window !== 'undefined') {
+  window.Auth = Auth;
+  window.Composite = Composite;
+  window.Announcements = Announcements;
+  window.ErrorTracker = ErrorTracker;
+  window.Assignments = Assignments;
+  window.Badges = Badges;
+  window.Leaderboard = Leaderboard;
+  window.Students = Students;
+  window.Analytics = Analytics;
+  window.Admin = Admin;
+  window.apiRequest = apiRequest;
 }
 
 // ── PWA Service Worker Registration ───────────────────────────

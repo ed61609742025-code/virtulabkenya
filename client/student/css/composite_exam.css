@@ -477,6 +477,36 @@ iframe.lab-frame {
 }
 
 /* ── 9. RESPONSIVE UTILITIES & TABLE OVERFLOW WRAPPER ── */
+.bench-prep-wing,
+.bench-titrant-wing {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.03);
+}
+
+.bench-action-buttons-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.exam-deductions-card {
+  background: var(--card-bg-hover);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.exam-deductions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
 .knec-table-scroll-wrap {
   width: 100%;
   overflow-x: auto;
@@ -500,14 +530,40 @@ iframe.lab-frame {
 }
 
 @media (max-width: 768px) {
+  html, body {
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .wrap {
+    width: 100% !important;
+    max-width: 100vw !important;
+    padding: 10px 8px 40px !important;
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
   .top-navbar {
-    padding: 10px 14px;
+    padding: 8px 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
   .exam-header {
-    padding: 14px 16px;
+    padding: 10px 10px !important;
+    margin-bottom: 10px !important;
+    border-radius: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
     flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
+    gap: 10px;
+  }
+  .exam-header-title {
+    font-size: 0.95rem !important;
+    white-space: normal !important;
+    line-height: 1.3 !important;
   }
   .exam-header > div:last-child {
     width: 100%;
@@ -516,24 +572,105 @@ iframe.lab-frame {
     justify-content: space-between;
   }
   .pacing-coach-bar {
-    padding: 10px 12px;
+    padding: 8px 10px !important;
+    margin-bottom: 10px !important;
+    border-radius: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
   .exam-tab-btn {
-    flex: 1 1 calc(50% - 8px);
-    font-size: 0.78rem;
-    padding: 8px 12px;
-    justify-content: center;
+    flex: 1 1 100% !important;
+    width: 100% !important;
+    font-size: 0.82rem !important;
+    padding: 9px 10px !important;
+    justify-content: center !important;
+    white-space: normal !important;
   }
   .btn-submit-exam {
-    width: 100%;
-    padding: 12px;
-    font-size: 0.9rem;
-    text-align: center;
-    justify-content: center;
+    width: 100% !important;
+    padding: 12px !important;
+    font-size: 0.9rem !important;
+    text-align: center !important;
+    justify-content: center !important;
+  }
+  .exam-section-card {
+    padding: 10px 8px !important;
+    margin-bottom: 12px !important;
+    border-radius: 10px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .exam-prompt-box {
+    padding: 10px 10px !important;
+    margin-bottom: 12px !important;
+    border-radius: 8px !important;
+    font-size: 0.82rem !important;
+    line-height: 1.45 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .titration-rig-workbench {
+    padding: 10px 8px !important;
+    margin-bottom: 12px !important;
+    border-radius: 10px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .bench-prep-wing,
+  .bench-titrant-wing {
+    padding: 10px 8px !important;
+    border-radius: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .bench-3col-layout {
+    width: 100% !important;
+    gap: 10px !important;
+    box-sizing: border-box !important;
+  }
+  .bench-action-buttons-row {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    margin-top: 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .bench-action-buttons-row button {
+    width: 100% !important;
+  }
+  .calc-step-card {
+    padding: 10px 8px !important;
+    margin-bottom: 10px !important;
+    border-radius: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .kcse-question-block {
+    padding: 10px 8px !important;
+    margin-bottom: 12px !important;
+    border-radius: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .exam-deductions-card {
+    padding: 10px 8px !important;
+    margin-top: 12px !important;
+    border-radius: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .exam-deductions-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    width: 100% !important;
   }
   .test-layout-grid {
     grid-template-columns: 1fr !important;
-    gap: 14px;
+    gap: 14px !important;
   }
   .apparatus-stage {
     width: 100%;
@@ -560,19 +697,35 @@ iframe.lab-frame {
 }
 
 @media (max-width: 480px) {
+  .wrap {
+    padding: 6px 4px 30px !important;
+  }
+  .exam-section-card {
+    padding: 8px 6px !important;
+    border-radius: 8px !important;
+  }
+  .titration-rig-workbench {
+    padding: 8px 6px !important;
+    border-radius: 8px !important;
+  }
+  .bench-prep-wing,
+  .bench-titrant-wing {
+    padding: 8px 6px !important;
+  }
+  .calc-step-card {
+    padding: 8px 6px !important;
+  }
+  .kcse-question-block {
+    padding: 8px 6px !important;
+    border-radius: 8px !important;
+  }
   .top-navbar .nav-actions {
     flex-wrap: wrap;
     gap: 6px;
   }
-  .exam-tab-btn {
-    flex: 1 1 100%;
-  }
   .exam-timer-chip {
     font-size: 1.1rem;
     padding: 4px 10px;
-  }
-  .titration-rig-workbench {
-    padding: 12px;
   }
   .buret-lens-card {
     min-width: unset;

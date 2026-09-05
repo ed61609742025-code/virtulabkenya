@@ -63,6 +63,93 @@
       grid-template-columns: 1fr;
     }
   }
+  @media (max-width: 768px) {
+    .exam-section-card {
+      padding: 10px 8px !important;
+      margin-bottom: 12px !important;
+      border-radius: 10px !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    .exam-prompt-box {
+      padding: 10px 10px !important;
+      margin-bottom: 12px !important;
+      border-radius: 8px !important;
+      font-size: 0.82rem !important;
+      line-height: 1.45 !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    .titration-rig-workbench {
+      padding: 10px 8px !important;
+      margin-bottom: 12px !important;
+      border-radius: 10px !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    .bench-prep-wing,
+    .bench-titrant-wing {
+      padding: 10px 8px !important;
+      border-radius: 8px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    .bench-3col-layout {
+      width: 100% !important;
+      gap: 10px !important;
+      box-sizing: border-box !important;
+    }
+    .bench-action-buttons-row {
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 8px !important;
+      margin-top: 12px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    .bench-action-buttons-row button {
+      width: 100% !important;
+    }
+    .calc-step-card {
+      padding: 10px 8px !important;
+      margin-bottom: 10px !important;
+      border-radius: 8px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    .exam-deductions-card {
+      padding: 10px 8px !important;
+      margin-top: 12px !important;
+      border-radius: 8px !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    .exam-deductions-grid {
+      display: grid !important;
+      grid-template-columns: 1fr !important;
+      gap: 10px !important;
+      width: 100% !important;
+    }
+  }
+  @media (max-width: 480px) {
+    .exam-section-card {
+      padding: 8px 6px !important;
+      border-radius: 8px !important;
+    }
+    .titration-rig-workbench {
+      padding: 8px 6px !important;
+      border-radius: 8px !important;
+    }
+    .bench-prep-wing,
+    .bench-titrant-wing {
+      padding: 8px 6px !important;
+    }
+    .calc-step-card {
+      padding: 8px 6px !important;
+    }
+  }
   .calc-step-card {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
@@ -386,7 +473,7 @@
 
       <div class="bench-3col-layout">
         <!-- LEFT WING: Pipette & Indicator Addition -->
-        <div class="bench-prep-wing" style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:14px;box-shadow:inset 0 1px 2px rgba(255,255,255,0.03);">
+        <div class="bench-prep-wing" style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;box-shadow:inset 0 1px 2px rgba(255,255,255,0.03);">
           <div class="prep-cluster">
             <div class="prep-item">
               <div style="font-weight:800;font-size:0.75rem;color:var(--cyan-accent);text-transform:uppercase;letter-spacing:0.03em;margin-bottom:4px;">1. Reagent Prep</div>
@@ -674,7 +761,7 @@
         </div>
 
         <!-- RIGHT WING: Stopcock & Speed Addition -->
-        <div class="bench-titrant-wing" style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:14px;box-shadow:inset 0 1px 2px rgba(255,255,255,0.03);">
+        <div class="bench-titrant-wing" style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;box-shadow:inset 0 1px 2px rgba(255,255,255,0.03);">
           <div style="font-weight:800;font-size:0.75rem;color:var(--amber-accent);text-transform:uppercase;letter-spacing:0.03em;margin-bottom:8px;">3. Add Titrant</div>
           <div class="titrant-buttons-cluster">
             <button class="btn-perform-test" onclick="addTitrantDirect(1.0)" style="font-size:0.78rem;padding:6px;width:100%;justify-content:center;">+1.0 cm³</button>
@@ -686,7 +773,7 @@
         </div>
       </div>
 
-      <div style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap;">
+      <div class="bench-action-buttons-row" style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap;">
         <button type="button" class="btn-perform-test" style="background:var(--green-accent);flex:1;justify-content:center;padding:10px 16px;font-size:0.88rem;" onclick="transferReadingToTable()">
           📥 Record Current Reading in Table 1 (Trial <span id="lblActiveTrial">1</span>)
         </button>
@@ -832,11 +919,11 @@
     <div class="tests-grid" id="q2TestsGrid"></div>
 
     <!-- Final Deductions -->
-    <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:16px;margin-top:16px;">
+    <div class="exam-deductions-card" style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:16px;margin-top:16px;">
       <div style="font-weight:800;font-size:0.88rem;color:var(--heading-color);margin-bottom:10px;">
         (v) Final Identity Deductions (3.0 Marks)
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="exam-deductions-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
         <div>
           <label style="font-size:0.78rem;font-weight:700;display:block;margin-bottom:4px;">Cation Present (1.5 Marks):</label>
           <select id="q2CationSelect" class="calc-input" style="max-width:100%;" onchange="onQ2DeductionsChanged()">
@@ -889,7 +976,7 @@
     <div class="tests-grid" id="q3TestsGrid"></div>
 
     <!-- Final Organic Deduction -->
-    <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:16px;margin-top:16px;">
+    <div class="exam-deductions-card" style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:16px;margin-top:16px;">
       <div style="font-weight:800;font-size:0.88rem;color:var(--heading-color);margin-bottom:10px;">
         (v) Functional Group Deduction (2.0 Marks)
       </div>

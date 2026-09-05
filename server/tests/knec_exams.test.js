@@ -80,6 +80,54 @@ describe('KNEC Paper 3 Examination Suite Standards', () => {
     assert.strictEqual(score.calcScore, 10.0, 'Full 10.0 marks for Series 1 stoichiometric calculation');
   });
 
+  it('should validate KCSE 2023 authentic preset with dual-key ECF answering', () => {
+    const engine2023 = new CompositeExamEngine({ presetKey: 'series_2023' });
+    assert.strictEqual(engine2023.preset.id, 'series_2023');
+    assert.strictEqual(engine2023.preset.q2.trueCation, 'Ca2+');
+    assert.strictEqual(engine2023.preset.q3.trueOrganicKey, 'Hex-1-ene');
+    assert.strictEqual(engine2023.preset.q1.moleRatioAcid, 1);
+    assert.strictEqual(engine2023.preset.q1.moleRatioBase, 2);
+
+    engine2023.recordTrial(1, 25.00, 0.00);
+    engine2023.recordTrial(2, 25.00, 0.00);
+    engine2023.setConcordant(1, true);
+    engine2023.setConcordant(2, true);
+
+    // Test dual-keying by answering with step_a, step_b, step_c, step_d, step_e
+    engine2023.setQ1Answer('step_a', '25.00'); // 25.00 cm³
+    engine2023.setQ1Answer('step_b', '0.00125'); // (0.050 * 25) / 1000 = 0.00125 mol H2C2O4
+    engine2023.setQ1Answer('step_c', '0.00250'); // 0.00125 * 2 = 0.00250 mol NaOH
+    engine2023.setQ1Answer('step_d', '0.100'); // (0.00250 * 1000) / 25 = 0.100 M NaOH
+    engine2023.setQ1Answer('step_e', '4.00'); // 0.100 * 40 = 4.00 g/dm³
+
+    const score = engine2023.calculateQ1Score();
+    assert.strictEqual(score.calcScore, 10.0, 'Full 10.0 marks for KCSE 2023 dual-key answered steps');
+  });
+
+  it('should validate KCSE 2024 authentic percentage purity preset and ECF logic', () => {
+    const engine2024 = new CompositeExamEngine({ presetKey: 'series_2024' });
+    assert.strictEqual(engine2024.preset.id, 'series_2024');
+    assert.strictEqual(engine2024.preset.q1.calcType, 'percentage_purity');
+    assert.strictEqual(engine2024.preset.q2.trueCation, 'Fe3+');
+    assert.strictEqual(engine2024.preset.q3.trueOrganicKey, 'Butan-1-ol');
+
+    engine2024.recordTrial(1, 24.00, 0.00);
+    engine2024.recordTrial(2, 24.00, 0.00);
+    engine2024.setConcordant(1, true);
+    engine2024.setConcordant(2, true);
+
+    // Candidate has slightly different titre (24.00 cm³) with ECF propagation
+    engine2024.setQ1Answer('avgTitre', '24.00'); // 24.00 cm³
+    engine2024.setQ1Answer('molesA', '0.00240'); // (0.100 * 24.00) / 1000 = 0.00240 mol HCl
+    engine2024.setQ1Answer('molesB', '0.00240'); // 1:1 ratio = 0.00240 mol NaHCO3
+    engine2024.setQ1Answer('molarityB', '0.0960'); // (0.00240 * 1000) / 25 = 0.0960 M
+    engine2024.setQ1Answer('massPure', '8.064'); // 0.0960 * 84 = 8.064 g
+    engine2024.setQ1Answer('percentagePurity', '80.6'); // (8.064 / 10.00) * 100 = 80.6%
+
+    const score = engine2024.calculateQ1Score();
+    assert.strictEqual(score.calcScore, 10.0, 'Full marks via ECF for KCSE 2024 percentage purity');
+  });
+
   it('should validate CPCAT Engine with 40 authentic items and 25% balanced keys', () => {
     const cpcatPath = path.join(rootDir, 'client', 'student', 'js', 'cpcat-engine.js');
     const { CPCAT_ITEMS, CPCATEngine } = require(cpcatPath);

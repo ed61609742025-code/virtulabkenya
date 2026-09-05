@@ -698,42 +698,44 @@
         Table 1: Titration Results (5.0 Marks)
       </div>
 
-      <table class="knec-table" style="margin-bottom:18px;">
-        <thead>
-          <tr>
-            <th>Burette Reading (cm³)</th>
-            <th style="text-align:center;">Trial I (Rough)</th>
-            <th style="text-align:center;">Trial II</th>
-            <th style="text-align:center;">Trial III</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><b>Final Reading (cm³)</b></td>
-            <td><input type="number" step="0.05" id="t1Final" class="calc-input" style="text-align:center;" placeholder="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
-            <td><input type="number" step="0.05" id="t2Final" class="calc-input" style="text-align:center;" placeholder="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
-            <td><input type="number" step="0.05" id="t3Final" class="calc-input" style="text-align:center;" placeholder="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
-          </tr>
-          <tr>
-            <td><b>Initial Reading (cm³)</b></td>
-            <td><input type="number" step="0.05" id="t1Init" class="calc-input" style="text-align:center;" value="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
-            <td><input type="number" step="0.05" id="t2Init" class="calc-input" style="text-align:center;" value="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
-            <td><input type="number" step="0.05" id="t3Init" class="calc-input" style="text-align:center;" value="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
-          </tr>
-          <tr style="background:var(--card-bg-hover);">
-            <td><b>Volume of Solution A Used (cm³)</b></td>
-            <td id="t1Used" style="text-align:center;font-weight:800;font-family:var(--font-mono);">0.00</td>
-            <td id="t2Used" style="text-align:center;font-weight:800;font-family:var(--font-mono);">0.00</td>
-            <td id="t3Used" style="text-align:center;font-weight:800;font-family:var(--font-mono);">0.00</td>
-          </tr>
-          <tr>
-            <td><b>Concordant Titres (±0.10 cm³)</b></td>
-            <td style="text-align:center;"><input type="checkbox" id="t1Concordant" onchange="onConcordantChanged()"></td>
-            <td style="text-align:center;"><input type="checkbox" id="t2Concordant" onchange="onConcordantChanged()"></td>
-            <td style="text-align:center;"><input type="checkbox" id="t3Concordant" onchange="onConcordantChanged()"></td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="knec-table-scroll-wrap">
+        <table class="knec-table" style="margin-bottom:18px;">
+          <thead>
+            <tr>
+              <th>Burette Reading (cm³)</th>
+              <th style="text-align:center;">Trial I (Rough)</th>
+              <th style="text-align:center;">Trial II</th>
+              <th style="text-align:center;">Trial III</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Final Reading (cm³)</b></td>
+              <td><input type="number" step="0.05" id="t1Final" class="calc-input" style="text-align:center;" placeholder="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
+              <td><input type="number" step="0.05" id="t2Final" class="calc-input" style="text-align:center;" placeholder="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
+              <td><input type="number" step="0.05" id="t3Final" class="calc-input" style="text-align:center;" placeholder="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
+            </tr>
+            <tr>
+              <td><b>Initial Reading (cm³)</b></td>
+              <td><input type="number" step="0.05" id="t1Init" class="calc-input" style="text-align:center;" value="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
+              <td><input type="number" step="0.05" id="t2Init" class="calc-input" style="text-align:center;" value="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
+              <td><input type="number" step="0.05" id="t3Init" class="calc-input" style="text-align:center;" value="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
+            </tr>
+            <tr style="background:var(--card-bg-hover);">
+              <td><b>Volume of Solution A Used (cm³)</b></td>
+              <td id="t1Used" style="text-align:center;font-weight:800;font-family:var(--font-mono);">0.00</td>
+              <td id="t2Used" style="text-align:center;font-weight:800;font-family:var(--font-mono);">0.00</td>
+              <td id="t3Used" style="text-align:center;font-weight:800;font-family:var(--font-mono);">0.00</td>
+            </tr>
+            <tr>
+              <td><b>Concordant Titres (±0.10 cm³)</b></td>
+              <td style="text-align:center;"><input type="checkbox" id="t1Concordant" onchange="onConcordantChanged()"></td>
+              <td style="text-align:center;"><input type="checkbox" id="t2Concordant" onchange="onConcordantChanged()"></td>
+              <td style="text-align:center;"><input type="checkbox" id="t3Concordant" onchange="onConcordantChanged()"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <!-- Dynamic Calculations & Stoichiometry (10.0 Marks) -->
       <div style="font-weight:800;font-size:0.95rem;color:var(--heading-color);margin:20px 0 10px;">
@@ -1075,6 +1077,12 @@
 <script src="js/composite-engine.js?v=69"></script>
 <script>
   requireStudentLogin();
+  const getAnswerValue = window.getAnswerValue || function(answers, fieldKey, stepId) {
+    if (!answers || typeof answers !== 'object') return undefined;
+    if (fieldKey && answers[fieldKey] !== undefined && answers[fieldKey] !== '') return answers[fieldKey];
+    if (stepId && answers[stepId] !== undefined && answers[stepId] !== '') return answers[stepId];
+    return undefined;
+  };
   const user = getUser();
   if (user) {
     document.getElementById('candidateName').textContent = user.name;
@@ -1140,6 +1148,10 @@
       if (stop1 && stop2) {
         stop1.setAttribute('stop-color', p.q1.titrantColor);
         stop2.setAttribute('stop-color', p.q1.titrantColor);
+      }
+      const cap = document.getElementById('buretteMeniscusCap');
+      if (cap) {
+        cap.setAttribute('fill', p.q1.titrantColor);
       }
     }
 
@@ -1289,7 +1301,17 @@
       if (label) label.textContent = 'Flask: 25.0 cm³ Sol. B';
     } else {
       const trueTitre = p.trueTitre || 25.00;
-      if (engine.q1BuretteReading >= trueTitre) {
+      if (engine.q1BuretteReading >= (trueTitre + 0.30)) {
+        const indName = (p.indicator || '').toLowerCase();
+        fillColor = p.overtitratedColor || (
+          indName.includes('methyl')
+            ? 'rgba(239, 68, 68, 0.95)'
+            : (indName.includes('kmno') || (p.solutionA || '').toLowerCase().includes('kmno'))
+            ? 'rgba(88, 28, 135, 0.98)'
+            : 'rgba(190, 24, 93, 0.95)'
+        );
+        if (label) label.textContent = 'Flask: Over-titrated! (Past Endpoint)';
+      } else if (engine.q1BuretteReading >= trueTitre) {
         fillColor = p.endpointColor || 'rgba(236,72,153,0.85)';
         if (label) label.textContent = 'Flask: Endpoint Reached!';
       } else {
@@ -1372,6 +1394,7 @@
     }
     if (cap) {
       cap.setAttribute('cy', 10 + (196 - bHeight));
+      cap.setAttribute('fill', engine.preset?.q1?.titrantColor || '#7DD3FC');
     }
 
     updateFlaskAppearance();
@@ -1424,11 +1447,34 @@
     const minVol = Math.max(0, Math.floor((volume - 1.4) * 10) / 10);
     const maxVol = Math.min(50, Math.ceil((volume + 1.4) * 10) / 10);
 
-    const isKmno4 = engine?.preset?.q1?.solutionA?.includes('KMnO') || engine?.preset?.q1?.titrantColor === '#7C3AED';
-    const liquidColor0 = isKmno4 ? '#A855F7' : (engine?.preset?.q1?.titrantColor || '#BAE6FD');
-    const liquidColor1 = isKmno4 ? '#7E22CE' : '#38BDF8';
-    const liquidColor2 = isKmno4 ? '#581C87' : '#0284C7';
-    const liquidColor3 = isKmno4 ? '#3B0764' : '#0369A1';
+    const solAStr = (engine?.preset?.q1?.solutionA || '').toLowerCase();
+    const titrantColor = engine?.preset?.q1?.titrantColor || '';
+    const isKmno4 = solAStr.includes('kmno') || titrantColor === '#7C3AED' || titrantColor === '#A855F7';
+    const isDark = isKmno4;
+    const isAmber = titrantColor === '#F59E0B' || titrantColor === '#D97706' || solAStr.includes('dichromate') || solAStr.includes('iodine');
+
+    let liquidColor0, liquidColor1, liquidColor2, liquidColor3;
+    if (isKmno4) {
+      liquidColor0 = '#A855F7';
+      liquidColor1 = '#7E22CE';
+      liquidColor2 = '#581C87';
+      liquidColor3 = '#3B0764';
+    } else if (isAmber) {
+      liquidColor0 = '#FDE68A';
+      liquidColor1 = '#F59E0B';
+      liquidColor2 = '#D97706';
+      liquidColor3 = '#B45309';
+    } else if (titrantColor && titrantColor !== '#38BDF8' && titrantColor !== '#7DD3FC') {
+      liquidColor0 = titrantColor;
+      liquidColor1 = titrantColor;
+      liquidColor2 = '#0284C7';
+      liquidColor3 = '#0369A1';
+    } else {
+      liquidColor0 = '#BAE6FD';
+      liquidColor1 = '#38BDF8';
+      liquidColor2 = '#0284C7';
+      liquidColor3 = '#0369A1';
+    }
 
     const defsSvg = `
       <defs>
@@ -1557,8 +1603,8 @@
       <rect x="42" y="0" width="5" height="180" fill="#FFFFFF" opacity="0.35"/>
 
       <!-- Optical Reticle Center Notches -->
-      <line x1="97" y1="${centerY - 4}" x2="97" y2="${centerY + 4}" stroke="#EF4444" stroke-width="1.4" stroke-linecap="round"/>
-      <line x1="103" y1="${centerY - 4}" x2="103" y2="${centerY + 4}" stroke="#EF4444" stroke-width="1.4" stroke-linecap="round"/>
+      <line x1="97" y1="${centerY - 4}" x2="97" y2="${centerY + 4}" stroke="${isDark ? '#FDE047' : '#EF4444'}" stroke-width="1.4" stroke-linecap="round"/>
+      <line x1="103" y1="${centerY - 4}" x2="103" y2="${centerY + 4}" stroke="${isDark ? '#FDE047' : '#EF4444'}" stroke-width="1.4" stroke-linecap="round"/>
     `;
 
     lensSvg.innerHTML = defsSvg + tubeGeometry + liquidBody + ticksSvg + meniscusArc + glassOverlays;
@@ -1643,7 +1689,9 @@
     container.innerHTML = questions.map(q => {
       const fieldId = q.field || q.id;
       const inputId = fieldId === 'avgTitre' ? 'ansAvgTitre' : (fieldId === 'molesB' ? 'ansMolesB' : (fieldId === 'molesA' ? 'ansMolesA' : (fieldId === 'molarityA' ? 'ansMolarityA' : (fieldId === 'concGrams' ? 'ansConcGrams' : `ans_${fieldId}`))));
-      const currentVal = (engine?.q1Answers && engine.q1Answers[fieldId] !== undefined) ? engine.q1Answers[fieldId] : (engine?.q1Answers ? engine.q1Answers[q.id] || '' : '');
+      const currentVal = typeof getAnswerValue === 'function'
+        ? (getAnswerValue(engine?.q1Answers, fieldId, q.id) || '')
+        : ((engine?.q1Answers && engine.q1Answers[fieldId] !== undefined) ? engine.q1Answers[fieldId] : (engine?.q1Answers ? engine.q1Answers[q.id] || '' : ''));
 
       return `
         <div class="calc-step-card" id="card_${fieldId}">
@@ -1678,7 +1726,8 @@
     const fieldId = q.field || q.id;
     const inputId = fieldId === 'avgTitre' ? 'ansAvgTitre' : (fieldId === 'molesB' ? 'ansMolesB' : (fieldId === 'molesA' ? 'ansMolesA' : (fieldId === 'molarityA' ? 'ansMolarityA' : (fieldId === 'concGrams' ? 'ansConcGrams' : `ans_${fieldId}`))));
     const el = document.getElementById(inputId);
-    const val = parseFloat(el ? el.value : engine.q1Answers[fieldId]);
+    const ansVal = typeof getAnswerValue === 'function' ? getAnswerValue(engine.q1Answers, fieldId, q.id) : engine.q1Answers[fieldId];
+    const val = parseFloat(el && el.value !== '' ? el.value : ansVal);
 
     const p = engine.preset.q1;
     const recordedTrials = engine.q1Trials.filter(t => t.recorded && t.used > 0);
@@ -1699,7 +1748,7 @@
       answers: engine.q1Answers,
       t1: engine.q1Trials[0]?.used || p.trueTitre,
       t2: engine.q1Trials[1]?.used || p.trueTitre,
-      v1: parseFloat(engine.q1Answers.avgTitre || engine.q1Answers.step_a) || expAvgFromTrials
+      v1: parseFloat(typeof getAnswerValue === 'function' ? getAnswerValue(engine.q1Answers, 'avgTitre', 'step_a') : (engine.q1Answers.avgTitre || engine.q1Answers.step_a)) || expAvgFromTrials
     };
 
     const expTheo = typeof q.calcTheoretical === 'function' ? q.calcTheoretical(evalCtx) : null;
@@ -1835,9 +1884,11 @@
                   <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'White precipitate formed')">White ppt</span>
                   <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'dissolves in excess to form colorless solution')">Soluble in excess</span>
                   <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'insoluble in excess')">Insoluble in excess</span>
+                  <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'Reddish-brown precipitate formed')">Reddish-brown ppt</span>
                   <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'Dirty green precipitate formed')">Dirty green ppt</span>
                   <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'Pale blue precipitate formed')">Pale blue ppt</span>
                   <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'dissolves to form royal deep blue solution')">Deep blue soln</span>
+                  <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'No precipitate formed')">No ppt</span>
                   <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'Effervescence of colorless gas')">Effervescence</span>
                 </div>
               </div>
@@ -1870,10 +1921,26 @@
   function getTubeVisualHtml(testId, st) {
     const performed = st && st.performed;
     const isExcess = st && st.stage === 'excess';
-    const p = engine.preset.q2;
-    const saltKey = p.trueSaltKey || 'Pb(NO3)2';
+    const p = engine.preset?.q2 || {};
+    const saltKey = String(p.trueSaltKey || 'Pb(NO3)2');
 
-    let liquidColor = performed ? (saltKey.includes('Fe') ? 'rgba(16, 185, 129, 0.4)' : saltKey.includes('Cu') ? 'rgba(56, 189, 248, 0.6)' : 'rgba(255,255,255,0.25)') : 'transparent';
+    const isFe3 = saltKey.includes('Fe') && (saltKey.includes('Cl') || saltKey.includes('3'));
+    const isFe2 = saltKey.includes('Fe') && !isFe3;
+    const isCa = saltKey.includes('Ca');
+
+    let liquidColor = 'transparent';
+    if (performed) {
+      if (isFe3) {
+        liquidColor = 'rgba(180, 83, 9, 0.45)';
+      } else if (isFe2) {
+        liquidColor = 'rgba(16, 185, 129, 0.4)';
+      } else if (saltKey.includes('Cu')) {
+        liquidColor = 'rgba(56, 189, 248, 0.6)';
+      } else {
+        liquidColor = 'rgba(255,255,255,0.25)';
+      }
+    }
+
     let pptColor = '#FFFFFF';
     let showPpt = false;
     let showPptDissolved = false;
@@ -1884,19 +1951,22 @@
       } else if (testId === 'q2_naoh') {
         if (!isExcess) {
           showPpt = true;
-          pptColor = saltKey.includes('Fe') ? '#15803D' : saltKey.includes('Cu') ? '#38BDF8' : '#FFFFFF';
+          pptColor = isFe3 ? '#991B1B' : isFe2 ? '#15803D' : saltKey.includes('Cu') ? '#38BDF8' : '#FFFFFF';
         } else {
           if (saltKey.includes('Pb') || saltKey.includes('Zn') || saltKey.includes('Al')) {
             showPptDissolved = true;
           } else {
             showPpt = true;
-            pptColor = saltKey.includes('Fe') ? '#15803D' : saltKey.includes('Cu') ? '#38BDF8' : '#FFFFFF';
+            pptColor = isFe3 ? '#991B1B' : isFe2 ? '#15803D' : saltKey.includes('Cu') ? '#38BDF8' : '#FFFFFF';
           }
         }
       } else if (testId === 'q2_nh3') {
-        if (!isExcess) {
+        if (isCa) {
+          showPpt = false;
+          showPptDissolved = false;
+        } else if (!isExcess) {
           showPpt = true;
-          pptColor = saltKey.includes('Fe') ? '#15803D' : saltKey.includes('Cu') ? '#38BDF8' : '#FFFFFF';
+          pptColor = isFe3 ? '#991B1B' : isFe2 ? '#15803D' : saltKey.includes('Cu') ? '#38BDF8' : '#FFFFFF';
         } else {
           if (saltKey.includes('Zn')) {
             showPptDissolved = true;
@@ -1904,10 +1974,11 @@
             liquidColor = '#1D4ED8';
           } else {
             showPpt = true;
+            pptColor = isFe3 ? '#991B1B' : isFe2 ? '#15803D' : '#FFFFFF';
           }
         }
       } else if (testId === 'q2_anion') {
-        if (saltKey.includes('SO4') || saltKey.includes('Cl')) {
+        if (saltKey.includes('SO4') || saltKey.includes('Cl') || isCa) {
           showPpt = true;
           pptColor = '#FFFFFF';
         } else if (saltKey.includes('Pb')) {
@@ -1959,23 +2030,50 @@
     st.performed = true;
     st.stage = stage;
 
-    const p = engine.preset.q2;
-    if (testId === 'q2_appearance') {
-      st.statusLabel = 'Appearance / Solubility Observed';
+    const p = engine.preset?.q2 || {};
+    const saltKey = String(p.trueSaltKey || '');
+    const isCa = saltKey.includes('Ca');
+    const isFe3 = saltKey.includes('Fe') && (saltKey.includes('Cl') || saltKey.includes('3'));
+    const isFe2 = saltKey.includes('Fe') && !isFe3;
+
+    if (testId === 'q2_heat') {
+      if (isCa) {
+        st.statusLabel = 'Heated: Decrepitation & brown NO₂ fumes that rekindle glowing splint';
+      } else if (isFe3) {
+        st.statusLabel = 'Heated: Melts & sublimes as dark brown fumes on tube walls';
+      } else {
+        st.statusLabel = 'Heated: Color change / condensation observed';
+      }
+    } else if (testId === 'q2_appearance') {
+      st.statusLabel = isFe3 ? 'Appearance: Yellow-brown solution formed' : 'Appearance / Solubility Observed';
     } else if (testId === 'q2_naoh') {
       if (stage === 'stage1') {
-        st.statusLabel = 'Few Drops: Precipitate formed';
+        st.statusLabel = isFe3 ? 'Few Drops: Reddish-brown precipitate formed' : isFe2 ? 'Few Drops: Dirty-green precipitate formed' : 'Few Drops: White precipitate formed';
       } else {
-        st.statusLabel = p.trueSaltKey.includes('Pb') || p.trueSaltKey.includes('Zn') ? 'In Excess: White ppt dissolves' : 'In Excess: Precipitate insoluble';
+        st.statusLabel = (saltKey.includes('Pb') || saltKey.includes('Zn') || saltKey.includes('Al'))
+          ? 'In Excess: White ppt dissolves to colorless solution'
+          : (isFe3 ? 'In Excess: Reddish-brown precipitate insoluble' : 'In Excess: Precipitate insoluble');
       }
     } else if (testId === 'q2_nh3') {
-      if (stage === 'stage1') {
-        st.statusLabel = 'Few Drops: Precipitate formed';
+      if (isCa) {
+        st.statusLabel = 'Drops / Excess: No precipitate formed';
+      } else if (stage === 'stage1') {
+        st.statusLabel = isFe3 ? 'Few Drops: Reddish-brown precipitate formed' : isFe2 ? 'Few Drops: Dirty-green precipitate formed' : 'Few Drops: White precipitate formed';
       } else {
-        st.statusLabel = p.trueSaltKey.includes('Zn') ? 'In Excess: White ppt dissolves' : p.trueSaltKey.includes('Cu') ? 'In Excess: Deep blue solution' : 'In Excess: Precipitate insoluble';
+        st.statusLabel = saltKey.includes('Zn')
+          ? 'In Excess: White ppt dissolves'
+          : saltKey.includes('Cu')
+          ? 'In Excess: Deep royal blue solution'
+          : (isFe3 ? 'In Excess: Reddish-brown precipitate insoluble' : 'In Excess: Precipitate insoluble');
       }
     } else if (testId === 'q2_anion') {
-      st.statusLabel = 'Reagent Added: Characteristic reaction observed';
+      if (isCa) {
+        st.statusLabel = 'H₂SO₄ Added: White precipitate of CaSO₄ formed';
+      } else if (isFe3) {
+        st.statusLabel = 'AgNO₃ Added: White precipitate of AgCl formed';
+      } else {
+        st.statusLabel = 'Reagent Added: Characteristic reaction observed';
+      }
     }
 
     renderQ2TestsGrid();
@@ -2075,6 +2173,7 @@
                   <span class="chem-token-chip" onclick="insertToken('q3Obs_${t.id}', 'Burns with clean non-sooty pale blue flame')">Non-sooty flame</span>
                   <span class="chem-token-chip" onclick="insertToken('q3Obs_${t.id}', 'Purple acidified KMnO₄ is decolorized')">KMnO₄ decolorized</span>
                   <span class="chem-token-chip" onclick="insertToken('q3Obs_${t.id}', 'Bromine water is rapidly decolorized')">Bromine decolorized</span>
+                  <span class="chem-token-chip" onclick="insertToken('q3Obs_${t.id}', 'Orange K₂Cr₂O₇ turns green')">Orange K₂Cr₂O₇ turns green</span>
                   <span class="chem-token-chip" onclick="insertToken('q3Obs_${t.id}', 'Moist blue litmus paper turns red')">Blue litmus turns red</span>
                   <span class="chem-token-chip" onclick="insertToken('q3Obs_${t.id}', 'Vigorous effervescence of gas that turns lime water milky')">Effervescence (CO₂)</span>
                 </div>
@@ -2107,11 +2206,13 @@
 
   function getOrganicVisualHtml(testId, st) {
     const performed = st && st.performed;
-    const p = engine.preset.q3;
-    const orgKey = p.trueOrganicKey || 'Ethanol';
+    const p = engine.preset?.q3 || {};
+    const orgKey = String(p.trueOrganicKey || 'Ethanol');
+    const isSooty = orgKey.includes('Cyclo') || orgKey.includes('Benzoic') || orgKey.includes('Hex') || orgKey.includes('Alkene');
+    const isButanol = orgKey.includes('Butan');
+    const isHexene = orgKey.includes('Hex');
 
     if (testId === 'q3_ignition') {
-      const isSooty = orgKey.includes('Cyclo') || orgKey.includes('Benzoic');
       return `
         <svg width="100" height="136" viewBox="0 0 100 136">
           <rect x="10" y="80" width="80" height="8" rx="2" fill="#94A3B8" />
@@ -2123,12 +2224,35 @@
       `;
     }
 
+    let tubeFillColor = 'rgba(56,189,248,0.35)';
+    if (performed) {
+      if (testId === 'q3_kmno4') {
+        if (isButanol) {
+          // Cr2O7(2-) reduced to Cr(3+) green
+          tubeFillColor = 'rgba(16, 185, 129, 0.7)';
+        } else if (isHexene || orgKey.includes('Cyclo') || orgKey.includes('Ethanol')) {
+          // Decolorized
+          tubeFillColor = 'rgba(255, 255, 255, 0.25)';
+        } else if (orgKey.includes('Acid')) {
+          // Purple retained
+          tubeFillColor = 'rgba(168, 85, 247, 0.7)';
+        }
+      } else if (testId === 'q3_nahco3') {
+        if (isHexene) {
+          // KMnO4 decolorized in test 4 of Hex-1-ene
+          tubeFillColor = 'rgba(255, 255, 255, 0.25)';
+        } else if (orgKey.includes('Acid')) {
+          tubeFillColor = 'rgba(56, 189, 248, 0.35)';
+        }
+      }
+    }
+
     return `
       <svg width="86" height="136" viewBox="0 0 86 136">
         <rect x="23" y="32" width="40" height="4" rx="2" fill="rgba(255,255,255,0.18)" stroke="#94A3B8" stroke-width="1.2"/>
         <path d="M 26,36 L 26,112 Q 26,130 43,130 Q 60,130 60,112 L 60,36 Z" fill="rgba(255,255,255,0.05)" stroke="#94A3B8" stroke-width="1.5"/>
         ${performed ? `
-          <path d="M 27,70 L 27,112 Q 27,128 43,128 Q 59,128 59,112 L 59,70 Z" fill="${testId === 'q3_kmno4' ? 'rgba(255,255,255,0.3)' : 'rgba(56,189,248,0.35)'}"/>
+          <path d="M 27,70 L 27,112 Q 27,128 43,128 Q 59,128 59,112 L 59,70 Z" fill="${tubeFillColor}"/>
           <ellipse cx="43" cy="70" rx="16" ry="3.5" fill="rgba(255,255,255,0.4)"/>
         ` : ''}
       </svg>
@@ -2141,15 +2265,32 @@
     st.performed = true;
     const p = engine?.preset?.q3 || {};
     const orgKey = String(p.trueOrganicKey || '');
+    const isButanol = orgKey.includes('Butan');
+    const isHexene = orgKey.includes('Hex');
+    const isSooty = orgKey.includes('Cyclo') || orgKey.includes('Benzoic') || isHexene || orgKey.includes('Alkene');
 
     if (testId === 'q3_ignition') {
-      st.statusLabel = (orgKey.includes('Cyclo') || orgKey.includes('Benzoic') || orgKey.includes('Alkene')) ? 'Ignition: Smoky sooty flame' : 'Ignition: Clear non-sooty blue flame';
+      st.statusLabel = isSooty ? 'Ignition: Smoky sooty yellow flame' : 'Ignition: Clear non-sooty pale blue flame';
     } else if (testId === 'q3_litmus') {
       st.statusLabel = orgKey.includes('Acid') ? 'Litmus: Turns moist blue litmus red' : 'Litmus: Neutral, no color change';
     } else if (testId === 'q3_kmno4') {
-      st.statusLabel = 'Reaction: Decolorization / change observed';
+      if (isButanol) {
+        st.statusLabel = 'K₂Cr₂O₇: Orange turns green; pleasant fruity odor';
+      } else if (isHexene) {
+        st.statusLabel = 'Bromine Water: Reddish-brown rapidly decolorized';
+      } else if (orgKey.includes('Acid')) {
+        st.statusLabel = 'KMnO₄: Purple color remains unchanged';
+      } else {
+        st.statusLabel = 'Reaction: Decolorization observed';
+      }
     } else if (testId === 'q3_nahco3') {
-      st.statusLabel = orgKey.includes('Acid') ? 'NaHCO₃: Vigorous effervescence of CO₂' : 'NaHCO₃: No effervescence';
+      if (isHexene) {
+        st.statusLabel = 'KMnO₄: Purple acidified KMnO₄ rapidly decolorized';
+      } else if (orgKey.includes('Acid')) {
+        st.statusLabel = 'NaHCO₃: Vigorous effervescence of CO₂';
+      } else {
+        st.statusLabel = 'NaHCO₃: No effervescence observed';
+      }
     }
 
     renderQ3TestsGrid();

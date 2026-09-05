@@ -475,3 +475,120 @@ iframe.lab-frame {
     padding: 20px;
   }
 }
+
+/* ── 9. RESPONSIVE UTILITIES & TABLE OVERFLOW WRAPPER ── */
+.knec-table-scroll-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 18px;
+}
+
+.knec-table-scroll-wrap .knec-table {
+  min-width: 520px;
+}
+
+/* ── 10. TABLET & MOBILE RESPONSIVENESS (360px - 1024px) ── */
+@media (max-width: 1024px) {
+  .wrap {
+    padding: 16px 14px 60px;
+  }
+  .bench-3col-layout {
+    grid-template-columns: 1fr !important;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .top-navbar {
+    padding: 10px 14px;
+  }
+  .exam-header {
+    padding: 14px 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .exam-header > div:last-child {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .pacing-coach-bar {
+    padding: 10px 12px;
+  }
+  .exam-tab-btn {
+    flex: 1 1 calc(50% - 8px);
+    font-size: 0.78rem;
+    padding: 8px 12px;
+    justify-content: center;
+  }
+  .btn-submit-exam {
+    width: 100%;
+    padding: 12px;
+    font-size: 0.9rem;
+    text-align: center;
+    justify-content: center;
+  }
+  .test-layout-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px;
+  }
+  .apparatus-stage {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .apparatus-view {
+    justify-content: center;
+  }
+  .btn-perform-test,
+  .btn-redo-test,
+  .btn-next-step,
+  .btn-start-series {
+    min-height: 44px; /* Accessible 44px touch target on mobile */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .calc-input {
+    max-width: 100%;
+    font-size: 1rem; /* Prevent iOS automatic zoom on focus */
+  }
+}
+
+@media (max-width: 480px) {
+  .top-navbar .nav-actions {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .exam-tab-btn {
+    flex: 1 1 100%;
+  }
+  .exam-timer-chip {
+    font-size: 1.1rem;
+    padding: 4px 10px;
+  }
+  .titration-rig-workbench {
+    padding: 12px;
+  }
+  .buret-lens-card {
+    min-width: unset;
+    width: 100%;
+  }
+  .action-buttons-row {
+    flex-direction: column;
+  }
+  .action-buttons-row button {
+    width: 100%;
+  }
+  .chem-palette-box {
+    padding: 8px;
+  }
+  .chem-token-chip {
+    padding: 4px 8px;
+    font-size: 0.76rem;
+  }
+}

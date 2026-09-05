@@ -5,6 +5,20 @@
 // ============================================================
 
 /**
+ * Helper to retrieve candidate answer by field key or step ID
+ */
+function getAnswerValue(answers, fieldKey, stepId) {
+  if (!answers || typeof answers !== 'object') return undefined;
+  if (fieldKey && answers[fieldKey] !== undefined && answers[fieldKey] !== '') {
+    return answers[fieldKey];
+  }
+  if (stepId && answers[stepId] !== undefined && answers[stepId] !== '') {
+    return answers[stepId];
+  }
+  return undefined;
+}
+
+/**
  * Standard KNEC Question 1 Calculation Schema Generators
  */
 function createStandardTitrationQuestions(q1Config) {
@@ -39,7 +53,7 @@ function createStandardTitrationQuestions(q1Config) {
       unit: 'moles of acid',
       calcTheoretical: (ctx) => (ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0,
       calcEcf: (ctx) => {
-        const v1 = parseFloat(ctx.answers.avgTitre) || ctx.trueTitre;
+        const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_a')) || ctx.trueTitre;
         return (ctx.trueAcidMolarity * v1) / 1000.0;
       },
       check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
@@ -59,7 +73,7 @@ function createStandardTitrationQuestions(q1Config) {
       unit: 'moles of base',
       calcTheoretical: (ctx) => ((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0) * (ctx.ratioB / ctx.ratioA),
       calcEcf: (ctx) => {
-        const ma = parseFloat(ctx.answers.molesA) || ((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0);
+        const ma = parseFloat(getAnswerValue(ctx.answers, 'molesA', 'step_b')) || ((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0);
         return ma * (ctx.ratioB / ctx.ratioA);
       },
       check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
@@ -79,7 +93,7 @@ function createStandardTitrationQuestions(q1Config) {
       unit: 'mol/dm³ (M)',
       calcTheoretical: (ctx) => ctx.trueBaseMolarity,
       calcEcf: (ctx) => {
-        const mb = parseFloat(ctx.answers.molesB) || (((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0) * (ctx.ratioB / ctx.ratioA));
+        const mb = parseFloat(getAnswerValue(ctx.answers, 'molesB', 'step_c')) || (((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0) * (ctx.ratioB / ctx.ratioA));
         return (mb * 1000.0) / (ctx.pipetteVol || 25.0);
       },
       check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
@@ -99,7 +113,7 @@ function createStandardTitrationQuestions(q1Config) {
       unit: 'g/dm³',
       calcTheoretical: (ctx) => ctx.trueBaseMolarity * rfmBase,
       calcEcf: (ctx) => {
-        const molarity = parseFloat(ctx.answers.molarityB) || ctx.trueBaseMolarity;
+        const molarity = parseFloat(getAnswerValue(ctx.answers, 'molarityB', 'step_d')) || ctx.trueBaseMolarity;
         return molarity * rfmBase;
       },
       check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
@@ -148,7 +162,7 @@ function createWaterOfCrystallizationQuestions(q1Config) {
       unit: 'moles of HCl',
       calcTheoretical: (ctx) => (ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0,
       calcEcf: (ctx) => {
-        const v1 = parseFloat(ctx.answers.avgTitre) || ctx.trueTitre;
+        const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_a')) || ctx.trueTitre;
         return (ctx.trueAcidMolarity * v1) / 1000.0;
       },
       check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
@@ -168,7 +182,7 @@ function createWaterOfCrystallizationQuestions(q1Config) {
       unit: 'moles of Na₂CO₃',
       calcTheoretical: (ctx) => ((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0) * 0.5,
       calcEcf: (ctx) => {
-        const ma = parseFloat(ctx.answers.molesA) || ((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0);
+        const ma = parseFloat(getAnswerValue(ctx.answers, 'molesA', 'step_b')) || ((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0);
         return ma * 0.5;
       },
       check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
@@ -188,7 +202,7 @@ function createWaterOfCrystallizationQuestions(q1Config) {
       unit: 'mol/dm³ (M)',
       calcTheoretical: (ctx) => ctx.trueBaseMolarity,
       calcEcf: (ctx) => {
-        const mb = parseFloat(ctx.answers.molesB) || (((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0) * 0.5);
+        const mb = parseFloat(getAnswerValue(ctx.answers, 'molesB', 'step_c')) || (((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0) * 0.5);
         return (mb * 1000.0) / ctx.pipetteVol;
       },
       check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
@@ -208,7 +222,7 @@ function createWaterOfCrystallizationQuestions(q1Config) {
       unit: 'g/mol',
       calcTheoretical: (ctx) => soluteMass / ctx.trueBaseMolarity,
       calcEcf: (ctx) => {
-        const molarity = parseFloat(ctx.answers.molarityB) || ctx.trueBaseMolarity;
+        const molarity = parseFloat(getAnswerValue(ctx.answers, 'molarityB', 'step_d')) || ctx.trueBaseMolarity;
         return soluteMass / (molarity || 0.05);
       },
       check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
@@ -228,7 +242,7 @@ function createWaterOfCrystallizationQuestions(q1Config) {
       unit: 'moles of H₂O',
       calcTheoretical: (ctx) => Math.round(((soluteMass / ctx.trueBaseMolarity) - anhydrousRfm) / waterRfm),
       calcEcf: (ctx) => {
-        const rfm = parseFloat(ctx.answers.rfmHydrated) || (soluteMass / ctx.trueBaseMolarity);
+        const rfm = parseFloat(getAnswerValue(ctx.answers, 'rfmHydrated', 'step_e')) || (soluteMass / ctx.trueBaseMolarity);
         return Math.round((rfm - anhydrousRfm) / waterRfm);
       },
       check: (val, ctx, expTheo, expEcf) => Math.abs(val - expTheo) <= 0.5 || Math.abs(val - expEcf) <= 0.5,
@@ -245,6 +259,10 @@ function createWaterOfCrystallizationQuestions(q1Config) {
 function createPercentagePurityQuestions(q1Config) {
   const totalSampleMass = q1Config.impureMassPerLiter || 6.00;
   const pureRfm = q1Config.pureRfm || 106.0;
+  const moleRatio = (q1Config.moleRatioAcid && q1Config.moleRatioBase)
+    ? (Number(q1Config.moleRatioBase) / Number(q1Config.moleRatioAcid))
+    : 0.5;
+  const soluteName = q1Config.baseFormula ? q1Config.baseFormula : 'pure solute';
 
   return [
     {
@@ -268,19 +286,19 @@ function createPercentagePurityQuestions(q1Config) {
       id: 'step_b',
       letter: 'b',
       field: 'molesA',
-      label: 'Calculate the number of moles of hydrochloric acid in the average volume V₁',
+      label: 'Calculate the number of moles of acid in the average volume V₁',
       marks: 2.0,
       marksLabel: '(2.0 Marks)',
       placeholder: 'e.g. 0.00262',
       step: '0.0001',
-      unit: 'moles of HCl',
+      unit: 'moles of acid',
       calcTheoretical: (ctx) => (ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0,
       calcEcf: (ctx) => {
-        const v1 = parseFloat(ctx.answers.avgTitre) || ctx.trueTitre;
+        const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_a')) || ctx.trueTitre;
         return (ctx.trueAcidMolarity * v1) / 1000.0;
       },
       check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
-      feedbackSuccess: (val) => `✓ Correct: ${val} moles of HCl.`,
+      feedbackSuccess: (val) => `✓ Correct: ${val} moles of acid.`,
       feedbackFail: (ctx, expTheo) => `Formula: (Molarity × V₁) / 1000 = ${expTheo.toFixed(5)} mol.`,
       working: (ctx) => `<b>(b) Moles of Acid in V₁:</b> (${ctx.trueAcidMolarity.toFixed(3)} × ${ctx.v1.toFixed(2)}) / 1000 = <b>${((ctx.trueAcidMolarity * ctx.v1) / 1000.0).toFixed(5)} mol</b>`
     },
@@ -288,81 +306,81 @@ function createPercentagePurityQuestions(q1Config) {
       id: 'step_c',
       letter: 'c',
       field: 'molesB',
-      label: `Calculate the number of moles of pure sodium carbonate present in ${Number(q1Config.pipetteVolume || 25.0).toFixed(1)} cm³ of Solution B`,
+      label: `Calculate the number of moles of pure ${soluteName} present in ${Number(q1Config.pipetteVolume || 25.0).toFixed(1)} cm³ of Solution B`,
       marks: 2.0,
       marksLabel: '(2.0 Marks)',
       placeholder: 'e.g. 0.00131',
       step: '0.0001',
-      unit: 'moles of pure Na₂CO₃',
-      calcTheoretical: (ctx) => ((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0) * 0.5,
+      unit: `moles of pure ${soluteName}`,
+      calcTheoretical: (ctx) => ((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0) * moleRatio,
       calcEcf: (ctx) => {
-        const ma = parseFloat(ctx.answers.molesA) || ((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0);
-        return ma * 0.5;
+        const ma = parseFloat(getAnswerValue(ctx.answers, 'molesA', 'step_b')) || ((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0);
+        return ma * moleRatio;
       },
       check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
-      feedbackSuccess: (val) => `✓ Correct: ${val} moles of pure Na₂CO₃.`,
-      feedbackFail: (ctx, expTheo) => `Formula: Moles of Acid / 2 = ${expTheo.toFixed(5)} mol.`,
-      working: (ctx) => `<b>(c) Moles of pure Na₂CO₃:</b> Moles of Acid / 2 = <b>${(((ctx.trueAcidMolarity * ctx.v1) / 1000.0) * 0.5).toFixed(5)} mol</b>`
+      feedbackSuccess: (val) => `✓ Correct: ${val} moles of pure ${soluteName}.`,
+      feedbackFail: (ctx, expTheo) => `Formula: Moles of Acid × ${moleRatio} = ${expTheo.toFixed(5)} mol.`,
+      working: (ctx) => `<b>(c) Moles of pure ${soluteName}:</b> Moles of Acid × ${moleRatio} = <b>${(((ctx.trueAcidMolarity * ctx.v1) / 1000.0) * moleRatio).toFixed(5)} mol</b>`
     },
     {
       id: 'step_d',
       letter: 'd',
       field: 'molarityB',
-      label: 'Determine the molar concentration of pure sodium carbonate in Solution B in mol/dm³',
+      label: `Determine the molar concentration of pure ${soluteName} in Solution B in mol/dm³`,
       marks: 2.0,
       marksLabel: '(2.0 Marks)',
       placeholder: 'e.g. 0.0524',
       step: '0.0001',
       unit: 'mol/dm³ (M)',
-      calcTheoretical: (ctx) => (((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0) * 0.5 * 1000.0) / ctx.pipetteVol,
+      calcTheoretical: (ctx) => (((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0) * moleRatio * 1000.0) / ctx.pipetteVol,
       calcEcf: (ctx) => {
-        const mb = parseFloat(ctx.answers.molesB) || (((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0) * 0.5);
+        const mb = parseFloat(getAnswerValue(ctx.answers, 'molesB', 'step_c')) || (((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0) * moleRatio);
         return (mb * 1000.0) / ctx.pipetteVol;
       },
       check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
       feedbackSuccess: (val) => `✓ Correct: Molarity = ${val} mol/dm³.`,
-      feedbackFail: (ctx, expTheo) => `Formula: (Moles of Na₂CO₃ × 1000) / 25.0 = ${expTheo.toFixed(4)} M.`,
-      working: (ctx) => `<b>(d) Molarity of pure Na₂CO₃:</b> (${(((ctx.trueAcidMolarity * ctx.v1) / 1000.0) * 0.5).toFixed(5)} × 1000) / ${ctx.pipetteVol.toFixed(1)} = <b>${((((ctx.trueAcidMolarity * ctx.v1) / 1000.0) * 0.5 * 1000.0) / ctx.pipetteVol).toFixed(4)} M</b>`
+      feedbackFail: (ctx, expTheo) => `Formula: (Moles of Base × 1000) / ${ctx.pipetteVol.toFixed(1)} = ${expTheo.toFixed(4)} M.`,
+      working: (ctx) => `<b>(d) Molarity of pure ${soluteName}:</b> (${(((ctx.trueAcidMolarity * ctx.v1) / 1000.0) * moleRatio).toFixed(5)} × 1000) / ${ctx.pipetteVol.toFixed(1)} = <b>${((((ctx.trueAcidMolarity * ctx.v1) / 1000.0) * moleRatio * 1000.0) / ctx.pipetteVol).toFixed(4)} M</b>`
     },
     {
       id: 'step_e',
       letter: 'e',
       field: 'massPure',
-      label: `Calculate the mass of pure sodium carbonate present in 1000 cm³ of Solution B (RFM = ${pureRfm})`,
+      label: `Calculate the mass of pure ${soluteName} present in 1000 cm³ of Solution B (RFM = ${pureRfm})`,
       marks: 1.5,
       marksLabel: '(1.5 Marks)',
       placeholder: 'e.g. 5.55',
       step: '0.01',
       unit: 'g',
-      calcTheoretical: (ctx) => ((((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0) * 0.5 * 1000.0) / ctx.pipetteVol) * pureRfm,
+      calcTheoretical: (ctx) => ((((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0) * moleRatio * 1000.0) / ctx.pipetteVol) * pureRfm,
       calcEcf: (ctx) => {
-        const molarity = parseFloat(ctx.answers.molarityB) || ((((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0) * 0.5 * 1000.0) / ctx.pipetteVol);
+        const molarity = parseFloat(getAnswerValue(ctx.answers, 'molarityB', 'step_d')) || ((((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0) * moleRatio * 1000.0) / ctx.pipetteVol);
         return molarity * pureRfm;
       },
       check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
       feedbackSuccess: (val) => `✓ Correct: Pure mass = ${val} g.`,
       feedbackFail: (ctx, expTheo) => `Formula: Molarity × RFM (${pureRfm}) = ${expTheo.toFixed(2)} g.`,
-      working: (ctx) => `<b>(e) Mass of pure Na₂CO₃ in 1 dm³:</b> Molarity × 106.0 = <b>${(((((ctx.trueAcidMolarity * ctx.v1) / 1000.0) * 0.5 * 1000.0) / ctx.pipetteVol) * pureRfm).toFixed(2)} g</b>`
+      working: (ctx) => `<b>(e) Mass of pure ${soluteName} in 1 dm³:</b> Molarity × ${pureRfm.toFixed(1)} = <b>${(((((ctx.trueAcidMolarity * ctx.v1) / 1000.0) * moleRatio * 1000.0) / ctx.pipetteVol) * pureRfm).toFixed(2)} g</b>`
     },
     {
       id: 'step_f',
       letter: 'f',
       field: 'percentagePurity',
-      label: `Determine the percentage purity of the commercial sodium carbonate sample (Sample mass = ${totalSampleMass.toFixed(2)} g)`,
+      label: `Determine the percentage purity of the commercial sample (Sample mass = ${totalSampleMass.toFixed(2)} g)`,
       marks: 1.5,
       marksLabel: '(1.5 Marks)',
       placeholder: 'e.g. 92.6',
       step: '0.1',
       unit: '%',
-      calcTheoretical: (ctx) => ((((((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0) * 0.5 * 1000.0) / ctx.pipetteVol) * pureRfm) / totalSampleMass) * 100.0,
+      calcTheoretical: (ctx) => ((((((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0) * moleRatio * 1000.0) / ctx.pipetteVol) * pureRfm) / totalSampleMass) * 100.0,
       calcEcf: (ctx) => {
-        const pureMass = parseFloat(ctx.answers.massPure) || ((((((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0) * 0.5 * 1000.0) / ctx.pipetteVol) * pureRfm));
+        const pureMass = parseFloat(getAnswerValue(ctx.answers, 'massPure', 'step_e')) || ((((((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0) * moleRatio * 1000.0) / ctx.pipetteVol) * pureRfm));
         return (pureMass / totalSampleMass) * 100.0;
       },
       check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) <= 1.2) || (Math.abs(val - expEcf) <= 1.2),
       feedbackSuccess: (val) => `✓ Correct! Percentage purity = ${val.toFixed(1)}%.`,
       feedbackFail: (ctx, expTheo) => `Formula: (Mass of pure sample / Total sample mass ${totalSampleMass}) × 100% = ${expTheo.toFixed(1)}%.`,
-      working: (ctx) => `<b>(f) Percentage Purity:</b> (Pure Mass / ${totalSampleMass.toFixed(2)} g) × 100% = <b>${(((((((ctx.trueAcidMolarity * ctx.v1) / 1000.0) * 0.5 * 1000.0) / ctx.pipetteVol) * pureRfm) / totalSampleMass) * 100.0).toFixed(1)}%</b>`
+      working: (ctx) => `<b>(f) Percentage Purity:</b> (Pure Mass / ${totalSampleMass.toFixed(2)} g) × 100% = <b>${(((((((ctx.trueAcidMolarity * ctx.v1) / 1000.0) * moleRatio * 1000.0) / ctx.pipetteVol) * pureRfm) / totalSampleMass) * 100.0).toFixed(1)}%</b>`
     }
   ];
 }
@@ -402,7 +420,7 @@ function createRamMetalQuestions(q1Config) {
       unit: 'moles of HNO₃',
       calcTheoretical: (ctx) => (ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0,
       calcEcf: (ctx) => {
-        const v1 = parseFloat(ctx.answers.avgTitre) || ctx.trueTitre;
+        const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_a')) || ctx.trueTitre;
         return (ctx.trueAcidMolarity * v1) / 1000.0;
       },
       check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
@@ -422,7 +440,7 @@ function createRamMetalQuestions(q1Config) {
       unit: 'moles of M₂CO₃',
       calcTheoretical: (ctx) => ((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0) * 0.5,
       calcEcf: (ctx) => {
-        const ma = parseFloat(ctx.answers.molesA) || ((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0);
+        const ma = parseFloat(getAnswerValue(ctx.answers, 'molesA', 'step_b')) || ((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0);
         return ma * 0.5;
       },
       check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
@@ -442,7 +460,7 @@ function createRamMetalQuestions(q1Config) {
       unit: 'mol/dm³ (M)',
       calcTheoretical: (ctx) => ctx.trueBaseMolarity,
       calcEcf: (ctx) => {
-        const mb = parseFloat(ctx.answers.molesB) || (((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0) * 0.5);
+        const mb = parseFloat(getAnswerValue(ctx.answers, 'molesB', 'step_c')) || (((ctx.trueAcidMolarity * ctx.trueTitre) / 1000.0) * 0.5);
         return (mb * 1000.0) / ctx.pipetteVol;
       },
       check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
@@ -462,7 +480,7 @@ function createRamMetalQuestions(q1Config) {
       unit: 'g/mol',
       calcTheoretical: (ctx) => soluteMass / ctx.trueBaseMolarity,
       calcEcf: (ctx) => {
-        const molarity = parseFloat(ctx.answers.molarityB) || ctx.trueBaseMolarity;
+        const molarity = parseFloat(getAnswerValue(ctx.answers, 'molarityB', 'step_d')) || ctx.trueBaseMolarity;
         return soluteMass / (molarity || 0.05);
       },
       check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
@@ -482,7 +500,7 @@ function createRamMetalQuestions(q1Config) {
       unit: 'g/mol (RAM)',
       calcTheoretical: (ctx) => ((soluteMass / ctx.trueBaseMolarity) - 60.0) / 2.0,
       calcEcf: (ctx) => {
-        const rfm = parseFloat(ctx.answers.rfmCarbonate) || (soluteMass / ctx.trueBaseMolarity);
+        const rfm = parseFloat(getAnswerValue(ctx.answers, 'rfmCarbonate', 'step_e')) || (soluteMass / ctx.trueBaseMolarity);
         return (rfm - 60.0) / 2.0;
       },
       check: (val, ctx, expTheo, expEcf) => Math.abs(val - expTheo) <= 1.0 || Math.abs(val - expEcf) <= 1.0,
@@ -1163,6 +1181,233 @@ const COMPOSITE_EXAM_PRESETS = {
         }
       ]
     }
+  },
+
+  // ── Series 2023: Official KCSE 2023 Standard Chemistry Practical (Paper 233/3) ──
+  series_2023: {
+    id: 'series_2023',
+    seriesKey: 'series_2023',
+    seriesNumber: 2023,
+    title: 'KCSE 2023 Standard Chemistry Practical Examination',
+    badgeText: 'KCSE 2023 Past National Paper · Ethanedioic Acid & Hexene Analysis',
+    durationMinutes: 135,
+    q1: {
+      type: 'titration',
+      calcType: 'standard_molarity',
+      title: 'Question 1: Volumetric Analysis (15.0 Marks)',
+      solutionA: '0.050 M Hydrated Ethanedioic Acid (H₂C₂O₄·2H₂O)',
+      solutionB: 'Sodium Hydroxide (NaOH) containing 4.00 g/dm³',
+      acidFormula: 'H2C2O4',
+      baseFormula: 'NaOH',
+      indicator: 'Phenolphthalein',
+      pipetteVolume: 25.0,
+      trueAcidMolarity: 0.050,
+      trueBaseMolarity: 0.100,
+      trueTitre: 25.00,
+      moleRatioAcid: 1,
+      moleRatioBase: 2,
+      acidRfm: 126.0,
+      baseRfm: 40.0,
+      titrantColor: '#38BDF8',
+      flaskBaseColor: 'rgba(56,189,248,0.25)',
+      flaskIndicatorColor: 'rgba(236,72,153,0.85)',
+      endpointColor: 'rgba(255,255,255,0.35)',
+      overtitratedColor: 'rgba(255,255,255,0.20)',
+      equation: 'H₂C₂O₄(aq) + 2NaOH(aq) → Na₂C₂O₄(aq) + 2H₂O(l)',
+      instructions: 'Pipette 25.0 cm³ of Solution B into a conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with Solution A until the pink color discharges sharply to colorless.',
+      questions: createStandardTitrationQuestions({ acidRfm: 126.0, baseRfm: 40.0, pipetteVolume: 25.0, moleRatioAcid: 1, moleRatioBase: 2 })
+    },
+    q2: {
+      type: 'qualitative_single',
+      title: 'Question 2: Inorganic Salt Qualitative Analysis (15.0 Marks)',
+      sampleName: 'Solid Y',
+      sampleDesc: 'A pure white inorganic crystalline salt containing one cation and one anion.',
+      trueSaltKey: 'Ca(NO3)2',
+      trueSaltName: 'Calcium Nitrate — Ca(NO₃)₂',
+      trueCation: 'Ca2+',
+      trueAnion: 'NO3-',
+      tests: [
+        {
+          id: 'q2_heat',
+          prompt: '(i) Heat a half-spatula of Solid Y strongly in a dry hard-glass test tube and test any gases evolved with moist litmus and a glowing splint.',
+          correctObs: 'Solid decrepitates and melts; brown fumes evolved that turn moist blue litmus red; gas rekindles a glowing wooden splint; white residue remains',
+          correctInf: 'Thermal decomposition of nitrate salt; NO₂ and O₂ gases evolved; NO₃⁻ present'
+        },
+        {
+          id: 'q2_appearance',
+          prompt: '(ii) Dissolve the remainder of Solid Y in about 10 cm³ of distilled water in a boiling tube. Divide the resulting solution into 4 portions.',
+          correctObs: 'White crystalline solid dissolves completely to form a clear, colorless solution',
+          correctInf: 'Soluble salt; absence of colored transition metal ions (Fe²⁺, Fe³⁺, Cu²⁺ absent)'
+        },
+        {
+          id: 'q2_naoh',
+          prompt: '(iii) To portion 1, add 2M NaOH dropwise until in excess.',
+          correctObs: 'White precipitate formed, insoluble in excess sodium hydroxide',
+          correctInf: 'Ca²⁺ or Mg²⁺ present'
+        },
+        {
+          id: 'q2_nh3',
+          prompt: '(iv) To portion 2, add 2M aqueous ammonia (NH₃) dropwise until in excess.',
+          correctObs: 'No precipitate formed with drops or with excess aqueous ammonia',
+          correctInf: 'Ca²⁺ confirmed present'
+        },
+        {
+          id: 'q2_anion',
+          prompt: '(v) To portion 3, add 3–4 drops of dilute sulfuric acid (H₂SO₄).',
+          correctObs: 'White precipitate formed (sparingly soluble CaSO₄)',
+          correctInf: 'Ca²⁺ confirmed present'
+        }
+      ]
+    },
+    q3: {
+      type: 'organic',
+      title: 'Question 3: Organic Functional Group Analysis (10.0 Marks)',
+      sampleName: 'Liquid Z',
+      sampleDesc: 'A clear, colorless, volatile organic liquid.',
+      trueOrganicKey: 'Hex-1-ene',
+      trueOrganicName: 'Hex-1-ene — C₆H₁₂',
+      trueFunctionalGroup: 'Alkene (>C=C<)',
+      tests: [
+        {
+          id: 'q3_ignition',
+          prompt: '(i) Place 2 drops of Liquid Z on a metallic spatula and ignite using a Bunsen flame.',
+          correctObs: 'Burns with a luminous, highly smoky and sooty yellow flame; leaves carbon residue',
+          correctInf: 'Unsaturated organic compound / high carbon:hydrogen ratio compound (>C=C< or -C≡C-)'
+        },
+        {
+          id: 'q3_litmus',
+          prompt: '(ii) Add 2 cm³ of distilled water to 2 cm³ of Liquid Z, shake, and test with moist red and blue litmus paper.',
+          correctObs: 'Forms two immiscible layers with liquid Z floating on water; no color change on either blue or red litmus paper',
+          correctInf: 'Neutral organic substance; insoluble non-polar hydrocarbon'
+        },
+        {
+          id: 'q3_kmno4',
+          prompt: '(iii) To 2 cm³ of Liquid Z, add 3 drops of Bromine water in the dark and shake thoroughly.',
+          correctObs: 'Reddish-brown bromine water is rapidly decolorized (turns colorless)',
+          correctInf: 'Unsaturated compound / Alkene (>C=C<) present by electrophilic addition'
+        },
+        {
+          id: 'q3_nahco3',
+          prompt: '(iv) To 2 cm³ of Liquid Z, add 3 drops of acidified Potassium Manganate(VII) (KMnO₄) and shake.',
+          correctObs: 'Purple acidified KMnO₄ solution is rapidly decolorized',
+          correctInf: 'Alkene (>C=C<) confirmed present'
+        }
+      ]
+    }
+  },
+
+  // ── Series 2024: Official KCSE 2024 Standard Chemistry Practical (Paper 233/3) ──
+  series_2024: {
+    id: 'series_2024',
+    seriesKey: 'series_2024',
+    seriesNumber: 2024,
+    title: 'KCSE 2024 Standard Chemistry Practical Examination',
+    badgeText: 'KCSE 2024 Past National Paper · Percentage Purity & Alkanol Oxidation',
+    durationMinutes: 135,
+    q1: {
+      type: 'titration',
+      calcType: 'percentage_purity',
+      title: 'Question 1: Volumetric Analysis (15.0 Marks)',
+      solutionA: '0.100 M Hydrochloric Acid (HCl)',
+      solutionB: 'Impure Sodium Hydrogen Carbonate (NaHCO₃) containing 10.00 g/dm³',
+      acidFormula: 'HCl',
+      baseFormula: 'NaHCO3',
+      indicator: 'Methyl Orange',
+      pipetteVolume: 25.0,
+      trueAcidMolarity: 0.100,
+      trueBaseMolarity: 0.100,
+      trueTitre: 25.00,
+      moleRatioAcid: 1,
+      moleRatioBase: 1,
+      acidRfm: 36.5,
+      pureRfm: 84.0,
+      impureMassPerLiter: 10.00,
+      titrantColor: '#38BDF8',
+      flaskBaseColor: 'rgba(251,191,36,0.25)',
+      flaskIndicatorColor: 'rgba(251,191,36,0.85)',
+      endpointColor: 'rgba(239,68,68,0.7)',
+      overtitratedColor: 'rgba(185,28,28,0.95)',
+      equation: 'HCl(aq) + NaHCO₃(aq) → NaCl(aq) + H₂O(l) + CO₂(g)',
+      instructions: 'Pipette 25.0 cm³ of Solution B into a conical flask. Add 2 drops of methyl orange indicator. Titrate with Solution A until the yellow solution turns sharply to orange-red.',
+      questions: createPercentagePurityQuestions({ impureMassPerLiter: 10.00, pureRfm: 84.0, pipetteVolume: 25.0, moleRatioAcid: 1, moleRatioBase: 1, baseFormula: 'NaHCO₃' })
+    },
+    q2: {
+      type: 'qualitative_single',
+      title: 'Question 2: Inorganic Salt Qualitative Analysis (15.0 Marks)',
+      sampleName: 'Solid Y',
+      sampleDesc: 'A brownish-yellow crystalline inorganic salt containing one cation and one anion.',
+      trueSaltKey: 'FeCl3',
+      trueSaltName: 'Iron(III) Chloride — FeCl₃',
+      trueCation: 'Fe3+',
+      trueAnion: 'Cl-',
+      tests: [
+        {
+          id: 'q2_heat',
+          prompt: '(i) Heat a half-spatula of Solid Y in a dry test tube gently, then strongly.',
+          correctObs: 'Brown crystalline solid melts and condenses as dark brown fumes on upper cooler walls; acidic fumes evolve that turn moist blue litmus red',
+          correctInf: 'Hydrated transition metal halide; FeCl₃ sublimes and decomposes'
+        },
+        {
+          id: 'q2_appearance',
+          prompt: '(ii) Dissolve the remainder of Solid Y in about 10 cm³ of distilled water in a boiling tube. Divide into 4 portions.',
+          correctObs: 'Brown-yellow crystalline solid dissolves completely to form a yellow-brown solution',
+          correctInf: 'Soluble transition metal salt; Fe³⁺ likely present'
+        },
+        {
+          id: 'q2_naoh',
+          prompt: '(iii) To portion 1, add 2M NaOH dropwise until in excess.',
+          correctObs: 'Reddish-brown precipitate formed, insoluble in excess sodium hydroxide',
+          correctInf: 'Fe³⁺ present (Fe(OH)₃ formed)'
+        },
+        {
+          id: 'q2_nh3',
+          prompt: '(iv) To portion 2, add 2M aqueous ammonia dropwise until in excess.',
+          correctObs: 'Reddish-brown precipitate formed, insoluble in excess aqueous ammonia',
+          correctInf: 'Fe³⁺ confirmed present'
+        },
+        {
+          id: 'q2_anion',
+          prompt: '(v) To portion 3, add 3 drops of dilute HNO₃ followed by AgNO₃ solution.',
+          correctObs: 'White precipitate formed, dissolves readily in aqueous ammonia',
+          correctInf: 'Cl⁻ confirmed present (AgCl formed)'
+        }
+      ]
+    },
+    q3: {
+      type: 'organic',
+      title: 'Question 3: Organic Functional Group Analysis (10.0 Marks)',
+      sampleName: 'Liquid Z',
+      sampleDesc: 'A clear, colorless liquid with a characteristic sweet, pleasant spirituous odor.',
+      trueOrganicKey: 'Butan-1-ol',
+      trueOrganicName: 'Butan-1-ol — CH₃(CH₂)₃OH',
+      trueFunctionalGroup: 'Alkanol (-OH)',
+      tests: [
+        {
+          id: 'q3_ignition',
+          prompt: '(i) Place 2 drops of Liquid Z on a metallic spatula and ignite using a Bunsen flame.',
+          correctObs: 'Burns with a clean, non-sooty pale blue flame; no smoke',
+          correctInf: 'Saturated organic compound / low carbon-to-hydrogen ratio'
+        },
+        {
+          id: 'q3_litmus',
+          prompt: '(ii) Add 2 cm³ of distilled water to 2 cm³ of Liquid Z, shake, and test with moist red and blue litmus paper.',
+          correctObs: 'Dissolves partially; no color change on either blue or red litmus paper',
+          correctInf: 'Neutral organic substance; absence of carboxylic acid and amine'
+        },
+        {
+          id: 'q3_kmno4',
+          prompt: '(iii) To 2 cm³ of Liquid Z, add 3 drops of acidified Potassium Dichromate(VI) (K₂Cr₂O₇) and warm gently in a water bath.',
+          correctObs: 'Orange potassium dichromate(VI) turns green; a pleasant fruity pungent smell is produced',
+          correctInf: 'Primary or secondary alkanol (—OH) present; Cr₂O₇²⁻ reduced to Cr³⁺'
+        },
+        {
+          id: 'q3_nahco3',
+          prompt: '(iv) To 2 cm³ of Liquid Z, add a half spatula-end of solid Sodium Hydrogen Carbonate (NaHCO₃).',
+          correctObs: 'No effervescence / no bubbles of gas evolved',
+          correctInf: 'Carboxylic acid (—COOH) absent; Alkanol (—OH) confirmed present'
+        }
+      ]
+    }
   }
 };
 
@@ -1174,7 +1419,7 @@ COMPOSITE_EXAM_PRESETS.standard_2 = COMPOSITE_EXAM_PRESETS.series_2;
  * Generate a dynamic randomized KCSE Paper 3 practical exam
  */
 function generateRandomCompositePreset() {
-  const seriesKeys = ['series_1', 'series_2', 'series_3', 'series_4', 'series_5', 'series_6'];
+  const seriesKeys = ['series_1', 'series_2', 'series_3', 'series_4', 'series_5', 'series_6', 'series_2023', 'series_2024'];
   const q1PickKey = seriesKeys[Math.floor(Math.random() * seriesKeys.length)];
   const q2PickKey = seriesKeys[Math.floor(Math.random() * seriesKeys.length)];
   const q3PickKey = seriesKeys[Math.floor(Math.random() * seriesKeys.length)];
@@ -1268,6 +1513,38 @@ function getSaltPresetDefinition(saltKey) {
       ]
     };
   }
+  if (key.includes('CA') || key.includes('CALCIUM')) {
+    return {
+      trueSaltKey: 'Ca(NO3)2',
+      trueSaltName: 'Calcium Nitrate — Ca(NO₃)₂',
+      trueCation: 'Ca2+',
+      trueAnion: 'NO3-',
+      sampleDesc: 'A pure white inorganic crystalline salt containing one cation and one anion.',
+      tests: [
+        { id: 'q2_heat', prompt: '(i) Heat a half-spatula of Solid Y strongly in a dry hard-glass test tube and test any gases evolved with moist litmus and a glowing splint.', correctObs: 'Solid decrepitates and melts; brown fumes evolved that turn moist blue litmus red; gas rekindles a glowing wooden splint; white residue remains', correctInf: 'Thermal decomposition of nitrate salt; NO₂ and O₂ gases evolved; NO₃⁻ present' },
+        { id: 'q2_appearance', prompt: '(ii) Dissolve the remainder of Solid Y in about 10 cm³ of distilled water in a boiling tube. Divide the resulting solution into 4 portions.', correctObs: 'White crystalline solid dissolves completely to form a clear, colorless solution', correctInf: 'Soluble salt; absence of colored transition metal ions (Fe²⁺, Fe³⁺, Cu²⁺ absent)' },
+        { id: 'q2_naoh', prompt: '(iii) To portion 1, add 2M NaOH dropwise until in excess.', correctObs: 'White precipitate formed, insoluble in excess sodium hydroxide', correctInf: 'Ca²⁺ or Mg²⁺ present' },
+        { id: 'q2_nh3', prompt: '(iv) To portion 2, add 2M aqueous ammonia (NH₃) dropwise until in excess.', correctObs: 'No precipitate formed with drops or with excess aqueous ammonia', correctInf: 'Ca²⁺ confirmed present' },
+        { id: 'q2_anion', prompt: '(v) To portion 3, add 3–4 drops of dilute sulfuric acid (H₂SO₄).', correctObs: 'White precipitate formed (sparingly soluble CaSO₄)', correctInf: 'Ca²⁺ confirmed present' }
+      ]
+    };
+  }
+  if (key.includes('FE') && (key.includes('CL') || key.includes('3'))) {
+    return {
+      trueSaltKey: 'FeCl3',
+      trueSaltName: 'Iron(III) Chloride — FeCl₃',
+      trueCation: 'Fe3+',
+      trueAnion: 'Cl-',
+      sampleDesc: 'A brownish-yellow crystalline inorganic salt containing one cation and one anion.',
+      tests: [
+        { id: 'q2_heat', prompt: '(i) Heat a half-spatula of Solid Y in a dry test tube gently, then strongly.', correctObs: 'Brown crystalline solid melts and condenses as dark brown fumes on upper cooler walls; acidic fumes evolve that turn moist blue litmus red', correctInf: 'Hydrated transition metal halide; FeCl₃ sublimes and decomposes' },
+        { id: 'q2_appearance', prompt: '(ii) Dissolve the remainder of Solid Y in about 10 cm³ of distilled water in a boiling tube. Divide into 4 portions.', correctObs: 'Brown-yellow crystalline solid dissolves completely to form a yellow-brown solution', correctInf: 'Soluble transition metal salt; Fe³⁺ likely present' },
+        { id: 'q2_naoh', prompt: '(iii) To portion 1, add 2M NaOH dropwise until in excess.', correctObs: 'Reddish-brown precipitate formed, insoluble in excess sodium hydroxide', correctInf: 'Fe³⁺ present (Fe(OH)₃ formed)' },
+        { id: 'q2_nh3', prompt: '(iv) To portion 2, add 2M aqueous ammonia dropwise until in excess.', correctObs: 'Reddish-brown precipitate formed, insoluble in excess aqueous ammonia', correctInf: 'Fe³⁺ confirmed present' },
+        { id: 'q2_anion', prompt: '(v) To portion 3, add 3 drops of dilute HNO₃ followed by AgNO₃ solution.', correctObs: 'White precipitate formed, dissolves readily in aqueous ammonia', correctInf: 'Cl⁻ confirmed present (AgCl formed)' }
+      ]
+    };
+  }
   if (key.includes('NH4') || key.includes('AMMONIUM')) {
     return {
       trueSaltKey: 'NH4Cl',
@@ -1314,16 +1591,30 @@ function getOrganicPresetDefinition(organicKey) {
       ]
     };
   }
-  if (key.includes('alkene') || key.includes('cyclohexene') || key.includes('unsaturated')) {
+  if (key.includes('hex') || key.includes('alkene') || key.includes('cyclohexene') || key.includes('unsaturated')) {
+    const isHexene = key.includes('hex');
     return {
-      trueOrganicKey: 'Cyclohexene',
+      trueOrganicKey: isHexene ? 'Hex-1-ene' : 'Cyclohexene',
       trueFunctionalGroup: 'Alkene (>C=C<)',
       sampleDesc: 'A clear, volatile organic liquid.',
       tests: [
-        { id: 'q3_ignition', prompt: '(i) Place 2 drops on a spatula and ignite in a Bunsen flame.', correctObs: 'Burns with a luminous, highly smoky and sooty yellow flame', correctInf: 'Unsaturated compound / high carbon:hydrogen ratio' },
+        { id: 'q3_ignition', prompt: '(i) Place 2 drops on a spatula and ignite in a Bunsen flame.', correctObs: 'Burns with a luminous, highly smoky and sooty yellow flame; leaves carbon residue', correctInf: 'Unsaturated compound / high carbon:hydrogen ratio' },
         { id: 'q3_litmus', prompt: '(ii) Test with moist blue and red litmus paper.', correctObs: 'No color change on either litmus paper', correctInf: 'Neutral hydrocarbon' },
-        { id: 'q3_kmno4', prompt: '(iii) Add 3 drops of acidified KMnO₄ and shake thoroughly.', correctObs: 'Purple acidified KMnO₄ solution is rapidly decolorized', correctInf: 'Alkene / unsaturation (>C=C<) present' },
-        { id: 'q3_nahco3', prompt: '(iv) Add 1 cm³ of Bromine water in the dark.', correctObs: 'Reddish-brown bromine water is rapidly decolorized', correctInf: 'Alkene (>C=C<) confirmed present by addition' }
+        { id: 'q3_kmno4', prompt: '(iii) Add 3 drops of Bromine water in the dark.', correctObs: 'Reddish-brown bromine water is rapidly decolorized', correctInf: 'Alkene (>C=C<) confirmed present by addition' },
+        { id: 'q3_nahco3', prompt: '(iv) Add 3 drops of acidified KMnO₄ and shake thoroughly.', correctObs: 'Purple acidified KMnO₄ solution is rapidly decolorized', correctInf: 'Alkene / unsaturation (>C=C<) present' }
+      ]
+    };
+  }
+  if (key.includes('butan')) {
+    return {
+      trueOrganicKey: 'Butan-1-ol',
+      trueFunctionalGroup: 'Alkanol (-OH)',
+      sampleDesc: 'A clear, colorless liquid with a characteristic sweet, pleasant spirituous odor.',
+      tests: [
+        { id: 'q3_ignition', prompt: '(i) Place 2 drops of Liquid Z on a metallic spatula and ignite using a Bunsen flame.', correctObs: 'Burns with a clean, non-sooty pale blue flame; no smoke', correctInf: 'Saturated organic compound / low carbon-to-hydrogen ratio' },
+        { id: 'q3_litmus', prompt: '(ii) Add 2 cm³ of distilled water, shake, and test with moist red and blue litmus paper.', correctObs: 'Dissolves partially; no color change on either blue or red litmus paper', correctInf: 'Neutral organic substance; absence of carboxylic acid and amine' },
+        { id: 'q3_kmno4', prompt: '(iii) Add 3 drops of acidified Potassium Dichromate(VI) (K₂Cr₂O₇) and warm gently.', correctObs: 'Orange potassium dichromate(VI) turns green; a pleasant fruity pungent smell is produced', correctInf: 'Primary or secondary alkanol (—OH) present; Cr₂O₇²⁻ reduced to Cr³⁺' },
+        { id: 'q3_nahco3', prompt: '(iv) Add a half spatula-end of solid Sodium Hydrogen Carbonate (NaHCO₃).', correctObs: 'No effervescence / no bubbles of gas evolved', correctInf: 'Carboxylic acid (—COOH) absent; Alkanol (—OH) confirmed present' }
       ]
     };
   }
@@ -1358,13 +1649,7 @@ class CompositeExamEngine {
     ];
 
     // Generic answers repository (supports arbitrary sub-questions)
-    this.q1Answers = {
-      avgTitre: '',
-      molesB: '',
-      molesA: '',
-      molarityA: '',
-      concGrams: ''
-    };
+    this.q1Answers = {};
 
     // Q2 Qualitative State
     this.q2Obs = {};
@@ -1613,7 +1898,7 @@ class CompositeExamEngine {
     // 4. Principles of Averaging (PA) — 1.0 Mark
     // Titres to average must be concordant (within ±0.20 cm³ of each other)
     const checkedConcordant = this.q1Trials.filter(t => t.recorded && t.concordant && t.used > 0);
-    const candidateAvgTitre = parseFloat(this.q1Answers.avgTitre || this.q1Answers.step_a);
+    const candidateAvgTitre = parseFloat(getAnswerValue(this.q1Answers, 'avgTitre', 'step_a'));
     
     // Detect concordant subset
     let concordantSet = checkedConcordant.length >= 2 ? checkedConcordant : [];
@@ -1730,12 +2015,12 @@ class CompositeExamEngine {
       answers: this.q1Answers,
       t1: this.q1Trials[0]?.used || trueTitre,
       t2: this.q1Trials[1]?.used || trueTitre,
-      v1: parseFloat(this.q1Answers.avgTitre || this.q1Answers.step_a) || expAvgFromTrials
+      v1: parseFloat(getAnswerValue(this.q1Answers, 'avgTitre', 'step_a')) || expAvgFromTrials
     };
 
     questionsList.forEach(q => {
       const fieldKey = q.field || q.id;
-      const rawAns = this.q1Answers[fieldKey] !== undefined ? this.q1Answers[fieldKey] : this.q1Answers[q.id];
+      const rawAns = getAnswerValue(this.q1Answers, fieldKey, q.id);
       const val = parseFloat(rawAns);
 
       const expTheo = typeof q.calcTheoretical === 'function' ? q.calcTheoretical(evalCtx) : null;
@@ -2240,6 +2525,7 @@ if (typeof window !== 'undefined') {
   window.createWaterOfCrystallizationQuestions = createWaterOfCrystallizationQuestions;
   window.createPercentagePurityQuestions = createPercentagePurityQuestions;
   window.createRamMetalQuestions = createRamMetalQuestions;
+  window.getAnswerValue = getAnswerValue;
 }
 
 if (typeof module !== 'undefined' && module.exports) {
@@ -2250,6 +2536,7 @@ if (typeof module !== 'undefined' && module.exports) {
     createStandardTitrationQuestions,
     createWaterOfCrystallizationQuestions,
     createPercentagePurityQuestions,
-    createRamMetalQuestions
+    createRamMetalQuestions,
+    getAnswerValue
   };
 }

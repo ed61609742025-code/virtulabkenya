@@ -1635,7 +1635,6 @@ class CompositeExamEngine {
   constructor(config = null) {
     this.preset = COMPOSITE_EXAM_PRESETS.series_1;
     this.mode = 'strict'; // 'strict' (135 min timed) or 'guided' (with hints)
-    if (config) this.applyConfig(config);
 
     // Q1 Workbench State
     this.q1BuretteReading = 0.00;
@@ -1646,6 +1645,19 @@ class CompositeExamEngine {
       { trial: 1, initial: 0.00, final: 0.00, used: 0.00, concordant: false, recorded: false },
       { trial: 2, initial: 0.00, final: 0.00, used: 0.00, concordant: false, recorded: false },
       { trial: 3, initial: 0.00, final: 0.00, used: 0.00, concordant: false, recorded: false }
+    ];
+
+    // Multi-procedure titration state (e.g. Procedure I standardization + Procedure II solubility)
+    this.activeProcedureIndex = 0;
+    this.procedureStates = [
+      {
+        trials: [
+          { trial: 1, initial: 0.00, final: 0.00, used: 0.00, concordant: false, recorded: false },
+          { trial: 2, initial: 0.00, final: 0.00, used: 0.00, concordant: false, recorded: false },
+          { trial: 3, initial: 0.00, final: 0.00, used: 0.00, concordant: false, recorded: false }
+        ],
+        answers: {}
+      }
     ];
 
     // Generic answers repository (supports arbitrary sub-questions)
@@ -1663,6 +1675,8 @@ class CompositeExamEngine {
     this.q3FunctionalGroupChoice = '';
 
     this.startTime = Date.now();
+
+    if (config) this.applyConfig(config);
   }
 
   applyConfig(config) {
@@ -1692,6 +1706,21 @@ class CompositeExamEngine {
 
     if (config.q1) {
       Object.assign(this.preset.q1, config.q1);
+
+      // Support multi-procedure double titrations (e.g. Procedure I & Procedure II)
+      if (Array.isArray(config.q1.procedures) && config.q1.procedures.length > 0) {
+        this.preset.q1.hasMultipleProcedures = true;
+        this.preset.q1.procedures = config.q1.procedures;
+        this.procedureStates = config.q1.procedures.map((proc, pIdx) => ({
+          trials: [
+            { trial: 1, initial: 0.00, final: 0.00, used: 0.00, concordant: false, recorded: false },
+            { trial: 2, initial: 0.00, final: 0.00, used: 0.00, concordant: false, recorded: false },
+            { trial: 3, initial: 0.00, final: 0.00, used: 0.00, concordant: false, recorded: false }
+          ],
+          answers: {}
+        }));
+      }
+
       if (config.q1.ratioA != null) this.preset.q1.moleRatioAcid = Number(config.q1.ratioA);
       if (config.q1.ratioB != null) this.preset.q1.moleRatioBase = Number(config.q1.ratioB);
       if (config.q1.acidRfm != null) {
@@ -1754,7 +1783,18 @@ class CompositeExamEngine {
   }
 
   // ── Q1 Titration Workbench Operations ────────────────────────────────
-  recordTrial(trialIndex, finalVol, initVol = 0.00) {
+  recordTrial(trialIndex, finalVol, initVol = 0.00, procIdx = null) {
+    const pIndex = (procIdx != null) ? procIdx : (this.activeProcedureIndex || 0);
+    if (this.procedureStates && this.procedureStates[pIndex]) {
+      const pTrials = this.procedureStates[pIndex].trials;
+      if (trialIndex >= 1 && trialIndex <= pTrials.length) {
+        const pt = pTrials[trialIndex - 1];
+        pt.initial = parseFloat(initVol) || 0.00;
+        pt.final = parseFloat(finalVol) || 0.00;
+        pt.used = parseFloat((pt.final - pt.initial).toFixed(2));
+        pt.recorded = true;
+      }
+    }
     if (trialIndex < 1 || trialIndex > 3) return;
     const t = this.q1Trials[trialIndex - 1];
     t.initial = parseFloat(initVol) || 0.00;
@@ -1764,25 +1804,57 @@ class CompositeExamEngine {
     return t;
   }
 
-  setConcordant(trialIndex, isConcordant) {
+  setConcordant(trialIndex, isConcordant, procIdx = null) {
+    const pIndex = (procIdx != null) ? procIdx : (this.activeProcedureIndex || 0);
+    if (this.procedureStates && this.procedureStates[pIndex]) {
+      const pTrials = this.procedureStates[pIndex].trials;
+      if (trialIndex >= 1 && trialIndex <= pTrials.length) {
+        pTrials[trialIndex - 1].concordant = !!isConcordant;
+      }
+    }
     if (trialIndex < 1 || trialIndex > 3) return;
     this.q1Trials[trialIndex - 1].concordant = !!isConcordant;
   }
 
-  setQ1Answer(field, value) {
+  setQ1Answer(field, value, procIdx = null) {
+    const pIndex = (procIdx != null) ? procIdx : (this.activeProcedureIndex || 0);
+    if (this.procedureStates && this.procedureStates[pIndex]) {
+      this.procedureStates[pIndex].answers[field] = value;
+    }
     this.q1Answers[field] = value;
   }
 
-  // ── KNEC Scoring Algorithm with Error Carried Forward (e.c.f.) ─────────
-  calculateQ1Score() {
+  recordProcedureTrial(procIdx, trialIndex, finalVol, initVol = 0.00) {
+    return this.recordTrial(trialIndex, finalVol, initVol, procIdx);
+  }
+
+  setProcedureConcordant(procIdx, trialIndex, isConcordant) {
+    this.setConcordant(trialIndex, isConcordant, procIdx);
+  }
+
+  setProcedureAnswer(procIdx, field, value) {
+    this.setQ1Answer(field, value, procIdx);
+  }
+
+  getProcedureTrials(procIdx) {
+    return (this.procedureStates && this.procedureStates[procIdx] && this.procedureStates[procIdx].trials) || this.q1Trials;
+  }
+
+  getProcedureAnswers(procIdx) {
+    return (this.procedureStates && this.procedureStates[procIdx] && this.procedureStates[procIdx].answers) || this.q1Answers;
+  }
+
+  // ── Modular Single Procedure Evaluator (KNEC Standards) ──────────────
+  evaluateSingleTitrationProcedure(proc, trials, answers, prefix = 'Q1') {
     let tableScore = 0.0;
     let calcScore = 0.0;
     const rubric = [];
     const modelAnswers = {};
 
-    const recordedTrials = this.q1Trials.filter(t => t.recorded && t.used > 0);
-    const trueTitre = Number(this.preset.q1.trueTitre) || 25.00;
-    modelAnswers.trueTitre = trueTitre;
+    const recordedTrials = (trials || []).filter(t => t.recorded && t.used > 0);
+    const trueTitre = Number(proc.trueTitre) || 25.00;
+    const tableTitle = proc.tableTitle || `Table (${prefix})`;
+    modelAnswers[`${prefix}_trueTitre`] = trueTitre;
 
     // 1. Complete Table (CT) — 1.0 Mark
     let ctPenalty = 0.0;
@@ -1790,7 +1862,7 @@ class CompositeExamEngine {
     let hasArithError = false;
     let hasImpossible = false;
 
-    this.q1Trials.forEach(t => {
+    (trials || []).forEach(t => {
       if (t.recorded) {
         if (t.initial > t.final) hasInverted = true;
         const diff = Math.abs(t.used - Math.max(0, t.final - t.initial));
@@ -1809,18 +1881,18 @@ class CompositeExamEngine {
       ctMark = Math.max(0.0, 1.0 - ctPenalty);
       ctDetail = ctPenalty > 0
         ? `Penalized (0.5 Mk): 3 trials recorded but detected ${hasInverted ? 'inverted readings' : (hasArithError ? 'subtraction arithmetic discrepancy' : 'unrealistic values')}.`
-        : 'Full mark (1.0 Mk): All 3 titration trials completely recorded within realistic boundaries.';
+        : `Full mark (1.0 Mk): All 3 titration trials in ${tableTitle} completely recorded within realistic boundaries.`;
     } else if (recordedTrials.length === 2) {
       ctMark = Math.max(0.0, 0.5 - ctPenalty);
-      ctDetail = 'Partial mark (0.5 Mk): 2 trials recorded.';
+      ctDetail = `Partial mark (0.5 Mk): 2 trials recorded in ${tableTitle}.`;
     } else {
       ctMark = 0.0;
-      ctDetail = 'Incomplete (0.0 Mk): At least 2 titration trials are required by KNEC.';
+      ctDetail = `Incomplete (0.0 Mk): At least 2 titration trials are required in ${tableTitle}.`;
     }
     tableScore += ctMark;
     rubric.push({
-      code: 'CT',
-      item: 'Table 1 Completeness (CT)',
+      code: `${prefix}_CT`,
+      item: `${tableTitle} Completeness (CT)`,
       max: 1.0,
       mark: ctMark,
       pass: ctMark >= 1.0,
@@ -1828,11 +1900,9 @@ class CompositeExamEngine {
     });
 
     // 2. Use of Decimals (D) — 1.0 Mark
-    // KNEC Rule: Readings must be recorded consistently to 1 or 2 decimal places.
-    // If 2 d.p., the 2nd decimal digit MUST strictly be '0' or '5' (e.g. 21.40, 21.45).
     let decimalViolations = 0;
     let recordedCount = 0;
-    this.q1Trials.forEach(t => {
+    (trials || []).forEach(t => {
       if (t.recorded) {
         recordedCount++;
         const finStr = Number(t.final).toFixed(2);
@@ -1847,18 +1917,18 @@ class CompositeExamEngine {
     let dDetail = '';
     if (recordedCount >= 2 && decimalViolations === 0) {
       dMark = 1.0;
-      dDetail = 'Full mark (1.0 Mk): All burette readings consistently adhere to KNEC 2 d.p. convention ending in .00 or .05.';
+      dDetail = `Full mark (1.0 Mk): All burette readings in ${tableTitle} consistently adhere to KNEC 2 d.p. convention ending in .00 or .05.`;
     } else if (recordedCount >= 2) {
       dMark = 0.0;
-      dDetail = `0.0 Mark: ${decimalViolations} reading(s) violated KNEC precision rule (2nd decimal must terminate strictly in .0 or .5).`;
+      dDetail = `0.0 Mark: ${decimalViolations} reading(s) in ${tableTitle} violated KNEC precision rule (2nd decimal must terminate strictly in .0 or .5).`;
     } else {
       dMark = 0.0;
-      dDetail = '0.0 Mark: Incomplete titration trials.';
+      dDetail = `0.0 Mark: Incomplete titration trials in ${tableTitle}.`;
     }
     tableScore += dMark;
     rubric.push({
-      code: 'D',
-      item: 'Use of Decimals (D)',
+      code: `${prefix}_D`,
+      item: `${tableTitle} Decimals (D)`,
       max: 1.0,
       mark: dMark,
       pass: dMark === 1.0,
@@ -1866,7 +1936,6 @@ class CompositeExamEngine {
     });
 
     // 3. Accuracy vs School Value (AC) — 1.0 Mark
-    // Compares individual candidate titres to Teacher's / School Value (S.V.)
     let minDiff = 999.0;
     recordedTrials.forEach(t => {
       const d = Math.abs(t.used - trueTitre);
@@ -1887,8 +1956,8 @@ class CompositeExamEngine {
     }
     tableScore += acMark;
     rubric.push({
-      code: 'AC',
-      item: 'Titre Accuracy vs School Value (AC)',
+      code: `${prefix}_AC`,
+      item: `${tableTitle} Accuracy (AC)`,
       max: 1.0,
       mark: acMark,
       pass: acMark === 1.0,
@@ -1896,11 +1965,9 @@ class CompositeExamEngine {
     });
 
     // 4. Principles of Averaging (PA) — 1.0 Mark
-    // Titres to average must be concordant (within ±0.20 cm³ of each other)
-    const checkedConcordant = this.q1Trials.filter(t => t.recorded && t.concordant && t.used > 0);
-    const candidateAvgTitre = parseFloat(getAnswerValue(this.q1Answers, 'avgTitre', 'step_a'));
+    const checkedConcordant = (trials || []).filter(t => t.recorded && t.concordant && t.used > 0);
+    const candidateAvgTitre = parseFloat(getAnswerValue(answers, 'avgTitre', 'step_a') || getAnswerValue(answers, `${prefix}_avgTitre`, `${prefix}_step_a`));
     
-    // Detect concordant subset
     let concordantSet = checkedConcordant.length >= 2 ? checkedConcordant : [];
     if (concordantSet.length === 0 && recordedTrials.length >= 2) {
       if (recordedTrials.length === 3) {
@@ -1959,71 +2026,77 @@ class CompositeExamEngine {
     }
     tableScore += paMark;
     rubric.push({
-      code: 'PA',
-      item: 'Principles of Averaging (PA)',
+      code: `${prefix}_PA`,
+      item: `${tableTitle} Principles of Averaging (PA)`,
       max: 1.0,
       mark: paMark,
       pass: paMark >= 1.0,
       detail: paDetail
     });
 
-    // 5. Final Accuracy of Averaged Titre (FA) — 1.0 Mark
-    const finalTitreVal = !isNaN(candidateAvgTitre) && candidateAvgTitre > 0
-      ? candidateAvgTitre
-      : (concordantSet.length > 0 ? (concordantSet.reduce((a, b) => a + b.used, 0) / concordantSet.length) : 0);
-    const faDiff = Math.abs(finalTitreVal - trueTitre);
+    const maxTableMarks = proc.tableMarks != null ? Number(proc.tableMarks) : 5.0;
 
-    let faMark = 0.0;
-    let faDetail = '';
-    if (finalTitreVal > 0 && faDiff <= 0.10) {
-      faMark = 1.0;
-      faDetail = `Full mark (1.0 Mk): Candidate final average titre (${finalTitreVal.toFixed(2)} cm³) is within ±0.10 cm³ of School Value (${trueTitre.toFixed(2)} cm³).`;
-    } else if (finalTitreVal > 0 && faDiff <= 0.20) {
-      faMark = 0.5;
-      faDetail = `Partial mark (0.5 Mk): Candidate final average titre (${finalTitreVal.toFixed(2)} cm³) is within ±0.20 cm³ of School Value (${trueTitre.toFixed(2)} cm³).`;
-    } else {
-      faMark = 0.0;
-      faDetail = `0.0 Mark: Candidate average titre (${finalTitreVal.toFixed(2)} cm³) deviated by > ±0.20 cm³ from School Value (${trueTitre.toFixed(2)} cm³).`;
+    // 5. Final Accuracy of Averaged Titre (FA) — 1.0 Mark (Standard single-titration KNEC rubric)
+    if (maxTableMarks >= 5.0) {
+      let faMark = 0.0;
+      let faDetail = '';
+      const finalTitreVal = !isNaN(candidateAvgTitre) ? candidateAvgTitre : expAvgFromTrials;
+      const faDiff = Math.abs(finalTitreVal - trueTitre);
+      if (faDiff <= 0.10) {
+        faMark = 1.0;
+        faDetail = `Full mark (1.0 Mk): Candidate final average titre (${finalTitreVal.toFixed(2)} cm³) is within ±0.10 cm³ of School Value (${trueTitre.toFixed(2)} cm³).`;
+      } else if (faDiff <= 0.20) {
+        faMark = 0.5;
+        faDetail = `Partial mark (0.5 Mk): Candidate final average titre (${finalTitreVal.toFixed(2)} cm³) is within ±0.20 cm³ of School Value (${trueTitre.toFixed(2)} cm³).`;
+      } else {
+        faMark = 0.0;
+        faDetail = `0.0 Mark: Candidate average titre (${finalTitreVal.toFixed(2)} cm³) deviated by > ±0.20 cm³ from School Value (${trueTitre.toFixed(2)} cm³).`;
+      }
+      tableScore += faMark;
+      rubric.push({
+        code: `${prefix}_FA`,
+        item: `${tableTitle} Final Accuracy of Averaged Titre (FA)`,
+        max: 1.0,
+        mark: faMark,
+        pass: faMark === 1.0,
+        detail: faDetail
+      });
     }
-    tableScore += faMark;
-    rubric.push({
-      code: 'FA',
-      item: 'Final Accuracy of Averaged Titre (FA)',
-      max: 1.0,
-      mark: faMark,
-      pass: faMark === 1.0,
-      detail: faDetail
-    });
 
-    // 6. Calculations (10.0 Marks Total) with Error Carried Forward (e.c.f.)
+    tableScore = Math.min(maxTableMarks, tableScore);
+
+    // 6. Mathematical Sub-Questions with e.c.f.
     const expAvgFromTrials = concordantSet.length > 0
-      ? concordantSet.reduce((a, b) => a + b.used, 0) / concordantSet.length
-      : (recordedTrials.length > 0 ? (recordedTrials.reduce((a, b) => a + b.used, 0) / recordedTrials.length) : trueTitre);
+      ? concordantSet.reduce((acc, b) => acc + b.used, 0) / concordantSet.length
+      : (recordedTrials.length > 0 ? (recordedTrials.reduce((acc, b) => acc + b.used, 0) / recordedTrials.length) : trueTitre);
 
-    const questionsList = this.preset.q1.questions || createStandardTitrationQuestions(this.preset.q1);
-    
+    const questionsList = proc.questions || [];
+    let calcMax = 0;
+
     const evalCtx = {
       trueTitre,
       expAvgFromTrials,
-      trueAcidMolarity: Number(this.preset.q1.trueAcidMolarity) || 0.100,
-      trueBaseMolarity: Number(this.preset.q1.trueBaseMolarity) || 0.100,
-      pipetteVol: Number(this.preset.q1.pipetteVolume) || 25.0,
-      ratioA: Number(this.preset.q1.moleRatioAcid || this.preset.q1.ratioA) || 1,
-      ratioB: Number(this.preset.q1.moleRatioBase || this.preset.q1.ratioB) || 1,
-      acidRfm: Number(this.preset.q1.acidRfm) || 36.5,
-      baseRfm: Number(this.preset.q1.baseRfm) || 40.0,
-      answers: this.q1Answers,
-      t1: this.q1Trials[0]?.used || trueTitre,
-      t2: this.q1Trials[1]?.used || trueTitre,
-      v1: parseFloat(getAnswerValue(this.q1Answers, 'avgTitre', 'step_a')) || expAvgFromTrials
+      trueAcidMolarity: Number(proc.trueAcidMolarity || this.preset.q1?.trueAcidMolarity) || 0.100,
+      trueBaseMolarity: Number(proc.trueBaseMolarity || this.preset.q1?.trueBaseMolarity) || 0.100,
+      pipetteVol: Number(proc.pipetteVolume || this.preset.q1?.pipetteVolume) || 25.0,
+      ratioA: Number(proc.moleRatioAcid || proc.ratioA) || 1,
+      ratioB: Number(proc.moleRatioBase || proc.ratioB) || 1,
+      acidRfm: Number(proc.acidRfm || this.preset.q1?.acidRfm) || 36.5,
+      baseRfm: Number(proc.baseRfm || this.preset.q1?.baseRfm) || 40.0,
+      answers,
+      t1: (trials && trials[0]?.used) || trueTitre,
+      t2: (trials && trials[1]?.used) || trueTitre,
+      v1: parseFloat(candidateAvgTitre) || expAvgFromTrials
     };
 
     questionsList.forEach(q => {
       const fieldKey = q.field || q.id;
-      const rawAns = getAnswerValue(this.q1Answers, fieldKey, q.id);
+      const qMarks = Number(q.marks) || 1.0;
+      calcMax += qMarks;
+      const rawAns = getAnswerValue(answers, fieldKey, q.id);
       const val = parseFloat(rawAns);
 
-      const expTheo = typeof q.calcTheoretical === 'function' ? q.calcTheoretical(evalCtx) : null;
+      const expTheo = typeof q.calcTheoretical === 'function' ? q.calcTheoretical(evalCtx) : (q.expectedValue != null ? Number(q.expectedValue) : null);
       const expEcf = typeof q.calcEcf === 'function' ? q.calcEcf(evalCtx) : expTheo;
 
       let isPassed = false;
@@ -2046,16 +2119,19 @@ class CompositeExamEngine {
             isPassed = Math.abs(val - expEcf) / (expEcf || 1) <= 0.08;
             if (isPassed) usedEcf = true;
           }
+        } else {
+          // If no custom validation formula provided, accept reasonable positive number
+          isPassed = val > 0;
         }
       }
 
       if (isPassed) {
-        awarded = q.marks;
+        awarded = qMarks;
         calcScore += awarded;
         rubric.push({
-          code: `Q1_${q.letter.toUpperCase()}`,
-          item: `(${q.letter}) ${q.label} [${awarded.toFixed(1)} / ${q.marks.toFixed(1)} Marks]`,
-          max: q.marks,
+          code: `${prefix}_${(q.letter || q.id).toUpperCase()}`,
+          item: `(${q.letter || q.id}) ${q.label} [${awarded.toFixed(1)} / ${qMarks.toFixed(1)} Marks]`,
+          max: qMarks,
           mark: awarded,
           pass: true,
           detail: usedEcf
@@ -2064,12 +2140,12 @@ class CompositeExamEngine {
         });
       } else {
         rubric.push({
-          code: `Q1_${q.letter.toUpperCase()}`,
-          item: `(${q.letter}) ${q.label} [0.0 / ${q.marks.toFixed(1)} Marks]`,
-          max: q.marks,
+          code: `${prefix}_${(q.letter || q.id).toUpperCase()}`,
+          item: `(${q.letter || q.id}) ${q.label} [0.0 / ${qMarks.toFixed(1)} Marks]`,
+          max: qMarks,
           mark: 0.0,
           pass: false,
-          detail: typeof q.feedbackFail === 'function' ? q.feedbackFail(evalCtx, expTheo) : `Expected around ${expTheo != null ? (typeof expTheo === 'number' ? expTheo.toFixed(4) : expTheo) : ''} ${q.unit || ''}.`
+          detail: typeof q.feedbackFail === 'function' ? q.feedbackFail(evalCtx, expTheo) : `Expected around ${expTheo != null ? (typeof expTheo === 'number' ? expTheo.toFixed(4) : expTheo) : 'correct KNEC calculation'} ${q.unit || ''}.`
         });
       }
 
@@ -2077,14 +2153,55 @@ class CompositeExamEngine {
     });
 
     const total = parseFloat((tableScore + calcScore).toFixed(1));
+    const maxScore = proc.marks != null ? Number(proc.marks) : (maxTableMarks + calcMax);
+
     return {
       tableScore: parseFloat(tableScore.toFixed(1)),
       calcScore: parseFloat(calcScore.toFixed(1)),
-      totalScore: Math.min(15.0, total),
-      maxScore: 15.0,
+      totalScore: parseFloat(total.toFixed(1)),
+      maxScore,
       rubric,
       modelAnswers
     };
+  }
+
+  // ── KNEC Scoring Algorithm with Multi-Procedure Support ───────────────
+  calculateQ1Score() {
+    if (this.preset.q1?.hasMultipleProcedures && Array.isArray(this.preset.q1.procedures) && this.preset.q1.procedures.length > 1) {
+      let combinedTable = 0;
+      let combinedCalc = 0;
+      let combinedTotal = 0;
+      let combinedMax = 0;
+      const combinedRubric = [];
+      const combinedModelAnswers = {};
+      const procResults = [];
+
+      this.preset.q1.procedures.forEach((proc, idx) => {
+        const trials = (this.procedureStates && this.procedureStates[idx] && this.procedureStates[idx].trials) || (idx === 0 ? this.q1Trials : []);
+        const answers = (this.procedureStates && this.procedureStates[idx] && this.procedureStates[idx].answers) || (idx === 0 ? this.q1Answers : {});
+        const res = this.evaluateSingleTitrationProcedure(proc, trials, answers, `P${idx + 1}`);
+        procResults.push(res);
+        combinedTable += res.tableScore;
+        combinedCalc += res.calcScore;
+        combinedTotal += res.totalScore;
+        combinedMax += res.maxScore;
+        combinedRubric.push(...res.rubric);
+        Object.assign(combinedModelAnswers, res.modelAnswers);
+      });
+
+      return {
+        tableScore: parseFloat(combinedTable.toFixed(1)),
+        calcScore: parseFloat(combinedCalc.toFixed(1)),
+        totalScore: parseFloat(combinedTotal.toFixed(1)),
+        maxScore: combinedMax || Number(this.preset.q1.marks) || 19.0,
+        rubric: combinedRubric,
+        modelAnswers: combinedModelAnswers,
+        procedures: procResults
+      };
+    }
+
+    // Single procedure (100% backward compatible)
+    return this.evaluateSingleTitrationProcedure(this.preset.q1, this.q1Trials, this.q1Answers, 'Q1');
   }
 
   // ── Q2 Qualitative Operations & Ionic Charge Enforcement ─────────────

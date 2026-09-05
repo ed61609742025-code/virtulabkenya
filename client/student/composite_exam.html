@@ -519,13 +519,16 @@
   ══════════════════════════════════════════════════════════════ -->
   <div id="paneQ1" class="exam-section-card">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-      <h2 style="font-size:1.2rem;font-weight:800;color:var(--heading-color);margin:0;font-family:var(--font-heading);">
+      <h2 style="font-size:1.2rem;font-weight:800;color:var(--heading-color);margin:0;font-family:var(--font-heading);" id="q1SectionTitle">
         🧪 QUESTION 1: Volumetric Analysis
       </h2>
-      <span class="timer-chip" style="font-size:0.78rem;padding:3px 10px;background:var(--amber-bg);color:var(--amber-accent);border:1px solid var(--amber-border);">15.0 MARKS</span>
+      <span class="timer-chip" id="q1MarksBadge" style="font-size:0.78rem;padding:3px 10px;background:var(--amber-bg);color:var(--amber-accent);border:1px solid var(--amber-border);">15.0 MARKS</span>
     </div>
 
-    <div class="exam-prompt-box">
+    <!-- Multi-Procedure Selector (Shown for two-stage titrations e.g. Procedure I & Procedure II) -->
+    <div id="q1ProcedureNav" style="display:none; gap:8px; margin-bottom:14px; flex-wrap:wrap;"></div>
+
+    <div class="exam-prompt-box" id="q1PromptBoxContent">
       <b>You are provided with:</b><br>
       • <b id="q1SolAName">Solution A</b> in the burette.<br>
       • <b id="q1SolBName">Solution B</b>.<br>
@@ -852,7 +855,7 @@
 
       <div class="bench-action-buttons-row" style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap;">
         <button type="button" class="btn-perform-test" style="background:var(--green-accent);flex:1;justify-content:center;padding:10px 16px;font-size:0.88rem;" onclick="transferReadingToTable()">
-          📥 Record Current Reading in Table 1 (Trial <span id="lblActiveTrial">1</span>)
+          📥 Record Current Reading in <span id="lblActiveTable">Table 1</span> (Trial <span id="lblActiveTrial">1</span>)
         </button>
         <button type="button" class="btn-perform-test" style="background:#475569;padding:10px 16px;font-size:0.88rem;" onclick="resetTitrationApparatus()">
           🔄 Reset Apparatus &amp; Flask
@@ -862,7 +865,7 @@
 
     <!-- Candidate Results Table & Step-by-Step Calculations -->
     <div>
-      <div style="font-weight:800;font-size:0.95rem;color:var(--heading-color);margin-bottom:8px;">
+      <div style="font-weight:800;font-size:0.95rem;color:var(--heading-color);margin-bottom:8px;" id="q1TableTitle">
         Table 1: Titration Results (5.0 Marks)
       </div>
 
@@ -890,7 +893,7 @@
               <td><input type="number" step="0.05" id="t3Init" class="calc-input" style="text-align:center;" value="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
             </tr>
             <tr style="background:var(--card-bg-hover);">
-              <td><b>Volume of Solution A Used (cm³)</b></td>
+              <td><b>Volume of Titrant Used (cm³)</b></td>
               <td id="t1Used" style="text-align:center;font-weight:800;font-family:var(--font-mono);">0.00</td>
               <td id="t2Used" style="text-align:center;font-weight:800;font-family:var(--font-mono);">0.00</td>
               <td id="t3Used" style="text-align:center;font-weight:800;font-family:var(--font-mono);">0.00</td>
@@ -906,7 +909,7 @@
       </div>
 
       <!-- Dynamic Calculations & Stoichiometry (10.0 Marks) -->
-      <div style="font-weight:800;font-size:0.95rem;color:var(--heading-color);margin:20px 0 10px;">
+      <div style="font-weight:800;font-size:0.95rem;color:var(--heading-color);margin:20px 0 10px;" id="q1CalcSectionTitle">
         Calculations &amp; Stoichiometry (10.0 Marks)
       </div>
 
@@ -970,6 +973,13 @@
           </div>
           <div id="stepFeedback_step_e" class="step-feedback-msg"></div>
         </div>
+      </div>
+
+      <!-- Multi-Procedure Next Step Button (e.g. Procedure I -> Procedure II) -->
+      <div id="q1NextProcedureRow" style="display:none; margin-top:18px; text-align:right;">
+        <button type="button" class="btn-next-step" onclick="switchTitrationProcedure(1)" id="btnProceedToProc2" style="font-size:0.88rem; padding:10px 20px;">
+          Proceed to Procedure II (Solubility) →
+        </button>
       </div>
     </div>
   </div>
@@ -1277,6 +1287,123 @@
   let isPipetted = false;
   let indicatorDrops = 0;
 
+  // Multi-Procedure Titration State (Procedure I & Procedure II)
+  let activeProcedureIndex = 0;
+
+  function setupQ1ProcedureNav() {
+    const nav = document.getElementById('q1ProcedureNav');
+    if (!nav) return;
+    const hasMulti = engine?.preset?.q1?.hasMultipleProcedures && Array.isArray(engine?.preset?.q1?.procedures) && engine.preset.q1.procedures.length > 1;
+    if (!hasMulti) {
+      nav.style.display = 'none';
+      return;
+    }
+    nav.style.display = 'flex';
+    const totalMarks = engine.preset.q1.procedures.reduce((acc, p) => acc + (Number(p.tableMarks || 4) + (p.questions ? p.questions.reduce((qs, q) => qs + (Number(q.marks) || 0), 0) : 0)), 0);
+    const marksBadge = document.getElementById('q1MarksBadge');
+    if (marksBadge) marksBadge.textContent = `${totalMarks > 0 ? totalMarks.toFixed(1) : '19.0'} MARKS`;
+
+    nav.innerHTML = engine.preset.q1.procedures.map((proc, idx) => {
+      const pMarks = Number(proc.tableMarks || 4) + (proc.questions ? proc.questions.reduce((qs, q) => qs + (Number(q.marks) || 0), 0) : 0);
+      const icon = idx === 0 ? '🧪' : '⚗️';
+      return `
+        <button class="${idx === activeProcedureIndex ? 'exam-tab-btn active' : 'exam-tab-btn'}" id="btnProc${idx}" onclick="switchTitrationProcedure(${idx})">
+          ${icon} ${escapeHtml(proc.title || `Procedure ${idx === 0 ? 'I' : 'II'}`)} (${pMarks.toFixed(1)} Mks)
+        </button>
+      `;
+    }).join('');
+  }
+
+  function switchTitrationProcedure(procIdx) {
+    activeProcedureIndex = procIdx;
+    engine.activeProcedureIndex = procIdx;
+
+    const hasMulti = engine?.preset?.q1?.hasMultipleProcedures && Array.isArray(engine?.preset?.q1?.procedures) && engine.preset.q1.procedures.length > 1;
+    if (!hasMulti) return;
+
+    const proc = engine.preset.q1.procedures[procIdx] || {};
+    const totalProcs = engine.preset.q1.procedures.length;
+
+    // Update Procedure Selector Buttons
+    for (let i = 0; i < totalProcs; i++) {
+      const btn = document.getElementById(`btnProc${i}`);
+      if (btn) btn.className = i === procIdx ? 'exam-tab-btn active' : 'exam-tab-btn';
+    }
+
+    // Update Prompt Box for this Procedure
+    const promptBox = document.getElementById('q1PromptBoxContent');
+    if (promptBox) {
+      promptBox.innerHTML = `
+        <div style="font-weight:800; font-size:1.0rem; color:var(--cyan-accent); margin-bottom:6px;">
+          ${escapeHtml(proc.title || `Procedure ${procIdx === 0 ? 'I' : 'II'}`)}
+        </div>
+        <b>You are provided with:</b><br>
+        • <b>${escapeHtml(proc.solutionA || 'Solution in Burette')}</b> in the burette.<br>
+        • <b>${escapeHtml(proc.solutionB || 'Solution in Flask')}</b>.<br>
+        • <b>${escapeHtml(proc.indicator || 'Indicator')}</b>.<br><br>
+        <b>Instructions &amp; Procedure:</b><br>
+        <div style="white-space:pre-wrap; line-height:1.5;">${escapeHtml(proc.instructions || 'Pipette 25.0 cm³ into conical flask, add indicator drops, and titrate to endpoint.')}</div>
+      `;
+    }
+
+    // Update Reagents Shelf
+    const titrantChip = document.getElementById('q1TitrantChip');
+    if (titrantChip) {
+      const solA = proc.solutionA || '';
+      titrantChip.textContent = `Titrant: ${solA ? solA.split(' ')[0] : 'Acid'}`;
+    }
+    const indicatorChip = document.getElementById('q1IndicatorChip');
+    if (indicatorChip) {
+      indicatorChip.textContent = `Indicator: ${proc.indicator || 'Phenolphthalein'}`;
+    }
+    const pipStatus = document.getElementById('pipetteStatus');
+    if (pipStatus) {
+      pipStatus.textContent = 'Not Pipetted';
+      pipStatus.style.color = 'var(--text-muted)';
+    }
+    const indStatus = document.getElementById('indicatorStatus');
+    if (indStatus) {
+      indStatus.textContent = '0 Drops Added';
+      indStatus.style.color = 'var(--text-muted)';
+    }
+
+    // Update Table Title & Record Button Target
+    const tableTitleEl = document.getElementById('q1TableTitle');
+    if (tableTitleEl) {
+      tableTitleEl.textContent = `${proc.tableTitle || `Table ${procIdx + 1}: Titration Results`} (${Number(proc.tableMarks || 4).toFixed(1)} Marks)`;
+    }
+    const lblActiveTable = document.getElementById('lblActiveTable');
+    if (lblActiveTable) {
+      lblActiveTable.textContent = `Table ${procIdx + 1}`;
+    }
+
+    // Load saved trials for this procedure
+    const pTrials = engine.getProcedureTrials(procIdx);
+    [1, 2, 3].forEach(n => {
+      const t = (pTrials && pTrials[n - 1]) || {};
+      const finEl = document.getElementById(`t${n}Final`);
+      const initEl = document.getElementById(`t${n}Init`);
+      const usedEl = document.getElementById(`t${n}Used`);
+      const concEl = document.getElementById(`t${n}Concordant`);
+      if (finEl) finEl.value = t.recorded && t.final ? Number(t.final).toFixed(2) : '';
+      if (initEl) initEl.value = t.recorded ? Number(t.initial).toFixed(2) : '0.00';
+      if (usedEl) usedEl.textContent = t.recorded && t.used ? Number(t.used).toFixed(2) : '0.00';
+      if (concEl) concEl.checked = !!t.concordant;
+    });
+
+    // Update Calculations for this procedure
+    renderQ1CalculationsForProcedure(procIdx);
+
+    // Toggle Next Procedure Button
+    const nextProcRow = document.getElementById('q1NextProcedureRow');
+    if (nextProcRow) {
+      nextProcRow.style.display = (procIdx < totalProcs - 1) ? 'block' : 'none';
+    }
+
+    // Reset apparatus for fresh titration in this procedure
+    resetTitrationApparatus();
+  }
+
   // Track dynamic stages for Question 2 & 3 test cards
   let q2TestStates = {};
   let q3TestStates = {};
@@ -1325,7 +1452,13 @@
       }
     }
 
-    try { renderQ1Calculations(); } catch(e) { console.error('renderQ1Calculations error:', e); }
+    setupQ1ProcedureNav();
+    if (p.q1?.hasMultipleProcedures && Array.isArray(p.q1.procedures) && p.q1.procedures.length > 1) {
+      switchTitrationProcedure(0);
+    } else {
+      try { renderQ1Calculations(); } catch(e) { console.error('renderQ1Calculations error:', e); }
+    }
+
     try { renderQ2TestsGrid(); } catch(e) { console.error('renderQ2TestsGrid error:', e); }
     try { renderQ3TestsGrid(); } catch(e) { console.error('renderQ3TestsGrid error:', e); }
     try { drawLens(); } catch(e) { console.error('drawLens error:', e); }
@@ -1390,7 +1523,12 @@
                   document.getElementById('q3SampleDescText').textContent = pCustom.q3.sampleDesc;
                 }
 
-                renderQ1Calculations();
+                if (pCustom.q1?.hasMultipleProcedures && Array.isArray(pCustom.q1.procedures) && pCustom.q1.procedures.length > 1) {
+                  setupQ1ProcedureNav();
+                  switchTitrationProcedure(0);
+                } else {
+                  renderQ1Calculations();
+                }
                 renderQ2TestsGrid();
                 renderQ3TestsGrid();
 
@@ -1653,28 +1791,35 @@
       surface.setAttribute('rx', rx.toFixed(1));
     }
 
+    const activeProc = (engine?.preset?.q1?.hasMultipleProcedures && engine?.preset?.q1?.procedures && engine.preset.q1.procedures[activeProcedureIndex])
+      ? engine.preset.q1.procedures[activeProcedureIndex]
+      : (engine?.preset?.q1 || {});
+    const indName = (activeProc.indicator || '').toLowerCase();
+    const isMethyl = indName.includes('methyl');
+    const trueTitre = Number(activeProc.trueTitre) || 25.00;
+
     let fillColor;
-    if (indicatorDrops === 0 && p.indicator !== 'Self-indicating (KMnO₄)') {
-      fillColor = p.flaskBaseColor || 'rgba(56,189,248,0.25)';
-      if (label) label.textContent = 'Flask: 25.0 cm³ Sol. B';
+    if (indicatorDrops === 0 && !indName.includes('kmno')) {
+      fillColor = activeProc.flaskBaseColor || 'rgba(56,189,248,0.25)';
+      if (label) label.textContent = `Flask: 25.0 cm³ ${activeProc.solutionB ? activeProc.solutionB.split(' ')[0] : 'Sample'}`;
     } else {
-      const trueTitre = p.trueTitre || 25.00;
       if (engine.q1BuretteReading >= (trueTitre + 0.30)) {
-        const indName = (p.indicator || '').toLowerCase();
-        fillColor = p.overtitratedColor || (
-          indName.includes('methyl')
-            ? 'rgba(239, 68, 68, 0.95)'
-            : (indName.includes('kmno') || (p.solutionA || '').toLowerCase().includes('kmno'))
-            ? 'rgba(88, 28, 135, 0.98)'
-            : 'rgba(190, 24, 93, 0.95)'
-        );
+        fillColor = isMethyl
+          ? 'rgba(239, 68, 68, 0.95)'
+          : (indName.includes('kmno') || (activeProc.solutionA || '').toLowerCase().includes('kmno'))
+          ? 'rgba(88, 28, 135, 0.98)'
+          : 'rgba(190, 24, 93, 0.95)';
         if (label) label.textContent = 'Flask: Over-titrated! (Past Endpoint)';
       } else if (engine.q1BuretteReading >= trueTitre) {
-        fillColor = p.endpointColor || 'rgba(236,72,153,0.85)';
+        fillColor = isMethyl
+          ? 'rgba(251, 113, 133, 0.88)'
+          : 'rgba(236, 72, 153, 0.85)';
         if (label) label.textContent = 'Flask: Endpoint Reached!';
       } else {
-        fillColor = p.flaskIndicatorColor || 'rgba(251,191,36,0.6)';
-        if (label) label.textContent = 'Flask: Sol. B + Indicator';
+        fillColor = isMethyl
+          ? 'rgba(251, 191, 36, 0.75)'
+          : 'rgba(244, 114, 182, 0.85)';
+        if (label) label.textContent = `Flask: ${activeProc.solutionB ? activeProc.solutionB.split(' ')[0] : 'Sample'} + Indicator`;
       }
     }
 
@@ -1783,12 +1928,14 @@
   function transferReadingToTable() {
     const reading = parseFloat(engine.q1BuretteReading.toFixed(2));
     if (reading === 0) {
-      alert('Please perform titration before recording reading in Table 1!');
+      alert('Please perform titration before recording reading in table!');
       return;
     }
-    document.getElementById(`t${activeTrial}Final`).value = reading.toFixed(2);
+    const targetInput = document.getElementById(`t${activeTrial}Final`);
+    if (targetInput) targetInput.value = reading.toFixed(2);
     onTableInputChanged();
-    alert(`Trial ${activeTrial} reading (${reading.toFixed(2)} cm³) transferred to Table 1!`);
+    const tableName = engine?.preset?.q1?.hasMultipleProcedures ? `Table ${activeProcedureIndex + 1}` : 'Table 1';
+    alert(`Trial ${activeTrial} reading (${reading.toFixed(2)} cm³) transferred to ${tableName}!`);
 
     activeTrial = activeTrial < 3 ? activeTrial + 1 : 1;
     document.getElementById('lblActiveTrial').textContent = activeTrial;
@@ -1986,19 +2133,21 @@
       const init = parseFloat(document.getElementById(`t${n}Init`).value) || 0;
       const used = parseFloat(Math.max(0, fin - init).toFixed(2));
       document.getElementById(`t${n}Used`).textContent = used.toFixed(2);
-      engine.recordTrial(n, fin, init);
+      engine.recordTrial(n, fin, init, activeProcedureIndex);
     });
 
-    const t1 = engine.q1Trials[0].used;
-    const t2 = engine.q1Trials[1].used;
-    const t3 = engine.q1Trials[2].used;
+    const pTrials = engine.getProcedureTrials(activeProcedureIndex);
+    const t1 = pTrials[0]?.used || 0;
+    const t2 = pTrials[1]?.used || 0;
+    const t3 = pTrials[2]?.used || 0;
     const valid = [t1, t2, t3].filter(v => v > 0);
-    const avgInput = document.getElementById('ansAvgTitre') || document.getElementById('ans_avgTitre');
+    const avgInput = document.getElementById('ansAvgTitre') || document.getElementById('ans_avgTitre') || document.getElementById(`ans_proc_${activeProcedureIndex}_avgTitre`) || document.getElementById(`ans_proc_${activeProcedureIndex}_step_1a`) || document.getElementById(`ans_proc_${activeProcedureIndex}_step_2a`) || document.getElementById(`ans_proc_${activeProcedureIndex}_step_a`);
     if (valid.length >= 2 && avgInput && !avgInput.value) {
       const avg = (valid.reduce((a, b) => a + b, 0) / valid.length).toFixed(2);
       avgInput.value = avg;
-      engine.setQ1Answer('avgTitre', avg);
-      engine.setQ1Answer('step_a', avg);
+      engine.setQ1Answer('avgTitre', avg, activeProcedureIndex);
+      engine.setQ1Answer('step_a', avg, activeProcedureIndex);
+      engine.setQ1Answer(`step_${activeProcedureIndex + 1}a`, avg, activeProcedureIndex);
     }
     updateLiveScoreDisplay();
   }
@@ -2006,7 +2155,7 @@
   function onConcordantChanged() {
     [1, 2, 3].forEach(n => {
       const cb = document.getElementById(`t${n}Concordant`);
-      engine.setConcordant(n, cb ? cb.checked : false);
+      engine.setConcordant(n, cb ? cb.checked : false, activeProcedureIndex);
     });
     updateLiveScoreDisplay();
   }
@@ -2040,30 +2189,50 @@
   }
 
   function renderQ1Calculations() {
+    renderQ1CalculationsForProcedure(activeProcedureIndex);
+  }
+
+  function renderQ1CalculationsForProcedure(procIdx = 0) {
     const container = document.getElementById('q1CalculationsContainer');
     if (!container) return;
-    const questions = getQ1CalculationQuestions();
-    if (engine?.preset?.q1 && (!engine.preset.q1.questions || engine.preset.q1.questions.length === 0)) {
-      engine.preset.q1.questions = questions;
+
+    const hasMulti = engine?.preset?.q1?.hasMultipleProcedures && Array.isArray(engine?.preset?.q1?.procedures) && engine.preset.q1.procedures.length > 1;
+    let questions = [];
+
+    if (hasMulti) {
+      const proc = engine.preset.q1.procedures[procIdx] || {};
+      questions = Array.isArray(proc.questions) && proc.questions.length > 0 ? proc.questions : [];
+      const calcSectionTitle = document.getElementById('q1CalcSectionTitle');
+      if (calcSectionTitle) {
+        const totalMarks = questions.reduce((sum, q) => sum + (Number(q.marks) || 0), 0);
+        calcSectionTitle.textContent = `${proc.title || `Procedure ${procIdx === 0 ? 'I' : 'II'}`} Calculations (${totalMarks.toFixed(1)} Marks)`;
+      }
+    } else {
+      questions = getQ1CalculationQuestions();
+      if (engine?.preset?.q1 && (!engine.preset.q1.questions || engine.preset.q1.questions.length === 0)) {
+        engine.preset.q1.questions = questions;
+      }
     }
+
     const isStrict = engine?.mode === 'strict';
+    const procAnswers = hasMulti ? engine.getProcedureAnswers(procIdx) : engine.q1Answers;
 
     container.innerHTML = questions.map(q => {
       const fieldId = q.field || q.id;
-      const inputId = fieldId === 'avgTitre' ? 'ansAvgTitre' : (fieldId === 'molesB' ? 'ansMolesB' : (fieldId === 'molesA' ? 'ansMolesA' : (fieldId === 'molarityA' ? 'ansMolarityA' : (fieldId === 'concGrams' ? 'ansConcGrams' : `ans_${fieldId}`))));
+      const inputId = hasMulti ? `ans_proc_${procIdx}_${fieldId}` : (fieldId === 'avgTitre' ? 'ansAvgTitre' : (fieldId === 'molesB' ? 'ansMolesB' : (fieldId === 'molesA' ? 'ansMolesA' : (fieldId === 'molarityA' ? 'ansMolarityA' : (fieldId === 'concGrams' ? 'ansConcGrams' : `ans_${fieldId}`)))));
       const currentVal = typeof window.getAnswerValue === 'function'
-        ? (window.getAnswerValue(engine?.q1Answers, fieldId, q.id) || '')
-        : ((engine?.q1Answers && engine.q1Answers[fieldId] !== undefined) ? engine.q1Answers[fieldId] : (engine?.q1Answers ? engine.q1Answers[q.id] || '' : ''));
+        ? (window.getAnswerValue(procAnswers, fieldId, q.id) || '')
+        : ((procAnswers && procAnswers[fieldId] !== undefined) ? procAnswers[fieldId] : (procAnswers ? procAnswers[q.id] || '' : ''));
 
       return `
         <div class="calc-step-card" id="card_${fieldId}">
           <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
-            (${q.letter}) ${q.label} <span style="color:var(--cyan-accent);">${q.marksLabel || ''}</span>
+            (${escapeHtml(q.letter || q.id)}) ${escapeHtml(q.label || '')} <span style="color:var(--cyan-accent);">${q.marksLabel || (q.marks ? `(${Number(q.marks).toFixed(1)} Marks)` : '')}</span>
           </div>
           <div class="calc-input-row" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-            <input type="number" step="${q.step || 'any'}" id="${inputId}" class="calc-input dynamic-calc-input" data-field="${fieldId}" data-step-id="${q.id}" placeholder="${q.placeholder || ''}" value="${currentVal}" oninput="onDynamicQ1CalculationChanged('${fieldId}', this.value)">
-            <span class="calc-unit-badge" style="font-weight:700;color:var(--text-muted);">${q.unit || ''}</span>
-            ${!isStrict ? `<button type="button" class="btn-perform-test btn-check-step" style="padding:6px 14px;font-size:0.78rem;" onclick="checkDynamicQ1Step('${q.id}')">Check (${q.letter})</button>` : ''}
+            <input type="number" step="${q.step || 'any'}" id="${inputId}" class="calc-input dynamic-calc-input" data-field="${fieldId}" data-step-id="${q.id}" placeholder="${q.placeholder || ''}" value="${currentVal}" oninput="onDynamicQ1CalculationChanged('${fieldId}', this.value, ${procIdx})">
+            <span class="calc-unit-badge" style="font-weight:700;color:var(--text-muted);">${escapeHtml(q.unit || '')}</span>
+            ${!isStrict ? `<button type="button" class="btn-perform-test btn-check-step" style="padding:6px 14px;font-size:0.78rem;" onclick="checkDynamicQ1Step('${q.id}', ${procIdx})">Check (${escapeHtml(q.letter || q.id)})</button>` : ''}
           </div>
           <div id="stepFeedback_${q.id}" class="step-feedback-msg"></div>
         </div>
@@ -2071,9 +2240,13 @@
     }).join('');
   }
 
-  function onDynamicQ1CalculationChanged(field, value) {
-    engine.setQ1Answer(field, value);
-    if (field === 'avgTitre') engine.setQ1Answer('step_a', value);
+  function onDynamicQ1CalculationChanged(field, value, procIdx = null) {
+    const pIdx = (procIdx != null) ? procIdx : activeProcedureIndex;
+    engine.setQ1Answer(field, value, pIdx);
+    if (field === 'avgTitre') {
+      engine.setQ1Answer('step_a', value, pIdx);
+      engine.setQ1Answer(`step_${pIdx + 1}a`, value, pIdx);
+    }
     updateLiveScoreDisplay();
   }
 
@@ -2920,41 +3093,85 @@
     const evalData = engine.evaluateExam();
     const p = engine.preset;
 
-    // Populate Q1 Print Table
-    let q1Html = `
-      <div style="margin-bottom:8px;"><b>Table 1: Titration Results</b></div>
-      <table style="width:100%; border-collapse:collapse; margin-bottom:8px; font-size:0.8rem;">
-        <tr style="background:#f1f5f9;">
-          <th style="border:1px solid #000; padding:4px;">Titration Trial</th>
-          <th style="border:1px solid #000; padding:4px;">I</th>
-          <th style="border:1px solid #000; padding:4px;">II</th>
-          <th style="border:1px solid #000; padding:4px;">III</th>
-        </tr>
-        <tr>
-          <td style="border:1px solid #000; padding:4px;">Final Burette Reading (cm³)</td>
-          <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[0].final.toFixed(2)}</td>
-          <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[1].final.toFixed(2)}</td>
-          <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[2].final.toFixed(2)}</td>
-        </tr>
-        <tr>
-          <td style="border:1px solid #000; padding:4px;">Initial Burette Reading (cm³)</td>
-          <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[0].initial.toFixed(2)}</td>
-          <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[1].initial.toFixed(2)}</td>
-          <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[2].initial.toFixed(2)}</td>
-        </tr>
-        <tr style="font-weight:bold;">
-          <td style="border:1px solid #000; padding:4px;">Volume of Solution A Used (cm³)</td>
-          <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[0].used.toFixed(2)}</td>
-          <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[1].used.toFixed(2)}</td>
-          <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[2].used.toFixed(2)}</td>
-        </tr>
-      </table>
-      ${(p.q1.questions || []).map(q => {
-        const fieldKey = q.field || q.id;
-        const ans = engine.q1Answers[fieldKey] !== undefined ? engine.q1Answers[fieldKey] : (engine.q1Answers[q.id] || '—');
-        return `<div>(${q.letter}) ${q.label}: <b>${ans} ${q.unit || ''}</b></div>`;
-      }).join('')}
-    `;
+    // Populate Q1 Print Table (supports multi-procedure titrations)
+    let q1Html = '';
+    if (p.q1?.hasMultipleProcedures && Array.isArray(p.q1.procedures) && p.q1.procedures.length > 1) {
+      p.q1.procedures.forEach((proc, pIdx) => {
+        const pTrials = engine.getProcedureTrials(pIdx);
+        const pAnswers = engine.getProcedureAnswers(pIdx);
+        q1Html += `
+          <div style="margin-top:${pIdx > 0 ? '12px' : '0'}; margin-bottom:6px; font-weight:bold;">
+            ${escapeHtml(proc.title || `Procedure ${pIdx === 0 ? 'I' : 'II'}`)} — ${escapeHtml(proc.tableTitle || `Table ${pIdx + 1}`)} (${Number(proc.tableMarks || 4).toFixed(1)} Marks)
+          </div>
+          <table style="width:100%; border-collapse:collapse; margin-bottom:8px; font-size:0.8rem;">
+            <tr style="background:#f1f5f9;">
+              <th style="border:1px solid #000; padding:4px;">Titration Trial</th>
+              <th style="border:1px solid #000; padding:4px;">I</th>
+              <th style="border:1px solid #000; padding:4px;">II</th>
+              <th style="border:1px solid #000; padding:4px;">III</th>
+            </tr>
+            <tr>
+              <td style="border:1px solid #000; padding:4px;">Final Reading (cm³)</td>
+              <td style="border:1px solid #000; padding:4px; text-align:center;">${(pTrials[0]?.final || 0).toFixed(2)}</td>
+              <td style="border:1px solid #000; padding:4px; text-align:center;">${(pTrials[1]?.final || 0).toFixed(2)}</td>
+              <td style="border:1px solid #000; padding:4px; text-align:center;">${(pTrials[2]?.final || 0).toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td style="border:1px solid #000; padding:4px;">Initial Reading (cm³)</td>
+              <td style="border:1px solid #000; padding:4px; text-align:center;">${(pTrials[0]?.initial || 0).toFixed(2)}</td>
+              <td style="border:1px solid #000; padding:4px; text-align:center;">${(pTrials[1]?.initial || 0).toFixed(2)}</td>
+              <td style="border:1px solid #000; padding:4px; text-align:center;">${(pTrials[2]?.initial || 0).toFixed(2)}</td>
+            </tr>
+            <tr style="font-weight:bold;">
+              <td style="border:1px solid #000; padding:4px;">Volume of Titrant Used (cm³)</td>
+              <td style="border:1px solid #000; padding:4px; text-align:center;">${(pTrials[0]?.used || 0).toFixed(2)}</td>
+              <td style="border:1px solid #000; padding:4px; text-align:center;">${(pTrials[1]?.used || 0).toFixed(2)}</td>
+              <td style="border:1px solid #000; padding:4px; text-align:center;">${(pTrials[2]?.used || 0).toFixed(2)}</td>
+            </tr>
+          </table>
+          ${(proc.questions || []).map(q => {
+            const fieldKey = q.field || q.id;
+            const ans = pAnswers[fieldKey] !== undefined ? pAnswers[fieldKey] : (pAnswers[q.id] || '—');
+            return `<div>(${escapeHtml(q.letter || q.id)}) ${escapeHtml(q.label)}: <b>${ans} ${escapeHtml(q.unit || '')}</b></div>`;
+          }).join('')}
+        `;
+      });
+    } else {
+      q1Html = `
+        <div style="margin-bottom:8px;"><b>Table 1: Titration Results</b></div>
+        <table style="width:100%; border-collapse:collapse; margin-bottom:8px; font-size:0.8rem;">
+          <tr style="background:#f1f5f9;">
+            <th style="border:1px solid #000; padding:4px;">Titration Trial</th>
+            <th style="border:1px solid #000; padding:4px;">I</th>
+            <th style="border:1px solid #000; padding:4px;">II</th>
+            <th style="border:1px solid #000; padding:4px;">III</th>
+          </tr>
+          <tr>
+            <td style="border:1px solid #000; padding:4px;">Final Burette Reading (cm³)</td>
+            <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[0].final.toFixed(2)}</td>
+            <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[1].final.toFixed(2)}</td>
+            <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[2].final.toFixed(2)}</td>
+          </tr>
+          <tr>
+            <td style="border:1px solid #000; padding:4px;">Initial Burette Reading (cm³)</td>
+            <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[0].initial.toFixed(2)}</td>
+            <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[1].initial.toFixed(2)}</td>
+            <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[2].initial.toFixed(2)}</td>
+          </tr>
+          <tr style="font-weight:bold;">
+            <td style="border:1px solid #000; padding:4px;">Volume of Solution A Used (cm³)</td>
+            <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[0].used.toFixed(2)}</td>
+            <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[1].used.toFixed(2)}</td>
+            <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[2].used.toFixed(2)}</td>
+          </tr>
+        </table>
+        ${(p.q1.questions || []).map(q => {
+          const fieldKey = q.field || q.id;
+          const ans = engine.q1Answers[fieldKey] !== undefined ? engine.q1Answers[fieldKey] : (engine.q1Answers[q.id] || '—');
+          return `<div>(${q.letter}) ${q.label}: <b>${ans} ${q.unit || ''}</b></div>`;
+        }).join('')}
+      `;
+    }
     document.getElementById('printQ1Content').innerHTML = q1Html;
 
     // Populate Q2 Print Table

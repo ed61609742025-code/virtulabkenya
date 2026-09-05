@@ -267,15 +267,41 @@ const SUPPORTED_SIMULATION_TYPES = [
 function normalizeQuestionsArray(parsed) {
   // If already has questions array, validate and return it
   if (Array.isArray(parsed.questions) && parsed.questions.length > 0) {
-    return parsed.questions.map((q, i) => ({
-      number: q.number || i + 1,
-      title: q.title || `Question ${i + 1}`,
-      simulationType: SUPPORTED_SIMULATION_TYPES.includes(q.simulationType) ? q.simulationType : 'written',
-      marks: Number(q.marks) || 10,
-      config: q.config || null,
-      prompt: q.prompt || '',
-      subQuestions: Array.isArray(q.subQuestions) ? q.subQuestions : []
-    }));
+    return parsed.questions.map((q, i) => {
+      const simType = SUPPORTED_SIMULATION_TYPES.includes(q.simulationType) ? q.simulationType : 'written';
+      let cfg = q.config ? { ...q.config } : null;
+
+      if (simType === 'titration' && cfg) {
+        if (Array.isArray(cfg.procedures) && cfg.procedures.length > 0) {
+          cfg.hasMultipleProcedures = true;
+          cfg.procedures = cfg.procedures.map((proc, pIdx) => ({
+            procedureIndex: proc.procedureIndex || pIdx + 1,
+            title: proc.title || `Procedure ${pIdx === 0 ? 'I' : (pIdx === 1 ? 'II' : pIdx + 1)}`,
+            instructions: proc.instructions || '',
+            solutionA: proc.solutionA || cfg.solutionA || 'Solution A',
+            solutionB: proc.solutionB || cfg.solutionB || 'Solution B',
+            pipetteVolume: Number(proc.pipetteVolume) || 25.0,
+            indicator: proc.indicator || 'Phenolphthalein',
+            indicatorStartColor: proc.indicatorStartColor || (proc.indicator && proc.indicator.toLowerCase().includes('methyl') ? '#FBBF24' : '#F472B6'),
+            indicatorEndColor: proc.indicatorEndColor || (proc.indicator && proc.indicator.toLowerCase().includes('methyl') ? '#FB7185' : 'transparent'),
+            trueTitre: Number(proc.trueTitre) || 25.0,
+            tableTitle: proc.tableTitle || `Table ${pIdx + 1}: Titration Results`,
+            tableMarks: Number(proc.tableMarks) || 4.0,
+            questions: Array.isArray(proc.questions) ? proc.questions : []
+          }));
+        }
+      }
+
+      return {
+        number: q.number || i + 1,
+        title: q.title || `Question ${i + 1}`,
+        simulationType: simType,
+        marks: Number(q.marks) || 10,
+        config: cfg,
+        prompt: q.prompt || '',
+        subQuestions: Array.isArray(q.subQuestions) ? q.subQuestions : []
+      };
+    });
   }
 
   // Legacy: convert q1/q2/q3 to questions[]
@@ -484,6 +510,19 @@ function normalizeExamStructure(parsed, sourceMeta = {}) {
   // Build flexible questions[] array (new format) alongside legacy examConfig (backward compat)
   normalized.questions = normalizeQuestionsArray(parsed);
 
+  // Sync multi-procedure configuration to examConfig.q1 for composite exams
+  if (Array.isArray(normalized.questions) && normalized.questions.length > 0) {
+    const q1Obj = normalized.questions.find(q => q.number === 1);
+    if (q1Obj && q1Obj.config && q1Obj.config.hasMultipleProcedures && Array.isArray(q1Obj.config.procedures)) {
+      normalized.examConfig.q1 = {
+        ...normalized.examConfig.q1,
+        ...q1Obj.config,
+        hasMultipleProcedures: true,
+        procedures: q1Obj.config.procedures
+      };
+    }
+  }
+
   return normalized;
 }
 
@@ -496,14 +535,16 @@ Analyze this uploaded chemistry exam paper document/photo and extract all practi
 
 KNEC Examination Setting Standards to Enforce:
 1. Cognitive Taxonomy: Balance questions across Recall (State, Name, Define), Comprehension (Describe, Explain, Account for), Application (Calculate, Determine), and Analysis (Deduce, Compare, Distinguish).
-2. Question 1 (Volumetric Analysis - 15 Marks):
+2. Question 1 (Volumetric Analysis - 15 to 20 Marks):
    - Accurately identify the calculation framework ("calcType"): 'standard_molarity', 'water_of_crystallization', 'percentage_purity', 'ram_metal', 'redox_stoichiometry', or 'dibasic_acid'.
    - Generate the sequential sub-questions (a) through (e)/(f) with clear method marks (M) and accuracy marks (A).
-3. Question 2 (Inorganic Qualitative Analysis - 15 Marks):
+   - If Question 1 has TWO titrations (Procedure I and Procedure II with Table 1 and Table 2), configure it as a multi-stage titration (see schema below).
+3. Question 2 (Inorganic Qualitative Analysis - 10 to 15 Marks):
    - Structured experimental procedures (e.g. heating solid in dry tube, dissolving, portioning, adding 2M NaOH and 2M aqueous NH3 dropwise until in excess, anion confirmatory tests).
    - Inferences must strictly enforce KNEC grouping notation (e.g. "Pb²⁺, Al³⁺, or Zn²⁺ present" in excess NaOH; "Pb²⁺ or Al³⁺ present" in excess NH3) with correct ionic charges.
-4. Question 3 (Organic Qualitative Analysis - 10 Marks):
-   - Procedural sequence: Spatula ignition flame test, litmus test, unsaturation/redox test (acidified KMnO4 or Bromine water), and carbonate/hydrogen carbonate effervescence.
+4. Question 3 (Organic or Second Inorganic Qualitative Analysis - 10 Marks):
+   - If organic: Spatula ignition flame test, litmus test, unsaturation/redox test (acidified KMnO4 or Bromine water), and carbonate/hydrogen carbonate effervescence.
+   - If inorganic (like Solid P): identify heating test, dissolving and portions with appropriate cations/anions inference.
 5. Marking Scheme:
    - Provide a rigorous marking guide with point-by-point breakdown and explicit instructions on applying Error Carried Forward (e.c.f.) on calculation steps.
 
@@ -523,7 +564,42 @@ Produce a strict JSON object with this exact schema:
       "title": "<question title, e.g. 'Volumetric Analysis'>",
       "simulationType": "<one of: titration, qualitative, organic, energy, rates, gas, solubility, written>",
       "marks": <number>,
-      "config": { <for simulated types: put the exact same config fields as the old q1/q2/q3 format; for 'written' type, set to null> },
+      "config": {
+        <for single titration: { solutionA, solutionB, indicator, pipetteVolume, trueTitre, questions: [...] }>
+        <for MULTI-STAGE TITRATION (Procedure I + Procedure II with Table 1 and Table 2):
+          "hasMultipleProcedures": true,
+          "procedures": [
+            {
+              "procedureIndex": 1,
+              "title": "<e.g. Procedure I: Standardization of Solution B>",
+              "instructions": "<instructions text for procedure 1>",
+              "solutionA": "<titrant in burette>",
+              "solutionB": "<analyte in flask>",
+              "pipetteVolume": 25.0,
+              "indicator": "<e.g. Phenolphthalein>",
+              "trueTitre": 25.00,
+              "tableTitle": "Table 1: Titration Results",
+              "tableMarks": 4.0,
+              "questions": [ { "id": "step_1a", "letter": "a", "label": "...", "marks": 1.0, "unit": "..." } ]
+            },
+            {
+              "procedureIndex": 2,
+              "title": "<e.g. Procedure II: Solubility of Solid C in Water>",
+              "instructions": "<instructions text for procedure 2>",
+              "solutionA": "<titrant in burette>",
+              "solutionB": "<analyte in flask>",
+              "pipetteVolume": 25.0,
+              "indicator": "<e.g. Methyl Orange>",
+              "trueTitre": 18.50,
+              "tableTitle": "Table 2: Titration Results",
+              "tableMarks": 4.0,
+              "questions": [ { "id": "step_2a", "letter": "a", "label": "...", "marks": 1.0, "unit": "..." } ]
+            }
+          ]
+        >
+        <for qualitative or organic: tests[], sampleName, sampleDesc, etc.>
+        <for 'written' type: set config to null>
+      },
       "prompt": "<for 'written' type: full question text including all sub-parts; empty string for simulated types>",
       "subQuestions": [
         {
@@ -546,7 +622,7 @@ Produce a strict JSON object with this exact schema:
 }
 
 CRITICAL INSTRUCTIONS FOR simulationType:
-- Use 'titration' for any volumetric/burette experiment (acid-base, redox, back-titration)
+- Use 'titration' for any volumetric/burette experiment (acid-base, redox, back-titration, or multi-procedure double titrations)
 - Use 'qualitative' for inorganic salt identification with NaOH/NH3 tests
 - Use 'organic' for organic functional group identification
 - Use 'energy' for thermochemistry/enthalpy/temperature change experiments

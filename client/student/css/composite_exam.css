@@ -592,3 +592,142 @@ iframe.lab-frame {
     font-size: 0.76rem;
   }
 }
+
+/* ============================================================
+   KNEC Titration Results Table (Strict Grid Protection)
+   ============================================================ */
+.knec-titration-table {
+  display: table !important;
+  width: 100% !important;
+  min-width: 520px !important;
+  border-collapse: collapse !important;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.knec-titration-table thead {
+  display: table-header-group !important;
+  background: var(--card-bg-hover);
+}
+
+.knec-titration-table tbody {
+  display: table-row-group !important;
+}
+
+.knec-titration-table tr {
+  display: table-row !important;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.knec-titration-table th,
+.knec-titration-table td {
+  display: table-cell !important;
+  padding: 10px 14px;
+  border-right: 1px solid var(--card-border);
+  vertical-align: middle;
+  text-align: center;
+}
+
+.knec-titration-table th:last-child,
+.knec-titration-table td:last-child {
+  border-right: none;
+}
+
+.knec-titration-table th:first-child,
+.knec-titration-table td:first-child {
+  text-align: left;
+}
+
+.knec-titration-table td::before,
+.knec-titration-table th::before {
+  content: none !important;
+  display: none !important;
+}
+
+.knec-titration-table .calc-input {
+  max-width: 105px !important;
+  width: 105px !important;
+  padding: 6px 8px !important;
+  text-align: center !important;
+  display: inline-block !important;
+}
+
+.knec-table-scroll-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 18px;
+}
+
+/* Pacing Coach Mobile Scroller */
+.pacing-milestones-scroller {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+}
+
+.pacing-milestones-scroller .pacing-milestone {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Titrant Addition Button Cluster */
+.titrant-buttons-cluster {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@media (max-width: 768px) {
+  .titrant-buttons-cluster {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+  }
+  .titrant-buttons-cluster #btnContinuous {
+    grid-column: span 2 !important;
+  }
+
+  .prep-cluster {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+
+  .apparatus-lens-row {
+    flex-direction: row !important;
+    justify-content: center !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  .apparatus-lens-row .rig-svg {
+    width: 120px !important;
+    height: 240px !important;
+  }
+
+  .apparatus-lens-row .buret-lens-card {
+    min-width: 140px !important;
+    max-width: 180px !important;
+    padding: 10px !important;
+  }
+
+  .calc-input-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .calc-input-row .calc-input {
+    max-width: 140px !important;
+    flex-shrink: 0 !important;
+  }
+}
+

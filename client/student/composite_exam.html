@@ -315,7 +315,7 @@
       <span style="font-size:1.05rem;">⏱️</span>
       <span style="font-size:0.8rem; font-weight:800; color:var(--heading-color);">KNEC Pacing Coach:</span>
     </div>
-    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+    <div class="pacing-milestones-scroller" style="display:flex; align-items:center; gap:8px;">
       <div class="pacing-milestone active" id="paceQ1">
         <span>🧪 Q1: Volumetric</span>
         <span style="opacity:0.75;">(Target: 45 min)</span>
@@ -386,31 +386,33 @@
 
       <div class="bench-3col-layout">
         <!-- LEFT WING: Pipette & Indicator Addition -->
-        <div style="display:flex;flex-direction:column;gap:10px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:14px;box-shadow:inset 0 1px 2px rgba(255,255,255,0.03);">
-          <div style="font-weight:800;font-size:0.75rem;color:var(--cyan-accent);text-transform:uppercase;letter-spacing:0.03em;">1. Reagent Prep</div>
-          <button class="btn-perform-test" id="btnPipette" onclick="pipetteSolutionB()" style="font-size:0.78rem;padding:8px;width:100%;justify-content:center;">
-            🧪 Pipette 25.0 cm³
-          </button>
-          <div id="pipetteStatus" style="font-size:0.72rem;color:var(--text-muted);line-height:1.2;">Not Pipetted</div>
+        <div class="bench-prep-wing" style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:14px;box-shadow:inset 0 1px 2px rgba(255,255,255,0.03);">
+          <div class="prep-cluster">
+            <div class="prep-item">
+              <div style="font-weight:800;font-size:0.75rem;color:var(--cyan-accent);text-transform:uppercase;letter-spacing:0.03em;margin-bottom:4px;">1. Reagent Prep</div>
+              <button class="btn-perform-test" id="btnPipette" onclick="pipetteSolutionB()" style="font-size:0.78rem;padding:8px;width:100%;justify-content:center;">
+                🧪 Pipette 25.0 cm³
+              </button>
+              <div id="pipetteStatus" style="font-size:0.72rem;color:var(--text-muted);line-height:1.2;margin-top:4px;">Not Pipetted</div>
+            </div>
 
-          <div style="border-top:1px dashed var(--card-border);margin:2px 0;"></div>
+            <div class="prep-item">
+              <div style="font-weight:800;font-size:0.75rem;color:var(--cyan-accent);text-transform:uppercase;letter-spacing:0.03em;margin-bottom:4px;">2. Indicator</div>
+              <button class="btn-perform-test btn-step-excess" id="btnAddIndicator" onclick="addIndicatorDrop()" style="font-size:0.78rem;padding:8px;width:100%;justify-content:center;">
+                💧 Add Indicator (0/3)
+              </button>
+              <div id="indicatorStatus" style="font-size:0.72rem;color:var(--text-muted);line-height:1.2;margin-top:4px;">0 Drops Added</div>
+            </div>
+          </div>
 
-          <div style="font-weight:800;font-size:0.75rem;color:var(--cyan-accent);text-transform:uppercase;letter-spacing:0.03em;">2. Indicator</div>
-          <button class="btn-perform-test btn-step-excess" id="btnAddIndicator" onclick="addIndicatorDrop()" style="font-size:0.78rem;padding:8px;width:100%;justify-content:center;">
-            💧 Add Indicator (0/3)
-          </button>
-          <div id="indicatorStatus" style="font-size:0.72rem;color:var(--text-muted);line-height:1.2;">0 Drops Added</div>
-
-          <div style="border-top:1px dashed var(--card-border);margin:2px 0;"></div>
-
-          <button class="btn-perform-test btn-step-heat" onclick="swirlFlask()" style="font-size:0.78rem;padding:8px;width:100%;justify-content:center;">
+          <button class="btn-perform-test btn-step-heat" onclick="swirlFlask()" style="margin-top:10px;font-size:0.78rem;padding:8px;width:100%;justify-content:center;">
             🌀 Swirl Flask
           </button>
         </div>
 
         <!-- CENTER: Large Photorealistic SVG Apparatus Rig + Magnified Reading Lens -->
         <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
-          <div style="display:flex;align-items:center;justify-content:center;gap:18px;width:100%;">
+          <div class="apparatus-lens-row" style="display:flex;align-items:center;justify-content:center;gap:18px;width:100%;">
             
             <!-- Realistic Apparatus SVG -->
             <svg class="rig-svg" viewBox="0 0 240 380" xmlns="http://www.w3.org/2000/svg" style="width:155px; height:305px; flex-shrink:0;">
@@ -672,13 +674,15 @@
         </div>
 
         <!-- RIGHT WING: Stopcock & Speed Addition -->
-        <div style="display:flex;flex-direction:column;gap:8px;background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:14px;box-shadow:inset 0 1px 2px rgba(255,255,255,0.03);">
-          <div style="font-weight:800;font-size:0.75rem;color:var(--amber-accent);text-transform:uppercase;letter-spacing:0.03em;">3. Add Titrant</div>
-          <button class="btn-perform-test" onclick="addTitrantDirect(1.0)" style="font-size:0.78rem;padding:6px;width:100%;justify-content:center;">+1.0 cm³</button>
-          <button class="btn-perform-test" onclick="addTitrantDirect(0.5)" style="font-size:0.78rem;padding:6px;width:100%;justify-content:center;">+0.5 cm³</button>
-          <button class="btn-perform-test" onclick="addTitrantDirect(0.1)" style="font-size:0.78rem;padding:6px;width:100%;justify-content:center;">+0.1 cm³</button>
-          <button class="btn-perform-test btn-step-excess" onclick="startContinuousTitration()" id="btnContinuous" style="font-size:0.78rem;padding:6px;width:100%;justify-content:center;">Continuous</button>
-          <button class="btn-perform-test" style="background:#EF4444;font-size:0.78rem;padding:6px;width:100%;justify-content:center;" onclick="stopTitrate()">Stop Tap</button>
+        <div class="bench-titrant-wing" style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:14px;box-shadow:inset 0 1px 2px rgba(255,255,255,0.03);">
+          <div style="font-weight:800;font-size:0.75rem;color:var(--amber-accent);text-transform:uppercase;letter-spacing:0.03em;margin-bottom:8px;">3. Add Titrant</div>
+          <div class="titrant-buttons-cluster">
+            <button class="btn-perform-test" onclick="addTitrantDirect(1.0)" style="font-size:0.78rem;padding:6px;width:100%;justify-content:center;">+1.0 cm³</button>
+            <button class="btn-perform-test" onclick="addTitrantDirect(0.5)" style="font-size:0.78rem;padding:6px;width:100%;justify-content:center;">+0.5 cm³</button>
+            <button class="btn-perform-test" onclick="addTitrantDirect(0.1)" style="font-size:0.78rem;padding:6px;width:100%;justify-content:center;">+0.1 cm³</button>
+            <button class="btn-perform-test btn-step-excess" onclick="startContinuousTitration()" id="btnContinuous" style="font-size:0.78rem;padding:6px;width:100%;justify-content:center;">Continuous</button>
+            <button class="btn-perform-test" style="background:#EF4444;font-size:0.78rem;padding:6px;width:100%;justify-content:center;" onclick="stopTitrate()">Stop Tap</button>
+          </div>
         </div>
       </div>
 
@@ -699,7 +703,7 @@
       </div>
 
       <div class="knec-table-scroll-wrap">
-        <table class="knec-table" style="margin-bottom:18px;">
+        <table class="knec-titration-table" style="margin-bottom:18px;">
           <thead>
             <tr>
               <th>Burette Reading (cm³)</th>
@@ -1074,7 +1078,7 @@
 
 <script src="/shared/api.js"></script>
 <script src="/shared/page-transitions.js"></script>
-<script src="js/composite-engine.js?v=70"></script>
+<script src="js/composite-engine.js?v=72"></script>
 <script>
   requireStudentLogin();
   if (typeof window.getAnswerValue !== 'function') {
@@ -1691,8 +1695,8 @@
     container.innerHTML = questions.map(q => {
       const fieldId = q.field || q.id;
       const inputId = fieldId === 'avgTitre' ? 'ansAvgTitre' : (fieldId === 'molesB' ? 'ansMolesB' : (fieldId === 'molesA' ? 'ansMolesA' : (fieldId === 'molarityA' ? 'ansMolarityA' : (fieldId === 'concGrams' ? 'ansConcGrams' : `ans_${fieldId}`))));
-      const currentVal = typeof getAnswerValue === 'function'
-        ? (getAnswerValue(engine?.q1Answers, fieldId, q.id) || '')
+      const currentVal = typeof window.getAnswerValue === 'function'
+        ? (window.getAnswerValue(engine?.q1Answers, fieldId, q.id) || '')
         : ((engine?.q1Answers && engine.q1Answers[fieldId] !== undefined) ? engine.q1Answers[fieldId] : (engine?.q1Answers ? engine.q1Answers[q.id] || '' : ''));
 
       return `
@@ -1700,9 +1704,9 @@
           <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
             (${q.letter}) ${q.label} <span style="color:var(--cyan-accent);">${q.marksLabel || ''}</span>
           </div>
-          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <div class="calc-input-row" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
             <input type="number" step="${q.step || 'any'}" id="${inputId}" class="calc-input dynamic-calc-input" data-field="${fieldId}" data-step-id="${q.id}" placeholder="${q.placeholder || ''}" value="${currentVal}" oninput="onDynamicQ1CalculationChanged('${fieldId}', this.value)">
-            <span style="font-weight:700;color:var(--text-muted);">${q.unit || ''}</span>
+            <span class="calc-unit-badge" style="font-weight:700;color:var(--text-muted);">${q.unit || ''}</span>
             ${!isStrict ? `<button type="button" class="btn-perform-test btn-check-step" style="padding:6px 14px;font-size:0.78rem;" onclick="checkDynamicQ1Step('${q.id}')">Check (${q.letter})</button>` : ''}
           </div>
           <div id="stepFeedback_${q.id}" class="step-feedback-msg"></div>
@@ -1728,7 +1732,7 @@
     const fieldId = q.field || q.id;
     const inputId = fieldId === 'avgTitre' ? 'ansAvgTitre' : (fieldId === 'molesB' ? 'ansMolesB' : (fieldId === 'molesA' ? 'ansMolesA' : (fieldId === 'molarityA' ? 'ansMolarityA' : (fieldId === 'concGrams' ? 'ansConcGrams' : `ans_${fieldId}`))));
     const el = document.getElementById(inputId);
-    const ansVal = typeof getAnswerValue === 'function' ? getAnswerValue(engine.q1Answers, fieldId, q.id) : engine.q1Answers[fieldId];
+    const ansVal = typeof window.getAnswerValue === 'function' ? window.getAnswerValue(engine.q1Answers, fieldId, q.id) : engine.q1Answers[fieldId];
     const val = parseFloat(el && el.value !== '' ? el.value : ansVal);
 
     const p = engine.preset.q1;
@@ -1750,7 +1754,7 @@
       answers: engine.q1Answers,
       t1: engine.q1Trials[0]?.used || p.trueTitre,
       t2: engine.q1Trials[1]?.used || p.trueTitre,
-      v1: parseFloat(typeof getAnswerValue === 'function' ? getAnswerValue(engine.q1Answers, 'avgTitre', 'step_a') : (engine.q1Answers.avgTitre || engine.q1Answers.step_a)) || expAvgFromTrials
+      v1: parseFloat(typeof window.getAnswerValue === 'function' ? window.getAnswerValue(engine.q1Answers, 'avgTitre', 'step_a') : (engine.q1Answers.avgTitre || engine.q1Answers.step_a)) || expAvgFromTrials
     };
 
     const expTheo = typeof q.calcTheoretical === 'function' ? q.calcTheoretical(evalCtx) : null;

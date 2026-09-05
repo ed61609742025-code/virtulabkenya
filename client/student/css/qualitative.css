@@ -1231,7 +1231,8 @@ html, body {
 }
 
 @media (max-width: 680px) {
-  .knec-table {
+  .test-layout-grid .knec-table:not(.knec-titration-table),
+  .qual-obs-table {
     display: flex;
     flex-direction: column;
     border: 1px solid var(--card-border);
@@ -1239,16 +1240,20 @@ html, body {
     width: 100%;
     margin-top: 6px;
   }
-  .knec-table thead {
+  .test-layout-grid .knec-table:not(.knec-titration-table) thead,
+  .qual-obs-table thead {
     display: none;
   }
-  .knec-table tbody,
-  .knec-table tr {
+  .test-layout-grid .knec-table:not(.knec-titration-table) tbody,
+  .test-layout-grid .knec-table:not(.knec-titration-table) tr,
+  .qual-obs-table tbody,
+  .qual-obs-table tr {
     display: flex;
     flex-direction: column;
     width: 100%;
   }
-  .knec-table td {
+  .test-layout-grid .knec-table:not(.knec-titration-table) td,
+  .qual-obs-table td {
     display: flex;
     flex-direction: column;
     width: 100% !important;
@@ -1256,10 +1261,12 @@ html, body {
     padding: 10px 8px;
     box-sizing: border-box;
   }
-  .knec-table td:first-child {
+  .test-layout-grid .knec-table:not(.knec-titration-table) td:first-child,
+  .qual-obs-table td:first-child {
     border-bottom: 1px dashed var(--card-border);
   }
-  .knec-table td:first-child::before {
+  .test-layout-grid .knec-table:not(.knec-titration-table) td:first-child::before,
+  .qual-obs-table td:first-child::before {
     content: "📝 OBSERVATIONS (0.7 MARK)";
     font-family: var(--font-heading);
     font-size: 0.72rem;
@@ -1269,7 +1276,8 @@ html, body {
     margin-bottom: 6px;
     display: block;
   }
-  .knec-table td:last-child::before {
+  .test-layout-grid .knec-table:not(.knec-titration-table) td:last-child::before,
+  .qual-obs-table td:last-child::before {
     content: "💡 INFERENCES / DEDUCTIONS (0.7 MARK)";
     font-family: var(--font-heading);
     font-size: 0.72rem;

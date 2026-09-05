@@ -483,24 +483,138 @@
     showTemporaryToast(`✓ Indicator set to ${val}`);
   };
 
+  window.promptCustomSalt = function(qNum = 2) {
+    const qKey = qNum === 3 ? 'q3' : 'q2';
+    if (!currentExamDraft?.examConfig?.[qKey]) return;
+    const targetQ = currentExamDraft.examConfig[qKey];
+
+    const currentName = targetQ.trueSaltName || targetQ.trueSaltKey || '';
+    const currentCation = targetQ.trueCation || '';
+    const currentAnion = targetQ.trueAnion || '';
+    const currentDesc = targetQ.sampleDesc || '';
+
+    const name = prompt(`Enter Question ${qNum} Confidential Chemical / Mixture Name:\n(e.g., Zinc Sulfate + Barium Sulfate Mixture, or Ammonium Chloride)`, currentName);
+    if (!name || !name.trim()) {
+      renderBlueprintTab(currentExamDraft);
+      return;
+    }
+
+    const cation = prompt(`Enter Confirmed Cation(s) for "${name.trim()}":\n(e.g., Zn²⁺, Ba²⁺ or NH₄⁺ or Pb²⁺ or Fe²⁺)`, currentCation || 'Zn²⁺');
+    const anion = prompt(`Enter Confirmed Anion(s) for "${name.trim()}":\n(e.g., SO₄²⁻ or Cl⁻ or NO₃⁻ or CO₃²⁻)`, currentAnion || 'SO₄²⁻');
+    const desc = prompt(`Enter Physical Appearance / Nature:\n(e.g., White solid mixture of soluble crystals and insoluble powder)`, currentDesc || 'Inorganic solid sample');
+
+    targetQ.trueSaltKey = name.trim();
+    targetQ.trueSaltName = name.trim();
+    targetQ.trueCation = (cation || '').trim();
+    targetQ.trueAnion = (anion || '').trim();
+    targetQ.sampleDesc = (desc || '').trim();
+
+    if (Array.isArray(currentExamDraft.questions)) {
+      const qObj = currentExamDraft.questions.find(q => q.number === qNum);
+      if (qObj && qObj.config) {
+        Object.assign(qObj.config, {
+          trueSaltKey: targetQ.trueSaltKey,
+          trueSaltName: targetQ.trueSaltName,
+          trueCation: targetQ.trueCation,
+          trueAnion: targetQ.trueAnion,
+          sampleDesc: targetQ.sampleDesc
+        });
+      }
+    }
+
+    saveDraftToStorage(currentExamDraft);
+    renderBlueprintTab(currentExamDraft);
+    renderStudentPaperTab(currentExamDraft);
+    renderMarkingSchemeTab(currentExamDraft);
+    showTemporaryToast(`✓ Question ${qNum} chemical updated to "${targetQ.trueSaltName}"`);
+  };
+
+  window.promptCustomOrganic = function(qNum = 3) {
+    if (!currentExamDraft?.examConfig?.q3) return;
+    const q3 = currentExamDraft.examConfig.q3;
+
+    const currentName = q3.trueOrganicName || q3.trueOrganicKey || '';
+    const currentFg = q3.trueFunctionalGroup || '';
+    const currentDesc = q3.sampleDesc || '';
+
+    const name = prompt(`Enter Question 3 Confidential Organic Compound Name:\n(e.g., Butan-1-ol, or Methanoic Acid, or Glucose)`, currentName);
+    if (!name || !name.trim()) {
+      renderBlueprintTab(currentExamDraft);
+      return;
+    }
+
+    const fg = prompt(`Enter Confirmed Functional Group for "${name.trim()}":\n(e.g., Alkanol (-OH), or Carboxylic Acid (-COOH), or Alkene (>C=C<))`, currentFg || 'Alkanol (-OH)');
+    const desc = prompt(`Enter Physical Appearance / Nature:\n(e.g., Clear, colorless liquid with characteristic spirituous odor)`, currentDesc || 'Clear neutral organic liquid');
+
+    q3.trueOrganicKey = name.trim();
+    q3.trueOrganicName = name.trim();
+    q3.trueFunctionalGroup = (fg || '').trim();
+    q3.sampleDesc = (desc || '').trim();
+
+    if (Array.isArray(currentExamDraft.questions)) {
+      const qObj = currentExamDraft.questions.find(q => q.number === qNum);
+      if (qObj && qObj.config) {
+        Object.assign(qObj.config, {
+          trueOrganicKey: q3.trueOrganicKey,
+          trueOrganicName: q3.trueOrganicName,
+          trueFunctionalGroup: q3.trueFunctionalGroup,
+          sampleDesc: q3.sampleDesc
+        });
+      }
+    }
+
+    saveDraftToStorage(currentExamDraft);
+    renderBlueprintTab(currentExamDraft);
+    renderStudentPaperTab(currentExamDraft);
+    renderMarkingSchemeTab(currentExamDraft);
+    showTemporaryToast(`✓ Question 3 organic chemical updated to "${q3.trueOrganicName}"`);
+  };
+
   window.updateBlueprintSalt = function(val, qNum = 2) {
+    if (val === '__custom__') {
+      promptCustomSalt(qNum);
+      return;
+    }
+
     const qKey = qNum === 3 ? 'q3' : 'q2';
     if (!currentExamDraft?.examConfig?.[qKey]) return;
     const targetQ = currentExamDraft.examConfig[qKey];
     targetQ.trueSaltKey = val;
+
     const saltNames = {
       'ZnSO4': { name: 'Zinc Sulfate — ZnSO₄', cation: 'Zn²⁺', anion: 'SO₄²⁻', desc: 'White crystalline solid' },
       'Pb(NO3)2': { name: 'Lead(II) Nitrate — Pb(NO₃)₂', cation: 'Pb²⁺', anion: 'NO₃⁻', desc: 'White crystalline solid' },
       'CuSO4': { name: 'Copper(II) Sulfate — CuSO₄', cation: 'Cu²⁺', anion: 'SO₄²⁻', desc: 'Blue crystalline powder' },
       'FeSO4': { name: 'Iron(II) Sulfate — FeSO₄', cation: 'Fe²⁺', anion: 'SO₄²⁻', desc: 'Pale green crystalline solid' },
       'FeCl3': { name: 'Iron(III) Chloride — FeCl₃', cation: 'Fe³⁺', anion: 'Cl⁻', desc: 'Reddish-brown crystalline solid' },
-      'CaCl2': { name: 'Calcium Chloride — CaCl₂', cation: 'Ca²⁺', anion: 'Cl⁻', desc: 'White deliquescent crystals' }
+      'CaCl2': { name: 'Calcium Chloride — CaCl₂', cation: 'Ca²⁺', anion: 'Cl⁻', desc: 'White deliquescent crystals' },
+      'Ca(NO3)2': { name: 'Calcium Nitrate — Ca(NO₃)₂', cation: 'Ca²⁺', anion: 'NO₃⁻', desc: 'White crystalline solid' },
+      'NH4Cl': { name: 'Ammonium Chloride — NH₄Cl', cation: 'NH₄⁺', anion: 'Cl⁻', desc: 'White crystalline solid, sublimes on heating' },
+      'Al2(SO4)3': { name: 'Aluminium Sulfate — Al₂(SO₄)₃', cation: 'Al³⁺', anion: 'SO₄²⁻', desc: 'White crystalline powder' },
+      'BaCl2': { name: 'Barium Chloride — BaCl₂', cation: 'Ba²⁺', anion: 'Cl⁻', desc: 'White crystalline solid' },
+      'ZnSO4 + BaSO4': { name: 'Zinc Sulfate + Barium Sulfate Mixture', cation: 'Zn²⁺, Ba²⁺', anion: 'SO₄²⁻', desc: 'White solid mixture containing one soluble and one insoluble salt' },
+      'CuCO3 + Na2SO4': { name: 'Copper(II) Carbonate + Sodium Sulfate Mixture', cation: 'Cu²⁺, Na⁺', anion: 'CO₃²⁻, SO₄²⁻', desc: 'Green powder and white crystalline solid mixture' },
+      'FeSO4 + (NH4)2SO4': { name: 'Ammonium Iron(II) Sulfate (Mohr’s Salt)', cation: 'Fe²⁺, NH₄⁺', anion: 'SO₄²⁻', desc: 'Pale green crystalline double salt' }
     };
-    const s = saltNames[val] || { name: val, cation: 'Zn²⁺', anion: 'SO₄²⁻', desc: 'Inorganic solid' };
+    const s = saltNames[val] || { name: val, cation: targetQ.trueCation || 'Zn²⁺', anion: targetQ.trueAnion || 'SO₄²⁻', desc: targetQ.sampleDesc || 'Inorganic solid' };
     targetQ.trueSaltName = s.name;
     targetQ.trueCation = s.cation;
     targetQ.trueAnion = s.anion;
     targetQ.sampleDesc = s.desc;
+
+    // Synchronize into questions array if present
+    if (Array.isArray(currentExamDraft.questions)) {
+      const qObj = currentExamDraft.questions.find(q => q.number === qNum);
+      if (qObj && qObj.config) {
+        Object.assign(qObj.config, {
+          trueSaltKey: targetQ.trueSaltKey,
+          trueSaltName: targetQ.trueSaltName,
+          trueCation: targetQ.trueCation,
+          trueAnion: targetQ.trueAnion,
+          sampleDesc: targetQ.sampleDesc
+        });
+      }
+    }
 
     // Trigger AI sync to get tests
     AiExamAssistant.refineDraft({
@@ -508,26 +622,49 @@
       instruction: `Change Question ${qNum} unknown salt to ${s.name}`
     }).then(res => {
       if (res?.exam) renderExamResults(res.exam);
-      showTemporaryToast(`✓ Question ${qNum} salt changed to ${s.name}`);
+      showTemporaryToast(`✓ Question ${qNum} chemical changed to ${s.name}`);
     }).catch(() => {
+      saveDraftToStorage(currentExamDraft);
       renderBlueprintTab(currentExamDraft);
     });
   };
 
   window.updateBlueprintOrganic = function(val) {
+    if (val === '__custom__') {
+      promptCustomOrganic(3);
+      return;
+    }
+
     if (!currentExamDraft?.examConfig?.q3) return;
     const q3 = currentExamDraft.examConfig.q3;
     q3.trueOrganicKey = val;
+
     const orgNames = {
       'Ethanol': { name: 'Ethanol — C₂H₅OH', fg: 'Alkanol (-OH)', desc: 'Clear neutral volatile liquid' },
       'Ethanoic Acid': { name: 'Ethanoic Acid — CH₃COOH', fg: 'Carboxylic Acid (-COOH)', desc: 'Pungent acidic liquid' },
       'Cyclohexene': { name: 'Cyclohexene — C₆H₁₀', fg: 'Alkene (>C=C<)', desc: 'Clear volatile hydrocarbon' },
-      'Hexane': { name: 'Hexane — C₆H₁₄', fg: 'Saturated Alkane', desc: 'Neutral immiscible hydrocarbon' }
+      'Hexane': { name: 'Hexane — C₆H₁₄', fg: 'Saturated Alkane', desc: 'Neutral immiscible hydrocarbon' },
+      'Butan-1-ol': { name: 'Butan-1-ol — C₄H₉OH', fg: 'Alkanol (-OH)', desc: 'Clear liquid with characteristic spirituous odor' },
+      'Methanoic Acid': { name: 'Methanoic Acid — HCOOH', fg: 'Carboxylic Acid (-COOH)', desc: 'Pungent liquid with dual acid/reducing properties' },
+      'Propan-2-ol': { name: 'Propan-2-ol — C₃H₇OH', fg: 'Alkanol (-OH)', desc: 'Clear neutral secondary alcohol' }
     };
-    const o = orgNames[val] || { name: val, fg: 'Organic Group', desc: 'Organic compound' };
+    const o = orgNames[val] || { name: val, fg: q3.trueFunctionalGroup || 'Organic Group', desc: q3.sampleDesc || 'Organic compound' };
     q3.trueOrganicName = o.name;
     q3.trueFunctionalGroup = o.fg;
     q3.sampleDesc = o.desc;
+
+    // Synchronize into questions array if present
+    if (Array.isArray(currentExamDraft.questions)) {
+      const qObj = currentExamDraft.questions.find(q => q.number === 3);
+      if (qObj && qObj.config) {
+        Object.assign(qObj.config, {
+          trueOrganicKey: q3.trueOrganicKey,
+          trueOrganicName: q3.trueOrganicName,
+          trueFunctionalGroup: q3.trueFunctionalGroup,
+          sampleDesc: q3.sampleDesc
+        });
+      }
+    }
 
     AiExamAssistant.refineDraft({
       currentDraft: currentExamDraft,
@@ -536,6 +673,7 @@
       if (res?.exam) renderExamResults(res.exam);
       showTemporaryToast(`✓ Organic sample changed to ${o.name}`);
     }).catch(() => {
+      saveDraftToStorage(currentExamDraft);
       renderBlueprintTab(currentExamDraft);
     });
   };
@@ -739,6 +877,25 @@
         ? config.tests
         : (Array.isArray(config.subQuestions) && config.subQuestions.length > 0 ? config.subQuestions : []);
 
+      const standardSalts = [
+        { key: 'ZnSO4', label: 'Zinc Sulfate — ZnSO₄ (Zn²⁺ / SO₄²⁻)' },
+        { key: 'Pb(NO3)2', label: 'Lead(II) Nitrate — Pb(NO₃)₂ (Pb²⁺ / NO₃⁻)' },
+        { key: 'CuSO4', label: 'Copper(II) Sulfate — CuSO₄ (Cu²⁺ / SO₄²⁻)' },
+        { key: 'FeSO4', label: 'Iron(II) Sulfate — FeSO₄ (Fe²⁺ / SO₄²⁻)' },
+        { key: 'FeCl3', label: 'Iron(III) Chloride — FeCl₃ (Fe³⁺ / Cl⁻)' },
+        { key: 'CaCl2', label: 'Calcium Chloride — CaCl₂ (Ca²⁺ / Cl⁻)' },
+        { key: 'Ca(NO3)2', label: 'Calcium Nitrate — Ca(NO₃)₂ (Ca²⁺ / NO₃⁻)' },
+        { key: 'NH4Cl', label: 'Ammonium Chloride — NH₄Cl (NH₄⁺ / Cl⁻)' },
+        { key: 'Al2(SO4)3', label: 'Aluminium Sulfate — Al₂(SO₄)₃ (Al³⁺ / SO₄²⁻)' },
+        { key: 'BaCl2', label: 'Barium Chloride — BaCl₂ (Ba²⁺ / Cl⁻)' },
+        { key: 'ZnSO4 + BaSO4', label: '🧪 Two-Salt Mixture: ZnSO₄ + BaSO₄ (Zn²⁺, Ba²⁺ / SO₄²⁻)' },
+        { key: 'CuCO3 + Na2SO4', label: '🧪 Two-Salt Mixture: CuCO₃ + Na₂SO₄ (Cu²⁺, Na⁺ / CO₃²⁻, SO₄²⁻)' },
+        { key: 'FeSO4 + (NH4)2SO4', label: '🧪 Double Salt: Mohr’s Salt (Fe²⁺ + NH₄⁺ / SO₄²⁻)' }
+      ];
+
+      const currentKey = config.trueSaltKey || '';
+      const isCustomKey = currentKey && !standardSalts.some(s => s.key.toLowerCase() === currentKey.toLowerCase());
+
       return `
         <div class="blueprint-card">
           <div class="blueprint-card-header">
@@ -747,20 +904,20 @@
           </div>
           <div class="blueprint-card-body">
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
-              <span class="bp-label">Target Unknown Salt:</span>
+              <span class="bp-label">Target Unknown Salt / Mixture:</span>
               <select class="form-control form-control-sm" style="font-weight:700;max-width:320px;" onchange="updateBlueprintSalt(this.value, ${qNum})">
-                <option value="ZnSO4" ${config.trueSaltKey === 'ZnSO4' ? 'selected' : ''}>Zinc Sulfate — ZnSO₄ (Zn²⁺ / SO₄²⁻)</option>
-                <option value="Pb(NO3)2" ${config.trueSaltKey === 'Pb(NO3)2' ? 'selected' : ''}>Lead(II) Nitrate — Pb(NO₃)₂ (Pb²⁺ / NO₃⁻)</option>
-                <option value="CuSO4" ${config.trueSaltKey === 'CuSO4' ? 'selected' : ''}>Copper(II) Sulfate — CuSO₄ (Cu²⁺ / SO₄²⁻)</option>
-                <option value="FeSO4" ${config.trueSaltKey === 'FeSO4' ? 'selected' : ''}>Iron(II) Sulfate — FeSO₄ (Fe²⁺ / SO₄²⁻)</option>
-                <option value="FeCl3" ${config.trueSaltKey === 'FeCl3' ? 'selected' : ''}>Iron(III) Chloride — FeCl₃ (Fe³⁺ / Cl⁻)</option>
-                <option value="CaCl2" ${config.trueSaltKey === 'CaCl2' ? 'selected' : ''}>Calcium Chloride — CaCl₂ (Ca²⁺ / Cl⁻)</option>
+                ${isCustomKey ? `<option value="${escapeHtml(currentKey)}" selected>🧪 ${escapeHtml(config.trueSaltName || currentKey)} (From Exam / Confidential)</option>` : ''}
+                ${standardSalts.map(s => `<option value="${s.key}" ${!isCustomKey && currentKey.toLowerCase() === s.key.toLowerCase() ? 'selected' : ''}>${s.label}</option>`).join('')}
+                <option value="__custom__">✏️ Custom Chemical / Mixture (from Confidential Guide)...</option>
               </select>
+              <button type="button" class="btn btn-sm btn-outline-secondary" onclick="promptCustomSalt(${qNum})" style="font-size:0.75rem;font-weight:700;padding:3px 9px;" title="Set or edit confidential chemical identity or mixture">
+                ✏️ Edit Confidential Identity
+              </button>
             </div>
 
             <div class="bp-param-row">
-              <div><span class="bp-label">Confirmed Cation:</span> <span class="pill pill-ok">${escapeHtml(config.trueCation || 'Zn²⁺')}</span></div>
-              <div><span class="bp-label">Confirmed Anion:</span> <span class="pill pill-ok">${escapeHtml(config.trueAnion || 'SO₄²⁻')}</span></div>
+              <div><span class="bp-label">Confirmed Cation(s):</span> <span class="pill pill-ok">${escapeHtml(config.trueCation || 'Zn²⁺')}</span></div>
+              <div><span class="bp-label">Confirmed Anion(s):</span> <span class="pill pill-ok">${escapeHtml(config.trueAnion || 'SO₄²⁻')}</span></div>
               <div><span class="bp-label">Appearance:</span> <i>${escapeHtml(config.sampleDesc || 'Solid sample')}</i></div>
             </div>
             
@@ -789,6 +946,19 @@
 
     // Helper: Render Question 3 Organic Card
     function getQ3CardHtml(qNum = 3, marks = 10, config = q3) {
+      const standardOrganics = [
+        { key: 'Ethanol', label: 'Ethanol — C₂H₅OH (Alkanol -OH)' },
+        { key: 'Ethanoic Acid', label: 'Ethanoic Acid — CH₃COOH (Carboxylic Acid -COOH)' },
+        { key: 'Cyclohexene', label: 'Cyclohexene — C₆H₁₀ (Alkene >C=C<)' },
+        { key: 'Hexane', label: 'Hexane — C₆H₁₄ (Saturated Alkane)' },
+        { key: 'Butan-1-ol', label: 'Butan-1-ol — C₄H₉OH (Alkanol -OH)' },
+        { key: 'Methanoic Acid', label: 'Methanoic Acid — HCOOH (Carboxylic Acid -COOH)' },
+        { key: 'Propan-2-ol', label: 'Propan-2-ol — C₃H₇OH (Secondary Alkanol -OH)' }
+      ];
+
+      const currentOrgKey = config.trueOrganicKey || '';
+      const isCustomOrg = currentOrgKey && !standardOrganics.some(o => o.key.toLowerCase() === currentOrgKey.toLowerCase());
+
       return `
         <div class="blueprint-card">
           <div class="blueprint-card-header">
@@ -799,11 +969,13 @@
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
               <span class="bp-label">Target Unknown Organic:</span>
               <select class="form-control form-control-sm" style="font-weight:700;max-width:320px;" onchange="updateBlueprintOrganic(this.value)">
-                <option value="Ethanol" ${config.trueOrganicKey === 'Ethanol' ? 'selected' : ''}>Ethanol — C₂H₅OH (Alkanol -OH)</option>
-                <option value="Ethanoic Acid" ${config.trueOrganicKey === 'Ethanoic Acid' ? 'selected' : ''}>Ethanoic Acid — CH₃COOH (Carboxylic Acid -COOH)</option>
-                <option value="Cyclohexene" ${config.trueOrganicKey === 'Cyclohexene' ? 'selected' : ''}>Cyclohexene — C₆H₁₀ (Alkene >C=C<)</option>
-                <option value="Hexane" ${config.trueOrganicKey === 'Hexane' ? 'selected' : ''}>Hexane — C₆H₁₄ (Saturated Alkane)</option>
+                ${isCustomOrg ? `<option value="${escapeHtml(currentOrgKey)}" selected>🧪 ${escapeHtml(config.trueOrganicName || currentOrgKey)} (From Exam / Confidential)</option>` : ''}
+                ${standardOrganics.map(o => `<option value="${o.key}" ${!isCustomOrg && currentOrgKey.toLowerCase() === o.key.toLowerCase() ? 'selected' : ''}>${o.label}</option>`).join('')}
+                <option value="__custom__">✏️ Custom Organic Compound (from Confidential Guide)...</option>
               </select>
+              <button type="button" class="btn btn-sm btn-outline-secondary" onclick="promptCustomOrganic(${qNum})" style="font-size:0.75rem;font-weight:700;padding:3px 9px;" title="Set or edit confidential organic identity">
+                ✏️ Edit Confidential Identity
+              </button>
             </div>
 
             <div class="bp-param-row">

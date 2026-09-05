@@ -1033,6 +1033,44 @@ function getSaltTestSequence(saltKey) {
         { id: 't4', prompt: '(iv) Flame test with clean nichrome wire in non-luminous flame', correctObs: 'Brick-red / orange-red flame', correctInf: 'Ca²⁺ confirmed' },
         { id: 't5', prompt: '(v) To portion 3, add dilute HNO₃ followed by AgNO₃', correctObs: 'White precipitate formed, soluble in aqueous NH₃', correctInf: 'Cl⁻ confirmed' }
       ];
+    case 'Ca(NO3)2':
+      return [
+        { id: 't1', prompt: '(i) Heat a half-spatula of Solid Y strongly in a dry hard-glass test tube', correctObs: 'Solid decrepitates and melts; brown fumes evolved that turn moist blue litmus red; rekindles glowing splint', correctInf: 'Thermal decomposition of nitrate salt; NO₂ and O₂ gases evolved; NO₃⁻ present' },
+        { id: 't2', prompt: '(ii) Dissolve remainder in 10 cm³ distilled water, divide into 4 portions. Test portion 1 with litmus', correctObs: 'Clear colorless solution; neutral to litmus', correctInf: 'Soluble neutral salt' },
+        { id: 't3', prompt: '(iii) To portion 2, add 2M NaOH dropwise until in excess', correctObs: 'White precipitate formed, insoluble in excess sodium hydroxide', correctInf: 'Ca²⁺ or Mg²⁺ present' },
+        { id: 't4', prompt: '(iv) To portion 3, add 2M aqueous ammonia (NH₃) dropwise until in excess', correctObs: 'No precipitate formed with drops or with excess aqueous ammonia', correctInf: 'Ca²⁺ confirmed present' },
+        { id: 't5', prompt: '(v) To portion 4, add 3-4 drops of dilute sulfuric acid (H₂SO₄)', correctObs: 'White precipitate formed (sparingly soluble CaSO₄)', correctInf: 'Ca²⁺ confirmed present' }
+      ];
+    case 'NH4Cl':
+      return [
+        { id: 't1', prompt: '(i) Heat Solid Y in a dry test tube gently, then strongly', correctObs: 'Sublimes; dense white fumes deposit on upper cooler walls of test tube', correctInf: 'Sublimable salt; NH₄⁺ present' },
+        { id: 't2', prompt: '(ii) Dissolve remainder in distilled water, add 2M NaOH and warm gently', correctObs: 'Colorless gas with pungent choking smell evolved; turns moist red litmus blue', correctInf: 'Alkaline ammonia (NH₃) gas evolved; NH₄⁺ confirmed' },
+        { id: 't3', prompt: '(iii) To portion 2, add 2M aqueous ammonia dropwise until in excess', correctObs: 'No precipitate formed with drops or excess', correctInf: 'Heavy transition metal ions absent' },
+        { id: 't4', prompt: '(iv) To portion 3, add dilute HNO₃ followed by AgNO₃ solution', correctObs: 'White precipitate formed, soluble in aqueous ammonia', correctInf: 'Cl⁻ confirmed present' }
+      ];
+    case 'Al2(SO4)3':
+      return [
+        { id: 't1', prompt: '(i) Describe physical appearance of Solid Y and dissolve in 10 cm³ distilled water', correctObs: 'White crystalline solid dissolves completely to form a clear colorless solution', correctInf: 'Soluble salt; absence of colored transition metal ions' },
+        { id: 't2', prompt: '(ii) To portion 1, add 2M NaOH dropwise until in excess', correctObs: 'White precipitate formed, soluble in excess NaOH to give a colorless solution', correctInf: 'Al³⁺, Pb²⁺, or Zn²⁺ present' },
+        { id: 't3', prompt: '(iii) To portion 2, add 2M aqueous ammonia (NH₃) dropwise until in excess', correctObs: 'White precipitate formed, insoluble in excess aqueous ammonia', correctInf: 'Al³⁺ or Pb²⁺ present (Zn²⁺ absent)' },
+        { id: 't4', prompt: '(iv) To portion 3, add 3 drops of potassium iodide (KI) solution', correctObs: 'No precipitate formed (solution remains clear)', correctInf: 'Al³⁺ confirmed present (Pb²⁺ absent)' },
+        { id: 't5', prompt: '(v) To portion 4, add Ba(NO₃)₂ followed by dilute HNO₃', correctObs: 'White precipitate formed, insoluble in dilute nitric acid', correctInf: 'SO₄²⁻ confirmed present' }
+      ];
+    case 'BaCl2':
+      return [
+        { id: 't1', prompt: '(i) Describe appearance and dissolve in 10 cm³ distilled water', correctObs: 'White crystalline solid dissolves completely to give a clear colorless solution', correctInf: 'Soluble non-transition metal salt' },
+        { id: 't2', prompt: '(ii) Flame test with clean platinum/nichrome wire in non-luminous flame', correctObs: 'Pale apple-green flame', correctInf: 'Ba²⁺ present' },
+        { id: 't3', prompt: '(iii) To portion 1, add dilute H₂SO₄ or Na₂SO₄ solution', correctObs: 'Dense white precipitate formed, insoluble in dilute HCl/HNO₃', correctInf: 'Ba²⁺ confirmed present (BaSO₄ formed)' },
+        { id: 't4', prompt: '(iv) To portion 2, add dilute HNO₃ followed by AgNO₃ solution', correctObs: 'White precipitate formed, soluble in aqueous ammonia', correctInf: 'Cl⁻ confirmed present' }
+      ];
+    case 'ZnSO4 + BaSO4':
+      return [
+        { id: 't1', prompt: '(i) Place Solid Mixture P in a beaker, add 15 cm³ distilled water, stir thoroughly and filter. Retain both filtrate and residue', correctObs: 'White residue remains on filter paper; clear colorless filtrate collected in boiling tube', correctInf: 'Mixture consists of an insoluble salt (residue) and a soluble salt (filtrate)' },
+        { id: 't2', prompt: '(ii) To 2 cm³ of the filtrate, add 2M NaOH dropwise until in excess', correctObs: 'White precipitate formed, dissolves in excess NaOH to form a colorless solution', correctInf: 'Zn²⁺, Al³⁺, or Pb²⁺ present in filtrate' },
+        { id: 't3', prompt: '(iii) To 2 cm³ of the filtrate, add 2M aqueous NH₃ dropwise until in excess', correctObs: 'White precipitate formed, dissolves completely in excess aqueous NH₃', correctInf: 'Zn²⁺ confirmed present in filtrate (Al³⁺ and Pb²⁺ are insoluble in excess NH₃)' },
+        { id: 't4', prompt: '(iv) To 2 cm³ of the filtrate, add dilute HNO₃ followed by Ba(NO₃)₂ solution', correctObs: 'Dense white precipitate formed, insoluble in dilute nitric acid', correctInf: 'SO₄²⁻ confirmed present in filtrate' },
+        { id: 't5', prompt: '(v) Transfer a half spatula of the residue into a test tube and add 2 cm³ of 2M dilute HCl', correctObs: 'Residue remains completely insoluble in dilute hydrochloric acid; no effervescence', correctInf: 'Insoluble barium sulfate (BaSO₄) confirmed in residue; carbonate absent' }
+      ];
     default:
       return [
         { id: 't1', prompt: '(i) Physical appearance of Solid Y', correctObs: 'White solid', correctInf: 'Non-transition metal compound' },
@@ -1346,7 +1384,42 @@ function applySmartRefinement(currentDraft, instruction) {
   // 5. UNKNOWN INORGANIC SALT (QUESTION 2)
   // ============================================================
   let matchedSaltKey = null;
-  if (lower.includes('zinc') || lower.includes('zn')) {
+  if (lower.includes('mixture') || (lower.includes('barium') && lower.includes('zinc'))) {
+    matchedSaltKey = 'ZnSO4 + BaSO4';
+    q2.trueSaltKey = 'ZnSO4 + BaSO4';
+    q2.trueSaltName = 'Zinc Sulfate + Barium Sulfate Mixture';
+    q2.trueCation = 'Zn2+, Ba2+';
+    q2.trueAnion = 'SO42-';
+    q2.sampleDesc = 'White solid mixture containing one soluble salt and one insoluble salt';
+  } else if (lower.includes('ammonium') || lower.includes('nh4')) {
+    matchedSaltKey = 'NH4Cl';
+    q2.trueSaltKey = 'NH4Cl';
+    q2.trueSaltName = 'Ammonium Chloride — NH₄Cl';
+    q2.trueCation = 'NH4+';
+    q2.trueAnion = 'Cl-';
+    q2.sampleDesc = 'White crystalline solid, sublimes on heating';
+  } else if (lower.includes('calcium nitrate') || (lower.includes('calcium') && lower.includes('nitrate'))) {
+    matchedSaltKey = 'Ca(NO3)2';
+    q2.trueSaltKey = 'Ca(NO3)2';
+    q2.trueSaltName = 'Calcium Nitrate — Ca(NO₃)₂';
+    q2.trueCation = 'Ca2+';
+    q2.trueAnion = 'NO3-';
+    q2.sampleDesc = 'Pure white inorganic crystalline salt';
+  } else if (lower.includes('aluminium') || lower.includes('aluminum')) {
+    matchedSaltKey = 'Al2(SO4)3';
+    q2.trueSaltKey = 'Al2(SO4)3';
+    q2.trueSaltName = 'Aluminium Sulfate — Al₂(SO₄)₃';
+    q2.trueCation = 'Al3+';
+    q2.trueAnion = 'SO42-';
+    q2.sampleDesc = 'White crystalline solid / powder';
+  } else if (lower.includes('barium') && (lower.includes('chloride') || lower.includes('bacl2'))) {
+    matchedSaltKey = 'BaCl2';
+    q2.trueSaltKey = 'BaCl2';
+    q2.trueSaltName = 'Barium Chloride — BaCl₂';
+    q2.trueCation = 'Ba2+';
+    q2.trueAnion = 'Cl-';
+    q2.sampleDesc = 'White crystalline solid';
+  } else if (lower.includes('zinc') || lower.includes('zn')) {
     matchedSaltKey = 'ZnSO4';
     q2.trueSaltKey = 'ZnSO4';
     q2.trueSaltName = 'Zinc Sulfate — ZnSO₄';

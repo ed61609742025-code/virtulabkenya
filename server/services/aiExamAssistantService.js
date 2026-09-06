@@ -274,23 +274,41 @@ function normalizeQuestionsArray(parsed) {
       let cfg = q.config ? { ...q.config } : null;
 
       if (simType === 'titration' && cfg) {
+        if (cfg.trueTitre != null) {
+          cfg.trueTitre = Number(cfg.trueTitre);
+        } else if (cfg.trueAcidMolarity && cfg.trueBaseMolarity) {
+          const rA = Number(cfg.ratioA || 1);
+          const rB = Number(cfg.ratioB || 1);
+          const pVol = Number(cfg.pipetteVolume || 25.0);
+          cfg.trueTitre = parseFloat(((rA * Number(cfg.trueBaseMolarity) * pVol) / (rB * Number(cfg.trueAcidMolarity))).toFixed(2));
+        }
+
         if (Array.isArray(cfg.procedures) && cfg.procedures.length > 0) {
           cfg.hasMultipleProcedures = true;
-          cfg.procedures = cfg.procedures.map((proc, pIdx) => ({
-            procedureIndex: proc.procedureIndex || pIdx + 1,
-            title: proc.title || `Procedure ${pIdx === 0 ? 'I' : (pIdx === 1 ? 'II' : pIdx + 1)}`,
-            instructions: proc.instructions || '',
-            solutionA: proc.solutionA || cfg.solutionA || 'Solution A',
-            solutionB: proc.solutionB || cfg.solutionB || 'Solution B',
-            pipetteVolume: Number(proc.pipetteVolume) || 25.0,
-            indicator: proc.indicator || 'Phenolphthalein',
-            indicatorStartColor: proc.indicatorStartColor || (proc.indicator && proc.indicator.toLowerCase().includes('methyl') ? '#FBBF24' : '#F472B6'),
-            indicatorEndColor: proc.indicatorEndColor || (proc.indicator && proc.indicator.toLowerCase().includes('methyl') ? '#FB7185' : 'transparent'),
-            trueTitre: Number(proc.trueTitre) || 25.0,
-            tableTitle: proc.tableTitle || `Table ${pIdx + 1}: Titration Results`,
-            tableMarks: Number(proc.tableMarks) || 4.0,
-            questions: Array.isArray(proc.questions) ? proc.questions : []
-          }));
+          cfg.procedures = cfg.procedures.map((proc, pIdx) => {
+            let pTitre = proc.trueTitre != null ? Number(proc.trueTitre) : null;
+            if (!pTitre && proc.trueAcidMolarity && proc.trueBaseMolarity) {
+              const rA = Number(proc.ratioA || 1);
+              const rB = Number(proc.ratioB || 1);
+              const pVol = Number(proc.pipetteVolume || 25.0);
+              pTitre = parseFloat(((rA * Number(proc.trueBaseMolarity) * pVol) / (rB * Number(proc.trueAcidMolarity))).toFixed(2));
+            }
+            return {
+              procedureIndex: proc.procedureIndex || pIdx + 1,
+              title: proc.title || `Procedure ${pIdx === 0 ? 'I' : (pIdx === 1 ? 'II' : pIdx + 1)}`,
+              instructions: proc.instructions || '',
+              solutionA: proc.solutionA || cfg.solutionA || 'Solution A',
+              solutionB: proc.solutionB || cfg.solutionB || 'Solution B',
+              pipetteVolume: Number(proc.pipetteVolume) || 25.0,
+              indicator: proc.indicator || 'Phenolphthalein',
+              indicatorStartColor: proc.indicatorStartColor || (proc.indicator && proc.indicator.toLowerCase().includes('methyl') ? '#FBBF24' : '#F472B6'),
+              indicatorEndColor: proc.indicatorEndColor || (proc.indicator && proc.indicator.toLowerCase().includes('methyl') ? '#FB7185' : 'transparent'),
+              trueTitre: pTitre || Number(cfg.trueTitre) || 25.0,
+              tableTitle: proc.tableTitle || `Table ${pIdx + 1}: Titration Results`,
+              tableMarks: Number(proc.tableMarks) || 4.0,
+              questions: Array.isArray(proc.questions) ? proc.questions : []
+            };
+          });
 
           // Backfill top-level solutionA/solutionB/indicator from Procedure I if omitted at root
           if (!cfg.solutionA && cfg.procedures[0]?.solutionA) cfg.solutionA = cfg.procedures[0].solutionA;
@@ -660,7 +678,7 @@ function normalizeExamStructure(parsed, sourceMeta = {}) {
 
   // Sync questions configuration to examConfig for composite exams
   if (Array.isArray(normalized.questions) && normalized.questions.length > 0) {
-    const q1Obj = normalized.questions.find(q => q.number === 1);
+    const q1Obj = normalized.questions.find(q => q.number === 1 || q.simulationType === 'titration');
     if (q1Obj && q1Obj.config) {
       normalized.examConfig.q1 = {
         ...(normalized.examConfig.q1 || {}),
@@ -668,6 +686,20 @@ function normalizeExamStructure(parsed, sourceMeta = {}) {
         simulationType: q1Obj.simulationType,
         marks: Number(q1Obj.marks) || normalized.examConfig.q1?.marks || 15
       };
+
+      // Determine canonical trueTitre
+      let titre = q1Obj.config.trueTitre != null ? Number(q1Obj.config.trueTitre) : (normalized.examConfig.q1.trueTitre != null ? Number(normalized.examConfig.q1.trueTitre) : null);
+      if (!titre && normalized.examConfig.q1.trueAcidMolarity && normalized.examConfig.q1.trueBaseMolarity) {
+        const rA = Number(normalized.examConfig.q1.ratioA || 1);
+        const rB = Number(normalized.examConfig.q1.ratioB || 1);
+        const pVol = Number(normalized.examConfig.q1.pipetteVolume || 25.0);
+        titre = parseFloat(((rA * Number(normalized.examConfig.q1.trueBaseMolarity) * pVol) / (rB * Number(normalized.examConfig.q1.trueAcidMolarity))).toFixed(2));
+      }
+      if (titre) {
+        normalized.examConfig.q1.trueTitre = titre;
+        q1Obj.config.trueTitre = titre;
+      }
+
       if (q1Obj.config.hasMultipleProcedures && Array.isArray(q1Obj.config.procedures)) {
         normalized.examConfig.q1.hasMultipleProcedures = true;
         normalized.examConfig.q1.procedures = q1Obj.config.procedures;
@@ -812,6 +844,8 @@ KNEC Examination Setting Standards to Enforce:
      - In "config", populate: { "sampleName": "Liquid Z", "trueOrganicKey": "Ethanol", "sampleDesc": "Clear volatile organic liquid", "marks": 10, "tests": [ ... ] }.
 5. Marking Scheme:
    - Provide a rigorous marking guide with point-by-point breakdown and explicit instructions on applying Error Carried Forward (e.c.f.) on calculation steps.
+6. CRITICAL TITRATION STOICHIOMETRIC CONSISTENCY:
+   - If the uploaded document, confidential preparation guide, or marking scheme mentions an expected average titre (e.g. 18.50 cm³ or 24.50 cm³), you MUST set "trueTitre" to that exact number in "config" and in "examConfig.q1" (and in "procedures[i].trueTitre" if multi-stage). The student simulation endpoint will trigger at this exact value, and the calculation steps in the marking scheme must be mathematically consistent with this trueTitre.
 
 Teacher's Additional Instructions: "${teacherNotes || 'None'}"
 

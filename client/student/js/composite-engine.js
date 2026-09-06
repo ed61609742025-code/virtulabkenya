@@ -1691,10 +1691,11 @@ class CompositeExamEngine {
     if (!config || typeof config !== 'object') return;
     if (config.mode) this.mode = config.mode;
 
-    if (config.presetKey === 'random' || config.presetKey === 'random_mock') {
+    const presetKey = config.presetKey || config.examConfig?.presetKey;
+    if (presetKey === 'random' || presetKey === 'random_mock') {
       this.preset = generateRandomCompositePreset();
-    } else if (config.presetKey && COMPOSITE_EXAM_PRESETS[config.presetKey]) {
-      const basePreset = COMPOSITE_EXAM_PRESETS[config.presetKey];
+    } else if (presetKey && COMPOSITE_EXAM_PRESETS[presetKey]) {
+      const basePreset = COMPOSITE_EXAM_PRESETS[presetKey];
       this.preset = {
         ...basePreset,
         q1: { ...basePreset.q1 },
@@ -1712,14 +1713,26 @@ class CompositeExamEngine {
       }
     }
 
-    if (config.q1) {
-      Object.assign(this.preset.q1, config.q1);
+    // Support flexible unpacking from config.q1, config.examConfig.q1, or config.questions[i].config
+    const q1Cfg = config.q1 || config.examConfig?.q1 || (Array.isArray(config.questions) ? config.questions.find(q => q.number === 1 || q.simulationType === 'titration')?.config : null);
+    const q2Cfg = config.q2 || config.examConfig?.q2 || (Array.isArray(config.questions) ? config.questions.find(q => q.number === 2 || q.simulationType === 'qualitative')?.config : null);
+    const q3Cfg = config.q3 || config.examConfig?.q3 || (Array.isArray(config.questions) ? config.questions.find(q => q.number === 3 || q.simulationType === 'organic' || (q.simulationType === 'qualitative' && q.number !== 2))?.config : null);
+
+    if (q1Cfg) {
+      Object.assign(this.preset.q1, q1Cfg);
+      if (q1Cfg.trueTitre != null) {
+        this.preset.q1.trueTitre = Number(q1Cfg.trueTitre);
+      }
 
       // Support multi-procedure double titrations (e.g. Procedure I & Procedure II)
-      if (Array.isArray(config.q1.procedures) && config.q1.procedures.length > 0) {
+      if (Array.isArray(q1Cfg.procedures) && q1Cfg.procedures.length > 0) {
         this.preset.q1.hasMultipleProcedures = true;
-        this.preset.q1.procedures = config.q1.procedures;
-        this.procedureStates = config.q1.procedures.map((proc, pIdx) => ({
+        this.preset.q1.procedures = q1Cfg.procedures.map((proc, pIdx) => ({
+          ...proc,
+          procedureIndex: proc.procedureIndex || pIdx + 1,
+          trueTitre: proc.trueTitre != null ? Number(proc.trueTitre) : Number(this.preset.q1.trueTitre || 25.00)
+        }));
+        this.procedureStates = q1Cfg.procedures.map((proc, pIdx) => ({
           trials: [
             { trial: 1, initial: 0.00, final: 0.00, used: 0.00, concordant: false, recorded: false },
             { trial: 2, initial: 0.00, final: 0.00, used: 0.00, concordant: false, recorded: false },
@@ -1729,10 +1742,10 @@ class CompositeExamEngine {
         }));
       }
 
-      if (config.q1.ratioA != null) this.preset.q1.moleRatioAcid = Number(config.q1.ratioA);
-      if (config.q1.ratioB != null) this.preset.q1.moleRatioBase = Number(config.q1.ratioB);
-      if (config.q1.acidRfm != null) {
-        this.preset.q1.acidRfm = Number(config.q1.acidRfm);
+      if (q1Cfg.ratioA != null) this.preset.q1.moleRatioAcid = Number(q1Cfg.ratioA);
+      if (q1Cfg.ratioB != null) this.preset.q1.moleRatioBase = Number(q1Cfg.ratioB);
+      if (q1Cfg.acidRfm != null) {
+        this.preset.q1.acidRfm = Number(q1Cfg.acidRfm);
       } else if (this.preset.q1.solutionA) {
         const solALower = this.preset.q1.solutionA.toLowerCase();
         if (solALower.includes('sulfuric') || solALower.includes('h₂so₄') || solALower.includes('h2so4')) {
@@ -1745,7 +1758,7 @@ class CompositeExamEngine {
           this.preset.q1.acidRfm = 36.5;
         }
       }
-      if (config.q1.baseRfm != null) this.preset.q1.baseRfm = Number(config.q1.baseRfm);
+      if (q1Cfg.baseRfm != null) this.preset.q1.baseRfm = Number(q1Cfg.baseRfm);
 
       // Regenerate appropriate calculation questions with bound functions
       if (this.preset.q1.calcType === 'water_of_crystallization') {
@@ -1759,18 +1772,18 @@ class CompositeExamEngine {
       }
     }
 
-    if (config.q2) {
-      Object.assign(this.preset.q2, config.q2);
-      const saltKey = config.q2.trueSaltKey || config.q2.salt;
+    if (q2Cfg) {
+      Object.assign(this.preset.q2, q2Cfg);
+      const saltKey = q2Cfg.trueSaltKey || q2Cfg.salt;
       if (saltKey) this.preset.q2.trueSaltKey = saltKey;
-      if (config.q2.hasDeduction !== undefined) {
-        this.preset.q2.hasDeduction = Boolean(config.q2.hasDeduction);
-      } else if (config.presetKey === 'custom' || !config.presetKey) {
+      if (q2Cfg.hasDeduction !== undefined) {
+        this.preset.q2.hasDeduction = Boolean(q2Cfg.hasDeduction);
+      } else if (presetKey === 'custom' || !presetKey) {
         this.preset.q2.hasDeduction = Boolean(
-          Array.isArray(config.q2.tests) && config.q2.tests.some(t => /final deduction|state the (cation|anion|identity)|write the formula/i.test(t.prompt || ''))
+          Array.isArray(q2Cfg.tests) && q2Cfg.tests.some(t => /final deduction|state the (cation|anion|identity)|write the formula/i.test(t.prompt || ''))
         );
       }
-      if (!Array.isArray(config.q2.tests) || config.q2.tests.length === 0) {
+      if (!Array.isArray(q2Cfg.tests) || q2Cfg.tests.length === 0) {
         const registryTests = getSaltPresetDefinition(saltKey);
         if (registryTests) {
           this.preset.q2.trueCation = registryTests.trueCation;
@@ -1782,21 +1795,21 @@ class CompositeExamEngine {
       }
     }
 
-    if (config.q3) {
-      Object.assign(this.preset.q3, config.q3);
-      const isQualitative = config.q3.simulationType === 'qualitative' || (
-        config.q3.simulationType !== 'organic' && (
-          Boolean(config.q3.trueSaltKey) ||
-          Boolean(config.q3.trueCation) ||
-          (config.q3.sampleName && /solid/i.test(config.q3.sampleName)) ||
-          (config.q3.tests && config.q3.tests.some(t => /naoh|ammonia|nh3|precipitation|cation|anion|heat|dissolv/i.test(t.prompt || '')))
+    if (q3Cfg) {
+      Object.assign(this.preset.q3, q3Cfg);
+      const isQualitative = q3Cfg.simulationType === 'qualitative' || (
+        q3Cfg.simulationType !== 'organic' && (
+          Boolean(q3Cfg.trueSaltKey) ||
+          Boolean(q3Cfg.trueCation) ||
+          (q3Cfg.sampleName && /solid/i.test(q3Cfg.sampleName)) ||
+          (q3Cfg.tests && q3Cfg.tests.some(t => /naoh|ammonia|nh3|precipitation|cation|anion|heat|dissolv/i.test(t.prompt || '')))
         )
       );
       if (isQualitative) {
         this.preset.q3.simulationType = 'qualitative';
-        const saltKey = config.q3.trueSaltKey || config.q3.salt;
+        const saltKey = q3Cfg.trueSaltKey || q3Cfg.salt;
         if (saltKey) this.preset.q3.trueSaltKey = saltKey;
-        if (!Array.isArray(config.q3.tests) || config.q3.tests.length === 0) {
+        if (!Array.isArray(q3Cfg.tests) || q3Cfg.tests.length === 0) {
           const registryTests = getSaltPresetDefinition(saltKey || 'Pb(NO3)2');
           if (registryTests) {
             this.preset.q3.trueCation = registryTests.trueCation;
@@ -1808,9 +1821,9 @@ class CompositeExamEngine {
         }
       } else {
         this.preset.q3.simulationType = 'organic';
-        const orgKey = config.q3.trueOrganicKey || config.q3.organic;
+        const orgKey = q3Cfg.trueOrganicKey || q3Cfg.organic;
         if (orgKey) this.preset.q3.trueOrganicKey = orgKey;
-        if (!Array.isArray(config.q3.tests) || config.q3.tests.length === 0) {
+        if (!Array.isArray(q3Cfg.tests) || q3Cfg.tests.length === 0) {
           const registryOrg = getOrganicPresetDefinition(orgKey);
           if (registryOrg) {
             this.preset.q3.trueFunctionalGroup = registryOrg.trueFunctionalGroup;

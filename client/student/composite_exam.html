@@ -2054,33 +2054,70 @@
     const activeProc = (engine?.preset?.q1?.hasMultipleProcedures && engine?.preset?.q1?.procedures && engine.preset.q1.procedures[activeProcedureIndex])
       ? engine.preset.q1.procedures[activeProcedureIndex]
       : (engine?.preset?.q1 || {});
+    const solA = (activeProc.solutionA || '').toLowerCase();
+    const solB = (activeProc.solutionB || '').toLowerCase();
     const indName = (activeProc.indicator || '').toLowerCase();
-    const isMethyl = indName.includes('methyl');
     const trueTitre = Number(activeProc.trueTitre) || 25.00;
 
+    const isKmno4 = indName.includes('kmno') || indName.includes('manganate') || solA.includes('kmno') || solA.includes('manganate');
+    const isMethyl = indName.includes('methyl');
+
+    // Identify whether base or acid is in conical flask (Solution B)
+    const isBaseInFlask = solB.includes('naoh') || solB.includes('base') || solB.includes('hydroxide') || solB.includes('carbonate') || solB.includes('na2co3') || solB.includes('alkali');
+    const isAcidInFlask = solB.includes('acid') || solB.includes('hcl') || solB.includes('h2so4') || solB.includes('hno3') || solB.includes('ethanedioic') || solB.includes('oxalic');
+    const isFe2InFlask = solB.includes('iron(ii)') || solB.includes('iron (ii)') || solB.includes('fe2') || solB.includes('ferrous');
+
     let fillColor;
-    if (indicatorDrops === 0 && !indName.includes('kmno')) {
-      fillColor = activeProc.flaskBaseColor || 'rgba(56,189,248,0.25)';
-      if (label) label.textContent = `Flask: 25.0 cm³ ${activeProc.solutionB ? activeProc.solutionB.split(' ')[0] : 'Sample'}`;
-    } else {
-      if (engine.q1BuretteReading >= (trueTitre + 0.30)) {
-        fillColor = isMethyl
-          ? 'rgba(239, 68, 68, 0.95)'
-          : (indName.includes('kmno') || (activeProc.solutionA || '').toLowerCase().includes('kmno'))
-          ? 'rgba(88, 28, 135, 0.98)'
-          : 'rgba(190, 24, 93, 0.95)';
-        if (label) label.textContent = 'Flask: Over-titrated! (Past Endpoint)';
-      } else if (engine.q1BuretteReading >= trueTitre) {
-        fillColor = isMethyl
-          ? 'rgba(251, 113, 133, 0.88)'
-          : 'rgba(236, 72, 153, 0.85)';
-        if (label) label.textContent = 'Flask: Endpoint Reached!';
+    const reading = engine.q1BuretteReading || 0;
+
+    if (indicatorDrops === 0 && !isKmno4) {
+      fillColor = isFe2InFlask ? 'rgba(16, 185, 129, 0.25)' : (activeProc.flaskBaseColor || 'rgba(224, 242, 254, 0.35)');
+      if (label) label.textContent = `Flask: 25.0 cm³ ${activeProc.solutionB ? activeProc.solutionB.split(' ')[0] : 'Sample'} (Add Indicator!)`;
+    } else if (reading >= (trueTitre + 0.30)) {
+      // PAST ENDPOINT (Excess titrant)
+      if (isKmno4) {
+        fillColor = activeProc.excessColor || 'rgba(126, 34, 206, 0.95)'; // Deep purple
+      } else if (isMethyl) {
+        fillColor = isAcidInFlask ? 'rgba(251, 191, 36, 0.90)' : 'rgba(239, 68, 68, 0.95)'; // Red in excess acid
       } else {
-        fillColor = isMethyl
-          ? 'rgba(251, 191, 36, 0.75)'
-          : 'rgba(244, 114, 182, 0.85)';
-        if (label) label.textContent = `Flask: ${activeProc.solutionB ? activeProc.solutionB.split(' ')[0] : 'Sample'} + Indicator`;
+        // Phenolphthalein
+        if (isAcidInFlask && !isBaseInFlask) {
+          fillColor = 'rgba(190, 24, 93, 0.95)'; // Dark pink in excess base
+        } else {
+          fillColor = activeProc.endpointColor || 'rgba(241, 245, 249, 0.25)'; // Discharged colorless in excess acid
+        }
       }
+      if (label) label.textContent = 'Flask: Over-titrated! (Past Endpoint)';
+    } else if (reading >= trueTitre) {
+      // AT ENDPOINT (Neutralization reached)
+      if (isKmno4) {
+        fillColor = activeProc.endpointColor || 'rgba(244, 114, 182, 0.75)'; // Faint permanent pink
+      } else if (isMethyl) {
+        fillColor = activeProc.endpointColor || 'rgba(249, 115, 22, 0.90)'; // Distinct orange
+      } else {
+        // Phenolphthalein
+        if (isAcidInFlask && !isBaseInFlask) {
+          fillColor = activeProc.endpointColor || 'rgba(244, 114, 182, 0.75)'; // Faint permanent pink
+        } else {
+          fillColor = activeProc.endpointColor || 'rgba(241, 245, 249, 0.25)'; // Discharged colorless
+        }
+      }
+      if (label) label.textContent = 'Flask: Endpoint Reached!';
+    } else {
+      // BEFORE ENDPOINT
+      if (isKmno4) {
+        fillColor = isFe2InFlask ? 'rgba(16, 185, 129, 0.22)' : 'rgba(241, 245, 249, 0.25)'; // Colorless / pale green
+      } else if (isMethyl) {
+        fillColor = isAcidInFlask ? 'rgba(239, 68, 68, 0.85)' : 'rgba(251, 191, 36, 0.85)'; // Yellow in base, Red in acid
+      } else {
+        // Phenolphthalein
+        if (isAcidInFlask && !isBaseInFlask) {
+          fillColor = 'rgba(241, 245, 249, 0.25)'; // Colorless in acid
+        } else {
+          fillColor = 'rgba(236, 72, 153, 0.85)'; // Pink in base
+        }
+      }
+      if (label) label.textContent = `Flask: ${activeProc.solutionB ? activeProc.solutionB.split(' ')[0] : 'Sample'} + Indicator`;
     }
 
     flask.setAttribute('fill', fillColor);
@@ -2123,7 +2160,20 @@
     const stopcock = document.getElementById('stopcockValve');
     if (stopcock) stopcock.style.transform = 'rotate(90deg)';
 
+    const activeProc = (engine?.preset?.q1?.hasMultipleProcedures && engine?.preset?.q1?.procedures && engine.preset.q1.procedures[activeProcedureIndex])
+      ? engine.preset.q1.procedures[activeProcedureIndex]
+      : (engine?.preset?.q1 || {});
+    const trueTitre = Number(activeProc.trueTitre) || 25.00;
+
     titrateInterval = setInterval(() => {
+      // Snap to trueTitre if approaching within one tick to prevent latency overshoot
+      if (engine.q1BuretteReading < trueTitre && (engine.q1BuretteReading + 0.20) >= trueTitre) {
+        engine.q1BuretteReading = trueTitre;
+        stopTitrate();
+        updateBuretteRig();
+        return;
+      }
+
       engine.q1BuretteReading += 0.20;
       if (engine.q1BuretteReading >= 50.0) {
         engine.q1BuretteReading = 50.0;
@@ -2723,13 +2773,23 @@
     const isFe2 = saltKey.includes('Fe') && !isFe3;
     const isCa = saltKey.includes('Ca');
 
+    // Find custom test object if present
+    const tests = Array.isArray(p.tests) ? p.tests : [];
+    const t = tests.find(x => x.id === testId) || {};
+    const obsStr = (t.correctObs || t.observation || t.obs || '').toLowerCase();
+    const promptStr = (t.prompt || '').toLowerCase();
+
     let liquidColor = 'transparent';
     if (performed) {
-      if (isFe3) {
-        liquidColor = 'rgba(180, 83, 9, 0.45)';
-      } else if (isFe2) {
+      if (obsStr.includes('deep blue') || obsStr.includes('royal blue')) {
+        liquidColor = '#1D4ED8';
+      } else if (obsStr.includes('brown fume') || obsStr.includes('brown gas') || obsStr.includes('no2')) {
+        liquidColor = 'rgba(180, 83, 9, 0.55)';
+      } else if (obsStr.includes('green solution') || isFe2) {
         liquidColor = 'rgba(16, 185, 129, 0.4)';
-      } else if (saltKey.includes('Cu')) {
+      } else if (obsStr.includes('brown solution') || obsStr.includes('yellow-brown') || isFe3) {
+        liquidColor = 'rgba(180, 83, 9, 0.45)';
+      } else if (saltKey.includes('Cu') || obsStr.includes('blue solution')) {
         liquidColor = 'rgba(56, 189, 248, 0.6)';
       } else {
         liquidColor = 'rgba(255,255,255,0.25)';
@@ -2741,7 +2801,45 @@
     let showPptDissolved = false;
 
     if (performed) {
-      if (testId === 'q2_appearance') {
+      // Dynamic precipitate inspection based on test observations and prompts
+      if (obsStr.includes('dissolv') || obsStr.includes('soluble in excess') || obsStr.includes('clear colorless solution')) {
+        if (isExcess || promptStr.includes('excess')) {
+          showPptDissolved = true;
+          showPpt = false;
+        } else {
+          showPpt = true;
+          pptColor = '#FFFFFF';
+        }
+      } else if (obsStr.includes('yellow ppt') || obsStr.includes('yellow precipitate') || obsStr.includes('bright yellow')) {
+        showPpt = true;
+        pptColor = '#FACC15';
+      } else if (obsStr.includes('reddish-brown') || obsStr.includes('brown ppt') || obsStr.includes('brown precipitate')) {
+        showPpt = true;
+        pptColor = '#991B1B';
+      } else if (obsStr.includes('dirty green') || obsStr.includes('green ppt') || obsStr.includes('green precipitate')) {
+        showPpt = true;
+        pptColor = '#15803D';
+      } else if (obsStr.includes('blue ppt') || obsStr.includes('blue precipitate') || obsStr.includes('pale blue')) {
+        if (isExcess && obsStr.includes('deep royal blue')) {
+          showPpt = false;
+          showPptDissolved = true;
+          liquidColor = '#1D4ED8';
+        } else {
+          showPpt = true;
+          pptColor = '#38BDF8';
+        }
+      } else if (obsStr.includes('white ppt') || obsStr.includes('white precipitate')) {
+        if (isExcess && (obsStr.includes('dissolv') || obsStr.includes('soluble'))) {
+          showPptDissolved = true;
+          showPpt = false;
+        } else {
+          showPpt = true;
+          pptColor = '#FFFFFF';
+        }
+      } else if (obsStr.includes('no ppt') || obsStr.includes('no precipitate') || obsStr.includes('clear solution') || obsStr.includes('colorless solution')) {
+        showPpt = false;
+        showPptDissolved = false;
+      } else if (testId === 'q2_appearance') {
         showPpt = false;
       } else if (testId === 'q2_naoh') {
         if (!isExcess) {
@@ -2831,6 +2929,10 @@
     const isFe3 = saltKey.includes('Fe') && (saltKey.includes('Cl') || saltKey.includes('3'));
     const isFe2 = saltKey.includes('Fe') && !isFe3;
 
+    // Find test definition
+    const tests = Array.isArray(p.tests) ? p.tests : [];
+    const t = tests.find(item => item.id === testId);
+
     if (testId === 'q2_heat') {
       if (isCa) {
         st.statusLabel = 'Heated: Decrepitation & brown NO₂ fumes that rekindle glowing splint';
@@ -2869,6 +2971,11 @@
       } else {
         st.statusLabel = 'Reagent Added: Characteristic reaction observed';
       }
+    } else if (t && (t.correctObs || t.observation)) {
+      const obs = t.correctObs || t.observation;
+      st.statusLabel = stage === 'excess' ? `In Excess: ${obs.slice(0, 55)}` : `Observed: ${obs.slice(0, 60)}`;
+    } else {
+      st.statusLabel = 'Test Completed: Reaction Observed';
     }
 
     renderQ2TestsGrid();

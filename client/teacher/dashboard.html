@@ -561,21 +561,36 @@
         </div>
 
         <div class="ai-drop-zone" id="aiDropZone" role="button" tabindex="0" aria-label="Upload exam paper PDF, photo scan, or text file" onclick="document.getElementById('aiFileInput').click()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('aiFileInput').click();}" ondragover="handleAiDragOver(event)" ondragleave="handleAiDragLeave(event)" ondrop="handleAiFileDrop(event)">
-          <input type="file" id="aiFileInput" style="display:none;" accept=".pdf,.png,.jpg,.jpeg,.webp,.txt" onchange="handleAiFileSelect(event)">
+          <input type="file" id="aiFileInput" style="display:none;" accept=".pdf,.png,.jpg,.jpeg,.webp,.txt" multiple onchange="handleAiFileSelect(event)">
           <div id="aiDropZoneNotice">
             <span class="ai-drop-icon">📑</span>
-            <div style="font-weight:800;font-size:0.95rem;color:var(--heading-color);margin-bottom:4px;">Drag and drop exam paper PDF, photo scan, or text file here</div>
-            <div style="font-size:0.8rem;color:var(--text-muted);">Supports PDF, PNG, JPG, JPEG, WEBP, and TXT files up to 20MB · or click / press Enter to browse</div>
+            <div style="font-weight:800;font-size:0.95rem;color:var(--heading-color);margin-bottom:4px;">Drag and drop Question Paper, Confidential Prep Guide, or multiple photo scans here</div>
+            <div style="font-size:0.8rem;color:var(--text-muted);">Supports multiple PDF, PNG, JPG, JPEG, WEBP, and TXT files · or click to browse</div>
           </div>
-          <div id="aiFilePreviewWrap" class="ai-file-preview-card" style="display:none;" onclick="event.stopPropagation()">
-            <div style="display:flex;align-items:center;gap:12px;">
-              <span id="aiFileIcon" style="font-size:1.8rem;">📄</span>
-              <div style="text-align:left;">
-                <div id="aiFileName" style="font-weight:800;font-size:0.88rem;color:var(--heading-color);">paper.pdf</div>
-                <div id="aiFileSize" style="font-size:0.75rem;color:var(--text-muted);">1.2 MB</div>
+          <div id="aiFilePreviewWrap" class="ai-file-preview-card" style="display:none;flex-direction:column;gap:12px;width:100%;cursor:default;" onclick="event.stopPropagation()">
+            <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--card-border);padding-bottom:8px;width:100%;">
+              <div style="font-weight:800;font-size:0.88rem;color:var(--heading-color);display:flex;align-items:center;gap:8px;">
+                <span>Attached Exam Documents</span>
+                <span id="aiFileCountBadge" class="badge" style="background:#0d9488;color:#fff;font-size:0.72rem;padding:2px 8px;border-radius:12px;">0 files</span>
+              </div>
+              <div style="display:flex;gap:6px;">
+                <button type="button" class="btn btn-sm btn-secondary" onclick="document.getElementById('aiFileInput').click()" style="font-size:0.75rem;padding:3px 10px;border-radius:6px;font-weight:700;">
+                  ➕ Add More Files
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="clearAllAiFiles()" style="font-size:0.75rem;padding:3px 8px;border-radius:6px;">
+                  Clear All
+                </button>
               </div>
             </div>
-            <button type="button" class="btn btn-sm btn-danger" onclick="removeSelectedAiFile()">✕ Remove</button>
+            
+            <!-- Dynamic List of Attached Document Cards -->
+            <div id="aiFilesList" style="display:flex;flex-direction:column;gap:8px;width:100%;max-height:240px;overflow-y:auto;">
+              <!-- Populated by renderFilePreview() -->
+            </div>
+
+            <div style="font-size:0.74rem;color:var(--text-muted);display:flex;align-items:center;gap:6px;padding-top:4px;border-top:1px dashed var(--card-border);width:100%;">
+              <span>💡 <b>Tip:</b> Tag each file as <b>Question Paper</b>, <b>Confidential Instructions</b>, or <b>Marking Scheme</b> so Walimu AI cross-references them accurately.</span>
+            </div>
           </div>
         </div>
 

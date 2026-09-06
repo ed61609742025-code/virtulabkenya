@@ -435,8 +435,9 @@ FALLBACK_PRESETS.redox.questions = normalizeQuestionsArray(FALLBACK_PRESETS.redo
 
 /**
  * Call Gemini REST API with optional multimodal parts (base64 documents / images).
+ * Supports both single fileData and multiple documents in files array.
  */
-async function callGeminiAssistant({ prompt, fileData = null, mimeType = null, maxTokens = EXAM_MAX_TOKENS }) {
+async function callGeminiAssistant({ prompt, files = [], fileData = null, mimeType = null, maxTokens = EXAM_MAX_TOKENS }) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     throw new Error('AI_NOT_CONFIGURED');
@@ -447,20 +448,34 @@ async function callGeminiAssistant({ prompt, fileData = null, mimeType = null, m
 
   const parts = [{ text: prompt }];
 
-  if (fileData && typeof fileData === 'string') {
+  const docList = Array.isArray(files) && files.length > 0
+    ? files
+    : (fileData ? [{ dataUrl: fileData, type: mimeType, name: 'document', role: 'question_paper' }] : []);
+
+  for (let i = 0; i < docList.length; i++) {
+    const doc = docList[i];
+    const rawData = doc.dataUrl || doc.fileData;
+    if (!rawData || typeof rawData !== 'string') continue;
+
     // Normalize mimeType: Gemini requires standard MIME types like application/pdf, image/png, image/jpeg, etc.
-    let resolvedMime = (mimeType || '').trim().toLowerCase();
+    let resolvedMime = (doc.type || doc.mimeType || '').trim().toLowerCase();
     if (!resolvedMime || resolvedMime === 'application/octet-stream' || resolvedMime === 'application/x-pdf') {
       resolvedMime = 'application/pdf';
     }
 
     // Strip data URL header efficiently without creating multiple multi-megabyte copies in V8
-    let cleanBase64 = fileData;
-    const commaIdx = fileData.indexOf('base64,');
+    let cleanBase64 = rawData;
+    const commaIdx = rawData.indexOf('base64,');
     if (commaIdx !== -1) {
-      cleanBase64 = fileData.substring(commaIdx + 7);
+      cleanBase64 = rawData.substring(commaIdx + 7);
     }
     cleanBase64 = cleanBase64.trim();
+
+    if (docList.length > 1 || doc.role) {
+      const docLabel = doc.name ? `Attached File: ${doc.name}` : `Attached Document ${i + 1}`;
+      const roleLabel = doc.role ? ` (Role: ${doc.role})` : '';
+      parts.push({ text: `=== ${docLabel}${roleLabel} ===` });
+    }
 
     parts.push({
       inlineData: {
@@ -717,26 +732,50 @@ function normalizeExamStructure(parsed, sourceMeta = {}) {
 
 /**
  * 1. Parse uploaded exam paper (PDF, Image photo, or plain text)
+ * Supports multiple documents simultaneously (Question Paper + Confidential Guide + Marking Scheme).
  */
-async function parseExamPaper({ fileData = null, mimeType = null, textContent = '', teacherNotes = '' }) {
-  // If PDF file data is provided, automatically extract text layer with pdf-parse to provide verbatim paper text
-  if (fileData && (mimeType === 'application/pdf' || fileData.startsWith('data:application/pdf') || fileData.includes('JVBERi0'))) {
-    try {
-      let b64 = fileData;
-      const commaIdx = fileData.indexOf('base64,');
-      if (commaIdx !== -1) b64 = fileData.substring(commaIdx + 7);
-      const pdfBuf = Buffer.from(b64.trim(), 'base64');
-      const { PDFParse } = require('pdf-parse');
-      const parser = new PDFParse({ data: pdfBuf });
-      const extracted = await parser.getText();
-      await parser.destroy();
-      if (extracted && extracted.text && extracted.text.trim()) {
-        const cleanedText = extracted.text.trim();
-        textContent = textContent ? `${textContent}\n\n${cleanedText}` : cleanedText;
+async function parseExamPaper({ files = [], fileData = null, mimeType = null, textContent = '', teacherNotes = '' }) {
+  // Normalize single fileData into files array if files is empty
+  let normalizedFiles = Array.isArray(files) && files.length > 0 ? [...files] : [];
+  if (normalizedFiles.length === 0 && fileData) {
+    normalizedFiles = [{
+      name: 'Uploaded Document',
+      type: mimeType || 'application/pdf',
+      dataUrl: fileData,
+      role: 'question_paper'
+    }];
+  }
+
+  // Extract text from all uploaded PDF files using pdf-parse
+  const extractedSections = [];
+  for (let i = 0; i < normalizedFiles.length; i++) {
+    const f = normalizedFiles[i];
+    const rawData = f.dataUrl || f.fileData;
+    const fType = f.type || f.mimeType || '';
+    if (rawData && (fType === 'application/pdf' || rawData.startsWith('data:application/pdf') || rawData.includes('JVBERi0'))) {
+      try {
+        let b64 = rawData;
+        const commaIdx = rawData.indexOf('base64,');
+        if (commaIdx !== -1) b64 = rawData.substring(commaIdx + 7);
+        const pdfBuf = Buffer.from(b64.trim(), 'base64');
+        const { PDFParse } = require('pdf-parse');
+        const parser = new PDFParse({ data: pdfBuf });
+        const extracted = await parser.getText();
+        await parser.destroy();
+        if (extracted && extracted.text && extracted.text.trim()) {
+          const docRole = (f.role || 'question_paper').toUpperCase();
+          const docName = f.name || `Document ${i + 1}`;
+          extractedSections.push(`=== ATTACHED DOCUMENT: ${docName} [ROLE: ${docRole}] ===\n${extracted.text.trim()}`);
+        }
+      } catch (pdfErr) {
+        console.warn(`[parseExamPaper] pdf-parse extraction note for "${f.name || i}":`, pdfErr.message);
       }
-    } catch (pdfErr) {
-      console.warn('[parseExamPaper] pdf-parse text extraction note:', pdfErr.message);
     }
+  }
+
+  if (extractedSections.length > 0) {
+    const combinedExtracted = extractedSections.join('\n\n');
+    textContent = textContent ? `${textContent}\n\n${combinedExtracted}` : combinedExtracted;
   }
 
   const prompt = `You are a Senior Kenya National Examinations Council (KNEC) Chief Chemistry Practical Examiner & Curriculum Specialist.
@@ -744,7 +783,17 @@ Analyze this uploaded chemistry exam paper document/photo and extract all practi
 
 KNEC Examination Setting Standards to Enforce:
 1. Cognitive Taxonomy: Balance questions across Recall (State, Name, Define), Comprehension (Describe, Explain, Account for), Application (Calculate, Determine), and Analysis (Deduce, Compare, Distinguish).
-2. Question 1 (Volumetric Analysis - 15 to 20 Marks):
+2. MULTI-DOCUMENT CROSS-REFERENCING (CRITICAL):
+   - If BOTH a Question Paper and Confidential Instructions/Lab Technician Guide are provided:
+     * Faithfully cross-reference the Question Paper with the Confidential Instructions!
+     * Use the Question Paper to extract the question structure, student instructions, sub-question prompts, marks, and tables.
+     * Use the Confidential Preparation Guide to identify the TRUE chemicals, reagents, concentrations, and recipes:
+       - If Question 2 in the paper says "You are provided with Solid Y", and the Confidential Guide specifies that Solid Y is "Zinc Sulfate (ZnSO4)", then configure Question 2 with trueSaltKey: "ZnSO4", trueSaltName: "Zinc Sulfate", trueCation: "Zn2+", trueAnion: "SO42-".
+       - If Question 1 uses Solution A and Solution B, extract the exact true concentrations (e.g. 0.02M KMnO4, 0.1M Fe2+) and preparation notes from the confidential instructions and configure trueAcidMolarity and trueBaseMolarity accordingly.
+       - If Question 3 tests Liquid Z, match it to the organic substance specified in the confidential guide (e.g. Ethanol, Cyclohexene).
+       - If a mixture of chemicals is specified in the confidential instructions (e.g. Solid Y is a mixture of BaSO4 and ZnSO4), configure the simulation accordingly (e.g. trueSaltKey: "ZnSO4 + BaSO4").
+     * If a Marking Scheme is provided, align mark allocations, accepted observations, inferences, and scoring criteria with the official marking guide.
+3. Question 1 (Volumetric Analysis - 15 to 20 Marks):
    - Accurately identify the calculation framework ("calcType"): 'standard_molarity', 'water_of_crystallization', 'percentage_purity', 'ram_metal', 'redox_stoichiometry', or 'dibasic_acid'.
    - Generate the sequential sub-questions (a) through (e)/(f) with clear method marks (M) and accuracy marks (A).
    - If Question 1 has TWO titrations (Procedure I and Procedure II with Table 1 and Table 2), configure it as a multi-stage titration (see schema below).
@@ -862,8 +911,9 @@ ${textContent ? `Extracted Paper Text:\n${textContent}` : ''}`;
   try {
     const rawResult = await callGeminiAssistant({
       prompt,
-      fileData,
-      mimeType: mimeType || 'application/pdf',
+      files: normalizedFiles,
+      fileData: normalizedFiles[0]?.dataUrl || fileData,
+      mimeType: normalizedFiles[0]?.type || mimeType || 'application/pdf',
       maxTokens: EXAM_MAX_TOKENS
     });
 
@@ -1641,5 +1691,6 @@ module.exports = {
   isAiConfigured,
   getAiStatus,
   cleanAndParseJson,
+  callGeminiAssistant,
   FALLBACK_PRESETS
 };

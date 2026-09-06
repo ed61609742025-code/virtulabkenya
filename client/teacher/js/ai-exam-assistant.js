@@ -8,7 +8,7 @@
 
   let currentExamDraft = null;
   let activeAiMode = 'idea'; // 'idea' | 'upload'
-  let uploadedFile = null;   // { name, size, type, dataUrl }
+  let uploadedFiles = [];    // Array of { name, size, type, dataUrl, role }
   let activeResultSubTab = 'blueprint'; // 'blueprint' | 'studentPaper' | 'markingScheme' | 'technicianGuide'
 
   const PRESET_TEMPLATES = {
@@ -97,9 +97,55 @@
   };
 
   // ── File Upload & Drag-and-Drop Handlers ───────────────────────
-  window.handleAiFileSelect = function(event) {
-    const file = event.target.files && event.target.files[0];
-    if (file) processUploadFile(file);
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function formatFileSize(bytes) {
+    if (!bytes || bytes <= 0) return '0 B';
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+  }
+
+  function detectFileRole(fileName, currentFiles) {
+    const lower = (fileName || '').toLowerCase();
+    if (/confidential|prep|technician|instructions|guide|setup/i.test(lower)) {
+      return 'confidential';
+    }
+    if (/marking|scheme|rubric|answers|solution|key/i.test(lower)) {
+      return 'marking_scheme';
+    }
+    const hasQuestionPaper = (currentFiles || []).some(f => f.role === 'question_paper');
+    if (!hasQuestionPaper) {
+      return 'question_paper';
+    }
+    return 'supplementary';
+  }
+
+  function readFileAsDataUrl(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result);
+      reader.onerror = () => reject(new Error('Failed to read file.'));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  window.handleAiFileSelect = async function(event) {
+    const files = event.target.files;
+    if (files && files.length > 0) {
+      for (let i = 0; i < files.length; i++) {
+        await processUploadFile(files[i]);
+      }
+      renderFilePreview();
+    }
   };
 
   window.handleAiDragOver = function(event) {
@@ -116,15 +162,20 @@
     if (zone) zone.classList.remove('dragover');
   };
 
-  window.handleAiFileDrop = function(event) {
+  window.handleAiFileDrop = async function(event) {
     event.preventDefault();
     event.stopPropagation();
     const zone = document.getElementById('aiDropZone');
     if (zone) zone.classList.remove('dragover');
 
     const dt = event.dataTransfer;
-    const file = dt.files && dt.files[0];
-    if (file) processUploadFile(file);
+    const files = dt && dt.files;
+    if (files && files.length > 0) {
+      for (let i = 0; i < files.length; i++) {
+        await processUploadFile(files[i]);
+      }
+      renderFilePreview();
+    }
   };
 
   function compressImageFile(file, maxWidth = 1600, quality = 0.82) {
@@ -165,69 +216,125 @@
     // 8MB limit ensures cloud upload doesn't hit proxy timeouts or RAM limits on Render
     const maxBytes = 8 * 1024 * 1024;
     if (file.size > maxBytes && !file.type.startsWith('image/')) {
-      alert('This PDF scan is ' + (file.size / (1024 * 1024)).toFixed(1) + ' MB. Cloud AI parsing works best with exam papers under 8MB. Please compress the PDF, or paste the question text into the box below.');
+      alert(`The document "${file.name}" is ${(file.size / (1024 * 1024)).toFixed(1)} MB. Cloud AI parsing works best with files under 8MB. Please compress the file, or paste question text below.`);
       return;
     }
+
+    let dataUrl = '';
+    let fileType = file.type || 'application/pdf';
+    let fileSize = file.size;
 
     // For photo scans (JPEG/PNG), compress client-side on canvas to reduce memory
     if (file.type.startsWith('image/')) {
       const compressed = await compressImageFile(file);
       if (compressed) {
-        uploadedFile = {
-          name: file.name,
-          size: Math.round(compressed.dataUrl.length * 0.75),
-          type: compressed.type,
-          dataUrl: compressed.dataUrl
-        };
-        renderFilePreview();
+        dataUrl = compressed.dataUrl;
+        fileType = compressed.type;
+        fileSize = Math.round(compressed.dataUrl.length * 0.75);
+      }
+    }
+
+    if (!dataUrl) {
+      try {
+        dataUrl = await readFileAsDataUrl(file);
+      } catch (err) {
+        alert(`Failed to read "${file.name}". Please try another file.`);
         return;
       }
     }
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      uploadedFile = {
-        name: file.name,
-        size: file.size,
-        type: file.type || 'application/pdf',
-        dataUrl: e.target.result
-      };
-      renderFilePreview();
-    };
-    reader.onerror = function() {
-      alert('Failed to read file. Please try another exam paper.');
+    const detectedRole = detectFileRole(file.name, uploadedFiles);
+    const fileObj = {
+      name: file.name,
+      size: fileSize,
+      type: fileType,
+      dataUrl: dataUrl,
+      role: detectedRole
     };
 
-    reader.readAsDataURL(file);
+    const existingIdx = uploadedFiles.findIndex(f => f.name === file.name);
+    if (existingIdx !== -1) {
+      uploadedFiles[existingIdx] = fileObj;
+    } else {
+      uploadedFiles.push(fileObj);
+    }
   }
 
   function renderFilePreview() {
     const previewWrap = document.getElementById('aiFilePreviewWrap');
     const emptyNotice = document.getElementById('aiDropZoneNotice');
-    if (!uploadedFile) {
+    const countBadge = document.getElementById('aiFileCountBadge');
+    const filesList = document.getElementById('aiFilesList');
+
+    if (!uploadedFiles || uploadedFiles.length === 0) {
       if (previewWrap) previewWrap.style.display = 'none';
       if (emptyNotice) emptyNotice.style.display = 'block';
+      if (countBadge) countBadge.textContent = '0 files';
+      if (filesList) filesList.innerHTML = '';
       return;
     }
 
     if (emptyNotice) emptyNotice.style.display = 'none';
-    if (previewWrap) {
-      previewWrap.style.display = 'flex';
-      const nameEl = document.getElementById('aiFileName');
-      const sizeEl = document.getElementById('aiFileSize');
-      const iconEl = document.getElementById('aiFileIcon');
-      if (nameEl) nameEl.textContent = uploadedFile.name;
-      if (sizeEl) sizeEl.textContent = (uploadedFile.size / (1024 * 1024)).toFixed(2) + ' MB';
-      if (iconEl) {
-        if (uploadedFile.type.includes('image')) iconEl.textContent = '🖼️';
-        else if (uploadedFile.type.includes('pdf')) iconEl.textContent = '📑';
-        else iconEl.textContent = '📄';
-      }
+    if (previewWrap) previewWrap.style.display = 'flex';
+    if (countBadge) {
+      countBadge.textContent = `${uploadedFiles.length} file${uploadedFiles.length === 1 ? '' : 's'}`;
+    }
+
+    if (filesList) {
+      filesList.innerHTML = uploadedFiles.map((file, idx) => {
+        let icon = '📄';
+        if (file.type && file.type.includes('image')) icon = '🖼️';
+        else if (file.type && file.type.includes('pdf')) icon = '📑';
+
+        return `
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--bg-card,#fff);border:1px solid var(--card-border,#e2e8f0);border-radius:8px;gap:10px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+            <div style="display:flex;align-items:center;gap:10px;overflow:hidden;flex:1;min-width:0;">
+              <span style="font-size:1.4rem;flex-shrink:0;">${icon}</span>
+              <div style="display:flex;flex-direction:column;overflow:hidden;text-align:left;min-width:0;">
+                <div style="font-weight:700;font-size:0.84rem;color:var(--heading-color);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${escapeHtml(file.name)}">
+                  ${escapeHtml(file.name)}
+                </div>
+                <div style="font-size:0.72rem;color:var(--text-muted);">
+                  ${formatFileSize(file.size)}
+                </div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+              <select onchange="setDocumentRole(${idx}, this.value)" style="font-size:0.74rem;font-weight:600;padding:4px 8px;border-radius:6px;border:1px solid var(--card-border,#cbd5e1);background:var(--bg-card,#fff);color:var(--heading-color);cursor:pointer;" title="Specify document role for AI analysis">
+                <option value="question_paper" ${file.role === 'question_paper' ? 'selected' : ''}>📄 Question Paper</option>
+                <option value="confidential" ${file.role === 'confidential' ? 'selected' : ''}>🔒 Confidential Guide</option>
+                <option value="marking_scheme" ${file.role === 'marking_scheme' ? 'selected' : ''}>📝 Marking Scheme</option>
+                <option value="supplementary" ${file.role === 'supplementary' ? 'selected' : ''}>📎 Supplementary</option>
+              </select>
+              <button type="button" class="btn btn-sm btn-ghost" onclick="removeSelectedAiFile(${idx})" title="Remove file" style="color:#ef4444;padding:2px 8px;border:none;background:transparent;font-size:0.95rem;font-weight:700;cursor:pointer;border-radius:4px;">
+                ✕
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
   }
 
-  window.removeSelectedAiFile = function() {
-    uploadedFile = null;
+  window.setDocumentRole = function(idx, role) {
+    if (uploadedFiles[idx]) {
+      uploadedFiles[idx].role = role;
+    }
+  };
+
+  window.removeSelectedAiFile = function(idx) {
+    if (typeof idx === 'number' && idx >= 0 && idx < uploadedFiles.length) {
+      uploadedFiles.splice(idx, 1);
+    } else {
+      uploadedFiles = [];
+    }
+    const fileInput = document.getElementById('aiFileInput');
+    if (fileInput && uploadedFiles.length === 0) fileInput.value = '';
+    renderFilePreview();
+  };
+
+  window.clearAllAiFiles = function() {
+    uploadedFiles = [];
     const fileInput = document.getElementById('aiFileInput');
     if (fileInput) fileInput.value = '';
     renderFilePreview();
@@ -290,17 +397,31 @@
     const textContent = (document.getElementById('aiPastedText')?.value || '').trim();
     const teacherNotes = (document.getElementById('aiUploadNotes')?.value || '').trim();
 
-    if (!uploadedFile && !textContent) {
-      showTemporaryToast('Please upload an exam paper (PDF or image) or paste the exam text.', 'error');
+    if ((!uploadedFiles || uploadedFiles.length === 0) && !textContent) {
+      showTemporaryToast('Please upload at least one exam document (Question Paper, Confidential Guide, etc.) or paste the exam text.', 'error');
       return;
     }
 
-    setGeneratingState(true, 'Walimu AI Multimodal Vision: Analyzing exam paper questions, reagents & observations...');
+    const isMultiDoc = uploadedFiles && uploadedFiles.length > 1;
+    const genMsg = isMultiDoc
+      ? 'Walimu AI Multimodal Vision: Cross-referencing Question Paper with Confidential Instructions & Marking Schemes...'
+      : 'Walimu AI Multimodal Vision: Analyzing exam paper questions, reagents & observations...';
+
+    setGeneratingState(true, genMsg);
 
     try {
+      const payloadFiles = (uploadedFiles || []).map(f => ({
+        name: f.name,
+        size: f.size,
+        type: f.type,
+        role: f.role,
+        dataUrl: f.dataUrl
+      }));
+
       const resp = await AiExamAssistant.parsePaper({
-        fileData: uploadedFile ? uploadedFile.dataUrl : null,
-        mimeType: uploadedFile ? uploadedFile.type : null,
+        files: payloadFiles,
+        fileData: uploadedFiles[0] ? uploadedFiles[0].dataUrl : null,
+        mimeType: uploadedFiles[0] ? uploadedFiles[0].type : null,
         textContent,
         teacherNotes
       });

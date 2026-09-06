@@ -36,17 +36,23 @@ router.get('/status', (req, res) => {
  * Uploaded exam paper document/photo parsing (Multimodal)
  */
 router.post('/parse-paper', asyncHandler(async (req, res) => {
-  const { fileData, mimeType, textContent, teacherNotes } = req.body;
+  const { files, fileData, mimeType, textContent, teacherNotes } = req.body;
+
+  if (files && !Array.isArray(files)) {
+    throw new ValidationError('files must be an array of uploaded documents.');
+  }
 
   if (fileData && typeof fileData !== 'string') {
     throw new ValidationError('Invalid file data format.');
   }
 
-  if (!fileData && !textContent) {
+  const hasFiles = Array.isArray(files) && files.length > 0;
+  if (!hasFiles && !fileData && !textContent) {
     throw new ValidationError('Please provide an exam paper file or paste the exam text.');
   }
 
   const exam = await aiExamService.parseExamPaper({
+    files: hasFiles ? files : [],
     fileData: fileData || null,
     mimeType: mimeType || null,
     textContent: textContent || '',

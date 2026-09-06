@@ -12,9 +12,9 @@
     if (window.VLKAuthGuard) {
       VLKAuthGuard.guardPage('student');
     }
-    if (window.location.search.includes('embedded=1')) {
+    if (window.location.search.includes('embedded=1') || window.location.search.includes('embed=true')) {
       const style = document.createElement('style');
-      style.innerHTML = '.top-navbar { display: none !important; } body { padding-top: 0 !important; margin: 0 !important; } .sol-page-wrap { padding-top: 10px !important; }';
+      style.innerHTML = '.top-navbar, .candidate-top-ribbon, .academic-top-header { display: none !important; } body { padding-top: 0 !important; margin: 0 !important; } .sol-page-wrap { padding-top: 10px !important; }';
       document.head.appendChild(style);
     }
   </script>

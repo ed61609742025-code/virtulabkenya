@@ -475,7 +475,7 @@
       <span style="font-size:1.05rem;">⏱️</span>
       <span style="font-size:0.8rem; font-weight:800; color:var(--heading-color);">KNEC Pacing Coach:</span>
     </div>
-    <div class="pacing-milestones-scroller" style="display:flex; align-items:center; gap:8px;">
+    <div class="pacing-milestones-scroller" id="pacingMilestonesContainer" style="display:flex; align-items:center; gap:8px;">
       <div class="pacing-milestone active" id="paceQ1">
         <span>🧪 Q1: Volumetric</span>
         <span style="opacity:0.75;">(Target: 45 min)</span>
@@ -497,7 +497,7 @@
 
   <!-- Question Navigation Tabs -->
   <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
-    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <div id="examTabsContainer" style="display:flex;gap:8px;flex-wrap:wrap;">
       <button class="exam-tab-btn active" id="btnQ1" onclick="switchQTab(1)">
         🧪 Question 1: Volumetric Analysis (15.0 Mks)
       </button>
@@ -1408,6 +1408,251 @@
   let q2TestStates = {};
   let q3TestStates = {};
 
+  // ── Universal Exam Simulator Router & Dynamic Mount System ───────────
+  function getSimulationTypeIcon(type) {
+    switch (type) {
+      case 'titration': return '🧪';
+      case 'qualitative': return '🧂';
+      case 'organic': return '🧫';
+      case 'energy': return '🔥';
+      case 'rates': return '⏱️';
+      case 'gas': return '🫧';
+      case 'solubility': return '📈';
+      case 'written': return '✏️';
+      default: return '🔬';
+    }
+  }
+
+  function getSpecializedSimulatorConfig(type) {
+    switch (type) {
+      case 'energy':
+        return {
+          title: 'Thermochemistry & Enthalpy Bench',
+          badge: '🔥 THERMOCHEMISTRY PRACTICAL',
+          url: '/student/energy.html',
+          desc: 'Simulate enthalpy of neutralization, displacement, cooling curves, and interactive graph plotting.'
+        };
+      case 'rates':
+        return {
+          title: 'Reaction Rates & Kinetics Bench',
+          badge: '⏱️ REACTION KINETICS PRACTICAL',
+          url: '/student/rates.html',
+          desc: 'Disappearing cross experiment with Sodium Thiosulfate and Hydrochloric acid, precision stopwatch, and rate curve analysis.'
+        };
+      case 'gas':
+        return {
+          title: 'Gas Preparation & Collection Bench',
+          badge: '🫧 GAS PREPARATION PRACTICAL',
+          url: '/student/gas_prep.html',
+          desc: 'Laboratory generation, drying, and collection of gases (CO₂, O₂, H₂), delivery tube assembly, and confirmatory tests.'
+        };
+      case 'solubility':
+        return {
+          title: 'Solubility Curves & Crystallization Bench',
+          badge: '📈 SOLUBILITY PRACTICAL',
+          url: '/student/solubility.html',
+          desc: 'Solute dissolving at elevated temperatures, crystal formation observation, temperature recording, and solubility curve graphing.'
+        };
+      default:
+        return null;
+    }
+  }
+
+  function getEmbeddedSimulatorHtml(q) {
+    const spec = getSpecializedSimulatorConfig(q.simulationType);
+    if (!spec) return '';
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+
+    return `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;border-bottom:1.5px solid var(--card-border);padding-bottom:10px;">
+        <div>
+          <span class="badge" style="background:var(--cyan-bg);color:var(--cyan-accent);font-weight:800;font-size:0.75rem;">${spec.badge}</span>
+          <h2 style="font-size:1.2rem;font-weight:800;color:var(--heading-color);margin:4px 0 0;font-family:var(--font-heading);">
+            QUESTION ${q.number}: ${escapeHtml(q.title || spec.title)}
+          </h2>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="timer-chip" style="font-size:0.78rem;padding:3px 10px;background:var(--amber-bg);color:var(--amber-accent);border:1px solid var(--amber-border);font-weight:800;">${Number(q.marks || 10).toFixed(1)} MARKS</span>
+          <a href="${spec.url}?embed=true" target="_blank" class="btn btn-sm btn-secondary" style="font-size:0.75rem;padding:4px 10px;text-decoration:none;font-weight:700;" title="Open in dedicated tab if you need maximum screen space">
+            ↗ Open Full Window
+          </a>
+        </div>
+      </div>
+
+      <div class="exam-prompt-box" style="margin-bottom:16px;font-size:0.88rem;line-height:1.6;white-space:pre-wrap;">
+        <b>Apparatus &amp; Practical Objectives:</b><br>
+        ${escapeHtml(q.prompt || spec.desc)}
+      </div>
+
+      <div style="border-radius:12px;overflow:hidden;border:1.5px solid var(--card-border);background:#0B132B;box-shadow:0 4px 20px rgba(0,0,0,0.3);position:relative;">
+        <iframe
+          src="${spec.url}?embed=true&qNum=${q.number}&theme=${currentTheme}"
+          style="width:100%;height:850px;border:none;display:block;"
+          title="${escapeHtml(q.title || spec.title)}"
+          allow="fullscreen"
+        ></iframe>
+      </div>
+    `;
+  }
+
+  function renderDynamicExamTabs(questions, activeNum = 1) {
+    const tabsContainer = document.getElementById('examTabsContainer');
+    const pacingContainer = document.getElementById('pacingMilestonesContainer');
+
+    if (tabsContainer && Array.isArray(questions) && questions.length > 0) {
+      tabsContainer.innerHTML = questions.map(q => {
+        const icon = getSimulationTypeIcon(q.simulationType);
+        const isActive = q.number === activeNum;
+        const qTitle = escapeHtml(q.title || `Question ${q.number}`);
+        const qMarks = Number(q.marks || 10).toFixed(1);
+        return `
+          <button class="exam-tab-btn ${isActive ? 'active' : ''}" id="btnQ${q.number}" onclick="switchQTab(${q.number})">
+            ${icon} Question ${q.number}: ${qTitle} (${qMarks} Mks)
+          </button>
+        `;
+      }).join('');
+    }
+
+    if (pacingContainer && Array.isArray(questions) && questions.length > 0) {
+      const totalMarks = questions.reduce((sum, q) => sum + (Number(q.marks) || 10), 0) || 40;
+      const totalExamMins = 120; // 135 mins total minus 15 min review
+
+      const milestonesHtml = questions.map(q => {
+        const icon = getSimulationTypeIcon(q.simulationType);
+        const isActive = q.number === activeNum;
+        const isCompleted = q.number < activeNum;
+        const shortTitle = escapeHtml(q.title ? q.title.split(':')[0].trim() : `Q${q.number}`);
+        const targetMins = Math.max(15, Math.round(((Number(q.marks) || 10) / totalMarks) * totalExamMins));
+        const statusClass = isActive ? 'active' : (isCompleted ? 'completed' : '');
+
+        return `
+          <div class="pacing-milestone ${statusClass}" id="paceQ${q.number}">
+            <span>${icon} Q${q.number}: ${shortTitle}</span>
+            <span style="opacity:0.75;">(Target: ${targetMins} min)</span>
+          </div>
+        `;
+      }).join('');
+
+      pacingContainer.innerHTML = milestonesHtml + `
+        <div class="pacing-milestone" id="paceRev">
+          <span>📋 Final Review</span>
+          <span style="opacity:0.75;">(Target: 15 min)</span>
+        </div>
+      `;
+    }
+  }
+
+  function mountQuestionPanes(questions) {
+    if (!Array.isArray(questions) || questions.length === 0) return;
+
+    if (!window._initialPaneTemplates) {
+      window._initialPaneTemplates = {
+        paneQ1: document.getElementById('paneQ1') ? document.getElementById('paneQ1').innerHTML : '',
+        paneQ2: document.getElementById('paneQ2') ? document.getElementById('paneQ2').innerHTML : '',
+        paneQ3: document.getElementById('paneQ3') ? document.getElementById('paneQ3').innerHTML : ''
+      };
+    }
+
+    questions.forEach(q => {
+      let pane = document.getElementById(`paneQ${q.number}`);
+      if (!pane) {
+        pane = document.createElement('div');
+        pane.id = `paneQ${q.number}`;
+        pane.className = 'exam-section-card';
+        pane.style.display = 'none';
+
+        const prevPane = document.getElementById(`paneQ${q.number - 1}`);
+        if (prevPane && prevPane.parentNode) {
+          prevPane.parentNode.insertBefore(pane, prevPane.nextSibling);
+        } else {
+          const mainWrap = document.querySelector('.wrap') || document.body;
+          mainWrap.appendChild(pane);
+        }
+      }
+
+      if (q.simulationType === 'written') {
+        pane.innerHTML = getWrittenQuestionPanelHtml(q);
+      } else if (['energy', 'rates', 'gas', 'solubility'].includes(q.simulationType)) {
+        pane.innerHTML = getEmbeddedSimulatorHtml(q);
+      } else if (q.simulationType === 'titration') {
+        if (q.number === 1 && window._initialPaneTemplates.paneQ1) {
+          if (!pane.querySelector('.titration-rig-workbench')) {
+            pane.innerHTML = window._initialPaneTemplates.paneQ1;
+          }
+          const titleEl = document.getElementById('q1SectionTitle');
+          if (titleEl) titleEl.innerHTML = `🧪 QUESTION ${q.number}: ${escapeHtml(q.title || 'Volumetric Analysis')}`;
+          const badgeEl = document.getElementById('q1MarksBadge');
+          if (badgeEl) badgeEl.textContent = `${Number(q.marks || 15).toFixed(1)} MARKS`;
+
+          if (q.config?.hasMultipleProcedures && Array.isArray(q.config.procedures) && q.config.procedures.length > 1) {
+            setupQ1ProcedureNav();
+            switchTitrationProcedure(0);
+          } else {
+            renderQ1Calculations();
+          }
+        }
+      } else if (q.simulationType === 'qualitative') {
+        if (q.number === 2 && window._initialPaneTemplates.paneQ2) {
+          if (!pane.querySelector('#q2ReagentShelf')) {
+            pane.innerHTML = window._initialPaneTemplates.paneQ2;
+          }
+          const h2 = document.getElementById('q2HeadingTitle');
+          if (h2) h2.innerHTML = `🧂 QUESTION ${q.number}: ${escapeHtml(q.title || 'Inorganic Qualitative Analysis')}`;
+          const mBadge = document.getElementById('q2MarksBadge');
+          if (mBadge) mBadge.textContent = `${Number(q.marks || 15).toFixed(1)} MARKS`;
+          renderQ2TestsGrid();
+        } else if (q.number === 3 && window._initialPaneTemplates.paneQ3) {
+          renderQ3TestsGrid();
+        }
+      } else if (q.simulationType === 'organic') {
+        if (q.number === 3 && window._initialPaneTemplates.paneQ3) {
+          renderQ3TestsGrid();
+        }
+      }
+    });
+  }
+
+  function setupUniversalExamRouter(cfg) {
+    let questions = [];
+    if (Array.isArray(cfg?.questions) && cfg.questions.length > 0) {
+      questions = cfg.questions;
+    } else {
+      const isQ3Qual = Boolean(
+        cfg?.examConfig?.q3?.simulationType === 'qualitative' ||
+        cfg?.q3?.simulationType === 'qualitative' ||
+        cfg?.examConfig?.q3?.trueSaltKey ||
+        cfg?.q3?.trueSaltKey
+      );
+      questions = [
+        {
+          number: 1,
+          title: cfg?.examConfig?.q1?.title || cfg?.q1?.title || 'Volumetric Analysis',
+          simulationType: 'titration',
+          marks: Number(cfg?.examConfig?.q1?.marks || cfg?.q1?.marks || 15),
+          config: cfg?.examConfig?.q1 || cfg?.q1 || {}
+        },
+        {
+          number: 2,
+          title: cfg?.examConfig?.q2?.title || cfg?.q2?.title || 'Qualitative Inorganic Analysis',
+          simulationType: 'qualitative',
+          marks: Number(cfg?.examConfig?.q2?.marks || cfg?.q2?.marks || 15),
+          config: cfg?.examConfig?.q2 || cfg?.q2 || {}
+        },
+        {
+          number: 3,
+          title: cfg?.examConfig?.q3?.title || cfg?.q3?.title || (isQ3Qual ? 'Inorganic Qualitative Analysis' : 'Organic Analysis'),
+          simulationType: isQ3Qual ? 'qualitative' : 'organic',
+          marks: Number(cfg?.examConfig?.q3?.marks || cfg?.q3?.marks || 10),
+          config: cfg?.examConfig?.q3 || cfg?.q3 || {}
+        }
+      ];
+    }
+
+    window._examQuestionsList = questions;
+    renderDynamicExamTabs(questions, (typeof activeTab !== 'undefined' && activeTab) ? activeTab : 1);
+    mountQuestionPanes(questions);
+  }
+
   function initExamUI() {
     const p = engine.preset;
     const setElemText = (id, text) => {
@@ -1475,6 +1720,9 @@
     }
     const indicatorChip = document.getElementById('q1IndicatorChip');
     if (indicatorChip) indicatorChip.textContent = `Indicator: ${p.q1?.indicator || 'Phenolphthalein'}`;
+
+    // Universal Exam Simulator Router for standard practice preset
+    setupUniversalExamRouter(engine.preset);
 
     // Handle Linked Assignment Header Banner
     if (assignmentId) {
@@ -1565,29 +1813,8 @@
                 renderQ2TestsGrid();
                 renderQ3TestsGrid();
 
-                // If flexible questions[] array is present, hydrate written questions
-                if (Array.isArray(cfg.questions) && cfg.questions.length > 0) {
-                  window._examQuestionsList = cfg.questions;
-                  cfg.questions.forEach(q => {
-                    const btn = document.getElementById(`btnQ${q.number}`);
-                    if (btn) {
-                      const icon = q.simulationType === 'written' ? '✏️' : (q.simulationType === 'titration' ? '🧪' : (q.simulationType === 'qualitative' ? '🧂' : '🧫'));
-                      btn.innerHTML = `${icon} Question ${q.number}: ${escapeHtml(q.title || 'Question ' + q.number)} (${Number(q.marks || 10).toFixed(1)} Mks)`;
-                    }
-                    if (q.simulationType === 'written') {
-                      let pane = document.getElementById(`paneQ${q.number}`);
-                      if (!pane) {
-                        pane = document.createElement('div');
-                        pane.id = `paneQ${q.number}`;
-                        pane.className = 'exam-section-card';
-                        pane.style.display = 'none';
-                        const p3 = document.getElementById('paneQ3');
-                        if (p3 && p3.parentNode) p3.parentNode.insertBefore(pane, p3.nextSibling);
-                      }
-                      pane.innerHTML = getWrittenQuestionPanelHtml(q);
-                    }
-                  });
-                }
+                // Universal Exam Simulator Router for custom assigned exam
+                setupUniversalExamRouter(cfg);
               } catch (cfgErr) {
                 console.warn('[Composite Exam] Could not hydrate assignment exam_config:', cfgErr);
               }
@@ -3036,16 +3263,14 @@
     }
 
     // Update Pacing Coach Indicators
-    const p1 = document.getElementById('paceQ1');
-    const p2 = document.getElementById('paceQ2');
-    const p3 = document.getElementById('paceQ3');
-    const prev = document.getElementById('paceRev');
-    if (p1 && p2 && p3 && prev) {
-      p1.className = qNum === 1 ? 'pacing-milestone active' : (qNum > 1 ? 'pacing-milestone completed' : 'pacing-milestone');
-      p2.className = qNum === 2 ? 'pacing-milestone active' : (qNum > 2 ? 'pacing-milestone completed' : 'pacing-milestone');
-      p3.className = qNum === 3 ? 'pacing-milestone active' : (qNum > 3 ? 'pacing-milestone completed' : 'pacing-milestone');
-      prev.className = 'pacing-milestone';
+    for (let n = 1; n <= totalTabs; n++) {
+      const paceEl = document.getElementById(`paceQ${n}`);
+      if (paceEl) {
+        paceEl.className = n === qNum ? 'pacing-milestone active' : (n < qNum ? 'pacing-milestone completed' : 'pacing-milestone');
+      }
     }
+    const prev = document.getElementById('paceRev');
+    if (prev) prev.className = 'pacing-milestone';
 
     const prevBtn = document.getElementById('btnPrevQ');
     const nextBtn = document.getElementById('btnNextQ');
@@ -3144,13 +3369,18 @@
     clearInterval(timerInterval);
     const evalData = engine.evaluateExam();
 
-    document.getElementById('modalExamTitle').textContent = evalData.examTitle;
-    document.getElementById('modalCompositeGrade').textContent = `Grade ${evalData.grade}`;
-    document.getElementById('modalCompositeScore').textContent = `${evalData.totalScore.toFixed(1)} / 40.0 Marks (${evalData.percentage}%)`;
-    document.getElementById('modalScoreQ1').textContent = evalData.q1Score.toFixed(1);
-    document.getElementById('modalScoreQ2').textContent = evalData.q2Score.toFixed(1);
-    document.getElementById('modalScoreQ3').textContent = evalData.q3Score.toFixed(1);
-    document.getElementById('modalScoreTotal').textContent = evalData.totalScore.toFixed(1);
+    const setElem = (id, val) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = val;
+    };
+
+    setElem('modalExamTitle', evalData.examTitle);
+    setElem('modalCompositeGrade', `Grade ${evalData.grade}`);
+    setElem('modalCompositeScore', `${evalData.totalScore.toFixed(1)} / 40.0 Marks (${evalData.percentage}%)`);
+    setElem('modalScoreQ1', evalData.q1Score.toFixed(1));
+    setElem('modalScoreQ2', evalData.q2Score.toFixed(1));
+    setElem('modalScoreQ3', evalData.q3Score.toFixed(1));
+    setElem('modalScoreTotal', evalData.totalScore.toFixed(1));
 
     const isQ3Qual = Boolean(
       engine.preset?.q3?.simulationType === 'qualitative' ||
@@ -3178,52 +3408,78 @@
       summaryMsg += '<div style="margin-top:8px; font-weight:700; color:var(--amber-accent);">Chief Examiner Diagnostic Advice:</div><ul style="margin:4px 0 0 16px; padding:0;">' +
         evalData.diagnosticNotes.map(n => `<li>${n}</li>`).join('') + '</ul>';
     }
-    feedbackEl.innerHTML = summaryMsg;
+    if (feedbackEl) feedbackEl.innerHTML = summaryMsg;
 
     // Populate Detailed Item-by-Item Rubric Box
     const rubricBox = document.getElementById('modalDetailedRubricBox');
     if (rubricBox) {
-      const q1Rubric = evalData.q1Details.rubric || [];
-      const q2Rubric = evalData.q2Details.rubric || [];
-      const q3Rubric = evalData.q3Details.rubric || [];
+      const q1Rubric = evalData.q1Details?.rubric || [];
+      const q2Rubric = evalData.q2Details?.rubric || [];
+      const q3Rubric = evalData.q3Details?.rubric || [];
 
-      let rubricHtml = '<div style="font-weight:800; color:var(--cyan-accent); margin-top:4px;">🧪 Q1 Volumetric Analysis (15.0 Marks):</div>';
-      rubricHtml += q1Rubric.map(r => `
-        <div style="border-bottom:1px solid var(--border-subtle, rgba(255,255,255,0.06)); padding:6px 0;">
-          <div class="rubric-item-row">
-            <span>${r.pass ? '✅' : '❌'} ${r.code ? `<b>[${r.code}]</b> ` : ''}${r.item}</span>
-            <span style="font-family:var(--font-mono); font-weight:700; color:${r.pass ? 'var(--green-accent)' : 'var(--red-accent)'};">${r.mark.toFixed(1)} / ${r.max.toFixed(1)}</span>
+      let rubricHtml = '';
+      if (q1Rubric.length > 0) {
+        rubricHtml += '<div style="font-weight:800; color:var(--cyan-accent); margin-top:4px;">🧪 Q1 Volumetric Analysis (15.0 Marks):</div>';
+        rubricHtml += q1Rubric.map(r => `
+          <div style="border-bottom:1px solid var(--border-subtle, rgba(255,255,255,0.06)); padding:6px 0;">
+            <div class="rubric-item-row">
+              <span>${r.pass ? '✅' : '❌'} ${r.code ? `<b>[${r.code}]</b> ` : ''}${r.item}</span>
+              <span style="font-family:var(--font-mono); font-weight:700; color:${r.pass ? 'var(--green-accent)' : 'var(--red-accent)'};">${r.mark.toFixed(1)} / ${r.max.toFixed(1)}</span>
+            </div>
+            ${r.detail ? `<div style="font-size:0.75rem; color:var(--text-muted); padding-left:22px; margin-top:2px;">${r.detail}</div>` : ''}
           </div>
-          ${r.detail ? `<div style="font-size:0.75rem; color:var(--text-muted); padding-left:22px; margin-top:2px;">${r.detail}</div>` : ''}
-        </div>
-      `).join('');
+        `).join('');
+      }
 
-      rubricHtml += '<div style="font-weight:800; color:var(--cyan-accent); margin-top:12px;">🧂 Q2 Qualitative Inorganic Analysis (15.0 Marks):</div>';
-      rubricHtml += q2Rubric.map(r => `
-        <div style="border-bottom:1px solid var(--border-subtle, rgba(255,255,255,0.06)); padding:6px 0;">
-          <div class="rubric-item-row">
-            <span>${r.pass ? '✅' : '❌'} ${r.code ? `<b>[${r.code}]</b> ` : ''}${r.item}</span>
-            <span style="font-family:var(--font-mono); font-weight:700; color:${r.pass ? 'var(--green-accent)' : 'var(--red-accent)'};">${r.mark.toFixed(1)} / ${r.max.toFixed(1)}</span>
+      if (q2Rubric.length > 0) {
+        rubricHtml += '<div style="font-weight:800; color:var(--cyan-accent); margin-top:12px;">🧂 Q2 Qualitative Inorganic Analysis (15.0 Marks):</div>';
+        rubricHtml += q2Rubric.map(r => `
+          <div style="border-bottom:1px solid var(--border-subtle, rgba(255,255,255,0.06)); padding:6px 0;">
+            <div class="rubric-item-row">
+              <span>${r.pass ? '✅' : '❌'} ${r.code ? `<b>[${r.code}]</b> ` : ''}${r.item}</span>
+              <span style="font-family:var(--font-mono); font-weight:700; color:${r.pass ? 'var(--green-accent)' : 'var(--red-accent)'};">${r.mark.toFixed(1)} / ${r.max.toFixed(1)}</span>
+            </div>
+            ${r.detail ? `<div style="font-size:0.75rem; color:var(--text-muted); padding-left:22px; margin-top:2px;">${r.detail}</div>` : ''}
           </div>
-          ${r.detail ? `<div style="font-size:0.75rem; color:var(--text-muted); padding-left:22px; margin-top:2px;">${r.detail}</div>` : ''}
-        </div>
-      `).join('');
+        `).join('');
+      }
 
-      const q3SectionHeader = isQ3Qual
-        ? `🧂 Q3 Qualitative Inorganic Analysis · ${escapeHtml(engine.preset?.q3?.sampleName || 'Solid P')} (10.0 Marks):`
-        : '🧫 Q3 Qualitative Organic Analysis (10.0 Marks):';
-      rubricHtml += `<div style="font-weight:800; color:var(--cyan-accent); margin-top:12px;">${q3SectionHeader}</div>`;
-      rubricHtml += q3Rubric.map(r => `
-        <div style="border-bottom:1px solid var(--border-subtle, rgba(255,255,255,0.06)); padding:6px 0;">
-          <div class="rubric-item-row">
-            <span>${r.pass ? '✅' : '❌'} ${r.code ? `<b>[${r.code}]</b> ` : ''}${r.item}</span>
-            <span style="font-family:var(--font-mono); font-weight:700; color:${r.pass ? 'var(--green-accent)' : 'var(--red-accent)'};">${r.mark.toFixed(1)} / ${r.max.toFixed(1)}</span>
+      if (q3Rubric.length > 0) {
+        const q3SectionHeader = isQ3Qual
+          ? `🧂 Q3 Qualitative Inorganic Analysis · ${escapeHtml(engine.preset?.q3?.sampleName || 'Solid P')} (10.0 Marks):`
+          : '🧫 Q3 Qualitative Organic Analysis (10.0 Marks):';
+        rubricHtml += `<div style="font-weight:800; color:var(--cyan-accent); margin-top:12px;">${q3SectionHeader}</div>`;
+        rubricHtml += q3Rubric.map(r => `
+          <div style="border-bottom:1px solid var(--border-subtle, rgba(255,255,255,0.06)); padding:6px 0;">
+            <div class="rubric-item-row">
+              <span>${r.pass ? '✅' : '❌'} ${r.code ? `<b>[${r.code}]</b> ` : ''}${r.item}</span>
+              <span style="font-family:var(--font-mono); font-weight:700; color:${r.pass ? 'var(--green-accent)' : 'var(--red-accent)'};">${r.mark.toFixed(1)} / ${r.max.toFixed(1)}</span>
+            </div>
+            ${r.detail ? `<div style="font-size:0.75rem; color:var(--text-muted); padding-left:22px; margin-top:2px;">${r.detail}</div>` : ''}
           </div>
-          ${r.detail ? `<div style="font-size:0.75rem; color:var(--text-muted); padding-left:22px; margin-top:2px;">${r.detail}</div>` : ''}
-        </div>
-      `).join('');
+        `).join('');
+      }
 
-      rubricBox.innerHTML = rubricHtml;
+      // Add written questions and specialized simulation status if any
+      const extraQuestions = (window._examQuestionsList || []).filter(q => q.simulationType === 'written' || ['energy', 'rates', 'gas', 'solubility'].includes(q.simulationType));
+      extraQuestions.forEach(eq => {
+        const isW = eq.simulationType === 'written';
+        const icon = isW ? '✏️' : '🔬';
+        rubricHtml += `<div style="font-weight:800; color:var(--cyan-accent); margin-top:12px;">${icon} Q${eq.number}: ${escapeHtml(eq.title || 'Question ' + eq.number)} (${Number(eq.marks || 10).toFixed(1)} Marks):</div>`;
+        rubricHtml += `
+          <div style="border-bottom:1px solid var(--border-subtle, rgba(255,255,255,0.06)); padding:6px 0;">
+            <div class="rubric-item-row">
+              <span>${isW ? '📝 Structured Theory/Practical Responses' : '💻 Interactive Virtual Experiment'}</span>
+              <span style="font-family:var(--font-mono); font-weight:700; color:var(--amber-accent);">${isW ? 'Saved & Submitted' : 'Recorded'}</span>
+            </div>
+            <div style="font-size:0.75rem; color:var(--text-muted); padding-left:22px; margin-top:2px;">
+              ${isW ? 'Candidate answers recorded for instant AI appraisal and teacher evaluation.' : 'Laboratory experiment executed in dedicated workbench simulator.'}
+            </div>
+          </div>
+        `;
+      });
+
+      rubricBox.innerHTML = rubricHtml || '<div style="padding:10px; color:var(--text-muted);">Evaluation completed successfully.</div>';
     }
 
     // Populate Worked Mathematical Model Solutions List
@@ -3239,14 +3495,15 @@
       `).join('');
     }
 
-    document.getElementById('compositeResultModal').style.display = 'flex';
+    const modalEl = document.getElementById('compositeResultModal');
+    if (modalEl) modalEl.style.display = 'flex';
 
-    // Populate Print Booklet
-    document.getElementById('printTotalScore').textContent = `${evalData.totalScore.toFixed(1)} / 40.0 Marks`;
-    document.getElementById('pScoreQ1').textContent = `${evalData.q1Score.toFixed(1)} / 15.0`;
-    document.getElementById('pScoreQ2').textContent = `${evalData.q2Score.toFixed(1)} / 15.0`;
-    document.getElementById('pScoreQ3').textContent = `${evalData.q3Score.toFixed(1)} / 10.0`;
-    document.getElementById('pGrade').textContent = `${evalData.grade} (${evalData.totalScore.toFixed(1)} / 40.0 Marks)`;
+    // Populate Print Booklet summary scores
+    setElem('printTotalScore', `${evalData.totalScore.toFixed(1)} / 40.0 Marks`);
+    setElem('pScoreQ1', `${evalData.q1Score.toFixed(1)} / 15.0`);
+    setElem('pScoreQ2', `${evalData.q2Score.toFixed(1)} / 15.0`);
+    setElem('pScoreQ3', `${evalData.q3Score.toFixed(1)} / 10.0`);
+    setElem('pGrade', `${evalData.grade} (${evalData.totalScore.toFixed(1)} / 40.0 Marks)`);
 
     const payload = engine.buildSubmissionPayload(assignmentId);
     try {
@@ -3309,7 +3566,7 @@
           }).join('')}
         `;
       });
-    } else {
+    } else if (p.q1 && engine.q1Trials) {
       q1Html = `
         <div style="margin-bottom:8px;"><b>Table 1: Titration Results</b></div>
         <table style="width:100%; border-collapse:collapse; margin-bottom:8px; font-size:0.8rem;">
@@ -3321,34 +3578,37 @@
           </tr>
           <tr>
             <td style="border:1px solid #000; padding:4px;">Final Burette Reading (cm³)</td>
-            <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[0].final.toFixed(2)}</td>
-            <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[1].final.toFixed(2)}</td>
-            <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[2].final.toFixed(2)}</td>
+            <td style="border:1px solid #000; padding:4px; text-align:center;">${(engine.q1Trials[0]?.final || 0).toFixed(2)}</td>
+            <td style="border:1px solid #000; padding:4px; text-align:center;">${(engine.q1Trials[1]?.final || 0).toFixed(2)}</td>
+            <td style="border:1px solid #000; padding:4px; text-align:center;">${(engine.q1Trials[2]?.final || 0).toFixed(2)}</td>
           </tr>
           <tr>
             <td style="border:1px solid #000; padding:4px;">Initial Burette Reading (cm³)</td>
-            <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[0].initial.toFixed(2)}</td>
-            <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[1].initial.toFixed(2)}</td>
-            <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[2].initial.toFixed(2)}</td>
+            <td style="border:1px solid #000; padding:4px; text-align:center;">${(engine.q1Trials[0]?.initial || 0).toFixed(2)}</td>
+            <td style="border:1px solid #000; padding:4px; text-align:center;">${(engine.q1Trials[1]?.initial || 0).toFixed(2)}</td>
+            <td style="border:1px solid #000; padding:4px; text-align:center;">${(engine.q1Trials[2]?.initial || 0).toFixed(2)}</td>
           </tr>
           <tr style="font-weight:bold;">
             <td style="border:1px solid #000; padding:4px;">Volume of Solution A Used (cm³)</td>
-            <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[0].used.toFixed(2)}</td>
-            <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[1].used.toFixed(2)}</td>
-            <td style="border:1px solid #000; padding:4px; text-align:center;">${engine.q1Trials[2].used.toFixed(2)}</td>
+            <td style="border:1px solid #000; padding:4px; text-align:center;">${(engine.q1Trials[0]?.used || 0).toFixed(2)}</td>
+            <td style="border:1px solid #000; padding:4px; text-align:center;">${(engine.q1Trials[1]?.used || 0).toFixed(2)}</td>
+            <td style="border:1px solid #000; padding:4px; text-align:center;">${(engine.q1Trials[2]?.used || 0).toFixed(2)}</td>
           </tr>
         </table>
-        ${(p.q1.questions || []).map(q => {
+        ${((p.q1?.questions) || []).map(q => {
           const fieldKey = q.field || q.id;
           const ans = engine.q1Answers[fieldKey] !== undefined ? engine.q1Answers[fieldKey] : (engine.q1Answers[q.id] || '—');
-          return `<div>(${q.letter}) ${q.label}: <b>${ans} ${q.unit || ''}</b></div>`;
+          return `<div>(${q.letter || ''}) ${q.label || ''}: <b>${ans} ${q.unit || ''}</b></div>`;
         }).join('')}
       `;
     }
-    document.getElementById('printQ1Content').innerHTML = q1Html;
+    const printQ1El = document.getElementById('printQ1Content');
+    if (printQ1El && q1Html) printQ1El.innerHTML = q1Html;
 
     // Populate Q2 Print Table
-    let q2Html = `
+    let q2Html = '';
+    if (p.q2 && Array.isArray(p.q2.tests) && p.q2.tests.length > 0) {
+      q2Html = `
       <table style="width:100%; border-collapse:collapse; margin-bottom:8px; font-size:0.8rem;">
         <tr style="background:#f1f5f9;">
           <th style="border:1px solid #000; padding:4px; width:45%;">Test / Procedure</th>
@@ -3365,12 +3625,16 @@
       </table>
       ${p.q2?.hasDeduction ? `<div><b>Final Deductions:</b> Cation: <u>${engine.q2CationChoice || '—'}</u> &nbsp;|&nbsp; Anion: <u>${engine.q2AnionChoice || '—'}</u></div>` : ''}
     `;
-    document.getElementById('printQ2Content').innerHTML = q2Html;
+    }
+    const printQ2El = document.getElementById('printQ2Content');
+    if (printQ2El && q2Html) printQ2El.innerHTML = q2Html;
 
     // Populate Q3 Print Table
     const q3TestsList = (Array.isArray(p.q3?.tests) && p.q3.tests.length > 0) ? p.q3.tests : [];
     const isQ3Qual = p.q3?.simulationType === 'qualitative' || p.q3?.trueSaltKey || (p.q3?.sampleName && /solid/i.test(p.q3.sampleName));
-    let q3Html = `
+    let q3Html = '';
+    if (q3TestsList.length > 0) {
+      q3Html = `
       <table style="width:100%; border-collapse:collapse; margin-bottom:8px; font-size:0.8rem;">
         <tr style="background:#f1f5f9;">
           <th style="border:1px solid #000; padding:4px; width:45%;">Test / Procedure</th>
@@ -3387,7 +3651,44 @@
       </table>
       ${!isQ3Qual && engine.q3FunctionalGroupChoice ? `<div><b>Functional Group Deduction:</b> <u>${engine.q3FunctionalGroupChoice || '—'}</u></div>` : ''}
     `;
-    document.getElementById('printQ3Content').innerHTML = q3Html;
+    }
+    const printQ3El = document.getElementById('printQ3Content');
+    if (printQ3El && q3Html) printQ3El.innerHTML = q3Html;
+
+    // Format any written questions or specialized simulator questions
+    const questionsList = window._examQuestionsList || [];
+    questionsList.forEach(q => {
+      const targetPrintEl = document.getElementById(`printQ${q.number}Content`);
+      if (q.simulationType === 'written' && targetPrintEl) {
+        const subQs = Array.isArray(q.subQuestions) ? q.subQuestions : [];
+        let wHtml = `
+          <div style="margin-bottom:6px;"><b>${escapeHtml(q.title || 'Written Question')}</b> (${Number(q.marks || 10).toFixed(1)} Marks)</div>
+          ${q.prompt ? `<div style="margin-bottom:8px; font-style:italic;">${escapeHtml(q.prompt)}</div>` : ''}
+        `;
+        if (subQs.length > 0) {
+          wHtml += subQs.map(sq => {
+            const ansInput = document.getElementById(`writtenAnswer_${q.number}_${sq.id}`);
+            const ans = ansInput ? (ansInput.value.trim() || '—') : '—';
+            return `
+              <div style="margin-bottom:8px;">
+                <div><b>(${escapeHtml(sq.id)})</b> ${escapeHtml(sq.text || '')} [${Number(sq.marks || 1).toFixed(1)} Mks]</div>
+                <div style="padding:4px 8px; border:1px solid #94a3b8; background:#f8fafc; margin-top:2px;">
+                  Candidate Answer: <b>${escapeHtml(ans)}</b>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+        targetPrintEl.innerHTML = wHtml;
+      } else if (['energy', 'rates', 'gas', 'solubility'].includes(q.simulationType) && targetPrintEl) {
+        targetPrintEl.innerHTML = `
+          <div style="padding:8px 12px; border:1px solid #cbd5e1; background:#f8fafc; border-radius:4px;">
+            <b>${escapeHtml(q.title || 'Specialized Simulation')}</b> (${Number(q.marks || 15).toFixed(1)} Marks)<br>
+            <span style="font-size:0.8rem; color:#475569;">Interactive laboratory workbench session logged and saved.</span>
+          </div>
+        `;
+      }
+    });
 
     window.print();
   }

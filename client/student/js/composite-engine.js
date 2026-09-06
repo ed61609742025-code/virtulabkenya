@@ -2208,6 +2208,9 @@ class CompositeExamEngine {
 
   // ── KNEC Scoring Algorithm with Multi-Procedure Support ───────────────
   calculateQ1Score() {
+    if (!this.preset || !this.preset.q1) {
+      return { tableScore: 0, calcScore: 0, totalScore: 0, maxScore: 0, rubric: [], modelAnswers: {} };
+    }
     if (this.preset.q1?.hasMultipleProcedures && Array.isArray(this.preset.q1.procedures) && this.preset.q1.procedures.length > 1) {
       let combinedTable = 0;
       let combinedCalc = 0;
@@ -2257,6 +2260,9 @@ class CompositeExamEngine {
   }
 
   calculateQ2Score() {
+    if (!this.preset || !this.preset.q2 || !Array.isArray(this.preset.q2.tests)) {
+      return { totalScore: 0, maxScore: 0, rubric: [] };
+    }
     let score = 0.0;
     const rubric = [];
     const tests = this.preset.q2.tests || [];
@@ -2463,6 +2469,9 @@ class CompositeExamEngine {
   }
 
   calculateQ3Score() {
+    if (!this.preset || !this.preset.q3 || !Array.isArray(this.preset.q3.tests)) {
+      return { totalScore: 0, maxScore: 0, rubric: [] };
+    }
     let score = 0.0;
     const rubric = [];
     const tests = this.preset.q3.tests || [];
@@ -2601,6 +2610,7 @@ class CompositeExamEngine {
 
   // ── Step-by-Step Mathematical Worked Solution Model ──────────────────
   generateWorkedSolutions() {
+    if (!this.preset || !this.preset.q1) return {};
     const questionsList = this.preset.q1.questions || createStandardTitrationQuestions(this.preset.q1);
     const v1 = Number(this.preset.q1.trueTitre) || 25.00;
 

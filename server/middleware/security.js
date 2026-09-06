@@ -34,7 +34,7 @@ const securityHeaders = helmet({
       mediaSrc: ["'self'", "data:", "blob:"],
       workerSrc: ["'self'", "blob:"],
       objectSrc: ["'none'"],
-      frameAncestors: ["'none'"],
+      frameAncestors: ["'self'"],
       upgradeInsecureRequests: isProd ? [] : null
     }
   },

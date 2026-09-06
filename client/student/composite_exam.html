@@ -24,6 +24,7 @@
 <link rel="stylesheet" href="css/qualitative.css">
 <link rel="stylesheet" href="css/organic.css">
 <link rel="stylesheet" href="css/composite_exam.css">
+<link rel="stylesheet" href="/shared/knec-graph-plotter.css">
 <style>
   /* Composite Exam Layout & Craftsmanship */
   .exam-section-card {
@@ -1253,6 +1254,8 @@
 <script src="/shared/api.js"></script>
 <script src="/shared/page-transitions.js"></script>
 <script src="js/composite-engine.js?v=72"></script>
+<script src="/shared/knec-graph-plotter.js"></script>
+<script src="js/exam-offline-manager.js"></script>
 <script>
   requireStudentLogin();
   if (typeof window.getAnswerValue !== 'function') {
@@ -1574,6 +1577,7 @@
         pane.innerHTML = getWrittenQuestionPanelHtml(q);
       } else if (['energy', 'rates', 'gas', 'solubility'].includes(q.simulationType)) {
         pane.innerHTML = getEmbeddedSimulatorHtml(q);
+        setTimeout(() => { mountKnecPlotterForQuestion(q); }, 200);
       } else if (q.simulationType === 'titration') {
         if (q.number === 1 && window._initialPaneTemplates.paneQ1) {
           if (!pane.querySelector('.titration-rig-workbench')) {
@@ -1723,6 +1727,11 @@
 
     // Universal Exam Simulator Router for standard practice preset
     setupUniversalExamRouter(engine.preset);
+    if (window.ExamDraftManager) {
+      ExamDraftManager.initConnectivityMonitor('offlineStatusBadge');
+      ExamDraftManager.registerServiceWorker('/sw.js');
+      setTimeout(() => { checkAndRestoreDraft(); }, 500);
+    }
 
     // Handle Linked Assignment Header Banner
     if (assignmentId) {
@@ -1855,7 +1864,7 @@
             </div>
             <textarea
               class="kcse-input"
-              id="written_input_${q.number}_${sq.id}"
+              id="written_input_${q.number}_${sq.id}" oninput="triggerDraftAutoSave()"
               placeholder="Record your observation, deduction, or calculation here..."
               rows="3"
               style="width:100%;font-size:0.86rem;padding:10px;resize:vertical;line-height:1.5;margin-top:6px;box-sizing:border-box;"
@@ -3796,6 +3805,26 @@
         `;
       }
     });
+
+    // Embed candidate plotted KNEC graph sheets
+    if (window.knecPlotters) {
+      Object.keys(window.knecPlotters).forEach(k => {
+        const plotter = window.knecPlotters[k];
+        if (plotter && Array.isArray(plotter.points) && plotter.points.length > 0) {
+          const qNumStr = k.replace('q', '');
+          const targetPrintEl = document.getElementById(`printQ${qNumStr}Content`);
+          if (targetPrintEl) {
+            const imgData = plotter.toDataURL();
+            targetPrintEl.innerHTML += `
+              <div style="margin-top:14px; page-break-inside:avoid;">
+                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:4px;">KNEC Examination Graph Sheet (Candidate Plotted):</div>
+                <img src="${imgData}" style="max-width:100%; height:auto; border:1px solid #000; display:block; margin:0 auto;" alt="KNEC Plotted Graph">
+              </div>
+            `;
+          }
+        }
+      });
+    }
 
     window.print();
   }

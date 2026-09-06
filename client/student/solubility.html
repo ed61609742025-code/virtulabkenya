@@ -30,6 +30,7 @@
   <link rel="stylesheet" href="/student/css/solubility.css?v=81">
   <link rel="stylesheet" href="/shared/ai-tutor.css">
   <link rel="stylesheet" href="/shared/pwa-installer.css">
+  <link rel="stylesheet" href="/shared/knec-graph-plotter.css">
 </head>
 <body>
 
@@ -411,6 +412,7 @@
               <button id="btnGraphTool-curve" class="sol-graph-tool-btn active" onclick="SolubilityEngine.setGraphTool('curve')">📈 Standard Curve</button>
               <button id="btnGraphTool-crosshair" class="sol-graph-tool-btn" onclick="SolubilityEngine.setGraphTool('crosshair')">🎯 Reading Probe</button>
               <button id="btnGraphTool-zones" class="sol-graph-tool-btn" onclick="SolubilityEngine.setGraphTool('zones')">📊 Saturation Zones</button>
+              <button id="btnOpenKnecPlotter" class="sol-graph-tool-btn" onclick="toggleKnecPlotterModal()">📐 KNEC Millimeter Sheet</button>
             </div>
           </div>
           <div class="sol-graph-wrapper">
@@ -449,6 +451,19 @@
        MODALS: Microscope, Examiner Tips
   ══════════════════════════════════════ -->
   
+  <!-- KNEC Graph Sheet Modal -->
+  <div id="knecPlotterModal" class="sol-modal-overlay" style="display:none; align-items:center; justify-content:center; z-index:10000; backdrop-filter:blur(4px);">
+    <div class="sol-modal-dialog" style="max-width:960px; width:95%; max-height:92vh; overflow-y:auto; background:var(--card-bg); border:1.5px solid var(--card-border); border-radius:14px; padding:20px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid var(--border-subtle, rgba(255,255,255,0.08)); padding-bottom:10px;">
+        <h3 style="margin:0; font-family:var(--font-heading); font-size:1.15rem; font-weight:800; color:var(--heading-color);">
+          📐 Official KNEC Millimeter Graph Sheet (Solubility Curve)
+        </h3>
+        <button onclick="toggleKnecPlotterModal()" class="sol-btn sol-btn-reset" style="padding:4px 12px; font-weight:700;">✕ Close</button>
+      </div>
+      <div id="knecSolubilityPlotterContainer"></div>
+    </div>
+  </div>
+
   <!-- Microscope Crystal Habit Modal -->
   <div id="solMicroscopeModal" class="sol-modal-overlay">
     <div class="sol-modal-dialog">
@@ -579,7 +594,43 @@
   <script src="/shared/brilliant-ui.js"></script>
   <script src="/shared/tutorial-engine.js"></script>
   <script src="/student/js/solubility-engine.js"></script>
+  <script src="/shared/knec-graph-plotter.js"></script>
   <script>
+    let solPlotterInstance = null;
+    function toggleKnecPlotterModal() {
+      const m = document.getElementById('knecPlotterModal');
+      if (!m) return;
+      const isOpening = m.style.display === 'none';
+      m.style.display = isOpening ? 'flex' : 'none';
+
+      if (isOpening && !solPlotterInstance && window.KNECGraphPlotter) {
+        const initialPoints = [];
+        if (window.SolubilityEngine && Array.isArray(SolubilityEngine.trials)) {
+          SolubilityEngine.trials.forEach(t => {
+            if (t.crystallizationTemp > 0 && t.solubility > 0) {
+              initialPoints.push({ x: Number(t.crystallizationTemp.toFixed(1)), y: Number(t.solubility.toFixed(1)) });
+            }
+          });
+        }
+        solPlotterInstance = new KNECGraphPlotter({
+          container: 'knecSolubilityPlotterContainer',
+          title: 'KNEC 233/3 Standard Solubility Curve',
+          xLabel: 'Temperature (°C)',
+          yLabel: 'Solubility (g/100g H₂O)',
+          xUnit: '°C',
+          yUnit: 'g/100g',
+          xMin: 0,
+          xMax: 100,
+          xStep: 10,
+          yMin: 0,
+          yMax: 160,
+          yStep: 20,
+          defaultMode: 'curve',
+          initialPoints
+        });
+      }
+    }
+
     if (window.TutorialEngine) {
       window.TutorialEngine.init({
         discipline: 'solubility',

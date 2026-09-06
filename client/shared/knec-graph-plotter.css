@@ -1,0 +1,275 @@
+/* VirtuLab Kenya — KNEC Standard Graph Plotter Stylesheet */
+
+.knec-graph-widget {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--card-bg, #0B1120);
+  border: 1.5px solid var(--card-border, #1E293B);
+  border-radius: 12px;
+  padding: 16px;
+  margin: 16px 0;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--text-color, #E2E8F0);
+  box-sizing: border-box;
+}
+
+.knec-graph-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+}
+
+.knec-graph-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.knec-graph-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.knec-graph-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--heading-color, #F8FAFC);
+  letter-spacing: -0.01em;
+}
+
+.knec-graph-sublabel {
+  font-size: 0.8rem;
+  color: var(--text-muted, #94A3B8);
+  margin-top: 2px;
+}
+
+.knec-graph-tools-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* Tool Buttons */
+.kg-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--btn-bg, #1E293B);
+  color: var(--btn-text, #CBD5E1);
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  user-select: none;
+}
+
+.kg-btn:hover {
+  background: #334155;
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.kg-btn.active {
+  background: rgba(6, 182, 212, 0.2);
+  border-color: #06B6D4;
+  color: #38BDF8;
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.25);
+}
+
+.kg-btn-primary {
+  background: #0284C7;
+  color: #FFFFFF;
+  border-color: #0369A1;
+}
+
+.kg-btn-primary:hover {
+  background: #0369A1;
+  border-color: #075985;
+}
+
+.kg-btn-danger {
+  color: #F87171;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.kg-btn-danger:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: #EF4444;
+  color: #FCA5A5;
+}
+
+/* Canvas Display Frame */
+.knec-graph-canvas-frame {
+  position: relative;
+  width: 100%;
+  height: 440px;
+  background: #0A0F1D;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1.5px solid var(--card-border, #1E293B);
+  touch-action: none;
+}
+
+.knec-graph-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+}
+
+.knec-graph-readout-pill {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(15, 23, 42, 0.88);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.78rem;
+  color: #38BDF8;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: 10;
+}
+
+/* Footer & Manual Entry Form */
+.knec-graph-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+}
+
+.knec-graph-entry-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.kg-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.kg-input-wrap label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted, #94A3B8);
+}
+
+.kg-coord-input {
+  width: 82px;
+  padding: 6px 8px;
+  font-size: 0.85rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+  background: #1E293B;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: #F8FAFC;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.kg-coord-input:focus {
+  border-color: #06B6D4;
+  box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+}
+
+.knec-graph-stats {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.kg-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  color: #CBD5E1;
+}
+
+.kg-pill b {
+  color: #38BDF8;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.kg-slope-pill {
+  border-color: rgba(245, 158, 11, 0.3);
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.kg-slope-pill b {
+  color: #FBBF24;
+}
+
+/* Light Theme Overrides */
+[data-theme="light"] .knec-graph-widget {
+  background: #FFFFFF;
+  border-color: #E2E8F0;
+  color: #1E293B;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .knec-graph-title {
+  color: #0F172A;
+}
+
+[data-theme="light"] .knec-graph-canvas-frame {
+  background: #F8FAFC;
+  border-color: #CBD5E1;
+}
+
+[data-theme="light"] .kg-btn {
+  background: #F1F5F9;
+  border-color: #CBD5E1;
+  color: #334155;
+}
+
+[data-theme="light"] .kg-btn:hover {
+  background: #E2E8F0;
+  color: #0F172A;
+}
+
+[data-theme="light"] .kg-btn.active {
+  background: rgba(6, 182, 212, 0.15);
+  border-color: #0891B2;
+  color: #0369A1;
+}
+
+[data-theme="light"] .kg-coord-input {
+  background: #F8FAFC;
+  border-color: #CBD5E1;
+  color: #0F172A;
+}
+
+[data-theme="light"] .kg-pill {
+  background: #F1F5F9;
+  border-color: #E2E8F0;
+  color: #475569;
+}

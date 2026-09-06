@@ -38,6 +38,7 @@
   <link rel="stylesheet" href="/student/css/rates.css?v=84">
   <link rel="stylesheet" href="/shared/ai-tutor.css">
   <link rel="stylesheet" href="/shared/pwa-installer.css">
+  <link rel="stylesheet" href="/shared/knec-graph-plotter.css">
 </head>
 <body>
 
@@ -413,6 +414,9 @@
             <button id="btnTangentTool" class="rate-tangent-chip" onclick="RatesEngine.toggleTangent()">
               📐 Tangent Tool (dy/dx)
             </button>
+            <button id="btnOpenKnecPlotter" class="rate-tangent-chip" onclick="toggleKnecPlotterModal()" style="margin-left:6px;">
+              📈 KNEC Millimeter Sheet
+            </button>
           </div>
         </div>
         <div class="rate-graph-container">
@@ -442,6 +446,19 @@
   <!-- ══════════════════════════════════════
        MODALS: Result & Safety
   ══════════════════════════════════════ -->
+
+  <!-- KNEC Graph Sheet Modal -->
+  <div id="knecPlotterModal" class="rate-modal-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:10000; align-items:center; justify-content:center; backdrop-filter:blur(4px);">
+    <div style="max-width:960px; width:95%; max-height:92vh; overflow-y:auto; background:var(--card-bg, #0F172A); border:1.5px solid var(--card-border, #334155); border-radius:14px; padding:20px; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">
+        <h3 style="margin:0; font-family:var(--font-heading); font-size:1.15rem; font-weight:800; color:var(--heading-color, #F8FAFC);">
+          📐 Official KNEC Millimeter Graph Sheet (Reaction Kinetics)
+        </h3>
+        <button class="kg-btn" onclick="toggleKnecPlotterModal()" style="font-size:0.9rem; padding:4px 12px;">✕ Close</button>
+      </div>
+      <div id="knecRatesPlotterContainer"></div>
+    </div>
+  </div>
 
   <!-- Result Modal -->
   <div id="rateExamResultModal" class="rate-modal-overlay">
@@ -505,7 +522,34 @@
   <script src="/shared/brilliant-ui.js"></script>
   <script src="/shared/tutorial-engine.js"></script>
   <script src="/student/js/rates-engine.js?v=84"></script>
+  <script src="/shared/knec-graph-plotter.js"></script>
   <script>
+    let ratesPlotterInstance = null;
+    function toggleKnecPlotterModal() {
+      const m = document.getElementById('knecPlotterModal');
+      if (!m) return;
+      const isOpening = m.style.display === 'none';
+      m.style.display = isOpening ? 'flex' : 'none';
+
+      if (isOpening && !ratesPlotterInstance && window.KNECGraphPlotter) {
+        ratesPlotterInstance = new KNECGraphPlotter({
+          container: 'knecRatesPlotterContainer',
+          title: 'KNEC 233/3 Kinetics Graph (Volume vs Time)',
+          xLabel: 'Time (seconds)',
+          yLabel: 'Volume of Gas (cm³)',
+          xUnit: 's',
+          yUnit: 'cm³',
+          xMin: 0,
+          xMax: 120,
+          xStep: 20,
+          yMin: 0,
+          yMax: 60,
+          yStep: 10,
+          defaultMode: 'curve'
+        });
+      }
+    }
+
     if (window.TutorialEngine) {
       window.TutorialEngine.init({
         discipline: 'rates',

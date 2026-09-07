@@ -305,7 +305,7 @@
     if (installBtn) {
       installBtn.addEventListener('click', () => {
         dismissHandler();
-        showInstallModal();
+        installDirectly();
       });
     }
 

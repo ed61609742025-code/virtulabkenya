@@ -1259,6 +1259,7 @@
 <script src="/shared/api.js"></script>
 <script src="/shared/page-transitions.js"></script>
 <script src="/shared/qualitative-bench-core.js"></script>
+<script src="/shared/organic-bench-core.js"></script>
 <script src="js/composite-engine.js?v=72"></script>
 <script src="/shared/knec-graph-plotter.js"></script>
 <script src="js/exam-offline-manager.js"></script>
@@ -3033,7 +3034,7 @@
           <div class="test-layout-grid">
             <div class="apparatus-stage">
               <div class="apparatus-view">
-                ${getOrganicVisualHtml(t.id, st)}
+                ${getOrganicVisualHtml(t.id, st, t.prompt)}
               </div>
               <div class="apparatus-status-tag" id="status_org_${t.id}">
                 ${!st.performed ? 'Ready to Test' : (st.statusLabel || 'Reaction Recorded')}
@@ -3104,10 +3105,21 @@
     }).join('');
   }
 
-  function getOrganicVisualHtml(testId, st) {
-    const performed = st && st.performed;
+  function getOrganicVisualHtml(testId, st, prompt = '') {
+    const performed = Boolean(st && st.performed);
     const p = engine.preset?.q3 || {};
     const orgKey = String(p.trueOrganicKey || 'Ethanol');
+
+    if (window.OrganicBenchCore) {
+      return window.OrganicBenchCore.renderApparatusSvg({
+        testId,
+        sampleKey: orgKey,
+        performed,
+        prompt,
+        tubeId: 'org_' + testId
+      });
+    }
+
     const isSooty = orgKey.includes('Cyclo') || orgKey.includes('Benzoic') || orgKey.includes('Hex') || orgKey.includes('Alkene');
     const isButanol = orgKey.includes('Butan');
     const isHexene = orgKey.includes('Hex');
@@ -3192,37 +3204,47 @@
     }
 
     const orgKey = String(p.trueOrganicKey || '');
-    const isButanol = orgKey.includes('Butan');
-    const isHexene = orgKey.includes('Hex');
-    const isSooty = orgKey.includes('Cyclo') || orgKey.includes('Benzoic') || isHexene || orgKey.includes('Alkene');
+    const tests = Array.isArray(p.tests) ? p.tests : [];
+    const t = tests.find(item => item.id === testId) || {};
+    const prompt = t.prompt || '';
 
-    if (testId === 'q3_ignition') {
-      st.statusLabel = isSooty ? 'Ignition: Smoky sooty yellow flame' : 'Ignition: Clear non-sooty pale blue flame';
-      if (window.QualitativeBenchCore) QualitativeBenchCore.playFlameSound();
-    } else if (testId === 'q3_litmus') {
-      st.statusLabel = orgKey.includes('Acid') ? 'Litmus: Turns moist blue litmus red' : 'Litmus: Neutral, no color change';
-      if (window.QualitativeBenchCore) QualitativeBenchCore.playDropSplashSound();
-    } else if (testId === 'q3_kmno4') {
-      if (isButanol) {
-        st.statusLabel = 'K₂Cr₂O₇: Orange turns green; pleasant fruity odor';
-      } else if (isHexene) {
-        st.statusLabel = 'Bromine Water: Reddish-brown rapidly decolorized';
-      } else if (orgKey.includes('Acid')) {
-        st.statusLabel = 'KMnO₄: Purple color remains unchanged';
-      } else {
-        st.statusLabel = 'Reaction: Decolorization observed';
-      }
-      if (window.QualitativeBenchCore) QualitativeBenchCore.playDropSplashSound();
-    } else if (testId === 'q3_nahco3') {
-      if (isHexene) {
-        st.statusLabel = 'KMnO₄: Purple acidified KMnO₄ rapidly decolorized';
+    if (window.OrganicBenchCore) {
+      const r = OrganicBenchCore.resolveOrganicReactionState(orgKey, testId, true, prompt);
+      st.statusLabel = r.statusLabel;
+      OrganicBenchCore.playOrganicSound(r.soundType);
+    } else {
+      const isButanol = orgKey.includes('Butan');
+      const isHexene = orgKey.includes('Hex');
+      const isSooty = orgKey.includes('Cyclo') || orgKey.includes('Benzoic') || isHexene || orgKey.includes('Alkene');
+
+      if (testId === 'q3_ignition') {
+        st.statusLabel = isSooty ? 'Ignition: Smoky sooty yellow flame' : 'Ignition: Clear non-sooty pale blue flame';
+        if (window.QualitativeBenchCore) QualitativeBenchCore.playFlameSound();
+      } else if (testId === 'q3_litmus') {
+        st.statusLabel = orgKey.includes('Acid') ? 'Litmus: Turns moist blue litmus red' : 'Litmus: Neutral, no color change';
         if (window.QualitativeBenchCore) QualitativeBenchCore.playDropSplashSound();
-      } else if (orgKey.includes('Acid')) {
-        st.statusLabel = 'NaHCO₃: Vigorous effervescence of CO₂';
-        if (window.QualitativeBenchCore) QualitativeBenchCore.playEffervescenceSound();
-      } else {
-        st.statusLabel = 'NaHCO₃: No effervescence observed';
+      } else if (testId === 'q3_kmno4') {
+        if (isButanol) {
+          st.statusLabel = 'K₂Cr₂O₇: Orange turns green; pleasant fruity odor';
+        } else if (isHexene) {
+          st.statusLabel = 'Bromine Water: Reddish-brown rapidly decolorized';
+        } else if (orgKey.includes('Acid')) {
+          st.statusLabel = 'KMnO₄: Purple color remains unchanged';
+        } else {
+          st.statusLabel = 'Reaction: Decolorization observed';
+        }
         if (window.QualitativeBenchCore) QualitativeBenchCore.playDropSplashSound();
+      } else if (testId === 'q3_nahco3') {
+        if (isHexene) {
+          st.statusLabel = 'KMnO₄: Purple acidified KMnO₄ rapidly decolorized';
+          if (window.QualitativeBenchCore) QualitativeBenchCore.playDropSplashSound();
+        } else if (orgKey.includes('Acid')) {
+          st.statusLabel = 'NaHCO₃: Vigorous effervescence of CO₂';
+          if (window.QualitativeBenchCore) QualitativeBenchCore.playEffervescenceSound();
+        } else {
+          st.statusLabel = 'NaHCO₃: No effervescence observed';
+          if (window.QualitativeBenchCore) QualitativeBenchCore.playDropSplashSound();
+        }
       }
     }
 

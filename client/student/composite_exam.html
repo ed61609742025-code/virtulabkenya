@@ -2684,6 +2684,31 @@
       const st = q2TestStates[t.id] || { performed: false, stage: 'idle' };
       const letter = String.fromCharCode(97 + idx);
       const promptTitle = t?.prompt ? (t.prompt.includes(') ') ? t.prompt.split(') ')[1] : t.prompt) : `Test Procedure (${letter})`;
+      const promptStr = (t.prompt || '').toLowerCase();
+
+      const isPhysicalAppearance =
+        promptStr.includes('physical appearance') ||
+        promptStr.includes('appearance of solid') ||
+        promptStr.includes('describe solid') ||
+        promptStr.includes('appearance of sample') ||
+        (promptStr.includes('appearance') && !promptStr.includes('dissolv') && !promptStr.includes('water')) ||
+        (t.id.includes('appearance') && !promptStr.includes('water')) ||
+        (t.id === 't1' && promptStr.includes('describe') && promptStr.includes('solid'));
+
+      const isHeat =
+        (promptStr.includes('heat') && (promptStr.includes('dry') || promptStr.includes('strongly') || promptStr.includes('solid') || promptStr.includes('spatula'))) ||
+        t.id.includes('heat') ||
+        t.id.includes('ignit');
+
+      const isDissolving = !isPhysicalAppearance && (
+        promptStr.includes('dissolv') ||
+        (promptStr.includes('water') && (promptStr.includes('solid') || promptStr.includes('spatula') || promptStr.includes('portion')))
+      );
+
+      let defaultStatus = 'Awaiting Reagent';
+      if (isPhysicalAppearance) defaultStatus = 'Awaiting Inspection';
+      else if (isHeat) defaultStatus = 'Awaiting Bunsen Flame';
+      else if (isDissolving) defaultStatus = 'Awaiting Distilled Water';
 
       const actions = window.QualitativeBenchCore
         ? QualitativeBenchCore.getMultiStageActions(t.id, t.prompt, st.stage)
@@ -2712,6 +2737,103 @@
         }
       }
 
+      let paletteHtml = '';
+      if (isPhysicalAppearance) {
+        paletteHtml = `
+          <div class="chem-palette-box">
+            <div class="chem-palette-header">
+              <span>⚡ Physical Appearance Quick-Palette</span>
+              <span style="font-size:0.68rem; color:var(--text-muted); font-weight:normal;">(Tap to insert token into observation or inference)</span>
+            </div>
+            <div style="margin-bottom:5px;">
+              <span style="font-size:0.7rem; color:var(--text-muted); font-weight:700;">Inferences / Deductions: </span>
+              <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Absence of transition metal ions (Cu²⁺, Fe²⁺, Fe³⁺ absent)')">Transition metals absent</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Absence of coloured transition ions')">Coloured ions absent</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Hydrated Cu²⁺ ion present')">Hydrated Cu²⁺</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Hydrated Fe²⁺ ion present')">Hydrated Fe²⁺</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Fe³⁺ ion present')">Fe³⁺ present</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Non-transition metal salt present')">Non-transition salt</span>
+            </div>
+            <div>
+              <span style="font-size:0.7rem; color:var(--text-muted); font-weight:700;">Observations: </span>
+              <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'White crystalline solid')">White crystalline solid</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'White crystalline powder')">White powder</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'Blue crystalline solid')">Blue crystalline solid</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'Pale green crystalline solid')">Pale green solid</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'Yellow-brown crystalline solid')">Yellow-brown solid</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'White deliquescent crystals')">Deliquescent solid</span>
+            </div>
+          </div>
+        `;
+      } else if (isHeat) {
+        paletteHtml = `
+          <div class="chem-palette-box">
+            <div class="chem-palette-header">
+              <span>⚡ Thermal Decomposition Quick-Palette</span>
+              <span style="font-size:0.68rem; color:var(--text-muted); font-weight:normal;">(Tap to insert token into observation or inference)</span>
+            </div>
+            <div style="margin-bottom:5px;">
+              <span style="font-size:0.7rem; color:var(--text-muted); font-weight:700;">Inferences / Deductions: </span>
+              <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Decomposition of hydrated or nitrate salt; NO₂ and O₂ gases evolved; NO₃⁻ present')">NO₃⁻ present</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Decomposition of hydrated salt; water of crystallization evolved')">Hydrated salt</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Zn²⁺ present (ZnO formed)')">Zn²⁺ present</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Pb²⁺ present (PbO residue formed)')">Pb²⁺ present</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'CO₂ gas evolved; CO₃²⁻ present')">CO₃²⁻ present</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'NH₄⁺ salt present (sublimation occurs)')">NH₄⁺ present</span>
+            </div>
+            <div>
+              <span style="font-size:0.7rem; color:var(--text-muted); font-weight:700;">Observations: </span>
+              <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'Solid decrepitates; brown fumes of gas evolved that turn moist blue litmus red')">Brown fumes (NO₂)</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'Gas rekindles a glowing splint (O₂)')">Relights splint (O₂)</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'Droplets of colorless liquid condense on cooler upper walls')">Liquid droplets</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'Solid decrepitates / crackles strongly')">Decrepitates</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'Solid turns yellow when hot, white on cooling')">Yellow hot, white cold</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'Residue is reddish-brown when hot, yellow on cooling')">Brown hot, yellow cold</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'Sublimes; white fumes deposit on upper cooler walls')">Sublimes</span>
+            </div>
+          </div>
+        `;
+      } else {
+        paletteHtml = `
+          <div class="chem-palette-box">
+            <div class="chem-palette-header">
+              <span>⚡ Quick Scientific Token Palette</span>
+              <span style="font-size:0.68rem; color:var(--text-muted); font-weight:normal;">(Tap to insert token into observation or inference)</span>
+            </div>
+            <div style="margin-bottom:5px;">
+              <span style="font-size:0.7rem; color:var(--text-muted); font-weight:700;">Ions &amp; Charges: </span>
+              <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Pb²⁺')">Pb²⁺</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Al³⁺')">Al³⁺</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Zn²⁺')">Zn²⁺</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Fe²⁺')">Fe²⁺</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Fe³⁺')">Fe³⁺</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Cu²⁺')">Cu²⁺</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Ca²⁺')">Ca²⁺</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'NH₄⁺')">NH₄⁺</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Ba²⁺')">Ba²⁺</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'SO₄²⁻')">SO₄²⁻</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'SO₃²⁻')">SO₃²⁻</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'CO₃²⁻')">CO₃²⁻</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Cl⁻')">Cl⁻</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'NO₃⁻')">NO₃⁻</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'I⁻')">I⁻</span>
+            </div>
+            <div>
+              <span style="font-size:0.7rem; color:var(--text-muted); font-weight:700;">Observations: </span>
+              <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'White precipitate formed')">White ppt</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'dissolves in excess to form colorless solution')">Soluble in excess</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'insoluble in excess')">Insoluble in excess</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'Reddish-brown precipitate formed')">Reddish-brown ppt</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'Dirty green precipitate formed')">Dirty green ppt</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'Pale blue precipitate formed')">Pale blue ppt</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'dissolves to form royal deep blue solution')">Deep blue soln</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'No precipitate formed')">No ppt</span>
+              <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'Effervescence of colorless gas')">Effervescence</span>
+            </div>
+          </div>
+        `;
+      }
+
       return `
         <div class="kcse-question-block">
           <div class="test-card-top">
@@ -2728,7 +2850,7 @@
                 ${getTubeVisualHtml(t.id, st, 'q2')}
               </div>
               <div class="apparatus-status-tag" id="status_${t.id}">
-                ${!st.performed ? 'Awaiting Reagent' : (st.statusLabel || 'Reaction Observed')}
+                ${!st.performed ? defaultStatus : (st.statusLabel || 'Reaction Observed')}
               </div>
             </div>
 
@@ -2742,43 +2864,7 @@
                 ${actionBtn}
               </div>
 
-              <!-- Smart Chemistry Scientific Token Quick-Palette -->
-              <div class="chem-palette-box">
-                <div class="chem-palette-header">
-                  <span>⚡ Quick Scientific Token Palette</span>
-                  <span style="font-size:0.68rem; color:var(--text-muted); font-weight:normal;">(Tap to insert token into observation or inference)</span>
-                </div>
-                <div style="margin-bottom:5px;">
-                  <span style="font-size:0.7rem; color:var(--text-muted); font-weight:700;">Ions &amp; Charges: </span>
-                  <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Pb²⁺')">Pb²⁺</span>
-                  <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Al³⁺')">Al³⁺</span>
-                  <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Zn²⁺')">Zn²⁺</span>
-                  <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Fe²⁺')">Fe²⁺</span>
-                  <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Fe³⁺')">Fe³⁺</span>
-                  <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Cu²⁺')">Cu²⁺</span>
-                  <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Ca²⁺')">Ca²⁺</span>
-                  <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'NH₄⁺')">NH₄⁺</span>
-                  <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Ba²⁺')">Ba²⁺</span>
-                  <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'SO₄²⁻')">SO₄²⁻</span>
-                  <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'SO₃²⁻')">SO₃²⁻</span>
-                  <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'CO₃²⁻')">CO₃²⁻</span>
-                  <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'Cl⁻')">Cl⁻</span>
-                  <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'NO₃⁻')">NO₃⁻</span>
-                  <span class="chem-token-chip" onclick="insertToken('q2Inf_${t.id}', 'I⁻')">I⁻</span>
-                </div>
-                <div>
-                  <span style="font-size:0.7rem; color:var(--text-muted); font-weight:700;">Observations: </span>
-                  <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'White precipitate formed')">White ppt</span>
-                  <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'dissolves in excess to form colorless solution')">Soluble in excess</span>
-                  <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'insoluble in excess')">Insoluble in excess</span>
-                  <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'Reddish-brown precipitate formed')">Reddish-brown ppt</span>
-                  <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'Dirty green precipitate formed')">Dirty green ppt</span>
-                  <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'Pale blue precipitate formed')">Pale blue ppt</span>
-                  <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'dissolves to form royal deep blue solution')">Deep blue soln</span>
-                  <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'No precipitate formed')">No ppt</span>
-                  <span class="chem-token-chip" onclick="insertToken('q2Obs_${t.id}', 'Effervescence of colorless gas')">Effervescence</span>
-                </div>
-              </div>
+              ${paletteHtml}
 
               <table class="knec-table">
                 <thead>
@@ -2813,6 +2899,16 @@
     const stage = st ? (st.stage || (st.performed ? 'done' : 'idle')) : 'idle';
 
     if (window.QualitativeBenchCore) {
+      if (typeof QualitativeBenchCore.renderApparatusSvg === 'function') {
+        return QualitativeBenchCore.renderApparatusSvg({
+          saltKey,
+          testId,
+          stage,
+          prompt: t.prompt || '',
+          obsStr: t.correctObs || t.observation || t.obs || '',
+          tubeId: `${qKey}_${testId}`
+        });
+      }
       return QualitativeBenchCore.renderTubeSvg({
         saltKey,
         testId,

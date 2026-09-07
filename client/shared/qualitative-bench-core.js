@@ -395,6 +395,25 @@
     } catch(e) {}
   }
 
+  function playCrystalInspectSound() {
+    if (isAudioMuted()) return;
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    try {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(1400, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(2200, ctx.currentTime + 0.08);
+      gain.gain.setValueAtTime(0.2, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.26);
+    } catch(e) {}
+  }
+
   // ── 3. Reaction Physics & State Resolver ───────────────────────
   function resolveReactionState(saltKey, testId, stage = 'idle', prompt = '', obsStr = '') {
     const salt = resolveSalt(saltKey);
@@ -404,7 +423,7 @@
 
     const performed = stage !== 'idle' && stage !== 'untested' && Boolean(stage);
     const isExcess = stage === 'excess' || stage === 'step3_nh3' || stage === 'step2_bacl2' || stage === 'step2_gas_warm' || pStr.includes('excess');
-    const isStep1 = stage === 'few_drops' || stage === 'step1' || stage === 'stage1' || stage === 'step1_hno3' || stage === 'step1_acid' || stage === 'step1_hcl' || stage === 'step1_feso4';
+    const isStep1 = stage === 'few_drops' || stage === 'step1' || stage === 'stage1' || stage === 'step1_hno3' || stage === 'step1_acid' || stage === 'step1_hcl' || stage === 'step1_feso4' || stage === 'inspected';
     const isHeated = stage === 'heated' || tId.includes('heat') || pStr.includes('heat') || pStr.includes('ignit');
     const isCooled = stage === 'cooled' || pStr.includes('cool');
 
@@ -412,6 +431,28 @@
     const anion = salt.anion;
 
     // Detect specialized test types
+    const isPhysicalAppearance =
+      pStr.includes('physical appearance') ||
+      pStr.includes('appearance of solid') ||
+      pStr.includes('describe solid') ||
+      pStr.includes('appearance of sample') ||
+      (pStr.includes('appearance') && !pStr.includes('dissolv') && !pStr.includes('water')) ||
+      (tId.includes('appearance') && !pStr.includes('water')) ||
+      (tId === 't1' && pStr.includes('describe') && pStr.includes('solid'));
+
+    const isDissolving = !isPhysicalAppearance && (
+      pStr.includes('dissolv') ||
+      (pStr.includes('water') && (pStr.includes('solid') || pStr.includes('spatula') || pStr.includes('portion')))
+    );
+
+    const isFlameTest = pStr.includes('flame test') || pStr.includes('nichrome') || tId.includes('flame');
+
+    const isHeat = !isFlameTest && (
+      (pStr.includes('heat') && (pStr.includes('dry') || pStr.includes('strongly') || pStr.includes('solid') || pStr.includes('spatula') || pStr.includes('test tube'))) ||
+      tId.includes('heat') ||
+      tId.includes('ignit')
+    );
+
     const isNaOH = tId.includes('naoh') || pStr.includes('naoh') || pStr.includes('sodium hydroxide');
     const isNH3 = tId.includes('nh3') || pStr.includes('ammonia') || pStr.includes('nh₃') || pStr.includes('nh3');
     const isKI = tId.includes('ki') || pStr.includes('potassium iodide') || pStr.includes('iodide');
@@ -419,8 +460,6 @@
     const isAgNO3 = tId.includes('agno3') || pStr.includes('silver nitrate') || (pStr.includes('hno3') && pStr.includes('agno3'));
     const isBaCl2 = tId.includes('bacl2') || tId.includes('barium') || pStr.includes('barium chloride') || pStr.includes('ba(no3)2') || pStr.includes('bacl2');
     const isHCl = tId.includes('hcl') || tId.includes('acid') || pStr.includes('hydrochloric') || pStr.includes('limewater');
-    const isHeat = tId.includes('heat') || pStr.includes('heat');
-    const isAppearance = tId.includes('appearance') || pStr.includes('dissolv') || pStr.includes('water');
 
     let liquidColor = 'rgba(56, 189, 248, 0.25)';
     let ppt = false;
@@ -429,6 +468,7 @@
     let bubbling = false;
     let complexDeepBlue = false;
     let statusLabel = 'Reaction Observed';
+    let soundType = 'drop';
 
     if (performed) {
       if (isBrownRing) {
@@ -548,26 +588,48 @@
         } else {
           statusLabel = 'No effervescence / No gas evolved';
         }
+      } else if (isPhysicalAppearance) {
+        statusLabel = `Inspected: ${salt.appearance || 'Crystalline Solid'}`;
+        soundType = 'inspect';
+      } else if (isDissolving) {
+        liquidColor = (cation === 'Cu2+') ? 'rgba(56, 189, 248, 0.6)'
+          : (cation === 'Fe2+') ? 'rgba(16, 185, 129, 0.4)'
+          : (cation === 'Fe3+') ? 'rgba(217, 119, 6, 0.45)'
+          : 'rgba(255, 255, 255, 0.25)';
+        statusLabel = `Water Added: ${salt.solubility || 'Solid dissolves completely to form clear stock solution'}`;
+        soundType = 'dissolve';
+      } else if (isFlameTest) {
+        statusLabel = (cation === 'Ca2+') ? 'Flame Test: Brick-red / orange-red flame'
+          : (cation === 'Cu2+') ? 'Flame Test: Blue-green flame'
+          : (cation === 'Ba2+') ? 'Flame Test: Apple-green flame'
+          : (salt.key.includes('sodium') || salt.name.includes('Sodium')) ? 'Flame Test: Persistent golden yellow flame'
+          : (salt.key.includes('potassium') || salt.name.includes('Potassium')) ? 'Flame Test: Pale lilac flame'
+          : 'Flame Test: Characteristic emission color recorded';
+        soundType = 'flame';
       } else if (isHeat) {
         if (anion === 'NO3-') {
           liquidColor = 'rgba(180, 83, 9, 0.55)';
-          statusLabel = 'Heated Strongly: Brown fumes of NO₂ evolved; rekindles glowing splint (O₂)';
+          statusLabel = (cation === 'Pb2+')
+            ? 'Heated: Decrepitates; brown fumes of NO₂; rekindles glowing splint (O₂); reddish-brown hot, yellow cold'
+            : 'Heated Strongly: Brown fumes of NO₂ evolved; rekindles glowing splint (O₂)';
         } else if (cation === 'NH4+') {
           statusLabel = 'Heated: Sublimes; dense white fumes deposit on upper cooler walls';
         } else if (cation === 'Zn2+') {
-          statusLabel = 'Heated: Solid turns yellow when hot, white on cooling';
+          statusLabel = 'Heated: Solid turns yellow when hot, white on cooling (ZnO formation)';
         } else if (cation === 'Cu2+') {
           statusLabel = 'Heated: Blue crystals dehydrate to white anhydrous powder; water droplets condense';
         } else if (cation === 'Fe2+') {
           statusLabel = 'Heated: Pale green crystals turn dirty brown; water droplets condense';
+        } else {
+          statusLabel = 'Heated Strongly: Thermal decomposition observed';
         }
-      } else if (isAppearance) {
-        liquidColor = (cation === 'Cu2+') ? 'rgba(56, 189, 248, 0.6)'
-          : (cation === 'Fe2+') ? 'rgba(16, 185, 129, 0.4)'
-          : (cation === 'Fe3+') ? 'rgba(180, 83, 9, 0.45)'
-          : 'rgba(255, 255, 255, 0.25)';
-        statusLabel = `Appearance: ${salt.appearance} dissolves completely`;
+        soundType = 'flame';
       }
+    } else {
+      if (isPhysicalAppearance) statusLabel = 'Solid Specimen Y on Watch Glass';
+      else if (isDissolving) statusLabel = 'Awaiting Distilled Water';
+      else if (isHeat || isFlameTest) statusLabel = 'Awaiting Bunsen Flame';
+      else statusLabel = 'Awaiting Reagent';
     }
 
     return {
@@ -589,7 +651,12 @@
       complexDeepBlue,
       isExcess,
       isStep1,
-      statusLabel
+      isPhysicalAppearance,
+      isDissolving,
+      isFlameTest,
+      isHeat,
+      statusLabel,
+      soundType
     };
   }
 
@@ -864,15 +931,480 @@
         </g>
 
         <!-- Dish Specular Sheen -->
-        <path d="M 24,42 C 34,54 96,54 106,42" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M 28,43 C 40,55 90,55 102,43" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.2" stroke-linecap="round"/>
       </svg>
     `;
+  }
+
+  // ── 5b. Watch Glass Specimen Examination Apparatus SVG (for Q2 / Q3 Physical Appearance) ──
+  function renderWatchGlassApparatusSvg(options = {}) {
+    const {
+      saltKey = 'leadNitrate',
+      stage = 'idle',
+      tubeId = `wg_${Math.random().toString(36).substring(2, 7)}`
+    } = options;
+
+    const salt = resolveSalt(saltKey);
+    const performed = stage !== 'idle' && stage !== 'untested' && Boolean(stage);
+    const prim = salt.crystalColor || '#FFFFFF';
+    const sec = salt.crystalSecondary || '#E2E8F0';
+    const hi = salt.crystalHighlight || '#FFFFFF';
+
+    return `
+      <svg width="112" height="136" viewBox="0 0 112 136">
+        <defs>
+          <radialGradient id="dishGrad_${tubeId}" cx="50%" cy="30%" r="70%">
+            <stop offset="0%" stop-color="rgba(255,255,255,0.35)"/>
+            <stop offset="50%" stop-color="rgba(255,255,255,0.08)"/>
+            <stop offset="90%" stop-color="rgba(148,163,184,0.3)"/>
+            <stop offset="100%" stop-color="rgba(56,189,248,0.35)"/>
+          </radialGradient>
+          <linearGradient id="rimGrad_${tubeId}" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="rgba(255,255,255,0.6)"/>
+            <stop offset="50%" stop-color="rgba(255,255,255,0.15)"/>
+            <stop offset="100%" stop-color="rgba(255,255,255,0.5)"/>
+          </linearGradient>
+          <filter id="crystShadow_${tubeId}" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="1.5" stdDeviation="2" flood-color="rgba(0,0,0,0.3)"/>
+          </filter>
+        </defs>
+
+        <!-- Lab Bench Surface Shadow -->
+        <ellipse cx="56" cy="94" rx="48" ry="18" fill="rgba(15,23,42,0.3)" filter="blur(3px)"/>
+
+        <!-- Watch Glass Dish Body -->
+        <path d="M 12,78 C 12,108 100,108 100,78" fill="url(#dishGrad_${tubeId})" stroke="url(#rimGrad_${tubeId})" stroke-width="1.8"/>
+        <ellipse cx="56" cy="78" rx="44" ry="14" fill="rgba(255,255,255,0.06)" stroke="url(#rimGrad_${tubeId})" stroke-width="1.2"/>
+
+        <!-- Dynamic Salt Crystals Mound -->
+        <g filter="url(#crystShadow_${tubeId})">
+          <ellipse cx="56" cy="82" rx="26" ry="9" fill="${sec}" opacity="0.75"/>
+          <ellipse cx="56" cy="80" rx="20" ry="7" fill="${prim}"/>
+
+          <!-- Faceted Micro-Crystals -->
+          <polygon points="48,74 55,71 59,75 52,78" fill="${hi}" opacity="0.95"/>
+          <polygon points="59,75 55,71 66,73 68,77" fill="${sec}" opacity="0.85"/>
+          <polygon points="41,77 47,74 51,79 45,82" fill="${prim}"/>
+          <polygon points="45,82 51,79 58,81 53,84" fill="${sec}"/>
+          <polygon points="61,76 68,76 72,81 65,81" fill="${hi}" opacity="0.9"/>
+          <polygon points="65,81 72,81 68,86 61,86" fill="${prim}"/>
+          <polygon points="35,80 41,78 46,83 40,85" fill="${sec}"/>
+          <polygon points="52,79 59,77 63,82 56,84" fill="${hi}"/>
+
+          <!-- Granules -->
+          <circle cx="30" cy="80" r="1.8" fill="${prim}"/>
+          <circle cx="34" cy="84" r="1.5" fill="${sec}"/>
+          <circle cx="76" cy="81" r="2" fill="${prim}"/>
+          <circle cx="81" cy="83" r="1.4" fill="${hi}"/>
+          <circle cx="56" cy="87" r="1.7" fill="${sec}"/>
+        </g>
+
+        <!-- Specular Sheen Curve on Watch Glass Rim -->
+        <path d="M 22,79 C 32,89 80,89 90,79" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="1.2" stroke-linecap="round"/>
+
+        <!-- Laboratory Magnifying Inspection Loupe -->
+        ${performed ? `
+          <!-- Inspection Loupe Centered Over Sample (Inspecting) -->
+          <g class="anim-loupe-inspect">
+            <!-- Loupe Handle -->
+            <line x1="72" y1="58" x2="98" y2="32" stroke="#64748B" stroke-width="4.5" stroke-linecap="round"/>
+            <line x1="72" y1="58" x2="98" y2="32" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
+            <!-- Loupe Metal Frame & Lens -->
+            <circle cx="56" cy="74" r="25" fill="rgba(56,189,248,0.12)" stroke="#38BDF8" stroke-width="2.5"/>
+            <circle cx="56" cy="74" r="23" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
+            <path d="M 40,64 A 20 20 0 0 1 70,60" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" opacity="0.8"/>
+            <!-- Sparkling Crystal Facets under Magnification -->
+            <g class="anim-crystal-glint">
+              <polygon points="56,66 57.5,70 61,71 57.5,72 56,76 54.5,72 51,71 54.5,70" fill="#FFFFFF"/>
+              <polygon points="46,74 47,77 50,77.5 47,78 46,81 45,78 42,77.5 45,77" fill="${hi}"/>
+              <polygon points="66,73 67,76 70,76.5 67,77 66,80 65,77 62,76.5 65,76" fill="${hi}"/>
+            </g>
+          </g>
+        ` : `
+          <!-- Inspection Loupe Resting on Upper Edge -->
+          <g opacity="0.75" transform="translate(14, -6)">
+            <line x1="64" y1="44" x2="88" y2="20" stroke="#64748B" stroke-width="4" stroke-linecap="round"/>
+            <line x1="64" y1="44" x2="88" y2="20" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="50" cy="56" r="20" fill="rgba(255,255,255,0.1)" stroke="#94A3B8" stroke-width="2"/>
+            <path d="M 38,48 A 16 16 0 0 1 60,46" fill="none" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" opacity="0.7"/>
+          </g>
+        `}
+
+        <!-- Specimen Plaque Label -->
+        <g transform="translate(16, 114)">
+          <rect x="0" y="0" width="80" height="18" rx="4" fill="rgba(15,23,42,0.85)" stroke="#334155" stroke-width="1"/>
+          <text x="40" y="12.5" font-size="8.5" font-weight="800" fill="#38BDF8" text-anchor="middle" font-family="'JetBrains Mono', monospace">
+            ${performed ? 'CRYSTALS: OBSERVED' : 'SOLID SPECIMEN Y'}
+          </text>
+        </g>
+      </svg>
+    `;
+  }
+
+  function renderDryHeatingApparatusSvg(options = {}) {
+    const {
+      saltKey = 'leadNitrate',
+      stage = 'idle',
+      prompt = '',
+      obsStr = '',
+      tubeId = `heat_${Math.random().toString(36).substring(2, 7)}`
+    } = options;
+
+    const salt = resolveSalt(saltKey);
+    const performed = stage !== 'idle' && stage !== 'untested' && Boolean(stage);
+    const cation = salt.cation;
+    const anion = salt.anion;
+    const isNitrate = anion === 'NO3-';
+    const isHydrated = salt.appearance?.toLowerCase().includes('hydrat') || salt.formula?.includes('H2O') || cation === 'Cu2+' || cation === 'Fe2+';
+
+    // Solid color hot vs cold
+    let hotPowderColor = salt.crystalColor || '#FFFFFF';
+    if (performed) {
+      if (cation === 'Zn2+') hotPowderColor = '#FACC15'; // ZnO yellow when hot
+      else if (cation === 'Cu2+') hotPowderColor = '#E2E8F0'; // Anhydrous white
+      else if (cation === 'Fe2+') hotPowderColor = '#78350F'; // Dirty brown Fe2O3/FeO
+      else if (cation === 'Pb2+') hotPowderColor = '#9A3412'; // PbO reddish-brown hot
+    }
+
+    return `
+      <svg width="112" height="136" viewBox="0 0 112 136">
+        <defs>
+          <linearGradient id="flameInner_${tubeId}" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.95"/>
+            <stop offset="60%" stop-color="#0284C7" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="#38BDF8" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="flameOuter_${tubeId}" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stop-color="#2563EB" stop-opacity="0.8"/>
+            <stop offset="70%" stop-color="#60A5FA" stop-opacity="0.75"/>
+            <stop offset="100%" stop-color="#93C5FD" stop-opacity="0"/>
+          </linearGradient>
+          <radialGradient id="no2Fumes_${tubeId}" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#78350F" stop-opacity="0.85"/>
+            <stop offset="60%" stop-color="#92400E" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#B45309" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <!-- Retort Stand Vertical Rod -->
+        <line x1="8" y1="10" x2="8" y2="132" stroke="#64748B" stroke-width="3" stroke-linecap="round"/>
+        <line x1="2" y1="130" x2="30" y2="130" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+
+        <!-- Wooden Clamp Arm Tilted holding tube -->
+        <g transform="translate(8, 46)">
+          <line x1="0" y1="0" x2="28" y2="4" stroke="#78350F" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="0" cy="0" r="3.5" fill="#94A3B8"/>
+          <!-- Clamp jaws -->
+          <rect x="24" y="-4" width="16" height="6" rx="1.5" fill="#78350F" stroke="#451A03" stroke-width="0.8" transform="rotate(20 28 0)"/>
+          <rect x="24" y="2" width="16" height="6" rx="1.5" fill="#78350F" stroke="#451A03" stroke-width="0.8" transform="rotate(20 28 0)"/>
+        </g>
+
+        <!-- Hard-Glass Test Tube (Tilted at 22 degrees) -->
+        <g transform="translate(32, 20) rotate(22 20 50)">
+          <!-- Glass Lip & Body -->
+          <rect x="13" y="10" width="22" height="3" rx="1" fill="rgba(255,255,255,0.2)" stroke="#94A3B8" stroke-width="1"/>
+          <path d="M 15,12 L 15,82 Q 15,96 24,96 Q 33,96 33,82 L 33,12 Z" fill="rgba(255,255,255,0.06)" stroke="#94A3B8" stroke-width="1.3"/>
+
+          <!-- Dry Solid Powder Mound at base of tube -->
+          <path d="M 16,74 L 16,82 Q 16,95 24,95 Q 32,95 32,82 L 32,74 Q 24,78 16,74 Z" fill="${hotPowderColor}"/>
+
+          <!-- Decrepitation Sparkles if Pb(NO3)2 -->
+          ${performed && cation === 'Pb2+' ? `
+            <g class="anim-spangle">
+              <circle cx="21" cy="78" r="1.4" fill="#FDE047"/>
+              <circle cx="27" cy="75" r="1.2" fill="#F59E0B"/>
+              <circle cx="24" cy="72" r="1" fill="#FFFFFF"/>
+            </g>
+          ` : ''}
+
+          <!-- Condensed Water Droplets on upper walls if hydrated -->
+          ${performed && isHydrated ? `
+            <g opacity="0.85">
+              <ellipse cx="17" cy="40" rx="1.5" ry="2" fill="#BAE6FD"/>
+              <ellipse cx="31" cy="46" rx="1.8" ry="2.2" fill="#BAE6FD"/>
+              <ellipse cx="17" cy="54" rx="1.6" ry="2" fill="#BAE6FD"/>
+              <ellipse cx="31" cy="36" rx="1.4" ry="1.8" fill="#BAE6FD"/>
+            </g>
+          ` : ''}
+
+          <!-- Brown NO2 Fumes rising in tube if nitrate -->
+          ${performed && isNitrate ? `
+            <g class="anim-heat-wave">
+              <ellipse cx="24" cy="50" rx="7" ry="14" fill="url(#no2Fumes_${tubeId})"/>
+              <ellipse cx="24" cy="30" rx="8" ry="16" fill="url(#no2Fumes_${tubeId})"/>
+            </g>
+          ` : ''}
+
+          <!-- Glass Specular Highlight -->
+          <path d="M 17,14 L 17,82 Q 17,92 24,92" fill="none" stroke="#FFFFFF" stroke-width="0.9" opacity="0.3"/>
+
+          <!-- Litmus paper or splint at mouth -->
+          ${performed && isNitrate ? `
+            <!-- Moist Blue Litmus turning Red at mouth -->
+            <path d="M 21,2 L 27,2 L 27,16 L 21,16 Z" fill="#EF4444" stroke="#DC2626" stroke-width="0.5"/>
+            <path d="M 21,2 L 27,2 L 27,8 L 21,8 Z" fill="#3B82F6"/>
+          ` : ''}
+        </g>
+
+        <!-- Billowing Fumes escaping mouth into air -->
+        ${performed && isNitrate ? `
+          <g class="anim-heat-wave" transform="translate(18, 10)">
+            <circle cx="16" cy="12" r="6" fill="url(#no2Fumes_${tubeId})" opacity="0.8"/>
+            <circle cx="12" cy="4" r="8" fill="url(#no2Fumes_${tubeId})" opacity="0.6"/>
+          </g>
+        ` : ''}
+
+        <!-- Bunsen Burner heating tube base -->
+        <g transform="translate(48, 86)">
+          <!-- Burner Chimney & Base -->
+          <rect x="18" y="24" width="8" height="22" fill="#64748B" stroke="#334155" stroke-width="0.8"/>
+          <ellipse cx="22" cy="46" rx="18" ry="4" fill="#334155"/>
+          <ellipse cx="22" cy="24" rx="4" ry="1.5" fill="#475569"/>
+
+          ${performed ? `
+            <!-- Roaring Non-Luminous Bunsen Flame -->
+            <g class="anim-flame">
+              <!-- Outer Blue Cone -->
+              <path d="M 17,24 C 15,10 18,2 22,2 C 26,2 29,10 27,24 Z" fill="url(#flameOuter_${tubeId})"/>
+              <!-- Inner Pale Blue Core -->
+              <path d="M 19,24 C 18,16 20,8 22,8 C 24,8 26,16 25,24 Z" fill="url(#flameInner_${tubeId})"/>
+            </g>
+          ` : `
+            <!-- Gentle Pilot Flame -->
+            <path d="M 20,24 C 19,19 21,16 22,16 C 23,16 25,19 24,24 Z" fill="#38BDF8" opacity="0.6"/>
+          `}
+        </g>
+      </svg>
+    `;
+  }
+
+  function renderDissolutionApparatusSvg(options = {}) {
+    const {
+      saltKey = 'leadNitrate',
+      stage = 'idle',
+      prompt = '',
+      obsStr = '',
+      tubeId = `diss_${Math.random().toString(36).substring(2, 7)}`
+    } = options;
+
+    const salt = resolveSalt(saltKey);
+    const performed = stage !== 'idle' && stage !== 'untested' && Boolean(stage);
+    const cation = salt.cation;
+
+    let solnColor = 'rgba(56, 189, 248, 0.25)';
+    if (cation === 'Cu2+') solnColor = 'rgba(56, 189, 248, 0.6)';
+    else if (cation === 'Fe2+') solnColor = 'rgba(16, 185, 129, 0.4)';
+    else if (cation === 'Fe3+') solnColor = 'rgba(217, 119, 6, 0.45)';
+
+    return `
+      <svg width="100" height="136" viewBox="0 0 100 136">
+        <!-- Clamp -->
+        <g transform="translate(0, 48)">
+          <rect x="6" y="3" width="22" height="8" rx="2" fill="#78350F" stroke="#451A03" stroke-width="0.8"/>
+          <rect x="72" y="3" width="22" height="8" rx="2" fill="#78350F" stroke="#451A03" stroke-width="0.8"/>
+          <circle cx="16" cy="7" r="2.5" fill="#64748B"/>
+          <circle cx="82" cy="7" r="2.5" fill="#64748B"/>
+        </g>
+
+        <!-- Wash Bottle Nozzle (when adding water) -->
+        ${performed ? `
+          <g class="anim-dropper">
+            <path d="M 68,6 L 56,22 L 53,24" fill="none" stroke="#CBD5E1" stroke-width="3" stroke-linecap="round"/>
+            <line x1="53" y1="24" x2="50" y2="42" stroke="rgba(56,189,248,0.7)" stroke-width="1.8" stroke-dasharray="3,2" class="anim-droplet"/>
+          </g>
+        ` : ''}
+
+        <!-- Boiling Tube Body & Lip -->
+        <rect x="27" y="28" width="46" height="4" rx="2" fill="rgba(255,255,255,0.18)" stroke="#94A3B8" stroke-width="1.2"/>
+        <path d="M 30,32 L 30,114 Q 30,132 50,132 Q 70,132 70,114 L 70,32 Z" fill="rgba(255,255,255,0.05)" stroke="#94A3B8" stroke-width="1.5"/>
+
+        ${performed ? `
+          <!-- Dissolving Solution Column -->
+          <path d="M 31,64 L 31,114 Q 31,130 50,130 Q 69,130 69,114 L 69,64 Z" fill="${solnColor}" class="anim-liquid-rise"/>
+          <ellipse cx="50" cy="64" rx="19" ry="4" fill="${solnColor}" class="anim-meniscus-ripple"/>
+          <!-- Swirling Dissolution Waves -->
+          <g opacity="0.6">
+            <path d="M 40,88 Q 50,82 60,88" stroke="rgba(255,255,255,0.6)" stroke-width="1.2" fill="none"/>
+            <path d="M 38,104 Q 50,98 62,104" stroke="rgba(255,255,255,0.5)" stroke-width="1.2" fill="none"/>
+          </g>
+        ` : `
+          <!-- Dry Solid Crystals at bottom awaiting water -->
+          <ellipse cx="50" cy="120" rx="14" ry="6" fill="${salt.crystalColor || '#FFFFFF'}" opacity="0.9"/>
+          <circle cx="44" cy="118" r="2.2" fill="${salt.crystalHighlight || '#FFFFFF'}"/>
+          <circle cx="54" cy="121" r="2.5" fill="${salt.crystalSecondary || '#CBD5E1'}"/>
+        `}
+
+        <!-- Specular Highlight -->
+        <path d="M 34,34 L 34,114 Q 34,126 50,126" fill="none" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" opacity="0.3"/>
+      </svg>
+    `;
+  }
+
+  function renderFlameTestApparatusSvg(options = {}) {
+    const {
+      saltKey = 'leadNitrate',
+      stage = 'idle',
+      prompt = '',
+      tubeId = `flame_${Math.random().toString(36).substring(2, 7)}`
+    } = options;
+
+    const salt = resolveSalt(saltKey);
+    const performed = stage !== 'idle' && stage !== 'untested' && Boolean(stage);
+    const cation = salt.cation;
+
+    let flameColor = '#38BDF8';
+    let flameOuter = '#0284C7';
+    if (performed) {
+      if (cation === 'Ca2+') {
+        flameColor = '#EA580C'; // Brick red / orange-red
+        flameOuter = '#DC2626';
+      } else if (cation === 'Cu2+') {
+        flameColor = '#10B981'; // Green / blue-green
+        flameOuter = '#059669';
+      } else if (cation === 'Ba2+') {
+        flameColor = '#84CC16'; // Pale apple-green
+        flameOuter = '#65A30D';
+      } else if (salt.key.includes('sodium') || salt.name.includes('Sodium')) {
+        flameColor = '#FACC15'; // Golden yellow
+        flameOuter = '#EAB308';
+      } else if (salt.key.includes('potassium') || salt.name.includes('Potassium')) {
+        flameColor = '#C084FC'; // Lilac
+        flameOuter = '#A855F7';
+      }
+    }
+
+    return `
+      <svg width="100" height="136" viewBox="0 0 100 136">
+        <!-- Bunsen Burner Chimney & Base -->
+        <rect x="42" y="80" width="16" height="36" fill="#64748B" stroke="#334155" stroke-width="1"/>
+        <ellipse cx="50" cy="116" rx="32" ry="7" fill="#334155"/>
+        <ellipse cx="50" cy="80" rx="8" ry="2.5" fill="#475569"/>
+
+        <!-- Flame -->
+        <g class="anim-flame">
+          <path d="M 40,80 C 35,50 42,24 50,24 C 58,24 65,50 60,80 Z" fill="${flameOuter}" opacity="0.8"/>
+          <path d="M 44,80 C 42,60 46,40 50,40 C 54,40 58,60 56,80 Z" fill="${flameColor}" opacity="0.95"/>
+        </g>
+
+        <!-- Nichrome Wire with Loop -->
+        <g transform="${performed ? 'translate(0, 0)' : 'translate(20, -15)'}">
+          <line x1="12" y1="12" x2="48" y2="48" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="50" cy="50" r="3.5" fill="none" stroke="${performed ? flameColor : '#CBD5E1'}" stroke-width="2"/>
+        </g>
+      </svg>
+    `;
+  }
+
+  // Unified Dispatcher: Dispatches to the exact apparatus based on procedure prompt & test ID
+  function renderApparatusSvg(options = {}) {
+    const {
+      saltKey = 'leadNitrate',
+      testId = '',
+      stage = 'idle',
+      prompt = '',
+      obsStr = '',
+      tubeId = `app_${Math.random().toString(36).substring(2, 7)}`
+    } = options;
+
+    const pStr = (prompt || '').toLowerCase();
+    const tId = (testId || '').toLowerCase();
+
+    // 1. Physical Appearance of Solid
+    if (
+      pStr.includes('physical appearance') ||
+      pStr.includes('appearance of solid') ||
+      pStr.includes('describe solid') ||
+      pStr.includes('appearance of sample') ||
+      (pStr.includes('appearance') && !pStr.includes('dissolv') && !pStr.includes('water')) ||
+      (tId.includes('appearance') && !pStr.includes('water')) ||
+      (tId === 't1' && pStr.includes('describe') && pStr.includes('solid'))
+    ) {
+      return renderWatchGlassApparatusSvg({ saltKey, stage, prompt, tubeId });
+    }
+
+    // 2. Flame Test
+    if (pStr.includes('flame test') || pStr.includes('nichrome') || tId.includes('flame')) {
+      return renderFlameTestApparatusSvg({ saltKey, stage, prompt, tubeId });
+    }
+
+    // 3. Dry Thermal Heating
+    if (
+      (pStr.includes('heat') && (pStr.includes('dry') || pStr.includes('strongly') || pStr.includes('solid') || pStr.includes('spatula') || pStr.includes('test tube'))) ||
+      tId.includes('heat') ||
+      tId.includes('ignit')
+    ) {
+      return renderDryHeatingApparatusSvg({ saltKey, stage, prompt, obsStr, tubeId });
+    }
+
+    // 4. Dissolution in Distilled Water
+    if (
+      pStr.includes('dissolv') ||
+      (pStr.includes('distilled water') && (pStr.includes('solid') || pStr.includes('spatula') || pStr.includes('portion')))
+    ) {
+      return renderDissolutionApparatusSvg({ saltKey, stage, prompt, obsStr, tubeId });
+    }
+
+    // 5. Standard Reagent Test Tube
+    return renderTubeSvg(options);
   }
 
   // ── 6. Step Action Buttons & Flow Machine ──────────────────────
   function getMultiStageActions(testId, prompt, stage = 'idle', testKeyOverride = null) {
     const pStr = (prompt || '').toLowerCase();
     const tId = (testId || '').toLowerCase();
+
+    // 0. Physical Appearance of Solid
+    if (
+      pStr.includes('physical appearance') ||
+      pStr.includes('appearance of solid') ||
+      pStr.includes('describe solid') ||
+      pStr.includes('appearance of sample') ||
+      (pStr.includes('appearance') && !pStr.includes('dissolv') && !pStr.includes('water')) ||
+      (tId.includes('appearance') && !pStr.includes('water')) ||
+      (tId === 't1' && pStr.includes('describe') && pStr.includes('solid'))
+    ) {
+      if (!stage || stage === 'idle') {
+        return [
+          { stage: 'inspected', label: '🔍 Inspect Solid Specimen Y', cls: 'btn-perform-test btn-step-inspect' }
+        ];
+      } else {
+        return [
+          { stage: 'done', label: '✅ Sample Inspected', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'idle', label: '↺ Re-examine', cls: 'btn-redo-test', isRedo: true }
+        ];
+      }
+    }
+
+    // 0b. Dissolving Solid in Distilled Water
+    if (
+      pStr.includes('dissolv') ||
+      (pStr.includes('distilled water') && (pStr.includes('solid') || pStr.includes('spatula') || pStr.includes('portion')))
+    ) {
+      if (!stage || stage === 'idle') {
+        return [
+          { stage: 'dissolved', label: '💧 Add Distilled Water & Dissolve', cls: 'btn-perform-test btn-step-dissolve' }
+        ];
+      } else {
+        return [
+          { stage: 'done', label: '✅ Stock Solution Formed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'idle', label: '↺ Redo', cls: 'btn-redo-test', isRedo: true }
+        ];
+      }
+    }
+
+    // 0c. Flame Test
+    if (pStr.includes('flame test') || pStr.includes('nichrome')) {
+      if (!stage || stage === 'idle') {
+        return [
+          { stage: 'flame_tested', label: '🔥 Insert Wire Loop into Flame', cls: 'btn-perform-test btn-step-heat' }
+        ];
+      } else {
+        return [
+          { stage: 'done', label: '✅ Flame Color Recorded', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'idle', label: '↺ Redo', cls: 'btn-redo-test', isRedo: true }
+        ];
+      }
+    }
 
     // 1. NaOH or NH3: Step 1 (Dropwise) -> Step 2 (Excess)
     if (tId.includes('naoh') || pStr.includes('naoh') || pStr.includes('sodium hydroxide')) {
@@ -893,101 +1425,21 @@
       }
     }
 
-    if (tId.includes('nh3') || pStr.includes('ammonia') || pStr.includes('nh₃') || pStr.includes('nh3')) {
-      if (!stage || stage === 'idle') {
-        return [
-          { stage: 'few_drops', label: '💧 Step 1: Add Dropwise (2–3 drops NH₃)', cls: 'btn-perform-test' }
-        ];
-      } else if (stage === 'few_drops' || stage === 'stage1') {
-        return [
-          { stage: 'excess', label: '🧪 Step 2: Add in Excess (~5 cm³ NH₃)', cls: 'btn-perform-test btn-step-excess' },
-          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
-        ];
-      } else {
-        return [
-          { stage: 'done', label: '✅ Test Completed', cls: 'btn-perform-test done', disabled: true },
-          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
-        ];
-      }
-    }
-
-    // 2. Potassium Iodide (KI): Step 1 (Add KI) -> Step 2 (Warm in Water Bath) -> Step 3 (Cool for Spangles)
+    // 2. Potassium Iodide (KI): Step 1 (Add KI) -> Step 2 (Warm) -> Step 3 (Cool)
     if (tId.includes('ki') || pStr.includes('potassium iodide') || pStr.includes('iodide')) {
       if (!stage || stage === 'idle') {
         return [
-          { stage: 'few_drops', label: '💧 Step 1: Add KI Solution', cls: 'btn-perform-test' }
+          { stage: 'few_drops', label: '💧 Step 1: Add 2–3 drops KI Solution', cls: 'btn-perform-test' }
         ];
       } else if (stage === 'few_drops' || stage === 'stage1') {
         return [
-          { stage: 'heated', label: '🔥 Step 2: Warm Gently in Water Bath', cls: 'btn-perform-test btn-step-heat' },
-          { stage: 'idle', label: '↺ Redo', cls: 'btn-redo-test', isRedo: true }
+          { stage: 'heated', label: '🔥 Step 2: Warm Gently in Bunsen Flame', cls: 'btn-perform-test btn-step-heat' },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else if (stage === 'heated') {
         return [
-          { stage: 'cooled', label: '❄️ Step 3: Cool under Tap Water (Spangles)', cls: 'btn-perform-test btn-step-cool' },
-          { stage: 'idle', label: '↺ Redo', cls: 'btn-redo-test', isRedo: true }
-        ];
-      } else {
-        return [
-          { stage: 'done', label: '✅ Test Completed', cls: 'btn-perform-test done', disabled: true },
-          { stage: 'idle', label: '↺ Redo', cls: 'btn-redo-test', isRedo: true }
-        ];
-      }
-    }
-
-    // 3. Silver Nitrate (AgNO3): Step 1 (Add HNO3) -> Step 2 (Follow with AgNO3) -> Step 3 (Test with NH3)
-    if (tId.includes('agno3') || (pStr.includes('agno3') && pStr.includes('hno3')) || pStr.includes('silver nitrate')) {
-      if (!stage || stage === 'idle') {
-        return [
-          { stage: 'step1_hno3', label: '💧 Step 1: Add Dilute Nitric Acid (HNO₃)', cls: 'btn-perform-test btn-step-acid' }
-        ];
-      } else if (stage === 'step1_hno3' || stage === 'stage1') {
-        return [
-          { stage: 'step2_agno3', label: '🔬 Step 2: Follow with Silver Nitrate (AgNO₃)', cls: 'btn-perform-test btn-step-reagent' },
-          { stage: 'idle', label: '↺ Redo', cls: 'btn-redo-test', isRedo: true }
-        ];
-      } else if (stage === 'step2_agno3') {
-        return [
-          { stage: 'step3_nh3', label: '🫧 Step 3: Test Precipitate with Aqueous NH₃', cls: 'btn-perform-test btn-step-ammonia' },
-          { stage: 'idle', label: '↺ Redo', cls: 'btn-redo-test', isRedo: true }
-        ];
-      } else {
-        return [
-          { stage: 'done', label: '✅ Test Completed', cls: 'btn-perform-test done', disabled: true },
-          { stage: 'idle', label: '↺ Redo', cls: 'btn-redo-test', isRedo: true }
-        ];
-      }
-    }
-
-    // 4. Barium Chloride / Nitrate (Ba2+): Step 1 (Add Acid) -> Step 2 (Follow with Ba reagent)
-    if (tId.includes('bacl2') || tId.includes('barium') || pStr.includes('ba(no3)2') || pStr.includes('barium')) {
-      if (!stage || stage === 'idle') {
-        return [
-          { stage: 'step1_acid', label: '💧 Step 1: Add Dilute Acid (HCl / HNO₃)', cls: 'btn-perform-test btn-step-acid' }
-        ];
-      } else if (stage === 'step1_acid' || stage === 'stage1') {
-        return [
-          { stage: 'step2_bacl2', label: '🧫 Step 2: Follow with Barium Solution', cls: 'btn-perform-test btn-step-reagent' },
-          { stage: 'idle', label: '↺ Redo', cls: 'btn-redo-test', isRedo: true }
-        ];
-      } else {
-        return [
-          { stage: 'done', label: '✅ Test Completed', cls: 'btn-perform-test done', disabled: true },
-          { stage: 'idle', label: '↺ Redo', cls: 'btn-redo-test', isRedo: true }
-        ];
-      }
-    }
-
-    // 5. Brown Ring: Step 1 (Add fresh FeSO4) -> Step 2 (Conc H2SO4)
-    if (tId.includes('brown_ring') || tId.includes('ring') || pStr.includes('brown ring')) {
-      if (!stage || stage === 'idle') {
-        return [
-          { stage: 'step1_feso4', label: '🧪 Step 1: Add Fresh FeSO₄(aq) Solution', cls: 'btn-perform-test btn-step-reagent' }
-        ];
-      } else if (stage === 'step1_feso4' || stage === 'stage1') {
-        return [
-          { stage: 'step2_h2so4', label: '🟤 Step 2: Trickle Conc. H₂SO₄ down the side', cls: 'btn-perform-test btn-step-heat' },
-          { stage: 'idle', label: '↺ Redo', cls: 'btn-redo-test', isRedo: true }
+          { stage: 'cooled', label: '❄️ Step 3: Allow to Cool under Tap', cls: 'btn-perform-test btn-step-cool' },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else {
         return [
@@ -998,7 +1450,11 @@
     }
 
     // 6. Heating solid
-    if (tId.includes('heat') || pStr.includes('heat') || pStr.includes('ignit')) {
+    if (
+      (pStr.includes('heat') && (pStr.includes('dry') || pStr.includes('strongly') || pStr.includes('solid') || pStr.includes('spatula'))) ||
+      tId.includes('heat') ||
+      tId.includes('ignit')
+    ) {
       if (!stage || stage === 'idle') {
         return [
           { stage: 'heated', label: '🔥 Heat Strongly in Bunsen Flame', cls: 'btn-perform-test btn-step-heat' }
@@ -1031,18 +1487,26 @@
     resolveReactionState,
     renderTubeSvg,
     renderWatchGlassSvg,
+    renderWatchGlassApparatusSvg,
+    renderDryHeatingApparatusSvg,
+    renderDissolutionApparatusSvg,
+    renderFlameTestApparatusSvg,
+    renderApparatusSvg,
     getMultiStageActions,
     playDropSplashSound,
     playEffervescenceSound,
     playFlameSound,
+    playCrystalInspectSound,
     playReactionSound: function(reactionStateOrType, isExcess = false) {
       if (typeof reactionStateOrType === 'string') {
         if (reactionStateOrType === 'effervescence' || reactionStateOrType === 'bubbling') playEffervescenceSound();
         else if (reactionStateOrType === 'flame' || reactionStateOrType === 'heat') playFlameSound();
+        else if (reactionStateOrType === 'inspect') playCrystalInspectSound();
         else playDropSplashSound(isExcess);
       } else if (reactionStateOrType && typeof reactionStateOrType === 'object') {
         if (reactionStateOrType.bubbling) playEffervescenceSound();
-        else if (reactionStateOrType.isHeated) playFlameSound();
+        else if (reactionStateOrType.isHeated || reactionStateOrType.soundType === 'flame') playFlameSound();
+        else if (reactionStateOrType.isPhysicalAppearance || reactionStateOrType.soundType === 'inspect') playCrystalInspectSound();
         else playDropSplashSound(reactionStateOrType.isExcess);
       } else {
         playDropSplashSound(isExcess);
@@ -1051,5 +1515,8 @@
   };
 
   global.QualitativeBenchCore = QualitativeBenchCore;
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = QualitativeBenchCore;
+  }
 
-})(typeof window !== 'undefined' ? window : this);
+})(typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : this));

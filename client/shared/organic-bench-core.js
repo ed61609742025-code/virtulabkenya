@@ -298,6 +298,122 @@
         inf: 'Neutral hydrocarbon',
         status: 'Neutral (pH 7)'
       }
+    },
+    'org_methanoic_acid': {
+      key: 'org_methanoic_acid',
+      altKeys: ['METHANOIC ACID', 'FORMIC ACID', 'HCOOH', 'METHANOIC'],
+      label: 'Sample F (Liquid)',
+      name: 'Methanoic Acid (HCOOH)',
+      compoundKey: 'methanoic_acid',
+      fgKey: 'alkanoic_acid',
+      fgName: 'Alkanoic Acid with Aldehydic Reducing Group',
+      isSooty: false,
+      solubility: {
+        isMiscible: true,
+        obs: 'Miscible. Dissolves completely in water to form single phase.',
+        inf: 'Polar carboxylic acid present',
+        status: 'Miscible (Single Clear Solution)'
+      },
+      ignition: {
+        isSooty: false,
+        obs: 'Burns with a non-sooty, clear pale blue flame.',
+        inf: 'Saturated organic compound present',
+        status: 'Non-Luminous Clear Pale Blue Flame'
+      },
+      bromine: {
+        isDecolorized: false,
+        obs: 'Bromine water remains reddish-brown.',
+        inf: 'Unsaturation absent',
+        status: 'Reddish-Brown Colour Persists'
+      },
+      kmno4: {
+        isDecolorized: true,
+        obs: 'Purple acidified KMnO₄ is decolourized with gentle effervescence of CO₂ gas.',
+        inf: 'Methanoic acid reduces KMnO₄ due to the unique formyl (—CHO) hydrogen structure',
+        status: 'KMnO₄ Decolourized with Gas Bubbling (CO₂)'
+      },
+      dichromate: {
+        turnsGreen: false,
+        obs: 'Acidified potassium dichromate(VI) remains orange.',
+        inf: 'Alkanol absent',
+        status: 'Orange Colour Persists'
+      },
+      carbonate: {
+        hasEffervescence: true,
+        obs: 'Vigorous effervescence of a colourless gas that forms a white precipitate with limewater (CO₂).',
+        inf: 'Carboxylic acid (-COOH) confirmed',
+        status: 'Vigorous Effervescence of CO₂ Gas'
+      },
+      esterification: {
+        isFruity: true,
+        obs: 'Sweet fruity smell of ethyl methanoate formed.',
+        inf: 'Carboxylic acid confirmed',
+        status: 'Pleasant Fruity Aroma (Ethyl Methanoate)'
+      },
+      litmus: {
+        isAcidic: true,
+        obs: 'Moist blue litmus paper turns red; red litmus remains red.',
+        inf: 'Carboxylic acid present',
+        status: 'Acidic (Moist Blue Litmus Turns Red, pH 2)'
+      }
+    },
+    'org_benzoic_acid': {
+      key: 'org_benzoic_acid',
+      altKeys: ['BENZOIC ACID', 'C6H5COOH', 'BENZOIC'],
+      label: 'Sample G (Solid)',
+      name: 'Benzoic Acid (C₆H₅COOH)',
+      compoundKey: 'benzoic_acid',
+      fgKey: 'alkanoic_acid',
+      fgName: 'Aromatic Carboxylic Acid (Ar-COOH)',
+      isSooty: true,
+      solubility: {
+        isMiscible: false,
+        obs: 'Sparingly soluble in cold water; dissolves on heating and recrystallizes on cooling.',
+        inf: 'Aromatic carboxylic acid present',
+        status: 'Sparingly Soluble Cold / Dissolves Hot'
+      },
+      ignition: {
+        isSooty: true,
+        obs: 'Melts and burns with a luminous, highly smoky and sooty yellow flame leaving carbon residue.',
+        inf: 'Aromatic compound / high C:H ratio present',
+        status: 'Luminous Smoky Sooty Flame (Aromatic Ring)'
+      },
+      bromine: {
+        isDecolorized: false,
+        obs: 'Bromine water remains yellow/orange without catalyst.',
+        inf: 'Aliphatic alkene / alkyne absent; stable aromatic benzene ring',
+        status: 'Bromine Colour Persists (Yellow/Orange)'
+      },
+      kmno4: {
+        isDecolorized: false,
+        obs: 'Purple acidified KMnO₄ remains purple.',
+        inf: 'Aromatic carboxylic acid resistant to mild oxidation',
+        status: 'Purple Colour Persists'
+      },
+      dichromate: {
+        turnsGreen: false,
+        obs: 'Acidified potassium dichromate(VI) remains orange.',
+        inf: 'Alkanol absent',
+        status: 'Orange Colour Persists'
+      },
+      carbonate: {
+        hasEffervescence: true,
+        obs: 'Vigorous effervescence of a colourless gas that turns limewater milky (CO₂).',
+        inf: 'Carboxylic acid (-COOH) confirmed present',
+        status: 'Vigorous Effervescence of CO₂ Gas'
+      },
+      esterification: {
+        isFruity: true,
+        obs: 'Pleasant fruity odour of ethyl benzoate formed.',
+        inf: 'Carboxylic acid confirmed',
+        status: 'Pleasant Fruity Smell (Ethyl Benzoate)'
+      },
+      litmus: {
+        isAcidic: true,
+        obs: 'Moist blue litmus paper turns red; red litmus remains red.',
+        inf: 'Carboxylic acid present',
+        status: 'Acidic (Moist Blue Litmus Turns Red, pH 3)'
+      }
     }
   };
 
@@ -305,14 +421,33 @@
     if (!query) return SAMPLES.org_alkene;
     if (typeof query === 'object' && query.key && SAMPLES[query.key]) return SAMPLES[query.key];
     const norm = String(query).toUpperCase().trim();
+
+    // 1. Exact matches first (key, compoundKey, name, exact altKey)
     for (const key of Object.keys(SAMPLES)) {
       const s = SAMPLES[key];
       if (s.key.toUpperCase() === norm) return s;
-      if (s.name.toUpperCase().includes(norm)) return s;
-      if (s.altKeys && s.altKeys.some(alt => norm.includes(alt) || alt.includes(norm))) return s;
+      if (s.name.toUpperCase() === norm) return s;
+      if (s.compoundKey && s.compoundKey.toUpperCase() === norm) return s;
+      if (s.altKeys && s.altKeys.some(alt => alt.toUpperCase() === norm)) return s;
     }
+
+    // 2. Specific compound checks before generic fallbacks
+    if (norm.includes('METHANOIC') || norm.includes('FORMIC') || norm.includes('HCOOH')) return SAMPLES.org_methanoic_acid;
+    if (norm.includes('BENZOIC') || norm.includes('C6H5COOH')) return SAMPLES.org_benzoic_acid;
+    if (norm.includes('CYCLOHEXENE')) return SAMPLES.org_alkene;
+    if (norm.includes('CYCLOHEXANE')) return SAMPLES.org_alkane;
+    if (norm.includes('BUTAN')) return SAMPLES.org_butanol;
+    if (norm.includes('PROPAN')) return SAMPLES.org_alcohol;
+
+    // 3. Name or word-boundary altKey matching
+    for (const key of Object.keys(SAMPLES)) {
+      const s = SAMPLES[key];
+      if (s.name.toUpperCase().includes(norm)) return s;
+    }
+
+    // 4. Broad functional group fallbacks
     if (norm.includes('ACID') || norm.includes('COOH')) return SAMPLES.org_acid;
-    if (norm.includes('ALCOHOL') || norm.includes('OL') || norm.includes('ETHANOL') || norm.includes('BUTANOL')) return SAMPLES.org_alcohol;
+    if (norm.includes('ALCOHOL') || norm.includes('OL') || norm.includes('ETHANOL')) return SAMPLES.org_alcohol;
     if (norm.includes('ENE') || norm.includes('HEXENE') || norm.includes('ALKENE')) return SAMPLES.org_alkene;
     return SAMPLES.org_alkene;
   }
@@ -724,7 +859,8 @@
         `;
       }
     } else if (testType === 'kmno4') {
-      const isDecolorized = sample.kmno4?.isDecolorized || sample.fgKey === 'alkene' || sample.fgKey === 'alkanol';
+      const isMethanoic = sample.compoundKey === 'methanoic_acid' || sample.key === 'org_methanoic_acid';
+      const isDecolorized = sample.kmno4?.isDecolorized || sample.fgKey === 'alkene' || sample.fgKey === 'alkanol' || isMethanoic;
       liquidColor = performed ? (isDecolorized ? 'rgba(240, 249, 255, 0.22)' : 'rgba(107, 33, 168, 0.92)') : 'rgba(107, 33, 168, 0.92)';
       meniscusColor = performed ? (isDecolorized ? 'rgba(240, 249, 255, 0.5)' : '#7E22CE') : '#7E22CE';
       dropperColor = '#6B21A8';
@@ -734,6 +870,15 @@
         schlierenWaves = `
           <path d="M 62,130 Q 80,135 98,130" stroke="rgba(255,255,255,0.45)" stroke-width="1.0" fill="none"/>
           <path d="M 64,155 Q 80,160 96,155" stroke="rgba(255,255,255,0.4)" stroke-width="0.8" fill="none"/>
+          ${isMethanoic ? `
+            <!-- CO2 Bubbles from Formic Acid Oxidation -->
+            <g class="anim-bubbles">
+              <circle cx="74" cy="170" r="2.2" fill="rgba(255,255,255,0.7)" stroke="#38BDF8" stroke-width="0.5"/>
+              <circle cx="86" cy="160" r="2.8" fill="rgba(255,255,255,0.7)" stroke="#38BDF8" stroke-width="0.5"/>
+              <circle cx="78" cy="145" r="1.8" fill="rgba(255,255,255,0.7)" stroke="#38BDF8" stroke-width="0.5"/>
+              <circle cx="82" cy="132" r="2.5" fill="rgba(255,255,255,0.7)" stroke="#38BDF8" stroke-width="0.5"/>
+            </g>
+          ` : ''}
         `;
       }
     } else if (testType === 'dichromate') {
@@ -1086,29 +1231,50 @@
     const tId = String(testId).toLowerCase();
     const pStr = String(prompt).toLowerCase();
 
-    if (tId.includes('ignit') || pStr.includes('ignit') || pStr.includes('flame') || pStr.includes('spatula') || pStr.includes('burn')) {
-      return renderIgnitionSvg({ sampleKey, performed, tubeId });
-    }
-    if (tId.includes('litmus') || pStr.includes('litmus') || pStr.includes('ph')) {
-      return renderLitmusSvg({ sampleKey, performed, tubeId });
-    }
-    if (tId.includes('bromine') || pStr.includes('bromine')) {
+    // 1. Prioritize specific chemical procedure described in prompt
+    if (pStr.includes('bromine')) {
       return renderDecolorizationSvg({ sampleKey, testType: 'bromine', performed, tubeId });
     }
-    if (tId.includes('kmno4') || pStr.includes('kmno4') || pStr.includes('manganate') || pStr.includes('permanganate')) {
-      return renderDecolorizationSvg({ sampleKey, testType: 'kmno4', performed, tubeId });
-    }
-    if (tId.includes('dichromate') || pStr.includes('dichromate') || pStr.includes('cr2o7')) {
+    if (pStr.includes('dichromate') || pStr.includes('cr2o7')) {
       return renderDecolorizationSvg({ sampleKey, testType: 'dichromate', performed, tubeId });
     }
-    if (tId.includes('nahco3') || tId.includes('carbonate') || pStr.includes('nahco3') || pStr.includes('carbonate') || pStr.includes('effervesc')) {
+    if (pStr.includes('kmno4') || pStr.includes('manganate') || pStr.includes('permanganate')) {
+      return renderDecolorizationSvg({ sampleKey, testType: 'kmno4', performed, tubeId });
+    }
+    if (pStr.includes('nahco3') || pStr.includes('carbonate') || pStr.includes('effervesc')) {
       return renderEffervescenceSvg({ sampleKey, performed, tubeId });
     }
-    if (tId.includes('ester') || pStr.includes('ester') || pStr.includes('fruity')) {
+    if (pStr.includes('litmus') || pStr.includes('ph')) {
+      return renderLitmusSvg({ sampleKey, performed, tubeId });
+    }
+    if (pStr.includes('ignit') || pStr.includes('flame') || pStr.includes('spatula') || pStr.includes('burn')) {
+      return renderIgnitionSvg({ sampleKey, performed, tubeId });
+    }
+    if (pStr.includes('ester') || pStr.includes('fruity')) {
       return renderEsterificationSvg({ sampleKey, performed, tubeId });
     }
-    if (tId.includes('solub') || tId.includes('miscib') || tId.includes('water') || pStr.includes('solub') || pStr.includes('miscib') || pStr.includes('water')) {
+    if (pStr.includes('solub') || pStr.includes('miscib') || pStr.includes('water')) {
       return renderSolubilitySvg({ sampleKey, performed, tubeId });
+    }
+
+    // 2. Secondary fallback based on testId
+    if (tId.includes('ignit')) {
+      return renderIgnitionSvg({ sampleKey, performed, tubeId });
+    }
+    if (tId.includes('litmus')) {
+      return renderLitmusSvg({ sampleKey, performed, tubeId });
+    }
+    if (tId.includes('bromine')) {
+      return renderDecolorizationSvg({ sampleKey, testType: 'bromine', performed, tubeId });
+    }
+    if (tId.includes('dichromate') || tId.includes('cr2o7')) {
+      return renderDecolorizationSvg({ sampleKey, testType: 'dichromate', performed, tubeId });
+    }
+    if (tId.includes('kmno4') || tId.includes('manganate')) {
+      return renderDecolorizationSvg({ sampleKey, testType: 'kmno4', performed, tubeId });
+    }
+    if (tId.includes('nahco3') || tId.includes('carbonate')) {
+      return renderEffervescenceSvg({ sampleKey, performed, tubeId });
     }
 
     // Default fallback: Decolorization / generic organic tube
@@ -1124,27 +1290,36 @@
     let statusLabel = 'Ready to test';
     let soundType = 'drop';
 
-    if (tId.includes('ignit') || pStr.includes('ignit') || pStr.includes('flame')) {
-      const isSooty = sample.isSooty || sample.fgKey === 'alkene' || sample.fgKey === 'alkyne';
+    const isMethanoic = sample.compoundKey === 'methanoic_acid' || sample.key === 'org_methanoic_acid';
+    const isBenzoic = sample.compoundKey === 'benzoic_acid' || sample.key === 'org_benzoic_acid';
+
+    if (pStr.includes('ignit') || pStr.includes('flame') || pStr.includes('burn') || pStr.includes('spatula') || tId.includes('ignit')) {
+      const isSooty = sample.isSooty || sample.fgKey === 'alkene' || sample.fgKey === 'alkyne' || isBenzoic;
       statusLabel = performed ? (isSooty ? 'Ignition: Luminous smoky sooty yellow flame' : 'Ignition: Clear non-sooty pale blue flame') : 'Awaiting Bunsen Flame';
       soundType = 'flame';
-    } else if (tId.includes('litmus') || pStr.includes('litmus')) {
+    } else if (pStr.includes('litmus') || pStr.includes('ph') || tId.includes('litmus')) {
       const isAcidic = sample.fgKey === 'alkanoic_acid';
       statusLabel = performed ? (isAcidic ? 'Litmus: Moist blue litmus turns red (Acidic, pH 3)' : 'Litmus: Neutral, no colour change (pH 7)') : 'Awaiting Litmus Strips';
       soundType = 'drop';
-    } else if (tId.includes('bromine') || pStr.includes('bromine')) {
+    } else if (pStr.includes('bromine') || tId.includes('bromine')) {
       const isDecolorized = sample.bromine?.isDecolorized || sample.fgKey === 'alkene' || sample.fgKey === 'alkyne';
       statusLabel = performed ? (isDecolorized ? 'Bromine Water: Rapidly decolourized to colourless' : 'Bromine Water: Reddish-brown colour persists') : 'Awaiting Bromine Water';
       soundType = 'drop';
-    } else if (tId.includes('kmno4') || pStr.includes('kmno4')) {
-      const isDecolorized = sample.kmno4?.isDecolorized || sample.fgKey === 'alkene' || sample.fgKey === 'alkanol';
-      statusLabel = performed ? (isDecolorized ? 'KMnO₄: Purple acidified KMnO₄ rapidly decolourized' : 'KMnO₄: Purple colour remains unchanged') : 'Awaiting KMnO₄';
-      soundType = 'drop';
-    } else if (tId.includes('dichromate') || pStr.includes('dichromate')) {
+    } else if (pStr.includes('dichromate') || pStr.includes('cr2o7') || tId.includes('dichromate')) {
       const turnsGreen = sample.dichromate?.turnsGreen || sample.fgKey === 'alkanol';
       statusLabel = performed ? (turnsGreen ? 'K₂Cr₂O₇: Orange turns emerald green (Cr³⁺ reduced)' : 'K₂Cr₂O₇: Orange colour persists') : 'Awaiting K₂Cr₂O₇';
       soundType = 'flame';
-    } else if (tId.includes('nahco3') || tId.includes('carbonate') || pStr.includes('nahco3')) {
+    } else if (pStr.includes('kmno4') || pStr.includes('manganate') || pStr.includes('permanganate') || tId.includes('kmno4')) {
+      const isDecolorized = sample.kmno4?.isDecolorized || sample.fgKey === 'alkene' || sample.fgKey === 'alkanol' || isMethanoic;
+      statusLabel = performed
+        ? (isDecolorized
+            ? (isMethanoic
+                ? 'KMnO₄: Purple acidified KMnO₄ rapidly decolourized with gentle CO₂ effervescence'
+                : 'KMnO₄: Purple acidified KMnO₄ rapidly decolourized')
+            : 'KMnO₄: Purple colour remains unchanged')
+        : 'Awaiting KMnO₄';
+      soundType = (performed && isMethanoic) ? 'effervescence' : 'drop';
+    } else if (pStr.includes('nahco3') || pStr.includes('carbonate') || pStr.includes('effervesc') || tId.includes('nahco3') || tId.includes('carbonate')) {
       const hasEff = sample.carbonate?.hasEffervescence || sample.fgKey === 'alkanoic_acid';
       statusLabel = performed ? (hasEff ? 'NaHCO₃: Vigorous effervescence of CO₂ gas' : 'NaHCO₃: No effervescence observed') : 'Awaiting Solid NaHCO₃';
       soundType = hasEff ? 'effervescence' : 'drop';

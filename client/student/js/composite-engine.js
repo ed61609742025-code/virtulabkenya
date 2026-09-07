@@ -953,7 +953,7 @@ const COMPOSITE_EXAM_PRESETS = {
           correctInf: 'Neutral organic liquid; absence of carboxylic acid'
         },
         {
-          id: 'q3_kmno4',
+          id: 'q3_dichromate',
           prompt: '(iii) To 2 cm³ of Liquid Z, add 3 drops of acidified K₂Cr₂O₇ and warm gently in a water bath.',
           correctObs: 'Orange acidified K₂Cr₂O₇ turns green with characteristic pleasant fruity odor',
           correctInf: 'Primary or secondary alkanol (—OH) confirmed oxidized to aldehyde/acid'
@@ -1174,7 +1174,7 @@ const COMPOSITE_EXAM_PRESETS = {
           correctInf: 'Acidic substance / Carboxylic acid (—COOH)'
         },
         {
-          id: 'q3_kmno4',
+          id: 'q3_bromine',
           prompt: '(iii) To 2 cm³ of the aqueous solution of Solid Z, add 3 drops of Bromine water.',
           correctObs: 'Bromine water color remains yellow/orange (not decolorized without catalyst)',
           correctInf: 'Aliphatic alkene / alkyne absent; stable aromatic benzene ring'
@@ -1288,13 +1288,13 @@ const COMPOSITE_EXAM_PRESETS = {
           correctInf: 'Neutral organic substance; insoluble non-polar hydrocarbon'
         },
         {
-          id: 'q3_kmno4',
+          id: 'q3_bromine',
           prompt: '(iii) To 2 cm³ of Liquid Z, add 3 drops of Bromine water in the dark and shake thoroughly.',
           correctObs: 'Reddish-brown bromine water is rapidly decolorized (turns colorless)',
           correctInf: 'Unsaturated compound / Alkene (>C=C<) present by electrophilic addition'
         },
         {
-          id: 'q3_nahco3',
+          id: 'q3_kmno4',
           prompt: '(iv) To 2 cm³ of Liquid Z, add 3 drops of acidified Potassium Manganate(VII) (KMnO₄) and shake.',
           correctObs: 'Purple acidified KMnO₄ solution is rapidly decolorized',
           correctInf: 'Alkene (>C=C<) confirmed present'

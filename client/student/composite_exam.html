@@ -3468,8 +3468,7 @@
           // Decolorized
           tubeFillColor = 'rgba(255, 255, 255, 0.25)';
         } else if (orgKey.includes('Acid')) {
-          // Purple retained
-          tubeFillColor = 'rgba(168, 85, 247, 0.7)';
+          tubeFillColor = orgKey.includes('Methanoic') ? 'rgba(255, 255, 255, 0.25)' : 'rgba(168, 85, 247, 0.7)';
         }
       } else if (testId === 'q3_nahco3') {
         if (isHexene) {
@@ -3552,7 +3551,9 @@
         } else if (isHexene) {
           st.statusLabel = 'Bromine Water: Reddish-brown rapidly decolorized';
         } else if (orgKey.includes('Acid')) {
-          st.statusLabel = 'KMnO₄: Purple color remains unchanged';
+          st.statusLabel = orgKey.includes('Methanoic')
+            ? 'KMnO₄: Purple acidified KMnO₄ rapidly decolorized with gentle bubbling'
+            : 'KMnO₄: Purple color remains unchanged';
         } else {
           st.statusLabel = 'Reaction: Decolorization observed';
         }

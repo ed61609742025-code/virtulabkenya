@@ -758,6 +758,17 @@ requireStudentLogin();
      SVG VISUALS (Dropper Test Tube & Flame Loop)
   ══════════════════════════════════════ */
   function getTubeVisual(test, st) {
+    if (window.QualitativeBenchCore && typeof QualitativeBenchCore.renderApparatusSvg === 'function') {
+      return QualitativeBenchCore.renderApparatusSvg({
+        saltKey: currentSaltKey,
+        testId: test.id || test.key,
+        stage: st ? (st.stage || (st.performed ? 'done' : 'idle')) : 'idle',
+        prompt: test.prompt || test.name || test.title || '',
+        obsStr: test.correctObs || test.observation || '',
+        tubeId: `qual_${test.key || test.id}`
+      });
+    }
+
     const performed = st && st.performed;
     const stage = st ? (st.stage || 'idle') : 'idle';
     const isExcess = stage === 'excess' || stage === 'step3_nh3' || stage === 'step2_bacl2' || stage === 'step2_gas_warm';

@@ -679,261 +679,300 @@
     // Special Case 1: Brown Ring Test Stratification
     if (performed && r.isBrownRing) {
       const isStep2 = stage === 'step2_h2so4' || stage === 'excess' || stage === 'done';
-      return `<svg width="86" height="136" viewBox="0 0 86 136">
-        <defs>
-          <linearGradient id="h2so4Grad_${tubeId}" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="rgba(241, 245, 249, 0.85)"/>
-            <stop offset="100%" stop-color="rgba(203, 213, 225, 0.95)"/>
-          </linearGradient>
-          <radialGradient id="ringGlow_${tubeId}" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#451A03" stop-opacity="1"/>
-            <stop offset="70%" stop-color="#78350F" stop-opacity="0.9"/>
-            <stop offset="100%" stop-color="#92400E" stop-opacity="0.2"/>
-          </radialGradient>
-        </defs>
-        
-        <!-- Wooden Test Tube Clamp -->
-        <g transform="translate(0, 48)">
-          <rect x="2" y="3" width="24" height="8" rx="2" fill="#78350F" stroke="#451A03" stroke-width="0.8"/>
-          <rect x="60" y="3" width="24" height="8" rx="2" fill="#78350F" stroke="#451A03" stroke-width="0.8"/>
-          <circle cx="14" cy="7" r="2.5" fill="#64748B"/>
-          <circle cx="72" cy="7" r="2.5" fill="#64748B"/>
-        </g>
-
-        <!-- Glass Test Tube Body & Lip -->
-        <rect x="23" y="32" width="40" height="4" rx="2" fill="rgba(255,255,255,0.18)" stroke="#94A3B8" stroke-width="1.2"/>
-        <path d="M 26,36 L 26,112 Q 26,130 43,130 Q 60,130 60,112 L 60,36 Z" fill="rgba(255,255,255,0.05)" stroke="#94A3B8" stroke-width="1.5"/>
-
-        ${isStep2 ? `
-          <!-- Lower Dense Layer (Conc. H2SO4) -->
-          <path d="M 27,94 L 27,112 Q 27,128 43,128 Q 59,128 59,112 L 59,94 Z" fill="url(#h2so4Grad_${tubeId})"/>
-          <ellipse cx="43" cy="94" rx="16" ry="3.5" fill="rgba(203, 213, 225, 0.95)"/>
-        ` : ''}
-
-        <!-- Upper Layer (Fresh FeSO4 Solution - pale green) -->
-        <path d="M 27,${isStep2 ? 66 : 78} L 27,${isStep2 ? 94 : 112} ${isStep2 ? '' : 'Q 27,128 43,128 Q 59,128 59,112'} L 59,${isStep2 ? 94 : 78} L 59,${isStep2 ? 66 : 78} Z" fill="rgba(16, 185, 129, 0.28)"/>
-        <ellipse cx="43" cy="${isStep2 ? 66 : 78}" rx="16" ry="3.5" fill="rgba(16, 185, 129, 0.4)"/>
-
-        <!-- Brown Ring [Fe(H2O)5(NO)]2+ Interface -->
-        ${r.hasBrownRing && isStep2 ? `
-          <g class="anim-brown-ring">
-            <ellipse cx="43" cy="94" rx="15.8" ry="4.5" fill="url(#ringGlow_${tubeId})" stroke="#B45309" stroke-width="1.5"/>
-            <ellipse cx="43" cy="94" rx="12" ry="2.5" fill="#290E02"/>
+      return `
+        <svg width="160" height="215" viewBox="0 0 160 215" style="max-width:100%; height:auto; display:block; filter:drop-shadow(0 4px 10px rgba(0,0,0,0.35));">
+          <defs>
+            <linearGradient id="h2so4Grad_${tubeId}" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="rgba(241, 245, 249, 0.7)"/>
+              <stop offset="35%" stop-color="rgba(255, 255, 255, 0.85)"/>
+              <stop offset="100%" stop-color="rgba(203, 213, 225, 0.7)"/>
+            </linearGradient>
+            <radialGradient id="ringGlow_${tubeId}" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#271105" stop-opacity="1"/>
+              <stop offset="70%" stop-color="#78350F" stop-opacity="0.95"/>
+              <stop offset="100%" stop-color="#B45309" stop-opacity="0.15"/>
+            </radialGradient>
+            <linearGradient id="woodGrad_${tubeId}" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#9A3412"/>
+              <stop offset="40%" stop-color="#78350F"/>
+              <stop offset="100%" stop-color="#451A03"/>
+            </linearGradient>
+          </defs>
+          
+          <!-- Wooden Test Tube Clamp -->
+          <g transform="translate(0, 68)">
+            <path d="M 4,0 L 57,0 L 57,14 L 4,14 Z" fill="url(#woodGrad_${tubeId})" stroke="#3A1700" stroke-width="1"/>
+            <path d="M 103,0 L 156,0 L 156,14 L 103,14 Z" fill="url(#woodGrad_${tubeId})" stroke="#3A1700" stroke-width="1"/>
+            <rect x="54" y="-1" width="3" height="16" fill="#D97706" opacity="0.9"/>
+            <rect x="103" y="-1" width="3" height="16" fill="#D97706" opacity="0.9"/>
+            <circle cx="20" cy="7" r="3.5" fill="#94A3B8" stroke="#475569" stroke-width="0.8"/>
+            <circle cx="140" cy="7" r="3.5" fill="#94A3B8" stroke="#475569" stroke-width="0.8"/>
+            <polygon points="14,0 26,0 22,5 18,5" fill="#F59E0B" stroke="#B45309" stroke-width="0.6"/>
           </g>
-        ` : ''}
 
-        <!-- Specular Highlight Curve -->
-        <path d="M 29,38 L 29,112 Q 29,126 43,126" fill="none" stroke="#FFF" stroke-width="1.2" stroke-linecap="round" opacity="0.25"/>
-      </svg>`;
+          <!-- Glass Test Tube Body & Lip -->
+          <rect x="53" y="27" width="54" height="5" rx="2.5" fill="rgba(255,255,255,0.3)" stroke="#94A3B8" stroke-width="1.2"/>
+          <path d="M 57,32 L 57,186 Q 57,208 80,208 Q 103,208 103,186 L 103,32 Z" fill="rgba(255,255,255,0.04)" stroke="#94A3B8" stroke-width="1.6"/>
+
+          <!-- Frosted Volume Graduations & Pyrex Brand -->
+          <line x1="97" y1="75" x2="103" y2="75" stroke="#FFFFFF" stroke-width="1" opacity="0.5"/>
+          <text x="94" y="77" font-size="6" fill="#FFFFFF" opacity="0.6" text-anchor="end" font-family="'JetBrains Mono', monospace">10ml</text>
+          <line x1="97" y1="120" x2="103" y2="120" stroke="#FFFFFF" stroke-width="1" opacity="0.5"/>
+          <text x="94" y="122" font-size="6" fill="#FFFFFF" opacity="0.6" text-anchor="end" font-family="'JetBrains Mono', monospace">5ml</text>
+          <line x1="97" y1="160" x2="103" y2="160" stroke="#FFFFFF" stroke-width="1" opacity="0.5"/>
+          <text x="94" y="162" font-size="6" fill="#FFFFFF" opacity="0.6" text-anchor="end" font-family="'JetBrains Mono', monospace">2ml</text>
+          <rect x="66" y="46" width="28" height="11" rx="2" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.25)" stroke-width="0.6"/>
+          <text x="80" y="54" font-size="5.5" font-weight="800" fill="#CBD5E1" text-anchor="middle" font-family="sans-serif">PYREX®</text>
+
+          ${isStep2 ? `
+            <!-- Lower Dense Layer (Conc. H2SO4) -->
+            <path d="M 58,150 L 58,186 Q 58,206 80,206 Q 102,206 102,186 L 102,150 Z" fill="url(#h2so4Grad_${tubeId})"/>
+            <ellipse cx="80" cy="150" rx="21.5" ry="4.5" fill="rgba(203, 213, 225, 0.95)"/>
+          ` : ''}
+
+          <!-- Upper Layer (Fresh FeSO4 Solution - pale emerald green) -->
+          <path d="M 58,${isStep2 ? 98 : 120} L 58,${isStep2 ? 150 : 186} ${isStep2 ? '' : 'Q 58,206 80,206 Q 102,206 102,186'} L 102,${isStep2 ? 150 : 120} L 102,${isStep2 ? 98 : 120} Z" fill="rgba(16, 185, 129, 0.28)"/>
+          <ellipse cx="80" cy="${isStep2 ? 98 : 120}" rx="21.5" ry="4.5" fill="rgba(16, 185, 129, 0.45)"/>
+
+          <!-- Brown Ring [Fe(H2O)5(NO)]2+ Interface Junction -->
+          ${r.hasBrownRing && isStep2 ? `
+            <g class="anim-brown-ring">
+              <ellipse cx="80" cy="150" rx="21.5" ry="5.5" fill="url(#ringGlow_${tubeId})" stroke="#B45309" stroke-width="1.8"/>
+              <ellipse cx="80" cy="150" rx="16" ry="3.5" fill="#1C0A00"/>
+              <path d="M 64,150 Q 80,152 96,150" stroke="rgba(255,255,255,0.4)" stroke-width="0.8" fill="none"/>
+            </g>
+          ` : ''}
+
+          <!-- Specular Highlight Curves -->
+          <line x1="62" y1="36" x2="62" y2="186" stroke="#FFFFFF" stroke-width="1.8" opacity="0.32" stroke-linecap="round"/>
+          <line x1="98" y1="36" x2="98" y2="186" stroke="#FFFFFF" stroke-width="1.2" opacity="0.18" stroke-linecap="round"/>
+          <path d="M 66,196 Q 80,204 94,196" fill="none" stroke="#FFFFFF" stroke-width="1.4" opacity="0.35"/>
+        </svg>
+      `;
     }
 
     // Special Case 2: Potassium Iodide Test for Lead (PbI2 Golden Spangles)
     if (performed && r.isKI && r.isLead) {
-      return `<svg width="86" height="136" viewBox="0 0 86 136">
-        <!-- Clamp -->
-        <g transform="translate(0, 48)">
-          <rect x="2" y="3" width="24" height="8" rx="2" fill="#78350F" stroke="#451A03" stroke-width="0.8"/>
-          <rect x="60" y="3" width="24" height="8" rx="2" fill="#78350F" stroke="#451A03" stroke-width="0.8"/>
-          <circle cx="14" cy="7" r="2.5" fill="#64748B"/>
-          <circle cx="72" cy="7" r="2.5" fill="#64748B"/>
-        </g>
+      const topY = isExcess ? 92 : 138;
+      return `
+        <svg width="160" height="215" viewBox="0 0 160 215" style="max-width:100%; height:auto; display:block; filter:drop-shadow(0 4px 10px rgba(0,0,0,0.35));">
+          <defs>
+            <linearGradient id="woodGrad_${tubeId}" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#9A3412"/>
+              <stop offset="40%" stop-color="#78350F"/>
+              <stop offset="100%" stop-color="#451A03"/>
+            </linearGradient>
+            <radialGradient id="pbi2Glow_${tubeId}" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#FEF08A"/>
+              <stop offset="60%" stop-color="#FACC15"/>
+              <stop offset="100%" stop-color="#CA8A04"/>
+            </radialGradient>
+          </defs>
 
-        <!-- Glass Body & Lip -->
-        <rect x="23" y="32" width="40" height="4" rx="2" fill="rgba(255,255,255,0.18)" stroke="#94A3B8" stroke-width="1.2"/>
-        <path d="M 26,36 L 26,112 Q 26,130 43,130 Q 60,130 60,112 L 60,36 Z" fill="rgba(255,255,255,0.05)" stroke="#94A3B8" stroke-width="1.5"/>
-
-        <!-- Liquid Phase -->
-        <path class="${isExcess ? 'anim-liquid-rise' : ''}" d="M 27,${r.liquidTopY} L 27,112 Q 27,128 43,128 Q 59,128 59,112 L 59,${r.liquidTopY} Z" fill="${r.liquidColor}"/>
-        <ellipse cx="43" cy="${r.liquidTopY}" rx="16" ry="3.5" fill="${r.liquidColor}" class="anim-meniscus-ripple"/>
-
-        <!-- Precision Dropper Pipette (when few drops) -->
-        ${isStep1 ? `
-          <g class="anim-dropper" opacity="1">
-            <path class="anim-dropper-bulb" d="M 39,2 L 47,2 L 45,12 L 41,12 Z" fill="#EF4444" rx="2"/>
-            <rect x="41.5" y="12" width="3" height="15" fill="rgba(255,255,255,0.75)" stroke="#94A3B8" stroke-width="0.8"/>
-            <path d="M 41.5,27 L 44.5,27 L 43,35 Z" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
+          <!-- Wooden Test Tube Clamp -->
+          <g transform="translate(0, 68)">
+            <path d="M 4,0 L 57,0 L 57,14 L 4,14 Z" fill="url(#woodGrad_${tubeId})" stroke="#3A1700" stroke-width="1"/>
+            <path d="M 103,0 L 156,0 L 156,14 L 103,14 Z" fill="url(#woodGrad_${tubeId})" stroke="#3A1700" stroke-width="1"/>
+            <rect x="54" y="-1" width="3" height="16" fill="#D97706" opacity="0.9"/>
+            <rect x="103" y="-1" width="3" height="16" fill="#D97706" opacity="0.9"/>
+            <circle cx="20" cy="7" r="3.5" fill="#94A3B8" stroke="#475569" stroke-width="0.8"/>
+            <circle cx="140" cy="7" r="3.5" fill="#94A3B8" stroke="#475569" stroke-width="0.8"/>
           </g>
-          <ellipse cx="43" cy="36" rx="2" ry="2.8" fill="#FACC15" class="anim-droplet"/>
-        ` : ''}
 
-        <!-- Convection Heat Waves when warmed -->
-        ${r.isHeated ? `
-          <g class="anim-heat-wave">
-            <path d="M 36,46 Q 40,40 44,46" stroke="rgba(245, 158, 11, 0.7)" stroke-width="1.5" fill="none"/>
-            <path d="M 44,42 Q 48,36 52,42" stroke="rgba(245, 158, 11, 0.6)" stroke-width="1.5" fill="none"/>
-          </g>
-        ` : ''}
+          <!-- Glass Body & Lip -->
+          <rect x="53" y="27" width="54" height="5" rx="2.5" fill="rgba(255,255,255,0.3)" stroke="#94A3B8" stroke-width="1.2"/>
+          <path d="M 57,32 L 57,186 Q 57,208 80,208 Q 103,208 103,186 L 103,32 Z" fill="rgba(255,255,255,0.04)" stroke="#94A3B8" stroke-width="1.6"/>
 
-        <!-- PbI2 Golden Precipitate -->
-        ${r.ppt ? `
-          <g class="anim-ppt-form">
-            <ellipse cx="43" cy="120" rx="14" ry="7" fill="#EAB308" opacity="0.9"/>
-            <circle cx="34" cy="116" r="3" fill="#FACC15"/>
-            <circle cx="48" cy="118" r="3.2" fill="#CA8A04"/>
-            <circle cx="42" cy="112" r="2.5" fill="#FEF08A"/>
-            <circle cx="38" cy="122" r="2.8" fill="#FACC15"/>
-          </g>
-        ` : ''}
+          <!-- Liquid Phase -->
+          <path class="${isExcess ? 'anim-liquid-rise' : ''}" d="M 58,${topY} L 58,186 Q 58,206 80,206 Q 102,206 102,186 L 102,${topY} Z" fill="${r.liquidColor}"/>
+          <ellipse cx="80" cy="${topY}" rx="21.5" ry="4.5" fill="${r.liquidColor}" class="anim-meniscus-ripple"/>
 
-        <!-- Sparkling Golden Spangles upon cooling -->
-        ${r.isCooled ? `
-          <g class="anim-spangle" style="animation-delay: 0s;">
-            <polygon points="43,84 45,88 49,89 45,90 43,94 41,90 37,89 41,88" fill="#FEF08A"/>
-          </g>
-          <g class="anim-spangle" style="animation-delay: 0.4s;">
-            <polygon points="34,74 35.5,77 39,78 35.5,79 34,82 32.5,79 29,78 32.5,77" fill="#FDE047"/>
-          </g>
-          <g class="anim-spangle" style="animation-delay: 0.8s;">
-            <polygon points="52,98 53.5,101 57,102 53.5,103 52,106 50.5,103 47,102 50.5,101" fill="#FEF08A"/>
-          </g>
-        ` : ''}
+          <!-- Precision Dropper Pipette (when few drops) -->
+          ${isStep1 ? `
+            <g class="anim-dropper" opacity="1" transform="translate(42, 0)">
+              <path class="anim-dropper-bulb" d="M 32,2 L 44,2 L 42,14 L 34,14 Z" fill="#EF4444" rx="2"/>
+              <rect x="36.5" y="14" width="3.5" height="14" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
+              <path d="M 36.5,28 L 40,28 L 38.2,34 Z" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
+            </g>
+            <ellipse cx="80" cy="38" rx="2.5" ry="3.5" fill="#FACC15" class="anim-droplet"/>
+          ` : ''}
 
-        <path d="M 29,38 L 29,112 Q 29,126 43,126" fill="none" stroke="#FFF" stroke-width="1.2" stroke-linecap="round" opacity="0.25"/>
-      </svg>`;
+          <!-- Convection Heat Waves when warmed -->
+          ${r.isHeated ? `
+            <g class="anim-heat-wave">
+              <path d="M 70,55 Q 80,48 90,55" stroke="rgba(245, 158, 11, 0.75)" stroke-width="2" fill="none"/>
+              <path d="M 72,70 Q 80,63 88,70" stroke="rgba(245, 158, 11, 0.6)" stroke-width="2" fill="none"/>
+            </g>
+          ` : ''}
+
+          <!-- PbI2 Golden Precipitate Bed -->
+          ${r.ppt ? `
+            <g class="anim-ppt-form">
+              <path d="M 58,180 Q 58,206 80,206 Q 102,206 102,180 Q 80,185 58,180 Z" fill="url(#pbi2Glow_${tubeId})" opacity="0.95"/>
+              <circle cx="68" cy="192" r="3.8" fill="#FACC15"/>
+              <circle cx="88" cy="194" r="4.2" fill="#CA8A04"/>
+              <circle cx="78" cy="186" r="3.2" fill="#FEF08A"/>
+              <circle cx="74" cy="198" r="3.5" fill="#FACC15"/>
+              <circle cx="84" cy="200" r="3.4" fill="#EAB308"/>
+            </g>
+          ` : ''}
+
+          <!-- Sparkling Golden Spangles upon cooling -->
+          ${r.isCooled ? `
+            <g class="anim-spangle" style="animation-delay: 0s;">
+              <polygon points="80,110 83,115 88,116 83,118 80,123 77,118 72,116 77,115" fill="#FEF08A"/>
+            </g>
+            <g class="anim-spangle" style="animation-delay: 0.35s;">
+              <polygon points="68,135 70,139 74,140 70,141 68,145 66,141 62,140 66,139" fill="#FDE047"/>
+            </g>
+            <g class="anim-spangle" style="animation-delay: 0.7s;">
+              <polygon points="92,125 94,129 98,130 94,131 92,135 90,131 86,130 90,129" fill="#FEF08A"/>
+            </g>
+            <g class="anim-spangle" style="animation-delay: 1.05s;">
+              <polygon points="76,155 78,159 82,160 78,161 76,165 74,161 70,160 74,159" fill="#FDE047"/>
+            </g>
+          ` : ''}
+
+          <line x1="62" y1="36" x2="62" y2="186" stroke="#FFFFFF" stroke-width="1.8" opacity="0.32" stroke-linecap="round"/>
+          <line x1="98" y1="36" x2="98" y2="186" stroke="#FFFFFF" stroke-width="1.2" opacity="0.18" stroke-linecap="round"/>
+        </svg>
+      `;
     }
 
-    // Standard Qualitative Reagent Test Tube (NaOH, NH3, HCl, AgNO3, BaCl2, Heat)
+    // Standard Qualitative Reagent Test Tube
     const isPpt = performed && r.ppt;
     const isPptDissolved = performed && r.pptDissolved;
     const isDeepBlue = performed && r.complexDeepBlue;
+    const topY = isExcess ? 88 : (performed ? 138 : 160);
 
-    return `<svg width="86" height="136" viewBox="0 0 86 136">
-      <defs>
-        <radialGradient id="liquidGlow_${tubeId}" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="${isDeepBlue ? '#1D4ED8' : r.liquidColor}" stop-opacity="${isDeepBlue ? '1' : '0.9'}"/>
-          <stop offset="100%" stop-color="${isDeepBlue ? '#1E40AF' : r.liquidColor}" stop-opacity="${isDeepBlue ? '0.9' : '0.7'}"/>
-        </radialGradient>
-      </defs>
+    return `
+      <svg width="160" height="215" viewBox="0 0 160 215" style="max-width:100%; height:auto; display:block; filter:drop-shadow(0 4px 10px rgba(0,0,0,0.35));">
+        <defs>
+          <radialGradient id="liquidGlow_${tubeId}" cx="45%" cy="40%" r="60%">
+            <stop offset="0%" stop-color="${isDeepBlue ? '#2563EB' : r.liquidColor}" stop-opacity="${isDeepBlue ? '1' : '0.95'}"/>
+            <stop offset="60%" stop-color="${isDeepBlue ? '#1D4ED8' : r.liquidColor}" stop-opacity="${isDeepBlue ? '0.92' : '0.85'}"/>
+            <stop offset="100%" stop-color="${isDeepBlue ? '#1E3A8A' : r.liquidColor}" stop-opacity="${isDeepBlue ? '0.95' : '0.75'}"/>
+          </radialGradient>
+          <linearGradient id="tubeGlassSheen_${tubeId}" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="rgba(255,255,255,0.22)"/>
+            <stop offset="25%" stop-color="rgba(255,255,255,0.05)"/>
+            <stop offset="85%" stop-color="rgba(255,255,255,0.02)"/>
+            <stop offset="100%" stop-color="rgba(255,255,255,0.18)"/>
+          </linearGradient>
+          <linearGradient id="woodGrad_${tubeId}" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#9A3412"/>
+            <stop offset="40%" stop-color="#78350F"/>
+            <stop offset="100%" stop-color="#451A03"/>
+          </linearGradient>
+          <radialGradient id="flocGrad_${tubeId}" cx="50%" cy="30%" r="70%">
+            <stop offset="0%" stop-color="${r.pptColor || '#FFFFFF'}" stop-opacity="0.95"/>
+            <stop offset="70%" stop-color="${r.pptColor || '#FFFFFF'}" stop-opacity="0.8"/>
+            <stop offset="100%" stop-color="${r.pptColor || '#FFFFFF'}" stop-opacity="0.3"/>
+          </radialGradient>
+        </defs>
 
-      <!-- Precision Reagent Dropper Pipette (Centered over Mouth) -->
-      <g class="anim-dropper" opacity="${performed ? '1' : '0.45'}">
-        <path class="${performed ? 'anim-dropper-bulb' : ''}" d="M 39,2 L 47,2 L 45,12 L 41,12 Z" fill="#EF4444" rx="2"/>
-        <rect x="41.5" y="12" width="3" height="15" fill="rgba(255,255,255,0.75)" stroke="#94A3B8" stroke-width="0.8"/>
-        <path d="M 41.5,27 L 44.5,27 L 43,35 Z" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
-      </g>
-      ${performed ? `
-        <!-- Fast Gravitational Falling Reagent Droplet -->
-        <ellipse cx="43" cy="36" rx="2" ry="2.8" fill="${isPpt ? r.pptColor : (r.liquidColor && r.liquidColor.startsWith('#') ? r.liquidColor : '#38BDF8')}" class="anim-droplet"/>
-      ` : ''}
-
-      <!-- Wooden Test Tube Clamp -->
-      <g transform="translate(0, 48)">
-        <rect x="2" y="3" width="24" height="8" rx="2" fill="#78350F" stroke="#451A03" stroke-width="0.8"/>
-        <rect x="60" y="3" width="24" height="8" rx="2" fill="#78350F" stroke="#451A03" stroke-width="0.8"/>
-        <circle cx="14" cy="7" r="2.5" fill="#64748B"/>
-        <circle cx="72" cy="7" r="2.5" fill="#64748B"/>
-      </g>
-
-      <!-- Glass Test Tube Body & Lip -->
-      <rect x="23" y="32" width="40" height="4" rx="2" fill="rgba(255,255,255,0.18)" stroke="#94A3B8" stroke-width="1.2"/>
-      <path d="M 26,36 L 26,112 Q 26,130 43,130 Q 60,130 60,112 L 60,36 Z" fill="rgba(255,255,255,0.05)" stroke="#94A3B8" stroke-width="1.5"/>
-
-      <!-- Liquid Column with Volume Rise & Meniscus Ripple -->
-      ${performed ? `
-        <path class="${isExcess ? 'anim-liquid-rise' : ''}" d="M 27,${r.liquidTopY} L 27,112 Q 27,128 43,128 Q 59,128 59,112 L 59,${r.liquidTopY} Z" fill="url(#liquidGlow_${tubeId})" opacity="0.9"/>
-        <ellipse cx="43" cy="${r.liquidTopY}" rx="16" ry="3.5" fill="${isDeepBlue ? '#1E40AF' : r.liquidColor}" opacity="0.95" class="${performed ? 'anim-meniscus-ripple' : ''}"/>
-      ` : ''}
-
-      <!-- Precipitate Curd Mass at Base -->
-      ${performed && isPpt && !r.bubbling ? `
-        <g class="anim-ppt-form">
-          <ellipse cx="43" cy="120" rx="14.5" ry="7" fill="${r.pptColor}" opacity="0.95" filter="brightness(0.9)"/>
-          <circle cx="34" cy="116" r="2.8" fill="${r.pptColor}" filter="brightness(1.15)"/>
-          <circle cx="48" cy="118" r="3.2" fill="${r.pptColor}" filter="brightness(0.85)"/>
-          <circle cx="41" cy="113" r="2.5" fill="${r.pptColor}" filter="brightness(1.1)"/>
-          <circle cx="38" cy="122" r="2.8" fill="${r.pptColor}" filter="brightness(0.9)"/>
-          <circle cx="46" cy="122" r="2.6" fill="${r.pptColor}" filter="brightness(1.05)"/>
+        <!-- Precision Reagent Dropper Pipette (Centered over Mouth) -->
+        <g class="anim-dropper" opacity="${performed ? '1' : '0.5'}" transform="translate(42, 0)">
+          <path class="${performed ? 'anim-dropper-bulb' : ''}" d="M 32,2 L 44,2 L 42,15 L 34,15 Z" fill="#EF4444" rx="2"/>
+          <rect x="36.5" y="15" width="3.5" height="13" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
+          <path d="M 36.5,28 L 40,28 L 38.2,34 Z" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
         </g>
-      ` : ''}
+        ${performed ? `
+          <!-- Fast Gravitational Falling Reagent Droplet -->
+          <path d="M 80,36 C 77.5,41 76.5,46 80,50 C 83.5,46 82.5,41 80,36 Z" fill="${isPpt ? (r.pptColor || '#E2E8F0') : (r.liquidColor && r.liquidColor.startsWith('#') ? r.liquidColor : '#38BDF8')}" class="anim-droplet"/>
+        ` : ''}
 
-      <!-- Dissolving Precipitate Transition (Excess) -->
-      ${performed && isPptDissolved ? `
-        <g class="anim-ppt-dissolve">
-          <ellipse cx="43" cy="120" rx="12" ry="5" fill="#E2E8F0" opacity="0.4"/>
-          <circle cx="38" cy="118" r="2" fill="#E2E8F0" opacity="0.4"/>
-          <circle cx="46" cy="119" r="2" fill="#E2E8F0" opacity="0.4"/>
+        <!-- Wooden Test Tube Clamp -->
+        <g transform="translate(0, 68)">
+          <path d="M 4,0 L 57,0 L 57,14 L 4,14 Z" fill="url(#woodGrad_${tubeId})" stroke="#3A1700" stroke-width="1"/>
+          <path d="M 103,0 L 156,0 L 156,14 L 103,14 Z" fill="url(#woodGrad_${tubeId})" stroke="#3A1700" stroke-width="1"/>
+          <rect x="54" y="-1" width="3" height="16" fill="#D97706" opacity="0.9"/>
+          <rect x="103" y="-1" width="3" height="16" fill="#D97706" opacity="0.9"/>
+          <circle cx="20" cy="7" r="3.5" fill="#94A3B8" stroke="#475569" stroke-width="0.8"/>
+          <circle cx="140" cy="7" r="3.5" fill="#94A3B8" stroke="#475569" stroke-width="0.8"/>
+          <polygon points="14,0 26,0 22,5 18,5" fill="#F59E0B" stroke="#B45309" stroke-width="0.6"/>
         </g>
-      ` : ''}
 
-      <!-- Bubbles & Froth Header for Acid Effervescence -->
-      ${performed && r.bubbling ? `
-        <g class="anim-qual-froth">
-          <ellipse cx="43" cy="${r.liquidTopY}" rx="15" ry="3.5" fill="#FFF" opacity="0.8"/>
-        </g>
-        <circle cx="36" cy="112" r="2.4" fill="#FFF" opacity="0.8" class="bubble anim-qual-bubble"/>
-        <circle cx="46" cy="104" r="2.8" fill="#FFF" opacity="0.9" class="bubble anim-qual-bubble" style="animation-delay: 0.25s;"/>
-        <circle cx="40" cy="94" r="2.2" fill="#FFF" opacity="0.75" class="bubble anim-qual-bubble" style="animation-delay: 0.5s;"/>
-        <circle cx="48" cy="84" r="2.6" fill="#FFF" opacity="0.85" class="bubble anim-qual-bubble" style="animation-delay: 0.75s;"/>
-        <circle cx="34" cy="74" r="2.4" fill="#FFF" opacity="0.8" class="bubble anim-qual-bubble" style="animation-delay: 0.35s;"/>
-      ` : ''}
+        <!-- Glass Test Tube Body & Lip -->
+        <rect x="53" y="27" width="54" height="5" rx="2.5" fill="rgba(255,255,255,0.3)" stroke="#94A3B8" stroke-width="1.2"/>
+        <path d="M 57,32 L 57,186 Q 57,208 80,208 Q 103,208 103,186 L 103,32 Z" fill="url(#tubeGlassSheen_${tubeId})" stroke="#94A3B8" stroke-width="1.6"/>
 
-      <!-- Glass Specular Highlight Curve -->
-      <path d="M 29,38 L 29,112 Q 29,126 43,126" fill="none" stroke="#FFF" stroke-width="1.2" stroke-linecap="round" opacity="0.25"/>
-    </svg>`;
+        <!-- Frosted Volume Graduations & Brand Patch -->
+        <line x1="97" y1="75" x2="103" y2="75" stroke="#FFFFFF" stroke-width="1" opacity="0.5"/>
+        <text x="94" y="77" font-size="6" fill="#FFFFFF" opacity="0.6" text-anchor="end" font-family="'JetBrains Mono', monospace">10ml</text>
+        <line x1="97" y1="120" x2="103" y2="120" stroke="#FFFFFF" stroke-width="1" opacity="0.5"/>
+        <text x="94" y="122" font-size="6" fill="#FFFFFF" opacity="0.6" text-anchor="end" font-family="'JetBrains Mono', monospace">5ml</text>
+        <line x1="97" y1="160" x2="103" y2="160" stroke="#FFFFFF" stroke-width="1" opacity="0.5"/>
+        <text x="94" y="162" font-size="6" fill="#FFFFFF" opacity="0.6" text-anchor="end" font-family="'JetBrains Mono', monospace">2ml</text>
+        <rect x="66" y="46" width="28" height="11" rx="2" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.25)" stroke-width="0.6"/>
+        <text x="80" y="54" font-size="5.5" font-weight="800" fill="#CBD5E1" text-anchor="middle" font-family="sans-serif">PYREX®</text>
+
+        <!-- Liquid Column with Volume Rise & Meniscus Ripple -->
+        <path class="${isExcess ? 'anim-liquid-rise' : ''}" d="M 58,${topY} L 58,186 Q 58,206 80,206 Q 102,206 102,186 L 102,${topY} Z" fill="url(#liquidGlow_${tubeId})" opacity="${performed ? '0.94' : '0.4'}"/>
+        <ellipse cx="80" cy="${topY}" rx="21.5" ry="4.5" fill="${isDeepBlue ? '#1D4ED8' : r.liquidColor}" opacity="${performed ? '0.98' : '0.5'}" class="${performed ? 'anim-meniscus-ripple' : ''}"/>
+        <path d="M 58,${topY} Q 80,${topY + 3} 102,${topY}" fill="none" stroke="rgba(0,0,0,0.3)" stroke-width="1.2"/>
+
+        <!-- Descending Precipitate Bloom Plume -->
+        ${performed && isPpt && !r.bubbling ? `
+          <g class="anim-ppt-bloom" opacity="0.85">
+            <ellipse cx="80" cy="${topY + 18}" rx="8" ry="12" fill="url(#flocGrad_${tubeId})"/>
+            <ellipse cx="76" cy="${topY + 34}" rx="12" ry="16" fill="url(#flocGrad_${tubeId})" opacity="0.8"/>
+            <ellipse cx="84" cy="${topY + 50}" rx="15" ry="18" fill="url(#flocGrad_${tubeId})" opacity="0.75"/>
+          </g>
+        ` : ''}
+
+        <!-- Precipitate Curd Mass at Base -->
+        ${performed && isPpt && !r.bubbling ? `
+          <g class="anim-ppt-form">
+            <path d="M 58,182 Q 58,206 80,206 Q 102,206 102,182 Q 80,187 58,182 Z" fill="${r.pptColor}" opacity="0.95" filter="brightness(0.92)"/>
+            <ellipse cx="80" cy="184" rx="21" ry="6" fill="${r.pptColor}" opacity="0.95"/>
+            <circle cx="68" cy="180" r="4.2" fill="${r.pptColor}" filter="brightness(1.15)"/>
+            <circle cx="88" cy="182" r="4.8" fill="${r.pptColor}" filter="brightness(0.85)"/>
+            <circle cx="78" cy="176" r="3.8" fill="${r.pptColor}" filter="brightness(1.1)"/>
+            <circle cx="73" cy="192" r="4.2" fill="${r.pptColor}" filter="brightness(0.9)"/>
+            <circle cx="87" cy="193" r="3.9" fill="${r.pptColor}" filter="brightness(1.05)"/>
+            <circle cx="80" cy="198" r="4.5" fill="${r.pptColor}" filter="brightness(0.8)"/>
+          </g>
+        ` : ''}
+
+        <!-- Dissolving Precipitate Transition (Excess) with Schlieren Refraction -->
+        ${performed && isPptDissolved ? `
+          <g class="anim-ppt-dissolve">
+            <ellipse cx="80" cy="184" rx="16" ry="6" fill="#E2E8F0" opacity="0.3"/>
+            <circle cx="74" cy="182" r="3" fill="#E2E8F0" opacity="0.3"/>
+            <circle cx="86" cy="183" r="3" fill="#E2E8F0" opacity="0.3"/>
+            <path d="M 68,130 Q 80,124 92,130" stroke="rgba(255,255,255,0.4)" stroke-width="1.2" fill="none"/>
+            <path d="M 66,152 Q 80,146 94,152" stroke="rgba(255,255,255,0.35)" stroke-width="1.2" fill="none"/>
+          </g>
+        ` : ''}
+
+        <!-- Bubbles & Froth Header for Acid Effervescence -->
+        ${performed && r.bubbling ? `
+          <g class="anim-qual-froth">
+            <ellipse cx="80" cy="${topY}" rx="20.5" ry="4.5" fill="#FFFFFF" opacity="0.9"/>
+            <circle cx="70" cy="${topY - 2}" r="2" fill="#FFFFFF" opacity="0.8"/>
+            <circle cx="78" cy="${topY - 3}" r="2.8" fill="#FFFFFF" opacity="0.85"/>
+            <circle cx="88" cy="${topY - 2}" r="2.2" fill="#FFFFFF" opacity="0.8"/>
+          </g>
+          <circle cx="70" cy="175" r="3.2" fill="#FFFFFF" opacity="0.85" class="bubble anim-qual-bubble"/>
+          <circle cx="85" cy="162" r="3.8" fill="#FFFFFF" opacity="0.9" class="bubble anim-qual-bubble" style="animation-delay: 0.25s;"/>
+          <circle cx="76" cy="148" r="2.8" fill="#FFFFFF" opacity="0.75" class="bubble anim-qual-bubble" style="animation-delay: 0.5s;"/>
+          <circle cx="87" cy="132" r="3.4" fill="#FFFFFF" opacity="0.85" class="bubble anim-qual-bubble" style="animation-delay: 0.75s;"/>
+          <circle cx="68" cy="116" r="3.0" fill="#FFFFFF" opacity="0.8" class="bubble anim-qual-bubble" style="animation-delay: 0.35s;"/>
+          <circle cx="82" cy="102" r="3.5" fill="#FFFFFF" opacity="0.9" class="bubble anim-qual-bubble" style="animation-delay: 0.6s;"/>
+        ` : ''}
+
+        <!-- Glass Specular Highlight Curves -->
+        <line x1="62" y1="36" x2="62" y2="186" stroke="#FFFFFF" stroke-width="1.8" opacity="0.32" stroke-linecap="round"/>
+        <line x1="98" y1="36" x2="98" y2="186" stroke="#FFFFFF" stroke-width="1.2" opacity="0.18" stroke-linecap="round"/>
+        <path d="M 66,196 Q 80,204 94,196" fill="none" stroke="#FFFFFF" stroke-width="1.4" opacity="0.35"/>
+      </svg>
+    `;
   }
 
   // ── 5. Interactive Specimen Watch Glass Renderer ───────────────
-  function renderWatchGlassSvg(saltKey = 'leadNitrate', width = 130, height = 90) {
-    const salt = resolveSalt(saltKey);
-    const prim = salt.crystalColor || '#F8FAFC';
-    const sec = salt.crystalSecondary || '#CBD5E1';
-    const hi = salt.crystalHighlight || '#FFFFFF';
-
-    return `
-      <svg width="${width}" height="${height}" viewBox="0 0 130 90" class="watchglass-dish-svg">
-        <defs>
-          <radialGradient id="dishGlassGrad_${salt.key}" cx="50%" cy="30%" r="70%">
-            <stop offset="0%" stop-color="rgba(255,255,255,0.4)" />
-            <stop offset="45%" stop-color="rgba(255,255,255,0.08)" />
-            <stop offset="90%" stop-color="rgba(148,163,184,0.3)" />
-            <stop offset="100%" stop-color="rgba(56,189,248,0.35)" />
-          </radialGradient>
-          <linearGradient id="dishRimGrad_${salt.key}" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="rgba(255,255,255,0.6)" />
-            <stop offset="50%" stop-color="rgba(255,255,255,0.15)" />
-            <stop offset="100%" stop-color="rgba(255,255,255,0.5)" />
-          </linearGradient>
-          <filter id="crystalShadow_${salt.key}" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="rgba(0,0,0,0.35)"/>
-          </filter>
-        </defs>
-
-        <!-- Watch Glass Elliptical Shadow -->
-        <ellipse cx="65" cy="58" rx="56" ry="24" fill="rgba(15,23,42,0.14)" filter="blur(4px)" />
-
-        <!-- Outer Concave Dish -->
-        <path d="M 12,42 C 12,74 118,74 118,42" fill="url(#dishGlassGrad_${salt.key})" stroke="url(#dishRimGrad_${salt.key})" stroke-width="1.8"/>
-        <!-- Inner Dish Oval -->
-        <ellipse cx="65" cy="42" rx="53" ry="18" fill="rgba(255,255,255,0.05)" stroke="url(#dishRimGrad_${salt.key})" stroke-width="1.2"/>
-        
-        <!-- Authentic Dynamic Salt Crystals -->
-        <g filter="url(#crystalShadow_${salt.key})">
-          <!-- Base heap mound -->
-          <ellipse cx="65" cy="46" rx="28" ry="11" fill="${sec}" opacity="0.6"/>
-          <ellipse cx="65" cy="44" rx="22" ry="8" fill="${prim}"/>
-          
-          <!-- Faceted crystal micro-geometry -->
-          <polygon points="56,38 64,34 68,39 60,43" fill="${hi}" opacity="0.95"/>
-          <polygon points="68,39 64,34 76,36 78,41" fill="${sec}" opacity="0.85"/>
-          <polygon points="48,42 54,39 58,45 52,48" fill="${prim}"/>
-          <polygon points="52,48 58,45 66,47 60,50" fill="${sec}"/>
-          <polygon points="70,41 78,41 82,47 74,47" fill="${hi}" opacity="0.9"/>
-          <polygon points="74,47 82,47 78,52 70,52" fill="${prim}"/>
-          <polygon points="42,46 48,43 54,49 48,52" fill="${sec}"/>
-          <polygon points="60,44 68,42 72,48 64,50" fill="${hi}"/>
-
-          <!-- Scattered granules -->
-          <circle cx="36" cy="46" r="2.2" fill="${prim}"/>
-          <circle cx="41" cy="51" r="1.8" fill="${sec}"/>
-          <circle cx="86" cy="46" r="2.4" fill="${prim}"/>
-          <circle cx="91" cy="49" r="1.6" fill="${hi}"/>
-          <circle cx="65" cy="53" r="2" fill="${sec}"/>
-        </g>
-
-        <!-- Dish Specular Sheen -->
-        <path d="M 28,43 C 40,55 90,55 102,43" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.2" stroke-linecap="round"/>
-      </svg>
-    `;
+  function renderWatchGlassSvg(saltKey = 'leadNitrate', width = 180, height = 150) {
+    return renderWatchGlassApparatusSvg({ saltKey, stage: 'idle', width, height });
   }
 
   // ── 5b. Watch Glass Specimen Examination Apparatus SVG (for Q2 / Q3 Physical Appearance) ──
@@ -941,6 +980,8 @@
     const {
       saltKey = 'leadNitrate',
       stage = 'idle',
+      width = 190,
+      height = 165,
       tubeId = `wg_${Math.random().toString(36).substring(2, 7)}`
     } = options;
 
@@ -951,102 +992,125 @@
     const hi = salt.crystalHighlight || '#FFFFFF';
 
     return `
-      <svg width="112" height="136" viewBox="0 0 112 136">
+      <svg width="${width}" height="${height}" viewBox="0 0 190 165" style="max-width:100%; height:auto; display:block; filter:drop-shadow(0 4px 12px rgba(0,0,0,0.4));">
         <defs>
-          <radialGradient id="dishGrad_${tubeId}" cx="50%" cy="30%" r="70%">
-            <stop offset="0%" stop-color="rgba(255,255,255,0.35)"/>
-            <stop offset="50%" stop-color="rgba(255,255,255,0.08)"/>
-            <stop offset="90%" stop-color="rgba(148,163,184,0.3)"/>
-            <stop offset="100%" stop-color="rgba(56,189,248,0.35)"/>
+          <radialGradient id="dishGlassGrad_${tubeId}" cx="50%" cy="30%" r="70%">
+            <stop offset="0%" stop-color="rgba(255,255,255,0.42)"/>
+            <stop offset="40%" stop-color="rgba(255,255,255,0.08)"/>
+            <stop offset="85%" stop-color="rgba(148,163,184,0.3)"/>
+            <stop offset="100%" stop-color="rgba(56,189,248,0.38)"/>
           </radialGradient>
-          <linearGradient id="rimGrad_${tubeId}" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="rgba(255,255,255,0.6)"/>
-            <stop offset="50%" stop-color="rgba(255,255,255,0.15)"/>
-            <stop offset="100%" stop-color="rgba(255,255,255,0.5)"/>
+          <linearGradient id="dishRimGrad_${tubeId}" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="rgba(255,255,255,0.65)"/>
+            <stop offset="50%" stop-color="rgba(255,255,255,0.18)"/>
+            <stop offset="100%" stop-color="rgba(255,255,255,0.55)"/>
           </linearGradient>
-          <filter id="crystShadow_${tubeId}" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="1.5" stdDeviation="2" flood-color="rgba(0,0,0,0.3)"/>
+          <filter id="crystShadow_${tubeId}" x="-25%" y="-25%" width="150%" height="150%">
+            <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="rgba(0,0,0,0.38)"/>
           </filter>
         </defs>
 
-        <!-- Lab Bench Surface Shadow -->
-        <ellipse cx="56" cy="94" rx="48" ry="18" fill="rgba(15,23,42,0.3)" filter="blur(3px)"/>
+        <!-- Lab Bench Slate Surface Shadow -->
+        <ellipse cx="95" cy="108" rx="72" ry="24" fill="rgba(15,23,42,0.45)" filter="blur(5px)"/>
 
-        <!-- Watch Glass Dish Body -->
-        <path d="M 12,78 C 12,108 100,108 100,78" fill="url(#dishGrad_${tubeId})" stroke="url(#rimGrad_${tubeId})" stroke-width="1.8"/>
-        <ellipse cx="56" cy="78" rx="44" ry="14" fill="rgba(255,255,255,0.06)" stroke="url(#rimGrad_${tubeId})" stroke-width="1.2"/>
+        <!-- Stainless Steel Laboratory Micro-Spatula (Resting on Bench) -->
+        <g opacity="0.85" transform="rotate(-8 150 110)">
+          <path d="M 148,110 L 176,96 L 180,102 L 152,116 Z" fill="#CBD5E1" stroke="#64748B" stroke-width="0.8"/>
+          <line x1="178" y1="99" x2="194" y2="90" stroke="#94A3B8" stroke-width="3" stroke-linecap="round"/>
+          <line x1="152" y1="113" x2="178" y2="99" stroke="#FFFFFF" stroke-width="0.9" opacity="0.6"/>
+        </g>
 
-        <!-- Dynamic Salt Crystals Mound -->
+        <!-- Watch Glass Dish Concave Body -->
+        <path d="M 23,80 C 23,122 167,122 167,80" fill="url(#dishGlassGrad_${tubeId})" stroke="url(#dishRimGrad_${tubeId})" stroke-width="2.2"/>
+        <ellipse cx="95" cy="80" rx="68" ry="20" fill="rgba(255,255,255,0.04)" stroke="url(#dishRimGrad_${tubeId})" stroke-width="1.4"/>
+
+        <!-- Dynamic Salt Crystals Mound (Habit-tailored) -->
         <g filter="url(#crystShadow_${tubeId})">
-          <ellipse cx="56" cy="82" rx="26" ry="9" fill="${sec}" opacity="0.75"/>
-          <ellipse cx="56" cy="80" rx="20" ry="7" fill="${prim}"/>
+          <ellipse cx="95" cy="86" rx="38" ry="13" fill="${sec}" opacity="0.8"/>
+          <ellipse cx="95" cy="83" rx="30" ry="10" fill="${prim}"/>
 
-          <!-- Faceted Micro-Crystals -->
-          <polygon points="48,74 55,71 59,75 52,78" fill="${hi}" opacity="0.95"/>
-          <polygon points="59,75 55,71 66,73 68,77" fill="${sec}" opacity="0.85"/>
-          <polygon points="41,77 47,74 51,79 45,82" fill="${prim}"/>
-          <polygon points="45,82 51,79 58,81 53,84" fill="${sec}"/>
-          <polygon points="61,76 68,76 72,81 65,81" fill="${hi}" opacity="0.9"/>
-          <polygon points="65,81 72,81 68,86 61,86" fill="${prim}"/>
-          <polygon points="35,80 41,78 46,83 40,85" fill="${sec}"/>
-          <polygon points="52,79 59,77 63,82 56,84" fill="${hi}"/>
+          <!-- Multi-faceted Micro-Crystals (tailored color and geometric habit) -->
+          <polygon points="84,74 95,70 101,75 90,80" fill="${hi}" opacity="0.95"/>
+          <polygon points="101,75 95,70 111,73 114,79" fill="${sec}" opacity="0.85"/>
+          <polygon points="73,78 82,74 88,81 79,85" fill="${prim}"/>
+          <polygon points="79,85 88,81 98,84 90,88" fill="${sec}"/>
+          <polygon points="103,77 114,77 120,84 110,84" fill="${hi}" opacity="0.9"/>
+          <polygon points="110,84 120,84 114,91 104,91" fill="${prim}"/>
+          <polygon points="65,82 74,79 81,86 73,89" fill="${sec}"/>
+          <polygon points="90,81 100,78 106,85 96,88" fill="${hi}"/>
+          <polygon points="82,88 92,86 98,92 88,94" fill="${sec}"/>
+          <polygon points="96,87 106,85 110,91 101,93" fill="${hi}"/>
 
-          <!-- Granules -->
-          <circle cx="30" cy="80" r="1.8" fill="${prim}"/>
-          <circle cx="34" cy="84" r="1.5" fill="${sec}"/>
-          <circle cx="76" cy="81" r="2" fill="${prim}"/>
-          <circle cx="81" cy="83" r="1.4" fill="${hi}"/>
-          <circle cx="56" cy="87" r="1.7" fill="${sec}"/>
+          <!-- Scattered individual crystalline granules -->
+          <circle cx="56" cy="82" r="2.4" fill="${prim}"/>
+          <circle cx="62" cy="88" r="2.0" fill="${sec}"/>
+          <circle cx="126" cy="83" r="2.8" fill="${prim}"/>
+          <circle cx="133" cy="86" r="2.2" fill="${hi}"/>
+          <circle cx="95" cy="94" r="2.5" fill="${sec}"/>
+          <circle cx="118" cy="90" r="2.0" fill="${hi}"/>
+          <circle cx="70" cy="91" r="1.8" fill="${prim}"/>
         </g>
 
         <!-- Specular Sheen Curve on Watch Glass Rim -->
-        <path d="M 22,79 C 32,89 80,89 90,79" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="1.2" stroke-linecap="round"/>
+        <path d="M 38,82 C 55,98 135,98 152,82" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1.5" stroke-linecap="round"/>
 
         <!-- Laboratory Magnifying Inspection Loupe -->
         ${performed ? `
-          <!-- Inspection Loupe Centered Over Sample (Inspecting) -->
+          <!-- Inspection Loupe Centered Over Sample with Optical Zoom -->
           <g class="anim-loupe-inspect">
-            <!-- Loupe Handle -->
-            <line x1="72" y1="58" x2="98" y2="32" stroke="#64748B" stroke-width="4.5" stroke-linecap="round"/>
-            <line x1="72" y1="58" x2="98" y2="32" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
-            <!-- Loupe Metal Frame & Lens -->
-            <circle cx="56" cy="74" r="25" fill="rgba(56,189,248,0.12)" stroke="#38BDF8" stroke-width="2.5"/>
-            <circle cx="56" cy="74" r="23" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
-            <path d="M 40,64 A 20 20 0 0 1 70,60" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" opacity="0.8"/>
-            <!-- Sparkling Crystal Facets under Magnification -->
+            <!-- Sturdy Knurled Handle -->
+            <line x1="119" y1="98" x2="162" y2="140" stroke="#334155" stroke-width="6.5" stroke-linecap="round"/>
+            <line x1="119" y1="98" x2="162" y2="140" stroke="#94A3B8" stroke-width="3" stroke-linecap="round"/>
+            <!-- Metal Bezel Frame & Optical Lens -->
+            <circle cx="95" cy="76" r="34" fill="none" stroke="#64748B" stroke-width="4"/>
+            <circle cx="95" cy="76" r="31" fill="none" stroke="#F59E0B" stroke-width="1"/>
+            <circle cx="95" cy="76" r="30" fill="rgba(56,189,248,0.12)"/>
+            <path d="M 72,60 A 28 28 0 0 1 118,54" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" opacity="0.85"/>
+            
+            <!-- Magnified Internal Crystal Facet Detail -->
+            <g transform="translate(10, 0)">
+              <polygon points="85,70 98,64 106,72 93,78" fill="${hi}" opacity="0.95"/>
+              <polygon points="72,76 84,70 92,79 80,85" fill="${prim}"/>
+              <polygon points="94,74 108,74 116,83 102,83" fill="${sec}"/>
+            </g>
+
+            <!-- Brilliant 4-Point Star Sparkle Glints under Magnification -->
             <g class="anim-crystal-glint">
-              <polygon points="56,66 57.5,70 61,71 57.5,72 56,76 54.5,72 51,71 54.5,70" fill="#FFFFFF"/>
-              <polygon points="46,74 47,77 50,77.5 47,78 46,81 45,78 42,77.5 45,77" fill="${hi}"/>
-              <polygon points="66,73 67,76 70,76.5 67,77 66,80 65,77 62,76.5 65,76" fill="${hi}"/>
+              <polygon points="95,64 97,69 102,70 97,71 95,76 93,71 88,70 93,69" fill="#FFFFFF"/>
+              <polygon points="80,75 81.5,79 85.5,80 81.5,81 80,85 78.5,81 74.5,80 78.5,79" fill="${hi}"/>
+              <polygon points="108,74 109.5,78 113.5,79 109.5,80 108,84 106.5,80 102.5,79 106.5,78" fill="${hi}"/>
             </g>
           </g>
         ` : `
           <!-- Inspection Loupe Resting on Upper Edge -->
-          <g opacity="0.75" transform="translate(14, -6)">
-            <line x1="64" y1="44" x2="88" y2="20" stroke="#64748B" stroke-width="4" stroke-linecap="round"/>
-            <line x1="64" y1="44" x2="88" y2="20" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round"/>
-            <circle cx="50" cy="56" r="20" fill="rgba(255,255,255,0.1)" stroke="#94A3B8" stroke-width="2"/>
-            <path d="M 38,48 A 16 16 0 0 1 60,46" fill="none" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" opacity="0.7"/>
+          <g opacity="0.8" transform="translate(26, -10)">
+            <line x1="105" y1="65" x2="138" y2="32" stroke="#334155" stroke-width="5" stroke-linecap="round"/>
+            <line x1="105" y1="65" x2="138" y2="32" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="85" cy="82" r="26" fill="rgba(255,255,255,0.08)" stroke="#94A3B8" stroke-width="2.5"/>
+            <path d="M 68,72 A 20 20 0 0 1 98,68" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" opacity="0.75"/>
           </g>
         `}
 
         <!-- Specimen Plaque Label -->
-        <g transform="translate(16, 114)">
-          <rect x="0" y="0" width="80" height="18" rx="4" fill="rgba(15,23,42,0.85)" stroke="#334155" stroke-width="1"/>
-          <text x="40" y="12.5" font-size="8.5" font-weight="800" fill="#38BDF8" text-anchor="middle" font-family="'JetBrains Mono', monospace">
-            ${performed ? 'CRYSTALS: OBSERVED' : 'SOLID SPECIMEN Y'}
+        <g transform="translate(18, 136)">
+          <rect x="0" y="0" width="154" height="20" rx="4" fill="rgba(15,23,42,0.92)" stroke="#334155" stroke-width="1"/>
+          <text x="77" y="14" font-size="8.5" font-weight="800" fill="#38BDF8" text-anchor="middle" font-family="'JetBrains Mono', monospace">
+            ${performed ? 'CRYSTALLINE HABIT: OBSERVED' : 'SOLID SPECIMEN Y · KNEC 233/3'}
           </text>
         </g>
       </svg>
     `;
   }
 
+  // ── 5c. Dry Thermal Heating Apparatus SVG (Angled Hard-Glass Tube & Bunsen Flame) ──
   function renderDryHeatingApparatusSvg(options = {}) {
     const {
       saltKey = 'leadNitrate',
       stage = 'idle',
       prompt = '',
       obsStr = '',
+      width = 200,
+      height = 185,
       tubeId = `heat_${Math.random().toString(36).substring(2, 7)}`
     } = options;
 
@@ -1057,17 +1121,17 @@
     const isNitrate = anion === 'NO3-';
     const isHydrated = salt.appearance?.toLowerCase().includes('hydrat') || salt.formula?.includes('H2O') || cation === 'Cu2+' || cation === 'Fe2+';
 
-    // Solid color hot vs cold
+    // Solid residue color transitions
     let hotPowderColor = salt.crystalColor || '#FFFFFF';
     if (performed) {
       if (cation === 'Zn2+') hotPowderColor = '#FACC15'; // ZnO yellow when hot
-      else if (cation === 'Cu2+') hotPowderColor = '#E2E8F0'; // Anhydrous white
-      else if (cation === 'Fe2+') hotPowderColor = '#78350F'; // Dirty brown Fe2O3/FeO
+      else if (cation === 'Cu2+') hotPowderColor = '#F1F5F9'; // Anhydrous white powder
+      else if (cation === 'Fe2+') hotPowderColor = '#451A03'; // Dirty brown/black Fe2O3
       else if (cation === 'Pb2+') hotPowderColor = '#9A3412'; // PbO reddish-brown hot
     }
 
     return `
-      <svg width="112" height="136" viewBox="0 0 112 136">
+      <svg width="${width}" height="${height}" viewBox="0 0 200 185" style="max-width:100%; height:auto; display:block; filter:drop-shadow(0 4px 12px rgba(0,0,0,0.4));">
         <defs>
           <linearGradient id="flameInner_${tubeId}" x1="0%" y1="100%" x2="0%" y2="0%">
             <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.95"/>
@@ -1080,110 +1144,125 @@
             <stop offset="100%" stop-color="#93C5FD" stop-opacity="0"/>
           </linearGradient>
           <radialGradient id="no2Fumes_${tubeId}" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="#78350F" stop-opacity="0.85"/>
-            <stop offset="60%" stop-color="#92400E" stop-opacity="0.6"/>
+            <stop offset="0%" stop-color="#581C87" stop-opacity="0"/>
+            <stop offset="20%" stop-color="#78350F" stop-opacity="0.9"/>
+            <stop offset="65%" stop-color="#92400E" stop-opacity="0.65"/>
             <stop offset="100%" stop-color="#B45309" stop-opacity="0"/>
           </radialGradient>
         </defs>
 
-        <!-- Retort Stand Vertical Rod -->
-        <line x1="8" y1="10" x2="8" y2="132" stroke="#64748B" stroke-width="3" stroke-linecap="round"/>
-        <line x1="2" y1="130" x2="30" y2="130" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+        <!-- Retort Stand Heavy Rod & Base -->
+        <line x1="16" y1="12" x2="16" y2="175" stroke="#64748B" stroke-width="4.5" stroke-linecap="round"/>
+        <rect x="6" y="168" width="46" height="8" rx="2" fill="#1E293B" stroke="#0F172A" stroke-width="1.2"/>
 
-        <!-- Wooden Clamp Arm Tilted holding tube -->
-        <g transform="translate(8, 46)">
-          <line x1="0" y1="0" x2="28" y2="4" stroke="#78350F" stroke-width="4" stroke-linecap="round"/>
-          <circle cx="0" cy="0" r="3.5" fill="#94A3B8"/>
-          <!-- Clamp jaws -->
-          <rect x="24" y="-4" width="16" height="6" rx="1.5" fill="#78350F" stroke="#451A03" stroke-width="0.8" transform="rotate(20 28 0)"/>
-          <rect x="24" y="2" width="16" height="6" rx="1.5" fill="#78350F" stroke="#451A03" stroke-width="0.8" transform="rotate(20 28 0)"/>
+        <!-- Heavy Laboratory Bosshead & Clamp holding Tube at 35 degrees -->
+        <g transform="translate(16, 68)">
+          <line x1="0" y1="0" x2="38" y2="6" stroke="#475569" stroke-width="4.5" stroke-linecap="round"/>
+          <circle cx="0" cy="0" r="5" fill="#334155" stroke="#64748B" stroke-width="1"/>
+          <!-- Tilted Clamp Jaws -->
+          <rect x="34" y="-5" width="20" height="7" rx="2" fill="#78350F" stroke="#3A1700" stroke-width="1" transform="rotate(25 38 0)"/>
+          <rect x="34" y="3" width="20" height="7" rx="2" fill="#78350F" stroke="#3A1700" stroke-width="1" transform="rotate(25 38 0)"/>
         </g>
 
-        <!-- Hard-Glass Test Tube (Tilted at 22 degrees) -->
-        <g transform="translate(32, 20) rotate(22 20 50)">
-          <!-- Glass Lip & Body -->
-          <rect x="13" y="10" width="22" height="3" rx="1" fill="rgba(255,255,255,0.2)" stroke="#94A3B8" stroke-width="1"/>
-          <path d="M 15,12 L 15,82 Q 15,96 24,96 Q 33,96 33,82 L 33,12 Z" fill="rgba(255,255,255,0.06)" stroke="#94A3B8" stroke-width="1.3"/>
+        <!-- Hard-Glass Pyrex Boiling Tube (Tilted at 35 degrees) -->
+        <g transform="translate(48, 24) rotate(26 30 70)">
+          <!-- Glass Body & Mouth Lip -->
+          <rect x="18" y="12" width="30" height="4.5" rx="2" fill="rgba(255,255,255,0.3)" stroke="#94A3B8" stroke-width="1.2"/>
+          <path d="M 21,15 L 21,108 Q 21,126 33,126 Q 45,126 45,108 L 45,15 Z" fill="rgba(255,255,255,0.06)" stroke="#94A3B8" stroke-width="1.5"/>
 
-          <!-- Dry Solid Powder Mound at base of tube -->
-          <path d="M 16,74 L 16,82 Q 16,95 24,95 Q 32,95 32,82 L 32,74 Q 24,78 16,74 Z" fill="${hotPowderColor}"/>
+          <!-- Dry Salt Residue Bed at Curved Base of Tube -->
+          <path d="M 22,96 L 22,108 Q 22,125 33,125 Q 44,125 44,108 L 44,96 Q 33,102 22,96 Z" fill="${hotPowderColor}"/>
 
-          <!-- Decrepitation Sparkles if Pb(NO3)2 -->
+          <!-- Decrepitation Sparkles (Crackling Solid Particles) -->
           ${performed && cation === 'Pb2+' ? `
             <g class="anim-spangle">
-              <circle cx="21" cy="78" r="1.4" fill="#FDE047"/>
-              <circle cx="27" cy="75" r="1.2" fill="#F59E0B"/>
-              <circle cx="24" cy="72" r="1" fill="#FFFFFF"/>
+              <circle cx="28" cy="102" r="1.8" fill="#FDE047"/>
+              <circle cx="38" cy="98" r="1.5" fill="#F59E0B"/>
+              <circle cx="33" cy="92" r="1.4" fill="#FFFFFF"/>
+              <circle cx="27" cy="110" r="1.6" fill="#FDE047"/>
             </g>
           ` : ''}
 
-          <!-- Condensed Water Droplets on upper walls if hydrated -->
+          <!-- Condensed Water Droplets on Upper Cooler Walls -->
           ${performed && isHydrated ? `
-            <g opacity="0.85">
-              <ellipse cx="17" cy="40" rx="1.5" ry="2" fill="#BAE6FD"/>
-              <ellipse cx="31" cy="46" rx="1.8" ry="2.2" fill="#BAE6FD"/>
-              <ellipse cx="17" cy="54" rx="1.6" ry="2" fill="#BAE6FD"/>
-              <ellipse cx="31" cy="36" rx="1.4" ry="1.8" fill="#BAE6FD"/>
+            <g opacity="0.9">
+              <ellipse cx="23" cy="50" rx="2" ry="2.6" fill="#BAE6FD"/>
+              <ellipse cx="43" cy="58" rx="2.2" ry="2.8" fill="#BAE6FD"/>
+              <ellipse cx="23" cy="72" rx="2" ry="2.5" fill="#BAE6FD"/>
+              <ellipse cx="43" cy="44" rx="1.8" ry="2.4" fill="#BAE6FD"/>
+              <line x1="23" y1="52" x2="23" y2="60" stroke="#BAE6FD" stroke-width="0.8" opacity="0.6"/>
             </g>
           ` : ''}
 
-          <!-- Brown NO2 Fumes rising in tube if nitrate -->
+          <!-- Dense Brown NO2 Fumes Inside Tube -->
           ${performed && isNitrate ? `
             <g class="anim-heat-wave">
-              <ellipse cx="24" cy="50" rx="7" ry="14" fill="url(#no2Fumes_${tubeId})"/>
-              <ellipse cx="24" cy="30" rx="8" ry="16" fill="url(#no2Fumes_${tubeId})"/>
+              <ellipse cx="33" cy="65" rx="10" ry="20" fill="url(#no2Fumes_${tubeId})"/>
+              <ellipse cx="33" cy="38" rx="11" ry="22" fill="url(#no2Fumes_${tubeId})"/>
             </g>
           ` : ''}
 
-          <!-- Glass Specular Highlight -->
-          <path d="M 17,14 L 17,82 Q 17,92 24,92" fill="none" stroke="#FFFFFF" stroke-width="0.9" opacity="0.3"/>
+          <!-- Glass Specular Flank Highlight -->
+          <path d="M 24,18 L 24,108 Q 24,122 33,122" fill="none" stroke="#FFFFFF" stroke-width="1.2" opacity="0.35"/>
 
-          <!-- Litmus paper or splint at mouth -->
+          <!-- Moist Blue Litmus Paper Held at Mouth -->
           ${performed && isNitrate ? `
-            <!-- Moist Blue Litmus turning Red at mouth -->
-            <path d="M 21,2 L 27,2 L 27,16 L 21,16 Z" fill="#EF4444" stroke="#DC2626" stroke-width="0.5"/>
-            <path d="M 21,2 L 27,2 L 27,8 L 21,8 Z" fill="#3B82F6"/>
+            <!-- Paper strip held in forceps: turns bright red at tip -->
+            <path d="M 29,2 L 37,2 L 37,20 L 29,20 Z" fill="#EF4444" stroke="#DC2626" stroke-width="0.6"/>
+            <path d="M 29,2 L 37,2 L 37,10 L 29,10 Z" fill="#3B82F6"/>
+            <!-- Forceps holding paper -->
+            <line x1="22" y1="-4" x2="31" y2="5" stroke="#94A3B8" stroke-width="2.5" stroke-linecap="round"/>
           ` : ''}
         </g>
 
-        <!-- Billowing Fumes escaping mouth into air -->
+        <!-- Billowing NO2 Gas Fumes Escaping from Tube Mouth into Air -->
         ${performed && isNitrate ? `
-          <g class="anim-heat-wave" transform="translate(18, 10)">
-            <circle cx="16" cy="12" r="6" fill="url(#no2Fumes_${tubeId})" opacity="0.8"/>
-            <circle cx="12" cy="4" r="8" fill="url(#no2Fumes_${tubeId})" opacity="0.6"/>
+          <g class="anim-heat-wave" transform="translate(30, 10)">
+            <circle cx="24" cy="18" r="9" fill="url(#no2Fumes_${tubeId})" opacity="0.85"/>
+            <circle cx="16" cy="8" r="13" fill="url(#no2Fumes_${tubeId})" opacity="0.75"/>
+            <circle cx="8" cy="-2" r="16" fill="url(#no2Fumes_${tubeId})" opacity="0.6"/>
           </g>
         ` : ''}
 
-        <!-- Bunsen Burner heating tube base -->
-        <g transform="translate(48, 86)">
-          <!-- Burner Chimney & Base -->
-          <rect x="18" y="24" width="8" height="22" fill="#64748B" stroke="#334155" stroke-width="0.8"/>
-          <ellipse cx="22" cy="46" rx="18" ry="4" fill="#334155"/>
-          <ellipse cx="22" cy="24" rx="4" ry="1.5" fill="#475569"/>
+        <!-- Full Laboratory Bunsen Burner Heating Tube Heel -->
+        <g transform="translate(86, 110)">
+          <!-- Cast-iron Hexagonal Base -->
+          <ellipse cx="30" cy="64" rx="28" ry="6" fill="#1E293B" stroke="#0F172A" stroke-width="1.2"/>
+          <rect x="25" y="58" width="10" height="6" fill="#334155"/>
+          <!-- Metallic Barrel & Air Collar -->
+          <rect x="25" y="24" width="10" height="34" fill="#64748B" stroke="#334155" stroke-width="0.8"/>
+          <rect x="24" y="44" width="12" height="8" rx="1.5" fill="#475569" stroke="#1E293B" stroke-width="0.6"/>
+          <circle cx="30" cy="48" r="2" fill="#0F172A"/>
+          <ellipse cx="30" cy="24" rx="5" ry="2" fill="#334155"/>
+          <!-- Rubber Gas Tubing -->
+          <path d="M 35,62 Q 52,60 68,68" fill="none" stroke="#D97706" stroke-width="3.5" stroke-linecap="round"/>
 
           ${performed ? `
             <!-- Roaring Non-Luminous Bunsen Flame -->
             <g class="anim-flame">
               <!-- Outer Blue Cone -->
-              <path d="M 17,24 C 15,10 18,2 22,2 C 26,2 29,10 27,24 Z" fill="url(#flameOuter_${tubeId})"/>
-              <!-- Inner Pale Blue Core -->
-              <path d="M 19,24 C 18,16 20,8 22,8 C 24,8 26,16 25,24 Z" fill="url(#flameInner_${tubeId})"/>
+              <path d="M 23,24 C 20,8 25,0 30,0 C 35,0 40,8 37,24 Z" fill="url(#flameOuter_${tubeId})"/>
+              <!-- Inner Hot Cyan Core -->
+              <path d="M 26,24 C 24,14 27,6 30,6 C 33,6 36,14 34,24 Z" fill="url(#flameInner_${tubeId})"/>
             </g>
           ` : `
-            <!-- Gentle Pilot Flame -->
-            <path d="M 20,24 C 19,19 21,16 22,16 C 23,16 25,19 24,24 Z" fill="#38BDF8" opacity="0.6"/>
+            <!-- Pilot Flame -->
+            <path d="M 28,24 C 27,18 29,14 30,14 C 31,14 33,18 32,24 Z" fill="#38BDF8" opacity="0.6"/>
           `}
         </g>
       </svg>
     `;
   }
 
+  // ── 5d. Dissolution in Distilled Water Apparatus SVG ───────────
   function renderDissolutionApparatusSvg(options = {}) {
     const {
       saltKey = 'leadNitrate',
       stage = 'idle',
       prompt = '',
       obsStr = '',
+      width = 180,
+      height = 215,
       tubeId = `diss_${Math.random().toString(36).substring(2, 7)}`
     } = options;
 
@@ -1191,60 +1270,83 @@
     const performed = stage !== 'idle' && stage !== 'untested' && Boolean(stage);
     const cation = salt.cation;
 
-    let solnColor = 'rgba(56, 189, 248, 0.25)';
-    if (cation === 'Cu2+') solnColor = 'rgba(56, 189, 248, 0.6)';
-    else if (cation === 'Fe2+') solnColor = 'rgba(16, 185, 129, 0.4)';
-    else if (cation === 'Fe3+') solnColor = 'rgba(217, 119, 6, 0.45)';
+    let solnColor = 'rgba(56, 189, 248, 0.28)';
+    if (cation === 'Cu2+') solnColor = 'rgba(56, 189, 248, 0.65)';
+    else if (cation === 'Fe2+') solnColor = 'rgba(16, 185, 129, 0.45)';
+    else if (cation === 'Fe3+') solnColor = 'rgba(217, 119, 6, 0.5)';
 
     return `
-      <svg width="100" height="136" viewBox="0 0 100 136">
-        <!-- Clamp -->
-        <g transform="translate(0, 48)">
-          <rect x="6" y="3" width="22" height="8" rx="2" fill="#78350F" stroke="#451A03" stroke-width="0.8"/>
-          <rect x="72" y="3" width="22" height="8" rx="2" fill="#78350F" stroke="#451A03" stroke-width="0.8"/>
-          <circle cx="16" cy="7" r="2.5" fill="#64748B"/>
-          <circle cx="82" cy="7" r="2.5" fill="#64748B"/>
+      <svg width="${width}" height="${height}" viewBox="0 0 180 215" style="max-width:100%; height:auto; display:block; filter:drop-shadow(0 4px 10px rgba(0,0,0,0.35));">
+        <defs>
+          <linearGradient id="washBottleGrad_${tubeId}" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="rgba(255,255,255,0.7)"/>
+            <stop offset="40%" stop-color="rgba(255,255,255,0.9)"/>
+            <stop offset="100%" stop-color="rgba(203,213,225,0.75)"/>
+          </linearGradient>
+          <linearGradient id="woodGrad_${tubeId}" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#9A3412"/>
+            <stop offset="40%" stop-color="#78350F"/>
+            <stop offset="100%" stop-color="#451A03"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Wooden Clamp -->
+        <g transform="translate(10, 68)">
+          <path d="M 4,0 L 57,0 L 57,14 L 4,14 Z" fill="url(#woodGrad_${tubeId})" stroke="#3A1700" stroke-width="1"/>
+          <path d="M 103,0 L 156,0 L 156,14 L 103,14 Z" fill="url(#woodGrad_${tubeId})" stroke="#3A1700" stroke-width="1"/>
+          <circle cx="20" cy="7" r="3.5" fill="#94A3B8" stroke="#475569" stroke-width="0.8"/>
+          <circle cx="140" cy="7" r="3.5" fill="#94A3B8" stroke="#475569" stroke-width="0.8"/>
         </g>
 
-        <!-- Wash Bottle Nozzle (when adding water) -->
+        <!-- Laboratory Polyethylene Wash Bottle with Curved Spout -->
         ${performed ? `
-          <g class="anim-dropper">
-            <path d="M 68,6 L 56,22 L 53,24" fill="none" stroke="#CBD5E1" stroke-width="3" stroke-linecap="round"/>
-            <line x1="53" y1="24" x2="50" y2="42" stroke="rgba(56,189,248,0.7)" stroke-width="1.8" stroke-dasharray="3,2" class="anim-droplet"/>
+          <g class="anim-dropper" transform="translate(42, 2)">
+            <!-- Wash Bottle Shoulder & Curved Swan-Neck Spout -->
+            <path d="M 88,4 Q 72,6 64,18 L 54,30" fill="none" stroke="url(#washBottleGrad_${tubeId})" stroke-width="4.5" stroke-linecap="round"/>
+            <path d="M 54,30 L 50,35" fill="none" stroke="#94A3B8" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Laminar Stream of Distilled Water Shooting into Tube -->
+            <line x1="49" y1="35" x2="48" y2="78" stroke="rgba(56,189,248,0.85)" stroke-width="2.2" stroke-linecap="round" class="anim-droplet"/>
           </g>
         ` : ''}
 
         <!-- Boiling Tube Body & Lip -->
-        <rect x="27" y="28" width="46" height="4" rx="2" fill="rgba(255,255,255,0.18)" stroke="#94A3B8" stroke-width="1.2"/>
-        <path d="M 30,32 L 30,114 Q 30,132 50,132 Q 70,132 70,114 L 70,32 Z" fill="rgba(255,255,255,0.05)" stroke="#94A3B8" stroke-width="1.5"/>
+        <g transform="translate(10, 0)">
+          <rect x="53" y="27" width="54" height="5" rx="2.5" fill="rgba(255,255,255,0.3)" stroke="#94A3B8" stroke-width="1.2"/>
+          <path d="M 57,32 L 57,186 Q 57,208 80,208 Q 103,208 103,186 L 103,32 Z" fill="rgba(255,255,255,0.05)" stroke="#94A3B8" stroke-width="1.6"/>
 
-        ${performed ? `
-          <!-- Dissolving Solution Column -->
-          <path d="M 31,64 L 31,114 Q 31,130 50,130 Q 69,130 69,114 L 69,64 Z" fill="${solnColor}" class="anim-liquid-rise"/>
-          <ellipse cx="50" cy="64" rx="19" ry="4" fill="${solnColor}" class="anim-meniscus-ripple"/>
-          <!-- Swirling Dissolution Waves -->
-          <g opacity="0.6">
-            <path d="M 40,88 Q 50,82 60,88" stroke="rgba(255,255,255,0.6)" stroke-width="1.2" fill="none"/>
-            <path d="M 38,104 Q 50,98 62,104" stroke="rgba(255,255,255,0.5)" stroke-width="1.2" fill="none"/>
-          </g>
-        ` : `
-          <!-- Dry Solid Crystals at bottom awaiting water -->
-          <ellipse cx="50" cy="120" rx="14" ry="6" fill="${salt.crystalColor || '#FFFFFF'}" opacity="0.9"/>
-          <circle cx="44" cy="118" r="2.2" fill="${salt.crystalHighlight || '#FFFFFF'}"/>
-          <circle cx="54" cy="121" r="2.5" fill="${salt.crystalSecondary || '#CBD5E1'}"/>
-        `}
+          ${performed ? `
+            <!-- Dissolved Solution Column -->
+            <path d="M 58,82 L 58,186 Q 58,206 80,206 Q 102,206 102,186 L 102,82 Z" fill="${solnColor}" class="anim-liquid-rise"/>
+            <ellipse cx="80" cy="82" rx="21.5" ry="4.5" fill="${solnColor}" class="anim-meniscus-ripple"/>
+            <!-- Swirling Dissolution Vortex Waves -->
+            <g opacity="0.75">
+              <path d="M 68,115 Q 80,108 92,115" stroke="rgba(255,255,255,0.6)" stroke-width="1.6" fill="none"/>
+              <path d="M 66,140 Q 80,132 94,140" stroke="rgba(255,255,255,0.5)" stroke-width="1.6" fill="none"/>
+              <path d="M 70,165 Q 80,158 90,165" stroke="rgba(255,255,255,0.4)" stroke-width="1.4" fill="none"/>
+            </g>
+          ` : `
+            <!-- Dry Solid Crystals at Bottom Awaiting Water -->
+            <ellipse cx="80" cy="192" rx="18" ry="8" fill="${salt.crystalColor || '#FFFFFF'}" opacity="0.95"/>
+            <circle cx="72" cy="188" r="3.2" fill="${salt.crystalHighlight || '#FFFFFF'}"/>
+            <circle cx="88" cy="190" r="3.8" fill="${salt.crystalSecondary || '#CBD5E1'}"/>
+            <circle cx="80" cy="196" r="3.5" fill="${salt.crystalColor || '#FFFFFF'}"/>
+          `}
 
-        <!-- Specular Highlight -->
-        <path d="M 34,34 L 34,114 Q 34,126 50,126" fill="none" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" opacity="0.3"/>
+          <!-- Specular Flank Highlight -->
+          <line x1="62" y1="36" x2="62" y2="186" stroke="#FFFFFF" stroke-width="1.8" opacity="0.32" stroke-linecap="round"/>
+        </g>
       </svg>
     `;
   }
 
+  // ── 5e. Flame Test Apparatus SVG (Bunsen Burner & Nichrome Wire Loop) ──
   function renderFlameTestApparatusSvg(options = {}) {
     const {
       saltKey = 'leadNitrate',
       stage = 'idle',
       prompt = '',
+      width = 180,
+      height = 200,
       tubeId = `flame_${Math.random().toString(36).substring(2, 7)}`
     } = options;
 
@@ -1252,44 +1354,89 @@
     const performed = stage !== 'idle' && stage !== 'untested' && Boolean(stage);
     const cation = salt.cation;
 
+    // Characteristic Emission Spectra
     let flameColor = '#38BDF8';
     let flameOuter = '#0284C7';
+    let glowRadius = 40;
     if (performed) {
       if (cation === 'Ca2+') {
-        flameColor = '#EA580C'; // Brick red / orange-red
+        flameColor = '#EA580C'; // Brick red / carmine
         flameOuter = '#DC2626';
+        glowRadius = 55;
       } else if (cation === 'Cu2+') {
-        flameColor = '#10B981'; // Green / blue-green
+        flameColor = '#06B6D4'; // Brilliant peacock blue-green
         flameOuter = '#059669';
+        glowRadius = 60;
       } else if (cation === 'Ba2+') {
         flameColor = '#84CC16'; // Pale apple-green
         flameOuter = '#65A30D';
+        glowRadius = 50;
       } else if (salt.key.includes('sodium') || salt.name.includes('Sodium')) {
-        flameColor = '#FACC15'; // Golden yellow
+        flameColor = '#FACC15'; // Intense golden yellow
         flameOuter = '#EAB308';
+        glowRadius = 70;
       } else if (salt.key.includes('potassium') || salt.name.includes('Potassium')) {
-        flameColor = '#C084FC'; // Lilac
+        flameColor = '#C084FC'; // Delicate lilac / violet
         flameOuter = '#A855F7';
+        glowRadius = 52;
+      } else if (cation === 'Pb2+') {
+        flameColor = '#94A3B8'; // Dull grayish-blue
+        flameOuter = '#64748B';
+        glowRadius = 42;
       }
     }
 
     return `
-      <svg width="100" height="136" viewBox="0 0 100 136">
-        <!-- Bunsen Burner Chimney & Base -->
-        <rect x="42" y="80" width="16" height="36" fill="#64748B" stroke="#334155" stroke-width="1"/>
-        <ellipse cx="50" cy="116" rx="32" ry="7" fill="#334155"/>
-        <ellipse cx="50" cy="80" rx="8" ry="2.5" fill="#475569"/>
+      <svg width="${width}" height="${height}" viewBox="0 0 180 200" style="max-width:100%; height:auto; display:block; filter:drop-shadow(0 4px 12px rgba(0,0,0,0.4));">
+        <defs>
+          <radialGradient id="flameGlow_${tubeId}" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="${flameColor}" stop-opacity="0.85"/>
+            <stop offset="60%" stop-color="${flameOuter}" stop-opacity="0.4"/>
+            <stop offset="100%" stop-color="${flameOuter}" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
 
-        <!-- Flame -->
-        <g class="anim-flame">
-          <path d="M 40,80 C 35,50 42,24 50,24 C 58,24 65,50 60,80 Z" fill="${flameOuter}" opacity="0.8"/>
-          <path d="M 44,80 C 42,60 46,40 50,40 C 54,40 58,60 56,80 Z" fill="${flameColor}" opacity="0.95"/>
+        <!-- Bunsen Burner Cast-Iron Base & Chimney -->
+        <g transform="translate(54, 80)">
+          <!-- Base -->
+          <ellipse cx="36" cy="106" rx="42" ry="9" fill="#1E293B" stroke="#0F172A" stroke-width="1.5"/>
+          <rect x="30" y="96" width="12" height="10" fill="#334155"/>
+          <!-- Chimney Barrel -->
+          <rect x="29" y="30" width="14" height="66" fill="#64748B" stroke="#334155" stroke-width="1"/>
+          <!-- Air Intake Collar -->
+          <rect x="27" y="66" width="18" height="12" rx="2" fill="#475569" stroke="#1E293B" stroke-width="0.8"/>
+          <circle cx="36" cy="72" r="3.2" fill="#0F172A"/>
+          <ellipse cx="36" cy="30" rx="7" ry="2.5" fill="#475569"/>
+          <!-- Rubber Gas Hose -->
+          <path d="M 42,102 Q 65,98 84,108" fill="none" stroke="#D97706" stroke-width="4.5" stroke-linecap="round"/>
         </g>
 
-        <!-- Nichrome Wire with Loop -->
-        <g transform="${performed ? 'translate(0, 0)' : 'translate(20, -15)'}">
-          <line x1="12" y1="12" x2="48" y2="48" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
-          <circle cx="50" cy="50" r="3.5" fill="none" stroke="${performed ? flameColor : '#CBD5E1'}" stroke-width="2"/>
+        <!-- Radiant Emission Glow Halo -->
+        ${performed ? `
+          <circle cx="90" cy="80" r="${glowRadius}" fill="url(#flameGlow_${tubeId})" opacity="0.85"/>
+        ` : ''}
+
+        <!-- Dynamic Combustion Flame -->
+        <g class="anim-flame" transform="translate(0, 0)">
+          <!-- Outer Flame Cone -->
+          <path d="M 80,110 C 72,70 82,34 90,34 C 98,34 108,70 100,110 Z" fill="${flameOuter}" opacity="0.85"/>
+          <!-- Inner Hot Cone -->
+          <path d="M 84,110 C 81,84 87,55 90,55 C 93,55 99,84 96,110 Z" fill="${flameColor}" opacity="0.95"/>
+        </g>
+
+        <!-- Nichrome Wire with Platinum Loop Assembly -->
+        <g transform="${performed ? 'translate(0, 0)' : 'translate(36, -24)'}" style="transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);">
+          <!-- Glass Rod Handle & Metallic Chuck -->
+          <line x1="18" y1="18" x2="68" y2="68" stroke="#475569" stroke-width="4.5" stroke-linecap="round"/>
+          <line x1="18" y1="18" x2="68" y2="68" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round"/>
+          <!-- Nichrome Wire -->
+          <line x1="68" y1="68" x2="86" y2="86" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
+          <!-- High-Temp Loop positioned in hot zone -->
+          <circle cx="89" cy="89" r="4.5" fill="none" stroke="${performed ? '#FFFFFF' : '#CBD5E1'}" stroke-width="2.2"/>
+          ${performed ? `
+            <!-- Incandescent White-Hot Salt Emission at Loop -->
+            <circle cx="89" cy="89" r="3" fill="#FFFFFF" opacity="0.95"/>
+          ` : ''}
         </g>
       </svg>
     `;

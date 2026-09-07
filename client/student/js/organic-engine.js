@@ -517,9 +517,20 @@
   }
 
   function getOrganicVisual(test, st) {
-    const performed = st && st.performed;
-    const sample = SAMPLES[currentSampleKey] || SAMPLES['org_alcohol'];
+    const performed = Boolean(st && st.performed);
     const testKey = test.key;
+
+    if (window.OrganicBenchCore && typeof window.OrganicBenchCore.renderApparatusSvg === 'function') {
+      return window.OrganicBenchCore.renderApparatusSvg({
+        testId: testKey,
+        sampleKey: currentSampleKey,
+        performed,
+        prompt: test.name || test.title || test.desc || '',
+        tubeId: `org_stand_${testKey}`
+      });
+    }
+
+    const sample = SAMPLES[currentSampleKey] || SAMPLES['org_alcohol'];
     const defs = getGlassDefs(testKey);
 
     // 1. SOLUBILITY & MISCIBILITY TEST

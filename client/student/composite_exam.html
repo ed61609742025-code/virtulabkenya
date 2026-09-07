@@ -1664,6 +1664,221 @@
     mountQuestionPanes(questions);
   }
 
+  // ── Client-Side Resilient Auto-Save & Draft Restoration Engine ──
+  function getExamSessionKey() {
+    return assignmentId ? `assign_${assignmentId}` : `${seriesParam}_${modeParam}`;
+  }
+
+  function saveExamDraft(immediate = false) {
+    if (!window.ExamDraftManager) return;
+    try {
+      // Gather Q1 Table Data
+      const tableData = [];
+      [1, 2, 3].forEach(n => {
+        const fin = document.getElementById(`t${n}Final`);
+        const init = document.getElementById(`t${n}Init`);
+        const used = document.getElementById(`t${n}Used`);
+        const conc = document.getElementById(`t${n}Concordant`);
+        tableData.push({
+          final: fin ? fin.value : '',
+          initial: init ? init.value : '',
+          used: used ? used.textContent : '',
+          concordant: conc ? conc.checked : false
+        });
+      });
+
+      // Gather Dynamic Calculation Inputs
+      const calcAnswers = {};
+      document.querySelectorAll('.dynamic-calc-input').forEach(input => {
+        if (input.id && input.value !== '') {
+          calcAnswers[input.id] = input.value;
+        }
+      });
+
+      // Gather Written Question Responses
+      const writtenAnswers = {};
+      document.querySelectorAll('textarea[id^="written_input_"]').forEach(el => {
+        if (el.value) writtenAnswers[el.id] = el.value;
+      });
+
+      const draftPayload = {
+        assignmentId: assignmentId || null,
+        seriesParam,
+        modeParam,
+        activeTab: (typeof activeTab !== 'undefined') ? activeTab : 1,
+        activeProcedureIndex: (typeof activeProcedureIndex !== 'undefined') ? activeProcedureIndex : 0,
+        tableData,
+        calcAnswers,
+        writtenAnswers,
+        q1Trials: engine?.q1Trials || [],
+        q1Answers: engine?.q1Answers || {},
+        procedureTrials: engine?.procedureTrials || {},
+        procedureAnswers: engine?.procedureAnswers || {},
+        q2Obs: engine?.q2Obs || {},
+        q2Inf: engine?.q2Inf || {},
+        q2CationChoice: engine?.q2CationChoice || '',
+        q2AnionChoice: engine?.q2AnionChoice || '',
+        q2TestStates: (typeof q2TestStates !== 'undefined') ? q2TestStates : {},
+        q3Obs: engine?.q3Obs || {},
+        q3Inf: engine?.q3Inf || {},
+        q3FunctionalGroupChoice: engine?.q3FunctionalGroupChoice || '',
+        q3TestStates: (typeof q3TestStates !== 'undefined') ? q3TestStates : {},
+        timeLeft: (typeof timeLeft !== 'undefined') ? timeLeft : 135 * 60,
+        savedAt: Date.now()
+      };
+
+      ExamDraftManager.saveDraft(getExamSessionKey(), draftPayload, immediate);
+    } catch (err) {
+      console.warn('[ExamOfflineManager] Error saving exam draft:', err);
+    }
+  }
+
+  function triggerDraftAutoSave(immediate = false) {
+    saveExamDraft(immediate);
+  }
+
+  function checkAndRestoreDraft() {
+    if (!window.ExamDraftManager) return;
+    try {
+      const sessionKey = getExamSessionKey();
+      const draftWrapper = ExamDraftManager.loadDraft(sessionKey);
+      if (!draftWrapper || !draftWrapper.data) return;
+
+      const d = draftWrapper.data;
+
+      // 1. Restore Q1 Table Data & Trials
+      if (Array.isArray(d.tableData)) {
+        d.tableData.forEach((t, idx) => {
+          const n = idx + 1;
+          const fin = document.getElementById(`t${n}Final`);
+          const init = document.getElementById(`t${n}Init`);
+          const used = document.getElementById(`t${n}Used`);
+          const conc = document.getElementById(`t${n}Concordant`);
+          if (fin && t.final !== undefined && t.final !== '') fin.value = t.final;
+          if (init && t.initial !== undefined && t.initial !== '') init.value = t.initial;
+          if (used && t.used !== undefined && t.used !== '') used.textContent = t.used;
+          if (conc && t.concordant !== undefined) conc.checked = Boolean(t.concordant);
+          if (t.final && !isNaN(parseFloat(t.final))) {
+            engine.recordTrial(n, parseFloat(t.final) || 0, parseFloat(t.initial) || 0, d.activeProcedureIndex || 0);
+            if (t.concordant) {
+              engine.setConcordant(n, true, d.activeProcedureIndex || 0);
+            }
+          }
+        });
+      }
+
+      if (Array.isArray(d.q1Trials) && d.q1Trials.length > 0) {
+        engine.q1Trials = d.q1Trials;
+      }
+      if (d.procedureTrials) engine.procedureTrials = d.procedureTrials;
+      if (d.procedureAnswers) engine.procedureAnswers = d.procedureAnswers;
+
+      // 2. Restore Q1 Calculation Inputs
+      if (d.q1Answers && typeof d.q1Answers === 'object') {
+        engine.q1Answers = { ...engine.q1Answers, ...d.q1Answers };
+      }
+      if (d.calcAnswers && typeof d.calcAnswers === 'object') {
+        Object.keys(d.calcAnswers).forEach(id => {
+          const el = document.getElementById(id);
+          if (el && d.calcAnswers[id] !== undefined) el.value = d.calcAnswers[id];
+        });
+      }
+      if (d.q1Answers) {
+        Object.keys(d.q1Answers).forEach(field => {
+          const val = d.q1Answers[field];
+          const el = document.getElementById(`ans_${field}`) || document.getElementById(`q1StepInput_${field}`) || document.getElementById(field === 'avgTitre' ? 'ansAvgTitre' : (field === 'molesB' ? 'ansMolesB' : (field === 'molesA' ? 'ansMolesA' : (field === 'molarityA' ? 'ansMolarityA' : (field === 'concGrams' ? 'ansConcGrams' : `ans_${field}`)))));
+          if (el && val !== undefined && val !== '') el.value = val;
+        });
+      }
+
+      // 3. Restore Q2 Qualitative State
+      if (d.q2Obs && typeof d.q2Obs === 'object') {
+        engine.q2Obs = { ...engine.q2Obs, ...d.q2Obs };
+        Object.keys(d.q2Obs).forEach(testId => {
+          const el = document.getElementById(`q2Obs_${testId}`);
+          if (el && d.q2Obs[testId]) el.value = d.q2Obs[testId];
+        });
+      }
+      if (d.q2Inf && typeof d.q2Inf === 'object') {
+        engine.q2Inf = { ...engine.q2Inf, ...d.q2Inf };
+        Object.keys(d.q2Inf).forEach(testId => {
+          const el = document.getElementById(`q2Inf_${testId}`);
+          if (el && d.q2Inf[testId]) el.value = d.q2Inf[testId];
+        });
+      }
+      if (d.q2CationChoice) {
+        engine.q2CationChoice = d.q2CationChoice;
+        const cat = document.getElementById('q2CationSelect');
+        if (cat) cat.value = d.q2CationChoice;
+      }
+      if (d.q2AnionChoice) {
+        engine.q2AnionChoice = d.q2AnionChoice;
+        const ani = document.getElementById('q2AnionSelect');
+        if (ani) ani.value = d.q2AnionChoice;
+      }
+      if (d.q2TestStates && typeof d.q2TestStates === 'object') {
+        q2TestStates = { ...q2TestStates, ...d.q2TestStates };
+        renderQ2TestsGrid();
+      }
+
+      // 4. Restore Q3 Qualitative/Organic State
+      if (d.q3Obs && typeof d.q3Obs === 'object') {
+        engine.q3Obs = { ...engine.q3Obs, ...d.q3Obs };
+        Object.keys(d.q3Obs).forEach(testId => {
+          const el = document.getElementById(`q3Obs_${testId}`);
+          if (el && d.q3Obs[testId]) el.value = d.q3Obs[testId];
+        });
+      }
+      if (d.q3Inf && typeof d.q3Inf === 'object') {
+        engine.q3Inf = { ...engine.q3Inf, ...d.q3Inf };
+        Object.keys(d.q3Inf).forEach(testId => {
+          const el = document.getElementById(`q3Inf_${testId}`);
+          if (el && d.q3Inf[testId]) el.value = d.q3Inf[testId];
+        });
+      }
+      if (d.q3FunctionalGroupChoice) {
+        engine.q3FunctionalGroupChoice = d.q3FunctionalGroupChoice;
+        const fg = document.getElementById('q3FGSelect');
+        if (fg) fg.value = d.q3FunctionalGroupChoice;
+      }
+      if (d.q3TestStates && typeof d.q3TestStates === 'object') {
+        q3TestStates = { ...q3TestStates, ...d.q3TestStates };
+        renderQ3TestsGrid();
+      }
+
+      // 5. Restore Written Question Textareas
+      if (d.writtenAnswers && typeof d.writtenAnswers === 'object') {
+        Object.keys(d.writtenAnswers).forEach(id => {
+          const el = document.getElementById(id);
+          if (el && d.writtenAnswers[id]) el.value = d.writtenAnswers[id];
+        });
+      }
+
+      // 6. Restore Active Tab & Procedure
+      if (typeof d.activeProcedureIndex === 'number' && d.activeProcedureIndex > 0) {
+        switchTitrationProcedure(d.activeProcedureIndex);
+      }
+      if (typeof d.activeTab === 'number' && d.activeTab > 1) {
+        switchQTab(d.activeTab);
+      }
+
+      // 7. Restore Remaining Time if valid
+      if (typeof d.timeLeft === 'number' && d.timeLeft > 10 && d.timeLeft < 135 * 60) {
+        timeLeft = d.timeLeft;
+      }
+
+      updateLiveScoreDisplay();
+      ExamDraftManager.notifyStatus('saved', draftWrapper.savedAt);
+      console.log('[ExamOfflineManager] Candidate draft restored successfully for', sessionKey);
+    } catch (err) {
+      console.warn('[ExamOfflineManager] Could not restore draft:', err);
+    }
+  }
+
+  window.saveExamDraft = saveExamDraft;
+  window.triggerDraftAutoSave = triggerDraftAutoSave;
+  window.checkAndRestoreDraft = checkAndRestoreDraft;
+
   function initExamUI() {
     const p = engine.preset;
     const setElemText = (id, text) => {
@@ -1831,6 +2046,7 @@
 
                 // Universal Exam Simulator Router for custom assigned exam
                 setupUniversalExamRouter(cfg);
+                setTimeout(() => { checkAndRestoreDraft(); }, 100);
               } catch (cfgErr) {
                 console.warn('[Composite Exam] Could not hydrate assignment exam_config:', cfgErr);
               }
@@ -2476,6 +2692,7 @@
       engine.setQ1Answer(`step_${activeProcedureIndex + 1}a`, avg, activeProcedureIndex);
     }
     updateLiveScoreDisplay();
+    saveExamDraft();
   }
 
   function onConcordantChanged() {
@@ -2484,6 +2701,7 @@
       engine.setConcordant(n, cb ? cb.checked : false, activeProcedureIndex);
     });
     updateLiveScoreDisplay();
+    saveExamDraft();
   }
 
   function getQ1CalculationQuestions() {
@@ -2574,6 +2792,7 @@
       engine.setQ1Answer(`step_${pIdx + 1}a`, value, pIdx);
     }
     updateLiveScoreDisplay();
+    saveExamDraft();
   }
 
   function checkDynamicQ1Step(stepId) {
@@ -2652,6 +2871,7 @@
       if (field) engine.setQ1Answer(field, input.value);
     });
     updateLiveScoreDisplay();
+    saveExamDraft();
   }
 
   // ── Render Q2 Question Cards with Realistic SVG Test Tubes ───────────
@@ -2954,11 +3174,13 @@
 
     renderQ2TestsGrid();
     updateLiveScoreDisplay();
+    saveExamDraft(true);
   }
 
   function redoQ2Test(testId) {
     q2TestStates[testId] = { performed: false, stage: 'idle' };
     renderQ2TestsGrid();
+    saveExamDraft(true);
   }
 
   function onQ2TextChange(testId) {
@@ -2966,6 +3188,7 @@
     const inf = document.getElementById(`q2Inf_${testId}`)?.value || '';
     engine.setQ2Response(testId, obs, inf);
     updateLiveScoreDisplay();
+    saveExamDraft();
   }
 
   function onQ2DeductionsChanged() {
@@ -2973,6 +3196,7 @@
     const ani = document.getElementById('q2AnionSelect')?.value || '';
     engine.setQ2Deduction(cat, ani);
     updateLiveScoreDisplay();
+    saveExamDraft();
   }
 
   // ── Render Q3 Question Cards with Organic Quick-Palette ──────────────
@@ -3296,6 +3520,7 @@
       }
       renderQ3TestsGrid();
       updateLiveScoreDisplay();
+      saveExamDraft(true);
       return;
     }
 
@@ -3346,11 +3571,13 @@
 
     renderQ3TestsGrid();
     updateLiveScoreDisplay();
+    saveExamDraft(true);
   }
 
   function redoQ3Test(testId) {
     q3TestStates[testId] = { performed: false, stage: 'idle' };
     renderQ3TestsGrid();
+    saveExamDraft(true);
   }
 
   function onQ3TextChange(testId) {
@@ -3358,12 +3585,14 @@
     const inf = document.getElementById(`q3Inf_${testId}`)?.value || '';
     engine.setQ3Response(testId, obs, inf);
     updateLiveScoreDisplay();
+    saveExamDraft();
   }
 
   function onQ3DeductionChanged() {
     const fg = document.getElementById('q3FGSelect')?.value || '';
     engine.setQ3Deduction(fg);
     updateLiveScoreDisplay();
+    saveExamDraft();
   }
 
   function insertToken(targetId, token) {
@@ -3426,6 +3655,7 @@
         nextBtn.className = 'btn-submit-exam';
       }
     }
+    saveExamDraft();
   }
 
   function switchReportTab(tab) {
@@ -3492,6 +3722,9 @@
         timerEl.style.color = 'var(--red-accent)';
         timerEl.style.borderColor = 'var(--red-border)';
       }
+    }
+    if (timeLeft > 0 && timeLeft % 30 === 0) {
+      saveExamDraft();
     }
   }, 1000);
 
@@ -3647,6 +3880,14 @@
     } catch(e) {
       console.warn('Could not post composite exam to server:', e);
       localStorage.setItem('vlk_last_composite_session', JSON.stringify(payload));
+    }
+
+    try {
+      if (window.ExamDraftManager) {
+        ExamDraftManager.clearDraft(getExamSessionKey());
+      }
+    } catch (clearErr) {
+      console.warn('Could not clear exam draft on submission:', clearErr);
     }
   }
 

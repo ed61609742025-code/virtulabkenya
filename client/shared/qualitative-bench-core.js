@@ -680,7 +680,7 @@
     if (performed && r.isBrownRing) {
       const isStep2 = stage === 'step2_h2so4' || stage === 'excess' || stage === 'done';
       return `
-        <svg width="160" height="215" viewBox="0 0 160 215" style="max-width:100%; height:auto; display:block; filter:drop-shadow(0 4px 10px rgba(0,0,0,0.35));">
+        <svg width="160" height="230" viewBox="0 0 160 230" style="max-width:100%; height:auto; display:block; filter:drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
           <defs>
             <linearGradient id="h2so4Grad_${tubeId}" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stop-color="rgba(241, 245, 249, 0.7)"/>
@@ -703,11 +703,12 @@
           <g transform="translate(0, 68)">
             <path d="M 4,0 L 57,0 L 57,14 L 4,14 Z" fill="url(#woodGrad_${tubeId})" stroke="#3A1700" stroke-width="1"/>
             <path d="M 103,0 L 156,0 L 156,14 L 103,14 Z" fill="url(#woodGrad_${tubeId})" stroke="#3A1700" stroke-width="1"/>
-            <rect x="54" y="-1" width="3" height="16" fill="#D97706" opacity="0.9"/>
-            <rect x="103" y="-1" width="3" height="16" fill="#D97706" opacity="0.9"/>
-            <circle cx="20" cy="7" r="3.5" fill="#94A3B8" stroke="#475569" stroke-width="0.8"/>
-            <circle cx="140" cy="7" r="3.5" fill="#94A3B8" stroke="#475569" stroke-width="0.8"/>
-            <polygon points="14,0 26,0 22,5 18,5" fill="#F59E0B" stroke="#B45309" stroke-width="0.6"/>
+            <rect x="54" y="-1" width="3" height="16" rx="0.5" fill="#D97706" stroke="#92400E" stroke-width="0.5" opacity="0.95"/>
+            <rect x="103" y="-1" width="3" height="16" rx="0.5" fill="#D97706" stroke="#92400E" stroke-width="0.5" opacity="0.95"/>
+            <circle cx="20" cy="7" r="3.5" fill="#94A3B8" stroke="#334155" stroke-width="0.8"/>
+            <circle cx="20" cy="7" r="1.5" fill="#475569"/>
+            <circle cx="140" cy="7" r="3.5" fill="#94A3B8" stroke="#334155" stroke-width="0.8"/>
+            <circle cx="140" cy="7" r="1.5" fill="#475569"/>
           </g>
 
           <!-- Glass Test Tube Body & Lip -->
@@ -755,7 +756,7 @@
     if (performed && r.isKI && r.isLead) {
       const topY = isExcess ? 92 : 138;
       return `
-        <svg width="160" height="215" viewBox="0 0 160 215" style="max-width:100%; height:auto; display:block; filter:drop-shadow(0 4px 10px rgba(0,0,0,0.35));">
+        <svg width="160" height="230" viewBox="0 0 160 230" style="max-width:100%; height:auto; display:block; filter:drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
           <defs>
             <linearGradient id="woodGrad_${tubeId}" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stop-color="#9A3412"/>
@@ -773,10 +774,12 @@
           <g transform="translate(0, 68)">
             <path d="M 4,0 L 57,0 L 57,14 L 4,14 Z" fill="url(#woodGrad_${tubeId})" stroke="#3A1700" stroke-width="1"/>
             <path d="M 103,0 L 156,0 L 156,14 L 103,14 Z" fill="url(#woodGrad_${tubeId})" stroke="#3A1700" stroke-width="1"/>
-            <rect x="54" y="-1" width="3" height="16" fill="#D97706" opacity="0.9"/>
-            <rect x="103" y="-1" width="3" height="16" fill="#D97706" opacity="0.9"/>
-            <circle cx="20" cy="7" r="3.5" fill="#94A3B8" stroke="#475569" stroke-width="0.8"/>
-            <circle cx="140" cy="7" r="3.5" fill="#94A3B8" stroke="#475569" stroke-width="0.8"/>
+            <rect x="54" y="-1" width="3" height="16" rx="0.5" fill="#D97706" stroke="#92400E" stroke-width="0.5" opacity="0.95"/>
+            <rect x="103" y="-1" width="3" height="16" rx="0.5" fill="#D97706" stroke="#92400E" stroke-width="0.5" opacity="0.95"/>
+            <circle cx="20" cy="7" r="3.5" fill="#94A3B8" stroke="#334155" stroke-width="0.8"/>
+            <circle cx="20" cy="7" r="1.5" fill="#475569"/>
+            <circle cx="140" cy="7" r="3.5" fill="#94A3B8" stroke="#334155" stroke-width="0.8"/>
+            <circle cx="140" cy="7" r="1.5" fill="#475569"/>
           </g>
 
           <!-- Glass Body & Lip -->
@@ -787,14 +790,17 @@
           <path class="${isExcess ? 'anim-liquid-rise' : ''}" d="M 58,${topY} L 58,186 Q 58,206 80,206 Q 102,206 102,186 L 102,${topY} Z" fill="${r.liquidColor}"/>
           <ellipse cx="80" cy="${topY}" rx="21.5" ry="4.5" fill="${r.liquidColor}" class="anim-meniscus-ripple"/>
 
-          <!-- Precision Dropper Pipette (when few drops) -->
+          <!-- Precision Dropper Pipette (when few drops) Centered directly over Mouth -->
           ${isStep1 ? `
-            <g class="anim-dropper" opacity="1" transform="translate(42, 0)">
-              <path class="anim-dropper-bulb" d="M 32,2 L 44,2 L 42,14 L 34,14 Z" fill="#EF4444" rx="2"/>
-              <rect x="36.5" y="14" width="3.5" height="14" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
-              <path d="M 36.5,28 L 40,28 L 38.2,34 Z" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
+            <g class="anim-dropper" opacity="1">
+              <path class="anim-dropper-bulb" d="M 74,2 C 71.5,2 71.5,6 73.5,9.5 L 75.5,14 L 84.5,14 L 86.5,9.5 C 88.5,6 88.5,2 86,2 Z" fill="#EF4444"/>
+              <rect x="75" y="13.5" width="10" height="1.8" rx="0.9" fill="#CBD5E1" stroke="#94A3B8" stroke-width="0.5"/>
+              <rect x="78" y="15" width="4" height="13" rx="0.5" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
+              <rect x="78.8" y="19" width="2.4" height="9" fill="#FACC15" opacity="0.85"/>
+              <path d="M 78,28 L 82,28 L 80.8,34 L 79.2,34 Z" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
+              <path d="M 78.6,28 L 81.4,28 L 80.6,33.5 L 79.4,33.5 Z" fill="#FACC15" opacity="0.9"/>
             </g>
-            <ellipse cx="80" cy="38" rx="2.5" ry="3.5" fill="#FACC15" class="anim-droplet"/>
+            <path d="M 80,35 C 77.5,40 76.5,45 80,49 C 83.5,45 82.5,40 80,35 Z" fill="#FACC15" class="anim-droplet"/>
           ` : ''}
 
           <!-- Convection Heat Waves when warmed -->
@@ -808,12 +814,11 @@
           <!-- PbI2 Golden Precipitate Bed -->
           ${r.ppt ? `
             <g class="anim-ppt-form">
-              <path d="M 58,180 Q 58,206 80,206 Q 102,206 102,180 Q 80,185 58,180 Z" fill="url(#pbi2Glow_${tubeId})" opacity="0.95"/>
-              <circle cx="68" cy="192" r="3.8" fill="#FACC15"/>
-              <circle cx="88" cy="194" r="4.2" fill="#CA8A04"/>
-              <circle cx="78" cy="186" r="3.2" fill="#FEF08A"/>
-              <circle cx="74" cy="198" r="3.5" fill="#FACC15"/>
-              <circle cx="84" cy="200" r="3.4" fill="#EAB308"/>
+              <path d="M 58,178 C 64,174 70,180 76,175 C 82,172 88,178 94,174 C 98,177 102,175 102,178 Q 102,206 80,206 Q 58,206 58,178 Z" fill="url(#pbi2Glow_${tubeId})" opacity="0.95"/>
+              <path d="M 58,185 C 65,182 74,186 82,183 C 90,186 97,182 102,185 Q 102,206 80,206 Q 58,206 58,185 Z" fill="#CA8A04" opacity="0.75"/>
+              <ellipse cx="68" cy="180" rx="3.5" ry="2.2" fill="#FACC15" opacity="0.9"/>
+              <ellipse cx="80" cy="177" rx="4" ry="2.5" fill="#FEF08A" opacity="0.95"/>
+              <ellipse cx="92" cy="179" rx="3.8" ry="2.3" fill="#EAB308" opacity="0.9"/>
             </g>
           ` : ''}
 
@@ -844,9 +849,10 @@
     const isPptDissolved = performed && r.pptDissolved;
     const isDeepBlue = performed && r.complexDeepBlue;
     const topY = isExcess ? 88 : (performed ? 138 : 160);
+    const dropletColor = isPpt ? (r.pptColor || '#E2E8F0') : (r.liquidColor && r.liquidColor.startsWith('#') ? r.liquidColor : '#38BDF8');
 
     return `
-      <svg width="160" height="215" viewBox="0 0 160 215" style="max-width:100%; height:auto; display:block; filter:drop-shadow(0 4px 10px rgba(0,0,0,0.35));">
+      <svg width="160" height="230" viewBox="0 0 160 230" style="max-width:100%; height:auto; display:block; filter:drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
         <defs>
           <radialGradient id="liquidGlow_${tubeId}" cx="45%" cy="40%" r="60%">
             <stop offset="0%" stop-color="${isDeepBlue ? '#2563EB' : r.liquidColor}" stop-opacity="${isDeepBlue ? '1' : '0.95'}"/>
@@ -864,33 +870,37 @@
             <stop offset="40%" stop-color="#78350F"/>
             <stop offset="100%" stop-color="#451A03"/>
           </linearGradient>
-          <radialGradient id="flocGrad_${tubeId}" cx="50%" cy="30%" r="70%">
-            <stop offset="0%" stop-color="${r.pptColor || '#FFFFFF'}" stop-opacity="0.95"/>
-            <stop offset="70%" stop-color="${r.pptColor || '#FFFFFF'}" stop-opacity="0.8"/>
-            <stop offset="100%" stop-color="${r.pptColor || '#FFFFFF'}" stop-opacity="0.3"/>
+          <radialGradient id="pptTurbidity_${tubeId}" cx="50%" cy="40%" r="50%">
+            <stop offset="0%" stop-color="${r.pptColor || '#FFFFFF'}" stop-opacity="0.6"/>
+            <stop offset="50%" stop-color="${r.pptColor || '#FFFFFF'}" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="${r.pptColor || '#FFFFFF'}" stop-opacity="0"/>
           </radialGradient>
         </defs>
 
         <!-- Precision Reagent Dropper Pipette (Centered over Mouth) -->
-        <g class="anim-dropper" opacity="${performed ? '1' : '0.5'}" transform="translate(42, 0)">
-          <path class="${performed ? 'anim-dropper-bulb' : ''}" d="M 32,2 L 44,2 L 42,15 L 34,15 Z" fill="#EF4444" rx="2"/>
-          <rect x="36.5" y="15" width="3.5" height="13" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
-          <path d="M 36.5,28 L 40,28 L 38.2,34 Z" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
+        <g class="anim-dropper" opacity="${performed ? '1' : '0.5'}">
+          <path class="${performed ? 'anim-dropper-bulb' : ''}" d="M 74,2 C 71.5,2 71.5,6 73.5,9.5 L 75.5,14 L 84.5,14 L 86.5,9.5 C 88.5,6 88.5,2 86,2 Z" fill="#EF4444"/>
+          <rect x="75" y="13.5" width="10" height="1.8" rx="0.9" fill="#CBD5E1" stroke="#94A3B8" stroke-width="0.5"/>
+          <rect x="78" y="15" width="4" height="13" rx="0.5" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
+          <rect x="78.8" y="19" width="2.4" height="9" fill="${dropletColor}" opacity="0.85"/>
+          <path d="M 78,28 L 82,28 L 80.8,34 L 79.2,34 Z" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
+          <path d="M 78.6,28 L 81.4,28 L 80.6,33.5 L 79.4,33.5 Z" fill="${dropletColor}" opacity="0.9"/>
         </g>
         ${performed ? `
           <!-- Fast Gravitational Falling Reagent Droplet -->
-          <path d="M 80,36 C 77.5,41 76.5,46 80,50 C 83.5,46 82.5,41 80,36 Z" fill="${isPpt ? (r.pptColor || '#E2E8F0') : (r.liquidColor && r.liquidColor.startsWith('#') ? r.liquidColor : '#38BDF8')}" class="anim-droplet"/>
+          <path d="M 80,35 C 77.5,40 76.5,45 80,49 C 83.5,45 82.5,40 80,35 Z" fill="${dropletColor}" class="anim-droplet"/>
         ` : ''}
 
-        <!-- Wooden Test Tube Clamp -->
+        <!-- Laboratory Test Tube Wooden Clamp with Cork Cushions & Dual Brass Rivets -->
         <g transform="translate(0, 68)">
           <path d="M 4,0 L 57,0 L 57,14 L 4,14 Z" fill="url(#woodGrad_${tubeId})" stroke="#3A1700" stroke-width="1"/>
           <path d="M 103,0 L 156,0 L 156,14 L 103,14 Z" fill="url(#woodGrad_${tubeId})" stroke="#3A1700" stroke-width="1"/>
-          <rect x="54" y="-1" width="3" height="16" fill="#D97706" opacity="0.9"/>
-          <rect x="103" y="-1" width="3" height="16" fill="#D97706" opacity="0.9"/>
-          <circle cx="20" cy="7" r="3.5" fill="#94A3B8" stroke="#475569" stroke-width="0.8"/>
-          <circle cx="140" cy="7" r="3.5" fill="#94A3B8" stroke="#475569" stroke-width="0.8"/>
-          <polygon points="14,0 26,0 22,5 18,5" fill="#F59E0B" stroke="#B45309" stroke-width="0.6"/>
+          <rect x="54" y="-1" width="3" height="16" rx="0.5" fill="#B45309" opacity="0.95"/>
+          <rect x="103" y="-1" width="3" height="16" rx="0.5" fill="#B45309" opacity="0.95"/>
+          <circle cx="20" cy="7" r="3.5" fill="#94A3B8" stroke="#334155" stroke-width="0.8"/>
+          <circle cx="20" cy="7" r="1.5" fill="#475569"/>
+          <circle cx="140" cy="7" r="3.5" fill="#94A3B8" stroke="#334155" stroke-width="0.8"/>
+          <circle cx="140" cy="7" r="1.5" fill="#475569"/>
         </g>
 
         <!-- Glass Test Tube Body & Lip -->
@@ -912,26 +922,23 @@
         <ellipse cx="80" cy="${topY}" rx="21.5" ry="4.5" fill="${isDeepBlue ? '#1D4ED8' : r.liquidColor}" opacity="${performed ? '0.98' : '0.5'}" class="${performed ? 'anim-meniscus-ripple' : ''}"/>
         <path d="M 58,${topY} Q 80,${topY + 3} 102,${topY}" fill="none" stroke="rgba(0,0,0,0.3)" stroke-width="1.2"/>
 
-        <!-- Descending Precipitate Bloom Plume -->
+        <!-- Soft Diffuse Turbidity Cloud (Reagent Dispersion) -->
         ${performed && isPpt && !r.bubbling ? `
-          <g class="anim-ppt-bloom" opacity="0.85">
-            <ellipse cx="80" cy="${topY + 18}" rx="8" ry="12" fill="url(#flocGrad_${tubeId})"/>
-            <ellipse cx="76" cy="${topY + 34}" rx="12" ry="16" fill="url(#flocGrad_${tubeId})" opacity="0.8"/>
-            <ellipse cx="84" cy="${topY + 50}" rx="15" ry="18" fill="url(#flocGrad_${tubeId})" opacity="0.75"/>
+          <g class="anim-ppt-bloom">
+            <ellipse cx="80" cy="${topY + 16}" rx="12" ry="14" fill="url(#pptTurbidity_${tubeId})"/>
+            <ellipse cx="80" cy="${topY + 34}" rx="16" ry="18" fill="url(#pptTurbidity_${tubeId})"/>
+            <ellipse cx="80" cy="${topY + 54}" rx="19" ry="20" fill="url(#pptTurbidity_${tubeId})"/>
           </g>
         ` : ''}
 
-        <!-- Precipitate Curd Mass at Base -->
+        <!-- Organic Precipitate Curd Mass at Base -->
         ${performed && isPpt && !r.bubbling ? `
           <g class="anim-ppt-form">
-            <path d="M 58,182 Q 58,206 80,206 Q 102,206 102,182 Q 80,187 58,182 Z" fill="${r.pptColor}" opacity="0.95" filter="brightness(0.92)"/>
-            <ellipse cx="80" cy="184" rx="21" ry="6" fill="${r.pptColor}" opacity="0.95"/>
-            <circle cx="68" cy="180" r="4.2" fill="${r.pptColor}" filter="brightness(1.15)"/>
-            <circle cx="88" cy="182" r="4.8" fill="${r.pptColor}" filter="brightness(0.85)"/>
-            <circle cx="78" cy="176" r="3.8" fill="${r.pptColor}" filter="brightness(1.1)"/>
-            <circle cx="73" cy="192" r="4.2" fill="${r.pptColor}" filter="brightness(0.9)"/>
-            <circle cx="87" cy="193" r="3.9" fill="${r.pptColor}" filter="brightness(1.05)"/>
-            <circle cx="80" cy="198" r="4.5" fill="${r.pptColor}" filter="brightness(0.8)"/>
+            <path d="M 58,176 C 64,172 70,178 76,173 C 82,170 88,176 94,172 C 98,175 102,173 102,176 Q 102,206 80,206 Q 58,206 58,176 Z" fill="${r.pptColor}" opacity="0.95"/>
+            <path d="M 58,184 C 65,181 74,185 82,182 C 90,185 97,181 102,184 Q 102,206 80,206 Q 58,206 58,184 Z" fill="${r.pptColor}" opacity="0.8" filter="brightness(0.9)"/>
+            <ellipse cx="68" cy="177" rx="3.8" ry="2" fill="${r.pptColor}" opacity="0.92" filter="brightness(1.1)"/>
+            <ellipse cx="80" cy="174" rx="4.5" ry="2.2" fill="${r.pptColor}" opacity="0.96" filter="brightness(1.15)"/>
+            <ellipse cx="91" cy="176" rx="3.5" ry="1.9" fill="${r.pptColor}" opacity="0.9" filter="brightness(1.05)"/>
           </g>
         ` : ''}
 
@@ -939,8 +946,6 @@
         ${performed && isPptDissolved ? `
           <g class="anim-ppt-dissolve">
             <ellipse cx="80" cy="184" rx="16" ry="6" fill="#E2E8F0" opacity="0.3"/>
-            <circle cx="74" cy="182" r="3" fill="#E2E8F0" opacity="0.3"/>
-            <circle cx="86" cy="183" r="3" fill="#E2E8F0" opacity="0.3"/>
             <path d="M 68,130 Q 80,124 92,130" stroke="rgba(255,255,255,0.4)" stroke-width="1.2" fill="none"/>
             <path d="M 66,152 Q 80,146 94,152" stroke="rgba(255,255,255,0.35)" stroke-width="1.2" fill="none"/>
           </g>
@@ -1633,6 +1638,7 @@
     resolveSalt,
     resolveReactionState,
     renderTubeSvg,
+    renderTestTubeApparatusSvg: renderTubeSvg,
     renderWatchGlassSvg,
     renderWatchGlassApparatusSvg,
     renderDryHeatingApparatusSvg,

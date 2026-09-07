@@ -3141,10 +3141,12 @@
 
     const performed = st && st.performed;
     return `
-      <svg width="86" height="136" viewBox="0 0 86 136">
-        <rect x="23" y="32" width="40" height="4" rx="2" fill="rgba(255,255,255,0.18)" stroke="#94A3B8" stroke-width="1.2"/>
-        <path d="M 26,36 L 26,112 Q 26,130 43,130 Q 60,130 60,112 L 60,36 Z" fill="rgba(255,255,255,0.05)" stroke="#94A3B8" stroke-width="1.5"/>
-        ${performed ? `<path d="M 27,76 L 27,112 Q 27,128 43,128 Q 59,128 59,112 L 59,76 Z" fill="rgba(56, 189, 248, 0.4)"/>` : ''}
+      <svg width="160" height="230" viewBox="0 0 160 230" style="max-width:100%; height:auto; display:block; filter:drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
+        <rect x="53" y="27" width="54" height="5" rx="2.5" fill="rgba(255,255,255,0.3)" stroke="#94A3B8" stroke-width="1.2"/>
+        <path d="M 57,32 L 57,186 Q 57,208 80,208 Q 103,208 103,186 L 103,32 Z" fill="rgba(255,255,255,0.05)" stroke="#94A3B8" stroke-width="1.6"/>
+        ${performed ? `<path d="M 58,138 L 58,186 Q 58,206 80,206 Q 102,206 102,186 L 102,138 Z" fill="rgba(56, 189, 248, 0.4)"/>` : ''}
+        <line x1="62" y1="36" x2="62" y2="186" stroke="#FFFFFF" stroke-width="1.8" opacity="0.32" stroke-linecap="round"/>
+        <line x1="98" y1="36" x2="98" y2="186" stroke="#FFFFFF" stroke-width="1.2" opacity="0.18" stroke-linecap="round"/>
       </svg>
     `;
   }

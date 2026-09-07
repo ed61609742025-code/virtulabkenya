@@ -2090,7 +2090,7 @@ html, body {
 
 /* Dropper stays stable over mouth without jumping */
 .anim-dropper {
-  transform: translate(1px, 0);
+  transform-origin: 80px 14px;
 }
 
 /* Rubber teat squeezes smoothly to dispense */
@@ -2102,6 +2102,8 @@ html, body {
 
 /* Fast gravitational drop: 0.36s */
 .anim-droplet {
+  transform-box: fill-box;
+  transform-origin: center center;
   animation: dropletFallIntoTube 0.36s cubic-bezier(0.5, 0.05, 0.8, 0.3) forwards;
 }
 

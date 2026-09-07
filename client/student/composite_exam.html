@@ -996,11 +996,16 @@
       <span class="timer-chip" style="font-size:0.78rem;padding:3px 10px;background:var(--amber-bg);color:var(--amber-accent);border:1px solid var(--amber-border);">15.0 MARKS</span>
     </div>
 
-    <div class="exam-prompt-box">
-      <b>You are provided with:</b><br>
-      • <b id="q2SampleName">Solid Y</b>: <span id="q2SampleDescText">An inorganic salt sample.</span><br>
-      • Standard Bench Reagents: Distilled water, 2M Aqueous Sodium Hydroxide (NaOH), 2M Aqueous Ammonia (NH₃), Dilute Nitric Acid (HNO₃), Barium Nitrate Solution Ba(NO₃)₂, and Potassium Iodide (KI) / Silver Nitrate (AgNO₃) solution.<br><br>
-      <b>Instructions:</b> Carry out the systematic tests below on the provided sample and record your observations and inferences in the spaces provided.
+    <div class="exam-prompt-box" style="display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+      <div id="q2WatchglassContainer" style="display:flex; flex-direction:column; align-items:center; flex-shrink:0;" title="Watch glass holding solid sample">
+      </div>
+      <div style="flex:1; min-width:260px;">
+        <b>You are provided with:</b><br>
+        • <b id="q2SampleName">Solid Y</b>: <span id="q2SampleDescText">An inorganic salt sample.</span><br>
+        • <b>Physical Appearance:</b> <span id="q2SampleAppearanceText" style="color:var(--cyan-accent); font-weight:700;">White crystalline solid</span><br>
+        • <b>Reagents Available:</b> Distilled water, 2M Aqueous Sodium Hydroxide (NaOH), 2M Aqueous Ammonia (NH₃), Dilute Nitric Acid (HNO₃), Barium Nitrate Solution Ba(NO₃)₂, and Potassium Iodide (KI) / Silver Nitrate (AgNO₃) solution.<br><br>
+        <b>Instructions:</b> Observe the solid on the watch glass, dissolve in distilled water in a boiling tube, divide into portions, carry out the systematic tests below, and record your observations and inferences.
+      </div>
     </div>
 
     <!-- Test Cards Grid Rendering Realistic Test Tubes with Clamps & Droppers -->
@@ -1253,6 +1258,7 @@
 
 <script src="/shared/api.js"></script>
 <script src="/shared/page-transitions.js"></script>
+<script src="/shared/qualitative-bench-core.js"></script>
 <script src="js/composite-engine.js?v=72"></script>
 <script src="/shared/knec-graph-plotter.js"></script>
 <script src="js/exam-offline-manager.js"></script>
@@ -2653,6 +2659,20 @@
     const grid = document.getElementById('q2TestsGrid');
     if (!grid) return;
 
+    // Render Watch Glass and Sample Appearance
+    const saltKey = String(p.trueSaltKey || 'Pb(NO3)2');
+    const watchGlassCont = document.getElementById('q2WatchglassContainer');
+    if (watchGlassCont && window.QualitativeBenchCore) {
+      watchGlassCont.innerHTML = QualitativeBenchCore.renderWatchGlassSvg(saltKey);
+    }
+    const appEl = document.getElementById('q2SampleAppearanceText');
+    if (appEl && window.QualitativeBenchCore) {
+      const saltObj = QualitativeBenchCore.resolveSalt(saltKey);
+      if (saltObj && saltObj.appearance) {
+        appEl.textContent = saltObj.appearance;
+      }
+    }
+
     const tests = Array.isArray(p.tests) ? p.tests : [];
     if (!tests.length) {
       grid.innerHTML = '<div style="padding:20px; color:var(--text-muted); text-align:center;">No qualitative tests configured for this sample.</div>';
@@ -2664,19 +2684,31 @@
       const letter = String.fromCharCode(97 + idx);
       const promptTitle = t?.prompt ? (t.prompt.includes(') ') ? t.prompt.split(') ')[1] : t.prompt) : `Test Procedure (${letter})`;
 
+      const actions = window.QualitativeBenchCore
+        ? QualitativeBenchCore.getMultiStageActions(t.id, t.prompt, st.stage)
+        : [];
+
       let actionBtn = '';
-      if (!st.performed) {
-        actionBtn = `<button class="btn-perform-test" onclick="performQ2TestStage('${t.id}', 'stage1')">🧪 Add Reagent &amp; Perform Test</button>`;
-      } else if (st.stage === 'stage1' && (t.id === 'q2_naoh' || t.id === 'q2_nh3')) {
-        actionBtn = `
-          <button class="btn-perform-test btn-step-excess" onclick="performQ2TestStage('${t.id}', 'excess')">💧 Add in Excess</button>
-          <button class="btn-redo-test" onclick="redoQ2Test('${t.id}')">↺ Redo</button>
-        `;
+      if (actions.length > 0) {
+        actionBtn = actions.map(act => {
+          if (act.disabled) return `<button class="${act.cls}" disabled>${act.label}</button>`;
+          if (act.isRedo) return `<button class="${act.cls}" onclick="redoQ2Test('${t.id}')">${act.label}</button>`;
+          return `<button class="${act.cls}" onclick="performQ2TestStage('${t.id}', '${act.stage}')">${act.label}</button>`;
+        }).join(' ');
       } else {
-        actionBtn = `
-          <button class="btn-perform-test done" disabled>✅ Test Completed</button>
-          <button class="btn-redo-test" onclick="redoQ2Test('${t.id}')">↺ Redo</button>
-        `;
+        if (!st.performed) {
+          actionBtn = `<button class="btn-perform-test" onclick="performQ2TestStage('${t.id}', 'stage1')">🧪 Add Reagent &amp; Perform Test</button>`;
+        } else if (st.stage === 'stage1' && (t.id === 'q2_naoh' || t.id === 'q2_nh3')) {
+          actionBtn = `
+            <button class="btn-perform-test btn-step-excess" onclick="performQ2TestStage('${t.id}', 'excess')">💧 Add in Excess</button>
+            <button class="btn-redo-test" onclick="redoQ2Test('${t.id}')">↺ Redo</button>
+          `;
+        } else {
+          actionBtn = `
+            <button class="btn-perform-test done" disabled>✅ Test Completed</button>
+            <button class="btn-redo-test" onclick="redoQ2Test('${t.id}')">↺ Redo</button>
+          `;
+        }
       }
 
       return `
@@ -2692,7 +2724,7 @@
           <div class="test-layout-grid">
             <div class="apparatus-stage">
               <div class="apparatus-view">
-                ${getTubeVisualHtml(t.id, st)}
+                ${getTubeVisualHtml(t.id, st, 'q2')}
               </div>
               <div class="apparatus-status-tag" id="status_${t.id}">
                 ${!st.performed ? 'Awaiting Reagent' : (st.statusLabel || 'Reaction Observed')}
@@ -2773,155 +2805,29 @@
   }
 
   function getTubeVisualHtml(testId, st, qKey = 'q2') {
-    const performed = st && st.performed;
-    const isExcess = st && st.stage === 'excess';
     const p = engine.preset?.[qKey] || {};
     const saltKey = String(p.trueSaltKey || (qKey === 'q3' ? 'ZnSO4' : 'Pb(NO3)2'));
-
-    const isFe3 = saltKey.includes('Fe') && (saltKey.includes('Cl') || saltKey.includes('3'));
-    const isFe2 = saltKey.includes('Fe') && !isFe3;
-    const isCa = saltKey.includes('Ca');
-
-    // Find custom test object if present
     const tests = Array.isArray(p.tests) ? p.tests : [];
     const t = tests.find(x => x.id === testId) || {};
-    const obsStr = (t.correctObs || t.observation || t.obs || '').toLowerCase();
-    const promptStr = (t.prompt || '').toLowerCase();
+    const stage = st ? (st.stage || (st.performed ? 'done' : 'idle')) : 'idle';
 
-    let liquidColor = 'transparent';
-    if (performed) {
-      if (obsStr.includes('deep blue') || obsStr.includes('royal blue')) {
-        liquidColor = '#1D4ED8';
-      } else if (obsStr.includes('brown fume') || obsStr.includes('brown gas') || obsStr.includes('no2')) {
-        liquidColor = 'rgba(180, 83, 9, 0.55)';
-      } else if (obsStr.includes('green solution') || isFe2) {
-        liquidColor = 'rgba(16, 185, 129, 0.4)';
-      } else if (obsStr.includes('brown solution') || obsStr.includes('yellow-brown') || isFe3) {
-        liquidColor = 'rgba(180, 83, 9, 0.45)';
-      } else if (saltKey.includes('Cu') || obsStr.includes('blue solution')) {
-        liquidColor = 'rgba(56, 189, 248, 0.6)';
-      } else {
-        liquidColor = 'rgba(255,255,255,0.25)';
-      }
+    if (window.QualitativeBenchCore) {
+      return QualitativeBenchCore.renderTubeSvg({
+        saltKey,
+        testId,
+        stage,
+        prompt: t.prompt || '',
+        obsStr: t.correctObs || t.observation || t.obs || '',
+        tubeId: `${qKey}_${testId}`
+      });
     }
 
-    let pptColor = '#FFFFFF';
-    let showPpt = false;
-    let showPptDissolved = false;
-
-    if (performed) {
-      // Dynamic precipitate inspection based on test observations and prompts
-      if (obsStr.includes('dissolv') || obsStr.includes('soluble in excess') || obsStr.includes('clear colorless solution')) {
-        if (isExcess || promptStr.includes('excess')) {
-          showPptDissolved = true;
-          showPpt = false;
-        } else {
-          showPpt = true;
-          pptColor = '#FFFFFF';
-        }
-      } else if (obsStr.includes('yellow ppt') || obsStr.includes('yellow precipitate') || obsStr.includes('bright yellow')) {
-        showPpt = true;
-        pptColor = '#FACC15';
-      } else if (obsStr.includes('reddish-brown') || obsStr.includes('brown ppt') || obsStr.includes('brown precipitate')) {
-        showPpt = true;
-        pptColor = '#991B1B';
-      } else if (obsStr.includes('dirty green') || obsStr.includes('green ppt') || obsStr.includes('green precipitate')) {
-        showPpt = true;
-        pptColor = '#15803D';
-      } else if (obsStr.includes('blue ppt') || obsStr.includes('blue precipitate') || obsStr.includes('pale blue')) {
-        if (isExcess && obsStr.includes('deep royal blue')) {
-          showPpt = false;
-          showPptDissolved = true;
-          liquidColor = '#1D4ED8';
-        } else {
-          showPpt = true;
-          pptColor = '#38BDF8';
-        }
-      } else if (obsStr.includes('white ppt') || obsStr.includes('white precipitate')) {
-        if (isExcess && (obsStr.includes('dissolv') || obsStr.includes('soluble'))) {
-          showPptDissolved = true;
-          showPpt = false;
-        } else {
-          showPpt = true;
-          pptColor = '#FFFFFF';
-        }
-      } else if (obsStr.includes('no ppt') || obsStr.includes('no precipitate') || obsStr.includes('clear solution') || obsStr.includes('colorless solution')) {
-        showPpt = false;
-        showPptDissolved = false;
-      } else if (testId === 'q2_appearance') {
-        showPpt = false;
-      } else if (testId === 'q2_naoh') {
-        if (!isExcess) {
-          showPpt = true;
-          pptColor = isFe3 ? '#991B1B' : isFe2 ? '#15803D' : saltKey.includes('Cu') ? '#38BDF8' : '#FFFFFF';
-        } else {
-          if (saltKey.includes('Pb') || saltKey.includes('Zn') || saltKey.includes('Al')) {
-            showPptDissolved = true;
-          } else {
-            showPpt = true;
-            pptColor = isFe3 ? '#991B1B' : isFe2 ? '#15803D' : saltKey.includes('Cu') ? '#38BDF8' : '#FFFFFF';
-          }
-        }
-      } else if (testId === 'q2_nh3') {
-        if (isCa) {
-          showPpt = false;
-          showPptDissolved = false;
-        } else if (!isExcess) {
-          showPpt = true;
-          pptColor = isFe3 ? '#991B1B' : isFe2 ? '#15803D' : saltKey.includes('Cu') ? '#38BDF8' : '#FFFFFF';
-        } else {
-          if (saltKey.includes('Zn')) {
-            showPptDissolved = true;
-          } else if (saltKey.includes('Cu')) {
-            liquidColor = '#1D4ED8';
-          } else {
-            showPpt = true;
-            pptColor = isFe3 ? '#991B1B' : isFe2 ? '#15803D' : '#FFFFFF';
-          }
-        }
-      } else if (testId === 'q2_anion') {
-        if (saltKey.includes('SO4') || saltKey.includes('Cl') || isCa) {
-          showPpt = true;
-          pptColor = '#FFFFFF';
-        } else if (saltKey.includes('Pb')) {
-          showPpt = true;
-          pptColor = '#FACC15';
-        }
-      }
-    }
-
+    const performed = st && st.performed;
     return `
       <svg width="86" height="136" viewBox="0 0 86 136">
-        <g transform="translate(0, 48)">
-          <rect x="2" y="3" width="24" height="8" rx="2" fill="#78350F" stroke="#451A03" stroke-width="0.8"/>
-          <rect x="60" y="3" width="24" height="8" rx="2" fill="#78350F" stroke="#451A03" stroke-width="0.8"/>
-          <circle cx="14" cy="7" r="2.5" fill="#64748B"/>
-          <circle cx="72" cy="7" r="2.5" fill="#64748B"/>
-        </g>
         <rect x="23" y="32" width="40" height="4" rx="2" fill="rgba(255,255,255,0.18)" stroke="#94A3B8" stroke-width="1.2"/>
         <path d="M 26,36 L 26,112 Q 26,130 43,130 Q 60,130 60,112 L 60,36 Z" fill="rgba(255,255,255,0.05)" stroke="#94A3B8" stroke-width="1.5"/>
-
-        ${performed ? `
-          <path d="M 27,${isExcess ? 54 : 76} L 27,112 Q 27,128 43,128 Q 59,128 59,112 L 59,${isExcess ? 54 : 76} Z" fill="${liquidColor}"/>
-          <ellipse cx="43" cy="${isExcess ? 54 : 76}" rx="16" ry="3.5" fill="${liquidColor}" opacity="0.9"/>
-        ` : ''}
-
-        ${showPpt ? `
-          <g class="anim-ppt-form">
-            <ellipse cx="43" cy="120" rx="14.5" ry="7" fill="${pptColor}" opacity="0.95"/>
-            <circle cx="34" cy="116" r="2.8" fill="${pptColor}"/>
-            <circle cx="48" cy="118" r="3.2" fill="${pptColor}"/>
-            <circle cx="41" cy="113" r="2.5" fill="${pptColor}"/>
-          </g>
-        ` : ''}
-
-        ${showPptDissolved ? `
-          <g class="anim-ppt-dissolve">
-            <ellipse cx="43" cy="120" rx="12" ry="5" fill="#E2E8F0" opacity="0.3"/>
-          </g>
-        ` : ''}
-
-        <path d="M 29,38 L 29,112 Q 29,126 43,126" fill="none" stroke="#FFF" stroke-width="1.2" stroke-linecap="round" opacity="0.25"/>
+        ${performed ? `<path d="M 27,76 L 27,112 Q 27,128 43,128 Q 59,128 59,112 L 59,76 Z" fill="rgba(56, 189, 248, 0.4)"/>` : ''}
       </svg>
     `;
   }
@@ -2933,58 +2839,20 @@
     st.stage = stage;
 
     const p = engine.preset?.q2 || {};
-    const saltKey = String(p.trueSaltKey || '');
-    const isCa = saltKey.includes('Ca');
-    const isFe3 = saltKey.includes('Fe') && (saltKey.includes('Cl') || saltKey.includes('3'));
-    const isFe2 = saltKey.includes('Fe') && !isFe3;
+    const saltKey = String(p.trueSaltKey || 'Pb(NO3)2');
 
     // Find test definition
     const tests = Array.isArray(p.tests) ? p.tests : [];
-    const t = tests.find(item => item.id === testId);
+    const t = tests.find(item => item.id === testId) || {};
+    const prompt = t.prompt || '';
+    const obsStr = t.correctObs || t.observation || '';
 
-    if (testId === 'q2_heat') {
-      if (isCa) {
-        st.statusLabel = 'Heated: Decrepitation & brown NO₂ fumes that rekindle glowing splint';
-      } else if (isFe3) {
-        st.statusLabel = 'Heated: Melts & sublimes as dark brown fumes on tube walls';
-      } else {
-        st.statusLabel = 'Heated: Color change / condensation observed';
-      }
-    } else if (testId === 'q2_appearance') {
-      st.statusLabel = isFe3 ? 'Appearance: Yellow-brown solution formed' : 'Appearance / Solubility Observed';
-    } else if (testId === 'q2_naoh') {
-      if (stage === 'stage1') {
-        st.statusLabel = isFe3 ? 'Few Drops: Reddish-brown precipitate formed' : isFe2 ? 'Few Drops: Dirty-green precipitate formed' : 'Few Drops: White precipitate formed';
-      } else {
-        st.statusLabel = (saltKey.includes('Pb') || saltKey.includes('Zn') || saltKey.includes('Al'))
-          ? 'In Excess: White ppt dissolves to colorless solution'
-          : (isFe3 ? 'In Excess: Reddish-brown precipitate insoluble' : 'In Excess: Precipitate insoluble');
-      }
-    } else if (testId === 'q2_nh3') {
-      if (isCa) {
-        st.statusLabel = 'Drops / Excess: No precipitate formed';
-      } else if (stage === 'stage1') {
-        st.statusLabel = isFe3 ? 'Few Drops: Reddish-brown precipitate formed' : isFe2 ? 'Few Drops: Dirty-green precipitate formed' : 'Few Drops: White precipitate formed';
-      } else {
-        st.statusLabel = saltKey.includes('Zn')
-          ? 'In Excess: White ppt dissolves'
-          : saltKey.includes('Cu')
-          ? 'In Excess: Deep royal blue solution'
-          : (isFe3 ? 'In Excess: Reddish-brown precipitate insoluble' : 'In Excess: Precipitate insoluble');
-      }
-    } else if (testId === 'q2_anion') {
-      if (isCa) {
-        st.statusLabel = 'H₂SO₄ Added: White precipitate of CaSO₄ formed';
-      } else if (isFe3) {
-        st.statusLabel = 'AgNO₃ Added: White precipitate of AgCl formed';
-      } else {
-        st.statusLabel = 'Reagent Added: Characteristic reaction observed';
-      }
-    } else if (t && (t.correctObs || t.observation)) {
-      const obs = t.correctObs || t.observation;
-      st.statusLabel = stage === 'excess' ? `In Excess: ${obs.slice(0, 55)}` : `Observed: ${obs.slice(0, 60)}`;
+    if (window.QualitativeBenchCore) {
+      const r = QualitativeBenchCore.resolveReactionState(saltKey, testId, stage, prompt, obsStr);
+      st.statusLabel = r.statusLabel;
+      QualitativeBenchCore.playReactionSound(r);
     } else {
-      st.statusLabel = 'Test Completed: Reaction Observed';
+      st.statusLabel = obsStr ? `Observed: ${obsStr.slice(0, 60)}` : 'Test Completed: Reaction Observed';
     }
 
     renderQ2TestsGrid();
@@ -3033,13 +2901,26 @@
       // ── Render Qualitative Inorganic Question 3 Cards ──
       const perTestMarks = parseFloat((10.0 / tests.length).toFixed(1));
       grid.innerHTML = tests.map((t, idx) => {
-        const st = q3TestStates[t.id] || { performed: false };
+        const st = q3TestStates[t.id] || { performed: false, stage: 'idle' };
         const letter = String.fromCharCode(97 + idx);
         const promptTitle = t?.prompt ? (t.prompt.includes(') ') ? t.prompt.split(') ')[1] : t.prompt) : `Test Procedure (${letter})`;
 
-        let actionBtn = !st.performed
-          ? `<button class="btn-perform-test" onclick="performQ3Test('${t.id}')">🧪 Perform Qualitative Test</button>`
-          : `<button class="btn-perform-test done" disabled>✅ Test Observed</button><button class="btn-redo-test" onclick="redoQ3Test('${t.id}')">↺ Redo</button>`;
+        const actions = window.QualitativeBenchCore
+          ? QualitativeBenchCore.getMultiStageActions(t.id, t.prompt, st.stage)
+          : [];
+
+        let actionBtn = '';
+        if (actions.length > 0) {
+          actionBtn = actions.map(act => {
+            if (act.disabled) return `<button class="${act.cls}" disabled>${act.label}</button>`;
+            if (act.isRedo) return `<button class="${act.cls}" onclick="redoQ3Test('${t.id}')">${act.label}</button>`;
+            return `<button class="${act.cls}" onclick="performQ3Test('${t.id}', '${act.stage}')">${act.label}</button>`;
+          }).join(' ');
+        } else {
+          actionBtn = !st.performed
+            ? `<button class="btn-perform-test" onclick="performQ3Test('${t.id}', 'stage1')">🧪 Perform Qualitative Test</button>`
+            : `<button class="btn-perform-test done" disabled>✅ Test Observed</button><button class="btn-redo-test" onclick="redoQ3Test('${t.id}')">↺ Redo</button>`;
+        }
 
         return `
           <div class="kcse-question-block">
@@ -3278,10 +3159,11 @@
     `;
   }
 
-  function performQ3Test(testId) {
+  function performQ3Test(testId, stage = 'stage1') {
     if (!q3TestStates[testId]) q3TestStates[testId] = {};
     const st = q3TestStates[testId];
     st.performed = true;
+    st.stage = stage;
     const p = engine?.preset?.q3 || {};
     const isQualitative = Boolean(
       p.simulationType === 'qualitative' ||
@@ -3292,9 +3174,18 @@
 
     if (isQualitative) {
       const tests = Array.isArray(p.tests) ? p.tests : [];
-      const t = tests.find(item => item.id === testId);
-      const obs = t?.correctObs || t?.observation || '';
-      st.statusLabel = obs ? `Observed: ${obs.slice(0, 65)}` : 'Test Performed: Reaction Recorded';
+      const t = tests.find(item => item.id === testId) || {};
+      const saltKey = String(p.trueSaltKey || 'ZnSO4');
+      const prompt = t.prompt || '';
+      const obs = t.correctObs || t.observation || '';
+
+      if (window.QualitativeBenchCore) {
+        const r = QualitativeBenchCore.resolveReactionState(saltKey, testId, stage, prompt, obs);
+        st.statusLabel = r.statusLabel;
+        QualitativeBenchCore.playReactionSound(r);
+      } else {
+        st.statusLabel = obs ? `Observed: ${obs.slice(0, 65)}` : 'Test Performed: Reaction Recorded';
+      }
       renderQ3TestsGrid();
       updateLiveScoreDisplay();
       return;
@@ -3307,8 +3198,10 @@
 
     if (testId === 'q3_ignition') {
       st.statusLabel = isSooty ? 'Ignition: Smoky sooty yellow flame' : 'Ignition: Clear non-sooty pale blue flame';
+      if (window.QualitativeBenchCore) QualitativeBenchCore.playFlameSound();
     } else if (testId === 'q3_litmus') {
       st.statusLabel = orgKey.includes('Acid') ? 'Litmus: Turns moist blue litmus red' : 'Litmus: Neutral, no color change';
+      if (window.QualitativeBenchCore) QualitativeBenchCore.playDropSplashSound();
     } else if (testId === 'q3_kmno4') {
       if (isButanol) {
         st.statusLabel = 'K₂Cr₂O₇: Orange turns green; pleasant fruity odor';
@@ -3319,13 +3212,17 @@
       } else {
         st.statusLabel = 'Reaction: Decolorization observed';
       }
+      if (window.QualitativeBenchCore) QualitativeBenchCore.playDropSplashSound();
     } else if (testId === 'q3_nahco3') {
       if (isHexene) {
         st.statusLabel = 'KMnO₄: Purple acidified KMnO₄ rapidly decolorized';
+        if (window.QualitativeBenchCore) QualitativeBenchCore.playDropSplashSound();
       } else if (orgKey.includes('Acid')) {
         st.statusLabel = 'NaHCO₃: Vigorous effervescence of CO₂';
+        if (window.QualitativeBenchCore) QualitativeBenchCore.playEffervescenceSound();
       } else {
         st.statusLabel = 'NaHCO₃: No effervescence observed';
+        if (window.QualitativeBenchCore) QualitativeBenchCore.playDropSplashSound();
       }
     }
 
@@ -3334,7 +3231,7 @@
   }
 
   function redoQ3Test(testId) {
-    q3TestStates[testId] = { performed: false };
+    q3TestStates[testId] = { performed: false, stage: 'idle' };
     renderQ3TestsGrid();
   }
 

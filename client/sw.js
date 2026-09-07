@@ -3,7 +3,7 @@
 //  Feature #1: Offline Support, Smart Caching & Sync
 // ============================================================
 
-const CACHE_NAME = 'virtulab-kenya-v104';
+const CACHE_NAME = 'virtulab-kenya-v105';
 
 const PRECACHE_ASSETS = [
   '/',
@@ -15,6 +15,7 @@ const PRECACHE_ASSETS = [
   '/shared/style.css',
   '/shared/knec-graph-plotter.css',
   '/shared/knec-graph-plotter.js',
+  '/shared/qualitative-bench-core.js',
   '/shared/brilliant-theme.css',
   '/shared/brilliant-ui.js',
   '/shared/tutorial-engine.css',

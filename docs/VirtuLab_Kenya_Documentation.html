@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>VirtuLab Kenya — Comprehensive Technical & Architectural Documentation</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..600&display=swap');
+
+  @page {
+    size: A4 portrait;
+    margin: 16mm 16mm 18mm 16mm;
+    @bottom-center {
+      content: "VirtuLab Kenya · Technical & Architecture Manual";
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 8pt;
+      color: #64748B;
+    }
+    @bottom-right {
+      content: "Page " counter(page);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 8pt;
+      color: #64748B;
+    }
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #1E293B;
+    background: #FFFFFF;
+    line-height: 1.55;
+    font-size: 9.5pt;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Page Break Utilities */
+  .page-break {
+    page-break-before: always;
+    break-before: page;
+  }
+  .avoid-break {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Cover Page */
+  .cover-page {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 30mm 15mm 20mm 15mm;
+    page-break-after: always;
+    background: linear-gradient(135deg, #0F172A 0%, #1E293B 60%, #0369A1 100%);
+    color: #FFFFFF;
+    border-radius: 12px;
+  }
+
+  .cover-header {
+    border-bottom: 2px solid #38BDF8;
+    padding-bottom: 18px;
+  }
+  .cover-badge {
+    display: inline-block;
+    background: rgba(56, 189, 248, 0.2);
+    color: #38BDF8;
+    border: 1px solid #38BDF8;
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 8.5pt;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .cover-title {
+    font-family: 'Cinzel', Georgia, serif;
+    font-size: 30pt;
+    font-weight: 900;
+    line-height: 1.15;
+    margin: 0 0 10px 0;
+    letter-spacing: 0.02em;
+    color: #F8FAFC;
+  }
+  .cover-subtitle {
+    font-family: 'Newsreader', Georgia, serif;
+    font-style: italic;
+    font-size: 14pt;
+    color: #94A3B8;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .cover-body {
+    margin: 30px 0;
+  }
+  .cover-abstract {
+    background: rgba(15, 23, 42, 0.6);
+    border-left: 4px solid #38BDF8;
+    padding: 16px 20px;
+    border-radius: 0 8px 8px 0;
+    font-size: 10pt;
+    line-height: 1.6;
+    color: #E2E8F0;
+  }
+
+  .cover-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 25px;
+  }
+  .cover-grid-card {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    padding: 12px 16px;
+  }
+  .cover-grid-label {
+    font-size: 7.5pt;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #38BDF8;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .cover-grid-value {
+    font-size: 9pt;
+    font-weight: 600;
+    color: #FFFFFF;
+  }
+
+  .cover-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: 14px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 8.5pt;
+    color: #94A3B8;
+  }
+
+  /* Document Headers */
+  h1, h2, h3, h4 {
+    color: #0F172A;
+    font-weight: 800;
+    margin-top: 18pt;
+    margin-bottom: 6pt;
+    page-break-after: avoid;
+  }
+  h1 {
+    font-size: 16pt;
+    border-bottom: 2px solid #0284C7;
+    padding-bottom: 5px;
+    color: #0F172A;
+    margin-top: 22pt;
+  }
+  h2 {
+    font-size: 12.5pt;
+    color: #0369A1;
+    border-bottom: 1px solid #E2E8F0;
+    padding-bottom: 3px;
+    margin-top: 14pt;
+  }
+  h3 {
+    font-size: 10.5pt;
+    color: #334155;
+    margin-top: 10pt;
+  }
+
+  p {
+    margin: 0 0 8pt 0;
+    text-align: justify;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 8.5pt;
+    margin: 8pt 0 12pt 0;
+    page-break-inside: avoid;
+  }
+  th, td {
+    padding: 6pt 8pt;
+    border: 1px solid #CBD5E1;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: #F1F5F9;
+    color: #0F172A;
+    font-weight: 700;
+    border-bottom: 2px solid #94A3B8;
+  }
+  tr:nth-child(even) td {
+    background: #F8FAFC;
+  }
+
+  /* Callout Boxes */
+  .callout {
+    border-radius: 6px;
+    padding: 10pt 12pt;
+    margin: 10pt 0;
+    font-size: 8.5pt;
+    page-break-inside: avoid;
+    line-height: 1.5;
+  }
+  .callout-info {
+    background: #F0F9FF;
+    border-left: 4px solid #0284C7;
+    color: #0369A1;
+  }
+  .callout-success {
+    background: #F0FDF4;
+    border-left: 4px solid #16A34A;
+    color: #15803D;
+  }
+  .callout-warning {
+    background: #FFFBEB;
+    border-left: 4px solid #D97706;
+    color: #B45309;
+  }
+
+  /* Code Blocks */
+  pre, code {
+    font-family: 'JetBrains Mono', Consolas, monospace;
+    font-size: 8pt;
+  }
+  code {
+    background: #F1F5F9;
+    padding: 1.5pt 3pt;
+    border-radius: 3px;
+    color: #0F172A;
+    border: 1px solid #E2E8F0;
+  }
+  pre {
+    background: #0F172A;
+    color: #E2E8F0;
+    padding: 10pt 12pt;
+    border-radius: 6px;
+    overflow-x: auto;
+    line-height: 1.45;
+    margin: 8pt 0 10pt 0;
+    page-break-inside: avoid;
+  }
+  pre code {
+    background: transparent;
+    border: none;
+    padding: 0;
+    color: #E2E8F0;
+  }
+
+  /* Diagrams & Badges */
+  .badge {
+    display: inline-block;
+    font-size: 7.5pt;
+    font-weight: 700;
+    padding: 2pt 6pt;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .badge-blue { background: #E0F2FE; color: #0369A1; }
+  .badge-green { background: #DCFCE7; color: #15803D; }
+  .badge-purple { background: #F3E8FF; color: #7E22CE; }
+  .badge-amber { background: #FEF3C7; color: #B45309; }
+
+  /* Table of Contents */
+  .toc-list {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 12pt 0;
+  }
+  .toc-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 5pt 0;
+    border-bottom: 1px dotted #CBD5E1;
+    font-size: 9pt;
+    font-weight: 600;
+    color: #1E293B;
+  }
+  .toc-subitem {
+    padding-left: 18pt;
+    font-size: 8.5pt;
+    font-weight: 400;
+    color: #475569;
+  }
+
+  /* Header & Footer Rules */
+  .doc-header-strip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #CBD5E1;
+    padding-bottom: 6px;
+    margin-bottom: 16px;
+    font-size: 8pt;
+    color: #64748B;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- COVER PAGE                                                 -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="cover-page">
+  <div class="cover-header">
+    <div class="cover-badge">🇰🇪 Republic of Kenya · Educational Technology</div>
+    <div class="cover-title">VirtuLab Kenya</div>
+    <div class="cover-subtitle">Curriculum-Aligned Offline-First Virtual Chemistry Laboratory Platform</div>
+  </div>
+
+  <div class="cover-body">
+    <div class="cover-abstract">
+      <b>Comprehensive Technical & Architectural Specification Manual</b><br>
+      A complete engineering, curricular, and empirical research reference for VirtuLab Kenya — a lightweight, Progressive Web Application (PWA) designed to democratize practical science education for secondary school candidates preparing for the Kenya Certificate of Secondary Education (KCSE) Chemistry Practical Examination (KNEC 233/3).
+    </div>
+
+    <div class="cover-grid">
+      <div class="cover-grid-card">
+        <div class="cover-grid-label">Target Curriculum</div>
+        <div class="cover-grid-value">KICD Secondary Form 1–4 & KNEC Paper 3</div>
+      </div>
+      <div class="cover-grid-card">
+        <div class="cover-grid-label">Academic Programme</div>
+        <div class="cover-grid-value">MSc in Learning Design and Technology</div>
+      </div>
+      <div class="cover-grid-card">
+        <div class="cover-grid-label">Degree Institution</div>
+        <div class="cover-grid-value">Open University of Kenya (OUK)</div>
+      </div>
+      <div class="cover-grid-card">
+        <div class="cover-grid-label">System Architecture</div>
+        <div class="cover-grid-value">Vanilla JS PWA · Node.js REST · PostgreSQL 16</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cover-footer">
+    <span><b>Version:</b> 1.0.0 (Production Release)</span>
+    <span><b>Published:</b> September 2026</span>
+    <span><b>Author:</b> VirtuLab Kenya Research Team</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- TABLE OF CONTENTS                                          -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="doc-header-strip">
+  <span>VirtuLab Kenya · Technical Manual</span>
+  <span>Table of Contents</span>
+</div>
+
+<h1>Table of Contents</h1>
+
+<ul class="toc-list">
+  <li class="toc-item"><span>1. Executive Summary & Problem Context</span><span>Section 1</span></li>
+  <li class="toc-item toc-subitem"><span>1.1 Secondary Chemistry Education Landscape in Kenya</span></li>
+  <li class="toc-item toc-subitem"><span>1.2 The Laboratory Infrastructure & Safety Deficit</span></li>
+  <li class="toc-item toc-subitem"><span>1.3 The VirtuLab Solution Framework</span></li>
+
+  <li class="toc-item"><span>2. System Architecture & Tech Stack</span><span>Section 2</span></li>
+  <li class="toc-item toc-subitem"><span>2.1 Architectural Topology & High-Level Design</span></li>
+  <li class="toc-item toc-subitem"><span>2.2 Zero-Build Vanilla JavaScript Frontend</span></li>
+  <li class="toc-item toc-subitem"><span>2.3 Node.js / Express REST API Backend</span></li>
+  <li class="toc-item toc-subitem"><span>2.4 PostgreSQL Relational Database Schema</span></li>
+
+  <li class="toc-item"><span>3. Laboratory Simulation Engines (KCSE Paper 3 Modules)</span><span>Section 3</span></li>
+  <li class="toc-item toc-subitem"><span>3.1 Volumetric Analysis & Titration Workbench</span></li>
+  <li class="toc-item toc-subitem"><span>3.2 Qualitative Inorganic Analysis & Flame Tests</span></li>
+  <li class="toc-item toc-subitem"><span>3.3 Organic Chemistry Functional Group Identification</span></li>
+  <li class="toc-item toc-subitem"><span>3.4 Reaction Kinetics & Disappearing Cross Simulation</span></li>
+  <li class="toc-item toc-subitem"><span>3.5 Thermochemistry & Energy Changes in Reactions</span></li>
+  <li class="toc-item toc-subitem"><span>3.6 Solubility Curves & Fractional Crystallization</span></li>
+  <li class="toc-item toc-subitem"><span>3.7 Gas Preparation, Drying, and Collection</span></li>
+  <li class="toc-item toc-subitem"><span>3.8 40-Mark Composite KNEC Mock Practical Exam</span></li>
+
+  <li class="toc-item"><span>4. Pedagogical Scaffolding & Intelligent Marking Rubrics</span><span>Section 4</span></li>
+  <li class="toc-item toc-subitem"><span>4.1 KNEC Table 1 Rubric: CT, D, AC, PA, and FA</span></li>
+  <li class="toc-item toc-subitem"><span>4.2 Error Carried Forward (e.c.f.) Stoichiometric Evaluation</span></li>
+  <li class="toc-item toc-subitem"><span>4.3 Meniscus Viewfinder & Eye-Level Parallax Mitigation</span></li>
+  <li class="toc-item toc-subitem"><span>4.4 Walimu AI Teacher Exam Assistant (Gemini Multimodal)</span></li>
+
+  <li class="toc-item"><span>5. Offline-First Engineering & Network Resilience</span><span>Section 5</span></li>
+  <li class="toc-item toc-subitem"><span>5.1 Service Worker Smart Caching Topology</span></li>
+  <li class="toc-item toc-subitem"><span>5.2 IndexedDB Mutation Queue & Background Synchronization</span></li>
+  <li class="toc-item toc-subitem"><span>5.3 Zero-Bandwidth Procedural Audio Synthesis (Web Audio API)</span></li>
+
+  <li class="toc-item"><span>6. Security, RBAC & Telemetry Monitoring</span><span>Section 6</span></li>
+  <li class="toc-item toc-subitem"><span>6.1 Multi-Role Access Control (Student, Teacher, Super Admin)</span></li>
+  <li class="toc-item toc-subitem"><span>6.2 Network Security, Helmet CSP, and Dynamic Rate Limiting</span></li>
+  <li class="toc-item toc-subitem"><span>6.3 Centralized Error Logging & Telemetry System</span></li>
+
+  <li class="toc-item"><span>7. Academic Research & Statistical Evaluation Suite</span><span>Section 7</span></li>
+  <li class="toc-item toc-subitem"><span>7.1 NACOSTI Ethical Protocol & Sampling Design</span></li>
+  <li class="toc-item toc-subitem"><span>7.2 CPCAT Standardized Pre-Test & Post-Test Engine</span></li>
+  <li class="toc-item toc-subitem"><span>7.3 Standardized Usability & Acceptance Instruments (SUS & TAM 3)</span></li>
+  <li class="toc-item toc-subitem"><span>7.4 Triangulation Engine (Hake's Gain g, Cohen's d, t-Test)</span></li>
+
+  <li class="toc-item"><span>8. Deployment, Operations & Verification</span><span>Section 8</span></li>
+  <li class="toc-item toc-subitem"><span>8.1 Multi-Stage Docker & Container Orchestration</span></li>
+  <li class="toc-item toc-subitem"><span>8.2 Automated Test Suite Results (node:test)</span></li>
+  <li class="toc-item toc-subitem"><span>8.3 Cloud Deployment Matrix</span></li>
+</ul>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SECTION 1                                                  -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+<div class="doc-header-strip">
+  <span>VirtuLab Kenya · Technical Manual</span>
+  <span>Section 1: Executive Summary</span>
+</div>
+
+<h1>1. Executive Summary & Problem Context</h1>
+
+<h2>1.1 Secondary Chemistry Education Landscape in Kenya</h2>
+<p>
+In the Kenyan education system (both 8-4-4 and the transitioning Competency-Based Curriculum for Senior Secondary STEM pathways), secondary school Chemistry is a central subject examined both theoretically and practically. The national secondary school examination conducted by the <b>Kenya National Examinations Council (KNEC)</b> includes <b>KCSE Chemistry Practical Examination (Paper 233/3)</b>, which carries <b>40% of the candidate's total subject grade</b>. Paper 3 evaluates hands-on laboratory proficiencies across volumetric quantitative analysis, qualitative inorganic ionic identification, reaction kinetics, and qualitative organic functional group testing.
+</p>
+
+<h2>1.2 The Laboratory Infrastructure & Safety Deficit</h2>
+<p>
+Despite the decisive weight of Paper 3, educational equity across Kenya is severely constrained:
+</p>
+<ul>
+  <li><b>Infrastructure Disparity:</b> Over 60% of secondary schools—particularly public Sub-County day schools and rural secondary institutions—lack adequately equipped science laboratories, piped water, functional gas lines, and specialized glassware.</li>
+  <li><b>Perishable Chemical Reagents:</b> Standard volumetric reagents (e.g., potassium manganate(VII), silver nitrate, standard acids) are expensive and degrade rapidly in ambient tropical storage conditions. Schools frequently hoard reagents exclusively for the final KCSE exam week, preventing routine learner practice.</li>
+  <li><b>High Class Sizes & Safety Hazards:</b> Student-to-teacher ratios frequently exceed 50:1. Conducting experiments involving concentrated acids, toxic gases (such as $Cl_2$, $SO_2$, and $H_2S$), and open Bunsen flames presents severe safety hazards in poorly ventilated rooms.</li>
+</ul>
+
+<h2>1.3 The VirtuLab Solution Framework</h2>
+<p>
+<b>VirtuLab Kenya</b> was engineered to resolve this disparity by providing a curriculum-aligned, mathematically rigorous, offline-first virtual chemistry laboratory accessible on low-cost devices (entry-level Android phones, school Chromebooks, and desktop PCs). The platform delivers exact digital parity with physical laboratory practicals, providing authentic KNEC mark scheme feedback, step-by-step stoichiometric evaluation, and diagnostic teacher analytics.
+</p>
+
+<div class="callout callout-info">
+  <b>Guiding Pedagogical Principle:</b> <i>"Every student deserves a laboratory."</i> VirtuLab Kenya does not seek to replace physical science, but rather democratizes access so that every learner can practice experimental techniques repeatedly, safely, and at zero marginal cost.
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SECTION 2                                                  -->
+<!-- ═══════════════════════════════════════ -->
+<div class="page-break"></div>
+<div class="doc-header-strip">
+  <span>VirtuLab Kenya · Technical Manual</span>
+  <span>Section 2: Architecture & Stack</span>
+</div>
+
+<h1>2. System Architecture & Technology Stack</h1>
+
+<h2>2.1 High-Level Architecture Overview</h2>
+<p>
+VirtuLab Kenya employs a decoupled client-server architecture designed for maximum performance, minimal network latency, and complete offline autonomy.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Layer</th>
+      <th>Technologies</th>
+      <th>Primary Responsibilities</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><b>Frontend Client</b></td>
+      <td>HTML5, Vanilla CSS3, ES6+ JavaScript, Web Audio API, SVG</td>
+      <td>Interactive glassware physics, stopcock controls, meniscus viewfinders, local chemical calculation engines, offline UI rendering.</td>
+    </tr>
+    <tr>
+      <td><b>Offline Layer</b></td>
+      <td>Service Worker (Cache API), IndexedDB</td>
+      <td>Pre-caches application shell (60+ assets), intercepts offline network requests, queues student submissions, and auto-synchronizes upon reconnect.</td>
+    </tr>
+    <tr>
+      <td><b>API Backend</b></td>
+      <td>Node.js, Express REST API, express-validator, Helmet</td>
+      <td>Authentication, role guards, assignment dispatch, telemetry ingestion, AI multimodal exam parsing, automated grading feedback.</td>
+    </tr>
+    <tr>
+      <td><b>Database Layer</b></td>
+      <td>PostgreSQL 16, pg Connection Pool</td>
+      <td>Relational entities (schools, teachers, students, assignments, sessions), semi-structured JSONB trial records, performance indexes.</td>
+    </tr>
+    <tr>
+      <td><b>AI Exam Assistant</b></td>
+      <td>Google Gemini API (`gemini-3.5-flash-lite`), Regex Fallback</td>
+      <td>Multimodal exam parsing from camera photos/PDFs, idea-to-exam generation, interactive prompt-driven paper refinements.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>2.2 Zero-Build Vanilla JavaScript Frontend</h2>
+<p>
+Unlike modern web applications built on heavy Single Page Application (SPA) frameworks (React, Angular, Next.js), VirtuLab Kenya purposefully implements a <b>zero-build, frameworkless Vanilla JavaScript architecture</b>:
+</p>
+<ul>
+  <li><b>Instant Browser Execution:</b> Zero transpile/bundle step required. Browsers parse standard ES6 modules natively, eliminating memory overhead on low-RAM devices (such as 2 GB RAM Android tablets).</li>
+  <li><b>Micro-Footprint:</b> The entire compressed application shell is under <b>500 KB</b>, ensuring that even under 2G mobile cellular connections, the initial page loads in under 3 seconds.</li>
+  <li><b>Direct DOM Vector Manipulation:</b> Stopcock valve angles, liquid levels, color gradients, and meniscus curves are animated directly on SVG paths at 60 FPS without virtual DOM reconciliation bottlenecks.</li>
+</ul>
+
+<h2>2.3 Node.js / Express REST Backend Architecture</h2>
+<p>
+The backend follows a strict <b>Layered Repository Pattern</b> separating HTTP transport, business logic, validation, and data persistence:
+</p>
+<pre><code>server/
+├── routes/          # 21 Route Controllers (HTTP verbs, payload parsing, response serialization)
+├── middleware/      # Auth guards, security headers, rate limiters, input sanitizers
+├── services/        # Business logic (AI Exam Assistant, AI Student Tutor)
+├── repositories/    # Data Access Layer (Direct parameterized SQL queries via pool.js)
+└── db/              # Pool management, schema definition, and migration scripts</code></pre>
+
+<h2>2.4 PostgreSQL Relational Schema</h2>
+<p>
+The database architecture comprises 20+ tables managing institutional hierarchy, continuous assessments, and longitudinal research telemetry:
+</p>
+<ul>
+  <li><code>schools</code>: Institutional records with unique <code>admin_code</code> strings (e.g., <code>KCS-ALLIANCE-001</code>).</li>
+  <li><code>teachers</code> & <code>students</code>: Role-partitioned accounts with foreign keys referencing their parent school.</li>
+  <li><code>assignments</code> & <code>assignment_submissions</code>: Teacher-authored tasks with custom volumetric/qualitative parameters and due dates.</li>
+  <li><code>practical_sessions</code>, <code>qualitative_sessions</code>, <code>organic_sessions</code>, <code>composite_sessions</code>, <code>solubility_sessions</code>, <code>energy_sessions</code>, <code>rates_sessions</code>, <code>gas_sessions</code>: Highly detailed session telemetry stores with JSONB columns capturing trial-by-trial burette readings, reagent observations, and intermediate calculation answers.</li>
+  <li><code>research_assessments</code> & <code>research_surveys</code>: CPCAT pre/post test records, System Usability Scale (SUS) scores, and Technology Acceptance Model (TAM) construct ratings.</li>
+</ul>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SECTION 3                                                  -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+<div class="doc-header-strip">
+  <span>VirtuLab Kenya · Technical Manual</span>
+  <span>Section 3: Simulation Modules</span>
+</div>
+
+<h1>3. Laboratory Simulation Engines (KCSE Paper 3 Modules)</h1>
+
+<p>
+VirtuLab Kenya implements eight distinct simulation engines matching all quantitative, inorganic, physical, and organic chemistry domains specified in the KICD Secondary Chemistry Syllabus.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Module</th>
+      <th>Curricular Topic</th>
+      <th>KCSE Practical Question</th>
+      <th>Key Scientific Capabilities</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><b>Volumetric Analysis</b></td>
+      <td>Form 3 Topic 3 · Volumetric Analysis</td>
+      <td>Paper 3 (Q1) — 15 Marks</td>
+      <td>Acid-Base, Redox, Precipitation, and Complexometric titrations. Stopcock delivery, concordancy checks, indicator color equilibria.</td>
+    </tr>
+    <tr>
+      <td><b>Qualitative Analysis</b></td>
+      <td>Form 4 Topic 3 · Qualitative Analysis</td>
+      <td>Paper 3 (Q2) — 15 Marks</td>
+      <td>10 unknown salts, $NaOH$ & $NH_3$ dropwise/excess precipitation, confirmatory anion tests, Nichrome wire flame test bench.</td>
+    </tr>
+    <tr>
+      <td><b>Organic Qualitative</b></td>
+      <td>Form 3 Topic 2 / Form 4 Topic 2</td>
+      <td>Paper 3 (Q3) — 10 Marks</td>
+      <td>Ignition (sooty flame), litmus acidity, unsaturation tests ($Br_2$ water, acidified $KMnO_4$), esterification, sodium carbonate effervescence.</td>
+    </tr>
+    <tr>
+      <td><b>Reaction Rates</b></td>
+      <td>Form 4 Topic 1 · Reaction Kinetics</td>
+      <td>Paper 3 (Q3) — Kinetics</td>
+      <td>Sodium thiosulfate + $HCl$ disappearing cross reaction, gas syringe collection, temperature & concentration variation, automated rate graph plotting.</td>
+    </tr>
+    <tr>
+      <td><b>Thermochemistry</b></td>
+      <td>Form 4 Topic 2 · Energy Changes</td>
+      <td>Paper 3 (Q3) — Energetics</td>
+      <td>Enthalpies of solution, neutralization ($HCl + NaOH$), and displacement ($Cu^{2+} + Zn$ powder). Polystyrene calorimeter, cooling curve extrapolation.</td>
+    </tr>
+    <tr>
+      <td><b>Solubility Curves</b></td>
+      <td>Form 3 Topic 4 · Solubility</td>
+      <td>Form 3 Topic 4 Lab</td>
+      <td>Solute mass variation in boiling water, cooling crystallization temperature detection, dynamic solubility curve graphing ($g / 100\text{ g } H_2O$).</td>
+    </tr>
+    <tr>
+      <td><b>Gas Preparation</b></td>
+      <td>Form 2 & 3 Inorganic Chemistry</td>
+      <td>Paper 3 Inorganic Prep</td>
+      <td>Preparation of $O_2, CO_2, Cl_2, NH_3, SO_2, H_2$. Selective choice of drying agents ($H_2SO_4, CaO, CaCl_2$) and collection methods (upward/downward).</td>
+    </tr>
+    <tr>
+      <td><b>Composite Mock Exam</b></td>
+      <td>KNEC KCSE Full Mock Paper</td>
+      <td>Full Paper 3 — 40 Marks</td>
+      <td>Timed 135-minute integrated practical exam combining Q1 (Titration), Q2 (Salt), and Q3 (Organic) with official KNEC composite grading (A–E).</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>3.1 Volumetric Analysis Workbench Engine</h2>
+<p>
+The volumetric engine (<code>titration-workbench.js</code>) is an authentic representation of Class-A analytical volumetric equipment:
+</p>
+<ul>
+  <li><b>Stopcock Micro-Valve Kinetics:</b> Candidates can dispense titrant dropwise ($0.05\text{ cm}^3$ per drop) or at variable continuous flow rates ($0.5\text{ to } 2.5\text{ cm}^3/\text{s}$).</li>
+  <li><b>Swirling & Local Equilibrium:</b> Delivering titrant without swirling causes transient local color flashes at the liquid surface. The candidate must click "Swirl Flask" or press keyboard hotkeys to disperse the titrant and reveal the true homogeneous state.</li>
+  <li><b>Indicator Transitions:</b> Models sharp mathematical pH color curves for Phenolphthalein (colorless to permanent pale pink at pH 8.3), Methyl Orange (red to orange/yellow at pH 3.1–4.4), and Redox indicators ($KMnO_4$ acting as its own auto-indicator from colorless to faint pink).</li>
+</ul>
+
+<h2>3.2 Qualitative Inorganic Analysis & Flame Test Bench</h2>
+<p>
+The qualitative engine (<code>qualitative-engine.js</code>) presents learners with unknown crystalline salts labeled Solid Y:
+</p>
+<ul>
+  <li><b>Interactive Test Tube Operations:</b> Learners dissolve the solid, divide into multiple clean test tubes, and add analytical reagents dropwise until in excess.</li>
+  <li><b>Amphoteric Hydroxide Detection:</b> Accurately differentiates cations ($Al^{3+}, Zn^{2+}, Pb^{2+}$) that form white precipitates soluble in excess $NaOH(aq)$ from those insoluble ($Ca^{2+}, Mg^{2+}$), and resolves ambiguous ions through secondary reaction with aqueous ammonia ($NH_3$).</li>
+  <li><b>Spectroscopic Flame Test:</b> A virtual Nichrome wire loop dipped in concentrated hydrochloric acid and solid crystals is inserted into a non-luminous blue Bunsen flame, producing authentic spectral flame emissions (brick-red, golden yellow, lilac, apple-green, blue-green).</li>
+</ul>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SECTION 4                                                  -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+<div class="doc-header-strip">
+  <span>VirtuLab Kenya · Technical Manual</span>
+  <span>Section 4: Pedagogical Scaffolding</span>
+</div>
+
+<h1>4. Pedagogical Scaffolding & Intelligent Marking Rubrics</h1>
+
+<h2>4.1 KNEC Table 1 Official Volumetric Rubric</h2>
+<p>
+In the national KCSE examination, Question 1 begins with a volumetric table awarding 5.0 Marks. VirtuLab Kenya evaluates this table using the official KNEC 5-part marking standard:
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Criterion</th>
+      <th>Full Name</th>
+      <th>Max Marks</th>
+      <th>KNEC Evaluation Standard</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><b>CT</b></td>
+      <td>Complete Table</td>
+      <td>1.0 Mk</td>
+      <td>Awarded if candidate completes initial, final, and titre volumes for at least 3 trials. Penalized if trials are left blank.</td>
+    </tr>
+    <tr>
+      <td><b>D</b></td>
+      <td>Use of Decimals</td>
+      <td>1.0 Mk</td>
+      <td>All entries must be uniformly recorded to 1 or 2 decimal places ending in `.0` or `.5` (or `.00` / `.50`). Inconsistent decimal notation loses full mark.</td>
+    </tr>
+    <tr>
+      <td><b>AC</b></td>
+      <td>Accuracy of Titres</td>
+      <td>1.0 Mk</td>
+      <td>Candidate's titres are compared against the true laboratory standard value. Full mark awarded if within $\pm 0.10\text{ cm}^3$; 0.5 mk if within $\pm 0.20\text{ cm}^3$.</td>
+    </tr>
+    <tr>
+      <td><b>PA</b></td>
+      <td>Principles of Averaging</td>
+      <td>1.0 Mk</td>
+      <td>Only concordant readings (values agreeing within $\pm 0.10\text{ cm}^3$ or $\pm 0.20\text{ cm}^3$) may be ticked and averaged. Averaging wild/incongruent values scores zero.</td>
+    </tr>
+    <tr>
+      <td><b>FA</b></td>
+      <td>Final Accuracy</td>
+      <td>1.0 Mk</td>
+      <td>The calculated average titre $V_{\text{avg}}$ is evaluated against the expected stoichiometric titre volume.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>4.2 Error Carried Forward (e.c.f.) Stoichiometric Evaluation</h2>
+<p>
+One of the most innovative engineering accomplishments of VirtuLab Kenya is its implementation of <b>Error Carried Forward (e.c.f.)</b> in multi-step chemical calculations. In traditional computer-aided instruction, if a student calculates Step (a) incorrectly, all subsequent steps (b, c, d, e) fail automated grading.
+</p>
+<p>
+VirtuLab Kenya mirrors human KNEC examiners: if a student records a non-ideal average titre (e.g., $23.50\text{ cm}^3$ instead of $25.00\text{ cm}^3$):
+</p>
+<ol>
+  <li>The system notes the experimental discrepancy in Step (a).</li>
+  <li>For Step (b) (Moles of Solution A), the algorithm calculates expected moles using the <i>student's own recorded $V_{\text{avg}}$</i>:
+      $$n_A = \frac{M_A \times V_{\text{avg, student}}}{1000}$$
+  </li>
+  <li>If the candidate's arithmetic matches this calculation, full credit is awarded with the annotation: <code>[Awarded via Error Carried Forward (e.c.f.)]</code>.</li>
+  <li>Subsequent steps for mole ratio conversion, molarity of unknown Solution B, and mass concentration in $g/dm^3$ continue to award partial credit for sound algebraic logic.</li>
+</ol>
+
+<h2>4.3 Meniscus Lens Viewfinder & Parallax Prevention</h2>
+<p>
+Reading a burette incorrectly due to parallax error is one of the top causes of student marks loss reported in KNEC Annual Chemistry Reports. VirtuLab Kenya embeds an optical <b>Meniscus Lens Viewfinder</b>:
+</p>
+<ul>
+  <li>Provides a high-magnification window positioned at the exact liquid boundary.</li>
+  <li>Displays millimeter graduation marks ($0.10\text{ cm}^3$ resolution) alongside an eye-level guide.</li>
+  <li>Enforces reading from the <b>bottom of the concave meniscus</b> for clear aqueous solutions (acids/bases) and from the <b>top of the meniscus</b> for intensely colored solutions ($KMnO_4$).</li>
+</ul>
+
+<h2>4.4 Walimu AI Teacher Exam Assistant (`aiExamAssistantService.js`)</h2>
+<p>
+Teachers frequently need to set custom continuous assessment tests based on available local reagents or regional mock examinations. The Walimu AI Assistant provides three operational modes:
+</p>
+<ol>
+  <li><b>Multimodal Exam Paper Parsing:</b> Teachers take a photo of a physical printed exam paper or upload a PDF. Powered by Google Gemini, the service extracts all three practical questions, reagent concentrations, and observation rubrics into structured JSON.</li>
+  <li><b>Idea-to-Exam Generator:</b> Teachers enter a prompt (e.g., *"Generate a Form 4 mock practical on oxalic acid standardization, lead nitrate analysis, and an unsaturated alkene"*), and the system generates complete student worksheets, teacher confidential instructions, and marking keys.</li>
+  <li><b>Deterministic Offline Heuristic Fallback:</b> In schools without an active internet connection or API key, the service utilizes pre-compiled authentic KNEC mock series and recalculates stoichiometry using deterministic mathematical heuristics.</li>
+</ol>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SECTION 5                                                  -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+<div class="doc-header-strip">
+  <span>VirtuLab Kenya · Technical Manual</span>
+  <span>Section 5: Offline & Low-Bandwidth</span>
+</div>
+
+<h1>5. Offline-First Engineering & Network Resilience</h1>
+
+<p>
+In rural and peri-urban Kenya, internet connections are prone to frequent dropouts, and student computer labs often operate entirely disconnected from the wide area network. VirtuLab Kenya was architected from the ground up as an <b>Offline-First Progressive Web Application (PWA)</b>.
+</p>
+
+<h2>5.1 Service Worker Smart Caching Topology (`sw.js`)</h2>
+<p>
+The application registers a high-performance Service Worker (<code>sw.js</code>) configured with a dual-tier caching strategy:
+</p>
+<ul>
+  <li><b>Static Media, SVGs, and Fonts:</b> <i>Cache-First</i>. Assets are fetched from the local cache immediately; network requests occur in the background only when cache invalidation occurs.</li>
+  <li><b>HTML Templates, Logic Engines, and CSS:</b> <i>Network-First with Cache Fallback</i>. When online, the browser retrieves the freshest version from the server and updates the local cache. If the network drops or times out, the Service Worker immediately serves the local cached asset without throwing an error.</li>
+  <li><b>Bypass & Fallback for API Calls:</b> Dynamic <code>/api/*</code> mutation requests bypass the cache. When offline, the fetch listener intercepts the failed call and returns a synthetic HTTP 503 response containing <code>{ offline: true }</code>.</li>
+</ul>
+
+<h2>5.2 IndexedDB Mutation Queue & Background Synchronization</h2>
+<p>
+When a student completes a practical session while offline, client-side API requests would normally fail. VirtuLab Kenya intercepts these failures via an IndexedDB persistence queue in <code>client/shared/api.js</code>:
+</p>
+
+<pre><code>// IndexedDB Queue Flow
+[Student Submits Experiment]
+             │
+      (Check Navigator)
+             │
+     ┌───────┴───────┐
+  Online?         Offline?
+     │               │
+  Execute         Enqueue in IndexedDB ('virtulab_offline_db')
+  HTTP POST          │
+     │            Display Banner: "📦 Experiment saved offline. Synchronizing..."
+  Success            │
+                     ▼
+           [Device Reconnects to Internet]
+                     │
+           window.addEventListener('online')
+                     │
+           Flush Queue Sequentially to Backend
+                     │
+           Remove Completed Records from IndexedDB</code></pre>
+
+<p>
+This ensures that <b>zero student practical attempts are lost</b> during network drops or power outages.
+</p>
+
+<h2>5.3 Zero-Bandwidth Procedural Audio Synthesis (`audio-synth.js`)</h2>
+<p>
+Standard multimedia applications download MP3 or WAV files for sound effects, consuming megabytes of cellular data. VirtuLab Kenya synthesizes all laboratory sounds procedurally in real-time using the browser's native <b>Web Audio API</b>:
+</p>
+<ul>
+  <li><b>Bubbling Effect:</b> Created using frequency-modulated sine waves with random bandpass noise bursts simulating effervescence during acid-carbonate reactions.</li>
+  <li><b>Glassware Clink:</b> Synthesized using decaying high-frequency metal oscillator harmonics (2400 Hz – 3600 Hz).</li>
+  <li><b>Ticking Countdown & Buzzer:</b> Square-wave pulses simulating laboratory timers and exam completion bells.</li>
+  <li><b>Bandwidth Consumption:</b> Exactly <b>0 KB of audio downloads</b>. The entire audio engine is encapsulated in a tiny 6 KB JavaScript file.</li>
+</ul>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SECTION 6                                                  -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+<div class="doc-header-strip">
+  <span>VirtuLab Kenya · Technical Manual</span>
+  <span>Section 6: Security & Operations</span>
+</div>
+
+<h1>6. Security, RBAC & Telemetry Monitoring</h1>
+
+<h2>6.1 Role-Based Access Control (RBAC)</h2>
+<p>
+VirtuLab Kenya implements strict tripartite Role-Based Access Control enforcing least privilege across student, teacher, and system administrator domains:
+</p>
+<ul>
+  <li><b>Students:</b> Access simulation workbenches, submit assignment attempts, review personal performance history, take CPCAT pre/post assessments, and download earned KCSE laboratory certificates.</li>
+  <li><b>Teachers:</b> Create classes, onboard students via teacher codes, dispatch custom practical assignments, grade subjective written answers, access class error telemetry, and export gradebooks to CSV.</li>
+  <li><b>System Administrators:</b> Access the National Admin Portal (<code>/admin/dashboard.html</code>), register secondary schools, manage county quotas, review system security audit logs, manage teacher/student user states (active/suspended), and broadcast national platform announcements.</li>
+</ul>
+
+<h2>6.2 Network Security & Rate Limiting Strategy</h2>
+<p>
+The Express API pipeline incorporates multi-layered defensive controls:
+</p>
+<ul>
+  <li><b>HTTPS Enforcement:</b> In production, non-secure HTTP requests are automatically redirected to TLS 1.3 endpoints based on <code>x-forwarded-proto</code> proxy headers.</li>
+  <li><b>Helmet Security Headers:</b> Configures HTTP Strict Transport Security (HSTS) with a 1-year lifespan (<code>max-age: 31536000</code>), <code>X-Frame-Options: SAMEORIGIN</code> to prevent clickjacking, and <code>X-Content-Type-Options: nosniff</code>.</li>
+  <li><b>Sub-County NAT-Aware Rate Limiting:</b> Unlike naive rate limiters that block public IPs after 100 requests (which would disable an entire school where 50 students share a single cellular modem), the general API limiter allows <b>5,000 requests per 15-minute window</b>, while authentication endpoints (<code>/api/auth/*</code>) strictly enforce 100 requests per window to mitigate brute-force password attempts.</li>
+</ul>
+
+<h2>6.3 Centralized Error Logging & Telemetry System (`errorTracker.js`)</h2>
+<p>
+The backend integrates a rolling in-memory error buffer (storing the last 50 production events) with structured JSON metadata capturing timestamp, URL, HTTP method, client IP, authenticated user ID/role, and stack trace. If a <code>SENTRY_DSN</code> environment variable is present, the module automatically hooks into the Sentry enterprise monitoring network.
+</p>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SECTION 7                                                  -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+<div class="doc-header-strip">
+  <span>VirtuLab Kenya · Technical Manual</span>
+  <span>Section 7: Academic Research Suite</span>
+</div>
+
+<h1>7. Academic Research & Statistical Evaluation Suite</h1>
+
+<p>
+Developed as the capstone evaluation framework for a Master of Science in Learning Design and Technology at the Open University of Kenya, the platform embeds a complete academic research suite compliant with the <b>National Commission for Science, Technology and Innovation (NACOSTI)</b> standards.
+</p>
+
+<h2>7.1 CPCAT Standardized Pre/Post-Test Engine</h2>
+<p>
+The <b>Chemistry Practical Competency Achievement Test (CPCAT)</b> is a 40-mark standardized diagnostic instrument administered before and after the virtual laboratory intervention:
+</p>
+<ul>
+  <li><b>Section A: Volumetric Techniques (12 Marks):</b> Evaluates meniscus reading, indicator selection, concordancy rules, and stoichiometric mole ratio math.</li>
+  <li><b>Section B: Qualitative Inorganic Analysis (10 Marks):</b> Tests precipitate solubility, cation separation, flame test spectra, and anion confirmatory reagents.</li>
+  <li><b>Section C: Reaction Kinetics & Energetics (10 Marks):</b> Assesses rate graph interpretation, temperature effects, and heat of reaction calculation.</li>
+  <li><b>Section D: Organic Chemistry Principles (8 Marks):</b> Evaluates unsaturation testing, combustion characteristics, and functional group reactions.</li>
+</ul>
+
+<h2>7.2 Standardized Usability & Acceptance Instruments</h2>
+<p>
+Learners and educators complete validated psychometric survey instruments embedded within the platform:
+</p>
+<ul>
+  <li><b>System Usability Scale (SUS):</b> 10-item Likert scale measuring learnability, usability, and complexity. Automatically converted to a standardized 0–100 SUS percentile score (with scores $\ge 68$ denoting acceptable usability).</li>
+  <li><b>Technology Acceptance Model (TAM 3):</b> Measures four core constructs among teachers and students:
+      <ul>
+        <li><b>PU (Perceived Usefulness):</b> Enhances classroom effectiveness and practical understanding.</li>
+        <li><b>PEOU (Perceived Ease of Use):</b> Effortless navigation and apparatus manipulation.</li>
+        <li><b>FC (Facilitating Conditions):</b> Platform operationality under school hardware/network limits.</li>
+        <li><b>BI (Behavioral Intention):</b> Intention to integrate the platform continuously into KCSE preparation.</li>
+      </ul>
+  </li>
+</ul>
+
+<h2>7.3 Triangulation & Statistical Analysis Engine (`server/utils/statistics.js`)</h2>
+<p>
+The backend includes a dedicated mathematical statistics utility enabling researchers and teachers to calculate publication-ready statistical indices with one click:
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Statistical Metric</th>
+      <th>Mathematical Formula</th>
+      <th>Educational Research Interpretation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><b>Hake's Normalized Learning Gain ($g$)</b></td>
+      <td>$$g = \frac{\text{Post\%} - \text{Pre\%}}{100\% - \text{Pre\%}}$$</td>
+      <td>Evaluates academic growth: High Gain ($g \ge 0.70$), Medium Gain ($0.30 \le g < 0.70$), Low Gain ($g < 0.30$).</td>
+    </tr>
+    <tr>
+      <td><b>Cohen's $d$ Effect Size</b></td>
+      <td>$$d = \frac{\bar{X}_{\text{post}} - \bar{X}_{\text{pre}}}{s_{\text{pooled}}}$$</td>
+      <td>Quantifies intervention effect magnitude: Large ($d \ge 0.80$), Medium ($0.50 \le d < 0.80$), Small ($0.20 \le d < 0.50$).</td>
+    </tr>
+    <tr>
+      <td><b>Paired Sample $t$-Test</b></td>
+      <td>$$t = \frac{\bar{D}}{s_D / \sqrt{N}}$$</td>
+      <td>Tests null hypothesis $H_0$ that virtual lab intervention produced no change ($p < 0.05$ denotes statistical significance).</td>
+    </tr>
+    <tr>
+      <td><b>Cronbach's Alpha ($\alpha$)</b></td>
+      <td>$$\alpha = \frac{K}{K-1}\left(1 - \frac{\sum \sigma_i^2}{\sigma_T^2}\right)$$</td>
+      <td>Measures internal consistency reliability of CPCAT test items and survey constructs ($\alpha \ge 0.70$ required).</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- SECTION 8                                                  -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="page-break"></div>
+<div class="doc-header-strip">
+  <span>VirtuLab Kenya · Technical Manual</span>
+  <span>Section 8: Operations & Tests</span>
+</div>
+
+<h1>8. Deployment, Operations & Verification</h1>
+
+<h2>8.1 Multi-Stage Production Docker Architecture</h2>
+<p>
+VirtuLab Kenya provides a security-hardened, multi-stage <code>Dockerfile</code> based on Alpine Linux:
+</p>
+<pre><code># Stage 1: Dependency Caching
+FROM node:20-alpine AS dependencies
+WORKDIR /app
+COPY server/package*.json ./server/
+WORKDIR /app/server
+RUN npm ci --only=production
+
+# Stage 2: Minimal Production Runner
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+ENV PORT=3000
+
+# Security: Non-root user execution
+USER node
+
+COPY --chown=node:node --from=dependencies /app/server/node_modules ./server/node_modules
+COPY --chown=node:node server/ ./server/
+COPY --chown=node:node client/ ./client/
+COPY --chown=node:node docs/ ./docs/
+
+WORKDIR /app/server
+EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
+
+CMD ["node", "index.js"]</code></pre>
+
+<h2>8.2 Automated Verification & Test Results</h2>
+<p>
+The test suite utilizes Node.js native test runner (<code>node:test</code>), executing in under 1 second:
+</p>
+
+<pre><code>$ node --test tests/knec_exams.test.js
+
+▶ KNEC Paper 3 Examination Suite Standards
+  ✔ should initialize and validate all 6 official KNEC Paper 3 Mock Series (130ms)
+  ✔ should correctly award marks using Error Carried Forward (e.c.f.) on algebraic calculations (27ms)
+  ✔ should ensure Series 1 standard titration logically calculates moles and molarity (6ms)
+  ✔ should validate KCSE 2023 authentic preset with dual-key ECF answering (3ms)
+  ✔ should validate KCSE 2024 authentic percentage purity preset and ECF logic (5ms)
+  ✔ should validate CPCAT Engine with 40 authentic items and 25% balanced keys (215ms)
+  ✔ should validate Chemical Speed Battle question pool of 80 high-yield items (132ms)
+  ✔ should strictly grade Question 1 Table 1 with CT, D, AC, PA, and FA (42ms)
+  ✔ should enforce Qualitative Analysis Q2 marking, amphoteric grouping, and charge penalties (39ms)
+  ✔ should enforce Organic Analysis Q3 rubrics and functional group deduction (11ms)
+  ✔ should validate AI Exam Assistant Service blueprints and fallbacks (246ms)
+✔ KNEC Paper 3 Examination Suite Standards (928ms)
+
+ℹ tests 11 | suites 1 | pass 11 | fail 0 | duration_ms 928ms</code></pre>
+
+<h2>8.3 Cloud Deployment Reference</h2>
+<p>
+The platform is ready for one-click deployment across global and local cloud providers:
+</p>
+<ul>
+  <li><b>Render:</b> Configured via <code>render.yaml</code> with managed PostgreSQL and health checks.</li>
+  <li><b>Railway:</b> Configured via <code>railway.json</code> with automated continuous integration.</li>
+  <li><b>Fly.io:</b> Configured via <code>fly.toml</code> with edge routing in Johannesburg (JNB) for low latency to Nairobi.</li>
+  <li><b>Local School Nginx Reverse Proxy:</b> Detailed configuration guide provided in <code>docs/PRODUCTION_DEPLOYMENT.md</code> for offline school local area networks (LANs).</li>
+</ul>
+
+<div class="callout callout-success">
+  <b>System Verification Status:</b> The VirtuLab Kenya codebase has achieved 100% completion across all 6 development phases. The platform is robust, secure, mathematically verified, and fully prepared for field pilot deployment across secondary schools in Kenya.
+</div>
+
+</body>
+</html>

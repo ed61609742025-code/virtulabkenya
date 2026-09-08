@@ -1072,3 +1072,169 @@ iframe.lab-frame {
   animation: frothFizz 1.2s infinite ease-in-out;
 }
 
+/* ── 12. Calculation Chips, Feedback, Examiner Tabs & Quick-Palette ── */
+.calc-step-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 14px;
+}
+.calc-input {
+  background: var(--bg-dark);
+  border: 1.5px solid var(--card-border);
+  border-radius: 8px;
+  color: var(--text-main);
+  font-family: var(--font-mono);
+  font-size: 0.92rem;
+  font-weight: 700;
+  padding: 8px 12px;
+  width: 100%;
+  max-width: 240px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.calc-input:focus {
+  border-color: var(--blue-accent);
+}
+.suggestion-chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.sugg-chip {
+  font-size: 0.72rem;
+  background: var(--card-bg-hover);
+  border: 1px solid var(--card-border);
+  border-radius: 4px;
+  padding: 3px 8px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+.sugg-chip:hover {
+  background: var(--blue-bg);
+  border-color: var(--blue-accent);
+  color: var(--blue-accent);
+}
+.step-feedback-msg {
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-top: 6px;
+}
+.step-feedback-success { color: var(--green-accent); }
+.step-feedback-fail { color: var(--red-accent); }
+
+/* Chief Examiner Report Tabs & Sections */
+.examiner-tab-btn {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.examiner-tab-btn.active {
+  background: var(--amber-accent);
+  color: #FFFFFF;
+  border-color: var(--amber-accent);
+}
+.rubric-item-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--card-border);
+  font-size: 0.8rem;
+}
+.rubric-item-row:last-child {
+  border-bottom: none;
+}
+
+/* Pacing Coach Bar */
+.pacing-coach-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-dark);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 10px 16px;
+  margin-bottom: 16px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.pacing-milestone {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+}
+.pacing-milestone.active {
+  background: var(--blue-bg);
+  color: var(--blue-accent);
+  border-color: var(--blue-accent);
+}
+.pacing-milestone.completed {
+  background: var(--green-bg);
+  color: var(--green-accent);
+  border-color: var(--green-border);
+}
+
+/* Smart Chemistry Quick-Palette */
+.chem-palette-box {
+  background: var(--bg-dark);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+}
+.chem-palette-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--cyan-accent);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.chem-token-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.chem-token-chip {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 4px;
+  padding: 2px 7px;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.12s ease;
+  user-select: none;
+}
+.chem-token-chip:hover {
+  background: var(--blue-bg);
+  border-color: var(--blue-accent);
+  color: var(--blue-accent);
+  transform: translateY(-1px);
+}
+.chem-token-chip:active {
+  transform: scale(0.96);
+}
+

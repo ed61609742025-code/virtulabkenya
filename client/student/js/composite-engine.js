@@ -1642,6 +1642,8 @@ function getOrganicPresetDefinition(organicKey) {
 class CompositeExamEngine {
   constructor(config = null) {
     this.preset = JSON.parse(JSON.stringify(COMPOSITE_EXAM_PRESETS.series_1));
+    if (!this.preset.q2.simulationType) this.preset.q2.simulationType = (this.preset.q2.type === 'organic') ? 'organic' : 'qualitative';
+    if (!this.preset.q3.simulationType) this.preset.q3.simulationType = (this.preset.q3.type === 'qualitative' || this.preset.q3.type === 'qualitative_single') ? 'qualitative' : 'organic';
     this.mode = 'strict'; // 'strict' (135 min timed) or 'guided' (with hints)
 
     // Q1 Workbench State
@@ -1671,11 +1673,12 @@ class CompositeExamEngine {
     // Generic answers repository (supports arbitrary sub-questions)
     this.q1Answers = {};
 
-    // Q2 Qualitative State
+    // Q2 State (Qualitative or Organic)
     this.q2Obs = {};
     this.q2Inf = {};
     this.q2CationChoice = '';
     this.q2AnionChoice = '';
+    this.q2FunctionalGroupChoice = '';
 
     // Q3 Organic State
     this.q3Obs = {};
@@ -1702,6 +1705,12 @@ class CompositeExamEngine {
         q2: { ...basePreset.q2 },
         q3: { ...basePreset.q3 }
       };
+      if (!this.preset.q2.simulationType) {
+        this.preset.q2.simulationType = (this.preset.q2.type === 'organic') ? 'organic' : 'qualitative';
+      }
+      if (!this.preset.q3.simulationType) {
+        this.preset.q3.simulationType = (this.preset.q3.type === 'qualitative' || this.preset.q3.type === 'qualitative_single') ? 'qualitative' : 'organic';
+      }
       if (this.preset.q1.calcType === 'water_of_crystallization') {
         this.preset.q1.questions = createWaterOfCrystallizationQuestions(this.preset.q1);
       } else if (this.preset.q1.calcType === 'percentage_purity') {
@@ -1714,9 +1723,15 @@ class CompositeExamEngine {
     }
 
     // Support flexible unpacking from config.q1, config.examConfig.q1, or config.questions[i].config
-    const q1Cfg = config.q1 || config.examConfig?.q1 || (Array.isArray(config.questions) ? config.questions.find(q => q.number === 1 || q.simulationType === 'titration')?.config : null);
-    const q2Cfg = config.q2 || config.examConfig?.q2 || (Array.isArray(config.questions) ? config.questions.find(q => q.number === 2 || q.simulationType === 'qualitative')?.config : null);
-    const q3Cfg = config.q3 || config.examConfig?.q3 || (Array.isArray(config.questions) ? config.questions.find(q => q.number === 3 || q.simulationType === 'organic' || (q.simulationType === 'qualitative' && q.number !== 2))?.config : null);
+    const q1Obj = Array.isArray(config.questions) ? (config.questions.find(q => q.number === 1 || q.simulationType === 'titration' || q.type === 'volumetric') || config.questions[0]) : null;
+    const q1Cfg = config.q1 || config.examConfig?.q1 || q1Obj?.config || (q1Obj && (q1Obj.solutionA || q1Obj.trueTitre || q1Obj.calcType || q1Obj.acidMolarity) ? q1Obj : null);
+    
+    // Explicit question mapping by question number first, preventing Q2/Q3 cross-contamination
+    const q2Obj = Array.isArray(config.questions) ? (config.questions.find(q => q.number === 2) || config.questions[1]) : null;
+    const q2Cfg = config.q2 || config.examConfig?.q2 || q2Obj?.config || (q2Obj && (q2Obj.tests || q2Obj.simulationType || q2Obj.type || q2Obj.trueSaltKey || q2Obj.trueOrganicKey) ? q2Obj : null);
+
+    const q3Obj = Array.isArray(config.questions) ? (config.questions.find(q => q.number === 3) || config.questions[2]) : null;
+    const q3Cfg = config.q3 || config.examConfig?.q3 || q3Obj?.config || (q3Obj && (q3Obj.tests || q3Obj.simulationType || q3Obj.type || q3Obj.trueSaltKey || q3Obj.trueOrganicKey) ? q3Obj : null);
 
     if (q1Cfg) {
       Object.assign(this.preset.q1, q1Cfg);
@@ -1774,23 +1789,47 @@ class CompositeExamEngine {
 
     if (q2Cfg) {
       Object.assign(this.preset.q2, q2Cfg);
-      const saltKey = q2Cfg.trueSaltKey || q2Cfg.salt;
-      if (saltKey) this.preset.q2.trueSaltKey = saltKey;
-      if (q2Cfg.hasDeduction !== undefined) {
-        this.preset.q2.hasDeduction = Boolean(q2Cfg.hasDeduction);
-      } else if (presetKey === 'custom' || !presetKey) {
-        this.preset.q2.hasDeduction = Boolean(
-          Array.isArray(q2Cfg.tests) && q2Cfg.tests.some(t => /final deduction|state the (cation|anion|identity)|write the formula/i.test(t.prompt || ''))
-        );
-      }
-      if (!Array.isArray(q2Cfg.tests) || q2Cfg.tests.length === 0) {
-        const registryTests = getSaltPresetDefinition(saltKey);
-        if (registryTests) {
-          this.preset.q2.trueCation = registryTests.trueCation;
-          this.preset.q2.trueAnion = registryTests.trueAnion;
-          this.preset.q2.trueSaltName = registryTests.trueSaltName;
-          this.preset.q2.sampleDesc = registryTests.sampleDesc;
-          this.preset.q2.tests = registryTests.tests;
+      const isQ2Organic = q2Cfg.simulationType === 'organic' || (
+        q2Cfg.simulationType !== 'qualitative' && (
+          Boolean(q2Cfg.trueOrganicKey) ||
+          Boolean(q2Cfg.trueFunctionalGroup) ||
+          (q2Cfg.sampleDesc && /organic/i.test(q2Cfg.sampleDesc)) ||
+          (q2Cfg.tests && q2Cfg.tests.some(t => /spatula|flame|litmus|manganate|kmno4|nahco3|bromine/i.test(t.prompt || '')))
+        )
+      );
+
+      if (isQ2Organic) {
+        this.preset.q2.simulationType = 'organic';
+        const orgKey = q2Cfg.trueOrganicKey || q2Cfg.organic;
+        if (orgKey) this.preset.q2.trueOrganicKey = orgKey;
+        if (!Array.isArray(q2Cfg.tests) || q2Cfg.tests.length === 0) {
+          const registryOrg = getOrganicPresetDefinition(orgKey || 'Ethanol');
+          if (registryOrg) {
+            this.preset.q2.trueFunctionalGroup = registryOrg.trueFunctionalGroup;
+            this.preset.q2.sampleDesc = registryOrg.sampleDesc;
+            this.preset.q2.tests = registryOrg.tests;
+          }
+        }
+      } else {
+        this.preset.q2.simulationType = 'qualitative';
+        const saltKey = q2Cfg.trueSaltKey || q2Cfg.salt;
+        if (saltKey) this.preset.q2.trueSaltKey = saltKey;
+        if (q2Cfg.hasDeduction !== undefined) {
+          this.preset.q2.hasDeduction = Boolean(q2Cfg.hasDeduction);
+        } else if (presetKey === 'custom' || !presetKey) {
+          this.preset.q2.hasDeduction = Boolean(
+            Array.isArray(q2Cfg.tests) && q2Cfg.tests.some(t => /final deduction|state the (cation|anion|identity)|write the formula/i.test(t.prompt || ''))
+          );
+        }
+        if (!Array.isArray(q2Cfg.tests) || q2Cfg.tests.length === 0) {
+          const registryTests = getSaltPresetDefinition(saltKey || 'Pb(NO3)2');
+          if (registryTests) {
+            this.preset.q2.trueCation = registryTests.trueCation;
+            this.preset.q2.trueAnion = registryTests.trueAnion;
+            this.preset.q2.trueSaltName = registryTests.trueSaltName;
+            this.preset.q2.sampleDesc = registryTests.sampleDesc;
+            this.preset.q2.tests = registryTests.tests;
+          }
         }
       }
     }
@@ -2272,6 +2311,10 @@ class CompositeExamEngine {
     this.q2AnionChoice = anion;
   }
 
+  setQ2OrganicDeduction(functionalGroup) {
+    this.q2FunctionalGroupChoice = functionalGroup;
+  }
+
   calculateQ2Score() {
     if (!this.preset || !this.preset.q2 || !Array.isArray(this.preset.q2.tests)) {
       return { totalScore: 0, maxScore: 0, rubric: [] };
@@ -2280,6 +2323,64 @@ class CompositeExamEngine {
     const rubric = [];
     const tests = this.preset.q2.tests || [];
     const totalMarks = Number(this.preset.q2.marks) || 15.0;
+
+    if (this.preset.q2.simulationType === 'organic') {
+      const perTestMax = tests.length > 0 ? parseFloat((totalMarks / tests.length).toFixed(1)) : 2.5;
+      const perHalfMax = parseFloat((perTestMax / 2.0).toFixed(1));
+      tests.forEach((t, idx) => {
+        const candidateObs = (this.q2Obs[t.id] || '').trim().toLowerCase();
+        const candidateInf = (this.q2Inf[t.id] || '').trim().toLowerCase();
+        let testMark = 0.0;
+        let obsMark = 0.0;
+        const obsKeywords = (t.correctObs || '').toLowerCase().split(/[,; ]+/).filter(w => w.length > 3);
+        const obsMatches = obsKeywords.filter(w => candidateObs.includes(w)).length;
+        if (candidateObs.length > 4 && obsMatches >= 1) {
+          obsMark = perHalfMax;
+        } else if (candidateObs.length > 2) {
+          obsMark = parseFloat((perHalfMax / 2).toFixed(1));
+        }
+
+        let infMark = 0.0;
+        const infKeywords = (t.correctInf || '').toLowerCase().split(/[,; ]+/).filter(w => w.length > 2);
+        const infMatches = infKeywords.filter(w => candidateInf.includes(w)).length;
+        if (candidateInf.length > 3 && infMatches >= 1) {
+          infMark = perHalfMax;
+        } else if (candidateInf.length > 2) {
+          infMark = parseFloat((perHalfMax / 2).toFixed(1));
+        }
+        testMark = parseFloat((obsMark + infMark).toFixed(1));
+        score += testMark;
+        rubric.push({
+          code: `Q2_${String.fromCharCode(97 + idx)}`,
+          item: `Organic Test (${String.fromCharCode(97 + idx)}): ${(t.prompt || '').substring(0, 45)}… [${testMark.toFixed(1)} / ${perTestMax.toFixed(1)} Mks]`,
+          max: perTestMax,
+          mark: testMark,
+          pass: testMark >= (perTestMax * 0.6),
+          detail: `Obs: [${obsMark.toFixed(1)}/${perHalfMax.toFixed(1)}] "${this.q2Obs[t.id] || 'None'}". Infs: [${infMark.toFixed(1)}/${perHalfMax.toFixed(1)}] "${this.q2Inf[t.id] || 'None'}".`
+        });
+      });
+
+      if (this.q2FunctionalGroupChoice) {
+        const fgCorrect = (this.preset.q2.trueFunctionalGroup && this.q2FunctionalGroupChoice.includes(this.preset.q2.trueFunctionalGroup.split(' ')[0]));
+        const fgMark = fgCorrect ? 2.0 : 0.0;
+        score += fgMark;
+        rubric.push({
+          code: 'Q2_FG',
+          item: 'Functional Group Deduction',
+          max: 2.0,
+          mark: fgMark,
+          pass: fgCorrect,
+          detail: fgCorrect ? `Correct functional group identified (${this.preset.q2.trueFunctionalGroup}).` : `Expected: ${this.preset.q2.trueFunctionalGroup || 'Correct functional group'}`
+        });
+      }
+
+      return {
+        totalScore: Math.min(totalMarks, parseFloat(score.toFixed(1))),
+        maxScore: totalMarks,
+        rubric
+      };
+    }
+
     const hasDeduction = Boolean(this.preset.q2.hasDeduction === true);
 
     const perTestMax = hasDeduction

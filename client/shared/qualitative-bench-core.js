@@ -84,6 +84,21 @@
       crystalSecondary: '#CBD5E1',
       crystalHighlight: '#FFFFFF'
     },
+    sodiumSulfite: {
+      key: 'sodiumSulfite',
+      altKeys: ['NA2SO3', 'SODIUM SULFITE', 'SODIUM SULPHITE', 'SODIUM_SULFITE'],
+      name: 'Sodium Sulfite',
+      formula: 'Na₂SO₃',
+      cation: 'Na+',
+      anion: 'SO3^2-',
+      cationDisplay: 'Na⁺',
+      anionDisplay: 'SO₃²⁻',
+      appearance: 'White crystalline powder',
+      solubility: 'Soluble in water; forms a clear, alkaline stock solution.',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#E2E8F0',
+      crystalHighlight: '#FFFFFF'
+    },
     calciumChloride: {
       key: 'calciumChloride',
       altKeys: ['CACL2', 'CALCIUM CHLORIDE', 'CALCIUM_CHLORIDE'],
@@ -224,12 +239,16 @@
   function resolveSalt(saltKey) {
     if (!saltKey) return SALTS.leadNitrate;
     if (SALTS[saltKey]) return SALTS[saltKey];
-    const norm = String(saltKey).toUpperCase().replace(/[\s\-_]/g, '');
+    const raw = String(saltKey).toUpperCase().replace(/[\s\-_]/g, '');
+    const norm = raw.startsWith('SALT') && raw.length > 4 ? raw.slice(4) : raw;
     for (const key in SALTS) {
       const salt = SALTS[key];
-      if (salt.key.toUpperCase() === norm) return salt;
+      if (salt.key.toUpperCase() === norm || salt.key.toUpperCase() === raw) return salt;
       if (salt.formula.toUpperCase().replace(/[\s\-_()]/g, '') === norm.replace(/[()]/g, '')) return salt;
-      if (salt.altKeys && salt.altKeys.some(k => k.replace(/[\s\-_()]/g, '') === norm.replace(/[()]/g, ''))) return salt;
+      if (salt.altKeys && salt.altKeys.some(k => {
+        const alt = k.toUpperCase().replace(/[\s\-_()]/g, '');
+        return alt === norm || alt === raw;
+      })) return salt;
     }
     // Fuzzy matching
     if (norm.includes('ZN')) return SALTS.zincSulfate;
@@ -243,6 +262,7 @@
     if (norm.includes('NH4')) return SALTS.ammoniumChloride;
     if (norm.includes('BA')) return SALTS.bariumChloride;
     if (norm.includes('AL')) return SALTS.aluminumNitrate;
+    if (norm.includes('SO3') || norm.includes('SULFITE') || norm.includes('SULPHITE')) return SALTS.sodiumSulfite;
     return SALTS.leadNitrate;
   }
 
@@ -533,6 +553,7 @@
           statusLabel = isExcess ? 'In Excess: White precipitate insoluble' : 'Few Drops: White precipitate formed';
         } else if (cation === 'Cu2+') {
           if (isExcess) {
+            pptDissolved = true;
             complexDeepBlue = true;
             liquidColor = '#1D4ED8';
             statusLabel = 'In Excess: Pale blue ppt dissolves to form deep royal blue solution ([Cu(NH₃)₄]²⁺)';
@@ -569,24 +590,30 @@
           statusLabel = 'No precipitate formed';
         }
       } else if (isBaCl2) {
-        if (anion === 'SO4^2-' || anion === 'SO42-' || (anion && anion.includes('SO4')) || oStr.includes('baso4') || oStr.includes('white precipitate') || oStr.includes('white ppt')) {
+        if (anion === 'SO3^2-' || anion === 'SO32-' || (anion && anion.includes('SO3')) || oStr.includes('baso3') || (oStr.includes('white precipitate') && oStr.includes('dissolv'))) {
           if (stage === 'step2_bacl2' || !isStep1) {
             ppt = true;
             pptColor = '#FFFFFF';
-            statusLabel = 'Ba²⁺ Added: Dense white precipitate of BaSO₄ formed (acid-insoluble)';
-          } else {
-            statusLabel = 'Dilute Acid Added: Clear solution remains';
+            if (stage === 'excess' || stage === 'step2_acid' || stage === 'acid' || isExcess || pStr.includes('acid') || pStr.includes('hcl') || oStr.includes('dissolv')) {
+              pptDissolved = true;
+              bubbling = true;
+              statusLabel = 'Dilute Acid Added: White BaSO₃ precipitate dissolves with effervescence of pungent SO₂ gas';
+            } else {
+              statusLabel = 'Ba²⁺ Added: White precipitate of BaSO₃ formed (dissolves in acid)';
+            }
           }
         } else if (anion === 'CO3^2-' || anion === 'CO32-' || (anion && anion.includes('CO3'))) {
           if (isStep1) {
             bubbling = true;
             statusLabel = 'Acid Added: Vigorous effervescence of CO₂ gas';
           }
-        } else if (anion === 'SO3^2-' || anion === 'SO32-' || (anion && anion.includes('SO3'))) {
+        } else if (anion === 'SO4^2-' || anion === 'SO42-' || (anion && anion.includes('SO4')) || oStr.includes('baso4') || oStr.includes('white precipitate') || oStr.includes('white ppt')) {
           if (stage === 'step2_bacl2' || !isStep1) {
             ppt = true;
             pptColor = '#FFFFFF';
-            statusLabel = 'Ba²⁺ Added: White precipitate of BaSO₃ formed (dissolves in acid)';
+            statusLabel = 'Ba²⁺ Added: Dense white precipitate of BaSO₄ formed (acid-insoluble)';
+          } else {
+            statusLabel = 'Dilute Acid Added: Clear solution remains';
           }
         } else {
           statusLabel = 'No precipitate formed';

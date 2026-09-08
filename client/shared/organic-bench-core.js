@@ -1247,7 +1247,7 @@
     if (pStr.includes('litmus') || pStr.includes('ph')) {
       return renderLitmusSvg({ sampleKey, performed, tubeId });
     }
-    if (pStr.includes('ignit') || pStr.includes('flame') || pStr.includes('spatula') || pStr.includes('burn')) {
+    if (pStr.includes('ignit') || pStr.includes('flame') || (pStr.includes('spatula') && (pStr.includes('flame') || pStr.includes('burn') || pStr.includes('heat') || pStr.includes('ignit'))) || pStr.includes('burn')) {
       return renderIgnitionSvg({ sampleKey, performed, tubeId });
     }
     if (pStr.includes('ester') || pStr.includes('fruity')) {
@@ -1293,15 +1293,7 @@
     const isMethanoic = sample.compoundKey === 'methanoic_acid' || sample.key === 'org_methanoic_acid';
     const isBenzoic = sample.compoundKey === 'benzoic_acid' || sample.key === 'org_benzoic_acid';
 
-    if (pStr.includes('ignit') || pStr.includes('flame') || pStr.includes('burn') || pStr.includes('spatula') || tId.includes('ignit')) {
-      const isSooty = sample.isSooty || sample.fgKey === 'alkene' || sample.fgKey === 'alkyne' || isBenzoic;
-      statusLabel = performed ? (isSooty ? 'Ignition: Luminous smoky sooty yellow flame' : 'Ignition: Clear non-sooty pale blue flame') : 'Awaiting Bunsen Flame';
-      soundType = 'flame';
-    } else if (pStr.includes('litmus') || pStr.includes('ph') || tId.includes('litmus')) {
-      const isAcidic = sample.fgKey === 'alkanoic_acid';
-      statusLabel = performed ? (isAcidic ? 'Litmus: Moist blue litmus turns red (Acidic, pH 3)' : 'Litmus: Neutral, no colour change (pH 7)') : 'Awaiting Litmus Strips';
-      soundType = 'drop';
-    } else if (pStr.includes('bromine') || tId.includes('bromine')) {
+    if (pStr.includes('bromine') || tId.includes('bromine')) {
       const isDecolorized = sample.bromine?.isDecolorized || sample.fgKey === 'alkene' || sample.fgKey === 'alkyne';
       statusLabel = performed ? (isDecolorized ? 'Bromine Water: Rapidly decolourized to colourless' : 'Bromine Water: Reddish-brown colour persists') : 'Awaiting Bromine Water';
       soundType = 'drop';
@@ -1323,6 +1315,14 @@
       const hasEff = sample.carbonate?.hasEffervescence || sample.fgKey === 'alkanoic_acid';
       statusLabel = performed ? (hasEff ? 'NaHCO₃: Vigorous effervescence of CO₂ gas' : 'NaHCO₃: No effervescence observed') : 'Awaiting Solid NaHCO₃';
       soundType = hasEff ? 'effervescence' : 'drop';
+    } else if (pStr.includes('litmus') || pStr.includes('ph') || tId.includes('litmus')) {
+      const isAcidic = sample.fgKey === 'alkanoic_acid';
+      statusLabel = performed ? (isAcidic ? 'Litmus: Moist blue litmus turns red (Acidic, pH 3)' : 'Litmus: Neutral, no colour change (pH 7)') : 'Awaiting Litmus Strips';
+      soundType = 'drop';
+    } else if (pStr.includes('ignit') || pStr.includes('flame') || pStr.includes('burn') || (pStr.includes('spatula') && (pStr.includes('flame') || pStr.includes('burn') || pStr.includes('heat') || pStr.includes('ignit'))) || tId.includes('ignit')) {
+      const isSooty = sample.isSooty || sample.fgKey === 'alkene' || sample.fgKey === 'alkyne' || isBenzoic;
+      statusLabel = performed ? (isSooty ? 'Ignition: Luminous smoky sooty yellow flame' : 'Ignition: Clear non-sooty pale blue flame') : 'Awaiting Bunsen Flame';
+      soundType = 'flame';
     } else {
       statusLabel = performed ? 'Test Completed: Observation Recorded' : 'Ready to test';
     }
@@ -1368,5 +1368,8 @@
   };
 
   global.OrganicBenchCore = OrganicBenchCore;
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = OrganicBenchCore;
+  }
 
 })(typeof window !== 'undefined' ? window : this);

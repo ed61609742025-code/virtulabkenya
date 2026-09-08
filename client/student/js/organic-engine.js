@@ -525,7 +525,7 @@
         testId: testKey,
         sampleKey: currentSampleKey,
         performed,
-        prompt: test.name || test.title || test.desc || '',
+        prompt: test.procedure || test.prompt || test.label || test.name || test.title || test.desc || '',
         tubeId: `org_stand_${testKey}`
       });
     }

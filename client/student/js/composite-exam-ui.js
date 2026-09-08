@@ -2429,6 +2429,32 @@ requireStudentLogin();
       `;
     }
 
+    const isSolubility = testId.includes('solub') || testId.includes('miscib') || (prompt && (prompt.toLowerCase().includes('water') || prompt.toLowerCase().includes('solub') || prompt.toLowerCase().includes('miscib')));
+
+    if (isSolubility) {
+      const isMiscible = orgKey.includes('Ethanol') || orgKey.includes('Alcohol') || (orgKey.includes('Acid') && !orgKey.includes('Benzoic'));
+      return `
+        <svg width="86" height="136" viewBox="0 0 86 136">
+          <rect x="23" y="32" width="40" height="4" rx="2" fill="rgba(255,255,255,0.18)" stroke="#94A3B8" stroke-width="1.2"/>
+          <path d="M 26,36 L 26,112 Q 26,130 43,130 Q 60,130 60,112 L 60,36 Z" fill="rgba(255,255,255,0.05)" stroke="#94A3B8" stroke-width="1.5"/>
+          ${performed ? (isMiscible ? `
+            <!-- Single Homogeneous Layer -->
+            <path d="M 27,70 L 27,112 Q 27,128 43,128 Q 59,128 59,112 L 59,70 Z" fill="rgba(56, 189, 248, 0.38)"/>
+            <ellipse cx="43" cy="70" rx="16" ry="3.5" fill="rgba(255,255,255,0.4)"/>
+          ` : `
+            <!-- Lower Aqueous Layer -->
+            <path d="M 27,92 L 27,112 Q 27,128 43,128 Q 59,128 59,112 L 59,92 Z" fill="rgba(56, 189, 248, 0.45)"/>
+            <ellipse cx="43" cy="92" rx="16" ry="3.2" fill="rgba(255,255,255,0.65)"/>
+            <!-- Upper Non-Polar Layer -->
+            <path d="M 27,70 L 27,92 L 59,92 L 59,70 Z" fill="rgba(245, 158, 11, 0.5)"/>
+            <ellipse cx="43" cy="70" rx="16" ry="3.5" fill="rgba(245, 158, 11, 0.7)"/>
+          `) : `
+            <path d="M 27,100 L 27,112 Q 27,128 43,128 Q 59,128 59,112 L 59,100 Z" fill="rgba(56, 189, 248, 0.25)"/>
+          `}
+        </svg>
+      `;
+    }
+
     let tubeFillColor = 'rgba(56,189,248,0.35)';
     if (performed) {
       if (testId === 'q3_kmno4') {

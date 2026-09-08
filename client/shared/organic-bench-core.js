@@ -1129,7 +1129,8 @@
   function renderSolubilitySvg(options = {}) {
     const { sampleKey = 'org_alkene', performed = false, tubeId = 'sol_1' } = options;
     const sample = resolveSample(sampleKey);
-    const isMiscible = sample.fgKey === 'alkanol' || sample.fgKey === 'alkanoic_acid';
+    const isMiscible = sample.solubility ? Boolean(sample.solubility.isMiscible) : (sample.fgKey === 'alkanol' || (sample.fgKey === 'alkanoic_acid' && sample.compoundKey !== 'benzoic_acid'));
+    const isSolid = sample.compoundKey === 'benzoic_acid' || sample.key === 'org_benzoic_acid' || (sample.label && sample.label.includes('Solid'));
 
     let fluidMarkup = '';
     if (!performed) {
@@ -1148,22 +1149,41 @@
         <path d="M 64,135 Q 80,140 96,135" stroke="rgba(255,255,255,0.4)" stroke-width="1.0" fill="none"/>
         <path d="M 66,160 Q 80,165 94,160" stroke="rgba(255,255,255,0.35)" stroke-width="0.8" fill="none"/>
       `;
+    } else if (isSolid) {
+      fluidMarkup = `
+        <!-- Clear Water Column with Undissolved Solid Benzoic Acid Crystals at Base -->
+        <path d="M 56,105 L 56,174 C 56,194 67,202 80,202 C 93,202 104,194 104,174 L 104,105 Z" fill="rgba(56, 189, 248, 0.28)"/>
+        <ellipse cx="80" cy="105" rx="24" ry="4" fill="rgba(56, 189, 248, 0.5)"/>
+        <path d="M 56,105 Q 80,110 104,105" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="1.2"/>
+        <!-- Undissolved Crystalline Flakes at Base -->
+        <polygon points="68,198 72,190 76,198" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="0.7"/>
+        <polygon points="77,201 81,192 86,201" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="0.7"/>
+        <polygon points="85,199 90,191 95,199" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="0.7"/>
+      `;
     } else {
       fluidMarkup = `
         <!-- Lower Aqueous Water Layer -->
-        <path d="M 56,145 L 56,174 C 56,194 67,202 80,202 C 93,202 104,194 104,174 L 104,145 Z" fill="rgba(56, 189, 248, 0.42)"/>
+        <path d="M 56,145 L 56,174 C 56,194 67,202 80,202 C 93,202 104,194 104,174 L 104,145 Z" fill="rgba(56, 189, 248, 0.45)"/>
         <ellipse cx="80" cy="145" rx="24" ry="4" fill="rgba(56, 189, 248, 0.65)"/>
         <!-- Curved Interfacial Boundary Meniscus -->
-        <path d="M 56,145 Q 80,150 104,145" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="1.5"/>
+        <path d="M 56,145 Q 80,150 104,145" fill="none" stroke="rgba(255,255,255,0.95)" stroke-width="1.6"/>
 
         <!-- Upper Non-Polar Hydrocarbon Oil Layer -->
-        <path d="M 56,105 L 56,145 L 104,145 L 104,105 Z" fill="rgba(245, 158, 11, 0.48)"/>
-        <ellipse cx="80" cy="105" rx="24" ry="4" fill="rgba(245, 158, 11, 0.7)"/>
-        <path d="M 56,105 Q 80,110 104,105" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="1.2"/>
+        <path d="M 56,105 L 56,145 L 104,145 L 104,105 Z" fill="rgba(245, 158, 11, 0.55)"/>
+        <ellipse cx="80" cy="105" rx="24" ry="4" fill="rgba(245, 158, 11, 0.75)"/>
+        <path d="M 56,105 Q 80,110 104,105" fill="none" stroke="rgba(255,255,255,0.85)" stroke-width="1.3"/>
+
+        <!-- Layer Indicator Labels -->
+        <text x="50" y="128" font-size="5.5" font-family="'JetBrains Mono', monospace" font-weight="700" fill="rgba(254,243,199,0.9)" text-anchor="end">Organic</text>
+        <line x1="51" y1="126" x2="59" y2="126" stroke="rgba(254,243,199,0.7)" stroke-width="0.7"/>
+
+        <text x="50" y="162" font-size="5.5" font-family="'JetBrains Mono', monospace" font-weight="700" fill="rgba(186,230,253,0.9)" text-anchor="end">Aqueous</text>
+        <line x1="51" y1="160" x2="59" y2="160" stroke="rgba(186,230,253,0.7)" stroke-width="0.7"/>
 
         <!-- Interfacial Hydrocarbon Droplets -->
-        <circle cx="72" cy="144" r="2.0" fill="#FBBF24" opacity="0.8"/>
-        <circle cx="88" cy="146" r="2.5" fill="#FBBF24" opacity="0.8"/>
+        <circle cx="72" cy="144" r="2.2" fill="#FBBF24" opacity="0.9"/>
+        <circle cx="88" cy="146" r="2.6" fill="#FBBF24" opacity="0.9"/>
+        <circle cx="79" cy="143" r="1.8" fill="#FDE68A" opacity="0.8"/>
       `;
     }
 
@@ -1199,7 +1219,7 @@
         ${fluidMarkup}
 
         <!-- Water Dropper Pipette -->
-        <g style="transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); transform: translate(0px, ${performed ? '6px' : '0px'});">
+        <g style="transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); transform: translate(0px, ${performed ? '-30px' : '0px'}); opacity: ${performed ? '0' : '1'};">
           <ellipse cx="80" cy="8" rx="8.5" ry="6.5" fill="url(#dropperBulb_${tubeId})"/>
           <rect x="78" y="14" width="4" height="20" fill="rgba(255,255,255,0.7)" stroke="#64748B" stroke-width="0.7"/>
           <path d="M 78,34 L 82,34 L 81,42 L 79,42 Z" fill="rgba(255,255,255,0.85)" stroke="#38BDF8" stroke-width="0.6"/>
@@ -1276,6 +1296,12 @@
     if (tId.includes('nahco3') || tId.includes('carbonate')) {
       return renderEffervescenceSvg({ sampleKey, performed, tubeId });
     }
+    if (tId.includes('solub') || tId.includes('miscib') || tId.includes('water')) {
+      return renderSolubilitySvg({ sampleKey, performed, tubeId });
+    }
+    if (tId.includes('ester')) {
+      return renderEsterificationSvg({ sampleKey, performed, tubeId });
+    }
 
     // Default fallback: Decolorization / generic organic tube
     return renderDecolorizationSvg({ sampleKey, testType: 'generic', performed, tubeId });
@@ -1322,6 +1348,14 @@
     } else if (pStr.includes('ignit') || pStr.includes('flame') || pStr.includes('burn') || (pStr.includes('spatula') && (pStr.includes('flame') || pStr.includes('burn') || pStr.includes('heat') || pStr.includes('ignit'))) || tId.includes('ignit')) {
       const isSooty = sample.isSooty || sample.fgKey === 'alkene' || sample.fgKey === 'alkyne' || isBenzoic;
       statusLabel = performed ? (isSooty ? 'Ignition: Luminous smoky sooty yellow flame' : 'Ignition: Clear non-sooty pale blue flame') : 'Awaiting Bunsen Flame';
+      soundType = 'flame';
+    } else if (pStr.includes('solub') || pStr.includes('miscib') || pStr.includes('water') || tId.includes('solub') || tId.includes('miscib')) {
+      const isMiscible = sample.solubility ? Boolean(sample.solubility.isMiscible) : (sample.fgKey === 'alkanol' || (sample.fgKey === 'alkanoic_acid' && !isBenzoic));
+      statusLabel = performed ? (sample.solubility?.status || (isMiscible ? 'Miscible: Dissolves completely in water' : 'Immiscible: Forms two distinct liquid layers')) : 'Awaiting Distilled Water';
+      soundType = 'drop';
+    } else if (pStr.includes('ester') || pStr.includes('fruity') || tId.includes('ester')) {
+      const isFruity = sample.esterification?.isFruity ?? (sample.fgKey === 'alkanol' || sample.fgKey === 'alkanoic_acid');
+      statusLabel = performed ? (sample.esterification?.status || (isFruity ? 'Esterification: Pleasant fruity aroma detected' : 'Esterification: No fruity smell')) : 'Awaiting Esterification Mixture';
       soundType = 'flame';
     } else {
       statusLabel = performed ? 'Test Completed: Observation Recorded' : 'Ready to test';

@@ -263,6 +263,30 @@ describe('Organic Bench Core (Carbon Compound Reactions)', () => {
       });
       assert.ok(dichromateSvg.includes('green') || dichromateSvg.includes('#10B981') || dichromateSvg.includes('#059669'), 'Acidified dichromate must turn green with alcohol');
     });
+
+    // Water Solubility & Miscibility
+    it('Water Solubility & Miscibility: Alkene forms 2 immiscible layers while Alkanol dissolves completely', () => {
+      const alkeneSvg = OrganicBenchCore.renderApparatusSvg({
+        sampleKey: 'org_alkene',
+        testId: 'solubility',
+        prompt: 'To 2 cm³ of the sample in a clean dry test tube, add 2 cm³ of distilled water and shake the mixture thoroughly.',
+        performed: true
+      });
+      assert.ok(alkeneSvg.includes('Water Solubility & Miscibility'), 'Must render Water Solubility apparatus');
+      assert.ok(alkeneSvg.includes('Organic') && alkeneSvg.includes('Aqueous'), 'Must show two distinct labeled layers for alkene');
+      assert.ok(alkeneSvg.includes('245, 158, 11'), 'Must render upper hydrocarbon amber layer');
+
+      const alcoholSvg = OrganicBenchCore.renderApparatusSvg({
+        sampleKey: 'org_alcohol',
+        testId: 'solubility',
+        prompt: 'To 2 cm³ of the sample in a clean dry test tube, add 2 cm³ of distilled water and shake the mixture thoroughly.',
+        performed: true
+      });
+      assert.ok(alcoholSvg.includes('Single Clear Homogeneous Solution'), 'Must render single homogeneous layer for miscible alcohol');
+
+      const alkeneState = OrganicBenchCore.resolveOrganicReactionState('org_alkene', 'solubility', true, 'Add 2 cm3 distilled water');
+      assert.ok(alkeneState.statusLabel.includes('Immiscible') || alkeneState.statusLabel.includes('2 Separate Layers'), 'Reaction state must report immiscible layers');
+    });
   });
 
   describe('Apparatus Dispatch Robustness', () => {
@@ -275,6 +299,17 @@ describe('Organic Bench Core (Carbon Compound Reactions)', () => {
         performed: true
       });
       assert.ok(svg.includes('Bromine Water') || svg.includes('Br₂'), 'Must render Bromine Water apparatus because prompt specifies bromine water');
+    });
+
+    it('REGRESSION: Solubility testId fallback must dispatch to Water Solubility even when prompt is empty', () => {
+      const svg = OrganicBenchCore.renderApparatusSvg({
+        sampleKey: 'org_alkene',
+        testId: 'solubility',
+        prompt: '',
+        performed: true
+      });
+      assert.ok(svg.includes('Water Solubility & Miscibility'), 'Must dispatch to Water Solubility apparatus via testId fallback');
+      assert.ok(svg.includes('Organic') && svg.includes('Aqueous'), 'Must render 2 immiscible layers');
     });
   });
 });

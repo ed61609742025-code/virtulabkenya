@@ -11,7 +11,7 @@ const gasRepo = require('../repositories/gasRepo');
 const asyncHandler = require('../utils/asyncHandler');
 
 // POST /api/gas/session or /api/gas — Save a completed Gas Preparation practical session
-router.post('/', apiLimiter, authMiddleware, asyncHandler(async (req, res) => {
+router.post('/', apiLimiter, authMiddleware, authMiddleware.requireRole('student'), asyncHandler(async (req, res) => {
   const studentId = req.user.id;
   const {
     assignment_id,
@@ -62,7 +62,7 @@ router.post('/', apiLimiter, authMiddleware, asyncHandler(async (req, res) => {
 }));
 
 // GET /api/gas/mine — Fetch student's own gas preparation practical history
-router.get('/mine', authMiddleware, asyncHandler(async (req, res) => {
+router.get('/mine', authMiddleware, authMiddleware.requireRole('student'), asyncHandler(async (req, res) => {
   const studentId = req.user.id;
   const sessions = await gasRepo.getStudentSessions(studentId);
   res.json({ success: true, sessions });

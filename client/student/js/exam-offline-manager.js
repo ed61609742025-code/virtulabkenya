@@ -220,6 +220,12 @@
           if (response.ok) {
             this.removeQueuedSubmission(item.id);
             syncedCount++;
+          } else if (response.status === 401 || response.status === 403) {
+            // Auth expired or invalid: DO NOT discard the student's exam work!
+            // Retain item in queue, pause sync, and notify UI to prompt candidate re-authentication
+            console.warn(`[ExamOfflineManager] Auth failed (${response.status}) syncing ${item.id}. Retaining queued exam submission.`);
+            this.notifyStatus('auth_required');
+            break;
           } else if (response.status >= 400 && response.status < 500) {
             // Client error: don't loop forever, but preserve for inspection if needed
             console.error(`[ExamOfflineManager] Submission ${item.id} rejected with ${response.status}`);

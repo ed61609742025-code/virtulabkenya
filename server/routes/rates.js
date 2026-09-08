@@ -11,7 +11,7 @@ const ratesRepo = require('../repositories/ratesRepo');
 const asyncHandler = require('../utils/asyncHandler');
 
 // POST /api/rates — Save a completed Reaction Rates practical session
-router.post('/', apiLimiter, authMiddleware, asyncHandler(async (req, res) => {
+router.post('/', apiLimiter, authMiddleware, authMiddleware.requireRole('student'), asyncHandler(async (req, res) => {
   const studentId = req.user.id;
   const {
     assignment_id,
@@ -76,7 +76,7 @@ router.post('/', apiLimiter, authMiddleware, asyncHandler(async (req, res) => {
 }));
 
 // GET /api/rates/mine — Fetch student's own reaction rates practical history
-router.get('/mine', authMiddleware, asyncHandler(async (req, res) => {
+router.get('/mine', authMiddleware, authMiddleware.requireRole('student'), asyncHandler(async (req, res) => {
   const studentId = req.user.id;
   const sessions = await ratesRepo.getStudentSessions(studentId);
   res.json({ success: true, sessions });

@@ -158,9 +158,22 @@ router.get('/:assignmentId/:studentId', authMiddleware, asyncHandler(async (req,
   const { assignmentId, studentId } = req.params;
   const requester = req.user;
 
-  // A student can only read their own responses; teachers can read any
+  // A student can only read their own responses; teachers can read their class/assignment
   if (requester.role === 'student' && String(requester.id) !== String(studentId)) {
     return res.status(403).json({ error: 'Access denied.' });
+  }
+
+  if (requester.role === 'teacher') {
+    const permCheck = await pool.query(
+      `SELECT 1 FROM students s
+       LEFT JOIN assignments a ON a.id = $1
+       WHERE s.id = $2 AND (s.teacher_id = $3 OR a.teacher_id = $3)
+       LIMIT 1`,
+      [assignmentId, studentId, requester.id]
+    );
+    if (permCheck.rows.length === 0) {
+      return res.status(403).json({ error: 'Access denied. Student is not enrolled in your class.' });
+    }
   }
 
   const result = await pool.query(
@@ -193,6 +206,19 @@ router.patch('/:responseId/teacher-mark', authMiddleware, asyncHandler(async (re
 
   if (teacherScore === undefined || teacherScore === null) {
     return res.status(400).json({ error: 'teacherScore is required.' });
+  }
+
+  // Verify response belongs to an assignment created by this teacher or a student in this teacher's class
+  const checkOwnership = await pool.query(
+    `SELECT wr.id FROM written_responses wr
+     JOIN assignments a ON a.id = wr.assignment_id
+     LEFT JOIN students s ON s.id = wr.student_id
+     WHERE wr.id = $1 AND (a.teacher_id = $2 OR s.teacher_id = $2)
+     LIMIT 1`,
+    [responseId, req.user.id]
+  );
+  if (checkOwnership.rows.length === 0) {
+    return res.status(404).json({ error: 'Written response not found or permission denied.' });
   }
 
   const result = await pool.query(

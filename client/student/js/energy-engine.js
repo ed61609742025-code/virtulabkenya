@@ -2077,7 +2077,9 @@ const EnergyEngine = (() => {
         sumXX += p.time * p.time;
       });
 
-      const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+      const denom = n * sumXX - sumX * sumX;
+      if (Math.abs(denom) < 1e-6 || n < 2) return;
+      const slope = (n * sumXY - sumX * sumY) / denom;
       const intercept = (sumY - slope * sumX) / n;
       const tMaxExtrapolated = slope * mixTime + intercept;
 
@@ -2129,7 +2131,9 @@ const EnergyEngine = (() => {
       sumXX += p.time * p.time;
     });
 
-    const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+    const denom = n * sumXX - sumX * sumX;
+    if (Math.abs(denom) < 1e-6 || n < 2) return;
+    const slope = (n * sumXY - sumX * sumY) / denom;
     const intercept = (sumY - slope * sumX) / n;
 
     const x1 = margin.left;

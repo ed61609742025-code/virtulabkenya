@@ -23,9 +23,18 @@ app.use(securityHeaders);
 app.use(compression());  // gzip/brotli — critical for slow connections
 
 // Configure CORS
-const corsOptions = process.env.CORS_ORIGIN
-  ? { origin: process.env.CORS_ORIGIN.split(',').map(s => s.trim()), credentials: true }
-  : { origin: true, credentials: true };
+const isProd = process.env.NODE_ENV === 'production';
+let corsOptions;
+if (process.env.CORS_ORIGIN) {
+  const allowed = process.env.CORS_ORIGIN.split(',').map(s => s.trim());
+  corsOptions = { origin: allowed, credentials: true };
+} else if (isProd) {
+  // In production, fail closed against external origins unless CORS_ORIGIN is explicitly configured
+  corsOptions = { origin: false };
+} else {
+  // Development / testing environment
+  corsOptions = { origin: true, credentials: true };
+}
 app.use(cors(corsOptions));
 
 app.use(express.json({ limit: '50mb' }));

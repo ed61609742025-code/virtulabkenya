@@ -997,6 +997,17 @@ async function markSubmission(submissionId, teacherId, teacherFeedback) {
         }
       } catch (e) {}
 
+      // Verify assignment ownership for this teacher
+      try {
+        const verifyOwnership = await pool.query(
+          `SELECT 1 FROM assignments WHERE id = $1 AND (teacher_id = $2 OR teacher_id IS NULL)`,
+          [aId, teacherId]
+        );
+        if (verifyOwnership.rows && verifyOwnership.rows.length === 0) {
+          return null;
+        }
+      } catch (e) {}
+
       const upsertQuery = `
         INSERT INTO assignment_submissions (assignment_id, student_id, session_id, status, teacher_feedback, marked_at)
         VALUES ($1, $2, $3, 'marked', $4, NOW())

@@ -32,10 +32,19 @@ router.post('/client', (req, res) => {
 });
 
 // ── GET /api/errors/recent ──────────────────────────────────────
-// Protected endpoint for retrieving the recent error logs (teachers & admins)
+// Protected endpoint for retrieving recent error logs
+// Admins receive full diagnostic stack traces; teachers receive sanitized error summaries
 router.get('/recent', authMiddleware, authMiddleware.requireRole(['teacher', 'admin']), (req, res) => {
   const errors = getRecentErrors();
-  return res.json({ errors, count: errors.length });
+  const isAdmin = req.user && req.user.role === 'admin';
+  const sanitized = isAdmin ? errors : errors.map(e => ({
+    id: e.id,
+    message: e.message,
+    source: e.source,
+    createdAt: e.createdAt,
+    url: e.clientUrl || e.url
+  }));
+  return res.json({ errors: sanitized, count: sanitized.length });
 });
 
 module.exports = router;

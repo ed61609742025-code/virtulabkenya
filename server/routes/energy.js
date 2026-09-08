@@ -46,7 +46,7 @@ const REACTION_MODELS = {
 };
 
 // POST /api/energy — Save a completed thermochemistry practical session
-router.post('/', apiLimiter, authMiddleware, asyncHandler(async (req, res) => {
+router.post('/', apiLimiter, authMiddleware, authMiddleware.requireRole('student'), asyncHandler(async (req, res) => {
   const studentId = req.user.id;
   const {
     assignment_id,
@@ -103,7 +103,7 @@ router.post('/', apiLimiter, authMiddleware, asyncHandler(async (req, res) => {
 }));
 
 // GET /api/energy/mine — Fetch student's thermochemistry session history
-router.get('/mine', authMiddleware, asyncHandler(async (req, res) => {
+router.get('/mine', authMiddleware, authMiddleware.requireRole('student'), asyncHandler(async (req, res) => {
   const studentId = req.user.id;
   const sessions = await energyRepo.getStudentSessions(studentId);
   return res.json({ success: true, sessions });

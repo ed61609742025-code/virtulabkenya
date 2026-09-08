@@ -13,7 +13,7 @@ const { parsePagination } = require('../utils/pagination');
 const router = express.Router();
 
 // POST /api/sessions — Save a titration practical session
-router.post('/', apiLimiter, authMiddleware, validateSessionSave, asyncHandler(async (req, res) => {
+router.post('/', apiLimiter, authMiddleware, authMiddleware.requireRole('student'), validateSessionSave, asyncHandler(async (req, res) => {
   const studentId = req.user.id;
   const {
     titrationKey,
@@ -71,7 +71,7 @@ router.post('/', apiLimiter, authMiddleware, validateSessionSave, asyncHandler(a
 }));
 
 // GET /api/sessions/mine — Fetch student's own sessions
-router.get('/mine', authMiddleware, asyncHandler(async (req, res) => {
+router.get('/mine', authMiddleware, authMiddleware.requireRole('student'), asyncHandler(async (req, res) => {
   const { page, limit } = parsePagination(req.query);
   const result = await sessionRepo.getStudentSessions(req.user.id, {
     page,

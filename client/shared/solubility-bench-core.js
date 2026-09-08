@@ -21,7 +21,7 @@
         const a = 0.015, b = 0.57, c = 13.3 - s;
         const disc = b * b - 4 * a * c;
         if (disc < 0) return 0;
-        return (-b + Math.sqrt(disc)) / (2 * a);
+        return Math.max(0, parseFloat(((-b + Math.sqrt(disc)) / (2 * a)).toFixed(1)));
       }
     },
     'KClO3': {
@@ -37,7 +37,7 @@
         const a = 0.005, b = 0.25, c = 3.3 - s;
         const disc = b * b - 4 * a * c;
         if (disc < 0) return 0;
-        return (-b + Math.sqrt(disc)) / (2 * a);
+        return Math.max(0, parseFloat(((-b + Math.sqrt(disc)) / (2 * a)).toFixed(1)));
       }
     },
     'CuSO4': {
@@ -53,7 +53,7 @@
         const a = 0.002, b = 0.28, c = 14.3 - s;
         const disc = b * b - 4 * a * c;
         if (disc < 0) return 0;
-        return (-b + Math.sqrt(disc)) / (2 * a);
+        return Math.max(0, parseFloat(((-b + Math.sqrt(disc)) / (2 * a)).toFixed(1)));
       }
     },
     'NaCl': {
@@ -65,7 +65,7 @@
       crystalHabit: 'Cubic Granules',
       crystalColor: '#FFFFFF',
       solubilityAtTemp: (t) => 35.7 + (0.02 * t),
-      tempFromSolubility: (s) => (s - 35.7) / 0.02
+      tempFromSolubility: (s) => Math.max(0, parseFloat(((s - 35.7) / 0.02).toFixed(1)))
     }
   };
 

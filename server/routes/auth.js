@@ -57,8 +57,8 @@ function generateSecureString(length, chars) {
 async function verifyGoogleIdToken(token) {
   if (!token || typeof token !== 'string') return null;
 
-  // Support test tokens or base64 decode fallback in test environment or when client ID is not configured
-  if (process.env.NODE_ENV === 'test' || !config.google.clientId) {
+  // Support test tokens or base64 decode fallback strictly in test environment
+  if (process.env.NODE_ENV === 'test') {
     try {
       const parts = token.split('.');
       if (parts.length === 3) {
@@ -73,6 +73,11 @@ async function verifyGoogleIdToken(token) {
         }
       }
     } catch (e) {}
+  }
+
+  // If Google client ID is not configured in non-test mode, cannot verify OAuth tokens securely
+  if (!config.google.clientId) {
+    return null;
   }
 
   // Try Google tokeninfo endpoint
@@ -112,6 +117,10 @@ router.post('/student/google', authLimiter, asyncHandler(async (req, res) => {
 
   if (!credential) {
     return res.status(400).json({ error: 'Google credential token is required.' });
+  }
+
+  if (!config.google.clientId && process.env.NODE_ENV !== 'test') {
+    return res.status(503).json({ error: 'Google Sign-In is not configured on this server.' });
   }
 
   const googleProfile = await verifyGoogleIdToken(credential);
@@ -701,15 +710,21 @@ router.post('/admin/login', authLimiter, validateLogin, asyncHandler(async (req,
           role: 'superadmin'
         });
       } catch (e) {
-        adminRecord = await adminRepo.findAdminByEmail(configuredAdminEmail);
+        try {
+          adminRecord = await adminRepo.findAdminByEmail(configuredAdminEmail);
+        } catch (_) {
+          adminRecord = null;
+        }
       }
 
       const adminId = adminRecord ? adminRecord.id : 0;
       const adminRole = adminRecord ? adminRecord.role : 'superadmin';
       const adminName = adminRecord ? adminRecord.name : 'System Administrator';
 
-      if (adminRecord) {
-        await adminRepo.updateLastLogin(adminRecord.id);
+      if (adminRecord && adminRecord.id) {
+        try {
+          await adminRepo.updateLastLogin(adminRecord.id);
+        } catch (_) {}
       }
 
       const token = signToken({

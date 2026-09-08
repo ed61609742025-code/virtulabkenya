@@ -28,7 +28,7 @@ function calculateKnecGrade(totalScore) {
 }
 
 // POST /api/composite — Save 40-mark composite practical exam session
-router.post('/', apiLimiter, authMiddleware, validateCompositeSave, asyncHandler(async (req, res) => {
+router.post('/', apiLimiter, authMiddleware, authMiddleware.requireRole('student'), validateCompositeSave, asyncHandler(async (req, res) => {
   const studentId = req.user.id;
   const {
     assignment_id = null,
@@ -94,7 +94,7 @@ router.post('/', apiLimiter, authMiddleware, validateCompositeSave, asyncHandler
 }));
 
 // GET /api/composite/mine — Fetch student's own composite exam results
-router.get('/mine', authMiddleware, asyncHandler(async (req, res) => {
+router.get('/mine', authMiddleware, authMiddleware.requireRole('student'), asyncHandler(async (req, res) => {
   const studentId = req.user.id;
   const sessions = await compositeRepo.getStudentSessions(studentId);
   return res.json({ sessions });

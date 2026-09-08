@@ -987,7 +987,7 @@ requireStudentLogin();
   let sessionMassConc = 0;
   let equivalenceVolume = 0;
   let currentVolume = 0;
-  trials = [];
+  let trials = [];
   let sessionSubmitted = false;
   let selectedIndicator = null;
   let indicatorAdded = false;
@@ -1945,10 +1945,11 @@ requireStudentLogin();
   }
 
   function systemAverage() {
+    if (!trials || trials.length === 0) return equivalenceVolume || 25.0;
     const isConcordant = (v, i) => trials.some((other, j) => j !== i && Math.abs(other - v) <= 0.10);
     const concordantValues = trials.filter((v, i) => isConcordant(v, i));
     const usable = concordantValues.length > 0 ? concordantValues : trials;
-    return usable.reduce((a, b) => a + b, 0) / usable.length;
+    return usable.length > 0 ? (usable.reduce((a, b) => a + b, 0) / usable.length) : (equivalenceVolume || 25.0);
   }
 
   // ── Session Timer & Audio Engine ──
@@ -2222,9 +2223,18 @@ requireStudentLogin();
       return;
     }
 
-    const studentAvg = parseFloat(document.getElementById('avgInput')?.value) || systemAverage();
+    const rawAvg = parseFloat(document.getElementById('avgInput')?.value);
+    const studentAvg = !isNaN(rawAvg) ? rawAvg : systemAverage();
+
+    const studentMolesTitrant = parseFloat(document.getElementById('molesTitrantInput')?.value);
+    const studentMolesAnalyte = parseFloat(document.getElementById('molesAnalyteInput')?.value);
+    const studentCalcConc = parseFloat(document.getElementById('calcConc')?.value);
+
     const ctx = {
       studentAvg,
+      studentMolesTitrant: !isNaN(studentMolesTitrant) ? studentMolesTitrant : null,
+      studentMolesAnalyte: !isNaN(studentMolesAnalyte) ? studentMolesAnalyte : null,
+      studentCalcConc: !isNaN(studentCalcConc) ? studentCalcConc : null,
       sessionTitrantConc,
       sessionAnalyteVolume,
       sessionMassConc,
@@ -2234,14 +2244,34 @@ requireStudentLogin();
     };
 
     const expected = q.calcExpected(ctx);
-    const isOk = q.checkOk(val, expected);
+
+    // Dynamic KNEC Error Carried Forward (ECF) calculation from student's entered values
+    let ecfExpected = null;
+    if (q.letter === 'c' && !isNaN(studentMolesTitrant)) {
+      ecfExpected = studentMolesTitrant * (current.ratio || 1.0);
+    } else if (q.letter === 'd' && !isNaN(studentMolesAnalyte)) {
+      ecfExpected = (studentMolesAnalyte * 1000.0) / (sessionAnalyteVolume || 25.0);
+    } else if (q.letter === 'e') {
+      const activeConc = !isNaN(studentCalcConc) ? studentCalcConc : (!isNaN(studentMolesAnalyte) ? (studentMolesAnalyte * 1000.0) / (sessionAnalyteVolume || 25.0) : null);
+      if (activeConc != null) {
+        ecfExpected = activeConc * (current.rfm || 36.5);
+      }
+    }
+
+    const isDirectOk = q.checkOk(val, expected);
+    const isEcfOk = ecfExpected !== null && !isNaN(ecfExpected) && q.checkOk(val, ecfExpected);
+    const isOk = isDirectOk || isEcfOk;
 
     if (isOk) playAudioTone('chime');
 
     if (msgBox) {
-      msgBox.innerHTML = isOk
-        ? `<div class="result-banner result-ok">✓ <b>(${q.letter}) Correct!</b> ${q.feedbackSuccess(expected, ctx)}</div>`
-        : `<div class="result-banner result-warn">✗ <b>(${q.letter}) Incorrect:</b> ${q.feedbackFail(expected, ctx)}</div>`;
+      if (isDirectOk) {
+        msgBox.innerHTML = `<div class="result-banner result-ok">✓ <b>(${q.letter}) Correct!</b> ${q.feedbackSuccess(expected, ctx)}</div>`;
+      } else if (isEcfOk) {
+        msgBox.innerHTML = `<div class="result-banner result-ok">✓ <b>(${q.letter}) Correct!</b> [KNEC e.c.f. Awarded] Accurate calculation from your previous answer (${ecfExpected >= 0.01 ? ecfExpected.toFixed(4) : ecfExpected.toExponential(3)}).</div>`;
+      } else {
+        msgBox.innerHTML = `<div class="result-banner result-warn">✗ <b>(${q.letter}) Incorrect:</b> ${q.feedbackFail(expected, ctx)}</div>`;
+      }
     }
 
     if (idx < current.questions.length - 1) {

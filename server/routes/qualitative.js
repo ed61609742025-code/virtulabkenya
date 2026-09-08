@@ -14,7 +14,7 @@ const { parsePagination } = require('../utils/pagination');
 const { getSalt } = require('../config/salts');
 
 // POST /api/qualitative — Save qualitative salt analysis session
-router.post('/', apiLimiter, authMiddleware, validateQualitativeSave, asyncHandler(async (req, res) => {
+router.post('/', apiLimiter, authMiddleware, authMiddleware.requireRole('student'), validateQualitativeSave, asyncHandler(async (req, res) => {
   const studentId = req.user.id;
   const {
     saltKey,
@@ -68,7 +68,7 @@ router.post('/', apiLimiter, authMiddleware, validateQualitativeSave, asyncHandl
 }));
 
 // GET /api/qualitative/mine — Student session history
-router.get('/mine', authMiddleware, asyncHandler(async (req, res) => {
+router.get('/mine', authMiddleware, authMiddleware.requireRole('student'), asyncHandler(async (req, res) => {
   const { page, limit } = parsePagination(req.query);
   const userSessions = await qualitativeRepo.getStudentSessions(req.user.id, { page, limit });
   return res.json(userSessions);

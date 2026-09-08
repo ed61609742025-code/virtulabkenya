@@ -12,7 +12,7 @@ const organicRepo = require('../repositories/organicRepo');
 const { getOrganicCompound, isFunctionalGroupCorrect } = require('../config/organicCompounds');
 
 // POST /api/organic — Save organic chemistry practical attempt
-router.post('/', apiLimiter, authMiddleware, asyncHandler(async (req, res) => {
+router.post('/', apiLimiter, authMiddleware, authMiddleware.requireRole('student'), asyncHandler(async (req, res) => {
   const student_id = req.user.id;
   const {
     compound_key,
@@ -68,7 +68,7 @@ router.post('/', apiLimiter, authMiddleware, asyncHandler(async (req, res) => {
 }));
 
 // GET /api/organic/mine — Fetch student's organic sessions
-router.get('/mine', authMiddleware, asyncHandler(async (req, res) => {
+router.get('/mine', authMiddleware, authMiddleware.requireRole('student'), asyncHandler(async (req, res) => {
   const student_id = req.user.id;
   const userSessions = await organicRepo.getStudentSessions(student_id);
   return res.json(userSessions);

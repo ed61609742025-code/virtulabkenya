@@ -62,5 +62,10 @@ module.exports = {
   },
   google: {
     clientId: process.env.GOOGLE_CLIENT_ID || ''
+  },
+  push: {
+    vapidPublicKey: process.env.VAPID_PUBLIC_KEY || '',
+    vapidPrivateKey: process.env.VAPID_PRIVATE_KEY || '',
+    vapidSubject: process.env.VAPID_SUBJECT || 'mailto:admin@virtulab.co.ke'
   }
 };

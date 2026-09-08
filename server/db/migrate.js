@@ -281,6 +281,19 @@ const migrations = [
      is_read BOOLEAN DEFAULT FALSE,
      created_at TIMESTAMP DEFAULT NOW()
    )`,
+  // Ensure push_subscriptions exists for PWA Web Push notifications
+  `CREATE TABLE IF NOT EXISTS push_subscriptions (
+     id SERIAL PRIMARY KEY,
+     user_id INTEGER NOT NULL,
+     user_role VARCHAR(20) NOT NULL,
+     endpoint TEXT NOT NULL UNIQUE,
+     p256dh TEXT NOT NULL,
+     auth TEXT NOT NULL,
+     user_agent TEXT,
+     created_at TIMESTAMP DEFAULT NOW(),
+     updated_at TIMESTAMP DEFAULT NOW()
+   )`,
+  `CREATE INDEX IF NOT EXISTS idx_push_user ON push_subscriptions(user_id, user_role)`,
   // Ensure gas_sessions exists for Gas Preparation and Collection practicals
   `CREATE TABLE IF NOT EXISTS gas_sessions (
      id SERIAL PRIMARY KEY,

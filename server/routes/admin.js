@@ -16,6 +16,7 @@ const auditRepo = require('../repositories/auditRepo');
 const adminRepo = require('../repositories/adminRepo');
 const { sendCsv, toCsvRow } = require('../utils/csv');
 const mailer = require('../utils/mailer');
+const pushService = require('../services/pushNotificationService');
 
 // Guard all admin routes: Requires valid JWT token with role === 'admin'
 router.use(authMiddleware, authMiddleware.requireRole('admin'));
@@ -134,6 +135,13 @@ router.post('/announcements', asyncHandler(async (req, res) => {
     message,
     type: type || 'info'
   });
+
+  // Broadcast push notification to all subscribers
+  pushService.broadcast({
+    title: `📢 Announcement: ${title}`,
+    body: message,
+    data: { url: '/student/home.html' }
+  }).catch(err => console.warn('[Announcement Push Warning]:', err.message));
 
   return res.status(201).json({ success: true, announcement });
 }));

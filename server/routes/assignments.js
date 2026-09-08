@@ -8,6 +8,7 @@ const asyncHandler = require('../utils/asyncHandler');
 const { validateAssignmentCreate } = require('../middleware/validators');
 const assignmentRepo = require('../repositories/assignmentRepo');
 const { sendCsv, toCsvRow } = require('../utils/csv');
+const pushService = require('../services/pushNotificationService');
 
 const router = express.Router();
 
@@ -168,6 +169,12 @@ router.post('/', authMiddleware, authMiddleware.requireRole('teacher'), validate
          SELECT unnest($1::int[]), $2, $3, 'assignment', '/student/home.html'`,
         [studentIds, title, message]
       );
+      // Dispatch Web Push notification to enrolled students
+      pushService.sendToUsers(studentIds, 'student', {
+        title,
+        body: message,
+        data: { url: '/student/home.html' }
+      }).catch(err => console.warn('[Assignment Push Warning]:', err.message));
     }
   } catch (notifErr) {
     console.warn('[Assignment Notice Warning]:', notifErr.message);
@@ -227,6 +234,12 @@ router.post('/:id/remind', authMiddleware, authMiddleware.requireRole('teacher')
        SELECT unnest($1::int[]), $2, $3, 'due_soon', '/student/home.html'`,
       [unsubmittedIds, title, message]
     );
+    // Dispatch Web Push notification to unsubmitted students
+    pushService.sendToUsers(unsubmittedIds, 'student', {
+      title,
+      body: message,
+      data: { url: '/student/home.html' }
+    }).catch(err => console.warn('[Remind Push Warning]:', err.message));
   }
 
   return res.json({

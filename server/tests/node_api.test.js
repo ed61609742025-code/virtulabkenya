@@ -1969,6 +1969,114 @@ describe('VirtuLab Kenya — Backend API Test Suite', () => {
     assert.ok(csv.includes('Tecla Rice'));
   });
 
+  /* 27. WEB PUSH NOTIFICATIONS API */
+  it('GET /api/push/vapid-public-key — should return VAPID public key', async () => {
+    const res = await fetch(url('/api/push/vapid-public-key'));
+    const body = await res.json();
+
+    assert.strictEqual(res.status, 200);
+    assert.strictEqual(body.success, true);
+    assert.ok(typeof body.publicKey === 'string');
+    assert.ok(body.publicKey.length > 20);
+  });
+
+  it('POST /api/push/subscribe — should reject invalid subscription payload with 400', async () => {
+    const res = await fetch(url('/api/push/subscribe'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${studentToken}`
+      },
+      body: JSON.stringify({})
+    });
+    const body = await res.json();
+
+    assert.strictEqual(res.status, 400);
+    assert.strictEqual(body.success, false);
+  });
+
+  it('POST /api/push/subscribe — should register push subscription for authenticated user', async () => {
+    pool.query = async (q, params) => {
+      if (q.includes('INSERT INTO push_subscriptions')) {
+        return {
+          rows: [{
+            id: 1,
+            user_id: 1,
+            user_role: 'student',
+            endpoint: 'https://fcm.googleapis.com/fcm/send/mock_device_endpoint_123',
+            created_at: new Date()
+          }]
+        };
+      }
+      return { rows: [] };
+    };
+
+    const res = await fetch(url('/api/push/subscribe'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${studentToken}`
+      },
+      body: JSON.stringify({
+        subscription: {
+          endpoint: 'https://fcm.googleapis.com/fcm/send/mock_device_endpoint_123',
+          keys: {
+            p256dh: 'BNcRdreALRFXTkOOUHK1EtK2wtaz5Ry4YfYCA_0QT9t0AknPQ3m0pqnAEHsVUQnGSlUKOIeJU3ToE6oEA-ANRoo',
+            auth: 'tBHItJI5svbpez7KI4CCXg'
+          }
+        }
+      })
+    });
+    const body = await res.json();
+
+    assert.strictEqual(res.status, 200);
+    assert.strictEqual(body.success, true);
+    assert.strictEqual(body.id, 1);
+  });
+
+  it('GET /api/push/status — should return current user subscription count and status', async () => {
+    pool.query = async (q, params) => {
+      if (q.includes('SELECT COUNT(*)::int as count FROM push_subscriptions')) {
+        return { rows: [{ count: 1 }] };
+      }
+      return { rows: [{ count: 0 }] };
+    };
+
+    const res = await fetch(url('/api/push/status'), {
+      headers: { 'Authorization': `Bearer ${studentToken}` }
+    });
+    const body = await res.json();
+
+    assert.strictEqual(res.status, 200);
+    assert.strictEqual(body.success, true);
+    assert.strictEqual(body.subscribed, true);
+    assert.strictEqual(body.deviceCount, 1);
+  });
+
+  it('POST /api/push/unsubscribe — should remove subscription by endpoint', async () => {
+    pool.query = async (q, params) => {
+      if (q.includes('DELETE FROM push_subscriptions')) {
+        return { rowCount: 1 };
+      }
+      return { rowCount: 0 };
+    };
+
+    const res = await fetch(url('/api/push/unsubscribe'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${studentToken}`
+      },
+      body: JSON.stringify({
+        endpoint: 'https://fcm.googleapis.com/fcm/send/mock_device_endpoint_123'
+      })
+    });
+    const body = await res.json();
+
+    assert.strictEqual(res.status, 200);
+    assert.strictEqual(body.success, true);
+  });
+
 });
 
 

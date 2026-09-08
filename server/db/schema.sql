@@ -259,6 +259,20 @@ CREATE TABLE IF NOT EXISTS student_notifications (
   created_at TIMESTAMP DEFAULT NOW()
 );
 
+-- Web Push subscriptions table (PWA Push Notifications)
+CREATE TABLE IF NOT EXISTS push_subscriptions (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL,
+  user_role VARCHAR(20) NOT NULL, -- 'student', 'teacher', 'admin'
+  endpoint TEXT NOT NULL UNIQUE,
+  p256dh TEXT NOT NULL,
+  auth TEXT NOT NULL,
+  user_agent TEXT,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_push_user ON push_subscriptions(user_id, user_role);
+
 -- Gas preparation and collection practical sessions table (KCSE Paper 3)
 CREATE TABLE IF NOT EXISTS gas_sessions (
   id SERIAL PRIMARY KEY,

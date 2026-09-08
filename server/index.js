@@ -147,6 +147,10 @@ app.use('/api/errors', errorRoutes);
 const notificationsRoutes = require('./routes/notifications');
 app.use('/api/notifications', notificationsRoutes);
 
+// Web Push Notification routes (PWA Push API & VAPID)
+const pushRoutes = require('./routes/push');
+app.use('/api/push', pushRoutes);
+
 // AI Teacher Exam Assistant routes (multimodal paper parsing, idea generation & refinement)
 const aiAssistantRoutes = require('./routes/ai_assistant');
 app.use('/api/ai-assistant', aiAssistantRoutes);

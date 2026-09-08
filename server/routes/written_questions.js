@@ -11,6 +11,7 @@ const authMiddleware = require('../middleware/auth');
 const { apiLimiter } = require('../middleware/rateLimiter');
 const asyncHandler = require('../utils/asyncHandler');
 const pool = require('../db/pool');
+const pushService = require('../services/pushNotificationService');
 
 /**
  * Score a single student answer using Gemini as a KNEC examiner.
@@ -210,7 +211,7 @@ router.patch('/:responseId/teacher-mark', authMiddleware, asyncHandler(async (re
 
   // Verify response belongs to an assignment created by this teacher or a student in this teacher's class
   const checkOwnership = await pool.query(
-    `SELECT wr.id FROM written_responses wr
+    `SELECT wr.id, wr.student_id, a.title AS assignment_title FROM written_responses wr
      JOIN assignments a ON a.id = wr.assignment_id
      LEFT JOIN students s ON s.id = wr.student_id
      WHERE wr.id = $1 AND (a.teacher_id = $2 OR s.teacher_id = $2)
@@ -237,6 +238,19 @@ router.patch('/:responseId/teacher-mark', authMiddleware, asyncHandler(async (re
   if (result.rows.length === 0) {
     return res.status(404).json({ error: 'Written response not found.' });
   }
+
+  // Dispatch Web Push notification to student
+  try {
+    const studentId = checkOwnership.rows[0].student_id;
+    const assignmentTitle = checkOwnership.rows[0].assignment_title || 'Practical Exam';
+    if (studentId) {
+      pushService.sendToUser(studentId, 'student', {
+        title: `🏆 Graded: ${assignmentTitle}`,
+        body: `Your teacher graded your response (${Number(teacherScore)} marks): "${teacherFeedback || 'Mark saved.'}"`,
+        data: { url: '/student/home.html' }
+      }).catch(err => console.warn('[Mark Push Warning]:', err.message));
+    }
+  } catch (_) {}
 
   return res.json({ success: true, response: result.rows[0] });
 }));

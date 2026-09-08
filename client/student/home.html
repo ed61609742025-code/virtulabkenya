@@ -239,6 +239,16 @@
             <div id="notifList" style="max-height:240px; overflow-y:auto; font-size:0.82rem; color:var(--text-muted);">
               <div style="padding:14px 0; text-align:center; font-family:'JetBrains Mono', monospace; font-size:0.78rem;">No unread notifications</div>
             </div>
+            <!-- Push Notification Quick Controls -->
+            <div id="pushNotifBar" style="margin-top:10px; padding-top:10px; border-top:1px solid var(--card-border); display:flex; align-items:center; justify-content:space-between; gap:8px;">
+              <div style="font-size:0.74rem; color:var(--text-muted);">
+                <span id="pushStatusText" class="vlk-push-status-text">Push Alerts: Disabled</span>
+              </div>
+              <div style="display:flex; gap:6px; align-items:center;">
+                <button type="button" id="pushTestBtn" class="vlk-push-test-btn btn btn-xs" onclick="VLKPush.sendTestNotification()" style="display:none; padding:3px 8px; font-size:0.7rem; border-radius:6px;" title="Send test push alert">Test</button>
+                <button type="button" id="pushToggleBtn" class="vlk-push-toggle-btn btn btn-xs btn-secondary" onclick="VLKPush.toggle()" style="padding:3px 10px; font-size:0.7rem; font-weight:700; border-radius:6px;">Enable</button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1366,6 +1376,7 @@
   <script src="../shared/chemical-safety.js"></script>
   <script src="../shared/knec-grading.js"></script>
   <script src="../shared/notifications-engine.js"></script>
+  <script src="../shared/push-manager.js"></script>
   <script src="../shared/page-transitions.js"></script>
   <script src="../shared/pwa-installer.js"></script>
   <script src="../shared/brilliant-ui.js"></script>

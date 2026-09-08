@@ -839,6 +839,19 @@
         <button class="btn btn-primary" onclick="submitChangePassword()" style="padding:10px 22px; font-weight:800; border-radius:100px; width:100%;">Update Security Password 🔐</button>
         <div id="pwMsg" style="margin-top:10px; text-align:center;"></div>
 
+        <!-- Web Push Notifications -->
+        <h3 style="font-family:var(--font-heading); font-size:1rem; color:var(--heading-color); border-top:1px solid var(--card-border); padding-top:16px; margin-bottom:14px;">🔔 Web Push Notifications & Examiner Alerts</h3>
+        <div style="background:var(--bg-dark); border:1px solid var(--card-border); border-radius:12px; padding:14px; margin-bottom:18px; display:flex; align-items:center; justify-content:space-between; gap:12px;">
+          <div>
+            <div style="font-weight:800; font-size:0.86rem; color:var(--heading-color);">Real-Time Assignment Alerts</div>
+            <div style="font-size:0.75rem; color:var(--text-muted);" id="tPushStatusText" class="vlk-push-status-text">Receive device alerts when students submit practicals and mock exams</div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <button type="button" class="vlk-push-test-btn btn btn-xs" id="tPushTestBtn" onclick="VLKPush.sendTestNotification()" style="display:none; padding:6px 12px; font-size:0.75rem; border-radius:100px;">🔔 Test Alert</button>
+            <button type="button" class="vlk-push-toggle-btn btn btn-secondary" id="tPushToggleBtn" onclick="VLKPush.toggle()" style="padding:6px 14px; font-size:0.78rem; font-weight:700; border-radius:100px;">Enable Alerts</button>
+          </div>
+        </div>
+
         <!-- Account Actions -->
         <div style="border-top:1px solid var(--card-border); padding-top:16px; margin-top:20px; display:flex; gap:12px;">
           <button class="btn" onclick="exportTeacherClassReportCSV()" style="flex:1; justify-content:center; padding:10px; font-weight:700;">📥 Export Class CSV Report</button>
@@ -866,6 +879,7 @@
 
 <script src="../shared/api.js?v=69"></script>
 <script src="../shared/notifications-engine.js?v=69"></script>
+<script src="../shared/push-manager.js?v=69"></script>
 <script src="js/teacher-dashboard.js?v=69"></script>
 <script src="js/ai-exam-assistant.js?v=69"></script>
 <script>

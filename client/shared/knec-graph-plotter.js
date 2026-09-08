@@ -93,14 +93,14 @@
           <div class="knec-graph-footer">
             <form class="knec-graph-entry-form" onsubmit="return false;">
               <span style="font-size:0.8rem; font-weight:700; color:var(--text-muted, #94A3B8);">Add Point:</span>
-              <div class="kg-input-wrap">
-                <label>X (${this.escape(this.xUnit)}):</label>
+              <label class="kg-input-wrap">
+                <span>X (${this.escape(this.xUnit)}):</span>
                 <input type="number" class="kg-coord-input kg-input-x" step="0.1" min="${this.xMin}" max="${this.xMax}" placeholder="${(this.xMin + this.xStep).toFixed(1)}">
-              </div>
-              <div class="kg-input-wrap">
-                <label>Y (${this.escape(this.yUnit)}):</label>
+              </label>
+              <label class="kg-input-wrap">
+                <span>Y (${this.escape(this.yUnit)}):</span>
                 <input type="number" class="kg-coord-input kg-input-y" step="0.1" min="${this.yMin}" max="${this.yMax}" placeholder="${(this.yMin + this.yStep).toFixed(1)}">
-              </div>
+              </label>
               <button type="button" class="kg-btn kg-btn-primary" data-action="addPoint">＋ Plot Point</button>
             </form>
 

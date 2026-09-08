@@ -663,18 +663,18 @@
     <div id="profPaneDetails">
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
         <div>
-          <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Full Name</label>
+          <label for="profInputName" style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Full Name</label>
           <input type="text" id="profInputName" placeholder="e.g. John Kamau" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
         </div>
         <div>
-          <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Email Address</label>
+          <label for="profInputEmail" style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Email Address</label>
           <input type="email" id="profInputEmail" readonly placeholder="e.g. student@virtulab.ke" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--card-bg-hover); color:var(--text-muted); font-weight:700; cursor:not-allowed;">
         </div>
       </div>
 
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:22px;">
         <div>
-          <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Form / Grade Level</label>
+          <label for="profInputForm" style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Form / Grade Level</label>
           <select id="profInputForm" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
             <option value="Form 1">Form 1 Secondary (KCSE 2029)</option>
             <option value="Form 2">Form 2 Secondary (KCSE 2028)</option>
@@ -683,7 +683,7 @@
           </select>
         </div>
         <div>
-          <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">School / Teacher Code</label>
+          <label for="profInputSchool" style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">School / Teacher Code</label>
           <input type="text" id="profInputSchool" placeholder="e.g. KCS-MANGU-8421 (Optional)" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
         </div>
       </div>
@@ -695,15 +695,15 @@
     <!-- Tab 2: Security & Password -->
     <div id="profPaneSecurity" style="display:none;">
       <div style="margin-bottom:16px;">
-        <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Current Password</label>
+        <label for="pwCurrent" style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Current Password</label>
         <input type="password" id="pwCurrent" placeholder="Enter current security password" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
       </div>
       <div style="margin-bottom:16px;">
-        <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">New Password</label>
+        <label for="pwNew" style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">New Password</label>
         <input type="password" id="pwNew" placeholder="Enter new password (min 6 characters)" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
       </div>
       <div style="margin-bottom:20px;">
-        <label style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Confirm New Password</label>
+        <label for="pwConfirm" style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Confirm New Password</label>
         <input type="password" id="pwConfirm" placeholder="Re-type new password to confirm" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
       </div>
 

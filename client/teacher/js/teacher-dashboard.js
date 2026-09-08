@@ -2029,11 +2029,11 @@ let currentPage = 1;
               <!-- Teacher Grading / Override Controls -->
               <div style="border-top:1px dashed var(--card-border);padding-top:12px;display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
                 <div>
-                  <label style="font-size:0.75rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Teacher Final Mark (0 – ${r.max_marks})</label>
+                  <label for="tScore_${r.id}" style="font-size:0.75rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Teacher Final Mark (0 – ${r.max_marks})</label>
                   <input type="number" id="tScore_${r.id}" min="0" max="${r.max_marks}" step="0.5" value="${r.teacher_score != null ? r.teacher_score : (r.ai_score != null ? r.ai_score : 0)}" class="form-control form-control-sm" style="width:90px;font-weight:800;color:var(--cyan-accent);">
                 </div>
                 <div style="flex:1;min-width:200px;">
-                  <label style="font-size:0.75rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Teacher Feedback / Examiner Note</label>
+                  <label for="tFeedback_${r.id}" style="font-size:0.75rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Teacher Feedback / Examiner Note</label>
                   <input type="text" id="tFeedback_${r.id}" value="${escapeHtml(r.teacher_feedback || '')}" placeholder="Optional teacher remark..." class="form-control form-control-sm">
                 </div>
                 <button type="button" class="btn btn-sm btn-primary" onclick="saveWrittenTeacherMark(${r.id})" id="btnSaveMark_${r.id}">

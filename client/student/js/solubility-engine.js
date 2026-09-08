@@ -1663,7 +1663,7 @@ const SolubilityEngine = (() => {
           Using your plotted solubility curve, determine the solubility of <b>${model.name}</b> at <b>50.0 °C</b> in g / 100g H₂O.
         </div>
         <div class="sol-input-group">
-          <label style="font-size:0.82rem;font-weight:700;">Solubility at 50°C:</label>
+          <label for="ansQ1" style="font-size:0.82rem;font-weight:700;">Solubility at 50°C:</label>
           <input type="number" step="0.1" id="ansQ1" class="sol-calc-input" placeholder="e.g. ${s50}">
           <span style="font-size:0.82rem;color:var(--text-muted);">g / 100g H₂O</span>
         </div>
@@ -1680,7 +1680,7 @@ const SolubilityEngine = (() => {
           A saturated solution containing <b>50.0 g of water</b> at <b>75.0 °C</b> is cooled to <b>25.0 °C</b>. Calculate the mass of ${model.formula} crystals that separate out.
         </div>
         <div class="sol-input-group">
-          <label style="font-size:0.82rem;font-weight:700;">Mass of crystals deposited:</label>
+          <label for="ansQ2" style="font-size:0.82rem;font-weight:700;">Mass of crystals deposited:</label>
           <input type="number" step="0.1" id="ansQ2" class="sol-calc-input" placeholder="e.g. ${yield50}">
           <span style="font-size:0.82rem;color:var(--text-muted);">grams</span>
         </div>

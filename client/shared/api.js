@@ -472,6 +472,10 @@ const Auth = {
     setUser(data.user);
     return data;
   },
+  getToken,
+  getUser,
+  setToken,
+  clearToken,
   logout() {
     const role = getUser()?.role;
     clearToken();
@@ -914,6 +918,10 @@ function requireAdminLogin(onSuccess) {
 
 // ── Global Window Exports (Cross-frame and non-module compatibility) ──
 if (typeof window !== 'undefined') {
+  window.getToken = getToken;
+  window.getUser = getUser;
+  window.setToken = setToken;
+  window.clearToken = clearToken;
   window.Auth = Auth;
   window.Composite = Composite;
   window.Announcements = Announcements;

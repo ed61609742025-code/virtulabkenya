@@ -22,11 +22,33 @@
   }
 
   function getAuthToken() {
-    return (
-      localStorage.getItem('virtulab_token') ||
-      localStorage.getItem('token') ||
-      (window.Auth && typeof window.Auth.getToken === 'function' ? window.Auth.getToken() : null)
-    );
+    if (typeof window.getToken === 'function') {
+      const t = window.getToken();
+      if (t) return t;
+    }
+    if (typeof getToken === 'function') {
+      try {
+        const t = getToken();
+        if (t) return t;
+      } catch (e) {}
+    }
+    if (window.Auth && typeof window.Auth.getToken === 'function') {
+      try {
+        const t = window.Auth.getToken();
+        if (t) return t;
+      } catch (e) {}
+    }
+    try {
+      return (
+        localStorage.getItem('vlk_token') ||
+        sessionStorage.getItem('vlk_token') ||
+        localStorage.getItem('virtulab_token') ||
+        localStorage.getItem('token') ||
+        null
+      );
+    } catch (e) {
+      return null;
+    }
   }
 
   function isSupported() {
@@ -44,7 +66,16 @@
 
   async function getRegistration() {
     if (!('serviceWorker' in navigator)) return null;
-    return await navigator.serviceWorker.ready;
+    try {
+      let reg = await navigator.serviceWorker.getRegistration();
+      if (!reg) {
+        reg = await navigator.serviceWorker.register('/sw.js');
+      }
+      return await navigator.serviceWorker.ready;
+    } catch (e) {
+      console.warn('[PushManager] getRegistration fallback:', e.message);
+      return await navigator.serviceWorker.ready;
+    }
   }
 
   async function getSubscription() {
@@ -130,6 +161,7 @@
       console.log('[PushManager] Push notification subscription active.');
       window.dispatchEvent(new CustomEvent('vlk-push-changed', { detail: { subscribed: true } }));
       syncUI();
+      alert('🔔 Web Push Notifications are now active for your account on this device!');
       return true;
     } catch (err) {
       console.error('[PushManager] Subscription failed:', err);
@@ -163,6 +195,7 @@
       console.log('[PushManager] Unsubscribed from push notifications.');
       window.dispatchEvent(new CustomEvent('vlk-push-changed', { detail: { subscribed: false } }));
       syncUI();
+      alert('🔕 Push notifications have been disabled on this device.');
       return true;
     } catch (err) {
       console.error('[PushManager] Unsubscribe failed:', err);

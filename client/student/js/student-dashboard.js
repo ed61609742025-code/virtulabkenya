@@ -1332,17 +1332,25 @@ requireStudentLogin();
       const key = new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
       if (daysMap[key]) {
         daysMap[key].total++;
-        if (s.correct) daysMap[key].correct++;
+        if (s.correct || (s.total_score != null && s.total_score >= 10)) daysMap[key].correct++;
       }
     });
 
-    const labels = Object.keys(daysMap);
-    const accuracyData = labels.map(lbl => {
-      const d = daysMap[lbl];
-      return d.total > 0 ? Math.round((d.correct / d.total) * 100) : null;
-    });
+    const allDates = Object.keys(daysMap);
+    // Smooth trend: only plot dates with activity, or rolling averages if sparse
+    const activeDates = allDates.filter(k => daysMap[k].total > 0);
+    let trendLabels = [];
+    let trendAccuracy = [];
 
-    // 2. Group by Practical Type
+    if (activeDates.length >= 1) {
+      trendLabels = activeDates;
+      trendAccuracy = activeDates.map(k => Math.round((daysMap[k].correct / daysMap[k].total) * 100));
+    } else {
+      trendLabels = [allDates[0], allDates[7], allDates[14], allDates[21], allDates[29]];
+      trendAccuracy = [null, null, null, null, null];
+    }
+
+    // 2. Group by Practical Type (All 10 KNEC syllabus practical domains)
     const typeCounts = {
       'Acid-Base': 0,
       'Redox': 0,
@@ -1350,19 +1358,44 @@ requireStudentLogin();
       'Complexometric': 0,
       'Qualitative': 0,
       'Organic': 0,
-      'Solubility': 0
+      'Solubility': 0,
+      'Energy': 0,
+      'Rates': 0,
+      'Gas Prep': 0
     };
 
     (sessions || []).forEach(s => {
-      const type = (s.titration_title || s.titration_type || s.titrationKey || s.salt_key || s.compound_name || s.solute_key || s.experiment_title || '').toLowerCase();
+      const type = (s.titration_title || s.titration_type || s.titrationKey || s.salt_key || s.salt_name || s.compound_name || s.solute_key || s.solute_name || s.experiment_title || s.gas_key || s.gas_name || s.method || '').toLowerCase();
       if (type.includes('redox')) typeCounts['Redox']++;
       else if (type.includes('precipit')) typeCounts['Precipitation']++;
       else if (type.includes('complex')) typeCounts['Complexometric']++;
-      else if (type.includes('qualitative') || s.salt_key) typeCounts['Qualitative']++;
+      else if (type.includes('qualitative') || s.salt_key || s.salt_name) typeCounts['Qualitative']++;
       else if (type.includes('organic') || s.compound_name) typeCounts['Organic']++;
-      else if (type.includes('solubility') || s.solute_key) typeCounts['Solubility']++;
+      else if (type.includes('solubility') || s.solute_key || s.solute_name) typeCounts['Solubility']++;
+      else if (type.includes('energy') || s.system_name || s.system_id) typeCounts['Energy']++;
+      else if (type.includes('rate') || s.method) typeCounts['Rates']++;
+      else if (type.includes('gas') || s.gas_key || s.gas_name) typeCounts['Gas Prep']++;
       else typeCounts['Acid-Base']++;
     });
+
+    const activeEntries = Object.entries(typeCounts).filter(([_, v]) => v > 0);
+    const chartLabels = activeEntries.length > 0 ? activeEntries.map(([k]) => k) : ['No Sessions'];
+    const chartData = activeEntries.length > 0 ? activeEntries.map(([_, v]) => v) : [1];
+
+    const colorPalette = {
+      'Acid-Base': '#10B981',
+      'Redox': '#8B5CF6',
+      'Precipitation': '#0284C7',
+      'Complexometric': '#F59E0B',
+      'Qualitative': '#6366F1',
+      'Organic': '#F43F5E',
+      'Solubility': '#EA580C',
+      'Energy': '#EF4444',
+      'Rates': '#EAB308',
+      'Gas Prep': '#06B6D4',
+      'No Sessions': '#475569'
+    };
+    const chartColors = chartLabels.map(l => colorPalette[l] || '#3B82F6');
 
     // If Chart.js is present, use Chart.js, otherwise use fallback native 2D canvas engine
     if (typeof Chart !== 'undefined') {
@@ -1371,12 +1404,18 @@ requireStudentLogin();
         studentTrendChartInstance = new Chart(trendCanvas, {
           type: 'line',
           data: {
-            labels: labels,
+            labels: trendLabels,
             datasets: [{
               label: 'Accuracy (%)',
-              data: accuracyData,
+              data: trendAccuracy,
               borderColor: '#10B981',
-              backgroundColor: 'rgba(16, 185, 129, 0.15)',
+              backgroundColor: 'rgba(16, 185, 129, 0.12)',
+              borderWidth: 2.5,
+              pointBackgroundColor: '#10B981',
+              pointBorderColor: '#FFFFFF',
+              pointBorderWidth: 1.5,
+              pointRadius: trendAccuracy.length === 1 ? 6 : 4,
+              pointHoverRadius: 6,
               fill: true,
               tension: 0.35,
               spanGaps: true
@@ -1385,10 +1424,30 @@ requireStudentLogin();
           options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                titleFont: { family: "'Plus Jakarta Sans', sans-serif", weight: 'bold' },
+                bodyFont: { family: "'JetBrains Mono', monospace" },
+                padding: 10,
+                cornerRadius: 8,
+                callbacks: {
+                  label: (ctx) => `Accuracy: ${ctx.parsed.y}%`
+                }
+              }
+            },
             scales: {
-              y: { min: 0, max: 100, ticks: { callback: v => v + '%' } },
-              x: { ticks: { maxTicksLimit: 7 } }
+              y: {
+                min: 0,
+                max: 100,
+                ticks: { callback: v => v + '%', font: { size: 10 } },
+                grid: { color: 'rgba(255, 255, 255, 0.06)' }
+              },
+              x: {
+                ticks: { maxTicksLimit: 6, font: { size: 10 } },
+                grid: { display: false }
+              }
             }
           }
         });
@@ -1397,18 +1456,33 @@ requireStudentLogin();
         studentTypeChartInstance = new Chart(typeCanvas, {
           type: 'doughnut',
           data: {
-            labels: Object.keys(typeCounts),
+            labels: chartLabels,
             datasets: [{
-              data: Object.values(typeCounts),
-              backgroundColor: ['#059669', '#3B82F6', '#0284C7', '#7C3AED', '#06B6D4', '#8B5CF6'],
+              data: chartData,
+              backgroundColor: chartColors,
               borderWidth: 0
             }]
           },
           options: {
             responsive: true,
             maintainAspectRatio: false,
+            cutout: '65%',
             plugins: {
-              legend: { position: 'right', labels: { boxWidth: 12, font: { size: 11 } } }
+              legend: {
+                position: 'right',
+                labels: {
+                  boxWidth: 10,
+                  boxHeight: 10,
+                  padding: 7,
+                  font: { size: 10, family: "'Plus Jakarta Sans', sans-serif", weight: '600' },
+                  color: document.documentElement.getAttribute('data-theme') === 'light' ? '#334155' : '#CBD5E1'
+                }
+              },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) => ` ${ctx.label}: ${ctx.raw} session${ctx.raw === 1 ? '' : 's'}`
+                }
+              }
             }
           }
         });
@@ -1419,7 +1493,7 @@ requireStudentLogin();
     }
 
     // Native HTML5 2D Canvas Fallback
-    drawNativeLineChart(trendCanvas, labels, accuracyData);
+    drawNativeLineChart(trendCanvas, trendLabels, trendAccuracy);
     drawNativeDoughnutChart(typeCanvas, typeCounts);
   }
 
@@ -1549,48 +1623,43 @@ requireStudentLogin();
       const data = await Leaderboard.getClass();
 
       if (data.message) {
-        box.innerHTML = '<div class="empty-box">' + escapeHtml(data.message) + '</div>';
+        box.innerHTML = '<div class="empty-box" style="padding:16px;text-align:center;font-size:0.8rem;color:var(--text-muted);">' + escapeHtml(data.message) + '</div>';
         return;
       }
 
       const list = data.top || data.ranked || [];
 
       if (!list || list.length === 0) {
-        box.innerHTML = `<div class="empty-box">No rankings yet. (Minimum 3 completed practicals required to rank)</div>`;
+        box.innerHTML = `<div class="empty-box" style="padding:16px;text-align:center;font-size:0.8rem;color:var(--text-muted);">No class rankings yet.<br><small>(Minimum 3 completed practicals required to rank)</small></div>`;
         return;
       }
 
-      const rows = list.map(r => {
+      const medals = ['🥇', '🥈', '🥉'];
+      const items = list.slice(0, 6).map((r, i) => {
         const isYou = data.you && r.studentId === data.you.studentId;
+        const rankDisplay = i < 3 ? medals[i] : `#${r.rank || (i + 1)}`;
+        const initials = (r.name || 'Student').trim().split(/\s+/).map(p => p[0]).join('').substring(0, 2).toUpperCase();
+
         return `
-          <tr class="${isYou ? 'lb-row-you' : ''}">
-            <td style="padding:8px 6px;">#${r.rank || 1}${isYou ? ' 🎯' : ''}</td>
-            <td style="padding:8px 6px;font-weight:700;">${escapeHtml(r.name)}${isYou ? ' (you)' : ''}</td>
-            <td style="padding:8px 6px;">${escapeHtml(r.form || 'Form 3')}</td>
-            <td style="padding:8px 6px;color:var(--green-accent);font-weight:800;">${r.accuracyPct}%</td>
-            <td style="padding:8px 6px;">${r.totalSessions}</td>
-          </tr>
+          <div class="lb-rank-card ${isYou ? 'is-you' : ''}">
+            <div class="lb-rank-left">
+              <span class="lb-medal">${rankDisplay}</span>
+              <div class="lb-avatar">${initials}</div>
+              <div class="lb-info">
+                <div class="lb-name">${escapeHtml(r.name)}${isYou ? ' <span class="lb-you-chip">YOU</span>' : ''}</div>
+                <div class="lb-meta">${escapeHtml(r.form || 'Form 4')} · ${r.totalSessions || 0} lab${r.totalSessions === 1 ? '' : 's'}</div>
+              </div>
+            </div>
+            <div class="lb-score-pill">
+              <span class="lb-acc">${r.accuracyPct}%</span>
+            </div>
+          </div>
         `;
       }).join('');
 
-      box.innerHTML = `
-        <div style="width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;">
-          <table class="lb-table-custom" style="width:100%;min-width:320px;border-collapse:collapse;font-size:0.82rem;">
-            <thead>
-              <tr style="border-bottom:1.5px solid var(--card-border);text-align:left;color:var(--text-muted);">
-                <th style="padding:6px 8px;white-space:nowrap;">Rank</th>
-                <th style="padding:6px 8px;white-space:nowrap;">Student</th>
-                <th style="padding:6px 8px;white-space:nowrap;">Form</th>
-                <th style="padding:6px 8px;white-space:nowrap;">Accuracy</th>
-                <th style="padding:6px 8px;white-space:nowrap;">Sessions</th>
-              </tr>
-            </thead>
-            <tbody>${rows}</tbody>
-          </table>
-        </div>
-      `;
+      box.innerHTML = `<div class="lb-list-wrap">${items}</div>`;
     } catch (err) {
-      box.innerHTML = '<div class="empty-box">Could not load leaderboard</div>';
+      box.innerHTML = '<div class="empty-box" style="padding:14px;text-align:center;font-size:0.8rem;color:var(--text-muted);">Could not load leaderboard</div>';
     }
   }
 
@@ -1683,6 +1752,39 @@ requireStudentLogin();
       if (accEl) accEl.textContent = accuracyPct + '%';
       if (streakEl) streakEl.textContent = formattedStreak;
       if (badgesEl) badgesEl.textContent = `${unlockedCount} / ${totalBadgesCount}`;
+
+      // Dynamically determine Top Skill from successful practical sessions
+      const skillStats = {
+        'Volumetric Analysis': titrationSessions.filter(s => s.correct).length,
+        'Qualitative Analysis': qualSessions.filter(s => s.correct).length,
+        'Organic Analysis': organicSessions.filter(s => s.overall_correct || s.correct).length,
+        'Thermochemistry': energySessions.filter(s => (s.total_score || 0) >= 10).length,
+        'Reaction Rates': ratesSessions.filter(s => (s.total_score || 0) >= 10).length,
+        'Solubility Curves': solubilitySessions.filter(s => (s.total_score || 0) >= 3).length,
+        'Gas Preparation': gasSessions.filter(s => s.correct).length,
+        'Mock Exam Mastery': compositeSessions.filter(s => (s.total || 0) >= 20).length
+      };
+
+      let bestSkill = 'Volumetric Analysis';
+      let maxSkillCount = -1;
+      for (const [skill, count] of Object.entries(skillStats)) {
+        if (count > maxSkillCount) {
+          maxSkillCount = count;
+          bestSkill = skill;
+        }
+      }
+      if (maxSkillCount <= 0) {
+        bestSkill = totalCount > 0 ? 'General Chemistry' : 'Volumetric Analysis';
+      }
+
+      // Populate history.html "My Achievements" Widget
+      const achieveCompleted = document.getElementById('achieveCompletedLabs');
+      const achieveBadges = document.getElementById('achieveBadgesEarned');
+      const achieveSkill = document.getElementById('achieveTopSkill');
+
+      if (achieveCompleted) achieveCompleted.textContent = `${totalCount} / 20`;
+      if (achieveBadges) achieveBadges.textContent = `${unlockedCount} / ${totalBadgesCount} Badges`;
+      if (achieveSkill) achieveSkill.textContent = bestSkill;
 
     } catch (err) {
       console.warn('Could not calculate full student profile stats:', err);

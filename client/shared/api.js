@@ -837,6 +837,9 @@ const Composite = {
     return downloadFile('/composite/export/' + assignmentId, filename);
   }
 };
+if (typeof window !== 'undefined') {
+  window.Composite = Composite;
+}
 
 // ── Error Tracker (Client-Side Telemetry) ──────────────────────
 const ErrorTracker = {

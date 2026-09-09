@@ -721,14 +721,21 @@
         <button type="button" class="btn" id="profSoundToggleBtn" onclick="toggleSound()" style="padding:8px 16px; font-size:0.82rem; font-weight:700; border-radius:100px;">🔊 Sound ON</button>
       </div>
 
-      <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:14px; margin-bottom:16px;">
-        <div>
-          <div style="font-size:0.88rem; font-weight:800; color:var(--heading-color);">Web Push Notifications</div>
-          <div style="font-size:0.75rem; color:var(--text-muted);" id="pushStatusText" class="vlk-push-status-text">Receive real-time alerts for teacher assignments and grades</div>
+      <div style="border-bottom:1px solid var(--card-border); padding-bottom:14px; margin-bottom:16px;">
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div>
+            <div style="font-size:0.88rem; font-weight:800; color:var(--heading-color);">Web Push Notifications</div>
+            <div style="font-size:0.75rem; color:var(--text-muted);" id="pushStatusText" class="vlk-push-status-text">Receive real-time alerts for teacher assignments and grades</div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <button type="button" class="vlk-push-test-btn btn btn-xs" id="pushTestBtn" onclick="VLKPush.sendTestNotification()" style="display:none; padding:8px 14px; font-size:0.78rem; border-radius:100px;">🔔 Test</button>
+            <button type="button" class="vlk-push-toggle-btn btn btn-secondary" id="pushToggleBtn" onclick="VLKPush.toggle()" style="padding:8px 16px; font-size:0.82rem; font-weight:700; border-radius:100px;">Enable Alerts</button>
+          </div>
         </div>
-        <div style="display:flex; gap:8px; align-items:center;">
-          <button type="button" class="vlk-push-test-btn btn btn-xs" id="pushTestBtn" onclick="VLKPush.sendTestNotification()" style="display:none; padding:8px 14px; font-size:0.78rem; border-radius:100px;">🔔 Test</button>
-          <button type="button" class="vlk-push-toggle-btn btn btn-secondary" id="pushToggleBtn" onclick="VLKPush.toggle()" style="padding:8px 16px; font-size:0.82rem; font-weight:700; border-radius:100px;">Enable Alerts</button>
+        <div style="margin-top:6px;">
+          <a href="javascript:void(0)" id="pushBatteryGuideBtn" class="vlk-push-guide-btn" onclick="VLKPush.openBatteryGuideModal()" style="font-size:0.75rem; color:var(--cyan-accent); text-decoration:none; display:none; align-items:center; gap:4px;">
+            <span>⚡ Phone Battery &amp; Notification Setup Guide (Tecno/Samsung/Infinix)</span>
+          </a>
         </div>
       </div>
 

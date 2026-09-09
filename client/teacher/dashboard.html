@@ -841,14 +841,21 @@
 
         <!-- Web Push Notifications -->
         <h3 style="font-family:var(--font-heading); font-size:1rem; color:var(--heading-color); border-top:1px solid var(--card-border); padding-top:16px; margin-bottom:14px;">🔔 Web Push Notifications & Examiner Alerts</h3>
-        <div style="background:var(--bg-dark); border:1px solid var(--card-border); border-radius:12px; padding:14px; margin-bottom:18px; display:flex; align-items:center; justify-content:space-between; gap:12px;">
-          <div>
-            <div style="font-weight:800; font-size:0.86rem; color:var(--heading-color);">Real-Time Assignment Alerts</div>
-            <div style="font-size:0.75rem; color:var(--text-muted);" id="tPushStatusText" class="vlk-push-status-text">Receive device alerts when students submit practicals and mock exams</div>
+        <div style="background:var(--bg-dark); border:1px solid var(--card-border); border-radius:12px; padding:14px; margin-bottom:18px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+            <div>
+              <div style="font-weight:800; font-size:0.86rem; color:var(--heading-color);">Real-Time Assignment Alerts</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);" id="tPushStatusText" class="vlk-push-status-text">Receive device alerts when students submit practicals and mock exams</div>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <button type="button" class="vlk-push-test-btn btn btn-xs" id="tPushTestBtn" onclick="VLKPush.sendTestNotification()" style="display:none; padding:6px 12px; font-size:0.75rem; border-radius:100px;">🔔 Test Alert</button>
+              <button type="button" class="vlk-push-toggle-btn btn btn-secondary" id="tPushToggleBtn" onclick="VLKPush.toggle()" style="padding:6px 14px; font-size:0.78rem; font-weight:700; border-radius:100px;">Enable Alerts</button>
+            </div>
           </div>
-          <div style="display:flex; gap:8px; align-items:center;">
-            <button type="button" class="vlk-push-test-btn btn btn-xs" id="tPushTestBtn" onclick="VLKPush.sendTestNotification()" style="display:none; padding:6px 12px; font-size:0.75rem; border-radius:100px;">🔔 Test Alert</button>
-            <button type="button" class="vlk-push-toggle-btn btn btn-secondary" id="tPushToggleBtn" onclick="VLKPush.toggle()" style="padding:6px 14px; font-size:0.78rem; font-weight:700; border-radius:100px;">Enable Alerts</button>
+          <div style="margin-top:8px; border-top:1px dashed var(--card-border); padding-top:8px; text-align:right;">
+            <a href="javascript:void(0)" id="tPushBatteryGuideBtn" class="vlk-push-guide-btn" onclick="VLKPush.openBatteryGuideModal()" style="font-size:0.74rem; color:var(--cyan-accent); text-decoration:none; display:none; align-items:center; gap:4px; justify-content:flex-end;">
+              <span>⚡ Mobile Battery &amp; Notification Optimization Guide</span>
+            </a>
           </div>
         </div>
 

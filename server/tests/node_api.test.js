@@ -2077,6 +2077,45 @@ describe('VirtuLab Kenya — Backend API Test Suite', () => {
     assert.strictEqual(body.success, true);
   });
 
+  it('PushNotificationService — should dispatch notifications with high urgency and 24h TTL to punch through mobile Doze mode', async () => {
+    const pushService = require('../services/pushNotificationService');
+    const webpush = require('web-push');
+    let capturedOptions = null;
+    const originalSend = webpush.sendNotification;
+    try {
+      webpush.sendNotification = async (sub, payload, options) => {
+        capturedOptions = options;
+        return { statusCode: 201 };
+      };
+
+      pool.query = async (q) => {
+        if (q.includes('SELECT id, endpoint, p256dh, auth FROM push_subscriptions')) {
+          return {
+            rows: [{
+              id: 1,
+              endpoint: 'https://fcm.googleapis.com/fcm/send/mock_device_endpoint_123',
+              p256dh: 'BNcRdreALRFXTkOOUHK1EtK2wtaz5Ry4YfYCA_0QT9t0AknPQ3m0pqnAEHsVUQnGSlUKOIeJU3ToE6oEA-ANRoo',
+              auth: 'tBHItJI5svbpez7KI4CCXg'
+            }]
+          };
+        }
+        return { rows: [] };
+      };
+
+      const result = await pushService.sendToUser(1, 'student', {
+        title: 'Mock Practical Due',
+        body: 'Submit your volumetric titration results before 5:00 PM.'
+      });
+
+      assert.strictEqual(result.sent, 1);
+      assert.ok(capturedOptions, 'push options must be provided');
+      assert.strictEqual(capturedOptions.urgency, 'high');
+      assert.strictEqual(capturedOptions.TTL, 86400);
+    } finally {
+      webpush.sendNotification = originalSend;
+    }
+  });
+
 });
 
 

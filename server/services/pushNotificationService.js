@@ -158,8 +158,14 @@ async function sendToUser(userId, userRole, payload) {
         }
       };
 
+      const pushOptions = {
+        TTL: (payload && typeof payload.ttl === 'number') ? payload.ttl : 86400,
+        urgency: (payload && payload.urgency) || 'high',
+        topic: (payload && payload.tag) || 'vlk-notice'
+      };
+
       try {
-        await webpush.sendNotification(pushSub, stringified);
+        await webpush.sendNotification(pushSub, stringified, pushOptions);
         sent++;
       } catch (err) {
         failed++;
@@ -212,8 +218,14 @@ async function sendToUsers(userIds, userRole, payload) {
         }
       };
 
+      const pushOptions = {
+        TTL: (payload && typeof payload.ttl === 'number') ? payload.ttl : 86400,
+        urgency: (payload && payload.urgency) || 'high',
+        topic: (payload && payload.tag) || 'vlk-notice'
+      };
+
       try {
-        await webpush.sendNotification(pushSub, stringified);
+        await webpush.sendNotification(pushSub, stringified, pushOptions);
         sent++;
       } catch (err) {
         failed++;
@@ -251,12 +263,19 @@ async function broadcast(payload, roleFilter = null) {
   let sent = 0;
   let failed = 0;
 
+  const pushOptions = {
+    TTL: (payload && typeof payload.ttl === 'number') ? payload.ttl : 86400,
+    urgency: (payload && payload.urgency) || 'high',
+    topic: (payload && payload.tag) || 'vlk-notice'
+  };
+
   await Promise.allSettled(
     subscriptions.map(async (sub) => {
       try {
         await webpush.sendNotification(
           { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
-          stringified
+          stringified,
+          pushOptions
         );
         sent++;
       } catch (err) {

@@ -240,13 +240,20 @@
               <div style="padding:14px 0; text-align:center; font-family:'JetBrains Mono', monospace; font-size:0.78rem;">No unread notifications</div>
             </div>
             <!-- Push Notification Quick Controls -->
-            <div id="pushNotifBar" style="margin-top:10px; padding-top:10px; border-top:1px solid var(--card-border); display:flex; align-items:center; justify-content:space-between; gap:8px;">
-              <div style="font-size:0.74rem; color:var(--text-muted);">
-                <span id="pushStatusText" class="vlk-push-status-text">Push Alerts: Disabled</span>
+            <div id="pushNotifBar" style="margin-top:10px; padding-top:10px; border-top:1px solid var(--card-border);">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                <div style="font-size:0.74rem; color:var(--text-muted);">
+                  <span id="pushStatusText" class="vlk-push-status-text">Push Alerts: Disabled</span>
+                </div>
+                <div style="display:flex; gap:6px; align-items:center;">
+                  <button type="button" id="pushTestBtn" class="vlk-push-test-btn btn btn-xs" onclick="VLKPush.sendTestNotification()" style="display:none; padding:3px 8px; font-size:0.7rem; border-radius:6px;" title="Send test push alert">Test</button>
+                  <button type="button" id="pushToggleBtn" class="vlk-push-toggle-btn btn btn-xs btn-secondary" onclick="VLKPush.toggle()" style="padding:3px 10px; font-size:0.7rem; font-weight:700; border-radius:6px;">Enable</button>
+                </div>
               </div>
-              <div style="display:flex; gap:6px; align-items:center;">
-                <button type="button" id="pushTestBtn" class="vlk-push-test-btn btn btn-xs" onclick="VLKPush.sendTestNotification()" style="display:none; padding:3px 8px; font-size:0.7rem; border-radius:6px;" title="Send test push alert">Test</button>
-                <button type="button" id="pushToggleBtn" class="vlk-push-toggle-btn btn btn-xs btn-secondary" onclick="VLKPush.toggle()" style="padding:3px 10px; font-size:0.7rem; font-weight:700; border-radius:6px;">Enable</button>
+              <div style="margin-top:5px; text-align:right;">
+                <a href="javascript:void(0)" id="pushBatteryGuideBtn" class="vlk-push-guide-btn" onclick="VLKPush.openBatteryGuideModal()" style="font-size:0.7rem; color:var(--cyan-accent); text-decoration:none; display:none; align-items:center; gap:3px; justify-content:flex-end;">
+                  <span>⚡ Mobile Alert Optimization Guide</span>
+                </a>
               </div>
             </div>
           </div>

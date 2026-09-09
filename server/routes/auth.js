@@ -31,13 +31,10 @@ function signToken(payload) {
 
 function safeTimingCompare(a, b) {
   if (typeof a !== 'string' || typeof b !== 'string') return false;
-  const bufA = Buffer.from(a);
-  const bufB = Buffer.from(b);
-  if (bufA.length !== bufB.length) {
-    crypto.timingSafeEqual(bufA, bufA);
-    return false;
-  }
-  return crypto.timingSafeEqual(bufA, bufB);
+  const secret = process.env.JWT_SECRET || 'virtulab_timing_secret_salt';
+  const hashA = crypto.createHmac('sha256', secret).update(a).digest();
+  const hashB = crypto.createHmac('sha256', secret).update(b).digest();
+  return crypto.timingSafeEqual(hashA, hashB);
 }
 
 function generateSecureString(length, chars) {
@@ -428,9 +425,6 @@ router.post('/student/login', authLimiter, validateLogin, asyncHandler(async (re
 // ── POST /api/auth/teacher/login ───────────────────────────────
 router.post('/teacher/login', authLimiter, validateLogin, asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  if (!email || !password) {
-    return res.status(400).json({ error: 'Email and password are required.' });
-  }
 
   const result = await pool.query(
     `SELECT t.id, t.name, t.email, t.password_hash, t.school_id, t.status, t.teacher_code,
@@ -690,6 +684,10 @@ router.post('/admin/login', authLimiter, validateLogin, asyncHandler(async (req,
     } else if (configuredAdminPassword.startsWith('$2a$') || configuredAdminPassword.startsWith('$2b$')) {
       isPasswordMatch = await bcrypt.compare(password, configuredAdminPassword);
     } else {
+      if (process.env.NODE_ENV === 'production') {
+        console.error('[CRITICAL SECURITY ERROR] Plaintext ADMIN_PASSWORD is not permitted in production. Set ADMIN_PASSWORD_HASH.');
+        return res.status(500).json({ error: 'Server configuration error: Plaintext admin credentials cannot be used in production. Please set ADMIN_PASSWORD_HASH.' });
+      }
       isPasswordMatch = safeTimingCompare(password, configuredAdminPassword);
     }
 

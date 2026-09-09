@@ -6,12 +6,12 @@
 const rateLimit = require('express-rate-limit');
 
 // Strict rate limiter for Auth endpoints (login, register, password change)
-// Limits each IP to 100 auth requests per 15 minutes window
+// Limits each IP to 20 auth requests per 15 minutes window
 const authLimiter = process.env.NODE_ENV === 'test'
   ? (req, res, next) => next()
   : rateLimit({
       windowMs: 15 * 60 * 1000, // 15 minutes
-      max: 100,
+      max: parseInt(process.env.AUTH_RATE_LIMIT_MAX, 10) || 20,
       standardHeaders: true,
       legacyHeaders: false,
       skip: (req) => {
@@ -38,6 +38,21 @@ const apiLimiter = process.env.NODE_ENV === 'test'
       message: { error: 'Too many requests from this IP. Please slow down and try again later.' }
     });
 
+// Dedicated rate limiter for client-side crash telemetry to prevent buffer flooding & DoS
+const clientErrorLimiter = process.env.NODE_ENV === 'test'
+  ? (req, res, next) => next()
+  : rateLimit({
+      windowMs: 15 * 60 * 1000, // 15 minutes
+      max: 60,
+      standardHeaders: true,
+      legacyHeaders: false,
+      skip: (req) => {
+        const ip = req.ip || (req.socket && req.socket.remoteAddress) || '';
+        return ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
+      },
+      message: { error: 'Too many error telemetry submissions from this IP. Please slow down.' }
+    });
+
 // Dedicated rate limiter for AI Assistant endpoints (LLM synthesis & multimodal parsing)
 // Limits to 30 requests per 15 minutes per IP/teacher to protect quotas and prevent abuse
 const aiAssistantLimiter = process.env.NODE_ENV === 'test'
@@ -57,5 +72,6 @@ const aiAssistantLimiter = process.env.NODE_ENV === 'test'
 module.exports = {
   authLimiter,
   apiLimiter,
+  clientErrorLimiter,
   aiAssistantLimiter
 };

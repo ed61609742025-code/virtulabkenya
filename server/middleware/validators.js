@@ -101,6 +101,38 @@ const validateGradeKcse = [
   handleValidationErrors
 ];
 
+// Announcement Creation Rules
+const validateAnnouncementCreate = [
+  body('title').trim().notEmpty().withMessage('Announcement title is required.').isLength({ max: 200 }).withMessage('Title must be at most 200 characters.').escape(),
+  body('message').trim().notEmpty().withMessage('Announcement message is required.').isLength({ max: 2000 }).withMessage('Message must be at most 2000 characters.').escape(),
+  body('type').optional().isIn(['info', 'warning', 'success', 'alert']).withMessage('Invalid announcement type.'),
+  handleValidationErrors
+];
+
+// CPCAT Assessment Submit Rules
+const validateCpcatSubmit = [
+  body('assessment_type').optional().isIn(['pre_test', 'post_test']).withMessage('Invalid assessment type.'),
+  body('section_a_score').optional().isNumeric().withMessage('section_a_score must be a number.'),
+  body('section_b_score').optional().isNumeric().withMessage('section_b_score must be a number.'),
+  body('section_c_score').optional().isNumeric().withMessage('section_c_score must be a number.'),
+  body('section_d_score').optional().isNumeric().withMessage('section_d_score must be a number.'),
+  handleValidationErrors
+];
+
+// SUS Survey Submit Rules
+const validateSusSubmit = [
+  body('responses').isArray({ min: 10, max: 10 }).withMessage('SUS requires exactly 10 survey responses.'),
+  body('feedback_text').optional().isLength({ max: 2000 }).withMessage('Feedback text exceeds 2000 characters.').escape(),
+  handleValidationErrors
+];
+
+// TAM Survey Submit Rules
+const validateTamSubmit = [
+  body('responses').isObject().withMessage('TAM responses must be an object of construct ratings.'),
+  body('feedback_text').optional().isLength({ max: 2000 }).withMessage('Feedback text exceeds 2000 characters.').escape(),
+  handleValidationErrors
+];
+
 module.exports = {
   validateStudentRegister,
   validateTeacherRegister,
@@ -113,5 +145,9 @@ module.exports = {
   validateSchoolCreate,
   validateTutorHint,
   validateGradeKcse,
+  validateAnnouncementCreate,
+  validateCpcatSubmit,
+  validateSusSubmit,
+  validateTamSubmit,
   handleValidationErrors
 };

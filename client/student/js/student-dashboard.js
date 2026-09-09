@@ -952,10 +952,10 @@ requireStudentLogin();
     if (barFill) barFill.style.width = totalReadiness + '%';
     if (certBtn) certBtn.style.display = (totalReadiness >= 20 || sessions.length > 0) ? 'inline-block' : 'none';
 
-    let statusText = 'Novice';
-    if (totalReadiness >= 80) statusText = 'KCSE Ready 🎯';
-    else if (totalReadiness >= 50) statusText = 'Proficient 📈';
-    else if (totalReadiness >= 20) statusText = 'Developing 🧪';
+    let statusText = 'Novice 🔰';
+    if (totalReadiness >= 85) statusText = 'KCSE Ready 🎯';
+    else if (totalReadiness >= 70) statusText = 'Competent 🧪';
+    else if (totalReadiness >= 40) statusText = 'Developing 📈';
     if (statusEl) statusEl.textContent = statusText;
 
     for (const [key, count] of Object.entries(topicCounts)) {
@@ -1337,14 +1337,20 @@ requireStudentLogin();
     });
 
     const allDates = Object.keys(daysMap);
-    // Smooth trend: only plot dates with activity, or rolling averages if sparse
+    // Smooth trend: calculate progressive cumulative mastery across active dates
     const activeDates = allDates.filter(k => daysMap[k].total > 0);
     let trendLabels = [];
     let trendAccuracy = [];
 
     if (activeDates.length >= 1) {
       trendLabels = activeDates;
-      trendAccuracy = activeDates.map(k => Math.round((daysMap[k].correct / daysMap[k].total) * 100));
+      let runningTotal = 0;
+      let runningCorrect = 0;
+      trendAccuracy = activeDates.map(k => {
+        runningTotal += daysMap[k].total;
+        runningCorrect += daysMap[k].correct;
+        return Math.round((runningCorrect / runningTotal) * 100);
+      });
     } else {
       trendLabels = [allDates[0], allDates[7], allDates[14], allDates[21], allDates[29]];
       trendAccuracy = [null, null, null, null, null];
@@ -1777,12 +1783,18 @@ requireStudentLogin();
         bestSkill = totalCount > 0 ? 'General Chemistry' : 'Volumetric Analysis';
       }
 
-      // Populate history.html "My Achievements" Widget
+      // Populate history.html "My Achievements" Widget with dynamic milestone targets
       const achieveCompleted = document.getElementById('achieveCompletedLabs');
       const achieveBadges = document.getElementById('achieveBadgesEarned');
       const achieveSkill = document.getElementById('achieveTopSkill');
 
-      if (achieveCompleted) achieveCompleted.textContent = `${totalCount} / 20`;
+      let targetMilestone = 10;
+      if (totalCount >= 50) targetMilestone = Math.ceil((totalCount + 1) / 25) * 25;
+      else if (totalCount >= 30) targetMilestone = 50;
+      else if (totalCount >= 20) targetMilestone = 30;
+      else if (totalCount >= 10) targetMilestone = 20;
+
+      if (achieveCompleted) achieveCompleted.textContent = `${totalCount} / ${targetMilestone}`;
       if (achieveBadges) achieveBadges.textContent = `${unlockedCount} / ${totalBadgesCount} Badges`;
       if (achieveSkill) achieveSkill.textContent = bestSkill;
 

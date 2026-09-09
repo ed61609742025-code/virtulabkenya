@@ -13,6 +13,7 @@ const authMiddleware = require('../middleware/auth');
 const { apiLimiter } = require('../middleware/rateLimiter');
 const asyncHandler = require('../utils/asyncHandler');
 const pool = require('../db/pool');
+const badgeRoutes = require('./badges');
 
 const router = express.Router();
 
@@ -262,7 +263,6 @@ router.post('/bulk-import', apiLimiter, authMiddleware, authMiddleware.requireRo
     importedCount,
     skippedCount,
     totalCount: students.length,
-    defaultPasswordUsed: defaultPassword,
     results
   });
 }));
@@ -282,51 +282,26 @@ router.get('/:id/drilldown', authMiddleware, authMiddleware.requireRole('teacher
     }
     const student = studentResult.rows[0];
 
-    // Fetch Titration sessions
-    const titrationResult = await pool.query(
-      `SELECT * FROM practical_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`,
-      [studentId]
-    );
-
-    // Fetch Qualitative sessions
-    const qualitativeResult = await pool.query(
-      `SELECT * FROM qualitative_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`,
-      [studentId]
-    );
-
-    // Fetch Organic sessions
-    const organicResult = await pool.query(
-      `SELECT * FROM organic_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`,
-      [studentId]
-    );
-
-    // Fetch Solubility sessions
-    const solubilityResult = await pool.query(
-      `SELECT * FROM solubility_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`,
-      [studentId]
-    );
-
-    // Fetch Composite exam sessions
-    const compositeResult = await pool.query(
-      `SELECT * FROM composite_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`,
-      [studentId]
-    );
-
-    // Fetch Energy practical sessions
-    const energyResult = await pool.query(
-      `SELECT * FROM energy_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`,
-      [studentId]
-    );
-
-    const ratesResult = await pool.query(
-      `SELECT * FROM rates_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`,
-      [studentId]
-    );
-
-    const gasResult = await pool.query(
-      `SELECT * FROM gas_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`,
-      [studentId]
-    );
+    // Fetch all module practical sessions concurrently for high performance
+    const [
+      titrationResult,
+      qualitativeResult,
+      organicResult,
+      solubilityResult,
+      compositeResult,
+      energyResult,
+      ratesResult,
+      gasResult
+    ] = await Promise.all([
+      pool.query(`SELECT * FROM practical_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`, [studentId]),
+      pool.query(`SELECT * FROM qualitative_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`, [studentId]),
+      pool.query(`SELECT * FROM organic_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`, [studentId]),
+      pool.query(`SELECT * FROM solubility_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`, [studentId]),
+      pool.query(`SELECT * FROM composite_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`, [studentId]),
+      pool.query(`SELECT * FROM energy_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`, [studentId]),
+      pool.query(`SELECT * FROM rates_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`, [studentId]),
+      pool.query(`SELECT * FROM gas_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`, [studentId])
+    ]);
 
     const titrationSessions = titrationResult.rows;
     const qualitativeSessions = qualitativeResult.rows;
@@ -338,7 +313,6 @@ router.get('/:id/drilldown', authMiddleware, authMiddleware.requireRole('teacher
     const gasSessions = gasResult.rows;
 
     // Compute badges dynamically
-    const badgeRoutes = require('./badges');
     const { badges } = badgeRoutes.computeBadges ? badgeRoutes.computeBadges(titrationSessions) : { badges: [] };
     const unlockedBadges = badges.filter(b => b.unlocked).map(b => ({
       badge_key: b.key,

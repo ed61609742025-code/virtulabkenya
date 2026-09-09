@@ -7,12 +7,13 @@ const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middleware/auth');
 const { apiLimiter } = require('../middleware/rateLimiter');
+const { validateCpcatSubmit, validateSusSubmit, validateTamSubmit } = require('../middleware/validators');
 const researchRepo = require('../repositories/researchRepo');
 const stats = require('../utils/statistics');
 const asyncHandler = require('../utils/asyncHandler');
 
 // POST /api/research/cpcat/submit — Record completed CPCAT pre-test or post-test
-router.post('/cpcat/submit', apiLimiter, authMiddleware, asyncHandler(async (req, res) => {
+router.post('/cpcat/submit', apiLimiter, authMiddleware, validateCpcatSubmit, asyncHandler(async (req, res) => {
   const studentId = req.user.id;
   const {
     assessment_type = 'pre_test',
@@ -94,7 +95,7 @@ router.get('/cpcat/mine', authMiddleware, asyncHandler(async (req, res) => {
 }));
 
 // POST /api/research/sus/submit — Record 10-item System Usability Scale survey
-router.post('/sus/submit', apiLimiter, authMiddleware, asyncHandler(async (req, res) => {
+router.post('/sus/submit', apiLimiter, authMiddleware, validateSusSubmit, asyncHandler(async (req, res) => {
   const userId = req.user.id;
   const userRole = req.user.role || 'student';
   const schoolId = req.user.school_id || null;
@@ -122,7 +123,7 @@ router.post('/sus/submit', apiLimiter, authMiddleware, asyncHandler(async (req, 
 }));
 
 // POST /api/research/tam/submit — Record Technology Acceptance Model (TAM 3) questionnaire
-router.post('/tam/submit', apiLimiter, authMiddleware, asyncHandler(async (req, res) => {
+router.post('/tam/submit', apiLimiter, authMiddleware, validateTamSubmit, asyncHandler(async (req, res) => {
   const userId = req.user.id;
   const userRole = req.user.role || 'student';
   const schoolId = req.user.school_id || null;

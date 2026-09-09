@@ -142,10 +142,20 @@
   }
   .readiness-topics-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr));
+    grid-template-columns: repeat(5, 1fr);
     gap: 10px;
     width: 100%;
     box-sizing: border-box;
+  }
+  @media (max-width: 1100px) {
+    .readiness-topics-grid {
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    }
+  }
+  @media (max-width: 580px) {
+    .readiness-topics-grid {
+      grid-template-columns: 1fr 1fr;
+    }
   }
   .topic-item {
     background: var(--card-bg-hover);
@@ -278,12 +288,23 @@
   .history-tabs {
     display: flex;
     gap: 8px;
-    margin-bottom: 18px;
+    margin-bottom: 16px;
     border-bottom: 1px solid var(--card-border);
     padding-bottom: 12px;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  @media (max-width: 900px) {
+    .history-tabs {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding-bottom: 8px;
+    }
+    .history-tabs::-webkit-scrollbar {
+      display: none;
+    }
   }
   .tab-btn {
     padding: 8px 18px;
@@ -718,7 +739,9 @@
 <!-- Standardized Top Navigation Bar -->
 <nav class="top-nav" aria-label="Main Navigation">
   <a href="home.html" class="nav-brand-academic" aria-label="VirtuLab Kenya Home">
-    <div class="seal-crest-small">⚗️</div>
+    <div class="seal-crest-small" style="background:transparent; border:none; box-shadow:none; padding:0;">
+      <img src="../shared/virtulab-logo.svg" alt="VirtuLab Kenya" width="36" height="36" style="display:block;" onerror="this.outerHTML='⚗️'">
+    </div>
     <div style="display:flex; flex-direction:column;">
       <div style="font-family:'Cinzel', serif; font-weight:900; font-size:1.1rem; color:var(--heading-color); line-height:1.1; letter-spacing:0.04em;">VirtuLab Kenya</div>
       <div style="font-size:0.68rem; font-weight:700; color:var(--text-muted); letter-spacing:0.02em;">Chemistry Practical Workstation</div>
@@ -946,7 +969,7 @@
   <h2 class="section-heading" style="font-size:1.15rem; margin-bottom:14px;">📜 Detailed Attempt Logs</h2>
   
   <!-- Navigation Tabs -->
-  <div class="history-tabs" style="overflow-x:auto; padding-bottom:8px;">
+  <div class="history-tabs">
     <button class="tab-btn active" id="tabTitration" onclick="switchTab('titration')">🧪 Titration</button>
     <button class="tab-btn" id="tabQualitative" onclick="switchTab('qualitative')">🧫 Qualitative Salt</button>
     <button class="tab-btn" id="tabOrganic" onclick="switchTab('organic')">⚗️ Organic</button>
@@ -960,8 +983,11 @@
 
   <div class="filter-bar-wrap">
     <div class="filter-bar-left">
-      <label for="sessionSearchInput" class="sr-only">Search attempts</label>
-      <input type="search" id="sessionSearchInput" class="search-input-pill" placeholder="🔍 Search attempts by title, reagent, salt, or method..." oninput="onSearchFilterChange()">
+      <div class="search-input-wrap" style="position:relative; display:flex; align-items:center; flex:1; min-width:240px; max-width:440px;">
+        <label for="sessionSearchInput" class="sr-only">Search practical attempts</label>
+        <input type="search" id="sessionSearchInput" name="vlk_session_search" class="search-input-pill" placeholder="🔍 Search attempts by title, reagent, salt, or method..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" data-lpignore="true" oninput="onSearchFilterChange()" style="width:100%; padding-right:32px;">
+        <button type="button" id="searchClearBtn" onclick="clearSearchInput()" title="Clear search filter" style="position:absolute; right:10px; background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:0.85rem; display:none; padding:4px; line-height:1;">✕</button>
+      </div>
 
       <div id="titrationFilters" style="display:flex; align-items:center;">
         <label for="filterType" class="sr-only">Filter titration practical type</label>
@@ -1182,6 +1208,12 @@
     currentPage = 1;
     expandedRows.clear();
 
+    // Reset search on tab switch so students aren't blocked by previous search terms
+    const sInput = document.getElementById('sessionSearchInput');
+    const clearBtn = document.getElementById('searchClearBtn');
+    if (sInput) sInput.value = '';
+    if (clearBtn) clearBtn.style.display = 'none';
+
     ALL_TABS.forEach(t => {
       const btnId = 'tab' + t.charAt(0).toUpperCase() + t.slice(1);
       const btn = document.getElementById(btnId);
@@ -1192,6 +1224,33 @@
     if (titrFilters) titrFilters.style.display = tab === 'titration' ? 'flex' : 'none';
 
     loadActiveTabSessions();
+  }
+
+  function getCleanSearchValue() {
+    const sInput = document.getElementById('sessionSearchInput');
+    const clearBtn = document.getElementById('searchClearBtn');
+    if (!sInput) return '';
+
+    let val = (sInput.value || '').trim();
+    // Scrub browser autofilled email addresses (e.g. tecla@yahoo.com)
+    if (val.includes('@') && (val.includes('.com') || val.includes('.ke') || val.includes('.org') || val.includes('.net') || val.includes('.edu'))) {
+      sInput.value = '';
+      val = '';
+    }
+
+    if (clearBtn) {
+      clearBtn.style.display = val.length > 0 ? 'block' : 'none';
+    }
+
+    return val.toLowerCase();
+  }
+
+  function clearSearchInput() {
+    const sInput = document.getElementById('sessionSearchInput');
+    const clearBtn = document.getElementById('searchClearBtn');
+    if (sInput) sInput.value = '';
+    if (clearBtn) clearBtn.style.display = 'none';
+    renderCurrentTabUI();
   }
 
   function onSearchFilterChange() {
@@ -1243,15 +1302,15 @@
 
   function getEmptyStateHTML(tab) {
     const labMap = {
-      titration: { title: 'No Titration Attempts Found', link: 'titration.html', action: 'Start Titration Practical 🧪' },
+      titration: { title: 'No Titration Attempts Found', link: 'lab.html', action: 'Start Titration Practical 🧪' },
       qualitative: { title: 'No Qualitative Salt Tests Found', link: 'qualitative.html', action: 'Investigate Unknown Salt 🧫' },
       organic: { title: 'No Organic Lab Attempts Found', link: 'organic.html', action: 'Test Organic Compounds ⚗️' },
       solubility: { title: 'No Solubility Runs Found', link: 'solubility.html', action: 'Plot Solubility Curve 🌡️' },
       energy: { title: 'No Thermochemistry Runs Found', link: 'energy.html', action: 'Measure Heat of Reaction 🔥' },
       rates: { title: 'No Reaction Rates Runs Found', link: 'rates.html', action: 'Run Kinetics Experiment ⚡' },
-      gas: { title: 'No Gas Prep Runs Found', link: 'gas.html', action: 'Prepare & Collect Gas 💨' },
-      composite: { title: 'No Mock Exams Found', link: 'composite.html', action: 'Take 40-Mark Mock Exam 📋' },
-      cpcat: { title: 'No Standardized Assessments Found', link: 'cpcat.html', action: 'Take CPCAT Assessment 📑' }
+      gas: { title: 'No Gas Prep Runs Found', link: 'gas_prep.html', action: 'Prepare & Collect Gas 💨' },
+      composite: { title: 'No Mock Exams Found', link: 'mock_exams.html', action: 'Take 40-Mark Mock Exam 📋' },
+      cpcat: { title: 'No Standardized Assessments Found', link: 'cpcat_assessment.html', action: 'Take CPCAT Assessment 📑' }
     };
     const info = labMap[tab] || { title: 'No Attempts Recorded', link: 'home.html', action: 'Explore Workbenches 🧪' };
     return `
@@ -1509,7 +1568,7 @@
   // ── Master Render & Real-time Filter Function ──
   function renderCurrentTabUI() {
     const box = document.getElementById('sessionsBox');
-    const searchVal = (document.getElementById('sessionSearchInput')?.value || '').toLowerCase().trim();
+    const searchVal = getCleanSearchValue();
     const statusVal = document.getElementById('filterStatus')?.value || 'all';
 
     let filtered = currentTabRawSessions.filter(item => {
@@ -1528,7 +1587,8 @@
           item.titration_title, item.titration_type, item.salt_name, item.compound_name,
           item.solute_name, item.experiment_title, item.system_name, item.method,
           item.gas_name, item.gas_key, item.exam_title, item.mode, item.student_cation,
-          item.student_anion, item.student_functional_group
+          item.student_anion, item.true_cation, item.true_anion, item.student_functional_group,
+          item.knec_grade
         ].filter(Boolean).join(' ').toLowerCase();
 
         if (!haystack.includes(searchVal)) return false;

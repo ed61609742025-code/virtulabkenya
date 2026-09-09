@@ -9,7 +9,7 @@ const bcrypt = require('bcrypt');
 const pool = require('../db/pool');
 const asyncHandler = require('../utils/asyncHandler');
 const authMiddleware = require('../middleware/auth');
-const { validateSchoolCreate } = require('../middleware/validators');
+const { validateSchoolCreate, validateAnnouncementCreate } = require('../middleware/validators');
 const schoolRepo = require('../repositories/schoolRepo');
 const announcementRepo = require('../repositories/announcementRepo');
 const auditRepo = require('../repositories/auditRepo');
@@ -128,7 +128,7 @@ router.delete('/schools/:id', asyncHandler(async (req, res) => {
 }));
 
 // POST /api/admin/announcements — Create broadcast announcement
-router.post('/announcements', asyncHandler(async (req, res) => {
+router.post('/announcements', validateAnnouncementCreate, asyncHandler(async (req, res) => {
   const { title, message, type } = req.body;
   const announcement = await announcementRepo.createAnnouncement({
     title,
@@ -148,9 +148,9 @@ router.post('/announcements', asyncHandler(async (req, res) => {
 
 // GET /api/admin/users — List all system users (teachers + students) with DB-level pagination
 router.get('/users', asyncHandler(async (req, res) => {
-  const isPaged = req.query.page || req.query.limit;
+  const isAll = req.query.all === 'true' && req.user.adminRole === 'superadmin';
 
-  if (isPaged) {
+  if (!isAll) {
     const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
     const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 50, 1), 200);
     const offset = (page - 1) * limit;
@@ -194,15 +194,24 @@ router.get('/users', asyncHandler(async (req, res) => {
     ORDER BY created_at DESC
   `);
 
-  return res.json({ success: true, users: usersRes.rows, total: usersRes.rows.length });
+  return res.json({ success: true, users: usersRes.rows, total: usersRes.rows.length, page: 1, limit: usersRes.rows.length });
 }));
 
 // PATCH /api/admin/users/:id/status — Toggle user active/suspended status
 router.patch('/users/:id/status', asyncHandler(async (req, res) => {
   const { role, status } = req.body;
-  const userId = req.params.id;
+  const userId = parseInt(req.params.id, 10);
+  if (isNaN(userId)) {
+    return res.status(400).json({ error: 'Valid numeric user ID is required.' });
+  }
+
+  const cleanRole = (role || '').toLowerCase().trim();
+  if (cleanRole !== 'teacher' && cleanRole !== 'student') {
+    return res.status(400).json({ error: 'Valid user role (teacher or student) is required.' });
+  }
+
+  const table = cleanRole === 'teacher' ? 'teachers' : 'students';
   const newStatus = status === 'suspended' ? 'suspended' : 'active';
-  const table = role && role.toLowerCase() === 'teacher' ? 'teachers' : 'students';
 
   const result = await pool.query(
     `UPDATE ${table} SET status = $1 WHERE id = $2 RETURNING id, name, email, status`,
@@ -216,7 +225,7 @@ router.patch('/users/:id/status', asyncHandler(async (req, res) => {
   await auditRepo.logAuditEvent({
     adminEmail: req.user.email,
     action: `Updated user status: ${result.rows[0].email} to ${newStatus}`,
-    details: { userId, role, status: newStatus },
+    details: { userId, role: cleanRole, status: newStatus },
     ipAddress: req.ip
   });
 
@@ -226,8 +235,17 @@ router.patch('/users/:id/status', asyncHandler(async (req, res) => {
 // POST /api/admin/users/:id/reset-password — Generate temporary password for user
 router.post('/users/:id/reset-password', asyncHandler(async (req, res) => {
   const { role } = req.body;
-  const userId = req.params.id;
-  const table = role && role.toLowerCase() === 'teacher' ? 'teachers' : 'students';
+  const userId = parseInt(req.params.id, 10);
+  if (isNaN(userId)) {
+    return res.status(400).json({ error: 'Valid numeric user ID is required.' });
+  }
+
+  const cleanRole = (role || '').toLowerCase().trim();
+  if (cleanRole !== 'teacher' && cleanRole !== 'student') {
+    return res.status(400).json({ error: 'Valid user role (teacher or student) is required.' });
+  }
+
+  const table = cleanRole === 'teacher' ? 'teachers' : 'students';
 
   // Generate random 8-char temporary password
   const tempPassword = 'VLK-' + crypto.randomBytes(4).toString('hex').toUpperCase().substring(0, 6);
@@ -245,7 +263,7 @@ router.post('/users/:id/reset-password', asyncHandler(async (req, res) => {
   await auditRepo.logAuditEvent({
     adminEmail: req.user.email,
     action: `Reset password for user: ${result.rows[0].email}`,
-    details: { userId, role },
+    details: { userId, role: cleanRole },
     ipAddress: req.ip
   });
 

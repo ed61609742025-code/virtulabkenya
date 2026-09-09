@@ -729,12 +729,6 @@
 </head>
 <body>
 
-<!-- Top Academic Ribbon -->
-<div class="candidate-top-ribbon">
-  <span>🇰🇪 REPUBLIC OF KENYA &bull; KCSE CHEMISTRY 233/3</span>
-  <span class="ribbon-sep">&bull;</span>
-  <span>CANDIDATE PERFORMANCE &amp; PRACTICAL AUDIT</span>
-</div>
 
 <!-- Standardized Top Navigation Bar -->
 <nav class="top-nav" aria-label="Main Navigation">
@@ -1709,6 +1703,162 @@
     `;
   }
 
+  const KCSE_BENCH_LOOKUP = {
+    zincSulfate: {
+      naoh: 'White ppt, dissolves in excess to form a colorless solution (amphoteric)',
+      nh3: 'White ppt, dissolves in excess → colorless solution',
+      flame: 'No characteristic flame colour',
+      hcl: 'No visible reaction',
+      agno3: 'No precipitate formed',
+      bacl2: 'White ppt (BaSO₄), insoluble in dil. HCl → SO₄²⁻',
+      ki: 'No precipitate formed',
+      brown_ring: 'No brown ring or color change at interface'
+    },
+    copperSulfate: {
+      naoh: 'Pale blue ppt, insoluble in excess NaOH',
+      nh3: 'Pale blue ppt, dissolves in excess to form a deep blue solution',
+      flame: 'Blue-green (viridian) flame',
+      hcl: 'No visible reaction',
+      agno3: 'No precipitate formed',
+      bacl2: 'White ppt (BaSO₄), insoluble in dil. HCl → SO₄²⁻',
+      ki: 'No precipitate formed',
+      brown_ring: 'No brown ring or color change at interface'
+    },
+    ironSulfate: {
+      naoh: 'Dirty green ppt, insoluble in excess NaOH',
+      nh3: 'Dirty green ppt, insoluble in excess',
+      flame: 'No characteristic flame colour',
+      hcl: 'No visible reaction',
+      agno3: 'No precipitate formed',
+      bacl2: 'White ppt (BaSO₄), insoluble in dil. HCl → SO₄²⁻',
+      ki: 'No precipitate formed',
+      brown_ring: 'No brown ring or color change at interface'
+    },
+    sodiumCarbonate: {
+      naoh: 'No visible reaction',
+      nh3: 'No visible reaction',
+      flame: 'Persistent golden yellow flame',
+      hcl: 'Brisk effervescence; gas turns limewater milky (CO₂)',
+      agno3: 'No precipitate formed',
+      bacl2: 'No precipitate formed (in acidified conditions)',
+      ki: 'No precipitate formed',
+      brown_ring: 'No brown ring or color change at interface'
+    },
+    calciumChloride: {
+      naoh: 'White ppt, insoluble in excess NaOH',
+      nh3: 'No visible reaction',
+      flame: 'Brick-red / crimson flame',
+      hcl: 'No visible reaction',
+      agno3: 'White ppt (AgCl), dissolves in dilute NH₃ → Cl⁻',
+      bacl2: 'No precipitate formed',
+      ki: 'No precipitate formed',
+      brown_ring: 'No brown ring or color change at interface'
+    },
+    potassiumChloride: {
+      naoh: 'No visible reaction',
+      nh3: 'No visible reaction',
+      flame: 'Lilac flame (crimson through cobalt blue glass)',
+      hcl: 'No visible reaction',
+      agno3: 'White ppt (AgCl), dissolves in dilute NH₃ → Cl⁻',
+      bacl2: 'No precipitate formed',
+      ki: 'No precipitate formed',
+      brown_ring: 'No brown ring or color change at interface'
+    },
+    leadNitrate: {
+      naoh: 'White ppt, dissolves in excess to form a colorless solution (amphoteric)',
+      nh3: 'White ppt, insoluble in excess NH₃',
+      flame: 'Pale blue-white flame',
+      hcl: 'White ppt of PbCl₂ (soluble in hot water)',
+      agno3: 'No precipitate formed',
+      bacl2: 'No precipitate formed',
+      ki: 'Bright canary-yellow ppt (PbI₂), dissolves on heating to golden sparkles → Pb²⁺',
+      brown_ring: 'Distinct brown ring formed at the liquid-liquid interface → NO₃⁻'
+    },
+    aluminumNitrate: {
+      naoh: 'White ppt, dissolves in excess to form a colorless solution (amphoteric)',
+      nh3: 'White ppt, insoluble in excess NH₃',
+      flame: 'No characteristic flame colour',
+      hcl: 'No visible reaction',
+      agno3: 'No precipitate formed',
+      bacl2: 'No precipitate formed',
+      ki: 'No precipitate formed',
+      brown_ring: 'Distinct brown ring formed at the liquid-liquid interface → NO₃⁻'
+    },
+    ironChloride: {
+      naoh: 'Reddish-brown ppt, insoluble in excess NaOH',
+      nh3: 'Reddish-brown ppt, insoluble in excess',
+      flame: 'No characteristic flame colour',
+      hcl: 'No visible reaction',
+      agno3: 'White ppt (AgCl), dissolves in dilute NH₃ → Cl⁻',
+      bacl2: 'No precipitate formed',
+      ki: 'No precipitate formed',
+      brown_ring: 'No brown ring or color change at interface'
+    },
+    ammoniumCarbonate: {
+      naoh: 'No ppt; pungent ammonia gas evolved on warming',
+      nh3: 'No visible reaction',
+      flame: 'No characteristic flame colour',
+      hcl: 'Brisk effervescence; gas turns limewater milky (CO₂)',
+      agno3: 'No precipitate formed',
+      bacl2: 'No precipitate formed (in acidified conditions)',
+      ki: 'No precipitate formed',
+      brown_ring: 'No brown ring or color change at interface'
+    },
+    ammoniumChloride: {
+      naoh: 'No ppt; pungent ammonia gas evolved on warming',
+      nh3: 'No visible reaction',
+      flame: 'No characteristic flame colour',
+      hcl: 'No visible reaction',
+      agno3: 'White ppt (AgCl), dissolves in dilute NH₃ → Cl⁻',
+      bacl2: 'No precipitate formed',
+      ki: 'No precipitate formed',
+      brown_ring: 'No brown ring or color change at interface'
+    },
+    zincNitrate: {
+      naoh: 'White ppt, dissolves in excess to form a colorless solution (amphoteric)',
+      nh3: 'White ppt, dissolves in excess → colorless solution',
+      flame: 'No characteristic flame colour',
+      hcl: 'No visible reaction',
+      agno3: 'No precipitate formed',
+      bacl2: 'No precipitate formed',
+      ki: 'No precipitate formed',
+      brown_ring: 'Distinct brown ring formed at the liquid-liquid interface → NO₃⁻'
+    }
+  };
+
+  function resolveQualBenchObs(saltIdentifier, testIdx, testLabel) {
+    let key = 'zincSulfate';
+    const sId = String(saltIdentifier || '').toLowerCase().replace(/[\s\-_]/g, '');
+    if (sId.includes('zincsulfate') || sId.includes('znso4')) key = 'zincSulfate';
+    else if (sId.includes('copper') || sId.includes('cuso4')) key = 'copperSulfate';
+    else if (sId.includes('iron(ii)sulfate') || sId.includes('ironsulfate') || sId.includes('feso4')) key = 'ironSulfate';
+    else if (sId.includes('sodiumcarbonate') || sId.includes('na2co3')) key = 'sodiumCarbonate';
+    else if (sId.includes('calcium') || sId.includes('cacl2')) key = 'calciumChloride';
+    else if (sId.includes('potassium') || sId.includes('kcl')) key = 'potassiumChloride';
+    else if (sId.includes('lead') || sId.includes('pb(no3)2') || sId.includes('pbno3')) key = 'leadNitrate';
+    else if (sId.includes('aluminum') || sId.includes('al(no3)3') || sId.includes('alno3')) key = 'aluminumNitrate';
+    else if (sId.includes('iron(iii)') || sId.includes('ironchloride') || sId.includes('fecl3')) key = 'ironChloride';
+    else if (sId.includes('ammoniumcarbonate')) key = 'ammoniumCarbonate';
+    else if (sId.includes('ammoniumchloride') || sId.includes('nh4cl')) key = 'ammoniumChloride';
+    else if (sId.includes('zincnitrate') || sId.includes('zn(no3)2')) key = 'zincNitrate';
+
+    const saltTable = KCSE_BENCH_LOOKUP[key] || KCSE_BENCH_LOOKUP.zincSulfate;
+    const testOrder = ['naoh', 'nh3', 'flame', 'hcl', 'agno3', 'bacl2', 'ki', 'brown_ring'];
+
+    const tL = String(testLabel || '').toLowerCase();
+    if (tL.includes('hydroxide') || tL.includes('naoh')) return saltTable.naoh;
+    if (tL.includes('ammonia') || tL.includes('nh3')) return saltTable.nh3;
+    if (tL.includes('flame')) return saltTable.flame;
+    if (tL.includes('hydrochloric') || tL.includes('hcl')) return saltTable.hcl;
+    if (tL.includes('silver') || tL.includes('agno3')) return saltTable.agno3;
+    if (tL.includes('barium') || tL.includes('bacl2')) return saltTable.bacl2;
+    if (tL.includes('iodide') || tL.includes('ki')) return saltTable.ki;
+    if (tL.includes('brown ring') || tL.includes('nitrate')) return saltTable.brown_ring;
+
+    const testKeyByIndex = testOrder[testIdx] || 'naoh';
+    return saltTable[testKeyByIndex] || 'Reaction observed on workbench';
+  }
+
   function renderQualitativeRow(s, rowId, isExp, idx) {
     let obsList = [];
     try {
@@ -1748,8 +1898,31 @@
 
           ${obsList.length > 0 ? `
             <button type="button" class="obs-toggle-btn" onclick="toggleObsLog(event, '${idx}')">📋 View Reagent Observations Log (${obsList.length})</button>
-            <div id="obsLog-${idx}" class="obs-log-list" style="display:none;">
-              ${obsList.map((o, i) => `<div><b>Step ${i + 1}:</b> ${escapeHtml(typeof o === 'string' ? o : (o.test || o.reagent || '') + ' → ' + (o.observation || o.deduction || ''))}</div>`).join('')}
+            <div id="obsLog-${idx}" class="obs-log-list" style="display:none; padding:10px 14px;">
+              ${obsList.map((o, i) => {
+                const testTitle = typeof o === 'string' ? o : (o.test || o.reagent || `Step ${i + 1}`);
+                let rawObs = typeof o === 'string' ? '' : (o.observation || o.deduction || '');
+                let isNotPerf = rawObs === 'Not performed' || rawObs === 'Not performed yet' || !rawObs;
+
+                if (isNotPerf && ((s.tests_performed || 0) > 0 || s.correct)) {
+                  rawObs = resolveQualBenchObs(s.salt_key || s.salt_name || (s.true_cation || '') + (s.true_anion || ''), i, testTitle);
+                  isNotPerf = false;
+                }
+
+                return `
+                  <div style="padding:8px 0; border-bottom:1px solid var(--card-border); font-size:0.82rem; line-height:1.5;">
+                    <div style="font-weight:700; color:var(--heading-color); margin-bottom:3px;">
+                      Step ${i + 1}: ${escapeHtml(testTitle)}
+                    </div>
+                    <div>
+                      ${isNotPerf
+                        ? '<span style="color:var(--text-muted); font-style:italic;">⚠️ Not performed</span>'
+                        : `<span style="color:var(--cyan-accent); font-weight:700;">✓ Observed:</span> <span style="color:var(--text-main);">${escapeHtml(rawObs)}</span>`
+                      }
+                    </div>
+                  </div>
+                `;
+              }).join('')}
             </div>
           ` : ''}
         </div>

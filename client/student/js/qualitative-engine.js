@@ -1552,18 +1552,73 @@ requireStudentLogin();
     </div>`;
 
     try {
+      // 1. Sync any active text entered in the DOM into testStates
+      TESTS.forEach(test => {
+        const obsElem = document.getElementById(`obs_${test.key}`);
+        const infElem = document.getElementById(`inf_${test.key}`);
+        if (!testStates[test.key]) testStates[test.key] = {};
+        if (obsElem && obsElem.value.trim()) testStates[test.key].obsText = obsElem.value.trim();
+        if (infElem && infElem.value.trim()) testStates[test.key].infText = infElem.value.trim();
+      });
+
+      // 2. Build rich observations array
       const observations = TESTS.map(test => {
         const st = testStates[test.key];
-        return { test: test.label, observation: st?.selectedKey ? (test.options.find(o => o.key === st.selectedKey)?.text || '') : 'Not performed' };
+        const isPerformed = Boolean(st && (st.performed || st.stage || (st.obsText && st.obsText.trim())));
+        if (!isPerformed) {
+          return {
+            test: test.label,
+            observation: 'Not performed',
+            performed: false
+          };
+        }
+
+        const correctKey = test.correct ? test.correct[currentSaltKey] : null;
+        const correctOpt = (correctKey && test.options) ? test.options.find(o => o.key === correctKey) : null;
+        const benchObs = correctOpt?.text || st.statusLabel || 'Reaction observed on bench';
+
+        const userObs = (st.obsText || '').trim();
+        const userInf = (st.infText || '').trim();
+
+        let finalObs = userObs || benchObs;
+        if (userInf) {
+          finalObs += ` (Inference: ${userInf})`;
+        }
+
+        return {
+          test: test.label,
+          observation: finalObs,
+          benchObservation: benchObs,
+          studentObservation: userObs,
+          studentInference: userInf,
+          performed: true
+        };
+      });
+
+      const testsPerformedCount = Object.keys(testStates).filter(k => testStates[k] && (testStates[k].performed || testStates[k].stage)).length;
+
+      let testsCorrectCount = 0;
+      TESTS.forEach(test => {
+        const st = testStates[test.key];
+        if (st && (st.performed || st.stage)) {
+          const uObs = (st.obsText || '').trim().toLowerCase();
+          if (!uObs || !uObs.includes('white solution')) {
+            testsCorrectCount++;
+          }
+        }
       });
 
       await Qualitative.save({
-        saltKey: currentSaltKey, saltName: salt.name,
-        trueCation: salt.cation, trueAnion: salt.anion,
-        studentCation: cation, studentAnion: anion,
-        cationCorrect, anionCorrect,
-        testsPerformed: Object.keys(testStates).filter(k => testStates[k].performed).length,
-        testsCorrect: Object.values(testStates).filter(s => s.selectedKey && s.selectedKey === s.correctKey).length,
+        saltKey: currentSaltKey,
+        saltName: salt.name,
+        trueCation: salt.cation,
+        trueAnion: salt.anion,
+        studentCation: cation,
+        studentAnion: anion,
+        cationCorrect,
+        anionCorrect,
+        testsPerformed: testsPerformedCount,
+        testsCorrect: testsCorrectCount,
         observations,
         mode: assignmentId ? 'assignment' : 'selfPaced',
         assignmentId: assignmentId ? parseInt(assignmentId, 10) : null

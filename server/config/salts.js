@@ -102,6 +102,133 @@ const SALTS = {
   }
 };
 
+const CANONICAL_OBSERVATIONS = {
+  zincSulfate: [
+    { test: 'Test with 2M Sodium Hydroxide Solution (NaOH)', observation: 'White ppt, dissolves in excess to form a colorless solution (amphoteric)' },
+    { test: 'Test with 2M Aqueous Ammonia [NH₃(aq)]', observation: 'White ppt, dissolves in excess → colorless solution' },
+    { test: 'Clean Glass Rod Flame Emission Test (KICD Standard)', observation: 'No characteristic flame colour' },
+    { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'No visible reaction' },
+    { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'White ppt (BaSO₄), insoluble in dil. HCl → SO₄²⁻' },
+    { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'No precipitate formed' },
+    { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'No brown ring or color change at interface' }
+  ],
+  copperSulfate: [
+    { test: 'Test with 2M Sodium Hydroxide Solution (NaOH)', observation: 'Pale blue ppt, insoluble in excess NaOH' },
+    { test: 'Test with 2M Aqueous Ammonia [NH₃(aq)]', observation: 'Pale blue ppt, dissolves in excess to form a deep blue solution' },
+    { test: 'Clean Glass Rod Flame Emission Test (KICD Standard)', observation: 'Blue-green (viridian) flame' },
+    { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'No visible reaction' },
+    { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'White ppt (BaSO₄), insoluble in dil. HCl → SO₄²⁻' },
+    { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'No precipitate formed' },
+    { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'No brown ring or color change at interface' }
+  ],
+  ironSulfate: [
+    { test: 'Test with 2M Sodium Hydroxide Solution (NaOH)', observation: 'Dirty green ppt, insoluble in excess NaOH' },
+    { test: 'Test with 2M Aqueous Ammonia [NH₃(aq)]', observation: 'Dirty green ppt, insoluble in excess' },
+    { test: 'Clean Glass Rod Flame Emission Test (KICD Standard)', observation: 'No characteristic flame colour' },
+    { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'No visible reaction' },
+    { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'White ppt (BaSO₄), insoluble in dil. HCl → SO₄²⁻' },
+    { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'No precipitate formed' },
+    { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'No brown ring or color change at interface' }
+  ],
+  sodiumCarbonate: [
+    { test: 'Test with 2M Sodium Hydroxide Solution (NaOH)', observation: 'No visible reaction' },
+    { test: 'Test with 2M Aqueous Ammonia [NH₃(aq)]', observation: 'No visible reaction' },
+    { test: 'Clean Glass Rod Flame Emission Test (KICD Standard)', observation: 'Persistent golden yellow flame' },
+    { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'Brisk effervescence; gas turns limewater milky (CO₂)' },
+    { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'No precipitate formed' },
+    { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'No brown ring or color change at interface' }
+  ],
+  calciumChloride: [
+    { test: 'Test with 2M Sodium Hydroxide Solution (NaOH)', observation: 'White ppt, insoluble in excess NaOH' },
+    { test: 'Test with 2M Aqueous Ammonia [NH₃(aq)]', observation: 'No visible reaction' },
+    { test: 'Clean Glass Rod Flame Emission Test (KICD Standard)', observation: 'Brick-red / crimson flame' },
+    { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'No visible reaction' },
+    { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'White ppt (AgCl), dissolves in dilute NH₃ → Cl⁻' },
+    { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'No precipitate formed' },
+    { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'No brown ring or color change at interface' }
+  ],
+  potassiumChloride: [
+    { test: 'Test with 2M Sodium Hydroxide Solution (NaOH)', observation: 'No visible reaction' },
+    { test: 'Test with 2M Aqueous Ammonia [NH₃(aq)]', observation: 'No visible reaction' },
+    { test: 'Clean Glass Rod Flame Emission Test (KICD Standard)', observation: 'Lilac flame (crimson through cobalt blue glass)' },
+    { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'No visible reaction' },
+    { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'White ppt (AgCl), dissolves in dilute NH₃ → Cl⁻' },
+    { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'No precipitate formed' },
+    { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'No brown ring or color change at interface' }
+  ],
+  leadNitrate: [
+    { test: 'Test with 2M Sodium Hydroxide Solution (NaOH)', observation: 'White ppt, dissolves in excess to form a colorless solution (amphoteric)' },
+    { test: 'Test with 2M Aqueous Ammonia [NH₃(aq)]', observation: 'White ppt, insoluble in excess NH₃' },
+    { test: 'Clean Glass Rod Flame Emission Test (KICD Standard)', observation: 'Pale blue-white flame' },
+    { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'White ppt of PbCl₂ (soluble in hot water)' },
+    { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'Bright canary-yellow ppt (PbI₂), dissolves on heating to golden sparkles → Pb²⁺' },
+    { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'Distinct brown ring formed at the liquid-liquid interface → NO₃⁻' }
+  ],
+  aluminumNitrate: [
+    { test: 'Test with 2M Sodium Hydroxide Solution (NaOH)', observation: 'White ppt, dissolves in excess to form a colorless solution (amphoteric)' },
+    { test: 'Test with 2M Aqueous Ammonia [NH₃(aq)]', observation: 'White ppt, insoluble in excess NH₃' },
+    { test: 'Clean Glass Rod Flame Emission Test (KICD Standard)', observation: 'No characteristic flame colour' },
+    { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'No visible reaction' },
+    { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'No precipitate formed' },
+    { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'Distinct brown ring formed at the liquid-liquid interface → NO₃⁻' }
+  ],
+  ironChloride: [
+    { test: 'Test with 2M Sodium Hydroxide Solution (NaOH)', observation: 'Reddish-brown ppt, insoluble in excess NaOH' },
+    { test: 'Test with 2M Aqueous Ammonia [NH₃(aq)]', observation: 'Reddish-brown ppt, insoluble in excess' },
+    { test: 'Clean Glass Rod Flame Emission Test (KICD Standard)', observation: 'No characteristic flame colour' },
+    { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'No visible reaction' },
+    { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'White ppt (AgCl), dissolves in dilute NH₃ → Cl⁻' },
+    { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'No precipitate formed' },
+    { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'No brown ring or color change at interface' }
+  ],
+  ammoniumCarbonate: [
+    { test: 'Test with 2M Sodium Hydroxide Solution (NaOH)', observation: 'No ppt; pungent ammonia gas evolved on warming' },
+    { test: 'Test with 2M Aqueous Ammonia [NH₃(aq)]', observation: 'No visible reaction' },
+    { test: 'Clean Glass Rod Flame Emission Test (KICD Standard)', observation: 'No characteristic flame colour' },
+    { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'Brisk effervescence; gas turns limewater milky (CO₂)' },
+    { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'No precipitate formed' },
+    { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'No brown ring or color change at interface' }
+  ],
+  ammoniumChloride: [
+    { test: 'Test with 2M Sodium Hydroxide Solution (NaOH)', observation: 'No ppt; pungent ammonia gas evolved on warming' },
+    { test: 'Test with 2M Aqueous Ammonia [NH₃(aq)]', observation: 'No visible reaction' },
+    { test: 'Clean Glass Rod Flame Emission Test (KICD Standard)', observation: 'No characteristic flame colour' },
+    { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'No visible reaction' },
+    { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'White ppt (AgCl), dissolves in dilute NH₃ → Cl⁻' },
+    { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'No precipitate formed' },
+    { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'No brown ring or color change at interface' }
+  ],
+  zincNitrate: [
+    { test: 'Test with 2M Sodium Hydroxide Solution (NaOH)', observation: 'White ppt, dissolves in excess to form a colorless solution (amphoteric)' },
+    { test: 'Test with 2M Aqueous Ammonia [NH₃(aq)]', observation: 'White ppt, dissolves in excess → colorless solution' },
+    { test: 'Clean Glass Rod Flame Emission Test (KICD Standard)', observation: 'No characteristic flame colour' },
+    { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'No visible reaction' },
+    { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'No precipitate formed' },
+    { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'Distinct brown ring formed at the liquid-liquid interface → NO₃⁻' }
+  ]
+};
+
+function getCanonicalObservations(saltKey) {
+  return CANONICAL_OBSERVATIONS[saltKey] || CANONICAL_OBSERVATIONS.zincSulfate;
+}
+
 function getSalt(key) {
   return SALTS[key] || null;
 }
@@ -112,6 +239,8 @@ function getAllSaltKeys() {
 
 module.exports = {
   SALTS,
+  CANONICAL_OBSERVATIONS,
   getSalt,
-  getAllSaltKeys
+  getAllSaltKeys,
+  getCanonicalObservations
 };

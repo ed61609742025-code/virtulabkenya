@@ -105,7 +105,7 @@ const validateGradeKcse = [
 const validateAnnouncementCreate = [
   body('title').trim().notEmpty().withMessage('Announcement title is required.').isLength({ max: 200 }).withMessage('Title must be at most 200 characters.').escape(),
   body('message').trim().notEmpty().withMessage('Announcement message is required.').isLength({ max: 2000 }).withMessage('Message must be at most 2000 characters.').escape(),
-  body('type').optional().isIn(['info', 'warning', 'success', 'alert']).withMessage('Invalid announcement type.'),
+  body('type').optional().isIn(['info', 'warning', 'success', 'alert', 'exam']).withMessage('Invalid announcement type. Must be one of: info, warning, success, alert, exam.'),
   handleValidationErrors
 ];
 

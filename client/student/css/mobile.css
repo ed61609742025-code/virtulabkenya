@@ -1,4 +1,4 @@
-﻿/* =============================================================
+/* =============================================================
    VirtuLab Kenya — Mobile UI Overrides
    Loaded only by: client/student/home.html (and sibling pages)
    All rules scoped to max-width: 768px unless noted.
@@ -81,23 +81,63 @@
   }
 }
 
-/* ── C. Top Nav Tap-Target Improvements ───────────────────── */
+/* ── C. Top Nav Tap-Target & Mobile Single Theme Toggle ──── */
+/* Single theme toggle button is hidden on desktop by default */
+.theme-single-toggle-btn {
+  display: none;
+}
+
 @media (max-width: 768px) {
-  /* Simplify top navbar on mobile — theme labels hidden, more breathing room */
-  .theme-label {
+  /* On mobile / small screens, hide the 3-button theme group completely */
+  .theme-multi-btn-group,
+  .top-navbar .theme-toggle-group:has([data-theme]),
+  .nav-actions .theme-toggle-group:has([data-theme]) {
     display: none !important;
   }
 
-  .theme-btn-chip {
-    padding: 6px 8px !important;
-    min-width: 36px !important;
-    min-height: 36px !important;
+  /* Show the single, accessible, touch-friendly theme toggle button */
+  .theme-single-toggle-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 8px !important;
+    background: var(--card-bg-hover, #F8FAFC) !important;
+    border: 1.5px solid var(--card-border, #CBD5E1) !important;
+    color: var(--heading-color, #0F172A) !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease, color 0.15s ease !important;
+    flex-shrink: 0 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  .theme-single-toggle-btn:hover {
+    border-color: var(--acad-oxford, #0284C7) !important;
+    background: var(--card-bg, #FFFFFF) !important;
+    transform: translateY(-1px) !important;
+  }
+
+  .theme-single-toggle-btn:active {
+    transform: scale(0.92) !important;
+  }
+
+  .theme-single-toggle-btn svg {
+    width: 19px !important;
+    height: 19px !important;
+    flex-shrink: 0 !important;
   }
 
   /* All nav action buttons: ensure 44px tap targets */
   .user-avatar-btn {
     min-width: 44px !important;
     min-height: 44px !important;
+    width: 44px !important;
+    height: 44px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -105,7 +145,7 @@
 
   /* Language switcher chips */
   .lang-btn-chip {
-    min-height: 36px !important;
+    min-height: 38px !important;
     padding: 6px 10px !important;
     font-size: 0.78rem !important;
   }

@@ -528,6 +528,32 @@ button:not(:disabled):active {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
+
+  /* Single theme toggle on mobile */
+  .theme-multi-btn-group {
+    display: none !important;
+  }
+  .theme-single-toggle-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    background: var(--panel2, #F1F5F9);
+    border: 1.5px solid var(--line, #CBD5E1);
+    color: var(--ink, #0F172A);
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.15s ease, background-color 0.15s ease;
+    flex-shrink: 0;
+  }
+}
+
+.theme-single-toggle-btn {
+  display: none;
 }
 
 /* ══════════════════════════════════════════════════════════════

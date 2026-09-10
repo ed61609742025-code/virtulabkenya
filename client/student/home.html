@@ -11,6 +11,19 @@
   if (window.VLKAuthGuard) {
     VLKAuthGuard.guardPage('student');
   }
+  window.cycleTheme = window.toggleTheme = function() {
+    var themes = ['light', 'dark', 'green'];
+    var current = document.documentElement.getAttribute('data-theme') || 'light';
+    var next = themes[(themes.indexOf(current) + 1) % themes.length];
+    if (typeof setTheme === 'function') {
+      setTheme(next);
+    } else {
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('vlk_theme', next);
+      if (typeof updateThemeButtons === 'function') updateThemeButtons();
+    }
+    return next;
+  };
 </script>
 <meta name="theme-color" content="#0F172A">
 <meta name="mobile-web-app-capable" content="yes">
@@ -209,8 +222,8 @@
           <button class="lang-btn-chip" id="btnLangSW" data-lang="sw" onclick="setLanguage('sw')" title="Kiswahili">SW</button>
         </div>
 
-        <!-- Theme Toggle -->
-        <div class="theme-toggle-group" aria-label="Visual Theme Switcher">
+        <!-- Theme Toggle: 3-chip switcher for desktop, single toggle button for mobile -->
+        <div class="theme-toggle-group theme-multi-btn-group" aria-label="Visual Theme Switcher">
           <button class="theme-btn-chip active" data-theme="light" data-theme-val="light" onclick="setTheme('light')" data-tooltip="Light mode" data-tooltip-pos="bottom" aria-label="Light Theme">
             <svg class="theme-icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
             <span class="theme-label">Light</span>
@@ -224,6 +237,11 @@
             <span class="theme-label">Lab</span>
           </button>
         </div>
+
+        <!-- Single Theme Toggle Button (Mobile / Small Screens) -->
+        <button type="button" class="theme-single-toggle-btn" id="themeToggleSingleBtn" onclick="cycleTheme()" data-tooltip="Theme: Light (Tap to switch)" data-tooltip-pos="bottom" aria-label="Toggle visual theme">
+          <svg class="theme-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
 
         <!-- Notification Bell -->
         <div style="position:relative;">

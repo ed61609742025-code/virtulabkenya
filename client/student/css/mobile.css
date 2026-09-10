@@ -1,0 +1,185 @@
+﻿/* =============================================================
+   VirtuLab Kenya — Mobile UI Overrides
+   Loaded only by: client/student/home.html (and sibling pages)
+   All rules scoped to max-width: 768px unless noted.
+   ============================================================= */
+
+/* ── A. Bottom Navigation Bar ─────────────────────────────── */
+/* Only show on mobile */
+.vlk-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .vlk-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: var(--bottom-nav-bg);
+    border-top: 1px solid var(--bottom-nav-border);
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+    z-index: 9000;
+    align-items: stretch;
+    justify-content: space-around;
+  }
+
+  .vlk-bottom-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    text-decoration: none;
+    color: var(--text-subtle, #64748B);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    min-height: 60px;
+    padding: 8px 4px;
+    transition: color 0.15s ease, background 0.15s ease;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    border-top: 2px solid transparent;
+  }
+
+  .vlk-bottom-nav-item.active {
+    color: var(--cyan-accent, #0284C7);
+    border-top-color: var(--cyan-accent, #0284C7);
+  }
+
+  .vlk-bottom-nav-item svg {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+  }
+
+  /* body already has padding-bottom:80px in dashboard.css — extend for safe area */
+  body {
+    padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+/* ── B. Hero Section — Colour Noise Reduction ─────────────── */
+@media (max-width: 768px) {
+  /* Unify the 4 competing accent colours in the hero into 1 visual band */
+  .dashboard-hero-wrap, .hero-summary-row {
+    gap: 8px !important;
+  }
+
+  /* Reduce streak/points pill size on mobile */
+  .streak-pill, .points-pill, .xp-pill {
+    font-size: 0.72rem !important;
+    padding: 4px 10px !important;
+  }
+}
+
+/* ── C. Top Nav Tap-Target Improvements ───────────────────── */
+@media (max-width: 768px) {
+  /* Simplify top navbar on mobile — theme labels hidden, more breathing room */
+  .theme-label {
+    display: none !important;
+  }
+
+  .theme-btn-chip {
+    padding: 6px 8px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+  }
+
+  /* All nav action buttons: ensure 44px tap targets */
+  .user-avatar-btn {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* Language switcher chips */
+  .lang-btn-chip {
+    min-height: 36px !important;
+    padding: 6px 10px !important;
+    font-size: 0.78rem !important;
+  }
+}
+
+/* ── D. Section Header Whitespace & Text Sizing ───────────── */
+@media (max-width: 768px) {
+  /* Increase section header whitespace */
+  .section-header, .lab-section-header, .topic-section-title {
+    margin-top: 24px !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* Minimum readable text size */
+  .card-desc, .card-subtitle, .module-card-desc, .assign-card-desc {
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Assignment and challenge description text */
+  .daily-challenge-desc, .challenge-body, .assign-desc {
+    font-size: 13px !important;
+  }
+
+  /* All primary action buttons: 48px min-height on mobile */
+  .btn-primary, .btn-start, .btn-launch, .start-btn, .complete-btn {
+    min-height: 48px !important;
+    font-size: 0.92rem !important;
+  }
+}
+
+/* ── E. Module Card Grid Fix — Prevent Right-Edge Clipping ── */
+@media (max-width: 768px) {
+  /* Module card grids: ensure 2-col fits 360px without overflow */
+  .module-cards-grid, .lab-cards-grid, .topic-cards-grid,
+  .practical-topics-grid, .diag-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+    padding: 0 !important;
+    width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  /* Individual module card: contain text, prevent overflow */
+  .module-card, .lab-card, .topic-card, .diag-card {
+    min-width: 0 !important;
+    overflow: hidden !important;
+    padding: 12px 10px !important;
+  }
+
+  .module-card-title, .lab-card-title, .topic-card-title {
+    font-size: 0.78rem !important;
+    line-height: 1.3 !important;
+    word-break: break-word !important;
+  }
+
+  /* Dashboard container: ensure no horizontal overflow */
+  .dashboard-container {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    overflow-x: hidden !important;
+  }
+}
+
+/* ── F. Daily Challenge Readability ───────────────────────── */
+@media (max-width: 768px) {
+  .daily-challenge-card, .challenge-card {
+    padding: 14px !important;
+  }
+
+  .quiz-option-btn, .challenge-option {
+    min-height: 48px !important;
+    font-size: 0.88rem !important;
+    padding: 10px 14px !important;
+    text-align: left !important;
+  }
+}

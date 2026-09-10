@@ -339,20 +339,23 @@
     <div id="passwordPanel" style="background:var(--card-bg); border:1px solid var(--card-border); border-radius:16px; padding:22px; margin-bottom:22px; box-shadow:var(--shadow-md);">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
         <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.15rem; font-weight:800; color:var(--heading-color); margin:0;">Security &amp; Password Update</h3>
-        <button class="btn" onclick="togglePasswordPanel()" style="padding:5px 12px; font-size:0.8rem; font-weight:700;">Close</button>
+        <button type="button" class="btn" onclick="togglePasswordPanel()" style="padding:5px 12px; font-size:0.8rem; font-weight:700;">Close</button>
       </div>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px; margin-bottom:16px;">
-        <div>
-          <label for="pwCurrent" style="font-size:0.84rem; font-weight:800; display:block; margin-bottom:6px; color:var(--heading-color);">Current Password</label>
-          <input type="password" id="pwCurrent" style="width:100%; padding:10px 14px; border-radius:8px; border:1.5px solid var(--card-border); background:var(--card-bg-hover); color:var(--text-main);">
+      <!-- form wrapper: required for browser password manager & eliminates Chromium DOM warning -->
+      <form id="changePasswordForm" autocomplete="on" onsubmit="submitChangePassword(); return false;">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:16px; margin-bottom:16px;">
+          <div>
+            <label for="pwCurrent" style="font-size:0.84rem; font-weight:800; display:block; margin-bottom:6px; color:var(--heading-color);">Current Password</label>
+            <input type="password" id="pwCurrent" name="current-password" autocomplete="current-password" style="width:100%; padding:10px 14px; border-radius:8px; border:1.5px solid var(--card-border); background:var(--card-bg-hover); color:var(--text-main);">
+          </div>
+          <div>
+            <label for="pwNew" style="font-size:0.84rem; font-weight:800; display:block; margin-bottom:6px; color:var(--heading-color);">New Password</label>
+            <input type="password" id="pwNew" name="new-password" autocomplete="new-password" style="width:100%; padding:10px 14px; border-radius:8px; border:1.5px solid var(--card-border); background:var(--card-bg-hover); color:var(--text-main);">
+          </div>
         </div>
-        <div>
-          <label for="pwNew" style="font-size:0.84rem; font-weight:800; display:block; margin-bottom:6px; color:var(--heading-color);">New Password</label>
-          <input type="password" id="pwNew" style="width:100%; padding:10px 14px; border-radius:8px; border:1.5px solid var(--card-border); background:var(--card-bg-hover); color:var(--text-main);">
-        </div>
-      </div>
-      <button class="btn btn-primary" onclick="submitChangePassword()" style="padding:10px 24px; font-weight:800; border-radius:8px;">Update Password</button>
-      <div id="pwMsg" style="margin-top:12px; font-size:0.86rem; font-weight:600;"></div>
+        <button type="submit" class="btn btn-primary" style="padding:10px 24px; font-weight:800; border-radius:8px;">Update Password</button>
+        <div id="pwMsg" style="margin-top:12px; font-size:0.86rem; font-weight:600;"></div>
+      </form>
     </div>
   </div>
 

@@ -14,8 +14,10 @@ requireStudentLogin();
   }
   const user = getUser();
   if (user) {
-    document.getElementById('candidateName').textContent = user.name;
-    document.getElementById('printName').textContent = user.name;
+    const candName = document.getElementById('candidateName');
+    if (candName) candName.textContent = user.name;
+    const prName = document.getElementById('printName');
+    if (prName) prName.textContent = user.name;
   }
 
   const urlParams = new URLSearchParams(window.location.search);
@@ -2714,7 +2716,7 @@ requireStudentLogin();
     if (timeLeft <= 0) {
       clearInterval(timerInterval);
       if (timerEl) timerEl.textContent = '⏱️ 00:00 (Time Up)';
-      submitCompositeExam();
+      submitCompositeExam(true);
       return;
     }
     timeLeft--;
@@ -2734,7 +2736,11 @@ requireStudentLogin();
   }, 1000);
 
   // ── Exam Submission & Chief Examiner Interactive Review ─────────────
-  async function submitCompositeExam() {
+  async function submitCompositeExam(isAutoSubmit = false) {
+    if (!isAutoSubmit) {
+      const confirmed = confirm('Are you sure you want to submit your complete KCSE Paper 3 Exam Booklet? Once submitted, your scores will be finalized.');
+      if (!confirmed) return;
+    }
     clearInterval(timerInterval);
     const evalData = engine.evaluateExam();
 

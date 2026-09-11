@@ -323,6 +323,13 @@
             <span>💾 Saving...</span>
           </div>
         `;
+      } else if (status === 'auth_required') {
+        badgeHTML = `
+          <div class="vlk-offline-badge vlk-status-auth" style="display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:9999px; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.35); color:#EF4444; font-size:0.75rem; font-weight:600; font-family:'Inter',sans-serif;" title="Session expired. Exam safely saved locally. Please login in another tab to sync.">
+            <span style="width:7px; height:7px; border-radius:50%; background:#EF4444; box-shadow:0 0 6px #EF4444;"></span>
+            <span>⚠️ Login Required · Saved Locally</span>
+          </div>
+        `;
       } else {
         const timeStr = detail ? new Date(detail).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : 'Live';
         badgeHTML = `

@@ -126,7 +126,7 @@ router.get('/export/:assignmentId', authMiddleware, asyncHandler(async (req, res
     return res.status(404).json({ error: 'Assignment not found or permission denied.' });
   }
 
-  const headers = ['Student Name', 'Email', 'Form', 'Q1 Score (16)', 'Q2 Score (12)', 'Q3 Score (12)', 'Total Score (40)', 'KNEC Grade', 'Duration (min)', 'Submitted At'];
+  const headers = ['Student Name', 'Email', 'Form', 'Q1 Score (15)', 'Q2 Score (15)', 'Q3 Score (10)', 'Total Score (40)', 'KNEC Grade', 'Duration (min)', 'Submitted At'];
   const headerRow = toCsvRow(headers);
   const dataRows = exportData.rows.map(r => toCsvRow([
     r.student_name,

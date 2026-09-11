@@ -36,7 +36,7 @@ function createStandardTitrationQuestions(q1Config) {
       unit: 'cm³',
       calcTheoretical: (ctx) => ctx.trueTitre,
       calcEcf: (ctx) => ctx.expAvgFromTrials,
-      check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.15,
+      check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
       feedbackSuccess: (val) => `✓ Correct: V₁ = ${val.toFixed(2)} cm³.`,
       feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
       working: (ctx) => `<b>(a) Average Titre:</b> V₁ = (${ctx.t1.toFixed(2)} + ${ctx.t2.toFixed(2)}) / 2 = <b>${ctx.v1.toFixed(2)} cm³</b>`
@@ -145,7 +145,7 @@ function createWaterOfCrystallizationQuestions(q1Config) {
       unit: 'cm³',
       calcTheoretical: (ctx) => ctx.trueTitre,
       calcEcf: (ctx) => ctx.expAvgFromTrials,
-      check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.15,
+      check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
       feedbackSuccess: (val) => `✓ Correct: V₁ = ${val.toFixed(2)} cm³.`,
       feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
       working: (ctx) => `<b>(a) Average Titre:</b> V₁ = <b>${ctx.v1.toFixed(2)} cm³</b>`
@@ -277,7 +277,7 @@ function createPercentagePurityQuestions(q1Config) {
       unit: 'cm³',
       calcTheoretical: (ctx) => ctx.trueTitre,
       calcEcf: (ctx) => ctx.expAvgFromTrials,
-      check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.15,
+      check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
       feedbackSuccess: (val) => `✓ Correct: V₁ = ${val.toFixed(2)} cm³.`,
       feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
       working: (ctx) => `<b>(a) Average Titre:</b> V₁ = <b>${ctx.v1.toFixed(2)} cm³</b>`
@@ -403,7 +403,7 @@ function createRamMetalQuestions(q1Config) {
       unit: 'cm³',
       calcTheoretical: (ctx) => ctx.trueTitre,
       calcEcf: (ctx) => ctx.expAvgFromTrials,
-      check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.15,
+      check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
       feedbackSuccess: (val) => `✓ Correct: V₁ = ${val.toFixed(2)} cm³.`,
       feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
       working: (ctx) => `<b>(a) Average Titre:</b> V₁ = <b>${ctx.v1.toFixed(2)} cm³</b>`

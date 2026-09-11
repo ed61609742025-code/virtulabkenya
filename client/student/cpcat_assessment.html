@@ -18,13 +18,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="VirtuLab">
-<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
-<link rel="manifest" href="../manifest.json">
+<link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400..800;1,6..72,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../shared/style.css">
-<link rel="stylesheet" href="../shared/pwa-installer.css">
+<link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/shared/pwa-installer.css">
 
 <style>
   :root {
@@ -246,7 +246,7 @@
       <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px; max-width:700px; margin:0 auto 20px;">
         <div style="background:var(--card-bg); padding:10px; border-radius:8px; border:1px solid var(--card-border);">
           <div style="font-size:0.72rem; color:var(--text-muted);">Section A (Titration)</div>
-          <div style="font-size:1.1rem; font-weight:800; color:var(--heading-color);" id="scoreSecA">-- / 14</div>
+          <div style="font-size:1.1rem; font-weight:800; color:var(--heading-color);" id="scoreSecA">-- / 10</div>
         </div>
         <div style="background:var(--card-bg); padding:10px; border-radius:8px; border:1px solid var(--card-border);">
           <div style="font-size:0.72rem; color:var(--text-muted);">Section B (Qualitative)</div>
@@ -258,7 +258,7 @@
         </div>
         <div style="background:var(--card-bg); padding:10px; border-radius:8px; border:1px solid var(--card-border);">
           <div style="font-size:0.72rem; color:var(--text-muted);">Section D (Organic/Safety)</div>
-          <div style="font-size:1.1rem; font-weight:800; color:var(--heading-color);" id="scoreSecD">-- / 6</div>
+          <div style="font-size:1.1rem; font-weight:800; color:var(--heading-color);" id="scoreSecD">-- / 10</div>
         </div>
       </div>
 
@@ -279,8 +279,8 @@
 
 </div>
 
-<script src="../shared/api.js"></script>
-<script src="../shared/theme.js"></script>
+<script src="/shared/api.js"></script>
+<script src="/shared/theme.js"></script>
 <script src="js/cpcat-engine.js"></script>
 
 <script>
@@ -316,7 +316,7 @@
       document.getElementById('timerDisplay').innerText = `⏱️ ${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
       if (remainingSeconds <= 0) {
         clearInterval(timerInterval);
-        alert('Time is up! Submitting your assessment booklet.');
+        document.getElementById('timerDisplay').innerText = '⏱️ 00:00 (Time Up)';
         submitAssessment();
       }
     }, 1000);
@@ -396,10 +396,10 @@
     document.getElementById('resultsCard').style.display = 'block';
     document.getElementById('finalScoreVal').innerText = `${score.totalScore.toFixed(1)} / 40.0`;
     document.getElementById('finalPctVal').innerText = `${score.percentage.toFixed(1)}% Standardized Competency`;
-    document.getElementById('scoreSecA').innerText = `${score.sectionA} / 14`;
-    document.getElementById('scoreSecB').innerText = `${score.sectionB} / 10`;
-    document.getElementById('scoreSecC').innerText = `${score.sectionC} / 10`;
-    document.getElementById('scoreSecD').innerText = `${score.sectionD} / 6`;
+    document.getElementById('scoreSecA').innerText = `${score.sectionA} / ${score.maxA || 10}`;
+    document.getElementById('scoreSecB').innerText = `${score.sectionB} / ${score.maxB || 10}`;
+    document.getElementById('scoreSecC').innerText = `${score.sectionC} / ${score.maxC || 10}`;
+    document.getElementById('scoreSecD').innerText = `${score.sectionD} / ${score.maxD || 10}`;
   }
 </script>
 </body>

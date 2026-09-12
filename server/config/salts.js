@@ -36,6 +36,14 @@ const SALTS = {
     cationDisplay: 'Na⁺',
     anionDisplay: 'CO₃²⁻'
   },
+  sodiumHydrogenCarbonate: {
+    name: 'Sodium Hydrogen Carbonate',
+    formula: 'NaHCO₃',
+    cation: 'Na+',
+    anion: 'HCO3-',
+    cationDisplay: 'Na⁺',
+    anionDisplay: 'HCO₃⁻'
+  },
   calciumChloride: {
     name: 'Calcium Chloride',
     formula: 'CaCl₂',
@@ -162,6 +170,17 @@ const CANONICAL_OBSERVATIONS = {
   ],
   sodiumCarbonate: [
     { test: 'Dry Thermal Heating of Solid in Hard-Glass Tube (Bunsen Flame)', observation: 'White solid remains unchanged; no gas evolved or water droplets formed (thermally stable)' },
+    { test: 'Test with 2M Sodium Hydroxide Solution (NaOH)', observation: 'No visible reaction' },
+    { test: 'Test with 2M Aqueous Ammonia [NH₃(aq)]', observation: 'No visible reaction' },
+    { test: 'Clean Glass Rod Flame Emission Test (KICD Standard)', observation: 'Persistent golden yellow flame' },
+    { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'Brisk effervescence; gas turns limewater milky (CO₂)' },
+    { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'No precipitate formed' },
+    { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'No brown ring or color change at interface' }
+  ],
+  sodiumHydrogenCarbonate: [
+    { test: 'Dry Thermal Heating of Solid in Hard-Glass Tube (Bunsen Flame)', observation: 'Colorless water droplets condense on cooler upper walls; colorless gas turns limewater milky (CO₂); white residue remains' },
     { test: 'Test with 2M Sodium Hydroxide Solution (NaOH)', observation: 'No visible reaction' },
     { test: 'Test with 2M Aqueous Ammonia [NH₃(aq)]', observation: 'No visible reaction' },
     { test: 'Clean Glass Rod Flame Emission Test (KICD Standard)', observation: 'Persistent golden yellow flame' },

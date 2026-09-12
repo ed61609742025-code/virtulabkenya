@@ -1751,6 +1751,16 @@
       ki: 'No precipitate formed',
       brown_ring: 'No brown ring or color change at interface'
     },
+    sodiumHydrogenCarbonate: {
+      naoh: 'No visible reaction',
+      nh3: 'No visible reaction',
+      flame: 'Persistent golden yellow flame',
+      hcl: 'Brisk effervescence; gas turns limewater milky (CO₂)',
+      agno3: 'No precipitate formed',
+      bacl2: 'No precipitate formed (in acidified conditions)',
+      ki: 'No precipitate formed',
+      brown_ring: 'No brown ring or color change at interface'
+    },
     calciumChloride: {
       naoh: 'White ppt, insoluble in excess NaOH',
       nh3: 'No visible reaction',
@@ -1839,6 +1849,7 @@
     if (sId.includes('zincsulfate') || sId.includes('znso4')) key = 'zincSulfate';
     else if (sId.includes('copper') || sId.includes('cuso4')) key = 'copperSulfate';
     else if (sId.includes('iron(ii)sulfate') || sId.includes('ironsulfate') || sId.includes('feso4')) key = 'ironSulfate';
+    else if (sId.includes('sodiumhydrogencarbonate') || sId.includes('nahco3') || sId.includes('bicarbonate')) key = 'sodiumHydrogenCarbonate';
     else if (sId.includes('sodiumcarbonate') || sId.includes('na2co3')) key = 'sodiumCarbonate';
     else if (sId.includes('calcium') || sId.includes('cacl2')) key = 'calciumChloride';
     else if (sId.includes('potassium') || sId.includes('kcl')) key = 'potassiumChloride';

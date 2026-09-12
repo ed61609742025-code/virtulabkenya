@@ -84,6 +84,21 @@
       crystalSecondary: '#CBD5E1',
       crystalHighlight: '#FFFFFF'
     },
+    sodiumHydrogenCarbonate: {
+      key: 'sodiumHydrogenCarbonate',
+      altKeys: ['NAHCO3', 'SODIUM HYDROGEN CARBONATE', 'SODIUM_HYDROGEN_CARBONATE', 'SODIUM BICARBONATE', 'BICARBONATE', 'SODIUM_BICARBONATE'],
+      name: 'Sodium Hydrogen Carbonate',
+      formula: 'NaHCO₃',
+      cation: 'Na+',
+      anion: 'HCO3-',
+      cationDisplay: 'Na⁺',
+      anionDisplay: 'HCO₃⁻',
+      appearance: 'White crystalline powder',
+      solubility: 'Readily soluble in water; forms a clear, slightly alkaline stock solution.',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#CBD5E1',
+      crystalHighlight: '#FFFFFF'
+    },
     sodiumSulfite: {
       key: 'sodiumSulfite',
       altKeys: ['NA2SO3', 'SODIUM SULFITE', 'SODIUM SULPHITE', 'SODIUM_SULFITE'],
@@ -782,7 +797,7 @@
               statusLabel = 'Ba²⁺ Added: White precipitate of BaSO₃ formed (dissolves in acid)';
             }
           }
-        } else if (anion === 'CO3^2-' || anion === 'CO32-' || (anion && anion.includes('CO3'))) {
+        } else if (anion === 'CO3^2-' || anion === 'CO32-' || anion === 'HCO3-' || (anion && (anion.includes('CO3') || anion.includes('HCO3')))) {
           if (isStep1) {
             bubbling = true;
             statusLabel = 'Acid Added: Vigorous effervescence of CO₂ gas';
@@ -813,7 +828,7 @@
         pptColor = '#FFFFFF';
         statusLabel = 'Dilute HCl Added: White residue remains completely insoluble (BaSO₄)';
       } else if (isHCl) {
-        if (anion === 'CO3^2-' || anion === 'CO32-' || (anion && anion.includes('CO3'))) {
+        if (anion === 'CO3^2-' || anion === 'CO32-' || anion === 'HCO3-' || (anion && (anion.includes('CO3') || anion.includes('HCO3')))) {
           bubbling = true;
           statusLabel = '2M HCl Added: Vigorous effervescence of a gas that turns limewater milky (CO₂)';
         } else if (anion === 'SO3^2-' || anion === 'SO32-' || (anion && anion.includes('SO3'))) {
@@ -971,6 +986,17 @@
           decrepitates = true;
           residueColor = salt.crystalColor || '#FFFFFF';
           statusLabel = 'Heated Strongly: White crystalline solid crackles; melts at high temperature; no gas evolved';
+        } else if (anion === 'HCO3-' || saltKey === 'sodiumHydrogenCarbonate') {
+          waterCondenses = true;
+          evolvesCO2 = true;
+          gasType = 'co2_steam';
+          gasColor = '#FFFFFF';
+          residueColorHot = '#FFFFFF';
+          residueColorCold = '#FFFFFF';
+          residueColor = '#FFFFFF';
+          statusLabel = isCooled
+            ? 'Cooled: White solid residue of Na₂CO₃ remains stable'
+            : 'Heated: Colorless water droplets condense on cooler upper walls; colorless gas turns limewater milky (CO₂); white residue remains';
         } else if (anion === 'CO3^2-') {
           residueColor = '#FFFFFF';
           statusLabel = 'Heated: White solid remains thermally stable in Bunsen flame; no gas evolved';
@@ -1503,13 +1529,14 @@
       salt.formula?.includes('H2O') ||
       cation === 'Cu2+' || cation === 'Fe2+' || cation === 'Zn2+' ||
       (cation === 'NH4+' && anion === 'CO3^2-') ||
+      anion === 'HCO3-' || saltKey === 'sodiumHydrogenCarbonate' ||
       (saltKey === 'copperSulfate' || saltKey === 'ironSulfate' || saltKey === 'zincSulfate' || saltKey === 'aluminumNitrate' || saltKey === 'zincNitrate' || saltKey === 'ironChloride');
 
     // Gas evolution identification
     const evolvesO2 = isNitrate;
     const evolvesNO2 = isNitrate;
     const evolvesNH3 = cation === 'NH4+';
-    const evolvesCO2 = cation === 'NH4+' && anion === 'CO3^2-';
+    const evolvesCO2 = (cation === 'NH4+' && anion === 'CO3^2-') || anion === 'HCO3-' || saltKey === 'sodiumHydrogenCarbonate';
     const evolvesSO2 = (cation === 'Fe2+' && anion === 'SO4^2-') || anion === 'SO3^2-';
     const sublimes = cation === 'NH4+' && anion === 'Cl-';
     const decomposesCompletely = cation === 'NH4+' && anion === 'CO3^2-';
@@ -1525,6 +1552,7 @@
       else if (isGasTestStage) {
         if (evolvesO2) activeProbe = 'glowing_splint';
         else if (evolvesNH3) activeProbe = 'red_litmus';
+        else if (evolvesCO2) activeProbe = 'limewater';
         else if (evolvesSO2) activeProbe = 'blue_litmus';
         else activeProbe = 'blue_litmus';
       }

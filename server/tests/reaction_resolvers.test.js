@@ -129,6 +129,12 @@ describe('Qualitative Bench Core (Inorganic Reactions)', () => {
       assert.strictEqual(res.bubbling, true, 'Must exhibit bubbling/effervescence (CO2 gas)');
     });
 
+    // Hydrogen Carbonate (HCO3-)
+    it('HCO₃⁻: effervescence with dilute acids', () => {
+      const res = QualitativeBenchCore.resolveReactionState('sodiumHydrogenCarbonate', 'q2_acid', 'done', 'To the solid add dilute HCl');
+      assert.strictEqual(res.bubbling, true, 'Must exhibit bubbling/effervescence (CO2 gas)');
+    });
+
     // Chloride (Cl-)
     it('Cl⁻: white ppt with AgNO₃, insoluble in HNO₃', () => {
       const res = QualitativeBenchCore.resolveReactionState('ironChloride', 'q2_anion', 'stage1', 'Add dilute HNO3 followed by AgNO3 solution');
@@ -224,6 +230,28 @@ describe('Qualitative Bench Core (Inorganic Reactions)', () => {
       assert.strictEqual(res.residueColor, null, 'No solid remains');
       assert.strictEqual(res.evolvesNH3, true, 'Ammonia evolved');
       assert.strictEqual(res.evolvesCO2, true, 'CO2 evolved');
+    });
+
+    it('NaHCO₃: decomposes to evolve CO₂ (limewater milky), condenses water droplets, leaving white residue', () => {
+      const res = QualitativeBenchCore.resolveReactionState('sodiumHydrogenCarbonate', 'heat_solid', 'step1_heat', 'Heat dry solid strongly');
+      assert.strictEqual(res.waterCondenses, true, 'Water droplets must condense on upper cooler walls');
+      assert.strictEqual(res.evolvesCO2, true, 'CO2 gas must be evolved');
+      assert.strictEqual(res.residueColor, '#FFFFFF', 'White Na2CO3 residue remains');
+      assert.strictEqual(res.decomposesCompletely, false, 'White residue does not disappear completely');
+
+      const cooled = QualitativeBenchCore.resolveReactionState('sodiumHydrogenCarbonate', 'heat_solid', 'cooled', 'Heat dry solid');
+      assert.strictEqual(cooled.residueColor, '#FFFFFF', 'White residue remains on cooling');
+    });
+
+    it('NaHCO₃: renders hard-glass tube SVG with water droplets and milky limewater test probe', () => {
+      const svg = QualitativeBenchCore.renderApparatusSvg({
+        saltKey: 'sodiumHydrogenCarbonate',
+        testId: 'heat_solid',
+        stage: 'step2_gas_test',
+        prompt: 'Heat solid in hard-glass tube and test gas with limewater'
+      });
+      assert.ok(svg.includes('LIMEWATER: TURNED MILKY (CO₂)'), 'Must show milky limewater probe for NaHCO3');
+      assert.ok(svg.includes('Condensed Water Droplets'), 'Must show condensed water droplets for NaHCO3 decomposition');
     });
 
     it('should generate multi-stage actions: heated at idle, step2_gas_test at heated, and cooled at gas_test', () => {

@@ -352,6 +352,31 @@ describe('KNEC Paper 3 Examination Suite Standards', () => {
     const sulfateAbsentInf = evaluateInferenceAccuracy(testBaCl2, calciumChloride, 'SO₄²⁻, SO₃²⁻ absent', 'No precipitate formed');
     assert.strictEqual(sulfateAbsentInf.score, 0.55, 'Full marks for SO4²⁻, SO3²⁻ absent on negative BaCl2 test');
     assert.strictEqual(sulfateAbsentInf.ciPenalty, 0.0);
+
+    // 11. Sodium Carbonate & Sodium Hydrogen Carbonate in HCl: dual CO₃²⁻ / HCO₃⁻ inference
+    const testHCl = TESTS.find(t => t.key === 'hcl');
+    const sodiumCarbonate = SALTS.sodiumCarbonate;
+    const sodiumHydrogenCarbonate = SALTS.sodiumHydrogenCarbonate;
+
+    assert.ok(sodiumHydrogenCarbonate, 'SALTS.sodiumHydrogenCarbonate must be registered');
+
+    const hclDualInf1 = evaluateInferenceAccuracy(testHCl, sodiumCarbonate, 'CO₃²⁻ / HCO₃⁻ present', 'Brisk effervescence; gas turns limewater milky');
+    assert.strictEqual(hclDualInf1.score, 0.55, 'Full 0.55 mark for "CO₃²⁻ / HCO₃⁻ present" on Na2CO3 acid effervescence');
+    assert.strictEqual(hclDualInf1.ciPenalty, 0.0);
+
+    const hclDualInf2 = evaluateInferenceAccuracy(testHCl, sodiumHydrogenCarbonate, 'CO₃²⁻ or HCO₃⁻ present', 'Brisk effervescence; gas turns limewater milky');
+    assert.strictEqual(hclDualInf2.score, 0.55, 'Full 0.55 mark for "CO₃²⁻ or HCO₃⁻ present" on NaHCO3 acid effervescence');
+
+    const hclSingleHco3Inf = evaluateInferenceAccuracy(testHCl, sodiumHydrogenCarbonate, 'HCO₃⁻ present', 'Brisk effervescence; gas turns limewater milky');
+    assert.strictEqual(hclSingleHco3Inf.score, 0.55, 'Full 0.55 mark for "HCO₃⁻ present" on NaHCO3 acid effervescence');
+
+    // 12. NaHCO3 Dry Thermal Heating: water droplets + CO2 observation and HCO3- inference
+    const testHeat = TESTS.find(t => t.key === 'heat_solid');
+    const heatHco3Obs = evaluateObservationAccuracy(testHeat, sodiumHydrogenCarbonate, 'Colorless water droplets condense on cooler upper walls; colorless gas turns limewater milky; white residue remains');
+    assert.strictEqual(heatHco3Obs.score, 0.55, 'Full 0.55 mark for NaHCO3 thermal decomposition observation');
+
+    const heatHco3Inf = evaluateInferenceAccuracy(testHeat, sodiumHydrogenCarbonate, 'HCO₃⁻ present (decomposes with CO₂ & H₂O)', 'Water droplets condense, limewater milky');
+    assert.strictEqual(heatHco3Inf.score, 0.55, 'Full 0.55 mark for HCO₃⁻ present deduction on thermal heating');
   });
 
 });

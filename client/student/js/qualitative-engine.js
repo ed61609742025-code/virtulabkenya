@@ -147,6 +147,11 @@ if (typeof window !== 'undefined') {
       appearance:'White crystalline solid / powder', solubility:'Readily soluble in water; forms a clear, alkaline stock solution.',
       crystalColor:'#F8FAFC', crystalSecondary:'#CBD5E1', crystalHighlight:'#FFFFFF'
     },
+    sodiumHydrogenCarbonate: {
+      name:'Sodium Hydrogen Carbonate', formula:'NaHCO₃', cation:'Na+', anion:'HCO3-', cationDisplay:'Na⁺', anionDisplay:'HCO₃⁻',
+      appearance:'White crystalline powder', solubility:'Readily soluble in water; forms a clear, slightly alkaline stock solution.',
+      crystalColor:'#F8FAFC', crystalSecondary:'#CBD5E1', crystalHighlight:'#FFFFFF'
+    },
     calciumChloride: {
       name:'Calcium Chloride', formula:'CaCl₂', cation:'Ca2+', anion:'Cl-', cationDisplay:'Ca²⁺', anionDisplay:'Cl⁻',
       appearance:'White deliquescent crystalline solid', solubility:'Highly soluble in water with slight heat evolution; forms a clear stock solution.',
@@ -223,10 +228,11 @@ if (typeof window !== 'undefined') {
         { key:'G', text:'Brown fumes of NO₂ turn blue litmus red; gas rekindles glowing splint (O₂); white residue (Al₂O₃)', color:'#B45309' },
         { key:'H', text:'White solid remains unchanged / melts at high temperature; no gas evolved or water droplets', color:'#334155' },
         { key:'I', text:'White solid crackles; on strong heating, faint pungent choking smell of SO₂', color:'#CBD5E1' },
-        { key:'J', text:'Yellow-brown solid loses water; sublimes giving reddish-brown vapor and steamy acidic fumes', color:'#D97706' }
+        { key:'J', text:'Yellow-brown solid loses water; sublimes giving reddish-brown vapor and steamy acidic fumes', color:'#D97706' },
+        { key:'K', text:'Colorless water droplets condense on cooler upper walls; colorless gas turns limewater milky (CO₂); white residue remains', color:'#CBD5E1', bubble:true }
       ],
       correct: {
-        ammoniumChloride:'D', copperSulfate:'B', ironSulfate:'C', sodiumCarbonate:'H', calciumChloride:'H', potassiumChloride:'H', leadNitrate:'A',
+        ammoniumChloride:'D', copperSulfate:'B', ironSulfate:'C', sodiumCarbonate:'H', sodiumHydrogenCarbonate:'K', calciumChloride:'H', potassiumChloride:'H', leadNitrate:'A',
         zincSulfate:'E', aluminumNitrate:'G', ironChloride:'J', ammoniumCarbonate:'F', zincNitrate:'A', sodiumSulfite:'I', potassiumBromide:'H', sodiumIodide:'H'
       }
     },
@@ -246,7 +252,7 @@ if (typeof window !== 'undefined') {
         { key:'G', text:'Reddish-brown ppt, insoluble in excess', color:'#B45309' }
       ],
       correct: {
-        ammoniumChloride:'D', copperSulfate:'B', ironSulfate:'C', sodiumCarbonate:'E', calciumChloride:'A', potassiumChloride:'E', leadNitrate:'F',
+        ammoniumChloride:'D', copperSulfate:'B', ironSulfate:'C', sodiumCarbonate:'E', sodiumHydrogenCarbonate:'E', calciumChloride:'A', potassiumChloride:'E', leadNitrate:'F',
         zincSulfate:'F', aluminumNitrate:'F', ironChloride:'G', ammoniumCarbonate:'D', zincNitrate:'F', sodiumSulfite:'E', potassiumBromide:'E', sodiumIodide:'E'
       }
     },
@@ -266,7 +272,7 @@ if (typeof window !== 'undefined') {
         { key:'G', text:'Reddish-brown ppt, insoluble in excess', color:'#B45309' }
       ],
       correct: {
-        ammoniumChloride:'E', copperSulfate:'B', ironSulfate:'C', sodiumCarbonate:'E', calciumChloride:'E', potassiumChloride:'E', leadNitrate:'D',
+        ammoniumChloride:'E', copperSulfate:'B', ironSulfate:'C', sodiumCarbonate:'E', sodiumHydrogenCarbonate:'E', calciumChloride:'E', potassiumChloride:'E', leadNitrate:'D',
         zincSulfate:'F', aluminumNitrate:'D', ironChloride:'G', ammoniumCarbonate:'E', zincNitrate:'F', sodiumSulfite:'E', potassiumBromide:'E', sodiumIodide:'E'
       }
     },
@@ -286,7 +292,7 @@ if (typeof window !== 'undefined') {
         { key:'F', text:'Pale blue-white flame', color:'#BFDBFE' }
       ],
       correct: {
-        ammoniumChloride:'E', copperSulfate:'D', ironSulfate:'E', sodiumCarbonate:'A', calciumChloride:'C', potassiumChloride:'B', leadNitrate:'F',
+        ammoniumChloride:'E', copperSulfate:'D', ironSulfate:'E', sodiumCarbonate:'A', sodiumHydrogenCarbonate:'A', calciumChloride:'C', potassiumChloride:'B', leadNitrate:'F',
         zincSulfate:'E', aluminumNitrate:'E', ironChloride:'E', ammoniumCarbonate:'E', zincNitrate:'E', sodiumSulfite:'A', potassiumBromide:'B', sodiumIodide:'A'
       }
     },
@@ -304,7 +310,7 @@ if (typeof window !== 'undefined') {
         { key:'E', text:'Effervescence of choking gas turning acidified K₂Cr₂O₇ green (SO₂)', color:'#CBD5E1', bubble:true }
       ],
       correct: {
-        ammoniumChloride:'B', copperSulfate:'B', ironSulfate:'B', sodiumCarbonate:'A', calciumChloride:'B', potassiumChloride:'B', leadNitrate:'C',
+        ammoniumChloride:'B', copperSulfate:'B', ironSulfate:'B', sodiumCarbonate:'A', sodiumHydrogenCarbonate:'A', calciumChloride:'B', potassiumChloride:'B', leadNitrate:'C',
         zincSulfate:'B', aluminumNitrate:'B', ironChloride:'B', ammoniumCarbonate:'A', zincNitrate:'B', sodiumSulfite:'E', potassiumBromide:'B', sodiumIodide:'B'
       }
     },
@@ -322,7 +328,7 @@ if (typeof window !== 'undefined') {
         { key:'E', text:'White ppt (Ag₂SO₃), soluble in dilute HNO₃', color:'#E2E8F0' }
       ],
       correct: {
-        ammoniumChloride:'A', copperSulfate:'D', ironSulfate:'D', sodiumCarbonate:'D', calciumChloride:'A', potassiumChloride:'A', leadNitrate:'D',
+        ammoniumChloride:'A', copperSulfate:'D', ironSulfate:'D', sodiumCarbonate:'D', sodiumHydrogenCarbonate:'D', calciumChloride:'A', potassiumChloride:'A', leadNitrate:'D',
         zincSulfate:'D', aluminumNitrate:'D', ironChloride:'A', ammoniumCarbonate:'D', zincNitrate:'D', sodiumSulfite:'E', potassiumBromide:'B', sodiumIodide:'C'
       }
     },
@@ -339,7 +345,7 @@ if (typeof window !== 'undefined') {
         { key:'D', text:'White ppt, insoluble; effervescence with HCl', color:'#CBD5E1', bubble:true }
       ],
       correct: {
-        ammoniumChloride:'B', copperSulfate:'A', ironSulfate:'A', sodiumCarbonate:'B', calciumChloride:'B', potassiumChloride:'B', leadNitrate:'B',
+        ammoniumChloride:'B', copperSulfate:'A', ironSulfate:'A', sodiumCarbonate:'B', sodiumHydrogenCarbonate:'B', calciumChloride:'B', potassiumChloride:'B', leadNitrate:'B',
         zincSulfate:'A', aluminumNitrate:'B', ironChloride:'B', ammoniumCarbonate:'B', zincNitrate:'B', sodiumSulfite:'C', potassiumBromide:'B', sodiumIodide:'B'
       }
     },
@@ -355,7 +361,7 @@ if (typeof window !== 'undefined') {
         { key:'C', text:'White precipitate formed', color:'#E2E8F0' }
       ],
       correct: {
-        ammoniumChloride:'B', copperSulfate:'B', ironSulfate:'B', sodiumCarbonate:'B', calciumChloride:'B', potassiumChloride:'B', leadNitrate:'A',
+        ammoniumChloride:'B', copperSulfate:'B', ironSulfate:'B', sodiumCarbonate:'B', sodiumHydrogenCarbonate:'B', calciumChloride:'B', potassiumChloride:'B', leadNitrate:'A',
         zincSulfate:'B', aluminumNitrate:'B', ironChloride:'B', ammoniumCarbonate:'B', zincNitrate:'B', sodiumSulfite:'B', potassiumBromide:'B', sodiumIodide:'B'
       }
     },
@@ -371,7 +377,7 @@ if (typeof window !== 'undefined') {
         { key:'B', text:'No brown ring or color change at interface', color:'#334155' }
       ],
       correct: {
-        ammoniumChloride:'B', copperSulfate:'B', ironSulfate:'B', sodiumCarbonate:'B', calciumChloride:'B', potassiumChloride:'B', leadNitrate:'A',
+        ammoniumChloride:'B', copperSulfate:'B', ironSulfate:'B', sodiumCarbonate:'B', sodiumHydrogenCarbonate:'B', calciumChloride:'B', potassiumChloride:'B', leadNitrate:'A',
         zincSulfate:'B', aluminumNitrate:'A', ironChloride:'B', ammoniumCarbonate:'B', zincNitrate:'A', sodiumSulfite:'B', potassiumBromide:'B', sodiumIodide:'B'
       }
     }
@@ -554,7 +560,7 @@ if (typeof window !== 'undefined') {
 
   function getInfSuggestionChips(testKey) {
     const suggestions = {
-      heat_solid: ['Hydrated salt / water of crystallization present', 'NO₃⁻ present', 'NH₄⁺ present', 'CO₃²⁻ present', 'SO₄²⁻ / SO₃²⁻ present', 'Zn²⁺ present', 'Sublimable salt (NH₄Cl) present', 'Thermally stable salt present'],
+      heat_solid: ['Hydrated salt / water of crystallization present', 'NO₃⁻ present', 'NH₄⁺ present', 'CO₃²⁻ present', 'HCO₃⁻ present (decomposes with CO₂ & H₂O)', 'SO₄²⁻ / SO₃²⁻ present', 'Zn²⁺ present', 'Sublimable salt (NH₄Cl) present', 'Thermally stable salt present'],
       flame: ['Na⁺ present', 'K⁺ present', 'Ca²⁺ present', 'Cu²⁺ present', 'Na⁺, K⁺ absent'],
       naoh: [
         'Zn²⁺, Al³⁺, Pb²⁺ present',
@@ -578,7 +584,7 @@ if (typeof window !== 'undefined') {
         'Fe²⁺ present',
         'Fe³⁺ present'
       ],
-      hcl: ['CO₃²⁻ present', 'SO₃²⁻ present', 'Pb²⁺ present', 'CO₃²⁻, SO₃²⁻ absent'],
+      hcl: ['CO₃²⁻ / HCO₃⁻ present', 'CO₃²⁻ present', 'HCO₃⁻ present', 'SO₃²⁻ present', 'Pb²⁺ present', 'CO₃²⁻, SO₃²⁻ absent'],
       agno3: ['Cl⁻ present', 'Br⁻ present', 'I⁻ present', 'SO₃²⁻ present', 'Cl⁻, Br⁻, I⁻ absent'],
       bacl2: ['SO₄²⁻ present', 'SO₃²⁻ present', 'CO₃²⁻ present', 'SO₄²⁻ absent', 'SO₄²⁻, SO₃²⁻ absent'],
       ki: ['Pb²⁺ present', 'Pb²⁺ absent'],
@@ -605,7 +611,12 @@ if (typeof window !== 'undefined') {
   ══════════════════════════════════════ */
   function extractIonsFromChunk(chunk) {
     if (!chunk || typeof chunk !== 'string') return [];
-    const lower = chunk.toLowerCase();
+    const lower = chunk.toLowerCase()
+      .replace(/[\u2080-\u2089]/g, m => String.fromCharCode(m.charCodeAt(0) - 0x2080 + 48))
+      .replace(/[\u00B9\u00B2\u00B3]/g, m => m === '¹' ? '1' : m === '²' ? '2' : '3')
+      .replace(/[\u2070-\u2079]/g, m => String.fromCharCode(m.charCodeAt(0) - 0x2070 + 48))
+      .replace(/[⁺+]/g, '+')
+      .replace(/[⁻-]/g, '-');
     const ions = [];
 
     // Cations
@@ -625,7 +636,17 @@ if (typeof window !== 'undefined') {
     // Anions
     if (lower.includes('so4') || lower.includes('sulphate') || lower.includes('sulfate')) ions.push('so42-');
     if (lower.includes('so3') || lower.includes('sulphite') || lower.includes('sulfite')) ions.push('so32-');
-    if (lower.includes('co3') || lower.includes('carbonate')) ions.push('co32-');
+    if (lower.includes('hco3') || lower.includes('hydrogen carbonate') || lower.includes('hydrogencarbonate') || lower.includes('bicarbonate')) {
+      ions.push('hco3-');
+    }
+    const lowerWithoutHco3 = lower
+      .replace(/hco3[⁻\-\^0-9]*/g, '')
+      .replace(/hydrogen\s*carbonate/g, '')
+      .replace(/hydrogencarbonate/g, '')
+      .replace(/bicarbonate/g, '');
+    if (lowerWithoutHco3.includes('co3') || lowerWithoutHco3.includes('carbonate')) {
+      ions.push('co32-');
+    }
     if (lower.includes('cl') || lower.includes('chloride')) ions.push('cl-');
     if (lower.includes('br') || lower.includes('bromide')) ions.push('br-');
     if (lower.includes('i-') || lower.includes('iodide')) ions.push('i-');
@@ -705,7 +726,8 @@ if (typeof window !== 'undefined') {
       { sym: 'Na', regex: /\bNa\b(?![⁺\^+-])/i },
       { sym: 'SO4', regex: /\bSO4\b(?![⁻²\^+-])/i },
       { sym: 'SO3', regex: /\bSO3\b(?![⁻²\^+-])/i },
-      { sym: 'CO3', regex: /\bCO3\b(?![⁻²\^+-])/i },
+      { sym: 'HCO3', regex: /\bHCO3\b(?![⁻\^+-])/i },
+      { sym: 'CO3', regex: /\b(?<!H)CO3\b(?![⁻²\^+-])/i },
       { sym: 'NO3', regex: /\bNO3\b(?![⁻\^+-])/i },
       { sym: 'Cl', regex: /\bCl\b(?![⁻\^+-])/i },
       { sym: 'Br', regex: /\bBr\b(?![⁻\^+-])/i }
@@ -858,6 +880,9 @@ if (typeof window !== 'undefined') {
       } else if (expLower.includes('decomposes completely') || expLower.includes('alkaline')) {
         if (lower.includes('ammonia') || lower.includes('litmus blue') || lower.includes('no residue')) score = 0.55;
         else score = 0.35;
+      } else if (expLower.includes('limewater milky') || (expLower.includes('water droplets') && expLower.includes('co₂'))) {
+        if ((lower.includes('water') || lower.includes('droplet') || lower.includes('condens')) && (lower.includes('milky') || lower.includes('limewater') || lower.includes('co2') || lower.includes('co₂'))) score = 0.55;
+        else if (lower.includes('water') || lower.includes('droplet') || lower.includes('milky') || lower.includes('limewater')) score = 0.35;
       } else {
         // Thermally stable (no change / crackles)
         if (lower.includes('no change') || lower.includes('unchanged') || lower.includes('no gas') || lower.includes('crackle') || lower.includes('melts')) score = 0.55;
@@ -992,12 +1017,18 @@ if (typeof window !== 'undefined') {
       if (!s || typeof s !== 'string') return '';
       return s.toLowerCase()
         .replace(/[\^_\s]/g, '')
-        .replace(/²/g, '2').replace(/³/g, '3')
+        .replace(/[\u2080-\u2089]/g, m => String.fromCharCode(m.charCodeAt(0) - 0x2080 + 48))
+        .replace(/[\u00B9\u00B2\u00B3]/g, m => m === '¹' ? '1' : m === '²' ? '2' : '3')
+        .replace(/[\u2070-\u2079]/g, m => String.fromCharCode(m.charCodeAt(0) - 0x2070 + 48))
         .replace(/[⁺+]/g, '+').replace(/[⁻-]/g, '-');
     }
     const saltCation = normIon(salt ? salt.cation : '');
     const saltAnion = normIon(salt ? salt.anion : '');
-    const lower = raw.toLowerCase();
+    const lower = raw.toLowerCase()
+      .replace(/[\u2080-\u2089]/g, m => String.fromCharCode(m.charCodeAt(0) - 0x2080 + 48))
+      .replace(/[\u00B9\u00B2\u00B3]/g, m => m === '¹' ? '1' : m === '²' ? '2' : '3')
+      .replace(/[\u2070-\u2079]/g, m => String.fromCharCode(m.charCodeAt(0) - 0x2070 + 48))
+      .replace(/[⁺+]/g, '+').replace(/[⁻-]/g, '-');
 
     // Base Inference Evaluation
     if (test.key === 'naoh') {
@@ -1062,15 +1093,22 @@ if (typeof window !== 'undefined') {
         if (lower.includes('absent') || lower.includes('no3')) score = 0.55;
       }
     } else if (test.key === 'hcl') {
-      if (['co32-', 'so32-'].includes(saltAnion) || saltCation === 'pb2+') {
-        if (parsed.presentIons.includes(saltAnion) || parsed.presentIons.includes(saltCation)) score = 0.55;
+      if (['co32-', 'hco3-', 'so32-'].includes(saltAnion) || saltCation === 'pb2+') {
+        if (saltAnion === 'co32-' || saltAnion === 'hco3-') {
+          if (parsed.presentIons.includes('co32-') || parsed.presentIons.includes('hco3-') || lower.includes('co3') || lower.includes('hco3') || lower.includes('carbonate')) {
+            score = 0.55;
+          }
+        } else if (parsed.presentIons.includes(saltAnion) || parsed.presentIons.includes(saltCation)) {
+          score = 0.55;
+        }
       } else {
-        if (lower.includes('absent') || lower.includes('co3') || lower.includes('so3')) score = 0.55;
+        if (lower.includes('absent') || lower.includes('co3') || lower.includes('hco3') || lower.includes('so3')) score = 0.55;
       }
     } else if (test.key === 'heat_solid') {
       if (lower.includes('water') || lower.includes('hydrat') || lower.includes('crystalliz')) score = 0.55;
       else if (lower.includes('no3') || lower.includes('nitrate')) score = 0.55;
       else if (lower.includes('nh4') || lower.includes('ammonium') || lower.includes('sublim')) score = 0.55;
+      else if (lower.includes('hco3') || lower.includes('hydrogen carbonate') || lower.includes('bicarbonate')) score = 0.55;
       else if (lower.includes('co3') || lower.includes('carbonate') || lower.includes('stable')) score = 0.55;
       else if (lower.includes('so4') || lower.includes('so3') || lower.includes('zn')) score = 0.55;
       else score = 0.35;

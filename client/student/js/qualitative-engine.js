@@ -203,6 +203,7 @@ if (typeof window !== 'undefined') {
       crystalColor:'#F1F5F9', crystalSecondary:'#E2E8F0', crystalHighlight:'#FFFFFF'
     }
   };
+  Object.keys(SALTS).forEach(k => { SALTS[k].key = k; });
 
   const TESTS = [
     {
@@ -240,7 +241,7 @@ if (typeof window !== 'undefined') {
         { key:'B', text:'Blue ppt, insoluble in excess', color:'#38BDF8' },
         { key:'C', text:'Green ppt, insoluble in excess', color:'#10B981' },
         { key:'D', text:'No ppt; pungent ammonia gas evolved', color:'#94A3B8', bubble:true },
-        { key:'E', text:'No visible change', color:'#475569' },
+        { key:'E', text:'No precipitate formed (colorless solution remains)', color:'#475569' },
         { key:'F', text:'White ppt, dissolves in excess to form a colorless solution (amphoteric)', color:'#CBD5E1' },
         { key:'G', text:'Reddish-brown ppt, insoluble in excess', color:'#B45309' }
       ],
@@ -260,7 +261,7 @@ if (typeof window !== 'undefined') {
         { key:'B', text:'Blue ppt, dissolves in excess → deep blue solution', color:'#2563EB' },
         { key:'C', text:'Green ppt, insoluble in excess', color:'#10B981' },
         { key:'D', text:'White ppt, insoluble in excess', color:'#E2E8F0' },
-        { key:'E', text:'No visible change', color:'#475569' },
+        { key:'E', text:'No precipitate formed (colorless solution remains)', color:'#475569' },
         { key:'F', text:'White ppt, dissolves in excess → colorless solution', color:'#CBD5E1' },
         { key:'G', text:'Reddish-brown ppt, insoluble in excess', color:'#B45309' }
       ],
@@ -503,8 +504,27 @@ if (typeof window !== 'undefined') {
         'White solid remains unchanged; no gas evolved or water droplets'
       ],
       flame: ['Golden yellow flame', 'Lilac / pale violet flame', 'Brick-red flame', 'Blue-green flame', 'No characteristic flame color'],
-      naoh: ['White ppt, soluble in excess NaOH to form a colorless solution', 'White ppt, insoluble in excess NaOH', 'Blue ppt, insoluble in excess NaOH', 'Green ppt, insoluble in excess NaOH', 'Reddish-brown ppt, insoluble in excess', 'No ppt; pungent ammonia gas evolved'],
-      nh3: ['Deep blue solution formed in excess NH₃', 'Blue ppt, soluble in excess NH₃ to form deep blue solution', 'White ppt, soluble in excess NH₃', 'White ppt, insoluble in excess NH₃', 'Green ppt, insoluble in excess NH₃', 'Reddish-brown ppt, insoluble in excess'],
+      naoh: [
+        'White ppt, soluble in excess NaOH to form a colorless solution',
+        'White ppt, insoluble in excess NaOH',
+        'Blue ppt, insoluble in excess NaOH',
+        'Green ppt, insoluble in excess NaOH',
+        'Reddish-brown ppt, insoluble in excess',
+        'No ppt; pungent ammonia gas evolved',
+        'No precipitate formed (colorless solution remains)',
+        'No visible change'
+      ],
+      nh3: [
+        'No precipitate formed',
+        'No white precipitate formed (colorless solution remains)',
+        'No visible change',
+        'Deep blue solution formed in excess NH₃',
+        'Blue ppt, soluble in excess NH₃ to form deep blue solution',
+        'White ppt, soluble in excess NH₃',
+        'White ppt, insoluble in excess NH₃',
+        'Green ppt, insoluble in excess NH₃',
+        'Reddish-brown ppt, insoluble in excess'
+      ],
       hcl: [
         'Effervescence of a colorless gas turning limewater milky (CO₂)',
         'Effervescence of choking gas turning acidified K₂Cr₂O₇ green (SO₂)',
@@ -536,11 +556,31 @@ if (typeof window !== 'undefined') {
     const suggestions = {
       heat_solid: ['Hydrated salt / water of crystallization present', 'NO₃⁻ present', 'NH₄⁺ present', 'CO₃²⁻ present', 'SO₄²⁻ / SO₃²⁻ present', 'Zn²⁺ present', 'Sublimable salt (NH₄Cl) present', 'Thermally stable salt present'],
       flame: ['Na⁺ present', 'K⁺ present', 'Ca²⁺ present', 'Cu²⁺ present', 'Na⁺, K⁺ absent'],
-      naoh: ['Zn²⁺, Al³⁺, Pb²⁺ present', 'Ca²⁺, Mg²⁺ present', 'Cu²⁺ present', 'Fe²⁺ present', 'Fe³⁺ present', 'NH₄⁺ present'],
-      nh3: ['Cu²⁺ present', 'Zn²⁺ present', 'Pb²⁺, Al³⁺ present', 'Fe²⁺ present', 'Fe³⁺ present'],
+      naoh: [
+        'Zn²⁺, Al³⁺, Pb²⁺ present',
+        'Ca²⁺, Mg²⁺ present',
+        'Cu²⁺ present',
+        'Fe²⁺ present',
+        'Fe³⁺ present',
+        'NH₄⁺ present',
+        'Na⁺, K⁺ present',
+        'Ca²⁺, Mg²⁺, Zn²⁺, Al³⁺, Pb²⁺, Cu²⁺, Fe²⁺, Fe³⁺ absent'
+      ],
+      nh3: [
+        'Ca²⁺ present',
+        'NH₄⁺ present',
+        'Cu²⁺, Fe²⁺, Fe³⁺, Al³⁺, Pb²⁺, Zn²⁺ absent',
+        'Ca²⁺ present / Cu²⁺, Fe²⁺, Fe³⁺, Al³⁺, Pb²⁺, Zn²⁺ absent',
+        'Na⁺, K⁺ present',
+        'Cu²⁺ present',
+        'Zn²⁺ present',
+        'Pb²⁺, Al³⁺ present',
+        'Fe²⁺ present',
+        'Fe³⁺ present'
+      ],
       hcl: ['CO₃²⁻ present', 'SO₃²⁻ present', 'Pb²⁺ present', 'CO₃²⁻, SO₃²⁻ absent'],
       agno3: ['Cl⁻ present', 'Br⁻ present', 'I⁻ present', 'SO₃²⁻ present', 'Cl⁻, Br⁻, I⁻ absent'],
-      bacl2: ['SO₄²⁻ present', 'SO₃²⁻ present', 'CO₃²⁻ present', 'SO₄²⁻ absent'],
+      bacl2: ['SO₄²⁻ present', 'SO₃²⁻ present', 'CO₃²⁻ present', 'SO₄²⁻ absent', 'SO₄²⁻, SO₃²⁻ absent'],
       ki: ['Pb²⁺ present', 'Pb²⁺ absent'],
       brown_ring: ['NO₃⁻ present', 'NO₃⁻ absent']
     };
@@ -563,11 +603,9 @@ if (typeof window !== 'undefined') {
   /* ══════════════════════════════════════
      KNEC 233/3 QUALITATIVE EVALUATION HELPERS
   ══════════════════════════════════════ */
-  function parseInferredIons(text) {
-    if (!text || typeof text !== 'string') {
-      return { ions: [], hasCharge: true, missingChargeSymbols: [], raw: '' };
-    }
-    const lower = text.toLowerCase();
+  function extractIonsFromChunk(chunk) {
+    if (!chunk || typeof chunk !== 'string') return [];
+    const lower = chunk.toLowerCase();
     const ions = [];
 
     // Cations
@@ -580,7 +618,7 @@ if (typeof window !== 'undefined') {
     if (lower.includes('ca') || lower.includes('calcium')) ions.push('ca2+');
     if (lower.includes('nh4') || lower.includes('ammonium')) ions.push('nh4+');
     if (lower.includes('na') || lower.includes('sodium')) ions.push('na+');
-    if (lower.includes('k+') || lower.includes('potassium') || /\bk\b/i.test(text)) ions.push('k+');
+    if (lower.includes('k+') || lower.includes('potassium') || /\bk\b/i.test(chunk)) ions.push('k+');
     if (lower.includes('mg') || lower.includes('magnesium')) ions.push('mg2+');
     if (lower.includes('ba') || lower.includes('barium')) ions.push('ba2+');
 
@@ -592,6 +630,62 @@ if (typeof window !== 'undefined') {
     if (lower.includes('br') || lower.includes('bromide')) ions.push('br-');
     if (lower.includes('i-') || lower.includes('iodide')) ions.push('i-');
     if (lower.includes('no3') || lower.includes('nitrate')) ions.push('no3-');
+
+    return [...new Set(ions)];
+  }
+
+  function parseInferredIons(text) {
+    if (!text || typeof text !== 'string') {
+      return { ions: [], presentIons: [], absentIons: [], hasCharge: true, missingChargeSymbols: [], raw: '' };
+    }
+    const allIons = extractIonsFromChunk(text);
+    const lower = text.toLowerCase();
+
+    // Check if candidate distinguished present vs absent
+    const hasAbsent = lower.includes('absent') || lower.includes('not present') || lower.includes('not detected');
+    const lowerWithoutNotPresent = lower.replace(/not\s+present/g, '').replace(/absent/g, '').replace(/not\s+detected/g, '');
+    const hasPresent = lowerWithoutNotPresent.includes('present');
+
+    let presentIons = [];
+    let absentIons = [];
+
+    if (hasAbsent && !hasPresent) {
+      // Entire statement deduces absence of listed ions (e.g. "Cu2+, Fe2+, Fe3+ absent")
+      absentIons = [...allIons];
+      presentIons = [];
+    } else if (hasAbsent && hasPresent) {
+      // Multiple clauses separating present vs absent
+      const clauses = text.split(/[;/\n]|(?:\b(?:while|whereas|but)\b)/i);
+      if (clauses.length > 1) {
+        clauses.forEach(cl => {
+          const clLower = cl.toLowerCase();
+          const clIons = extractIonsFromChunk(cl);
+          if (clLower.includes('absent') || clLower.includes('not present') || clLower.includes('not detected')) {
+            absentIons.push(...clIons);
+          } else {
+            presentIons.push(...clIons);
+          }
+        });
+      } else {
+        const commaParts = text.split(/,\s*(?=[^,]*\b(?:present|absent)\b)/i);
+        commaParts.forEach(cl => {
+          const clLower = cl.toLowerCase();
+          const clIons = extractIonsFromChunk(cl);
+          if (clLower.includes('absent') || clLower.includes('not present') || clLower.includes('not detected')) {
+            absentIons.push(...clIons);
+          } else {
+            presentIons.push(...clIons);
+          }
+        });
+      }
+    } else {
+      // Standard deduction of present ions
+      presentIons = [...allIons];
+      absentIons = [];
+    }
+
+    presentIons = [...new Set(presentIons)];
+    absentIons = [...new Set(absentIons)];
 
     // Detect if symbols lack charge notations
     const hasAnyCharge = text.includes('+') || text.includes('-') || text.includes('²') || 
@@ -626,65 +720,75 @@ if (typeof window !== 'undefined') {
     }
 
     return {
-      ions: [...new Set(ions)],
+      ions: allIons,
+      presentIons,
+      absentIons,
       hasCharge: hasAnyCharge,
       missingChargeSymbols: [...new Set(missingChargeSymbols)],
       raw: text
     };
   }
 
-  function detectContradictoryIons(testKey, salt, inferredIons, obsText) {
+  function detectContradictoryIons(testKey, salt, inferredIons, obsText, rawInfText) {
     const contradictions = [];
     const obsLower = (obsText || '').toLowerCase();
-    const isWhiteOrColorless = obsLower.includes('white') || obsLower.includes('colorless') || obsLower.includes('colourless');
+    const isWhiteOrColorless = obsLower.includes('white') || obsLower.includes('colorless') || obsLower.includes('colourless') || obsLower.includes('no ppt') || obsLower.includes('no precipitate') || obsLower.includes('clear');
 
-    // 1. Colored ions inferred on white precipitate or colorless solution
+    let presentIons = Array.isArray(inferredIons) ? inferredIons : [];
+    if (rawInfText && typeof rawInfText === 'string') {
+      const parsed = parseInferredIons(rawInfText);
+      presentIons = parsed.presentIons;
+    } else if (inferredIons && Array.isArray(inferredIons.presentIons)) {
+      presentIons = inferredIons.presentIons;
+    }
+
+    // 1. Colored ions inferred as PRESENT on white precipitate or colorless solution
     if (isWhiteOrColorless) {
-      if (inferredIons.includes('cu2+')) {
+      if (presentIons.includes('cu2+')) {
         contradictions.push({ ion: 'Cu²⁺', reason: 'Cu²⁺ forms blue precipitate / solution, which contradicts white/colorless observation' });
       }
-      if (inferredIons.includes('fe2+')) {
+      if (presentIons.includes('fe2+')) {
         contradictions.push({ ion: 'Fe²⁺', reason: 'Fe²⁺ forms dirty-green precipitate, which contradicts white/colorless observation' });
       }
-      if (inferredIons.includes('fe3+')) {
+      if (presentIons.includes('fe3+')) {
         contradictions.push({ ion: 'Fe³⁺', reason: 'Fe³⁺ forms reddish-brown precipitate, which contradicts white/colorless observation' });
       }
     }
 
-    // 2. Both Fe²⁺ and Fe³⁺ inferred together in a single test
-    if (inferredIons.includes('fe2+') && inferredIons.includes('fe3+')) {
+    // 2. Both Fe²⁺ and Fe³⁺ inferred together as PRESENT in a single test
+    if (presentIons.includes('fe2+') && presentIons.includes('fe3+')) {
       contradictions.push({ ion: 'Fe²⁺ / Fe³⁺', reason: 'Fe²⁺ and Fe³⁺ are contradictory, mutually exclusive oxidation states' });
     }
 
-    // 3. Zn²⁺ inferred when precipitate is insoluble in excess NH₃
+    // 3. Zn²⁺ inferred as PRESENT when precipitate is insoluble in excess NH₃
     if (testKey === 'nh3') {
       const isInsolubleInExcess = obsLower.includes('insoluble in excess') || (obsLower.includes('insoluble') && !obsLower.includes('dissolv'));
-      if (isInsolubleInExcess && inferredIons.includes('zn2+')) {
+      if (isInsolubleInExcess && presentIons.includes('zn2+')) {
         contradictions.push({ ion: 'Zn²⁺', reason: 'Zn²⁺ precipitate readily dissolves in excess aqueous NH₃ to form [Zn(NH₃)₄]²⁺' });
       }
     }
 
-    // 4. BaCl2: SO4²⁻ inferred when precipitate dissolved or no ppt formed
+    // 4. BaCl2: SO4²⁻ inferred as PRESENT when precipitate dissolved or no ppt formed
     if (testKey === 'bacl2') {
       const noPpt = obsLower.includes('no ppt') || obsLower.includes('no precipitate') || obsLower.includes('no visible');
       const dissolved = obsLower.includes('dissolv') || obsLower.includes('soluble in');
-      if ((noPpt || dissolved) && inferredIons.includes('so42-')) {
+      if ((noPpt || dissolved) && presentIons.includes('so42-')) {
         contradictions.push({ ion: 'SO₄²⁻', reason: 'BaSO₄ precipitate is completely insoluble in dilute hydrochloric acid' });
       }
     }
 
-    // 5. AgNO3: Halides inferred when no precipitate formed
+    // 5. AgNO3: Halides inferred as PRESENT when no precipitate formed
     if (testKey === 'agno3') {
       const noPpt = obsLower.includes('no ppt') || obsLower.includes('no precipitate') || obsLower.includes('no visible');
-      if (noPpt && (inferredIons.includes('cl-') || inferredIons.includes('br-') || inferredIons.includes('i-'))) {
+      if (noPpt && (presentIons.includes('cl-') || presentIons.includes('br-') || presentIons.includes('i-'))) {
         contradictions.push({ ion: 'Halide (Cl⁻/Br⁻/I⁻)', reason: 'Silver halides form insoluble precipitates with aqueous AgNO₃' });
       }
     }
 
-    // 6. KI: Pb²⁺ inferred when no precipitate formed
+    // 6. KI: Pb²⁺ inferred as PRESENT when no precipitate formed
     if (testKey === 'ki') {
       const noPpt = obsLower.includes('no ppt') || obsLower.includes('no precipitate') || obsLower.includes('no visible');
-      if (noPpt && inferredIons.includes('pb2+')) {
+      if (noPpt && presentIons.includes('pb2+')) {
         contradictions.push({ ion: 'Pb²⁺', reason: 'Pb²⁺ forms a bright canary-yellow precipitate of PbI₂ with KI' });
       }
     }
@@ -704,7 +808,13 @@ if (typeof window !== 'undefined') {
       return { score: 0.0, maxScore, notes: ['❌ Observation area left blank.'], warnings: [], tabooPenalty: false, expectedText: '' };
     }
 
-    const saltKeyToUse = salt ? (salt.key || currentSaltKey) : currentSaltKey;
+    let saltKeyToUse = salt ? (salt.key || '') : '';
+    if (!saltKeyToUse && salt) {
+      const foundKey = Object.keys(SALTS).find(k => SALTS[k] === salt || (SALTS[k].formula && SALTS[k].formula === salt.formula) || (SALTS[k].name && SALTS[k].name === salt.name));
+      if (foundKey) saltKeyToUse = foundKey;
+    }
+    if (!saltKeyToUse) saltKeyToUse = currentSaltKey;
+
     const correctKey = test.correct ? test.correct[saltKeyToUse] : null;
     const correctOpt = (correctKey && test.options) ? test.options.find(o => o.key === correctKey) : null;
     const expectedText = correctOpt ? correctOpt.text : (test.procedure || '');
@@ -721,7 +831,7 @@ if (typeof window !== 'undefined') {
     if (/gas (evolved|produced|given off)/i.test(raw) && !/(effervescence|limewater|litmus|ammonia|pungent|choking|brown|relight|pop)/i.test(raw)) {
       warnings.push('⚠️ KNEC Warning: State specific gas properties (e.g. effervescence, limewater milky, litmus change).');
     }
-    if (/(precipitate|ppt)/i.test(raw) && !/(excess|soluble|insoluble|dissolv)/i.test(raw) && ['naoh','nh3','agno3'].includes(test.key)) {
+    if (/(precipitate|ppt)/i.test(raw) && !/(no ppt|no precipitate|no white ppt)/i.test(raw) && !/(excess|soluble|insoluble|dissolv)/i.test(raw) && ['naoh','nh3','agno3'].includes(test.key)) {
       warnings.push('⚠️ KNEC Warning: Always specify precipitate solubility in excess reagent.');
     }
     if (/clear solution/i.test(raw) && !/colorless|colourless/i.test(raw)) {
@@ -773,8 +883,14 @@ if (typeof window !== 'undefined') {
       }
     } else {
       // Precipitation & Solution Tests (naoh, nh3, hcl, agno3, bacl2, ki, brown_ring)
-      const hasExpectedPpt = expLower.includes('ppt') || expLower.includes('precipitate') || expLower.includes('ring');
-      const studentPpt = lower.includes('ppt') || lower.includes('precipitate') || lower.includes('ring');
+      const noPptRegex = /(?:no|without)\s+(?:white\s+|yellow\s+|cream\s+|blue\s+|green\s+|brown\s+|dense\s+|heavy\s+)?(?:ppt|precipitate)/i;
+      const expHasNoPpt = noPptRegex.test(expLower) || expLower.includes('no visible') || expLower.includes('no change') || expLower.includes('no brown ring') || ((expLower.includes('colorless') || expLower.includes('colourless')) && !expLower.includes('ppt') && !expLower.includes('precipitate'));
+      const hasExpectedPpt = (expLower.includes('ppt') || expLower.includes('precipitate') || expLower.includes('ring')) && !expHasNoPpt;
+
+      const studentHasExplicitNoPpt = noPptRegex.test(lower) || lower.includes('no visible') || lower.includes('remains clear') || lower.includes('no change') || lower.includes('no reaction') || lower.includes('no effervescence');
+      const studentOnlyColorless = (lower.includes('colorless') || lower.includes('colourless') || lower.includes('clear')) && !lower.includes('ppt') && !lower.includes('precipitate');
+      const studentHasNoPpt = studentHasExplicitNoPpt || studentOnlyColorless;
+      const studentPpt = (lower.includes('ppt') || lower.includes('precipitate') || lower.includes('ring')) && !studentHasExplicitNoPpt;
 
       if (!hasExpectedPpt) {
         // Expected is NO precipitate / NO visible reaction / Effervescence
@@ -789,7 +905,7 @@ if (typeof window !== 'undefined') {
           if (studentPpt) {
             score = 0.0;
             notes.push('❌ Incorrect observation: No precipitate forms in this reaction.');
-          } else if (lower.includes('no ppt') || lower.includes('no precipitate') || lower.includes('no visible') || lower.includes('colorless') || lower.includes('colourless') || lower.includes('remains')) {
+          } else if (studentHasNoPpt) {
             score = 0.55;
           } else {
             score = 0.35;
@@ -797,7 +913,7 @@ if (typeof window !== 'undefined') {
         }
       } else {
         // Expected HAS precipitate
-        if (lower.includes('no ppt') || lower.includes('no precipitate') || lower.includes('no visible')) {
+        if (studentHasNoPpt) {
           score = 0.0;
           notes.push('❌ Incorrect observation: A precipitate should form in this test.');
         } else {
@@ -870,9 +986,17 @@ if (typeof window !== 'undefined') {
     }
 
     const parsed = parseInferredIons(raw);
-    const contradictions = detectContradictoryIons(test.key, salt, parsed.ions, obsText);
-    const saltCation = salt ? (salt.cation || '').toLowerCase().replace(/[^a-z0-9]/g, '') : '';
-    const saltAnion = salt ? (salt.anion || '').toLowerCase().replace(/[^a-z0-9]/g, '') : '';
+    const contradictions = detectContradictoryIons(test.key, salt, parsed.presentIons, obsText, raw);
+    
+    function normIon(s) {
+      if (!s || typeof s !== 'string') return '';
+      return s.toLowerCase()
+        .replace(/[\^_\s]/g, '')
+        .replace(/²/g, '2').replace(/³/g, '3')
+        .replace(/[⁺+]/g, '+').replace(/[⁻-]/g, '-');
+    }
+    const saltCation = normIon(salt ? salt.cation : '');
+    const saltAnion = normIon(salt ? salt.anion : '');
     const lower = raw.toLowerCase();
 
     // Base Inference Evaluation
@@ -880,61 +1004,66 @@ if (typeof window !== 'undefined') {
       const amphotericCations = ['pb2+', 'al3+', 'zn2+'];
       const isAmphotericSalt = amphotericCations.includes(saltCation);
       if (isAmphotericSalt) {
-        const amphoCount = amphotericCations.filter(c => parsed.ions.includes(c)).length;
+        const amphoCount = amphotericCations.filter(c => parsed.presentIons.includes(c)).length;
         if (amphoCount === 3) score = 0.55;
         else if (amphoCount === 2) score = 0.38;
         else if (amphoCount === 1) score = 0.20;
         else if (lower.includes('amphoteric')) score = 0.35;
-      } else if (parsed.ions.includes(saltCation)) {
+      } else if (parsed.presentIons.includes(saltCation)) {
         score = 0.55;
       } else if (['na+', 'k+'].includes(saltCation) && (lower.includes('absent') || lower.includes('na') || lower.includes('k'))) {
         score = 0.55;
       }
     } else if (test.key === 'nh3') {
+      const pptCations = ['cu2+', 'zn2+', 'pb2+', 'al3+', 'fe2+', 'fe3+'];
+      const isPptSalt = pptCations.includes(saltCation);
       if (saltCation === 'zn2+') {
-        if (parsed.ions.includes('zn2+')) score = 0.55;
+        if (parsed.presentIons.includes('zn2+')) score = 0.55;
       } else if (['pb2+', 'al3+'].includes(saltCation)) {
-        const hasInsol = parsed.ions.includes('pb2+') || parsed.ions.includes('al3+');
-        if (hasInsol && !parsed.ions.includes('zn2+')) score = 0.55;
+        const hasInsol = parsed.presentIons.includes('pb2+') || parsed.presentIons.includes('al3+');
+        if (hasInsol && !parsed.presentIons.includes('zn2+')) score = 0.55;
         else if (hasInsol) score = 0.35;
-      } else if (parsed.ions.includes(saltCation)) {
+      } else if (parsed.presentIons.includes(saltCation)) {
         score = 0.55;
-      } else if (lower.includes('absent')) {
-        score = 0.55;
+      } else if (!isPptSalt) {
+        // Non-precipitating cations (Ca2+, NH4+, Na+, K+)
+        if (parsed.presentIons.includes(saltCation) || lower.includes('absent')) {
+          score = 0.55;
+        }
       }
     } else if (test.key === 'flame') {
       if (['na+', 'k+', 'ca2+', 'cu2+'].includes(saltCation)) {
-        if (parsed.ions.includes(saltCation)) score = 0.55;
+        if (parsed.presentIons.includes(saltCation)) score = 0.55;
       } else {
         if (lower.includes('absent') || lower.includes('na') || lower.includes('k')) score = 0.55;
       }
     } else if (test.key === 'bacl2') {
       if (['so42-', 'so32-'].includes(saltAnion)) {
-        if (parsed.ions.includes(saltAnion)) score = 0.55;
+        if (parsed.presentIons.includes(saltAnion)) score = 0.55;
       } else {
         if (lower.includes('absent') || lower.includes('so4') || lower.includes('so3')) score = 0.55;
       }
     } else if (test.key === 'agno3') {
       if (['cl-', 'br-', 'i-', 'so32-'].includes(saltAnion)) {
-        if (parsed.ions.includes(saltAnion)) score = 0.55;
+        if (parsed.presentIons.includes(saltAnion)) score = 0.55;
       } else {
         if (lower.includes('absent') || lower.includes('cl') || lower.includes('halide')) score = 0.55;
       }
     } else if (test.key === 'ki') {
       if (saltCation === 'pb2+') {
-        if (parsed.ions.includes('pb2+')) score = 0.55;
+        if (parsed.presentIons.includes('pb2+')) score = 0.55;
       } else {
         if (lower.includes('absent') || lower.includes('pb')) score = 0.55;
       }
     } else if (test.key === 'brown_ring') {
       if (saltAnion === 'no3-') {
-        if (parsed.ions.includes('no3-')) score = 0.55;
+        if (parsed.presentIons.includes('no3-')) score = 0.55;
       } else {
         if (lower.includes('absent') || lower.includes('no3')) score = 0.55;
       }
     } else if (test.key === 'hcl') {
       if (['co32-', 'so32-'].includes(saltAnion) || saltCation === 'pb2+') {
-        if (parsed.ions.includes(saltAnion) || parsed.ions.includes(saltCation)) score = 0.55;
+        if (parsed.presentIons.includes(saltAnion) || parsed.presentIons.includes(saltCation)) score = 0.55;
       } else {
         if (lower.includes('absent') || lower.includes('co3') || lower.includes('so3')) score = 0.55;
       }
@@ -949,9 +1078,9 @@ if (typeof window !== 'undefined') {
 
     // Fallback: if student correctly mentioned true cation or true anion
     if (score === 0.0) {
-      if (parsed.ions.includes(saltCation) || parsed.ions.includes(saltAnion)) {
+      if (parsed.presentIons.includes(saltCation) || parsed.presentIons.includes(saltAnion)) {
         score = 0.45;
-      } else if (lower.includes('present') && parsed.ions.length > 0) {
+      } else if (lower.includes('present') && parsed.presentIons.length > 0) {
         score = 0.20;
       }
     }
@@ -1010,7 +1139,7 @@ if (typeof window !== 'undefined') {
       if (/gas (evolved|produced|given off)/i.test(obsVal) && !/(effervescence|limewater|litmus|ammonia|pungent|choking|brown|relight|pop)/i.test(obsVal)) {
         obsLines.push('<div class="feedback-line warning">⚠️ State specific gas properties (effervescence, odor, color, litmus/limewater test).</div>');
       }
-      if (/(precipitate|ppt)/i.test(obsVal) && !/(excess|soluble|insoluble|dissolv)/i.test(obsVal) && ['naoh','nh3','agno3'].includes(testKey)) {
+      if (/(precipitate|ppt)/i.test(obsVal) && !/(no ppt|no precipitate|no white ppt)/i.test(obsVal) && !/(excess|soluble|insoluble|dissolv)/i.test(obsVal) && ['naoh','nh3','agno3'].includes(testKey)) {
         obsLines.push('<div class="feedback-line info">💡 Tip: Always specify precipitate solubility in excess reagent.</div>');
       }
       obsFeedback.innerHTML = obsLines.join('');
@@ -1024,7 +1153,7 @@ if (typeof window !== 'undefined') {
         if (parsed.missingChargeSymbols.length > 0) {
           infLines.push(`<div class="feedback-line warning">⚠️ Missing charge: Element symbol written without ionic charge (e.g. ${parsed.missingChargeSymbols.join(', ')}) forfeits inference marks (-0.5 Mk).</div>`);
         }
-        const contras = detectContradictoryIons(testKey, salt, parsed.ions, obsVal);
+        const contras = detectContradictoryIons(testKey, salt, parsed.presentIons, obsVal, infVal);
         if (contras.length > 0) {
           const cIons = contras.map(c => c.ion).join(', ');
           infLines.push(`<div class="feedback-line penalty">🚨 Contradictory Ion: Inferring ${cIons} contradicts observation (-0.5 Mk).</div>`);

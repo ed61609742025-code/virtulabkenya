@@ -316,6 +316,42 @@ describe('KNEC Paper 3 Examination Suite Standards', () => {
     const ciZnEval = evaluateInferenceAccuracy(testNH3, leadNitrate, 'Pb²⁺, Al³⁺, Zn²⁺ present', 'White ppt, insoluble in excess NH₃');
     assert.strictEqual(ciZnEval.ciPenalty, 0.5, 'Must penalize 0.5 marks for inferring Zn²⁺ when ppt is insoluble in excess NH₃');
     assert.ok(ciZnEval.contradictions.some(c => c.ion === 'Zn²⁺'), 'Must identify Zn²⁺ contradiction');
+
+    // 7. Calcium Chloride in Aqueous Ammonia [NH3(aq)]: NO PRECIPITATE formed
+    const calciumChloride = SALTS.calciumChloride;
+    const noPptObs1 = evaluateObservationAccuracy(testNH3, calciumChloride, 'No precipitate formed');
+    assert.strictEqual(noPptObs1.score, 0.55, 'Full 0.55 mark for "No precipitate formed" in NH3 for Ca²⁺');
+
+    const noPptObs2 = evaluateObservationAccuracy(testNH3, calciumChloride, 'No white precipitate formed (colorless solution remains)');
+    assert.strictEqual(noPptObs2.score, 0.55, 'Full 0.55 mark for "No white precipitate formed (colorless solution remains)" in NH3');
+
+    // 8. Calcium Chloride in NH3 Inferences: "Ca²⁺ present" and "Cu²⁺, Fe²⁺, Fe³⁺, Al³⁺, Pb²⁺, Zn²⁺ absent"
+    const caPresentInf = evaluateInferenceAccuracy(testNH3, calciumChloride, 'Ca²⁺ present', 'No precipitate formed');
+    assert.strictEqual(caPresentInf.score, 0.55, 'Full marks for Ca²⁺ present when no ppt in NH3');
+    assert.strictEqual(caPresentInf.ciPenalty, 0.0);
+
+    const absentIonsInf = evaluateInferenceAccuracy(testNH3, calciumChloride, 'Cu²⁺, Fe²⁺, Fe³⁺, Al³⁺, Pb²⁺, Zn²⁺ absent', 'No precipitate formed');
+    assert.strictEqual(absentIonsInf.score, 0.55, 'Full marks for deducing absence of precipitating cations');
+    assert.strictEqual(absentIonsInf.ciPenalty, 0.0, 'Must not falsely penalize absent ions as contradictory');
+
+    // 9. Copper Sulfate with AgNO3: Halide absence
+    const testAgNO3 = TESTS.find(t => t.key === 'agno3');
+    const copperSulfate = SALTS.copperSulfate;
+    const agno3NoPptObs = evaluateObservationAccuracy(testAgNO3, copperSulfate, 'No precipitate formed');
+    assert.strictEqual(agno3NoPptObs.score, 0.55, 'Full marks for "No precipitate formed" with AgNO3 on sulfate');
+
+    const halideAbsentInf = evaluateInferenceAccuracy(testAgNO3, copperSulfate, 'Cl⁻, Br⁻, I⁻ absent', 'No precipitate formed');
+    assert.strictEqual(halideAbsentInf.score, 0.55, 'Full marks for Halides absent on negative AgNO3 test');
+    assert.strictEqual(halideAbsentInf.ciPenalty, 0.0);
+
+    // 10. Calcium Chloride with BaCl2: Sulfate absence
+    const testBaCl2 = TESTS.find(t => t.key === 'bacl2');
+    const bacl2NoPptObs = evaluateObservationAccuracy(testBaCl2, calciumChloride, 'No precipitate formed');
+    assert.strictEqual(bacl2NoPptObs.score, 0.55, 'Full marks for "No precipitate formed" with BaCl2 on chloride');
+
+    const sulfateAbsentInf = evaluateInferenceAccuracy(testBaCl2, calciumChloride, 'SO₄²⁻, SO₃²⁻ absent', 'No precipitate formed');
+    assert.strictEqual(sulfateAbsentInf.score, 0.55, 'Full marks for SO4²⁻, SO3²⁻ absent on negative BaCl2 test');
+    assert.strictEqual(sulfateAbsentInf.ciPenalty, 0.0);
   });
 
 });

@@ -136,6 +136,34 @@ describe('Qualitative Bench Core (Inorganic Reactions)', () => {
       assert.strictEqual(res.pptColor, '#FFFFFF');
     });
 
+    // Bromide (Br-)
+    it('Br⁻: pale cream ppt with AgNO₃, sparingly soluble in dilute NH₃', () => {
+      const step2 = QualitativeBenchCore.resolveReactionState('potassiumBromide', 'agno3', 'step2_agno3', 'Add dilute HNO3 followed by AgNO3');
+      assert.strictEqual(step2.ppt, true, 'AgBr pale cream ppt forms');
+      assert.strictEqual(step2.pptColor, '#FEF08A', 'AgBr pale cream color');
+
+      const step3 = QualitativeBenchCore.resolveReactionState('potassiumBromide', 'agno3', 'step3_nh3', 'Test precipitate with aqueous NH3');
+      assert.strictEqual(step3.ppt, true, 'AgBr is sparingly soluble / persists in dilute NH3');
+      assert.strictEqual(step3.pptDissolved, false);
+    });
+
+    // Iodide (I-)
+    it('I⁻: bright yellow ppt with AgNO₃, completely insoluble in aqueous NH₃', () => {
+      const step2 = QualitativeBenchCore.resolveReactionState('sodiumIodide', 'agno3', 'step2_agno3', 'Add dilute HNO3 followed by AgNO3');
+      assert.strictEqual(step2.ppt, true, 'AgI bright yellow ppt forms');
+      assert.strictEqual(step2.pptColor, '#FACC15', 'AgI bright yellow color');
+
+      const step3 = QualitativeBenchCore.resolveReactionState('sodiumIodide', 'agno3', 'step3_nh3', 'Test precipitate with aqueous NH3');
+      assert.strictEqual(step3.ppt, true, 'AgI is completely insoluble in aqueous NH3');
+      assert.strictEqual(step3.pptDissolved, false);
+    });
+
+    // Sulfite (SO3^2-) with acid effervescence of SO2
+    it('SO₃²⁻: effervescence of choking SO₂ gas with dilute HCl', () => {
+      const res = QualitativeBenchCore.resolveReactionState('sodiumSulfite', 'hcl', 'step1_hcl', 'Add 2M HCl to solid');
+      assert.strictEqual(res.bubbling, true, 'Effervescence of SO2 must occur');
+    });
+
     // Regression check for isStep1 bug: single-step anion tests with stage === 'stage1' must form ppt
     it('REGRESSION: single-step stage === "stage1" tests must form precipitate', () => {
       const testCases = [
@@ -147,6 +175,58 @@ describe('Qualitative Bench Core (Inorganic Reactions)', () => {
         const state = QualitativeBenchCore.resolveReactionState(tc.salt, 'q2_anion', 'stage1', tc.prompt);
         assert.strictEqual(state.ppt, true, `Precipitate must form for prompt: "${tc.prompt}" on ${tc.salt}`);
       });
+    });
+  });
+
+  describe('Dry Thermal Heating of Solid in Hard-Glass Tube', () => {
+    it('NH₄Cl: white solid sublimes directly with dense white fumes depositing on upper cooler walls', () => {
+      const res = QualitativeBenchCore.resolveReactionState('ammoniumChloride', 'heat_solid', 'step1_heat', 'Heat solid strongly in hard-glass tube');
+      assert.strictEqual(res.sublimes, true, 'NH4Cl must undergo sublimation');
+      assert.strictEqual(res.gasType, 'sublimate_deposit', 'Deposits on cooler tube walls');
+    });
+
+    it('CuSO₄·5H₂O: blue hydrated crystals turn white anhydrous powder with condensed water droplets', () => {
+      const res = QualitativeBenchCore.resolveReactionState('copperSulfate', 'heat_solid', 'step1_heat', 'Heat solid in hard-glass tube');
+      assert.strictEqual(res.waterCondenses, true, 'Water droplets must condense');
+      assert.strictEqual(res.residueColor, '#F1F5F9', 'Residue turns white anhydrous CuSO4');
+    });
+
+    it('Pb(NO₃)₂: dense brown fumes of NO₂ and residue yellow cold, brown hot', () => {
+      const res = QualitativeBenchCore.resolveReactionState('leadNitrate', 'heat_solid', 'step1_heat', 'Heat dry solid');
+      assert.strictEqual(res.gasType, 'no2_brown', 'NO2 brown fumes evolved');
+      assert.strictEqual(res.gasColor, '#78350F');
+      assert.strictEqual(res.residueColor, '#CA8A04');
+    });
+
+    it('ZnSO₄: residue turns yellow when hot, white on cooling (ZnO formation)', () => {
+      const res = QualitativeBenchCore.resolveReactionState('zincSulfate', 'heat_solid', 'step1_heat', 'Heat dry solid strongly');
+      assert.strictEqual(res.residueColor, '#FACC15', 'Hot ZnO residue is yellow');
+      assert.strictEqual(res.waterCondenses, true, 'Water of crystallization condenses');
+    });
+
+    it('should generate multi-stage actions: heated at idle and step2_gas_test at heated', () => {
+      const idleActions = QualitativeBenchCore.getMultiStageActions('heat_solid', 'Heat solid in hard-glass tube', 'idle');
+      assert.strictEqual(idleActions.length, 1);
+      assert.ok(idleActions[0].stage === 'heated' || idleActions[0].stage === 'step1_heat');
+      assert.ok(idleActions[0].label.includes('Heat'));
+
+      const heatActions = QualitativeBenchCore.getMultiStageActions('heat_solid', 'Heat solid in hard-glass tube', 'heated');
+      assert.strictEqual(heatActions.length, 2);
+      assert.strictEqual(heatActions[0].stage, 'step2_gas_test');
+      assert.ok(heatActions[1].isRedo || heatActions[1].stage === 'idle');
+    });
+
+    it('should render valid hard-glass tube SVG with 35° tilt and Bunsen flame', () => {
+      const svg = QualitativeBenchCore.renderApparatusSvg({
+        saltKey: 'leadNitrate',
+        testId: 'heat_solid',
+        stage: 'step1_heat',
+        prompt: 'Heat solid in hard-glass tube',
+        obsStr: 'Brown fumes of NO2'
+      });
+      assert.ok(svg.includes('<svg'), 'Output must be an SVG element');
+      assert.ok(svg.includes('rotate(-35'), 'Hard-glass tube must be tilted at 35 degrees');
+      assert.ok(svg.includes('heatWave'), 'Bunsen heating waves must be rendered');
     });
   });
 

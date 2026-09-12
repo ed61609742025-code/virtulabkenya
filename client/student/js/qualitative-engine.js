@@ -168,10 +168,49 @@ requireStudentLogin();
       name:'Zinc Nitrate', formula:'Zn(NO₃)₂', cation:'Zn2+', anion:'NO3-', cationDisplay:'Zn²⁺', anionDisplay:'NO₃⁻',
       appearance:'White crystalline solid', solubility:'Readily soluble in water; forms a clear, colorless stock solution.',
       crystalColor:'#F8FAFC', crystalSecondary:'#CBD5E1', crystalHighlight:'#FFFFFF'
+    },
+    sodiumSulfite: {
+      name:'Sodium Sulfite', formula:'Na₂SO₃', cation:'Na+', anion:'SO3^2-', cationDisplay:'Na⁺', anionDisplay:'SO₃²⁻',
+      appearance:'White crystalline powder', solubility:'Soluble in water; forms a clear, alkaline stock solution.',
+      crystalColor:'#F8FAFC', crystalSecondary:'#E2E8F0', crystalHighlight:'#FFFFFF'
+    },
+    potassiumBromide: {
+      name:'Potassium Bromide', formula:'KBr', cation:'K+', anion:'Br-', cationDisplay:'K⁺', anionDisplay:'Br⁻',
+      appearance:'White crystalline solid (cubic granules)', solubility:'Readily soluble in water; forms a clear, neutral stock solution.',
+      crystalColor:'#F8FAFC', crystalSecondary:'#CBD5E1', crystalHighlight:'#FFFFFF'
+    },
+    sodiumIodide: {
+      name:'Sodium Iodide', formula:'NaI', cation:'Na+', anion:'I-', cationDisplay:'Na⁺', anionDisplay:'I⁻',
+      appearance:'White deliquescent crystalline powder', solubility:'Highly soluble in water; forms a clear, neutral stock solution.',
+      crystalColor:'#F1F5F9', crystalSecondary:'#E2E8F0', crystalHighlight:'#FFFFFF'
     }
   };
 
   const TESTS = [
+    {
+      key:'heat_solid',
+      label:'Dry Thermal Heating of Solid in Hard-Glass Tube (Bunsen Flame)',
+      icon:'🔥',
+      reagent:'Hard-glass boiling tube + Bunsen flame',
+      isHeat:true,
+      procedure:'Place about one-third of the solid salt sample into a clean, dry hard-glass boiling tube. Clamp the tube at approx. 35° and heat gently, then strongly in a non-luminous Bunsen flame. Test any evolved gas with moist red/blue litmus papers or a glowing wooden splint, and observe any condensation or residue color transitions.',
+      options: [
+        { key:'A', text:'Dense brown fumes of NO₂ turn moist blue litmus red; gas rekindles glowing splint (O₂); residue yellow cold, brown hot', color:'#B45309' },
+        { key:'B', text:'Blue crystals turn white anhydrous powder; colorless water droplets condense on cooler upper walls', color:'#F1F5F9' },
+        { key:'C', text:'Pale green crystals turn dirty brown/black; water droplets condense; choking SO₂ gas evolved on strong heating', color:'#451A03' },
+        { key:'D', text:'White solid sublimes directly; dense white fumes deposit on upper cooler tube walls', color:'#FFFFFF' },
+        { key:'E', text:'Solid turns yellow when hot, white on cooling (ZnO formation); water droplets condense', color:'#FACC15' },
+        { key:'F', text:'Decomposes completely with no residue; alkaline gas (NH₃) turns moist red litmus blue; gas turns limewater milky (CO₂)', color:'#94A3B8', bubble:true },
+        { key:'G', text:'Brown fumes of NO₂ turn blue litmus red; gas rekindles glowing splint (O₂); white residue (Al₂O₃)', color:'#B45309' },
+        { key:'H', text:'White solid remains unchanged / melts at high temperature; no gas evolved or water droplets', color:'#334155' },
+        { key:'I', text:'White solid crackles; on strong heating, faint pungent choking smell of SO₂', color:'#CBD5E1' },
+        { key:'J', text:'Yellow-brown solid loses water; sublimes giving reddish-brown vapor and steamy acidic fumes', color:'#D97706' }
+      ],
+      correct: {
+        ammoniumChloride:'D', copperSulfate:'B', ironSulfate:'C', sodiumCarbonate:'H', calciumChloride:'H', potassiumChloride:'H', leadNitrate:'A',
+        zincSulfate:'E', aluminumNitrate:'G', ironChloride:'J', ammoniumCarbonate:'F', zincNitrate:'A', sodiumSulfite:'I', potassiumBromide:'H', sodiumIodide:'H'
+      }
+    },
     {
       key:'naoh',
       label:'Test with 2M Sodium Hydroxide Solution (NaOH)',
@@ -189,7 +228,7 @@ requireStudentLogin();
       ],
       correct: {
         ammoniumChloride:'D', copperSulfate:'B', ironSulfate:'C', sodiumCarbonate:'E', calciumChloride:'A', potassiumChloride:'E', leadNitrate:'F',
-        zincSulfate:'F', aluminumNitrate:'F', ironChloride:'G', ammoniumCarbonate:'D', zincNitrate:'F'
+        zincSulfate:'F', aluminumNitrate:'F', ironChloride:'G', ammoniumCarbonate:'D', zincNitrate:'F', sodiumSulfite:'E', potassiumBromide:'E', sodiumIodide:'E'
       }
     },
     {
@@ -209,7 +248,7 @@ requireStudentLogin();
       ],
       correct: {
         ammoniumChloride:'E', copperSulfate:'B', ironSulfate:'C', sodiumCarbonate:'E', calciumChloride:'E', potassiumChloride:'E', leadNitrate:'D',
-        zincSulfate:'F', aluminumNitrate:'D', ironChloride:'G', ammoniumCarbonate:'E', zincNitrate:'F'
+        zincSulfate:'F', aluminumNitrate:'D', ironChloride:'G', ammoniumCarbonate:'E', zincNitrate:'F', sodiumSulfite:'E', potassiumBromide:'E', sodiumIodide:'E'
       }
     },
     {
@@ -229,7 +268,7 @@ requireStudentLogin();
       ],
       correct: {
         ammoniumChloride:'E', copperSulfate:'D', ironSulfate:'E', sodiumCarbonate:'A', calciumChloride:'C', potassiumChloride:'B', leadNitrate:'F',
-        zincSulfate:'E', aluminumNitrate:'E', ironChloride:'E', ammoniumCarbonate:'E', zincNitrate:'E'
+        zincSulfate:'E', aluminumNitrate:'E', ironChloride:'E', ammoniumCarbonate:'E', zincNitrate:'E', sodiumSulfite:'A', potassiumBromide:'B', sodiumIodide:'A'
       }
     },
     {
@@ -242,11 +281,12 @@ requireStudentLogin();
         { key:'A', text:'Brisk effervescence; gas turns limewater milky (CO₂)', color:'#CBD5E1', bubble:true },
         { key:'B', text:'No visible reaction', color:'#334155' },
         { key:'C', text:'White ppt of PbCl₂ (soluble in hot water)', color:'#E2E8F0' },
-        { key:'D', text:'Pungent gas (NH₃) evolved', color:'#94A3B8', bubble:true }
+        { key:'D', text:'Pungent gas (NH₃) evolved', color:'#94A3B8', bubble:true },
+        { key:'E', text:'Effervescence of choking gas turning acidified K₂Cr₂O₇ green (SO₂)', color:'#CBD5E1', bubble:true }
       ],
       correct: {
         ammoniumChloride:'B', copperSulfate:'B', ironSulfate:'B', sodiumCarbonate:'A', calciumChloride:'B', potassiumChloride:'B', leadNitrate:'C',
-        zincSulfate:'B', aluminumNitrate:'B', ironChloride:'B', ammoniumCarbonate:'A', zincNitrate:'B'
+        zincSulfate:'B', aluminumNitrate:'B', ironChloride:'B', ammoniumCarbonate:'A', zincNitrate:'B', sodiumSulfite:'E', potassiumBromide:'B', sodiumIodide:'B'
       }
     },
     {
@@ -257,13 +297,14 @@ requireStudentLogin();
       procedure:'To about 2 cm³ of the aqueous solution of the unknown salt in a clean test tube, add 3–4 drops of dilute nitric(V) acid, followed by 3–4 drops of silver nitrate solution. If a precipitate forms, test its solubility with dilute aqueous ammonia.',
       options: [
         { key:'A', text:'White ppt (AgCl), dissolves in dilute NH₃ → Cl⁻', color:'#F8FAFC' },
-        { key:'B', text:'Cream ppt (AgBr), partly soluble in conc. NH₃', color:'#FEF08A' },
-        { key:'C', text:'Yellow ppt (AgI), insoluble in NH₃', color:'#F59E0B' },
-        { key:'D', text:'No precipitate formed', color:'#334155' }
+        { key:'B', text:'Pale cream ppt (AgBr), sparingly soluble in dilute NH₃, soluble in conc. NH₃ → Br⁻', color:'#FEF08A' },
+        { key:'C', text:'Bright yellow ppt (AgI), completely insoluble in dilute and conc. NH₃ → I⁻', color:'#FACC15' },
+        { key:'D', text:'No precipitate formed', color:'#334155' },
+        { key:'E', text:'White ppt (Ag₂SO₃), soluble in dilute HNO₃', color:'#E2E8F0' }
       ],
       correct: {
         ammoniumChloride:'A', copperSulfate:'D', ironSulfate:'D', sodiumCarbonate:'D', calciumChloride:'A', potassiumChloride:'A', leadNitrate:'D',
-        zincSulfate:'D', aluminumNitrate:'D', ironChloride:'A', ammoniumCarbonate:'D', zincNitrate:'D'
+        zincSulfate:'D', aluminumNitrate:'D', ironChloride:'A', ammoniumCarbonate:'D', zincNitrate:'D', sodiumSulfite:'E', potassiumBromide:'B', sodiumIodide:'C'
       }
     },
     {
@@ -275,12 +316,12 @@ requireStudentLogin();
       options: [
         { key:'A', text:'White ppt (BaSO₄), insoluble in dil. HCl → SO₄²⁻', color:'#F8FAFC' },
         { key:'B', text:'No precipitate formed', color:'#334155' },
-        { key:'C', text:'White ppt, dissolves in dil. HCl', color:'#E2E8F0' },
+        { key:'C', text:'White ppt (BaSO₃), dissolves in dilute HCl with effervescence of choking SO₂ gas → SO₃²⁻', color:'#E2E8F0', bubble:true },
         { key:'D', text:'White ppt, insoluble; effervescence with HCl', color:'#CBD5E1', bubble:true }
       ],
       correct: {
         ammoniumChloride:'B', copperSulfate:'A', ironSulfate:'A', sodiumCarbonate:'B', calciumChloride:'B', potassiumChloride:'B', leadNitrate:'B',
-        zincSulfate:'A', aluminumNitrate:'B', ironChloride:'B', ammoniumCarbonate:'B', zincNitrate:'B'
+        zincSulfate:'A', aluminumNitrate:'B', ironChloride:'B', ammoniumCarbonate:'B', zincNitrate:'B', sodiumSulfite:'C', potassiumBromide:'B', sodiumIodide:'B'
       }
     },
     {
@@ -296,7 +337,7 @@ requireStudentLogin();
       ],
       correct: {
         ammoniumChloride:'B', copperSulfate:'B', ironSulfate:'B', sodiumCarbonate:'B', calciumChloride:'B', potassiumChloride:'B', leadNitrate:'A',
-        zincSulfate:'B', aluminumNitrate:'B', ironChloride:'B', ammoniumCarbonate:'B', zincNitrate:'B'
+        zincSulfate:'B', aluminumNitrate:'B', ironChloride:'B', ammoniumCarbonate:'B', zincNitrate:'B', sodiumSulfite:'B', potassiumBromide:'B', sodiumIodide:'B'
       }
     },
     {
@@ -312,7 +353,7 @@ requireStudentLogin();
       ],
       correct: {
         ammoniumChloride:'B', copperSulfate:'B', ironSulfate:'B', sodiumCarbonate:'B', calciumChloride:'B', potassiumChloride:'B', leadNitrate:'A',
-        zincSulfate:'B', aluminumNitrate:'A', ironChloride:'B', ammoniumCarbonate:'B', zincNitrate:'A'
+        zincSulfate:'B', aluminumNitrate:'A', ironChloride:'B', ammoniumCarbonate:'B', zincNitrate:'A', sodiumSulfite:'B', potassiumBromide:'B', sodiumIodide:'B'
       }
     }
   ];
@@ -433,12 +474,37 @@ requireStudentLogin();
 
   function getObsSuggestionChips(testKey) {
     const suggestions = {
+      heat_solid: [
+        'Brown fumes of NO₂ turn blue litmus red; residue yellow cold, brown hot',
+        'Blue crystals turn white anhydrous powder; water droplets condense on cooler walls',
+        'Pale green crystals turn dirty brown/black; water droplets; choking SO₂ gas evolved',
+        'White solid sublimes directly; dense white fumes deposit on upper cooler tube walls',
+        'Solid turns yellow when hot, white on cooling; water droplets condense',
+        'Decomposes completely with no residue; alkaline NH₃ gas turns red litmus blue',
+        'White solid crackles; on strong heating, faint pungent choking smell of SO₂',
+        'White solid remains unchanged; no gas evolved or water droplets'
+      ],
       flame: ['Golden yellow flame', 'Lilac / pale violet flame', 'Brick-red flame', 'Blue-green flame', 'No characteristic flame color'],
       naoh: ['White ppt, soluble in excess NaOH to form a colorless solution', 'White ppt, insoluble in excess NaOH', 'Blue ppt, insoluble in excess NaOH', 'Green ppt, insoluble in excess NaOH', 'Reddish-brown ppt, insoluble in excess', 'No ppt; pungent ammonia gas evolved'],
       nh3: ['Deep blue solution formed in excess NH₃', 'Blue ppt, soluble in excess NH₃ to form deep blue solution', 'White ppt, soluble in excess NH₃', 'White ppt, insoluble in excess NH₃', 'Green ppt, insoluble in excess NH₃', 'Reddish-brown ppt, insoluble in excess'],
-      hcl: ['Effervescence of a colorless gas turning limewater milky (CO₂)', 'No effervescence or visible change', 'White ppt formed'],
-      agno3: ['White ppt (AgCl), insoluble in dilute HNO₃', 'No precipitate formed'],
-      bacl2: ['White ppt (BaSO₄), insoluble in dilute HCl', 'White ppt, soluble in dilute HCl with effervescence', 'No precipitate formed'],
+      hcl: [
+        'Effervescence of a colorless gas turning limewater milky (CO₂)',
+        'Effervescence of choking gas turning acidified K₂Cr₂O₇ green (SO₂)',
+        'No effervescence or visible change',
+        'White ppt formed (PbCl₂), dissolves on warming'
+      ],
+      agno3: [
+        'White ppt (AgCl), dissolves in dilute NH₃',
+        'Pale cream ppt (AgBr), sparingly soluble in dilute NH₃',
+        'Bright yellow ppt (AgI), completely insoluble in aqueous NH₃',
+        'White ppt (Ag₂SO₃), soluble in dilute HNO₃',
+        'No precipitate formed'
+      ],
+      bacl2: [
+        'White ppt (BaSO₄), insoluble in dilute HCl',
+        'White ppt (BaSO₃), dissolves in dilute HCl with effervescence of choking SO₂ gas',
+        'No precipitate formed'
+      ],
       ki: ['Bright canary-yellow ppt formed (PbI₂)', 'Yellow ppt dissolves on heating to form golden sparkles', 'No precipitate formed'],
       brown_ring: ['Brown ring formed at liquid-liquid junction', 'No brown ring formed at junction']
     };
@@ -450,12 +516,13 @@ requireStudentLogin();
 
   function getInfSuggestionChips(testKey) {
     const suggestions = {
+      heat_solid: ['Hydrated salt / water of crystallization present', 'NO₃⁻ present', 'NH₄⁺ present', 'CO₃²⁻ present', 'SO₄²⁻ / SO₃²⁻ present', 'Zn²⁺ present', 'Sublimable salt (NH₄Cl) present', 'Thermally stable salt present'],
       flame: ['Na⁺ present', 'K⁺ present', 'Ca²⁺ present', 'Cu²⁺ present', 'Na⁺, K⁺ absent'],
       naoh: ['Zn²⁺, Al³⁺, Pb²⁺ present', 'Ca²⁺, Mg²⁺ present', 'Cu²⁺ present', 'Fe²⁺ present', 'Fe³⁺ present', 'NH₄⁺ present'],
       nh3: ['Cu²⁺ present', 'Zn²⁺ present', 'Pb²⁺, Al³⁺ present', 'Fe²⁺ present', 'Fe³⁺ present'],
-      hcl: ['CO₃²⁻ present', 'CO₃²⁻ absent'],
-      agno3: ['Cl⁻ present', 'Cl⁻ absent'],
-      bacl2: ['SO₄²⁻ present', 'CO₃²⁻ present', 'SO₄²⁻ absent'],
+      hcl: ['CO₃²⁻ present', 'SO₃²⁻ present', 'Pb²⁺ present', 'CO₃²⁻, SO₃²⁻ absent'],
+      agno3: ['Cl⁻ present', 'Br⁻ present', 'I⁻ present', 'SO₃²⁻ present', 'Cl⁻, Br⁻, I⁻ absent'],
+      bacl2: ['SO₄²⁻ present', 'SO₃²⁻ present', 'CO₃²⁻ present', 'SO₄²⁻ absent'],
       ki: ['Pb²⁺ present', 'Pb²⁺ absent'],
       brown_ring: ['NO₃⁻ present', 'NO₃⁻ absent']
     };
@@ -491,7 +558,30 @@ requireStudentLogin();
       const testLetter = String.fromCharCode(97 + idx); // a, b, c, d, e, f, g, h
 
       let actionButtonsHtml = '';
-      if (test.key === 'naoh' || test.key === 'nh3') {
+      if (test.key === 'heat_solid') {
+        if (!st.performed || st.stage === 'idle') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test btn-step-heat" onclick="performTestStage('heat_solid', 'step1_heat')">
+              🔥 Step 1: Heat Solid Strongly in Flame
+            </button>`;
+        } else if (st.stage === 'step1_heat') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test btn-step-gas" onclick="performTestStage('heat_solid', 'step2_gas_test')">
+              📜 Step 2: Test Evolved Gases / Litmus Paper
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('heat_solid')" title="Clean hard-glass tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        } else {
+          actionButtonsHtml = `
+            <button class="btn-perform-test done" disabled>
+              ✅ Heating Test Completed
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('heat_solid')" title="Clean hard-glass tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        }
+      } else if (test.key === 'naoh' || test.key === 'nh3') {
         const reagentName = test.key === 'naoh' ? 'NaOH' : 'NH₃';
         if (!st.performed || st.stage === 'idle') {
           actionButtonsHtml = `
@@ -685,7 +775,7 @@ requireStudentLogin();
               <span class="test-step-badge">(${testLetter})</span>
               <h3 class="test-title-text">${test.label}</h3>
             </div>
-            <span class="timer-chip" style="font-size:0.75rem; padding:2px 8px;">1.4 Marks</span>
+            <span class="timer-chip" style="font-size:0.75rem; padding:2px 8px;">1.1 Marks</span>
           </div>
 
           <div class="test-layout-grid">
@@ -1074,7 +1164,14 @@ requireStudentLogin();
     st.performed = true;
     st.stage = targetStage;
 
-    if (testKey === 'naoh') {
+    if (testKey === 'heat_solid') {
+      playFlameSound();
+      if (targetStage === 'step1_heat') {
+        st.statusLabel = 'Step 1: Solid heated strongly in flame — Thermal changes observed';
+      } else if (targetStage === 'step2_gas_test') {
+        st.statusLabel = 'Step 2: Evolved gases tested with litmus / splint — Completed';
+      }
+    } else if (testKey === 'naoh') {
       playDropSplashSound(targetStage === 'excess');
       if (targetStage === 'few_drops') {
         if (['Zn2+', 'Al3+', 'Pb2+', 'Ca2+'].includes(salt.cation)) {
@@ -1198,11 +1295,11 @@ requireStudentLogin();
       }
     } else if (testKey === 'agno3') {
       if (targetStage === 'step1_hno3') {
-        if (salt.anion === 'CO3^2-') {
+        if (salt.anion === 'CO3^2-' || salt.anion === 'SO3^2-') {
           playEffervescenceSound();
           st.bubbling = true;
           st.color = '#CBD5E1';
-          st.statusLabel = 'Step 1: Dil. HNO₃ added — Effervescence (CO₂ gas evolved)';
+          st.statusLabel = `Step 1: Dil. HNO₃ added — Effervescence (${salt.anion === 'CO3^2-' ? 'CO₂' : 'SO₂'} gas evolved)`;
         } else {
           playDropSplashSound();
           st.bubbling = false;
@@ -1217,6 +1314,21 @@ requireStudentLogin();
           st.pptDissolved = false;
           st.color = '#F8FAFC';
           st.statusLabel = 'Step 2: AgNO₃ added — Dense curdy white ppt (AgCl) formed';
+        } else if (salt.anion === 'Br-') {
+          st.ppt = true;
+          st.pptDissolved = false;
+          st.color = '#FEF08A';
+          st.statusLabel = 'Step 2: AgNO₃ added — Pale cream precipitate (AgBr) formed';
+        } else if (salt.anion === 'I-') {
+          st.ppt = true;
+          st.pptDissolved = false;
+          st.color = '#FACC15';
+          st.statusLabel = 'Step 2: AgNO₃ added — Bright yellow precipitate (AgI) formed';
+        } else if (salt.anion === 'SO3^2-') {
+          st.ppt = true;
+          st.pptDissolved = false;
+          st.color = '#E2E8F0';
+          st.statusLabel = 'Step 2: AgNO₃ added — White precipitate (Ag₂SO₃) formed';
         } else {
           st.ppt = false;
           st.color = 'rgba(56, 189, 248, 0.2)';
@@ -1229,6 +1341,16 @@ requireStudentLogin();
           st.pptDissolved = true;
           st.color = 'rgba(56, 189, 248, 0.18)';
           st.statusLabel = 'Step 3: Dil. NH₃ added — White ppt dissolves completely (diamminesilver complex)';
+        } else if (salt.anion === 'Br-') {
+          st.ppt = true;
+          st.pptDissolved = false;
+          st.color = '#FEF08A';
+          st.statusLabel = 'Step 3: Dil. NH₃ added — Cream ppt is sparingly soluble in dilute NH₃ (soluble in conc. NH₃)';
+        } else if (salt.anion === 'I-') {
+          st.ppt = true;
+          st.pptDissolved = false;
+          st.color = '#FACC15';
+          st.statusLabel = 'Step 3: Dil. NH₃ added — Yellow ppt remains completely insoluble in aqueous NH₃';
         } else {
           st.statusLabel = 'Step 3: Dil. NH₃ added — Solution remains clear';
         }
@@ -1240,6 +1362,11 @@ requireStudentLogin();
           st.bubbling = true;
           st.color = '#CBD5E1';
           st.statusLabel = 'Step 1: Dil. Acid added — Effervescence of CO₂ gas';
+        } else if (salt.anion === 'SO3^2-') {
+          playEffervescenceSound();
+          st.bubbling = true;
+          st.color = '#CBD5E1';
+          st.statusLabel = 'Step 1: Dil. Acid added — Effervescence of pungent choking SO₂ gas';
         } else {
           playDropSplashSound();
           st.bubbling = false;
@@ -1253,6 +1380,10 @@ requireStudentLogin();
           st.ppt = true;
           st.color = '#F8FAFC';
           st.statusLabel = 'Step 2: BaCl₂ added — Dense white ppt (BaSO₄), insoluble in acid';
+        } else if (salt.anion === 'SO3^2-') {
+          st.ppt = true;
+          st.color = '#E2E8F0';
+          st.statusLabel = 'Step 2: BaCl₂ added — White ppt (BaSO₃), dissolves in dilute HCl with effervescence of SO₂';
         } else {
           st.ppt = false;
           st.color = 'rgba(56, 189, 248, 0.2)';
@@ -1280,6 +1411,10 @@ requireStudentLogin();
           playEffervescenceSound();
           st.bubbling = true;
           st.statusLabel = 'Step 1: 2M HCl added — Brisk effervescence of colorless gas';
+        } else if (salt.anion === 'SO3^2-') {
+          playEffervescenceSound();
+          st.bubbling = true;
+          st.statusLabel = 'Step 1: 2M HCl added — Effervescence of choking SO₂ gas';
         } else if (salt.cation === 'Pb2+') {
           playDropSplashSound();
           st.ppt = true;
@@ -1295,6 +1430,8 @@ requireStudentLogin();
       } else if (targetStage === 'step2_gas_warm') {
         if (salt.anion === 'CO3^2-') {
           st.statusLabel = 'Step 2: Gas tested — Colorless gas turns limewater milky (CO₂)';
+        } else if (salt.anion === 'SO3^2-') {
+          st.statusLabel = 'Step 2: Gas tested — Gas turns filter paper soaked in acidified K₂Cr₂O₇ from orange to green (SO₂)';
         } else if (salt.cation === 'Pb2+') {
           st.ppt = false;
           st.pptDissolved = true;
@@ -1345,18 +1482,20 @@ requireStudentLogin();
   };
 
   window.performTest = function(testKey) {
-    if (testKey === 'flame') {
+    if (testKey === 'flame' || testKey === 'heat_solid') {
       playFlameSound();
-      openFlameModal();
-      return;
+      if (testKey === 'flame') {
+        openFlameModal();
+        return;
+      }
     }
     const test = TESTS.find(t => t.key === testKey);
     const correctKey = test.correct[currentSaltKey];
     const correctOpt = test.options.find(o => o.key === correctKey);
 
-    if (testKey === 'hcl' && correctOpt && correctOpt.bubble) {
+    if ((testKey === 'hcl' || testKey === 'heat_solid') && correctOpt && correctOpt.bubble) {
       playEffervescenceSound();
-    } else {
+    } else if (testKey !== 'heat_solid') {
       playDropSplashSound();
     }
 
@@ -1954,19 +2093,33 @@ requireStudentLogin();
         <div style="display:flex; flex-direction:column; gap:14px;">
           <div style="background:var(--card-bg); padding:14px 18px; border-radius:12px; border-left:4px solid var(--blue-accent);">
             <b style="color:var(--blue-accent); font-size:0.95rem;">Test A: Carbonate Ion (CO₃²⁻)</b>
-            <p style="margin:4px 0 0 0; font-size:0.84rem; color:var(--text-muted);">Add dilute HCl: Effervescence of a colorless gas turning limewater milky confirms <b>CO₃²⁻</b>.</p>
+            <p style="margin:4px 0 0 0; font-size:0.84rem; color:var(--text-muted);">Add dilute HCl: Effervescence of a colorless, odorless gas that turns calcium hydroxide (limewater) milky confirms <b>CO₃²⁻</b>.</p>
+          </div>
+          <div style="background:var(--card-bg); padding:14px 18px; border-radius:12px; border-left:4px solid var(--cyan-accent, #06B6D4);">
+            <b style="color:var(--cyan-accent, #06B6D4); font-size:0.95rem;">Test B: Sulfite Ion (SO₃²⁻)</b>
+            <p style="margin:4px 0 0 0; font-size:0.84rem; color:var(--text-muted);">Add dilute HCl: Effervescence of a choking, pungent gas (SO₂) that turns filter paper soaked in acidified potassium dichromate(VI) (K₂Cr₂O₇) from orange to green confirms <b>SO₃²⁻</b>. BaCl₂(aq) gives a white ppt of BaSO₃ that dissolves in dilute HCl.</p>
           </div>
           <div style="background:var(--card-bg); padding:14px 18px; border-radius:12px; border-left:4px solid var(--green-accent);">
-            <b style="color:var(--green-accent); font-size:0.95rem;">Test B: Sulfate Ion (SO₄²⁻)</b>
-            <p style="margin:4px 0 0 0; font-size:0.84rem; color:var(--text-muted);">Acidify with dilute HCl, then add BaCl₂(aq): White precipitate of BaSO₄ insoluble in dilute HCl confirms <b>SO₄²⁻</b>.</p>
+            <b style="color:var(--green-accent); font-size:0.95rem;">Test C: Sulfate Ion (SO₄²⁻)</b>
+            <p style="margin:4px 0 0 0; font-size:0.84rem; color:var(--text-muted);">Acidify with dilute HCl, then add BaCl₂(aq): Dense white precipitate of barium sulfate (BaSO₄) completely insoluble in dilute HCl confirms <b>SO₄²⁻</b>.</p>
           </div>
           <div style="background:var(--card-bg); padding:14px 18px; border-radius:12px; border-left:4px solid var(--purple-accent);">
-            <b style="color:var(--purple-accent); font-size:0.95rem;">Test C: Chloride Ion (Cl⁻)</b>
-            <p style="margin:4px 0 0 0; font-size:0.84rem; color:var(--text-muted);">Acidify with dilute HNO₃, then add AgNO₃(aq): White precipitate of AgCl soluble in aqueous NH₃ confirms <b>Cl⁻</b>.</p>
+            <b style="color:var(--purple-accent); font-size:0.95rem;">Test D: Halide Ions (Cl⁻, Br⁻, I⁻) via Acidified AgNO₃(aq)</b>
+            <div style="margin-top:8px; display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px;">
+              <div style="background:var(--bg-dark); padding:10px; border-radius:8px; border:1px solid var(--card-border);">
+                <span style="color:#F8FAFC; font-weight:700;">White ppt (AgCl):</span> Readily dissolves in dilute aqueous NH₃ → Confirms <b>Cl⁻</b>
+              </div>
+              <div style="background:var(--bg-dark); padding:10px; border-radius:8px; border:1px solid var(--card-border);">
+                <span style="color:#FEF08A; font-weight:700;">Pale Cream ppt (AgBr):</span> Sparingly soluble in dilute NH₃, soluble in conc. NH₃ → Confirms <b>Br⁻</b>
+              </div>
+              <div style="background:var(--bg-dark); padding:10px; border-radius:8px; border:1px solid var(--card-border);">
+                <span style="color:#FACC15; font-weight:700;">Bright Yellow ppt (AgI):</span> Completely insoluble in both dilute and conc. NH₃ → Confirms <b>I⁻</b>
+              </div>
+            </div>
           </div>
           <div style="background:var(--card-bg); padding:14px 18px; border-radius:12px; border-left:4px solid var(--amber-accent);">
-            <b style="color:var(--amber-accent); font-size:0.95rem;">Test D: Nitrate Ion (NO₃⁻) — Brown Ring Test</b>
-            <p style="margin:4px 0 0 0; font-size:0.84rem; color:var(--text-muted);">Add fresh FeSO₄(aq), slant tube, and carefully pour conc. H₂SO₄ down the side: A brown ring at the interface layer confirms <b>NO₃⁻</b>.</p>
+            <b style="color:var(--amber-accent); font-size:0.95rem;">Test E: Nitrate Ion (NO₃⁻) — Brown Ring Test</b>
+            <p style="margin:4px 0 0 0; font-size:0.84rem; color:var(--text-muted);">Add freshly prepared FeSO₄(aq), slant the test tube, and carefully trickle concentrated H₂SO₄ down the side: A brown ring at the liquid-liquid interface confirms <b>NO₃⁻</b>.</p>
           </div>
         </div>
       `;
@@ -1996,29 +2149,29 @@ requireStudentLogin();
             notes.push('🚨 KNEC Penalty: Never write "white solution" (-0.5). Use "white precipitate" or "colorless solution".');
             itemScore = Math.max(0, itemScore - 0.5);
           }
-          if (/gas (evolved|produced|given off)/i.test(obsText) && !/(effervescence|limewater|litmus|ammonia|pungent)/i.test(obsText)) {
+          if (/gas (evolved|produced|given off)/i.test(obsText) && !/(effervescence|limewater|litmus|ammonia|pungent|choking|brown)/i.test(obsText)) {
             notes.push('⚠️ KNEC Warning: State specific gas properties (e.g. effervescence, turns limewater milky).');
           }
-          if (/(precipitate|ppt)/i.test(obsText) && !/(excess|soluble|insoluble)/i.test(obsText) && ['naoh','nh3'].includes(test.key)) {
-            notes.push('⚠️ KNEC Warning: Always specify excess reagent behavior (soluble/insoluble in excess).');
+          if (/(precipitate|ppt)/i.test(obsText) && !/(excess|soluble|insoluble)/i.test(obsText) && ['naoh','nh3','agno3'].includes(test.key)) {
+            notes.push('⚠️ KNEC Warning: Always specify excess reagent behavior or solubility in aqueous NH₃.');
           }
-          itemScore += 0.7;
-          notes.push('✅ Observation recorded accurately (+0.7 mark).');
+          itemScore += 0.55;
+          notes.push('✅ Observation recorded accurately (+0.55 mark).');
         }
 
         if (!infText) {
           notes.push('❌ Inference area left blank.');
         } else {
-          itemScore += 0.7;
-          notes.push('✅ Inference recorded accurately (+0.7 mark).');
+          itemScore += 0.55;
+          notes.push('✅ Inference recorded accurately (+0.55 mark).');
         }
       }
 
       totalScore += itemScore;
       feedbackItems.push({
         testLabel: test.label,
-        score: itemScore,
-        maxItemScore: 1.4,
+        score: Math.min(1.1, itemScore),
+        maxItemScore: 1.1,
         notes
       });
     });

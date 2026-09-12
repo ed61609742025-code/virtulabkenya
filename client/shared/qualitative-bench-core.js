@@ -233,6 +233,36 @@
       crystalColor: '#F1F5F9',
       crystalSecondary: '#CBD5E1',
       crystalHighlight: '#FFFFFF'
+    },
+    potassiumBromide: {
+      key: 'potassiumBromide',
+      altKeys: ['KBR', 'POTASSIUM BROMIDE', 'POTASSIUM_BROMIDE'],
+      name: 'Potassium Bromide',
+      formula: 'KBr',
+      cation: 'K+',
+      anion: 'Br-',
+      cationDisplay: 'K⁺',
+      anionDisplay: 'Br⁻',
+      appearance: 'White crystalline solid (cubic granules)',
+      solubility: 'Readily soluble in water; forms a clear, neutral stock solution.',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#CBD5E1',
+      crystalHighlight: '#FFFFFF'
+    },
+    sodiumIodide: {
+      key: 'sodiumIodide',
+      altKeys: ['NAI', 'SODIUM IODIDE', 'SODIUM_IODIDE'],
+      name: 'Sodium Iodide',
+      formula: 'NaI',
+      cation: 'Na+',
+      anion: 'I-',
+      cationDisplay: 'Na⁺',
+      anionDisplay: 'I⁻',
+      appearance: 'White deliquescent crystalline powder',
+      solubility: 'Highly soluble in water; forms a clear, neutral stock solution.',
+      crystalColor: '#F1F5F9',
+      crystalSecondary: '#E2E8F0',
+      crystalHighlight: '#FFFFFF'
     }
   };
 
@@ -263,6 +293,9 @@
     if (norm.includes('BA')) return SALTS.bariumChloride;
     if (norm.includes('AL')) return SALTS.aluminumNitrate;
     if (norm.includes('SO3') || norm.includes('SULFITE') || norm.includes('SULPHITE')) return SALTS.sodiumSulfite;
+    if (norm.includes('BR') || norm.includes('BROMIDE')) return SALTS.potassiumBromide;
+    if (norm.includes('NAI') || (norm.includes('IODIDE') && norm.includes('NA'))) return SALTS.sodiumIodide;
+    if (norm.includes('KI') || norm.includes('POTASSIUMIODIDE')) return SALTS.potassiumChloride;
     return SALTS.leadNitrate;
   }
 
@@ -473,12 +506,12 @@
       tId.includes('ignit')
     );
 
-    const isNaOH = tId.includes('naoh') || pStr.includes('naoh') || pStr.includes('sodium hydroxide');
-    const isNH3 = tId.includes('nh3') || pStr.includes('ammonia') || pStr.includes('nh₃') || pStr.includes('nh3');
-    const isKI = tId.includes('ki') || pStr.includes('potassium iodide') || pStr.includes('iodide');
-    const isBrownRing = tId.includes('brown_ring') || tId.includes('ring') || (pStr.includes('feso4') && pStr.includes('h2so4')) || pStr.includes('brown ring');
     const isAgNO3 = tId.includes('agno3') || pStr.includes('silver nitrate') || pStr.includes('agno3') || (pStr.includes('hno3') && pStr.includes('silver'));
     const isBaCl2 = tId.includes('bacl2') || tId.includes('barium') || pStr.includes('barium') || pStr.includes('ba(no3)2') || pStr.includes('bacl2');
+    const isNaOH = tId.includes('naoh') || pStr.includes('naoh') || pStr.includes('sodium hydroxide');
+    const isNH3 = !isAgNO3 && (tId.includes('nh3') || pStr.includes('ammonia') || pStr.includes('nh₃') || pStr.includes('nh3'));
+    const isKI = tId.includes('ki') || pStr.includes('potassium iodide') || pStr.includes('iodide');
+    const isBrownRing = tId.includes('brown_ring') || tId.includes('ring') || (pStr.includes('feso4') && pStr.includes('h2so4')) || pStr.includes('brown ring');
     const isH2SO4 = tId.includes('h2so4') || pStr.includes('h2so4') || pStr.includes('sulfuric') || pStr.includes('sulphuric');
     const isHCl = tId.includes('hcl') || tId.includes('acid') || pStr.includes('hydrochloric') || pStr.includes('limewater');
     const isResidueTest = tId.includes('residue') || pStr.includes('residue');
@@ -491,6 +524,13 @@
     let complexDeepBlue = false;
     let statusLabel = 'Reaction Observed';
     let soundType = 'drop';
+
+    // Thermal physics for dry heating in hard-glass tube
+    let sublimes = false;
+    let gasType = null;
+    let gasColor = null;
+    let residueColor = null;
+    let waterCondenses = false;
 
     if (performed) {
       if (isBrownRing) {
@@ -586,6 +626,32 @@
           } else {
             statusLabel = 'Dilute HNO₃ Added: Acidified stock solution';
           }
+        } else if (anion === 'Br-' || anion === 'Br⁻' || (anion && anion.includes('Br')) || oStr.includes('agbr') || oStr.includes('cream')) {
+          if (stage === 'step3_nh3' || isExcess) {
+            ppt = true;
+            pptDissolved = false;
+            pptColor = '#FEF08A';
+            statusLabel = 'In Aqueous NH₃: Pale cream precipitate is sparingly soluble';
+          } else if (stage === 'step2_agno3' || !isStep1) {
+            ppt = true;
+            pptColor = '#FEF08A';
+            statusLabel = 'AgNO₃ Added: Pale cream precipitate of AgBr formed';
+          } else {
+            statusLabel = 'Dilute HNO₃ Added: Acidified stock solution';
+          }
+        } else if (anion === 'I-' || anion === 'I⁻' || (anion && anion.includes('I')) || oStr.includes('agi') || oStr.includes('yellow ppt') || oStr.includes('bright yellow')) {
+          if (stage === 'step3_nh3' || isExcess) {
+            ppt = true;
+            pptDissolved = false;
+            pptColor = '#FACC15';
+            statusLabel = 'In Aqueous NH₃: Yellow precipitate remains completely insoluble';
+          } else if (stage === 'step2_agno3' || !isStep1) {
+            ppt = true;
+            pptColor = '#FACC15';
+            statusLabel = 'AgNO₃ Added: Bright yellow precipitate of AgI formed';
+          } else {
+            statusLabel = 'Dilute HNO₃ Added: Acidified stock solution';
+          }
         } else {
           statusLabel = 'No precipitate formed';
         }
@@ -636,6 +702,13 @@
         if (anion === 'CO3^2-' || anion === 'CO32-' || (anion && anion.includes('CO3'))) {
           bubbling = true;
           statusLabel = '2M HCl Added: Vigorous effervescence of a gas that turns limewater milky (CO₂)';
+        } else if (anion === 'SO3^2-' || anion === 'SO32-' || (anion && anion.includes('SO3'))) {
+          bubbling = true;
+          statusLabel = '2M HCl Added: Effervescence of a choking gas that turns acidified K₂Cr₂O₇ green (SO₂)';
+        } else if (cation === 'Pb2+') {
+          ppt = true;
+          pptColor = '#FFFFFF';
+          statusLabel = isHeated ? 'Warmed: White precipitate of PbCl₂ dissolves in hot water' : '2M HCl Added: White precipitate of PbCl₂ formed';
         } else {
           statusLabel = 'No effervescence / No gas evolved';
         }
@@ -677,17 +750,42 @@
       } else if (isHeat) {
         if (anion === 'NO3-') {
           liquidColor = 'rgba(180, 83, 9, 0.55)';
+          gasType = 'no2_brown';
+          gasColor = '#78350F';
+          residueColor = (cation === 'Pb2+') ? '#CA8A04' : (cation === 'Zn2+') ? '#FACC15' : '#FFFFFF';
           statusLabel = (cation === 'Pb2+')
             ? 'Heated: Decrepitates; brown fumes of NO₂; rekindles glowing splint (O₂); reddish-brown hot, yellow cold'
             : 'Heated Strongly: Brown fumes of NO₂ evolved; rekindles glowing splint (O₂)';
         } else if (cation === 'NH4+') {
-          statusLabel = 'Heated: Sublimes; dense white fumes deposit on upper cooler walls';
+          sublimes = (anion === 'Cl-');
+          gasType = (anion === 'Cl-') ? 'sublimate_deposit' : 'nh3_co2';
+          gasColor = '#FFFFFF';
+          residueColor = (anion === 'Cl-') ? '#FFFFFF' : null;
+          statusLabel = (anion === 'CO3^2-')
+            ? 'Heated: Decomposes completely; alkaline gas (NH₃) turns red litmus blue; CO₂ turns limewater milky'
+            : 'Heated: Sublimes; dense white fumes deposit on upper cooler walls (sublimation ring)';
         } else if (cation === 'Zn2+') {
+          waterCondenses = true;
+          residueColor = '#FACC15'; // ZnO yellow when hot
+          gasType = 'steam';
           statusLabel = 'Heated: Solid turns yellow when hot, white on cooling (ZnO formation)';
         } else if (cation === 'Cu2+') {
+          waterCondenses = true;
+          residueColor = '#F1F5F9'; // Anhydrous CuSO4 white powder
+          gasType = 'steam';
           statusLabel = 'Heated: Blue crystals dehydrate to white anhydrous powder; water droplets condense';
         } else if (cation === 'Fe2+') {
-          statusLabel = 'Heated: Pale green crystals turn dirty brown; water droplets condense';
+          waterCondenses = true;
+          residueColor = '#451A03';
+          gasType = 'so2_steam';
+          statusLabel = 'Heated: Pale green crystals turn dirty brown; water droplets condense; choking SO₂ gas evolved';
+        } else if (anion === 'SO3^2-') {
+          gasType = 'so2_pungent';
+          statusLabel = 'Heated Strongly: Solid remains stable; faint choking sulfurous smell of SO₂';
+        } else if (anion === 'Br-' || anion === 'I-') {
+          statusLabel = 'Heated Strongly: White crystalline solid crackles; melts at high temperature; no gas evolved';
+        } else if (anion === 'CO3^2-') {
+          statusLabel = 'Heated: White solid remains thermally stable in Bunsen flame; no gas evolved';
         } else {
           statusLabel = 'Heated Strongly: Thermal decomposition observed';
         }
@@ -710,6 +808,11 @@
       pptColor,
       pptDissolved,
       bubbling,
+      sublimes,
+      gasType,
+      gasColor,
+      residueColor,
+      waterCondenses,
       isBrownRing,
       hasBrownRing: isBrownRing && anion === 'NO3-',
       isKI,
@@ -1238,7 +1341,7 @@
         </g>
 
         <!-- Hard-Glass Pyrex Boiling Tube (Tilted at 35 degrees) -->
-        <g transform="translate(48, 24) rotate(26 30 70)">
+        <g transform="translate(48, 24) rotate(-35 30 70)">
           <!-- Glass Body & Mouth Lip -->
           <rect x="18" y="12" width="30" height="4.5" rx="2" fill="rgba(255,255,255,0.3)" stroke="#94A3B8" stroke-width="1.2"/>
           <path d="M 21,15 L 21,108 Q 21,126 33,126 Q 45,126 45,108 L 45,15 Z" fill="rgba(255,255,255,0.06)" stroke="#94A3B8" stroke-width="1.5"/>
@@ -1275,15 +1378,32 @@
             </g>
           ` : ''}
 
+          <!-- Sublimation Deposit Ring on Upper Cooler Walls for Ammonium Salts -->
+          ${performed && cation === 'NH4+' ? `
+            <g opacity="0.95">
+              <ellipse cx="33" cy="45" rx="11" ry="3.5" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8"/>
+              <ellipse cx="33" cy="48" rx="10" ry="2.5" fill="#F8FAFC"/>
+              <ellipse cx="33" cy="65" rx="8" ry="16" fill="rgba(255,255,255,0.4)"/>
+            </g>
+          ` : ''}
+
           <!-- Glass Specular Flank Highlight -->
           <path d="M 24,18 L 24,108 Q 24,122 33,122" fill="none" stroke="#FFFFFF" stroke-width="1.2" opacity="0.35"/>
 
-          <!-- Moist Blue Litmus Paper Held at Mouth -->
+          <!-- Moist Blue Litmus Paper Held at Mouth (Turns Red for Nitrates) -->
           ${performed && isNitrate ? `
             <!-- Paper strip held in forceps: turns bright red at tip -->
             <path d="M 29,2 L 37,2 L 37,20 L 29,20 Z" fill="#EF4444" stroke="#DC2626" stroke-width="0.6"/>
             <path d="M 29,2 L 37,2 L 37,10 L 29,10 Z" fill="#3B82F6"/>
             <!-- Forceps holding paper -->
+            <line x1="22" y1="-4" x2="31" y2="5" stroke="#94A3B8" stroke-width="2.5" stroke-linecap="round"/>
+          ` : ''}
+
+          <!-- Moist Red Litmus Paper Held at Mouth (Turns Blue for Ammonium Carbonate) -->
+          ${performed && cation === 'NH4+' && anion === 'CO3^2-' ? `
+            <!-- Paper strip turns blue at tip from alkaline NH3 gas -->
+            <path d="M 29,2 L 37,2 L 37,20 L 29,20 Z" fill="#3B82F6" stroke="#2563EB" stroke-width="0.6"/>
+            <path d="M 29,2 L 37,2 L 37,10 L 29,10 Z" fill="#EF4444"/>
             <line x1="22" y1="-4" x2="31" y2="5" stroke="#94A3B8" stroke-width="2.5" stroke-linecap="round"/>
           ` : ''}
         </g>
@@ -1311,8 +1431,8 @@
           <path d="M 35,62 Q 52,60 68,68" fill="none" stroke="#D97706" stroke-width="3.5" stroke-linecap="round"/>
 
           ${performed ? `
-            <!-- Roaring Non-Luminous Bunsen Flame -->
-            <g class="anim-flame">
+            <!-- Roaring Non-Luminous Bunsen Flame & Heat Waves -->
+            <g class="anim-flame heatWave anim-heat-wave">
               <!-- Outer Blue Cone -->
               <path d="M 23,24 C 20,8 25,0 30,0 C 35,0 40,8 37,24 Z" fill="url(#flameOuter_${tubeId})"/>
               <!-- Inner Hot Cyan Core -->
@@ -1680,12 +1800,17 @@
     ) {
       if (!stage || stage === 'idle') {
         return [
-          { stage: 'heated', label: '🔥 Heat Strongly in Bunsen Flame', cls: 'btn-perform-test btn-step-heat' }
+          { stage: 'heated', label: '🔥 Step 1: Heat Strongly in Bunsen Flame', cls: 'btn-perform-test btn-step-heat' }
+        ];
+      } else if (stage === 'heated') {
+        return [
+          { stage: 'step2_gas_test', label: '🧪 Step 2: Test Gas (Moist Litmus / Splint)', cls: 'btn-perform-test btn-step-gas' },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else {
         return [
           { stage: 'done', label: '✅ Thermal Observation Recorded', cls: 'btn-perform-test done', disabled: true },
-          { stage: 'idle', label: '↺ Redo', cls: 'btn-redo-test', isRedo: true }
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       }
     }

@@ -1006,8 +1006,13 @@ requireStudentLogin();
   // ── Q1 Titration Workbench Interactive Actions ───────────────────────
   function pipetteSolutionB() {
     isPipetted = true;
-    document.getElementById('pipetteStatus').textContent = '25.0 cm³ Pipetted ✓';
-    document.getElementById('pipetteStatus').style.color = 'var(--green-accent)';
+    const pipEl = document.getElementById('pipetteStatus');
+    if (pipEl) {
+      pipEl.textContent = '25.0 cm³ Pipetted ✓';
+      pipEl.style.color = '#10B981';
+      pipEl.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+      pipEl.style.background = 'rgba(16, 185, 129, 0.12)';
+    }
     updateFlaskAppearance();
   }
 
@@ -1018,9 +1023,15 @@ requireStudentLogin();
     }
     if (indicatorDrops < 3) {
       indicatorDrops++;
-      document.getElementById('btnAddIndicator').textContent = `💧 Add Indicator (${indicatorDrops}/3)`;
-      document.getElementById('indicatorStatus').textContent = `${indicatorDrops} of 3 Drops Added`;
-      document.getElementById('indicatorStatus').style.color = 'var(--cyan-accent)';
+      const btnInd = document.getElementById('btnAddIndicator');
+      if (btnInd) btnInd.textContent = `💧 Add Indicator (${indicatorDrops}/3)`;
+      const indEl = document.getElementById('indicatorStatus');
+      if (indEl) {
+        indEl.textContent = `${indicatorDrops} of 3 Drops Added`;
+        indEl.style.color = '#38BDF8';
+        indEl.style.borderColor = 'rgba(56, 189, 248, 0.4)';
+        indEl.style.background = 'rgba(56, 189, 248, 0.12)';
+      }
       
       const indicatorChip = document.getElementById('q1IndicatorChip');
       if (indicatorChip) {
@@ -1241,11 +1252,22 @@ requireStudentLogin();
     engine.q1BuretteReading = 0.00;
     isPipetted = false;
     indicatorDrops = 0;
-    document.getElementById('pipetteStatus').textContent = 'Not Pipetted';
-    document.getElementById('pipetteStatus').style.color = 'var(--text-muted)';
-    document.getElementById('btnAddIndicator').textContent = '💧 Add Indicator (0/3)';
-    document.getElementById('indicatorStatus').textContent = '0 Drops Added';
-    document.getElementById('indicatorStatus').style.color = 'var(--text-muted)';
+    const pipEl = document.getElementById('pipetteStatus');
+    if (pipEl) {
+      pipEl.textContent = 'Not Pipetted';
+      pipEl.style.color = 'var(--text-muted)';
+      pipEl.style.borderColor = 'var(--card-border)';
+      pipEl.style.background = 'var(--bg-dark)';
+    }
+    const btnInd = document.getElementById('btnAddIndicator');
+    if (btnInd) btnInd.textContent = '💧 Add Indicator (0/3)';
+    const indEl = document.getElementById('indicatorStatus');
+    if (indEl) {
+      indEl.textContent = '0 Drops Added';
+      indEl.style.color = 'var(--text-muted)';
+      indEl.style.borderColor = 'var(--card-border)';
+      indEl.style.background = 'var(--bg-dark)';
+    }
     updateBuretteRig();
   }
 

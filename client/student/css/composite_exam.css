@@ -476,14 +476,296 @@ iframe.lab-frame {
   }
 }
 
-/* ── 9. RESPONSIVE UTILITIES & TABLE OVERFLOW WRAPPER ── */
+/* ── 9. RESPONSIVE UTILITIES & VOLUMETRIC WORKBENCH ── */
+.titration-rig-workbench {
+  background: radial-gradient(circle at 50% 20%, rgba(56, 189, 248, 0.08) 0%, rgba(15, 23, 42, 0.6) 75%),
+              linear-gradient(180deg, rgba(15, 23, 42, 0.85) 0%, rgba(11, 19, 43, 0.98) 100%);
+  border: 1.5px solid var(--card-border);
+  border-radius: 16px;
+  padding: 20px 22px;
+  margin-bottom: 24px;
+  box-shadow: inset 0 2px 16px rgba(0, 0, 0, 0.5), 0 4px 20px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+}
+
+.bench-header-title {
+  font-weight: 800;
+  font-size: 0.86rem;
+  color: var(--cyan-accent);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.bench-3col-layout {
+  display: grid;
+  grid-template-columns: 230px 1fr 230px;
+  gap: 16px;
+  align-items: stretch;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Wing Cards */
 .bench-prep-wing,
 .bench-titrant-wing {
   background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 14px;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  box-shadow: var(--shadow-sm);
+  box-sizing: border-box;
+}
+
+.bench-wing-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--card-border);
+  padding-bottom: 10px;
+}
+
+.bench-wing-step-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid var(--cyan-accent);
+  color: var(--cyan-accent);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.bench-wing-step-num.num-amber {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: var(--amber-accent);
+  color: var(--amber-accent);
+}
+
+.bench-wing-title {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--heading-color);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1.2;
+}
+
+.bench-wing-sub {
+  font-size: 0.70rem;
+  color: var(--text-muted);
+  line-height: 1.2;
+  margin-top: 2px;
+}
+
+/* Prep Wing Items */
+.prep-cluster {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.prep-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.prep-item-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.prep-status-pill {
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  background: var(--bg-dark);
   border: 1px solid var(--card-border);
-  border-radius: 12px;
-  padding: 14px;
-  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  padding: 4px 8px;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+/* Center Stage */
+.bench-center-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: rgba(15, 23, 42, 0.4);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: 12px 10px;
+  box-sizing: border-box;
+}
+
+.apparatus-lens-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  width: 100%;
+}
+
+.apparatus-lens-row .rig-svg {
+  width: 155px;
+  height: 305px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4));
+}
+
+.bench-reagents-shelf {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  width: 100%;
+  flex-wrap: wrap;
+  padding: 6px 10px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+  box-sizing: border-box;
+}
+
+.bench-bottle-chip {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  background: var(--bg-dark);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  color: var(--text-main);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Right Wing: Titrant Buttons Cluster */
+.titrant-buttons-cluster {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.titrant-grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+/* Dedicated Tactile Laboratory Buttons */
+.titration-rig-workbench .btn-bench {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  box-sizing: border-box;
+  text-decoration: none;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.titration-rig-workbench .btn-bench:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+  filter: brightness(1.08);
+}
+
+.titration-rig-workbench .btn-bench:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.titration-rig-workbench .btn-bench:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Button Color Themes */
+.titration-rig-workbench .btn-bench-cyan {
+  background: #0284C7;
+  color: #FFFFFF;
+  border-color: #0369A1;
+}
+
+.titration-rig-workbench .btn-bench-blue {
+  background: #2563EB;
+  color: #FFFFFF;
+  border-color: #1D4ED8;
+}
+
+.titration-rig-workbench .btn-bench-teal {
+  background: #0D9488;
+  color: #FFFFFF;
+  border-color: #0F766E;
+}
+
+.titration-rig-workbench .btn-bench-amber {
+  background: #D97706;
+  color: #FFFFFF;
+  border-color: #B45309;
+}
+
+.titration-rig-workbench .btn-bench-crimson {
+  background: #DC2626;
+  color: #FFFFFF;
+  border-color: #B91C1C;
+}
+
+.titration-rig-workbench .btn-bench-emerald {
+  background: #059669;
+  color: #FFFFFF;
+  border-color: #047857;
+  font-size: 0.88rem;
+  padding: 10px 16px;
+}
+
+.titration-rig-workbench .btn-bench-slate {
+  background: #475569;
+  color: #FFFFFF;
+  border-color: #334155;
+  font-size: 0.88rem;
+  padding: 10px 16px;
+}
+
+.bench-tip-hint {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+  text-align: center;
+  font-style: italic;
+  margin-top: 4px;
 }
 
 .bench-action-buttons-row {
@@ -491,6 +773,57 @@ iframe.lab-frame {
   gap: 12px;
   margin-top: 16px;
   flex-wrap: wrap;
+}
+
+/* Responsive Breakpoints for Workbench */
+@media (max-width: 1024px) {
+  .bench-3col-layout {
+    grid-template-columns: 210px 1fr 210px;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 860px) {
+  .bench-3col-layout {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "center center"
+      "prep titrant";
+    gap: 14px;
+  }
+  .bench-center-stage {
+    grid-area: center;
+  }
+  .bench-prep-wing {
+    grid-area: prep;
+  }
+  .bench-titrant-wing {
+    grid-area: titrant;
+  }
+}
+
+@media (max-width: 600px) {
+  .bench-3col-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .apparatus-lens-row {
+    flex-direction: row;
+    gap: 10px;
+  }
+  .apparatus-lens-row .rig-svg {
+    width: 120px;
+    height: 240px;
+  }
+  .buret-lens-card {
+    min-width: 140px;
+    max-width: 180px;
+    padding: 8px;
+  }
+  .bench-action-buttons-row {
+    flex-direction: column;
+  }
 }
 
 .exam-deductions-card {
@@ -907,47 +1240,7 @@ iframe.lab-frame {
   flex-shrink: 0;
 }
 
-/* Titrant Addition Button Cluster */
-.titrant-buttons-cluster {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
 @media (max-width: 768px) {
-  .titrant-buttons-cluster {
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 8px !important;
-  }
-  .titrant-buttons-cluster #btnContinuous {
-    grid-column: span 2 !important;
-  }
-
-  .prep-cluster {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 8px !important;
-  }
-
-  .apparatus-lens-row {
-    flex-direction: row !important;
-    justify-content: center !important;
-    gap: 12px !important;
-    width: 100% !important;
-  }
-
-  .apparatus-lens-row .rig-svg {
-    width: 120px !important;
-    height: 240px !important;
-  }
-
-  .apparatus-lens-row .buret-lens-card {
-    min-width: 140px !important;
-    max-width: 180px !important;
-    padding: 10px !important;
-  }
-
   .calc-input-row {
     display: flex !important;
     align-items: center !important;

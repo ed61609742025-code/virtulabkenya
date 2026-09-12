@@ -177,40 +177,52 @@
     </div>
 
     <!-- Spacious Photorealistic Volumetric Workbench Assembly -->
-    <div class="titration-rig-workbench" style="background:radial-gradient(circle at 50% 20%, rgba(56, 189, 248, 0.06) 0%, rgba(15, 23, 42, 0.5) 75%), linear-gradient(180deg, rgba(15, 23, 42, 0.8) 0%, rgba(11, 19, 43, 0.95) 100%); border-radius:16px; box-shadow:inset 0 2px 16px rgba(0,0,0,0.6), 0 4px 20px rgba(0,0,0,0.3);">
-      <div style="font-weight:800;font-size:0.84rem;color:var(--cyan-accent);margin-bottom:14px;text-transform:uppercase;letter-spacing:0.04em;text-align:center;">
-        🔬 Interactive Volumetric Workbench &amp; Precision Apparatus
+    <div class="titration-rig-workbench">
+      <div class="bench-header-title">
+        <span>🔬</span> Interactive Volumetric Workbench &amp; Precision Apparatus
       </div>
 
       <div class="bench-3col-layout">
         <!-- LEFT WING: Pipette & Indicator Addition -->
-        <div class="bench-prep-wing" style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;box-shadow:inset 0 1px 2px rgba(255,255,255,0.03);">
-          <div class="prep-cluster">
-            <div class="prep-item">
-              <div style="font-weight:800;font-size:0.75rem;color:var(--cyan-accent);text-transform:uppercase;letter-spacing:0.03em;margin-bottom:4px;">1. Reagent Prep</div>
-              <button class="btn-perform-test" id="btnPipette" onclick="pipetteSolutionB()" style="font-size:0.78rem;padding:8px;width:100%;justify-content:center;">
-                🧪 Pipette 25.0 cm³
-              </button>
-              <div id="pipetteStatus" style="font-size:0.72rem;color:var(--text-muted);line-height:1.2;margin-top:4px;">Not Pipetted</div>
-            </div>
-
-            <div class="prep-item">
-              <div style="font-weight:800;font-size:0.75rem;color:var(--cyan-accent);text-transform:uppercase;letter-spacing:0.03em;margin-bottom:4px;">2. Indicator</div>
-              <button class="btn-perform-test btn-step-excess" id="btnAddIndicator" onclick="addIndicatorDrop()" style="font-size:0.78rem;padding:8px;width:100%;justify-content:center;">
-                💧 Add Indicator (0/3)
-              </button>
-              <div id="indicatorStatus" style="font-size:0.72rem;color:var(--text-muted);line-height:1.2;margin-top:4px;">0 Drops Added</div>
+        <div class="bench-prep-wing">
+          <div class="bench-wing-header">
+            <span class="bench-wing-step-num">1</span>
+            <div>
+              <div class="bench-wing-title">Flask Preparation</div>
+              <div class="bench-wing-sub">Pipette &amp; Indicator Setup</div>
             </div>
           </div>
 
-          <button class="btn-perform-test btn-step-heat" onclick="swirlFlask()" style="margin-top:10px;font-size:0.78rem;padding:8px;width:100%;justify-content:center;">
-            🌀 Swirl Flask
-          </button>
+          <div class="prep-cluster">
+            <div class="prep-item">
+              <div class="prep-item-label">1. Pipette Aliquot</div>
+              <button class="btn-bench btn-bench-cyan" id="btnPipette" onclick="pipetteSolutionB()">
+                🧪 Pipette 25.0 cm³
+              </button>
+              <div id="pipetteStatus" class="prep-status-pill">Not Pipetted</div>
+            </div>
+
+            <div class="prep-item">
+              <div class="prep-item-label">2. Indicator Addition</div>
+              <button class="btn-bench btn-bench-blue" id="btnAddIndicator" onclick="addIndicatorDrop()">
+                💧 Add Indicator (0/3)
+              </button>
+              <div id="indicatorStatus" class="prep-status-pill">0 Drops Added</div>
+            </div>
+
+            <div class="prep-item">
+              <div class="prep-item-label">3. Mixing Motion</div>
+              <button class="btn-bench btn-bench-amber" onclick="swirlFlask()">
+                🌀 Swirl Conical Flask
+              </button>
+              <div class="bench-tip-hint">Mix thoroughly to detect sharp endpoint color transition.</div>
+            </div>
+          </div>
         </div>
 
         <!-- CENTER: Large Photorealistic SVG Apparatus Rig + Magnified Reading Lens -->
-        <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
-          <div class="apparatus-lens-row" style="display:flex;align-items:center;justify-content:center;gap:18px;width:100%;">
+        <div class="bench-center-stage">
+          <div class="apparatus-lens-row">
             
             <!-- Realistic Apparatus SVG -->
             <svg class="rig-svg" viewBox="0 0 240 380" xmlns="http://www.w3.org/2000/svg" style="width:155px; height:305px; flex-shrink:0;">
@@ -459,16 +471,16 @@
           </div>
 
           <!-- Authentic Chemistry Laboratory Reagent Bottles Shelf -->
-          <div class="bench-reagents-shelf" style="display:flex; gap:8px; justify-content:center; width:100%; flex-wrap:wrap; padding:6px 10px; background:rgba(15,23,42,0.85); border:1px solid var(--card-border); border-radius:8px;">
-            <div class="bench-bottle-chip" style="font-size:0.72rem; padding:3px 8px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:4px; color:var(--text-main);">
+          <div class="bench-reagents-shelf">
+            <div class="bench-bottle-chip">
               <span>🫙</span>
               <span id="q1TitrantChip">Solution A (Burette)</span>
             </div>
-            <div class="bench-bottle-chip" style="font-size:0.72rem; padding:3px 8px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:4px; color:var(--text-main);">
+            <div class="bench-bottle-chip">
               <span>🧪</span>
               <span id="flaskContentsLabel">Flask: Empty</span>
             </div>
-            <div class="bench-bottle-chip" style="font-size:0.72rem; padding:3px 8px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:4px; color:var(--text-main);">
+            <div class="bench-bottle-chip">
               <span>💧</span>
               <span id="q1IndicatorChip">Indicator Dropper</span>
             </div>
@@ -476,23 +488,47 @@
         </div>
 
         <!-- RIGHT WING: Stopcock & Speed Addition -->
-        <div class="bench-titrant-wing" style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;box-shadow:inset 0 1px 2px rgba(255,255,255,0.03);">
-          <div style="font-weight:800;font-size:0.75rem;color:var(--amber-accent);text-transform:uppercase;letter-spacing:0.03em;margin-bottom:8px;">3. Add Titrant</div>
+        <div class="bench-titrant-wing">
+          <div class="bench-wing-header">
+            <span class="bench-wing-step-num num-amber">2</span>
+            <div>
+              <div class="bench-wing-title">Titrant Delivery</div>
+              <div class="bench-wing-sub">Burette Stopcock Controls</div>
+            </div>
+          </div>
+
           <div class="titrant-buttons-cluster">
-            <button class="btn-perform-test" onclick="addTitrantDirect(1.0)" style="font-size:0.78rem;padding:6px;width:100%;justify-content:center;">+1.0 cm³</button>
-            <button class="btn-perform-test" onclick="addTitrantDirect(0.5)" style="font-size:0.78rem;padding:6px;width:100%;justify-content:center;">+0.5 cm³</button>
-            <button class="btn-perform-test" onclick="addTitrantDirect(0.1)" style="font-size:0.78rem;padding:6px;width:100%;justify-content:center;">+0.1 cm³</button>
-            <button class="btn-perform-test btn-step-excess" onclick="startContinuousTitration()" id="btnContinuous" style="font-size:0.78rem;padding:6px;width:100%;justify-content:center;">Continuous</button>
-            <button class="btn-perform-test" style="background:#EF4444;font-size:0.78rem;padding:6px;width:100%;justify-content:center;" onclick="stopTitrate()">Stop Tap</button>
+            <div class="prep-item-label">Coarse Delivery (cm³)</div>
+            <div class="titrant-grid-2col">
+              <button class="btn-bench btn-bench-cyan" onclick="addTitrantDirect(1.0)">+1.0 cm³</button>
+              <button class="btn-bench btn-bench-cyan" onclick="addTitrantDirect(0.5)">+0.5 cm³</button>
+            </div>
+
+            <div class="prep-item-label" style="margin-top:4px;">Fine &amp; Dropwise (cm³)</div>
+            <div class="titrant-grid-2col">
+              <button class="btn-bench btn-bench-teal" onclick="addTitrantDirect(0.1)">+0.1 cm³</button>
+              <button class="btn-bench btn-bench-teal" onclick="addTitrantDirect(0.05)">💧 +0.05</button>
+            </div>
+
+            <div class="prep-item-label" style="margin-top:4px;">Continuous Flow</div>
+            <button class="btn-bench btn-bench-blue" onclick="startContinuousTitration()" id="btnContinuous">
+              ⚡ Continuous Run
+            </button>
+
+            <button class="btn-bench btn-bench-crimson" style="margin-top:2px;" onclick="stopTitrate()">
+              🔴 Stop Tap
+            </button>
+
+            <div class="bench-tip-hint">Slow down to dropwise (0.1 / 0.05 cm³) as you approach equivalence!</div>
           </div>
         </div>
       </div>
 
-      <div class="bench-action-buttons-row" style="display:flex;gap:12px;margin-top:16px;flex-wrap:wrap;">
-        <button type="button" class="btn-perform-test" style="background:var(--green-accent);flex:1;justify-content:center;padding:10px 16px;font-size:0.88rem;" onclick="transferReadingToTable()">
+      <div class="bench-action-buttons-row">
+        <button type="button" class="btn-bench btn-bench-emerald" style="flex:1;" onclick="transferReadingToTable()">
           📥 Record Current Reading in <span id="lblActiveTable">Table 1</span> (Trial <span id="lblActiveTrial">1</span>)
         </button>
-        <button type="button" class="btn-perform-test" style="background:#475569;padding:10px 16px;font-size:0.88rem;" onclick="resetTitrationApparatus()">
+        <button type="button" class="btn-bench btn-bench-slate" onclick="resetTitrationApparatus()">
           🔄 Reset Apparatus &amp; Flask
         </button>
       </div>

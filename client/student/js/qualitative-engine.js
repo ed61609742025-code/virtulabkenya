@@ -1,106 +1,124 @@
-requireStudentLogin();
-  updateThemeChips();
+if (typeof window === 'undefined') {
+  global.window = global;
+}
 
-  /* ── Theme ── */
-  function setTheme(theme) {
-    localStorage.setItem('vlk_theme', theme);
-    document.documentElement.setAttribute('data-theme', theme);
-    updateThemeChips();
-  }
-  function updateThemeChips() {
-    const cur = localStorage.getItem('vlk_theme') || 'light';
-    document.querySelectorAll('.theme-btn-chip').forEach(b => {
-      b.classList.toggle('active', b.dataset.theme === cur);
-    });
-  }
-  updateThemeChips();
+if (typeof requireStudentLogin === 'function') {
+  requireStudentLogin();
+}
 
-  /* ── Sound Toggle ── */
-  function isMuted() {
-    return localStorage.getItem('vlk_muted') === 'true';
-  }
-  function toggleSound() {
-    const muted = !isMuted();
-    localStorage.setItem('vlk_muted', muted ? 'true' : 'false');
-    updateSoundButton();
-  }
-  function updateSoundButton() {
-    const btn = document.getElementById('soundToggleBtn');
-    if (btn) {
-      const muted = isMuted();
-      btn.innerHTML = muted ? '🔇 Muted' : '🔊 Sound ON';
-    }
-  }
+/* ── Theme ── */
+function setTheme(theme) {
+  if (typeof localStorage !== 'undefined') localStorage.setItem('vlk_theme', theme);
+  if (typeof document !== 'undefined') document.documentElement.setAttribute('data-theme', theme);
+  updateThemeChips();
+}
+function updateThemeChips() {
+  if (typeof document === 'undefined') return;
+  const cur = (typeof localStorage !== 'undefined' ? localStorage.getItem('vlk_theme') : null) || 'light';
+  document.querySelectorAll('.theme-btn-chip').forEach(b => {
+    b.classList.toggle('active', b.dataset.theme === cur);
+  });
+}
+if (typeof document !== 'undefined') {
+  updateThemeChips();
+}
+
+/* ── Sound Toggle ── */
+function isMuted() {
+  return typeof localStorage !== 'undefined' && localStorage.getItem('vlk_muted') === 'true';
+}
+function toggleSound() {
+  const muted = !isMuted();
+  if (typeof localStorage !== 'undefined') localStorage.setItem('vlk_muted', muted ? 'true' : 'false');
   updateSoundButton();
-
-  /* ── Notifications ── */
-  const user = getUser();
-
-  function toggleNotifDropdown(e) {
-    e.stopPropagation();
-    const dd = document.getElementById('notifDropdown');
-    dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
+}
+function updateSoundButton() {
+  if (typeof document === 'undefined') return;
+  const btn = document.getElementById('soundToggleBtn');
+  if (btn) {
+    const muted = isMuted();
+    btn.innerHTML = muted ? '🔇 Muted' : '🔊 Sound ON';
   }
+}
+if (typeof document !== 'undefined') {
+  updateSoundButton();
+}
+
+/* ── Notifications ── */
+const user = typeof getUser === 'function' ? getUser() : null;
+
+function toggleNotifDropdown(e) {
+  if (!e) return;
+  e.stopPropagation();
+  const dd = document.getElementById('notifDropdown');
+  if (dd) dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
+}
+if (typeof document !== 'undefined') {
   document.addEventListener('click', (e) => {
     const dd = document.getElementById('notifDropdown');
     const bell = document.getElementById('notifBellBtn');
-    if (dd && dd.style.display === 'block' && !dd.contains(e.target) && !bell.contains(e.target)) {
+    if (dd && dd.style.display === 'block' && !dd.contains(e.target) && (!bell || !bell.contains(e.target))) {
       dd.style.display = 'none';
     }
   });
+}
 
-  function getReadNotifIds() {
-    try { return JSON.parse(localStorage.getItem('vlk_read_notifs_' + (user ? user.id : 'anon')) || '[]'); }
-    catch (e) { return []; }
-  }
-  function saveReadNotifIds(ids) {
-    try { localStorage.setItem('vlk_read_notifs_' + (user ? user.id : 'anon'), JSON.stringify(ids)); }
-    catch (e) {}
-  }
+function getReadNotifIds() {
+  try { return JSON.parse(localStorage.getItem('vlk_read_notifs_' + (user ? user.id : 'anon')) || '[]'); }
+  catch (e) { return []; }
+}
+function saveReadNotifIds(ids) {
+  try { localStorage.setItem('vlk_read_notifs_' + (user ? user.id : 'anon'), JSON.stringify(ids)); }
+  catch (e) {}
+}
 
-  async function loadNotifications() {
-    try {
-      const data = await Assignments.getMine();
-      const assignments = data.assignments || [];
-      const readIds = getReadNotifIds();
-      const marked = assignments.filter(a => a.submitted && a.submission_status === 'marked');
-      const unread = marked.filter(a => !readIds.includes(a.id));
+async function loadNotifications() {
+  try {
+    if (typeof Assignments === 'undefined' || !Assignments.getMine) return;
+    const data = await Assignments.getMine();
+    const assignments = data.assignments || [];
+    const readIds = getReadNotifIds();
+    const marked = assignments.filter(a => a.submitted && a.submission_status === 'marked');
+    const unread = marked.filter(a => !readIds.includes(a.id));
 
-      const badge = document.getElementById('notifBadge');
-      if (badge) {
-        badge.textContent = unread.length;
-        badge.style.display = unread.length > 0 ? 'inline-block' : 'none';
+    const badge = document.getElementById('notifBadge');
+    if (badge) {
+      badge.textContent = unread.length;
+      badge.style.display = unread.length > 0 ? 'inline-block' : 'none';
+    }
+
+    const list = document.getElementById('notifList');
+    if (list) {
+      if (marked.length === 0) {
+        list.innerHTML = '<div style="font-size:0.8rem;color:var(--text-muted);text-align:center;padding:12px;">No notifications yet</div>';
+      } else {
+      list.innerHTML = marked.map(a => {
+        const isRead = readIds.includes(a.id);
+        return `<div style="padding:10px 12px;border-bottom:1px solid var(--card-border);background:${isRead ? 'transparent' : 'rgba(16,185,129,0.12)'};border-radius:8px;margin-bottom:6px;">
+          <div style="font-size:0.82rem;font-weight:700;color:var(--heading-color);display:flex;align-items:center;justify-content:space-between;">
+            <span>${isRead ? '📜' : '🟢'} ${esc(a.title)}</span>
+            <span style="font-size:0.7rem;color:var(--text-muted);">${a.marked_at ? new Date(a.marked_at).toLocaleDateString() : ''}</span>
+          </div>
+          <div style="font-size:0.78rem;color:var(--text-muted);margin-top:4px;">Assignment marked by teacher! View grade on Dashboard.</div>
+        </div>`;
+      }).join('');
       }
+    }
+  } catch (err) { /* notifications optional */ }
+}
 
-      const list = document.getElementById('notifList');
-      if (list) {
-        if (marked.length === 0) {
-          list.innerHTML = '<div style="font-size:0.8rem;color:var(--text-muted);text-align:center;padding:12px;">No notifications yet</div>';
-        } else {
-        list.innerHTML = marked.map(a => {
-          const isRead = readIds.includes(a.id);
-          return `<div style="padding:10px 12px;border-bottom:1px solid var(--card-border);background:${isRead ? 'transparent' : 'rgba(16,185,129,0.12)'};border-radius:8px;margin-bottom:6px;">
-            <div style="font-size:0.82rem;font-weight:700;color:var(--heading-color);display:flex;align-items:center;justify-content:space-between;">
-              <span>${isRead ? '📜' : '🟢'} ${esc(a.title)}</span>
-              <span style="font-size:0.7rem;color:var(--text-muted);">${a.marked_at ? new Date(a.marked_at).toLocaleDateString() : ''}</span>
-            </div>
-            <div style="font-size:0.78rem;color:var(--text-muted);margin-top:4px;">Assignment marked by teacher! View grade on Dashboard.</div>
-          </div>`;
-        }).join('');
-        }
-      }
-    } catch (err) { /* notifications optional */ }
-  }
+function markAllNotificationsRead() {
+  if (typeof Assignments === 'undefined' || !Assignments.getMine) return;
+  Assignments.getMine().then(data => {
+    const ids = (data.assignments || []).filter(a => a.submitted && a.submission_status === 'marked').map(a => a.id);
+    saveReadNotifIds(ids);
+    loadNotifications();
+  }).catch(() => {});
+}
 
-  function markAllNotificationsRead() {
-    Assignments.getMine().then(data => {
-      const ids = (data.assignments || []).filter(a => a.submitted && a.submission_status === 'marked').map(a => a.id);
-      saveReadNotifIds(ids);
-      loadNotifications();
-    }).catch(() => {});
-  }
-
+if (typeof window !== 'undefined') {
   loadNotifications();
+}
 
   /* ══════════════════════════════════════
      SALT & TEST DATA BANK
@@ -365,7 +383,7 @@ requireStudentLogin();
   let sampleCounter = 0;
   const testStates = {};
   let sessionSaved = false;
-  const urlParams = new URLSearchParams(window.location.search);
+  const urlParams = (typeof window !== 'undefined' && window.location) ? new URLSearchParams(window.location.search) : new URLSearchParams('');
   const assignmentId = urlParams.get('assignment');
 
   /* ══════════════════════════════════════
@@ -542,6 +560,480 @@ requireStudentLogin();
     }
   };
 
+  /* ══════════════════════════════════════
+     KNEC 233/3 QUALITATIVE EVALUATION HELPERS
+  ══════════════════════════════════════ */
+  function parseInferredIons(text) {
+    if (!text || typeof text !== 'string') {
+      return { ions: [], hasCharge: true, missingChargeSymbols: [], raw: '' };
+    }
+    const lower = text.toLowerCase();
+    const ions = [];
+
+    // Cations
+    if (lower.includes('pb') || lower.includes('lead')) ions.push('pb2+');
+    if (lower.includes('al') || lower.includes('aluminium') || lower.includes('aluminum')) ions.push('al3+');
+    if (lower.includes('zn') || lower.includes('zinc')) ions.push('zn2+');
+    if (lower.includes('cu') || lower.includes('copper')) ions.push('cu2+');
+    if (lower.includes('fe2') || lower.includes('iron(ii)') || lower.includes('iron (ii)')) ions.push('fe2+');
+    if (lower.includes('fe3') || lower.includes('iron(iii)') || lower.includes('iron (iii)')) ions.push('fe3+');
+    if (lower.includes('ca') || lower.includes('calcium')) ions.push('ca2+');
+    if (lower.includes('nh4') || lower.includes('ammonium')) ions.push('nh4+');
+    if (lower.includes('na') || lower.includes('sodium')) ions.push('na+');
+    if (lower.includes('k+') || lower.includes('potassium') || /\bk\b/i.test(text)) ions.push('k+');
+    if (lower.includes('mg') || lower.includes('magnesium')) ions.push('mg2+');
+    if (lower.includes('ba') || lower.includes('barium')) ions.push('ba2+');
+
+    // Anions
+    if (lower.includes('so4') || lower.includes('sulphate') || lower.includes('sulfate')) ions.push('so42-');
+    if (lower.includes('so3') || lower.includes('sulphite') || lower.includes('sulfite')) ions.push('so32-');
+    if (lower.includes('co3') || lower.includes('carbonate')) ions.push('co32-');
+    if (lower.includes('cl') || lower.includes('chloride')) ions.push('cl-');
+    if (lower.includes('br') || lower.includes('bromide')) ions.push('br-');
+    if (lower.includes('i-') || lower.includes('iodide')) ions.push('i-');
+    if (lower.includes('no3') || lower.includes('nitrate')) ions.push('no3-');
+
+    // Detect if symbols lack charge notations
+    const hasAnyCharge = text.includes('+') || text.includes('-') || text.includes('²') || 
+                         text.includes('³') || text.includes('⁺') || text.includes('⁻') || 
+                         lower.includes('ion');
+    
+    const missingChargeSymbols = [];
+    const bareSymbolPatterns = [
+      { sym: 'Pb', regex: /\bPb\b(?![⁺²\^+-])/i },
+      { sym: 'Al', regex: /\bAl\b(?![⁺³\^+-])/i },
+      { sym: 'Zn', regex: /\bZn\b(?![⁺²\^+-])/i },
+      { sym: 'Cu', regex: /\bCu\b(?![⁺²\^+-])/i },
+      { sym: 'Fe', regex: /\bFe\b(?![⁺²³\^+-])/i },
+      { sym: 'Ca', regex: /\bCa\b(?![⁺²\^+-])/i },
+      { sym: 'Ba', regex: /\bBa\b(?![⁺²\^+-])/i },
+      { sym: 'Mg', regex: /\bMg\b(?![⁺²\^+-])/i },
+      { sym: 'Na', regex: /\bNa\b(?![⁺\^+-])/i },
+      { sym: 'SO4', regex: /\bSO4\b(?![⁻²\^+-])/i },
+      { sym: 'SO3', regex: /\bSO3\b(?![⁻²\^+-])/i },
+      { sym: 'CO3', regex: /\bCO3\b(?![⁻²\^+-])/i },
+      { sym: 'NO3', regex: /\bNO3\b(?![⁻\^+-])/i },
+      { sym: 'Cl', regex: /\bCl\b(?![⁻\^+-])/i },
+      { sym: 'Br', regex: /\bBr\b(?![⁻\^+-])/i }
+    ];
+
+    if (!hasAnyCharge) {
+      bareSymbolPatterns.forEach(b => {
+        if (b.regex.test(text)) {
+          missingChargeSymbols.push(b.sym);
+        }
+      });
+    }
+
+    return {
+      ions: [...new Set(ions)],
+      hasCharge: hasAnyCharge,
+      missingChargeSymbols: [...new Set(missingChargeSymbols)],
+      raw: text
+    };
+  }
+
+  function detectContradictoryIons(testKey, salt, inferredIons, obsText) {
+    const contradictions = [];
+    const obsLower = (obsText || '').toLowerCase();
+    const isWhiteOrColorless = obsLower.includes('white') || obsLower.includes('colorless') || obsLower.includes('colourless');
+
+    // 1. Colored ions inferred on white precipitate or colorless solution
+    if (isWhiteOrColorless) {
+      if (inferredIons.includes('cu2+')) {
+        contradictions.push({ ion: 'Cu²⁺', reason: 'Cu²⁺ forms blue precipitate / solution, which contradicts white/colorless observation' });
+      }
+      if (inferredIons.includes('fe2+')) {
+        contradictions.push({ ion: 'Fe²⁺', reason: 'Fe²⁺ forms dirty-green precipitate, which contradicts white/colorless observation' });
+      }
+      if (inferredIons.includes('fe3+')) {
+        contradictions.push({ ion: 'Fe³⁺', reason: 'Fe³⁺ forms reddish-brown precipitate, which contradicts white/colorless observation' });
+      }
+    }
+
+    // 2. Both Fe²⁺ and Fe³⁺ inferred together in a single test
+    if (inferredIons.includes('fe2+') && inferredIons.includes('fe3+')) {
+      contradictions.push({ ion: 'Fe²⁺ / Fe³⁺', reason: 'Fe²⁺ and Fe³⁺ are contradictory, mutually exclusive oxidation states' });
+    }
+
+    // 3. Zn²⁺ inferred when precipitate is insoluble in excess NH₃
+    if (testKey === 'nh3') {
+      const isInsolubleInExcess = obsLower.includes('insoluble in excess') || (obsLower.includes('insoluble') && !obsLower.includes('dissolv'));
+      if (isInsolubleInExcess && inferredIons.includes('zn2+')) {
+        contradictions.push({ ion: 'Zn²⁺', reason: 'Zn²⁺ precipitate readily dissolves in excess aqueous NH₃ to form [Zn(NH₃)₄]²⁺' });
+      }
+    }
+
+    // 4. BaCl2: SO4²⁻ inferred when precipitate dissolved or no ppt formed
+    if (testKey === 'bacl2') {
+      const noPpt = obsLower.includes('no ppt') || obsLower.includes('no precipitate') || obsLower.includes('no visible');
+      const dissolved = obsLower.includes('dissolv') || obsLower.includes('soluble in');
+      if ((noPpt || dissolved) && inferredIons.includes('so42-')) {
+        contradictions.push({ ion: 'SO₄²⁻', reason: 'BaSO₄ precipitate is completely insoluble in dilute hydrochloric acid' });
+      }
+    }
+
+    // 5. AgNO3: Halides inferred when no precipitate formed
+    if (testKey === 'agno3') {
+      const noPpt = obsLower.includes('no ppt') || obsLower.includes('no precipitate') || obsLower.includes('no visible');
+      if (noPpt && (inferredIons.includes('cl-') || inferredIons.includes('br-') || inferredIons.includes('i-'))) {
+        contradictions.push({ ion: 'Halide (Cl⁻/Br⁻/I⁻)', reason: 'Silver halides form insoluble precipitates with aqueous AgNO₃' });
+      }
+    }
+
+    // 6. KI: Pb²⁺ inferred when no precipitate formed
+    if (testKey === 'ki') {
+      const noPpt = obsLower.includes('no ppt') || obsLower.includes('no precipitate') || obsLower.includes('no visible');
+      if (noPpt && inferredIons.includes('pb2+')) {
+        contradictions.push({ ion: 'Pb²⁺', reason: 'Pb²⁺ forms a bright canary-yellow precipitate of PbI₂ with KI' });
+      }
+    }
+
+    return contradictions;
+  }
+
+  function evaluateObservationAccuracy(test, salt, obsText) {
+    const raw = (obsText || '').trim();
+    const lower = raw.toLowerCase();
+    const notes = [];
+    const warnings = [];
+    let score = 0.0;
+    const maxScore = 0.55;
+
+    if (!raw) {
+      return { score: 0.0, maxScore, notes: ['❌ Observation area left blank.'], warnings: [], tabooPenalty: false, expectedText: '' };
+    }
+
+    const saltKeyToUse = salt ? (salt.key || currentSaltKey) : currentSaltKey;
+    const correctKey = test.correct ? test.correct[saltKeyToUse] : null;
+    const correctOpt = (correctKey && test.options) ? test.options.find(o => o.key === correctKey) : null;
+    const expectedText = correctOpt ? correctOpt.text : (test.procedure || '');
+    const expLower = expectedText.toLowerCase();
+
+    // Taboo phrases
+    let tabooPenalty = false;
+    if (/white solution/i.test(raw)) {
+      tabooPenalty = true;
+      notes.push('🚨 KNEC Penalty: Never write "white solution" (-0.5 Mk). Use "white precipitate" or "colorless solution".');
+    }
+
+    // Warnings
+    if (/gas (evolved|produced|given off)/i.test(raw) && !/(effervescence|limewater|litmus|ammonia|pungent|choking|brown|relight|pop)/i.test(raw)) {
+      warnings.push('⚠️ KNEC Warning: State specific gas properties (e.g. effervescence, limewater milky, litmus change).');
+    }
+    if (/(precipitate|ppt)/i.test(raw) && !/(excess|soluble|insoluble|dissolv)/i.test(raw) && ['naoh','nh3','agno3'].includes(test.key)) {
+      warnings.push('⚠️ KNEC Warning: Always specify precipitate solubility in excess reagent.');
+    }
+    if (/clear solution/i.test(raw) && !/colorless|colourless/i.test(raw)) {
+      warnings.push('💡 KNEC Tip: A colored solution can be clear; if it looks like water, write "colorless solution".');
+    }
+
+    // Reaction Ground-Truth Matching
+    if (test.key === 'heat_solid') {
+      if (expLower.includes('sublime') || expLower.includes('dense white fumes')) {
+        if (lower.includes('sublime') || lower.includes('white fumes') || lower.includes('deposit')) score = 0.55;
+        else if (lower.length > 5) score = 0.25;
+      } else if (expLower.includes('brown fumes') || expLower.includes('no₂') || expLower.includes('no2')) {
+        if (lower.includes('brown') || lower.includes('fumes') || lower.includes('relight') || lower.includes('rekindl')) score = 0.55;
+        else if (lower.includes('water') || lower.includes('droplet')) score = 0.35;
+      } else if (expLower.includes('blue') && expLower.includes('white')) {
+        if ((lower.includes('blue') || lower.includes('white')) && (lower.includes('droplet') || lower.includes('water') || lower.includes('condens'))) score = 0.55;
+        else if (lower.includes('water') || lower.includes('droplet')) score = 0.35;
+      } else if (expLower.includes('yellow when hot') || expLower.includes('zno')) {
+        if (lower.includes('yellow') && (lower.includes('hot') || lower.includes('cool') || lower.includes('white'))) score = 0.55;
+        else if (lower.includes('yellow')) score = 0.35;
+      } else if (expLower.includes('choking') || expLower.includes('so₂') || expLower.includes('so2')) {
+        if (lower.includes('choking') || lower.includes('pungent') || lower.includes('so2') || lower.includes('green') || lower.includes('brown')) score = 0.55;
+        else if (lower.includes('water') || lower.includes('droplet')) score = 0.35;
+      } else if (expLower.includes('decomposes completely') || expLower.includes('alkaline')) {
+        if (lower.includes('ammonia') || lower.includes('litmus blue') || lower.includes('no residue')) score = 0.55;
+        else score = 0.35;
+      } else {
+        // Thermally stable (no change / crackles)
+        if (lower.includes('no change') || lower.includes('unchanged') || lower.includes('no gas') || lower.includes('crackle') || lower.includes('melts')) score = 0.55;
+        else if (!lower.includes('fumes') && !lower.includes('brown')) score = 0.35;
+      }
+    } else if (test.key === 'flame') {
+      const flameExpected = expLower.includes('golden yellow') ? 'yellow'
+        : expLower.includes('lilac') ? 'lilac'
+        : expLower.includes('brick-red') ? 'brick-red'
+        : expLower.includes('blue-green') ? 'blue-green'
+        : expLower.includes('pale blue-white') ? 'pale blue'
+        : 'no colour';
+
+      if (flameExpected === 'no colour') {
+        if (lower.includes('no char') || lower.includes('no color') || lower.includes('no colour') || lower.includes('none')) score = 0.55;
+        else score = 0.0;
+      } else {
+        if (lower.includes(flameExpected) || (flameExpected === 'brick-red' && (lower.includes('red') || lower.includes('crimson'))) || (flameExpected === 'lilac' && lower.includes('violet'))) {
+          score = 0.55;
+        } else if (lower.includes('flame')) {
+          score = 0.20;
+        }
+      }
+    } else {
+      // Precipitation & Solution Tests (naoh, nh3, hcl, agno3, bacl2, ki, brown_ring)
+      const hasExpectedPpt = expLower.includes('ppt') || expLower.includes('precipitate') || expLower.includes('ring');
+      const studentPpt = lower.includes('ppt') || lower.includes('precipitate') || lower.includes('ring');
+
+      if (!hasExpectedPpt) {
+        // Expected is NO precipitate / NO visible reaction / Effervescence
+        const isEffervescenceExpected = expLower.includes('effervescence') || expLower.includes('bubbl') || expLower.includes('gas');
+        if (isEffervescenceExpected) {
+          if (lower.includes('effervescence') || lower.includes('bubbl') || lower.includes('gas') || lower.includes('milky') || lower.includes('green')) {
+            score = 0.55;
+          } else {
+            score = 0.20;
+          }
+        } else {
+          if (studentPpt) {
+            score = 0.0;
+            notes.push('❌ Incorrect observation: No precipitate forms in this reaction.');
+          } else if (lower.includes('no ppt') || lower.includes('no precipitate') || lower.includes('no visible') || lower.includes('colorless') || lower.includes('colourless') || lower.includes('remains')) {
+            score = 0.55;
+          } else {
+            score = 0.35;
+          }
+        }
+      } else {
+        // Expected HAS precipitate
+        if (lower.includes('no ppt') || lower.includes('no precipitate') || lower.includes('no visible')) {
+          score = 0.0;
+          notes.push('❌ Incorrect observation: A precipitate should form in this test.');
+        } else {
+          const expColor = expLower.includes('blue') ? 'blue'
+            : expLower.includes('green') ? 'green'
+            : expLower.includes('reddish-brown') || expLower.includes('brown') ? 'brown'
+            : expLower.includes('yellow') ? 'yellow'
+            : expLower.includes('cream') ? 'cream'
+            : 'white';
+
+          const colorMatches = lower.includes(expColor) || (expColor === 'brown' && lower.includes('red'));
+
+          if (['naoh', 'nh3'].includes(test.key)) {
+            const expSolubleInExcess = expLower.includes('soluble in excess') || expLower.includes('dissolves in excess');
+            const expInsolubleInExcess = expLower.includes('insoluble in excess');
+            const studentSoluble = lower.includes('soluble in excess') || lower.includes('dissolves in excess') || lower.includes('dissolve in excess');
+            const studentInsoluble = lower.includes('insoluble in excess') || (lower.includes('insoluble') && !lower.includes('dissolv'));
+
+            if (colorMatches && ((expSolubleInExcess && studentSoluble) || (expInsolubleInExcess && studentInsoluble))) {
+              score = 0.55;
+            } else if (colorMatches) {
+              score = 0.35; // Dropped marks for missing or inaccurate excess
+              notes.push('⚠️ Partial credit: State precipitate behavior in excess reagent accurately.');
+            } else if (studentSoluble || studentInsoluble) {
+              score = 0.25;
+            } else {
+              score = 0.15;
+            }
+          } else {
+            if (colorMatches && studentPpt) {
+              score = 0.55;
+            } else if (studentPpt) {
+              score = 0.35;
+            } else {
+              score = 0.15;
+            }
+          }
+        }
+      }
+    }
+
+    if (tabooPenalty) {
+      score = Math.max(0.0, score - 0.5);
+    }
+
+    if (score >= 0.55) {
+      notes.push(`✅ Accurate observation recorded (+${score.toFixed(2)} Mk).`);
+    } else if (score > 0) {
+      notes.push(`⚠️ Partially accurate observation (+${score.toFixed(2)} Mk).`);
+    }
+
+    return {
+      score: parseFloat(score.toFixed(2)),
+      maxScore,
+      notes,
+      warnings,
+      tabooPenalty,
+      expectedText
+    };
+  }
+
+  function evaluateInferenceAccuracy(test, salt, infText, obsText) {
+    const raw = (infText || '').trim();
+    const notes = [];
+    let score = 0.0;
+    const maxScore = 0.55;
+
+    if (!raw) {
+      return { score: 0.0, maxScore, notes: ['❌ Inference area left blank.'], ciPenalty: 0.0, chargePenalty: 0.0, contradictions: [] };
+    }
+
+    const parsed = parseInferredIons(raw);
+    const contradictions = detectContradictoryIons(test.key, salt, parsed.ions, obsText);
+    const saltCation = salt ? (salt.cation || '').toLowerCase().replace(/[^a-z0-9]/g, '') : '';
+    const saltAnion = salt ? (salt.anion || '').toLowerCase().replace(/[^a-z0-9]/g, '') : '';
+    const lower = raw.toLowerCase();
+
+    // Base Inference Evaluation
+    if (test.key === 'naoh') {
+      const amphotericCations = ['pb2+', 'al3+', 'zn2+'];
+      const isAmphotericSalt = amphotericCations.includes(saltCation);
+      if (isAmphotericSalt) {
+        const amphoCount = amphotericCations.filter(c => parsed.ions.includes(c)).length;
+        if (amphoCount === 3) score = 0.55;
+        else if (amphoCount === 2) score = 0.38;
+        else if (amphoCount === 1) score = 0.20;
+        else if (lower.includes('amphoteric')) score = 0.35;
+      } else if (parsed.ions.includes(saltCation)) {
+        score = 0.55;
+      } else if (['na+', 'k+'].includes(saltCation) && (lower.includes('absent') || lower.includes('na') || lower.includes('k'))) {
+        score = 0.55;
+      }
+    } else if (test.key === 'nh3') {
+      if (saltCation === 'zn2+') {
+        if (parsed.ions.includes('zn2+')) score = 0.55;
+      } else if (['pb2+', 'al3+'].includes(saltCation)) {
+        const hasInsol = parsed.ions.includes('pb2+') || parsed.ions.includes('al3+');
+        if (hasInsol && !parsed.ions.includes('zn2+')) score = 0.55;
+        else if (hasInsol) score = 0.35;
+      } else if (parsed.ions.includes(saltCation)) {
+        score = 0.55;
+      } else if (lower.includes('absent')) {
+        score = 0.55;
+      }
+    } else if (test.key === 'flame') {
+      if (['na+', 'k+', 'ca2+', 'cu2+'].includes(saltCation)) {
+        if (parsed.ions.includes(saltCation)) score = 0.55;
+      } else {
+        if (lower.includes('absent') || lower.includes('na') || lower.includes('k')) score = 0.55;
+      }
+    } else if (test.key === 'bacl2') {
+      if (['so42-', 'so32-'].includes(saltAnion)) {
+        if (parsed.ions.includes(saltAnion)) score = 0.55;
+      } else {
+        if (lower.includes('absent') || lower.includes('so4') || lower.includes('so3')) score = 0.55;
+      }
+    } else if (test.key === 'agno3') {
+      if (['cl-', 'br-', 'i-', 'so32-'].includes(saltAnion)) {
+        if (parsed.ions.includes(saltAnion)) score = 0.55;
+      } else {
+        if (lower.includes('absent') || lower.includes('cl') || lower.includes('halide')) score = 0.55;
+      }
+    } else if (test.key === 'ki') {
+      if (saltCation === 'pb2+') {
+        if (parsed.ions.includes('pb2+')) score = 0.55;
+      } else {
+        if (lower.includes('absent') || lower.includes('pb')) score = 0.55;
+      }
+    } else if (test.key === 'brown_ring') {
+      if (saltAnion === 'no3-') {
+        if (parsed.ions.includes('no3-')) score = 0.55;
+      } else {
+        if (lower.includes('absent') || lower.includes('no3')) score = 0.55;
+      }
+    } else if (test.key === 'hcl') {
+      if (['co32-', 'so32-'].includes(saltAnion) || saltCation === 'pb2+') {
+        if (parsed.ions.includes(saltAnion) || parsed.ions.includes(saltCation)) score = 0.55;
+      } else {
+        if (lower.includes('absent') || lower.includes('co3') || lower.includes('so3')) score = 0.55;
+      }
+    } else if (test.key === 'heat_solid') {
+      if (lower.includes('water') || lower.includes('hydrat') || lower.includes('crystalliz')) score = 0.55;
+      else if (lower.includes('no3') || lower.includes('nitrate')) score = 0.55;
+      else if (lower.includes('nh4') || lower.includes('ammonium') || lower.includes('sublim')) score = 0.55;
+      else if (lower.includes('co3') || lower.includes('carbonate') || lower.includes('stable')) score = 0.55;
+      else if (lower.includes('so4') || lower.includes('so3') || lower.includes('zn')) score = 0.55;
+      else score = 0.35;
+    }
+
+    // Fallback: if student correctly mentioned true cation or true anion
+    if (score === 0.0) {
+      if (parsed.ions.includes(saltCation) || parsed.ions.includes(saltAnion)) {
+        score = 0.45;
+      } else if (lower.includes('present') && parsed.ions.length > 0) {
+        score = 0.20;
+      }
+    }
+
+    // Penalties
+    let ciPenalty = 0.0;
+    if (contradictions.length > 0) {
+      ciPenalty = Math.min(1.0, contradictions.length * 0.5);
+      score = Math.max(0.0, score - ciPenalty);
+      contradictions.forEach(c => {
+        notes.push(`🚨 KNEC Deduction (-0.5 Mk): Contradictory ion ${c.ion} inferred. ${c.reason}.`);
+      });
+    }
+
+    let chargePenalty = 0.0;
+    if (score > 0 && parsed.missingChargeSymbols.length > 0) {
+      chargePenalty = 0.5;
+      score = Math.max(0.0, score - chargePenalty);
+      notes.push(`⚠️ Ionic Charge Penalty (-0.5 Mk): Element symbol(s) ${parsed.missingChargeSymbols.join(', ')} written without ionic charge notation.`);
+    }
+
+    if (score >= 0.55) {
+      notes.push(`✅ Accurate deduction recorded (+${score.toFixed(2)} Mk).`);
+    } else if (score > 0 && ciPenalty === 0 && chargePenalty === 0) {
+      notes.push(`⚠️ Partially accurate deduction (+${score.toFixed(2)} Mk).`);
+    }
+
+    return {
+      score: parseFloat(score.toFixed(2)),
+      maxScore,
+      notes,
+      ciPenalty,
+      chargePenalty,
+      contradictions,
+      missingChargeSymbols: parsed.missingChargeSymbols
+    };
+  }
+
+  function onCandidateTextChange(testKey) {
+    if (typeof document === 'undefined') return;
+    const obsElem = document.getElementById(`obs_${testKey}`);
+    const infElem = document.getElementById(`inf_${testKey}`);
+    const obsFeedback = document.getElementById(`obsFeedback_${testKey}`);
+    const infFeedback = document.getElementById(`infFeedback_${testKey}`);
+
+    const obsVal = (obsElem ? obsElem.value : '').trim();
+    const infVal = (infElem ? infElem.value : '').trim();
+    const salt = SALTS[currentSaltKey] || {};
+
+    // Live Observation Feedback
+    if (obsFeedback) {
+      const obsLines = [];
+      if (/white solution/i.test(obsVal)) {
+        obsLines.push('<div class="feedback-line penalty">🚨 KNEC Penalty: Never write "white solution" (-0.5 Mk). Use "white precipitate" or "colorless solution".</div>');
+      }
+      if (/gas (evolved|produced|given off)/i.test(obsVal) && !/(effervescence|limewater|litmus|ammonia|pungent|choking|brown|relight|pop)/i.test(obsVal)) {
+        obsLines.push('<div class="feedback-line warning">⚠️ State specific gas properties (effervescence, odor, color, litmus/limewater test).</div>');
+      }
+      if (/(precipitate|ppt)/i.test(obsVal) && !/(excess|soluble|insoluble|dissolv)/i.test(obsVal) && ['naoh','nh3','agno3'].includes(testKey)) {
+        obsLines.push('<div class="feedback-line info">💡 Tip: Always specify precipitate solubility in excess reagent.</div>');
+      }
+      obsFeedback.innerHTML = obsLines.join('');
+    }
+
+    // Live Inference Feedback
+    if (infFeedback) {
+      const infLines = [];
+      if (infVal) {
+        const parsed = parseInferredIons(infVal);
+        if (parsed.missingChargeSymbols.length > 0) {
+          infLines.push(`<div class="feedback-line warning">⚠️ Missing charge: Element symbol written without ionic charge (e.g. ${parsed.missingChargeSymbols.join(', ')}) forfeits inference marks (-0.5 Mk).</div>`);
+        }
+        const contras = detectContradictoryIons(testKey, salt, parsed.ions, obsVal);
+        if (contras.length > 0) {
+          const cIons = contras.map(c => c.ion).join(', ');
+          infLines.push(`<div class="feedback-line penalty">🚨 Contradictory Ion: Inferring ${cIons} contradicts observation (-0.5 Mk).</div>`);
+        }
+      }
+      infFeedback.innerHTML = infLines.join('');
+    }
+  }
+
   function saveTextState(testKey) {
     const obsElem = document.getElementById(`obs_${testKey}`);
     const infElem = document.getElementById(`inf_${testKey}`);
@@ -549,6 +1041,7 @@ requireStudentLogin();
     if (obsElem) testStates[testKey].obsText = obsElem.value;
     if (infElem) testStates[testKey].infText = infElem.value;
     updateProgress();
+    onCandidateTextChange(testKey);
   }
 
   function renderGrid() {
@@ -809,10 +1302,10 @@ requireStudentLogin();
                 <thead>
                   <tr>
                     <th style="width:50%;">
-                      <span class="sci-tooltip">Observations <span class="sci-tip-text">Observations: Record sharp visual changes — color, effervescence, precipitate formation, or dissolving in excess.</span></span> (0.7 Mark)
+                      <span class="sci-tooltip">Observations <span class="sci-tip-text">Observations: Record sharp visual changes — color, effervescence, precipitate formation, or dissolving in excess.</span></span> (0.55 Mark)
                     </th>
                     <th style="width:50%;">
-                      <span class="sci-tooltip">Inferences <span class="sci-tip-text">Inferences: Deduce present/absent ions (e.g. Cu²⁺, Fe²⁺, Fe³⁺, Al³⁺, Zn²⁺, Pb²⁺, SO₄²⁻, CO₃²⁻, Cl⁻, NO₃⁻).</span></span> (0.7 Mark)
+                      <span class="sci-tooltip">Inferences <span class="sci-tip-text">Inferences: Deduce present/absent ions (e.g. Cu²⁺, Fe²⁺, Fe³⁺, Al³⁺, Zn²⁺, Pb²⁺, SO₄²⁻, CO₃²⁻, Cl⁻, NO₃⁻).</span></span> (0.55 Mark)
                     </th>
                   </tr>
                 </thead>
@@ -825,6 +1318,7 @@ requireStudentLogin();
                       <div class="suggestion-chips-container">
                         ${getObsSuggestionChips(test.key)}
                       </div>
+                      <div id="obsFeedback_${test.key}" class="live-feedback-strip"></div>
                     </td>
 
                     <td>
@@ -834,6 +1328,7 @@ requireStudentLogin();
                       <div class="suggestion-chips-container">
                         ${getInfSuggestionChips(test.key)}
                       </div>
+                      <div id="infFeedback_${test.key}" class="live-feedback-strip"></div>
                     </td>
                   </tr>
                 </tbody>
@@ -842,6 +1337,10 @@ requireStudentLogin();
           </div>
         </div>`;
     }).join('');
+
+    TESTS.forEach(test => {
+      onCandidateTextChange(test.key);
+    });
   }
 
   /* ══════════════════════════════════════
@@ -1700,7 +2199,7 @@ requireStudentLogin();
         if (infElem && infElem.value.trim()) testStates[test.key].infText = infElem.value.trim();
       });
 
-      // 2. Build rich observations array
+      // 2. Build rich observations array with KNEC scoring
       const observations = TESTS.map(test => {
         const st = testStates[test.key];
         const isPerformed = Boolean(st && (st.performed || st.stage || (st.obsText && st.obsText.trim())));
@@ -1719,6 +2218,9 @@ requireStudentLogin();
         const userObs = (st.obsText || '').trim();
         const userInf = (st.infText || '').trim();
 
+        const obsEval = evaluateObservationAccuracy(test, salt, userObs);
+        const infEval = evaluateInferenceAccuracy(test, salt, userInf, userObs);
+
         let finalObs = userObs || benchObs;
         if (userInf) {
           finalObs += ` (Inference: ${userInf})`;
@@ -1726,10 +2228,14 @@ requireStudentLogin();
 
         return {
           test: test.label,
+          testKey: test.key,
           observation: finalObs,
           benchObservation: benchObs,
           studentObservation: userObs,
           studentInference: userInf,
+          obsScore: obsEval.score,
+          infScore: infEval.score,
+          totalItemScore: parseFloat((obsEval.score + infEval.score).toFixed(2)),
           performed: true
         };
       });
@@ -1737,13 +2243,9 @@ requireStudentLogin();
       const testsPerformedCount = Object.keys(testStates).filter(k => testStates[k] && (testStates[k].performed || testStates[k].stage)).length;
 
       let testsCorrectCount = 0;
-      TESTS.forEach(test => {
-        const st = testStates[test.key];
-        if (st && (st.performed || st.stage)) {
-          const uObs = (st.obsText || '').trim().toLowerCase();
-          if (!uObs || !uObs.includes('white solution')) {
-            testsCorrectCount++;
-          }
+      observations.forEach(o => {
+        if (o.performed && (o.obsScore >= 0.35 || o.infScore >= 0.35)) {
+          testsCorrectCount++;
         }
       });
 
@@ -2130,66 +2632,64 @@ requireStudentLogin();
   window.evaluateKnecMarking = function() {
     let totalScore = 0;
     const feedbackItems = [];
+    const salt = SALTS[currentSaltKey] || {};
+    let totalCiPenalties = 0;
+    let totalChargePenalties = 0;
+    let totalTabooPenalties = 0;
 
     TESTS.forEach((test, idx) => {
       const st = testStates[test.key] || {};
       const obsText = (st.obsText || '').trim();
       const infText = (st.infText || '').trim();
 
-      let itemScore = 0;
-      const notes = [];
+      const obsResult = evaluateObservationAccuracy(test, salt, obsText);
+      const infResult = evaluateInferenceAccuracy(test, salt, infText, obsText);
 
-      if (!st.performed) {
-        notes.push('⚠️ Test not performed yet.');
-      } else {
-        if (!obsText) {
-          notes.push('❌ Observation area left blank.');
-        } else {
-          if (/white solution/i.test(obsText)) {
-            notes.push('🚨 KNEC Penalty: Never write "white solution" (-0.5). Use "white precipitate" or "colorless solution".');
-            itemScore = Math.max(0, itemScore - 0.5);
-          }
-          if (/gas (evolved|produced|given off)/i.test(obsText) && !/(effervescence|limewater|litmus|ammonia|pungent|choking|brown)/i.test(obsText)) {
-            notes.push('⚠️ KNEC Warning: State specific gas properties (e.g. effervescence, turns limewater milky).');
-          }
-          if (/(precipitate|ppt)/i.test(obsText) && !/(excess|soluble|insoluble)/i.test(obsText) && ['naoh','nh3','agno3'].includes(test.key)) {
-            notes.push('⚠️ KNEC Warning: Always specify excess reagent behavior or solubility in aqueous NH₃.');
-          }
-          itemScore += 0.55;
-          notes.push('✅ Observation recorded accurately (+0.55 mark).');
-        }
+      if (obsResult.tabooPenalty) totalTabooPenalties += 0.5;
+      if (infResult.ciPenalty) totalCiPenalties += infResult.ciPenalty;
+      if (infResult.chargePenalty) totalChargePenalties += infResult.chargePenalty;
 
-        if (!infText) {
-          notes.push('❌ Inference area left blank.');
-        } else {
-          itemScore += 0.55;
-          notes.push('✅ Inference recorded accurately (+0.55 mark).');
-        }
-      }
+      const testMark = parseFloat((obsResult.score + infResult.score).toFixed(2));
+      totalScore += testMark;
 
-      totalScore += itemScore;
       feedbackItems.push({
         testLabel: test.label,
-        score: Math.min(1.1, itemScore),
-        maxItemScore: 1.1,
-        notes
+        testKey: test.key,
+        stepLetter: String.fromCharCode(97 + idx),
+        score: testMark,
+        maxItemScore: 1.10,
+        obsScore: obsResult.score,
+        infScore: infResult.score,
+        obsText: obsText || '(None recorded)',
+        infText: infText || '(None recorded)',
+        expectedObs: obsResult.expectedText,
+        obsNotes: obsResult.notes,
+        obsWarnings: obsResult.warnings,
+        infNotes: infResult.notes,
+        ciPenalty: infResult.ciPenalty,
+        chargePenalty: infResult.chargePenalty,
+        tabooPenalty: obsResult.tabooPenalty
       });
     });
 
     const finalScore = Math.min(10.0, Math.max(0, totalScore)).toFixed(1);
-    openKnecEvalModal(finalScore, feedbackItems);
+    openKnecEvalModal(finalScore, feedbackItems, {
+      totalCiPenalties: parseFloat(totalCiPenalties.toFixed(1)),
+      totalChargePenalties: parseFloat(totalChargePenalties.toFixed(1)),
+      totalTabooPenalties: parseFloat(totalTabooPenalties.toFixed(1))
+    });
   };
 
-  function openKnecEvalModal(finalScore, feedbackItems) {
+  function openKnecEvalModal(finalScore, feedbackItems, penalties = {}) {
     const q2Score = Math.min(15.0, Math.round((parseFloat(finalScore) * 1.5) * 10) / 10);
     window.currentQualScore = q2Score;
-    if (window.parent && window.parent !== window) {
+    if (typeof window !== 'undefined' && window.parent && window.parent !== window) {
       try {
         window.parent.postMessage({
           type: 'VLK_Q_SCORED',
           qNum: 2,
           score: q2Score,
-          details: { finalScore, feedbackItems }
+          details: { finalScore, feedbackItems, penalties }
         }, '*');
       } catch(e) {}
     }
@@ -2199,28 +2699,96 @@ requireStudentLogin();
     const resBox = document.getElementById('knecEvalResults');
     if (!resBox) return;
 
-    const grade = finalScore >= 8.5 ? 'A (Excellent KCSE Standard)' : finalScore >= 6.5 ? 'B (Good Practical Record)' : finalScore >= 4.5 ? 'C (Passable)' : 'D (Needs Revision)';
-    const gradeColor = finalScore >= 8.5 ? 'var(--green-accent)' : finalScore >= 6.5 ? 'var(--blue-accent)' : 'var(--amber-accent)';
+    const numScore = parseFloat(finalScore);
+    const grade = numScore >= 8.5 ? 'A (Excellent KCSE Distinction Standard)' 
+                : numScore >= 6.5 ? 'B (Good Practical Recording)' 
+                : numScore >= 4.5 ? 'C (Average Practical Competence)' 
+                : 'D (Below KCSE Standard - Needs Revision)';
+    const gradeColor = numScore >= 8.5 ? 'var(--green-accent)' 
+                     : numScore >= 6.5 ? 'var(--blue-accent)' 
+                     : numScore >= 4.5 ? 'var(--amber-accent)' 
+                     : 'var(--red-accent)';
 
     resBox.innerHTML = `
-      <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:14px; padding:18px; margin-bottom:20px; text-align:center;">
-        <div style="font-size:0.82rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; font-weight:700;">Total Practical Performance Score</div>
-        <div style="font-family:var(--font-heading); font-size:2.4rem; font-weight:800; color:${gradeColor}; margin:4px 0;">${finalScore} / 10.0</div>
-        <div style="font-size:0.9rem; font-weight:700; color:${gradeColor};">${grade}</div>
+      <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:14px; padding:20px; margin-bottom:20px; text-align:center;">
+        <div style="font-size:0.82rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; font-weight:800;">Official KNEC Paper 3 Question 2 Performance</div>
+        <div style="display:flex; align-items:center; justify-content:center; gap:24px; margin:10px 0;">
+          <div>
+            <div style="font-family:var(--font-heading); font-size:2.6rem; font-weight:800; color:${gradeColor}; line-height:1;">${finalScore} <span style="font-size:1.3rem; color:var(--text-muted); font-weight:600;">/ 10.0</span></div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Raw Rubric Score</div>
+          </div>
+          <div style="width:1px; height:44px; background:var(--card-border);"></div>
+          <div>
+            <div style="font-family:var(--font-heading); font-size:2.6rem; font-weight:800; color:var(--purple-accent); line-height:1;">${q2Score.toFixed(1)} <span style="font-size:1.3rem; color:var(--text-muted); font-weight:600;">/ 15.0</span></div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">KNEC Scaled Q2 Marks</div>
+          </div>
+        </div>
+        <div style="display:inline-block; font-size:0.88rem; font-weight:800; color:${gradeColor}; background:var(--card-bg); padding:4px 14px; border-radius:20px; border:1px solid var(--card-border);">${grade}</div>
+
+        <!-- Penalty Badges Row -->
+        <div style="display:flex; justify-content:center; gap:10px; margin-top:14px; flex-wrap:wrap;">
+          <span style="font-size:0.76rem; font-weight:700; padding:4px 10px; border-radius:6px; background:${penalties.totalCiPenalties > 0 ? 'var(--red-bg)' : 'var(--card-bg)'}; color:${penalties.totalCiPenalties > 0 ? 'var(--red-accent)' : 'var(--text-muted)'}; border:1px solid var(--card-border);">
+            ${penalties.totalCiPenalties > 0 ? '🚨' : '✅'} Contradictory Ion Deductions: -${penalties.totalCiPenalties || 0} Mk
+          </span>
+          <span style="font-size:0.76rem; font-weight:700; padding:4px 10px; border-radius:6px; background:${penalties.totalChargePenalties > 0 ? 'var(--amber-bg)' : 'var(--card-bg)'}; color:${penalties.totalChargePenalties > 0 ? 'var(--amber-accent)' : 'var(--text-muted)'}; border:1px solid var(--card-border);">
+            ${penalties.totalChargePenalties > 0 ? '⚠️' : '✅'} Missing Charge Deductions: -${penalties.totalChargePenalties || 0} Mk
+          </span>
+          <span style="font-size:0.76rem; font-weight:700; padding:4px 10px; border-radius:6px; background:${penalties.totalTabooPenalties > 0 ? 'var(--red-bg)' : 'var(--card-bg)'}; color:${penalties.totalTabooPenalties > 0 ? 'var(--red-accent)' : 'var(--text-muted)'}; border:1px solid var(--card-border);">
+            ${penalties.totalTabooPenalties > 0 ? '🚨' : '✅'} Taboo Phrase Deductions: -${penalties.totalTabooPenalties || 0} Mk
+          </span>
+        </div>
       </div>
 
-      <div style="display:flex; flex-direction:column; gap:12px;">
+      <!-- Itemized Rubrics List -->
+      <div style="display:flex; flex-direction:column; gap:14px;">
         ${feedbackItems.map(item => `
-          <div style="background:var(--bg-dark); border:1px solid var(--card-border); border-radius:10px; padding:12px 16px;">
-            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
-              <b style="color:var(--heading-color); font-size:0.88rem;">${item.testLabel}</b>
-              <span style="font-family:var(--font-mono); font-size:0.78rem; font-weight:700; color:var(--blue-accent);">${item.score.toFixed(1)} / ${item.maxItemScore} Marks</span>
+          <div style="background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; padding:14px 16px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+              <div>
+                <span style="display:inline-block; font-size:0.75rem; font-weight:800; background:var(--card-bg-hover); padding:2px 6px; border-radius:4px; margin-right:6px;">(${item.stepLetter})</span>
+                <b style="color:var(--heading-color); font-size:0.88rem;">${item.testLabel}</b>
+              </div>
+              <span style="font-family:var(--font-mono); font-size:0.84rem; font-weight:800; color:${item.score >= 0.8 ? 'var(--green-accent)' : item.score >= 0.4 ? 'var(--blue-accent)' : 'var(--red-accent)'}; white-space:nowrap;">${item.score.toFixed(2)} / ${item.maxItemScore.toFixed(2)} Mks</span>
             </div>
-            <ul style="margin:4px 0 0 16px; padding:0; font-size:0.8rem; color:var(--text-muted);">
-              ${item.notes.map(n => `<li style="margin-bottom:3px;">${n}</li>`).join('')}
-            </ul>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:0.8rem;">
+              <!-- Observations Breakdown -->
+              <div style="background:var(--card-bg-hover); padding:10px 12px; border-radius:8px;">
+                <div style="display:flex; justify-content:space-between; font-weight:800; color:var(--text-main); margin-bottom:4px;">
+                  <span>Observations:</span>
+                  <span style="font-family:var(--font-mono); color:var(--blue-accent);">${item.obsScore.toFixed(2)} / 0.55 Mk</span>
+                </div>
+                <div style="color:var(--text-secondary); margin-bottom:4px;"><b>Candidate:</b> "${item.obsText}"</div>
+                <div style="color:var(--text-muted); font-size:0.76rem;"><b>Expected:</b> ${item.expectedObs}</div>
+                ${item.obsNotes.length > 0 ? `
+                  <ul style="margin:6px 0 0 14px; padding:0; font-size:0.75rem; color:var(--text-muted);">
+                    ${item.obsNotes.map(n => `<li style="margin-bottom:2px;">${n}</li>`).join('')}
+                  </ul>` : ''}
+                ${item.obsWarnings.length > 0 ? `
+                  <div style="margin-top:6px; font-size:0.75rem; color:var(--amber-accent);">
+                    ${item.obsWarnings.map(w => `<div>${w}</div>`).join('')}
+                  </div>` : ''}
+              </div>
+
+              <!-- Inferences Breakdown -->
+              <div style="background:var(--card-bg-hover); padding:10px 12px; border-radius:8px;">
+                <div style="display:flex; justify-content:space-between; font-weight:800; color:var(--text-main); margin-bottom:4px;">
+                  <span>Inferences / Deductions:</span>
+                  <span style="font-family:var(--font-mono); color:var(--blue-accent);">${item.infScore.toFixed(2)} / 0.55 Mk</span>
+                </div>
+                <div style="color:var(--text-secondary); margin-bottom:4px;"><b>Candidate:</b> "${item.infText}"</div>
+                ${item.infNotes.length > 0 ? `
+                  <ul style="margin:6px 0 0 14px; padding:0; font-size:0.75rem; color:var(--text-muted);">
+                    ${item.infNotes.map(n => `<li style="margin-bottom:2px;">${n}</li>`).join('')}
+                  </ul>` : ''}
+              </div>
+            </div>
           </div>
         `).join('')}
+      </div>
+
+      <div style="text-align:right; margin-top:16px;">
+        <button class="btn-primary-solid" onclick="closeKnecEvalModal()" style="padding:8px 24px;">Close Mark Sheet</button>
       </div>
     `;
   }
@@ -2253,5 +2821,18 @@ requireStudentLogin();
   }
 
   /* Boot */
-  newSample();
-  initAssignmentBanner();
+  if (typeof document !== 'undefined' && document.getElementById('testGrid')) {
+    newSample();
+    initAssignmentBanner();
+  }
+
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+      SALTS,
+      TESTS,
+      parseInferredIons,
+      detectContradictoryIons,
+      evaluateObservationAccuracy,
+      evaluateInferenceAccuracy
+    };
+  }

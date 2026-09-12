@@ -1397,6 +1397,28 @@ html, body {
   background: var(--red-bg);
   border: 1px solid var(--red-border);
 }
+.feedback-line.warning {
+  color: var(--amber-accent);
+  background: var(--amber-bg);
+  border: 1px solid var(--amber-border);
+}
+.feedback-line.penalty {
+  color: var(--red-accent);
+  background: var(--red-bg);
+  border: 1.5px solid var(--red-border);
+  font-weight: 800;
+}
+.feedback-line.info {
+  color: var(--blue-accent);
+  background: var(--blue-bg);
+  border: 1px solid var(--blue-border);
+}
+.live-feedback-strip {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 6px;
+}
 
 /* ── 9. IDENTIFICATION PANEL ── */
 .id-panel {

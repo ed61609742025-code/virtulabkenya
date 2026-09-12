@@ -268,4 +268,54 @@ describe('KNEC Paper 3 Examination Suite Standards', () => {
     assert.strictEqual(FALLBACK_PRESETS.redox.examConfig.q1.calcType, 'redox_stoichiometry');
   });
 
+  it('should enforce standalone Qualitative Salt Analysis KNEC rubrics, taboo penalties, CI penalties, and CP penalties', () => {
+    const qualEnginePath = path.join(rootDir, 'client', 'student', 'js', 'qualitative-engine.js');
+    const {
+      SALTS,
+      TESTS,
+      parseInferredIons,
+      detectContradictoryIons,
+      evaluateObservationAccuracy,
+      evaluateInferenceAccuracy
+    } = require(qualEnginePath);
+
+    assert.ok(SALTS, 'SALTS dictionary must exist');
+    assert.ok(TESTS, 'TESTS array must exist');
+    assert.strictEqual(TESTS.length, 9, 'Must have all 9 systematic KNEC tests');
+
+    const leadNitrate = SALTS.leadNitrate;
+    const testNaOH = TESTS.find(t => t.key === 'naoh');
+    const testNH3 = TESTS.find(t => t.key === 'nh3');
+
+    // 1. Taboo deduction: writing "white solution" must receive -0.5 penalty
+    const tabooEval = evaluateObservationAccuracy(testNaOH, leadNitrate, 'White solution formed in excess');
+    assert.strictEqual(tabooEval.tabooPenalty, true, 'Must flag taboo term "white solution"');
+    assert.ok(tabooEval.notes.some(n => n.includes('KNEC Penalty')), 'Must include KNEC Penalty note');
+
+    // 2. Accurate observation: "White precipitate, dissolves in excess to form a colorless solution"
+    const accurateObs = evaluateObservationAccuracy(testNaOH, leadNitrate, 'White ppt, soluble in excess to form a colorless solution');
+    assert.strictEqual(accurateObs.score, 0.55, 'Full 0.55 marks awarded for accurate observation with excess behavior');
+    assert.strictEqual(accurateObs.tabooPenalty, false);
+
+    // 3. Omitted excess behavior: partial marks
+    const partialObs = evaluateObservationAccuracy(testNaOH, leadNitrate, 'White ppt formed');
+    assert.strictEqual(partialObs.score, 0.35, 'Partial 0.35 mark awarded when excess behavior is omitted');
+    assert.ok(partialObs.warnings.length > 0, 'Should warn about specifying excess reagent');
+
+    // 4. Missing charge penalty: writing "Pb, Al, Zn" without charges
+    const cpEval = evaluateInferenceAccuracy(testNaOH, leadNitrate, 'Pb, Al, Zn present', 'White ppt, soluble in excess');
+    assert.strictEqual(cpEval.chargePenalty, 0.5, 'Must penalize 0.5 marks for missing ionic charges');
+    assert.ok(cpEval.notes.some(n => n.includes('Ionic Charge Penalty')), 'Must note missing charge penalty');
+
+    // 5. Contradictory ion penalty: candidate includes Cu²⁺ or Fe³⁺ for white ppt
+    const ciEval = evaluateInferenceAccuracy(testNaOH, leadNitrate, 'Pb²⁺, Al³⁺, Zn²⁺, Cu²⁺ present', 'White ppt, soluble in excess');
+    assert.strictEqual(ciEval.ciPenalty, 0.5, 'Must penalize 0.5 marks for contradictory colored ion');
+    assert.ok(ciEval.contradictions.some(c => c.ion === 'Cu²⁺'), 'Must list Cu²⁺ as contradiction');
+
+    // 6. Insoluble in excess NH3: inferring Zn²⁺ is contradictory
+    const ciZnEval = evaluateInferenceAccuracy(testNH3, leadNitrate, 'Pb²⁺, Al³⁺, Zn²⁺ present', 'White ppt, insoluble in excess NH₃');
+    assert.strictEqual(ciZnEval.ciPenalty, 0.5, 'Must penalize 0.5 marks for inferring Zn²⁺ when ppt is insoluble in excess NH₃');
+    assert.ok(ciZnEval.contradictions.some(c => c.ion === 'Zn²⁺'), 'Must identify Zn²⁺ contradiction');
+  });
+
 });

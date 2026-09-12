@@ -137,6 +137,12 @@
       <button id="examTimerBtn" class="btn-secondary" onclick="toggleExamTimer()">
         ⏱️ Start 45-Min Timer
       </button>
+      <button class="btn-secondary" onclick="openExaminerTipsModal()" style="border-color:var(--amber-accent); color:var(--amber-accent);">
+        💡 Examiner Tips
+      </button>
+      <button class="btn-secondary" onclick="evaluateKnecMarking()" style="border-color:var(--green-accent); color:var(--green-accent); font-weight:700;">
+        📋 KNEC Mark Sheet
+      </button>
       <button class="btn-secondary" onclick="openFlowchartModal()">
         🌳 Systematic Flowchart
       </button>
@@ -285,8 +291,9 @@
           <option value="NO3-">NO₃⁻ (Nitrate)</option>
         </select>
       </div>
-      <div class="id-group">
+      <div class="id-group" style="display:flex; gap:8px; align-items:flex-end;">
         <button id="submitIdBtn" class="btn-submit-id" onclick="submitIdentification()" data-i18n="submit_id_btn">Submit Identification</button>
+        <button type="button" class="btn-secondary" onclick="evaluateKnecMarking()" style="border-color:var(--green-accent); color:var(--green-accent); font-weight:700; padding:10px 16px; border-radius:8px; white-space:nowrap;">📋 Mark Sheet</button>
       </div>
     </div>
 
@@ -433,6 +440,58 @@
 
     <!-- Dynamic Flowchart Content -->
     <div id="flowchartContent" style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:10px; padding:18px; color:var(--text-main); font-size:0.85rem; line-height:1.6;">
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     KNEC AUTO-MARKING EVALUATION MODAL
+══════════════════════════════════════ -->
+<div id="knecEvalModal" class="modal-overlay" style="display:none;">
+  <div class="modal-box" style="max-width:880px; padding:24px; max-height:90vh; overflow-y:auto;">
+    <div class="modal-header" style="padding:0 0 14px 0; margin-bottom:16px;">
+      <h2>📋 KNEC Examination Mark Sheet & Technical Rubrics</h2>
+      <button class="modal-close-btn" onclick="closeKnecEvalModal()">&times;</button>
+    </div>
+    <div id="knecEvalResults">
+      <!-- Populated dynamically by evaluateKnecMarking() -->
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     KNEC EXAMINER TIPS & RUBRICS MODAL
+══════════════════════════════════════ -->
+<div id="examinerTipsModal" class="modal-overlay" style="display:none;">
+  <div class="modal-box" style="max-width:820px; padding:24px; max-height:90vh; overflow-y:auto;">
+    <div class="modal-header" style="padding:0 0 14px 0; margin-bottom:16px;">
+      <h2>💡 KNEC 233/3 Senior Examiner Guidelines & Dos/Don'ts</h2>
+      <button class="modal-close-btn" onclick="closeExaminerTipsModal()">&times;</button>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:16px; font-size:0.86rem; line-height:1.6; color:var(--text-main);">
+      <div style="background:var(--card-bg-hover); border-left:4px solid var(--red-accent); padding:12px 16px; border-radius:8px;">
+        <b style="color:var(--red-accent);">🚨 Strict Penalties (Marks Deducted)</b>
+        <ul style="margin:6px 0 0 16px; padding:0;">
+          <li><b>"White Solution":</b> Never write "white solution" (Deduction: -0.5 Mk). Solutions without precipitate are <i>colorless</i>, precipitates are <i>white</i>.</li>
+          <li><b>Missing Ionic Charges:</b> Element symbols written without ionic charges (e.g. <code>Pb</code> instead of <code>Pb²⁺</code>, <code>SO4</code> instead of <code>SO₄²⁻</code>) forfeit the inference mark (-0.5 Mk).</li>
+          <li><b>Contradictory Ions:</b> Claiming colored ions (<code>Cu²⁺</code>, <code>Fe²⁺</code>, <code>Fe³⁺</code>) when a white precipitate was observed, or claiming <code>Zn²⁺</code> when a precipitate is insoluble in aqueous NH₃, incurs an automatic -0.5 to -1.0 mark penalty.</li>
+          <li><b>Vague Gas Observations:</b> "Gas is evolved" without specifying effervescence, odor, color, or reaction with moist litmus / limewater / acidified dichromate will not score.</li>
+        </ul>
+      </div>
+
+      <div style="background:var(--card-bg-hover); border-left:4px solid var(--green-accent); padding:12px 16px; border-radius:8px;">
+        <b style="color:var(--green-accent);">✅ Mandatory Examination Phrases</b>
+        <ul style="margin:6px 0 0 16px; padding:0;">
+          <li><b>Always Specify Excess Reagent:</b> For NaOH(aq) and NH₃(aq), you must write both the initial precipitate AND its behavior in excess (e.g., <i>"White precipitate soluble in excess to form a colorless solution"</i>).</li>
+          <li><b>Distinguish Clear vs Colorless:</b> A solution can be clear blue; if it looks like water, write <i>"colorless solution"</i>.</li>
+          <li><b>Gas Evolution:</b> Write <i>"Effervescence of a colorless, odorless gas that turns calcium hydroxide (limewater) milky"</i> for CO₂.</li>
+          <li><b>Amphoteric Cations:</b> When a white ppt dissolves in excess NaOH, infer <code>Zn²⁺, Al³⁺, Pb²⁺</code>. Differentiate them using aqueous NH₃ and KI.</li>
+        </ul>
+      </div>
+
+      <div style="text-align:right; margin-top:8px;">
+        <button class="btn-primary-solid" onclick="closeExaminerTipsModal()" style="padding:8px 24px;">Got It, Back to Lab</button>
+      </div>
     </div>
   </div>
 </div>

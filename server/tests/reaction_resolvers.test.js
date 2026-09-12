@@ -202,9 +202,31 @@ describe('Qualitative Bench Core (Inorganic Reactions)', () => {
       const res = QualitativeBenchCore.resolveReactionState('zincSulfate', 'heat_solid', 'step1_heat', 'Heat dry solid strongly');
       assert.strictEqual(res.residueColor, '#FACC15', 'Hot ZnO residue is yellow');
       assert.strictEqual(res.waterCondenses, true, 'Water of crystallization condenses');
+
+      const cooled = QualitativeBenchCore.resolveReactionState('zincSulfate', 'heat_solid', 'cooled', 'Heat dry solid');
+      assert.strictEqual(cooled.residueColor, '#FFFFFF', 'Cooled ZnO residue reverts to white');
     });
 
-    it('should generate multi-stage actions: heated at idle and step2_gas_test at heated', () => {
+    it('Pb(NO₃)₂: decrepitation, hot/cold residue (#CA8A04 hot -> #FACC15 cold), and O₂ evolution', () => {
+      const res = QualitativeBenchCore.resolveReactionState('leadNitrate', 'heat_solid', 'step1_heat', 'Heat strongly');
+      assert.strictEqual(res.decrepitates, true, 'Pb(NO3)2 crackles/decrepitates on heating');
+      assert.strictEqual(res.evolvesO2, true, 'Oxygen gas evolved');
+      assert.strictEqual(res.evolvesNO2, true, 'NO2 gas evolved');
+      assert.strictEqual(res.residueColor, '#CA8A04', 'Hot PbO is reddish-brown/orange');
+
+      const cooled = QualitativeBenchCore.resolveReactionState('leadNitrate', 'heat_solid', 'cooled', 'Heat dry solid');
+      assert.strictEqual(cooled.residueColor, '#FACC15', 'Cooled PbO is bright canary yellow');
+    });
+
+    it('(NH₄)₂CO₃: decomposes completely leaving NO residue, evolves alkaline NH₃ and acidic CO₂', () => {
+      const res = QualitativeBenchCore.resolveReactionState('ammoniumCarbonate', 'heat_solid', 'step1_heat', 'Heat strongly');
+      assert.strictEqual(res.decomposesCompletely, true, 'Leaves no residue in tube');
+      assert.strictEqual(res.residueColor, null, 'No solid remains');
+      assert.strictEqual(res.evolvesNH3, true, 'Ammonia evolved');
+      assert.strictEqual(res.evolvesCO2, true, 'CO2 evolved');
+    });
+
+    it('should generate multi-stage actions: heated at idle, step2_gas_test at heated, and cooled at gas_test', () => {
       const idleActions = QualitativeBenchCore.getMultiStageActions('heat_solid', 'Heat solid in hard-glass tube', 'idle');
       assert.strictEqual(idleActions.length, 1);
       assert.ok(idleActions[0].stage === 'heated' || idleActions[0].stage === 'step1_heat');
@@ -214,9 +236,13 @@ describe('Qualitative Bench Core (Inorganic Reactions)', () => {
       assert.strictEqual(heatActions.length, 2);
       assert.strictEqual(heatActions[0].stage, 'step2_gas_test');
       assert.ok(heatActions[1].isRedo || heatActions[1].stage === 'idle');
+
+      const gasActions = QualitativeBenchCore.getMultiStageActions('heat_solid', 'Heat solid in hard-glass tube', 'step2_gas_test');
+      assert.strictEqual(gasActions[0].stage, 'cooled');
+      assert.ok(gasActions[0].label.includes('Cool'));
     });
 
-    it('should render valid hard-glass tube SVG with 35° tilt and Bunsen flame', () => {
+    it('should render valid hard-glass tube SVG with 35° tilt, Bunsen flame, and interactive probes', () => {
       const svg = QualitativeBenchCore.renderApparatusSvg({
         saltKey: 'leadNitrate',
         testId: 'heat_solid',
@@ -227,6 +253,38 @@ describe('Qualitative Bench Core (Inorganic Reactions)', () => {
       assert.ok(svg.includes('<svg'), 'Output must be an SVG element');
       assert.ok(svg.includes('rotate(-35'), 'Hard-glass tube must be tilted at 35 degrees');
       assert.ok(svg.includes('heatWave'), 'Bunsen heating waves must be rendered');
+      assert.ok(svg.includes('anim-decrepitate'), 'Pb(NO3)2 must show decrepitation animation');
+
+      // Test Glowing Splint rekindling on Nitrate
+      const splintSvg = QualitativeBenchCore.renderDryHeatingApparatusSvg({
+        saltKey: 'leadNitrate',
+        stage: 'test_splint',
+        probe: 'glowing_splint'
+      });
+      assert.ok(splintSvg.includes('SPLINT REKINDLES'), 'Glowing splint rekindles in O2');
+
+      // Test Blue Litmus turning red on Nitrate
+      const litmusSvg = QualitativeBenchCore.renderDryHeatingApparatusSvg({
+        saltKey: 'leadNitrate',
+        stage: 'test_gas_blue_litmus',
+        probe: 'blue_litmus'
+      });
+      assert.ok(litmusSvg.includes('TURNED RED'), 'Moist blue litmus turns red with NO2');
+
+      // Test Red Litmus turning blue on Ammonium Carbonate
+      const redLitmusSvg = QualitativeBenchCore.renderDryHeatingApparatusSvg({
+        saltKey: 'ammoniumCarbonate',
+        stage: 'test_gas_red_litmus',
+        probe: 'red_litmus'
+      });
+      assert.ok(redLitmusSvg.includes('TURNED BLUE'), 'Moist red litmus turns blue with NH3');
+
+      // Test Cooling State
+      const cooledSvg = QualitativeBenchCore.renderDryHeatingApparatusSvg({
+        saltKey: 'leadNitrate',
+        stage: 'cooled'
+      });
+      assert.ok(cooledSvg.includes('COOLED'), 'Cooling status badge is rendered');
     });
   });
 

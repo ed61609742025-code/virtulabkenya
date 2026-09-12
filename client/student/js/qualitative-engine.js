@@ -1054,25 +1054,55 @@ if (typeof window !== 'undefined') {
       if (test.key === 'heat_solid') {
         if (!st.performed || st.stage === 'idle') {
           actionButtonsHtml = `
-            <button class="btn-perform-test btn-step-heat" onclick="performTestStage('heat_solid', 'step1_heat')">
-              🔥 Step 1: Heat Solid Strongly in Flame
-            </button>`;
-        } else if (st.stage === 'step1_heat') {
-          actionButtonsHtml = `
-            <button class="btn-perform-test btn-step-gas" onclick="performTestStage('heat_solid', 'step2_gas_test')">
-              📜 Step 2: Test Evolved Gases / Litmus Paper
-            </button>
-            <button class="btn-redo-test" onclick="redoTest('heat_solid')" title="Clean hard-glass tube and redo test">
-              <span class="redo-icon">↺</span> Redo Test
-            </button>`;
+            <div class="heating-toolbar-group">
+              <div class="heating-mode-buttons">
+                <button class="btn-perform-test btn-step-heat-gentle" onclick="performTestStage('heat_solid', 'gentle_heat')">
+                  🔥 Step 1a: Gently Warm Heel
+                </button>
+                <button class="btn-perform-test btn-step-heat" onclick="performTestStage('heat_solid', 'step1_heat')">
+                  💥 Step 1b: Heat Strongly in Flame
+                </button>
+              </div>
+            </div>`;
         } else {
+          const isHeatedStage = st.stage === 'gentle_heat' || st.stage === 'step1_heat' || st.stage === 'heated';
+          const isCooledStage = st.stage === 'cooled' || st.stage === 'cool_down';
+          const activeProbe = st.probe || '';
+
           actionButtonsHtml = `
-            <button class="btn-perform-test done" disabled>
-              ✅ Heating Test Completed
-            </button>
-            <button class="btn-redo-test" onclick="redoTest('heat_solid')" title="Clean hard-glass tube and redo test">
-              <span class="redo-icon">↺</span> Redo Test
-            </button>`;
+            <div class="heating-lab-toolbar">
+              <!-- Primary Heating Control -->
+              <div class="heating-toolbar-row">
+                <button class="btn-perform-test btn-step-heat ${isHeatedStage ? 'active-stage-btn' : ''}" onclick="performTestStage('heat_solid', 'step1_heat')" title="Heat strongly in non-luminous flame">
+                  💥 ${st.stage === 'gentle_heat' ? 'Heat Strongly' : 'Heat in Flame'}
+                </button>
+                <button class="btn-perform-test btn-step-cool ${isCooledStage ? 'active-stage-btn' : ''}" onclick="performTestStage('heat_solid', 'cooled')" title="Allow tube to cool and observe hot vs cold residue color">
+                  ❄️ Allow Tube to Cool
+                </button>
+                <button class="btn-redo-test" onclick="redoTest('heat_solid')" title="Clean hard-glass tube and restart dry heating">
+                  <span class="redo-icon">↺</span> Clean &amp; Redo
+                </button>
+              </div>
+
+              <!-- Interactive Evolved Gas & Vapour Probes -->
+              <div class="heating-probe-selector-tray">
+                <span class="probe-tray-label">🔬 Introduce Gas Test Probe to Mouth of Tube:</span>
+                <div class="probe-chips-group">
+                  <button type="button" class="btn-probe-chip ${activeProbe === 'blue_litmus' ? 'active-probe' : ''}" onclick="performTestStage('heat_solid', 'test_gas_blue_litmus', 'blue_litmus')" title="Moist Blue Litmus Paper: Turns red for acidic fumes (NO₂, SO₂, HCl)">
+                    🔵 Moist Blue Litmus
+                  </button>
+                  <button type="button" class="btn-probe-chip ${activeProbe === 'red_litmus' ? 'active-probe' : ''}" onclick="performTestStage('heat_solid', 'test_gas_red_litmus', 'red_litmus')" title="Moist Red Litmus Paper: Turns blue for alkaline NH₃ gas">
+                    🔴 Moist Red Litmus
+                  </button>
+                  <button type="button" class="btn-probe-chip ${activeProbe === 'glowing_splint' ? 'active-probe' : ''}" onclick="performTestStage('heat_solid', 'test_splint', 'glowing_splint')" title="Glowing Wooden Splint: Rekindles / bursts into flame if O₂ gas is evolved">
+                    🪵 Glowing Splint
+                  </button>
+                  <button type="button" class="btn-probe-chip ${activeProbe === 'limewater' ? 'active-probe' : ''}" onclick="performTestStage('heat_solid', 'test_limewater', 'limewater')" title="Limewater (Calcium Hydroxide): Turns milky white for CO₂ gas">
+                    🥛 Limewater Test
+                  </button>
+                </div>
+              </div>
+            </div>`;
         }
       } else if (test.key === 'naoh' || test.key === 'nh3') {
         const reagentName = test.key === 'naoh' ? 'NaOH' : 'NH₃';
@@ -1352,6 +1382,7 @@ if (typeof window !== 'undefined') {
         saltKey: currentSaltKey,
         testId: test.id || test.key,
         stage: st ? (st.stage || (st.performed ? 'done' : 'idle')) : 'idle',
+        probe: st ? st.probe : null,
         prompt: test.prompt || test.name || test.title || '',
         obsStr: test.correctObs || test.observation || '',
         tubeId: `qual_${test.key || test.id}`
@@ -1647,6 +1678,7 @@ if (typeof window !== 'undefined') {
       testStates[testKey] = {
         performed: false,
         stage: 'idle',
+        probe: null,
         obsText: prevObs,
         infText: prevInf
       };
@@ -1654,7 +1686,7 @@ if (typeof window !== 'undefined') {
     renderAll();
   };
 
-  window.performTestStage = function(testKey, targetStage) {
+  window.performTestStage = function(testKey, targetStage, probeOption = null) {
     const salt = SALTS[currentSaltKey] || {};
     const test = TESTS.find(t => t.key === testKey);
     if (!testStates[testKey]) testStates[testKey] = {};
@@ -1662,12 +1694,62 @@ if (typeof window !== 'undefined') {
 
     st.performed = true;
     st.stage = targetStage;
+    if (probeOption) st.probe = probeOption;
 
     if (testKey === 'heat_solid') {
-      playFlameSound();
-      if (targetStage === 'step1_heat') {
-        st.statusLabel = 'Step 1: Solid heated strongly in flame — Thermal changes observed';
+      const res = (window.QualitativeBenchCore && typeof QualitativeBenchCore.resolveReactionState === 'function')
+        ? QualitativeBenchCore.resolveReactionState(currentSaltKey, 'heat_solid', targetStage)
+        : {};
+
+      if (targetStage === 'gentle_heat' || targetStage === 'warm') {
+        playFlameSound();
+        if (res.waterCondenses) playDropletSizzleSound();
+        st.statusLabel = res.statusLabel || 'Gentle Warming: Moisture & condensation observed';
+      } else if (targetStage === 'step1_heat' || targetStage === 'strong_heat' || targetStage === 'heated') {
+        if (res.decrepitates) {
+          playDecrepitationSound();
+        } else {
+          playFlameSound();
+        }
+        if (res.waterCondenses) {
+          setTimeout(() => playDropletSizzleSound(), 350);
+        }
+        st.statusLabel = res.statusLabel || 'Step 1: Solid heated strongly in flame — Thermal changes observed';
+      } else if (targetStage === 'test_splint' || (targetStage === 'step2_gas_test' && st.probe === 'glowing_splint')) {
+        st.probe = 'glowing_splint';
+        if (res.evolvesO2) {
+          playSplintRelightSound();
+          st.statusLabel = 'Gas Test: Glowing splint bursts into flame (O₂ confirmed)';
+        } else {
+          playFlameSound();
+          st.statusLabel = 'Gas Test: Glowing splint extinguished (No O₂ gas)';
+        }
+      } else if (targetStage === 'test_gas_blue_litmus' || (targetStage === 'step2_gas_test' && st.probe === 'blue_litmus')) {
+        st.probe = 'blue_litmus';
+        playFlameSound();
+        const turnsRed = res.evolvesNO2 || res.evolvesSO2 || (salt.cation === 'NH4+' && salt.anion === 'Cl-');
+        st.statusLabel = turnsRed
+          ? 'Gas Test: Moist blue litmus turns red (Acidic gas NO₂/SO₂)'
+          : 'Gas Test: Moist blue litmus remains blue';
+      } else if (targetStage === 'test_gas_red_litmus' || (targetStage === 'step2_gas_test' && st.probe === 'red_litmus')) {
+        st.probe = 'red_litmus';
+        playFlameSound();
+        const turnsBlue = res.evolvesNH3;
+        st.statusLabel = turnsBlue
+          ? 'Gas Test: Moist red litmus turns blue (Alkaline NH₃ gas)'
+          : 'Gas Test: Moist red litmus remains red';
+      } else if (targetStage === 'test_limewater' || (targetStage === 'step2_gas_test' && st.probe === 'limewater')) {
+        st.probe = 'limewater';
+        playFlameSound();
+        const turnsMilky = res.evolvesCO2;
+        st.statusLabel = turnsMilky
+          ? 'Gas Test: Limewater turns milky white precipitate (CO₂ confirmed)'
+          : 'Gas Test: Limewater remains clear';
+      } else if (targetStage === 'cooled' || targetStage === 'cool_down') {
+        st.statusLabel = res.statusLabel || 'Step 3: Allowed tube to cool — Residue color transitions observed';
       } else if (targetStage === 'step2_gas_test') {
+        playFlameSound();
+        if (res.evolvesO2) playSplintRelightSound();
         st.statusLabel = 'Step 2: Evolved gases tested with litmus / splint — Completed';
       }
     } else if (testKey === 'naoh') {
@@ -2397,6 +2479,92 @@ if (typeof window !== 'undefined') {
       filter.connect(gain);
       gain.connect(audioCtx.destination);
       noise.start();
+    } catch(e) {}
+  }
+
+  function playDecrepitationSound() {
+    if (window.QualitativeBenchCore && typeof QualitativeBenchCore.playDecrepitationSound === 'function') {
+      QualitativeBenchCore.playDecrepitationSound();
+      return;
+    }
+    if (!isSoundEnabled) return;
+    initAudio();
+    if (!audioCtx) return;
+    try {
+      const now = audioCtx.currentTime;
+      for (let i = 0; i < 9; i++) {
+        const popTime = now + (i * 0.045) + (Math.random() * 0.025);
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const filter = audioCtx.createBiquadFilter();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(1000 + Math.random() * 1500, popTime);
+        osc.frequency.exponentialRampToValueAtTime(150, popTime + 0.025);
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(1500, popTime);
+        gain.gain.setValueAtTime(0.2, popTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, popTime + 0.03);
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(popTime);
+        osc.stop(popTime + 0.035);
+      }
+    } catch(e) {}
+  }
+
+  function playSplintRelightSound() {
+    if (window.QualitativeBenchCore && typeof QualitativeBenchCore.playSplintRelightSound === 'function') {
+      QualitativeBenchCore.playSplintRelightSound();
+      return;
+    }
+    if (!isSoundEnabled) return;
+    initAudio();
+    if (!audioCtx) return;
+    try {
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const oscGain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(180, now);
+      osc.frequency.exponentialRampToValueAtTime(45, now + 0.12);
+      oscGain.gain.setValueAtTime(0.35, now);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+      osc.connect(oscGain);
+      oscGain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.15);
+    } catch(e) {}
+  }
+
+  function playDropletSizzleSound() {
+    if (window.QualitativeBenchCore && typeof QualitativeBenchCore.playDropletSizzleSound === 'function') {
+      QualitativeBenchCore.playDropletSizzleSound();
+      return;
+    }
+    if (!isSoundEnabled) return;
+    initAudio();
+    if (!audioCtx) return;
+    try {
+      const now = audioCtx.currentTime;
+      const bufferSize = Math.floor(audioCtx.sampleRate * 0.35);
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (audioCtx.sampleRate * 0.1));
+      }
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = buffer;
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'highpass';
+      filter.frequency.setValueAtTime(3200, now);
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.exponentialRampToValueAtTime(0.005, now + 0.3);
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
+      noise.start(now);
     } catch(e) {}
   }
 

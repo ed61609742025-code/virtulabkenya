@@ -467,6 +467,111 @@
     } catch(e) {}
   }
 
+  function playDecrepitationSound() {
+    if (isAudioMuted()) return;
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    try {
+      // Violent crystalline decrepitation: burst of randomized sharp snapping pops & clicks
+      const now = ctx.currentTime;
+      const popsCount = 10;
+      for (let i = 0; i < popsCount; i++) {
+        const popTime = now + (i * 0.045) + (Math.random() * 0.025);
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const filter = ctx.createBiquadFilter();
+
+        osc.type = Math.random() > 0.4 ? 'triangle' : 'square';
+        osc.frequency.setValueAtTime(900 + Math.random() * 1900, popTime);
+        osc.frequency.exponentialRampToValueAtTime(140 + Math.random() * 180, popTime + 0.025);
+
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(1400 + Math.random() * 1600, popTime);
+        filter.Q.setValueAtTime(4.5, popTime);
+
+        gain.gain.setValueAtTime(0.24, popTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, popTime + 0.03);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(popTime);
+        osc.stop(popTime + 0.035);
+      }
+    } catch(e) {}
+  }
+
+  function playSplintRelightSound() {
+    if (isAudioMuted()) return;
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    try {
+      const now = ctx.currentTime;
+      // 1. Initial low ignition pop ("thump")
+      const osc = ctx.createOscillator();
+      const oscGain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(190, now);
+      osc.frequency.exponentialRampToValueAtTime(45, now + 0.12);
+      oscGain.gain.setValueAtTime(0.38, now);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+      osc.connect(oscGain);
+      oscGain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.15);
+
+      // 2. White noise rushing "fwoosh" flame burst
+      const bufferSize = Math.floor(ctx.sampleRate * 0.55);
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.18));
+      }
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(750, now);
+      filter.frequency.exponentialRampToValueAtTime(320, now + 0.45);
+      filter.Q.setValueAtTime(1.8, now);
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.35, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      noise.start(now);
+    } catch(e) {}
+  }
+
+  function playDropletSizzleSound() {
+    if (isAudioMuted()) return;
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    try {
+      const now = ctx.currentTime;
+      const bufferSize = Math.floor(ctx.sampleRate * 0.4);
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.12));
+      }
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'highpass';
+      filter.frequency.setValueAtTime(3200, now);
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.2, now);
+      gain.gain.exponentialRampToValueAtTime(0.005, now + 0.35);
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      noise.start(now);
+    } catch(e) {}
+  }
+
   // ── 3. Reaction Physics & State Resolver ───────────────────────
   function resolveReactionState(saltKey, testId, stage = 'idle', prompt = '', obsStr = '') {
     const salt = resolveSalt(saltKey);
@@ -531,6 +636,15 @@
     let gasColor = null;
     let residueColor = null;
     let waterCondenses = false;
+    let decrepitates = false;
+    let evolvesO2 = false;
+    let evolvesNO2 = false;
+    let evolvesNH3 = false;
+    let evolvesCO2 = false;
+    let evolvesSO2 = false;
+    let decomposesCompletely = false;
+    let residueColorHot = salt.crystalColor || '#FFFFFF';
+    let residueColorCold = salt.crystalColor || '#FFFFFF';
 
     if (performed) {
       if (isBrownRing) {
@@ -748,48 +862,123 @@
           : 'Flame Test: Characteristic emission color recorded';
         soundType = 'flame';
       } else if (isHeat) {
+        const isGentleHeat = stage === 'gentle_heat' || stage === 'warm';
+        const isCooled = stage === 'cooled' || stage === 'cool_down';
+        decrepitates = false;
+        evolvesO2 = false;
+        evolvesNO2 = false;
+        evolvesNH3 = false;
+        evolvesCO2 = false;
+        evolvesSO2 = false;
+        decomposesCompletely = false;
+        residueColorHot = salt.crystalColor || '#FFFFFF';
+        residueColorCold = salt.crystalColor || '#FFFFFF';
+
         if (anion === 'NO3-') {
           liquidColor = 'rgba(180, 83, 9, 0.55)';
           gasType = 'no2_brown';
           gasColor = '#78350F';
-          residueColor = (cation === 'Pb2+') ? '#CA8A04' : (cation === 'Zn2+') ? '#FACC15' : '#FFFFFF';
-          statusLabel = (cation === 'Pb2+')
-            ? 'Heated: Decrepitates; brown fumes of NO₂; rekindles glowing splint (O₂); reddish-brown hot, yellow cold'
-            : 'Heated Strongly: Brown fumes of NO₂ evolved; rekindles glowing splint (O₂)';
+          evolvesNO2 = true;
+          evolvesO2 = true;
+
+          if (cation === 'Pb2+') {
+            decrepitates = true;
+            residueColorHot = '#CA8A04'; // PbO reddish-brown/orange hot
+            residueColorCold = '#FACC15'; // PbO bright yellow cold
+            statusLabel = isCooled
+              ? 'Cooled: Reddish-brown residue cooled to bright yellow powder (PbO formation)'
+              : (isGentleHeat
+                ? 'Gently Warmed: Solid crackles softly; faint fumes begin to appear'
+                : 'Heated: Decrepitates; brown fumes of NO₂; rekindles glowing splint (O₂); reddish-brown hot, yellow cold');
+          } else if (cation === 'Zn2+') {
+            waterCondenses = true;
+            residueColorHot = '#FACC15'; // ZnO canary-yellow hot
+            residueColorCold = '#FFFFFF'; // ZnO white cold
+            statusLabel = isCooled
+              ? 'Cooled: Canary-yellow residue cooled back to pure white powder (ZnO formation)'
+              : 'Heated Strongly: Brown fumes of NO₂; rekindles glowing splint (O₂); yellow hot, white cold';
+          } else {
+            // aluminumNitrate
+            waterCondenses = true;
+            residueColorHot = '#FFFFFF';
+            residueColorCold = '#FFFFFF';
+            statusLabel = isCooled
+              ? 'Cooled: White residue (Al₂O₃) cooled to room temperature'
+              : 'Heated Strongly: Brown fumes of NO₂ evolved; rekindles glowing splint (O₂)';
+          }
+          residueColor = isCooled ? residueColorCold : residueColorHot;
         } else if (cation === 'NH4+') {
-          sublimes = (anion === 'Cl-');
-          gasType = (anion === 'Cl-') ? 'sublimate_deposit' : 'nh3_co2';
-          gasColor = '#FFFFFF';
-          residueColor = (anion === 'Cl-') ? '#FFFFFF' : null;
-          statusLabel = (anion === 'CO3^2-')
-            ? 'Heated: Decomposes completely; alkaline gas (NH₃) turns red litmus blue; CO₂ turns limewater milky'
-            : 'Heated: Sublimes; dense white fumes deposit on upper cooler walls (sublimation ring)';
+          if (anion === 'Cl-') {
+            sublimes = true;
+            gasType = 'sublimate_deposit';
+            gasColor = '#FFFFFF';
+            evolvesNH3 = true;
+            residueColorHot = '#FFFFFF';
+            residueColorCold = '#FFFFFF';
+            residueColor = '#FFFFFF';
+            statusLabel = isCooled
+              ? 'Cooled: Dense white sublimate ring deposited firmly on upper cooler glass walls'
+              : 'Heated: Sublimes; dense white fumes deposit on upper cooler walls (sublimation ring)';
+          } else {
+            // (NH4)2CO3
+            decomposesCompletely = true;
+            waterCondenses = true;
+            gasType = 'nh3_co2';
+            gasColor = '#FFFFFF';
+            evolvesNH3 = true;
+            evolvesCO2 = true;
+            residueColorHot = null;
+            residueColorCold = null;
+            residueColor = null; // disappears completely!
+            statusLabel = isCooled
+              ? 'Cooled: Hard-glass tube is completely empty (no residue remains)'
+              : 'Heated: Decomposes completely; alkaline gas (NH₃) turns red litmus blue; CO₂ turns limewater milky';
+          }
         } else if (cation === 'Zn2+') {
           waterCondenses = true;
-          residueColor = '#FACC15'; // ZnO yellow when hot
           gasType = 'steam';
-          statusLabel = 'Heated: Solid turns yellow when hot, white on cooling (ZnO formation)';
+          residueColorHot = '#FACC15';
+          residueColorCold = '#FFFFFF';
+          residueColor = isCooled ? residueColorCold : residueColorHot;
+          statusLabel = isCooled
+            ? 'Cooled: Yellow hot residue cooled back to white powder (ZnO)'
+            : 'Heated: Solid turns yellow when hot, white on cooling (ZnO formation)';
         } else if (cation === 'Cu2+') {
           waterCondenses = true;
-          residueColor = '#F1F5F9'; // Anhydrous CuSO4 white powder
           gasType = 'steam';
-          statusLabel = 'Heated: Blue crystals dehydrate to white anhydrous powder; water droplets condense';
+          residueColorHot = '#F1F5F9';
+          residueColorCold = '#F1F5F9';
+          residueColor = '#F1F5F9';
+          statusLabel = isCooled
+            ? 'Cooled: White anhydrous CuSO₄ powder remains stable in dry tube'
+            : 'Heated: Blue crystals dehydrate to white anhydrous powder; water droplets condense';
         } else if (cation === 'Fe2+') {
           waterCondenses = true;
-          residueColor = '#451A03';
+          evolvesSO2 = true;
           gasType = 'so2_steam';
-          statusLabel = 'Heated: Pale green crystals turn dirty brown; water droplets condense; choking SO₂ gas evolved';
+          residueColorHot = '#451A03';
+          residueColorCold = '#451A03';
+          residueColor = '#451A03';
+          statusLabel = isCooled
+            ? 'Cooled: Dirty brown/black residue of Fe₂O₃ cooled to room temperature'
+            : 'Heated: Pale green crystals turn dirty brown; water droplets condense; choking SO₂ gas evolved';
         } else if (anion === 'SO3^2-') {
+          evolvesSO2 = true;
           gasType = 'so2_pungent';
+          residueColor = '#FFFFFF';
           statusLabel = 'Heated Strongly: Solid remains stable; faint choking sulfurous smell of SO₂';
         } else if (anion === 'Br-' || anion === 'I-') {
+          decrepitates = true;
+          residueColor = salt.crystalColor || '#FFFFFF';
           statusLabel = 'Heated Strongly: White crystalline solid crackles; melts at high temperature; no gas evolved';
         } else if (anion === 'CO3^2-') {
+          residueColor = '#FFFFFF';
           statusLabel = 'Heated: White solid remains thermally stable in Bunsen flame; no gas evolved';
         } else {
+          residueColor = salt.crystalColor || '#FFFFFF';
           statusLabel = 'Heated Strongly: Thermal decomposition observed';
         }
-        soundType = 'flame';
+        soundType = decrepitates ? 'decrepitate' : 'flame';
       }
     } else {
       if (isPhysicalAppearance) statusLabel = 'Solid Specimen Y on Watch Glass';
@@ -819,6 +1008,15 @@
       isLead: cation === 'Pb2+',
       isHeated,
       isCooled,
+      decrepitates: Boolean(decrepitates),
+      evolvesO2: Boolean(evolvesO2),
+      evolvesNO2: Boolean(evolvesNO2),
+      evolvesNH3: Boolean(evolvesNH3),
+      evolvesCO2: Boolean(evolvesCO2),
+      evolvesSO2: Boolean(evolvesSO2),
+      decomposesCompletely: Boolean(decomposesCompletely),
+      residueColorHot,
+      residueColorCold,
       complexDeepBlue,
       isExcess,
       isStep1,
@@ -1283,10 +1481,11 @@
     const {
       saltKey = 'leadNitrate',
       stage = 'idle',
+      probe = null,
       prompt = '',
       obsStr = '',
-      width = 200,
-      height = 185,
+      width = 240,
+      height = 205,
       tubeId = `heat_${Math.random().toString(36).substring(2, 7)}`
     } = options;
 
@@ -1295,19 +1494,98 @@
     const cation = salt.cation;
     const anion = salt.anion;
     const isNitrate = anion === 'NO3-';
-    const isHydrated = salt.appearance?.toLowerCase().includes('hydrat') || salt.formula?.includes('H2O') || cation === 'Cu2+' || cation === 'Fe2+';
+    const isGentleHeat = stage === 'gentle_heat' || stage === 'warm';
+    const isCooled = stage === 'cooled' || stage === 'cool_down';
+    const isStrongHeat = stage === 'heated' || stage === 'strong_heat' || stage === 'step1_heat';
+    const isGasTestStage = stage === 'step2_gas_test' || stage.startsWith('test_gas') || stage === 'test_splint' || stage === 'test_limewater';
 
-    // Solid residue color transitions
+    const isHydrated = salt.appearance?.toLowerCase().includes('hydrat') ||
+      salt.formula?.includes('H2O') ||
+      cation === 'Cu2+' || cation === 'Fe2+' || cation === 'Zn2+' ||
+      (cation === 'NH4+' && anion === 'CO3^2-') ||
+      (saltKey === 'copperSulfate' || saltKey === 'ironSulfate' || saltKey === 'zincSulfate' || saltKey === 'aluminumNitrate' || saltKey === 'zincNitrate' || saltKey === 'ironChloride');
+
+    // Gas evolution identification
+    const evolvesO2 = isNitrate;
+    const evolvesNO2 = isNitrate;
+    const evolvesNH3 = cation === 'NH4+';
+    const evolvesCO2 = cation === 'NH4+' && anion === 'CO3^2-';
+    const evolvesSO2 = (cation === 'Fe2+' && anion === 'SO4^2-') || anion === 'SO3^2-';
+    const sublimes = cation === 'NH4+' && anion === 'Cl-';
+    const decomposesCompletely = cation === 'NH4+' && anion === 'CO3^2-';
+    const decrepitates = cation === 'Pb2+';
+
+    // Active Probe Resolver: check explicit probe argument or infer from stage/salt
+    let activeProbe = probe;
+    if (!activeProbe) {
+      if (stage === 'test_gas_blue_litmus') activeProbe = 'blue_litmus';
+      else if (stage === 'test_gas_red_litmus') activeProbe = 'red_litmus';
+      else if (stage === 'test_splint') activeProbe = 'glowing_splint';
+      else if (stage === 'test_limewater') activeProbe = 'limewater';
+      else if (isGasTestStage) {
+        if (evolvesO2) activeProbe = 'glowing_splint';
+        else if (evolvesNH3) activeProbe = 'red_litmus';
+        else if (evolvesSO2) activeProbe = 'blue_litmus';
+        else activeProbe = 'blue_litmus';
+      }
+    }
+
+    // Residue Color Transitions (Hot vs Cold)
     let hotPowderColor = salt.crystalColor || '#FFFFFF';
+    let residueVisible = true;
     if (performed) {
-      if (cation === 'Zn2+') hotPowderColor = '#FACC15'; // ZnO yellow when hot
-      else if (cation === 'Cu2+') hotPowderColor = '#F1F5F9'; // Anhydrous white powder
-      else if (cation === 'Fe2+') hotPowderColor = '#451A03'; // Dirty brown/black Fe2O3
-      else if (cation === 'Pb2+') hotPowderColor = '#9A3412'; // PbO reddish-brown hot
+      if (decomposesCompletely && !isGentleHeat) {
+        residueVisible = false; // Ammonium carbonate leaves NO residue!
+      } else if (cation === 'Zn2+') {
+        hotPowderColor = isCooled ? '#FFFFFF' : '#FACC15'; // ZnO canary-yellow hot, pure white cold
+      } else if (cation === 'Cu2+') {
+        hotPowderColor = '#F1F5F9'; // Anhydrous white powder
+      } else if (cation === 'Fe2+') {
+        hotPowderColor = '#451A03'; // Dirty brown/black Fe2O3
+      } else if (cation === 'Pb2+') {
+        hotPowderColor = isCooled ? '#FACC15' : '#CA8A04'; // PbO yellow cold, brown/orange hot (#CA8A04)
+      } else if (isNitrate && cation === 'Al3+') {
+        hotPowderColor = '#FFFFFF'; // Al2O3 white residue
+      }
+    }
+
+    // Litmus & Gas Probe Reaction States
+    const isAcidicGas = evolvesNO2 || evolvesSO2 || (cation === 'NH4+' && anion === 'Cl-') || saltKey === 'ironChloride';
+    const blueLitmusTip = isAcidicGas ? '#EF4444' : '#3B82F6';
+    const redLitmusTip = evolvesNH3 ? '#2563EB' : '#EF4444';
+    const splintIgnites = evolvesO2;
+    const limewaterMilky = evolvesCO2;
+
+    // Status Banner Text
+    let badgeText = 'SOLID SPECIMEN Y IN HARD-GLASS TUBE';
+    let badgeColor = '#38BDF8';
+    if (isCooled) {
+      badgeText = cation === 'Zn2+' ? '❄️ COOLED: ZnO REVERTED TO WHITE' :
+        (cation === 'Pb2+' ? '❄️ COOLED: PbO TURNED YELLOW' :
+        (decomposesCompletely ? '❄️ COOLED: TUBE IS EMPTY (NO RESIDUE)' : '❄️ COOLED TO ROOM TEMPERATURE'));
+      badgeColor = '#38BDF8';
+    } else if (activeProbe === 'glowing_splint') {
+      badgeText = splintIgnites ? '🪵 SPLINT REKINDLES INTO FLAME (O₂)' : '🪵 SPLINT EXTINGUISHED (NO O₂)';
+      badgeColor = splintIgnites ? '#F59E0B' : '#94A3B8';
+    } else if (activeProbe === 'blue_litmus') {
+      badgeText = isAcidicGas ? '🔵 BLUE LITMUS: TURNED RED (ACIDIC)' : '🔵 BLUE LITMUS: UNCHANGED (BLUE)';
+      badgeColor = isAcidicGas ? '#EF4444' : '#38BDF8';
+    } else if (activeProbe === 'red_litmus') {
+      badgeText = evolvesNH3 ? '🔴 RED LITMUS: TURNED BLUE (ALKALINE)' : '🔴 RED LITMUS: UNCHANGED (RED)';
+      badgeColor = evolvesNH3 ? '#38BDF8' : '#EF4444';
+    } else if (activeProbe === 'limewater') {
+      badgeText = limewaterMilky ? '🥛 LIMEWATER: TURNED MILKY (CO₂)' : '🥛 LIMEWATER: REMAINED CLEAR';
+      badgeColor = limewaterMilky ? '#E2E8F0' : '#94A3B8';
+    } else if (isStrongHeat) {
+      badgeText = decrepitates ? '💥 STRONG HEAT: DECREPITATION CRACKLE' : '🔥 HEATING STRONGLY (NON-LUMINOUS)';
+      badgeColor = '#F59E0B';
+    } else if (isGentleHeat) {
+      badgeText = '🔥 GENTLY WARMING TUBE HEEL';
+      badgeColor = '#38BDF8';
     }
 
     return `
-      <svg width="${width}" height="${height}" viewBox="0 0 200 185" style="max-width:100%; height:auto; display:block; filter:drop-shadow(0 4px 12px rgba(0,0,0,0.4));">
+      <svg width="${width}" height="${height}" viewBox="0 0 240 205" style="max-width:100%; height:auto; display:block; filter:drop-shadow(0 4px 12px rgba(0,0,0,0.4));">
         <defs>
           <linearGradient id="flameInner_${tubeId}" x1="0%" y1="100%" x2="0%" y2="0%">
             <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.95"/>
@@ -1315,112 +1593,168 @@
             <stop offset="100%" stop-color="#38BDF8" stop-opacity="0"/>
           </linearGradient>
           <linearGradient id="flameOuter_${tubeId}" x1="0%" y1="100%" x2="0%" y2="0%">
-            <stop offset="0%" stop-color="#2563EB" stop-opacity="0.8"/>
-            <stop offset="70%" stop-color="#60A5FA" stop-opacity="0.75"/>
+            <stop offset="0%" stop-color="#2563EB" stop-opacity="0.85"/>
+            <stop offset="70%" stop-color="#60A5FA" stop-opacity="0.78"/>
             <stop offset="100%" stop-color="#93C5FD" stop-opacity="0"/>
           </linearGradient>
           <radialGradient id="no2Fumes_${tubeId}" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stop-color="#581C87" stop-opacity="0"/>
-            <stop offset="20%" stop-color="#78350F" stop-opacity="0.9"/>
-            <stop offset="65%" stop-color="#92400E" stop-opacity="0.65"/>
+            <stop offset="20%" stop-color="#78350F" stop-opacity="0.92"/>
+            <stop offset="65%" stop-color="#92400E" stop-opacity="0.7"/>
             <stop offset="100%" stop-color="#B45309" stop-opacity="0"/>
+          </radialGradient>
+          <radialGradient id="splintBurst_${tubeId}" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1"/>
+            <stop offset="30%" stop-color="#FDE047" stop-opacity="0.95"/>
+            <stop offset="70%" stop-color="#F97316" stop-opacity="0.8"/>
+            <stop offset="100%" stop-color="#EF4444" stop-opacity="0"/>
           </radialGradient>
         </defs>
 
         <!-- Retort Stand Heavy Rod & Base -->
-        <line x1="16" y1="12" x2="16" y2="175" stroke="#64748B" stroke-width="4.5" stroke-linecap="round"/>
-        <rect x="6" y="168" width="46" height="8" rx="2" fill="#1E293B" stroke="#0F172A" stroke-width="1.2"/>
+        <line x1="18" y1="14" x2="18" y2="188" stroke="#64748B" stroke-width="5" stroke-linecap="round"/>
+        <rect x="6" y="180" width="54" height="9" rx="2.5" fill="#1E293B" stroke="#0F172A" stroke-width="1.4"/>
+        <line x1="6" y1="182" x2="60" y2="182" stroke="#475569" stroke-width="0.8"/>
 
         <!-- Heavy Laboratory Bosshead & Clamp holding Tube at 35 degrees -->
-        <g transform="translate(16, 68)">
-          <line x1="0" y1="0" x2="38" y2="6" stroke="#475569" stroke-width="4.5" stroke-linecap="round"/>
-          <circle cx="0" cy="0" r="5" fill="#334155" stroke="#64748B" stroke-width="1"/>
-          <!-- Tilted Clamp Jaws -->
-          <rect x="34" y="-5" width="20" height="7" rx="2" fill="#78350F" stroke="#3A1700" stroke-width="1" transform="rotate(25 38 0)"/>
-          <rect x="34" y="3" width="20" height="7" rx="2" fill="#78350F" stroke="#3A1700" stroke-width="1" transform="rotate(25 38 0)"/>
+        <g transform="translate(18, 76)">
+          <line x1="0" y1="0" x2="42" y2="6" stroke="#475569" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="0" cy="0" r="5.5" fill="#334155" stroke="#64748B" stroke-width="1.2"/>
+          <circle cx="0" cy="0" r="2" fill="#0F172A"/>
+          <!-- Tilted Clamp Jaws Gripping Boiling Tube -->
+          <rect x="36" y="-6" width="22" height="7.5" rx="2" fill="#78350F" stroke="#3A1700" stroke-width="1" transform="rotate(25 40 0)"/>
+          <rect x="36" y="3" width="22" height="7.5" rx="2" fill="#78350F" stroke="#3A1700" stroke-width="1" transform="rotate(25 40 0)"/>
         </g>
 
         <!-- Hard-Glass Pyrex Boiling Tube (Tilted at 35 degrees) -->
-        <g transform="translate(48, 24) rotate(-35 30 70)">
+        <g transform="translate(56, 32) rotate(-35 30 70)">
           <!-- Glass Body & Mouth Lip -->
-          <rect x="18" y="12" width="30" height="4.5" rx="2" fill="rgba(255,255,255,0.3)" stroke="#94A3B8" stroke-width="1.2"/>
-          <path d="M 21,15 L 21,108 Q 21,126 33,126 Q 45,126 45,108 L 45,15 Z" fill="rgba(255,255,255,0.06)" stroke="#94A3B8" stroke-width="1.5"/>
+          <rect x="18" y="10" width="30" height="5" rx="2.2" fill="rgba(255,255,255,0.35)" stroke="#94A3B8" stroke-width="1.3"/>
+          <path d="M 21,13 L 21,112 Q 21,130 33,130 Q 45,130 45,112 L 45,13 Z" fill="rgba(255,255,255,0.07)" stroke="#94A3B8" stroke-width="1.6"/>
 
           <!-- Dry Salt Residue Bed at Curved Base of Tube -->
-          <path d="M 22,96 L 22,108 Q 22,125 33,125 Q 44,125 44,108 L 44,96 Q 33,102 22,96 Z" fill="${hotPowderColor}"/>
+          ${residueVisible ? `
+            <path d="M 22,98 L 22,112 Q 22,129 33,129 Q 44,129 44,112 L 44,98 Q 33,104 22,98 Z" fill="${hotPowderColor}"/>
+          ` : ''}
 
-          <!-- Decrepitation Sparkles (Crackling Solid Particles) -->
-          ${performed && cation === 'Pb2+' ? `
-            <g class="anim-spangle">
-              <circle cx="28" cy="102" r="1.8" fill="#FDE047"/>
-              <circle cx="38" cy="98" r="1.5" fill="#F59E0B"/>
-              <circle cx="33" cy="92" r="1.4" fill="#FFFFFF"/>
-              <circle cx="27" cy="110" r="1.6" fill="#FDE047"/>
+          <!-- Decrepitation Sparkles (Violently Snapping Crystal Fragments) -->
+          ${performed && decrepitates && !isCooled ? `
+            <g class="anim-spangle anim-decrepitate">
+              <circle cx="28" cy="106" r="2" fill="#FDE047"/>
+              <circle cx="38" cy="102" r="1.6" fill="#F59E0B"/>
+              <circle cx="33" cy="94" r="1.8" fill="#FFFFFF"/>
+              <circle cx="26" cy="114" r="1.8" fill="#FDE047"/>
+              <polygon points="34,98 36,94 38,98 36,102" fill="#FFFFFF"/>
+              <polygon points="29,112 31,108 33,112 31,116" fill="#FACC15"/>
             </g>
           ` : ''}
 
           <!-- Condensed Water Droplets on Upper Cooler Walls -->
           ${performed && isHydrated ? `
-            <g opacity="0.9">
-              <ellipse cx="23" cy="50" rx="2" ry="2.6" fill="#BAE6FD"/>
-              <ellipse cx="43" cy="58" rx="2.2" ry="2.8" fill="#BAE6FD"/>
-              <ellipse cx="23" cy="72" rx="2" ry="2.5" fill="#BAE6FD"/>
-              <ellipse cx="43" cy="44" rx="1.8" ry="2.4" fill="#BAE6FD"/>
-              <line x1="23" y1="52" x2="23" y2="60" stroke="#BAE6FD" stroke-width="0.8" opacity="0.6"/>
+            <g opacity="0.92">
+              <ellipse cx="23" cy="50" rx="2.2" ry="2.8" fill="#BAE6FD"/>
+              <ellipse cx="43" cy="58" rx="2.4" ry="3.0" fill="#BAE6FD"/>
+              <ellipse cx="23" cy="72" rx="2.2" ry="2.6" fill="#BAE6FD"/>
+              <ellipse cx="43" cy="44" rx="2.0" ry="2.5" fill="#BAE6FD"/>
+              <ellipse cx="24" cy="62" rx="1.8" ry="2.2" fill="#BAE6FD"/>
+              <ellipse cx="42" cy="74" rx="1.9" ry="2.4" fill="#BAE6FD"/>
+              <line x1="23" y1="52" x2="23" y2="62" stroke="#BAE6FD" stroke-width="0.9" opacity="0.6"/>
+              <line x1="43" y1="60" x2="43" y2="70" stroke="#BAE6FD" stroke-width="0.9" opacity="0.5"/>
             </g>
           ` : ''}
 
           <!-- Dense Brown NO2 Fumes Inside Tube -->
-          ${performed && isNitrate ? `
+          ${performed && evolvesNO2 && !isCooled ? `
             <g class="anim-heat-wave">
-              <ellipse cx="33" cy="65" rx="10" ry="20" fill="url(#no2Fumes_${tubeId})"/>
-              <ellipse cx="33" cy="38" rx="11" ry="22" fill="url(#no2Fumes_${tubeId})"/>
+              <ellipse cx="33" cy="68" rx="10.5" ry="22" fill="url(#no2Fumes_${tubeId})"/>
+              <ellipse cx="33" cy="38" rx="11.5" ry="24" fill="url(#no2Fumes_${tubeId})"/>
             </g>
           ` : ''}
 
           <!-- Sublimation Deposit Ring on Upper Cooler Walls for Ammonium Salts -->
-          ${performed && cation === 'NH4+' ? `
+          ${performed && sublimes ? `
             <g opacity="0.95">
-              <ellipse cx="33" cy="45" rx="11" ry="3.5" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8"/>
-              <ellipse cx="33" cy="48" rx="10" ry="2.5" fill="#F8FAFC"/>
-              <ellipse cx="33" cy="65" rx="8" ry="16" fill="rgba(255,255,255,0.4)"/>
+              <ellipse cx="33" cy="45" rx="11" ry="3.8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+              <ellipse cx="33" cy="48" rx="10" ry="2.6" fill="#F8FAFC"/>
+              <ellipse cx="33" cy="65" rx="8.5" ry="17" fill="rgba(255,255,255,0.45)"/>
             </g>
           ` : ''}
 
           <!-- Glass Specular Flank Highlight -->
-          <path d="M 24,18 L 24,108 Q 24,122 33,122" fill="none" stroke="#FFFFFF" stroke-width="1.2" opacity="0.35"/>
+          <path d="M 24,16 L 24,112 Q 24,125 33,125" fill="none" stroke="#FFFFFF" stroke-width="1.3" opacity="0.38"/>
 
-          <!-- Moist Blue Litmus Paper Held at Mouth (Turns Red for Nitrates) -->
-          ${performed && isNitrate ? `
-            <!-- Paper strip held in forceps: turns bright red at tip -->
-            <path d="M 29,2 L 37,2 L 37,20 L 29,20 Z" fill="#EF4444" stroke="#DC2626" stroke-width="0.6"/>
-            <path d="M 29,2 L 37,2 L 37,10 L 29,10 Z" fill="#3B82F6"/>
-            <!-- Forceps holding paper -->
-            <line x1="22" y1="-4" x2="31" y2="5" stroke="#94A3B8" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- ── Interactive Gas Probes at Mouth ── -->
+          ${performed && activeProbe === 'blue_litmus' ? `
+            <!-- Moist Blue Litmus Paper Held in Forceps -->
+            <g transform="translate(0, 0)">
+              <!-- Upper unreacted paper (blue) -->
+              <path d="M 29,-2 L 37,-2 L 37,8 L 29,8 Z" fill="#3B82F6"/>
+              <!-- Lower reacted tip dipped in gas (turns red if acidic fumes) -->
+              <path d="M 29,8 L 37,8 L 37,20 L 29,20 Z" fill="${blueLitmusTip}" stroke="${blueLitmusTip === '#EF4444' ? '#DC2626' : '#2563EB'}" stroke-width="0.6"/>
+              <!-- Forceps clamp -->
+              <line x1="22" y1="-8" x2="31" y2="2" stroke="#94A3B8" stroke-width="2.6" stroke-linecap="round"/>
+            </g>
           ` : ''}
 
-          <!-- Moist Red Litmus Paper Held at Mouth (Turns Blue for Ammonium Carbonate) -->
-          ${performed && cation === 'NH4+' && anion === 'CO3^2-' ? `
-            <!-- Paper strip turns blue at tip from alkaline NH3 gas -->
-            <path d="M 29,2 L 37,2 L 37,20 L 29,20 Z" fill="#3B82F6" stroke="#2563EB" stroke-width="0.6"/>
-            <path d="M 29,2 L 37,2 L 37,10 L 29,10 Z" fill="#EF4444"/>
-            <line x1="22" y1="-4" x2="31" y2="5" stroke="#94A3B8" stroke-width="2.5" stroke-linecap="round"/>
+          ${performed && activeProbe === 'red_litmus' ? `
+            <!-- Moist Red Litmus Paper Held in Forceps -->
+            <g transform="translate(0, 0)">
+              <!-- Upper unreacted paper (red) -->
+              <path d="M 29,-2 L 37,-2 L 37,8 L 29,8 Z" fill="#EF4444"/>
+              <!-- Lower reacted tip dipped in gas (turns blue if alkaline NH3) -->
+              <path d="M 29,8 L 37,8 L 37,20 L 29,20 Z" fill="${redLitmusTip}" stroke="${redLitmusTip === '#2563EB' ? '#1D4ED8' : '#DC2626'}" stroke-width="0.6"/>
+              <!-- Forceps clamp -->
+              <line x1="22" y1="-8" x2="31" y2="2" stroke="#94A3B8" stroke-width="2.6" stroke-linecap="round"/>
+            </g>
+          ` : ''}
+
+          ${performed && activeProbe === 'glowing_splint' ? `
+            <!-- Wooden Splint Entering Mouth -->
+            <g transform="translate(0, 0)">
+              <!-- Wooden Splint Body -->
+              <line x1="16" y1="-14" x2="33" y2="16" stroke="#B45309" stroke-width="2.8" stroke-linecap="round"/>
+              <line x1="16" y1="-14" x2="28" y2="6" stroke="#D97706" stroke-width="1.2" stroke-linecap="round"/>
+              ${splintIgnites ? `
+                <!-- Splint Rekindles into Bright Active Flame! -->
+                <g class="anim-flame" transform="translate(33, 16)">
+                  <circle cx="0" cy="0" r="14" fill="url(#splintBurst_${tubeId})" opacity="0.85"/>
+                  <path d="M -4,0 C -6,-10 0,-16 0,-16 C 0,-16 6,-10 4,0 Z" fill="#FDE047"/>
+                  <circle cx="0" cy="0" r="3.5" fill="#FFFFFF"/>
+                  <circle cx="-3" cy="-5" r="1.5" fill="#F59E0B"/>
+                  <circle cx="3" cy="-7" r="1.2" fill="#FDE047"/>
+                </g>
+              ` : `
+                <!-- Extinguished Splint: Charred Tip & Smoke Wisp -->
+                <circle cx="33" cy="16" r="2.2" fill="#1E293B"/>
+                <circle cx="33" cy="16" r="1.1" fill="#F97316" opacity="0.75"/>
+                <path d="M 33,14 Q 36,8 32,2" stroke="#94A3B8" stroke-width="0.9" fill="none" opacity="0.65"/>
+              `}
+            </g>
+          ` : ''}
+
+          ${performed && activeProbe === 'limewater' ? `
+            <!-- Limewater Dropper Delivery at Mouth -->
+            <g transform="translate(0, 0)">
+              <line x1="18" y1="-12" x2="32" y2="12" stroke="#64748B" stroke-width="2.2" stroke-linecap="round"/>
+              <circle cx="33" cy="16" r="4.5" fill="${limewaterMilky ? '#F8FAFC' : 'rgba(56,189,248,0.25)'}" stroke="${limewaterMilky ? '#CBD5E1' : '#38BDF8'}" stroke-width="1.2"/>
+              ${limewaterMilky ? `<ellipse cx="33" cy="16" rx="2.5" ry="2.5" fill="#E2E8F0"/>` : ''}
+            </g>
           ` : ''}
         </g>
 
         <!-- Billowing NO2 Gas Fumes Escaping from Tube Mouth into Air -->
-        ${performed && isNitrate ? `
-          <g class="anim-heat-wave" transform="translate(30, 10)">
-            <circle cx="24" cy="18" r="9" fill="url(#no2Fumes_${tubeId})" opacity="0.85"/>
-            <circle cx="16" cy="8" r="13" fill="url(#no2Fumes_${tubeId})" opacity="0.75"/>
-            <circle cx="8" cy="-2" r="16" fill="url(#no2Fumes_${tubeId})" opacity="0.6"/>
+        ${performed && evolvesNO2 && !isCooled ? `
+          <g class="anim-heat-wave" transform="translate(38, 14)">
+            <circle cx="24" cy="18" r="9.5" fill="url(#no2Fumes_${tubeId})" opacity="0.88"/>
+            <circle cx="16" cy="8" r="13.5" fill="url(#no2Fumes_${tubeId})" opacity="0.78"/>
+            <circle cx="8" cy="-2" r="16.5" fill="url(#no2Fumes_${tubeId})" opacity="0.62"/>
           </g>
         ` : ''}
 
         <!-- Full Laboratory Bunsen Burner Heating Tube Heel -->
-        <g transform="translate(86, 110)">
+        <g transform="translate(98, 122)">
           <!-- Cast-iron Hexagonal Base -->
-          <ellipse cx="30" cy="64" rx="28" ry="6" fill="#1E293B" stroke="#0F172A" stroke-width="1.2"/>
+          <ellipse cx="30" cy="64" rx="28" ry="6" fill="#1E293B" stroke="#0F172A" stroke-width="1.3"/>
           <rect x="25" y="58" width="10" height="6" fill="#334155"/>
           <!-- Metallic Barrel & Air Collar -->
           <rect x="25" y="24" width="10" height="34" fill="#64748B" stroke="#334155" stroke-width="0.8"/>
@@ -1428,9 +1762,17 @@
           <circle cx="30" cy="48" r="2" fill="#0F172A"/>
           <ellipse cx="30" cy="24" rx="5" ry="2" fill="#334155"/>
           <!-- Rubber Gas Tubing -->
-          <path d="M 35,62 Q 52,60 68,68" fill="none" stroke="#D97706" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M 35,62 Q 54,60 72,68" fill="none" stroke="#D97706" stroke-width="3.5" stroke-linecap="round"/>
 
-          ${performed ? `
+          ${isCooled ? `
+            <!-- Flame Extinguished / Burner Swung Away during Cooling -->
+          ` : (isGentleHeat ? `
+            <!-- Gentle Blue Heating Flame -->
+            <g class="anim-flame heatWave anim-heat-wave">
+              <path d="M 25,24 C 23,12 27,6 30,6 C 33,6 37,12 35,24 Z" fill="url(#flameOuter_${tubeId})" opacity="0.8"/>
+              <path d="M 27,24 C 26,16 28,10 30,10 C 32,10 34,16 33,24 Z" fill="url(#flameInner_${tubeId})" opacity="0.9"/>
+            </g>
+          ` : (performed ? `
             <!-- Roaring Non-Luminous Bunsen Flame & Heat Waves -->
             <g class="anim-flame heatWave anim-heat-wave">
               <!-- Outer Blue Cone -->
@@ -1441,7 +1783,15 @@
           ` : `
             <!-- Pilot Flame -->
             <path d="M 28,24 C 27,18 29,14 30,14 C 31,14 33,18 32,24 Z" fill="#38BDF8" opacity="0.6"/>
-          `}
+          `))}
+        </g>
+
+        <!-- Specimen Apparatus Status Plaque -->
+        <g transform="translate(18, 180)">
+          <rect x="0" y="0" width="204" height="19" rx="4" fill="rgba(15,23,42,0.94)" stroke="#334155" stroke-width="1"/>
+          <text x="102" y="13" font-size="8" font-weight="800" fill="${badgeColor}" text-anchor="middle" font-family="'JetBrains Mono', monospace">
+            ${badgeText}
+          </text>
         </g>
       </svg>
     `;
@@ -1673,7 +2023,7 @@
       tId.includes('heat') ||
       tId.includes('ignit')
     ) {
-      return renderDryHeatingApparatusSvg({ saltKey, stage, prompt, obsStr, tubeId });
+      return renderDryHeatingApparatusSvg(options);
     }
 
     // 4. Dissolution in Distilled Water
@@ -1802,9 +2152,14 @@
         return [
           { stage: 'heated', label: '🔥 Step 1: Heat Strongly in Bunsen Flame', cls: 'btn-perform-test btn-step-heat' }
         ];
-      } else if (stage === 'heated') {
+      } else if (stage === 'heated' || stage === 'step1_heat') {
         return [
           { stage: 'step2_gas_test', label: '🧪 Step 2: Test Gas (Moist Litmus / Splint)', cls: 'btn-perform-test btn-step-gas' },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      } else if (stage === 'step2_gas_test' || stage.startsWith('test_gas') || stage === 'test_splint' || stage === 'test_limewater') {
+        return [
+          { stage: 'cooled', label: '❄️ Step 3: Allow Tube to Cool', cls: 'btn-perform-test btn-step-cool' },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else {
@@ -1846,14 +2201,21 @@
     playEffervescenceSound,
     playFlameSound,
     playCrystalInspectSound,
+    playDecrepitationSound,
+    playSplintRelightSound,
+    playDropletSizzleSound,
     playReactionSound: function(reactionStateOrType, isExcess = false) {
       if (typeof reactionStateOrType === 'string') {
         if (reactionStateOrType === 'effervescence' || reactionStateOrType === 'bubbling') playEffervescenceSound();
         else if (reactionStateOrType === 'flame' || reactionStateOrType === 'heat') playFlameSound();
         else if (reactionStateOrType === 'inspect') playCrystalInspectSound();
+        else if (reactionStateOrType === 'decrepitate') playDecrepitationSound();
+        else if (reactionStateOrType === 'splint') playSplintRelightSound();
+        else if (reactionStateOrType === 'sizzle') playDropletSizzleSound();
         else playDropSplashSound(isExcess);
       } else if (reactionStateOrType && typeof reactionStateOrType === 'object') {
-        if (reactionStateOrType.bubbling) playEffervescenceSound();
+        if (reactionStateOrType.decrepitates) playDecrepitationSound();
+        else if (reactionStateOrType.bubbling) playEffervescenceSound();
         else if (reactionStateOrType.isHeated || reactionStateOrType.soundType === 'flame') playFlameSound();
         else if (reactionStateOrType.isPhysicalAppearance || reactionStateOrType.soundType === 'inspect') playCrystalInspectSound();
         else playDropSplashSound(reactionStateOrType.isExcess);

@@ -2329,3 +2329,145 @@ html, body {
   transform-origin: center center;
   animation: frothFizz 1.2s infinite ease-in-out;
 }
+
+/* ── Dry Thermal Heating Simulator Enhancements ── */
+.heating-lab-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.heating-toolbar-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.heating-mode-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+}
+
+.btn-step-heat-gentle {
+  background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
+  color: #FFFFFF;
+}
+
+.active-stage-btn {
+  box-shadow: 0 0 0 2.5px var(--cyan-accent), var(--shadow-md) !important;
+  font-weight: 800 !important;
+}
+
+.heating-probe-selector-tray {
+  background: var(--card-bg-hover);
+  border: 1px solid var(--card-border);
+  border-left: 3px solid var(--amber-accent);
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.probe-tray-label {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: var(--heading-color);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.probe-chips-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.btn-probe-chip {
+  padding: 5px 11px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-family: var(--font-body);
+  border-radius: 6px;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.18s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-probe-chip:hover {
+  background: var(--card-bg-hover);
+  border-color: var(--cyan-accent);
+  transform: translateY(-1px);
+}
+
+.btn-probe-chip.active-probe {
+  background: rgba(2, 132, 199, 0.12);
+  border-color: var(--cyan-accent);
+  color: var(--cyan-accent);
+  box-shadow: 0 0 0 1.5px var(--cyan-accent);
+  font-weight: 800;
+}
+
+/* Decrepitation Snapping Crystals Pop & Flash */
+@keyframes decrepitationFlash {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.85;
+  }
+  20% {
+    transform: translate(-1.5px, -2px) scale(1.35);
+    opacity: 1;
+    filter: drop-shadow(0 0 4px #FDE047);
+  }
+  40% {
+    transform: translate(2px, -3px) scale(0.9);
+    opacity: 0.7;
+  }
+  65% {
+    transform: translate(-1px, 1px) scale(1.4);
+    opacity: 1;
+    filter: drop-shadow(0 0 5px #F59E0B);
+  }
+  85% {
+    transform: translate(1px, -1.5px) scale(1.1);
+    opacity: 0.9;
+  }
+}
+.anim-decrepitate {
+  transform-box: fill-box;
+  transform-origin: center center;
+  animation: decrepitationFlash 0.36s infinite ease-in-out;
+}
+
+/* Glowing Wooden Splint Flame Burst (Oxygen Reignition) */
+@keyframes splintFlameBurst {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.8;
+    filter: drop-shadow(0 0 2px #F59E0B);
+  }
+  45% {
+    transform: scale(1.18);
+    opacity: 1;
+    filter: drop-shadow(0 0 8px #FACC15);
+  }
+  100% {
+    transform: scale(0.85);
+    opacity: 0.8;
+    filter: drop-shadow(0 0 2px #F59E0B);
+  }
+}
+.anim-splint-burst {
+  transform-box: fill-box;
+  transform-origin: center center;
+  animation: splintFlameBurst 0.28s infinite ease-in-out;
+}

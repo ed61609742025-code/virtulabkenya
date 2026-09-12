@@ -45,6 +45,7 @@
 <link rel="stylesheet" href="css/dashboard.css?v=78">
 <link rel="stylesheet" href="css/skill-tree.css?v=78">
 <link rel="stylesheet" href="css/mobile.css?v=1">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" crossorigin="anonymous"></script>
 
 <style>
   :root, [data-theme="light"] {
@@ -434,6 +435,15 @@
           </div>
           <div class="xp-sub-text" id="heroTierName">Paper 3 Practical</div>
           <span id="heroLevelBadge" style="display:none;"></span>
+        </div>
+
+        <!-- Progress Analytics Quick-Jump -->
+        <div id="heroAnalyticsPill" class="hero-metric-card" onclick="switchStudentSubTab('achievements', true); document.getElementById('analyticsSection')?.scrollIntoView({behavior:'smooth'});" data-tooltip="Track 30-day accuracy trend &amp; topic mastery" data-tooltip-pos="bottom" style="cursor:pointer;">
+          <div class="metric-icon">📈</div>
+          <div class="metric-body">
+            <div class="metric-val" id="heroAccuracyVal">--%</div>
+            <div class="metric-lbl">Accuracy Trend</div>
+          </div>
         </div>
 
         <!-- Pre-Lab Quick Drill CTA -->
@@ -1230,6 +1240,101 @@
         </p>
       </div>
 
+      <!-- ── PROGRESS & COMPETENCY ANALYTICS SUITE ── -->
+      <section id="analyticsSection" class="student-analytics-section" style="margin-bottom:28px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+          <div>
+            <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.15rem; font-weight:800; color:var(--heading-color); margin:0 0 4px 0;">
+              📊 Performance Trajectory &amp; Practice Velocity
+            </h3>
+            <p style="font-size:0.82rem; color:var(--text-muted); margin:0;">
+              Live telemetry tracking your 30-day practical accuracy, syllabus coverage, and KNEC benchmark progression.
+            </p>
+          </div>
+          <div class="analytics-badge-status" id="analyticsReadinessBadge">
+            <span class="status-dot"></span>
+            <span id="analyticsReadinessStatusText">Analyzing Telemetry...</span>
+          </div>
+        </div>
+
+        <!-- 4-Card KPI Ribbon -->
+        <div class="analytics-kpi-ribbon">
+          <div class="analytics-kpi-card">
+            <div class="kpi-icon-wrap" style="background:rgba(16,185,129,0.12); color:#10B981;">🎯</div>
+            <div class="kpi-data">
+              <div class="kpi-value" id="kpiAccuracyVal">--%</div>
+              <div class="kpi-label">Overall Accuracy</div>
+              <div class="kpi-subtext" id="kpiAccuracySub">KNEC Passing Standard</div>
+            </div>
+          </div>
+
+          <div class="analytics-kpi-card">
+            <div class="kpi-icon-wrap" style="background:rgba(56,189,248,0.12); color:var(--cyan-accent);">🧪</div>
+            <div class="kpi-data">
+              <div class="kpi-value" id="kpiTotalSessions">--</div>
+              <div class="kpi-label">Practicals Logged</div>
+              <div class="kpi-subtext" id="kpiDisciplinesCount">Across 8 Disciplines</div>
+            </div>
+          </div>
+
+          <div class="analytics-kpi-card">
+            <div class="kpi-icon-wrap" style="background:rgba(245,158,11,0.14); color:var(--amber-accent);">⚡</div>
+            <div class="kpi-data">
+              <div class="kpi-value" id="kpiWeeklySessions">--</div>
+              <div class="kpi-label">Weekly Velocity</div>
+              <div class="kpi-subtext" id="kpiVelocityTarget">Target: 3+ per week</div>
+            </div>
+          </div>
+
+          <div class="analytics-kpi-card">
+            <div class="kpi-icon-wrap" style="background:rgba(139,92,246,0.14); color:#8B5CF6;">🏆</div>
+            <div class="kpi-data">
+              <div class="kpi-value" id="kpiTopDiscipline" style="font-size:1.05rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">--</div>
+              <div class="kpi-label">Top Competency</div>
+              <div class="kpi-subtext" id="kpiTopDisciplineSub">Highest-scoring discipline</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Two-Column Chart Grid -->
+        <div class="student-chart-grid">
+          <!-- Chart 1: 30-Day Accuracy Trajectory Line Chart -->
+          <div class="student-chart-card">
+            <div class="student-chart-header">
+              <div>
+                <h4 class="student-chart-title">📈 30-Day Practical Accuracy Trajectory</h4>
+                <div class="student-chart-subtitle" id="trendGainSubtitle">Chronological score progression across sessions</div>
+              </div>
+              <div class="knec-benchmark-legend">
+                <span class="benchmark-pill pill-distinction" title="KNEC ≥80% Distinction Level">80% Distinction</span>
+                <span class="benchmark-pill pill-pass" title="KNEC ≥50% Passing Standard">50% Pass</span>
+              </div>
+            </div>
+            <div class="student-chart-canvas-wrap">
+              <canvas id="studentTrendChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Chart 2: Syllabus Mastery & Weekly Practice Velocity -->
+          <div class="student-chart-card">
+            <div class="student-chart-header">
+              <div>
+                <h4 class="student-chart-title" id="secondaryChartTitle">🔬 Syllabus Discipline Mastery</h4>
+                <div class="student-chart-subtitle" id="secondaryChartSubtitle">Distribution of practical sessions by chemistry domain</div>
+              </div>
+              <div class="chart-toggle-group">
+                <button type="button" id="btnToggleMastery" class="chart-toggle-btn active" onclick="switchStudentChartMode('mastery')">Topics</button>
+                <button type="button" id="btnToggleVelocity" class="chart-toggle-btn" onclick="switchStudentChartMode('velocity')">Velocity</button>
+              </div>
+            </div>
+            <div class="student-chart-canvas-wrap">
+              <canvas id="studentTypeChart"></canvas>
+              <canvas id="studentVelocityChart" style="display:none;"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <div class="modular-2col-grid">
         
         <!-- Left Column: Honors & Badges -->
@@ -1444,6 +1549,13 @@
 
       // Update URL hash without jumping
       history.replaceState(null, null, `#${tabId}`);
+
+      // Resize and re-align charts if switching to achievements tab
+      if (tabId === 'achievements') {
+        if (typeof window.resizeStudentCharts === 'function') {
+          setTimeout(window.resizeStudentCharts, 60);
+        }
+      }
     }
 
     // Toggle user dropdown

@@ -14,6 +14,9 @@ requireStudentLogin();
     localStorage.setItem('vlk_theme', theme);
     document.documentElement.setAttribute('data-theme', theme);
     updateThemeButtons();
+    if (typeof renderStudentCharts === 'function' && (cachedStudentSessions || cachedStudentAnalytics)) {
+      renderStudentCharts(cachedStudentSessions, cachedStudentAnalytics);
+    }
   }
   
   // Set current formatted date
@@ -1139,14 +1142,94 @@ requireStudentLogin();
 
   let studentTrendChartInstance = null;
   let studentTypeChartInstance = null;
+  let studentVelocityChartInstance = null;
+  let currentStudentChartMode = 'mastery';
+  let cachedStudentAnalytics = null;
+  let cachedStudentSessions = null;
+
+  function getThemeChartColors() {
+    const theme = document.documentElement.getAttribute('data-theme') || 'light';
+    if (theme === 'dark') {
+      return {
+        text: '#CBD5E1',
+        textMuted: '#94A3B8',
+        grid: 'rgba(255, 255, 255, 0.08)',
+        tooltipBg: 'rgba(15, 26, 46, 0.95)',
+        accent: '#10B981',
+        accentBg: 'rgba(16, 185, 129, 0.15)',
+        cyan: '#38BDF8',
+        amber: '#F59E0B'
+      };
+    } else if (theme === 'green') {
+      return {
+        text: '#A7F3D0',
+        textMuted: '#6EE7B7',
+        grid: 'rgba(52, 211, 153, 0.12)',
+        tooltipBg: 'rgba(6, 20, 11, 0.95)',
+        accent: '#34D399',
+        accentBg: 'rgba(52, 211, 153, 0.18)',
+        cyan: '#38BDF8',
+        amber: '#FBBF24'
+      };
+    } else {
+      return {
+        text: '#334155',
+        textMuted: '#475569',
+        grid: 'rgba(0, 0, 0, 0.06)',
+        tooltipBg: 'rgba(15, 23, 42, 0.95)',
+        accent: '#059669',
+        accentBg: 'rgba(5, 150, 105, 0.12)',
+        cyan: '#0284C7',
+        amber: '#D97706'
+      };
+    }
+  }
+
+  window.switchStudentChartMode = function(mode) {
+    currentStudentChartMode = mode;
+    const btnMastery = document.getElementById('btnToggleMastery');
+    const btnVelocity = document.getElementById('btnToggleVelocity');
+    const typeCanvas = document.getElementById('studentTypeChart');
+    const velocityCanvas = document.getElementById('studentVelocityChart');
+    const title = document.getElementById('secondaryChartTitle');
+    const subtitle = document.getElementById('secondaryChartSubtitle');
+
+    if (mode === 'mastery') {
+      if (btnMastery) btnMastery.classList.add('active');
+      if (btnVelocity) btnVelocity.classList.remove('active');
+      if (typeCanvas) typeCanvas.style.display = 'block';
+      if (velocityCanvas) velocityCanvas.style.display = 'none';
+      if (title) title.textContent = '🔬 Syllabus Discipline Mastery';
+      if (subtitle) subtitle.textContent = 'Distribution of practical sessions by chemistry domain';
+      if (studentTypeChartInstance) studentTypeChartInstance.resize();
+    } else {
+      if (btnMastery) btnMastery.classList.remove('active');
+      if (btnVelocity) btnVelocity.classList.add('active');
+      if (typeCanvas) typeCanvas.style.display = 'none';
+      if (velocityCanvas) velocityCanvas.style.display = 'block';
+      if (title) title.textContent = '⚡ 4-Week Practice Velocity';
+      if (subtitle) subtitle.textContent = 'Completed practicals per week vs KNEC target pace (3+/wk)';
+      if (studentVelocityChartInstance) {
+        studentVelocityChartInstance.resize();
+      } else if (cachedStudentAnalytics && cachedStudentAnalytics.weeklyVelocity) {
+        renderVelocityChart(cachedStudentAnalytics.weeklyVelocity);
+      }
+    }
+  };
+
+  window.resizeStudentCharts = function() {
+    if (studentTrendChartInstance) studentTrendChartInstance.resize();
+    if (studentTypeChartInstance && currentStudentChartMode === 'mastery') studentTypeChartInstance.resize();
+    if (studentVelocityChartInstance && currentStudentChartMode === 'velocity') studentVelocityChartInstance.resize();
+  };
 
   function drawNativeLineChart(canvas, labels, accuracyData) {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     const dpr = window.devicePixelRatio || 1;
-    const width = canvas.parentElement ? canvas.parentElement.clientWidth : (canvas.clientWidth || 300);
-    const height = 180;
+    const width = canvas.parentElement ? canvas.parentElement.clientWidth : (canvas.clientWidth || 340);
+    const height = 200;
     
     canvas.width = width * dpr;
     canvas.height = height * dpr;
@@ -1156,50 +1239,53 @@ requireStudentLogin();
     ctx.scale(dpr, dpr);
     ctx.clearRect(0, 0, width, height);
 
-    // Background Grid
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+    const tc = getThemeChartColors();
+
+    // Background Grid & Axis Labels
+    ctx.strokeStyle = tc.grid;
     ctx.lineWidth = 1;
     for (let i = 0; i <= 4; i++) {
-      const y = 20 + i * (height - 40) / 4;
+      const y = 20 + i * (height - 45) / 4;
       ctx.beginPath();
       ctx.moveTo(35, y);
       ctx.lineTo(width - 15, y);
       ctx.stroke();
       
-      ctx.fillStyle = '#94A3B8';
-      ctx.font = '10px sans-serif';
+      ctx.fillStyle = tc.textMuted;
+      ctx.font = '10px JetBrains Mono, monospace';
       ctx.textAlign = 'right';
       ctx.fillText(`${100 - i * 25}%`, 30, y + 3);
     }
 
+    // Benchmark Guideline: 80% Distinction
+    const y80 = 20 + (1 - 0.8) * (height - 45);
+    ctx.strokeStyle = 'rgba(16, 185, 129, 0.4)';
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(35, y80);
+    ctx.lineTo(width - 15, y80);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
     const validIndices = accuracyData.map((v, i) => v !== null ? i : -1).filter(i => i !== -1);
     
     if (validIndices.length === 0) {
-      // Empty state placeholder baseline
-      ctx.strokeStyle = 'rgba(16, 185, 129, 0.4)';
-      ctx.setLineDash([4, 4]);
-      ctx.beginPath();
-      ctx.moveTo(40, height / 2);
-      ctx.lineTo(width - 20, height / 2);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      ctx.fillStyle = '#94A3B8';
-      ctx.font = '11px sans-serif';
+      ctx.fillStyle = tc.textMuted;
+      ctx.font = '11px Plus Jakarta Sans, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('No session history yet — complete a practical to view trend', width / 2, height / 2 - 8);
+      ctx.fillText('No session telemetry yet — complete practicals to view accuracy trend', width / 2, height / 2);
       return;
     }
 
     const points = validIndices.map(idx => {
-      const x = 40 + (idx / (labels.length - 1)) * (width - 60);
-      const y = 20 + (1 - accuracyData[idx] / 100) * (height - 40);
+      const x = 40 + (idx / Math.max(1, labels.length - 1)) * (width - 60);
+      const y = 20 + (1 - accuracyData[idx] / 100) * (height - 45);
       return { x, y, val: accuracyData[idx] };
     });
 
     if (points.length > 1) {
       const gradient = ctx.createLinearGradient(0, 0, 0, height);
-      gradient.addColorStop(0, 'rgba(16, 185, 129, 0.35)');
+      gradient.addColorStop(0, tc.accentBg);
       gradient.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
 
       ctx.beginPath();
@@ -1207,8 +1293,8 @@ requireStudentLogin();
       for (let i = 1; i < points.length; i++) {
         ctx.lineTo(points[i].x, points[i].y);
       }
-      ctx.lineTo(points[points.length - 1].x, height - 20);
-      ctx.lineTo(points[0].x, height - 20);
+      ctx.lineTo(points[points.length - 1].x, height - 25);
+      ctx.lineTo(points[0].x, height - 25);
       ctx.closePath();
       ctx.fillStyle = gradient;
       ctx.fill();
@@ -1218,7 +1304,7 @@ requireStudentLogin();
       for (let i = 1; i < points.length; i++) {
         ctx.lineTo(points[i].x, points[i].y);
       }
-      ctx.strokeStyle = '#10B981';
+      ctx.strokeStyle = tc.accent;
       ctx.lineWidth = 2.5;
       ctx.stroke();
     }
@@ -1226,7 +1312,7 @@ requireStudentLogin();
     points.forEach(p => {
       ctx.beginPath();
       ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
-      ctx.fillStyle = '#10B981';
+      ctx.fillStyle = tc.accent;
       ctx.fill();
       ctx.strokeStyle = '#FFFFFF';
       ctx.lineWidth = 1.5;
@@ -1239,8 +1325,8 @@ requireStudentLogin();
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     const dpr = window.devicePixelRatio || 1;
-    const width = canvas.parentElement ? canvas.parentElement.clientWidth : (canvas.clientWidth || 300);
-    const height = 180;
+    const width = canvas.parentElement ? canvas.parentElement.clientWidth : (canvas.clientWidth || 340);
+    const height = 200;
     
     canvas.width = width * dpr;
     canvas.height = height * dpr;
@@ -1250,38 +1336,28 @@ requireStudentLogin();
     ctx.scale(dpr, dpr);
     ctx.clearRect(0, 0, width, height);
 
-    const colors = ['#059669', '#3B82F6', '#0284C7', '#7C3AED', '#06B6D4', '#8B5CF6'];
+    const tc = getThemeChartColors();
+    const colors = ['#10B981', '#8B5CF6', '#0284C7', '#F59E0B', '#6366F1', '#F43F5E', '#EA580C', '#EF4444', '#EAB308', '#06B6D4'];
     const labels = Object.keys(typeCounts);
     const values = Object.values(typeCounts);
     const total = values.reduce((a, b) => a + b, 0);
 
-    const centerX = width * 0.3;
+    const centerX = width * 0.32;
     const centerY = height / 2;
     const outerRadius = Math.min(centerX - 10, height / 2 - 15);
-    const innerRadius = Math.max(10, outerRadius * 0.55);
+    const innerRadius = Math.max(10, outerRadius * 0.58);
 
     if (total === 0) {
       ctx.beginPath();
       ctx.arc(centerX, centerY, outerRadius, 0, Math.PI * 2);
       ctx.arc(centerX, centerY, innerRadius, Math.PI * 2, 0, true);
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+      ctx.fillStyle = tc.grid;
       ctx.fill();
 
-      ctx.fillStyle = '#94A3B8';
-      ctx.font = '10px sans-serif';
+      ctx.fillStyle = tc.textMuted;
+      ctx.font = '10px Plus Jakarta Sans, sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText('0 Sessions', centerX, centerY + 3);
-
-      let legY = 20;
-      labels.forEach((lbl, i) => {
-        ctx.fillStyle = colors[i % colors.length];
-        ctx.fillRect(width * 0.55, legY, 8, 8);
-        ctx.fillStyle = '#94A3B8';
-        ctx.font = '10px sans-serif';
-        ctx.textAlign = 'left';
-        ctx.fillText(`${lbl} (0)`, width * 0.55 + 14, legY + 8);
-        legY += 22;
-      });
       return;
     }
 
@@ -1301,62 +1377,284 @@ requireStudentLogin();
       startAngle = endAngle;
     });
 
-    let legY = 20;
+    let legY = 16;
     labels.forEach((lbl, i) => {
+      if (values[i] === 0 && labels.length > 5) return;
+      if (legY > height - 16) return;
       ctx.fillStyle = colors[i % colors.length];
-      ctx.fillRect(width * 0.55, legY, 8, 8);
-      ctx.fillStyle = '#F1F5F9';
-      ctx.font = '10px sans-serif';
+      ctx.fillRect(width * 0.62, legY, 8, 8);
+      ctx.fillStyle = tc.text;
+      ctx.font = '10px Plus Jakarta Sans, sans-serif';
       ctx.textAlign = 'left';
-      ctx.fillText(`${lbl} (${values[i]})`, width * 0.55 + 14, legY + 8);
-      legY += 22;
+      ctx.fillText(`${lbl} (${values[i]})`, width * 0.62 + 13, legY + 8);
+      legY += 18;
     });
   }
 
-  function renderStudentCharts(sessions) {
-    const trendCanvas = document.getElementById('studentTrendChart');
-    const typeCanvas = document.getElementById('studentTypeChart');
-    if (!trendCanvas || !typeCanvas) return;
+  function drawNativeBarChart(canvas, velocityData) {
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const dpr = window.devicePixelRatio || 1;
+    const width = canvas.parentElement ? canvas.parentElement.clientWidth : (canvas.clientWidth || 340);
+    const height = 200;
 
-    // 1. Group 30-Day Trend
-    const now = new Date();
-    const daysMap = {};
-    for (let i = 29; i >= 0; i--) {
-      const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
-      const key = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      daysMap[key] = { total: 0, correct: 0 };
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, width, height);
+
+    const tc = getThemeChartColors();
+    const items = velocityData || [
+      { label: '3 Wks Ago', count: 0, target: 3 },
+      { label: '2 Wks Ago', count: 0, target: 3 },
+      { label: 'Last Week', count: 0, target: 3 },
+      { label: 'This Week', count: 0, target: 3 }
+    ];
+
+    const maxCount = Math.max(5, ...items.map(it => it.count));
+    const padX = 40;
+    const padY = 25;
+    const barWidth = Math.min(36, (width - padX * 2) / (items.length * 1.8));
+    const stepX = (width - padX * 2) / items.length;
+
+    // Grid lines
+    ctx.strokeStyle = tc.grid;
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 4; i++) {
+      const y = padY + (i / 4) * (height - padY * 2);
+      ctx.beginPath();
+      ctx.moveTo(padX, y);
+      ctx.lineTo(width - 20, y);
+      ctx.stroke();
+
+      ctx.fillStyle = tc.textMuted;
+      ctx.font = '10px JetBrains Mono, monospace';
+      ctx.textAlign = 'right';
+      ctx.fillText(Math.round(maxCount * (1 - i / 4)), padX - 6, y + 3);
     }
 
-    (sessions || []).forEach(s => {
-      if (!s.created_at) return;
-      const key = new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      if (daysMap[key]) {
-        daysMap[key].total++;
-        if (s.correct || (s.total_score != null && s.total_score >= 10)) daysMap[key].correct++;
-      }
-    });
+    // Target Line (3 sessions)
+    const targetY = padY + (1 - 3 / maxCount) * (height - padY * 2);
+    ctx.strokeStyle = '#F59E0B';
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(padX, targetY);
+    ctx.lineTo(width - 20, targetY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#F59E0B';
+    ctx.font = '9px Plus Jakarta Sans, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText('Target (3/wk)', width - 24, targetY - 4);
 
-    const allDates = Object.keys(daysMap);
-    // Smooth trend: calculate progressive cumulative mastery across active dates
-    const activeDates = allDates.filter(k => daysMap[k].total > 0);
+    // Draw Bars
+    items.forEach((item, idx) => {
+      const x = padX + idx * stepX + (stepX - barWidth) / 2;
+      const barH = (item.count / maxCount) * (height - padY * 2);
+      const y = (height - padY) - barH;
+
+      const grad = ctx.createLinearGradient(0, y, 0, height - padY);
+      grad.addColorStop(0, '#0284C7');
+      grad.addColorStop(1, 'rgba(2, 132, 199, 0.4)');
+
+      ctx.fillStyle = grad;
+      ctx.fillRect(x, y, barWidth, barH);
+
+      // Count above bar
+      if (item.count > 0) {
+        ctx.fillStyle = tc.text;
+        ctx.font = 'bold 10px Plus Jakarta Sans, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(item.count, x + barWidth / 2, y - 4);
+      }
+
+      // Label below bar
+      ctx.fillStyle = tc.textMuted;
+      ctx.font = '10px Plus Jakarta Sans, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(item.label, x + barWidth / 2, height - padY + 14);
+    });
+  }
+
+  function renderVelocityChart(weeklyVelocity) {
+    const velocityCanvas = document.getElementById('studentVelocityChart');
+    if (!velocityCanvas) return;
+    const tc = getThemeChartColors();
+
+    const vData = weeklyVelocity || [
+      { label: '3 Wks Ago', count: 0, target: 3 },
+      { label: '2 Wks Ago', count: 0, target: 3 },
+      { label: 'Last Week', count: 0, target: 3 },
+      { label: 'This Week', count: 0, target: 3 }
+    ];
+
+    const vLabels = vData.map(v => v.label);
+    const vCounts = vData.map(v => v.count);
+
+    if (typeof Chart !== 'undefined') {
+      try {
+        if (studentVelocityChartInstance) studentVelocityChartInstance.destroy();
+        studentVelocityChartInstance = new Chart(velocityCanvas, {
+          type: 'bar',
+          data: {
+            labels: vLabels,
+            datasets: [{
+              label: 'Completed Practicals',
+              data: vCounts,
+              backgroundColor: 'rgba(2, 132, 199, 0.8)',
+              borderColor: '#0284C7',
+              borderWidth: 1.5,
+              borderRadius: 6,
+              maxBarThickness: 38
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                backgroundColor: tc.tooltipBg,
+                titleFont: { family: "'Plus Jakarta Sans', sans-serif", weight: 'bold' },
+                bodyFont: { family: "'JetBrains Mono', monospace" },
+                padding: 10,
+                cornerRadius: 8,
+                callbacks: {
+                  label: (ctx) => ` ${ctx.raw} practical session${ctx.raw === 1 ? '' : 's'}`
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                suggestedMax: 5,
+                ticks: { stepSize: 1, color: tc.textMuted, font: { size: 10, family: "'JetBrains Mono', monospace" } },
+                grid: { color: tc.grid }
+              },
+              x: {
+                ticks: { color: tc.textMuted, font: { size: 10, family: "'Plus Jakarta Sans', sans-serif" } },
+                grid: { display: false }
+              }
+            }
+          }
+        });
+        return;
+      } catch (err) {
+        console.warn('Chart.js velocity render error, using canvas fallback:', err);
+      }
+    }
+
+    drawNativeBarChart(velocityCanvas, vData);
+  }
+
+  function renderStudentCharts(sessions, analyticsOverride) {
+    const trendCanvas = document.getElementById('studentTrendChart');
+    const typeCanvas = document.getElementById('studentTypeChart');
+    const velocityCanvas = document.getElementById('studentVelocityChart');
+    if (!trendCanvas && !typeCanvas) return;
+
+    const analytics = analyticsOverride || cachedStudentAnalytics;
+    const tc = getThemeChartColors();
+
+    // ── 1. Populate KPI Summary Ribbon ──
+    const overallAcc = analytics?.summary?.overallAccuracyPct != null
+      ? analytics.summary.overallAccuracyPct
+      : (sessions?.length ? Math.round((sessions.filter(s => s.correct).length / sessions.length) * 100) : 0);
+    const totalSessions = analytics?.summary?.totalSessions != null
+      ? analytics.summary.totalSessions
+      : (sessions?.length || 0);
+    const weeklySessions = analytics?.summary?.weeklySessions != null
+      ? analytics.summary.weeklySessions
+      : (sessions ? sessions.filter(s => new Date(s.created_at) >= new Date(Date.now() - 7 * 86400000)).length : 0);
+    const topDiscipline = analytics?.summary?.topDiscipline || (sessions?.length ? (sessions[0].titration_title || sessions[0].titration_type || 'Volumetric') : 'None yet');
+
+    const kpiAccEl = document.getElementById('kpiAccuracyVal');
+    if (kpiAccEl) kpiAccEl.textContent = overallAcc + '%';
+    const heroAccEl = document.getElementById('heroAccuracyVal');
+    if (heroAccEl) heroAccEl.textContent = overallAcc + '%';
+
+    const kpiTotalEl = document.getElementById('kpiTotalSessions');
+    if (kpiTotalEl) kpiTotalEl.textContent = totalSessions;
+
+    const kpiWeeklyEl = document.getElementById('kpiWeeklySessions');
+    if (kpiWeeklyEl) kpiWeeklyEl.textContent = weeklySessions;
+
+    const kpiTopEl = document.getElementById('kpiTopDiscipline');
+    if (kpiTopEl) kpiTopEl.textContent = topDiscipline;
+
+    const statusBadge = document.getElementById('analyticsReadinessStatusText');
+    if (statusBadge) {
+      if (overallAcc >= 80) statusBadge.textContent = 'Distinction Pace (A/B)';
+      else if (overallAcc >= 50) statusBadge.textContent = 'Satisfactory Pace (C)';
+      else if (totalSessions > 0) statusBadge.textContent = 'Review Suggested';
+      else statusBadge.textContent = 'Ready for First Lab';
+    }
+
+    // ── 2. Format 30-Day Accuracy Trend Data ──
     let trendLabels = [];
     let trendAccuracy = [];
 
-    if (activeDates.length >= 1) {
-      trendLabels = activeDates;
-      let runningTotal = 0;
-      let runningCorrect = 0;
-      trendAccuracy = activeDates.map(k => {
-        runningTotal += daysMap[k].total;
-        runningCorrect += daysMap[k].correct;
-        return Math.round((runningCorrect / runningTotal) * 100);
+    if (analytics && Array.isArray(analytics.accuracyOverTime) && analytics.accuracyOverTime.length > 0) {
+      trendLabels = analytics.accuracyOverTime.map(r => {
+        const d = new Date(r.day);
+        return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
       });
+      trendAccuracy = analytics.accuracyOverTime.map(r => r.accuracyPct);
+
+      // Trend gain indicator
+      const gainEl = document.getElementById('trendGainSubtitle');
+      if (gainEl && trendAccuracy.length >= 2) {
+        const diff = trendAccuracy[trendAccuracy.length - 1] - trendAccuracy[0];
+        gainEl.textContent = diff >= 0 
+          ? `▲ +${diff.toFixed(1)}% improvement across recent sessions` 
+          : `▼ ${diff.toFixed(1)}% concordance variation (review suggested)`;
+      }
     } else {
-      trendLabels = [allDates[0], allDates[7], allDates[14], allDates[21], allDates[29]];
-      trendAccuracy = [null, null, null, null, null];
+      // Fallback: build progressive accuracy from sessions array
+      const now = new Date();
+      const daysMap = {};
+      for (let i = 29; i >= 0; i--) {
+        const d = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+        const key = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        daysMap[key] = { total: 0, correct: 0 };
+      }
+
+      (sessions || []).forEach(s => {
+        if (!s.created_at) return;
+        const key = new Date(s.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        if (daysMap[key]) {
+          daysMap[key].total++;
+          if (s.correct || (s.score != null && s.score >= 50) || (s.total_score != null && s.total_score >= 10)) {
+            daysMap[key].correct++;
+          }
+        }
+      });
+
+      const allDates = Object.keys(daysMap);
+      const activeDates = allDates.filter(k => daysMap[k].total > 0);
+
+      if (activeDates.length >= 1) {
+        trendLabels = activeDates;
+        let runningTotal = 0;
+        let runningCorrect = 0;
+        trendAccuracy = activeDates.map(k => {
+          runningTotal += daysMap[k].total;
+          runningCorrect += daysMap[k].correct;
+          return Math.round((runningCorrect / runningTotal) * 100);
+        });
+      } else {
+        trendLabels = [allDates[0], allDates[7], allDates[14], allDates[21], allDates[29]];
+        trendAccuracy = [null, null, null, null, null];
+      }
     }
 
-    // 2. Group by Practical Type (All 10 KNEC syllabus practical domains)
+    // ── 3. Format Topic Mastery Data ──
+    let chartLabels = [];
+    let chartData = [];
     const typeCounts = {
       'Acid-Base': 0,
       'Redox': 0,
@@ -1370,40 +1668,59 @@ requireStudentLogin();
       'Gas Prep': 0
     };
 
-    (sessions || []).forEach(s => {
-      const type = (s.titration_title || s.titration_type || s.titrationKey || s.salt_key || s.salt_name || s.compound_name || s.solute_key || s.solute_name || s.experiment_title || s.gas_key || s.gas_name || s.method || '').toLowerCase();
-      if (type.includes('redox')) typeCounts['Redox']++;
-      else if (type.includes('precipit')) typeCounts['Precipitation']++;
-      else if (type.includes('complex')) typeCounts['Complexometric']++;
-      else if (type.includes('qualitative') || s.salt_key || s.salt_name) typeCounts['Qualitative']++;
-      else if (type.includes('organic') || s.compound_name) typeCounts['Organic']++;
-      else if (type.includes('solubility') || s.solute_key || s.solute_name) typeCounts['Solubility']++;
-      else if (type.includes('energy') || s.system_name || s.system_id) typeCounts['Energy']++;
-      else if (type.includes('rate') || s.method) typeCounts['Rates']++;
-      else if (type.includes('gas') || s.gas_key || s.gas_name) typeCounts['Gas Prep']++;
-      else typeCounts['Acid-Base']++;
-    });
+    if (analytics && Array.isArray(analytics.byType) && analytics.byType.length > 0) {
+      analytics.byType.forEach(t => {
+        const lbl = t.label || t.practicalType;
+        if (t.totalSessions > 0) {
+          chartLabels.push(lbl);
+          chartData.push(t.totalSessions);
+        }
+        if (typeCounts[lbl] !== undefined) typeCounts[lbl] = t.totalSessions;
+      });
+    }
 
-    const activeEntries = Object.entries(typeCounts).filter(([_, v]) => v > 0);
-    const chartLabels = activeEntries.length > 0 ? activeEntries.map(([k]) => k) : ['No Sessions'];
-    const chartData = activeEntries.length > 0 ? activeEntries.map(([_, v]) => v) : [1];
+    if (chartLabels.length === 0) {
+      (sessions || []).forEach(s => {
+        const type = (s.titration_title || s.titration_type || s.type || s.salt_name || s.compound_name || s.solute_name || s.gas_name || s.method || '').toLowerCase();
+        if (type.includes('redox')) typeCounts['Redox']++;
+        else if (type.includes('precipit')) typeCounts['Precipitation']++;
+        else if (type.includes('complex')) typeCounts['Complexometric']++;
+        else if (type.includes('qualitative') || s.salt_key || s.salt_name) typeCounts['Qualitative']++;
+        else if (type.includes('organic') || s.compound_name) typeCounts['Organic']++;
+        else if (type.includes('solubility') || s.solute_key || s.solute_name) typeCounts['Solubility']++;
+        else if (type.includes('energy') || s.system_name || s.system_id) typeCounts['Energy']++;
+        else if (type.includes('rate') || s.method) typeCounts['Rates']++;
+        else if (type.includes('gas') || s.gas_key || s.gas_name) typeCounts['Gas Prep']++;
+        else typeCounts['Acid-Base']++;
+      });
+      const activeEntries = Object.entries(typeCounts).filter(([_, v]) => v > 0);
+      chartLabels = activeEntries.length > 0 ? activeEntries.map(([k]) => k) : ['No Sessions'];
+      chartData = activeEntries.length > 0 ? activeEntries.map(([_, v]) => v) : [1];
+    }
 
     const colorPalette = {
       'Acid-Base': '#10B981',
       'Redox': '#8B5CF6',
       'Precipitation': '#0284C7',
       'Complexometric': '#F59E0B',
+      'Qualitative Analysis': '#6366F1',
       'Qualitative': '#6366F1',
+      'Organic Chemistry': '#F43F5E',
       'Organic': '#F43F5E',
+      'Solubility Curves': '#EA580C',
       'Solubility': '#EA580C',
+      'Thermochemistry': '#EF4444',
       'Energy': '#EF4444',
+      'Reaction Rates': '#EAB308',
       'Rates': '#EAB308',
+      'Gas Preparation': '#06B6D4',
       'Gas Prep': '#06B6D4',
+      'KCSE Mock Exam': '#EC4899',
       'No Sessions': '#475569'
     };
     const chartColors = chartLabels.map(l => colorPalette[l] || '#3B82F6');
 
-    // If Chart.js is present, use Chart.js, otherwise use fallback native 2D canvas engine
+    // ── 4. Render with Chart.js if available ──
     if (typeof Chart !== 'undefined') {
       try {
         if (studentTrendChartInstance) studentTrendChartInstance.destroy();
@@ -1414,10 +1731,10 @@ requireStudentLogin();
             datasets: [{
               label: 'Accuracy (%)',
               data: trendAccuracy,
-              borderColor: '#10B981',
-              backgroundColor: 'rgba(16, 185, 129, 0.12)',
+              borderColor: tc.accent,
+              backgroundColor: tc.accentBg,
               borderWidth: 2.5,
-              pointBackgroundColor: '#10B981',
+              pointBackgroundColor: tc.accent,
               pointBorderColor: '#FFFFFF',
               pointBorderWidth: 1.5,
               pointRadius: trendAccuracy.length === 1 ? 6 : 4,
@@ -1433,7 +1750,7 @@ requireStudentLogin();
             plugins: {
               legend: { display: false },
               tooltip: {
-                backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                backgroundColor: tc.tooltipBg,
                 titleFont: { family: "'Plus Jakarta Sans', sans-serif", weight: 'bold' },
                 bodyFont: { family: "'JetBrains Mono', monospace" },
                 padding: 10,
@@ -1447,11 +1764,11 @@ requireStudentLogin();
               y: {
                 min: 0,
                 max: 100,
-                ticks: { callback: v => v + '%', font: { size: 10 } },
-                grid: { color: 'rgba(255, 255, 255, 0.06)' }
+                ticks: { callback: v => v + '%', color: tc.textMuted, font: { size: 10, family: "'JetBrains Mono', monospace" } },
+                grid: { color: tc.grid }
               },
               x: {
-                ticks: { maxTicksLimit: 6, font: { size: 10 } },
+                ticks: { maxTicksLimit: 6, color: tc.textMuted, font: { size: 10, family: "'Plus Jakarta Sans', sans-serif" } },
                 grid: { display: false }
               }
             }
@@ -1479,12 +1796,13 @@ requireStudentLogin();
                 labels: {
                   boxWidth: 10,
                   boxHeight: 10,
-                  padding: 7,
+                  padding: 8,
                   font: { size: 10, family: "'Plus Jakarta Sans', sans-serif", weight: '600' },
-                  color: document.documentElement.getAttribute('data-theme') === 'light' ? '#334155' : '#CBD5E1'
+                  color: tc.text
                 }
               },
               tooltip: {
+                backgroundColor: tc.tooltipBg,
                 callbacks: {
                   label: (ctx) => ` ${ctx.label}: ${ctx.raw} session${ctx.raw === 1 ? '' : 's'}`
                 }
@@ -1492,6 +1810,11 @@ requireStudentLogin();
             }
           }
         });
+
+        // Also render weekly velocity chart
+        if (velocityCanvas) {
+          renderVelocityChart(analytics?.weeklyVelocity);
+        }
         return;
       } catch (err) {
         console.warn('Chart.js render error, using native canvas fallback:', err);
@@ -1501,18 +1824,32 @@ requireStudentLogin();
     // Native HTML5 2D Canvas Fallback
     drawNativeLineChart(trendCanvas, trendLabels, trendAccuracy);
     drawNativeDoughnutChart(typeCanvas, typeCounts);
+    if (velocityCanvas) {
+      drawNativeBarChart(velocityCanvas, analytics?.weeklyVelocity);
+    }
   }
 
   async function loadSessions() {
     const box = document.getElementById('sessionsList');
     try {
-      const data = await Sessions.getMine({ limit: 15 });
-      const sessions = data.sessions || [];
+      // Parallel fetch: session history + full analytics telemetry
+      const [sessionsData, analyticsData] = await Promise.allSettled([
+        Sessions.getMine({ limit: 20 }),
+        (typeof Analytics !== 'undefined' && typeof Analytics.getMine === 'function')
+          ? Analytics.getMine()
+          : Promise.resolve(null)
+      ]);
+
+      const sessions = (sessionsData.status === 'fulfilled' && sessionsData.value) ? (sessionsData.value.sessions || []) : [];
+      const analytics = (analyticsData.status === 'fulfilled' && analyticsData.value) ? analyticsData.value : null;
+
+      cachedStudentSessions = sessions;
+      cachedStudentAnalytics = analytics;
 
       updateReadinessScore(sessions);
       updateMwalimuAdvice(sessions);
       renderAdaptiveRecommendation(sessions);
-      renderStudentCharts(sessions);
+      renderStudentCharts(sessions, analytics);
       if (typeof updateProfileStatsUI === 'function') updateProfileStatsUI();
 
       // Sync sessions with SkillTree & cache
@@ -1530,7 +1867,7 @@ requireStudentLogin();
         return;
       }
 
-      const displaySessions = sessions.slice(0, 2);
+      const displaySessions = sessions.slice(0, 3);
       box.innerHTML = displaySessions.map(s => `
         <div class="session-card-item" data-tooltip="${s.correct ? 'Verified practical passing standard on official rubric' : 'Review suggested to improve concordance / observations'}" data-tooltip-pos="top">
           <div style="min-width:0;">
@@ -1546,8 +1883,9 @@ requireStudentLogin();
         { titration_title: 'Standardisation of HCl with Na2CO3', created_at: new Date().toISOString(), trials_count: 3, concordant_found: true, correct: true },
         { titration_title: 'Redox Titration of Fe2+ with KMnO4', created_at: new Date(Date.now() - 86400000).toISOString(), trials_count: 3, concordant_found: true, correct: true }
       ];
+      cachedStudentSessions = fallbackSessions;
       updateReadinessScore(fallbackSessions);
-      renderStudentCharts(fallbackSessions);
+      renderStudentCharts(fallbackSessions, null);
       try {
         localStorage.setItem('vlk_cached_sessions', JSON.stringify(fallbackSessions));
       } catch (e) {}

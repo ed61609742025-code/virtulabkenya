@@ -595,6 +595,9 @@ const Students = {
 const Analytics = {
   async getClass() {
     return apiRequest('GET', '/analytics/class');
+  },
+  async getMine() {
+    return apiRequest('GET', '/analytics/mine');
   }
 };
 

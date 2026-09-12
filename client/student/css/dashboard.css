@@ -3762,3 +3762,268 @@ html, body {
     padding: 9px 10px !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   STUDENT PERFORMANCE & PROGRESS ANALYTICS SUITE
+   Roadmap Feature #10: Progress Dashboard Charts
+   ══════════════════════════════════════════════════════════════ */
+
+.student-analytics-section {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.analytics-badge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  box-shadow: var(--shadow-sm);
+}
+
+.analytics-badge-status .status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+  animation: pulseDot 2s infinite ease-in-out;
+}
+
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.6; }
+}
+
+/* 4-Card KPI Ribbon */
+.analytics-kpi-ribbon {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+  width: 100%;
+}
+
+.analytics-kpi-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.analytics-kpi-card:hover {
+  transform: translateY(-1.5px);
+  border-color: var(--card-border-strong);
+  box-shadow: var(--shadow-md);
+}
+
+.kpi-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.kpi-data {
+  min-width: 0;
+  flex: 1;
+}
+
+.kpi-value {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--heading-color);
+  line-height: 1.2;
+}
+
+.kpi-label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+
+.kpi-subtext {
+  font-size: 0.68rem;
+  color: var(--text-subtle);
+  margin-top: 1px;
+}
+
+/* Two-Column Chart Grid */
+.student-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+@media (max-width: 800px) {
+  .student-chart-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.student-chart-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: 18px 18px 14px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.student-chart-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.student-chart-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--heading-color);
+  margin: 0 0 2px 0;
+}
+
+.student-chart-subtitle {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.knec-benchmark-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.benchmark-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.66rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.pill-distinction {
+  background: rgba(16, 185, 129, 0.14);
+  color: #10B981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.pill-pass {
+  background: rgba(245, 158, 11, 0.14);
+  color: var(--amber-accent);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* Chart Segmented Switcher */
+.chart-toggle-group {
+  display: inline-flex;
+  background: var(--card-bg-hover);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.chart-toggle-btn {
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.chart-toggle-btn:hover {
+  color: var(--heading-color);
+}
+
+.chart-toggle-btn.active {
+  background: var(--card-bg);
+  color: var(--cyan-accent);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .chart-toggle-btn.active,
+[data-theme="green"] .chart-toggle-btn.active {
+  background: rgba(56, 189, 248, 0.2);
+  color: #38BDF8;
+}
+
+/* Canvas Container */
+.student-chart-canvas-wrap {
+  position: relative;
+  width: 100%;
+  height: 240px;
+  max-height: 240px;
+}
+
+.student-chart-canvas-wrap canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+@media (max-width: 480px) {
+  .analytics-kpi-ribbon {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .analytics-kpi-card {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+
+  .kpi-icon-wrap {
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+  }
+
+  .kpi-value {
+    font-size: 1.15rem;
+  }
+
+  .kpi-label {
+    font-size: 0.68rem;
+  }
+
+  .student-chart-card {
+    padding: 12px;
+  }
+
+  .student-chart-canvas-wrap {
+    height: 200px;
+    max-height: 200px;
+  }
+}
+

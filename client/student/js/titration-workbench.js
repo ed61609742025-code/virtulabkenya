@@ -1898,6 +1898,7 @@ requireStudentLogin();
         statusEl.innerHTML = `Delivered: <b>${currentVolume.toFixed(2)} cm³</b>. Keep adding titrant.`;
       }
     }
+    updateTitrationCurve();
   }
 
   function recordTrial() {
@@ -2909,6 +2910,602 @@ requireStudentLogin();
     localStorage.setItem('vlk_tutorial_completed', 'true');
   }
 
+  /* ══════════════════════════════════════════════════════════════
+     DYNAMIC pH TITRATION CURVES & EQUIVALENCE BUFFERS ENGINE
+     Class-A Volumetric Physical Chemistry Telemetry (Roadmap #20)
+     Constrained exclusively to large screens (Laptops & Desktops)
+  ══════════════════════════════════════════════════════════════ */
+  const curveOverlays = {
+    indicators: true,
+    buffer: true,
+    derivative: false
+  };
+
+  let curveHoverCoord = null;
+  let curveCanvasInitialized = false;
+
+  function toggleCurveOverlay(type) {
+    if (curveOverlays.hasOwnProperty(type)) {
+      curveOverlays[type] = !curveOverlays[type];
+      const btnIdMap = {
+        indicators: 'toggleIndicatorBandsBtn',
+        buffer: 'toggleBufferZoneBtn',
+        derivative: 'toggleDerivativeBtn'
+      };
+      const btn = document.getElementById(btnIdMap[type]);
+      if (btn) {
+        btn.classList.toggle('active', curveOverlays[type]);
+      }
+      drawTitrationCurve();
+    }
+  }
+
+  function calculateCurrentPH(v, practicalKey, analyteVol, titrantConc, analyteConc, eqVol) {
+    const key = practicalKey || (current ? current.key : 'acidBase');
+    const Va = (typeof analyteVol === 'number' && analyteVol > 0) ? analyteVol : (sessionAnalyteVolume || 25.0);
+    const Ct = (typeof titrantConc === 'number' && titrantConc > 0) ? titrantConc : (sessionTitrantConc || 0.1000);
+    const Ca = (typeof analyteConc === 'number' && analyteConc > 0) ? analyteConc : (trueConc || 0.1000);
+    const Veq = (typeof eqVol === 'number' && eqVol > 0) ? eqVol : (equivalenceVolume || 25.0);
+    const Vtot = Va + v;
+    const Kw = 1.0e-14;
+
+    // 1. Weak Acid - Strong Base (CH3COOH + NaOH)
+    if (key === 'weakAcid') {
+      const Ka = 1.75e-5;
+      const pKa = 4.757; // ~4.76
+      if (v <= 0.001) {
+        const hConc = Math.sqrt(Ka * Ca);
+        return { ph: -Math.log10(Math.max(1e-14, hConc)), status: 'Initial Weak Acid (CH₃COOH)', isBuffer: false, isEq: false };
+      }
+      if (v < Veq - 0.08) {
+        const ratio = v / Math.max(0.001, Veq - v);
+        let phHH = pKa + Math.log10(ratio);
+        const initialPH = -Math.log10(Math.max(1e-14, Math.sqrt(Ka * Ca)));
+        if (v < 0.6) {
+          const t = v / 0.6;
+          phHH = (1 - t) * initialPH + t * phHH;
+        }
+        const isHalfEq = Math.abs(v - 0.5 * Veq) <= 0.35;
+        const status = isHalfEq 
+          ? 'Half-Equivalence: pH = pKa = 4.76 (Max Buffer Capacity)' 
+          : 'Buffer Region: CH₃COOH / CH₃COO⁻';
+        return { ph: Math.min(8.0, Math.max(initialPH, phHH)), status, isBuffer: true, isEq: false };
+      }
+      if (Math.abs(v - Veq) <= 0.08) {
+        const Kb = Kw / Ka;
+        const Csalt = (Ca * Va) / (Va + Veq);
+        const ohConc = Math.sqrt(Kb * Csalt);
+        const phEq = 14.0 - (-Math.log10(Math.max(1e-14, ohConc)));
+        return { ph: phEq, status: `Equivalence Point (pH = ${phEq.toFixed(2)}, Alkaline Salt Hydrolysis)`, isBuffer: false, isEq: true };
+      }
+      // Post-Equivalence: Excess NaOH
+      const excessMolesOH = (Ct * (v - Veq)) / 1000;
+      const concOH = (excessMolesOH * 1000) / Vtot;
+      const poh = -Math.log10(Math.max(1e-14, concOH));
+      const ph = Math.min(13.8, Math.max(8.72, 14.0 - poh));
+      return { ph, status: 'Excess Strong Base (NaOH)', isBuffer: false, isEq: false };
+    }
+
+    // 2. Weak Base - Strong Acid (NH3 + HCl)
+    if (key === 'weakBase') {
+      const Kb = 1.78e-5;
+      const pKb = 4.75;
+      const pKaConj = 14.0 - pKb; // 9.25
+      if (v <= 0.001) {
+        const ohConc = Math.sqrt(Kb * Ca);
+        const initialPH = 14.0 - (-Math.log10(Math.max(1e-14, ohConc)));
+        return { ph: initialPH, status: 'Initial Weak Base (Aqueous NH₃)', isBuffer: false, isEq: false };
+      }
+      if (v < Veq - 0.08) {
+        const ratio = v / Math.max(0.001, Veq - v);
+        let phHH = pKaConj - Math.log10(ratio);
+        const initialPH = 14.0 - (-Math.log10(Math.max(1e-14, Math.sqrt(Kb * Ca))));
+        if (v < 0.6) {
+          const t = v / 0.6;
+          phHH = (1 - t) * initialPH + t * phHH;
+        }
+        const isHalfEq = Math.abs(v - 0.5 * Veq) <= 0.35;
+        const status = isHalfEq
+          ? 'Half-Equivalence: pH = 9.25 (Max Basic Buffer)'
+          : 'Buffer Region: NH₃ / NH₄⁺';
+        return { ph: Math.max(6.0, Math.min(initialPH, phHH)), status, isBuffer: true, isEq: false };
+      }
+      if (Math.abs(v - Veq) <= 0.08) {
+        const KaSalt = Kw / Kb;
+        const Csalt = (Ca * Va) / (Va + Veq);
+        const hConc = Math.sqrt(KaSalt * Csalt);
+        const phEq = -Math.log10(Math.max(1e-14, hConc));
+        return { ph: phEq, status: `Equivalence Point (pH = ${phEq.toFixed(2)}, Acidic Salt Hydrolysis)`, isBuffer: false, isEq: true };
+      }
+      // Post-Equivalence: Excess HCl
+      const excessMolesH = (Ct * (v - Veq)) / 1000;
+      const concH = (excessMolesH * 1000) / Vtot;
+      const ph = Math.max(0.5, -Math.log10(Math.max(1e-14, concH)));
+      return { ph, status: 'Excess Strong Acid (HCl)', isBuffer: false, isEq: false };
+    }
+
+    // 3. Polyprotic / Tribasic Acid (H3PO4 + NaOH)
+    if (key === 'tribasic') {
+      const v1 = Veq * (1 / 2);
+      const v2 = Veq;
+      if (v < v1 - 0.15) {
+        const ph = 2.15 + Math.log10((v + 0.1) / Math.max(0.01, v1 - v));
+        return { ph: Math.max(1.5, Math.min(4.5, ph)), status: 'Buffer 1: H₃PO₄ / H₂PO₄⁻', isBuffer: true, isEq: false };
+      }
+      if (Math.abs(v - v1) <= 0.15) {
+        return { ph: 4.67, status: '1st Equivalence Point: NaH₂PO₄ (pH 4.67)', isBuffer: false, isEq: true };
+      }
+      if (v < v2 - 0.15) {
+        const subV = v - v1;
+        const subVeq = v2 - v1;
+        const ph = 7.20 + Math.log10((subV + 0.05) / Math.max(0.01, subVeq - subV));
+        return { ph: Math.max(4.8, Math.min(9.3, ph)), status: 'Buffer 2: H₂PO₄⁻ / HPO₄²⁻', isBuffer: true, isEq: false };
+      }
+      if (Math.abs(v - v2) <= 0.15) {
+        return { ph: 9.70, status: '2nd Equivalence Point: Na₂HPO₄ (pH 9.70, Phenolphthalein)', isBuffer: false, isEq: true };
+      }
+      const excessMolesOH = (Ct * (v - v2)) / 1000;
+      const concOH = (excessMolesOH * 1000) / Vtot;
+      const ph = Math.min(13.6, 14.0 - (-Math.log10(Math.max(1e-14, concOH))));
+      return { ph, status: 'Excess Strong Base (NaOH)', isBuffer: false, isEq: false };
+    }
+
+    // 4. Fallback for non-acid-base practicals (Redox, Precipitation, Complexometric)
+    if (key === 'redox') {
+      // In KMnO4 titration, analyte is strongly acidified with H2SO4 (pH ~ 0.8 - 1.2)
+      return { ph: 1.05, status: 'Acidified Fe²⁺ Medium (pH ≈ 1.0; Redox Potential Monitored)', isBuffer: false, isEq: Math.abs(v - Veq) <= 0.1 };
+    }
+    if (key === 'complexometric') {
+      return { ph: 10.00, status: 'NH₃/NH₄Cl Buffer Medium (Regulated at pH 10.0 for EDTA Chelation)', isBuffer: true, isEq: Math.abs(v - Veq) <= 0.1 };
+    }
+    if (key === 'precipitation') {
+      return { ph: 6.85, status: 'Neutral Saline Medium (AgCl Precipitation Monitored)', isBuffer: false, isEq: Math.abs(v - Veq) <= 0.1 };
+    }
+
+    // 5. Strong Acid - Strong Base (HCl + NaOH, or H2SO4 + 2NaOH)
+    const factor = (key === 'dibasic') ? 2.0 : 1.0;
+    const initialMolesH = (factor * Ca * Va) / 1000;
+    const molesDelivered = (Ct * v) / 1000;
+
+    if (Math.abs(v - Veq) <= 0.05) {
+      return { ph: 7.00, status: 'Equivalence Point (Neutralization: pH = 7.00)', isBuffer: false, isEq: true };
+    }
+    if (v < Veq) {
+      const remMolesH = initialMolesH - molesDelivered;
+      const excessH = (remMolesH * 1000) / Vtot;
+      const hConc = (excessH + Math.sqrt(excessH * excessH + 4 * Kw)) / 2;
+      const ph = -Math.log10(Math.max(1e-14, hConc));
+      return { ph: Math.max(0.2, Math.min(6.8, ph)), status: 'Acidic Analyte (Pre-Equivalence)', isBuffer: false, isEq: false };
+    } else {
+      const excessMolesOH = molesDelivered - initialMolesH;
+      const excessOH = (excessMolesOH * 1000) / Vtot;
+      const ohConc = (excessOH + Math.sqrt(excessOH * excessOH + 4 * Kw)) / 2;
+      const poh = -Math.log10(Math.max(1e-14, ohConc));
+      const ph = 14.0 - poh;
+      return { ph: Math.min(13.9, Math.max(7.2, ph)), status: 'Alkaline Titrant Excess (Post-Equivalence)', isBuffer: false, isEq: false };
+    }
+  }
+
+  function updateCurveTelemetry(curData, activeVol, eqVol) {
+    const phEl = document.getElementById('curveLivePH');
+    const pohEl = document.getElementById('curveLivePOH');
+    const ionsEl = document.getElementById('curveLiveIons');
+    const volEl = document.getElementById('curveLiveVol');
+    const statusEl = document.getElementById('curveLiveStatus');
+    const legendEqEl = document.getElementById('legendEqLabel');
+    const insightTextEl = document.getElementById('curveInsightText');
+
+    const ph = curData.ph;
+    const poh = Math.max(0, 14.0 - ph);
+    if (phEl) phEl.textContent = `pH ${ph.toFixed(2)}`;
+    if (pohEl) pohEl.textContent = `pOH ${poh.toFixed(2)}`;
+
+    if (ionsEl) {
+      if (ph < 7.0) {
+        const hConc = Math.pow(10, -ph);
+        ionsEl.textContent = `[H⁺] = ${hConc < 0.001 ? hConc.toExponential(3) : hConc.toFixed(4)} M`;
+      } else {
+        const ohConc = Math.pow(10, -poh);
+        ionsEl.textContent = `[OH⁻] = ${ohConc < 0.001 ? ohConc.toExponential(3) : ohConc.toFixed(4)} M`;
+      }
+    }
+
+    if (volEl) {
+      volEl.innerHTML = `${activeVol.toFixed(2)} cm³ <small>/ 50.00 cm³</small>`;
+    }
+
+    if (statusEl) {
+      statusEl.textContent = curData.status;
+      if (curData.isEq) {
+        statusEl.style.background = 'rgba(239, 68, 68, 0.2)';
+        statusEl.style.color = '#EF4444';
+        statusEl.style.borderColor = '#EF4444';
+      } else if (curData.isBuffer) {
+        statusEl.style.background = 'rgba(16, 185, 129, 0.2)';
+        statusEl.style.color = '#10B981';
+        statusEl.style.borderColor = '#10B981';
+      } else {
+        statusEl.style.background = '';
+        statusEl.style.color = '';
+        statusEl.style.borderColor = '';
+      }
+    }
+
+    if (legendEqEl) {
+      legendEqEl.textContent = `Equivalence Point (V_eq = ${eqVol.toFixed(2)} cm³)`;
+    }
+
+    if (insightTextEl && current) {
+      const key = current.key;
+      let text = '';
+      if (key === 'weakAcid') {
+        text = `<b>Ethanoic Acid (Weak Acid) + NaOH (Strong Base):</b> Governed by Henderson-Hasselbalch equation <code>pH = pKa + log([A⁻]/[HA])</code>. In the buffer zone, added base converts CH₃COOH to CH₃COO⁻ without drastic pH fluctuation. At half-equivalence (<b>${(eqVol * 0.5).toFixed(2)} cm³</b>), [CH₃COOH] = [CH₃COO⁻] so <b>pH = pKa = 4.76</b>. At equivalence (<b>${eqVol.toFixed(2)} cm³</b>), acetate salt hydrolysis yields an alkaline endpoint (<b>pH ≈ 8.72</b>), requiring <b>Phenolphthalein (8.2–10.0)</b> for accurate detection.`;
+      } else if (key === 'weakBase') {
+        text = `<b>Ammonia (Weak Base) + HCl (Strong Acid):</b> Forms a basic buffer system (NH₃ / NH₄⁺). At half-equivalence (<b>${(eqVol * 0.5).toFixed(2)} cm³</b>), <b>pH = 14 - pKb = 9.25</b>. At equivalence (<b>${eqVol.toFixed(2)} cm³</b>), ammonium ion hydrolysis produces an acidic endpoint (<b>pH ≈ 5.28</b>), rendering <b>Methyl Orange (3.1–4.4)</b> or Methyl Red the mandatory indicator according to KCSE marking schemes.`;
+      } else if (key === 'tribasic') {
+        text = `<b>Phosphoric Acid (Polyprotic H₃PO₄) + NaOH:</b> Demonstrates multi-step proton neutralization with distinct buffer plateaus (pKₐ₁ = 2.15, pKₐ₂ = 7.20). In KCSE volumetric standardisation using phenolphthalein, neutralization proceeds to the second equivalence point (Na₂HPO₄, <b>pH ≈ 9.70</b>).`;
+      } else if (key === 'redox') {
+        text = `<b>Redox Titration (Fe²⁺ vs KMnO₄):</b> Equivalence is indicated by self-indicating KMnO₄ (MnO₄⁻ ion reduction) at a 1:5 stoichiometric ratio. The solution remains strongly acidified with H₂SO₄ (<b>pH ≈ 1.0</b>) throughout, while the redox potential abruptly surges from +0.77 V to +1.51 V at equivalence (<b>${eqVol.toFixed(2)} cm³</b>).`;
+      } else if (key === 'complexometric') {
+        text = `<b>Complexometric Titration (Ca²⁺/Mg²⁺ vs EDTA):</b> The solution is buffered at a stable <b>pH 10.0</b> using an NH₃/NH₄Cl buffer system to ensure maximum thermodynamic stability and sharp color transition of Eriochrome Black T chelate indicator at equivalence (<b>${eqVol.toFixed(2)} cm³</b>).`;
+      } else if (key === 'precipitation') {
+        text = `<b>Precipitation Titration (Mohr's Method, Cl⁻ vs AgNO₃):</b> Conducted in neutral/mildly alkaline solution (<b>pH 6.5–9.0</b>). White AgCl precipitates first until the equivalence volume (<b>${eqVol.toFixed(2)} cm³</b>), after which excess Ag⁺ reacts with chromate to form the characteristic brick-red Ag₂CrO₄ precipitate.`;
+      } else {
+        text = `<b>Strong Acid (${current.analyteName ? current.analyteName.split(' ')[0] : 'HCl'}) + Strong Base (${current.titrantName ? current.titrantName.split(' ')[0] : 'NaOH'}):</b> The titration curve features a long, steep vertical inflection passing symmetrically through <b>pH 7.00</b> at equivalence (<b>${eqVol.toFixed(2)} cm³</b>). Both Phenolphthalein and Methyl Orange are theoretically valid because the steep vertical jump spans pH 4.0 to 10.0 in a single drop (+0.05 cm³).`;
+      }
+      insightTextEl.innerHTML = text;
+    }
+  }
+
+  function drawTitrationCurve() {
+    const card = document.getElementById('titrationCurveCard');
+    const canvas = document.getElementById('titrationCurveCanvas');
+    if (!card || !canvas) return;
+
+    // Strict constraint: only compute and paint on large screens (min-width: 1024px)
+    if (window.innerWidth < 1024) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    const width = rect.width > 0 ? rect.width : 760;
+    const height = 380;
+
+    canvas.width = Math.round(width * dpr);
+    canvas.height = Math.round(height * dpr);
+    ctx.resetTransform();
+    ctx.scale(dpr, dpr);
+
+    const padLeft = 55;
+    const padRight = 30;
+    const padTop = 25;
+    const padBottom = 45;
+    const plotW = Math.max(10, width - padLeft - padRight);
+    const plotH = Math.max(10, height - padTop - padBottom);
+
+    const mapX = (v) => padLeft + (v / 50.0) * plotW;
+    const mapY = (ph) => padTop + ((14.0 - ph) / 14.0) * plotH;
+
+    // A. Canvas Background
+    ctx.fillStyle = '#080D1A';
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.7)';
+    ctx.fillRect(padLeft, padTop, plotW, plotH);
+
+    // B. Indicator Transition Bands
+    if (curveOverlays.indicators) {
+      // 1. Phenolphthalein Band (pH 8.2 - 10.0)
+      const yPhPhTop = mapY(10.0);
+      const yPhPhBottom = mapY(8.2);
+      ctx.fillStyle = 'rgba(232, 101, 159, 0.12)';
+      ctx.fillRect(padLeft, yPhPhTop, plotW, yPhPhBottom - yPhPhTop);
+      ctx.strokeStyle = 'rgba(232, 101, 159, 0.5)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath();
+      ctx.moveTo(padLeft, yPhPhTop); ctx.lineTo(padLeft + plotW, yPhPhTop);
+      ctx.moveTo(padLeft, yPhPhBottom); ctx.lineTo(padLeft + plotW, yPhPhBottom);
+      ctx.stroke();
+
+      ctx.font = '600 10px "Plus Jakarta Sans", sans-serif';
+      ctx.fillStyle = '#F472B6';
+      ctx.textAlign = 'right';
+      ctx.fillText('Phenolphthalein (8.2–10.0)', padLeft + plotW - 8, yPhPhTop + 14);
+
+      // 2. Methyl Orange Band (pH 3.1 - 4.4)
+      const yMOTop = mapY(4.4);
+      const yMOBottom = mapY(3.1);
+      ctx.fillStyle = 'rgba(245, 158, 11, 0.12)';
+      ctx.fillRect(padLeft, yMOTop, plotW, yMOBottom - yMOTop);
+      ctx.strokeStyle = 'rgba(245, 158, 11, 0.5)';
+      ctx.beginPath();
+      ctx.moveTo(padLeft, yMOTop); ctx.lineTo(padLeft + plotW, yMOTop);
+      ctx.moveTo(padLeft, yMOBottom); ctx.lineTo(padLeft + plotW, yMOBottom);
+      ctx.stroke();
+
+      ctx.fillStyle = '#FBBF24';
+      ctx.fillText('Methyl Orange (3.1–4.4)', padLeft + plotW - 8, yMOTop + 14);
+      ctx.setLineDash([]);
+    }
+
+    // C. Buffer Capacity Zone (pKa ± 1) for weak acid/base
+    const key = current ? current.key : 'acidBase';
+    const eqVol = (typeof equivalenceVolume === 'number' && equivalenceVolume > 0) ? equivalenceVolume : 25.0;
+
+    if (curveOverlays.buffer && (key === 'weakAcid' || key === 'weakBase')) {
+      const pKa = (key === 'weakAcid') ? 4.76 : 9.25;
+      const bufTop = mapY(Math.min(14, pKa + 1.0));
+      const bufBottom = mapY(Math.max(0, pKa - 1.0));
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.11)';
+      ctx.fillRect(padLeft, bufTop, plotW, bufBottom - bufTop);
+
+      ctx.strokeStyle = 'rgba(16, 185, 129, 0.45)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(padLeft, bufTop); ctx.lineTo(padLeft + plotW, bufTop);
+      ctx.moveTo(padLeft, bufBottom); ctx.lineTo(padLeft + plotW, bufBottom);
+      ctx.stroke();
+
+      // Half-Equivalence Vertical Guideline (V = 0.5 * Veq)
+      const xHalfEq = mapX(0.5 * eqVol);
+      ctx.strokeStyle = '#10B981';
+      ctx.lineWidth = 1.3;
+      ctx.beginPath();
+      ctx.moveTo(xHalfEq, padTop);
+      ctx.lineTo(xHalfEq, padTop + plotH);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.font = '700 10px "JetBrains Mono", monospace';
+      ctx.fillStyle = '#34D399';
+      ctx.textAlign = 'left';
+      ctx.fillText(`Half-Eq: pH = ${pKa.toFixed(2)} [Max Buffer]`, xHalfEq + 6, bufTop + 14);
+    }
+
+    // D. Grid Lines and Scale Axis Labels
+    ctx.setLineDash([]);
+    ctx.lineWidth = 1;
+
+    // Y-Axis Horizontal Grid (pH 0 to 14)
+    for (let ph = 0; ph <= 14; ph += 2) {
+      const y = mapY(ph);
+      ctx.strokeStyle = (ph === 7) ? 'rgba(56, 189, 248, 0.4)' : 'rgba(255, 255, 255, 0.09)';
+      ctx.beginPath();
+      ctx.moveTo(padLeft, y);
+      ctx.lineTo(padLeft + plotW, y);
+      ctx.stroke();
+
+      ctx.font = '700 10px "JetBrains Mono", monospace';
+      ctx.fillStyle = (ph === 7) ? '#38BDF8' : '#64748B';
+      ctx.textAlign = 'right';
+      ctx.fillText(ph.toString(), padLeft - 8, y + 3.5);
+    }
+
+    // X-Axis Vertical Grid (Volume 0 to 50 cm³)
+    for (let v = 0; v <= 50; v += 10) {
+      const x = mapX(v);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.09)';
+      ctx.beginPath();
+      ctx.moveTo(x, padTop);
+      ctx.lineTo(x, padTop + plotH);
+      ctx.stroke();
+
+      ctx.font = '700 10px "JetBrains Mono", monospace';
+      ctx.fillStyle = '#64748B';
+      ctx.textAlign = 'center';
+      ctx.fillText(v.toString(), x, padTop + plotH + 16);
+    }
+
+    // Axes Rect & Titles
+    ctx.strokeStyle = '#334155';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(padLeft, padTop, plotW, plotH);
+
+    ctx.font = '800 11px "Plus Jakarta Sans", sans-serif';
+    ctx.fillStyle = '#94A3B8';
+    ctx.textAlign = 'center';
+    ctx.fillText('Delivered Titrant Volume V (cm³)', padLeft + plotW / 2, height - 10);
+
+    ctx.save();
+    ctx.translate(16, padTop + plotH / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('Flask pH', 0, 0);
+    ctx.restore();
+
+    // E. 1st Derivative Curve (dpH / dV) (Optional)
+    if (curveOverlays.derivative) {
+      const derivPoints = [];
+      const delta = 0.2;
+      let maxDeriv = 0;
+      for (let v = delta; v <= 50 - delta; v += 0.2) {
+        const ph1 = calculateCurrentPH(v - delta).ph;
+        const ph2 = calculateCurrentPH(v + delta).ph;
+        const d = Math.abs((ph2 - ph1) / (2 * delta));
+        derivPoints.push({ v, d });
+        if (d > maxDeriv) maxDeriv = d;
+      }
+      if (maxDeriv > 0) {
+        ctx.strokeStyle = 'rgba(168, 85, 247, 0.75)';
+        ctx.lineWidth = 1.8;
+        ctx.setLineDash([2, 2]);
+        ctx.beginPath();
+        derivPoints.forEach((pt, i) => {
+          const x = mapX(pt.v);
+          const normY = padTop + plotH - (pt.d / maxDeriv) * (plotH * 0.85);
+          if (i === 0) ctx.moveTo(x, normY);
+          else ctx.lineTo(x, normY);
+        });
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.font = '700 10px "JetBrains Mono", monospace';
+        ctx.fillStyle = '#C084FC';
+        ctx.textAlign = 'left';
+        ctx.fillText('dpH/dV Inflection Peak', padLeft + 10, padTop + 20);
+      }
+    }
+
+    // F. Full Theoretical Equilibrium Path (Dashed trace)
+    ctx.strokeStyle = 'rgba(148, 163, 184, 0.35)';
+    ctx.lineWidth = 1.8;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    const numPoints = 200;
+    for (let i = 0; i <= numPoints; i++) {
+      const v = (i / numPoints) * 50.0;
+      const ph = calculateCurrentPH(v).ph;
+      const x = mapX(v);
+      const y = mapY(ph);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // G. Live Plotted Delivered Curve (Up to currentVolume)
+    const activeVol = Math.max(0, Math.min(50.0, currentVolume));
+    if (activeVol > 0) {
+      const activePointsCount = Math.max(4, Math.round((activeVol / 50.0) * 200));
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = '#00F2FE';
+      ctx.strokeStyle = '#00F2FE';
+      ctx.lineWidth = 3.2;
+      ctx.beginPath();
+      for (let i = 0; i <= activePointsCount; i++) {
+        const v = (i / activePointsCount) * activeVol;
+        const ph = calculateCurrentPH(v).ph;
+        const x = mapX(v);
+        const y = mapY(ph);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+    }
+
+    // H. Equivalence Point Marker (Veq, pHeq)
+    const eqData = calculateCurrentPH(eqVol);
+    const xEq = mapX(eqVol);
+    const yEq = mapY(eqData.ph);
+
+    ctx.strokeStyle = '#EF4444';
+    ctx.lineWidth = 1.2;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(xEq, padTop + plotH);
+    ctx.lineTo(xEq, yEq);
+    ctx.lineTo(padLeft, yEq);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = '#EF4444';
+    ctx.beginPath();
+    ctx.arc(xEq, yEq, 4.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.font = '800 10px "JetBrains Mono", monospace';
+    ctx.fillStyle = '#F87171';
+    ctx.textAlign = 'left';
+    ctx.fillText(`Eq (${eqVol.toFixed(2)} cm³, pH ${eqData.ph.toFixed(2)})`, Math.min(padLeft + plotW - 140, xEq + 8), yEq - 6);
+
+    // I. Live Tracer Bead (Current Position)
+    const curData = calculateCurrentPH(activeVol);
+    const curX = mapX(activeVol);
+    const curY = mapY(curData.ph);
+
+    ctx.fillStyle = 'rgba(0, 242, 254, 0.25)';
+    ctx.beginPath();
+    ctx.arc(curX, curY, 10, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#FFFFFF';
+    ctx.strokeStyle = '#00F2FE';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.arc(curX, curY, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // J. Interactive Cursor Crosshair
+    if (curveHoverCoord) {
+      ctx.strokeStyle = 'rgba(248, 250, 252, 0.7)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath();
+      ctx.moveTo(curveHoverCoord.x, padTop);
+      ctx.lineTo(curveHoverCoord.x, padTop + plotH);
+      ctx.moveTo(padLeft, mapY(curveHoverCoord.ph));
+      ctx.lineTo(padLeft + plotW, mapY(curveHoverCoord.ph));
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = '#38BDF8';
+      ctx.beginPath();
+      ctx.arc(curveHoverCoord.x, mapY(curveHoverCoord.ph), 4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // K. Telemetry Digital Meters Update
+    updateCurveTelemetry(curData, activeVol, eqVol);
+  }
+
+  function updateTitrationCurve() {
+    drawTitrationCurve();
+  }
+
+  function initTitrationCurveCanvas() {
+    if (curveCanvasInitialized) return;
+    const canvas = document.getElementById('titrationCurveCanvas');
+    if (!canvas) return;
+
+    curveCanvasInitialized = true;
+
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const padLeft = 55;
+      const padRight = 30;
+      const plotW = rect.width - padLeft - padRight;
+      if (x >= padLeft && x <= rect.width - padRight) {
+        const vHover = Math.max(0, Math.min(50, ((x - padLeft) / plotW) * 50));
+        const phData = calculateCurrentPH(vHover);
+        curveHoverCoord = { x, y, v: vHover, ph: phData.ph, status: phData.status };
+
+        const tooltip = document.getElementById('curveTooltip');
+        if (tooltip) {
+          const ionsText = phData.ph < 7.0 
+            ? `[H⁺] = ${Math.pow(10, -phData.ph).toExponential(2)} M` 
+            : `[OH⁻] = ${Math.pow(10, -(14.0 - phData.ph)).toExponential(2)} M`;
+          tooltip.innerHTML = `<b>V: ${vHover.toFixed(2)} cm³</b> · <b>pH ${phData.ph.toFixed(2)}</b><br><span style="font-size:0.68rem;color:#7DD3FC;">${ionsText}</span><br><span style="font-size:0.66rem;color:#E2E8F0;">${phData.status}</span>`;
+          tooltip.style.left = x + 'px';
+          tooltip.style.top = y + 'px';
+          tooltip.style.display = 'block';
+        }
+      } else {
+        curveHoverCoord = null;
+        const tooltip = document.getElementById('curveTooltip');
+        if (tooltip) tooltip.style.display = 'none';
+      }
+      drawTitrationCurve();
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      curveHoverCoord = null;
+      const tooltip = document.getElementById('curveTooltip');
+      if (tooltip) tooltip.style.display = 'none';
+      drawTitrationCurve();
+    });
+
+    window.addEventListener('resize', () => {
+      drawTitrationCurve();
+    });
+  }
+
   // Explicit window exports for inline HTML event handlers
   if (typeof window !== 'undefined') {
     window.setTheme = setTheme;
@@ -2936,6 +3533,12 @@ requireStudentLogin();
     window.saveDraft = saveDraft;
     window.resetWorkbench = resetWorkbench;
     window.startNextPractical = startNextPractical;
+    window.toggleCurveOverlay = toggleCurveOverlay;
+    window.drawTitrationCurve = drawTitrationCurve;
+    window.updateTitrationCurve = updateTitrationCurve;
+    window.calculateCurrentPH = calculateCurrentPH;
   }
 
   initTutorial();
+  initTitrationCurveCanvas();
+  setTimeout(drawTitrationCurve, 100);

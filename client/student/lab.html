@@ -703,6 +703,95 @@
         </div>
       </div>
 
+      <!-- Card 4B: Dynamic pH Titration Curve & Equivalence Buffers (Desktop & Laptop Screens Only) -->
+      <div class="wb-card card-curve-telemetry curve-desktop-only" id="titrationCurveCard" style="margin-top:20px;">
+        <div class="curve-card-header">
+          <div class="wb-card-title" style="margin:0; border:none; padding:0; font-family:'Cinzel', serif;">
+            <span>📈 Real-Time pH Titration Curve &amp; Buffer Dynamics</span>
+            <span class="curve-spec-pill" title="Class-A Physical Chemistry Telemetry">Class-A Telemetry</span>
+          </div>
+          <!-- Interactive Toggle Buttons -->
+          <div class="curve-toggles-wrap">
+            <button type="button" class="curve-toggle-btn active" id="toggleIndicatorBandsBtn" onclick="toggleCurveOverlay('indicators')" title="Toggle Indicator Transition Ranges (Phenolphthalein, Methyl Orange, Litmus)">
+              <span class="toggle-dot"></span> Indicator Bands
+            </button>
+            <button type="button" class="curve-toggle-btn active" id="toggleBufferZoneBtn" onclick="toggleCurveOverlay('buffer')" title="Toggle Buffer Capacity Zone (pKa ± 1) and Henderson-Hasselbalch Half-Equivalence">
+              <span class="toggle-dot"></span> Buffer Zone
+            </button>
+            <button type="button" class="curve-toggle-btn" id="toggleDerivativeBtn" onclick="toggleCurveOverlay('derivative')" title="Toggle 1st Derivative (dpH/dV) Inflection Rate Curve">
+              <span class="toggle-dot"></span> 1st Derivative (dpH/dV)
+            </button>
+          </div>
+        </div>
+
+        <!-- Real-Time Telemetry Bar -->
+        <div class="curve-telemetry-bar">
+          <div class="curve-telemetry-item item-ph">
+            <span class="telemetry-label">Digital pH Meter</span>
+            <div class="telemetry-val-group">
+              <span class="telemetry-ph-display" id="curveLivePH">pH 1.05</span>
+              <span class="telemetry-poh" id="curveLivePOH">pOH 12.95</span>
+            </div>
+          </div>
+          <div class="curve-telemetry-item item-ions">
+            <span class="telemetry-label">Active Ion Concentration</span>
+            <div class="telemetry-val" id="curveLiveIons">[H⁺] = 8.91 × 10⁻² M</div>
+          </div>
+          <div class="curve-telemetry-item item-volume">
+            <span class="telemetry-label">Titrant Delivered</span>
+            <div class="telemetry-val" id="curveLiveVol">0.00 cm³ <small>/ 50.00 cm³</small></div>
+          </div>
+          <div class="curve-telemetry-item item-status">
+            <span class="telemetry-label">Equilibria State</span>
+            <div class="telemetry-badge" id="curveLiveStatus">Acidic Analyte</div>
+          </div>
+        </div>
+
+        <!-- High-DPI HTML5 Canvas Chart -->
+        <div class="curve-canvas-container" id="curveCanvasContainer">
+          <canvas id="titrationCurveCanvas" width="800" height="380" aria-label="Dynamic pH Titration Curve Plot"></canvas>
+          <div id="curveTooltip" class="curve-tooltip" style="display:none;"></div>
+        </div>
+
+        <!-- Legend and Analytical Indicator Strip -->
+        <div class="curve-footer-strip">
+          <div class="curve-legend-item">
+            <span class="legend-swatch swatch-live"></span>
+            <span>Delivered Titre Path</span>
+          </div>
+          <div class="curve-legend-item">
+            <span class="legend-swatch swatch-theo"></span>
+            <span>Theoretical Equilibrium</span>
+          </div>
+          <div class="curve-legend-item">
+            <span class="legend-swatch swatch-eq"></span>
+            <span id="legendEqLabel">Equivalence Point (V_eq)</span>
+          </div>
+          <div class="curve-legend-item">
+            <span class="legend-swatch swatch-buffer"></span>
+            <span>Buffer Region (pKa ± 1)</span>
+          </div>
+          <div class="curve-legend-item">
+            <span class="legend-swatch swatch-phph"></span>
+            <span>Phenolphthalein (8.2–10.0)</span>
+          </div>
+          <div class="curve-legend-item">
+            <span class="legend-swatch swatch-mo"></span>
+            <span>Methyl Orange (3.1–4.4)</span>
+          </div>
+        </div>
+
+        <!-- Chemistry Insights Drawer -->
+        <div class="curve-chem-insight" id="curveChemInsight">
+          <div class="insight-title">
+            <span>🔬 Physical Chemistry &amp; Buffer Mechanics:</span>
+          </div>
+          <div class="insight-text" id="curveInsightText">
+            Loading reaction equilibria model...
+          </div>
+        </div>
+      </div>
+
       <!-- Card 5: Results Table (KCSE Format) -->
       <div class="wb-card card-results-table" id="resultsTableCard" style="margin-top:20px;">
         <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1.5px solid var(--card-border);padding-bottom:12px;margin-bottom:14px;flex-wrap:wrap;gap:8px;">

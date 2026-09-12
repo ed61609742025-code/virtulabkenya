@@ -2318,34 +2318,860 @@ let currentPage = 1;
     }
   }
 
-  loadSessions();
+  /* ============================================================
+     Roadmap Feature #16: Class Roster & Bulk Student CSV Import
+     ============================================================ */
+  let classStudentsList = [];
+  let parsedCsvRows = [];
+  let lastImportCredentials = [];
+  let currentRawInputText = '';
+
   async function loadStudents() {
     const box = document.getElementById('studentsList');
     try {
       const data = await Students.getClass();
-      const students = data.students || [];
+      classStudentsList = data.students || [];
 
-      if (students.length === 0) {
-        box.innerHTML = '<div class="empty">No students linked yet. Share your teacher code so students can link their accounts at registration.</div>';
-        return;
-      }
+      // Update Quick Roster Stat Strip
+      updateRosterStats(classStudentsList);
 
-      box.innerHTML = students.map(s => `
-        <div class="student-item" style="cursor:pointer;" onclick="openStudentDrilldown(${s.id})">
-          <div class="info">
-            <div class="s-name" style="color:var(--heading-color);">📊 ${escapeHtml(s.name)}</div>
-            <div class="s-meta">${escapeHtml(s.email)} · ${escapeHtml(s.form || '—')}</div>
-          </div>
-          <div style="display:flex;gap:8px;" onclick="event.stopPropagation()">
-            <button class="btn" onclick="openStudentDrilldown(${s.id})">👁️ View Performance</button>
-            <button class="btn" onclick="resetStudentPw(${s.id}, '${escapeHtml(s.name).replace(/'/g, "\\'")}')">Reset Password</button>
-          </div>
-        </div>
-      `).join('');
+      // Render filtered & sorted roster
+      filterRoster();
     } catch (err) {
-      box.innerHTML = '<div class="empty">Could not load students: ' + escapeHtml(err.message) + '</div>';
+      if (box) box.innerHTML = '<div class="empty">Could not load class roster: ' + escapeHtml(err.message) + '</div>';
     }
   }
+
+  function updateRosterStats(students) {
+    const totalEl = document.getElementById('statTotalStudents');
+    const f1El = document.getElementById('statF1');
+    const f2El = document.getElementById('statF2');
+    const f3El = document.getElementById('statF3');
+    const f4El = document.getElementById('statF4');
+    const accEl = document.getElementById('statClassAccuracy');
+    const practEl = document.getElementById('statTotalPracticals');
+
+    if (!students) students = [];
+
+    const total = students.length;
+    let f1 = 0, f2 = 0, f3 = 0, f4 = 0;
+    let totalPracticals = 0;
+    let accuracySum = 0;
+    let accuracyCount = 0;
+
+    for (const s of students) {
+      const formStr = (s.form || '').toLowerCase();
+      if (formStr.includes('1')) f1++;
+      else if (formStr.includes('2')) f2++;
+      else if (formStr.includes('3')) f3++;
+      else if (formStr.includes('4')) f4++;
+
+      const sessions = parseInt(s.total_sessions || 0, 10);
+      totalPracticals += sessions;
+
+      if (sessions > 0) {
+        accuracySum += parseFloat(s.avg_accuracy || 0);
+        accuracyCount++;
+      }
+    }
+
+    const avgAccuracy = accuracyCount > 0 ? Math.round(accuracySum / accuracyCount) : 0;
+
+    if (totalEl) totalEl.textContent = total;
+    if (f1El) f1El.textContent = f1;
+    if (f2El) f2El.textContent = f2;
+    if (f3El) f3El.textContent = f3;
+    if (f4El) f4El.textContent = f4;
+    if (accEl) {
+      accEl.textContent = avgAccuracy + '%';
+      accEl.style.color = avgAccuracy >= 80 ? 'var(--green-accent)' : (avgAccuracy >= 50 ? 'var(--amber-accent)' : 'var(--red-accent)');
+    }
+    if (practEl) practEl.textContent = totalPracticals;
+  }
+
+  function filterRoster() {
+    const box = document.getElementById('studentsList');
+    if (!box) return;
+
+    const query = (document.getElementById('rosterSearchInput')?.value || '').trim().toLowerCase();
+    const formFilter = (document.getElementById('rosterFormFilter')?.value || '').trim();
+    const sortFilter = (document.getElementById('rosterSortFilter')?.value || 'name_asc').trim();
+    const clearBtn = document.getElementById('rosterSearchClear');
+
+    if (clearBtn) {
+      clearBtn.style.display = query ? 'block' : 'none';
+    }
+
+    if (!classStudentsList || classStudentsList.length === 0) {
+      const code = (currentUser && currentUser.teacherCode) || (document.getElementById('teacherCodePill')?.textContent) || '—';
+      box.innerHTML = `
+        <div class="empty" style="padding:32px 20px;">
+          <div style="font-size:2rem; margin-bottom:8px;">👥</div>
+          <div style="font-weight:700; font-size:1.05rem; color:var(--heading-color); margin-bottom:6px;">No students enrolled in your class yet</div>
+          <p style="margin:0 0 16px 0; color:var(--text-muted); font-size:0.86rem; max-width:480px; margin-left:auto; margin-right:auto;">
+            Share your Teacher Class Code <b style="color:var(--blue-accent); font-family:var(--font-mono, monospace);">${escapeHtml(code)}</b> with your students or import your class roster from CSV or Excel.
+          </p>
+          <div style="display:flex; justify-content:center; gap:10px;">
+            <button class="btn btn-primary" onclick="openBulkImportModal()">📥 Bulk Import CSV / Excel</button>
+            <button class="btn" onclick="copyTeacherCode()">📋 Copy Class Code</button>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    let filtered = classStudentsList.filter(s => {
+      // Search matching
+      if (query) {
+        const nameMatch = (s.name || '').toLowerCase().includes(query);
+        const emailMatch = (s.email || '').toLowerCase().includes(query);
+        const formMatch = (s.form || '').toLowerCase().includes(query);
+        if (!nameMatch && !emailMatch && !formMatch) return false;
+      }
+
+      // Form filter
+      if (formFilter) {
+        if ((s.form || '').toLowerCase() !== formFilter.toLowerCase()) return false;
+      }
+
+      return true;
+    });
+
+    // Sorting
+    filtered.sort((a, b) => {
+      if (sortFilter === 'name_asc') {
+        return (a.name || '').localeCompare(b.name || '');
+      } else if (sortFilter === 'name_desc') {
+        return (b.name || '').localeCompare(a.name || '');
+      } else if (sortFilter === 'practicals_desc') {
+        return (b.total_sessions || 0) - (a.total_sessions || 0);
+      } else if (sortFilter === 'accuracy_desc') {
+        return (b.avg_accuracy || 0) - (a.avg_accuracy || 0);
+      } else if (sortFilter === 'recent_active') {
+        const timeA = a.last_active ? new Date(a.last_active).getTime() : 0;
+        const timeB = b.last_active ? new Date(b.last_active).getTime() : 0;
+        return timeB - timeA;
+      }
+      return 0;
+    });
+
+    if (filtered.length === 0) {
+      box.innerHTML = `
+        <div class="empty" style="padding:28px 20px;">
+          <div style="font-size:1.6rem; margin-bottom:6px;">🔍</div>
+          <div style="font-weight:700; color:var(--heading-color);">No students match your search or filter</div>
+          <p style="margin:4px 0 14px 0; color:var(--text-muted); font-size:0.83rem;">Try searching a different name, email, or reset the form filter.</p>
+          <button class="btn btn-sm" onclick="clearRosterSearch()">Clear Search & Filters</button>
+        </div>
+      `;
+      return;
+    }
+
+    box.innerHTML = filtered.map(s => {
+      const initial = (s.name || 'S').trim().charAt(0).toUpperCase();
+      const sessions = parseInt(s.total_sessions || 0, 10);
+      const accuracy = parseInt(s.avg_accuracy || 0, 10);
+      const accClass = accuracy >= 80 ? 'accuracy-badge-green' : (accuracy >= 50 ? 'accuracy-badge-amber' : 'accuracy-badge-red');
+      const lastActiveFormatted = s.last_active ? new Date(s.last_active).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : 'Never active';
+
+      return `
+        <div class="student-roster-card" onclick="openStudentDrilldown(${s.id})">
+          <div class="student-card-left">
+            <div class="student-avatar">${initial}</div>
+            <div class="student-info-meta">
+              <div class="student-name-row">
+                <span class="student-name">${escapeHtml(s.name)}</span>
+                <span class="form-badge-pill">${escapeHtml(s.form || 'Unassigned')}</span>
+              </div>
+              <div class="student-email">${escapeHtml(s.email)}</div>
+            </div>
+          </div>
+
+          <div class="student-card-metrics">
+            <div class="metric-pill">
+              <span class="m-val" style="color:var(--blue-accent);">${sessions}</span>
+              <span class="m-lbl">Practicals</span>
+            </div>
+            <div class="metric-pill">
+              <span class="m-val ${accClass}">${accuracy}%</span>
+              <span class="m-lbl">Avg Accuracy</span>
+            </div>
+            <div class="metric-pill" style="min-width:100px;">
+              <span class="m-val" style="font-size:0.78rem; font-weight:600; color:var(--text-muted);">${lastActiveFormatted}</span>
+              <span class="m-lbl">Last Active</span>
+            </div>
+          </div>
+
+          <div class="student-card-actions" onclick="event.stopPropagation()">
+            <button class="btn btn-sm" onclick="openStudentDrilldown(${s.id})" title="View complete practical scorecard">
+              👁️ Scorecard
+            </button>
+            <button class="btn btn-sm" onclick="resetStudentPw(${s.id}, '${escapeHtml(s.name).replace(/'/g, "\\'")}')" title="Generate new temporary password">
+              🔑 Reset PW
+            </button>
+            <button class="btn btn-sm" style="color:var(--red-accent);" onclick="unlinkStudent(${s.id}, '${escapeHtml(s.name).replace(/'/g, "\\'")}')" title="Unlink student from class">
+              ⚠️ Unlink
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function clearRosterSearch() {
+    const input = document.getElementById('rosterSearchInput');
+    const formFilter = document.getElementById('rosterFormFilter');
+    if (input) input.value = '';
+    if (formFilter) formFilter.value = '';
+    filterRoster();
+  }
+
+  async function unlinkStudent(studentId, studentName) {
+    const confirmed = confirm(
+      `Are you sure you want to unlink ${studentName} from your class roster?\n\n` +
+      `• The student's account, login, and practical trial histories will NOT be deleted.\n` +
+      `• They will be disconnected from your teacher dashboard until re-linked with your class code.`
+    );
+    if (!confirmed) return;
+
+    try {
+      const res = await Students.unlink(studentId);
+      alert('✓ ' + (res.message || `${studentName} has been safely unlinked from your class.`));
+      await loadStudents();
+    } catch (err) {
+      alert('Could not unlink student: ' + (err.message || 'Server error'));
+    }
+  }
+
+  function downloadCsvTemplate() {
+    const headers = 'Name,Email,Form,Password';
+    const sampleRows = [
+      'Achieng Grace,achieng.grace@school.ac.ke,Form 3,VirtuLab2026!',
+      'Kamau Brian,kamau.brian@school.ac.ke,Form 3,VirtuLab2026!',
+      'Wanjiku Mercy,wanjiku.mercy@school.ac.ke,Form 4,VirtuLab2026!',
+      'Otieno Kevin,otieno.kevin@school.ac.ke,Form 2,VirtuLab2026!'
+    ];
+    const csvContent = headers + '\n' + sampleRows.join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'virtulab_student_import_template.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
+  function exportClassRosterCSV() {
+    if (!classStudentsList || classStudentsList.length === 0) {
+      return alert('No students currently enrolled in your class roster to export.');
+    }
+
+    const headers = ['ID', 'Name', 'Email', 'Form', 'Status', 'Practicals Completed', 'Avg Accuracy (%)', 'Last Active Date', 'Enrollment Date'];
+    const rows = classStudentsList.map(s => [
+      s.id,
+      `"${(s.name || '').replace(/"/g, '""')}"`,
+      `"${(s.email || '').replace(/"/g, '""')}"`,
+      `"${(s.form || '').replace(/"/g, '""')}"`,
+      s.status || 'active',
+      s.total_sessions || 0,
+      s.avg_accuracy || 0,
+      s.last_active ? new Date(s.last_active).toISOString().split('T')[0] : 'Never',
+      s.created_at ? new Date(s.created_at).toISOString().split('T')[0] : ''
+    ]);
+
+    const csvContent = '\uFEFF' + headers.join(',') + '\n' + rows.map(r => r.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const dateStr = new Date().toISOString().split('T')[0];
+    link.setAttribute('href', url);
+    link.setAttribute('download', `virtulab_class_roster_${dateStr}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
+  /* ── Bulk Import Modal & Parsing Logic ── */
+  function openBulkImportModal() {
+    const modal = document.getElementById('bulkImportModal');
+    if (!modal) return;
+
+    resetBulkImportForm();
+    modal.style.display = 'flex';
+  }
+
+  function closeBulkImportModal() {
+    const modal = document.getElementById('bulkImportModal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  function handleBulkModalOverlayClick(e) {
+    if (e.target.id === 'bulkImportModal') {
+      closeBulkImportModal();
+    }
+  }
+
+  function switchImportTab(tab) {
+    const tabBtnDropzone = document.getElementById('tabBtnDropzone');
+    const tabBtnPaste = document.getElementById('tabBtnPaste');
+    const contentDropzone = document.getElementById('tabContentDropzone');
+    const contentPaste = document.getElementById('tabContentPaste');
+
+    if (tab === 'dropzone') {
+      tabBtnDropzone?.classList.add('active');
+      tabBtnPaste?.classList.remove('active');
+      contentDropzone?.classList.add('active');
+      contentPaste?.classList.remove('active');
+    } else {
+      tabBtnDropzone?.classList.remove('active');
+      tabBtnPaste?.classList.add('active');
+      contentDropzone?.classList.remove('active');
+      contentPaste?.classList.add('active');
+    }
+  }
+
+  function handleDragOver(e) {
+    e.preventDefault();
+    const zone = document.getElementById('csvDropZone');
+    if (zone) zone.classList.add('dragover');
+  }
+
+  function handleDragLeave(e) {
+    e.preventDefault();
+    const zone = document.getElementById('csvDropZone');
+    if (zone) zone.classList.remove('dragover');
+  }
+
+  function handleDropFile(e) {
+    e.preventDefault();
+    const zone = document.getElementById('csvDropZone');
+    if (zone) zone.classList.remove('dragover');
+
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      processSelectedFile(e.dataTransfer.files[0]);
+    }
+  }
+
+  function handleCsvFileSelected(e) {
+    if (e.target && e.target.files && e.target.files.length > 0) {
+      processSelectedFile(e.target.files[0]);
+    }
+  }
+
+  function processSelectedFile(file) {
+    if (!file) return;
+
+    const badge = document.getElementById('selectedFileNameBadge');
+    if (badge) {
+      const sizeKb = (file.size / 1024).toFixed(1);
+      badge.textContent = `📄 ${file.name} (${sizeKb} KB)`;
+      badge.style.display = 'inline-flex';
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      currentRawInputText = evt.target.result || '';
+      reparseCurrentInput();
+    };
+    reader.onerror = function() {
+      alert('Could not read selected file.');
+    };
+    reader.readAsText(file);
+  }
+
+  function handlePasteChange() {
+    const pasteArea = document.getElementById('csvPasteArea');
+    if (!pasteArea) return;
+    currentRawInputText = pasteArea.value || '';
+    reparseCurrentInput();
+  }
+
+  function insertSamplePasteData() {
+    const pasteArea = document.getElementById('csvPasteArea');
+    if (!pasteArea) return;
+
+    const sample = [
+      'Achieng Grace\tachieng.grace@school.ac.ke\tForm 3\tVirtuLab2026!',
+      'Kamau Brian\tkamau.brian@school.ac.ke\tForm 3\tVirtuLab2026!',
+      'Wanjiku Mercy\twanjiku.mercy@school.ac.ke\tForm 4\tVirtuLab2026!',
+      'Otieno Kevin\totieno.kevin@school.ac.ke\tForm 2\tVirtuLab2026!'
+    ].join('\n');
+
+    pasteArea.value = sample;
+    currentRawInputText = sample;
+    reparseCurrentInput();
+  }
+
+  function reparseCurrentInput() {
+    const defaultForm = document.getElementById('defaultFormSelect')?.value || 'Form 3';
+    const defaultPassword = document.getElementById('defaultPasswordInput')?.value || 'VirtuLab2026!';
+
+    parsedCsvRows = parseUniversalStudentText(currentRawInputText, defaultForm, defaultPassword);
+    renderCsvPreview();
+  }
+
+  function resetBulkImportForm() {
+    currentRawInputText = '';
+    parsedCsvRows = [];
+    lastImportCredentials = [];
+
+    const fileInput = document.getElementById('csvFileInput');
+    if (fileInput) fileInput.value = '';
+
+    const badge = document.getElementById('selectedFileNameBadge');
+    if (badge) {
+      badge.textContent = '';
+      badge.style.display = 'none';
+    }
+
+    const pasteArea = document.getElementById('csvPasteArea');
+    if (pasteArea) pasteArea.value = '';
+
+    const inputSec = document.getElementById('importInputSection');
+    const successSec = document.getElementById('importSuccessSection');
+    const previewSec = document.getElementById('csvPreviewSection');
+    const btnSubmit = document.getElementById('btnSubmitBulkImport');
+    const note = document.getElementById('importStatusNote');
+
+    if (inputSec) inputSec.style.display = 'block';
+    if (successSec) successSec.style.display = 'none';
+    if (previewSec) previewSec.style.display = 'none';
+    if (btnSubmit) {
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = '<span>📥</span> Import Valid Students';
+    }
+    if (note) note.textContent = 'Ready to import valid students into your class.';
+    switchImportTab('dropzone');
+  }
+
+  /* Universal CSV / TSV / Spreadsheet row parser */
+  function parseUniversalStudentText(rawText, defaultForm, defaultPassword) {
+    if (!rawText || typeof rawText !== 'string' || !rawText.trim()) {
+      return [];
+    }
+
+    const cleanLines = rawText.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n')
+      .map(line => line.trim())
+      .filter(line => line.length > 0);
+
+    if (cleanLines.length === 0) return [];
+
+    // Auto-detect delimiter from sample lines
+    let tabCount = 0, commaCount = 0, semiCount = 0;
+    const sample = cleanLines.slice(0, 5);
+    for (const l of sample) {
+      tabCount += (l.match(/\t/g) || []).length;
+      commaCount += (l.match(/,/g) || []).length;
+      semiCount += (l.match(/;/g) || []).length;
+    }
+
+    let delimiter = ',';
+    if (tabCount > 0 && tabCount >= commaCount && tabCount >= semiCount) {
+      delimiter = '\t';
+    } else if (semiCount > commaCount && semiCount > tabCount) {
+      delimiter = ';';
+    }
+
+    // Helper to split line taking quotes into account
+    function splitLine(line, delim) {
+      if (delim === '\t') {
+        return line.split('\t').map(c => c.trim().replace(/^["']|["']$/g, ''));
+      }
+      const tokens = [];
+      let inQuotes = false;
+      let current = '';
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') {
+          inQuotes = !inQuotes;
+        } else if (ch === delim && !inQuotes) {
+          tokens.push(current.trim().replace(/^["']|["']$/g, ''));
+          current = '';
+        } else {
+          current += ch;
+        }
+      }
+      tokens.push(current.trim().replace(/^["']|["']$/g, ''));
+      return tokens;
+    }
+
+    const firstRowTokens = splitLine(cleanLines[0], delimiter);
+    let isHeader = false;
+    let nameIdx = -1, emailIdx = -1, formIdx = -1, passIdx = -1;
+
+    // If first row has an '@' symbol in any cell, it is definitely a DATA row, not a header row
+    const hasEmailInFirstRow = firstRowTokens.some(tok => tok.includes('@'));
+    if (!hasEmailInFirstRow) {
+      firstRowTokens.forEach((tok, idx) => {
+        const lower = tok.trim().toLowerCase();
+        if (/^(name|student|student_name|full_name|jina)$/i.test(lower) || /^(student\s+name|full\s+name)$/i.test(lower)) {
+          nameIdx = idx;
+          isHeader = true;
+        } else if (/^(email|e-mail|mail|email_address|email\s+address|anwani)$/i.test(lower)) {
+          emailIdx = idx;
+          isHeader = true;
+        } else if (/^(form|class|grade|darasa)$/i.test(lower)) {
+          formIdx = idx;
+          isHeader = true;
+        } else if (/^(password|pass|pin|pwd|code)$/i.test(lower)) {
+          passIdx = idx;
+          isHeader = true;
+        }
+      });
+    }
+
+    // If not header, fallback to positional
+    const dataLines = isHeader ? cleanLines.slice(1) : cleanLines;
+    if (!isHeader || nameIdx === -1 || emailIdx === -1) {
+      nameIdx = 0;
+      emailIdx = 1;
+      formIdx = 2;
+      passIdx = 3;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const existingClassEmails = new Set((classStudentsList || []).map(s => (s.email || '').toLowerCase().trim()));
+    const seenBatchEmails = new Set();
+    const parsedRows = [];
+
+    // Helper to normalize Form
+    function normalizeFormValue(val) {
+      if (!val) return defaultForm;
+      const clean = val.trim().toLowerCase();
+      if (clean.includes('1')) return 'Form 1';
+      if (clean.includes('2')) return 'Form 2';
+      if (clean.includes('3')) return 'Form 3';
+      if (clean.includes('4')) return 'Form 4';
+      return defaultForm;
+    }
+
+    for (let i = 0; i < dataLines.length; i++) {
+      const tokens = splitLine(dataLines[i], delimiter);
+      if (tokens.length === 0 || (tokens.length === 1 && !tokens[0])) continue;
+
+      let rawName = tokens[nameIdx] || '';
+      let rawEmail = tokens[emailIdx] || '';
+      let rawForm = tokens[formIdx] || '';
+      let rawPass = tokens[passIdx] || '';
+
+      // Auto-swap if user put email in first column and name in second
+      if (emailRegex.test(rawName) && !emailRegex.test(rawEmail)) {
+        const temp = rawName;
+        rawName = rawEmail;
+        rawEmail = temp;
+      }
+
+      rawName = rawName.trim();
+      rawEmail = rawEmail.toLowerCase().trim();
+      const form = normalizeFormValue(rawForm);
+      const password = (rawPass && rawPass.trim().length >= 6) ? rawPass.trim() : defaultPassword;
+
+      let status = 'ready';
+      let statusMessage = 'Ready to import';
+
+      if (!rawName || rawName.length < 2) {
+        status = 'invalid';
+        statusMessage = 'Name missing or too short (min 2 chars)';
+      } else if (!rawEmail || !emailRegex.test(rawEmail)) {
+        status = 'invalid';
+        statusMessage = 'Invalid email address format';
+      } else if (seenBatchEmails.has(rawEmail)) {
+        status = 'warning';
+        statusMessage = 'Duplicate email within this import batch';
+      } else if (existingClassEmails.has(rawEmail)) {
+        status = 'warning';
+        statusMessage = 'Student email already linked in your class';
+      } else {
+        seenBatchEmails.add(rawEmail);
+      }
+
+      parsedRows.push({
+        rowNumber: i + 1,
+        name: rawName,
+        email: rawEmail,
+        form: form,
+        password: password,
+        status: status,
+        statusMessage: statusMessage
+      });
+    }
+
+    return parsedRows;
+  }
+
+  function renderCsvPreview() {
+    const previewSec = document.getElementById('csvPreviewSection');
+    const tableBody = document.getElementById('csvPreviewTableBody');
+    const badgesBox = document.getElementById('previewBadgesSummary');
+    const btnSubmit = document.getElementById('btnSubmitBulkImport');
+    const note = document.getElementById('importStatusNote');
+
+    if (!parsedCsvRows || parsedCsvRows.length === 0) {
+      if (previewSec) previewSec.style.display = 'none';
+      if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.innerHTML = '<span>📥</span> Import Valid Students';
+      }
+      if (note) note.textContent = 'No student records detected yet.';
+      return;
+    }
+
+    if (previewSec) previewSec.style.display = 'block';
+
+    const readyRows = parsedCsvRows.filter(r => r.status === 'ready');
+    const warningRows = parsedCsvRows.filter(r => r.status === 'warning');
+    const invalidRows = parsedCsvRows.filter(r => r.status === 'invalid');
+
+    if (badgesBox) {
+      badgesBox.innerHTML = `
+        <span class="badge-count ready">🟢 ${readyRows.length} Ready</span>
+        <span class="badge-count warning">🟡 ${warningRows.length} Duplicate / Skip</span>
+        <span class="badge-count invalid">🔴 ${invalidRows.length} Invalid</span>
+      `;
+    }
+
+    if (tableBody) {
+      tableBody.innerHTML = parsedCsvRows.map(r => {
+        const pillClass = r.status === 'ready' ? 'ready' : (r.status === 'warning' ? 'warning' : 'invalid');
+        const pillIcon = r.status === 'ready' ? '✓' : (r.status === 'warning' ? '⚠' : '✕');
+
+        return `
+          <tr>
+            <td style="font-weight:700; color:var(--text-muted);">${r.rowNumber}</td>
+            <td style="font-weight:600; color:var(--heading-color);">${escapeHtml(r.name || '—')}</td>
+            <td style="font-family:var(--font-mono, monospace); font-size:0.8rem;">${escapeHtml(r.email || '—')}</td>
+            <td><span class="form-badge-pill">${escapeHtml(r.form)}</span></td>
+            <td style="font-family:var(--font-mono, monospace); font-size:0.8rem; color:var(--text-muted);">${escapeHtml(r.password)}</td>
+            <td>
+              <span class="status-pill ${pillClass}">
+                <span>${pillIcon}</span>
+                <span>${escapeHtml(r.statusMessage)}</span>
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    if (btnSubmit) {
+      btnSubmit.disabled = readyRows.length === 0;
+      btnSubmit.innerHTML = `<span>📥</span> Import ${readyRows.length} Valid Student${readyRows.length === 1 ? '' : 's'}`;
+    }
+
+    if (note) {
+      if (readyRows.length > 0) {
+        note.innerHTML = `<b>${readyRows.length}</b> student${readyRows.length === 1 ? '' : 's'} will be enrolled. Duplicate and invalid rows will be safely excluded.`;
+      } else {
+        note.innerHTML = `<span style="color:var(--red-accent);">No valid new student rows found to import. Please correct errors above.</span>`;
+      }
+    }
+  }
+
+  async function executeBulkImport() {
+    const readyRows = parsedCsvRows.filter(r => r.status === 'ready');
+    if (readyRows.length === 0) {
+      return alert('No valid students to import. Please check validation errors above.');
+    }
+
+    const defaultForm = document.getElementById('defaultFormSelect')?.value || 'Form 3';
+    const defaultPasswordOverride = document.getElementById('defaultPasswordInput')?.value || 'VirtuLab2026!';
+    const btnSubmit = document.getElementById('btnSubmitBulkImport');
+
+    if (btnSubmit) {
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = '<span>⏳</span> Importing students…';
+    }
+
+    try {
+      const payload = {
+        students: readyRows.map(r => ({
+          name: r.name,
+          email: r.email,
+          form: r.form,
+          password: r.password
+        })),
+        defaultForm,
+        defaultPasswordOverride
+      };
+
+      const result = await Students.bulkImport(payload);
+
+      lastImportCredentials = result.credentials || [];
+      const teacherCode = (result.credentials && result.credentials[0] && result.credentials[0].teacherCode)
+        || (currentUser && currentUser.teacherCode)
+        || '—';
+
+      // Show success step
+      const inputSec = document.getElementById('importInputSection');
+      const successSec = document.getElementById('importSuccessSection');
+      const titleEl = document.getElementById('importSuccessTitle');
+      const descEl = document.getElementById('importSuccessDesc');
+
+      if (inputSec) inputSec.style.display = 'none';
+      if (successSec) successSec.style.display = 'block';
+
+      if (titleEl) {
+        titleEl.textContent = `✓ ${result.importedCount} Student${result.importedCount === 1 ? '' : 's'} Enrolled Successfully!`;
+      }
+      if (descEl) {
+        descEl.textContent = `${result.importedCount} accounts registered and linked to your class. ${result.skippedCount > 0 ? result.skippedCount + ' duplicate or invalid rows were safely skipped.' : 'All rows imported cleanly.'}`;
+      }
+
+      // Render credential slips
+      renderCredentialSlips(lastImportCredentials, teacherCode);
+
+      // Refresh main roster
+      await loadStudents();
+    } catch (err) {
+      alert('Bulk import failed: ' + (err.message || 'Server error'));
+      if (btnSubmit) {
+        btnSubmit.disabled = false;
+        btnSubmit.innerHTML = `<span>📥</span> Import ${readyRows.length} Valid Students`;
+      }
+    }
+  }
+
+  function renderCredentialSlips(credentials, teacherCode) {
+    const grid = document.getElementById('credentialSlipsGrid');
+    if (!grid) return;
+
+    if (!credentials || credentials.length === 0) {
+      grid.innerHTML = '<div class="empty">No credential slips available.</div>';
+      return;
+    }
+
+    grid.innerHTML = credentials.map(c => `
+      <div class="credential-slip">
+        <div class="slip-header">
+          <span class="slip-brand">🧪 VIRTULAB KENYA</span>
+          <span class="slip-form">${escapeHtml(c.form || 'Form 3')}</span>
+        </div>
+        <div class="slip-name">${escapeHtml(c.name)}</div>
+        <div class="slip-row">
+          <span class="slip-label">Email / Login:</span>
+          <span class="slip-val">${escapeHtml(c.email)}</span>
+        </div>
+        <div class="slip-row">
+          <span class="slip-label">Initial Password:</span>
+          <span class="slip-val" style="color:var(--blue-accent);">${escapeHtml(c.password)}</span>
+        </div>
+        <div class="slip-row">
+          <span class="slip-label">Class Link Code:</span>
+          <span class="slip-val">${escapeHtml(c.teacherCode || teacherCode || '—')}</span>
+        </div>
+        <div class="slip-footer">
+          Sign in at <b>virtulabkenya.co.ke/student/login.html</b>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function printStudentCredentialSlips() {
+    if (!lastImportCredentials || lastImportCredentials.length === 0) {
+      return alert('No student credentials to print.');
+    }
+
+    const teacherName = (currentUser && currentUser.name) || 'Teacher';
+    const teacherCode = (lastImportCredentials[0] && lastImportCredentials[0].teacherCode)
+      || (currentUser && currentUser.teacherCode)
+      || '—';
+
+    const printArea = document.getElementById('credentialPrintArea');
+    if (!printArea) return;
+
+    const slipsHtml = lastImportCredentials.map(c => `
+      <div class="print-credential-slip">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #9CA3AF; padding-bottom:4px; margin-bottom:6px;">
+          <span style="font-weight:800; font-size:9pt; color:#1D4ED8; letter-spacing:0.04em;">🧪 VIRTULAB KENYA</span>
+          <span style="font-size:8pt; font-weight:700; background:#F3F4F6; padding:2px 6px; border-radius:4px; border:1px solid #D1D5DB;">${escapeHtml(c.form || 'Form 3')}</span>
+        </div>
+        <div style="font-weight:800; font-size:11pt; color:#111827; margin-bottom:6px;">${escapeHtml(c.name)}</div>
+        <div style="display:flex; justify-content:space-between; font-size:8.5pt; margin-bottom:3px;">
+          <span style="color:#4B5563;">Login Email:</span>
+          <span style="font-family:monospace; font-weight:700; color:#111827;">${escapeHtml(c.email)}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:8.5pt; margin-bottom:3px;">
+          <span style="color:#4B5563;">Initial Password:</span>
+          <span style="font-family:monospace; font-weight:700; color:#1D4ED8;">${escapeHtml(c.password)}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:8.5pt; margin-bottom:4px;">
+          <span style="color:#4B5563;">Class Code:</span>
+          <span style="font-family:monospace; font-weight:700; color:#111827;">${escapeHtml(c.teacherCode || teacherCode)}</span>
+        </div>
+        <div style="font-size:7.5pt; color:#6B7280; text-align:center; border-top:1px dashed #D1D5DB; padding-top:4px; margin-top:4px;">
+          Sign in at <b>virtulabkenya.co.ke/student/login.html</b>
+        </div>
+      </div>
+    `).join('');
+
+    printArea.innerHTML = `
+      <div style="text-align:center; margin-bottom:14px; border-bottom:2px solid #111827; padding-bottom:8px;">
+        <h2 style="margin:0 0 4px 0; font-size:16pt; color:#111827;">VirtuLab Kenya — Student Laboratory Login Slips</h2>
+        <p style="margin:0; font-size:9.5pt; color:#4B5563;">
+          Instructor: <b>${escapeHtml(teacherName)}</b> · Class Link Code: <b style="font-family:monospace;">${escapeHtml(teacherCode)}</b> · Issued: ${new Date().toLocaleDateString()}
+        </p>
+      </div>
+      <div class="print-slips-container">
+        ${slipsHtml}
+      </div>
+    `;
+
+    document.body.classList.add('printing-credentials');
+    window.print();
+
+    const cleanup = () => {
+      document.body.classList.remove('printing-credentials');
+      printArea.innerHTML = '';
+      window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup);
+    setTimeout(cleanup, 2000);
+  }
+
+  function copyCredentialsList() {
+    if (!lastImportCredentials || lastImportCredentials.length === 0) {
+      return alert('No student credentials to copy.');
+    }
+
+    const header = "Student Name\tEmail\tForm\tPassword\tClass Code";
+    const rows = lastImportCredentials.map(c => 
+      `${c.name}\t${c.email}\t${c.form}\t${c.password}\t${c.teacherCode || ''}`
+    );
+    const text = header + '\n' + rows.join('\n');
+
+    navigator.clipboard.writeText(text).then(() => {
+      alert(`✓ Copied ${lastImportCredentials.length} student credentials to clipboard! You can paste directly into Excel or Word.`);
+    }).catch(() => {
+      prompt('Copy student credentials list:', text);
+    });
+  }
+
+  // Global exports for HTML event handlers
+  window.openBulkImportModal = openBulkImportModal;
+  window.closeBulkImportModal = closeBulkImportModal;
+  window.handleBulkModalOverlayClick = handleBulkModalOverlayClick;
+  window.switchImportTab = switchImportTab;
+  window.handleDragOver = handleDragOver;
+  window.handleDragLeave = handleDragLeave;
+  window.handleDropFile = handleDropFile;
+  window.handleCsvFileSelected = handleCsvFileSelected;
+  window.handlePasteChange = handlePasteChange;
+  window.insertSamplePasteData = insertSamplePasteData;
+  window.reparseCurrentInput = reparseCurrentInput;
+  window.resetBulkImportForm = resetBulkImportForm;
+  window.executeBulkImport = executeBulkImport;
+  window.renderCredentialSlips = renderCredentialSlips;
+  window.printStudentCredentialSlips = printStudentCredentialSlips;
+  window.copyCredentialsList = copyCredentialsList;
+  window.downloadCsvTemplate = downloadCsvTemplate;
+  window.exportClassRosterCSV = exportClassRosterCSV;
+  window.filterRoster = filterRoster;
+  window.clearRosterSearch = clearRosterSearch;
+  window.unlinkStudent = unlinkStudent;
+  window.loadStudents = loadStudents;
 
   /* ── Student Performance Drill-Down Modal ── */
   async function openStudentDrilldown(studentId) {
@@ -2579,6 +3405,9 @@ let currentPage = 1;
     const modal = document.getElementById('studentDrilldownModal');
     if (modal) modal.style.display = 'none';
   }
+  window.closeStudentDrilldown = closeStudentDrilldown;
+  window.closeStudentDrilldownModal = closeStudentDrilldown;
+  window.openStudentDrilldown = openStudentDrilldown;
 
   async function resetStudentPw(studentId, studentName) {
     if (!confirm('Reset the password for ' + studentName + '? Their old password will stop working immediately.')) {
@@ -2595,6 +3424,7 @@ let currentPage = 1;
       alert('Could not reset password: ' + (err.message || 'unknown error'));
     }
   }
+  window.resetStudentPw = resetStudentPw;
 
   // Password panel is now inside the Settings tab — accessed via switchTeacherTab('paneSettings')
 

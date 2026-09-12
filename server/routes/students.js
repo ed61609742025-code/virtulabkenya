@@ -20,16 +20,33 @@ const router = express.Router();
 router.get('/class', authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT id, name, email, form, created_at
-       FROM students
-       WHERE teacher_id = $1
-       ORDER BY name ASC`,
+      `SELECT 
+         s.id, s.name, s.email, s.form, s.status, s.created_at,
+         COUNT(p.id)::int AS total_sessions,
+         COALESCE(ROUND(AVG(CASE WHEN p.correct THEN 100.0 ELSE 0.0 END)), 0)::int AS avg_accuracy,
+         MAX(p.created_at) AS last_active
+       FROM students s
+       LEFT JOIN practical_sessions p ON p.student_id = s.id
+       WHERE s.teacher_id = $1
+       GROUP BY s.id, s.name, s.email, s.form, s.status, s.created_at
+       ORDER BY s.name ASC`,
       [req.user.id]
     );
     return res.json({ students: result.rows || [] });
   } catch (err) {
     console.warn('[/api/students/class] Safe fallback:', err.message);
-    return res.json({ students: [] });
+    try {
+      const fallbackResult = await pool.query(
+        `SELECT id, name, email, form, status, created_at, 0 AS total_sessions, 0 AS avg_accuracy, NULL AS last_active
+         FROM students
+         WHERE teacher_id = $1
+         ORDER BY name ASC`,
+        [req.user.id]
+      );
+      return res.json({ students: fallbackResult.rows || [] });
+    } catch (e2) {
+      return res.json({ students: [] });
+    }
   }
 }));
 
@@ -123,7 +140,7 @@ router.post('/link-teacher', apiLimiter, authMiddleware, authMiddleware.requireR
 // POST /api/students/bulk-import — Bulk register students from CSV data (Teacher only)
 router.post('/bulk-import', apiLimiter, authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
   const teacherId = req.user.id;
-  const { students } = req.body;
+  const { students, defaultForm, defaultPasswordOverride } = req.body;
 
   if (!Array.isArray(students) || students.length === 0) {
     return res.status(400).json({ error: 'Please provide an array of students to import.' });
@@ -134,14 +151,28 @@ router.post('/bulk-import', apiLimiter, authMiddleware, authMiddleware.requireRo
   }
 
   // Get teacher's school_id
-  const teacherRes = await pool.query(`SELECT school_id, name FROM teachers WHERE id = $1`, [teacherId]);
+  const teacherRes = await pool.query(`SELECT school_id, name, teacher_code FROM teachers WHERE id = $1`, [teacherId]);
   if (teacherRes.rows.length === 0) {
     return res.status(404).json({ error: 'Teacher profile not found.' });
   }
   const schoolId = teacherRes.rows[0].school_id;
+  const teacherCode = teacherRes.rows[0].teacher_code;
 
+  function normalizeForm(f, fallback = 'Form 4') {
+    if (!f || typeof f !== 'string') return fallback;
+    const s = f.trim();
+    if (/^1$|^f\s*1$|^form\s*1$/i.test(s)) return 'Form 1';
+    if (/^2$|^f\s*2$|^form\s*2$/i.test(s)) return 'Form 2';
+    if (/^3$|^f\s*3$|^form\s*3$/i.test(s)) return 'Form 3';
+    if (/^4$|^f\s*4$|^form\s*4$/i.test(s)) return 'Form 4';
+    return s || fallback;
+  }
+
+  const fallbackForm = normalizeForm(defaultForm, 'Form 4');
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const defaultPassword = 'VirtuLab2026!';
+  const defaultPassword = (defaultPasswordOverride && typeof defaultPasswordOverride === 'string' && defaultPasswordOverride.trim().length >= 6)
+    ? defaultPasswordOverride.trim()
+    : 'VirtuLab2026!';
   const defaultHash = await bcrypt.hash(defaultPassword, 10);
 
   // Check existing emails in a single query
@@ -158,6 +189,7 @@ router.post('/bulk-import', apiLimiter, authMiddleware, authMiddleware.requireRo
   let importedCount = 0;
   let skippedCount = 0;
   const results = [];
+  const credentials = [];
   const seenInBatch = new Set();
   const validRows = [];
 
@@ -166,7 +198,7 @@ router.post('/bulk-import', apiLimiter, authMiddleware, authMiddleware.requireRo
     const row = students[i];
     const rawName = (row.name || '').trim();
     const rawEmail = (row.email || '').toLowerCase().trim();
-    const rawForm = (row.form || 'Form 4').trim();
+    const rawForm = normalizeForm(row.form, fallbackForm);
     const rawPassword = (row.password || '').trim();
 
     // Validation
@@ -194,7 +226,8 @@ router.post('/bulk-import', apiLimiter, authMiddleware, authMiddleware.requireRo
       name: rawName,
       email: rawEmail,
       form: rawForm,
-      password: rawPassword
+      password: rawPassword,
+      displayPassword: rawPassword && rawPassword.length >= 6 ? rawPassword : defaultPassword
     });
   }
 
@@ -232,6 +265,14 @@ router.post('/bulk-import', apiLimiter, authMiddleware, authMiddleware.requireRo
         existingEmailSet.add(r.email);
         importedCount++;
         results.push({ row: r.rowIndex, id: inserted.id, name: r.name, email: r.email, status: 'imported', form: r.form });
+        credentials.push({
+          id: inserted.id,
+          name: r.name,
+          email: r.email,
+          form: r.form,
+          password: r.displayPassword,
+          teacherCode
+        });
       }
     } catch (batchErr) {
       // Safe fallback: insert sequentially if batch fails
@@ -246,6 +287,14 @@ router.post('/bulk-import', apiLimiter, authMiddleware, authMiddleware.requireRo
           existingEmailSet.add(r.email);
           importedCount++;
           results.push({ row: r.rowIndex, id: singleRes.rows[0].id, name: r.name, email: r.email, status: 'imported', form: r.form });
+          credentials.push({
+            id: singleRes.rows[0].id,
+            name: r.name,
+            email: r.email,
+            form: r.form,
+            password: r.displayPassword,
+            teacherCode
+          });
         } catch (singleErr) {
           skippedCount++;
           results.push({ row: r.rowIndex, name: r.name, email: r.email, status: 'skipped', reason: singleErr.message });
@@ -263,7 +312,36 @@ router.post('/bulk-import', apiLimiter, authMiddleware, authMiddleware.requireRo
     importedCount,
     skippedCount,
     totalCount: students.length,
-    results
+    results,
+    credentials
+  });
+}));
+
+// POST /api/students/:id/unlink — Unlink student from teacher class
+router.post('/:id/unlink', authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
+  const teacherId = req.user.id;
+  const studentId = parseInt(req.params.id, 10);
+
+  if (isNaN(studentId)) {
+    return res.status(400).json({ error: 'Invalid student ID.' });
+  }
+
+  const result = await pool.query(
+    `UPDATE students
+     SET teacher_id = NULL
+     WHERE id = $1 AND teacher_id = $2
+     RETURNING id, name, email`,
+    [studentId, teacherId]
+  );
+
+  if (result.rows.length === 0) {
+    return res.status(404).json({ error: 'Student not found in your class roster.' });
+  }
+
+  return res.json({
+    success: true,
+    message: `Student "${result.rows[0].name}" has been unlinked from your class.`,
+    student: result.rows[0]
   });
 }));
 

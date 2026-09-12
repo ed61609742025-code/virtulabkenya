@@ -700,16 +700,84 @@
 
     <!-- Tab Pane 3: Students -->
     <div id="paneStudents" class="tab-pane">
-      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:10px;">
-        <h2 class="section-title" style="margin:0;">👥 Registered Students & Individual Performance</h2>
-        <div style="display:inline-flex; align-items:center; gap:8px; background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:10px; padding:6px 12px;">
-          <span style="font-size:0.8rem; font-weight:700; color:var(--text-muted);">Share Code with Students:</span>
-          <code id="teacherCodeRosterPill" style="font-size:0.92rem; font-weight:800; color:var(--blue-accent); font-family:var(--font-mono, monospace);">—</code>
-          <button class="btn" onclick="copyTeacherCode()" style="padding:2px 8px; font-size:0.75rem;">📋 Copy</button>
+      <div class="roster-header-bar">
+        <div>
+          <h2 class="section-title" style="margin:0 0 4px 0;">👥 Class Roster & Student Performance</h2>
+          <p class="hint" style="margin:0;">Manage enrolled students, sync class rosters, review practical trial metrics, and issue credentials.</p>
+        </div>
+        <div class="roster-header-actions">
+          <div class="teacher-code-badge">
+            <span class="tc-label">Class Code:</span>
+            <code id="teacherCodeRosterPill" class="tc-code">—</code>
+            <button class="btn btn-sm" onclick="copyTeacherCode()" title="Copy Teacher Code">📋 Copy</button>
+          </div>
+          <button class="btn btn-primary" onclick="openBulkImportModal()">
+            <span>📥</span> Bulk Import CSV / Excel
+          </button>
+          <button class="btn" onclick="downloadCsvTemplate()" title="Download a pre-formatted CSV template">
+            <span>📄</span> Template
+          </button>
+          <button class="btn" onclick="exportClassRosterCSV()" title="Export current student roster to CSV">
+            <span>📤</span> Export Roster
+          </button>
         </div>
       </div>
-      <p class="hint" style="margin-bottom:14px;">Students linked using your Teacher Code appear in this roster. Click any student to inspect their comprehensive practical scorecard.</p>
-      <div id="studentsList"><div class="empty">Loading students…</div></div>
+
+      <!-- Quick Roster Stat Strip -->
+      <div class="roster-stat-strip" id="rosterStatStrip">
+        <div class="stat-card">
+          <div class="stat-num" id="statTotalStudents">0</div>
+          <div class="stat-label">Enrolled Students</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="statFormBreakdown" style="font-size:0.95rem; display:flex; gap:6px; justify-content:center; align-items:center; flex-wrap:wrap;">
+            <span title="Form 1" class="form-stat-pill">F1: <b id="statF1">0</b></span>
+            <span title="Form 2" class="form-stat-pill">F2: <b id="statF2">0</b></span>
+            <span title="Form 3" class="form-stat-pill">F3: <b id="statF3">0</b></span>
+            <span title="Form 4" class="form-stat-pill">F4: <b id="statF4">0</b></span>
+          </div>
+          <div class="stat-label">Form Breakdown</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="statClassAccuracy" style="color:var(--green-accent);">0%</div>
+          <div class="stat-label">Class Avg Accuracy</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="statTotalPracticals" style="color:var(--blue-accent);">0</div>
+          <div class="stat-label">Practicals Completed</div>
+        </div>
+      </div>
+
+      <!-- Roster Search & Filter Toolbar -->
+      <div class="roster-filter-toolbar">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="rosterSearchInput" class="roster-search-input" placeholder="Search students by name or email..." oninput="filterRoster()">
+          <button type="button" id="rosterSearchClear" class="search-clear-btn" onclick="clearRosterSearch()" style="display:none;">✕</button>
+        </div>
+        <div class="filter-controls">
+          <select id="rosterFormFilter" class="filter-select" onchange="filterRoster()">
+            <option value="">All Forms (Form 1 – 4)</option>
+            <option value="Form 1">Form 1</option>
+            <option value="Form 2">Form 2</option>
+            <option value="Form 3">Form 3</option>
+            <option value="Form 4">Form 4</option>
+          </select>
+          <select id="rosterSortFilter" class="filter-select" onchange="filterRoster()">
+            <option value="name_asc">Sort: Name (A → Z)</option>
+            <option value="name_desc">Sort: Name (Z → A)</option>
+            <option value="practicals_desc">Sort: Most Practicals Done</option>
+            <option value="accuracy_desc">Sort: Highest Accuracy</option>
+            <option value="recent_active">Sort: Recently Active</option>
+          </select>
+          <button class="btn btn-sm" onclick="loadStudents()" title="Refresh Roster">🔄 Refresh</button>
+        </div>
+      </div>
+
+      <!-- Enriched Student List Container -->
+      <div id="studentsList" class="roster-student-list">
+        <div class="empty">Loading student roster…</div>
+      </div>
     </div>
 
     <!-- Tab Pane 4: Titration Sessions -->
@@ -883,6 +951,139 @@
     </div>
   </div>
 </div>
+
+<!-- Modal: Teacher Bulk Student CSV Import & Class Sync -->
+<div id="bulkImportModal" class="modal-overlay" style="display:none;" onclick="handleBulkModalOverlayClick(event)">
+  <div class="modal-card modal-card-large" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div class="modal-icon-badge">📥</div>
+        <div>
+          <h3 class="modal-title">Bulk Student CSV Import & Class Roster Sync</h3>
+          <p class="modal-subtitle">Quickly register and link your entire class from CSV files or directly from Excel / Google Sheets.</p>
+        </div>
+      </div>
+      <button class="btn modal-close-btn" onclick="closeBulkImportModal()">✕</button>
+    </div>
+
+    <!-- Import Step 1: Data Input & Configuration -->
+    <div id="importInputSection">
+      <div class="import-tabs-nav">
+        <button class="import-tab-btn active" id="tabBtnDropzone" onclick="switchImportTab('dropzone')">📁 Upload CSV / Text File</button>
+        <button class="import-tab-btn" id="tabBtnPaste" onclick="switchImportTab('paste')">📋 Paste Excel / Google Sheets Rows</button>
+      </div>
+
+      <!-- Tab Content: File Dropzone -->
+      <div id="tabContentDropzone" class="import-tab-content active">
+        <div class="csv-drop-zone" id="csvDropZone" onclick="document.getElementById('csvFileInput').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDropFile(event)">
+          <input type="file" id="csvFileInput" accept=".csv,text/csv,text/plain" style="display:none;" onchange="handleCsvFileSelected(event)">
+          <div class="drop-zone-icon">📄</div>
+          <div class="drop-zone-title">Click to browse or drag & drop student CSV file here</div>
+          <div class="drop-zone-hint">Supports comma (,), semicolon (;), or tab-delimited files (.csv, .txt)</div>
+          <div id="selectedFileNameBadge" class="selected-file-badge" style="display:none;"></div>
+        </div>
+      </div>
+
+      <!-- Tab Content: Copy-Paste -->
+      <div id="tabContentPaste" class="import-tab-content">
+        <div class="paste-zone-header">
+          <label for="csvPasteArea" class="field-label">Copy & paste rows directly from your spreadsheet:</label>
+          <button class="btn btn-sm" onclick="insertSamplePasteData()">Load Sample Rows</button>
+        </div>
+        <textarea id="csvPasteArea" class="csv-paste-textarea" rows="6" placeholder="Example:&#10;Kamau Brian&#9;kamau.brian@school.ac.ke&#9;Form 3&#10;Achieng Grace&#9;achieng.grace@school.ac.ke&#9;Form 3&#10;Wanjiku Mercy&#9;wanjiku.mercy@school.ac.ke&#9;Form 4" oninput="handlePasteChange()"></textarea>
+      </div>
+
+      <!-- Import Defaults Configuration Strip -->
+      <div class="import-config-strip">
+        <div class="config-field">
+          <label for="defaultFormSelect">Default Class Form (if missing in row):</label>
+          <select id="defaultFormSelect" class="form-select" onchange="reparseCurrentInput()">
+            <option value="Form 3" selected>Form 3</option>
+            <option value="Form 1">Form 1</option>
+            <option value="Form 2">Form 2</option>
+            <option value="Form 4">Form 4</option>
+          </select>
+        </div>
+        <div class="config-field">
+          <label for="defaultPasswordInput">Initial Password Override (optional):</label>
+          <input type="text" id="defaultPasswordInput" class="form-input" placeholder="VirtuLab2026!" value="VirtuLab2026!" oninput="reparseCurrentInput()">
+          <span class="field-hint">Students can change this password after first login.</span>
+        </div>
+      </div>
+
+      <!-- Step 2: Pre-Flight Validation Preview -->
+      <div id="csvPreviewSection" style="display:none; margin-top:20px;">
+        <div class="preview-header-bar">
+          <h4 style="margin:0; font-size:0.95rem; color:var(--heading-color);">Pre-Flight Validation Preview</h4>
+          <div class="preview-badges-summary" id="previewBadgesSummary">
+            <!-- Badges dynamically inserted -->
+          </div>
+        </div>
+        <div class="preview-table-wrapper">
+          <table class="preview-table">
+            <thead>
+              <tr>
+                <th style="width:50px;">#</th>
+                <th>Student Full Name</th>
+                <th>Email Address</th>
+                <th>Form</th>
+                <th>Initial Password</th>
+                <th>Validation Status</th>
+              </tr>
+            </thead>
+            <tbody id="csvPreviewTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Import Action Footer -->
+      <div class="modal-footer" style="margin-top:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <div style="font-size:0.83rem; color:var(--text-muted);" id="importStatusNote">
+          Ready to import valid students into your class.
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn" onclick="resetBulkImportForm()">Reset / Clear</button>
+          <button class="btn btn-primary" id="btnSubmitBulkImport" onclick="executeBulkImport()" disabled>
+            <span>📥</span> Import Valid Students
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Success & Printable Credential Slips -->
+    <div id="importSuccessSection" style="display:none;">
+      <div class="import-success-banner">
+        <div class="success-icon">🎉</div>
+        <div>
+          <h4 class="success-title" id="importSuccessTitle">Roster Synchronized Successfully!</h4>
+          <p class="success-desc" id="importSuccessDesc">All valid student accounts have been registered and linked to your class.</p>
+        </div>
+      </div>
+
+      <div class="credentials-action-bar">
+        <div>
+          <h4 style="margin:0 0 4px 0; color:var(--heading-color);">Printable Student Credential Slips</h4>
+          <p class="hint" style="margin:0;">Hand out these slips during practical lab periods so students can immediately sign in.</p>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn" onclick="copyCredentialsList()">📋 Copy All (Text)</button>
+          <button class="btn btn-primary" onclick="printStudentCredentialSlips()">🖨️ Print Credential Handouts</button>
+          <button class="btn" onclick="closeBulkImportModal()">✓ Done</button>
+        </div>
+      </div>
+
+      <!-- Credential Slips Cards Container -->
+      <div class="credential-slips-grid" id="credentialSlipsGrid">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Print-Only Dedicated Container for Student Credential Slips -->
+<div id="credentialPrintArea" style="display:none;"></div>
 
 <script src="../shared/api.js?v=69"></script>
 <script src="../shared/notifications-engine.js?v=69"></script>

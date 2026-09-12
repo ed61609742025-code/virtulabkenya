@@ -588,6 +588,12 @@ const Students = {
   },
   async getProfile() {
     return apiRequest('GET', '/students/profile');
+  },
+  async bulkImport(payload) {
+    return apiRequest('POST', '/students/bulk-import', payload);
+  },
+  async unlink(id) {
+    return apiRequest('POST', '/students/' + id + '/unlink');
   }
 };
 

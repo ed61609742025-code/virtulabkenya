@@ -498,112 +498,58 @@ if (typeof window !== 'undefined') {
   }
 
   function getObsSuggestionChips(testKey) {
-    const suggestions = {
-      heat_solid: [
-        'Brown fumes of NO₂ turn blue litmus red; residue yellow cold, brown hot',
-        'Blue crystals turn white anhydrous powder; water droplets condense on cooler walls',
-        'Pale green crystals turn dirty brown/black; water droplets; choking SO₂ gas evolved',
-        'White solid sublimes directly; dense white fumes deposit on upper cooler tube walls',
-        'Solid turns yellow when hot, white on cooling; water droplets condense',
-        'Decomposes completely with no residue; alkaline NH₃ gas turns red litmus blue',
-        'White solid crackles; on strong heating, faint pungent choking smell of SO₂',
-        'White solid remains unchanged; no gas evolved or water droplets'
-      ],
-      flame: ['Golden yellow flame', 'Lilac / pale violet flame', 'Brick-red flame', 'Blue-green flame', 'No characteristic flame color'],
-      naoh: [
-        'White ppt, soluble in excess NaOH to form a colorless solution',
-        'White ppt, insoluble in excess NaOH',
-        'Blue ppt, insoluble in excess NaOH',
-        'Green ppt, insoluble in excess NaOH',
-        'Reddish-brown ppt, insoluble in excess',
-        'No ppt; pungent ammonia gas evolved',
-        'No precipitate formed (colorless solution remains)',
-        'No visible change'
-      ],
-      nh3: [
-        'No precipitate formed',
-        'No white precipitate formed (colorless solution remains)',
-        'No visible change',
-        'Deep blue solution formed in excess NH₃',
-        'Blue ppt, soluble in excess NH₃ to form deep blue solution',
-        'White ppt, soluble in excess NH₃',
-        'White ppt, insoluble in excess NH₃',
-        'Green ppt, insoluble in excess NH₃',
-        'Reddish-brown ppt, insoluble in excess'
-      ],
-      hcl: [
-        'Effervescence of a colorless gas turning limewater milky (CO₂)',
-        'Effervescence of choking gas turning acidified K₂Cr₂O₇ green (SO₂)',
-        'No effervescence or visible change',
-        'White ppt formed (PbCl₂), dissolves on warming'
-      ],
-      agno3: [
-        'White ppt (AgCl), dissolves in dilute NH₃',
-        'Pale cream ppt (AgBr), sparingly soluble in dilute NH₃',
-        'Bright yellow ppt (AgI), completely insoluble in aqueous NH₃',
-        'White ppt (Ag₂SO₃), soluble in dilute HNO₃',
-        'No precipitate formed'
-      ],
-      bacl2: [
-        'White ppt (BaSO₄), insoluble in dilute HCl',
-        'White ppt (BaSO₃), dissolves in dilute HCl with effervescence of choking SO₂ gas',
-        'No precipitate formed'
-      ],
-      ki: ['Bright canary-yellow ppt formed (PbI₂)', 'Yellow ppt dissolves on heating to form golden sparkles', 'No precipitate formed'],
-      brown_ring: ['Brown ring formed at liquid-liquid junction', 'No brown ring formed at junction']
-    };
-    const chips = suggestions[testKey] || [];
+    // Only scientific symbols/shorthands; students formulate full observations themselves
+    const chips = ['ppt', 'Δ', '↑', '↓'];
     return chips.map(c => `
-      <button type="button" class="suggestion-chip" onclick="insertSuggestion('obs_${testKey}', '${c.replace(/'/g, "\\'")}')">+ ${c}</button>
+      <button type="button" class="suggestion-chip" onclick="insertSuggestion('obs_${testKey}', '${c}')" title="Insert scientific symbol">${c}</button>
     `).join('');
   }
 
   function getInfSuggestionChips(testKey) {
-    const suggestions = {
-      heat_solid: ['Hydrated salt / water of crystallization present', 'NO₃⁻ present', 'NH₄⁺ present', 'CO₃²⁻ present', 'HCO₃⁻ present (decomposes with CO₂ & H₂O)', 'SO₄²⁻ / SO₃²⁻ present', 'Zn²⁺ present', 'Sublimable salt (NH₄Cl) present', 'Thermally stable salt present'],
-      flame: ['Na⁺ present', 'K⁺ present', 'Ca²⁺ present', 'Cu²⁺ present', 'Na⁺, K⁺ absent'],
-      naoh: [
-        'Zn²⁺, Al³⁺, Pb²⁺ present',
-        'Ca²⁺, Mg²⁺ present',
-        'Cu²⁺ present',
-        'Fe²⁺ present',
-        'Fe³⁺ present',
-        'NH₄⁺ present',
-        'Na⁺, K⁺ present',
-        'Ca²⁺, Mg²⁺, Zn²⁺, Al³⁺, Pb²⁺, Cu²⁺, Fe²⁺, Fe³⁺ absent'
-      ],
-      nh3: [
-        'Ca²⁺ present',
-        'NH₄⁺ present',
-        'Cu²⁺, Fe²⁺, Fe³⁺, Al³⁺, Pb²⁺, Zn²⁺ absent',
-        'Ca²⁺ present / Cu²⁺, Fe²⁺, Fe³⁺, Al³⁺, Pb²⁺, Zn²⁺ absent',
-        'Na⁺, K⁺ present',
-        'Cu²⁺ present',
-        'Zn²⁺ present',
-        'Pb²⁺, Al³⁺ present',
-        'Fe²⁺ present',
-        'Fe³⁺ present'
-      ],
-      hcl: ['CO₃²⁻ / HCO₃⁻ present', 'CO₃²⁻ present', 'HCO₃⁻ present', 'SO₃²⁻ present', 'Pb²⁺ present', 'CO₃²⁻, SO₃²⁻ absent'],
-      agno3: ['Cl⁻ present', 'Br⁻ present', 'I⁻ present', 'SO₃²⁻ present', 'Cl⁻, Br⁻, I⁻ absent'],
-      bacl2: ['SO₄²⁻ present', 'SO₃²⁻ present', 'CO₃²⁻ present', 'SO₄²⁻ absent', 'SO₄²⁻, SO₃²⁻ absent'],
-      ki: ['Pb²⁺ present', 'Pb²⁺ absent'],
-      brown_ring: ['NO₃⁻ present', 'NO₃⁻ absent']
+    // Only chemical ions and notation superscripts; no pre-written deduction sentences
+    const symbolMap = {
+      heat_solid: ['NO₃⁻', 'CO₃²⁻', 'SO₄²⁻', 'SO₃²⁻', 'NH₄⁺', 'Zn²⁺', 'Pb²⁺', '²⁺', '⁻', '²⁻'],
+      flame: ['Na⁺', 'K⁺', 'Ca²⁺', 'Cu²⁺', '⁺', '²⁺'],
+      naoh: ['Zn²⁺', 'Al³⁺', 'Pb²⁺', 'Ca²⁺', 'Mg²⁺', 'Cu²⁺', 'Fe²⁺', 'Fe³⁺', 'NH₄⁺', '²⁺', '³⁺'],
+      nh3: ['Cu²⁺', 'Zn²⁺', 'Al³⁺', 'Pb²⁺', 'Fe²⁺', 'Fe³⁺', 'Ca²⁺', 'NH₄⁺', '²⁺', '³⁺'],
+      hcl: ['CO₃²⁻', 'SO₃²⁻', 'Pb²⁺', '²⁻', '⁻'],
+      agno3: ['Cl⁻', 'Br⁻', 'I⁻', 'SO₃²⁻', '⁻', '²⁻'],
+      bacl2: ['SO₄²⁻', 'SO₃²⁻', 'CO₃²⁻', '²⁻'],
+      ki: ['Pb²⁺', '²⁺'],
+      brown_ring: ['NO₃⁻', '⁻']
     };
-    const chips = suggestions[testKey] || [];
+    const chips = symbolMap[testKey] || ['Pb²⁺', 'Al³⁺', 'Zn²⁺', 'SO₄²⁻', 'Cl⁻', '²⁺', '³⁺', '²⁻', '⁻'];
     return chips.map(c => `
-      <button type="button" class="suggestion-chip" onclick="insertSuggestion('inf_${testKey}', '${c.replace(/'/g, "\\'")}')">+ ${c}</button>
+      <button type="button" class="suggestion-chip" onclick="insertSuggestion('inf_${testKey}', '${c}')" title="Insert ion / symbol">${c}</button>
     `).join('');
   }
 
   window.insertSuggestion = function(elemId, text) {
     const elem = document.getElementById(elemId);
-    if (elem) {
-      elem.value = text;
-      const parts = elemId.split('_');
-      const testKey = parts[1];
-      saveTextState(testKey);
+    if (!elem) return;
+    const start = elem.selectionStart !== undefined ? elem.selectionStart : elem.value.length;
+    const end = elem.selectionEnd !== undefined ? elem.selectionEnd : elem.value.length;
+    const val = elem.value;
+
+    const isSubOrSuper = /^[²³⁺⁻₂₃₄]+$/.test(text);
+    let prefix = '';
+    if (!isSubOrSuper && start > 0) {
+      const prev = val[start - 1];
+      if (prev !== ' ' && prev !== '\n') prefix = ' ';
     }
+    let suffix = '';
+    if (!isSubOrSuper && end < val.length) {
+      const next = val[end];
+      if (next !== ' ' && next !== '\n' && next !== ',' && next !== '.') suffix = ' ';
+    }
+
+    elem.value = val.substring(0, start) + prefix + text + suffix + val.substring(end);
+    const newPos = start + prefix.length + text.length;
+    elem.selectionStart = elem.selectionEnd = newPos;
+    elem.focus();
+    const parts = elemId.split('_');
+    const testKey = parts[1];
+    saveTextState(testKey);
   };
 
   /* ══════════════════════════════════════

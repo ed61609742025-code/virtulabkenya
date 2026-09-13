@@ -1345,27 +1345,30 @@ html, body {
 }
 
 .suggestion-chip {
-  background: var(--card-bg-hover);
-  border: 1px solid var(--card-border);
-  color: var(--text-muted);
-  font-size: 0.74rem;
-  font-weight: 600;
-  font-family: var(--font-body);
-  padding: 4px 8px;
-  border-radius: 6px;
+  background: var(--card-bg, #1e293b);
+  border: 1px solid var(--card-border, #334155);
+  color: var(--text-main, #f8fafc);
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: var(--font-mono, monospace);
+  padding: 3px 8px;
+  min-height: 25px;
+  border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease;
-  text-align: left;
-  white-space: normal;
-  word-break: break-word;
-  max-width: 100%;
-  line-height: 1.35;
-  box-sizing: border-box;
+  transition: all 0.12s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
 }
 .suggestion-chip:hover {
-  background: var(--blue-bg);
-  color: var(--blue-accent);
-  border-color: var(--blue-border);
+  background: var(--blue-bg, rgba(59, 130, 246, 0.15));
+  color: var(--blue-accent, #38bdf8);
+  border-color: var(--blue-accent, #38bdf8);
+  transform: translateY(-1px);
+}
+.suggestion-chip:active {
+  transform: scale(0.95);
 }
 
 .feedback-line {

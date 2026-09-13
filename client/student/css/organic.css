@@ -778,22 +778,30 @@ html, body {
 }
 
 .suggestion-chip {
-  background: var(--card-bg-hover);
-  border: 1px solid var(--card-border);
-  color: var(--text-muted);
-  font-size: 0.74rem;
-  font-weight: 600;
-  font-family: var(--font-body);
-  padding: 4px 8px;
-  border-radius: 6px;
+  background: var(--card-bg, #1e293b);
+  border: 1px solid var(--card-border, #334155);
+  color: var(--text-main, #f8fafc);
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: var(--font-mono, monospace);
+  padding: 3px 8px;
+  min-height: 25px;
+  border-radius: 5px;
   cursor: pointer;
   transition: all 0.12s ease;
-  text-align: left;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
 }
 .suggestion-chip:hover {
-  background: var(--violet-bg);
-  color: var(--violet-accent);
-  border-color: var(--violet-border);
+  background: var(--violet-bg, rgba(124, 58, 237, 0.15));
+  color: var(--violet-accent, #a78bfa);
+  border-color: var(--violet-accent, #a78bfa);
+  transform: translateY(-1px);
+}
+.suggestion-chip:active {
+  transform: scale(0.95);
 }
 
 .feedback-line {

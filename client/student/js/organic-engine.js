@@ -301,87 +301,47 @@
      Exact KNEC Marking Language
   ══════════════════════════════════════ */
   function getObsSuggestionChips(testKey) {
-    const suggestions = {
-      solubility: [
-        'Miscible. Dissolves completely in water',
-        'Immiscible. Forms two distinct liquid layers'
-      ],
-      ignition: [
-        'Burns with a yellow smoky sooty flame',
-        'Burns with a clear blue non-sooty flame'
-      ],
-      bromine: [
-        'Bromine water is decolourized immediately',
-        'Bromine water remains reddish-brown'
-      ],
-      dichromate: [
-        'Acidified potassium dichromate(VI) turns green',
-        'Acidified potassium dichromate(VI) remains orange'
-      ],
-      carbonate: [
-        'Effervescence of colourless gas that turns limewater milky',
-        'No effervescence observed'
-      ],
-      esterification: [
-        'Sweet pleasant fruity aroma produced',
-        'Pungent acid smell persists'
-      ],
-      litmus: [
-        'Blue litmus paper turns red',
-        'Litmus papers remain unchanged'
-      ]
-    };
-    const chips = suggestions[testKey] || [];
+    // Scientific lab symbols; students formulate observations in their own words
+    const chips = ['ppt', 'Δ', '↑', '↓'];
     return chips.map(c => `
-      <button type="button" class="suggestion-chip" onclick="insertSuggestion('obs_${testKey}', '${c.replace(/'/g, "\\'")}')">+ ${c}</button>
+      <button type="button" class="suggestion-chip" onclick="insertSuggestion('obs_${testKey}', '${c}')" title="Insert scientific symbol">${c}</button>
     `).join('');
   }
 
   function getInfSuggestionChips(testKey) {
-    const suggestions = {
-      solubility: [
-        'Polar organic compound present',
-        'Non-polar hydrocarbon present'
-      ],
-      ignition: [
-        'High C:H ratio compound present',
-        'Saturated organic compound present'
-      ],
-      bromine: [
-        '-C=C- or -C≡C- unsaturation present',
-        'Saturated compound with no unsaturation'
-      ],
-      dichromate: [
-        'Primary or secondary alkanol present',
-        'Alkanol absent'
-      ],
-      carbonate: [
-        'Carboxylic acid (R-COOH) present',
-        'Carboxylic acid absent'
-      ],
-      esterification: [
-        'Alkanol (R-OH) present',
-        'Alkanol absent'
-      ],
-      litmus: [
-        'Carboxylic acid (R-COOH) present',
-        'Neutral organic compound'
-      ]
-    };
-    const chips = suggestions[testKey] || [];
+    // Only organic bonds and functional group formulas; students write deductions themselves
+    const chips = ['>C=C<', '—C≡C—', '—OH', '—COOH', 'R—OH', 'R—COOH', '—COO—', 'Δ'];
     return chips.map(c => `
-      <button type="button" class="suggestion-chip" onclick="insertSuggestion('inf_${testKey}', '${c.replace(/'/g, "\\'")}')">+ ${c}</button>
+      <button type="button" class="suggestion-chip" onclick="insertSuggestion('inf_${testKey}', '${c}')" title="Insert functional group">${c}</button>
     `).join('');
   }
 
   window.insertSuggestion = function(elemId, text) {
     const elem = document.getElementById(elemId);
-    if (elem) {
-      elem.value = text;
-      const parts = elemId.split('_');
-      const testKey = parts[1];
-      saveTextState(testKey);
+    if (!elem) return;
+    const start = elem.selectionStart !== undefined ? elem.selectionStart : elem.value.length;
+    const end = elem.selectionEnd !== undefined ? elem.selectionEnd : elem.value.length;
+    const val = elem.value;
+
+    const isSubOrSuper = /^[²³⁺⁻₂₃₄]+$/.test(text);
+    let prefix = '';
+    if (!isSubOrSuper && start > 0) {
+      const prev = val[start - 1];
+      if (prev !== ' ' && prev !== '\n') prefix = ' ';
     }
+    let suffix = '';
+    if (!isSubOrSuper && end < val.length) {
+      const next = val[end];
+      if (next !== ' ' && next !== '\n' && next !== ',' && next !== '.') suffix = ' ';
+    }
+
+    elem.value = val.substring(0, start) + prefix + text + suffix + val.substring(end);
+    const newPos = start + prefix.length + text.length;
+    elem.selectionStart = elem.selectionEnd = newPos;
+    elem.focus();
+    const parts = elemId.split('_');
+    const testKey = parts[1];
+    saveTextState(testKey);
   };
 
   function saveTextState(testKey) {

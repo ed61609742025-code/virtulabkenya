@@ -153,6 +153,7 @@ requireStudentLogin();
 
     // Reset apparatus for fresh titration in this procedure
     resetTitrationApparatus();
+    updateConcordancyFeedbackHUD();
   }
 
   // Track dynamic stages for Question 2 & 3 test cards
@@ -692,6 +693,7 @@ requireStudentLogin();
     try { renderQ3TestsGrid(); } catch(e) { console.error('renderQ3TestsGrid error:', e); }
     try { drawLens(); } catch(e) { console.error('drawLens error:', e); }
     try { updateLiveScoreDisplay(); } catch(e) { console.error('updateLiveScoreDisplay error:', e); }
+    try { updateConcordancyFeedbackHUD(); } catch(e) { console.error('updateConcordancyFeedbackHUD error:', e); }
 
     // Reagents shelf initialization
     const titrantChip = document.getElementById('q1TitrantChip');
@@ -1271,6 +1273,17 @@ requireStudentLogin();
     updateBuretteRig();
   }
 
+  function setActiveTrial(trialNum) {
+    activeTrial = trialNum;
+    const lbl = document.getElementById('lblActiveTrial');
+    if (lbl) lbl.textContent = trialNum;
+    [1, 2, 3].forEach(n => {
+      const pill = document.getElementById(`btnTrial${n}Pill`);
+      if (pill) pill.classList.toggle('active', n === trialNum);
+    });
+  }
+  window.setActiveTrial = setActiveTrial;
+
   function transferReadingToTable() {
     const reading = parseFloat(engine.q1BuretteReading.toFixed(2));
     if (reading === 0) {
@@ -1283,8 +1296,7 @@ requireStudentLogin();
     const tableName = engine?.preset?.q1?.hasMultipleProcedures ? `Table ${activeProcedureIndex + 1}` : 'Table 1';
     alert(`Trial ${activeTrial} reading (${reading.toFixed(2)} cm³) transferred to ${tableName}!`);
 
-    activeTrial = activeTrial < 3 ? activeTrial + 1 : 1;
-    document.getElementById('lblActiveTrial').textContent = activeTrial;
+    setActiveTrial(activeTrial < 3 ? activeTrial + 1 : 1);
     resetTitrationApparatus();
   }
 
@@ -1473,6 +1485,100 @@ requireStudentLogin();
     }
   }
 
+  function updateConcordancyFeedbackHUD() {
+    const textEl = document.getElementById('q1ConcordantStatusText');
+    if (!textEl) return;
+    const pTrials = engine.getProcedureTrials(activeProcedureIndex);
+    const checkedIndices = [];
+    [1, 2, 3].forEach(n => {
+      const cb = document.getElementById(`t${n}Concordant`);
+      if (cb && cb.checked) {
+        const u = pTrials && pTrials[n - 1] ? pTrials[n - 1].used : (parseFloat(document.getElementById(`t${n}Used`)?.textContent) || 0);
+        if (u > 0) checkedIndices.push({ trial: n, used: u });
+      }
+    });
+
+    if (checkedIndices.length === 0) {
+      textEl.innerHTML = '<span style="color:var(--text-muted);">Check 2 or 3 concordant trials (within ±0.10 cm³) in Table 1 below.</span>';
+      return;
+    }
+    if (checkedIndices.length === 1) {
+      textEl.innerHTML = '<span style="color:var(--amber-accent);">⚠️ Select at least 2 concordant trials to evaluate average titre.</span>';
+      return;
+    }
+
+    const values = checkedIndices.map(item => item.used);
+    const maxVal = Math.max(...values);
+    const minVal = Math.min(...values);
+    const diff = parseFloat((maxVal - minVal).toFixed(2));
+    const trialNames = checkedIndices.map(item => `Trial ${item.trial}`).join(' & ');
+
+    if (diff <= 0.10) {
+      textEl.innerHTML = `<span style="color:#10B981; font-weight:800;">✓ Valid Concordant Titres (${trialNames}): Diff = ${diff.toFixed(2)} cm³ (within KNEC ±0.10 cm³ standard).</span>`;
+    } else {
+      textEl.innerHTML = `<span style="color:#EF4444; font-weight:800;">⚠️ Range Exceeds KNEC Tolerance (${trialNames}): Diff = ${diff.toFixed(2)} cm³ (> 0.10 cm³). Only average titres within ±0.10 cm³!</span>`;
+    }
+  }
+  window.updateConcordancyFeedbackHUD = updateConcordancyFeedbackHUD;
+
+  function autoSelectConcordantTrials() {
+    const pTrials = engine.getProcedureTrials(activeProcedureIndex);
+    const trials = [1, 2, 3].map(n => {
+      const u = pTrials && pTrials[n - 1] ? pTrials[n - 1].used : (parseFloat(document.getElementById(`t${n}Used`)?.textContent) || 0);
+      return { n, used: u };
+    }).filter(t => t.used > 0);
+
+    if (trials.length < 2) {
+      alert('Please record at least 2 non-zero trials before auto-selecting concordancy!');
+      return;
+    }
+
+    let bestSelection = null;
+    let minSpan = 999;
+
+    // Check all 3 if >= 3
+    if (trials.length === 3) {
+      const span3 = Math.max(trials[0].used, trials[1].used, trials[2].used) - Math.min(trials[0].used, trials[1].used, trials[2].used);
+      if (span3 <= 0.10) {
+        bestSelection = [1, 2, 3];
+        minSpan = span3;
+      }
+    }
+
+    // Check pairs (1,2), (2,3), (1,3)
+    if (!bestSelection) {
+      for (let i = 0; i < trials.length; i++) {
+        for (let j = i + 1; j < trials.length; j++) {
+          const span = Math.abs(trials[i].used - trials[j].used);
+          if (span < minSpan) {
+            minSpan = span;
+            bestSelection = [trials[i].n, trials[j].n];
+          }
+        }
+      }
+    }
+
+    if (bestSelection) {
+      [1, 2, 3].forEach(n => {
+        const cb = document.getElementById(`t${n}Concordant`);
+        if (cb) cb.checked = bestSelection.includes(n);
+        engine.setConcordant(n, bestSelection.includes(n), activeProcedureIndex);
+      });
+      const concordantValues = trials.filter(t => bestSelection.includes(t.n)).map(t => t.used);
+      const avg = (concordantValues.reduce((a, b) => a + b, 0) / concordantValues.length).toFixed(2);
+      const avgInput = document.getElementById('ansAvgTitre') || document.getElementById('ans_avgTitre');
+      if (avgInput) {
+        avgInput.value = avg;
+        engine.setQ1Answer('avgTitre', avg, activeProcedureIndex);
+        engine.setQ1Answer('step_a', avg, activeProcedureIndex);
+      }
+      updateLiveScoreDisplay();
+      updateConcordancyFeedbackHUD();
+      saveExamDraft();
+    }
+  }
+  window.autoSelectConcordantTrials = autoSelectConcordantTrials;
+
   function onTableInputChanged() {
     [1, 2, 3].forEach(n => {
       const fin = parseFloat(document.getElementById(`t${n}Final`).value) || 0;
@@ -1496,6 +1602,7 @@ requireStudentLogin();
       engine.setQ1Answer(`step_${activeProcedureIndex + 1}a`, avg, activeProcedureIndex);
     }
     updateLiveScoreDisplay();
+    updateConcordancyFeedbackHUD();
     saveExamDraft();
   }
 
@@ -1505,6 +1612,7 @@ requireStudentLogin();
       engine.setConcordant(n, cb ? cb.checked : false, activeProcedureIndex);
     });
     updateLiveScoreDisplay();
+    updateConcordancyFeedbackHUD();
     saveExamDraft();
   }
 

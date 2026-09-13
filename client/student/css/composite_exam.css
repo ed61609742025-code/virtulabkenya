@@ -477,6 +477,322 @@ iframe.lab-frame {
 }
 
 /* ── 9. RESPONSIVE UTILITIES & VOLUMETRIC WORKBENCH ── */
+
+/* ── 9.1 CLEAN & DISTINCT REORGANIZED QUESTION 1 (TITRATION) STYLES ── */
+.q1-parts-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.q1-part-card {
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: var(--shadow-sm);
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.q1-part-card:hover {
+  border-color: rgba(56, 189, 248, 0.35);
+  box-shadow: var(--shadow-md);
+}
+
+.q1-part-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--card-border);
+  margin-bottom: 16px;
+}
+
+.q1-part-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--heading-color);
+  letter-spacing: -0.01em;
+}
+
+.q1-part-badge {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: rgba(56, 189, 248, 0.12);
+  color: var(--cyan-accent);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.q1-part-badge.badge-amber {
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--amber-accent);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.q1-part-badge.badge-emerald {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10B981;
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.q1-part-badge.badge-purple {
+  background: rgba(168, 85, 247, 0.12);
+  color: #A855F7;
+  border-color: rgba(168, 85, 247, 0.3);
+}
+
+/* Part 1: Reagents & Procedure Matrix */
+.q1-reagents-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 16px;
+}
+
+.q1-spec-box {
+  background: var(--card-bg-hover);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.q1-spec-box-title {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: var(--cyan-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.q1-spec-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.84rem;
+  color: var(--text-main);
+  line-height: 1.45;
+}
+
+.q1-spec-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.q1-equation-callout {
+  background: var(--bg-dark);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-top: 4px;
+}
+
+.q1-procedure-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.q1-proc-step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.82rem;
+  color: var(--text-main);
+  line-height: 1.4;
+}
+
+.q1-proc-step-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid var(--cyan-accent);
+  color: var(--cyan-accent);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* Part 2: Split Workbench */
+.q1-bench-split-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  align-items: stretch;
+}
+
+.q1-observation-stage {
+  background: radial-gradient(circle at 50% 20%, rgba(56, 189, 248, 0.08) 0%, rgba(15, 23, 42, 0.6) 75%),
+              linear-gradient(180deg, rgba(15, 23, 42, 0.85) 0%, rgba(11, 19, 43, 0.98) 100%);
+  border: 1.5px solid var(--card-border);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-sizing: border-box;
+}
+
+.q1-flask-status-hud {
+  width: 100%;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  box-sizing: border-box;
+}
+
+.q1-action-console {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.q1-console-section {
+  background: var(--card-bg-hover);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-sizing: border-box;
+}
+
+.q1-console-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: var(--heading-color);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-bottom: 1px solid var(--card-border);
+  padding-bottom: 6px;
+}
+
+.q1-trial-switcher-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.q1-trial-pill-btn {
+  flex: 1;
+  padding: 6px 8px;
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  border-radius: 6px;
+  border: 1px solid var(--card-border);
+  background: var(--bg-dark);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: center;
+}
+
+.q1-trial-pill-btn:hover {
+  color: var(--heading-color);
+  border-color: var(--cyan-accent);
+}
+
+.q1-trial-pill-btn.active {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: var(--cyan-accent);
+  color: var(--cyan-accent);
+  font-weight: 800;
+}
+
+.q1-concordant-hud {
+  background: var(--card-bg-hover);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.q1-knec-criteria-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.q1-criteria-pill {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 5px;
+  background: var(--bg-dark);
+  border: 1px solid var(--card-border);
+  color: var(--text-muted);
+}
+
+.q1-ecf-notice-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(56, 189, 248, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.76rem;
+  color: var(--text-main);
+  margin-bottom: 14px;
+}
+
+@media (max-width: 960px) {
+  .q1-reagents-grid {
+    grid-template-columns: 1fr;
+  }
+  .q1-bench-split-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
 .titration-rig-workbench {
   background: radial-gradient(circle at 50% 20%, rgba(56, 189, 248, 0.08) 0%, rgba(15, 23, 42, 0.6) 75%),
               linear-gradient(180deg, rgba(15, 23, 42, 0.85) 0%, rgba(11, 19, 43, 0.98) 100%);

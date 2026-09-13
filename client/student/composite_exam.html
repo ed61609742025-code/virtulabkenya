@@ -23,7 +23,7 @@
 <link rel="stylesheet" href="css/lab.css">
 <link rel="stylesheet" href="css/qualitative.css">
 <link rel="stylesheet" href="css/organic.css">
-<link rel="stylesheet" href="css/composite_exam.css">
+<link rel="stylesheet" href="css/composite_exam.css?v=2">
 <link rel="stylesheet" href="/shared/knec-graph-plotter.css">
 <!-- Extracted styles moved to css/composite_exam.css -->
 </head>
@@ -163,495 +163,617 @@
     <!-- Multi-Procedure Selector (Shown for two-stage titrations e.g. Procedure I & Procedure II) -->
     <div id="q1ProcedureNav" style="display:none; gap:8px; margin-bottom:14px; flex-wrap:wrap;"></div>
 
-    <div class="exam-prompt-box" id="q1PromptBoxContent">
-      <b>You are provided with:</b><br>
-      • <b id="q1SolAName">Solution A</b> in the burette.<br>
-      • <b id="q1SolBName">Solution B</b>.<br>
-      • <b id="q1IndicatorName">Indicator</b>.<br>
-      <span id="q1EquationRow" style="display:inline-block; margin-top:4px;">• <b>Chemical Equation:</b> <code id="q1EquationDisplay" style="font-family:var(--font-mono); font-weight:700; color:var(--cyan-accent); background:var(--card-bg); padding:2px 8px; border-radius:4px; border:1px solid var(--card-border);"></code></span><br><br>
-      <b>Instructions &amp; Procedure:</b><br>
-      1. Pipette <b>25.0 cm³</b> of Solution B into a clean 250 cm³ conical flask. Add 2–3 drops of indicator (or titrate as self-indicating).<br>
-      2. Fill the burette with Solution A and adjust the meniscus level to 0.00 cm³.<br>
-      3. Titrate Solution B with Solution A until the characteristic endpoint is observed.<br>
-      4. Repeat the titration procedure to complete <b>Table 1</b> below with concordant titres (within ±0.10 cm³).
-    </div>
+    <div class="q1-parts-stack">
 
-    <!-- Spacious Photorealistic Volumetric Workbench Assembly -->
-    <div class="titration-rig-workbench">
-      <div class="bench-header-title">
-        <span>🔬</span> Interactive Volumetric Workbench &amp; Precision Apparatus
-      </div>
+      <!-- ════════════════════════════════════════════════════════════
+           PART 1: EXPERIMENTAL BRIEF & REAGENTS SPECIFICATION
+      ════════════════════════════════════════════════════════════ -->
+      <section class="q1-part-card" id="q1Part1Card">
+        <div class="q1-part-header">
+          <div class="q1-part-title">
+            <span>📋</span>
+            <span>Part 1: Experimental Brief &amp; Reagents Specification</span>
+          </div>
+          <span class="q1-part-badge">KNEC Practical Specifications</span>
+        </div>
 
-      <div class="bench-3col-layout">
-        <!-- LEFT WING: Pipette & Indicator Addition -->
-        <div class="bench-prep-wing">
-          <div class="bench-wing-header">
-            <span class="bench-wing-step-num">1</span>
-            <div>
-              <div class="bench-wing-title">Flask Preparation</div>
-              <div class="bench-wing-sub">Pipette &amp; Indicator Setup</div>
+        <div class="exam-prompt-box" id="q1PromptBoxContent" style="margin-bottom:0; background:transparent; border:none; padding:0;">
+          <div class="q1-reagents-grid">
+            <!-- Col 1: Prescribed Reagents & Reaction Equation -->
+            <div class="q1-spec-box">
+              <div class="q1-spec-box-title">
+                <span>🫙</span> Prescribed Laboratory Reagents &amp; Reaction
+              </div>
+              <div class="q1-spec-item">
+                <span class="q1-spec-icon">🧪</span>
+                <div>
+                  <b style="color:var(--cyan-accent);">Burette (Titrant):</b> <span id="q1SolAName">Solution A</span>
+                </div>
+              </div>
+              <div class="q1-spec-item">
+                <span class="q1-spec-icon">⚗️</span>
+                <div>
+                  <b style="color:var(--heading-color);">Conical Flask (Analyte):</b> <span id="q1SolBName">Solution B</span>
+                </div>
+              </div>
+              <div class="q1-spec-item">
+                <span class="q1-spec-icon">💧</span>
+                <div>
+                  <b style="color:var(--amber-accent);">Endpoint Indicator:</b> <span id="q1IndicatorName">Indicator</span>
+                </div>
+              </div>
+              <div id="q1EquationRow" class="q1-equation-callout">
+                <div style="font-size:0.70rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:3px;">Chemical Equation:</div>
+                <code id="q1EquationDisplay" style="font-family:var(--font-mono); font-weight:700; color:var(--cyan-accent); font-size:0.86rem; word-break:break-all;"></code>
+              </div>
+            </div>
+
+            <!-- Col 2: Standard KNEC Procedure Flow -->
+            <div class="q1-spec-box">
+              <div class="q1-spec-box-title">
+                <span>📝</span> Standard KNEC Procedure Flow
+              </div>
+              <div class="q1-procedure-list">
+                <div class="q1-proc-step-item">
+                  <span class="q1-proc-step-num">1</span>
+                  <span>Pipette exactly <b>25.0 cm³</b> of Solution B into a clean 250 cm³ conical flask. Add 2–3 drops of indicator.</span>
+                </div>
+                <div class="q1-proc-step-item">
+                  <span class="q1-proc-step-num">2</span>
+                  <span>Fill the burette with Solution A and adjust the meniscus level precisely to <b>0.00 cm³</b>.</span>
+                </div>
+                <div class="q1-proc-step-item">
+                  <span class="q1-proc-step-num">3</span>
+                  <span>Titrate Solution B with Solution A with continuous swirling until the sharp characteristic endpoint is reached.</span>
+                </div>
+                <div class="q1-proc-step-item">
+                  <span class="q1-proc-step-num">4</span>
+                  <span>Record readings and repeat to complete <b>Table 1</b> with concordant titres (within ±0.10 cm³).</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ════════════════════════════════════════════════════════════
+           PART 2: VOLUMETRIC BENCH & OPTICAL OBSERVATION STAGE
+      ════════════════════════════════════════════════════════════ -->
+      <section class="q1-part-card" id="q1Part2Card">
+        <div class="q1-part-header">
+          <div class="q1-part-title">
+            <span>🔬</span>
+            <span>Part 2: Volumetric Laboratory Bench &amp; Optical Observation</span>
+          </div>
+          <span class="q1-part-badge badge-amber">Interactive Apparatus</span>
+        </div>
+
+        <div class="q1-bench-split-layout">
+          <!-- Left: Optical Observation Stage (SVG Apparatus Rig + Magnified Reading Lens) -->
+          <div class="q1-observation-stage">
+            <div class="apparatus-lens-row">
+              <!-- Realistic Apparatus SVG -->
+              <svg class="rig-svg" viewBox="0 0 240 380" xmlns="http://www.w3.org/2000/svg" style="width:155px; height:305px; flex-shrink:0;">
+                <defs>
+                  <linearGradient id="glassSheenExam" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.65"/>
+                    <stop offset="15%" stop-color="#BAE6FD" stop-opacity="0.25"/>
+                    <stop offset="60%" stop-color="#0284C7" stop-opacity="0.08"/>
+                    <stop offset="85%" stop-color="#38BDF8" stop-opacity="0.3"/>
+                    <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.75"/>
+                  </linearGradient>
+
+                  <linearGradient id="metalChromeExam" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#334155"/>
+                    <stop offset="25%" stop-color="#94A3B8"/>
+                    <stop offset="50%" stop-color="#F8FAFC"/>
+                    <stop offset="75%" stop-color="#64748B"/>
+                    <stop offset="100%" stop-color="#1E293B"/>
+                  </linearGradient>
+                  
+                  <linearGradient id="castIronBaseExam" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#475569"/>
+                    <stop offset="20%" stop-color="#334155"/>
+                    <stop offset="80%" stop-color="#1E293B"/>
+                    <stop offset="100%" stop-color="#0F172A"/>
+                  </linearGradient>
+
+                  <linearGradient id="brassScrewExam" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#B45309"/>
+                    <stop offset="50%" stop-color="#FDE047"/>
+                    <stop offset="100%" stop-color="#78350F"/>
+                  </linearGradient>
+
+                  <linearGradient id="liquidGradRig" x1="0" y1="0" x2="1" y2="0">
+                    <stop id="gradStop1" offset="0%" stop-color="#38BDF8" stop-opacity="0.95"/>
+                    <stop offset="30%" stop-color="#7DD3FC" stop-opacity="0.75"/>
+                    <stop id="gradStop2" offset="70%" stop-color="#0284C7" stop-opacity="0.85"/>
+                    <stop offset="100%" stop-color="#0369A1" stop-opacity="0.95"/>
+                  </linearGradient>
+
+                  <linearGradient id="porcelainTileExam" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#FFFFFF"/>
+                    <stop offset="70%" stop-color="#F1F5F9"/>
+                    <stop offset="100%" stop-color="#E2E8F0"/>
+                  </linearGradient>
+
+                  <filter id="apparatusShadowExam" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="rgba(0,0,0,0.5)"/>
+                  </filter>
+                </defs>
+
+                <!-- 1. Cast-Iron Retort Stand Base -->
+                <g filter="url(#apparatusShadowExam)">
+                  <rect x="25" y="348" width="160" height="14" rx="4" fill="url(#castIronBaseExam)" stroke="#64748B" stroke-width="1"/>
+                  <rect x="27" y="349" width="156" height="2" fill="rgba(255,255,255,0.4)" rx="1"/>
+                  <rect x="32" y="362" width="16" height="3" rx="1" fill="#000000"/>
+                  <rect x="162" y="362" width="16" height="3" rx="1" fill="#000000"/>
+                </g>
+
+                <!-- 2. Porcelain White Titration Tile (Under Flask) -->
+                <g filter="url(#apparatusShadowExam)">
+                  <rect x="80" y="338" width="95" height="12" rx="3" fill="url(#porcelainTileExam)" stroke="#CBD5E1" stroke-width="1.2"/>
+                  <rect x="82" y="339" width="91" height="2" fill="#FFFFFF" rx="1"/>
+                  <ellipse cx="129" cy="344" rx="26" ry="3" fill="rgba(56,189,248,0.15)"/>
+                </g>
+
+                <!-- 3. Vertical Chrome Steel Stand Rod -->
+                <rect x="42" y="15" width="10" height="335" rx="3" fill="url(#metalChromeExam)" stroke="#475569" stroke-width="0.8"/>
+                <rect x="45" y="15" width="2" height="335" fill="rgba(255,255,255,0.6)"/>
+
+                <!-- 4. Bosshead & Dual-Prong Articulated Clamp -->
+                <g id="clampAssembly">
+                  <rect x="38" y="90" width="18" height="24" rx="3" fill="#1E293B" stroke="#475569" stroke-width="1"/>
+                  <circle cx="34" cy="102" r="5" fill="url(#brassScrewExam)" stroke="#78350F" stroke-width="0.8"/>
+                  <line x1="34" y1="99" x2="34" y2="105" stroke="#451A03" stroke-width="1.2"/>
+                  <rect x="56" y="98" width="56" height="8" rx="2" fill="url(#metalChromeExam)" stroke="#475569" stroke-width="0.8"/>
+                  <path d="M 112,86 L 118,92 L 118,112 L 112,118" fill="none" stroke="#334155" stroke-width="4" stroke-linecap="round"/>
+                  <rect x="115" y="88" width="6" height="28" rx="2" fill="#DC2626" stroke="#991B1B" stroke-width="0.8"/>
+                  <circle cx="112" cy="102" r="4" fill="url(#brassScrewExam)"/>
+                </g>
+
+                <!-- 5. Precision 50 cm³ Borosilicate Glass Burette -->
+                <g id="buretteGlassRig">
+                  <rect x="120" y="10" width="18" height="200" rx="3" fill="url(#glassSheenExam)" stroke="#38BDF8" stroke-width="1.4" opacity="0.9"/>
+                  <rect id="buretteFill" x="122" y="10" width="14" height="196" rx="1" fill="url(#liquidGradRig)"/>
+                  <ellipse id="buretteMeniscusCap" cx="129" cy="10" rx="7" ry="1.8" fill="#7DD3FC" opacity="0.9"/>
+
+                  <!-- Millimeter Graduation Marks -->
+                  <g stroke="rgba(255,255,255,0.85)" stroke-width="0.75">
+                    <line x1="130" y1="18" x2="137" y2="18"/>
+                    <line x1="132" y1="36" x2="137" y2="36"/>
+                    <line x1="130" y1="54" x2="137" y2="54"/>
+                    <line x1="132" y1="72" x2="137" y2="72"/>
+                    <line x1="130" y1="90" x2="137" y2="90"/>
+                    <line x1="132" y1="108" x2="137" y2="108"/>
+                    <line x1="130" y1="126" x2="137" y2="126"/>
+                    <line x1="132" y1="144" x2="137" y2="144"/>
+                    <line x1="130" y1="162" x2="137" y2="162"/>
+                    <line x1="132" y1="180" x2="137" y2="180"/>
+                    <line x1="130" y1="198" x2="137" y2="198"/>
+                  </g>
+                  <g font-family="'JetBrains Mono', monospace" font-size="6" fill="#FFFFFF" font-weight="700">
+                    <text x="139" y="20">0</text>
+                    <text x="139" y="56">10</text>
+                    <text x="139" y="92">20</text>
+                    <text x="139" y="128">30</text>
+                    <text x="139" y="164">40</text>
+                    <text x="139" y="200">50</text>
+                  </g>
+                  <line x1="122" y1="12" x2="122" y2="208" stroke="#FFFFFF" stroke-width="1" opacity="0.65"/>
+                  <line x1="136" y1="12" x2="136" y2="208" stroke="#0284C7" stroke-width="0.8" opacity="0.5"/>
+
+                  <!-- Stopcock Valve Assembly -->
+                  <g id="stopcockAssembly">
+                    <rect x="117" y="210" width="24" height="12" rx="3" fill="url(#glassSheenExam)" stroke="#0284C7" stroke-width="1.2"/>
+                    <g id="stopcockValve" style="transform-origin: 129px 216px; transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);">
+                      <rect x="126" y="208" width="6" height="16" rx="2" fill="#0284C7" stroke="#38BDF8" stroke-width="0.8"/>
+                      <rect x="120" y="206" width="18" height="4" rx="1.5" fill="#F8FAFC" stroke="#94A3B8" stroke-width="0.8"/>
+                    </g>
+                    <path d="M 126,222 L 127,242 L 131,242 L 132,222 Z" fill="url(#glassSheenExam)" stroke="#38BDF8" stroke-width="1.2"/>
+                    <line x1="129" y1="222" x2="129" y2="242" stroke="#38BDF8" stroke-width="1.8"/>
+                  </g>
+                </g>
+
+                <!-- Animated Drip -->
+                <circle id="rigDrip" cx="129" cy="242" r="3.2" fill="#00F2FE" style="display:none;" />
+
+                <!-- 6. Erlenmeyer Conical Flask (250 cm³) -->
+                <g id="flaskContainer" style="transform-origin: 129px 310px; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);">
+                  <!-- Transparent Glass Base Tint -->
+                  <path d="M 118,256 L 118,268 L 94,334 Q 129,346 164,334 L 140,268 L 140,256 Z"
+                        fill="rgba(255,255,255,0.05)" stroke="none"/>
+
+                  <!-- Chemical Liquid Layer -->
+                  <path id="flaskRigBody" d="M 107.1,298 L 94,334 Q 129,346 164,334 L 150.9,298 Q 129,294 107.1,298 Z"
+                        fill="rgba(56,189,248,0.15)" stroke="none" style="display:none; transition: fill 0.35s ease; opacity: 0.9;"/>
+
+                  <!-- Meniscus Surface Ellipse -->
+                  <ellipse id="flaskLiquidSurface" cx="129" cy="298" rx="22" ry="4" fill="rgba(255,255,255,0.3)" style="display:none; transition: fill 0.35s ease, cy 0.2s ease, rx 0.2s ease;"/>
+
+                  <!-- Flask Volume Graduations (100, 150, 200 cm³) -->
+                  <g stroke="rgba(255,255,255,0.7)" stroke-width="0.8">
+                    <line x1="110" y1="318" x2="118" y2="318"/>
+                    <line x1="114" y1="304" x2="120" y2="304"/>
+                    <line x1="118" y1="290" x2="124" y2="290"/>
+                  </g>
+                  <g font-family="'JetBrains Mono', monospace" font-size="5" fill="rgba(255,255,255,0.85)">
+                    <text x="100" y="320">100</text>
+                    <text x="104" y="306">150</text>
+                    <text x="108" y="292">200</text>
+                  </g>
+                  <rect x="134" y="296" width="18" height="12" rx="2" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.35)" stroke-width="0.5"/>
+
+                  <!-- Glass Refraction & Highlights -->
+                  <path d="M 120,264 L 102,328 Q 112,334 122,332 L 132,270 Z" fill="rgba(255,255,255,0.16)" opacity="0.75" pointer-events="none"/>
+                  <path d="M 137,264 L 154,324" stroke="rgba(255,255,255,0.45)" stroke-width="1.2" stroke-linecap="round" fill="none" pointer-events="none"/>
+
+                  <!-- Outer Glass Wall & Rim -->
+                  <path id="flaskGlassWallExam" d="M 118,256 L 118,268 L 94,334 Q 129,346 164,334 L 140,268 L 140,256 Z"
+                        fill="none" stroke="#38BDF8" stroke-width="1.8" stroke-linejoin="round" pointer-events="none"/>
+                  <ellipse cx="129" cy="254" rx="15" ry="4" fill="url(#glassSheenExam)" stroke="#38BDF8" stroke-width="1.5"/>
+                  <ellipse cx="129" cy="254" rx="11" ry="2.8" fill="rgba(15,23,42,0.6)" stroke="#0284C7" stroke-width="0.8"/>
+                </g>
+              </svg>
+
+              <!-- Magnified Reading Lens -->
+              <div class="buret-lens-card">
+                <div style="font-size:0.75rem; font-weight:800; color:var(--cyan-accent); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.04em; display:flex; align-items:center; justify-content:space-between; width:100%;">
+                  <span>🔍 Burette Lens</span>
+                  <span style="font-size:0.60rem; color:#EF4444; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.35); border-radius:4px; padding:1px 5px; font-weight:800; letter-spacing:0.03em;">EYE LEVEL</span>
+                </div>
+                <div class="lens-viewfinder">
+                  <div class="lens-glass-glare"></div>
+                  <div class="lens-crosshair-line"></div>
+                  <svg id="lensSvg" viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%; display:block;">
+                    <!-- Default Initial Burette Lens Rendering at 0.00 cm³ -->
+                    <defs>
+                      <linearGradient id="lensTubeCeramicExam" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stop-color="#E2E8F0"/>
+                        <stop offset="10%" stop-color="#FFFFFF"/>
+                        <stop offset="90%" stop-color="#FFFFFF"/>
+                        <stop offset="100%" stop-color="#CBD5E1"/>
+                      </linearGradient>
+                      <linearGradient id="luminousLiquidFillExam" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.92"/>
+                        <stop offset="15%" stop-color="#0284C7" stop-opacity="0.88"/>
+                        <stop offset="60%" stop-color="#0369A1" stop-opacity="0.92"/>
+                        <stop offset="100%" stop-color="#0C4A6E" stop-opacity="0.98"/>
+                      </linearGradient>
+                      <linearGradient id="tubeSpecularExam" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.8"/>
+                        <stop offset="15%" stop-color="#FFFFFF" stop-opacity="0.2"/>
+                        <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.0"/>
+                      </linearGradient>
+                      <filter id="lensBeadGlowExam" x="-50%" y="-50%" width="200%" height="200%">
+                        <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#EF4444" flood-opacity="0.9"/>
+                      </filter>
+                    </defs>
+                    <rect x="12" y="0" width="176" height="180" rx="6" fill="url(#lensTubeCeramicExam)"/>
+                    <rect x="94" y="0" width="12" height="180" fill="#0284C7" opacity="0.25"/>
+                    <line x1="12" y1="0" x2="12" y2="180" stroke="#00F2FE" stroke-width="3" stroke-opacity="0.8"/>
+                    <line x1="188" y1="0" x2="188" y2="180" stroke="#00F2FE" stroke-width="3" stroke-opacity="0.8"/>
+                    <rect x="16" y="0" width="14" height="180" fill="url(#tubeSpecularExam)"/>
+                    <path d="M 12 80 Q 100 100 188 80 L 188 180 L 12 180 Z" fill="url(#luminousLiquidFillExam)"/>
+                    <rect x="16" y="90" width="14" height="90" fill="url(#tubeSpecularExam)"/>
+                    <!-- Initial Graduation Marks at 0.00 cm³ -->
+                    <line x1="12" y1="90" x2="68" y2="90" stroke="#0F172A" stroke-width="2.6" stroke-linecap="round"/>
+                    <line x1="132" y1="90" x2="188" y2="90" stroke="#0F172A" stroke-width="2.6" stroke-linecap="round"/>
+                    <text x="76" y="95" fill="#0F172A" font-size="14" font-family="'JetBrains Mono', monospace" font-weight="900">0.0</text>
+                    <line x1="12" y1="96" x2="38" y2="96" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="162" y1="96" x2="188" y2="96" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="12" y1="102" x2="38" y2="102" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="162" y1="102" x2="188" y2="102" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="12" y1="108" x2="38" y2="108" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="162" y1="108" x2="188" y2="108" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="12" y1="114" x2="38" y2="114" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="162" y1="114" x2="188" y2="114" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="12" y1="120" x2="52" y2="120" stroke="#1E293B" stroke-width="2.0" stroke-linecap="round"/>
+                    <line x1="148" y1="120" x2="188" y2="120" stroke="#1E293B" stroke-width="2.0" stroke-linecap="round"/>
+                    <line x1="12" y1="126" x2="38" y2="126" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="162" y1="126" x2="188" y2="126" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="12" y1="132" x2="38" y2="132" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="162" y1="132" x2="188" y2="132" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="12" y1="138" x2="38" y2="138" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="162" y1="138" x2="188" y2="138" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="12" y1="144" x2="38" y2="144" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="162" y1="144" x2="188" y2="144" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="12" y1="150" x2="68" y2="150" stroke="#0F172A" stroke-width="2.6" stroke-linecap="round"/>
+                    <line x1="132" y1="150" x2="188" y2="150" stroke="#0F172A" stroke-width="2.6" stroke-linecap="round"/>
+                    <text x="76" y="155" fill="#0F172A" font-size="14" font-family="'JetBrains Mono', monospace" font-weight="900">1.0</text>
+                    <!-- Meniscus Boundary & Center Reticle Bead at y = 90 -->
+                    <path d="M 12 79 Q 100 99 188 79" stroke="#032B44" stroke-width="3" fill="none" opacity="0.85"/>
+                    <path d="M 12 80 Q 100 100 188 80" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+                    <circle cx="100" cy="90" r="4" fill="#EF4444" stroke="#FFFFFF" stroke-width="1.5" filter="url(#lensBeadGlowExam)"/>
+                    <line x1="12" y1="90" x2="32" y2="90" stroke="#EF4444" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="168" y1="90" x2="188" y2="90" stroke="#EF4444" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="lens-readout-badge" id="lensDigitalReadout">
+                  <span>🎯</span> 0.00 cm³
+                </div>
+                <div style="font-size:0.68rem; color:var(--text-muted); margin-top:3px; font-family:'Newsreader', serif; font-style:italic;" id="lensReadoutSubText">
+                  Read at <b>bottom of meniscus</b>.
+                </div>
+              </div>
+            </div>
+
+            <!-- Live Flask Status HUD -->
+            <div class="q1-flask-status-hud">
+              <span id="flaskContentsLabel" style="color:var(--heading-color);">Flask: Empty</span>
+              <span style="font-size:0.68rem; color:var(--text-muted); font-family:var(--font-mono);">250 cm³ Conical Flask</span>
+            </div>
+
+            <!-- Authentic Chemistry Laboratory Reagent Bottles Shelf -->
+            <div class="bench-reagents-shelf">
+              <div class="bench-bottle-chip">
+                <span>🫙</span>
+                <span id="q1TitrantChip">Solution A (Burette)</span>
+              </div>
+              <div class="bench-bottle-chip">
+                <span>💧</span>
+                <span id="q1IndicatorChip">Indicator Dropper</span>
+              </div>
             </div>
           </div>
 
-          <div class="prep-cluster">
-            <div class="prep-item">
-              <div class="prep-item-label">1. Pipette Aliquot</div>
-              <button class="btn-bench btn-bench-cyan" id="btnPipette" onclick="pipetteSolutionB()">
-                🧪 Pipette 25.0 cm³
-              </button>
-              <div id="pipetteStatus" class="prep-status-pill">Not Pipetted</div>
-            </div>
+          <!-- Right: Laboratory Action Console -->
+          <div class="q1-action-console">
+            <!-- Console Section 1: Flask Preparation -->
+            <div class="q1-console-section">
+              <div class="q1-console-header">
+                <span style="display:flex; align-items:center; gap:6px;">
+                  <span class="bench-wing-step-num">1</span>
+                  <span>Flask Preparation</span>
+                </span>
+                <span style="font-size:0.68rem; color:var(--text-muted);">Aliquot &amp; Indicator</span>
+              </div>
 
-            <div class="prep-item">
-              <div class="prep-item-label">2. Indicator Addition</div>
-              <button class="btn-bench btn-bench-blue" id="btnAddIndicator" onclick="addIndicatorDrop()">
-                💧 Add Indicator (0/3)
-              </button>
-              <div id="indicatorStatus" class="prep-status-pill">0 Drops Added</div>
-            </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                <div>
+                  <button class="btn-bench btn-bench-cyan" id="btnPipette" onclick="pipetteSolutionB()">
+                    🧪 Pipette 25.0 cm³
+                  </button>
+                  <div id="pipetteStatus" class="prep-status-pill" style="margin-top:4px;">Not Pipetted</div>
+                </div>
+                <div>
+                  <button class="btn-bench btn-bench-blue" id="btnAddIndicator" onclick="addIndicatorDrop()">
+                    💧 Add Indicator (0/3)
+                  </button>
+                  <div id="indicatorStatus" class="prep-status-pill" style="margin-top:4px;">0 Drops Added</div>
+                </div>
+              </div>
 
-            <div class="prep-item">
-              <div class="prep-item-label">3. Mixing Motion</div>
               <button class="btn-bench btn-bench-amber" onclick="swirlFlask()">
                 🌀 Swirl Conical Flask
               </button>
-              <div class="bench-tip-hint">Mix thoroughly to detect sharp endpoint color transition.</div>
+            </div>
+
+            <!-- Console Section 2: Burette Dispenser & Flow Controls -->
+            <div class="q1-console-section">
+              <div class="q1-console-header">
+                <span style="display:flex; align-items:center; gap:6px;">
+                  <span class="bench-wing-step-num num-amber">2</span>
+                  <span>Titrant Delivery</span>
+                </span>
+                <span style="font-size:0.68rem; color:var(--text-muted);">Burette Stopcock Controls</span>
+              </div>
+
+              <div style="display:flex; flex-direction:column; gap:6px;">
+                <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:6px;">
+                  <button class="btn-bench btn-bench-cyan" onclick="addTitrantDirect(1.0)">+1.0 cm³</button>
+                  <button class="btn-bench btn-bench-cyan" onclick="addTitrantDirect(0.5)">+0.5 cm³</button>
+                  <button class="btn-bench btn-bench-teal" onclick="addTitrantDirect(0.1)">+0.10 cm³</button>
+                  <button class="btn-bench btn-bench-teal" onclick="addTitrantDirect(0.05)">💧 +0.05</button>
+                </div>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+                  <button class="btn-bench btn-bench-blue" onclick="startContinuousTitration()" id="btnContinuous">
+                    ⚡ Continuous Run
+                  </button>
+                  <button class="btn-bench btn-bench-crimson" onclick="stopTitrate()">
+                    🔴 Stop Tap
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Console Section 3: Data Logging & Operations -->
+            <div class="q1-console-section">
+              <div class="q1-console-header">
+                <span style="display:flex; align-items:center; gap:6px;">
+                  <span class="bench-wing-step-num" style="background:rgba(16,185,129,0.15); border-color:#10B981; color:#10B981;">3</span>
+                  <span>Trial Data Logging &amp; Bench Operations</span>
+                </span>
+                <span style="font-size:0.68rem; color:var(--text-muted);">Table 1 Transfer</span>
+              </div>
+
+              <!-- Active Trial Target Switcher -->
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:0.72rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Active Recording Target:</span>
+                <span style="font-size:0.70rem; font-family:var(--font-mono); color:var(--cyan-accent); font-weight:800;">Target: Trial <span id="lblActiveTrial">1</span></span>
+              </div>
+              <div class="q1-trial-switcher-row">
+                <button type="button" class="q1-trial-pill-btn active" id="btnTrial1Pill" onclick="setActiveTrial(1)">Trial I (Rough)</button>
+                <button type="button" class="q1-trial-pill-btn" id="btnTrial2Pill" onclick="setActiveTrial(2)">Trial II</button>
+                <button type="button" class="q1-trial-pill-btn" id="btnTrial3Pill" onclick="setActiveTrial(3)">Trial III</button>
+              </div>
+
+              <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px;">
+                <button type="button" class="btn-bench btn-bench-emerald" onclick="transferReadingToTable()">
+                  📥 Record Current Reading in <span id="lblActiveTable">Table 1</span>
+                </button>
+                <button type="button" class="btn-bench btn-bench-slate" onclick="resetTitrationApparatus()">
+                  🔄 Reset Apparatus &amp; Wash Flask
+                </button>
+              </div>
             </div>
           </div>
         </div>
+      </section>
 
-        <!-- CENTER: Large Photorealistic SVG Apparatus Rig + Magnified Reading Lens -->
-        <div class="bench-center-stage">
-          <div class="apparatus-lens-row">
-            
-            <!-- Realistic Apparatus SVG -->
-            <svg class="rig-svg" viewBox="0 0 240 380" xmlns="http://www.w3.org/2000/svg" style="width:155px; height:305px; flex-shrink:0;">
-              <defs>
-                <linearGradient id="glassSheenExam" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.65"/>
-                  <stop offset="15%" stop-color="#BAE6FD" stop-opacity="0.25"/>
-                  <stop offset="60%" stop-color="#0284C7" stop-opacity="0.08"/>
-                  <stop offset="85%" stop-color="#38BDF8" stop-opacity="0.3"/>
-                  <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.75"/>
-                </linearGradient>
-
-                <linearGradient id="metalChromeExam" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stop-color="#334155"/>
-                  <stop offset="25%" stop-color="#94A3B8"/>
-                  <stop offset="50%" stop-color="#F8FAFC"/>
-                  <stop offset="75%" stop-color="#64748B"/>
-                  <stop offset="100%" stop-color="#1E293B"/>
-                </linearGradient>
-                
-                <linearGradient id="castIronBaseExam" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#475569"/>
-                  <stop offset="20%" stop-color="#334155"/>
-                  <stop offset="80%" stop-color="#1E293B"/>
-                  <stop offset="100%" stop-color="#0F172A"/>
-                </linearGradient>
-
-                <linearGradient id="brassScrewExam" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stop-color="#B45309"/>
-                  <stop offset="50%" stop-color="#FDE047"/>
-                  <stop offset="100%" stop-color="#78350F"/>
-                </linearGradient>
-
-                <linearGradient id="liquidGradRig" x1="0" y1="0" x2="1" y2="0">
-                  <stop id="gradStop1" offset="0%" stop-color="#38BDF8" stop-opacity="0.95"/>
-                  <stop offset="30%" stop-color="#7DD3FC" stop-opacity="0.75"/>
-                  <stop id="gradStop2" offset="70%" stop-color="#0284C7" stop-opacity="0.85"/>
-                  <stop offset="100%" stop-color="#0369A1" stop-opacity="0.95"/>
-                </linearGradient>
-
-                <linearGradient id="porcelainTileExam" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stop-color="#FFFFFF"/>
-                  <stop offset="70%" stop-color="#F1F5F9"/>
-                  <stop offset="100%" stop-color="#E2E8F0"/>
-                </linearGradient>
-
-                <filter id="apparatusShadowExam" x="-20%" y="-20%" width="140%" height="140%">
-                  <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="rgba(0,0,0,0.5)"/>
-                </filter>
-              </defs>
-
-              <!-- 1. Cast-Iron Retort Stand Base -->
-              <g filter="url(#apparatusShadowExam)">
-                <rect x="25" y="348" width="160" height="14" rx="4" fill="url(#castIronBaseExam)" stroke="#64748B" stroke-width="1"/>
-                <rect x="27" y="349" width="156" height="2" fill="rgba(255,255,255,0.4)" rx="1"/>
-                <rect x="32" y="362" width="16" height="3" rx="1" fill="#000000"/>
-                <rect x="162" y="362" width="16" height="3" rx="1" fill="#000000"/>
-              </g>
-
-              <!-- 2. Porcelain White Titration Tile (Under Flask) -->
-              <g filter="url(#apparatusShadowExam)">
-                <rect x="80" y="338" width="95" height="12" rx="3" fill="url(#porcelainTileExam)" stroke="#CBD5E1" stroke-width="1.2"/>
-                <rect x="82" y="339" width="91" height="2" fill="#FFFFFF" rx="1"/>
-                <ellipse cx="129" cy="344" rx="26" ry="3" fill="rgba(56,189,248,0.15)"/>
-              </g>
-
-              <!-- 3. Vertical Chrome Steel Stand Rod -->
-              <rect x="42" y="15" width="10" height="335" rx="3" fill="url(#metalChromeExam)" stroke="#475569" stroke-width="0.8"/>
-              <rect x="45" y="15" width="2" height="335" fill="rgba(255,255,255,0.6)"/>
-
-              <!-- 4. Bosshead & Dual-Prong Articulated Clamp -->
-              <g id="clampAssembly">
-                <rect x="38" y="90" width="18" height="24" rx="3" fill="#1E293B" stroke="#475569" stroke-width="1"/>
-                <circle cx="34" cy="102" r="5" fill="url(#brassScrewExam)" stroke="#78350F" stroke-width="0.8"/>
-                <line x1="34" y1="99" x2="34" y2="105" stroke="#451A03" stroke-width="1.2"/>
-                <rect x="56" y="98" width="56" height="8" rx="2" fill="url(#metalChromeExam)" stroke="#475569" stroke-width="0.8"/>
-                <path d="M 112,86 L 118,92 L 118,112 L 112,118" fill="none" stroke="#334155" stroke-width="4" stroke-linecap="round"/>
-                <rect x="115" y="88" width="6" height="28" rx="2" fill="#DC2626" stroke="#991B1B" stroke-width="0.8"/>
-                <circle cx="112" cy="102" r="4" fill="url(#brassScrewExam)"/>
-              </g>
-
-              <!-- 5. Precision 50 cm³ Borosilicate Glass Burette -->
-              <g id="buretteGlassRig">
-                <rect x="120" y="10" width="18" height="200" rx="3" fill="url(#glassSheenExam)" stroke="#38BDF8" stroke-width="1.4" opacity="0.9"/>
-                <rect id="buretteFill" x="122" y="10" width="14" height="196" rx="1" fill="url(#liquidGradRig)"/>
-                <ellipse id="buretteMeniscusCap" cx="129" cy="10" rx="7" ry="1.8" fill="#7DD3FC" opacity="0.9"/>
-
-                <!-- Millimeter Graduation Marks -->
-                <g stroke="rgba(255,255,255,0.85)" stroke-width="0.75">
-                  <line x1="130" y1="18" x2="137" y2="18"/>
-                  <line x1="132" y1="36" x2="137" y2="36"/>
-                  <line x1="130" y1="54" x2="137" y2="54"/>
-                  <line x1="132" y1="72" x2="137" y2="72"/>
-                  <line x1="130" y1="90" x2="137" y2="90"/>
-                  <line x1="132" y1="108" x2="137" y2="108"/>
-                  <line x1="130" y1="126" x2="137" y2="126"/>
-                  <line x1="132" y1="144" x2="137" y2="144"/>
-                  <line x1="130" y1="162" x2="137" y2="162"/>
-                  <line x1="132" y1="180" x2="137" y2="180"/>
-                  <line x1="130" y1="198" x2="137" y2="198"/>
-                </g>
-                <g font-family="'JetBrains Mono', monospace" font-size="6" fill="#FFFFFF" font-weight="700">
-                  <text x="139" y="20">0</text>
-                  <text x="139" y="56">10</text>
-                  <text x="139" y="92">20</text>
-                  <text x="139" y="128">30</text>
-                  <text x="139" y="164">40</text>
-                  <text x="139" y="200">50</text>
-                </g>
-                <line x1="122" y1="12" x2="122" y2="208" stroke="#FFFFFF" stroke-width="1" opacity="0.65"/>
-                <line x1="136" y1="12" x2="136" y2="208" stroke="#0284C7" stroke-width="0.8" opacity="0.5"/>
-
-                <!-- Stopcock Valve Assembly -->
-                <g id="stopcockAssembly">
-                  <rect x="117" y="210" width="24" height="12" rx="3" fill="url(#glassSheenExam)" stroke="#0284C7" stroke-width="1.2"/>
-                  <g id="stopcockValve" style="transform-origin: 129px 216px; transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);">
-                    <rect x="126" y="208" width="6" height="16" rx="2" fill="#0284C7" stroke="#38BDF8" stroke-width="0.8"/>
-                    <rect x="120" y="206" width="18" height="4" rx="1.5" fill="#F8FAFC" stroke="#94A3B8" stroke-width="0.8"/>
-                  </g>
-                  <path d="M 126,222 L 127,242 L 131,242 L 132,222 Z" fill="url(#glassSheenExam)" stroke="#38BDF8" stroke-width="1.2"/>
-                  <line x1="129" y1="222" x2="129" y2="242" stroke="#38BDF8" stroke-width="1.8"/>
-                </g>
-              </g>
-
-              <!-- Animated Drip -->
-              <circle id="rigDrip" cx="129" cy="242" r="3.2" fill="#00F2FE" style="display:none;" />
-
-              <!-- 6. Erlenmeyer Conical Flask (250 cm³) -->
-              <g id="flaskContainer" style="transform-origin: 129px 310px; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);">
-                <!-- Transparent Glass Base Tint -->
-                <path d="M 118,256 L 118,268 L 94,334 Q 129,346 164,334 L 140,268 L 140,256 Z"
-                      fill="rgba(255,255,255,0.05)" stroke="none"/>
-
-                <!-- Chemical Liquid Layer (above half flask height ~55-65%) -->
-                <path id="flaskRigBody" d="M 107.1,298 L 94,334 Q 129,346 164,334 L 150.9,298 Q 129,294 107.1,298 Z"
-                      fill="rgba(56,189,248,0.15)" stroke="none" style="display:none; transition: fill 0.35s ease; opacity: 0.9;"/>
-
-                <!-- Meniscus Surface Ellipse -->
-                <ellipse id="flaskLiquidSurface" cx="129" cy="298" rx="22" ry="4" fill="rgba(255,255,255,0.3)" style="display:none; transition: fill 0.35s ease, cy 0.2s ease, rx 0.2s ease;"/>
-
-                <!-- Flask Volume Graduations (100, 150, 200 cm³) -->
-                <g stroke="rgba(255,255,255,0.7)" stroke-width="0.8">
-                  <line x1="110" y1="318" x2="118" y2="318"/>
-                  <line x1="114" y1="304" x2="120" y2="304"/>
-                  <line x1="118" y1="290" x2="124" y2="290"/>
-                </g>
-                <g font-family="'JetBrains Mono', monospace" font-size="5" fill="rgba(255,255,255,0.85)">
-                  <text x="100" y="320">100</text>
-                  <text x="104" y="306">150</text>
-                  <text x="108" y="292">200</text>
-                </g>
-                <rect x="134" y="296" width="18" height="12" rx="2" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.35)" stroke-width="0.5"/>
-
-                <!-- Glass Refraction & Highlights -->
-                <path d="M 120,264 L 102,328 Q 112,334 122,332 L 132,270 Z" fill="rgba(255,255,255,0.16)" opacity="0.75" pointer-events="none"/>
-                <path d="M 137,264 L 154,324" stroke="rgba(255,255,255,0.45)" stroke-width="1.2" stroke-linecap="round" fill="none" pointer-events="none"/>
-
-                <!-- Outer Glass Wall & Rim (Always Clear Glass Structure) -->
-                <path id="flaskGlassWallExam" d="M 118,256 L 118,268 L 94,334 Q 129,346 164,334 L 140,268 L 140,256 Z"
-                      fill="none" stroke="#38BDF8" stroke-width="1.8" stroke-linejoin="round" pointer-events="none"/>
-                <ellipse cx="129" cy="254" rx="15" ry="4" fill="url(#glassSheenExam)" stroke="#38BDF8" stroke-width="1.5"/>
-                <ellipse cx="129" cy="254" rx="11" ry="2.8" fill="rgba(15,23,42,0.6)" stroke="#0284C7" stroke-width="0.8"/>
-              </g>
-            </svg>
-
-            <!-- Magnified Reading Lens -->
-            <div class="buret-lens-card">
-              <div style="font-size:0.75rem; font-weight:800; color:var(--cyan-accent); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.04em; display:flex; align-items:center; justify-content:space-between; width:100%;">
-                <span>🔍 Burette Lens</span>
-                <span style="font-size:0.60rem; color:#EF4444; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.35); border-radius:4px; padding:1px 5px; font-weight:800; letter-spacing:0.03em;">EYE LEVEL</span>
-              </div>
-              <div class="lens-viewfinder">
-                <div class="lens-glass-glare"></div>
-                <div class="lens-crosshair-line"></div>
-                <svg id="lensSvg" viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%; display:block;">
-                  <!-- Default Initial Burette Lens Rendering at 0.00 cm³ -->
-                  <defs>
-                    <linearGradient id="lensTubeCeramicExam" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stop-color="#E2E8F0"/>
-                      <stop offset="10%" stop-color="#FFFFFF"/>
-                      <stop offset="90%" stop-color="#FFFFFF"/>
-                      <stop offset="100%" stop-color="#CBD5E1"/>
-                    </linearGradient>
-                    <linearGradient id="luminousLiquidFillExam" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.92"/>
-                      <stop offset="15%" stop-color="#0284C7" stop-opacity="0.88"/>
-                      <stop offset="60%" stop-color="#0369A1" stop-opacity="0.92"/>
-                      <stop offset="100%" stop-color="#0C4A6E" stop-opacity="0.98"/>
-                    </linearGradient>
-                    <linearGradient id="tubeSpecularExam" x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.8"/>
-                      <stop offset="15%" stop-color="#FFFFFF" stop-opacity="0.2"/>
-                      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.0"/>
-                    </linearGradient>
-                    <filter id="lensBeadGlowExam" x="-50%" y="-50%" width="200%" height="200%">
-                      <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#EF4444" flood-opacity="0.9"/>
-                    </filter>
-                  </defs>
-                  <rect x="12" y="0" width="176" height="180" rx="6" fill="url(#lensTubeCeramicExam)"/>
-                  <rect x="94" y="0" width="12" height="180" fill="#0284C7" opacity="0.25"/>
-                  <line x1="12" y1="0" x2="12" y2="180" stroke="#00F2FE" stroke-width="3" stroke-opacity="0.8"/>
-                  <line x1="188" y1="0" x2="188" y2="180" stroke="#00F2FE" stroke-width="3" stroke-opacity="0.8"/>
-                  <rect x="16" y="0" width="14" height="180" fill="url(#tubeSpecularExam)"/>
-                  <path d="M 12 80 Q 100 100 188 80 L 188 180 L 12 180 Z" fill="url(#luminousLiquidFillExam)"/>
-                  <rect x="16" y="90" width="14" height="90" fill="url(#tubeSpecularExam)"/>
-                  <!-- Initial Graduation Marks at 0.00 cm³ -->
-                  <line x1="12" y1="90" x2="68" y2="90" stroke="#0F172A" stroke-width="2.6" stroke-linecap="round"/>
-                  <line x1="132" y1="90" x2="188" y2="90" stroke="#0F172A" stroke-width="2.6" stroke-linecap="round"/>
-                  <text x="76" y="95" fill="#0F172A" font-size="14" font-family="'JetBrains Mono', monospace" font-weight="900">0.0</text>
-                  <line x1="12" y1="96" x2="38" y2="96" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
-                  <line x1="162" y1="96" x2="188" y2="96" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
-                  <line x1="12" y1="102" x2="38" y2="102" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
-                  <line x1="162" y1="102" x2="188" y2="102" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
-                  <line x1="12" y1="108" x2="38" y2="108" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
-                  <line x1="162" y1="108" x2="188" y2="108" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
-                  <line x1="12" y1="114" x2="38" y2="114" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
-                  <line x1="162" y1="114" x2="188" y2="114" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
-                  <line x1="12" y1="120" x2="52" y2="120" stroke="#1E293B" stroke-width="2.0" stroke-linecap="round"/>
-                  <line x1="148" y1="120" x2="188" y2="120" stroke="#1E293B" stroke-width="2.0" stroke-linecap="round"/>
-                  <line x1="12" y1="126" x2="38" y2="126" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
-                  <line x1="162" y1="126" x2="188" y2="126" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
-                  <line x1="12" y1="132" x2="38" y2="132" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
-                  <line x1="162" y1="132" x2="188" y2="132" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
-                  <line x1="12" y1="138" x2="38" y2="138" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
-                  <line x1="162" y1="138" x2="188" y2="138" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
-                  <line x1="12" y1="144" x2="38" y2="144" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
-                  <line x1="162" y1="144" x2="188" y2="144" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
-                  <line x1="12" y1="150" x2="68" y2="150" stroke="#0F172A" stroke-width="2.6" stroke-linecap="round"/>
-                  <line x1="132" y1="150" x2="188" y2="150" stroke="#0F172A" stroke-width="2.6" stroke-linecap="round"/>
-                  <text x="76" y="155" fill="#0F172A" font-size="14" font-family="'JetBrains Mono', monospace" font-weight="900">1.0</text>
-                  <!-- Meniscus Boundary & Center Reticle Bead at y = 90 -->
-                  <path d="M 12 79 Q 100 99 188 79" stroke="#032B44" stroke-width="3" fill="none" opacity="0.85"/>
-                  <path d="M 12 80 Q 100 100 188 80" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-                  <circle cx="100" cy="90" r="4" fill="#EF4444" stroke="#FFFFFF" stroke-width="1.5" filter="url(#lensBeadGlowExam)"/>
-                  <line x1="12" y1="90" x2="32" y2="90" stroke="#EF4444" stroke-width="2" stroke-linecap="round"/>
-                  <line x1="168" y1="90" x2="188" y2="90" stroke="#EF4444" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-              </div>
-              <div class="lens-readout-badge" id="lensDigitalReadout">
-                <span>🎯</span> 0.00 cm³
-              </div>
-              <div style="font-size:0.68rem; color:var(--text-muted); margin-top:3px; font-family:'Newsreader', serif; font-style:italic;" id="lensReadoutSubText">
-                Read at <b>bottom of meniscus</b>.
-              </div>
-            </div>
+      <!-- ════════════════════════════════════════════════════════════
+           PART 3: TITRATION RESULTS LOG (TABLE 1)
+      ════════════════════════════════════════════════════════════ -->
+      <section class="q1-part-card" id="q1Part3Card">
+        <div class="q1-part-header">
+          <div class="q1-part-title">
+            <span>📊</span>
+            <span id="q1TableTitle">Part 3: Titration Results Log (Table 1 — 5.0 Marks)</span>
           </div>
-
-          <!-- Authentic Chemistry Laboratory Reagent Bottles Shelf -->
-          <div class="bench-reagents-shelf">
-            <div class="bench-bottle-chip">
-              <span>🫙</span>
-              <span id="q1TitrantChip">Solution A (Burette)</span>
-            </div>
-            <div class="bench-bottle-chip">
-              <span>🧪</span>
-              <span id="flaskContentsLabel">Flask: Empty</span>
-            </div>
-            <div class="bench-bottle-chip">
-              <span>💧</span>
-              <span id="q1IndicatorChip">Indicator Dropper</span>
-            </div>
-          </div>
+          <span class="q1-part-badge badge-emerald">5.0 Marks Allocated</span>
         </div>
 
-        <!-- RIGHT WING: Stopcock & Speed Addition -->
-        <div class="bench-titrant-wing">
-          <div class="bench-wing-header">
-            <span class="bench-wing-step-num num-amber">2</span>
+        <!-- Official KNEC Table 1 Criteria Chips -->
+        <div class="q1-knec-criteria-row">
+          <span class="q1-criteria-pill">CT: Complete Table (1.0 Mk)</span>
+          <span class="q1-criteria-pill">D: Decimals Consistency (1.0 Mk)</span>
+          <span class="q1-criteria-pill">AC: Accuracy to Standard (1.0 Mk)</span>
+          <span class="q1-criteria-pill">PA: Principles of Averaging (1.0 Mk)</span>
+          <span class="q1-criteria-pill">FA: Final Accuracy (1.0 Mk)</span>
+        </div>
+
+        <!-- Live Concordancy Evaluation Banner -->
+        <div class="q1-concordant-hud" id="q1ConcordantHud">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:1.1rem;">⚖️</span>
             <div>
-              <div class="bench-wing-title">Titrant Delivery</div>
-              <div class="bench-wing-sub">Burette Stopcock Controls</div>
+              <div style="font-size:0.72rem; font-weight:800; text-transform:uppercase; color:var(--cyan-accent); letter-spacing:0.03em;">Concordancy Verification (±0.10 cm³)</div>
+              <div id="q1ConcordantStatusText" style="font-size:0.80rem; font-weight:700; color:var(--text-muted);">Check 2 or 3 concordant trials in Table 1 below.</div>
             </div>
           </div>
+          <button type="button" class="btn-bench btn-bench-teal" style="width:auto; padding:5px 12px; font-size:0.74rem;" onclick="autoSelectConcordantTrials()">
+            ⚡ Auto-Select Concordant Titres
+          </button>
+        </div>
 
-          <div class="titrant-buttons-cluster">
-            <div class="prep-item-label">Coarse Delivery (cm³)</div>
-            <div class="titrant-grid-2col">
-              <button class="btn-bench btn-bench-cyan" onclick="addTitrantDirect(1.0)">+1.0 cm³</button>
-              <button class="btn-bench btn-bench-cyan" onclick="addTitrantDirect(0.5)">+0.5 cm³</button>
+        <div class="knec-table-scroll-wrap">
+          <table class="knec-titration-table" style="margin-bottom:0;">
+            <thead>
+              <tr>
+                <th>Burette Reading (cm³)</th>
+                <th style="text-align:center;">Trial I (Rough)</th>
+                <th style="text-align:center;">Trial II</th>
+                <th style="text-align:center;">Trial III</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><b>Final Reading (cm³)</b></td>
+                <td><input type="number" step="0.05" id="t1Final" class="calc-input" style="text-align:center;" placeholder="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
+                <td><input type="number" step="0.05" id="t2Final" class="calc-input" style="text-align:center;" placeholder="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
+                <td><input type="number" step="0.05" id="t3Final" class="calc-input" style="text-align:center;" placeholder="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
+              </tr>
+              <tr>
+                <td><b>Initial Reading (cm³)</b></td>
+                <td><input type="number" step="0.05" id="t1Init" class="calc-input" style="text-align:center;" value="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
+                <td><input type="number" step="0.05" id="t2Init" class="calc-input" style="text-align:center;" value="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
+                <td><input type="number" step="0.05" id="t3Init" class="calc-input" style="text-align:center;" value="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
+              </tr>
+              <tr style="background:var(--card-bg-hover);">
+                <td><b>Volume of Titrant Used (cm³)</b></td>
+                <td id="t1Used" style="text-align:center;font-weight:800;font-family:var(--font-mono);">0.00</td>
+                <td id="t2Used" style="text-align:center;font-weight:800;font-family:var(--font-mono);">0.00</td>
+                <td id="t3Used" style="text-align:center;font-weight:800;font-family:var(--font-mono);">0.00</td>
+              </tr>
+              <tr>
+                <td><b>Concordant Titres (±0.10 cm³)</b></td>
+                <td style="text-align:center;"><input type="checkbox" id="t1Concordant" onchange="onConcordantChanged()"></td>
+                <td style="text-align:center;"><input type="checkbox" id="t2Concordant" onchange="onConcordantChanged()"></td>
+                <td style="text-align:center;"><input type="checkbox" id="t3Concordant" onchange="onConcordantChanged()"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ════════════════════════════════════════════════════════════
+           PART 4: STOICHIOMETRIC CALCULATIONS
+      ════════════════════════════════════════════════════════════ -->
+      <section class="q1-part-card" id="q1Part4Card">
+        <div class="q1-part-header">
+          <div class="q1-part-title">
+            <span>📐</span>
+            <span id="q1CalcSectionTitle">Part 4: Stoichiometric Calculations (10.0 Marks)</span>
+          </div>
+          <span class="q1-part-badge badge-purple">10.0 Marks Allocated</span>
+        </div>
+
+        <div class="q1-ecf-notice-banner">
+          <span style="font-size:1.1rem;">ℹ️</span>
+          <span><b>KNEC Scoring Protocol:</b> Calculations are evaluated using <b>Error Carried Forward (e.c.f.)</b> based on your own concordant Table 1 titres. Ensure correct algebraic rounding and units.</span>
+        </div>
+
+        <div id="q1CalculationsContainer">
+          <!-- Default Step (a) -->
+          <div class="calc-step-card" id="card_avgTitre">
+            <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
+              (a) Calculate the average volume of Solution A used, V₁ <span style="color:var(--cyan-accent);">(1.0 Mark)</span>
             </div>
-
-            <div class="prep-item-label" style="margin-top:4px;">Fine &amp; Dropwise (cm³)</div>
-            <div class="titrant-grid-2col">
-              <button class="btn-bench btn-bench-teal" onclick="addTitrantDirect(0.1)">+0.1 cm³</button>
-              <button class="btn-bench btn-bench-teal" onclick="addTitrantDirect(0.05)">💧 +0.05</button>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <input type="number" step="0.01" id="ansAvgTitre" class="calc-input dynamic-calc-input" data-field="avgTitre" data-step-id="step_a" placeholder="e.g. 25.00" oninput="onDynamicQ1CalculationChanged('avgTitre', this.value)">
+              <span style="font-weight:700;color:var(--text-muted);">cm³</span>
             </div>
+            <div id="stepFeedback_step_a" class="step-feedback-msg"></div>
+          </div>
 
-            <div class="prep-item-label" style="margin-top:4px;">Continuous Flow</div>
-            <button class="btn-bench btn-bench-blue" onclick="startContinuousTitration()" id="btnContinuous">
-              ⚡ Continuous Run
-            </button>
+          <!-- Default Step (b) -->
+          <div class="calc-step-card" id="card_molesA">
+            <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
+              (b) Calculate the number of moles of Solution A (acid) in the average volume V₁ used <span style="color:var(--cyan-accent);">(2.0 Marks)</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <input type="number" step="0.0001" id="ansMolesA" class="calc-input dynamic-calc-input" data-field="molesA" data-step-id="step_b" placeholder="e.g. 0.00250" oninput="onDynamicQ1CalculationChanged('molesA', this.value)">
+              <span style="font-weight:700;color:var(--text-muted);">moles of acid</span>
+            </div>
+            <div id="stepFeedback_step_b" class="step-feedback-msg"></div>
+          </div>
 
-            <button class="btn-bench btn-bench-crimson" style="margin-top:2px;" onclick="stopTitrate()">
-              🔴 Stop Tap
-            </button>
+          <!-- Default Step (c) -->
+          <div class="calc-step-card" id="card_molesB">
+            <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
+              (c) Determine the number of moles of Solution B (base) in 25.0 cm³ of solution used <span style="color:var(--cyan-accent);">(2.0 Marks)</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <input type="number" step="0.0001" id="ansMolesB" class="calc-input dynamic-calc-input" data-field="molesB" data-step-id="step_c" placeholder="e.g. 0.00250" oninput="onDynamicQ1CalculationChanged('molesB', this.value)">
+              <span style="font-weight:700;color:var(--text-muted);">moles of base</span>
+            </div>
+            <div id="stepFeedback_step_c" class="step-feedback-msg"></div>
+          </div>
 
-            <div class="bench-tip-hint">Slow down to dropwise (0.1 / 0.05 cm³) as you approach equivalence!</div>
+          <!-- Default Step (d) -->
+          <div class="calc-step-card" id="card_molarityB">
+            <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
+              (d) Calculate the molar concentration (molarity) of Solution B in mol/dm³ <span style="color:var(--cyan-accent);">(3.0 Marks)</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <input type="number" step="0.001" id="ansMolarityB" class="calc-input dynamic-calc-input" data-field="molarityB" data-step-id="step_d" placeholder="e.g. 0.100" oninput="onDynamicQ1CalculationChanged('molarityB', this.value)">
+              <span style="font-weight:700;color:var(--text-muted);">mol/dm³ (M)</span>
+            </div>
+            <div id="stepFeedback_step_d" class="step-feedback-msg"></div>
+          </div>
+
+          <!-- Default Step (e) -->
+          <div class="calc-step-card" id="card_concGrams">
+            <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
+              (e) Calculate the concentration of Solution B in g/dm³ (RFM = 40.0) <span style="color:var(--cyan-accent);">(2.0 Marks)</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <input type="number" step="0.01" id="ansConcGrams" class="calc-input dynamic-calc-input" data-field="concGrams" data-step-id="step_e" placeholder="e.g. 4.00" oninput="onDynamicQ1CalculationChanged('concGrams', this.value)">
+              <span style="font-weight:700;color:var(--text-muted);">g/dm³</span>
+            </div>
+            <div id="stepFeedback_step_e" class="step-feedback-msg"></div>
           </div>
         </div>
-      </div>
 
-      <div class="bench-action-buttons-row">
-        <button type="button" class="btn-bench btn-bench-emerald" style="flex:1;" onclick="transferReadingToTable()">
-          📥 Record Current Reading in <span id="lblActiveTable">Table 1</span> (Trial <span id="lblActiveTrial">1</span>)
-        </button>
-        <button type="button" class="btn-bench btn-bench-slate" onclick="resetTitrationApparatus()">
-          🔄 Reset Apparatus &amp; Flask
-        </button>
-      </div>
-    </div>
-
-    <!-- Candidate Results Table & Step-by-Step Calculations -->
-    <div>
-      <div style="font-weight:800;font-size:0.95rem;color:var(--heading-color);margin-bottom:8px;" id="q1TableTitle">
-        Table 1: Titration Results (5.0 Marks)
-      </div>
-
-      <div class="knec-table-scroll-wrap">
-        <table class="knec-titration-table" style="margin-bottom:18px;">
-          <thead>
-            <tr>
-              <th>Burette Reading (cm³)</th>
-              <th style="text-align:center;">Trial I (Rough)</th>
-              <th style="text-align:center;">Trial II</th>
-              <th style="text-align:center;">Trial III</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><b>Final Reading (cm³)</b></td>
-              <td><input type="number" step="0.05" id="t1Final" class="calc-input" style="text-align:center;" placeholder="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
-              <td><input type="number" step="0.05" id="t2Final" class="calc-input" style="text-align:center;" placeholder="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
-              <td><input type="number" step="0.05" id="t3Final" class="calc-input" style="text-align:center;" placeholder="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
-            </tr>
-            <tr>
-              <td><b>Initial Reading (cm³)</b></td>
-              <td><input type="number" step="0.05" id="t1Init" class="calc-input" style="text-align:center;" value="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
-              <td><input type="number" step="0.05" id="t2Init" class="calc-input" style="text-align:center;" value="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
-              <td><input type="number" step="0.05" id="t3Init" class="calc-input" style="text-align:center;" value="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
-            </tr>
-            <tr style="background:var(--card-bg-hover);">
-              <td><b>Volume of Titrant Used (cm³)</b></td>
-              <td id="t1Used" style="text-align:center;font-weight:800;font-family:var(--font-mono);">0.00</td>
-              <td id="t2Used" style="text-align:center;font-weight:800;font-family:var(--font-mono);">0.00</td>
-              <td id="t3Used" style="text-align:center;font-weight:800;font-family:var(--font-mono);">0.00</td>
-            </tr>
-            <tr>
-              <td><b>Concordant Titres (±0.10 cm³)</b></td>
-              <td style="text-align:center;"><input type="checkbox" id="t1Concordant" onchange="onConcordantChanged()"></td>
-              <td style="text-align:center;"><input type="checkbox" id="t2Concordant" onchange="onConcordantChanged()"></td>
-              <td style="text-align:center;"><input type="checkbox" id="t3Concordant" onchange="onConcordantChanged()"></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Dynamic Calculations & Stoichiometry (10.0 Marks) -->
-      <div style="font-weight:800;font-size:0.95rem;color:var(--heading-color);margin:20px 0 10px;" id="q1CalcSectionTitle">
-        Calculations &amp; Stoichiometry (10.0 Marks)
-      </div>
-
-      <div id="q1CalculationsContainer">
-        <!-- Default Step (a) -->
-        <div class="calc-step-card" id="card_avgTitre">
-          <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
-            (a) Calculate the average volume of Solution A used, V₁ <span style="color:var(--cyan-accent);">(1.0 Mark)</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-            <input type="number" step="0.01" id="ansAvgTitre" class="calc-input dynamic-calc-input" data-field="avgTitre" data-step-id="step_a" placeholder="e.g. 25.00" oninput="onDynamicQ1CalculationChanged('avgTitre', this.value)">
-            <span style="font-weight:700;color:var(--text-muted);">cm³</span>
-          </div>
-          <div id="stepFeedback_step_a" class="step-feedback-msg"></div>
+        <!-- Multi-Procedure Next Step Button (e.g. Procedure I -> Procedure II) -->
+        <div id="q1NextProcedureRow" style="display:none; margin-top:18px; text-align:right;">
+          <button type="button" class="btn-next-step" onclick="switchTitrationProcedure(1)" id="btnProceedToProc2" style="font-size:0.88rem; padding:10px 20px;">
+            Proceed to Procedure II (Solubility) →
+          </button>
         </div>
+      </section>
 
-        <!-- Default Step (b) -->
-        <div class="calc-step-card" id="card_molesA">
-          <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
-            (b) Calculate the number of moles of Solution A (acid) in the average volume V₁ used <span style="color:var(--cyan-accent);">(2.0 Marks)</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-            <input type="number" step="0.0001" id="ansMolesA" class="calc-input dynamic-calc-input" data-field="molesA" data-step-id="step_b" placeholder="e.g. 0.00250" oninput="onDynamicQ1CalculationChanged('molesA', this.value)">
-            <span style="font-weight:700;color:var(--text-muted);">moles of acid</span>
-          </div>
-          <div id="stepFeedback_step_b" class="step-feedback-msg"></div>
-        </div>
-
-        <!-- Default Step (c) -->
-        <div class="calc-step-card" id="card_molesB">
-          <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
-            (c) Determine the number of moles of Solution B (base) in 25.0 cm³ of solution used <span style="color:var(--cyan-accent);">(2.0 Marks)</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-            <input type="number" step="0.0001" id="ansMolesB" class="calc-input dynamic-calc-input" data-field="molesB" data-step-id="step_c" placeholder="e.g. 0.00250" oninput="onDynamicQ1CalculationChanged('molesB', this.value)">
-            <span style="font-weight:700;color:var(--text-muted);">moles of base</span>
-          </div>
-          <div id="stepFeedback_step_c" class="step-feedback-msg"></div>
-        </div>
-
-        <!-- Default Step (d) -->
-        <div class="calc-step-card" id="card_molarityB">
-          <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
-            (d) Calculate the molar concentration (molarity) of Solution B in mol/dm³ <span style="color:var(--cyan-accent);">(3.0 Marks)</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-            <input type="number" step="0.001" id="ansMolarityB" class="calc-input dynamic-calc-input" data-field="molarityB" data-step-id="step_d" placeholder="e.g. 0.100" oninput="onDynamicQ1CalculationChanged('molarityB', this.value)">
-            <span style="font-weight:700;color:var(--text-muted);">mol/dm³ (M)</span>
-          </div>
-          <div id="stepFeedback_step_d" class="step-feedback-msg"></div>
-        </div>
-
-        <!-- Default Step (e) -->
-        <div class="calc-step-card" id="card_concGrams">
-          <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
-            (e) Calculate the concentration of Solution B in g/dm³ (RFM = 40.0) <span style="color:var(--cyan-accent);">(2.0 Marks)</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-            <input type="number" step="0.01" id="ansConcGrams" class="calc-input dynamic-calc-input" data-field="concGrams" data-step-id="step_e" placeholder="e.g. 4.00" oninput="onDynamicQ1CalculationChanged('concGrams', this.value)">
-            <span style="font-weight:700;color:var(--text-muted);">g/dm³</span>
-          </div>
-          <div id="stepFeedback_step_e" class="step-feedback-msg"></div>
-        </div>
-      </div>
-
-      <!-- Multi-Procedure Next Step Button (e.g. Procedure I -> Procedure II) -->
-      <div id="q1NextProcedureRow" style="display:none; margin-top:18px; text-align:right;">
-        <button type="button" class="btn-next-step" onclick="switchTitrationProcedure(1)" id="btnProceedToProc2" style="font-size:0.88rem; padding:10px 20px;">
-          Proceed to Procedure II (Solubility) →
-        </button>
-      </div>
     </div>
   </div>
 
@@ -953,6 +1075,6 @@
 <script src="/shared/knec-graph-plotter.js"></script>
 <script src="js/composite-engine.js?v=73"></script>
 <script src="js/exam-offline-manager.js?v=1"></script>
-<script src="js/composite-exam-ui.js?v=1"></script>
+<script src="js/composite-exam-ui.js?v=2"></script>
 </body>
 </html>

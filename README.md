@@ -16,7 +16,7 @@ Over 60% of Kenyan secondary schools lack adequately equipped chemistry laborato
 
 - **Students**:
   - Perform realistic virtual practicals mapped directly to the KNEC KCSE Chemistry Paper 3 syllabus.
-  - Interactive SVG glassware rigs with drop-wise stopcock addition, meniscus lens viewfinders ($0.10\text{ cm}^3$ precision), flame test wire loops, and chemical precipitation reactions.
+  - Interactive SVG glassware rigs with drop-wise stopcock addition, meniscus lens viewfinders ($0.10\text{ cm}^3$ precision), clean glass rod flame tests (KNEC standard), and chemical precipitation reactions.
   - Practice self-paced experiments with instant feedback or take timed **15-Minute KCSE Exam Mode** simulations scored with official KNEC grades (A–E).
   - Step-by-step interactive guided tutorial walkthroughs.
   - Full session history, accuracy tracking, and achievement badges.

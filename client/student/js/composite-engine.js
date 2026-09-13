@@ -1263,6 +1263,12 @@ const COMPOSITE_EXAM_PRESETS = {
           prompt: '(v) To portion 3, add 3–4 drops of dilute sulfuric acid (H₂SO₄).',
           correctObs: 'White precipitate formed (sparingly soluble CaSO₄)',
           correctInf: 'Ca²⁺ confirmed present'
+        },
+        {
+          id: 'q2_flame',
+          prompt: '(vi) Dip a clean glass rod into portion 4 and place it in the non-luminous flame of a Bunsen burner.',
+          correctObs: 'Brick-red / orange-red flame',
+          correctInf: 'Ca²⁺ confirmed present'
         }
       ]
     },
@@ -1533,7 +1539,8 @@ function getSaltPresetDefinition(saltKey) {
         { id: 'q2_appearance', prompt: '(ii) Dissolve the remainder of Solid Y in about 10 cm³ of distilled water in a boiling tube. Divide the resulting solution into 4 portions.', correctObs: 'White crystalline solid dissolves completely to form a clear, colorless solution', correctInf: 'Soluble salt; absence of colored transition metal ions (Fe²⁺, Fe³⁺, Cu²⁺ absent)' },
         { id: 'q2_naoh', prompt: '(iii) To portion 1, add 2M NaOH dropwise until in excess.', correctObs: 'White precipitate formed, insoluble in excess sodium hydroxide', correctInf: 'Ca²⁺ or Mg²⁺ present' },
         { id: 'q2_nh3', prompt: '(iv) To portion 2, add 2M aqueous ammonia (NH₃) dropwise until in excess.', correctObs: 'No precipitate formed with drops or with excess aqueous ammonia', correctInf: 'Ca²⁺ confirmed present' },
-        { id: 'q2_anion', prompt: '(v) To portion 3, add 3–4 drops of dilute sulfuric acid (H₂SO₄).', correctObs: 'White precipitate formed (sparingly soluble CaSO₄)', correctInf: 'Ca²⁺ confirmed present' }
+        { id: 'q2_anion', prompt: '(v) To portion 3, add 3–4 drops of dilute sulfuric acid (H₂SO₄).', correctObs: 'White precipitate formed (sparingly soluble CaSO₄)', correctInf: 'Ca²⁺ confirmed present' },
+        { id: 'q2_flame', prompt: '(vi) Dip a clean glass rod into portion 4 and place it in the non-luminous flame of a Bunsen burner.', correctObs: 'Brick-red / orange-red flame', correctInf: 'Ca²⁺ confirmed present' }
       ]
     };
   }
@@ -2459,6 +2466,13 @@ class CompositeExamEngine {
       if (obsLower.includes('dissolves') && obsLower.includes('insoluble in excess')) {
         obsMark = Math.max(0, obsMark - 0.5);
       }
+
+      // Taboo scientific phrase penalty: "white solution" (-0.5 Mk)
+      let tabooPenalty = 0.0;
+      if (obsLower.includes('white solution')) {
+        tabooPenalty = 0.5;
+        obsMark = Math.max(0.0, obsMark - tabooPenalty);
+      }
       testMark += obsMark;
 
       // 2. Inference Keyword Scoring
@@ -2531,7 +2545,7 @@ class CompositeExamEngine {
         max: perTestMax,
         mark: parseFloat(testMark.toFixed(1)),
         pass: testMark >= (perTestMax * 0.6),
-        detail: `Obs: [${obsMark.toFixed(1)}/${perHalfMax.toFixed(1)}] "${candidateObs || 'None'}" (Expected: "${t.correctObs}"). Infs: [${infMark.toFixed(1)}/${perHalfMax.toFixed(1)}] "${candidateInf || 'None'}" (Expected: "${t.correctInf}").${ciPenalty > 0 ? ` [CI Penalty: -${ciPenalty} Mk for contradictory ion(s)]` : ''}${chargePenalty > 0 ? ' [CP Penalty: -0.5 Mk for missing charge superscripts]' : ''}`
+        detail: `Obs: [${obsMark.toFixed(1)}/${perHalfMax.toFixed(1)}] "${candidateObs || 'None'}" (Expected: "${t.correctObs}"). Infs: [${infMark.toFixed(1)}/${perHalfMax.toFixed(1)}] "${candidateInf || 'None'}" (Expected: "${t.correctInf}").${ciPenalty > 0 ? ` [CI Penalty: -${ciPenalty} Mk for contradictory ion(s)]` : ''}${chargePenalty > 0 ? ' [CP Penalty: -0.5 Mk for missing charge superscripts]' : ''}${tabooPenalty > 0 ? ' [Taboo Penalty: -0.5 Mk for writing "white solution"]' : ''}`
       });
     });
 

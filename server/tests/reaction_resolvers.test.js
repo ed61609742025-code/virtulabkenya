@@ -400,6 +400,72 @@ describe('Qualitative Bench Core (Inorganic Reactions)', () => {
       const singleActions = QualitativeBenchCore.getMultiStageActions('q2_anion', 'Add 3 drops of Ba(NO3)2', 'idle');
       assert.strictEqual(singleActions.length, 1, 'Standard single-step test should have 1 action button');
     });
+
+    it('Lead(II) nitrate anion test: generates 3-stage sequence (add -> warm -> cool -> done)', () => {
+      const prompt = '(iv) To 2 cm³ of solution Y, add 3 drops of lead(II) nitrate solution and warm the mixture, then allow to cool.';
+      
+      // Stage 1: idle -> Step 1 (few_drops)
+      const idleActs = QualitativeBenchCore.getMultiStageActions('q2_anion', prompt, 'idle');
+      assert.strictEqual(idleActs.length, 1);
+      assert.strictEqual(idleActs[0].stage, 'few_drops');
+      assert.ok(idleActs[0].label.includes('Lead(II) Nitrate'));
+
+      // Stage 2: few_drops -> Step 2 (warm/heat)
+      const dropsActs = QualitativeBenchCore.getMultiStageActions('q2_anion', prompt, 'few_drops');
+      assert.strictEqual(dropsActs.length, 2);
+      assert.strictEqual(dropsActs[0].stage, 'heated');
+      assert.ok(dropsActs[0].label.includes('Warm'));
+
+      // Stage 3: heated -> Step 3 (cool)
+      const heatActs = QualitativeBenchCore.getMultiStageActions('q2_anion', prompt, 'heated');
+      assert.strictEqual(heatActs.length, 2);
+      assert.strictEqual(heatActs[0].stage, 'cooled');
+      assert.ok(heatActs[0].label.includes('Cool'));
+
+      // Complete: cooled -> done
+      const coolActs = QualitativeBenchCore.getMultiStageActions('q2_anion', prompt, 'cooled');
+      assert.strictEqual(coolActs[0].stage, 'done');
+      assert.strictEqual(coolActs[0].disabled, true);
+      assert.ok(coolActs[1].isRedo);
+    });
+
+    it('Prevents premature cooling or heating at Step 1 (few_drops) for multi-stage KI and Pb(NO3)2 prompts', () => {
+      const kiPrompt = '(v) To portion 3, add 3 drops of Potassium Iodide (KI) solution and warm gently, then allow to cool.';
+      const kiStep1 = QualitativeBenchCore.resolveReactionState('leadNitrate', 'test_ki', 'few_drops', kiPrompt);
+      assert.strictEqual(kiStep1.isCooled, false, 'Step 1 must not prematurely set isCooled=true');
+      assert.strictEqual(kiStep1.isHeated, false, 'Step 1 must not prematurely set isHeated=true');
+      assert.strictEqual(kiStep1.ppt, true, 'PbI2 yellow precipitate forms in the cold');
+      assert.ok(kiStep1.statusLabel.includes('Few Drops'), 'Shows Step 1 few drops observation');
+
+      const pbPrompt = '(iv) To 2 cm³ of solution Y, add 3 drops of lead(II) nitrate solution and warm the mixture, then cool.';
+      const pbStep1 = QualitativeBenchCore.resolveReactionState('ammoniumChloride', 'q2_anion', 'few_drops', pbPrompt);
+      assert.strictEqual(pbStep1.isCooled, false, 'Step 1 must not prematurely set isCooled=true');
+      assert.strictEqual(pbStep1.isHeated, false, 'Step 1 must not prematurely set isHeated=true');
+      assert.strictEqual(pbStep1.ppt, true, 'PbCl2 white precipitate forms in the cold');
+      assert.strictEqual(pbStep1.pptDissolved, false, 'Precipitate is NOT dissolved yet');
+    });
+
+    it('Renders convection heat waves on warming and glistening needle crystals on cooling in renderTubeSvg', () => {
+      // Warmed state
+      const warmSvg = QualitativeBenchCore.renderTubeSvg({
+        saltKey: 'ammoniumChloride',
+        testId: 'q2_anion',
+        stage: 'heated',
+        prompt: 'To solution add Pb(NO3)2 and warm'
+      });
+      assert.ok(warmSvg.includes('anim-heat-wave'), 'Must render anim-heat-wave on warming');
+      assert.ok(warmSvg.includes('anim-ppt-dissolve'), 'Must render dissolved transition');
+
+      // Cooled state
+      const coolSvg = QualitativeBenchCore.renderTubeSvg({
+        saltKey: 'ammoniumChloride',
+        testId: 'q2_anion',
+        stage: 'cooled',
+        prompt: '(iv) To 2 cm³ of solution Y, add 3 drops of lead(II) nitrate solution and warm the mixture, then allow to cool.'
+      });
+      assert.ok(coolSvg.includes('Glistening White Needle-Like Crystals of PbCl2'), 'Must render glistening needle crystals on cooling');
+      assert.ok(coolSvg.includes('anim-spangle'), 'Must render sparkling spangles for needle crystals');
+    });
   });
 });
 

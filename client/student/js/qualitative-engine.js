@@ -1451,7 +1451,7 @@ if (typeof window !== 'undefined') {
             <button class="btn-perform-test flame-btn done" onclick="performTest('flame')">
               🔥 Re-open Flame Test
             </button>
-            <button class="btn-redo-test" onclick="redoTest('flame')" title="Clean wire loop and redo test">
+            <button class="btn-redo-test" onclick="redoTest('flame')" title="Clean glass rod and redo test">
               <span class="redo-icon">↺</span> Redo Test
             </button>`;
         }
@@ -1744,6 +1744,14 @@ if (typeof window !== 'undefined') {
         <ellipse cx="43" cy="${liquidTopY}" rx="16" ry="3.5" fill="${isDeepBlue ? '#1E40AF' : liquid}" opacity="0.95" class="${performed ? 'anim-meniscus-ripple' : ''}"/>
       ` : ''}
 
+      <!-- Convection Heat Waves / Steam Wisps when warmed -->
+      ${(isHeated || st.stage === 'heated') ? `
+        <g class="anim-heat-wave">
+          <path d="M 36,${liquidTopY - 10} Q 40,${liquidTopY - 16} 44,${liquidTopY - 10}" stroke="rgba(245, 158, 11, 0.7)" stroke-width="1.5" fill="none"/>
+          <path d="M 44,${liquidTopY - 6} Q 48,${liquidTopY - 12} 52,${liquidTopY - 6}" stroke="rgba(245, 158, 11, 0.6)" stroke-width="1.5" fill="none"/>
+        </g>
+      ` : ''}
+
       <!-- Precipitate Curd Mass at Base -->
       ${performed && isPpt && !bubbles ? `
         <g class="anim-ppt-form">
@@ -1756,12 +1764,27 @@ if (typeof window !== 'undefined') {
         </g>
       ` : ''}
 
-      <!-- Dissolving Precipitate (Transition Effect in Excess) -->
+      <!-- Dissolving Precipitate (Transition Effect in Excess / Heat) -->
       ${performed && isPptDissolved ? `
         <g class="anim-ppt-dissolve">
           <ellipse cx="43" cy="120" rx="12" ry="5" fill="#E2E8F0" opacity="0.4"/>
           <circle cx="38" cy="118" r="2" fill="#E2E8F0" opacity="0.4"/>
           <circle cx="46" cy="119" r="2" fill="#E2E8F0" opacity="0.4"/>
+        </g>
+      ` : ''}
+
+      <!-- Glistening White Needle-Like Crystals of PbCl2 upon cooling -->
+      ${(st.stage === 'cooled' && (testKey === 'pb_no3' || testKey === 'hcl') && (salt.anion === 'Cl-' || (salt.anion && salt.anion.includes('Cl')))) ? `
+        <g class="anim-spangle" style="animation-delay: 0s;">
+          <polygon points="38,102 46,92 47,93 39,103" fill="#FFFFFF" opacity="0.95"/>
+          <line x1="38" y1="102" x2="47" y2="93" stroke="#BAE6FD" stroke-width="0.6"/>
+        </g>
+        <g class="anim-spangle" style="animation-delay: 0.4s;">
+          <polygon points="34,115 48,108 48.5,109 34.5,116" fill="#FFFFFF" opacity="0.95"/>
+          <line x1="34" y1="115" x2="48.5" y2="109" stroke="#E0F2FE" stroke-width="0.6"/>
+        </g>
+        <g class="anim-spangle" style="animation-delay: 0.8s;">
+          <polygon points="42,122 52,112 52.5,113 42.5,123" fill="#FFFFFF" opacity="0.92"/>
         </g>
       ` : ''}
 
@@ -1834,13 +1857,14 @@ if (typeof window !== 'undefined') {
       <!-- Flame Inner Core Cone -->
       <path class="${lit ? 'anim-flame-inner' : ''}" d="M 50,34 C 40,46 43,68 50,68 C 57,68 60,46 50,34 Z" fill="#E0F2FE" opacity="${lit ? '0.95' : '0.05'}"/>
 
-      <!-- Platinum Wire Loop with Incandescent Sample -->
+      <!-- Clean Borosilicate Glass Rod with Sample Droplet (KNEC Standard) -->
       ${performed ? `
         <g transform="translate(18, 42)">
-          <rect x="-16" y="14" width="16" height="3" rx="1" fill="#78350F"/>
-          <path d="M 0,15.5 L 30,15.5" stroke="#CBD5E1" stroke-width="1.8" stroke-linecap="round"/>
-          <circle cx="31" cy="15.5" r="3.2" fill="none" stroke="#E2E8F0" stroke-width="1.6"/>
-          <circle cx="31" cy="15.5" r="2.2" fill="${fc}" class="anim-spangle"/>
+          <line x1="-16" y1="15.5" x2="30" y2="15.5" stroke="rgba(255,255,255,0.75)" stroke-width="3" stroke-linecap="round"/>
+          <line x1="-16" y1="15.5" x2="30" y2="15.5" stroke="#94A3B8" stroke-width="3" stroke-linecap="round" opacity="0.3"/>
+          <line x1="-15" y1="14.8" x2="28" y2="14.8" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round" opacity="0.85"/>
+          <ellipse cx="31" cy="15.5" rx="2.5" ry="2" fill="rgba(255,255,255,0.9)" stroke="#CBD5E1" stroke-width="0.6"/>
+          <circle cx="32" cy="15.5" r="2.2" fill="${fc}" class="anim-spangle"/>
         </g>
       ` : ''}
     </svg>`;

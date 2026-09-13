@@ -232,6 +232,14 @@ describe('KNEC Paper 3 Examination Suite Standards', () => {
     const cpRubric = q2CpScore.rubric.find(r => r.code.includes('Q2_c') || r.item.includes('NaOH'));
     assert.ok(cpRubric.detail.includes('CP Penalty'), 'Missing ionic charge superscripts must trigger CP penalty');
 
+    // Taboo scientific phrase penalty: candidate writes "white solution"
+    const engineTaboo = new CompositeExamEngine({ presetKey: 'series_1' });
+    engineTaboo.setQ2Response('q2_naoh', 'White precipitate dissolves in excess to form a white solution', 'Pb²⁺, Al³⁺, Zn²⁺ present');
+    let q2TabooScore = engineTaboo.calculateQ2Score();
+    const tabooRubric = q2TabooScore.rubric.find(r => r.code.includes('Q2_c') || r.item.includes('NaOH'));
+    assert.ok(tabooRubric.detail.includes('Taboo Penalty'), 'Writing "white solution" must trigger taboo penalty');
+    assert.ok(tabooRubric.mark < 3.0, 'Mark must be reduced due to taboo phrase penalty');
+
     // Final Cation & Anion Deductions
     engine.setQ2Deduction('Pb²⁺', 'NO₃⁻');
     const finalScore = engine.calculateQ2Score();
@@ -239,6 +247,25 @@ describe('KNEC Paper 3 Examination Suite Standards', () => {
     const aniRubric = finalScore.rubric.find(r => r.code === 'Q2_ANI');
     assert.strictEqual(catRubric.mark, 1.5, 'Cation with charge awarded 1.5 Mks');
     assert.strictEqual(aniRubric.mark, 1.5, 'Anion identified awarded 1.5 Mks');
+  });
+
+  it('should validate KCSE 2023 authentic preset includes Portion 4 clean glass rod flame test', () => {
+    const engine2023 = new CompositeExamEngine({ presetKey: 'series_2023' });
+    const tests = engine2023.preset.q2.tests;
+    assert.strictEqual(tests.length, 6, 'KCSE 2023 Q2 must have 6 tests including all 4 divided portions');
+    
+    const flameTest = tests.find(t => t.id === 'q2_flame');
+    assert.ok(flameTest, 'Must have q2_flame test');
+    assert.ok(flameTest.prompt.includes('clean glass rod'), 'Flame test must use clean glass rod');
+    assert.ok(flameTest.prompt.includes('portion 4'), 'Flame test must test portion 4');
+    assert.ok(flameTest.correctObs.includes('Brick-red'), 'Expected observation must be brick-red flame');
+    assert.ok(flameTest.correctInf.includes('Ca²⁺'), 'Expected inference must confirm Ca²⁺');
+
+    engine2023.setQ2Response('q2_flame', 'Brick-red flame observed', 'Ca²⁺ confirmed');
+    const q2Score = engine2023.calculateQ2Score();
+    const flameRubric = q2Score.rubric.find(r => r.code === 'Q2_f');
+    assert.ok(flameRubric, 'Must have rubric for flame test step (f)');
+    assert.strictEqual(flameRubric.pass, true, 'Correct flame observation and inference must pass');
   });
 
   it('should enforce Organic Analysis Q3 rubrics and functional group deduction', () => {

@@ -595,10 +595,10 @@
     const tId = (testId || '').toLowerCase();
 
     const performed = stage !== 'idle' && stage !== 'untested' && Boolean(stage);
-    const isExcess = stage === 'excess' || stage === 'step3_nh3' || stage === 'step2_bacl2' || stage === 'step2_gas_warm' || pStr.includes('excess');
+    const isExcess = stage === 'excess' || stage === 'step3_nh3' || stage === 'step2_bacl2' || stage === 'step2_gas_warm' || (stage !== 'few_drops' && stage !== 'step1' && pStr.includes('excess'));
     const isStep1 = stage === 'few_drops' || stage === 'step1' || stage === 'step1_hno3' || stage === 'step1_acid' || stage === 'step1_hcl' || stage === 'step1_feso4' || stage === 'inspected';
-    const isHeated = stage === 'heated' || tId.includes('heat') || pStr.includes('heat') || pStr.includes('ignit');
-    const isCooled = stage === 'cooled' || pStr.includes('cool');
+    const isHeated = stage === 'heated' || stage === 'warm' || stage === 'step2_warm' || (!isStep1 && stage !== 'cooled' && stage !== 'few_drops' && stage !== 'idle' && (tId.includes('heat') || tId.includes('ignit') || (pStr.includes('heat') && !pStr.includes('portion') && !pStr.includes('drop'))));
+    const isCooled = stage === 'cooled' || stage === 'step3_cool' || stage === 'cool_down';
 
     const cation = salt.cation;
     const anion = salt.anion;
@@ -1402,12 +1402,43 @@
           </g>
         ` : ''}
 
-        <!-- Dissolving Precipitate Transition (Excess) with Schlieren Refraction -->
+        <!-- Convection Heat Waves / Steam Wisps when warmed -->
+        ${(r.isHeated || stage === 'heated' || stage === 'warm' || stage === 'step2_warm') ? `
+          <g class="anim-heat-wave">
+            <path d="M 70,${topY - 14} Q 80,${topY - 22} 90,${topY - 14}" stroke="rgba(245, 158, 11, 0.75)" stroke-width="2" fill="none"/>
+            <path d="M 72,${topY - 4} Q 80,${topY - 12} 88,${topY - 4}" stroke="rgba(245, 158, 11, 0.6)" stroke-width="2" fill="none"/>
+          </g>
+        ` : ''}
+
+        <!-- Dissolving Precipitate Transition (Excess / Heat) with Schlieren Refraction -->
         ${performed && isPptDissolved ? `
           <g class="anim-ppt-dissolve">
             <ellipse cx="80" cy="184" rx="16" ry="6" fill="#E2E8F0" opacity="0.3"/>
             <path d="M 68,130 Q 80,124 92,130" stroke="rgba(255,255,255,0.4)" stroke-width="1.2" fill="none"/>
             <path d="M 66,152 Q 80,146 94,152" stroke="rgba(255,255,255,0.35)" stroke-width="1.2" fill="none"/>
+          </g>
+        ` : ''}
+
+        <!-- Glistening White Needle-Like Crystals of PbCl2 upon cooling -->
+        ${(r.isCooled || stage === 'cooled' || stage === 'step3_cool') && (r.isPbNO3 || (r.statusLabel && r.statusLabel.toLowerCase().includes('needle'))) ? `
+          <g class="anim-spangle" style="animation-delay: 0s;">
+            <polygon points="76,155 84,140 85,141 77,156" fill="#FFFFFF" opacity="0.95"/>
+            <line x1="76" y1="155" x2="85" y2="141" stroke="#BAE6FD" stroke-width="0.8"/>
+          </g>
+          <g class="anim-spangle" style="animation-delay: 0.35s;">
+            <polygon points="68,170 86,158 87,159 69,171" fill="#FFFFFF" opacity="0.95"/>
+            <line x1="68" y1="170" x2="87" y2="159" stroke="#E0F2FE" stroke-width="0.8"/>
+          </g>
+          <g class="anim-spangle" style="animation-delay: 0.7s;">
+            <polygon points="80,176 94,162 95,163 81,177" fill="#FFFFFF" opacity="0.92"/>
+            <line x1="80" y1="176" x2="95" y2="163" stroke="#BAE6FD" stroke-width="0.8"/>
+          </g>
+          <g class="anim-spangle" style="animation-delay: 1.05s;">
+            <polygon points="64,158 76,174 75,175 63,159" fill="#FFFFFF" opacity="0.95"/>
+            <line x1="64" y1="158" x2="75" y2="175" stroke="#E0F2FE" stroke-width="0.8"/>
+          </g>
+          <g class="anim-spangle" style="animation-delay: 1.4s;">
+            <polygon points="72,182 86,185 86,186 72,183" fill="#FFFFFF" opacity="0.92"/>
           </g>
         ` : ''}
 
@@ -1975,7 +2006,7 @@
     `;
   }
 
-  // ── 5e. Flame Test Apparatus SVG (Bunsen Burner & Nichrome Wire Loop) ──
+  // ── 5e. Flame Test Apparatus SVG (Bunsen Burner & Clean Borosilicate Glass Rod) ──
   function renderFlameTestApparatusSvg(options = {}) {
     const {
       saltKey = 'leadNitrate',
@@ -2244,6 +2275,33 @@
         return [
           { stage: 'done', label: '✅ Test Completed', cls: 'btn-perform-test done', disabled: true },
           { stage: 'idle', label: '↺ Redo', cls: 'btn-redo-test', isRedo: true }
+        ];
+      }
+    }
+
+    // 2b. Lead(II) Nitrate Test with Warming & Cooling (KCSE Standard Anion Test)
+    const isPbNO3 = tId.includes('pb_no3') || tId.includes('pbno3') ||
+      (pStr.includes('lead') && (pStr.includes('nitrate') || pStr.includes('(ii)'))) ||
+      pStr.includes('pb(no3)2') || pStr.includes('pb(no₃)₂');
+    if (isPbNO3) {
+      if (!stage || stage === 'idle') {
+        return [
+          { stage: 'few_drops', label: '💧 Step 1: Add 2–3 drops Lead(II) Nitrate [Pb(NO₃)₂]', cls: 'btn-perform-test' }
+        ];
+      } else if (stage === 'few_drops' || stage === 'stage1') {
+        return [
+          { stage: 'heated', label: '🔥 Step 2: Warm Gently in Bunsen Flame', cls: 'btn-perform-test btn-step-heat' },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      } else if (stage === 'heated' || stage === 'warm' || stage === 'step2_warm') {
+        return [
+          { stage: 'cooled', label: '❄️ Step 3: Allow to Cool under Tap', cls: 'btn-perform-test btn-step-cool' },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      } else {
+        return [
+          { stage: 'done', label: '✅ Observation Recorded', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       }
     }

@@ -628,8 +628,9 @@
 
     const isAgNO3 = tId.includes('agno3') || pStr.includes('silver nitrate') || pStr.includes('agno3') || (pStr.includes('hno3') && pStr.includes('silver'));
     const isBaCl2 = tId.includes('bacl2') || tId.includes('barium') || pStr.includes('barium') || pStr.includes('ba(no3)2') || pStr.includes('bacl2');
+    const isPbNO3 = tId.includes('pb_no3') || tId.includes('pbno3') || (pStr.includes('lead') && (pStr.includes('nitrate') || pStr.includes('(ii)'))) || pStr.includes('pb(no3)2') || pStr.includes('pb(no₃)₂');
     const isNaOH = tId.includes('naoh') || pStr.includes('naoh') || pStr.includes('sodium hydroxide');
-    const isNH3 = !isAgNO3 && (tId.includes('nh3') || pStr.includes('ammonia') || pStr.includes('nh₃') || pStr.includes('nh3'));
+    const isNH3 = !isAgNO3 && !isPbNO3 && (tId.includes('nh3') || pStr.includes('ammonia') || pStr.includes('nh₃') || pStr.includes('nh3'));
     const isKI = tId.includes('ki') || pStr.includes('potassium iodide') || pStr.includes('iodide');
     const isBrownRing = tId.includes('brown_ring') || tId.includes('ring') || (pStr.includes('feso4') && pStr.includes('h2so4')) || pStr.includes('brown ring');
     const isH2SO4 = tId.includes('h2so4') || pStr.includes('h2so4') || pStr.includes('sulfuric') || pStr.includes('sulphuric');
@@ -812,6 +813,64 @@
           }
         } else {
           statusLabel = 'No precipitate formed';
+        }
+      } else if (isPbNO3) {
+        // KNEC Standard Method for Halides & Anions: Lead(II) Nitrate with warming & cooling
+        const isChloride = anion === 'Cl-' || anion === 'Cl⁻' || (anion && anion.includes('Cl')) || oStr.includes('pbcl2') || oStr.includes('chloride');
+        const isSulfate = anion === 'SO4^2-' || anion === 'SO42-' || (anion && anion.includes('SO4')) || oStr.includes('pbso4') || oStr.includes('sulfate') || oStr.includes('sulphate');
+        const isSulfite = anion === 'SO3^2-' || anion === 'SO32-' || (anion && anion.includes('SO3'));
+        const isCarbonate = anion === 'CO3^2-' || anion === 'CO32-' || anion === 'HCO3-' || (anion && (anion.includes('CO3') || anion.includes('HCO3')));
+        const hasWhitePptAnion = isChloride || isSulfate || isSulfite || isCarbonate || oStr.includes('white precipitate') || oStr.includes('white ppt');
+
+        if (hasWhitePptAnion) {
+          if (stage === 'warm' || stage === 'heated' || stage === 'step2_warm' || isHeated) {
+            if (isChloride) {
+              pptDissolved = true;
+              ppt = false;
+              liquidColor = 'rgba(255, 255, 255, 0.2)';
+              statusLabel = 'Warmed: White precipitate of PbCl₂ dissolves completely to form a colourless solution';
+            } else {
+              ppt = true;
+              pptColor = '#FFFFFF';
+              statusLabel = isSulfate
+                ? 'Warmed: White precipitate of PbSO₄ remains completely insoluble on boiling'
+                : 'Warmed: White precipitate remains insoluble';
+            }
+          } else if (stage === 'cooled' || stage === 'step3_cool' || isCooled) {
+            if (isChloride) {
+              ppt = true;
+              pptColor = '#FFFFFF';
+              statusLabel = 'Cooled: White glistening needle-like crystals of PbCl₂ reappear on cooling';
+            } else {
+              ppt = true;
+              pptColor = '#FFFFFF';
+              statusLabel = 'Cooled: White precipitate persists';
+            }
+          } else {
+            // Cold addition (Step 1)
+            ppt = true;
+            pptColor = '#FFFFFF';
+            statusLabel = isChloride
+              ? 'Lead(II) Nitrate Added: White precipitate of PbCl₂ formed'
+              : 'Lead(II) Nitrate Added: White precipitate formed';
+          }
+        } else if (anion === 'I-' || anion === 'I⁻' || (anion && anion.includes('I'))) {
+          if (stage === 'warm' || stage === 'heated' || stage === 'step2_warm' || isHeated) {
+            pptDissolved = true;
+            ppt = false;
+            liquidColor = 'rgba(250, 204, 21, 0.4)';
+            statusLabel = 'Warmed: Yellow precipitate of PbI₂ dissolves in hot water';
+          } else if (stage === 'cooled' || stage === 'step3_cool' || isCooled) {
+            ppt = true;
+            pptColor = '#FACC15';
+            statusLabel = 'Cooled: Golden shimmering spangles of PbI₂ recrystallize on cooling';
+          } else {
+            ppt = true;
+            pptColor = '#FACC15';
+            statusLabel = 'Lead(II) Nitrate Added: Bright yellow precipitate of PbI₂ formed';
+          }
+        } else {
+          statusLabel = 'Lead(II) Nitrate Added: No precipitate formed';
         }
       } else if (isH2SO4) {
         if (cation === 'Ca2+' || cation === 'Ba2+' || cation === 'Pb2+' || oStr.includes('precipitate') || oStr.includes('ppt') || oStr.includes('caso4') || oStr.includes('baso4') || oStr.includes('pbso4')) {
@@ -1031,6 +1090,7 @@
       isBrownRing,
       hasBrownRing: isBrownRing && anion === 'NO3-',
       isKI,
+      isPbNO3,
       isLead: cation === 'Pb2+',
       isHeated,
       isCooled,

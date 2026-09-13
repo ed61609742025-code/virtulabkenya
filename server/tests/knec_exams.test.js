@@ -281,11 +281,13 @@ describe('KNEC Paper 3 Examination Suite Standards', () => {
 
     assert.ok(SALTS, 'SALTS dictionary must exist');
     assert.ok(TESTS, 'TESTS array must exist');
-    assert.strictEqual(TESTS.length, 9, 'Must have all 9 systematic KNEC tests');
+    assert.strictEqual(TESTS.length, 10, 'Must have all 10 systematic KNEC tests including Lead(II) nitrate');
 
     const leadNitrate = SALTS.leadNitrate;
     const testNaOH = TESTS.find(t => t.key === 'naoh');
     const testNH3 = TESTS.find(t => t.key === 'nh3');
+    const testPbNO3 = TESTS.find(t => t.key === 'pb_no3');
+    assert.ok(testPbNO3, 'pb_no3 test must exist');
 
     // 1. Taboo deduction: writing "white solution" must receive -0.5 penalty
     const tabooEval = evaluateObservationAccuracy(testNaOH, leadNitrate, 'White solution formed in excess');
@@ -377,6 +379,14 @@ describe('KNEC Paper 3 Examination Suite Standards', () => {
 
     const heatHco3Inf = evaluateInferenceAccuracy(testHeat, sodiumHydrogenCarbonate, 'HCO₃⁻ present (decomposes with CO₂ & H₂O)', 'Water droplets condense, limewater milky');
     assert.strictEqual(heatHco3Inf.score, 0.55, 'Full 0.55 mark for HCO₃⁻ present deduction on thermal heating');
+
+    // 13. Lead(II) Nitrate test with warming for Chloride
+    const pbObs = evaluateObservationAccuracy(testPbNO3, calciumChloride, 'White precipitate formed, dissolves on warming to form a colourless solution (reappears on cooling)');
+    assert.strictEqual(pbObs.score, 0.55, 'Full 0.55 mark for PbCl2 dissolving on warming');
+
+    const pbInf = evaluateInferenceAccuracy(testPbNO3, calciumChloride, 'Cl⁻ present', 'White precipitate dissolves on warming');
+    assert.strictEqual(pbInf.score, 0.55, 'Full 0.55 mark for Cl⁻ present inference with Pb(NO3)2');
+    assert.strictEqual(pbInf.ciPenalty, 0.0);
   });
 
 });

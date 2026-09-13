@@ -142,6 +142,35 @@ describe('Qualitative Bench Core (Inorganic Reactions)', () => {
       assert.strictEqual(res.pptColor, '#FFFFFF');
     });
 
+    // Chloride (Cl-) with Lead(II) Nitrate (KNEC Standard Practical Method)
+    it('Cl⁻: white ppt with Pb(NO₃)₂, dissolves on warming, reappears on cooling', () => {
+      // Step 1: Cold addition
+      const step1 = QualitativeBenchCore.resolveReactionState('ironChloride', 'pb_no3', 'few_drops', 'Add 2–3 drops of Pb(NO3)2 solution');
+      assert.strictEqual(step1.ppt, true, 'PbCl2 white ppt forms in cold');
+      assert.strictEqual(step1.pptColor, '#FFFFFF');
+      assert.strictEqual(step1.isPbNO3, true);
+
+      // Step 2: Warm mixture
+      const step2 = QualitativeBenchCore.resolveReactionState('ironChloride', 'pb_no3', 'heated', 'Warm the mixture gently');
+      assert.strictEqual(step2.ppt, false, 'PbCl2 precipitate must dissolve on warming');
+      assert.strictEqual(step2.pptDissolved, true, 'Precipitate is dissolved');
+
+      // Step 3: Cool under tap
+      const step3 = QualitativeBenchCore.resolveReactionState('ironChloride', 'pb_no3', 'cooled', 'Cool under tap water');
+      assert.strictEqual(step3.ppt, true, 'PbCl2 white crystals must recrystallize on cooling');
+    });
+
+    it('SO₄²⁻: white ppt with Pb(NO₃)₂, remains insoluble on boiling', () => {
+      // Step 1: Cold addition
+      const step1 = QualitativeBenchCore.resolveReactionState('zincSulfate', 'pb_no3', 'few_drops', 'Add 2–3 drops of Pb(NO3)2 solution');
+      assert.strictEqual(step1.ppt, true, 'PbSO4 white ppt forms');
+
+      // Step 2: Warm mixture
+      const step2 = QualitativeBenchCore.resolveReactionState('zincSulfate', 'pb_no3', 'heated', 'Warm the mixture gently');
+      assert.strictEqual(step2.ppt, true, 'PbSO4 white ppt must remain insoluble on warming');
+      assert.strictEqual(step2.pptDissolved, false, 'PbSO4 does not dissolve');
+    });
+
     // Bromide (Br-)
     it('Br⁻: pale cream ppt with AgNO₃, sparingly soluble in dilute NH₃', () => {
       const step2 = QualitativeBenchCore.resolveReactionState('potassiumBromide', 'agno3', 'step2_agno3', 'Add dilute HNO3 followed by AgNO3');
@@ -175,6 +204,7 @@ describe('Qualitative Bench Core (Inorganic Reactions)', () => {
       const testCases = [
         { salt: 'zincSulfate', prompt: 'Add 3 drops of BaCl2 solution' },
         { salt: 'ironChloride', prompt: 'Add 3 drops of AgNO3 solution' },
+        { salt: 'ironChloride', prompt: 'Add 3 drops of Pb(NO3)2 solution' },
         { salt: 'copperSulfate', prompt: 'Add 3 drops of Ba(NO3)2 solution' }
       ];
       testCases.forEach(tc => {

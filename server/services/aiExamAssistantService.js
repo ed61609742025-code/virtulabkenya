@@ -1107,7 +1107,7 @@ function getSaltTestSequence(saltKey) {
         { id: 't1', prompt: '(i) Describe physical appearance of Solid Y', correctObs: 'Yellow-brown / reddish crystalline solid', correctInf: 'Fe³⁺ ion present' },
         { id: 't2', prompt: '(ii) Dissolve in water, add 2M NaOH dropwise until in excess', correctObs: 'Red-brown / rust-brown precipitate, insoluble in excess', correctInf: 'Fe³⁺ confirmed' },
         { id: 't3', prompt: '(iii) To portion 2, add 2M NH₃ dropwise until in excess', correctObs: 'Red-brown precipitate, insoluble in excess', correctInf: 'Fe³⁺ confirmed' },
-        { id: 't4', prompt: '(iv) To portion 3, add dilute HNO₃ followed by AgNO₃ solution', correctObs: 'White precipitate of AgCl, insoluble in dilute HNO₃, soluble in aqueous ammonia', correctInf: 'Cl⁻ confirmed' }
+        { id: 't4', prompt: '(iv) To portion 3, add 2–3 drops of lead(II) nitrate solution and warm the mixture', correctObs: 'White precipitate formed, dissolves on warming to form a colourless solution (reappears on cooling)', correctInf: 'Cl⁻ confirmed' }
       ];
     case 'CaCl2':
       return [
@@ -1115,7 +1115,7 @@ function getSaltTestSequence(saltKey) {
         { id: 't2', prompt: '(ii) Dissolve in water, add 2M NaOH dropwise until in excess', correctObs: 'White precipitate, insoluble in excess NaOH', correctInf: 'Ca²⁺ or Mg²⁺ present' },
         { id: 't3', prompt: '(iii) To portion 2, add 2M NH₃ dropwise until in excess', correctObs: 'No precipitate formed with aqueous ammonia', correctInf: 'Ca²⁺ present (or group 1/2; transition metal ions absent)' },
         { id: 't4', prompt: '(iv) Flame test with clean nichrome wire in non-luminous flame', correctObs: 'Brick-red / orange-red flame', correctInf: 'Ca²⁺ confirmed' },
-        { id: 't5', prompt: '(v) To portion 3, add dilute HNO₃ followed by AgNO₃', correctObs: 'White precipitate formed, soluble in aqueous NH₃', correctInf: 'Cl⁻ confirmed' }
+        { id: 't5', prompt: '(v) To portion 3, add 2–3 drops of lead(II) nitrate solution and warm the mixture', correctObs: 'White precipitate formed, dissolves on warming to form a colourless solution (reappears on cooling)', correctInf: 'Cl⁻ confirmed' }
       ];
     case 'Ca(NO3)2':
       return [
@@ -1130,7 +1130,7 @@ function getSaltTestSequence(saltKey) {
         { id: 't1', prompt: '(i) Heat Solid Y in a dry test tube gently, then strongly', correctObs: 'Sublimes; dense white fumes deposit on upper cooler walls of test tube', correctInf: 'Sublimable salt; NH₄⁺ present' },
         { id: 't2', prompt: '(ii) Dissolve remainder in distilled water, add 2M NaOH and warm gently', correctObs: 'Colorless gas with pungent choking smell evolved; turns moist red litmus blue', correctInf: 'Alkaline ammonia (NH₃) gas evolved; NH₄⁺ confirmed' },
         { id: 't3', prompt: '(iii) To portion 2, add 2M aqueous ammonia dropwise until in excess', correctObs: 'No precipitate formed with drops or excess', correctInf: 'Heavy transition metal ions absent' },
-        { id: 't4', prompt: '(iv) To portion 3, add dilute HNO₃ followed by AgNO₃ solution', correctObs: 'White precipitate formed, soluble in aqueous ammonia', correctInf: 'Cl⁻ confirmed present' }
+        { id: 't4', prompt: '(iv) To portion 3, add 2–3 drops of lead(II) nitrate solution and warm the mixture', correctObs: 'White precipitate formed, dissolves on warming to form a colourless solution (reappears on cooling)', correctInf: 'Cl⁻ confirmed present' }
       ];
     case 'Al2(SO4)3':
       return [
@@ -1145,7 +1145,7 @@ function getSaltTestSequence(saltKey) {
         { id: 't1', prompt: '(i) Describe appearance and dissolve in 10 cm³ distilled water', correctObs: 'White crystalline solid dissolves completely to give a clear colorless solution', correctInf: 'Soluble non-transition metal salt' },
         { id: 't2', prompt: '(ii) Flame test with clean platinum/nichrome wire in non-luminous flame', correctObs: 'Pale apple-green flame', correctInf: 'Ba²⁺ present' },
         { id: 't3', prompt: '(iii) To portion 1, add dilute H₂SO₄ or Na₂SO₄ solution', correctObs: 'Dense white precipitate formed, insoluble in dilute HCl/HNO₃', correctInf: 'Ba²⁺ confirmed present (BaSO₄ formed)' },
-        { id: 't4', prompt: '(iv) To portion 2, add dilute HNO₃ followed by AgNO₃ solution', correctObs: 'White precipitate formed, soluble in aqueous ammonia', correctInf: 'Cl⁻ confirmed present' }
+        { id: 't4', prompt: '(iv) To portion 2, add 2–3 drops of lead(II) nitrate solution and warm the mixture', correctObs: 'White precipitate formed, dissolves on warming to form a colourless solution (reappears on cooling)', correctInf: 'Cl⁻ confirmed present' }
       ];
     case 'ZnSO4 + BaSO4':
       return [
@@ -1297,7 +1297,7 @@ function generateSynchronizedPrepGuide(exam) {
 ### 2. QUESTION 2 PREPARATIONS (SALT ANALYSIS)
 - **Target Substance:** ${q2.trueSaltName || 'Unknown Salt'} (${q2.trueSaltKey})
 - **Quantity per candidate:** **2.0 g** of ${q2.sampleName || 'Solid Y'} in a dry stoppered container.
-- **Reagents on bench:** 2M NaOH, 2M Aqueous Ammonia (NH₃), Ba(NO₃)₂ solution, dilute HNO₃, distilled water wash bottle.
+- **Reagents on bench:** 2M NaOH, 2M Aqueous Ammonia (NH₃), Ba(NO₃)₂ solution, Pb(NO₃)₂ solution, dilute HNO₃, distilled water wash bottle.
 
 ### 3. QUESTION 3 PREPARATIONS (ORGANIC ANALYSIS)
 - **Target Substance:** ${q3.trueOrganicName || 'Ethanol'} (${q3.trueFunctionalGroup})

@@ -1146,9 +1146,9 @@ const COMPOSITE_EXAM_PRESETS = {
         },
         {
           id: 'q2_anion',
-          prompt: '(iv) To 2 cm³ of solution Y, add 3 drops of dilute HNO₃ followed by AgNO₃ solution.',
-          correctObs: 'White precipitate formed, dissolves readily upon addition of aqueous ammonia',
-          correctInf: 'Cl⁻ confirmed present (AgCl formed)'
+          prompt: '(iv) To 2 cm³ of solution Y, add 3 drops of lead(II) nitrate solution and warm the mixture.',
+          correctObs: 'White precipitate formed, which dissolves on warming to form a colourless solution (reappears on cooling)',
+          correctInf: 'Cl⁻ confirmed present (PbCl₂ formed)'
         }
       ]
     },
@@ -1375,9 +1375,9 @@ const COMPOSITE_EXAM_PRESETS = {
         },
         {
           id: 'q2_anion',
-          prompt: '(v) To portion 3, add 3 drops of dilute HNO₃ followed by AgNO₃ solution.',
-          correctObs: 'White precipitate formed, dissolves readily in aqueous ammonia',
-          correctInf: 'Cl⁻ confirmed present (AgCl formed)'
+          prompt: '(v) To portion 3, add 3 drops of lead(II) nitrate solution and warm the mixture.',
+          correctObs: 'White precipitate formed, which dissolves on warming to form a colourless solution (reappears on cooling)',
+          correctInf: 'Cl⁻ confirmed present (PbCl₂ formed)'
         }
       ]
     },
@@ -1549,7 +1549,7 @@ function getSaltPresetDefinition(saltKey) {
         { id: 'q2_appearance', prompt: '(ii) Dissolve the remainder of Solid Y in about 10 cm³ of distilled water in a boiling tube. Divide into 4 portions.', correctObs: 'Brown-yellow crystalline solid dissolves completely to form a yellow-brown solution', correctInf: 'Soluble transition metal salt; Fe³⁺ likely present' },
         { id: 'q2_naoh', prompt: '(iii) To portion 1, add 2M NaOH dropwise until in excess.', correctObs: 'Reddish-brown precipitate formed, insoluble in excess sodium hydroxide', correctInf: 'Fe³⁺ present (Fe(OH)₃ formed)' },
         { id: 'q2_nh3', prompt: '(iv) To portion 2, add 2M aqueous ammonia dropwise until in excess.', correctObs: 'Reddish-brown precipitate formed, insoluble in excess aqueous ammonia', correctInf: 'Fe³⁺ confirmed present' },
-        { id: 'q2_anion', prompt: '(v) To portion 3, add 3 drops of dilute HNO₃ followed by AgNO₃ solution.', correctObs: 'White precipitate formed, dissolves readily in aqueous ammonia', correctInf: 'Cl⁻ confirmed present (AgCl formed)' }
+        { id: 'q2_anion', prompt: '(v) To portion 3, add 3 drops of lead(II) nitrate solution and warm the mixture.', correctObs: 'White precipitate formed, which dissolves on warming to form a colourless solution (reappears on cooling)', correctInf: 'Cl⁻ confirmed present (PbCl₂ formed)' }
       ]
     };
   }
@@ -1564,7 +1564,7 @@ function getSaltPresetDefinition(saltKey) {
         { id: 'q2_heat', prompt: '(i) Heat Solid Y in a dry test tube.', correctObs: 'Sublimes; dense white fumes deposit on upper cooler walls', correctInf: 'Sublimable salt; NH₄⁺ present' },
         { id: 'q2_naoh', prompt: '(ii) Add 2M NaOH and warm gently.', correctObs: 'Pungent gas evolved, turns moist red litmus blue', correctInf: 'NH₃ gas evolved; NH₄⁺ confirmed' },
         { id: 'q2_nh3', prompt: '(iii) Add 2M aqueous ammonia.', correctObs: 'No precipitate formed', correctInf: 'Heavy metal cations absent' },
-        { id: 'q2_anion', prompt: '(iv) Add AgNO₃ followed by dilute HNO₃.', correctObs: 'White precipitate formed, soluble in aqueous ammonia', correctInf: 'Cl⁻ confirmed present' }
+        { id: 'q2_anion', prompt: '(iv) To 2 cm³ of solution, add 3 drops of lead(II) nitrate solution and warm the mixture.', correctObs: 'White precipitate formed, dissolves on warming to form a colourless solution (reappears on cooling)', correctInf: 'Cl⁻ confirmed present (PbCl₂ formed)' }
       ]
     };
   }

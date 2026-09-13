@@ -143,6 +143,7 @@ const CANONICAL_OBSERVATIONS = {
     { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'No visible reaction' },
     { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'No precipitate formed' },
     { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'White ppt (BaSO₄), insoluble in dil. HCl → SO₄²⁻' },
+    { test: 'Test with Lead(II) Nitrate Solution [Pb(NO₃)₂(aq)] and Warm', observation: 'White ppt (PbSO₄), insoluble on warming / boiling' },
     { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'No precipitate formed' },
     { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'No brown ring or color change at interface' }
   ],
@@ -154,6 +155,7 @@ const CANONICAL_OBSERVATIONS = {
     { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'No visible reaction' },
     { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'No precipitate formed' },
     { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'White ppt (BaSO₄), insoluble in dil. HCl → SO₄²⁻' },
+    { test: 'Test with Lead(II) Nitrate Solution [Pb(NO₃)₂(aq)] and Warm', observation: 'White ppt (PbSO₄), insoluble on warming / boiling' },
     { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'No precipitate formed' },
     { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'No brown ring or color change at interface' }
   ],
@@ -165,6 +167,7 @@ const CANONICAL_OBSERVATIONS = {
     { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'No visible reaction' },
     { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'No precipitate formed' },
     { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'White ppt (BaSO₄), insoluble in dil. HCl → SO₄²⁻' },
+    { test: 'Test with Lead(II) Nitrate Solution [Pb(NO₃)₂(aq)] and Warm', observation: 'White ppt (PbSO₄), insoluble on warming / boiling' },
     { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'No precipitate formed' },
     { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'No brown ring or color change at interface' }
   ],
@@ -176,6 +179,7 @@ const CANONICAL_OBSERVATIONS = {
     { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'Brisk effervescence; gas turns limewater milky (CO₂)' },
     { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'No precipitate formed' },
     { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Lead(II) Nitrate Solution [Pb(NO₃)₂(aq)] and Warm', observation: 'White ppt (PbCO₃), insoluble on warming' },
     { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'No precipitate formed' },
     { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'No brown ring or color change at interface' }
   ],
@@ -187,6 +191,7 @@ const CANONICAL_OBSERVATIONS = {
     { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'Brisk effervescence; gas turns limewater milky (CO₂)' },
     { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'No precipitate formed' },
     { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Lead(II) Nitrate Solution [Pb(NO₃)₂(aq)] and Warm', observation: 'White ppt, insoluble on warming' },
     { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'No precipitate formed' },
     { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'No brown ring or color change at interface' }
   ],
@@ -198,6 +203,7 @@ const CANONICAL_OBSERVATIONS = {
     { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'No visible reaction' },
     { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'White ppt (AgCl), dissolves in dilute NH₃ → Cl⁻' },
     { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Lead(II) Nitrate Solution [Pb(NO₃)₂(aq)] and Warm', observation: 'White ppt (PbCl₂), dissolves on warming to form a colourless solution, reappears on cooling → Cl⁻' },
     { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'No precipitate formed' },
     { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'No brown ring or color change at interface' }
   ],
@@ -209,6 +215,7 @@ const CANONICAL_OBSERVATIONS = {
     { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'No visible reaction' },
     { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'White ppt (AgCl), dissolves in dilute NH₃ → Cl⁻' },
     { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Lead(II) Nitrate Solution [Pb(NO₃)₂(aq)] and Warm', observation: 'White ppt (PbCl₂), dissolves on warming to form a colourless solution, reappears on cooling → Cl⁻' },
     { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'No precipitate formed' },
     { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'No brown ring or color change at interface' }
   ],
@@ -220,6 +227,7 @@ const CANONICAL_OBSERVATIONS = {
     { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'White ppt of PbCl₂ (soluble in hot water)' },
     { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'No precipitate formed' },
     { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Lead(II) Nitrate Solution [Pb(NO₃)₂(aq)] and Warm', observation: 'No precipitate formed' },
     { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'Bright canary-yellow ppt (PbI₂), dissolves on heating to golden sparkles → Pb²⁺' },
     { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'Distinct brown ring formed at the liquid-liquid interface → NO₃⁻' }
   ],
@@ -231,6 +239,7 @@ const CANONICAL_OBSERVATIONS = {
     { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'No visible reaction' },
     { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'No precipitate formed' },
     { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Lead(II) Nitrate Solution [Pb(NO₃)₂(aq)] and Warm', observation: 'No precipitate formed' },
     { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'No precipitate formed' },
     { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'Distinct brown ring formed at the liquid-liquid interface → NO₃⁻' }
   ],
@@ -242,6 +251,7 @@ const CANONICAL_OBSERVATIONS = {
     { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'No visible reaction' },
     { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'White ppt (AgCl), dissolves in dilute NH₃ → Cl⁻' },
     { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Lead(II) Nitrate Solution [Pb(NO₃)₂(aq)] and Warm', observation: 'White ppt (PbCl₂), dissolves on warming to form a colourless solution, reappears on cooling → Cl⁻' },
     { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'No precipitate formed' },
     { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'No brown ring or color change at interface' }
   ],
@@ -253,6 +263,7 @@ const CANONICAL_OBSERVATIONS = {
     { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'Brisk effervescence; gas turns limewater milky (CO₂)' },
     { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'No precipitate formed' },
     { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Lead(II) Nitrate Solution [Pb(NO₃)₂(aq)] and Warm', observation: 'White ppt (PbCO₃), insoluble on warming' },
     { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'No precipitate formed' },
     { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'No brown ring or color change at interface' }
   ],
@@ -264,6 +275,7 @@ const CANONICAL_OBSERVATIONS = {
     { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'No visible reaction' },
     { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'White ppt (AgCl), dissolves in dilute NH₃ → Cl⁻' },
     { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Lead(II) Nitrate Solution [Pb(NO₃)₂(aq)] and Warm', observation: 'White ppt (PbCl₂), dissolves on warming to form a colourless solution, reappears on cooling → Cl⁻' },
     { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'No precipitate formed' },
     { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'No brown ring or color change at interface' }
   ],
@@ -275,6 +287,7 @@ const CANONICAL_OBSERVATIONS = {
     { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'No visible reaction' },
     { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'No precipitate formed' },
     { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Lead(II) Nitrate Solution [Pb(NO₃)₂(aq)] and Warm', observation: 'No precipitate formed' },
     { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'No precipitate formed' },
     { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'Distinct brown ring formed at the liquid-liquid interface → NO₃⁻' }
   ],
@@ -286,6 +299,7 @@ const CANONICAL_OBSERVATIONS = {
     { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'Colorless gas with choking sulfurous smell (SO₂) evolved with effervescence; turns acidified K₂Cr₂O₇ from orange to green' },
     { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'White ppt (Ag₂SO₃), soluble in dilute HNO₃' },
     { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'White ppt (BaSO₃), dissolves in dilute HCl with effervescence of pungent SO₂ gas → SO₃²⁻' },
+    { test: 'Test with Lead(II) Nitrate Solution [Pb(NO₃)₂(aq)] and Warm', observation: 'White ppt (PbSO₃), insoluble on warming' },
     { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'No precipitate formed' },
     { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'No brown ring or color change at interface' }
   ],
@@ -297,6 +311,7 @@ const CANONICAL_OBSERVATIONS = {
     { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'No visible reaction' },
     { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'Pale cream ppt (AgBr), sparingly soluble in dilute NH₃, soluble in concentrated NH₃ → Br⁻' },
     { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Lead(II) Nitrate Solution [Pb(NO₃)₂(aq)] and Warm', observation: 'White / cream ppt (PbBr₂), dissolves on warming' },
     { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'No precipitate formed' },
     { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'No brown ring or color change at interface' }
   ],
@@ -308,6 +323,7 @@ const CANONICAL_OBSERVATIONS = {
     { test: 'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', observation: 'No visible reaction' },
     { test: 'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]', observation: 'Bright yellow ppt (AgI), completely insoluble in dilute and concentrated NH₃ → I⁻' },
     { test: 'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]', observation: 'No precipitate formed' },
+    { test: 'Test with Lead(II) Nitrate Solution [Pb(NO₃)₂(aq)] and Warm', observation: 'Bright yellow ppt (PbI₂), dissolves on warming, reappears as golden spangles on cooling' },
     { test: 'Test with Potassium Iodide Solution [1M KI(aq)]', observation: 'No precipitate formed' },
     { test: 'Brown Ring Test for Nitrates [NO₃⁻]', observation: 'No brown ring or color change at interface' }
   ]

@@ -333,6 +333,24 @@ if (typeof window !== 'undefined') {
       }
     },
     {
+      key:'pb_no3',
+      label:'Test with Lead(II) Nitrate Solution [Pb(NO₃)₂(aq)] & Warm (KCSE Standard)',
+      icon:'🧪',
+      reagent:'0.5M Pb(NO₃)₂(aq) + Bunsen warming',
+      procedure:'To about 2 cm³ of the aqueous solution of the unknown salt in a clean test tube, add 3–4 drops of lead(II) nitrate solution. Warm the mixture gently over a Bunsen flame and allow it to cool.',
+      options: [
+        { key:'A', text:'White ppt formed (PbCl₂), dissolves on warming to form a colorless solution; reappears on cooling → Cl⁻', color:'#F8FAFC' },
+        { key:'B', text:'White ppt formed (PbSO₄), remains insoluble on warming/boiling → SO₄²⁻', color:'#F1F5F9' },
+        { key:'C', text:'White ppt formed (PbSO₃ / PbCO₃), insoluble on warming → SO₃²⁻ or CO₃²⁻', color:'#E2E8F0' },
+        { key:'D', text:'Bright yellow ppt formed (PbI₂), dissolves on heating to golden shimmering spangles on cooling → I⁻', color:'#FACC15' },
+        { key:'E', text:'No precipitate formed', color:'#334155' }
+      ],
+      correct: {
+        ammoniumChloride:'A', copperSulfate:'B', ironSulfate:'B', sodiumCarbonate:'C', sodiumHydrogenCarbonate:'C', calciumChloride:'A', potassiumChloride:'A', leadNitrate:'E',
+        zincSulfate:'B', aluminumNitrate:'E', ironChloride:'A', ammoniumCarbonate:'C', zincNitrate:'E', sodiumSulfite:'C', potassiumBromide:'A', sodiumIodide:'D'
+      }
+    },
+    {
       key:'bacl2',
       label:'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]',
       icon:'🧫',
@@ -515,6 +533,7 @@ if (typeof window !== 'undefined') {
       hcl: ['CO₃²⁻', 'SO₃²⁻', 'Pb²⁺', '²⁻', '⁻'],
       agno3: ['Cl⁻', 'Br⁻', 'I⁻', 'SO₃²⁻', '⁻', '²⁻'],
       bacl2: ['SO₄²⁻', 'SO₃²⁻', 'CO₃²⁻', '²⁻'],
+      pb_no3: ['Cl⁻', 'SO₄²⁻', 'SO₃²⁻', 'CO₃²⁻', '²⁻', '⁻'],
       ki: ['Pb²⁺', '²⁺'],
       brown_ring: ['NO₃⁻', '⁻']
     };
@@ -750,6 +769,18 @@ if (typeof window !== 'undefined') {
       const noPpt = obsLower.includes('no ppt') || obsLower.includes('no precipitate') || obsLower.includes('no visible');
       if (noPpt && (presentIons.includes('cl-') || presentIons.includes('br-') || presentIons.includes('i-'))) {
         contradictions.push({ ion: 'Halide (Cl⁻/Br⁻/I⁻)', reason: 'Silver halides form insoluble precipitates with aqueous AgNO₃' });
+      }
+    }
+
+    // 5b. Pb(NO3)2: Halides or Sulfate inferred when no ppt formed, or SO4²⁻ inferred when dissolved on warming
+    if (testKey === 'pb_no3') {
+      const noPpt = obsLower.includes('no ppt') || obsLower.includes('no precipitate') || obsLower.includes('no visible');
+      if (noPpt && (presentIons.includes('cl-') || presentIons.includes('so42-') || presentIons.includes('so32-') || presentIons.includes('co32-'))) {
+        contradictions.push({ ion: 'Anion (Cl⁻/SO₄²⁻)', reason: 'Pb²⁺ forms white precipitates with chloride, sulfate, sulfite, and carbonate' });
+      }
+      const dissolvedOnWarming = (obsLower.includes('dissolv') || obsLower.includes('soluble')) && (obsLower.includes('warm') || obsLower.includes('heat'));
+      if (dissolvedOnWarming && presentIons.includes('so42-')) {
+        contradictions.push({ ion: 'SO₄²⁻', reason: 'PbSO₄ remains completely insoluble on boiling; only PbCl₂ dissolves on warming' });
       }
     }
 
@@ -1025,6 +1056,12 @@ if (typeof window !== 'undefined') {
         if (parsed.presentIons.includes(saltAnion)) score = 0.55;
       } else {
         if (lower.includes('absent') || lower.includes('cl') || lower.includes('halide')) score = 0.55;
+      }
+    } else if (test.key === 'pb_no3') {
+      if (['cl-', 'so42-', 'so32-', 'co32-'].includes(saltAnion)) {
+        if (parsed.presentIons.includes(saltAnion)) score = 0.55;
+      } else {
+        if (lower.includes('absent') || lower.includes('cl') || lower.includes('so4')) score = 0.55;
       }
     } else if (test.key === 'ki') {
       if (saltCation === 'pb2+') {
@@ -1338,6 +1375,37 @@ if (typeof window !== 'undefined') {
               ✅ Test Completed
             </button>
             <button class="btn-redo-test" onclick="redoTest('hcl')" title="Wash tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        }
+      } else if (test.key === 'pb_no3') {
+        if (!st.performed || st.stage === 'idle') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test" onclick="performTestStage('pb_no3', 'few_drops')">
+              💧 Step 1: Add Lead(II) Nitrate [Pb(NO₃)₂]
+            </button>`;
+        } else if (st.stage === 'few_drops') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test btn-step-heat" onclick="performTestStage('pb_no3', 'heated')">
+              🔥 Step 2: Warm Mixture Gently in Bunsen Flame
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('pb_no3')" title="Wash tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        } else if (st.stage === 'heated') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test btn-step-cool" onclick="performTestStage('pb_no3', 'cooled')">
+              ❄️ Step 3: Cool Tube under Tap Water
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('pb_no3')" title="Wash tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        } else {
+          actionButtonsHtml = `
+            <button class="btn-perform-test done" disabled>
+              ✅ Test Completed
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('pb_no3')" title="Wash tube and redo test">
               <span class="redo-icon">↺</span> Redo Test
             </button>`;
         }
@@ -2131,6 +2199,75 @@ if (typeof window !== 'undefined') {
           st.statusLabel = 'Step 2: Warmed — White ppt (PbCl₂) dissolves in hot water';
         } else {
           st.statusLabel = 'Step 2: Warmed — No visible change';
+        }
+      }
+    } else if (testKey === 'pb_no3') {
+      const isChloride = salt.anion === 'Cl-' || salt.anion === 'Cl⁻' || (salt.anion && salt.anion.includes('Cl'));
+      const isSulfate = salt.anion === 'SO4^2-' || salt.anion === 'SO42-' || (salt.anion && salt.anion.includes('SO4'));
+      const isSulfite = salt.anion === 'SO3^2-' || salt.anion === 'SO32-' || (salt.anion && salt.anion.includes('SO3'));
+      const isCarbonate = salt.anion === 'CO3^2-' || salt.anion === 'CO32-' || salt.anion === 'HCO3-' || (salt.anion && (salt.anion.includes('CO3') || salt.anion.includes('HCO3')));
+      const isIodide = salt.anion === 'I-' || salt.anion === 'I⁻' || (salt.anion && salt.anion.includes('I'));
+
+      if (targetStage === 'few_drops') {
+        playDropSplashSound();
+        if (isChloride || isSulfate || isSulfite || isCarbonate) {
+          st.ppt = true;
+          st.pptDissolved = false;
+          st.color = '#F8FAFC';
+          st.statusLabel = isChloride
+            ? 'Step 1: Pb(NO₃)₂ added — White precipitate of PbCl₂ formed'
+            : (isSulfate
+                ? 'Step 1: Pb(NO₃)₂ added — Dense white precipitate of PbSO₄ formed'
+                : 'Step 1: Pb(NO₃)₂ added — White precipitate formed');
+        } else if (isIodide) {
+          st.ppt = true;
+          st.color = '#FACC15';
+          st.statusLabel = 'Step 1: Pb(NO₃)₂ added — Bright yellow precipitate of PbI₂ formed';
+        } else {
+          st.ppt = false;
+          st.color = 'rgba(56, 189, 248, 0.2)';
+          st.statusLabel = 'Step 1: Pb(NO₃)₂ added — No precipitate formed';
+        }
+      } else if (targetStage === 'heated') {
+        playFlameSound();
+        if (isChloride) {
+          st.ppt = false;
+          st.pptDissolved = true;
+          st.color = 'rgba(56, 189, 248, 0.2)';
+          st.statusLabel = 'Step 2: Warmed gently — White precipitate of PbCl₂ dissolves completely to form a colourless solution';
+        } else if (isSulfate || isSulfite || isCarbonate) {
+          st.ppt = true;
+          st.pptDissolved = false;
+          st.color = '#F8FAFC';
+          st.statusLabel = isSulfate
+            ? 'Step 2: Warmed gently — White precipitate of PbSO₄ remains completely insoluble on boiling'
+            : 'Step 2: Warmed gently — White precipitate remains insoluble';
+        } else if (isIodide) {
+          st.ppt = false;
+          st.pptDissolved = true;
+          st.color = 'rgba(250, 204, 21, 0.35)';
+          st.statusLabel = 'Step 2: Warmed gently — Yellow precipitate of PbI₂ dissolves in hot water';
+        } else {
+          st.statusLabel = 'Step 2: Warmed gently — No change observed';
+        }
+      } else if (targetStage === 'cooled') {
+        playDropSplashSound();
+        if (isChloride) {
+          st.ppt = true;
+          st.pptDissolved = false;
+          st.color = '#F8FAFC';
+          st.statusLabel = 'Step 3: Cooled under tap water — White needle-like crystals of PbCl₂ reappear';
+        } else if (isIodide) {
+          st.ppt = true;
+          st.pptDissolved = false;
+          st.color = '#FACC15';
+          st.statusLabel = 'Step 3: Cooled under tap water — Golden shimmering spangles of PbI₂ recrystallize';
+        } else if (isSulfate || isSulfite || isCarbonate) {
+          st.ppt = true;
+          st.color = '#F8FAFC';
+          st.statusLabel = 'Step 3: Cooled — White precipitate persists';
+        } else {
+          st.statusLabel = 'Step 3: Cooled — Solution remains clear';
         }
       }
     } else if (testKey === 'ki') {

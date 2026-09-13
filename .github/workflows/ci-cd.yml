@@ -15,10 +15,10 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Set up Node.js 20
+      - name: Set up Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
           cache-dependency-path: 'server/package-lock.json'
 
@@ -26,8 +26,10 @@ jobs:
         working-directory: ./server
         run: npm ci
 
-      - name: Execute Node.js Test Suite
+      - name: Execute Unit Test Suite (no database required)
         working-directory: ./server
+        # Runs standalone pure-logic unit tests that work without a live PostgreSQL instance.
+        # Integration tests (node_api, google_auth) require a Postgres service and run separately.
         run: npm test
 
   docker-build:

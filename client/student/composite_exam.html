@@ -23,7 +23,7 @@
 <link rel="stylesheet" href="css/lab.css">
 <link rel="stylesheet" href="css/qualitative.css">
 <link rel="stylesheet" href="css/organic.css">
-<link rel="stylesheet" href="css/composite_exam.css?v=2">
+<link rel="stylesheet" href="css/composite_exam.css?v=3">
 <link rel="stylesheet" href="/shared/knec-graph-plotter.css">
 <!-- Extracted styles moved to css/composite_exam.css -->
 </head>
@@ -522,29 +522,29 @@
             <!-- Console Section 1: Flask Preparation -->
             <div class="q1-console-section">
               <div class="q1-console-header">
-                <span style="display:flex; align-items:center; gap:6px;">
-                  <span class="bench-wing-step-num">1</span>
-                  <span>Flask Preparation</span>
+                <span class="q1-console-title-wrap">
+                  <span class="q1-console-step-badge step-cyan">1</span>
+                  <span class="q1-console-title">Flask Preparation</span>
                 </span>
-                <span style="font-size:0.68rem; color:var(--text-muted);">Aliquot &amp; Indicator</span>
+                <span class="q1-console-sub">Aliquot &amp; Indicator</span>
               </div>
 
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                <div>
+              <div class="q1-prep-grid">
+                <div class="q1-prep-action-card">
                   <button class="btn-bench btn-bench-cyan" id="btnPipette" onclick="pipetteSolutionB()">
                     🧪 Pipette 25.0 cm³
                   </button>
-                  <div id="pipetteStatus" class="prep-status-pill" style="margin-top:4px;">Not Pipetted</div>
+                  <div id="pipetteStatus" class="prep-status-pill">Not Pipetted</div>
                 </div>
-                <div>
+                <div class="q1-prep-action-card">
                   <button class="btn-bench btn-bench-blue" id="btnAddIndicator" onclick="addIndicatorDrop()">
                     💧 Add Indicator (0/3)
                   </button>
-                  <div id="indicatorStatus" class="prep-status-pill" style="margin-top:4px;">0 Drops Added</div>
+                  <div id="indicatorStatus" class="prep-status-pill">0 Drops Added</div>
                 </div>
               </div>
 
-              <button class="btn-bench btn-bench-amber" onclick="swirlFlask()">
+              <button class="btn-bench btn-bench-amber btn-bench-swirl" onclick="swirlFlask()">
                 🌀 Swirl Conical Flask
               </button>
             </div>
@@ -552,22 +552,22 @@
             <!-- Console Section 2: Burette Dispenser & Flow Controls -->
             <div class="q1-console-section">
               <div class="q1-console-header">
-                <span style="display:flex; align-items:center; gap:6px;">
-                  <span class="bench-wing-step-num num-amber">2</span>
-                  <span>Titrant Delivery</span>
+                <span class="q1-console-title-wrap">
+                  <span class="q1-console-step-badge step-amber">2</span>
+                  <span class="q1-console-title">Titrant Delivery</span>
                 </span>
-                <span style="font-size:0.68rem; color:var(--text-muted);">Burette Stopcock Controls</span>
+                <span class="q1-console-sub">Burette Stopcock Controls</span>
               </div>
 
-              <div style="display:flex; flex-direction:column; gap:6px;">
-                <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:6px;">
-                  <button class="btn-bench btn-bench-cyan" onclick="addTitrantDirect(1.0)">+1.0 cm³</button>
-                  <button class="btn-bench btn-bench-cyan" onclick="addTitrantDirect(0.5)">+0.5 cm³</button>
-                  <button class="btn-bench btn-bench-teal" onclick="addTitrantDirect(0.1)">+0.10 cm³</button>
-                  <button class="btn-bench btn-bench-teal" onclick="addTitrantDirect(0.05)">💧 +0.05</button>
+              <div class="q1-delivery-controls">
+                <div class="q1-vol-buttons-row">
+                  <button class="btn-bench btn-bench-vol btn-bench-cyan" onclick="addTitrantDirect(1.0)">+1.0 cm³</button>
+                  <button class="btn-bench btn-bench-vol btn-bench-cyan" onclick="addTitrantDirect(0.5)">+0.5 cm³</button>
+                  <button class="btn-bench btn-bench-vol btn-bench-teal" onclick="addTitrantDirect(0.1)">+0.10 cm³</button>
+                  <button class="btn-bench btn-bench-vol btn-bench-teal" onclick="addTitrantDirect(0.05)">💧 +0.05</button>
                 </div>
 
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+                <div class="q1-flow-buttons-row">
                   <button class="btn-bench btn-bench-blue" onclick="startContinuousTitration()" id="btnContinuous">
                     ⚡ Continuous Run
                   </button>
@@ -581,17 +581,17 @@
             <!-- Console Section 3: Data Logging & Operations -->
             <div class="q1-console-section">
               <div class="q1-console-header">
-                <span style="display:flex; align-items:center; gap:6px;">
-                  <span class="bench-wing-step-num" style="background:rgba(16,185,129,0.15); border-color:#10B981; color:#10B981;">3</span>
-                  <span>Trial Data Logging &amp; Bench Operations</span>
+                <span class="q1-console-title-wrap">
+                  <span class="q1-console-step-badge step-emerald">3</span>
+                  <span class="q1-console-title">Trial Data Logging &amp; Bench Operations</span>
                 </span>
-                <span style="font-size:0.68rem; color:var(--text-muted);">Table 1 Transfer</span>
+                <span class="q1-console-sub">Table 1 Transfer</span>
               </div>
 
               <!-- Active Trial Target Switcher -->
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-size:0.72rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Active Recording Target:</span>
-                <span style="font-size:0.70rem; font-family:var(--font-mono); color:var(--cyan-accent); font-weight:800;">Target: Trial <span id="lblActiveTrial">1</span></span>
+              <div class="q1-trial-target-bar">
+                <span class="q1-trial-target-label">Active Recording Target:</span>
+                <span class="q1-trial-target-badge">Target: Trial <span id="lblActiveTrial">1</span></span>
               </div>
               <div class="q1-trial-switcher-row">
                 <button type="button" class="q1-trial-pill-btn active" id="btnTrial1Pill" onclick="setActiveTrial(1)">Trial I (Rough)</button>
@@ -599,7 +599,7 @@
                 <button type="button" class="q1-trial-pill-btn" id="btnTrial3Pill" onclick="setActiveTrial(3)">Trial III</button>
               </div>
 
-              <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px;">
+              <div class="q1-ops-buttons-row">
                 <button type="button" class="btn-bench btn-bench-emerald" onclick="transferReadingToTable()">
                   📥 Record Current Reading in <span id="lblActiveTable">Table 1</span>
                 </button>

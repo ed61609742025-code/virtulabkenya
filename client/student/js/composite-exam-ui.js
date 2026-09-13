@@ -329,7 +329,7 @@ requireStudentLogin();
         setTimeout(() => { mountKnecPlotterForQuestion(q); }, 200);
       } else if (q.simulationType === 'titration') {
         if (q.number === 1 && window._initialPaneTemplates.paneQ1) {
-          if (!pane.querySelector('.titration-rig-workbench')) {
+          if (!pane.querySelector('#q1Part2Card') && !pane.querySelector('.q1-action-console') && !pane.querySelector('.titration-rig-workbench')) {
             pane.innerHTML = window._initialPaneTemplates.paneQ1;
           }
           const titleEl = document.getElementById('q1SectionTitle');

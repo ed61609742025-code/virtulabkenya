@@ -320,15 +320,15 @@
           <li class="step-item" id="flameStep2">
             <div class="step-num">2</div>
             <div class="step-text">
-              <b>Collect Solid Salt Sample</b>
-              <span>Dip the moist glass rod tip into the solid unknown salt to pick up a small crystal. Click the watch glass.</span>
+              <b>Dip Glass Rod into Solution</b>
+              <span>Dip the clean glass rod into the aqueous solution of the unknown salt to coat the tip with a droplet. Click the solution container.</span>
             </div>
           </li>
           <li class="step-item" id="flameStep3">
             <div class="step-num">3</div>
             <div class="step-text">
               <b>Introduce to Non-Luminous Flame</b>
-              <span>Hold the loaded wire in the non-luminous Bunsen flame. Click the burner to observe the characteristic flame colour.</span>
+              <span>Hold the glass rod tip with the solution droplet into the non-luminous Bunsen flame. Click the burner to observe the characteristic flame colour.</span>
             </div>
           </li>
         </ol>
@@ -356,14 +356,13 @@
             </svg>
           </div>
           <div class="bench-item disabled" id="benchSalt" onclick="flameDipSalt()">
-            <div class="bench-item-label">Salt Sample</div>
-            <svg width="78" height="50" viewBox="0 0 78 50">
-              <path d="M 8,28 C 8,42 70,42 70,28" fill="rgba(255,255,255,0.06)" stroke="#94A3B8" stroke-width="1.2"/>
-              <ellipse cx="39" cy="28" rx="31" ry="10" fill="rgba(255,255,255,0.08)" stroke="#94A3B8" stroke-width="1"/>
-              <ellipse cx="39" cy="26" rx="18" ry="6" fill="#FFF" opacity="0.75"/>
-              <circle cx="34" cy="24" r="1.5" fill="#FFF"/>
-              <circle cx="44" cy="25" r="1.2" fill="#FFF"/>
-              <circle cx="40" cy="23" r="1.4" fill="#FFF"/>
+            <div class="bench-item-label">Salt Solution</div>
+            <svg width="78" height="56" viewBox="0 0 78 56">
+              <rect x="22" y="8" width="34" height="42" rx="3" fill="rgba(56,189,248,0.08)" stroke="#94A3B8" stroke-width="1.2"/>
+              <rect x="23" y="22" width="32" height="27" rx="2" fill="rgba(56,189,248,0.28)"/>
+              <ellipse cx="39" cy="22" rx="16" ry="3.5" fill="rgba(56,189,248,0.45)"/>
+              <line x1="18" y1="8" x2="60" y2="8" stroke="#CBD5E1" stroke-width="1.8"/>
+              <text x="39" y="38" font-size="8" font-weight="700" text-anchor="middle" fill="currentColor" font-family="var(--font-mono)">Solution</text>
             </svg>
           </div>
         </div>
@@ -403,12 +402,13 @@
 
             <text id="flameTapHint" x="90" y="200" font-size="9" font-weight="700" text-anchor="middle" fill="#94A3B8" font-family="var(--font-heading)">click to test</text>
 
-            <!-- Platinum Wire Assembly -->
+            <!-- Clean Borosilicate Glass Rod Assembly (KNEC Standard) -->
             <g id="wireGroup" style="transition: transform 0.8s cubic-bezier(0.4,0,0.2,1); transform: translate(-60px, 95px);">
-              <rect x="-90" y="-3" width="90" height="6" rx="2" fill="#78350F" stroke="#451A03" stroke-width="0.8"/>
-              <line x1="0" y1="0" x2="70" y2="0" stroke="#CBD5E1" stroke-width="2.2" stroke-linecap="round"/>
-              <circle cx="70" cy="0" r="5" stroke="#E2E8F0" stroke-width="2" fill="none"/>
-              <circle id="wireDeposit" cx="70" cy="0" r="3" fill="#FFF" opacity="0.95" style="display:none;" class="anim-spangle"/>
+              <line x1="-80" y1="0" x2="68" y2="0" stroke="rgba(255,255,255,0.75)" stroke-width="4.5" stroke-linecap="round"/>
+              <line x1="-80" y1="0" x2="68" y2="0" stroke="#94A3B8" stroke-width="4.5" stroke-linecap="round" opacity="0.3"/>
+              <line x1="-78" y1="-1" x2="66" y2="-1" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" opacity="0.85"/>
+              <ellipse cx="69" cy="0" rx="3.5" ry="3" fill="rgba(255,255,255,0.9)" stroke="#CBD5E1" stroke-width="0.8"/>
+              <circle id="wireDeposit" cx="71" cy="0" r="3.2" fill="rgba(56,189,248,0.9)" stroke="#FFFFFF" stroke-width="0.8" style="display:none;" class="anim-spangle"/>
             </g>
           </svg>
         </div>

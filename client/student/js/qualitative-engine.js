@@ -280,9 +280,9 @@ if (typeof window !== 'undefined') {
       key:'flame',
       label:'Clean Glass Rod Flame Emission Test (KICD Standard)',
       icon:'🔥',
-      reagent:'Glass rod + conc. HCl',
+      reagent:'Clean glass rod + salt solution',
       isFlame:true,
-      procedure:'Clean a glass rod in concentrated hydrochloric acid and heat the tip in a non-luminous Bunsen flame until no colour is imparted. Dip the moist clean rod tip into the solid salt sample, introduce it into the non-luminous Bunsen flame, and observe the characteristic flame emission colour (and through cobalt blue glass).',
+      procedure:'Dip a clean glass rod into the aqueous solution of the unknown salt and place it into the non-luminous Bunsen burner flame. Observe the characteristic flame emission colour (and through cobalt blue glass for potassium).',
       options: [
         { key:'A', text:'Golden yellow flame', color:'#F59E0B' },
         { key:'B', text:'Lilac / pale violet flame', color:'#A855F7' },

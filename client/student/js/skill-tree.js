@@ -90,11 +90,11 @@
         {
           id: 'node-flame',
           title: 'Flame Emission Spectroscopy',
-          sublabel: 'Wire Loop Bench',
+          sublabel: 'Clean Glass Rod Bench',
           icon: '🔥',
           url: 'qualitative.html',
           syllabus: 'KNEC Flame Test Cation Identification',
-          skills: ['Nichrome wire loop cleaning in conc. HCl', 'Non-luminous Bunsen flame positioning', 'Characteristic emission spectra (Na⁺ Golden, K⁺ Lilac, Ca²⁺ Brick Red, Cu²⁺ Green)', 'Flame interference elimination'],
+          skills: ['Clean glass rod preparation', 'Non-luminous Bunsen flame positioning', 'Solution sampling technique', 'Characteristic emission spectra (Na⁺ Golden, K⁺ Lilac, Ca²⁺ Brick Red, Cu²⁺ Green)', 'Cobalt blue glass filter evaluation'],
           sessionKey: 'qualitative_flame',
           maxMarks: 15
         }

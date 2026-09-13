@@ -618,7 +618,12 @@
       (pStr.includes('water') && (pStr.includes('solid') || pStr.includes('spatula') || pStr.includes('portion')))
     );
 
-    const isFlameTest = pStr.includes('flame test') || pStr.includes('nichrome') || tId.includes('flame');
+    const isFlameTest =
+      pStr.includes('flame test') ||
+      pStr.includes('nichrome') ||
+      (pStr.includes('glass rod') && (pStr.includes('flame') || pStr.includes('bunsen'))) ||
+      (pStr.includes('solution') && pStr.includes('flame') && !pStr.includes('heat') && !pStr.includes('warm')) ||
+      tId.includes('flame');
 
     const isHeat = !isFlameTest && (
       (pStr.includes('heat') && (pStr.includes('dry') || pStr.includes('strongly') || pStr.includes('solid') || pStr.includes('spatula') || pStr.includes('test tube'))) ||
@@ -2055,18 +2060,19 @@
           <path d="M 84,110 C 81,84 87,55 90,55 C 93,55 99,84 96,110 Z" fill="${flameColor}" opacity="0.95"/>
         </g>
 
-        <!-- Nichrome Wire with Platinum Loop Assembly -->
+        <!-- Clean Borosilicate Glass Rod Assembly (KNEC Standard) -->
         <g transform="${performed ? 'translate(0, 0)' : 'translate(36, -24)'}" style="transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);">
-          <!-- Glass Rod Handle & Metallic Chuck -->
-          <line x1="18" y1="18" x2="68" y2="68" stroke="#475569" stroke-width="4.5" stroke-linecap="round"/>
-          <line x1="18" y1="18" x2="68" y2="68" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round"/>
-          <!-- Nichrome Wire -->
-          <line x1="68" y1="68" x2="86" y2="86" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
-          <!-- High-Temp Loop positioned in hot zone -->
-          <circle cx="89" cy="89" r="4.5" fill="none" stroke="${performed ? '#FFFFFF' : '#CBD5E1'}" stroke-width="2.2"/>
+          <!-- Borosilicate Glass Rod Body -->
+          <line x1="14" y1="14" x2="86" y2="86" stroke="rgba(255,255,255,0.75)" stroke-width="5" stroke-linecap="round"/>
+          <line x1="14" y1="14" x2="86" y2="86" stroke="#94A3B8" stroke-width="5" stroke-linecap="round" opacity="0.3"/>
+          <line x1="15" y1="12" x2="84" y2="81" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" opacity="0.85"/>
+          <!-- Rounded Glass Tip -->
+          <ellipse cx="87" cy="87" rx="3.5" ry="3.5" fill="rgba(255,255,255,0.9)" stroke="#CBD5E1" stroke-width="0.8"/>
+          <!-- Solution Droplet on Tip -->
+          <circle cx="88" cy="88" r="3" fill="${performed ? '#FFFFFF' : 'rgba(56,189,248,0.85)'}" stroke="${performed ? flameColor : '#FFFFFF'}" stroke-width="1" opacity="0.95"/>
           ${performed ? `
-            <!-- Incandescent White-Hot Salt Emission at Loop -->
-            <circle cx="89" cy="89" r="3" fill="#FFFFFF" opacity="0.95"/>
+            <!-- Incandescent Emission at Glass Rod Tip -->
+            <circle cx="88" cy="88" r="5" fill="${flameColor}" opacity="0.55"/>
           ` : ''}
         </g>
       </svg>
@@ -2101,7 +2107,13 @@
     }
 
     // 2. Flame Test
-    if (pStr.includes('flame test') || pStr.includes('nichrome') || tId.includes('flame')) {
+    if (
+      pStr.includes('flame test') ||
+      pStr.includes('nichrome') ||
+      (pStr.includes('glass rod') && (pStr.includes('flame') || pStr.includes('bunsen'))) ||
+      (pStr.includes('solution') && pStr.includes('flame') && !pStr.includes('heat') && !pStr.includes('warm')) ||
+      tId.includes('flame')
+    ) {
       return renderFlameTestApparatusSvg({ saltKey, stage, prompt, tubeId });
     }
 
@@ -2171,10 +2183,16 @@
     }
 
     // 0c. Flame Test
-    if (pStr.includes('flame test') || pStr.includes('nichrome')) {
+    if (
+      pStr.includes('flame test') ||
+      pStr.includes('nichrome') ||
+      (pStr.includes('glass rod') && (pStr.includes('flame') || pStr.includes('bunsen'))) ||
+      (pStr.includes('solution') && pStr.includes('flame') && !pStr.includes('heat') && !pStr.includes('warm')) ||
+      tId.includes('flame')
+    ) {
       if (!stage || stage === 'idle') {
         return [
-          { stage: 'flame_tested', label: '🔥 Insert Wire Loop into Flame', cls: 'btn-perform-test btn-step-heat' }
+          { stage: 'flame_tested', label: '🔥 Place Glass Rod into Flame', cls: 'btn-perform-test btn-step-heat' }
         ];
       } else {
         return [

@@ -1114,7 +1114,7 @@ function getSaltTestSequence(saltKey) {
         { id: 't1', prompt: '(i) Describe physical appearance of Solid Y', correctObs: 'White deliquescent solid / crystals', correctInf: 'Non-transition metal salt' },
         { id: 't2', prompt: '(ii) Dissolve in water, add 2M NaOH dropwise until in excess', correctObs: 'White precipitate, insoluble in excess NaOH', correctInf: 'Ca²⁺ or Mg²⁺ present' },
         { id: 't3', prompt: '(iii) To portion 2, add 2M NH₃ dropwise until in excess', correctObs: 'No precipitate formed with aqueous ammonia', correctInf: 'Ca²⁺ present (or group 1/2; transition metal ions absent)' },
-        { id: 't4', prompt: '(iv) Flame test with clean nichrome wire in non-luminous flame', correctObs: 'Brick-red / orange-red flame', correctInf: 'Ca²⁺ confirmed' },
+        { id: 't4', prompt: '(iv) Dip a clean glass rod into the solution and place it in the non-luminous flame', correctObs: 'Brick-red / orange-red flame', correctInf: 'Ca²⁺ confirmed' },
         { id: 't5', prompt: '(v) To portion 3, add 2–3 drops of lead(II) nitrate solution and warm the mixture', correctObs: 'White precipitate formed, dissolves on warming to form a colourless solution (reappears on cooling)', correctInf: 'Cl⁻ confirmed' }
       ];
     case 'Ca(NO3)2':
@@ -1143,7 +1143,7 @@ function getSaltTestSequence(saltKey) {
     case 'BaCl2':
       return [
         { id: 't1', prompt: '(i) Describe appearance and dissolve in 10 cm³ distilled water', correctObs: 'White crystalline solid dissolves completely to give a clear colorless solution', correctInf: 'Soluble non-transition metal salt' },
-        { id: 't2', prompt: '(ii) Flame test with clean platinum/nichrome wire in non-luminous flame', correctObs: 'Pale apple-green flame', correctInf: 'Ba²⁺ present' },
+        { id: 't2', prompt: '(ii) Dip a clean glass rod into the solution and place it in the non-luminous flame', correctObs: 'Pale apple-green flame', correctInf: 'Ba²⁺ present' },
         { id: 't3', prompt: '(iii) To portion 1, add dilute H₂SO₄ or Na₂SO₄ solution', correctObs: 'Dense white precipitate formed, insoluble in dilute HCl/HNO₃', correctInf: 'Ba²⁺ confirmed present (BaSO₄ formed)' },
         { id: 't4', prompt: '(iv) To portion 2, add 2–3 drops of lead(II) nitrate solution and warm the mixture', correctObs: 'White precipitate formed, dissolves on warming to form a colourless solution (reappears on cooling)', correctInf: 'Cl⁻ confirmed present' }
       ];

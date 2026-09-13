@@ -346,6 +346,36 @@ describe('Qualitative Bench Core (Inorganic Reactions)', () => {
     });
   });
 
+  describe('Clean Glass Rod Flame Emission Tests (KNEC Standard)', () => {
+    it('should resolve flame test when prompt dips clean glass rod into solution', () => {
+      const res = QualitativeBenchCore.resolveReactionState('calciumChloride', 'q2_flame', 'stage1', 'Dip a clean glass rod into the solution and place it in the non-luminous flame');
+      assert.strictEqual(res.isFlameTest, true, 'Must identify flame test with glass rod');
+      assert.ok(res.statusLabel.includes('Brick-red'), 'Ca²⁺ emits brick-red flame');
+
+      const kRes = QualitativeBenchCore.resolveReactionState('potassiumChloride', 'q2_flame', 'stage1', 'Dip a clean glass rod into the solution and place it in the non-luminous flame');
+      assert.strictEqual(kRes.isFlameTest, true);
+      assert.ok(kRes.statusLabel.includes('lilac'), 'K⁺ emits lilac flame');
+    });
+
+    it('should render clean borosilicate glass rod in flame test SVG', () => {
+      const svg = QualitativeBenchCore.renderApparatusSvg({
+        saltKey: 'calciumChloride',
+        testId: 'q2_flame',
+        stage: 'done',
+        prompt: 'Dip a clean glass rod into the solution and place it in the non-luminous flame'
+      });
+      assert.ok(svg.includes('Glass Rod'), 'Must render glass rod in flame apparatus');
+      assert.ok(!svg.includes('Nichrome Wire'), 'Must not render legacy nichrome wire');
+    });
+
+    it('should provide action button to place glass rod into flame', () => {
+      const actions = QualitativeBenchCore.getMultiStageActions('q2_flame', 'Dip a clean glass rod into the solution and place it in the non-luminous flame', 'idle');
+      assert.strictEqual(actions.length, 1);
+      assert.strictEqual(actions[0].stage, 'flame_tested');
+      assert.ok(actions[0].label.includes('Glass Rod'));
+    });
+  });
+
   describe('Multi-Stage Action Controls', () => {
     it('should generate dropwise at idle, excess at few_drops, and single button for non-staged tests', () => {
       // At idle: Step 1 (Dropwise)

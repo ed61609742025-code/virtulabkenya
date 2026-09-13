@@ -112,8 +112,8 @@
           hint: 'Click "Add Distilled Water" to prepare your aqueous test solution.'
         },
         {
-          title: 'Step 2: Flame Emission Test with Nichrome Loop',
-          instruction: 'Dip a clean nichrome wire loop into concentrated HCl, touch the solid salt, and place it directly into the non-luminous zone of the Bunsen burner flame.',
+          title: 'Step 2: Flame Emission Test with Clean Glass Rod',
+          instruction: 'Dip a clean glass rod into the solution and place it directly into the non-luminous zone of the Bunsen burner flame.',
           targetSelector: '#btnFlameTest, #flameVisualizer',
           checkpoint: {
             question: 'Which characteristic flame color confirms the presence of Calcium (Ca²⁺) ions?',

@@ -339,9 +339,9 @@
     const newPos = start + prefix.length + text.length;
     elem.selectionStart = elem.selectionEnd = newPos;
     elem.focus();
-    const parts = elemId.split('_');
-    const testKey = parts[1];
+    const testKey = elemId.replace(/^(obs|inf)_/, '');
     saveTextState(testKey);
+    elem.dispatchEvent(new Event('input'));
   };
 
   function saveTextState(testKey) {

@@ -956,9 +956,7 @@
               <div class="apparatus-view">
                 ${getOrganicVisual(test, st)}
               </div>
-              <div class="apparatus-status-tag" id="status_${test.key}">
-                ${!st.performed ? 'Awaiting Reagent' : (st.statusLabel || 'Test Completed')}
-              </div>
+              <div class="apparatus-status-tag" id="status_${test.key}" style="display:none !important;"></div>
             </div>
 
             <!-- Right Column: Procedure & 2-Column KCSE Table -->

@@ -1093,17 +1093,7 @@ html, body {
 }
 
 .apparatus-status-tag {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--text-muted);
-  background: var(--card-bg);
-  border: 1.5px solid var(--card-border);
-  border-radius: 6px;
-  padding: 4px 8px;
-  text-align: center;
-  width: 100%;
-  margin-top: 10px;
-  box-shadow: var(--shadow-sm);
+  display: none !important;
 }
 
 /* Action Buttons */

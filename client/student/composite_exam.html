@@ -202,7 +202,8 @@
                   <b style="color:var(--amber-accent);">Endpoint Indicator:</b> <span id="q1IndicatorName">Indicator</span>
                 </div>
               </div>
-              <div id="q1EquationRow" class="q1-equation-callout">
+              <!-- Chemical Equation Callout Hidden in Mock Exams -->
+              <div id="q1EquationRow" class="q1-equation-callout" style="display:none !important;">
                 <div style="font-size:0.70rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:3px;">Chemical Equation:</div>
                 <code id="q1EquationDisplay" style="font-family:var(--font-mono); font-weight:700; color:var(--cyan-accent); font-size:0.86rem; word-break:break-all;"></code>
               </div>
@@ -490,10 +491,10 @@
                   </svg>
                 </div>
                 <div class="lens-readout-badge" id="lensDigitalReadout">
-                  <span>🎯</span> 0.00 cm³
+                  <span>🔍</span> Meniscus Viewfinder
                 </div>
                 <div style="font-size:0.68rem; color:var(--text-muted); margin-top:3px; font-family:'Newsreader', serif; font-style:italic;" id="lensReadoutSubText">
-                  Read at <b>bottom of meniscus</b>.
+                  Read scale at <b>bottom of meniscus</b> at eye level.
                 </div>
               </div>
             </div>
@@ -588,23 +589,18 @@
                 <span class="q1-console-sub">Table 1 Transfer</span>
               </div>
 
-              <!-- Active Trial Target Switcher -->
+              <!-- Manual Data Logging Instructions & Wash Flask -->
               <div class="q1-trial-target-bar">
-                <span class="q1-trial-target-label">Active Recording Target:</span>
-                <span class="q1-trial-target-badge">Target: Trial <span id="lblActiveTrial">1</span></span>
+                <span class="q1-trial-target-label">Recording Instruction:</span>
+                <span class="q1-trial-target-badge" style="background:var(--card-bg-hover); color:var(--heading-color);">Manual Entry in Table 1</span>
               </div>
-              <div class="q1-trial-switcher-row">
-                <button type="button" class="q1-trial-pill-btn active" id="btnTrial1Pill" onclick="setActiveTrial(1)">Trial I (Rough)</button>
-                <button type="button" class="q1-trial-pill-btn" id="btnTrial2Pill" onclick="setActiveTrial(2)">Trial II</button>
-                <button type="button" class="q1-trial-pill-btn" id="btnTrial3Pill" onclick="setActiveTrial(3)">Trial III</button>
+              <div style="font-size:0.78rem; color:var(--text-muted); margin-bottom:12px; line-height:1.45;">
+                Read the initial and final burette levels using the magnified meniscus viewfinder above and enter your readings directly into Table 1 below.
               </div>
 
               <div class="q1-ops-buttons-row">
-                <button type="button" class="btn-bench btn-bench-emerald" onclick="transferReadingToTable()">
-                  📥 Record Current Reading in <span id="lblActiveTable">Table 1</span>
-                </button>
-                <button type="button" class="btn-bench btn-bench-slate" onclick="resetTitrationApparatus()">
-                  🔄 Reset Apparatus &amp; Wash Flask
+                <button type="button" class="btn-bench btn-bench-slate" style="width:100%; justify-content:center;" onclick="resetTitrationApparatus()">
+                  🔄 Wash Flask &amp; Refill Burette for Next Trial
                 </button>
               </div>
             </div>

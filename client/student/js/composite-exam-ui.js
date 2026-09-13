@@ -654,16 +654,27 @@ requireStudentLogin();
     setElemText('q1SolAName', 'Solution A: ' + (p.q1?.solutionA || ''));
     setElemText('q1SolBName', 'Solution B: ' + (p.q1?.solutionB || ''));
     setElemText('q1IndicatorName', p.q1?.indicator || 'Phenolphthalein Indicator');
-    setElemText('q1EquationDisplay', p.q1?.equation || '');
+    setElemText('q1EquationDisplay', '');
     const eqRow = document.getElementById('q1EquationRow');
-    if (eqRow) eqRow.style.display = p.q1?.equation ? 'inline-block' : 'none';
+    if (eqRow) eqRow.style.display = 'none';
     setElemText('q1RfmDisplay', p.q1?.acidRfm || 36.5);
+
+    function sanitizeSampleDesc(desc, fallback) {
+      if (!desc || typeof desc !== 'string') return fallback;
+      return desc
+        .replace(/:\s*one soluble in water and one insoluble in water/gi, '')
+        .replace(/one soluble in water and one insoluble in water/gi, 'containing two salts')
+        .replace(/,\s*water-soluble\b/gi, '')
+        .replace(/\bwater-soluble\b/gi, '')
+        .replace(/,\s*miscible\b/gi, '')
+        .trim() || fallback;
+    }
 
     // Fixed integrity leak: Never expose true salt name or organic formula in candidate prompt!
     setElemText('q2SampleName', p.q2?.sampleName || 'Solid Y');
-    setElemText('q2SampleDescText', p.q2?.sampleDesc || 'An inorganic salt sample.');
+    setElemText('q2SampleDescText', sanitizeSampleDesc(p.q2?.sampleDesc, 'An inorganic salt sample.'));
     setElemText('q3SampleName', p.q3?.sampleName || 'Liquid Z');
-    setElemText('q3SampleDescText', p.q3?.sampleDesc || 'An organic sample.');
+    setElemText('q3SampleDescText', sanitizeSampleDesc(p.q3?.sampleDesc, 'An organic sample.'));
 
     // Update apparatus fill colors based on titrant
     if (p.q1?.titrantColor) {
@@ -740,8 +751,8 @@ requireStudentLogin();
                 if (document.getElementById('q1SolAName')) document.getElementById('q1SolAName').textContent = 'Solution A: ' + (pCustom.q1?.solutionA || '');
                 if (document.getElementById('q1SolBName')) document.getElementById('q1SolBName').textContent = 'Solution B: ' + (pCustom.q1?.solutionB || '');
                 if (document.getElementById('q1IndicatorName')) document.getElementById('q1IndicatorName').textContent = pCustom.q1?.indicator || 'Phenolphthalein Indicator';
-                if (document.getElementById('q1EquationDisplay')) document.getElementById('q1EquationDisplay').textContent = pCustom.q1?.equation || '';
-                if (document.getElementById('q1EquationRow')) document.getElementById('q1EquationRow').style.display = pCustom.q1?.equation ? 'inline-block' : 'none';
+                if (document.getElementById('q1EquationDisplay')) document.getElementById('q1EquationDisplay').textContent = '';
+                if (document.getElementById('q1EquationRow')) document.getElementById('q1EquationRow').style.display = 'none';
                 if (document.getElementById('q1IndicatorChip')) document.getElementById('q1IndicatorChip').textContent = `Indicator: ${pCustom.q1?.indicator || 'Phenolphthalein'}`;
                 if (document.getElementById('q1TitrantChip')) {
                   const solACust = pCustom.q1?.solutionA || '';
@@ -753,13 +764,13 @@ requireStudentLogin();
                   document.getElementById('q2SampleName').textContent = pCustom.q2.sampleName;
                 }
                 if (document.getElementById('q2SampleDescText') && pCustom.q2?.sampleDesc) {
-                  document.getElementById('q2SampleDescText').textContent = pCustom.q2.sampleDesc;
+                  document.getElementById('q2SampleDescText').textContent = sanitizeSampleDesc(pCustom.q2.sampleDesc, 'An inorganic salt sample.');
                 }
                 if (document.getElementById('q3SampleName') && pCustom.q3?.sampleName) {
                   document.getElementById('q3SampleName').textContent = pCustom.q3.sampleName;
                 }
                 if (document.getElementById('q3SampleDescText') && pCustom.q3?.sampleDesc) {
-                  document.getElementById('q3SampleDescText').textContent = pCustom.q3.sampleDesc;
+                  document.getElementById('q3SampleDescText').textContent = sanitizeSampleDesc(pCustom.q3.sampleDesc, 'An organic sample.');
                 }
 
                 const isQ2Organic = Boolean(
@@ -1223,7 +1234,8 @@ requireStudentLogin();
 
   function updateBuretteRig() {
     const reading = engine.q1BuretteReading;
-    document.getElementById('lensDigitalReadout').textContent = reading.toFixed(2) + ' cm³';
+    const readout = document.getElementById('lensDigitalReadout');
+    if (readout) readout.innerHTML = '<span>🔍</span> Meniscus Viewfinder';
 
     const bHeight = Math.max(0, 196 - (reading / 50.0) * 196);
     const bFill = document.getElementById('buretteFill');
@@ -1285,19 +1297,7 @@ requireStudentLogin();
   window.setActiveTrial = setActiveTrial;
 
   function transferReadingToTable() {
-    const reading = parseFloat(engine.q1BuretteReading.toFixed(2));
-    if (reading === 0) {
-      alert('Please perform titration before recording reading in table!');
-      return;
-    }
-    const targetInput = document.getElementById(`t${activeTrial}Final`);
-    if (targetInput) targetInput.value = reading.toFixed(2);
-    onTableInputChanged();
-    const tableName = engine?.preset?.q1?.hasMultipleProcedures ? `Table ${activeProcedureIndex + 1}` : 'Table 1';
-    alert(`Trial ${activeTrial} reading (${reading.toFixed(2)} cm³) transferred to ${tableName}!`);
-
-    setActiveTrial(activeTrial < 3 ? activeTrial + 1 : 1);
-    resetTitrationApparatus();
+    alert('In official KNEC examinations, you must read the graduated burette scale yourself and enter your readings directly into Table 1.');
   }
 
   function drawLens() {
@@ -1477,7 +1477,7 @@ requireStudentLogin();
     lensSvg.innerHTML = defsSvg + tubeGeometry + liquidBody + ticksSvg + meniscusArc + glassOverlays;
 
     const readout = document.getElementById('lensDigitalReadout');
-    if (readout) readout.innerHTML = `<span>🎯</span> ${volume.toFixed(2)} cm³`;
+    if (readout) readout.innerHTML = `<span>🔍</span> Meniscus Viewfinder`;
 
     const subText = document.getElementById('lensReadoutSubText');
     if (subText) {
@@ -1886,9 +1886,7 @@ requireStudentLogin();
                 <div class="apparatus-view">
                   ${getOrganicVisualHtml(t.id, st, t.prompt, 'q2')}
                 </div>
-                <div class="apparatus-status-tag" id="status_q2_org_${t.id}">
-                  ${!st.performed ? 'Ready to Test' : (st.statusLabel || 'Reaction Recorded')}
-                </div>
+                <div class="apparatus-status-tag" id="status_q2_org_${t.id}" style="display:none !important;"></div>
               </div>
 
               <div>
@@ -2126,9 +2124,7 @@ requireStudentLogin();
               <div class="apparatus-view">
                 ${getTubeVisualHtml(t.id, st, 'q2')}
               </div>
-              <div class="apparatus-status-tag" id="status_${t.id}">
-                ${!st.performed ? defaultStatus : (st.statusLabel || 'Reaction Observed')}
-              </div>
+              <div class="apparatus-status-tag" id="status_${t.id}" style="display:none !important;"></div>
             </div>
 
             <div>
@@ -2362,9 +2358,7 @@ requireStudentLogin();
                 <div class="apparatus-view">
                   ${getTubeVisualHtml(t.id, st, 'q3')}
                 </div>
-                <div class="apparatus-status-tag" id="status_q3_${t.id}">
-                  ${!st.performed ? 'Ready to Test' : (st.statusLabel || 'Reaction Recorded')}
-                </div>
+                <div class="apparatus-status-tag" id="status_q3_${t.id}" style="display:none !important;"></div>
               </div>
 
               <div>
@@ -2460,9 +2454,7 @@ requireStudentLogin();
               <div class="apparatus-view">
                 ${getOrganicVisualHtml(t.id, st, t.prompt, 'q3')}
               </div>
-              <div class="apparatus-status-tag" id="status_org_${t.id}">
-                ${!st.performed ? 'Ready to Test' : (st.statusLabel || 'Reaction Recorded')}
-              </div>
+              <div class="apparatus-status-tag" id="status_org_${t.id}" style="display:none !important;"></div>
             </div>
 
             <div>

@@ -2055,3 +2055,11 @@ iframe.lab-frame {
   transform: scale(0.96);
 }
 
+/* Authentic Exam Observation Integrity: Hide descriptive text underneath apparatus & chemical equation callouts */
+.apparatus-status-tag {
+  display: none !important;
+}
+
+#q1EquationRow {
+  display: none !important;
+}

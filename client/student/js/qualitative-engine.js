@@ -1474,9 +1474,7 @@ if (typeof window !== 'undefined') {
               <div class="apparatus-view">
                 ${test.key === 'flame' ? getFlameVisual(st) : getTubeVisual(test, st)}
               </div>
-              <div class="apparatus-status-tag" id="status_${test.key}">
-                ${!st.performed ? 'Awaiting Reagent' : (st.statusLabel || 'Test Performed')}
-              </div>
+              <div class="apparatus-status-tag" id="status_${test.key}" style="display:none !important;"></div>
             </div>
 
             <!-- Right Column: Procedure & 2-Column KCSE Table -->

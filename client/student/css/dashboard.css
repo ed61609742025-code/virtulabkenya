@@ -7,7 +7,7 @@
 
 /* Clean Academic Paper (Light Mode) - High Energy & Contrast */
 :root, [data-theme="light"] {
-  --bg-dark: #F1F5F9;
+  --bg-dark: #EEF3F8;
   --bg-gradient: radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.08) 0px, transparent 45%),
                  radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.06) 0px, transparent 40%),
                  radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
@@ -178,34 +178,46 @@ html, body {
 }
 
 [data-theme="light"] body {
-  background-color: #F4F7FB;
+  background-color: #EEF3F8;
   background-image: 
-    radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.08) 0px, transparent 45%),
-    radial-gradient(at 100% 0%, rgba(139, 92, 246, 0.06) 0px, transparent 40%),
-    radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%),
-    radial-gradient(circle at 1px 1px, rgba(15, 23, 42, 0.035) 1px, transparent 0);
-  background-size: 100% 100%, 100% 100%, 100% 100%, 28px 28px;
+    /* Ambient Science Vignette: Cyan anchor for logo/quiz & Warm amber for streaks */
+    radial-gradient(circle 800px at 5% 0%, rgba(2, 132, 199, 0.12) 0%, transparent 70%),
+    radial-gradient(circle 600px at 95% 10%, rgba(245, 158, 11, 0.07) 0%, transparent 60%),
+    radial-gradient(circle 700px at 50% 100%, rgba(16, 185, 129, 0.07) 0%, transparent 65%),
+    /* Major Scientific Grid Lines (64px) */
+    linear-gradient(to right, rgba(2, 132, 199, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(2, 132, 199, 0.035) 1px, transparent 1px),
+    /* Minor Millimeter Sub-grid (16px) */
+    linear-gradient(to right, rgba(15, 23, 42, 0.015) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15, 23, 42, 0.015) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 64px 64px, 64px 64px, 16px 16px, 16px 16px;
   background-attachment: fixed;
 }
 
 [data-theme="dark"] body {
   background-color: #070E18;
   background-image: 
-    radial-gradient(at 10% 10%, rgba(56, 189, 248, 0.1) 0px, transparent 45%),
-    radial-gradient(at 90% 15%, rgba(129, 140, 248, 0.08) 0px, transparent 45%),
-    radial-gradient(at 50% 60%, rgba(16, 185, 129, 0.05) 0px, transparent 50%),
-    radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.04) 1px, transparent 0);
-  background-size: 100% 100%, 100% 100%, 100% 100%, 28px 28px;
+    radial-gradient(circle 800px at 10% 10%, rgba(56, 189, 248, 0.12) 0%, transparent 55%),
+    radial-gradient(circle 700px at 90% 15%, rgba(129, 140, 248, 0.09) 0%, transparent 50%),
+    radial-gradient(circle 700px at 50% 100%, rgba(16, 185, 129, 0.07) 0%, transparent 60%),
+    linear-gradient(to right, rgba(56, 189, 248, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(56, 189, 248, 0.045) 1px, transparent 1px),
+    linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 64px 64px, 64px 64px, 16px 16px, 16px 16px;
   background-attachment: fixed;
 }
 
 [data-theme="green"] body {
   background-color: #05130A;
   background-image: 
-    radial-gradient(at 20% 15%, rgba(52, 211, 153, 0.08) 0px, transparent 45%),
-    radial-gradient(at 80% 25%, rgba(16, 185, 129, 0.06) 0px, transparent 45%),
-    radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.03) 1px, transparent 0);
-  background-size: 100% 100%, 100% 100%, 100% 100%, 28px 28px;
+    radial-gradient(circle 800px at 20% 15%, rgba(52, 211, 153, 0.1) 0%, transparent 50%),
+    radial-gradient(circle 700px at 80% 25%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+    linear-gradient(to right, rgba(52, 211, 153, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(52, 211, 153, 0.04) 1px, transparent 1px),
+    linear-gradient(to right, rgba(255, 255, 255, 0.012) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.012) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 64px 64px, 64px 64px, 16px 16px, 16px 16px;
   background-attachment: fixed;
 }
 

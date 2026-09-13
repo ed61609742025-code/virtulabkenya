@@ -42,7 +42,7 @@
 <link rel="stylesheet" href="../shared/pwa-installer.css">
 <link rel="stylesheet" href="../shared/brilliant-theme.css">
 <link rel="stylesheet" href="../shared/gamification-engine.css">
-<link rel="stylesheet" href="css/dashboard.css?v=79">
+<link rel="stylesheet" href="css/dashboard.css?v=80">
 <link rel="stylesheet" href="css/skill-tree.css?v=78">
 <link rel="stylesheet" href="css/mobile.css?v=1">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" crossorigin="anonymous"></script>
@@ -425,7 +425,7 @@
         </div>
 
         <!-- XP & Level Progress Card -->
-        <div class="hero-metric-card xp-metric-card">
+        <div class="hero-metric-card xp-metric-card" onclick="openXPPerksModal()" data-tooltip="Click to view XP breakdown, level perks, and syllabus rank roadmap" data-tooltip-pos="bottom" role="button" tabindex="0" aria-label="Candidate Level and XP Progress Breakdown" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openXPPerksModal();}">
           <div class="xp-header-row">
             <span class="xp-level-badge"><span id="heroLevelIcon" style="margin-right:4px;">🧪</span><span id="heroLevelTitle">Level 1: Form 1 Apprentice</span></span>
             <span id="heroXPText" class="xp-points-badge">120 / 250 XP</span>
@@ -433,7 +433,10 @@
           <div class="xp-track-bar">
             <div class="xp-track-fill" id="heroXPBar" style="width: 48%;"></div>
           </div>
-          <div class="xp-sub-text" id="heroTierName">Paper 3 Practical</div>
+          <div class="xp-sub-text-row" style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="xp-sub-text" id="heroTierName">Paper 3 Practical</span>
+            <span class="xp-perks-hint" style="font-size:0.68rem; font-weight:800; color:var(--cyan-accent); display:flex; align-items:center; gap:2px;">Perks ➔</span>
+          </div>
           <span id="heroLevelBadge" style="display:none;"></span>
         </div>
 
@@ -1511,6 +1514,124 @@
     </div>
   </div>
 
+  <!-- Candidate XP Breakdown & Level Perks Modal -->
+  <div class="xp-modal-backdrop" id="xpPerksModal" onclick="if(event.target === this) closeXPPerksModal()" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="xpModalTitle">
+    <div class="xp-modal-card">
+      
+      <!-- Modal Header -->
+      <div class="xp-modal-header">
+        <div class="xp-modal-header-left">
+          <div class="xp-modal-icon-badge" id="xpModalIcon">🧪</div>
+          <div>
+            <h3 class="xp-modal-title" id="xpModalTitle">Candidate Rank &amp; XP Progression</h3>
+            <div class="xp-modal-sub" id="xpModalSubtitle">KCSE Paper 3 Analytical Mastery Pathway</div>
+          </div>
+        </div>
+        <button type="button" class="xp-modal-close-btn" onclick="closeXPPerksModal()" aria-label="Close modal" title="Close (Esc)">✕</button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="xp-modal-body">
+        
+        <!-- Active Progress Hero HUD -->
+        <div class="xp-hud-card">
+          <div class="xp-hud-top">
+            <div>
+              <span class="xp-hud-badge" id="xpHudLevelBadge">Level 1</span>
+              <h4 class="xp-hud-title" id="xpHudLevelTitle">Form 1 Apprentice</h4>
+            </div>
+            <div class="xp-hud-score">
+              <span class="xp-hud-current" id="xpHudCurrentXP">120</span>
+              <span class="xp-hud-target" id="xpHudTargetXP">/ 250 XP</span>
+            </div>
+          </div>
+          
+          <div class="xp-hud-bar-wrap">
+            <div class="xp-hud-bar-fill" id="xpHudBarFill" style="width: 48%;"></div>
+          </div>
+
+          <div class="xp-hud-meta">
+            <span class="xp-hud-remaining" id="xpHudRemainingText">⚡ <strong>130 XP</strong> needed to reach next level</span>
+            <span class="xp-hud-percent" id="xpHudPercentText">48% to Rank</span>
+          </div>
+        </div>
+
+        <!-- Section: Level Progression Roadmap -->
+        <div class="xp-section-title-row">
+          <h4 class="xp-section-title">Academic Rank Roadmap &amp; Bench Perks</h4>
+          <span class="xp-section-sub">5 Curriculum Tiers</span>
+        </div>
+
+        <div class="xp-tiers-list" id="xpTiersList">
+          <!-- Dynamically populated by student-dashboard.js -->
+        </div>
+
+        <!-- Section: How to Earn XP Ledger -->
+        <div class="xp-section-title-row" style="margin-top: 22px;">
+          <h4 class="xp-section-title">How to Earn Practical XP</h4>
+          <span class="xp-section-sub">Daily &amp; Exam Tasks</span>
+        </div>
+
+        <div class="xp-earning-grid">
+          <div class="xp-earning-item">
+            <div class="xp-earning-icon">🎯</div>
+            <div class="xp-earning-info">
+              <div class="xp-earning-name">Daily Quick Quiz</div>
+              <div class="xp-earning-desc">3 rapid diagnostic questions</div>
+            </div>
+            <span class="xp-earning-val">+100 XP</span>
+          </div>
+
+          <div class="xp-earning-item">
+            <div class="xp-earning-icon">🧪</div>
+            <div class="xp-earning-info">
+              <div class="xp-earning-name">Guided Lab Practical</div>
+              <div class="xp-earning-desc">Full simulation with rubric feedback</div>
+            </div>
+            <span class="xp-earning-val">+75 XP</span>
+          </div>
+
+          <div class="xp-earning-item">
+            <div class="xp-earning-icon">⚡</div>
+            <div class="xp-earning-info">
+              <div class="xp-earning-name">Diagnostic Speed Battle</div>
+              <div class="xp-earning-desc">60s blitz &amp; sudden-death survival</div>
+            </div>
+            <span class="xp-earning-val">+50 XP</span>
+          </div>
+
+          <div class="xp-earning-item">
+            <div class="xp-earning-icon">📝</div>
+            <div class="xp-earning-info">
+              <div class="xp-earning-name">Teacher Assignment</div>
+              <div class="xp-earning-desc">Submitted continuous assessment lab</div>
+            </div>
+            <span class="xp-earning-val">+150 XP</span>
+          </div>
+
+          <div class="xp-earning-item">
+            <div class="xp-earning-icon">👑</div>
+            <div class="xp-earning-info">
+              <div class="xp-earning-name">National 40-Mark Mock</div>
+              <div class="xp-earning-desc">Full 3-question timed examination</div>
+            </div>
+            <span class="xp-earning-val">+250 XP</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="xp-modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeXPPerksModal()">Close</button>
+        <a href="speed_battle.html?mode=daily_bite" class="btn btn-primary" onclick="closeXPPerksModal()">
+          Earn XP in Daily Quiz →
+        </a>
+      </div>
+
+    </div>
+  </div>
+
   <script src="../shared/api.js"></script>
   <script src="../shared/auth-forms.js"></script>
   <script src="../shared/i18n.js?v=75"></script>
@@ -1524,7 +1645,7 @@
   <script src="../shared/brilliant-ui.js"></script>
   <script src="../shared/gamification-engine.js"></script>
   <script src="js/skill-tree.js?v=76"></script>
-  <script src="js/student-dashboard.js?v=76"></script>
+  <script src="js/student-dashboard.js?v=77"></script>
 
   <script>
     // Tab switching handler

@@ -2316,6 +2316,8 @@ requireStudentLogin();
     window.exportLabHistoryCSV = exportLabHistoryCSV;
     window.dismissAnnouncement = dismissAnnouncement;
     window.updateGamificationDashboardUI = updateGamificationDashboardUI;
+    window.openXPPerksModal = openXPPerksModal;
+    window.closeXPPerksModal = closeXPPerksModal;
   }
 
   function updateGamificationDashboardUI() {
@@ -2361,6 +2363,148 @@ requireStudentLogin();
         launchBtn.style.background = '#10B981';
         launchBtn.style.borderColor = '#10B981';
       }
+    }
+  }
+
+  // ── 4. CANDIDATE LEVEL PERKS & XP BREAKDOWN MODAL ──────────
+  const LEVEL_TIER_PERKS = [
+    {
+      level: 1,
+      title: 'Form 1 Apprentice',
+      icon: '🧪',
+      minXP: 0,
+      maxXP: 250,
+      perks: 'Basic apparatus calibration, lab safety badges & volumetric pipetting.'
+    },
+    {
+      level: 2,
+      title: 'Form 2 Experimenter',
+      icon: '🔬',
+      minXP: 250,
+      maxXP: 700,
+      perks: 'Acid-base indicator transition endpoints, solubility curves & dissolution bench.'
+    },
+    {
+      level: 3,
+      title: 'Form 3 Analytical Chemist',
+      icon: '⚗️',
+      minXP: 700,
+      maxXP: 1600,
+      perks: 'Precision volumetric burette concordancy (Table 1), redox titrations & enthalpy calorimetry.'
+    },
+    {
+      level: 4,
+      title: 'Form 4 Master Chemist',
+      icon: '⚡',
+      minXP: 1600,
+      maxXP: 3200,
+      perks: 'Qualitative inorganic cation/anion precipitation benches, gas tests & organic functional deductions.'
+    },
+    {
+      level: 5,
+      title: 'KCSE Distinction Scholar',
+      icon: '👑',
+      minXP: 3200,
+      maxXP: 6000,
+      perks: 'Full 40-mark national mock capstone, gold certificate eligibility & examiner marking rubric access.'
+    }
+  ];
+
+  function openXPPerksModal() {
+    if (!window.GamificationEngine) return;
+    const xp = window.GamificationEngine.getXP();
+    const modal = document.getElementById('xpPerksModal');
+    if (!modal) return;
+
+    // Audio chime if available
+    if (window.GamificationEngine.audio && typeof window.GamificationEngine.audio.playStreakMultiplier === 'function') {
+      window.GamificationEngine.audio.playStreakMultiplier(2);
+    }
+
+    // Populate HUD elements
+    const iconEl = document.getElementById('xpModalIcon');
+    const badgeEl = document.getElementById('xpHudLevelBadge');
+    const titleEl = document.getElementById('xpHudLevelTitle');
+    const currentXpEl = document.getElementById('xpHudCurrentXP');
+    const targetXpEl = document.getElementById('xpHudTargetXP');
+    const barFillEl = document.getElementById('xpHudBarFill');
+    const remainingEl = document.getElementById('xpHudRemainingText');
+    const percentEl = document.getElementById('xpHudPercentText');
+
+    if (iconEl) iconEl.textContent = xp.icon || '🧪';
+    if (badgeEl) badgeEl.textContent = `Level ${xp.level}`;
+    if (titleEl) titleEl.textContent = xp.title;
+    if (currentXpEl) currentXpEl.textContent = (xp.totalXP || 0).toLocaleString();
+    if (targetXpEl) targetXpEl.textContent = `/ ${(xp.nextLevelXP || 0).toLocaleString()} XP`;
+    if (barFillEl) barFillEl.style.width = `${xp.progressPercent}%`;
+    if (percentEl) percentEl.textContent = `${xp.progressPercent}% to Rank`;
+
+    const remainingXP = Math.max(0, (xp.nextLevelXP || 0) - (xp.totalXP || 0));
+    const nextTier = LEVEL_TIER_PERKS.find(t => t.level === xp.level + 1);
+
+    if (remainingEl) {
+      if (nextTier) {
+        remainingEl.innerHTML = `⚡ <strong>${remainingXP.toLocaleString()} XP</strong> needed to reach Level ${nextTier.level}: ${nextTier.title}`;
+      } else {
+        remainingEl.innerHTML = `👑 <strong>Max Academic Rank Achieved!</strong> You have reached top distinction level.`;
+      }
+    }
+
+    // Populate 5-tier roadmap
+    const tiersListEl = document.getElementById('xpTiersList');
+    if (tiersListEl) {
+      tiersListEl.innerHTML = LEVEL_TIER_PERKS.map(tier => {
+        let statusCls = 'tier-locked';
+        let statusBadge = '<span>🔒 Locked</span>';
+
+        if (xp.level > tier.level) {
+          statusCls = 'tier-completed';
+          statusBadge = '<span>✓ Unlocked</span>';
+        } else if (xp.level === tier.level) {
+          statusCls = 'tier-active';
+          statusBadge = '<span>⚡ Current Rank</span>';
+        }
+
+        return `
+          <div class="xp-tier-card ${statusCls}">
+            <div class="xp-tier-top">
+              <div class="xp-tier-name-row">
+                <span class="xp-tier-icon">${tier.icon}</span>
+                <span class="xp-tier-title">Level ${tier.level}: ${tier.title}</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; font-weight:700; color:var(--text-muted);">${tier.minXP.toLocaleString()} – ${tier.maxXP.toLocaleString()} XP</span>
+                <span class="xp-tier-status-chip">${statusBadge}</span>
+              </div>
+            </div>
+            <div class="xp-tier-perks">
+              <strong>Unlocked Perks:</strong> ${tier.perks}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Show modal & disable background scroll
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+
+    // Trap Escape key
+    if (!window.__xpModalEscHandler) {
+      window.__xpModalEscHandler = function(e) {
+        if (e.key === 'Escape') closeXPPerksModal();
+      };
+      window.addEventListener('keydown', window.__xpModalEscHandler);
+    }
+  }
+
+  function closeXPPerksModal() {
+    const modal = document.getElementById('xpPerksModal');
+    if (modal) modal.style.display = 'none';
+    document.body.style.overflow = '';
+    if (window.__xpModalEscHandler) {
+      window.removeEventListener('keydown', window.__xpModalEscHandler);
+      window.__xpModalEscHandler = null;
     }
   }
 

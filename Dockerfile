@@ -7,7 +7,7 @@ FROM node:20-alpine AS dependencies
 WORKDIR /app
 COPY server/package*.json ./server/
 WORKDIR /app/server
-RUN npm ci --only=production
+RUN npm ci --omit=dev
 
 # Stage 2: Production Runtime
 FROM node:20-alpine AS runner

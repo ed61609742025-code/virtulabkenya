@@ -344,9 +344,12 @@
           starsHtml += `<span class="${s <= prog.stars ? '' : 'st-star-empty'}">★</span>`;
         }
 
+        const estTime = node.isCapstone ? '~40 mins' : (node.maxMarks >= 15 ? '~15 mins' : '~10 mins');
+        const shortTag = (branch.tag || '').replace(/\s*\(.*\)/, '').trim();
+
         html += `
           <div class="st-node-wrapper ${stateClass}" onclick="SkillTree.openModal('${node.id}')" role="button" tabindex="0" aria-label="${node.title}">
-            ${isNodeActive ? '<span class="st-node-beacon">Next Up 🔥</span>' : ''}
+            ${isNodeActive ? '<span class="st-node-beacon"><span class="st-beacon-pulse-dot"></span>NEXT UP ⚡</span>' : ''}
             <div class="st-node-circle">
               <span>${node.icon}</span>
             </div>
@@ -355,6 +358,23 @@
             </div>
             <div class="st-node-label">${node.title}</div>
             <div class="st-node-sublabel">${node.sublabel}</div>
+
+            <!-- Rich Interactive Hover Popover Tooltip -->
+            <div class="st-node-tooltip" role="tooltip">
+              <div class="st-tooltip-header">
+                <span class="st-tooltip-tag">${shortTag || 'PRACTICAL'}</span>
+                <span class="st-tooltip-time">⏱️ ${estTime}</span>
+              </div>
+              <div class="st-tooltip-title">${node.title}</div>
+              <div class="st-tooltip-sub">${node.syllabus}</div>
+              <div class="st-tooltip-meta">
+                <span class="st-tooltip-status ${prog.completed ? 'status-done' : (isNodeActive ? 'status-next' : 'status-ready')}">
+                  ${prog.completed ? `✓ Mastered (${prog.maxScore > 0 ? prog.maxScore.toFixed(1) : node.maxMarks}/${node.maxMarks} Mks)` : (isNodeActive ? '⚡ Next Recommended' : 'Ready to Attempt')}
+                </span>
+                <span class="st-tooltip-stars">${starsHtml}</span>
+              </div>
+              <div class="st-tooltip-hint">Click node for full KNEC rubric &amp; simulation →</div>
+            </div>
           </div>
         `;
       });

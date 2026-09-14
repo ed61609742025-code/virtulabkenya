@@ -66,6 +66,7 @@ requireStudentLogin();
   }
 
   function switchTitrationProcedure(procIdx) {
+    stopTitrate();
     activeProcedureIndex = procIdx;
     engine.activeProcedureIndex = procIdx;
 
@@ -1173,6 +1174,7 @@ requireStudentLogin();
       alert('Please pipette Solution B into the conical flask before titrating!');
       return;
     }
+    stopTitrate();
     const stopcock = document.getElementById('stopcockValve');
     if (stopcock) {
       stopcock.style.transform = 'rotate(90deg)';
@@ -1197,22 +1199,14 @@ requireStudentLogin();
     if (drip) drip.style.display = 'block';
     const stopcock = document.getElementById('stopcockValve');
     if (stopcock) stopcock.style.transform = 'rotate(90deg)';
-
-    const activeProc = (engine?.preset?.q1?.hasMultipleProcedures && engine?.preset?.q1?.procedures && engine.preset.q1.procedures[activeProcedureIndex])
-      ? engine.preset.q1.procedures[activeProcedureIndex]
-      : (engine?.preset?.q1 || {});
-    const trueTitre = Number(activeProc.trueTitre) || 25.00;
+    const btn = document.getElementById('btnContinuous');
+    if (btn) {
+      btn.innerHTML = '⚡ Flowing...';
+      btn.style.filter = 'brightness(1.2)';
+    }
 
     titrateInterval = setInterval(() => {
-      // Snap to trueTitre if approaching within one tick to prevent latency overshoot
-      if (engine.q1BuretteReading < trueTitre && (engine.q1BuretteReading + 0.20) >= trueTitre) {
-        engine.q1BuretteReading = trueTitre;
-        stopTitrate();
-        updateBuretteRig();
-        return;
-      }
-
-      engine.q1BuretteReading += 0.20;
+      engine.q1BuretteReading = Math.min(50.0, parseFloat((engine.q1BuretteReading + 0.20).toFixed(2)));
       if (engine.q1BuretteReading >= 50.0) {
         engine.q1BuretteReading = 50.0;
         stopTitrate();
@@ -1230,6 +1224,11 @@ requireStudentLogin();
     if (drip) drip.style.display = 'none';
     const stopcock = document.getElementById('stopcockValve');
     if (stopcock) stopcock.style.transform = 'rotate(0deg)';
+    const btn = document.getElementById('btnContinuous');
+    if (btn) {
+      btn.innerHTML = '⚡ Continuous Run';
+      btn.style.filter = 'none';
+    }
   }
 
   function updateBuretteRig() {

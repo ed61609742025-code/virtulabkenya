@@ -588,7 +588,11 @@
   }
 
   // ── 3. Reaction Physics & State Resolver ───────────────────────
-  function resolveReactionState(saltKey, testId, stage = 'idle', prompt = '', obsStr = '') {
+  function resolveReactionState(saltKey, testId, stage = 'idle', prompt = '', obsStr = '', options = {}) {
+    if (typeof obsStr === 'object' && obsStr !== null) {
+      options = obsStr;
+      obsStr = '';
+    }
     const salt = resolveSalt(saltKey);
     const pStr = (prompt || '').toLowerCase();
     const oStr = (obsStr || '').toLowerCase();
@@ -933,12 +937,24 @@
         statusLabel = `Water Added: ${salt.solubility || 'Solid dissolves completely to form clear stock solution'}`;
         soundType = 'dissolve';
       } else if (isFlameTest) {
-        statusLabel = (cation === 'Ca2+') ? 'Flame Test: Brick-red / orange-red flame'
-          : (cation === 'Cu2+') ? 'Flame Test: Blue-green flame'
-          : (cation === 'Ba2+') ? 'Flame Test: Apple-green flame'
-          : (salt.key.includes('sodium') || salt.name.includes('Sodium')) ? 'Flame Test: Persistent golden yellow flame'
-          : (salt.key.includes('potassium') || salt.name.includes('Potassium')) ? 'Flame Test: Pale lilac flame'
-          : 'Flame Test: Characteristic emission color recorded';
+        const isCobaltGlass = Boolean(options && options.isCobaltGlass);
+        if (isCobaltGlass) {
+          statusLabel = (salt.key.includes('sodium') || salt.name.includes('Sodium') || cation === 'Na+')
+            ? 'Flame Test (Cobalt Glass): Golden yellow flame completely absorbed / invisible'
+            : (salt.key.includes('potassium') || salt.name.includes('Potassium') || cation === 'K+')
+            ? 'Flame Test (Cobalt Glass): Pale lilac / purple-crimson flame shines through clearly'
+            : (cation === 'Ca2+') ? 'Flame Test (Cobalt Glass): Brick-red flame attenuated'
+            : (cation === 'Cu2+') ? 'Flame Test (Cobalt Glass): Blue-green flame seen through blue filter'
+            : (cation === 'Ba2+') ? 'Flame Test (Cobalt Glass): Apple-green flame absorbed'
+            : 'Flame Test (Cobalt Glass): Characteristic emission observed through blue optical filter';
+        } else {
+          statusLabel = (cation === 'Ca2+') ? 'Flame Test: Brick-red / orange-red flame'
+            : (cation === 'Cu2+') ? 'Flame Test: Blue-green flame'
+            : (cation === 'Ba2+') ? 'Flame Test: Apple-green flame'
+            : (salt.key.includes('sodium') || salt.name.includes('Sodium')) ? 'Flame Test: Persistent golden yellow flame'
+            : (salt.key.includes('potassium') || salt.name.includes('Potassium')) ? 'Flame Test: Pale lilac flame'
+            : 'Flame Test: Characteristic emission color recorded';
+        }
         soundType = 'flame';
       } else if (isHeat) {
         const isGentleHeat = stage === 'gentle_heat' || stage === 'warm';
@@ -2014,7 +2030,8 @@
       prompt = '',
       width = 180,
       height = 200,
-      tubeId = `flame_${Math.random().toString(36).substring(2, 7)}`
+      tubeId = `flame_${Math.random().toString(36).substring(2, 7)}`,
+      isCobaltGlass = false
     } = options;
 
     const salt = resolveSalt(saltKey);
@@ -2027,29 +2044,31 @@
     let glowRadius = 40;
     if (performed) {
       if (cation === 'Ca2+') {
-        flameColor = '#EA580C'; // Brick red / carmine
-        flameOuter = '#DC2626';
-        glowRadius = 55;
+        flameColor = isCobaltGlass ? 'rgba(148, 163, 184, 0.35)' : '#EA580C'; // Brick red / carmine
+        flameOuter = isCobaltGlass ? 'rgba(100, 116, 139, 0.25)' : '#DC2626';
+        glowRadius = isCobaltGlass ? 25 : 55;
       } else if (cation === 'Cu2+') {
-        flameColor = '#06B6D4'; // Brilliant peacock blue-green
-        flameOuter = '#059669';
-        glowRadius = 60;
+        flameColor = isCobaltGlass ? '#38BDF8' : '#06B6D4'; // Brilliant peacock blue-green
+        flameOuter = isCobaltGlass ? '#0284C7' : '#059669';
+        glowRadius = isCobaltGlass ? 45 : 60;
       } else if (cation === 'Ba2+') {
-        flameColor = '#84CC16'; // Pale apple-green
-        flameOuter = '#65A30D';
-        glowRadius = 50;
-      } else if (salt.key.includes('sodium') || salt.name.includes('Sodium')) {
-        flameColor = '#FACC15'; // Intense golden yellow
-        flameOuter = '#EAB308';
-        glowRadius = 70;
-      } else if (salt.key.includes('potassium') || salt.name.includes('Potassium')) {
-        flameColor = '#C084FC'; // Delicate lilac / violet
-        flameOuter = '#A855F7';
-        glowRadius = 52;
+        flameColor = isCobaltGlass ? 'rgba(100, 116, 139, 0.3)' : '#84CC16'; // Pale apple-green
+        flameOuter = isCobaltGlass ? 'rgba(71, 85, 105, 0.22)' : '#65A30D';
+        glowRadius = isCobaltGlass ? 20 : 50;
+      } else if (salt.key.includes('sodium') || salt.name.includes('Sodium') || cation === 'Na+') {
+        // KNEC Guideline: Cobalt blue glass completely absorbs 589nm sodium golden yellow!
+        flameColor = isCobaltGlass ? 'rgba(148, 163, 184, 0.22)' : '#FACC15'; // Intense golden yellow
+        flameOuter = isCobaltGlass ? 'rgba(100, 116, 139, 0.18)' : '#EAB308';
+        glowRadius = isCobaltGlass ? 15 : 70;
+      } else if (salt.key.includes('potassium') || salt.name.includes('Potassium') || cation === 'K+') {
+        // KNEC Guideline: Cobalt blue glass transmits violet/lilac light (766 & 404 nm) of potassium clearly!
+        flameColor = isCobaltGlass ? '#F472B6' : '#C084FC'; // Delicate lilac / vivid purple
+        flameOuter = isCobaltGlass ? '#C084FC' : '#A855F7';
+        glowRadius = isCobaltGlass ? 62 : 52;
       } else if (cation === 'Pb2+') {
-        flameColor = '#94A3B8'; // Dull grayish-blue
-        flameOuter = '#64748B';
-        glowRadius = 42;
+        flameColor = isCobaltGlass ? 'rgba(100, 116, 139, 0.3)' : '#94A3B8'; // Dull grayish-blue
+        flameOuter = isCobaltGlass ? 'rgba(71, 85, 105, 0.22)' : '#64748B';
+        glowRadius = isCobaltGlass ? 20 : 42;
       }
     }
 
@@ -2080,15 +2099,15 @@
 
         <!-- Radiant Emission Glow Halo -->
         ${performed ? `
-          <circle cx="90" cy="80" r="${glowRadius}" fill="url(#flameGlow_${tubeId})" opacity="0.85"/>
+          <circle cx="90" cy="80" r="${glowRadius}" fill="url(#flameGlow_${tubeId})" opacity="${isCobaltGlass && (salt.key.includes('sodium') || cation === 'Na+') ? '0.15' : '0.85'}"/>
         ` : ''}
 
         <!-- Dynamic Combustion Flame -->
         <g class="anim-flame" transform="translate(0, 0)">
           <!-- Outer Flame Cone -->
-          <path d="M 80,110 C 72,70 82,34 90,34 C 98,34 108,70 100,110 Z" fill="${flameOuter}" opacity="0.85"/>
+          <path d="M 80,110 C 72,70 82,34 90,34 C 98,34 108,70 100,110 Z" fill="${flameOuter}" opacity="${isCobaltGlass && (salt.key.includes('sodium') || cation === 'Na+') ? '0.2' : '0.85'}"/>
           <!-- Inner Hot Cone -->
-          <path d="M 84,110 C 81,84 87,55 90,55 C 93,55 99,84 96,110 Z" fill="${flameColor}" opacity="0.95"/>
+          <path d="M 84,110 C 81,84 87,55 90,55 C 93,55 99,84 96,110 Z" fill="${flameColor}" opacity="${isCobaltGlass && (salt.key.includes('sodium') || cation === 'Na+') ? '0.25' : '0.95'}"/>
         </g>
 
         <!-- Clean Borosilicate Glass Rod Assembly (KNEC Standard) -->
@@ -2106,6 +2125,15 @@
             <circle cx="88" cy="88" r="5" fill="${flameColor}" opacity="0.55"/>
           ` : ''}
         </g>
+
+        ${isCobaltGlass ? `
+          <!-- Cobalt Blue Glass Optical Filter Plate (KNEC Standard) -->
+          <g transform="translate(0, 0)">
+            <rect x="8" y="8" width="164" height="184" rx="8" fill="rgba(30, 58, 138, 0.38)" stroke="#3B82F6" stroke-width="2.5"/>
+            <rect x="14" y="14" width="98" height="18" rx="4" fill="#1E3A8A" opacity="0.92"/>
+            <text x="63" y="27" font-family="system-ui, -apple-system, sans-serif" font-size="9.5" font-weight="800" fill="#93C5FD" text-anchor="middle" letter-spacing="0.5">COBALT GLASS</text>
+          </g>
+        ` : ''}
       </svg>
     `;
   }
@@ -2145,7 +2173,13 @@
       (pStr.includes('solution') && pStr.includes('flame') && !pStr.includes('heat') && !pStr.includes('warm')) ||
       tId.includes('flame')
     ) {
-      return renderFlameTestApparatusSvg({ saltKey, stage, prompt, tubeId });
+      return renderFlameTestApparatusSvg({
+        saltKey,
+        stage,
+        prompt,
+        tubeId,
+        isCobaltGlass: Boolean(options.isCobaltGlass)
+      });
     }
 
     // 3. Dry Thermal Heating

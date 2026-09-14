@@ -1443,17 +1443,30 @@ if (typeof window !== 'undefined') {
       } else if (test.key === 'flame') {
         if (!st.performed) {
           actionButtonsHtml = `
-            <button class="btn-perform-test flame-btn" onclick="performTest('flame')">
-              🔥 Perform Flame Test
-            </button>`;
+            <div class="flame-inline-toolbar" style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+              <button class="btn-perform-test btn-step-heat" onclick="performFlameTestOnScreen()">
+                🔥 Dip Clean Glass Rod &amp; Introduce to Flame
+              </button>
+              <button type="button" class="btn-secondary ${isCobaltGlassActive ? 'btn-primary-solid' : ''}" onclick="toggleCobaltGlassInline()" style="font-size:0.82rem; font-weight:700; padding:6px 12px; display:inline-flex; align-items:center; gap:6px;">
+                🟦 Cobalt Blue Glass: ${isCobaltGlassActive ? 'ON' : 'OFF'}
+              </button>
+            </div>`;
         } else {
           actionButtonsHtml = `
-            <button class="btn-perform-test flame-btn done" onclick="performTest('flame')">
-              🔥 Re-open Flame Test
-            </button>
-            <button class="btn-redo-test" onclick="redoTest('flame')" title="Clean glass rod and redo test">
-              <span class="redo-icon">↺</span> Redo Test
-            </button>`;
+            <div class="flame-inline-toolbar" style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+              <button class="btn-perform-test done" disabled>
+                ✅ Flame Emission Observed
+              </button>
+              <button type="button" class="btn-secondary ${isCobaltGlassActive ? 'btn-primary-solid' : ''}" onclick="toggleCobaltGlassInline()" style="font-size:0.82rem; font-weight:700; padding:6px 12px; display:inline-flex; align-items:center; gap:6px;">
+                🟦 Cobalt Blue Glass: ${isCobaltGlassActive ? 'ON' : 'OFF'}
+              </button>
+              <button class="btn-redo-test" onclick="redoTest('flame')" title="Clean glass rod with HCl and redo test">
+                <span class="redo-icon">↺</span> Clean Rod &amp; Redo
+              </button>
+            </div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:6px; line-height:1.4;">
+              💡 <b>KNEC Guideline:</b> Clean borosilicate glass rod dipped in solution and placed in flame. Use Cobalt Blue Glass to absorb Na⁺ yellow emission and reveal K⁺ (lilac).
+            </div>`;
         }
       } else {
         if (!st.performed) {
@@ -1486,7 +1499,7 @@ if (typeof window !== 'undefined') {
             <!-- Left Column: Tube / Flame Stage -->
             <div class="apparatus-stage">
               <div class="apparatus-view">
-                ${test.key === 'flame' ? getFlameVisual(st) : getTubeVisual(test, st)}
+                ${getTubeVisual(test, st)}
               </div>
               <div class="apparatus-status-tag" id="status_${test.key}" style="display:none !important;"></div>
             </div>
@@ -1564,8 +1577,13 @@ if (typeof window !== 'undefined') {
         probe: st ? st.probe : null,
         prompt: test.prompt || test.name || test.title || '',
         obsStr: test.correctObs || test.observation || '',
-        tubeId: `qual_${test.key || test.id}`
+        tubeId: `qual_${test.key || test.id}`,
+        isCobaltGlass: isCobaltGlassActive
       });
+    }
+
+    if (test.key === 'flame') {
+      return getFlameVisual(st);
     }
 
     const performed = st && st.performed;
@@ -1816,7 +1834,13 @@ if (typeof window !== 'undefined') {
       'Ba2+': '#84CC16',
       'Pb2+': '#93C5FD'
     };
-    const fc = performed ? (flameColors[salt.cation] || 'rgba(56, 189, 248, 0.85)') : '#475569';
+    let fc = performed ? (flameColors[salt.cation] || 'rgba(56, 189, 248, 0.85)') : '#475569';
+    if (performed && isCobaltGlassActive) {
+      if (salt.cation === 'Na+') fc = 'rgba(148, 163, 184, 0.22)';
+      else if (salt.cation === 'K+') fc = '#F472B6';
+      else if (salt.cation === 'Ca2+') fc = 'rgba(148, 163, 184, 0.35)';
+      else if (salt.cation === 'Ba2+') fc = 'rgba(100, 116, 139, 0.3)';
+    }
     const lit = performed;
 
     return `<svg width="100" height="136" viewBox="0 0 100 136">
@@ -1865,6 +1889,14 @@ if (typeof window !== 'undefined') {
           <line x1="-15" y1="14.8" x2="28" y2="14.8" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round" opacity="0.85"/>
           <ellipse cx="31" cy="15.5" rx="2.5" ry="2" fill="rgba(255,255,255,0.9)" stroke="#CBD5E1" stroke-width="0.6"/>
           <circle cx="32" cy="15.5" r="2.2" fill="${fc}" class="anim-spangle"/>
+        </g>
+      ` : ''}
+
+      ${isCobaltGlassActive ? `
+        <g>
+          <rect x="4" y="4" width="92" height="128" rx="6" fill="rgba(30, 58, 138, 0.35)" stroke="#3B82F6" stroke-width="1.8"/>
+          <rect x="8" y="8" width="60" height="14" rx="3" fill="#1E3A8A" opacity="0.9"/>
+          <text x="38" y="18" font-size="7" font-weight="700" fill="#93C5FD" text-anchor="middle">COBALT GLASS</text>
         </g>
       ` : ''}
     </svg>`;
@@ -2335,16 +2367,16 @@ if (typeof window !== 'undefined') {
   };
 
   window.performTest = function(testKey) {
-    if (testKey === 'flame' || testKey === 'heat_solid') {
+    if (testKey === 'flame') {
+      performFlameTestOnScreen();
+      return;
+    }
+    if (testKey === 'heat_solid') {
       playFlameSound();
-      if (testKey === 'flame') {
-        openFlameModal();
-        return;
-      }
     }
     const test = TESTS.find(t => t.key === testKey);
-    const correctKey = test.correct[currentSaltKey];
-    const correctOpt = test.options.find(o => o.key === correctKey);
+    const correctKey = test ? test.correct[currentSaltKey] : null;
+    const correctOpt = test ? test.options.find(o => o.key === correctKey) : null;
 
     if ((testKey === 'hcl' || testKey === 'heat_solid') && correctOpt && correctOpt.bubble) {
       playEffervescenceSound();
@@ -2372,155 +2404,75 @@ if (typeof window !== 'undefined') {
   }
 
   /* ══════════════════════════════════════
-     FLAME TEST MODAL & COBALT GLASS FILTER
+     ON-SCREEN FLAME TEST & COBALT GLASS FILTER
   ══════════════════════════════════════ */
-  let flamePhase = 'idle';
   let isCobaltGlassActive = false;
 
-  window.toggleCobaltGlass = function() {
-    isCobaltGlassActive = !isCobaltGlassActive;
-    const btn = document.getElementById('btnCobaltGlass');
-    if (btn) {
-      btn.innerHTML = isCobaltGlassActive ? '🟦 Cobalt Blue Glass Filter: ON' : '🟦 Cobalt Blue Glass Filter: OFF';
-      btn.classList.toggle('btn-primary-solid', isCobaltGlassActive);
-      btn.classList.toggle('btn-secondary', !isCobaltGlassActive);
-    }
+  window.performFlameTestOnScreen = function() {
+    playFlameSound();
+    const fTest = TESTS.find(t => t.key === 'flame');
+    const correctKey = fTest ? fTest.correct[currentSaltKey] : null;
+    const correctOpt = fTest ? fTest.options.find(o => o.key === correctKey) : null;
     const salt = SALTS[currentSaltKey] || {};
-    if (flamePhase === 'burning' || flamePhase === 'done') {
-      const fTest = TESTS.find(t => t.key === 'flame');
-      const correctKey = fTest.correct[currentSaltKey];
-      const correctOpt = fTest.options.find(o => o.key === correctKey);
-      let flameColor = correctOpt ? correctOpt.color : '#38BDF8';
 
-      // KCSE Cobalt Glass Physics: Absorbs Na+ yellow, reveals K+ lilac/crimson
-      if (isCobaltGlassActive) {
-        if (salt.cation === 'Na+') flameColor = 'rgba(100, 116, 139, 0.2)'; // Yellow absorbed
-        else if (salt.cation === 'K+') flameColor = '#C084FC'; // Lilac shines through
-      }
-      setFlameColor(flameColor, true);
+    let flameColor = correctOpt ? correctOpt.color : '#38BDF8';
+    if (isCobaltGlassActive) {
+      if (salt.cation === 'Na+') flameColor = 'rgba(100, 116, 139, 0.2)';
+      else if (salt.cation === 'K+') flameColor = '#C084FC';
     }
+
+    if (!testStates['flame']) testStates['flame'] = {};
+    testStates['flame'].performed = true;
+    testStates['flame'].stage = 'done';
+    testStates['flame'].color = flameColor;
+    testStates['flame'].bubbling = false;
+    testStates['flame'].correctKey = correctKey;
+    testStates['flame'].statusLabel = `Observed: ${correctOpt ? correctOpt.text : 'Flame emission'}`;
+
+    renderAll();
   };
 
-  function openFlameModal() {
-    flamePhase = 'idle';
-    isCobaltGlassActive = false;
-    const btn = document.getElementById('btnCobaltGlass');
-    if (btn) {
-      btn.innerHTML = '🟦 Cobalt Blue Glass Filter: OFF';
-      btn.className = 'btn-secondary';
-    }
-    document.getElementById('flameModal').style.display = 'flex';
-    resetFlameSteps();
-  }
-  function closeFlameModal() { document.getElementById('flameModal').style.display = 'none'; }
-
-  function resetFlameSteps() {
-    setFlameStep(1);
-    document.getElementById('wireGroup').style.transform = 'translate(-60px, 95px)';
-    document.getElementById('wireDeposit').style.display = 'none';
-    document.getElementById('flameDoneBanner').style.display = 'none';
-    const chip = document.getElementById('flameObsChip');
-    chip.className = 'flame-obs-chip';
-    chip.textContent = 'Awaiting flame test result…';
-    setFlameColor('#38BDF8', false);
-    setBenchActive('HCl');
-    flamePhase = 'idle';
-  }
-
-  function setFlameStep(active) {
-    [1,2,3].forEach(n => {
-      const el = document.getElementById(`flameStep${n}`);
-      el.className = n < active ? 'step-item done' : n === active ? 'step-item active' : 'step-item';
-      el.querySelector('.step-num').textContent = n < active ? '✓' : n;
-    });
-  }
-  function setBenchActive(name) {
-    ['HCl','Salt'].forEach(n => {
-      const el = document.getElementById('bench' + n);
-      if (el) { el.classList.toggle('active-step', n === name); el.classList.toggle('disabled', n !== name); }
-    });
-  }
-
-  function setFlameColor(color, intense) {
-    const o = document.getElementById('flameOuterPath');
-    const i = document.getElementById('flameInnerPath');
-    const g = document.getElementById('flameGlow');
-    o.setAttribute('fill', color);
-    o.setAttribute('opacity', intense ? '0.95' : '0.65');
-    if (intense) o.setAttribute('d', 'M90,5 C40,40 50,110 90,110 C130,110 140,40 90,5 Z');
-    else o.setAttribute('d', 'M90,18 C55,50 62,110 90,110 C118,110 125,50 90,18 Z');
-    i.setAttribute('opacity', intense ? '0.95' : '0.85');
-    g.setAttribute('fill', color === '#38BDF8' ? 'url(#glowGrad)' : color);
-    g.setAttribute('opacity', intense ? '0.5' : '0.3');
-  }
-
-  function flameDipHCl() {
-    if (flamePhase !== 'idle') return;
-    flamePhase = 'cleaning';
-    setBenchActive(null);
-    const wire = document.getElementById('wireGroup');
-    wire.style.transform = 'translate(-100px, 150px)';
-    setTimeout(() => {
-      wire.style.transform = 'translate(20px, 55px)';
-      setFlameColor('#F59E0B', true);
-      setTimeout(() => {
-        setFlameColor('#38BDF8', false);
-        wire.style.transform = 'translate(-60px, 95px)';
-        flamePhase = 'cleaned';
-        setFlameStep(2);
-        setBenchActive('Salt');
-      }, 900);
-    }, 900);
-  }
-
-  function flameDipSalt() {
-    if (flamePhase !== 'cleaned') return;
-    flamePhase = 'sampling';
-    setBenchActive(null);
-    const wire = document.getElementById('wireGroup');
-    wire.style.transform = 'translate(30px, 150px)';
-    setTimeout(() => {
-      document.getElementById('wireDeposit').style.display = 'block';
-      wire.style.transform = 'translate(-60px, 95px)';
-      flamePhase = 'sampled';
-      setFlameStep(3);
-      setBenchActive(null);
-    }, 900);
-  }
-
-  function flameIgnite() {
-    if (flamePhase !== 'sampled') return;
-    flamePhase = 'burning';
-    document.getElementById('flameTapHint').style.display = 'none';
-    const wire = document.getElementById('wireGroup');
-    wire.style.transform = 'translate(20px, 55px)';
-    setTimeout(() => {
+  window.toggleCobaltGlassInline = function() {
+    isCobaltGlassActive = !isCobaltGlassActive;
+    if (testStates['flame'] && testStates['flame'].performed) {
       const fTest = TESTS.find(t => t.key === 'flame');
-      const correctKey = fTest.correct[currentSaltKey];
-      const correctOpt = fTest.options.find(o => o.key === correctKey);
-      let flameColor = correctOpt ? correctOpt.color : '#38BDF8';
+      const correctKey = fTest ? fTest.correct[currentSaltKey] : null;
+      const correctOpt = fTest ? fTest.options.find(o => o.key === correctKey) : null;
       const salt = SALTS[currentSaltKey] || {};
 
+      let flameColor = correctOpt ? correctOpt.color : '#38BDF8';
       if (isCobaltGlassActive) {
         if (salt.cation === 'Na+') flameColor = 'rgba(100, 116, 139, 0.2)';
         else if (salt.cation === 'K+') flameColor = '#C084FC';
       }
+      testStates['flame'].color = flameColor;
+    }
+    renderAll();
+  };
 
-      setFlameColor(flameColor, true);
-      document.getElementById('wireDeposit').style.display = 'none';
-      setTimeout(() => {
-        wire.style.transform = 'translate(-60px, 95px)';
-        setFlameColor('#38BDF8', false);
-        flamePhase = 'done';
-        const chip = document.getElementById('flameObsChip');
-        chip.textContent = `🔥 Observed: ${correctOpt?.text || 'No colour'}`;
-        chip.className = 'flame-obs-chip observed';
-        document.getElementById('flameDoneBanner').style.display = 'block';
-        testStates['flame'] = { performed:true, color:flameColor, bubbling:false, correctKey, selectedKey:null };
-        renderAll();
-      }, 1800);
-    }, 850);
+  window.toggleCobaltGlass = function() {
+    toggleCobaltGlassInline();
+  };
+
+  function openFlameModal() {
+    performFlameTestOnScreen();
   }
+
+  function closeFlameModal() {
+    if (typeof document !== 'undefined') {
+      const modal = document.getElementById('flameModal');
+      if (modal) modal.style.display = 'none';
+    }
+  }
+
+  // Backwards compatibility stubs
+  function resetFlameSteps() {}
+  function setFlameStep() {}
+  function setBenchActive() {}
+  function setFlameColor() {}
+  function flameDipHCl() {}
+  function flameDipSalt() {}
+  function flameIgnite() {}
 
   /* ══════════════════════════════════════
      SUBMIT IDENTIFICATION

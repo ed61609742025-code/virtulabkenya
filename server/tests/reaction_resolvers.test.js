@@ -374,6 +374,56 @@ describe('Qualitative Bench Core (Inorganic Reactions)', () => {
       assert.strictEqual(actions[0].stage, 'flame_tested');
       assert.ok(actions[0].label.includes('Glass Rod'));
     });
+
+    it('should correctly handle Cobalt Blue Glass optical absorption for Na+ and transmission for K+', () => {
+      // 1. Unfiltered Flame Test (Sodium vs Potassium)
+      const naSvgUnfiltered = QualitativeBenchCore.renderApparatusSvg({
+        saltKey: 'sodiumCarbonate',
+        testId: 'q2_flame',
+        stage: 'done',
+        prompt: 'Dip a clean glass rod into the solution and place it in the non-luminous flame',
+        isCobaltGlass: false
+      });
+      assert.ok(naSvgUnfiltered.includes('#FACC15'), 'Unfiltered sodium flame must be intense golden yellow');
+      assert.ok(!naSvgUnfiltered.includes('COBALT GLASS'), 'Unfiltered SVG must not have cobalt glass plate');
+
+      const kSvgUnfiltered = QualitativeBenchCore.renderApparatusSvg({
+        saltKey: 'potassiumChloride',
+        testId: 'q2_flame',
+        stage: 'done',
+        prompt: 'Dip a clean glass rod into the solution and place it in the non-luminous flame',
+        isCobaltGlass: false
+      });
+      assert.ok(kSvgUnfiltered.includes('#C084FC'), 'Unfiltered potassium flame must be lilac');
+
+      // 2. Filtered through Cobalt Blue Glass
+      const naSvgFiltered = QualitativeBenchCore.renderApparatusSvg({
+        saltKey: 'sodiumCarbonate',
+        testId: 'q2_flame',
+        stage: 'done',
+        prompt: 'Dip a clean glass rod into the solution and place it in the non-luminous flame',
+        isCobaltGlass: true
+      });
+      assert.ok(naSvgFiltered.includes('COBALT GLASS'), 'Filtered SVG must render the COBALT GLASS plate overlay');
+      assert.ok(naSvgFiltered.includes('rgba(148, 163, 184, 0.22)'), 'Sodium golden yellow must be absorbed through cobalt glass');
+
+      const kSvgFiltered = QualitativeBenchCore.renderApparatusSvg({
+        saltKey: 'potassiumChloride',
+        testId: 'q2_flame',
+        stage: 'done',
+        prompt: 'Dip a clean glass rod into the solution and place it in the non-luminous flame',
+        isCobaltGlass: true
+      });
+      assert.ok(kSvgFiltered.includes('COBALT GLASS'), 'Filtered SVG must render the COBALT GLASS plate overlay');
+      assert.ok(kSvgFiltered.includes('#F472B6') || kSvgFiltered.includes('#C084FC'), 'Potassium lilac/violet must transmit through cobalt glass');
+
+      // 3. Reaction State Status Label with Cobalt Glass
+      const naStateFiltered = QualitativeBenchCore.resolveReactionState('sodiumCarbonate', 'q2_flame', 'done', 'Dip a clean glass rod into flame', '', { isCobaltGlass: true });
+      assert.ok(naStateFiltered.statusLabel.includes('completely absorbed'), 'Sodium emission absorbed through cobalt glass');
+
+      const kStateFiltered = QualitativeBenchCore.resolveReactionState('potassiumChloride', 'q2_flame', 'done', 'Dip a clean glass rod into flame', '', { isCobaltGlass: true });
+      assert.ok(kStateFiltered.statusLabel.includes('Pale lilac') || kStateFiltered.statusLabel.includes('purple'), 'Potassium lilac emission shines through cobalt glass');
+    });
   });
 
   describe('Multi-Stage Action Controls', () => {

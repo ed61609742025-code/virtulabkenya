@@ -13,53 +13,57 @@ requireStudentLogin();
     };
   }
 
-  const sanitizeAnalyteDisplay = window.sanitizeAnalyteDisplay || function(name, questions = []) {
-    if (!name || typeof name !== 'string') return name || '';
-    let s = name;
-    const qList = Array.isArray(questions) ? questions : [];
+  if (typeof window.sanitizeAnalyteDisplay !== 'function') {
+    window.sanitizeAnalyteDisplay = function(name, questions = []) {
+      if (!name || typeof name !== 'string') return name || '';
+      let s = name;
+      const qList = Array.isArray(questions) ? questions : [];
 
-    const asksMolarity = qList.some(q => q.field === 'molarityB' || /molar(?:ity| concentration) .* (?:solution b|base|analyte)/i.test(q.label || ''));
-    const asksConc = qList.some(q => q.field === 'concGrams' || /concentration of solution b in g\/(?:dm³|dm3|l)/i.test(q.label || ''));
-    const hasBoth = /\b\d+(?:\.\d+)?\s*M\b/i.test(s) && /g\/(?:dm³|dm3|l)/i.test(s);
+      const asksMolarity = qList.some(q => q.field === 'molarityB' || /molar(?:ity| concentration) .* (?:solution b|base|analyte)/i.test(q.label || ''));
+      const asksConc = qList.some(q => q.field === 'concGrams' || /concentration of solution b in g\/(?:dm³|dm3|l)/i.test(q.label || ''));
+      const hasBoth = /\b\d+(?:\.\d+)?\s*M\b/i.test(s) && /g\/(?:dm³|dm3|l)/i.test(s);
 
-    if (asksMolarity || hasBoth) {
-      s = s.replace(/(?:~\s*)?\b\d+(?:\.\d+)?\s*M\b/gi, '');
-    }
+      if (asksMolarity || hasBoth) {
+        s = s.replace(/(?:~\s*)?\b\d+(?:\.\d+)?\s*M\b/gi, '');
+      }
 
-    if (asksConc || hasBoth) {
-      s = s.replace(/\s*containing\s+\d+(?:\.\d+)?\s*g\/(?:dm³|dm3|l|liter|litre)/gi, '')
-           .replace(/\s*\(\s*\d+(?:\.\d+)?\s*g\/(?:dm³|dm3|l|liter|litre)\s*\)/gi, '');
-    }
+      if (asksConc || hasBoth) {
+        s = s.replace(/\s*containing\s+\d+(?:\.\d+)?\s*g\/(?:dm³|dm3|l|liter|litre)/gi, '')
+             .replace(/\s*\(\s*\d+(?:\.\d+)?\s*g\/(?:dm³|dm3|l|liter|litre)\s*\)/gi, '');
+      }
 
-    s = s.trim().replace(/^[,;\-~ \t]+|[,;\-~ \t]+$/g, '').replace(/\s{2,}/g, ' ');
-    if (s && !/solution|sample|containing/i.test(s)) {
-      s += ' solution';
-    }
-    return s;
-  };
+      s = s.trim().replace(/^[,;\-~ \t]+|[,;\-~ \t]+$/g, '').replace(/\s{2,}/g, ' ');
+      if (s && !/solution|sample|containing/i.test(s)) {
+        s += ' solution';
+      }
+      return s;
+    };
+  }
 
-  const sanitizeInstructions = window.sanitizeInstructions || function(text, questions = []) {
-    if (!text || typeof text !== 'string') return text || '';
-    let s = text;
-    const qList = Array.isArray(questions) ? questions : [];
-    const asksMolarity = qList.some(q => q.field === 'molarityB' || /molar(?:ity| concentration) .* (?:solution b|base|analyte)/i.test(q.label || ''));
-    const asksConc = qList.some(q => q.field === 'concGrams' || /concentration of solution b in g\/(?:dm³|dm3|l)/i.test(q.label || ''));
+  if (typeof window.sanitizeInstructions !== 'function') {
+    window.sanitizeInstructions = function(text, questions = []) {
+      if (!text || typeof text !== 'string') return text || '';
+      let s = text;
+      const qList = Array.isArray(questions) ? questions : [];
+      const asksMolarity = qList.some(q => q.field === 'molarityB' || /molar(?:ity| concentration) .* (?:solution b|base|analyte)/i.test(q.label || ''));
+      const asksConc = qList.some(q => q.field === 'concGrams' || /concentration of solution b in g\/(?:dm³|dm3|l)/i.test(q.label || ''));
 
-    if (asksMolarity) {
-      s = s.replace(/(?:~\s*)?\b\d+(?:\.\d+)?\s*M\s+(Sodium\s+Hydroxide|Solution\s+B|NaOH|Ammonium\s+Iron)/gi, '$1');
-    }
+      if (asksMolarity) {
+        s = s.replace(/(?:~\s*)?\b\d+(?:\.\d+)?\s*M\s+(Sodium\s+Hydroxide|Solution\s+B|NaOH|Ammonium\s+Iron)/gi, '$1');
+      }
 
-    if (asksConc) {
-      s = s.replace(/\s*containing\s+\d+(?:\.\d+)?\s*g\/(?:dm³|dm3|l|liter|litre)/gi, '')
-           .replace(/\s*\(\s*\d+(?:\.\d+)?\s*g\/(?:dm³|dm3|l|liter|litre)\s*\)/gi, '');
-    }
+      if (asksConc) {
+        s = s.replace(/\s*containing\s+\d+(?:\.\d+)?\s*g\/(?:dm³|dm3|l|liter|litre)/gi, '')
+             .replace(/\s*\(\s*\d+(?:\.\d+)?\s*g\/(?:dm³|dm3|l|liter|litre)\s*\)/gi, '');
+      }
 
-    return s;
-  };
+      return s;
+    };
+  }
 
   function getFlaskLabelName(solB) {
     if (!solB || typeof solB !== 'string') return 'Sample';
-    const clean = sanitizeAnalyteDisplay(solB).replace(/solution/gi, '').trim();
+    const clean = window.sanitizeAnalyteDisplay(solB).replace(/solution/gi, '').trim();
     const firstWord = clean.split(/\s+/)[0] || 'Sample';
     return firstWord;
   }
@@ -142,10 +146,10 @@ requireStudentLogin();
         </div>
         <b>You are provided with:</b><br>
         • <b>${escapeHtml(proc.solutionA || 'Solution in Burette')}</b> in the burette.<br>
-        • <b>${escapeHtml(sanitizeAnalyteDisplay(proc.solutionB, proc.questions || engine?.preset?.q1?.questions) || 'Solution in Flask')}</b>.<br>
+        • <b>${escapeHtml(window.sanitizeAnalyteDisplay(proc.solutionB, proc.questions || engine?.preset?.q1?.questions) || 'Solution in Flask')}</b>.<br>
         • <b>${escapeHtml(proc.indicator || 'Indicator')}</b>.<br><br>
         <b>Instructions &amp; Procedure:</b><br>
-        <div style="white-space:pre-wrap; line-height:1.5;">${escapeHtml(sanitizeInstructions(proc.instructions || 'Pipette 25.0 cm³ into conical flask, add indicator drops, and titrate to endpoint.', proc.questions || engine?.preset?.q1?.questions))}</div>
+        <div style="white-space:pre-wrap; line-height:1.5;">${escapeHtml(window.sanitizeInstructions(proc.instructions || 'Pipette 25.0 cm³ into conical flask, add indicator drops, and titrate to endpoint.', proc.questions || engine?.preset?.q1?.questions))}</div>
       `;
     }
 
@@ -704,7 +708,7 @@ requireStudentLogin();
     }
 
     setElemText('q1SolAName', 'Solution A: ' + (p.q1?.solutionA || ''));
-    setElemText('q1SolBName', 'Solution B: ' + sanitizeAnalyteDisplay(p.q1?.solutionB, p.q1?.questions));
+    setElemText('q1SolBName', 'Solution B: ' + window.sanitizeAnalyteDisplay(p.q1?.solutionB, p.q1?.questions));
     setElemText('q1IndicatorName', p.q1?.indicator || 'Phenolphthalein Indicator');
     setElemText('q1EquationDisplay', '');
     const eqRow = document.getElementById('q1EquationRow');
@@ -801,7 +805,7 @@ requireStudentLogin();
                 if (document.getElementById('examSubTitle')) document.getElementById('examSubTitle').textContent = match.title + ' — Code 233/3';
                 if (document.getElementById('printExamTitle')) document.getElementById('printExamTitle').textContent = match.title.toUpperCase();
                 if (document.getElementById('q1SolAName')) document.getElementById('q1SolAName').textContent = 'Solution A: ' + (pCustom.q1?.solutionA || '');
-                if (document.getElementById('q1SolBName')) document.getElementById('q1SolBName').textContent = 'Solution B: ' + sanitizeAnalyteDisplay(pCustom.q1?.solutionB, pCustom.q1?.questions);
+                if (document.getElementById('q1SolBName')) document.getElementById('q1SolBName').textContent = 'Solution B: ' + window.sanitizeAnalyteDisplay(pCustom.q1?.solutionB, pCustom.q1?.questions);
                 if (document.getElementById('q1IndicatorName')) document.getElementById('q1IndicatorName').textContent = pCustom.q1?.indicator || 'Phenolphthalein Indicator';
                 if (document.getElementById('q1EquationDisplay')) document.getElementById('q1EquationDisplay').textContent = '';
                 if (document.getElementById('q1EquationRow')) document.getElementById('q1EquationRow').style.display = 'none';

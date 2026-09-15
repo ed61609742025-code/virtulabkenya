@@ -14,7 +14,9 @@ describe('KNEC Paper 3 Examination Suite Standards', () => {
   const compositeEnginePath = path.join(rootDir, 'client', 'student', 'js', 'composite-engine.js');
   const {
     COMPOSITE_EXAM_PRESETS,
-    CompositeExamEngine
+    CompositeExamEngine,
+    sanitizeAnalyteDisplay,
+    sanitizeInstructions
   } = require(compositeEnginePath);
 
   it('should initialize and validate all 6 official KNEC Paper 3 Mock Series', () => {
@@ -414,6 +416,62 @@ describe('KNEC Paper 3 Examination Suite Standards', () => {
     const pbInf = evaluateInferenceAccuracy(testPbNO3, calciumChloride, 'Cl⁻ present', 'White precipitate dissolves on warming');
     assert.strictEqual(pbInf.score, 0.55, 'Full 0.55 mark for Cl⁻ present inference with Pb(NO3)2');
     assert.strictEqual(pbInf.ciPenalty, 0.0);
+  });
+
+  it('should guarantee no leakage of target titration answers in Solution B specifications and instructions', () => {
+    // 1. Check presets where student calculates molarity or mass concentration
+    const leakSensitiveSeries = ['series_1', 'series_4', 'series_6', 'series_2023'];
+    leakSensitiveSeries.forEach(key => {
+      const p = COMPOSITE_EXAM_PRESETS[key];
+      assert.ok(p, `Preset ${key} must exist`);
+      const solB = p.q1.solutionB;
+
+      // Ensure Solution B does not state numerical concentration or mass concentration
+      assert.doesNotMatch(solB, /\b\d+(?:\.\d+)?\s*M\b/i, `${key} Solution B must not reveal molarity`);
+      assert.doesNotMatch(solB, /\b\d+(?:\.\d+)?\s*g\/(?:dm³|dm3|l)/i, `${key} Solution B must not reveal concentration in g/dm³`);
+      assert.doesNotMatch(p.q1.instructions, /\b\d+(?:\.\d+)?\s*M\s+(?:Solution\s+B|NaOH|Sodium\s+Hydroxide|Ammonium)/i, `${key} instructions must not reveal Solution B molarity`);
+    });
+
+    // 2. Test sanitizeAnalyteDisplay helper with standard molarity & mass concentration questions
+    const standardQuestions = [
+      { field: 'avgTitre' },
+      { field: 'molesA' },
+      { field: 'molesB' },
+      { field: 'molarityB', label: 'Calculate the molar concentration (molarity) of Solution B in mol/dm³' },
+      { field: 'concGrams', label: 'Calculate the concentration of Solution B in g/dm³' }
+    ];
+
+    const leakedSolB1 = 'Sodium Hydroxide (NaOH) containing 4.00 g/dm³';
+    assert.strictEqual(sanitizeAnalyteDisplay(leakedSolB1, standardQuestions), 'Sodium Hydroxide (NaOH) solution');
+
+    const leakedSolB2 = '0.100 M Sodium Hydroxide (NaOH) containing 4.00 g/dm³';
+    assert.strictEqual(sanitizeAnalyteDisplay(leakedSolB2, standardQuestions), 'Sodium Hydroxide (NaOH) solution');
+
+    const leakedSolB3 = 'Acidified Ammonium Iron(II) Sulfate [(NH₄)₂Fe(SO₄)₂·6H₂O] (39.2 g/dm³)';
+    assert.strictEqual(sanitizeAnalyteDisplay(leakedSolB3, standardQuestions), 'Acidified Ammonium Iron(II) Sulfate [(NH₄)₂Fe(SO₄)₂·6H₂O] solution');
+
+    const leakedSolB4 = 'Ammonium Iron(II) Sulfate [(NH₄)₂Fe(SO₄)₂·6H₂O] ~0.100 M';
+    assert.strictEqual(sanitizeAnalyteDisplay(leakedSolB4, standardQuestions), 'Ammonium Iron(II) Sulfate [(NH₄)₂Fe(SO₄)₂·6H₂O] solution');
+
+    // 3. Ensure mass dissolved is preserved when question premise intentionally requires it (e.g. water of cryst, RAM)
+    const waterOfCrystQuestions = [
+      { field: 'avgTitre' }, { field: 'molesA' }, { field: 'molesB' }, { field: 'molarityB' }, { field: 'rfmHydrated' }, { field: 'waterOfCryst' }
+    ];
+    const waterOfCrystSolB = 'Hydrated Sodium Carbonate (Na₂CO₃·xH₂O) containing 14.30 g/dm³';
+    assert.strictEqual(sanitizeAnalyteDisplay(waterOfCrystSolB, waterOfCrystQuestions), 'Hydrated Sodium Carbonate (Na₂CO₃·xH₂O) containing 14.30 g/dm³');
+
+    const ramQuestions = [
+      { field: 'avgTitre' }, { field: 'molesA' }, { field: 'molesB' }, { field: 'molarityB' }, { field: 'rfmCarbonate' }, { field: 'ramMetal' }
+    ];
+    const ramSolB = 'Unknown Monovalent Metal Carbonate (M₂CO₃) containing 5.30 g/dm³';
+    assert.strictEqual(sanitizeAnalyteDisplay(ramSolB, ramQuestions), 'Unknown Monovalent Metal Carbonate (M₂CO₃) containing 5.30 g/dm³');
+
+    // 4. Test sanitizeInstructions helper
+    const leakedInstructions = 'You are provided with 0.100 M Hydrochloric Acid and 0.100 M Sodium Hydroxide. Pipette 25.0 cm³ of Solution B into a conical flask and titrate.';
+    const cleanedInst = sanitizeInstructions(leakedInstructions, standardQuestions);
+    assert.ok(cleanedInst.includes('0.100 M Hydrochloric Acid'), 'Solution A titrant concentration should be preserved');
+    assert.ok(!cleanedInst.includes('0.100 M Sodium Hydroxide'), 'Solution B analyte concentration must be stripped');
+    assert.ok(cleanedInst.includes('Sodium Hydroxide'), 'Analyte chemical name should remain intact');
   });
 
 });

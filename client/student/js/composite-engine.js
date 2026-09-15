@@ -19,6 +19,58 @@ function getAnswerValue(answers, fieldKey, stepId) {
 }
 
 /**
+ * Sanitize Solution B (analyte) display text to prevent leaking answers being tested.
+ * Follows KNEC Paper 3 standards: If molarity (molarityB) is asked, strip explicit molarity.
+ * If concentration in g/dm³ (concGrams) is asked, strip mass concentrations like containing 4.00 g/dm³.
+ */
+function sanitizeAnalyteDisplay(name, questions = []) {
+  if (!name || typeof name !== 'string') return name || '';
+  let s = name;
+  const qList = Array.isArray(questions) ? questions : [];
+
+  const asksMolarity = qList.some(q => q.field === 'molarityB' || /molar(?:ity| concentration) .* (?:solution b|base|analyte)/i.test(q.label || ''));
+  const asksConc = qList.some(q => q.field === 'concGrams' || /concentration of solution b in g\/(?:dm³|dm3|l)/i.test(q.label || ''));
+  const hasBoth = /\b\d+(?:\.\d+)?\s*M\b/i.test(s) && /g\/(?:dm³|dm3|l)/i.test(s);
+
+  if (asksMolarity || hasBoth) {
+    s = s.replace(/(?:~\s*)?\b\d+(?:\.\d+)?\s*M\b/gi, '');
+  }
+
+  if (asksConc || hasBoth) {
+    s = s.replace(/\s*containing\s+\d+(?:\.\d+)?\s*g\/(?:dm³|dm3|l|liter|litre)/gi, '')
+         .replace(/\s*\(\s*\d+(?:\.\d+)?\s*g\/(?:dm³|dm3|l|liter|litre)\s*\)/gi, '');
+  }
+
+  s = s.trim().replace(/^[,;\-~ \t]+|[,;\-~ \t]+$/g, '').replace(/\s{2,}/g, ' ');
+  if (s && !/solution|sample|containing/i.test(s)) {
+    s += ' solution';
+  }
+  return s;
+}
+
+/**
+ * Sanitize instructions text to avoid leaking Solution B concentration when tested.
+ */
+function sanitizeInstructions(text, questions = []) {
+  if (!text || typeof text !== 'string') return text || '';
+  let s = text;
+  const qList = Array.isArray(questions) ? questions : [];
+  const asksMolarity = qList.some(q => q.field === 'molarityB' || /molar(?:ity| concentration) .* (?:solution b|base|analyte)/i.test(q.label || ''));
+  const asksConc = qList.some(q => q.field === 'concGrams' || /concentration of solution b in g\/(?:dm³|dm3|l)/i.test(q.label || ''));
+
+  if (asksMolarity) {
+    s = s.replace(/(?:~\s*)?\b\d+(?:\.\d+)?\s*M\s+(Sodium\s+Hydroxide|Solution\s+B|NaOH|Ammonium\s+Iron)/gi, '$1');
+  }
+
+  if (asksConc) {
+    s = s.replace(/\s*containing\s+\d+(?:\.\d+)?\s*g\/(?:dm³|dm3|l|liter|litre)/gi, '')
+         .replace(/\s*\(\s*\d+(?:\.\d+)?\s*g\/(?:dm³|dm3|l|liter|litre)\s*\)/gi, '');
+  }
+
+  return s;
+}
+
+/**
  * Standard KNEC Question 1 Calculation Schema Generators
  */
 function createStandardTitrationQuestions(q1Config) {
@@ -525,7 +577,7 @@ const COMPOSITE_EXAM_PRESETS = {
       calcType: 'standard_molarity',
       title: 'Question 1: Volumetric Analysis (15.0 Marks)',
       solutionA: '0.100 M Hydrochloric Acid (HCl)',
-      solutionB: 'Sodium Hydroxide (NaOH) containing 4.00 g/dm³',
+      solutionB: 'Sodium Hydroxide (NaOH) solution',
       acidFormula: 'HCl',
       baseFormula: 'NaOH',
       indicator: 'Phenolphthalein',
@@ -868,7 +920,7 @@ const COMPOSITE_EXAM_PRESETS = {
       calcType: 'redox_stoichiometry',
       title: 'Question 1: Volumetric Redox Analysis (15.0 Marks)',
       solutionA: '0.020 M Potassium Manganate(VII) (KMnO₄)',
-      solutionB: 'Acidified Ammonium Iron(II) Sulfate [(NH₄)₂Fe(SO₄)₂·6H₂O] (39.2 g/dm³)',
+      solutionB: 'Acidified Ammonium Iron(II) Sulfate [(NH₄)₂Fe(SO₄)₂·6H₂O] solution',
       acidFormula: 'KMnO4',
       baseFormula: 'Fe2+',
       indicator: 'Self-indicating (KMnO₄)',
@@ -886,7 +938,7 @@ const COMPOSITE_EXAM_PRESETS = {
       endpointColor: 'rgba(236,72,153,0.7)',
       equation: 'MnO₄⁻(aq) + 5Fe²⁺(aq) + 8H⁺(aq) → Mn²⁺(aq) + 5Fe³⁺(aq) + 4H₂O(l)',
       instructions: 'Titrate 25.0 cm³ of acidified Solution B with Solution A until the first permanent pale pink coloration persists for at least 30 seconds.',
-      questions: createStandardTitrationQuestions({ acidRfm: 392.0, pipetteVolume: 25.0 })
+      questions: createStandardTitrationQuestions({ baseRfm: 392.0, pipetteVolume: 25.0 })
     },
     q2: {
       type: 'qualitative_single',
@@ -1095,7 +1147,7 @@ const COMPOSITE_EXAM_PRESETS = {
       calcType: 'standard_molarity',
       title: 'Question 1: Volumetric Analysis — Dibasic Organic Acid (15.0 Marks)',
       solutionA: '0.050 M Ethanedioic Acid (H₂C₂O₄·2H₂O)',
-      solutionB: '0.100 M Sodium Hydroxide (NaOH) containing 4.00 g/dm³',
+      solutionB: 'Sodium Hydroxide (NaOH) solution',
       acidFormula: 'H2C2O4',
       baseFormula: 'NaOH',
       indicator: 'Phenolphthalein',
@@ -1113,7 +1165,7 @@ const COMPOSITE_EXAM_PRESETS = {
       endpointColor: 'rgba(255,255,255,0.35)',
       equation: 'H₂C₂O₄(aq) + 2NaOH(aq) → Na₂C₂O₄(aq) + 2H₂O(l)',
       instructions: 'Titrate 25.0 cm³ of Solution B with Solution A until the pink color turns permanently colorless.',
-      questions: createStandardTitrationQuestions({ acidRfm: 126.0, pipetteVolume: 25.0 })
+      questions: createStandardTitrationQuestions({ baseRfm: 40.0, pipetteVolume: 25.0 })
     },
     q2: {
       type: 'qualitative_single',
@@ -1202,7 +1254,7 @@ const COMPOSITE_EXAM_PRESETS = {
       calcType: 'standard_molarity',
       title: 'Question 1: Volumetric Analysis (15.0 Marks)',
       solutionA: '0.050 M Hydrated Ethanedioic Acid (H₂C₂O₄·2H₂O)',
-      solutionB: 'Sodium Hydroxide (NaOH) containing 4.00 g/dm³',
+      solutionB: 'Sodium Hydroxide (NaOH) solution',
       acidFormula: 'H2C2O4',
       baseFormula: 'NaOH',
       indicator: 'Phenolphthalein',
@@ -2885,6 +2937,8 @@ if (typeof window !== 'undefined') {
   window.createPercentagePurityQuestions = createPercentagePurityQuestions;
   window.createRamMetalQuestions = createRamMetalQuestions;
   window.getAnswerValue = getAnswerValue;
+  window.sanitizeAnalyteDisplay = sanitizeAnalyteDisplay;
+  window.sanitizeInstructions = sanitizeInstructions;
 }
 
 if (typeof module !== 'undefined' && module.exports) {
@@ -2896,6 +2950,8 @@ if (typeof module !== 'undefined' && module.exports) {
     createWaterOfCrystallizationQuestions,
     createPercentagePurityQuestions,
     createRamMetalQuestions,
-    getAnswerValue
+    getAnswerValue,
+    sanitizeAnalyteDisplay,
+    sanitizeInstructions
   };
 }

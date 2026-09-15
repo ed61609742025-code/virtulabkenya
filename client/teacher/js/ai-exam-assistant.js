@@ -524,7 +524,15 @@
     const vB = parseFloat(q1.pipetteVolume) || 25.0;
 
     q1.trueTitre = Number(((nA * cB * vB) / (nB * cA)).toFixed(2));
-    q1.instructions = `You are provided with ${q1.solutionA} and ${q1.solutionB}. Pipette ${vB.toFixed(1)} cm³ of Solution B into a conical flask and titrate with Solution A using ${q1.indicator} indicator.`;
+    const cleanSolBInst = (q1.solutionB || 'Solution B')
+      .replace(/(?:~\s*)?\b\d+(?:\.\d+)?\s*M\b/gi, '')
+      .replace(/\s*containing\s+\d+(?:\.\d+)?\s*g\/(?:dm³|dm3|l|liter|litre)/gi, '')
+      .replace(/\s*\(\s*\d+(?:\.\d+)?\s*g\/(?:dm³|dm3|l|liter|litre)\s*\)/gi, '')
+      .trim()
+      .replace(/^[,;\-~ \t]+|[,;\-~ \t]+$/g, '')
+      .replace(/\s{2,}/g, ' ');
+    const solBInstructionName = cleanSolBInst && !/solution|sample/i.test(cleanSolBInst) ? `${cleanSolBInst} solution` : (cleanSolBInst || 'Solution B');
+    q1.instructions = `You are provided with ${q1.solutionA} and ${solBInstructionName}. Pipette ${vB.toFixed(1)} cm³ of Solution B into a conical flask and titrate with Solution A using ${q1.indicator} indicator.`;
 
     // Re-render other tabs
     renderStudentPaperTab(currentExamDraft);
@@ -957,7 +965,7 @@
                   <button type="button" class="btn btn-sm btn-secondary" style="font-size:0.72rem;padding:2px 8px;" onclick="quickSetConcB(0.20)">0.20M</button>
                 </div>
               </div>
-              <input type="text" class="form-control form-control-sm" style="font-weight:700;" value="${escapeHtml(config.solutionB || '0.100 M Sodium Hydroxide (NaOH)')}" onchange="updateBlueprintSolB(this.value)">
+              <input type="text" class="form-control form-control-sm" style="font-weight:700;" value="${escapeHtml(config.solutionB || 'Sodium Hydroxide (NaOH) solution')}" onchange="updateBlueprintSolB(this.value)">
             </div>
 
             <div class="bp-param-row" style="align-items:center;">
@@ -1218,6 +1226,35 @@
     const q2 = cfg.q2 || {};
     const q3 = cfg.q3 || {};
 
+    const sanitizeAnalyte = window.sanitizeAnalyteDisplay || function(name, qList = []) {
+      if (!name || typeof name !== 'string') return name || '';
+      let s = name;
+      const asksMolarity = qList.some(q => q.field === 'molarityB' || /molar(?:ity| concentration) .* (?:solution b|base|analyte)/i.test(q.label || q.text || ''));
+      const asksConc = qList.some(q => q.field === 'concGrams' || /concentration of solution b in g\/(?:dm³|dm3|l)/i.test(q.label || q.text || ''));
+      const hasBoth = /\b\d+(?:\.\d+)?\s*M\b/i.test(s) && /g\/(?:dm³|dm3|l)/i.test(s);
+      if (asksMolarity || hasBoth) s = s.replace(/(?:~\s*)?\b\d+(?:\.\d+)?\s*M\b/gi, '');
+      if (asksConc || hasBoth) {
+        s = s.replace(/\s*containing\s+\d+(?:\.\d+)?\s*g\/(?:dm³|dm3|l|liter|litre)/gi, '')
+             .replace(/\s*\(\s*\d+(?:\.\d+)?\s*g\/(?:dm³|dm3|l|liter|litre)\s*\)/gi, '');
+      }
+      s = s.trim().replace(/^[,;\-~ \t]+|[,;\-~ \t]+$/g, '').replace(/\s{2,}/g, ' ');
+      if (s && !/solution|sample|containing/i.test(s)) s += ' solution';
+      return s;
+    };
+
+    const sanitizeInst = window.sanitizeInstructions || function(text, qList = []) {
+      if (!text || typeof text !== 'string') return text || '';
+      let s = text;
+      const asksMolarity = qList.some(q => q.field === 'molarityB' || /molar(?:ity| concentration) .* (?:solution b|base|analyte)/i.test(q.label || q.text || ''));
+      const asksConc = qList.some(q => q.field === 'concGrams' || /concentration of solution b in g\/(?:dm³|dm3|l)/i.test(q.label || q.text || ''));
+      if (asksMolarity) s = s.replace(/(?:~\s*)?\b\d+(?:\.\d+)?\s*M\s+(Sodium\s+Hydroxide|Solution\s+B|NaOH|Ammonium\s+Iron)/gi, '$1');
+      if (asksConc) {
+        s = s.replace(/\s*containing\s+\d+(?:\.\d+)?\s*g\/(?:dm³|dm3|l|liter|litre)/gi, '')
+             .replace(/\s*\(\s*\d+(?:\.\d+)?\s*g\/(?:dm³|dm3|l|liter|litre)\s*\)/gi, '');
+      }
+      return s;
+    };
+
     const container = document.getElementById('subTabPane_studentPaper');
     if (!container) return;
 
@@ -1286,11 +1323,11 @@
                     <h5 style="margin:0 0 8px 0; color:var(--heading-color); font-size:0.92rem; font-weight:800;">
                       ${escapeHtml(proc.title || `PROCEDURE ${procNum}`)}
                     </h5>
-                    ${proc.instructions ? `<div style="font-size:0.84rem; line-height:1.6; margin-bottom:12px; white-space:pre-wrap;">${formatInlineMarkdown(escapeHtml(proc.instructions))}</div>` : ''}
+                    ${proc.instructions ? `<div style="font-size:0.84rem; line-height:1.6; margin-bottom:12px; white-space:pre-wrap;">${formatInlineMarkdown(escapeHtml(sanitizeInst(proc.instructions, procQuestions)))}</div>` : ''}
                     
                     <div style="background:rgba(255,255,255,0.02); border:1px solid var(--card-border); border-radius:6px; padding:10px 14px; margin-bottom:14px; font-size:0.83rem; line-height:1.7;">
                       <div><b>Burette (Titrant):</b> ${formatChemicalFormula(escapeHtml(proc.solutionA || 'Standard Solution in Burette'))}</div>
-                      <div><b>Conical Flask (Analyte):</b> ${formatChemicalFormula(escapeHtml(proc.solutionB || 'Solution in Conical Flask'))} (${proc.pipetteVolume || 25.0} cm³)</div>
+                      <div><b>Conical Flask (Analyte):</b> ${formatChemicalFormula(escapeHtml(sanitizeAnalyte(proc.solutionB, procQuestions) || 'Solution in Conical Flask'))} (${proc.pipetteVolume || 25.0} cm³)</div>
                       <div><b>Indicator:</b> ${escapeHtml(proc.indicator || 'Phenolphthalein')}</div>
                     </div>
 
@@ -1350,10 +1387,10 @@
               <p style="font-size:0.85rem; line-height:1.6;">You are provided with:</p>
               <ul style="font-size:0.84rem; line-height:1.7; margin-left:20px;">
                 <li><b>Solution A:</b> ${formatChemicalFormula(escapeHtml(c1.solutionA || 'Standard Solution A'))}</li>
-                <li><b>Solution B:</b> ${formatChemicalFormula(escapeHtml(c1.solutionB || 'Solution B Sample'))}</li>
+                <li><b>Solution B:</b> ${formatChemicalFormula(escapeHtml(sanitizeAnalyte(c1.solutionB, questionsList) || 'Solution B Sample'))}</li>
                 <li><b>Indicator:</b> ${escapeHtml(c1.indicator || 'Phenolphthalein')}</li>
               </ul>
-              <p style="font-size:0.84rem; line-height:1.6;">${escapeHtml(c1.instructions || q.prompt || 'You are required to titrate Solution B with Solution A and determine its concentration.')}</p>
+              <p style="font-size:0.84rem; line-height:1.6;">${escapeHtml(sanitizeInst(c1.instructions, questionsList) || q.prompt || 'You are required to titrate Solution B with Solution A and determine its concentration.')}</p>
               
               <div style="margin:14px 0;">
                 <div style="font-weight:700; font-size:0.82rem; margin-bottom:6px;">${escapeHtml(c1.tableTitle || 'Table 1: Candidate Burette Titration Results')} [${c1.tableMarks || 5.0} Marks]</div>

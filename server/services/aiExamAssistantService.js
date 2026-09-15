@@ -24,7 +24,7 @@ const FALLBACK_PRESETS = {
       q1: {
         calcType: 'redox_stoichiometry',
         solutionA: '0.020 M Potassium Manganate(VII) (KMnO₄)',
-        solutionB: 'Ammonium Iron(II) Sulfate [(NH₄)₂Fe(SO₄)₂·6H₂O] ~0.100 M',
+        solutionB: 'Acidified Ammonium Iron(II) Sulfate [(NH₄)₂Fe(SO₄)₂·6H₂O] solution',
         ratioA: 1,
         ratioB: 5,
         pipetteVolume: 25.0,
@@ -152,7 +152,7 @@ const FALLBACK_PRESETS = {
       q1: {
         calcType: 'standard_molarity',
         solutionA: '0.100 M Hydrochloric Acid (HCl)',
-        solutionB: 'Sodium Hydroxide (NaOH) ~0.100 M',
+        solutionB: 'Sodium Hydroxide (NaOH) solution',
         ratioA: 1,
         ratioB: 1,
         pipetteVolume: 25.0,
@@ -1610,7 +1610,15 @@ function applySmartRefinement(currentDraft, instruction) {
   // ============================================================
   // 8. SYNCHRONIZE MARKING SCHEME & TECHNICIAN GUIDE
   // ============================================================
-  q1.instructions = `You are provided with ${q1.solutionA} and ${q1.solutionB}. Pipette ${Number(q1.pipetteVolume || 25.0).toFixed(1)} cm³ of Solution B into a conical flask and titrate with Solution A using ${q1.indicator} indicator.`;
+  const cleanSolBInst = (q1.solutionB || 'Solution B')
+    .replace(/(?:~\s*)?\b\d+(?:\.\d+)?\s*M\b/gi, '')
+    .replace(/\s*containing\s+\d+(?:\.\d+)?\s*g\/(?:dm³|dm3|l|liter|litre)/gi, '')
+    .replace(/\s*\(\s*\d+(?:\.\d+)?\s*g\/(?:dm³|dm3|l|liter|litre)\s*\)/gi, '')
+    .trim()
+    .replace(/^[,;\-~ \t]+|[,;\-~ \t]+$/g, '')
+    .replace(/\s{2,}/g, ' ');
+  const solBInstructionName = cleanSolBInst && !/solution|sample/i.test(cleanSolBInst) ? `${cleanSolBInst} solution` : (cleanSolBInst || 'Solution B');
+  q1.instructions = `You are provided with ${q1.solutionA} and ${solBInstructionName}. Pipette ${Number(q1.pipetteVolume || 25.0).toFixed(1)} cm³ of Solution B into a conical flask and titrate with Solution A using ${q1.indicator} indicator.`;
   updated.markingScheme = generateSynchronizedMarkingScheme(updated);
   updated.confidentialPrepGuide = generateSynchronizedPrepGuide(updated);
 

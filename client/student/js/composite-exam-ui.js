@@ -3009,175 +3009,343 @@ requireStudentLogin();
   function printKCSEBooklet() {
     const evalData = engine.evaluateExam();
     const p = engine.preset;
+    const user = (typeof Auth !== 'undefined' && Auth.getUser) ? (Auth.getUser() || {}) : {};
+    const candidateName = user.name || 'Candidate Student';
+    const candidateIndex = user.indexNumber || user.email || '233001/001';
+    const examDate = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 
-    // Populate Q1 Print Table (supports multi-procedure titrations)
+    // Populate Header & Identity Metadata
+    const nameEl = document.getElementById('printCandidateName');
+    if (nameEl) nameEl.textContent = candidateName;
+    const idxEl = document.getElementById('printCandidateIndex');
+    if (idxEl) idxEl.textContent = candidateIndex;
+    const dateEl = document.getElementById('printExamDate');
+    if (dateEl) dateEl.textContent = examDate;
+    const seriesEl = document.getElementById('printSeriesName');
+    if (seriesEl) seriesEl.textContent = p.title || p.badgeText || 'KCSE Paper 3 Practical';
+    const titleEl = document.getElementById('printExamTitle');
+    if (titleEl) titleEl.textContent = `${p.title || 'KCSE Chemistry Paper 3 Practical Examination'} · Official Marked Script`;
+
+    // Populate Examiner Scorecard Grid
+    const q1ScoreEl = document.getElementById('pScoreQ1');
+    if (q1ScoreEl) q1ScoreEl.textContent = `${evalData.q1Score.toFixed(1)} / 15.0`;
+    const q2ScoreEl = document.getElementById('pScoreQ2');
+    if (q2ScoreEl) q2ScoreEl.textContent = `${evalData.q2Score.toFixed(1)} / 15.0`;
+    const q3ScoreEl = document.getElementById('pScoreQ3');
+    if (q3ScoreEl) q3ScoreEl.textContent = `${evalData.q3Score.toFixed(1)} / 10.0`;
+    const totScoreEl = document.getElementById('printTotalScore');
+    if (totScoreEl) totScoreEl.textContent = `${evalData.totalScore.toFixed(1)} / 40.0`;
+    const grdBadgeEl = document.getElementById('pGrade');
+    if (grdBadgeEl) grdBadgeEl.textContent = `Grade ${evalData.grade} (${evalData.percentage}%)`;
+
+    // 1. Populate Q1 Print Table & Calculations
     let q1Html = '';
+    const q1Rubric = evalData.q1Details?.rubric || [];
+    const tableCriteria = q1Rubric.filter(r => ['CT', 'D', 'AC', 'PA', 'FA'].includes(r.code));
+    const calcCriteria = q1Rubric.filter(r => !['CT', 'D', 'AC', 'PA', 'FA'].includes(r.code));
+
     if (p.q1?.hasMultipleProcedures && Array.isArray(p.q1.procedures) && p.q1.procedures.length > 1) {
       p.q1.procedures.forEach((proc, pIdx) => {
         const pTrials = engine.getProcedureTrials(pIdx);
         const pAnswers = engine.getProcedureAnswers(pIdx);
         q1Html += `
-          <div style="margin-top:${pIdx > 0 ? '12px' : '0'}; margin-bottom:6px; font-weight:bold;">
+          <div style="margin-top:${pIdx > 0 ? '10px' : '0'}; margin-bottom:4px; font-weight:bold; font-size:9pt;">
             ${escapeHtml(proc.title || `Procedure ${pIdx === 0 ? 'I' : 'II'}`)} — ${escapeHtml(proc.tableTitle || `Table ${pIdx + 1}`)} (${Number(proc.tableMarks || 4).toFixed(1)} Marks)
           </div>
-          <table style="width:100%; border-collapse:collapse; margin-bottom:8px; font-size:0.8rem;">
-            <tr style="background:#f1f5f9;">
-              <th style="border:1px solid #000; padding:4px;">Titration Trial</th>
-              <th style="border:1px solid #000; padding:4px;">I</th>
-              <th style="border:1px solid #000; padding:4px;">II</th>
-              <th style="border:1px solid #000; padding:4px;">III</th>
-            </tr>
-            <tr>
-              <td style="border:1px solid #000; padding:4px;">Final Reading (cm³)</td>
-              <td style="border:1px solid #000; padding:4px; text-align:center;">${(pTrials[0]?.final || 0).toFixed(2)}</td>
-              <td style="border:1px solid #000; padding:4px; text-align:center;">${(pTrials[1]?.final || 0).toFixed(2)}</td>
-              <td style="border:1px solid #000; padding:4px; text-align:center;">${(pTrials[2]?.final || 0).toFixed(2)}</td>
-            </tr>
-            <tr>
-              <td style="border:1px solid #000; padding:4px;">Initial Reading (cm³)</td>
-              <td style="border:1px solid #000; padding:4px; text-align:center;">${(pTrials[0]?.initial || 0).toFixed(2)}</td>
-              <td style="border:1px solid #000; padding:4px; text-align:center;">${(pTrials[1]?.initial || 0).toFixed(2)}</td>
-              <td style="border:1px solid #000; padding:4px; text-align:center;">${(pTrials[2]?.initial || 0).toFixed(2)}</td>
-            </tr>
-            <tr style="font-weight:bold;">
-              <td style="border:1px solid #000; padding:4px;">Volume of Titrant Used (cm³)</td>
-              <td style="border:1px solid #000; padding:4px; text-align:center;">${(pTrials[0]?.used || 0).toFixed(2)}</td>
-              <td style="border:1px solid #000; padding:4px; text-align:center;">${(pTrials[1]?.used || 0).toFixed(2)}</td>
-              <td style="border:1px solid #000; padding:4px; text-align:center;">${(pTrials[2]?.used || 0).toFixed(2)}</td>
-            </tr>
+          <table class="knec-ledger-table" style="text-align:center;">
+            <thead>
+              <tr>
+                <th style="text-align:left;">Titration Trial</th>
+                <th style="text-align:center;width:20%;">I (Rough)</th>
+                <th style="text-align:center;width:20%;">II</th>
+                <th style="text-align:center;width:20%;">III</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;">Final Reading (cm³)</td>
+                <td>${(pTrials[0]?.final || 0).toFixed(2)}</td>
+                <td>${(pTrials[1]?.final || 0).toFixed(2)}</td>
+                <td>${(pTrials[2]?.final || 0).toFixed(2)}</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;">Initial Reading (cm³)</td>
+                <td>${(pTrials[0]?.initial || 0).toFixed(2)}</td>
+                <td>${(pTrials[1]?.initial || 0).toFixed(2)}</td>
+                <td>${(pTrials[2]?.initial || 0).toFixed(2)}</td>
+              </tr>
+              <tr style="font-weight:bold;background:#f8fafc;">
+                <td style="text-align:left;">Volume of Titrant Used (cm³)</td>
+                <td>${(pTrials[0]?.used || 0).toFixed(2)}</td>
+                <td>${(pTrials[1]?.used || 0).toFixed(2)}</td>
+                <td>${(pTrials[2]?.used || 0).toFixed(2)}</td>
+              </tr>
+            </tbody>
           </table>
-          ${(proc.questions || []).map(q => {
-            const fieldKey = q.field || q.id;
-            const ans = pAnswers[fieldKey] !== undefined ? pAnswers[fieldKey] : (pAnswers[q.id] || '—');
-            return `<div>(${escapeHtml(q.letter || q.id)}) ${escapeHtml(q.label)}: <b>${ans} ${escapeHtml(q.unit || '')}</b></div>`;
-          }).join('')}
+          <div style="font-size:8.5pt;margin-top:6px;">
+            ${(proc.questions || []).map(q => {
+              const fieldKey = q.field || q.id;
+              const ans = pAnswers[fieldKey] !== undefined ? pAnswers[fieldKey] : (pAnswers[q.id] || '—');
+              return `<div>(${escapeHtml(q.letter || q.id)}) ${escapeHtml(q.label)}: <b>${ans} ${escapeHtml(q.unit || '')}</b></div>`;
+            }).join('')}
+          </div>
         `;
       });
     } else if (p.q1 && engine.q1Trials) {
       q1Html = `
-        <div style="margin-bottom:8px;"><b>Table 1: Titration Results</b></div>
-        <table style="width:100%; border-collapse:collapse; margin-bottom:8px; font-size:0.8rem;">
-          <tr style="background:#f1f5f9;">
-            <th style="border:1px solid #000; padding:4px;">Titration Trial</th>
-            <th style="border:1px solid #000; padding:4px;">I</th>
-            <th style="border:1px solid #000; padding:4px;">II</th>
-            <th style="border:1px solid #000; padding:4px;">III</th>
-          </tr>
-          <tr>
-            <td style="border:1px solid #000; padding:4px;">Final Burette Reading (cm³)</td>
-            <td style="border:1px solid #000; padding:4px; text-align:center;">${(engine.q1Trials[0]?.final || 0).toFixed(2)}</td>
-            <td style="border:1px solid #000; padding:4px; text-align:center;">${(engine.q1Trials[1]?.final || 0).toFixed(2)}</td>
-            <td style="border:1px solid #000; padding:4px; text-align:center;">${(engine.q1Trials[2]?.final || 0).toFixed(2)}</td>
-          </tr>
-          <tr>
-            <td style="border:1px solid #000; padding:4px;">Initial Burette Reading (cm³)</td>
-            <td style="border:1px solid #000; padding:4px; text-align:center;">${(engine.q1Trials[0]?.initial || 0).toFixed(2)}</td>
-            <td style="border:1px solid #000; padding:4px; text-align:center;">${(engine.q1Trials[1]?.initial || 0).toFixed(2)}</td>
-            <td style="border:1px solid #000; padding:4px; text-align:center;">${(engine.q1Trials[2]?.initial || 0).toFixed(2)}</td>
-          </tr>
-          <tr style="font-weight:bold;">
-            <td style="border:1px solid #000; padding:4px;">Volume of Solution A Used (cm³)</td>
-            <td style="border:1px solid #000; padding:4px; text-align:center;">${(engine.q1Trials[0]?.used || 0).toFixed(2)}</td>
-            <td style="border:1px solid #000; padding:4px; text-align:center;">${(engine.q1Trials[1]?.used || 0).toFixed(2)}</td>
-            <td style="border:1px solid #000; padding:4px; text-align:center;">${(engine.q1Trials[2]?.used || 0).toFixed(2)}</td>
-          </tr>
+        <div style="margin-bottom:4px;font-weight:bold;font-size:9pt;">Table 1: Titration Results (5.0 Marks)</div>
+        <table class="knec-ledger-table" style="text-align:center;">
+          <thead>
+            <tr>
+              <th style="text-align:left;">Titration Trial</th>
+              <th style="text-align:center;width:20%;">I (Rough)</th>
+              <th style="text-align:center;width:20%;">II</th>
+              <th style="text-align:center;width:20%;">III</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="text-align:left;">Final Burette Reading (cm³)</td>
+              <td>${(engine.q1Trials[0]?.final || 0).toFixed(2)}</td>
+              <td>${(engine.q1Trials[1]?.final || 0).toFixed(2)}</td>
+              <td>${(engine.q1Trials[2]?.final || 0).toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td style="text-align:left;">Initial Burette Reading (cm³)</td>
+              <td>${(engine.q1Trials[0]?.initial || 0).toFixed(2)}</td>
+              <td>${(engine.q1Trials[1]?.initial || 0).toFixed(2)}</td>
+              <td>${(engine.q1Trials[2]?.initial || 0).toFixed(2)}</td>
+            </tr>
+            <tr style="font-weight:bold;background:#f8fafc;">
+              <td style="text-align:left;">Volume of Solution A Used (cm³)</td>
+              <td>${(engine.q1Trials[0]?.used || 0).toFixed(2)}</td>
+              <td>${(engine.q1Trials[1]?.used || 0).toFixed(2)}</td>
+              <td>${(engine.q1Trials[2]?.used || 0).toFixed(2)}</td>
+            </tr>
+          </tbody>
         </table>
-        ${((p.q1?.questions) || []).map(q => {
-          const fieldKey = q.field || q.id;
-          const ans = engine.q1Answers[fieldKey] !== undefined ? engine.q1Answers[fieldKey] : (engine.q1Answers[q.id] || '—');
-          return `<div>(${q.letter || ''}) ${q.label || ''}: <b>${ans} ${q.unit || ''}</b></div>`;
-        }).join('')}
+
+        <!-- Table 1 Rubric Breakdown -->
+        <div class="knec-rubric-criteria-box">
+          <span style="font-weight:bold;margin-right:4px;">Table 1 Criteria:</span>
+          ${tableCriteria.map(c => `
+            <span><b>[${c.code}]</b> ${c.pass ? '✓' : '✗'} <span style="color:#dc2626;">${c.mark.toFixed(1)}/${c.max.toFixed(1)}</span></span>
+          `).join(' &nbsp;·&nbsp; ')}
+        </div>
+
+        <!-- Calculation Sub-Questions -->
+        <div style="font-size:9pt;margin-top:8px;">
+          <div style="font-weight:bold;margin-bottom:6px;">Calculations & Stoichiometric Determination (10.0 Marks):</div>
+          ${((p.q1?.questions) || []).map((q, qIdx) => {
+            const fieldKey = q.field || q.id;
+            const ans = engine.q1Answers[fieldKey] !== undefined ? engine.q1Answers[fieldKey] : (engine.q1Answers[q.id] || '—');
+            const stepRubric = calcCriteria.find(c => c.item && c.item.toLowerCase().includes(`(${q.letter || ''})`)) || calcCriteria[qIdx] || {};
+            const pass = Boolean(stepRubric.pass);
+            const mark = Number(stepRubric.mark || 0);
+            const max = Number(stepRubric.max || q.marks || 2.0);
+
+            return `
+              <div style="margin-bottom:6px;padding:4px 8px;border-left:2px solid #000;background:#fcfcfc;">
+                <div style="display:flex;justify-content:space-between;">
+                  <span><b>(${q.letter || ''})</b> ${escapeHtml(q.label || '')}</span>
+                  <span style="font-weight:bold;color:#dc2626;">${mark.toFixed(1)} / ${max.toFixed(1)} Mk</span>
+                </div>
+                <div style="font-size:8.5pt;margin-top:2px;">
+                  Candidate Answer: <b>${escapeHtml(String(ans))} ${escapeHtml(q.unit || '')}</b>
+                  <span class="${pass ? 'knec-examiner-tick' : 'knec-examiner-cross'}">${pass ? '✓' : '✗'}</span>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
       `;
     }
     const printQ1El = document.getElementById('printQ1Content');
     if (printQ1El && q1Html) printQ1El.innerHTML = q1Html;
 
-    // Populate Q2 Print Table
+    // 2. Populate Q2 Print Table
+    const q2RubricMap = {};
+    (evalData.q2Details?.rubric || []).forEach((r, idx) => {
+      const code = r.code || `Q2_${String.fromCharCode(97 + idx)}`;
+      q2RubricMap[code] = r;
+    });
+
     let q2Html = '';
     if (p.q2 && Array.isArray(p.q2.tests) && p.q2.tests.length > 0) {
       q2Html = `
-      <table style="width:100%; border-collapse:collapse; margin-bottom:8px; font-size:0.8rem;">
-        <tr style="background:#f1f5f9;">
-          <th style="border:1px solid #000; padding:4px; width:45%;">Test / Procedure</th>
-          <th style="border:1px solid #000; padding:4px; width:30%;">Candidate Observations</th>
-          <th style="border:1px solid #000; padding:4px; width:25%;">Candidate Inferences</th>
-        </tr>
-        ${p.q2.tests.map(t => `
-          <tr>
-            <td style="border:1px solid #000; padding:4px;">${t.prompt}</td>
-            <td style="border:1px solid #000; padding:4px;">${engine.q2Obs[t.id] || '—'}</td>
-            <td style="border:1px solid #000; padding:4px;">${engine.q2Inf[t.id] || '—'}</td>
-          </tr>
-        `).join('')}
-      </table>
-      ${p.q2?.hasDeduction ? `<div><b>Final Deductions:</b> Cation: <u>${engine.q2CationChoice || '—'}</u> &nbsp;|&nbsp; Anion: <u>${engine.q2AnionChoice || '—'}</u></div>` : ''}
-    `;
+        <div style="font-size:9pt;margin-bottom:6px;color:#333;">
+          Sample: <b>${escapeHtml(p.q2.sampleName || 'Solid Y')}</b> — ${escapeHtml(p.q2.sampleDesc || '')}
+        </div>
+        <table class="knec-ledger-table">
+          <thead>
+            <tr>
+              <th style="width:42%;">Test / Procedure</th>
+              <th style="width:29%;">Candidate Observations</th>
+              <th style="width:29%;">Candidate Inferences</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${p.q2.tests.map((t, idx) => {
+              const code = `Q2_${String.fromCharCode(97 + idx)}`;
+              const rubricItem = q2RubricMap[code] || {};
+              const pass = Boolean(rubricItem.pass);
+              const mark = Number(rubricItem.mark || 0);
+              const max = Number(rubricItem.max || 2.0);
+              const obsText = engine.q2Obs[t.id] || '—';
+              const infText = engine.q2Inf[t.id] || '—';
+              const markTag = `<div class="knec-examiner-mark-tag">${mark.toFixed(1)} / ${max.toFixed(1)} Mks</div>`;
+              const schemeCorrection = (!pass && t.correctObs && t.correctInf) ? `
+                <div class="knec-scheme-correction">
+                  <b>KNEC Scheme:</b> Obs: "${escapeHtml(t.correctObs)}" | Infs: "${escapeHtml(t.correctInf)}"
+                </div>
+              ` : '';
+
+              return `
+                <tr>
+                  <td>
+                    <b>(${String.fromCharCode(97 + idx)})</b> ${escapeHtml(t.prompt)}
+                    ${markTag}
+                  </td>
+                  <td>
+                    <span>${escapeHtml(obsText)}</span>
+                    <span class="${pass ? 'knec-examiner-tick' : 'knec-examiner-cross'}">${pass ? '✓' : '✗'}</span>
+                    ${schemeCorrection}
+                  </td>
+                  <td>
+                    <span>${escapeHtml(infText)}</span>
+                    <span class="${pass ? 'knec-examiner-tick' : 'knec-examiner-cross'}">${pass ? '✓' : '✗'}</span>
+                  </td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+        ${p.q2?.hasDeduction ? `
+          <div style="font-size:9pt;margin-top:6px;padding:6px 10px;border:1px dashed #666;background:#fbfbfb;">
+            <b>Final Cation/Anion Deduction:</b> Cation: <u>${escapeHtml(engine.q2CationChoice || '—')}</u> &nbsp;|&nbsp; Anion: <u>${escapeHtml(engine.q2AnionChoice || '—')}</u>
+            <span style="float:right;font-weight:bold;color:#dc2626;">Expected: ${escapeHtml(p.q2.trueCation || '—')} / ${escapeHtml(p.q2.trueAnion || '—')}</span>
+          </div>
+        ` : ''}
+      `;
     }
     const printQ2El = document.getElementById('printQ2Content');
     if (printQ2El && q2Html) printQ2El.innerHTML = q2Html;
 
-    // Populate Q3 Print Table
+    // 3. Populate Q3 Print Table
+    const q3RubricMap = {};
+    (evalData.q3Details?.rubric || []).forEach((r, idx) => {
+      const code = r.code || `Q3_${String.fromCharCode(97 + idx)}`;
+      q3RubricMap[code] = r;
+    });
+
     const q3TestsList = (Array.isArray(p.q3?.tests) && p.q3.tests.length > 0) ? p.q3.tests : [];
     const isQ3Qual = p.q3?.simulationType === 'qualitative' || p.q3?.trueSaltKey || (p.q3?.sampleName && /solid/i.test(p.q3.sampleName));
     let q3Html = '';
     if (q3TestsList.length > 0) {
       q3Html = `
-      <table style="width:100%; border-collapse:collapse; margin-bottom:8px; font-size:0.8rem;">
-        <tr style="background:#f1f5f9;">
-          <th style="border:1px solid #000; padding:4px; width:45%;">Test / Procedure</th>
-          <th style="border:1px solid #000; padding:4px; width:30%;">Candidate Observations</th>
-          <th style="border:1px solid #000; padding:4px; width:25%;">Candidate Inferences</th>
-        </tr>
-        ${q3TestsList.map(t => `
-          <tr>
-            <td style="border:1px solid #000; padding:4px;">${t.prompt}</td>
-            <td style="border:1px solid #000; padding:4px;">${engine.q3Obs[t.id] || '—'}</td>
-            <td style="border:1px solid #000; padding:4px;">${engine.q3Inf[t.id] || '—'}</td>
-          </tr>
-        `).join('')}
-      </table>
-      ${!isQ3Qual && engine.q3FunctionalGroupChoice ? `<div><b>Functional Group Deduction:</b> <u>${engine.q3FunctionalGroupChoice || '—'}</u></div>` : ''}
-    `;
+        <div style="font-size:9pt;margin-bottom:6px;color:#333;">
+          Sample: <b>${escapeHtml(p.q3.sampleName || (isQ3Qual ? 'Solid P' : 'Liquid Z'))}</b> — ${escapeHtml(p.q3.sampleDesc || '')}
+        </div>
+        <table class="knec-ledger-table">
+          <thead>
+            <tr>
+              <th style="width:42%;">Test / Procedure</th>
+              <th style="width:29%;">Candidate Observations</th>
+              <th style="width:29%;">Candidate Inferences</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${q3TestsList.map((t, idx) => {
+              const code = `Q3_${String.fromCharCode(97 + idx)}`;
+              const rubricItem = q3RubricMap[code] || {};
+              const pass = Boolean(rubricItem.pass);
+              const mark = Number(rubricItem.mark || 0);
+              const max = Number(rubricItem.max || 2.0);
+              const obsText = engine.q3Obs[t.id] || '—';
+              const infText = engine.q3Inf[t.id] || '—';
+              const markTag = `<div class="knec-examiner-mark-tag">${mark.toFixed(1)} / ${max.toFixed(1)} Mks</div>`;
+              const schemeCorrection = (!pass && t.correctObs && t.correctInf) ? `
+                <div class="knec-scheme-correction">
+                  <b>KNEC Scheme:</b> Obs: "${escapeHtml(t.correctObs)}" | Infs: "${escapeHtml(t.correctInf)}"
+                </div>
+              ` : '';
+
+              return `
+                <tr>
+                  <td>
+                    <b>(${String.fromCharCode(97 + idx)})</b> ${escapeHtml(t.prompt)}
+                    ${markTag}
+                  </td>
+                  <td>
+                    <span>${escapeHtml(obsText)}</span>
+                    <span class="${pass ? 'knec-examiner-tick' : 'knec-examiner-cross'}">${pass ? '✓' : '✗'}</span>
+                    ${schemeCorrection}
+                  </td>
+                  <td>
+                    <span>${escapeHtml(infText)}</span>
+                    <span class="${pass ? 'knec-examiner-tick' : 'knec-examiner-cross'}">${pass ? '✓' : '✗'}</span>
+                  </td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+        ${!isQ3Qual && engine.q3FunctionalGroupChoice ? `
+          <div style="font-size:9pt;margin-top:6px;padding:6px 10px;border:1px dashed #666;background:#fbfbfb;">
+            <b>Functional Group Deduction:</b> <u>${escapeHtml(engine.q3FunctionalGroupChoice || '—')}</u>
+            <span style="float:right;font-weight:bold;color:#dc2626;">Expected: ${escapeHtml(p.q3.trueFunctionalGroup || '—')} (${escapeHtml(p.q3.trueOrganicName || '')})</span>
+          </div>
+        ` : ''}
+      `;
     }
     const printQ3El = document.getElementById('printQ3Content');
     if (printQ3El && q3Html) printQ3El.innerHTML = q3Html;
 
-    // Format any written questions or specialized simulator questions
+    // 4. Format Written / Specialized Simulator Questions
     const questionsList = window._examQuestionsList || [];
-    questionsList.forEach(q => {
-      const targetPrintEl = document.getElementById(`printQ${q.number}Content`);
-      if (q.simulationType === 'written' && targetPrintEl) {
-        const subQs = Array.isArray(q.subQuestions) ? q.subQuestions : [];
-        let wHtml = `
-          <div style="margin-bottom:6px;"><b>${escapeHtml(q.title || 'Written Question')}</b> (${Number(q.marks || 10).toFixed(1)} Marks)</div>
-          ${q.prompt ? `<div style="margin-bottom:8px; font-style:italic;">${escapeHtml(q.prompt)}</div>` : ''}
-        `;
-        if (subQs.length > 0) {
-          wHtml += subQs.map(sq => {
-            const ansInput = document.getElementById(`writtenAnswer_${q.number}_${sq.id}`);
-            const ans = ansInput ? (ansInput.value.trim() || '—') : '—';
-            return `
-              <div style="margin-bottom:8px;">
-                <div><b>(${escapeHtml(sq.id)})</b> ${escapeHtml(sq.text || '')} [${Number(sq.marks || 1).toFixed(1)} Mks]</div>
-                <div style="padding:4px 8px; border:1px solid #94a3b8; background:#f8fafc; margin-top:2px;">
-                  Candidate Answer: <b>${escapeHtml(ans)}</b>
-                </div>
-              </div>
-            `;
-          }).join('');
+    const extraContainer = document.getElementById('printExtraQuestionsContainer');
+    if (extraContainer) {
+      let extraHtml = '';
+      questionsList.forEach(q => {
+        if (q.simulationType === 'written') {
+          const subQs = Array.isArray(q.subQuestions) ? q.subQuestions : [];
+          extraHtml += `
+            <div class="knec-print-section">
+              <div class="knec-section-heading">${q.number}. QUESTION ${q.number}: ${escapeHtml(q.title || 'WRITTEN PRACTICAL')} (${Number(q.marks || 10).toFixed(1)} MARKS)</div>
+              ${q.prompt ? `<div style="font-size:8.5pt;font-style:italic;margin-bottom:6px;">${escapeHtml(q.prompt)}</div>` : ''}
+              ${subQs.map(sq => {
+                const ansInput = document.getElementById(`writtenAnswer_${q.number}_${sq.id}`);
+                const ans = ansInput ? (ansInput.value.trim() || '—') : '—';
+                return `
+                  <div style="margin-bottom:6px;padding:4px 8px;border-left:2px solid #000;background:#fcfcfc;">
+                    <div style="font-weight:bold;">(${escapeHtml(sq.id)}) ${escapeHtml(sq.text || '')} [${Number(sq.marks || 1).toFixed(1)} Mks]</div>
+                    <div style="font-size:8.5pt;margin-top:2px;">Candidate Answer: <b>${escapeHtml(ans)}</b></div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `;
         }
-        targetPrintEl.innerHTML = wHtml;
-      } else if (['energy', 'rates', 'gas', 'solubility'].includes(q.simulationType) && targetPrintEl) {
-        targetPrintEl.innerHTML = `
-          <div style="padding:8px 12px; border:1px solid #cbd5e1; background:#f8fafc; border-radius:4px;">
-            <b>${escapeHtml(q.title || 'Specialized Simulation')}</b> (${Number(q.marks || 15).toFixed(1)} Marks)<br>
-            <span style="font-size:0.8rem; color:#475569;">Interactive laboratory workbench session logged and saved.</span>
-          </div>
-        `;
-      }
-    });
+      });
+      extraContainer.innerHTML = extraHtml;
+    }
 
-    // Embed candidate plotted KNEC graph sheets
+    // 5. Chief Examiner Remarks
+    const diagNotes = evalData.diagnosticNotes || [];
+    const printDiagEl = document.getElementById('printDiagnosticNotes');
+    if (printDiagEl) {
+      printDiagEl.innerHTML = `
+        <div style="font-size:8.5pt;line-height:1.5;">
+          ${diagNotes.length > 0 ? `
+            <ul style="margin:4px 0 0 16px;padding:0;">
+              ${diagNotes.map(n => `<li>${escapeHtml(n)}</li>`).join('')}
+            </ul>
+          ` : '<div>Candidate demonstrated exemplary precision according to KNEC Paper 3 marking criteria.</div>'}
+        </div>
+      `;
+    }
+
+    // Embed candidate plotted KNEC graph sheets if any
     if (window.knecPlotters) {
       Object.keys(window.knecPlotters).forEach(k => {
         const plotter = window.knecPlotters[k];
@@ -3187,8 +3355,8 @@ requireStudentLogin();
           if (targetPrintEl) {
             const imgData = plotter.toDataURL();
             targetPrintEl.innerHTML += `
-              <div style="margin-top:14px; page-break-inside:avoid;">
-                <div style="font-weight:bold; font-size:0.85rem; margin-bottom:4px;">KNEC Examination Graph Sheet (Candidate Plotted):</div>
+              <div style="margin-top:10px; page-break-inside:avoid;">
+                <div style="font-weight:bold; font-size:8.5pt; margin-bottom:4px;">KNEC Examination Graph Sheet (Candidate Plotted):</div>
                 <img src="${imgData}" style="max-width:100%; height:auto; border:1px solid #000; display:block; margin:0 auto;" alt="KNEC Plotted Graph">
               </div>
             `;

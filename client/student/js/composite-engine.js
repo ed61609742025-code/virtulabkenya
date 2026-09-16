@@ -1474,6 +1474,120 @@ const COMPOSITE_EXAM_PRESETS = {
         }
       ]
     }
+  },
+
+  // ── Series 2022: Official KCSE 2022 Standard Chemistry Practical (Paper 233/3) ──
+  series_2022: {
+    id: 'series_2022',
+    seriesKey: 'series_2022',
+    seriesNumber: 2022,
+    title: 'KCSE 2022 Standard Chemistry Practical Examination',
+    badgeText: 'KCSE 2022 Past National Paper · Sodium Carbonate, Magnesium & Carboxylic Acid',
+    durationMinutes: 135,
+    q1: {
+      type: 'titration',
+      calcType: 'standard_molarity',
+      title: 'Question 1: Volumetric Analysis (15.0 Marks)',
+      solutionA: '0.100 M Hydrochloric Acid (HCl)',
+      solutionB: 'Sodium Carbonate (Na₂CO₃) solution',
+      acidFormula: 'HCl',
+      baseFormula: 'Na2CO3',
+      indicator: 'Methyl Orange',
+      pipetteVolume: 25.0,
+      trueAcidMolarity: 0.100,
+      trueBaseMolarity: 0.050,
+      trueTitre: 25.00,
+      moleRatioAcid: 2,
+      moleRatioBase: 1,
+      acidRfm: 36.5,
+      baseRfm: 106.0,
+      titrantColor: '#38BDF8',
+      flaskBaseColor: 'rgba(251,191,36,0.25)',
+      flaskIndicatorColor: 'rgba(251,191,36,0.85)',
+      endpointColor: 'rgba(239,68,68,0.7)',
+      overtitratedColor: 'rgba(185,28,28,0.95)',
+      equation: '2HCl(aq) + Na₂CO₃(aq) → 2NaCl(aq) + CO₂(g) + H₂O(l)',
+      instructions: 'Pipette 25.0 cm³ of Solution B into a clean conical flask. Add 2–3 drops of methyl orange indicator. Titrate with Solution A until the yellow color changes sharply to permanent orange-red.',
+      questions: createStandardTitrationQuestions({ baseRfm: 106.0, pipetteVolume: 25.0 })
+    },
+    q2: {
+      type: 'qualitative_single',
+      title: 'Question 2: Inorganic Salt Qualitative Analysis (15.0 Marks)',
+      sampleName: 'Solid Y',
+      sampleDesc: 'A white crystalline inorganic salt containing one cation and one anion.',
+      trueSaltKey: 'MgSO4',
+      trueSaltName: 'Magnesium Sulfate — MgSO₄',
+      trueCation: 'Mg2+',
+      trueAnion: 'SO42-',
+      hasDeduction: true,
+      tests: [
+        {
+          id: 'q2_heat',
+          prompt: '(i) Heat a half-spatula of Solid Y in a dry test tube gently, then strongly.',
+          correctObs: 'White crystalline solid loses luster and decomposes slightly; droplets of colorless liquid condense on upper cooler walls; white residue remains',
+          correctInf: 'Hydrated salt; loses water of crystallization'
+        },
+        {
+          id: 'q2_appearance',
+          prompt: '(ii) Dissolve the remainder of Solid Y in about 10 cm³ of distilled water in a boiling tube. Divide into 4 portions.',
+          correctObs: 'White crystalline solid dissolves completely to form a clear, colorless solution',
+          correctInf: 'Soluble salt; absence of colored transition metal ions (Cu²⁺, Fe²⁺, Fe³⁺ absent)'
+        },
+        {
+          id: 'q2_naoh',
+          prompt: '(iii) To portion 1, add 2M NaOH dropwise until in excess.',
+          correctObs: 'White precipitate formed, insoluble in excess sodium hydroxide',
+          correctInf: 'Mg²⁺, Ca²⁺, or Ba²⁺ present (Al³⁺, Pb²⁺, Zn²⁺ absent)'
+        },
+        {
+          id: 'q2_nh3',
+          prompt: '(iv) To portion 2, add 2M aqueous ammonia dropwise until in excess.',
+          correctObs: 'White precipitate formed, insoluble in excess aqueous ammonia',
+          correctInf: 'Mg²⁺ confirmed present (Ca²⁺ forms no precipitate with aqueous NH₃)'
+        },
+        {
+          id: 'q2_anion',
+          prompt: '(v) To portion 3, add 3 drops of Barium Nitrate solution followed by dilute nitric acid.',
+          correctObs: 'Dense white precipitate formed, insoluble in dilute nitric acid',
+          correctInf: 'SO₄²⁻ confirmed present (BaSO₄ formed)'
+        }
+      ]
+    },
+    q3: {
+      type: 'organic',
+      title: 'Question 3: Organic Functional Group Analysis (10.0 Marks)',
+      sampleName: 'Liquid Z',
+      sampleDesc: 'A colorless organic liquid with a pungent, vinegar-like odor.',
+      trueOrganicKey: 'Propanoic Acid',
+      trueOrganicName: 'Propanoic Acid — CH₃CH₂COOH',
+      trueFunctionalGroup: 'Carboxylic Acid (-COOH)',
+      tests: [
+        {
+          id: 'q3_ignition',
+          prompt: '(i) Place 2 drops of Liquid Z on a metallic spatula and ignite using a Bunsen flame.',
+          correctObs: 'Burns with a clean, non-sooty pale blue flame; sharp pungent odor; leaves no carbon residue',
+          correctInf: 'Saturated organic compound / low carbon-to-hydrogen ratio'
+        },
+        {
+          id: 'q3_litmus',
+          prompt: '(ii) Test 2 cm³ of Liquid Z with moist blue and red litmus paper.',
+          correctObs: 'Moist blue litmus paper turns red; red litmus paper remains red (pH ~ 3)',
+          correctInf: 'Acidic substance / H⁺ ions present / Carboxylic acid (—COOH)'
+        },
+        {
+          id: 'q3_kmno4',
+          prompt: '(iii) To 2 cm³ of Liquid Z, add 3 drops of acidified Potassium Manganate(VII) (KMnO₄) and warm gently.',
+          correctObs: 'Purple acidified KMnO₄ solution remains unchanged (purple color persists, not decolorized)',
+          correctInf: 'Alkene (>C=C<) and primary/secondary alkanol absent'
+        },
+        {
+          id: 'q3_nahco3',
+          prompt: '(iv) To 2 cm³ of Liquid Z, add a half spatula-end of solid Sodium Hydrogen Carbonate (NaHCO₃).',
+          correctObs: 'Brisk effervescence of a colorless gas that forms a white precipitate with limewater',
+          correctInf: 'Carboxylic acid (—COOH) confirmed present; CO₂ gas evolved'
+        }
+      ]
+    }
   }
 };
 
@@ -1485,7 +1599,7 @@ COMPOSITE_EXAM_PRESETS.standard_2 = COMPOSITE_EXAM_PRESETS.series_2;
  * Generate a dynamic randomized KCSE Paper 3 practical exam
  */
 function generateRandomCompositePreset() {
-  const seriesKeys = ['series_1', 'series_2', 'series_3', 'series_4', 'series_5', 'series_6', 'series_2023', 'series_2024'];
+  const seriesKeys = ['series_1', 'series_2', 'series_3', 'series_4', 'series_5', 'series_6', 'series_2022', 'series_2023', 'series_2024'];
   const q1PickKey = seriesKeys[Math.floor(Math.random() * seriesKeys.length)];
   const q2PickKey = seriesKeys[Math.floor(Math.random() * seriesKeys.length)];
   const q3PickKey = seriesKeys[Math.floor(Math.random() * seriesKeys.length)];

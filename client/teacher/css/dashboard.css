@@ -2479,4 +2479,234 @@ tr:hover td {
     break-inside: avoid !important;
     box-sizing: border-box !important;
   }
+}
+
+/* Dedicated Print Layout for Official KNEC Marked Scripts */
+@media print {
+  body.printing-knec-script * {
+    visibility: hidden !important;
+  }
+  body.printing-knec-script #teacherKnecPrintArea,
+  body.printing-knec-script #teacherKnecPrintArea * {
+    visibility: visible !important;
+  }
+  body.printing-knec-script #teacherKnecPrintArea {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    display: block !important;
+    background: #FFFFFF !important;
+    color: #000000 !important;
+    padding: 10mm 15mm !important;
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 10pt !important;
+    line-height: 1.35 !important;
+  }
+  body.printing-knec-script .knec-print-header {
+    text-align: center;
+    border-bottom: 2px solid #000;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+    page-break-inside: avoid;
+  }
+  body.printing-knec-script .knec-coat-arms {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 4px auto;
+    display: block;
+  }
+  body.printing-knec-script .knec-republic-text {
+    font-size: 14pt;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  body.printing-knec-script .knec-council-text {
+    font-size: 12pt;
+    font-weight: bold;
+    letter-spacing: 0.04em;
+    margin-top: 2px;
+  }
+  body.printing-knec-script .knec-exam-title {
+    font-size: 11pt;
+    font-weight: bold;
+    margin-top: 3px;
+  }
+  body.printing-knec-script .knec-paper-title {
+    font-size: 12pt;
+    font-weight: 900;
+    margin-top: 2px;
+    text-decoration: underline;
+  }
+  body.printing-knec-script .knec-paper-subtitle {
+    font-size: 9.5pt;
+    font-style: italic;
+    margin-top: 2px;
+  }
+  body.printing-knec-script .knec-duration-text {
+    font-size: 9.5pt;
+    font-weight: bold;
+    margin-top: 3px;
+  }
+  body.printing-knec-script .knec-print-meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: 12px;
+    border: 1.5px solid #000;
+    padding: 8px 10px;
+    margin-bottom: 14px;
+    background: #fafafa;
+    page-break-inside: avoid;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  body.printing-knec-script .knec-candidate-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+    font-size: 9pt;
+  }
+  body.printing-knec-script .knec-meta-row {
+    display: flex;
+    gap: 6px;
+  }
+  body.printing-knec-script .knec-meta-row span {
+    width: 125px;
+    font-weight: normal;
+    color: #222;
+  }
+  body.printing-knec-script .knec-meta-row b {
+    color: #000;
+  }
+  body.printing-knec-script .knec-examiner-grid-wrapper {
+    display: flex;
+    justify-content: flex-end;
+  }
+  body.printing-knec-script .knec-examiner-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 8.5pt;
+  }
+  body.printing-knec-script .knec-examiner-table th,
+  body.printing-knec-script .knec-examiner-table td {
+    border: 1px solid #000;
+    padding: 3px 5px;
+    text-align: center;
+  }
+  body.printing-knec-script .knec-examiner-table th {
+    background: #e2e8f0;
+    font-weight: bold;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  body.printing-knec-script .knec-total-row {
+    font-weight: bold;
+    background: #f1f5f9;
+  }
+  body.printing-knec-script .knec-red-score {
+    color: #dc2626 !important;
+    font-weight: bold;
+    font-size: 9.5pt;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+  }
+  body.printing-knec-script .knec-red-score-total {
+    color: #b91c1c !important;
+    font-weight: 900;
+    font-size: 10.5pt;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+  }
+  body.printing-knec-script .knec-grade-badge {
+    color: #047857 !important;
+    font-weight: 900;
+    font-size: 9.5pt;
+  }
+  body.printing-knec-script .knec-print-section {
+    margin-bottom: 14px;
+    page-break-inside: avoid;
+  }
+  body.printing-knec-script .knec-section-heading {
+    font-size: 10pt;
+    font-weight: bold;
+    background: #000000;
+    color: #ffffff !important;
+    padding: 3px 6px;
+    margin-bottom: 6px;
+    letter-spacing: 0.02em;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  body.printing-knec-script table.knec-ledger-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 8px;
+    font-size: 8.5pt;
+    page-break-inside: avoid;
+  }
+  body.printing-knec-script table.knec-ledger-table th,
+  body.printing-knec-script table.knec-ledger-table td {
+    border: 1px solid #000;
+    padding: 4px 5px;
+    vertical-align: top;
+  }
+  body.printing-knec-script table.knec-ledger-table th {
+    background: #f1f5f9;
+    font-weight: bold;
+    text-align: left;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  body.printing-knec-script .knec-examiner-tick {
+    color: #059669 !important;
+    font-weight: 900;
+    margin-left: 4px;
+  }
+  body.printing-knec-script .knec-examiner-cross {
+    color: #dc2626 !important;
+    font-weight: 900;
+    margin-left: 4px;
+  }
+  body.printing-knec-script .knec-examiner-mark-tag {
+    display: inline-block;
+    color: #dc2626 !important;
+    font-weight: bold;
+    font-size: 7.5pt;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    border: 1px solid #dc2626;
+    border-radius: 3px;
+    padding: 0 3px;
+    margin-top: 2px;
+  }
+  body.printing-knec-script .knec-scheme-correction {
+    font-size: 7.5pt;
+    color: #4b5563 !important;
+    font-style: italic;
+    margin-top: 2px;
+    padding-top: 2px;
+    border-top: 0.5px dashed #9ca3af;
+  }
+  body.printing-knec-script .knec-rubric-criteria-box {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 7.5pt;
+    border: 1px solid #000;
+    padding: 3px 6px;
+    background: #f8fafc;
+    margin-top: 4px;
+    margin-bottom: 6px;
+    page-break-inside: avoid;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  body.printing-knec-script .knec-examiner-remarks-section {
+    border: 1px solid #000;
+    padding: 8px 10px;
+    background: #fffbeb;
+    margin-top: 10px;
+    page-break-inside: avoid;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
 }

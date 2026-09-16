@@ -607,4 +607,176 @@ describe('KNEC Paper 3 Examination Suite Standards', () => {
     assert.ok(naohUpdated.mark > 1.5, 'Accurate Q2 observation and inference must score high marks');
     assert.strictEqual(naohUpdated.pass, true);
   });
+
+  it('should validate KCSE 2022 authentic national practical preset (HCl/Na2CO3, MgSO4, Propanoic Acid)', () => {
+    const engine2022 = new CompositeExamEngine({ presetKey: 'series_2022' });
+    assert.strictEqual(engine2022.preset.id, 'series_2022');
+    assert.strictEqual(engine2022.preset.q1.moleRatioAcid, 2, '2 moles of HCl react with 1 mole of Na2CO3');
+    assert.strictEqual(engine2022.preset.q1.moleRatioBase, 1);
+    assert.ok(/methyl\s*orange/i.test(engine2022.preset.q1.indicator));
+    assert.ok(engine2022.preset.q2.trueCation.includes('Mg'));
+    assert.ok(engine2022.preset.q2.trueAnion.includes('SO4'));
+    assert.strictEqual(engine2022.preset.q3.trueOrganicKey, 'Propanoic Acid');
+    assert.strictEqual(engine2022.preset.q3.trueFunctionalGroup, 'Carboxylic Acid (-COOH)');
+
+    // 1. Question 1 Titration Calculation
+    engine2022.recordTrial(1, 24.50, 0.00);
+    engine2022.recordTrial(2, 24.00, 0.00);
+    engine2022.recordTrial(3, 24.00, 0.00);
+    engine2022.setConcordant(2, true);
+    engine2022.setConcordant(3, true);
+
+    // Theoretical: 0.100 M HCl titrating 25.0 cm³ Na2CO3 (5.30 g/dm³ = 0.050 M)
+    // 2 moles HCl : 1 mole Na2CO3 -> Volume of HCl needed = 25.00 cm³
+    engine2022.setQ1Answer('avgTitre', '24.00'); // Step a
+    engine2022.setQ1Answer('molesA', '0.00240'); // (0.100 * 24.00) / 1000
+    engine2022.setQ1Answer('molesB', '0.00120'); // 0.00240 / 2
+    engine2022.setQ1Answer('molarityB', '0.0480'); // (0.00120 * 1000) / 25
+    engine2022.setQ1Answer('concGrams', '5.09'); // 0.0480 * 106 g/mol
+
+    const q1Score = engine2022.calculateQ1Score();
+    assert.strictEqual(q1Score.calcScore, 10.0, 'Full stoichiometric calculation marks for KCSE 2022 Q1');
+
+    // 2. Question 2 Magnesium Sulfate Analysis
+    // Accurate responses:
+    engine2022.setQ2Response('q2_heat', 'White crystalline solid loses luster; droplets of colorless liquid condense on cooler upper walls; white residue remains', 'Hydrated salt; water of crystallization');
+    engine2022.setQ2Response('q2_appearance', 'White crystalline solid dissolves completely to form a clear, colorless solution', 'Soluble salt; absence of colored transition metal ions');
+    engine2022.setQ2Response('q2_naoh', 'White precipitate formed, insoluble in excess sodium hydroxide', 'Mg²⁺, Ca²⁺ present');
+    engine2022.setQ2Response('q2_nh3', 'White precipitate formed, insoluble in excess aqueous ammonia', 'Mg²⁺ present');
+    engine2022.setQ2Response('q2_anion', 'Dense white precipitate formed, insoluble in dilute nitric acid', 'SO₄²⁻ present');
+    engine2022.setQ2Deduction('Mg²⁺', 'SO₄²⁻');
+
+    const q2Score = engine2022.calculateQ2Score();
+    assert.ok(q2Score.totalScore >= 12.0, 'High marks for accurate KCSE 2022 MgSO4 observations and inferences');
+
+    // 3. Question 3 Propanoic Acid Analysis
+    engine2022.setQ3Response('q3_ignition', 'Burns with a clean, non-sooty pale blue flame', 'Low C:H ratio / Saturated organic compound');
+    engine2022.setQ3Response('q3_litmus', 'Moist blue litmus paper turns red, red litmus paper remains red', 'Acidic substance present / H⁺ ions present');
+    engine2022.setQ3Response('q3_kmno4', 'Purple acidified KMnO₄ solution remains unchanged / purple color persists', 'Absence of C=C double bonds');
+    engine2022.setQ3Response('q3_nahco3', 'Brisk effervescence of a colorless gas that turns limewater milky', 'Carboxylic acid / R-COOH present');
+    engine2022.setQ3Deduction('Carboxylic Acid (-COOH)');
+
+    const q3Score = engine2022.calculateQ3Score();
+    assert.ok(q3Score.totalScore >= 9.0, 'High marks for KCSE 2022 propanoic acid analysis');
+    assert.strictEqual(q3Score.rubric.length, 5, 'Must contain 4 tests + 1 FG deduction rubric item');
+
+    // 4. Strict 0.0 Marks on Wrong Answers in series_2022
+    const engineWrong = new CompositeExamEngine({ presetKey: 'series_2022' });
+    engineWrong.setQ2Response('q2_naoh', 'Green gelatinous precipitate turning brown', 'Fe²⁺ present');
+    const q2Wrong = engineWrong.calculateQ2Score();
+    const naohWrong = q2Wrong.rubric.find(r => r.code === 'Q2_c' || (r.item && r.item.includes('NaOH')));
+    assert.strictEqual(naohWrong.mark, 0.0, 'Wrong cation observation and inference in KCSE 2022 must score 0.0');
+  });
+
+  it('should accurately aggregate class-wide error diagnostics and penalization frequencies', () => {
+    // Simulate candidate submissions with distinct error profiles
+    const mockSessions = [
+      {
+        id: 1,
+        student_name: 'Faith Achieng',
+        details: {
+          q1: {
+            rubric: [
+              { code: 'CT', pass: true, mark: 1.0, max: 1.0 },
+              { code: 'D', pass: true, mark: 1.0, max: 1.0 },
+              { code: 'AC', pass: true, mark: 1.5, max: 1.5 },
+              { code: 'PA', pass: false, mark: 0.5, max: 1.0, detail: 'PA Penalty: non-concordant titres averaged' }
+            ]
+          },
+          q2: {
+            rubric: [
+              { code: 'Q2_a', pass: false, mark: 1.0, max: 2.0, detail: 'Taboo Penalty: used phrase "white solution"' }
+            ]
+          },
+          q3: {
+            rubric: [
+              { code: 'Q3_a', pass: true, mark: 2.0, max: 2.0 }
+            ]
+          },
+          diagnosticNotes: ['Table 1: Concordant titre penalty', 'Q2: Taboo phrase "white solution" used']
+        }
+      },
+      {
+        id: 2,
+        student_name: 'Brian Kiprono',
+        details: {
+          q1: {
+            rubric: [
+              { code: 'CT', pass: true, mark: 1.0, max: 1.0 },
+              { code: 'D', pass: false, mark: 0.0, max: 1.0, detail: 'D Penalty: readings to 1 d.p.' },
+              { code: 'PA', pass: false, mark: 0.5, max: 1.0 }
+            ]
+          },
+          q2: {
+            rubric: [
+              { code: 'Q2_b', pass: false, mark: 0.5, max: 2.0, detail: 'CP Penalty: missing ionic charges (Pb, Al)' },
+              { code: 'Q2_c', pass: false, mark: 0.0, max: 2.0, detail: 'CI Penalty: Contradictory ion Cu²⁺ included' }
+            ]
+          },
+          q3: {
+            rubric: [
+              { code: 'Q3_carb', pass: false, mark: 0.0, max: 2.0 }
+            ]
+          },
+          diagnosticNotes: ['Missing ionic charges: CP penalty applied', 'Contradictory ion: Cu²⁺ contradicts white ppt']
+        }
+      },
+      {
+        id: 3,
+        student_name: 'Mercy Wanjiku',
+        details: {
+          q1: {
+            rubric: [
+              { code: 'CT', pass: true, mark: 1.0, max: 1.0 },
+              { code: 'D', pass: true, mark: 1.0, max: 1.0 },
+              { code: 'AC', pass: true, mark: 1.5, max: 1.5 },
+              { code: 'PA', pass: true, mark: 1.0, max: 1.0 }
+            ]
+          },
+          q2: { rubric: [{ code: 'Q2_a', pass: true, mark: 2.0, max: 2.0 }] },
+          q3: { rubric: [{ code: 'Q3_a', pass: true, mark: 2.0, max: 2.0 }] },
+          diagnosticNotes: []
+        }
+      }
+    ];
+
+    const N = mockSessions.length; // 3 candidates
+    let concordantErrors = 0;
+    let chargeErrors = 0;
+    let contradictoryErrors = 0;
+    let tabooErrors = 0;
+
+    mockSessions.forEach(s => {
+      const d = s.details;
+      const q1Rubric = d.q1?.rubric || [];
+      const q2Rubric = d.q2?.rubric || [];
+      const q3Rubric = d.q3?.rubric || [];
+      const diagNotes = (d.diagnosticNotes || []).join(' ').toLowerCase();
+
+      // PA
+      const paItem = q1Rubric.find(r => r.code === 'PA');
+      if ((paItem && !paItem.pass) || diagNotes.includes('concordant')) concordantErrors++;
+
+      // CP
+      const hasCharge = [...q2Rubric, ...q3Rubric].some(r => r.detail && r.detail.includes('CP Penalty'));
+      if (hasCharge || diagNotes.includes('charge')) chargeErrors++;
+
+      // CI
+      const hasCi = [...q2Rubric, ...q3Rubric].some(r => r.detail && r.detail.includes('CI Penalty'));
+      if (hasCi || diagNotes.includes('contradictory')) contradictoryErrors++;
+
+      // Taboo
+      const hasTaboo = [...q2Rubric, ...q3Rubric].some(r => r.detail && r.detail.includes('Taboo Penalty'));
+      if (hasTaboo || diagNotes.includes('white solution')) tabooErrors++;
+    });
+
+    assert.strictEqual(concordantErrors, 2, '2 of 3 candidates made concordant titre errors (67%)');
+    assert.strictEqual(chargeErrors, 1, '1 of 3 candidates had missing ionic charges (33%)');
+    assert.strictEqual(contradictoryErrors, 1, '1 of 3 candidates had contradictory ions (33%)');
+    assert.strictEqual(tabooErrors, 1, '1 of 3 candidates used taboo "white solution" (33%)');
+
+    const paRate = Math.round((concordantErrors / N) * 100);
+    assert.strictEqual(paRate, 67, 'High risk (>50%) triggers danger status');
+    assert.ok(paRate >= 50, 'Severity must be danger for >= 50% failure rate');
+  });
 });

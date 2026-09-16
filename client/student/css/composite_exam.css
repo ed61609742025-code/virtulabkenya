@@ -2068,3 +2068,268 @@ iframe.lab-frame {
 #q1EquationRow {
   display: none !important;
 }
+
+/* ============================================================
+   Official KNEC Paper 3 Examination Script Print Architecture
+   ============================================================ */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm 12mm 12mm 12mm;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 10.5pt;
+    line-height: 1.35;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body > *:not(#knecPrintContainer) {
+    display: none !important;
+  }
+
+  #knecPrintContainer {
+    display: block !important;
+    position: relative !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-family: 'Times New Roman', Times, Georgia, serif;
+  }
+
+  .knec-print-header {
+    text-align: center;
+    border-bottom: 2px solid #000;
+    padding-bottom: 6px;
+    margin-bottom: 12px;
+  }
+
+  .knec-republic-text {
+    font-size: 13pt;
+    font-weight: bold;
+    letter-spacing: 0.08em;
+  }
+
+  .knec-council-text {
+    font-size: 12pt;
+    font-weight: bold;
+    letter-spacing: 0.04em;
+    margin-top: 2px;
+  }
+
+  .knec-exam-title {
+    font-size: 11pt;
+    font-weight: bold;
+    margin-top: 3px;
+  }
+
+  .knec-paper-title {
+    font-size: 12pt;
+    font-weight: 900;
+    margin-top: 2px;
+    text-decoration: underline;
+  }
+
+  .knec-paper-subtitle {
+    font-size: 9.5pt;
+    font-style: italic;
+    margin-top: 2px;
+  }
+
+  .knec-duration-text {
+    font-size: 9.5pt;
+    font-weight: bold;
+    margin-top: 3px;
+  }
+
+  .knec-print-meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: 12px;
+    border: 1.5px solid #000;
+    padding: 8px 10px;
+    margin-bottom: 14px;
+    background: #fafafa;
+    page-break-inside: avoid;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .knec-candidate-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+    font-size: 9pt;
+  }
+
+  .knec-meta-row {
+    display: flex;
+    gap: 6px;
+  }
+
+  .knec-meta-row span {
+    width: 125px;
+    font-weight: normal;
+    color: #222;
+  }
+
+  .knec-meta-row b {
+    color: #000;
+  }
+
+  .knec-examiner-grid-wrapper {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .knec-examiner-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 8.5pt;
+  }
+
+  .knec-examiner-table th,
+  .knec-examiner-table td {
+    border: 1px solid #000;
+    padding: 3px 5px;
+    text-align: center;
+  }
+
+  .knec-examiner-table th {
+    background: #e2e8f0;
+    font-weight: bold;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .knec-total-row {
+    font-weight: bold;
+    background: #f1f5f9;
+  }
+
+  .knec-red-score {
+    color: #dc2626 !important;
+    font-weight: bold;
+    font-size: 9.5pt;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+  }
+
+  .knec-red-score-total {
+    color: #b91c1c !important;
+    font-weight: 900;
+    font-size: 10.5pt;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+  }
+
+  .knec-grade-badge {
+    color: #047857 !important;
+    font-weight: 900;
+    font-size: 9.5pt;
+  }
+
+  .knec-print-section {
+    margin-bottom: 14px;
+    page-break-inside: avoid;
+  }
+
+  .knec-section-heading {
+    font-size: 10pt;
+    font-weight: bold;
+    background: #000000;
+    color: #ffffff !important;
+    padding: 3px 6px;
+    margin-bottom: 6px;
+    letter-spacing: 0.02em;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  table.knec-ledger-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 8px;
+    font-size: 8.5pt;
+    page-break-inside: avoid;
+  }
+
+  table.knec-ledger-table th,
+  table.knec-ledger-table td {
+    border: 1px solid #000;
+    padding: 4px 5px;
+    vertical-align: top;
+  }
+
+  table.knec-ledger-table th {
+    background: #f1f5f9;
+    font-weight: bold;
+    text-align: left;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .knec-examiner-tick {
+    color: #059669 !important;
+    font-weight: 900;
+    margin-left: 4px;
+  }
+
+  .knec-examiner-cross {
+    color: #dc2626 !important;
+    font-weight: 900;
+    margin-left: 4px;
+  }
+
+  .knec-examiner-mark-tag {
+    display: inline-block;
+    color: #dc2626 !important;
+    font-weight: bold;
+    font-size: 7.5pt;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    border: 1px solid #dc2626;
+    border-radius: 3px;
+    padding: 0 3px;
+    margin-top: 2px;
+  }
+
+  .knec-scheme-correction {
+    font-size: 7.5pt;
+    color: #4b5563 !important;
+    font-style: italic;
+    margin-top: 2px;
+    padding-top: 2px;
+    border-top: 0.5px dashed #9ca3af;
+  }
+
+  .knec-rubric-criteria-box {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 7.5pt;
+    border: 1px solid #000;
+    padding: 3px 6px;
+    background: #f8fafc;
+    margin-top: 4px;
+    margin-bottom: 6px;
+    page-break-inside: avoid;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .knec-examiner-remarks-section {
+    border: 1px solid #000;
+    padding: 8px 10px;
+    background: #fffbeb;
+    margin-top: 10px;
+    page-break-inside: avoid;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

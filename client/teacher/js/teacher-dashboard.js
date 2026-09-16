@@ -2200,6 +2200,30 @@ let currentPage = 1;
       document.getElementById('cfgQ1Indicator').value = 'phenolphthalein';
       document.getElementById('cfgQ2Salt').value = 'CaCl2';
       document.getElementById('cfgQ3Organic').value = 'Ethanoic Acid';
+    } else if (sel === 'series_2022') {
+      document.getElementById('cfgQ1SolA').value = '0.100 M Hydrochloric Acid (HCl)';
+      document.getElementById('cfgQ1SolB').value = 'Sodium Carbonate (Na₂CO₃) 5.30 g/dm³';
+      document.getElementById('cfgQ1RatioA').value = 2;
+      document.getElementById('cfgQ1RatioB').value = 1;
+      document.getElementById('cfgQ1Indicator').value = 'methylOrange';
+      document.getElementById('cfgQ2Salt').value = 'MgSO4';
+      document.getElementById('cfgQ3Organic').value = 'Propanoic Acid';
+    } else if (sel === 'series_2023') {
+      document.getElementById('cfgQ1SolA').value = '0.050 M Ethanedioic Acid (H₂C₂O₄)';
+      document.getElementById('cfgQ1SolB').value = '0.100 M Sodium Hydroxide (NaOH)';
+      document.getElementById('cfgQ1RatioA').value = 1;
+      document.getElementById('cfgQ1RatioB').value = 2;
+      document.getElementById('cfgQ1Indicator').value = 'phenolphthalein';
+      document.getElementById('cfgQ2Salt').value = 'Ca(NO3)2';
+      document.getElementById('cfgQ3Organic').value = 'Hex-1-ene';
+    } else if (sel === 'series_2024') {
+      document.getElementById('cfgQ1SolA').value = '0.100 M Hydrochloric Acid (HCl)';
+      document.getElementById('cfgQ1SolB').value = 'Sodium Hydrogen Carbonate (NaHCO₃) 10.00 g/dm³';
+      document.getElementById('cfgQ1RatioA').value = 1;
+      document.getElementById('cfgQ1RatioB').value = 1;
+      document.getElementById('cfgQ1Indicator').value = 'methylOrange';
+      document.getElementById('cfgQ2Salt').value = 'FeCl3';
+      document.getElementById('cfgQ3Organic').value = 'Butan-1-ol';
     }
   }
 
@@ -3635,12 +3659,247 @@ let currentPage = 1;
   loadCompositeSessions();
 
   let compositeSessionsStore = [];
+
+  function renderClassDiagnosticHeatmap(sessions) {
+    const container = document.getElementById('compositeClassDiagnostics');
+    if (!container) return;
+
+    if (!Array.isArray(sessions) || sessions.length === 0) {
+      container.innerHTML = `
+        <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:16px 20px;color:var(--text-muted);font-size:0.86rem;">
+          <b>Class Diagnostics Heatmap:</b> No submitted KCSE Paper 3 sessions yet. Once candidates submit exam attempts, high-frequency misconceptions and KNEC penalization patterns will automatically populate here.
+        </div>
+      `;
+      return;
+    }
+
+    const N = sessions.length;
+    let concordantErrors = 0;
+    let decimalErrors = 0;
+    let accuracyErrors = 0;
+    let chargeErrors = 0;
+    let contradictoryErrors = 0;
+    let tabooErrors = 0;
+    let effervescenceErrors = 0;
+    let unsaturationErrors = 0;
+
+    sessions.forEach(s => {
+      let d = s.details;
+      if (typeof d === 'string') {
+        try { d = JSON.parse(d); } catch (e) { d = {}; }
+      }
+      d = d || {};
+
+      const q1Rubric = d.q1?.rubric || [];
+      const q2Rubric = d.q2?.rubric || [];
+      const q3Rubric = d.q3?.rubric || [];
+      const diagNotes = Array.isArray(d.diagnosticNotes) ? d.diagnosticNotes : [];
+      const diagText = diagNotes.join(' ').toLowerCase();
+
+      // 1. Concordant Titre Penalty (PA)
+      const paItem = q1Rubric.find(r => r.code === 'PA');
+      if ((paItem && !paItem.pass) || diagText.includes('concordant') || diagText.includes('averaging')) {
+        concordantErrors++;
+      }
+
+      // 2. Decimal Consistency (D)
+      const dItem = q1Rubric.find(r => r.code === 'D');
+      if ((dItem && !dItem.pass) || diagText.includes('decimal')) {
+        decimalErrors++;
+      }
+
+      // 3. Accuracy Penalty (AC)
+      const acItem = q1Rubric.find(r => r.code === 'AC');
+      if ((acItem && !acItem.pass) || diagText.includes('accuracy') || diagText.includes('deviation')) {
+        accuracyErrors++;
+      }
+
+      // 4. Missing Charge Superscripts (CP)
+      const hasChargePenalty = [...q2Rubric, ...q3Rubric].some(r => r.detail && (r.detail.includes('CP Penalty') || r.detail.includes('Charge')));
+      if (hasChargePenalty || diagText.includes('charge') || diagText.includes('superscript')) {
+        chargeErrors++;
+      }
+
+      // 5. Contradictory Ions (CI)
+      const hasCiPenalty = [...q2Rubric, ...q3Rubric].some(r => r.detail && (r.detail.includes('CI Penalty') || r.detail.includes('Contradictory')));
+      if (hasCiPenalty || diagText.includes('contradictory')) {
+        contradictoryErrors++;
+      }
+
+      // 6. Taboo "White Solution"
+      const hasTabooPenalty = [...q2Rubric, ...q3Rubric].some(r => r.detail && (r.detail.includes('Taboo Penalty') || r.detail.toLowerCase().includes('white solution')));
+      const hasTabooObs = Object.values(d.candidateQ2Obs || {}).concat(Object.values(d.candidateQ3Obs || {})).some(obs => typeof obs === 'string' && /white\s+solution/i.test(obs));
+      if (hasTabooPenalty || hasTabooObs || diagText.includes('white solution')) {
+        tabooErrors++;
+      }
+
+      // 7. Organic Effervescence Confusion
+      const carbItem = q3Rubric.find(r => (r.code && r.code.includes('carb')) || (r.item && r.item.toLowerCase().includes('carbonate')));
+      if ((carbItem && !carbItem.pass) || diagText.includes('effervescence') || diagText.includes('carbonate')) {
+        effervescenceErrors++;
+      }
+
+      // 8. Alkene Decolourization / Unsaturation Confusion
+      const unsatItem = q3Rubric.find(r => (r.code && (r.code.includes('br2') || r.code.includes('kmno4'))) || (r.item && (r.item.toLowerCase().includes('bromine') || r.item.toLowerCase().includes('kmno4') || r.item.toLowerCase().includes('unsaturat'))));
+      if ((unsatItem && !unsatItem.pass) || diagText.includes('unsaturat') || diagText.includes('decolouri') || diagText.includes('bromine') || diagText.includes('kmno4')) {
+        unsaturationErrors++;
+      }
+    });
+
+    const metrics = [
+      {
+        title: 'Concordant Titre Rule (Table 1 PA)',
+        count: concordantErrors,
+        desc: 'Non-concordant titres averaged (readings deviating by > 0.20 cm³ or including non-concordant rough).',
+        penalty: '-0.5 to -1.0 Mk'
+      },
+      {
+        title: 'Burette Decimal Precision (Table 1 D)',
+        count: decimalErrors,
+        desc: 'Readings recorded to fewer than 2 decimal places, or terminating in values other than .00 or .05.',
+        penalty: '-0.5 to -1.0 Mk'
+      },
+      {
+        title: 'Titration Experimental Accuracy (AC)',
+        count: accuracyErrors,
+        desc: 'Candidate average titre deviating by > ±0.20 cm³ from teacher or theoretical true titre.',
+        penalty: '-0.5 to -1.5 Mks'
+      },
+      {
+        title: 'Missing Ionic Charge Superscripts (CP)',
+        count: chargeErrors,
+        desc: 'Inferred ions written without formal charges (e.g. "Pb", "Al", "Zn2" instead of Pb²⁺, Al³⁺, Zn²⁺).',
+        penalty: '-0.5 Mk per ion'
+      },
+      {
+        title: 'Contradictory Ion Deduction (CI)',
+        count: contradictoryErrors,
+        desc: 'Candidate inferring contradictory ions (e.g. colored ions Cu²⁺/Fe³⁺ on white ppt, or soluble ions in NH₃).',
+        penalty: '-0.5 to -1.0 Mk'
+      },
+      {
+        title: 'Taboo Scientific Phrase: "White Solution"',
+        count: tabooErrors,
+        desc: 'Writing "white solution" instead of "colourless solution" when soluble white salts dissolve.',
+        penalty: '-0.5 Mk penalty'
+      },
+      {
+        title: 'Carboxylic Acid / Carbonate Effervescence',
+        count: effervescenceErrors,
+        desc: 'Failing to record brisk CO₂ effervescence for R-COOH or falsely claiming gas evolution on alcohols.',
+        penalty: '-1.0 Mk'
+      },
+      {
+        title: 'Alkene Decolourization & Unsaturation',
+        count: unsaturationErrors,
+        desc: 'Misidentifying bromine water / acidified KMnO₄ decolourization or confusing C=C unsaturation with saturation.',
+        penalty: '-1.0 Mk'
+      }
+    ];
+
+    const cardsHtml = metrics.map(m => {
+      const pct = Math.round((m.count / N) * 100);
+      let statusClass = 'pill-ok';
+      let barColor = '#10B981';
+      let statusLabel = 'Proficient';
+
+      if (pct >= 50) {
+        statusClass = 'pill-danger';
+        barColor = '#EF4444';
+        statusLabel = 'Critical Deficit';
+      } else if (pct >= 25) {
+        statusClass = 'pill-warn';
+        barColor = '#F59E0B';
+        statusLabel = 'Moderate Concern';
+      }
+
+      return `
+        <div style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;justify-content:space-between;">
+          <div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;">
+              <span style="font-weight:700;font-size:0.86rem;color:var(--heading-color);">${escapeHtml(m.title)}</span>
+              <span class="pill ${statusClass}" style="font-size:0.72rem;padding:2px 8px;font-weight:800;">${pct}% · ${statusLabel}</span>
+            </div>
+            <div style="font-size:0.77rem;color:var(--text-muted);line-height:1.4;margin-bottom:8px;">${escapeHtml(m.desc)}</div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.72rem;color:var(--text-muted);margin-bottom:4px;">
+              <span><b>${m.count}</b> of ${N} candidates affected</span>
+              <span style="color:#DC2626;font-weight:700;">KNEC Penalty: ${escapeHtml(m.penalty)}</span>
+            </div>
+            <div style="width:100%;height:6px;background:var(--card-bg-hover);border-radius:4px;overflow:hidden;border:1px solid var(--card-border);">
+              <div style="width:${pct}%;height:100%;background:${barColor};border-radius:3px;transition:width 0.4s ease;"></div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    // Dynamic Chief Examiner Advice
+    const highRiskItems = metrics.filter(m => (m.count / N) >= 0.25);
+    let adviceList = [];
+    if (highRiskItems.length === 0) {
+      adviceList.push('Class demonstrates stellar compliance with KNEC Paper 3 marking standards. Continue regular timed mock examinations to maintain precision.');
+    } else {
+      highRiskItems.forEach(item => {
+        if (item.title.includes('Concordant')) {
+          adviceList.push('<b>Table 1 Averaging Drill:</b> Reiterate to students that KNEC examiners immediately penalize PA (-0.5 to -1.0 Mk) if non-concordant titres (> 0.20 cm³ gap) are included. The rough trial must only be used if it is concordant with subsequent trials.');
+        } else if (item.title.includes('Decimal')) {
+          adviceList.push('<b>Burette Precision Practice:</b> Ensure every student records burette initial and final readings strictly to 2 decimal places ending in .00 or .05 cm³ (e.g. 24.50 cm³, not 24.5 cm³).');
+        } else if (item.title.includes('Charge')) {
+          adviceList.push('<b>Chemical Superscript Notation:</b> Drill the writing of full ions with charges (Pb²⁺, Al³⁺, Zn²⁺, SO₄²⁻). KNEC penalizes -0.5 marks per ion for missing superscripts, leading to substantial lost marks in Question 2.');
+        } else if (item.title.includes('Contradictory')) {
+          adviceList.push('<b>Contradictory Ion Awareness:</b> Train candidates never to list coloured ions (e.g. Cu²⁺, Fe²⁺, Fe³⁺) when observing white precipitates, as national examiners apply the Contradictory Ion (CI) penalty deducting the entire inference mark.');
+        } else if (item.title.includes('White Solution')) {
+          adviceList.push('<b>Eradicate Taboo Phrases:</b> Strictly forbid the phrase "white solution". Transparent homogeneous liquids formed on salt dissolution must be designated "colourless solution". "White solution" receives a 0.5 Mk penalty.');
+        } else if (item.title.includes('Effervescence') || item.title.includes('Alkene')) {
+          adviceList.push('<b>Organic Bench Differentiation:</b> Conduct rapid diagnostic tests distinguishing carboxylic acids (effervescence with solid NaHCO₃ / Na₂CO₃) from neutral alkanols and alkenes (rapid decolourization of bromine water and acidified KMnO₄).');
+        }
+      });
+    }
+
+    const adviceHtml = adviceList.map(a => `<li style="margin-bottom:6px;">${a}</li>`).join('');
+
+    container.innerHTML = `
+      <div style="background:var(--card-bg-hover);border:1.5px solid var(--blue-accent);border-radius:14px;padding:18px 20px;margin-bottom:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+          <div>
+            <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:1.05rem;color:var(--heading-color);display:flex;align-items:center;gap:8px;">
+              <span>🔍 Class Misconception & Error Diagnostics Heatmap</span>
+              <span class="brand-badge">${N} Scripts Analyzed</span>
+            </div>
+            <div style="font-size:0.78rem;color:var(--text-muted);margin-top:2px;">
+              High-yield KNEC Paper 3 penalization points, common candidate blunders, and rubric diagnostic breakdown.
+            </div>
+          </div>
+          <button class="btn btn-outline" style="font-size:0.76rem;padding:4px 10px;" onclick="loadCompositeSessions()">🔄 Refresh Diagnostics</button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:10px;margin-bottom:14px;">
+          ${cardsHtml}
+        </div>
+
+        <!-- Examiner Remedial Advice Box -->
+        <div style="background:var(--card-bg);border:1px solid var(--card-border);border-left:4px solid var(--gold-accent);border-radius:10px;padding:12px 16px;">
+          <div style="font-weight:800;font-size:0.84rem;color:var(--gold-accent);margin-bottom:6px;display:flex;align-items:center;gap:6px;">
+            <span>👨‍🏫 Chief Examiner Remedial Teaching Guidance</span>
+          </div>
+          <ul style="margin:0 0 0 18px;padding:0;font-size:0.80rem;color:var(--text-main);line-height:1.5;">
+            ${adviceHtml}
+          </ul>
+        </div>
+      </div>
+    `;
+  }
+
   async function loadCompositeSessions() {
     const box = document.getElementById('compositeSessionsBox');
     if (!box) return;
     try {
       const res = await Composite.getTeacherList();
       compositeSessionsStore = res.sessions || [];
+
+      renderClassDiagnosticHeatmap(compositeSessionsStore);
 
       if (compositeSessionsStore.length === 0) {
         box.innerHTML = '<div class="empty">No KCSE composite practical exams submitted yet.</div>';
@@ -3735,9 +3994,14 @@ let currentPage = 1;
             </td>
             <td>${new Date(s.created_at).toLocaleDateString()}</td>
             <td>
-              <button class="btn btn-primary" style="padding:4px 10px;font-size:0.78rem;font-weight:700;" onclick="viewTeacherCompositeBooklet(${idx})">
-                👁️ Booklet
-              </button>
+              <div style="display:flex;gap:4px;">
+                <button class="btn btn-primary" style="padding:4px 10px;font-size:0.78rem;font-weight:700;" onclick="viewTeacherCompositeBooklet(${idx})">
+                  👁️ Booklet
+                </button>
+                <button class="btn btn-outline" style="padding:4px 8px;font-size:0.75rem;font-weight:700;" onclick="exportTeacherStudentScript(${idx})" title="Export official marked KNEC script as PDF">
+                  📥 PDF Script
+                </button>
+              </div>
             </td>
           </tr>
         `;
@@ -3825,15 +4089,375 @@ let currentPage = 1;
           </div>
         </div>
 
-        <div style="font-size:0.83rem;color:var(--text-muted);line-height:1.5;">
+        <div style="font-size:0.83rem;color:var(--text-muted);line-height:1.5;margin-bottom:16px;">
           ✓ Session completed in <b>${s.duration_seconds ? Math.round(s.duration_seconds / 60) + ' minutes' : '45 minutes (standard time limit)'}</b>.<br>
           ✓ Exam submission archived and synced to student performance records.
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--card-border);">
+          <button class="btn btn-primary" style="padding:6px 14px;font-size:0.82rem;font-weight:800;background:linear-gradient(135deg,#0284C7,#0369A1);color:#fff;border:none;" onclick="exportTeacherStudentScript(${idx})">
+            📥 Export Official Marked Script (PDF)
+          </button>
+          <button class="btn" onclick="document.getElementById('compositeBookletModal').style.display='none'" style="padding:6px 14px;">✕ Close</button>
         </div>
       </div>
     `;
 
     modal.style.display = 'flex';
   }
+
+  function exportTeacherStudentScript(idx) {
+    const s = compositeSessionsStore[idx];
+    if (!s) return alert('Session not found.');
+
+    let d = s.details;
+    if (typeof d === 'string') {
+      try { d = JSON.parse(d); } catch (e) { d = {}; }
+    }
+    d = d || {};
+
+    const studentName = s.student_name || 'Candidate Student';
+    const studentForm = s.student_form || 'Form 4';
+    const studentIndex = s.student_email || '233001/001';
+    const examTitle = s.exam_title || 'KCSE Chemistry Paper 3 Practical';
+    const examDate = s.created_at ? new Date(s.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : new Date().toLocaleDateString('en-GB');
+
+    const q1Score = Number(s.q1_score || 0).toFixed(1);
+    const q2Score = Number(s.q2_score || 0).toFixed(1);
+    const q3Score = Number(s.q3_score || 0).toFixed(1);
+    const totScore = Number(s.total_score || 0).toFixed(1);
+    const pct = Math.round((Number(s.total_score || 0) / 40.0) * 100);
+    const grade = s.grade || (pct >= 70 ? 'A' : pct >= 55 ? 'B' : pct >= 45 ? 'C' : pct >= 35 ? 'D' : 'E');
+
+    // Retrieve preset if available
+    let p = null;
+    if (typeof COMPOSITE_EXAM_PRESETS !== 'undefined' && d.seriesKey && COMPOSITE_EXAM_PRESETS[d.seriesKey]) {
+      p = COMPOSITE_EXAM_PRESETS[d.seriesKey];
+    } else if (typeof COMPOSITE_EXAM_PRESETS !== 'undefined') {
+      p = COMPOSITE_EXAM_PRESETS['series_1'];
+    }
+
+    // 1. Q1 Titration Table
+    const trials = Array.isArray(d.candidateTrials) && d.candidateTrials.length > 0 ? d.candidateTrials : [
+      { trial: 1, initial: 0, final: 25.0, used: 25.0 },
+      { trial: 2, initial: 0, final: 25.0, used: 25.0 },
+      { trial: 3, initial: 0, final: 25.0, used: 25.0 }
+    ];
+    const q1Rubric = d.q1?.rubric || [];
+    const tableCriteria = q1Rubric.filter(r => ['CT', 'D', 'AC', 'PA', 'FA'].includes(r.code));
+    const calcCriteria = q1Rubric.filter(r => !['CT', 'D', 'AC', 'PA', 'FA'].includes(r.code));
+    const candidateQ1Ans = d.candidateQ1Answers || {};
+
+    let q1TableHtml = `
+      <div style="margin-bottom:4px;font-weight:bold;font-size:9pt;">Table 1: Titration Results (5.0 Marks)</div>
+      <table class="knec-ledger-table" style="text-align:center;">
+        <thead>
+          <tr>
+            <th style="text-align:left;">Titration Trial</th>
+            <th style="text-align:center;width:20%;">I (Rough)</th>
+            <th style="text-align:center;width:20%;">II</th>
+            <th style="text-align:center;width:20%;">III</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="text-align:left;">Final Burette Reading (cm³)</td>
+            <td>${Number(trials[0]?.final || 0).toFixed(2)}</td>
+            <td>${Number(trials[1]?.final || 0).toFixed(2)}</td>
+            <td>${Number(trials[2]?.final || 0).toFixed(2)}</td>
+          </tr>
+          <tr>
+            <td style="text-align:left;">Initial Burette Reading (cm³)</td>
+            <td>${Number(trials[0]?.initial || 0).toFixed(2)}</td>
+            <td>${Number(trials[1]?.initial || 0).toFixed(2)}</td>
+            <td>${Number(trials[2]?.initial || 0).toFixed(2)}</td>
+          </tr>
+          <tr style="font-weight:bold;background:#f8fafc;">
+            <td style="text-align:left;">Volume of Solution A Used (cm³)</td>
+            <td>${Number(trials[0]?.used || 0).toFixed(2)}</td>
+            <td>${Number(trials[1]?.used || 0).toFixed(2)}</td>
+            <td>${Number(trials[2]?.used || 0).toFixed(2)}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="knec-rubric-criteria-box">
+        <span style="font-weight:bold;margin-right:4px;">Table 1 Criteria:</span>
+        ${tableCriteria.length > 0 ? tableCriteria.map(c => `
+          <span><b>[${c.code}]</b> ${c.pass ? '✓' : '✗'} <span style="color:#dc2626;">${Number(c.mark || 0).toFixed(1)}/${Number(c.max || 1.0).toFixed(1)}</span></span>
+        `).join(' &nbsp;·&nbsp; ') : '<span><b>[CT]</b> ✓ 1.0/1.0 &nbsp;·&nbsp; <b>[D]</b> ✓ 1.0/1.0 &nbsp;·&nbsp; <b>[AC]</b> ✓ 1.5/1.5 &nbsp;·&nbsp; <b>[PA]</b> ✓ 1.0/1.0 &nbsp;·&nbsp; <b>[FA]</b> ✓ 0.5/0.5</span>'}
+      </div>
+
+      <div style="font-size:9pt;margin-top:8px;">
+        <div style="font-weight:bold;margin-bottom:6px;">Calculations & Stoichiometric Determination (10.0 Marks):</div>
+        ${((p?.q1?.questions) || [
+          { id: 'avgTitre', letter: 'a', label: 'Calculate the average volume of Solution A used' },
+          { id: 'molesB', letter: 'b', label: 'Calculate moles of reactant in aliquot' },
+          { id: 'molesA', letter: 'c', label: 'Calculate moles of reactant reacting' },
+          { id: 'molarityA', letter: 'd', label: 'Determine molarity / concentration' },
+          { id: 'concGrams', letter: 'e', label: 'Calculate concentration in g/dm³' }
+        ]).map((q, qIdx) => {
+          const fieldKey = q.field || q.id;
+          const ans = candidateQ1Ans[fieldKey] !== undefined ? candidateQ1Ans[fieldKey] : (candidateQ1Ans[q.id] || '—');
+          const stepRubric = calcCriteria.find(c => c.item && c.item.toLowerCase().includes(`(${q.letter || ''})`)) || calcCriteria[qIdx] || {};
+          const pass = stepRubric.pass !== undefined ? Boolean(stepRubric.pass) : true;
+          const mark = Number(stepRubric.mark !== undefined ? stepRubric.mark : (q.marks || 2.0));
+          const max = Number(stepRubric.max !== undefined ? stepRubric.max : (q.marks || 2.0));
+
+          return `
+            <div style="margin-bottom:6px;padding:4px 8px;border-left:2px solid #000;background:#fcfcfc;">
+              <div style="display:flex;justify-content:space-between;">
+                <span><b>(${q.letter || ''})</b> ${escapeHtml(q.label || '')}</span>
+                <span style="font-weight:bold;color:#dc2626;">${mark.toFixed(1)} / ${max.toFixed(1)} Mk</span>
+              </div>
+              <div style="font-size:8.5pt;margin-top:2px;">
+                Candidate Answer: <b>${escapeHtml(String(ans))} ${escapeHtml(q.unit || '')}</b>
+                <span class="${pass ? 'knec-examiner-tick' : 'knec-examiner-cross'}">${pass ? '✓' : '✗'}</span>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+
+    // 2. Q2 Qualitative Table
+    const q2RubricMap = {};
+    (d.q2?.rubric || []).forEach((r, idx) => {
+      const code = r.code || `Q2_${String.fromCharCode(97 + idx)}`;
+      q2RubricMap[code] = r;
+    });
+    const q2Tests = p?.q2?.tests || [
+      { id: 'q2_solubility', prompt: 'Dissolve sample in distilled water and divide into 4 portions', correctObs: 'Dissolves completely to form a colorless solution', correctInf: 'Soluble salt present' },
+      { id: 'q2_naoh', prompt: 'To portion 1, add 2M NaOH dropwise until in excess', correctObs: 'White precipitate formed, soluble in excess', correctInf: 'Pb²⁺, Al³⁺, Zn²⁺ present' },
+      { id: 'q2_nh3', prompt: 'To portion 2, add 2M aqueous ammonia dropwise until in excess', correctObs: 'White precipitate formed, insoluble in excess', correctInf: 'Pb²⁺, Al³⁺ present' },
+      { id: 'q2_ba_no3', prompt: 'To portion 3, add Ba(NO₃)₂ solution followed by dilute HNO₃', correctObs: 'White precipitate formed, insoluble in dilute acid', correctInf: 'SO₄²⁻ present' }
+    ];
+    const candidateQ2Obs = d.candidateQ2Obs || {};
+    const candidateQ2Inf = d.candidateQ2Inf || {};
+    const q2Deductions = d.candidateQ2Deductions || {};
+
+    let q2TableHtml = `
+      <div style="font-size:9pt;margin-bottom:6px;color:#333;">
+        Sample: <b>${escapeHtml(p?.q2?.sampleName || 'Solid Y')}</b> — ${escapeHtml(p?.q2?.sampleDesc || 'Inorganic Salt Analysis')}
+      </div>
+      <table class="knec-ledger-table">
+        <thead>
+          <tr>
+            <th style="width:42%;">Test / Procedure</th>
+            <th style="width:29%;">Candidate Observations</th>
+            <th style="width:29%;">Candidate Inferences</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${q2Tests.map((t, idx) => {
+            const code = `Q2_${String.fromCharCode(97 + idx)}`;
+            const rubricItem = q2RubricMap[code] || {};
+            const pass = rubricItem.pass !== undefined ? Boolean(rubricItem.pass) : true;
+            const mark = Number(rubricItem.mark !== undefined ? rubricItem.mark : 2.0);
+            const max = Number(rubricItem.max !== undefined ? rubricItem.max : 2.0);
+            const obsText = candidateQ2Obs[t.id] || '—';
+            const infText = candidateQ2Inf[t.id] || '—';
+            const markTag = `<div class="knec-examiner-mark-tag">${mark.toFixed(1)} / ${max.toFixed(1)} Mks</div>`;
+            const schemeCorrection = (!pass && t.correctObs && t.correctInf) ? `
+              <div class="knec-scheme-correction">
+                <b>KNEC Scheme:</b> Obs: "${escapeHtml(t.correctObs)}" | Infs: "${escapeHtml(t.correctInf)}"
+              </div>
+            ` : '';
+
+            return `
+              <tr>
+                <td><b>(${String.fromCharCode(97 + idx)})</b> ${escapeHtml(t.prompt)}${markTag}</td>
+                <td><span>${escapeHtml(obsText)}</span> <span class="${pass ? 'knec-examiner-tick' : 'knec-examiner-cross'}">${pass ? '✓' : '✗'}</span>${schemeCorrection}</td>
+                <td><span>${escapeHtml(infText)}</span> <span class="${pass ? 'knec-examiner-tick' : 'knec-examiner-cross'}">${pass ? '✓' : '✗'}</span></td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+      <div style="font-size:9pt;margin-top:6px;padding:6px 10px;border:1px dashed #666;background:#fbfbfb;">
+        <b>Final Cation/Anion Deduction:</b> Cation: <u>${escapeHtml(q2Deductions.cation || '—')}</u> &nbsp;|&nbsp; Anion: <u>${escapeHtml(q2Deductions.anion || '—')}</u>
+        ${p?.q2?.trueCation ? `<span style="float:right;font-weight:bold;color:#dc2626;">Expected: ${escapeHtml(p.q2.trueCation)} / ${escapeHtml(p.q2.trueAnion || '')}</span>` : ''}
+      </div>
+    `;
+
+    // 3. Q3 Organic Table
+    const q3RubricMap = {};
+    (d.q3?.rubric || []).forEach((r, idx) => {
+      const code = r.code || `Q3_${String.fromCharCode(97 + idx)}`;
+      q3RubricMap[code] = r;
+    });
+    const q3Tests = p?.q3?.tests || [
+      { id: 'q3_ignition', prompt: 'Ignite 2-3 drops of Liquid on a clean nickel spatula in a Bunsen flame', correctObs: 'Burns with a non-sooty, pale blue flame', correctInf: 'Low C:H ratio / Saturated compound present' },
+      { id: 'q3_litmus', prompt: 'Test liquid with moist blue and red litmus papers', correctObs: 'No effect on both red and blue litmus paper', correctInf: 'Neutral substance present' },
+      { id: 'q3_kmno4', prompt: 'Add 2-3 drops of acidified potassium manganate(VII) solution', correctObs: 'Purple acidified KMnO₄ is decolorized', correctInf: 'Alkanol (—OH group) present' },
+      { id: 'q3_nahco3', prompt: 'Add a spatula end of sodium hydrogen carbonate (NaHCO₃)', correctObs: 'No effervescence observed', correctInf: 'R-COOH absent' }
+    ];
+    const candidateQ3Obs = d.candidateQ3Obs || {};
+    const candidateQ3Inf = d.candidateQ3Inf || {};
+    const q3Deduction = d.candidateQ3Deduction || '';
+
+    let q3TableHtml = `
+      <div style="font-size:9pt;margin-bottom:6px;color:#333;">
+        Sample: <b>${escapeHtml(p?.q3?.sampleName || 'Liquid Z')}</b> — ${escapeHtml(p?.q3?.sampleDesc || 'Organic Chemistry Analysis')}
+      </div>
+      <table class="knec-ledger-table">
+        <thead>
+          <tr>
+            <th style="width:42%;">Test / Procedure</th>
+            <th style="width:29%;">Candidate Observations</th>
+            <th style="width:29%;">Candidate Inferences</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${q3Tests.map((t, idx) => {
+            const code = `Q3_${String.fromCharCode(97 + idx)}`;
+            const rubricItem = q3RubricMap[code] || {};
+            const pass = rubricItem.pass !== undefined ? Boolean(rubricItem.pass) : true;
+            const mark = Number(rubricItem.mark !== undefined ? rubricItem.mark : 2.0);
+            const max = Number(rubricItem.max !== undefined ? rubricItem.max : 2.0);
+            const obsText = candidateQ3Obs[t.id] || '—';
+            const infText = candidateQ3Inf[t.id] || '—';
+            const markTag = `<div class="knec-examiner-mark-tag">${mark.toFixed(1)} / ${max.toFixed(1)} Mks</div>`;
+            const schemeCorrection = (!pass && t.correctObs && t.correctInf) ? `
+              <div class="knec-scheme-correction">
+                <b>KNEC Scheme:</b> Obs: "${escapeHtml(t.correctObs)}" | Infs: "${escapeHtml(t.correctInf)}"
+              </div>
+            ` : '';
+
+            return `
+              <tr>
+                <td><b>(${String.fromCharCode(97 + idx)})</b> ${escapeHtml(t.prompt)}${markTag}</td>
+                <td><span>${escapeHtml(obsText)}</span> <span class="${pass ? 'knec-examiner-tick' : 'knec-examiner-cross'}">${pass ? '✓' : '✗'}</span>${schemeCorrection}</td>
+                <td><span>${escapeHtml(infText)}</span> <span class="${pass ? 'knec-examiner-tick' : 'knec-examiner-cross'}">${pass ? '✓' : '✗'}</span></td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+      ${q3Deduction ? `
+        <div style="font-size:9pt;margin-top:6px;padding:6px 10px;border:1px dashed #666;background:#fbfbfb;">
+          <b>Functional Group Deduction:</b> <u>${escapeHtml(q3Deduction)}</u>
+          ${p?.q3?.trueFunctionalGroup ? `<span style="float:right;font-weight:bold;color:#dc2626;">Expected: ${escapeHtml(p.q3.trueFunctionalGroup)} (${escapeHtml(p.q3.trueOrganicName || '')})</span>` : ''}
+        </div>
+      ` : ''}
+    `;
+
+    // 4. Diagnostic Notes
+    const diagNotes = Array.isArray(d.diagnosticNotes) ? d.diagnosticNotes : [];
+    const examinerRemarksHtml = `
+      <div style="font-size:8.5pt;line-height:1.5;">
+        ${diagNotes.length > 0 ? `
+          <ul style="margin:4px 0 0 16px;padding:0;">
+            ${diagNotes.map(n => `<li>${escapeHtml(n)}</li>`).join('')}
+          </ul>
+        ` : '<div>Candidate demonstrated exemplary precision according to KNEC Paper 3 marking criteria.</div>'}
+      </div>
+    `;
+
+    const printArea = document.getElementById('teacherKnecPrintArea');
+    if (!printArea) return alert('Print container not available.');
+
+    printArea.innerHTML = `
+      <div class="knec-print-header">
+        <svg class="knec-coat-arms" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M50 5 L85 20 L85 55 C85 75 50 95 50 95 C50 95 15 75 15 55 L15 20 Z" fill="#ffffff" stroke="#000000" stroke-width="3"/>
+          <path d="M30 40 L50 25 L70 40 L70 70 L30 70 Z" fill="#f8fafc" stroke="#000000" stroke-width="2"/>
+          <circle cx="50" cy="50" r="12" fill="#e2e8f0" stroke="#000000" stroke-width="1.5"/>
+          <line x1="50" y1="25" x2="50" y2="75" stroke="#dc2626" stroke-width="2"/>
+          <line x1="30" y1="50" x2="70" y2="50" stroke="#16a34a" stroke-width="2"/>
+        </svg>
+        <div class="knec-republic-text">REPUBLIC OF KENYA</div>
+        <div class="knec-council-text">THE KENYA NATIONAL EXAMINATIONS COUNCIL</div>
+        <div class="knec-exam-title">KENYA CERTIFICATE OF SECONDARY EDUCATION</div>
+        <div class="knec-paper-title">CHEMISTRY PRACTICAL (CONFIDENTIAL MARKED SCRIPT)</div>
+        <div class="knec-paper-subtitle">Paper 3 (233/3) · Authentic Examiner Verification Record</div>
+        <div class="knec-duration-text">Time: 2 Hours 15 Minutes · Maximum Score: 40.0 Marks</div>
+      </div>
+
+      <div class="knec-print-meta-grid">
+        <div class="knec-candidate-box">
+          <div class="knec-meta-row"><span>Candidate Name:</span><b>${escapeHtml(studentName)}</b></div>
+          <div class="knec-meta-row"><span>Index Number:</span><b>${escapeHtml(studentIndex)}</b></div>
+          <div class="knec-meta-row"><span>Class / Form:</span><b>${escapeHtml(studentForm)}</b></div>
+          <div class="knec-meta-row"><span>Date Examined:</span><b>${escapeHtml(examDate)}</b></div>
+          <div class="knec-meta-row"><span>Examination:</span><b>${escapeHtml(examTitle)}</b></div>
+        </div>
+        <div class="knec-examiner-grid-wrapper">
+          <table class="knec-examiner-table">
+            <thead>
+              <tr>
+                <th>Question</th>
+                <th>Maximum</th>
+                <th>Candidate Score</th>
+                <th>Examiner</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align:left;font-weight:bold;">1. Volumetric Analysis</td>
+                <td>15.0</td>
+                <td class="knec-red-score">${q1Score}</td>
+                <td>KNEC-EX1</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;font-weight:bold;">2. Qualitative Analysis</td>
+                <td>15.0</td>
+                <td class="knec-red-score">${q2Score}</td>
+                <td>KNEC-EX2</td>
+              </tr>
+              <tr>
+                <td style="text-align:left;font-weight:bold;">3. Organic Chemistry</td>
+                <td>10.0</td>
+                <td class="knec-red-score">${q3Score}</td>
+                <td>KNEC-EX3</td>
+              </tr>
+              <tr class="knec-total-row">
+                <td style="text-align:left;">TOTAL / VERIFIED</td>
+                <td>40.0</td>
+                <td class="knec-red-score-total">${totScore}</td>
+                <td class="knec-grade-badge">Grade ${grade}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="knec-print-section">
+        <div class="knec-section-heading">1. QUESTION 1: VOLUMETRIC ANALYSIS (15.0 MARKS)</div>
+        ${q1TableHtml}
+      </div>
+
+      <div class="knec-print-section">
+        <div class="knec-section-heading">2. QUESTION 2: QUALITATIVE SALT ANALYSIS (15.0 MARKS)</div>
+        ${q2TableHtml}
+      </div>
+
+      <div class="knec-print-section">
+        <div class="knec-section-heading">3. QUESTION 3: ORGANIC CHEMISTRY ANALYSIS (10.0 MARKS)</div>
+        ${q3TableHtml}
+      </div>
+
+      <div class="knec-examiner-remarks-section">
+        <div style="font-weight:bold;font-size:9pt;margin-bottom:4px;color:#92400e;">4. CHIEF EXAMINER DIAGNOSTIC SUMMARY & PENALIZATION AUDIT</div>
+        ${examinerRemarksHtml}
+      </div>
+    `;
+
+    document.body.classList.add('printing-knec-script');
+    window.print();
+
+    const cleanup = () => {
+      document.body.classList.remove('printing-knec-script');
+      printArea.innerHTML = '';
+      window.removeEventListener('afterprint', cleanup);
+    };
+    window.addEventListener('afterprint', cleanup);
+    setTimeout(cleanup, 2500);
+  }
+
+  window.renderClassDiagnosticHeatmap = renderClassDiagnosticHeatmap;
+  window.exportTeacherStudentScript = exportTeacherStudentScript;
+  window.viewTeacherCompositeBooklet = viewTeacherCompositeBooklet;
 
   // ── Auto-initialize Dashboard Sections ──────────────────────────
   loadSessions();

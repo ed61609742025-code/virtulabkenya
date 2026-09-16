@@ -330,6 +330,9 @@
               <option value="series_4">Series 4: Thermochemistry Enthalpy (HNO₃/KOH · Copper Sulfate · Propanol)</option>
               <option value="series_5">Series 5: Two-Salt Separation (H₂SO₄/NaOH · ZnSO₄+BaSO₄ · Formic Acid)</option>
               <option value="series_6">Series 6: Reaction Kinetics (H₂C₂O₄/NaOH · NH₄Cl Sublimation · Benzoic Acid)</option>
+              <option value="series_2022">KCSE 2022: National Practical (HCl/Na₂CO₃ · MgSO₄ · Propanoic Acid)</option>
+              <option value="series_2023">KCSE 2023: National Practical (H₂C₂O₄/NaOH · Ca(NO₃)₂ · Hex-1-ene)</option>
+              <option value="series_2024">KCSE 2024: National Practical (HCl/NaHCO₃ · FeCl₃ · Butan-1-ol)</option>
               <option value="custom">✏️ Custom Modular Combination</option>
             </select>
             <span class="field-hint" style="margin-top:4px;">Instantly sets standard KNEC reagents across all 3 exam questions</span>
@@ -412,6 +415,8 @@
                   <option value="FeCl3">Iron(III) Chloride — FeCl₃</option>
                   <option value="ZnSO4">Zinc Sulfate — ZnSO₄</option>
                   <option value="Al(NO3)3">Aluminum Nitrate — Al(NO₃)₃</option>
+                  <option value="MgSO4">Magnesium Sulfate — MgSO₄</option>
+                  <option value="Ca(NO3)2">Calcium Nitrate — Ca(NO₃)₂</option>
                   <option value="CaCl2">Calcium Chloride — CaCl₂</option>
                   <option value="NH4Cl">Ammonium Chloride — NH₄Cl</option>
                   <option value="Na2CO3">Sodium Carbonate — Na₂CO₃</option>
@@ -432,7 +437,10 @@
                 <select id="cfgQ3Organic" class="form-control">
                   <option value="Ethanol">Ethanol — C₂H₅OH (Primary Alcohol)</option>
                   <option value="Ethanoic Acid">Ethanoic Acid — CH₃COOH (Carboxylic Acid)</option>
+                  <option value="Propanoic Acid">Propanoic Acid — CH₃CH₂COOH (Carboxylic Acid)</option>
                   <option value="Cyclohexene">Cyclohexene — C₆H₁₀ (Unsaturated Alkene)</option>
+                  <option value="Hex-1-ene">Hex-1-ene — C₆H₁₂ (Unsaturated Alkene)</option>
+                  <option value="Butan-1-ol">Butan-1-ol — C₄H₉OH (Primary Alcohol)</option>
                   <option value="Ethyne">Ethyne — C₂H₂ (Alkyne Gas)</option>
                   <option value="Ethyl Ethanoate">Ethyl Ethanoate — CH₃COOC₂H₅ (Ester)</option>
                   <option value="Hexane">Hexane — C₆H₁₄ (Saturated Alkane)</option>
@@ -849,6 +857,7 @@
     <div id="paneComposite" class="tab-pane">
       <h2 class="section-title">📋 KCSE Composite Practical Exams (40 Marks)</h2>
       <p class="hint" style="margin-bottom:14px;">Full KCSE Paper 3 Mock Examinations completed by your students with Q1 (15m), Q2 (15m), and Q3 (10m) breakdown.</p>
+      <div id="compositeClassDiagnostics" style="margin-bottom:18px;"></div>
       <div id="compositeSessionsBox"><div class="empty">Loading composite exam sessions…</div></div>
     </div>
 
@@ -1086,6 +1095,10 @@
 <!-- Print-Only Dedicated Container for Student Credential Slips -->
 <div id="credentialPrintArea" style="display:none;"></div>
 
+<!-- Print-Only Dedicated Container for Official KNEC Marked Scripts -->
+<div id="teacherKnecPrintArea" style="display:none;"></div>
+
+<script src="../student/js/composite-engine.js?v=69"></script>
 <script src="../shared/api.js?v=69"></script>
 <script src="../shared/notifications-engine.js?v=69"></script>
 <script src="../shared/push-manager.js?v=69"></script>

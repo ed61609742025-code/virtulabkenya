@@ -1043,6 +1043,7 @@
     <div style="display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;">
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <button class="top-action-btn" onclick="window.location.href='/student/mock_exams.html'">📚 Mock Hub</button>
+        <button class="top-action-btn" onclick="printKCSEBooklet()" style="background:linear-gradient(135deg,#0284C7,#0369A1);color:#fff;border:none;font-weight:800;">📥 Download Marked Script (PDF)</button>
         <button class="top-action-btn" onclick="printKCSEBooklet()">🖨️ Print Booklet</button>
       </div>
       <div style="display:flex; gap:8px; flex-wrap:wrap;">
@@ -1051,6 +1052,95 @@
         <button class="btn-submit-exam" onclick="window.location.href='/student/history.html'">📊 View History →</button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Official KNEC Paper 3 Examination Script Print Container (Rendered exclusively for @media print) -->
+<div id="knecPrintContainer" class="knec-official-print-document" style="display:none;">
+  <!-- Header with Coat of Arms & Exam Metadata -->
+  <div class="knec-print-header">
+    <div class="knec-republic-text">REPUBLIC OF KENYA</div>
+    <div class="knec-council-text">THE KENYA NATIONAL EXAMINATIONS COUNCIL</div>
+    <div class="knec-exam-title">KENYA CERTIFICATE OF SECONDARY EDUCATION (KCSE)</div>
+    <div class="knec-paper-title">233/3 — CHEMISTRY PAPER 3 (PRACTICAL)</div>
+    <div class="knec-paper-subtitle" id="printExamTitle">Official Examination Booklet &amp; Marked Candidate Script</div>
+    <div class="knec-duration-text">Time: 2 Hours 15 Minutes &nbsp;·&nbsp; Maximum Marks: 40.0</div>
+  </div>
+
+  <!-- Candidate Identity & Official Examiner Scorecard Grid -->
+  <div class="knec-print-meta-grid">
+    <div class="knec-candidate-box">
+      <div class="knec-meta-row"><span>Candidate Name:</span> <b id="printCandidateName">—</b></div>
+      <div class="knec-meta-row"><span>Index Number:</span> <b id="printCandidateIndex">—</b></div>
+      <div class="knec-meta-row"><span>Centre Name:</span> <b id="printCentreName">VirtuLab Kenya Examination Centre</b></div>
+      <div class="knec-meta-row"><span>Date &amp; Session:</span> <b id="printExamDate">—</b></div>
+      <div class="knec-meta-row"><span>Examination Series:</span> <b id="printSeriesName">—</b></div>
+    </div>
+    <div class="knec-examiner-grid-wrapper">
+      <table class="knec-examiner-table">
+        <thead>
+          <tr>
+            <th>Question</th>
+            <th>Max Score</th>
+            <th>Candidate Mark</th>
+            <th>Examiner Initial</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Question 1 (Volumetric)</td>
+            <td>15.0</td>
+            <td id="pScoreQ1" class="knec-red-score">—</td>
+            <td>KNEC/CH</td>
+          </tr>
+          <tr>
+            <td>Question 2 (Qualitative)</td>
+            <td>15.0</td>
+            <td id="pScoreQ2" class="knec-red-score">—</td>
+            <td>KNEC/CH</td>
+          </tr>
+          <tr>
+            <td>Question 3 (Organic)</td>
+            <td>10.0</td>
+            <td id="pScoreQ3" class="knec-red-score">—</td>
+            <td>KNEC/CH</td>
+          </tr>
+          <tr class="knec-total-row">
+            <td><b>TOTAL SCORE</b></td>
+            <td><b>40.0</b></td>
+            <td id="printTotalScore" class="knec-red-score-total">—</td>
+            <td id="pGrade" class="knec-grade-badge">—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Question 1 Content -->
+  <div class="knec-print-section" id="printSectionQ1">
+    <div class="knec-section-heading">1. QUESTION 1: VOLUMETRIC ANALYSIS (15.0 MARKS)</div>
+    <div id="printQ1Content"></div>
+  </div>
+
+  <!-- Question 2 Content (Inorganic) -->
+  <div class="knec-print-section" id="printSectionQ2">
+    <div class="knec-section-heading">2. QUESTION 2: INORGANIC QUALITATIVE ANALYSIS (15.0 MARKS)</div>
+    <div id="printQ2Content"></div>
+  </div>
+
+  <!-- Question 3 Content (Organic) -->
+  <div class="knec-print-section" id="printSectionQ3">
+    <div class="knec-section-heading">3. QUESTION 3: ORGANIC FUNCTIONAL GROUP ANALYSIS (10.0 MARKS)</div>
+    <div id="printQ3Content"></div>
+  </div>
+
+  <!-- Additional Questions if polymorphic/written -->
+  <div id="printExtraQuestionsContainer"></div>
+
+  <!-- Chief Examiner Critique & Diagnostic Advice -->
+  <div class="knec-print-section knec-examiner-remarks-section" id="printExaminerRemarks">
+    <div class="knec-section-heading">CHIEF EXAMINER'S OFFICIAL REMARKS &amp; REMEDIAL CRITIQUE</div>
+    <div id="printDiagnosticNotes"></div>
   </div>
 </div>
 

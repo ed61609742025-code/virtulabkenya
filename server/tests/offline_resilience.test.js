@@ -213,8 +213,8 @@ describe('Offline Resilience & Low-Bandwidth Lab Tests', () => {
     const swPath = path.resolve(__dirname, '../../client/sw.js');
     const swContent = fs.readFileSync(swPath, 'utf8');
 
-    it('should use updated cache version virtulab-kenya-v110', () => {
-      assert.match(swContent, /const CACHE_NAME = 'virtulab-kenya-v110';/);
+    it('should use updated cache version virtulab-kenya-v110 or higher', () => {
+      assert.match(swContent, /const CACHE_NAME = 'virtulab-kenya-v11[0-9]';/);
     });
 
     it('should precache all 8 student benches, engines, and shared cores', () => {

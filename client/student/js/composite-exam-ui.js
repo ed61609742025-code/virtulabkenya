@@ -2058,6 +2058,7 @@ requireStudentLogin();
                       </td>
                       <td>
                         <textarea class="kcse-input" id="q2Inf_${t.id}" placeholder="Write inferences..." oninput="onQ2TextChange('${t.id}')">${engine.q2Inf[t.id] || ''}</textarea>
+                        <div id="preview_q2Inf_${t.id}" class="chem-preview-box"></div>
                       </td>
                     </tr>
                   </tbody>
@@ -2174,6 +2175,7 @@ requireStudentLogin();
                     </td>
                     <td>
                       <textarea class="kcse-input" id="q2Inf_${t.id}" placeholder="Write deductions / inferences with ionic superscripts (e.g. Pb²⁺, Zn²⁺)..." oninput="onQ2TextChange('${t.id}')">${engine.q2Inf[t.id] || ''}</textarea>
+                      <div id="preview_q2Inf_${t.id}" class="chem-preview-box"></div>
                     </td>
                   </tr>
                 </tbody>
@@ -2265,6 +2267,17 @@ requireStudentLogin();
     engine.setQ2Response(testId, obs, inf);
     updateLiveScoreDisplay();
     saveExamDraft();
+
+    if (window.KnecPedagogy) {
+      const prevBox = document.getElementById(`preview_q2Inf_${testId}`);
+      if (prevBox) {
+        const isQ2Org = Boolean(engine.preset?.q2?.simulationType === 'organic');
+        const prev = KnecPedagogy.getFormulaPreview(inf, isQ2Org ? 'organic' : 'inorganic');
+        prevBox.innerHTML = prev.isValid
+          ? `<span class="chem-preview-badge valid">⚡ Formatted: ${prev.formattedText}</span>`
+          : '';
+      }
+    }
   }
 
   function onQ2DeductionsChanged() {
@@ -2408,6 +2421,7 @@ requireStudentLogin();
                       </td>
                       <td>
                         <textarea class="kcse-input" id="q3Inf_${t.id}" placeholder="Write deductions / inferences (e.g. Pb²⁺, Al³⁺, Zn²⁺)..." oninput="onQ3TextChange('${t.id}')">${engine.q3Inf[t.id] || ''}</textarea>
+                        <div id="preview_q3Inf_${t.id}" class="chem-preview-box"></div>
                       </td>
                     </tr>
                   </tbody>
@@ -2473,6 +2487,7 @@ requireStudentLogin();
                     </td>
                     <td>
                       <textarea class="kcse-input" id="q3Inf_${t.id}" placeholder="Write inferences..." oninput="onQ3TextChange('${t.id}')">${engine.q3Inf[t.id] || ''}</textarea>
+                      <div id="preview_q3Inf_${t.id}" class="chem-preview-box"></div>
                     </td>
                   </tr>
                 </tbody>
@@ -2673,6 +2688,21 @@ requireStudentLogin();
     engine.setQ3Response(testId, obs, inf);
     updateLiveScoreDisplay();
     saveExamDraft();
+
+    if (window.KnecPedagogy) {
+      const prevBox = document.getElementById(`preview_q3Inf_${testId}`);
+      if (prevBox) {
+        const isQ3Qual = Boolean(
+          engine.preset?.q3?.simulationType === 'qualitative' ||
+          engine.preset?.q3?.trueSaltKey ||
+          (engine.preset?.q3?.sampleName && /solid/i.test(engine.preset?.q3?.sampleName))
+        );
+        const prev = KnecPedagogy.getFormulaPreview(inf, isQ3Qual ? 'inorganic' : 'organic');
+        prevBox.innerHTML = prev.isValid
+          ? `<span class="chem-preview-badge valid">⚡ Formatted: ${prev.formattedText}</span>`
+          : '';
+      }
+    }
   }
 
   function onQ3DeductionChanged() {
@@ -2897,6 +2927,33 @@ requireStudentLogin();
       const q3Rubric = evalData.q3Details?.rubric || [];
 
       let rubricHtml = '';
+      function renderRubricItemRationale(r, questionType) {
+        if (!window.KnecPedagogy || (r.pass && r.mark >= r.max)) return '';
+        const rat = KnecPedagogy.getExaminerRationale({
+          ruleCode: r.code || '',
+          score: r.mark,
+          maxScore: r.max,
+          candidateText: r.detail || '',
+          expectedText: r.detail || '',
+          penalties: {
+            tabooPenalty: (r.detail || '').includes('Taboo Penalty') || (r.detail || '').includes('white solution'),
+            chargePenalty: (r.detail || '').includes('CP Penalty') || (r.detail || '').includes('missing charge'),
+            ciPenalty: (r.detail || '').includes('CI Penalty') || (r.detail || '').includes('contradictory ion')
+          },
+          type: questionType
+        });
+        return `
+          <div class="examiner-rationale-box" style="margin:6px 0 6px 22px;">
+            <div class="examiner-rationale-header">
+              <span>👨‍🏫 Examiner Rationale &bull; ${rat.knecClause}</span>
+              <span>⚠️ Deduction</span>
+            </div>
+            <div class="examiner-rationale-text">${rat.rationale}</div>
+            ${rat.pedagogicalTip ? `<div class="examiner-rationale-tip">💡 Revision Pointer: ${rat.pedagogicalTip}</div>` : ''}
+          </div>
+        `;
+      }
+
       if (q1Rubric.length > 0) {
         rubricHtml += '<div style="font-weight:800; color:var(--cyan-accent); margin-top:4px;">🧪 Q1 Volumetric Analysis (15.0 Marks):</div>';
         rubricHtml += q1Rubric.map(r => `
@@ -2906,12 +2963,14 @@ requireStudentLogin();
               <span style="font-family:var(--font-mono); font-weight:700; color:${r.pass ? 'var(--green-accent)' : 'var(--red-accent)'};">${r.mark.toFixed(1)} / ${r.max.toFixed(1)}</span>
             </div>
             ${r.detail ? `<div style="font-size:0.75rem; color:var(--text-muted); padding-left:22px; margin-top:2px;">${r.detail}</div>` : ''}
+            ${renderRubricItemRationale(r, 'volumetric')}
           </div>
         `).join('');
       }
 
       if (q2Rubric.length > 0) {
-        rubricHtml += '<div style="font-weight:800; color:var(--cyan-accent); margin-top:12px;">🧂 Q2 Qualitative Inorganic Analysis (15.0 Marks):</div>';
+        const isQ2Org = Boolean(engine.preset?.q2?.simulationType === 'organic');
+        rubricHtml += '<div style="font-weight:800; color:var(--cyan-accent); margin-top:12px;">🧂 Q2 Qualitative Analysis (15.0 Marks):</div>';
         rubricHtml += q2Rubric.map(r => `
           <div style="border-bottom:1px solid var(--border-subtle, rgba(255,255,255,0.06)); padding:6px 0;">
             <div class="rubric-item-row">
@@ -2919,6 +2978,7 @@ requireStudentLogin();
               <span style="font-family:var(--font-mono); font-weight:700; color:${r.pass ? 'var(--green-accent)' : 'var(--red-accent)'};">${r.mark.toFixed(1)} / ${r.max.toFixed(1)}</span>
             </div>
             ${r.detail ? `<div style="font-size:0.75rem; color:var(--text-muted); padding-left:22px; margin-top:2px;">${r.detail}</div>` : ''}
+            ${renderRubricItemRationale(r, isQ2Org ? 'organic' : 'inorganic')}
           </div>
         `).join('');
       }
@@ -2935,6 +2995,7 @@ requireStudentLogin();
               <span style="font-family:var(--font-mono); font-weight:700; color:${r.pass ? 'var(--green-accent)' : 'var(--red-accent)'};">${r.mark.toFixed(1)} / ${r.max.toFixed(1)}</span>
             </div>
             ${r.detail ? `<div style="font-size:0.75rem; color:var(--text-muted); padding-left:22px; margin-top:2px;">${r.detail}</div>` : ''}
+            ${renderRubricItemRationale(r, isQ3Qual ? 'inorganic' : 'organic')}
           </div>
         `).join('');
       }

@@ -1199,8 +1199,15 @@ if (typeof window !== 'undefined') {
     // Live Observation Feedback
     if (obsFeedback) {
       const obsLines = [];
-      if (/white solution/i.test(obsVal)) {
-        obsLines.push('<div class="feedback-line penalty">🚨 KNEC Penalty: Never write "white solution" (-0.5 Mk). Use "white precipitate" or "colorless solution".</div>');
+      if (window.KnecPedagogy) {
+        const tabooHits = KnecPedagogy.detectTabooPhrases(obsVal, 'observation');
+        tabooHits.forEach(hit => {
+          obsLines.push(`<div class="taboo-nudge-alert ${hit.severity}">${hit.alert}</div>`);
+        });
+      } else {
+        if (/white solution/i.test(obsVal)) {
+          obsLines.push('<div class="feedback-line penalty">🚨 KNEC Penalty: Never write "white solution" (-0.5 Mk). Use "white precipitate" or "colorless solution".</div>');
+        }
       }
       if (/gas (evolved|produced|given off)/i.test(obsVal) && !/(effervescence|limewater|litmus|ammonia|pungent|choking|brown|relight|pop)/i.test(obsVal)) {
         obsLines.push('<div class="feedback-line warning">⚠️ State specific gas properties (effervescence, odor, color, litmus/limewater test).</div>');
@@ -1215,8 +1222,18 @@ if (typeof window !== 'undefined') {
     if (infFeedback) {
       const infLines = [];
       if (infVal) {
+        if (window.KnecPedagogy) {
+          const preview = KnecPedagogy.getFormulaPreview(infVal, 'inorganic');
+          if (preview.isValid) {
+            infLines.push(`<div class="chem-preview-box"><span class="chem-preview-badge valid">⚡ Formatted: ${preview.formattedText}</span></div>`);
+          }
+          const tabooHits = KnecPedagogy.detectTabooPhrases(infVal, 'inference');
+          tabooHits.forEach(hit => {
+            infLines.push(`<div class="taboo-nudge-alert ${hit.severity}">${hit.alert}</div>`);
+          });
+        }
         const parsed = parseInferredIons(infVal);
-        if (parsed.missingChargeSymbols.length > 0) {
+        if (!window.KnecPedagogy && parsed.missingChargeSymbols.length > 0) {
           infLines.push(`<div class="feedback-line warning">⚠️ Missing charge: Element symbol written without ionic charge (e.g. ${parsed.missingChargeSymbols.join(', ')}) forfeits inference marks (-0.5 Mk).</div>`);
         }
         const contras = detectContradictoryIons(testKey, salt, parsed.presentIons, obsVal, infVal);
@@ -3342,8 +3359,38 @@ if (typeof window !== 'undefined') {
                   <ul style="margin:6px 0 0 14px; padding:0; font-size:0.75rem; color:var(--text-muted);">
                     ${item.infNotes.map(n => `<li style="margin-bottom:2px;">${n}</li>`).join('')}
                   </ul>` : ''}
-              </div>
             </div>
+
+            ${(() => {
+              if (window.KnecPedagogy) {
+                const rat = KnecPedagogy.getExaminerRationale({
+                  testLabel: item.testLabel,
+                  stepLetter: item.stepLetter,
+                  score: item.score,
+                  maxScore: item.maxItemScore,
+                  candidateText: `${item.obsText} | ${item.infText}`,
+                  expectedText: `${item.expectedObs}`,
+                  testKey: item.testKey,
+                  penalties: {
+                    tabooPenalty: item.tabooPenalty,
+                    chargePenalty: item.chargePenalty,
+                    ciPenalty: item.ciPenalty
+                  },
+                  type: 'inorganic'
+                });
+                return `
+                  <div class="examiner-rationale-box ${rat.isFullMark ? 'full-marks' : ''}">
+                    <div class="examiner-rationale-header">
+                      <span>👨‍🏫 KNEC Examiner Rationale &bull; ${rat.knecClause}</span>
+                      <span>${rat.isFullMark ? '✅ Satisfied' : '⚠️ Deduction'}</span>
+                    </div>
+                    <div class="examiner-rationale-text">${rat.rationale}</div>
+                    ${rat.pedagogicalTip ? `<div class="examiner-rationale-tip">💡 Revision Pointer: ${rat.pedagogicalTip}</div>` : ''}
+                  </div>
+                `;
+              }
+              return '';
+            })()}
           </div>
         `).join('')}
       </div>

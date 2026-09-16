@@ -2581,6 +2581,43 @@ requireStudentLogin();
     } else {
       notes = '⚠️ <b>More Practice Needed.</b> Use Guided Mode to review indicator selection, meniscus reading, and C₁V₁=C₂V₂ math.';
     }
+
+    if (window.KnecPedagogy && examMarks.totalMarks < 15.0) {
+      let lossReasons = [];
+      let ruleCode = 'AC';
+      if (examMarks.concordanceMarks < 3) {
+        ruleCode = 'PA';
+        lossReasons.push(`Concordancy: Trials varied by > ±0.10 cm³ (${examMarks.concordanceMarks}/3 Mks).`);
+      } else if (examMarks.averageMarks < 2) {
+        ruleCode = 'D';
+        lossReasons.push(`Decimal Precision: Values must end in .00 or .05 cm³ (${examMarks.averageMarks}/2 Mks).`);
+      } else if (examMarks.accuracyMarks < 5) {
+        ruleCode = 'AC';
+        lossReasons.push(`Accuracy: Titre deviated by > ±0.10 cm³ (${examMarks.accuracyMarks}/5 Mks).`);
+      }
+      if (examMarks.concMarks < 5) {
+        lossReasons.push(`Stoichiometry: Error in mole ratio calculation (${examMarks.concMarks}/5 Mks).`);
+      }
+      const rat = KnecPedagogy.getExaminerRationale({
+        ruleCode,
+        score: examMarks.totalMarks,
+        maxScore: 15.0,
+        candidateText: lossReasons.join('; '),
+        expectedText: 'Concordant titres within ±0.10 cm³ with accurate stoichiometric calculation.',
+        type: 'volumetric'
+      });
+      notes += `
+        <div class="examiner-rationale-box" style="margin-top:12px; text-align:left;">
+          <div class="examiner-rationale-header">
+            <span>👨‍🏫 KNEC Examiner Rationale &bull; ${rat.knecClause}</span>
+            <span>⚠️ Deduction</span>
+          </div>
+          <div class="examiner-rationale-text">${rat.rationale}</div>
+          ${rat.pedagogicalTip ? `<div class="examiner-rationale-tip">💡 Revision Pointer: ${rat.pedagogicalTip}</div>` : ''}
+        </div>
+      `;
+    }
+
     const notesEl = document.getElementById('examFeedbackNotes');
     if (notesEl) notesEl.innerHTML = notes;
 

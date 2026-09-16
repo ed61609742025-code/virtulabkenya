@@ -695,3 +695,92 @@ button:not(:disabled):active {
 
 
 
+
+
+/* ── KNEC Pedagogy: Live Formula Preview, Taboo Nudges & Examiner Rationale ── */
+.chem-preview-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 5px;
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+.chem-preview-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(14, 165, 233, 0.12);
+  border: 1px solid rgba(14, 165, 233, 0.3);
+  color: var(--cyan-accent);
+  font-family: var(--font-mono, monospace);
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+.chem-preview-badge.valid {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.35);
+  color: var(--green-accent);
+}
+.taboo-nudge-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: var(--amber-accent);
+  font-size: 0.76rem;
+  line-height: 1.4;
+  animation: fadeInAlert 0.25s ease-out;
+}
+.taboo-nudge-alert.penalty {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.35);
+  color: var(--red-accent);
+}
+@keyframes fadeInAlert {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.examiner-rationale-box {
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-left: 3px solid var(--amber-accent);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+.examiner-rationale-box.full-marks {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.25);
+  border-left: 3px solid var(--green-accent);
+}
+.examiner-rationale-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  font-weight: 800;
+  color: var(--amber-accent);
+}
+.examiner-rationale-box.full-marks .examiner-rationale-header {
+  color: var(--green-accent);
+}
+.examiner-rationale-text {
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+.examiner-rationale-tip {
+  color: var(--text-muted);
+  font-size: 0.74rem;
+  font-style: italic;
+}

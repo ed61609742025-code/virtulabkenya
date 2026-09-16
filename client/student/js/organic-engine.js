@@ -352,6 +352,41 @@ if (typeof window === 'undefined') {
     elem.dispatchEvent(new Event('input'));
   };
 
+  function onCandidateTextChange(testKey) {
+    if (typeof document === 'undefined') return;
+    const obsElem = document.getElementById(`obs_${testKey}`);
+    const infElem = document.getElementById(`inf_${testKey}`);
+    const obsFeedback = document.getElementById(`obsFeedback_${testKey}`);
+    const infFeedback = document.getElementById(`infFeedback_${testKey}`);
+
+    const obsVal = (obsElem ? obsElem.value : '').trim();
+    const infVal = (infElem ? infElem.value : '').trim();
+
+    // Observation feedback
+    if (obsFeedback) {
+      const lines = [];
+      if (window.KnecPedagogy) {
+        const hits = KnecPedagogy.detectTabooPhrases(obsVal, 'observation');
+        hits.forEach(h => lines.push(`<div class="taboo-nudge-alert ${h.severity}">${h.alert}</div>`));
+      }
+      obsFeedback.innerHTML = lines.join('');
+    }
+
+    // Inference feedback & live formula preview
+    if (infFeedback) {
+      const lines = [];
+      if (infVal && window.KnecPedagogy) {
+        const prev = KnecPedagogy.getFormulaPreview(infVal, 'organic');
+        if (prev.isValid) {
+          lines.push(`<div class="chem-preview-box"><span class="chem-preview-badge valid">⚡ Formatted: ${prev.formattedText}</span></div>`);
+        }
+        const hits = KnecPedagogy.detectTabooPhrases(infVal, 'organic_neutral');
+        hits.forEach(h => lines.push(`<div class="taboo-nudge-alert ${h.severity}">${h.alert}</div>`));
+      }
+      infFeedback.innerHTML = lines.join('');
+    }
+  }
+
   function saveTextState(testKey) {
     const obsElem = document.getElementById(`obs_${testKey}`);
     const infElem = document.getElementById(`inf_${testKey}`);
@@ -359,6 +394,7 @@ if (typeof window === 'undefined') {
     if (obsElem) testStates[testKey].obsText = obsElem.value;
     if (infElem) testStates[testKey].infText = infElem.value;
     updateProgress();
+    onCandidateTextChange(testKey);
   }
   window.saveTextState = saveTextState;
 
@@ -962,12 +998,14 @@ if (typeof window === 'undefined') {
                         <div class="suggestion-chips-container">
                           ${getObsSuggestionChips(test.key)}
                         </div>
+                        <div id="obsFeedback_${test.key}" class="live-feedback-strip"></div>
                       </td>
                       <td>
                         <textarea class="kcse-input" id="inf_${test.key}" placeholder="Write deductions (e.g. -C=C- or -C≡C- present)..." oninput="saveTextState('${test.key}')">${st.infText || ''}</textarea>
                         <div class="suggestion-chips-container">
                           ${getInfSuggestionChips(test.key)}
                         </div>
+                        <div id="infFeedback_${test.key}" class="live-feedback-strip"></div>
                       </td>
                     </tr>
                   </tbody>
@@ -1417,6 +1455,32 @@ if (typeof window === 'undefined') {
               <b>Inf:</b> "${escapeHtml(userInf || '(None recorded)')}" — 
               <span style="color:${infEval.pass ? 'var(--green-accent)' : 'var(--red-accent)'}; font-weight:600;">${infEval.note}</span>
             </div>
+
+            ${(() => {
+              if (window.KnecPedagogy) {
+                const rat = KnecPedagogy.getExaminerRationale({
+                  testLabel: t.label,
+                  stepLetter: String.fromCharCode(97 + i),
+                  score: testScore,
+                  maxScore: 1.4,
+                  candidateText: `${userObs || ''} | ${userInf || ''}`,
+                  expectedText: `${t.correctObs || ''} | ${t.correctInf || ''}`,
+                  testKey: t.key,
+                  type: 'organic'
+                });
+                return `
+                  <div class="examiner-rationale-box ${rat.isFullMark ? 'full-marks' : ''}">
+                    <div class="examiner-rationale-header">
+                      <span>👨‍🏫 KNEC Examiner Rationale &bull; ${rat.knecClause}</span>
+                      <span>${rat.isFullMark ? '✅ Satisfied' : '⚠️ Deduction'}</span>
+                    </div>
+                    <div class="examiner-rationale-text">${rat.rationale}</div>
+                    ${rat.pedagogicalTip ? `<div class="examiner-rationale-tip">💡 Revision Pointer: ${rat.pedagogicalTip}</div>` : ''}
+                  </div>
+                `;
+              }
+              return '';
+            })()}
           </div>
         `;
       });

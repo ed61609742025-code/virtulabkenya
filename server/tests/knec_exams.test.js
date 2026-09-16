@@ -474,4 +474,137 @@ describe('KNEC Paper 3 Examination Suite Standards', () => {
     assert.ok(cleanedInst.includes('Sodium Hydroxide'), 'Analyte chemical name should remain intact');
   });
 
+  it('should strictly award 0.0 marks for wrong observations and inferences in Qualitative Salt Analysis bench', () => {
+    const qualEnginePath = path.join(rootDir, 'client', 'student', 'js', 'qualitative-engine.js');
+    const { SALTS, TESTS, evaluateObservationAccuracy, evaluateInferenceAccuracy } = require(qualEnginePath);
+
+    const leadNitrate = SALTS.leadNitrate;
+    const testNaOH = TESTS.find(t => t.key === 'naoh');
+    const testHeat = TESTS.find(t => t.key === 'heat_solid');
+    const testAgNO3 = TESTS.find(t => t.key === 'agno3');
+    const testNH3 = TESTS.find(t => t.key === 'nh3');
+    const calciumChloride = SALTS.calciumChloride;
+
+    // Wrong observations must receive 0.0 marks
+    const wrongObs1 = evaluateObservationAccuracy(testNaOH, leadNitrate, 'Effervescence of gas');
+    assert.strictEqual(wrongObs1.score, 0.0, 'Wrong observation (effervescence on NaOH) must score 0.0');
+
+    const wrongObs2 = evaluateObservationAccuracy(testNaOH, leadNitrate, 'Red precipitate formed');
+    assert.strictEqual(wrongObs2.score, 0.0, 'Wrong precipitate color must score 0.0');
+
+    const wrongObs3 = evaluateObservationAccuracy(testHeat, leadNitrate, 'Burns with a clean non-luminous blue flame');
+    assert.strictEqual(wrongObs3.score, 0.0, 'Irrelevant heating observation must score 0.0');
+
+    const wrongObs4 = evaluateObservationAccuracy(testAgNO3, calciumChloride, 'No precipitate formed');
+    assert.strictEqual(wrongObs4.score, 0.0, 'Reporting no ppt when white ppt is expected must score 0.0');
+
+    // Wrong inferences must receive 0.0 marks or negative penalty
+    const wrongInf1 = evaluateInferenceAccuracy(testNaOH, leadNitrate, 'Na⁺ present', 'White ppt, soluble in excess');
+    assert.strictEqual(wrongInf1.score, 0.0, 'Wrong cation (Na+) on NaOH test must score 0.0');
+
+    const wrongInf2 = evaluateInferenceAccuracy(testNaOH, leadNitrate, 'Fe³⁺ present', 'White ppt, soluble in excess');
+    assert.strictEqual(wrongInf2.score, 0.0, 'Colored cation on white ppt must score 0.0');
+    assert.ok(wrongInf2.ciPenalty > 0, 'Contradictory colored ion must receive penalty');
+
+    const wrongInf3 = evaluateInferenceAccuracy(testNaOH, leadNitrate, 'random wrong guess', 'White ppt, soluble in excess');
+    assert.strictEqual(wrongInf3.score, 0.0, 'Nonsense inference text must score 0.0');
+
+    // Negative test: calcium in NH3 gives no precipitate -> writing "Ca2+ absent" is wrong
+    const wrongCaInf = evaluateInferenceAccuracy(testNH3, calciumChloride, 'Ca²⁺ absent', 'No precipitate formed');
+    assert.strictEqual(wrongCaInf.score, 0.0, 'Inferring Ca2+ absent when it is present must score 0.0');
+  });
+
+  it('should strictly award 0.0 marks for wrong observations and inferences in Organic Chemistry bench', () => {
+    const organicEnginePath = path.join(rootDir, 'client', 'student', 'js', 'organic-engine.js');
+    const { SAMPLES, evaluateOrganicObservation, evaluateOrganicInference } = require(organicEnginePath);
+
+    const alkene = SAMPLES.org_alkene;
+    const alcohol = SAMPLES.org_alcohol;
+    const acid = SAMPLES.org_acid;
+
+    // Alkene (Hex-1-ene): Immiscible, sooty flame, decolourizes bromine, orange dichromate persists, no effervescence
+    const wrongAlkeneSol = evaluateOrganicObservation('solubility', alkene, 'Dissolves completely forming a single clear layer');
+    assert.strictEqual(wrongAlkeneSol.score, 0.0, 'Alkene dissolving completely in water must score 0.0');
+    assert.strictEqual(wrongAlkeneSol.pass, false);
+
+    const correctAlkeneSol = evaluateOrganicObservation('solubility', alkene, 'Immiscible, forms two separate layers');
+    assert.strictEqual(correctAlkeneSol.score, 0.7, 'Accurate immiscibility must score full 0.7 marks');
+    assert.strictEqual(correctAlkeneSol.pass, true);
+
+    const wrongAlkeneIgn = evaluateOrganicObservation('ignition', alkene, 'Burns with a clean non-sooty blue flame');
+    assert.strictEqual(wrongAlkeneIgn.score, 0.0, 'Alkene burning with clean non-sooty flame must score 0.0');
+    assert.strictEqual(wrongAlkeneIgn.pass, false);
+
+    const wrongAlkeneBr2 = evaluateOrganicObservation('bromine', alkene, 'Reddish-brown color persists, no decolourization');
+    assert.strictEqual(wrongAlkeneBr2.score, 0.0, 'Bromine not decolourizing on alkene must score 0.0');
+    assert.strictEqual(wrongAlkeneBr2.pass, false);
+
+    const wrongAlkeneCr = evaluateOrganicObservation('dichromate', alkene, 'Turns from orange to green');
+    assert.strictEqual(wrongAlkeneCr.score, 0.0, 'Alkene turning dichromate green must score 0.0');
+    assert.strictEqual(wrongAlkeneCr.pass, false);
+
+    // Alkene Inferences
+    const wrongAlkeneInf1 = evaluateOrganicInference('bromine', alkene, 'R-OH / alkanol present');
+    assert.strictEqual(wrongAlkeneInf1.score, 0.0, 'Inferring alkanol on bromine test must score 0.0');
+    assert.strictEqual(wrongAlkeneInf1.pass, false);
+
+    const wrongAlkeneInf2 = evaluateOrganicInference('bromine', alkene, 'Saturated organic compound / C-C single bond');
+    assert.strictEqual(wrongAlkeneInf2.score, 0.0, 'Inferring saturated compound on decolourization must score 0.0');
+    assert.strictEqual(wrongAlkeneInf2.pass, false);
+
+    const wrongAlkeneInf3 = evaluateOrganicInference('ignition', alkene, 'this is totally wrong answer');
+    assert.strictEqual(wrongAlkeneInf3.score, 0.0, 'Random wrong inference text must score 0.0');
+    assert.strictEqual(wrongAlkeneInf3.pass, false);
+
+    const correctAlkeneInf = evaluateOrganicInference('bromine', alkene, 'Unsaturated compound with C=C double bond present');
+    assert.strictEqual(correctAlkeneInf.score, 0.7, 'Accurate C=C unsaturation inference must score 0.7');
+    assert.strictEqual(correctAlkeneInf.pass, true);
+
+    // Carboxylic acid (Ethanoic acid): Effervescence with carbonate, turns blue litmus red
+    const wrongAcidCarb = evaluateOrganicObservation('carbonate', acid, 'No reaction, no effervescence observed');
+    assert.strictEqual(wrongAcidCarb.score, 0.0, 'Acid with no effervescence must score 0.0');
+
+    const correctAcidCarb = evaluateOrganicObservation('carbonate', acid, 'Brisk effervescence of a colorless gas that turns limewater milky');
+    assert.strictEqual(correctAcidCarb.score, 0.7, 'Acid effervescence must score 0.7');
+
+    const wrongAcidLitmus = evaluateOrganicObservation('litmus', acid, 'No change on red or blue litmus papers');
+    assert.strictEqual(wrongAcidLitmus.score, 0.0, 'Acid having no effect on litmus must score 0.0');
+
+    const wrongAcidInf = evaluateOrganicInference('carbonate', acid, 'Alkanol present (R-OH)');
+    assert.strictEqual(wrongAcidInf.score, 0.0, 'Inferring alkanol on carbonate test must score 0.0');
+  });
+
+  it('should strictly award 0.0 marks for wrong free-form answers in Composite Exam Question 2 & Question 3', () => {
+    const engine = new CompositeExamEngine({ presetKey: 'series_1' });
+
+    // Q2: Inorganic Salt Analysis
+    // Submit completely wrong observations and inferences for NaOH
+    engine.setQ2Observation('q2_naoh', 'Vigorous purple fizzing with green smoke');
+    engine.setQ2Inference('q2_naoh', 'Potassium or sodium ions present');
+
+    const q2Score = engine.calculateQ2Score();
+    const naohRubric = q2Score.rubric.find(r => r.code === 'Q2_c');
+    assert.ok(naohRubric, 'NaOH rubric item must exist');
+    assert.strictEqual(naohRubric.mark, 0.0, 'Completely wrong Q2 observation and inference must score 0.0 Marks');
+    assert.strictEqual(naohRubric.pass, false);
+
+    // Q3: Organic Analysis (Series 1 Q3: test b is litmus)
+    // Submit wrong answers for litmus test
+    engine.setQ3Observation('q3_litmus', 'Turns bright yellow with pungent fumes');
+    engine.setQ3Inference('q3_litmus', 'Acidic substance present');
+
+    const q3Score = engine.calculateQ3Score();
+    const litmusRubric = q3Score.rubric.find(r => r.code === 'Q3_b');
+    assert.ok(litmusRubric, 'Litmus rubric item must exist');
+    assert.strictEqual(litmusRubric.mark, 0.0, 'Wrong Q3 observation and inference must score 0.0 Marks');
+    assert.strictEqual(litmusRubric.pass, false);
+
+    // Verify accurate answers DO receive marks
+    engine.setQ2Observation('q2_naoh', 'White precipitate formed, soluble in excess to form a colourless solution');
+    engine.setQ2Inference('q2_naoh', 'Al³⁺, Pb²⁺, Zn²⁺ present');
+    const q2Updated = engine.calculateQ2Score();
+    const naohUpdated = q2Updated.rubric.find(r => r.code === 'Q2_c');
+    assert.ok(naohUpdated.mark > 1.5, 'Accurate Q2 observation and inference must score high marks');
+    assert.strictEqual(naohUpdated.pass, true);
+  });
 });

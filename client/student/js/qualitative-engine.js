@@ -841,29 +841,34 @@ if (typeof window !== 'undefined') {
     if (test.key === 'heat_solid') {
       if (expLower.includes('sublime') || expLower.includes('dense white fumes')) {
         if (lower.includes('sublime') || lower.includes('white fumes') || lower.includes('deposit')) score = 0.55;
-        else if (lower.length > 5) score = 0.25;
+        else score = 0.0;
       } else if (expLower.includes('brown fumes') || expLower.includes('no₂') || expLower.includes('no2')) {
         if (lower.includes('brown') || lower.includes('fumes') || lower.includes('relight') || lower.includes('rekindl')) score = 0.55;
-        else if (lower.includes('water') || lower.includes('droplet')) score = 0.35;
+        else if (lower.includes('water') || lower.includes('droplet') || lower.includes('crackle')) score = 0.25;
+        else score = 0.0;
       } else if (expLower.includes('blue') && expLower.includes('white')) {
         if ((lower.includes('blue') || lower.includes('white')) && (lower.includes('droplet') || lower.includes('water') || lower.includes('condens'))) score = 0.55;
         else if (lower.includes('water') || lower.includes('droplet')) score = 0.35;
+        else score = 0.0;
       } else if (expLower.includes('yellow when hot') || expLower.includes('zno')) {
         if (lower.includes('yellow') && (lower.includes('hot') || lower.includes('cool') || lower.includes('white'))) score = 0.55;
-        else if (lower.includes('yellow')) score = 0.35;
+        else if (lower.includes('yellow')) score = 0.25;
+        else score = 0.0;
       } else if (expLower.includes('choking') || expLower.includes('so₂') || expLower.includes('so2')) {
         if (lower.includes('choking') || lower.includes('pungent') || lower.includes('so2') || lower.includes('green') || lower.includes('brown')) score = 0.55;
-        else if (lower.includes('water') || lower.includes('droplet')) score = 0.35;
+        else if (lower.includes('water') || lower.includes('droplet')) score = 0.25;
+        else score = 0.0;
       } else if (expLower.includes('decomposes completely') || expLower.includes('alkaline')) {
         if (lower.includes('ammonia') || lower.includes('litmus blue') || lower.includes('no residue')) score = 0.55;
-        else score = 0.35;
+        else score = 0.0;
       } else if (expLower.includes('limewater milky') || (expLower.includes('water droplets') && expLower.includes('co₂'))) {
         if ((lower.includes('water') || lower.includes('droplet') || lower.includes('condens')) && (lower.includes('milky') || lower.includes('limewater') || lower.includes('co2') || lower.includes('co₂'))) score = 0.55;
         else if (lower.includes('water') || lower.includes('droplet') || lower.includes('milky') || lower.includes('limewater')) score = 0.35;
+        else score = 0.0;
       } else {
         // Thermally stable (no change / crackles)
-        if (lower.includes('no change') || lower.includes('unchanged') || lower.includes('no gas') || lower.includes('crackle') || lower.includes('melts')) score = 0.55;
-        else if (!lower.includes('fumes') && !lower.includes('brown')) score = 0.35;
+        if (lower.includes('no change') || lower.includes('unchanged') || lower.includes('no gas') || lower.includes('crackle') || lower.includes('melts') || lower.includes('stable')) score = 0.55;
+        else score = 0.0;
       }
     } else if (test.key === 'flame') {
       const flameExpected = expLower.includes('golden yellow') ? 'yellow'
@@ -879,12 +884,12 @@ if (typeof window !== 'undefined') {
       } else {
         if (lower.includes(flameExpected) || (flameExpected === 'brick-red' && (lower.includes('red') || lower.includes('crimson'))) || (flameExpected === 'lilac' && lower.includes('violet'))) {
           score = 0.55;
-        } else if (lower.includes('flame')) {
-          score = 0.20;
+        } else {
+          score = 0.0;
         }
       }
     } else {
-      // Precipitation & Solution Tests (naoh, nh3, hcl, agno3, bacl2, ki, brown_ring)
+      // Precipitation & Solution Tests (naoh, nh3, hcl, agno3, bacl2, ki, brown_ring, pb_no3)
       const noPptRegex = /(?:no|without)\s+(?:white\s+|yellow\s+|cream\s+|blue\s+|green\s+|brown\s+|dense\s+|heavy\s+)?(?:ppt|precipitate)/i;
       const expHasNoPpt = noPptRegex.test(expLower) || expLower.includes('no visible') || expLower.includes('no change') || expLower.includes('no brown ring') || ((expLower.includes('colorless') || expLower.includes('colourless')) && !expLower.includes('ppt') && !expLower.includes('precipitate'));
       const hasExpectedPpt = (expLower.includes('ppt') || expLower.includes('precipitate') || expLower.includes('ring')) && !expHasNoPpt;
@@ -898,10 +903,10 @@ if (typeof window !== 'undefined') {
         // Expected is NO precipitate / NO visible reaction / Effervescence
         const isEffervescenceExpected = expLower.includes('effervescence') || expLower.includes('bubbl') || expLower.includes('gas');
         if (isEffervescenceExpected) {
-          if (lower.includes('effervescence') || lower.includes('bubbl') || lower.includes('gas') || lower.includes('milky') || lower.includes('green')) {
+          if (lower.includes('effervescence') || lower.includes('bubbl') || lower.includes('gas') || lower.includes('milky') || lower.includes('green') || lower.includes('fizz')) {
             score = 0.55;
           } else {
-            score = 0.20;
+            score = 0.0;
           }
         } else {
           if (studentPpt) {
@@ -910,7 +915,8 @@ if (typeof window !== 'undefined') {
           } else if (studentHasNoPpt) {
             score = 0.55;
           } else {
-            score = 0.35;
+            score = 0.0;
+            notes.push('❌ Incorrect observation: Expected no precipitate or no visible change.');
           }
         }
       } else {
@@ -936,21 +942,36 @@ if (typeof window !== 'undefined') {
 
             if (colorMatches && ((expSolubleInExcess && studentSoluble) || (expInsolubleInExcess && studentInsoluble))) {
               score = 0.55;
+            } else if (colorMatches && (studentSoluble || studentInsoluble)) {
+              score = 0.20;
+              notes.push('❌ Inaccurate: Incorrect precipitate solubility in excess reagent.');
             } else if (colorMatches) {
-              score = 0.35; // Dropped marks for missing or inaccurate excess
+              score = 0.35; // Dropped marks for missing excess specification
               notes.push('⚠️ Partial credit: State precipitate behavior in excess reagent accurately.');
-            } else if (studentSoluble || studentInsoluble) {
-              score = 0.25;
             } else {
-              score = 0.15;
+              score = 0.0;
+              notes.push('❌ Incorrect observation: Wrong precipitate colour or behavior.');
+            }
+          } else if (test.key === 'pb_no3') {
+            const expWarms = expLower.includes('warm') || expLower.includes('dissolv') || expLower.includes('heat');
+            const studentWarms = lower.includes('warm') || lower.includes('heat') || lower.includes('dissolv') || lower.includes('soluble');
+            if (colorMatches && studentPpt && expWarms && studentWarms) {
+              score = 0.55;
+            } else if (colorMatches && studentPpt && !expWarms) {
+              score = 0.55;
+            } else if (colorMatches && studentPpt) {
+              score = 0.35;
+              notes.push('⚠️ Partial credit: Note precipitate solubility on warming.');
+            } else {
+              score = 0.0;
+              notes.push('❌ Incorrect observation: Precipitation and warming behavior do not match.');
             }
           } else {
             if (colorMatches && studentPpt) {
               score = 0.55;
-            } else if (studentPpt) {
-              score = 0.35;
             } else {
-              score = 0.15;
+              score = 0.0;
+              notes.push('❌ Incorrect observation: Wrong precipitate colour.');
             }
           }
         }
@@ -965,6 +986,8 @@ if (typeof window !== 'undefined') {
       notes.push(`✅ Accurate observation recorded (+${score.toFixed(2)} Mk).`);
     } else if (score > 0) {
       notes.push(`⚠️ Partially accurate observation (+${score.toFixed(2)} Mk).`);
+    } else if (notes.length === 0) {
+      notes.push(`❌ Inaccurate observation (0.00 Mk). Expected: "${expectedText}".`);
     }
 
     return {
@@ -1001,11 +1024,14 @@ if (typeof window !== 'undefined') {
     }
     const saltCation = normIon(salt ? salt.cation : '');
     const saltAnion = normIon(salt ? salt.anion : '');
+    const saltKeyToUse = salt ? (salt.key || '') : currentSaltKey;
     const lower = raw.toLowerCase()
       .replace(/[\u2080-\u2089]/g, m => String.fromCharCode(m.charCodeAt(0) - 0x2080 + 48))
       .replace(/[\u00B9\u00B2\u00B3]/g, m => m === '¹' ? '1' : m === '²' ? '2' : '3')
       .replace(/[\u2070-\u2079]/g, m => String.fromCharCode(m.charCodeAt(0) - 0x2070 + 48))
       .replace(/[⁺+]/g, '+').replace(/[⁻-]/g, '-');
+
+    const hasAbsent = lower.includes('absent') || lower.includes('not present') || lower.includes('not detected');
 
     // Base Inference Evaluation
     if (test.key === 'naoh') {
@@ -1019,8 +1045,13 @@ if (typeof window !== 'undefined') {
         else if (lower.includes('amphoteric')) score = 0.35;
       } else if (parsed.presentIons.includes(saltCation)) {
         score = 0.55;
-      } else if (['na+', 'k+'].includes(saltCation) && (lower.includes('absent') || lower.includes('na') || lower.includes('k'))) {
-        score = 0.55;
+      } else if (['na+', 'k+'].includes(saltCation)) {
+        const mentionsAbsentGroup = parsed.absentIons.some(i => ['cu2+', 'fe2+', 'fe3+', 'al3+', 'pb2+', 'zn2+', 'ca2+', 'mg2+'].includes(i));
+        if (mentionsAbsentGroup || (hasAbsent && (lower.includes('cu') || lower.includes('fe') || lower.includes('al') || lower.includes('pb') || lower.includes('zn')))) {
+          score = 0.55;
+        } else if (parsed.presentIons.includes(saltCation)) {
+          score = 0.55;
+        }
       }
     } else if (test.key === 'nh3') {
       const pptCations = ['cu2+', 'zn2+', 'pb2+', 'al3+', 'fe2+', 'fe3+'];
@@ -1035,7 +1066,8 @@ if (typeof window !== 'undefined') {
         score = 0.55;
       } else if (!isPptSalt) {
         // Non-precipitating cations (Ca2+, NH4+, Na+, K+)
-        if (parsed.presentIons.includes(saltCation) || lower.includes('absent')) {
+        const hasAbsentPpt = parsed.absentIons.some(i => pptCations.includes(i)) || (hasAbsent && (lower.includes('cu') || lower.includes('fe') || lower.includes('al') || lower.includes('pb') || lower.includes('zn')));
+        if (parsed.presentIons.includes(saltCation) || hasAbsentPpt) {
           score = 0.55;
         }
       }
@@ -1043,37 +1075,55 @@ if (typeof window !== 'undefined') {
       if (['na+', 'k+', 'ca2+', 'cu2+'].includes(saltCation)) {
         if (parsed.presentIons.includes(saltCation)) score = 0.55;
       } else {
-        if (lower.includes('absent') || lower.includes('na') || lower.includes('k')) score = 0.55;
+        const mentionsNaK = parsed.absentIons.includes('na+') || parsed.absentIons.includes('k+') || lower.includes('na') || lower.includes('k');
+        if (hasAbsent && mentionsNaK && !parsed.presentIons.includes('na+') && !parsed.presentIons.includes('k+')) {
+          score = 0.55;
+        }
       }
     } else if (test.key === 'bacl2') {
       if (['so42-', 'so32-'].includes(saltAnion)) {
         if (parsed.presentIons.includes(saltAnion)) score = 0.55;
       } else {
-        if (lower.includes('absent') || lower.includes('so4') || lower.includes('so3')) score = 0.55;
+        const mentionsSO = parsed.absentIons.includes('so42-') || parsed.absentIons.includes('so32-') || lower.includes('so4') || lower.includes('so3') || lower.includes('sulfate') || lower.includes('sulphite');
+        if (hasAbsent && mentionsSO && !parsed.presentIons.includes('so42-') && !parsed.presentIons.includes('so32-')) {
+          score = 0.55;
+        }
       }
     } else if (test.key === 'agno3') {
       if (['cl-', 'br-', 'i-', 'so32-'].includes(saltAnion)) {
         if (parsed.presentIons.includes(saltAnion)) score = 0.55;
       } else {
-        if (lower.includes('absent') || lower.includes('cl') || lower.includes('halide')) score = 0.55;
+        const mentionsHalide = parsed.absentIons.some(i => ['cl-', 'br-', 'i-'].includes(i)) || lower.includes('cl') || lower.includes('br') || lower.includes('i') || lower.includes('halide');
+        if (hasAbsent && mentionsHalide && !parsed.presentIons.some(i => ['cl-', 'br-', 'i-'].includes(i))) {
+          score = 0.55;
+        }
       }
     } else if (test.key === 'pb_no3') {
       if (['cl-', 'so42-', 'so32-', 'co32-'].includes(saltAnion)) {
         if (parsed.presentIons.includes(saltAnion)) score = 0.55;
       } else {
-        if (lower.includes('absent') || lower.includes('cl') || lower.includes('so4')) score = 0.55;
+        const mentionsAnion = parsed.absentIons.some(i => ['cl-', 'so42-'].includes(i)) || lower.includes('cl') || lower.includes('so4') || lower.includes('chloride') || lower.includes('sulfate');
+        if (hasAbsent && mentionsAnion && !parsed.presentIons.some(i => ['cl-', 'so42-'].includes(i))) {
+          score = 0.55;
+        }
       }
     } else if (test.key === 'ki') {
       if (saltCation === 'pb2+') {
         if (parsed.presentIons.includes('pb2+')) score = 0.55;
       } else {
-        if (lower.includes('absent') || lower.includes('pb')) score = 0.55;
+        const mentionsPb = parsed.absentIons.includes('pb2+') || lower.includes('pb') || lower.includes('lead');
+        if (hasAbsent && mentionsPb && !parsed.presentIons.includes('pb2+')) {
+          score = 0.55;
+        }
       }
     } else if (test.key === 'brown_ring') {
       if (saltAnion === 'no3-') {
         if (parsed.presentIons.includes('no3-')) score = 0.55;
       } else {
-        if (lower.includes('absent') || lower.includes('no3')) score = 0.55;
+        const mentionsNO3 = parsed.absentIons.includes('no3-') || lower.includes('no3') || lower.includes('nitrate');
+        if (hasAbsent && mentionsNO3 && !parsed.presentIons.includes('no3-')) {
+          score = 0.55;
+        }
       }
     } else if (test.key === 'hcl') {
       if (['co32-', 'hco3-', 'so32-'].includes(saltAnion) || saltCation === 'pb2+') {
@@ -1085,25 +1135,20 @@ if (typeof window !== 'undefined') {
           score = 0.55;
         }
       } else {
-        if (lower.includes('absent') || lower.includes('co3') || lower.includes('hco3') || lower.includes('so3')) score = 0.55;
+        const mentionsAcidAnions = parsed.absentIons.some(i => ['co32-', 'hco3-', 'so32-'].includes(i)) || lower.includes('co3') || lower.includes('hco3') || lower.includes('so3') || lower.includes('carbonate');
+        if (hasAbsent && mentionsAcidAnions && !parsed.presentIons.some(i => ['co32-', 'hco3-', 'so32-'].includes(i))) {
+          score = 0.55;
+        }
       }
     } else if (test.key === 'heat_solid') {
-      if (lower.includes('water') || lower.includes('hydrat') || lower.includes('crystalliz')) score = 0.55;
-      else if (lower.includes('no3') || lower.includes('nitrate')) score = 0.55;
-      else if (lower.includes('nh4') || lower.includes('ammonium') || lower.includes('sublim')) score = 0.55;
-      else if (lower.includes('hco3') || lower.includes('hydrogen carbonate') || lower.includes('bicarbonate')) score = 0.55;
-      else if (lower.includes('co3') || lower.includes('carbonate') || lower.includes('stable')) score = 0.55;
-      else if (lower.includes('so4') || lower.includes('so3') || lower.includes('zn')) score = 0.55;
-      else score = 0.35;
-    }
-
-    // Fallback: if student correctly mentioned true cation or true anion
-    if (score === 0.0) {
-      if (parsed.presentIons.includes(saltCation) || parsed.presentIons.includes(saltAnion)) {
-        score = 0.45;
-      } else if (lower.includes('present') && parsed.presentIons.length > 0) {
-        score = 0.20;
-      }
+      if (salt && salt.formula && salt.formula.includes('H2O') && (lower.includes('water') || lower.includes('hydrat') || lower.includes('crystalliz'))) score = 0.55;
+      else if (saltAnion === 'no3-' && (lower.includes('no3') || lower.includes('nitrate') || parsed.presentIons.includes('no3-'))) score = 0.55;
+      else if (saltCation === 'nh4+' && (lower.includes('nh4') || lower.includes('ammonium') || lower.includes('sublim') || parsed.presentIons.includes('nh4+'))) score = 0.55;
+      else if ((saltKeyToUse === 'sodiumHydrogenCarbonate' || saltAnion === 'hco3-') && (lower.includes('hco3') || lower.includes('hydrogen carbonate') || lower.includes('bicarbonate') || parsed.presentIons.includes('hco3-') || lower.includes('co3'))) score = 0.55;
+      else if (saltCation === 'zn2+' && (lower.includes('zn') || parsed.presentIons.includes('zn2+'))) score = 0.55;
+      else if (saltAnion === 'so42-' && (lower.includes('so4') || lower.includes('so3') || parsed.presentIons.includes('so42-'))) score = 0.55;
+      else if (['sodiumChloride', 'potassiumSulfate'].includes(saltKeyToUse) && (lower.includes('stable') || lower.includes('unchanged') || lower.includes('no decomp'))) score = 0.55;
+      else score = 0.0;
     }
 
     // Penalties
@@ -2550,7 +2595,7 @@ if (typeof window !== 'undefined') {
 
       let testsCorrectCount = 0;
       observations.forEach(o => {
-        if (o.performed && (o.obsScore >= 0.35 || o.infScore >= 0.35)) {
+        if (o.performed && (o.totalItemScore >= 0.70 || (o.obsScore >= 0.35 && o.infScore >= 0.35))) {
           testsCorrectCount++;
         }
       });

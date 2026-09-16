@@ -38,10 +38,23 @@ router.post('/', apiLimiter, authMiddleware, authMiddleware.requireRole('student
     ? isFunctionalGroupCorrect(compound_key, student_functional_group)
     : (String(req.body.true_functional_group || '').trim().toLowerCase() === String(student_functional_group || '').trim().toLowerCase());
 
-  const overall_correct = fg_correct;
-  const questions_total = req.body.questions_total || 4;
-  const questions_correct = fg_correct ? Math.max(1, Number(tests_correct) || 1) : Number(tests_correct || 0);
-  const score_pct = overall_correct ? 100 : Math.round((questions_correct / questions_total) * 100);
+  const testsPerformedNum = Number(tests_performed) || 0;
+  const testsCorrectNum = Number(tests_correct) || 0;
+  const questions_total = req.body.questions_total || (testsPerformedNum > 0 ? testsPerformedNum : 4);
+  const questions_correct = testsCorrectNum;
+
+  let score_pct;
+  if (typeof req.body.score_pct === 'number') {
+    score_pct = Math.max(0, Math.min(100, Math.round(req.body.score_pct)));
+  } else if (testsPerformedNum > 0) {
+    const testRatio = Math.min(1, Math.max(0, testsCorrectNum / testsPerformedNum));
+    const fgRatio = fg_correct ? 1.0 : 0.0;
+    score_pct = Math.round((testRatio * 0.65 + fgRatio * 0.35) * 100);
+  } else {
+    score_pct = fg_correct ? 100 : 0;
+  }
+
+  const overall_correct = fg_correct && (testsPerformedNum === 0 || testsCorrectNum >= Math.ceil(testsPerformedNum * 0.5));
 
   const savedSession = await organicRepo.saveOrganicSession({
     student_id,

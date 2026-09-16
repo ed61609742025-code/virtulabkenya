@@ -4,11 +4,19 @@
  * Perfectly mirrors Qualitative Salt Analysis Workbench design & architecture
  */
 
+if (typeof window === 'undefined') {
+  global.window = global;
+}
+
 (() => {
   'use strict';
 
-  requireStudentLogin();
-  updateThemeButtons();
+  if (typeof requireStudentLogin === 'function') {
+    requireStudentLogin();
+  }
+  if (typeof updateThemeButtons === 'function') {
+    updateThemeButtons();
+  }
 
   /* ══════════════════════════════════════
      SAMPLES REGISTRY & TEST DEFINITIONS
@@ -1031,6 +1039,176 @@
     updateProgress();
   };
 
+  function evaluateOrganicObservation(testKey, sample, userObs) {
+    const raw = (userObs || '').trim();
+    if (!raw) return { score: 0.0, maxScore: 0.7, pass: false, note: 'Observation left blank' };
+    const lower = raw.toLowerCase();
+    const target = sample[testKey];
+    if (!target) return { score: 0.0, maxScore: 0.7, pass: false, note: 'No criteria' };
+
+    let isCorrect = false;
+    let note = '';
+
+    if (testKey === 'solubility') {
+      const isMiscible = sample.fgKey === 'alkanol' || sample.fgKey === 'alkanoic_acid';
+      if (isMiscible) {
+        isCorrect = (lower.includes('miscible') || lower.includes('dissolv') || lower.includes('single layer') || lower.includes('one layer') || lower.includes('clear solution') || lower.includes('colorless solution') || lower.includes('colourless solution')) && !lower.includes('immiscible') && !lower.includes('two layer') && !lower.includes('2 layer');
+        note = isCorrect ? 'Correct: Polar sample is fully miscible in water' : 'Incorrect: Sample dissolves completely in water (single clear layer)';
+      } else {
+        isCorrect = lower.includes('immiscible') || lower.includes('two layer') || lower.includes('2 layer') || lower.includes('separate layer') || lower.includes('does not dissolve') || lower.includes('insoluble');
+        note = isCorrect ? 'Correct: Non-polar sample is immiscible and forms 2 layers' : 'Incorrect: Hydrocarbon is immiscible in water (2 distinct layers form)';
+      }
+    } else if (testKey === 'ignition') {
+      const isSooty = sample.fgKey === 'alkene' || sample.compoundKey === 'benzoic_acid' || (sample.name && /benzene|arene|alkyne/i.test(sample.name));
+      if (isSooty) {
+        isCorrect = (lower.includes('sooty') || lower.includes('smoky') || lower.includes('black smoke') || lower.includes('yellow')) && !lower.includes('non-sooty') && !lower.includes('non sooty');
+        note = isCorrect ? 'Correct: Unsaturated sample burns with luminous smoky/sooty flame' : 'Incorrect: High C:H ratio burns with luminous smoky sooty flame';
+      } else {
+        isCorrect = lower.includes('non-sooty') || lower.includes('non sooty') || lower.includes('blue') || lower.includes('clean') || lower.includes('clear blue') || lower.includes('non-luminous');
+        note = isCorrect ? 'Correct: Saturated sample burns with clear non-sooty blue flame' : 'Incorrect: Saturated sample burns with clean non-sooty blue flame';
+      }
+    } else if (testKey === 'bromine') {
+      const isUnsaturated = sample.fgKey === 'alkene';
+      if (isUnsaturated) {
+        isCorrect = (lower.includes('decol') || lower.includes('colorless') || lower.includes('colourless') || lower.includes('discharg')) && !lower.includes('persists') && !lower.includes('remains') && !lower.includes('no decol') && !lower.includes('not decol');
+        note = isCorrect ? 'Correct: Rapid decolourization of bromine water' : 'Incorrect: Bromine water is rapidly decolourized by C=C bond';
+      } else {
+        isCorrect = lower.includes('remain') || lower.includes('persist') || lower.includes('no decol') || lower.includes('unchanged') || lower.includes('brown');
+        note = isCorrect ? 'Correct: Reddish-brown bromine colour persists' : 'Incorrect: Saturated sample does not decolourize bromine water in the dark';
+      }
+    } else if (testKey === 'dichromate') {
+      const isAlcohol = sample.fgKey === 'alkanol';
+      if (isAlcohol) {
+        isCorrect = (lower.includes('green') || lower.includes('emerald') || lower.includes('reduced')) && !lower.includes('orange persists');
+        note = isCorrect ? 'Correct: Acidified dichromate turns green (Cr³⁺ formed)' : 'Incorrect: Orange K₂Cr₂O₇ is reduced to green Cr³⁺ by alkanol';
+      } else {
+        isCorrect = (lower.includes('orange') || lower.includes('persist') || lower.includes('remain') || lower.includes('no change')) && !lower.includes('green') && !lower.includes('emerald') && !lower.includes('reduced');
+        note = isCorrect ? 'Correct: Orange dichromate persists' : 'Incorrect: Only primary/secondary alcohols reduce orange dichromate to green';
+      }
+    } else if (testKey === 'carbonate') {
+      const isAcid = sample.fgKey === 'alkanoic_acid';
+      if (isAcid) {
+        isCorrect = (lower.includes('effervesc') || lower.includes('bubbl') || lower.includes('fizz') || lower.includes('milky') || lower.includes('gas')) && !lower.includes('no effervesc') && !lower.includes('no gas') && !lower.includes('no bubbl') && !lower.includes('no reaction');
+        note = isCorrect ? 'Correct: Brisk effervescence of CO₂ gas' : 'Incorrect: Carboxylic acid reacts with NaHCO₃ with brisk effervescence';
+      } else {
+        isCorrect = lower.includes('no effervesc') || lower.includes('no gas') || lower.includes('no bubbl') || lower.includes('no reaction') || lower.includes('no change') || lower.includes('settles');
+        note = isCorrect ? 'Correct: No effervescence observed' : 'Incorrect: Only carboxylic acids produce effervescence with NaHCO₃';
+      }
+    } else if (testKey === 'esterification') {
+      const isEsterForming = sample.fgKey === 'alkanol' || sample.fgKey === 'alkanoic_acid';
+      if (isEsterForming) {
+        isCorrect = lower.includes('sweet') || lower.includes('fruity') || lower.includes('aroma') || lower.includes('pleasant') || lower.includes('ester');
+        note = isCorrect ? 'Correct: Sweet pleasant fruity smell of ester formed' : 'Incorrect: Warming alkanol/acid with catalyst produces sweet fruity ester';
+      } else {
+        isCorrect = lower.includes('pungent') || lower.includes('vinegar') || lower.includes('acid smell') || lower.includes('no sweet') || lower.includes('no fruity');
+        note = isCorrect ? 'Correct: No fruity ester aroma formed' : 'Incorrect: Hydrocarbons do not undergo esterification';
+      }
+    } else if (testKey === 'litmus') {
+      const isAcid = sample.fgKey === 'alkanoic_acid';
+      if (isAcid) {
+        const hasNoChange = lower.includes('no change') || lower.includes('no effect') || lower.includes('unchanged') || lower.includes('neutral') || lower.includes('remains unchanged');
+        const hasTurnRed = lower.includes('turns red') || lower.includes('turned red') || lower.includes('to red') || lower.includes('becomes red') || lower.includes('turns pink') || lower.includes('turned pink');
+        const mentionsBlueToRed = lower.includes('blue') && lower.includes('red') && !lower.includes('red or blue') && !lower.includes('blue or red') && !lower.includes('red and blue') && !lower.includes('blue and red');
+        isCorrect = !hasNoChange && (hasTurnRed || mentionsBlueToRed) && !lower.includes('turns blue') && !lower.includes('turned blue');
+        note = isCorrect ? 'Correct: Moist blue litmus turns red' : 'Incorrect: Carboxylic acid turns moist blue litmus paper red';
+      } else {
+        const hasTurnPaper = lower.includes('turns red') || lower.includes('turns blue') || lower.includes('turned red') || lower.includes('turned blue') || lower.includes('to red') || lower.includes('to blue');
+        isCorrect = !hasTurnPaper && (lower.includes('no change') || lower.includes('unchanged') || lower.includes('neutral') || lower.includes('neither') || lower.includes('no effect') || lower.includes('remains') || lower.includes('retains'));
+        note = isCorrect ? 'Correct: Litmus papers remain unchanged (neutral)' : 'Incorrect: Neutral organic compounds have no effect on litmus papers';
+      }
+    }
+
+    return {
+      score: isCorrect ? 0.7 : 0.0,
+      maxScore: 0.7,
+      pass: isCorrect,
+      note
+    };
+  }
+
+  function evaluateOrganicInference(testKey, sample, userInf) {
+    const raw = (userInf || '').trim();
+    if (!raw) return { score: 0.0, maxScore: 0.7, pass: false, note: 'Inference left blank' };
+    const lower = raw.toLowerCase();
+
+    let isCorrect = false;
+    let note = '';
+
+    if (testKey === 'solubility') {
+      const isMiscible = sample.fgKey === 'alkanol' || sample.fgKey === 'alkanoic_acid';
+      if (isMiscible) {
+        isCorrect = (lower.includes('polar') || lower.includes('alkanol') || lower.includes('acid') || lower.includes('soluble')) && !lower.includes('non-polar') && !lower.includes('hydrocarbon');
+        note = isCorrect ? 'Correct: Polar organic compound deduced' : 'Incorrect: Expected polar organic compound (R-OH or R-COOH)';
+      } else {
+        isCorrect = (lower.includes('non-polar') || lower.includes('hydrocarbon') || lower.includes('insoluble')) && !lower.includes('polar');
+        note = isCorrect ? 'Correct: Non-polar hydrocarbon deduced' : 'Incorrect: Expected non-polar organic compound / hydrocarbon';
+      }
+    } else if (testKey === 'ignition') {
+      const isSooty = sample.fgKey === 'alkene' || sample.compoundKey === 'benzoic_acid';
+      const claimsSaturatedOnly = /\bsaturated\b/i.test(lower) && !/unsaturated/i.test(lower);
+      if (isSooty) {
+        isCorrect = (lower.includes('unsaturated') || lower.includes('c=c') || lower.includes('>c=c<') || lower.includes('high c:h') || lower.includes('aromatic') || lower.includes('c≡c')) && !claimsSaturatedOnly;
+        note = isCorrect ? 'Correct: Unsaturation / high C:H ratio deduced' : 'Incorrect: Expected unsaturated compound (>C=C<) or high C:H ratio';
+      } else {
+        isCorrect = claimsSaturatedOnly || lower.includes('low c:h');
+        note = isCorrect ? 'Correct: Saturated organic compound deduced' : 'Incorrect: Expected saturated organic compound';
+      }
+    } else if (testKey === 'bromine') {
+      const isUnsaturated = sample.fgKey === 'alkene';
+      const claimsSaturatedOnly = /\bsaturated\b/i.test(lower) && !/unsaturated/i.test(lower);
+      if (isUnsaturated) {
+        isCorrect = (lower.includes('unsaturated') || lower.includes('c=c') || lower.includes('>c=c<') || lower.includes('c≡c') || lower.includes('unsaturation present')) && !lower.includes('c=c absent') && !claimsSaturatedOnly;
+        note = isCorrect ? 'Correct: C=C unsaturation confirmed' : 'Incorrect: Expected -C=C- or -C≡C- unsaturation present';
+      } else {
+        isCorrect = claimsSaturatedOnly || lower.includes('absent') || lower.includes('no c=c') || lower.includes('no unsaturation');
+        note = isCorrect ? 'Correct: Saturated compound / unsaturation absent deduced' : 'Incorrect: Expected saturated compound or C=C absent';
+      }
+    } else if (testKey === 'dichromate') {
+      const isAlcohol = sample.fgKey === 'alkanol';
+      if (isAlcohol) {
+        isCorrect = (lower.includes('alkanol') || lower.includes('alcohol') || lower.includes('r-oh') || lower.includes('-oh') || lower.includes('primary') || lower.includes('reducing')) && !lower.includes('absent');
+        note = isCorrect ? 'Correct: Primary/secondary alkanol (R-OH) present' : 'Incorrect: Expected primary or secondary alkanol (R-OH) present';
+      } else {
+        isCorrect = lower.includes('absent') || lower.includes('not alkanol') || lower.includes('no r-oh');
+        note = isCorrect ? 'Correct: Alkanol (R-OH) absent deduced' : 'Incorrect: Expected alkanol absent';
+      }
+    } else if (testKey === 'carbonate') {
+      const isAcid = sample.fgKey === 'alkanoic_acid';
+      if (isAcid) {
+        isCorrect = (lower.includes('carboxylic') || lower.includes('-cooh') || lower.includes('r-cooh') || lower.includes('alkanoic') || lower.includes('h+')) && !lower.includes('absent');
+        note = isCorrect ? 'Correct: Carboxylic acid (R-COOH) present' : 'Incorrect: Expected carboxylic acid (R-COOH) present';
+      } else {
+        isCorrect = lower.includes('absent') || lower.includes('not acid') || lower.includes('no -cooh');
+        note = isCorrect ? 'Correct: Carboxylic acid (R-COOH) absent deduced' : 'Incorrect: Expected carboxylic acid absent';
+      }
+    } else if (testKey === 'esterification') {
+      const isEster = sample.fgKey === 'alkanol' || sample.fgKey === 'alkanoic_acid';
+      if (isEster) {
+        isCorrect = (lower.includes('alkanol') || lower.includes('acid') || lower.includes('ester') || lower.includes('r-oh') || lower.includes('-cooh')) && !lower.includes('absent');
+        note = isCorrect ? 'Correct: Alkanol / acid ester formation verified' : 'Incorrect: Expected alkanol (R-OH) or carboxylic acid verified';
+      } else {
+        isCorrect = lower.includes('absent') || lower.includes('no ester') || lower.includes('neutral');
+        note = isCorrect ? 'Correct: Non-ester forming compound verified' : 'Incorrect: Expected alkanol absent';
+      }
+    } else if (testKey === 'litmus') {
+      const isAcid = sample.fgKey === 'alkanoic_acid';
+      if (isAcid) {
+        isCorrect = (lower.includes('carboxylic') || lower.includes('acid') || lower.includes('r-cooh') || lower.includes('-cooh')) && !lower.includes('neutral');
+        note = isCorrect ? 'Correct: Acidic functional group (R-COOH) confirmed' : 'Incorrect: Expected carboxylic acid (R-COOH) present';
+      } else {
+        isCorrect = lower.includes('neutral') || lower.includes('absent');
+        note = isCorrect ? 'Correct: Neutral organic compound deduced' : 'Incorrect: Expected neutral organic compound';
+      }
+    }
+
+    return {
+      score: isCorrect ? 0.7 : 0.0,
+      maxScore: 0.7,
+      pass: isCorrect,
+      note
+    };
+  }
+
   window.submitIdentification = function() {
     const fgSelect = document.getElementById('fgSelect');
     const compSelect = document.getElementById('compoundSelect');
@@ -1050,33 +1228,68 @@
     const compCorrect = chosenComp === sample.compoundKey;
 
     let testMarks = 0;
+    let testsCorrectCount = 0;
+    const testEvaluations = [];
+
     TESTS.forEach(t => {
-      const st = testStates[t.key];
-      if (st && st.performed) {
-        if ((st.obsText || '').trim().length > 3) testMarks += 0.7;
-        if ((st.infText || '').trim().length > 3) testMarks += 0.7;
-      }
+      const st = testStates[t.key] || {};
+      const userObs = (st.obsText || '').trim();
+      const userInf = (st.infText || '').trim();
+
+      const obsEval = evaluateOrganicObservation(t.key, sample, userObs);
+      const infEval = evaluateOrganicInference(t.key, sample, userInf);
+
+      const totalItem = parseFloat((obsEval.score + infEval.score).toFixed(1));
+      testMarks += totalItem;
+
+      const isPassed = obsEval.pass && infEval.pass;
+      if (isPassed) testsCorrectCount++;
+
+      testEvaluations.push({
+        label: t.label,
+        key: t.key,
+        userObs,
+        userInf,
+        obsEval,
+        infEval,
+        totalItem,
+        isPassed
+      });
     });
 
+    testMarks = parseFloat(testMarks.toFixed(1));
     const deductionMarks = (fgCorrect ? 2.5 : 0) + (compCorrect ? 2.5 : 0);
-    const totalScore = +(testMarks + deductionMarks).toFixed(1);
+    const totalScore = parseFloat((testMarks + deductionMarks).toFixed(1));
     const maxScore = 14.8;
     const percentage = Math.round((totalScore / maxScore) * 100);
 
     resBox.style.display = 'block';
     resBox.innerHTML = `
-      <div class="id-result-card ${fgCorrect && compCorrect ? 'correct' : 'incorrect'}">
-        <div class="id-result-icon">${fgCorrect && compCorrect ? '🏆' : '⚠️'}</div>
+      <div class="id-result-card ${fgCorrect && compCorrect && testsCorrectCount >= 5 ? 'correct' : 'incorrect'}">
+        <div class="id-result-icon">${fgCorrect && compCorrect && testsCorrectCount >= 5 ? '🏆' : '⚠️'}</div>
         <div class="id-result-text" style="flex:1;">
           <h3>KCSE Examination Performance: ${totalScore} / ${maxScore} Marks (${percentage}%)</h3>
           <p><strong>Actual Sample Identity:</strong> ${sample.name} (${sample.fgName})</p>
           <p style="margin-top:4px;">
             • <b>Functional Group:</b> ${fgCorrect ? '<span style="color:var(--green-accent); font-weight:700;">✅ Correct (+2.5 Marks)</span>' : '<span style="color:var(--red-accent); font-weight:700;">❌ Incorrect (Expected: ' + sample.fgName + ')</span>'}<br>
             • <b>Molecular Formula:</b> ${compCorrect ? '<span style="color:var(--green-accent); font-weight:700;">✅ Correct (+2.5 Marks)</span>' : '<span style="color:var(--red-accent); font-weight:700;">❌ Incorrect (Expected: ' + sample.name + ')</span>'}<br>
-            • <b>Observations & Inferences Score:</b> ${testMarks.toFixed(1)} / 9.8 Marks
+            • <b>Observations &amp; Inferences Score:</b> ${testMarks.toFixed(1)} / 9.8 Marks (${testsCorrectCount} / 7 Tests Verified Correct)
           </p>
+
+          <div style="margin-top:12px; display:flex; flex-direction:column; gap:8px;">
+            ${testEvaluations.map((te, idx) => `
+              <div style="background:var(--card-bg-hover, rgba(255,255,255,0.04)); border:1px solid var(--card-border); border-radius:8px; padding:8px 12px; font-size:0.8rem;">
+                <div style="display:flex; justify-content:space-between; font-weight:700; margin-bottom:4px;">
+                  <span>${te.isPassed ? '✅' : '❌'} (${String.fromCharCode(97 + idx)}) ${te.label}</span>
+                  <span style="color:${te.isPassed ? 'var(--green-accent)' : 'var(--red-accent)'}; font-family:var(--font-mono);">${te.totalItem.toFixed(1)} / 1.4 Mks</span>
+                </div>
+                <div style="color:var(--text-secondary); font-size:0.76rem;"><b>Obs:</b> "${escapeHtml(te.userObs || 'None')}" — <span style="color:${te.obsEval.pass ? 'var(--green-accent)' : 'var(--red-accent)'};">${te.obsEval.note}</span></div>
+                <div style="color:var(--text-secondary); font-size:0.76rem;"><b>Inf:</b> "${escapeHtml(te.userInf || 'None')}" — <span style="color:${te.infEval.pass ? 'var(--green-accent)' : 'var(--red-accent)'};">${te.infEval.note}</span></div>
+              </div>
+            `).join('')}
+          </div>
         </div>
-        <div>
+        <div style="margin-top:12px;">
           <button class="btn-primary-solid" onclick="newSample()">⚗️ Next Sample</button>
         </div>
       </div>
@@ -1098,9 +1311,10 @@
       compound_name: sample.name,
       student_functional_group: fgLabel,
       tests_performed: performedCount,
-      tests_correct: (fgCorrect && compCorrect) ? 7 : (fgCorrect ? 5 : 2),
+      tests_correct: testsCorrectCount,
       questions_total: 4,
-      questions_correct: fgCorrect ? 4 : (compCorrect ? 2 : 1),
+      questions_correct: (fgCorrect ? 2 : 0) + (compCorrect ? 2 : 0),
+      score_pct: percentage,
       observations: Object.keys(testStates).map(k => ({ test: k, obs: testStates[k].obsText, inf: testStates[k].infText })),
       mode: 'practice',
       assignment_id: assignmentId
@@ -1165,27 +1379,67 @@
     const m = document.getElementById('knecEvalModal');
     const res = document.getElementById('knecEvalResults');
     if (res) {
+      const sample = SAMPLES[currentSampleKey];
+      let totalMarks = 0;
       let performedCount = 0;
+      let correctCount = 0;
       let breakdownHtml = '';
 
       TESTS.forEach((t, i) => {
-        const st = testStates[t.key];
-        const done = st && st.performed;
+        const st = testStates[t.key] || {};
+        const done = st.performed;
         if (done) performedCount++;
-        const obs = (st && st.obsText) || '—';
-        const inf = (st && st.infText) || '—';
+        const userObs = (st.obsText || '').trim();
+        const userInf = (st.infText || '').trim();
+
+        const obsEval = evaluateOrganicObservation(t.key, sample, userObs);
+        const infEval = evaluateOrganicInference(t.key, sample, userInf);
+        const testScore = parseFloat((obsEval.score + infEval.score).toFixed(1));
+        totalMarks += testScore;
+        const isPassed = obsEval.pass && infEval.pass;
+        if (isPassed) correctCount++;
+
         breakdownHtml += `
-          <div style="background:var(--bg-dark); border:1px solid var(--card-border); border-radius:8px; padding:10px 14px; margin-bottom:8px;">
-            <div style="font-weight:700; color:var(--purple-accent); font-size:0.85rem;">(${String.fromCharCode(97 + i)}) ${t.label}</div>
-            <div style="font-size:0.8rem; color:var(--text-main); margin-top:3px;"><b>Obs:</b> ${obs}</div>
-            <div style="font-size:0.8rem; color:var(--text-muted);"><b>Inf:</b> ${inf}</div>
+          <div style="background:var(--card-bg-hover, rgba(255,255,255,0.04)); border:1px solid var(--card-border); border-radius:8px; padding:10px 14px; margin-bottom:8px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span style="font-weight:700; color:var(--purple-accent); font-size:0.85rem;">
+                ${isPassed ? '✅' : '❌'} (${String.fromCharCode(97 + i)}) ${t.label}
+              </span>
+              <span style="font-weight:800; font-family:var(--font-mono); color:${isPassed ? 'var(--green-accent)' : 'var(--red-accent)'}; font-size:0.85rem;">
+                ${testScore.toFixed(1)} / 1.4 Mks
+              </span>
+            </div>
+            <div style="font-size:0.8rem; color:var(--text-main); margin-bottom:3px;">
+              <b>Obs:</b> "${escapeHtml(userObs || '(None recorded)')}" — 
+              <span style="color:${obsEval.pass ? 'var(--green-accent)' : 'var(--red-accent)'}; font-weight:600;">${obsEval.note}</span>
+            </div>
+            <div style="font-size:0.8rem; color:var(--text-muted);">
+              <b>Inf:</b> "${escapeHtml(userInf || '(None recorded)')}" — 
+              <span style="color:${infEval.pass ? 'var(--green-accent)' : 'var(--red-accent)'}; font-weight:600;">${infEval.note}</span>
+            </div>
           </div>
         `;
       });
 
+      totalMarks = parseFloat(totalMarks.toFixed(1));
+      const grade = totalMarks >= 8.0 ? 'A (Distinction Standard)'
+                  : totalMarks >= 6.0 ? 'B (Good Recording)'
+                  : totalMarks >= 4.0 ? 'C (Average Competence)'
+                  : 'D (Below Standard - Incorrect Deductions)';
+      const gradeColor = totalMarks >= 8.0 ? 'var(--green-accent)'
+                       : totalMarks >= 6.0 ? 'var(--blue-accent)'
+                       : totalMarks >= 4.0 ? 'var(--amber-accent)'
+                       : 'var(--red-accent)';
+
       res.innerHTML = `
-        <div style="margin-bottom:14px; font-size:0.88rem; color:var(--text-main);">
-          <strong>Tests Evaluated:</strong> ${performedCount} of ${TESTS.length} tests performed.
+        <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:12px; padding:16px; margin-bottom:16px; text-align:center;">
+          <div style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; font-weight:800;">KNEC Paper 3 Organic Rubric Evaluation</div>
+          <div style="font-family:var(--font-heading); font-size:2.4rem; font-weight:800; color:${gradeColor}; margin:8px 0;">
+            ${totalMarks.toFixed(1)} <span style="font-size:1.2rem; color:var(--text-muted); font-weight:600;">/ 9.8 Mks</span>
+          </div>
+          <div style="display:inline-block; font-size:0.85rem; font-weight:800; color:${gradeColor}; background:var(--card-bg); padding:4px 14px; border-radius:20px; border:1px solid var(--card-border);">
+            ${grade} (${correctCount} / ${TESTS.length} Tests Passed)
+          </div>
         </div>
         <div style="max-height:360px; overflow-y:auto; margin-bottom:16px;">
           ${breakdownHtml}
@@ -1264,10 +1518,21 @@
     }
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
+  if (typeof document !== 'undefined') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  }
+
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+      SAMPLES,
+      TESTS,
+      evaluateOrganicObservation,
+      evaluateOrganicInference
+    };
   }
 
 })();

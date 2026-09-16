@@ -1698,6 +1698,17 @@ function getOrganicPresetDefinition(organicKey) {
   };
 }
 
+function normalizeChemString(str) {
+  return (str || '').toLowerCase()
+    .replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]/g, m => ({ '⁰':'0','¹':'1','²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9' }[m]))
+    .replace(/[₀₁₂₃₄₅₆₇₈₉]/g, m => ({ '₀':'0','₁':'1','₂':'2','₃':'3','₄':'4','₅':'5','₆':'6','₇':'7','₈':'8','₉':'9' }[m]))
+    .replace(/[⁺﹢]/g, '+')
+    .replace(/[⁻﹣–—]/g, '-')
+    .replace(/[()\[\],;:\/\\.]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 class CompositeExamEngine {
   constructor(config = null) {
     this.preset = JSON.parse(JSON.stringify(COMPOSITE_EXAM_PRESETS.series_1));
@@ -2365,6 +2376,14 @@ class CompositeExamEngine {
     this.q2Inf[testId] = infText;
   }
 
+  setQ2Observation(testId, obsText) {
+    this.q2Obs[testId] = obsText;
+  }
+
+  setQ2Inference(testId, infText) {
+    this.q2Inf[testId] = infText;
+  }
+
   setQ2Deduction(cation, anion) {
     this.q2CationChoice = cation;
     this.q2AnionChoice = anion;
@@ -2386,26 +2405,29 @@ class CompositeExamEngine {
     if (this.preset.q2.simulationType === 'organic') {
       const perTestMax = tests.length > 0 ? parseFloat((totalMarks / tests.length).toFixed(1)) : 2.5;
       const perHalfMax = parseFloat((perTestMax / 2.0).toFixed(1));
+      const stopWords = ['with', 'from', 'form', 'forms', 'formed', 'solution', 'added', 'give', 'gives', 'given', 'there', 'when', 'that', 'this', 'remain', 'remains', 'test'];
+      const infStopWords = ['the', 'and', 'ion', 'ions', 'may', 'present', 'absent', 'probable', 'suspected', 'confirmed', 'with', 'from', 'compound', 'substance'];
+
       tests.forEach((t, idx) => {
         const candidateObs = (this.q2Obs[t.id] || '').trim().toLowerCase();
         const candidateInf = (this.q2Inf[t.id] || '').trim().toLowerCase();
         let testMark = 0.0;
         let obsMark = 0.0;
-        const obsKeywords = (t.correctObs || '').toLowerCase().split(/[,; ]+/).filter(w => w.length > 3);
+        const obsKeywords = (t.correctObs || '').toLowerCase().split(/[,; ]+/).filter(w => w.length > 3 && !stopWords.includes(w));
         const obsMatches = obsKeywords.filter(w => candidateObs.includes(w)).length;
-        if (candidateObs.length > 4 && obsMatches >= 1) {
+        if (candidateObs.length > 4 && obsMatches >= Math.min(2, obsKeywords.length) && obsKeywords.length > 0) {
           obsMark = perHalfMax;
-        } else if (candidateObs.length > 2) {
-          obsMark = parseFloat((perHalfMax / 2).toFixed(1));
+        } else if (candidateObs.length > 4 && obsMatches >= 1) {
+          obsMark = obsKeywords.length <= 2 ? perHalfMax : parseFloat((perHalfMax / 2).toFixed(1));
         }
 
         let infMark = 0.0;
-        const infKeywords = (t.correctInf || '').toLowerCase().split(/[,; ]+/).filter(w => w.length > 2);
+        const infKeywords = (t.correctInf || '').toLowerCase().split(/[,; ]+/).filter(w => w.length > 2 && !infStopWords.includes(w));
         const infMatches = infKeywords.filter(w => candidateInf.includes(w)).length;
-        if (candidateInf.length > 3 && infMatches >= 1) {
+        if (candidateInf.length > 3 && infMatches >= Math.min(2, infKeywords.length) && infKeywords.length > 0) {
           infMark = perHalfMax;
-        } else if (candidateInf.length > 2) {
-          infMark = parseFloat((perHalfMax / 2).toFixed(1));
+        } else if (candidateInf.length > 3 && infMatches >= 1) {
+          infMark = infKeywords.length <= 2 ? perHalfMax : parseFloat((perHalfMax / 2).toFixed(1));
         }
         testMark = parseFloat((obsMark + infMark).toFixed(1));
         score += testMark;
@@ -2449,14 +2471,14 @@ class CompositeExamEngine {
 
     // Helper to extract chemical ions and keywords
     const extractIons = (text) => {
-      const lower = text.toLowerCase();
+      const lower = normalizeChemString(text);
       const ions = [];
       if (lower.includes('pb') || lower.includes('lead')) ions.push('pb2+');
       if (lower.includes('al') || lower.includes('aluminium') || lower.includes('aluminum')) ions.push('al3+');
       if (lower.includes('zn') || lower.includes('zinc')) ions.push('zn2+');
       if (lower.includes('cu') || lower.includes('copper')) ions.push('cu2+');
-      if (lower.includes('fe2') || lower.includes('iron(ii)') || lower.includes('iron (ii)')) ions.push('fe2+');
-      if (lower.includes('fe3') || lower.includes('iron(iii)') || lower.includes('iron (iii)')) ions.push('fe3+');
+      if (lower.includes('fe2') || lower.includes('iron(ii)') || lower.includes('iron (ii)') || lower.includes('fe 2')) ions.push('fe2+');
+      if (lower.includes('fe3') || lower.includes('iron(iii)') || lower.includes('iron (iii)') || lower.includes('fe 3')) ions.push('fe3+');
       if (lower.includes('ca') || lower.includes('calcium')) ions.push('ca2+');
       if (lower.includes('mg') || lower.includes('magnesium')) ions.push('mg2+');
       if (lower.includes('ba') || lower.includes('barium')) ions.push('ba2+');
@@ -2465,7 +2487,7 @@ class CompositeExamEngine {
       if (lower.includes('co3') || lower.includes('carbonate')) ions.push('co32-');
       if (lower.includes('cl') || lower.includes('chloride')) ions.push('cl-');
       if (lower.includes('no3') || lower.includes('nitrate')) ions.push('no3-');
-      if (lower.includes('i-') || lower.includes('iodide')) ions.push('i-');
+      if (lower.includes('i-') || lower.includes('iodide') || lower.includes('i -')) ions.push('i-');
       return ions;
     };
 
@@ -2489,8 +2511,13 @@ class CompositeExamEngine {
         matchesDropwise = obsLower.includes('yellow') && hasPpt;
       } else if (expectedObsLower.includes('brown fumes') || expectedObsLower.includes('decrepit')) {
         matchesDropwise = obsLower.includes('brown') || obsLower.includes('decrepit') || obsLower.includes('rekindl');
+      } else if (expectedObsLower.includes('no precipitate') || expectedObsLower.includes('no ppt')) {
+        matchesDropwise = (obsLower.includes('no ppt') || obsLower.includes('no precipitate') || obsLower.includes('remains colorless') || obsLower.includes('colourless solution remains') || obsLower.includes('clear solution')) && !obsLower.includes('white ppt') && !obsLower.includes('white precipitate');
       } else {
-        matchesDropwise = obsLower.length > 5;
+        const obsStopWords = ['with', 'from', 'form', 'forms', 'formed', 'solution', 'added', 'give', 'gives', 'given', 'there', 'when', 'that', 'this', 'remain', 'remains'];
+        const obsKeywords = expectedObsLower.split(/[,; ]+/).filter(w => w.length > 3 && !obsStopWords.includes(w));
+        const obsMatches = obsKeywords.filter(w => obsLower.includes(w)).length;
+        matchesDropwise = obsKeywords.length > 0 && obsMatches >= Math.min(2, obsKeywords.length);
       }
 
       if (t.id === 'q2_naoh' || t.id === 'q2_nh3') {
@@ -2508,11 +2535,18 @@ class CompositeExamEngine {
           obsMark = parseFloat((perHalfMax * 0.6).toFixed(1));
         }
       } else {
-        const obsKeywords = (t.correctObs || '').toLowerCase().split(/[,; ]+/).filter(w => w.length > 3);
+        const obsStopWords = ['with', 'from', 'form', 'forms', 'formed', 'solution', 'added', 'give', 'gives', 'given', 'there', 'when', 'that', 'this', 'remain', 'remains'];
+        const obsKeywords = (t.correctObs || '').toLowerCase().split(/[,; ]+/).filter(w => w.length > 3 && !obsStopWords.includes(w));
         const obsMatches = obsKeywords.filter(w => obsLower.includes(w)).length;
-        if (obsMatches >= 2) obsMark = perHalfMax;
-        else if (obsMatches >= 1 || obsLower.length > 8) obsMark = parseFloat((perHalfMax * 0.67).toFixed(1));
-        else if (obsLower.length > 3) obsMark = parseFloat((perHalfMax * 0.33).toFixed(1));
+        if (obsMatches >= 2) {
+          obsMark = perHalfMax;
+        } else if (obsMatches >= 1 && obsKeywords.length <= 2) {
+          obsMark = perHalfMax;
+        } else if (obsMatches >= 1) {
+          obsMark = parseFloat((perHalfMax * 0.5).toFixed(1));
+        } else {
+          obsMark = 0.0;
+        }
       }
 
       if (obsLower.includes('dissolves') && obsLower.includes('insoluble in excess')) {
@@ -2556,14 +2590,16 @@ class CompositeExamEngine {
           infMark = parseFloat((perHalfMax * 0.67).toFixed(1));
         }
       } else {
-        const infKeywords = (t.correctInf || '').toLowerCase().split(/[,; ]+/).filter(w => w.length > 2);
+        const infStopWords = ['the', 'and', 'ion', 'ions', 'may', 'present', 'absent', 'probable', 'suspected', 'confirmed', 'with', 'from'];
+        const infKeywords = (t.correctInf || '').toLowerCase().split(/[,; ]+/).filter(w => w.length > 2 && !infStopWords.includes(w));
         const infMatches = infKeywords.filter(w => infLower.includes(w)).length;
-        if (infMatches >= 2 || (t.trueCation && infLower.includes(t.trueCation.toLowerCase()))) {
+        const cationMatched = t.trueCation && (inferredIons.includes(t.trueCation.toLowerCase().replace(/[^a-z0-9]/g, '')) || infLower.includes(t.trueCation.toLowerCase()));
+        if (infMatches >= 2 || cationMatched) {
           infMark = perHalfMax;
         } else if (infMatches >= 1) {
-          infMark = parseFloat((perHalfMax * 0.67).toFixed(1));
-        } else if (infLower.length > 3) {
-          infMark = parseFloat((perHalfMax * 0.33).toFixed(1));
+          infMark = parseFloat((perHalfMax * 0.5).toFixed(1));
+        } else {
+          infMark = 0.0;
         }
       }
 
@@ -2644,6 +2680,14 @@ class CompositeExamEngine {
     this.q3Inf[testId] = infText;
   }
 
+  setQ3Observation(testId, obsText) {
+    this.q3Obs[testId] = obsText;
+  }
+
+  setQ3Inference(testId, infText) {
+    this.q3Inf[testId] = infText;
+  }
+
   setQ3Deduction(functionalGroup) {
     this.q3FunctionalGroupChoice = functionalGroup;
   }
@@ -2661,30 +2705,36 @@ class CompositeExamEngine {
       // Qualitative Scoring for Question 3 (e.g. Solid P)
       const perTestMax = tests.length > 0 ? parseFloat((10.0 / tests.length).toFixed(1)) : 2.0;
       const perHalfMax = parseFloat((perTestMax / 2.0).toFixed(1));
+      const obsStopWords = ['with', 'from', 'form', 'forms', 'formed', 'solution', 'added', 'give', 'gives', 'given', 'there', 'when', 'that', 'this', 'remain', 'remains'];
+      const infStopWords = ['the', 'and', 'ion', 'ions', 'may', 'present', 'absent', 'probable', 'suspected', 'confirmed', 'with', 'from'];
 
       tests.forEach((t, idx) => {
-        const candidateObs = (this.q3Obs[t.id] || '').trim().toLowerCase();
-        const candidateInf = (this.q3Inf[t.id] || '').trim().toLowerCase();
+        const candidateObs = normalizeChemString(this.q3Obs[t.id] || '');
+        const candidateInf = normalizeChemString(this.q3Inf[t.id] || '');
         let testMark = 0.0;
 
         let obsMark = 0.0;
-        const expectedObs = (t.correctObs || t.observation || '').toLowerCase();
-        const obsKeywords = expectedObs.split(/[,; ]+/).filter(w => w.length > 2);
+        const expectedObs = normalizeChemString(t.correctObs || t.observation || '');
+        const obsKeywords = expectedObs.split(' ').filter(w => w.length > 2 && !obsStopWords.includes(w));
         const obsMatches = obsKeywords.filter(w => candidateObs.includes(w)).length;
-        if (candidateObs.length > 4 && obsMatches >= 1) {
+        if (candidateObs.length > 4 && obsMatches >= Math.min(2, obsKeywords.length) && obsKeywords.length > 0) {
           obsMark = perHalfMax;
-        } else if (candidateObs.length > 2) {
-          obsMark = parseFloat((perHalfMax / 2).toFixed(1));
+        } else if (candidateObs.length > 4 && obsMatches >= 1) {
+          obsMark = obsKeywords.length <= 2 ? perHalfMax : parseFloat((perHalfMax / 2).toFixed(1));
+        } else {
+          obsMark = 0.0;
         }
 
         let infMark = 0.0;
-        const expectedInf = (t.correctInf || t.inference || '').toLowerCase();
-        const infKeywords = expectedInf.split(/[,; ]+/).filter(w => w.length > 2);
+        const expectedInf = normalizeChemString(t.correctInf || t.inference || '');
+        const infKeywords = expectedInf.split(' ').filter(w => w.length > 1 && !infStopWords.includes(w));
         const infMatches = infKeywords.filter(w => candidateInf.includes(w)).length;
-        if (candidateInf.length > 2 && (infMatches >= 1 || candidateInf.includes('ion') || candidateInf.includes('+') || candidateInf.includes('-'))) {
+        if (candidateInf.length > 2 && infMatches >= Math.min(2, infKeywords.length) && infKeywords.length > 0) {
           infMark = perHalfMax;
-        } else if (candidateInf.length > 2) {
-          infMark = parseFloat((perHalfMax / 2).toFixed(1));
+        } else if (candidateInf.length > 2 && infMatches >= 1) {
+          infMark = infKeywords.length <= 2 ? perHalfMax : parseFloat((perHalfMax / 2).toFixed(1));
+        } else {
+          infMark = 0.0;
         }
 
         testMark = parseFloat((obsMark + infMark).toFixed(1));
@@ -2708,30 +2758,67 @@ class CompositeExamEngine {
     }
 
     // Standard Organic Scoring
+    const orgObsStopWords = ['with', 'from', 'form', 'forms', 'formed', 'solution', 'added', 'give', 'gives', 'given', 'there', 'when', 'that', 'this', 'remain', 'remains', 'paper', 'papers'];
+    const orgInfStopWords = ['the', 'and', 'ion', 'ions', 'may', 'probable', 'suspected', 'confirmed', 'with', 'from', 'compound', 'substance'];
+
     tests.forEach((t, idx) => {
-      const candidateObs = (this.q3Obs[t.id] || '').trim().toLowerCase();
-      const candidateInf = (this.q3Inf[t.id] || '').trim().toLowerCase();
+      const candidateObs = normalizeChemString(this.q3Obs[t.id] || '');
+      const candidateInf = normalizeChemString(this.q3Inf[t.id] || '');
       let testMark = 0.0;
 
       let obsMark = 0.0;
-      const obsKeywords = (t.correctObs || '').toLowerCase().split(/[,; ]+/).filter(w => w.length > 3);
+      const expectedObs = normalizeChemString(t.correctObs || '');
+      const obsKeywords = expectedObs.split(' ').filter(w => w.length > 2 && !orgObsStopWords.includes(w));
       const obsMatches = obsKeywords.filter(w => candidateObs.includes(w)).length;
-      if (candidateObs.length > 4 && obsMatches >= 1) {
+
+      const expectedHasNeutralLitmus = (expectedObs.includes('neutral') || expectedObs.includes('retain')) && expectedObs.includes('litmus');
+      const candidateHasNeutralLitmus = (candidateObs.includes('no change') || candidateObs.includes('retains') || candidateObs.includes('retain') || candidateObs.includes('neutral')) && candidateObs.includes('litmus');
+
+      const expectedHasNoEffervescence = expectedObs.includes('no effervesc') || expectedObs.includes('no gas');
+      const candidateHasNoEffervescence = (candidateObs.includes('no effervesc') || candidateObs.includes('no gas') || candidateObs.includes('no bubbl')) && !candidateObs.includes('brisk');
+
+      if (expectedHasNeutralLitmus && candidateHasNeutralLitmus) {
         obsMark = 1.0;
-      } else if (candidateObs.length > 2) {
+      } else if (expectedHasNeutralLitmus && !candidateHasNeutralLitmus) {
+        obsMark = 0.0;
+      } else if (expectedHasNoEffervescence && candidateHasNoEffervescence) {
+        obsMark = 1.0;
+      } else if (expectedHasNoEffervescence && !candidateHasNoEffervescence) {
+        obsMark = 0.0;
+      } else if (candidateObs.length > 4 && obsMatches >= Math.min(2, obsKeywords.length) && obsKeywords.length > 0) {
+        obsMark = 1.0;
+      } else if (candidateObs.length > 4 && obsMatches >= 2) {
         obsMark = 0.5;
+      } else {
+        obsMark = 0.0;
       }
 
       let infMark = 0.0;
-      const infKeywords = (t.correctInf || '').toLowerCase().split(/[,; ]+/).filter(w => w.length > 2);
+      const expectedInf = normalizeChemString(t.correctInf || '');
+      const infKeywords = expectedInf.split(' ').filter(w => w.length > 1 && !orgInfStopWords.includes(w));
       const infMatches = infKeywords.filter(w => candidateInf.includes(w)).length;
-      if (candidateInf.length > 3 && infMatches >= 1) {
+
+      const expectedHasNeutral = expectedInf.includes('neutral');
+      const expectedHasAbsentAcid = (expectedInf.includes('carboxylic') || expectedInf.includes('cooh')) && expectedInf.includes('absent');
+      const candidateHasAbsentAcid = (candidateInf.includes('carboxylic') || candidateInf.includes('cooh') || candidateInf.includes('acid')) && candidateInf.includes('absent');
+
+      if (expectedHasNeutral && candidateInf.includes('neutral')) {
         infMark = 1.0;
-      } else if (candidateInf.length > 2) {
+      } else if (expectedHasAbsentAcid && candidateHasAbsentAcid) {
+        infMark = 1.0;
+      } else if (expectedHasNeutral && (candidateInf.includes('acid') || candidateInf.includes('base') || candidateInf.includes('alkali'))) {
+        infMark = 0.0;
+      } else if (expectedHasAbsentAcid && (candidateInf.includes('present') || candidateInf.includes('acid')) && !candidateInf.includes('absent')) {
+        infMark = 0.0;
+      } else if (candidateInf.length > 3 && infMatches >= Math.min(2, infKeywords.length) && infKeywords.length > 0) {
+        infMark = 1.0;
+      } else if (candidateInf.length > 3 && infMatches >= 2) {
         infMark = 0.5;
+      } else {
+        infMark = 0.0;
       }
 
-      if (t.correctObs && t.correctObs.toLowerCase().includes('no effervescence') && (candidateInf.includes('carboxylic acid present') || candidateInf.includes('r-cooh present'))) {
+      if (expectedObs.includes('no effervescence') && (candidateInf.includes('carboxylic acid present') || candidateInf.includes('cooh present') || candidateInf.includes('acid present'))) {
         infMark = 0.0;
       }
 

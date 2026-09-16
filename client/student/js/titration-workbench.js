@@ -1572,6 +1572,10 @@ requireStudentLogin();
   }
 
   function resetBurette() {
+    if (transientColorTimeout) {
+      clearTimeout(transientColorTimeout);
+      transientColorTimeout = null;
+    }
     currentVolume = 0;
     const selfInd = isSelfIndicatingExp(current);
     indicatorAdded = selfInd;
@@ -1611,6 +1615,59 @@ requireStudentLogin();
     saveDraft();
   }
 
+  let currentParallaxAngle = 0; // -8 (low), 0 (eye level), +8 (high)
+
+  function setParallaxAngle(angle) {
+    currentParallaxAngle = angle;
+    window.currentParallaxAngle = angle;
+
+    // Update button active states
+    const btnLow = document.getElementById('btnParallaxLow');
+    const btnZero = document.getElementById('btnParallaxZero');
+    const btnHigh = document.getElementById('btnParallaxHigh');
+    if (btnLow) btnLow.classList.toggle('active', angle === -8);
+    if (btnZero) btnZero.classList.toggle('active', angle === 0);
+    if (btnHigh) btnHigh.classList.toggle('active', angle === 8);
+
+    // Update status chip
+    const statusChip = document.getElementById('parallaxStatusChip');
+    if (statusChip) {
+      if (angle === 0) {
+        statusChip.className = 'parallax-status-chip';
+        statusChip.textContent = '🎯 0° Calibrated';
+        statusChip.title = 'Eye level aligned: front and back graduation lines coincide.';
+      } else if (angle > 0) {
+        statusChip.className = 'parallax-status-chip has-error';
+        statusChip.textContent = '⚠️ Parallax (+0.08)';
+        statusChip.title = 'Viewing from above (+8°): sightline projects meniscus +0.08 cm³ higher on scale!';
+      } else {
+        statusChip.className = 'parallax-status-chip has-error';
+        statusChip.textContent = '⚠️ Parallax (-0.08)';
+        statusChip.title = 'Viewing from below (-8°): sightline projects meniscus -0.08 cm³ lower on scale!';
+      }
+    }
+
+    // Update crosshair reticle line styling
+    const crosshair = document.getElementById('lensCrosshairLine');
+    if (crosshair) {
+      if (angle === 0) {
+        crosshair.className = 'lens-crosshair-line parallax-calibrated';
+      } else {
+        crosshair.className = 'lens-crosshair-line parallax-error';
+      }
+    }
+
+    playAudioTone('drip');
+    updateLensView(currentVolume);
+  }
+  window.setParallaxAngle = setParallaxAngle;
+
+  function getApparentVolume() {
+    const shift = (currentParallaxAngle / 8) * 0.08;
+    return Math.max(0, Math.min(50, Math.round((currentVolume + shift) * 1000) / 1000));
+  }
+  window.getApparentVolume = getApparentVolume;
+
   function updateLensView(volume) {
     const lensSvg = document.getElementById('lensSvg');
     if (!lensSvg) return;
@@ -1618,8 +1675,14 @@ requireStudentLogin();
     const pcm = 60; // 60px per cm³ magnification
     const centerY = 80; // Center of 160x160 circular loupe (aligned with red eye-level reticle)
 
-    const minVol = Math.max(0, Math.floor((volume - 1.3) * 10) / 10);
-    const maxVol = Math.min(50, Math.ceil((volume + 1.3) * 10) / 10);
+    // Authentic KNEC Volumetric Parallax Shift:
+    // Eye-level sightline at angle θ shifts apparent meniscus intercept on the graduated tube:
+    const parallaxOffset = currentParallaxAngle * 0.75; // px separation between front and rear marks
+    const apparentShift = (currentParallaxAngle / 8) * 0.08; // ±0.08 cm³ apparent error
+    const apparentVolume = Math.max(0, Math.min(50, Math.round((volume + apparentShift) * 1000) / 1000));
+
+    const minVol = Math.max(0, Math.floor((apparentVolume - 1.3) * 10) / 10);
+    const maxVol = Math.min(50, Math.ceil((apparentVolume + 1.3) * 10) / 10);
 
     const isKmno4 = (current && current.titrantName && (current.titrantName.includes('KMnO4') || current.titrantName.includes('KMnO₄'))) || (current && current.id && current.id.includes('kmno4'));
 
@@ -1719,26 +1782,40 @@ requireStudentLogin();
       `;
     }
 
-    // 3. Laser-Etched Graduation Scale Marks & Side Numbers
+    // 3. Laser-Etched Graduation Scale Marks & Side Numbers (with Parallax Rear Line Splitting)
     let ticksSvg = '';
     for (let v = minVol; v <= maxVol + 0.05; v += 0.1) {
       const vRounded = Math.round(v * 10) / 10;
-      const y = centerY + (vRounded - volume) * pcm;
-      if (y < -12 || y > 172) continue;
+      const yFront = centerY + (vRounded - apparentVolume) * pcm;
+      if (yFront < -14 || yFront > 174) continue;
 
       const isMajor = Math.abs(vRounded - Math.round(vRounded)) < 0.01;
       const isMedium = !isMajor && Math.abs((vRounded * 10) % 5) < 0.01;
 
+      // Parallax Simulation: Off-angle sightlines split front and rear glass graduation lines
+      if (currentParallaxAngle !== 0) {
+        const yRear = yFront - parallaxOffset;
+        if (yRear >= -10 && yRear <= 170) {
+          if (isMajor) {
+            ticksSvg += `<line x1="32" y1="${yRear}" x2="60" y2="${yRear}" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.6"/>`;
+            ticksSvg += `<line x1="100" y1="${yRear}" x2="128" y2="${yRear}" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.6"/>`;
+          } else {
+            ticksSvg += `<line x1="32" y1="${yRear}" x2="48" y2="${yRear}" stroke="#CBD5E1" stroke-width="1.0" stroke-dasharray="1.5,1.5" opacity="0.45"/>`;
+            ticksSvg += `<line x1="112" y1="${yRear}" x2="128" y2="${yRear}" stroke="#CBD5E1" stroke-width="1.0" stroke-dasharray="1.5,1.5" opacity="0.45"/>`;
+          }
+        }
+      }
+
       if (isMajor) {
-        ticksSvg += `<line x1="32" y1="${y}" x2="64" y2="${y}" stroke="#0F172A" stroke-width="2.2" stroke-linecap="round"/>`;
-        ticksSvg += `<line x1="96" y1="${y}" x2="128" y2="${y}" stroke="#0F172A" stroke-width="2.2" stroke-linecap="round"/>`;
-        ticksSvg += `<text x="112" y="${y + 4}" fill="#0F172A" font-size="11" font-family="'JetBrains Mono', monospace" font-weight="900" text-anchor="middle" paint-order="stroke" stroke="#FFFFFF" stroke-width="3" stroke-linejoin="round">${Math.round(vRounded)}</text>`;
+        ticksSvg += `<line x1="32" y1="${yFront}" x2="64" y2="${yFront}" stroke="#0F172A" stroke-width="2.2" stroke-linecap="round"/>`;
+        ticksSvg += `<line x1="96" y1="${yFront}" x2="128" y2="${yFront}" stroke="#0F172A" stroke-width="2.2" stroke-linecap="round"/>`;
+        ticksSvg += `<text x="112" y="${yFront + 4}" fill="#0F172A" font-size="11" font-family="'JetBrains Mono', monospace" font-weight="900" text-anchor="middle" paint-order="stroke" stroke="#FFFFFF" stroke-width="3" stroke-linejoin="round">${Math.round(vRounded)}</text>`;
       } else if (isMedium) {
-        ticksSvg += `<line x1="32" y1="${y}" x2="55" y2="${y}" stroke="#1E293B" stroke-width="1.6" stroke-linecap="round"/>`;
-        ticksSvg += `<line x1="105" y1="${y}" x2="128" y2="${y}" stroke="#1E293B" stroke-width="1.6" stroke-linecap="round"/>`;
+        ticksSvg += `<line x1="32" y1="${yFront}" x2="55" y2="${yFront}" stroke="#1E293B" stroke-width="1.6" stroke-linecap="round"/>`;
+        ticksSvg += `<line x1="105" y1="${yFront}" x2="128" y2="${yFront}" stroke="#1E293B" stroke-width="1.6" stroke-linecap="round"/>`;
       } else {
-        ticksSvg += `<line x1="32" y1="${y}" x2="45" y2="${y}" stroke="#475569" stroke-width="1.1" stroke-linecap="round"/>`;
-        ticksSvg += `<line x1="115" y1="${y}" x2="128" y2="${y}" stroke="#475569" stroke-width="1.1" stroke-linecap="round"/>`;
+        ticksSvg += `<line x1="32" y1="${yFront}" x2="45" y2="${yFront}" stroke="#475569" stroke-width="1.1" stroke-linecap="round"/>`;
+        ticksSvg += `<line x1="115" y1="${yFront}" x2="128" y2="${yFront}" stroke="#475569" stroke-width="1.1" stroke-linecap="round"/>`;
       }
     }
 
@@ -1758,22 +1835,31 @@ requireStudentLogin();
       <rect x="36" y="0" width="4" height="160" fill="#FFFFFF" opacity="0.35"/>
 
       <!-- Optical Reticle Precision Center Notch at eye level (y = 80) -->
-      <line x1="77" y1="${centerY - 4}" x2="77" y2="${centerY + 4}" stroke="#EF4444" stroke-width="1.4" stroke-linecap="round"/>
-      <line x1="83" y1="${centerY - 4}" x2="83" y2="${centerY + 4}" stroke="#EF4444" stroke-width="1.4" stroke-linecap="round"/>
+      <line x1="77" y1="${centerY - 4}" x2="77" y2="${centerY + 4}" stroke="${currentParallaxAngle === 0 ? '#10B981' : '#F59E0B'}" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="83" y1="${centerY - 4}" x2="83" y2="${centerY + 4}" stroke="${currentParallaxAngle === 0 ? '#10B981' : '#F59E0B'}" stroke-width="1.5" stroke-linecap="round"/>
     `;
 
     lensSvg.innerHTML = defsSvg + tubeGeometry + liquidBody + ticksSvg + meniscusArc + glassOverlays;
 
     const readoutPill = document.getElementById('lensReadoutPill');
     if (readoutPill) {
-      readoutPill.innerHTML = `<span>🎯</span> ${volume.toFixed(2)} cm³`;
+      if (currentParallaxAngle === 0) {
+        readoutPill.innerHTML = `<span>🎯</span> ${volume.toFixed(2)} cm³`;
+      } else {
+        const signStr = apparentShift > 0 ? `+${apparentShift.toFixed(2)}` : apparentShift.toFixed(2);
+        readoutPill.innerHTML = `<span>⚠️</span> ${apparentVolume.toFixed(2)} cm³ <small style="font-size:0.65rem;opacity:0.85;">(${signStr})</small>`;
+      }
     }
 
     const lensSubtitle = document.getElementById('lensGuidanceSub') || document.querySelector('.lens-readout-sub');
     if (lensSubtitle) {
-      lensSubtitle.innerHTML = isKmno4
-        ? 'Read at <b style="color:var(--heading-color);">top edge</b> (opaque KMnO₄).'
-        : 'Read at <b style="color:var(--heading-color);">bottom of meniscus</b>';
+      if (currentParallaxAngle === 0) {
+        lensSubtitle.innerHTML = isKmno4
+          ? 'Read at <b style="color:var(--heading-color);">top edge</b> (0° calibrated eye level).'
+          : 'Read at <b style="color:var(--heading-color);">bottom of meniscus</b> at 0° eye level.';
+      } else {
+        lensSubtitle.innerHTML = `<span style="color:#F59E0B;font-weight:700;">⚠️ Parallax Error:</span> Front &amp; rear lines split! Align to 0° eye level.`;
+      }
     }
   }
 
@@ -1879,6 +1965,41 @@ requireStudentLogin();
         flaskLabel.textContent = `${sessionAnalyteVolume.toFixed(2)} cm³ ${baseName} · Self-indicating`;
       } else if (indicatorAdded) {
         flaskLabel.textContent = `${sessionAnalyteVolume.toFixed(2)} cm³ ${baseName} + ${indName} (${indicatorDropsCount}d)`;
+      }
+    }
+
+    // Authentic Transient Endpoint Premonition Dynamics:
+    // When approaching equivalence (within 0.25 cm³), delivered drops produce a localized color flash
+    // that naturally dissipates within 1.5s unless thoroughly mixed via swirling.
+    if (diff >= -0.25 && diff < 0.00 && (indicatorAdded || isSelfIndicatingExp(current))) {
+      if (transientColorTimeout) clearTimeout(transientColorTimeout);
+      transientColorTimeout = setTimeout(() => {
+        if (currentVolume - eqVol >= -0.25 && currentVolume - eqVol < 0.00) {
+          const baseColor = (current && current.flaskColors && current.flaskColors[0] !== 'var(--rig-body)')
+            ? current.flaskColors[0]
+            : 'rgba(224, 242, 254, 0.28)';
+          if (flask) {
+            flask.setAttribute('fill', baseColor);
+            flask.style.fill = baseColor;
+          }
+          if (surface) {
+            surface.setAttribute('fill', baseColor);
+            surface.style.fill = baseColor;
+          }
+          const fLabel = document.getElementById('flaskLabel');
+          if (fLabel) {
+            fLabel.innerHTML = `<span style="color:#F59E0B;font-weight:700;">⏳ Color Dissipated:</span> Swirl flask to mix thoroughly!`;
+          }
+          const sText = document.getElementById('statusText');
+          if (sText) {
+            sText.innerHTML = `<span style="color:#F59E0B;font-weight:700;">⏳ Transient bloom dissipated.</span> Click <b>"🌀 Swirl Flask"</b> before next addition!`;
+          }
+        }
+      }, 1500);
+    } else {
+      if (transientColorTimeout) {
+        clearTimeout(transientColorTimeout);
+        transientColorTimeout = null;
       }
     }
 
@@ -2115,8 +2236,14 @@ requireStudentLogin();
     } catch (e) {}
   }
 
+  let transientColorTimeout = null;
+
   function swirlFlask() {
     playAudioTone('swirl');
+    if (transientColorTimeout) {
+      clearTimeout(transientColorTimeout);
+      transientColorTimeout = null;
+    }
     const container = document.getElementById('flaskContainer');
     if (container) {
       container.style.transition = 'transform 0.4s ease-in-out';
@@ -2133,7 +2260,7 @@ requireStudentLogin();
     // If just before endpoint (within 0.25 cm³), transient tinge dissipates upon swirling
     const eqVol = (typeof equivalenceVolume === 'number' && equivalenceVolume > 0) ? equivalenceVolume : 25.0;
     const diff = currentVolume - eqVol;
-    if (indicatorAdded && diff >= -0.25 && diff < 0.00) {
+    if ((indicatorAdded || isSelfIndicatingExp(current)) && diff >= -0.25 && diff < 0.00) {
       const flask = document.getElementById('flask');
       const surface = document.getElementById('flaskLiquidSurface');
       const baseColor = (current && current.flaskColors && current.flaskColors[0] !== 'var(--rig-body)')
@@ -2150,6 +2277,10 @@ requireStudentLogin();
       const flaskLabel = document.getElementById('flaskLabel');
       if (flaskLabel) {
         flaskLabel.innerHTML = `<span style="color:var(--cyan-accent);font-weight:700;">🌀 Swirled:</span> Transient tinge mixed away. Add next drop!`;
+      }
+      const sText = document.getElementById('statusText');
+      if (sText) {
+        sText.innerHTML = `Delivered: <b>${currentVolume.toFixed(2)} cm³</b>. Swirled clean. Add next single drop (+0.05 cm³).`;
       }
     }
   }
@@ -2173,10 +2304,30 @@ requireStudentLogin();
     }
   }
 
-  function addVolume(amount) {
-    if (!indicatorAdded) return;
+  function addHalfDrop() {
+    if (!indicatorAdded && !isSelfIndicatingExp(current)) return;
     animateStopcock();
-    currentVolume = Math.min(MAX_BURETTE, +(currentVolume + amount).toFixed(2));
+    // Authentic KCSE Half-Drop: delivers 0.025 cm³ and touches inside neck wall
+    currentVolume = Math.min(MAX_BURETTE, Math.round((currentVolume + 0.025) * 1000) / 1000);
+
+    const container = document.getElementById('flaskContainer');
+    if (container) {
+      container.classList.remove('anim-flask-tip-touch');
+      void container.offsetWidth; // trigger reflow
+      container.classList.add('anim-flask-tip-touch');
+      setTimeout(() => container.classList.remove('anim-flask-tip-touch'), 900);
+    }
+
+    playAudioTone('drip');
+    updateRig();
+    saveDraft();
+  }
+  window.addHalfDrop = addHalfDrop;
+
+  function addVolume(amount) {
+    if (!indicatorAdded && !isSelfIndicatingExp(current)) return;
+    animateStopcock();
+    currentVolume = Math.min(MAX_BURETTE, Math.round((currentVolume + amount) * 1000) / 1000);
     updateRig();
     saveDraft();
     spawnMultipleDrops(amount);

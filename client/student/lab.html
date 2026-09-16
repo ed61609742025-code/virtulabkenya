@@ -626,7 +626,7 @@
                   <div class="loupe-metallic-bezel">
                     <div class="loupe-lens-viewport" role="img" aria-label="Magnified burette scale showing liquid meniscus level at eye level">
                       <div class="lens-glass-glare"></div>
-                      <div class="lens-crosshair-line"></div>
+                      <div class="lens-crosshair-line" id="lensCrosshairLine"></div>
                       <svg id="lensSvg" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;"></svg>
                     </div>
                   </div>
@@ -637,6 +637,19 @@
                     </div>
                     <div class="lens-readout-sub" id="lensGuidanceSub">
                       Read at <b style="color:var(--text-main);">bottom of meniscus</b>
+                    </div>
+                  </div>
+
+                  <!-- Parallax Perspective Alignment Controls (KNEC Full Marks Training) -->
+                  <div class="parallax-view-controls" title="Adjust eye-level angle relative to burette scale to eliminate parallax error">
+                    <div class="parallax-ctrl-header">
+                      <span class="parallax-label">Sightline:</span>
+                      <span class="parallax-status-chip" id="parallaxStatusChip">🎯 0° Calibrated</span>
+                    </div>
+                    <div class="parallax-btn-group" role="group" aria-label="Sightline Angle Selector">
+                      <button type="button" class="parallax-btn" id="btnParallaxLow" onclick="setParallaxAngle(-8)" title="Viewing from below (-8°): Meniscus bottom projects downward on scale, apparent volume decreases">▼ -8° Low</button>
+                      <button type="button" class="parallax-btn active" id="btnParallaxZero" onclick="setParallaxAngle(0)" title="Viewing at eye level (0°): Front and rear graduation lines align, zero parallax error">🎯 0° Level</button>
+                      <button type="button" class="parallax-btn" id="btnParallaxHigh" onclick="setParallaxAngle(8)" title="Viewing from above (+8°): Meniscus bottom projects upward on scale, apparent volume increases">▲ +8° High</button>
                     </div>
                   </div>
                 </div>
@@ -681,6 +694,7 @@
                 <button class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(0.1)" style="padding:8px 4px;font-size:0.78rem;font-weight:700;font-family:'JetBrains Mono',monospace;" title="Add 0.10 cm³ titrant" aria-label="Add 0.10 cm³ titrant">+0.1 cm³</button>
                 <button class="btn-tactile btn-tactile-cyan btn-tactile-sm btn-pill-action" onclick="addVolume(0.05)" style="padding:8px 4px;font-size:0.78rem;font-weight:700;font-family:'JetBrains Mono',monospace;" title="Add single drop (0.05 cm³) for precision equivalence" aria-label="Add single drop of 0.05 cm³">💧 +0.05 cm³</button>
               </div>
+              <button type="button" class="btn-tactile btn-tactile-cyan btn-tactile-sm btn-action-halfdrop" id="btnHalfDrop" onclick="addHalfDrop()" style="width:100%;padding:7px 4px;font-size:0.75rem;font-weight:700;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;justify-content:center;gap:4px;" title="Split a half-drop on burette tip and touch inner flask wall (+0.025 cm³)" aria-label="Add half-drop (+0.025 cm³) touching tip to flask">🖐️ Half-Drop (+0.025 cm³ · Touch Tip)</button>
             </div>
 
             <div style="border-top:1px dashed var(--card-border);margin:4px 0;"></div>

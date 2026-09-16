@@ -145,6 +145,11 @@
         if (typeof localStorage !== 'undefined') {
           localStorage.setItem(QUEUE_KEY, JSON.stringify(queue));
         }
+
+        if (typeof window !== 'undefined' && window.OfflineQueue && typeof window.OfflineQueue.enqueue === 'function') {
+          window.OfflineQueue.enqueue(url, 'POST', payload).catch(() => {});
+        }
+
         this.notifyStatus('queued');
         return queuedItem;
       } catch (err) {
@@ -160,9 +165,30 @@
       try {
         if (typeof localStorage === 'undefined') return [];
         const raw = localStorage.getItem(QUEUE_KEY);
-        if (!raw) return [];
-        const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? parsed : [];
+        const list = raw ? JSON.parse(raw) : [];
+        const result = Array.isArray(list) ? list : [];
+
+        // Also check vlk_offline_submission_queue for any pending practicals
+        const rawOffline = localStorage.getItem('vlk_offline_submission_queue');
+        if (rawOffline) {
+          const offlineList = JSON.parse(rawOffline);
+          if (Array.isArray(offlineList)) {
+            for (const item of offlineList) {
+              if (item && item.id && !result.some(r => r.id === item.id)) {
+                result.push({
+                  id: item.id,
+                  url: item.endpoint.startsWith('/') ? item.endpoint : '/' + item.endpoint,
+                  payload: item.body,
+                  meta: {},
+                  queuedAt: new Date(item.timestamp || Date.now()).toISOString(),
+                  attempts: item.attempts || 0
+                });
+              }
+            }
+          }
+        }
+
+        return result;
       } catch (err) {
         console.warn('[ExamOfflineManager] Failed to parse pending queue:', err);
         return [];
@@ -177,6 +203,11 @@
         const queue = this.getPendingSubmissions().filter(item => item.id !== id);
         if (typeof localStorage !== 'undefined') {
           localStorage.setItem(QUEUE_KEY, JSON.stringify(queue));
+          const rawOffline = localStorage.getItem('vlk_offline_submission_queue');
+          if (rawOffline) {
+            const offlineList = JSON.parse(rawOffline).filter(item => item.id !== id);
+            localStorage.setItem('vlk_offline_submission_queue', JSON.stringify(offlineList));
+          }
         }
       } catch (err) {
         console.warn('[ExamOfflineManager] Failed to update queue:', err);
@@ -190,6 +221,10 @@
       if (this.isSyncing) return { synced: 0, pending: 0 };
       if (typeof navigator !== 'undefined' && !navigator.onLine) {
         return { synced: 0, pending: this.getPendingSubmissions().length };
+      }
+
+      if (typeof window !== 'undefined' && window.OfflineQueue && typeof window.OfflineQueue.flush === 'function') {
+        await window.OfflineQueue.flush();
       }
 
       const queue = this.getPendingSubmissions();
@@ -217,9 +252,9 @@
             body: JSON.stringify(item.payload)
           });
 
-          if (response.ok) {
+          if (response.ok || response.status === 400 || response.status === 409 || response.status === 422) {
             this.removeQueuedSubmission(item.id);
-            syncedCount++;
+            if (response.ok) syncedCount++;
           } else if (response.status === 401 || response.status === 403) {
             // Auth expired or invalid: DO NOT discard the student's exam work!
             // Retain item in queue, pause sync, and notify UI to prompt candidate re-authentication
@@ -255,6 +290,10 @@
 
       window.addEventListener('offline', () => {
         this.notifyStatus('offline');
+      });
+
+      window.addEventListener('vlk:offline_sync_complete', () => {
+        this.notifyStatus('online');
       });
     }
 

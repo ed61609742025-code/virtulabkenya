@@ -2600,7 +2600,7 @@ if (typeof window !== 'undefined') {
         }
       });
 
-      await Qualitative.save({
+      const saveRes = await Qualitative.save({
         saltKey: currentSaltKey,
         saltName: salt.name,
         trueCation: salt.cation,
@@ -2617,8 +2617,18 @@ if (typeof window !== 'undefined') {
       });
 
       sessionSaved = true;
-      document.getElementById('submitIdBtn').textContent = '✅ Submitted';
-      document.getElementById('submitIdBtn').disabled = true;
+      const isOfflineQueued = saveRes && saveRes.offlineQueued;
+      const submitBtn = document.getElementById('submitIdBtn');
+      if (submitBtn) {
+        submitBtn.textContent = isOfflineQueued ? '📦 Saved Offline' : '✅ Submitted';
+        submitBtn.disabled = true;
+      }
+
+      const offlinePill = isOfflineQueued ? `
+        <div style="margin-top:10px; padding:6px 12px; border-radius:6px; background:rgba(234,179,8,0.12); border:1px solid rgba(234,179,8,0.35); color:#FACC15; font-size:0.8rem; font-weight:600; display:flex; align-items:center; gap:6px;">
+          <span>🟡</span> <span><b>Saved Offline:</b> Analysis results are stored locally and will sync to your teacher on reconnect.</span>
+        </div>
+      ` : '';
 
       box.innerHTML = `
         <div class="id-result-card ${fullyCorrect ? 'correct' : 'incorrect'}">
@@ -2628,6 +2638,7 @@ if (typeof window !== 'undefined') {
             <p>The salt was <b>${esc(salt.name)} (${esc(salt.formula)})</b>. Cation: <b>${esc(salt.cationDisplay)}</b>  Anion: <b>${esc(salt.anionDisplay)}</b>.</p>
             ${!cationCorrect ? `<p style="color:var(--red-accent);margin-top:4px;">✗ Your cation (${esc(cation)}) was incorrect.</p>` : ''}
             ${!anionCorrect  ? `<p style="color:var(--red-accent);margin-top:4px;">✗ Your anion (${esc(anion)}) was incorrect.</p>` : ''}
+            ${offlinePill}
           </div>
         </div>`;
     } catch (err) {

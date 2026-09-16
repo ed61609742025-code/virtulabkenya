@@ -2470,7 +2470,7 @@ requireStudentLogin();
     }
 
     try {
-      await Sessions.save({
+      const saveResult = await Sessions.save({
         titrationKey: current.key,
         titrationTitle: current.title,
         indicatorLabel: selectedIndicator || current.indicatorName,
@@ -2517,14 +2517,21 @@ requireStudentLogin();
       sessionSubmitted = true;
       playAudioTone('chime');
 
+      const isQueuedOffline = saveResult && saveResult.offlineQueued;
+      const offlineNotice = isQueuedOffline ? `
+        <div style="margin-top:12px; padding:10px 14px; border-radius:8px; background:rgba(234,179,8,0.12); border:1px solid rgba(234,179,8,0.35); color:#FACC15; font-size:0.82rem; font-weight:600; display:flex; align-items:center; gap:8px;">
+          <span>🟡</span> <span><b>Saved Offline:</b> Your practical attempt is safely preserved on this device and will automatically sync with your teacher once connection is restored.</span>
+        </div>
+      ` : '';
+
       // Lock Submit Button
       const submitBtn = document.getElementById('btnSubmitTitration');
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.style.opacity = '0.5';
+        submitBtn.style.opacity = '0.7';
         submitBtn.style.cursor = 'not-allowed';
-        submitBtn.style.background = 'var(--green-accent)';
-        submitBtn.innerHTML = '✓ Submitted Successfully';
+        submitBtn.style.background = isQueuedOffline ? '#D97706' : 'var(--green-accent)';
+        submitBtn.innerHTML = isQueuedOffline ? '📦 Saved Offline (Queued)' : '✓ Submitted Successfully';
       }
 
       // Lock all calculation inputs
@@ -2555,10 +2562,11 @@ requireStudentLogin();
 
       if (linkedAssignmentId) {
         msg.innerHTML = `<div class="result-banner result-ok" style="border-color:var(--cyan-accent);background:rgba(6,182,212,0.12);color:var(--text-main);padding:18px;border-radius:10px;">
-          <b style="color:var(--cyan-accent);font-size:1.05rem;">🎉 Assignment Submitted Successfully!</b><br>
+          <b style="color:var(--cyan-accent);font-size:1.05rem;">🎉 Assignment ${isQueuedOffline ? 'Saved Offline!' : 'Submitted Successfully!'}</b><br>
           <span style="font-size:0.86rem;color:var(--text-main);display:block;margin-top:6px;line-height:1.5;">
-            Your titration practical response has been recorded and submitted to your teacher. You will be notified on your student dashboard once your score is marked and released.
+            Your titration practical response has been recorded and ${isQueuedOffline ? 'safely stored locally' : 'submitted to your teacher'}. You will be notified on your student dashboard once your score is marked and released.
           </span>
+          ${offlineNotice}
           <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:16px;">
             <button type="button" class="btn-cyan" onclick="window.location.href='/student/home.html'" style="flex:1; min-width:180px; height:42px; font-weight:800; font-size:0.85rem;">
               🏠 Return to Dashboard
@@ -2583,7 +2591,7 @@ requireStudentLogin();
               ${correct ? '<b>Excellent precision!</b> Your concentration matches the KNEC standard.' : '<b>Session saved.</b> Your calculated concentration deviated from the standard.'}
               Expected concentration: <b>${expectedConcFromStudentAvg.toFixed(4)} M</b>. Your practical session has been recorded.
             </span>
-
+            ${offlineNotice}
             <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:16px;">
               <button type="button" class="btn-cyan" onclick="startNextPractical('${nextKey}')" style="flex:1.2; min-width:200px; height:44px; font-weight:800; font-size:0.88rem; display:flex; align-items:center; justify-content:center; gap:6px;">
                 🧪 Next Practical: ${nextPractical ? nextPractical.title.split('(')[0] : 'Next'} →

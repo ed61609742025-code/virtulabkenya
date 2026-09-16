@@ -3,7 +3,7 @@
 //  Feature #1: Offline Support, Smart Caching & Sync
 // ============================================================
 
-const CACHE_NAME = 'virtulab-kenya-v109';
+const CACHE_NAME = 'virtulab-kenya-v110';
 
 const PRECACHE_ASSETS = [
   '/',
@@ -11,6 +11,7 @@ const PRECACHE_ASSETS = [
   '/terms.html',
   '/privacy.html',
   '/manifest.json',
+  '/favicon.ico',
   'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js',
   '/shared/auth-guard.js',
   '/shared/style.css',
@@ -47,6 +48,8 @@ const PRECACHE_ASSETS = [
   '/shared/ai-tutor.js',
   '/shared/virtulab-logo.svg',
   '/shared/virtulab-logo.png',
+  '/shared/chemistry_hero_badge.jpg',
+  '/shared/config.js',
   '/shared/icon-192.png',
   '/shared/icon-512.png',
   '/shared/icon-512-maskable.png',
@@ -83,6 +86,7 @@ const PRECACHE_ASSETS = [
   '/student/css/gas-prep.css',
   '/student/css/composite_exam.css',
   '/student/css/speed-battle.css',
+  '/student/css/mobile.css',
   '/shared/page-transitions.js',
   '/student/js/skill-tree.js',
   '/student/js/titration-workbench.js',
@@ -107,6 +111,7 @@ const PRECACHE_ASSETS = [
   '/teacher/css/dashboard.css',
   '/teacher/js/teacher-dashboard.js',
   '/teacher/js/research-portal.js',
+  '/teacher/js/ai-exam-assistant.js',
   '/admin/dashboard.html',
   '/admin/css/admin.css'
 ];
@@ -177,8 +182,22 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Only handle same-origin static assets
+  // Precached cross-origin assets (e.g. Chart.js CDN for offline graphs)
   if (url.origin !== self.location.origin) {
+    if (url.hostname.includes('cdnjs.cloudflare.com') || PRECACHE_ASSETS.includes(event.request.url)) {
+      event.respondWith(
+        caches.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) return cachedResponse;
+          return fetch(event.request).then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200) {
+              const clone = networkResponse.clone();
+              caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+            }
+            return networkResponse;
+          }).catch(() => new Response('', { status: 408 }));
+        })
+      );
+    }
     return;
   }
 

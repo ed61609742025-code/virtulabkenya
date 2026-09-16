@@ -75,7 +75,7 @@
     toast.className = `vlk-network-toast ${isOnline ? 'online' : 'offline'}`;
     toast.innerHTML = isOnline
       ? `<span>🟢</span> <span>Back Online — Cloud Sync Resumed</span>`
-      : `<span>⚡</span> <span>Offline Mode Active — 7 Chemistry Benches Ready (0 MB data)</span>`;
+      : `<span>⚡</span> <span>Offline Mode Active — 8 Practical Benches Ready (0 MB data)</span>`;
 
     document.body.appendChild(toast);
 

@@ -149,181 +149,304 @@ async function downloadFile(endpoint, filename) {
   URL.revokeObjectURL(url);
 }
 
-// ── IndexedDB Offline Queue & Auto-Sync ─────────────────────────
+// ── IndexedDB & LocalStorage Hybrid Offline Queue & Auto-Sync ──
 const DB_NAME = 'virtulab_offline_db';
 const DB_VERSION = 1;
 const QUEUE_STORE = 'submission_queue';
+const LOCAL_STORAGE_QUEUE_KEY = 'vlk_offline_submission_queue';
+const LEGACY_STORAGE_QUEUE_KEY = 'vlk_pending_submissions';
 
 function openOfflineDB() {
   return new Promise((resolve, reject) => {
     if (typeof indexedDB === 'undefined') {
       return reject(new Error('IndexedDB not supported'));
     }
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
-    request.onupgradeneeded = (e) => {
-      const db = e.target.result;
-      if (!db.objectStoreNames.contains(QUEUE_STORE)) {
-        db.createObjectStore(QUEUE_STORE, { keyPath: 'id', autoIncrement: true });
-      }
-    };
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
+    try {
+      const request = indexedDB.open(DB_NAME, DB_VERSION);
+      request.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains(QUEUE_STORE)) {
+          db.createObjectStore(QUEUE_STORE, { keyPath: 'id' });
+        }
+      };
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error || new Error('IndexedDB open error'));
+    } catch (err) {
+      reject(err);
+    }
   });
 }
 
-const OfflineQueue = {
-  async enqueue(endpoint, method, body, token) {
-    try {
-      const db = await openOfflineDB();
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction(QUEUE_STORE, 'readwrite');
-        const store = tx.objectStore(QUEUE_STORE);
-        const item = {
-          endpoint,
-          method,
-          body,
-          token: token || getToken(),
-          timestamp: Date.now()
-        };
-        const req = store.add(item);
-        req.onsuccess = () => {
-          OfflineQueue.updateBadge();
-          resolve(req.result);
-        };
-        req.onerror = () => reject(req.error);
-      });
-    } catch (err) {
-      console.warn('[OfflineQueue] Fallback local storage enqueue:', err.message);
-    }
-  },
+function getLocalQueue() {
+  try {
+    if (typeof localStorage === 'undefined') return [];
+    const raw = localStorage.getItem(LOCAL_STORAGE_QUEUE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    return [];
+  }
+}
 
-  async count() {
+function setLocalQueue(items) {
+  try {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(LOCAL_STORAGE_QUEUE_KEY, JSON.stringify(items));
+    }
+  } catch (e) {
+    console.warn('[OfflineQueue] LocalStorage write error:', e.message);
+  }
+}
+
+const OfflineQueue = {
+  _isFlushing: false,
+
+  async enqueue(endpoint, method, body, token) {
+    const item = {
+      id: 'sub_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7),
+      endpoint: endpoint.startsWith('/api/') ? endpoint.substring(4) : endpoint,
+      method: method || 'POST',
+      body,
+      token: token || getToken(),
+      timestamp: Date.now(),
+      attempts: 0
+    };
+
+    // 1. Primary write to localStorage (instant, survives offline refreshes)
+    try {
+      const list = getLocalQueue();
+      list.push(item);
+      setLocalQueue(list);
+    } catch (e) {
+      console.warn('[OfflineQueue] Primary local storage enqueue error:', e.message);
+    }
+
+    // 2. Mirror to IndexedDB if supported (asynchronous)
     try {
       const db = await openOfflineDB();
-      return new Promise((resolve) => {
-        const tx = db.transaction(QUEUE_STORE, 'readonly');
-        const store = tx.objectStore(QUEUE_STORE);
-        const req = store.count();
-        req.onsuccess = () => resolve(req.result);
-        req.onerror = () => resolve(0);
-      });
-    } catch (e) {
-      return 0;
+      const tx = db.transaction(QUEUE_STORE, 'readwrite');
+      const store = tx.objectStore(QUEUE_STORE);
+      store.put(item);
+    } catch (err) {
+      // IndexedDB failure is gracefully ignored since localStorage is intact
     }
+
+    OfflineQueue.updateBadge();
+    if (typeof window !== 'undefined' && window.dispatchEvent) {
+      window.dispatchEvent(new CustomEvent('vlk:offline_queued', { detail: item }));
+    }
+    return item;
   },
 
   async getAll() {
+    const itemsMap = new Map();
+
+    // Read from primary localStorage
+    const localItems = getLocalQueue();
+    for (const it of localItems) {
+      if (it && it.id) itemsMap.set(it.id, it);
+    }
+
+    // Also check legacy/companion exam draft queue key
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const legacyRaw = localStorage.getItem(LEGACY_STORAGE_QUEUE_KEY);
+        if (legacyRaw) {
+          const legacyItems = JSON.parse(legacyRaw);
+          if (Array.isArray(legacyItems)) {
+            for (const leg of legacyItems) {
+              if (leg && leg.id && !itemsMap.has(leg.id)) {
+                itemsMap.set(leg.id, {
+                  id: leg.id,
+                  endpoint: (leg.url || '/composite').replace(/^\/api/, ''),
+                  method: 'POST',
+                  body: leg.payload,
+                  token: getToken(),
+                  timestamp: leg.queuedAt ? new Date(leg.queuedAt).getTime() : Date.now(),
+                  attempts: leg.attempts || 0
+                });
+              }
+            }
+          }
+        }
+      }
+    } catch (e) {}
+
+    // Also read from IndexedDB and merge
     try {
       const db = await openOfflineDB();
-      return new Promise((resolve) => {
+      const idbItems = await new Promise((resolve) => {
         const tx = db.transaction(QUEUE_STORE, 'readonly');
         const store = tx.objectStore(QUEUE_STORE);
         const req = store.getAll();
         req.onsuccess = () => resolve(req.result || []);
         req.onerror = () => resolve([]);
       });
-    } catch (e) {
-      return [];
-    }
+      for (const it of idbItems) {
+        if (it && it.id && !itemsMap.has(it.id)) {
+          itemsMap.set(it.id, it);
+        }
+      }
+    } catch (e) {}
+
+    const result = Array.from(itemsMap.values());
+    result.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+    return result;
+  },
+
+  async count() {
+    const items = await OfflineQueue.getAll();
+    return items.length;
   },
 
   async remove(id) {
+    // 1. Remove from localStorage
+    try {
+      const list = getLocalQueue().filter(item => item.id !== id);
+      setLocalQueue(list);
+    } catch (e) {}
+
+    // 2. Remove from legacy exam draft queue
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const legacyRaw = localStorage.getItem(LEGACY_STORAGE_QUEUE_KEY);
+        if (legacyRaw) {
+          const legacyItems = JSON.parse(legacyRaw).filter(item => item.id !== id);
+          localStorage.setItem(LEGACY_STORAGE_QUEUE_KEY, JSON.stringify(legacyItems));
+        }
+      }
+    } catch (e) {}
+
+    // 3. Remove from IndexedDB
     try {
       const db = await openOfflineDB();
-      return new Promise((resolve) => {
-        const tx = db.transaction(QUEUE_STORE, 'readwrite');
-        const store = tx.objectStore(QUEUE_STORE);
-        const req = store.delete(id);
-        req.onsuccess = () => resolve(true);
-        req.onerror = () => resolve(false);
-      });
-    } catch (e) {
-      return false;
-    }
+      const tx = db.transaction(QUEUE_STORE, 'readwrite');
+      tx.objectStore(QUEUE_STORE).delete(id);
+    } catch (e) {}
+
+    OfflineQueue.updateBadge();
+    return true;
   },
 
   async flush() {
-    if (!isOnline()) return;
-    const items = await OfflineQueue.getAll();
-    if (!items || items.length === 0) {
-      OfflineQueue.updateBadge();
-      return;
-    }
+    if (!isOnline() || OfflineQueue._isFlushing) return;
+    OfflineQueue._isFlushing = true;
 
-    console.log(`[OfflineQueue] Replaying ${items.length} queued offline submissions...`);
-    const currentToken = getToken();
-    for (const item of items) {
-      try {
-        const headers = { 'Content-Type': 'application/json' };
-        const tokenToUse = currentToken || item.token;
-        if (tokenToUse) headers['Authorization'] = 'Bearer ' + tokenToUse;
-        const res = await fetch(API_BASE + item.endpoint, {
-          method: item.method || 'POST',
-          headers,
-          body: item.body ? JSON.stringify(item.body) : undefined
-        });
-        if (res.ok || res.status === 400 || res.status === 409 || res.status === 422) {
-          // If saved or rejected as duplicate/invalid, remove from queue
-          await OfflineQueue.remove(item.id);
-        } else if (res.status === 401) {
-          // Token expired or unauthenticated
-          if (!currentToken) {
-            console.warn('[OfflineQueue] Awaiting user login before flushing queued items.');
+    try {
+      const items = await OfflineQueue.getAll();
+      if (!items || items.length === 0) {
+        OfflineQueue.updateBadge();
+        OfflineQueue._isFlushing = false;
+        return;
+      }
+
+      console.log(`[OfflineQueue] Replaying ${items.length} queued offline practical submission(s)...`);
+      let syncedCount = 0;
+      const currentToken = getToken();
+
+      for (const item of items) {
+        try {
+          const headers = { 'Content-Type': 'application/json' };
+          const tokenToUse = currentToken || item.token;
+          if (tokenToUse) headers['Authorization'] = 'Bearer ' + tokenToUse;
+
+          const endpointClean = item.endpoint.startsWith('/') ? item.endpoint : '/' + item.endpoint;
+          const finalUrl = endpointClean.startsWith('/api/') ? endpointClean : API_BASE + endpointClean;
+
+          const res = await fetch(finalUrl, {
+            method: item.method || 'POST',
+            headers,
+            body: item.body ? JSON.stringify(item.body) : undefined
+          });
+
+          if (res.ok || res.status === 400 || res.status === 409 || res.status === 422) {
+            // Submission accepted or already processed idempotently
+            await OfflineQueue.remove(item.id);
+            if (res.ok) syncedCount++;
+          } else if (res.status === 401 || res.status === 403) {
+            // Auth expired: DO NOT discard student practical responses!
+            console.warn(`[OfflineQueue] Auth required for item ${item.id}. Work safely retained in queue until student logs in.`);
+            OfflineQueue.showToast('⚠️ Session expired while offline. Your work is saved locally. Please log in to finish syncing.', 'warn');
             break;
           } else {
-            // Even current token was rejected, remove stale item
-            await OfflineQueue.remove(item.id);
+            // Temporary server error, retain and retry next time
+            console.warn(`[OfflineQueue] Server responded with status ${res.status} for item ${item.id}`);
+            break;
           }
+        } catch (err) {
+          console.warn(`[OfflineQueue] Network error flushing item ${item.id}:`, err.message);
+          break; // Still offline or unstable network, abort flush
         }
-      } catch (err) {
-        console.warn(`[OfflineQueue] Sync failed for item ${item.id}, will retry:`, err.message);
-        break; // Network still disconnected, stop flushing
       }
+
+      await OfflineQueue.updateBadge();
+
+      if (syncedCount > 0) {
+        OfflineQueue.showToast(`🟢 ${syncedCount} offline practical(s) successfully synced with server!`, 'success');
+        if (typeof window !== 'undefined' && window.dispatchEvent) {
+          window.dispatchEvent(new CustomEvent('vlk:offline_sync_complete', {
+            detail: { syncedCount, remaining: await OfflineQueue.count() }
+          }));
+        }
+      }
+    } finally {
+      OfflineQueue._isFlushing = false;
     }
-    await OfflineQueue.updateBadge();
   },
 
-  async updateBadge() {
+  updateBadge() {
     if (typeof document === 'undefined') return;
-    const count = await OfflineQueue.count();
-    let banner = document.getElementById('vlk-offline-banner');
-    if (count > 0) {
-      if (!banner) {
-        banner = document.createElement('div');
-        banner.id = 'vlk-offline-banner';
-        document.body.appendChild(banner);
+    OfflineQueue.count().then((count) => {
+      let banner = document.getElementById('vlk-offline-banner');
+      if (count > 0) {
+        if (!banner) {
+          banner = document.createElement('div');
+          banner.id = 'vlk-offline-banner';
+          document.body.appendChild(banner);
+        }
+        banner.setAttribute('style', 'position:fixed;bottom:16px;right:16px;z-index:99999;background:rgba(15,23,42,0.95);backdrop-filter:blur(10px);color:#FBBF24;border:1.5px solid #F59E0B;padding:10px 16px;border-radius:12px;font-family:\'Plus Jakarta Sans\',sans-serif;font-size:0.82rem;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,0.5);display:flex;align-items:center;gap:8px;cursor:pointer;');
+        banner.title = 'Click to attempt immediate synchronization';
+        banner.onclick = () => { if (isOnline()) OfflineQueue.flush(); };
+        banner.innerHTML = `<span>📦</span> <span>${count} practical(s) saved offline.</span> <span style="text-decoration:underline;font-size:0.75rem;color:#38BDF8;">${isOnline() ? 'Sync Now' : 'Sync on reconnect'}</span>`;
+        banner.style.display = 'flex';
+      } else if (banner && isOnline()) {
+        banner.style.display = 'none';
       }
-      banner.setAttribute('style', 'position:fixed;bottom:16px;right:16px;z-index:99999;background:#D97706;color:#FFF;padding:10px 18px;border-radius:10px;font-family:sans-serif;font-size:0.85rem;font-weight:600;box-shadow:0 4px 14px rgba(0,0,0,0.3);display:flex;align-items:center;gap:8px;');
-      banner.innerHTML = `<span>📦 ${count} experiment(s) saved offline. Synchronizing...</span>`;
-      banner.style.display = 'flex';
-    } else if (banner && isOnline()) {
-      banner.style.display = 'none';
-    }
+    }).catch(() => {});
+  },
+
+  showToast(message, type = 'info') {
+    if (typeof document === 'undefined') return;
+    const existing = document.getElementById('vlkOfflineSyncToast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.id = 'vlkOfflineSyncToast';
+    const borderColor = type === 'success' ? '#10B981' : (type === 'warn' ? '#F59E0B' : '#0284C7');
+    const textColor = type === 'success' ? '#34D399' : (type === 'warn' ? '#FBBF24' : '#38BDF8');
+    toast.setAttribute('style', `position:fixed;top:16px;left:50%;transform:translateX(-50%);background:rgba(15,23,42,0.95);backdrop-filter:blur(12px);border:1.5px solid ${borderColor};color:${textColor};padding:10px 20px;border-radius:100px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.84rem;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,0.6);z-index:1000001;display:flex;align-items:center;gap:8px;transition:all 0.3s ease;`);
+    toast.innerHTML = message;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(-50%) translateY(-10px)';
+      setTimeout(() => toast.remove(), 350);
+    }, 4500);
   }
 };
 
-// ── Network Resilience & Offline Banner ─────────────────────────
+// ── Network Resilience & Offline Status Handlers ───────────────
 function isOnline() {
-  return typeof navigator !== 'undefined' ? navigator.onLine : true;
+  return typeof navigator !== 'undefined' && typeof navigator.onLine === 'boolean' ? navigator.onLine : true;
 }
 
 function updateOfflineBanner(online) {
   if (typeof document === 'undefined') return;
   let banner = document.getElementById('vlk-offline-banner');
   if (!online) {
-    if (!banner) {
-      banner = document.createElement('div');
-      banner.id = 'vlk-offline-banner';
-      banner.setAttribute('style', 'position:fixed;bottom:16px;right:16px;z-index:99999;background:#DC2626;color:#FFF;padding:10px 18px;border-radius:10px;font-family:sans-serif;font-size:0.85rem;font-weight:600;box-shadow:0 4px 14px rgba(0,0,0,0.3);display:flex;align-items:center;gap:8px;');
-      document.body.appendChild(banner);
-    }
-    banner.innerHTML = '<span>⚠️ You are offline. Experiments are saved locally and will sync when reconnected.</span>';
-    banner.style.display = 'flex';
+    OfflineQueue.updateBadge();
   } else {
     OfflineQueue.flush();
-    if (banner) {
-      banner.style.display = 'none';
-    }
   }
 }
 
@@ -338,7 +461,7 @@ if (typeof window !== 'undefined') {
 
 function isOfflineQueueable(endpoint, method) {
   if (method !== 'POST' && method !== 'PUT') return false;
-  const queueable = ['/sessions', '/qualitative', '/organic', '/composite', '/solubility', '/energy', '/rates', '/gas', '/research', '/errors/client'];
+  const queueable = ['/sessions', '/qualitative', '/organic', '/composite', '/solubility', '/energy', '/rates', '/gas', '/research'];
   return queueable.some(p => endpoint.startsWith(p));
 }
 
@@ -356,10 +479,12 @@ async function apiRequest(method, endpoint, body, retries = 2) {
       if (!isOnline() && attempt === 0) {
         updateOfflineBanner(false);
         if (isOfflineQueueable(endpoint, method)) {
-          await OfflineQueue.enqueue(endpoint, method, body, token);
+          const queuedItem = await OfflineQueue.enqueue(endpoint, method, body, token);
           return {
             success: true,
+            offline: true,
             offlineQueued: true,
+            queuedId: queuedItem?.id,
             message: 'Saved offline. Your practical attempt has been queued and will synchronize automatically.'
           };
         }
@@ -379,6 +504,19 @@ async function apiRequest(method, endpoint, body, retries = 2) {
       }
 
       if (!res.ok) {
+        // Fast offline response check: if service worker or network returns 503 with offline: true
+        if ((data.offline || res.status === 503) && isOfflineQueueable(endpoint, method)) {
+          const queuedItem = await OfflineQueue.enqueue(endpoint, method, body, token);
+          updateOfflineBanner(false);
+          return {
+            success: true,
+            offline: true,
+            offlineQueued: true,
+            queuedId: queuedItem?.id,
+            message: 'Saved offline. Your practical attempt has been queued and will synchronize automatically.'
+          };
+        }
+
         // If 401 Unauthorized, clear stale token
         if (res.status === 401) {
           clearToken();
@@ -417,11 +555,13 @@ async function apiRequest(method, endpoint, body, retries = 2) {
       }
       // If network offline or fetch failed completely on a queueable mutation
       if (isOfflineQueueable(endpoint, method)) {
-        await OfflineQueue.enqueue(endpoint, method, body, token);
+        const queuedItem = await OfflineQueue.enqueue(endpoint, method, body, token);
         updateOfflineBanner(false);
         return {
           success: true,
+          offline: true,
           offlineQueued: true,
+          queuedId: queuedItem?.id,
           message: 'Saved offline. Your practical attempt has been queued and will synchronize automatically.'
         };
       }
@@ -853,6 +993,7 @@ if (typeof window !== 'undefined') {
 // ── Error Tracker (Client-Side Telemetry) ──────────────────────
 const ErrorTracker = {
   async logClientError(message, stack = '', line = 0, col = 0) {
+    if (!isOnline()) return; // Data-saver: avoid network telemetry requests when offline
     try {
       await fetch(API_BASE + '/errors/client', {
         method: 'POST',
@@ -945,6 +1086,8 @@ if (typeof window !== 'undefined') {
   window.Analytics = Analytics;
   window.Admin = Admin;
   window.apiRequest = apiRequest;
+  window.OfflineQueue = OfflineQueue;
+  window.isOnline = isOnline;
 }
 
 // ── PWA Service Worker Registration ───────────────────────────
@@ -956,4 +1099,15 @@ if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
       console.log('[VirtuLab PWA] Service worker registration failed:', err);
     });
   });
+}
+
+// ── Node.js CommonJS Module Exports (Unit Testing) ───────────
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    OfflineQueue,
+    isOnline,
+    isOfflineQueueable,
+    LOCAL_STORAGE_QUEUE_KEY,
+    LEGACY_STORAGE_QUEUE_KEY
+  };
 }

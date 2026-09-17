@@ -779,4 +779,73 @@ describe('KNEC Paper 3 Examination Suite Standards', () => {
     assert.strictEqual(paRate, 67, 'High risk (>50%) triggers danger status');
     assert.ok(paRate >= 50, 'Severity must be danger for >= 50% failure rate');
   });
+
+  it('should validate all 6 newly added authentic KCSE past paper presets (2013, 2011, 2009, 2008, 1998, 1996)', () => {
+    const newPresets = ['series_2013', 'series_2011', 'series_2009', 'series_2008', 'series_1998', 'series_1996'];
+    newPresets.forEach(key => {
+      assert.ok(COMPOSITE_EXAM_PRESETS[key], `Preset ${key} must exist in COMPOSITE_EXAM_PRESETS`);
+      const engine = new CompositeExamEngine({ presetKey: key });
+      assert.strictEqual(engine.preset.seriesKey, key, `Engine must initialize with seriesKey ${key}`);
+      assert.ok(engine.preset.title.includes('KCSE'), `Preset title must contain KCSE`);
+      assert.ok(engine.preset.q1, `${key} must have Q1`);
+      assert.ok(engine.preset.q2, `${key} must have Q2`);
+      assert.ok(engine.preset.q3, `${key} must have Q3`);
+      assert.ok(engine.preset.q1.questions.length >= 4, `${key} Q1 must have at least 4 step questions`);
+      assert.ok(engine.preset.q2.tests.length >= 3, `${key} Q2 must have at least 3 qualitative tests`);
+      assert.ok(engine.preset.q3.tests.length >= 3, `${key} Q3 must have at least 3 organic tests`);
+
+      // Verify trial recording and worked solutions generation
+      const titre = engine.preset.q1.trueTitre || 25.00;
+      engine.recordTrial(1, titre, 0.00);
+      engine.recordTrial(2, titre, 0.00);
+      engine.setConcordant(1, true);
+      engine.setConcordant(2, true);
+
+      const worked = engine.generateWorkedSolutions();
+      assert.ok(Object.keys(worked).length >= 4, `${key} must generate worked solutions for titration`);
+    });
+  });
+
+  it('should verify KCSE Past Papers Archive and Lead Notes integrity and filtering', () => {
+    const pastPapersDataPath = path.join(rootDir, 'client', 'student', 'js', 'kcse-past-papers-data.js');
+    assert.ok(fs.existsSync(pastPapersDataPath), 'kcse-past-papers-data.js file must exist');
+
+    const { KCSE_LEAD_NOTES, KCSE_PAST_PAPERS_ARCHIVE, filterPastPapers } = require(pastPapersDataPath);
+    assert.ok(Array.isArray(KCSE_PAST_PAPERS_ARCHIVE), 'KCSE_PAST_PAPERS_ARCHIVE must be an array');
+    assert.ok(KCSE_PAST_PAPERS_ARCHIVE.length >= 15, `Archive must contain comprehensive past papers (got ${KCSE_PAST_PAPERS_ARCHIVE.length})`);
+
+    // Verify lead notes structure
+    assert.ok(KCSE_LEAD_NOTES.quantitative, 'Lead notes must include quantitative guidelines');
+    assert.ok(KCSE_LEAD_NOTES.quantitative.graphPlottingRules.length >= 4, 'Must include KNEC graph plotting rules');
+    assert.ok(KCSE_LEAD_NOTES.qualitative.cationTests.length >= 3, 'Must include cation precipitation tests');
+    assert.ok(KCSE_LEAD_NOTES.qualitative.anionTests.length >= 4, 'Must include anion diagnostic tests');
+    assert.ok(KCSE_LEAD_NOTES.qualitative.organicTests.length >= 4, 'Must include organic functional group tests');
+
+    // Verify paper items structure
+    KCSE_PAST_PAPERS_ARCHIVE.forEach(paper => {
+      assert.ok(paper.id, 'Each paper must have an id');
+      assert.ok(typeof paper.year === 'number', `Paper ${paper.id} must have numeric year`);
+      assert.ok(paper.title, `Paper ${paper.id} must have a title`);
+      assert.ok(Array.isArray(paper.topics) && paper.topics.length > 0, `Paper ${paper.id} must have topics`);
+      assert.ok(Array.isArray(paper.questions) && paper.questions.length >= 2, `Paper ${paper.id} must have questions`);
+      assert.ok(paper.markScheme, `Paper ${paper.id} must have markScheme`);
+    });
+
+    // Verify filterPastPapers functionality
+    const decade2010s = filterPastPapers({ decade: '2010s' });
+    assert.ok(decade2010s.every(p => p.year >= 2010), '2010s filter must only return papers >= 2010');
+
+    const decade2000s = filterPastPapers({ decade: '2000s' });
+    assert.ok(decade2000s.every(p => p.year >= 2000 && p.year <= 2009), '2000s filter must only return papers in 2000-2009');
+
+    const decade90s = filterPastPapers({ decade: '1980s-1990s' });
+    assert.ok(decade90s.every(p => p.year >= 1989 && p.year <= 1999), '1980s-1990s filter must only return papers in 1989-1999');
+
+    const redoxPapers = filterPastPapers({ topic: 'Redox' });
+    assert.ok(redoxPapers.length > 0, 'Topic filter for Redox should return papers');
+    assert.ok(redoxPapers.every(p => p.topics.some(t => t.toLowerCase().includes('redox'))), 'Redox papers must include Redox topic');
+
+    const searchResults = filterPastPapers({ keyword: '2013' });
+    assert.ok(searchResults.some(p => p.year === 2013), 'Keyword search for 2013 must include 2013 paper');
+  });
 });

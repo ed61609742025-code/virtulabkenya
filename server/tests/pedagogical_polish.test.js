@@ -240,10 +240,10 @@ describe('Category 1: Pedagogical & Grading Polish Tests', () => {
   });
 
   describe('5. PWA Cache v111 & Cross-Bench HTML/CSS Asset Integrity', () => {
-    it('should have sw.js configured with cache version virtulab-kenya-v111', () => {
+    it('should have sw.js configured with cache version virtulab-kenya-v111 or higher', () => {
       const swPath = path.resolve(__dirname, '../../client/sw.js');
       const swCode = fs.readFileSync(swPath, 'utf8');
-      assert.ok(swCode.includes("const CACHE_NAME = 'virtulab-kenya-v111';"), 'sw.js must be bumped to virtulab-kenya-v111');
+      assert.ok(/const CACHE_NAME = 'virtulab-kenya-v11[1-9]';/.test(swCode), 'sw.js must be bumped to virtulab-kenya-v111 or higher');
       assert.ok(swCode.includes("'/shared/knec-pedagogy.js'"), 'sw.js PRECACHE_ASSETS must include /shared/knec-pedagogy.js');
     });
 

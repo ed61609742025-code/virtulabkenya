@@ -1588,6 +1588,667 @@ const COMPOSITE_EXAM_PRESETS = {
         }
       ]
     }
+  },
+
+  // ── Series 2013: Official KCSE 2013 Standard Chemistry Practical (Paper 233/3) ──
+  series_2013: {
+    id: 'series_2013',
+    seriesKey: 'series_2013',
+    seriesNumber: 2013,
+    title: 'KCSE 2013 Standard Chemistry Practical Examination',
+    badgeText: 'KCSE 2013 Past National Paper · Displacement Calorimetry, KMnO₄ Redox & Zinc',
+    durationMinutes: 135,
+    q1: {
+      type: 'titration',
+      calcType: 'standard_molarity',
+      title: 'Question 1: Volumetric Analysis — KMnO₄ Redox Titration (15.0 Marks)',
+      solutionA: '0.020 M Acidified Potassium Manganate(VII) (KMnO₄)',
+      solutionB: 'Solution D (Iron(II) Sulfate from displacement)',
+      acidFormula: 'KMnO4',
+      baseFormula: 'FeSO4',
+      indicator: 'Potassium Manganate(VII)',
+      pipetteVolume: 25.0,
+      trueAcidMolarity: 0.020,
+      trueBaseMolarity: 0.100,
+      trueTitre: 25.00,
+      moleRatioAcid: 1,
+      moleRatioBase: 5,
+      acidRfm: 158.0,
+      baseRfm: 392.0,
+      titrantColor: '#701A75',
+      flaskBaseColor: 'rgba(56,189,248,0.25)',
+      flaskIndicatorColor: 'rgba(56,189,248,0.25)',
+      endpointColor: 'rgba(236,72,153,0.7)',
+      overtitratedColor: 'rgba(192,38,211,0.95)',
+      equation: 'MnO₄⁻(aq) + 5Fe²⁺(aq) + 8H⁺(aq) → Mn²⁺(aq) + 5Fe³⁺(aq) + 4H₂O(l)',
+      instructions: 'Pipette 25.0 cm³ of Solution D into a clean conical flask. Titrate with 0.020 M KMnO₄ Solution A until the first permanent pale pink colour persists for at least 30 seconds.',
+      questions: createStandardTitrationQuestions({ acidRfm: 158.0, baseRfm: 392.0, pipetteVolume: 25.0, moleRatioAcid: 1, moleRatioBase: 5 })
+    },
+    q2: {
+      type: 'qualitative_single',
+      title: 'Question 2: Inorganic Salt Qualitative Analysis (15.0 Marks)',
+      sampleName: 'Solid E',
+      sampleDesc: 'A white inorganic solid containing zinc ions.',
+      trueSaltKey: 'ZnSO4',
+      trueSaltName: 'Zinc Sulfate — ZnSO₄',
+      trueCation: 'Zn2+',
+      trueAnion: 'SO42-',
+      hasDeduction: true,
+      tests: [
+        {
+          id: 'q2_heat',
+          prompt: '(i) Heat a half-spatula of Solid E strongly in a dry test tube.',
+          correctObs: 'Solid turns yellow when hot and white on cooling; colourless liquid droplets condense on upper cooler walls',
+          correctInf: 'Compound of zinc / ZnO formed; hydrated salt'
+        },
+        {
+          id: 'q2_appearance',
+          prompt: '(ii) Dissolve remainder of Solid E in 10 cm³ of distilled water. Divide into 4 portions.',
+          correctObs: 'White crystalline solid dissolves completely to form a clear, colourless solution',
+          correctInf: 'Soluble salt; colored transition metal ions (Fe²⁺, Fe³⁺, Cu²⁺) absent'
+        },
+        {
+          id: 'q2_naoh',
+          prompt: '(iii) To portion 1, add 2M NaOH dropwise until in excess.',
+          correctObs: 'White precipitate formed, dissolves in excess sodium hydroxide to form a clear colourless solution',
+          correctInf: 'Zn²⁺, Al³⁺, or Pb²⁺ present (zincate / aluminate / plumbite formed)'
+        },
+        {
+          id: 'q2_nh3',
+          prompt: '(iv) To portion 2, add 2M aqueous ammonia dropwise until in excess.',
+          correctObs: 'White precipitate formed, dissolves in excess aqueous ammonia to form a colourless solution',
+          correctInf: 'Zn²⁺ confirmed present (forms soluble tetraamminezinc(II) complex)'
+        },
+        {
+          id: 'q2_anion',
+          prompt: '(v) To portion 3, add 3 drops of barium chloride followed by dilute HCl.',
+          correctObs: 'Dense white precipitate formed, insoluble in dilute hydrochloric acid',
+          correctInf: 'SO₄²⁻ confirmed present (BaSO₄ formed)'
+        }
+      ]
+    },
+    q3: {
+      type: 'organic',
+      title: 'Question 3: Organic Functional Group Analysis (10.0 Marks)',
+      sampleName: 'Solid G',
+      sampleDesc: 'A pure white organic crystalline solid.',
+      trueOrganicKey: 'Maleic Acid',
+      trueOrganicName: 'Maleic Acid — C₄H₄O₄',
+      trueFunctionalGroup: 'Unsaturated Carboxylic Acid (-COOH, >C=C<)',
+      tests: [
+        {
+          id: 'q3_ignition',
+          prompt: '(i) Place one-third of Solid G on a metallic spatula and burn in Bunsen flame.',
+          correctObs: 'Melts to liquid; burns with a luminous, highly smoky and sooty yellow flame; leaves black carbon residue',
+          correctInf: 'Unsaturated organic compound / high C:H ratio (>C=C< or -C≡C-)'
+        },
+        {
+          id: 'q3_litmus',
+          prompt: '(ii) Dissolve Solid G in distilled water. Test with blue and red litmus paper.',
+          correctObs: 'Moist blue litmus paper turns red; red litmus paper remains red (pH ~ 2)',
+          correctInf: 'Acidic organic compound / H⁺ ions present / Carboxylic acid (—COOH)'
+        },
+        {
+          id: 'q3_kmno4',
+          prompt: '(iii) To 2 cm³ of solution, add 2–3 drops of acidified Potassium Manganate(VII).',
+          correctObs: 'Purple acidified KMnO₄ solution is rapidly decolorized to colourless',
+          correctInf: 'Alkene (>C=C<) present by electrophilic oxidation'
+        },
+        {
+          id: 'q3_nahco3',
+          prompt: '(iv) To 2 cm³ of solution, add a half spatula-end of solid Sodium Hydrogen Carbonate (NaHCO₃).',
+          correctObs: 'Brisk effervescence of a colourless gas that turns limewater milky',
+          correctInf: 'Carboxylic acid (—COOH) confirmed present; CO₂ gas evolved'
+        }
+      ]
+    }
+  },
+
+  // ── Series 2011: Official KCSE 2011 Standard Chemistry Practical (Paper 233/3) ──
+  series_2011: {
+    id: 'series_2011',
+    seriesKey: 'series_2011',
+    seriesNumber: 2011,
+    title: 'KCSE 2011 Standard Chemistry Practical Examination',
+    badgeText: 'KCSE 2011 Past National Paper · Dibasic Acid Standardization & Fe²⁺ Redox Oxidation',
+    durationMinutes: 135,
+    q1: {
+      type: 'titration',
+      calcType: 'standard_molarity',
+      title: 'Question 1: Volumetric Analysis — Standardization of NaOH (15.0 Marks)',
+      solutionA: '0.051 M Hydrated Dibasic Acid (H₂X·2H₂O)',
+      solutionB: 'Sodium Hydroxide (NaOH) Solution C',
+      acidFormula: 'H2X',
+      baseFormula: 'NaOH',
+      indicator: 'Phenolphthalein',
+      pipetteVolume: 25.0,
+      trueAcidMolarity: 0.051,
+      trueBaseMolarity: 0.100,
+      trueTitre: 24.50,
+      moleRatioAcid: 1,
+      moleRatioBase: 2,
+      acidRfm: 126.0,
+      baseRfm: 40.0,
+      titrantColor: '#38BDF8',
+      flaskBaseColor: 'rgba(56,189,248,0.25)',
+      flaskIndicatorColor: 'rgba(236,72,153,0.85)',
+      endpointColor: 'rgba(255,255,255,0.35)',
+      overtitratedColor: 'rgba(255,255,255,0.20)',
+      equation: 'H₂X(aq) + 2NaOH(aq) → Na₂X(aq) + 2H₂O(l)',
+      instructions: 'Pipette 25.0 cm³ of Solution C (NaOH) into a conical flask. Add 2 drops of phenolphthalein indicator. Titrate with Solution A until the pink colour discharges sharply to colourless.',
+      questions: createStandardTitrationQuestions({ acidRfm: 126.0, baseRfm: 40.0, pipetteVolume: 25.0, moleRatioAcid: 1, moleRatioBase: 2 })
+    },
+    q2: {
+      type: 'qualitative_single',
+      title: 'Question 2: Inorganic Salt Qualitative Analysis (15.0 Marks)',
+      sampleName: 'Solid D',
+      sampleDesc: 'A pale green inorganic crystalline salt containing iron(II) ions.',
+      trueSaltKey: 'FeSO4',
+      trueSaltName: 'Iron(II) Sulfate — FeSO₄',
+      trueCation: 'Fe2+',
+      trueAnion: 'SO42-',
+      hasDeduction: true,
+      tests: [
+        {
+          id: 'q2_heat',
+          prompt: '(i) Heat a half-spatula of Solid D in a dry test tube; test gases with litmus.',
+          correctObs: 'Solid decrepitates and turns dirty brown; droplets of colourless liquid condense on cooler walls; choking fumes evolve',
+          correctInf: 'Hydrated salt; contains water of crystallization; FeSO₄ thermal decomposition'
+        },
+        {
+          id: 'q2_appearance',
+          prompt: '(ii) Dissolve Solid D in 10 cm³ of distilled water. Divide into 3 portions.',
+          correctObs: 'Pale green crystalline solid dissolves completely to form a pale green solution',
+          correctInf: 'Soluble transition metal salt; Fe²⁺ present'
+        },
+        {
+          id: 'q2_naoh',
+          prompt: '(iii) To portion 1, add 1 cm³ H₂O₂ followed by 2M NaOH dropwise until in excess.',
+          correctObs: 'Solution turns yellow-brown; reddish-brown precipitate formed, insoluble in excess NaOH',
+          correctInf: 'Fe²⁺ oxidized to Fe³⁺ by H₂O₂; Fe³⁺ confirmed present (Fe(OH)₃)'
+        },
+        {
+          id: 'q2_nh3',
+          prompt: '(iv) To portion 2, add 2M aqueous ammonia dropwise until in excess.',
+          correctObs: 'Dirty green gelatinous precipitate formed, insoluble in excess aqueous ammonia',
+          correctInf: 'Fe²⁺ confirmed present'
+        },
+        {
+          id: 'q2_anion',
+          prompt: '(v) To portion 3, add 3 drops barium nitrate followed by dilute HNO₃.',
+          correctObs: 'Dense white precipitate formed, insoluble in dilute nitric acid',
+          correctInf: 'SO₄²⁻ confirmed present (BaSO₄ formed)'
+        }
+      ]
+    },
+    q3: {
+      type: 'organic',
+      title: 'Question 3: Organic Functional Group Analysis (10.0 Marks)',
+      sampleName: 'Liquid F',
+      sampleDesc: 'A clear, colourless, neutral organic liquid.',
+      trueOrganicKey: 'Ethanol',
+      trueOrganicName: 'Ethanol — C₂H₅OH',
+      trueFunctionalGroup: 'Alkanol (-OH)',
+      tests: [
+        {
+          id: 'q3_ignition',
+          prompt: '(i) Place 2 drops of Liquid F on a metallic spatula and ignite using a Bunsen flame.',
+          correctObs: 'Burns with a clean, non-sooty pale blue flame; leaves no carbon residue',
+          correctInf: 'Saturated organic compound / low carbon:hydrogen ratio'
+        },
+        {
+          id: 'q3_litmus',
+          prompt: '(ii) Add 2 cm³ water to 2 cm³ Liquid F; test with blue and red litmus paper.',
+          correctObs: 'Dissolves completely to form a single clear layer; no effect on red or blue litmus paper',
+          correctInf: 'Neutral polar organic substance; absence of carboxylic acid and amine'
+        },
+        {
+          id: 'q3_kmno4',
+          prompt: '(iii) To 2 cm³ of Liquid F, add 3 drops acidified Potassium Dichromate(VI) and warm gently.',
+          correctObs: 'Orange potassium dichromate(VI) solution turns green; sweet fruity ester/aldehyde fragrance',
+          correctInf: 'Primary alkanol (—OH) present; Cr₂O₇²⁻ reduced to Cr³⁺'
+        },
+        {
+          id: 'q3_nahco3',
+          prompt: '(iv) To 2 cm³ of Liquid F, add a half spatula-end of solid Sodium Hydrogen Carbonate (NaHCO₃).',
+          correctObs: 'No effervescence / no bubbles of gas evolved',
+          correctInf: 'Carboxylic acid (—COOH) absent; Alkanol (—OH) confirmed present'
+        }
+      ]
+    }
+  },
+
+  // ── Series 2009: Official KCSE 2009 Standard Chemistry Practical (Paper 233/3) ──
+  series_2009: {
+    id: 'series_2009',
+    seriesKey: 'series_2009',
+    seriesNumber: 2009,
+    title: 'KCSE 2009 Standard Chemistry Practical Examination',
+    badgeText: 'KCSE 2009 Past National Paper · Carbonate Solubility & Hydrochloric Acid Standardization',
+    durationMinutes: 135,
+    q1: {
+      type: 'titration',
+      calcType: 'standard_molarity',
+      title: 'Question 1: Volumetric Analysis — Standardization of Diluted HCl (15.0 Marks)',
+      solutionA: '0.258 M Hydrochloric Acid (Solution D)',
+      solutionB: '0.300 M Sodium Hydroxide (Solution C)',
+      acidFormula: 'HCl',
+      baseFormula: 'NaOH',
+      indicator: 'Methyl Orange',
+      pipetteVolume: 25.0,
+      trueAcidMolarity: 0.258,
+      trueBaseMolarity: 0.300,
+      trueTitre: 21.50,
+      moleRatioAcid: 1,
+      moleRatioBase: 1,
+      acidRfm: 36.5,
+      baseRfm: 40.0,
+      titrantColor: '#38BDF8',
+      flaskBaseColor: 'rgba(251,191,36,0.25)',
+      flaskIndicatorColor: 'rgba(245,158,11,0.85)',
+      endpointColor: 'rgba(239,68,68,0.7)',
+      overtitratedColor: 'rgba(185,28,28,0.95)',
+      equation: 'HCl(aq) + NaOH(aq) → NaCl(aq) + H₂O(l)',
+      instructions: 'Pipette 25.0 cm³ of Solution D into a conical flask. Add 2 drops of methyl orange indicator. Titrate with 0.300 M NaOH Solution C until the colour changes sharply from red to orange-yellow.',
+      questions: createStandardTitrationQuestions({ acidRfm: 36.5, baseRfm: 40.0, pipetteVolume: 25.0, moleRatioAcid: 1, moleRatioBase: 1 })
+    },
+    q2: {
+      type: 'qualitative_single',
+      title: 'Question 2: Inorganic Salt Qualitative Analysis (15.0 Marks)',
+      sampleName: 'Solid E',
+      sampleDesc: 'A white crystalline inorganic salt containing ammonium and sulfate ions.',
+      trueSaltKey: 'NH4Cl',
+      trueSaltName: 'Ammonium Sulfate — (NH₄)₂SO₄',
+      trueCation: 'NH4+',
+      trueAnion: 'SO42-',
+      hasDeduction: true,
+      tests: [
+        {
+          id: 'q2_heat',
+          prompt: '(i) Heat half of Solid E strongly in dry test tube; test gas using HCl on glass rod.',
+          correctObs: 'White solid sublimes forming white deposit on upper cooler walls; dense white fumes formed with HCl on glass rod',
+          correctInf: 'NH₄⁺ confirmed present (ammonia reacts with HCl fumes to form NH₄Cl)'
+        },
+        {
+          id: 'q2_appearance',
+          prompt: '(ii) Dissolve rest of Solid E in 10 cm³ distilled water. Divide into 3 portions.',
+          correctObs: 'White crystalline solid dissolves completely to form a clear colourless solution',
+          correctInf: 'Soluble salt; coloured transition metal ions absent'
+        },
+        {
+          id: 'q2_naoh',
+          prompt: '(iii) To portion 1, add 2M NaOH dropwise until in excess and warm gently.',
+          correctObs: 'No precipitate formed; pungent smelling gas evolved that turns moist red litmus blue',
+          correctInf: 'NH₄⁺ confirmed present; alkaline NH₃ gas evolved'
+        },
+        {
+          id: 'q2_anion',
+          prompt: '(iv) To portion 2, add 3 drops barium nitrate followed by dilute HNO₃.',
+          correctObs: 'Dense white precipitate formed, insoluble in dilute nitric acid',
+          correctInf: 'SO₄²⁻ confirmed present (BaSO₄ formed)'
+        }
+      ]
+    },
+    q3: {
+      type: 'organic',
+      title: 'Question 3: Organic Functional Group Analysis (10.0 Marks)',
+      sampleName: 'Solid F',
+      sampleDesc: 'A pure white organic crystalline powder.',
+      trueOrganicKey: 'Benzoic Acid',
+      trueOrganicName: 'Benzoic Acid — C₆H₅COOH',
+      trueFunctionalGroup: 'Aromatic Carboxylic Acid (-COOH)',
+      tests: [
+        {
+          id: 'q3_ignition',
+          prompt: '(i) Place a small portion of Solid F on a metallic spatula and burn in Bunsen flame.',
+          correctObs: 'Melts and burns with a luminous, highly smoky and sooty yellow flame; leaves carbon residue',
+          correctInf: 'Aromatic compound / unsaturated organic compound with high C:H ratio'
+        },
+        {
+          id: 'q3_litmus',
+          prompt: '(ii) Dissolve Solid F in warm water; test with blue and red litmus paper.',
+          correctObs: 'Moist blue litmus paper turns red; red litmus paper remains red (pH ~ 3)',
+          correctInf: 'Acidic substance / H⁺ ions present / Carboxylic acid (—COOH)'
+        },
+        {
+          id: 'q3_kmno4',
+          prompt: '(iii) To 2 cm³ of warm solution, add 2 drops acidified KMnO₄.',
+          correctObs: 'Purple colour persists / not decolorized',
+          correctInf: 'Aliphatic alkene (>C=C<) absent; stable aromatic nucleus'
+        },
+        {
+          id: 'q3_nahco3',
+          prompt: '(iv) To 2 cm³ of solution, add solid Sodium Hydrogen Carbonate (NaHCO₃).',
+          correctObs: 'Brisk effervescence of colourless gas that turns limewater milky',
+          correctInf: 'Carboxylic acid (—COOH) confirmed present; CO₂ gas evolved'
+        }
+      ]
+    }
+  },
+
+  // ── Series 2008: Official KCSE 2008 Standard Chemistry Practical (Paper 233/3) ──
+  series_2008: {
+    id: 'series_2008',
+    seriesKey: 'series_2008',
+    seriesNumber: 2008,
+    title: 'KCSE 2008 Standard Chemistry Practical Examination',
+    badgeText: 'KCSE 2008 Past National Paper · Calorimetry Back-Titration & Basic Copper Carbonate',
+    durationMinutes: 135,
+    q1: {
+      type: 'titration',
+      calcType: 'standard_molarity',
+      title: 'Question 1: Volumetric Analysis — Residual Acid Back-Titration (15.0 Marks)',
+      solutionA: '0.100 M Hydrochloric Acid (Solution C from Calorimetry)',
+      solutionB: '0.100 M Sodium Hydroxide (Solution B)',
+      acidFormula: 'HCl',
+      baseFormula: 'NaOH',
+      indicator: 'Phenolphthalein',
+      pipetteVolume: 25.0,
+      trueAcidMolarity: 0.0648,
+      trueBaseMolarity: 0.100,
+      trueTitre: 16.20,
+      moleRatioAcid: 1,
+      moleRatioBase: 1,
+      acidRfm: 36.5,
+      baseRfm: 40.0,
+      titrantColor: '#38BDF8',
+      flaskBaseColor: 'rgba(56,189,248,0.25)',
+      flaskIndicatorColor: 'rgba(236,72,153,0.85)',
+      endpointColor: 'rgba(255,255,255,0.35)',
+      overtitratedColor: 'rgba(255,255,255,0.20)',
+      equation: 'HCl(aq) + NaOH(aq) → NaCl(aq) + H₂O(l)',
+      instructions: 'Pipette 25.0 cm³ of Solution C into a conical flask. Add 2 drops of phenolphthalein indicator. Titrate with 0.100 M NaOH Solution B until the first permanent pale pink colour appears.',
+      questions: createStandardTitrationQuestions({ acidRfm: 36.5, baseRfm: 40.0, pipetteVolume: 25.0, moleRatioAcid: 1, moleRatioBase: 1 })
+    },
+    q2: {
+      type: 'qualitative_single',
+      title: 'Question 2: Inorganic Salt Qualitative Analysis (15.0 Marks)',
+      sampleName: 'Solid D',
+      sampleDesc: 'A green inorganic powder containing copper(II) carbonate.',
+      trueSaltKey: 'CuCO3',
+      trueSaltName: 'Basic Copper(II) Carbonate — CuCO₃',
+      trueCation: 'Cu2+',
+      trueAnion: 'CO32-',
+      hasDeduction: true,
+      tests: [
+        {
+          id: 'q2_heat',
+          prompt: '(i) Heat Solid D strongly in a dry test tube; test gases with litmus and glowing splint.',
+          correctObs: 'Green powder turns black; colourless gas evolved that extinguishes a burning splint and turns moist blue litmus red',
+          correctInf: 'Hydrated carbonate salt; CO₂ gas evolved; CuO black residue formed'
+        },
+        {
+          id: 'q2_appearance',
+          prompt: '(ii) Add 10 cm³ 2M HCl to black residue, shake for 3 minutes, and filter.',
+          correctObs: 'Black residue dissolves to form a clear green / blue-green solution',
+          correctInf: 'Basic oxide (CuO) dissolves in acid forming Cu²⁺ ions'
+        },
+        {
+          id: 'q2_nh3',
+          prompt: '(iii) To 1 cm³ portion of filtrate, add aqueous ammonia dropwise until in excess.',
+          correctObs: 'Pale blue precipitate formed, dissolves in excess aqueous ammonia to form a deep blue solution',
+          correctInf: 'Cu²⁺ confirmed present (tetraamminecopper(II) complex formed)'
+        },
+        {
+          id: 'q2_displacement',
+          prompt: '(iv) To rest of filtrate, add Solid E (zinc dust) and shake.',
+          correctObs: 'Effervescence; green solution turns colourless; reddish-brown solid deposited; test tube becomes warm',
+          correctInf: 'Zinc displaces copper; Cu²⁺ reduced to copper metal (reddish-brown solid)'
+        }
+      ]
+    },
+    q3: {
+      type: 'organic',
+      title: 'Question 3: Organic Functional Group Analysis (10.0 Marks)',
+      sampleName: 'Solid F',
+      sampleDesc: 'A white organic crystalline solid.',
+      trueOrganicKey: 'Maleic Acid',
+      trueOrganicName: 'Maleic Acid — C₄H₄O₄',
+      trueFunctionalGroup: 'Unsaturated Carboxylic Acid (-COOH, >C=C<)',
+      tests: [
+        {
+          id: 'q3_ignition',
+          prompt: '(i) Burn one-third of Solid F on metallic spatula in Bunsen flame.',
+          correctObs: 'Melts and burns with yellow smoky sooty flame; leaves carbon residue',
+          correctInf: 'Unsaturated organic compound / high C:H ratio (>C=C<)'
+        },
+        {
+          id: 'q3_litmus',
+          prompt: '(ii) Dissolve rest of F in water; test with litmus paper.',
+          correctObs: 'Moist blue litmus paper turns red; red litmus unchanged (pH ~ 2)',
+          correctInf: 'Acidic substance / carboxylic acid (—COOH) / H⁺ present'
+        },
+        {
+          id: 'q3_kmno4',
+          prompt: '(iii) To 2 cm³ of solution, add 2 drops acidified KMnO₄.',
+          correctObs: 'Purple KMnO₄ solution is rapidly decolorized to colourless',
+          correctInf: 'Alkene (>C=C<) confirmed present'
+        },
+        {
+          id: 'q3_nahco3',
+          prompt: '(iv) To 2 cm³ of solution, add solid Sodium Hydrogen Carbonate (NaHCO₃).',
+          correctObs: 'Brisk effervescence of colourless gas that turns limewater milky',
+          correctInf: 'Carboxylic acid (—COOH) confirmed present; CO₂ gas evolved'
+        }
+      ]
+    }
+  },
+
+  // ── Series 1998: Official KCSE 1998 Standard Chemistry Practical (Paper 233/3) ──
+  series_1998: {
+    id: 'series_1998',
+    seriesKey: 'series_1998',
+    seriesNumber: 1998,
+    title: 'KCSE 1998 Standard Chemistry Practical Examination',
+    badgeText: 'KCSE 1998 Past National Paper · Impure Carbonate Percentage Purity & Lead(II) Nitrate',
+    durationMinutes: 135,
+    q1: {
+      type: 'titration',
+      calcType: 'percentage_purity',
+      title: 'Question 1: Volumetric Analysis — Carbonate Percentage Purity (15.0 Marks)',
+      solutionA: '0.210 M Hydrochloric Acid (Solution M)',
+      solutionB: 'Impure Carbonate (6.00 g/dm³ sample in Solution B)',
+      acidFormula: 'HCl',
+      baseFormula: 'Na2CO3',
+      indicator: 'Screened Methyl Orange',
+      pipetteVolume: 25.0,
+      impureMassPerLiter: 6.00,
+      pureRfm: 106.0,
+      trueAcidMolarity: 0.210,
+      trueBaseMolarity: 0.105,
+      trueTitre: 25.00,
+      moleRatioAcid: 2,
+      moleRatioBase: 1,
+      acidRfm: 36.5,
+      baseRfm: 106.0,
+      titrantColor: '#38BDF8',
+      flaskBaseColor: 'rgba(251,191,36,0.3)',
+      flaskIndicatorColor: 'rgba(245,158,11,0.85)',
+      endpointColor: 'rgba(239,68,68,0.7)',
+      equation: '2HCl(aq) + Na₂CO₃(aq) → 2NaCl(aq) + CO₂(g) + H₂O(l)',
+      instructions: 'Titrate 25.0 cm³ of impure Solution B with Solution A using screened methyl orange indicator until the colour changes sharply from green to pink.',
+      questions: createPercentagePurityQuestions({ impureMassPerLiter: 6.00, pipetteVolume: 25.0, pureRfm: 106.0 })
+    },
+    q2: {
+      type: 'qualitative_single',
+      title: 'Question 2: Inorganic Salt Qualitative Analysis (15.0 Marks)',
+      sampleName: 'Solid S',
+      sampleDesc: 'A heavy, white crystalline inorganic salt containing lead(II) ions.',
+      trueSaltKey: 'Pb(NO3)2',
+      trueSaltName: 'Lead(II) Nitrate — Pb(NO₃)₂',
+      trueCation: 'Pb2+',
+      trueAnion: 'NO3-',
+      hasDeduction: true,
+      tests: [
+        {
+          id: 'q2_heat',
+          prompt: '(i) Heat one-third of Solid S strongly in dry test tube; test gases with litmus.',
+          correctObs: 'Solid decrepitates (cracking sound); brown fumes evolved that turn moist blue litmus red; relights glowing splint; residue is reddish-brown when hot, yellow on cooling',
+          correctInf: 'NO₃⁻ confirmed present (NO₂ and O₂ evolved); Pb²⁺ present (PbO residue formed)'
+        },
+        {
+          id: 'q2_appearance',
+          prompt: '(ii) Dissolve rest of Solid S in 10 cm³ distilled water. Divide into 3 portions.',
+          correctObs: 'White crystalline solid dissolves completely to form a clear colourless solution',
+          correctInf: 'Soluble salt; absence of coloured transition metal ions'
+        },
+        {
+          id: 'q2_naoh',
+          prompt: '(iii) To portion 1, add 2M NaOH dropwise until in excess.',
+          correctObs: 'White precipitate formed, soluble in excess NaOH to form a clear colourless solution',
+          correctInf: 'Pb²⁺, Al³⁺, or Zn²⁺ present (plumbite formed)'
+        },
+        {
+          id: 'q2_nh3',
+          prompt: '(iv) To portion 2, add 2M aqueous ammonia dropwise until in excess.',
+          correctObs: 'White precipitate formed, insoluble in excess aqueous ammonia',
+          correctInf: 'Pb²⁺ or Al³⁺ present (Zn²⁺ absent)'
+        },
+        {
+          id: 'q2_anion',
+          prompt: '(v) To portion 3, add 3 drops Potassium Iodide (KI) solution and warm gently.',
+          correctObs: 'Bright golden-yellow precipitate formed; dissolves on heating to colourless solution and reappears on cooling as golden spangles',
+          correctInf: 'Pb²⁺ confirmed present (PbI₂ formed)'
+        }
+      ]
+    },
+    q3: {
+      type: 'organic',
+      title: 'Question 3: Organic Functional Group Analysis (10.0 Marks)',
+      sampleName: 'Solid L',
+      sampleDesc: 'A white organic crystalline solid.',
+      trueOrganicKey: 'Benzoic Acid',
+      trueOrganicName: 'Benzoic Acid — C₆H₅COOH',
+      trueFunctionalGroup: 'Aromatic Carboxylic Acid (-COOH)',
+      tests: [
+        {
+          id: 'q3_ignition',
+          prompt: '(i) Burn a small portion of Solid L on metallic spatula.',
+          correctObs: 'Melts and burns with yellow luminous sooty flame; leaves carbon residue',
+          correctInf: 'Aromatic compound / unsaturated organic compound with high C:H ratio'
+        },
+        {
+          id: 'q3_litmus',
+          prompt: '(ii) Dissolve in warm water; test with blue and red litmus paper.',
+          correctObs: 'Moist blue litmus paper turns red; red litmus unchanged (pH ~ 3)',
+          correctInf: 'Acidic substance / carboxylic acid (—COOH) / H⁺ present'
+        },
+        {
+          id: 'q3_kmno4',
+          prompt: '(iii) To 2 cm³ of warm solution, add 2 drops acidified KMnO₄.',
+          correctObs: 'Purple colour persists / not decolorized',
+          correctInf: 'Aliphatic alkene (>C=C<) absent; stable aromatic ring'
+        },
+        {
+          id: 'q3_nahco3',
+          prompt: '(iv) To 2 cm³ of solution, add solid Sodium Carbonate (Na₂CO₃).',
+          correctObs: 'Brisk effervescence of colourless gas that turns limewater milky',
+          correctInf: 'Carboxylic acid (—COOH) confirmed present; CO₂ gas evolved'
+        }
+      ]
+    }
+  },
+
+  // ── Series 1996: Official KCSE 1996 Standard Chemistry Practical (Paper 233/3) ──
+  series_1996: {
+    id: 'series_1996',
+    seriesKey: 'series_1996',
+    seriesNumber: 1996,
+    title: 'KCSE 1996 Standard Chemistry Practical Examination',
+    badgeText: 'KCSE 1996 Past National Paper · KMnO₄ Redox Standardization & MnO₂ Catalysis',
+    durationMinutes: 135,
+    q1: {
+      type: 'titration',
+      calcType: 'standard_molarity',
+      title: 'Question 1: Volumetric Analysis — KMnO₄ Redox Standardization (15.0 Marks)',
+      solutionA: '0.012 M Acidified Potassium Manganate(VII) (KMnO₄)',
+      solutionB: 'Ammonium Iron(II) Sulfate Solution (23.5 g/dm³)',
+      acidFormula: 'KMnO4',
+      baseFormula: 'FeSO4',
+      indicator: 'Potassium Manganate(VII)',
+      pipetteVolume: 25.0,
+      trueAcidMolarity: 0.012,
+      trueBaseMolarity: 0.060,
+      trueTitre: 25.00,
+      moleRatioAcid: 1,
+      moleRatioBase: 5,
+      acidRfm: 158.0,
+      baseRfm: 392.0,
+      titrantColor: '#701A75',
+      flaskBaseColor: 'rgba(56,189,248,0.25)',
+      flaskIndicatorColor: 'rgba(56,189,248,0.25)',
+      endpointColor: 'rgba(236,72,153,0.7)',
+      overtitratedColor: 'rgba(192,38,211,0.95)',
+      equation: 'MnO₄⁻(aq) + 5Fe²⁺(aq) + 8H⁺(aq) → Mn²⁺(aq) + 5Fe³⁺(aq) + 4H₂O(l)',
+      instructions: 'Pipette 25.0 cm³ of Solution B into a conical flask. Titrate with 0.012 M KMnO₄ Solution A until the first permanent pale pink colour persists for at least 30 seconds.',
+      questions: createStandardTitrationQuestions({ acidRfm: 158.0, baseRfm: 392.0, pipetteVolume: 25.0, moleRatioAcid: 1, moleRatioBase: 5 })
+    },
+    q2: {
+      type: 'qualitative_single',
+      title: 'Question 2: Inorganic Substance Qualitative Analysis (15.0 Marks)',
+      sampleName: 'Solid D',
+      sampleDesc: 'A dense black inorganic powder containing manganese(IV) oxide and iron.',
+      trueSaltKey: 'MnO2',
+      trueSaltName: 'Manganese(IV) Oxide — MnO₂',
+      trueCation: 'Fe3+',
+      trueAnion: 'Cl-',
+      hasDeduction: true,
+      tests: [
+        {
+          id: 'q2_acid_warm',
+          prompt: '(i) To half of Solid D, add 1 cm³ 6M HCl and warm gently for 1 minute.',
+          correctObs: 'Effervescence increases with heating; greenish-yellow gas evolved with pungent choking smell that bleaches moist blue litmus paper',
+          correctInf: 'Chlorine gas evolved; Solid D is an oxidizing agent'
+        },
+        {
+          id: 'q2_naoh',
+          prompt: '(ii) Dilute mixture with water, filter, and add 2M NaOH dropwise until in excess.',
+          correctObs: 'Reddish-brown precipitate formed, insoluble in excess sodium hydroxide',
+          correctInf: 'Fe³⁺ confirmed present (Fe(OH)₃ formed)'
+        },
+        {
+          id: 'q2_peroxide',
+          prompt: '(iii) To remaining Solid D, add 1 cm³ 20-volume hydrogen peroxide (H₂O₂).',
+          correctObs: 'Vigorous effervescence of a colourless gas that rekindles / relights a glowing wooden splint',
+          correctInf: 'Oxygen gas evolved; Solid D acts as a catalyst (MnO₂)'
+        }
+      ]
+    },
+    q3: {
+      type: 'organic',
+      title: 'Question 3: Organic Functional Group Analysis (10.0 Marks)',
+      sampleName: 'Solid E',
+      sampleDesc: 'A pure white crystalline organic solid.',
+      trueOrganicKey: 'Maleic Acid',
+      trueOrganicName: 'Maleic Acid — C₄H₄O₄',
+      trueFunctionalGroup: 'Unsaturated Carboxylic Acid (-COOH, >C=C<)',
+      tests: [
+        {
+          id: 'q3_ignition',
+          prompt: '(i) Ignite Solid E on clean metallic spatula using a Bunsen burner flame.',
+          correctObs: 'Melts to colourless liquid; burns with a luminous, smoky and sooty yellow flame; leaves carbon residue',
+          correctInf: 'Unsaturated organic compound / high C:H ratio (>C=C<)'
+        },
+        {
+          id: 'q3_litmus',
+          prompt: '(ii) Dissolve Solid E in distilled water; test with blue and red litmus paper.',
+          correctObs: 'Moist blue litmus paper turns faint red/pink; red litmus unchanged (pH ~ 2)',
+          correctInf: 'Acidic substance / carboxylic acid (—COOH) / H⁺ present'
+        },
+        {
+          id: 'q3_kmno4',
+          prompt: '(iii) To 2 cm³ of solution, add 2 drops acidified KMnO₄ and warm gently.',
+          correctObs: 'Purple KMnO₄ solution is rapidly decolorized to colourless',
+          correctInf: 'Alkene (>C=C<) confirmed present'
+        },
+        {
+          id: 'q3_nahco3',
+          prompt: '(iv) To 2 cm³ of solution, add solid Sodium Hydrogen Carbonate (NaHCO₃).',
+          correctObs: 'Brisk effervescence of colourless gas that turns limewater milky',
+          correctInf: 'Carboxylic acid (—COOH) confirmed present; CO₂ gas evolved'
+        }
+      ]
+    }
   }
 };
 
@@ -1599,7 +2260,11 @@ COMPOSITE_EXAM_PRESETS.standard_2 = COMPOSITE_EXAM_PRESETS.series_2;
  * Generate a dynamic randomized KCSE Paper 3 practical exam
  */
 function generateRandomCompositePreset() {
-  const seriesKeys = ['series_1', 'series_2', 'series_3', 'series_4', 'series_5', 'series_6', 'series_2022', 'series_2023', 'series_2024'];
+  const seriesKeys = [
+    'series_1', 'series_2', 'series_3', 'series_4', 'series_5', 'series_6',
+    'series_2022', 'series_2023', 'series_2024',
+    'series_2013', 'series_2011', 'series_2009', 'series_2008', 'series_1998', 'series_1996'
+  ];
   const q1PickKey = seriesKeys[Math.floor(Math.random() * seriesKeys.length)];
   const q2PickKey = seriesKeys[Math.floor(Math.random() * seriesKeys.length)];
   const q3PickKey = seriesKeys[Math.floor(Math.random() * seriesKeys.length)];

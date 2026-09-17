@@ -3,7 +3,7 @@
 //  Feature #1: Offline Support, Smart Caching & Sync
 // ============================================================
 
-const CACHE_NAME = 'virtulab-kenya-v111';
+const CACHE_NAME = 'virtulab-kenya-v112';
 
 const PRECACHE_ASSETS = [
   '/',
@@ -99,6 +99,7 @@ const PRECACHE_ASSETS = [
   '/student/js/gas-prep-engine.js',
   '/student/js/cpcat-engine.js',
   '/student/js/composite-engine.js',
+  '/student/js/kcse-past-papers-data.js',
   '/student/js/exam-offline-manager.js',
   '/student/js/composite-exam-ui.js',
   '/student/js/survey-sus.js',

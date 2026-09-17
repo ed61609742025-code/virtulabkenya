@@ -183,7 +183,7 @@
           title: '40-Mark KCSE Mock Exam',
           sublabel: 'Q1 + Q2 + Q3 Timed',
           icon: '🏆',
-          url: 'composite_exam.html',
+          url: 'mock_exams.html',
           syllabus: 'Official KNEC KCSE Chemistry Practical (233/3)',
           skills: ['40-Minute full examination timing', 'Question 1: Volumetric Titration (15 Marks)', 'Question 2: Qualitative Salt Analysis (15 Marks)', 'Question 3: Organic Functional Groups (10 Marks)'],
           sessionKey: 'composite',

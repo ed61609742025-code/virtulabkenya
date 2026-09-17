@@ -77,13 +77,45 @@ requireStudentLogin();
 
   const urlParams = new URLSearchParams(window.location.search);
   const assignmentId = urlParams.get('assignment') ? parseInt(urlParams.get('assignment'), 10) : null;
-  const seriesParam = urlParams.get('series') || 'series_1';
+  const rawSeries = urlParams.get('series');
+
+  // If student accesses composite_exam.html directly without choosing an exam series or assignment,
+  // redirect immediately to the Mock Hub so they can select their desired practical paper.
+  if (!rawSeries && !assignmentId) {
+    window.location.replace('/student/mock_exams.html');
+  }
+
+  const seriesParam = rawSeries || 'series_1';
   const modeParam = urlParams.get('mode') || 'strict';
 
   let engine = new CompositeExamEngine({
     presetKey: seriesParam,
     mode: modeParam
   });
+
+  function populateBriefingOverlay() {
+    const titleEl = document.getElementById('briefingExamTitle');
+    const badgeEl = document.getElementById('briefingExamBadge');
+    const candEl = document.getElementById('briefingCandidateName');
+    const modeEl = document.getElementById('briefingModeText');
+    const q1El = document.getElementById('briefingQ1Desc');
+    const q2El = document.getElementById('briefingQ2Desc');
+    const q3El = document.getElementById('briefingQ3Desc');
+
+    if (user && candEl) candEl.textContent = user.name || 'Student Candidate';
+    if (modeEl) {
+      modeEl.textContent = (modeParam === 'guided') ? '💡 Guided Practice (Self-Paced)' : '⏱️ Official Timed (135 Mins)';
+    }
+
+    if (engine && engine.preset) {
+      const p = engine.preset;
+      if (titleEl) titleEl.textContent = p.title || 'KCSE Chemistry Paper 3 Practical Mock';
+      if (badgeEl) badgeEl.textContent = `${p.badgeText || 'Official KNEC Paper 3'} · 40.0 Marks Total · 2 Hours 15 Minutes`;
+      if (q1El && p.q1) q1El.textContent = p.q1.title ? p.q1.title.replace(/^Question 1:\s*/i, '') : 'Quantitative Titration & Stoichiometry';
+      if (q2El && p.q2) q2El.textContent = p.q2.title ? p.q2.title.replace(/^Question 2:\s*/i, '') : (p.q2.sampleName ? `${p.q2.sampleName} Qualitative Analysis` : 'Inorganic Salt Qualitative Analysis');
+      if (q3El && p.q3) q3El.textContent = p.q3.title ? p.q3.title.replace(/^Question 3:\s*/i, '') : (p.q3.sampleName ? `${p.q3.sampleName} Organic Analysis` : 'Organic Functional Group Analysis');
+    }
+  }
 
   let activeTab = 1;
   let titrateInterval = null;
@@ -679,6 +711,16 @@ requireStudentLogin();
         timeLeft = d.timeLeft;
       }
 
+      const hadStarted = (typeof d.timeLeft === 'number' && d.timeLeft < 135 * 60) || 
+                         (Array.isArray(d.q1Trials) && d.q1Trials.length > 0) ||
+                         (d.calcAnswers && Object.keys(d.calcAnswers).length > 0);
+      if (hadStarted) {
+        examStarted = true;
+        const overlay = document.getElementById('examBriefingOverlay');
+        if (overlay) overlay.style.display = 'none';
+        startExamTimer();
+      }
+
       updateLiveScoreDisplay();
       ExamDraftManager.notifyStatus('saved', draftWrapper.savedAt);
       console.log('[ExamOfflineManager] Candidate draft restored successfully for', sessionKey);
@@ -906,6 +948,10 @@ requireStudentLogin();
         }).catch(err => console.warn('Could not fetch assignment details for exam banner:', err.message));
       }
     }
+
+    populateBriefingOverlay();
+    if (typeof updateTimerDisplay === 'function') updateTimerDisplay();
+    setTimeout(() => { checkAndRestoreDraft(); }, 120);
   }
 
   // ── Written Question Panel Component & Submission ────────────────────
@@ -2843,17 +2889,13 @@ requireStudentLogin();
     }
   }
 
-  // 135-minute Countdown Timer
+  // 135-minute Countdown Timer Controller
   let timeLeft = 135 * 60;
+  let timerInterval = null;
+  let examStarted = false;
   const timerEl = document.getElementById('examTimerDisplay');
-  const timerInterval = setInterval(() => {
-    if (timeLeft <= 0) {
-      clearInterval(timerInterval);
-      if (timerEl) timerEl.textContent = '⏱️ 00:00 (Time Up)';
-      submitCompositeExam(true);
-      return;
-    }
-    timeLeft--;
+
+  function updateTimerDisplay() {
     const hrs = Math.floor(timeLeft / 3600);
     const mins = Math.floor((timeLeft % 3600) / 60);
     const secs = timeLeft % 60;
@@ -2864,10 +2906,35 @@ requireStudentLogin();
         timerEl.style.borderColor = 'var(--red-border)';
       }
     }
-    if (timeLeft > 0 && timeLeft % 30 === 0) {
-      saveExamDraft();
-    }
-  }, 1000);
+  }
+
+  function startExamTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+    updateTimerDisplay();
+    timerInterval = setInterval(() => {
+      if (timeLeft <= 0) {
+        clearInterval(timerInterval);
+        if (timerEl) timerEl.textContent = '⏱️ 00:00 (Time Up)';
+        submitCompositeExam(true);
+        return;
+      }
+      timeLeft--;
+      updateTimerDisplay();
+      if (timeLeft > 0 && timeLeft % 30 === 0) {
+        saveExamDraft();
+      }
+    }, 1000);
+  }
+
+  function startOfficialExamination() {
+    examStarted = true;
+    const overlay = document.getElementById('examBriefingOverlay');
+    if (overlay) overlay.style.display = 'none';
+    startExamTimer();
+    saveExamDraft(true);
+  }
+  window.startOfficialExamination = startOfficialExamination;
+  window.startExamTimer = startExamTimer;
 
   // ── Exam Submission & Chief Examiner Interactive Review ─────────────
   async function submitCompositeExam(isAutoSubmit = false) {

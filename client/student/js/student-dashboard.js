@@ -1221,6 +1221,15 @@ requireStudentLogin();
     if (studentTrendChartInstance) studentTrendChartInstance.resize();
     if (studentTypeChartInstance && currentStudentChartMode === 'mastery') studentTypeChartInstance.resize();
     if (studentVelocityChartInstance && currentStudentChartMode === 'velocity') studentVelocityChartInstance.resize();
+
+    // If Chart.js instances do not exist, re-render native charts to adapt to visible container
+    if (!studentTrendChartInstance && typeof renderStudentCharts === 'function' && cachedStudentSessions) {
+      try {
+        renderStudentCharts(cachedStudentSessions, cachedStudentAnalytics);
+      } catch (e) {
+        console.warn('Resize native charts error:', e);
+      }
+    }
   };
 
   function drawNativeLineChart(canvas, labels, accuracyData) {
@@ -1228,7 +1237,10 @@ requireStudentLogin();
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     const dpr = window.devicePixelRatio || 1;
-    const width = canvas.parentElement ? canvas.parentElement.clientWidth : (canvas.clientWidth || 340);
+    const parentW = (canvas.parentElement && canvas.parentElement.clientWidth > 50)
+      ? canvas.parentElement.clientWidth
+      : (canvas.clientWidth > 50 ? canvas.clientWidth : 340);
+    const width = Math.max(parentW, 240);
     const height = 200;
     
     canvas.width = width * dpr;
@@ -1325,7 +1337,10 @@ requireStudentLogin();
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     const dpr = window.devicePixelRatio || 1;
-    const width = canvas.parentElement ? canvas.parentElement.clientWidth : (canvas.clientWidth || 340);
+    const parentW = (canvas.parentElement && canvas.parentElement.clientWidth > 50)
+      ? canvas.parentElement.clientWidth
+      : (canvas.clientWidth > 50 ? canvas.clientWidth : 340);
+    const width = Math.max(parentW, 240);
     const height = 200;
     
     canvas.width = width * dpr;
@@ -1342,10 +1357,12 @@ requireStudentLogin();
     const values = Object.values(typeCounts);
     const total = values.reduce((a, b) => a + b, 0);
 
-    const centerX = width * 0.32;
+    const centerX = Math.max(width * 0.32, 50);
     const centerY = height / 2;
-    const outerRadius = Math.min(centerX - 10, height / 2 - 15);
-    const innerRadius = Math.max(10, outerRadius * 0.58);
+    const outerRadius = Math.max(25, Math.min(centerX - 10, height / 2 - 15));
+    const innerRadius = Math.max(10, Math.min(outerRadius - 8, outerRadius * 0.58));
+
+    if (outerRadius <= 0 || isNaN(outerRadius) || innerRadius <= 0 || innerRadius >= outerRadius) return;
 
     if (total === 0) {
       ctx.beginPath();
@@ -1396,7 +1413,10 @@ requireStudentLogin();
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     const dpr = window.devicePixelRatio || 1;
-    const width = canvas.parentElement ? canvas.parentElement.clientWidth : (canvas.clientWidth || 340);
+    const parentW = (canvas.parentElement && canvas.parentElement.clientWidth > 50)
+      ? canvas.parentElement.clientWidth
+      : (canvas.clientWidth > 50 ? canvas.clientWidth : 340);
+    const width = Math.max(parentW, 240);
     const height = 200;
 
     canvas.width = width * dpr;
@@ -1418,8 +1438,9 @@ requireStudentLogin();
     const maxCount = Math.max(5, ...items.map(it => it.count));
     const padX = 40;
     const padY = 25;
-    const barWidth = Math.min(36, (width - padX * 2) / (items.length * 1.8));
-    const stepX = (width - padX * 2) / items.length;
+    const availableW = Math.max(width - padX * 2, 100);
+    const barWidth = Math.max(8, Math.min(36, availableW / (items.length * 1.8)));
+    const stepX = availableW / items.length;
 
     // Grid lines
     ctx.strokeStyle = tc.grid;
@@ -1822,10 +1843,14 @@ requireStudentLogin();
     }
 
     // Native HTML5 2D Canvas Fallback
-    drawNativeLineChart(trendCanvas, trendLabels, trendAccuracy);
-    drawNativeDoughnutChart(typeCanvas, typeCounts);
-    if (velocityCanvas) {
-      drawNativeBarChart(velocityCanvas, analytics?.weeklyVelocity);
+    try {
+      if (trendCanvas) drawNativeLineChart(trendCanvas, trendLabels, trendAccuracy);
+      if (typeCanvas) drawNativeDoughnutChart(typeCanvas, typeCounts);
+      if (velocityCanvas) {
+        drawNativeBarChart(velocityCanvas, analytics?.weeklyVelocity);
+      }
+    } catch (fallbackErr) {
+      console.warn('Native canvas chart fallback error:', fallbackErr);
     }
   }
 
@@ -1849,7 +1874,11 @@ requireStudentLogin();
       updateReadinessScore(sessions);
       updateMwalimuAdvice(sessions);
       renderAdaptiveRecommendation(sessions);
-      renderStudentCharts(sessions, analytics);
+      try {
+        renderStudentCharts(sessions, analytics);
+      } catch (chartErr) {
+        console.warn('Non-fatal chart rendering error:', chartErr);
+      }
       if (typeof updateProfileStatsUI === 'function') updateProfileStatsUI();
 
       // Sync sessions with SkillTree & cache
@@ -1885,7 +1914,11 @@ requireStudentLogin();
       ];
       cachedStudentSessions = fallbackSessions;
       updateReadinessScore(fallbackSessions);
-      renderStudentCharts(fallbackSessions, null);
+      try {
+        renderStudentCharts(fallbackSessions, null);
+      } catch (chartErr) {
+        console.warn('Non-fatal fallback chart rendering error:', chartErr);
+      }
       try {
         localStorage.setItem('vlk_cached_sessions', JSON.stringify(fallbackSessions));
       } catch (e) {}

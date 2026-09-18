@@ -3,7 +3,7 @@
 //  Feature #1: Offline Support, Smart Caching & Sync
 // ============================================================
 
-const CACHE_NAME = 'virtulab-kenya-v112';
+const CACHE_NAME = 'virtulab-kenya-v113';
 
 const PRECACHE_ASSETS = [
   '/',
@@ -196,7 +196,12 @@ self.addEventListener('fetch', (event) => {
               caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
             }
             return networkResponse;
-          }).catch(() => new Response('', { status: 408 }));
+          }).catch(() => {
+            return new Response('/* Offline fallback for cross-origin CDN asset */', {
+              status: 200,
+              headers: { 'Content-Type': 'application/javascript' }
+            });
+          });
         })
       );
     }

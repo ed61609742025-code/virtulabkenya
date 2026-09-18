@@ -29,7 +29,7 @@ const securityHeaders = helmet({
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
       styleSrcAttr: ["'unsafe-inline'"],
       imgSrc: ["'self'", "data:", "blob:"],
-      connectSrc: ["'self'"],
+      connectSrc: ["'self'", "https://cdnjs.cloudflare.com", "https://fonts.googleapis.com", "https://fonts.gstatic.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
       mediaSrc: ["'self'", "data:", "blob:"],
       workerSrc: ["'self'", "blob:"],

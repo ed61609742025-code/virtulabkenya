@@ -110,4 +110,40 @@ describe('5. App Initialization & Security Headers', () => {
     assert.ok(app);
     assert.ok(typeof app.listen === 'function');
   });
+
+  it('should include https://cdnjs.cloudflare.com in Content-Security-Policy connect-src', () => {
+    const { securityHeaders } = require('../middleware/security');
+    const req = { headers: {} };
+    const res = {
+      headers: {},
+      setHeader: (k, v) => { res.headers[k.toLowerCase()] = v; },
+      getHeader: (k) => res.headers[k.toLowerCase()],
+      removeHeader: (k) => { delete res.headers[k.toLowerCase()]; }
+    };
+    securityHeaders(req, res, () => {});
+    const csp = res.getHeader('content-security-policy') || '';
+    assert.ok(csp.includes("connect-src 'self' https://cdnjs.cloudflare.com"), `CSP must allow cdnjs in connect-src. Got: ${csp}`);
+  });
+
+  it('should have sw.js bumped to virtulab-kenya-v113 or higher and handle offline CDN fallback gracefully', () => {
+    const fs = require('fs');
+    const path = require('path');
+    const swPath = path.join(__dirname, '../../client/sw.js');
+    const swContent = fs.readFileSync(swPath, 'utf8');
+    assert.match(swContent, /const CACHE_NAME = 'virtulab-kenya-v11[3-9]';/);
+    assert.ok(swContent.includes('application/javascript'), 'sw.js should provide clean javascript response on cross-origin fallback');
+  });
+
+  it('should guarantee non-negative outerRadius and innerRadius in student doughnut chart even if parent width is 0', () => {
+    const fs = require('fs');
+    const path = require('path');
+    const dashPath = path.join(__dirname, '../../client/student/js/student-dashboard.js');
+    const dashContent = fs.readFileSync(dashPath, 'utf8');
+    
+    // Ensure parentW fallback is present
+    assert.ok(dashContent.includes('const parentW = (canvas.parentElement && canvas.parentElement.clientWidth > 50)'), 'Must guard parent width');
+    assert.ok(dashContent.includes('const outerRadius = Math.max(25,'), 'Must guard outerRadius at minimum 25');
+    assert.ok(dashContent.includes('if (outerRadius <= 0 || isNaN(outerRadius)'), 'Must guard against zero or invalid radius before arc');
+  });
 });
+

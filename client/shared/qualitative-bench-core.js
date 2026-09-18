@@ -729,6 +729,63 @@
       crystalColor: '#1E293B',
       crystalSecondary: '#0F172A',
       crystalHighlight: '#334155'
+    },
+    hydrochloricAcid: {
+      key: 'hydrochloricAcid',
+      altKeys: ['HCL', 'HYDROCHLORIC ACID', 'DILUTE HCL', 'DILUTE HYDROCHLORIC ACID', 'ACID'],
+      name: 'Dilute Hydrochloric Acid (HCl)',
+      formula: 'HCl',
+      cation: 'H+',
+      anion: 'Cl-',
+      cationDisplay: 'H⁺',
+      anionDisplay: 'Cl⁻',
+      isAcid: true,
+      appearance: 'Clear colourless acidic solution',
+      solubility: 'Miscible in all proportions with water; turns blue litmus red.',
+      liquidColor: 'rgba(255, 255, 255, 0.2)',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#E2E8F0',
+      crystalHighlight: '#FFFFFF',
+      flameColor: null,
+      flameSvgColor: null
+    },
+    nitricAcid: {
+      key: 'nitricAcid',
+      altKeys: ['HNO3', 'NITRIC ACID', 'DILUTE HNO3', 'DILUTE NITRIC ACID'],
+      name: 'Dilute Nitric Acid (HNO₃)',
+      formula: 'HNO₃',
+      cation: 'H+',
+      anion: 'NO3-',
+      cationDisplay: 'H⁺',
+      anionDisplay: 'NO₃⁻',
+      isAcid: true,
+      appearance: 'Clear colourless acidic solution',
+      solubility: 'Miscible in all proportions with water; turns blue litmus red.',
+      liquidColor: 'rgba(255, 255, 255, 0.2)',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#E2E8F0',
+      crystalHighlight: '#FFFFFF',
+      flameColor: null,
+      flameSvgColor: null
+    },
+    sulfuricAcid: {
+      key: 'sulfuricAcid',
+      altKeys: ['H2SO4', 'SULFURIC ACID', 'DILUTE H2SO4', 'DILUTE SULFURIC ACID'],
+      name: 'Dilute Sulfuric Acid (H₂SO₄)',
+      formula: 'H₂SO₄',
+      cation: 'H+',
+      anion: 'SO4^2-',
+      cationDisplay: 'H⁺',
+      anionDisplay: 'SO₄²⁻',
+      isAcid: true,
+      appearance: 'Clear colourless acidic solution',
+      solubility: 'Miscible in all proportions with water; turns blue litmus red.',
+      liquidColor: 'rgba(255, 255, 255, 0.2)',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#E2E8F0',
+      crystalHighlight: '#FFFFFF',
+      flameColor: null,
+      flameSvgColor: null
     }
   };
 
@@ -775,6 +832,8 @@
       cation = 'Mn4+'; cationDisplay = 'Mn⁴⁺'; cationName = 'Manganese(IV)';
     } else if (up.includes('MN') || up.includes('MANGAN')) {
       cation = 'Mn2+'; cationDisplay = 'Mn²⁺'; cationName = 'Manganese(II)';
+    } else if (up.includes('HCL') || up.includes('HNO3') || up.includes('H2SO4') || up.includes('HYDROCHLORIC') || up.includes('NITRIC') || up.includes('SULFURIC') || up.startsWith('H+') || up === 'ACID' || up.includes('DILUTEACID')) {
+      cation = 'H+'; cationDisplay = 'H⁺'; cationName = 'Hydrogen (Acid)';
     }
 
     // 2. Detect Anion
@@ -809,7 +868,7 @@
     if (!anion) { anion = 'NO3-'; anionDisplay = 'NO₃⁻'; anionName = 'Nitrate'; }
 
     const key = (cationName.toLowerCase().replace(/[^a-z0-9]/g, '') + anionName.replace(/[^a-z0-9]/gi, ''));
-    const name = `${cationName} ${anionName}`;
+    const name = (cation === 'H+') ? `Dilute ${anionName === 'Chloride' ? 'Hydrochloric' : anionName === 'Nitrate' ? 'Nitric' : anionName === 'Sulfate' ? 'Sulfuric' : anionName} Acid` : `${cationName} ${anionName}`;
 
     // Compute Appearance & Crystal Colors based on inorganic transition chemistry
     let crystalColor = '#F8FAFC';
@@ -817,7 +876,9 @@
     let crystalHighlight = '#FFFFFF';
     let appearance = 'White crystalline solid / powder';
 
-    if (cation === 'Mn4+' || up.includes('MNO2')) {
+    if (cation === 'H+') {
+      appearance = 'Clear colourless acidic solution';
+    } else if (cation === 'Mn4+' || up.includes('MNO2')) {
       crystalColor = '#1E293B'; crystalSecondary = '#0F172A'; crystalHighlight = '#334155';
       appearance = 'Dense black inorganic powder / granules (catalytic solid)';
     } else if (cation === 'Cu2+') {
@@ -833,7 +894,9 @@
 
     // Compute Solubility according to KNEC Qualitative rules
     let solubility = 'Readily soluble in water; forms a clear stock solution.';
-    if (cation === 'Mn4+' || anion === 'O2-') {
+    if (cation === 'H+') {
+      solubility = 'Miscible completely in water; turns blue litmus red.';
+    } else if (cation === 'Mn4+' || anion === 'O2-') {
       solubility = 'Insoluble in water; forms an insoluble black solid / catalyst.';
     } else if (anion === 'CO3^2-') {
       if (cation === 'Na+' || cation === 'K+' || cation === 'NH4+') {
@@ -867,6 +930,7 @@
       crystalColor,
       crystalSecondary,
       crystalHighlight,
+      isAcid: cation === 'H+',
       isDynamic: true
     };
 
@@ -1242,9 +1306,15 @@
     const isKI = tId.includes('ki') || pStr.includes('potassium iodide') || pStr.includes('iodide');
     const isBrownRing = tId.includes('brown_ring') || tId.includes('ring') || (pStr.includes('feso4') && pStr.includes('h2so4')) || pStr.includes('brown ring');
     const isH2SO4 = tId.includes('h2so4') || pStr.includes('h2so4') || pStr.includes('sulfuric') || pStr.includes('sulphuric');
-    const isHCl = tId.includes('hcl') || tId.includes('acid') || pStr.includes('hydrochloric') || pStr.includes('limewater');
+    const isNaHCO3 = tId.includes('nahco3') || tId.includes('hydrogencarbonate') || tId.includes('bicarbonate') ||
+      pStr.includes('nahco3') || pStr.includes('sodium hydrogen carbonate') || pStr.includes('sodium hydrogencarbonate') ||
+      pStr.includes('bicarbonate') || (pStr.includes('solid') && (pStr.includes('carbonate') || pStr.includes('nahco3')));
+    const isHCl = !isNaHCO3 && (tId.includes('hcl') || tId.includes('acid') || pStr.includes('hydrochloric') || (!pStr.includes('nahco3') && !pStr.includes('carbonate') && pStr.includes('limewater')));
     const isResidueTest = tId.includes('residue') || pStr.includes('residue');
     const isH2O2 = tId.includes('h2o2') || tId.includes('peroxide') || pStr.includes('hydrogen peroxide') || pStr.includes('h2o2') || pStr.includes('h₂o₂');
+    const isZincDisplacement = tId.includes('displacement') || tId.includes('zinc_dust') ||
+      pStr.includes('zinc dust') || pStr.includes('zinc powder') || pStr.includes('solid e') ||
+      (pStr.includes('zinc') && (pStr.includes('shake') || pStr.includes('filtrate') || pStr.includes('dust')));
 
     let liquidColor = 'rgba(56, 189, 248, 0.25)';
     let ppt = false;
@@ -1311,6 +1381,10 @@
           ppt = true;
           pptColor = '#991B1B'; // Reddish-brown
           statusLabel = isExcess ? 'In Excess: Reddish-brown precipitate insoluble' : 'Few Drops: Reddish-brown precipitate formed (Fe(OH)₃)';
+        } else if (cation === 'Mn2+' || cation === 'Mn4+' || pStr.includes('solid d') || pStr.includes('mno2')) {
+          ppt = true;
+          pptColor = '#991B1B'; // Oxidizes rapidly in air to dark reddish-brown hydrated MnO2
+          statusLabel = isExcess ? 'In Excess: Reddish-brown precipitate insoluble' : 'Few Drops: Precipitate formed rapidly darkening to reddish-brown in air';
         } else if (cation === 'NH4+' || cation === 'Na+' || cation === 'K+') {
           bubbling = isHeated;
           statusLabel = (cation === 'NH4+' && isHeated)
@@ -1351,6 +1425,10 @@
           ppt = true;
           pptColor = '#991B1B';
           statusLabel = isExcess ? 'In Excess: Reddish-brown precipitate insoluble' : 'Few Drops: Reddish-brown precipitate formed';
+        } else if (cation === 'Mn2+' || cation === 'Mn4+' || pStr.includes('solid d') || pStr.includes('mno2')) {
+          ppt = true;
+          pptColor = '#991B1B';
+          statusLabel = isExcess ? 'In Excess: Reddish-brown precipitate insoluble' : 'Few Drops: Precipitate formed rapidly darkening to reddish-brown in air';
         } else if (cation === 'Ca2+' || cation === 'NH4+' || cation === 'Na+' || cation === 'K+' || cation === 'Ba2+') {
           statusLabel = 'No precipitate formed with drops or excess NH₃';
         }
@@ -1415,13 +1493,11 @@
             statusLabel = 'Acid Added: Vigorous effervescence of CO₂ gas';
           }
         } else if (anion === 'SO4^2-' || anion === 'SO42-' || (anion && anion.includes('SO4')) || oStr.includes('baso4') || oStr.includes('white precipitate') || oStr.includes('white ppt')) {
-          if (stage === 'step2_bacl2' || !isStep1) {
-            ppt = true;
-            pptColor = '#FFFFFF';
-            statusLabel = 'Ba²⁺ Added: Dense white precipitate of BaSO₄ formed (acid-insoluble)';
-          } else {
-            statusLabel = 'Dilute Acid Added: Clear solution remains';
-          }
+          ppt = true;
+          pptColor = '#FFFFFF';
+          statusLabel = (pStr.includes('acid') || pStr.includes('hno3') || pStr.includes('hcl') || oStr.includes('insoluble'))
+            ? 'Ba²⁺ & Dilute Acid Added: Dense white precipitate of BaSO₄ formed (insoluble in dilute acid)'
+            : 'Ba²⁺ Added: Dense white precipitate of BaSO₄ formed';
         } else {
           statusLabel = 'No precipitate formed';
         }
@@ -1498,7 +1574,19 @@
         pptColor = '#FFFFFF';
         statusLabel = 'Dilute HCl Added: White residue remains completely insoluble (BaSO₄)';
       } else if (isHCl) {
-        if (anion === 'CO3^2-' || anion === 'CO32-' || anion === 'HCO3-' || (anion && (anion.includes('CO3') || anion.includes('HCO3')))) {
+        const isMnO2 = cation === 'Mn4+' ||
+          (salt.key && (salt.key.includes('mno2') || salt.key.includes('manganese') || salt.key.includes('solidd') || salt.key.includes('solid_d'))) ||
+          pStr.includes('solid d') || pStr.includes('mno2') || pStr.includes('manganese');
+        if (isMnO2) {
+          bubbling = true;
+          gasType = 'cl2_choking';
+          gasColor = '#D9F99D';
+          liquidColor = 'rgba(254, 240, 138, 0.4)';
+          soundType = 'effervescence';
+          statusLabel = (isHeated || pStr.includes('warm') || pStr.includes('heat') || oStr.includes('effervesc'))
+            ? '6M HCl Added & Warmed: Effervescence of suffocating greenish-yellow Cl₂ gas that bleaches moist blue litmus paper'
+            : '6M HCl Added: Moderate effervescence on warming with Cl₂ gas evolved';
+        } else if (anion === 'CO3^2-' || anion === 'CO32-' || anion === 'HCO3-' || (anion && (anion.includes('CO3') || anion.includes('HCO3')))) {
           bubbling = true;
           statusLabel = '2M HCl Added: Vigorous effervescence of a gas that turns limewater milky (CO₂)';
         } else if (anion === 'SO3^2-' || anion === 'SO32-' || (anion && anion.includes('SO3'))) {
@@ -1554,6 +1642,60 @@
         } else {
           statusLabel = 'H₂O₂ Added: No observable effervescence / no visible reaction';
           soundType = 'drop';
+        }
+      } else if (isNaHCO3) {
+        const isLimewater = stage === 'limewater_test' || stage === 'step2_gas_test' || stage === 'step2_limewater' || (pStr.includes('limewater') && stage !== 'added_nahco3' && stage !== 'few_drops');
+        const isAcidic = cation === 'H+' || (salt && salt.isAcid) ||
+          (salt.key && (salt.key.toLowerCase().includes('acid') || salt.key === 'hydrochloricAcid' || salt.key === 'nitricAcid' || salt.key === 'sulfuricAcid')) ||
+          pStr.includes('acid') || oStr.includes('effervesc') || oStr.includes('bubbles') || oStr.includes('milky');
+        const isHydrolyzingCation = cation === 'Fe3+' || cation === 'Al3+';
+
+        if (isAcidic) {
+          bubbling = true;
+          evolvesCO2 = true;
+          ppt = false;
+          soundType = 'effervescence';
+          liquidColor = 'rgba(255, 255, 255, 0.2)';
+          if (isLimewater) {
+            statusLabel = 'Gas Bubbled through Limewater: White precipitate formed / Limewater turned milky (CO₂ confirmed)';
+            soundType = 'effervescence';
+          } else {
+            statusLabel = 'Solid NaHCO₃ Added: Vigorous effervescence of a colourless gas that turns limewater milky (CO₂ evolved; H⁺ / acid present)';
+          }
+        } else if (isHydrolyzingCation) {
+          bubbling = true;
+          evolvesCO2 = true;
+          ppt = true;
+          pptColor = (cation === 'Fe3+') ? '#991B1B' : '#FFFFFF';
+          liquidColor = (cation === 'Fe3+') ? 'rgba(217, 119, 6, 0.3)' : 'rgba(255, 255, 255, 0.2)';
+          soundType = 'effervescence';
+          statusLabel = (cation === 'Fe3+')
+            ? 'Solid NaHCO₃ Added: Moderate effervescence with reddish-brown precipitate of Fe(OH)₃ (due to hydrolysis of Fe³⁺)'
+            : 'Solid NaHCO₃ Added: Moderate effervescence with white gelatinous precipitate of Al(OH)₃ (due to hydrolysis of Al³⁺)';
+        } else {
+          bubbling = false;
+          ppt = true;
+          pptColor = '#FFFFFF';
+          soundType = 'drop';
+          statusLabel = 'Solid NaHCO₃ Added: No effervescence observed; white solid settles at bottom of tube';
+        }
+      } else if (isZincDisplacement) {
+        const isCopper = cation === 'Cu2+' ||
+          (salt.key && (salt.key.toLowerCase().includes('cu') || salt.key.toLowerCase().includes('copper'))) ||
+          (salt.name && salt.name.toLowerCase().includes('copper')) ||
+          pStr.includes('copper') || oStr.includes('copper') || oStr.includes('reddish-brown');
+        if (isCopper) {
+          ppt = true;
+          pptColor = '#B45309'; // Reddish-brown copper metal powder
+          liquidColor = 'rgba(255, 255, 255, 0.2)'; // Turns colourless from green/blue
+          bubbling = true;
+          soundType = 'effervescence';
+          statusLabel = 'Solid E (Zinc Dust) Added: Effervescence; green solution turns colourless with reddish-brown solid deposited';
+        } else {
+          ppt = true;
+          pptColor = '#94A3B8';
+          soundType = 'drop';
+          statusLabel = 'Solid E (Zinc Dust) Added: Grey metal powder settles; no displacement observed';
         }
       } else if (oStr.includes('precipitate') || oStr.includes('ppt')) {
         ppt = true;
@@ -1778,6 +1920,8 @@
       isDissolving,
       isFlameTest,
       isHeat,
+      isNaHCO3: Boolean(isNaHCO3),
+      isZincDisplacement: Boolean(isZincDisplacement),
       statusLabel,
       soundType
     };
@@ -1972,6 +2116,7 @@
     const isPptDissolved = performed && r.pptDissolved;
     const isDeepBlue = performed && r.complexDeepBlue;
     const isSplint = performed && (stage === 'splint_test' || stage === 'step2_gas_test' || stage === 'step2_splint' || (r.evolvesO2 && stage === 'splint_test'));
+    const isSpatula = r.isNaHCO3 || r.isZincDisplacement || (prompt && (prompt.toLowerCase().includes('nahco3') || prompt.toLowerCase().includes('bicarbonate') || prompt.toLowerCase().includes('zinc dust') || prompt.toLowerCase().includes('solid e') || (prompt.toLowerCase().includes('solid') && prompt.toLowerCase().includes('carbonate'))));
     const topY = isExcess ? 88 : (performed ? 138 : 160);
     const dropletColor = isPpt ? (r.pptColor || '#E2E8F0') : (r.liquidColor && r.liquidColor.startsWith('#') ? r.liquidColor : '#38BDF8');
 
@@ -1988,6 +2133,12 @@
             <stop offset="25%" stop-color="rgba(255,255,255,0.05)"/>
             <stop offset="85%" stop-color="rgba(255,255,255,0.02)"/>
             <stop offset="100%" stop-color="rgba(255,255,255,0.18)"/>
+          </linearGradient>
+          <linearGradient id="spatulaMetal_${tubeId}" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#94A3B8"/>
+            <stop offset="40%" stop-color="#E2E8F0"/>
+            <stop offset="70%" stop-color="#CBD5E1"/>
+            <stop offset="100%" stop-color="#64748B"/>
           </linearGradient>
           <linearGradient id="woodGrad_${tubeId}" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stop-color="#9A3412"/>
@@ -2020,6 +2171,13 @@
               <circle cx="2" cy="-6" r="1.1" fill="#FDE047"/>
             </g>
           </g>
+        ` : (isSpatula ? `
+          <!-- Stainless Steel Laboratory Spatula Delivering Solid Reagent Powder -->
+          <g style="transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); transform: translate(${performed ? '8px, 6px' : '0px, 0px'});" opacity="${performed ? '1' : '0.8'}">
+            <line x1="28" y1="24" x2="76" y2="24" stroke="url(#spatulaMetal_${tubeId})" stroke-width="3.2" stroke-linecap="round"/>
+            <ellipse cx="76" cy="24" rx="6.5" ry="3.2" fill="url(#spatulaMetal_${tubeId})" stroke="#475569" stroke-width="0.6"/>
+            <circle cx="76" cy="23" r="2.5" fill="${r.isZincDisplacement ? '#94A3B8' : '#FFFFFF'}"/>
+          </g>
         ` : `
           <!-- Precision Reagent Dropper Pipette (Centered over Mouth) -->
           <g class="anim-dropper" opacity="${performed ? '1' : '0.5'}">
@@ -2034,7 +2192,7 @@
             <!-- Fast Gravitational Falling Reagent Droplet -->
             <path d="M 80,35 C 77.5,40 76.5,45 80,49 C 83.5,45 82.5,40 80,35 Z" fill="${dropletColor}" class="anim-droplet"/>
           ` : ''}
-        `}
+        `)}
 
         <!-- Laboratory Test Tube Wooden Clamp with Cork Cushions & Dual Brass Rivets -->
         <g transform="translate(0, 68)">
@@ -2125,6 +2283,14 @@
           <g class="anim-spangle" style="animation-delay: 1.4s;">
             <polygon points="72,182 86,185 86,186 72,183" fill="#FFFFFF" opacity="0.92"/>
           </g>
+        ` : ''}
+
+        <!-- Solid Reagent / Powder Sediment at Base -->
+        ${performed && isSpatula ? `
+          <ellipse cx="80" cy="198" rx="19" ry="5" fill="${r.isZincDisplacement ? '#B45309' : '#FFFFFF'}" opacity="0.95"/>
+          <circle cx="71" cy="195" r="2.8" fill="${r.isZincDisplacement ? '#9A3412' : '#F8FAFC'}"/>
+          <circle cx="87" cy="196" r="3.2" fill="${r.isZincDisplacement ? '#78350F' : '#F8FAFC'}"/>
+          <circle cx="79" cy="197" r="2.5" fill="${r.isZincDisplacement ? '#92400E' : '#F1F5F9'}"/>
         ` : ''}
 
         <!-- Bubbles & Froth Header for Acid Effervescence -->
@@ -3023,6 +3189,29 @@
       } else if ((stage === 'added_h2o2' || stage === 'few_drops' || stage === 'stage1') && hasGasOrSplint) {
         return [
           { stage: 'splint_test', label: '🪵 Step 2: Test Gas with Glowing Splint', cls: 'btn-perform-test btn-step-gas' },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      } else {
+        return [
+          { stage: 'done', label: '✅ Reaction Observed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      }
+    }
+
+    // 2d. Solid Sodium Hydrogen Carbonate (NaHCO3) Test: Step 1 (Add solid NaHCO3) -> Step 2 (Test Gas with Limewater if effervescent)
+    const isNaHCO3 = tId.includes('nahco3') || tId.includes('hydrogencarbonate') || tId.includes('bicarbonate') ||
+      pStr.includes('nahco3') || pStr.includes('sodium hydrogen carbonate') || pStr.includes('sodium hydrogencarbonate') ||
+      pStr.includes('bicarbonate') || (pStr.includes('solid') && (pStr.includes('carbonate') || pStr.includes('nahco3')));
+    if (isNaHCO3) {
+      const hasLimewaterOrGas = pStr.includes('limewater') || pStr.includes('calcium hydroxide') || pStr.includes('gas') || pStr.includes('effervesc');
+      if (!stage || stage === 'idle') {
+        return [
+          { stage: 'added_nahco3', label: '🥄 Step 1: Add Spatula-End of Solid NaHCO₃', cls: 'btn-perform-test' }
+        ];
+      } else if ((stage === 'added_nahco3' || stage === 'few_drops' || stage === 'stage1') && hasLimewaterOrGas) {
+        return [
+          { stage: 'limewater_test', label: '🧪 Step 2: Test Gas with Limewater (Ca(OH)₂)', cls: 'btn-perform-test btn-step-gas' },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else {

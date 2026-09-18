@@ -824,6 +824,156 @@ describe('Organic Bench Core (Carbon Compound Reactions)', () => {
       assert.ok(r.statusLabel.includes('dark brown'), 'Status must confirm iodine liberation');
     });
   });
+
+  describe('Solid Sodium Hydrogen Carbonate (NaHCO₃) Inorganic Diagnostic Simulation', () => {
+    it('should simulate vigorous effervescence of CO₂ when solid NaHCO₃ is added to an acid', () => {
+      const r = QualitativeBenchCore.resolveReactionState(
+        'hydrochloricAcid',
+        'q2_carbonate',
+        'added_nahco3',
+        'To portion 2, add a spatula-end of solid sodium hydrogen carbonate',
+        ''
+      );
+      assert.strictEqual(r.bubbling, true, 'Acid + NaHCO3 must trigger bubbling');
+      assert.strictEqual(r.evolvesCO2, true, 'Must evolve CO2');
+      assert.strictEqual(r.soundType, 'effervescence', 'Must trigger effervescence sound');
+      assert.ok(r.statusLabel.includes('Vigorous effervescence') && r.statusLabel.includes('limewater milky'), 'Status must describe CO2 effervescence');
+    });
+
+    it('should simulate limewater test in multi-stage NaHCO₃ workflow', () => {
+      const r = QualitativeBenchCore.resolveReactionState(
+        'nitricAcid',
+        'q2_carbonate',
+        'limewater_test',
+        'To portion 2, add solid sodium hydrogen carbonate and bubble gas through limewater',
+        ''
+      );
+      assert.strictEqual(r.bubbling, true);
+      assert.ok(r.statusLabel.includes('Limewater turned milky') || r.statusLabel.includes('White precipitate'), 'Must confirm limewater milky test');
+    });
+
+    it('should simulate neutral salt with no effervescence and solid settling at tube base', () => {
+      const r = QualitativeBenchCore.resolveReactionState(
+        'copperSulfate',
+        'q2_carbonate',
+        'added_nahco3',
+        'To portion 2, add solid sodium hydrogen carbonate',
+        ''
+      );
+      assert.strictEqual(r.bubbling, false, 'Neutral salt must NOT produce effervescence');
+      assert.strictEqual(r.soundType, 'drop', 'Must not trigger effervescence audio');
+      assert.ok(r.statusLabel.includes('No effervescence observed'), 'Observation must state no effervescence');
+    });
+
+    it('should simulate hydrolyzing cation Fe³⁺ effervescence with reddish-brown Fe(OH)₃ ppt', () => {
+      const r = QualitativeBenchCore.resolveReactionState(
+        'ironChloride',
+        'q2_carbonate',
+        'added_nahco3',
+        'To portion 2, add solid sodium hydrogen carbonate',
+        ''
+      );
+      assert.strictEqual(r.bubbling, true, 'Fe3+ hydrolysis must produce effervescence');
+      assert.strictEqual(r.ppt, true, 'Fe3+ + NaHCO3 must form insoluble hydroxide ppt');
+      assert.strictEqual(r.pptColor, '#991B1B', 'Fe(OH)3 must be reddish-brown');
+    });
+
+    it('should generate multi-stage actions: idle -> added_nahco3 -> limewater_test -> done', () => {
+      const prompt = 'To portion 2, add solid sodium hydrogen carbonate and test the gas evolved with limewater';
+      const idleActions = QualitativeBenchCore.getMultiStageActions('q2_carb', prompt, 'idle');
+      assert.strictEqual(idleActions[0].stage, 'added_nahco3');
+      assert.ok(idleActions[0].label.includes('Add Spatula-End of Solid NaHCO₃'));
+
+      const step1Actions = QualitativeBenchCore.getMultiStageActions('q2_carb', prompt, 'added_nahco3');
+      assert.strictEqual(step1Actions[0].stage, 'limewater_test');
+      assert.ok(step1Actions[0].label.includes('Test Gas with Limewater'));
+      assert.strictEqual(step1Actions[1].stage, 'idle');
+
+      const doneActions = QualitativeBenchCore.getMultiStageActions('q2_carb', prompt, 'limewater_test');
+      assert.strictEqual(doneActions[0].stage, 'done');
+      assert.strictEqual(doneActions[0].disabled, true);
+    });
+
+    it('should dynamically synthesize unlisted acid formulas (e.g., dilute nitric acid, H2SO4)', () => {
+      const acid1 = QualitativeBenchCore.resolveSalt('dilute nitric acid');
+      assert.strictEqual(acid1.cation, 'H+');
+      assert.strictEqual(acid1.isAcid, true);
+
+      const acid2 = QualitativeBenchCore.resolveSalt('H2SO4');
+      assert.strictEqual(acid2.cation, 'H+');
+      assert.strictEqual(acid2.isAcid, true);
+    });
+
+    it('should render spatula delivering powder and white sediment in SVG apparatus', () => {
+      const svg = QualitativeBenchCore.renderApparatusSvg({
+        saltKey: 'hydrochloricAcid',
+        testId: 'q2_carb',
+        prompt: 'To portion 2, add solid sodium hydrogen carbonate',
+        stage: 'added_nahco3'
+      });
+      assert.ok(svg.includes('spatulaMetal_'), 'SVG must include spatula metal gradient');
+      assert.ok(svg.includes('anim-qual-froth'), 'Acid effervescence must render froth head in SVG');
+    });
+  });
+
+  describe('Exam Hub Qualitative Fidelity & Historical KCSE Scenarios', () => {
+    it('should form dense white BaSO₄ precipitate in single-step barium nitrate tests (KCSE 2022/2013)', () => {
+      const r = QualitativeBenchCore.resolveReactionState(
+        'magnesiumSulfate',
+        'q2_anion',
+        'few_drops',
+        '(v) To portion 3, add 3 drops of Barium Nitrate solution followed by dilute nitric acid.',
+        'Dense white precipitate formed, insoluble in dilute nitric acid'
+      );
+      assert.strictEqual(r.ppt, true, 'BaSO4 precipitate must form');
+      assert.strictEqual(r.pptColor, '#FFFFFF', 'BaSO4 must be white');
+      assert.ok(r.statusLabel.includes('BaSO₄') && r.statusLabel.includes('insoluble in dilute acid'));
+    });
+
+    it('should simulate zinc dust displacement of Cu²⁺ to reddish-brown copper metal (KCSE 2008)', () => {
+      const r = QualitativeBenchCore.resolveReactionState(
+        'copperCarbonate',
+        'q2_displacement',
+        'few_drops',
+        '(iv) To rest of filtrate, add Solid E (zinc dust) and shake.',
+        'Effervescence; green solution turns colourless; reddish-brown solid deposited; test tube becomes warm'
+      );
+      assert.strictEqual(r.ppt, true, 'Copper metal precipitate must form');
+      assert.strictEqual(r.pptColor, '#B45309', 'Copper deposit must be reddish-brown');
+      assert.strictEqual(r.bubbling, true, 'Must produce effervescence');
+      assert.strictEqual(r.soundType, 'effervescence');
+      assert.ok(r.statusLabel.includes('Zinc Dust') && r.statusLabel.includes('reddish-brown'));
+    });
+
+    it('should simulate MnO₂ oxidation of 6M HCl evolving greenish-yellow Cl₂ gas on warming (KCSE 1996)', () => {
+      const r = QualitativeBenchCore.resolveReactionState(
+        'manganeseDioxide',
+        'q2_acid_warm',
+        'few_drops',
+        '(i) To half of Solid D, add 1 cm³ 6M HCl and warm gently for 1 minute.',
+        'Effervescence increases with heating; greenish-yellow gas evolved with pungent choking smell that bleaches moist blue litmus paper'
+      );
+      assert.strictEqual(r.bubbling, true, 'Must bubble on warming');
+      assert.strictEqual(r.soundType, 'effervescence');
+      assert.strictEqual(r.gasColor, '#D9F99D', 'Cl2 must be pale greenish-yellow');
+      assert.ok(r.statusLabel.includes('greenish-yellow Cl₂ gas'));
+    });
+
+    it('should simulate Mn²⁺ precipitate in NaOH darkening to reddish-brown in air (KCSE 1996)', () => {
+      const r = QualitativeBenchCore.resolveReactionState(
+        'manganeseDioxide',
+        'q2_naoh',
+        'few_drops',
+        '(ii) Dilute mixture with water, filter, and add 2M NaOH dropwise until in excess.',
+        'Reddish-brown precipitate formed, insoluble in excess sodium hydroxide'
+      );
+      assert.strictEqual(r.ppt, true, 'Must form precipitate');
+      assert.strictEqual(r.pptColor, '#991B1B', 'Mn(OH)2 oxidizes to reddish-brown');
+      assert.ok(r.statusLabel.includes('reddish-brown'));
+    });
+  });
 });
+
+
 
 

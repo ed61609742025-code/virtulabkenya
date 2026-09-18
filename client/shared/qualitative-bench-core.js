@@ -714,6 +714,21 @@
       crystalColor: '#F8FAFC',
       crystalSecondary: '#CBD5E1',
       crystalHighlight: '#FFFFFF'
+    },
+    manganeseDioxide: {
+      key: 'manganeseDioxide',
+      altKeys: ['MNO2', 'MANGANESE DIOXIDE', 'MANGANESE_DIOXIDE', 'MANGANESE(IV) OXIDE', 'MANGANESE OXIDE', 'SOLID D', 'SOLID_D'],
+      name: 'Manganese(IV) Oxide',
+      formula: 'MnO₂',
+      cation: 'Mn4+',
+      anion: 'O2-',
+      cationDisplay: 'Mn⁴⁺',
+      anionDisplay: 'O²⁻',
+      appearance: 'Dense black inorganic powder / granules',
+      solubility: 'Insoluble in water; forms a black suspension (catalytic solid).',
+      crystalColor: '#1E293B',
+      crystalSecondary: '#0F172A',
+      crystalHighlight: '#334155'
     }
   };
 
@@ -756,6 +771,10 @@
       cation = 'Na+'; cationDisplay = 'Na⁺'; cationName = 'Sodium';
     } else if (up.includes('POTASSI') || (up.startsWith('K') && up.length <= 4) || up.includes('KNO3') || up.includes('KCL') || up.includes('KBR') || up.includes('KI') || up.includes('K2SO4') || up.includes('K2CO3')) {
       cation = 'K+'; cationDisplay = 'K⁺'; cationName = 'Potassium';
+    } else if (up.includes('MN4') || up.includes('MANGANESE4') || up.includes('MANGANESE(IV)') || up.includes('MNO2')) {
+      cation = 'Mn4+'; cationDisplay = 'Mn⁴⁺'; cationName = 'Manganese(IV)';
+    } else if (up.includes('MN') || up.includes('MANGAN')) {
+      cation = 'Mn2+'; cationDisplay = 'Mn²⁺'; cationName = 'Manganese(II)';
     }
 
     // 2. Detect Anion
@@ -779,6 +798,8 @@
       anion = 'Br-'; anionDisplay = 'Br⁻'; anionName = 'Bromide';
     } else if (up.includes('IODI') || up.includes('NAI') || up.includes('KI') || up.includes('I2') || up.includes('I3') || /I\d*$/.test(up)) {
       anion = 'I-'; anionDisplay = 'I⁻'; anionName = 'Iodide';
+    } else if (up.includes('OXIDE') || up.includes('O2') || /O\d*$/.test(up)) {
+      anion = 'O2-'; anionDisplay = 'O²⁻'; anionName = 'Oxide';
     }
 
     if (!cation && !anion) return null;
@@ -796,7 +817,10 @@
     let crystalHighlight = '#FFFFFF';
     let appearance = 'White crystalline solid / powder';
 
-    if (cation === 'Cu2+') {
+    if (cation === 'Mn4+' || up.includes('MNO2')) {
+      crystalColor = '#1E293B'; crystalSecondary = '#0F172A'; crystalHighlight = '#334155';
+      appearance = 'Dense black inorganic powder / granules (catalytic solid)';
+    } else if (cation === 'Cu2+') {
       crystalColor = '#38BDF8'; crystalSecondary = '#0284C7'; crystalHighlight = '#BAE6FD';
       appearance = (anion === 'CO3^2-') ? 'Fine green powder (basic carbonate)' : 'Blue/green crystalline solid';
     } else if (cation === 'Fe2+') {
@@ -809,7 +833,9 @@
 
     // Compute Solubility according to KNEC Qualitative rules
     let solubility = 'Readily soluble in water; forms a clear stock solution.';
-    if (anion === 'CO3^2-') {
+    if (cation === 'Mn4+' || anion === 'O2-') {
+      solubility = 'Insoluble in water; forms an insoluble black solid / catalyst.';
+    } else if (anion === 'CO3^2-') {
       if (cation === 'Na+' || cation === 'K+' || cation === 'NH4+') {
         solubility = 'Readily soluble in water; forms an alkaline stock solution.';
       } else {
@@ -1218,6 +1244,7 @@
     const isH2SO4 = tId.includes('h2so4') || pStr.includes('h2so4') || pStr.includes('sulfuric') || pStr.includes('sulphuric');
     const isHCl = tId.includes('hcl') || tId.includes('acid') || pStr.includes('hydrochloric') || pStr.includes('limewater');
     const isResidueTest = tId.includes('residue') || pStr.includes('residue');
+    const isH2O2 = tId.includes('h2o2') || tId.includes('peroxide') || pStr.includes('hydrogen peroxide') || pStr.includes('h2o2') || pStr.includes('h₂o₂');
 
     let liquidColor = 'rgba(56, 189, 248, 0.25)';
     let ppt = false;
@@ -1483,6 +1510,50 @@
           statusLabel = isHeated ? 'Warmed: White precipitate of PbCl₂ dissolves in hot water' : '2M HCl Added: White precipitate of PbCl₂ formed';
         } else {
           statusLabel = 'No effervescence / No gas evolved';
+        }
+      } else if (isH2O2) {
+        const isSplint = stage === 'splint_test' || stage === 'step2_gas_test' || stage === 'step2_splint' || stage === 'test_splint' || (pStr.includes('splint') && stage !== 'few_drops' && stage !== 'added_h2o2');
+        const isSolidDOrMnO2 = cation === 'Mn4+' || cation === 'Mn2+' ||
+          (salt.key && (salt.key.includes('mno2') || salt.key.includes('manganese') || salt.key.includes('solidd') || salt.key.includes('solid_d'))) ||
+          (salt.name && (salt.name.includes('Manganese') || salt.name.includes('Solid D'))) ||
+          pStr.includes('solid d') || pStr.includes('catalyst') || pStr.includes('mno2') || pStr.includes('manganese') ||
+          oStr.includes('mno2') || oStr.includes('catalyst') || oStr.includes('effervescence') || oStr.includes('splint') || oStr.includes('rekindle') || oStr.includes('relight');
+
+        if (isSolidDOrMnO2) {
+          bubbling = true;
+          evolvesO2 = true;
+          ppt = true;
+          pptColor = '#1E293B'; // Black solid catalyst powder
+          liquidColor = 'rgba(255, 255, 255, 0.2)';
+          if (isSplint) {
+            statusLabel = 'Glowing Splint Inserted: Rekindles into bright flame (O₂ gas confirmed)';
+            soundType = 'splint';
+          } else {
+            statusLabel = 'H₂O₂ Added: Vigorous effervescence of colourless gas (relights glowing splint; Solid D acts as catalyst)';
+            soundType = 'effervescence';
+          }
+        } else if (cation === 'Fe2+' || pStr.includes('fe(oh)2') || oStr.includes('dirty green') || oStr.includes('reddish-brown') || oStr.includes('fe(oh)3')) {
+          ppt = true;
+          pptColor = '#991B1B'; // Reddish-brown Fe(OH)3
+          liquidColor = 'rgba(217, 119, 6, 0.45)';
+          statusLabel = 'H₂O₂ Added: Dirty-green precipitate rapidly oxidised to reddish-brown Fe(OH)₃';
+          soundType = 'drop';
+        } else if (anion === 'I-' || (anion && anion.includes('I')) || pStr.includes('iodide') || oStr.includes('iodine') || oStr.includes('brown')) {
+          liquidColor = '#78350F';
+          statusLabel = 'H₂O₂ Added: Clear solution turns dark brown as iodide (I⁻) is oxidised to free iodine (I₂)';
+          soundType = 'drop';
+        } else if (anion === 'SO3^2-' || anion === 'SO32-' || (anion && anion.includes('SO3'))) {
+          statusLabel = 'H₂O₂ Added: Sulfite (SO₃²⁻) oxidised to sulfate (SO₄²⁻)';
+          soundType = 'drop';
+        } else if (pStr.includes('kmno4') || pStr.includes('manganate') || pStr.includes('permanganate') || oStr.includes('decoloriz')) {
+          bubbling = true;
+          evolvesO2 = true;
+          liquidColor = 'rgba(255, 255, 255, 0.2)';
+          statusLabel = 'H₂O₂ Added: Purple acidified KMnO₄ rapidly decolourises with effervescence of O₂ gas';
+          soundType = 'effervescence';
+        } else {
+          statusLabel = 'H₂O₂ Added: No observable effervescence / no visible reaction';
+          soundType = 'drop';
         }
       } else if (oStr.includes('precipitate') || oStr.includes('ppt')) {
         ppt = true;
@@ -1900,6 +1971,7 @@
     const isPpt = performed && r.ppt;
     const isPptDissolved = performed && r.pptDissolved;
     const isDeepBlue = performed && r.complexDeepBlue;
+    const isSplint = performed && (stage === 'splint_test' || stage === 'step2_gas_test' || stage === 'step2_splint' || (r.evolvesO2 && stage === 'splint_test'));
     const topY = isExcess ? 88 : (performed ? 138 : 160);
     const dropletColor = isPpt ? (r.pptColor || '#E2E8F0') : (r.liquidColor && r.liquidColor.startsWith('#') ? r.liquidColor : '#38BDF8');
 
@@ -1927,21 +1999,42 @@
             <stop offset="50%" stop-color="${r.pptColor || '#FFFFFF'}" stop-opacity="0.35"/>
             <stop offset="100%" stop-color="${r.pptColor || '#FFFFFF'}" stop-opacity="0"/>
           </radialGradient>
+          <radialGradient id="splintBurst_${tubeId}" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#FFFFFF"/>
+            <stop offset="25%" stop-color="#FEF08A"/>
+            <stop offset="65%" stop-color="#F59E0B" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="#EA580C" stop-opacity="0"/>
+          </radialGradient>
         </defs>
 
-        <!-- Precision Reagent Dropper Pipette (Centered over Mouth) -->
-        <g class="anim-dropper" opacity="${performed ? '1' : '0.5'}">
-          <path class="${performed ? 'anim-dropper-bulb' : ''}" d="M 74,2 C 71.5,2 71.5,6 73.5,9.5 L 75.5,14 L 84.5,14 L 86.5,9.5 C 88.5,6 88.5,2 86,2 Z" fill="#EF4444"/>
-          <rect x="75" y="13.5" width="10" height="1.8" rx="0.9" fill="#CBD5E1" stroke="#94A3B8" stroke-width="0.5"/>
-          <rect x="78" y="15" width="4" height="13" rx="0.5" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
-          <rect x="78.8" y="19" width="2.4" height="9" fill="${dropletColor}" opacity="0.85"/>
-          <path d="M 78,28 L 82,28 L 80.8,34 L 79.2,34 Z" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
-          <path d="M 78.6,28 L 81.4,28 L 80.6,33.5 L 79.4,33.5 Z" fill="${dropletColor}" opacity="0.9"/>
-        </g>
-        ${performed ? `
-          <!-- Fast Gravitational Falling Reagent Droplet -->
-          <path d="M 80,35 C 77.5,40 76.5,45 80,49 C 83.5,45 82.5,40 80,35 Z" fill="${dropletColor}" class="anim-droplet"/>
-        ` : ''}
+        ${isSplint ? `
+          <!-- Glowing Wooden Splint Rekindling at Test Tube Mouth -->
+          <g class="anim-splint-rekindle" transform="translate(0, 0)">
+            <line x1="62" y1="-6" x2="79" y2="28" stroke="#B45309" stroke-width="2.8" stroke-linecap="round"/>
+            <line x1="62" y1="-6" x2="74" y2="18" stroke="#D97706" stroke-width="1.3" stroke-linecap="round"/>
+            <g class="anim-flame" transform="translate(79, 28)">
+              <circle cx="0" cy="0" r="13" fill="url(#splintBurst_${tubeId})" opacity="0.88"/>
+              <path d="M -4,0 C -6,-10 0,-16 0,-16 C 0,-16 6,-10 4,0 Z" fill="#FDE047"/>
+              <circle cx="0" cy="0" r="3.2" fill="#FFFFFF"/>
+              <circle cx="-2" cy="-4" r="1.4" fill="#F59E0B"/>
+              <circle cx="2" cy="-6" r="1.1" fill="#FDE047"/>
+            </g>
+          </g>
+        ` : `
+          <!-- Precision Reagent Dropper Pipette (Centered over Mouth) -->
+          <g class="anim-dropper" opacity="${performed ? '1' : '0.5'}">
+            <path class="${performed ? 'anim-dropper-bulb' : ''}" d="M 74,2 C 71.5,2 71.5,6 73.5,9.5 L 75.5,14 L 84.5,14 L 86.5,9.5 C 88.5,6 88.5,2 86,2 Z" fill="#EF4444"/>
+            <rect x="75" y="13.5" width="10" height="1.8" rx="0.9" fill="#CBD5E1" stroke="#94A3B8" stroke-width="0.5"/>
+            <rect x="78" y="15" width="4" height="13" rx="0.5" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
+            <rect x="78.8" y="19" width="2.4" height="9" fill="${dropletColor}" opacity="0.85"/>
+            <path d="M 78,28 L 82,28 L 80.8,34 L 79.2,34 Z" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
+            <path d="M 78.6,28 L 81.4,28 L 80.6,33.5 L 79.4,33.5 Z" fill="${dropletColor}" opacity="0.9"/>
+          </g>
+          ${performed ? `
+            <!-- Fast Gravitational Falling Reagent Droplet -->
+            <path d="M 80,35 C 77.5,40 76.5,45 80,49 C 83.5,45 82.5,40 80,35 Z" fill="${dropletColor}" class="anim-droplet"/>
+          ` : ''}
+        `}
 
         <!-- Laboratory Test Tube Wooden Clamp with Cork Cushions & Dual Brass Rivets -->
         <g transform="translate(0, 68)">
@@ -1983,8 +2076,8 @@
           </g>
         ` : ''}
 
-        <!-- Organic Precipitate Curd Mass at Base -->
-        ${performed && isPpt && !r.bubbling ? `
+        <!-- Organic / Solid Precipitate Mass at Base -->
+        ${performed && isPpt && (!r.bubbling || r.pptColor === '#1E293B' || !r.pptDissolved) ? `
           <g class="anim-ppt-form">
             <path d="M 58,176 C 64,172 70,178 76,173 C 82,170 88,176 94,172 C 98,175 102,173 102,176 Q 102,206 80,206 Q 58,206 58,176 Z" fill="${r.pptColor}" opacity="0.95"/>
             <path d="M 58,184 C 65,181 74,185 82,182 C 90,185 97,181 102,184 Q 102,206 80,206 Q 58,206 58,184 Z" fill="${r.pptColor}" opacity="0.8" filter="brightness(0.9)"/>
@@ -2916,6 +3009,30 @@
       }
     }
 
+    // 2c. Hydrogen Peroxide (H2O2) Test: Step 1 (Add H2O2) -> Step 2 (Test Gas with Glowing Splint if effervescent/catalytic)
+    const isH2O2 = tId.includes('h2o2') || tId.includes('peroxide') ||
+      pStr.includes('hydrogen peroxide') || pStr.includes('h2o2') || pStr.includes('h₂o₂');
+    if (isH2O2) {
+      const hasGasOrSplint = pStr.includes('splint') || pStr.includes('gas') || pStr.includes('effervesc') ||
+        pStr.includes('solid d') || pStr.includes('mno2') || pStr.includes('manganese') || pStr.includes('catalyst') ||
+        tId.includes('peroxide');
+      if (!stage || stage === 'idle') {
+        return [
+          { stage: 'added_h2o2', label: '💧 Step 1: Add 1 cm³ Hydrogen Peroxide (H₂O₂)', cls: 'btn-perform-test' }
+        ];
+      } else if ((stage === 'added_h2o2' || stage === 'few_drops' || stage === 'stage1') && hasGasOrSplint) {
+        return [
+          { stage: 'splint_test', label: '🪵 Step 2: Test Gas with Glowing Splint', cls: 'btn-perform-test btn-step-gas' },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      } else {
+        return [
+          { stage: 'done', label: '✅ Reaction Observed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      }
+    }
+
     // 6. Heating solid
     if (
       (pStr.includes('heat') && (pStr.includes('dry') || pStr.includes('strongly') || pStr.includes('solid') || pStr.includes('spatula'))) ||
@@ -2989,7 +3106,8 @@
         else if (reactionStateOrType === 'sizzle') playDropletSizzleSound();
         else playDropSplashSound(isExcess);
       } else if (reactionStateOrType && typeof reactionStateOrType === 'object') {
-        if (reactionStateOrType.decrepitates) playDecrepitationSound();
+        if (reactionStateOrType.soundType === 'splint' || reactionStateOrType.stage === 'splint_test') playSplintRelightSound();
+        else if (reactionStateOrType.decrepitates) playDecrepitationSound();
         else if (reactionStateOrType.bubbling) playEffervescenceSound();
         else if (reactionStateOrType.isHeated || reactionStateOrType.soundType === 'flame') playFlameSound();
         else if (reactionStateOrType.isPhysicalAppearance || reactionStateOrType.soundType === 'inspect') playCrystalInspectSound();

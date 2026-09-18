@@ -759,5 +759,71 @@ describe('Organic Bench Core (Carbon Compound Reactions)', () => {
       assert.strictEqual(pentanol.esterification.isFruity, true, 'Pentan-1-ol must produce fruity ester aroma');
     });
   });
+
+  describe('Hydrogen Peroxide (H₂O₂) Dynamic Simulation & Catalytic Decomposition', () => {
+    it('should resolve manganeseDioxide (MnO2) as a black catalytic solid', () => {
+      const mno2 = QualitativeBenchCore.resolveSalt('MnO2');
+      assert.ok(mno2, 'Must resolve MnO2');
+      assert.strictEqual(mno2.cation, 'Mn4+');
+      assert.strictEqual(mno2.anion, 'O2-');
+      assert.strictEqual(mno2.crystalColor, '#1E293B', 'Must have dark charcoal/black appearance');
+    });
+
+    it('should simulate catalytic decomposition: "To remaining Solid D, add 1 cm³ 20-volume hydrogen peroxide (H₂O₂)"', () => {
+      const prompt = '(iii) To remaining Solid D, add 1 cm³ 20-volume hydrogen peroxide (H₂O₂).';
+      const obs = 'Vigorous effervescence of a colourless gas that rekindles / relights a glowing wooden splint';
+
+      // Step 1: Add H2O2
+      const step1 = QualitativeBenchCore.resolveReactionState('MnO2', 'q2_peroxide', 'added_h2o2', prompt, obs);
+      assert.strictEqual(step1.bubbling, true, 'Must have vigorous bubbling / effervescence');
+      assert.strictEqual(step1.evolvesO2, true, 'Must evolve oxygen gas');
+      assert.strictEqual(step1.soundType, 'effervescence', 'Sound must be effervescence on addition');
+      assert.strictEqual(step1.ppt, true, 'Black solid catalyst remains present at bottom');
+      assert.strictEqual(step1.pptColor, '#1E293B', 'Solid catalyst must be black');
+
+      // Step 2: Glowing Splint
+      const step2 = QualitativeBenchCore.resolveReactionState('MnO2', 'q2_peroxide', 'splint_test', prompt, obs);
+      assert.strictEqual(step2.bubbling, true, 'Bubbling persists during splint test');
+      assert.strictEqual(step2.evolvesO2, true, 'Oxygen gas present');
+      assert.strictEqual(step2.soundType, 'splint', 'Sound must be splint ignition pop');
+      assert.ok(step2.statusLabel.includes('Rekindles into bright flame'), 'Status must indicate splint rekindling');
+    });
+
+    it('should generate multi-stage actions for H₂O₂ testing with glowing splint', () => {
+      const prompt = '(iii) To remaining Solid D, add 1 cm³ 20-volume hydrogen peroxide (H₂O₂).';
+
+      // Stage idle -> Step 1
+      const idleActions = QualitativeBenchCore.getMultiStageActions('q2_peroxide', prompt, 'idle');
+      assert.strictEqual(idleActions.length, 1);
+      assert.strictEqual(idleActions[0].stage, 'added_h2o2');
+      assert.ok(idleActions[0].label.includes('Step 1: Add 1 cm³ Hydrogen Peroxide'));
+
+      // Stage added_h2o2 -> Step 2 (Glowing Splint)
+      const step1Actions = QualitativeBenchCore.getMultiStageActions('q2_peroxide', prompt, 'added_h2o2');
+      assert.strictEqual(step1Actions.length, 2);
+      assert.strictEqual(step1Actions[0].stage, 'splint_test');
+      assert.ok(step1Actions[0].label.includes('Step 2: Test Gas with Glowing Splint'));
+      assert.strictEqual(step1Actions[1].stage, 'idle'); // Redo button
+
+      // Stage splint_test -> Done
+      const doneActions = QualitativeBenchCore.getMultiStageActions('q2_peroxide', prompt, 'splint_test');
+      assert.strictEqual(doneActions[0].stage, 'done');
+      assert.strictEqual(doneActions[0].disabled, true);
+    });
+
+    it('should simulate Fe²⁺ oxidation to reddish-brown Fe(OH)₃ when H₂O₂ is added', () => {
+      const r = QualitativeBenchCore.resolveReactionState('ironSulfate', 't_peroxide', 'added_h2o2', 'To green solid, add 1 cm3 hydrogen peroxide', '');
+      assert.strictEqual(r.ppt, true, 'Must form precipitate');
+      assert.strictEqual(r.pptColor, '#991B1B', 'Must turn reddish-brown');
+      assert.ok(r.statusLabel.includes('reddish-brown Fe(OH)₃'), 'Status must confirm Fe(OH)3 oxidation');
+    });
+
+    it('should simulate I⁻ oxidation to dark brown iodine solution when H₂O₂ is added', () => {
+      const r = QualitativeBenchCore.resolveReactionState('potassiumIodide', 't_peroxide', 'added_h2o2', 'Add 1 cm3 hydrogen peroxide to solution', '');
+      assert.strictEqual(r.liquidColor, '#78350F', 'Must turn dark brown from liberated iodine');
+      assert.ok(r.statusLabel.includes('dark brown'), 'Status must confirm iodine liberation');
+    });
+  });
 });
+
 

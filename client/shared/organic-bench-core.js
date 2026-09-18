@@ -414,8 +414,547 @@
         inf: 'Carboxylic acid present',
         status: 'Acidic (Moist Blue Litmus Turns Red, pH 3)'
       }
+    },
+    // ── Extended KNEC Syllabus Organic Compounds ──────────────────
+    'org_propene': {
+      key: 'org_propene',
+      altKeys: ['PROPENE', 'PROPYLENE', 'C3H6'],
+      label: 'Propene (Gas/Solution)',
+      name: 'Propene (C₃H₆)',
+      compoundKey: 'propene',
+      fgKey: 'alkene',
+      fgName: 'Alkene (>C=C< unsaturation)',
+      isSooty: true,
+      solubility: {
+        isMiscible: false,
+        obs: 'Immiscible with water; bubbles through without dissolving.',
+        inf: 'Non-polar hydrocarbon present',
+        status: 'Immiscible'
+      },
+      ignition: {
+        isSooty: true,
+        obs: 'Burns with a luminous, smoky and sooty yellow flame.',
+        inf: 'Unsaturation (>C=C<) present',
+        status: 'Luminous Smoky Sooty Flame'
+      },
+      bromine: {
+        isDecolorized: true,
+        obs: 'Reddish-brown bromine water is decolourized immediately.',
+        inf: '>C=C< unsaturation present',
+        status: 'Bromine Decolourized (Colourless)'
+      },
+      kmno4: {
+        isDecolorized: true,
+        obs: 'Purple acidified KMnO₄ is rapidly decolourized.',
+        inf: '>C=C< unsaturation present',
+        status: 'KMnO₄ Decolourized (Purple to Colourless)'
+      },
+      dichromate: {
+        turnsGreen: false,
+        obs: 'Acidified potassium dichromate(VI) remains orange.',
+        inf: 'Alkanol absent',
+        status: 'Orange Colour Persists'
+      },
+      carbonate: {
+        hasEffervescence: false,
+        obs: 'No effervescence observed.',
+        inf: 'Carboxylic acid absent',
+        status: 'No Effervescence'
+      },
+      esterification: {
+        isFruity: false,
+        obs: 'No sweet fruity aroma produced.',
+        inf: 'Alkanol absent',
+        status: 'No Ester Formed'
+      },
+      litmus: {
+        isAcidic: false,
+        obs: 'Both moist red and blue litmus papers remain unchanged.',
+        inf: 'Neutral organic compound',
+        status: 'Neutral (pH 7)'
+      }
+    },
+    'org_ethene': {
+      key: 'org_ethene',
+      altKeys: ['ETHENE', 'ETHYLENE', 'C2H4'],
+      label: 'Ethene (Gas/Solution)',
+      name: 'Ethene (C₂H₄)',
+      compoundKey: 'ethene',
+      fgKey: 'alkene',
+      fgName: 'Alkene (>C=C< unsaturation)',
+      isSooty: true,
+      solubility: {
+        isMiscible: false,
+        obs: 'Insoluble in water.',
+        inf: 'Non-polar hydrocarbon present',
+        status: 'Immiscible'
+      },
+      ignition: {
+        isSooty: true,
+        obs: 'Burns with a pale sooty flame.',
+        inf: 'Unsaturation present',
+        status: 'Sooty Flame'
+      },
+      bromine: {
+        isDecolorized: true,
+        obs: 'Bromine water is immediately decolourized.',
+        inf: '>C=C< unsaturation confirmed',
+        status: 'Bromine Decolourized'
+      },
+      kmno4: {
+        isDecolorized: true,
+        obs: 'Acidified KMnO₄ is rapidly decolourized.',
+        inf: '>C=C< unsaturation confirmed',
+        status: 'KMnO₄ Decolourized'
+      },
+      dichromate: {
+        turnsGreen: false,
+        obs: 'Orange colour persists.',
+        inf: 'Alkanol absent',
+        status: 'Orange Colour Persists'
+      },
+      carbonate: {
+        hasEffervescence: false,
+        obs: 'No effervescence observed.',
+        inf: 'Carboxylic acid absent',
+        status: 'No Effervescence'
+      },
+      esterification: {
+        isFruity: false,
+        obs: 'No fruity smell.',
+        inf: 'Alkanol absent',
+        status: 'No Reaction'
+      },
+      litmus: {
+        isAcidic: false,
+        obs: 'Litmus papers remain unchanged.',
+        inf: 'Neutral hydrocarbon',
+        status: 'Neutral (pH 7)'
+      }
+    },
+    'org_pentene': {
+      key: 'org_pentene',
+      altKeys: ['PENTENE', 'PENT-1-ENE', 'C5H10'],
+      label: 'Pent-1-ene (Liquid)',
+      name: 'Pent-1-ene (C₅H₁₀)',
+      compoundKey: 'pentene',
+      fgKey: 'alkene',
+      fgName: 'Alkene (>C=C< unsaturation)',
+      isSooty: true,
+      solubility: {
+        isMiscible: false,
+        obs: 'Immiscible with water; forms 2 distinct liquid layers.',
+        inf: 'Non-polar hydrocarbon present',
+        status: 'Immiscible (2 Layers)'
+      },
+      ignition: {
+        isSooty: true,
+        obs: 'Burns with a yellow smoky sooty flame.',
+        inf: 'Unsaturation present',
+        status: 'Smoky Sooty Flame'
+      },
+      bromine: {
+        isDecolorized: true,
+        obs: 'Bromine water is decolourized immediately.',
+        inf: '>C=C< unsaturation present',
+        status: 'Bromine Decolourized'
+      },
+      kmno4: {
+        isDecolorized: true,
+        obs: 'Purple acidified KMnO₄ is rapidly decolourized.',
+        inf: '>C=C< unsaturation present',
+        status: 'KMnO₄ Decolourized'
+      },
+      dichromate: {
+        turnsGreen: false,
+        obs: 'Dichromate remains orange.',
+        inf: 'Alkanol absent',
+        status: 'Orange Persists'
+      },
+      carbonate: {
+        hasEffervescence: false,
+        obs: 'No effervescence.',
+        inf: 'Carboxylic acid absent',
+        status: 'No Effervescence'
+      },
+      esterification: {
+        isFruity: false,
+        obs: 'No sweet fruity smell.',
+        inf: 'Alkanol absent',
+        status: 'No Reaction'
+      },
+      litmus: {
+        isAcidic: false,
+        obs: 'Litmus papers unchanged.',
+        inf: 'Neutral hydrocarbon',
+        status: 'Neutral (pH 7)'
+      }
+    },
+    'org_methanol': {
+      key: 'org_methanol',
+      altKeys: ['METHANOL', 'METHYL ALCOHOL', 'CH3OH'],
+      label: 'Methanol (Liquid)',
+      name: 'Methanol (CH₃OH)',
+      compoundKey: 'methanol',
+      fgKey: 'alkanol',
+      fgName: 'Primary Alkanol (R-OH)',
+      isSooty: false,
+      solubility: {
+        isMiscible: true,
+        obs: 'Miscible. Dissolves completely in water in all proportions.',
+        inf: 'Polar organic compound present',
+        status: 'Miscible (Clear Solution)'
+      },
+      ignition: {
+        isSooty: false,
+        obs: 'Burns cleanly with a non-luminous pale blue flame without smoke.',
+        inf: 'Saturated compound / low carbon ratio',
+        status: 'Non-Luminous Pale Blue Flame'
+      },
+      bromine: {
+        isDecolorized: false,
+        obs: 'Bromine water remains reddish-brown.',
+        inf: 'Unsaturation absent',
+        status: 'Red-Brown Persists'
+      },
+      kmno4: {
+        isDecolorized: true,
+        obs: 'Purple acidified KMnO₄ turns colourless on gentle heating.',
+        inf: 'Primary alkanol oxidized',
+        status: 'Decolourized on Warming'
+      },
+      dichromate: {
+        turnsGreen: true,
+        obs: 'Acidified potassium dichromate(VI) turns from orange to green.',
+        inf: 'Primary alkanol (R-OH) present',
+        status: 'Turns Green (Cr³⁺ formed)'
+      },
+      carbonate: {
+        hasEffervescence: false,
+        obs: 'No effervescence observed.',
+        inf: 'Carboxylic acid absent',
+        status: 'No Effervescence'
+      },
+      esterification: {
+        isFruity: true,
+        obs: 'Pleasant sweet fruity aroma formed.',
+        inf: 'Alkanol confirmed',
+        status: 'Fruity Ester Aroma'
+      },
+      litmus: {
+        isAcidic: false,
+        obs: 'Litmus papers remain unchanged.',
+        inf: 'Neutral organic compound',
+        status: 'Neutral (pH 7)'
+      }
+    },
+    'org_propanol': {
+      key: 'org_propanol',
+      altKeys: ['PROPANOL', 'PROPAN-1-OL', '1-PROPANOL', 'C3H7OH'],
+      label: 'Propan-1-ol (Liquid)',
+      name: 'Propan-1-ol (C₃H₇OH)',
+      compoundKey: 'propanol',
+      fgKey: 'alkanol',
+      fgName: 'Primary Alkanol (R-OH)',
+      isSooty: false,
+      solubility: {
+        isMiscible: true,
+        obs: 'Miscible in water to form a single clear phase.',
+        inf: 'Polar organic compound present',
+        status: 'Miscible'
+      },
+      ignition: {
+        isSooty: false,
+        obs: 'Burns with a non-luminous pale blue flame with yellow tip.',
+        inf: 'Saturated alkanol present',
+        status: 'Non-Sooty Pale Blue Flame'
+      },
+      bromine: {
+        isDecolorized: false,
+        obs: 'Bromine water remains reddish-brown.',
+        inf: 'Unsaturation absent',
+        status: 'Red-Brown Persists'
+      },
+      kmno4: {
+        isDecolorized: true,
+        obs: 'Acidified KMnO₄ slowly decolourizes on heating.',
+        inf: 'Primary alkanol oxidized',
+        status: 'Decolourized on Heating'
+      },
+      dichromate: {
+        turnsGreen: true,
+        obs: 'Acidified potassium dichromate(VI) turns from orange to green.',
+        inf: 'Primary alkanol (R-OH) present',
+        status: 'Turns Green (Cr³⁺ formed)'
+      },
+      carbonate: {
+        hasEffervescence: false,
+        obs: 'No effervescence observed.',
+        inf: 'Carboxylic acid absent',
+        status: 'No Effervescence'
+      },
+      esterification: {
+        isFruity: true,
+        obs: 'Sweet fruity aroma produced on warming with ethanoic acid and conc. H₂SO₄.',
+        inf: 'Alkanol confirmed',
+        status: 'Sweet Fruity Aroma (Propyl ethanoate)'
+      },
+      litmus: {
+        isAcidic: false,
+        obs: 'Litmus papers unchanged.',
+        inf: 'Neutral compound',
+        status: 'Neutral (pH 7)'
+      }
+    },
+    'org_propanoic_acid': {
+      key: 'org_propanoic_acid',
+      altKeys: ['PROPANOIC ACID', 'PROPIONIC ACID', 'C2H5COOH', 'PROPANOIC'],
+      label: 'Propanoic Acid (Liquid)',
+      name: 'Propanoic Acid (C₂H₅COOH)',
+      compoundKey: 'propanoic_acid',
+      fgKey: 'alkanoic_acid',
+      fgName: 'Carboxylic Acid (R-COOH)',
+      isSooty: false,
+      solubility: {
+        isMiscible: true,
+        obs: 'Miscible. Dissolves completely in water.',
+        inf: 'Polar carboxylic acid present',
+        status: 'Miscible (Clear Solution)'
+      },
+      ignition: {
+        isSooty: false,
+        obs: 'Burns with a clear pale blue flame.',
+        inf: 'Saturated compound present',
+        status: 'Non-Luminous Pale Blue Flame'
+      },
+      bromine: {
+        isDecolorized: false,
+        obs: 'Bromine water remains reddish-brown.',
+        inf: 'Unsaturation absent',
+        status: 'Reddish-Brown Persists'
+      },
+      kmno4: {
+        isDecolorized: false,
+        obs: 'Acidified KMnO₄ remains purple.',
+        inf: 'Carboxylic acid resistant to mild oxidation',
+        status: 'Purple Persists'
+      },
+      dichromate: {
+        turnsGreen: false,
+        obs: 'Acidified dichromate remains orange.',
+        inf: 'Alkanol absent',
+        status: 'Orange Persists'
+      },
+      carbonate: {
+        hasEffervescence: true,
+        obs: 'Vigorous effervescence of a colourless gas that turns limewater milky (CO₂).',
+        inf: 'Carboxylic acid (R-COOH) confirmed',
+        status: 'Vigorous Effervescence of CO₂ Gas'
+      },
+      esterification: {
+        isFruity: true,
+        obs: 'Sweet pleasant fruity aroma produced when heated with ethanol and conc. H₂SO₄.',
+        inf: 'Carboxylic acid confirmed',
+        status: 'Pleasant Fruity Aroma (Ethyl propanoate)'
+      },
+      litmus: {
+        isAcidic: true,
+        obs: 'Moist blue litmus paper turns red; red litmus remains red.',
+        inf: 'Carboxylic acid present',
+        status: 'Acidic (Moist Blue Litmus Turns Red, pH 3)'
+      }
+    },
+    'org_pentane': {
+      key: 'org_pentane',
+      altKeys: ['PENTANE', 'C5H12', 'N-PENTANE'],
+      label: 'Pentane (Liquid)',
+      name: 'Pentane (C₅H₁₂)',
+      compoundKey: 'pentane',
+      fgKey: 'alkane',
+      fgName: 'Saturated Aliphatic Alkane (C-C)',
+      isSooty: false,
+      solubility: {
+        isMiscible: false,
+        obs: 'Immiscible with water; forms a distinct upper layer.',
+        inf: 'Non-polar hydrocarbon present',
+        status: 'Immiscible (2 Layers)'
+      },
+      ignition: {
+        isSooty: false,
+        obs: 'Burns with a luminous yellow flame with slight smoke.',
+        inf: 'Saturated alkane present',
+        status: 'Luminous Flame'
+      },
+      bromine: {
+        isDecolorized: false,
+        obs: 'Bromine water remains reddish-brown in the absence of light.',
+        inf: 'Unsaturation absent',
+        status: 'Red-Brown Persists'
+      },
+      kmno4: {
+        isDecolorized: false,
+        obs: 'Acidified KMnO₄ remains purple.',
+        inf: 'Saturated hydrocarbon unreactive to mild oxidants',
+        status: 'Purple Persists'
+      },
+      dichromate: {
+        turnsGreen: false,
+        obs: 'Dichromate remains orange.',
+        inf: 'Alkanol absent',
+        status: 'Orange Persists'
+      },
+      carbonate: {
+        hasEffervescence: false,
+        obs: 'No effervescence observed.',
+        inf: 'Carboxylic acid absent',
+        status: 'No Effervescence'
+      },
+      esterification: {
+        isFruity: false,
+        obs: 'No fruity smell formed.',
+        inf: 'Alkanol absent',
+        status: 'No Reaction'
+      },
+      litmus: {
+        isAcidic: false,
+        obs: 'Litmus papers remain unchanged.',
+        inf: 'Neutral hydrocarbon',
+        status: 'Neutral (pH 7)'
+      }
+    },
+    'org_hexane': {
+      key: 'org_hexane',
+      altKeys: ['HEXANE', 'C6H14', 'N-HEXANE'],
+      label: 'Hexane (Liquid)',
+      name: 'Hexane (C₆H₁₄)',
+      compoundKey: 'hexane',
+      fgKey: 'alkane',
+      fgName: 'Saturated Aliphatic Alkane (C-C)',
+      isSooty: false,
+      solubility: {
+        isMiscible: false,
+        obs: 'Immiscible with water; forms an upper oily layer.',
+        inf: 'Non-polar hydrocarbon present',
+        status: 'Immiscible (2 Layers)'
+      },
+      ignition: {
+        isSooty: false,
+        obs: 'Burns with a luminous yellow flame.',
+        inf: 'Saturated alkane present',
+        status: 'Luminous Flame'
+      },
+      bromine: {
+        isDecolorized: false,
+        obs: 'Bromine water remains reddish-brown.',
+        inf: 'Unsaturation absent',
+        status: 'Red-Brown Persists'
+      },
+      kmno4: {
+        isDecolorized: false,
+        obs: 'Acidified KMnO₄ remains purple.',
+        inf: 'Saturated hydrocarbon unreactive to KMnO₄',
+        status: 'Purple Persists'
+      },
+      dichromate: {
+        turnsGreen: false,
+        obs: 'Dichromate remains orange.',
+        inf: 'Alkanol absent',
+        status: 'Orange Persists'
+      },
+      carbonate: {
+        hasEffervescence: false,
+        obs: 'No effervescence observed.',
+        inf: 'Carboxylic acid absent',
+        status: 'No Effervescence'
+      },
+      esterification: {
+        isFruity: false,
+        obs: 'No fruity odour.',
+        inf: 'Alkanol absent',
+        status: 'No Reaction'
+      },
+      litmus: {
+        isAcidic: false,
+        obs: 'Litmus papers remain unchanged.',
+        inf: 'Neutral hydrocarbon',
+        status: 'Neutral (pH 7)'
+      }
     }
   };
+
+  /**
+   * ── Dynamic Organic Compound Parser & Synthesizer ───────────────
+   * Dynamically synthesizes reaction profiles for unlisted organic compounds
+   * based on IUPAC nomenclature, functional group suffixes, and chemical formulas.
+   */
+  function parseAndSynthesizeOrganicSample(query) {
+    if (!query) return null;
+    const raw = String(query).trim();
+    const up = raw.toUpperCase().replace(/[\s\-_]/g, '');
+
+    // 1. Check for Methanoic / Formic special case first
+    if (up.includes('METHANOIC') || up.includes('FORMIC') || up.includes('HCOOH')) {
+      return SAMPLES.org_methanoic_acid;
+    }
+    // 2. Check for Benzoic / Aromatic special case
+    if (up.includes('BENZOIC') || up.includes('C6H5COOH')) {
+      return SAMPLES.org_benzoic_acid;
+    }
+
+    // 3. Functional group classification
+    let fgKey = null;
+    let fgName = '';
+    let isSooty = false;
+    let archetype = null;
+
+    if (up.includes('ALKENE') || up.includes('HEXENE') || up.includes('OCTENE') || up.includes('HEPTENE') || up.includes('PENTENE') || up.includes('BUTENE') || up.includes('PROPENE') || up.includes('ETHENE') || (up.endsWith('ENE') && !up.includes('BENZENE')) || up.includes('C=C')) {
+      fgKey = 'alkene';
+      fgName = 'Alkene (>C=C< unsaturation)';
+      isSooty = true;
+      archetype = SAMPLES.org_alkene;
+    } else if (up.includes('ALCOHOL') || up.includes('ALKANOL') || up.includes('METHANOL') || up.includes('ETHANOL') || up.includes('PROPANOL') || up.includes('BUTANOL') || up.includes('PENTANOL') || up.includes('HEXANOL') || up.includes('OCTANOL') || (up.endsWith('OL') && !up.includes('BENZOL')) || up.includes('OH')) {
+      fgKey = 'alkanol';
+      fgName = 'Primary / Secondary Alkanol (R-OH)';
+      isSooty = false;
+      archetype = SAMPLES.org_alcohol;
+    } else if (up.includes('ACID') || up.includes('CARBOXYL') || up.includes('ETHANOIC') || up.includes('PROPANOIC') || up.includes('BUTANOIC') || up.includes('PENTANOIC') || up.includes('HEXANOIC') || up.includes('OCTANOIC') || up.endsWith('OIC') || up.includes('COOH')) {
+      fgKey = 'alkanoic_acid';
+      fgName = 'Carboxylic Acid (R-COOH)';
+      isSooty = false;
+      archetype = SAMPLES.org_acid;
+    } else if (up.includes('ALKANE') || up.includes('PARAFFIN') || up.includes('KEROSENE') || up.includes('PETROLEUM') || up.includes('METHANE') || up.includes('ETHANE') || up.includes('PROPANE') || up.includes('BUTANE') || up.includes('PENTANE') || up.includes('HEXANE') || up.includes('HEPTANE') || up.includes('OCTANE') || up.includes('CYCLOHEXANE') || up.endsWith('ANE')) {
+      fgKey = 'alkane';
+      fgName = 'Saturated Hydrocarbon (C-C)';
+      isSooty = up.includes('CYCLO') || up.includes('OCT');
+      archetype = SAMPLES.org_alkane;
+    }
+
+    if (!archetype) return null;
+
+    const dynamicKey = `org_dyn_${raw.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+    const dynamicSample = {
+      key: dynamicKey,
+      altKeys: [raw.toUpperCase(), up],
+      label: `${raw} (Dynamic Sample)`,
+      name: raw,
+      compoundKey: raw.toLowerCase().replace(/[^a-z0-9]/g, '_'),
+      fgKey,
+      fgName,
+      isSooty,
+      solubility: Object.assign({}, archetype.solubility),
+      ignition: Object.assign({}, archetype.ignition, { isSooty }),
+      bromine: Object.assign({}, archetype.bromine),
+      kmno4: Object.assign({}, archetype.kmno4),
+      dichromate: Object.assign({}, archetype.dichromate),
+      carbonate: Object.assign({}, archetype.carbonate),
+      esterification: Object.assign({}, archetype.esterification),
+      litmus: Object.assign({}, archetype.litmus),
+      isDynamic: true
+    };
+
+    SAMPLES[dynamicKey] = dynamicSample;
+    return dynamicSample;
+  }
 
   function resolveSample(query) {
     if (!query) return SAMPLES.org_alkene;
@@ -437,15 +976,20 @@
     if (norm.includes('CYCLOHEXENE')) return SAMPLES.org_alkene;
     if (norm.includes('CYCLOHEXANE')) return SAMPLES.org_alkane;
     if (norm.includes('BUTAN')) return SAMPLES.org_butanol;
-    if (norm.includes('PROPAN')) return SAMPLES.org_alcohol;
+    if (norm.includes('PROPAN-2-OL') || norm.includes('ISOPROPANOL')) return SAMPLES.org_propanol;
+    if (norm.includes('PROPAN')) return SAMPLES.org_propanol;
 
-    // 3. Name or word-boundary altKey matching
+    // 3. Dynamic functional group synthesizer before blind fallback
+    const dynamicSample = parseAndSynthesizeOrganicSample(query);
+    if (dynamicSample) return dynamicSample;
+
+    // 4. Name or word-boundary altKey matching
     for (const key of Object.keys(SAMPLES)) {
       const s = SAMPLES[key];
       if (s.name.toUpperCase().includes(norm)) return s;
     }
 
-    // 4. Broad functional group fallbacks
+    // 5. Broad functional group fallbacks
     if (norm.includes('ACID') || norm.includes('COOH')) return SAMPLES.org_acid;
     if (norm.includes('ALCOHOL') || norm.includes('OL') || norm.includes('ETHANOL')) return SAMPLES.org_alcohol;
     if (norm.includes('ENE') || norm.includes('HEXENE') || norm.includes('ALKENE')) return SAMPLES.org_alkene;
@@ -1386,6 +1930,7 @@
   const OrganicBenchCore = {
     SAMPLES,
     resolveSample,
+    parseAndSynthesizeOrganicSample,
     renderIgnitionSvg,
     renderLitmusSvg,
     renderDecolorizationSvg,

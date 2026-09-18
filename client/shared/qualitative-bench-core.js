@@ -278,8 +278,575 @@
       crystalColor: '#F1F5F9',
       crystalSecondary: '#E2E8F0',
       crystalHighlight: '#FFFFFF'
+    },
+    // ── Extended KNEC Syllabus Salts ──────────────────────────────
+    magnesiumSulfate: {
+      key: 'magnesiumSulfate',
+      altKeys: ['MGSO4', 'MAGNESIUM SULFATE', 'MAGNESIUM SULPHATE', 'MAGNESIUM_SULFATE', 'EPSOM_SALT'],
+      name: 'Magnesium Sulfate',
+      formula: 'MgSO₄',
+      cation: 'Mg2+',
+      anion: 'SO4^2-',
+      cationDisplay: 'Mg²⁺',
+      anionDisplay: 'SO₄²⁻',
+      appearance: 'White crystalline solid (hydrated prismatic crystals)',
+      solubility: 'Readily soluble in water; forms a clear, neutral stock solution.',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#E2E8F0',
+      crystalHighlight: '#FFFFFF'
+    },
+    magnesiumChloride: {
+      key: 'magnesiumChloride',
+      altKeys: ['MGCL2', 'MAGNESIUM CHLORIDE', 'MAGNESIUM_CHLORIDE'],
+      name: 'Magnesium Chloride',
+      formula: 'MgCl₂',
+      cation: 'Mg2+',
+      anion: 'Cl-',
+      cationDisplay: 'Mg²⁺',
+      anionDisplay: 'Cl⁻',
+      appearance: 'White deliquescent crystalline flakes',
+      solubility: 'Very soluble in water; forms a clear stock solution.',
+      crystalColor: '#F1F5F9',
+      crystalSecondary: '#CBD5E1',
+      crystalHighlight: '#FFFFFF'
+    },
+    magnesiumNitrate: {
+      key: 'magnesiumNitrate',
+      altKeys: ['MG(NO3)2', 'MGNO32', 'MAGNESIUM NITRATE', 'MAGNESIUM_NITRATE'],
+      name: 'Magnesium Nitrate',
+      formula: 'Mg(NO₃)₂',
+      cation: 'Mg2+',
+      anion: 'NO3-',
+      cationDisplay: 'Mg²⁺',
+      anionDisplay: 'NO₃⁻',
+      appearance: 'White crystalline deliquescent solid',
+      solubility: 'Readily soluble in water; forms a clear, neutral stock solution.',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#E2E8F0',
+      crystalHighlight: '#FFFFFF'
+    },
+    magnesiumCarbonate: {
+      key: 'magnesiumCarbonate',
+      altKeys: ['MGCO3', 'MAGNESIUM CARBONATE', 'MAGNESIUM_CARBONATE'],
+      name: 'Magnesium Carbonate',
+      formula: 'MgCO₃',
+      cation: 'Mg2+',
+      anion: 'CO3^2-',
+      cationDisplay: 'Mg²⁺',
+      anionDisplay: 'CO₃²⁻',
+      appearance: 'White light bulky powder',
+      solubility: 'Insoluble in water; dissolves in dilute acids with effervescence of CO₂.',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#CBD5E1',
+      crystalHighlight: '#FFFFFF'
+    },
+    potassiumIodide: {
+      key: 'potassiumIodide',
+      altKeys: ['KI', 'POTASSIUM IODIDE', 'POTASSIUM_IODIDE'],
+      name: 'Potassium Iodide',
+      formula: 'KI',
+      cation: 'K+',
+      anion: 'I-',
+      cationDisplay: 'K⁺',
+      anionDisplay: 'I⁻',
+      appearance: 'White crystalline solid (cubic granules)',
+      solubility: 'Readily soluble in water; forms a clear, neutral stock solution.',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#E2E8F0',
+      crystalHighlight: '#FFFFFF'
+    },
+    potassiumNitrate: {
+      key: 'potassiumNitrate',
+      altKeys: ['KNO3', 'POTASSIUM NITRATE', 'POTASSIUM_NITRATE', 'SALTPETRE'],
+      name: 'Potassium Nitrate',
+      formula: 'KNO₃',
+      cation: 'K+',
+      anion: 'NO3-',
+      cationDisplay: 'K⁺',
+      anionDisplay: 'NO₃⁻',
+      appearance: 'White crystalline prism solid',
+      solubility: 'Soluble in water; forms a clear, neutral solution.',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#CBD5E1',
+      crystalHighlight: '#FFFFFF'
+    },
+    potassiumSulfate: {
+      key: 'potassiumSulfate',
+      altKeys: ['K2SO4', 'POTASSIUM SULFATE', 'POTASSIUM SULPHATE', 'POTASSIUM_SULFATE'],
+      name: 'Potassium Sulfate',
+      formula: 'K₂SO₄',
+      cation: 'K+',
+      anion: 'SO4^2-',
+      cationDisplay: 'K⁺',
+      anionDisplay: 'SO₄²⁻',
+      appearance: 'White crystalline solid / powder',
+      solubility: 'Soluble in water; forms a clear, neutral stock solution.',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#E2E8F0',
+      crystalHighlight: '#FFFFFF'
+    },
+    potassiumCarbonate: {
+      key: 'potassiumCarbonate',
+      altKeys: ['K2CO3', 'POTASSIUM CARBONATE', 'POTASSIUM_CARBONATE'],
+      name: 'Potassium Carbonate',
+      formula: 'K₂CO₃',
+      cation: 'K+',
+      anion: 'CO3^2-',
+      cationDisplay: 'K⁺',
+      anionDisplay: 'CO₃²⁻',
+      appearance: 'White deliquescent powder',
+      solubility: 'Readily soluble in water; forms an alkaline stock solution.',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#CBD5E1',
+      crystalHighlight: '#FFFFFF'
+    },
+    sodiumChloride: {
+      key: 'sodiumChloride',
+      altKeys: ['NACL', 'SODIUM CHLORIDE', 'SODIUM_CHLORIDE', 'TABLE_SALT'],
+      name: 'Sodium Chloride',
+      formula: 'NaCl',
+      cation: 'Na+',
+      anion: 'Cl-',
+      cationDisplay: 'Na⁺',
+      anionDisplay: 'Cl⁻',
+      appearance: 'White crystalline solid (cubic crystals)',
+      solubility: 'Readily soluble in water; forms a clear, neutral stock solution.',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#CBD5E1',
+      crystalHighlight: '#FFFFFF'
+    },
+    sodiumSulfate: {
+      key: 'sodiumSulfate',
+      altKeys: ['NA2SO4', 'SODIUM SULFATE', 'SODIUM SULPHATE', 'SODIUM_SULFATE'],
+      name: 'Sodium Sulfate',
+      formula: 'Na₂SO₄',
+      cation: 'Na+',
+      anion: 'SO4^2-',
+      cationDisplay: 'Na⁺',
+      anionDisplay: 'SO₄²⁻',
+      appearance: 'White crystalline powder',
+      solubility: 'Soluble in water; forms a clear, neutral stock solution.',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#CBD5E1',
+      crystalHighlight: '#FFFFFF'
+    },
+    sodiumNitrate: {
+      key: 'sodiumNitrate',
+      altKeys: ['NANO3', 'SODIUM NITRATE', 'SODIUM_NITRATE', 'CHILE_SALTPETRE'],
+      name: 'Sodium Nitrate',
+      formula: 'NaNO₃',
+      cation: 'Na+',
+      anion: 'NO3-',
+      cationDisplay: 'Na⁺',
+      anionDisplay: 'NO₃⁻',
+      appearance: 'White crystalline granules',
+      solubility: 'Very soluble in water; forms a clear stock solution.',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#CBD5E1',
+      crystalHighlight: '#FFFFFF'
+    },
+    copperChloride: {
+      key: 'copperChloride',
+      altKeys: ['CUCL2', 'COPPER CHLORIDE', 'COPPER(II) CHLORIDE', 'COPPER_CHLORIDE'],
+      name: 'Copper(II) Chloride',
+      formula: 'CuCl₂',
+      cation: 'Cu2+',
+      anion: 'Cl-',
+      cationDisplay: 'Cu²⁺',
+      anionDisplay: 'Cl⁻',
+      appearance: 'Blue-green deliquescent crystalline solid',
+      solubility: 'Very soluble in water; forms a clear bright blue-green solution.',
+      crystalColor: '#0EA5E9',
+      crystalSecondary: '#0284C7',
+      crystalHighlight: '#7DD3FC'
+    },
+    copperNitrate: {
+      key: 'copperNitrate',
+      altKeys: ['CU(NO3)2', 'CUNO32', 'COPPER NITRATE', 'COPPER(II) NITRATE', 'COPPER_NITRATE'],
+      name: 'Copper(II) Nitrate',
+      formula: 'Cu(NO₃)₂',
+      cation: 'Cu2+',
+      anion: 'NO3-',
+      cationDisplay: 'Cu²⁺',
+      anionDisplay: 'NO₃⁻',
+      appearance: 'Deep blue hydrated crystalline solid',
+      solubility: 'Very soluble in water; forms a deep blue acidic solution.',
+      crystalColor: '#2563EB',
+      crystalSecondary: '#1D4ED8',
+      crystalHighlight: '#93C5FD'
+    },
+    copperCarbonate: {
+      key: 'copperCarbonate',
+      altKeys: ['CUCO3', 'COPPER CARBONATE', 'COPPER(II) CARBONATE', 'COPPER_CARBONATE', 'MALACHITE'],
+      name: 'Copper(II) Carbonate',
+      formula: 'CuCO₃',
+      cation: 'Cu2+',
+      anion: 'CO3^2-',
+      cationDisplay: 'Cu²⁺',
+      anionDisplay: 'CO₃²⁻',
+      appearance: 'Fine green powder (basic copper carbonate)',
+      solubility: 'Insoluble in water; dissolves in dilute acids with effervescence to form a blue solution.',
+      crystalColor: '#10B981',
+      crystalSecondary: '#059669',
+      crystalHighlight: '#6EE7B7'
+    },
+    zincChloride: {
+      key: 'zincChloride',
+      altKeys: ['ZNCL2', 'ZINC CHLORIDE', 'ZINC_CHLORIDE'],
+      name: 'Zinc Chloride',
+      formula: 'ZnCl₂',
+      cation: 'Zn2+',
+      anion: 'Cl-',
+      cationDisplay: 'Zn²⁺',
+      anionDisplay: 'Cl⁻',
+      appearance: 'White highly deliquescent granules',
+      solubility: 'Very soluble in water; forms a clear slightly acidic solution.',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#CBD5E1',
+      crystalHighlight: '#FFFFFF'
+    },
+    zincCarbonate: {
+      key: 'zincCarbonate',
+      altKeys: ['ZNCO3', 'ZINC CARBONATE', 'ZINC_CARBONATE', 'CALAMINE'],
+      name: 'Zinc Carbonate',
+      formula: 'ZnCO₃',
+      cation: 'Zn2+',
+      anion: 'CO3^2-',
+      cationDisplay: 'Zn²⁺',
+      anionDisplay: 'CO₃²⁻',
+      appearance: 'White fine amorphous powder',
+      solubility: 'Insoluble in water; dissolves in dilute acids with effervescence.',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#E2E8F0',
+      crystalHighlight: '#FFFFFF'
+    },
+    ironChlorideFe2: {
+      key: 'ironChlorideFe2',
+      altKeys: ['FECL2', 'IRON(II) CHLORIDE', 'FERROUS CHLORIDE', 'IRON_II_CHLORIDE'],
+      name: 'Iron(II) Chloride',
+      formula: 'FeCl₂',
+      cation: 'Fe2+',
+      anion: 'Cl-',
+      cationDisplay: 'Fe²⁺',
+      anionDisplay: 'Cl⁻',
+      appearance: 'Pale green-yellow crystalline solid',
+      solubility: 'Soluble in water; forms a pale green solution.',
+      crystalColor: '#34D399',
+      crystalSecondary: '#059669',
+      crystalHighlight: '#A7F3D0'
+    },
+    ironNitrate: {
+      key: 'ironNitrate',
+      altKeys: ['FE(NO3)3', 'FENO33', 'IRON(III) NITRATE', 'FERRIC NITRATE', 'IRON_NITRATE'],
+      name: 'Iron(III) Nitrate',
+      formula: 'Fe(NO₃)₃',
+      cation: 'Fe3+',
+      anion: 'NO3-',
+      cationDisplay: 'Fe³⁺',
+      anionDisplay: 'NO₃⁻',
+      appearance: 'Pale violet / brownish-yellow deliquescent crystals',
+      solubility: 'Readily soluble in water; forms a brownish-yellow acidic solution.',
+      crystalColor: '#D97706',
+      crystalSecondary: '#B45309',
+      crystalHighlight: '#FDE68A'
+    },
+    leadChloride: {
+      key: 'leadChloride',
+      altKeys: ['PBCL2', 'LEAD CHLORIDE', 'LEAD(II) CHLORIDE', 'LEAD_CHLORIDE'],
+      name: 'Lead(II) Chloride',
+      formula: 'PbCl₂',
+      cation: 'Pb2+',
+      anion: 'Cl-',
+      cationDisplay: 'Pb²⁺',
+      anionDisplay: 'Cl⁻',
+      appearance: 'White crystalline needle-like powder',
+      solubility: 'Sparingly soluble in cold water; dissolves readily in boiling water and recrystallizes on cooling.',
+      crystalColor: '#F1F5F9',
+      crystalSecondary: '#CBD5E1',
+      crystalHighlight: '#FFFFFF'
+    },
+    leadSulfate: {
+      key: 'leadSulfate',
+      altKeys: ['PBSO4', 'LEAD SULFATE', 'LEAD SULPHATE', 'LEAD(II) SULFATE', 'LEAD_SULFATE'],
+      name: 'Lead(II) Sulfate',
+      formula: 'PbSO₄',
+      cation: 'Pb2+',
+      anion: 'SO4^2-',
+      cationDisplay: 'Pb²⁺',
+      anionDisplay: 'SO₄²⁻',
+      appearance: 'Dense white heavy powder',
+      solubility: 'Insoluble in water and dilute acids.',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#CBD5E1',
+      crystalHighlight: '#FFFFFF'
+    },
+    leadCarbonate: {
+      key: 'leadCarbonate',
+      altKeys: ['PBCO3', 'LEAD CARBONATE', 'LEAD(II) CARBONATE', 'LEAD_CARBONATE'],
+      name: 'Lead(II) Carbonate',
+      formula: 'PbCO₃',
+      cation: 'Pb2+',
+      anion: 'CO3^2-',
+      cationDisplay: 'Pb²⁺',
+      anionDisplay: 'CO₃²⁻',
+      appearance: 'White heavy crystalline powder',
+      solubility: 'Insoluble in water; dissolves in dilute HNO₃ with effervescence of CO₂.',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#CBD5E1',
+      crystalHighlight: '#FFFFFF'
+    },
+    bariumNitrate: {
+      key: 'bariumNitrate',
+      altKeys: ['BA(NO3)2', 'BANO32', 'BARIUM NITRATE', 'BARIUM_NITRATE'],
+      name: 'Barium Nitrate',
+      formula: 'Ba(NO₃)₂',
+      cation: 'Ba2+',
+      anion: 'NO3-',
+      cationDisplay: 'Ba²⁺',
+      anionDisplay: 'NO₃⁻',
+      appearance: 'White sparkling crystalline granules',
+      solubility: 'Soluble in water; forms a clear, neutral stock solution.',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#E2E8F0',
+      crystalHighlight: '#FFFFFF'
+    },
+    bariumSulfate: {
+      key: 'bariumSulfate',
+      altKeys: ['BASO4', 'BARIUM SULFATE', 'BARIUM SULPHATE', 'BARIUM_SULFATE'],
+      name: 'Barium Sulfate',
+      formula: 'BaSO₄',
+      cation: 'Ba2+',
+      anion: 'SO4^2-',
+      cationDisplay: 'Ba²⁺',
+      anionDisplay: 'SO₄²⁻',
+      appearance: 'Dense white heavy powder',
+      solubility: 'Completely insoluble in water and all dilute mineral acids.',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#CBD5E1',
+      crystalHighlight: '#FFFFFF'
+    },
+    calciumCarbonate: {
+      key: 'calciumCarbonate',
+      altKeys: ['CACO3', 'CALCIUM CARBONATE', 'CALCIUM_CARBONATE', 'MARBLE_CHIPS', 'CHALK'],
+      name: 'Calcium Carbonate',
+      formula: 'CaCO₃',
+      cation: 'Ca2+',
+      anion: 'CO3^2-',
+      cationDisplay: 'Ca²⁺',
+      anionDisplay: 'CO₃²⁻',
+      appearance: 'White chalky crystalline powder / chips',
+      solubility: 'Insoluble in water; dissolves vigorously in dilute acids with effervescence.',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#CBD5E1',
+      crystalHighlight: '#FFFFFF'
+    },
+    calciumSulfate: {
+      key: 'calciumSulfate',
+      altKeys: ['CASO4', 'CALCIUM SULFATE', 'CALCIUM SULPHATE', 'CALCIUM_SULFATE', 'GYPSUM'],
+      name: 'Calcium Sulfate',
+      formula: 'CaSO₄',
+      cation: 'Ca2+',
+      anion: 'SO4^2-',
+      cationDisplay: 'Ca²⁺',
+      anionDisplay: 'SO₄²⁻',
+      appearance: 'White crystalline solid (gypsum powder)',
+      solubility: 'Sparingly soluble in water; forms a cloudy suspension.',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#CBD5E1',
+      crystalHighlight: '#FFFFFF'
+    },
+    aluminumSulfate: {
+      key: 'aluminumSulfate',
+      altKeys: ['AL2(SO4)3', 'AL2SO43', 'ALUMINUM SULFATE', 'ALUMINIUM SULFATE', 'ALUMINUM_SULFATE'],
+      name: 'Aluminum Sulfate',
+      formula: 'Al₂(SO₄)₃',
+      cation: 'Al3+',
+      anion: 'SO4^2-',
+      cationDisplay: 'Al³⁺',
+      anionDisplay: 'SO₄²⁻',
+      appearance: 'White lustrous crystalline solid / powder',
+      solubility: 'Readily soluble in water; forms a clear, acidic stock solution.',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#CBD5E1',
+      crystalHighlight: '#FFFFFF'
+    },
+    aluminumChloride: {
+      key: 'aluminumChloride',
+      altKeys: ['ALCL3', 'ALUMINUM CHLORIDE', 'ALUMINIUM CHLORIDE', 'ALUMINUM_CHLORIDE'],
+      name: 'Aluminum Chloride',
+      formula: 'AlCl₃',
+      cation: 'Al3+',
+      anion: 'Cl-',
+      cationDisplay: 'Al³⁺',
+      anionDisplay: 'Cl⁻',
+      appearance: 'White to yellowish crystalline powder (fumes in moist air)',
+      solubility: 'Very soluble in water with slight hiss and heat evolution.',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#E2E8F0',
+      crystalHighlight: '#FFFFFF'
+    },
+    ammoniumNitrate: {
+      key: 'ammoniumNitrate',
+      altKeys: ['NH4NO3', 'AMMONIUM NITRATE', 'AMMONIUM_NITRATE'],
+      name: 'Ammonium Nitrate',
+      formula: 'NH₄NO₃',
+      cation: 'NH4+',
+      anion: 'NO3-',
+      cationDisplay: 'NH₄⁺',
+      anionDisplay: 'NO₃⁻',
+      appearance: 'White crystalline deliquescent solid',
+      solubility: 'Extremely soluble in water with marked temperature drop.',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#CBD5E1',
+      crystalHighlight: '#FFFFFF'
+    },
+    ammoniumSulfate: {
+      key: 'ammoniumSulfate',
+      altKeys: ['(NH4)2SO4', 'NH42SO4', 'AMMONIUM SULFATE', 'AMMONIUM SULPHATE', 'AMMONIUM_SULFATE'],
+      name: 'Ammonium Sulfate',
+      formula: '(NH₄)₂SO₄',
+      cation: 'NH4+',
+      anion: 'SO4^2-',
+      cationDisplay: 'NH₄⁺',
+      anionDisplay: 'SO₄²⁻',
+      appearance: 'White crystalline granules / solid',
+      solubility: 'Very soluble in water; forms a clear, neutral stock solution.',
+      crystalColor: '#F8FAFC',
+      crystalSecondary: '#CBD5E1',
+      crystalHighlight: '#FFFFFF'
     }
   };
+
+  /**
+   * ── Dynamic Chemical Formula & Name Parser ─────────────────────
+   * Parses arbitrary teacher queries into fundamental Cation + Anion pairs,
+   * synthesizing complete reaction profiles dynamically on the fly.
+   */
+  function parseAndSynthesizeSalt(query) {
+    if (!query) return null;
+    const raw = String(query).trim();
+    const up = raw.toUpperCase().replace(/[\s\-_]/g, '');
+
+    // 1. Detect Cation
+    let cation = null;
+    let cationDisplay = '';
+    let cationName = '';
+
+    if (up.includes('PB') || up.includes('LEAD') || up.includes('PLUMB')) {
+      cation = 'Pb2+'; cationDisplay = 'Pb²⁺'; cationName = 'Lead(II)';
+    } else if (up.includes('CU') || up.includes('COPPER') || up.includes('CUPR')) {
+      cation = 'Cu2+'; cationDisplay = 'Cu²⁺'; cationName = 'Copper(II)';
+    } else if (up.includes('FE3') || up.includes('FEIII') || up.includes('IRON3') || up.includes('IRON(III)') || up.includes('FERRIC') || (up.includes('FE') && (up.includes('CL3') || up.includes('NO33')))) {
+      cation = 'Fe3+'; cationDisplay = 'Fe³⁺'; cationName = 'Iron(III)';
+    } else if (up.includes('FE2') || up.includes('FEII') || up.includes('IRON2') || up.includes('IRON(II)') || up.includes('FERROUS') || up.includes('FE')) {
+      cation = 'Fe2+'; cationDisplay = 'Fe²⁺'; cationName = 'Iron(II)';
+    } else if (up.includes('AL') || up.includes('ALUMIN')) {
+      cation = 'Al3+'; cationDisplay = 'Al³⁺'; cationName = 'Aluminum';
+    } else if (up.includes('ZN') || up.includes('ZINC')) {
+      cation = 'Zn2+'; cationDisplay = 'Zn²⁺'; cationName = 'Zinc';
+    } else if (up.includes('CA') || up.includes('CALCI')) {
+      cation = 'Ca2+'; cationDisplay = 'Ca²⁺'; cationName = 'Calcium';
+    } else if (up.includes('MG') || up.includes('MAGNESI')) {
+      cation = 'Mg2+'; cationDisplay = 'Mg²⁺'; cationName = 'Magnesium';
+    } else if (up.includes('BA') || up.includes('BARI')) {
+      cation = 'Ba2+'; cationDisplay = 'Ba²⁺'; cationName = 'Barium';
+    } else if (up.includes('NH4') || up.includes('AMMONI')) {
+      cation = 'NH4+'; cationDisplay = 'NH₄⁺'; cationName = 'Ammonium';
+    } else if (up.includes('NA') || up.includes('SODI')) {
+      cation = 'Na+'; cationDisplay = 'Na⁺'; cationName = 'Sodium';
+    } else if (up.includes('POTASSI') || (up.startsWith('K') && up.length <= 4) || up.includes('KNO3') || up.includes('KCL') || up.includes('KBR') || up.includes('KI') || up.includes('K2SO4') || up.includes('K2CO3')) {
+      cation = 'K+'; cationDisplay = 'K⁺'; cationName = 'Potassium';
+    }
+
+    // 2. Detect Anion
+    let anion = null;
+    let anionDisplay = '';
+    let anionName = '';
+
+    if (up.includes('HCO3') || up.includes('HYDROGENCARBONAT') || up.includes('BICARBONAT')) {
+      anion = 'HCO3-'; anionDisplay = 'HCO₃⁻'; anionName = 'Hydrogen Carbonate';
+    } else if (up.includes('CO3') || up.includes('CARBONAT')) {
+      anion = 'CO3^2-'; anionDisplay = 'CO₃²⁻'; anionName = 'Carbonate';
+    } else if (up.includes('SO3') || up.includes('SULFIT') || up.includes('SULPHIT')) {
+      anion = 'SO3^2-'; anionDisplay = 'SO₃²⁻'; anionName = 'Sulfite';
+    } else if (up.includes('SO4') || up.includes('SULFAT') || up.includes('SULPHAT')) {
+      anion = 'SO4^2-'; anionDisplay = 'SO₄²⁻'; anionName = 'Sulfate';
+    } else if (up.includes('NO3') || up.includes('NITRAT')) {
+      anion = 'NO3-'; anionDisplay = 'NO₃⁻'; anionName = 'Nitrate';
+    } else if (up.includes('CL') || up.includes('CHLORI')) {
+      anion = 'Cl-'; anionDisplay = 'Cl⁻'; anionName = 'Chloride';
+    } else if (up.includes('BR') || up.includes('BROMI')) {
+      anion = 'Br-'; anionDisplay = 'Br⁻'; anionName = 'Bromide';
+    } else if (up.includes('IODI') || up.includes('NAI') || up.includes('KI') || up.includes('I2') || up.includes('I3') || /I\d*$/.test(up)) {
+      anion = 'I-'; anionDisplay = 'I⁻'; anionName = 'Iodide';
+    }
+
+    if (!cation && !anion) return null;
+
+    // Fallbacks if one was detected but not the other
+    if (!cation) { cation = 'Na+'; cationDisplay = 'Na⁺'; cationName = 'Sodium'; }
+    if (!anion) { anion = 'NO3-'; anionDisplay = 'NO₃⁻'; anionName = 'Nitrate'; }
+
+    const key = (cationName.toLowerCase().replace(/[^a-z0-9]/g, '') + anionName.replace(/[^a-z0-9]/gi, ''));
+    const name = `${cationName} ${anionName}`;
+
+    // Compute Appearance & Crystal Colors based on inorganic transition chemistry
+    let crystalColor = '#F8FAFC';
+    let crystalSecondary = '#CBD5E1';
+    let crystalHighlight = '#FFFFFF';
+    let appearance = 'White crystalline solid / powder';
+
+    if (cation === 'Cu2+') {
+      crystalColor = '#38BDF8'; crystalSecondary = '#0284C7'; crystalHighlight = '#BAE6FD';
+      appearance = (anion === 'CO3^2-') ? 'Fine green powder (basic carbonate)' : 'Blue/green crystalline solid';
+    } else if (cation === 'Fe2+') {
+      crystalColor = '#34D399'; crystalSecondary = '#059669'; crystalHighlight = '#A7F3D0';
+      appearance = 'Pale green crystalline solid';
+    } else if (cation === 'Fe3+') {
+      crystalColor = '#F59E0B'; crystalSecondary = '#B45309'; crystalHighlight = '#FDE68A';
+      appearance = 'Yellow-brown / reddish-brown crystalline solid';
+    }
+
+    // Compute Solubility according to KNEC Qualitative rules
+    let solubility = 'Readily soluble in water; forms a clear stock solution.';
+    if (anion === 'CO3^2-') {
+      if (cation === 'Na+' || cation === 'K+' || cation === 'NH4+') {
+        solubility = 'Readily soluble in water; forms an alkaline stock solution.';
+      } else {
+        solubility = 'Insoluble in water; dissolves in dilute mineral acids with effervescence of CO₂.';
+      }
+    } else if (anion === 'SO4^2-') {
+      if (cation === 'Ba2+' || cation === 'Pb2+') {
+        solubility = 'Insoluble in water and dilute acids.';
+      } else if (cation === 'Ca2+') {
+        solubility = 'Sparingly soluble in water; forms a cloudy suspension.';
+      }
+    } else if (anion === 'Cl-') {
+      if (cation === 'Pb2+') {
+        solubility = 'Sparingly soluble in cold water; dissolves readily in hot water and recrystallizes on cooling.';
+      }
+    }
+
+    const dynamicSalt = {
+      key,
+      altKeys: [raw.toUpperCase(), up, name.toUpperCase()],
+      name,
+      formula: `${cationDisplay}${anionDisplay}`,
+      cation,
+      anion,
+      cationDisplay,
+      anionDisplay,
+      appearance,
+      solubility,
+      crystalColor,
+      crystalSecondary,
+      crystalHighlight,
+      isDynamic: true
+    };
+
+    SALTS[key] = dynamicSalt;
+    return dynamicSalt;
+  }
 
   function resolveSalt(saltKey) {
     if (!saltKey) return SALTS.leadNitrate;
@@ -289,13 +856,18 @@
     for (const key in SALTS) {
       const salt = SALTS[key];
       if (salt.key.toUpperCase() === norm || salt.key.toUpperCase() === raw) return salt;
-      if (salt.formula.toUpperCase().replace(/[\s\-_()]/g, '') === norm.replace(/[()]/g, '')) return salt;
+      if (salt.formula && salt.formula.toUpperCase().replace(/[\s\-_()]/g, '') === norm.replace(/[()]/g, '')) return salt;
       if (salt.altKeys && salt.altKeys.some(k => {
         const alt = k.toUpperCase().replace(/[\s\-_()]/g, '');
         return alt === norm || alt === raw;
       })) return salt;
     }
-    // Fuzzy matching
+
+    // Dynamic first-principles synthesis before fallback
+    const synthesized = parseAndSynthesizeSalt(saltKey);
+    if (synthesized) return synthesized;
+
+    // Fuzzy matching fallback
     if (norm.includes('ZN')) return SALTS.zincSulfate;
     if (norm.includes('PB')) return SALTS.leadNitrate;
     if (norm.includes('CU')) return SALTS.copperSulfate;
@@ -303,6 +875,7 @@
     if (norm.includes('FE')) return SALTS.ironSulfate;
     if (norm.includes('CA') && norm.includes('NO3')) return SALTS.calciumNitrate;
     if (norm.includes('CA')) return SALTS.calciumChloride;
+    if (norm.includes('MG')) return SALTS.magnesiumSulfate;
     if (norm.includes('NH4') && norm.includes('CO3')) return SALTS.ammoniumCarbonate;
     if (norm.includes('NH4')) return SALTS.ammoniumChloride;
     if (norm.includes('BA')) return SALTS.bariumChloride;
@@ -310,7 +883,7 @@
     if (norm.includes('SO3') || norm.includes('SULFITE') || norm.includes('SULPHITE')) return SALTS.sodiumSulfite;
     if (norm.includes('BR') || norm.includes('BROMIDE')) return SALTS.potassiumBromide;
     if (norm.includes('NAI') || (norm.includes('IODIDE') && norm.includes('NA'))) return SALTS.sodiumIodide;
-    if (norm.includes('KI') || norm.includes('POTASSIUMIODIDE')) return SALTS.potassiumChloride;
+    if (norm.includes('KI') || norm.includes('POTASSIUMIODIDE')) return SALTS.potassiumIodide;
     return SALTS.leadNitrate;
   }
 
@@ -711,9 +1284,11 @@
           ppt = true;
           pptColor = '#991B1B'; // Reddish-brown
           statusLabel = isExcess ? 'In Excess: Reddish-brown precipitate insoluble' : 'Few Drops: Reddish-brown precipitate formed (Fe(OH)₃)';
-        } else if (cation === 'NH4+') {
+        } else if (cation === 'NH4+' || cation === 'Na+' || cation === 'K+') {
           bubbling = isHeated;
-          statusLabel = isHeated ? 'Warmed: Pungent gas evolved (NH₃) turning moist red litmus blue' : 'No precipitate formed';
+          statusLabel = (cation === 'NH4+' && isHeated)
+            ? 'Warmed: Pungent gas evolved (NH₃) turning moist red litmus blue'
+            : 'No precipitate formed';
         }
       } else if (isNH3) {
         if (cation === 'Zn2+') {
@@ -726,7 +1301,7 @@
             pptColor = '#FFFFFF';
             statusLabel = 'Few Drops: White precipitate formed';
           }
-        } else if (cation === 'Pb2+' || cation === 'Al3+') {
+        } else if (cation === 'Pb2+' || cation === 'Al3+' || cation === 'Mg2+') {
           ppt = true;
           pptColor = '#FFFFFF';
           statusLabel = isExcess ? 'In Excess: White precipitate insoluble' : 'Few Drops: White precipitate formed';
@@ -749,7 +1324,7 @@
           ppt = true;
           pptColor = '#991B1B';
           statusLabel = isExcess ? 'In Excess: Reddish-brown precipitate insoluble' : 'Few Drops: Reddish-brown precipitate formed';
-        } else if (cation === 'Ca2+' || cation === 'NH4+') {
+        } else if (cation === 'Ca2+' || cation === 'NH4+' || cation === 'Na+' || cation === 'K+' || cation === 'Ba2+') {
           statusLabel = 'No precipitate formed with drops or excess NH₃';
         }
       } else if (isAgNO3) {
@@ -951,8 +1526,9 @@
           statusLabel = (cation === 'Ca2+') ? 'Flame Test: Brick-red / orange-red flame'
             : (cation === 'Cu2+') ? 'Flame Test: Blue-green flame'
             : (cation === 'Ba2+') ? 'Flame Test: Apple-green flame'
-            : (salt.key.includes('sodium') || salt.name.includes('Sodium')) ? 'Flame Test: Persistent golden yellow flame'
-            : (salt.key.includes('potassium') || salt.name.includes('Potassium')) ? 'Flame Test: Pale lilac flame'
+            : (cation === 'Na+' || salt.key.includes('sodium') || salt.name.includes('Sodium')) ? 'Flame Test: Persistent golden yellow flame'
+            : (cation === 'K+' || salt.key.includes('potassium') || salt.name.includes('Potassium')) ? 'Flame Test: Pale lilac flame'
+            : (cation === 'Pb2+') ? 'Flame Test: Dull bluish-white / grey flame'
             : 'Flame Test: Characteristic emission color recorded';
         }
         soundType = 'flame';
@@ -2385,6 +2961,7 @@
   const QualitativeBenchCore = {
     SALTS,
     resolveSalt,
+    parseAndSynthesizeSalt,
     resolveReactionState,
     renderTubeSvg,
     renderTestTubeApparatusSvg: renderTubeSvg,

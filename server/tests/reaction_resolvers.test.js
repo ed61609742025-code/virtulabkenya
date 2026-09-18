@@ -654,4 +654,110 @@ describe('Organic Bench Core (Carbon Compound Reactions)', () => {
       assert.ok(svg.includes('Organic') && svg.includes('Aqueous'), 'Must render 2 immiscible layers');
     });
   });
+
+  describe('Unbounded Dynamic Simulation Engine — Extended Inorganic Registries & First-Principles Synthesis', () => {
+    it('should resolve newly added KNEC salts correctly (e.g., magnesiumSulfate, potassiumIodide, copperChloride)', () => {
+      const mg = QualitativeBenchCore.resolveSalt('magnesiumSulfate');
+      assert.strictEqual(mg.cation, 'Mg2+');
+      assert.strictEqual(mg.anion, 'SO4^2-');
+
+      // Regression fix: KI must resolve to potassiumIodide, NOT potassiumChloride
+      const ki = QualitativeBenchCore.resolveSalt('KI');
+      assert.strictEqual(ki.cation, 'K+');
+      assert.strictEqual(ki.anion, 'I-');
+      assert.strictEqual(ki.formula, 'KI');
+
+      const cuCl2 = QualitativeBenchCore.resolveSalt('copperChloride');
+      assert.strictEqual(cuCl2.cation, 'Cu2+');
+      assert.strictEqual(cuCl2.anion, 'Cl-');
+    });
+
+    it('Mg²⁺: white precipitate with NaOH & NH₃, insoluble in excess of both reagents', () => {
+      const naohFew = QualitativeBenchCore.resolveReactionState('magnesiumSulfate', 'q2_naoh', 'few_drops', 'Add NaOH dropwise');
+      assert.strictEqual(naohFew.ppt, true);
+      assert.strictEqual(naohFew.pptColor, '#FFFFFF');
+
+      const naohExcess = QualitativeBenchCore.resolveReactionState('magnesiumSulfate', 'q2_naoh', 'excess', 'Add NaOH in excess');
+      assert.strictEqual(naohExcess.ppt, true);
+      assert.strictEqual(naohExcess.pptDissolved, false, 'Mg(OH)2 is insoluble in excess NaOH');
+
+      const nh3Few = QualitativeBenchCore.resolveReactionState('magnesiumSulfate', 'q2_nh3', 'few_drops', 'Add NH3 dropwise');
+      assert.strictEqual(nh3Few.ppt, true);
+
+      const nh3Excess = QualitativeBenchCore.resolveReactionState('magnesiumSulfate', 'q2_nh3', 'excess', 'Add NH3 in excess');
+      assert.strictEqual(nh3Excess.ppt, true);
+      assert.strictEqual(nh3Excess.pptDissolved, false, 'Mg(OH)2 is insoluble in excess aqueous ammonia');
+    });
+
+    it('Dynamic First-Principles Salt Synthesis: unlisted teacher practical salt "Magnesium Bromide"', () => {
+      const dynSalt = QualitativeBenchCore.resolveSalt('Magnesium Bromide');
+      assert.ok(dynSalt, 'Must synthesize dynamic salt');
+      assert.strictEqual(dynSalt.cation, 'Mg2+');
+      assert.strictEqual(dynSalt.anion, 'Br-');
+
+      // Test with AgNO3
+      const agno3State = QualitativeBenchCore.resolveReactionState(dynSalt.key, 'q2_agno3', 'step2_agno3', 'Add AgNO3 to solution of sample');
+      assert.strictEqual(agno3State.ppt, true);
+      assert.strictEqual(agno3State.pptColor, '#FEF08A', 'Must produce pale cream precipitate of AgBr');
+    });
+
+    it('Dynamic First-Principles Salt Synthesis: unlisted formula "BaI2"', () => {
+      const dynSalt = QualitativeBenchCore.resolveSalt('BaI2');
+      assert.ok(dynSalt, 'Must synthesize BaI2');
+      assert.strictEqual(dynSalt.cation, 'Ba2+');
+      assert.strictEqual(dynSalt.anion, 'I-');
+
+      // Test flame reaction
+      const flame = QualitativeBenchCore.resolveReactionState(dynSalt.key, 'flame', 'stage1', 'Dip glass rod in solution and place in flame');
+      assert.ok(flame.statusLabel.includes('Apple-green flame'), 'Ba2+ must exhibit apple-green flame');
+
+      // Test AgNO3 reaction
+      const agno3State = QualitativeBenchCore.resolveReactionState(dynSalt.key, 'q2_agno3', 'step2_agno3', 'Add AgNO3 solution');
+      assert.strictEqual(agno3State.ppt, true);
+      assert.strictEqual(agno3State.pptColor, '#FACC15', 'Iodide must produce bright yellow precipitate of AgI');
+    });
+  });
+
+  describe('Unbounded Dynamic Simulation Engine — Extended Organic Registries & IUPAC Suffix Synthesis', () => {
+    it('should resolve newly added KNEC organic compounds (propene, methanol, propanoic acid, pentane)', () => {
+      const propene = OrganicBenchCore.resolveSample('propene');
+      assert.strictEqual(propene.fgKey, 'alkene');
+
+      const methanol = OrganicBenchCore.resolveSample('methanol');
+      assert.strictEqual(methanol.fgKey, 'alkanol');
+
+      const propAcid = OrganicBenchCore.resolveSample('propanoic acid');
+      assert.strictEqual(propAcid.fgKey, 'alkanoic_acid');
+
+      const pentane = OrganicBenchCore.resolveSample('pentane');
+      assert.strictEqual(pentane.fgKey, 'alkane');
+    });
+
+    it('Dynamic Functional Group Synthesis: unlisted alkene "Oct-1-ene"', () => {
+      const octene = OrganicBenchCore.resolveSample('Oct-1-ene');
+      assert.ok(octene, 'Must synthesize Oct-1-ene');
+      assert.strictEqual(octene.fgKey, 'alkene');
+      assert.strictEqual(octene.bromine.isDecolorized, true, 'Octene must decolorize bromine water');
+      assert.strictEqual(octene.kmno4.isDecolorized, true, 'Octene must decolorize KMnO4');
+      assert.strictEqual(octene.ignition.isSooty, true, 'Octene must burn with sooty flame');
+    });
+
+    it('Dynamic Functional Group Synthesis: unlisted carboxylic acid "Hexanoic acid"', () => {
+      const hexAcid = OrganicBenchCore.resolveSample('Hexanoic acid');
+      assert.ok(hexAcid, 'Must synthesize Hexanoic acid');
+      assert.strictEqual(hexAcid.fgKey, 'alkanoic_acid');
+      assert.strictEqual(hexAcid.litmus.isAcidic, true, 'Hexanoic acid must turn blue litmus red');
+      assert.strictEqual(hexAcid.carbonate.hasEffervescence, true, 'Hexanoic acid must produce CO2 effervescence');
+      assert.strictEqual(hexAcid.bromine.isDecolorized, false, 'Saturated acid does not decolorize bromine');
+    });
+
+    it('Dynamic Functional Group Synthesis: unlisted alkanol "Pentan-1-ol"', () => {
+      const pentanol = OrganicBenchCore.resolveSample('Pentan-1-ol');
+      assert.ok(pentanol, 'Must synthesize Pentan-1-ol');
+      assert.strictEqual(pentanol.fgKey, 'alkanol');
+      assert.strictEqual(pentanol.dichromate.turnsGreen, true, 'Pentan-1-ol must turn acidified dichromate green');
+      assert.strictEqual(pentanol.esterification.isFruity, true, 'Pentan-1-ol must produce fruity ester aroma');
+    });
+  });
 });
+

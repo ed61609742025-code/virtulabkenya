@@ -170,7 +170,7 @@ router.post('/bulk-import', apiLimiter, authMiddleware, authMiddleware.requireRo
 
   const fallbackForm = normalizeForm(defaultForm, 'Form 4');
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const defaultPassword = (defaultPasswordOverride && typeof defaultPasswordOverride === 'string' && defaultPasswordOverride.trim().length >= 6)
+  const defaultPassword = (defaultPasswordOverride && typeof defaultPasswordOverride === 'string' && defaultPasswordOverride.trim().length >= 8)
     ? defaultPasswordOverride.trim()
     : 'VirtuLab2026!';
   const defaultHash = await bcrypt.hash(defaultPassword, 10);
@@ -233,7 +233,7 @@ router.post('/bulk-import', apiLimiter, authMiddleware, authMiddleware.requireRo
 
   // 2. Precompute custom password hashes in parallel (defaultHash reused for others)
   const rowsWithHashes = await Promise.all(validRows.map(async (r) => {
-    const passwordHash = r.password && r.password.length >= 6
+    const passwordHash = r.password && r.password.length >= 8
       ? await bcrypt.hash(r.password, 10)
       : defaultHash;
     return { ...r, passwordHash };

@@ -23,7 +23,6 @@ USER node
 COPY --chown=node:node --from=dependencies /app/server/node_modules ./server/node_modules
 COPY --chown=node:node server/ ./server/
 COPY --chown=node:node client/ ./client/
-COPY --chown=node:node docs/ ./docs/
 COPY --chown=node:node README.md ./
 
 WORKDIR /app/server

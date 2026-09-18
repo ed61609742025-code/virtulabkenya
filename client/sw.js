@@ -105,6 +105,8 @@ const PRECACHE_ASSETS = [
   '/student/js/survey-sus.js',
   '/student/js/student-dashboard.js',
   '/student/js/speed-battle.js',
+  '/student/js/home.js',
+  '/student/js/history.js',
   '/teacher/login.html',
   '/teacher/register.html',
   '/teacher/dashboard.html',

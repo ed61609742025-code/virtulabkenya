@@ -18,7 +18,7 @@ function handleValidationErrors(req, res, next) {
 const validateStudentRegister = [
   body('name').trim().notEmpty().withMessage('All fields are required.').escape(),
   body('email').trim().notEmpty().withMessage('All fields are required.').isEmail().withMessage('Invalid email address.').normalizeEmail(),
-  body('password').notEmpty().withMessage('All fields are required.').isLength({ min: 6 }).withMessage('Password must be at least 6 characters.'),
+  body('password').notEmpty().withMessage('All fields are required.').isLength({ min: 8 }).withMessage('Password must be at least 8 characters.'),
   body('form').trim().notEmpty().withMessage('All fields are required.').escape(),
   body('schoolCode').trim().notEmpty().withMessage('All fields are required.').escape(),
   body('teacherCode').optional({ checkFalsy: true }).trim().escape(),
@@ -53,7 +53,7 @@ const validateQualitativeSave = [
 const validateTeacherRegister = [
   body('name').trim().notEmpty().withMessage('All fields are required.').escape(),
   body('email').trim().notEmpty().withMessage('All fields are required.').isEmail().withMessage('Invalid email address.').normalizeEmail(),
-  body('password').notEmpty().withMessage('All fields are required.').isLength({ min: 6 }).withMessage('Password must be at least 6 characters.'),
+  body('password').notEmpty().withMessage('All fields are required.').isLength({ min: 8 }).withMessage('Password must be at least 8 characters.'),
   body('schoolCode').trim().notEmpty().withMessage('All fields are required.').escape(),
   handleValidationErrors
 ];

@@ -78,7 +78,7 @@ describe('VirtuLab Kenya — Backend API Test Suite', () => {
     assert.strictEqual(body.error, 'All fields are required.');
   });
 
-  it('POST /api/auth/student/register — should return 400 if password < 6 chars', async () => {
+  it('POST /api/auth/student/register — should return 400 if password < 8 chars', async () => {
     const res = await fetch(url('/api/auth/student/register'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -93,7 +93,7 @@ describe('VirtuLab Kenya — Backend API Test Suite', () => {
     const body = await res.json();
 
     assert.strictEqual(res.status, 400);
-    assert.strictEqual(body.error, 'Password must be at least 6 characters.');
+    assert.strictEqual(body.error, 'Password must be at least 8 characters.');
   });
 
   it('POST /api/auth/student/register — should return 400 if school code invalid', async () => {

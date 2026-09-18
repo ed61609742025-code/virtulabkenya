@@ -59,7 +59,8 @@ app.use('/api/', apiLimiter);
 
 // ── Favicon Route ─────────────────────────────────────────────
 app.get('/favicon.ico', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/shared/icon-192.png'));
+  res.type('image/x-icon');
+  res.sendFile(path.join(__dirname, '../client/favicon.ico'));
 });
 
 // ── Health Check ──────────────────────────────────────────────
@@ -225,9 +226,42 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('[Process Error] Unhandled Promise Rejection at:', promise, 'reason:', reason);
 });
 
-process.on('uncaughtException', (err) => {
-  console.error('[Process Error] Uncaught Exception thrown:', err);
-  // Allow pending I/O to flush before exiting if necessary
+// Dispatches fatal process alerts to monitoring webhook if configured
+async function dispatchCrashAlert(type, error) {
+  const webhookUrl = process.env.ALERT_WEBHOOK_URL;
+  if (!webhookUrl) return;
+
+  try {
+    const payload = {
+      text: `🚨 *VirtuLab Kenya [CRITICAL]*: ${type} at ${new Date().toISOString()}\n` +
+            `*Error*: ${error?.message || error}\n` +
+            `*PID*: ${process.pid} | *Node*: ${process.version} | *Memory*: ${Math.round(process.memoryUsage().rss / 1024 / 1024)}MB\n` +
+            ```${error?.stack ? error.stack.slice(0, 1000) : 'No stack trace'}```
+    };
+    await fetch(webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  } catch (alertErr) {
+    console.error('[Crash Alert Failed]:', alertErr.message);
+  }
+}
+
+process.on('uncaughtException', async (err) => {
+  console.error('[Process Error] Uncaught Exception thrown:', {
+    timestamp: new Date().toISOString(),
+    pid: process.pid,
+    error: err?.message,
+    stack: err?.stack
+  });
+
+  // Attempt alerting before graceful exit
+  try {
+    await dispatchCrashAlert('Uncaught Exception', err);
+  } catch (_) {}
+
+  // Allow pending I/O to flush before exiting
   setTimeout(() => process.exit(1), 1000).unref();
 });
 

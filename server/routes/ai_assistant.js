@@ -7,6 +7,7 @@ const authMiddleware = require('../middleware/auth');
 const asyncHandler = require('../utils/asyncHandler');
 const { ValidationError } = require('../utils/AppError');
 const aiExamService = require('../services/aiExamAssistantService');
+const aiAssistantRepo = require('../repositories/aiAssistantRepo');
 
 const { aiAssistantLimiter } = require('../middleware/rateLimiter');
 
@@ -117,6 +118,41 @@ router.post('/refine-exam', asyncHandler(async (req, res) => {
     message: 'Exam refined successfully.',
     exam
   });
+}));
+
+
+/**
+ * GET /api/ai-assistant/drafts
+ * Retrieve saved teacher exam drafts
+ */
+router.get('/drafts', asyncHandler(async (req, res) => {
+  const drafts = await aiAssistantRepo.getTeacherDrafts(req.user.id);
+  return res.json({ success: true, drafts });
+}));
+
+/**
+ * POST /api/ai-assistant/drafts
+ * Save an exam draft
+ */
+router.post('/drafts', asyncHandler(async (req, res) => {
+  const { title, moduleType, examConfig } = req.body;
+  if (!examConfig) {
+    throw new ValidationError('examConfig is required.');
+  }
+  const draft = await aiAssistantRepo.saveExamDraft(req.user.id, { title, moduleType, examConfig });
+  return res.status(201).json({ success: true, draft });
+}));
+
+/**
+ * DELETE /api/ai-assistant/drafts/:id
+ * Delete a saved exam draft
+ */
+router.delete('/drafts/:id', asyncHandler(async (req, res) => {
+  const deleted = await aiAssistantRepo.deleteDraft(req.params.id, req.user.id);
+  if (!deleted) {
+    return res.status(404).json({ error: 'Draft not found or access denied.' });
+  }
+  return res.json({ success: true, message: 'Draft deleted successfully.' });
 }));
 
 module.exports = router;

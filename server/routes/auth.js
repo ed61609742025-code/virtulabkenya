@@ -320,8 +320,8 @@ router.post('/student/register', authLimiter, validateStudentRegister, asyncHand
   if (!name || !email || !password || !form || !schoolCode) {
     return res.status(400).json({ error: 'All fields are required.' });
   }
-  if (password.length < 6) {
-    return res.status(400).json({ error: 'Password must be at least 6 characters.' });
+  if (password.length < 8) {
+    return res.status(400).json({ error: 'Password must be at least 8 characters.' });
   }
 
   let createdUser;
@@ -394,8 +394,8 @@ router.post('/teacher/register', authLimiter, validateTeacherRegister, asyncHand
   if (!name || !email || !password || !schoolCode) {
     return res.status(400).json({ error: 'All fields are required.' });
   }
-  if (password.length < 6) {
-    return res.status(400).json({ error: 'Password must be at least 6 characters.' });
+  if (password.length < 8) {
+    return res.status(400).json({ error: 'Password must be at least 8 characters.' });
   }
 
   let teacher;

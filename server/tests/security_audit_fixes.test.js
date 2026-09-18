@@ -221,4 +221,84 @@ describe('7. Announcements Route Module (routes/announcements.js)', () => {
   });
 });
 
+// 8. NIST SP 800-63B Minimum Password Length (>= 8 chars)
+describe('8. NIST SP 800-63B Minimum Password Length Verification', () => {
+  const validators = require('../middleware/validators');
+
+  it('should require minimum 8 characters in validateStudentRegister', () => {
+    const pwValidator = validators.validateStudentRegister.find(v => v.builder && v.builder.fields && v.builder.fields.includes('password'));
+    assert.ok(pwValidator, 'Must have password validator in validateStudentRegister');
+    const min8Config = pwValidator.builder.stack.some(s => s.validator && s.validator.name === 'isLength' && s.options && s.options[0] && s.options[0].min === 8);
+    assert.ok(min8Config, 'Password validator must enforce min: 8');
+  });
+
+  it('should require minimum 8 characters in validateTeacherRegister', () => {
+    const pwValidator = validators.validateTeacherRegister.find(v => v.builder && v.builder.fields && v.builder.fields.includes('password'));
+    assert.ok(pwValidator, 'Must have password validator in validateTeacherRegister');
+    const min8Config = pwValidator.builder.stack.some(s => s.validator && s.validator.name === 'isLength' && s.options && s.options[0] && s.options[0].min === 8);
+    assert.ok(min8Config, 'Password validator must enforce min: 8');
+  });
+});
+
+// 9. AI Assistant Database Repository (repositories/aiAssistantRepo.js)
+describe('9. AI Assistant Database Repository Layer', () => {
+  const aiRepo = require('../repositories/aiAssistantRepo');
+
+  it('should export all required repository functions', () => {
+    assert.strictEqual(typeof aiRepo.saveExamDraft, 'function');
+    assert.strictEqual(typeof aiRepo.getTeacherDrafts, 'function');
+    assert.strictEqual(typeof aiRepo.getDraftById, 'function');
+    assert.strictEqual(typeof aiRepo.deleteDraft, 'function');
+    assert.strictEqual(typeof aiRepo.logAiAudit, 'function');
+  });
+});
+
+// 10. Favicon & PWA Icons Verification
+describe('10. Favicon & PWA Icons Optimization', () => {
+  const fs = require('fs');
+  const path = require('path');
+
+  it('should have client/favicon.ico with genuine ICO binary header', () => {
+    const icoPath = path.join(__dirname, '../../client/favicon.ico');
+    assert.ok(fs.existsSync(icoPath), 'client/favicon.ico must exist');
+    const buf = fs.readFileSync(icoPath);
+    // ICO header: 0x00 0x00 0x01 0x00
+    assert.strictEqual(buf[0], 0x00);
+    assert.strictEqual(buf[1], 0x00);
+    assert.strictEqual(buf[2], 0x01);
+    assert.strictEqual(buf[3], 0x00);
+    assert.ok(buf.length < 30000, `Favicon size must be compact (<30KB), got ${buf.length}`);
+  });
+
+  it('should have properly compressed PWA icons in client/shared/', () => {
+    const icons = ['icon-192.png', 'icon-512.png', 'icon-512-maskable.png', 'apple-touch-icon.png'];
+    icons.forEach(name => {
+      const p = path.join(__dirname, '../../client/shared/', name);
+      assert.ok(fs.existsSync(p), `${name} must exist`);
+      const stat = fs.statSync(p);
+      assert.ok(stat.size < 500000, `${name} size should be under 500KB, got ${stat.size}`);
+    });
+  });
+});
+
+// 11. Modularized Student Scripts
+describe('11. Modularized Student Scripts Verification', () => {
+  const fs = require('fs');
+  const path = require('path');
+
+  it('should have extracted home.js and history.js with clean syntax', () => {
+    const homeJsPath = path.join(__dirname, '../../client/student/js/home.js');
+    const histJsPath = path.join(__dirname, '../../client/student/js/history.js');
+    assert.ok(fs.existsSync(homeJsPath), 'home.js must exist');
+    assert.ok(fs.existsSync(histJsPath), 'history.js must exist');
+
+    const homeHtml = fs.readFileSync(path.join(__dirname, '../../client/student/home.html'), 'utf8');
+    const histHtml = fs.readFileSync(path.join(__dirname, '../../client/student/history.html'), 'utf8');
+
+    assert.ok(homeHtml.includes('src="js/home.js'), 'home.html must link to home.js');
+    assert.ok(histHtml.includes('src="js/history.js'), 'history.html must link to history.js');
+  });
+});
+
+
 

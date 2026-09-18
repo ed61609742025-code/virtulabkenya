@@ -3,4 +3,10 @@ server/node_modules
 .git
 .github
 .gemini
+docs
+tests
+server/tests
 *.log
+*.md
+!README.md
+.env*

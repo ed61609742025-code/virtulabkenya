@@ -9,6 +9,7 @@ require('dotenv').config({ path: path.join(__dirname, '.env') });
 const express = require('express');
 const cors = require('cors');
 const compression = require('compression');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 app.set('trust proxy', 1);
@@ -35,6 +36,8 @@ if (process.env.CORS_ORIGIN) {
   // Development / testing environment
   corsOptions = { origin: true, credentials: true };
 }
+app.use(cors(corsOptions));
+app.use(cookieParser());
 // Allow up to 50mb strictly on AI exam assistant parse-paper endpoint for base64 scanned exam papers
 app.use('/api/ai-assistant/parse-paper', express.json({ limit: '50mb' }));
 // Standard 1mb payload limit across all general API routes to mitigate JSON body buffer flooding
@@ -60,10 +63,20 @@ app.get('/favicon.ico', (req, res) => {
 });
 
 // ── Health Check ──────────────────────────────────────────────
-// This is the first endpoint — visit it to confirm the server is live
-app.get('/api/health', (req, res) => {
+// Health check endpoint — verifies server liveness and database connectivity
+app.get('/api/health', async (req, res) => {
+  let dbStatus = 'disconnected';
+  try {
+    const pool = require('./db/pool');
+    await pool.query('SELECT 1');
+    dbStatus = 'connected';
+  } catch (err) {
+    dbStatus = 'disconnected';
+  }
+
   res.json({
     status: 'ok',
+    db: dbStatus,
     project: 'VirtuLab Kenya',
     version: '1.0.0',
     message: 'Server is running. Welcome to VirtuLab Kenya.',

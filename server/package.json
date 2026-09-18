@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "node --test tests/reaction_resolvers.test.js tests/knec_exams.test.js tests/composite_polymorphism.test.js tests/mailer.test.js tests/offline_resilience.test.js tests/bench_fidelity.test.js tests/pedagogical_polish.test.js",
+    "test": "node --test tests/reaction_resolvers.test.js tests/knec_exams.test.js tests/composite_polymorphism.test.js tests/mailer.test.js tests/offline_resilience.test.js tests/bench_fidelity.test.js tests/pedagogical_polish.test.js tests/node_api.test.js tests/ai_assistant.test.js tests/google_auth.test.js tests/security_audit_fixes.test.js tests/student_analytics.test.js",
     "bump-version": "node scripts/bump_version.js"
   },
   "author": "VirtuLab Kenya",
@@ -14,11 +14,13 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "compression": "^1.8.1",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-rate-limit": "^8.6.2",
     "express-validator": "^7.3.2",
+    "google-auth-library": "^11.1.0",
     "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^6.10.1",

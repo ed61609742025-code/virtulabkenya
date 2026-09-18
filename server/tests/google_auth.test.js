@@ -174,4 +174,89 @@ describe('Student Google Authentication (OAuth2 / GIS)', () => {
     assert.strictEqual(body.user.name, 'Brian Omondi');
     assert.strictEqual(body.user.schoolName, 'Alliance High School');
   });
+
+  it('POST /api/auth/student/google — should set HttpOnly vlk_token cookie on successful authentication', async () => {
+    const credential = createMockGoogleCredential({
+      email: 'cookie.test@school.ac.ke',
+      name: 'Cookie Learner',
+      sub: 'google_cookie_123'
+    });
+
+    pool.query = async (text) => {
+      if (text.includes('FROM students s')) {
+        return {
+          rows: [{
+            id: 88,
+            name: 'Cookie Learner',
+            email: 'cookie.test@school.ac.ke',
+            form: 'Form 2',
+            school_id: 1,
+            status: 'active',
+            google_id: 'google_cookie_123'
+          }]
+        };
+      }
+      return { rows: [] };
+    };
+
+    const res = await fetch(url('/api/auth/student/google'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ credential })
+    });
+
+    assert.strictEqual(res.status, 200);
+    const setCookie = res.headers.get('set-cookie');
+    assert.ok(setCookie, 'Expected Set-Cookie header');
+    assert.ok(setCookie.includes('vlk_token='), 'Expected vlk_token in cookie');
+    assert.ok(setCookie.toLowerCase().includes('httponly'), 'Expected HttpOnly flag in cookie');
+    assert.ok(setCookie.toLowerCase().includes('samesite=strict'), 'Expected SameSite=Strict in cookie');
+  });
+
+  it('GET /api/auth/me — should authenticate using HttpOnly cookie without Authorization header', async () => {
+    const jwt = require('jsonwebtoken');
+    const token = jwt.sign(
+      { id: 88, role: 'student', name: 'Cookie Learner', email: 'cookie.test@school.ac.ke' },
+      process.env.JWT_SECRET
+    );
+
+    pool.query = async (text) => {
+      if (text.includes('FROM students s')) {
+        return {
+          rows: [{
+            id: 88,
+            name: 'Cookie Learner',
+            email: 'cookie.test@school.ac.ke',
+            form: 'Form 2',
+            school_id: 1,
+            school_name: 'Alliance High',
+            school_code: 'KCS-001'
+          }]
+        };
+      }
+      return { rows: [] };
+    };
+
+    const res = await fetch(url('/api/auth/me'), {
+      headers: {
+        'Cookie': `vlk_token=${token}`
+      }
+    });
+
+    assert.strictEqual(res.status, 200);
+    const body = await res.json();
+    assert.strictEqual(body.user.email, 'cookie.test@school.ac.ke');
+  });
+
+  it('POST /api/auth/logout — should clear the vlk_token cookie', async () => {
+    const res = await fetch(url('/api/auth/logout'), {
+      method: 'POST'
+    });
+    assert.strictEqual(res.status, 200);
+    const body = await res.json();
+    assert.strictEqual(body.success, true);
+    const setCookie = res.headers.get('set-cookie');
+    assert.ok(setCookie, 'Expected Set-Cookie header on logout');
+    assert.ok(setCookie.includes('vlk_token='), 'Expected vlk_token clear in cookie');
+  });
 });

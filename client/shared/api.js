@@ -38,6 +38,11 @@ function clearToken() {
     sessionStorage.removeItem('vlk_token');
     sessionStorage.removeItem('vlk_user');
   } catch(e) {}
+  try {
+    if (typeof fetch !== 'undefined') {
+      fetch(API_BASE + '/auth/logout', { method: 'POST', credentials: 'same-origin' }).catch(() => {});
+    }
+  } catch(e) {}
 }
 function decodeTokenPayload(token) {
   if (!token) return null;
@@ -131,7 +136,7 @@ async function downloadFile(endpoint, filename) {
   const token = getToken();
   if (token) headers['Authorization'] = 'Bearer ' + token;
 
-  const res = await fetch(API_BASE + endpoint, { headers });
+  const res = await fetch(API_BASE + endpoint, { headers, credentials: 'same-origin' });
   if (!res.ok) {
     let message = 'Download failed';
     try { const data = await res.json(); message = data.error || message; } catch (e) {}
@@ -470,7 +475,7 @@ async function apiRequest(method, endpoint, body, retries = 2) {
   const token = getToken();
   if (token) headers['Authorization'] = 'Bearer ' + token;
 
-  const options = { method, headers };
+  const options = { method, headers, credentials: 'same-origin' };
   if (body) options.body = JSON.stringify(body);
 
   let attempt = 0;

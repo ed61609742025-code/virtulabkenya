@@ -1115,8 +1115,8 @@ describe('VirtuLab Kenya — Backend API Test Suite', () => {
 
   it('POST /api/students/bulk-import — should batch insert valid students in a single query', async () => {
     pool.query = async (text, params) => {
-      if (text.includes('SELECT school_id, name FROM teachers')) {
-        return { rows: [{ school_id: 1, name: 'Test Teacher' }] };
+      if (text.includes('FROM teachers WHERE id = $1') || text.includes('SELECT school_id, name')) {
+        return { rows: [{ school_id: 1, name: 'Test Teacher', teacher_code: 'TCHTEST' }] };
       }
       if (text.includes('SELECT email FROM students WHERE email = ANY')) {
         return { rows: [{ email: 'existing@school.ac.ke' }] };
@@ -1384,17 +1384,17 @@ describe('VirtuLab Kenya — Backend API Test Suite', () => {
     engine.setQ1Answer('percentagePurity', '92.5');
 
     // Simulate candidate Q2 deductions
-    engine.setQ2Response('q2_appearance', 'White crystalline solid, dissolves to clear solution', 'Soluble salt');
-    engine.setQ2Response('q2_naoh', 'White precipitate formed, dissolves in excess', 'Zn2+ or Al3+ present');
+    engine.setQ2Response('q2_appearance', 'White crystalline solid, dissolves to colourless solution', 'Soluble salt');
+    engine.setQ2Response('q2_naoh', 'White precipitate formed, dissolves in excess', 'Pb2+, Al3+, or Zn2+ present');
     engine.setQ2Response('q2_nh3', 'White precipitate formed, dissolves completely in excess aqueous ammonia', 'Zn2+ confirmed');
     engine.setQ2Response('q2_anion', 'Dense white precipitate insoluble in nitric acid', 'SO42- confirmed');
     engine.setQ2Deduction('Zn2+', 'SO42-');
 
     // Simulate candidate Q3 deductions
-    engine.setQ3Response('q3_ignition', 'Burns with luminous smoky yellow sooty flame', 'Unsaturated compound');
+    engine.setQ3Response('q3_ignition', 'Burns with luminous smoky yellow sooty flame', 'Unsaturated organic compound (>C=C< present)');
     engine.setQ3Response('q3_litmus', 'No change on litmus paper', 'Neutral hydrocarbon');
-    engine.setQ3Response('q3_kmno4', 'Purple KMnO4 solution rapidly decolorized', 'Alkene present');
-    engine.setQ3Response('q3_nahco3', 'Bromine water rapidly decolorized in dark', 'Double bond confirmed');
+    engine.setQ3Response('q3_kmno4', 'Purple KMnO4 solution rapidly decolorized', 'Unsaturated carbon-carbon double bond (>C=C<) present');
+    engine.setQ3Response('q3_nahco3', 'Reddish-brown bromine water is rapidly decolorized without effervescence', 'Alkene (>C=C<) confirmed present');
     engine.setQ3Deduction('Alkene (>C=C<)');
 
     const evaluation = engine.evaluateExam();

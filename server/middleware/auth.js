@@ -13,13 +13,22 @@
 const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
+  let token = null;
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'No token provided. Please log in.' });
+  // 1. Check HttpOnly cookie first (XSS-safe storage)
+  if (req.cookies && req.cookies.vlk_token) {
+    token = req.cookies.vlk_token;
+  } else {
+    // 2. Fall back to Authorization: Bearer <token> header (localStorage / mobile clients)
+    const authHeader = req.headers['authorization'];
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
+    }
   }
 
-  const token = authHeader.split(' ')[1];
+  if (!token) {
+    return res.status(401).json({ error: 'No token provided. Please log in.' });
+  }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);

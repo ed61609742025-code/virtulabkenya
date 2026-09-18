@@ -12,6 +12,34 @@ const express = require('express');
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { OAuth2Client } = require('google-auth-library');
+
+// OAuth2Client is instantiated lazily (so tests without GOOGLE_CLIENT_ID still work).
+// The client caches Google's JWKS keys after the first verification — no repeated network calls.
+let _googleOAuthClient = null;
+function getGoogleClient() {
+  if (!_googleOAuthClient && config.google.clientId) {
+    _googleOAuthClient = new OAuth2Client(config.google.clientId);
+  }
+  return _googleOAuthClient;
+}
+
+const COOKIE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 7 days, matching TOKEN_EXPIRY default
+
+/**
+ * Sets the JWT as an HttpOnly, SameSite=Strict cookie on the response.
+ * This prevents JavaScript from reading the token, protecting against XSS token theft.
+ * The token is also included in the JSON response body for backward compatibility
+ * with clients that still read it from localStorage (api.js fallback path).
+ */
+function setCookieToken(res, token) {
+  res.cookie('vlk_token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    maxAge: COOKIE_MAX_AGE_MS
+  });
+}
 const authMiddleware = require('../middleware/auth');
 const pool = require('../db/pool');
 const { authLimiter } = require('../middleware/rateLimiter');
@@ -77,23 +105,29 @@ async function verifyGoogleIdToken(token) {
     return null;
   }
 
-  // Try Google tokeninfo endpoint
+  // Verify the Google ID Token locally using google-auth-library.
+  // On the first call it fetches Google's JWKS public keys and caches them;
+  // subsequent calls verify purely in-process — no per-login network round-trip.
   try {
-    const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(token)}`);
-    if (response.ok) {
-      const payload = await response.json();
-      if (config.google.clientId && payload.aud !== config.google.clientId) {
-        return null;
-      }
-      return {
-        email: payload.email,
-        name: payload.name || payload.email.split('@')[0],
-        sub: payload.sub,
-        picture: payload.picture
-      };
-    }
+    const oauthClient = getGoogleClient();
+    if (!oauthClient) return null;
+
+    const ticket = await oauthClient.verifyIdToken({
+      idToken: token,
+      audience: config.google.clientId,
+    });
+    const payload = ticket.getPayload();
+    if (!payload) return null;
+
+    return {
+      email: payload.email,
+      name: payload.name || (payload.email ? payload.email.split('@')[0] : 'Student'),
+      sub: payload.sub,
+      picture: payload.picture
+    };
   } catch (err) {
-    // Network or fetch error
+    // Token is invalid, expired, or audience mismatch
+    return null;
   }
 
   return null;
@@ -158,6 +192,7 @@ router.post('/student/google', authLimiter, asyncHandler(async (req, res) => {
       name: student.name,
       email: student.email
     });
+    setCookieToken(res, token);
 
     return res.json({
       success: true,
@@ -235,6 +270,7 @@ router.post('/student/google', authLimiter, asyncHandler(async (req, res) => {
     name: newStudent.name,
     email: newStudent.email
   });
+  setCookieToken(res, token);
 
   return res.status(201).json({
     success: true,
@@ -356,6 +392,7 @@ router.post('/teacher/register', authLimiter, validateTeacherRegister, asyncHand
     name: teacher.name,
     email: teacher.email
   });
+  setCookieToken(res, token);
 
   return res.status(201).json({
     token,
@@ -403,6 +440,7 @@ router.post('/student/login', authLimiter, validateLogin, asyncHandler(async (re
     name: student.name,
     email: student.email
   });
+  setCookieToken(res, token);
 
   return res.json({
     token,
@@ -454,6 +492,7 @@ router.post('/teacher/login', authLimiter, validateLogin, asyncHandler(async (re
     name: teacher.name,
     email: teacher.email
   });
+  setCookieToken(res, token);
 
   return res.json({
     token,
@@ -652,6 +691,7 @@ router.post('/admin/login', authLimiter, validateLogin, asyncHandler(async (req,
           name: dbAdmin.name,
           email: dbAdmin.email
         });
+        setCookieToken(res, token);
 
         return res.json({
           token,
@@ -732,6 +772,7 @@ router.post('/admin/login', authLimiter, validateLogin, asyncHandler(async (req,
         name: adminName,
         email: configuredAdminEmail
       });
+      setCookieToken(res, token);
 
       return res.json({
         token,
@@ -748,6 +789,18 @@ router.post('/admin/login', authLimiter, validateLogin, asyncHandler(async (req,
 
   return res.status(401).json({ error: 'Invalid admin credentials.' });
 }));
+
+
+// ── POST /api/auth/logout ───────────────────────────────────────
+// Clears the HttpOnly vlk_token cookie
+router.post('/logout', (req, res) => {
+  res.clearCookie('vlk_token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict'
+  });
+  return res.json({ success: true, message: 'Logged out successfully.' });
+});
 
 module.exports = router;
 

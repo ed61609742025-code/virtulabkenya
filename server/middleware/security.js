@@ -20,17 +20,24 @@ function enforceHttps(req, res, next) {
 // Configured Helmet security headers
 const isProd = process.env.NODE_ENV === 'production';
 
+// NOTE [Security CSP Trade-off]:
+// 'unsafe-inline' is currently retained for scriptSrc and styleSrc because the client-side
+// architecture uses vanilla JavaScript with inline <script> blocks and event handlers across
+// HTML templates.
+// Remediation roadmap (Phase B): Extract inline scripts and attributes to dedicated JS modules
+// under client/*/js/ and adopt a per-request cryptographic nonce or sha256 hash CSP policy.
 const securityHeaders = helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com", "https://accounts.google.com"],
       scriptSrcAttr: ["'unsafe-inline'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
       styleSrcAttr: ["'unsafe-inline'"],
-      imgSrc: ["'self'", "data:", "blob:"],
-      connectSrc: ["'self'", "https://cdnjs.cloudflare.com", "https://fonts.googleapis.com", "https://fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:", "blob:", "https://lh3.googleusercontent.com"],
+      connectSrc: ["'self'", "https://cdnjs.cloudflare.com", "https://fonts.googleapis.com", "https://fonts.gstatic.com", "https://accounts.google.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
+      frameSrc: ["'self'", "https://accounts.google.com"],
       mediaSrc: ["'self'", "data:", "blob:"],
       workerSrc: ["'self'", "blob:"],
       objectSrc: ["'none'"],

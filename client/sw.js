@@ -154,11 +154,15 @@ self.addEventListener('activate', (event) => {
 // Trim cache if it exceeds maximum allowable items
 const MAX_DYNAMIC_CACHE_ITEMS = 120;
 async function trimCache(cacheName, maxItems) {
-  const cache = await caches.open(cacheName);
-  const keys = await cache.keys();
-  if (keys.length > maxItems) {
-    await cache.delete(keys[0]);
-    await trimCache(cacheName, maxItems);
+  try {
+    const cache = await caches.open(cacheName);
+    const keys = await cache.keys();
+    if (keys.length > maxItems) {
+      const excess = keys.slice(0, keys.length - maxItems);
+      await Promise.all(excess.map(key => cache.delete(key)));
+    }
+  } catch (err) {
+    console.warn('[Service Worker] trimCache note:', err.message);
   }
 }
 

@@ -26,6 +26,10 @@ jobs:
         working-directory: ./server
         run: npm ci
 
+      - name: Validate Service Worker Cache Version & Asset Sync
+        working-directory: ./server
+        run: node scripts/bump_version.js --dry-run --sync-html
+
       - name: Execute Unit Test Suite (no database required)
         working-directory: ./server
         # Runs standalone pure-logic unit tests that work without a live PostgreSQL instance.

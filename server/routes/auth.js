@@ -41,6 +41,7 @@ function setCookieToken(res, token) {
   });
 }
 const authMiddleware = require('../middleware/auth');
+const { withTransaction } = require('../db/transaction');
 const pool = require('../db/pool');
 const { authLimiter } = require('../middleware/rateLimiter');
 const { validateStudentRegister, validateTeacherRegister, validateLogin } = require('../middleware/validators');
@@ -224,46 +225,67 @@ router.post('/student/google', authLimiter, asyncHandler(async (req, res) => {
     });
   }
 
-  // 3. Register new student with Google Profile + School Code
-  const schoolResult = await pool.query(
-    'SELECT id, name, admin_code FROM schools WHERE admin_code = $1',
-    [schoolCode.trim().toUpperCase()]
-  );
-  if (schoolResult.rows.length === 0) {
-    return res.status(400).json({ error: 'Invalid school registration code. Please ask your chemistry teacher.' });
-  }
-  const school = schoolResult.rows[0];
-  let finalSchoolId = school.id;
-  let teacherId = null;
-  let teacherName = null;
-  let cleanTeacherCode = null;
-
-  if (teacherCode && typeof teacherCode === 'string' && teacherCode.trim()) {
-    cleanTeacherCode = teacherCode.trim().toUpperCase();
-    const teacherResult = await pool.query(
-      'SELECT id, name, school_id FROM teachers WHERE UPPER(teacher_code) = $1',
-      [cleanTeacherCode]
-    );
-    if (teacherResult.rows.length > 0) {
-      teacherId = teacherResult.rows[0].id;
-      teacherName = teacherResult.rows[0].name;
-      if (teacherResult.rows[0].school_id) {
-        finalSchoolId = teacherResult.rows[0].school_id;
+  // 3. Register new student with Google Profile + School Code inside atomic transaction
+  let registrationData;
+  try {
+    registrationData = await withTransaction(async (client) => {
+      const schoolResult = await client.query(
+        'SELECT id, name, admin_code FROM schools WHERE admin_code = $1',
+        [schoolCode.trim().toUpperCase()]
+      );
+      if (schoolResult.rows.length === 0) {
+        const err = new Error('Invalid school registration code. Please ask your chemistry teacher.');
+        err.statusCode = 400;
+        throw err;
       }
+      const school = schoolResult.rows[0];
+      let finalSchoolId = school.id;
+      let teacherId = null;
+      let teacherName = null;
+      let cleanTeacherCode = null;
+
+      if (teacherCode && typeof teacherCode === 'string' && teacherCode.trim()) {
+        cleanTeacherCode = teacherCode.trim().toUpperCase();
+        const teacherResult = await client.query(
+          'SELECT id, name, school_id FROM teachers WHERE UPPER(teacher_code) = $1',
+          [cleanTeacherCode]
+        );
+        if (teacherResult.rows.length > 0) {
+          teacherId = teacherResult.rows[0].id;
+          teacherName = teacherResult.rows[0].name;
+          if (teacherResult.rows[0].school_id) {
+            finalSchoolId = teacherResult.rows[0].school_id;
+          }
+        }
+      }
+
+      const dummyPassword = crypto.randomBytes(16).toString('hex');
+      const passwordHash = await bcrypt.hash(dummyPassword, SALT_ROUNDS);
+
+      const insertResult = await client.query(
+        `INSERT INTO students (school_id, teacher_id, name, email, password_hash, form, google_id)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)
+         RETURNING id, name, email, form`,
+        [finalSchoolId, teacherId, name, cleanEmail, passwordHash, form, googleId]
+      );
+
+      return {
+        newStudent: insertResult.rows[0],
+        school,
+        finalSchoolId,
+        teacherId,
+        teacherName,
+        cleanTeacherCode
+      };
+    });
+  } catch (err) {
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({ error: err.message });
     }
+    throw err;
   }
 
-  const dummyPassword = crypto.randomBytes(16).toString('hex');
-  const passwordHash = await bcrypt.hash(dummyPassword, SALT_ROUNDS);
-
-  const insertResult = await pool.query(
-    `INSERT INTO students (school_id, teacher_id, name, email, password_hash, form, google_id)
-     VALUES ($1, $2, $3, $4, $5, $6, $7)
-     RETURNING id, name, email, form`,
-    [finalSchoolId, teacherId, name, cleanEmail, passwordHash, form, googleId]
-  );
-
-  const newStudent = insertResult.rows[0];
+  const { newStudent, school, finalSchoolId, teacherId, teacherName, cleanTeacherCode } = registrationData;
   const token = signToken({
     id: newStudent.id,
     role: 'student',
@@ -302,49 +324,67 @@ router.post('/student/register', authLimiter, validateStudentRegister, asyncHand
     return res.status(400).json({ error: 'Password must be at least 6 characters.' });
   }
 
-  const schoolResult = await pool.query(
-    'SELECT id FROM schools WHERE admin_code = $1',
-    [schoolCode]
-  );
-  if (schoolResult.rows.length === 0) {
-    return res.status(400).json({ error: 'Invalid school registration code.' });
-  }
-  const schoolId = schoolResult.rows[0].id;
+  let createdUser;
+  try {
+    createdUser = await withTransaction(async (client) => {
+      const schoolResult = await client.query(
+        'SELECT id FROM schools WHERE admin_code = $1',
+        [schoolCode]
+      );
+      if (schoolResult.rows.length === 0) {
+        const err = new Error('Invalid school registration code.');
+        err.statusCode = 400;
+        throw err;
+      }
+      const schoolId = schoolResult.rows[0].id;
 
-  // teacherCode is optional. If provided, lookup teacher by code
-  // and link the student to the teacher and teacher's school.
-  let teacherId = null;
-  let finalSchoolId = schoolId;
-  if (teacherCode && typeof teacherCode === 'string' && teacherCode.trim()) {
-    const cleanTeacherCode = teacherCode.trim().toUpperCase();
-    const teacherResult = await pool.query(
-      'SELECT id, school_id FROM teachers WHERE UPPER(teacher_code) = $1',
-      [cleanTeacherCode]
-    );
-    if (teacherResult.rows.length === 0) {
-      return res.status(400).json({ error: `No teacher found with code "${cleanTeacherCode}". Please verify the code with your instructor.` });
+      // teacherCode is optional. If provided, lookup teacher by code
+      // and link the student to the teacher and teacher's school.
+      let teacherId = null;
+      let finalSchoolId = schoolId;
+      if (teacherCode && typeof teacherCode === 'string' && teacherCode.trim()) {
+        const cleanTeacherCode = teacherCode.trim().toUpperCase();
+        const teacherResult = await client.query(
+          'SELECT id, school_id FROM teachers WHERE UPPER(teacher_code) = $1',
+          [cleanTeacherCode]
+        );
+        if (teacherResult.rows.length === 0) {
+          const err = new Error(`No teacher found with code "${cleanTeacherCode}". Please verify the code with your instructor.`);
+          err.statusCode = 400;
+          throw err;
+        }
+        teacherId = teacherResult.rows[0].id;
+        if (teacherResult.rows[0].school_id) {
+          finalSchoolId = teacherResult.rows[0].school_id;
+        }
+      }
+
+      const existing = await client.query('SELECT id FROM students WHERE email = $1', [email]);
+      if (existing.rows.length > 0) {
+        const err = new Error('An account with this email already exists.');
+        err.statusCode = 409;
+        throw err;
+      }
+
+      const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
+
+      const insertResult = await client.query(
+        `INSERT INTO students (school_id, teacher_id, name, email, password_hash, form)
+         VALUES ($1, $2, $3, $4, $5, $6)
+         RETURNING id, name, email, form`,
+        [finalSchoolId, teacherId, name, email, passwordHash, form]
+      );
+
+      return insertResult.rows[0];
+    });
+  } catch (err) {
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({ error: err.message });
     }
-    teacherId = teacherResult.rows[0].id;
-    if (teacherResult.rows[0].school_id) {
-      finalSchoolId = teacherResult.rows[0].school_id;
-    }
+    throw err;
   }
 
-  const existing = await pool.query('SELECT id FROM students WHERE email = $1', [email]);
-  if (existing.rows.length > 0) {
-    return res.status(409).json({ error: 'An account with this email already exists.' });
-  }
-
-  const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-
-  const insertResult = await pool.query(
-    `INSERT INTO students (school_id, teacher_id, name, email, password_hash, form)
-     VALUES ($1, $2, $3, $4, $5, $6)
-     RETURNING id, name, email, form`,
-    [finalSchoolId, teacherId, name, email, passwordHash, form]
-  );
-
-  return res.status(201).json({ user: insertResult.rows[0] });
+  return res.status(201).json({ user: createdUser });
 }));
 
 // ── POST /api/auth/teacher/register ────────────────────────────
@@ -358,34 +398,48 @@ router.post('/teacher/register', authLimiter, validateTeacherRegister, asyncHand
     return res.status(400).json({ error: 'Password must be at least 6 characters.' });
   }
 
-  const schoolResult = await pool.query(
-    'SELECT id FROM schools WHERE admin_code = $1',
-    [schoolCode]
-  );
-  if (schoolResult.rows.length === 0) {
-    return res.status(400).json({ error: 'Invalid school registration code.' });
+  let teacher;
+  try {
+    teacher = await withTransaction(async (client) => {
+      const schoolResult = await client.query(
+        'SELECT id FROM schools WHERE admin_code = $1',
+        [schoolCode]
+      );
+      if (schoolResult.rows.length === 0) {
+        const err = new Error('Invalid school registration code.');
+        err.statusCode = 400;
+        throw err;
+      }
+      const schoolId = schoolResult.rows[0].id;
+
+      const existing = await client.query('SELECT id FROM teachers WHERE email = $1', [email]);
+      if (existing.rows.length > 0) {
+        const err = new Error('An account with this email already exists.');
+        err.statusCode = 409;
+        throw err;
+      }
+
+      const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
+
+      // Generate cryptographically secure unique teacher code (e.g. TCH8X2)
+      const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+      const teacherCode = 'TCH' + generateSecureString(4, chars);
+
+      const insertResult = await client.query(
+        `INSERT INTO teachers (school_id, name, email, password_hash, teacher_code)
+         VALUES ($1, $2, $3, $4, $5)
+         RETURNING id, name, email, teacher_code`,
+        [schoolId, name, email, passwordHash, teacherCode]
+      );
+
+      return insertResult.rows[0];
+    });
+  } catch (err) {
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({ error: err.message });
+    }
+    throw err;
   }
-  const schoolId = schoolResult.rows[0].id;
-
-  const existing = await pool.query('SELECT id FROM teachers WHERE email = $1', [email]);
-  if (existing.rows.length > 0) {
-    return res.status(409).json({ error: 'An account with this email already exists.' });
-  }
-
-  const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-
-  // Generate cryptographically secure unique teacher code (e.g. TCH8X2)
-  const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
-  const teacherCode = 'TCH' + generateSecureString(4, chars);
-
-  const insertResult = await pool.query(
-    `INSERT INTO teachers (school_id, name, email, password_hash, teacher_code)
-     VALUES ($1, $2, $3, $4, $5)
-     RETURNING id, name, email, teacher_code`,
-    [schoolId, name, email, passwordHash, teacherCode]
-  );
-
-  const teacher = insertResult.rows[0];
   const token = signToken({
     id: teacher.id,
     role: 'teacher',

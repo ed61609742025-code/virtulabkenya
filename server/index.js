@@ -173,13 +173,9 @@ app.use('/api/ai-assistant', aiAssistantRoutes);
 const writtenQuestionsRoutes = require('./routes/written_questions');
 app.use('/api/written-questions', writtenQuestionsRoutes);
 
-// Public announcements endpoint
-const announcementRepo = require('./repositories/announcementRepo');
-const asyncHandler = require('./utils/asyncHandler');
-app.get('/api/announcements/active', asyncHandler(async (req, res) => {
-  const announcements = await announcementRepo.getActiveAnnouncements('all');
-  res.json({ success: true, announcements });
-}));
+// Announcements routes (public announcements, banner alerts)
+const announcementRoutes = require('./routes/announcements');
+app.use('/api/announcements', announcementRoutes);
 
 // ── 404 Handler ───────────────────────────────────────────────
 app.use((req, res) => {

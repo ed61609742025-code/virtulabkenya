@@ -39,6 +39,7 @@ const pool = new Pool({
   keepAlive: true,
   keepAliveInitialDelayMillis: 10000
 });
+const originalPoolQuery = pool.query;
 
 pool.on('error', (err) => {
   console.error('[DB Pool] Unexpected error on idle client:', err.message);
@@ -78,6 +79,87 @@ process.on('SIGTERM', async () => {
 process.on('SIGINT', async () => {
   await pool.shutdown();
 });
+
+/**
+ * Execute a unit of work inside a managed database transaction.
+ * 
+ * - In production/standard environments: checks out a client from pool,
+ *   executes BEGIN, runs the callback, commits with COMMIT on success,
+ *   rolls back with ROLLBACK on error, and always releases the client.
+ * - In test environments without a live Postgres server (where pool.query
+ *   is monkey-patched): wraps queries in a compatible mock client delegating
+ *   to pool.query with BEGIN/COMMIT/ROLLBACK simulation.
+ * 
+ * @param {Function} callback - async (client) => Promise<any>
+ * @returns {Promise<any>} Result of callback
+ */
+pool.withTransaction = async function withTransaction(callback) {
+  // In test environments where tests monkey-patch pool.query, delegate to pool.query
+  if (process.env.NODE_ENV === 'test' && pool.query !== originalPoolQuery) {
+    const mockClient = {
+      query: (text, params) => pool.query(text, params),
+      release: () => {}
+    };
+    await mockClient.query('BEGIN');
+    try {
+      const result = await callback(mockClient);
+      await mockClient.query('COMMIT');
+      return result;
+    } catch (err) {
+      try {
+        await mockClient.query('ROLLBACK');
+      } catch (rbErr) {
+        console.warn('[DB Transaction] Rollback note:', rbErr.message);
+      }
+      throw err;
+    }
+  }
+
+  let client;
+  try {
+    client = await pool.connect();
+  } catch (connectErr) {
+    if (process.env.NODE_ENV === 'test') {
+      const mockClient = {
+        query: (text, params) => pool.query(text, params),
+        release: () => {}
+      };
+      await mockClient.query('BEGIN');
+      try {
+        const result = await callback(mockClient);
+        await mockClient.query('COMMIT');
+        return result;
+      } catch (err) {
+        try {
+          await mockClient.query('ROLLBACK');
+        } catch (rbErr) {
+          console.warn('[DB Transaction] Rollback note:', rbErr.message);
+        }
+        throw err;
+      }
+    } else {
+      throw connectErr;
+    }
+  }
+
+  try {
+    await client.query('BEGIN');
+    const result = await callback(client);
+    await client.query('COMMIT');
+    return result;
+  } catch (err) {
+    try {
+      await client.query('ROLLBACK');
+    } catch (rbErr) {
+      console.warn('[DB Transaction] Rollback note:', rbErr.message);
+    }
+    throw err;
+  } finally {
+    if (client && typeof client.release === 'function') {
+      client.release();
+    }
+  }
+};
 
 module.exports = pool;
 

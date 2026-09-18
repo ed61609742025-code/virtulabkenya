@@ -148,36 +148,53 @@ function getCsvConfigForAssignment(assignment, rows) {
 }
 
 const pool = require('../db/pool');
+const { withTransaction } = require('../db/transaction');
 
-// POST /api/assignments — Create an assignment (teacher)
+// POST /api/assignments — Create an assignment (teacher) with atomic transaction
 router.post('/', authMiddleware, authMiddleware.requireRole('teacher'), validateAssignmentCreate, asyncHandler(async (req, res) => {
-  const assignment = await assignmentRepo.createAssignment(req.user.id, req.body);
-  if (!assignment) {
-    return res.status(404).json({ error: 'Teacher account not found.' });
+  let pushData = null;
+
+  let assignment;
+  try {
+    assignment = await withTransaction(async (client) => {
+      const newAssign = await assignmentRepo.createAssignment(req.user.id, req.body, client);
+      if (!newAssign) {
+        const err = new Error('Teacher account not found.');
+        err.statusCode = 404;
+        throw err;
+      }
+
+      // Auto-notify all students enrolled under this teacher inside same transaction
+      const studentsRes = await client.query('SELECT id FROM students WHERE teacher_id = $1', [req.user.id]);
+      if (studentsRes.rows.length > 0) {
+        const dueFormatted = newAssign.due_date ? new Date(newAssign.due_date).toLocaleDateString() : 'No deadline';
+        const title = `📝 New Assignment: ${newAssign.title}`;
+        const message = `Your chemistry teacher posted a new practical assignment: "${newAssign.title}". Due date: ${dueFormatted}.`;
+        const studentIds = studentsRes.rows.map(s => s.id);
+        await client.query(
+          `INSERT INTO student_notifications (student_id, title, message, type, link)
+           SELECT unnest($1::int[]), $2, $3, 'assignment', '/student/home.html'`,
+          [studentIds, title, message]
+        );
+        pushData = { studentIds, title, message };
+      }
+
+      return newAssign;
+    });
+  } catch (err) {
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({ error: err.message });
+    }
+    throw err;
   }
 
-  // Auto-notify all students enrolled under this teacher
-  try {
-    const studentsRes = await pool.query('SELECT id FROM students WHERE teacher_id = $1', [req.user.id]);
-    if (studentsRes.rows.length > 0) {
-      const dueFormatted = assignment.due_date ? new Date(assignment.due_date).toLocaleDateString() : 'No deadline';
-      const title = `📝 New Assignment: ${assignment.title}`;
-      const message = `Your chemistry teacher posted a new practical assignment: "${assignment.title}". Due date: ${dueFormatted}.`;
-      const studentIds = studentsRes.rows.map(s => s.id);
-      await pool.query(
-        `INSERT INTO student_notifications (student_id, title, message, type, link)
-         SELECT unnest($1::int[]), $2, $3, 'assignment', '/student/home.html'`,
-        [studentIds, title, message]
-      );
-      // Dispatch Web Push notification to enrolled students
-      pushService.sendToUsers(studentIds, 'student', {
-        title,
-        body: message,
-        data: { url: '/student/home.html' }
-      }).catch(err => console.warn('[Assignment Push Warning]:', err.message));
-    }
-  } catch (notifErr) {
-    console.warn('[Assignment Notice Warning]:', notifErr.message);
+  // Dispatch Web Push notification outside transaction (network call should not block DB transaction)
+  if (pushData && pushData.studentIds.length > 0) {
+    pushService.sendToUsers(pushData.studentIds, 'student', {
+      title: pushData.title,
+      body: pushData.message,
+      data: { url: '/student/home.html' }
+    }).catch(err => console.warn('[Assignment Push Warning]:', err.message));
   }
 
   return res.status(201).json({ assignment });
@@ -275,29 +292,40 @@ router.get('/submissions/all', authMiddleware, authMiddleware.requireRole('teach
   return res.json(data);
 }));
 
-// POST /api/assignments/submissions/:id/mark — Teacher approves & marks submission
+// POST /api/assignments/submissions/:id/mark — Teacher approves & marks submission with atomic transaction
 router.post('/submissions/:id/mark', authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
   const { teacherFeedback } = req.body || {};
-  const submission = await assignmentRepo.markSubmission(req.params.id, req.user.id, teacherFeedback);
-  if (!submission) {
-    return res.status(404).json({ error: 'Submission not found or access denied.' });
-  }
 
-  // Notify student of released feedback
+  let submission;
   try {
-    if (submission.student_id) {
-      await pool.query(
-        `INSERT INTO student_notifications (student_id, title, message, type, link)
-         VALUES ($1, $2, $3, 'feedback', '/student/home.html')`,
-        [
-          submission.student_id,
-          `🏆 Graded: Practical Feedback Released`,
-          `Your chemistry teacher has reviewed and released marks/feedback for your practical assignment.`
-        ]
-      );
+    submission = await withTransaction(async (client) => {
+      const sub = await assignmentRepo.markSubmission(req.params.id, req.user.id, teacherFeedback, client);
+      if (!sub) {
+        const err = new Error('Submission not found or access denied.');
+        err.statusCode = 404;
+        throw err;
+      }
+
+      // Notify student of released feedback inside same transaction
+      if (sub.student_id) {
+        await client.query(
+          `INSERT INTO student_notifications (student_id, title, message, type, link)
+           VALUES ($1, $2, $3, 'feedback', '/student/home.html')`,
+          [
+            sub.student_id,
+            `🏆 Graded: Practical Feedback Released`,
+            `Your chemistry teacher has reviewed and released marks/feedback for your practical assignment.`
+          ]
+        );
+      }
+
+      return sub;
+    });
+  } catch (err) {
+    if (err.statusCode) {
+      return res.status(err.statusCode).json({ error: err.message });
     }
-  } catch (markNotifErr) {
-    console.warn('[Mark Notice Warning]:', markNotifErr.message);
+    throw err;
   }
 
   return res.json({ success: true, submission });

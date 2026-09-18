@@ -7,7 +7,9 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "node --test tests/reaction_resolvers.test.js tests/knec_exams.test.js tests/composite_polymorphism.test.js tests/mailer.test.js tests/offline_resilience.test.js tests/bench_fidelity.test.js tests/pedagogical_polish.test.js tests/node_api.test.js tests/ai_assistant.test.js tests/google_auth.test.js tests/security_audit_fixes.test.js tests/student_analytics.test.js",
-    "bump-version": "node scripts/bump_version.js"
+    "bump-version": "node scripts/bump_version.js",
+    "bump-version:sync": "node scripts/bump_version.js --sync-html",
+    "bump-version:check": "node scripts/bump_version.js --dry-run"
   },
   "author": "VirtuLab Kenya",
   "license": "MIT",

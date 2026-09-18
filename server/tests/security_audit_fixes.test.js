@@ -147,3 +147,78 @@ describe('5. App Initialization & Security Headers', () => {
   });
 });
 
+// 6. Database Transaction Helper Verification
+describe('6. Database Transaction Helper (withTransaction)', () => {
+  const { withTransaction } = require('../db/transaction');
+  const pool = require('../db/pool');
+
+  it('should export withTransaction as a function on pool and db/transaction', () => {
+    assert.strictEqual(typeof withTransaction, 'function');
+    assert.strictEqual(typeof pool.withTransaction, 'function');
+  });
+
+  it('should execute queries within transaction and commit on success', async () => {
+    const executedQueries = [];
+    const originalQuery = pool.query;
+    pool.query = async (text, params) => {
+      executedQueries.push(text);
+      if (text.includes('SELECT 42')) return { rows: [{ answer: 42 }] };
+      return { rows: [] };
+    };
+
+    try {
+      const result = await withTransaction(async (client) => {
+        const res = await client.query('SELECT 42 AS answer');
+        return res.rows[0].answer;
+      });
+
+      assert.strictEqual(result, 42);
+      assert.ok(executedQueries.some(q => q.includes('BEGIN')), 'Transaction must issue BEGIN');
+      assert.ok(executedQueries.some(q => q.includes('COMMIT')), 'Transaction must issue COMMIT');
+      assert.ok(!executedQueries.some(q => q.includes('ROLLBACK')), 'Successful transaction must not issue ROLLBACK');
+    } finally {
+      pool.query = originalQuery;
+    }
+  });
+
+  it('should rollback transaction and rethrow when callback fails', async () => {
+    const executedQueries = [];
+    const originalQuery = pool.query;
+    pool.query = async (text, params) => {
+      executedQueries.push(text);
+      return { rows: [] };
+    };
+
+    try {
+      await assert.rejects(async () => {
+        await withTransaction(async (client) => {
+          await client.query('INSERT INTO fail_table VALUES (1)');
+          throw new Error('Simulated write failure');
+        });
+      }, /Simulated write failure/);
+
+      assert.ok(executedQueries.some(q => q.includes('BEGIN')), 'Transaction must issue BEGIN');
+      assert.ok(executedQueries.some(q => q.includes('ROLLBACK')), 'Failed transaction must issue ROLLBACK');
+      assert.ok(!executedQueries.some(q => q.includes('COMMIT')), 'Failed transaction must not issue COMMIT');
+    } finally {
+      pool.query = originalQuery;
+    }
+  });
+});
+
+// 7. Announcements Route Verification
+describe('7. Announcements Route Module (routes/announcements.js)', () => {
+  it('should export an Express router in routes/announcements.js', () => {
+    const announcementsRouter = require('../routes/announcements');
+    assert.ok(announcementsRouter);
+    assert.strictEqual(typeof announcementsRouter, 'function');
+  });
+
+  it('should have GET /active route registered and return announcements', async () => {
+    const announcementsRouter = require('../routes/announcements');
+    const hasActiveRoute = announcementsRouter.stack.some(layer => layer.route && layer.route.path === '/active' && layer.route.methods.get);
+    assert.ok(hasActiveRoute, 'Router must register GET /active route');
+  });
+});
+
+

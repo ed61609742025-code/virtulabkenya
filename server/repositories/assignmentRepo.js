@@ -158,9 +158,10 @@ async function ensureAssignmentTables() {
   }
 }
 
-async function createAssignment(teacherId, data) {
+async function createAssignment(teacherId, data, dbClient = pool) {
   await ensureAssignmentTables();
-  const teacherResult = await pool.query(
+  const q = (dbClient || pool);
+  const teacherResult = await q.query(
     'SELECT school_id FROM teachers WHERE id = $1',
     [teacherId]
   );
@@ -169,7 +170,7 @@ async function createAssignment(teacherId, data) {
   const schoolId = teacherResult.rows[0].school_id;
   const { title, titrationType, instructions, dueDate, examConfig } = data;
 
-  const result = await pool.query(
+  const result = await q.query(
     `INSERT INTO assignments (teacher_id, school_id, title, titration_type, instructions, due_date, exam_config)
      VALUES ($1, $2, $3, $4, $5, $6, $7)
      RETURNING *`,
@@ -965,7 +966,8 @@ async function linkAssignmentSubmission({
   }
 }
 
-async function markSubmission(submissionId, teacherId, teacherFeedback) {
+async function markSubmission(submissionId, teacherId, teacherFeedback, dbClient = pool) {
+  const q = (dbClient || pool);
   // 1. Direct match on assignment_submissions.id
   const directQuery = `
     UPDATE assignment_submissions
@@ -977,7 +979,7 @@ async function markSubmission(submissionId, teacherId, teacherFeedback) {
     RETURNING *
   `;
   try {
-    const result = await pool.query(directQuery, [teacherFeedback || null, submissionId, teacherId]);
+    const result = await q.query(directQuery, [teacherFeedback || null, submissionId, teacherId]);
     if (result.rows[0]) return result.rows[0];
   } catch (e) {}
 
@@ -987,19 +989,19 @@ async function markSubmission(submissionId, teacherId, teacherFeedback) {
     if (aId && sId) {
       let foundSessionId = null;
       try {
-        const pRes = await pool.query(
+        const pRes = await q.query(
           `SELECT id FROM practical_sessions WHERE student_id = $1 AND (assignment_id = $2 OR titration_type = (SELECT titration_type FROM assignments WHERE id = $2)) ORDER BY created_at DESC LIMIT 1`,
           [sId, aId]
         );
         foundSessionId = pRes.rows[0]?.id || null;
         if (foundSessionId) {
-          await pool.query('UPDATE practical_sessions SET assignment_id = $1 WHERE id = $2 AND assignment_id IS NULL', [aId, foundSessionId]);
+          await q.query('UPDATE practical_sessions SET assignment_id = $1 WHERE id = $2 AND assignment_id IS NULL', [aId, foundSessionId]);
         }
       } catch (e) {}
 
       // Verify assignment ownership for this teacher
       try {
-        const verifyOwnership = await pool.query(
+        const verifyOwnership = await q.query(
           `SELECT 1 FROM assignments WHERE id = $1 AND (teacher_id = $2 OR teacher_id IS NULL)`,
           [aId, teacherId]
         );
@@ -1020,7 +1022,7 @@ async function markSubmission(submissionId, teacherId, teacherFeedback) {
         RETURNING *
       `;
       try {
-        const result = await pool.query(upsertQuery, [aId, sId, foundSessionId, teacherFeedback || null]);
+        const result = await q.query(upsertQuery, [aId, sId, foundSessionId, teacherFeedback || null]);
         if (result.rows[0]) return result.rows[0];
       } catch (e) {}
     }

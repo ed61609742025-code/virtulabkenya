@@ -111,24 +111,102 @@
 
 .st-branch-title {
   font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-  font-size: 1.02rem;
-  font-weight: 800;
-  color: var(--b-text);
+  font-size: 1.12rem;
+  font-weight: 900;
+  color: var(--heading-color, var(--b-text));
   display: flex;
   align-items: center;
   gap: 8px;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
 }
 
 .st-branch-tag {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.74rem;
+  font-size: 0.76rem;
   font-weight: 800;
-  padding: 3px 10px;
+  padding: 4px 10px;
   border-radius: 6px;
-  background: var(--b-surface-subtle);
-  color: var(--b-text-muted);
-  border: 1px solid var(--b-border);
+  background: rgba(2, 132, 199, 0.12);
+  color: var(--cyan-accent, #0284c7);
+  border: 1px solid rgba(2, 132, 199, 0.3);
+  letter-spacing: 0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s ease;
+}
+
+/* Branch 1: Volumetric Analysis (Blue/Cyan) */
+#branch-volumetric .st-branch-tag {
+  background: rgba(2, 132, 199, 0.14);
+  color: #0284c7;
+  border-color: rgba(2, 132, 199, 0.35);
+}
+[data-theme="dark"] #branch-volumetric .st-branch-tag {
+  background: rgba(2, 132, 199, 0.22);
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+/* Branch 2: Qualitative Salt Analysis (Emerald/Green) */
+#branch-qualitative .st-branch-tag {
+  background: rgba(16, 185, 129, 0.14);
+  color: #047857;
+  border-color: rgba(16, 185, 129, 0.35);
+}
+[data-theme="dark"] #branch-qualitative .st-branch-tag {
+  background: rgba(16, 185, 129, 0.22);
+  color: #34d399;
+  border-color: rgba(52, 211, 153, 0.4);
+}
+
+/* Branch 3: Kinetics & Energetics (Amber/Orange) */
+#branch-kinetics .st-branch-tag {
+  background: rgba(245, 158, 11, 0.14);
+  color: #b45309;
+  border-color: rgba(245, 158, 11, 0.35);
+}
+[data-theme="dark"] #branch-kinetics .st-branch-tag {
+  background: rgba(245, 158, 11, 0.22);
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.4);
+}
+
+/* Branch 4: Organic & Gas Chemistry (Purple/Violet) */
+#branch-organic-gas .st-branch-tag {
+  background: rgba(139, 92, 246, 0.14);
+  color: #6d28d9;
+  border-color: rgba(139, 92, 246, 0.35);
+}
+[data-theme="dark"] #branch-organic-gas .st-branch-tag {
+  background: rgba(139, 92, 246, 0.22);
+  color: #a78bfa;
+  border-color: rgba(167, 139, 250, 0.4);
+}
+
+/* Branch 5: Capstone Mock Exam (Gold) */
+#branch-capstone .st-branch-tag,
+.st-capstone-branch .st-branch-tag {
+  background: rgba(217, 119, 6, 0.16);
+  color: #b45309;
+  border-color: rgba(217, 119, 6, 0.4);
+}
+[data-theme="dark"] #branch-capstone .st-branch-tag,
+[data-theme="dark"] .st-capstone-branch .st-branch-tag {
+  background: rgba(217, 119, 6, 0.26);
+  color: #fcd34d;
+  border-color: rgba(252, 211, 77, 0.5);
+}
+
+/* Pulse Highlight for Recommended Practical Node Focus */
+@keyframes stPulseHighlight {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.7); }
+  50% { transform: scale(1.08); box-shadow: 0 0 0 12px rgba(2, 132, 199, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(2, 132, 199, 0); }
+}
+
+.st-node-wrapper.pulse-highlight .st-node-circle {
+  animation: stPulseHighlight 1.1s cubic-bezier(0.4, 0, 0.2, 1) 2;
 }
 
 /* ── 4. NODE TRACK & CONNECTORS ── */
@@ -849,12 +927,13 @@
   }
 
   .st-branch-title {
-    font-size: 0.92rem !important;
+    font-size: 1.05rem !important;
+    font-weight: 900 !important;
   }
 
   .st-branch-tag {
-    font-size: 0.68rem !important;
-    padding: 2px 6px !important;
+    font-size: 0.72rem !important;
+    padding: 3px 8px !important;
   }
 
   /* Horizontal swipe track: nodes scroll left-to-right smoothly */

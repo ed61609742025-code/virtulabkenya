@@ -580,4 +580,271 @@
   border-style: solid;
 }
 
+/* ── K. Master Practical Above-The-Fold CTA Banner ────────── */
+.master-practical-cta {
+  background: var(--card-bg, #FFFFFF);
+  border: 1.5px solid var(--card-border, #CBD5E1);
+  border-radius: 14px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.master-practical-cta:hover {
+  border-color: var(--acad-navy, #0284C7);
+  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.1);
+}
+
+.master-practical-cta .mpc-glow-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #0284C7 0%, #10B981 50%, #F59E0B 100%);
+}
+
+.mpc-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  flex-wrap: wrap;
+}
+
+.mpc-left {
+  flex: 1;
+  min-width: 260px;
+}
+
+.mpc-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.mpc-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(2, 132, 199, 0.14);
+  color: #0284c7;
+  border: 1px solid rgba(2, 132, 199, 0.3);
+  letter-spacing: 0.02em;
+}
+
+.mpc-syllabus-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted, #64748B);
+  background: var(--card-bg-hover, #F1F5F9);
+  padding: 2px 7px;
+  border-radius: 6px;
+  border: 1px solid var(--card-border, #E2E8F0);
+}
+
+.mpc-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mpc-icon {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.mpc-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: var(--heading-color, #0F172A);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.mpc-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted, #475569);
+  margin: 3px 0 0 0;
+  line-height: 1.35;
+}
+
+.mpc-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.mpc-launch-btn {
+  background: var(--cyan-accent, #0284C7);
+  color: #FFFFFF !important;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.84rem;
+  font-weight: 800;
+  padding: 8px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.mpc-launch-btn:hover {
+  background: #0369A1;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.45);
+}
+
+.mpc-launch-btn:active {
+  transform: translateY(1px);
+}
+
+.mpc-pathway-link {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-muted, #64748B);
+  text-decoration: none;
+  background: var(--card-bg-hover, #F8FAFC);
+  border: 1px solid var(--card-border, #CBD5E1);
+  padding: 7px 11px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.mpc-pathway-link:hover {
+  color: var(--heading-color, #0F172A);
+  border-color: var(--acad-navy, #0284C7);
+  background: var(--card-bg);
+}
+
+.mpc-drill-jump {
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: var(--b-amber-text, #92400E);
+  text-decoration: none;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  padding: 7px 11px;
+  border-radius: 8px;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.mpc-drill-jump:hover {
+  background: rgba(245, 158, 11, 0.22);
+}
+
+[data-theme="dark"] .master-practical-cta {
+  background: var(--card-bg);
+  border-color: var(--card-border);
+}
+
+[data-theme="dark"] .mpc-desc {
+  color: var(--text-muted);
+}
+
+[data-theme="dark"] .mpc-pathway-link {
+  background: var(--card-bg-hover);
+  border-color: var(--card-border);
+  color: var(--text-muted);
+}
+
+[data-theme="dark"] .mpc-pathway-link:hover {
+  color: var(--heading-color);
+  border-color: var(--cyan-accent);
+}
+
+[data-theme="dark"] .mpc-drill-jump {
+  color: #FBBF24;
+  background: rgba(245, 158, 11, 0.2);
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+/* ── L. Mobile Responsive Adjustments for Master CTA & Speed Drills ─ */
+@media (max-width: 768px) {
+  .master-practical-cta {
+    margin-bottom: 12px !important;
+    border-radius: 12px !important;
+  }
+  .mpc-inner {
+    padding: 12px 14px !important;
+    gap: 10px !important;
+  }
+  .mpc-title {
+    font-size: 0.98rem !important;
+  }
+  .mpc-desc {
+    font-size: 0.76rem !important;
+  }
+  .mpc-right {
+    width: 100% !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    margin-top: 2px !important;
+  }
+  .mpc-launch-btn {
+    flex: 1 !important;
+    justify-content: center !important;
+    min-height: 42px !important;
+  }
+  .mpc-pathway-link, .mpc-drill-jump {
+    min-height: 42px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* Diagnostic Drills: Transform into smooth horizontal swipe tray */
+  .zone-drills {
+    margin-top: 20px !important;
+  }
+  .drill-card-grid {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-snap-type: x mandatory !important;
+    gap: 10px !important;
+    padding: 4px 2px 12px !important;
+    scrollbar-width: thin !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .drill-item-card {
+    flex: 0 0 215px !important;
+    width: 215px !important;
+    min-width: 215px !important;
+    scroll-snap-align: start !important;
+    box-sizing: border-box !important;
+    padding: 12px 14px !important;
+  }
+
+  .drill-card-title {
+    font-size: 0.86rem !important;
+    font-weight: 800 !important;
+  }
+
+  .drill-card-desc {
+    font-size: 0.72rem !important;
+  }
+}
+
 

@@ -290,11 +290,29 @@ html, body {
 [data-theme="dark"] .seal-crest-small { background: #162238; border-color: var(--acad-gold); }
 [data-theme="green"] .seal-crest-small { background: #0E2415; border-color: var(--acad-gold); }
 
-.nav-actions {
-  display: flex;
+.nav-btn-tutorial {
+  display: inline-flex;
   align-items: center;
   gap: 6px;
-  flex-shrink: 0;
+  padding: 6px 14px;
+  font-size: 0.84rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  border-radius: 8px;
+  white-space: nowrap;
+  box-shadow: 0 3px 0 var(--b-primary-shadow, rgba(0,0,0,0.25));
+  transition: all 0.15s ease;
+  height: 36px;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+.nav-btn-tutorial .tutorial-icon {
+  font-size: 1.05rem;
+  line-height: 1;
+}
+.nav-btn-tutorial .tutorial-btn-text {
+  font-weight: 800;
+  display: inline !important;
 }
 
 .theme-single-toggle-btn {
@@ -1218,16 +1236,41 @@ html, body {
   }
 
   .nav-actions {
-    gap: 4px !important;
+    gap: 6px !important;
     flex-shrink: 0 !important;
+    align-items: center !important;
   }
 
-  .nav-actions .btn-tactile,
+  .nav-btn-tutorial {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    padding: 6px 12px !important;
+    font-size: 0.84rem !important;
+    font-weight: 800 !important;
+    height: 34px !important;
+    border-radius: 8px !important;
+    white-space: nowrap !important;
+    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.25) !important;
+    flex-shrink: 0 !important;
+    box-sizing: border-box !important;
+  }
+  .nav-btn-tutorial .tutorial-icon {
+    font-size: 1.05rem !important;
+    line-height: 1 !important;
+  }
+  .nav-btn-tutorial .tutorial-btn-text {
+    font-size: 0.82rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.01em !important;
+    display: inline !important;
+  }
+
   .nav-actions .nav-btn {
     padding: 4px 6px !important;
-    font-size: 0.70rem !important;
-    height: 28px !important;
-    min-width: 28px !important;
+    font-size: 0.72rem !important;
+    height: 34px !important;
+    min-width: 34px !important;
     box-sizing: border-box !important;
     display: inline-flex !important;
     align-items: center !important;
@@ -1236,13 +1279,13 @@ html, body {
   }
 
   .theme-single-toggle-btn {
-    width: 28px !important;
-    height: 28px !important;
+    width: 34px !important;
+    height: 34px !important;
     border-radius: 6px !important;
   }
   .theme-single-toggle-btn svg {
-    width: 15px !important;
-    height: 15px !important;
+    width: 17px !important;
+    height: 17px !important;
   }
 
   #benchSettingsDropdown {
@@ -1406,17 +1449,28 @@ html, body {
 }
 
 @media (max-width: 480px) {
-  .btn-text-short {
-    display: none !important;
-  }
   .nav-actions {
-    gap: 3px !important;
+    gap: 4px !important;
   }
-  .nav-actions .btn-tactile,
+  .nav-btn-tutorial {
+    padding: 5px 10px !important;
+    height: 32px !important;
+    gap: 4px !important;
+  }
+  .nav-btn-tutorial .tutorial-icon {
+    font-size: 1.0rem !important;
+  }
+  .nav-btn-tutorial .tutorial-btn-text {
+    font-size: 0.78rem !important;
+    font-weight: 800 !important;
+    display: inline !important;
+  }
   .nav-actions .nav-btn,
   .theme-single-toggle-btn {
     padding: 3px 5px !important;
-    min-width: 26px !important;
+    min-width: 32px !important;
+    width: 32px !important;
+    height: 32px !important;
   }
   .brand-subtagline {
     font-size: 0.58rem !important;
@@ -1428,6 +1482,25 @@ html, body {
 }
 
 @media (max-width: 380px) {
+  .nav-btn-tutorial {
+    padding: 4px 8px !important;
+    height: 30px !important;
+    gap: 3px !important;
+  }
+  .nav-btn-tutorial .tutorial-icon {
+    font-size: 0.92rem !important;
+  }
+  .nav-btn-tutorial .tutorial-btn-text {
+    font-size: 0.74rem !important;
+    font-weight: 800 !important;
+    display: inline !important;
+  }
+  .nav-actions .nav-btn,
+  .theme-single-toggle-btn {
+    min-width: 28px !important;
+    width: 28px !important;
+    height: 30px !important;
+  }
   .brand-subtagline {
     font-size: 0.54rem !important;
     display: block !important;

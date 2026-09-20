@@ -270,6 +270,8 @@ html, body {
   font-style: italic;
   color: var(--cyan-accent);
   letter-spacing: 0.01em;
+  white-space: nowrap;
+  display: block;
 }
 
 .seal-crest-small {
@@ -295,19 +297,30 @@ html, body {
   flex-shrink: 0;
 }
 
-.session-timer-badge {
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 6px;
-  padding: 4px 8px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--cyan-accent);
-  display: inline-flex;
+.theme-single-toggle-btn {
+  display: inline-flex !important;
   align-items: center;
-  gap: 4px;
-  font-family: var(--font-mono);
-  white-space: nowrap;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  background: var(--card-bg-hover);
+  border: 1px solid var(--card-border);
+  color: var(--heading-color);
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+.theme-single-toggle-btn:hover {
+  background: var(--card-bg);
+  border-color: var(--cyan-accent);
+  color: var(--cyan-accent);
+}
+.theme-single-toggle-btn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
 }
 
 .nav-btn {
@@ -1197,21 +1210,20 @@ html, body {
 
   .brand-subtagline {
     display: block !important;
-    font-size: 0.58rem !important;
+    font-size: 0.62rem !important;
     white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    max-width: 80px !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    max-width: none !important;
   }
 
   .nav-actions {
-    gap: 3px !important;
+    gap: 4px !important;
     flex-shrink: 0 !important;
   }
 
   .nav-actions .btn-tactile,
-  .nav-actions .nav-btn,
-  .nav-actions .btn-back-link {
+  .nav-actions .nav-btn {
     padding: 4px 6px !important;
     font-size: 0.70rem !important;
     height: 28px !important;
@@ -1223,12 +1235,14 @@ html, body {
     border-radius: 6px !important;
   }
 
-  .session-timer-badge {
-    padding: 3px 5px !important;
-    font-size: 0.68rem !important;
+  .theme-single-toggle-btn {
+    width: 28px !important;
     height: 28px !important;
-    box-sizing: border-box !important;
-    gap: 2px !important;
+    border-radius: 6px !important;
+  }
+  .theme-single-toggle-btn svg {
+    width: 15px !important;
+    height: 15px !important;
   }
 
   #benchSettingsDropdown {
@@ -1396,29 +1410,30 @@ html, body {
     display: none !important;
   }
   .nav-actions {
-    gap: 2px !important;
+    gap: 3px !important;
   }
   .nav-actions .btn-tactile,
   .nav-actions .nav-btn,
-  .nav-actions .btn-back-link {
+  .theme-single-toggle-btn {
     padding: 3px 5px !important;
     min-width: 26px !important;
   }
-  .session-timer-badge {
-    padding: 2px 4px !important;
-    font-size: 0.65rem !important;
-  }
   .brand-subtagline {
-    max-width: 60px !important;
+    font-size: 0.58rem !important;
+    display: block !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    max-width: none !important;
   }
 }
 
 @media (max-width: 380px) {
-  .nav-btn-tips {
-    display: none !important;
-  }
   .brand-subtagline {
-    display: none !important;
+    font-size: 0.54rem !important;
+    display: block !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    max-width: none !important;
   }
 }
 

@@ -509,10 +509,75 @@
 
 /* ── J. Dismissible Study Tip ──────────────────────────────── */
 .tip-dismiss-btn {
-  transition: color 0.15s ease, transform 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  background: rgba(245, 158, 11, 0.12);
+  color: #92400E;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.18s ease;
+  flex-shrink: 0;
 }
+
 .tip-dismiss-btn:hover {
-  color: var(--heading-color) !important;
-  transform: scale(1.15);
+  background: #F59E0B;
+  color: #FFFFFF;
+  transform: scale(1.1);
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.35);
 }
+
+.tip-dismiss-btn:active {
+  transform: scale(0.92);
+}
+
+[data-theme="dark"] .tip-dismiss-btn {
+  border-color: rgba(245, 158, 11, 0.5);
+  background: rgba(245, 158, 11, 0.2);
+  color: #FBBF24;
+}
+
+[data-theme="dark"] .tip-dismiss-btn:hover {
+  background: #F59E0B;
+  color: #111827;
+}
+
+/* Dismiss Animation */
+.tip-card-dismissing {
+  opacity: 0 !important;
+  transform: translateY(-8px) scaleY(0.95) !important;
+  max-height: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+  overflow: hidden !important;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Restore button */
+.tip-restore-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px dashed rgba(245, 158, 11, 0.4);
+  color: var(--text-muted);
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tip-restore-btn:hover {
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--heading-color);
+  border-style: solid;
+}
+
 

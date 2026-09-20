@@ -123,18 +123,53 @@ window.focusAssignmentsSection = focusAssignmentsSection;
 
 function dismissStudyTip() {
   const card = document.getElementById('studyTipCard');
+  const restoreWrap = document.getElementById('studyTipRestoreWrap');
   if (card) {
-    card.style.display = 'none';
-    try { sessionStorage.setItem('vlk_study_tip_dismissed', 'true'); } catch(e) {}
+    card.classList.add('tip-card-dismissing');
+    setTimeout(() => {
+      card.style.display = 'none';
+      card.classList.remove('tip-card-dismissing');
+      if (restoreWrap) restoreWrap.style.display = 'block';
+    }, 220);
+    try { localStorage.setItem('vlk_study_tip_dismissed', 'true'); } catch(e) {}
   }
 }
 window.dismissStudyTip = dismissStudyTip;
 
-if (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('vlk_study_tip_dismissed') === 'true') {
-  window.addEventListener('DOMContentLoaded', () => {
-    const card = document.getElementById('studyTipCard');
-    if (card) card.style.display = 'none';
-  });
+function restoreStudyTip() {
+  const card = document.getElementById('studyTipCard');
+  const restoreWrap = document.getElementById('studyTipRestoreWrap');
+  const earlyStyle = document.getElementById('vlkStudyTipEarlyStyle');
+  if (earlyStyle) earlyStyle.remove();
+  if (card) {
+    card.style.display = 'block';
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(-6px)';
+    requestAnimationFrame(() => {
+      card.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+      card.style.opacity = '1';
+      card.style.transform = 'translateY(0)';
+    });
+  }
+  if (restoreWrap) restoreWrap.style.display = 'none';
+  try { localStorage.removeItem('vlk_study_tip_dismissed'); } catch(e) {}
+}
+window.restoreStudyTip = restoreStudyTip;
+
+function initStudyTipState() {
+  try {
+    if (localStorage.getItem('vlk_study_tip_dismissed') === 'true') {
+      const card = document.getElementById('studyTipCard');
+      const restoreWrap = document.getElementById('studyTipRestoreWrap');
+      if (card) card.style.display = 'none';
+      if (restoreWrap) restoreWrap.style.display = 'block';
+    }
+  } catch(e) {}
+}
+if (document.readyState === 'loading') {
+  window.addEventListener('DOMContentLoaded', initStudyTipState);
+} else {
+  initStudyTipState();
 }
 
 // Highlight active bottom nav item based on current page

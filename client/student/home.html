@@ -24,6 +24,11 @@
     }
     return next;
   };
+  try {
+    if (localStorage.getItem('vlk_study_tip_dismissed') === 'true') {
+      document.write('<style id="vlkStudyTipEarlyStyle">#studyTipCard{display:none!important;}#studyTipRestoreWrap{display:block!important;}</style>');
+    }
+  } catch(e){}
 </script>
 <meta name="theme-color" content="#0F172A">
 <meta name="mobile-web-app-capable" content="yes">
@@ -44,7 +49,7 @@
 <link rel="stylesheet" href="../shared/gamification-engine.css">
 <link rel="stylesheet" href="css/dashboard.css?v=81">
 <link rel="stylesheet" href="css/skill-tree.css?v=80">
-<link rel="stylesheet" href="css/mobile.css?v=2">
+<link rel="stylesheet" href="css/mobile.css?v=3">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" crossorigin="anonymous"></script>
 
 <style>
@@ -752,13 +757,22 @@
           <!-- Right: Study Guidance & Targeted Suggestions -->
           <div class="priority-side-block" id="adaptiveRecCardWrap">
             <div id="adaptiveRecCard">
+              <!-- Study Tip Restore Bar (Appears when tip is dismissed) -->
+              <div id="studyTipRestoreWrap" style="display:none; margin-bottom:10px; text-align:right;">
+                <button type="button" class="tip-restore-btn" onclick="restoreStudyTip()" title="Show examiner study tip">
+                  <span>💡 Show Study Tip</span>
+                </button>
+              </div>
+
               <!-- Study Tip Card (Dismissible) -->
               <div class="guidance-card tip-card" id="studyTipCard">
                 <div class="guidance-header">
                   <span class="guidance-title" data-i18n="mwalimu_diag_title">Study Tip</span>
-                  <div style="display:flex; align-items:center; gap:6px;">
+                  <div style="display:flex; align-items:center; gap:8px;">
                     <span class="guidance-badge" data-i18n="pedagogical_hint">Tip</span>
-                    <button type="button" class="tip-dismiss-btn" onclick="dismissStudyTip()" aria-label="Dismiss tip" title="Dismiss study tip" style="background:none; border:none; cursor:pointer; font-size:0.9rem; color:var(--text-muted); padding:0 2px; line-height:1;">✕</button>
+                    <button type="button" class="tip-dismiss-btn" onclick="dismissStudyTip()" aria-label="Dismiss study tip" title="Dismiss study tip">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
                   </div>
                 </div>
                 <p id="mwalimuMessage" class="guidance-body">
@@ -1666,7 +1680,7 @@
   <script src="js/skill-tree.js?v=78"></script>
   <script src="js/student-dashboard.js?v=78"></script>
 
-  <script src="js/home.js?v=114"></script>
+  <script src="js/home.js?v=115"></script>
 
   <!-- ── Mobile Bottom Navigation Bar (hidden on desktop via CSS) ── -->
   <nav class="vlk-bottom-nav" aria-label="Mobile Bottom Navigation" id="vlkBottomNav">

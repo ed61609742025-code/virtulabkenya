@@ -1,5 +1,5 @@
 // ============================================================
-//  VirtuLab Kenya — AI Practical Tutor Service (Gemini 2.5)
+//  VirtuLab Kenya — AI Practical Tutor Service (Gemini 3.5 Flash-Lite)
 // ============================================================
 
 const config = require('../config');

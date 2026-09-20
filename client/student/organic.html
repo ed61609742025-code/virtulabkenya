@@ -31,7 +31,7 @@
 <link rel="stylesheet" href="../shared/style.css">
 <link rel="stylesheet" href="../shared/brilliant-theme.css">
 <link rel="stylesheet" href="../shared/tutorial-engine.css">
-<link rel="stylesheet" href="css/organic.css?v=82">
+<link rel="stylesheet" href="css/organic.css?v=83">
 <link rel="stylesheet" href="../shared/ai-tutor.css">
 <link rel="stylesheet" href="../shared/pwa-installer.css">
 </head>
@@ -77,16 +77,6 @@
         🧭 <span class="btn-text-full">Guided Tutorial</span><span class="btn-text-short">Tutorial</span>
       </button>
 
-      <!-- Examiner Tips Button -->
-      <button class="nav-btn nav-btn-tips" onclick="openExaminerTipsModal()" title="View KNEC marking tips">
-        💡 <span class="btn-text-full">Tips</span>
-      </button>
-
-      <!-- Reagent Safety (SDS) Button -->
-      <button class="nav-btn nav-btn-safety" onclick="window.VLKSafety && window.VLKSafety.openSDSModal('Ethanol')" title="View Chemical Safety & SDS Hazards">
-        ⚠️ <span class="btn-text-full">SDS</span>
-      </button>
-
       <!-- Settings Dropdown Button -->
       <div style="position:relative;">
         <button type="button" class="nav-btn nav-btn-settings" onclick="toggleBenchSettings(event)" title="Workbench Settings & Tools">
@@ -104,6 +94,18 @@
           <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
             <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Scratchpad</span>
             <button type="button" onclick="toggleScratchpad()" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border);">📝 Rough Work</button>
+          </div>
+
+          <!-- Examiner Tips Option -->
+          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">KNEC Tips</span>
+            <button type="button" onclick="openExaminerTipsModal()" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border); color:var(--violet-accent);">💡 View Tips</button>
+          </div>
+
+          <!-- Safety SDS Option -->
+          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Chemical Safety</span>
+            <button type="button" onclick="window.VLKSafety && window.VLKSafety.openSDSModal('Ethanol')" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border); color:var(--red-accent);">⚠️ View SDS</button>
           </div>
 
           <!-- Language Selector Row -->

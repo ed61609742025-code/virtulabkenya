@@ -1133,13 +1133,13 @@ if (typeof window === 'undefined') {
         note = isCorrect ? 'Correct: No effervescence observed' : 'Incorrect: Only carboxylic acids produce effervescence with NaHCO₃';
       }
     } else if (testKey === 'esterification') {
-      const isEsterForming = sample.fgKey === 'alkanol' || sample.fgKey === 'alkanoic_acid';
+      const isEsterForming = sample.fgKey === 'alkanol';
       if (isEsterForming) {
         isCorrect = lower.includes('sweet') || lower.includes('fruity') || lower.includes('aroma') || lower.includes('pleasant') || lower.includes('ester');
-        note = isCorrect ? 'Correct: Sweet pleasant fruity smell of ester formed' : 'Incorrect: Warming alkanol/acid with catalyst produces sweet fruity ester';
+        note = isCorrect ? 'Correct: Sweet pleasant fruity smell of ester formed' : 'Incorrect: Warming alkanol with ethanoic acid and catalyst produces sweet fruity ester';
       } else {
-        isCorrect = lower.includes('pungent') || lower.includes('vinegar') || lower.includes('acid smell') || lower.includes('no sweet') || lower.includes('no fruity');
-        note = isCorrect ? 'Correct: No fruity ester aroma formed' : 'Incorrect: Hydrocarbons do not undergo esterification';
+        isCorrect = lower.includes('pungent') || lower.includes('vinegar') || lower.includes('acid smell') || lower.includes('no sweet') || lower.includes('no fruity') || lower.includes('no ester') || lower.includes('persists');
+        note = isCorrect ? 'Correct: No fruity ester aroma formed' : 'Incorrect: Non-alkanol sample does not undergo esterification with ethanoic acid';
       }
     } else if (testKey === 'litmus') {
       const isAcid = sample.fgKey === 'alkanoic_acid';
@@ -1220,13 +1220,13 @@ if (typeof window === 'undefined') {
         note = isCorrect ? 'Correct: Carboxylic acid (R-COOH) absent deduced' : 'Incorrect: Expected carboxylic acid absent';
       }
     } else if (testKey === 'esterification') {
-      const isEster = sample.fgKey === 'alkanol' || sample.fgKey === 'alkanoic_acid';
+      const isEster = sample.fgKey === 'alkanol';
       if (isEster) {
-        isCorrect = (lower.includes('alkanol') || lower.includes('acid') || lower.includes('ester') || lower.includes('r-oh') || lower.includes('-cooh')) && !lower.includes('absent');
-        note = isCorrect ? 'Correct: Alkanol / acid ester formation verified' : 'Incorrect: Expected alkanol (R-OH) or carboxylic acid verified';
+        isCorrect = (lower.includes('alkanol') || lower.includes('alcohol') || lower.includes('ester') || lower.includes('r-oh') || lower.includes('-oh')) && !lower.includes('absent');
+        note = isCorrect ? 'Correct: Alkanol (R-OH) verified by ester formation' : 'Incorrect: Expected alkanol (R-OH) present';
       } else {
-        isCorrect = lower.includes('absent') || lower.includes('no ester') || lower.includes('neutral');
-        note = isCorrect ? 'Correct: Non-ester forming compound verified' : 'Incorrect: Expected alkanol absent';
+        isCorrect = lower.includes('absent') || lower.includes('no ester') || lower.includes('not alkanol') || lower.includes('neutral') || lower.includes('no alcohol');
+        note = isCorrect ? 'Correct: Alkanol absent deduced' : 'Incorrect: Expected alkanol (R-OH) absent';
       }
     } else if (testKey === 'litmus') {
       const isAcid = sample.fgKey === 'alkanoic_acid';

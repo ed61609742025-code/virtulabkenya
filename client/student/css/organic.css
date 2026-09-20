@@ -243,35 +243,50 @@ html, body {
 }
 
 .nav-brand-academic {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
-  color: var(--heading-color);
-  flex-shrink: 0;
+  display: flex !important;
+  align-items: center !important;
+  gap: 9px !important;
+  text-decoration: none !important;
+  color: var(--heading-color) !important;
+  flex-shrink: 0 !important;
 }
 
 .nav-brand-text {
-  display: flex;
-  flex-direction: column;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  line-height: 1.15 !important;
 }
 
 .nav-brand-academic .brand-title {
-  font-weight: 800;
-  font-family: var(--font-academic);
-  font-size: 1.05rem;
-  line-height: 1.1;
-  color: var(--heading-color);
+  font-weight: 800 !important;
+  font-family: var(--font-academic, 'Cinzel', Georgia, serif) !important;
+  font-size: 1.10rem !important;
+  line-height: 1.1 !important;
+  color: var(--heading-color) !important;
+  letter-spacing: -0.01em !important;
 }
 
-.brand-subtagline {
-  font-size: 0.65rem;
-  font-family: var(--font-editorial);
-  font-style: italic;
-  color: var(--cyan-accent);
-  letter-spacing: 0.01em;
-  white-space: nowrap;
-  display: block;
+.nav-brand-text .brand-subtagline {
+  display: block !important;
+  font-size: 0.78rem !important;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-style: normal !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em !important;
+  line-height: 1.2 !important;
+  color: var(--cyan-accent, #0284C7) !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  max-width: none !important;
+  opacity: 1 !important;
+}
+[data-theme="dark"] .nav-brand-text .brand-subtagline {
+  color: #38BDF8 !important;
+}
+[data-theme="green"] .nav-brand-text .brand-subtagline {
+  color: #34D399 !important;
 }
 
 .seal-crest-small {
@@ -290,77 +305,169 @@ html, body {
 [data-theme="dark"] .seal-crest-small { background: #162238; border-color: var(--acad-gold); }
 [data-theme="green"] .seal-crest-small { background: #0E2415; border-color: var(--acad-gold); }
 
+/* Top Navbar Action Buttons Container — strictly single flex row */
+.nav-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-shrink: 0 !important;
+  flex-wrap: nowrap !important;
+}
+
+.nav-actions > * {
+  flex-shrink: 0 !important;
+}
+
 .nav-btn-tutorial {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  font-size: 0.84rem;
-  font-weight: 800;
-  letter-spacing: 0.01em;
-  border-radius: 8px;
-  white-space: nowrap;
-  box-shadow: 0 3px 0 var(--b-primary-shadow, rgba(0,0,0,0.25));
-  transition: all 0.15s ease;
-  height: 36px;
-  cursor: pointer;
-  box-sizing: border-box;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  padding: 6px 14px !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 0.86rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.01em !important;
+  border-radius: 8px !important;
+  white-space: nowrap !important;
+  box-shadow: 0 3px 0 var(--b-primary-shadow, rgba(0, 0, 0, 0.25)) !important;
+  transition: all 0.15s ease !important;
+  height: 36px !important;
+  cursor: pointer !important;
+  box-sizing: border-box !important;
+  background: linear-gradient(135deg, #0284C7, #0369A1) !important;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+.nav-btn-tutorial:hover {
+  filter: brightness(1.08) !important;
+  transform: translateY(-1px) !important;
+}
+.nav-btn-tutorial:active {
+  transform: translateY(2px) !important;
+  box-shadow: 0 1px 0 var(--b-primary-shadow, rgba(0, 0, 0, 0.25)) !important;
 }
 .nav-btn-tutorial .tutorial-icon {
-  font-size: 1.05rem;
-  line-height: 1;
+  font-size: 1.1rem !important;
+  line-height: 1 !important;
 }
 .nav-btn-tutorial .tutorial-btn-text {
-  font-weight: 800;
+  font-weight: 800 !important;
   display: inline !important;
 }
 
-.theme-single-toggle-btn {
+/* Theme Switcher — 3-Chip Group (Matches Home Page) */
+.theme-toggle-group.theme-multi-btn-group {
   display: inline-flex !important;
-  align-items: center;
-  justify-content: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 6px;
-  background: var(--card-bg-hover);
-  border: 1px solid var(--card-border);
-  color: var(--heading-color);
-  cursor: pointer;
-  padding: 0;
-  transition: all 0.15s ease;
-  flex-shrink: 0;
-}
-.theme-single-toggle-btn:hover {
-  background: var(--card-bg);
-  border-color: var(--cyan-accent);
-  color: var(--cyan-accent);
-}
-.theme-single-toggle-btn svg {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
+  align-items: center !important;
+  background: var(--card-bg-hover) !important;
+  border: 1.5px solid var(--card-border) !important;
+  border-radius: 8px !important;
+  padding: 2px !important;
+  gap: 2px !important;
+  flex-shrink: 0 !important;
 }
 
-.nav-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 10px;
-  border-radius: 6px;
-  font-family: inherit;
-  font-size: 0.76rem;
-  font-weight: 700;
-  cursor: pointer;
-  border: 1px solid var(--card-border);
-  background: var(--card-bg-hover);
-  color: var(--text-main);
-  transition: all 0.15s ease;
-  white-space: nowrap;
+.theme-toggle-group.theme-multi-btn-group .theme-btn-chip {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 0.74rem !important;
+  font-weight: 700 !important;
+  padding: 4px 8px !important;
+  border-radius: 6px !important;
+  border: 1px solid transparent !important;
+  background: transparent !important;
+  color: var(--text-muted) !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  transition: all 0.15s ease !important;
+  height: 28px !important;
+  min-height: 28px !important;
+  box-sizing: border-box !important;
 }
-.nav-btn:hover {
-  background: var(--card-bg);
-  border-color: var(--violet-accent);
-  color: var(--violet-accent);
+
+.theme-toggle-group.theme-multi-btn-group .theme-btn-chip:hover {
+  color: var(--heading-color) !important;
+  background: rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="dark"] .theme-toggle-group.theme-multi-btn-group .theme-btn-chip:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.theme-toggle-group.theme-multi-btn-group .theme-btn-chip.active {
+  background: var(--card-bg) !important;
+  color: var(--heading-color) !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1) !important;
+  border-color: var(--card-border) !important;
+  font-weight: 800 !important;
+}
+
+.theme-toggle-group.theme-multi-btn-group .theme-icon-svg {
+  width: 14px !important;
+  height: 14px !important;
+  flex-shrink: 0 !important;
+}
+
+/* Single Theme Toggle Button (Hidden on desktop, shown on mobile / narrow viewports) */
+.theme-single-toggle-btn {
+  display: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  border-radius: 8px !important;
+  background: var(--card-bg-hover) !important;
+  border: 1.5px solid var(--card-border) !important;
+  color: var(--heading-color) !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease !important;
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.theme-single-toggle-btn:hover {
+  background: var(--card-bg) !important;
+  border-color: var(--cyan-accent) !important;
+  color: var(--cyan-accent) !important;
+}
+
+.theme-single-toggle-btn svg {
+  width: 18px !important;
+  height: 18px !important;
+  flex-shrink: 0 !important;
+}
+
+.nav-btn,
+.nav-btn-settings {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  padding: 6px 12px !important;
+  border-radius: 8px !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  border: 1.5px solid var(--card-border) !important;
+  background: var(--card-bg-hover) !important;
+  color: var(--heading-color) !important;
+  transition: all 0.15s ease !important;
+  white-space: nowrap !important;
+  height: 36px !important;
+  box-sizing: border-box !important;
+}
+.nav-btn:hover,
+.nav-btn-settings:hover {
+  background: var(--card-bg) !important;
+  border-color: var(--acad-oxford) !important;
 }
 
 .nav-btn-tips {
@@ -392,7 +499,7 @@ html, body {
   gap: 2px;
 }
 
-.theme-btn-chip {
+.nav-modules-pill .theme-btn-chip {
   font-family: inherit;
   font-size: 0.70rem;
   font-weight: 600;
@@ -406,10 +513,10 @@ html, body {
   transition: all 0.12s ease;
   text-decoration: none;
 }
-.theme-btn-chip:hover {
+.nav-modules-pill .theme-btn-chip:hover {
   color: var(--text-main);
 }
-.theme-btn-chip.active {
+.nav-modules-pill .theme-btn-chip.active {
   background: var(--violet-accent);
   color: #FFFFFF;
 }
@@ -1154,7 +1261,16 @@ html, body {
   opacity: 1;
 }
 
-/* ── 10. MOBILE RESPONSIVE RULES ── */
+/* ── 10. MOBILE & TABLET RESPONSIVE RULES ── */
+@media (max-width: 960px) {
+  .theme-toggle-group.theme-multi-btn-group {
+    display: none !important;
+  }
+  .theme-single-toggle-btn {
+    display: inline-flex !important;
+  }
+}
+
 @media (max-width: 768px) {
   .ribbon-full {
     display: none !important;
@@ -1192,8 +1308,8 @@ html, body {
   }
 
   .top-navbar {
-    padding: 6px 8px !important;
-    gap: 6px !important;
+    padding: 6px 10px !important;
+    gap: 8px !important;
     box-sizing: border-box !important;
     width: 100% !important;
     max-width: 100vw !important;
@@ -1222,13 +1338,17 @@ html, body {
   }
 
   .nav-brand-academic .brand-title {
-    font-size: 0.90rem !important;
+    font-size: 0.95rem !important;
     line-height: 1.1 !important;
   }
 
-  .brand-subtagline {
+  .nav-brand-text .brand-subtagline {
     display: block !important;
-    font-size: 0.62rem !important;
+    font-size: 0.72rem !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-style: normal !important;
+    font-weight: 700 !important;
+    color: var(--cyan-accent, #0284C7) !important;
     white-space: nowrap !important;
     overflow: visible !important;
     text-overflow: clip !important;
@@ -1236,56 +1356,72 @@ html, body {
   }
 
   .nav-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
     gap: 6px !important;
     flex-shrink: 0 !important;
-    align-items: center !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .nav-actions > * {
+    flex-shrink: 0 !important;
+  }
+
+  .theme-toggle-group.theme-multi-btn-group {
+    display: none !important;
   }
 
   .nav-btn-tutorial {
     display: inline-flex !important;
     align-items: center !important;
-    gap: 5px !important;
-    padding: 6px 12px !important;
-    font-size: 0.84rem !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    padding: 6px 13px !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-size: 0.86rem !important;
     font-weight: 800 !important;
-    height: 34px !important;
+    height: 36px !important;
     border-radius: 8px !important;
     white-space: nowrap !important;
-    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.25) !important;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.25) !important;
     flex-shrink: 0 !important;
     box-sizing: border-box !important;
   }
   .nav-btn-tutorial .tutorial-icon {
-    font-size: 1.05rem !important;
+    font-size: 1.15rem !important;
     line-height: 1 !important;
   }
   .nav-btn-tutorial .tutorial-btn-text {
-    font-size: 0.82rem !important;
+    font-size: 0.86rem !important;
     font-weight: 800 !important;
     letter-spacing: 0.01em !important;
     display: inline !important;
   }
 
-  .nav-actions .nav-btn {
-    padding: 4px 6px !important;
-    font-size: 0.72rem !important;
-    height: 34px !important;
-    min-width: 34px !important;
+  .nav-actions .nav-btn,
+  .nav-actions .nav-btn-settings {
+    padding: 6px 10px !important;
+    font-size: 0.78rem !important;
+    height: 36px !important;
+    min-width: 36px !important;
     box-sizing: border-box !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    border-radius: 6px !important;
+    border-radius: 8px !important;
   }
 
   .theme-single-toggle-btn {
-    width: 34px !important;
-    height: 34px !important;
-    border-radius: 6px !important;
+    display: inline-flex !important;
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    border-radius: 8px !important;
   }
   .theme-single-toggle-btn svg {
-    width: 17px !important;
-    height: 17px !important;
+    width: 18px !important;
+    height: 18px !important;
   }
 
   #benchSettingsDropdown {
@@ -1449,64 +1585,123 @@ html, body {
 }
 
 @media (max-width: 480px) {
+  .top-navbar {
+    padding: 6px 8px !important;
+    gap: 6px !important;
+  }
+  .nav-brand-academic {
+    gap: 6px !important;
+  }
+  .nav-brand-academic .brand-title {
+    font-size: 0.92rem !important;
+  }
+  .nav-brand-text .brand-subtagline {
+    font-size: 0.68rem !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-style: normal !important;
+    font-weight: 700 !important;
+    color: var(--cyan-accent, #0284C7) !important;
+    display: block !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    max-width: none !important;
+  }
   .nav-actions {
-    gap: 4px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 5px !important;
+    flex-wrap: nowrap !important;
   }
   .nav-btn-tutorial {
-    padding: 5px 10px !important;
-    height: 32px !important;
-    gap: 4px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 6px 11px !important;
+    height: 36px !important;
+    font-size: 0.84rem !important;
+    gap: 5px !important;
+    flex-shrink: 0 !important;
   }
   .nav-btn-tutorial .tutorial-icon {
-    font-size: 1.0rem !important;
+    font-size: 1.1rem !important;
   }
   .nav-btn-tutorial .tutorial-btn-text {
-    font-size: 0.78rem !important;
+    font-size: 0.84rem !important;
     font-weight: 800 !important;
     display: inline !important;
   }
   .nav-actions .nav-btn,
-  .theme-single-toggle-btn {
-    padding: 3px 5px !important;
-    min-width: 32px !important;
-    width: 32px !important;
-    height: 32px !important;
+  .nav-actions .nav-btn-settings {
+    padding: 6px 8px !important;
+    min-width: 34px !important;
+    width: 34px !important;
+    height: 36px !important;
+    border-radius: 8px !important;
   }
-  .brand-subtagline {
-    font-size: 0.58rem !important;
-    display: block !important;
-    white-space: nowrap !important;
-    overflow: visible !important;
-    max-width: none !important;
+  .theme-single-toggle-btn {
+    min-width: 34px !important;
+    width: 34px !important;
+    height: 36px !important;
+    border-radius: 8px !important;
   }
 }
 
 @media (max-width: 380px) {
+  .top-navbar {
+    padding: 5px 6px !important;
+    gap: 4px !important;
+  }
+  .nav-brand-academic {
+    gap: 5px !important;
+  }
+  .nav-brand-academic .brand-title {
+    font-size: 0.88rem !important;
+  }
+  .nav-brand-text .brand-subtagline {
+    font-size: 0.64rem !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-style: normal !important;
+    font-weight: 700 !important;
+    color: var(--cyan-accent, #0284C7) !important;
+    display: block !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    max-width: none !important;
+  }
+  .nav-actions {
+    gap: 4px !important;
+  }
   .nav-btn-tutorial {
-    padding: 4px 8px !important;
-    height: 30px !important;
-    gap: 3px !important;
+    padding: 5px 9px !important;
+    height: 34px !important;
+    font-size: 0.80rem !important;
+    gap: 4px !important;
+    flex-shrink: 0 !important;
   }
   .nav-btn-tutorial .tutorial-icon {
-    font-size: 0.92rem !important;
+    font-size: 1.05rem !important;
   }
   .nav-btn-tutorial .tutorial-btn-text {
-    font-size: 0.74rem !important;
+    font-size: 0.80rem !important;
     font-weight: 800 !important;
     display: inline !important;
   }
   .nav-actions .nav-btn,
-  .theme-single-toggle-btn {
-    min-width: 28px !important;
-    width: 28px !important;
-    height: 30px !important;
+  .nav-actions .nav-btn-settings {
+    min-width: 32px !important;
+    width: 32px !important;
+    height: 34px !important;
+    padding: 4px 6px !important;
+    border-radius: 8px !important;
   }
-  .brand-subtagline {
-    font-size: 0.54rem !important;
-    display: block !important;
-    white-space: nowrap !important;
-    overflow: visible !important;
-    max-width: none !important;
+  .theme-single-toggle-btn {
+    min-width: 32px !important;
+    width: 32px !important;
+    height: 34px !important;
+    border-radius: 8px !important;
   }
 }
 

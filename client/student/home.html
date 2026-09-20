@@ -42,9 +42,9 @@
 <link rel="stylesheet" href="../shared/pwa-installer.css">
 <link rel="stylesheet" href="../shared/brilliant-theme.css">
 <link rel="stylesheet" href="../shared/gamification-engine.css">
-<link rel="stylesheet" href="css/dashboard.css?v=80">
+<link rel="stylesheet" href="css/dashboard.css?v=81">
 <link rel="stylesheet" href="css/skill-tree.css?v=79">
-<link rel="stylesheet" href="css/mobile.css?v=1">
+<link rel="stylesheet" href="css/mobile.css?v=2">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" crossorigin="anonymous"></script>
 
 <style>
@@ -475,95 +475,39 @@
     <!-- Tab 1: Laboratory Benches & Assignments -->
     <div class="student-tab-panel active" id="panel_benches">
 
-      <!-- Zone 1: Priority Tasks & Assignments -->
-      <section id="zone_assignments" class="activity-zone-wrap zone-priority">
-
-        <!-- Daily Challenge Highlight Banner -->
-        <div id="dailyChallengeCard" class="daily-challenge-card">
-          <div class="daily-challenge-left">
-            <div class="daily-tag-row">
-              <span class="daily-pill-badge" data-i18n="daily_bite_tag">Daily Challenge</span>
-              <span class="daily-xp-badge" id="dailyChallengeXP" data-i18n="daily_bite_bonus">+100 XP</span>
-              <span class="daily-timer-text" id="dailyChallengeTimer" data-i18n="daily_bite_timer">Resets at midnight</span>
-            </div>
-            <h3 id="dailyChallengeTitle" class="daily-title" data-i18n="daily_bite_title">
-              Daily Quick Quiz
-            </h3>
-            <p id="dailyChallengeDesc" class="daily-desc" data-i18n="daily_bite_desc">
-              3 quick questions to practice observation and calculations.
-            </p>
+      <!-- Daily Challenge Highlight Banner (Top Priority) -->
+      <div id="dailyChallengeCard" class="daily-challenge-card">
+        <div class="daily-challenge-left">
+          <div class="daily-tag-row">
+            <span class="daily-pill-badge" data-i18n="daily_bite_tag">Daily Challenge</span>
+            <span class="daily-xp-badge" id="dailyChallengeXP" data-i18n="daily_bite_bonus">+100 XP</span>
+            <span class="daily-timer-text" id="dailyChallengeTimer" data-i18n="daily_bite_timer">Resets at midnight</span>
           </div>
-          <div class="daily-challenge-right">
-            <a id="dailyChallengeLaunchBtn" href="speed_battle.html?mode=daily_bite" class="daily-launch-btn">
-              <span data-i18n="daily_bite_launch">Start Quiz →</span>
-            </a>
-          </div>
+          <h3 id="dailyChallengeTitle" class="daily-title" data-i18n="daily_bite_title">
+            Daily Quick Quiz
+          </h3>
+          <p id="dailyChallengeDesc" class="daily-desc" data-i18n="daily_bite_desc">
+            3 quick questions to practice observation and calculations.
+          </p>
         </div>
-
-        <!-- Balanced 2-Column Priority Grid -->
-        <div class="priority-action-grid">
-          
-          <!-- Left: Teacher Assignments Block -->
-          <div class="priority-card-block">
-            <div class="block-header">
-              <div class="block-title-row">
-                <h3 class="block-title" data-i18n="prescribed_ca">Teacher Assignments</h3>
-                <span class="dash-section-badge badge-cyan" id="caProgressPercentBadge">0% Complete</span>
-              </div>
-              <!-- Task Progress Header -->
-              <div class="ca-progress-header" id="caProgressHeader">
-                <div class="ca-progress-bar-wrap" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                  <div class="ca-progress-fill" id="caProgressFill" style="width: 0%;"></div>
-                </div>
-                <div class="ca-stat-chips" id="caStatChips">
-                  <div class="ca-stat-chip chip-marked" id="statChipMarked">0 Graded</div>
-                  <div class="ca-stat-chip chip-review" id="statChipReview">0 Under Review</div>
-                  <div class="ca-stat-chip chip-pending" id="statChipPending">0 Pending</div>
-                </div>
-              </div>
-            </div>
-
-            <div id="assignmentsList" class="assignments-grid-container">
-              <div class="empty-box">Loading assignments…</div>
-            </div>
-          </div>
-
-          <!-- Right: Study Guidance & Targeted Suggestions -->
-          <div class="priority-side-block" id="adaptiveRecCardWrap">
-            <div id="adaptiveRecCard">
-              <!-- Study Tip Card -->
-              <div class="guidance-card tip-card">
-                <div class="guidance-header">
-                  <span class="guidance-title" data-i18n="mwalimu_diag_title">Study Tip</span>
-                  <span class="guidance-badge" data-i18n="pedagogical_hint">Tip</span>
-                </div>
-                <p id="mwalimuMessage" class="guidance-body">
-                  Analyzing your practical logs to suggest focused revision areas…
-                </p>
-              </div>
-
-              <!-- Suggested Practical Card -->
-              <div class="guidance-card rec-card" style="margin-top: 14px;">
-                <div class="guidance-header">
-                  <span class="guidance-title" data-i18n="prescribed_practical">Suggested Practical</span>
-                  <span class="guidance-badge rec-badge" id="recReasonBadge" data-i18n="syllabus_focus">Syllabus Focus</span>
-                </div>
-                <h4 class="rec-title" id="recTitle">Redox Titration (Fe²⁺ vs KMnO₄)</h4>
-                <p class="guidance-body" id="recDesc">
-                  Practice self-indicating titration transitions without external indicators.
-                </p>
-                <a id="recActionBtn" href="lab.html?studyMode=guided" class="rec-cta-btn" data-tooltip="Launch this practical simulation session" data-tooltip-pos="top">
-                  <span data-i18n="launch_prescribed">Start Session →</span>
-                </a>
-              </div>
-            </div>
-          </div>
-
+        <div class="daily-challenge-right">
+          <a id="dailyChallengeLaunchBtn" href="speed_battle.html?mode=daily_bite" class="daily-launch-btn">
+            <span data-i18n="daily_bite_launch">Start Quiz →</span>
+          </a>
         </div>
-      </section>
+      </div>
 
-      <!-- Zone 2: Practical Chemistry Topics (Pathway & Grid) -->
-      <section class="activity-zone-wrap zone-pathway">
+      <!-- Smart Assignment Alert Strip (Appears dynamically when assignments exist) -->
+      <div id="assignmentAlertStrip" class="assignment-alert-strip" style="display:none;">
+        <div class="aas-left">
+          <span class="aas-icon">📋</span>
+          <span class="aas-text" id="aasText">Teacher Assignment</span>
+        </div>
+        <a href="#zone_assignments" onclick="focusAssignmentsSection(event)" class="aas-btn" id="aasBtn">View Assignment →</a>
+      </div>
+
+      <!-- Zone 1 (PRIMARY): Practical Chemistry Topics (Pathway & Grid) -->
+      <section class="activity-zone-wrap zone-pathway" id="zone_pathway">
         <div class="activity-zone-header">
           <div class="activity-zone-title-box">
             <div>
@@ -764,6 +708,72 @@
             </div>
             <span class="drill-time-chip" style="background:rgba(239,68,68,0.12); color:#B91C1C; border:1px solid rgba(239,68,68,0.3);" aria-label="Time limit: 15 seconds per question">15s</span>
           </a>
+        </div>
+      </section>
+
+      <!-- Zone 2: Continuous Assessment & Teacher Assignments + Study Guidance -->
+      <section id="zone_assignments" class="activity-zone-wrap zone-priority" style="margin-top: 28px;">
+        <div class="priority-action-grid">
+          
+          <!-- Left: Teacher Assignments Block -->
+          <div class="priority-card-block">
+            <div class="block-header">
+              <div class="block-title-row">
+                <h3 class="block-title" data-i18n="prescribed_ca">Teacher Assignments</h3>
+                <span class="dash-section-badge badge-cyan" id="caProgressPercentBadge">0% Complete</span>
+              </div>
+              <!-- Task Progress Header -->
+              <div class="ca-progress-header" id="caProgressHeader">
+                <div class="ca-progress-bar-wrap" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                  <div class="ca-progress-fill" id="caProgressFill" style="width: 0%;"></div>
+                </div>
+                <div class="ca-stat-chips" id="caStatChips">
+                  <div class="ca-stat-chip chip-marked" id="statChipMarked">0 Graded</div>
+                  <div class="ca-stat-chip chip-review" id="statChipReview">0 Under Review</div>
+                  <div class="ca-stat-chip chip-pending" id="statChipPending">0 Pending</div>
+                </div>
+              </div>
+            </div>
+
+            <div id="assignmentsList" class="assignments-grid-container">
+              <div class="empty-box">Loading assignments…</div>
+            </div>
+          </div>
+
+          <!-- Right: Study Guidance & Targeted Suggestions -->
+          <div class="priority-side-block" id="adaptiveRecCardWrap">
+            <div id="adaptiveRecCard">
+              <!-- Study Tip Card (Dismissible) -->
+              <div class="guidance-card tip-card" id="studyTipCard">
+                <div class="guidance-header">
+                  <span class="guidance-title" data-i18n="mwalimu_diag_title">Study Tip</span>
+                  <div style="display:flex; align-items:center; gap:6px;">
+                    <span class="guidance-badge" data-i18n="pedagogical_hint">Tip</span>
+                    <button type="button" class="tip-dismiss-btn" onclick="dismissStudyTip()" aria-label="Dismiss tip" title="Dismiss study tip" style="background:none; border:none; cursor:pointer; font-size:0.9rem; color:var(--text-muted); padding:0 2px; line-height:1;">✕</button>
+                  </div>
+                </div>
+                <p id="mwalimuMessage" class="guidance-body">
+                  Analyzing your practical logs to suggest focused revision areas…
+                </p>
+              </div>
+
+              <!-- Suggested Practical Card -->
+              <div class="guidance-card rec-card" style="margin-top: 14px;">
+                <div class="guidance-header">
+                  <span class="guidance-title" data-i18n="prescribed_practical">Suggested Practical</span>
+                  <span class="guidance-badge rec-badge" id="recReasonBadge" data-i18n="syllabus_focus">Syllabus Focus</span>
+                </div>
+                <h4 class="rec-title" id="recTitle">Redox Titration (Fe²⁺ vs KMnO₄)</h4>
+                <p class="guidance-body" id="recDesc">
+                  Practice self-indicating titration transitions without external indicators.
+                </p>
+                <a id="recActionBtn" href="lab.html?studyMode=guided" class="rec-cta-btn" data-tooltip="Launch this practical simulation session" data-tooltip-pos="top">
+                  <span data-i18n="launch_prescribed">Start Session →</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
 
@@ -1645,9 +1655,9 @@
   <script src="../shared/brilliant-ui.js"></script>
   <script src="../shared/gamification-engine.js"></script>
   <script src="js/skill-tree.js?v=77"></script>
-  <script src="js/student-dashboard.js?v=77"></script>
+  <script src="js/student-dashboard.js?v=78"></script>
 
-  <script src="js/home.js?v=113"></script>
+  <script src="js/home.js?v=114"></script>
 
   <!-- ── Mobile Bottom Navigation Bar (hidden on desktop via CSS) ── -->
   <nav class="vlk-bottom-nav" aria-label="Mobile Bottom Navigation" id="vlkBottomNav">

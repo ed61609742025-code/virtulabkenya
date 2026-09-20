@@ -210,12 +210,8 @@
   }
 }
 
-/* ── F. Daily Challenge Readability ───────────────────────── */
+/* ── F. Daily Challenge Readability & Options ────────────── */
 @media (max-width: 768px) {
-  .daily-challenge-card, .challenge-card {
-    padding: 14px !important;
-  }
-
   .quiz-option-btn, .challenge-option {
     min-height: 48px !important;
     font-size: 0.88rem !important;
@@ -223,3 +219,300 @@
     text-align: left !important;
   }
 }
+
+/* ── G. Ultra-Compact Mobile Hero Command Bar ─────────────── */
+@media (max-width: 768px) {
+  .candidate-hero-bar {
+    padding: 10px 12px !important;
+    margin-bottom: 10px !important;
+    border-radius: 14px !important;
+    gap: 8px !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .hero-profile-box {
+    gap: 10px !important;
+    width: 100% !important;
+    flex: 1 1 100% !important;
+    align-items: center !important;
+  }
+
+  .hero-avatar {
+    width: 38px !important;
+    height: 38px !important;
+    font-size: 0.92rem !important;
+    border-radius: 10px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .candidate-name-title {
+    font-size: 1.05rem !important;
+    line-height: 1.15 !important;
+  }
+
+  .hero-role-chip {
+    font-size: 0.68rem !important;
+    padding: 2px 7px !important;
+  }
+
+  .hero-meta-row {
+    gap: 6px !important;
+    margin-top: 2px !important;
+  }
+
+  .hero-meta-chip {
+    font-size: 0.70rem !important;
+    padding: 2px 6px !important;
+  }
+
+  .hero-metrics-box {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 6px !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 2px 0 !important;
+    grid-template-columns: none !important;
+  }
+  .hero-metrics-box::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .hero-metric-card {
+    padding: 4px 8px !important;
+    border-radius: 8px !important;
+    flex-shrink: 0 !important;
+    min-height: 34px !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
+
+  .hero-metric-card .metric-icon {
+    font-size: 1.05rem !important;
+  }
+
+  .hero-metric-card .metric-val {
+    font-size: 0.82rem !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+  }
+
+  .hero-metric-card .metric-lbl {
+    display: none !important;
+  }
+
+  .xp-metric-card {
+    grid-column: auto !important;
+    padding: 4px 10px !important;
+    min-width: 130px !important;
+    flex: 1 0 auto !important;
+    display: block !important;
+  }
+
+  .xp-metric-card .xp-header-row {
+    margin-bottom: 2px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+  }
+
+  .xp-metric-card .xp-level-badge {
+    font-size: 0.68rem !important;
+  }
+
+  .xp-metric-card .xp-points-badge {
+    font-size: 0.65rem !important;
+  }
+
+  .xp-metric-card .xp-track-bar {
+    height: 4px !important;
+  }
+
+  .xp-metric-card .xp-sub-text-row {
+    display: none !important;
+  }
+
+  .hero-warmup-btn {
+    grid-column: auto !important;
+    padding: 5px 10px !important;
+    min-height: 34px !important;
+    height: 34px !important;
+    font-size: 0.74rem !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    width: auto !important;
+    border-radius: 8px !important;
+  }
+}
+
+/* ── H. Compact Daily Challenge Card on Mobile ────────────── */
+@media (max-width: 768px) {
+  .daily-challenge-card {
+    padding: 10px 12px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    margin-bottom: 10px !important;
+    border-radius: 12px !important;
+    min-height: 50px !important;
+  }
+
+  .daily-challenge-left {
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+
+  .daily-tag-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    margin-bottom: 2px !important;
+  }
+
+  .daily-pill-badge {
+    font-size: 0.62rem !important;
+    padding: 1px 6px !important;
+  }
+
+  .daily-xp-badge {
+    font-size: 0.62rem !important;
+    padding: 1px 6px !important;
+  }
+
+  .daily-timer-text {
+    display: none !important;
+  }
+
+  .daily-title {
+    font-size: 0.86rem !important;
+    margin: 0 !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .daily-desc {
+    display: none !important;
+  }
+
+  .daily-challenge-right {
+    flex-shrink: 0 !important;
+  }
+
+  .daily-launch-btn {
+    width: auto !important;
+    min-height: 32px !important;
+    height: 32px !important;
+    padding: 4px 12px !important;
+    font-size: 0.78rem !important;
+    font-weight: 800 !important;
+    white-space: nowrap !important;
+  }
+}
+
+/* ── I. Smart Assignment Quick Alert Strip ─────────────────── */
+.assignment-alert-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: rgba(2, 132, 199, 0.08);
+  border: 1.5px solid rgba(2, 132, 199, 0.3);
+  border-radius: 10px;
+  padding: 8px 14px;
+  margin-bottom: 14px;
+  box-sizing: border-box;
+  transition: all 0.15s ease;
+}
+
+[data-theme="dark"] .assignment-alert-strip {
+  background: rgba(56, 189, 248, 0.1);
+  border-color: rgba(56, 189, 248, 0.3);
+}
+
+[data-theme="green"] .assignment-alert-strip {
+  background: rgba(52, 211, 153, 0.1);
+  border-color: rgba(52, 211, 153, 0.3);
+}
+
+.assignment-alert-strip .aas-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--heading-color);
+  min-width: 0;
+}
+
+.assignment-alert-strip .aas-icon {
+  font-size: 1.05rem;
+  flex-shrink: 0;
+}
+
+.assignment-alert-strip .aas-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.82rem;
+}
+
+.assignment-alert-strip .aas-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #FFFFFF !important;
+  background: var(--cyan-accent, #0284C7);
+  border-radius: 6px;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s ease;
+}
+
+.assignment-alert-strip .aas-btn:hover {
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .assignment-alert-strip {
+    padding: 6px 10px !important;
+    margin-bottom: 10px !important;
+  }
+  .assignment-alert-strip .aas-text {
+    font-size: 0.78rem !important;
+  }
+  .assignment-alert-strip .aas-btn {
+    padding: 4px 9px !important;
+    font-size: 0.72rem !important;
+  }
+
+  /* Compact section header for topics */
+  .activity-zone-header {
+    margin-bottom: 10px !important;
+  }
+}
+
+/* ── J. Dismissible Study Tip ──────────────────────────────── */
+.tip-dismiss-btn {
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+.tip-dismiss-btn:hover {
+  color: var(--heading-color) !important;
+  transform: scale(1.15);
+}
+

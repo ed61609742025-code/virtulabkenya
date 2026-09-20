@@ -121,6 +121,22 @@ window.toggleUserDropdown = toggleUserDropdown;
 window.togglePasswordPanel = togglePasswordPanel;
 window.focusAssignmentsSection = focusAssignmentsSection;
 
+function dismissStudyTip() {
+  const card = document.getElementById('studyTipCard');
+  if (card) {
+    card.style.display = 'none';
+    try { sessionStorage.setItem('vlk_study_tip_dismissed', 'true'); } catch(e) {}
+  }
+}
+window.dismissStudyTip = dismissStudyTip;
+
+if (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('vlk_study_tip_dismissed') === 'true') {
+  window.addEventListener('DOMContentLoaded', () => {
+    const card = document.getElementById('studyTipCard');
+    if (card) card.style.display = 'none';
+  });
+}
+
 // Highlight active bottom nav item based on current page
     (function() {
       const page = window.location.pathname.split('/').pop() || 'home.html';

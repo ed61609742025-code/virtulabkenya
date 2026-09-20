@@ -374,6 +374,8 @@ requireStudentLogin();
       const progressHeader = document.getElementById('caProgressHeader');
 
       if (assignments.length === 0) {
+        const alertStrip = document.getElementById('assignmentAlertStrip');
+        if (alertStrip) alertStrip.style.display = 'none';
         if (progressHeader) progressHeader.style.display = 'none';
         const hasTeacher = !!(currentStudentUser && (currentStudentUser.teacherName || currentStudentUser.teacherId || currentStudentUser.teacherCode));
         if (!hasTeacher) {
@@ -455,6 +457,23 @@ requireStudentLogin();
       if (statMarked) statMarked.innerHTML = `<b>${markedCount}</b> Graded`;
       if (statReview) statReview.innerHTML = `<b>${reviewCount}</b> Under Review`;
       if (statPending) statPending.innerHTML = `<b>${pendingCount}</b> Pending`;
+
+      const alertStrip = document.getElementById('assignmentAlertStrip');
+      const aasText = document.getElementById('aasText');
+      const aasBtn = document.getElementById('aasBtn');
+      if (alertStrip && aasText) {
+        if (pendingCount > 0) {
+          alertStrip.style.display = 'flex';
+          aasText.innerHTML = `<strong>${pendingCount} Pending Teacher Assignment${pendingCount > 1 ? 's' : ''}</strong>`;
+          if (aasBtn) aasBtn.textContent = 'View →';
+        } else if (markedCount > 0) {
+          alertStrip.style.display = 'flex';
+          aasText.innerHTML = `<strong>${markedCount} Graded Teacher Assignment${markedCount > 1 ? 's' : ''}</strong> available`;
+          if (aasBtn) aasBtn.textContent = 'View Feedback →';
+        } else {
+          alertStrip.style.display = 'none';
+        }
+      }
 
       box.innerHTML = assignments.map(a => {
         const isSubmitted = !!a.submitted;

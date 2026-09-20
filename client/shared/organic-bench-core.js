@@ -1607,7 +1607,7 @@
   function renderEsterificationSvg(options = {}) {
     const { sampleKey = 'org_alcohol', performed = false, tubeId = 'est_1' } = options;
     const sample = resolveSample(sampleKey);
-    const isFruity = sample.esterification?.isFruity || sample.fgKey === 'alkanol' || sample.fgKey === 'alkanoic_acid';
+    const isFruity = sample.esterification?.isFruity ?? (sample.fgKey === 'alkanol');
 
     // Fruity pleasant aroma vapors
     const vapors = performed && isFruity ? `
@@ -1617,9 +1617,20 @@
       </g>
     ` : '';
 
+    const aromaBadge = performed ? `
+      <!-- Olfactory Odor Feedback Badge -->
+      <g transform="translate(10, 6)">
+        <rect x="0" y="0" width="170" height="22" rx="6" fill="${isFruity ? 'rgba(244, 114, 182, 0.22)' : 'rgba(148, 163, 184, 0.18)'}" stroke="${isFruity ? '#F472B6' : '#94A3B8'}" stroke-width="1.2"/>
+        <text x="85" y="14.5" font-size="7.5" font-weight="800" fill="${isFruity ? '#F472B6' : '#CBD5E1'}" text-anchor="middle">
+          ${isFruity ? '👃 Sweet Fruity Ester Aroma' : '👃 Pungent Acid Smell (No Ester)'}
+        </text>
+      </g>
+    ` : '';
+
     return `
       <svg width="190" height="215" viewBox="0 0 190 215" style="max-width:100%; height:auto; display:block; filter:drop-shadow(0 4px 12px rgba(0,0,0,0.4));">
         ${getCommonDefs(tubeId)}
+        ${aromaBadge}
 
         <!-- 250 mL Pyrex Beaker Acting as Water Bath -->
         <path d="M 28,95 L 28,198 C 28,206 38,210 50,210 L 140,210 C 152,210 162,206 162,198 L 162,95" fill="none" stroke="#64748B" stroke-width="2"/>
@@ -1795,7 +1806,36 @@
     const tId = String(testId).toLowerCase();
     const pStr = String(prompt).toLowerCase();
 
-    // 1. Prioritize specific chemical procedure described in prompt
+    // 1. Check explicit testId first when provided
+    if (tId.includes('ester') || tId.includes('fruity')) {
+      return renderEsterificationSvg({ sampleKey, performed, tubeId });
+    }
+    if (tId.includes('ignit') || tId.includes('flame') || tId.includes('burn')) {
+      return renderIgnitionSvg({ sampleKey, performed, tubeId });
+    }
+    if (tId.includes('litmus') || tId.includes('ph')) {
+      return renderLitmusSvg({ sampleKey, performed, tubeId });
+    }
+    if (tId.includes('bromine') || tId.includes('br2')) {
+      return renderDecolorizationSvg({ sampleKey, testType: 'bromine', performed, tubeId });
+    }
+    if (tId.includes('dichromate') || tId.includes('cr2o7')) {
+      return renderDecolorizationSvg({ sampleKey, testType: 'dichromate', performed, tubeId });
+    }
+    if (tId.includes('kmno4') || tId.includes('manganate') || tId.includes('permanganate')) {
+      return renderDecolorizationSvg({ sampleKey, testType: 'kmno4', performed, tubeId });
+    }
+    if (tId.includes('nahco3') || tId.includes('carbonate') || tId.includes('effervesc')) {
+      return renderEffervescenceSvg({ sampleKey, performed, tubeId });
+    }
+    if (tId.includes('solub') || tId.includes('miscib')) {
+      return renderSolubilitySvg({ sampleKey, performed, tubeId });
+    }
+
+    // 2. Specific chemical procedure described in prompt
+    if (pStr.includes('ester') || pStr.includes('fruity') || pStr.includes('water bath') || (pStr.includes('ethanoic acid') && pStr.includes('h2so4'))) {
+      return renderEsterificationSvg({ sampleKey, performed, tubeId });
+    }
     if (pStr.includes('bromine')) {
       return renderDecolorizationSvg({ sampleKey, testType: 'bromine', performed, tubeId });
     }
@@ -1814,37 +1854,8 @@
     if (pStr.includes('ignit') || pStr.includes('flame') || (pStr.includes('spatula') && (pStr.includes('flame') || pStr.includes('burn') || pStr.includes('heat') || pStr.includes('ignit'))) || pStr.includes('burn')) {
       return renderIgnitionSvg({ sampleKey, performed, tubeId });
     }
-    if (pStr.includes('ester') || pStr.includes('fruity')) {
-      return renderEsterificationSvg({ sampleKey, performed, tubeId });
-    }
-    if (pStr.includes('solub') || pStr.includes('miscib') || pStr.includes('water')) {
+    if ((pStr.includes('solub') || pStr.includes('miscib') || pStr.includes('water')) && !pStr.includes('water bath')) {
       return renderSolubilitySvg({ sampleKey, performed, tubeId });
-    }
-
-    // 2. Secondary fallback based on testId
-    if (tId.includes('ignit')) {
-      return renderIgnitionSvg({ sampleKey, performed, tubeId });
-    }
-    if (tId.includes('litmus')) {
-      return renderLitmusSvg({ sampleKey, performed, tubeId });
-    }
-    if (tId.includes('bromine')) {
-      return renderDecolorizationSvg({ sampleKey, testType: 'bromine', performed, tubeId });
-    }
-    if (tId.includes('dichromate') || tId.includes('cr2o7')) {
-      return renderDecolorizationSvg({ sampleKey, testType: 'dichromate', performed, tubeId });
-    }
-    if (tId.includes('kmno4') || tId.includes('manganate')) {
-      return renderDecolorizationSvg({ sampleKey, testType: 'kmno4', performed, tubeId });
-    }
-    if (tId.includes('nahco3') || tId.includes('carbonate')) {
-      return renderEffervescenceSvg({ sampleKey, performed, tubeId });
-    }
-    if (tId.includes('solub') || tId.includes('miscib') || tId.includes('water')) {
-      return renderSolubilitySvg({ sampleKey, performed, tubeId });
-    }
-    if (tId.includes('ester')) {
-      return renderEsterificationSvg({ sampleKey, performed, tubeId });
     }
 
     // Default fallback: Decolorization / generic organic tube
@@ -1893,14 +1904,14 @@
       const isSooty = sample.isSooty || sample.fgKey === 'alkene' || sample.fgKey === 'alkyne' || isBenzoic;
       statusLabel = performed ? (isSooty ? 'Ignition: Luminous smoky sooty yellow flame' : 'Ignition: Clear non-sooty pale blue flame') : 'Awaiting Bunsen Flame';
       soundType = 'flame';
-    } else if (pStr.includes('solub') || pStr.includes('miscib') || pStr.includes('water') || tId.includes('solub') || tId.includes('miscib')) {
+    } else if (pStr.includes('ester') || pStr.includes('fruity') || pStr.includes('water bath') || tId.includes('ester')) {
+      const isFruity = sample.esterification?.isFruity ?? (sample.fgKey === 'alkanol');
+      statusLabel = performed ? (sample.esterification?.status || (isFruity ? 'Esterification: Pleasant sweet fruity aroma detected' : 'Esterification: Pungent acid fumes (no fruity ester)')) : 'Awaiting Esterification Mixture';
+      soundType = 'flame';
+    } else if (pStr.includes('solub') || pStr.includes('miscib') || ((pStr.includes('water') || tId.includes('solub') || tId.includes('miscib')) && !pStr.includes('water bath') && !tId.includes('ester'))) {
       const isMiscible = sample.solubility ? Boolean(sample.solubility.isMiscible) : (sample.fgKey === 'alkanol' || (sample.fgKey === 'alkanoic_acid' && !isBenzoic));
       statusLabel = performed ? (sample.solubility?.status || (isMiscible ? 'Miscible: Dissolves completely in water' : 'Immiscible: Forms two distinct liquid layers')) : 'Awaiting Distilled Water';
       soundType = 'drop';
-    } else if (pStr.includes('ester') || pStr.includes('fruity') || tId.includes('ester')) {
-      const isFruity = sample.esterification?.isFruity ?? (sample.fgKey === 'alkanol' || sample.fgKey === 'alkanoic_acid');
-      statusLabel = performed ? (sample.esterification?.status || (isFruity ? 'Esterification: Pleasant fruity aroma detected' : 'Esterification: No fruity smell')) : 'Awaiting Esterification Mixture';
-      soundType = 'flame';
     } else {
       statusLabel = performed ? 'Test Completed: Observation Recorded' : 'Ready to test';
     }

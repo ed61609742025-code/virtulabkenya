@@ -935,13 +935,45 @@ if (typeof window === 'undefined') {
             ${test.actionLabel}
           </button>`;
       } else {
+        const sensoryIcons = {
+          esterification: '👃',
+          ignition: '🔥',
+          carbonate: '🫧',
+          bromine: '🧪',
+          dichromate: '🧪',
+          litmus: '📄',
+          solubility: '💧'
+        };
+        const sensoryTitles = {
+          esterification: 'Sensory Odour / Scent Evidence',
+          ignition: 'Flame & Combustion Evidence',
+          carbonate: 'Gas Evolution / Effervescence Evidence',
+          bromine: 'Color Change / Halogen Evidence',
+          dichromate: 'Redox / Oxidation Evidence',
+          litmus: 'Acid-Base Litmus Evidence',
+          solubility: 'Miscibility / Phase Evidence'
+        };
+        const icon = sensoryIcons[test.key] || '👁️';
+        const title = sensoryTitles[test.key] || 'Sensory Evidence / Result';
+
         actionButtonsHtml = `
-          <button class="btn-perform-test done" disabled>
-            ✅ Test Completed — Result Observed
-          </button>
-          <button class="btn-redo-test" onclick="redoTest('${test.key}')" title="Clean test tube and redo test">
-            <span class="redo-icon">↺</span> Redo Test
-          </button>`;
+          <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <button class="btn-perform-test done" disabled>
+              ✅ Test Completed — Result Observed
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('${test.key}')" title="Clean test tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>
+          </div>
+          <div class="sensory-observation-callout" style="margin-top:10px; padding:10px 14px; border-radius:8px; background:rgba(6,182,212,0.12); border:1.5px solid var(--cyan-accent); color:var(--text-main); font-size:0.86rem; display:flex; align-items:center; gap:12px; box-shadow:0 2px 8px rgba(0,0,0,0.15);">
+            <span style="font-size:1.6rem; flex-shrink:0;">${icon}</span>
+            <div style="flex:1;">
+              <span style="font-size:0.72rem; font-weight:800; text-transform:uppercase; color:var(--cyan-accent); letter-spacing:0.04em; display:block; margin-bottom:2px;">
+                ${title}
+              </span>
+              <span style="font-weight:700; color:var(--heading-color); font-size:0.92rem;">${st.statusLabel || 'Observation recorded'}</span>
+            </div>
+          </div>`;
       }
 
       return `

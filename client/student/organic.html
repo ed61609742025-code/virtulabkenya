@@ -31,7 +31,7 @@
 <link rel="stylesheet" href="../shared/style.css">
 <link rel="stylesheet" href="../shared/brilliant-theme.css">
 <link rel="stylesheet" href="../shared/tutorial-engine.css">
-<link rel="stylesheet" href="css/organic.css?v=81">
+<link rel="stylesheet" href="css/organic.css?v=82">
 <link rel="stylesheet" href="../shared/ai-tutor.css">
 <link rel="stylesheet" href="../shared/pwa-installer.css">
 </head>
@@ -45,9 +45,12 @@
       <div class="vlk-brand-logo-wrap">
         <img src="/shared/virtulab-logo.svg" alt="VirtuLab Kenya Logo" class="vlk-brand-logo-img" width="34" height="34">
       </div>
-      <div style="display:flex; flex-direction:column;">
-        <span class="brand-title" style="font-weight:800; font-family:'Cinzel', serif; font-size:1.05rem; line-height:1.1; color:var(--heading-color);">VirtuLab</span>
-        <span class="brand-subtagline" style="font-size:0.65rem; font-family:'Newsreader', serif; font-style:italic; color:var(--cyan-accent); letter-spacing:0.01em;">Organic Chemistry Bench</span>
+      <div class="nav-brand-text">
+        <span class="brand-title">VirtuLab</span>
+        <span class="brand-subtagline">
+          <span class="subtagline-full">Organic Chemistry Bench</span>
+          <span class="subtagline-short">Organic Bench</span>
+        </span>
       </div>
     </a>
 
@@ -64,29 +67,29 @@
 
     <div class="nav-actions">
       <!-- Session Timer Badge -->
-      <div class="session-timer-badge" style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:6px;padding:4px 8px;font-size:0.75rem;font-weight:700;color:var(--cyan-accent);display:flex;align-items:center;gap:4px;font-family:'JetBrains Mono',monospace;">
+      <div class="session-timer-badge">
         <span>⏱️</span>
         <span id="sessionTimerText">00:00</span>
       </div>
 
       <!-- Guided Tutorial Button -->
-      <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm" onclick="TutorialEngine.start('organic')" style="padding:4px 8px; font-size:0.75rem; white-space:nowrap;">
+      <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm" onclick="TutorialEngine.start('organic')" title="Start Step-by-Step Guided Tutorial">
         🧭 <span class="btn-text-full">Guided Tutorial</span><span class="btn-text-short">Tutorial</span>
       </button>
 
       <!-- Examiner Tips Button -->
-      <button class="nav-btn nav-btn-tips" onclick="openExaminerTipsModal()" title="View KNEC marking tips" style="padding:4px 8px; font-size:0.75rem;">
+      <button class="nav-btn nav-btn-tips" onclick="openExaminerTipsModal()" title="View KNEC marking tips">
         💡 <span class="btn-text-full">Tips</span>
       </button>
 
       <!-- Reagent Safety (SDS) Button -->
-      <button class="nav-btn nav-btn-safety" onclick="window.VLKSafety && window.VLKSafety.openSDSModal('Ethanol')" title="View Chemical Safety & SDS Hazards" style="padding:4px 8px; font-size:0.75rem;">
+      <button class="nav-btn nav-btn-safety" onclick="window.VLKSafety && window.VLKSafety.openSDSModal('Ethanol')" title="View Chemical Safety & SDS Hazards">
         ⚠️ <span class="btn-text-full">SDS</span>
       </button>
 
       <!-- Settings Dropdown Button -->
       <div style="position:relative;">
-        <button type="button" class="nav-btn nav-btn-settings" onclick="toggleBenchSettings(event)" title="Workbench Settings & Tools" style="padding:4px 8px; font-size:0.75rem;">
+        <button type="button" class="nav-btn nav-btn-settings" onclick="toggleBenchSettings(event)" title="Workbench Settings & Tools">
           ⚙️ <span class="btn-text-full">Settings</span>
         </button>
         
@@ -129,7 +132,9 @@
       </div>
 
       <!-- Exit Button -->
-      <a href="/student/home.html" class="btn-back-link" style="padding:4px 8px; font-size:0.75rem; border-radius:6px;" title="Exit to Workstation" data-i18n="back">← Exit</a>
+      <a href="/student/home.html" class="btn-back-link" title="Exit to Workstation" data-i18n="back">
+        <span class="btn-text-full">← Exit</span><span class="btn-text-short">←</span>
+      </a>
     </div>
   </nav>
 
@@ -147,7 +152,7 @@
       <span class="knec-subbar-label">Sample:</span>
       <span class="knec-subbar-val" id="knecSubbarSample">Unknown Liquid</span>
     </div>
-    <div class="knec-subbar-item" style="margin-left:auto;">
+    <div class="knec-subbar-item knec-score-item">
       <span class="knec-subbar-label">Max Score:</span>
       <span class="knec-subbar-val" style="color:var(--amber-accent); font-weight:800;">10.0 Marks</span>
     </div>
@@ -172,12 +177,12 @@
   <div id="tutorialDrawer" style="display:none;"></div>
 
   <!-- Brilliant Segmented Practical Workflow Progress Bar -->
-  <div style="background:var(--card-bg); border:1.5px solid var(--card-border); border-radius:12px; padding:10px 18px; margin-bottom:16px; box-shadow:var(--shadow-sm); display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
-    <div style="display:flex; align-items:center; gap:10px;">
-      <span style="font-weight:800; font-size:0.8rem; color:var(--heading-color); font-family:'Plus Jakarta Sans',sans-serif;">PRACTICAL WORKFLOW</span>
-      <span id="organicStepBadge" class="badge" style="font-size:0.7rem; font-family:'JetBrains Mono',monospace;">Diagnostic Tests</span>
+  <div class="workflow-progress-card">
+    <div class="workflow-progress-label">
+      <span class="workflow-progress-title">PRACTICAL WORKFLOW</span>
+      <span id="organicStepBadge" class="badge">Diagnostic Tests</span>
     </div>
-    <div style="flex:1; max-width:320px; min-width:180px;" id="organicStepProgress"></div>
+    <div class="workflow-progress-bar-wrap" id="organicStepProgress"></div>
   </div>
 
   <!-- Prescribed Continuous Assessment Banner (Shown when assignmentId is present) -->
@@ -194,7 +199,7 @@
 
   <!-- Page Header -->
   <div class="page-header">
-    <div>
+    <div class="page-header-text">
       <h1 class="page-header-title">
         <span>⚗️ Organic Chemistry Qualitative Analysis (Question 3)</span>
       </h1>
@@ -204,7 +209,7 @@
       <button class="btn-secondary" onclick="openFlowchartModal()">
         🧭 Systematic Flowchart
       </button>
-      <button class="btn-secondary" onclick="evaluateKnecMarking()" style="border-color:var(--green-accent);color:var(--green-accent);">
+      <button class="btn-secondary btn-autoscore" onclick="evaluateKnecMarking()">
         📝 Auto-Score KCSE Marks
       </button>
       <button class="btn-primary-solid" id="newSampleBtn" onclick="newSample()">⚗️ New Sample</button>

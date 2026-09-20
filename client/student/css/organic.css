@@ -197,6 +197,8 @@ html, body {
 .ribbon-mobile { display: none; }
 .btn-text-full { display: inline; }
 .btn-text-short { display: none; }
+.subtagline-full { display: inline; }
+.subtagline-short { display: none; }
 
 .candidate-top-ribbon {
   background: var(--acad-oxford);
@@ -226,6 +228,7 @@ html, body {
   margin: 0 auto;
   gap: 10px;
   flex-wrap: nowrap;
+  box-sizing: border-box;
 }
 
 .nav-modules-pill {
@@ -246,6 +249,27 @@ html, body {
   text-decoration: none;
   color: var(--heading-color);
   flex-shrink: 0;
+}
+
+.nav-brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-brand-academic .brand-title {
+  font-weight: 800;
+  font-family: var(--font-academic);
+  font-size: 1.05rem;
+  line-height: 1.1;
+  color: var(--heading-color);
+}
+
+.brand-subtagline {
+  font-size: 0.65rem;
+  font-family: var(--font-editorial);
+  font-style: italic;
+  color: var(--cyan-accent);
+  letter-spacing: 0.01em;
 }
 
 .seal-crest-small {
@@ -269,6 +293,21 @@ html, body {
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
+}
+
+.session-timer-badge {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--cyan-accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  white-space: nowrap;
 }
 
 .nav-btn {
@@ -393,6 +432,9 @@ html, body {
   font-weight: 700;
   font-family: var(--font-mono);
 }
+.knec-score-item {
+  margin-left: auto;
+}
 
 /* ── 4. PAGE CONTAINER & CARDS ── */
 .page-container {
@@ -402,6 +444,40 @@ html, body {
   padding: 20px 20px 80px;
   box-sizing: border-box;
   overflow-x: hidden;
+}
+
+/* Practical Workflow Progress Card */
+.workflow-progress-card {
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 12px;
+  padding: 10px 18px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.workflow-progress-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.workflow-progress-title {
+  font-weight: 800;
+  font-size: 0.8rem;
+  color: var(--heading-color);
+  font-family: var(--font-body);
+}
+
+.workflow-progress-bar-wrap {
+  flex: 1;
+  max-width: 320px;
+  min-width: 180px;
 }
 
 .page-header {
@@ -484,6 +560,16 @@ html, body {
   background: var(--card-bg-hover);
   border-color: var(--violet-accent);
   color: var(--violet-accent);
+}
+
+.btn-autoscore {
+  border-color: var(--green-accent);
+  color: var(--green-accent);
+}
+.btn-autoscore:hover {
+  background: var(--green-bg);
+  border-color: var(--green-accent);
+  color: var(--green-accent);
 }
 
 /* Specimen Task Card */
@@ -1051,6 +1137,12 @@ html, body {
   .btn-text-short {
     display: inline !important;
   }
+  .subtagline-full {
+    display: none !important;
+  }
+  .subtagline-short {
+    display: inline !important;
+  }
 
   .candidate-top-ribbon {
     font-size: 0.68rem;
@@ -1062,9 +1154,19 @@ html, body {
     text-overflow: ellipsis;
   }
 
+  .academic-top-header {
+    width: 100% !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+  }
+
   .top-navbar {
-    padding: 6px 10px;
-    gap: 6px;
+    padding: 6px 8px !important;
+    gap: 6px !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow: hidden !important;
   }
 
   .nav-modules-pill {
@@ -1072,57 +1174,191 @@ html, body {
   }
 
   .seal-crest-small {
-    width: 28px;
-    height: 28px;
-    font-size: 0.95rem;
+    width: 26px;
+    height: 26px;
+    font-size: 0.90rem;
+  }
+
+  .vlk-brand-logo-img {
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  .nav-brand-academic {
+    min-width: 0 !important;
+    flex-shrink: 1 !important;
+    gap: 6px !important;
   }
 
   .nav-brand-academic .brand-title {
-    font-size: 0.95rem !important;
+    font-size: 0.90rem !important;
+    line-height: 1.1 !important;
   }
 
   .brand-subtagline {
     display: block !important;
-    font-size: 0.60rem !important;
+    font-size: 0.58rem !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 80px !important;
   }
 
   .nav-actions {
-    gap: 4px;
+    gap: 3px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .nav-actions .btn-tactile,
+  .nav-actions .nav-btn,
+  .nav-actions .btn-back-link {
+    padding: 4px 6px !important;
+    font-size: 0.70rem !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 6px !important;
   }
 
   .session-timer-badge {
-    padding: 3px 6px !important;
-    font-size: 0.72rem !important;
+    padding: 3px 5px !important;
+    font-size: 0.68rem !important;
+    height: 28px !important;
+    box-sizing: border-box !important;
+    gap: 2px !important;
+  }
+
+  #benchSettingsDropdown {
+    right: 0 !important;
+    max-width: calc(100vw - 20px) !important;
+    width: 250px !important;
   }
 
   .knec-exam-subbar {
-    padding: 4px 10px;
-    gap: 10px;
-    font-size: 0.68rem;
-    overflow-x: auto;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
+    padding: 5px 8px !important;
+    gap: 6px !important;
+    font-size: 0.68rem !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+  }
+
+  .knec-exam-subbar::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .knec-subbar-item {
+    flex-shrink: 0 !important;
+    background: var(--card-bg) !important;
+    border: 1px solid var(--card-border) !important;
+    border-radius: 6px !important;
+    padding: 3px 7px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+  }
+
+  .knec-score-item {
+    margin-left: 0 !important;
   }
 
   .page-container {
     padding: 10px 8px 90px !important;
     width: 100% !important;
     max-width: 100vw !important;
+    box-sizing: border-box !important;
     overflow-x: hidden !important;
   }
 
+  .workflow-progress-card {
+    padding: 8px 12px !important;
+    margin-bottom: 10px !important;
+    border-radius: 10px !important;
+    gap: 8px !important;
+  }
+
+  .workflow-progress-title {
+    font-size: 0.72rem !important;
+  }
+
+  .workflow-progress-bar-wrap {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    flex-basis: 100% !important;
+  }
+
   .page-header {
-    padding: 12px !important;
+    padding: 12px 14px !important;
     margin-bottom: 12px !important;
+    border-radius: 10px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   .page-header-title {
-    font-size: 1.05rem !important;
+    font-size: 0.98rem !important;
+    line-height: 1.25 !important;
+    margin: 0 0 4px 0 !important;
+    display: block !important;
+  }
+
+  .page-header-subtitle {
+    font-size: 0.74rem !important;
+    line-height: 1.35 !important;
+    color: var(--text-muted) !important;
+    margin: 0 !important;
+  }
+
+  .header-actions {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    width: 100% !important;
+    margin-top: 4px !important;
+  }
+
+  .header-actions .btn-secondary {
+    flex: 1 1 calc(50% - 6px) !important;
+    justify-content: center !important;
+    padding: 7px 6px !important;
+    font-size: 0.74rem !important;
+    text-align: center !important;
+    white-space: normal !important;
+    box-sizing: border-box !important;
+    border-radius: 8px !important;
+  }
+
+  .header-actions .btn-primary-solid {
+    flex: 1 1 100% !important;
+    justify-content: center !important;
+    padding: 8px 10px !important;
+    font-size: 0.78rem !important;
+    text-align: center !important;
+    white-space: normal !important;
+    box-sizing: border-box !important;
+    border-radius: 8px !important;
   }
 
   .task-card {
-    padding: 12px !important;
+    padding: 12px 14px !important;
     margin-bottom: 12px !important;
+    gap: 10px !important;
+  }
+
+  .task-row {
+    gap: 10px !important;
   }
 
   .test-layout-grid {
@@ -1152,6 +1388,37 @@ html, body {
 
   .knec-table th, .knec-table td {
     padding: 6px 8px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .btn-text-short {
+    display: none !important;
+  }
+  .nav-actions {
+    gap: 2px !important;
+  }
+  .nav-actions .btn-tactile,
+  .nav-actions .nav-btn,
+  .nav-actions .btn-back-link {
+    padding: 3px 5px !important;
+    min-width: 26px !important;
+  }
+  .session-timer-badge {
+    padding: 2px 4px !important;
+    font-size: 0.65rem !important;
+  }
+  .brand-subtagline {
+    max-width: 60px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .nav-btn-tips {
+    display: none !important;
+  }
+  .brand-subtagline {
+    display: none !important;
   }
 }
 

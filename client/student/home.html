@@ -43,7 +43,7 @@
 <link rel="stylesheet" href="../shared/brilliant-theme.css">
 <link rel="stylesheet" href="../shared/gamification-engine.css">
 <link rel="stylesheet" href="css/dashboard.css?v=81">
-<link rel="stylesheet" href="css/skill-tree.css?v=79">
+<link rel="stylesheet" href="css/skill-tree.css?v=80">
 <link rel="stylesheet" href="css/mobile.css?v=2">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" crossorigin="anonymous"></script>
 
@@ -564,6 +564,7 @@
             
             <!-- 1. Guided Volumetric Analysis -->
             <a href="lab.html?studyMode=guided" class="practice-banner-card" data-type="acidBase" style="border-left:4px solid var(--acad-gold);">
+              <div class="practice-card-icon-badge" style="background:rgba(217,119,6,0.12); color:#D97706;">🧪</div>
               <div style="flex:1; min-width:0;">
                 <div class="practice-text-title">Guided Volumetric Analysis</div>
                 <div class="practice-text-desc">Step-by-step meniscus alignment, indicator selection, and calculations.</div>
@@ -572,6 +573,7 @@
 
             <!-- 2. Volumetric Workbench -->
             <a href="lab.html" class="practice-banner-card" data-type="acidBase" style="border-left:4px solid var(--acad-navy);">
+              <div class="practice-card-icon-badge" style="background:rgba(2,132,199,0.12); color:#0284C7;">⚗️</div>
               <div style="flex:1; min-width:0;">
                 <div class="practice-text-title">Volumetric Analysis Workbench</div>
                 <div class="practice-text-desc">Acid-Base, KMnO₄ Redox, Mohr's Precipitation, and EDTA Complexometry.</div>
@@ -580,6 +582,7 @@
 
             <!-- 3. Qualitative Salt Analysis -->
             <a href="qualitative.html" class="practice-banner-card" data-type="qualitative" style="border-left:4px solid var(--acad-emerald);">
+              <div class="practice-card-icon-badge" style="background:rgba(16,185,129,0.12); color:#059669;">🔬</div>
               <div style="flex:1; min-width:0;">
                 <div class="practice-text-title">Systematic Qualitative Analysis</div>
                 <div class="practice-text-desc">Identify 10 unknown cations and anions via aqueous reagents and flame tests.</div>
@@ -588,6 +591,7 @@
 
             <!-- 4. Reaction Rates & Kinetics -->
             <a href="rates.html" class="practice-banner-card" data-type="rates" style="border-left:4px solid #F59E0B;">
+              <div class="practice-card-icon-badge" style="background:rgba(245,158,11,0.12); color:#D97706;">⚡</div>
               <div style="flex:1; min-width:0;">
                 <div class="practice-text-title">Reaction Rates &amp; Kinetics</div>
                 <div class="practice-text-desc">Disappearing cross method, rate graphs (1/t vs conc), and temperature effects.</div>
@@ -596,6 +600,7 @@
 
             <!-- 5. Thermochemistry & Enthalpy -->
             <a href="energy.html" class="practice-banner-card" data-type="energy" style="border-left:4px solid #EF4444;">
+              <div class="practice-card-icon-badge" style="background:rgba(239,68,68,0.12); color:#DC2626;">🌡️</div>
               <div style="flex:1; min-width:0;">
                 <div class="practice-text-title">Thermochemistry &amp; Energy Changes</div>
                 <div class="practice-text-desc">Calorimetric measurement of neutralization, solution, and displacement enthalpies (ΔH).</div>
@@ -604,6 +609,7 @@
 
             <!-- 6. Solubility Curves -->
             <a href="solubility.html" class="practice-banner-card" data-type="solubility" style="border-left:4px solid #0284C7;">
+              <div class="practice-card-icon-badge" style="background:rgba(2,132,199,0.12); color:#0284C7;">❄️</div>
               <div style="flex:1; min-width:0;">
                 <div class="practice-text-title">Solubility Curves &amp; Crystallization</div>
                 <div class="practice-text-desc">Determine crystallization inception points across solute masses and plot curves.</div>
@@ -612,6 +618,7 @@
 
             <!-- 7. Organic Chemistry Lab -->
             <a href="organic.html" class="practice-banner-card" data-type="organic" style="border-left:4px solid #10B981;">
+              <div class="practice-card-icon-badge" style="background:rgba(16,185,129,0.12); color:#059669;">🌿</div>
               <div style="flex:1; min-width:0;">
                 <div class="practice-text-title">Organic Chemistry &amp; Functional Groups</div>
                 <div class="practice-text-desc">Test for unsaturation (Br₂/KMnO₄), combustion sootiness, and esterification.</div>
@@ -620,6 +627,7 @@
 
             <!-- 8. Gas Preparation & Identification -->
             <a href="gas.html" class="practice-banner-card" data-type="gas" style="border-left:4px solid #8B5CF6;">
+              <div class="practice-card-icon-badge" style="background:rgba(139,92,246,0.12); color:#7C3AED;">💨</div>
               <div style="flex:1; min-width:0;">
                 <div class="practice-text-title">Gas Preparation &amp; Analysis</div>
                 <div class="practice-text-desc">Generate and test H₂, O₂, CO₂, Cl₂, NH₃, and SO₂ with confirmatory tests.</div>
@@ -628,6 +636,7 @@
 
             <!-- 9. KCSE Mock Exam -->
             <a href="mock_exams.html" class="practice-banner-card" data-type="all" style="border-left:4px solid var(--acad-gold); grid-column: 1 / -1; background:var(--card-bg-hover);">
+              <div class="practice-card-icon-badge" style="background:rgba(245,158,11,0.15); color:#D97706;">🏆</div>
               <div style="flex:1; min-width:0;">
                 <div class="practice-text-title">KCSE Paper 3 National Mock Examination (40 Marks)</div>
                 <div class="practice-text-desc">Full 40-mark timed mock exam with automated grading rubric.</div>
@@ -1654,7 +1663,7 @@
   <script src="../shared/pwa-installer.js"></script>
   <script src="../shared/brilliant-ui.js"></script>
   <script src="../shared/gamification-engine.js"></script>
-  <script src="js/skill-tree.js?v=77"></script>
+  <script src="js/skill-tree.js?v=78"></script>
   <script src="js/student-dashboard.js?v=78"></script>
 
   <script src="js/home.js?v=114"></script>

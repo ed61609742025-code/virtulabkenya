@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/shared/style.css">
-<link rel="stylesheet" href="css/admin.css">
+<link rel="stylesheet" href="css/admin.css?v=2">
 </head>
 <body>
 
@@ -50,7 +50,6 @@
 
     <button class="btn-secondary" id="btnAddAdminTop" onclick="openAddAdminModal()">🛡️ + Add Admin</button>
     <button class="btn-secondary" onclick="openAnnouncementModal()">📢 Post Broadcast</button>
-    <button class="btn-primary-solid" onclick="openRegisterSchoolModal()">+ Register School</button>
     <a href="/teacher/dashboard.html" class="btn-secondary">Teacher View →</a>
     <button class="btn-danger" onclick="Auth.logout()">🚪 Logout</button>
   </div>
@@ -125,10 +124,10 @@
           Institutional directory of secondary schools across Kenya participating in virtual chemistry practicals.
         </p>
       </div>
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <div class="panel-actions">
         <input type="text" id="schoolSearch" class="form-control search-control" placeholder="Search school or county..." oninput="filterSchools()">
-        <button class="btn-primary-solid" onclick="openRegisterSchoolModal()">+ Register School</button>
         <button class="btn-secondary" onclick="Admin.exportSchoolsReport()">📥 Export CSV</button>
+        <button class="btn-primary-solid" onclick="openRegisterSchoolModal()">+ Register School</button>
       </div>
     </div>
     <div class="table-responsive">
@@ -727,6 +726,12 @@
     showToast(label, 'success', 2500);
   }
 
+  function copyTeacherInvite(schoolName, code) {
+    const origin = window.location.origin;
+    const inviteText = `Join VirtuLab Kenya as a STEM Chemistry Teacher for ${schoolName}.\nRegistration Admin Code: ${code}\nRegister your classroom here: ${origin}/teacher/register.html?code=${encodeURIComponent(code)}`;
+    copyToClipboard(inviteText, `Teacher invite message for ${schoolName} copied to clipboard!`);
+  }
+
   async function checkAdminAuth() {
     const user = getUser();
     if (!isLoggedIn() || user?.role !== 'admin') {
@@ -956,10 +961,15 @@
           </td>
           <td><span style="font-weight:600;">${escapeHtml(s.county || 'Nairobi')}</span></td>
           <td>
-            <span class="code-chip" onclick="copyToClipboard('${adminCode}', 'Admin Code copied: ${adminCode}')" title="Click to copy registration code">
-              <code>${adminCode}</code>
-              <span class="copy-icon">📋</span>
-            </span>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span class="code-chip" onclick="copyToClipboard('${adminCode}', 'Admin Code copied: ${adminCode}')" title="Click to copy registration code">
+                <code>${adminCode}</code>
+                <span class="copy-icon">📋</span>
+              </span>
+              <button type="button" class="btn-table-action" onclick="copyTeacherInvite('${escapeHtml(s.name).replace(/'/g, "\\'")}', '${adminCode}')" title="Copy ready-to-share teacher invite message with link" style="font-size:0.72rem;padding:3px 7px;">
+                ✉️ Invite
+              </button>
+            </div>
           </td>
           <td style="font-family:var(--font-mono);font-weight:700;">${s.teacher_count || 0}</td>
           <td style="font-family:var(--font-mono);font-weight:700;">${s.student_count || 0}</td>

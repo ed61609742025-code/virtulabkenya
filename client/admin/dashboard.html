@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/shared/style.css">
-<link rel="stylesheet" href="css/admin.css?v=2">
+<link rel="stylesheet" href="css/admin.css?v=3">
 </head>
 <body>
 
@@ -126,8 +126,25 @@
       </div>
       <div class="panel-actions">
         <input type="text" id="schoolSearch" class="form-control search-control" placeholder="Search school or county..." oninput="filterSchools()">
+        <select id="countyFilterSelect" class="form-control filter-select" onchange="filterSchools(this.value)">
+          <option value="all">All Counties</option>
+        </select>
         <button class="btn-secondary" onclick="Admin.exportSchoolsReport()">📥 Export CSV</button>
         <button class="btn-primary-solid" onclick="openRegisterSchoolModal()">+ Register School</button>
+      </div>
+    </div>
+
+    <!-- Regional County Coverage Filter Strip -->
+    <div class="county-coverage-bar" id="countyCoverageBar">
+      <div class="county-label-wrap">
+        <span>📍</span>
+        <span>County Coverage:</span>
+      </div>
+      <div class="county-pill-group" id="countyPillGroup">
+        <button type="button" class="county-pill active" data-county="all" onclick="filterSchools('all')">
+          <span>All</span>
+          <span class="pill-badge" id="pillCountAll">0</span>
+        </button>
       </div>
     </div>
     <div class="table-responsive">
@@ -791,6 +808,9 @@
         document.getElementById('metricStudents').textContent = overviewRes.metrics.totalStudents;
         document.getElementById('metricExperiments').textContent = overviewRes.metrics.totalExperiments;
         document.getElementById('metricPassRate').textContent = overviewRes.metrics.kcsePassRate + '%';
+        if (overviewRes.metrics.counties) {
+          renderCountyCoverage(overviewRes.metrics.counties, overviewRes.metrics.totalSchools);
+        }
       }
 
       const schoolsRes = await Admin.getSchools();
@@ -942,7 +962,11 @@
   function renderSchools(list) {
     const tbody = document.getElementById('schoolsTableBody');
     if (!list || list.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">No schools registered yet.</td></tr>';
+      if (allSchools.length > 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">No schools match the selected search or county filter. <button type="button" class="btn-table-action" onclick="resetSchoolFilters()" style="margin-left:8px;font-weight:700;">Clear Filters</button></td></tr>';
+      } else {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">No schools registered yet.</td></tr>';
+      }
       return;
     }
 
@@ -1032,14 +1056,80 @@
     }
   }
 
-  function filterSchools() {
-    const q = document.getElementById('schoolSearch').value.toLowerCase().trim();
-    const filtered = allSchools.filter(s =>
-      (s.name && s.name.toLowerCase().includes(q)) ||
-      (s.county && s.county.toLowerCase().includes(q)) ||
-      (s.admin_code && s.admin_code.toLowerCase().includes(q))
-    );
+  function renderCountyCoverage(counties, totalSchools) {
+    const pillGroup = document.getElementById('countyPillGroup');
+    const select = document.getElementById('countyFilterSelect');
+    if (!pillGroup || !select) return;
+
+    const currentSelected = select.value || 'all';
+    const total = totalSchools || allSchools.length;
+
+    let pillsHtml = `
+      <button type="button" class="county-pill ${currentSelected === 'all' ? 'active' : ''}" data-county="all" onclick="filterSchools('all')">
+        <span>All</span>
+        <span class="pill-badge">${total}</span>
+      </button>
+    `;
+
+    let selectHtml = `<option value="all">All Counties (${total})</option>`;
+
+    if (Array.isArray(counties) && counties.length > 0) {
+      counties.forEach(c => {
+        const cName = escapeHtml(c.county || 'Unspecified');
+        const cCount = c.school_count || 0;
+        const isActive = currentSelected.toLowerCase() === cName.toLowerCase();
+
+        pillsHtml += `
+          <button type="button" class="county-pill ${isActive ? 'active' : ''}" data-county="${cName}" onclick="filterSchools('${cName}')">
+            <span>${cName}</span>
+            <span class="pill-badge">${cCount}</span>
+          </button>
+        `;
+
+        selectHtml += `<option value="${cName}" ${isActive ? 'selected' : ''}>${cName} (${cCount})</option>`;
+      });
+    }
+
+    pillGroup.innerHTML = pillsHtml;
+    select.innerHTML = selectHtml;
+    select.value = currentSelected;
+  }
+
+  function filterSchools(countyParam = null) {
+    const select = document.getElementById('countyFilterSelect');
+    if (countyParam !== null && select) {
+      select.value = countyParam;
+    }
+    const q = (document.getElementById('schoolSearch').value || '').toLowerCase().trim();
+    const selectedCounty = (select ? select.value : 'all').toLowerCase();
+
+    // Update active class on county pills
+    document.querySelectorAll('.county-pill').forEach(pill => {
+      const pillCounty = (pill.getAttribute('data-county') || '').toLowerCase();
+      pill.classList.toggle('active', pillCounty === selectedCounty);
+    });
+
+    const filtered = allSchools.filter(s => {
+      const matchesSearch = !q ||
+        (s.name && s.name.toLowerCase().includes(q)) ||
+        (s.county && s.county.toLowerCase().includes(q)) ||
+        (s.admin_code && s.admin_code.toLowerCase().includes(q));
+
+      const matchesCounty = selectedCounty === 'all' || !selectedCounty ||
+        (s.county && s.county.toLowerCase() === selectedCounty);
+
+      return matchesSearch && matchesCounty;
+    });
+
     renderSchools(filtered);
+  }
+
+  function resetSchoolFilters() {
+    const searchInput = document.getElementById('schoolSearch');
+    const select = document.getElementById('countyFilterSelect');
+    if (searchInput) searchInput.value = '';
+    if (select) select.value = 'all';
+    filterSchools('all');
   }
 
   function filterUserRole(role, btn) {

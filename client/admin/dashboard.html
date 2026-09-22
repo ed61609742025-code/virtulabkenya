@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/shared/style.css">
-<link rel="stylesheet" href="css/admin.css?v=3">
+<link rel="stylesheet" href="css/admin.css?v=4">
 </head>
 <body>
 
@@ -405,6 +405,93 @@
 <!-- ══════════════════════════════════════
      MODALS: Register School, Edit School, Announcements, Login
 ══════════════════════════════════════ -->
+
+<!-- Modal 0: School Details Inspection Drawer -->
+<div id="schoolDetailsModal" class="modal-overlay" style="display:none;">
+  <div class="modal-box modal-lg">
+    <div class="modal-header">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span class="avatar-circle" id="sdModalAvatar" style="background:linear-gradient(135deg, #0284C7, #0369A1);width:34px;height:34px;font-size:0.85rem;">SC</span>
+        <div>
+          <h3 id="sdModalTitle" style="margin:0;font-size:1.1rem;color:var(--heading-color);">School Details</h3>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:2px;">
+            <span id="sdModalCounty" class="role-badge" style="background:var(--blue-bg);color:var(--blue-accent);padding:1px 7px;font-size:0.7rem;">County</span>
+            <span class="code-chip" id="sdModalCodeChip" style="font-size:0.72rem;padding:2px 8px;cursor:pointer;" title="Click to copy registration code">
+              <code id="sdModalCode">CODE</code>
+              <span class="copy-icon">📋</span>
+            </span>
+          </div>
+        </div>
+      </div>
+      <button class="modal-close-btn" onclick="closeSchoolDetailsModal()">&times;</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- 3 Summary Metrics -->
+      <div class="school-metric-pills">
+        <div class="school-metric-pill">
+          <div style="font-size:1.4rem;">👨‍🏫</div>
+          <div>
+            <div class="val" id="sdStatTeachers">0</div>
+            <div class="lbl">Teachers</div>
+          </div>
+        </div>
+        <div class="school-metric-pill">
+          <div style="font-size:1.4rem;">🎓</div>
+          <div>
+            <div class="val" id="sdStatStudents">0</div>
+            <div class="lbl">Students</div>
+          </div>
+        </div>
+        <div class="school-metric-pill">
+          <div style="font-size:1.4rem;">🧪</div>
+          <div>
+            <div class="val" id="sdStatExperiments">0</div>
+            <div class="lbl">Lab Sessions</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Subtab Nav inside modal -->
+      <div class="subtab-nav" style="margin-top:16px;">
+        <button class="subtab-btn active" id="btnSdTabTeachers" onclick="switchSchoolModalTab('teachers', this)">
+          <span>👨‍🏫 Teachers</span>
+          <span class="pill-badge" id="sdCountTeachers">0</span>
+        </button>
+        <button class="subtab-btn" id="btnSdTabStudents" onclick="switchSchoolModalTab('students', this)">
+          <span>🎓 Students</span>
+          <span class="pill-badge" id="sdCountStudents">0</span>
+        </button>
+        <button class="subtab-btn" id="btnSdTabExperiments" onclick="switchSchoolModalTab('experiments', this)">
+          <span>🧪 Experiment Breakdown</span>
+        </button>
+      </div>
+
+      <!-- Tab Content 1: Teachers -->
+      <div id="sdTabTeachers">
+        <div id="sdTeachersList"></div>
+      </div>
+
+      <!-- Tab Content 2: Students -->
+      <div id="sdTabStudents" style="display:none;">
+        <div id="sdStudentsList"></div>
+      </div>
+
+      <!-- Tab Content 3: Experiments -->
+      <div id="sdTabExperiments" style="display:none;">
+        <div id="sdExperimentsBreakdown"></div>
+      </div>
+    </div>
+
+    <div style="padding:12px 20px;border-top:1px solid var(--card-border);display:flex;justify-content:space-between;align-items:center;background:var(--card-bg-hover);">
+      <button type="button" id="sdBtnShareInvite" class="btn-secondary" style="font-size:0.8rem;">✉️ Copy Teacher Invite</button>
+      <div style="display:flex;gap:8px;">
+        <button type="button" id="sdBtnEditSchool" class="btn-secondary" style="font-size:0.8rem;">✏️ Edit School</button>
+        <button type="button" class="btn-primary-solid" onclick="closeSchoolDetailsModal()" style="font-size:0.8rem;">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Modal 1: Register School -->
 <div id="registerSchoolModal" class="modal-overlay" style="display:none;">
@@ -972,14 +1059,20 @@
 
     tbody.innerHTML = list.map(s => {
       const adminCode = escapeHtml(s.admin_code || 'N/A');
+      const teacherCount = s.teacher_count || 0;
+      const studentCount = s.student_count || 0;
+      const teacherDisplay = teacherCount === 0
+        ? `<span class="badge-pending" title="Pending teacher registration">0 Pending</span>`
+        : `<span style="font-family:var(--font-mono);font-weight:700;">${teacherCount}</span>`;
+
       return `
         <tr>
           <td>
-            <div class="user-cell">
+            <div class="user-cell" onclick="openSchoolDetailsModal(${s.id})" style="cursor:pointer;" title="Click to view full school details">
               <span class="avatar-circle" style="background:linear-gradient(135deg, #0284C7, #0369A1);">${getInitials(s.name)}</span>
               <div>
                 <b style="color:var(--heading-color);">${escapeHtml(s.name)}</b>
-                <div style="font-size:0.74rem;color:var(--text-muted);">Registered Institution</div>
+                <div style="font-size:0.74rem;color:var(--text-muted);">Registered Institution · <span style="color:var(--blue-accent);">Inspect ↗</span></div>
               </div>
             </div>
           </td>
@@ -995,11 +1088,12 @@
               </button>
             </div>
           </td>
-          <td style="font-family:var(--font-mono);font-weight:700;">${s.teacher_count || 0}</td>
-          <td style="font-family:var(--font-mono);font-weight:700;">${s.student_count || 0}</td>
+          <td>${teacherDisplay}</td>
+          <td style="font-family:var(--font-mono);font-weight:700;">${studentCount}</td>
           <td><span class="status-badge active">Active</span></td>
           <td>
             <div style="display:flex;gap:6px;">
+              <button onclick="openSchoolDetailsModal(${s.id})" class="btn-table-action" style="color:var(--blue-accent);font-weight:700;">👁️ View</button>
               <button onclick="editSchool(${s.id}, '${escapeHtml(s.name).replace(/'/g, "\\'")}', '${escapeHtml(s.county || 'Nairobi')}', '${adminCode}')" class="btn-table-action">✏️ Edit</button>
               <button onclick="deleteSchool(${s.id}, '${escapeHtml(s.name).replace(/'/g, "\\'")}')" class="btn-table-action" style="color:var(--red-accent);">🗑️ Delete</button>
             </div>
@@ -1007,6 +1101,197 @@
         </tr>
       `;
     }).join('');
+  }
+
+  let activeSchoolDetail = null;
+
+  async function openSchoolDetailsModal(schoolId) {
+    const modal = document.getElementById('schoolDetailsModal');
+    if (!modal) return;
+
+    modal.style.display = 'flex';
+    document.getElementById('sdModalTitle').textContent = 'Loading school details...';
+    document.getElementById('sdTeachersList').innerHTML = '<div style="text-align:center;padding:28px;color:var(--text-muted);">Loading teachers...</div>';
+    document.getElementById('sdStudentsList').innerHTML = '<div style="text-align:center;padding:28px;color:var(--text-muted);">Loading students...</div>';
+    document.getElementById('sdExperimentsBreakdown').innerHTML = '';
+
+    // Default to teachers tab
+    switchSchoolModalTab('teachers', document.getElementById('btnSdTabTeachers'));
+
+    try {
+      const res = await Admin.getSchoolDetails(schoolId);
+      if (!res || !res.success) {
+        throw new Error(res?.error || 'Failed to retrieve school details');
+      }
+
+      activeSchoolDetail = res;
+      const s = res.school;
+      const teachers = res.teachers || [];
+      const students = res.students || [];
+      const stats = res.stats || {};
+
+      const totalExperiments = (parseInt(stats.titrations_count, 10) || 0) +
+                               (parseInt(stats.qualitative_count, 10) || 0) +
+                               (parseInt(stats.organic_count, 10) || 0) +
+                               (parseInt(stats.composite_count, 10) || 0);
+
+      // Header
+      document.getElementById('sdModalAvatar').textContent = getInitials(s.name);
+      document.getElementById('sdModalTitle').textContent = s.name;
+      document.getElementById('sdModalCounty').textContent = s.county || 'Kenya';
+      document.getElementById('sdModalCode').textContent = s.admin_code || 'N/A';
+      document.getElementById('sdModalCodeChip').onclick = () => copyToClipboard(s.admin_code, `Admin code for ${s.name} copied!`);
+
+      // Summary counters
+      document.getElementById('sdStatTeachers').textContent = teachers.length;
+      document.getElementById('sdStatStudents').textContent = students.length;
+      document.getElementById('sdStatExperiments').textContent = totalExperiments;
+
+      document.getElementById('sdCountTeachers').textContent = teachers.length;
+      document.getElementById('sdCountStudents').textContent = students.length;
+
+      // Footer action buttons
+      document.getElementById('sdBtnShareInvite').onclick = () => copyTeacherInvite(s.name, s.admin_code);
+      document.getElementById('sdBtnEditSchool').onclick = () => {
+        closeSchoolDetailsModal();
+        editSchool(s.id, s.name, s.county, s.admin_code);
+      };
+
+      // 1. Teachers list
+      const tContainer = document.getElementById('sdTeachersList');
+      if (teachers.length === 0) {
+        tContainer.innerHTML = `
+          <div class="empty-callout">
+            <div style="font-size:2rem;margin-bottom:6px;">👨‍🏫</div>
+            <h4 style="margin:0 0 6px 0;color:var(--heading-color);">No STEM Teachers Registered Yet</h4>
+            <p style="margin:0 0 14px 0;font-size:0.83rem;color:var(--text-muted);max-width:440px;margin-left:auto;margin-right:auto;">
+              Teachers register using this school's admin registration code: <b style="font-family:var(--font-mono);color:var(--blue-accent);">${escapeHtml(s.admin_code)}</b>.
+            </p>
+            <button type="button" class="btn-primary-solid" onclick="copyTeacherInvite('${escapeHtml(s.name).replace(/'/g, "\\'")}', '${escapeHtml(s.admin_code)}')">
+              ✉️ Copy Teacher Onboarding Message
+            </button>
+          </div>
+        `;
+      } else {
+        tContainer.innerHTML = `
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Teacher Name</th>
+                  <th>Email</th>
+                  <th>Teacher Code</th>
+                  <th>Status</th>
+                  <th>Joined</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${teachers.map(t => `
+                  <tr>
+                    <td><b>${escapeHtml(t.name)}</b></td>
+                    <td>${escapeHtml(t.email)}</td>
+                    <td><code style="color:var(--blue-accent);font-family:var(--font-mono);">${escapeHtml(t.teacher_code || '—')}</code></td>
+                    <td><span class="status-badge ${t.status === 'active' ? 'active' : 'inactive'}">${escapeHtml(t.status || 'active')}</span></td>
+                    <td><small style="font-family:var(--font-mono);color:var(--text-muted);">${new Date(t.created_at || Date.now()).toLocaleDateString()}</small></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      }
+
+      // 2. Students list
+      const sContainer = document.getElementById('sdStudentsList');
+      if (students.length === 0) {
+        sContainer.innerHTML = `
+          <div class="empty-callout">
+            <div style="font-size:2rem;margin-bottom:6px;">🎓</div>
+            <h4 style="margin:0 0 6px 0;color:var(--heading-color);">No Enrolled Students Yet</h4>
+            <p style="margin:0;font-size:0.83rem;color:var(--text-muted);max-width:440px;margin-left:auto;margin-right:auto;">
+              Students enroll in VirtuLab Kenya by joining a verified teacher's classroom code.
+            </p>
+          </div>
+        `;
+      } else {
+        sContainer.innerHTML = `
+          <div class="table-responsive">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Student Name</th>
+                  <th>Email</th>
+                  <th>Form Level</th>
+                  <th>Assigned Teacher</th>
+                  <th>Status</th>
+                  <th>Enrolled</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${students.map(st => `
+                  <tr>
+                    <td><b>${escapeHtml(st.name)}</b></td>
+                    <td>${escapeHtml(st.email)}</td>
+                    <td><span class="role-badge" style="background:var(--blue-bg);color:var(--blue-accent);">${escapeHtml(st.form || 'Form 4')}</span></td>
+                    <td>${escapeHtml(st.teacher_name || 'Unassigned')}</td>
+                    <td><span class="status-badge ${st.status === 'active' ? 'active' : 'inactive'}">${escapeHtml(st.status || 'active')}</span></td>
+                    <td><small style="font-family:var(--font-mono);color:var(--text-muted);">${new Date(st.created_at || Date.now()).toLocaleDateString()}</small></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      }
+
+      // 3. Experiment Breakdown
+      const expContainer = document.getElementById('sdExperimentsBreakdown');
+      expContainer.innerHTML = `
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));gap:12px;margin-top:6px;">
+          <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:12px 14px;">
+            <div style="font-size:0.75rem;font-weight:700;color:var(--blue-accent);text-transform:uppercase;">🧪 Volumetric</div>
+            <div style="font-family:var(--font-mono);font-size:1.4rem;font-weight:800;color:var(--heading-color);margin-top:2px;">${stats.titrations_count || 0}</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);">Titration Sessions</div>
+          </div>
+          <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:12px 14px;">
+            <div style="font-size:0.75rem;font-weight:700;color:var(--amber-accent);text-transform:uppercase;">🧂 Qualitative</div>
+            <div style="font-family:var(--font-mono);font-size:1.4rem;font-weight:800;color:var(--heading-color);margin-top:2px;">${stats.qualitative_count || 0}</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);">Salt & Ion Tests</div>
+          </div>
+          <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:12px 14px;">
+            <div style="font-size:0.75rem;font-weight:700;color:var(--green-accent);text-transform:uppercase;">⚗️ Organic</div>
+            <div style="font-family:var(--font-mono);font-size:1.4rem;font-weight:800;color:var(--heading-color);margin-top:2px;">${stats.organic_count || 0}</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);">Organic Practicals</div>
+          </div>
+          <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:12px 14px;">
+            <div style="font-size:0.75rem;font-weight:700;color:var(--violet-accent);text-transform:uppercase;">📋 Composite</div>
+            <div style="font-family:var(--font-mono);font-size:1.4rem;font-weight:800;color:var(--heading-color);margin-top:2px;">${stats.composite_count || 0}</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);">40-Mark Mock Exams</div>
+          </div>
+        </div>
+      `;
+
+    } catch (err) {
+      document.getElementById('sdTeachersList').innerHTML = `<div style="text-align:center;padding:24px;color:var(--red-accent);">Error loading details: ${escapeHtml(err.message)}</div>`;
+    }
+  }
+
+  function closeSchoolDetailsModal() {
+    const modal = document.getElementById('schoolDetailsModal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  function switchSchoolModalTab(tab, btn) {
+    document.querySelectorAll('#schoolDetailsModal .subtab-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+
+    const tabT = document.getElementById('sdTabTeachers');
+    const tabS = document.getElementById('sdTabStudents');
+    const tabE = document.getElementById('sdTabExperiments');
+
+    if (tabT) tabT.style.display = tab === 'teachers' ? 'block' : 'none';
+    if (tabS) tabS.style.display = tab === 'students' ? 'block' : 'none';
+    if (tabE) tabE.style.display = tab === 'experiments' ? 'block' : 'none';
   }
 
   function editSchool(id, name, county, adminCode) {

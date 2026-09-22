@@ -924,6 +924,9 @@ const Admin = {
   async deleteSchool(id) {
     return apiRequest('DELETE', '/admin/schools/' + id);
   },
+  async getSchoolDetails(id) {
+    return apiRequest('GET', '/admin/schools/' + id + '/details');
+  },
   async getUsers() {
     return apiRequest('GET', '/admin/users');
   },

@@ -110,6 +110,53 @@ router.put('/schools/:id', asyncHandler(async (req, res) => {
   return res.json({ success: true, school });
 }));
 
+// GET /api/admin/schools/:id/details — Detailed roster and stats for a school
+router.get('/schools/:id/details', asyncHandler(async (req, res) => {
+  const schoolId = parseInt(req.params.id, 10);
+  if (isNaN(schoolId)) {
+    return res.status(400).json({ error: 'Valid numeric school ID is required.' });
+  }
+
+  const school = await schoolRepo.getSchoolById(schoolId);
+  if (!school) {
+    return res.status(404).json({ error: 'School not found' });
+  }
+
+  const teachersRes = await pool.query(
+    `SELECT id, name, email, teacher_code, status, created_at
+     FROM teachers
+     WHERE school_id = $1
+     ORDER BY created_at ASC`,
+    [schoolId]
+  );
+
+  const studentsRes = await pool.query(
+    `SELECT s.id, s.name, s.email, s.form, s.status, s.created_at, t.name AS teacher_name
+     FROM students s
+     LEFT JOIN teachers t ON t.id = s.teacher_id
+     WHERE s.school_id = $1
+     ORDER BY s.created_at DESC`,
+    [schoolId]
+  );
+
+  const statsRes = await pool.query(
+    `SELECT
+       (SELECT COUNT(*) FROM practical_sessions ps JOIN students st ON st.id = ps.student_id WHERE st.school_id = $1) AS titrations_count,
+       (SELECT COUNT(*) FROM qualitative_sessions qs JOIN students st ON st.id = qs.student_id WHERE st.school_id = $1) AS qualitative_count,
+       (SELECT COUNT(*) FROM organic_sessions os JOIN students st ON st.id = os.student_id WHERE st.school_id = $1) AS organic_count,
+       (SELECT COUNT(*) FROM composite_sessions cs JOIN students st ON st.id = cs.student_id WHERE st.school_id = $1) AS composite_count`,
+    [schoolId]
+  );
+
+  return res.json({
+    success: true,
+    school,
+    teachers: teachersRes.rows,
+    students: studentsRes.rows,
+    stats: statsRes.rows[0]
+  });
+}));
+
 // DELETE /api/admin/schools/:id — Remove a school
 router.delete('/schools/:id', asyncHandler(async (req, res) => {
   const deleted = await schoolRepo.deleteSchool(req.params.id);

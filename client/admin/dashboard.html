@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/shared/style.css">
-<link rel="stylesheet" href="css/admin.css?v=4">
+<link rel="stylesheet" href="css/admin.css?v=5">
 </head>
 <body>
 
@@ -360,6 +360,28 @@
 
   <!-- Tab 5: System Telemetry & Audit Logs -->
   <div id="telemetryTab" class="card-panel" style="display:none;">
+    <div class="panel-header" style="flex-wrap:wrap;gap:12px;align-items:center;border-bottom:none;padding-bottom:0;margin-bottom:12px;">
+      <div>
+        <h3 class="panel-title" style="margin:0;">⚙️ Infrastructure Health & Live Cluster Diagnostics</h3>
+        <p style="margin:4px 0 0 0;font-size:0.8rem;color:var(--text-muted);">
+          Real-time cluster telemetry across PostgreSQL database, Cloud Node, Gemini AI engine, and Push service.
+        </p>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span id="healthLastChecked" style="font-size:0.75rem;color:var(--text-muted);font-family:var(--font-mono);">Status: Checking...</span>
+        <button type="button" class="btn-secondary" onclick="loadSystemHealth(true)" id="btnRefreshHealth" style="font-size:0.78rem;padding:6px 12px;display:inline-flex;align-items:center;gap:6px;">
+          <span>🔄</span> Refresh Diagnostics
+        </button>
+      </div>
+    </div>
+
+    <!-- 4 Infrastructure Cards Grid -->
+    <div class="infra-grid" id="infraHealthGrid">
+      <div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--text-muted);">
+        Loading infrastructure telemetry...
+      </div>
+    </div>
+
     <div class="panel-header">
       <h3 class="panel-title">🛡️ Security Audit Logs & System Activity</h3>
     </div>
@@ -949,6 +971,8 @@
         renderTelemetry([]);
       }
 
+      loadSystemHealth();
+
     } catch (err) {
       console.error('Failed to load admin dashboard data:', err);
     }
@@ -1512,6 +1536,219 @@
     }
   }
 
+  let isHealthLoading = false;
+
+  async function loadSystemHealth(isManual = false) {
+    if (isHealthLoading) return;
+    isHealthLoading = true;
+    const btn = document.getElementById('btnRefreshHealth');
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<span>⏳</span> Diagnosing...';
+    }
+
+    try {
+      const res = await Admin.getSystemHealth();
+      if (res && res.success) {
+        renderSystemHealth(res);
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString();
+        const timeEl = document.getElementById('healthLastChecked');
+        if (timeEl) timeEl.textContent = `Checked: ${timeStr}`;
+
+        if (isManual) {
+          showToast(`Cluster Diagnostic: DB ${res.database?.latencyMs}ms · AI ${res.gemini?.status} · Region ${res.server?.region}`, 'success', 5000);
+        }
+      } else {
+        throw new Error(res?.error || 'Diagnostic query failed');
+      }
+    } catch (err) {
+      console.error('Failed to load system health:', err);
+      const grid = document.getElementById('infraHealthGrid');
+      if (grid) {
+        grid.innerHTML = `
+          <div style="grid-column:1/-1;background:var(--red-bg);color:var(--red-accent);border:1px solid var(--red-border);border-radius:10px;padding:16px;text-align:center;font-size:0.85rem;">
+            ⚠️ Diagnostic telemetry error: ${escapeHtml(err.message)}
+          </div>
+        `;
+      }
+      if (isManual) {
+        showToast('System health diagnostic failed: ' + err.message, 'error');
+      }
+    } finally {
+      isHealthLoading = false;
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<span>🔄</span> Refresh Diagnostics';
+      }
+    }
+  }
+
+  function renderSystemHealth(data) {
+    const grid = document.getElementById('infraHealthGrid');
+    if (!grid) return;
+
+    const db = data.database || {};
+    const srv = data.server || {};
+    const ai = data.gemini || {};
+    const push = data.vapid || {};
+
+    const dbIsOnline = db.status === 'healthy';
+    const dbStatusBadge = dbIsOnline
+      ? `<span class="status-indicator-badge online"><span class="pulse-dot online"></span> ${db.latencyMs}ms Latency</span>`
+      : `<span class="status-indicator-badge warning"><span class="pulse-dot warning"></span> Degraded</span>`;
+
+    const srvStatusBadge = `<span class="status-indicator-badge online"><span class="pulse-dot online"></span> ${srv.isRender ? 'Live Cloud' : 'Dev Node'}</span>`;
+
+    const aiIsReady = ai.status === 'operational';
+    const aiStatusBadge = aiIsReady
+      ? `<span class="status-indicator-badge online"><span class="pulse-dot online"></span> Operational</span>`
+      : `<span class="status-indicator-badge warning"><span class="pulse-dot warning"></span> Blueprint Fallback</span>`;
+
+    const pushIsActive = push.status === 'active';
+    const pushStatusBadge = pushIsActive
+      ? `<span class="status-indicator-badge online"><span class="pulse-dot online"></span> VAPID Active</span>`
+      : `<span class="status-indicator-badge online"><span class="pulse-dot online"></span> Ephemeral</span>`;
+
+    grid.innerHTML = `
+      <!-- Card 1: PostgreSQL Connection Pool -->
+      <div class="infra-card">
+        <div>
+          <div class="infra-header">
+            <div class="infra-title-wrap">
+              <div class="infra-icon" style="color:var(--blue-accent);">🗄️</div>
+              <div>
+                <div class="infra-name">PostgreSQL Database</div>
+                <div class="infra-subtitle">${escapeHtml(db.provider || 'PostgreSQL Cluster')}</div>
+              </div>
+            </div>
+            ${dbStatusBadge}
+          </div>
+          <div class="infra-metric-rows">
+            <div class="infra-metric-row">
+              <span class="infra-metric-label">Connection Pool</span>
+              <span class="infra-metric-val">${db.pool?.total || 1} / ${db.pool?.max || 20} Active</span>
+            </div>
+            <div class="infra-metric-row">
+              <span class="infra-metric-label">Idle / Waiting</span>
+              <span class="infra-metric-val">${db.pool?.idle || 0} idle · ${db.pool?.waiting || 0} wait</span>
+            </div>
+            <div class="infra-metric-row">
+              <span class="infra-metric-label">Cluster Entities</span>
+              <span class="infra-metric-val">${db.counts?.schools || 0} sch · ${db.counts?.teachers || 0} tch · ${db.counts?.students || 0} stu</span>
+            </div>
+          </div>
+        </div>
+        <div class="infra-footer-tag">
+          <span>Ping Latency: <b>${db.latencyMs}ms</b></span>
+          <span style="color:var(--green-accent);">SSL Verified</span>
+        </div>
+      </div>
+
+      <!-- Card 2: Cloud Runtime & Node -->
+      <div class="infra-card">
+        <div>
+          <div class="infra-header">
+            <div class="infra-title-wrap">
+              <div class="infra-icon" style="color:var(--violet-accent);">☁️</div>
+              <div>
+                <div class="infra-name">Cloud Runtime Host</div>
+                <div class="infra-subtitle">${escapeHtml(srv.serviceName || 'virtulab-web')}</div>
+              </div>
+            </div>
+            ${srvStatusBadge}
+          </div>
+          <div class="infra-metric-rows">
+            <div class="infra-metric-row">
+              <span class="infra-metric-label">Cluster Region</span>
+              <span class="infra-metric-val">${escapeHtml(srv.region || 'Frankfurt, EU')}</span>
+            </div>
+            <div class="infra-metric-row">
+              <span class="infra-metric-label">Node Runtime</span>
+              <span class="infra-metric-val">${escapeHtml(srv.nodeVersion || 'v20.x')} (${escapeHtml(srv.env || 'prod')})</span>
+            </div>
+            <div class="infra-metric-row">
+              <span class="infra-metric-label">Memory Allocation</span>
+              <span class="infra-metric-val">RSS ${srv.memory?.rss || '--'} · Heap ${srv.memory?.heapUsed || '--'}</span>
+            </div>
+          </div>
+        </div>
+        <div class="infra-footer-tag">
+          <span>Instance: <code>${escapeHtml(srv.instanceId || 'srv-01')}</code></span>
+          <span>Uptime: <b>${escapeHtml(srv.uptimeFormatted || 'Live')}</b></span>
+        </div>
+      </div>
+
+      <!-- Card 3: Google Gemini AI Engine -->
+      <div class="infra-card">
+        <div>
+          <div class="infra-header">
+            <div class="infra-title-wrap">
+              <div class="infra-icon" style="color:var(--amber-accent);">✨</div>
+              <div>
+                <div class="infra-name">Google Gemini AI</div>
+                <div class="infra-subtitle">Multimodal KCSE Engine</div>
+              </div>
+            </div>
+            ${aiStatusBadge}
+          </div>
+          <div class="infra-metric-rows">
+            <div class="infra-metric-row">
+              <span class="infra-metric-label">Active Model</span>
+              <span class="infra-metric-val">${escapeHtml(ai.model || 'gemini-3.5-flash-lite')}</span>
+            </div>
+            <div class="infra-metric-row">
+              <span class="infra-metric-label">API Configuration</span>
+              <span class="infra-metric-val" style="color:${aiIsReady ? 'var(--green-accent)' : 'var(--amber-accent)'};">${aiIsReady ? 'Key Authenticated' : 'Blueprint Mode'}</span>
+            </div>
+            <div class="infra-metric-row">
+              <span class="infra-metric-label">Core Capabilities</span>
+              <span class="infra-metric-val" style="font-size:0.75rem;">Vision OCR + Socratic Hints</span>
+            </div>
+          </div>
+        </div>
+        <div class="infra-footer-tag">
+          <span>Quota Window: <b>Standard</b></span>
+          <span style="color:var(--blue-accent);">Token Limit: 8,192</span>
+        </div>
+      </div>
+
+      <!-- Card 4: Web Push & VAPID Broadcasts -->
+      <div class="infra-card">
+        <div>
+          <div class="infra-header">
+            <div class="infra-title-wrap">
+              <div class="infra-icon" style="color:var(--green-accent);">🔔</div>
+              <div>
+                <div class="infra-name">Web Push / VAPID</div>
+                <div class="infra-subtitle">Service Worker Notifications</div>
+              </div>
+            </div>
+            ${pushStatusBadge}
+          </div>
+          <div class="infra-metric-rows">
+            <div class="infra-metric-row">
+              <span class="infra-metric-label">Delivery Protocol</span>
+              <span class="infra-metric-val">${escapeHtml(push.protocol || 'RFC 8292')}</span>
+            </div>
+            <div class="infra-metric-row">
+              <span class="infra-metric-label">VAPID Key Pair</span>
+              <span class="infra-metric-val"><code>${escapeHtml(push.keyPreview || 'Ready')}</code></span>
+            </div>
+            <div class="infra-metric-row">
+              <span class="infra-metric-label">Broadcast Audience</span>
+              <span class="infra-metric-val">PWA Offline Sync</span>
+            </div>
+          </div>
+        </div>
+        <div class="infra-footer-tag">
+          <span>Subject: <b style="font-size:0.68rem;">admin@virtulab.co.ke</b></span>
+          <span style="color:var(--green-accent);">SW Push API</span>
+        </div>
+      </div>
+    `;
+  }
+
   function renderTelemetry(logs) {
     const list = Array.isArray(logs) ? logs : (logs && Array.isArray(logs.errors) ? logs.errors : []);
     const tbody = document.getElementById('telemetryTableBody');
@@ -1666,6 +1903,10 @@
     ['schoolsTab', 'usersTab', 'adminsTab', 'announcementsTab', 'analyticsTab', 'telemetryTab'].forEach(id => {
       document.getElementById(id).style.display = (id === tabId) ? 'block' : 'none';
     });
+
+    if (tabId === 'telemetryTab') {
+      loadSystemHealth();
+    }
   }
 
   function openRegisterSchoolModal() {

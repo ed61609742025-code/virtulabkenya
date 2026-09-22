@@ -936,6 +936,9 @@ const Admin = {
   async resetUserPassword(userId, role) {
     return apiRequest('POST', '/admin/users/' + userId + '/reset-password', { role });
   },
+  async getSystemHealth() {
+    return apiRequest('GET', '/admin/system/health');
+  },
   async getAuditLogs() {
     return apiRequest('GET', '/admin/audit-logs');
   },

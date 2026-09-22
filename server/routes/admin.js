@@ -17,6 +17,7 @@ const adminRepo = require('../repositories/adminRepo');
 const { sendCsv, toCsvRow } = require('../utils/csv');
 const mailer = require('../utils/mailer');
 const pushService = require('../services/pushNotificationService');
+const config = require('../config');
 
 // Guard all admin routes: Requires valid JWT token with role === 'admin'
 router.use(authMiddleware, authMiddleware.requireRole('admin'));
@@ -545,6 +546,117 @@ router.get('/export/users', asyncHandler(async (req, res) => {
   ]));
 
   sendCsv(res, 'virtulab_users_export.csv', headerRow, dataRows);
+}));
+
+// GET /api/admin/system/health — Infrastructure diagnostics & cluster service status
+router.get('/system/health', asyncHandler(async (req, res) => {
+  const startPing = Date.now();
+  let dbStatus = 'healthy';
+  let dbLatency = 0;
+  let tableCounts = {};
+
+  try {
+    await pool.query('SELECT 1');
+    dbLatency = Date.now() - startPing;
+
+    const countsRes = await pool.query(`
+      SELECT
+        (SELECT COUNT(*) FROM schools)::int AS schools,
+        (SELECT COUNT(*) FROM teachers)::int AS teachers,
+        (SELECT COUNT(*) FROM students)::int AS students,
+        (
+          (SELECT COUNT(*) FROM practical_sessions) +
+          (SELECT COUNT(*) FROM qualitative_sessions) +
+          (SELECT COUNT(*) FROM organic_sessions) +
+          (SELECT COUNT(*) FROM composite_sessions)
+        )::int AS sessions
+    `);
+    tableCounts = countsRes.rows[0] || {};
+  } catch (err) {
+    dbStatus = 'degraded';
+    dbLatency = Date.now() - startPing;
+  }
+
+  const dbUrl = process.env.DATABASE_URL || '';
+  let dbProvider = 'Localhost PostgreSQL';
+  if (dbUrl.includes('.neon.tech')) dbProvider = 'Neon Serverless Postgres';
+  else if (dbUrl.includes('.supabase.co') || dbUrl.includes('.pooler.supabase.com')) dbProvider = 'Supabase Cloud Postgres';
+  else if (dbUrl.includes('render.com')) dbProvider = 'Render PostgreSQL';
+  else if (dbUrl.includes('railway.app')) dbProvider = 'Railway Postgres';
+  else if (process.env.NODE_ENV === 'production') dbProvider = 'Managed Cloud PostgreSQL';
+
+  const poolStats = {
+    total: pool.totalCount || 0,
+    idle: pool.idleCount || 0,
+    waiting: pool.waitingCount || 0,
+    max: 20
+  };
+
+  const uptimeSec = Math.floor(process.uptime());
+  const days = Math.floor(uptimeSec / 86400);
+  const hours = Math.floor((uptimeSec % 86400) / 3600);
+  const minutes = Math.floor((uptimeSec % 3600) / 60);
+  const uptimeFormatted = `${days > 0 ? days + 'd ' : ''}${hours}h ${minutes}m`;
+
+  const mem = process.memoryUsage();
+  const memoryFormatted = {
+    rss: `${(mem.rss / 1024 / 1024).toFixed(1)} MB`,
+    heapUsed: `${(mem.heapUsed / 1024 / 1024).toFixed(1)} MB`,
+    heapTotal: `${(mem.heapTotal / 1024 / 1024).toFixed(1)} MB`
+  };
+
+  const isRender = Boolean(process.env.RENDER || process.env.RENDER_SERVICE_ID || process.env.RENDER_INSTANCE_ID);
+  const renderRegion = process.env.RENDER_REGION
+    ? (process.env.RENDER_REGION === 'frankfurt' ? 'Frankfurt, EU (eu-central)' : process.env.RENDER_REGION === 'oregon' ? 'Oregon, US (us-west)' : process.env.RENDER_REGION)
+    : (isRender ? 'Frankfurt, EU (eu-central)' : 'Localhost Dev Node');
+  const serviceName = process.env.RENDER_SERVICE_NAME || 'virtulab-web';
+  const instanceId = process.env.RENDER_INSTANCE_ID ? process.env.RENDER_INSTANCE_ID.substring(0, 8) : 'srv-node-01';
+
+  const hasGeminiKey = Boolean(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim());
+  const geminiModel = process.env.GEMINI_MODEL || (config.gemini && config.gemini.defaultModel) || 'gemini-3.5-flash-lite';
+  const geminiStatus = hasGeminiKey ? 'operational' : 'blueprint_fallback';
+
+  const hasVapid = Boolean(config.push && config.push.vapidPublicKey && config.push.vapidPrivateKey);
+  const vapidStatus = hasVapid ? 'active' : 'unconfigured';
+  const vapidSubject = (config.push && config.push.vapidSubject) || 'mailto:admin@virtulab.co.ke';
+  const pubKey = (config.push && config.push.vapidPublicKey) || '';
+  const keyPreview = pubKey ? `${pubKey.substring(0, 10)}...${pubKey.slice(-6)}` : 'Auto Ephemeral';
+
+  return res.json({
+    success: true,
+    timestamp: new Date().toISOString(),
+    database: {
+      status: dbStatus,
+      latencyMs: dbLatency,
+      provider: dbProvider,
+      pool: poolStats,
+      counts: tableCounts
+    },
+    server: {
+      isRender,
+      serviceName,
+      instanceId,
+      region: renderRegion,
+      nodeVersion: process.version,
+      uptimeSeconds: uptimeSec,
+      uptimeFormatted,
+      memory: memoryFormatted,
+      env: process.env.NODE_ENV || 'production'
+    },
+    gemini: {
+      status: geminiStatus,
+      model: geminiModel,
+      configured: hasGeminiKey,
+      role: 'Paper 3 Multimodal Exam Parser & Socratic Lab Tutor'
+    },
+    vapid: {
+      status: vapidStatus,
+      configured: hasVapid,
+      subject: vapidSubject,
+      keyPreview: keyPreview,
+      protocol: 'Web Push (RFC 8292)'
+    }
+  });
 }));
 
 module.exports = router;

@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/shared/style.css">
-<link rel="stylesheet" href="css/admin.css?v=5">
+<link rel="stylesheet" href="css/admin.css?v=6">
 </head>
 <body>
 
@@ -178,11 +178,26 @@
       </div>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
         <div class="filter-chip-group">
-          <button class="filter-chip active" data-filter="all" onclick="filterUserRole('all', this)">All</button>
-          <button class="filter-chip" data-filter="teacher" onclick="filterUserRole('teacher', this)">Teachers</button>
-          <button class="filter-chip" data-filter="student" onclick="filterUserRole('student', this)">Students</button>
-          <button class="filter-chip" data-filter="active" onclick="filterUserRole('active', this)">Active</button>
-          <button class="filter-chip" data-filter="suspended" onclick="filterUserRole('suspended', this)">Suspended</button>
+          <button class="filter-chip active" data-filter="all" onclick="filterUserRole('all', this)">
+            <span>All</span>
+            <span class="pill-badge" id="uCountAll">0</span>
+          </button>
+          <button class="filter-chip" data-filter="teacher" onclick="filterUserRole('teacher', this)">
+            <span>Teachers</span>
+            <span class="pill-badge" id="uCountTeachers">0</span>
+          </button>
+          <button class="filter-chip" data-filter="student" onclick="filterUserRole('student', this)">
+            <span>Students</span>
+            <span class="pill-badge" id="uCountStudents">0</span>
+          </button>
+          <button class="filter-chip" data-filter="active" onclick="filterUserRole('active', this)">
+            <span>Active</span>
+            <span class="pill-badge" id="uCountActive">0</span>
+          </button>
+          <button class="filter-chip" data-filter="suspended" onclick="filterUserRole('suspended', this)">
+            <span>Suspended</span>
+            <span class="pill-badge" id="uCountSuspended">0</span>
+          </button>
         </div>
         <input type="text" id="userSearch" class="form-control search-control" placeholder="Search user, email or school..." oninput="filterUsers()">
         <button class="btn-secondary" onclick="Admin.exportUsersReport()">📥 Export CSV</button>
@@ -510,6 +525,121 @@
       <div style="display:flex;gap:8px;">
         <button type="button" id="sdBtnEditSchool" class="btn-secondary" style="font-size:0.8rem;">✏️ Edit School</button>
         <button type="button" class="btn-primary-solid" onclick="closeSchoolDetailsModal()" style="font-size:0.8rem;">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 0B: User Password Reset & Credential Dispatch -->
+<div id="userPasswordResetModal" class="modal-overlay" style="display:none;">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="avatar-circle teacher" id="upwAvatar" style="width:34px;height:34px;font-size:0.85rem;">US</span>
+        <div>
+          <h3 style="margin:0;font-size:1.05rem;color:var(--heading-color);">Reset User Password</h3>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:2px;">
+            <span id="upwUserName" style="font-weight:700;color:var(--text-main);">User</span> ·
+            <span id="upwUserRole" class="role-badge teacher" style="padding:1px 6px;font-size:0.68rem;">Teacher</span>
+          </div>
+        </div>
+      </div>
+      <button class="modal-close-btn" onclick="closeUserPwModal()">&times;</button>
+    </div>
+
+    <!-- State 1: Reset Form -->
+    <div id="upwFormContainer" class="modal-body">
+      <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:8px;padding:12px 14px;margin-bottom:16px;">
+        <div style="font-size:0.76rem;color:var(--text-muted);">Account Email:</div>
+        <div style="font-family:var(--font-mono);font-size:0.88rem;font-weight:700;color:var(--blue-accent);margin-top:2px;" id="upwUserEmail">email@domain.com</div>
+      </div>
+
+      <div class="form-group">
+        <label>Password Generation Method</label>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px;">
+          <label style="display:flex;align-items:center;gap:8px;font-weight:normal;cursor:pointer;font-size:0.84rem;">
+            <input type="radio" name="pwGenType" value="auto" checked onchange="toggleCustomPwField(false)">
+            <span><b>Auto-Generate</b> secure temporary password (e.g. <code>VLK-9A3F2C</code>)</span>
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;font-weight:normal;cursor:pointer;font-size:0.84rem;">
+            <input type="radio" name="pwGenType" value="custom" onchange="toggleCustomPwField(true)">
+            <span><b>Custom Password</b> (Admin-specified)</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group" id="upwCustomGroup" style="display:none;margin-top:12px;">
+        <label for="upwCustomInput">Custom Temporary Password (min 6 characters)</label>
+        <input type="text" id="upwCustomInput" class="form-control" placeholder="Enter temporary password...">
+      </div>
+
+      <div id="upwErrorMsg" style="margin-top:10px;"></div>
+
+      <div style="margin-top:20px;display:flex;justify-content:flex-end;gap:10px;">
+        <button type="button" class="btn-secondary" onclick="closeUserPwModal()">Cancel</button>
+        <button type="button" class="btn-primary-solid" id="btnConfirmResetPw" onclick="submitUserPwReset()">
+          🔑 Confirm & Reset Password
+        </button>
+      </div>
+    </div>
+
+    <!-- State 2: Success & Credentials Card -->
+    <div id="upwSuccessContainer" class="modal-body" style="display:none;">
+      <div style="text-align:center;margin-bottom:14px;">
+        <div style="font-size:2rem;margin-bottom:4px;">🎉</div>
+        <h4 style="margin:0;color:var(--heading-color);font-size:1.05rem;">Password Successfully Reset</h4>
+        <p style="margin:4px 0 0 0;font-size:0.8rem;color:var(--text-muted);" id="upwSuccessSubtitle">
+          The new temporary credentials have been generated.
+        </p>
+      </div>
+
+      <div style="background:var(--card-bg-hover);border:2px solid var(--blue-border);border-radius:12px;padding:16px;margin-bottom:16px;text-align:center;">
+        <div style="font-size:0.75rem;text-transform:uppercase;color:var(--text-muted);font-weight:700;letter-spacing:0.04em;">Temporary Password</div>
+        <div style="font-family:var(--font-mono);font-size:1.6rem;font-weight:800;color:var(--blue-accent);letter-spacing:0.05em;margin:8px 0;" id="upwGeneratedDisplay">VLK-XXXXXX</div>
+        <button type="button" class="btn-secondary" id="btnCopyUpw" style="font-size:0.8rem;padding:5px 12px;">
+          📋 Copy Password
+        </button>
+      </div>
+
+      <div id="upwEmailStatus" style="margin-bottom:16px;"></div>
+
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <button type="button" class="btn-secondary" id="btnCopyShareMsg" style="width:100%;font-size:0.8rem;justify-content:center;">
+          💬 Copy WhatsApp / SMS Share Message
+        </button>
+        <button type="button" class="btn-primary-solid" onclick="closeUserPwModal()" style="width:100%;font-size:0.8rem;justify-content:center;">
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 0C: User Account Status Toggle Confirmation -->
+<div id="userStatusModal" class="modal-overlay" style="display:none;">
+  <div class="modal-box" style="max-width:440px;">
+    <div class="modal-header">
+      <h3 style="margin:0;font-size:1.05rem;color:var(--heading-color);" id="usModalTitle">Update Account Status</h3>
+      <button class="modal-close-btn" onclick="closeUserStatusModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:12px 14px;">
+        <span class="avatar-circle teacher" id="usModalAvatar" style="width:34px;height:34px;font-size:0.85rem;">US</span>
+        <div>
+          <div style="font-weight:700;color:var(--heading-color);" id="usModalName">User Name</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);" id="usModalEmail">email@domain.com</div>
+        </div>
+      </div>
+
+      <div id="usModalImpact" style="font-size:0.85rem;line-height:1.45;color:var(--text-main);margin-bottom:16px;">
+        <!-- Filled dynamically explaining suspension/activation -->
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:20px;">
+        <button type="button" class="btn-secondary" onclick="closeUserStatusModal()">Cancel</button>
+        <button type="button" id="usModalConfirmBtn" class="btn-danger" onclick="confirmUserStatusChange()">
+          Confirm
+        </button>
       </div>
     </div>
   </div>
@@ -1470,7 +1600,29 @@
     renderUsers(filtered);
   }
 
+  function updateUserFilterCounters(list) {
+    const users = Array.isArray(list) ? list : allUsers;
+    const total = users.length;
+    const teachers = users.filter(u => (u.role || '').toLowerCase() === 'teacher').length;
+    const students = users.filter(u => (u.role || '').toLowerCase() === 'student').length;
+    const active = users.filter(u => u.status !== 'suspended').length;
+    const suspended = users.filter(u => u.status === 'suspended').length;
+
+    const elAll = document.getElementById('uCountAll');
+    const elT = document.getElementById('uCountTeachers');
+    const elS = document.getElementById('uCountStudents');
+    const elAct = document.getElementById('uCountActive');
+    const elSusp = document.getElementById('uCountSuspended');
+
+    if (elAll) elAll.textContent = total;
+    if (elT) elT.textContent = teachers;
+    if (elS) elS.textContent = students;
+    if (elAct) elAct.textContent = active;
+    if (elSusp) elSusp.textContent = suspended;
+  }
+
   function renderUsers(list) {
+    updateUserFilterCounters(allUsers);
     const tbody = document.getElementById('usersTableBody');
     if (!list || list.length === 0) {
       tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:24px;">No users found matching current filters.</td></tr>';
@@ -1484,9 +1636,11 @@
         : '<span class="status-badge active">Active</span>';
 
       const toggleActionText = isSuspended ? 'Activate' : 'Suspend';
-      const newStatus = isSuspended ? 'active' : 'suspended';
       const roleLower = (u.role || 'student').toLowerCase();
       const initials = getInitials(u.name);
+      const safeName = escapeHtml(u.name).replace(/'/g, "\\'");
+      const safeEmail = escapeHtml(u.email || '').replace(/'/g, "\\'");
+      const actionBtnClass = isSuspended ? 'btn-activate' : 'btn-suspend';
 
       return `
         <tr>
@@ -1506,8 +1660,8 @@
           <td>${statusBadge}</td>
           <td>
             <div style="display:flex;gap:6px;">
-              <button onclick="toggleUserStatus(${u.id}, '${u.role}', '${newStatus}')" class="btn-table-action">${toggleActionText}</button>
-              <button onclick="resetUserPw(${u.id}, '${u.role}', '${escapeHtml(u.name).replace(/'/g, "\\'")}')" class="btn-table-action">🔑 Reset PW</button>
+              <button type="button" onclick="openToggleUserStatusModal(${u.id}, '${u.role}', '${safeName}', '${safeEmail}', '${u.status || 'active'}')" class="btn-table-action ${actionBtnClass}">${toggleActionText}</button>
+              <button type="button" onclick="openResetUserPwModal(${u.id}, '${u.role}', '${safeName}', '${safeEmail}')" class="btn-table-action">🔑 Reset PW</button>
             </div>
           </td>
         </tr>
@@ -1515,24 +1669,200 @@
     }).join('');
   }
 
-  async function toggleUserStatus(userId, role, status) {
-    if (!confirm(`Are you sure you want to change this user's status to ${status}?`)) return;
-    try {
-      await Admin.updateUserStatus(userId, role, status);
-      showToast(`User status updated to ${status}.`, 'success');
-      initAdminDashboard();
-    } catch (err) {
-      showToast('Failed to update status: ' + err.message, 'error');
+  // ── User Password Reset Modal Handlers ──
+  let activeResetUser = null;
+
+  function openResetUserPwModal(userId, role, name, email) {
+    activeResetUser = { id: userId, role, name, email };
+    const modal = document.getElementById('userPasswordResetModal');
+    if (!modal) return;
+
+    // Reset view states
+    document.getElementById('upwFormContainer').style.display = 'block';
+    document.getElementById('upwSuccessContainer').style.display = 'none';
+    document.getElementById('upwErrorMsg').innerHTML = '';
+    document.getElementById('upwCustomInput').value = '';
+    const autoRadio = document.querySelector('input[name="pwGenType"][value="auto"]');
+    if (autoRadio) autoRadio.checked = true;
+    toggleCustomPwField(false);
+
+    // Populate user info
+    const roleLower = (role || 'student').toLowerCase();
+    const avatarEl = document.getElementById('upwAvatar');
+    avatarEl.className = `avatar-circle ${roleLower}`;
+    avatarEl.textContent = getInitials(name);
+
+    document.getElementById('upwUserName').textContent = name;
+    const roleBadge = document.getElementById('upwUserRole');
+    roleBadge.className = `role-badge ${roleLower}`;
+    roleBadge.textContent = role;
+
+    document.getElementById('upwUserEmail').textContent = email || 'No email registered';
+
+    const confirmBtn = document.getElementById('btnConfirmResetPw');
+    if (confirmBtn) {
+      confirmBtn.disabled = false;
+      confirmBtn.innerHTML = '🔑 Confirm & Reset Password';
+    }
+
+    modal.style.display = 'flex';
+  }
+
+  function closeUserPwModal() {
+    const modal = document.getElementById('userPasswordResetModal');
+    if (modal) modal.style.display = 'none';
+    activeResetUser = null;
+  }
+
+  function toggleCustomPwField(isCustom) {
+    const customGroup = document.getElementById('upwCustomGroup');
+    if (customGroup) customGroup.style.display = isCustom ? 'block' : 'none';
+    if (isCustom) {
+      const input = document.getElementById('upwCustomInput');
+      if (input) input.focus();
     }
   }
 
-  async function resetUserPw(userId, role, userName) {
-    if (!confirm(`Reset password for ${userName}? A new temporary password will be generated.`)) return;
+  async function submitUserPwReset() {
+    if (!activeResetUser) return;
+    const isCustom = document.querySelector('input[name="pwGenType"]:checked')?.value === 'custom';
+    let customPassword = null;
+
+    if (isCustom) {
+      customPassword = (document.getElementById('upwCustomInput').value || '').trim();
+      if (customPassword.length < 6) {
+        document.getElementById('upwErrorMsg').innerHTML = '<div style="color:var(--red-accent);font-size:0.83rem;">Custom password must be at least 6 characters long.</div>';
+        return;
+      }
+    }
+
+    const confirmBtn = document.getElementById('btnConfirmResetPw');
+    if (confirmBtn) {
+      confirmBtn.disabled = true;
+      confirmBtn.innerHTML = '⏳ Resetting...';
+    }
+
     try {
-      const res = await Admin.resetUserPassword(userId, role);
-      showToast(`Password reset for ${userName}. Temporary PW: ${res.temporaryPassword}`, 'success', 9000);
+      const res = await Admin.resetUserPassword(activeResetUser.id, activeResetUser.role, customPassword);
+      if (res && res.success) {
+        document.getElementById('upwFormContainer').style.display = 'none';
+        document.getElementById('upwSuccessContainer').style.display = 'block';
+
+        const pw = res.temporaryPassword;
+        document.getElementById('upwGeneratedDisplay').textContent = pw;
+        document.getElementById('upwSuccessSubtitle').textContent = `Password reset for ${activeResetUser.name} (${activeResetUser.role}).`;
+
+        document.getElementById('btnCopyUpw').onclick = () => {
+          copyToClipboard(pw, 'Temporary password copied to clipboard!');
+        };
+
+        const emailStatusEl = document.getElementById('upwEmailStatus');
+        if (res.emailSent) {
+          emailStatusEl.innerHTML = `
+            <div style="background:var(--green-bg);color:var(--green-accent);border:1px solid var(--green-border);border-radius:8px;padding:8px 12px;font-size:0.8rem;display:flex;align-items:center;gap:6px;">
+              <span>✓</span> Credentials automatically emailed to <b>${escapeHtml(activeResetUser.email)}</b>
+            </div>
+          `;
+        } else {
+          emailStatusEl.innerHTML = `
+            <div style="background:var(--amber-bg);color:var(--amber-accent);border:1px solid var(--amber-border);border-radius:8px;padding:8px 12px;font-size:0.78rem;">
+              ℹ️ Copy the credentials above to share directly with the user via WhatsApp or SMS.
+            </div>
+          `;
+        }
+
+        const shareMsg = `Hello ${activeResetUser.name}, your VirtuLab Kenya password has been reset by the administrator.\n\nTemporary Password: ${pw}\nLogin URL: https://virtulab-web.onrender.com\n\nPlease log in and update your password in settings.`;
+        document.getElementById('btnCopyShareMsg').onclick = () => {
+          copyToClipboard(shareMsg, 'Ready-to-share credentials message copied!');
+        };
+
+        showToast(`Password successfully reset for ${activeResetUser.name}`, 'success');
+      } else {
+        throw new Error(res?.error || 'Failed to reset password');
+      }
     } catch (err) {
-      showToast('Failed to reset password: ' + err.message, 'error');
+      document.getElementById('upwErrorMsg').innerHTML = `<div style="color:var(--red-accent);font-size:0.83rem;">Error: ${escapeHtml(err.message)}</div>`;
+      if (confirmBtn) {
+        confirmBtn.disabled = false;
+        confirmBtn.innerHTML = '🔑 Confirm & Reset Password';
+      }
+    }
+  }
+
+  // ── User Status Toggle Modal Handlers ──
+  let activeStatusUser = null;
+
+  function openToggleUserStatusModal(userId, role, name, email, currentStatus) {
+    const isSuspended = currentStatus === 'suspended';
+    const targetStatus = isSuspended ? 'active' : 'suspended';
+    activeStatusUser = { id: userId, role, name, email, targetStatus };
+
+    const modal = document.getElementById('userStatusModal');
+    if (!modal) return;
+
+    const roleLower = (role || 'student').toLowerCase();
+    const avatar = document.getElementById('usModalAvatar');
+    avatar.className = `avatar-circle ${roleLower}`;
+    avatar.textContent = getInitials(name);
+
+    document.getElementById('usModalName').textContent = name;
+    document.getElementById('usModalEmail').textContent = `${email} (${role})`;
+
+    const titleEl = document.getElementById('usModalTitle');
+    const impactEl = document.getElementById('usModalImpact');
+    const confirmBtn = document.getElementById('usModalConfirmBtn');
+
+    if (targetStatus === 'suspended') {
+      titleEl.textContent = `Suspend ${role} Account`;
+      impactEl.innerHTML = `
+        <p style="margin:0 0 8px 0;">Are you sure you want to <b>suspend</b> this ${role.toLowerCase()} account?</p>
+        <div style="background:var(--red-bg);color:var(--red-accent);border:1px solid var(--red-border);border-radius:8px;padding:10px 12px;font-size:0.8rem;">
+          ⚠️ <b>Impact:</b> ${escapeHtml(name)} will be locked out of VirtuLab Kenya and prevented from accessing practical simulations, assignments, and school classrooms until reactivated.
+        </div>
+      `;
+      confirmBtn.className = 'btn-danger';
+      confirmBtn.textContent = `Yes, Suspend ${role}`;
+    } else {
+      titleEl.textContent = `Reactivate ${role} Account`;
+      impactEl.innerHTML = `
+        <p style="margin:0 0 8px 0;">Are you sure you want to <b>reactivate</b> this ${role.toLowerCase()} account?</p>
+        <div style="background:var(--green-bg);color:var(--green-accent);border:1px solid var(--green-border);border-radius:8px;padding:10px 12px;font-size:0.8rem;">
+          ✓ <b>Impact:</b> Full platform access will be immediately restored for ${escapeHtml(name)}.
+        </div>
+      `;
+      confirmBtn.className = 'btn-primary-solid';
+      confirmBtn.textContent = `Yes, Reactivate ${role}`;
+    }
+
+    confirmBtn.disabled = false;
+    modal.style.display = 'flex';
+  }
+
+  function closeUserStatusModal() {
+    const modal = document.getElementById('userStatusModal');
+    if (modal) modal.style.display = 'none';
+    activeStatusUser = null;
+  }
+
+  async function confirmUserStatusChange() {
+    if (!activeStatusUser) return;
+    const confirmBtn = document.getElementById('usModalConfirmBtn');
+    if (confirmBtn) {
+      confirmBtn.disabled = true;
+      confirmBtn.textContent = 'Updating...';
+    }
+
+    try {
+      await Admin.updateUserStatus(activeStatusUser.id, activeStatusUser.role, activeStatusUser.targetStatus);
+      showToast(`${activeStatusUser.name}'s account is now ${activeStatusUser.targetStatus}.`, 'success');
+      closeUserStatusModal();
+      initAdminDashboard();
+    } catch (err) {
+      showToast('Failed to update status: ' + err.message, 'error');
+      if (confirmBtn) {
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = 'Retry';
+      }
     }
   }
 

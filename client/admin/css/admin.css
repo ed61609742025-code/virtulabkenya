@@ -1207,3 +1207,78 @@ html, body {
   justify-content: space-between;
 }
 
+/* ── 15. USER ROSTER ENHANCEMENTS & FILTER CHIPS ── */
+.filter-chip-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 100px;
+  font-family: var(--font-heading);
+  font-size: 0.76rem;
+  font-weight: 700;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-main);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.filter-chip:hover {
+  background: var(--card-bg-hover);
+  border-color: var(--blue-accent);
+  color: var(--blue-accent);
+}
+
+.filter-chip.active {
+  background: var(--blue-accent);
+  color: #FFFFFF;
+  border-color: var(--blue-accent);
+  box-shadow: var(--shadow-sm);
+}
+
+.filter-chip .pill-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 800;
+  background: var(--card-bg-hover);
+  color: var(--text-muted);
+}
+
+.filter-chip.active .pill-badge {
+  background: rgba(255, 255, 255, 0.25);
+  color: #FFFFFF;
+}
+
+.btn-table-action.btn-activate {
+  color: var(--green-accent);
+  border-color: var(--green-border);
+  background: var(--green-bg);
+}
+.btn-table-action.btn-activate:hover {
+  filter: brightness(1.08);
+}
+
+.btn-table-action.btn-suspend {
+  color: var(--red-accent);
+  border-color: var(--red-border);
+  background: var(--red-bg);
+}
+.btn-table-action.btn-suspend:hover {
+  filter: brightness(1.08);
+}
+
+

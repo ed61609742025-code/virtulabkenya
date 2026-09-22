@@ -280,9 +280,9 @@ router.patch('/users/:id/status', asyncHandler(async (req, res) => {
   return res.json({ success: true, user: result.rows[0] });
 }));
 
-// POST /api/admin/users/:id/reset-password — Generate temporary password for user
+// POST /api/admin/users/:id/reset-password — Generate temporary or custom password for user
 router.post('/users/:id/reset-password', asyncHandler(async (req, res) => {
-  const { role } = req.body;
+  const { role, customPassword } = req.body;
   const userId = parseInt(req.params.id, 10);
   if (isNaN(userId)) {
     return res.status(400).json({ error: 'Valid numeric user ID is required.' });
@@ -295,8 +295,10 @@ router.post('/users/:id/reset-password', asyncHandler(async (req, res) => {
 
   const table = cleanRole === 'teacher' ? 'teachers' : 'students';
 
-  // Generate random 8-char temporary password
-  const tempPassword = 'VLK-' + crypto.randomBytes(4).toString('hex').toUpperCase().substring(0, 6);
+  // Support custom password if provided (min 6 chars), or generate 8-char random temporary password
+  const tempPassword = (customPassword && typeof customPassword === 'string' && customPassword.trim().length >= 6)
+    ? customPassword.trim()
+    : 'VLK-' + crypto.randomBytes(4).toString('hex').toUpperCase().substring(0, 6);
   const hashedPassword = await bcrypt.hash(tempPassword, 10);
 
   const result = await pool.query(
@@ -308,17 +310,29 @@ router.post('/users/:id/reset-password', asyncHandler(async (req, res) => {
     return res.status(404).json({ error: 'User not found' });
   }
 
+  const targetUser = result.rows[0];
+
   await auditRepo.logAuditEvent({
     adminEmail: req.user.email,
-    action: `Reset password for user: ${result.rows[0].email}`,
+    action: `Reset password for user: ${targetUser.email}`,
     details: { userId, role: cleanRole },
     ipAddress: req.ip
   });
 
+  const mailResult = await mailer.sendUserPasswordResetEmail({
+    to: targetUser.email,
+    name: targetUser.name,
+    role: cleanRole,
+    temporaryPassword: tempPassword
+  });
+
   return res.json({
     success: true,
-    message: `Password reset successfully for ${result.rows[0].name}`,
-    temporaryPassword: tempPassword
+    message: `Password reset successfully for ${targetUser.name}`,
+    userName: targetUser.name,
+    userEmail: targetUser.email,
+    temporaryPassword: tempPassword,
+    emailSent: mailResult.emailSent
   });
 }));
 

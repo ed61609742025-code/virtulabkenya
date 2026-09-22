@@ -933,8 +933,8 @@ const Admin = {
   async updateUserStatus(userId, role, status) {
     return apiRequest('PATCH', '/admin/users/' + userId + '/status', { role, status });
   },
-  async resetUserPassword(userId, role) {
-    return apiRequest('POST', '/admin/users/' + userId + '/reset-password', { role });
+  async resetUserPassword(userId, role, customPassword = null) {
+    return apiRequest('POST', '/admin/users/' + userId + '/reset-password', { role, customPassword });
   },
   async getSystemHealth() {
     return apiRequest('GET', '/admin/system/health');

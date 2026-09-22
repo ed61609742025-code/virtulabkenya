@@ -244,9 +244,61 @@ async function deliverEmail({ to, subject, html, text }) {
   }
 }
 
+/**
+ * Send password reset email to a Teacher or Student user.
+ */
+async function sendUserPasswordResetEmail({ to, name, role, temporaryPassword, loginUrl }) {
+  const portalUrl = loginUrl || `${config.email.platformUrl}/student/login.html`;
+  const cleanRole = role ? role.charAt(0).toUpperCase() + role.slice(1) : 'User';
+
+  const html = wrapEmailTemplate({
+    title: 'VirtuLab Kenya — Password Reset',
+    preheader: `Your ${cleanRole} temporary password has been reset.`,
+    contentHtml: `
+      <h2 style="margin-top:0; color:#0f172a; font-size:20px;">${cleanRole} Password Reset</h2>
+      <p>Hello ${name},</p>
+      <p>Your password for VirtuLab Kenya has been reset by the platform administrator.</p>
+
+      <div class="cred-box">
+        <div class="cred-item">
+          <span class="cred-label">Registered Email:</span>
+          <strong>${to}</strong>
+        </div>
+        <div class="cred-item">
+          <span class="cred-label">New Temporary Password:</span>
+          <strong style="color:#2563eb; font-size:16px;">${temporaryPassword}</strong>
+        </div>
+      </div>
+
+      <div class="alert-box">
+        🔒 For security, please log in and change your password in your settings.
+      </div>
+
+      <div style="text-align:center; margin: 28px 0 16px;">
+        <a href="${portalUrl}" class="btn-login">Sign In to VirtuLab Kenya</a>
+      </div>
+    `
+  });
+
+  const text = `VirtuLab Kenya — ${cleanRole} Password Reset\n\n`
+    + `Hello ${name},\n\n`
+    + `Your password has been reset by the platform administrator.\n`
+    + `Email: ${to}\n`
+    + `New Temporary Password: ${temporaryPassword}\n`
+    + `Sign In: ${portalUrl}\n`;
+
+  return deliverEmail({
+    to,
+    subject: `VirtuLab Kenya — ${cleanRole} Password Reset`,
+    html,
+    text
+  });
+}
+
 module.exports = {
   getTransporter,
   sendAdminWelcomeEmail,
   sendAdminPasswordResetEmail,
+  sendUserPasswordResetEmail,
   deliverEmail
 };

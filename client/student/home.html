@@ -48,8 +48,8 @@
 <link rel="stylesheet" href="../shared/brilliant-theme.css">
 <link rel="stylesheet" href="../shared/gamification-engine.css">
 <link rel="stylesheet" href="css/dashboard.css?v=81">
-<link rel="stylesheet" href="css/skill-tree.css?v=81">
-<link rel="stylesheet" href="css/mobile.css?v=4">
+<link rel="stylesheet" href="css/skill-tree.css?v=80">
+<link rel="stylesheet" href="css/mobile.css?v=3">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" crossorigin="anonymous"></script>
 
 <style>
@@ -511,37 +511,6 @@
         <a href="#zone_assignments" onclick="focusAssignmentsSection(event)" class="aas-btn" id="aasBtn">View Assignment →</a>
       </div>
 
-      <!-- Master Practical CTA Banner (Above-The-Fold Continue Practice) -->
-      <section id="masterPracticalCta" class="master-practical-cta" aria-label="Recommended Practical Mission">
-        <div class="mpc-glow-line" aria-hidden="true"></div>
-        <div class="mpc-inner">
-          <div class="mpc-left">
-            <div class="mpc-badge-row">
-              <span class="mpc-badge" id="mpcBadge">Recommended Next Step</span>
-              <span class="mpc-syllabus-pill">Paper 3 Practical</span>
-            </div>
-            <div class="mpc-title-row">
-              <span class="mpc-icon" id="mpcIcon">🧪</span>
-              <h3 class="mpc-title" id="mpcTitle">Acid-Base Standardisation (HCl vs NaOH)</h3>
-            </div>
-            <p class="mpc-desc" id="mpcDesc">
-              Master burette meniscus alignment, concordant titres, and molarity calculations.
-            </p>
-          </div>
-          <div class="mpc-right">
-            <a id="mpcActionBtn" href="lab.html?type=acidBase" class="mpc-launch-btn">
-              Continue Practice →
-            </a>
-            <button type="button" class="mpc-pathway-link" onclick="scrollToRecommendedPractical()" title="Scroll down and highlight this practical in the pathway">
-              View on Pathway ↓
-            </button>
-            <a href="#zone_drills" class="mpc-drill-jump" title="Jump to timed diagnostic drills">
-              ⚡ Quick Drills
-            </a>
-          </div>
-        </div>
-      </section>
-
       <!-- Zone 1 (PRIMARY): Practical Chemistry Topics (Pathway & Grid) -->
       <section class="activity-zone-wrap zone-pathway" id="zone_pathway">
         <div class="activity-zone-header">
@@ -557,7 +526,6 @@
           </div>
           
           <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-            <a href="#zone_drills" class="dash-section-badge badge-amber" style="text-decoration:none; display:inline-flex; align-items:center; gap:4px; font-weight:800; cursor:pointer;" title="Jump to timed diagnostic drills">⚡ Quick Drills</a>
             <span class="dash-section-badge badge-green">40 Marks Syllabus</span>
             <!-- View Toggle Switcher -->
             <div class="pathway-view-toggle">
@@ -685,7 +653,7 @@
       </section>
 
       <!-- Zone 3: Practical Diagnostic Drills Hub -->
-      <section class="activity-zone-wrap zone-drills" id="zone_drills">
+      <section class="activity-zone-wrap zone-drills">
         <div class="activity-zone-header">
           <div class="activity-zone-title-box">
             <div>
@@ -1710,8 +1678,9 @@
   <script src="../shared/brilliant-ui.js"></script>
   <script src="../shared/gamification-engine.js"></script>
   <script src="js/skill-tree.js?v=78"></script>
-  <script src="js/student-dashboard.js?v=79"></script>
-  <script src="js/home.js?v=116"></script>
+  <script src="js/student-dashboard.js?v=78"></script>
+
+  <script src="js/home.js?v=115"></script>
 
   <!-- ── Mobile Bottom Navigation Bar (hidden on desktop via CSS) ── -->
   <nav class="vlk-bottom-nav" aria-label="Mobile Bottom Navigation" id="vlkBottomNav">

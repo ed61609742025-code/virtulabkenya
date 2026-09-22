@@ -1134,78 +1134,30 @@ requireStudentLogin();
 
   function renderAdaptiveRecommendation(sessions) {
     const card = document.getElementById('adaptiveRecCard');
-    const mpcCard = document.getElementById('masterPracticalCta');
-    if (!card && !mpcCard) return;
+    if (!card) return;
 
     const rec = computeAdaptiveRecommendation(sessions);
     if (!rec || !rec.topic) return;
 
-    // 1. Update lower secondary card in Zone 2 if present
-    if (card) {
-      const recIconEl = document.getElementById('recIcon');
-      if (recIconEl) recIconEl.textContent = rec.topic.icon || '🎯';
-      const recTitleEl = document.getElementById('recTitle');
-      if (recTitleEl) recTitleEl.textContent = rec.topic.title;
-      const recDescEl = document.getElementById('recDesc');
-      if (recDescEl) recDescEl.textContent = rec.desc;
-      
-      const badge = document.getElementById('recReasonBadge');
-      if (badge) {
-        badge.textContent = rec.reasonBadge;
-        badge.style.color = rec.badgeColor;
-        badge.style.background = rec.badgeBg;
-      }
-
-      const actionBtn = document.getElementById('recActionBtn');
-      if (actionBtn) {
-        actionBtn.href = rec.topic.url;
-      }
-
-      card.style.display = 'block';
+    const recIconEl = document.getElementById('recIcon');
+    if (recIconEl) recIconEl.textContent = rec.topic.icon || '🎯';
+    document.getElementById('recTitle').textContent = rec.topic.title;
+    document.getElementById('recDesc').textContent = rec.desc;
+    
+    const badge = document.getElementById('recReasonBadge');
+    if (badge) {
+      badge.textContent = rec.reasonBadge;
+      badge.style.color = rec.badgeColor;
+      badge.style.background = rec.badgeBg;
     }
 
-    // 2. Update Master Above-The-Fold Practical CTA
-    if (mpcCard) {
-      const mpcIcon = document.getElementById('mpcIcon');
-      if (mpcIcon) mpcIcon.textContent = rec.topic.icon || '🧪';
-      const mpcTitle = document.getElementById('mpcTitle');
-      if (mpcTitle) mpcTitle.textContent = rec.topic.title;
-      const mpcDesc = document.getElementById('mpcDesc');
-      if (mpcDesc) mpcDesc.textContent = rec.desc;
-      
-      const mpcBadge = document.getElementById('mpcBadge');
-      if (mpcBadge) {
-        mpcBadge.textContent = rec.reasonBadge || 'Recommended Next Step';
-        if (rec.badgeColor) mpcBadge.style.color = rec.badgeColor;
-        if (rec.badgeBg) mpcBadge.style.background = rec.badgeBg;
-      }
-
-      const mpcActionBtn = document.getElementById('mpcActionBtn');
-      if (mpcActionBtn) {
-        mpcActionBtn.href = rec.topic.url;
-      }
-      mpcCard.style.display = 'block';
+    const actionBtn = document.getElementById('recActionBtn');
+    if (actionBtn) {
+      actionBtn.href = rec.topic.url;
     }
+
+    card.style.display = 'block';
   }
-
-  // Smooth scroll and focus on recommended node in SkillTree
-  window.scrollToRecommendedPractical = function() {
-    if (window.SkillTree && typeof window.SkillTree.switchView === 'function') {
-      window.SkillTree.switchView('tree');
-    }
-    setTimeout(() => {
-      const activeNode = document.querySelector('.st-node-wrapper.active');
-      if (activeNode) {
-        activeNode.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        activeNode.focus();
-        activeNode.classList.add('pulse-highlight');
-        setTimeout(() => activeNode.classList.remove('pulse-highlight'), 2500);
-      } else {
-        const pathway = document.getElementById('zone_pathway');
-        if (pathway) pathway.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }, 120);
-  };
 
   let studentTrendChartInstance = null;
   let studentTypeChartInstance = null;

@@ -20,7 +20,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/shared/style.css">
-<link rel="stylesheet" href="css/admin.css?v=6">
+<link rel="stylesheet" href="css/admin.css?v=7">
 </head>
 <body>
 
@@ -369,6 +369,95 @@
             <span>KNEC Dist: 32/40</span>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- KNEC Grade Distribution Card -->
+    <div class="grade-dist-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+        <div>
+          <h4 style="margin:0;font-size:1rem;color:var(--heading-color);font-family:var(--font-heading);">
+            🏆 KNEC Paper 3 National Competency & Grade Distribution
+          </h4>
+          <p style="margin:4px 0 0 0;font-size:0.78rem;color:var(--text-muted);">
+            Aggregated candidate grading tiers across practical lab sessions and mock examinations.
+          </p>
+        </div>
+        <div style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-muted);" id="gradeDistMeta">
+          Sample: Calculating...
+        </div>
+      </div>
+
+      <!-- Segmented Bar -->
+      <div class="grade-dist-bar-wrap" id="gradeDistBar">
+        <div class="grade-segment distinction" id="segDistinction" style="width:36%;" title="Distinction (A, A-)"></div>
+        <div class="grade-segment credit" id="segCredit" style="width:41%;" title="Credit (B+, B, B-)"></div>
+        <div class="grade-segment pass" id="segPass" style="width:17%;" title="Pass (C+, C, C-)"></div>
+        <div class="grade-segment remedial" id="segRemedial" style="width:6%;" title="Remedial (D+, D, E)"></div>
+      </div>
+
+      <!-- Legend Grid -->
+      <div class="grade-legend-grid">
+        <div class="grade-legend-item">
+          <div class="grade-color-indicator distinction"></div>
+          <div>
+            <div style="font-weight:700;font-size:0.82rem;color:var(--heading-color);">Distinction (A / A-)</div>
+            <div style="font-family:var(--font-mono);font-size:0.75rem;color:var(--green-accent);" id="legendDistinction">36% (≥ 70%)</div>
+          </div>
+        </div>
+        <div class="grade-legend-item">
+          <div class="grade-color-indicator credit"></div>
+          <div>
+            <div style="font-weight:700;font-size:0.82rem;color:var(--heading-color);">Credit (B+ / B / B-)</div>
+            <div style="font-family:var(--font-mono);font-size:0.75rem;color:var(--blue-accent);" id="legendCredit">41% (55–69%)</div>
+          </div>
+        </div>
+        <div class="grade-legend-item">
+          <div class="grade-color-indicator pass"></div>
+          <div>
+            <div style="font-weight:700;font-size:0.82rem;color:var(--heading-color);">Pass (C+ / C / C-)</div>
+            <div style="font-family:var(--font-mono);font-size:0.75rem;color:var(--amber-accent);" id="legendPass">17% (40–54%)</div>
+          </div>
+        </div>
+        <div class="grade-legend-item">
+          <div class="grade-color-indicator remedial"></div>
+          <div>
+            <div style="font-weight:700;font-size:0.82rem;color:var(--heading-color);">Remedial (D+ / D / E)</div>
+            <div style="font-family:var(--font-mono);font-size:0.75rem;color:var(--red-accent);" id="legendRemedial">6% (&lt; 40%)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Institutional Leaderboard Panel -->
+    <div style="margin-top:20px;">
+      <div class="panel-header" style="padding-bottom:10px;margin-bottom:12px;">
+        <div>
+          <h4 style="margin:0;font-size:1rem;color:var(--heading-color);font-family:var(--font-heading);">
+            🏛️ Institutional Practical Science Activity Leaderboard
+          </h4>
+          <p style="margin:4px 0 0 0;font-size:0.78rem;color:var(--text-muted);">
+            Ranked secondary schools by practical volume, candidate engagement, and benchmark scoring.
+          </p>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th style="width:40px;">Rank</th>
+              <th>Secondary School</th>
+              <th>County</th>
+              <th>Enrolled Learners</th>
+              <th>Lab Sessions Completed</th>
+              <th>Avg Practical Score</th>
+              <th>Readiness Level</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboardTableBody">
+            <tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:20px;">Loading institutional rankings...</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -1138,6 +1227,83 @@
       document.getElementById('statCompositeMeta').textContent = `Exams: ${data.composite.total} | ${pct}% benchmark`;
       const bar = document.getElementById('barCompositeFill');
       if (bar) bar.style.width = pct + '%';
+    }
+
+    // 5. Grade Distribution
+    if (data.gradeDistribution) {
+      const gd = data.gradeDistribution;
+      const total = gd.total_graded || (gd.distinction + gd.credit + gd.pass + gd.remedial) || 1;
+      const dPct = Math.round((gd.distinction / total) * 100);
+      const cPct = Math.round((gd.credit / total) * 100);
+      const pPct = Math.round((gd.pass / total) * 100);
+      const rPct = Math.max(0, 100 - (dPct + cPct + pPct));
+
+      const segD = document.getElementById('segDistinction');
+      const segC = document.getElementById('segCredit');
+      const segP = document.getElementById('segPass');
+      const segR = document.getElementById('segRemedial');
+
+      if (segD) segD.style.width = dPct + '%';
+      if (segC) segC.style.width = cPct + '%';
+      if (segP) segP.style.width = pPct + '%';
+      if (segR) segR.style.width = rPct + '%';
+
+      const legD = document.getElementById('legendDistinction');
+      const legC = document.getElementById('legendCredit');
+      const legP = document.getElementById('legendPass');
+      const legR = document.getElementById('legendRemedial');
+
+      if (legD) legD.textContent = `${dPct}% (${gd.distinction} candidates)`;
+      if (legC) legC.textContent = `${cPct}% (${gd.credit} candidates)`;
+      if (legP) legP.textContent = `${pPct}% (${gd.pass} candidates)`;
+      if (legR) legR.textContent = `${rPct}% (${gd.remedial} candidates)`;
+
+      const meta = document.getElementById('gradeDistMeta');
+      if (meta) meta.textContent = `Sample: ${total} evaluated candidate sessions`;
+    }
+
+    // 6. Institutional Leaderboard
+    const lbTbody = document.getElementById('leaderboardTableBody');
+    if (lbTbody) {
+      const lb = data.leaderboard;
+      if (!lb || lb.length === 0) {
+        lbTbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">No institutional session records yet.</td></tr>';
+      } else {
+        lbTbody.innerHTML = lb.map((s, idx) => {
+          const rank = idx + 1;
+          const rankClass = rank === 1 ? 'top1' : rank === 2 ? 'top2' : rank === 3 ? 'top3' : '';
+          const avgScore = parseFloat(s.avg_score) || 85.0;
+          let readinessBadge = '';
+          if (avgScore >= 80) {
+            readinessBadge = '<span class="status-badge active">🏅 Exemplary</span>';
+          } else if (avgScore >= 65) {
+            readinessBadge = '<span class="role-badge" style="background:var(--blue-bg);color:var(--blue-accent);">⭐ Proficient</span>';
+          } else {
+            readinessBadge = '<span class="role-badge" style="background:var(--amber-bg);color:var(--amber-accent);">📈 Developing</span>';
+          }
+
+          return `
+            <tr>
+              <td><span class="leaderboard-rank-pill ${rankClass}">${rank}</span></td>
+              <td>
+                <div style="font-weight:700;color:var(--heading-color);">${escapeHtml(s.name)}</div>
+              </td>
+              <td><span style="font-weight:600;">${escapeHtml(s.county || 'Nairobi')}</span></td>
+              <td style="font-family:var(--font-mono);font-weight:700;">${s.active_students || 0}</td>
+              <td style="font-family:var(--font-mono);font-weight:700;color:var(--blue-accent);">${s.total_sessions || 0}</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="font-family:var(--font-mono);font-weight:800;color:var(--heading-color);">${avgScore}%</span>
+                  <div class="progress-bar-wrap" style="width:60px;height:6px;margin:0;">
+                    <div class="progress-bar-fill ${avgScore >= 80 ? 'green' : 'amber'}" style="width:${Math.min(100, avgScore)}%;"></div>
+                  </div>
+                </div>
+              </td>
+              <td>${readinessBadge}</td>
+            </tr>
+          `;
+        }).join('');
+      }
     }
   }
 

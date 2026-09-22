@@ -771,74 +771,73 @@ router.post('/admin/login', authLimiter, validateLogin, asyncHandler(async (req,
 
   if (configuredAdminEmail && (configuredAdminHash || configuredAdminPassword)) {
     const isEmailMatch = safeTimingCompare(cleanEmail, configuredAdminEmail);
+    let isPasswordMatch = false;
 
-    // Only attempt fallback verification if the email actually matches configuredAdminEmail
-    if (isEmailMatch) {
-      let isPasswordMatch = false;
-
-      if (configuredAdminHash) {
-        isPasswordMatch = await bcrypt.compare(password, configuredAdminHash);
-      } else if (configuredAdminPassword.startsWith('$2a$') || configuredAdminPassword.startsWith('$2b$')) {
-        isPasswordMatch = await bcrypt.compare(password, configuredAdminPassword);
-      } else {
-        // Plaintext fallback (e.g. Render auto-generated password) — compare constant-time
-        isPasswordMatch = safeTimingCompare(password, configuredAdminPassword);
+    if (configuredAdminHash) {
+      isPasswordMatch = await bcrypt.compare(password, configuredAdminHash);
+    } else if (configuredAdminPassword.startsWith('$2a$') || configuredAdminPassword.startsWith('$2b$')) {
+      isPasswordMatch = await bcrypt.compare(password, configuredAdminPassword);
+    } else {
+      if (process.env.NODE_ENV === 'production') {
+        console.error('[CRITICAL SECURITY ERROR] Plaintext ADMIN_PASSWORD is not permitted in production. Set ADMIN_PASSWORD_HASH.');
+        return res.status(500).json({ error: 'Server configuration error: Plaintext admin credentials cannot be used in production. Please set ADMIN_PASSWORD_HASH.' });
       }
+      isPasswordMatch = safeTimingCompare(password, configuredAdminPassword);
+    }
 
-      if (isPasswordMatch) {
-        // Auto-upsert into admins table as superadmin if missing
-        let adminRecord = null;
+    if (isEmailMatch && isPasswordMatch) {
+      // Auto-upsert into admins table as superadmin if missing
+      let adminRecord = null;
+      try {
+        let seededHash = configuredAdminHash;
+        if (!seededHash) {
+          seededHash = (configuredAdminPassword.startsWith('$2a$') || configuredAdminPassword.startsWith('$2b$'))
+            ? configuredAdminPassword
+            : await bcrypt.hash(configuredAdminPassword, 10);
+        }
+        adminRecord = await adminRepo.createAdmin({
+          name: 'System Administrator',
+          email: configuredAdminEmail,
+          passwordHash: seededHash,
+          role: 'superadmin'
+        });
+      } catch (e) {
         try {
-          let seededHash = configuredAdminHash;
-          if (!seededHash) {
-            seededHash = (configuredAdminPassword.startsWith('$2a$') || configuredAdminPassword.startsWith('$2b$'))
-              ? configuredAdminPassword
-              : await bcrypt.hash(configuredAdminPassword, 10);
-          }
-          adminRecord = await adminRepo.createAdmin({
-            name: 'System Administrator',
-            email: configuredAdminEmail,
-            passwordHash: seededHash,
-            role: 'superadmin'
-          });
-        } catch (e) {
-          try {
-            adminRecord = await adminRepo.findAdminByEmail(configuredAdminEmail);
-          } catch (_) {
-            adminRecord = null;
-          }
+          adminRecord = await adminRepo.findAdminByEmail(configuredAdminEmail);
+        } catch (_) {
+          adminRecord = null;
         }
-
-        const adminId = adminRecord ? adminRecord.id : 0;
-        const adminRole = adminRecord ? adminRecord.role : 'superadmin';
-        const adminName = adminRecord ? adminRecord.name : 'System Administrator';
-
-        if (adminRecord && adminRecord.id) {
-          try {
-            await adminRepo.updateLastLogin(adminRecord.id);
-          } catch (_) {}
-        }
-
-        const token = signToken({
-          id: adminId,
-          role: 'admin',
-          adminRole,
-          name: adminName,
-          email: configuredAdminEmail
-        });
-        setCookieToken(res, token);
-
-        return res.json({
-          token,
-          user: {
-            id: adminId,
-            name: adminName,
-            email: configuredAdminEmail,
-            role: 'admin',
-            adminRole
-          }
-        });
       }
+
+      const adminId = adminRecord ? adminRecord.id : 0;
+      const adminRole = adminRecord ? adminRecord.role : 'superadmin';
+      const adminName = adminRecord ? adminRecord.name : 'System Administrator';
+
+      if (adminRecord && adminRecord.id) {
+        try {
+          await adminRepo.updateLastLogin(adminRecord.id);
+        } catch (_) {}
+      }
+
+      const token = signToken({
+        id: adminId,
+        role: 'admin',
+        adminRole,
+        name: adminName,
+        email: configuredAdminEmail
+      });
+      setCookieToken(res, token);
+
+      return res.json({
+        token,
+        user: {
+          id: adminId,
+          name: adminName,
+          email: configuredAdminEmail,
+          role: 'admin',
+          adminRole
+        }
+      });
     }
   }
 

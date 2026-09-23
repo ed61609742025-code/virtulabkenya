@@ -553,6 +553,78 @@ html, body {
   animation: gauze-pulse 1.2s infinite ease-in-out;
 }
 
+/* Realism & Physics Effects */
+.glass-reflection {
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+.liquid-wobble {
+  transform-origin: center bottom;
+  animation: liquid-swirl 2s infinite ease-in-out;
+}
+
+@keyframes liquid-swirl {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-1.5px) scaleY(1.01); }
+}
+
+@keyframes thermal-glow {
+  0%, 100% { filter: drop-shadow(0 0 6px #F97316); opacity: 0.88; }
+  50% { filter: drop-shadow(0 0 15px #EF4444); opacity: 1; }
+}
+
+.thermal-radiance {
+  animation: thermal-glow 1.4s infinite ease-in-out;
+}
+
+.fume-hood-banner {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  background: rgba(220, 38, 38, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #F87171;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 10;
+  backdrop-filter: blur(4px);
+  letter-spacing: 0.03em;
+}
+
+.apparatus-interactive-part {
+  cursor: pointer;
+  transition: opacity 0.15s ease, filter 0.15s ease;
+}
+
+.apparatus-interactive-part:hover {
+  filter: drop-shadow(0 0 5px #38BDF8);
+  opacity: 0.95;
+}
+
+.component-spec-tooltip {
+  position: absolute;
+  bottom: 12px;
+  left: 14px;
+  background: rgba(15, 23, 42, 0.94);
+  border: 1px solid var(--blue-border);
+  color: var(--text-main);
+  font-size: 0.74rem;
+  font-family: var(--font-mono);
+  padding: 6px 12px;
+  border-radius: 6px;
+  z-index: 12;
+  box-shadow: var(--shadow-md);
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
 /* Diagram Callout Labels */
 .diagram-callout text {
   font-family: var(--font-body);

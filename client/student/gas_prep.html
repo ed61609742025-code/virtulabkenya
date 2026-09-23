@@ -310,6 +310,16 @@
     <!-- Interactive SVG Apparatus -->
     <div class="apparatus-stage">
       
+      <!-- Fume Cupboard Active Warning Banner (Displayed for toxic gases: Cl₂, SO₂) -->
+      <div id="stageFumeHoodBanner" class="fume-hood-banner" style="display:none;">
+        <span>☣️</span> FUME CUPBOARD ACTIVE • TOXIC GAS VENTILATION PROTOCOL
+      </div>
+
+      <!-- Interactive Component Specification Tooltip -->
+      <div id="componentSpecTooltip" class="component-spec-tooltip" style="opacity:0;">
+        Hover over apparatus parts to inspect laboratory specifications.
+      </div>
+
       <!-- Interactive Confirmatory Test Inset Visualizer Overlay -->
       <div id="confirmatoryTestVisualizer" class="confirmatory-visualizer-box" style="display:none;">
         <div class="visualizer-header">
@@ -326,406 +336,671 @@
         </div>
       </div>
 
-      <!-- High-Fidelity Scientific SVG Bench Simulation -->
+      <!-- Ultra-Realistic Publication-Grade Scientific SVG Bench Simulation -->
       <svg class="apparatus-svg" viewBox="0 0 760 410" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <!-- Glass Shading & Reflection Gradients -->
+          <!-- Laboratory Architectural Wall Tile Grid -->
+          <pattern id="labWallTiles" width="32" height="32" patternUnits="userSpaceOnUse">
+            <rect width="32" height="32" fill="none" stroke="rgba(255, 255, 255, 0.025)" stroke-width="0.8"/>
+            <path d="M 0,32 L 32,32 M 32,0 L 32,32" stroke="rgba(0, 0, 0, 0.12)" stroke-width="0.8"/>
+          </pattern>
+
+          <!-- Authentic Woven Wire Mesh Pattern for Gauze -->
+          <pattern id="gauzeMeshPattern" width="3.5" height="3.5" patternUnits="userSpaceOnUse">
+            <path d="M 0,1.75 L 3.5,1.75 M 1.75,0 L 1.75,3.5" fill="none" stroke="#475569" stroke-width="0.7"/>
+          </pattern>
+
+          <!-- Photorealistic Borosilicate Glass Wall Gradient (Double-wall refraction) -->
           <linearGradient id="glassWallGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.25"/>
-            <stop offset="15%" stop-color="#BAE6FD" stop-opacity="0.08"/>
-            <stop offset="85%" stop-color="#BAE6FD" stop-opacity="0.08"/>
+            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.45"/>
+            <stop offset="4%" stop-color="#BAE6FD" stop-opacity="0.25"/>
+            <stop offset="12%" stop-color="#E0F2FE" stop-opacity="0.08"/>
+            <stop offset="88%" stop-color="#BAE6FD" stop-opacity="0.08"/>
+            <stop offset="96%" stop-color="#BAE6FD" stop-opacity="0.25"/>
+            <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.5"/>
+          </linearGradient>
+
+          <!-- Specular Glass Highlight Glint -->
+          <linearGradient id="glassGlossSheen" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0"/>
+            <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.38"/>
+            <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+          </linearGradient>
+
+          <!-- Vertical Curvilinear Glass Reflection -->
+          <linearGradient id="glassCurvedHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.55"/>
+            <stop offset="35%" stop-color="#FFFFFF" stop-opacity="0.15"/>
+            <stop offset="70%" stop-color="#BAE6FD" stop-opacity="0.05"/>
             <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.3"/>
           </linearGradient>
 
-          <linearGradient id="glassHighlightGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.45"/>
-            <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.05"/>
+          <!-- Polished Laboratory Teakwood Benchtop Gradient -->
+          <linearGradient id="benchTeakGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#334155"/>
+            <stop offset="6%" stop-color="#475569"/>
+            <stop offset="16%" stop-color="#1E293B"/>
+            <stop offset="85%" stop-color="#0F172A"/>
+            <stop offset="100%" stop-color="#020617"/>
           </linearGradient>
 
-          <!-- Bench Surface Gradient -->
-          <linearGradient id="benchTopGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#334155"/>
-            <stop offset="15%" stop-color="#1E293B"/>
+          <!-- Polished Stainless Steel Rod Shading -->
+          <linearGradient id="steelRodGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#475569"/>
+            <stop offset="35%" stop-color="#E2E8F0"/>
+            <stop offset="60%" stop-color="#CBD5E1"/>
+            <stop offset="100%" stop-color="#334155"/>
+          </linearGradient>
+
+          <!-- Cast Iron Hammerite Stand Base Texture -->
+          <linearGradient id="castIronBaseGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#475569"/>
+            <stop offset="15%" stop-color="#334155"/>
+            <stop offset="75%" stop-color="#1E293B"/>
             <stop offset="100%" stop-color="#0F172A"/>
           </linearGradient>
 
-          <!-- Bunsen Roaring Blue Flame Gradients -->
-          <linearGradient id="bunsenOuterFlameGrad" x1="0%" y1="100%" x2="0%" y2="0%">
-            <stop offset="0%" stop-color="#1D4ED8" stop-opacity="0.9"/>
-            <stop offset="40%" stop-color="#0284C7" stop-opacity="0.75"/>
-            <stop offset="100%" stop-color="#38BDF8" stop-opacity="0.1"/>
+          <!-- Amber Latex Rubber Tubing Gradient -->
+          <linearGradient id="latexTubingGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#F59E0B"/>
+            <stop offset="50%" stop-color="#D97706"/>
+            <stop offset="100%" stop-color="#B45309"/>
           </linearGradient>
 
-          <linearGradient id="bunsenInnerFlameGrad" x1="0%" y1="100%" x2="0%" y2="0%">
-            <stop offset="0%" stop-color="#0284C7" stop-opacity="0.95"/>
-            <stop offset="60%" stop-color="#7DD3FC" stop-opacity="0.85"/>
-            <stop offset="100%" stop-color="#E0F2FE" stop-opacity="0.4"/>
+          <!-- Vulcanized Black Rubber Bung Gradient -->
+          <linearGradient id="rubberBungGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#1E293B"/>
+            <stop offset="30%" stop-color="#334155"/>
+            <stop offset="70%" stop-color="#475569"/>
+            <stop offset="100%" stop-color="#0F172A"/>
           </linearGradient>
 
-          <!-- Liquid Gradients -->
+          <!-- Roaring Bunsen Flame Gradients (Physics-Accurate Triple Cone) -->
+          <linearGradient id="bunsenMantleGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stop-color="#1E3A8A" stop-opacity="0.95"/>
+            <stop offset="45%" stop-color="#0284C7" stop-opacity="0.8"/>
+            <stop offset="85%" stop-color="#38BDF8" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="#7DD3FC" stop-opacity="0"/>
+          </linearGradient>
+
+          <linearGradient id="bunsenInnerConeGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stop-color="#0284C7" stop-opacity="0.98"/>
+            <stop offset="40%" stop-color="#38BDF8" stop-opacity="0.9"/>
+            <stop offset="80%" stop-color="#BAE6FD" stop-opacity="0.8"/>
+            <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.95"/>
+          </linearGradient>
+
+          <!-- Glowing Refractory Ceramic Pad Thermal Gradient -->
+          <radialGradient id="gauzeThermalGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#FEF08A"/>
+            <stop offset="40%" stop-color="#F97316"/>
+            <stop offset="75%" stop-color="#EF4444"/>
+            <stop offset="100%" stop-color="#991B1B" stop-opacity="0.6"/>
+          </radialGradient>
+
+          <!-- Aqueous Solution Gradients -->
           <linearGradient id="flaskLiquidGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.55"/>
-            <stop offset="100%" stop-color="#0284C7" stop-opacity="0.75"/>
+            <stop offset="0%" stop-color="#7DD3FC" stop-opacity="0.45"/>
+            <stop offset="85%" stop-color="#0284C7" stop-opacity="0.75"/>
+            <stop offset="100%" stop-color="#0369A1" stop-opacity="0.85"/>
           </linearGradient>
 
+          <!-- Viscous Concentrated H₂SO₄ Acid Gradient -->
           <linearGradient id="acidWashGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#FBBF24" stop-opacity="0.55"/>
-            <stop offset="100%" stop-color="#D97706" stop-opacity="0.75"/>
+            <stop offset="0%" stop-color="#FEF3C7" stop-opacity="0.65"/>
+            <stop offset="40%" stop-color="#FDE68A" stop-opacity="0.75"/>
+            <stop offset="100%" stop-color="#D97706" stop-opacity="0.82"/>
           </linearGradient>
 
           <linearGradient id="troughWaterGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.35"/>
-            <stop offset="100%" stop-color="#0284C7" stop-opacity="0.55"/>
+            <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.32"/>
+            <stop offset="70%" stop-color="#0284C7" stop-opacity="0.55"/>
+            <stop offset="100%" stop-color="#0369A1" stop-opacity="0.7"/>
           </linearGradient>
 
-          <!-- Dynamic Gas Collection Gradients -->
+          <!-- Dynamic Gas Infiltration Gradients -->
           <linearGradient id="gasOverWaterGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.85"/>
-            <stop offset="85%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.45"/>
-            <stop offset="100%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.2"/>
+            <stop offset="0%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.92"/>
+            <stop offset="70%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.25"/>
           </linearGradient>
 
           <linearGradient id="gasDownwardGrad" x1="0%" y1="100%" x2="0%" y2="0%">
-            <stop offset="0%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.85"/>
-            <stop offset="85%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.45"/>
-            <stop offset="100%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.15"/>
+            <stop offset="0%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.92"/>
+            <stop offset="75%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.55"/>
+            <stop offset="100%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.18"/>
           </linearGradient>
 
           <linearGradient id="gasUpwardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.85"/>
-            <stop offset="85%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.45"/>
-            <stop offset="100%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.15"/>
+            <stop offset="0%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.92"/>
+            <stop offset="75%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.55"/>
+            <stop offset="100%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.18"/>
           </linearGradient>
 
-          <!-- Shadow Filter -->
-          <filter id="benchDropShadow" x="-5%" y="-5%" width="110%" height="115%">
-            <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity="0.3"/>
+          <!-- Realistic Soft Contact Shadows -->
+          <filter id="softContactShadow" x="-10%" y="-10%" width="120%" height="130%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2.5"/>
+            <feOffset dx="0" dy="3" result="offsetblur"/>
+            <feComponentTransfer>
+              <feFuncA type="linear" slope="0.45"/>
+            </feComponentTransfer>
+            <feMerge> 
+              <feMergeNode/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
           </filter>
         </defs>
 
         <!-- ══════════════════════════════════════════
-             1. LABORATORY BENCH SURFACE
+             1. LABORATORY ENVIRONMENT & BENCH SURFACE
              ══════════════════════════════════════════ -->
-        <!-- Bench Tabletop -->
-        <rect x="15" y="372" width="730" height="24" rx="4" fill="url(#benchTopGrad)" filter="url(#benchDropShadow)"/>
-        <!-- Polished Beveled Top Lip -->
-        <line x1="16" y1="373" x2="744" y2="373" stroke="#64748B" stroke-width="1.5"/>
-        <line x1="16" y1="375" x2="744" y2="375" stroke="#475569" stroke-width="0.8"/>
+        <!-- Wall Tile Background Layer -->
+        <rect width="760" height="370" fill="url(#labWallTiles)" opacity="0.6"/>
 
-        <!-- ══════════════════════════════════════════
-             2. RETORT STANDS & METAL SUPPORTS
-             ══════════════════════════════════════════ -->
-        <!-- Left Retort Stand 1 (Generation Flask Support) -->
-        <g id="retortStandLeft">
-          <!-- Heavy Cast-Iron Base -->
-          <rect x="40" y="362" width="70" height="12" rx="2" fill="#475569" stroke="#334155" stroke-width="1.2"/>
-          <line x1="42" y1="363" x2="108" y2="363" stroke="#94A3B8" stroke-width="0.8"/>
-          <!-- Upright Steel Rod -->
-          <rect x="71" y="60" width="8" height="302" fill="#94A3B8" stroke="#64748B" stroke-width="1"/>
-          <!-- Metal Bosshead & 3-Finger Clamp holding Flask Neck -->
-          <rect x="67" y="174" width="16" height="14" rx="2" fill="#334155" stroke="#1E293B" stroke-width="1"/>
-          <path d="M 83,181 L 115,181" stroke="#64748B" stroke-width="4" stroke-linecap="round"/>
-          <path d="M 115,172 L 126,176 L 126,186 L 115,190" fill="none" stroke="#475569" stroke-width="3" stroke-linecap="round"/>
+        <!-- Soft Overhead Illuminating Spotlight -->
+        <ellipse cx="145" cy="270" rx="140" ry="100" fill="rgba(56, 189, 248, 0.03)" pointer-events="none"/>
+        <ellipse cx="530" cy="270" rx="130" ry="90" fill="rgba(56, 189, 248, 0.03)" pointer-events="none"/>
+
+        <!-- Heavy Teakwood / Chemical Epoxy Lab Benchtop -->
+        <g id="labBenchSurface" class="apparatus-interactive-part" data-spec="Chemical-Resistant Epoxy Resin Lab Benchtop (Non-porous, heat & acid-resistant heavy-duty laboratory work surface)">
+          <!-- Ambient Shadow beneath Bench Front -->
+          <rect x="10" y="374" width="740" height="26" rx="4" fill="#020617" opacity="0.6"/>
+          <!-- Solid Bench Plank -->
+          <rect x="12" y="370" width="736" height="26" rx="3" fill="url(#benchTeakGrad)" stroke="#1E293B" stroke-width="1.2"/>
+          <!-- Beveled Top Edge Sheen Line -->
+          <line x1="14" y1="371" x2="746" y2="371" stroke="#64748B" stroke-width="1.4" opacity="0.9"/>
+          <line x1="14" y1="373" x2="746" y2="373" stroke="#475569" stroke-width="0.8" opacity="0.6"/>
         </g>
 
-        <!-- Right Retort Stand 2 (Gas Collection Assembly Support) -->
-        <g id="retortStandRight">
-          <rect x="645" y="362" width="75" height="12" rx="2" fill="#475569" stroke="#334155" stroke-width="1.2"/>
-          <line x1="647" y1="363" x2="718" y2="363" stroke="#94A3B8" stroke-width="0.8"/>
-          <rect x="678" y="60" width="8" height="302" fill="#94A3B8" stroke="#64748B" stroke-width="1"/>
-          <!-- Clamp Bosshead for Collection Jar -->
-          <rect x="674" y="174" width="16" height="14" rx="2" fill="#334155" stroke="#1E293B" stroke-width="1"/>
+        <!-- Contact Shadows on Benchtop for Apparatus Bases -->
+        <g id="benchShadows" opacity="0.6">
+          <ellipse cx="75" cy="374" rx="42" ry="4" fill="#020617"/>
+          <ellipse cx="145" cy="372" rx="38" ry="4" fill="#020617"/>
+          <ellipse cx="302" cy="372" rx="36" ry="3.5" fill="#020617"/>
+          <ellipse cx="530" cy="372" rx="52" ry="4" fill="#020617"/>
+          <ellipse cx="682" cy="374" rx="44" ry="4" fill="#020617"/>
         </g>
 
         <!-- ══════════════════════════════════════════
-             3. HEATING APPARATUS (Tripod, Wire Gauze & Bunsen)
+             2. MECHANICAL SUPPORTS (Heavy Retort Stands & Clamps)
              ══════════════════════════════════════════ -->
-        <!-- Tripod Stand (Active for heated reactions) -->
-        <g id="tripodGroup" style="display:none;">
-          <!-- 3 Flared Steel Legs -->
-          <line x1="94" y1="316" x2="82" y2="372" stroke="#64748B" stroke-width="3.5" stroke-linecap="round"/>
-          <line x1="145" y1="316" x2="145" y2="372" stroke="#475569" stroke-width="3.5" stroke-linecap="round"/>
-          <line x1="196" y1="316" x2="208" y2="372" stroke="#64748B" stroke-width="3.5" stroke-linecap="round"/>
-          <!-- Tripod Circular Ring -->
-          <rect x="88" y="312" width="114" height="6" rx="2" fill="#475569" stroke="#334155" stroke-width="1"/>
+        <!-- Retort Stand 1 (Left: Clamps Reaction Flask) -->
+        <g id="retortStandLeft" class="apparatus-interactive-part" data-spec="Cast-Iron Retort Stand & Bosshead Clamp (Firmly securing flask neck)">
+          <!-- Beveled Heavy Cast-Iron Base -->
+          <path d="M 38,373 L 44,361 L 106,361 L 112,373 Z" fill="url(#castIronBaseGrad)" stroke="#1E293B" stroke-width="1.2"/>
+          <line x1="45" y1="362" x2="105" y2="362" stroke="#94A3B8" stroke-width="0.8" opacity="0.7"/>
+          <!-- Upright Polished Stainless Steel Rod -->
+          <rect x="71" y="48" width="8" height="314" rx="1.5" fill="url(#steelRodGrad)" stroke="#475569" stroke-width="0.8"/>
+          <!-- Universal Bosshead with Brass T-Screw Handle -->
+          <rect x="67" y="174" width="16" height="15" rx="2" fill="#1E293B" stroke="#0F172A" stroke-width="1.2"/>
+          <circle cx="75" cy="181.5" r="3" fill="#D97706"/>
+          <!-- T-Screw Bar -->
+          <line x1="60" y1="181.5" x2="68" y2="181.5" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- Chrome Clamp Arm -->
+          <path d="M 83,181.5 L 114,181.5" stroke="#94A3B8" stroke-width="4.2" stroke-linecap="round"/>
+          <!-- 3-Prong Clamp Jaws with Red Rubber Padding wrapping Flask Neck -->
+          <path d="M 114,172 L 126,176 L 126,187 L 114,191" fill="none" stroke="#DC2626" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M 114,172 L 126,176 L 126,187 L 114,191" fill="none" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
         </g>
 
-        <!-- Wire Gauze with Ceramic Center -->
-        <g id="wireGauzeGroup" style="display:none;">
-          <rect x="85" y="308" width="120" height="4" rx="1" fill="#94A3B8" stroke="#64748B" stroke-width="0.8"/>
-          <ellipse id="wireGauzeCenter" cx="145" cy="310" rx="28" ry="2" fill="#CBD5E1"/>
+        <!-- Retort Stand 2 (Right: Collection Assembly Support) -->
+        <g id="retortStandRight" class="apparatus-interactive-part" data-spec="Retort Stand 2 (Holds inverted jar or collection train securely)">
+          <path d="M 648,373 L 654,361 L 716,361 L 722,373 Z" fill="url(#castIronBaseGrad)" stroke="#1E293B" stroke-width="1.2"/>
+          <line x1="655" y1="362" x2="715" y2="362" stroke="#94A3B8" stroke-width="0.8" opacity="0.7"/>
+          <rect x="681" y="48" width="8" height="314" rx="1.5" fill="url(#steelRodGrad)" stroke="#475569" stroke-width="0.8"/>
+          <!-- Bosshead for Collection Holder -->
+          <rect x="677" y="174" width="16" height="15" rx="2" fill="#1E293B" stroke="#0F172A" stroke-width="1.2"/>
+          <line x1="693" y1="181.5" x2="701" y2="181.5" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round"/>
         </g>
 
-        <!-- Bunsen Burner & Roaring Flame -->
-        <g id="bunsenGroup" style="display:none;">
-          <!-- Circular Heavy Metal Base -->
-          <ellipse cx="145" cy="368" rx="24" ry="4" fill="#334155" stroke="#1E293B" stroke-width="1"/>
-          <!-- Rubber Gas Supply Tubing trailing off-bench -->
-          <path d="M 135,364 C 115,366 100,375 75,375" fill="none" stroke="#64748B" stroke-width="3.5" stroke-linecap="round"/>
-          <!-- Air Collar & Vent Hole -->
-          <rect x="139" y="352" width="12" height="12" fill="#94A3B8" stroke="#475569" stroke-width="0.8"/>
-          <circle cx="145" cy="358" r="2.2" fill="#0F172A"/>
-          <!-- Nickel-Plated Chimney Barrel -->
-          <rect x="140" y="318" width="10" height="34" fill="#CBD5E1" stroke="#64748B" stroke-width="1"/>
+        <!-- ══════════════════════════════════════════
+             3. HEATING TRAIN (Tripod, Wire Gauze with Refractory Center & Bunsen)
+             ══════════════════════════════════════════ -->
+        <!-- Heavy Steel Tripod Stand -->
+        <g id="tripodGroup" style="display:none;" class="apparatus-interactive-part" data-spec="Heavy Metal Tripod Stand (Distributes support for heated round-bottom flasks)">
+          <!-- Three Steel Splayed Legs with Rubber Feet -->
+          <line x1="94" y1="315" x2="80" y2="370" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+          <line x1="94" y1="315" x2="80" y2="370" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+          <!-- Rubber feet pads -->
+          <rect x="76" y="367" width="9" height="5" rx="1.5" fill="#0F172A"/>
+
+          <line x1="145" y1="315" x2="145" y2="370" stroke="#334155" stroke-width="4" stroke-linecap="round"/>
+          <rect x="141" y="367" width="8" height="5" rx="1.5" fill="#0F172A"/>
+
+          <line x1="196" y1="315" x2="210" y2="370" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+          <line x1="196" y1="315" x2="210" y2="370" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+          <rect x="205" y="367" width="9" height="5" rx="1.5" fill="#0F172A"/>
+
+          <!-- Cast-Iron Triangular Tripod Ring -->
+          <rect x="88" y="311" width="114" height="7" rx="2" fill="url(#castIronBaseGrad)" stroke="#1E293B" stroke-width="1"/>
+        </g>
+
+        <!-- Wire Gauze with Woven Mesh & Ceramic Refractory Disc -->
+        <g id="wireGauzeGroup" style="display:none;" class="apparatus-interactive-part" data-spec="Wire Gauze with Refractory Ceramic Center (Evenly distributes heat, prevents glass cracking)">
+          <!-- Iron Woven Wire Mesh Layer -->
+          <rect x="82" y="306" width="126" height="5" rx="1.5" fill="#94A3B8" stroke="#475569" stroke-width="0.8"/>
+          <rect x="83" y="306.5" width="124" height="4" fill="url(#gauzeMeshPattern)" opacity="0.85"/>
           
-          <!-- Flickering Roaring Bunsen Flame -->
-          <g class="bunsen-flame" style="transform-origin: 145px 318px;">
-            <!-- Outer Blue Mantle -->
-            <path id="svgFlameOuter" d="M 145,260 C 137,280 139,305 145,318 C 151,305 153,280 145,260 Z" fill="url(#bunsenOuterFlameGrad)"/>
-            <!-- Inner Hot Pale-Blue Cone -->
-            <path id="svgFlameInner" d="M 145,280 C 141,295 142,310 145,318 C 148,310 149,295 145,280 Z" fill="url(#bunsenInnerFlameGrad)"/>
-            <ellipse cx="145" cy="318" rx="4" ry="1.2" fill="#38BDF8"/>
+          <!-- Central Refractory Ceramic Disc (Glows intensely when hot) -->
+          <ellipse id="wireGauzeCenter" cx="145" cy="308.5" rx="28" ry="2.8" fill="#CBD5E1" stroke="#94A3B8" stroke-width="0.6"/>
+        </g>
+
+        <!-- Ultra-Realistic Bunsen Burner & Flickering Roaring Flame -->
+        <g id="bunsenGroup" style="display:none;" class="apparatus-interactive-part" data-spec="Bunsen Burner (Roaring non-luminous blue flame ~1,400°C for endothermic gas evolution)">
+          <!-- Heavy Octagonal Cast Base with Rim -->
+          <ellipse cx="145" cy="368" rx="25" ry="4.5" fill="url(#castIronBaseGrad)" stroke="#0F172A" stroke-width="1.2"/>
+          <ellipse cx="145" cy="366" rx="18" ry="3" fill="#334155"/>
+          
+          <!-- Flexible Corrugated Rubber Gas Tubing trailing off-bench -->
+          <path d="M 134,364 C 112,367 96,375 70,375" fill="none" stroke="#D97706" stroke-width="4" stroke-linecap="round"/>
+          <path d="M 134,364 C 112,367 96,375 70,375" fill="none" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+          <!-- Brass Hose Nipple & Jubilee Spring Clamp -->
+          <rect x="133" y="361.5" width="5" height="5" fill="#F59E0B" stroke="#B45309" stroke-width="0.6"/>
+
+          <!-- Knurled Brass Air Collar with Vent Hole -->
+          <rect x="138.5" y="348" width="13" height="14" rx="1" fill="#D97706" stroke="#92400E" stroke-width="0.8"/>
+          <ellipse cx="145" cy="355" rx="3.5" ry="3.5" fill="#0F172A"/> <!-- Air Hole exposes Gas Jet -->
+          <circle cx="145" cy="355" r="1.2" fill="#FDE68A"/> <!-- Gas Orifice Jet -->
+
+          <!-- Nickel-Plated Chimney Barrel with Heat Discoloration -->
+          <rect x="140" y="316" width="10" height="34" rx="1" fill="url(#steelRodGrad)" stroke="#64748B" stroke-width="0.8"/>
+          <!-- Heat-tempered bronze tint at chimney rim -->
+          <rect x="140" y="316" width="10" height="5" fill="#D97706" opacity="0.45"/>
+          
+          <!-- Roaring Physics Bunsen Flame (Multi-Zone Cones) -->
+          <g class="bunsen-flame" style="transform-origin: 145px 316px;">
+            <!-- Outer Pale Blue/Violet Mantle -->
+            <path id="svgFlameOuter" d="M 145,248 C 135,272 137,302 145,316 C 153,302 155,272 145,248 Z" fill="url(#bunsenMantleGrad)"/>
+            <!-- Middle Hot Oxidation Blue Cone -->
+            <path id="svgFlameMiddle" d="M 145,268 C 139,285 141,308 145,316 C 149,308 151,285 145,268 Z" fill="url(#bunsenInnerConeGrad)"/>
+            <!-- Inner Unburnt Gas Pale Cone (300°C) -->
+            <path id="svgFlameInner" d="M 145,292 C 142.5,302 143,312 145,316 C 147,312 147.5,302 145,292 Z" fill="#E0F2FE" opacity="0.95"/>
+            <ellipse cx="145" cy="316" rx="4.5" ry="1.2" fill="#38BDF8"/>
           </g>
         </g>
 
         <!-- ══════════════════════════════════════════
-             4. GENERATION VESSELS (Flasks, Funnels, Stoppers)
+             4. REACTION VESSELS (Conical & Round-Bottom Flasks with Meniscus & Reagents)
              ══════════════════════════════════════════ -->
-        <!-- Flat-Bottom / Conical Flask (Room Temperature Mode: O₂, CO₂, H₂) -->
-        <g id="flaskConicalGroup">
-          <!-- Flask Glass Body -->
-          <path d="M 134,185 L 134,235 L 102,345 C 98,360 106,368 122,368 L 168,368 C 184,368 192,360 188,345 L 156,235 L 156,185 Z" fill="url(#glassWallGrad)" stroke="#94A3B8" stroke-width="2.5" stroke-linejoin="round"/>
-          <ellipse cx="145" cy="185" rx="11" ry="3" fill="#FFFFFF" fill-opacity="0.3" stroke="#94A3B8" stroke-width="1"/>
-          <!-- Measurement Graduation Marks -->
-          <line x1="126" y1="330" x2="135" y2="330" stroke="#94A3B8" stroke-width="1" stroke-dasharray="1 1"/>
-          <line x1="130" y1="300" x2="138" y2="300" stroke="#94A3B8" stroke-width="1" stroke-dasharray="1 1"/>
-          <line x1="134" y1="270" x2="141" y2="270" stroke="#94A3B8" stroke-width="1" stroke-dasharray="1 1"/>
-          <!-- Liquid Content with Meniscus -->
-          <path id="conicalLiquid" d="M 112,315 Q 145,312 178,315 L 186,346 C 190,359 183,366 168,366 L 122,366 C 107,366 100,359 104,346 Z" fill="url(#flaskLiquidGrad)"/>
-          <ellipse cx="145" cy="315" rx="33" ry="3.5" fill="#38BDF8" fill-opacity="0.45"/>
-          <!-- Solid Reactant Granules at Bottom -->
-          <g id="conicalSolidGranules">
-            <ellipse cx="128" cy="360" rx="6" ry="3.5" fill="#1E293B" stroke="#0F172A" stroke-width="0.8"/>
-            <ellipse cx="142" cy="362" rx="7" ry="4" fill="#334155" stroke="#1E293B" stroke-width="0.8"/>
-            <ellipse cx="156" cy="359" rx="5.5" ry="3.2" fill="#1E293B" stroke="#0F172A" stroke-width="0.8"/>
-            <ellipse cx="135" cy="363" rx="4.5" ry="2.8" fill="#475569" stroke="#334155" stroke-width="0.8"/>
-            <ellipse cx="149" cy="363" rx="5" ry="3" fill="#334155" stroke="#1E293B" stroke-width="0.8"/>
+        <!-- Flat-Bottom Conical Flask (Room Temperature Mode: O₂, CO₂, H₂) -->
+        <g id="flaskConicalGroup" class="apparatus-interactive-part" data-spec="Borosilicate 3.3 Conical Flask 250mL (ISO 3819 Standard — Flat bottom resting on bench)">
+          <!-- Glass Body Outer Profile with Wall Thickness -->
+          <path d="M 133,184 L 133,235 L 100,346 C 96,361 104,368 122,368 L 168,368 C 186,368 194,361 190,346 L 157,235 L 157,184 Z" fill="url(#glassWallGrad)" stroke="#94A3B8" stroke-width="2.6" stroke-linejoin="round"/>
+          <!-- Rolled Glass Lip Bead at Mouth -->
+          <ellipse cx="145" cy="184" rx="12" ry="3.2" fill="#FFFFFF" fill-opacity="0.35" stroke="#94A3B8" stroke-width="1.2"/>
+          
+          <!-- Inner Glass Lumen Wall Contour (Refracts Liquid) -->
+          <path d="M 136,186 L 136,233 L 105,342 C 102,355 108,365 124,365 L 166,365 C 182,365 188,355 185,342 L 154,233 L 154,186 Z" fill="none" stroke="#BAE6FD" stroke-width="0.8" opacity="0.5"/>
+
+          <!-- Printed Pyrex® Borosilicate Stamp Emblem -->
+          <circle cx="145" cy="256" r="6" fill="none" stroke="#F8FAFC" stroke-width="0.6" stroke-dasharray="1 1" opacity="0.6"/>
+          <text x="145" y="258" font-size="4.2" fill="#F8FAFC" font-family="'JetBrains Mono', monospace" font-weight="700" text-anchor="middle" opacity="0.75">PYREX</text>
+          <text x="145" y="263" font-size="3" fill="#F8FAFC" font-family="sans-serif" text-anchor="middle" opacity="0.6">250mL</text>
+
+          <!-- White Enamel Volumetric Graduation Lines -->
+          <g stroke="#F8FAFC" stroke-width="0.9" opacity="0.7">
+            <line x1="126" y1="335" x2="135" y2="335"/>
+            <text x="123" y="337" font-size="5" fill="#F8FAFC" text-anchor="end" font-family="'JetBrains Mono', monospace">50</text>
+            <line x1="130" y1="305" x2="138" y2="305"/>
+            <text x="127" y="307" font-size="5" fill="#F8FAFC" text-anchor="end" font-family="'JetBrains Mono', monospace">100</text>
+            <line x1="134" y1="275" x2="141" y2="275"/>
+            <text x="131" y="277" font-size="5" fill="#F8FAFC" text-anchor="end" font-family="'JetBrains Mono', monospace">150</text>
+            <line x1="138" y1="248" x2="144" y2="248"/>
+            <text x="135" y="250" font-size="5" fill="#F8FAFC" text-anchor="end" font-family="'JetBrains Mono', monospace">200</text>
           </g>
+
+          <!-- Reaction Liquid with Concave Meniscus Curve -->
+          <g class="liquid-wobble">
+            <path id="conicalLiquid" d="M 111,314 Q 145,310 179,314 L 187,346 C 191,360 183,366 168,366 L 122,366 C 107,366 99,360 103,346 Z" fill="url(#flaskLiquidGrad)"/>
+            <!-- Meniscus Edge Highlight Curve -->
+            <ellipse cx="145" cy="314" rx="34" ry="3.6" fill="#38BDF8" fill-opacity="0.4" stroke="#7DD3FC" stroke-width="0.8"/>
+            <path d="M 111,314 Q 145,311 179,314" fill="none" stroke="#FFFFFF" stroke-width="1.2" opacity="0.6"/>
+          </g>
+
+          <!-- Photorealistic Solid Reactants Bed at Flask Bottom -->
+          <g id="conicalSolidGranules">
+            <!-- 3D Faceted Marble Chips / Granules with light & shadow facets -->
+            <polygon points="122,361 129,355 137,358 135,365 124,366" fill="#475569" stroke="#1E293B" stroke-width="0.8"/>
+            <polygon points="129,355 137,358 134,352 126,351" fill="#94A3B8" stroke="#334155" stroke-width="0.6"/>
+            
+            <polygon points="138,364 144,354 153,357 151,366 140,366" fill="#334155" stroke="#0F172A" stroke-width="0.8"/>
+            <polygon points="144,354 153,357 150,351 142,349" fill="#CBD5E1" stroke="#475569" stroke-width="0.6"/>
+
+            <polygon points="152,362 161,356 168,360 166,366 154,366" fill="#1E293B" stroke="#0F172A" stroke-width="0.8"/>
+            <polygon points="161,356 168,360 165,353 158,352" fill="#94A3B8" stroke="#334155" stroke-width="0.6"/>
+
+            <polygon points="132,366 142,362 148,366" fill="#475569" stroke="#1E293B" stroke-width="0.6"/>
+            <polygon points="148,365 156,361 161,366" fill="#334155" stroke="#0F172A" stroke-width="0.6"/>
+          </g>
+
+          <!-- Specular Curved Glass Shoulder Highlight -->
+          <path d="M 136,195 L 136,234 L 112,338" fill="none" stroke="url(#glassCurvedHighlight)" stroke-width="3" stroke-linecap="round" opacity="0.75" class="glass-reflection"/>
+          <path d="M 154,195 L 154,234 L 178,338" fill="none" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" opacity="0.3" class="glass-reflection"/>
         </g>
 
         <!-- Round-Bottom Flask (Heated Mode: Cl₂, NH₃, SO₂) -->
-        <g id="flaskRoundBottomGroup" style="display:none;">
-          <!-- Spherical Glass Bulb on Wire Gauze -->
-          <path d="M 135,185 L 135,225 C 115,235 102,256 102,275 C 102,300 121,316 145,316 C 169,316 188,300 188,275 C 188,256 175,235 155,225 L 155,185 Z" fill="url(#glassWallGrad)" stroke="#94A3B8" stroke-width="2.5" stroke-linejoin="round"/>
-          <ellipse cx="145" cy="185" rx="10" ry="3" fill="#FFFFFF" fill-opacity="0.3" stroke="#94A3B8" stroke-width="1"/>
-          <!-- Round-Bottom Liquid Content -->
-          <path id="roundBottomLiquid" d="M 108,275 Q 145,272 182,275 C 182,298 165,314 145,314 C 125,314 108,298 108,275 Z" fill="url(#flaskLiquidGrad)"/>
-          <ellipse cx="145" cy="275" rx="37" ry="3.5" fill="#38BDF8" fill-opacity="0.4"/>
-          <!-- Solid Reactant Crystals in Bulb -->
-          <g id="roundBottomSolidGranules">
-            <ellipse cx="138" cy="308" rx="6" ry="3.5" fill="#1E293B"/>
-            <ellipse cx="148" cy="309" rx="6.5" ry="3.8" fill="#334155"/>
-            <ellipse cx="155" cy="306" rx="5" ry="3" fill="#1E293B"/>
+        <g id="flaskRoundBottomGroup" style="display:none;" class="apparatus-interactive-part" data-spec="Borosilicate Round-Bottom Flask 250mL (Mounted on wire gauze over Bunsen burner for uniform thermal distribution)">
+          <!-- Glass Bulb Sitting Naturally on Gauze -->
+          <path d="M 135,184 L 135,225 C 114,235 101,256 101,275 C 101,300 120,316 145,316 C 170,316 189,300 189,275 C 189,256 176,235 155,225 L 155,184 Z" fill="url(#glassWallGrad)" stroke="#94A3B8" stroke-width="2.6" stroke-linejoin="round"/>
+          <ellipse cx="145" cy="184" rx="11" ry="3.2" fill="#FFFFFF" fill-opacity="0.35" stroke="#94A3B8" stroke-width="1.2"/>
+          
+          <!-- Inner Lumen Glass Profile -->
+          <path d="M 138,186 L 138,223 C 117,233 105,254 105,273 C 105,296 123,313 145,313 C 167,313 185,296 185,273 C 185,254 173,233 152,223 L 152,186 Z" fill="none" stroke="#BAE6FD" stroke-width="0.8" opacity="0.5"/>
+
+          <!-- Round-Bottom Liquid Content with Curved Surface Meniscus -->
+          <g class="liquid-wobble">
+            <path id="roundBottomLiquid" d="M 106,275 Q 145,272 184,275 C 184,298 166,314 145,314 C 124,314 106,298 106,275 Z" fill="url(#flaskLiquidGrad)"/>
+            <ellipse cx="145" cy="275" rx="39" ry="3.8" fill="#38BDF8" fill-opacity="0.45" stroke="#7DD3FC" stroke-width="0.8"/>
+            <path d="M 106,275 Q 145,272 184,275" fill="none" stroke="#FFFFFF" stroke-width="1.2" opacity="0.6"/>
           </g>
+
+          <!-- Solid Reactant Crystals/Powder in Spherical Base -->
+          <g id="roundBottomSolidGranules">
+            <ellipse cx="137" cy="309" rx="7" ry="4" fill="#1E293B" stroke="#0F172A" stroke-width="0.8"/>
+            <ellipse cx="147" cy="310" rx="8" ry="4.5" fill="#334155" stroke="#1E293B" stroke-width="0.8"/>
+            <ellipse cx="156" cy="307" rx="6.5" ry="3.6" fill="#1E293B" stroke="#0F172A" stroke-width="0.8"/>
+          </g>
+
+          <!-- Bulb Glass Gloss Arc -->
+          <path d="M 112,255 C 108,270 112,295 125,308" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" opacity="0.65" class="glass-reflection"/>
         </g>
 
-        <!-- Two-Hole Rubber Bung (Flask Mouth Stopper) -->
-        <g id="flaskRubberBung">
-          <polygon points="132,185 158,185 154,168 136,168" fill="#334155" stroke="#1E293B" stroke-width="1.2"/>
-          <ellipse cx="145" cy="168" rx="9" ry="2.2" fill="#475569"/>
+        <!-- Two-Hole Rubber Bung (Vulcanized Rubber Stopper with Insertion Bevel) -->
+        <g id="flaskRubberBung" class="apparatus-interactive-part" data-spec="Two-Hole Vulcanized Rubber Stopper (Forms airtight pressure seal at flask mouth)">
+          <!-- Beveled Tapered Stopper Body -->
+          <polygon points="131,185 159,185 155,166 135,166" fill="url(#rubberBungGrad)" stroke="#0F172A" stroke-width="1.2"/>
+          <ellipse cx="145" cy="166" rx="10" ry="2.5" fill="#475569"/>
+          <!-- Rubber Compression Collar Rings around bored holes -->
+          <ellipse cx="139" cy="166" rx="3.5" ry="1.4" fill="#1E293B" stroke="#0F172A" stroke-width="0.6"/>
+          <ellipse cx="150" cy="166" rx="3" ry="1.2" fill="#1E293B" stroke="#0F172A" stroke-width="0.6"/>
+          <!-- Insertion Depth Guideline Line -->
+          <line x1="133" y1="180" x2="157" y2="180" stroke="#0F172A" stroke-width="0.8" stroke-dasharray="2 1" opacity="0.6"/>
         </g>
 
-        <!-- Thistle Funnel with Safety Liquid Seal Dip -->
-        <g id="thistleFunnelGroup">
-          <!-- Glass Stem dipping deep below liquid surface -->
-          <rect id="thistleStem" x="137" y="95" width="4.5" height="255" fill="rgba(255,255,255,0.3)" stroke="#94A3B8" stroke-width="1.2"/>
-          <!-- Liquid Column inside Thistle Funnel Stem (Hydrostatic Seal) -->
-          <rect id="thistleLiquidColumn" x="138" y="308" width="2.5" height="42" fill="#0284C7" fill-opacity="0.75"/>
-          <!-- Flared Conical Funnel Mouth -->
-          <polygon points="126,72 152,72 143,95 136,95" fill="rgba(255,255,255,0.35)" stroke="#94A3B8" stroke-width="1.5"/>
-          <ellipse cx="139" cy="72" rx="13" ry="3.5" fill="#FFFFFF" fill-opacity="0.4" stroke="#94A3B8" stroke-width="1"/>
+        <!-- Thistle Funnel with Safety Liquid Seal Immersion -->
+        <g id="thistleFunnelGroup" class="apparatus-interactive-part" data-spec="Thistle Funnel with Liquid Seal (Stem MUST dip below liquid level to prevent evolved gas escape — KNEC 1 Mark)">
+          <!-- Glass Stem dipping deep into liquid -->
+          <rect id="thistleStem" x="136.8" y="92" width="4.4" height="258" rx="1.2" fill="rgba(255,255,255,0.3)" stroke="#94A3B8" stroke-width="1.2"/>
+          
+          <!-- Hydrostatic Liquid Column inside Stem (Shows Reaction Pressure Seal) -->
+          <rect id="thistleLiquidColumn" x="137.6" y="306" width="2.8" height="44" fill="#0284C7" fill-opacity="0.85"/>
+          <ellipse cx="139" cy="306" rx="1.4" ry="0.6" fill="#7DD3FC"/>
+
+          <!-- Flared Trumpet Conical Mouth with Rolled Glass Rim -->
+          <polygon points="124,68 154,68 143,92 135,92" fill="url(#glassWallGrad)" stroke="#94A3B8" stroke-width="1.4"/>
+          <ellipse cx="139" cy="68" rx="15" ry="4" fill="#FFFFFF" fill-opacity="0.4" stroke="#94A3B8" stroke-width="1.2"/>
+          <ellipse cx="139" cy="68" rx="11" ry="2.6" fill="#BAE6FD" fill-opacity="0.2"/>
+          <path d="M 127,72 L 136,90" stroke="#FFFFFF" stroke-width="1.2" opacity="0.6"/>
         </g>
 
-        <!-- Dropping Funnel with Stopcock Key (Used for Cl₂) -->
-        <g id="droppingFunnelGroup" style="display:none;">
-          <!-- Reservoir Bulb -->
-          <ellipse cx="139" cy="115" rx="14" ry="18" fill="rgba(255,255,255,0.25)" stroke="#94A3B8" stroke-width="1.5"/>
-          <rect x="136.5" y="75" width="5" height="25" fill="rgba(255,255,255,0.3)" stroke="#94A3B8" stroke-width="1"/>
-          <!-- Stopcock Glass Tap -->
-          <rect x="134" y="138" width="10" height="7" rx="1.5" fill="#0284C7" stroke="#0369A1" stroke-width="1"/>
-          <line x1="131" y1="141.5" x2="147" y2="141.5" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round"/>
-          <!-- Stem into flask -->
+        <!-- Dropping Funnel with Stopcock Key (Chlorine Preparation Mode) -->
+        <g id="droppingFunnelGroup" style="display:none;" class="apparatus-interactive-part" data-spec="Dropping Funnel with PTFE Stopcock Tap (Controls concentrated acid addition rate during chlorine evolution)">
+          <!-- Pear-Shaped Reservoir Bulb -->
+          <ellipse cx="139" cy="115" rx="15" ry="20" fill="url(#glassWallGrad)" stroke="#94A3B8" stroke-width="1.5"/>
+          <!-- Reservoir Liquid Content -->
+          <path d="M 126,118 Q 139,122 152,118 C 150,132 139,135 139,135 C 139,135 128,132 126,118 Z" fill="#FDE68A" fill-opacity="0.65"/>
+          <!-- Neck Stem & Flanged Rim -->
+          <rect x="136" y="72" width="6" height="26" fill="rgba(255,255,255,0.3)" stroke="#94A3B8" stroke-width="1"/>
+          <ellipse cx="139" cy="72" rx="5" ry="1.8" fill="#FFFFFF" opacity="0.5"/>
+
+          <!-- Precision Ground-Glass Stopcock Body -->
+          <rect x="133.5" y="137" width="11" height="8" rx="1.5" fill="#0284C7" stroke="#0369A1" stroke-width="1"/>
+          <!-- Crossbar Turning Tap Key -->
+          <line x1="130" y1="141" x2="148" y2="141" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="139" cy="141" r="2" fill="#FFFFFF"/>
+
+          <!-- Stem into reaction flask -->
           <rect x="137" y="145" width="4" height="40" fill="rgba(255,255,255,0.3)" stroke="#94A3B8" stroke-width="1"/>
         </g>
 
-        <!-- Streaming Bubbles inside Generation Flask -->
+        <!-- Streaming Reactive Gas Bubbles in Flask -->
         <g id="bubbleLayer" style="display:none;">
-          <circle cx="128" cy="340" r="2.8" fill="#FFFFFF" class="gas-bubble"/>
-          <circle cx="145" cy="335" r="3.5" fill="#FFFFFF" class="gas-bubble-fast"/>
-          <circle cx="136" cy="345" r="2.2" fill="#FFFFFF" class="gas-bubble-delay"/>
-          <circle cx="152" cy="338" r="3.2" fill="#FFFFFF" class="gas-bubble"/>
-          <circle cx="142" cy="328" r="2.5" fill="#FFFFFF" class="gas-bubble-fast"/>
-          <circle cx="158" cy="342" r="3.0" fill="#FFFFFF" class="gas-bubble-delay"/>
+          <circle cx="126" cy="345" r="2.2" fill="#FFFFFF" class="gas-bubble-fast"/>
+          <circle cx="138" cy="350" r="3.2" fill="#FFFFFF" class="gas-bubble"/>
+          <circle cx="147" cy="342" r="3.6" fill="#FFFFFF" class="gas-bubble-fast"/>
+          <circle cx="133" cy="336" r="2.5" fill="#FFFFFF" class="gas-bubble-delay"/>
+          <circle cx="156" cy="348" r="3.0" fill="#FFFFFF" class="gas-bubble"/>
+          <circle cx="143" cy="328" r="2.8" fill="#FFFFFF" class="gas-bubble-fast"/>
+          <circle cx="162" cy="342" r="2.4" fill="#FFFFFF" class="gas-bubble-delay"/>
         </g>
 
         <!-- ══════════════════════════════════════════
-             5. DELIVERY TUBE 1 (From Flask to Drying Vessel)
+             5. DELIVERY TUBE 1 & LATEX RUBBER SLEEVE JUNCTIONS
              ══════════════════════════════════════════ -->
-        <!-- Glass Delivery Tube -->
-        <path d="M 149,168 L 149,120 Q 149,112 157,112 L 285,112 Q 293,112 293,120 L 293,348" fill="none" stroke="#94A3B8" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M 149,168 L 149,120 Q 149,112 157,112 L 285,112 Q 293,112 293,120 L 293,348" fill="none" stroke="#E2E8F0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
-        <!-- Animated Gas Particles Stream 1 -->
-        <path id="gasStreamTube1" class="gas-stream-tube" d="M 149,168 L 149,120 Q 149,112 157,112 L 285,112 Q 293,112 293,120 L 293,348" fill="none" stroke="var(--gas-fill-color, #38BDF8)" stroke-width="2" style="display:none;"/>
+        <g id="deliveryTrainSection1" class="apparatus-interactive-part" data-spec="Borosilicate Glass Delivery Tube with Flexible Amber Latex Rubber Junction">
+          <!-- Glass Right-Angle Elbow from Flask -->
+          <path d="M 149,166 L 149,118 Q 149,110 157,110 L 200,110" fill="none" stroke="#94A3B8" stroke-width="4.2" stroke-linecap="round"/>
+          <path d="M 149,166 L 149,118 Q 149,110 157,110 L 200,110" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" opacity="0.75"/>
+
+          <!-- Amber Latex Rubber Connecting Sleeve (Realistic Joint) -->
+          <rect x="198" y="106.8" width="16" height="6.4" rx="2" fill="url(#latexTubingGrad)" stroke="#B45309" stroke-width="0.8"/>
+          <!-- Metal Spring Clips on Rubber Sleeve -->
+          <line x1="200" y1="106" x2="200" y2="114" stroke="#475569" stroke-width="1.2"/>
+          <line x1="212" y1="106" x2="212" y2="114" stroke="#475569" stroke-width="1.2"/>
+
+          <!-- Main Glass Delivery Tube into Drying Bottle -->
+          <path d="M 212,110 L 285,110 Q 293,110 293,118 L 293,348" fill="none" stroke="#94A3B8" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M 212,110 L 285,110 Q 293,110 293,118 L 293,348" fill="none" stroke="#E2E8F0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
+
+          <!-- Animated Gas Stream Flow in Tube 1 -->
+          <path id="gasStreamTube1" class="gas-stream-tube" d="M 149,166 L 149,118 Q 149,110 157,110 L 285,110 Q 293,110 293,118 L 293,348" fill="none" stroke="var(--gas-fill-color, #38BDF8)" stroke-width="2" style="display:none;"/>
+        </g>
 
         <!-- ══════════════════════════════════════════
-             6. DRYING ASSEMBLY (Drechsel Wash Bottle / CaO Tower)
+             6. DRYING ASSEMBLY (Drechsel Wash Bottle / CaO Tower / CaCl₂ U-Tube)
              ══════════════════════════════════════════ -->
-        <!-- Drechsel Wash Bottle (Conc H₂SO₄ Mode) -->
-        <g id="dryingWashBottleGroup">
-          <!-- Glass Wash Bottle Outer Body -->
-          <rect x="272" y="225" width="60" height="145" rx="8" fill="url(#glassWallGrad)" stroke="#94A3B8" stroke-width="2.5"/>
-          <ellipse cx="302" cy="225" rx="15" ry="3.5" fill="#FFFFFF" fill-opacity="0.3" stroke="#94A3B8" stroke-width="1"/>
-          <!-- Rubber Stopper on Wash Bottle -->
-          <polygon points="288,225 316,225 313,212 291,212" fill="#334155" stroke="#1E293B" stroke-width="1"/>
-          <!-- Concentrated H₂SO₄ Liquid Fill -->
-          <rect id="dryingLiquidFill" x="275" y="295" width="54" height="72" rx="5" fill="url(#acidWashGrad)"/>
-          <ellipse cx="302" cy="295" rx="27" ry="3" fill="#FDE68A" fill-opacity="0.5"/>
+        <!-- Drechsel Wash Bottle (Concentrated H₂SO₄ Mode) -->
+        <g id="dryingWashBottleGroup" class="apparatus-interactive-part" data-spec="Drechsel Concentrated H₂SO₄ Gas Wash Bottle (Absorbs moisture; inlet tube immersed, outlet tube in headspace)">
+          <!-- Glass Wash Bottle Outer Cylinder with Beveled Base -->
+          <rect x="272" y="222" width="60" height="148" rx="8" fill="url(#glassWallGrad)" stroke="#94A3B8" stroke-width="2.6"/>
+          <ellipse cx="302" cy="222" rx="16" ry="3.8" fill="#FFFFFF" fill-opacity="0.4" stroke="#94A3B8" stroke-width="1.2"/>
+
+          <!-- Ground-Glass Frosted Stopper Collar -->
+          <polygon points="288,222 316,222 313,208 291,208" fill="url(#rubberBungGrad)" stroke="#1E293B" stroke-width="1.2"/>
+          <ellipse cx="302" cy="208" rx="11" ry="2.4" fill="#475569"/>
+
+          <!-- Concentrated Viscous H₂SO₄ Acid Fill -->
+          <rect id="dryingLiquidFill" x="275" y="292" width="54" height="75" rx="5" fill="url(#acidWashGrad)"/>
+          <!-- Acid Meniscus with Surface Glint -->
+          <ellipse cx="302" cy="292" rx="27" ry="3.5" fill="#FDE68A" fill-opacity="0.6" stroke="#F59E0B" stroke-width="0.8"/>
+          
+          <!-- Sintered Glass Gas Disperser Nozzle at deep inlet tip -->
+          <rect x="289" y="342" width="8" height="8" rx="1.5" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+
           <!-- Short Gas Exit Tube in Headspace -->
-          <rect x="307" y="200" width="4" height="45" fill="rgba(255,255,255,0.3)" stroke="#94A3B8" stroke-width="1.2"/>
-          <!-- Bubbles in Drying Acid (Active during gas flow) -->
+          <rect x="307" y="196" width="4.5" height="48" rx="1" fill="rgba(255,255,255,0.3)" stroke="#94A3B8" stroke-width="1.2"/>
+
+          <!-- Bubbling in Concentrated Acid (Active during Gas Evolution) -->
           <g id="dryingBubbleLayer" style="display:none;">
-            <circle cx="293" cy="335" r="2.2" fill="#FFFFFF" class="gas-bubble-fast"/>
-            <circle cx="295" cy="318" r="2.8" fill="#FFFFFF" class="gas-bubble"/>
+            <circle cx="293" cy="336" r="2.2" fill="#FFFFFF" class="gas-bubble-fast"/>
+            <circle cx="295" cy="320" r="2.8" fill="#FFFFFF" class="gas-bubble"/>
+            <circle cx="291" cy="305" r="2.4" fill="#FFFFFF" class="gas-bubble-delay"/>
           </g>
-          <text x="302" y="385" font-size="9" fill="#94A3B8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700">Conc. H₂SO₄</text>
+
+          <!-- Specular Glass Wall Reflection Band -->
+          <path d="M 276,230 L 276,360" stroke="#FFFFFF" stroke-width="1.6" opacity="0.6" class="glass-reflection"/>
+          <text x="302" y="385" font-size="8.8" fill="#94A3B8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700">Conc. H₂SO₄</text>
         </g>
 
         <!-- Quicklime / Calcium Oxide (CaO) Drying Tower (Ammonia Mode) -->
-        <g id="dryingQuicklimeGroup" style="display:none;">
-          <rect x="272" y="210" width="60" height="160" rx="6" fill="url(#glassWallGrad)" stroke="#94A3B8" stroke-width="2.5"/>
-          <!-- Quicklime Lumps & Glass Wool Plugs -->
-          <rect x="275" y="356" width="54" height="10" fill="#E2E8F0" opacity="0.6"/>
-          <text x="302" y="364" font-size="6.5" fill="#475569" text-anchor="middle" font-family="sans-serif">Glass Wool</text>
-          <!-- Solid CaO Chunks -->
-          <g fill="#F1F5F9" stroke="#94A3B8" stroke-width="0.8">
-            <rect x="278" y="332" width="14" height="12" rx="2"/>
-            <rect x="296" y="334" width="16" height="10" rx="2"/>
-            <rect x="314" y="330" width="14" height="14" rx="2"/>
-            <rect x="282" y="316" width="16" height="12" rx="2"/>
-            <rect x="302" y="318" width="14" height="12" rx="2"/>
-            <rect x="278" y="300" width="18" height="12" rx="2"/>
-            <rect x="300" y="302" width="16" height="11" rx="2"/>
-            <rect x="286" y="286" width="16" height="10" rx="2"/>
-            <rect x="306" y="284" width="14" height="12" rx="2"/>
-            <rect x="280" y="270" width="16" height="12" rx="2"/>
-            <rect x="300" y="268" width="18" height="12" rx="2"/>
+        <g id="dryingQuicklimeGroup" style="display:none;" class="apparatus-interactive-part" data-spec="Quicklime (CaO) Upright Drying Tower (MANDATORY for Ammonia: Basic CaO does not react with basic NH₃!)">
+          <!-- Glass Drying Tower Body with Flared Ends -->
+          <rect x="272" y="206" width="60" height="164" rx="6" fill="url(#glassWallGrad)" stroke="#94A3B8" stroke-width="2.6"/>
+          
+          <!-- Lower Glass Wool Filter Plug -->
+          <rect x="275" y="354" width="54" height="12" fill="#F1F5F9" opacity="0.75" stroke="#CBD5E1" stroke-width="0.6"/>
+          <text x="302" y="362.5" font-size="6.5" fill="#475569" text-anchor="middle" font-family="sans-serif" font-weight="700">Glass Wool</text>
+
+          <!-- 3D Porous Off-White Calcium Oxide (CaO) Lumps -->
+          <g fill="#F8FAFC" stroke="#94A3B8" stroke-width="0.8">
+            <polygon points="278,348 290,344 294,352 284,354"/>
+            <polygon points="296,346 308,342 314,349 302,352"/>
+            <polygon points="314,344 326,346 324,354 315,353"/>
+
+            <polygon points="279,332 291,328 296,338 283,340"/>
+            <polygon points="297,330 310,326 315,335 304,337"/>
+            <polygon points="314,329 325,331 324,340 316,339"/>
+
+            <polygon points="279,314 293,310 297,322 282,324"/>
+            <polygon points="298,312 312,308 316,319 303,322"/>
+            <polygon points="314,312 326,314 324,324 315,323"/>
+
+            <polygon points="280,296 294,292 298,304 284,306"/>
+            <polygon points="298,294 311,290 316,301 304,304"/>
+            <polygon points="315,295 326,297 323,307 314,306"/>
+
+            <polygon points="279,278 292,274 296,286 283,288"/>
+            <polygon points="297,276 312,272 316,283 303,286"/>
+            <polygon points="314,277 325,279 324,289 315,288"/>
+
+            <polygon points="281,260 293,256 297,268 284,270"/>
+            <polygon points="298,258 311,254 315,265 302,268"/>
+            <polygon points="315,259 326,261 323,271 314,270"/>
           </g>
-          <rect x="275" y="254" width="54" height="10" fill="#E2E8F0" opacity="0.6"/>
-          <text x="302" y="262" font-size="6.5" fill="#475569" text-anchor="middle" font-family="sans-serif">Glass Wool</text>
-          <text x="302" y="385" font-size="9" fill="#94A3B8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700">Quicklime (CaO)</text>
+
+          <!-- Upper Glass Wool Plug -->
+          <rect x="275" y="244" width="54" height="12" fill="#F1F5F9" opacity="0.75" stroke="#CBD5E1" stroke-width="0.6"/>
+          <text x="302" y="252.5" font-size="6.5" fill="#475569" text-anchor="middle" font-family="sans-serif" font-weight="700">Glass Wool</text>
+
+          <text x="302" y="385" font-size="8.8" fill="#94A3B8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700">Quicklime (CaO)</text>
         </g>
 
         <!-- Anhydrous CaCl₂ U-Tube Mode -->
-        <g id="dryingCacl2Group" style="display:none;">
-          <path d="M 280,240 L 280,350 C 280,365 324,365 324,350 L 324,240" fill="none" stroke="#94A3B8" stroke-width="18" stroke-linecap="round"/>
-          <path d="M 280,240 L 280,350 C 280,365 324,365 324,350 L 324,240" fill="none" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" opacity="0.85"/>
-          <text x="302" y="385" font-size="9" fill="#94A3B8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700">Fused CaCl₂</text>
+        <g id="dryingCacl2Group" style="display:none;" class="apparatus-interactive-part" data-spec="Fused Anhydrous Calcium Chloride U-Tube (Absorbs water vapor from neutral and acidic gases)">
+          <path d="M 280,238 L 280,350 C 280,366 324,366 324,350 L 324,238" fill="none" stroke="#94A3B8" stroke-width="18" stroke-linecap="round"/>
+          <path d="M 280,238 L 280,350 C 280,366 324,366 324,350 L 324,238" fill="none" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" opacity="0.9"/>
+          <!-- Spherical White Calcium Chloride Pellets -->
+          <circle cx="280" cy="340" r="4.5" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.6"/>
+          <circle cx="288" cy="348" r="4.2" fill="#F8FAFC" stroke="#94A3B8" stroke-width="0.6"/>
+          <circle cx="302" cy="354" r="4.5" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.6"/>
+          <circle cx="316" cy="348" r="4.2" fill="#F8FAFC" stroke="#94A3B8" stroke-width="0.6"/>
+          <circle cx="324" cy="340" r="4.5" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.6"/>
+          <text x="302" y="385" font-size="8.8" fill="#94A3B8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700">Fused CaCl₂</text>
         </g>
 
         <!-- ══════════════════════════════════════════
-             7. DELIVERY TUBE 2 (From Drying Vessel to Collection)
+             7. DELIVERY TUBE 2 & INTERMEDIATE COUPLING
              ══════════════════════════════════════════ -->
-        <!-- Glass Tube to Collection Apparatus -->
-        <path id="tubeDryingToCollection" d="M 309,202 L 309,118 Q 309,110 317,110 L 525,110 Q 533,110 533,118 L 533,260" fill="none" stroke="#94A3B8" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M 309,202 L 309,118 Q 309,110 317,110 L 525,110 Q 533,110 533,118 L 533,260" fill="none" stroke="#E2E8F0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>
-        <!-- Animated Gas Stream 2 -->
-        <path id="gasStreamTube2" class="gas-stream-tube" d="M 309,202 L 309,118 Q 309,110 317,110 L 525,110 Q 533,110 533,118 L 533,260" fill="none" stroke="var(--gas-fill-color, #38BDF8)" stroke-width="2" style="display:none;"/>
+        <g id="deliveryTrainSection2" class="apparatus-interactive-part" data-spec="Glass Delivery Tube 2 (Directs purified, dry gas to collection apparatus)">
+          <!-- Glass Exit Elbow from Drying Vessel -->
+          <path d="M 309,198 L 309,118 Q 309,110 317,110 L 350,110" fill="none" stroke="#94A3B8" stroke-width="4.2" stroke-linecap="round"/>
+          <path d="M 309,198 L 309,118 Q 309,110 317,110 L 350,110" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" opacity="0.75"/>
+          
+          <!-- Amber Latex Rubber Sleeve Coupling -->
+          <rect x="348" y="106.8" width="16" height="6.4" rx="2" fill="url(#latexTubingGrad)" stroke="#B45309" stroke-width="0.8"/>
+          <line x1="350" y1="106" x2="350" y2="114" stroke="#475569" stroke-width="1.2"/>
+          <line x1="362" y1="106" x2="362" y2="114" stroke="#475569" stroke-width="1.2"/>
+
+          <!-- Long Glass Bridge to Collection Assembly -->
+          <path id="tubeDryingToCollection" d="M 362,110 L 525,110 Q 533,110 533,118 L 533,260" fill="none" stroke="#94A3B8" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M 362,110 L 525,110 Q 533,110 533,118 L 533,260" fill="none" stroke="#E2E8F0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
+
+          <!-- Animated Gas Stream 2 -->
+          <path id="gasStreamTube2" class="gas-stream-tube" d="M 309,198 L 309,118 Q 309,110 317,110 L 525,110 Q 533,110 533,118 L 533,260" fill="none" stroke="var(--gas-fill-color, #38BDF8)" stroke-width="2" style="display:none;"/>
+        </g>
 
         <!-- ══════════════════════════════════════════
              8. COLLECTION SETUPS (3 Dynamic Modes)
              ══════════════════════════════════════════ -->
 
         <!-- ── MODE A: Over Water (Downward Displacement of Water) ── -->
-        <g id="setupOverWater">
-          <!-- Curving Delivery Tube under water and into beehive shelf -->
-          <path d="M 309,202 L 309,118 Q 309,110 317,110 L 440,110 Q 448,110 448,118 L 448,348 Q 448,354 456,354 L 525,354 Q 531,354 531,346 L 531,330" fill="none" stroke="#94A3B8" stroke-width="4" stroke-linecap="round"/>
-          <path d="M 309,202 L 309,118 Q 309,110 317,110 L 440,110 Q 448,110 448,118 L 448,348 Q 448,354 456,354 L 525,354 Q 531,354 531,346 L 531,330" fill="none" stroke="#E2E8F0" stroke-width="1.6" opacity="0.7"/>
-          
-          <!-- Glass Pneumatic Trough -->
-          <rect x="445" y="285" width="165" height="85" rx="8" fill="url(#glassWallGrad)" stroke="#38BDF8" stroke-width="2.2"/>
-          <!-- Water Content inside Trough -->
-          <rect x="447" y="306" width="161" height="62" rx="5" fill="url(#troughWaterGrad)"/>
-          <line x1="447" y1="306" x2="608" y2="306" stroke="#67E8F9" stroke-width="1.5" stroke-dasharray="6 3"/>
-          <text x="480" y="322" font-size="9" fill="#0284C7" font-family="'JetBrains Mono', monospace" font-weight="700">Water</text>
+        <g id="setupOverWater" class="apparatus-interactive-part" data-spec="Collection Over Water (Pneumatic Trough, Beehive Shelf & Inverted Jar — Best for insoluble gases)">
+          <!-- Glass Delivery Tube curving under water through beehive shelf notch -->
+          <path d="M 362,110 L 440,110 Q 448,110 448,118 L 448,348 Q 448,354 456,354 L 525,354 Q 531,354 531,346 L 531,330" fill="none" stroke="#94A3B8" stroke-width="4.2" stroke-linecap="round"/>
+          <path d="M 362,110 L 440,110 Q 448,110 448,118 L 448,348 Q 448,354 456,354 L 525,354 Q 531,354 531,346 L 531,330" fill="none" stroke="#FFFFFF" stroke-width="1.6" opacity="0.75"/>
 
-          <!-- Ceramic Beehive Shelf -->
-          <g id="beehiveShelf">
-            <path d="M 500,368 L 505,330 Q 530,326 555,330 L 560,368 Z" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1.5"/>
-            <!-- Notch at Base for Delivery Tube -->
-            <path d="M 522,368 C 522,356 538,356 538,368 Z" fill="#334155"/>
+          <!-- Glass Pneumatic Trough with Water Meniscus -->
+          <rect x="444" y="284" width="168" height="88" rx="8" fill="url(#glassWallGrad)" stroke="#38BDF8" stroke-width="2.4"/>
+          <!-- Water Content inside Trough -->
+          <rect x="446" y="306" width="164" height="64" rx="5" fill="url(#troughWaterGrad)"/>
+          <line x1="446" y1="306" x2="610" y2="306" stroke="#67E8F9" stroke-width="1.6" stroke-dasharray="6 3"/>
+          <text x="476" y="322" font-size="9" fill="#0284C7" font-family="'JetBrains Mono', monospace" font-weight="700">Water</text>
+
+          <!-- Authentic Ceramic Earthenware Beehive Shelf -->
+          <g id="beehiveShelf" class="apparatus-interactive-part" data-spec="Earthenware Beehive Shelf (Provides stable underwater platform for inverted jar and directs rising gas bubbles into jar mouth — KNEC 1 Mark)">
+            <path d="M 498,368 L 504,328 Q 530,324 556,328 L 562,368 Z" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1.5"/>
+            <!-- Arched Bottom Cutout for Delivery Tube Insertion -->
+            <path d="M 522,368 C 522,354 538,354 538,368 Z" fill="#1E293B"/>
             <!-- Central Aperture for Rising Bubbles -->
-            <ellipse cx="530" cy="330" rx="9" ry="3.5" fill="#334155" stroke="#1E293B" stroke-width="1"/>
+            <ellipse cx="530" cy="328" rx="9.5" ry="3.8" fill="#1E293B" stroke="#0F172A" stroke-width="1"/>
           </g>
 
           <!-- Inverted Glass Gas Jar over Beehive Shelf -->
-          <g id="invertedJarOverWater">
-            <!-- Full Water Column initially in inverted jar -->
-            <rect id="jarWaterFill" x="507" y="162" width="46" height="168" rx="3" fill="url(#troughWaterGrad)"/>
-            <!-- Glass Outer Walls -->
-            <rect x="505" y="160" width="50" height="170" rx="4" fill="url(#glassWallGrad)" stroke="#94A3B8" stroke-width="2.5"/>
-            <ellipse cx="530" cy="161" rx="14" ry="3.5" fill="#FFFFFF" fill-opacity="0.4" stroke="#94A3B8" stroke-width="1"/>
-            <!-- Measurement Tick Lines -->
-            <line x1="510" y1="200" x2="518" y2="200" stroke="#94A3B8" stroke-width="0.8"/>
-            <line x1="510" y1="240" x2="518" y2="240" stroke="#94A3B8" stroke-width="0.8"/>
-            <line x1="510" y1="280" x2="518" y2="280" stroke="#94A3B8" stroke-width="0.8"/>
+          <g id="invertedJarOverWater" class="apparatus-interactive-part" data-spec="Borosilicate Gas Jar (Inverted over beehive shelf; water displaced downward as gas accumulates)">
+            <!-- Initial Full Water Column inside inverted jar -->
+            <rect id="jarWaterFill" x="506" y="160" width="48" height="170" rx="3" fill="url(#troughWaterGrad)"/>
+            
+            <!-- Glass Outer Walls with Rolled Ground-Glass Rim -->
+            <rect x="504" y="158" width="52" height="172" rx="4" fill="url(#glassWallGrad)" stroke="#94A3B8" stroke-width="2.6"/>
+            <ellipse cx="530" cy="159" rx="15" ry="3.8" fill="#FFFFFF" fill-opacity="0.45" stroke="#94A3B8" stroke-width="1.2"/>
+            
+            <!-- White Enamel Volume Graduations on Jar -->
+            <line x1="508" y1="200" x2="516" y2="200" stroke="#F8FAFC" stroke-width="0.9" opacity="0.8"/>
+            <line x1="508" y1="240" x2="516" y2="240" stroke="#F8FAFC" stroke-width="0.9" opacity="0.8"/>
+            <line x1="508" y1="280" x2="516" y2="280" stroke="#F8FAFC" stroke-width="0.9" opacity="0.8"/>
             
             <!-- Collected Gas Pocket (Accumulates from closed top downwards) -->
-            <rect id="gasLayerOverWater" x="507" y="162" width="46" height="0" rx="3" fill="url(#gasOverWaterGrad)"/>
-            <!-- Water Meniscus Line dropping as gas collects -->
-            <ellipse id="waterMeniscusLine" cx="530" cy="162" rx="22" ry="2.5" fill="#38BDF8" fill-opacity="0.6"/>
+            <rect id="gasLayerOverWater" x="506" y="160" width="48" height="0" rx="3" fill="url(#gasOverWaterGrad)"/>
+            <!-- Concave Water Meniscus Line dropping as gas collects -->
+            <ellipse id="waterMeniscusLine" cx="530" cy="160" rx="23" ry="2.8" fill="#38BDF8" fill-opacity="0.7" stroke="#7DD3FC" stroke-width="0.8"/>
 
-            <!-- Streaming Gas Bubbles Rising in Inverted Jar -->
+            <!-- Streaming Gas Bubbles Rising from Beehive Shelf Aperture -->
             <g id="jarBubbleStream" style="display:none;">
-              <circle cx="530" cy="315" r="3.2" fill="#FFFFFF" class="gas-bubble-fast"/>
+              <circle cx="530" cy="316" r="3.2" fill="#FFFFFF" class="gas-bubble-fast"/>
               <circle cx="527" cy="275" r="3.8" fill="#FFFFFF" class="gas-bubble"/>
               <circle cx="533" cy="235" r="3.2" fill="#FFFFFF" class="gas-bubble-delay"/>
             </g>
+
+            <!-- Specular Reflection Streak -->
+            <path d="M 508,170 L 508,310" stroke="#FFFFFF" stroke-width="1.4" opacity="0.6" class="glass-reflection"/>
           </g>
 
-          <text x="530" y="148" font-size="9.5" fill="#94A3B8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700">Inverted Gas Jar</text>
+          <text x="530" y="146" font-size="9.5" fill="#94A3B8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700">Inverted Gas Jar</text>
           <text x="530" y="388" font-size="9" fill="#0284C7" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700">Over Water Collection</text>
         </g>
 
         <!-- ── MODE B: Downward Delivery (Upward Displacement of Air) ── -->
-        <g id="setupDownwardDelivery" style="display:none;">
-          <!-- Delivery Tube extending near jar bottom -->
-          <path d="M 309,202 L 309,118 Q 309,110 317,110 L 525,110 Q 533,110 533,118 L 533,355" fill="none" stroke="#94A3B8" stroke-width="4.2" stroke-linecap="round"/>
-          <path d="M 309,202 L 309,118 Q 309,110 317,110 L 525,110 Q 533,110 533,118 L 533,355" fill="none" stroke="#E2E8F0" stroke-width="1.8" opacity="0.7"/>
+        <g id="setupDownwardDelivery" style="display:none;" class="apparatus-interactive-part" data-spec="Downward Delivery / Upward Displacement of Air (Jar upright, delivery tube extends to bottom — Optimal for dense gases)">
+          <!-- Glass Delivery Tube extending near jar bottom -->
+          <path d="M 362,110 L 533,110 Q 533,110 533,118 L 533,355" fill="none" stroke="#94A3B8" stroke-width="4.2" stroke-linecap="round"/>
+          <path d="M 362,110 L 533,110 Q 533,110 533,118 L 533,355" fill="none" stroke="#FFFFFF" stroke-width="1.6" opacity="0.75"/>
           
           <!-- Upright Cylindrical Gas Jar standing on table -->
-          <rect x="502" y="200" width="56" height="170" rx="4" fill="url(#glassWallGrad)" stroke="#94A3B8" stroke-width="2.5"/>
-          <ellipse cx="530" cy="369" rx="26" ry="3" fill="#64748B" fill-opacity="0.3"/>
+          <rect x="502" y="198" width="58" height="172" rx="4" fill="url(#glassWallGrad)" stroke="#94A3B8" stroke-width="2.6"/>
+          <ellipse cx="531" cy="369" rx="27" ry="3.5" fill="#64748B" fill-opacity="0.35"/>
+          <path d="M 505,210 L 505,355" stroke="#FFFFFF" stroke-width="1.4" opacity="0.6" class="glass-reflection"/>
           
-          <!-- Heavy Cardboard Cover with Hole at Jar Mouth -->
-          <rect x="492" y="195" width="76" height="7" rx="2" fill="#78350F" stroke="#92400E" stroke-width="1"/>
-          <ellipse cx="533" cy="198.5" rx="3.5" ry="1.5" fill="#1E293B"/>
+          <!-- Heavy Weighted Cardboard / Glass Cover with Center Hole -->
+          <rect x="490" y="193" width="80" height="7.5" rx="2" fill="#78350F" stroke="#92400E" stroke-width="1"/>
+          <ellipse cx="533" cy="196.8" rx="4" ry="1.6" fill="#1E293B"/>
 
-          <!-- Gas Layer Accumulating from Bottom Up -->
-          <rect id="gasLayerDownward" x="504" y="368" width="52" height="0" rx="3" fill="url(#gasDownwardGrad)"/>
+          <!-- Gas Layer Accumulating from Bottom Upwards with Atmospheric Volumetric Gradient -->
+          <rect id="gasLayerDownward" x="504" y="368" width="54" height="0" rx="3" fill="url(#gasDownwardGrad)"/>
           
-          <text x="530" y="184" font-size="9.5" fill="#94A3B8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700">Upright Gas Jar</text>
-          <text x="530" y="388" font-size="9" fill="#0284C7" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700">Downward Delivery (Dense Gas)</text>
+          <text x="531" y="182" font-size="9.5" fill="#94A3B8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700">Upright Gas Jar</text>
+          <text x="531" y="388" font-size="9" fill="#0284C7" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700">Downward Delivery (Dense Gas)</text>
         </g>
 
         <!-- ── MODE C: Upward Delivery (Downward Displacement of Air) ── -->
-        <g id="setupUpwardDelivery" style="display:none;">
-          <!-- Retort Clamp Arm holding Inverted Jar in Air -->
-          <rect x="555" y="195" width="125" height="6" fill="#64748B" stroke="#475569" stroke-width="1"/>
-          <path d="M 555,188 L 542,192 L 542,204 L 555,208" fill="none" stroke="#334155" stroke-width="3.5" stroke-linecap="round"/>
+        <g id="setupUpwardDelivery" style="display:none;" class="apparatus-interactive-part" data-spec="Upward Delivery / Downward Displacement of Air (Suspended by clamp, tube curves up into jar mouth — Optimal for light gases like NH₃, H₂)">
+          <!-- Retort Clamp Arm holding Inverted Jar firmly in Air -->
+          <rect x="558" y="194" width="124" height="6.5" rx="1" fill="#475569" stroke="#334155" stroke-width="1"/>
+          <path d="M 558,186 L 544,191 L 544,204 L 558,209" fill="none" stroke="#DC2626" stroke-width="3.5" stroke-linecap="round"/>
 
-          <!-- Delivery Tube Curving Up into Inverted Jar Mouth -->
-          <path d="M 309,202 L 309,118 Q 309,110 317,110 L 450,110 Q 458,110 458,118 L 458,335 Q 458,342 466,342 L 525,342 Q 533,342 533,334 L 533,165" fill="none" stroke="#94A3B8" stroke-width="4.2" stroke-linecap="round"/>
-          <path d="M 309,202 L 309,118 Q 309,110 317,110 L 450,110 Q 458,110 458,118 L 458,335 Q 458,342 466,342 L 525,342 Q 533,342 533,334 L 533,165" fill="none" stroke="#E2E8F0" stroke-width="1.8" opacity="0.7"/>
+          <!-- Glass Delivery Tube Curving Up into Inverted Jar Mouth -->
+          <path d="M 362,110 L 450,110 Q 458,110 458,118 L 458,335 Q 458,342 466,342 L 525,342 Q 533,342 533,334 L 533,165" fill="none" stroke="#94A3B8" stroke-width="4.2" stroke-linecap="round"/>
+          <path d="M 362,110 L 450,110 Q 458,110 458,118 L 458,335 Q 458,342 466,342 L 525,342 Q 533,342 533,334 L 533,165" fill="none" stroke="#FFFFFF" stroke-width="1.6" opacity="0.75"/>
 
           <!-- Inverted Gas Jar Suspended in Air -->
-          <rect x="502" y="145" width="56" height="170" rx="4" fill="url(#glassWallGrad)" stroke="#94A3B8" stroke-width="2.5"/>
-          <ellipse cx="530" cy="146" rx="16" ry="3.5" fill="#FFFFFF" fill-opacity="0.4" stroke="#94A3B8" stroke-width="1"/>
+          <rect x="502" y="142" width="58" height="172" rx="4" fill="url(#glassWallGrad)" stroke="#94A3B8" stroke-width="2.6"/>
+          <ellipse cx="531" cy="143" rx="17" ry="3.8" fill="#FFFFFF" fill-opacity="0.45" stroke="#94A3B8" stroke-width="1.2"/>
+          <path d="M 505,155 L 505,300" stroke="#FFFFFF" stroke-width="1.4" opacity="0.6" class="glass-reflection"/>
 
           <!-- Light Gas Layer Collecting at Closed Top Downwards -->
-          <rect id="gasLayerUpward" x="504" y="147" width="52" height="0" rx="3" fill="url(#gasUpwardGrad)"/>
+          <rect id="gasLayerUpward" x="504" y="144" width="54" height="0" rx="3" fill="url(#gasUpwardGrad)"/>
 
-          <text x="530" y="132" font-size="9.5" fill="#94A3B8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700">Inverted Gas Jar</text>
-          <text x="530" y="388" font-size="9" fill="#0284C7" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700">Upward Delivery (Light Gas)</text>
+          <text x="531" y="128" font-size="9.5" fill="#94A3B8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700">Inverted Gas Jar</text>
+          <text x="531" y="388" font-size="9" fill="#0284C7" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700">Upward Delivery (Light Gas)</text>
         </g>
 
         <!-- ══════════════════════════════════════════
@@ -734,7 +1009,7 @@
         <g id="scientificLabelsGroup" class="diagram-callout">
           <!-- 1. Thistle Funnel Liquid Seal Callout -->
           <g transform="translate(139, 45)">
-            <rect class="diagram-label-pill" x="-65" y="-12" width="130" height="20" fill="rgba(15, 23, 42, 0.88)" stroke="#38BDF8" stroke-width="1"/>
+            <rect class="diagram-label-pill" x="-65" y="-12" width="130" height="20" fill="rgba(15, 23, 42, 0.9)" stroke="#38BDF8" stroke-width="1"/>
             <text x="0" y="2" fill="#F8FAFC" text-anchor="middle">① Thistle Funnel (Liquid Seal)</text>
             <line x1="0" y1="8" x2="0" y2="24" stroke="#38BDF8" stroke-width="1.2" stroke-dasharray="2 1"/>
             <circle cx="0" cy="25" r="2" fill="#38BDF8"/>
@@ -742,7 +1017,7 @@
 
           <!-- 2. Rubber Bung Callout -->
           <g transform="translate(70, 160)">
-            <rect class="diagram-label-pill" x="-55" y="-10" width="110" height="18" fill="rgba(15, 23, 42, 0.88)" stroke="#38BDF8" stroke-width="1"/>
+            <rect class="diagram-label-pill" x="-55" y="-10" width="110" height="18" fill="rgba(15, 23, 42, 0.9)" stroke="#38BDF8" stroke-width="1"/>
             <text x="0" y="3" fill="#F8FAFC" text-anchor="middle">② Airtight Rubber Bung</text>
             <path d="M 55,0 L 78,0 L 132,175" fill="none" stroke="#38BDF8" stroke-width="1" stroke-dasharray="2 1"/>
             <circle cx="132" cy="175" r="2" fill="#38BDF8"/>
@@ -750,7 +1025,7 @@
 
           <!-- 3. Reaction Flask & Reagents Callout -->
           <g transform="translate(60, 280)">
-            <rect class="diagram-label-pill" x="-50" y="-10" width="100" height="18" fill="rgba(15, 23, 42, 0.88)" stroke="#38BDF8" stroke-width="1"/>
+            <rect class="diagram-label-pill" x="-50" y="-10" width="100" height="18" fill="rgba(15, 23, 42, 0.9)" stroke="#38BDF8" stroke-width="1"/>
             <text x="0" y="3" fill="#F8FAFC" text-anchor="middle">③ Reaction Flask</text>
             <line x1="50" y1="0" x2="100" y2="330" stroke="#38BDF8" stroke-width="1" stroke-dasharray="2 1"/>
             <circle cx="100" cy="330" r="2" fill="#38BDF8"/>
@@ -758,7 +1033,7 @@
 
           <!-- 4. Delivery Tube (Gas Flow) Callout -->
           <g transform="translate(225, 90)">
-            <rect class="diagram-label-pill" x="-55" y="-10" width="110" height="18" fill="rgba(15, 23, 42, 0.88)" stroke="#38BDF8" stroke-width="1"/>
+            <rect class="diagram-label-pill" x="-55" y="-10" width="110" height="18" fill="rgba(15, 23, 42, 0.9)" stroke="#38BDF8" stroke-width="1"/>
             <text x="0" y="3" fill="#F8FAFC" text-anchor="middle">④ Delivery Tube</text>
             <line x1="0" y1="8" x2="0" y2="20" stroke="#38BDF8" stroke-width="1" stroke-dasharray="2 1"/>
             <circle cx="0" cy="21" r="2" fill="#38BDF8"/>
@@ -766,7 +1041,7 @@
 
           <!-- 5. Drying Vessel Callout -->
           <g transform="translate(302, 185)">
-            <rect class="diagram-label-pill" x="-50" y="-10" width="100" height="18" fill="rgba(15, 23, 42, 0.88)" stroke="#38BDF8" stroke-width="1"/>
+            <rect class="diagram-label-pill" x="-50" y="-10" width="100" height="18" fill="rgba(15, 23, 42, 0.9)" stroke="#38BDF8" stroke-width="1"/>
             <text x="0" y="3" fill="#F8FAFC" text-anchor="middle">⑤ Drying Vessel</text>
             <line x1="0" y1="8" x2="0" y2="35" stroke="#38BDF8" stroke-width="1" stroke-dasharray="2 1"/>
             <circle cx="0" cy="36" r="2" fill="#38BDF8"/>
@@ -774,7 +1049,7 @@
 
           <!-- 6. Gas Jar / Collection Assembly Callout -->
           <g transform="translate(530, 90)">
-            <rect class="diagram-label-pill" x="-60" y="-10" width="120" height="18" fill="rgba(15, 23, 42, 0.88)" stroke="#38BDF8" stroke-width="1"/>
+            <rect class="diagram-label-pill" x="-60" y="-10" width="120" height="18" fill="rgba(15, 23, 42, 0.9)" stroke="#38BDF8" stroke-width="1"/>
             <text x="0" y="3" fill="#F8FAFC" text-anchor="middle">⑥ Gas Collection Jar</text>
             <line x1="0" y1="8" x2="0" y2="50" stroke="#38BDF8" stroke-width="1" stroke-dasharray="2 1"/>
             <circle cx="0" cy="51" r="2" fill="#38BDF8"/>
@@ -1356,6 +1631,95 @@
     if (cacl2) cacl2.style.display = dryingKey === 'anhydrousCaCl2' ? 'inline' : 'none';
   }
 
+  function updateSolidReactantBed(gasKey) {
+    const conicalGranules = document.getElementById('conicalSolidGranules');
+    const roundGranules = document.getElementById('roundBottomSolidGranules');
+
+    if (conicalGranules) {
+      if (gasKey === 'O2') {
+        // Fine Black MnO₂ Catalyst Powder Mound
+        conicalGranules.innerHTML = `
+          <path d="M 112,367 C 118,358 132,352 145,352 C 158,352 172,358 178,367 Z" fill="#0F172A" stroke="#1E293B" stroke-width="0.8"/>
+          <path d="M 120,366 C 128,356 138,354 145,354 C 152,354 162,356 170,366 Z" fill="#1E293B" opacity="0.9"/>
+          <circle cx="132" cy="358" r="0.9" fill="#475569"/>
+          <circle cx="140" cy="355" r="0.8" fill="#334155"/>
+          <circle cx="147" cy="356" r="0.9" fill="#475569"/>
+          <circle cx="155" cy="360" r="0.8" fill="#334155"/>
+          <circle cx="136" cy="363" r="0.7" fill="#64748B"/>
+          <circle cx="150" cy="362" r="0.7" fill="#64748B"/>
+          <text x="145" y="374" font-size="5.2" fill="#94A3B8" font-family="'JetBrains Mono', monospace" font-weight="700" text-anchor="middle">MnO₂ (s) Catalyst</text>
+        `;
+      } else if (gasKey === 'H2') {
+        // Metallic Silvery Granulated Zinc Chunks (Zn)
+        conicalGranules.innerHTML = `
+          <polygon points="118,364 126,356 136,359 132,366 120,366" fill="#64748B" stroke="#475569" stroke-width="0.8"/>
+          <polygon points="126,356 136,359 131,352 122,351" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.6"/>
+
+          <polygon points="135,365 144,354 154,358 150,366 137,366" fill="#475569" stroke="#334155" stroke-width="0.8"/>
+          <polygon points="144,354 154,358 149,349 140,348" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="0.6"/>
+
+          <polygon points="153,363 163,356 172,360 167,366 155,366" fill="#64748B" stroke="#475569" stroke-width="0.8"/>
+          <polygon points="163,356 172,360 167,352 159,351" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.6"/>
+
+          <circle cx="128" cy="354" r="1.1" fill="#FFFFFF"/>
+          <circle cx="146" cy="351" r="1.2" fill="#FFFFFF"/>
+          <circle cx="165" cy="354" r="1.1" fill="#FFFFFF"/>
+          <text x="145" y="374" font-size="5.2" fill="#94A3B8" font-family="'JetBrains Mono', monospace" font-weight="700" text-anchor="middle">Granulated Zinc (Zn)</text>
+        `;
+      } else {
+        // CO2 & Default: 3D Faceted White-Grey Marble Chips (CaCO₃)
+        conicalGranules.innerHTML = `
+          <polygon points="118,364 125,354 135,357 133,366 120,366" fill="#CBD5E1" stroke="#94A3B8" stroke-width="0.8"/>
+          <polygon points="125,354 135,357 132,350 123,349" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="0.6"/>
+
+          <polygon points="134,365 142,352 153,356 150,366 136,366" fill="#94A3B8" stroke="#64748B" stroke-width="0.8"/>
+          <polygon points="142,352 153,356 149,348 139,347" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.6"/>
+
+          <polygon points="152,363 162,354 171,358 168,366 154,366" fill="#CBD5E1" stroke="#94A3B8" stroke-width="0.8"/>
+          <polygon points="162,354 171,358 167,351 159,350" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="0.6"/>
+
+          <polygon points="128,366 139,360 147,366" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="0.6"/>
+          <polygon points="146,366 156,359 163,366" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="0.6"/>
+          <text x="145" y="374" font-size="5.2" fill="#94A3B8" font-family="'JetBrains Mono', monospace" font-weight="700" text-anchor="middle">CaCO₃ Marble Chips</text>
+        `;
+      }
+    }
+
+    if (roundGranules) {
+      if (gasKey === 'NH3') {
+        // Dry Mixture of Ca(OH)₂ and NH₄Cl Powder (No Liquid)
+        roundGranules.innerHTML = `
+          <path d="M 108,298 C 118,288 134,284 145,284 C 156,284 172,288 182,298 C 182,312 166,315 145,315 C 124,315 108,312 108,298 Z" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1"/>
+          <path d="M 115,297 C 125,289 137,286 145,286 C 153,286 165,289 175,297 Z" fill="#FFFFFF" opacity="0.8"/>
+          <circle cx="130" cy="294" r="0.8" fill="#CBD5E1"/>
+          <circle cx="142" cy="291" r="0.8" fill="#94A3B8"/>
+          <circle cx="154" cy="293" r="0.8" fill="#CBD5E1"/>
+          <circle cx="160" cy="301" r="0.9" fill="#94A3B8"/>
+          <circle cx="135" cy="305" r="0.9" fill="#CBD5E1"/>
+          <text x="145" y="322" font-size="4.5" fill="#38BDF8" font-family="'JetBrains Mono', monospace" font-weight="700" text-anchor="middle">Dry Ca(OH)₂ + NH₄Cl Mixture</text>
+        `;
+      } else if (gasKey === 'SO2') {
+        // Crystalline Na₂SO₃
+        roundGranules.innerHTML = `
+          <ellipse cx="136" cy="309" rx="7.5" ry="4" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="0.8"/>
+          <ellipse cx="146" cy="310" rx="8.5" ry="4.5" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8"/>
+          <ellipse cx="156" cy="308" rx="7" ry="3.8" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="0.8"/>
+          <polygon points="144,306 148,304 150,308 146,309" fill="#FFFFFF" stroke="#94A3B8" stroke-width="0.5"/>
+          <text x="145" y="322" font-size="4.8" fill="#94A3B8" font-family="'JetBrains Mono', monospace" font-weight="700" text-anchor="middle">Na₂SO₃ Crystals</text>
+        `;
+      } else {
+        // Cl2: Dark MnO₂ Lumps
+        roundGranules.innerHTML = `
+          <ellipse cx="135" cy="309" rx="8" ry="4.5" fill="#0F172A" stroke="#1E293B" stroke-width="0.8"/>
+          <ellipse cx="146" cy="310" rx="9" ry="5" fill="#1E293B" stroke="#334155" stroke-width="0.8"/>
+          <ellipse cx="156" cy="308" rx="7.5" ry="4" fill="#0F172A" stroke="#1E293B" stroke-width="0.8"/>
+          <circle cx="144" cy="306" r="1" fill="#64748B"/>
+          <text x="145" y="322" font-size="4.8" fill="#94A3B8" font-family="'JetBrains Mono', monospace" font-weight="700" text-anchor="middle">Solid MnO₂ Lumps</text>
+        `;
+      }
+    }
+  }
+
   function updateApparatusForGas(gasKey) {
     const gas = (typeof GAS_DATABASE !== 'undefined' && GAS_DATABASE[gasKey]) || {};
     const isHeated = !!gas.heatingRequired;
@@ -1371,15 +1735,33 @@
     if (wire) wire.style.display = isHeated ? 'inline' : 'none';
     if (tripod) tripod.style.display = isHeated ? 'inline' : 'none';
 
-    // Funnel: Cl2 uses Dropping Funnel; others use Thistle Funnel
+    // Funnel: Cl2 uses Dropping Funnel; NH3 uses dry solid mixture (no funnel); others use Thistle Funnel
     const thistle = document.getElementById('thistleFunnelGroup');
     const dropping = document.getElementById('droppingFunnelGroup');
     if (gasKey === 'Cl2') {
       if (thistle) thistle.style.display = 'none';
       if (dropping) dropping.style.display = 'inline';
+    } else if (gasKey === 'NH3') {
+      if (thistle) thistle.style.display = 'none';
+      if (dropping) dropping.style.display = 'none';
     } else {
       if (thistle) thistle.style.display = 'inline';
       if (dropping) dropping.style.display = 'none';
+    }
+
+    // NH3 is dry reaction: hide roundBottomLiquid meniscus and liquid fill
+    const rbLiquid = document.getElementById('roundBottomLiquid');
+    if (rbLiquid && rbLiquid.parentElement) {
+      rbLiquid.parentElement.style.display = (gasKey === 'NH3') ? 'none' : 'inline';
+    }
+
+    // Update solid reactant bed
+    updateSolidReactantBed(gasKey);
+
+    // Fume cupboard warning banner for toxic gases (Cl2, SO2)
+    const fumeBanner = document.getElementById('stageFumeHoodBanner');
+    if (fumeBanner) {
+      fumeBanner.style.display = (gasKey === 'Cl2' || gasKey === 'SO2') ? 'flex' : 'none';
     }
 
     // Update Left Panel preview text
@@ -1388,8 +1770,8 @@
       const titles = {
         O2: 'O₂: Catalytic Decomposition Apparatus (MnO₂ + H₂O₂)',
         CO2: 'CO₂: Carbonate-Acid Displacement (CaCO₃ + HCl)',
-        Cl2: 'Cl₂: Heated Oxidation of HCl by MnO₂',
-        NH3: 'NH₃: Heated Base-Ammonium Salt Displacement',
+        Cl2: 'Cl₂: Heated Oxidation of HCl by MnO₂ (Fume Cupboard)',
+        NH3: 'NH₃: Heated Dry Base-Ammonium Salt (Ca(OH)₂ + NH₄Cl)',
         SO2: 'SO₂: Sulphite Acid Displacement (Na₂SO₃ + H₂SO₄)',
         H2: 'H₂: Metal-Acid Displacement (Zn + HCl)'
       };
@@ -1922,7 +2304,32 @@
     }
   }
 
-  // Initialize workbench
+  function initApparatusInspectionTooltips() {
+    const tooltipEl = document.getElementById('componentSpecTooltip');
+    if (!tooltipEl) return;
+    const defaultHint = '💡 Hover over apparatus parts to inspect laboratory specifications';
+    tooltipEl.textContent = defaultHint;
+    tooltipEl.style.opacity = '0.75';
+
+    document.querySelectorAll('.apparatus-interactive-part').forEach(part => {
+      part.addEventListener('mouseenter', () => {
+        const spec = part.getAttribute('data-spec');
+        if (spec) {
+          tooltipEl.textContent = spec;
+          tooltipEl.style.opacity = '1';
+          tooltipEl.style.borderColor = 'var(--blue-accent)';
+        }
+      });
+      part.addEventListener('mouseleave', () => {
+        tooltipEl.textContent = defaultHint;
+        tooltipEl.style.opacity = '0.75';
+        tooltipEl.style.borderColor = 'var(--blue-border)';
+      });
+    });
+  }
+
+  // Initialize workbench & inspection tooltips
+  initApparatusInspectionTooltips();
   selectGas('O2');
 </script>
 </body>

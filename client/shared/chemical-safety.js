@@ -335,6 +335,21 @@ const REAGENT_SAFETY_DB = {
     ppe: ['🥽 Safety Glasses', '🥼 Lab Coat'],
     firstAid: 'Rinse eyes with water if powder causes mechanical irritation.',
     knecAdvice: 'Surface area practical: Fine powder reacts much faster than large chips due to higher exposed surface area.'
+  },
+  'Cl2': {
+    name: 'Chlorine Gas',
+    formula: 'Cl₂(g)',
+    ghs: ['toxic', 'corrosive', 'oxidizer', 'environment'],
+    pictograms: ['☠️', '☣️', '🔥', '🌊'],
+    signalWord: 'DANGER',
+    hazards: [
+      'Toxic, suffocating greenish-yellow gas with pungent, irritating bleach-like odor.',
+      'Causes severe eye damage and acute respiratory damage (pulmonary edema).',
+      'Strong oxidizing and bleaching agent.'
+    ],
+    ppe: ['🌬️ Conduct Strictly Under Fume Hood', '🥽 Chemical Splash Goggles', '🧤 Nitrile Gloves'],
+    firstAid: 'Move affected candidate to fresh air immediately. Keep at rest in half-upright position. Call emergency medical services.',
+    knecAdvice: 'In KCSE Paper 3: Bleaches moist litmus paper. Turns moist starch-iodide paper dark blue-black. Always handle in well-ventilated conditions.'
   }
 };
 
@@ -352,7 +367,7 @@ window.VLKSafety = {
       'energy': ['HCl', 'NaOH', 'CuSO4', 'Zn', 'NH4NO3'],
       'solubility': ['KNO3', 'KClO3', 'CuSO4', 'PbNO3'],
       'organic': ['Br2', 'KMnO4', 'K2Cr2O7', 'Ethanol', 'CH3COOH'],
-      'gas_prep': ['HCl', 'H2O2', 'MnO2', 'CaCO3', 'NH3'],
+      'gas_prep': ['HCl', 'H2O2', 'MnO2', 'CaCO3', 'NH3', 'Cl2', 'SO2'],
       'composite_exam': ['HCl', 'NaOH', 'KMnO4', 'BaNO32', 'AgNO3', 'Br2']
     };
     return map[labKey] || ['HCl', 'NaOH'];

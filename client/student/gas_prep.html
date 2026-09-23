@@ -23,56 +23,157 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="VirtuLab">
-<link rel="apple-touch-icon" href="../shared/apple-touch-icon.png">
-<link rel="manifest" href="../manifest.json">
+<link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../shared/style.css">
-<link rel="stylesheet" href="../shared/brilliant-theme.css">
-<link rel="stylesheet" href="../shared/tutorial-engine.css">
-<link rel="stylesheet" href="css/gas-prep.css">
-<link rel="stylesheet" href="../shared/ai-tutor.css">
-<link rel="stylesheet" href="../shared/pwa-installer.css">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/shared/brilliant-theme.css">
+<link rel="stylesheet" href="/shared/tutorial-engine.css">
+<link rel="stylesheet" href="/student/css/gas-prep.css?v=85">
+<link rel="stylesheet" href="/shared/ai-tutor.css">
+<link rel="stylesheet" href="/shared/pwa-installer.css">
 </head>
 <body>
 
-<!-- TOPBAR NAVIGATION -->
-<nav class="top-navbar">
-  <a href="home.html" class="nav-brand">
-    <span class="nav-logo-icon">VL</span>
-    <span>Gas Prep Bench</span>
-  </a>
+<!-- ══════════════════════════════════════
+     UNIFIED STICKY ACADEMIC HEADER
+══════════════════════════════════════ -->
+<header class="academic-top-header">
+  <!-- Topbar Navigation Bar -->
+  <nav class="top-navbar">
+    <a href="/student/home.html" class="nav-brand-academic" title="Back to Student Workstation">
+      <div class="vlk-brand-logo-wrap">
+        <img src="/shared/virtulab-logo.svg" alt="VirtuLab Kenya Logo" class="vlk-brand-logo-img" width="34" height="34">
+      </div>
+      <div style="display:flex; flex-direction:column;">
+        <span class="brand-title" style="font-weight:800; font-family:'Cinzel', serif; font-size:1.05rem; line-height:1.1; color:var(--heading-color);">VirtuLab</span>
+        <span class="brand-subtagline" style="font-size:0.65rem; font-family:'Newsreader', serif; font-style:italic; color:var(--cyan-accent); letter-spacing:0.01em;">Gas Preparation Bench</span>
+      </div>
+    </a>
 
-  <div class="nav-modules-pill">
-    <a href="lab.html" class="theme-btn-chip">🧪 Titration</a>
-    <a href="qualitative.html" class="theme-btn-chip">🔍 Qualitative</a>
-    <a href="organic.html" class="theme-btn-chip">⚗️ Organic</a>
-    <a href="solubility.html" class="theme-btn-chip">🌡️ Solubility</a>
-    <a href="energy.html" class="theme-btn-chip">🔥 Energy</a>
-    <a href="rates.html" class="theme-btn-chip">⚡ Rates</a>
-    <a href="gas_prep.html" class="theme-btn-chip active">💨 Gas Prep</a>
-    <a href="mock_exams.html" class="theme-btn-chip">📋 Mock Hub</a>
-  </div>
+    <!-- Desktop Workbench Switcher (Hidden on Mobile) -->
+    <div class="nav-modules-pill">
+      <a href="lab.html" class="theme-btn-chip">🧪 Titration</a>
+      <a href="qualitative.html" class="theme-btn-chip">🔍 Qualitative</a>
+      <a href="organic.html" class="theme-btn-chip">⚗️ Organic</a>
+      <a href="solubility.html" class="theme-btn-chip">🌡️ Solubility</a>
+      <a href="energy.html" class="theme-btn-chip">🔥 Energy</a>
+      <a href="rates.html" class="theme-btn-chip">⚡ Rates</a>
+      <a href="gas_prep.html" class="theme-btn-chip active">💨 Gas Prep</a>
+      <a href="mock_exams.html" class="theme-btn-chip">📋 Mock Hub</a>
+    </div>
 
-  <div class="nav-actions">
-    <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm" onclick="TutorialEngine.start('gas_prep')" style="padding:4px 10px; font-size:0.75rem;">
-      🧭 Guided Tutorial
-    </button>
-    <button class="nav-btn nav-btn-safety" onclick="window.VLKSafety && window.VLKSafety.openSDSModal('HCl')" title="View Chemical Safety & SDS Hazards">
-      ⚠️ Reagent Safety (SDS)
-    </button>
-    <button class="nav-btn" onclick="window.print()" title="Print Practical Record">
-      🖨️ Print
-    </button>
+    <div class="nav-actions">
+      <!-- Session Timer Badge -->
+      <div class="session-timer-badge" style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:6px;padding:4px 8px;font-size:0.75rem;font-weight:700;color:var(--cyan-accent);display:flex;align-items:center;gap:4px;font-family:'JetBrains Mono',monospace;">
+        <span>⏱️</span>
+        <span id="sessionTimerText">00:00</span>
+      </div>
 
-    <div class="theme-toggle-group">
-      <button class="theme-btn-chip active" data-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
-      <button class="theme-btn-chip" data-theme="light" onclick="setTheme('light')">☀️ Light</button>
-      <button class="theme-btn-chip" data-theme="green" onclick="setTheme('green')">🧪 Lab</button>
+      <!-- Guided Tutorial Button -->
+      <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm" onclick="TutorialEngine.start('gas_prep')" style="padding:4px 8px; font-size:0.75rem; white-space:nowrap;">
+        🧭 <span class="btn-text-full">Guided Tutorial</span><span class="btn-text-short">Tutorial</span>
+      </button>
+
+      <!-- Study Mode Toggle -->
+      <div class="theme-toggle-group">
+        <button type="button" class="theme-btn-chip active" id="btnModePractice" onclick="setStudyMode('practice')">🎓 <span class="btn-text-full">Practice</span></button>
+        <button type="button" class="theme-btn-chip" id="btnModeExam" onclick="setStudyMode('exam')">📝 <span class="btn-text-full">Exam</span></button>
+      </div>
+
+      <!-- Quick Reagent Safety SDS Button -->
+      <button type="button" class="nav-btn nav-btn-safety" onclick="openCurrentGasSafety()" title="View Chemical Safety Data Sheets" style="padding:4px 8px; font-size:0.75rem;">
+        ⚠️ <span class="btn-text-full">SDS Hazards</span><span class="btn-text-short">SDS</span>
+      </button>
+
+      <!-- Settings Dropdown -->
+      <div style="position:relative;">
+        <button type="button" class="nav-btn nav-btn-settings" onclick="toggleBenchSettings(event)" title="Workbench Settings & Tools" style="padding:4px 8px; font-size:0.75rem;">
+          ⚙️ <span class="btn-text-full">Settings</span><span class="btn-text-short">⚙️</span>
+        </button>
+        
+        <div id="benchSettingsDropdown" style="display:none; position:absolute; right:0; top:36px; width:250px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; box-shadow:var(--shadow-lg); z-index:100000; padding:12px; flex-direction:column; gap:10px; text-align:left;">
+          <!-- Sound Toggle -->
+          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Sound Effects</span>
+            <button type="button" id="soundToggleBtnGas" onclick="toggleSound()" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border);">🔊 Sound ON</button>
+          </div>
+
+          <!-- Scratchpad Toggle -->
+          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Scratchpad</span>
+            <button type="button" onclick="toggleScratchpad()" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border);">📝 Rough Work</button>
+          </div>
+
+          <!-- Language Selector Row -->
+          <div style="display:flex; flex-direction:column; gap:6px; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Language / Lugha</span>
+            <div class="theme-toggle-group" style="width:100%;">
+              <button class="theme-btn-chip lang-btn-chip active" style="flex:1;" data-lang="en" onclick="setLanguage('en')">🇬🇧 EN</button>
+              <button class="theme-btn-chip lang-btn-chip" style="flex:1;" data-lang="sw" onclick="setLanguage('sw')">🇰🇪 SW</button>
+            </div>
+          </div>
+
+          <!-- Theme Selector Row -->
+          <div style="display:flex; flex-direction:column; gap:6px; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Appearance Theme</span>
+            <div class="theme-toggle-group" style="width:100%;">
+              <button class="theme-btn-chip" style="flex:1;" data-theme="light" onclick="setTheme('light')">☀️ Light</button>
+              <button class="theme-btn-chip active" style="flex:1;" data-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
+              <button class="theme-btn-chip" style="flex:1;" data-theme="green" onclick="setTheme('green')">🧪 Lab</button>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <button type="button" onclick="openCurrentGasSafety()" style="background:var(--red-bg);border:1px solid var(--red-border);color:var(--red-accent);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
+              ⚠️ Reagent Safety (SDS)
+            </button>
+            <button type="button" onclick="window.print()" style="background:var(--card-bg-hover);border:1px solid var(--card-border);color:var(--text-main);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
+              🖨️ Print Practical Record
+            </button>
+            <button type="button" onclick="saveSession()" style="background:var(--blue-accent);border:none;color:#FFF;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
+              💾 Save Session
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Exit Button -->
+      <a href="/student/home.html" class="rate-nav-back-btn" style="padding:4px 8px; font-size:0.75rem; border-radius:6px; text-decoration:none;" title="Exit to Workstation">← Exit</a>
+    </div>
+  </nav>
+
+  <!-- Official KNEC Practical Ledger Sub-Header -->
+  <div class="knec-exam-subbar">
+    <div class="knec-subbar-item">
+      <span class="knec-subbar-label">Examination:</span>
+      <span class="knec-subbar-val">KCSE Chemistry Paper 3</span>
+    </div>
+    <div class="knec-subbar-item">
+      <span class="knec-subbar-label">Section:</span>
+      <span class="knec-subbar-val">Question 3 (Inorganic Gas Preparation)</span>
+    </div>
+    <div class="knec-subbar-item">
+      <span class="knec-subbar-label">Specimen:</span>
+      <span class="knec-subbar-val" id="knecSubbarGas">O₂ (Oxygen Gas)</span>
+    </div>
+    <div class="knec-subbar-item" style="margin-left:auto;">
+      <span class="knec-subbar-label">Max Score:</span>
+      <span class="knec-subbar-val" style="color:var(--cyan-accent); font-weight:800;">10.0 Marks</span>
     </div>
   </div>
-</nav>
+</header>
+
+<!-- Collapsible Scratchpad Drawer -->
+<div id="scratchpadDrawer" style="display:none;background:var(--card-bg);border:1px solid var(--cyan-accent);border-radius:12px;padding:16px;margin:16px 20px 0;box-shadow:0 4px 20px rgba(0,0,0,0.4);">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+    <div style="font-size:0.88rem;font-weight:700;color:var(--heading-color);font-family:'Cinzel', serif;">📝 Rough Work Scratchpad (KNEC Candidate Working)</div>
+    <button type="button" class="theme-btn-chip" style="padding:2px 8px;font-size:0.7rem;" onclick="toggleScratchpad()">✕ Close</button>
+  </div>
+  <textarea id="scratchpadText" placeholder="Draft your gas preparation equations, drying agent selection notes, observation inferences, and confirmatory test equations here..." style="width:100%;height:90px;background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:8px;padding:10px;color:var(--text-main);font-family:'JetBrains Mono',monospace;font-size:0.82rem;outline:none;resize:vertical;"></textarea>
+</div>
 
 <!-- MAIN WORKBENCH LAYOUT -->
 <main class="gas-workbench-layout">
@@ -90,6 +191,22 @@
       </div>
     </div>
     <span style="font-size:0.76rem; font-family:var(--font-mono); font-weight:700; background:var(--card-bg); padding:4px 10px; border-radius:6px; border:1px solid var(--card-border);" id="assignBannerDue">Active Practical Assignment</span>
+  </div>
+
+  <!-- Official KNEC Practical Examination Proctor Banner -->
+  <div id="gasExamProctorBanner" style="display:none; grid-column: 1 / -1; background:var(--red-bg); border:1px solid var(--red-border); border-radius:12px; padding:12px 18px; margin-bottom:14px; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div style="background:var(--red-accent); color:#FFF; padding:4px 8px; border-radius:6px; font-weight:800; font-size:0.72rem; font-family:var(--font-mono); letter-spacing:0.05em;">
+        🔒 KNEC EXAM MODE
+      </div>
+      <div>
+        <div style="font-size:0.95rem; font-weight:800; color:var(--heading-color); font-family:var(--font-heading);">Chemistry Paper 3 (233/3) — Question 3: Gas Preparation &amp; Qualitative Testing</div>
+        <div style="font-size:0.8rem; color:var(--text-muted);">Strict Candidate Evaluation · Immediate validation tips and answer hints locked until final submission</div>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <span style="font-size:0.76rem; font-family:var(--font-mono); color:var(--text-muted);">Timed KCSE Ledger</span>
+    </div>
   </div>
 
   <!-- LEFT COLUMN: Gas Selection & Apparatus Configuration -->
@@ -169,14 +286,31 @@
     <!-- Interactive SVG Apparatus -->
     <div class="apparatus-stage">
       <svg class="apparatus-svg" viewBox="0 0 600 380" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="gasOverWaterGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.8" />
+            <stop offset="100%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.3" />
+          </linearGradient>
+          <linearGradient id="gasDownwardGrad" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.85" />
+            <stop offset="100%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.35" />
+          </linearGradient>
+          <linearGradient id="gasUpwardGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.85" />
+            <stop offset="100%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.35" />
+          </linearGradient>
+        </defs>
+
         <!-- Workbench Tabletop -->
         <rect x="20" y="340" width="560" height="20" fill="#334155" rx="4" />
         
-        <!-- Retort Stands -->
+        <!-- Retort Stand 1 (Flask support) -->
         <rect x="90" y="80" width="8" height="260" fill="#64748B" />
         <rect x="60" y="336" width="70" height="6" fill="#475569" />
-        <rect x="420" y="80" width="8" height="260" fill="#64748B" />
-        <rect x="390" y="336" width="70" height="6" fill="#475569" />
+
+        <!-- Retort Stand 2 (Collection support) -->
+        <rect x="520" y="80" width="8" height="260" fill="#64748B" />
+        <rect x="490" y="336" width="70" height="6" fill="#475569" />
 
         <!-- Bunsen Burner & Flame -->
         <g id="bunsenGroup" style="display: none;">
@@ -197,28 +331,13 @@
         </g>
 
         <!-- Delivery Tube from Flask to Drying Bottle -->
-        <path d="M152 185 L152 160 L260 160 L260 250" fill="none" stroke="#94A3B8" stroke-width="4" stroke-linecap="round" />
+        <path d="M152 185 L152 160 L245 160 L245 260" fill="none" stroke="#94A3B8" stroke-width="4" stroke-linecap="round" />
 
         <!-- Drying Wash Bottle -->
         <g id="dryingBottle">
-          <rect x="240" y="220" width="50" height="100" rx="8" fill="rgba(255,255,255,0.15)" stroke="#94A3B8" stroke-width="3" />
-          <rect id="dryingReagentFill" x="243" y="270" width="44" height="47" rx="4" fill="#F59E0B" opacity="0.5" />
-          <text x="265" y="335" font-size="10" fill="#94A3B8" text-anchor="middle" font-family="monospace">Drying</text>
-        </g>
-
-        <!-- Delivery Tube to Collection Jar -->
-        <path d="M275 230 L275 170 L430 170 L430 220" fill="none" stroke="#94A3B8" stroke-width="4" stroke-linecap="round" />
-
-        <!-- Gas Collection Assembly -->
-        <g id="collectionGroup">
-          <!-- Over Water Trough (Default) -->
-          <g id="troughOverWater">
-            <rect x="390" y="290" width="100" height="45" rx="4" fill="#0284C7" opacity="0.35" stroke="#38BDF8" stroke-width="2" />
-            <!-- Inverted Gas Jar -->
-            <rect x="420" y="190" width="40" height="100" rx="4" fill="rgba(255,255,255,0.2)" stroke="#94A3B8" stroke-width="2.5" />
-            <!-- Gas Layer in Jar -->
-            <rect id="gasLayerJar" x="422" y="192" width="36" height="0" rx="2" fill="#10B981" opacity="0.5" />
-          </g>
+          <rect x="225" y="220" width="50" height="100" rx="8" fill="rgba(255,255,255,0.15)" stroke="#94A3B8" stroke-width="3" />
+          <rect id="dryingReagentFill" x="228" y="270" width="44" height="47" rx="4" fill="#F59E0B" opacity="0.5" />
+          <text x="250" y="335" font-size="9" fill="#94A3B8" text-anchor="middle" font-family="'JetBrains Mono', monospace">Drying Agent</text>
         </g>
 
         <!-- Animated Bubbles in Flask -->
@@ -227,6 +346,53 @@
           <circle cx="150" cy="305" r="4" fill="#FFF" class="gas-bubble-fast" />
           <circle cx="140" cy="295" r="2.5" fill="#FFF" class="gas-bubble" />
           <circle cx="155" cy="298" r="3.5" fill="#FFF" class="gas-bubble-fast" />
+        </g>
+
+        <!-- DYNAMIC GAS COLLECTION SETUPS -->
+
+        <!-- 1. Over Water Collection (Downward Displacement of Water) -->
+        <g id="setupOverWater">
+          <!-- Delivery Tube to Trough & Inverted Jar -->
+          <path d="M260 220 L260 160 L360 160 L360 322 L425 322 L425 295" fill="none" stroke="#94A3B8" stroke-width="4" stroke-linecap="round" />
+          <!-- Pneumatic Trough -->
+          <rect x="365" y="280" width="120" height="60" rx="6" fill="#0284C7" opacity="0.3" stroke="#38BDF8" stroke-width="2" />
+          <line x1="365" y1="290" x2="485" y2="290" stroke="#38BDF8" stroke-width="1.5" stroke-dasharray="4 2" />
+          <text x="425" y="335" font-size="9" fill="#67E8F9" text-anchor="middle" font-family="'JetBrains Mono', monospace">Water Trough</text>
+          <!-- Beehive Shelf Support -->
+          <rect x="405" y="308" width="40" height="28" rx="2" fill="#475569" />
+          <!-- Inverted Gas Jar -->
+          <rect x="410" y="180" width="40" height="120" rx="3" fill="rgba(255,255,255,0.18)" stroke="#94A3B8" stroke-width="2.5" />
+          <!-- Gas Collected in Inverted Jar (fills from top down) -->
+          <rect id="gasLayerOverWater" x="412" y="182" width="36" height="0" rx="2" fill="url(#gasOverWaterGrad)" />
+          <text x="430" y="172" font-size="9" fill="#94A3B8" text-anchor="middle" font-family="'JetBrains Mono', monospace">Inverted Gas Jar</text>
+        </g>
+
+        <!-- 2. Downward Delivery (Upward Displacement of Air) -->
+        <g id="setupDownwardDelivery" style="display: none;">
+          <!-- Delivery Tube extending near jar bottom -->
+          <path d="M260 220 L260 150 L430 150 L430 320" fill="none" stroke="#94A3B8" stroke-width="4" stroke-linecap="round" />
+          <!-- Upright Gas Jar -->
+          <rect x="408" y="200" width="44" height="138" rx="3" fill="rgba(255,255,255,0.18)" stroke="#94A3B8" stroke-width="2.5" />
+          <!-- Cardboard cover -->
+          <rect x="400" y="196" width="60" height="5" rx="2" fill="#78350F" stroke="#92400E" stroke-width="1" />
+          <!-- Gas layer rising from bottom of jar -->
+          <rect id="gasLayerDownward" x="410" y="336" width="40" height="0" rx="2" fill="url(#gasDownwardGrad)" />
+          <text x="430" y="188" font-size="9" fill="#94A3B8" text-anchor="middle" font-family="'JetBrains Mono', monospace">Upright Gas Jar</text>
+          <text x="430" y="355" font-size="8.5" fill="#38BDF8" text-anchor="middle" font-family="'JetBrains Mono', monospace">Downward Delivery</text>
+        </g>
+
+        <!-- 3. Upward Delivery (Downward Displacement of Air) -->
+        <g id="setupUpwardDelivery" style="display: none;">
+          <!-- Clamp Arm holding jar -->
+          <rect x="450" y="170" width="70" height="5" fill="#64748B" />
+          <!-- Delivery Tube curving upward into mouth near top -->
+          <path d="M260 220 L260 140 L370 140 L370 290 L430 290 L430 180" fill="none" stroke="#94A3B8" stroke-width="4" stroke-linecap="round" />
+          <!-- Inverted Gas Jar in Air -->
+          <rect x="410" y="160" width="44" height="125" rx="3" fill="rgba(255,255,255,0.18)" stroke="#94A3B8" stroke-width="2.5" />
+          <!-- Gas collecting at closed top downwards -->
+          <rect id="gasLayerUpward" x="412" y="162" width="40" height="0" rx="2" fill="url(#gasUpwardGrad)" />
+          <text x="432" y="152" font-size="9" fill="#94A3B8" text-anchor="middle" font-family="'JetBrains Mono', monospace">Inverted Gas Jar</text>
+          <text x="432" y="305" font-size="8.5" fill="#38BDF8" text-anchor="middle" font-family="'JetBrains Mono', monospace">Upward Delivery</text>
         </g>
       </svg>
     </div>
@@ -308,15 +474,15 @@
 
 </main>
 
-<script src="../shared/api.js"></script>
-<script src="../shared/theme.js"></script>
-<script src="../shared/audio-synth.js"></script>
-<script src="../shared/chemical-safety.js"></script>
-<script src="../shared/brilliant-ui.js"></script>
-<script src="../shared/tutorial-engine.js"></script>
-<script src="../shared/ai-tutor.js"></script>
+<script src="/shared/api.js"></script>
+<script src="/shared/theme.js"></script>
+<script src="/shared/audio-synth.js"></script>
+<script src="/shared/chemical-safety.js"></script>
+<script src="/shared/brilliant-ui.js"></script>
+<script src="/shared/tutorial-engine.js"></script>
+<script src="/shared/ai-tutor.js"></script>
 <script src="/shared/gas-prep-bench-core.js"></script>
-<script src="js/gas-prep-engine.js"></script>
+<script src="/student/js/gas-prep-engine.js?v=85"></script>
 
 <script>
   const urlParams = new URLSearchParams(window.location.search);
@@ -357,6 +523,161 @@
     });
   }
 
+  // Active Session Stopwatch Timer
+  let sessionSeconds = 0;
+  let sessionTimerInterval = setInterval(() => {
+    sessionSeconds++;
+    const m = Math.floor(sessionSeconds / 60);
+    const s = sessionSeconds % 60;
+    const timerEl = document.getElementById('sessionTimerText');
+    if (timerEl) {
+      timerEl.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+  }, 1000);
+
+  function setStudyMode(mode) {
+    engine.setStudyMode(mode);
+    const btnPrac = document.getElementById('btnModePractice');
+    const btnExam = document.getElementById('btnModeExam');
+    const proctor = document.getElementById('gasExamProctorBanner');
+    if (btnPrac && btnExam) {
+      btnPrac.classList.toggle('active', mode === 'practice');
+      btnExam.classList.toggle('active', mode === 'exam');
+    }
+    if (proctor) {
+      proctor.style.display = mode === 'exam' ? 'flex' : 'none';
+    }
+    if (mode === 'exam') {
+      const dryingFb = document.getElementById('dryingFeedback');
+      const collFb = document.getElementById('collectionFeedback');
+      if (dryingFb) dryingFb.innerText = 'Feedback locked during exam mode.';
+      if (collFb) collFb.innerText = 'Feedback locked during exam mode.';
+    } else {
+      onDryingChange(document.getElementById('dryingSelect').value);
+      onCollectionChange(document.getElementById('collectionSelect').value);
+    }
+  }
+
+  function toggleBenchSettings(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('benchSettingsDropdown');
+    if (!menu) return;
+    menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+  }
+
+  document.addEventListener('click', (e) => {
+    const menu = document.getElementById('benchSettingsDropdown');
+    if (menu && menu.style.display === 'flex') {
+      if (!e.target.closest('#benchSettingsDropdown') && !e.target.closest('.nav-btn-settings')) {
+        menu.style.display = 'none';
+      }
+    }
+  });
+
+  function toggleScratchpad() {
+    const drawer = document.getElementById('scratchpadDrawer');
+    if (!drawer) return;
+    const isOpen = drawer.style.display !== 'none';
+    drawer.style.display = isOpen ? 'none' : 'block';
+    if (!isOpen) {
+      const saved = localStorage.getItem('vlk_gas_scratchpad') || '';
+      const txt = document.getElementById('scratchpadText');
+      if (txt && !txt.value) txt.value = saved;
+    }
+  }
+
+  const scratchpadEl = document.getElementById('scratchpadText');
+  if (scratchpadEl) {
+    const saved = localStorage.getItem('vlk_gas_scratchpad');
+    if (saved) scratchpadEl.value = saved;
+    scratchpadEl.addEventListener('input', (e) => {
+      localStorage.setItem('vlk_gas_scratchpad', e.target.value);
+    });
+  }
+
+  function toggleSound() {
+    let isEnabled = true;
+    if (window.GasPrepBenchCore && typeof GasPrepBenchCore.isSoundEnabled === 'function') {
+      isEnabled = !GasPrepBenchCore.isSoundEnabled();
+      GasPrepBenchCore.setSoundEnabled(isEnabled);
+    } else {
+      isEnabled = !window._vlkGasSound;
+      window._vlkGasSound = isEnabled;
+    }
+    const btn = document.getElementById('soundToggleBtnGas');
+    if (btn) {
+      btn.textContent = isEnabled ? '🔊 Sound ON' : '🔇 Sound OFF';
+    }
+  }
+
+  function setLanguage(lang) {
+    document.querySelectorAll('.lang-btn-chip').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+    });
+    localStorage.setItem('vlk_lang', lang);
+    if (window.TutorialEngine && typeof TutorialEngine.setLanguage === 'function') {
+      TutorialEngine.setLanguage(lang);
+    }
+  }
+
+  function openCurrentGasSafety() {
+    const gasKey = engine.currentGasKey || 'O2';
+    const reagentMap = {
+      'O2': 'H2O2',
+      'CO2': 'CaCO3',
+      'Cl2': 'Cl2',
+      'NH3': 'NH3',
+      'SO2': 'SO2',
+      'H2': 'Zn'
+    };
+    const reagent = reagentMap[gasKey] || 'HCl';
+    if (window.VLKSafety && typeof VLKSafety.openSDSModal === 'function') {
+      VLKSafety.openSDSModal(reagent);
+    } else {
+      alert(`Safety Data for ${reagent} is not available.`);
+    }
+  }
+
+  function updateCollectionApparatus(methodKey, gasKey, isCollected) {
+    const setupOver = document.getElementById('setupOverWater');
+    const setupDown = document.getElementById('setupDownwardDelivery');
+    const setupUp = document.getElementById('setupUpwardDelivery');
+    
+    if (setupOver) setupOver.style.display = methodKey === 'overWater' ? 'inline' : 'none';
+    if (setupDown) setupDown.style.display = methodKey === 'downwardDelivery' ? 'inline' : 'none';
+    if (setupUp) setupUp.style.display = methodKey === 'upwardDelivery' ? 'inline' : 'none';
+
+    // Set gas color in SVG gradient variables
+    let gasColor = '#38BDF8';
+    if (gasKey === 'Cl2') {
+      gasColor = '#84CC16'; // characteristic greenish-yellow
+    } else if (gasKey === 'SO2') {
+      gasColor = '#FDE047'; // pale yellow
+    }
+    document.documentElement.style.setProperty('--gas-fill-color', gasColor);
+
+    // Update gas layer height if collected
+    const layerOver = document.getElementById('gasLayerOverWater');
+    const layerDown = document.getElementById('gasLayerDownward');
+    const layerUp = document.getElementById('gasLayerUpward');
+
+    if (isCollected) {
+      if (layerOver) layerOver.setAttribute('height', '95');
+      if (layerDown) {
+        layerDown.setAttribute('y', '225');
+        layerDown.setAttribute('height', '110');
+      }
+      if (layerUp) layerUp.setAttribute('height', '100');
+    } else {
+      if (layerOver) layerOver.setAttribute('height', '0');
+      if (layerDown) {
+        layerDown.setAttribute('y', '336');
+        layerDown.setAttribute('height', '0');
+      }
+      if (layerUp) layerUp.setAttribute('height', '0');
+    }
+  }
+
   function selectGas(gasKey) {
     document.querySelectorAll('.gas-select-chip').forEach(btn => {
       btn.classList.toggle('active', btn.getAttribute('data-gas') === gasKey);
@@ -368,10 +689,14 @@
     document.getElementById('densityText').innerText = gas.densityVsAir;
     document.getElementById('solubilityText').innerText = gas.solubilityInWater;
     
+    const subbarEl = document.getElementById('knecSubbarGas');
+    if (subbarEl) subbarEl.innerText = `${gas.formula} (${gas.name})`;
+
     document.getElementById('dryingSelect').value = engine.selectedDrying;
     document.getElementById('collectionSelect').value = engine.selectedCollection;
     
     updateHeatingUI();
+    updateCollectionApparatus(engine.selectedCollection, gasKey, false);
     resetObservationUI();
     renderQuestions();
     updateScoreUI();
@@ -380,14 +705,21 @@
   function onDryingChange(val) {
     engine.setDryingAgent(val);
     const feedback = engine.validateConfiguration().dryingExpl;
-    document.getElementById('dryingFeedback').innerText = feedback;
+    const dryingFb = document.getElementById('dryingFeedback');
+    if (dryingFb) {
+      dryingFb.innerText = engine.studyMode === 'exam' ? 'Feedback locked during exam mode.' : feedback;
+    }
     resetObservationUI();
   }
 
   function onCollectionChange(val) {
     engine.setCollectionMethod(val);
+    updateCollectionApparatus(val, engine.currentGasKey, engine.gasGenerated);
     const feedback = engine.validateConfiguration().collectionExpl;
-    document.getElementById('collectionFeedback').innerText = feedback;
+    const collFb = document.getElementById('collectionFeedback');
+    if (collFb) {
+      collFb.innerText = engine.studyMode === 'exam' ? 'Feedback locked during exam mode.' : feedback;
+    }
     resetObservationUI();
   }
 
@@ -413,7 +745,8 @@
   function generateGas() {
     const res = engine.runReaction();
     document.getElementById('bubbleLayer').style.display = 'block';
-    document.getElementById('gasLayerJar').setAttribute('height', '80');
+    updateCollectionApparatus(engine.selectedCollection, engine.currentGasKey, true);
+
     document.getElementById('reactionStatusBadge').innerText = 'Gas Collected';
     document.getElementById('reactionStatusBadge').style.background = 'var(--green-bg)';
     document.getElementById('reactionStatusBadge').style.color = 'var(--green-accent)';
@@ -421,7 +754,9 @@
     document.getElementById('telemetryBanner').innerHTML = 
       `<b>Evolving:</b> ${res.gas.formula} (${res.gas.name}) — <i>${res.validation.isFullyCorrect ? 'Optimal setup verified.' : 'Setup has chemical discrepancies!'}</i>`;
 
-    if (window.AudioSynth) {
+    if (window.GasPrepBenchCore && typeof GasPrepBenchCore.playGasBubbling === 'function') {
+      GasPrepBenchCore.playGasBubbling();
+    } else if (window.AudioSynth) {
       AudioSynth.playTone(440, 0.2);
     }
     updateScoreUI();
@@ -445,7 +780,15 @@
     entry.innerHTML = `<b>[${obs.timestamp}]</b> ${obs.result}<br><span style="color:var(--text-muted);font-size:0.75rem;">Inference: ${obs.inference}</span>`;
     feed.prepend(entry);
 
-    if (window.AudioSynth) {
+    if (engine.currentGasKey === 'H2' && testKey === 'burningSplint') {
+      if (window.GasPrepBenchCore && typeof GasPrepBenchCore.playSqueakyPop === 'function') {
+        GasPrepBenchCore.playSqueakyPop();
+      }
+    } else if (engine.currentGasKey === 'O2' && testKey === 'glowingSplint') {
+      if (window.GasPrepBenchCore && typeof GasPrepBenchCore.playFlameWhoosh === 'function') {
+        GasPrepBenchCore.playFlameWhoosh();
+      }
+    } else if (window.AudioSynth) {
       AudioSynth.playTone(obs.status === 'success' ? 660 : 330, 0.15);
     }
 
@@ -487,7 +830,7 @@
 
   function resetObservationUI() {
     document.getElementById('bubbleLayer').style.display = 'none';
-    document.getElementById('gasLayerJar').setAttribute('height', '0');
+    updateCollectionApparatus(engine.selectedCollection, engine.currentGasKey, false);
     document.getElementById('reactionStatusBadge').innerText = 'Ready';
     document.getElementById('reactionStatusBadge').style.background = 'var(--blue-bg)';
     document.getElementById('reactionStatusBadge').style.color = 'var(--blue-accent)';

@@ -518,11 +518,17 @@ class GasPrepEngine {
     this.heatingEnabled = false;
     this.isReacting = false;
     this.gasGenerated = false;
+    this.studyMode = 'practice'; // 'practice' or 'exam'
     this.startTime = Date.now();
     this.testObservations = {};
     this.userAnswers = {};
     this.testsPerformed = 0;
     this.testsCorrect = 0;
+  }
+
+  setStudyMode(mode) {
+    this.studyMode = mode === 'exam' ? 'exam' : 'practice';
+    return this.studyMode;
   }
 
   selectGas(gasKey) {
@@ -592,6 +598,16 @@ class GasPrepEngine {
     const validation = this.validateConfiguration();
     this.isReacting = true;
     this.gasGenerated = true;
+
+    // Trigger procedural bubbling sound
+    if (typeof window !== 'undefined') {
+      if (window.GasPrepBenchCore && window.GasPrepBenchCore.playGasBubbling) {
+        window.GasPrepBenchCore.playGasBubbling();
+      } else if (window.AudioSynth) {
+        window.AudioSynth.playTone(440, 0.2);
+      }
+    }
+
     return {
       success: true,
       validation,
@@ -624,6 +640,17 @@ class GasPrepEngine {
       inference: testDef.inference,
       status: testDef.status
     };
+
+    // Realistic procedural audio synthesis
+    if (typeof window !== 'undefined') {
+      if (testKey === 'burningSplint' && this.currentGasKey === 'H2' && window.GasPrepBenchCore && window.GasPrepBenchCore.playSqueakyPop) {
+        window.GasPrepBenchCore.playSqueakyPop();
+      } else if (testKey === 'glowingSplint' && this.currentGasKey === 'O2' && window.GasPrepBenchCore && window.GasPrepBenchCore.playFlameWhoosh) {
+        window.GasPrepBenchCore.playFlameWhoosh();
+      } else if (window.AudioSynth) {
+        window.AudioSynth.playTone(testDef.status === 'success' ? 660 : 330, 0.15);
+      }
+    }
 
     return {
       success: true,
@@ -670,7 +697,7 @@ class GasPrepEngine {
     };
   }
 
-  buildSessionPayload(assignmentId = null, mode = 'selfPaced') {
+  buildSessionPayload(assignmentId = null, mode = null) {
     const rubric = this.calculateRubric();
     const validation = this.validateConfiguration();
 
@@ -690,7 +717,7 @@ class GasPrepEngine {
       total_score: rubric.totalScore,
       rubric_breakdown: rubric,
       correct: rubric.isPassing,
-      mode: mode,
+      mode: mode || this.studyMode || 'practice',
       duration_seconds: rubric.durationSeconds
     };
   }

@@ -1372,7 +1372,7 @@
 
   // 3. Decolorization Reagents (Bromine Water, Acidified KMnO₄, Acidified K₂Cr₂O₇)
   function renderDecolorizationSvg(options = {}) {
-    const { sampleKey = 'org_alkene', testType = 'bromine', performed = false, tubeId = 'dec_1' } = options;
+    const { sampleKey = 'org_alkene', testType = 'bromine', performed = false, isAdding = false, tubeId = 'dec_1' } = options;
     const sample = resolveSample(sampleKey);
 
     let liquidColor = 'rgba(56, 189, 248, 0.28)';
@@ -1479,12 +1479,14 @@
         ${schlierenWaves}
 
         <!-- Precision Dropper Pipette -->
-        <g style="transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); transform: translate(0px, ${performed ? '6px' : '0px'});">
-          <ellipse cx="80" cy="8" rx="8.5" ry="6.5" fill="url(#dropperBulb_${tubeId})"/>
+        <g style="transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); transform: translate(0px, ${performed || isAdding ? '6px' : '0px'});">
+          <ellipse cx="80" cy="8" rx="${isAdding ? '7.5' : '8.5'}" ry="${isAdding ? '5.5' : '6.5'}" fill="url(#dropperBulb_${tubeId})"/>
           <rect x="78" y="14" width="4" height="20" fill="rgba(255,255,255,0.7)" stroke="#64748B" stroke-width="0.7"/>
           <path d="M 78,34 L 82,34 L 81,42 L 79,42 Z" fill="${dropperColor}" stroke="#991B1B" stroke-width="0.6"/>
-          ${!performed ? `
-            <!-- Falling Droplet -->
+          <!-- Poised Meniscus at Dropper Tip -->
+          <ellipse cx="80" cy="42.5" rx="1.6" ry="1.0" fill="${dropperColor}"/>
+          ${isAdding ? `
+            <!-- Falling Droplet during Reagent Dispensing -->
             <ellipse cx="80" cy="54" rx="2.5" ry="3.8" fill="${dropperColor}" class="anim-droplet"/>
           ` : ''}
         </g>
@@ -1682,7 +1684,7 @@
 
   // 6. Water Solubility & Miscibility Apparatus
   function renderSolubilitySvg(options = {}) {
-    const { sampleKey = 'org_alkene', performed = false, tubeId = 'sol_1' } = options;
+    const { sampleKey = 'org_alkene', performed = false, isAdding = false, tubeId = 'sol_1' } = options;
     const sample = resolveSample(sampleKey);
     const isMiscible = sample.solubility ? Boolean(sample.solubility.isMiscible) : (sample.fgKey === 'alkanol' || (sample.fgKey === 'alkanoic_acid' && sample.compoundKey !== 'benzoic_acid'));
     const isSolid = sample.compoundKey === 'benzoic_acid' || sample.key === 'org_benzoic_acid' || (sample.label && sample.label.includes('Solid'));
@@ -1774,11 +1776,14 @@
         ${fluidMarkup}
 
         <!-- Water Dropper Pipette -->
-        <g style="transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); transform: translate(0px, ${performed ? '-30px' : '0px'}); opacity: ${performed ? '0' : '1'};">
-          <ellipse cx="80" cy="8" rx="8.5" ry="6.5" fill="url(#dropperBulb_${tubeId})"/>
+        <g style="transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); transform: translate(0px, ${performed ? '-30px' : (isAdding ? '6px' : '0px')}); opacity: ${performed ? '0' : '1'};">
+          <ellipse cx="80" cy="8" rx="${isAdding ? '7.5' : '8.5'}" ry="${isAdding ? '5.5' : '6.5'}" fill="url(#dropperBulb_${tubeId})"/>
           <rect x="78" y="14" width="4" height="20" fill="rgba(255,255,255,0.7)" stroke="#64748B" stroke-width="0.7"/>
           <path d="M 78,34 L 82,34 L 81,42 L 79,42 Z" fill="rgba(255,255,255,0.85)" stroke="#38BDF8" stroke-width="0.6"/>
-          ${!performed ? `
+          <!-- Poised Meniscus at Dropper Tip -->
+          <ellipse cx="80" cy="42.5" rx="1.6" ry="1.0" fill="#38BDF8"/>
+          ${isAdding ? `
+            <!-- Falling Droplet during Water Addition -->
             <ellipse cx="80" cy="54" rx="2.5" ry="3.8" fill="#38BDF8" class="anim-droplet"/>
           ` : ''}
         </g>
@@ -1799,6 +1804,7 @@
       testId = '',
       sampleKey = 'org_alkene',
       performed = false,
+      isAdding = false,
       prompt = '',
       tubeId = `org_${Math.random().toString(36).substring(2, 7)}`
     } = options;
@@ -1808,13 +1814,13 @@
 
     // 1. Specific chemical reagents in prompt ALWAYS take highest priority over generic procedures like "water bath"
     if (pStr.includes('dichromate') || pStr.includes('cr2o7') || pStr.includes('k2cr2o7')) {
-      return renderDecolorizationSvg({ sampleKey, testType: 'dichromate', performed, tubeId });
+      return renderDecolorizationSvg({ sampleKey, testType: 'dichromate', performed, isAdding, tubeId });
     }
     if (pStr.includes('kmno4') || pStr.includes('manganate') || pStr.includes('permanganate')) {
-      return renderDecolorizationSvg({ sampleKey, testType: 'kmno4', performed, tubeId });
+      return renderDecolorizationSvg({ sampleKey, testType: 'kmno4', performed, isAdding, tubeId });
     }
     if (pStr.includes('bromine') || pStr.includes('br2')) {
-      return renderDecolorizationSvg({ sampleKey, testType: 'bromine', performed, tubeId });
+      return renderDecolorizationSvg({ sampleKey, testType: 'bromine', performed, isAdding, tubeId });
     }
     if (pStr.includes('nahco3') || pStr.includes('na2co3') || pStr.includes('carbonate') || pStr.includes('effervesc')) {
       return renderEffervescenceSvg({ sampleKey, performed, tubeId });
@@ -1830,18 +1836,18 @@
       return renderEsterificationSvg({ sampleKey, performed, tubeId });
     }
     if ((pStr.includes('solub') || pStr.includes('miscib') || pStr.includes('water')) && !pStr.includes('water bath')) {
-      return renderSolubilitySvg({ sampleKey, performed, tubeId });
+      return renderSolubilitySvg({ sampleKey, performed, isAdding, tubeId });
     }
 
     // 2. Fallback to explicit testId when prompt is generic, unspecific, or empty
     if (tId.includes('dichromate') || tId.includes('cr2o7')) {
-      return renderDecolorizationSvg({ sampleKey, testType: 'dichromate', performed, tubeId });
+      return renderDecolorizationSvg({ sampleKey, testType: 'dichromate', performed, isAdding, tubeId });
     }
     if (tId.includes('kmno4') || tId.includes('manganate') || tId.includes('permanganate')) {
-      return renderDecolorizationSvg({ sampleKey, testType: 'kmno4', performed, tubeId });
+      return renderDecolorizationSvg({ sampleKey, testType: 'kmno4', performed, isAdding, tubeId });
     }
     if (tId.includes('bromine') || tId.includes('br2')) {
-      return renderDecolorizationSvg({ sampleKey, testType: 'bromine', performed, tubeId });
+      return renderDecolorizationSvg({ sampleKey, testType: 'bromine', performed, isAdding, tubeId });
     }
     if (tId.includes('nahco3') || tId.includes('carbonate') || tId.includes('effervesc')) {
       return renderEffervescenceSvg({ sampleKey, performed, tubeId });
@@ -1856,11 +1862,11 @@
       return renderEsterificationSvg({ sampleKey, performed, tubeId });
     }
     if (tId.includes('solub') || tId.includes('miscib')) {
-      return renderSolubilitySvg({ sampleKey, performed, tubeId });
+      return renderSolubilitySvg({ sampleKey, performed, isAdding, tubeId });
     }
 
     // Default fallback: Decolorization / generic organic tube
-    return renderDecolorizationSvg({ sampleKey, testType: 'generic', performed, tubeId });
+    return renderDecolorizationSvg({ sampleKey, testType: 'generic', performed, isAdding, tubeId });
   }
 
   // ── 4. Reaction State & Multi-Stage Action Button Resolver ─────

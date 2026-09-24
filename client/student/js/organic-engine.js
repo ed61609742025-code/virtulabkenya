@@ -522,6 +522,7 @@ if (typeof window === 'undefined') {
 
   function getOrganicVisual(test, st) {
     const performed = Boolean(st && st.performed);
+    const isAdding = Boolean(st && st.isAdding);
     const testKey = test.key;
 
     if (window.OrganicBenchCore && typeof window.OrganicBenchCore.renderApparatusSvg === 'function') {
@@ -529,6 +530,7 @@ if (typeof window === 'undefined') {
         testId: testKey,
         sampleKey: currentSampleKey,
         performed,
+        isAdding,
         prompt: test.procedure || test.prompt || test.label || test.name || test.title || test.desc || '',
         tubeId: `org_stand_${testKey}`
       });
@@ -596,11 +598,12 @@ if (typeof window === 'undefined') {
         <line x1="65" y1="32" x2="65" y2="112" stroke="#FFFFFF" stroke-width="0.8" stroke-linecap="round" opacity="0.35"/>
 
         <!-- Water Dropper Pipette -->
-        <g style="transition: transform 0.6s ease; transform: translate(0px, ${performed ? '4px' : '0px'});">
-          <ellipse cx="50" cy="6" rx="6.5" ry="5" fill="url(#dropperTeat_${testKey})"/>
+        <g style="transition: transform 0.6s ease; transform: translate(0px, ${performed ? '-25px' : (isAdding ? '4px' : '0px')}); opacity: ${performed ? '0' : '1'};">
+          <ellipse cx="50" cy="6" rx="${isAdding ? '5.5' : '6.5'}" ry="${isAdding ? '4' : '5'}" fill="url(#dropperTeat_${testKey})"/>
           <rect x="48.5" y="10" width="3" height="14" fill="rgba(255,255,255,0.7)" stroke="#38BDF8" stroke-width="0.6"/>
           <path d="M 48.5,24 L 51.5,24 L 50.8,30 L 49.2,30 Z" fill="rgba(255,255,255,0.85)" stroke="#38BDF8" stroke-width="0.6"/>
-          ${!performed ? '<ellipse cx="50" cy="38" rx="2.2" ry="3.2" fill="#38BDF8" class="anim-droplet"/>' : ''}
+          <ellipse cx="50" cy="30.5" rx="1.2" ry="0.8" fill="#38BDF8"/>
+          ${isAdding ? '<ellipse cx="50" cy="38" rx="2.2" ry="3.2" fill="#38BDF8" class="anim-droplet"/>' : ''}
         </g>
         <text x="50" y="148" font-size="8.5" font-weight="700" fill="var(--text-muted)" text-anchor="middle">Water Immersion</text>
       </svg>`;
@@ -700,11 +703,12 @@ if (typeof window === 'undefined') {
         <line x1="65" y1="32" x2="65" y2="112" stroke="#FFFFFF" stroke-width="0.8" stroke-linecap="round" opacity="0.35"/>
 
         <!-- Red Bromine Dropper Assembly -->
-        <g style="transition: transform 0.6s ease; transform: translate(0px, ${performed ? '4px' : '0px'});">
-          <ellipse cx="50" cy="6" rx="6.5" ry="5" fill="url(#dropperTeat_${testKey})"/>
+        <g style="transition: transform 0.6s ease; transform: translate(0px, ${performed || isAdding ? '4px' : '0px'});">
+          <ellipse cx="50" cy="6" rx="${isAdding ? '5.5' : '6.5'}" ry="${isAdding ? '4' : '5'}" fill="url(#dropperTeat_${testKey})"/>
           <rect x="48.5" y="10" width="3" height="14" fill="rgba(255,255,255,0.7)" stroke="#EA580C" stroke-width="0.6"/>
           <path d="M 48.5,24 L 51.5,24 L 50.8,30 L 49.2,30 Z" fill="#DC2626" stroke="#B91C1C" stroke-width="0.6"/>
-          ${!performed ? '<ellipse cx="50" cy="38" rx="2.4" ry="3.5" fill="#DC2626" class="anim-droplet"/>' : ''}
+          <ellipse cx="50" cy="30.5" rx="1.2" ry="0.8" fill="#DC2626"/>
+          ${isAdding ? '<ellipse cx="50" cy="38" rx="2.4" ry="3.5" fill="#DC2626" class="anim-droplet"/>' : ''}
         </g>
         <text x="50" y="148" font-size="8.5" font-weight="700" fill="var(--text-muted)" text-anchor="middle">Bromine Tube</text>
       </svg>`;
@@ -1057,25 +1061,49 @@ if (typeof window === 'undefined') {
     const expected = sample[testKey];
     if (!expected) return;
 
+    const isDropperTest = (testKey === 'bromine' || testKey === 'dichromate' || testKey === 'solubility');
+
     if (testKey === 'ignition') playAudioTone('flame');
     else if (testKey === 'carbonate') playAudioTone('bubble');
-    else if (testKey === 'bromine' || testKey === 'dichromate') playAudioTone('drip');
+    else if (testKey === 'bromine' || testKey === 'dichromate' || testKey === 'solubility') playAudioTone('drip');
     else playAudioTone('clink');
 
-    testStates[testKey] = {
-      performed: true,
-      statusLabel: expected.status || 'Test Completed',
-      obsText: (testStates[testKey] && testStates[testKey].obsText) || '',
-      infText: (testStates[testKey] && testStates[testKey].infText) || ''
-    };
+    if (isDropperTest) {
+      testStates[testKey] = {
+        isAdding: true,
+        performed: false,
+        statusLabel: 'Dispensing Reagent...',
+        obsText: (testStates[testKey] && testStates[testKey].obsText) || '',
+        infText: (testStates[testKey] && testStates[testKey].infText) || ''
+      };
+      renderGrid();
 
-    renderGrid();
-    updateProgress();
+      setTimeout(() => {
+        if (testStates[testKey]) {
+          testStates[testKey].isAdding = false;
+          testStates[testKey].performed = true;
+          testStates[testKey].statusLabel = expected.status || 'Test Completed';
+          renderGrid();
+          updateProgress();
+        }
+      }, 750);
+    } else {
+      testStates[testKey] = {
+        isAdding: false,
+        performed: true,
+        statusLabel: expected.status || 'Test Completed',
+        obsText: (testStates[testKey] && testStates[testKey].obsText) || '',
+        infText: (testStates[testKey] && testStates[testKey].infText) || ''
+      };
+      renderGrid();
+      updateProgress();
+    }
   };
 
   window.redoTest = function(testKey) {
     playAudioTone('clink');
     if (testStates[testKey]) {
+      testStates[testKey].isAdding = false;
       testStates[testKey].performed = false;
       testStates[testKey].statusLabel = 'Awaiting Test';
     }

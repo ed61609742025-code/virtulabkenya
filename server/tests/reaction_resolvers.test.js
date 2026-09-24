@@ -665,6 +665,44 @@ describe('Organic Bench Core (Carbon Compound Reactions)', () => {
       assert.ok(!svg.includes('Ester Aroma'), 'Must NOT display Sweet Fruity Ester Aroma badge');
       assert.ok(!svg.includes('Water Bath Esterification'), 'Must NOT display Water Bath Esterification label');
     });
+
+    it('REGRESSION: Droppers must NOT constantly drop droplets when idle/unperformed', () => {
+      // 1. Bromine test unperformed
+      const brIdleSvg = OrganicBenchCore.renderApparatusSvg({
+        sampleKey: 'org_alkene',
+        testId: 'bromine',
+        performed: false,
+        isAdding: false
+      });
+      assert.ok(!brIdleSvg.includes('anim-droplet'), 'Bromine test idle apparatus must NOT have anim-droplet');
+
+      // 2. Dichromate test unperformed
+      const dichroIdleSvg = OrganicBenchCore.renderApparatusSvg({
+        sampleKey: 'org_alcohol',
+        testId: 'dichromate',
+        performed: false,
+        isAdding: false
+      });
+      assert.ok(!dichroIdleSvg.includes('anim-droplet'), 'Dichromate test idle apparatus must NOT have anim-droplet');
+
+      // 3. Water Solubility test unperformed
+      const solIdleSvg = OrganicBenchCore.renderApparatusSvg({
+        sampleKey: 'org_alkene',
+        testId: 'solubility',
+        performed: false,
+        isAdding: false
+      });
+      assert.ok(!solIdleSvg.includes('anim-droplet'), 'Solubility test idle apparatus must NOT have anim-droplet');
+
+      // 4. Dispensing active state (isAdding: true) MUST render droplet
+      const brAddingSvg = OrganicBenchCore.renderApparatusSvg({
+        sampleKey: 'org_alkene',
+        testId: 'bromine',
+        performed: false,
+        isAdding: true
+      });
+      assert.ok(brAddingSvg.includes('anim-droplet'), 'Dispensing state must render falling droplet');
+    });
   });
 
   describe('Unbounded Dynamic Simulation Engine — Extended Inorganic Registries & First-Principles Synthesis', () => {

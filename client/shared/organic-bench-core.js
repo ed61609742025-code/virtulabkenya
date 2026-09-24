@@ -1806,53 +1806,54 @@
     const tId = String(testId).toLowerCase();
     const pStr = String(prompt).toLowerCase();
 
-    // 1. Specific chemical procedure described in prompt takes priority (e.g. KNEC past exam prompts with generic test IDs)
-    if (pStr.includes('ester') || pStr.includes('fruity') || pStr.includes('water bath') || (pStr.includes('ethanoic acid') && pStr.includes('h2so4'))) {
-      return renderEsterificationSvg({ sampleKey, performed, tubeId });
-    }
-    if (pStr.includes('bromine') || pStr.includes('br2')) {
-      return renderDecolorizationSvg({ sampleKey, testType: 'bromine', performed, tubeId });
-    }
-    if (pStr.includes('dichromate') || pStr.includes('cr2o7')) {
+    // 1. Specific chemical reagents in prompt ALWAYS take highest priority over generic procedures like "water bath"
+    if (pStr.includes('dichromate') || pStr.includes('cr2o7') || pStr.includes('k2cr2o7')) {
       return renderDecolorizationSvg({ sampleKey, testType: 'dichromate', performed, tubeId });
     }
     if (pStr.includes('kmno4') || pStr.includes('manganate') || pStr.includes('permanganate')) {
       return renderDecolorizationSvg({ sampleKey, testType: 'kmno4', performed, tubeId });
     }
-    if (pStr.includes('nahco3') || pStr.includes('carbonate') || pStr.includes('effervesc')) {
+    if (pStr.includes('bromine') || pStr.includes('br2')) {
+      return renderDecolorizationSvg({ sampleKey, testType: 'bromine', performed, tubeId });
+    }
+    if (pStr.includes('nahco3') || pStr.includes('na2co3') || pStr.includes('carbonate') || pStr.includes('effervesc')) {
       return renderEffervescenceSvg({ sampleKey, performed, tubeId });
     }
-    if (pStr.includes('litmus') || pStr.includes('ph')) {
+    if (pStr.includes('litmus') || pStr.includes('ph paper') || pStr.includes('universal indicator')) {
       return renderLitmusSvg({ sampleKey, performed, tubeId });
     }
-    if (pStr.includes('ignit') || pStr.includes('flame') || (pStr.includes('spatula') && (pStr.includes('flame') || pStr.includes('burn') || pStr.includes('heat') || pStr.includes('ignit'))) || pStr.includes('burn')) {
+    if (pStr.includes('ignit') || (pStr.includes('spatula') && (pStr.includes('flame') || pStr.includes('burn') || pStr.includes('heat') || pStr.includes('ignit'))) || pStr.includes('burn')) {
       return renderIgnitionSvg({ sampleKey, performed, tubeId });
+    }
+    // Esterification: explicit ester/fruity keywords, OR ethanoic acid + H2SO4, OR a water bath specifically for ester/odor testing
+    if (pStr.includes('ester') || pStr.includes('fruity') || (pStr.includes('ethanoic acid') && pStr.includes('h2so4')) || (pStr.includes('water bath') && (pStr.includes('smell') || pStr.includes('odor') || pStr.includes('odour') || pStr.includes('ester') || pStr.includes('aroma')))) {
+      return renderEsterificationSvg({ sampleKey, performed, tubeId });
     }
     if ((pStr.includes('solub') || pStr.includes('miscib') || pStr.includes('water')) && !pStr.includes('water bath')) {
       return renderSolubilitySvg({ sampleKey, performed, tubeId });
     }
 
     // 2. Fallback to explicit testId when prompt is generic, unspecific, or empty
-    if (tId.includes('ester') || tId.includes('fruity')) {
-      return renderEsterificationSvg({ sampleKey, performed, tubeId });
-    }
-    if (tId.includes('ignit') || tId.includes('flame') || tId.includes('burn')) {
-      return renderIgnitionSvg({ sampleKey, performed, tubeId });
-    }
-    if (tId.includes('litmus') || tId.includes('ph')) {
-      return renderLitmusSvg({ sampleKey, performed, tubeId });
-    }
-    if (tId.includes('bromine') || tId.includes('br2')) {
-      return renderDecolorizationSvg({ sampleKey, testType: 'bromine', performed, tubeId });
-    }
     if (tId.includes('dichromate') || tId.includes('cr2o7')) {
       return renderDecolorizationSvg({ sampleKey, testType: 'dichromate', performed, tubeId });
     }
     if (tId.includes('kmno4') || tId.includes('manganate') || tId.includes('permanganate')) {
       return renderDecolorizationSvg({ sampleKey, testType: 'kmno4', performed, tubeId });
     }
+    if (tId.includes('bromine') || tId.includes('br2')) {
+      return renderDecolorizationSvg({ sampleKey, testType: 'bromine', performed, tubeId });
+    }
     if (tId.includes('nahco3') || tId.includes('carbonate') || tId.includes('effervesc')) {
       return renderEffervescenceSvg({ sampleKey, performed, tubeId });
+    }
+    if (tId.includes('litmus') || tId.includes('ph')) {
+      return renderLitmusSvg({ sampleKey, performed, tubeId });
+    }
+    if (tId.includes('ignit') || tId.includes('flame') || tId.includes('burn')) {
+      return renderIgnitionSvg({ sampleKey, performed, tubeId });
+    }
+    if (tId.includes('ester') || tId.includes('fruity')) {
+      return renderEsterificationSvg({ sampleKey, performed, tubeId });
     }
     if (tId.includes('solub') || tId.includes('miscib')) {
       return renderSolubilitySvg({ sampleKey, performed, tubeId });

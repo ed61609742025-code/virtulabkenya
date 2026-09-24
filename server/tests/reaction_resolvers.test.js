@@ -653,6 +653,18 @@ describe('Organic Bench Core (Carbon Compound Reactions)', () => {
       assert.ok(svg.includes('Water Solubility & Miscibility'), 'Must dispatch to Water Solubility apparatus via testId fallback');
       assert.ok(svg.includes('Organic') && svg.includes('Aqueous'), 'Must render 2 immiscible layers');
     });
+
+    it('REGRESSION: Dichromate test with water bath in prompt must render Dichromate apparatus, NOT Esterification', () => {
+      const svg = OrganicBenchCore.renderApparatusSvg({
+        sampleKey: 'org_alcohol',
+        testId: 'dichromate',
+        prompt: 'To 2 cm³ of the sample, add 1 cm³ of acidified potassium dichromate(VI) (K₂Cr₂O₇/H₂SO₄) and heat in a boiling water bath for 2 minutes.',
+        performed: true
+      });
+      assert.ok(svg.includes('K₂Cr₂O₇') || svg.includes('Heat'), 'Must render Dichromate test apparatus');
+      assert.ok(!svg.includes('Ester Aroma'), 'Must NOT display Sweet Fruity Ester Aroma badge');
+      assert.ok(!svg.includes('Water Bath Esterification'), 'Must NOT display Water Bath Esterification label');
+    });
   });
 
   describe('Unbounded Dynamic Simulation Engine — Extended Inorganic Registries & First-Principles Synthesis', () => {

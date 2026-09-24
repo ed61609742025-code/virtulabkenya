@@ -17,12 +17,15 @@ Over 60% of Kenyan secondary schools lack adequately equipped chemistry laborato
 - **Students**:
   - Perform realistic virtual practicals mapped directly to the KNEC KCSE Chemistry Paper 3 syllabus.
   - Interactive SVG glassware rigs with drop-wise stopcock addition, meniscus lens viewfinders ($0.10\text{ cm}^3$ precision), clean glass rod flame tests (KNEC standard), and chemical precipitation reactions.
-  - Practice self-paced experiments with instant feedback or take timed **15-Minute KCSE Exam Mode** simulations scored with official KNEC grades (A–E).
-  - Step-by-step interactive guided tutorial walkthroughs.
+  - Photorealistic laboratory apparatus simulations featuring architectural lab backdrops, double-wall borosilicate glass refractions, triple-cone Bunsen flame thermodynamics, woven wire mesh gauze with glowing ceramic pads, and dynamic solid reactant beds.
+  - Practice self-paced experiments with instant feedback or take timed **15-Minute KCSE Exam Mode** and full-length **40-Mark Paper 3 Mock Exams** scored with official KNEC grades (A–E).
+  - Step-by-step interactive guided tutorial walkthroughs and live interactive component inspection tooltips.
   - Full session history, accuracy tracking, and achievement badges.
 - **Teachers**:
   - Real-time class analytics dashboard with student drill-down performance profiles.
   - Create and grade assignments with due dates and custom instructions.
+  - Walimu AI Teacher Assistant for multimodal exam generation and co-piloting.
+  - Dedicated Teacher Research Portal for empirical statistical triangulation (Hake's $g$, Cohen's $d$, paired $t$-tests).
   - One-click printable PDF class performance reports and CSV data export.
 - **System Administrators**:
   - National platform metrics, school registration & CRUD management, user roster management (active/suspended states, password resets), security audit logs, and broadcast announcements.
@@ -46,10 +49,11 @@ Over 60% of Kenyan secondary schools lack adequately equipped chemistry laborato
 | **Qualitative Salt Analysis** (10 Unknown Salts) | Inorganic Chemistry | Paper 3 (Q2) | ✅ Built & Verified |
 | **Flame Test Bench** (Cation Emission Identification) | Inorganic Chemistry | Paper 3 (Q2) | ✅ Built & Verified |
 | **Organic Chemistry Functional Group Lab** | Organic Chemistry | Paper 3 (Q3) | ✅ Built & Verified |
-| **Gas Preparation Lab** (O₂, CO₂, Cl₂, NH₃, SO₂, H₂) | Inorganic Practical | Paper 3 (Q3) | ✅ Built & Verified |
-| **Reaction Rates & Kinetics** (Disappearing cross) | Chemical Kinetics | Paper 3 (Q3) | ✅ Built & Verified |
+| **Gas Preparation Lab** (O₂, CO₂, Cl₂, NH₃, SO₂, H₂) | Inorganic Practical (Photorealistic Apparatus, Material Physics & Confirmatory Tests) | Paper 3 (Q3) | ✅ Built & Verified |
+| **Reaction Rates & Kinetics** (Disappearing cross, Syringe, Collision) | Chemical Kinetics | Paper 3 (Q3) | ✅ Built & Verified |
 | **Thermochemistry & Energetics** (Enthalpies) | Thermochemistry | Paper 3 (Q3) | ✅ Built & Verified |
 | **Solubility Curves & Crystallization** | Physical Chemistry | Form 3 Topic 4 | ✅ Built & Verified |
+| **40-Mark Composite KCSE Mock Exam** | Full-Length Practical Simulation | Paper 3 (Q1–Q3) | ✅ Built & Verified |
 | **CPCAT Standardized Pre/Post-Test Engine** | Research Evaluation | Paper 3 (40 Mks) | ✅ Built & Verified |
 | **SUS & TAM Usability Survey Suite** | Usability / Adoption | Research Framework | ✅ Built & Verified |
 

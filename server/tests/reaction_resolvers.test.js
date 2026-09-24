@@ -702,6 +702,33 @@ describe('Organic Bench Core (Carbon Compound Reactions)', () => {
         isAdding: true
       });
       assert.ok(brAddingSvg.includes('anim-droplet'), 'Dispensing state must render falling droplet');
+
+      // 5. Completed state (performed: true) MUST retract and fade out dropper
+      const brDoneSvg = OrganicBenchCore.renderApparatusSvg({
+        sampleKey: 'org_alkene',
+        testId: 'bromine',
+        performed: true,
+        isAdding: false
+      });
+      assert.ok(brDoneSvg.includes('opacity: 0'), 'Completed test must retract and fade out dropper');
+      assert.ok(!brDoneSvg.includes('anim-droplet'), 'Completed test must NOT have falling droplet');
+
+      // 6. NaHCO3 test spatula animation & retraction
+      const nahco3AddingSvg = OrganicBenchCore.renderApparatusSvg({
+        sampleKey: 'org_acid',
+        testId: 'carbonate',
+        performed: false,
+        isAdding: true
+      });
+      assert.ok(nahco3AddingSvg.includes('anim-droplet'), 'Spatula powder delivery must render falling crystals during addition');
+
+      const nahco3DoneSvg = OrganicBenchCore.renderApparatusSvg({
+        sampleKey: 'org_acid',
+        testId: 'carbonate',
+        performed: true,
+        isAdding: false
+      });
+      assert.ok(nahco3DoneSvg.includes('opacity: 0'), 'Spatula must retract away after powder delivery');
     });
   });
 

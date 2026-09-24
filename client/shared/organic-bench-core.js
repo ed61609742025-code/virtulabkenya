@@ -1479,7 +1479,7 @@
         ${schlierenWaves}
 
         <!-- Precision Dropper Pipette -->
-        <g style="transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); transform: translate(0px, ${performed || isAdding ? '6px' : '0px'});">
+        <g style="transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease; transform: translate(0px, ${performed ? '-30px' : (isAdding ? '6px' : '0px')}); opacity: ${performed ? '0' : '1'};">
           <ellipse cx="80" cy="8" rx="${isAdding ? '7.5' : '8.5'}" ry="${isAdding ? '5.5' : '6.5'}" fill="url(#dropperBulb_${tubeId})"/>
           <rect x="78" y="14" width="4" height="20" fill="rgba(255,255,255,0.7)" stroke="#64748B" stroke-width="0.7"/>
           <path d="M 78,34 L 82,34 L 81,42 L 79,42 Z" fill="${dropperColor}" stroke="#991B1B" stroke-width="0.6"/>
@@ -1515,7 +1515,7 @@
 
   // 4. Solid Sodium Carbonate / Hydrogen Carbonate (NaHCO₃) Effervescence Test
   function renderEffervescenceSvg(options = {}) {
-    const { sampleKey = 'org_alkene', performed = false, tubeId = 'eff_1' } = options;
+    const { sampleKey = 'org_alkene', performed = false, isAdding = false, tubeId = 'eff_1' } = options;
     const sample = resolveSample(sampleKey);
     const hasEffervescence = sample.carbonate?.hasEffervescence || sample.fgKey === 'alkanoic_acid';
 
@@ -1589,11 +1589,17 @@
         ${bubblesAndFroth}
 
         <!-- Spatula Delivering Solid Crystalline NaHCO3 Powder -->
-        <g style="transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); transform: translate(${performed ? '8px, 6px' : '0px, 0px'});">
+        <g style="transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease; transform: translate(${performed ? '-30px, -20px' : (isAdding ? '8px, 6px' : '0px, 0px')}); opacity: ${performed ? '0' : '1'};">
           <line x1="28" y1="26" x2="76" y2="26" stroke="url(#spatulaMetal_${tubeId})" stroke-width="3" stroke-linecap="round"/>
           <ellipse cx="76" cy="26" rx="6" ry="3" fill="url(#spatulaMetal_${tubeId})" stroke="#475569" stroke-width="0.6"/>
           <circle cx="76" cy="25" r="2.4" fill="#FFFFFF"/>
         </g>
+        ${isAdding ? `
+          <!-- Falling Crystalline Powder into Test Tube -->
+          <circle cx="76" cy="42" r="1.5" fill="#FFFFFF" class="anim-droplet"/>
+          <circle cx="79" cy="52" r="1.2" fill="#FFFFFF" class="anim-droplet" style="animation-delay: 0.1s;"/>
+          <circle cx="74" cy="62" r="1.4" fill="#FFFFFF" class="anim-droplet" style="animation-delay: 0.2s;"/>
+        ` : ''}
 
         <!-- Specular Highlights -->
         <path d="M 58,36 L 58,170 C 58,185 66,195 78,199" fill="none" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" opacity="0.65"/>
@@ -1607,7 +1613,7 @@
 
   // 5. Esterification in Warm Water Bath with Porous Boiling Chips
   function renderEsterificationSvg(options = {}) {
-    const { sampleKey = 'org_alcohol', performed = false, tubeId = 'est_1' } = options;
+    const { sampleKey = 'org_alcohol', performed = false, isAdding = false, tubeId = 'est_1' } = options;
     const sample = resolveSample(sampleKey);
     const isFruity = sample.esterification?.isFruity ?? (sample.fgKey === 'alkanol');
 
@@ -1823,7 +1829,7 @@
       return renderDecolorizationSvg({ sampleKey, testType: 'bromine', performed, isAdding, tubeId });
     }
     if (pStr.includes('nahco3') || pStr.includes('na2co3') || pStr.includes('carbonate') || pStr.includes('effervesc')) {
-      return renderEffervescenceSvg({ sampleKey, performed, tubeId });
+      return renderEffervescenceSvg({ sampleKey, performed, isAdding, tubeId });
     }
     if (pStr.includes('litmus') || pStr.includes('ph paper') || pStr.includes('universal indicator')) {
       return renderLitmusSvg({ sampleKey, performed, tubeId });
@@ -1833,7 +1839,7 @@
     }
     // Esterification: explicit ester/fruity keywords, OR ethanoic acid + H2SO4, OR a water bath specifically for ester/odor testing
     if (pStr.includes('ester') || pStr.includes('fruity') || (pStr.includes('ethanoic acid') && pStr.includes('h2so4')) || (pStr.includes('water bath') && (pStr.includes('smell') || pStr.includes('odor') || pStr.includes('odour') || pStr.includes('ester') || pStr.includes('aroma')))) {
-      return renderEsterificationSvg({ sampleKey, performed, tubeId });
+      return renderEsterificationSvg({ sampleKey, performed, isAdding, tubeId });
     }
     if ((pStr.includes('solub') || pStr.includes('miscib') || pStr.includes('water')) && !pStr.includes('water bath')) {
       return renderSolubilitySvg({ sampleKey, performed, isAdding, tubeId });
@@ -1850,7 +1856,7 @@
       return renderDecolorizationSvg({ sampleKey, testType: 'bromine', performed, isAdding, tubeId });
     }
     if (tId.includes('nahco3') || tId.includes('carbonate') || tId.includes('effervesc')) {
-      return renderEffervescenceSvg({ sampleKey, performed, tubeId });
+      return renderEffervescenceSvg({ sampleKey, performed, isAdding, tubeId });
     }
     if (tId.includes('litmus') || tId.includes('ph')) {
       return renderLitmusSvg({ sampleKey, performed, tubeId });
@@ -1859,7 +1865,7 @@
       return renderIgnitionSvg({ sampleKey, performed, tubeId });
     }
     if (tId.includes('ester') || tId.includes('fruity')) {
-      return renderEsterificationSvg({ sampleKey, performed, tubeId });
+      return renderEsterificationSvg({ sampleKey, performed, isAdding, tubeId });
     }
     if (tId.includes('solub') || tId.includes('miscib')) {
       return renderSolubilitySvg({ sampleKey, performed, isAdding, tubeId });

@@ -536,7 +536,8 @@ if (typeof window === 'undefined') {
       });
     }
 
-    const sample = SAMPLES[currentSampleKey] || SAMPLES['org_alcohol'];
+    const reg = (window.OrganicBenchCore && window.OrganicBenchCore.SAMPLES) || SAMPLES;
+    const sample = reg[currentSampleKey] || reg['org_alcohol'];
     const defs = getGlassDefs(testKey);
 
     // 1. SOLUBILITY & MISCIBILITY TEST
@@ -703,7 +704,7 @@ if (typeof window === 'undefined') {
         <line x1="65" y1="32" x2="65" y2="112" stroke="#FFFFFF" stroke-width="0.8" stroke-linecap="round" opacity="0.35"/>
 
         <!-- Red Bromine Dropper Assembly -->
-        <g style="transition: transform 0.6s ease; transform: translate(0px, ${performed || isAdding ? '4px' : '0px'});">
+        <g style="transition: transform 0.6s ease, opacity 0.4s ease; transform: translate(0px, ${performed ? '-25px' : (isAdding ? '4px' : '0px')}); opacity: ${performed ? '0' : '1'};">
           <ellipse cx="50" cy="6" rx="${isAdding ? '5.5' : '6.5'}" ry="${isAdding ? '4' : '5'}" fill="url(#dropperTeat_${testKey})"/>
           <rect x="48.5" y="10" width="3" height="14" fill="rgba(255,255,255,0.7)" stroke="#EA580C" stroke-width="0.6"/>
           <path d="M 48.5,24 L 51.5,24 L 50.8,30 L 49.2,30 Z" fill="#DC2626" stroke="#B91C1C" stroke-width="0.6"/>
@@ -813,11 +814,15 @@ if (typeof window === 'undefined') {
         <line x1="65" y1="32" x2="65" y2="112" stroke="#FFFFFF" stroke-width="0.8" stroke-linecap="round" opacity="0.35"/>
 
         <!-- Spatula Delivering Powder -->
-        <g style="transition: transform 0.6s ease; transform: translate(${performed ? '4px, 4px' : '0px, 0px'});">
+        <g style="transition: transform 0.6s ease, opacity 0.4s ease; transform: translate(${performed ? '-25px, -15px' : (isAdding ? '4px, 4px' : '0px, 0px')}); opacity: ${performed ? '0' : '1'};">
           <line x1="20" y1="18" x2="48" y2="18" stroke="url(#spatulaMetal_${testKey})" stroke-width="2.5"/>
           <ellipse cx="48" cy="18" rx="4" ry="2" fill="#94A3B8"/>
           <circle cx="48" cy="17" r="1.8" fill="#FFFFFF"/>
         </g>
+        ${isAdding ? `
+          <circle cx="48" cy="30" r="1.2" fill="#FFFFFF" class="anim-droplet"/>
+          <circle cx="50" cy="38" r="1.0" fill="#FFFFFF" class="anim-droplet" style="animation-delay: 0.1s;"/>
+        ` : ''}
         <text x="50" y="148" font-size="8.5" font-weight="700" fill="var(--text-muted)" text-anchor="middle">Na₂CO₃ Effervescence</text>
       </svg>`;
     }
@@ -1057,22 +1062,23 @@ if (typeof window === 'undefined') {
      PERFORM & REDO ACTIONS
   ══════════════════════════════════════ */
   window.performTest = function(testKey) {
-    const sample = SAMPLES[currentSampleKey] || SAMPLES['org_alcohol'];
+    const reg = (window.OrganicBenchCore && window.OrganicBenchCore.SAMPLES) || SAMPLES;
+    const sample = reg[currentSampleKey] || reg['org_alcohol'];
     const expected = sample[testKey];
     if (!expected) return;
 
-    const isDropperTest = (testKey === 'bromine' || testKey === 'dichromate' || testKey === 'solubility');
+    const isAnimatedDelivery = (testKey === 'bromine' || testKey === 'dichromate' || testKey === 'solubility' || testKey === 'carbonate' || testKey === 'esterification');
 
     if (testKey === 'ignition') playAudioTone('flame');
     else if (testKey === 'carbonate') playAudioTone('bubble');
     else if (testKey === 'bromine' || testKey === 'dichromate' || testKey === 'solubility') playAudioTone('drip');
     else playAudioTone('clink');
 
-    if (isDropperTest) {
+    if (isAnimatedDelivery) {
       testStates[testKey] = {
         isAdding: true,
         performed: false,
-        statusLabel: 'Dispensing Reagent...',
+        statusLabel: testKey === 'carbonate' ? 'Adding Solid Na₂CO₃...' : (testKey === 'esterification' ? 'Warming in Water Bath...' : 'Dispensing Reagent...'),
         obsText: (testStates[testKey] && testStates[testKey].obsText) || '',
         infText: (testStates[testKey] && testStates[testKey].infText) || ''
       };
@@ -1115,11 +1121,12 @@ if (typeof window === 'undefined') {
      IDENTIFICATION & SUBMISSION
   ══════════════════════════════════════ */
   window.newSample = function() {
-    const keys = Object.keys(SAMPLES);
+    const reg = (window.OrganicBenchCore && window.OrganicBenchCore.SAMPLES) || SAMPLES;
+    const keys = Object.keys(reg);
     const otherKeys = keys.filter(k => k !== currentSampleKey);
     currentSampleKey = otherKeys[Math.floor(Math.random() * otherKeys.length)] || keys[0];
 
-    const sample = SAMPLES[currentSampleKey];
+    const sample = reg[currentSampleKey];
     const badge = document.getElementById('sampleIdBadge');
     if (badge) badge.textContent = `Sample: ${sample.label}`;
     const subbarSample = document.getElementById('knecSubbarSample');

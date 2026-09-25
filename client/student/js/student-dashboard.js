@@ -237,6 +237,7 @@ requireStudentLogin();
         message: `${scoreText}Your teacher marked this session. Click to view feedback & rubric.`,
         timestamp: a.marked_at ? new Date(a.marked_at).getTime() : Date.now(),
         type: 'marked_assignment',
+        isPermanent: true,
         targetUrl: null,
         rawAssignment: a
       });
@@ -247,7 +248,7 @@ requireStudentLogin();
     const streakVal = streakEl ? parseInt(streakEl.textContent, 10) : 1;
     if (streakVal > 0) {
       rawList.push({
-        id: 'notif_streak_active',
+        id: 'notif_streak_' + streakVal,
         assignmentId: null,
         title: '🔥 Active Practice Streak',
         message: `${streakVal}-Day Lab Practice Streak active! Keep up the momentum for KCSE Paper 3.`,
@@ -266,6 +267,11 @@ requireStudentLogin();
     const badge = document.getElementById('notifBadge') || document.getElementById('notifCount');
     const bellBtn = document.getElementById('notifBellBtn');
     const list = document.getElementById('notifList');
+    const unreadLabel = document.getElementById('notifUnreadLabel');
+
+    if (unreadLabel) {
+      unreadLabel.textContent = `${unreadNotifs.length} new`;
+    }
 
     if (badge) {
       if (unreadNotifs.length > 0) {
@@ -349,6 +355,17 @@ requireStudentLogin();
       window.VLKNotifs.markAllAsRead(activeNotifs.map(n => n.id));
     }
     loadAssignments();
+  }
+
+  // Listen for Service Worker background push click / dismiss events to sync in-app notifications
+  if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
+    navigator.serviceWorker.addEventListener('message', (event) => {
+      if (event.data && (event.data.type === 'VLK_PUSH_CLICKED' || event.data.type === 'VLK_PUSH_DISMISSED')) {
+        if (typeof loadAssignments === 'function') {
+          loadAssignments();
+        }
+      }
+    });
   }
 
   async function loadAssignments() {

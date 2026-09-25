@@ -260,7 +260,10 @@
           <div id="notifDropdown" class="notif-dropdown" style="display:none; position:absolute; right:0; top:46px; width:320px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:14px; box-shadow:var(--shadow-lg); z-index:1000; padding:14px;">
             <div style="font-family:'Plus Jakarta Sans', sans-serif; font-size:0.92rem; font-weight:800; color:var(--heading-color); margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
               <span>Notifications &amp; Feedback</span>
-              <span id="notifUnreadLabel" style="font-size:0.74rem; color:var(--cyan-accent); font-family:'JetBrains Mono', monospace; font-weight:700;">0 new</span>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span id="notifUnreadLabel" style="font-size:0.74rem; color:var(--cyan-accent); font-family:'JetBrains Mono', monospace; font-weight:700;">0 new</span>
+                <button type="button" id="markAllReadBtn" onclick="markAllNotificationsRead()" style="background:none; border:none; color:var(--text-muted); font-size:0.72rem; font-weight:700; cursor:pointer; padding:2px 4px; border-radius:4px;" title="Mark all notifications as read">Clear</button>
+              </div>
             </div>
             <div id="notifList" style="max-height:240px; overflow-y:auto; font-size:0.82rem; color:var(--text-muted);">
               <div style="padding:14px 0; text-align:center; font-family:'JetBrains Mono', monospace; font-size:0.78rem;">No unread notifications</div>

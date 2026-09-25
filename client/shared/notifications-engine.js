@@ -85,11 +85,18 @@
 
   /**
    * Process a list of notification objects:
-   * Filter out any notifications that were read > 24 hours ago.
+   * Filter out any notifications that were read > 24 hours ago, unless marked isPermanent.
    */
   function filterActiveNotifications(notifications) {
     if (!Array.isArray(notifications)) return [];
-    return notifications.filter(item => !isExpired(item.id));
+    return notifications.filter(item => item && (item.isPermanent || !isExpired(item.id)));
+  }
+
+  function clearUserData(userId) {
+    try {
+      const key = userId ? 'vlk_notif_read_timestamps_' + userId : getStorageKey();
+      localStorage.removeItem(key);
+    } catch(e) {}
   }
 
   window.VLKNotifs = {
@@ -100,6 +107,7 @@
     getRemainingHours,
     formatTimeAgo,
     filterActiveNotifications,
+    clearUserData,
     TWENTY_FOUR_HOURS_MS
   };
 })(window);

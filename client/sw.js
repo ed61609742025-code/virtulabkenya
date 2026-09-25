@@ -3,7 +3,7 @@
 //  Feature #1: Offline Support, Smart Caching & Sync
 // ============================================================
 
-const CACHE_NAME = 'virtulab-kenya-v124';
+const CACHE_NAME = 'virtulab-kenya-v125';
 
 const PRECACHE_ASSETS = [
   '/',
@@ -294,15 +294,20 @@ self.addEventListener('push', (event) => {
   }
 
   const title = data.title || 'VirtuLab Kenya Alert';
+  const isHighUrgency = data.urgency === 'high' || data.priority === 'high';
+  const renotify = typeof data.renotify === 'boolean' ? data.renotify : isHighUrgency;
+  const vibratePattern = data.silent ? [] : (data.vibrate || (isHighUrgency ? [200, 100, 200, 100, 200] : [150, 80, 150]));
+
   const options = {
     body: data.body || 'You have a new update in your laboratory.',
     icon: data.icon || '/shared/icon-192.png',
     badge: data.badge || '/shared/icon-192.png',
     image: data.image || null,
     data: data.data || { url: '/student/home.html' },
-    tag: data.tag || 'vlk-push-' + Date.now(),
-    renotify: true,
-    vibrate: [150, 80, 150],
+    tag: data.tag || (isHighUrgency ? 'vlk-push-urgent-' + Date.now() : 'vlk-push-general'),
+    renotify: renotify,
+    silent: !!data.silent,
+    vibrate: vibratePattern,
     actions: data.actions || [
       { action: 'open', title: 'Open Lab' }
     ]
@@ -323,6 +328,13 @@ self.addEventListener('notificationclick', (event) => {
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      // Broadcast to open clients that notification was clicked
+      clientList.forEach((client) => {
+        try {
+          client.postMessage({ type: 'VLK_PUSH_CLICKED', url: targetUrl, data: notifData });
+        } catch (e) {}
+      });
+
       for (const client of clientList) {
         if (client.url && client.url.includes(targetUrl) && 'focus' in client) {
           return client.focus();
@@ -337,5 +349,19 @@ self.addEventListener('notificationclick', (event) => {
     })
   );
 });
+
+self.addEventListener('notificationclose', (event) => {
+  const notifData = (event.notification && event.notification.data) || {};
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      clientList.forEach((client) => {
+        try {
+          client.postMessage({ type: 'VLK_PUSH_DISMISSED', data: notifData });
+        } catch (e) {}
+      });
+    }).catch(() => {})
+  );
+});
+
 
 

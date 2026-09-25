@@ -39,6 +39,11 @@ function clearToken() {
     sessionStorage.removeItem('vlk_user');
   } catch(e) {}
   try {
+    if (window.VLKNotifs && typeof window.VLKNotifs.clearUserData === 'function') {
+      window.VLKNotifs.clearUserData();
+    }
+  } catch(e) {}
+  try {
     if (typeof fetch !== 'undefined') {
       fetch(API_BASE + '/auth/logout', { method: 'POST', credentials: 'same-origin' }).catch(() => {});
     }

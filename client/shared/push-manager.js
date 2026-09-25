@@ -43,12 +43,51 @@
         localStorage.getItem('vlk_token') ||
         sessionStorage.getItem('vlk_token') ||
         localStorage.getItem('virtulab_token') ||
-        localStorage.getItem('token') ||
         null
       );
     } catch (e) {
       return null;
     }
+  }
+
+  /**
+   * Display a non-blocking toast notification.
+   */
+  function showToast(message, type = 'info') {
+    if (window.BrilliantUI && window.BrilliantUI.audio) {
+      if (type === 'success') window.BrilliantUI.audio.playSuccess();
+      else if (type === 'error') window.BrilliantUI.audio.playIncorrect();
+      else window.BrilliantUI.audio.playClick();
+    }
+    if (window.BrilliantUI && window.BrilliantUI.vibrate) {
+      window.BrilliantUI.vibrate(type === 'error' ? [50, 50, 50] : 10);
+    }
+
+    let toast = document.getElementById('vlkPushToast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'vlkPushToast';
+      toast.setAttribute('role', 'alert');
+      toast.setAttribute('aria-live', 'polite');
+      toast.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:100000;background:#0f172a;color:#f8fafc;border:1px solid #334155;border-left:4px solid #06b6d4;border-radius:12px;padding:12px 18px;box-shadow:0 10px 25px -5px rgba(0,0,0,0.5);font-family:\'Plus Jakarta Sans\',system-ui,sans-serif;font-size:0.86rem;font-weight:600;display:flex;align-items:center;gap:10px;max-width:420px;transform:translateY(20px);opacity:0;transition:all 0.25s cubic-bezier(0.16,1,0.3,1);pointer-events:none;';
+      document.body.appendChild(toast);
+    }
+
+    const icon = type === 'success' ? '🔔' : type === 'error' ? '⚠️' : 'ℹ️';
+    const borderColor = type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#06b6d4';
+    toast.style.borderLeftColor = borderColor;
+    toast.innerHTML = `<span style="font-size:1.2rem;flex-shrink:0;">${icon}</span><div style="line-height:1.4;">${message}</div>`;
+
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateY(0)';
+    toast.style.pointerEvents = 'auto';
+
+    clearTimeout(toast._hideTimer);
+    toast._hideTimer = setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(20px)';
+      toast.style.pointerEvents = 'none';
+    }, 4500);
   }
 
   function isSupported() {
@@ -99,14 +138,14 @@
    */
   async function subscribe() {
     if (!isSupported()) {
-      alert('Push Notifications are not supported by your current browser.');
+      showToast('Push Notifications are not supported by your current browser.', 'info');
       return false;
     }
 
     const perm = await Notification.requestPermission();
     if (perm !== 'granted') {
       if (perm === 'denied') {
-        alert('Push notifications are blocked in your browser settings. Please enable notifications for VirtuLab Kenya in your browser address bar.');
+        showToast('Push notifications are blocked in your browser settings. Please enable notifications for VirtuLab Kenya in your browser address bar.', 'error');
       }
       syncUI();
       return false;
@@ -114,7 +153,7 @@
 
     const token = getAuthToken();
     if (!token) {
-      alert('Please log in to enable push notifications on this device.');
+      showToast('Please log in to enable push notifications on this device.', 'info');
       return false;
     }
 
@@ -164,11 +203,11 @@
       console.log('[PushManager] Push notification subscription active.');
       window.dispatchEvent(new CustomEvent('vlk-push-changed', { detail: { subscribed: true } }));
       syncUI();
-      alert('🔔 Web Push Notifications are now active for your account on this device!');
+      showToast('Web Push Notifications are now active for your account on this device!', 'success');
       return true;
     } catch (err) {
       console.error('[PushManager] Subscription failed:', err);
-      alert('Could not enable push notifications: ' + err.message);
+      showToast('Could not enable push notifications: ' + err.message, 'error');
       syncUI();
       return false;
     }
@@ -198,10 +237,11 @@
       console.log('[PushManager] Unsubscribed from push notifications.');
       window.dispatchEvent(new CustomEvent('vlk-push-changed', { detail: { subscribed: false } }));
       syncUI();
-      alert('🔕 Push notifications have been disabled on this device.');
+      showToast('Push notifications have been disabled on this device.', 'info');
       return true;
     } catch (err) {
       console.error('[PushManager] Unsubscribe failed:', err);
+      showToast('Could not disable push notifications: ' + err.message, 'error');
       syncUI();
       return false;
     }
@@ -225,7 +265,7 @@
   async function sendTestNotification() {
     const token = getAuthToken();
     if (!token) {
-      alert('Please log in first.');
+      showToast('Please log in first.', 'info');
       return;
     }
 
@@ -241,14 +281,15 @@
       if (data.success) {
         if (data.sent > 0) {
           console.log('[PushManager] Test alert dispatched.');
+          showToast('Test push notification dispatched!', 'success');
         } else {
-          alert('No active device subscription registered. Please click "Enable Push Alerts" first.');
+          showToast('No active device subscription registered. Please click "Enable Alerts" first.', 'info');
         }
       } else {
-        alert(data.error || 'Could not send test notification.');
+        showToast(data.error || 'Could not send test notification.', 'error');
       }
     } catch (e) {
-      alert('Test push failed: ' + e.message);
+      showToast('Test push failed: ' + e.message, 'error');
     }
   }
 
@@ -348,7 +389,10 @@
     if (ua.includes('xiaomi') || ua.includes('redmi') || ua.includes('poco')) {
       return 'guide-xiaomi';
     }
-    return 'guide-tecno';
+    if (ua.includes('iphone') || ua.includes('ipad') || ua.includes('ipod') || (ua.includes('macintosh') && 'ontouchend' in document)) {
+      return 'guide-ios';
+    }
+    return 'guide-stock';
   }
 
   /**
@@ -390,6 +434,7 @@
               <button type="button" class="vlk-guide-tab-btn" data-target="guide-samsung" onclick="VLKPush.switchGuideTab('guide-samsung')" style="padding:6px 14px; border-radius:20px; border:1px solid var(--card-border, #374151); background:transparent; color:var(--text-muted, #9ca3af); font-weight:700; font-size:0.78rem; cursor:pointer;">Samsung</button>
               <button type="button" class="vlk-guide-tab-btn" data-target="guide-xiaomi" onclick="VLKPush.switchGuideTab('guide-xiaomi')" style="padding:6px 14px; border-radius:20px; border:1px solid var(--card-border, #374151); background:transparent; color:var(--text-muted, #9ca3af); font-weight:700; font-size:0.78rem; cursor:pointer;">Xiaomi / Redmi</button>
               <button type="button" class="vlk-guide-tab-btn" data-target="guide-stock" onclick="VLKPush.switchGuideTab('guide-stock')" style="padding:6px 14px; border-radius:20px; border:1px solid var(--card-border, #374151); background:transparent; color:var(--text-muted, #9ca3af); font-weight:700; font-size:0.78rem; cursor:pointer;">Other Android</button>
+              <button type="button" class="vlk-guide-tab-btn" data-target="guide-ios" onclick="VLKPush.switchGuideTab('guide-ios')" style="padding:6px 14px; border-radius:20px; border:1px solid var(--card-border, #374151); background:transparent; color:var(--text-muted, #9ca3af); font-weight:700; font-size:0.78rem; cursor:pointer;">Apple iOS</button>
             </div>
 
             <!-- Content: Tecno / Infinix -->
@@ -432,6 +477,17 @@
                 <li>Long press the <strong>Chrome</strong> / <strong>VirtuLab</strong> app icon &rarr; Tap <strong>App info (ℹ️)</strong>.</li>
                 <li>Tap <strong>App battery usage</strong> &rarr; Choose <strong>Unrestricted</strong>.</li>
                 <li>Under <strong>Mobile data &amp; Wi-Fi</strong>, ensure <strong>Background data</strong> is turned ON.</li>
+              </ol>
+            </div>
+
+            <!-- Content: Apple iOS -->
+            <div id="guide-ios" class="vlk-guide-tab-pane" style="display:none;">
+              <div style="font-weight:700; font-size:0.86rem; margin-bottom:8px; color:var(--cyan-accent, #22d3ee);">Apple iPhone &amp; iPad (iOS 16.4+):</div>
+              <ol style="margin:0 0 14px 20px; padding:0; font-size:0.82rem; line-height:1.6; color:var(--text-color, #d1d5db);">
+                <li>Tap Safari's <strong>Share button (⎋)</strong> &rarr; Tap <strong>Add to Home Screen</strong>.</li>
+                <li>Launch VirtuLab from your Home Screen (Web Push requires PWA Home Screen mode on iOS).</li>
+                <li>Go to <strong>Settings &rarr; Notifications &rarr; VirtuLab</strong> &rarr; Enable <strong>Allow Notifications</strong>.</li>
+                <li>In <strong>Settings &rarr; General &rarr; Background App Refresh</strong>, ensure VirtuLab is ON.</li>
               </ol>
             </div>
 
@@ -498,6 +554,7 @@
     unsubscribe,
     toggle,
     sendTestNotification,
+    showToast,
     syncUI,
     requestPersistentStorage,
     openBatteryGuideModal,

@@ -467,6 +467,55 @@ describe('Qualitative Bench Core (Inorganic Reactions)', () => {
       const kStateFiltered = QualitativeBenchCore.resolveReactionState('potassiumChloride', 'q2_flame', 'done', 'Dip a clean glass rod into flame', '', { isCobaltGlass: true });
       assert.ok(kStateFiltered.statusLabel.includes('Pale lilac') || kStateFiltered.statusLabel.includes('purple'), 'Potassium lilac emission shines through cobalt glass');
     });
+
+    it('should default flame test apparatus to Naked Eye view with direct emission badge', () => {
+      const defaultSvg = QualitativeBenchCore.renderApparatusSvg({
+        saltKey: 'sodiumCarbonate',
+        testId: 'q2_flame',
+        stage: 'done',
+        prompt: 'Dip a clean glass rod into the solution and place it in the non-luminous flame'
+      });
+      assert.ok(defaultSvg.includes('NAKED EYE'), 'Default flame test must display NAKED EYE header badge');
+      assert.ok(!defaultSvg.includes('COBALT GLASS'), 'Default flame test must not have COBALT GLASS filter plate');
+      assert.ok(defaultSvg.includes('#FACC15'), 'Default sodium flame must show direct golden yellow emission');
+    });
+
+    it('should support Dual Split-View with simultaneous Naked Eye and Cobalt Glass viewports', () => {
+      const splitSvg = QualitativeBenchCore.renderApparatusSvg({
+        saltKey: 'sodiumCarbonate',
+        testId: 'q2_flame',
+        stage: 'done',
+        prompt: 'Dip a clean glass rod into the solution and place it in the non-luminous flame',
+        opticalMode: 'split'
+      });
+      assert.ok(splitSvg.includes('clipLeft_'), 'Split view must include left clip-path for naked eye');
+      assert.ok(splitSvg.includes('clipRight_'), 'Split view must include right clip-path for cobalt glass');
+      assert.ok(splitSvg.includes('589 nm Golden Yellow'), 'Split view must label direct naked eye emission');
+      assert.ok(splitSvg.includes('589 nm Absorbed'), 'Split view must label cobalt glass absorption');
+    });
+
+    it('should render glass rod dipping and introduction delay state before excitation', () => {
+      const introSvg = QualitativeBenchCore.renderApparatusSvg({
+        saltKey: 'sodiumCarbonate',
+        testId: 'q2_flame',
+        stage: 'introducing',
+        isIntroducing: true,
+        prompt: 'Dip a clean glass rod into the solution and place it in the non-luminous flame'
+      });
+      assert.ok(introSvg.includes('INTRODUCING...'), 'Introducing state must display INTRODUCING badge');
+      assert.ok(introSvg.includes('#38BDF8'), 'Flame must remain unexcited pale blue while rod is introduced');
+      assert.ok(introSvg.includes('translate(0, 0)'), 'Glass rod must be translated into position in flame');
+    });
+
+    it('should simulate lilac flame emission for KMnO4 and K2Cr2O7 salts containing K+ cation', () => {
+      const kmno4Flame = QualitativeBenchCore.resolveReactionState('potassiumPermanganate', 'q2_flame', 'done', 'Dip a clean glass rod into flame');
+      assert.strictEqual(kmno4Flame.isFlameTest, true);
+      assert.ok(kmno4Flame.statusLabel.includes('lilac'), 'KMnO4 must emit lilac flame from K+');
+
+      const k2cr2o7Flame = QualitativeBenchCore.resolveReactionState('potassiumDichromate', 'q2_flame', 'done', 'Dip a clean glass rod into flame');
+      assert.strictEqual(k2cr2o7Flame.isFlameTest, true);
+      assert.ok(k2cr2o7Flame.statusLabel.includes('lilac'), 'K2Cr2O7 must emit lilac flame from K+');
+    });
   });
 
   describe('Multi-Stage Action Controls', () => {

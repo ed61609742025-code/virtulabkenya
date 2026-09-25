@@ -319,7 +319,8 @@ if (typeof window !== 'undefined') {
       ],
       correct: {
         ammoniumChloride:'E', copperSulfate:'D', ironSulfate:'E', sodiumCarbonate:'A', sodiumHydrogenCarbonate:'A', calciumChloride:'C', potassiumChloride:'B', leadNitrate:'F',
-        zincSulfate:'E', aluminumNitrate:'E', ironChloride:'E', ammoniumCarbonate:'E', zincNitrate:'E', sodiumSulfite:'A', potassiumBromide:'B', sodiumIodide:'A'
+        zincSulfate:'E', aluminumNitrate:'E', ironChloride:'E', ammoniumCarbonate:'E', zincNitrate:'E', sodiumSulfite:'A', potassiumBromide:'B', sodiumIodide:'A',
+        potassiumPermanganate:'B', potassiumDichromate:'B'
       }
     },
     {
@@ -488,6 +489,10 @@ if (typeof window !== 'undefined') {
     sampleCounter++;
     Object.keys(testStates).forEach(k => delete testStates[k]);
     sessionSaved = false;
+    isCobaltGlassActive = false;
+    flameOpticalMode = 'naked';
+    const btnCobaltInit = document.getElementById('btnCobaltGlass');
+    if (btnCobaltInit) btnCobaltInit.innerHTML = '🟦 Cobalt Blue Glass Filter: OFF';
 
     const salt = SALTS[currentSaltKey];
 
@@ -1680,7 +1685,9 @@ if (typeof window !== 'undefined') {
         prompt: test.prompt || test.name || test.title || '',
         obsStr: test.correctObs || test.observation || '',
         tubeId: `qual_${test.key || test.id}`,
-        isCobaltGlass: isCobaltGlassActive
+        isCobaltGlass: isCobaltGlassActive,
+        opticalMode: flameOpticalMode,
+        isIntroducing: Boolean(st && (st.isIntroducing || st.stage === 'introducing'))
       });
     }
 
@@ -2120,11 +2127,18 @@ if (typeof window !== 'undefined') {
         isHeating: false,
         isCooling: false,
         isTestingProbe: false,
+        isIntroducing: false,
         stage: 'idle',
         probe: null,
         obsText: prevObs,
         infText: prevInf
       };
+      if (testKey === 'flame') {
+        isCobaltGlassActive = false;
+        flameOpticalMode = 'naked';
+        const btnCobalt = document.getElementById('btnCobaltGlass');
+        if (btnCobalt) btnCobalt.innerHTML = '🟦 Cobalt Blue Glass Filter: OFF';
+      }
     }
     renderAll();
   };
@@ -2695,13 +2709,17 @@ if (typeof window !== 'undefined') {
   /* ══════════════════════════════════════
      ON-SCREEN FLAME TEST & DUAL-OPTICAL VIEWPORT
   ══════════════════════════════════════ */
-  let isCobaltGlassActive = true;
-  let flameOpticalMode = 'split'; // 'naked', 'cobalt', or 'split'
+  let isCobaltGlassActive = false; // Default: Naked Eye (Filter OFF)
+  let flameOpticalMode = 'naked'; // Default: 'naked' (Naked Eye direct emission)
 
   window.setFlameOpticalMode = function(mode) {
     flameOpticalMode = mode;
-    isCobaltGlassActive = (mode === 'cobalt' || mode === 'split');
-    if (testStates['flame'] && testStates['flame'].performed) {
+    isCobaltGlassActive = (mode === 'cobalt');
+    const btnCobalt = document.getElementById('btnCobaltGlass');
+    if (btnCobalt) {
+      btnCobalt.innerHTML = (mode === 'cobalt') ? '🟦 Cobalt Blue Glass Filter: ON' : '🟦 Cobalt Blue Glass Filter: OFF';
+    }
+    if (testStates['flame'] && testStates['flame'].performed && !testStates['flame'].isIntroducing) {
       const fTest = TESTS.find(t => t.key === 'flame');
       const correctKey = fTest ? fTest.correct[currentSaltKey] : null;
       const correctOpt = fTest ? fTest.options.find(o => o.key === correctKey) : null;
@@ -2713,36 +2731,66 @@ if (typeof window !== 'undefined') {
         else if (salt.cation === 'K+') flameColor = '#C084FC';
       }
       testStates['flame'].color = flameColor;
+      if (mode === 'naked') {
+        testStates['flame'].statusLabel = `Observed: ${correctOpt ? correctOpt.text : 'Flame emission'}`;
+      } else if (mode === 'cobalt') {
+        testStates['flame'].statusLabel = (salt.cation === 'Na+')
+          ? 'Observed (Cobalt Glass): 589 nm yellow absorbed'
+          : `Observed (Cobalt Glass): Filtered emission`;
+      } else if (mode === 'split') {
+        testStates['flame'].statusLabel = 'Observed: Dual Split-View';
+      }
     }
     renderAll();
   };
 
   window.performFlameTestOnScreen = function() {
-    playFlameSound();
+    if (!testStates['flame']) testStates['flame'] = {};
+    const st = testStates['flame'];
+    if (st.isIntroducing || st.stage === 'introducing') return;
+
     const fTest = TESTS.find(t => t.key === 'flame');
     const correctKey = fTest ? fTest.correct[currentSaltKey] : null;
     const correctOpt = fTest ? fTest.options.find(o => o.key === correctKey) : null;
     const salt = SALTS[currentSaltKey] || {};
 
-    let flameColor = correctOpt ? correctOpt.color : '#38BDF8';
-    if (isCobaltGlassActive && flameOpticalMode === 'cobalt') {
-      if (salt.cation === 'Na+') flameColor = 'rgba(100, 116, 139, 0.2)';
-      else if (salt.cation === 'K+') flameColor = '#C084FC';
-    }
-
-    if (!testStates['flame']) testStates['flame'] = {};
-    testStates['flame'].performed = true;
-    testStates['flame'].stage = 'done';
-    testStates['flame'].color = flameColor;
-    testStates['flame'].bubbling = false;
-    testStates['flame'].correctKey = correctKey;
-    testStates['flame'].statusLabel = `Observed: ${correctOpt ? correctOpt.text : 'Flame emission'}`;
-
+    // 1. Physical Dipping & Introducing Delay (850ms)
+    st.performed = true;
+    st.stage = 'introducing';
+    st.isIntroducing = true;
+    st.bubbling = false;
+    st.correctKey = correctKey;
+    st.color = '#38BDF8'; // Unexcited pale blue non-luminous flame while entering
+    st.statusLabel = '🔥 Dipping clean glass rod into solution and introducing to flame...';
     renderAll();
+
+    setTimeout(() => {
+      if (!testStates['flame']) return;
+      playFlameSound();
+      st.isIntroducing = false;
+      st.stage = 'done';
+
+      let flameColor = correctOpt ? correctOpt.color : '#38BDF8';
+      if (flameOpticalMode === 'cobalt') {
+        if (salt.cation === 'Na+') flameColor = 'rgba(100, 116, 139, 0.2)';
+        else if (salt.cation === 'K+') flameColor = '#C084FC';
+      }
+      st.color = flameColor;
+      if (flameOpticalMode === 'naked') {
+        st.statusLabel = `Observed: ${correctOpt ? correctOpt.text : 'Flame emission'}`;
+      } else if (flameOpticalMode === 'cobalt') {
+        st.statusLabel = (salt.cation === 'Na+')
+          ? 'Observed (Cobalt Glass): 589 nm yellow absorbed'
+          : `Observed (Cobalt Glass): Filtered flame emission`;
+      } else {
+        st.statusLabel = 'Observed: Dual Split-View';
+      }
+      renderAll();
+    }, 850);
   };
 
   window.toggleCobaltGlassInline = function() {
-    const nextMode = (flameOpticalMode === 'cobalt') ? 'naked' : (flameOpticalMode === 'naked' ? 'split' : 'cobalt');
+    const nextMode = (flameOpticalMode === 'cobalt') ? 'naked' : 'cobalt';
     setFlameOpticalMode(nextMode);
   };
 

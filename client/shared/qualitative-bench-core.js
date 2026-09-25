@@ -1755,8 +1755,24 @@
         statusLabel = `Water Added: ${salt.solubility || 'Solid dissolves completely to form clear stock solution'}`;
         soundType = 'dissolve';
       } else if (isFlameTest) {
-        const isCobaltGlass = Boolean(options && options.isCobaltGlass);
-        if (isCobaltGlass) {
+        const effMode = (options && options.opticalMode) || (options && options.isCobaltGlass ? 'cobalt' : 'naked');
+        const isCobaltGlass = (effMode === 'cobalt');
+        const isSplit = (effMode === 'split');
+        if (stage === 'introducing' || (options && options.isIntroducing)) {
+          statusLabel = '🔥 Dipping clean glass rod in solution and introducing to non-luminous flame...';
+        } else if (isSplit) {
+          statusLabel = (cation === 'Na+' || salt.key.includes('sodium') || salt.name.includes('Sodium'))
+            ? 'Dual Split-View: Naked Eye (589 nm Golden Yellow) | Cobalt Glass (Absorbed / Invisible)'
+            : (cation === 'K+' || salt.key.includes('potassium') || salt.name.includes('Potassium'))
+            ? 'Dual Split-View: Naked Eye (Lilac) | Cobalt Glass (766/404 nm Lilac Transmitted)'
+            : (cation === 'Ca2+')
+            ? 'Dual Split-View: Naked Eye (Brick-Red) | Cobalt Glass (Attenuated)'
+            : (cation === 'Cu2+')
+            ? 'Dual Split-View: Naked Eye (Blue-Green) | Cobalt Glass (Transmitted)'
+            : (cation === 'Ba2+')
+            ? 'Dual Split-View: Naked Eye (Apple-Green) | Cobalt Glass (Absorbed)'
+            : 'Dual Split-View: Direct Emission vs Cobalt Blue Glass filter';
+        } else if (isCobaltGlass) {
           statusLabel = (salt.key.includes('sodium') || salt.name.includes('Sodium') || cation === 'Na+')
             ? 'Flame Test (Cobalt Glass): Golden yellow flame completely absorbed / invisible'
             : (salt.key.includes('potassium') || salt.name.includes('Potassium') || cation === 'K+')
@@ -2971,54 +2987,158 @@
       width = 180,
       height = 200,
       tubeId = `flame_${Math.random().toString(36).substring(2, 7)}`,
-      isCobaltGlass = false
+      opticalMode = 'naked',
+      isCobaltGlass = false,
+      isIntroducing = false
     } = options;
 
     const salt = resolveSalt(saltKey);
     const performed = stage !== 'idle' && stage !== 'untested' && Boolean(stage);
+    const introducing = Boolean(isIntroducing || stage === 'introducing');
     const cation = salt.cation;
 
-    // Characteristic Emission Spectra
-    let flameColor = '#38BDF8';
-    let flameOuter = '#0284C7';
-    let glowRadius = 40;
-    if (performed) {
+    // Optical mode resolution: default to naked eye!
+    const effMode = options.opticalMode || (options.isCobaltGlass ? 'cobalt' : 'naked');
+    const isFiltered = (effMode === 'cobalt') || Boolean(options.isCobaltGlass && effMode !== 'naked');
+    const isSplit = (effMode === 'split');
+
+    // Spectral Telemetry Badges
+    const spectralLabels = {
+      'Na+': { naked: '589 nm Golden Yellow', cobalt: '589 nm Absorbed' },
+      'K+': { naked: '766 nm Lilac', cobalt: '766/404 nm Lilac' },
+      'Ca2+': { naked: '622 nm Brick-Red', cobalt: 'Attenuated' },
+      'Cu2+': { naked: '510 nm Viridian', cobalt: 'Transmitted' },
+      'Ba2+': { naked: '553 nm Apple-Green', cobalt: 'Absorbed' },
+      'Pb2+': { naked: '405 nm Gray-Blue', cobalt: 'Faint' }
+    };
+    const spec = spectralLabels[cation] || { naked: 'Direct Emission', cobalt: 'Filtered' };
+
+    // Characteristic Emission Spectra (Naked Eye)
+    let fcNaked = '#38BDF8';
+    let foNaked = '#0284C7';
+    let glowRadiusNaked = 40;
+
+    // Characteristic Emission Spectra (Cobalt Glass Filtered)
+    let fcCobalt = '#38BDF8';
+    let foCobalt = '#0284C7';
+    let glowRadiusCobalt = 25;
+
+    if (performed && !introducing) {
       if (cation === 'Ca2+') {
-        flameColor = isCobaltGlass ? 'rgba(148, 163, 184, 0.35)' : '#EA580C'; // Brick red / carmine
-        flameOuter = isCobaltGlass ? 'rgba(100, 116, 139, 0.25)' : '#DC2626';
-        glowRadius = isCobaltGlass ? 25 : 55;
+        fcNaked = '#EA580C'; foNaked = '#DC2626'; glowRadiusNaked = 55;
+        fcCobalt = 'rgba(148, 163, 184, 0.35)'; foCobalt = 'rgba(100, 116, 139, 0.25)'; glowRadiusCobalt = 25;
       } else if (cation === 'Cu2+') {
-        flameColor = isCobaltGlass ? '#38BDF8' : '#06B6D4'; // Brilliant peacock blue-green
-        flameOuter = isCobaltGlass ? '#0284C7' : '#059669';
-        glowRadius = isCobaltGlass ? 45 : 60;
+        fcNaked = '#06B6D4'; foNaked = '#059669'; glowRadiusNaked = 60;
+        fcCobalt = '#38BDF8'; foCobalt = '#0284C7'; glowRadiusCobalt = 45;
       } else if (cation === 'Ba2+') {
-        flameColor = isCobaltGlass ? 'rgba(100, 116, 139, 0.3)' : '#84CC16'; // Pale apple-green
-        flameOuter = isCobaltGlass ? 'rgba(71, 85, 105, 0.22)' : '#65A30D';
-        glowRadius = isCobaltGlass ? 20 : 50;
+        fcNaked = '#84CC16'; foNaked = '#65A30D'; glowRadiusNaked = 50;
+        fcCobalt = 'rgba(100, 116, 139, 0.3)'; foCobalt = 'rgba(71, 85, 105, 0.22)'; glowRadiusCobalt = 20;
       } else if (salt.key.includes('sodium') || salt.name.includes('Sodium') || cation === 'Na+') {
-        // KNEC Guideline: Cobalt blue glass completely absorbs 589nm sodium golden yellow!
-        flameColor = isCobaltGlass ? 'rgba(148, 163, 184, 0.22)' : '#FACC15'; // Intense golden yellow
-        flameOuter = isCobaltGlass ? 'rgba(100, 116, 139, 0.18)' : '#EAB308';
-        glowRadius = isCobaltGlass ? 15 : 70;
+        fcNaked = '#FACC15'; foNaked = '#EAB308'; glowRadiusNaked = 70;
+        fcCobalt = 'rgba(148, 163, 184, 0.22)'; foCobalt = 'rgba(100, 116, 139, 0.18)'; glowRadiusCobalt = 15;
       } else if (salt.key.includes('potassium') || salt.name.includes('Potassium') || cation === 'K+') {
-        // KNEC Guideline: Cobalt blue glass transmits violet/lilac light (766 & 404 nm) of potassium clearly!
-        flameColor = isCobaltGlass ? '#F472B6' : '#C084FC'; // Delicate lilac / vivid purple
-        flameOuter = isCobaltGlass ? '#C084FC' : '#A855F7';
-        glowRadius = isCobaltGlass ? 62 : 52;
+        fcNaked = '#C084FC'; foNaked = '#A855F7'; glowRadiusNaked = 52;
+        fcCobalt = '#F472B6'; foCobalt = '#C084FC'; glowRadiusCobalt = 62;
       } else if (cation === 'Pb2+') {
-        flameColor = isCobaltGlass ? 'rgba(100, 116, 139, 0.3)' : '#94A3B8'; // Dull grayish-blue
-        flameOuter = isCobaltGlass ? 'rgba(71, 85, 105, 0.22)' : '#64748B';
-        glowRadius = isCobaltGlass ? 20 : 42;
+        fcNaked = '#94A3B8'; foNaked = '#64748B'; glowRadiusNaked = 42;
+        fcCobalt = 'rgba(100, 116, 139, 0.3)'; foCobalt = 'rgba(71, 85, 105, 0.22)'; glowRadiusCobalt = 20;
       }
     }
+
+    // 1. Dual Split-Optical Viewport (Side-by-side: Naked Eye vs Cobalt Blue Glass)
+    if (isSplit && performed) {
+      return `
+        <svg width="${width}" height="${height}" viewBox="0 0 180 200" style="max-width:100%; height:auto; display:block; filter:drop-shadow(0 4px 12px rgba(0,0,0,0.4));">
+          <defs>
+            <clipPath id="clipLeft_${tubeId}">
+              <rect x="0" y="0" width="90" height="200"/>
+            </clipPath>
+            <clipPath id="clipRight_${tubeId}">
+              <rect x="90" y="0" width="90" height="200"/>
+            </clipPath>
+            <radialGradient id="flameGlowNaked_${tubeId}" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="${fcNaked}" stop-opacity="0.9"/>
+              <stop offset="60%" stop-color="${foNaked}" stop-opacity="0.45"/>
+              <stop offset="100%" stop-color="${foNaked}" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="flameGlowCobalt_${tubeId}" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="${fcCobalt}" stop-opacity="${(cation === 'Na+' || salt.key.includes('sodium')) ? '0.2' : '0.85'}"/>
+              <stop offset="60%" stop-color="${foCobalt}" stop-opacity="${(cation === 'Na+' || salt.key.includes('sodium')) ? '0.12' : '0.4'}"/>
+              <stop offset="100%" stop-color="${foCobalt}" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+
+          <!-- Bunsen Burner Cast-Iron Base & Chimney centered at x=90 -->
+          <g transform="translate(54, 80)">
+            <ellipse cx="36" cy="106" rx="42" ry="9" fill="#1E293B" stroke="#0F172A" stroke-width="1.5"/>
+            <rect x="30" y="96" width="12" height="10" fill="#334155"/>
+            <rect x="29" y="30" width="14" height="66" fill="#64748B" stroke="#334155" stroke-width="1"/>
+            <rect x="27" y="66" width="18" height="12" rx="2" fill="#475569" stroke="#1E293B" stroke-width="0.8"/>
+            <circle cx="36" cy="72" r="3.2" fill="#0F172A"/>
+            <ellipse cx="36" cy="30" rx="7" ry="2.5" fill="#475569"/>
+            <path d="M 42,102 Q 65,98 84,108" fill="none" stroke="#D97706" stroke-width="4.5" stroke-linecap="round"/>
+          </g>
+
+          <!-- Left Half: Naked Eye Direct Emission -->
+          <g clip-path="url(#clipLeft_${tubeId})">
+            <circle cx="90" cy="80" r="${glowRadiusNaked}" fill="url(#flameGlowNaked_${tubeId})" opacity="0.9"/>
+            <g class="anim-flame">
+              <path d="M 80,110 C 72,70 82,34 90,34 C 98,34 108,70 100,110 Z" fill="${foNaked}" opacity="0.88"/>
+              <path d="M 84,110 C 81,84 87,55 90,55 C 93,55 99,84 96,110 Z" fill="${fcNaked}" opacity="0.95"/>
+            </g>
+          </g>
+
+          <!-- Right Half: Cobalt Blue Glass Filter Transmission -->
+          <g clip-path="url(#clipRight_${tubeId})">
+            <circle cx="90" cy="80" r="${glowRadiusCobalt}" fill="url(#flameGlowCobalt_${tubeId})" opacity="${(cation === 'Na+' || salt.key.includes('sodium')) ? '0.18' : '0.85'}"/>
+            <g class="anim-flame">
+              <path d="M 80,110 C 72,70 82,34 90,34 C 98,34 108,70 100,110 Z" fill="${foCobalt}" opacity="${(cation === 'Na+' || salt.key.includes('sodium')) ? '0.2' : '0.85'}"/>
+              <path d="M 84,110 C 81,84 87,55 90,55 C 93,55 99,84 96,110 Z" fill="${fcCobalt}" opacity="${(cation === 'Na+' || salt.key.includes('sodium')) ? '0.22' : '0.95'}"/>
+            </g>
+            <!-- Cobalt Blue Glass Plate on Right -->
+            <rect x="90" y="4" width="86" height="192" rx="4" fill="rgba(30, 58, 138, 0.38)" stroke="#3B82F6" stroke-width="1.8"/>
+          </g>
+
+          <!-- Clean Borosilicate Glass Rod Assembly (KNEC Standard) -->
+          <g transform="translate(0, 0)" style="transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);">
+            <line x1="14" y1="14" x2="86" y2="86" stroke="rgba(255,255,255,0.75)" stroke-width="5" stroke-linecap="round"/>
+            <line x1="14" y1="14" x2="86" y2="86" stroke="#94A3B8" stroke-width="5" stroke-linecap="round" opacity="0.3"/>
+            <line x1="15" y1="12" x2="84" y2="81" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" opacity="0.85"/>
+            <ellipse cx="87" cy="87" rx="3.5" ry="3.5" fill="rgba(255,255,255,0.9)" stroke="#CBD5E1" stroke-width="0.8"/>
+            <circle cx="88" cy="88" r="3" fill="#FFFFFF" stroke="${fcNaked}" stroke-width="1" opacity="0.95"/>
+            <circle cx="88" cy="88" r="5" fill="${fcNaked}" opacity="0.55"/>
+          </g>
+
+          <!-- Central Divider Line -->
+          <line x1="90" y1="4" x2="90" y2="196" stroke="#38BDF8" stroke-width="1.6" stroke-dasharray="3,2" opacity="0.85"/>
+          <circle cx="90" cy="80" r="3" fill="#38BDF8" stroke="#0F172A" stroke-width="1"/>
+
+          <!-- Spectral Telemetry Headers -->
+          <g transform="translate(6, 8)">
+            <rect x="0" y="0" width="80" height="16" rx="3" fill="#0F172A" opacity="0.92"/>
+            <text x="40" y="11" font-size="7" font-weight="800" fill="#F8FAFC" text-anchor="middle" font-family="'JetBrains Mono', monospace">👁️ ${spec.naked}</text>
+          </g>
+          <g transform="translate(94, 8)">
+            <rect x="0" y="0" width="80" height="16" rx="3" fill="#1E3A8A" opacity="0.95"/>
+            <text x="40" y="11" font-size="7" font-weight="800" fill="#93C5FD" text-anchor="middle" font-family="'JetBrains Mono', monospace">🟦 ${spec.cobalt}</text>
+          </g>
+        </svg>
+      `;
+    }
+
+    // 2. Single Viewport: Naked Eye (Default) or Full Cobalt Glass
+    const activeFc = isFiltered ? fcCobalt : fcNaked;
+    const activeFo = isFiltered ? foCobalt : foNaked;
+    const activeGlowRadius = isFiltered ? glowRadiusCobalt : glowRadiusNaked;
+    const rodPos = performed ? 'translate(0, 0)' : 'translate(36, -24)';
 
     return `
       <svg width="${width}" height="${height}" viewBox="0 0 180 200" style="max-width:100%; height:auto; display:block; filter:drop-shadow(0 4px 12px rgba(0,0,0,0.4));">
         <defs>
           <radialGradient id="flameGlow_${tubeId}" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="${flameColor}" stop-opacity="0.85"/>
-            <stop offset="60%" stop-color="${flameOuter}" stop-opacity="0.4"/>
-            <stop offset="100%" stop-color="${flameOuter}" stop-opacity="0"/>
+            <stop offset="0%" stop-color="${activeFc}" stop-opacity="${isFiltered && (salt.key.includes('sodium') || cation === 'Na+') ? '0.2' : '0.85'}"/>
+            <stop offset="60%" stop-color="${activeFo}" stop-opacity="${isFiltered && (salt.key.includes('sodium') || cation === 'Na+') ? '0.1' : '0.4'}"/>
+            <stop offset="100%" stop-color="${activeFo}" stop-opacity="0"/>
           </radialGradient>
         </defs>
 
@@ -3038,20 +3158,20 @@
         </g>
 
         <!-- Radiant Emission Glow Halo -->
-        ${performed ? `
-          <circle cx="90" cy="80" r="${glowRadius}" fill="url(#flameGlow_${tubeId})" opacity="${isCobaltGlass && (salt.key.includes('sodium') || cation === 'Na+') ? '0.15' : '0.85'}"/>
+        ${performed && !introducing ? `
+          <circle cx="90" cy="80" r="${activeGlowRadius}" fill="url(#flameGlow_${tubeId})" opacity="${isFiltered && (salt.key.includes('sodium') || cation === 'Na+') ? '0.15' : '0.85'}"/>
         ` : ''}
 
         <!-- Dynamic Combustion Flame -->
         <g class="anim-flame" transform="translate(0, 0)">
           <!-- Outer Flame Cone -->
-          <path d="M 80,110 C 72,70 82,34 90,34 C 98,34 108,70 100,110 Z" fill="${flameOuter}" opacity="${isCobaltGlass && (salt.key.includes('sodium') || cation === 'Na+') ? '0.2' : '0.85'}"/>
+          <path d="M 80,110 C 72,70 82,34 90,34 C 98,34 108,70 100,110 Z" fill="${introducing ? '#0284C7' : activeFo}" opacity="${isFiltered && (salt.key.includes('sodium') || cation === 'Na+') ? '0.2' : '0.85'}"/>
           <!-- Inner Hot Cone -->
-          <path d="M 84,110 C 81,84 87,55 90,55 C 93,55 99,84 96,110 Z" fill="${flameColor}" opacity="${isCobaltGlass && (salt.key.includes('sodium') || cation === 'Na+') ? '0.25' : '0.95'}"/>
+          <path d="M 84,110 C 81,84 87,55 90,55 C 93,55 99,84 96,110 Z" fill="${introducing ? '#38BDF8' : activeFc}" opacity="${isFiltered && (salt.key.includes('sodium') || cation === 'Na+') ? '0.25' : '0.95'}"/>
         </g>
 
         <!-- Clean Borosilicate Glass Rod Assembly (KNEC Standard) -->
-        <g transform="${performed ? 'translate(0, 0)' : 'translate(36, -24)'}" style="transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);">
+        <g transform="${rodPos}" style="transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);">
           <!-- Borosilicate Glass Rod Body -->
           <line x1="14" y1="14" x2="86" y2="86" stroke="rgba(255,255,255,0.75)" stroke-width="5" stroke-linecap="round"/>
           <line x1="14" y1="14" x2="86" y2="86" stroke="#94A3B8" stroke-width="5" stroke-linecap="round" opacity="0.3"/>
@@ -3059,21 +3179,30 @@
           <!-- Rounded Glass Tip -->
           <ellipse cx="87" cy="87" rx="3.5" ry="3.5" fill="rgba(255,255,255,0.9)" stroke="#CBD5E1" stroke-width="0.8"/>
           <!-- Solution Droplet on Tip -->
-          <circle cx="88" cy="88" r="3" fill="${performed ? '#FFFFFF' : 'rgba(56,189,248,0.85)'}" stroke="${performed ? flameColor : '#FFFFFF'}" stroke-width="1" opacity="0.95"/>
-          ${performed ? `
+          <circle cx="88" cy="88" r="3" fill="${performed && !introducing ? '#FFFFFF' : 'rgba(56,189,248,0.85)'}" stroke="${performed && !introducing ? activeFc : '#FFFFFF'}" stroke-width="1" opacity="0.95"/>
+          ${performed && !introducing ? `
             <!-- Incandescent Emission at Glass Rod Tip -->
-            <circle cx="88" cy="88" r="5" fill="${flameColor}" opacity="0.55"/>
+            <circle cx="88" cy="88" r="5" fill="${activeFc}" opacity="0.55"/>
           ` : ''}
         </g>
 
-        ${isCobaltGlass ? `
+        <!-- Optical Filter Overlay & Badges -->
+        ${isFiltered ? `
           <!-- Cobalt Blue Glass Optical Filter Plate (KNEC Standard) -->
           <g transform="translate(0, 0)">
             <rect x="8" y="8" width="164" height="184" rx="8" fill="rgba(30, 58, 138, 0.38)" stroke="#3B82F6" stroke-width="2.5"/>
             <rect x="14" y="14" width="98" height="18" rx="4" fill="#1E3A8A" opacity="0.92"/>
             <text x="63" y="27" font-family="system-ui, -apple-system, sans-serif" font-size="9.5" font-weight="800" fill="#93C5FD" text-anchor="middle" letter-spacing="0.5">COBALT GLASS</text>
           </g>
-        ` : ''}
+        ` : (performed ? `
+          <!-- Naked Eye Viewport Header Badge (KNEC Standard Default) -->
+          <g transform="translate(10, 10)">
+            <rect x="0" y="0" width="${introducing ? '94' : '78'}" height="16" rx="3" fill="#0F172A" opacity="0.88"/>
+            <text x="${introducing ? '47' : '39'}" y="11" font-size="7.2" font-weight="800" fill="${introducing ? '#38BDF8' : '#F8FAFC'}" text-anchor="middle" font-family="'JetBrains Mono', monospace">
+              ${introducing ? '🔥 INTRODUCING...' : '👁️ NAKED EYE'}
+            </text>
+          </g>
+        ` : '')}
       </svg>
     `;
   }
@@ -3119,7 +3248,9 @@
         stage,
         prompt,
         tubeId,
-        isCobaltGlass: Boolean(options.isCobaltGlass)
+        isCobaltGlass: Boolean(options.isCobaltGlass),
+        opticalMode: options.opticalMode || (options.isCobaltGlass ? 'cobalt' : 'naked'),
+        isIntroducing: Boolean(options.isIntroducing || options.isHeating)
       });
     }
 

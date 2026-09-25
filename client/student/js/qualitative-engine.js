@@ -206,6 +206,32 @@ if (typeof window !== 'undefined') {
       name:'Sodium Iodide', formula:'NaI', cation:'Na+', anion:'I-', cationDisplay:'Na⁺', anionDisplay:'I⁻',
       appearance:'White deliquescent crystalline powder', solubility:'Highly soluble in water; forms a clear, neutral stock solution.',
       crystalColor:'#F1F5F9', crystalSecondary:'#E2E8F0', crystalHighlight:'#FFFFFF'
+    },
+    potassiumPermanganate: {
+      name: 'Potassium Permanganate',
+      formula: 'KMnO₄',
+      cation: 'K+',
+      anion: 'MnO4-',
+      cationDisplay: 'K⁺',
+      anionDisplay: 'MnO₄⁻',
+      appearance: 'Dark purple / bronze-black lustrous crystals',
+      solubility: 'Readily soluble in water; forms an intense deep-purple stock solution.',
+      crystalColor: '#3B0764',
+      crystalSecondary: '#1E1B4B',
+      crystalHighlight: '#581C87'
+    },
+    potassiumDichromate: {
+      name: 'Potassium Dichromate',
+      formula: 'K₂Cr₂O₇',
+      cation: 'K+',
+      anion: 'Cr2O7^2-',
+      cationDisplay: 'K⁺',
+      anionDisplay: 'Cr₂O₇²⁻',
+      appearance: 'Bright orange-red crystalline solid',
+      solubility: 'Soluble in water; forms a clear bright-orange stock solution.',
+      crystalColor: '#EA580C',
+      crystalSecondary: '#C2410C',
+      crystalHighlight: '#FB923C'
     }
   };
   Object.keys(SALTS).forEach(k => { SALTS[k].key = k; });
@@ -1647,6 +1673,9 @@ if (typeof window !== 'undefined') {
         testId: test.id || test.key,
         stage: st ? (st.stage || (st.performed ? 'done' : 'idle')) : 'idle',
         isAdding: Boolean(st && st.isAdding),
+        isHeating: Boolean(st && st.isHeating),
+        isCooling: Boolean(st && st.isCooling),
+        isTestingProbe: Boolean(st && st.isTestingProbe),
         probe: st ? st.probe : null,
         prompt: test.prompt || test.name || test.title || '',
         obsStr: test.correctObs || test.observation || '',
@@ -2088,6 +2117,9 @@ if (typeof window !== 'undefined') {
       testStates[testKey] = {
         performed: false,
         isAdding: false,
+        isHeating: false,
+        isCooling: false,
+        isTestingProbe: false,
         stage: 'idle',
         probe: null,
         obsText: prevObs,
@@ -2124,52 +2156,111 @@ if (typeof window !== 'undefined') {
         ? QualitativeBenchCore.resolveReactionState(currentSaltKey, 'heat_solid', targetStage)
         : {};
 
-      if (targetStage === 'gentle_heat' || targetStage === 'warm') {
+      if (targetStage === 'gentle_heat' || targetStage === 'warm' || targetStage === 'step1_heat' || targetStage === 'strong_heat' || targetStage === 'heated') {
+        st.isHeating = true;
+        st.isCooling = false;
+        st.isTestingProbe = false;
         playFlameSound();
-        if (res.waterCondenses) playDropletSizzleSound();
-        st.statusLabel = res.statusLabel || 'Gentle Warming: Moisture & condensation observed';
-      } else if (targetStage === 'step1_heat' || targetStage === 'strong_heat' || targetStage === 'heated') {
-        if (res.decrepitates) {
-          playDecrepitationSound();
-        } else {
-          playFlameSound();
-        }
-        if (res.waterCondenses) {
-          setTimeout(() => playDropletSizzleSound(), 350);
-        }
-        st.statusLabel = res.statusLabel || 'Step 1: Solid heated strongly in flame — Thermal changes observed';
-      } else if (targetStage === 'test_splint' || (targetStage === 'step2_gas_test' && st.probe === 'glowing_splint')) {
-        st.probe = 'glowing_splint';
-        if (res.evolvesO2) {
-          playSplintRelightSound();
-          st.statusLabel = 'Gas Test: Glowing splint bursts into flame (O₂ confirmed)';
-        } else {
-          playFlameSound();
-          st.statusLabel = 'Gas Test: Glowing splint extinguished (No O₂ gas)';
-        }
-      } else if (targetStage === 'test_gas_blue_litmus' || (targetStage === 'step2_gas_test' && st.probe === 'blue_litmus')) {
-        st.probe = 'blue_litmus';
-        playFlameSound();
-        const turnsRed = res.evolvesNO2 || res.evolvesSO2 || (salt.cation === 'NH4+' && salt.anion === 'Cl-');
-        st.statusLabel = turnsRed
-          ? 'Gas Test: Moist blue litmus turns red (Acidic gas NO₂/SO₂)'
-          : 'Gas Test: Moist blue litmus remains blue';
-      } else if (targetStage === 'test_gas_red_litmus' || (targetStage === 'step2_gas_test' && st.probe === 'red_litmus')) {
-        st.probe = 'red_litmus';
-        playFlameSound();
-        const turnsBlue = res.evolvesNH3;
-        st.statusLabel = turnsBlue
-          ? 'Gas Test: Moist red litmus turns blue (Alkaline NH₃ gas)'
-          : 'Gas Test: Moist red litmus remains red';
-      } else if (targetStage === 'test_limewater' || (targetStage === 'step2_gas_test' && st.probe === 'limewater')) {
-        st.probe = 'limewater';
-        playFlameSound();
-        const turnsMilky = res.evolvesCO2;
-        st.statusLabel = turnsMilky
-          ? 'Gas Test: Limewater turns milky white precipitate (CO₂ confirmed)'
-          : 'Gas Test: Limewater remains clear';
+        st.statusLabel = (targetStage === 'gentle_heat' || targetStage === 'warm')
+          ? '🔥 Gently warming tube heel... solid absorbing heat from flame...'
+          : '🔥 Heating strongly in flame... solid absorbing heat from flame...';
+
+        setTimeout(() => {
+          if (testStates['heat_solid'] && testStates['heat_solid'].isHeating) {
+            testStates['heat_solid'].isHeating = false;
+            if (res.decrepitates) {
+              playDecrepitationSound();
+            }
+            if (res.waterCondenses) {
+              playDropletSizzleSound();
+            }
+            testStates['heat_solid'].statusLabel = res.statusLabel || (
+              (targetStage === 'gentle_heat' || targetStage === 'warm')
+                ? 'Gentle Warming: Moisture & condensation observed'
+                : 'Step 1: Solid heated strongly in flame — Thermal changes observed'
+            );
+            renderAll();
+          }
+        }, 1500);
       } else if (targetStage === 'cooled' || targetStage === 'cool_down') {
-        st.statusLabel = res.statusLabel || 'Step 3: Allowed tube to cool — Residue color transitions observed';
+        st.isCooling = true;
+        st.isHeating = false;
+        st.isTestingProbe = false;
+        st.statusLabel = '❄️ Tube removed from flame... cooling down to room temperature...';
+
+        setTimeout(() => {
+          if (testStates['heat_solid'] && testStates['heat_solid'].isCooling) {
+            testStates['heat_solid'].isCooling = false;
+            testStates['heat_solid'].statusLabel = res.statusLabel || 'Step 3: Allowed tube to cool — Residue color transitions observed';
+            renderAll();
+          }
+        }, 1300);
+      } else if (targetStage === 'test_splint' || (targetStage === 'step2_gas_test' && st.probe === 'glowing_splint')) {
+        st.isTestingProbe = true;
+        st.probe = 'glowing_splint';
+        st.statusLabel = '🪵 Introducing glowing splint into mouth of tube...';
+
+        setTimeout(() => {
+          if (testStates['heat_solid'] && testStates['heat_solid'].isTestingProbe) {
+            testStates['heat_solid'].isTestingProbe = false;
+            if (res.evolvesO2) {
+              playSplintRelightSound();
+              testStates['heat_solid'].statusLabel = 'Gas Test: Glowing splint bursts into flame (O₂ confirmed)';
+            } else {
+              playFlameSound();
+              testStates['heat_solid'].statusLabel = 'Gas Test: Glowing splint extinguished (No O₂ gas)';
+            }
+            renderAll();
+          }
+        }, 750);
+      } else if (targetStage === 'test_gas_blue_litmus' || (targetStage === 'step2_gas_test' && st.probe === 'blue_litmus')) {
+        st.isTestingProbe = true;
+        st.probe = 'blue_litmus';
+        st.statusLabel = '📄 Holding moist blue litmus paper at mouth of tube...';
+
+        setTimeout(() => {
+          if (testStates['heat_solid'] && testStates['heat_solid'].isTestingProbe) {
+            testStates['heat_solid'].isTestingProbe = false;
+            playFlameSound();
+            const turnsRed = res.evolvesNO2 || res.evolvesSO2 || (salt.cation === 'NH4+' && salt.anion === 'Cl-');
+            testStates['heat_solid'].statusLabel = turnsRed
+              ? 'Gas Test: Moist blue litmus turns red (Acidic gas NO₂/SO₂)'
+              : 'Gas Test: Moist blue litmus remains blue';
+            renderAll();
+          }
+        }, 750);
+      } else if (targetStage === 'test_gas_red_litmus' || (targetStage === 'step2_gas_test' && st.probe === 'red_litmus')) {
+        st.isTestingProbe = true;
+        st.probe = 'red_litmus';
+        st.statusLabel = '📄 Holding moist red litmus paper at mouth of tube...';
+
+        setTimeout(() => {
+          if (testStates['heat_solid'] && testStates['heat_solid'].isTestingProbe) {
+            testStates['heat_solid'].isTestingProbe = false;
+            playFlameSound();
+            const turnsBlue = res.evolvesNH3;
+            testStates['heat_solid'].statusLabel = turnsBlue
+              ? 'Gas Test: Moist red litmus turns blue (Alkaline NH₃ gas)'
+              : 'Gas Test: Moist red litmus remains red';
+            renderAll();
+          }
+        }, 750);
+      } else if (targetStage === 'test_limewater' || (targetStage === 'step2_gas_test' && st.probe === 'limewater')) {
+        st.isTestingProbe = true;
+        st.probe = 'limewater';
+        st.statusLabel = '🥛 Introducing limewater droplet into mouth of tube...';
+
+        setTimeout(() => {
+          if (testStates['heat_solid'] && testStates['heat_solid'].isTestingProbe) {
+            testStates['heat_solid'].isTestingProbe = false;
+            playFlameSound();
+            const turnsMilky = res.evolvesCO2;
+            testStates['heat_solid'].statusLabel = turnsMilky
+              ? 'Gas Test: Limewater turns milky white precipitate (CO₂ confirmed)'
+              : 'Gas Test: Limewater remains clear';
+            renderAll();
+          }
+        }, 750);
       } else if (targetStage === 'step2_gas_test') {
         playFlameSound();
         if (res.evolvesO2) playSplintRelightSound();

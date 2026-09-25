@@ -1372,7 +1372,7 @@
 
   // 3. Decolorization Reagents (Bromine Water, Acidified KMnO₄, Acidified K₂Cr₂O₇)
   function renderDecolorizationSvg(options = {}) {
-    const { sampleKey = 'org_alkene', testType = 'bromine', performed = false, isAdding = false, tubeId = 'dec_1' } = options;
+    const { sampleKey = 'org_alkene', testType = 'bromine', performed = false, isAdding = false, isHeating = false, isWarming = false, tubeId = 'dec_1' } = options;
     const sample = resolveSample(sampleKey);
 
     let liquidColor = 'rgba(56, 189, 248, 0.28)';
@@ -1405,12 +1405,14 @@
     } else if (testType === 'kmno4') {
       const isMethanoic = sample.compoundKey === 'methanoic_acid' || sample.key === 'org_methanoic_acid';
       const isDecolorized = sample.kmno4?.isDecolorized || sample.fgKey === 'alkene' || sample.fgKey === 'alkanol' || isMethanoic;
-      liquidColor = performed ? (isDecolorized ? 'rgba(240, 249, 255, 0.22)' : 'rgba(107, 33, 168, 0.92)') : 'rgba(107, 33, 168, 0.92)';
-      meniscusColor = performed ? (isDecolorized ? 'rgba(240, 249, 255, 0.5)' : '#7E22CE') : '#7E22CE';
+      const isThermalDelay = isHeating || isWarming;
+      liquidColor = (performed && !isThermalDelay) ? (isDecolorized ? 'rgba(240, 249, 255, 0.22)' : 'rgba(107, 33, 168, 0.92)') : 'rgba(107, 33, 168, 0.92)';
+      meniscusColor = (performed && !isThermalDelay) ? (isDecolorized ? 'rgba(240, 249, 255, 0.5)' : '#7E22CE') : '#7E22CE';
       dropperColor = '#6B21A8';
       testLabel = 'Acidified KMnO₄';
+      if (isThermalDelay) showHeating = true;
 
-      if (performed && isDecolorized) {
+      if (performed && !isThermalDelay && isDecolorized) {
         schlierenWaves = `
           <path d="M 62,130 Q 80,135 98,130" stroke="rgba(255,255,255,0.45)" stroke-width="1.0" fill="none"/>
           <path d="M 64,155 Q 80,160 96,155" stroke="rgba(255,255,255,0.4)" stroke-width="0.8" fill="none"/>
@@ -1427,13 +1429,14 @@
       }
     } else if (testType === 'dichromate') {
       const turnsGreen = sample.dichromate?.turnsGreen || sample.fgKey === 'alkanol';
-      liquidColor = performed ? (turnsGreen ? 'rgba(5, 150, 105, 0.92)' : 'rgba(234, 88, 12, 0.88)') : 'rgba(234, 88, 12, 0.88)';
-      meniscusColor = performed ? (turnsGreen ? '#10B981' : '#F97316') : '#F97316';
+      const isThermalDelay = isHeating || isWarming;
+      liquidColor = (performed && !isThermalDelay) ? (turnsGreen ? 'rgba(5, 150, 105, 0.92)' : 'rgba(234, 88, 12, 0.88)') : 'rgba(234, 88, 12, 0.88)';
+      meniscusColor = (performed && !isThermalDelay) ? (turnsGreen ? '#10B981' : '#F97316') : '#F97316';
       dropperColor = '#EA580C';
       testLabel = 'K₂Cr₂O₇ / Heat';
       showHeating = true;
 
-      if (performed && turnsGreen) {
+      if (performed && !isThermalDelay && turnsGreen) {
         schlierenWaves = `
           <!-- Cr³⁺ Emerald Green Complex Glow -->
           <ellipse cx="80" cy="155" rx="18" ry="12" fill="rgba(16, 185, 129, 0.35)"/>
@@ -1811,6 +1814,8 @@
       sampleKey = 'org_alkene',
       performed = false,
       isAdding = false,
+      isHeating = false,
+      isWarming = false,
       prompt = '',
       tubeId = `org_${Math.random().toString(36).substring(2, 7)}`
     } = options;
@@ -1820,13 +1825,13 @@
 
     // 1. Specific chemical reagents in prompt ALWAYS take highest priority over generic procedures like "water bath"
     if (pStr.includes('dichromate') || pStr.includes('cr2o7') || pStr.includes('k2cr2o7')) {
-      return renderDecolorizationSvg({ sampleKey, testType: 'dichromate', performed, isAdding, tubeId });
+      return renderDecolorizationSvg({ sampleKey, testType: 'dichromate', performed, isAdding, isHeating, isWarming, tubeId });
     }
     if (pStr.includes('kmno4') || pStr.includes('manganate') || pStr.includes('permanganate')) {
-      return renderDecolorizationSvg({ sampleKey, testType: 'kmno4', performed, isAdding, tubeId });
+      return renderDecolorizationSvg({ sampleKey, testType: 'kmno4', performed, isAdding, isHeating, isWarming, tubeId });
     }
     if (pStr.includes('bromine') || pStr.includes('br2')) {
-      return renderDecolorizationSvg({ sampleKey, testType: 'bromine', performed, isAdding, tubeId });
+      return renderDecolorizationSvg({ sampleKey, testType: 'bromine', performed, isAdding, isHeating, isWarming, tubeId });
     }
     if (pStr.includes('nahco3') || pStr.includes('na2co3') || pStr.includes('carbonate') || pStr.includes('effervesc')) {
       return renderEffervescenceSvg({ sampleKey, performed, isAdding, tubeId });
@@ -1847,13 +1852,13 @@
 
     // 2. Fallback to explicit testId when prompt is generic, unspecific, or empty
     if (tId.includes('dichromate') || tId.includes('cr2o7')) {
-      return renderDecolorizationSvg({ sampleKey, testType: 'dichromate', performed, isAdding, tubeId });
+      return renderDecolorizationSvg({ sampleKey, testType: 'dichromate', performed, isAdding, isHeating, isWarming, tubeId });
     }
     if (tId.includes('kmno4') || tId.includes('manganate') || tId.includes('permanganate')) {
-      return renderDecolorizationSvg({ sampleKey, testType: 'kmno4', performed, isAdding, tubeId });
+      return renderDecolorizationSvg({ sampleKey, testType: 'kmno4', performed, isAdding, isHeating, isWarming, tubeId });
     }
     if (tId.includes('bromine') || tId.includes('br2')) {
-      return renderDecolorizationSvg({ sampleKey, testType: 'bromine', performed, isAdding, tubeId });
+      return renderDecolorizationSvg({ sampleKey, testType: 'bromine', performed, isAdding, isHeating, isWarming, tubeId });
     }
     if (tId.includes('nahco3') || tId.includes('carbonate') || tId.includes('effervesc')) {
       return renderEffervescenceSvg({ sampleKey, performed, isAdding, tubeId });

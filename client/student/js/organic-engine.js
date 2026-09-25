@@ -718,10 +718,12 @@ if (typeof window === 'undefined') {
     // 4. ACIDIFIED POTASSIUM DICHROMATE(VI) OXIDATION
     if (testKey === 'dichromate') {
       const turnsGreen = sample.fgKey === 'alkanol';
-      const liquidColor = performed ? (turnsGreen ? '#059669' : '#EA580C') : '#F59E0B';
-      const meniscusColor = performed ? (turnsGreen ? '#10B981' : '#F97316') : '#FBBF24';
+      const isHeating = Boolean(st && st.isHeating);
+      const isAdding = Boolean(st && st.isAdding);
+      const liquidColor = (performed && !isHeating) ? (turnsGreen ? '#059669' : '#EA580C') : (isAdding || isHeating ? '#EA580C' : '#F59E0B');
+      const meniscusColor = (performed && !isHeating) ? (turnsGreen ? '#10B981' : '#F97316') : '#F97316';
 
-      const vapors = performed && turnsGreen ? `
+      const vapors = (performed && !isHeating && turnsGreen) || isHeating ? `
         <g class="anim-vapor">
           <path d="M 44,20 Q 48,10 45,0" stroke="rgba(255,255,255,0.75)" stroke-width="1.8" fill="none"/>
           <path d="M 56,22 Q 60,12 57,2" stroke="rgba(255,255,255,0.75)" stroke-width="1.8" fill="none"/>
@@ -743,10 +745,10 @@ if (typeof window === 'undefined') {
         <ellipse cx="50" cy="23" rx="19" ry="3.5" fill="url(#rimGrad_${testKey})" stroke="#38BDF8" stroke-width="0.8"/>
         <ellipse cx="50" cy="23" rx="16.5" ry="2.6" fill="rgba(15,23,42,0.3)" stroke="rgba(255,255,255,0.4)" stroke-width="0.6"/>
 
-        <!-- Dichromate Liquid Column -->
-        <path d="M 33,64 L 33,112 C 33,124 41,130 50,130 C 59,130 67,124 67,112 L 67,64 Z" fill="${liquidColor}"/>
+        <!-- Dichromate Liquid Column with Smooth Thermal Color Transition -->
+        <path d="M 33,64 L 33,112 C 33,124 41,130 50,130 C 59,130 67,124 67,112 L 67,64 Z" fill="${liquidColor}" style="transition: fill 0.85s cubic-bezier(0.4, 0, 0.2, 1);"/>
         <path d="M 33,64 L 33,112 C 33,124 41,130 50,130 C 59,130 67,124 67,112 L 67,64 Z" fill="url(#liquidSheen_${testKey})"/>
-        <ellipse cx="50" cy="64" rx="17" ry="3.5" fill="${meniscusColor}" opacity="0.9"/>
+        <ellipse cx="50" cy="64" rx="17" ry="3.5" fill="${meniscusColor}" opacity="0.9" style="transition: fill 0.85s cubic-bezier(0.4, 0, 0.2, 1);"/>
         <path d="M 33,64 Q 50,67 67,64" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="1.2"/>
         ${vapors}
 
@@ -754,9 +756,20 @@ if (typeof window === 'undefined') {
         <path d="M 35,28 L 35,110 C 35,122 40,128 48,130" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" opacity="0.65"/>
         <line x1="65" y1="30" x2="65" y2="108" stroke="#FFFFFF" stroke-width="0.8" stroke-linecap="round" opacity="0.35"/>
 
-        <!-- Heating Bunsen Base & Gentle Fast Warming Blue Flame -->
-        <path d="M 50,132 C 44,138 46,148 50,148 C 54,148 56,138 50,132 Z" fill="url(#clearBlueFlame_outer_${testKey})" class="anim-flame" style="transform-origin: 50px 148px;"/>
-        <path d="M 50,138 C 47,142 48,148 50,148 C 52,148 53,142 50,138 Z" fill="url(#clearBlueFlame_inner_${testKey})" class="anim-flame-inner" style="transform-origin: 50px 148px;"/>
+        <!-- Orange Dichromate Dropper Assembly during Addition -->
+        <g style="transition: transform 0.6s ease, opacity 0.4s ease; transform: translate(0px, ${performed || isHeating ? '-25px' : (isAdding ? '4px' : '0px')}); opacity: ${performed || isHeating ? '0' : '1'};">
+          <ellipse cx="50" cy="6" rx="${isAdding ? '5.5' : '6.5'}" ry="${isAdding ? '4' : '5'}" fill="url(#dropperTeat_${testKey})"/>
+          <rect x="48.5" y="10" width="3" height="14" fill="rgba(255,255,255,0.7)" stroke="#EA580C" stroke-width="0.6"/>
+          <path d="M 48.5,24 L 51.5,24 L 50.8,30 L 49.2,30 Z" fill="#EA580C" stroke="#C2410C" stroke-width="0.6"/>
+          <ellipse cx="50" cy="30.5" rx="1.2" ry="0.8" fill="#EA580C"/>
+          ${isAdding ? '<ellipse cx="50" cy="38" rx="2.4" ry="3.5" fill="#EA580C" class="anim-droplet"/>' : ''}
+        </g>
+
+        ${isHeating || performed ? `
+          <!-- Heating Bunsen Base & Gentle Fast Warming Blue Flame -->
+          <path d="M 50,132 C 44,138 46,148 50,148 C 54,148 56,138 50,132 Z" fill="url(#clearBlueFlame_outer_${testKey})" class="anim-flame" style="transform-origin: 50px 148px;"/>
+          <path d="M 50,138 C 47,142 48,148 50,148 C 52,148 53,142 50,138 Z" fill="url(#clearBlueFlame_inner_${testKey})" class="anim-flame-inner" style="transform-origin: 50px 148px;"/>
+        ` : ''}
         <text x="50" y="148" font-size="8.5" font-weight="700" fill="var(--text-muted)" text-anchor="middle">K₂Cr₂O₇ / Heat</text>
       </svg>`;
     }
@@ -1074,11 +1087,74 @@ if (typeof window === 'undefined') {
     else if (testKey === 'bromine' || testKey === 'dichromate' || testKey === 'solubility') playAudioTone('drip');
     else playAudioTone('clink');
 
-    if (isAnimatedDelivery) {
+    if (testKey === 'dichromate') {
       testStates[testKey] = {
         isAdding: true,
+        isHeating: false,
         performed: false,
-        statusLabel: testKey === 'carbonate' ? 'Adding Solid Na₂CO₃...' : (testKey === 'esterification' ? 'Warming in Water Bath...' : 'Dispensing Reagent...'),
+        statusLabel: 'Dispensing Acidified K₂Cr₂O₇ dropwise...',
+        obsText: (testStates[testKey] && testStates[testKey].obsText) || '',
+        infText: (testStates[testKey] && testStates[testKey].infText) || ''
+      };
+      renderGrid();
+
+      setTimeout(() => {
+        if (testStates[testKey]) {
+          testStates[testKey].isAdding = false;
+          testStates[testKey].isHeating = true;
+          testStates[testKey].statusLabel = '🔥 Warming mixture in flame... solution absorbing heat...';
+          playAudioTone('flame');
+          renderGrid();
+
+          setTimeout(() => {
+            if (testStates[testKey]) {
+              testStates[testKey].isHeating = false;
+              testStates[testKey].performed = true;
+              testStates[testKey].statusLabel = expected.status || 'Test Completed';
+              playAudioTone('clink');
+              renderGrid();
+              updateProgress();
+            }
+          }, 1400);
+        }
+      }, 650);
+    } else if (testKey === 'esterification') {
+      testStates[testKey] = {
+        isAdding: true,
+        isHeating: false,
+        performed: false,
+        statusLabel: 'Adding reagents for esterification...',
+        obsText: (testStates[testKey] && testStates[testKey].obsText) || '',
+        infText: (testStates[testKey] && testStates[testKey].infText) || ''
+      };
+      renderGrid();
+
+      setTimeout(() => {
+        if (testStates[testKey]) {
+          testStates[testKey].isAdding = false;
+          testStates[testKey].isHeating = true;
+          testStates[testKey].statusLabel = '🔥 Warming in warm water bath... absorbing heat...';
+          playAudioTone('flame');
+          renderGrid();
+
+          setTimeout(() => {
+            if (testStates[testKey]) {
+              testStates[testKey].isHeating = false;
+              testStates[testKey].performed = true;
+              testStates[testKey].statusLabel = expected.status || 'Pleasant Sweet Fruity Aroma (Ester)';
+              playAudioTone('clink');
+              renderGrid();
+              updateProgress();
+            }
+          }, 1400);
+        }
+      }, 650);
+    } else if (isAnimatedDelivery) {
+      testStates[testKey] = {
+        isAdding: true,
+        isHeating: false,
+        performed: false,
+        statusLabel: testKey === 'carbonate' ? 'Adding Solid Na₂CO₃...' : 'Dispensing Reagent...',
         obsText: (testStates[testKey] && testStates[testKey].obsText) || '',
         infText: (testStates[testKey] && testStates[testKey].infText) || ''
       };
@@ -1096,6 +1172,7 @@ if (typeof window === 'undefined') {
     } else {
       testStates[testKey] = {
         isAdding: false,
+        isHeating: false,
         performed: true,
         statusLabel: expected.status || 'Test Completed',
         obsText: (testStates[testKey] && testStates[testKey].obsText) || '',
@@ -1110,6 +1187,7 @@ if (typeof window === 'undefined') {
     playAudioTone('clink');
     if (testStates[testKey]) {
       testStates[testKey].isAdding = false;
+      testStates[testKey].isHeating = false;
       testStates[testKey].performed = false;
       testStates[testKey].statusLabel = 'Awaiting Test';
     }

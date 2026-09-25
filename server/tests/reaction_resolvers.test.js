@@ -343,6 +343,49 @@ describe('Qualitative Bench Core (Inorganic Reactions)', () => {
         stage: 'cooled'
       });
       assert.ok(cooledSvg.includes('COOLED'), 'Cooling status badge is rendered');
+
+      // Test Realistic Heat Absorption Delay (isHeating: true retains initial crystal appearance)
+      const absorbingSvg = QualitativeBenchCore.renderDryHeatingApparatusSvg({
+        saltKey: 'leadNitrate',
+        stage: 'step1_heat',
+        isHeating: true
+      });
+      assert.ok(absorbingSvg.includes('ABSORBING HEAT'), 'Status badge reflects heat absorption phase');
+      assert.ok(!absorbingSvg.includes('anim-decrepitate'), 'No decrepitation crackles while solid is still absorbing initial heat');
+      assert.ok(!absorbingSvg.includes('anim-heat-wave" transform="translate(38'), 'No brown NO2 fumes billow while still absorbing heat');
+
+      // Once isHeating is false, thermal decomposition takes effect
+      const decomposedSvg = QualitativeBenchCore.renderDryHeatingApparatusSvg({
+        saltKey: 'leadNitrate',
+        stage: 'step1_heat',
+        isHeating: false
+      });
+      assert.ok(decomposedSvg.includes('anim-decrepitate'), 'Decrepitation crackles begin after heat absorption threshold');
+      assert.ok(decomposedSvg.includes('anim-heat-wave'), 'Brown NO2 fumes billow after heat absorption threshold');
+    });
+
+    it('should simulate thermal decomposition of Potassium Permanganate (KMnO4) with decrepitation and O2 evolution', () => {
+      const res = QualitativeBenchCore.resolveReactionState('potassiumPermanganate', 'heat_solid', 'step1_heat', 'Heat solid in hard-glass tube');
+      assert.strictEqual(res.decrepitates, true, 'KMnO4 crackles/decrepitates on heating');
+      assert.strictEqual(res.evolvesO2, true, 'KMnO4 evolves oxygen gas (O2)');
+      assert.strictEqual(res.residueColor, '#0F172A', 'KMnO4 decomposes to black residue (K2MnO4 + MnO2)');
+
+      const splintSvg = QualitativeBenchCore.renderDryHeatingApparatusSvg({
+        saltKey: 'potassiumPermanganate',
+        stage: 'test_splint',
+        probe: 'glowing_splint'
+      });
+      assert.ok(splintSvg.includes('SPLINT REKINDLES'), 'Oxygen gas evolved from KMnO4 rekindles glowing splint into flame');
+    });
+
+    it('should simulate thermal decomposition of Potassium Dichromate (K2Cr2O7) evolving O2 gas', () => {
+      const res = QualitativeBenchCore.resolveReactionState('potassiumDichromate', 'heat_solid', 'step1_heat', 'Heat solid in hard-glass tube');
+      assert.strictEqual(res.evolvesO2, true, 'K2Cr2O7 evolves oxygen gas on strong heating');
+      assert.strictEqual(res.residueColorHot, '#7C2D12', 'K2Cr2O7 turns dark reddish-brown when hot');
+      assert.strictEqual(res.residueColorCold, '#14532D', 'K2Cr2O7 decomposes to dark green Cr2O3 residue on cooling');
+
+      const cooled = QualitativeBenchCore.resolveReactionState('potassiumDichromate', 'heat_solid', 'cooled', 'Heat solid in hard-glass tube');
+      assert.strictEqual(cooled.residueColor, '#14532D', 'Cooled residue must be dark green');
     });
   });
 

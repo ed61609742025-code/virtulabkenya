@@ -279,6 +279,36 @@
       crystalSecondary: '#E2E8F0',
       crystalHighlight: '#FFFFFF'
     },
+    potassiumPermanganate: {
+      key: 'potassiumPermanganate',
+      altKeys: ['KMNO4', 'POTASSIUM PERMANGANATE', 'POTASSIUM MANGANATE(VII)', 'POTASSIUM_PERMANGANATE', 'MANGANATE'],
+      name: 'Potassium Permanganate',
+      formula: 'KMnO₄',
+      cation: 'K+',
+      anion: 'MnO4-',
+      cationDisplay: 'K⁺',
+      anionDisplay: 'MnO₄⁻',
+      appearance: 'Dark purple / bronze-black lustrous crystals',
+      solubility: 'Readily soluble in water; forms an intense deep-purple stock solution.',
+      crystalColor: '#3B0764',
+      crystalSecondary: '#1E1B4B',
+      crystalHighlight: '#581C87'
+    },
+    potassiumDichromate: {
+      key: 'potassiumDichromate',
+      altKeys: ['K2CR2O7', 'POTASSIUM DICHROMATE', 'POTASSIUM DICHROMATE(VI)', 'POTASSIUM_DICHROMATE'],
+      name: 'Potassium Dichromate',
+      formula: 'K₂Cr₂O₇',
+      cation: 'K+',
+      anion: 'Cr2O7^2-',
+      cationDisplay: 'K⁺',
+      anionDisplay: 'Cr₂O₇²⁻',
+      appearance: 'Bright orange-red crystalline solid',
+      solubility: 'Soluble in water; forms a clear bright-orange stock solution.',
+      crystalColor: '#EA580C',
+      crystalSecondary: '#C2410C',
+      crystalHighlight: '#FB923C'
+    },
     // ── Extended KNEC Syllabus Salts ──────────────────────────────
     magnesiumSulfate: {
       key: 'magnesiumSulfate',
@@ -1851,6 +1881,29 @@
           gasType = 'so2_pungent';
           residueColor = '#FFFFFF';
           statusLabel = 'Heated Strongly: Solid remains stable; faint choking sulfurous smell of SO₂';
+        } else if (anion === 'MnO4-' || saltKey === 'potassiumPermanganate' || (salt.name && salt.name.includes('Permanganate'))) {
+          decrepitates = true;
+          evolvesO2 = true;
+          gasType = 'o2_gas';
+          residueColorHot = '#0F172A';
+          residueColorCold = '#0F172A';
+          residueColor = '#0F172A';
+          statusLabel = isCooled
+            ? 'Cooled: Black/dark greenish-black residue of K₂MnO₄ and MnO₂ cooled to room temperature'
+            : (isGentleHeat
+              ? 'Gently Warmed: Purple crystals begin absorbing heat; faint crackling audible'
+              : 'Heated: Decrepitates crackling loudly; decomposes to black residue (K₂MnO₄ + MnO₂); evolves colourless gas that relights glowing splint (O₂)');
+        } else if (anion === 'Cr2O7^2-' || saltKey === 'potassiumDichromate' || (salt.name && salt.name.includes('Dichromate'))) {
+          evolvesO2 = true;
+          gasType = 'o2_gas';
+          residueColorHot = '#7C2D12';
+          residueColorCold = '#14532D';
+          residueColor = isCooled ? residueColorCold : residueColorHot;
+          statusLabel = isCooled
+            ? 'Cooled: Orange crystals converted to dark green residue of Cr₂O₃ and K₂CrO₄'
+            : (isGentleHeat
+              ? 'Gently Warmed: Bright orange crystals begin darkening as heat is absorbed'
+              : 'Heated Strongly: Orange crystals darken to reddish-brown hot; decomposes evolving O₂ gas that relights glowing splint');
         } else if (anion === 'Br-' || anion === 'I-') {
           decrepitates = true;
           residueColor = salt.crystalColor || '#FFFFFF';
@@ -2466,6 +2519,9 @@
     const {
       saltKey = 'leadNitrate',
       stage = 'idle',
+      isHeating = false,
+      isCooling = false,
+      isTestingProbe = false,
       probe = null,
       prompt = '',
       obsStr = '',
@@ -2492,14 +2548,14 @@
       (saltKey === 'copperSulfate' || saltKey === 'ironSulfate' || saltKey === 'zincSulfate' || saltKey === 'aluminumNitrate' || saltKey === 'zincNitrate' || saltKey === 'ironChloride');
 
     // Gas evolution identification
-    const evolvesO2 = isNitrate;
+    const evolvesO2 = isNitrate || anion === 'MnO4-' || saltKey === 'potassiumPermanganate' || anion === 'Cr2O7^2-' || saltKey === 'potassiumDichromate';
     const evolvesNO2 = isNitrate;
     const evolvesNH3 = cation === 'NH4+';
     const evolvesCO2 = (cation === 'NH4+' && anion === 'CO3^2-') || anion === 'HCO3-' || saltKey === 'sodiumHydrogenCarbonate';
     const evolvesSO2 = (cation === 'Fe2+' && anion === 'SO4^2-') || anion === 'SO3^2-';
     const sublimes = cation === 'NH4+' && anion === 'Cl-';
     const decomposesCompletely = cation === 'NH4+' && anion === 'CO3^2-';
-    const decrepitates = cation === 'Pb2+';
+    const decrepitates = cation === 'Pb2+' || anion === 'MnO4-' || saltKey === 'potassiumPermanganate';
 
     // Active Probe Resolver: check explicit probe argument or infer from stage/salt
     let activeProbe = probe;
@@ -2517,52 +2573,86 @@
       }
     }
 
-    // Residue Color Transitions (Hot vs Cold)
+    // Residue Color Transitions (Hot vs Cold & Absorption Phase)
     let hotPowderColor = salt.crystalColor || '#FFFFFF';
     let residueVisible = true;
     if (performed) {
-      if (decomposesCompletely && !isGentleHeat) {
+      if (decomposesCompletely && !isGentleHeat && !isHeating) {
         residueVisible = false; // Ammonium carbonate leaves NO residue!
       } else if (cation === 'Zn2+') {
-        hotPowderColor = isCooled ? '#FFFFFF' : '#FACC15'; // ZnO canary-yellow hot, pure white cold
+        hotPowderColor = (isCooled && !isCooling) ? '#FFFFFF' : '#FACC15'; // ZnO canary-yellow hot, pure white cold
       } else if (cation === 'Cu2+') {
         hotPowderColor = '#F1F5F9'; // Anhydrous white powder
       } else if (cation === 'Fe2+') {
         hotPowderColor = '#451A03'; // Dirty brown/black Fe2O3
       } else if (cation === 'Pb2+') {
-        hotPowderColor = isCooled ? '#FACC15' : '#CA8A04'; // PbO yellow cold, brown/orange hot (#CA8A04)
+        hotPowderColor = (isCooled && !isCooling) ? '#FACC15' : '#CA8A04'; // PbO yellow cold, brown/orange hot (#CA8A04)
+      } else if (anion === 'MnO4-' || saltKey === 'potassiumPermanganate' || (salt.name && salt.name.includes('Permanganate'))) {
+        hotPowderColor = '#0F172A'; // Black/dark greenish-black residue of K2MnO4 + MnO2
+      } else if (anion === 'Cr2O7^2-' || saltKey === 'potassiumDichromate' || (salt.name && salt.name.includes('Dichromate'))) {
+        hotPowderColor = (isCooled && !isCooling) ? '#14532D' : '#7C2D12'; // Dark green Cr2O3 cold, dark reddish-brown hot
       } else if (isNitrate && cation === 'Al3+') {
         hotPowderColor = '#FFFFFF'; // Al2O3 white residue
       }
     }
 
-    // Litmus & Gas Probe Reaction States
-    const isAcidicGas = evolvesNO2 || evolvesSO2 || (cation === 'NH4+' && anion === 'Cl-') || saltKey === 'ironChloride';
-    const blueLitmusTip = isAcidicGas ? '#EF4444' : '#3B82F6';
-    const redLitmusTip = evolvesNH3 ? '#2563EB' : '#EF4444';
-    const splintIgnites = evolvesO2;
-    const limewaterMilky = evolvesCO2;
+    // While absorbing heat (isHeating), crystals stay in initial appearance before decomposing!
+    const currentPowderColor = isHeating ? (salt.crystalColor || '#FFFFFF') : hotPowderColor;
 
-    // Status Banner Text
+    // Litmus & Gas Probe Reaction States (unreacted if currently introducing probe)
+    const isAcidicGas = evolvesNO2 || evolvesSO2 || (cation === 'NH4+' && anion === 'Cl-') || saltKey === 'ironChloride';
+    const blueLitmusTip = isTestingProbe ? '#3B82F6' : (isAcidicGas ? '#EF4444' : '#3B82F6');
+    const redLitmusTip = isTestingProbe ? '#EF4444' : (evolvesNH3 ? '#2563EB' : '#EF4444');
+    const splintIgnites = isTestingProbe ? false : evolvesO2;
+    const limewaterMilky = isTestingProbe ? false : evolvesCO2;
+
+    // Status Banner Text with Realistic Heating Delays
     let badgeText = 'SOLID SPECIMEN Y IN HARD-GLASS TUBE';
     let badgeColor = '#38BDF8';
-    if (isCooled) {
+    if (isHeating) {
+      badgeText = isGentleHeat ? '🔥 GENTLE WARMING: SOLID ABSORBING HEAT...' : '🔥 HEATING STRONGLY: SOLID ABSORBING HEAT...';
+      badgeColor = '#F59E0B';
+    } else if (isCooling) {
+      badgeText = '❄️ TUBE REMOVED FROM FLAME: COOLING DOWN...';
+      badgeColor = '#38BDF8';
+    } else if (isCooled) {
       badgeText = cation === 'Zn2+' ? '❄️ COOLED: ZnO REVERTED TO WHITE' :
         (cation === 'Pb2+' ? '❄️ COOLED: PbO TURNED YELLOW' :
-        (decomposesCompletely ? '❄️ COOLED: TUBE IS EMPTY (NO RESIDUE)' : '❄️ COOLED TO ROOM TEMPERATURE'));
+        (anion === 'Cr2O7^2-' || saltKey === 'potassiumDichromate' ? '❄️ COOLED: DARK GREEN Cr₂O₃ RESIDUE' :
+        (decomposesCompletely ? '❄️ COOLED: TUBE IS EMPTY (NO RESIDUE)' : '❄️ COOLED TO ROOM TEMPERATURE')));
       badgeColor = '#38BDF8';
     } else if (activeProbe === 'glowing_splint') {
-      badgeText = splintIgnites ? '🪵 SPLINT REKINDLES INTO FLAME (O₂)' : '🪵 SPLINT EXTINGUISHED (NO O₂)';
-      badgeColor = splintIgnites ? '#F59E0B' : '#94A3B8';
+      if (isTestingProbe) {
+        badgeText = '🪵 INTRODUCING GLOWING SPLINT TO TUBE MOUTH...';
+        badgeColor = '#F59E0B';
+      } else {
+        badgeText = splintIgnites ? '🪵 SPLINT REKINDLES INTO FLAME (O₂)' : '🪵 SPLINT EXTINGUISHED (NO O₂)';
+        badgeColor = splintIgnites ? '#F59E0B' : '#94A3B8';
+      }
     } else if (activeProbe === 'blue_litmus') {
-      badgeText = isAcidicGas ? '🔵 BLUE LITMUS: TURNED RED (ACIDIC)' : '🔵 BLUE LITMUS: UNCHANGED (BLUE)';
-      badgeColor = isAcidicGas ? '#EF4444' : '#38BDF8';
+      if (isTestingProbe) {
+        badgeText = '🔵 HOLDING MOIST BLUE LITMUS AT MOUTH...';
+        badgeColor = '#3B82F6';
+      } else {
+        badgeText = isAcidicGas ? '🔵 BLUE LITMUS: TURNED RED (ACIDIC)' : '🔵 BLUE LITMUS: UNCHANGED (BLUE)';
+        badgeColor = isAcidicGas ? '#EF4444' : '#38BDF8';
+      }
     } else if (activeProbe === 'red_litmus') {
-      badgeText = evolvesNH3 ? '🔴 RED LITMUS: TURNED BLUE (ALKALINE)' : '🔴 RED LITMUS: UNCHANGED (RED)';
-      badgeColor = evolvesNH3 ? '#38BDF8' : '#EF4444';
+      if (isTestingProbe) {
+        badgeText = '🔴 HOLDING MOIST RED LITMUS AT MOUTH...';
+        badgeColor = '#EF4444';
+      } else {
+        badgeText = evolvesNH3 ? '🔴 RED LITMUS: TURNED BLUE (ALKALINE)' : '🔴 RED LITMUS: UNCHANGED (RED)';
+        badgeColor = evolvesNH3 ? '#38BDF8' : '#EF4444';
+      }
     } else if (activeProbe === 'limewater') {
-      badgeText = limewaterMilky ? '🥛 LIMEWATER: TURNED MILKY (CO₂)' : '🥛 LIMEWATER: REMAINED CLEAR';
-      badgeColor = limewaterMilky ? '#E2E8F0' : '#94A3B8';
+      if (isTestingProbe) {
+        badgeText = '🥛 INTRODUCING LIMEWATER DROPLET AT MOUTH...';
+        badgeColor = '#94A3B8';
+      } else {
+        badgeText = limewaterMilky ? '🥛 LIMEWATER: TURNED MILKY (CO₂)' : '🥛 LIMEWATER: REMAINED CLEAR';
+        badgeColor = limewaterMilky ? '#E2E8F0' : '#94A3B8';
+      }
     } else if (isStrongHeat) {
       badgeText = decrepitates ? '💥 STRONG HEAT: DECREPITATION CRACKLE' : '🔥 HEATING STRONGLY (NON-LUMINOUS)';
       badgeColor = '#F59E0B';
@@ -2619,13 +2709,13 @@
           <rect x="18" y="10" width="30" height="5" rx="2.2" fill="rgba(255,255,255,0.35)" stroke="#94A3B8" stroke-width="1.3"/>
           <path d="M 21,13 L 21,112 Q 21,130 33,130 Q 45,130 45,112 L 45,13 Z" fill="rgba(255,255,255,0.07)" stroke="#94A3B8" stroke-width="1.6"/>
 
-          <!-- Dry Salt Residue Bed at Curved Base of Tube -->
+          <!-- Dry Salt Residue Bed at Curved Base of Tube with Smooth Thermal Color Transition -->
           ${residueVisible ? `
-            <path d="M 22,98 L 22,112 Q 22,129 33,129 Q 44,129 44,112 L 44,98 Q 33,104 22,98 Z" fill="${hotPowderColor}"/>
+            <path d="M 22,98 L 22,112 Q 22,129 33,129 Q 44,129 44,112 L 44,98 Q 33,104 22,98 Z" fill="${currentPowderColor}" style="transition: fill 0.85s cubic-bezier(0.4, 0, 0.2, 1);"/>
           ` : ''}
 
           <!-- Decrepitation Sparkles (Violently Snapping Crystal Fragments) -->
-          ${performed && decrepitates && !isCooled ? `
+          ${performed && !isHeating && decrepitates && !isCooled ? `
             <g class="anim-spangle anim-decrepitate">
               <circle cx="28" cy="106" r="2" fill="#FDE047"/>
               <circle cx="38" cy="102" r="1.6" fill="#F59E0B"/>
@@ -2637,7 +2727,7 @@
           ` : ''}
 
           <!-- Condensed Water Droplets on Upper Cooler Walls -->
-          ${performed && isHydrated ? `
+          ${performed && !isHeating && isHydrated ? `
             <g opacity="0.92">
               <ellipse cx="23" cy="50" rx="2.2" ry="2.8" fill="#BAE6FD"/>
               <ellipse cx="43" cy="58" rx="2.4" ry="3.0" fill="#BAE6FD"/>
@@ -2651,7 +2741,7 @@
           ` : ''}
 
           <!-- Dense Brown NO2 Fumes Inside Tube -->
-          ${performed && evolvesNO2 && !isCooled ? `
+          ${performed && !isHeating && evolvesNO2 && !isCooled ? `
             <g class="anim-heat-wave">
               <ellipse cx="33" cy="68" rx="10.5" ry="22" fill="url(#no2Fumes_${tubeId})"/>
               <ellipse cx="33" cy="38" rx="11.5" ry="24" fill="url(#no2Fumes_${tubeId})"/>
@@ -2659,7 +2749,7 @@
           ` : ''}
 
           <!-- Sublimation Deposit Ring on Upper Cooler Walls for Ammonium Salts -->
-          ${performed && sublimes ? `
+          ${performed && !isHeating && sublimes ? `
             <g opacity="0.95">
               <ellipse cx="33" cy="45" rx="11" ry="3.8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
               <ellipse cx="33" cy="48" rx="10" ry="2.6" fill="#F8FAFC"/>
@@ -2730,7 +2820,7 @@
         </g>
 
         <!-- Billowing NO2 Gas Fumes Escaping from Tube Mouth into Air -->
-        ${performed && evolvesNO2 && !isCooled ? `
+        ${performed && !isHeating && evolvesNO2 && !isCooled ? `
           <g class="anim-heat-wave" transform="translate(38, 14)">
             <circle cx="24" cy="18" r="9.5" fill="url(#no2Fumes_${tubeId})" opacity="0.88"/>
             <circle cx="16" cy="8" r="13.5" fill="url(#no2Fumes_${tubeId})" opacity="0.78"/>
@@ -2751,7 +2841,7 @@
           <!-- Rubber Gas Tubing -->
           <path d="M 35,62 Q 54,60 72,68" fill="none" stroke="#D97706" stroke-width="3.5" stroke-linecap="round"/>
 
-          ${isCooled ? `
+          ${isCooled || isCooling ? `
             <!-- Flame Extinguished / Burner Swung Away during Cooling -->
           ` : (isGentleHeat ? `
             <!-- Gentle Blue Heating Flame -->

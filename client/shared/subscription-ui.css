@@ -13,7 +13,7 @@
   border-radius: 999px;
   border: 1px solid var(--card-border, #E2E8F0);
   background: var(--card-bg, #FFFFFF);
-  color: var(--text-primary, #0F172A);
+  color: var(--text-primary, var(--text-main, var(--ink, #0F172A)));
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: 'Plus Jakarta Sans', sans-serif;
@@ -133,7 +133,7 @@
 }
 
 .vlk-sub-close-btn:hover {
-  color: var(--text-primary, #0F172A);
+  color: var(--text-primary, var(--text-main, var(--ink, #0F172A)));
 }
 
 /* Body */
@@ -147,7 +147,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
-  background: var(--acad-paper-subtle, #F8FAFC);
+  background: var(--acad-paper-subtle, var(--card-bg-hover, var(--panel2, #F8FAFC)));
   border: 1px solid var(--card-border, #E2E8F0);
   border-radius: 12px;
   margin-bottom: 20px;
@@ -157,7 +157,7 @@
   margin: 0 0 2px 0;
   font-size: 0.88rem;
   font-weight: 800;
-  color: var(--heading-color, #0F172A);
+  color: var(--heading-color, var(--text-main, #0F172A));
 }
 
 .vlk-status-info p {
@@ -264,7 +264,7 @@
 
 /* Phone & Checkout Form */
 .vlk-checkout-box {
-  background: var(--acad-paper-subtle, #F8FAFC);
+  background: var(--acad-paper-subtle, var(--card-bg-hover, var(--panel2, #F8FAFC)));
   border: 1px solid var(--card-border, #E2E8F0);
   border-radius: 14px;
   padding: 16px;
@@ -274,7 +274,7 @@
   display: block;
   font-size: 0.82rem;
   font-weight: 700;
-  color: var(--heading-color, #0F172A);
+  color: var(--heading-color, var(--text-main, #0F172A));
   margin-bottom: 6px;
 }
 
@@ -301,7 +301,7 @@
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.95rem;
   font-weight: 700;
-  color: var(--text-primary, #0F172A);
+  color: var(--text-primary, var(--text-main, var(--ink, #0F172A)));
   background: var(--card-bg, #FFFFFF);
   border: 1px solid var(--card-border, #CBD5E1);
   border-radius: 10px;
@@ -529,5 +529,30 @@
     text-align: center;
     justify-content: center;
   }
+}
+
+/* ── Dark & Lab Green Theme Overrides ───────────────────────── */
+[data-theme="dark"] .vlk-upgrade-banner {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.12) 0%, rgba(15, 26, 46, 0.75) 100%);
+  border-color: rgba(56, 189, 248, 0.28);
+}
+[data-theme="dark"] .vlk-upgrade-banner--grace {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(15, 26, 46, 0.75) 100%);
+  border-color: rgba(245, 158, 11, 0.4);
+}
+[data-theme="dark"] .vlk-plan-price {
+  color: var(--acad-oxford, #38BDF8);
+}
+
+[data-theme="green"] .vlk-upgrade-banner {
+  background: linear-gradient(135deg, rgba(52, 211, 153, 0.12) 0%, rgba(12, 33, 20, 0.75) 100%);
+  border-color: rgba(52, 211, 153, 0.28);
+}
+[data-theme="green"] .vlk-upgrade-banner--grace {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(12, 33, 20, 0.75) 100%);
+  border-color: rgba(251, 191, 36, 0.4);
+}
+[data-theme="green"] .vlk-plan-price {
+  color: var(--acad-oxford, #34D399);
 }
 

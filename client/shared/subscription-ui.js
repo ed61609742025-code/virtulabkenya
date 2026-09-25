@@ -131,10 +131,10 @@
           </div>
         </div>
         <div class="vlk-upgrade-banner-actions">
-          <button class="vlk-upgrade-banner-btn" onclick="window.VLKSubscriptionUI && window.VLKSubscriptionUI.openModal()">
+          <button class="vlk-upgrade-banner-btn" onclick="window.VLKSubscriptionUI && window.VLKSubscriptionUI.openModal(1)">
             Get Term Pass (KES 500) →
           </button>
-          <button class="vlk-upgrade-banner-btn vlk-upgrade-banner-btn--secondary" onclick="window.VLKSubscriptionUI && window.VLKSubscriptionUI.openModal()">
+          <button class="vlk-upgrade-banner-btn vlk-upgrade-banner-btn--secondary" onclick="window.VLKSubscriptionUI && window.VLKSubscriptionUI.openModal(2)">
             30-Day Sprint (KES 200)
           </button>
         </div>
@@ -145,8 +145,13 @@
 
   /**
    * Open the Subscription & Billing Modal.
+   * @param {number} [targetPlanId] - Optional plan ID to pre-select
    */
-  async function openModal() {
+  async function openModal(targetPlanId) {
+    if (targetPlanId) {
+      selectedPlanId = targetPlanId;
+    }
+
     let overlay = document.getElementById('vlkSubModalOverlay');
     if (!overlay) {
       overlay = renderModalDOM();
@@ -157,6 +162,10 @@
 
     // Refresh data in modal
     await populateModalContent();
+
+    if (targetPlanId) {
+      selectPlan(targetPlanId);
+    }
   }
 
   /**

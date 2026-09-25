@@ -243,7 +243,10 @@ describe('Category 1: Pedagogical & Grading Polish Tests', () => {
     it('should have sw.js configured with cache version virtulab-kenya-v111 or higher', () => {
       const swPath = path.resolve(__dirname, '../../client/sw.js');
       const swCode = fs.readFileSync(swPath, 'utf8');
-      assert.ok(/const CACHE_NAME = 'virtulab-kenya-v11[1-9]';/.test(swCode), 'sw.js must be bumped to virtulab-kenya-v111 or higher');
+      const match = swCode.match(/const CACHE_NAME = 'virtulab-kenya-v(\d+)';/);
+      assert.ok(match, 'CACHE_NAME pattern not found in sw.js');
+      const ver = parseInt(match[1], 10);
+      assert.ok(ver >= 111, `Expected cache version >= 111, got ${ver}`);
       assert.ok(swCode.includes("'/shared/knec-pedagogy.js'"), 'sw.js PRECACHE_ASSETS must include /shared/knec-pedagogy.js');
     });
 

@@ -1080,6 +1080,32 @@ function requireAdminLogin(onSuccess) {
   return true;
 }
 
+// ── Subscriptions & Payments API (Paystack & KCSE Passes) ───
+const Subscriptions = {
+  async getPlans(target) {
+    const qs = target ? `?target=${encodeURIComponent(target)}` : '';
+    return apiRequest(`/subscriptions/plans${qs}`);
+  },
+  async getStatus() {
+    return apiRequest('/subscriptions/status');
+  },
+  async checkout(data) {
+    return apiRequest('/subscriptions/checkout', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  },
+  async verify(reference) {
+    return apiRequest(`/subscriptions/verify/${encodeURIComponent(reference)}`);
+  },
+  async adminActivate(data) {
+    return apiRequest('/subscriptions/admin/activate', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    });
+  }
+};
+
 // ── Global Window Exports (Cross-frame and non-module compatibility) ──
 if (typeof window !== 'undefined') {
   window.getToken = getToken;
@@ -1096,6 +1122,7 @@ if (typeof window !== 'undefined') {
   window.Students = Students;
   window.Analytics = Analytics;
   window.Admin = Admin;
+  window.Subscriptions = Subscriptions;
   window.apiRequest = apiRequest;
   window.OfflineQueue = OfflineQueue;
   window.isOnline = isOnline;

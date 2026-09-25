@@ -40,8 +40,13 @@ app.use(cors(corsOptions));
 app.use(cookieParser());
 // Allow up to 50mb strictly on AI exam assistant parse-paper endpoint for base64 scanned exam papers
 app.use('/api/ai-assistant/parse-paper', express.json({ limit: '50mb' }));
-// Standard 1mb payload limit across all general API routes to mitigate JSON body buffer flooding
-app.use(express.json({ limit: '1mb' }));
+// Standard 1mb payload limit across all general API routes with rawBody captured for HMAC webhook validation
+app.use(express.json({
+  limit: '1mb',
+  verify: (req, res, buf) => {
+    req.rawBody = buf;
+  }
+}));
 app.use(express.static(path.join(__dirname, '../client'), {
   setHeaders: (res, filePath) => {
     if (filePath.endsWith('.html') || filePath.endsWith('sw.js')) {
@@ -177,6 +182,10 @@ app.use('/api/written-questions', writtenQuestionsRoutes);
 // Announcements routes (public announcements, banner alerts)
 const announcementRoutes = require('./routes/announcements');
 app.use('/api/announcements', announcementRoutes);
+
+// Subscription & Paystack Payment routes (KCSE passes & school licenses)
+const subscriptionRoutes = require('./routes/subscriptions');
+app.use('/api/subscriptions', subscriptionRoutes);
 
 // ── 404 Handler ───────────────────────────────────────────────
 app.use((req, res) => {

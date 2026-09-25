@@ -130,7 +130,10 @@ describe('5. App Initialization & Security Headers', () => {
     const path = require('path');
     const swPath = path.join(__dirname, '../../client/sw.js');
     const swContent = fs.readFileSync(swPath, 'utf8');
-    assert.match(swContent, /const CACHE_NAME = 'virtulab-kenya-v11[3-9]';/);
+    const match = swContent.match(/const CACHE_NAME = 'virtulab-kenya-v(\d+)';/);
+    assert.ok(match, 'CACHE_NAME pattern not found in sw.js');
+    const ver = parseInt(match[1], 10);
+    assert.ok(ver >= 113, `Expected cache version >= 113, got ${ver}`);
     assert.ok(swContent.includes('application/javascript'), 'sw.js should provide clean javascript response on cross-origin fallback');
   });
 

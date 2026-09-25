@@ -352,6 +352,66 @@ CREATE TABLE IF NOT EXISTS written_responses (
 CREATE INDEX IF NOT EXISTS idx_written_responses_student ON written_responses(student_id);
 CREATE INDEX IF NOT EXISTS idx_written_responses_assignment ON written_responses(assignment_id);
 
+-- Subscription plans catalog
+CREATE TABLE IF NOT EXISTS subscription_plans (
+  id SERIAL PRIMARY KEY,
+  plan_code VARCHAR(50) UNIQUE NOT NULL,
+  name VARCHAR(150) NOT NULL,
+  target_audience VARCHAR(20) NOT NULL, -- 'student' | 'school'
+  price_kes DECIMAL(10,2) NOT NULL,
+  duration_days INTEGER NOT NULL,
+  max_students INTEGER DEFAULT 1,
+  description TEXT,
+  features JSONB DEFAULT '{}'::jsonb,
+  is_active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Active subscriptions
+CREATE TABLE IF NOT EXISTS subscriptions (
+  id SERIAL PRIMARY KEY,
+  plan_id INTEGER REFERENCES subscription_plans(id) ON DELETE SET NULL,
+  subscriber_type VARCHAR(20) NOT NULL, -- 'student' | 'school'
+  student_id INTEGER REFERENCES students(id) ON DELETE CASCADE,
+  school_id INTEGER REFERENCES schools(id) ON DELETE CASCADE,
+  status VARCHAR(20) DEFAULT 'active', -- 'active' | 'grace_period' | 'expired' | 'cancelled'
+  starts_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  expires_at TIMESTAMP NOT NULL,
+  auto_renew BOOLEAN DEFAULT FALSE,
+  paystack_customer_code VARCHAR(100),
+  paystack_subscription_code VARCHAR(100),
+  metadata JSONB DEFAULT '{}'::jsonb,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW(),
+  CONSTRAINT chk_subscriber_entity CHECK (
+    (subscriber_type = 'student' AND student_id IS NOT NULL) OR
+    (subscriber_type = 'school' AND school_id IS NOT NULL)
+  )
+);
+
+-- Payment transactions audit & verification
+CREATE TABLE IF NOT EXISTS payment_transactions (
+  id SERIAL PRIMARY KEY,
+  subscription_id INTEGER REFERENCES subscriptions(id) ON DELETE SET NULL,
+  user_type VARCHAR(20) NOT NULL, -- 'student' | 'school' | 'admin'
+  user_id INTEGER,
+  school_id INTEGER REFERENCES schools(id) ON DELETE SET NULL,
+  gateway VARCHAR(30) DEFAULT 'paystack',
+  reference_code VARCHAR(100) UNIQUE NOT NULL,
+  paystack_reference VARCHAR(100),
+  mpesa_receipt_number VARCHAR(50),
+  phone_number VARCHAR(20),
+  amount_kes DECIMAL(10,2) NOT NULL,
+  currency VARCHAR(10) DEFAULT 'KES',
+  status VARCHAR(20) DEFAULT 'pending', -- 'pending' | 'success' | 'failed' | 'abandoned'
+  channel VARCHAR(50), -- 'mobile_money' | 'card' | 'manual'
+  failure_reason TEXT,
+  raw_payload JSONB,
+  paid_at TIMESTAMP,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
 -- ── Performance Indexes ──────────────────────────────────────
 CREATE INDEX IF NOT EXISTS idx_students_school_id ON students(school_id);
 CREATE INDEX IF NOT EXISTS idx_students_teacher_id ON students(teacher_id);
@@ -376,4 +436,10 @@ CREATE INDEX IF NOT EXISTS idx_assignment_submissions_student_id ON assignment_s
 CREATE INDEX IF NOT EXISTS idx_assignment_submissions_assignment_id ON assignment_submissions(assignment_id);
 CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_admins_email ON admins(email);
+CREATE INDEX IF NOT EXISTS idx_subscriptions_student_id ON subscriptions(student_id);
+CREATE INDEX IF NOT EXISTS idx_subscriptions_school_id ON subscriptions(school_id);
+CREATE INDEX IF NOT EXISTS idx_subscriptions_status_expires ON subscriptions(status, expires_at);
+CREATE INDEX IF NOT EXISTS idx_payment_transactions_reference ON payment_transactions(reference_code);
+CREATE INDEX IF NOT EXISTS idx_payment_transactions_paystack_ref ON payment_transactions(paystack_reference);
+CREATE INDEX IF NOT EXISTS idx_payment_transactions_user ON payment_transactions(user_type, user_id);
 

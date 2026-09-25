@@ -405,7 +405,63 @@ const migrations = [
      CONSTRAINT unique_written_response UNIQUE (assignment_id, student_id, question_number, sub_question_id)
    )`,
   `CREATE INDEX IF NOT EXISTS idx_written_responses_student ON written_responses(student_id)`,
-  `CREATE INDEX IF NOT EXISTS idx_written_responses_assignment ON written_responses(assignment_id)`
+  `CREATE INDEX IF NOT EXISTS idx_written_responses_assignment ON written_responses(assignment_id)`,
+  `CREATE TABLE IF NOT EXISTS subscription_plans (
+     id SERIAL PRIMARY KEY,
+     plan_code VARCHAR(50) UNIQUE NOT NULL,
+     name VARCHAR(150) NOT NULL,
+     target_audience VARCHAR(20) NOT NULL,
+     price_kes DECIMAL(10,2) NOT NULL,
+     duration_days INTEGER NOT NULL,
+     max_students INTEGER DEFAULT 1,
+     description TEXT,
+     features JSONB DEFAULT '{}'::jsonb,
+     is_active BOOLEAN DEFAULT TRUE,
+     created_at TIMESTAMP DEFAULT NOW()
+   )`,
+  `CREATE TABLE IF NOT EXISTS subscriptions (
+     id SERIAL PRIMARY KEY,
+     plan_id INTEGER REFERENCES subscription_plans(id) ON DELETE SET NULL,
+     subscriber_type VARCHAR(20) NOT NULL,
+     student_id INTEGER REFERENCES students(id) ON DELETE CASCADE,
+     school_id INTEGER REFERENCES schools(id) ON DELETE CASCADE,
+     status VARCHAR(20) DEFAULT 'active',
+     starts_at TIMESTAMP NOT NULL DEFAULT NOW(),
+     expires_at TIMESTAMP NOT NULL,
+     auto_renew BOOLEAN DEFAULT FALSE,
+     paystack_customer_code VARCHAR(100),
+     paystack_subscription_code VARCHAR(100),
+     metadata JSONB DEFAULT '{}'::jsonb,
+     created_at TIMESTAMP DEFAULT NOW(),
+     updated_at TIMESTAMP DEFAULT NOW()
+   )`,
+  `CREATE TABLE IF NOT EXISTS payment_transactions (
+     id SERIAL PRIMARY KEY,
+     subscription_id INTEGER REFERENCES subscriptions(id) ON DELETE SET NULL,
+     user_type VARCHAR(20) NOT NULL,
+     user_id INTEGER,
+     school_id INTEGER REFERENCES schools(id) ON DELETE SET NULL,
+     gateway VARCHAR(30) DEFAULT 'paystack',
+     reference_code VARCHAR(100) UNIQUE NOT NULL,
+     paystack_reference VARCHAR(100),
+     mpesa_receipt_number VARCHAR(50),
+     phone_number VARCHAR(20),
+     amount_kes DECIMAL(10,2) NOT NULL,
+     currency VARCHAR(10) DEFAULT 'KES',
+     status VARCHAR(20) DEFAULT 'pending',
+     channel VARCHAR(50),
+     failure_reason TEXT,
+     raw_payload JSONB,
+     paid_at TIMESTAMP,
+     created_at TIMESTAMP DEFAULT NOW(),
+     updated_at TIMESTAMP DEFAULT NOW()
+   )`,
+  `CREATE INDEX IF NOT EXISTS idx_subscriptions_student_id ON subscriptions(student_id)`,
+  `CREATE INDEX IF NOT EXISTS idx_subscriptions_school_id ON subscriptions(school_id)`,
+  `CREATE INDEX IF NOT EXISTS idx_subscriptions_status_expires ON subscriptions(status, expires_at)`,
+  `CREATE INDEX IF NOT EXISTS idx_payment_transactions_reference ON payment_transactions(reference_code)`,
+  `CREATE INDEX IF NOT EXISTS idx_payment_transactions_paystack_ref ON payment_transactions(paystack_reference)`,
+  `CREATE INDEX IF NOT EXISTS idx_payment_transactions_user ON payment_transactions(user_type, user_id)`
 ];
 
 async function seedInitialAdmin(targetPool) {
@@ -436,6 +492,81 @@ async function seedInitialAdmin(targetPool) {
   }
 }
 
+async function seedInitialSubscriptionPlans(targetPool) {
+  try {
+    const plans = [
+      {
+        code: 'student_term',
+        name: 'Student Term Pass',
+        target: 'student',
+        price: 500.00,
+        days: 120,
+        maxStudents: 1,
+        desc: 'Complete access to all 8 virtual chemistry lab engines, Walimu AI Chemistry Tutor, and personalized KCSE performance analytics for one full school term.',
+        features: JSON.stringify({ all_labs: true, ai_tutor: true, kcse_mocks: true, offline_sync: true })
+      },
+      {
+        code: 'kcse_sprint',
+        name: 'KCSE 30-Day Exam Sprint',
+        target: 'student',
+        price: 200.00,
+        days: 30,
+        maxStudents: 1,
+        desc: 'Intensive 30-day revision pass with full 40-mark composite mock exams and step-by-step marking rubrics.',
+        features: JSON.stringify({ all_labs: true, ai_tutor: true, kcse_mocks: true, offline_sync: true })
+      },
+      {
+        code: 'student_annual',
+        name: 'Student Full Year Pass',
+        target: 'student',
+        price: 1200.00,
+        days: 365,
+        maxStudents: 1,
+        desc: 'Annual unlimited chemistry laboratory access covering Forms 1 to 4.',
+        features: JSON.stringify({ all_labs: true, ai_tutor: true, kcse_mocks: true, offline_sync: true, priority_support: true })
+      },
+      {
+        code: 'school_term',
+        name: 'School Term Institutional Pass',
+        target: 'school',
+        price: 15000.00,
+        days: 120,
+        maxStudents: 150,
+        desc: 'Institutional license for up to 150 learners per term, including teacher exam generator, gradebook exports, and class analytics.',
+        features: JSON.stringify({ all_labs: true, ai_tutor: true, kcse_mocks: true, teacher_exam_co_pilot: true, gradebook_export: true, analytics: true })
+      },
+      {
+        code: 'school_annual',
+        name: 'School Annual Institutional Pass',
+        target: 'school',
+        price: 38000.00,
+        days: 365,
+        maxStudents: 300,
+        desc: 'Whole-school annual lab coverage for up to 300 learners across all terms with dedicated onboarding and teacher training support.',
+        features: JSON.stringify({ all_labs: true, ai_tutor: true, kcse_mocks: true, teacher_exam_co_pilot: true, gradebook_export: true, analytics: true, priority_support: true })
+      }
+    ];
+
+    for (const p of plans) {
+      await targetPool.query(
+        `INSERT INTO subscription_plans (plan_code, name, target_audience, price_kes, duration_days, max_students, description, features)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+         ON CONFLICT (plan_code) DO UPDATE
+         SET name = EXCLUDED.name,
+             price_kes = EXCLUDED.price_kes,
+             duration_days = EXCLUDED.duration_days,
+             max_students = EXCLUDED.max_students,
+             description = EXCLUDED.description,
+             features = EXCLUDED.features`,
+        [p.code, p.name, p.target, p.price, p.days, p.maxStudents, p.desc, p.features]
+      );
+    }
+    console.log('[Migrate] Standard subscription plans seeded/synchronized.');
+  } catch (err) {
+    console.warn('[Migrate] Subscription plans seeding note:', err.message);
+  }
+}
+
 async function migrate() {
   const dbUrl = process.env.DATABASE_URL || '';
   const isCloudDb = dbUrl.includes('.neon.tech') || dbUrl.includes('.supabase.co') || dbUrl.includes('.pooler.supabase.com') || dbUrl.includes('render.com') || dbUrl.includes('railway.app') || (process.env.NODE_ENV === 'production' && !dbUrl.includes('localhost') && !dbUrl.includes('127.0.0.1'));
@@ -457,6 +588,7 @@ async function migrate() {
   }
 
   await seedInitialAdmin(pool);
+  await seedInitialSubscriptionPlans(pool);
 
   await pool.end();
   console.log('Migration complete.');
@@ -487,6 +619,8 @@ async function runMigrationsAsync(poolInstance) {
 
   // Step 3: Ensure primary super admin account exists
   await seedInitialAdmin(targetPool);
+  // Step 4: Ensure subscription plans exist
+  await seedInitialSubscriptionPlans(targetPool);
 }
 
 if (require.main === module) {

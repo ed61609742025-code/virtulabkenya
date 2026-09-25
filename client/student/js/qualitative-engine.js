@@ -1646,6 +1646,7 @@ if (typeof window !== 'undefined') {
         saltKey: currentSaltKey,
         testId: test.id || test.key,
         stage: st ? (st.stage || (st.performed ? 'done' : 'idle')) : 'idle',
+        isAdding: Boolean(st && st.isAdding),
         probe: st ? st.probe : null,
         prompt: test.prompt || test.name || test.title || '',
         obsStr: test.correctObs || test.observation || '',
@@ -1749,12 +1750,16 @@ if (typeof window !== 'undefined') {
 
         ${stage === 'few_drops' ? `
           <!-- Precision Dropper -->
-          <g class="anim-dropper" opacity="1">
-            <path class="anim-dropper-bulb" d="M 39,2 L 47,2 L 45,12 L 41,12 Z" fill="#EF4444" rx="2"/>
+          <g class="anim-dropper" opacity="1" style="transition: transform 0.6s ease, opacity 0.4s ease; transform: translate(0px, ${st && st.isAdding ? '4px' : '0px'});">
+            <path class="${st && st.isAdding ? 'anim-dropper-bulb' : ''}" d="M 39,2 L 47,2 L 45,12 L 41,12 Z" fill="#EF4444" rx="2"/>
             <rect x="41.5" y="12" width="3" height="15" fill="rgba(255,255,255,0.75)" stroke="#94A3B8" stroke-width="0.8"/>
             <path d="M 41.5,27 L 44.5,27 L 43,35 Z" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
+            <!-- Poised Meniscus at Dropper Tip -->
+            <ellipse cx="43" cy="35" rx="1.2" ry="0.8" fill="#FACC15"/>
           </g>
-          <ellipse cx="43" cy="36" rx="2" ry="2.8" fill="#FACC15" class="anim-droplet"/>
+          ${st && st.isAdding ? `
+            <ellipse cx="43" cy="36" rx="2" ry="2.8" fill="#FACC15" class="anim-droplet"/>
+          ` : ''}
         ` : ''}
 
         <!-- Heat Waves when warmed -->
@@ -1806,14 +1811,16 @@ if (typeof window !== 'undefined') {
       </defs>
 
       <!-- Precision Reagent Dropper Pipette (Centered over Mouth) -->
-      <g class="anim-dropper" opacity="${performed ? '1' : '0.45'}">
-        <path class="${performed ? 'anim-dropper-bulb' : ''}" d="M 39,2 L 47,2 L 45,12 L 41,12 Z" fill="#EF4444" rx="2"/>
+      <g class="anim-dropper" style="transition: transform 0.6s ease, opacity 0.4s ease; transform: translate(0px, ${performed && (!st || !st.isAdding) && (stage === 'excess' || stage === 'done') ? '-25px' : (st && st.isAdding ? '4px' : '0px')}); opacity: ${performed && (!st || !st.isAdding) && (stage === 'excess' || stage === 'done') ? '0' : (st && st.isAdding ? '1' : (performed ? '0.85' : '0.45'))};">
+        <path class="${st && st.isAdding ? 'anim-dropper-bulb' : ''}" d="M 39,2 L 47,2 L 45,12 L 41,12 Z" fill="#EF4444" rx="2"/>
         <rect x="41.5" y="12" width="3" height="15" fill="rgba(255,255,255,0.75)" stroke="#94A3B8" stroke-width="0.8"/>
         <path d="M 41.5,27 L 44.5,27 L 43,35 Z" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
+        <!-- Poised Meniscus at Dropper Tip -->
+        <ellipse cx="43" cy="35" rx="1.2" ry="0.8" fill="${st && st.color && st.color.startsWith('#') ? st.color : '#38BDF8'}"/>
       </g>
-      ${performed ? `
+      ${st && st.isAdding ? `
         <!-- Fast Gravitational Falling Reagent Droplet -->
-        <ellipse cx="43" cy="36" rx="2" ry="2.8" fill="${st.color && st.color.startsWith('#') ? st.color : '#38BDF8'}" class="anim-droplet"/>
+        <ellipse cx="43" cy="36" rx="2" ry="2.8" fill="${st && st.color && st.color.startsWith('#') ? st.color : '#38BDF8'}" class="anim-droplet"/>
       ` : ''}
 
       <!-- Wooden Test Tube Clamp -->
@@ -2080,6 +2087,7 @@ if (typeof window !== 'undefined') {
       delete testStates[testKey];
       testStates[testKey] = {
         performed: false,
+        isAdding: false,
         stage: 'idle',
         probe: null,
         obsText: prevObs,
@@ -2095,9 +2103,21 @@ if (typeof window !== 'undefined') {
     if (!testStates[testKey]) testStates[testKey] = {};
     const st = testStates[testKey];
 
+    const isDropperAction = ['few_drops', 'excess', 'step1_hno3', 'step2_agno3', 'step3_nh3', 'step1_acid', 'step2_bacl2', 'step1_hcl', 'step2_gas_warm', 'step1_feso4', 'step2_h2so4'].includes(targetStage) || testKey === 'naoh' || testKey === 'nh3' || testKey === 'agno3' || testKey === 'bacl2' || testKey === 'ki' || testKey === 'pb_no3';
+
     st.performed = true;
     st.stage = targetStage;
     if (probeOption) st.probe = probeOption;
+
+    if (isDropperAction) {
+      st.isAdding = true;
+      setTimeout(() => {
+        if (testStates[testKey]) {
+          testStates[testKey].isAdding = false;
+          renderAll();
+        }
+      }, 650);
+    }
 
     if (testKey === 'heat_solid') {
       const res = (window.QualitativeBenchCore && typeof QualitativeBenchCore.resolveReactionState === 'function')
@@ -2560,6 +2580,16 @@ if (typeof window !== 'undefined') {
     testStates[testKey].ppt = correctOpt ? (correctOpt.text.toLowerCase().includes('ppt') || correctOpt.text.toLowerCase().includes('precipitate')) : false;
     testStates[testKey].correctKey = correctKey;
     testStates[testKey].statusLabel = 'Reagent Added — Observed';
+
+    if (testKey !== 'flame' && testKey !== 'heat_solid') {
+      testStates[testKey].isAdding = true;
+      setTimeout(() => {
+        if (testStates[testKey]) {
+          testStates[testKey].isAdding = false;
+          renderAll();
+        }
+      }, 650);
+    }
 
     renderAll();
   };

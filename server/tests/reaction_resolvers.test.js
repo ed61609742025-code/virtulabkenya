@@ -517,6 +517,67 @@ describe('Qualitative Bench Core (Inorganic Reactions)', () => {
       assert.ok(coolSvg.includes('anim-spangle'), 'Must render sparkling spangles for needle crystals');
     });
   });
+
+  describe('Qualitative Dropper Dispensing & Retraction (Zero Idle Dripping)', () => {
+    it('REGRESSION: Qualitative droppers must NOT constantly drop droplets when idle or completed', () => {
+      // 1. Idle reagent test
+      const idleSvg = QualitativeBenchCore.renderTubeSvg({
+        saltKey: 'copperSulfate',
+        testId: 'naoh',
+        stage: 'idle',
+        isAdding: false
+      });
+      assert.ok(!idleSvg.includes('anim-droplet'), 'Idle qualitative apparatus must NOT have anim-droplet');
+
+      // 2. Completed few_drops stage (isAdding: false) must have static tip meniscus, NOT anim-droplet
+      const fewDropsDoneSvg = QualitativeBenchCore.renderTubeSvg({
+        saltKey: 'copperSulfate',
+        testId: 'naoh',
+        stage: 'few_drops',
+        isAdding: false
+      });
+      assert.ok(!fewDropsDoneSvg.includes('anim-droplet'), 'Finished few_drops test must NOT continuously drop droplets');
+
+      // 3. Completed in excess (isAdding: false) must retract dropper with opacity 0
+      const excessDoneSvg = QualitativeBenchCore.renderTubeSvg({
+        saltKey: 'copperSulfate',
+        testId: 'naoh',
+        stage: 'excess',
+        isAdding: false
+      });
+      assert.ok(!excessDoneSvg.includes('anim-droplet'), 'Excess stage must NOT have anim-droplet');
+      assert.ok(excessDoneSvg.includes('opacity: 0'), 'Dropper must retract and fade out upon excess completion');
+
+      // 4. Active dispensing (isAdding: true) MUST render falling droplet
+      const addingSvg = QualitativeBenchCore.renderTubeSvg({
+        saltKey: 'copperSulfate',
+        testId: 'naoh',
+        stage: 'few_drops',
+        isAdding: true
+      });
+      assert.ok(addingSvg.includes('anim-droplet'), 'Active dispensing must render falling anim-droplet');
+
+      // 5. Wash bottle in dissolution must NOT squirt water when completed
+      const dissDoneSvg = QualitativeBenchCore.renderApparatusSvg({
+        saltKey: 'copperSulfate',
+        testId: 'dissolution',
+        prompt: 'To a small portion of Solid in a boiling tube, add 10 cm³ distilled water and shake.',
+        stage: 'done',
+        isAdding: false
+      });
+      assert.ok(!dissDoneSvg.includes('anim-droplet'), 'Completed dissolution must NOT continuously squirt water stream');
+
+      // 6. Wash bottle active addition (isAdding: true) MUST render laminar water stream
+      const dissAddingSvg = QualitativeBenchCore.renderApparatusSvg({
+        saltKey: 'copperSulfate',
+        testId: 'dissolution',
+        prompt: 'To a small portion of Solid in a boiling tube, add 10 cm³ distilled water and shake.',
+        stage: 'few_drops',
+        isAdding: true
+      });
+      assert.ok(dissAddingSvg.includes('anim-droplet'), 'Active dissolution must render water stream anim-droplet');
+    });
+  });
 });
 
 describe('Organic Bench Core (Carbon Compound Reactions)', () => {

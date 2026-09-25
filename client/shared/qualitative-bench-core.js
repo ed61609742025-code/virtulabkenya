@@ -1933,6 +1933,7 @@
       saltKey = 'leadNitrate',
       testId = 'test_1',
       stage = 'idle',
+      isAdding = false,
       prompt = '',
       obsStr = '',
       tubeId = `tube_${Math.random().toString(36).substring(2, 7)}`
@@ -2059,15 +2060,19 @@
 
           <!-- Precision Dropper Pipette (when few drops) Centered directly over Mouth -->
           ${isStep1 ? `
-            <g class="anim-dropper" opacity="1">
-              <path class="anim-dropper-bulb" d="M 74,2 C 71.5,2 71.5,6 73.5,9.5 L 75.5,14 L 84.5,14 L 86.5,9.5 C 88.5,6 88.5,2 86,2 Z" fill="#EF4444"/>
+            <g class="anim-dropper" style="transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease; transform: translate(0px, ${isAdding ? '6px' : '0px'}); opacity: 1;">
+              <path class="${isAdding ? 'anim-dropper-bulb' : ''}" d="M 74,2 C 71.5,2 71.5,6 73.5,9.5 L 75.5,14 L 84.5,14 L 86.5,9.5 C 88.5,6 88.5,2 86,2 Z" fill="#EF4444"/>
               <rect x="75" y="13.5" width="10" height="1.8" rx="0.9" fill="#CBD5E1" stroke="#94A3B8" stroke-width="0.5"/>
               <rect x="78" y="15" width="4" height="13" rx="0.5" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
               <rect x="78.8" y="19" width="2.4" height="9" fill="#FACC15" opacity="0.85"/>
               <path d="M 78,28 L 82,28 L 80.8,34 L 79.2,34 Z" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
               <path d="M 78.6,28 L 81.4,28 L 80.6,33.5 L 79.4,33.5 Z" fill="#FACC15" opacity="0.9"/>
+              <!-- Static Poised Tip Meniscus -->
+              <ellipse cx="80" cy="35" rx="1.6" ry="1.0" fill="#FACC15"/>
             </g>
-            <path d="M 80,35 C 77.5,40 76.5,45 80,49 C 83.5,45 82.5,40 80,35 Z" fill="#FACC15" class="anim-droplet"/>
+            ${isAdding ? `
+              <path d="M 80,35 C 77.5,40 76.5,45 80,49 C 83.5,45 82.5,40 80,35 Z" fill="#FACC15" class="anim-droplet"/>
+            ` : ''}
           ` : ''}
 
           <!-- Convection Heat Waves when warmed -->
@@ -2173,22 +2178,29 @@
           </g>
         ` : (isSpatula ? `
           <!-- Stainless Steel Laboratory Spatula Delivering Solid Reagent Powder -->
-          <g style="transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); transform: translate(${performed ? '8px, 6px' : '0px, 0px'});" opacity="${performed ? '1' : '0.8'}">
+          <g style="transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease; transform: translate(${performed && !isAdding ? '-30px, -20px' : (isAdding ? '8px, 6px' : '0px, 0px')}); opacity: ${performed && !isAdding ? '0' : '1'};">
             <line x1="28" y1="24" x2="76" y2="24" stroke="url(#spatulaMetal_${tubeId})" stroke-width="3.2" stroke-linecap="round"/>
             <ellipse cx="76" cy="24" rx="6.5" ry="3.2" fill="url(#spatulaMetal_${tubeId})" stroke="#475569" stroke-width="0.6"/>
             <circle cx="76" cy="23" r="2.5" fill="${r.isZincDisplacement ? '#94A3B8' : '#FFFFFF'}"/>
           </g>
+          ${isAdding ? `
+            <!-- Falling Powder Crystals -->
+            <circle cx="76" cy="38" r="1.5" fill="${r.isZincDisplacement ? '#94A3B8' : '#FFFFFF'}" class="anim-droplet"/>
+            <circle cx="78" cy="46" r="1.2" fill="${r.isZincDisplacement ? '#94A3B8' : '#FFFFFF'}" class="anim-droplet" style="animation-delay: 0.1s;"/>
+          ` : ''}
         ` : `
           <!-- Precision Reagent Dropper Pipette (Centered over Mouth) -->
-          <g class="anim-dropper" opacity="${performed ? '1' : '0.5'}">
-            <path class="${performed ? 'anim-dropper-bulb' : ''}" d="M 74,2 C 71.5,2 71.5,6 73.5,9.5 L 75.5,14 L 84.5,14 L 86.5,9.5 C 88.5,6 88.5,2 86,2 Z" fill="#EF4444"/>
+          <g class="anim-dropper" style="transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease; transform: translate(0px, ${performed && !isAdding && (stage === 'excess' || stage === 'done') ? '-25px' : (isAdding ? '6px' : '0px')}); opacity: ${performed && !isAdding && (stage === 'excess' || stage === 'done') ? '0' : (isAdding ? '1' : (performed ? '0.85' : '0.5'))};">
+            <path class="${isAdding ? 'anim-dropper-bulb' : ''}" d="M 74,2 C 71.5,2 71.5,6 73.5,9.5 L 75.5,14 L 84.5,14 L 86.5,9.5 C 88.5,6 88.5,2 86,2 Z" fill="#EF4444"/>
             <rect x="75" y="13.5" width="10" height="1.8" rx="0.9" fill="#CBD5E1" stroke="#94A3B8" stroke-width="0.5"/>
             <rect x="78" y="15" width="4" height="13" rx="0.5" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
             <rect x="78.8" y="19" width="2.4" height="9" fill="${dropletColor}" opacity="0.85"/>
             <path d="M 78,28 L 82,28 L 80.8,34 L 79.2,34 Z" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
             <path d="M 78.6,28 L 81.4,28 L 80.6,33.5 L 79.4,33.5 Z" fill="${dropletColor}" opacity="0.9"/>
+            <!-- Static Poised Tip Meniscus -->
+            <ellipse cx="80" cy="35" rx="1.6" ry="1.0" fill="${dropletColor}"/>
           </g>
-          ${performed ? `
+          ${isAdding ? `
             <!-- Fast Gravitational Falling Reagent Droplet -->
             <path d="M 80,35 C 77.5,40 76.5,45 80,49 C 83.5,45 82.5,40 80,35 Z" fill="${dropletColor}" class="anim-droplet"/>
           ` : ''}
@@ -2777,6 +2789,7 @@
     const {
       saltKey = 'leadNitrate',
       stage = 'idle',
+      isAdding = false,
       prompt = '',
       obsStr = '',
       width = 180,
@@ -2817,13 +2830,15 @@
         </g>
 
         <!-- Laboratory Polyethylene Wash Bottle with Curved Spout -->
-        ${performed ? `
-          <g class="anim-dropper" transform="translate(42, 2)">
+        ${isAdding || (!performed && stage !== 'done') ? `
+          <g class="anim-dropper" transform="translate(42, 2)" style="transition: opacity 0.4s ease, transform 0.6s ease; transform: translate(42px, ${performed && !isAdding ? '-25px' : '2px'}); opacity: ${isAdding ? '1' : (performed ? '0' : '0.85')};">
             <!-- Wash Bottle Shoulder & Curved Swan-Neck Spout -->
             <path d="M 88,4 Q 72,6 64,18 L 54,30" fill="none" stroke="url(#washBottleGrad_${tubeId})" stroke-width="4.5" stroke-linecap="round"/>
             <path d="M 54,30 L 50,35" fill="none" stroke="#94A3B8" stroke-width="2.5" stroke-linecap="round"/>
-            <!-- Laminar Stream of Distilled Water Shooting into Tube -->
-            <line x1="49" y1="35" x2="48" y2="78" stroke="rgba(56,189,248,0.85)" stroke-width="2.2" stroke-linecap="round" class="anim-droplet"/>
+            ${isAdding ? `
+              <!-- Laminar Stream of Distilled Water Shooting into Tube -->
+              <line x1="49" y1="35" x2="48" y2="78" stroke="rgba(56,189,248,0.85)" stroke-width="2.2" stroke-linecap="round" class="anim-droplet"/>
+            ` : ''}
           </g>
         ` : ''}
 
@@ -2979,6 +2994,7 @@
       saltKey = 'leadNitrate',
       testId = '',
       stage = 'idle',
+      isAdding = false,
       prompt = '',
       obsStr = '',
       tubeId = `app_${Math.random().toString(36).substring(2, 7)}`
@@ -3031,7 +3047,7 @@
       pStr.includes('dissolv') ||
       (pStr.includes('distilled water') && (pStr.includes('solid') || pStr.includes('spatula') || pStr.includes('portion')))
     ) {
-      return renderDissolutionApparatusSvg({ saltKey, stage, prompt, obsStr, tubeId });
+      return renderDissolutionApparatusSvg({ saltKey, stage, isAdding, prompt, obsStr, tubeId });
     }
 
     // 5. Standard Reagent Test Tube

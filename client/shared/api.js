@@ -471,12 +471,21 @@ function isOfflineQueueable(endpoint, method) {
 }
 
 async function apiRequest(method, endpoint, body, retries = 2) {
+  // Support polymorphic apiRequest('/endpoint', { method, body })
+  if (typeof method === 'string' && (method.startsWith('/') || method.startsWith('http'))) {
+    const rawEndpoint = method;
+    const opts = typeof endpoint === 'object' && endpoint !== null ? endpoint : {};
+    method = opts.method || 'GET';
+    endpoint = rawEndpoint;
+    body = opts.body !== undefined ? opts.body : body;
+  }
+
   const headers = { 'Content-Type': 'application/json' };
   const token = getToken();
   if (token) headers['Authorization'] = 'Bearer ' + token;
 
   const options = { method, headers, credentials: 'same-origin' };
-  if (body) options.body = JSON.stringify(body);
+  if (body) options.body = typeof body === 'string' ? body : JSON.stringify(body);
 
   let attempt = 0;
   while (attempt <= retries) {
@@ -1084,25 +1093,19 @@ function requireAdminLogin(onSuccess) {
 const Subscriptions = {
   async getPlans(target) {
     const qs = target ? `?target=${encodeURIComponent(target)}` : '';
-    return apiRequest(`/subscriptions/plans${qs}`);
+    return apiRequest('GET', `/subscriptions/plans${qs}`);
   },
   async getStatus() {
-    return apiRequest('/subscriptions/status');
+    return apiRequest('GET', '/subscriptions/status');
   },
   async checkout(data) {
-    return apiRequest('/subscriptions/checkout', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    });
+    return apiRequest('POST', '/subscriptions/checkout', data);
   },
   async verify(reference) {
-    return apiRequest(`/subscriptions/verify/${encodeURIComponent(reference)}`);
+    return apiRequest('GET', `/subscriptions/verify/${encodeURIComponent(reference)}`);
   },
   async adminActivate(data) {
-    return apiRequest('/subscriptions/admin/activate', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    });
+    return apiRequest('POST', '/subscriptions/admin/activate', data);
   }
 };
 

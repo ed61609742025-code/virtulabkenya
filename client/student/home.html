@@ -50,7 +50,7 @@
 <link rel="stylesheet" href="css/dashboard.css?v=120">
 <link rel="stylesheet" href="css/skill-tree.css?v=120">
 <link rel="stylesheet" href="css/mobile.css?v=120">
-<link rel="stylesheet" href="../shared/subscription-ui.css?v=122">
+<link rel="stylesheet" href="../shared/subscription-ui.css?v=123">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" crossorigin="anonymous"></script>
 
 <style>
@@ -420,6 +420,8 @@
               <span id="studentTeacherNameDisplay">Instructor: Not linked</span>
               <button onclick="toggleTeacherLinkPanel()" class="hero-link-btn" id="linkTeacherBtn">Link</button>
             </span>
+            <!-- Subscription status chip — populated by subscription-ui.js -->
+            <button id="heroSubChip" class="hero-meta-chip vlk-hero-sub-chip" style="display:none; border:none; cursor:pointer; background:none; padding:0;" onclick="window.VLKSubscriptionUI && window.VLKSubscriptionUI.openModal()" aria-label="Subscription status"></button>
             <span class="hero-meta-chip" id="todayDate"></span>
             <span id="studentNameMobile" style="display:none;">Student</span>
             <span id="todayDateMobile" style="display:none;"></span>
@@ -488,6 +490,9 @@
 
     <!-- Tab 1: Laboratory Benches & Assignments -->
     <div class="student-tab-panel active" id="panel_benches">
+
+      <!-- Upgrade / Pass Status Banner (shown/hidden by subscription-ui.js based on entitlement) -->
+      <div id="vlkUpgradeBanner" style="display:none;"></div>
 
       <!-- Daily Challenge Highlight Banner (Top Priority) -->
       <div id="dailyChallengeCard" class="daily-challenge-card">
@@ -1688,7 +1693,7 @@
   <script src="../shared/gamification-engine.js"></script>
   <script src="js/skill-tree.js?v=120"></script>
   <script src="js/student-dashboard.js?v=120"></script>
-  <script src="../shared/subscription-ui.js?v=122"></script>
+  <script src="../shared/subscription-ui.js?v=123"></script>
 
   <script src="js/home.js?v=120"></script>
 

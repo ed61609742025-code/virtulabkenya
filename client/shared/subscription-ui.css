@@ -21,6 +21,16 @@
   white-space: nowrap;
 }
 
+/* On small phones show compact text, hide full text */
+.vlk-pill-compact { display: none; }
+.vlk-pill-full { display: inline; }
+
+@media (max-width: 500px) {
+  .vlk-pill-compact { display: inline; }
+  .vlk-pill-full { display: none; }
+  .vlk-sub-pill { padding: 4px 8px; font-size: 0.70rem; }
+}
+
 .vlk-sub-pill:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
@@ -403,3 +413,121 @@
     max-width: none;
   }
 }
+
+/* ── Hero Profile Subscription Chip ────────────────────────── */
+.vlk-hero-sub-chip {
+  cursor: pointer;
+}
+.vlk-hero-sub-chip:hover span {
+  filter: brightness(1.08);
+}
+
+/* ── Upgrade Banner ─────────────────────────────────────────── */
+.vlk-upgrade-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.06) 0%, rgba(11, 37, 69, 0.04) 100%);
+  border: 1px solid rgba(2, 132, 199, 0.22);
+  border-radius: 14px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.vlk-upgrade-banner--grace {
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.08) 0%, rgba(11, 37, 69, 0.04) 100%);
+  border-color: rgba(217, 119, 6, 0.30);
+}
+
+.vlk-upgrade-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+}
+
+.vlk-upgrade-icon {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+
+.vlk-upgrade-banner-title {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--heading-color, #0F172A);
+  margin-bottom: 2px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.vlk-upgrade-banner-sub {
+  font-size: 0.76rem;
+  color: var(--text-muted, #64748B);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.vlk-upgrade-banner-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.vlk-upgrade-banner-btn {
+  padding: 8px 16px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  border-radius: 8px;
+  border: none;
+  background: #0284C7;
+  color: #FFFFFF;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, transform 0.1s ease;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.vlk-upgrade-banner-btn:hover {
+  background: #0369A1;
+  transform: translateY(-1px);
+}
+
+.vlk-upgrade-banner-btn--secondary {
+  background: transparent;
+  color: #0284C7;
+  border: 1.5px solid rgba(2, 132, 199, 0.4);
+}
+
+.vlk-upgrade-banner-btn--secondary:hover {
+  background: rgba(2, 132, 199, 0.08);
+  transform: translateY(-1px);
+}
+
+.vlk-upgrade-banner-btn--warn {
+  background: #D97706;
+}
+
+.vlk-upgrade-banner-btn--warn:hover {
+  background: #B45309;
+}
+
+@media (max-width: 640px) {
+  .vlk-upgrade-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+  }
+  .vlk-upgrade-banner-actions {
+    width: 100%;
+  }
+  .vlk-upgrade-banner-btn {
+    flex: 1;
+    text-align: center;
+    justify-content: center;
+  }
+}
+

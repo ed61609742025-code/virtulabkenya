@@ -28,7 +28,7 @@
   }
 
   /**
-   * Fetch current subscription entitlement and update UI pills.
+   * Fetch current subscription entitlement and update all UI touchpoints.
    */
   async function refreshStatus() {
     try {
@@ -37,6 +37,8 @@
 
       cachedStatus = res.subscription;
       updateNavbarPill(cachedStatus);
+      updateHeroChip(cachedStatus);
+      updateUpgradeBanner(cachedStatus);
       return cachedStatus;
     } catch (err) {
       console.warn('[SubscriptionUI] Refresh status error:', err);
@@ -45,7 +47,8 @@
   }
 
   /**
-   * Update the badge in the navigation header.
+   * Update the compact badge in the navigation header.
+   * On mobile (<= 640px) this renders as icon + short text only.
    */
   function updateNavbarPill(status) {
     const pill = document.getElementById('subStatusPill');
@@ -53,19 +56,91 @@
 
     if (!status || !status.isActive) {
       pill.className = 'vlk-sub-pill upgrade-needed';
-      pill.innerHTML = '⚡ <span>Upgrade (KES 500)</span>';
+      pill.innerHTML = '⚡ <span class="vlk-pill-full">Upgrade (KES 500)</span><span class="vlk-pill-compact">Upgrade</span>';
       pill.title = 'Upgrade to an active KCSE term pass';
     } else if (status.isGracePeriod) {
       pill.className = 'vlk-sub-pill grace-warning';
-      pill.innerHTML = `⚠️ <span>Grace Period (${status.graceDaysLeft || 1}d)</span>`;
-      pill.title = 'Pass expired! 3-day grace period active. Click to renew.';
+      pill.innerHTML = `⚠️ <span class="vlk-pill-full">Grace Period (${status.graceDaysLeft || 1}d left)</span><span class="vlk-pill-compact">${status.graceDaysLeft || 1}d</span>`;
+      pill.title = 'Pass expired — 3-day grace period active. Click to renew.';
     } else {
       pill.className = 'vlk-sub-pill active-pass';
-      const daysText = status.daysRemaining !== null ? `${status.daysRemaining}d left` : 'Active';
-      pill.innerHTML = `⭐ <span>${status.planName || 'Term Pass'} (${daysText})</span>`;
-      pill.title = `Active pass: ${status.planName}. Click to view details.`;
+      const days = status.daysRemaining !== null ? status.daysRemaining : '∞';
+      pill.innerHTML = `⭐ <span class="vlk-pill-full">${status.planName || 'Term Pass'} (${days}d left)</span><span class="vlk-pill-compact">${days}d</span>`;
+      pill.title = `Active: ${status.planName}. Click to manage.`;
     }
     pill.style.display = 'inline-flex';
+  }
+
+  /**
+   * Update the subscription status chip inside the hero profile card.
+   * Sits alongside "Instructor: Mr. Otieno" and today's date.
+   */
+  function updateHeroChip(status) {
+    const chip = document.getElementById('heroSubChip');
+    if (!chip) return;
+
+    if (!status || !status.isActive) {
+      chip.innerHTML = `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;background:rgba(2,132,199,0.10);border:1px solid rgba(2,132,199,0.3);color:#0284C7;font-size:0.72rem;font-weight:800;">⚡ Free Tier · Upgrade →</span>`;
+    } else if (status.isGracePeriod) {
+      chip.innerHTML = `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;background:rgba(217,119,6,0.10);border:1px solid rgba(217,119,6,0.35);color:#D97706;font-size:0.72rem;font-weight:800;animation:vlkPulse 2s infinite ease-in-out;">⚠️ Grace Period · ${status.graceDaysLeft || 1}d left</span>`;
+    } else if (status.source === 'school') {
+      chip.innerHTML = `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;background:rgba(5,150,105,0.09);border:1px solid rgba(5,150,105,0.3);color:#059669;font-size:0.72rem;font-weight:800;">🏫 ${status.planName || 'School License'}</span>`;
+    } else {
+      const days = status.daysRemaining !== null ? `${status.daysRemaining}d left` : 'Active';
+      chip.innerHTML = `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;background:rgba(5,150,105,0.09);border:1px solid rgba(5,150,105,0.3);color:#059669;font-size:0.72rem;font-weight:800;">⭐ ${status.planName || 'Term Pass'} · ${days}</span>`;
+    }
+    chip.style.display = 'inline-block';
+  }
+
+  /**
+   * Show an upgrade call-to-action banner above the lab benches section
+   * for free-tier and grace-period students. Hidden for active subscribers.
+   */
+  function updateUpgradeBanner(status) {
+    const banner = document.getElementById('vlkUpgradeBanner');
+    if (!banner) return;
+
+    if (status && status.isActive && !status.isGracePeriod) {
+      // Active subscriber — hide the banner completely
+      banner.style.display = 'none';
+      return;
+    }
+
+    const isGrace = status && status.isGracePeriod;
+
+    banner.innerHTML = isGrace ? `
+      <div class="vlk-upgrade-banner vlk-upgrade-banner--grace" role="alert">
+        <div class="vlk-upgrade-banner-left">
+          <span class="vlk-upgrade-icon">⚠️</span>
+          <div>
+            <div class="vlk-upgrade-banner-title">Your pass expired — ${status.graceDaysLeft || 1} grace day${(status.graceDaysLeft || 1) !== 1 ? 's' : ''} remaining</div>
+            <div class="vlk-upgrade-banner-sub">Renew now to keep uninterrupted access to all 8 KCSE practicals and Walimu AI.</div>
+          </div>
+        </div>
+        <button class="vlk-upgrade-banner-btn vlk-upgrade-banner-btn--warn" onclick="window.VLKSubscriptionUI && window.VLKSubscriptionUI.openModal()">
+          Renew Pass →
+        </button>
+      </div>
+    ` : `
+      <div class="vlk-upgrade-banner" role="complementary">
+        <div class="vlk-upgrade-banner-left">
+          <span class="vlk-upgrade-icon">🧪</span>
+          <div>
+            <div class="vlk-upgrade-banner-title">Unlock all 8 KCSE Practicals + Walimu AI Tutor</div>
+            <div class="vlk-upgrade-banner-sub">Full titration, qualitative, organic, composite 40-mark mocks &amp; AI co-pilot. From <strong>KES 200</strong>.</div>
+          </div>
+        </div>
+        <div class="vlk-upgrade-banner-actions">
+          <button class="vlk-upgrade-banner-btn" onclick="window.VLKSubscriptionUI && window.VLKSubscriptionUI.openModal()">
+            Get Term Pass (KES 500) →
+          </button>
+          <button class="vlk-upgrade-banner-btn vlk-upgrade-banner-btn--secondary" onclick="window.VLKSubscriptionUI && window.VLKSubscriptionUI.openModal()">
+            30-Day Sprint (KES 200)
+          </button>
+        </div>
+      </div>
+    `;
+    banner.style.display = 'block';
   }
 
   /**

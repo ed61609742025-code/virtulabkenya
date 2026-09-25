@@ -342,6 +342,23 @@
       }
     });
 
+    // 2b. Status Indicator Dot
+    document.querySelectorAll('.notif-status-dot, #pushStatusDot').forEach((dot) => {
+      if (!supported) {
+        dot.style.background = '#94A3B8';
+        dot.style.boxShadow = 'none';
+      } else if (perm === 'denied') {
+        dot.style.background = '#EF4444';
+        dot.style.boxShadow = '0 0 6px rgba(239, 68, 68, 0.5)';
+      } else if (subscribed) {
+        dot.style.background = '#10B981';
+        dot.style.boxShadow = '0 0 8px rgba(16, 185, 129, 0.6)';
+      } else {
+        dot.style.background = '#CBD5E1';
+        dot.style.boxShadow = 'none';
+      }
+    });
+
     // 3. Test Button visibility
     document.querySelectorAll('.vlk-push-test-btn, #pushTestBtn, #tPushTestBtn').forEach((btn) => {
       btn.style.display = subscribed ? 'inline-block' : 'none';

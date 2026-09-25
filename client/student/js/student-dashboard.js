@@ -164,16 +164,32 @@ requireStudentLogin();
   function toggleNotifDropdown(e) {
     if (e) e.stopPropagation();
     const dropdown = document.getElementById('notifDropdown');
+    const backdrop = document.getElementById('notifBackdrop');
     if (!dropdown) return;
-    dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+    const isShowing = dropdown.style.display !== 'none';
+    dropdown.style.display = isShowing ? 'none' : 'flex';
+    if (backdrop) backdrop.style.display = isShowing ? 'none' : 'block';
   }
 
   document.addEventListener('click', (e) => {
     const dropdown = document.getElementById('notifDropdown');
+    const backdrop = document.getElementById('notifBackdrop');
     const bellBtn = document.getElementById('notifBellBtn');
-    if (dropdown && dropdown.style.display === 'block') {
+    if (dropdown && dropdown.style.display !== 'none') {
       if (!dropdown.contains(e.target) && (!bellBtn || !bellBtn.contains(e.target))) {
         dropdown.style.display = 'none';
+        if (backdrop) backdrop.style.display = 'none';
+      }
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const dropdown = document.getElementById('notifDropdown');
+      const backdrop = document.getElementById('notifBackdrop');
+      if (dropdown && dropdown.style.display !== 'none') {
+        dropdown.style.display = 'none';
+        if (backdrop) backdrop.style.display = 'none';
       }
     }
   });
@@ -289,10 +305,10 @@ requireStudentLogin();
     if (list) {
       if (activeNotifs.length === 0) {
         list.innerHTML = `
-          <div style="text-align:center; padding:20px 12px; color:var(--text-muted);">
-            <div style="font-size:1.8rem; margin-bottom:6px;">✨</div>
-            <div style="font-size:0.84rem; font-weight:700; color:var(--heading-color);">All Caught Up!</div>
-            <div style="font-size:0.75rem; margin-top:2px; line-height:1.4;">No active notifications. Read notices automatically disappear after 24 hours.</div>
+          <div class="notif-empty-state">
+            <div class="notif-empty-icon" aria-hidden="true">✨</div>
+            <div class="notif-empty-title">All Caught Up!</div>
+            <div class="notif-empty-sub">No unread lab notices or prescribed tasks. Read notices automatically expire after 24 hours.</div>
           </div>
         `;
         return;
@@ -302,28 +318,45 @@ requireStudentLogin();
         const isRead = window.VLKNotifs ? window.VLKNotifs.isRead(n.id) : false;
         const hoursLeft = window.VLKNotifs ? window.VLKNotifs.getRemainingHours(n.id) : null;
         const timeAgo = window.VLKNotifs ? window.VLKNotifs.formatTimeAgo(n.timestamp) : '';
+        const itemType = n.type || 'general';
+
+        let icon = '📢';
+        if (itemType === 'pending_assignment') icon = '📝';
+        else if (itemType === 'marked_assignment') icon = '🏆';
+        else if (itemType === 'streak') icon = '🔥';
 
         return `
-          <div class="notif-item ${isRead ? 'read-active' : 'unread'}" onclick="clickNotifItem('${n.id}', ${n.assignmentId ? n.assignmentId : 'null'})">
-            <div style="font-size:0.84rem; font-weight:800; color:var(--heading-color); display:flex; align-items:center; justify-content:space-between; margin-bottom:3px;">
-              <span>${isRead ? '📜' : (n.type === 'pending_assignment' ? '📝' : '🟢')} ${escapeHtml(n.title)}</span>
-              <span style="font-size:0.7rem; color:var(--text-muted); font-weight:600;">${timeAgo}</span>
+          <div class="notif-card-item ${isRead ? 'read' : 'unread'} notif-type-${itemType}" onclick="clickNotifItem('${n.id}', ${n.assignmentId ? n.assignmentId : 'null'})">
+            <div class="notif-item-icon-box" aria-hidden="true">
+              <span>${icon}</span>
             </div>
-            <div style="font-size:0.78rem; color:var(--text-muted); line-height:1.4;">
-              ${escapeHtml(n.message)}
+            <div class="notif-item-content">
+              <div class="notif-item-top">
+                <span class="notif-item-title">${escapeHtml(n.title)}</span>
+                <span class="notif-item-time">${timeAgo}</span>
+              </div>
+              <div class="notif-item-body">
+                ${escapeHtml(n.message)}
+              </div>
+              <div class="notif-item-footer">
+                ${n.targetUrl ? `
+                  <span class="notif-action-chip">
+                    <span>Open Practical</span>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </span>
+                ` : (n.rawAssignment && n.rawAssignment.submitted ? `
+                  <span class="notif-action-chip notif-chip-rubric">
+                    <span>View Rubric Feedback</span>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                  </span>
+                ` : '')}
+                ${n.isPermanent ? `
+                  <span class="notif-perm-pill">⭐ Record</span>
+                ` : (isRead && hoursLeft != null ? `
+                  <span class="notif-expiry-pill">⏳ Disappears in ${hoursLeft}h</span>
+                ` : '')}
+              </div>
             </div>
-            ${n.targetUrl ? `
-              <div style="margin-top:6px;">
-                <a href="${n.targetUrl}" style="font-size:0.75rem; font-weight:800; color:var(--cyan-accent); text-decoration:none; display:inline-flex; align-items:center; gap:4px;">
-                  Open Assignment Practical →
-                </a>
-              </div>
-            ` : ''}
-            ${isRead && hoursLeft != null ? `
-              <div class="notif-expire-tag">
-                ⏳ Read — Disappears in ${hoursLeft}h
-              </div>
-            ` : ''}
           </div>
         `;
       }).join('');
@@ -345,7 +378,9 @@ requireStudentLogin();
       }
     }
     const dropdown = document.getElementById('notifDropdown');
+    const backdrop = document.getElementById('notifBackdrop');
     if (dropdown) dropdown.style.display = 'none';
+    if (backdrop) backdrop.style.display = 'none';
     loadAssignments();
   }
 

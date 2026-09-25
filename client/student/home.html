@@ -256,33 +256,54 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
             <span class="notif-badge" id="notifCount" style="display:none; position:absolute; top:-4px; right:-4px; background:#EF4444; color:#FFF; font-size:0.68rem; font-weight:800; border-radius:100px; width:18px; height:18px; display:none; align-items:center; justify-content:center;">0</span>
           </button>
-          <!-- Notification Dropdown -->
-          <div id="notifDropdown" class="notif-dropdown" style="display:none; position:absolute; right:0; top:46px; width:320px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:14px; box-shadow:var(--shadow-lg); z-index:1000; padding:14px;">
-            <div style="font-family:'Plus Jakarta Sans', sans-serif; font-size:0.92rem; font-weight:800; color:var(--heading-color); margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
-              <span>Notifications &amp; Feedback</span>
-              <div style="display:flex; align-items:center; gap:8px;">
-                <span id="notifUnreadLabel" style="font-size:0.74rem; color:var(--cyan-accent); font-family:'JetBrains Mono', monospace; font-weight:700;">0 new</span>
-                <button type="button" id="markAllReadBtn" onclick="markAllNotificationsRead()" style="background:none; border:none; color:var(--text-muted); font-size:0.72rem; font-weight:700; cursor:pointer; padding:2px 4px; border-radius:4px;" title="Mark all notifications as read">Clear</button>
+          <!-- Notification Backdrop for Mobile Light Dismiss -->
+          <div id="notifBackdrop" class="notif-backdrop" onclick="toggleNotifDropdown(event)" style="display:none;" aria-hidden="true"></div>
+
+          <!-- Notification Dropdown Card -->
+          <div id="notifDropdown" class="notif-dropdown" style="display:none;" role="region" aria-label="Notifications & Alerts Panel">
+            <div class="notif-header">
+              <div class="notif-header-left">
+                <div class="notif-header-icon-box" aria-hidden="true">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                </div>
+                <div class="notif-header-titles">
+                  <h3 class="notif-title">Notifications</h3>
+                  <span id="notifUnreadLabel" class="notif-unread-chip">0 new</span>
+                </div>
+              </div>
+              <div class="notif-header-actions">
+                <button type="button" id="markAllReadBtn" class="notif-clear-btn" onclick="markAllNotificationsRead()" title="Mark all notifications as read">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  <span>Mark read</span>
+                </button>
+                <button type="button" class="notif-close-btn" onclick="toggleNotifDropdown(event)" aria-label="Close notifications panel">&times;</button>
               </div>
             </div>
-            <div id="notifList" style="max-height:240px; overflow-y:auto; font-size:0.82rem; color:var(--text-muted);">
-              <div style="padding:14px 0; text-align:center; font-family:'JetBrains Mono', monospace; font-size:0.78rem;">No unread notifications</div>
+
+            <!-- Scroll Area -->
+            <div id="notifList" class="notif-scroll-area">
+              <div class="notif-empty-state">
+                <div class="notif-empty-icon" aria-hidden="true">✨</div>
+                <div class="notif-empty-title">All Caught Up!</div>
+                <div class="notif-empty-sub">No unread lab notices or prescribed tasks.</div>
+              </div>
             </div>
-            <!-- Push Notification Quick Controls -->
-            <div id="pushNotifBar" style="margin-top:10px; padding-top:10px; border-top:1px solid var(--card-border);">
-              <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
-                <div style="font-size:0.74rem; color:var(--text-muted);">
+
+            <!-- Push Alerts Quick Control Card -->
+            <div id="pushNotifBar" class="notif-push-bar">
+              <div class="notif-push-info">
+                <div class="notif-push-status-row">
+                  <span class="notif-status-dot" id="pushStatusDot" aria-hidden="true"></span>
                   <span id="pushStatusText" class="vlk-push-status-text">Push Alerts: Disabled</span>
                 </div>
-                <div style="display:flex; gap:6px; align-items:center;">
-                  <button type="button" id="pushTestBtn" class="vlk-push-test-btn btn btn-xs" onclick="VLKPush.sendTestNotification()" style="display:none; padding:3px 8px; font-size:0.7rem; border-radius:6px;" title="Send test push alert">Test</button>
-                  <button type="button" id="pushToggleBtn" class="vlk-push-toggle-btn btn btn-xs btn-secondary" onclick="VLKPush.toggle()" style="padding:3px 10px; font-size:0.7rem; font-weight:700; border-radius:6px;">Enable</button>
-                </div>
-              </div>
-              <div style="margin-top:5px; text-align:right;">
-                <a href="javascript:void(0)" id="pushBatteryGuideBtn" class="vlk-push-guide-btn" onclick="VLKPush.openBatteryGuideModal()" style="font-size:0.7rem; color:var(--cyan-accent); text-decoration:none; display:none; align-items:center; gap:3px; justify-content:flex-end;">
-                  <span>⚡ Mobile Alert Optimization Guide</span>
+                <a href="javascript:void(0)" id="pushBatteryGuideBtn" class="vlk-push-guide-btn notif-battery-guide-link" onclick="VLKPush.openBatteryGuideModal()">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                  <span>Mobile Optimization Guide</span>
                 </a>
+              </div>
+              <div class="notif-push-actions">
+                <button type="button" id="pushTestBtn" class="vlk-push-test-btn notif-btn-pill notif-btn-test" onclick="VLKPush.sendTestNotification()" style="display:none;" title="Send test push alert">Test</button>
+                <button type="button" id="pushToggleBtn" class="vlk-push-toggle-btn notif-btn-pill notif-btn-toggle" onclick="VLKPush.toggle()">Enable</button>
               </div>
             </div>
           </div>

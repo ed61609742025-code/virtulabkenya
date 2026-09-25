@@ -429,4 +429,158 @@ describe('VirtuLab Kenya — Subscription & Payment System', () => {
     assert.strictEqual(jsonCalled.code, 'SUBSCRIPTION_REQUIRED');
     assert.strictEqual(nextCalled, false);
   });
+
+  // 11. Webhook Signature Security — Reject Invalid Signature
+  it('POST /api/subscriptions/webhook — should reject invalid/forged signature with HTTP 401', async () => {
+    const payload = {
+      event: 'charge.success',
+      data: { reference: 'vlk_fake_ref_999' }
+    };
+    const rawBody = JSON.stringify(payload);
+
+    const res = await fetch(url('/api/subscriptions/webhook'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-paystack-signature': 'invalid_forged_signature_hex_1234567890'
+      },
+      body: rawBody
+    });
+
+    assert.strictEqual(res.status, 401);
+  });
+
+  // 12. Transaction Verification Ownership — Reject Other User
+  it('GET /api/subscriptions/verify/:reference — should reject caller who does not own transaction (403)', async () => {
+    // Transaction belongs to student ID 999, caller is student ID 101
+    pool.query = async (text, params) => {
+      if (text.includes('SELECT * FROM payment_transactions WHERE reference_code')) {
+        return {
+          rows: [{
+            id: 888,
+            reference_code: 'vlk_other_user_ref',
+            user_type: 'student',
+            user_id: 999,
+            status: 'success'
+          }]
+        };
+      }
+      return { rows: [] };
+    };
+
+    const res = await fetch(url('/api/subscriptions/verify/vlk_other_user_ref'), {
+      headers: { Authorization: `Bearer ${studentToken}` }
+    });
+
+    assert.strictEqual(res.status, 403);
+    const body = await res.json();
+    assert.ok(body.error.includes('Unauthorized'));
+  });
+
+  // 13. Transaction Verification Ownership — Allow Owner
+  it('GET /api/subscriptions/verify/:reference — should allow owner to verify their own transaction', async () => {
+    pool.query = async (text, params) => {
+      if (text.includes('SELECT * FROM payment_transactions WHERE reference_code')) {
+        return {
+          rows: [{
+            id: 889,
+            reference_code: 'vlk_my_ref',
+            user_type: 'student',
+            user_id: 101, // matches studentToken ID
+            status: 'success'
+          }]
+        };
+      }
+      return { rows: [] };
+    };
+
+    const res = await fetch(url('/api/subscriptions/verify/vlk_my_ref'), {
+      headers: { Authorization: `Bearer ${studentToken}` }
+    });
+
+    assert.strictEqual(res.status, 200);
+    const body = await res.json();
+    assert.strictEqual(body.success, true);
+    assert.strictEqual(body.status, 'success');
+  });
+
+  // 14. School Checkout Validation — Require schoolId
+  it('POST /api/subscriptions/checkout — teacher without school_id should receive 400', async () => {
+    const unlinkedTeacherToken = jwt.sign(
+      { id: 202, role: 'teacher', name: 'Mr. Kamau', email: 'kamau@example.com' }, // no school_id
+      process.env.JWT_SECRET
+    );
+
+    pool.query = async (text, params) => {
+      if (text.includes('FROM subscription_plans WHERE id = $1')) {
+        return {
+          rows: [{
+            id: 4,
+            plan_code: 'school_term',
+            name: 'School Term Pass',
+            price_kes: '15000.00',
+            duration_days: 120
+          }]
+        };
+      }
+      if (text.includes('SELECT school_id FROM teachers')) {
+        return { rows: [] }; // No school linked
+      }
+      return { rows: [] };
+    };
+
+    const res = await fetch(url('/api/subscriptions/checkout'), {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${unlinkedTeacherToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ planId: 4 })
+    });
+
+    assert.strictEqual(res.status, 400);
+    const body = await res.json();
+    assert.ok(body.error.includes('school institution'));
+  });
+
+  // 15. Admin Billing Overview
+  it('GET /api/subscriptions/admin/overview — should return revenue metrics and recent transactions for admin', async () => {
+    pool.query = async (text, params) => {
+      if (text.includes('SUM(amount_kes)')) {
+        return { rows: [{ total_revenue_kes: '45000.00', total_success_count: '15' }] };
+      }
+      if (text.includes('GROUP BY subscriber_type')) {
+        return {
+          rows: [
+            { subscriber_type: 'student', count: '10' },
+            { subscriber_type: 'school', count: '5' }
+          ]
+        };
+      }
+      if (text.includes('FROM payment_transactions pt')) {
+        return {
+          rows: [{
+            id: 1,
+            reference_code: 'vlk_123',
+            user_type: 'student',
+            amount_kes: '500.00',
+            status: 'success'
+          }]
+        };
+      }
+      return { rows: [] };
+    };
+
+    const res = await fetch(url('/api/subscriptions/admin/overview'), {
+      headers: { Authorization: `Bearer ${adminToken}` }
+    });
+
+    assert.strictEqual(res.status, 200);
+    const body = await res.json();
+    assert.strictEqual(body.success, true);
+    assert.strictEqual(body.metrics.totalRevenueKes, 45000);
+    assert.strictEqual(body.metrics.activeStudentSubscriptions, 10);
+    assert.strictEqual(body.metrics.activeSchoolSubscriptions, 5);
+    assert.strictEqual(body.recentTransactions.length, 1);
+  });
 });

@@ -184,6 +184,29 @@
   }
 
   /**
+   * Display a non-blocking toast notification.
+   */
+  function showToast(message, type = 'success') {
+    let toast = document.getElementById('vlkSubToast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'vlkSubToast';
+      toast.className = 'vlk-sub-toast';
+      document.body.appendChild(toast);
+    }
+    toast.className = `vlk-sub-toast ${type} show`;
+    toast.innerHTML = `
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:1.15rem;">${type === 'success' ? '🎉' : type === 'error' ? '⚠️' : 'ℹ️'}</span>
+        <div>${message}</div>
+      </div>
+    `;
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 6000);
+  }
+
+  /**
    * Handle checkout submit.
    */
   async function submitPayment() {
@@ -193,11 +216,27 @@
 
     if (errorEl) errorEl.style.display = 'none';
 
-    let phone = phoneInput ? phoneInput.value.trim() : '';
-    if (phone.startsWith('0')) {
-      phone = '254' + phone.substring(1);
-    } else if (phone.startsWith('+254')) {
+    // Strip whitespace, dashes, parentheses and periods
+    let rawPhone = phoneInput ? phoneInput.value.replace(/[\s\-\(\)\.]/g, '') : '';
+    let phone = rawPhone;
+    if (phone.startsWith('+254')) {
       phone = phone.substring(1);
+    } else if (phone.startsWith('0')) {
+      phone = '254' + phone.substring(1);
+    } else if (phone.length === 9 && (phone.startsWith('7') || phone.startsWith('1'))) {
+      phone = '254' + phone;
+    }
+
+    // Validate Kenyan Safaricom / Airtel mobile numbers if provided
+    if (phone) {
+      const isValidKePhone = /^254(7|1)\d{8}$/.test(phone);
+      if (!isValidKePhone) {
+        if (errorEl) {
+          errorEl.textContent = 'Please enter a valid Kenyan Safaricom/Airtel number (e.g. 0712 345 678).';
+          errorEl.style.display = 'block';
+        }
+        return;
+      }
     }
 
     if (!selectedPlanId) {
@@ -245,14 +284,18 @@
   async function handlePaymentReturn(reference) {
     try {
       const verifyRes = await window.Subscriptions.verify(reference);
+      // Clean URL query parameters
+      window.history.replaceState({}, document.title, window.location.pathname);
+
       if (verifyRes && verifyRes.success && verifyRes.status === 'success') {
-        alert('🎉 Hongera! Your VirtuLab Kenya subscription has been activated successfully!');
-        // Clean URL query parameters
-        window.history.replaceState({}, document.title, window.location.pathname);
+        showToast('<strong>Hongera!</strong> Your VirtuLab Kenya subscription has been activated successfully!', 'success');
         await refreshStatus();
+      } else {
+        showToast('Payment verification pending. If M-Pesa deducted funds, your pass will activate shortly.', 'info');
       }
     } catch (e) {
       console.warn('Verification on return note:', e.message);
+      window.history.replaceState({}, document.title, window.location.pathname);
     }
   }
 
@@ -316,7 +359,8 @@
     openModal,
     closeModal,
     selectPlan,
-    submitPayment
+    submitPayment,
+    showToast
   };
 
   // Auto-init on DOM ready

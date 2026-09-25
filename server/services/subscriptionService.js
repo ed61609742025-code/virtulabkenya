@@ -367,6 +367,7 @@ class SubscriptionService {
     const subscriberType = metadata.subscriber_type || 'student';
     const studentId = metadata.student_id ? parseInt(metadata.student_id, 10) : null;
     const schoolId = metadata.school_id ? parseInt(metadata.school_id, 10) : null;
+    const userId = metadata.user_id ? parseInt(metadata.user_id, 10) : (studentId || null);
     const planId = metadata.plan_id ? parseInt(metadata.plan_id, 10) : null;
 
     if (!planId) {
@@ -397,7 +398,7 @@ class SubscriptionService {
          RETURNING id`,
         [
           subscriberType,
-          studentId,
+          userId,
           schoolId,
           reference,
           chargeData.id ? String(chargeData.id) : reference,

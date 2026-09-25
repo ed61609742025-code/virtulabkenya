@@ -75,10 +75,18 @@ router.post('/checkout', requireAuth, async (req, res) => {
 
     if (subscriberType === 'student') {
       studentId = req.user.id;
+      schoolId = req.user.school_id || null;
     } else {
       schoolId = req.user.school_id || null;
       if (!schoolId && req.body.schoolId) {
         schoolId = parseInt(req.body.schoolId, 10);
+      }
+      if (!schoolId && req.user.role === 'teacher') {
+        const tchRes = await pool.query('SELECT school_id FROM teachers WHERE id = $1', [req.user.id]);
+        schoolId = tchRes.rows[0]?.school_id || null;
+      }
+      if (!schoolId) {
+        return res.status(400).json({ error: 'Your account is not linked to a school institution. Please specify schoolId or link your school.' });
       }
     }
 
@@ -86,7 +94,7 @@ router.post('/checkout', requireAuth, async (req, res) => {
     const uniqueHash = crypto.randomBytes(4).toString('hex');
     const reference = `vlk_${Date.now()}_${uniqueHash}`;
 
-    // Record pending transaction in database
+    // Record pending transaction in database (user_id captures initiating student/teacher)
     const txInsert = await pool.query(
       `INSERT INTO payment_transactions (
          user_type, user_id, school_id, gateway, reference_code,
@@ -95,7 +103,7 @@ router.post('/checkout', requireAuth, async (req, res) => {
        RETURNING id`,
       [
         subscriberType,
-        studentId,
+        req.user.id,
         schoolId,
         reference,
         phone || null,
@@ -117,6 +125,7 @@ router.post('/checkout', requireAuth, async (req, res) => {
         subscriber_type: subscriberType,
         student_id: studentId,
         school_id: schoolId,
+        user_id: req.user.id,
         transaction_id: txId,
         phone: phone || null
       }
@@ -152,9 +161,13 @@ router.post('/webhook', async (req, res) => {
 
     // Verify authenticity
     const isValid = paystackService.verifyWebhookSignature(rawBody, signature);
-    if (!isValid && process.env.NODE_ENV === 'production') {
-      console.warn('[Paystack Webhook] Invalid signature rejected.');
-      return res.status(401).send('Invalid webhook signature');
+    if (!isValid) {
+      if (process.env.SKIP_WEBHOOK_VERIFY === 'true') {
+        console.warn('[Paystack Webhook] Signature verification SKIPPED via SKIP_WEBHOOK_VERIFY flag.');
+      } else {
+        console.warn('[Paystack Webhook] Invalid signature rejected.');
+        return res.status(401).send('Invalid webhook signature');
+      }
     }
 
     const event = req.body;
@@ -177,6 +190,7 @@ router.post('/webhook', async (req, res) => {
 /**
  * GET /api/subscriptions/verify/:reference
  * Verifies transaction completion after client redirect from Paystack
+ * Protected by authentication and caller ownership validation
  */
 router.get('/verify/:reference', requireAuth, async (req, res) => {
   try {
@@ -193,12 +207,36 @@ router.get('/verify/:reference', requireAuth, async (req, res) => {
       return res.status(404).json({ error: 'Transaction reference not found.' });
     }
 
+    // 2. Ownership verification
+    const isAdmin = req.user.role === 'admin' || req.user.role === 'superadmin';
+    if (!isAdmin) {
+      if (tx.user_type === 'student') {
+        if (tx.user_id && tx.user_id !== req.user.id) {
+          return res.status(403).json({ error: 'Unauthorized: You do not own this transaction.' });
+        }
+      } else if (tx.user_type === 'school') {
+        let userSchoolId = req.user.school_id;
+        if (!userSchoolId && req.user.role === 'teacher') {
+          const tch = await pool.query('SELECT school_id FROM teachers WHERE id = $1', [req.user.id]);
+          userSchoolId = tch.rows[0]?.school_id;
+        } else if (!userSchoolId && req.user.role === 'student') {
+          const std = await pool.query('SELECT school_id FROM students WHERE id = $1', [req.user.id]);
+          userSchoolId = std.rows[0]?.school_id;
+        }
+        const matchesSchool = tx.school_id && userSchoolId && tx.school_id === userSchoolId;
+        const matchesUser = tx.user_id && tx.user_id === req.user.id;
+        if (!matchesSchool && !matchesUser) {
+          return res.status(403).json({ error: 'Unauthorized: You do not have access to this transaction.' });
+        }
+      }
+    }
+
     if (tx.status === 'success') {
       const status = await subscriptionService.getSubscriptionStatus(req.user);
       return res.json({ success: true, status: 'success', subscription: status });
     }
 
-    // 2. Query Paystack directly if still pending locally
+    // 3. Query Paystack directly if still pending locally
     const paystackData = await paystackService.verifyTransaction(reference);
 
     if (paystackData.status === 'success') {
@@ -279,6 +317,65 @@ router.post('/admin/activate', requireAuth, requireRole('admin'), async (req, re
   } catch (err) {
     console.error('[Admin Subscription Activation Error]:', err.message);
     res.status(500).json({ error: err.message || 'Failed to activate subscription.' });
+  }
+});
+
+/**
+ * GET /api/subscriptions/admin/overview
+ * Admin-only: Overview of subscription metrics, revenue, and recent transactions
+ */
+router.get('/admin/overview', requireAuth, requireRole('admin'), async (req, res) => {
+  try {
+    // 1. Total revenue
+    const revRes = await pool.query(
+      `SELECT COALESCE(SUM(amount_kes), 0) AS total_revenue_kes,
+              COUNT(*) AS total_success_count
+       FROM payment_transactions
+       WHERE status = 'success'`
+    );
+
+    // 2. Active subscriptions count
+    const subsCountRes = await pool.query(
+      `SELECT subscriber_type, COUNT(*) AS count
+       FROM subscriptions
+       WHERE status IN ('active', 'grace_period') AND expires_at > NOW()
+       GROUP BY subscriber_type`
+    );
+
+    let activeStudents = 0;
+    let activeSchools = 0;
+    (subsCountRes.rows || []).forEach(r => {
+      if (r.subscriber_type === 'student') activeStudents = parseInt(r.count, 10);
+      if (r.subscriber_type === 'school') activeSchools = parseInt(r.count, 10);
+    });
+
+    // 3. Recent transactions
+    const txRes = await pool.query(
+      `SELECT pt.id, pt.reference_code, pt.user_type, pt.user_id, pt.school_id,
+              pt.amount_kes, pt.status, pt.channel, pt.gateway, pt.paid_at, pt.created_at,
+              sp.name AS plan_name,
+              s.name AS school_name
+       FROM payment_transactions pt
+       LEFT JOIN subscriptions sub ON pt.subscription_id = sub.id
+       LEFT JOIN subscription_plans sp ON sub.plan_id = sp.id
+       LEFT JOIN schools s ON pt.school_id = s.id
+       ORDER BY pt.created_at DESC
+       LIMIT 50`
+    );
+
+    res.json({
+      success: true,
+      metrics: {
+        totalRevenueKes: parseFloat(revRes.rows[0]?.total_revenue_kes || 0),
+        totalSuccessTransactions: parseInt(revRes.rows[0]?.total_success_count || 0, 10),
+        activeStudentSubscriptions: activeStudents,
+        activeSchoolSubscriptions: activeSchools
+      },
+      recentTransactions: txRes.rows
+    });
+  } catch (err) {
+    console.error('[Admin Subscription Overview Error]:', err.message);
+    res.status(500).json({ error: 'Failed to retrieve administrative billing overview.' });
   }
 });
 

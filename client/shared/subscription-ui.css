@@ -350,3 +350,56 @@
   transform: none;
   box-shadow: none;
 }
+
+/* Toast Notifications */
+.vlk-sub-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 10000;
+  background: #0F172A;
+  color: #FFFFFF;
+  padding: 14px 18px;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transform: translateY(120px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+  border-left: 4px solid #059669;
+  max-width: 420px;
+}
+
+.vlk-sub-toast.show {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.vlk-sub-toast.success {
+  border-left-color: #059669;
+}
+
+.vlk-sub-toast.info {
+  border-left-color: #0284C7;
+}
+
+.vlk-sub-toast.error {
+  border-left-color: #EF4444;
+}
+
+@media (max-width: 640px) {
+  .vlk-sub-toast {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    max-width: none;
+  }
+}

@@ -50,6 +50,7 @@
 <link rel="stylesheet" href="css/dashboard.css?v=120">
 <link rel="stylesheet" href="css/skill-tree.css?v=120">
 <link rel="stylesheet" href="css/mobile.css?v=120">
+<link rel="stylesheet" href="../shared/subscription-ui.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" crossorigin="anonymous"></script>
 
 <style>
@@ -284,6 +285,11 @@
           </div>
         </div>
 
+        <!-- Subscription / Pass Status Pill -->
+        <button type="button" class="vlk-sub-pill upgrade-needed" id="subStatusPill" onclick="window.VLKSubscriptionUI && window.VLKSubscriptionUI.openModal()" style="display:none;" title="Subscription status">
+          ⚡ <span>Upgrade</span>
+        </button>
+
         <!-- User Profile Dropdown -->
         <div style="position:relative;">
           <button class="user-avatar-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)" data-tooltip="Profile &amp; settings" data-tooltip-pos="bottom" aria-label="Student Profile">
@@ -294,6 +300,9 @@
               <div style="font-weight:800; font-size:0.92rem; color:var(--heading-color);" id="dropdownUserName">Student</div>
               <div style="font-size:0.76rem; color:var(--text-muted); font-family:'JetBrains Mono', monospace; font-weight:700;" id="dropdownUserRole">KCSE Student</div>
             </div>
+            <button onclick="window.VLKSubscriptionUI && window.VLKSubscriptionUI.openModal()" style="width:100%; text-align:left; display:flex; align-items:center; gap:8px; padding:8px 10px; font-size:0.84rem; font-weight:800; color:var(--acad-navy, #0284C7); background:rgba(2, 132, 199, 0.08); border:none; cursor:pointer; border-radius:6px; margin-bottom:6px;" class="dropdown-link-hover">
+              <span>⭐</span> KCSE Pass &amp; Billing
+            </button>
             <a href="#assignments" onclick="focusAssignmentsSection(event)" style="display:flex; align-items:center; gap:10px; padding:8px 10px; font-size:0.84rem; font-weight:700; color:var(--cyan-accent); text-decoration:none; border-radius:6px;" class="dropdown-link-hover">
               Teacher Assignments
             </a>
@@ -1679,6 +1688,7 @@
   <script src="../shared/gamification-engine.js"></script>
   <script src="js/skill-tree.js?v=120"></script>
   <script src="js/student-dashboard.js?v=120"></script>
+  <script src="../shared/subscription-ui.js?v=120"></script>
 
   <script src="js/home.js?v=120"></script>
 

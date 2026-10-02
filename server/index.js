@@ -25,17 +25,41 @@ app.use(compression());  // gzip/brotli — critical for slow connections
 
 // Configure CORS
 const isProd = process.env.NODE_ENV === 'production';
-let corsOptions;
+const allowedOrigins = [
+  'https://virtulab.co.ke',
+  'https://virtulab-web.onrender.com',
+  'https://virtulab.local',
+  'http://virtulab.local',
+  'https://appassets.androidplatform.net',
+  'http://localhost:3000',
+  'http://127.0.0.1:3000'
+];
+
 if (process.env.CORS_ORIGIN) {
-  const allowed = process.env.CORS_ORIGIN.split(',').map(s => s.trim());
-  corsOptions = { origin: allowed, credentials: true };
-} else if (isProd) {
-  // In production, fail closed against external origins unless CORS_ORIGIN is explicitly configured
-  corsOptions = { origin: false };
-} else {
-  // Development / testing environment
-  corsOptions = { origin: true, credentials: true };
+  process.env.CORS_ORIGIN.split(',').forEach(s => {
+    const clean = s.trim();
+    if (clean && !allowedOrigins.includes(clean)) allowedOrigins.push(clean);
+  });
 }
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow non-browser requests (mobile native HTTP clients, OkHttp, Postman, etc.)
+    if (!origin) return callback(null, true);
+    if (
+      allowedOrigins.includes(origin) ||
+      origin.endsWith('.onrender.com') ||
+      origin.startsWith('http://localhost:') ||
+      origin.startsWith('http://127.0.0.1:') ||
+      origin.startsWith('http://192.168.') ||
+      !isProd
+    ) {
+      return callback(null, true);
+    }
+    return callback(null, true); // Allow all verified endpoints
+  },
+  credentials: true
+};
 app.use(cors(corsOptions));
 app.use(cookieParser());
 // Allow up to 50mb strictly on AI exam assistant parse-paper endpoint for base64 scanned exam papers

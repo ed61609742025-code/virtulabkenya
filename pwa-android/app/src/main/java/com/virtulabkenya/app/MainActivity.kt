@@ -44,11 +44,22 @@ class MainActivity : AppCompatActivity() {
         CookieManager.getInstance().setAcceptCookie(true)
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true)
 
+        val prefsInit = getSharedPreferences("virtulab_prefs", MODE_PRIVATE)
+        val initialUrl = prefsInit.getString("server_url", null)
+        if (initialUrl == null || initialUrl.contains("192.168.") || initialUrl.contains("localhost") || initialUrl.contains("127.0.0.1")) {
+            prefsInit.edit().putString("server_url", "https://virtulab-web.onrender.com").apply()
+        }
+
         webView.addJavascriptInterface(object {
             @JavascriptInterface
             fun getServer(): String {
                 val prefs = getSharedPreferences("virtulab_prefs", MODE_PRIVATE)
-                return prefs.getString("server_url", "https://virtulab-web.onrender.com") ?: "https://virtulab-web.onrender.com"
+                var url = prefs.getString("server_url", "https://virtulab-web.onrender.com") ?: "https://virtulab-web.onrender.com"
+                if (url.contains("192.168.") || url.contains("localhost") || url.contains("127.0.0.1")) {
+                    url = "https://virtulab-web.onrender.com"
+                    prefs.edit().putString("server_url", url).apply()
+                }
+                return url
             }
 
             @JavascriptInterface
@@ -70,25 +81,33 @@ class MainActivity : AppCompatActivity() {
         webView.webViewClient = object : WebViewClient() {
             override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? {
                 val url = request.url
-                val host = url.host
+                val host = url.host ?: ""
 
-                // Intercept our local origin
-                if (host == "virtulab.local" || host == "appassets.androidplatform.net") {
+                val prefs = getSharedPreferences("virtulab_prefs", MODE_PRIVATE)
+                var serverBase = prefs.getString("server_url", "https://virtulab-web.onrender.com")?.trimEnd('/') ?: "https://virtulab-web.onrender.com"
+                if (serverBase.contains("192.168.") || serverBase.contains("localhost") || serverBase.contains("127.0.0.1")) {
+                    serverBase = "https://virtulab-web.onrender.com"
+                }
+                val serverHost = try { Uri.parse(serverBase).host ?: "" } catch (_: Exception) { "" }
+
+                val isLocalOrigin = (host == "virtulab.local" || host == "appassets.androidplatform.net")
+                val isBackendHost = (serverHost.isNotEmpty() && host.equals(serverHost, ignoreCase = true))
+
+                // Intercept our local origin or backend API calls
+                if (isLocalOrigin || isBackendHost) {
                     val rawPath = url.path?.trimStart('/') ?: ""
                     val assetPath = if (rawPath.isEmpty()) "index.html" else rawPath
 
-                    // If an API request reaches virtulab.local/api, proxy it live to backend server with offline fallback
+                    // If an API request reaches virtulab.local/api or the backend server directly, proxy it live via native HttpURLConnection
                     if (assetPath.startsWith("api/")) {
-                        val prefs = getSharedPreferences("virtulab_prefs", MODE_PRIVATE)
-                        val serverBase = prefs.getString("server_url", "https://virtulab-web.onrender.com")?.trimEnd('/') ?: "https://virtulab-web.onrender.com"
                         val queryStr = if (url.query.isNullOrEmpty()) "" else "?${url.query}"
                         val targetUrl = "$serverBase/$assetPath$queryStr"
 
                         try {
                             val conn = (java.net.URL(targetUrl).openConnection() as java.net.HttpURLConnection).apply {
                                 requestMethod = request.method
-                                connectTimeout = 4000
-                                readTimeout = 8000
+                                connectTimeout = 15000
+                                readTimeout = 20000
                                 instanceFollowRedirects = true
                                 request.requestHeaders?.forEach { (k, v) ->
                                     if (!k.equals("Host", ignoreCase = true)) {
@@ -110,6 +129,8 @@ class MainActivity : AppCompatActivity() {
                             }
                             headers["Access-Control-Allow-Origin"] = "*"
                             headers["Access-Control-Allow-Credentials"] = "true"
+                            headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+                            headers["Access-Control-Allow-Headers"] = "*"
                             return WebResourceResponse(mime, encoding, code, conn.responseMessage ?: "OK", headers, stream)
                         } catch (e: Exception) {
                             val jsonResponse = if (assetPath == "api/auth/config") {
@@ -126,6 +147,11 @@ class MainActivity : AppCompatActivity() {
                             )
                             return WebResourceResponse("application/json", "UTF-8", 503, "Offline", headers, inputStream)
                         }
+                    }
+
+                    // If not an API request, but matching backend host, don't serve from local assets
+                    if (isBackendHost) {
+                        return super.shouldInterceptRequest(view, request)
                     }
 
                     try {

@@ -5,15 +5,19 @@
 
 function getServerBaseUrl() {
   try {
-    if (typeof window !== 'undefined' && window.VirtuLabNative && typeof window.VirtuLabNative.getServer === 'function') {
-      const nativeUrl = window.VirtuLabNative.getServer();
-      if (nativeUrl && nativeUrl.trim()) return nativeUrl.trim().replace(/\/+$/, '');
+    const custom = localStorage.getItem('vlk_server_url');
+    if (custom && (custom.includes('192.168.') || custom.includes('localhost') || custom.includes('127.0.0.1'))) {
+      localStorage.removeItem('vlk_server_url');
+    } else if (custom && custom.trim()) {
+      return custom.trim().replace(/\/+$/, '');
     }
   } catch (e) {}
   try {
-    const custom = localStorage.getItem('vlk_server_url');
-    if (custom && custom.trim()) {
-      return custom.trim().replace(/\/+$/, '');
+    if (typeof window !== 'undefined' && window.VirtuLabNative && typeof window.VirtuLabNative.getServer === 'function') {
+      const nativeUrl = window.VirtuLabNative.getServer();
+      if (nativeUrl && !nativeUrl.includes('192.168.') && !nativeUrl.includes('localhost')) {
+        return nativeUrl.trim().replace(/\/+$/, '');
+      }
     }
   } catch (e) {}
   if (typeof window !== 'undefined' && window.location.hostname && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
@@ -54,7 +58,7 @@ const VLKServer = {
     if (!url || typeof url !== 'string') return;
     let clean = url.trim().replace(/\/+$/, '');
     if (!clean.startsWith('http://') && !clean.startsWith('https://')) {
-      clean = 'http://' + clean;
+      clean = 'https://' + clean;
     }
     try {
       localStorage.setItem('vlk_server_url', clean);
@@ -67,9 +71,13 @@ const VLKServer = {
     return clean;
   },
   async testHealth(url) {
-    const target = (url ? url.trim().replace(/\/+$/, '') : getServerBaseUrl()) + '/api/health';
+    const serverUrl = url ? url.trim().replace(/\/+$/, '') : getServerBaseUrl();
+    let target = serverUrl + '/api/health';
+    if (typeof window !== 'undefined' && window.location.hostname === 'virtulab.local' && (!url || url.trim() === getServerBaseUrl())) {
+      target = '/api/health';
+    }
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 4000);
+    const timer = setTimeout(() => controller.abort(), 15000);
     try {
       const res = await fetch(target, { signal: controller.signal });
       clearTimeout(timer);

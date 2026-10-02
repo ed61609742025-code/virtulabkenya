@@ -567,6 +567,48 @@ async function seedInitialSubscriptionPlans(targetPool) {
   }
 }
 
+async function seedDemoData(pool) {
+  try {
+    // Seed a demo school (idempotent — skips if already exists)
+    await pool.query(`
+      INSERT INTO schools (name, county, admin_code)
+      VALUES ('VirtuLab Demo School', 'Nairobi', 'DEMO2025')
+      ON CONFLICT (admin_code) DO NOTHING
+    `);
+
+    // Get the demo school id
+    const schoolRes = await pool.query(`SELECT id FROM schools WHERE admin_code = 'DEMO2025' LIMIT 1`);
+    if (schoolRes.rows.length === 0) return;
+    const schoolId = schoolRes.rows[0].id;
+
+    // Seed test student (idempotent)
+    const existing = await pool.query(`SELECT id FROM students WHERE email = 'student1@test.com' LIMIT 1`);
+    if (existing.rows.length === 0) {
+      const hash = await bcrypt.hash('password123', 10);
+      await pool.query(`
+        INSERT INTO students (school_id, name, email, password_hash, form)
+        VALUES ($1, 'Test Student', 'student1@test.com', $2, 'Form 3')
+        ON CONFLICT (email) DO NOTHING
+      `, [schoolId, hash]);
+      console.log('[Migrate] Demo student seeded: student1@test.com / password123');
+    }
+
+    // Seed test student 2
+    const existing2 = await pool.query(`SELECT id FROM students WHERE email = 'demo@virtulab.co.ke' LIMIT 1`);
+    if (existing2.rows.length === 0) {
+      const hash2 = await bcrypt.hash('Demo1234!', 10);
+      await pool.query(`
+        INSERT INTO students (school_id, name, email, password_hash, form)
+        VALUES ($1, 'Demo Student', 'demo@virtulab.co.ke', $2, 'Form 4')
+        ON CONFLICT (email) DO NOTHING
+      `, [schoolId, hash2]);
+      console.log('[Migrate] Demo student 2 seeded: demo@virtulab.co.ke / Demo1234!');
+    }
+  } catch (err) {
+    console.warn('[Migrate] Demo data seeding note:', err.message);
+  }
+}
+
 async function migrate() {
   const dbUrl = process.env.DATABASE_URL || '';
   const isCloudDb = dbUrl.includes('.neon.tech') || dbUrl.includes('.supabase.co') || dbUrl.includes('.pooler.supabase.com') || dbUrl.includes('render.com') || dbUrl.includes('railway.app') || (process.env.NODE_ENV === 'production' && !dbUrl.includes('localhost') && !dbUrl.includes('127.0.0.1'));
@@ -621,6 +663,8 @@ async function runMigrationsAsync(poolInstance) {
   await seedInitialAdmin(targetPool);
   // Step 4: Ensure subscription plans exist
   await seedInitialSubscriptionPlans(targetPool);
+  // Step 5: Seed demo school + test students (idempotent — safe to run on every boot)
+  await seedDemoData(targetPool);
 }
 
 if (require.main === module) {

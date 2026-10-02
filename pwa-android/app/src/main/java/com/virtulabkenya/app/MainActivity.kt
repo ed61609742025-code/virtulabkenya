@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
             @JavascriptInterface
             fun getServer(): String {
                 val prefs = getSharedPreferences("virtulab_prefs", MODE_PRIVATE)
-                return prefs.getString("server_url", "http://192.168.18.14:3000") ?: "http://192.168.18.14:3000"
+                return prefs.getString("server_url", "https://virtulab-web.onrender.com") ?: "https://virtulab-web.onrender.com"
             }
 
             @JavascriptInterface
@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity() {
                     // If an API request reaches virtulab.local/api, proxy it live to backend server with offline fallback
                     if (assetPath.startsWith("api/")) {
                         val prefs = getSharedPreferences("virtulab_prefs", MODE_PRIVATE)
-                        val serverBase = prefs.getString("server_url", "http://192.168.18.14:3000")?.trimEnd('/') ?: "http://192.168.18.14:3000"
+                        val serverBase = prefs.getString("server_url", "https://virtulab-web.onrender.com")?.trimEnd('/') ?: "https://virtulab-web.onrender.com"
                         val queryStr = if (url.query.isNullOrEmpty()) "" else "?${url.query}"
                         val targetUrl = "$serverBase/$assetPath$queryStr"
 

@@ -19,8 +19,8 @@ function getServerBaseUrl() {
   if (typeof window !== 'undefined' && window.location.hostname && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
     return window.location.origin;
   }
-  // Default to current server IP on Wi-Fi
-  return 'http://192.168.18.14:3000';
+  // Default to Render cloud server
+  return 'https://virtulab-web.onrender.com';
 }
 
 function getApiBase() {

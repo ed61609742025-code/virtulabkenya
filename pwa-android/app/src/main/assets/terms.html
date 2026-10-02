@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0F172A">
+<link rel="icon" type="image/png" href="/shared/icon-192.png">
+<link rel="manifest" href="/manifest.json">
+<title>Terms of Service — VirtuLab Kenya</title>
+<meta name="description" content="Terms of Service for VirtuLab Kenya. Academic terms, KNEC/KICD non-affiliation disclaimer, physical laboratory safety warnings, and limitation of educational liability.">
+
+<script>
+  var t = localStorage.getItem('vlk_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', t);
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400..800;1,6..72,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/shared/pwa-installer.css">
+
+<style>
+  :root, [data-theme="light"] {
+    --acad-bg: #F9F8F6;
+    --acad-paper: #FFFFFF;
+    --acad-paper-subtle: #F4F2EC;
+    --acad-border: #DCD6CA;
+    --acad-border-strong: #BCB4A4;
+    --acad-oxford: #0B2545;
+    --acad-navy: #134074;
+    --acad-gold: #B8860B;
+    --acad-emerald: #0F5132;
+    --text-primary: #1A1A1A;
+    --text-body: #2C3E50;
+    --text-muted: #5A6B7C;
+  }
+  [data-theme="dark"] {
+    --acad-bg: #090E17;
+    --acad-paper: #111A2E;
+    --acad-paper-subtle: #16223B;
+    --acad-border: #233554;
+    --acad-border-strong: #364E78;
+    --acad-oxford: #38BDF8;
+    --acad-navy: #60A5FA;
+    --acad-gold: #F59E0B;
+    --acad-emerald: #10B981;
+    --text-primary: #F8FAFC;
+    --text-body: #CBD5E1;
+    --text-muted: #94A3B8;
+  }
+  [data-theme="green"] {
+    --acad-bg: #06140B;
+    --acad-paper: #0E2415;
+    --acad-paper-subtle: #14331E;
+    --acad-border: #1E4D2B;
+    --acad-border-strong: #2D6A3E;
+    --acad-oxford: #34D399;
+    --acad-navy: #10B981;
+    --acad-gold: #EAB308;
+    --acad-emerald: #34D399;
+    --text-primary: #F0FDF4;
+    --text-body: #C2ECCF;
+    --text-muted: #86C198;
+  }
+
+  body {
+    background-color: var(--acad-bg);
+    color: var(--text-primary);
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  .academic-top-ribbon {
+    background: var(--acad-oxford);
+    color: #FFFFFF;
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-align: center;
+    padding: 7px 16px;
+    letter-spacing: 0.05em;
+  }
+
+  .legal-nav-header {
+    background: var(--acad-paper);
+    border-bottom: 1px solid var(--acad-border);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  .legal-nav-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .legal-brand-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: inherit;
+  }
+  .legal-brand-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.15rem;
+    font-weight: 800;
+  }
+
+  .legal-container {
+    max-width: 900px;
+    margin: 40px auto 80px;
+    padding: 0 20px;
+  }
+  .legal-card {
+    background: var(--acad-paper);
+    border: 1.5px solid var(--acad-border);
+    border-radius: 12px;
+    padding: 44px 40px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+  }
+
+  .legal-pill {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.74rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: rgba(184, 134, 11, 0.12);
+    color: var(--acad-gold);
+    border: 1px solid rgba(184, 134, 11, 0.35);
+    padding: 4px 12px;
+    border-radius: 4px;
+    margin-bottom: 14px;
+  }
+  .legal-title {
+    font-family: 'Cinzel', serif;
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin: 0 0 10px;
+    line-height: 1.25;
+  }
+  .legal-meta {
+    font-size: 0.86rem;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--acad-border);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .legal-section {
+    margin-bottom: 36px;
+  }
+  .legal-section h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.32rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 28px 0 12px;
+    border-left: 4px solid var(--acad-gold);
+    padding-left: 12px;
+  }
+  .legal-section p, .legal-section li {
+    font-size: 0.94rem;
+    color: var(--text-body);
+    line-height: 1.72;
+  }
+  .legal-section ul, .legal-section ol {
+    padding-left: 24px;
+    margin: 12px 0;
+  }
+  .legal-section li {
+    margin-bottom: 8px;
+  }
+
+  .legal-callout {
+    background: var(--acad-paper-subtle);
+    border: 1.5px solid var(--acad-border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 20px 0;
+    font-size: 0.9rem;
+  }
+  .legal-callout.warning {
+    border-left: 5px solid #F59E0B;
+    background: rgba(245, 158, 11, 0.08);
+  }
+  .legal-callout.danger {
+    border-left: 5px solid #DC2626;
+    background: rgba(220, 38, 38, 0.08);
+  }
+
+  .legal-footer {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    padding: 30px 20px;
+    border-top: 1px solid var(--acad-border);
+    background: var(--acad-paper);
+  }
+
+  @media (max-width: 768px) {
+    .legal-card { padding: 24px 18px; }
+    .legal-title { font-size: 1.65rem; }
+    .legal-section h2 { font-size: 1.15rem; }
+    .legal-container { margin: 20px auto 40px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="academic-top-ribbon">
+  🇰🇪 REPUBLIC OF KENYA — TERMS OF SERVICE &amp; ACADEMIC GOVERNANCE
+</div>
+
+<header class="legal-nav-header">
+  <div class="legal-nav-inner">
+    <a href="/" class="legal-brand-link">
+      <span style="font-size:1.5rem;">⚗️</span>
+      <span class="legal-brand-title">VirtuLab Kenya</span>
+    </a>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <a href="/" class="btn-acad btn-acad-outline" style="padding:7px 14px; font-size:0.84rem;">← Back to Home</a>
+      <a href="/privacy.html" class="btn-acad btn-acad-primary" style="padding:7px 14px; font-size:0.84rem;">Privacy Policy</a>
+    </div>
+  </div>
+</header>
+
+<main class="legal-container">
+  <article class="legal-card">
+    <div class="legal-pill">ACADEMIC USER AGREEMENT</div>
+    <h1 class="legal-title">Terms of Service &amp; User Agreement</h1>
+    <div class="legal-meta">
+      <span>Effective Date: 1st September 2026</span> • 
+      <span>Governing Law: Laws of the Republic of Kenya</span> • 
+      <span>Version 1.0</span>
+    </div>
+
+    <div class="legal-callout warning" id="disclaimer">
+      <strong>⚠️ Official Curriculum Non-Affiliation Disclaimer:</strong>
+      VirtuLab Kenya is an independent educational laboratory simulation application developed to support secondary school scholars and chemistry teachers. <b>VirtuLab Kenya is not affiliated with, authorized by, sponsored by, or an official agency of the Kenya National Examinations Council (KNEC), the Kenya Institute of Curriculum Development (KICD), or the Ministry of Education.</b> References to curriculum code "Chemistry 233/3", "Paper 3", and syllabus competencies are made strictly for curriculum identification and academic benchmarking purposes under fair use.
+    </div>
+
+    <div class="legal-section">
+      <h2>1. Acceptance of Terms</h2>
+      <p>
+        By accessing, installing, browsing, registering for, or using the VirtuLab Kenya Progressive Web App ("the Platform", "the Service"), you agree to be bound by these Terms of Service ("Terms") and our <a href="/privacy.html" style="color:var(--acad-oxford); font-weight:700;">Privacy Policy</a>. If you do not agree to these Terms, you must immediately discontinue use of the Platform.
+      </p>
+      <p>
+        These Terms constitute a legally binding agreement between you ("User", whether student, teacher, or institutional administrator) and VirtuLab Kenya (originated as an Open University of Kenya Capstone Project).
+      </p>
+    </div>
+
+    <div class="legal-section" id="safety">
+      <h2>2. Physical Laboratory Safety &amp; Experimental Disclaimer</h2>
+      <div class="legal-callout danger">
+        <strong>⚠️ CRITICAL SAFETY NOTICE — DIGITAL SIMULATIONS ONLY:</strong>
+        All experiments simulated on VirtuLab Kenya—including acid-base titrations, inorganic qualitative salt analyses, toxic gas syntheses, calorimeter reactions, and organic group tests—are <b>computer-generated digital approximations</b> designed for cognitive understanding and procedural mastery.
+      </div>
+      <ul>
+        <li><b>No Substitute for Physical Safety Protocols:</b> Real-world chemistry experiments involve hazardous reagents (e.g., concentrated sulfuric acid, sodium hydroxide, toxic chlorine or sulfur dioxide fumes, flammable organics).</li>
+        <li><b>Mandatory Supervision:</b> Students must <b>NEVER</b> attempt to replicate chemical reactions in a physical laboratory, home, or classroom without the direct supervision of a certified science teacher or laboratory technician adhering to the official Ministry of Education Laboratory Safety Handbook.</li>
+        <li><b>VirtuLab Kenya disclaims any and all liability</b> for physical injuries, property damage, chemical burns, or accidents resulting from the unauthorized or reckless handling of physical laboratory apparatus or chemical reagents.</li>
+      </ul>
+    </div>
+
+    <div class="legal-section">
+      <h2>3. Educational Outcomes &amp; Warranty Disclaimer</h2>
+      <p>
+        VirtuLab Kenya provides high-fidelity simulations, diagnostic table mark calculations, and Socratic AI hints on an <b>"AS IS"</b> and <b>"AS AVAILABLE"</b> basis.
+      </p>
+      <ul>
+        <li><b>No Guarantee of Examination Results:</b> While VirtuLab Kenya is engineered to maximize candidate competence in KCSE Chemistry practicals, we make no representation, warranty, or guarantee that using the Platform will result in specific examination marks, grades, or university placement.</li>
+        <li><b>Examiner Discretion:</b> In official KNEC practical examinations, individual examiner marking schemes and school teacher values (STV) may incorporate localized experimental variations. Digital concordancy verification on VirtuLab serves as a diagnostic learning guide.</li>
+      </ul>
+    </div>
+
+    <div class="legal-section">
+      <h2>4. User Eligibility &amp; Minor Learners</h2>
+      <p>
+        VirtuLab Kenya is intended primarily for secondary school learners (Forms 1 to 4) in Kenya.
+      </p>
+      <ul>
+        <li><b>Minor Consent:</b> Users under 18 years of age represent that they have obtained consent from a parent, legal guardian, or registered school instructor prior to creating an independent account.</li>
+        <li><b>Institutional Accounts:</b> Secondary schools and teachers enrolling classes through school registration codes represent that they possess statutory authority to register student learners.</li>
+      </ul>
+    </div>
+
+    <div class="legal-section">
+      <h2>5. Academic Integrity &amp; Acceptable Use</h2>
+      <p>Users agree to uphold the highest standards of academic integrity. You agree NOT to:</p>
+      <ul>
+        <li>Submit fraudulent or artificially generated simulation data into class assignments or teacher ledgers.</li>
+        <li>Attempt to reverse engineer, decompile, disassemble, or extract source code from VirtuLab's simulation algorithms, client engines, or scoring rubrics.</li>
+        <li>Use automated scripts, bots, spiders, or scrapers to access or extract assessment material or student rosters.</li>
+        <li>Share student or teacher authentication credentials with unauthorized third parties.</li>
+        <li>Use the Socratic AI Tutor for non-academic queries, harassment, hate speech, or prompt manipulation.</li>
+      </ul>
+    </div>
+
+    <div class="legal-section">
+      <h2>6. Intellectual Property Rights</h2>
+      <p>
+        All proprietary software, interactive SVG apparatus illustrations, titration physics engines, colorimetry animations, rubric algorithms, source code, logos, and instructional texts are the intellectual property of VirtuLab Kenya and its licensors.
+      </p>
+      <p>
+        Users are granted a limited, revocable, non-exclusive, non-transferable license to access the Platform for non-commercial, personal study, or classroom instruction purposes only.
+      </p>
+    </div>
+
+    <div class="legal-section">
+      <h2>7. Limitation of Financial Liability</h2>
+      <p>
+        To the maximum extent permitted under the Laws of Kenya, VirtuLab Kenya, its creators, developers, academic supervisors, and partners shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including loss of data, educational opportunity, or goodwill, arising from or related to the use or inability to use the Platform.
+      </p>
+    </div>
+
+    <div class="legal-section">
+      <h2>8. Governing Law &amp; Dispute Resolution</h2>
+      <p>
+        These Terms shall be governed by, construed, and interpreted in accordance with the <b>Laws of the Republic of Kenya</b>. Any dispute, claim, or controversy arising out of or relating to these Terms or the Platform shall be resolved amicably through good-faith negotiation, failing which it shall be referred to the competent courts of the Republic of Kenya in Nairobi.
+      </p>
+    </div>
+
+    <div class="legal-section">
+      <h2>9. Amendments &amp; Updates</h2>
+      <p>
+        We reserve the right to revise these Terms periodically to reflect updates in educational guidelines, technology, or Kenyan statutory regulations. Substantial modifications will be indicated by updating the "Effective Date" at the top of this document.
+      </p>
+    </div>
+
+    <div class="legal-section">
+      <h2>10. Contact Information</h2>
+      <p>
+        For inquiries regarding these Terms of Service or institutional licensing for secondary schools, please contact:
+      </p>
+      <div class="legal-callout">
+        <b>VirtuLab Kenya Legal &amp; Institutional Affairs</b><br>
+        Email: <a href="mailto:legal@virtulab.co.ke" style="color:var(--acad-oxford); font-weight:700;">legal@virtulab.co.ke</a><br>
+        Curriculum Compliance: KCSE Chemistry Paper 3 Digital Science Initiative<br>
+        Nairobi, Republic of Kenya.
+      </div>
+    </div>
+  </article>
+</main>
+
+<footer class="legal-footer">
+  <p>© 2026 VirtuLab Kenya — Open University of Kenya Capstone Project. All rights reserved.</p>
+  <p><a href="/terms.html" style="color:var(--acad-oxford); margin-right:14px;">Terms of Service</a> | <a href="/privacy.html" style="color:var(--acad-oxford); margin-left:14px;">Privacy Policy</a></p>
+</footer>
+
+<script>
+  function setTheme(theme) {
+    localStorage.setItem('vlk_theme', theme);
+    document.documentElement.setAttribute('data-theme', theme);
+  }
+</script>
+</body>
+</html>

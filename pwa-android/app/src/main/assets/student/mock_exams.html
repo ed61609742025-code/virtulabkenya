@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>KCSE Chemistry Paper 3 Mock Examination Center | VirtuLab Kenya</title>
+<meta name="description" content="Simulate official KNEC KCSE Chemistry Paper 3 (233/3) national mock practical exams with timed simulations, comprehensive marking rubrics, and detailed examiner reports.">
+<script src="/shared/auth-guard.js"></script>
+<script>
+  var t = localStorage.getItem('vlk_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', t);
+  if (window.VLKAuthGuard) {
+    VLKAuthGuard.guardPage('student');
+  }
+</script>
+<meta name="theme-color" content="#0F172A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VirtuLab">
+<link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.json">
+
+<!-- Academic & Technical Typography -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400..800;1,6..72,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/style.css">
+<link rel="stylesheet" href="../shared/brilliant-theme.css">
+<link rel="stylesheet" href="css/dashboard.css">
+<link rel="stylesheet" href="css/composite_exam.css">
+<link rel="stylesheet" href="css/mobile.css">
+
+<style>
+  :root, [data-theme="light"] {
+    --acad-oxford: #0B2545;
+    --acad-navy: #134074;
+    --acad-gold: #B8860B;
+    --acad-gold-subtle: rgba(184, 134, 11, 0.12);
+    --acad-gold-border: rgba(184, 134, 11, 0.35);
+    --acad-emerald: #0F5132;
+    --acad-paper: #FFFFFF;
+    --acad-paper-subtle: #F8FAFC;
+    --acad-border: #E2E8F0;
+    --text-primary: #0F172A;
+    --text-muted: #64748B;
+  }
+  [data-theme="dark"] {
+    --acad-oxford: #38BDF8;
+    --acad-navy: #60A5FA;
+    --acad-gold: #F59E0B;
+    --acad-gold-subtle: rgba(245, 158, 11, 0.15);
+    --acad-gold-border: rgba(245, 158, 11, 0.4);
+    --acad-emerald: #10B981;
+    --acad-paper: #0F172A;
+    --acad-paper-subtle: #1E293B;
+    --acad-border: #334155;
+    --text-primary: #F8FAFC;
+    --text-muted: #94A3B8;
+  }
+  [data-theme="green"] {
+    --acad-oxford: #34D399;
+    --acad-navy: #10B981;
+    --acad-gold: #EAB308;
+    --acad-gold-subtle: rgba(234, 179, 8, 0.15);
+    --acad-gold-border: rgba(234, 179, 8, 0.4);
+    --acad-emerald: #34D399;
+    --acad-paper: #061F10;
+    --acad-paper-subtle: #0E2E1A;
+    --acad-border: #1B4D2B;
+    --text-primary: #F0FDF4;
+    --text-muted: #86C198;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-main);
+    min-height: 100vh;
+    margin: 0;
+  }
+
+  .mock-hub-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 20px 60px;
+  }
+
+  .hero-banner-mock {
+    background: linear-gradient(135deg, rgba(184, 134, 11, 0.12), rgba(11, 37, 69, 0.08));
+    border: 1.5px solid var(--acad-gold-border);
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .mode-selector-pill {
+    display: inline-flex;
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    border-radius: 50px;
+    padding: 4px;
+    gap: 4px;
+  }
+
+  .mode-pill-btn {
+    border: none;
+    background: transparent;
+    padding: 8px 18px;
+    border-radius: 50px;
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .mode-pill-btn.active {
+    background: var(--acad-gold);
+    color: #FFFFFF;
+    box-shadow: 0 2px 8px rgba(184, 134, 11, 0.35);
+  }
+
+  .series-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+    margin-bottom: 36px;
+  }
+
+  .series-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .series-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--acad-gold);
+  }
+
+  .series-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 3px 10px;
+    border-radius: 6px;
+    background: var(--acad-gold-subtle);
+    color: var(--acad-gold);
+    border: 1px solid var(--acad-gold-border);
+    margin-bottom: 12px;
+  }
+
+  .series-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.12rem;
+    font-weight: 800;
+    color: var(--heading-color);
+    margin: 0 0 10px 0;
+    line-height: 1.35;
+  }
+
+  .series-questions-list {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0 18px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.84rem;
+    color: var(--text-main);
+  }
+
+  .series-q-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.4;
+  }
+
+  .series-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--card-border);
+    padding-top: 14px;
+    margin-top: 6px;
+  }
+
+  .btn-start-series {
+    background: linear-gradient(135deg, var(--acad-gold), #9A7B0C);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 18px;
+    font-size: 0.86rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+
+  .btn-start-series:hover {
+    opacity: 0.95;
+    transform: translateY(-1px);
+  }
+
+  .mini-mocks-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+
+  .mini-mock-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 18px;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.15s ease;
+  }
+
+  .mini-mock-card:hover {
+    border-color: var(--blue-accent);
+    transform: translateY(-2px);
+  }
+
+  .mini-mock-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+
+  .history-table-container {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .knec-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.86rem;
+  }
+
+  .knec-table th {
+    background: var(--card-bg-hover, rgba(0, 0, 0, 0.04));
+    color: var(--heading-color);
+    font-weight: 800;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 12px 14px;
+    border-bottom: 2px solid var(--card-border);
+    white-space: nowrap;
+  }
+
+  .knec-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--card-border);
+    color: var(--text-main);
+  }
+
+  .knec-table tr:hover td {
+    background: rgba(56, 189, 248, 0.04);
+  }
+
+  .knec-grade-chip {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-weight: 800;
+    font-size: 0.82rem;
+    font-family: var(--font-mono, monospace);
+    text-align: center;
+    min-width: 32px;
+  }
+
+  .grade-a, .grade-a-minus {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10B981;
+    border: 1px solid rgba(16, 185, 129, 0.35);
+  }
+
+  .grade-b, .grade-b-plus {
+    background: rgba(56, 189, 248, 0.15);
+    color: #0284C7;
+    border: 1px solid rgba(56, 189, 248, 0.35);
+  }
+
+  .grade-c, .grade-c-plus {
+    background: rgba(245, 158, 11, 0.15);
+    color: #D97706;
+    border: 1px solid rgba(245, 158, 11, 0.35);
+  }
+
+  .grade-d, .grade-d-plus {
+    background: rgba(249, 115, 22, 0.15);
+    color: #EA580C;
+    border: 1px solid rgba(249, 115, 22, 0.35);
+  }
+
+  .grade-e {
+    background: rgba(239, 68, 68, 0.15);
+    color: #DC2626;
+    border: 1px solid rgba(239, 68, 68, 0.35);
+  }
+
+  /* Hub Navigation Tabs */
+  .hub-main-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    border-bottom: 2px solid var(--card-border);
+    padding-bottom: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .hub-tab-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    padding: 10px 18px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .hub-tab-btn:hover {
+    color: var(--heading-color);
+    background: var(--acad-gold-subtle);
+  }
+
+  .hub-tab-btn.active {
+    color: #FFFFFF;
+    background: var(--acad-navy);
+    box-shadow: 0 2px 8px rgba(19, 64, 116, 0.3);
+  }
+  [data-theme="dark"] .hub-tab-btn.active {
+    background: #1E3A8A;
+    color: #38BDF8;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+  }
+  [data-theme="green"] .hub-tab-btn.active {
+    background: #064E3B;
+    color: #34D399;
+    border: 1px solid rgba(52, 211, 153, 0.4);
+  }
+
+  /* Past Papers Filter Bar */
+  .past-filters-bar {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .filter-search-box {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .filter-input {
+    flex: 1;
+    background: var(--acad-paper-subtle);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.88rem;
+    color: var(--text-main);
+    outline: none;
+  }
+  .filter-input:focus {
+    border-color: var(--acad-gold);
+  }
+
+  .filter-pills-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .filter-pill-label {
+    font-size: 0.76rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+    margin-right: 4px;
+  }
+
+  .filter-chip-btn {
+    background: var(--card-bg-hover, rgba(0, 0, 0, 0.05));
+    border: 1px solid var(--card-border);
+    border-radius: 50px;
+    padding: 4px 12px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .filter-chip-btn:hover {
+    border-color: var(--acad-gold);
+  }
+
+  .filter-chip-btn.active {
+    background: var(--acad-gold);
+    color: #FFFFFF;
+    border-color: var(--acad-gold);
+    font-weight: 700;
+  }
+
+  /* Past Paper Card */
+  .past-paper-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 14px;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  .past-paper-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--acad-gold);
+  }
+
+  .topic-tag {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    background: rgba(56, 189, 248, 0.12);
+    color: var(--cyan-accent);
+    margin-right: 4px;
+    margin-bottom: 4px;
+  }
+
+  /* Modal Backdrop & Dialog */
+  .past-paper-modal-backdrop {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100000;
+    padding: 20px;
+  }
+
+  .past-paper-modal-dialog {
+    background: var(--card-bg);
+    border: 1.5px solid var(--acad-gold-border);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 960px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: var(--shadow-xl);
+  }
+
+  .modal-tab-bar {
+    display: flex;
+    background: var(--acad-paper-subtle);
+    border-bottom: 1px solid var(--card-border);
+    padding: 0 20px;
+    gap: 12px;
+    overflow-x: auto;
+  }
+
+  .modal-tab-btn {
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: 12px 14px;
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .modal-tab-btn.active {
+    color: var(--acad-gold);
+    border-bottom-color: var(--acad-gold);
+  }
+
+  .modal-paper-content {
+    padding: 24px;
+    overflow-y: auto;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+    .past-paper-modal-dialog, .past-paper-modal-dialog * {
+      visibility: visible;
+    }
+    .past-paper-modal-dialog {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      max-height: none;
+      box-shadow: none;
+      border: none;
+    }
+    .modal-tab-bar, .modal-close-btn, .top-navbar, .vlk-bottom-nav, .btn-start-series {
+      display: none !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Academic Top Navigation -->
+<nav class="top-navbar">
+  <a href="/student/home.html" class="nav-brand-academic" title="Back to Student Workstation">
+    <div class="vlk-brand-logo-wrap">
+      <img src="/shared/virtulab-logo.svg" alt="VirtuLab Kenya Logo" class="vlk-brand-logo-img" width="34" height="34">
+    </div>
+    <div style="display:flex; flex-direction:column;">
+      <span class="brand-title" style="font-weight:800; font-family:'Cinzel', serif; font-size:1.05rem; line-height:1.1; color:var(--heading-color);">VirtuLab</span>
+      <span class="brand-subtagline" style="font-size:0.65rem; font-family:'Newsreader', serif; font-style:italic; color:var(--cyan-accent); letter-spacing:0.01em;">Mock Exams Center</span>
+    </div>
+  </a>
+  <div class="nav-actions">
+    <button type="button" class="top-action-btn" id="themeToggleBtn" onclick="cycleTheme()" title="Switch Appearance Theme">🌙 Theme</button>
+    <a href="/student/home.html" class="top-action-btn">🏠 Student Workstation</a>
+    <a href="/student/history.html" class="top-action-btn">📜 Full History</a>
+  </div>
+</nav>
+
+<div class="mock-hub-wrap">
+
+  <!-- Academic Hub Navigation Tabs -->
+  <div class="hub-main-tabs" role="tablist" aria-label="Mock Hub Sections">
+    <button type="button" class="hub-tab-btn active" id="tabBtnSimulations" onclick="switchHubTab('simulations')">
+      <span>🏆</span> 40-Mark Mock Simulations
+    </button>
+    <button type="button" class="hub-tab-btn" id="tabBtnPastPapers" onclick="switchHubTab('past_papers')">
+      <span>📚</span> KCSE Past Papers &amp; Mark Schemes (1989–2016)
+    </button>
+    <button type="button" class="hub-tab-btn" id="tabBtnSprints" onclick="switchHubTab('sprints')">
+      <span>⚡</span> Section Sprints
+    </button>
+    <button type="button" class="hub-tab-btn" id="tabBtnHistory" onclick="switchHubTab('history')">
+      <span>📜</span> Grade Ledger &amp; Attempts
+    </button>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TAB 1: 40-MARK MOCK SIMULATIONS
+  ══════════════════════════════════════ -->
+  <div id="sectionSimulations" class="hub-tab-section">
+    <!-- Header & Mode Switcher -->
+    <div class="hero-banner-mock">
+      <div>
+        <div style="font-family:'Cinzel', serif; font-size:1.45rem; font-weight:900; color:var(--heading-color); margin-bottom:6px;">
+          🇰🇪 KNEC KCSE Chemistry Paper 3 Mock Examinations
+        </div>
+        <div style="font-size:0.9rem; color:var(--text-muted); max-width:650px; line-height:1.5;">
+          Standardized 40-Mark composite practical examinations mapped directly to the KNEC Paper 3 (233/3) syllabus. Complete full-length papers or targeted section sprints with precision virtual glassware.
+        </div>
+      </div>
+
+      <!-- Mode Selector Controls -->
+      <div>
+        <div style="font-size:0.75rem; font-weight:800; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px; letter-spacing:0.04em;">
+          Select Examination Mode:
+        </div>
+        <div class="mode-selector-pill">
+          <button type="button" class="mode-pill-btn active" id="btnModeStrict" onclick="setExamMode('strict')">
+            ⏱️ Official Timed (135m)
+          </button>
+          <button type="button" class="mode-pill-btn" id="btnModeGuided" onclick="setExamMode('guided')">
+            💡 Guided Practice
+          </button>
+        </div>
+        <div id="modeHelpText" style="font-size:0.75rem; color:var(--text-muted); margin-top:6px;">
+          Strict Mode: 2h 15m timer, locked hints, official KNEC marking rubric.
+        </div>
+      </div>
+    </div>
+
+    <!-- Adaptive Random Mock Banner -->
+    <div style="background:linear-gradient(135deg, rgba(56,189,248,0.1), rgba(16,185,129,0.08)); border:1.5px dashed var(--blue-accent); border-radius:14px; padding:20px 24px; margin-bottom:28px; display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <div style="font-size:2rem;">🎲</div>
+        <div>
+          <div style="font-weight:800; font-size:1.05rem; color:var(--heading-color);">
+            Adaptive Randomized KCSE National Mock Generator
+          </div>
+          <div style="font-size:0.84rem; color:var(--text-muted); margin-top:2px;">
+            Dynamically samples 1 Quantitative Titration, 1 Qualitative Salt, and 1 Organic module with randomized concentrations.
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn-start-series" style="background:linear-gradient(135deg, #0284C7, #0369A1);" onclick="launchSeries('random')">
+        ⚡ Generate &amp; Start Adaptive Paper →
+      </button>
+    </div>
+
+    <!-- National Mock Exam Series Grid -->
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:16px;">
+      <div>
+        <h2 style="font-family:'Cinzel', serif; font-size:1.25rem; font-weight:800; color:var(--heading-color); margin:0;">
+          National KCSE Practical Examination Series (40.0 Marks Each)
+        </h2>
+        <p style="font-size:0.84rem; color:var(--text-muted); margin:4px 0 0 0;">
+          Full-length practical simulations replicating official KNEC trends from recent and historical past papers.
+        </p>
+      </div>
+    </div>
+
+    <div class="series-grid" id="seriesContainer">
+      <!-- Series cards populated dynamically -->
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TAB 2: KCSE PAST PAPERS & MARK SCHEMES ARCHIVE (1989–2016)
+  ══════════════════════════════════════ -->
+  <div id="sectionPastPapers" class="hub-tab-section" style="display:none;">
+    <!-- Archive Hero Banner -->
+    <div style="background:linear-gradient(135deg, rgba(11,37,69,0.08), rgba(184,134,11,0.1)); border:1.5px solid var(--acad-gold-border); border-radius:16px; padding:24px 28px; margin-bottom:24px; display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap;">
+      <div>
+        <div style="font-family:'Cinzel', serif; font-size:1.35rem; font-weight:900; color:var(--heading-color); margin-bottom:6px;">
+          🇰🇪 KNEC KCSE Chemistry Practical Archive (1989–2016)
+        </div>
+        <div style="font-size:0.88rem; color:var(--text-muted); max-width:720px; line-height:1.5;">
+          Official Kenyan National Examinations Council Paper 3 practical questions, step-by-step coordinated marking schemes, examiner deduction guidelines, and confidential school laboratory preparation requirements.
+        </div>
+      </div>
+      <button type="button" class="top-action-btn" onclick="toggleLeadNotes()" style="background:var(--card-bg); border-color:var(--acad-gold); color:var(--acad-gold); font-weight:700;">
+        📖 Examiner Lead Notes &amp; Ion Tables
+      </button>
+    </div>
+
+    <!-- Collapsible Lead Notes Container -->
+    <div id="leadNotesContainer" style="display:none; background:var(--card-bg); border:1px solid var(--card-border); border-radius:14px; padding:24px; margin-bottom:24px;">
+      <!-- Populated dynamically with lead notes -->
+    </div>
+
+    <!-- Search & Filter Controls -->
+    <div class="past-filters-bar">
+      <div class="filter-search-box">
+        <span style="font-size:1.1rem;">🔍</span>
+        <input type="text" id="kcsePaperSearchInput" class="filter-input" placeholder="Search past practicals by year, chemical, procedure, ion or topic (e.g. 2013, displacement, KMnO4, lead, benzoic acid)..." oninput="onPastPaperFilterChange()">
+      </div>
+
+      <div class="filter-pills-row">
+        <span class="filter-pill-label">Decade:</span>
+        <button type="button" class="filter-chip-btn active" data-decade="all" onclick="setDecadeFilter('all', this)">All Years (1989–2016)</button>
+        <button type="button" class="filter-chip-btn" data-decade="2010s" onclick="setDecadeFilter('2010s', this)">2010s Series</button>
+        <button type="button" class="filter-chip-btn" data-decade="2000s" onclick="setDecadeFilter('2000s', this)">2000s Series</button>
+        <button type="button" class="filter-chip-btn" data-decade="1980s-1990s" onclick="setDecadeFilter('1980s-1990s', this)">1980s–1990s Series</button>
+      </div>
+
+      <div class="filter-pills-row">
+        <span class="filter-pill-label">Technique:</span>
+        <button type="button" class="filter-chip-btn active" data-topic="all" onclick="setTopicFilter('all', this)">All Techniques</button>
+        <button type="button" class="filter-chip-btn" data-topic="Volumetric" onclick="setTopicFilter('Volumetric', this)">Volumetric Titrations</button>
+        <button type="button" class="filter-chip-btn" data-topic="Redox" onclick="setTopicFilter('Redox', this)">Redox Titrations</button>
+        <button type="button" class="filter-chip-btn" data-topic="Thermochemistry" onclick="setTopicFilter('Thermochemistry', this)">Thermochemistry &amp; Enthalpy</button>
+        <button type="button" class="filter-chip-btn" data-topic="Kinetics" onclick="setTopicFilter('Kinetics', this)">Reaction Rates / Clock</button>
+        <button type="button" class="filter-chip-btn" data-topic="Qualitative" onclick="setTopicFilter('Qualitative', this)">Qualitative Salt Analysis</button>
+        <button type="button" class="filter-chip-btn" data-topic="Organic" onclick="setTopicFilter('Organic', this)">Organic Chemistry</button>
+        <button type="button" class="filter-chip-btn" data-topic="Solubility" onclick="setTopicFilter('Solubility', this)">Solubility Curves</button>
+      </div>
+    </div>
+
+    <!-- Results Status Count -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <div id="pastPapersResultCount" style="font-size:0.86rem; font-weight:700; color:var(--text-muted);">
+        Showing all available past practical papers
+      </div>
+    </div>
+
+    <!-- Past Papers Grid -->
+    <div class="series-grid" id="pastPapersContainer">
+      <!-- Populated dynamically from kcse-past-papers-data.js -->
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TAB 3: SECTION SPRINTS
+  ══════════════════════════════════════ -->
+  <div id="sectionSprints" class="hub-tab-section" style="display:none;">
+    <div style="margin-bottom:16px;">
+      <h2 style="font-family:'Cinzel', serif; font-size:1.2rem; font-weight:800; color:var(--heading-color); margin:0;">
+        ⚡ Modular Paper 3 Section Sprints
+      </h2>
+      <p style="font-size:0.84rem; color:var(--text-muted); margin:4px 0 0 0;">
+        Targeted single-question practice sessions to master specific practical competencies.
+      </p>
+    </div>
+
+    <div class="mini-mocks-grid">
+      <a href="/student/lab.html" class="mini-mock-card">
+        <div class="mini-mock-icon" style="background:rgba(56,189,248,0.15); color:#0284C7;">🧪</div>
+        <div>
+          <div style="font-weight:800; font-size:0.92rem; color:var(--heading-color);">Volumetric Analysis Sprint</div>
+          <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">Question 1 Focus · 15.0 Marks · Titration table &amp; stoichiometry</div>
+        </div>
+      </a>
+
+      <a href="/student/qualitative.html" class="mini-mock-card">
+        <div class="mini-mock-icon" style="background:rgba(16,185,129,0.15); color:#059669;">🧂</div>
+        <div>
+          <div style="font-weight:800; font-size:0.92rem; color:var(--heading-color);">Qualitative Salt Analysis Sprint</div>
+          <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">Question 2 Focus · 15.0 Marks · Cation &amp; anion observation ledger</div>
+        </div>
+      </a>
+
+      <a href="/student/organic.html" class="mini-mock-card">
+        <div class="mini-mock-icon" style="background:rgba(245,158,11,0.15); color:#D97706;">🧫</div>
+        <div>
+          <div style="font-weight:800; font-size:0.92rem; color:var(--heading-color);">Organic Chemistry Sprint</div>
+          <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">Question 3 Focus · 10.0 Marks · Flame, unsaturation &amp; functional groups</div>
+        </div>
+      </a>
+
+      <a href="/student/energy.html" class="mini-mock-card">
+        <div class="mini-mock-icon" style="background:rgba(239,68,68,0.15); color:#DC2626;">🔥</div>
+        <div>
+          <div style="font-weight:800; font-size:0.92rem; color:var(--heading-color);">Thermochemistry Sprint</div>
+          <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">Enthalpy of Neutralization &amp; Displacement calorimetry</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       TAB 4: EXAMINATION GRADE LEDGER
+  ══════════════════════════════════════ -->
+  <div id="sectionHistory" class="hub-tab-section" style="display:none;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+      <h2 style="font-family:'Cinzel', serif; font-size:1.2rem; font-weight:800; color:var(--heading-color); margin:0;">
+        📜 Your Mock Examination History &amp; Grade Ledger
+      </h2>
+      <button class="top-action-btn" onclick="loadExamHistory()">🔄 Refresh</button>
+    </div>
+
+    <div class="history-table-container">
+      <div id="mockHistoryBox" style="padding:16px;">
+        <div class="empty">Loading your KCSE mock practical examination attempts…</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════
+     PAST PAPER & MARK SCHEME MODAL
+══════════════════════════════════════ -->
+<div class="past-paper-modal-backdrop" id="pastPaperModal" onclick="if(event.target===this)closePastPaperModal()">
+  <div class="past-paper-modal-dialog">
+    <!-- Modal Header -->
+    <div style="display:flex; justify-content:space-between; align-items:center; padding:18px 24px; border-bottom:1px solid var(--card-border); background:var(--card-bg);">
+      <div>
+        <div id="modalPaperTitle" style="font-family:'Cinzel', serif; font-weight:800; font-size:1.15rem; color:var(--heading-color);">
+          KCSE Chemistry Paper 3 Practical
+        </div>
+        <div id="modalPaperBadge" style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">
+          KNEC Code 233/3 · 40.0 Marks Total · 2h 15m
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button type="button" class="top-action-btn" onclick="printModalPaper()" title="Print Paper Booklet">🖨️ Print</button>
+        <button type="button" class="top-action-btn modal-close-btn" onclick="closePastPaperModal()" title="Close Viewer">✕</button>
+      </div>
+    </div>
+
+    <!-- Modal Sub-Tabs -->
+    <div class="modal-tab-bar">
+      <button type="button" class="modal-tab-btn active" id="modalTabBtnQuestions" onclick="switchModalTab('questions')">
+        📄 Examination Questions &amp; Procedures
+      </button>
+      <button type="button" class="modal-tab-btn" id="modalTabBtnScheme" onclick="switchModalTab('scheme')">
+        🎯 Coordinated Mark Scheme
+      </button>
+      <button type="button" class="modal-tab-btn" id="modalTabBtnPrep" onclick="switchModalTab('prep')">
+        🧪 Confidential Preparation Guide
+      </button>
+    </div>
+
+    <!-- Modal Content Body -->
+    <div class="modal-paper-content" id="modalPaperBody">
+      <!-- Injected dynamically -->
+    </div>
+
+    <!-- Modal Footer -->
+    <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 24px; border-top:1px solid var(--card-border); background:var(--acad-paper-subtle);">
+      <span id="modalPaperFooterMeta" style="font-size:0.8rem; color:var(--text-muted); font-family:var(--font-mono);">
+        Official KNEC Chemistry Practical Syllabus Standard
+      </span>
+      <div style="display:flex; gap:10px;" id="modalActionButtons">
+        <!-- Playable button injected if series key exists -->
+        <button type="button" class="top-action-btn" onclick="closePastPaperModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/shared/api.js"></script>
+<script src="/shared/page-transitions.js"></script>
+<script src="js/composite-engine.js"></script>
+<script src="js/kcse-past-papers-data.js"></script>
+<script>
+  requireStudentLogin();
+  let currentExamMode = 'strict';
+
+  const SERIES_DATA = [
+    {
+      key: 'series_1',
+      num: 1,
+      title: 'Series 1: National Classic Neutralization Mock',
+      badge: 'National Standard · Acid-Base Stoichiometry & Heavy Metals',
+      q1: '0.100 M HCl vs NaOH Solution · Determination of Molarity & Concentration in g/dm³',
+      q2: 'Solid Y: Lead(II) Nitrate Analysis (Pb²⁺ / NO₃⁻)',
+      q3: 'Liquid Z: Ethanol Alkanol Analysis (C₂H₅OH)'
+    },
+    {
+      key: 'series_2',
+      num: 2,
+      title: 'Series 2: Water of Crystallization Mock',
+      badge: 'Stoichiometric Hydration · Water of Crystallization (x)',
+      q1: '0.100 M HCl vs Na₂CO₃·xH₂O (14.30 g/dm³) · Determine x',
+      q2: 'Solid Y: Iron(II) Sulfate Hydrate (Fe²⁺ / SO₄²⁻)',
+      q3: 'Liquid Z: Ethanoic Acid Carboxylic Group (CH₃COOH)'
+    },
+    {
+      key: 'series_3',
+      num: 3,
+      title: 'Series 3: Industrial Percentage Purity Mock',
+      badge: 'Industrial Purity Assay & Alkene Electrophilic Halogenation',
+      q1: '0.100 M HCl vs Impure Na₂CO₃ (6.00 g/dm³) · % Purity',
+      q2: 'Solid Y: Zinc Sulfate Analysis (Zn²⁺ / SO₄²⁻)',
+      q3: 'Liquid Z: Cyclohexene Unsaturated Double Bond (>C=C<)'
+    },
+    {
+      key: 'series_4',
+      num: 4,
+      title: 'Series 4: Quantitative Redox Analysis Mock',
+      badge: 'Redox Volumetric Analysis & Transition Metal Complexation',
+      q1: '0.020 M KMnO₄ vs Acidified Fe²⁺ Solution · Redox Stoichiometry & RFM',
+      q2: 'Solid Y: Copper(II) Sulfate Hydrate (Cu²⁺ / SO₄²⁻)',
+      q3: 'Liquid Z: Propan-1-ol Alkanol Oxidation (C₃H₇OH)'
+    },
+    {
+      key: 'series_5',
+      num: 5,
+      title: 'Series 5: Atomic Mass & Two-Salt Mixture Mock',
+      badge: 'Atomic Mass Deduction (Ar) & Periodic Element Identification',
+      q1: '0.100 M HNO₃ vs Unknown M₂CO₃ (5.30 g/dm³) · Find Ar of M',
+      q2: 'Solid Mixture P: Separation & Filtrate/Residue (ZnSO₄ + BaSO₄)',
+      q3: 'Liquid Z: Methanoic Acid Reduction & Effervescence (HCOOH)'
+    },
+    {
+      key: 'series_6',
+      num: 6,
+      title: 'Series 6: Dibasic Acid & Ammonium Salt Mock',
+      badge: 'Dibasic Acid Neutralization & Ammonium Sublimation Dynamics',
+      q1: '0.050 M Ethanedioic Acid vs NaOH Solution (1:2 Mole Ratio) · Molarity Determination',
+      q2: 'Solid Y: Ammonium Chloride Sublimation & Gas Test (NH₄Cl)',
+      q3: 'Solid Z: Benzoic Acid Aromatic Carboxylic Acid'
+    },
+    {
+      key: 'series_2022',
+      num: 2022,
+      title: 'KCSE 2022 National Practical Paper Mock',
+      badge: 'Official KNEC Series · Sodium Carbonate, Magnesium Sulfate & Propanoic Acid',
+      q1: '0.100 M HCl vs Na₂CO₃ Solution (2:1 Mole Ratio) · Molar Concentration & g/dm³',
+      q2: 'Solid Y: Hydrated Magnesium Sulfate MgSO₄ Analysis (Mg²⁺ / SO₄²⁻)',
+      q3: 'Liquid Z: Propanoic Acid Carboxylic Group (CH₃CH₂COOH)'
+    },
+    {
+      key: 'series_2023',
+      num: 2023,
+      title: 'KCSE 2023 National Practical Paper Mock',
+      badge: 'Official KNEC Series · Ethanedioic Acid, Calcium Nitrate & Hex-1-ene',
+      q1: 'Standard H₂C₂O₄·2H₂O vs NaOH Solution (1:2 Mole Ratio) · Concentration Determination',
+      q2: 'Solid Y: Hydrated Calcium Nitrate Ca(NO₃)₂ Analysis (Ca²⁺ / NO₃⁻)',
+      q3: 'Liquid Z: Unsaturated Aliphatic Hydrocarbon (Hex-1-ene >C=C<)'
+    },
+    {
+      key: 'series_2024',
+      num: 2024,
+      title: 'KCSE 2024 National Practical Paper Mock',
+      badge: 'Official KNEC Series · Sodium Hydrogen Carbonate Assay, Iron(III) & Butan-1-ol',
+      q1: '0.100 M HCl vs Commercial NaHCO₃ (10.00 g/dm³) · % Purity Determination',
+      q2: 'Solid Y: Iron(III) Chloride FeCl₃ Transition Analysis (Fe³⁺ / Cl⁻)',
+      q3: 'Liquid Z: Primary Alkanol (Butan-1-ol C₄H₉OH) Dichromate Oxidation'
+    },
+    {
+      key: 'series_2013',
+      num: 2013,
+      title: 'KCSE 2013 Official Practical Mock',
+      badge: 'Official KNEC Series · Displacement Calorimetry, KMnO₄ Redox & Zinc',
+      q1: '0.020 M KMnO₄ vs Fe²⁺ Solution (from displacement) · Redox Titration Stoichiometry',
+      q2: 'Solid E: Zinc Sulfate Analysis (Zn²⁺ / SO₄²⁻)',
+      q3: 'Solid G: Unsaturated Carboxylic Acid (Maleic Acid >C=C< / —COOH)'
+    },
+    {
+      key: 'series_2011',
+      num: 2011,
+      title: 'KCSE 2011 Official Practical Mock',
+      badge: 'Official KNEC Series · Ethanedioic Acid Standard & Iron(II) Salt',
+      q1: '0.051 M Ethanedioic Acid vs NaOH Solution C · Standardization Titration',
+      q2: 'Solid D: Iron(II) Sulfate Hydrate (Fe²⁺ / SO₄²⁻)',
+      q3: 'Liquid F: Ethanol Alkanol Dichromate(VI) Oxidation (C₂H₅OH)'
+    },
+    {
+      key: 'series_2009',
+      num: 2009,
+      title: 'KCSE 2009 Official Practical Mock',
+      badge: 'Official KNEC Series · Carbonate Solubility & Hydrochloric Acid Standardization',
+      q1: '0.258 M HCl vs 0.300 M NaOH · Acid Dilution & Standardization',
+      q2: 'Solid E: Lead(II) Nitrate Analysis (Pb²⁺ / NO₃⁻)',
+      q3: 'Solid L: Benzoic Acid Aromatic Carboxylic Acid (C₆H₅COOH)'
+    },
+    {
+      key: 'series_2008',
+      num: 2008,
+      title: 'KCSE 2008 Official Practical Mock',
+      badge: 'Official KNEC Series · Calorimetry Back-Titration & Basic Copper Carbonate',
+      q1: '0.100 M HCl vs 0.100 M NaOH · Residual Acid Back-Titration',
+      q2: 'Solid D: Basic Copper(II) Carbonate (Cu²⁺ / CO₃²⁻)',
+      q3: 'Solid F: Unsaturated Carboxylic Acid (Maleic Acid >C=C< / —COOH)'
+    },
+    {
+      key: 'series_1998',
+      num: 1998,
+      title: 'KCSE 1998 Official Practical Mock',
+      badge: 'Official KNEC Series · Impure Carbonate Percentage Purity & Lead(II) Nitrate',
+      q1: '0.210 M HCl vs Impure Carbonate (6.00 g/dm³) · % Purity Determination',
+      q2: 'Solid K: Lead(II) Nitrate Thermal Decomposition & KI Test (Pb²⁺ / NO₃⁻)',
+      q3: 'Solid L: Benzoic Acid Aromatic Carboxylic Acid (C₆H₅COOH)'
+    },
+    {
+      key: 'series_1996',
+      num: 1996,
+      title: 'KCSE 1996 Official Practical Mock',
+      badge: 'Official KNEC Series · KMnO₄ Redox Standardization & MnO₂ Catalysis',
+      q1: '0.012 M KMnO₄ vs Ammonium Iron(II) Sulfate · Redox Titration',
+      q2: 'Solid D: Manganese(IV) Oxide Catalyst & Iron(III) (MnO₂ / Fe³⁺)',
+      q3: 'Solid E: Unsaturated Carboxylic Acid (Maleic Acid >C=C< / —COOH)'
+    }
+  ];
+
+  function renderSeriesCards() {
+    const container = document.getElementById('seriesContainer');
+    if (!container) return;
+
+    container.innerHTML = SERIES_DATA.map(s => `
+      <div class="series-card">
+        <div>
+          <div class="series-badge">${s.badge}</div>
+          <h3 class="series-title">${s.title}</h3>
+          
+          <ul class="series-questions-list">
+            <li class="series-q-item">
+              <span>🧪</span>
+              <div><b>Q1 (15M):</b> ${s.q1}</div>
+            </li>
+            <li class="series-q-item">
+              <span>🧂</span>
+              <div><b>Q2 (15M):</b> ${s.q2}</div>
+            </li>
+            <li class="series-q-item">
+              <span>🧫</span>
+              <div><b>Q3 (10M):</b> ${s.q3}</div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="series-card-footer">
+          <span style="font-size:0.8rem; font-weight:700; color:var(--text-muted); font-family:var(--font-mono);">
+            ⏱️ 135 Mins · 40 Marks
+          </span>
+          <button type="button" class="btn-start-series" onclick="launchSeries('${s.key}')">
+            Start Paper 3 →
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function setExamMode(mode) {
+    currentExamMode = mode;
+    const btnStrict = document.getElementById('btnModeStrict');
+    const btnGuided = document.getElementById('btnModeGuided');
+    const help = document.getElementById('modeHelpText');
+
+    if (mode === 'strict') {
+      btnStrict.className = 'mode-pill-btn active';
+      btnGuided.className = 'mode-pill-btn';
+      help.textContent = 'Strict Mode: 2h 15m timer, locked hints, official KNEC marking rubric.';
+    } else {
+      btnStrict.className = 'mode-pill-btn';
+      btnGuided.className = 'mode-pill-btn active';
+      help.textContent = 'Guided Mode: Self-paced practice, step checks, and AI chemistry tutor hints enabled.';
+    }
+  }
+
+  function launchSeries(seriesKey) {
+    window.location.href = `/student/composite_exam.html?series=${encodeURIComponent(seriesKey)}&mode=${encodeURIComponent(currentExamMode)}`;
+  }
+
+  async function loadExamHistory() {
+    const box = document.getElementById('mockHistoryBox');
+    if (!box) return;
+
+    try {
+      let sessions = [];
+      if (window.Composite && Composite.getMine) {
+        const res = await Composite.getMine();
+        sessions = res.sessions || [];
+      } else {
+        const res = await apiRequest('GET', '/composite/mine');
+        sessions = res.sessions || [];
+      }
+
+      if (sessions.length === 0) {
+        // Check local storage fallback
+        const last = localStorage.getItem('vlk_last_composite_session');
+        if (last) {
+          sessions = [JSON.parse(last)];
+        }
+      }
+
+      if (sessions.length === 0) {
+        box.innerHTML = '<div class="empty" style="padding:24px; text-align:center; color:var(--text-muted);">No KCSE mock examination attempts recorded yet. Choose a series above to take your first 40-mark paper!</div>';
+        return;
+      }
+
+      box.innerHTML = `
+        <table class="knec-table" style="width:100%; border-collapse:collapse;">
+          <thead>
+            <tr>
+              <th style="text-align:left;">Mock Examination Paper</th>
+              <th style="text-align:center;">Q1 (15M)</th>
+              <th style="text-align:center;">Q2 (15M)</th>
+              <th style="text-align:center;">Q3 (10M)</th>
+              <th style="text-align:center;">Total (40M)</th>
+              <th style="text-align:center;">KNEC Grade</th>
+              <th style="text-align:center;">Duration</th>
+              <th style="text-align:center;">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${sessions.map(s => {
+              const dt = s.created_at ? new Date(s.created_at).toLocaleDateString('en-GB') : 'Recent';
+              const mins = Math.round((s.duration_seconds || 0) / 60);
+              const rawGrade = s.grade || s.knec_grade || 'E';
+              const gradeClass = 'grade-' + String(rawGrade).toLowerCase().replace('+', '-plus').replace('-', '-minus');
+              return `
+                <tr>
+                  <td><b>${escapeHtml(s.exam_title || 'KCSE Paper 3 Mock Practical')}</b></td>
+                  <td style="text-align:center; font-family:var(--font-mono); font-weight:700;">${Number(s.q1_score || 0).toFixed(1)}</td>
+                  <td style="text-align:center; font-family:var(--font-mono); font-weight:700;">${Number(s.q2_score || 0).toFixed(1)}</td>
+                  <td style="text-align:center; font-family:var(--font-mono); font-weight:700;">${Number(s.q3_score || 0).toFixed(1)}</td>
+                  <td style="text-align:center; font-family:var(--font-mono); font-weight:800; color:var(--amber-accent);">${Number(s.total_score || 0).toFixed(1)}</td>
+                  <td style="text-align:center;"><span class="knec-grade-chip ${gradeClass}">${escapeHtml(rawGrade)}</span></td>
+                  <td style="text-align:center; color:var(--text-muted); font-size:0.8rem;">${mins} mins</td>
+                  <td style="text-align:center; color:var(--text-muted); font-size:0.8rem;">${dt}</td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      `;
+    } catch (e) {
+      box.innerHTML = `<div class="empty" style="color:var(--text-muted);">Could not load past sessions: ${escapeHtml(e.message)}</div>`;
+    }
+  }
+
+  // ── Hub Main Tab Switcher ──
+  function switchHubTab(tabName) {
+    const tabs = ['simulations', 'past_papers', 'sprints', 'history'];
+    const sections = {
+      simulations: document.getElementById('sectionSimulations'),
+      past_papers: document.getElementById('sectionPastPapers'),
+      sprints: document.getElementById('sectionSprints'),
+      history: document.getElementById('sectionHistory')
+    };
+    const btns = {
+      simulations: document.getElementById('tabBtnSimulations'),
+      past_papers: document.getElementById('tabBtnPastPapers'),
+      sprints: document.getElementById('tabBtnSprints'),
+      history: document.getElementById('tabBtnHistory')
+    };
+
+    tabs.forEach(t => {
+      if (sections[t]) sections[t].style.display = (t === tabName) ? 'block' : 'none';
+      if (btns[t]) {
+        if (t === tabName) {
+          btns[t].classList.add('active');
+        } else {
+          btns[t].classList.remove('active');
+        }
+      }
+    });
+
+    if (tabName === 'past_papers') {
+      renderPastPaperCards();
+    } else if (tabName === 'history') {
+      loadExamHistory();
+    }
+  }
+
+  // ── Past Papers Archive Filters & Lead Notes ──
+  let currentDecadeFilter = 'all';
+  let currentTopicFilter = 'all';
+  let leadNotesVisible = false;
+
+  function setDecadeFilter(decade, btn) {
+    currentDecadeFilter = decade;
+    document.querySelectorAll('[data-decade]').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderPastPaperCards();
+  }
+
+  function setTopicFilter(topic, btn) {
+    currentTopicFilter = topic;
+    document.querySelectorAll('[data-topic]').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderPastPaperCards();
+  }
+
+  function onPastPaperFilterChange() {
+    renderPastPaperCards();
+  }
+
+  function toggleLeadNotes() {
+    const container = document.getElementById('leadNotesContainer');
+    if (!container) return;
+    leadNotesVisible = !leadNotesVisible;
+    if (leadNotesVisible) {
+      container.style.display = 'block';
+      renderLeadNotes();
+      container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      container.style.display = 'none';
+    }
+  }
+
+  function renderLeadNotes() {
+    const container = document.getElementById('leadNotesContainer');
+    if (!container || typeof KCSE_LEAD_NOTES === 'undefined') return;
+    const ln = KCSE_LEAD_NOTES;
+
+    container.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; border-bottom:1px solid var(--card-border); padding-bottom:12px;">
+        <h3 style="font-family:'Cinzel', serif; font-size:1.15rem; font-weight:800; color:var(--heading-color); margin:0;">
+          📘 ${escapeHtml(ln.title)}
+        </h3>
+        <button type="button" class="top-action-btn" onclick="toggleLeadNotes()" style="padding:4px 10px; font-size:0.75rem;">✕ Close Guide</button>
+      </div>
+
+      <!-- Quantitative Guidelines -->
+      <div style="margin-bottom:22px;">
+        <h4 style="color:var(--amber-accent); font-size:0.95rem; margin-bottom:8px; font-weight:700;">1. Quantitative Volumetric Analysis &amp; Thermochemistry Guidelines</h4>
+        <p style="font-size:0.86rem; color:var(--text-muted); line-height:1.5;">${escapeHtml(ln.quantitative.overview)}</p>
+        
+        <div style="background:var(--acad-paper-subtle); border-radius:8px; padding:12px 16px; margin-top:10px;">
+          <div style="font-size:0.82rem; font-weight:700; color:var(--heading-color); margin-bottom:6px;">Official KNEC Graph Plotting Criteria:</div>
+          <ul style="font-size:0.82rem; color:var(--text-muted); margin:0; padding-left:18px; line-height:1.5;">
+            ${ln.quantitative.graphPlottingRules.map(r => `<li>${escapeHtml(r)}</li>`).join('')}
+          </ul>
+        </div>
+
+        <div style="background:var(--acad-paper-subtle); border-radius:8px; padding:12px 16px; margin-top:10px;">
+          <div style="font-size:0.82rem; font-weight:700; color:var(--heading-color); margin-bottom:6px;">Common Practical Pitfalls &amp; Penalties:</div>
+          <ul style="font-size:0.82rem; color:var(--text-muted); margin:0; padding-left:18px; line-height:1.5;">
+            ${ln.quantitative.commonErrors.map(e => `<li>${escapeHtml(e)}</li>`).join('')}
+          </ul>
+        </div>
+      </div>
+
+      <!-- Qualitative Cation & Anion Tables -->
+      <div style="margin-bottom:22px;">
+        <h4 style="color:var(--cyan-accent); font-size:0.95rem; margin-bottom:8px; font-weight:700;">2. Inorganic Qualitative Testing Diagnostic Tables</h4>
+        
+        <div style="margin-bottom:14px;">
+          <div style="font-size:0.82rem; font-weight:700; color:var(--heading-color); margin-bottom:6px;">Cation Precipitation Matrix:</div>
+          <table class="knec-table" style="width:100%; font-size:0.82rem;">
+            <thead>
+              <tr>
+                <th style="width:30%;">Reagent / Test</th>
+                <th>Observations &amp; Confirmed Inferences</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${ln.qualitative.cationTests.map(t => `
+                <tr>
+                  <td><b>${escapeHtml(t.reagent)}</b></td>
+                  <td>${escapeHtml(t.ions)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+
+        <div style="margin-bottom:14px;">
+          <div style="font-size:0.82rem; font-weight:700; color:var(--heading-color); margin-bottom:6px;">Anion Diagnostic Matrix:</div>
+          <table class="knec-table" style="width:100%; font-size:0.82rem;">
+            <thead>
+              <tr>
+                <th style="width:30%;">Reagent</th>
+                <th style="width:35%;">Observation</th>
+                <th>Inference</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${ln.qualitative.anionTests.map(t => `
+                <tr>
+                  <td><b>${escapeHtml(t.reagent)}</b></td>
+                  <td>${escapeHtml(t.obs)}</td>
+                  <td>${escapeHtml(t.inference)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Organic Diagnostic Matrix -->
+      <div>
+        <h4 style="color:var(--purple-accent); font-size:0.95rem; margin-bottom:8px; font-weight:700;">3. Organic Functional Group Diagnostic Matrix</h4>
+        <table class="knec-table" style="width:100%; font-size:0.82rem;">
+          <thead>
+            <tr>
+              <th style="width:25%;">Diagnostic Test</th>
+              <th style="width:40%;">Observation</th>
+              <th>Inference &amp; Deductions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${ln.qualitative.organicTests.map(t => `
+              <tr>
+                <td><b>${escapeHtml(t.test)}</b></td>
+                <td>${escapeHtml(t.obs)}</td>
+                <td>${escapeHtml(t.inference || '')}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  // ── Render Past Paper Archive Cards ──
+  function renderPastPaperCards() {
+    const container = document.getElementById('pastPapersContainer');
+    const countEl = document.getElementById('pastPapersResultCount');
+    if (!container || typeof filterPastPapers !== 'function' || typeof KCSE_PAST_PAPERS_ARCHIVE === 'undefined') return;
+
+    const keyword = document.getElementById('kcsePaperSearchInput') ? document.getElementById('kcsePaperSearchInput').value : '';
+    const filtered = filterPastPapers({
+      decade: currentDecadeFilter,
+      topic: currentTopicFilter,
+      keyword: keyword
+    });
+
+    if (countEl) {
+      countEl.textContent = `Showing ${filtered.length} of ${KCSE_PAST_PAPERS_ARCHIVE.length} past KCSE practical papers`;
+    }
+
+    if (filtered.length === 0) {
+      container.innerHTML = `
+        <div style="grid-column: 1 / -1; padding: 36px 20px; text-align:center; color:var(--text-muted); background:var(--card-bg); border-radius:12px; border:1px dashed var(--card-border);">
+          <div style="font-size:2rem; margin-bottom:8px;">🔍</div>
+          <div style="font-weight:700; font-size:1rem; color:var(--heading-color);">No matching past papers found</div>
+          <div style="font-size:0.85rem; margin-top:4px;">Try loosening your decade or technique filters, or searching for broader terms like "titration", "lead", or "2011".</div>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = filtered.map(p => {
+      const isPlayable = Boolean(p.playablePresetKey);
+      const q1Title = p.questions && p.questions[0] ? p.questions[0].title : 'Quantitative Analysis';
+      const q2Title = p.questions && p.questions[1] ? p.questions[1].title : 'Inorganic Salt Qualitative Analysis';
+      const q3Title = p.questions && p.questions[2] ? p.questions[2].title : 'Organic Functional Group Analysis';
+
+      return `
+        <div class="past-paper-card">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:6px;">
+              <span class="past-paper-year-badge">KCSE ${p.year}</span>
+              ${isPlayable ? '<span class="past-paper-playable-badge">🎮 40M Simulation Available</span>' : '<span style="font-size:0.72rem; color:var(--text-muted); font-family:var(--font-mono); font-weight:700;">Archived Exam</span>'}
+            </div>
+
+            <h3 class="past-paper-title">${escapeHtml(p.title)}</h3>
+            <div class="past-paper-topics">
+              ${(p.topics || []).map(t => `<span class="past-topic-pill">${escapeHtml(t)}</span>`).join('')}
+            </div>
+
+            <div style="font-size:0.84rem; color:var(--text-muted); margin-bottom:14px; line-height:1.45;">
+              ${escapeHtml(p.summary || '')}
+            </div>
+
+            <ul class="past-q-summary-list">
+              <li class="past-q-item">
+                <span class="q-icon">🧪</span>
+                <div><b>Q1:</b> ${escapeHtml(q1Title)}</div>
+              </li>
+              <li class="past-q-item">
+                <span class="q-icon">🧂</span>
+                <div><b>Q2:</b> ${escapeHtml(q2Title)}</div>
+              </li>
+              <li class="past-q-item">
+                <span class="q-icon">🧫</span>
+                <div><b>Q3:</b> ${escapeHtml(q3Title)}</div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="past-paper-card-footer">
+            <button type="button" class="btn-view-paper" onclick="openPastPaperModal('${p.id}')">
+              📖 View Paper &amp; Scheme
+            </button>
+            ${isPlayable ? `
+              <button type="button" class="btn-launch-sim" onclick="launchSeries('${p.playablePresetKey}')" title="Launch interactive 40-mark KNEC simulation">
+                ⚡ Start 40M Mock →
+              </button>
+            ` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // ── Past Paper & Mark Scheme Modal Controller ──
+  let currentModalPaper = null;
+  let currentModalTab = 'questions';
+
+  function openPastPaperModal(paperId) {
+    if (typeof KCSE_PAST_PAPERS_ARCHIVE === 'undefined') return;
+    const paper = KCSE_PAST_PAPERS_ARCHIVE.find(p => p.id === paperId);
+    if (!paper) return;
+    currentModalPaper = paper;
+    currentModalTab = 'questions';
+
+    const modal = document.getElementById('pastPaperModal');
+    const titleEl = document.getElementById('modalPaperTitle');
+    const badgeEl = document.getElementById('modalPaperBadge');
+    const footerMeta = document.getElementById('modalPaperFooterMeta');
+    const actionBtns = document.getElementById('modalActionButtons');
+
+    if (titleEl) titleEl.textContent = paper.title;
+    if (badgeEl) badgeEl.textContent = `${paper.badgeText || ''} · ${paper.totalMarks || 40.0} Marks · ${paper.durationMinutes || 135} Mins`;
+    if (footerMeta) footerMeta.textContent = `KNEC Chemistry Practical 233/3 · Year ${paper.year}`;
+
+    if (actionBtns) {
+      if (paper.playablePresetKey) {
+        actionBtns.innerHTML = `
+          <button type="button" class="btn-start-series" onclick="launchSeries('${paper.playablePresetKey}')">
+            ⚡ Launch 40M Simulation →
+          </button>
+          <button type="button" class="top-action-btn" onclick="closePastPaperModal()">Close</button>
+        `;
+      } else {
+        actionBtns.innerHTML = `
+          <button type="button" class="top-action-btn" onclick="closePastPaperModal()">Close</button>
+        `;
+      }
+    }
+
+    const btnQ = document.getElementById('modalTabBtnQuestions');
+    const btnS = document.getElementById('modalTabBtnScheme');
+    const btnP = document.getElementById('modalTabBtnPrep');
+    if (btnQ) btnQ.className = 'modal-tab-btn active';
+    if (btnS) btnS.className = 'modal-tab-btn';
+    if (btnP) btnP.className = 'modal-tab-btn';
+
+    renderModalBody();
+    if (modal) modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closePastPaperModal() {
+    const modal = document.getElementById('pastPaperModal');
+    if (modal) modal.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  function switchModalTab(tabKey) {
+    currentModalTab = tabKey;
+    const btnQ = document.getElementById('modalTabBtnQuestions');
+    const btnS = document.getElementById('modalTabBtnScheme');
+    const btnP = document.getElementById('modalTabBtnPrep');
+
+    if (btnQ) btnQ.className = tabKey === 'questions' ? 'modal-tab-btn active' : 'modal-tab-btn';
+    if (btnS) btnS.className = tabKey === 'scheme' ? 'modal-tab-btn active' : 'modal-tab-btn';
+    if (btnP) btnP.className = tabKey === 'prep' ? 'modal-tab-btn active' : 'modal-tab-btn';
+
+    renderModalBody();
+  }
+
+  function renderModalBody() {
+    const body = document.getElementById('modalPaperBody');
+    if (!body || !currentModalPaper) return;
+    const p = currentModalPaper;
+
+    if (currentModalTab === 'questions') {
+      body.innerHTML = `
+        <div style="background:var(--acad-paper-subtle); border-left:4px solid var(--acad-gold); padding:12px 16px; border-radius:0 8px 8px 0; margin-bottom:20px; font-size:0.86rem; color:var(--text-muted);">
+          <b>Candidate Instructions:</b> Answer ALL questions in the spaces provided. Mathematical tables and non-programmable electronic calculators may be used. All working must be clearly shown.
+        </div>
+
+        ${(p.questions || []).map((q) => `
+          <div style="margin-bottom:24px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; padding:20px;">
+            <h4 style="font-family:'Cinzel', serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin-bottom:12px;">
+              ${escapeHtml(q.title)}
+            </h4>
+
+            ${q.procedure ? `
+              <div style="font-size:0.86rem; line-height:1.6; color:var(--text-normal); margin-bottom:16px; white-space:pre-line; background:var(--surface-color); padding:14px; border-radius:8px; border:1px solid var(--card-border);">
+                <b>Procedure:</b>\n${escapeHtml(q.procedure)}
+              </div>
+            ` : ''}
+
+            ${q.preamble ? `
+              <p style="font-size:0.86rem; color:var(--text-muted); margin-bottom:12px; font-style:italic;">
+                ${escapeHtml(q.preamble)}
+              </p>
+            ` : ''}
+
+            <!-- Table 1 if present -->
+            ${q.table1 ? `
+              <div style="margin-bottom:16px;">
+                <div style="font-size:0.82rem; font-weight:700; color:var(--heading-color); margin-bottom:6px;">${escapeHtml(q.table1.title || 'Table 1')}</div>
+                <table class="knec-table" style="width:100%; font-size:0.82rem;">
+                  <thead>
+                    <tr>
+                      ${(q.table1.headers || []).map(h => `<th>${escapeHtml(h)}</th>`).join('')}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      ${(q.table1.sampleValues || []).map(v => `<td style="font-family:var(--font-mono);">${escapeHtml(v)}</td>`).join('')}
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            ` : ''}
+
+            <!-- Table 2 if present -->
+            ${q.table2 ? `
+              <div style="margin-bottom:16px;">
+                <div style="font-size:0.82rem; font-weight:700; color:var(--heading-color); margin-bottom:6px;">${escapeHtml(q.table2.title || 'Table 2')}</div>
+                <table class="knec-table" style="width:100%; font-size:0.82rem;">
+                  <thead>
+                    <tr>
+                      ${(q.table2.headers || []).map(h => `<th>${escapeHtml(h)}</th>`).join('')}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      ${(q.table2.sampleValues || []).map(v => `<td style="font-family:var(--font-mono);">${escapeHtml(v)}</td>`).join('')}
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            ` : ''}
+
+            <!-- Calculations list -->
+            ${q.calculations && q.calculations.length ? `
+              <div style="margin-top:14px;">
+                <div style="font-size:0.84rem; font-weight:700; color:var(--heading-color); margin-bottom:8px;">Analytical Calculations &amp; Questions:</div>
+                <ul style="font-size:0.85rem; line-height:1.6; color:var(--text-normal); padding-left:18px; margin:0;">
+                  ${q.calculations.map(c => `<li style="margin-bottom:6px;">${escapeHtml(c)}</li>`).join('')}
+                </ul>
+              </div>
+            ` : ''}
+
+            <!-- Qualitative Tests Table -->
+            ${q.tests && q.tests.length ? `
+              <div style="margin-top:14px;">
+                <table class="knec-table" style="width:100%; font-size:0.82rem;">
+                  <thead>
+                    <tr>
+                      <th style="width:15%;">Step</th>
+                      <th style="width:40%;">Experimental Procedure / Test</th>
+                      <th style="width:25%;">Expected Observation</th>
+                      <th style="width:20%;">Inference</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${q.tests.map(t => `
+                      <tr>
+                        <td><b>${escapeHtml(t.step || '')}</b></td>
+                        <td>${escapeHtml(t.prompt || '')}</td>
+                        <td>${escapeHtml(t.obs || '')}</td>
+                        <td>${escapeHtml(t.inf || '')}</td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            ` : ''}
+          </div>
+        `).join('')}
+      `;
+    } else if (currentModalTab === 'scheme') {
+      const ms = p.markScheme || {};
+      body.innerHTML = `
+        <div style="background:var(--acad-paper-subtle); border-left:4px solid var(--emerald-accent); padding:12px 16px; border-radius:0 8px 8px 0; margin-bottom:20px; font-size:0.86rem; color:var(--text-muted);">
+          <b>Official KNEC Coordinated Mark Scheme:</b> This marking guide shows official KNEC scoring distributions, accepted tolerance bands (±0.10 cm³ for burette, ±0.5 °C for thermometers), error-carried-forward (ECF) allowances, and strict penalty rubrics (penalize 0.5 Mk for contradictory ions or omitted state charges).
+        </div>
+
+        <!-- Question 1 Calculations Scheme -->
+        <div style="margin-bottom:24px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; padding:20px;">
+          <h4 style="font-family:'Cinzel', serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin-bottom:12px;">
+            Question 1: Volumetric / Thermochemical Scoring Rubric
+          </h4>
+          ${ms.q1Calculations && ms.q1Calculations.length ? `
+            <table class="knec-table" style="width:100%; font-size:0.84rem;">
+              <thead>
+                <tr>
+                  <th style="width:30%;">Scoring Item</th>
+                  <th style="width:15%; text-align:center;">Marks</th>
+                  <th>KNEC Evaluator Rubric &amp; Conditions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${ms.q1Calculations.map(c => `
+                  <tr>
+                    <td><b>${escapeHtml(c.item)}</b></td>
+                    <td style="text-align:center; font-family:var(--font-mono); font-weight:700; color:var(--emerald-accent);">${escapeHtml(c.marks)}</td>
+                    <td style="line-height:1.5;">${escapeHtml(c.rubric)}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          ` : '<p style="color:var(--text-muted); font-size:0.85rem;">Standard KNEC Volumetric Scoring: Complete Table (1.0 Mk), Decimals (1.0 Mk), Accuracy within ±0.20 cm³ (1.0 Mk), Principles of Averaging (1.0 Mk), Final Accuracy (1.0 Mk).</p>'}
+        </div>
+
+        <!-- Qualitative Observations Scheme -->
+        <div style="margin-bottom:24px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; padding:20px;">
+          <h4 style="font-family:'Cinzel', serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin-bottom:12px;">
+            Questions 2 &amp; 3: Qualitative Observation &amp; Inference Scoring Notes
+          </h4>
+          <div style="font-size:0.86rem; line-height:1.6; color:var(--text-normal); background:var(--surface-color); padding:14px; border-radius:8px; border:1px solid var(--card-border);">
+            ${escapeHtml(ms.qualitativeObservations || 'Award 1/2 Mark for correct observation and 1/2 Mark for correct inference. Both must correspond. Deduct 1/2 Mark for contradictory ions or wrong formula/charges.')}
+          </div>
+        </div>
+      `;
+    } else if (currentModalTab === 'prep') {
+      const ms = p.markScheme || {};
+      body.innerHTML = `
+        <div style="background:var(--acad-paper-subtle); border-left:4px solid var(--amber-accent); padding:12px 16px; border-radius:0 8px 8px 0; margin-bottom:20px; font-size:0.86rem; color:var(--text-muted);">
+          <b>Confidential School Instructions to Head of Chemistry / Lab Technician:</b> The information contained herein is strictly confidential and is meant to facilitate laboratory preparations before the examination date. Quantities listed are per candidate.
+        </div>
+
+        <div style="background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; padding:20px;">
+          <h4 style="font-family:'Cinzel', serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin-bottom:12px;">
+            Reagents &amp; Solutions Preparation Recipes
+          </h4>
+          <div style="font-size:0.88rem; line-height:1.7; color:var(--text-normal); background:var(--surface-color); padding:16px; border-radius:8px; border:1px solid var(--card-border); font-family:var(--font-mono); white-space:pre-line;">
+            ${escapeHtml(ms.confidentialPrep || 'No special confidential instructions recorded for this past paper series.')}
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  function printModalPaper() {
+    window.print();
+  }
+
+  // Keyboard shortcut: close modal on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closePastPaperModal();
+    }
+  });
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function updateThemeButtonLabel() {
+    const btn = document.getElementById('themeToggleBtn');
+    if (!btn) return;
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+    if (currentTheme === 'dark') btn.textContent = '🌙 Dark';
+    else if (currentTheme === 'green') btn.textContent = '🧪 Lab';
+    else btn.textContent = '☀️ Light';
+  }
+
+  function cycleTheme() {
+    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    const next = current === 'dark' ? 'light' : current === 'light' ? 'green' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('vlk_theme', next);
+    updateThemeButtonLabel();
+  }
+
+  updateThemeButtonLabel();
+  renderSeriesCards();
+  renderPastPaperCards();
+  loadExamHistory();
+</script>
+
+<!-- Mobile Bottom Navigation Bar -->
+<nav class="vlk-bottom-nav" aria-label="Mobile Bottom Navigation" id="vlkBottomNav">
+  <a href="home.html" class="vlk-bottom-nav-item" aria-label="Home" id="bnav-home">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Home</span>
+  </a>
+  <a href="lab.html" class="vlk-bottom-nav-item" aria-label="Lab" id="bnav-lab">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31M14 2v7.31M8.5 2h7M14 9.3a6.5 6.5 0 1 1-4 0"/><line x1="6" y1="16" x2="18" y2="16"/></svg>
+    <span>Lab</span>
+  </a>
+  <a href="mock_exams.html" class="vlk-bottom-nav-item active" aria-label="Exams" id="bnav-exams">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+    <span>Exams</span>
+  </a>
+  <a href="history.html" class="vlk-bottom-nav-item" aria-label="History" id="bnav-history">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    <span>History</span>
+  </a>
+  <a href="home.html" class="vlk-bottom-nav-item" aria-label="Profile" id="bnav-profile">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>Me</span>
+  </a>
+</nav>
+
+<script src="/shared/brilliant-ui.js"></script>
+</body>
+</html>

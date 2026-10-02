@@ -1,4 +1,7 @@
-# OPEN UNIVERSITY OF KENYA
+import os
+
+def generate_markdown_v10():
+    md = """# OPEN UNIVERSITY OF KENYA
 ## SCHOOL OF EDUCATION
 ### DEPARTMENT OF TECHNOLOGY EDUCATION
 
@@ -658,3 +661,10 @@ Wabwoba, C. W., & Chang’ach, J. K. (2021). Resource allocation and academic pe
 Wandera, C. N., & Changeiywo, J. M. (2021). Effect of computer-based simulations on students' achievement in chemistry in secondary schools in Machakos County, Kenya. *Journal of Science Education and Technology in Africa*, 9(2), 55–68.
 
 Wieman, C. E., Adams, W. K., & Perkins, K. K. (2008). PhET: Simulations that enhance learning. *Science*, 322(5902), 682–683. https://doi.org/10.1126/science.1161948
+"""
+    with open(r'c:\Users\USER\.gemini\antigravity\scratch\virtulabkenya\docs\PROJECT_PROPOSAL.md', 'w', encoding='utf-8') as f:
+        f.write(md)
+    print("Successfully synchronized docs/PROJECT_PROPOSAL.md with refined V10 text resolving all 8 observations.")
+
+if __name__ == '__main__':
+    generate_markdown_v10()

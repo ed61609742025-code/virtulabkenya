@@ -1,0 +1,382 @@
+/* ============================================================
+   VirtuLab Kenya — Shared Authentication Stylesheet
+   Used by student/login, student/register, teacher/login, teacher/register
+   ============================================================ */
+
+:root, [data-theme="light"] {
+  --bg-dark: #F8FAFC;
+  --card-bg: #FFFFFF;
+  --card-bg-hover: #F1F5F9;
+  --card-border: #E2E8F0;
+  --card-border-focus: #0284C7;
+  --cyan-accent: #0284C7;
+  --cyan-btn-bg: #0B2545;
+  --cyan-btn-hover: #133D6B;
+  --teacher-btn-bg: #059669;
+  --teacher-btn-hover: #047857;
+  --text-main: #0F172A;
+  --text-muted: #64748B;
+  --heading-color: #0F172A;
+  --shadow-auth: 0 4px 20px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] {
+  --bg-dark: #090E17;
+  --card-bg: #111A2E;
+  --card-bg-hover: #16223B;
+  --card-border: #1E2D4A;
+  --card-border-focus: #38BDF8;
+  --cyan-accent: #38BDF8;
+  --cyan-btn-bg: #0284C7;
+  --cyan-btn-hover: #0369A1;
+  --teacher-btn-bg: #059669;
+  --teacher-btn-hover: #047857;
+  --text-main: #F8FAFC;
+  --text-muted: #94A3B8;
+  --heading-color: #F8FAFC;
+  --shadow-auth: 0 8px 30px rgba(0, 0, 0, 0.45);
+}
+
+[data-theme="green"] {
+  --bg-dark: #06140B;
+  --card-bg: #0E2415;
+  --card-bg-hover: #14331E;
+  --card-border: #1E4D2B;
+  --card-border-focus: #34D399;
+  --cyan-accent: #34D399;
+  --cyan-btn-bg: #059669;
+  --cyan-btn-hover: #047857;
+  --teacher-btn-bg: #059669;
+  --teacher-btn-hover: #047857;
+  --text-main: #F0FDF4;
+  --text-muted: #86C198;
+  --heading-color: #F0FDF4;
+  --shadow-auth: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+* { box-sizing: border-box; }
+
+body.auth-page {
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  margin: 0;
+  padding: 24px 16px;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow-x: hidden;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Floating Theme Toggle */
+.theme-toggle-float {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 100;
+  display: flex;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 2px;
+  gap: 2px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.theme-btn {
+  border: none;
+  background: transparent;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: all 0.15s ease;
+}
+
+.theme-btn.active {
+  background: var(--cyan-btn-bg);
+  color: #FFFFFF;
+}
+
+/* Clean Modern Auth Card */
+.auth-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 32px 28px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: var(--shadow-auth);
+  position: relative;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.auth-logo-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--heading-color);
+  margin: 0 0 6px 0;
+  letter-spacing: -0.01em;
+}
+
+.auth-sub {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Form Group & Inputs */
+.auth-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.field-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.field-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--heading-color);
+}
+
+.forgot-link {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--cyan-accent);
+  text-decoration: none;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.auth-input, .auth-select {
+  width: 100%;
+  height: 42px;
+  background: var(--bg-dark);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 0 12px;
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.auth-input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.75;
+  font-size: 0.84rem;
+}
+
+.auth-input:focus, .auth-select:focus {
+  border-color: var(--card-border-focus);
+  background: var(--card-bg);
+}
+
+.toggle-pw-btn {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 4px 6px;
+}
+
+/* Buttons */
+.btn-submit-login, .btn-submit-teacher {
+  width: 100%;
+  height: 44px;
+  background: var(--cyan-btn-bg);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.15s ease;
+}
+
+.btn-submit-teacher {
+  background: var(--teacher-btn-bg);
+}
+
+.btn-submit-login:hover {
+  background: var(--cyan-btn-hover);
+}
+
+.btn-submit-teacher:hover {
+  background: var(--teacher-btn-hover);
+}
+
+/* OAuth Divider & Google Button */
+.oauth-divider {
+  display: flex;
+  align-items: center;
+  margin: 16px 0 14px;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.oauth-divider::before,
+.oauth-divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.oauth-divider span {
+  padding: 0 10px;
+}
+
+.btn-google {
+  width: 100%;
+  height: 42px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  text-decoration: none;
+}
+
+.btn-google:hover {
+  background: var(--card-bg-hover);
+  border-color: var(--card-border-focus);
+}
+
+.btn-google svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* Status / Alert Messages */
+.msg-alert {
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-top: 14px;
+  line-height: 1.45;
+}
+
+.msg-alert.err {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid #EF4444;
+  color: #EF4444;
+}
+
+.msg-alert.info {
+  background: rgba(2, 132, 199, 0.1);
+  border: 1px solid #0284C7;
+  color: var(--cyan-accent);
+}
+
+/* Footer Navigation Links */
+.auth-footer {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--card-border);
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.auth-footer a {
+  color: var(--cyan-accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Reset Password Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-reset-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 24px;
+  max-width: 380px;
+  width: 100%;
+  box-shadow: var(--shadow-auth);
+}
+
+.teacher-code-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 16px;
+  text-align: center;
+}
+
+.teacher-code-display {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--cyan-accent);
+  padding: 10px;
+  background: var(--bg-dark);
+  border: 1px dashed var(--card-border);
+  border-radius: 6px;
+  margin: 12px 0;
+  letter-spacing: 0.08em;
+}

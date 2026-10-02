@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Titration Bench — VirtuLab Kenya</title>
+<script src="/shared/auth-guard.js"></script>
+<script>
+  var t = localStorage.getItem('vlk_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  if (window.VLKAuthGuard) {
+    VLKAuthGuard.guardPage('student');
+  }
+  if (window.location.search.includes('embedded=1')) {
+    const style = document.createElement('style');
+    style.innerHTML = '.top-navbar { display: none !important; } body { padding-top: 0 !important; margin: 0 !important; } .workbench-container { margin-top: 10px !important; }';
+    document.head.appendChild(style);
+  }
+</script>
+<meta name="theme-color" content="#0F172A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VirtuLab">
+<link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400..800;1,6..72,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/shared/brilliant-theme.css">
+<link rel="stylesheet" href="/shared/tutorial-engine.css">
+<link rel="stylesheet" href="css/lab.css?v=120">
+<link rel="stylesheet" href="/shared/ai-tutor.css">
+<link rel="stylesheet" href="/shared/pwa-installer.css">
+</head>
+<body>
+
+<!-- Unified Sticky Academic Header -->
+<header class="academic-top-header">
+  <!-- Topbar Navigation Bar -->
+  <nav class="top-navbar">
+    <a href="/student/home.html" class="nav-brand-academic" title="Back to Student Workstation">
+      <div class="vlk-brand-logo-wrap">
+        <img src="/shared/virtulab-logo.svg" alt="VirtuLab Kenya Logo" class="vlk-brand-logo-img" width="34" height="34">
+      </div>
+      <div style="display:flex; flex-direction:column;">
+        <span class="brand-title" style="font-weight:800; font-family:'Cinzel', serif; font-size:1.05rem; line-height:1.1; color:var(--heading-color);">VirtuLab</span>
+        <span class="brand-subtagline" style="font-size:0.65rem; font-family:'Newsreader', serif; font-style:italic; color:var(--cyan-accent); letter-spacing:0.01em;">Titration Bench</span>
+      </div>
+    </a>
+
+    <!-- Desktop Workbench Switcher (Hidden on Mobile) -->
+    <div class="nav-modules-pill">
+      <a href="lab.html" class="theme-btn-chip active">🧪 Titration</a>
+      <a href="qualitative.html" class="theme-btn-chip">🔍 Qualitative</a>
+      <a href="organic.html" class="theme-btn-chip">⚗️ Organic</a>
+      <a href="solubility.html" class="theme-btn-chip">🌡️ Solubility</a>
+      <a href="energy.html" class="theme-btn-chip">🔥 Energy</a>
+      <a href="rates.html" class="theme-btn-chip">⚡ Rates</a>
+      <a href="mock_exams.html" class="theme-btn-chip">📋 Mock Hub</a>
+    </div>
+
+    <div class="nav-actions">
+      <!-- Session Timer Badge -->
+      <div class="session-timer-badge" style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:6px;padding:4px 8px;font-size:0.75rem;font-weight:700;color:var(--cyan-accent);display:flex;align-items:center;gap:4px;font-family:'JetBrains Mono',monospace;">
+        <span>⏱️</span>
+        <span id="sessionTimerText">00:00</span>
+      </div>
+
+      <!-- Theory & Mark Scheme Guide Button -->
+      <a href="titration_theory.html" class="theme-btn-chip" title="View KCSE Volumetric Analysis Theory & Mark Scheme" style="padding:4px 8px; font-size:0.75rem; text-decoration:none; display:inline-flex; align-items:center; gap:4px;">
+        📖 <span class="btn-text-full">Theory Guide</span>
+      </a>
+
+      <!-- Guided Tutorial Button -->
+      <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm" onclick="TutorialEngine.start('titration')" style="padding:4px 8px; font-size:0.75rem; white-space:nowrap;">
+        🧭 <span class="btn-text-full">Guided Tutorial</span><span class="btn-text-short">Tutorial</span>
+      </button>
+
+      <!-- Reagent Safety (SDS) Button -->
+      <button class="nav-btn nav-btn-safety" onclick="window.VLKSafety && window.VLKSafety.openSDSModal('HCl')" title="View Chemical Safety & SDS Hazards" style="padding:4px 8px; font-size:0.75rem;">
+        ⚠️ <span class="btn-text-full">SDS</span>
+      </button>
+
+      <!-- Settings Dropdown Button -->
+      <div style="position:relative;">
+        <button type="button" class="nav-btn nav-btn-settings" onclick="toggleBenchSettings(event)" title="Workbench Settings & Tools" style="padding:4px 8px; font-size:0.75rem;">
+          ⚙️ <span class="btn-text-full">Settings</span>
+        </button>
+        
+        <div id="benchSettingsDropdown" style="display:none; position:absolute; right:0; top:36px; width:240px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; box-shadow:var(--shadow-lg); z-index:100000; padding:12px; flex-direction:column; gap:10px; text-align:left;">
+          <!-- Sound Toggle -->
+          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Sound Effects</span>
+            <button type="button" id="soundToggleBtn" onclick="toggleSound()" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border);">🔊 Sound ON</button>
+          </div>
+
+          <!-- Scratchpad Toggle -->
+          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Scratchpad</span>
+            <button type="button" onclick="toggleScratchpad()" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border);">📝 Rough Work</button>
+          </div>
+
+          <!-- Language Selector Row -->
+          <div style="display:flex; flex-direction:column; gap:6px; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Language / Lugha</span>
+            <div class="theme-toggle-group" style="width:100%;">
+              <button class="theme-btn-chip lang-btn-chip active" style="flex:1;" data-lang="en" onclick="setLanguage('en')">🇬🇧 EN</button>
+              <button class="theme-btn-chip lang-btn-chip" style="flex:1;" data-lang="sw" onclick="setLanguage('sw')">🇰🇪 SW</button>
+            </div>
+          </div>
+
+          <!-- Theme Selector Row -->
+          <div style="display:flex; flex-direction:column; gap:6px; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Appearance Theme</span>
+            <div class="theme-toggle-group" style="width:100%;">
+              <button class="theme-btn-chip" style="flex:1;" data-theme="light" onclick="setTheme('light')">☀️ Light</button>
+              <button class="theme-btn-chip active" style="flex:1;" data-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
+              <button class="theme-btn-chip" style="flex:1;" data-theme="green" onclick="setTheme('green')">🧪 Lab</button>
+            </div>
+          </div>
+
+          <button onclick="window.print()" style="background:var(--card-bg-hover);border:1px solid var(--card-border);color:var(--text-main);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
+            🖨️ Print Practical Booklet
+          </button>
+        </div>
+      </div>
+
+      <!-- Exit Button -->
+      <a href="/student/home.html" class="btn-back-link" style="padding:4px 8px; font-size:0.75rem; border-radius:6px;" title="Exit to Workstation" data-i18n="back">← Exit</a>
+    </div>
+  </nav>
+
+  <!-- Official KNEC Practical Ledger Sub-Header -->
+  <div class="knec-exam-subbar">
+    <div class="knec-subbar-item">
+      <span class="knec-subbar-label">Burette:</span>
+      <span class="knec-subbar-val">50.0 cm³</span>
+    </div>
+    <div class="knec-subbar-item">
+      <span class="knec-subbar-label">Aliquot:</span>
+      <span class="knec-subbar-val" id="knecSubbarAliquot">25.00 cm³</span>
+    </div>
+    <div class="knec-subbar-item">
+      <span class="knec-subbar-label">Concordance:</span>
+      <span class="knec-subbar-val">±0.10 cm³</span>
+    </div>
+    <div class="knec-subbar-item" style="margin-left:auto;">
+      <span class="knec-subbar-label">Max Score:</span>
+      <span class="knec-subbar-val" style="color:var(--amber-accent); font-weight:800;">15.0 Marks</span>
+    </div>
+  </div>
+</header>
+
+<!-- Collapsible Scratchpad Drawer (Hidden by default) -->
+<div id="scratchpadDrawer" style="display:none;background:var(--card-bg);border:1px solid var(--cyan-accent);border-radius:12px;padding:16px;margin:16px 20px 0;box-shadow:0 4px 20px rgba(0,0,0,0.4);">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+    <div style="font-size:0.88rem;font-weight:700;color:var(--heading-color);font-family:'Cinzel', serif;">📝 Rough Work Scratchpad (KNEC Candidate Working)</div>
+    <button type="button" class="btn-pill-action" style="padding:2px 8px;font-size:0.7rem;" onclick="toggleScratchpad()">✕ Close</button>
+  </div>
+  <textarea id="scratchpadText" placeholder="Draft your raw buret readings, trial math, or C1V1=C2V2 working here..." style="width:100%;height:90px;background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:8px;padding:10px;color:var(--text-main);font-family:'JetBrains Mono',monospace;font-size:0.82rem;outline:none;resize:vertical;"></textarea>
+</div>
+
+<!-- Main Workbench Grid Container -->
+<div class="workbench-container">
+  
+  <!-- Interactive Step-by-Step Tutorial Container -->
+  <div id="tutorialDrawer" style="display:none;"></div>
+
+  <div id="assignmentBanner" style="display:none;align-items:center;gap:8px;background:var(--card-bg-hover);border:1px solid var(--cyan-accent);border-radius:10px;padding:10px 16px;margin-bottom:16px;font-size:0.83rem;color:var(--text-main);">
+    <span style="background:var(--cyan-btn-bg);color:#FFF;padding:2px 8px;border-radius:100px;font-size:0.7rem;font-weight:700;">ASSIGNMENT</span>
+    <span>This attempt is linked to an assignment from your teacher — the practical type is locked. One submission only.</span>
+  </div>
+
+  <div id="examBanner" style="display:none;align-items:center;justify-content:space-between;gap:12px;background:rgba(239,68,68,0.15);border:1px solid #EF4444;border-radius:10px;padding:12px 18px;margin-bottom:16px;font-size:0.85rem;color:var(--text-main);">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span style="background:#EF4444;color:#FFF;padding:3px 10px;border-radius:100px;font-size:0.72rem;font-weight:800;letter-spacing:0.04em;">KCSE EXAM MODE</span>
+      <span>Paper 3 Practical Exam — Timed 15:00 countdown. Scored out of 15 KCSE marks.</span>
+    </div>
+    <div style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:1.1rem;color:#EF4444;white-space:nowrap;" id="examTimerText">⏱️ 15:00</div>
+  </div>
+
+  <div id="guidedBanner" style="display:none;align-items:center;gap:8px;background:var(--card-bg-hover);border:1px solid var(--cyan-accent);border-radius:10px;padding:10px 16px;margin-bottom:16px;font-size:0.83rem;color:var(--text-main);">
+    <span style="background:var(--cyan-btn-bg);color:#FFF;padding:2px 8px;border-radius:100px;font-size:0.7rem;font-weight:700;">GUIDED</span>
+    <span>Guided Practice walks you through Acid-Base titration step by step.</span>
+  </div>
+  <!-- Interactive Practical Workflow Stepper & Breadcrumbs -->
+  <nav class="workflow-stepper-card" id="practicalWorkflowStepper" aria-label="Practical Examination Workflow">
+    <div class="workflow-stepper-top">
+      <div class="workflow-title-wrap">
+        <span class="workflow-title-label">
+          <span>📋</span> PRACTICAL WORKFLOW
+        </span>
+        <span id="labStepBadge" class="workflow-step-badge">Step 1 of 5: Setup &amp; Indicator</span>
+      </div>
+      <div class="workflow-jump-hint" id="workflowProgressHint">
+        <span>💡 Click any step below to jump directly to that workstation section</span>
+      </div>
+    </div>
+    
+    <div class="workflow-stepper-track" id="workflowStepTrack" role="list">
+      <div class="workflow-stepper-progress-fill" id="workflowProgressFill" style="width: 10%;"></div>
+      
+      <!-- Step 1: Setup & Indicator -->
+      <button type="button" class="workflow-step-item active" id="wfStep0" onclick="jumpToWorkflowStep(0)" role="listitem" aria-current="step" title="Step 1: Check Reagents & Dispense Indicator">
+        <div class="workflow-step-node" id="wfNode0">1</div>
+        <span class="workflow-step-label">1. Setup &amp; Indicator</span>
+        <span class="workflow-step-sub" id="wfSub0">Aliquot &amp; Dyes</span>
+      </button>
+
+      <!-- Step 2: Add Titrant & Swirl -->
+      <button type="button" class="workflow-step-item upcoming" id="wfStep1" onclick="jumpToWorkflowStep(1)" role="listitem" title="Step 2: Add Titrant from Burette and Swirl Flask">
+        <div class="workflow-step-node" id="wfNode1">2</div>
+        <span class="workflow-step-label">2. Titrate &amp; Swirl</span>
+        <span class="workflow-step-sub" id="wfSub1">Burette Delivery</span>
+      </button>
+
+      <!-- Step 3: Observe Endpoint -->
+      <button type="button" class="workflow-step-item upcoming" id="wfStep2" onclick="jumpToWorkflowStep(2)" role="listitem" title="Step 3: Read Meniscus at Color Transition and Record Trial">
+        <div class="workflow-step-node" id="wfNode2">3</div>
+        <span class="workflow-step-label">3. Observe Endpoint</span>
+        <span class="workflow-step-sub" id="wfSub2">Color Transition</span>
+      </button>
+
+      <!-- Step 4: Concordant Trials -->
+      <button type="button" class="workflow-step-item upcoming" id="wfStep3" onclick="jumpToWorkflowStep(3)" role="listitem" title="Step 4: Repeat Trials to Achieve Concordance within ±0.10 cm³">
+        <div class="workflow-step-node" id="wfNode3">4</div>
+        <span class="workflow-step-label">4. Concordant Trials</span>
+        <span class="workflow-step-sub" id="wfSub3">Table 1 (±0.10 cm³)</span>
+      </button>
+
+      <!-- Step 5: Stoichiometry & Submit -->
+      <button type="button" class="workflow-step-item upcoming" id="wfStep4" onclick="jumpToWorkflowStep(4)" role="listitem" title="Step 5: Solve Section 1 Stoichiometric Calculations and Submit">
+        <div class="workflow-step-node" id="wfNode4">5</div>
+        <span class="workflow-step-label">5. Stoichiometry &amp; Submit</span>
+        <span class="workflow-step-sub" id="wfSub4">5 Questions · 10 Marks</span>
+      </button>
+    </div>
+    <!-- Hidden legacy element for backward compatibility -->
+    <div id="titrationStepProgress" style="display:none;"></div>
+  </nav>
+
+  <!-- Prescribed Continuous Assessment Banner (Shown when linkedAssignmentId is present) -->
+  <div id="assignmentHeaderBanner" style="display:none; background:rgba(6,182,212,0.12); border:1.5px solid var(--cyan-accent-strong); border-radius:12px; padding:14px 20px; margin-bottom:18px; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; box-shadow:var(--shadow-sm);">
+    <div style="display:flex; align-items:center; gap:12px;">
+      <span style="font-size:1.4rem;" aria-hidden="true">📋</span>
+      <div>
+        <div style="font-size:0.75rem; font-weight:800; text-transform:uppercase; color:var(--cyan-accent-strong); letter-spacing:0.05em;">PRESCRIBED CONTINUOUS ASSESSMENT ASSIGNMENT</div>
+        <div id="assignBannerTitle" style="font-size:1.0rem; font-weight:800; color:var(--heading-color); margin-top:2px;">Volumetric Analysis Assignment</div>
+      </div>
+    </div>
+    <span style="font-size:0.78rem; font-family:var(--font-mono); font-weight:700; color:var(--text-main); background:var(--card-bg); padding:5px 12px; border-radius:6px; border:1.5px solid var(--card-border);" id="assignBannerDue">Active Practical Assignment</span>
+  </div>
+
+  <div class="workbench-grid">
+    
+    <!-- LEFT COLUMN: Experiment Selection, Your Task, Reagents -->
+    <aside class="wb-left-col">
+      
+      <!-- Card 2: Your Task -->
+      <div class="wb-card card-task">
+        <div class="wb-card-title">
+          <span>📜 Question 1 Instructions &amp; Brief</span>
+          <span style="font-size:0.7rem; color:var(--text-tertiary); font-family:var(--font-mono); font-weight:600;">KNEC Rubric</span>
+        </div>
+        <div class="task-brief-box" id="briefText" tabindex="0" role="region" aria-label="KCSE Question 1 Practical Instructions">
+          Loading task details...
+        </div>
+      </div>
+
+      <!-- Card 3: Reagents -->
+      <div class="wb-card card-reagents">
+        <div class="reagents-header-bar">
+          <div class="wb-card-title" style="margin-bottom:0;">
+            <span>🧪 Prescribed Reagents Ledger</span>
+          </div>
+          <span class="reagents-knec-badge" title="Official KNEC KCSE Chemistry Practical Specifications">
+            <span class="reagents-status-dot"></span> KNEC Spec
+          </span>
+        </div>
+        <div class="reagents-subtitle">
+          Official volumetric standards &amp; analytical parameters for Question 1.
+        </div>
+
+        <div class="reagents-ledger-grid">
+          
+          <!-- Row 1: Analyte (Solution A) -->
+          <div class="reagent-info-item reagent-item-analyte">
+            <div class="reagent-item-left">
+              <div class="reagent-icon-badge icon-analyte" aria-hidden="true">
+                <span>⚗️</span>
+              </div>
+              <div class="reagent-content">
+                <div class="reagent-label-row">
+                  <span class="sci-tooltip" tabindex="0" role="tooltip" aria-label="Definition of Analyte">
+                    Analyte (Solution A)
+                    <span class="sci-tip-icon" aria-hidden="true">ℹ️</span>
+                    <span class="sci-tip-text"><b>Analyte:</b> The chemical solution of unknown concentration placed in the conical flask using a pipette.</span>
+                  </span>
+                </div>
+                <span class="reagent-meta-tag">Conical Flask · Unknown Conc.</span>
+              </div>
+            </div>
+            <div class="reagent-val-box">
+              <span class="reagent-spec-pill pill-analyte" id="pillAnalyte">HCl(aq)</span>
+            </div>
+          </div>
+
+          <!-- Row 2: Titrant (Solution B) -->
+          <div class="reagent-info-item reagent-item-titrant">
+            <div class="reagent-item-left">
+              <div class="reagent-icon-badge icon-titrant" aria-hidden="true">
+                <span>🧪</span>
+              </div>
+              <div class="reagent-content">
+                <div class="reagent-label-row">
+                  <span class="sci-tooltip" tabindex="0" role="tooltip" aria-label="Definition of Titrant">
+                    Titrant (Solution B)
+                    <span class="sci-tip-icon" aria-hidden="true">ℹ️</span>
+                    <span class="sci-tip-text"><b>Titrant:</b> The standard solution of known concentration delivered accurately from the burette.</span>
+                  </span>
+                </div>
+                <span class="reagent-meta-tag">Burette Standard · Known Conc.</span>
+              </div>
+            </div>
+            <div class="reagent-val-box">
+              <span class="reagent-spec-pill pill-titrant" id="pillTitrant">0.12 M NaOH</span>
+            </div>
+          </div>
+
+          <!-- Row 3: Acid-Base Indicator -->
+          <div class="reagent-info-item reagent-item-indicator">
+            <div class="reagent-item-left">
+              <div class="reagent-icon-badge icon-indicator" aria-hidden="true">
+                <span>💧</span>
+              </div>
+              <div class="reagent-content">
+                <div class="reagent-label-row">
+                  <span class="sci-tooltip" tabindex="0" role="tooltip" aria-label="Definition of Acid-Base Indicator">
+                    Indicator
+                    <span class="sci-tip-icon" aria-hidden="true">ℹ️</span>
+                    <span class="sci-tip-text"><b>Indicator:</b> A dye that exhibits a sharp, distinct color change at the neutralization endpoint.</span>
+                  </span>
+                </div>
+                <span class="reagent-meta-tag">Endpoint Detection Dye</span>
+              </div>
+            </div>
+            <div class="reagent-val-box">
+              <span class="reagent-spec-pill pill-indicator is-pending" id="pillIndicator">? (choose below)</span>
+            </div>
+          </div>
+
+          <!-- Row 4: Pipette Aliquot -->
+          <div class="reagent-info-item reagent-item-aliquot">
+            <div class="reagent-item-left">
+              <div class="reagent-icon-badge icon-aliquot" aria-hidden="true">
+                <span>📏</span>
+              </div>
+              <div class="reagent-content">
+                <div class="reagent-label-row">
+                  <span class="sci-tooltip" tabindex="0" role="tooltip" aria-label="Definition of Pipette Aliquot">
+                    Pipette Aliquot
+                    <span class="sci-tip-icon" aria-hidden="true">ℹ️</span>
+                    <span class="sci-tip-text"><b>Aliquot:</b> The fixed, standard volume (25.00 cm³) of Solution A dispensed into the flask.</span>
+                  </span>
+                </div>
+                <span class="reagent-meta-tag">Class-A Bulb Pipette Vol.</span>
+              </div>
+            </div>
+            <div class="reagent-val-box">
+              <span class="reagent-spec-pill pill-aliquot" id="pillAliquot">25.00 cm³ Pipette</span>
+            </div>
+          </div>
+
+          <!-- Row 5: Concordance Rubric -->
+          <div class="reagent-info-item reagent-item-concordance">
+            <div class="reagent-item-left">
+              <div class="reagent-icon-badge icon-concordance" aria-hidden="true">
+                <span>🎯</span>
+              </div>
+              <div class="reagent-content">
+                <div class="reagent-label-row">
+                  <span class="sci-tooltip" tabindex="0" role="tooltip" aria-label="Definition of Concordance">
+                    Concordance Rubric
+                    <span class="sci-tip-icon" aria-hidden="true">ℹ️</span>
+                    <span class="sci-tip-text"><b>Concordance:</b> Two or more titres that agree within ±0.10 cm³ of each other, required by KNEC for full marks.</span>
+                  </span>
+                </div>
+                <span class="reagent-meta-tag">KNEC Mark Scheme Standard</span>
+              </div>
+            </div>
+            <div class="reagent-val-box">
+              <span class="reagent-spec-pill pill-concordance" id="pillConcordance">±0.10 cm³</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Reagents Footer Quality & Safety Strip -->
+        <div class="reagents-footer-bar">
+          <div class="reagents-quality-badge">
+            <span class="quality-shield" aria-hidden="true">🛡️</span>
+            <span>Class-A Glassware · ISO 1042</span>
+          </div>
+          <button type="button" class="btn-reagents-sds" onclick="window.VLKSafety &amp;&amp; window.VLKSafety.openSDSModal()" title="View Chemical Safety &amp; SDS Hazards">
+            <span>⚠️ Safety SDS</span>
+          </button>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- CENTER COLUMN: Interactive Apparatus Workbench + KCSE Results Table -->
+    <main class="wb-center-col">
+      
+      <!-- Card 4: Interactive Apparatus Simulation & Bench Controls -->
+      <div class="apparatus-card wb-card glow-card card-apparatus" id="apparatusCard">
+        <div class="wb-card-title" style="margin-bottom:14px; font-family:'Cinzel', serif;">
+          <span>🔬 Interactive Volumetric Apparatus &amp; Burette Assembly</span>
+          <span style="font-size:0.72rem; font-weight:700; color:var(--cyan-accent-strong); font-family:var(--font-mono);">Class-A Glassware</span>
+        </div>
+        
+        <div class="bench-layout-grid">
+          
+          <!-- LEFT SIDE: Indicator & Swirl Controls -->
+          <div class="bench-left-wing" style="display:flex;flex-direction:column;gap:10px;background:var(--card-bg-hover);border:1.5px solid var(--card-border);border-radius:12px;padding:14px;">
+            <div class="bench-wing-title" style="font-weight:800;font-size:0.78rem;color:var(--heading-color);text-transform:uppercase;letter-spacing:0.04em;display:flex;align-items:center;gap:6px;font-family:'Cinzel', serif;border-bottom:1px solid var(--card-border);padding-bottom:6px;">
+              <span>💧 Indicator</span>
+            </div>
+            <div class="bench-wing-helper" style="font-size:0.72rem; color:var(--text-secondary); line-height:1.45; background:var(--card-bg); border:1px solid var(--card-border); border-radius:6px; padding:6px 8px;">
+              Add 1 to 3 drops to detect the sharp neutralization endpoint.
+            </div>
+            <button class="btn-tactile btn-tactile-cyan btn-tactile-sm btn-cyan" id="addIndicatorBtn" onclick="addIndicatorDrops()" style="width:100%;font-weight:700;padding:8px 8px;font-size:0.78rem;line-height:1.3;" aria-label="Add drops of chemical indicator to conical flask">💧 Add Drop 1 of 3 (Phenolphthalein)</button>
+            <div id="indicatorMsg" style="font-size:0.74rem;"></div>
+
+            <div style="border-top:1px dashed var(--card-border);margin:4px 0;"></div>
+
+            <div class="bench-wing-title" style="font-weight:800;font-size:0.78rem;color:var(--heading-color);text-transform:uppercase;letter-spacing:0.04em;display:flex;align-items:center;gap:6px;font-family:'Cinzel', serif;border-bottom:1px solid var(--card-border);padding-bottom:6px;">
+              <span>🌀 Flask Motion</span>
+            </div>
+            <div class="bench-wing-helper" style="font-size:0.72rem; color:var(--text-secondary); line-height:1.45; background:var(--card-bg); border:1px solid var(--card-border); border-radius:6px; padding:6px 8px;">
+              Swirl continuously during titration to verify if color persist.
+            </div>
+            <button class="btn-tactile btn-tactile-surface btn-tactile-sm btn-action-swirl" onclick="swirlFlask()" style="width:100%;padding:8px 8px;font-size:0.78rem;font-weight:700;height:38px;" data-i18n="swirl_flask" title="Swirl conical flask to thoroughly mix delivered titrant and analyte" aria-label="Swirl conical flask">🌀 Swirl Flask</button>
+          </div>
+
+          <!-- CENTER: Photorealistic Apparatus Rig + Precision Lens + Reagents Shelf -->
+          <div class="bench-center-rig">
+            <div class="apparatus-interactive-stage">
+              <!-- Realistic Glass & Metal Apparatus SVG -->
+              <svg class="rig-svg" viewBox="0 0 240 380" xmlns="http://www.w3.org/2000/svg" style="width:155px; height:305px; flex-shrink:0;">
+                <defs>
+                  <!-- Realistic Glass Sheen -->
+                  <linearGradient id="glassSheenLab" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.65"/>
+                    <stop offset="15%" stop-color="#BAE6FD" stop-opacity="0.25"/>
+                    <stop offset="60%" stop-color="#0284C7" stop-opacity="0.08"/>
+                    <stop offset="85%" stop-color="#38BDF8" stop-opacity="0.3"/>
+                    <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.75"/>
+                  </linearGradient>
+
+                  <!-- Chrome Steel Rod & Cast Iron Stand Base -->
+                  <linearGradient id="metalChromeLab" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#334155"/>
+                    <stop offset="25%" stop-color="#94A3B8"/>
+                    <stop offset="50%" stop-color="#F8FAFC"/>
+                    <stop offset="75%" stop-color="#64748B"/>
+                    <stop offset="100%" stop-color="#1E293B"/>
+                  </linearGradient>
+                  
+                  <linearGradient id="castIronBaseLab" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#475569"/>
+                    <stop offset="20%" stop-color="#334155"/>
+                    <stop offset="80%" stop-color="#1E293B"/>
+                    <stop offset="100%" stop-color="#0F172A"/>
+                  </linearGradient>
+
+                  <linearGradient id="brassScrewLab" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#B45309"/>
+                    <stop offset="50%" stop-color="#FDE047"/>
+                    <stop offset="100%" stop-color="#78350F"/>
+                  </linearGradient>
+
+                  <!-- Liquid Gradient -->
+                  <linearGradient id="liquidGradLab" x1="0" y1="0" x2="1" y2="0">
+                    <stop id="gradStop1" offset="0%" stop-color="#38BDF8" stop-opacity="0.95"/>
+                    <stop offset="30%" stop-color="#7DD3FC" stop-opacity="0.75"/>
+                    <stop id="gradStop2" offset="70%" stop-color="#0284C7" stop-opacity="0.85"/>
+                    <stop offset="100%" stop-color="#0369A1" stop-opacity="0.95"/>
+                  </linearGradient>
+
+                  <!-- Porcelain White Titration Tile -->
+                  <linearGradient id="porcelainTileLab" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#FFFFFF"/>
+                    <stop offset="70%" stop-color="#F1F5F9"/>
+                    <stop offset="100%" stop-color="#E2E8F0"/>
+                  </linearGradient>
+
+                  <!-- Realistic Drop Shadow -->
+                  <filter id="apparatusShadowLab" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="rgba(0,0,0,0.5)"/>
+                  </filter>
+                </defs>
+
+                <!-- 1. Cast-Iron Retort Stand Base -->
+                <g filter="url(#apparatusShadowLab)">
+                  <rect x="25" y="348" width="160" height="14" rx="4" fill="url(#castIronBaseLab)" stroke="#64748B" stroke-width="1"/>
+                  <rect x="27" y="349" width="156" height="2" fill="rgba(255,255,255,0.4)" rx="1"/>
+                  <rect x="32" y="362" width="16" height="3" rx="1" fill="#000000"/>
+                  <rect x="162" y="362" width="16" height="3" rx="1" fill="#000000"/>
+                </g>
+
+                <!-- 2. Porcelain White Titration Tile (Under Flask) -->
+                <g filter="url(#apparatusShadowLab)">
+                  <rect x="80" y="338" width="95" height="12" rx="3" fill="url(#porcelainTileLab)" stroke="#CBD5E1" stroke-width="1.2"/>
+                  <rect x="82" y="339" width="91" height="2" fill="#FFFFFF" rx="1"/>
+                  <ellipse cx="129" cy="344" rx="26" ry="3" fill="rgba(56,189,248,0.15)"/>
+                </g>
+
+                <!-- 3. Vertical Chrome Steel Stand Rod -->
+                <rect x="42" y="15" width="10" height="335" rx="3" fill="url(#metalChromeLab)" stroke="#475569" stroke-width="0.8"/>
+                <rect x="45" y="15" width="2" height="335" fill="rgba(255,255,255,0.6)"/>
+
+                <!-- 4. Bosshead & Dual-Prong Articulated Clamp -->
+                <g id="clampAssembly">
+                  <rect x="38" y="90" width="18" height="24" rx="3" fill="#1E293B" stroke="#475569" stroke-width="1"/>
+                  <circle cx="34" cy="102" r="5" fill="url(#brassScrewLab)" stroke="#78350F" stroke-width="0.8"/>
+                  <line x1="34" y1="99" x2="34" y2="105" stroke="#451A03" stroke-width="1.2"/>
+                  <rect x="56" y="98" width="56" height="8" rx="2" fill="url(#metalChromeLab)" stroke="#475569" stroke-width="0.8"/>
+                  <path d="M 112,86 L 118,92 L 118,112 L 112,118" fill="none" stroke="#334155" stroke-width="4" stroke-linecap="round"/>
+                  <rect x="115" y="88" width="6" height="28" rx="2" fill="#DC2626" stroke="#991B1B" stroke-width="0.8"/>
+                  <circle cx="112" cy="102" r="4" fill="url(#brassScrewLab)"/>
+                </g>
+
+                <!-- 5. Precision 50 cm³ Borosilicate Glass Burette -->
+                <g id="buretteGlassRig">
+                  <rect x="120" y="10" width="18" height="200" rx="3" fill="url(#glassSheenLab)" stroke="#38BDF8" stroke-width="1.4" opacity="0.9"/>
+                  <rect id="buretteFill" x="122" y="10" width="14" height="196" rx="1" fill="url(#liquidGradLab)"/>
+                  <ellipse id="buretteMeniscusCap" cx="129" cy="10" rx="7" ry="1.8" fill="#7DD3FC" opacity="0.9"/>
+
+                  <!-- Millimeter Graduation Marks -->
+                  <g stroke="rgba(255,255,255,0.85)" stroke-width="0.75">
+                    <line x1="130" y1="18" x2="137" y2="18"/>
+                    <line x1="132" y1="36" x2="137" y2="36"/>
+                    <line x1="130" y1="54" x2="137" y2="54"/>
+                    <line x1="132" y1="72" x2="137" y2="72"/>
+                    <line x1="130" y1="90" x2="137" y2="90"/>
+                    <line x1="132" y1="108" x2="137" y2="108"/>
+                    <line x1="130" y1="126" x2="137" y2="126"/>
+                    <line x1="132" y1="144" x2="137" y2="144"/>
+                    <line x1="130" y1="162" x2="137" y2="162"/>
+                    <line x1="132" y1="180" x2="137" y2="180"/>
+                    <line x1="130" y1="198" x2="137" y2="198"/>
+                  </g>
+                  <g font-family="'JetBrains Mono', monospace" font-size="6" fill="#FFFFFF" font-weight="700">
+                    <text x="139" y="20">0</text>
+                    <text x="139" y="56">10</text>
+                    <text x="139" y="92">20</text>
+                    <text x="139" y="128">30</text>
+                    <text x="139" y="164">40</text>
+                    <text x="139" y="200">50</text>
+                  </g>
+                  <line x1="122" y1="12" x2="122" y2="208" stroke="#FFFFFF" stroke-width="1" opacity="0.65"/>
+                  <line x1="136" y1="12" x2="136" y2="208" stroke="#0284C7" stroke-width="0.8" opacity="0.5"/>
+
+                  <!-- Stopcock Valve Assembly -->
+                  <g id="stopcockAssembly">
+                    <rect x="117" y="210" width="24" height="12" rx="3" fill="url(#glassSheenLab)" stroke="#0284C7" stroke-width="1.2"/>
+                    <g id="stopcockValve" style="transform-origin: 129px 216px; transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);">
+                      <rect x="126" y="208" width="6" height="16" rx="2" fill="#0284C7" stroke="#38BDF8" stroke-width="0.8"/>
+                      <rect x="120" y="206" width="18" height="4" rx="1.5" fill="#F8FAFC" stroke="#94A3B8" stroke-width="0.8"/>
+                    </g>
+                    <path d="M 126,222 L 127,242 L 131,242 L 132,222 Z" fill="url(#glassSheenLab)" stroke="#38BDF8" stroke-width="1.2"/>
+                    <line x1="129" y1="222" x2="129" y2="242" stroke="#38BDF8" stroke-width="1.8"/>
+                  </g>
+                </g>
+
+                <!-- 6. Erlenmeyer Conical Flask (250 cm³) -->
+                <g id="flaskContainer" style="transform-origin: 129px 310px; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);">
+                  <!-- Transparent Glass Inner Base Tint -->
+                  <path d="M 118,256 L 118,268 L 94,334 Q 129,346 164,334 L 140,268 L 140,256 Z"
+                        fill="rgba(255,255,255,0.05)" stroke="none"/>
+
+                  <!-- Chemical Liquid Layer (filled above half the flask height ~55-65%) -->
+                  <path id="flask" d="M 107.1,298 L 94,334 Q 129,346 164,334 L 150.9,298 Q 129,294 107.1,298 Z"
+                        fill="var(--rig-body, rgba(56,189,248,0.14))" stroke="none" style="transition: fill 0.35s ease, opacity 0.35s ease; opacity: 0.9;"/>
+
+                  <!-- Meniscus Surface Ellipse -->
+                  <ellipse id="flaskLiquidSurface" cx="129" cy="298" rx="22" ry="4" fill="rgba(255,255,255,0.3)" style="transition: fill 0.35s ease, cy 0.2s ease, rx 0.2s ease;"/>
+
+                  <!-- Flask Volume Graduations (100, 150, 200 cm³) - naturally above the 25-50 cm³ liquid -->
+                  <g stroke="rgba(255,255,255,0.7)" stroke-width="0.8">
+                    <line x1="110" y1="318" x2="118" y2="318"/>
+                    <line x1="114" y1="304" x2="120" y2="304"/>
+                    <line x1="118" y1="290" x2="124" y2="290"/>
+                  </g>
+                  <g font-family="'JetBrains Mono', monospace" font-size="5" fill="rgba(255,255,255,0.85)">
+                    <text x="100" y="320">100</text>
+                    <text x="104" y="306">150</text>
+                    <text x="108" y="292">200</text>
+                  </g>
+                  <rect x="134" y="296" width="18" height="12" rx="2" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.35)" stroke-width="0.5"/>
+
+                  <!-- Glass Refraction & Sheen Highlights -->
+                  <path d="M 120,264 L 102,328 Q 112,334 122,332 L 132,270 Z" fill="rgba(255,255,255,0.16)" opacity="0.75" pointer-events="none"/>
+                  <path d="M 137,264 L 154,324" stroke="rgba(255,255,255,0.45)" stroke-width="1.2" stroke-linecap="round" fill="none" pointer-events="none"/>
+
+                  <!-- Outer Glass Wall & Rim (Always Clear Glass Structure) -->
+                  <path id="flaskGlassWall" d="M 118,256 L 118,268 L 94,334 Q 129,346 164,334 L 140,268 L 140,256 Z"
+                        fill="none" stroke="#38BDF8" stroke-width="1.8" stroke-linejoin="round" pointer-events="none"/>
+                  <ellipse cx="129" cy="254" rx="15" ry="4" fill="url(#glassSheenLab)" stroke="#38BDF8" stroke-width="1.5"/>
+                  <ellipse cx="129" cy="254" rx="11" ry="2.8" fill="rgba(15,23,42,0.6)" stroke="#0284C7" stroke-width="0.8"/>
+                </g>
+              </svg>
+
+              <!-- Attached Circular Burette Magnifying Loupe (Directly tracks meniscus on burette) -->
+              <div class="burette-loupe-mount" id="buretteLoupeMount">
+                <div class="loupe-clamp-arm" title="Loupe mounting collar attached directly to burette tube">
+                  <div class="loupe-clamp-collar"></div>
+                  <div class="loupe-clamp-bar"></div>
+                  <div class="loupe-knurled-screw"></div>
+                </div>
+
+                <div class="circular-loupe-chassis">
+                  <div class="loupe-metallic-bezel">
+                    <div class="loupe-lens-viewport" role="img" aria-label="Magnified burette scale showing liquid meniscus level at eye level">
+                      <div class="lens-glass-glare"></div>
+                      <div class="lens-crosshair-line" id="lensCrosshairLine"></div>
+                      <svg id="lensSvg" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;"></svg>
+                    </div>
+                  </div>
+
+                  <div class="loupe-telemetry-pod">
+                    <div class="lens-readout-badge" id="lensReadoutPill" aria-live="polite">
+                      <span>🎯</span> 0.00 cm³
+                    </div>
+                    <div class="lens-readout-sub" id="lensGuidanceSub">
+                      Read at <b style="color:var(--text-main);">bottom of meniscus</b>
+                    </div>
+                  </div>
+
+                  <!-- Parallax Perspective Alignment Controls (KNEC Full Marks Training) -->
+                  <div class="parallax-view-controls" title="Adjust eye-level angle relative to burette scale to eliminate parallax error">
+                    <div class="parallax-ctrl-header">
+                      <span class="parallax-label">Sightline:</span>
+                      <span class="parallax-status-chip" id="parallaxStatusChip">🎯 0° Calibrated</span>
+                    </div>
+                    <div class="parallax-btn-group" role="group" aria-label="Sightline Angle Selector">
+                      <button type="button" class="parallax-btn" id="btnParallaxLow" onclick="setParallaxAngle(-8)" title="Viewing from below (-8°): Meniscus bottom projects downward on scale, apparent volume decreases">▼ -8° Low</button>
+                      <button type="button" class="parallax-btn active" id="btnParallaxZero" onclick="setParallaxAngle(0)" title="Viewing at eye level (0°): Front and rear graduation lines align, zero parallax error">🎯 0° Level</button>
+                      <button type="button" class="parallax-btn" id="btnParallaxHigh" onclick="setParallaxAngle(8)" title="Viewing from above (+8°): Meniscus bottom projects upward on scale, apparent volume increases">▲ +8° High</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Authentic Chemistry Laboratory Reagent Bottles Shelf -->
+            <div class="bench-reagents-shelf">
+              <div class="bench-bottle-chip" title="Stock Titrant Solution B in burette">
+                <span>🫙</span>
+                <span id="pillTitrantChip">Titrant Stock (Sol. B)</span>
+              </div>
+              <div class="bench-bottle-chip" title="Analyte Solution A Aliquot in conical flask">
+                <span>🧪</span>
+                <span id="flaskLabel">25.00 cm³ HCl(aq)</span>
+              </div>
+              <div class="bench-bottle-chip" title="Indicator Dropper Bottle">
+                <span>💧</span>
+                <span id="pillIndicatorChip">Indicator Dropper</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT SIDE: Titrant Stopcock & Trial Actions -->
+          <div class="bench-right-wing" style="display:flex;flex-direction:column;gap:10px;background:var(--card-bg-hover);border:1.5px solid var(--card-border);border-radius:12px;padding:14px;">
+            
+            <!-- Stopcock Titrant Controls -->
+            <div class="bench-wing-title" style="font-weight:800;font-size:0.78rem;color:var(--heading-color);text-transform:uppercase;letter-spacing:0.04em;display:flex;align-items:center;gap:6px;font-family:'Cinzel', serif;border-bottom:1px solid var(--card-border);padding-bottom:6px;">
+              <span>🚰 Add Titrant</span>
+            </div>
+            <div class="bench-wing-helper" style="font-size:0.72rem; color:var(--text-secondary); line-height:1.45; background:var(--card-bg); border:1px solid var(--card-border); border-radius:6px; padding:6px 8px;">
+              Coarse additions early; use single drops (+0.05 cm³) near endpoint.
+            </div>
+
+            <div id="titrationControls" class="is-locked" style="display:flex;flex-direction:column;gap:6px;">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+                <button class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(1.0)" style="padding:8px 4px;font-size:0.78rem;font-weight:700;font-family:'JetBrains Mono',monospace;" title="Add 1.00 cm³ titrant (Coarse delivery)" aria-label="Add 1.00 cm³ titrant">+1 cm³</button>
+                <button class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(0.5)" style="padding:8px 4px;font-size:0.78rem;font-weight:700;font-family:'JetBrains Mono',monospace;" title="Add 0.50 cm³ titrant" aria-label="Add 0.50 cm³ titrant">+0.5 cm³</button>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+                <button class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(0.1)" style="padding:8px 4px;font-size:0.78rem;font-weight:700;font-family:'JetBrains Mono',monospace;" title="Add 0.10 cm³ titrant" aria-label="Add 0.10 cm³ titrant">+0.1 cm³</button>
+                <button class="btn-tactile btn-tactile-cyan btn-tactile-sm btn-pill-action" onclick="addVolume(0.05)" style="padding:8px 4px;font-size:0.78rem;font-weight:700;font-family:'JetBrains Mono',monospace;" title="Add single drop (0.05 cm³) for precision equivalence" aria-label="Add single drop of 0.05 cm³">💧 +0.05 cm³</button>
+              </div>
+              <button type="button" class="btn-tactile btn-tactile-cyan btn-tactile-sm btn-action-halfdrop" id="btnHalfDrop" onclick="addHalfDrop()" style="width:100%;padding:7px 4px;font-size:0.75rem;font-weight:700;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;justify-content:center;gap:4px;" title="Split a half-drop on burette tip and touch inner flask wall (+0.025 cm³)" aria-label="Add half-drop (+0.025 cm³) touching tip to flask">🖐️ Half-Drop (+0.025 cm³ · Touch Tip)</button>
+            </div>
+
+            <div style="border-top:1px dashed var(--card-border);margin:4px 0;"></div>
+
+            <!-- Endpoint & Reset -->
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <button class="btn-tactile btn-tactile-success btn-action-record" onclick="recordTrial()" style="width:100%;padding:8px 6px;font-size:0.80rem;font-weight:700;height:38px;" data-i18n="record_endpoint" title="Record the current burette volume in the KCSE Results Table once permanent endpoint is reached" aria-label="Record titration endpoint">✅ Record Endpoint</button>
+              <button class="btn-tactile btn-tactile-surface btn-action-reset" onclick="resetBurette()" style="width:100%;padding:7px 6px;font-size:0.78rem;font-weight:700;height:36px;" data-i18n="reset_burette" title="Refill burette to 0.00 cm³ and prepare a fresh conical flask aliquot for the next trial" aria-label="Reset burette and flask">🔄 Reset Burette</button>
+            </div>
+            
+            <div id="statusText" style="font-size:0.75rem;color:var(--text-secondary);text-align:center;font-weight:600;font-family:var(--font-body);padding:2px 0;">Waiting to start…</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Card 4B: Dynamic pH Titration Curve & Equivalence Buffers (Desktop & Laptop Screens Only) -->
+      <div class="wb-card card-curve-telemetry curve-desktop-only" id="titrationCurveCard" style="margin-top:20px;">
+        <div class="curve-card-header">
+          <div class="wb-card-title" style="margin:0; border:none; padding:0; font-family:'Cinzel', serif;">
+            <span>📈 Real-Time pH Titration Curve &amp; Buffer Dynamics</span>
+            <span class="curve-spec-pill" title="Class-A Physical Chemistry Telemetry">Class-A Telemetry</span>
+          </div>
+          <!-- Interactive Toggle Buttons -->
+          <div class="curve-toggles-wrap">
+            <button type="button" class="curve-toggle-btn active" id="toggleIndicatorBandsBtn" onclick="toggleCurveOverlay('indicators')" title="Toggle Indicator Transition Ranges (Phenolphthalein, Methyl Orange, Litmus)">
+              <span class="toggle-dot"></span> Indicator Bands
+            </button>
+            <button type="button" class="curve-toggle-btn active" id="toggleBufferZoneBtn" onclick="toggleCurveOverlay('buffer')" title="Toggle Buffer Capacity Zone (pKa ± 1) and Henderson-Hasselbalch Half-Equivalence">
+              <span class="toggle-dot"></span> Buffer Zone
+            </button>
+            <button type="button" class="curve-toggle-btn" id="toggleDerivativeBtn" onclick="toggleCurveOverlay('derivative')" title="Toggle 1st Derivative (dpH/dV) Inflection Rate Curve">
+              <span class="toggle-dot"></span> 1st Derivative (dpH/dV)
+            </button>
+          </div>
+        </div>
+
+        <!-- Real-Time Telemetry Bar -->
+        <div class="curve-telemetry-bar">
+          <div class="curve-telemetry-item item-ph">
+            <span class="telemetry-label">Digital pH Meter</span>
+            <div class="telemetry-val-group">
+              <span class="telemetry-ph-display" id="curveLivePH">pH 1.05</span>
+              <span class="telemetry-poh" id="curveLivePOH">pOH 12.95</span>
+            </div>
+          </div>
+          <div class="curve-telemetry-item item-ions">
+            <span class="telemetry-label">Active Ion Concentration</span>
+            <div class="telemetry-val" id="curveLiveIons">[H⁺] = 8.91 × 10⁻² M</div>
+          </div>
+          <div class="curve-telemetry-item item-volume">
+            <span class="telemetry-label">Titrant Delivered</span>
+            <div class="telemetry-val" id="curveLiveVol">0.00 cm³ <small>/ 50.00 cm³</small></div>
+          </div>
+          <div class="curve-telemetry-item item-status">
+            <span class="telemetry-label">Equilibria State</span>
+            <div class="telemetry-badge" id="curveLiveStatus">Acidic Analyte</div>
+          </div>
+        </div>
+
+        <!-- High-DPI HTML5 Canvas Chart -->
+        <div class="curve-canvas-container" id="curveCanvasContainer">
+          <canvas id="titrationCurveCanvas" width="800" height="380" aria-label="Dynamic pH Titration Curve Plot"></canvas>
+          <div id="curveTooltip" class="curve-tooltip" style="display:none;"></div>
+        </div>
+
+        <!-- Legend and Analytical Indicator Strip -->
+        <div class="curve-footer-strip">
+          <div class="curve-legend-item">
+            <span class="legend-swatch swatch-live"></span>
+            <span>Delivered Titre Path</span>
+          </div>
+          <div class="curve-legend-item">
+            <span class="legend-swatch swatch-theo"></span>
+            <span>Theoretical Equilibrium</span>
+          </div>
+          <div class="curve-legend-item">
+            <span class="legend-swatch swatch-eq"></span>
+            <span id="legendEqLabel">Equivalence Point (V_eq)</span>
+          </div>
+          <div class="curve-legend-item">
+            <span class="legend-swatch swatch-buffer"></span>
+            <span>Buffer Region (pKa ± 1)</span>
+          </div>
+          <div class="curve-legend-item">
+            <span class="legend-swatch swatch-phph"></span>
+            <span>Phenolphthalein (8.2–10.0)</span>
+          </div>
+          <div class="curve-legend-item">
+            <span class="legend-swatch swatch-mo"></span>
+            <span>Methyl Orange (3.1–4.4)</span>
+          </div>
+        </div>
+
+        <!-- Chemistry Insights Drawer -->
+        <div class="curve-chem-insight" id="curveChemInsight">
+          <div class="insight-title">
+            <span>🔬 Physical Chemistry &amp; Buffer Mechanics:</span>
+          </div>
+          <div class="insight-text" id="curveInsightText">
+            Loading reaction equilibria model...
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 5: Results Table (KCSE Format) -->
+      <div class="wb-card card-results-table" id="resultsTableCard" style="margin-top:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1.5px solid var(--card-border);padding-bottom:12px;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
+          <div class="wb-card-title" data-i18n="results_table_title" style="margin:0; border:none; padding:0; font-family:'Cinzel', serif;">
+            <span>📊 Table 1: Titre Volume Determination (KCSE Format)</span>
+            <span style="font-size:0.74rem; font-weight:700; color:var(--cyan-accent-strong); font-family:var(--font-mono); margin-left:8px;">[5.0 Marks]</span>
+          </div>
+          <span style="font-size:0.76rem; font-family:var(--font-body); font-weight:600; color:var(--text-secondary);">KNEC Rubric: Concordant within ±0.10 cm³ · Complete Table &amp; Accuracy</span>
+        </div>
+        <div class="table-responsive">
+          <div id="trialsList">
+            <div class="empty" style="text-align:center;padding:20px;color:var(--text-secondary);font-size:0.85rem;font-weight:600;">No trials recorded yet. Titrate and click &ldquo;Record Endpoint&rdquo; to populate Table 1.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 9: KCSE Volumetric Analysis Calculations (5 Questions) -->
+      <div class="wb-card card-calc" id="kcseCalcCard" style="margin-top:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;border-bottom:1.5px solid var(--card-border);padding-bottom:12px;flex-wrap:wrap;gap:10px;">
+          <div>
+            <div class="wb-card-title" id="calcSectionTitle" style="margin:0; border:none; padding:0; font-family:'Cinzel', serif;">
+              <span>🧮 Section 1 Calculations: Stoichiometry &amp; Analysis</span>
+            </div>
+            <div id="calcSectionSub" style="font-size:0.76rem; font-family:var(--font-body); font-weight:600; color:var(--text-secondary); margin-top:4px;">KNEC Examination Standard: 10.0 Marks Total (2.0 Marks per Question) · Practical Total: 15.0 Marks</div>
+          </div>
+          <span id="calcSectionBadge" style="font-size:0.76rem;font-weight:800;color:var(--acad-gold);background:var(--acad-gold-bg);padding:5px 12px;border-radius:6px;border:1.5px solid var(--amber-border);font-family:var(--font-mono);">5 Sub-Questions · [10.0 Marks]</span>
+        </div>
+        
+        <!-- Dynamic Questions Grid: Automatically populated by loadPractical() -->
+        <div id="questionsGrid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));gap:14px;">
+          <!-- Rendered dynamically per practical -->
+        </div>
+
+        <!-- Final KCSE Titration Submission Box -->
+        <div class="calc-field-group" id="submitCardBox" style="opacity:0.4;pointer-events:none;background:var(--card-bg-hover);border:1.5px solid var(--cyan-accent);border-radius:10px;padding:16px;margin-top:14px;">
+          <div class="calc-input-row" style="flex-direction:column;gap:12px;width:100%;">
+            <button class="btn-submit-titration" id="btnSubmitTitration" onclick="submitSession()" style="width:100%;height:48px;font-weight:800;font-size:0.95rem;font-family:'Cinzel', serif;" data-i18n="submit_titration">Submit Full KCSE Titration →</button>
+          </div>
+          <div id="resultMsg"></div>
+          <div id="aiFeedbackBox" style="display:none;"></div>
+          <div id="workingBox" style="display:none;"></div>
+          <button class="btn-pill-action" id="showWorkingBtn" style="display:none;margin-top:12px;width:100%;font-weight:700;" onclick="requestWorking()">🧮 Show me step-by-step calculation</button>
+        </div>
+
+      </div>
+
+      <!-- Card 1: Practical Examination Selection (Positioned at bottom for next practical selection after submission) -->
+      <div class="wb-card card-exp-select" id="cardExpSelect" style="margin-top:20px;">
+        <div class="wb-card-title">
+          <span>🔬 Select Another Practical Examination</span>
+          <span style="font-size:0.7rem; color:var(--text-tertiary); font-family:var(--font-mono); font-weight:600;">Paper 3 · Q1</span>
+        </div>
+        <p style="font-size:0.76rem; color:var(--text-secondary); margin-bottom:10px; line-height:1.45;">
+          Submitted your practical or ready to practice another volumetric analysis experiment? Choose a new practical below to reset the bench with fresh reagents.
+        </p>
+        <label for="practicalSelect" style="display:block; font-size:0.74rem; font-weight:700; color:var(--text-secondary); margin-bottom:6px;">Choose Examination Practical:</label>
+        <select id="practicalSelect" class="wb-select" onchange="resetWorkbench(this.value)" aria-label="Select KCSE practical examination experiment">
+          <option value="acidBase">Acid-Base Titration (HCl vs NaOH)</option>
+          <option value="redox">Redox Titration (Fe²⁺ vs KMnO₄)</option>
+          <option value="precipitation">Precipitation Titration (Cl⁻ vs AgNO₃, Mohr's method)</option>
+          <option value="complexometric">Complexometric Titration (Ca²⁺/Mg²⁺ vs EDTA)</option>
+          <option value="dibasic">Dibasic Acid Titration (H₂SO₄ vs NaOH)</option>
+          <option value="tribasic">Tribasic Acid Titration (H₃PO₄ vs NaOH)</option>
+          <option value="weakAcid">Weak Acid – Strong Base (CH₃COOH vs NaOH)</option>
+          <option value="weakBase">Weak Base – Strong Acid (NH₃ vs HCl)</option>
+        </select>
+        <button type="button" onclick="resetWorkbench()" class="btn-pill-action" style="width:100%; margin-top:10px; height:40px; font-size:0.80rem; font-weight:700; display:flex; align-items:center; justify-content:center; gap:6px;" title="Flushes burette, washes conical flask, and resets experimental apparatus" aria-label="Wash apparatus and reset setup">
+          🔄 Switch Practical &amp; Reset Setup
+        </button>
+      </div>
+
+    </main>
+  </div> <!-- workbench-grid -->
+</div> <!-- workbench-container -->
+
+
+
+<!-- Tutorial Overlay -->
+<div id="tutorialOverlay" class="tutorial-overlay">
+  <div id="tutorialSpotlight" class="tutorial-spotlight"></div>
+  <div id="tutorialTooltip" class="tutorial-tooltip">
+    <div class="tut-header"><span id="tutIcon"></span> <span id="tutTitle"></span></div>
+    <div class="tut-body" id="tutText"></div>
+    <div class="tut-footer">
+      <div class="tut-counter" id="tutCounter"></div>
+      <div class="tut-actions">
+        <button class="tut-skip" onclick="endTutorial()">Skip</button>
+        <button class="tut-next" id="tutNextBtn" onclick="nextTutorialStep()">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- KCSE Question 1 Exam Results Modal -->
+<div id="examResultModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:20000;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:var(--card-bg);border:2px solid #EF4444;border-radius:16px;max-width:560px;width:100%;padding:28px;box-shadow:0 12px 40px rgba(239,68,68,0.25);color:var(--text-main);">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;border-bottom:1px solid var(--card-border);padding-bottom:12px;">
+      <div>
+        <span id="examCardBadge" style="background:#EF4444;color:#FFF;padding:2px 8px;border-radius:100px;font-size:0.7rem;font-weight:800;">QUESTION 1 RESULT</span>
+        <h2 id="examCardTitle" style="font-size:1.25rem;font-weight:700;margin-top:4px;color:var(--heading-color);">Q1: Volumetric Analysis Score Card</h2>
+        <small style="color:var(--text-muted);">KNEC Chemistry Paper 3 Section 1 (15.0 Marks Total)</small>
+      </div>
+      <div style="text-align:right;">
+        <div id="examFinalGrade" style="font-size:1.8rem;font-weight:800;color:#EF4444;">Grade A</div>
+        <div id="examFinalScore" style="font-size:0.85rem;color:var(--text-muted);font-weight:700;">14.0 / 15.0 Marks</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:18px;">
+      <table class="kcse-table" style="font-size:0.82rem;width:100%;">
+        <thead>
+          <tr>
+            <th>Marking Criterion (Question 1)</th>
+            <th style="text-align:center;">Max</th>
+            <th style="text-align:center;">Awarded</th>
+          </tr>
+        </thead>
+        <tbody id="examBreakdownTableBody">
+          <!-- Filled dynamically -->
+        </tbody>
+      </table>
+    </div>
+
+    <div id="examFeedbackNotes" style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:8px;padding:12px 14px;font-size:0.82rem;line-height:1.55;color:var(--text-muted);margin-bottom:20px;">
+      <!-- Feedback text filled dynamically -->
+    </div>
+
+    <!-- Action Buttons -->
+    <div id="examModalActions" style="display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;">
+      <button class="btn" onclick="window.location.href='/student/home.html'" style="border-radius:100px;font-size:0.82rem;font-weight:700;">🏠 Dashboard</button>
+      <a href="/student/mock_exams.html" class="btn btn-primary" id="btnLaunchFullExam" style="border-radius:100px;font-size:0.82rem;font-weight:700;background:linear-gradient(135deg,#F59E0B,#D97706);color:#FFF;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">🏆 KCSE Mock Exams Hub →</a>
+      <button class="btn btn-primary" id="btnNextExamQuestion" onclick="proceedToNextExamQuestion()" style="display:none;border-radius:100px;font-size:0.82rem;font-weight:700;background:linear-gradient(135deg,#0284C7,#2563EB);color:#FFF;">Next: Q2 Salt Analysis →</button>
+    </div>
+  </div>
+</div>
+
+<script src="../shared/api.js"></script>
+<script src="../shared/chemical-safety.js"></script>
+<script src="../shared/i18n.js"></script>
+<script src="../shared/brilliant-ui.js"></script>
+<script src="../shared/tutorial-engine.js"></script>
+<script src="/shared/knec-pedagogy.js"></script>
+<script src="js/titration-workbench.js?v=120"></script>
+<script src="../shared/ai-tutor.js"></script>
+<script src="../shared/pwa-installer.js"></script>
+<script src="../shared/page-transitions.js"></script>
+<script>
+  // Initialize Brilliant Segmented Step Progress
+  if (window.BrilliantUI) {
+    window.BrilliantUI.renderSegmentedProgress('titrationStepProgress', 5, 0);
+  }
+
+  // Initialize Interactive Step-by-Step Practical Tutorial
+  if (window.TutorialEngine) {
+    window.TutorialEngine.init({
+      discipline: 'titration',
+      containerId: 'tutorialDrawer'
+    });
+  }
+
+  window.toggleBenchSettings = function(e) {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    const dropdown = document.getElementById('benchSettingsDropdown');
+    if (!dropdown) return;
+    const isHidden = dropdown.style.display === 'none' || !dropdown.style.display;
+    dropdown.style.display = isHidden ? 'flex' : 'none';
+  };
+
+  document.addEventListener('click', function(e) {
+    const dropdown = document.getElementById('benchSettingsDropdown');
+    if (dropdown && dropdown.style.display === 'flex') {
+      if (!dropdown.contains(e.target) && !e.target.closest('button[onclick*="toggleBenchSettings"]')) {
+        dropdown.style.display = 'none';
+      }
+    }
+  });
+</script>
+</body>
+</html>
+

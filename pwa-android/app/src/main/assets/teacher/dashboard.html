@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Teacher Portal — VirtuLab Kenya</title>
+<script src="/shared/auth-guard.js"></script>
+<script>
+  var t = localStorage.getItem('vlk_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', t);
+  if (window.VLKAuthGuard) {
+    VLKAuthGuard.guardPage('teacher');
+  }
+</script>
+<meta name="theme-color" content="#0F172A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VirtuLab">
+<link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/style.css">
+<link rel="stylesheet" href="../shared/pwa-installer.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="css/dashboard.css">
+
+</head>
+<body>
+
+<nav class="top-navbar">
+  <div style="display:flex;align-items:center;gap:14px;">
+    <a href="#" class="nav-brand">
+      <span class="nav-logo-icon"></span>
+      VirtuLab Kenya
+    </a>
+    <span class="brand-badge">Teacher Console · KCSE Chemistry</span>
+  </div>
+  
+  <div class="nav-actions">
+    <a href="/teacher/research_portal.html" class="btn" style="background:var(--blue-bg);color:var(--blue-accent);border:1px solid var(--blue-border);font-weight:700;">📊 Research & Efficacy</a>
+    <a href="/admin/dashboard.html" class="btn" style="background:var(--amber-bg);color:var(--amber-accent);border:1px solid var(--amber-border);font-weight:700;">🛡️ Admin Portal</a>
+    <button class="btn btn-secondary" onclick="window.print()" title="Print or save PDF class performance report">🖨️ Print Report</button>
+    
+    <!-- Compact Settings Cog Dropdown -->
+    <div style="position:relative; display:inline-block;">
+      <button type="button" class="btn" onclick="toggleTeacherSettings(event)" style="cursor:pointer; display:flex; align-items:center; gap:6px;" title="Portal Settings">
+        <span>⚙️ Settings</span>
+      </button>
+      
+      <div id="teacherSettingsDropdown" style="display:none; position:absolute; right:0; top:42px; width:240px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; box-shadow:var(--shadow-lg); z-index:10000; padding:14px; flex-direction:column; gap:10px; text-align:left;">
+        <span style="font-size:0.8rem; font-weight:800; color:var(--heading-color); margin-bottom:4px; display:block;">Appearance Theme</span>
+        <div class="theme-toggle-group" style="width:100%;">
+          <button class="theme-btn-chip" style="flex:1;" data-theme="dark" onclick="setTheme('dark'); reRenderCharts();">🌙 Dark</button>
+          <button class="theme-btn-chip" style="flex:1;" data-theme="light" onclick="setTheme('light'); reRenderCharts();">☀️ Light</button>
+          <button class="theme-btn-chip" style="flex:1;" data-theme="green" onclick="setTheme('green'); reRenderCharts();">🧪 Lab</button>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-danger" onclick="Auth.logout()">Log out</button>
+  </div>
+</nav>
+
+<div class="teacher-layout">
+  <!-- Left Sidebar Navigation -->
+  <aside class="teacher-sidebar">
+    <div class="sidebar-group-title">Dashboard &amp; Classroom</div>
+    <button class="sidebar-nav-btn active" id="btnTabOverview" onclick="switchTeacherTab('paneOverview')">
+      <span>📊 Class Overview</span>
+    </button>
+    <button class="sidebar-nav-btn" id="btnTabStudents" onclick="switchTeacherTab('paneStudents')">
+      <span>👥 Student Roster</span>
+    </button>
+
+    <div class="sidebar-group-title">Exam Studio</div>
+    <button class="sidebar-nav-btn" id="btnTabAiAssistant" onclick="switchTeacherTab('paneAiAssistant')">
+      <span style="display:flex;align-items:center;gap:6px;">🤖 Walimu AI Exam Setter <span class="pill pill-info" style="font-size:0.62rem;padding:2px 6px;margin-left:auto;">AI</span></span>
+    </button>
+    <button class="sidebar-nav-btn" id="btnTabAssignments" onclick="switchTeacherTab('paneAssignments')">
+      <span>📝 Assignments &amp; Grading</span>
+      <span class="badge-count" id="ungradedBadge" style="display:none;">0</span>
+    </button>
+
+    <div class="sidebar-group-title">KCSE Lab Modules</div>
+    <button class="sidebar-nav-btn" id="btnTabTitration" onclick="switchTeacherTab('paneTitration')">
+      <span>🧪 Volumetric Titrations</span>
+    </button>
+    <button class="sidebar-nav-btn" id="btnTabQualitative" onclick="switchTeacherTab('paneQualitative')">
+      <span>🧂 Qualitative Analysis</span>
+    </button>
+    <button class="sidebar-nav-btn" id="btnTabOrganic" onclick="switchTeacherTab('paneOrganic')">
+      <span>⚗️ Organic Chemistry</span>
+    </button>
+    <button class="sidebar-nav-btn" id="btnTabSolubility" onclick="switchTeacherTab('paneSolubility')">
+      <span>🌡️ Solubility Curves</span>
+    </button>
+    <button class="sidebar-nav-btn" id="btnTabEnergy" onclick="switchTeacherTab('paneEnergy')">
+      <span>🔥 Energy Changes</span>
+    </button>
+    <button class="sidebar-nav-btn" id="btnTabRates" onclick="switchTeacherTab('paneRates')">
+      <span>⚡ Reaction Rates</span>
+    </button>
+    <button class="sidebar-nav-btn" id="btnTabGas" onclick="switchTeacherTab('paneGas')">
+      <span>💨 Gas Preparation</span>
+    </button>
+    <button class="sidebar-nav-btn" id="btnTabComposite" onclick="switchTeacherTab('paneComposite')">
+      <span>📋 Composite Mock Exams</span>
+    </button>
+
+    <div class="sidebar-group-title">Reports & Settings</div>
+    <button class="sidebar-nav-btn" id="btnTabLeaderboard" onclick="switchTeacherTab('paneLeaderboard')">
+      <span>🏆 Leaderboard & Badges</span>
+    </button>
+    <button class="sidebar-nav-btn" id="btnTabSettings" onclick="switchTeacherTab('paneSettings')">
+      <span>⚙️ Account & Security</span>
+    </button>
+  </aside>
+
+  <!-- Main Content Viewport -->
+  <main class="teacher-content">
+    <div class="teacher-hero-card">
+      <div class="teacher-hero-left">
+        <div class="teacher-avatar-badge">👨‍🏫</div>
+        <div class="teacher-hero-meta">
+          <h1>Welcome back, <span id="teacherName">Teacher</span></h1>
+          <p>Senior Chemistry Instructor & Laboratory Practical Examiner</p>
+        </div>
+      </div>
+      <div id="teacherCodeBanner" class="teacher-code-pill-box">
+        <span style="font-size:0.78rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em;">Class Link Code:</span>
+        <code id="teacherCodePill">—</code>
+        <button class="btn btn-sm btn-primary" onclick="copyTeacherCode()" title="Copy teacher code to share with students">📋 Copy Code</button>
+      </div>
+    </div>
+
+    <!-- Tab Pane 1: Overview -->
+    <div id="paneOverview" class="tab-pane active">
+      <h2 class="section-title">📊 Class Performance Overview</h2>
+      <div id="statStrip" class="stat-strip"></div>
+      <div class="charts-row">
+        <div class="chart-card">
+          <h3>Accuracy Over Time <span style="font-weight:400;font-size:0.68rem;color:var(--text-muted);">last 30 days</span></h3>
+          <div id="trendChartWrap"><canvas id="trendChart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>By Practical Type</h3>
+          <div id="typeChartWrap"><canvas id="typeChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab Pane 2: Assignments & Grading -->
+    <div id="paneAssignments" class="tab-pane">
+
+      <!-- AI Exam Assistant Hero Quick Launch Banner -->
+      <div class="ai-hero-banner" style="margin-bottom:22px;">
+        <div class="ai-hero-title-group">
+          <div class="ai-hero-icon">🤖</div>
+          <div>
+            <h3 style="margin:0 0 4px;font-family:var(--font-heading);font-size:1.1rem;color:var(--heading-color);">Set Practical Exams in Seconds with Walimu AI Assistant</h3>
+            <p style="margin:0;font-size:0.84rem;color:var(--text-muted);">Have an exam paper? Upload it (PDF/Image/Text). Or just share an idea — our AI examiner configures the complete simulation bench, chemical stoichiometry, and KNEC marking scheme.</p>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="switchTeacherTab('paneAiAssistant')" style="background:linear-gradient(135deg, #10B981, #059669);border:none;font-weight:800;padding:10px 22px;border-radius:100px;display:flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(16,185,129,0.3);flex-shrink:0;">
+          <span>✨ Launch AI Exam Assistant →</span>
+        </button>
+      </div>
+
+      <!-- Quick Metric Counters for Assignments -->
+      <div class="stat-strip" id="assignmentStatStrip" style="margin-bottom:20px;">
+        <div class="stat-card">
+          <div class="stat-card-top">
+            <span class="stat-card-icon" style="background:var(--blue-bg);color:var(--blue-accent);">📋</span>
+            <span class="pill pill-info" style="font-size:0.68rem;">Active</span>
+          </div>
+          <div class="stat-value" id="statAssignmentsCount">0</div>
+          <div class="stat-label">Total Assignments</div>
+          <div class="stat-sub">Across all practical modules</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card-top">
+            <span class="stat-card-icon" style="background:var(--amber-bg);color:var(--amber-accent);">⏳</span>
+            <span class="pill pill-warn" style="font-size:0.68rem;">Action Req.</span>
+          </div>
+          <div class="stat-value" id="statPendingCount" style="color:var(--amber-accent);">0</div>
+          <div class="stat-label">Pending Approval</div>
+          <div class="stat-sub">Student booklets waiting for review</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card-top">
+            <span class="stat-card-icon" style="background:var(--green-bg);color:var(--green-accent);">✓</span>
+            <span class="pill pill-ok" style="font-size:0.68rem;">Released</span>
+          </div>
+          <div class="stat-value" id="statMarkedCount" style="color:var(--green-accent);">0</div>
+          <div class="stat-label">Marked & Released</div>
+          <div class="stat-sub">Scores visible on student dashboards</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-card-top">
+            <span class="stat-card-icon" style="background:rgba(124, 58, 237, 0.15);color:var(--violet-accent);">🎓</span>
+            <span class="pill" style="background:rgba(124, 58, 237, 0.15);color:var(--violet-accent);font-size:0.68rem;">KNEC Lab</span>
+          </div>
+          <div class="stat-value" id="statSubmissionsTotal">0</div>
+          <div class="stat-label">Total Submissions</div>
+          <div class="stat-sub">Completed practical lab trials</div>
+        </div>
+      </div>
+
+      <!-- Section 1: Submitted Assignments & Grading Console -->
+      <div class="console-section-card">
+        <div class="section-header-row">
+          <div class="section-header-title-group">
+            <h2>📥 Submitted Assignments & Marking Console</h2>
+            <p>Review student practical lab booklets, evaluate calculations, release KNEC marks, and export data.</p>
+          </div>
+          <div class="table-filter-pills" id="submissionFilterTabs">
+            <button class="filter-pill-btn active" id="filterTabAll" onclick="filterSubmissionsTab('all', this)">All Submissions</button>
+            <button class="filter-pill-btn" id="filterTabPending" onclick="filterSubmissionsTab('pending', this)">🟡 Pending Approval</button>
+            <button class="filter-pill-btn" id="filterTabMarked" onclick="filterSubmissionsTab('marked', this)">🟢 Marked & Released</button>
+          </div>
+        </div>
+
+        <div id="submittedAssignmentsList">
+          <div class="empty">Loading submitted assignments…</div>
+        </div>
+      </div>
+
+      <!-- Section 2: Manage Created Practical Assignments -->
+      <div class="console-section-card">
+        <div class="section-header-row">
+          <div class="section-header-title-group">
+            <h2>🛠️ Active Practical Assignments</h2>
+            <p>Monitor student completion rates, issue due date reminders, download CSV scorecards, or modify exam parameters.</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-outline btn-sm" onclick="switchTeacherTab('paneAiAssistant')">
+              <span>🤖 Walimu AI Exam Setter</span>
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="scrollToCreateAssignment()">
+              <span>➕ Create New Assignment</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="assignmentsManageList">
+          <div class="empty">Loading assignments…</div>
+        </div>
+      </div>
+
+      <!-- Section 3: Assignment Authoring Studio Form -->
+      <div class="assign-form" id="assignmentStudioCard">
+        <div class="studio-header">
+          <div class="studio-header-title">
+            <h3 id="formHeading">Create Practical Assignment</h3>
+            <span class="studio-mode-pill" id="studioModeBadge">Authoring Mode</span>
+          </div>
+          <button class="btn btn-sm btn-secondary" id="aCancelBtn" onclick="cancelEdit()" style="display:none;">✕ Cancel Edit</button>
+        </div>
+
+        <input type="hidden" id="aEditingId" value="">
+
+        <!-- Top Form Row: Title and Practical Type -->
+        <div class="row">
+          <div class="field" style="flex: 2;">
+            <label for="aTitle">📝 Assignment Title</label>
+            <input type="text" id="aTitle" class="form-control" placeholder="e.g. KCSE Chemistry Paper 3 Term 2 National Mock">
+            <span class="field-hint">A clear exam or practical title shown to your students</span>
+          </div>
+          <div class="field" style="flex: 1.2;">
+            <label for="aType">⚗️ Practical Module Type</label>
+            <select id="aType" class="form-control" onchange="toggleCompositeConfigPanel()">
+              <option value="kcseComposite">🏆 KCSE Composite Practical Exam (40 Marks Total)</option>
+              <option value="acidBase">Acid-Base Titration (Neutralization)</option>
+              <option value="redox">Redox Titration (Manganate / Iron)</option>
+              <option value="precipitation">Precipitation Titration</option>
+              <option value="complexometric">Complexometric Titration</option>
+              <option value="dibasic">Dibasic Acid Titration (H₂SO₄)</option>
+              <option value="tribasic">Tribasic Acid Titration (H₃PO₄)</option>
+              <option value="weakAcid">Weak Acid – Strong Base</option>
+              <option value="weakBase">Weak Base – Strong Acid</option>
+              <option value="qualitative">🧪 Qualitative Salt Analysis (Inorganic ID)</option>
+              <option value="organic">🧫 Organic Chemistry (Functional Groups)</option>
+              <option value="solubility">🌡️ Solubility Curves & Crystallization</option>
+              <option value="energy">🔥 Energy Changes (Enthalpy / Thermochemistry)</option>
+              <option value="rates">⚡ Reaction Rates & Kinetics</option>
+              <option value="gas">💨 Gas Preparation & Testing</option>
+            </select>
+            <span class="field-hint">Determines the virtual laboratory setup and KNEC scoring rubric</span>
+          </div>
+        </div>
+
+        <!-- Second Row: Due Date and Instructions -->
+        <div class="row" style="margin-top: 6px;">
+          <div class="field" style="flex: 1;">
+            <label for="aDue">📅 Due Date & Deadline</label>
+            <input type="date" id="aDue" class="form-control">
+            <span class="field-hint">Students receive auto-reminders before this date</span>
+          </div>
+          <div class="field" style="flex: 2;">
+            <label for="aInstructions">📋 Practical Instructions & Teacher Notes</label>
+            <input type="text" id="aInstructions" class="form-control" placeholder="e.g. Complete two concordant titres within 0.20 cm³ and record qualitative observations.">
+            <span class="field-hint">Special laboratory instructions displayed at the top of the student booklet</span>
+          </div>
+        </div>
+
+        <!-- KCSE Composite Exam Question Setter Blueprint Studio -->
+        <div id="kcseCompositeConfigPanel" class="kcse-blueprint-panel">
+          <div class="blueprint-header">
+            <div class="blueprint-header-title">
+              <span>⚙️ KCSE Composite Practical Exam Question Setter (40 Marks)</span>
+            </div>
+            <span class="blueprint-badge">KNEC Paper 3 Blueprint</span>
+          </div>
+
+          <!-- Series Template Selector Banner -->
+          <div class="field" style="margin-bottom:18px; background:var(--card-bg); padding:14px; border-radius:12px; border:1px solid var(--card-border);">
+            <label for="cfgSeriesPreset" style="font-weight:800; color:var(--amber-accent); margin-bottom:6px;">
+              📋 National Standard Mock Series Template
+            </label>
+            <select id="cfgSeriesPreset" class="form-control" onchange="applySeriesPreset()">
+              <option value="series_1">Series 1: National Classic (HCl/NaOH · Lead Nitrate · Ethanol)</option>
+              <option value="series_2">Series 2: Carbonate Stoichiometry (HCl/Na₂CO₃ · Iron Sulfate · Ethanoic Acid)</option>
+              <option value="series_3">Series 3: Redox Practical (KMnO₄/Fe²⁺ · Zinc Sulfate · Alkene)</option>
+              <option value="series_4">Series 4: Thermochemistry Enthalpy (HNO₃/KOH · Copper Sulfate · Propanol)</option>
+              <option value="series_5">Series 5: Two-Salt Separation (H₂SO₄/NaOH · ZnSO₄+BaSO₄ · Formic Acid)</option>
+              <option value="series_6">Series 6: Reaction Kinetics (H₂C₂O₄/NaOH · NH₄Cl Sublimation · Benzoic Acid)</option>
+              <option value="series_2022">KCSE 2022: National Practical (HCl/Na₂CO₃ · MgSO₄ · Propanoic Acid)</option>
+              <option value="series_2023">KCSE 2023: National Practical (H₂C₂O₄/NaOH · Ca(NO₃)₂ · Hex-1-ene)</option>
+              <option value="series_2024">KCSE 2024: National Practical (HCl/NaHCO₃ · FeCl₃ · Butan-1-ol)</option>
+              <option value="custom">✏️ Custom Modular Combination</option>
+            </select>
+            <span class="field-hint" style="margin-top:4px;">Instantly sets standard KNEC reagents across all 3 exam questions</span>
+          </div>
+
+          <!-- Question 1 Card -->
+          <div class="blueprint-question-card">
+            <div class="question-card-title">
+              <span>🧪 Question 1: Volumetric Analysis Settings</span>
+              <span class="question-marks-badge">15 Marks</span>
+            </div>
+            
+            <div class="field" style="margin-bottom:12px;">
+              <label for="cfgQ1Preset">Titration Reaction Preset</label>
+              <select id="cfgQ1Preset" class="form-control" onchange="applyQ1Preset()">
+                <option value="acidBase_monobasic">HCl + NaOH (Monobasic Acid – Monobasic Base 1:1)</option>
+                <option value="acidBase_dibasic">H₂SO₄ + 2NaOH (Dibasic Acid – Sulfuric Acid 1:2)</option>
+                <option value="acidBase_tribasic">H₃PO₄ + 3NaOH (Tribasic Acid – Phosphoric Acid 1:3)</option>
+                <option value="weakAcid">CH₃COOH + NaOH (Weak Organic Acid – Ethanoic Acid 1:1)</option>
+                <option value="weakBase">HCl + NH₃(aq) (Strong Acid – Weak Base Ammonia 1:1)</option>
+                <option value="carbonate">2HCl + Na₂CO₃ (Strong Acid – Sodium Carbonate 2:1)</option>
+                <option value="redox_kmnO4">KMnO₄ + 5FeSO₄ (Redox Titration 1:5)</option>
+                <option value="custom">✏️ Custom Reagents & Manual Ratio</option>
+              </select>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="field">
+                <label for="cfgQ1SolA">Solution A (Burette Reagent)</label>
+                <input type="text" id="cfgQ1SolA" class="form-control" value="0.10M Hydrochloric Acid (HCl)">
+              </div>
+              <div class="field">
+                <label for="cfgQ1SolB">Solution B (Conical Flask Sample)</label>
+                <input type="text" id="cfgQ1SolB" class="form-control" value="Sodium Hydroxide (NaOH) approx 0.10M">
+              </div>
+            </div>
+
+            <div class="form-grid-4" style="margin-top:6px;">
+              <div class="field">
+                <label for="cfgQ1RatioA">Moles A (nA)</label>
+                <input type="number" id="cfgQ1RatioA" class="form-control" value="1" min="1" max="10">
+              </div>
+              <div class="field">
+                <label for="cfgQ1RatioB">Moles B (nB)</label>
+                <input type="number" id="cfgQ1RatioB" class="form-control" value="1" min="1" max="10">
+              </div>
+              <div class="field">
+                <label for="cfgQ1Pipette">Pipette Volume</label>
+                <select id="cfgQ1Pipette" class="form-control">
+                  <option value="25.0">25.0 cm³ Pipette</option>
+                  <option value="20.0">20.0 cm³ Pipette</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="cfgQ1Indicator">Indicator</label>
+                <select id="cfgQ1Indicator" class="form-control">
+                  <option value="phenolphthalein">Phenolphthalein</option>
+                  <option value="methylOrange">Methyl Orange</option>
+                  <option value="screenedMethylOrange">Screened Methyl Orange</option>
+                  <option value="starch">Starch Indicator</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Question 2 & Question 3 Grid on Desktop -->
+          <div class="form-grid-2" style="margin-top:14px;">
+            <!-- Q2 Config -->
+            <div class="blueprint-question-card" style="margin-bottom:0;">
+              <div class="question-card-title">
+                <span>🧂 Question 2: Inorganic Salt Analysis</span>
+                <span class="question-marks-badge">15 Marks</span>
+              </div>
+              <div class="field">
+                <label for="cfgQ2Salt">Target Unknown Salt Sample</label>
+                <select id="cfgQ2Salt" class="form-control">
+                  <option value="Pb(NO3)2">Lead(II) Nitrate — Pb(NO₃)₂</option>
+                  <option value="CuSO4">Copper(II) Sulfate — CuSO₄</option>
+                  <option value="FeSO4">Iron(II) Sulfate — FeSO₄</option>
+                  <option value="FeCl3">Iron(III) Chloride — FeCl₃</option>
+                  <option value="ZnSO4">Zinc Sulfate — ZnSO₄</option>
+                  <option value="Al(NO3)3">Aluminum Nitrate — Al(NO₃)₃</option>
+                  <option value="MgSO4">Magnesium Sulfate — MgSO₄</option>
+                  <option value="Ca(NO3)2">Calcium Nitrate — Ca(NO₃)₂</option>
+                  <option value="CaCl2">Calcium Chloride — CaCl₂</option>
+                  <option value="NH4Cl">Ammonium Chloride — NH₄Cl</option>
+                  <option value="Na2CO3">Sodium Carbonate — Na₂CO₃</option>
+                  <option value="NaHCO3">Sodium Hydrogen Carbonate — NaHCO₃</option>
+                  <option value="random">🎲 Random Salt Assignment per Student</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Q3 Config -->
+            <div class="blueprint-question-card" style="margin-bottom:0;">
+              <div class="question-card-title">
+                <span>🧫 Question 3: Organic Functional Group</span>
+                <span class="question-marks-badge">10 Marks</span>
+              </div>
+              <div class="field">
+                <label for="cfgQ3Organic">Target Unknown Organic Sample</label>
+                <select id="cfgQ3Organic" class="form-control">
+                  <option value="Ethanol">Ethanol — C₂H₅OH (Primary Alcohol)</option>
+                  <option value="Ethanoic Acid">Ethanoic Acid — CH₃COOH (Carboxylic Acid)</option>
+                  <option value="Propanoic Acid">Propanoic Acid — CH₃CH₂COOH (Carboxylic Acid)</option>
+                  <option value="Cyclohexene">Cyclohexene — C₆H₁₀ (Unsaturated Alkene)</option>
+                  <option value="Hex-1-ene">Hex-1-ene — C₆H₁₂ (Unsaturated Alkene)</option>
+                  <option value="Butan-1-ol">Butan-1-ol — C₄H₉OH (Primary Alcohol)</option>
+                  <option value="Ethyne">Ethyne — C₂H₂ (Alkyne Gas)</option>
+                  <option value="Ethyl Ethanoate">Ethyl Ethanoate — CH₃COOC₂H₅ (Ester)</option>
+                  <option value="Hexane">Hexane — C₆H₁₄ (Saturated Alkane)</option>
+                  <option value="random">🎲 Random Organic Sample per Student</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Action Button & Feedback -->
+        <div style="margin-top:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <button class="btn btn-primary" id="aSaveBtn" onclick="saveAssignment()" style="padding:10px 24px; font-size:0.9rem;">
+              <span>🚀 Publish Practical Assignment</span>
+            </button>
+          </div>
+          <div id="assignMsg" style="margin:0;"></div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Tab Pane: Walimu AI Exam Assistant Studio -->
+    <div id="paneAiAssistant" class="tab-pane">
+      <div class="ai-hero-banner">
+        <div class="ai-hero-title-group">
+          <div class="ai-hero-icon">🤖</div>
+          <div>
+            <h2 style="margin:0 0 4px;font-family:var(--font-heading);font-size:1.4rem;color:var(--heading-color);">Walimu AI Exam Studio</h2>
+            <p style="margin:0;font-size:0.88rem;color:var(--text-muted);">AI-powered KNEC KCSE Chemistry practical exam setter, question extractor &amp; curriculum co-pilot</p>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-sm btn-secondary" onclick="openInManualStudio()" title="Switch to manual form editor">✏️ Open Manual Studio</button>
+        </div>
+      </div>
+
+      <!-- Cloud AI Status Alert (dynamically populated) -->
+      <div id="aiServiceStatusNotice" style="display:none;margin-bottom:16px;padding:12px 18px;border-radius:12px;font-size:0.85rem;line-height:1.5;"></div>
+
+      <!-- Mode Selector Pills -->
+      <div class="ai-mode-toggle-group">
+        <button class="ai-mode-btn active" id="aiModeBtnIdea" onclick="setAiExamMode('idea')">
+          <span>💡 From an Idea or Syllabus Topic</span>
+        </button>
+        <button class="ai-mode-btn" id="aiModeBtnUpload" onclick="setAiExamMode('upload')">
+          <span>📄 Upload Exam Paper (PDF / Image / Text)</span>
+        </button>
+      </div>
+
+      <!-- Container 1: Idea Mode -->
+      <div id="aiIdeaSection" class="ai-input-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+          <h3 style="margin:0;font-family:var(--font-heading);font-size:1.05rem;color:var(--heading-color);">Describe the Exam You Want to Set</h3>
+          <span style="font-size:0.75rem;color:var(--text-muted);font-weight:700;">Prompt in English or Kiswahili</span>
+        </div>
+
+        <label for="aiPromptInput" class="sr-only" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;">Exam prompt instructions</label>
+        <textarea id="aiPromptInput" class="form-control" rows="3" aria-label="Exam prompt instructions" placeholder="e.g. Set a challenging Form 4 Term 2 mock exam testing Redox titration of KMnO₄ with Mohr's salt, an unknown zinc sulfate salt, and an organic alkene test with bromine water..."></textarea>
+
+        <!-- Instant Template Chips -->
+        <div style="margin-top:12px;">
+          <span style="font-size:0.75rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;">Or pick an instant national curriculum template:</span>
+          <div class="ai-chips-wrap">
+            <button type="button" class="ai-chip" onclick="selectAiTemplate('classic')">🧪 Neutralization Classic (HCl/NaOH · Pb²⁺ · Ethanol)</button>
+            <button type="button" class="ai-chip" onclick="selectAiTemplate('redox')">⚡ Redox Practical (KMnO₄/Fe²⁺ · ZnSO₄ · Alkene)</button>
+            <button type="button" class="ai-chip" onclick="selectAiTemplate('energy')">🔥 Thermochemistry &amp; Neutralization Enthalpy</button>
+            <button type="button" class="ai-chip" onclick="selectAiTemplate('rates')">⏱️ Reaction Rates (Disappearing Cross &amp; Gas)</button>
+            <button type="button" class="ai-chip" onclick="selectAiTemplate('gas')">💨 Gas Preparation &amp; Confirmatory Tests</button>
+            <button type="button" class="ai-chip" onclick="selectAiTemplate('twosalt')">🧂 Advanced Two-Salt Separation (Merit Challenge)</button>
+          </div>
+        </div>
+
+        <!-- Options Grid -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:14px;margin-top:14px;border-top:1px solid var(--card-border);padding-top:16px;">
+          <div>
+            <label for="aiFormSelect" style="font-size:0.78rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Target Form Level</label>
+            <select id="aiFormSelect" class="form-control">
+              <option value="Form 4" selected>Form 4 (KCSE Candidate)</option>
+              <option value="Form 3">Form 3 (Senior Secondary)</option>
+              <option value="Form 2">Form 2</option>
+              <option value="Form 1">Form 1</option>
+            </select>
+          </div>
+          <div>
+            <label for="aiTypeSelect" style="font-size:0.78rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Exam Format</label>
+            <select id="aiTypeSelect" class="form-control">
+              <option value="kcseComposite" selected>🏆 KCSE Composite Mock (40 Marks, 3 Questions)</option>
+              <option value="acidBase">Acid-Base Volumetric Titration</option>
+              <option value="redox">Redox Volumetric Titration</option>
+              <option value="qualitative">🧂 Qualitative Salt Analysis</option>
+              <option value="organic">⚗️ Organic Chemistry Tests</option>
+              <option value="energy">🔥 Thermochemistry / Enthalpy</option>
+              <option value="rates">⚡ Reaction Rates &amp; Kinetics</option>
+              <option value="gas">💨 Gas Preparation &amp; Collection</option>
+            </select>
+          </div>
+          <div>
+            <label for="aiDiffSelect" style="font-size:0.78rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Difficulty Standard</label>
+            <select id="aiDiffSelect" class="form-control">
+              <option value="standard" selected>KNEC National Standard</option>
+              <option value="foundational">Foundational Revision (Supportive)</option>
+              <option value="challenge">National School Challenge (Advanced)</option>
+            </select>
+          </div>
+          <div>
+            <label for="aiDurationInput" style="font-size:0.78rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Allocated Duration</label>
+            <input type="number" id="aiDurationInput" class="form-control" value="135" min="30" max="180">
+          </div>
+        </div>
+
+        <div style="margin-top:20px;display:flex;justify-content:flex-end;">
+          <button type="button" class="btn btn-primary ai-action-btn" onclick="submitAiIdeaExam()" style="padding:12px 28px;font-size:0.92rem;font-weight:800;border-radius:100px;background:linear-gradient(135deg, #10B981, #059669);box-shadow:0 4px 14px rgba(16,185,129,0.35);">
+            <span>🚀 Generate Exam with AI</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Container 2: Document Upload Mode -->
+      <div id="aiUploadSection" class="ai-input-card" style="display:none;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <h3 style="margin:0;font-family:var(--font-heading);font-size:1.05rem;color:var(--heading-color);">Upload Physical or Digital Exam Paper</h3>
+          <span style="font-size:0.75rem;color:var(--text-muted);font-weight:700;">Multimodal Vision &amp; PDF Extraction</span>
+        </div>
+
+        <div class="ai-drop-zone" id="aiDropZone" role="button" tabindex="0" aria-label="Upload exam paper PDF, photo scan, or text file" onclick="document.getElementById('aiFileInput').click()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('aiFileInput').click();}" ondragover="handleAiDragOver(event)" ondragleave="handleAiDragLeave(event)" ondrop="handleAiFileDrop(event)">
+          <input type="file" id="aiFileInput" style="display:none;" accept=".pdf,.png,.jpg,.jpeg,.webp,.txt" multiple onchange="handleAiFileSelect(event)">
+          <div id="aiDropZoneNotice">
+            <span class="ai-drop-icon">📑</span>
+            <div style="font-weight:800;font-size:0.95rem;color:var(--heading-color);margin-bottom:4px;">Drag and drop Question Paper, Confidential Prep Guide, or multiple photo scans here</div>
+            <div style="font-size:0.8rem;color:var(--text-muted);">Supports multiple PDF, PNG, JPG, JPEG, WEBP, and TXT files · or click to browse</div>
+          </div>
+          <div id="aiFilePreviewWrap" class="ai-file-preview-card" style="display:none;flex-direction:column;gap:12px;width:100%;cursor:default;" onclick="event.stopPropagation()">
+            <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--card-border);padding-bottom:8px;width:100%;">
+              <div style="font-weight:800;font-size:0.88rem;color:var(--heading-color);display:flex;align-items:center;gap:8px;">
+                <span>Attached Exam Documents</span>
+                <span id="aiFileCountBadge" class="badge" style="background:#0d9488;color:#fff;font-size:0.72rem;padding:2px 8px;border-radius:12px;">0 files</span>
+              </div>
+              <div style="display:flex;gap:6px;">
+                <button type="button" class="btn btn-sm btn-secondary" onclick="document.getElementById('aiFileInput').click()" style="font-size:0.75rem;padding:3px 10px;border-radius:6px;font-weight:700;">
+                  ➕ Add More Files
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="clearAllAiFiles()" style="font-size:0.75rem;padding:3px 8px;border-radius:6px;">
+                  Clear All
+                </button>
+              </div>
+            </div>
+            
+            <!-- Dynamic List of Attached Document Cards -->
+            <div id="aiFilesList" style="display:flex;flex-direction:column;gap:8px;width:100%;max-height:240px;overflow-y:auto;">
+              <!-- Populated by renderFilePreview() -->
+            </div>
+
+            <div style="font-size:0.74rem;color:var(--text-muted);display:flex;align-items:center;gap:6px;padding-top:4px;border-top:1px dashed var(--card-border);width:100%;">
+              <span>💡 <b>Tip:</b> Tag each file as <b>Question Paper</b>, <b>Confidential Instructions</b>, or <b>Marking Scheme</b> so Walimu AI cross-references them accurately.</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:14px;">
+          <label for="aiPastedText" style="font-size:0.8rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Or Paste Raw Exam Text (Optional):</label>
+          <textarea id="aiPastedText" class="form-control" rows="3" placeholder="Paste questions, titration tables, or qualitative procedures directly if you prefer..."></textarea>
+        </div>
+
+        <div style="margin-bottom:18px;">
+          <label for="aiUploadNotes" style="font-size:0.8rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Teacher Notes or Special Constraints (Optional):</label>
+          <input type="text" id="aiUploadNotes" class="form-control" placeholder="e.g. Prioritize Q1 and Q2 from this paper, or adjust titration to 0.1M">
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;">
+          <button type="button" class="btn btn-primary ai-action-btn" onclick="submitAiPaperUpload()" style="padding:12px 28px;font-size:0.92rem;font-weight:800;border-radius:100px;background:linear-gradient(135deg, #10B981, #059669);box-shadow:0 4px 14px rgba(16,185,129,0.35);">
+            <span>⚡ Analyze Paper &amp; Set Exam</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Animated Generating State -->
+      <div id="aiGeneratingState" class="ai-generating-overlay" role="status" aria-live="polite" style="display:none;">
+        <div class="ai-pulse-spinner"></div>
+        <div style="font-weight:800;font-size:1.1rem;font-family:var(--font-heading);color:var(--heading-color);" id="aiGenStatusText">Synthesizing KNEC Chemistry Exam...</div>
+        <div style="font-size:0.82rem;color:var(--text-muted);">Walimu AI is calculating balanced chemical stoichiometry, unknown salt tests, and official mark rubrics</div>
+      </div>
+
+      <!-- Exam Results & Interactive Studio -->
+      <div id="aiResultsSection" class="ai-results-wrapper" style="display:none;">
+        
+        <!-- Summary & Actions Header -->
+        <div class="ai-results-header">
+          <div style="flex:1;min-width:280px;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap;">
+              <span class="badge" style="background:#10B981;color:#fff;" id="resBadgeForm">Form 4</span>
+              <span class="badge" style="background:rgba(14,165,233,0.2);color:#0284C7;" id="resBadgeType">🏆 Composite 40M</span>
+              <span class="badge" style="background:rgba(245,158,11,0.2);color:#D97706;" id="resBadgeDuration">135 Mins</span>
+            </div>
+            <input type="text" id="resExamTitle" class="form-control" aria-label="Exam Title" style="font-size:1.15rem;font-weight:800;font-family:var(--font-heading);color:var(--heading-color);background:transparent;border:1px dashed var(--card-border);padding:6px 10px;" value="KCSE Chemistry Practical Examination">
+          </div>
+          
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button type="button" class="btn btn-outline" onclick="exportAiExamJson()" title="Download JSON blueprint">
+              <span>💾 Export JSON</span>
+            </button>
+            <button type="button" class="btn btn-outline" onclick="printAiExamBooklet()" title="Print complete exam booklet">
+              <span>🖨️ Print Booklet</span>
+            </button>
+            <button type="button" class="btn btn-primary" onclick="publishAiExamToClass()" style="background:linear-gradient(135deg, #10B981, #059669);font-weight:800;box-shadow:0 4px 12px rgba(16,185,129,0.35);">
+              <span>🚀 Publish Exam to Class</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 Sub-Tabs Strip -->
+        <div class="ai-subtab-strip" role="tablist" aria-label="AI Exam Assistant View Tabs">
+          <button type="button" class="ai-subtab-btn active" id="subTabBtn_blueprint" role="tab" aria-selected="true" aria-controls="subTabPane_blueprint" onclick="switchAiResultSubTab('blueprint')">
+            <span>⚙️ Simulation Blueprint</span>
+          </button>
+          <button type="button" class="ai-subtab-btn" id="subTabBtn_studentPaper" role="tab" aria-selected="false" aria-controls="subTabPane_studentPaper" onclick="switchAiResultSubTab('studentPaper')">
+            <span>📜 Student Question Paper</span>
+          </button>
+          <button type="button" class="ai-subtab-btn" id="subTabBtn_markingScheme" role="tab" aria-selected="false" aria-controls="subTabPane_markingScheme" onclick="switchAiResultSubTab('markingScheme')">
+            <span>🎯 KNEC Marking Scheme</span>
+          </button>
+          <button type="button" class="ai-subtab-btn" id="subTabBtn_technicianGuide" role="tab" aria-selected="false" aria-controls="subTabPane_technicianGuide" onclick="switchAiResultSubTab('technicianGuide')">
+            <span>🧪 Lab Technician Instructions</span>
+          </button>
+        </div>
+
+        <!-- Tab Contents -->
+        <div id="subTabPane_blueprint" role="tabpanel" aria-labelledby="subTabBtn_blueprint"></div>
+        <div id="subTabPane_studentPaper" role="tabpanel" aria-labelledby="subTabBtn_studentPaper" style="display:none;"></div>
+        <div id="subTabPane_markingScheme" role="tabpanel" aria-labelledby="subTabBtn_markingScheme" style="display:none;"></div>
+        <div id="subTabPane_technicianGuide" role="tabpanel" aria-labelledby="subTabBtn_technicianGuide" style="display:none;"></div>
+
+        <!-- Conversational Refinement Drawer ("Walimu AI Co-Pilot") -->
+        <div class="ai-refine-drawer">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <span style="font-size:1.1rem;">💬</span>
+            <span style="font-weight:800;font-size:0.88rem;color:var(--heading-color);">Refine with Walimu AI Co-Pilot</span>
+            <span style="font-size:0.75rem;color:var(--text-muted);margin-left:auto;">Need modifications? Press Enter to refine:</span>
+          </div>
+          
+          <div class="ai-refine-input-row">
+            <input type="text" id="aiRefineInput" class="ai-refine-input" aria-label="Walimu AI Co-Pilot instructions" placeholder="e.g. 'Use 20 cm³ pipette instead', 'Change indicator to methyl orange', 'Replace lead with zinc'..." onkeydown="if(event.key==='Enter'){event.preventDefault();submitAiRefinement();}">
+            <button type="button" class="btn btn-primary" onclick="submitAiRefinement()" style="padding:9px 18px;font-weight:800;border-radius:8px;">
+              <span>Refine ⚡</span>
+            </button>
+          </div>
+
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;">
+            <span style="font-size:0.72rem;font-weight:700;color:var(--text-muted);align-self:center;">Quick suggestions:</span>
+            <button type="button" class="ai-chip" style="font-size:0.72rem;padding:3px 10px;" onclick="applyRefineChip('Change the concentration of Solution A to 0.05M')">Conc A: 0.05M</button>
+            <button type="button" class="ai-chip" style="font-size:0.72rem;padding:3px 10px;" onclick="applyRefineChip('Change the concentration of Solution A to 0.20M')">Conc A: 0.20M</button>
+            <button type="button" class="ai-chip" style="font-size:0.72rem;padding:3px 10px;" onclick="applyRefineChip('Change pipette to 20 cm³')">20 cm³ Pipette</button>
+            <button type="button" class="ai-chip" style="font-size:0.72rem;padding:3px 10px;" onclick="applyRefineChip('Use Methyl Orange indicator')">Methyl Orange</button>
+            <button type="button" class="ai-chip" style="font-size:0.72rem;padding:3px 10px;" onclick="applyRefineChip('Change unknown salt to Zinc Sulfate')">Zinc Sulfate</button>
+            <button type="button" class="ai-chip" style="font-size:0.72rem;padding:3px 10px;" onclick="applyRefineChip('Change organic sample to Ethanoic Acid')">Ethanoic Acid</button>
+            <button type="button" class="ai-chip" style="font-size:0.72rem;padding:3px 10px;" onclick="applyRefineChip('Add strict warning about safety goggles')">Safety Caution</button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Tab Pane 3: Students -->
+    <div id="paneStudents" class="tab-pane">
+      <div class="roster-header-bar">
+        <div>
+          <h2 class="section-title" style="margin:0 0 4px 0;">👥 Class Roster & Student Performance</h2>
+          <p class="hint" style="margin:0;">Manage enrolled students, sync class rosters, review practical trial metrics, and issue credentials.</p>
+        </div>
+        <div class="roster-header-actions">
+          <div class="teacher-code-badge">
+            <span class="tc-label">Class Code:</span>
+            <code id="teacherCodeRosterPill" class="tc-code">—</code>
+            <button class="btn btn-sm" onclick="copyTeacherCode()" title="Copy Teacher Code">📋 Copy</button>
+          </div>
+          <button class="btn btn-primary" onclick="openBulkImportModal()">
+            <span>📥</span> Bulk Import CSV / Excel
+          </button>
+          <button class="btn" onclick="downloadCsvTemplate()" title="Download a pre-formatted CSV template">
+            <span>📄</span> Template
+          </button>
+          <button class="btn" onclick="exportClassRosterCSV()" title="Export current student roster to CSV">
+            <span>📤</span> Export Roster
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Roster Stat Strip -->
+      <div class="roster-stat-strip" id="rosterStatStrip">
+        <div class="stat-card">
+          <div class="stat-num" id="statTotalStudents">0</div>
+          <div class="stat-label">Enrolled Students</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="statFormBreakdown" style="font-size:0.95rem; display:flex; gap:6px; justify-content:center; align-items:center; flex-wrap:wrap;">
+            <span title="Form 1" class="form-stat-pill">F1: <b id="statF1">0</b></span>
+            <span title="Form 2" class="form-stat-pill">F2: <b id="statF2">0</b></span>
+            <span title="Form 3" class="form-stat-pill">F3: <b id="statF3">0</b></span>
+            <span title="Form 4" class="form-stat-pill">F4: <b id="statF4">0</b></span>
+          </div>
+          <div class="stat-label">Form Breakdown</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="statClassAccuracy" style="color:var(--green-accent);">0%</div>
+          <div class="stat-label">Class Avg Accuracy</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="statTotalPracticals" style="color:var(--blue-accent);">0</div>
+          <div class="stat-label">Practicals Completed</div>
+        </div>
+      </div>
+
+      <!-- Roster Search & Filter Toolbar -->
+      <div class="roster-filter-toolbar">
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="rosterSearchInput" class="roster-search-input" placeholder="Search students by name or email..." oninput="filterRoster()">
+          <button type="button" id="rosterSearchClear" class="search-clear-btn" onclick="clearRosterSearch()" style="display:none;">✕</button>
+        </div>
+        <div class="filter-controls">
+          <select id="rosterFormFilter" class="filter-select" onchange="filterRoster()">
+            <option value="">All Forms (Form 1 – 4)</option>
+            <option value="Form 1">Form 1</option>
+            <option value="Form 2">Form 2</option>
+            <option value="Form 3">Form 3</option>
+            <option value="Form 4">Form 4</option>
+          </select>
+          <select id="rosterSortFilter" class="filter-select" onchange="filterRoster()">
+            <option value="name_asc">Sort: Name (A → Z)</option>
+            <option value="name_desc">Sort: Name (Z → A)</option>
+            <option value="practicals_desc">Sort: Most Practicals Done</option>
+            <option value="accuracy_desc">Sort: Highest Accuracy</option>
+            <option value="recent_active">Sort: Recently Active</option>
+          </select>
+          <button class="btn btn-sm" onclick="loadStudents()" title="Refresh Roster">🔄 Refresh</button>
+        </div>
+      </div>
+
+      <!-- Enriched Student List Container -->
+      <div id="studentsList" class="roster-student-list">
+        <div class="empty">Loading student roster…</div>
+      </div>
+    </div>
+
+    <!-- Tab Pane 4: Titration Sessions -->
+    <div id="paneTitration" class="tab-pane">
+      <h2 class="section-title">🧪 Volumetric Titration Sessions</h2>
+      <div class="filters">
+        <select id="filterType">
+          <option value="">All titration types</option>
+          <option value="acidBase">Acid-Base Titration</option>
+          <option value="redox">Redox Titration</option>
+          <option value="precipitation">Precipitation Titration</option>
+          <option value="complexometric">Complexometric Titration</option>
+          <option value="dibasic">Dibasic Acid Titration</option>
+          <option value="tribasic">Tribasic Acid Titration</option>
+          <option value="weakAcid">Weak Acid – Strong Base</option>
+          <option value="weakBase">Weak Base – Strong Acid</option>
+        </select>
+        <input type="text" id="filterClass" placeholder="Filter by form, e.g. Form 3">
+        <button class="btn btn-primary" onclick="applyFilters()">Apply Filter</button>
+      </div>
+      <div id="sessionsBox"><div class="empty">Loading titration sessions…</div></div>
+      <div id="paginationBox" style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:12px;"></div>
+    </div>
+
+    <!-- Tab Pane 5: Qualitative Sessions -->
+    <div id="paneQualitative" class="tab-pane">
+      <h2 class="section-title">🧂 Qualitative Salt Analysis Sessions</h2>
+      <p class="hint" style="margin-bottom:14px;">All unknown-salt cation/anion identification sessions completed by your students.</p>
+      <div id="qualSessionsBox"><div class="empty">Loading qualitative sessions…</div></div>
+    </div>
+
+    <!-- Tab Pane 6: Organic Sessions -->
+    <div id="paneOrganic" class="tab-pane">
+      <h2 class="section-title">⚗️ Organic Chemistry Sessions</h2>
+      <p class="hint" style="margin-bottom:14px;">All functional-group identification sessions completed by your students.</p>
+      <div id="organicSessionsBox"><div class="empty">Loading organic sessions…</div></div>
+    </div>
+
+    <!-- Tab Pane: Solubility Curves -->
+    <div id="paneSolubility" class="tab-pane">
+      <h2 class="section-title">🌡️ Solubility Curves & Crystallization Sessions</h2>
+      <p class="hint" style="margin-bottom:14px;">All crystallization temperature determinations and KNEC graph sessions completed by your students.</p>
+      <div id="solubilitySessionsBox"><div class="empty">Loading solubility sessions…</div></div>
+    </div>
+
+    <!-- Tab Pane: Energy Changes / Thermochemistry -->
+    <div id="paneEnergy" class="tab-pane">
+      <h2 class="section-title">🔥 Energy Changes in Reactions (Thermochemistry)</h2>
+      <p class="hint" style="margin-bottom:14px;">All enthalpy determination sessions (neutralization, displacement, solution, combustion) and 15-mark rubrics.</p>
+      <div id="energySessionsBox"><div class="empty">Loading energy sessions…</div></div>
+    </div>
+
+    <!-- Tab Pane: Reaction Rates & Chemical Kinetics -->
+    <div id="paneRates" class="tab-pane">
+      <h2 class="section-title">⚡ Reaction Rates & Chemical Kinetics Sessions</h2>
+      <p class="hint" style="margin-bottom:14px;">All disappearing cross timing runs, gas syringe kinetics, mass loss, catalysts, and 15-mark KNEC collision theory scorecards.</p>
+      <div id="ratesSessionsBox"><div class="empty">Loading reaction rates sessions…</div></div>
+    </div>
+
+    <!-- Tab Pane: Gas Preparation & Collection -->
+    <div id="paneGas" class="tab-pane">
+      <h2 class="section-title">💨 Gas Preparation & Collection Sessions</h2>
+      <p class="hint" style="margin-bottom:14px;">All inorganic gas synthesis, drying agent selections, collection apparatus setups, and confirmatory testing scorecards.</p>
+      <div id="gasSessionsBox"><div class="empty">Loading gas preparation sessions…</div></div>
+    </div>
+
+    <!-- Tab Pane 7: Composite Exams -->
+    <div id="paneComposite" class="tab-pane">
+      <h2 class="section-title">📋 KCSE Composite Practical Exams (40 Marks)</h2>
+      <p class="hint" style="margin-bottom:14px;">Full KCSE Paper 3 Mock Examinations completed by your students with Q1 (15m), Q2 (15m), and Q3 (10m) breakdown.</p>
+      <div id="compositeClassDiagnostics" style="margin-bottom:18px;"></div>
+      <div id="compositeSessionsBox"><div class="empty">Loading composite exam sessions…</div></div>
+    </div>
+
+    <!-- Tab Pane 8: Leaderboard & Badges -->
+    <div id="paneLeaderboard" class="tab-pane">
+      <h2 class="section-title">🏆 Class Leaderboard <span style="font-weight:400;font-size:0.72rem;color:var(--text-muted);">by accuracy, min. 3 sessions</span></h2>
+      <div id="leaderboardBox" style="margin-bottom:32px;"><div class="empty">Loading leaderboard…</div></div>
+
+      <h2 class="section-title">🎖️ Unlocked Class Badges</h2>
+      <div id="classBadgesList"><div class="empty">Loading badges…</div></div>
+    </div>
+
+    <!-- Tab Pane 9: Settings & Profile -->
+    <div id="paneSettings" class="tab-pane">
+      <h2 class="section-title">⚙️ Instructor Profile & Account Settings</h2>
+      
+      <div style="background:var(--card-bg); border:1.5px solid var(--card-border); border-radius:20px; padding:24px; max-width:680px; box-shadow:var(--shadow-sm); margin-bottom:24px;">
+        
+        <!-- Profile Identity Header -->
+        <div style="display:flex; align-items:center; gap:16px; border-bottom:1px solid var(--card-border); padding-bottom:16px; margin-bottom:20px;">
+          <div style="width:54px; height:54px; border-radius:50%; background:linear-gradient(135deg, #10B981 0%, #059669 100%); border:2px solid var(--green-accent); display:flex; align-items:center; justify-content:center; font-size:1.6rem; color:#FFF;">
+            👨‍🏫
+          </div>
+          <div>
+            <div style="font-weight:900; font-size:1.2rem; color:var(--heading-color); font-family:var(--font-heading);" id="tProfHeaderName">Teacher Instructor</div>
+            <div style="font-size:0.8rem; color:var(--green-accent); font-weight:700;">
+              <span>👨‍🏫 Verified Chemistry Instructor</span> · <span id="tProfHeaderEmail" style="color:var(--text-muted);">teacher@virtulab.ke</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Personal Details Inputs -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px;">
+          <div>
+            <label for="tProfInputName" style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:4px;">Full Name</label>
+            <input type="text" id="tProfInputName" class="form-control" placeholder="e.g. Dr. Jane Mutua" style="font-weight:700;">
+          </div>
+          <div>
+            <label for="tProfInputSchool" style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:4px;">School / Institution Code</label>
+            <input type="text" id="tProfInputSchool" class="form-control" placeholder="e.g. KCS-MANGU-8421" style="font-weight:700;">
+          </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="saveTeacherProfileDetails()" style="padding:10px 22px; font-weight:800; border-radius:100px; width:100%; margin-bottom:20px;">Save Profile Information ✓</button>
+        <div id="tProfMsg" style="margin-bottom:14px; text-align:center;"></div>
+
+        <!-- Security & Password -->
+        <h3 style="font-family:var(--font-heading); font-size:1rem; color:var(--heading-color); border-top:1px solid var(--card-border); padding-top:16px; margin-bottom:14px;">🔒 Update Account Security Password</h3>
+        <div class="field" style="margin-bottom:10px;">
+          <label for="pwCurrent" style="font-size:0.8rem; font-weight:700;">Current Password</label>
+          <input type="password" id="pwCurrent" class="form-control" placeholder="Enter current security password">
+        </div>
+        <div class="field" style="margin-bottom:14px;">
+          <label for="pwNew" style="font-size:0.8rem; font-weight:700;">New Password</label>
+          <input type="password" id="pwNew" class="form-control" placeholder="Enter new password (min 6 characters)">
+        </div>
+        <button class="btn btn-primary" onclick="submitChangePassword()" style="padding:10px 22px; font-weight:800; border-radius:100px; width:100%;">Update Security Password 🔐</button>
+        <div id="pwMsg" style="margin-top:10px; text-align:center;"></div>
+
+        <!-- Web Push Notifications -->
+        <h3 style="font-family:var(--font-heading); font-size:1rem; color:var(--heading-color); border-top:1px solid var(--card-border); padding-top:16px; margin-bottom:14px;">🔔 Web Push Notifications & Examiner Alerts</h3>
+        <div style="background:var(--bg-dark); border:1px solid var(--card-border); border-radius:12px; padding:14px; margin-bottom:18px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+            <div>
+              <div style="font-weight:800; font-size:0.86rem; color:var(--heading-color);">Real-Time Assignment Alerts</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);" id="tPushStatusText" class="vlk-push-status-text">Receive device alerts when students submit practicals and mock exams</div>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <button type="button" class="vlk-push-test-btn btn btn-xs" id="tPushTestBtn" onclick="VLKPush.sendTestNotification()" style="display:none; padding:6px 12px; font-size:0.75rem; border-radius:100px;">🔔 Test Alert</button>
+              <button type="button" class="vlk-push-toggle-btn btn btn-secondary" id="tPushToggleBtn" onclick="VLKPush.toggle()" style="padding:6px 14px; font-size:0.78rem; font-weight:700; border-radius:100px;">Enable Alerts</button>
+            </div>
+          </div>
+          <div style="margin-top:8px; border-top:1px dashed var(--card-border); padding-top:8px; text-align:right;">
+            <a href="javascript:void(0)" id="tPushBatteryGuideBtn" class="vlk-push-guide-btn" onclick="VLKPush.openBatteryGuideModal()" style="font-size:0.74rem; color:var(--cyan-accent); text-decoration:none; display:none; align-items:center; gap:4px; justify-content:flex-end;">
+              <span>⚡ Mobile Battery &amp; Notification Optimization Guide</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Account Actions -->
+        <div style="border-top:1px solid var(--card-border); padding-top:16px; margin-top:20px; display:flex; gap:12px;">
+          <button class="btn" onclick="exportTeacherClassReportCSV()" style="flex:1; justify-content:center; padding:10px; font-weight:700;">📥 Export Class CSV Report</button>
+          <button class="btn" onclick="Auth.logout()" style="flex:1; justify-content:center; background:rgba(239, 68, 68, 0.15); color:var(--red-accent); border:1px solid var(--red-accent); padding:10px; font-weight:800;">🚪 Log Out</button>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Modal: Student Performance Drill-Down -->
+<div id="studentDrilldownModal" class="modal-overlay" style="display:none;">
+  <div class="modal-card">
+    <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--card-border);padding-bottom:14px;margin-bottom:18px;">
+      <h3 style="margin:0;font-family:var(--font-heading);font-size:1.15rem;color:var(--heading-color);" id="drillStudentName">Student Performance Scorecard</h3>
+      <button class="btn" onclick="closeStudentDrilldownModal()">✕ Close</button>
+    </div>
+    <div id="drillModalBody">
+      <div class="empty">Loading student scorecard…</div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Teacher Bulk Student CSV Import & Class Sync -->
+<div id="bulkImportModal" class="modal-overlay" style="display:none;" onclick="handleBulkModalOverlayClick(event)">
+  <div class="modal-card modal-card-large" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div class="modal-icon-badge">📥</div>
+        <div>
+          <h3 class="modal-title">Bulk Student CSV Import & Class Roster Sync</h3>
+          <p class="modal-subtitle">Quickly register and link your entire class from CSV files or directly from Excel / Google Sheets.</p>
+        </div>
+      </div>
+      <button class="btn modal-close-btn" onclick="closeBulkImportModal()">✕</button>
+    </div>
+
+    <!-- Import Step 1: Data Input & Configuration -->
+    <div id="importInputSection">
+      <div class="import-tabs-nav">
+        <button class="import-tab-btn active" id="tabBtnDropzone" onclick="switchImportTab('dropzone')">📁 Upload CSV / Text File</button>
+        <button class="import-tab-btn" id="tabBtnPaste" onclick="switchImportTab('paste')">📋 Paste Excel / Google Sheets Rows</button>
+      </div>
+
+      <!-- Tab Content: File Dropzone -->
+      <div id="tabContentDropzone" class="import-tab-content active">
+        <div class="csv-drop-zone" id="csvDropZone" onclick="document.getElementById('csvFileInput').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDropFile(event)">
+          <input type="file" id="csvFileInput" accept=".csv,text/csv,text/plain" style="display:none;" onchange="handleCsvFileSelected(event)">
+          <div class="drop-zone-icon">📄</div>
+          <div class="drop-zone-title">Click to browse or drag & drop student CSV file here</div>
+          <div class="drop-zone-hint">Supports comma (,), semicolon (;), or tab-delimited files (.csv, .txt)</div>
+          <div id="selectedFileNameBadge" class="selected-file-badge" style="display:none;"></div>
+        </div>
+      </div>
+
+      <!-- Tab Content: Copy-Paste -->
+      <div id="tabContentPaste" class="import-tab-content">
+        <div class="paste-zone-header">
+          <label for="csvPasteArea" class="field-label">Copy & paste rows directly from your spreadsheet:</label>
+          <button class="btn btn-sm" onclick="insertSamplePasteData()">Load Sample Rows</button>
+        </div>
+        <textarea id="csvPasteArea" class="csv-paste-textarea" rows="6" placeholder="Example:&#10;Kamau Brian&#9;kamau.brian@school.ac.ke&#9;Form 3&#10;Achieng Grace&#9;achieng.grace@school.ac.ke&#9;Form 3&#10;Wanjiku Mercy&#9;wanjiku.mercy@school.ac.ke&#9;Form 4" oninput="handlePasteChange()"></textarea>
+      </div>
+
+      <!-- Import Defaults Configuration Strip -->
+      <div class="import-config-strip">
+        <div class="config-field">
+          <label for="defaultFormSelect">Default Class Form (if missing in row):</label>
+          <select id="defaultFormSelect" class="form-select" onchange="reparseCurrentInput()">
+            <option value="Form 3" selected>Form 3</option>
+            <option value="Form 1">Form 1</option>
+            <option value="Form 2">Form 2</option>
+            <option value="Form 4">Form 4</option>
+          </select>
+        </div>
+        <div class="config-field">
+          <label for="defaultPasswordInput">Initial Password Override (optional):</label>
+          <input type="text" id="defaultPasswordInput" class="form-input" placeholder="VirtuLab2026!" value="VirtuLab2026!" oninput="reparseCurrentInput()">
+          <span class="field-hint">Students can change this password after first login.</span>
+        </div>
+      </div>
+
+      <!-- Step 2: Pre-Flight Validation Preview -->
+      <div id="csvPreviewSection" style="display:none; margin-top:20px;">
+        <div class="preview-header-bar">
+          <h4 style="margin:0; font-size:0.95rem; color:var(--heading-color);">Pre-Flight Validation Preview</h4>
+          <div class="preview-badges-summary" id="previewBadgesSummary">
+            <!-- Badges dynamically inserted -->
+          </div>
+        </div>
+        <div class="preview-table-wrapper">
+          <table class="preview-table">
+            <thead>
+              <tr>
+                <th style="width:50px;">#</th>
+                <th>Student Full Name</th>
+                <th>Email Address</th>
+                <th>Form</th>
+                <th>Initial Password</th>
+                <th>Validation Status</th>
+              </tr>
+            </thead>
+            <tbody id="csvPreviewTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Import Action Footer -->
+      <div class="modal-footer" style="margin-top:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <div style="font-size:0.83rem; color:var(--text-muted);" id="importStatusNote">
+          Ready to import valid students into your class.
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn" onclick="resetBulkImportForm()">Reset / Clear</button>
+          <button class="btn btn-primary" id="btnSubmitBulkImport" onclick="executeBulkImport()" disabled>
+            <span>📥</span> Import Valid Students
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Success & Printable Credential Slips -->
+    <div id="importSuccessSection" style="display:none;">
+      <div class="import-success-banner">
+        <div class="success-icon">🎉</div>
+        <div>
+          <h4 class="success-title" id="importSuccessTitle">Roster Synchronized Successfully!</h4>
+          <p class="success-desc" id="importSuccessDesc">All valid student accounts have been registered and linked to your class.</p>
+        </div>
+      </div>
+
+      <div class="credentials-action-bar">
+        <div>
+          <h4 style="margin:0 0 4px 0; color:var(--heading-color);">Printable Student Credential Slips</h4>
+          <p class="hint" style="margin:0;">Hand out these slips during practical lab periods so students can immediately sign in.</p>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn" onclick="copyCredentialsList()">📋 Copy All (Text)</button>
+          <button class="btn btn-primary" onclick="printStudentCredentialSlips()">🖨️ Print Credential Handouts</button>
+          <button class="btn" onclick="closeBulkImportModal()">✓ Done</button>
+        </div>
+      </div>
+
+      <!-- Credential Slips Cards Container -->
+      <div class="credential-slips-grid" id="credentialSlipsGrid">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Print-Only Dedicated Container for Student Credential Slips -->
+<div id="credentialPrintArea" style="display:none;"></div>
+
+<!-- Print-Only Dedicated Container for Official KNEC Marked Scripts -->
+<div id="teacherKnecPrintArea" style="display:none;"></div>
+
+<script src="../student/js/composite-engine.js?v=120"></script>
+<script src="../shared/api.js?v=120"></script>
+<script src="../shared/notifications-engine.js?v=120"></script>
+<script src="../shared/push-manager.js?v=120"></script>
+<script src="js/teacher-dashboard.js?v=120"></script>
+<script src="js/ai-exam-assistant.js?v=120"></script>
+<script>
+  function switchTeacherTab(tabId) {
+    document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.sidebar-nav-btn').forEach(el => el.classList.remove('active'));
+
+    const pane = document.getElementById(tabId);
+    if (pane) pane.classList.add('active');
+
+    const btnMap = {
+      'paneOverview': 'btnTabOverview',
+      'paneAssignments': 'btnTabAssignments',
+      'paneAiAssistant': 'btnTabAiAssistant',
+      'paneStudents': 'btnTabStudents',
+      'paneTitration': 'btnTabTitration',
+      'paneQualitative': 'btnTabQualitative',
+      'paneOrganic': 'btnTabOrganic',
+      'paneSolubility': 'btnTabSolubility',
+      'paneEnergy': 'btnTabEnergy',
+      'paneRates': 'btnTabRates',
+      'paneGas': 'btnTabGas',
+      'paneComposite': 'btnTabComposite',
+      'paneLeaderboard': 'btnTabLeaderboard',
+      'paneSettings': 'btnTabSettings'
+    };
+
+    const btnId = btnMap[tabId];
+    if (btnId) {
+      const btn = document.getElementById(btnId);
+      if (btn) btn.classList.add('active');
+    }
+  }
+
+
+
+  function toggleTeacherSettings(e) {
+    if (e) e.stopPropagation();
+    const dropdown = document.getElementById('teacherSettingsDropdown');
+    if (!dropdown) return;
+    const show = dropdown.style.display === 'none' || !dropdown.style.display;
+    dropdown.style.display = show ? 'block' : 'none';
+  }
+  document.addEventListener('click', function(e) {
+    const dropdown = document.getElementById('teacherSettingsDropdown');
+    if (dropdown && dropdown.style.display === 'block') {
+      if (!dropdown.contains(e.target) && !e.target.closest('button[onclick*="toggleTeacherSettings"]')) {
+        dropdown.style.display = 'none';
+      }
+    }
+  });
+</script>
+<script src="../shared/pwa-installer.js"></script>
+<script src="../shared/page-transitions.js"></script>
+</body>
+</html>
+

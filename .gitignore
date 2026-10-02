@@ -10,3 +10,9 @@ Thumbs.db
 ~$*
 *~
 *.apk
+.gradle/
+**/build/
+pwa-android/.gradle/
+pwa-android/app/build/
+pwa-android/local.properties
+pwa-android/.idea/

@@ -1,0 +1,1225 @@
+/* ============================================================
+   VirtuLab Kenya — Visual Skill Tree & Learning Pathway (skill-tree.css)
+   Brilliant-style interactive node roadmap & branch progressions
+   ============================================================ */
+
+/* ── 1. VIEW TOGGLE BAR ── */
+.pathway-view-toggle {
+  display: inline-flex;
+  background: var(--b-surface-subtle);
+  border: 1.5px solid var(--b-border);
+  border-radius: 12px;
+  padding: 3px;
+  gap: 3px;
+}
+
+.view-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 9px;
+  border: none;
+  background: transparent;
+  color: var(--b-text-muted);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.view-toggle-btn:hover {
+  color: var(--b-text);
+}
+
+.view-toggle-btn.active {
+  background: var(--b-surface);
+  color: var(--b-primary);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* ── 2. SKILL TREE HEADER & STATS BANNER ── */
+.st-stats-banner {
+  background: var(--b-surface);
+  border: 2px solid var(--b-border);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  box-shadow: var(--b-card-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.st-stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--b-text);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.st-stat-stars {
+  color: var(--b-amber-text, var(--b-amber));
+  background: var(--b-amber-light);
+  padding: 4px 12px;
+  border-radius: 100px;
+  border: 1px solid var(--b-amber-dark, var(--b-amber));
+}
+
+.st-stat-progress {
+  flex: 1;
+  max-width: 260px;
+  min-width: 140px;
+}
+
+/* ── 3. SKILL TREE PATHWAY CONTAINER ── */
+.skill-tree-pathway {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  position: relative;
+  padding: 10px 0 30px;
+}
+
+/* Branch Section Container */
+.st-branch {
+  position: relative;
+  background: var(--b-surface);
+  border: 2px solid var(--b-border);
+  border-radius: 20px;
+  padding: 22px 24px;
+  box-shadow: var(--b-card-shadow);
+}
+
+.st-branch-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1.5px solid var(--b-border);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.st-branch-title {
+  font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+  font-size: 1.02rem;
+  font-weight: 800;
+  color: var(--b-text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: -0.01em;
+}
+
+.st-branch-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.74rem;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 6px;
+  background: var(--b-surface-subtle);
+  color: var(--b-text-muted);
+  border: 1px solid var(--b-border);
+}
+
+/* ── 4. NODE TRACK & CONNECTORS ── */
+.st-nodes-track {
+  display: grid;
+  grid-template-columns: repeat(var(--node-count, 4), minmax(0, 1fr));
+  align-items: start;
+  gap: 16px;
+  position: relative;
+  padding: 16px 6px 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Connecting Line between nodes on desktop */
+.st-nodes-track::before {
+  content: '';
+  position: absolute;
+  top: 50px;
+  left: 12%;
+  right: 12%;
+  height: 3px;
+  background: var(--b-border-strong);
+  border-radius: 4px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.st-nodes-track.track-count-1::before {
+  display: none;
+}
+
+.st-nodes-track.track-count-1 {
+  display: flex;
+  justify-content: center;
+}
+
+.st-nodes-track.track-count-1 .st-node-wrapper {
+  max-width: 200px;
+}
+
+.st-nodes-track.track-count-2 {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.st-node-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+  text-align: center;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  transition: transform 0.15s ease;
+  outline: none;
+}
+
+.st-node-wrapper:hover {
+  transform: translateY(-3px);
+}
+
+.st-node-wrapper:focus-visible .st-node-circle {
+  box-shadow: var(--b-focus-ring), 0 5px 0 var(--b-card-depth) !important;
+}
+
+/* The Circular Node */
+.st-node-circle {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: var(--b-surface);
+  border: 3.5px solid var(--b-border-strong);
+  box-shadow: 0 5px 0 var(--b-card-depth), 0 8px 18px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.3rem;
+  position: relative;
+  transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.st-node-wrapper:active .st-node-circle {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--b-card-depth);
+}
+
+/* Node State: Active (Next Recommended Node) */
+.st-node-wrapper.active .st-node-circle {
+  border-color: var(--b-primary, #0284C7);
+  background: var(--b-primary-light, rgba(2, 132, 199, 0.08));
+  box-shadow: 0 5px 0 var(--b-primary-shadow, #0369A1), 0 0 24px rgba(2, 132, 199, 0.45);
+  animation: stNodePulse 2.2s infinite ease-in-out;
+}
+
+@keyframes stNodePulse {
+  0% {
+    box-shadow: 0 5px 0 var(--b-primary-shadow, #0369A1), 0 0 0 0 rgba(2, 132, 199, 0.65), 0 0 12px rgba(2, 132, 199, 0.3);
+  }
+  50% {
+    box-shadow: 0 5px 0 var(--b-primary-shadow, #0369A1), 0 0 0 14px rgba(2, 132, 199, 0), 0 0 26px rgba(2, 132, 199, 0.6);
+  }
+  100% {
+    box-shadow: 0 5px 0 var(--b-primary-shadow, #0369A1), 0 0 0 0 rgba(2, 132, 199, 0), 0 0 12px rgba(2, 132, 199, 0.3);
+  }
+}
+
+/* Node State: Completed */
+.st-node-wrapper.completed .st-node-circle {
+  border-color: var(--b-emerald);
+  background: var(--b-emerald-light);
+  box-shadow: 0 5px 0 var(--b-emerald-shadow);
+}
+
+/* Node State: Locked */
+.st-node-wrapper.locked {
+  opacity: 0.65;
+  filter: grayscale(0.7);
+  cursor: not-allowed;
+}
+
+.st-node-wrapper.locked:hover {
+  transform: none;
+}
+
+.st-node-wrapper.locked .st-node-circle {
+  background: var(--b-surface-subtle);
+  border-color: var(--b-border);
+  box-shadow: 0 3px 0 var(--b-card-depth);
+}
+
+/* Beacon Pill above active node */
+.st-node-beacon {
+  position: absolute;
+  top: -14px;
+  background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
+  color: #FFFFFF;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 100px;
+  box-shadow: 0 0 14px rgba(2, 132, 199, 0.5), 0 2px 6px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  animation: stBeaconGlow 2s infinite ease-in-out;
+}
+
+.st-beacon-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #38BDF8;
+  display: inline-block;
+  box-shadow: 0 0 8px #38BDF8;
+  animation: stPulseDot 1.4s infinite ease-in-out;
+}
+
+@keyframes stPulseDot {
+  0%, 100% {
+    transform: scale(0.9);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 1;
+    background: #FACC15;
+    box-shadow: 0 0 10px #FACC15;
+  }
+}
+
+@keyframes stBeaconGlow {
+  0%, 100% {
+    transform: translateY(0);
+    box-shadow: 0 0 12px rgba(2, 132, 199, 0.45), 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+  50% {
+    transform: translateY(-2px);
+    box-shadow: 0 0 22px rgba(2, 132, 199, 0.8), 0 4px 10px rgba(2, 132, 199, 0.3);
+  }
+}
+
+[data-theme="dark"] .st-node-beacon {
+  background: linear-gradient(135deg, #38BDF8 0%, #0284C7 100%);
+  color: #070E18;
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.55);
+}
+
+/* ── RICH INTERACTIVE NODE HOVER POPOVER TOOLTIP ── */
+.st-node-tooltip {
+  position: absolute;
+  bottom: calc(100% + 14px);
+  left: 50%;
+  transform: translateX(-50%) translateY(8px) scale(0.96);
+  width: 240px;
+  background: var(--card-bg, #FFFFFF);
+  border: 1.5px solid var(--card-border, #E2E8F0);
+  border-radius: 14px;
+  padding: 12px 14px;
+  box-shadow: 0 12px 32px -4px rgba(11, 37, 69, 0.22), 0 4px 10px rgba(0, 0, 0, 0.06);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 9999;
+  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0.2s ease;
+  text-align: left;
+}
+
+/* Tooltip arrow */
+.st-node-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: var(--card-border, #E2E8F0) transparent transparent transparent;
+}
+
+.st-node-wrapper:hover .st-node-tooltip,
+.st-node-wrapper:focus-visible .st-node-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+
+@media (hover: none) {
+  .st-node-tooltip {
+    display: none !important;
+  }
+}
+
+.st-tooltip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.st-tooltip-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.64rem;
+  font-weight: 800;
+  color: var(--cyan-accent, #0284C7);
+  background: rgba(2, 132, 199, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.st-tooltip-time {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted, #64748B);
+}
+
+.st-tooltip-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: var(--heading-color, #0B2545);
+  line-height: 1.25;
+  margin-bottom: 3px;
+}
+
+.st-tooltip-sub {
+  font-size: 0.72rem;
+  color: var(--text-muted, #64748B);
+  line-height: 1.35;
+  margin-bottom: 8px;
+}
+
+.st-tooltip-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--card-border, #E2E8F0);
+  margin-bottom: 6px;
+}
+
+.st-tooltip-status {
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 100px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.st-tooltip-status.status-done {
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+.st-tooltip-status.status-next {
+  background: rgba(2, 132, 199, 0.15);
+  color: var(--cyan-accent, #0284C7);
+}
+
+.st-tooltip-status.status-ready {
+  background: var(--card-bg-hover, #F1F5F9);
+  color: var(--text-muted, #64748B);
+}
+
+.st-tooltip-stars {
+  font-size: 0.72rem;
+  color: var(--acad-gold, #D97706);
+}
+
+.st-tooltip-hint {
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: var(--cyan-accent, #0284C7);
+  text-align: right;
+}
+
+/* Dark Theme Overrides */
+[data-theme="dark"] .st-node-tooltip {
+  background: #0F1A2E;
+  border-color: rgba(56, 189, 248, 0.25);
+  box-shadow: 0 14px 36px -4px rgba(0, 0, 0, 0.6), 0 0 16px rgba(56, 189, 248, 0.15);
+}
+
+[data-theme="dark"] .st-node-tooltip::after {
+  border-color: rgba(56, 189, 248, 0.25) transparent transparent transparent;
+}
+
+[data-theme="dark"] .st-tooltip-status.status-done {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34D399;
+}
+
+/* Green Theme Overrides */
+[data-theme="green"] .st-node-tooltip {
+  background: #0C2114;
+  border-color: rgba(52, 211, 153, 0.3);
+}
+
+[data-theme="green"] .st-node-tooltip::after {
+  border-color: rgba(52, 211, 153, 0.3) transparent transparent transparent;
+}
+
+/* Stars rating badge below node */
+.st-node-stars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  font-size: 0.75rem;
+  color: var(--b-amber);
+  min-height: 16px;
+}
+
+.st-star-empty {
+  opacity: 0.25;
+  filter: grayscale(1);
+}
+
+/* Node label below circle */
+.st-node-label {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--b-text);
+  line-height: 1.25;
+}
+
+.st-node-sublabel {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--b-text-muted);
+  letter-spacing: -0.01em;
+  margin-top: 1px;
+}
+
+/* ── 5. CAPSTONE EXAM NODE (SPECIAL GOLD HIGHLIGHT) ── */
+.st-capstone-branch {
+  background: linear-gradient(135deg, var(--b-surface) 0%, var(--b-amber-light) 100%);
+  border-color: var(--b-amber);
+}
+
+.st-node-wrapper.capstone .st-node-circle {
+  width: 90px;
+  height: 90px;
+  font-size: 2.8rem;
+  border-color: var(--b-amber);
+  background: var(--b-amber-light);
+  box-shadow: 0 6px 0 var(--b-amber-shadow), 0 10px 24px rgba(245, 158, 11, 0.25);
+}
+
+/* ── 6. INTERACTIVE NODE DETAILS POPOVER / MODAL ── */
+.st-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.st-modal-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.st-modal-card {
+  background: var(--b-surface);
+  border: 2px solid var(--b-border);
+  border-radius: 20px;
+  max-width: 440px;
+  width: 100%;
+  padding: 24px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+  transform: translateY(12px) scale(0.97);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  box-sizing: border-box;
+}
+
+.st-modal-backdrop.open .st-modal-card {
+  transform: translateY(0) scale(1);
+}
+
+.st-modal-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--b-border);
+  background: var(--b-surface-subtle);
+  color: var(--b-text-muted);
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.st-modal-close-btn:hover {
+  background: var(--b-surface-hover);
+  color: var(--b-text);
+}
+
+.st-modal-icon-badge {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: var(--b-surface-subtle);
+  border: 2px solid var(--b-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  margin-bottom: 12px;
+}
+
+.st-modal-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--b-text);
+  margin-bottom: 6px;
+  line-height: 1.25;
+}
+
+.st-modal-syllabus {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--b-primary);
+  margin-bottom: 12px;
+}
+
+.st-modal-desc {
+  font-size: 0.84rem;
+  color: var(--b-text-subtle);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.st-modal-skills-list {
+  background: var(--b-surface-subtle);
+  border: 1px solid var(--b-border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  font-size: 0.78rem;
+  color: var(--b-text);
+}
+
+.st-modal-skills-list ul {
+  margin: 6px 0 0 16px;
+  padding: 0;
+}
+
+.st-modal-skills-list li {
+  margin-bottom: 4px;
+}
+
+.st-modal-stats-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1.5px solid var(--b-border);
+  font-size: 0.82rem;
+}
+
+/* ── 7. RESPONSIVE MOBILE TWEAKS ── */
+@media (max-width: 640px) {
+  .st-branch {
+    padding: 14px 12px;
+    border-radius: 14px;
+  }
+
+  .st-branch-header {
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    gap: 6px;
+  }
+
+  .st-branch-title {
+    font-size: 0.94rem;
+  }
+
+  .st-branch-tag {
+    font-size: 0.68rem;
+    padding: 2px 8px;
+  }
+
+  .st-nodes-track {
+    gap: 16px 8px;
+    padding: 4px 0;
+  }
+
+  .st-node-circle {
+    width: 68px;
+    height: 68px;
+    font-size: 2.05rem;
+  }
+
+  .st-node-wrapper {
+    max-width: 140px;
+    gap: 6px;
+  }
+
+  .st-node-label {
+    font-size: 0.78rem;
+    line-height: 1.25;
+  }
+
+  .st-node-sublabel {
+    font-size: 0.68rem;
+  }
+
+  .st-node-wrapper.capstone .st-node-circle {
+    width: 82px;
+    height: 82px;
+    font-size: 2.5rem;
+  }
+
+  .st-modal-card {
+    padding: 20px 16px;
+  }
+}
+
+
+/* ── MODERN POLISHED SKILL TREE ── */
+.st-branch {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 20px 22px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s ease;
+}
+.st-branch:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+}
+
+.st-branch-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.st-branch-title {
+  font-size: 1.02rem;
+  font-weight: 800;
+  color: var(--heading-color);
+  letter-spacing: -0.01em;
+}
+
+.st-branch-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 6px;
+  background: var(--card-bg-hover);
+  color: var(--text-muted);
+  border: 1px solid var(--card-border);
+}
+
+.st-nodes-track {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 8px 0;
+}
+
+.st-node-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  text-align: center;
+  max-width: 130px;
+  transition: transform 0.15s ease;
+}
+.st-node-wrapper:hover {
+  transform: translateY(-2px);
+}
+
+.st-node-circle {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: var(--card-bg);
+  border: 3.5px solid var(--card-border);
+  box-shadow: 0 5px 0 var(--b-card-depth), 0 8px 18px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.3rem;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.st-node-wrapper.active .st-node-circle {
+  border-color: #0284C7;
+  background: rgba(2, 132, 199, 0.08);
+  box-shadow: 0 5px 0 #0369A1, 0 0 20px rgba(2, 132, 199, 0.35);
+}
+
+.st-node-wrapper.completed .st-node-circle {
+  border-color: #10B981;
+  background: rgba(16, 185, 129, 0.08);
+  box-shadow: 0 5px 0 #059669;
+}
+
+.st-node-label {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--heading-color);
+  line-height: 1.25;
+}
+
+.st-node-sublabel {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+
+/* ── HORIZONTAL SWIPE TRACKS FOR SKILL TREE ON MOBILE ── */
+@media (max-width: 768px) {
+  .st-branch {
+    padding: 14px 16px !important;
+    border-radius: 14px !important;
+    margin-bottom: 14px !important;
+  }
+
+  .st-branch-header {
+    margin-bottom: 10px !important;
+    padding-bottom: 8px !important;
+  }
+
+  .st-branch-title {
+    font-size: 0.92rem !important;
+  }
+
+  .st-branch-tag {
+    font-size: 0.68rem !important;
+    padding: 2px 6px !important;
+  }
+
+  /* Horizontal swipe track: nodes scroll left-to-right smoothly */
+  .st-nodes-track {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    justify-content: flex-start !important;
+    gap: 14px !important;
+    padding: 6px 4px 10px !important;
+  }
+  .st-nodes-track::before {
+    display: none !important;
+  }
+  .st-nodes-track::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .st-node-wrapper {
+    flex: 0 0 110px !important;
+    max-width: 130px !important;
+    min-width: 100px !important;
+    gap: 6px !important;
+  }
+
+  .st-node-circle {
+    width: 66px !important;
+    height: 66px !important;
+    font-size: 2.0rem !important;
+  }
+
+  .st-node-label {
+    font-size: 0.76rem !important;
+    line-height: 1.22 !important;
+  }
+
+  .st-node-sublabel {
+    font-size: 0.66rem !important;
+  }
+
+  .st-node-wrapper.capstone .st-node-circle {
+    width: 80px !important;
+    height: 80px !important;
+    font-size: 2.4rem !important;
+  }
+}
+
+
+/* ── COMPACT SKILL TREE STATS & TIGHT BRANCHES ── */
+.st-stats-banner {
+  background: var(--card-bg-hover);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+}
+
+.st-stats-row-compact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.st-stats-chips-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.st-stat-progress-compact {
+  flex: 1 1 200px;
+  max-width: 260px;
+}
+
+.st-progress-label-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.st-progress-track {
+  width: 100%;
+  height: 6px;
+  background: var(--card-border);
+  border-radius: 100px;
+  overflow: hidden;
+}
+
+.st-progress-fill {
+  height: 100%;
+  background: #10B981;
+  border-radius: 100px;
+  transition: width 0.4s ease;
+}
+
+.st-branch {
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  border-radius: 14px;
+}
+
+.st-branch-header {
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+}
+
+.st-branch-title {
+  font-size: 0.94rem;
+}
+
+.st-branch-tag {
+  font-size: 0.7rem;
+  padding: 2px 6px;
+}
+
+/* ── RESPONSIVE ADAPTIVE SKILL TREE CARDS ── */
+@media (max-width: 768px) {
+  .st-stats-banner {
+    padding: 10px 14px !important;
+    margin-bottom: 12px !important;
+    border-radius: 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .st-branch {
+    padding: 14px 12px !important;
+    margin-bottom: 12px !important;
+    border-radius: 14px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  .st-branch-header {
+    margin-bottom: 10px !important;
+    padding-bottom: 6px !important;
+    gap: 8px !important;
+  }
+
+  .st-branch-title {
+    font-size: 0.92rem !important;
+  }
+
+  .st-branch-tag {
+    font-size: 0.68rem !important;
+    padding: 2px 6px !important;
+  }
+
+  .st-nodes-track {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 14px 2px 6px !important;
+    align-items: start !important;
+  }
+
+  /* 4 nodes: 2x2 grid on mobile so every node has ample room and fits inside the card cleanly */
+  .st-nodes-track.track-count-4 {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 16px 12px !important;
+  }
+
+  /* 3 nodes: 3 equal fluid columns across the card */
+  .st-nodes-track.track-count-3 {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 10px 4px !important;
+  }
+
+  /* 2 nodes: 2 equal columns */
+  .st-nodes-track.track-count-2 {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 14px 12px !important;
+    max-width: 100% !important;
+  }
+
+  /* 1 node: centered */
+  .st-nodes-track.track-count-1 {
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  .st-node-wrapper {
+    flex: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    gap: 4px !important;
+    padding: 0 2px !important;
+    box-sizing: border-box !important;
+  }
+
+  .st-node-circle {
+    width: 62px !important;
+    height: 62px !important;
+    font-size: 1.85rem !important;
+    box-shadow: 0 4px 0 var(--b-card-depth) !important;
+  }
+
+  .st-nodes-track.track-count-3 .st-node-circle {
+    width: 56px !important;
+    height: 56px !important;
+    font-size: 1.70rem !important;
+  }
+
+  .st-node-wrapper.capstone .st-node-circle {
+    width: 76px !important;
+    height: 76px !important;
+    font-size: 2.3rem !important;
+  }
+
+  .st-node-beacon {
+    top: -12px !important;
+    font-size: 0.58rem !important;
+    padding: 2px 6px !important;
+  }
+
+  .st-node-stars {
+    font-size: 0.80rem !important;
+    gap: 2px !important;
+    min-height: 16px !important;
+  }
+
+  .st-node-label {
+    font-size: 0.76rem !important;
+    font-weight: 800 !important;
+    line-height: 1.25 !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+    hyphens: auto !important;
+  }
+
+  .st-node-sublabel {
+    font-size: 0.68rem !important;
+    line-height: 1.2 !important;
+    color: var(--b-text-muted) !important;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .st-branch {
+    padding: 12px 10px !important;
+  }
+
+  .st-nodes-track.track-count-4 {
+    gap: 14px 10px !important;
+  }
+
+  .st-nodes-track.track-count-3 {
+    gap: 8px 4px !important;
+  }
+
+  .st-node-circle {
+    width: 58px !important;
+    height: 58px !important;
+    font-size: 1.75rem !important;
+  }
+
+  .st-nodes-track.track-count-3 .st-node-circle {
+    width: 50px !important;
+    height: 50px !important;
+    font-size: 1.55rem !important;
+  }
+
+  .st-node-wrapper.capstone .st-node-circle {
+    width: 70px !important;
+    height: 70px !important;
+    font-size: 2.1rem !important;
+  }
+
+  .st-node-label {
+    font-size: 0.72rem !important;
+    font-weight: 800 !important;
+  }
+
+  .st-node-sublabel {
+    font-size: 0.64rem !important;
+  }
+}
+
+/* ── THEMED BRANCH LAB CARD ACCENTS ── */
+#branch-volumetric .st-node-circle {
+  border-color: rgba(2, 132, 199, 0.45);
+  background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+  box-shadow: 0 5px 0 #0284C7;
+}
+[data-theme="dark"] #branch-volumetric .st-node-circle {
+  border-color: rgba(56, 189, 248, 0.5);
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.16) 0%, rgba(2, 132, 199, 0.08) 100%);
+  box-shadow: 0 5px 0 #0369A1;
+}
+
+#branch-qualitative .st-node-circle {
+  border-color: rgba(16, 185, 129, 0.45);
+  background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+  box-shadow: 0 5px 0 #059669;
+}
+[data-theme="dark"] #branch-qualitative .st-node-circle {
+  border-color: rgba(52, 211, 153, 0.5);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.16) 0%, rgba(5, 150, 105, 0.08) 100%);
+  box-shadow: 0 5px 0 #047857;
+}
+
+#branch-kinetics .st-node-circle {
+  border-color: rgba(245, 158, 11, 0.45);
+  background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+  box-shadow: 0 5px 0 #D97706;
+}
+[data-theme="dark"] #branch-kinetics .st-node-circle {
+  border-color: rgba(251, 191, 36, 0.5);
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.16) 0%, rgba(217, 119, 6, 0.08) 100%);
+  box-shadow: 0 5px 0 #B45309;
+}
+
+#branch-organic-gas .st-node-circle {
+  border-color: rgba(139, 92, 246, 0.45);
+  background: linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%);
+  box-shadow: 0 5px 0 #7C3AED;
+}
+[data-theme="dark"] #branch-organic-gas .st-node-circle {
+  border-color: rgba(167, 139, 250, 0.5);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.16) 0%, rgba(124, 58, 237, 0.08) 100%);
+  box-shadow: 0 5px 0 #6D28D9;
+}
+
+#branch-capstone .st-node-circle {
+  border-color: #F59E0B;
+  background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+  box-shadow: 0 6px 0 #D97706, 0 8px 24px rgba(245, 158, 11, 0.25);
+}
+[data-theme="dark"] #branch-capstone .st-node-circle {
+  border-color: #FBBF24;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(180, 83, 9, 0.1) 100%);
+  box-shadow: 0 6px 0 #B45309, 0 8px 24px rgba(245, 158, 11, 0.3);
+}
+
+/* Practice Grid Banner Card Large Icons */
+.practice-banner-card {
+  align-items: center !important;
+  gap: 16px !important;
+  padding: 16px 18px !important;
+}
+
+.practice-card-icon-badge {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  flex-shrink: 0;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+}
+

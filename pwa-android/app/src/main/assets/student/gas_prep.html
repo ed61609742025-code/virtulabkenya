@@ -1,0 +1,2342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Gas Preparation & Collection — VirtuLab Kenya</title>
+<meta name="description" content="Simulate the preparation, drying, collection, and confirmatory testing of essential inorganic gases for KCSE Chemistry Paper 3.">
+<script src="/shared/auth-guard.js"></script>
+<script>
+  var t = localStorage.getItem('vlk_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  if (window.VLKAuthGuard) {
+    VLKAuthGuard.guardPage('student');
+  }
+  if (window.location.search.includes('embed=true') || window.location.search.includes('embedded=1')) {
+    const style = document.createElement('style');
+    style.innerHTML = '.top-navbar, .academic-top-header, .candidate-top-ribbon { display: none !important; } body { padding-top: 0 !important; margin: 0 !important; }';
+    document.head.appendChild(style);
+  }
+</script>
+<meta name="theme-color" content="#0F172A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="VirtuLab">
+<link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/shared/brilliant-theme.css">
+<link rel="stylesheet" href="/shared/tutorial-engine.css">
+<link rel="stylesheet" href="/student/css/gas-prep.css?v=120">
+<link rel="stylesheet" href="/shared/ai-tutor.css">
+<link rel="stylesheet" href="/shared/pwa-installer.css">
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     UNIFIED STICKY ACADEMIC HEADER
+══════════════════════════════════════ -->
+<header class="academic-top-header">
+  <!-- Topbar Navigation Bar -->
+  <nav class="top-navbar">
+    <a href="/student/home.html" class="nav-brand-academic" title="Back to Student Workstation">
+      <div class="vlk-brand-logo-wrap">
+        <img src="/shared/virtulab-logo.svg" alt="VirtuLab Kenya Logo" class="vlk-brand-logo-img" width="34" height="34">
+      </div>
+      <div style="display:flex; flex-direction:column;">
+        <span class="brand-title" style="font-weight:800; font-family:'Cinzel', serif; font-size:1.05rem; line-height:1.1; color:var(--heading-color);">VirtuLab</span>
+        <span class="brand-subtagline" style="font-size:0.65rem; font-family:'Newsreader', serif; font-style:italic; color:var(--cyan-accent); letter-spacing:0.01em;">Gas Preparation Bench</span>
+      </div>
+    </a>
+
+    <!-- Desktop Workbench Switcher (Hidden on Mobile) -->
+    <div class="nav-modules-pill">
+      <a href="lab.html" class="theme-btn-chip">🧪 Titration</a>
+      <a href="qualitative.html" class="theme-btn-chip">🔍 Qualitative</a>
+      <a href="organic.html" class="theme-btn-chip">⚗️ Organic</a>
+      <a href="solubility.html" class="theme-btn-chip">🌡️ Solubility</a>
+      <a href="energy.html" class="theme-btn-chip">🔥 Energy</a>
+      <a href="rates.html" class="theme-btn-chip">⚡ Rates</a>
+      <a href="gas_prep.html" class="theme-btn-chip active">💨 Gas Prep</a>
+      <a href="mock_exams.html" class="theme-btn-chip">📋 Mock Hub</a>
+    </div>
+
+    <div class="nav-actions">
+      <!-- Session Timer Badge -->
+      <div class="session-timer-badge" style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:6px;padding:4px 8px;font-size:0.75rem;font-weight:700;color:var(--cyan-accent);display:flex;align-items:center;gap:4px;font-family:'JetBrains Mono',monospace;">
+        <span>⏱️</span>
+        <span id="sessionTimerText">00:00</span>
+      </div>
+
+      <!-- Guided Tutorial Button -->
+      <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm" onclick="TutorialEngine.start('gas_prep')" style="padding:4px 8px; font-size:0.75rem; white-space:nowrap;">
+        🧭 <span class="btn-text-full">Guided Tutorial</span><span class="btn-text-short">Tutorial</span>
+      </button>
+
+      <!-- Study Mode Toggle -->
+      <div class="theme-toggle-group">
+        <button type="button" class="theme-btn-chip active" id="btnModePractice" onclick="setStudyMode('practice')">🎓 <span class="btn-text-full">Practice</span></button>
+        <button type="button" class="theme-btn-chip" id="btnModeExam" onclick="setStudyMode('exam')">📝 <span class="btn-text-full">Exam</span></button>
+      </div>
+
+      <!-- Quick Reagent Safety SDS Button -->
+      <button type="button" class="nav-btn nav-btn-safety" onclick="openCurrentGasSafety()" title="View Chemical Safety Data Sheets" style="padding:4px 8px; font-size:0.75rem;">
+        ⚠️ <span class="btn-text-full">SDS Hazards</span><span class="btn-text-short">SDS</span>
+      </button>
+
+      <!-- Settings Dropdown -->
+      <div style="position:relative;">
+        <button type="button" class="nav-btn nav-btn-settings" onclick="toggleBenchSettings(event)" title="Workbench Settings & Tools" style="padding:4px 8px; font-size:0.75rem;">
+          ⚙️ <span class="btn-text-full">Settings</span><span class="btn-text-short">⚙️</span>
+        </button>
+        
+        <div id="benchSettingsDropdown" style="display:none; position:absolute; right:0; top:36px; width:250px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; box-shadow:var(--shadow-lg); z-index:100000; padding:12px; flex-direction:column; gap:10px; text-align:left;">
+          <!-- Sound Toggle -->
+          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Sound Effects</span>
+            <button type="button" id="soundToggleBtnGas" onclick="toggleSound()" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border);">🔊 Sound ON</button>
+          </div>
+
+          <!-- Scratchpad Toggle -->
+          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Scratchpad</span>
+            <button type="button" onclick="toggleScratchpad()" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border);">📝 Rough Work</button>
+          </div>
+
+          <!-- Language Selector Row -->
+          <div style="display:flex; flex-direction:column; gap:6px; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Language / Lugha</span>
+            <div class="theme-toggle-group" style="width:100%;">
+              <button class="theme-btn-chip lang-btn-chip active" style="flex:1;" data-lang="en" onclick="setLanguage('en')">🇬🇧 EN</button>
+              <button class="theme-btn-chip lang-btn-chip" style="flex:1;" data-lang="sw" onclick="setLanguage('sw')">🇰🇪 SW</button>
+            </div>
+          </div>
+
+          <!-- Theme Selector Row -->
+          <div style="display:flex; flex-direction:column; gap:6px; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Appearance Theme</span>
+            <div class="theme-toggle-group" style="width:100%;">
+              <button class="theme-btn-chip" style="flex:1;" data-theme="light" onclick="setTheme('light')">☀️ Light</button>
+              <button class="theme-btn-chip active" style="flex:1;" data-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
+              <button class="theme-btn-chip" style="flex:1;" data-theme="green" onclick="setTheme('green')">🧪 Lab</button>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <button type="button" onclick="openCurrentGasSafety()" style="background:var(--red-bg);border:1px solid var(--red-border);color:var(--red-accent);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
+              ⚠️ Reagent Safety (SDS)
+            </button>
+            <button type="button" onclick="window.print()" style="background:var(--card-bg-hover);border:1px solid var(--card-border);color:var(--text-main);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
+              🖨️ Print Practical Record
+            </button>
+            <button type="button" onclick="saveSession()" style="background:var(--blue-accent);border:none;color:#FFF;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
+              💾 Save Session
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Exit Button -->
+      <a href="/student/home.html" class="rate-nav-back-btn" style="padding:4px 8px; font-size:0.75rem; border-radius:6px; text-decoration:none;" title="Exit to Workstation">← Exit</a>
+    </div>
+  </nav>
+
+  <!-- Official KNEC Practical Ledger Sub-Header -->
+  <div class="knec-exam-subbar">
+    <div class="knec-subbar-item">
+      <span class="knec-subbar-label">Examination:</span>
+      <span class="knec-subbar-val">KCSE Chemistry Paper 3</span>
+    </div>
+    <div class="knec-subbar-item">
+      <span class="knec-subbar-label">Section:</span>
+      <span class="knec-subbar-val">Question 3 (Inorganic Gas Preparation)</span>
+    </div>
+    <div class="knec-subbar-item">
+      <span class="knec-subbar-label">Specimen:</span>
+      <span class="knec-subbar-val" id="knecSubbarGas">O₂ (Oxygen Gas)</span>
+    </div>
+    <div class="knec-subbar-item" style="margin-left:auto;">
+      <span class="knec-subbar-label">Max Score:</span>
+      <span class="knec-subbar-val" style="color:var(--cyan-accent); font-weight:800;">10.0 Marks</span>
+    </div>
+  </div>
+</header>
+
+<!-- Collapsible Scratchpad Drawer -->
+<div id="scratchpadDrawer" style="display:none;background:var(--card-bg);border:1px solid var(--cyan-accent);border-radius:12px;padding:16px;margin:16px 20px 0;box-shadow:0 4px 20px rgba(0,0,0,0.4);">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+    <div style="font-size:0.88rem;font-weight:700;color:var(--heading-color);font-family:'Cinzel', serif;">📝 Rough Work Scratchpad (KNEC Candidate Working)</div>
+    <button type="button" class="theme-btn-chip" style="padding:2px 8px;font-size:0.7rem;" onclick="toggleScratchpad()">✕ Close</button>
+  </div>
+  <textarea id="scratchpadText" placeholder="Draft your gas preparation equations, drying agent selection notes, observation inferences, and confirmatory test equations here..." style="width:100%;height:90px;background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:8px;padding:10px;color:var(--text-main);font-family:'JetBrains Mono',monospace;font-size:0.82rem;outline:none;resize:vertical;"></textarea>
+</div>
+
+<!-- MAIN WORKBENCH LAYOUT -->
+<main class="gas-workbench-layout">
+
+  <!-- Interactive Step-by-Step Tutorial Container -->
+  <div id="tutorialDrawer" style="display:none; grid-column: 1 / -1; margin-bottom: 14px;"></div>
+
+  <!-- Prescribed Continuous Assessment Banner (Shown when assignmentId is present) -->
+  <div id="assignmentHeaderBanner" style="display:none; grid-column: 1 / -1; background:rgba(6,182,212,0.15); border:1.5px solid var(--cyan-accent); border-radius:12px; padding:12px 18px; margin-bottom:14px; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <span style="font-size:1.3rem;">📋</span>
+      <div>
+        <div style="font-size:0.75rem; font-weight:800; text-transform:uppercase; color:var(--cyan-accent); letter-spacing:0.04em;">PRESCRIBED CONTINUOUS ASSESSMENT ASSIGNMENT</div>
+        <div id="assignBannerTitle" style="font-size:0.95rem; font-weight:800; color:var(--heading-color);">Gas Preparation &amp; Collection Practical Assignment</div>
+      </div>
+    </div>
+    <span style="font-size:0.76rem; font-family:var(--font-mono); font-weight:700; background:var(--card-bg); padding:4px 10px; border-radius:6px; border:1px solid var(--card-border);" id="assignBannerDue">Active Practical Assignment</span>
+  </div>
+
+  <!-- Official KNEC Practical Examination Proctor Banner -->
+  <div id="gasExamProctorBanner" style="display:none; grid-column: 1 / -1; background:var(--red-bg); border:1px solid var(--red-border); border-radius:12px; padding:12px 18px; margin-bottom:14px; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <div style="background:var(--red-accent); color:#FFF; padding:4px 8px; border-radius:6px; font-weight:800; font-size:0.72rem; font-family:var(--font-mono); letter-spacing:0.05em;">
+        🔒 KNEC EXAM MODE
+      </div>
+      <div>
+        <div style="font-size:0.95rem; font-weight:800; color:var(--heading-color); font-family:var(--font-heading);">Chemistry Paper 3 (233/3) — Question 3: Gas Preparation &amp; Qualitative Testing</div>
+        <div style="font-size:0.8rem; color:var(--text-muted);">Strict Candidate Evaluation · Immediate validation tips and answer hints locked until final submission</div>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <span style="font-size:0.76rem; font-family:var(--font-mono); color:var(--text-muted);">Timed KCSE Ledger</span>
+    </div>
+  </div>
+
+  <!-- LEFT COLUMN: Gas Selection & Apparatus Configuration -->
+  <section class="gas-card-panel">
+    <div class="gas-panel-header">
+      <h2 class="gas-panel-title"><span>💨</span> 1. Select Gas to Prepare</h2>
+      <span class="knec-badge-pill">KCSE Paper 3</span>
+    </div>
+
+    <!-- Gas Selector Chips -->
+    <div class="gas-selector-grid">
+      <button class="gas-select-chip active" data-gas="O2" onclick="selectGas('O2')">O₂ (Oxygen)</button>
+      <button class="gas-select-chip" data-gas="CO2" onclick="selectGas('CO2')">CO₂ (Carbon)</button>
+      <button class="gas-select-chip" data-gas="Cl2" onclick="selectGas('Cl2')">Cl₂ (Chlorine)</button>
+      <button class="gas-select-chip" data-gas="NH3" onclick="selectGas('NH3')">NH₃ (Ammonia)</button>
+      <button class="gas-select-chip" data-gas="SO2" onclick="selectGas('SO2')">SO₂ (Sulphur)</button>
+      <button class="gas-select-chip" data-gas="H2" onclick="selectGas('H2')">H₂ (Hydrogen)</button>
+    </div>
+
+    <!-- Chemical Equation Display -->
+    <div class="chem-equation-box" id="eqBox">
+      2H₂O₂(aq)  —[MnO₂]→  2H₂O(l) + O₂(g)
+    </div>
+
+    <!-- Reagents & Properties Summary -->
+    <div style="font-size: 0.82rem; line-height: 1.5; color: var(--text-main);">
+      <p style="margin: 0 0 6px;"><b>🧪 Reactants:</b> <span id="reactantsText">Hydrogen Peroxide + Manganese(IV) Oxide</span></p>
+      <p style="margin: 0 0 6px;"><b>⚖️ Density vs Air:</b> <span id="densityText">Slightly denser than air</span></p>
+      <p style="margin: 0 0 6px;"><b>💧 Solubility in H₂O:</b> <span id="solubilityText">Slightly soluble in water</span></p>
+    </div>
+
+    <!-- KCSE Schematic Preview Badge -->
+    <div id="gasDiagramPreviewBox" style="margin-top:10px; padding:10px 12px; background:var(--blue-bg); border:1.5px solid var(--blue-border); border-radius:10px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:1.2rem;">📐</span>
+        <div>
+          <div style="font-size:0.72rem; font-weight:800; color:var(--blue-accent); text-transform:uppercase; letter-spacing:0.04em;">KCSE Textbook Schematic</div>
+          <div id="gasDiagramPreviewText" style="font-size:0.78rem; font-weight:700; color:var(--heading-color);">O₂: Catalytic Decomposition Apparatus</div>
+        </div>
+      </div>
+      <button type="button" class="theme-btn-chip" onclick="openBlueprintModal()" style="font-size:0.72rem; padding:4px 9px; font-weight:700; border:1px solid var(--blue-border); background:var(--card-bg);">
+        🔍 Blueprint
+      </button>
+    </div>
+
+    <!-- Configuration: Drying Agent Selection -->
+    <div style="margin-top: 8px;">
+      <label for="dryingSelect" style="font-size: 0.82rem; font-weight: 700; color: var(--heading-color); display: block; margin-bottom: 6px;">
+        🧴 2. Select Drying Agent:
+      </label>
+      <select id="dryingSelect" class="form-control" onchange="onDryingChange(this.value)">
+        <option value="concH2SO4">Concentrated Sulphuric Acid (H₂SO₄)</option>
+        <option value="anhydrousCaCl2">Anhydrous Calcium Chloride (CaCl₂)</option>
+        <option value="quicklimeCaO">Quicklime / Calcium Oxide (CaO)</option>
+      </select>
+      <div id="dryingFeedback" style="font-size: 0.76rem; color: var(--text-muted); margin-top: 4px;"></div>
+    </div>
+
+    <!-- Configuration: Collection Method Selection -->
+    <div style="margin-top: 8px;">
+      <label for="collectionSelect" style="font-size: 0.82rem; font-weight: 700; color: var(--heading-color); display: block; margin-bottom: 6px;">
+        🏺 3. Select Collection Method:
+      </label>
+      <select id="collectionSelect" class="form-control" onchange="onCollectionChange(this.value)">
+        <option value="overWater">Over Water (Downward displacement of water)</option>
+        <option value="downwardDelivery">Downward Delivery (Upward displacement of air)</option>
+        <option value="upwardDelivery">Upward Delivery (Downward displacement of air)</option>
+      </select>
+      <div id="collectionFeedback" style="font-size: 0.76rem; color: var(--text-muted); margin-top: 4px;"></div>
+    </div>
+
+    <!-- Heat Requirement Toggle -->
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: var(--card-bg-hover); border-radius: 8px;">
+      <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-main);">🔥 Bunsen Burner Heating</span>
+      <button id="heatBtn" class="theme-btn-chip" onclick="toggleHeating()">Heating: OFF</button>
+    </div>
+
+    <!-- Generation Trigger Button -->
+    <button id="runReactionBtn" class="btn btn-primary" style="width: 100%; padding: 12px; font-weight: 800; font-size: 0.9rem;" onclick="generateGas()">
+      ⚡ Generate & Collect Gas
+    </button>
+  </section>
+
+  <!-- CENTER COLUMN: Visual Laboratory Apparatus Simulation -->
+  <section class="gas-card-panel" style="display: flex; flex-direction: column;">
+    <div class="gas-panel-header" style="flex-wrap: wrap; gap: 8px;">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <h2 class="gas-panel-title"><span>🔬</span> Simulation Stage</h2>
+        <span id="reactionStatusBadge" class="knec-badge-pill" style="background: var(--blue-bg); color: var(--blue-accent); border-color: var(--blue-border);">Ready</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:6px;">
+        <button type="button" class="theme-btn-chip active" id="btnToggleLabels" onclick="toggleApparatusLabels()" title="Toggle Scientific Textbook Labels">
+          🏷️ Labels: ON
+        </button>
+        <button type="button" class="theme-btn-chip" onclick="openBlueprintModal()" title="View KNEC Official Textbook Blueprint Schematic">
+          📐 KCSE Blueprint
+        </button>
+      </div>
+    </div>
+
+    <!-- Interactive SVG Apparatus -->
+    <div class="apparatus-stage">
+      
+      <!-- Fume Cupboard Active Warning Banner (Displayed for toxic gases: Cl₂, SO₂) -->
+      <div id="stageFumeHoodBanner" class="fume-hood-banner" style="display:none;">
+        <span>☣️</span> FUME CUPBOARD ACTIVE • TOXIC GAS VENTILATION PROTOCOL
+      </div>
+
+      <!-- Interactive Component Specification Tooltip -->
+      <div id="componentSpecTooltip" class="component-spec-tooltip" style="opacity:0;">
+        Hover over apparatus parts to inspect laboratory specifications.
+      </div>
+
+      <!-- Interactive Confirmatory Test Inset Visualizer Overlay -->
+      <div id="confirmatoryTestVisualizer" class="confirmatory-visualizer-box" style="display:none;">
+        <div class="visualizer-header">
+          <div class="visualizer-title" id="visualizerTitle">
+            <span>🪵</span> Confirmatory Test Active
+          </div>
+          <button type="button" class="theme-btn-chip" onclick="closeConfirmatoryVisualizer()" style="padding:2px 7px; font-size:0.7rem;">✕ Close</button>
+        </div>
+        <div class="visualizer-canvas-wrap" id="visualizerCanvas">
+          <!-- Animated Test SVG injected dynamically -->
+        </div>
+        <div id="visualizerResultTag" class="visualizer-result-tag success">
+          <b>Observation:</b> <span id="visualizerResultText">Observing test...</span>
+        </div>
+      </div>
+
+      <!-- Ultra-Realistic Publication-Grade Scientific SVG Bench Simulation -->
+      <svg class="apparatus-svg" viewBox="0 0 760 410" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- Laboratory Architectural Wall Tile Grid -->
+          <pattern id="labWallTiles" width="32" height="32" patternUnits="userSpaceOnUse">
+            <rect width="32" height="32" fill="none" stroke="rgba(255, 255, 255, 0.025)" stroke-width="0.8"/>
+            <path d="M 0,32 L 32,32 M 32,0 L 32,32" stroke="rgba(0, 0, 0, 0.12)" stroke-width="0.8"/>
+          </pattern>
+
+          <!-- Authentic Woven Wire Mesh Pattern for Gauze -->
+          <pattern id="gauzeMeshPattern" width="3.5" height="3.5" patternUnits="userSpaceOnUse">
+            <path d="M 0,1.75 L 3.5,1.75 M 1.75,0 L 1.75,3.5" fill="none" stroke="#475569" stroke-width="0.7"/>
+          </pattern>
+
+          <!-- Photorealistic Borosilicate Glass Wall Gradient (Double-wall refraction) -->
+          <linearGradient id="glassWallGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.45"/>
+            <stop offset="4%" stop-color="#BAE6FD" stop-opacity="0.25"/>
+            <stop offset="12%" stop-color="#E0F2FE" stop-opacity="0.08"/>
+            <stop offset="88%" stop-color="#BAE6FD" stop-opacity="0.08"/>
+            <stop offset="96%" stop-color="#BAE6FD" stop-opacity="0.25"/>
+            <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.5"/>
+          </linearGradient>
+
+          <!-- Specular Glass Highlight Glint -->
+          <linearGradient id="glassGlossSheen" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0"/>
+            <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.38"/>
+            <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+          </linearGradient>
+
+          <!-- Vertical Curvilinear Glass Reflection -->
+          <linearGradient id="glassCurvedHighlight" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.55"/>
+            <stop offset="35%" stop-color="#FFFFFF" stop-opacity="0.15"/>
+            <stop offset="70%" stop-color="#BAE6FD" stop-opacity="0.05"/>
+            <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.3"/>
+          </linearGradient>
+
+          <!-- Polished Laboratory Teakwood Benchtop Gradient -->
+          <linearGradient id="benchTeakGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#334155"/>
+            <stop offset="6%" stop-color="#475569"/>
+            <stop offset="16%" stop-color="#1E293B"/>
+            <stop offset="85%" stop-color="#0F172A"/>
+            <stop offset="100%" stop-color="#020617"/>
+          </linearGradient>
+
+          <!-- Polished Stainless Steel Rod Shading -->
+          <linearGradient id="steelRodGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#475569"/>
+            <stop offset="35%" stop-color="#E2E8F0"/>
+            <stop offset="60%" stop-color="#CBD5E1"/>
+            <stop offset="100%" stop-color="#334155"/>
+          </linearGradient>
+
+          <!-- Cast Iron Hammerite Stand Base Texture -->
+          <linearGradient id="castIronBaseGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#475569"/>
+            <stop offset="15%" stop-color="#334155"/>
+            <stop offset="75%" stop-color="#1E293B"/>
+            <stop offset="100%" stop-color="#0F172A"/>
+          </linearGradient>
+
+          <!-- Amber Latex Rubber Tubing Gradient -->
+          <linearGradient id="latexTubingGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#F59E0B"/>
+            <stop offset="50%" stop-color="#D97706"/>
+            <stop offset="100%" stop-color="#B45309"/>
+          </linearGradient>
+
+          <!-- Vulcanized Black Rubber Bung Gradient -->
+          <linearGradient id="rubberBungGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#1E293B"/>
+            <stop offset="30%" stop-color="#334155"/>
+            <stop offset="70%" stop-color="#475569"/>
+            <stop offset="100%" stop-color="#0F172A"/>
+          </linearGradient>
+
+          <!-- Roaring Bunsen Flame Gradients (Physics-Accurate Triple Cone) -->
+          <linearGradient id="bunsenMantleGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stop-color="#1E3A8A" stop-opacity="0.95"/>
+            <stop offset="45%" stop-color="#0284C7" stop-opacity="0.8"/>
+            <stop offset="85%" stop-color="#38BDF8" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="#7DD3FC" stop-opacity="0"/>
+          </linearGradient>
+
+          <linearGradient id="bunsenInnerConeGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stop-color="#0284C7" stop-opacity="0.98"/>
+            <stop offset="40%" stop-color="#38BDF8" stop-opacity="0.9"/>
+            <stop offset="80%" stop-color="#BAE6FD" stop-opacity="0.8"/>
+            <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.95"/>
+          </linearGradient>
+
+          <!-- Glowing Refractory Ceramic Pad Thermal Gradient -->
+          <radialGradient id="gauzeThermalGrad" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#FEF08A"/>
+            <stop offset="40%" stop-color="#F97316"/>
+            <stop offset="75%" stop-color="#EF4444"/>
+            <stop offset="100%" stop-color="#991B1B" stop-opacity="0.6"/>
+          </radialGradient>
+
+          <!-- Aqueous Solution Gradients -->
+          <linearGradient id="flaskLiquidGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#7DD3FC" stop-opacity="0.45"/>
+            <stop offset="85%" stop-color="#0284C7" stop-opacity="0.75"/>
+            <stop offset="100%" stop-color="#0369A1" stop-opacity="0.85"/>
+          </linearGradient>
+
+          <!-- Viscous Concentrated H₂SO₄ Acid Gradient -->
+          <linearGradient id="acidWashGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#FEF3C7" stop-opacity="0.65"/>
+            <stop offset="40%" stop-color="#FDE68A" stop-opacity="0.75"/>
+            <stop offset="100%" stop-color="#D97706" stop-opacity="0.82"/>
+          </linearGradient>
+
+          <linearGradient id="troughWaterGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.32"/>
+            <stop offset="70%" stop-color="#0284C7" stop-opacity="0.55"/>
+            <stop offset="100%" stop-color="#0369A1" stop-opacity="0.7"/>
+          </linearGradient>
+
+          <!-- Dynamic Gas Infiltration Gradients -->
+          <linearGradient id="gasOverWaterGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.92"/>
+            <stop offset="70%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.25"/>
+          </linearGradient>
+
+          <linearGradient id="gasDownwardGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.92"/>
+            <stop offset="75%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.55"/>
+            <stop offset="100%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.18"/>
+          </linearGradient>
+
+          <linearGradient id="gasUpwardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.92"/>
+            <stop offset="75%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.55"/>
+            <stop offset="100%" stop-color="var(--gas-fill-color, #38BDF8)" stop-opacity="0.18"/>
+          </linearGradient>
+
+          <!-- Realistic Soft Contact Shadows -->
+          <filter id="softContactShadow" x="-10%" y="-10%" width="120%" height="130%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2.5"/>
+            <feOffset dx="0" dy="3" result="offsetblur"/>
+            <feComponentTransfer>
+              <feFuncA type="linear" slope="0.45"/>
+            </feComponentTransfer>
+            <feMerge> 
+              <feMergeNode/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+
+        <!-- ══════════════════════════════════════════
+             1. LABORATORY ENVIRONMENT & BENCH SURFACE
+             ══════════════════════════════════════════ -->
+        <!-- Wall Tile Background Layer -->
+        <rect width="760" height="370" fill="url(#labWallTiles)" opacity="0.6"/>
+
+        <!-- Soft Overhead Illuminating Spotlight -->
+        <ellipse cx="145" cy="270" rx="140" ry="100" fill="rgba(56, 189, 248, 0.03)" pointer-events="none"/>
+        <ellipse cx="530" cy="270" rx="130" ry="90" fill="rgba(56, 189, 248, 0.03)" pointer-events="none"/>
+
+        <!-- Heavy Teakwood / Chemical Epoxy Lab Benchtop -->
+        <g id="labBenchSurface" class="apparatus-interactive-part" data-spec="Chemical-Resistant Epoxy Resin Lab Benchtop (Non-porous, heat & acid-resistant heavy-duty laboratory work surface)">
+          <!-- Ambient Shadow beneath Bench Front -->
+          <rect x="10" y="374" width="740" height="26" rx="4" fill="#020617" opacity="0.6"/>
+          <!-- Solid Bench Plank -->
+          <rect x="12" y="370" width="736" height="26" rx="3" fill="url(#benchTeakGrad)" stroke="#1E293B" stroke-width="1.2"/>
+          <!-- Beveled Top Edge Sheen Line -->
+          <line x1="14" y1="371" x2="746" y2="371" stroke="#64748B" stroke-width="1.4" opacity="0.9"/>
+          <line x1="14" y1="373" x2="746" y2="373" stroke="#475569" stroke-width="0.8" opacity="0.6"/>
+        </g>
+
+        <!-- Contact Shadows on Benchtop for Apparatus Bases -->
+        <g id="benchShadows" opacity="0.6">
+          <ellipse cx="75" cy="374" rx="42" ry="4" fill="#020617"/>
+          <ellipse cx="145" cy="372" rx="38" ry="4" fill="#020617"/>
+          <ellipse cx="302" cy="372" rx="36" ry="3.5" fill="#020617"/>
+          <ellipse cx="530" cy="372" rx="52" ry="4" fill="#020617"/>
+          <ellipse cx="682" cy="374" rx="44" ry="4" fill="#020617"/>
+        </g>
+
+        <!-- ══════════════════════════════════════════
+             2. MECHANICAL SUPPORTS (Heavy Retort Stands & Clamps)
+             ══════════════════════════════════════════ -->
+        <!-- Retort Stand 1 (Left: Clamps Reaction Flask) -->
+        <g id="retortStandLeft" class="apparatus-interactive-part" data-spec="Cast-Iron Retort Stand & Bosshead Clamp (Firmly securing flask neck)">
+          <!-- Beveled Heavy Cast-Iron Base -->
+          <path d="M 38,373 L 44,361 L 106,361 L 112,373 Z" fill="url(#castIronBaseGrad)" stroke="#1E293B" stroke-width="1.2"/>
+          <line x1="45" y1="362" x2="105" y2="362" stroke="#94A3B8" stroke-width="0.8" opacity="0.7"/>
+          <!-- Upright Polished Stainless Steel Rod -->
+          <rect x="71" y="48" width="8" height="314" rx="1.5" fill="url(#steelRodGrad)" stroke="#475569" stroke-width="0.8"/>
+          <!-- Universal Bosshead with Brass T-Screw Handle -->
+          <rect x="67" y="174" width="16" height="15" rx="2" fill="#1E293B" stroke="#0F172A" stroke-width="1.2"/>
+          <circle cx="75" cy="181.5" r="3" fill="#D97706"/>
+          <!-- T-Screw Bar -->
+          <line x1="60" y1="181.5" x2="68" y2="181.5" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- Chrome Clamp Arm -->
+          <path d="M 83,181.5 L 114,181.5" stroke="#94A3B8" stroke-width="4.2" stroke-linecap="round"/>
+          <!-- 3-Prong Clamp Jaws with Red Rubber Padding wrapping Flask Neck -->
+          <path d="M 114,172 L 126,176 L 126,187 L 114,191" fill="none" stroke="#DC2626" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M 114,172 L 126,176 L 126,187 L 114,191" fill="none" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round" opacity="0.8"/>
+        </g>
+
+        <!-- Retort Stand 2 (Right: Collection Assembly Support) -->
+        <g id="retortStandRight" class="apparatus-interactive-part" data-spec="Retort Stand 2 (Holds inverted jar or collection train securely)">
+          <path d="M 648,373 L 654,361 L 716,361 L 722,373 Z" fill="url(#castIronBaseGrad)" stroke="#1E293B" stroke-width="1.2"/>
+          <line x1="655" y1="362" x2="715" y2="362" stroke="#94A3B8" stroke-width="0.8" opacity="0.7"/>
+          <rect x="681" y="48" width="8" height="314" rx="1.5" fill="url(#steelRodGrad)" stroke="#475569" stroke-width="0.8"/>
+          <!-- Bosshead for Collection Holder -->
+          <rect x="677" y="174" width="16" height="15" rx="2" fill="#1E293B" stroke="#0F172A" stroke-width="1.2"/>
+          <line x1="693" y1="181.5" x2="701" y2="181.5" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round"/>
+        </g>
+
+        <!-- ══════════════════════════════════════════
+             3. HEATING TRAIN (Tripod, Wire Gauze with Refractory Center & Bunsen)
+             ══════════════════════════════════════════ -->
+        <!-- Heavy Steel Tripod Stand -->
+        <g id="tripodGroup" style="display:none;" class="apparatus-interactive-part" data-spec="Heavy Metal Tripod Stand (Distributes support for heated round-bottom flasks)">
+          <!-- Three Steel Splayed Legs with Rubber Feet -->
+          <line x1="94" y1="315" x2="80" y2="370" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+          <line x1="94" y1="315" x2="80" y2="370" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+          <!-- Rubber feet pads -->
+          <rect x="76" y="367" width="9" height="5" rx="1.5" fill="#0F172A"/>
+
+          <line x1="145" y1="315" x2="145" y2="370" stroke="#334155" stroke-width="4" stroke-linecap="round"/>
+          <rect x="141" y="367" width="8" height="5" rx="1.5" fill="#0F172A"/>
+
+          <line x1="196" y1="315" x2="210" y2="370" stroke="#475569" stroke-width="4" stroke-linecap="round"/>
+          <line x1="196" y1="315" x2="210" y2="370" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+          <rect x="205" y="367" width="9" height="5" rx="1.5" fill="#0F172A"/>
+
+          <!-- Cast-Iron Triangular Tripod Ring -->
+          <rect x="88" y="311" width="114" height="7" rx="2" fill="url(#castIronBaseGrad)" stroke="#1E293B" stroke-width="1"/>
+        </g>
+
+        <!-- Wire Gauze with Woven Mesh & Ceramic Refractory Disc -->
+        <g id="wireGauzeGroup" style="display:none;" class="apparatus-interactive-part" data-spec="Wire Gauze with Refractory Ceramic Center (Evenly distributes heat, prevents glass cracking)">
+          <!-- Iron Woven Wire Mesh Layer -->
+          <rect x="82" y="306" width="126" height="5" rx="1.5" fill="#94A3B8" stroke="#475569" stroke-width="0.8"/>
+          <rect x="83" y="306.5" width="124" height="4" fill="url(#gauzeMeshPattern)" opacity="0.85"/>
+          
+          <!-- Central Refractory Ceramic Disc (Glows intensely when hot) -->
+          <ellipse id="wireGauzeCenter" cx="145" cy="308.5" rx="28" ry="2.8" fill="#CBD5E1" stroke="#94A3B8" stroke-width="0.6"/>
+        </g>
+
+        <!-- Ultra-Realistic Bunsen Burner & Flickering Roaring Flame -->
+        <g id="bunsenGroup" style="display:none;" class="apparatus-interactive-part" data-spec="Bunsen Burner (Roaring non-luminous blue flame ~1,400°C for endothermic gas evolution)">
+          <!-- Heavy Octagonal Cast Base with Rim -->
+          <ellipse cx="145" cy="368" rx="25" ry="4.5" fill="url(#castIronBaseGrad)" stroke="#0F172A" stroke-width="1.2"/>
+          <ellipse cx="145" cy="366" rx="18" ry="3" fill="#334155"/>
+          
+          <!-- Flexible Corrugated Rubber Gas Tubing trailing off-bench -->
+          <path d="M 134,364 C 112,367 96,375 70,375" fill="none" stroke="#D97706" stroke-width="4" stroke-linecap="round"/>
+          <path d="M 134,364 C 112,367 96,375 70,375" fill="none" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+          <!-- Brass Hose Nipple & Jubilee Spring Clamp -->
+          <rect x="133" y="361.5" width="5" height="5" fill="#F59E0B" stroke="#B45309" stroke-width="0.6"/>
+
+          <!-- Knurled Brass Air Collar with Vent Hole -->
+          <rect x="138.5" y="348" width="13" height="14" rx="1" fill="#D97706" stroke="#92400E" stroke-width="0.8"/>
+          <ellipse cx="145" cy="355" rx="3.5" ry="3.5" fill="#0F172A"/> <!-- Air Hole exposes Gas Jet -->
+          <circle cx="145" cy="355" r="1.2" fill="#FDE68A"/> <!-- Gas Orifice Jet -->
+
+          <!-- Nickel-Plated Chimney Barrel with Heat Discoloration -->
+          <rect x="140" y="316" width="10" height="34" rx="1" fill="url(#steelRodGrad)" stroke="#64748B" stroke-width="0.8"/>
+          <!-- Heat-tempered bronze tint at chimney rim -->
+          <rect x="140" y="316" width="10" height="5" fill="#D97706" opacity="0.45"/>
+          
+          <!-- Roaring Physics Bunsen Flame (Multi-Zone Cones) -->
+          <g class="bunsen-flame" style="transform-origin: 145px 316px;">
+            <!-- Outer Pale Blue/Violet Mantle -->
+            <path id="svgFlameOuter" d="M 145,248 C 135,272 137,302 145,316 C 153,302 155,272 145,248 Z" fill="url(#bunsenMantleGrad)"/>
+            <!-- Middle Hot Oxidation Blue Cone -->
+            <path id="svgFlameMiddle" d="M 145,268 C 139,285 141,308 145,316 C 149,308 151,285 145,268 Z" fill="url(#bunsenInnerConeGrad)"/>
+            <!-- Inner Unburnt Gas Pale Cone (300°C) -->
+            <path id="svgFlameInner" d="M 145,292 C 142.5,302 143,312 145,316 C 147,312 147.5,302 145,292 Z" fill="#E0F2FE" opacity="0.95"/>
+            <ellipse cx="145" cy="316" rx="4.5" ry="1.2" fill="#38BDF8"/>
+          </g>
+        </g>
+
+        <!-- ══════════════════════════════════════════
+             4. REACTION VESSELS (Conical & Round-Bottom Flasks with Meniscus & Reagents)
+             ══════════════════════════════════════════ -->
+        <!-- Flat-Bottom Conical Flask (Room Temperature Mode: O₂, CO₂, H₂) -->
+        <g id="flaskConicalGroup" class="apparatus-interactive-part" data-spec="Borosilicate 3.3 Conical Flask 250mL (ISO 3819 Standard — Flat bottom resting on bench)">
+          <!-- Glass Body Outer Profile with Wall Thickness -->
+          <path d="M 133,184 L 133,235 L 100,346 C 96,361 104,368 122,368 L 168,368 C 186,368 194,361 190,346 L 157,235 L 157,184 Z" fill="url(#glassWallGrad)" stroke="#94A3B8" stroke-width="2.6" stroke-linejoin="round"/>
+          <!-- Rolled Glass Lip Bead at Mouth -->
+          <ellipse cx="145" cy="184" rx="12" ry="3.2" fill="#FFFFFF" fill-opacity="0.35" stroke="#94A3B8" stroke-width="1.2"/>
+          
+          <!-- Inner Glass Lumen Wall Contour (Refracts Liquid) -->
+          <path d="M 136,186 L 136,233 L 105,342 C 102,355 108,365 124,365 L 166,365 C 182,365 188,355 185,342 L 154,233 L 154,186 Z" fill="none" stroke="#BAE6FD" stroke-width="0.8" opacity="0.5"/>
+
+          <!-- Printed Pyrex® Borosilicate Stamp Emblem -->
+          <circle cx="145" cy="256" r="6" fill="none" stroke="#F8FAFC" stroke-width="0.6" stroke-dasharray="1 1" opacity="0.6"/>
+          <text x="145" y="258" font-size="4.2" fill="#F8FAFC" font-family="'JetBrains Mono', monospace" font-weight="700" text-anchor="middle" opacity="0.75">PYREX</text>
+          <text x="145" y="263" font-size="3" fill="#F8FAFC" font-family="sans-serif" text-anchor="middle" opacity="0.6">250mL</text>
+
+          <!-- White Enamel Volumetric Graduation Lines -->
+          <g stroke="#F8FAFC" stroke-width="0.9" opacity="0.7">
+            <line x1="126" y1="335" x2="135" y2="335"/>
+            <text x="123" y="337" font-size="5" fill="#F8FAFC" text-anchor="end" font-family="'JetBrains Mono', monospace">50</text>
+            <line x1="130" y1="305" x2="138" y2="305"/>
+            <text x="127" y="307" font-size="5" fill="#F8FAFC" text-anchor="end" font-family="'JetBrains Mono', monospace">100</text>
+            <line x1="134" y1="275" x2="141" y2="275"/>
+            <text x="131" y="277" font-size="5" fill="#F8FAFC" text-anchor="end" font-family="'JetBrains Mono', monospace">150</text>
+            <line x1="138" y1="248" x2="144" y2="248"/>
+            <text x="135" y="250" font-size="5" fill="#F8FAFC" text-anchor="end" font-family="'JetBrains Mono', monospace">200</text>
+          </g>
+
+          <!-- Reaction Liquid with Concave Meniscus Curve -->
+          <g class="liquid-wobble">
+            <path id="conicalLiquid" d="M 111,314 Q 145,310 179,314 L 187,346 C 191,360 183,366 168,366 L 122,366 C 107,366 99,360 103,346 Z" fill="url(#flaskLiquidGrad)"/>
+            <!-- Meniscus Edge Highlight Curve -->
+            <ellipse cx="145" cy="314" rx="34" ry="3.6" fill="#38BDF8" fill-opacity="0.4" stroke="#7DD3FC" stroke-width="0.8"/>
+            <path d="M 111,314 Q 145,311 179,314" fill="none" stroke="#FFFFFF" stroke-width="1.2" opacity="0.6"/>
+          </g>
+
+          <!-- Photorealistic Solid Reactants Bed at Flask Bottom -->
+          <g id="conicalSolidGranules">
+            <!-- 3D Faceted Marble Chips / Granules with light & shadow facets -->
+            <polygon points="122,361 129,355 137,358 135,365 124,366" fill="#475569" stroke="#1E293B" stroke-width="0.8"/>
+            <polygon points="129,355 137,358 134,352 126,351" fill="#94A3B8" stroke="#334155" stroke-width="0.6"/>
+            
+            <polygon points="138,364 144,354 153,357 151,366 140,366" fill="#334155" stroke="#0F172A" stroke-width="0.8"/>
+            <polygon points="144,354 153,357 150,351 142,349" fill="#CBD5E1" stroke="#475569" stroke-width="0.6"/>
+
+            <polygon points="152,362 161,356 168,360 166,366 154,366" fill="#1E293B" stroke="#0F172A" stroke-width="0.8"/>
+            <polygon points="161,356 168,360 165,353 158,352" fill="#94A3B8" stroke="#334155" stroke-width="0.6"/>
+
+            <polygon points="132,366 142,362 148,366" fill="#475569" stroke="#1E293B" stroke-width="0.6"/>
+            <polygon points="148,365 156,361 161,366" fill="#334155" stroke="#0F172A" stroke-width="0.6"/>
+          </g>
+
+          <!-- Specular Curved Glass Shoulder Highlight -->
+          <path d="M 136,195 L 136,234 L 112,338" fill="none" stroke="url(#glassCurvedHighlight)" stroke-width="3" stroke-linecap="round" opacity="0.75" class="glass-reflection"/>
+          <path d="M 154,195 L 154,234 L 178,338" fill="none" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" opacity="0.3" class="glass-reflection"/>
+        </g>
+
+        <!-- Round-Bottom Flask (Heated Mode: Cl₂, NH₃, SO₂) -->
+        <g id="flaskRoundBottomGroup" style="display:none;" class="apparatus-interactive-part" data-spec="Borosilicate Round-Bottom Flask 250mL (Mounted on wire gauze over Bunsen burner for uniform thermal distribution)">
+          <!-- Glass Bulb Sitting Naturally on Gauze -->
+          <path d="M 135,184 L 135,225 C 114,235 101,256 101,275 C 101,300 120,316 145,316 C 170,316 189,300 189,275 C 189,256 176,235 155,225 L 155,184 Z" fill="url(#glassWallGrad)" stroke="#94A3B8" stroke-width="2.6" stroke-linejoin="round"/>
+          <ellipse cx="145" cy="184" rx="11" ry="3.2" fill="#FFFFFF" fill-opacity="0.35" stroke="#94A3B8" stroke-width="1.2"/>
+          
+          <!-- Inner Lumen Glass Profile -->
+          <path d="M 138,186 L 138,223 C 117,233 105,254 105,273 C 105,296 123,313 145,313 C 167,313 185,296 185,273 C 185,254 173,233 152,223 L 152,186 Z" fill="none" stroke="#BAE6FD" stroke-width="0.8" opacity="0.5"/>
+
+          <!-- Round-Bottom Liquid Content with Curved Surface Meniscus -->
+          <g class="liquid-wobble">
+            <path id="roundBottomLiquid" d="M 106,275 Q 145,272 184,275 C 184,298 166,314 145,314 C 124,314 106,298 106,275 Z" fill="url(#flaskLiquidGrad)"/>
+            <ellipse cx="145" cy="275" rx="39" ry="3.8" fill="#38BDF8" fill-opacity="0.45" stroke="#7DD3FC" stroke-width="0.8"/>
+            <path d="M 106,275 Q 145,272 184,275" fill="none" stroke="#FFFFFF" stroke-width="1.2" opacity="0.6"/>
+          </g>
+
+          <!-- Solid Reactant Crystals/Powder in Spherical Base -->
+          <g id="roundBottomSolidGranules">
+            <ellipse cx="137" cy="309" rx="7" ry="4" fill="#1E293B" stroke="#0F172A" stroke-width="0.8"/>
+            <ellipse cx="147" cy="310" rx="8" ry="4.5" fill="#334155" stroke="#1E293B" stroke-width="0.8"/>
+            <ellipse cx="156" cy="307" rx="6.5" ry="3.6" fill="#1E293B" stroke="#0F172A" stroke-width="0.8"/>
+          </g>
+
+          <!-- Bulb Glass Gloss Arc -->
+          <path d="M 112,255 C 108,270 112,295 125,308" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" opacity="0.65" class="glass-reflection"/>
+        </g>
+
+        <!-- Two-Hole Rubber Bung (Vulcanized Rubber Stopper with Insertion Bevel) -->
+        <g id="flaskRubberBung" class="apparatus-interactive-part" data-spec="Two-Hole Vulcanized Rubber Stopper (Forms airtight pressure seal at flask mouth)">
+          <!-- Beveled Tapered Stopper Body -->
+          <polygon points="131,185 159,185 155,166 135,166" fill="url(#rubberBungGrad)" stroke="#0F172A" stroke-width="1.2"/>
+          <ellipse cx="145" cy="166" rx="10" ry="2.5" fill="#475569"/>
+          <!-- Rubber Compression Collar Rings around bored holes -->
+          <ellipse cx="139" cy="166" rx="3.5" ry="1.4" fill="#1E293B" stroke="#0F172A" stroke-width="0.6"/>
+          <ellipse cx="150" cy="166" rx="3" ry="1.2" fill="#1E293B" stroke="#0F172A" stroke-width="0.6"/>
+          <!-- Insertion Depth Guideline Line -->
+          <line x1="133" y1="180" x2="157" y2="180" stroke="#0F172A" stroke-width="0.8" stroke-dasharray="2 1" opacity="0.6"/>
+        </g>
+
+        <!-- Thistle Funnel with Safety Liquid Seal Immersion -->
+        <g id="thistleFunnelGroup" class="apparatus-interactive-part" data-spec="Thistle Funnel with Liquid Seal (Stem MUST dip below liquid level to prevent evolved gas escape — KNEC 1 Mark)">
+          <!-- Glass Stem dipping deep into liquid -->
+          <rect id="thistleStem" x="136.8" y="92" width="4.4" height="258" rx="1.2" fill="rgba(255,255,255,0.3)" stroke="#94A3B8" stroke-width="1.2"/>
+          
+          <!-- Hydrostatic Liquid Column inside Stem (Shows Reaction Pressure Seal) -->
+          <rect id="thistleLiquidColumn" x="137.6" y="306" width="2.8" height="44" fill="#0284C7" fill-opacity="0.85"/>
+          <ellipse cx="139" cy="306" rx="1.4" ry="0.6" fill="#7DD3FC"/>
+
+          <!-- Flared Trumpet Conical Mouth with Rolled Glass Rim -->
+          <polygon points="124,68 154,68 143,92 135,92" fill="url(#glassWallGrad)" stroke="#94A3B8" stroke-width="1.4"/>
+          <ellipse cx="139" cy="68" rx="15" ry="4" fill="#FFFFFF" fill-opacity="0.4" stroke="#94A3B8" stroke-width="1.2"/>
+          <ellipse cx="139" cy="68" rx="11" ry="2.6" fill="#BAE6FD" fill-opacity="0.2"/>
+          <path d="M 127,72 L 136,90" stroke="#FFFFFF" stroke-width="1.2" opacity="0.6"/>
+        </g>
+
+        <!-- Dropping Funnel with Stopcock Key (Chlorine Preparation Mode) -->
+        <g id="droppingFunnelGroup" style="display:none;" class="apparatus-interactive-part" data-spec="Dropping Funnel with PTFE Stopcock Tap (Controls concentrated acid addition rate during chlorine evolution)">
+          <!-- Pear-Shaped Reservoir Bulb -->
+          <ellipse cx="139" cy="115" rx="15" ry="20" fill="url(#glassWallGrad)" stroke="#94A3B8" stroke-width="1.5"/>
+          <!-- Reservoir Liquid Content -->
+          <path d="M 126,118 Q 139,122 152,118 C 150,132 139,135 139,135 C 139,135 128,132 126,118 Z" fill="#FDE68A" fill-opacity="0.65"/>
+          <!-- Neck Stem & Flanged Rim -->
+          <rect x="136" y="72" width="6" height="26" fill="rgba(255,255,255,0.3)" stroke="#94A3B8" stroke-width="1"/>
+          <ellipse cx="139" cy="72" rx="5" ry="1.8" fill="#FFFFFF" opacity="0.5"/>
+
+          <!-- Precision Ground-Glass Stopcock Body -->
+          <rect x="133.5" y="137" width="11" height="8" rx="1.5" fill="#0284C7" stroke="#0369A1" stroke-width="1"/>
+          <!-- Crossbar Turning Tap Key -->
+          <line x1="130" y1="141" x2="148" y2="141" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="139" cy="141" r="2" fill="#FFFFFF"/>
+
+          <!-- Stem into reaction flask -->
+          <rect x="137" y="145" width="4" height="40" fill="rgba(255,255,255,0.3)" stroke="#94A3B8" stroke-width="1"/>
+        </g>
+
+        <!-- Streaming Reactive Gas Bubbles in Flask -->
+        <g id="bubbleLayer" style="display:none;">
+          <circle cx="126" cy="345" r="2.2" fill="#FFFFFF" class="gas-bubble-fast"/>
+          <circle cx="138" cy="350" r="3.2" fill="#FFFFFF" class="gas-bubble"/>
+          <circle cx="147" cy="342" r="3.6" fill="#FFFFFF" class="gas-bubble-fast"/>
+          <circle cx="133" cy="336" r="2.5" fill="#FFFFFF" class="gas-bubble-delay"/>
+          <circle cx="156" cy="348" r="3.0" fill="#FFFFFF" class="gas-bubble"/>
+          <circle cx="143" cy="328" r="2.8" fill="#FFFFFF" class="gas-bubble-fast"/>
+          <circle cx="162" cy="342" r="2.4" fill="#FFFFFF" class="gas-bubble-delay"/>
+        </g>
+
+        <!-- ══════════════════════════════════════════
+             5. DELIVERY TUBE 1 & LATEX RUBBER SLEEVE JUNCTIONS
+             ══════════════════════════════════════════ -->
+        <g id="deliveryTrainSection1" class="apparatus-interactive-part" data-spec="Borosilicate Glass Delivery Tube with Flexible Amber Latex Rubber Junction">
+          <!-- Glass Right-Angle Elbow from Flask -->
+          <path d="M 149,166 L 149,118 Q 149,110 157,110 L 200,110" fill="none" stroke="#94A3B8" stroke-width="4.2" stroke-linecap="round"/>
+          <path d="M 149,166 L 149,118 Q 149,110 157,110 L 200,110" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" opacity="0.75"/>
+
+          <!-- Amber Latex Rubber Connecting Sleeve (Realistic Joint) -->
+          <rect x="198" y="106.8" width="16" height="6.4" rx="2" fill="url(#latexTubingGrad)" stroke="#B45309" stroke-width="0.8"/>
+          <!-- Metal Spring Clips on Rubber Sleeve -->
+          <line x1="200" y1="106" x2="200" y2="114" stroke="#475569" stroke-width="1.2"/>
+          <line x1="212" y1="106" x2="212" y2="114" stroke="#475569" stroke-width="1.2"/>
+
+          <!-- Main Glass Delivery Tube into Drying Bottle -->
+          <path d="M 212,110 L 285,110 Q 293,110 293,118 L 293,348" fill="none" stroke="#94A3B8" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M 212,110 L 285,110 Q 293,110 293,118 L 293,348" fill="none" stroke="#E2E8F0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
+
+          <!-- Animated Gas Stream Flow in Tube 1 -->
+          <path id="gasStreamTube1" class="gas-stream-tube" d="M 149,166 L 149,118 Q 149,110 157,110 L 285,110 Q 293,110 293,118 L 293,348" fill="none" stroke="var(--gas-fill-color, #38BDF8)" stroke-width="2" style="display:none;"/>
+        </g>
+
+        <!-- ══════════════════════════════════════════
+             6. DRYING ASSEMBLY (Drechsel Wash Bottle / CaO Tower / CaCl₂ U-Tube)
+             ══════════════════════════════════════════ -->
+        <!-- Drechsel Wash Bottle (Concentrated H₂SO₄ Mode) -->
+        <g id="dryingWashBottleGroup" class="apparatus-interactive-part" data-spec="Drechsel Concentrated H₂SO₄ Gas Wash Bottle (Absorbs moisture; inlet tube immersed, outlet tube in headspace)">
+          <!-- Glass Wash Bottle Outer Cylinder with Beveled Base -->
+          <rect x="272" y="222" width="60" height="148" rx="8" fill="url(#glassWallGrad)" stroke="#94A3B8" stroke-width="2.6"/>
+          <ellipse cx="302" cy="222" rx="16" ry="3.8" fill="#FFFFFF" fill-opacity="0.4" stroke="#94A3B8" stroke-width="1.2"/>
+
+          <!-- Ground-Glass Frosted Stopper Collar -->
+          <polygon points="288,222 316,222 313,208 291,208" fill="url(#rubberBungGrad)" stroke="#1E293B" stroke-width="1.2"/>
+          <ellipse cx="302" cy="208" rx="11" ry="2.4" fill="#475569"/>
+
+          <!-- Concentrated Viscous H₂SO₄ Acid Fill -->
+          <rect id="dryingLiquidFill" x="275" y="292" width="54" height="75" rx="5" fill="url(#acidWashGrad)"/>
+          <!-- Acid Meniscus with Surface Glint -->
+          <ellipse cx="302" cy="292" rx="27" ry="3.5" fill="#FDE68A" fill-opacity="0.6" stroke="#F59E0B" stroke-width="0.8"/>
+          
+          <!-- Sintered Glass Gas Disperser Nozzle at deep inlet tip -->
+          <rect x="289" y="342" width="8" height="8" rx="1.5" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.8"/>
+
+          <!-- Short Gas Exit Tube in Headspace -->
+          <rect x="307" y="196" width="4.5" height="48" rx="1" fill="rgba(255,255,255,0.3)" stroke="#94A3B8" stroke-width="1.2"/>
+
+          <!-- Bubbling in Concentrated Acid (Active during Gas Evolution) -->
+          <g id="dryingBubbleLayer" style="display:none;">
+            <circle cx="293" cy="336" r="2.2" fill="#FFFFFF" class="gas-bubble-fast"/>
+            <circle cx="295" cy="320" r="2.8" fill="#FFFFFF" class="gas-bubble"/>
+            <circle cx="291" cy="305" r="2.4" fill="#FFFFFF" class="gas-bubble-delay"/>
+          </g>
+
+          <!-- Specular Glass Wall Reflection Band -->
+          <path d="M 276,230 L 276,360" stroke="#FFFFFF" stroke-width="1.6" opacity="0.6" class="glass-reflection"/>
+          <text x="302" y="385" font-size="8.8" fill="#94A3B8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700">Conc. H₂SO₄</text>
+        </g>
+
+        <!-- Quicklime / Calcium Oxide (CaO) Drying Tower (Ammonia Mode) -->
+        <g id="dryingQuicklimeGroup" style="display:none;" class="apparatus-interactive-part" data-spec="Quicklime (CaO) Upright Drying Tower (MANDATORY for Ammonia: Basic CaO does not react with basic NH₃!)">
+          <!-- Glass Drying Tower Body with Flared Ends -->
+          <rect x="272" y="206" width="60" height="164" rx="6" fill="url(#glassWallGrad)" stroke="#94A3B8" stroke-width="2.6"/>
+          
+          <!-- Lower Glass Wool Filter Plug -->
+          <rect x="275" y="354" width="54" height="12" fill="#F1F5F9" opacity="0.75" stroke="#CBD5E1" stroke-width="0.6"/>
+          <text x="302" y="362.5" font-size="6.5" fill="#475569" text-anchor="middle" font-family="sans-serif" font-weight="700">Glass Wool</text>
+
+          <!-- 3D Porous Off-White Calcium Oxide (CaO) Lumps -->
+          <g fill="#F8FAFC" stroke="#94A3B8" stroke-width="0.8">
+            <polygon points="278,348 290,344 294,352 284,354"/>
+            <polygon points="296,346 308,342 314,349 302,352"/>
+            <polygon points="314,344 326,346 324,354 315,353"/>
+
+            <polygon points="279,332 291,328 296,338 283,340"/>
+            <polygon points="297,330 310,326 315,335 304,337"/>
+            <polygon points="314,329 325,331 324,340 316,339"/>
+
+            <polygon points="279,314 293,310 297,322 282,324"/>
+            <polygon points="298,312 312,308 316,319 303,322"/>
+            <polygon points="314,312 326,314 324,324 315,323"/>
+
+            <polygon points="280,296 294,292 298,304 284,306"/>
+            <polygon points="298,294 311,290 316,301 304,304"/>
+            <polygon points="315,295 326,297 323,307 314,306"/>
+
+            <polygon points="279,278 292,274 296,286 283,288"/>
+            <polygon points="297,276 312,272 316,283 303,286"/>
+            <polygon points="314,277 325,279 324,289 315,288"/>
+
+            <polygon points="281,260 293,256 297,268 284,270"/>
+            <polygon points="298,258 311,254 315,265 302,268"/>
+            <polygon points="315,259 326,261 323,271 314,270"/>
+          </g>
+
+          <!-- Upper Glass Wool Plug -->
+          <rect x="275" y="244" width="54" height="12" fill="#F1F5F9" opacity="0.75" stroke="#CBD5E1" stroke-width="0.6"/>
+          <text x="302" y="252.5" font-size="6.5" fill="#475569" text-anchor="middle" font-family="sans-serif" font-weight="700">Glass Wool</text>
+
+          <text x="302" y="385" font-size="8.8" fill="#94A3B8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700">Quicklime (CaO)</text>
+        </g>
+
+        <!-- Anhydrous CaCl₂ U-Tube Mode -->
+        <g id="dryingCacl2Group" style="display:none;" class="apparatus-interactive-part" data-spec="Fused Anhydrous Calcium Chloride U-Tube (Absorbs water vapor from neutral and acidic gases)">
+          <path d="M 280,238 L 280,350 C 280,366 324,366 324,350 L 324,238" fill="none" stroke="#94A3B8" stroke-width="18" stroke-linecap="round"/>
+          <path d="M 280,238 L 280,350 C 280,366 324,366 324,350 L 324,238" fill="none" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round" opacity="0.9"/>
+          <!-- Spherical White Calcium Chloride Pellets -->
+          <circle cx="280" cy="340" r="4.5" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.6"/>
+          <circle cx="288" cy="348" r="4.2" fill="#F8FAFC" stroke="#94A3B8" stroke-width="0.6"/>
+          <circle cx="302" cy="354" r="4.5" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.6"/>
+          <circle cx="316" cy="348" r="4.2" fill="#F8FAFC" stroke="#94A3B8" stroke-width="0.6"/>
+          <circle cx="324" cy="340" r="4.5" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.6"/>
+          <text x="302" y="385" font-size="8.8" fill="#94A3B8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700">Fused CaCl₂</text>
+        </g>
+
+        <!-- ══════════════════════════════════════════
+             7. DELIVERY TUBE 2 & INTERMEDIATE COUPLING
+             ══════════════════════════════════════════ -->
+        <g id="deliveryTrainSection2" class="apparatus-interactive-part" data-spec="Glass Delivery Tube 2 (Directs purified, dry gas to collection apparatus)">
+          <!-- Glass Exit Elbow from Drying Vessel -->
+          <path d="M 309,198 L 309,118 Q 309,110 317,110 L 350,110" fill="none" stroke="#94A3B8" stroke-width="4.2" stroke-linecap="round"/>
+          <path d="M 309,198 L 309,118 Q 309,110 317,110 L 350,110" fill="none" stroke="#FFFFFF" stroke-width="1.6" stroke-linecap="round" opacity="0.75"/>
+          
+          <!-- Amber Latex Rubber Sleeve Coupling -->
+          <rect x="348" y="106.8" width="16" height="6.4" rx="2" fill="url(#latexTubingGrad)" stroke="#B45309" stroke-width="0.8"/>
+          <line x1="350" y1="106" x2="350" y2="114" stroke="#475569" stroke-width="1.2"/>
+          <line x1="362" y1="106" x2="362" y2="114" stroke="#475569" stroke-width="1.2"/>
+
+          <!-- Long Glass Bridge to Collection Assembly -->
+          <path id="tubeDryingToCollection" d="M 362,110 L 525,110 Q 533,110 533,118 L 533,260" fill="none" stroke="#94A3B8" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M 362,110 L 525,110 Q 533,110 533,118 L 533,260" fill="none" stroke="#E2E8F0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
+
+          <!-- Animated Gas Stream 2 -->
+          <path id="gasStreamTube2" class="gas-stream-tube" d="M 309,198 L 309,118 Q 309,110 317,110 L 525,110 Q 533,110 533,118 L 533,260" fill="none" stroke="var(--gas-fill-color, #38BDF8)" stroke-width="2" style="display:none;"/>
+        </g>
+
+        <!-- ══════════════════════════════════════════
+             8. COLLECTION SETUPS (3 Dynamic Modes)
+             ══════════════════════════════════════════ -->
+
+        <!-- ── MODE A: Over Water (Downward Displacement of Water) ── -->
+        <g id="setupOverWater" class="apparatus-interactive-part" data-spec="Collection Over Water (Pneumatic Trough, Beehive Shelf & Inverted Jar — Best for insoluble gases)">
+          <!-- Glass Delivery Tube curving under water through beehive shelf notch -->
+          <path d="M 362,110 L 440,110 Q 448,110 448,118 L 448,348 Q 448,354 456,354 L 525,354 Q 531,354 531,346 L 531,330" fill="none" stroke="#94A3B8" stroke-width="4.2" stroke-linecap="round"/>
+          <path d="M 362,110 L 440,110 Q 448,110 448,118 L 448,348 Q 448,354 456,354 L 525,354 Q 531,354 531,346 L 531,330" fill="none" stroke="#FFFFFF" stroke-width="1.6" opacity="0.75"/>
+
+          <!-- Glass Pneumatic Trough with Water Meniscus -->
+          <rect x="444" y="284" width="168" height="88" rx="8" fill="url(#glassWallGrad)" stroke="#38BDF8" stroke-width="2.4"/>
+          <!-- Water Content inside Trough -->
+          <rect x="446" y="306" width="164" height="64" rx="5" fill="url(#troughWaterGrad)"/>
+          <line x1="446" y1="306" x2="610" y2="306" stroke="#67E8F9" stroke-width="1.6" stroke-dasharray="6 3"/>
+          <text x="476" y="322" font-size="9" fill="#0284C7" font-family="'JetBrains Mono', monospace" font-weight="700">Water</text>
+
+          <!-- Authentic Ceramic Earthenware Beehive Shelf -->
+          <g id="beehiveShelf" class="apparatus-interactive-part" data-spec="Earthenware Beehive Shelf (Provides stable underwater platform for inverted jar and directs rising gas bubbles into jar mouth — KNEC 1 Mark)">
+            <path d="M 498,368 L 504,328 Q 530,324 556,328 L 562,368 Z" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1.5"/>
+            <!-- Arched Bottom Cutout for Delivery Tube Insertion -->
+            <path d="M 522,368 C 522,354 538,354 538,368 Z" fill="#1E293B"/>
+            <!-- Central Aperture for Rising Bubbles -->
+            <ellipse cx="530" cy="328" rx="9.5" ry="3.8" fill="#1E293B" stroke="#0F172A" stroke-width="1"/>
+          </g>
+
+          <!-- Inverted Glass Gas Jar over Beehive Shelf -->
+          <g id="invertedJarOverWater" class="apparatus-interactive-part" data-spec="Borosilicate Gas Jar (Inverted over beehive shelf; water displaced downward as gas accumulates)">
+            <!-- Initial Full Water Column inside inverted jar -->
+            <rect id="jarWaterFill" x="506" y="160" width="48" height="170" rx="3" fill="url(#troughWaterGrad)"/>
+            
+            <!-- Glass Outer Walls with Rolled Ground-Glass Rim -->
+            <rect x="504" y="158" width="52" height="172" rx="4" fill="url(#glassWallGrad)" stroke="#94A3B8" stroke-width="2.6"/>
+            <ellipse cx="530" cy="159" rx="15" ry="3.8" fill="#FFFFFF" fill-opacity="0.45" stroke="#94A3B8" stroke-width="1.2"/>
+            
+            <!-- White Enamel Volume Graduations on Jar -->
+            <line x1="508" y1="200" x2="516" y2="200" stroke="#F8FAFC" stroke-width="0.9" opacity="0.8"/>
+            <line x1="508" y1="240" x2="516" y2="240" stroke="#F8FAFC" stroke-width="0.9" opacity="0.8"/>
+            <line x1="508" y1="280" x2="516" y2="280" stroke="#F8FAFC" stroke-width="0.9" opacity="0.8"/>
+            
+            <!-- Collected Gas Pocket (Accumulates from closed top downwards) -->
+            <rect id="gasLayerOverWater" x="506" y="160" width="48" height="0" rx="3" fill="url(#gasOverWaterGrad)"/>
+            <!-- Concave Water Meniscus Line dropping as gas collects -->
+            <ellipse id="waterMeniscusLine" cx="530" cy="160" rx="23" ry="2.8" fill="#38BDF8" fill-opacity="0.7" stroke="#7DD3FC" stroke-width="0.8"/>
+
+            <!-- Streaming Gas Bubbles Rising from Beehive Shelf Aperture -->
+            <g id="jarBubbleStream" style="display:none;">
+              <circle cx="530" cy="316" r="3.2" fill="#FFFFFF" class="gas-bubble-fast"/>
+              <circle cx="527" cy="275" r="3.8" fill="#FFFFFF" class="gas-bubble"/>
+              <circle cx="533" cy="235" r="3.2" fill="#FFFFFF" class="gas-bubble-delay"/>
+            </g>
+
+            <!-- Specular Reflection Streak -->
+            <path d="M 508,170 L 508,310" stroke="#FFFFFF" stroke-width="1.4" opacity="0.6" class="glass-reflection"/>
+          </g>
+
+          <text x="530" y="146" font-size="9.5" fill="#94A3B8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700">Inverted Gas Jar</text>
+          <text x="530" y="388" font-size="9" fill="#0284C7" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700">Over Water Collection</text>
+        </g>
+
+        <!-- ── MODE B: Downward Delivery (Upward Displacement of Air) ── -->
+        <g id="setupDownwardDelivery" style="display:none;" class="apparatus-interactive-part" data-spec="Downward Delivery / Upward Displacement of Air (Jar upright, delivery tube extends to bottom — Optimal for dense gases)">
+          <!-- Glass Delivery Tube extending near jar bottom -->
+          <path d="M 362,110 L 533,110 Q 533,110 533,118 L 533,355" fill="none" stroke="#94A3B8" stroke-width="4.2" stroke-linecap="round"/>
+          <path d="M 362,110 L 533,110 Q 533,110 533,118 L 533,355" fill="none" stroke="#FFFFFF" stroke-width="1.6" opacity="0.75"/>
+          
+          <!-- Upright Cylindrical Gas Jar standing on table -->
+          <rect x="502" y="198" width="58" height="172" rx="4" fill="url(#glassWallGrad)" stroke="#94A3B8" stroke-width="2.6"/>
+          <ellipse cx="531" cy="369" rx="27" ry="3.5" fill="#64748B" fill-opacity="0.35"/>
+          <path d="M 505,210 L 505,355" stroke="#FFFFFF" stroke-width="1.4" opacity="0.6" class="glass-reflection"/>
+          
+          <!-- Heavy Weighted Cardboard / Glass Cover with Center Hole -->
+          <rect x="490" y="193" width="80" height="7.5" rx="2" fill="#78350F" stroke="#92400E" stroke-width="1"/>
+          <ellipse cx="533" cy="196.8" rx="4" ry="1.6" fill="#1E293B"/>
+
+          <!-- Gas Layer Accumulating from Bottom Upwards with Atmospheric Volumetric Gradient -->
+          <rect id="gasLayerDownward" x="504" y="368" width="54" height="0" rx="3" fill="url(#gasDownwardGrad)"/>
+          
+          <text x="531" y="182" font-size="9.5" fill="#94A3B8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700">Upright Gas Jar</text>
+          <text x="531" y="388" font-size="9" fill="#0284C7" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700">Downward Delivery (Dense Gas)</text>
+        </g>
+
+        <!-- ── MODE C: Upward Delivery (Downward Displacement of Air) ── -->
+        <g id="setupUpwardDelivery" style="display:none;" class="apparatus-interactive-part" data-spec="Upward Delivery / Downward Displacement of Air (Suspended by clamp, tube curves up into jar mouth — Optimal for light gases like NH₃, H₂)">
+          <!-- Retort Clamp Arm holding Inverted Jar firmly in Air -->
+          <rect x="558" y="194" width="124" height="6.5" rx="1" fill="#475569" stroke="#334155" stroke-width="1"/>
+          <path d="M 558,186 L 544,191 L 544,204 L 558,209" fill="none" stroke="#DC2626" stroke-width="3.5" stroke-linecap="round"/>
+
+          <!-- Glass Delivery Tube Curving Up into Inverted Jar Mouth -->
+          <path d="M 362,110 L 450,110 Q 458,110 458,118 L 458,335 Q 458,342 466,342 L 525,342 Q 533,342 533,334 L 533,165" fill="none" stroke="#94A3B8" stroke-width="4.2" stroke-linecap="round"/>
+          <path d="M 362,110 L 450,110 Q 458,110 458,118 L 458,335 Q 458,342 466,342 L 525,342 Q 533,342 533,334 L 533,165" fill="none" stroke="#FFFFFF" stroke-width="1.6" opacity="0.75"/>
+
+          <!-- Inverted Gas Jar Suspended in Air -->
+          <rect x="502" y="142" width="58" height="172" rx="4" fill="url(#glassWallGrad)" stroke="#94A3B8" stroke-width="2.6"/>
+          <ellipse cx="531" cy="143" rx="17" ry="3.8" fill="#FFFFFF" fill-opacity="0.45" stroke="#94A3B8" stroke-width="1.2"/>
+          <path d="M 505,155 L 505,300" stroke="#FFFFFF" stroke-width="1.4" opacity="0.6" class="glass-reflection"/>
+
+          <!-- Light Gas Layer Collecting at Closed Top Downwards -->
+          <rect id="gasLayerUpward" x="504" y="144" width="54" height="0" rx="3" fill="url(#gasUpwardGrad)"/>
+
+          <text x="531" y="128" font-size="9.5" fill="#94A3B8" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700">Inverted Gas Jar</text>
+          <text x="531" y="388" font-size="9" fill="#0284C7" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="700">Upward Delivery (Light Gas)</text>
+        </g>
+
+        <!-- ══════════════════════════════════════════
+             9. TEXTBOOK SCIENTIFIC CALLOUT LABELS LAYER
+             ══════════════════════════════════════════ -->
+        <g id="scientificLabelsGroup" class="diagram-callout">
+          <!-- 1. Thistle Funnel Liquid Seal Callout -->
+          <g transform="translate(139, 45)">
+            <rect class="diagram-label-pill" x="-65" y="-12" width="130" height="20" fill="rgba(15, 23, 42, 0.9)" stroke="#38BDF8" stroke-width="1"/>
+            <text x="0" y="2" fill="#F8FAFC" text-anchor="middle">① Thistle Funnel (Liquid Seal)</text>
+            <line x1="0" y1="8" x2="0" y2="24" stroke="#38BDF8" stroke-width="1.2" stroke-dasharray="2 1"/>
+            <circle cx="0" cy="25" r="2" fill="#38BDF8"/>
+          </g>
+
+          <!-- 2. Rubber Bung Callout -->
+          <g transform="translate(70, 160)">
+            <rect class="diagram-label-pill" x="-55" y="-10" width="110" height="18" fill="rgba(15, 23, 42, 0.9)" stroke="#38BDF8" stroke-width="1"/>
+            <text x="0" y="3" fill="#F8FAFC" text-anchor="middle">② Airtight Rubber Bung</text>
+            <path d="M 55,0 L 78,0 L 132,175" fill="none" stroke="#38BDF8" stroke-width="1" stroke-dasharray="2 1"/>
+            <circle cx="132" cy="175" r="2" fill="#38BDF8"/>
+          </g>
+
+          <!-- 3. Reaction Flask & Reagents Callout -->
+          <g transform="translate(60, 280)">
+            <rect class="diagram-label-pill" x="-50" y="-10" width="100" height="18" fill="rgba(15, 23, 42, 0.9)" stroke="#38BDF8" stroke-width="1"/>
+            <text x="0" y="3" fill="#F8FAFC" text-anchor="middle">③ Reaction Flask</text>
+            <line x1="50" y1="0" x2="100" y2="330" stroke="#38BDF8" stroke-width="1" stroke-dasharray="2 1"/>
+            <circle cx="100" cy="330" r="2" fill="#38BDF8"/>
+          </g>
+
+          <!-- 4. Delivery Tube (Gas Flow) Callout -->
+          <g transform="translate(225, 90)">
+            <rect class="diagram-label-pill" x="-55" y="-10" width="110" height="18" fill="rgba(15, 23, 42, 0.9)" stroke="#38BDF8" stroke-width="1"/>
+            <text x="0" y="3" fill="#F8FAFC" text-anchor="middle">④ Delivery Tube</text>
+            <line x1="0" y1="8" x2="0" y2="20" stroke="#38BDF8" stroke-width="1" stroke-dasharray="2 1"/>
+            <circle cx="0" cy="21" r="2" fill="#38BDF8"/>
+          </g>
+
+          <!-- 5. Drying Vessel Callout -->
+          <g transform="translate(302, 185)">
+            <rect class="diagram-label-pill" x="-50" y="-10" width="100" height="18" fill="rgba(15, 23, 42, 0.9)" stroke="#38BDF8" stroke-width="1"/>
+            <text x="0" y="3" fill="#F8FAFC" text-anchor="middle">⑤ Drying Vessel</text>
+            <line x1="0" y1="8" x2="0" y2="35" stroke="#38BDF8" stroke-width="1" stroke-dasharray="2 1"/>
+            <circle cx="0" cy="36" r="2" fill="#38BDF8"/>
+          </g>
+
+          <!-- 6. Gas Jar / Collection Assembly Callout -->
+          <g transform="translate(530, 90)">
+            <rect class="diagram-label-pill" x="-60" y="-10" width="120" height="18" fill="rgba(15, 23, 42, 0.9)" stroke="#38BDF8" stroke-width="1"/>
+            <text x="0" y="3" fill="#F8FAFC" text-anchor="middle">⑥ Gas Collection Jar</text>
+            <line x1="0" y1="8" x2="0" y2="50" stroke="#38BDF8" stroke-width="1" stroke-dasharray="2 1"/>
+            <circle cx="0" cy="51" r="2" fill="#38BDF8"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <!-- Live Reaction Telemetry Banner -->
+    <div id="telemetryBanner" style="margin-top: 12px; padding: 10px 14px; background: var(--card-bg-hover); border-radius: 8px; font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-main);">
+      Status: Ready to assemble and generate gas.
+    </div>
+  </section>
+
+  <!-- RIGHT COLUMN: Confirmatory Gas Testing & KNEC Marks -->
+  <section class="gas-card-panel">
+    <div class="gas-panel-header">
+      <h2 class="gas-panel-title"><span>🧪</span> 4. Gas Testing Station</h2>
+      <span class="knec-badge-pill">Paper 3 (Q3)</span>
+    </div>
+
+    <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0 0 10px;">
+      Apply confirmatory test reagents to the collected gas jar to verify gas identity:
+    </p>
+
+    <!-- Test Tools Grid -->
+    <div class="test-reagent-grid">
+      <button class="test-tool-btn" id="btnTestGlowing" onclick="runTest('glowingSplint')">
+        <span>🪵</span> Glowing Splint
+      </button>
+      <button class="test-tool-btn" id="btnTestBurning" onclick="runTest('burningSplint')">
+        <span>🔥</span> Burning Splint
+      </button>
+      <button class="test-tool-btn" id="btnTestLitmus" onclick="runTest('dampLitmus')">
+        <span>📑</span> Moist Litmus
+      </button>
+      <button class="test-tool-btn" id="btnTestLime" onclick="runTest('limeWater')">
+        <span>🥛</span> Lime Water
+      </button>
+      <button class="test-tool-btn" id="btnTestDichromate" onclick="runTest('dichromate')">
+        <span>🟠</span> K₂Cr₂O₇ Paper
+      </button>
+      <button class="test-tool-btn" id="btnTestStarch" onclick="runTest('starchIodide')">
+        <span>📜</span> Starch-Iodide
+      </button>
+      <button class="test-tool-btn" id="btnTestHcl" onclick="runTest('hclRod')">
+        <span>🧪</span> Conc HCl Rod
+      </button>
+    </div>
+
+    <!-- Observation Log Feed -->
+    <div style="margin-top: 10px;">
+      <h3 style="font-size: 0.82rem; font-weight: 700; color: var(--heading-color); margin-bottom: 6px;">
+        📝 Practical Observation Record:
+      </h3>
+      <div id="obsFeed" class="observation-log">
+        <div style="color: var(--text-muted); text-align: center; padding: 16px;">
+          No tests performed yet. Collect gas and apply a test above.
+        </div>
+      </div>
+    </div>
+
+    <!-- KNEC Theory Practical Questions -->
+    <div id="theoryQuestionSection" style="margin-top: 10px; border-top: 1px dashed var(--card-border); padding-top: 10px;">
+      <h3 style="font-size: 0.85rem; font-weight: 700; color: var(--heading-color); margin-bottom: 8px;">
+        📋 KNEC Examiner Questions
+      </h3>
+      <div id="questionsContainer"></div>
+    </div>
+
+    <!-- Final Score and Save Button -->
+    <div style="margin-top: auto; padding-top: 14px; border-top: 1.5px solid var(--card-border);">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+        <span style="font-weight: 700; font-size: 0.85rem; color: var(--heading-color);">Total Practical Score:</span>
+        <span class="score-badge-large" id="scoreDisplay">0.0 / 10.0</span>
+      </div>
+
+      <button id="saveGasSessionBtn" class="btn btn-primary" style="width: 100%; padding: 12px; font-weight: 800;" onclick="saveSession()">
+        💾 Submit & Save Practical Session
+      </button>
+    </div>
+  </section>
+
+</main>
+
+<!-- KCSE Official Schematic Blueprint Modal -->
+<div id="blueprintDiagramModal" class="blueprint-modal-overlay" style="display:none;" onclick="if(event.target === this) closeBlueprintModal()">
+  <div class="blueprint-modal-content">
+    <div class="blueprint-modal-header">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="font-size:1.5rem;">📐</span>
+        <div>
+          <h2 style="font-size:1.15rem; font-weight:800; color:var(--heading-color); margin:0;">
+            KCSE Laboratory Setup Blueprint: <span id="blueprintGasTitle" style="color:var(--blue-accent);">Oxygen (O₂)</span>
+          </h2>
+          <span style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono);">
+            KNEC Form 2 & Form 3 Practical Chemistry Paper 3 Blueprint Standard
+          </span>
+        </div>
+      </div>
+      <button type="button" class="theme-btn-chip" onclick="closeBlueprintModal()" style="font-size:0.85rem; padding:6px 14px; font-weight:700;">
+        ✕ Close
+      </button>
+    </div>
+
+    <!-- Blueprint Canvas / SVG Container -->
+    <div id="blueprintSvgContainer" style="background:#091224; border:1.5px solid #1E293B; border-radius:12px; padding:18px; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:320px; position:relative; overflow:hidden;">
+      <div style="position:absolute; top:8px; left:14px; font-family:var(--font-mono); font-size:0.68rem; color:#64748B; text-transform:uppercase; letter-spacing:0.08em;">
+        KNEC PAPER 3 EXAMINER APPARATUS SCHEMATIC • NOT TO SCALE
+      </div>
+      <div id="blueprintSvgCanvas" style="width:100%; max-width:760px; margin-top:12px;">
+        <!-- Injected dynamically based on gas selected -->
+      </div>
+    </div>
+
+    <!-- Exam Precautions & Chemical Rationale Grid -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:4px;">
+      <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:10px; padding:14px;">
+        <h4 style="margin:0 0 8px; font-size:0.86rem; color:var(--heading-color); display:flex; align-items:center; gap:6px;">
+          <span>⚠️</span> Critical KNEC Examination Precautions
+        </h4>
+        <ul id="blueprintPrecautionsList" style="margin:0; padding-left:18px; font-size:0.78rem; color:var(--text-main); line-height:1.6;">
+          <li><b>Thistle Funnel Safety Seal:</b> Stem must dip below the liquid surface to prevent evolved gas from escaping into the lab room.</li>
+          <li><b>Airtight Joints:</b> All rubber bungs and delivery tube joints must be securely sealed to maintain pressure.</li>
+          <li><b>Collection Logic:</b> Over water is optimal for insoluble gases; upward displacement of air for gases denser than air.</li>
+        </ul>
+      </div>
+
+      <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:10px; padding:14px;">
+        <h4 style="margin:0 0 8px; font-size:0.86rem; color:var(--heading-color); display:flex; align-items:center; gap:6px;">
+          <span>🧪</span> Chemical Equation & State Symbols
+        </h4>
+        <div id="blueprintEquationBox" style="background:var(--card-bg); border:1px dashed var(--blue-border); border-radius:8px; padding:10px; font-family:var(--font-mono); font-size:0.82rem; color:var(--blue-accent); text-align:center; margin-bottom:8px;">
+          2H₂O₂(aq)  —[MnO₂]→  2H₂O(l) + O₂(g)
+        </div>
+        <p id="blueprintDryingNote" style="margin:0; font-size:0.76rem; color:var(--text-muted); line-height:1.5;">
+          <b>Drying Compatibility:</b> Neutral and acidic gases can be dried using concentrated H₂SO₄ or fused CaCl₂. Basic gases (NH₃) react vigorously with acid and must only be dried with Quicklime (CaO).
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/shared/api.js"></script>
+<script src="/shared/theme.js"></script>
+<script src="/shared/audio-synth.js"></script>
+<script src="/shared/chemical-safety.js"></script>
+<script src="/shared/brilliant-ui.js"></script>
+<script src="/shared/tutorial-engine.js"></script>
+<script src="/shared/ai-tutor.js"></script>
+<script src="/shared/gas-prep-bench-core.js"></script>
+<script src="/student/js/gas-prep-engine.js?v=120"></script>
+
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const assignmentId = urlParams.get('assignment') ? parseInt(urlParams.get('assignment'), 10) : null;
+
+  let engine = new GasPrepEngine();
+
+  if (assignmentId) {
+    const banner = document.getElementById('assignmentHeaderBanner');
+    const bannerTitle = document.getElementById('assignBannerTitle');
+    const bannerDue = document.getElementById('assignBannerDue');
+    if (banner) banner.style.display = 'flex';
+    if (typeof Assignments !== 'undefined' && Assignments.getMine) {
+      Assignments.getMine().then(data => {
+        const list = data.assignments || [];
+        const match = list.find(a => a.id === assignmentId);
+        if (match) {
+          if (bannerTitle) bannerTitle.textContent = match.title + (match.instructions ? ` — ${match.instructions}` : '');
+          if (bannerDue && match.due_date) {
+            bannerDue.textContent = `Due ${new Date(match.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+          }
+        }
+      }).catch(err => console.warn('Could not fetch gas assignment banner info:', err.message));
+    }
+  }
+
+  if (window.TutorialEngine) {
+    window.TutorialEngine.init({
+      discipline: 'gas_prep',
+      containerId: 'tutorialDrawer'
+    });
+  }
+
+  if (window.AITutor) {
+    AITutor.init({
+      module: 'gas_prep',
+      assignmentId: assignmentId
+    });
+  }
+
+  // Active Session Stopwatch Timer
+  let sessionSeconds = 0;
+  let sessionTimerInterval = setInterval(() => {
+    sessionSeconds++;
+    const m = Math.floor(sessionSeconds / 60);
+    const s = sessionSeconds % 60;
+    const timerEl = document.getElementById('sessionTimerText');
+    if (timerEl) {
+      timerEl.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+  }, 1000);
+
+  function setStudyMode(mode) {
+    engine.setStudyMode(mode);
+    const btnPrac = document.getElementById('btnModePractice');
+    const btnExam = document.getElementById('btnModeExam');
+    const proctor = document.getElementById('gasExamProctorBanner');
+    if (btnPrac && btnExam) {
+      btnPrac.classList.toggle('active', mode === 'practice');
+      btnExam.classList.toggle('active', mode === 'exam');
+    }
+    if (proctor) {
+      proctor.style.display = mode === 'exam' ? 'flex' : 'none';
+    }
+    if (mode === 'exam') {
+      const dryingFb = document.getElementById('dryingFeedback');
+      const collFb = document.getElementById('collectionFeedback');
+      if (dryingFb) dryingFb.innerText = 'Feedback locked during exam mode.';
+      if (collFb) collFb.innerText = 'Feedback locked during exam mode.';
+    } else {
+      onDryingChange(document.getElementById('dryingSelect').value);
+      onCollectionChange(document.getElementById('collectionSelect').value);
+    }
+  }
+
+  function toggleBenchSettings(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('benchSettingsDropdown');
+    if (!menu) return;
+    menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
+  }
+
+  document.addEventListener('click', (e) => {
+    const menu = document.getElementById('benchSettingsDropdown');
+    if (menu && menu.style.display === 'flex') {
+      if (!e.target.closest('#benchSettingsDropdown') && !e.target.closest('.nav-btn-settings')) {
+        menu.style.display = 'none';
+      }
+    }
+  });
+
+  function toggleScratchpad() {
+    const drawer = document.getElementById('scratchpadDrawer');
+    if (!drawer) return;
+    const isOpen = drawer.style.display !== 'none';
+    drawer.style.display = isOpen ? 'none' : 'block';
+    if (!isOpen) {
+      const saved = localStorage.getItem('vlk_gas_scratchpad') || '';
+      const txt = document.getElementById('scratchpadText');
+      if (txt && !txt.value) txt.value = saved;
+    }
+  }
+
+  const scratchpadEl = document.getElementById('scratchpadText');
+  if (scratchpadEl) {
+    const saved = localStorage.getItem('vlk_gas_scratchpad');
+    if (saved) scratchpadEl.value = saved;
+    scratchpadEl.addEventListener('input', (e) => {
+      localStorage.setItem('vlk_gas_scratchpad', e.target.value);
+    });
+  }
+
+  function toggleSound() {
+    let isEnabled = true;
+    if (window.GasPrepBenchCore && typeof GasPrepBenchCore.isSoundEnabled === 'function') {
+      isEnabled = !GasPrepBenchCore.isSoundEnabled();
+      GasPrepBenchCore.setSoundEnabled(isEnabled);
+    } else {
+      isEnabled = !window._vlkGasSound;
+      window._vlkGasSound = isEnabled;
+    }
+    const btn = document.getElementById('soundToggleBtnGas');
+    if (btn) {
+      btn.textContent = isEnabled ? '🔊 Sound ON' : '🔇 Sound OFF';
+    }
+  }
+
+  function setLanguage(lang) {
+    document.querySelectorAll('.lang-btn-chip').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+    });
+    localStorage.setItem('vlk_lang', lang);
+    if (window.TutorialEngine && typeof TutorialEngine.setLanguage === 'function') {
+      TutorialEngine.setLanguage(lang);
+    }
+  }
+
+  function openCurrentGasSafety() {
+    const gasKey = engine.currentGasKey || 'O2';
+    const reagentMap = {
+      'O2': 'H2O2',
+      'CO2': 'CaCO3',
+      'Cl2': 'Cl2',
+      'NH3': 'NH3',
+      'SO2': 'SO2',
+      'H2': 'Zn'
+    };
+    const reagent = reagentMap[gasKey] || 'HCl';
+    if (window.VLKSafety && typeof VLKSafety.openSDSModal === 'function') {
+      VLKSafety.openSDSModal(reagent);
+    } else {
+      alert(`Safety Data for ${reagent} is not available.`);
+    }
+  }
+
+  let labelsVisible = true;
+  function toggleApparatusLabels() {
+    labelsVisible = !labelsVisible;
+    const group = document.getElementById('scientificLabelsGroup');
+    const btn = document.getElementById('btnToggleLabels');
+    if (group) group.style.display = labelsVisible ? 'inline' : 'none';
+    if (btn) {
+      btn.classList.toggle('active', labelsVisible);
+      btn.innerText = labelsVisible ? '🏷️ Labels: ON' : '🏷️ Labels: OFF';
+    }
+  }
+
+  function openBlueprintModal() {
+    const modal = document.getElementById('blueprintDiagramModal');
+    if (!modal) return;
+    modal.style.display = 'flex';
+    renderBlueprintSchematic(engine.currentGasKey);
+  }
+
+  function closeBlueprintModal() {
+    const modal = document.getElementById('blueprintDiagramModal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  function renderBlueprintSchematic(gasKey) {
+    const gas = (typeof GAS_DATABASE !== 'undefined' && GAS_DATABASE[gasKey]) || { formula: gasKey, name: 'Gas', equation: '' };
+    const titleEl = document.getElementById('blueprintGasTitle');
+    const eqEl = document.getElementById('blueprintEquationBox');
+    const precList = document.getElementById('blueprintPrecautionsList');
+    const dryingNote = document.getElementById('blueprintDryingNote');
+    const canvas = document.getElementById('blueprintSvgCanvas');
+
+    const blueprintConfigs = {
+      O2: {
+        title: 'Oxygen (O₂) — Catalytic Decomposition',
+        eq: '2H₂O₂(aq)  —[MnO₂ catalyst]→  2H₂O(l) + O₂(g)',
+        precautions: [
+          '<b>Thistle Funnel Seal [1 Mark]:</b> Stem must dip below H₂O₂ liquid level to prevent evolved O₂ from escaping.',
+          '<b>No Heating Required [1 Mark]:</b> Catalytic decomposition proceeds rapidly at room temperature.',
+          '<b>Collection Over Water [1 Mark]:</b> Optimal because O₂ is only slightly soluble in water, yielding pure gas.'
+        ],
+        dryingNote: '<b>Drying Agent:</b> Can be dried by passing through concentrated H₂SO₄ or fused anhydrous CaCl₂.',
+        flaskType: 'conical',
+        drying: 'washBottle',
+        collection: 'overWater',
+        hasHeat: false
+      },
+      CO2: {
+        title: 'Carbon Dioxide (CO₂) — Carbonate-Acid Displacement',
+        eq: 'CaCO₃(s) + 2HCl(aq)  →  CaCl₂(aq) + H₂O(l) + CO₂(g)',
+        precautions: [
+          '<b>Acid Selection [1 Mark]:</b> Dilute HCl or HNO₃ must be used; dilute H₂SO₄ fails due to insoluble CaSO₄ coating.',
+          '<b>Thistle Funnel Immersion [1 Mark]:</b> Safety liquid seal prevents high-pressure CO₂ escape.',
+          '<b>Downward Delivery [1 Mark]:</b> CO₂ is approx 1.5× denser than air and moderately soluble in cold water.'
+        ],
+        dryingNote: '<b>Incompatibility Rule [1 Mark]:</b> Cannot use Quicklime (CaO) because basic CaO reacts with acidic CO₂ forming CaCO₃!',
+        flaskType: 'conical',
+        drying: 'washBottle',
+        collection: 'downward',
+        hasHeat: false
+      },
+      Cl2: {
+        title: 'Chlorine (Cl₂) — Oxidation of Concentrated HCl',
+        eq: 'MnO₂(s) + 4HCl(conc)  —[Heat]→  MnCl₂(aq) + 2H₂O(l) + Cl₂(g)',
+        precautions: [
+          '<b>Heating on Wire Gauze [1 Mark]:</b> Round-bottom flask heated with Bunsen flame over tripod & wire gauze.',
+          '<b>Dropping Funnel with Tap [1 Mark]:</b> Used to carefully regulate addition of conc. HCl and prevent gas surges.',
+          '<b>Safety & Fume Cupboard [1 Mark]:</b> Chlorine is poisonous and choking; must be prepared in a fume chamber.'
+        ],
+        dryingNote: '<b>Purification Train:</b> 1st wash bottle contains water (absorbs HCl fumes), 2nd contains conc. H₂SO₄ for drying.',
+        flaskType: 'round',
+        drying: 'washBottle',
+        collection: 'downward',
+        hasHeat: true
+      },
+      NH3: {
+        title: 'Ammonia (NH₃) — Base-Ammonium Salt Displacement',
+        eq: 'Ca(OH)₂(s) + 2NH₄Cl(s)  —[Heat]→  CaCl₂(s) + 2H₂O(l) + 2NH₃(g)',
+        precautions: [
+          '<b>Slanted Flask Neck [1 Mark]:</b> Flask slopes downward so condensed steam does not run back and crack hot glass.',
+          '<b>Quicklime Drying Tower ONLY [1 Mark]:</b> NH₃ reacts with conc. H₂SO₄ and forms complex with CaCl₂; CaO is mandatory!',
+          '<b>Upward Delivery [1 Mark]:</b> Inverted gas jar because NH₃ is less dense than air (~0.6×) and extremely soluble in water.'
+        ],
+        dryingNote: '<b>CRITICAL KNEC EXAM POINT:</b> Drying NH₃ with conc. H₂SO₄ or CaCl₂ forfeits all marks!',
+        flaskType: 'round',
+        drying: 'quicklime',
+        collection: 'upward',
+        hasHeat: true
+      },
+      SO2: {
+        title: 'Sulphur(IV) Oxide (SO₂) — Sulphite Acid Displacement',
+        eq: 'Na₂SO₃(s) + H₂SO₄(dil/conc)  —[Gentle Heat]→  Na₂SO₄(aq) + H₂O(l) + SO₂(g)',
+        precautions: [
+          '<b>Gentle Heating [1 Mark]:</b> Requires moderate heating on wire gauze to accelerate evolution.',
+          '<b>Thistle Funnel Safety Seal [1 Mark]:</b> Prevents pungent, toxic SO₂ vapors from contaminating lab air.',
+          '<b>Downward Delivery [1 Mark]:</b> SO₂ is 2.2× denser than air and extremely soluble in water.'
+        ],
+        dryingNote: '<b>Drying Agent:</b> Concentrated H₂SO₄ wash bottle; basic CaO would react neutralizing SO₂.',
+        flaskType: 'round',
+        drying: 'washBottle',
+        collection: 'downward',
+        hasHeat: true
+      },
+      H2: {
+        title: 'Hydrogen (H₂) — Metal-Acid Displacement',
+        eq: 'Zn(s) + 2HCl(aq)  →  ZnCl₂(aq) + H₂(g)',
+        precautions: [
+          '<b>NO NAKED FLAMES [1 Mark]:</b> Hydrogen forms an explosive mixture with air (2H₂ + O₂); keep all flames away!',
+          '<b>Thistle Funnel Immersion [1 Mark]:</b> Essential liquid seal preventing hydrogen loss.',
+          '<b>Collection Over Water [1 Mark]:</b> Insoluble in water; verifies purity before lighting or testing.'
+        ],
+        dryingNote: '<b>Drying Agent:</b> Anhydrous CaCl₂ U-tube or conc. H₂SO₄ wash bottle.',
+        flaskType: 'conical',
+        drying: 'washBottle',
+        collection: 'overWater',
+        hasHeat: false
+      }
+    };
+
+    const cfg = blueprintConfigs[gasKey] || blueprintConfigs.O2;
+    if (titleEl) titleEl.innerText = cfg.title;
+    if (eqEl) eqEl.innerText = cfg.eq;
+    if (dryingNote) dryingNote.innerHTML = cfg.dryingNote;
+    if (precList) {
+      precList.innerHTML = cfg.precautions.map(p => `<li>${p}</li>`).join('');
+    }
+
+    // Render Clean Technical SVG Blueprint
+    if (canvas) {
+      canvas.innerHTML = `
+        <svg viewBox="0 0 740 290" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="modalBpGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1E293B" stroke-width="0.8"/>
+            </pattern>
+          </defs>
+          <rect width="740" height="290" fill="#0B132B" rx="10"/>
+          <rect width="740" height="290" fill="url(#modalBpGrid)" rx="10"/>
+
+          <!-- Bench Surface Reference -->
+          <line x1="20" y1="260" x2="720" y2="260" stroke="#334155" stroke-width="2.5" stroke-dasharray="6 3"/>
+
+          <!-- Retort Stand Left -->
+          <rect x="50" y="255" width="70" height="6" fill="#475569"/>
+          <line x1="85" y1="255" x2="85" y2="35" stroke="#64748B" stroke-width="3"/>
+          <line x1="85" y1="120" x2="140" y2="120" stroke="#64748B" stroke-width="2.5"/>
+
+          ${cfg.hasHeat ? `
+            <!-- Tripod & Wire Gauze & Bunsen Burner -->
+            <line x1="115" y1="255" x2="128" y2="210" stroke="#64748B" stroke-width="2.5"/>
+            <line x1="175" y1="255" x2="162" y2="210" stroke="#64748B" stroke-width="2.5"/>
+            <line x1="124" y1="210" x2="166" y2="210" stroke="#38BDF8" stroke-width="3"/>
+            <!-- Wire Gauze with Mark Badge -->
+            <rect x="120" y="207" width="50" height="3" fill="#94A3B8"/>
+            <!-- Bunsen Burner -->
+            <rect x="141" y="225" width="8" height="30" fill="#CBD5E1"/>
+            <ellipse cx="145" cy="255" rx="15" ry="3" fill="#334155"/>
+            <path d="M 145,215 C 141,220 143,225 145,225 C 147,225 149,220 145,215 Z" fill="#38BDF8"/>
+            <!-- Heated Round-Bottom Flask -->
+            <path d="M 137,130 L 137,165 C 120,173 110,188 110,204 C 110,220 125,232 145,232 C 165,232 180,220 180,204 C 180,188 170,173 153,165 L 153,130 Z" fill="none" stroke="#38BDF8" stroke-width="2"/>
+            <path d="M 114,204 C 114,218 127,228 145,228 C 163,228 176,218 176,204 Z" fill="#0284C7" fill-opacity="0.3"/>
+          ` : `
+            <!-- Flat-bottom Conical Flask (No Heat) -->
+            <path d="M 137,130 L 137,160 L 115,250 C 113,258 118,258 126,258 L 164,258 C 172,258 177,258 175,250 L 153,160 L 153,130 Z" fill="none" stroke="#38BDF8" stroke-width="2"/>
+            <path d="M 120,230 L 170,230 L 174,256 L 116,256 Z" fill="#0284C7" fill-opacity="0.3"/>
+          `}
+
+          <!-- Rubber Stopper on Reaction Flask -->
+          <polygon points="135,130 155,130 152,118 138,118" fill="#475569" stroke="#38BDF8" stroke-width="1"/>
+
+          ${gasKey === 'Cl2' ? `
+            <!-- Dropping Funnel with Tap -->
+            <ellipse cx="140" cy="75" rx="12" ry="16" fill="none" stroke="#38BDF8" stroke-width="1.8"/>
+            <line x1="140" y1="42" x2="140" y2="59" stroke="#38BDF8" stroke-width="1.8"/>
+            <rect x="135" y="93" width="10" height="6" fill="#0284C7"/>
+            <line x1="140" y1="99" x2="140" y2="135" stroke="#38BDF8" stroke-width="1.8"/>
+          ` : `
+            <!-- Thistle Funnel Stem Dips Below Liquid -->
+            <line x1="141" y1="48" x2="141" y2="242" stroke="#38BDF8" stroke-width="2"/>
+            <polygon points="131,34 151,34 144,48 138,48" fill="none" stroke="#38BDF8" stroke-width="1.8"/>
+            <line x1="141" y1="210" x2="141" y2="242" stroke="#38BDF8" stroke-width="3"/>
+          `}
+
+          <!-- Callout 1: Funnel Mark -->
+          <g transform="translate(140, 20)">
+            <rect x="-65" y="-10" width="130" height="18" rx="3" fill="#1E293B" stroke="#F59E0B" stroke-width="1"/>
+            <text x="0" y="3" fill="#F59E0B" font-size="8.5" font-family="'JetBrains Mono', monospace" font-weight="700" text-anchor="middle">
+              ${gasKey === 'Cl2' ? '[1 Mark] Dropping Funnel' : '[1 Mark] Thistle Liquid Seal'}
+            </text>
+          </g>
+
+          <!-- Delivery Tube from Flask to Drying Vessel -->
+          <path d="M 148,118 L 148,80 L 320,80 L 320,${cfg.drying === 'washBottle' ? '235' : '150'}" fill="none" stroke="#E2E8F0" stroke-width="2"/>
+
+          ${cfg.drying === 'washBottle' ? `
+            <!-- Drechsel Wash Bottle (Conc H₂SO₄) -->
+            <rect x="305" y="155" width="55" height="103" rx="6" fill="none" stroke="#38BDF8" stroke-width="2"/>
+            <rect x="307" y="205" width="51" height="51" rx="4" fill="#F59E0B" fill-opacity="0.3"/>
+            <polygon points="318,155 347,155 344,146 321,146" fill="#475569"/>
+            <line x1="340" y1="146" x2="340" y2="175" stroke="#E2E8F0" stroke-width="2"/>
+            <text x="332" y="240" fill="#F59E0B" font-size="8" font-family="'JetBrains Mono', monospace" text-anchor="middle">Conc. H₂SO₄</text>
+            <path d="M 340,146 L 340,80 L 530,80" fill="none" stroke="#E2E8F0" stroke-width="2"/>
+          ` : (cfg.drying === 'quicklime' ? `
+            <!-- Quicklime (CaO) Drying Tower -->
+            <rect x="305" y="125" width="55" height="133" rx="4" fill="none" stroke="#38BDF8" stroke-width="2"/>
+            <text x="332" y="195" fill="#38BDF8" font-size="8" font-family="'JetBrains Mono', monospace" text-anchor="middle">CaO Lumps</text>
+            <rect x="308" y="245" width="49" height="8" fill="#CBD5E1" opacity="0.6"/>
+            <text x="332" y="251" fill="#0F172A" font-size="6" text-anchor="middle">Glass Wool</text>
+            <path d="M 332,125 L 332,80 L 530,80" fill="none" stroke="#E2E8F0" stroke-width="2"/>
+          ` : `
+            <!-- CaCl₂ U-Tube -->
+            <path d="M 310,165 L 310,240 C 310,255 350,255 350,240 L 350,165" fill="none" stroke="#38BDF8" stroke-width="12"/>
+            <path d="M 350,165 L 350,80 L 530,80" fill="none" stroke="#E2E8F0" stroke-width="2"/>
+          `)}
+
+          <!-- Callout 2: Drying Agent Mark -->
+          <g transform="translate(332, 55)">
+            <rect x="-70" y="-10" width="140" height="18" rx="3" fill="#1E293B" stroke="#10B981" stroke-width="1"/>
+            <text x="0" y="3" fill="#10B981" font-size="8.5" font-family="'JetBrains Mono', monospace" font-weight="700" text-anchor="middle">
+              ${cfg.drying === 'quicklime' ? '[1 Mark] Quicklime (CaO) ONLY' : '[1 Mark] Conc. H₂SO₄ Drying'}
+            </text>
+          </g>
+
+          ${cfg.collection === 'overWater' ? `
+            <!-- Collection Over Water in Pneumatic Trough -->
+            <rect x="475" y="205" width="165" height="53" rx="4" fill="none" stroke="#38BDF8" stroke-width="2"/>
+            <rect x="477" y="218" width="161" height="38" fill="#0284C7" fill-opacity="0.3"/>
+            <!-- Beehive Shelf -->
+            <polygon points="528,256 534,228 576,228 582,256" fill="#64748B"/>
+            <!-- Inverted Jar over shelf -->
+            <rect x="535" y="115" width="40" height="113" rx="3" fill="none" stroke="#38BDF8" stroke-width="2"/>
+            <rect x="536" y="116" width="38" height="45" fill="#38BDF8" fill-opacity="0.4"/>
+            <!-- Delivery tube curving into shelf -->
+            <path d="M 530,80 L 460,80 L 460,245 L 555,245 L 555,232" fill="none" stroke="#E2E8F0" stroke-width="2"/>
+            <text x="555" y="142" fill="#E2E8F0" font-size="8" font-family="'JetBrains Mono', monospace" text-anchor="middle">Gas</text>
+            <text x="555" y="185" fill="#38BDF8" font-size="7.5" font-family="'JetBrains Mono', monospace" text-anchor="middle">Water</text>
+          ` : (cfg.collection === 'downward' ? `
+            <!-- Downward Delivery into Upright Gas Jar -->
+            <path d="M 530,80 L 550,80 L 550,248" fill="none" stroke="#E2E8F0" stroke-width="2"/>
+            <rect x="525" y="145" width="50" height="113" rx="3" fill="none" stroke="#38BDF8" stroke-width="2"/>
+            <rect x="515" y="141" width="70" height="5" fill="#78350F"/>
+            <rect x="527" y="200" width="46" height="56" rx="2" fill="${gasKey === 'Cl2' ? '#84CC16' : '#0284C7'}" fill-opacity="0.35"/>
+            <text x="550" y="235" fill="#E2E8F0" font-size="8" font-family="'JetBrains Mono', monospace" text-anchor="middle">Dense Gas</text>
+          ` : `
+            <!-- Upward Delivery into Inverted Gas Jar -->
+            <path d="M 530,80 L 480,80 L 480,245 L 550,245 L 550,135" fill="none" stroke="#E2E8F0" stroke-width="2"/>
+            <rect x="525" y="115" width="50" height="113" rx="3" fill="none" stroke="#38BDF8" stroke-width="2"/>
+            <rect x="527" y="117" width="46" height="55" rx="2" fill="#38BDF8" fill-opacity="0.35"/>
+            <!-- Retort clamp holding jar in air -->
+            <line x1="575" y1="160" x2="650" y2="160" stroke="#64748B" stroke-width="2.5"/>
+            <text x="550" y="145" fill="#E2E8F0" font-size="8" font-family="'JetBrains Mono', monospace" text-anchor="middle">Light Gas</text>
+          `)}
+
+          <!-- Callout 3: Collection Mark -->
+          <g transform="translate(555, 30)">
+            <rect x="-70" y="-10" width="140" height="18" rx="3" fill="#1E293B" stroke="#38BDF8" stroke-width="1"/>
+            <text x="0" y="3" fill="#38BDF8" font-size="8.5" font-family="'JetBrains Mono', monospace" font-weight="700" text-anchor="middle">
+              ${cfg.collection === 'overWater' ? '[1 Mark] Over Water Collection' : (cfg.collection === 'downward' ? '[1 Mark] Downward Delivery' : '[1 Mark] Upward Delivery')}
+            </text>
+          </g>
+        </svg>
+      `;
+    }
+  }
+
+  function updateDryingApparatus(dryingKey) {
+    const wash = document.getElementById('dryingWashBottleGroup');
+    const quick = document.getElementById('dryingQuicklimeGroup');
+    const cacl2 = document.getElementById('dryingCacl2Group');
+    if (wash) wash.style.display = dryingKey === 'concH2SO4' ? 'inline' : 'none';
+    if (quick) quick.style.display = dryingKey === 'quicklimeCaO' ? 'inline' : 'none';
+    if (cacl2) cacl2.style.display = dryingKey === 'anhydrousCaCl2' ? 'inline' : 'none';
+  }
+
+  function updateSolidReactantBed(gasKey) {
+    const conicalGranules = document.getElementById('conicalSolidGranules');
+    const roundGranules = document.getElementById('roundBottomSolidGranules');
+
+    if (conicalGranules) {
+      if (gasKey === 'O2') {
+        // Fine Black MnO₂ Catalyst Powder Mound
+        conicalGranules.innerHTML = `
+          <path d="M 112,367 C 118,358 132,352 145,352 C 158,352 172,358 178,367 Z" fill="#0F172A" stroke="#1E293B" stroke-width="0.8"/>
+          <path d="M 120,366 C 128,356 138,354 145,354 C 152,354 162,356 170,366 Z" fill="#1E293B" opacity="0.9"/>
+          <circle cx="132" cy="358" r="0.9" fill="#475569"/>
+          <circle cx="140" cy="355" r="0.8" fill="#334155"/>
+          <circle cx="147" cy="356" r="0.9" fill="#475569"/>
+          <circle cx="155" cy="360" r="0.8" fill="#334155"/>
+          <circle cx="136" cy="363" r="0.7" fill="#64748B"/>
+          <circle cx="150" cy="362" r="0.7" fill="#64748B"/>
+          <text x="145" y="374" font-size="5.2" fill="#94A3B8" font-family="'JetBrains Mono', monospace" font-weight="700" text-anchor="middle">MnO₂ (s) Catalyst</text>
+        `;
+      } else if (gasKey === 'H2') {
+        // Metallic Silvery Granulated Zinc Chunks (Zn)
+        conicalGranules.innerHTML = `
+          <polygon points="118,364 126,356 136,359 132,366 120,366" fill="#64748B" stroke="#475569" stroke-width="0.8"/>
+          <polygon points="126,356 136,359 131,352 122,351" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.6"/>
+
+          <polygon points="135,365 144,354 154,358 150,366 137,366" fill="#475569" stroke="#334155" stroke-width="0.8"/>
+          <polygon points="144,354 154,358 149,349 140,348" fill="#F1F5F9" stroke="#CBD5E1" stroke-width="0.6"/>
+
+          <polygon points="153,363 163,356 172,360 167,366 155,366" fill="#64748B" stroke="#475569" stroke-width="0.8"/>
+          <polygon points="163,356 172,360 167,352 159,351" fill="#E2E8F0" stroke="#94A3B8" stroke-width="0.6"/>
+
+          <circle cx="128" cy="354" r="1.1" fill="#FFFFFF"/>
+          <circle cx="146" cy="351" r="1.2" fill="#FFFFFF"/>
+          <circle cx="165" cy="354" r="1.1" fill="#FFFFFF"/>
+          <text x="145" y="374" font-size="5.2" fill="#94A3B8" font-family="'JetBrains Mono', monospace" font-weight="700" text-anchor="middle">Granulated Zinc (Zn)</text>
+        `;
+      } else {
+        // CO2 & Default: 3D Faceted White-Grey Marble Chips (CaCO₃)
+        conicalGranules.innerHTML = `
+          <polygon points="118,364 125,354 135,357 133,366 120,366" fill="#CBD5E1" stroke="#94A3B8" stroke-width="0.8"/>
+          <polygon points="125,354 135,357 132,350 123,349" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="0.6"/>
+
+          <polygon points="134,365 142,352 153,356 150,366 136,366" fill="#94A3B8" stroke="#64748B" stroke-width="0.8"/>
+          <polygon points="142,352 153,356 149,348 139,347" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.6"/>
+
+          <polygon points="152,363 162,354 171,358 168,366 154,366" fill="#CBD5E1" stroke="#94A3B8" stroke-width="0.8"/>
+          <polygon points="162,354 171,358 167,351 159,350" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="0.6"/>
+
+          <polygon points="128,366 139,360 147,366" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="0.6"/>
+          <polygon points="146,366 156,359 163,366" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="0.6"/>
+          <text x="145" y="374" font-size="5.2" fill="#94A3B8" font-family="'JetBrains Mono', monospace" font-weight="700" text-anchor="middle">CaCO₃ Marble Chips</text>
+        `;
+      }
+    }
+
+    if (roundGranules) {
+      if (gasKey === 'NH3') {
+        // Dry Mixture of Ca(OH)₂ and NH₄Cl Powder (No Liquid)
+        roundGranules.innerHTML = `
+          <path d="M 108,298 C 118,288 134,284 145,284 C 156,284 172,288 182,298 C 182,312 166,315 145,315 C 124,315 108,312 108,298 Z" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1"/>
+          <path d="M 115,297 C 125,289 137,286 145,286 C 153,286 165,289 175,297 Z" fill="#FFFFFF" opacity="0.8"/>
+          <circle cx="130" cy="294" r="0.8" fill="#CBD5E1"/>
+          <circle cx="142" cy="291" r="0.8" fill="#94A3B8"/>
+          <circle cx="154" cy="293" r="0.8" fill="#CBD5E1"/>
+          <circle cx="160" cy="301" r="0.9" fill="#94A3B8"/>
+          <circle cx="135" cy="305" r="0.9" fill="#CBD5E1"/>
+          <text x="145" y="321" font-size="4.5" fill="#38BDF8" font-family="'JetBrains Mono', monospace" font-weight="700" text-anchor="middle">Dry Ca(OH)₂ + NH₄Cl Mixture</text>
+          <text x="145" y="327" font-size="3.5" fill="#94A3B8" font-family="'JetBrains Mono', monospace" text-anchor="middle">[Dry Reaction · No Liquid Acid]</text>
+        `;
+      } else if (gasKey === 'SO2') {
+        // Crystalline Na₂SO₃
+        roundGranules.innerHTML = `
+          <ellipse cx="136" cy="309" rx="7.5" ry="4" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="0.8"/>
+          <ellipse cx="146" cy="310" rx="8.5" ry="4.5" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8"/>
+          <ellipse cx="156" cy="308" rx="7" ry="3.8" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="0.8"/>
+          <polygon points="144,306 148,304 150,308 146,309" fill="#FFFFFF" stroke="#94A3B8" stroke-width="0.5"/>
+          <text x="145" y="322" font-size="4.8" fill="#94A3B8" font-family="'JetBrains Mono', monospace" font-weight="700" text-anchor="middle">Na₂SO₃ Crystals</text>
+        `;
+      } else {
+        // Cl2: Dark MnO₂ Lumps
+        roundGranules.innerHTML = `
+          <ellipse cx="135" cy="309" rx="8" ry="4.5" fill="#0F172A" stroke="#1E293B" stroke-width="0.8"/>
+          <ellipse cx="146" cy="310" rx="9" ry="5" fill="#1E293B" stroke="#334155" stroke-width="0.8"/>
+          <ellipse cx="156" cy="308" rx="7.5" ry="4" fill="#0F172A" stroke="#1E293B" stroke-width="0.8"/>
+          <circle cx="144" cy="306" r="1" fill="#64748B"/>
+          <text x="145" y="322" font-size="4.8" fill="#94A3B8" font-family="'JetBrains Mono', monospace" font-weight="700" text-anchor="middle">Solid MnO₂ Lumps</text>
+        `;
+      }
+    }
+  }
+
+  function updateApparatusForGas(gasKey) {
+    const gas = (typeof GAS_DATABASE !== 'undefined' && GAS_DATABASE[gasKey]) || {};
+    const isHeated = !!gas.heatingRequired;
+
+    // Toggle conical flask vs round-bottom flask
+    const conical = document.getElementById('flaskConicalGroup');
+    const round = document.getElementById('flaskRoundBottomGroup');
+    const wire = document.getElementById('wireGauzeGroup');
+    const tripod = document.getElementById('tripodGroup');
+    
+    if (conical) conical.style.display = isHeated ? 'none' : 'inline';
+    if (round) {
+      round.style.display = isHeated ? 'inline' : 'none';
+      round.setAttribute('data-spec', gasKey === 'NH3'
+        ? 'Borosilicate Round-Bottom Flask (Dry solid mixture of Ca(OH)₂ + NH₄Cl heated directly — No liquid acid added; stem slopes slightly forward so steam does not crack hot glass — KNEC 1 Mark)'
+        : 'Borosilicate Round-Bottom Flask 250mL (Mounted on wire gauze over Bunsen burner for uniform thermal distribution)');
+    }
+    if (wire) wire.style.display = isHeated ? 'inline' : 'none';
+    if (tripod) tripod.style.display = isHeated ? 'inline' : 'none';
+
+    // Funnel: Cl2 uses Dropping Funnel; NH3 uses dry solid mixture (no funnel); others use Thistle Funnel
+    const thistle = document.getElementById('thistleFunnelGroup');
+    const dropping = document.getElementById('droppingFunnelGroup');
+    if (gasKey === 'Cl2') {
+      if (thistle) thistle.style.display = 'none';
+      if (dropping) dropping.style.display = 'inline';
+    } else if (gasKey === 'NH3') {
+      if (thistle) thistle.style.display = 'none';
+      if (dropping) dropping.style.display = 'none';
+    } else {
+      if (thistle) thistle.style.display = 'inline';
+      if (dropping) dropping.style.display = 'none';
+    }
+
+    // NH3 is dry reaction: hide roundBottomLiquid meniscus and liquid fill
+    const rbLiquid = document.getElementById('roundBottomLiquid');
+    if (rbLiquid && rbLiquid.parentElement) {
+      rbLiquid.parentElement.style.display = (gasKey === 'NH3') ? 'none' : 'inline';
+    }
+
+    // Update solid reactant bed
+    updateSolidReactantBed(gasKey);
+
+    // Fume cupboard warning banner for toxic gases (Cl2, SO2)
+    const fumeBanner = document.getElementById('stageFumeHoodBanner');
+    if (fumeBanner) {
+      fumeBanner.style.display = (gasKey === 'Cl2' || gasKey === 'SO2') ? 'flex' : 'none';
+    }
+
+    // Update Left Panel preview text
+    const previewText = document.getElementById('gasDiagramPreviewText');
+    if (previewText) {
+      const titles = {
+        O2: 'O₂: Catalytic Decomposition Apparatus (MnO₂ + H₂O₂)',
+        CO2: 'CO₂: Carbonate-Acid Displacement (CaCO₃ + HCl)',
+        Cl2: 'Cl₂: Heated Oxidation of HCl by MnO₂ (Fume Cupboard)',
+        NH3: 'NH₃: Heated Dry Base-Ammonium Salt (Ca(OH)₂ + NH₄Cl)',
+        SO2: 'SO₂: Sulphite Acid Displacement (Na₂SO₃ + H₂SO₄)',
+        H2: 'H₂: Metal-Acid Displacement (Zn + HCl)'
+      };
+      previewText.textContent = titles[gasKey] || `${gasKey} Apparatus Setup`;
+    }
+
+    // Update Drying vessel
+    updateDryingApparatus(engine.selectedDrying);
+  }
+
+  function updateCollectionApparatus(methodKey, gasKey, isCollected) {
+    const setupOver = document.getElementById('setupOverWater');
+    const setupDown = document.getElementById('setupDownwardDelivery');
+    const setupUp = document.getElementById('setupUpwardDelivery');
+    
+    if (setupOver) setupOver.style.display = methodKey === 'overWater' ? 'inline' : 'none';
+    if (setupDown) setupDown.style.display = methodKey === 'downwardDelivery' ? 'inline' : 'none';
+    if (setupUp) setupUp.style.display = methodKey === 'upwardDelivery' ? 'inline' : 'none';
+
+    // Set gas color in SVG gradient variables
+    let gasColor = '#38BDF8';
+    if (gasKey === 'Cl2') {
+      gasColor = '#84CC16'; // characteristic greenish-yellow
+    } else if (gasKey === 'SO2') {
+      gasColor = '#FDE047'; // pale yellow
+    }
+    document.documentElement.style.setProperty('--gas-fill-color', gasColor);
+
+    // Update gas layer height if collected
+    const layerOver = document.getElementById('gasLayerOverWater');
+    const meniscus = document.getElementById('waterMeniscusLine');
+    const layerDown = document.getElementById('gasLayerDownward');
+    const layerUp = document.getElementById('gasLayerUpward');
+
+    if (isCollected) {
+      if (layerOver) layerOver.setAttribute('height', '95');
+      if (meniscus) meniscus.setAttribute('cy', '257');
+      if (layerDown) {
+        layerDown.setAttribute('y', '258');
+        layerDown.setAttribute('height', '110');
+      }
+      if (layerUp) layerUp.setAttribute('height', '100');
+    } else {
+      if (layerOver) layerOver.setAttribute('height', '0');
+      if (meniscus) meniscus.setAttribute('cy', '162');
+      if (layerDown) {
+        layerDown.setAttribute('y', '368');
+        layerDown.setAttribute('height', '0');
+      }
+      if (layerUp) layerUp.setAttribute('height', '0');
+    }
+  }
+
+  function selectGas(gasKey) {
+    document.querySelectorAll('.gas-select-chip').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-gas') === gasKey);
+    });
+
+    const gas = engine.selectGas(gasKey);
+    document.getElementById('eqBox').innerText = gas.equation;
+    document.getElementById('reactantsText').innerText = gas.reactants;
+    document.getElementById('densityText').innerText = gas.densityVsAir;
+    document.getElementById('solubilityText').innerText = gas.solubilityInWater;
+    
+    const subbarEl = document.getElementById('knecSubbarGas');
+    if (subbarEl) subbarEl.innerText = `${gas.formula} (${gas.name})`;
+
+    document.getElementById('dryingSelect').value = engine.selectedDrying;
+    document.getElementById('collectionSelect').value = engine.selectedCollection;
+    
+    updateApparatusForGas(gasKey);
+    updateHeatingUI();
+    updateCollectionApparatus(engine.selectedCollection, gasKey, false);
+    resetObservationUI();
+    renderQuestions();
+    updateScoreUI();
+  }
+
+  function onDryingChange(val) {
+    engine.setDryingAgent(val);
+    updateDryingApparatus(val);
+    const feedback = engine.validateConfiguration().dryingExpl;
+    const dryingFb = document.getElementById('dryingFeedback');
+    if (dryingFb) {
+      dryingFb.innerText = engine.studyMode === 'exam' ? 'Feedback locked during exam mode.' : feedback;
+    }
+    resetObservationUI();
+  }
+
+  function onCollectionChange(val) {
+    engine.setCollectionMethod(val);
+    updateCollectionApparatus(val, engine.currentGasKey, engine.gasGenerated);
+    const feedback = engine.validateConfiguration().collectionExpl;
+    const collFb = document.getElementById('collectionFeedback');
+    if (collFb) {
+      collFb.innerText = engine.studyMode === 'exam' ? 'Feedback locked during exam mode.' : feedback;
+    }
+    resetObservationUI();
+  }
+
+  function toggleHeating() {
+    engine.toggleHeating();
+    updateHeatingUI();
+  }
+
+  function updateHeatingUI() {
+    const btn = document.getElementById('heatBtn');
+    const bunsen = document.getElementById('bunsenGroup');
+    const wire = document.getElementById('wireGauzeCenter');
+    if (engine.heatingEnabled) {
+      btn.innerText = 'Heating: ON 🔥';
+      btn.classList.add('active');
+      if (bunsen) bunsen.style.display = 'block';
+      if (wire) wire.setAttribute('fill', '#EF4444');
+    } else {
+      btn.innerText = 'Heating: OFF';
+      btn.classList.remove('active');
+      if (bunsen) bunsen.style.display = 'none';
+      if (wire) wire.setAttribute('fill', '#CBD5E1');
+    }
+  }
+
+  function generateGas() {
+    const res = engine.runReaction();
+    
+    // Activate animated bubbles and gas streams
+    const bubbleL = document.getElementById('bubbleLayer');
+    const dryingB = document.getElementById('dryingBubbleLayer');
+    const stream1 = document.getElementById('gasStreamTube1');
+    const stream2 = document.getElementById('gasStreamTube2');
+    const jarStream = document.getElementById('jarBubbleStream');
+
+    if (bubbleL) bubbleL.style.display = 'block';
+    if (stream1) stream1.style.display = 'inline';
+    if (stream2) stream2.style.display = 'inline';
+    if (dryingB && engine.selectedDrying === 'concH2SO4') dryingB.style.display = 'block';
+    if (jarStream && engine.selectedCollection === 'overWater') jarStream.style.display = 'inline';
+
+    updateCollectionApparatus(engine.selectedCollection, engine.currentGasKey, true);
+
+    document.getElementById('reactionStatusBadge').innerText = 'Gas Collected';
+    document.getElementById('reactionStatusBadge').style.background = 'var(--green-bg)';
+    document.getElementById('reactionStatusBadge').style.color = 'var(--green-accent)';
+
+    document.getElementById('telemetryBanner').innerHTML = 
+      `<b>Evolving:</b> ${res.gas.formula} (${res.gas.name}) — <i>${res.validation.isFullyCorrect ? 'Optimal setup verified.' : 'Setup has chemical discrepancies!'}</i>`;
+
+    if (window.GasPrepBenchCore && typeof GasPrepBenchCore.playGasBubbling === 'function') {
+      GasPrepBenchCore.playGasBubbling();
+    } else if (window.AudioSynth) {
+      AudioSynth.playTone(440, 0.2);
+    }
+    updateScoreUI();
+  }
+
+  function closeConfirmatoryVisualizer() {
+    const vis = document.getElementById('confirmatoryTestVisualizer');
+    if (vis) vis.style.display = 'none';
+  }
+
+  function showConfirmatoryVisualizer(testKey, gasKey, obs) {
+    const vis = document.getElementById('confirmatoryTestVisualizer');
+    const titleEl = document.getElementById('visualizerTitle');
+    const canvas = document.getElementById('visualizerCanvas');
+    const resultTag = document.getElementById('visualizerResultTag');
+    const resultText = document.getElementById('visualizerResultText');
+
+    if (!vis || !canvas) return;
+
+    vis.style.display = 'block';
+
+    const testTitles = {
+      glowingSplint: '🪵 Glowing Splint Test',
+      burningSplint: '🔥 Burning Splint Test',
+      dampLitmus: '📑 Moist Litmus Paper Test',
+      limeWater: '🥛 Lime Water (Ca(OH)₂) Test',
+      dichromate: '🟠 Acidified K₂Cr₂O₇ Paper',
+      starchIodide: '📜 Moist Starch-Iodide Test',
+      hclRod: '🧪 Glass Rod with Conc. HCl'
+    };
+
+    if (titleEl) titleEl.innerText = testTitles[testKey] || '🧪 Confirmatory Test';
+    if (resultText) resultText.innerText = obs.result;
+    if (resultTag) {
+      resultTag.className = `visualizer-result-tag ${obs.status === 'success' ? 'success' : 'warn'}`;
+    }
+
+    let svgHtml = '';
+
+    if (testKey === 'glowingSplint') {
+      const isO2 = (gasKey === 'O2');
+      svgHtml = `
+        <svg viewBox="0 0 280 130" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="visGlowGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#FEF08A"/>
+              <stop offset="60%" stop-color="#F97316"/>
+              <stop offset="100%" stop-color="#EA580C" stop-opacity="0"/>
+            </radialGradient>
+            <linearGradient id="visFlameGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+              <stop offset="0%" stop-color="#EA580C"/>
+              <stop offset="50%" stop-color="#FACC15"/>
+              <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.95"/>
+            </linearGradient>
+          </defs>
+          <rect x="80" y="25" width="120" height="95" rx="6" fill="rgba(56, 189, 248, 0.08)" stroke="#94A3B8" stroke-width="2"/>
+          <ellipse cx="140" cy="25" rx="60" ry="8" fill="rgba(255,255,255,0.2)" stroke="#94A3B8" stroke-width="1.5"/>
+          <text x="140" y="112" font-size="9" fill="#64748B" font-family="'JetBrains Mono', monospace" text-anchor="middle">Collected ${gasKey} Gas</text>
+          
+          <line x1="140" y1="5" x2="140" y2="70" stroke="#B45309" stroke-width="4.5" stroke-linecap="round"/>
+          
+          ${isO2 ? `
+            <circle cx="140" cy="65" r="18" fill="url(#visGlowGrad)" opacity="0.85">
+              <animate attributeName="r" values="14;22;14" dur="0.8s" repeatCount="indefinite"/>
+            </circle>
+            <path d="M 140,38 C 130,55 132,68 140,74 C 148,68 150,55 140,38 Z" fill="url(#visFlameGrad)">
+              <animateTransform attributeName="transform" type="scale" values="1 1; 1.08 1.15; 0.95 0.98; 1 1" origin="140 74" dur="0.3s" repeatCount="indefinite"/>
+            </path>
+            <ellipse cx="140" cy="65" rx="3.5" ry="5" fill="#FFFFFF"/>
+            <text x="140" y="20" font-size="11" font-weight="800" fill="#FACC15" font-family="'JetBrains Mono', monospace" text-anchor="middle" filter="drop-shadow(0 0 3px #EA580C)">🔥 RELIGHTS WITH FLAME!</text>
+          ` : `
+            <circle cx="140" cy="70" r="3" fill="#334155"/>
+            <path d="M 140,68 Q 144,55 138,42 Q 142,32 139,22" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="3 2" opacity="0.6">
+              <animate attributeName="stroke-dashoffset" values="0;-15" dur="1s" repeatCount="indefinite"/>
+            </path>
+            <text x="140" y="20" font-size="10" font-weight="700" fill="#94A3B8" font-family="'JetBrains Mono', monospace" text-anchor="middle">Ember Snuffed Out</text>
+          `}
+        </svg>
+      `;
+    } else if (testKey === 'burningSplint') {
+      const isH2 = (gasKey === 'H2');
+      const isO2Burn = (gasKey === 'O2');
+      svgHtml = `
+        <svg viewBox="0 0 280 130" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="popBlastGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#38BDF8"/>
+              <stop offset="60%" stop-color="#0284C7" stop-opacity="0.8"/>
+              <stop offset="100%" stop-color="#0369A1" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <rect x="80" y="30" width="120" height="90" rx="6" fill="rgba(56, 189, 248, 0.08)" stroke="#94A3B8" stroke-width="2"/>
+          <ellipse cx="140" cy="30" rx="60" ry="8" fill="rgba(255,255,255,0.2)" stroke="#94A3B8" stroke-width="1.5"/>
+
+          <line x1="140" y1="5" x2="140" y2="40" stroke="#B45309" stroke-width="4.5" stroke-linecap="round"/>
+
+          ${isH2 ? `
+            <circle cx="140" cy="38" r="32" fill="url(#popBlastGrad)" opacity="0.9">
+              <animate attributeName="r" values="8;36;44" dur="0.7s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values="1;0.6;0" dur="0.7s" repeatCount="indefinite"/>
+            </circle>
+            <path d="M 140,18 L 144,32 L 158,32 L 146,40 L 150,54 L 140,44 L 130,54 L 134,40 L 122,32 L 136,32 Z" fill="#FACC15" stroke="#EA580C" stroke-width="1">
+              <animateTransform attributeName="transform" type="rotate" from="0 140 38" to="360 140 38" dur="1.2s" repeatCount="indefinite"/>
+            </path>
+            <text x="140" y="20" font-size="11" font-weight="800" fill="#38BDF8" font-family="'JetBrains Mono', monospace" text-anchor="middle" filter="drop-shadow(0 0 4px #0284C7)">💥 SQUEAKY POP! (2H₂ + O₂)</text>
+          ` : (isO2Burn ? `
+            <circle cx="140" cy="42" r="16" fill="#FDE047" opacity="0.8">
+              <animate attributeName="r" values="14;20;14" dur="0.5s" repeatCount="indefinite"/>
+            </circle>
+            <path d="M 140,24 C 132,36 134,48 140,54 C 146,48 148,36 140,24 Z" fill="#F97316"/>
+            <text x="140" y="20" font-size="10.5" font-weight="800" fill="#FACC15" font-family="'JetBrains Mono', monospace" text-anchor="middle">🔥 BURNS MORE BRIGHTLY</text>
+          ` : `
+            <circle cx="140" cy="45" r="2.5" fill="#334155"/>
+            <path d="M 140,42 Q 144,30 137,20" fill="none" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="2 2" opacity="0.7"/>
+            <text x="140" y="20" font-size="10" font-weight="700" fill="#EF4444" font-family="'JetBrains Mono', monospace" text-anchor="middle">💨 FLAME EXTINGUISHED</text>
+          `)}
+        </svg>
+      `;
+    } else if (testKey === 'dampLitmus') {
+      let redStripColor = '#EF4444';
+      let blueStripColor = '#3B82F6';
+      let badgeText = 'Litmus Unchanged';
+      let badgeColor = '#94A3B8';
+
+      if (gasKey === 'Cl2') {
+        redStripColor = '#F8FAFC';
+        blueStripColor = '#F8FAFC';
+        badgeText = 'Turns Red, then BLEACHED WHITE!';
+        badgeColor = '#84CC16';
+      } else if (gasKey === 'NH3') {
+        redStripColor = '#1D4ED8';
+        blueStripColor = '#1D4ED8';
+        badgeText = 'Moist Red Litmus turns BLUE (Alkaline)';
+        badgeColor = '#38BDF8';
+      } else if (gasKey === 'CO2') {
+        blueStripColor = '#F43F5E';
+        badgeText = 'Moist Blue Litmus turns PINK (Acidic)';
+        badgeColor = '#F43F5E';
+      } else if (gasKey === 'SO2') {
+        blueStripColor = '#EF4444';
+        badgeText = 'Turns RED, then Slow Bleaching';
+        badgeColor = '#F59E0B';
+      } else {
+        badgeText = 'No Color Change (Neutral Gas)';
+        badgeColor = '#10B981';
+      }
+
+      svgHtml = `
+        <svg viewBox="0 0 280 130" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <rect x="70" y="30" width="140" height="90" rx="6" fill="rgba(56, 189, 248, 0.08)" stroke="#94A3B8" stroke-width="2"/>
+          <ellipse cx="140" cy="30" rx="70" ry="8" fill="rgba(255,255,255,0.2)" stroke="#94A3B8" stroke-width="1.5"/>
+
+          <line x1="110" y1="5" x2="110" y2="40" stroke="#64748B" stroke-width="3" stroke-linecap="round"/>
+          <line x1="170" y1="5" x2="170" y2="40" stroke="#64748B" stroke-width="3" stroke-linecap="round"/>
+
+          <rect x="104" y="40" width="12" height="52" rx="2" fill="${redStripColor}" stroke="#94A3B8" stroke-width="0.8"/>
+          <text x="110" y="105" font-size="7.5" fill="#94A3B8" font-family="'JetBrains Mono', monospace" text-anchor="middle">Red</text>
+
+          <rect x="164" y="40" width="12" height="52" rx="2" fill="${blueStripColor}" stroke="#94A3B8" stroke-width="0.8"/>
+          <text x="170" y="105" font-size="7.5" fill="#94A3B8" font-family="'JetBrains Mono', monospace" text-anchor="middle">Blue</text>
+
+          <text x="140" y="18" font-size="9.5" font-weight="800" fill="${badgeColor}" font-family="'JetBrains Mono', monospace" text-anchor="middle">${badgeText}</text>
+        </svg>
+      `;
+    } else if (testKey === 'limeWater') {
+      const isCO2 = (gasKey === 'CO2');
+      svgHtml = `
+        <svg viewBox="0 0 280 130" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 125,25 L 125,100 C 125,114 155,114 155,100 L 155,25 Z" fill="${isCO2 ? '#F8FAFC' : 'rgba(224, 242, 254, 0.25)'}" stroke="#94A3B8" stroke-width="2"/>
+          <ellipse cx="140" cy="25" rx="15" ry="4" fill="rgba(255,255,255,0.4)" stroke="#94A3B8" stroke-width="1.2"/>
+          
+          <path d="M 127,65 L 127,100 C 127,112 153,112 153,100 L 153,65 Z" fill="${isCO2 ? '#F1F5F9' : '#BAE6FD'}" fill-opacity="${isCO2 ? '0.95' : '0.4'}"/>
+          
+          <path d="M 100,10 L 138,10 Q 140,10 140,14 L 140,95" fill="none" stroke="#94A3B8" stroke-width="3" stroke-linecap="round"/>
+          
+          <circle cx="140" cy="92" r="2.5" fill="#FFFFFF">
+            <animate attributeName="cy" values="92;68;66" dur="0.8s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="1;1;0" dur="0.8s" repeatCount="indefinite"/>
+          </circle>
+          <circle cx="143" cy="84" r="3.2" fill="#FFFFFF">
+            <animate attributeName="cy" values="84;68;66" dur="0.7s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="1;1;0" dur="0.7s" repeatCount="indefinite"/>
+          </circle>
+
+          ${isCO2 ? `
+            <circle cx="134" cy="78" r="1.5" fill="#CBD5E1"/>
+            <circle cx="146" cy="88" r="1.8" fill="#94A3B8"/>
+            <circle cx="138" cy="98" r="1.4" fill="#CBD5E1"/>
+            <text x="140" y="124" font-size="9" font-weight="700" fill="#38BDF8" font-family="'JetBrains Mono', monospace" text-anchor="middle">CaCO₃(s) Precipitate Formed</text>
+            <text x="140" y="16" font-size="10" font-weight="800" fill="#F8FAFC" font-family="'JetBrains Mono', monospace" text-anchor="middle">🥛 TURNS MILKY WHITE</text>
+          ` : `
+            <text x="140" y="124" font-size="9" fill="#94A3B8" font-family="'JetBrains Mono', monospace" text-anchor="middle">Lime Water (Ca(OH)₂)</text>
+            <text x="140" y="16" font-size="10" font-weight="700" fill="#94A3B8" font-family="'JetBrains Mono', monospace" text-anchor="middle">Remains Clear & Colourless</text>
+          `}
+        </svg>
+      `;
+    } else if (testKey === 'dichromate') {
+      const isSO2 = (gasKey === 'SO2');
+      svgHtml = `
+        <svg viewBox="0 0 280 130" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <rect x="80" y="30" width="120" height="90" rx="6" fill="rgba(56, 189, 248, 0.08)" stroke="#94A3B8" stroke-width="2"/>
+          <ellipse cx="140" cy="30" rx="60" ry="8" fill="rgba(255,255,255,0.2)" stroke="#94A3B8" stroke-width="1.5"/>
+
+          <rect x="133" y="12" width="14" height="68" rx="2" fill="${isSO2 ? '#10B981' : '#EA580C'}" stroke="#94A3B8" stroke-width="1"/>
+          
+          ${isSO2 ? `
+            <text x="140" y="16" font-size="10" font-weight="800" fill="#10B981" font-family="'JetBrains Mono', monospace" text-anchor="middle">🟠 ➔ 🟢 TURNS EMERALD GREEN</text>
+            <text x="140" y="112" font-size="8.5" fill="#6EE7B7" font-family="'JetBrains Mono', monospace" text-anchor="middle">Cr₂O₇²⁻ reduced to Cr³⁺</text>
+          ` : `
+            <text x="140" y="16" font-size="10" font-weight="700" fill="#EA580C" font-family="'JetBrains Mono', monospace" text-anchor="middle">Filter Paper Remains Orange</text>
+            <text x="140" y="112" font-size="8.5" fill="#94A3B8" font-family="'JetBrains Mono', monospace" text-anchor="middle">Acidified K₂Cr₂O₇</text>
+          `}
+        </svg>
+      `;
+    } else if (testKey === 'starchIodide') {
+      const isCl2 = (gasKey === 'Cl2');
+      svgHtml = `
+        <svg viewBox="0 0 280 130" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <rect x="80" y="30" width="120" height="90" rx="6" fill="rgba(132, 204, 22, 0.08)" stroke="#94A3B8" stroke-width="2"/>
+          <ellipse cx="140" cy="30" rx="60" ry="8" fill="rgba(255,255,255,0.2)" stroke="#94A3B8" stroke-width="1.5"/>
+
+          <rect x="133" y="12" width="14" height="68" rx="2" fill="${isCl2 ? '#1E1B4B' : '#F8FAFC'}" stroke="#64748B" stroke-width="1"/>
+          
+          ${isCl2 ? `
+            <text x="140" y="16" font-size="10" font-weight="800" fill="#818CF8" font-family="'JetBrains Mono', monospace" text-anchor="middle">📜 ➔ 🖤 TURNS DEEP BLUE-BLACK</text>
+            <text x="140" y="112" font-size="8.5" fill="#A5B4FC" font-family="'JetBrains Mono', monospace" text-anchor="middle">I⁻ oxidized to I₂ (Starch Complex)</text>
+          ` : `
+            <text x="140" y="16" font-size="10" font-weight="700" fill="#94A3B8" font-family="'JetBrains Mono', monospace" text-anchor="middle">Paper Strip Remains White</text>
+            <text x="140" y="112" font-size="8.5" fill="#64748B" font-family="'JetBrains Mono', monospace" text-anchor="middle">Moist Starch-Iodide</text>
+          `}
+        </svg>
+      `;
+    } else if (testKey === 'hclRod') {
+      const isNH3 = (gasKey === 'NH3');
+      svgHtml = `
+        <svg viewBox="0 0 280 130" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <rect x="80" y="35" width="120" height="85" rx="6" fill="rgba(56, 189, 248, 0.08)" stroke="#94A3B8" stroke-width="2"/>
+          <ellipse cx="140" cy="35" rx="60" ry="8" fill="rgba(255,255,255,0.2)" stroke="#94A3B8" stroke-width="1.5"/>
+
+          <line x1="140" y1="5" x2="140" y2="40" stroke="#CBD5E1" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="140" cy="42" r="3" fill="#38BDF8" opacity="0.8"/>
+
+          ${isNH3 ? `
+            <g opacity="0.9">
+              <circle cx="140" cy="40" r="14" fill="#FFFFFF">
+                <animate attributeName="r" values="8;18;24" dur="1s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0.9;0.6;0" dur="1s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="128" cy="34" r="12" fill="#F8FAFC">
+                <animate attributeName="r" values="6;16;22" dur="0.9s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0.9;0.5;0" dur="0.9s" repeatCount="indefinite"/>
+              </circle>
+              <circle cx="152" cy="36" r="13" fill="#FFFFFF">
+                <animate attributeName="r" values="7;17;23" dur="1.1s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0.9;0.5;0" dur="0.9s" repeatCount="indefinite"/>
+              </circle>
+            </g>
+            <text x="140" y="16" font-size="10" font-weight="800" fill="#F8FAFC" font-family="'JetBrains Mono', monospace" text-anchor="middle" filter="drop-shadow(0 0 4px #38BDF8)">☁️ DENSE WHITE FUMES (NH₄Cl)</text>
+            <text x="140" y="112" font-size="8.5" fill="#38BDF8" font-family="'JetBrains Mono', monospace" text-anchor="middle">NH₃(g) + HCl(g) → NH₄Cl(s)</text>
+          ` : `
+            <text x="140" y="16" font-size="10" font-weight="700" fill="#94A3B8" font-family="'JetBrains Mono', monospace" text-anchor="middle">No Dense White Fumes</text>
+            <text x="140" y="112" font-size="8.5" fill="#64748B" font-family="'JetBrains Mono', monospace" text-anchor="middle">Glass rod with conc. HCl</text>
+          `}
+        </svg>
+      `;
+    }
+
+    canvas.innerHTML = svgHtml;
+  }
+
+  function runTest(testKey) {
+    const res = engine.performTest(testKey);
+    if (res.error) {
+      alert(res.error);
+      return;
+    }
+
+    const obs = res.observation;
+    const feed = document.getElementById('obsFeed');
+    if (feed.innerText.includes('No tests performed')) {
+      feed.innerHTML = '';
+    }
+
+    const entry = document.createElement('div');
+    entry.className = `obs-entry ${obs.status === 'success' ? 'success' : 'warn'}`;
+    entry.innerHTML = `<b>[${obs.timestamp}]</b> ${obs.result}<br><span style="color:var(--text-muted);font-size:0.75rem;">Inference: ${obs.inference}</span>`;
+    feed.prepend(entry);
+
+    // Trigger visualizer animation
+    showConfirmatoryVisualizer(testKey, engine.currentGasKey, obs);
+
+    if (engine.currentGasKey === 'H2' && testKey === 'burningSplint') {
+      if (window.GasPrepBenchCore && typeof GasPrepBenchCore.playSqueakyPop === 'function') {
+        GasPrepBenchCore.playSqueakyPop();
+      }
+    } else if (engine.currentGasKey === 'O2' && testKey === 'glowingSplint') {
+      if (window.GasPrepBenchCore && typeof GasPrepBenchCore.playFlameWhoosh === 'function') {
+        GasPrepBenchCore.playFlameWhoosh();
+      }
+    } else if (window.AudioSynth) {
+      AudioSynth.playTone(obs.status === 'success' ? 660 : 330, 0.15);
+    }
+
+    updateScoreUI();
+  }
+
+  function renderQuestions() {
+    const container = document.getElementById('questionsContainer');
+    if (!container) return;
+    container.innerHTML = '';
+    const qList = (engine.currentGas && engine.currentGas.questions) || [];
+
+    qList.forEach((q, idx) => {
+      const qBox = document.createElement('div');
+      qBox.style.marginBottom = '12px';
+      qBox.innerHTML = `
+        <p style="font-size:0.8rem;font-weight:700;color:var(--text-main);margin:0 0 6px;">Q${idx + 1}. ${q.prompt}</p>
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          ${q.options.map((opt, oIdx) => `
+            <label style="font-size:0.76rem;color:var(--text-main);display:flex;align-items:center;gap:6px;cursor:pointer;">
+              <input type="radio" name="${q.id}" value="${oIdx}" onchange="onAnswerSelected('${q.id}', ${oIdx})">
+              <span>${opt}</span>
+            </label>
+          `).join('')}
+        </div>
+      `;
+      container.appendChild(qBox);
+    });
+  }
+
+  function onAnswerSelected(qId, oIdx) {
+    engine.answerQuestion(qId, oIdx);
+    updateScoreUI();
+  }
+
+  function updateScoreUI() {
+    const rubric = engine.calculateRubric();
+    const scoreEl = document.getElementById('scoreDisplay');
+    if (scoreEl) {
+      scoreEl.innerText = `${rubric.totalScore.toFixed(1)} / 10.0`;
+    }
+  }
+
+  function resetObservationUI() {
+    const bubbleL = document.getElementById('bubbleLayer');
+    const dryingB = document.getElementById('dryingBubbleLayer');
+    const stream1 = document.getElementById('gasStreamTube1');
+    const stream2 = document.getElementById('gasStreamTube2');
+    const jarStream = document.getElementById('jarBubbleStream');
+
+    if (bubbleL) bubbleL.style.display = 'none';
+    if (dryingB) dryingB.style.display = 'none';
+    if (stream1) stream1.style.display = 'none';
+    if (stream2) stream2.style.display = 'none';
+    if (jarStream) jarStream.style.display = 'none';
+
+    closeConfirmatoryVisualizer();
+    updateCollectionApparatus(engine.selectedCollection, engine.currentGasKey, false);
+
+    document.getElementById('reactionStatusBadge').innerText = 'Ready';
+    document.getElementById('reactionStatusBadge').style.background = 'var(--blue-bg)';
+    document.getElementById('reactionStatusBadge').style.color = 'var(--blue-accent)';
+  }
+
+  async function saveSession() {
+    const payload = engine.buildSessionPayload();
+    if (assignmentId) payload.assignment_id = assignmentId;
+    try {
+      if (window.API && API.saveGasSession) {
+        await API.saveGasSession(payload);
+        alert('Practical session recorded successfully to your student log!');
+      } else {
+        localStorage.setItem('vlk_last_gas_session', JSON.stringify(payload));
+        alert('Session saved to local storage (Offline Mode)!');
+      }
+    } catch (err) {
+      console.warn('Session save fallback:', err);
+      localStorage.setItem('vlk_last_gas_session', JSON.stringify(payload));
+      alert('Session saved to local device!');
+    }
+  }
+
+  function initApparatusInspectionTooltips() {
+    const tooltipEl = document.getElementById('componentSpecTooltip');
+    if (!tooltipEl) return;
+    const defaultHint = '💡 Hover over apparatus parts to inspect laboratory specifications';
+    tooltipEl.textContent = defaultHint;
+    tooltipEl.style.opacity = '0.75';
+
+    document.querySelectorAll('.apparatus-interactive-part').forEach(part => {
+      part.addEventListener('mouseenter', () => {
+        const spec = part.getAttribute('data-spec');
+        if (spec) {
+          tooltipEl.textContent = spec;
+          tooltipEl.style.opacity = '1';
+          tooltipEl.style.borderColor = 'var(--blue-accent)';
+        }
+      });
+      part.addEventListener('mouseleave', () => {
+        tooltipEl.textContent = defaultHint;
+        tooltipEl.style.opacity = '0.75';
+        tooltipEl.style.borderColor = 'var(--blue-border)';
+      });
+    });
+  }
+
+  // Initialize workbench & inspection tooltips
+  initApparatusInspectionTooltips();
+  selectGas('O2');
+</script>
+</body>
+</html>

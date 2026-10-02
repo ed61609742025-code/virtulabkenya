@@ -1,0 +1,3615 @@
+if (typeof window === 'undefined') {
+  global.window = global;
+}
+
+if (typeof requireStudentLogin === 'function') {
+  requireStudentLogin();
+}
+
+/* ── Theme ── */
+function setTheme(theme) {
+  if (typeof localStorage !== 'undefined') localStorage.setItem('vlk_theme', theme);
+  if (typeof document !== 'undefined') document.documentElement.setAttribute('data-theme', theme);
+  updateThemeChips();
+}
+function updateThemeChips() {
+  if (typeof document === 'undefined') return;
+  const cur = (typeof localStorage !== 'undefined' ? localStorage.getItem('vlk_theme') : null) || 'light';
+  document.querySelectorAll('.theme-btn-chip').forEach(b => {
+    b.classList.toggle('active', b.dataset.theme === cur);
+  });
+}
+if (typeof document !== 'undefined') {
+  updateThemeChips();
+}
+
+/* ── Sound Toggle ── */
+function isMuted() {
+  return typeof localStorage !== 'undefined' && localStorage.getItem('vlk_muted') === 'true';
+}
+function toggleSound() {
+  const muted = !isMuted();
+  if (typeof localStorage !== 'undefined') localStorage.setItem('vlk_muted', muted ? 'true' : 'false');
+  updateSoundButton();
+}
+function updateSoundButton() {
+  if (typeof document === 'undefined') return;
+  const btn = document.getElementById('soundToggleBtn');
+  if (btn) {
+    const muted = isMuted();
+    btn.innerHTML = muted ? '🔇 Muted' : '🔊 Sound ON';
+  }
+}
+if (typeof document !== 'undefined') {
+  updateSoundButton();
+}
+
+/* ── Notifications ── */
+const user = typeof getUser === 'function' ? getUser() : null;
+
+function toggleNotifDropdown(e) {
+  if (!e) return;
+  e.stopPropagation();
+  const dd = document.getElementById('notifDropdown');
+  if (dd) dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
+}
+if (typeof document !== 'undefined') {
+  document.addEventListener('click', (e) => {
+    const dd = document.getElementById('notifDropdown');
+    const bell = document.getElementById('notifBellBtn');
+    if (dd && dd.style.display === 'block' && !dd.contains(e.target) && (!bell || !bell.contains(e.target))) {
+      dd.style.display = 'none';
+    }
+  });
+}
+
+function getReadNotifIds() {
+  try { return JSON.parse(localStorage.getItem('vlk_read_notifs_' + (user ? user.id : 'anon')) || '[]'); }
+  catch (e) { return []; }
+}
+function saveReadNotifIds(ids) {
+  try { localStorage.setItem('vlk_read_notifs_' + (user ? user.id : 'anon'), JSON.stringify(ids)); }
+  catch (e) {}
+}
+
+async function loadNotifications() {
+  try {
+    if (typeof Assignments === 'undefined' || !Assignments.getMine) return;
+    const data = await Assignments.getMine();
+    const assignments = data.assignments || [];
+    const readIds = getReadNotifIds();
+    const marked = assignments.filter(a => a.submitted && a.submission_status === 'marked');
+    const unread = marked.filter(a => !readIds.includes(a.id));
+
+    const badge = document.getElementById('notifBadge');
+    if (badge) {
+      badge.textContent = unread.length;
+      badge.style.display = unread.length > 0 ? 'inline-block' : 'none';
+    }
+
+    const list = document.getElementById('notifList');
+    if (list) {
+      if (marked.length === 0) {
+        list.innerHTML = '<div style="font-size:0.8rem;color:var(--text-muted);text-align:center;padding:12px;">No notifications yet</div>';
+      } else {
+      list.innerHTML = marked.map(a => {
+        const isRead = readIds.includes(a.id);
+        return `<div style="padding:10px 12px;border-bottom:1px solid var(--card-border);background:${isRead ? 'transparent' : 'rgba(16,185,129,0.12)'};border-radius:8px;margin-bottom:6px;">
+          <div style="font-size:0.82rem;font-weight:700;color:var(--heading-color);display:flex;align-items:center;justify-content:space-between;">
+            <span>${isRead ? '📜' : '🟢'} ${esc(a.title)}</span>
+            <span style="font-size:0.7rem;color:var(--text-muted);">${a.marked_at ? new Date(a.marked_at).toLocaleDateString() : ''}</span>
+          </div>
+          <div style="font-size:0.78rem;color:var(--text-muted);margin-top:4px;">Assignment marked by teacher! View grade on Dashboard.</div>
+        </div>`;
+      }).join('');
+      }
+    }
+  } catch (err) { /* notifications optional */ }
+}
+
+function markAllNotificationsRead() {
+  if (typeof Assignments === 'undefined' || !Assignments.getMine) return;
+  Assignments.getMine().then(data => {
+    const ids = (data.assignments || []).filter(a => a.submitted && a.submission_status === 'marked').map(a => a.id);
+    saveReadNotifIds(ids);
+    loadNotifications();
+  }).catch(() => {});
+}
+
+if (typeof window !== 'undefined') {
+  loadNotifications();
+}
+
+  /* ══════════════════════════════════════
+     SALT & TEST DATA BANK
+  ══════════════════════════════════════ */
+  /* ══════════════════════════════════════
+     SALT & TEST DATA BANK
+  ══════════════════════════════════════ */
+  const SALTS = {
+    ammoniumChloride: {
+      name:'Ammonium Chloride', formula:'NH₄Cl', cation:'NH4+', anion:'Cl-', cationDisplay:'NH₄⁺', anionDisplay:'Cl⁻',
+      appearance:'White crystalline solid', solubility:'Readily soluble in water; forms a clear, colorless stock solution.',
+      crystalColor:'#F8FAFC', crystalSecondary:'#E2E8F0', crystalHighlight:'#FFFFFF'
+    },
+    copperSulfate: {
+      name:'Copper(II) Sulfate', formula:'CuSO₄', cation:'Cu2+', anion:'SO4^2-', cationDisplay:'Cu²⁺', anionDisplay:'SO₄²⁻',
+      appearance:'Blue hydrated crystalline solid (rhombic crystals)', solubility:'Readily soluble in water; forms a clear sky-blue stock solution.',
+      crystalColor:'#38BDF8', crystalSecondary:'#1D4ED8', crystalHighlight:'#BAE6FD'
+    },
+    ironSulfate: {
+      name:'Iron(II) Sulfate', formula:'FeSO₄', cation:'Fe2+', anion:'SO4^2-', cationDisplay:'Fe²⁺', anionDisplay:'SO₄²⁻',
+      appearance:'Pale-green crystalline solid', solubility:'Readily soluble in water; forms a pale-green stock solution.',
+      crystalColor:'#34D399', crystalSecondary:'#059669', crystalHighlight:'#A7F3D0'
+    },
+    sodiumCarbonate: {
+      name:'Sodium Carbonate', formula:'Na₂CO₃', cation:'Na+', anion:'CO3^2-', cationDisplay:'Na⁺', anionDisplay:'CO₃²⁻',
+      appearance:'White crystalline solid / powder', solubility:'Readily soluble in water; forms a clear, alkaline stock solution.',
+      crystalColor:'#F8FAFC', crystalSecondary:'#CBD5E1', crystalHighlight:'#FFFFFF'
+    },
+    sodiumHydrogenCarbonate: {
+      name:'Sodium Hydrogen Carbonate', formula:'NaHCO₃', cation:'Na+', anion:'HCO3-', cationDisplay:'Na⁺', anionDisplay:'HCO₃⁻',
+      appearance:'White crystalline powder', solubility:'Readily soluble in water; forms a clear, slightly alkaline stock solution.',
+      crystalColor:'#F8FAFC', crystalSecondary:'#CBD5E1', crystalHighlight:'#FFFFFF'
+    },
+    calciumChloride: {
+      name:'Calcium Chloride', formula:'CaCl₂', cation:'Ca2+', anion:'Cl-', cationDisplay:'Ca²⁺', anionDisplay:'Cl⁻',
+      appearance:'White deliquescent crystalline solid', solubility:'Highly soluble in water with slight heat evolution; forms a clear stock solution.',
+      crystalColor:'#F1F5F9', crystalSecondary:'#CBD5E1', crystalHighlight:'#FFFFFF'
+    },
+    potassiumChloride: {
+      name:'Potassium Chloride', formula:'KCl', cation:'K+', anion:'Cl-', cationDisplay:'K⁺', anionDisplay:'Cl⁻',
+      appearance:'White crystalline solid (cubic granules)', solubility:'Readily soluble in water; forms a clear, neutral stock solution.',
+      crystalColor:'#F8FAFC', crystalSecondary:'#CBD5E1', crystalHighlight:'#FFFFFF'
+    },
+    leadNitrate: {
+      name:'Lead(II) Nitrate', formula:'Pb(NO₃)₂', cation:'Pb2+', anion:'NO3-', cationDisplay:'Pb²⁺', anionDisplay:'NO₃⁻',
+      appearance:'White / colorless sparkling crystalline solid', solubility:'Soluble in water; forms a clear, colorless stock solution.',
+      crystalColor:'#F1F5F9', crystalSecondary:'#94A3B8', crystalHighlight:'#FFFFFF'
+    },
+    zincSulfate: {
+      name:'Zinc Sulfate', formula:'ZnSO₄', cation:'Zn2+', anion:'SO4^2-', cationDisplay:'Zn²⁺', anionDisplay:'SO₄²⁻',
+      appearance:'White crystalline solid', solubility:'Readily soluble in water; forms a clear, colorless stock solution.',
+      crystalColor:'#F8FAFC', crystalSecondary:'#CBD5E1', crystalHighlight:'#FFFFFF'
+    },
+    aluminumNitrate: {
+      name:'Aluminum Nitrate', formula:'Al(NO₃)₃', cation:'Al3+', anion:'NO3-', cationDisplay:'Al³⁺', anionDisplay:'NO₃⁻',
+      appearance:'White deliquescent crystalline solid', solubility:'Readily soluble in water; forms a clear, slightly acidic stock solution.',
+      crystalColor:'#F1F5F9', crystalSecondary:'#94A3B8', crystalHighlight:'#FFFFFF'
+    },
+    ironChloride: {
+      name:'Iron(III) Chloride', formula:'FeCl₃', cation:'Fe3+', anion:'Cl-', cationDisplay:'Fe³⁺', anionDisplay:'Cl⁻',
+      appearance:'Yellowish-brown deliquescent crystals / solid', solubility:'Readily soluble in water; forms a yellowish-brown stock solution.',
+      crystalColor:'#D97706', crystalSecondary:'#78350F', crystalHighlight:'#FDE68A'
+    },
+    ammoniumCarbonate: {
+      name:'Ammonium Carbonate', formula:'(NH₄)₂CO₃', cation:'NH4+', anion:'CO3^2-', cationDisplay:'NH₄⁺', anionDisplay:'CO₃²⁻',
+      appearance:'White crystalline solid / translucent lumps', solubility:'Readily soluble in water with faint ammonia odor; forms a clear stock solution.',
+      crystalColor:'#F8FAFC', crystalSecondary:'#CBD5E1', crystalHighlight:'#FFFFFF'
+    },
+    zincNitrate: {
+      name:'Zinc Nitrate', formula:'Zn(NO₃)₂', cation:'Zn2+', anion:'NO3-', cationDisplay:'Zn²⁺', anionDisplay:'NO₃⁻',
+      appearance:'White crystalline solid', solubility:'Readily soluble in water; forms a clear, colorless stock solution.',
+      crystalColor:'#F8FAFC', crystalSecondary:'#CBD5E1', crystalHighlight:'#FFFFFF'
+    },
+    sodiumSulfite: {
+      name:'Sodium Sulfite', formula:'Na₂SO₃', cation:'Na+', anion:'SO3^2-', cationDisplay:'Na⁺', anionDisplay:'SO₃²⁻',
+      appearance:'White crystalline powder', solubility:'Soluble in water; forms a clear, alkaline stock solution.',
+      crystalColor:'#F8FAFC', crystalSecondary:'#E2E8F0', crystalHighlight:'#FFFFFF'
+    },
+    potassiumBromide: {
+      name:'Potassium Bromide', formula:'KBr', cation:'K+', anion:'Br-', cationDisplay:'K⁺', anionDisplay:'Br⁻',
+      appearance:'White crystalline solid (cubic granules)', solubility:'Readily soluble in water; forms a clear, neutral stock solution.',
+      crystalColor:'#F8FAFC', crystalSecondary:'#CBD5E1', crystalHighlight:'#FFFFFF'
+    },
+    sodiumIodide: {
+      name:'Sodium Iodide', formula:'NaI', cation:'Na+', anion:'I-', cationDisplay:'Na⁺', anionDisplay:'I⁻',
+      appearance:'White deliquescent crystalline powder', solubility:'Highly soluble in water; forms a clear, neutral stock solution.',
+      crystalColor:'#F1F5F9', crystalSecondary:'#E2E8F0', crystalHighlight:'#FFFFFF'
+    },
+    potassiumPermanganate: {
+      name: 'Potassium Permanganate',
+      formula: 'KMnO₄',
+      cation: 'K+',
+      anion: 'MnO4-',
+      cationDisplay: 'K⁺',
+      anionDisplay: 'MnO₄⁻',
+      appearance: 'Dark purple / bronze-black lustrous crystals',
+      solubility: 'Readily soluble in water; forms an intense deep-purple stock solution.',
+      crystalColor: '#3B0764',
+      crystalSecondary: '#1E1B4B',
+      crystalHighlight: '#581C87'
+    },
+    potassiumDichromate: {
+      name: 'Potassium Dichromate',
+      formula: 'K₂Cr₂O₇',
+      cation: 'K+',
+      anion: 'Cr2O7^2-',
+      cationDisplay: 'K⁺',
+      anionDisplay: 'Cr₂O₇²⁻',
+      appearance: 'Bright orange-red crystalline solid',
+      solubility: 'Soluble in water; forms a clear bright-orange stock solution.',
+      crystalColor: '#EA580C',
+      crystalSecondary: '#C2410C',
+      crystalHighlight: '#FB923C'
+    }
+  };
+  Object.keys(SALTS).forEach(k => { SALTS[k].key = k; });
+
+  const TESTS = [
+    {
+      key:'heat_solid',
+      label:'Dry Thermal Heating of Solid in Hard-Glass Tube (Bunsen Flame)',
+      icon:'🔥',
+      reagent:'Hard-glass boiling tube + Bunsen flame',
+      isHeat:true,
+      procedure:'Place about one-third of the solid salt sample into a clean, dry hard-glass boiling tube. Clamp the tube at approx. 35° and heat gently, then strongly in a non-luminous Bunsen flame. Test any evolved gas with moist red/blue litmus papers or a glowing wooden splint, and observe any condensation or residue color transitions.',
+      options: [
+        { key:'A', text:'Dense brown fumes of NO₂ turn moist blue litmus red; gas rekindles glowing splint (O₂); residue yellow cold, brown hot', color:'#B45309' },
+        { key:'B', text:'Blue crystals turn white anhydrous powder; colorless water droplets condense on cooler upper walls', color:'#F1F5F9' },
+        { key:'C', text:'Pale green crystals turn dirty brown/black; water droplets condense; choking SO₂ gas evolved on strong heating', color:'#451A03' },
+        { key:'D', text:'White solid sublimes directly; dense white fumes deposit on upper cooler tube walls', color:'#FFFFFF' },
+        { key:'E', text:'Solid turns yellow when hot, white on cooling (ZnO formation); water droplets condense', color:'#FACC15' },
+        { key:'F', text:'Decomposes completely with no residue; alkaline gas (NH₃) turns moist red litmus blue; gas turns limewater milky (CO₂)', color:'#94A3B8', bubble:true },
+        { key:'G', text:'Brown fumes of NO₂ turn blue litmus red; gas rekindles glowing splint (O₂); white residue (Al₂O₃)', color:'#B45309' },
+        { key:'H', text:'White solid remains unchanged / melts at high temperature; no gas evolved or water droplets', color:'#334155' },
+        { key:'I', text:'White solid crackles; on strong heating, faint pungent choking smell of SO₂', color:'#CBD5E1' },
+        { key:'J', text:'Yellow-brown solid loses water; sublimes giving reddish-brown vapor and steamy acidic fumes', color:'#D97706' },
+        { key:'K', text:'Colorless water droplets condense on cooler upper walls; colorless gas turns limewater milky (CO₂); white residue remains', color:'#CBD5E1', bubble:true }
+      ],
+      correct: {
+        ammoniumChloride:'D', copperSulfate:'B', ironSulfate:'C', sodiumCarbonate:'H', sodiumHydrogenCarbonate:'K', calciumChloride:'H', potassiumChloride:'H', leadNitrate:'A',
+        zincSulfate:'E', aluminumNitrate:'G', ironChloride:'J', ammoniumCarbonate:'F', zincNitrate:'A', sodiumSulfite:'I', potassiumBromide:'H', sodiumIodide:'H'
+      }
+    },
+    {
+      key:'naoh',
+      label:'Test with 2M Sodium Hydroxide Solution (NaOH)',
+      icon:'🧴',
+      reagent:'2M NaOH(aq)',
+      procedure:'To about 2 cm³ of the aqueous solution of the unknown salt in a clean test tube, add 2M sodium hydroxide solution dropwise (2–3 drops) until in excess (approx. 5 cm³), shaking the test tube gently after each addition. Observe whether a precipitate forms and whether it dissolves in excess.',
+      options: [
+        { key:'A', text:'White ppt, insoluble in excess NaOH', color:'#E2E8F0' },
+        { key:'B', text:'Blue ppt, insoluble in excess', color:'#38BDF8' },
+        { key:'C', text:'Green ppt, insoluble in excess', color:'#10B981' },
+        { key:'D', text:'No ppt; pungent ammonia gas evolved', color:'#94A3B8', bubble:true },
+        { key:'E', text:'No precipitate formed (colorless solution remains)', color:'#475569' },
+        { key:'F', text:'White ppt, dissolves in excess to form a colorless solution (amphoteric)', color:'#CBD5E1' },
+        { key:'G', text:'Reddish-brown ppt, insoluble in excess', color:'#B45309' }
+      ],
+      correct: {
+        ammoniumChloride:'D', copperSulfate:'B', ironSulfate:'C', sodiumCarbonate:'E', sodiumHydrogenCarbonate:'E', calciumChloride:'A', potassiumChloride:'E', leadNitrate:'F',
+        zincSulfate:'F', aluminumNitrate:'F', ironChloride:'G', ammoniumCarbonate:'D', zincNitrate:'F', sodiumSulfite:'E', potassiumBromide:'E', sodiumIodide:'E'
+      }
+    },
+    {
+      key:'nh3',
+      label:'Test with 2M Aqueous Ammonia [NH₃(aq)]',
+      icon:'🫧',
+      reagent:'2M NH₃(aq)',
+      procedure:'To about 2 cm³ of the aqueous solution of the unknown salt in a clean test tube, add 2M aqueous ammonia dropwise (2–3 drops) until in excess (approx. 5 cm³), shaking thoroughly after each addition. Observe if any precipitate dissolves to form a complex ion.',
+      options: [
+        { key:'A', text:'Deep blue solution (Cu-tetramine complex)', color:'#1D4ED8' },
+        { key:'B', text:'Blue ppt, dissolves in excess → deep blue solution', color:'#2563EB' },
+        { key:'C', text:'Green ppt, insoluble in excess', color:'#10B981' },
+        { key:'D', text:'White ppt, insoluble in excess', color:'#E2E8F0' },
+        { key:'E', text:'No precipitate formed (colorless solution remains)', color:'#475569' },
+        { key:'F', text:'White ppt, dissolves in excess → colorless solution', color:'#CBD5E1' },
+        { key:'G', text:'Reddish-brown ppt, insoluble in excess', color:'#B45309' }
+      ],
+      correct: {
+        ammoniumChloride:'E', copperSulfate:'B', ironSulfate:'C', sodiumCarbonate:'E', sodiumHydrogenCarbonate:'E', calciumChloride:'E', potassiumChloride:'E', leadNitrate:'D',
+        zincSulfate:'F', aluminumNitrate:'D', ironChloride:'G', ammoniumCarbonate:'E', zincNitrate:'F', sodiumSulfite:'E', potassiumBromide:'E', sodiumIodide:'E'
+      }
+    },
+    {
+      key:'flame',
+      label:'Clean Glass Rod Flame Emission Test (KICD Standard)',
+      icon:'🔥',
+      reagent:'Clean glass rod + salt solution',
+      isFlame:true,
+      procedure:'Dip a clean glass rod into the aqueous solution of the unknown salt and place it into the non-luminous Bunsen burner flame. Observe the characteristic flame emission colour (and through cobalt blue glass for potassium).',
+      options: [
+        { key:'A', text:'Golden yellow flame', color:'#F59E0B' },
+        { key:'B', text:'Lilac / pale violet flame', color:'#A855F7' },
+        { key:'C', text:'Brick-red / crimson flame', color:'#EF4444' },
+        { key:'D', text:'Blue-green (viridian) flame', color:'#10B981' },
+        { key:'E', text:'No characteristic colour', color:'#64748B' },
+        { key:'F', text:'Pale blue-white flame', color:'#BFDBFE' }
+      ],
+      correct: {
+        ammoniumChloride:'E', copperSulfate:'D', ironSulfate:'E', sodiumCarbonate:'A', sodiumHydrogenCarbonate:'A', calciumChloride:'C', potassiumChloride:'B', leadNitrate:'F',
+        zincSulfate:'E', aluminumNitrate:'E', ironChloride:'E', ammoniumCarbonate:'E', zincNitrate:'E', sodiumSulfite:'A', potassiumBromide:'B', sodiumIodide:'A',
+        potassiumPermanganate:'B', potassiumDichromate:'B'
+      }
+    },
+    {
+      key:'hcl',
+      label:'Test with Dilute Hydrochloric Acid [2M HCl(aq)]',
+      icon:'⚗️',
+      reagent:'2M HCl(aq)',
+      procedure:'To about 2 cm³ of the aqueous solution of the unknown salt in a clean test tube, add 3–4 drops of 2M hydrochloric acid. Warm gently if necessary and test any evolved gas with calcium hydroxide solution (limewater) or moist litmus papers.',
+      options: [
+        { key:'A', text:'Brisk effervescence; gas turns limewater milky (CO₂)', color:'#CBD5E1', bubble:true },
+        { key:'B', text:'No visible reaction', color:'#334155' },
+        { key:'C', text:'White ppt of PbCl₂ (soluble in hot water)', color:'#E2E8F0' },
+        { key:'D', text:'Pungent gas (NH₃) evolved', color:'#94A3B8', bubble:true },
+        { key:'E', text:'Effervescence of choking gas turning acidified K₂Cr₂O₇ green (SO₂)', color:'#CBD5E1', bubble:true }
+      ],
+      correct: {
+        ammoniumChloride:'B', copperSulfate:'B', ironSulfate:'B', sodiumCarbonate:'A', sodiumHydrogenCarbonate:'A', calciumChloride:'B', potassiumChloride:'B', leadNitrate:'C',
+        zincSulfate:'B', aluminumNitrate:'B', ironChloride:'B', ammoniumCarbonate:'A', zincNitrate:'B', sodiumSulfite:'E', potassiumBromide:'B', sodiumIodide:'B'
+      }
+    },
+    {
+      key:'agno3',
+      label:'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]',
+      icon:'🔬',
+      reagent:'Dil. HNO₃ + AgNO₃(aq)',
+      procedure:'To about 2 cm³ of the aqueous solution of the unknown salt in a clean test tube, add 3–4 drops of dilute nitric(V) acid, followed by 3–4 drops of silver nitrate solution. If a precipitate forms, test its solubility with dilute aqueous ammonia.',
+      options: [
+        { key:'A', text:'White ppt (AgCl), dissolves in dilute NH₃ → Cl⁻', color:'#F8FAFC' },
+        { key:'B', text:'Pale cream ppt (AgBr), sparingly soluble in dilute NH₃, soluble in conc. NH₃ → Br⁻', color:'#FEF08A' },
+        { key:'C', text:'Bright yellow ppt (AgI), completely insoluble in dilute and conc. NH₃ → I⁻', color:'#FACC15' },
+        { key:'D', text:'No precipitate formed', color:'#334155' },
+        { key:'E', text:'White ppt (Ag₂SO₃), soluble in dilute HNO₃', color:'#E2E8F0' }
+      ],
+      correct: {
+        ammoniumChloride:'A', copperSulfate:'D', ironSulfate:'D', sodiumCarbonate:'D', sodiumHydrogenCarbonate:'D', calciumChloride:'A', potassiumChloride:'A', leadNitrate:'D',
+        zincSulfate:'D', aluminumNitrate:'D', ironChloride:'A', ammoniumCarbonate:'D', zincNitrate:'D', sodiumSulfite:'E', potassiumBromide:'B', sodiumIodide:'C'
+      }
+    },
+    {
+      key:'pb_no3',
+      label:'Test with Lead(II) Nitrate Solution [Pb(NO₃)₂(aq)] & Warm (KCSE Standard)',
+      icon:'🧪',
+      reagent:'0.5M Pb(NO₃)₂(aq) + Bunsen warming',
+      procedure:'To about 2 cm³ of the aqueous solution of the unknown salt in a clean test tube, add 3–4 drops of lead(II) nitrate solution. Warm the mixture gently over a Bunsen flame and allow it to cool.',
+      options: [
+        { key:'A', text:'White ppt formed (PbCl₂), dissolves on warming to form a colorless solution; reappears on cooling → Cl⁻', color:'#F8FAFC' },
+        { key:'B', text:'White ppt formed (PbSO₄), remains insoluble on warming/boiling → SO₄²⁻', color:'#F1F5F9' },
+        { key:'C', text:'White ppt formed (PbSO₃ / PbCO₃), insoluble on warming → SO₃²⁻ or CO₃²⁻', color:'#E2E8F0' },
+        { key:'D', text:'Bright yellow ppt formed (PbI₂), dissolves on heating to golden shimmering spangles on cooling → I⁻', color:'#FACC15' },
+        { key:'E', text:'No precipitate formed', color:'#334155' }
+      ],
+      correct: {
+        ammoniumChloride:'A', copperSulfate:'B', ironSulfate:'B', sodiumCarbonate:'C', sodiumHydrogenCarbonate:'C', calciumChloride:'A', potassiumChloride:'A', leadNitrate:'E',
+        zincSulfate:'B', aluminumNitrate:'E', ironChloride:'A', ammoniumCarbonate:'C', zincNitrate:'E', sodiumSulfite:'C', potassiumBromide:'A', sodiumIodide:'D'
+      }
+    },
+    {
+      key:'bacl2',
+      label:'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]',
+      icon:'🧫',
+      reagent:'Dil. HCl + BaCl₂(aq)',
+      procedure:'To about 2 cm³ of the aqueous solution of the unknown salt in a clean test tube, add 3–4 drops of dilute hydrochloric acid, followed by 3–4 drops of barium chloride solution. Observe whether a dense, acid-insoluble white precipitate forms.',
+      options: [
+        { key:'A', text:'White ppt (BaSO₄), insoluble in dil. HCl → SO₄²⁻', color:'#F8FAFC' },
+        { key:'B', text:'No precipitate formed', color:'#334155' },
+        { key:'C', text:'White ppt (BaSO₃), dissolves in dilute HCl with effervescence of choking SO₂ gas → SO₃²⁻', color:'#E2E8F0', bubble:true },
+        { key:'D', text:'White ppt, insoluble; effervescence with HCl', color:'#CBD5E1', bubble:true }
+      ],
+      correct: {
+        ammoniumChloride:'B', copperSulfate:'A', ironSulfate:'A', sodiumCarbonate:'B', sodiumHydrogenCarbonate:'B', calciumChloride:'B', potassiumChloride:'B', leadNitrate:'B',
+        zincSulfate:'A', aluminumNitrate:'B', ironChloride:'B', ammoniumCarbonate:'B', zincNitrate:'B', sodiumSulfite:'C', potassiumBromide:'B', sodiumIodide:'B'
+      }
+    },
+    {
+      key:'ki',
+      label:'Test with Potassium Iodide Solution [1M KI(aq)]',
+      icon:'🟡',
+      reagent:'1M KI(aq)',
+      procedure:'To about 2 cm³ of the aqueous solution of the unknown salt in a clean test tube, add 3–4 drops of 1M potassium iodide solution. Heat the mixture gently in a water bath, then allow it to cool under tap water to observe golden spangles.',
+      options: [
+        { key:'A', text:'Bright canary-yellow ppt (PbI₂), dissolves on heating to golden sparkles → Pb²⁺', color:'#EAB308' },
+        { key:'B', text:'No precipitate formed', color:'#334155' },
+        { key:'C', text:'White precipitate formed', color:'#E2E8F0' }
+      ],
+      correct: {
+        ammoniumChloride:'B', copperSulfate:'B', ironSulfate:'B', sodiumCarbonate:'B', sodiumHydrogenCarbonate:'B', calciumChloride:'B', potassiumChloride:'B', leadNitrate:'A',
+        zincSulfate:'B', aluminumNitrate:'B', ironChloride:'B', ammoniumCarbonate:'B', zincNitrate:'B', sodiumSulfite:'B', potassiumBromide:'B', sodiumIodide:'B'
+      }
+    },
+    {
+      key:'brown_ring',
+      label:'Brown Ring Test for Nitrates [NO₃⁻]',
+      icon:'🟤',
+      reagent:'FeSO₄(aq) + conc. H₂SO₄',
+      isBrownRing:true,
+      procedure:'To about 2 cm³ of the aqueous solution of the unknown salt in a clean test tube, add 2 cm³ of freshly prepared iron(II) sulfate solution. Slant the test tube at 45°, and carefully trickle concentrated sulfuric(VI) acid down the inside wall of the tube without shaking.',
+      options: [
+        { key:'A', text:'Distinct brown ring formed at the liquid-liquid interface → NO₃⁻', color:'#78350F' },
+        { key:'B', text:'No brown ring or color change at interface', color:'#334155' }
+      ],
+      correct: {
+        ammoniumChloride:'B', copperSulfate:'B', ironSulfate:'B', sodiumCarbonate:'B', sodiumHydrogenCarbonate:'B', calciumChloride:'B', potassiumChloride:'B', leadNitrate:'A',
+        zincSulfate:'B', aluminumNitrate:'A', ironChloride:'B', ammoniumCarbonate:'B', zincNitrate:'A', sodiumSulfite:'B', potassiumBromide:'B', sodiumIodide:'B'
+      }
+    }
+  ];
+
+  /* ══════════════════════════════════════
+     STATE
+  ══════════════════════════════════════ */
+  let currentSaltKey = '';
+  let sampleCounter = 0;
+  const testStates = {};
+  let sessionSaved = false;
+  const urlParams = (typeof window !== 'undefined' && window.location) ? new URLSearchParams(window.location.search) : new URLSearchParams('');
+  const assignmentId = urlParams.get('assignment');
+
+  /* ══════════════════════════════════════
+     INIT
+  ══════════════════════════════════════ */
+  function renderSpecimenWatchglass(salt) {
+    const g = document.getElementById('specimenCrystalsGroup');
+    if (!g || !salt) return;
+
+    const c1 = salt.crystalColor || '#FFFFFF';
+    const c2 = salt.crystalSecondary || '#CBD5E1';
+    const c3 = salt.crystalHighlight || '#FFFFFF';
+
+    // Base crystal cluster polygons situated in center of watch glass dish (centered around x: 65, y: 46)
+    const facets = [
+      // Bottom shadow mound
+      `<ellipse cx="65" cy="48" rx="26" ry="9" fill="${c2}" opacity="0.45" filter="blur(1px)"/>`,
+      // Back facets
+      `<polygon points="48,46 54,40 62,42 56,48" fill="${c2}" stroke="${c3}" stroke-width="0.5" opacity="0.9"/>`,
+      `<polygon points="68,47 76,41 84,43 76,49" fill="${c2}" stroke="${c3}" stroke-width="0.5" opacity="0.9"/>`,
+      `<polygon points="56,42 65,36 74,38 65,44" fill="${c1}" stroke="${c3}" stroke-width="0.6" opacity="0.95"/>`,
+      // Main cluster facets
+      `<polygon points="52,48 59,43 68,45 61,50" fill="${c1}" stroke="${c3}" stroke-width="0.6"/>`,
+      `<polygon points="62,49 71,44 80,46 71,51" fill="${c1}" stroke="${c3}" stroke-width="0.6"/>`,
+      `<polygon points="44,50 51,46 58,49 51,53" fill="${c2}" stroke="${c3}" stroke-width="0.5"/>`,
+      `<polygon points="72,50 79,45 86,48 79,53" fill="${c2}" stroke="${c3}" stroke-width="0.5"/>`,
+      // Top sparkling facets
+      `<polygon points="58,44 65,39 65,44 58,47" fill="${c3}" opacity="0.85"/>`,
+      `<polygon points="65,39 72,41 72,46 65,44" fill="${c1}" stroke="${c3}" stroke-width="0.5"/>`,
+      `<polygon points="60,46 66,42 66,47 60,50" fill="${c3}" opacity="0.9"/>`,
+      // Small crystalline granules scattered
+      `<circle cx="42" cy="49" r="1.6" fill="${c1}" stroke="${c3}" stroke-width="0.4"/>`,
+      `<circle cx="45" cy="52" r="1.3" fill="${c2}"/>`,
+      `<circle cx="87" cy="49" r="1.5" fill="${c1}" stroke="${c3}" stroke-width="0.4"/>`,
+      `<circle cx="84" cy="52" r="1.2" fill="${c2}"/>`,
+      `<circle cx="50" cy="52" r="1.8" fill="${c3}"/>`,
+      `<circle cx="78" cy="52" r="1.6" fill="${c3}"/>`,
+      `<circle cx="65" cy="51" r="2.0" fill="${c3}"/>`,
+      // Glistening sparkles
+      `<path d="M 64,38 L 65,35 L 66,38 L 69,39 L 66,40 L 65,43 L 64,40 L 61,39 Z" fill="#FFFFFF" opacity="0.95"/>`,
+      `<path d="M 54,43 L 55,41 L 56,43 L 58,44 L 56,45 L 55,47 L 54,45 L 52,44 Z" fill="#FFFFFF" opacity="0.85"/>`,
+      `<path d="M 74,42 L 75,40 L 76,42 L 78,43 L 76,44 L 75,46 L 74,44 L 72,43 Z" fill="#FFFFFF" opacity="0.85"/>`
+    ];
+
+    g.innerHTML = facets.join('\n');
+  }
+
+  function newSample() {
+    const keys = Object.keys(SALTS);
+    currentSaltKey = keys[Math.floor(Math.random() * keys.length)];
+    sampleCounter++;
+    Object.keys(testStates).forEach(k => delete testStates[k]);
+    sessionSaved = false;
+    isCobaltGlassActive = false;
+    flameOpticalMode = 'naked';
+    const btnCobaltInit = document.getElementById('btnCobaltGlass');
+    if (btnCobaltInit) btnCobaltInit.innerHTML = '🟦 Cobalt Blue Glass Filter: OFF';
+
+    const salt = SALTS[currentSaltKey];
+
+    const sampleNumStr = String(sampleCounter).padStart(2, '0');
+    const saltBadge = document.getElementById('sampleIdBadge') || document.getElementById('saltBadge');
+    if (saltBadge) saltBadge.textContent = `Specimen Solid: S-${sampleNumStr}`;
+
+    const titleEl = document.getElementById('specimenTitle');
+    if (titleEl) titleEl.textContent = `Unknown Inorganic Salt Sample S (${salt.appearance})`;
+
+    const appPill = document.getElementById('specimenAppearancePill');
+    if (appPill) appPill.textContent = salt.appearance;
+
+    const solPill = document.getElementById('specimenSolubilityPill');
+    if (solPill) solPill.textContent = salt.solubility;
+
+    renderSpecimenWatchglass(salt);
+
+    const cationSelect = document.getElementById('cationSelect');
+    if (cationSelect) cationSelect.value = '';
+    const anionSelect = document.getElementById('anionSelect');
+    if (anionSelect) anionSelect.value = '';
+    const submitBtn = document.getElementById('submitIdBtn');
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = '✅ Submit Identification';
+    }
+    const idResultBox = document.getElementById('idResultBox');
+    if (idResultBox) idResultBox.style.display = 'none';
+
+    renderAll();
+  }
+
+  /* ══════════════════════════════════════
+     RENDER
+  ══════════════════════════════════════ */
+  function renderAll() {
+    renderGrid();
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const totalTests = TESTS.length;
+    const performedCount = Object.keys(testStates).filter(k => testStates[k].performed).length;
+    const filledCount = Object.keys(testStates).filter(k => (testStates[k].obsText || '').trim() && (testStates[k].infText || '').trim()).length;
+    const pct = Math.round((performedCount / totalTests) * 100);
+
+    const fill = document.getElementById('progressFill') || document.getElementById('qualProgressFill');
+    const txt = document.getElementById('progressCount') || document.getElementById('qualProgressCount');
+    if (fill) fill.style.width = `${pct}%`;
+    if (txt) txt.textContent = `${performedCount} / ${totalTests} Tests Performed (${filledCount} Recorded)`;
+  }
+
+  function getObsSuggestionChips(testKey) {
+    // Only scientific symbols/shorthands; students formulate full observations themselves
+    const chips = ['ppt', 'Δ', '↑', '↓'];
+    return chips.map(c => `
+      <button type="button" class="suggestion-chip" onclick="insertSuggestion('obs_${testKey}', '${c}')" title="Insert scientific symbol">${c}</button>
+    `).join('');
+  }
+
+  function getInfSuggestionChips(testKey) {
+    // Only chemical ions and notation superscripts; no pre-written deduction sentences
+    const symbolMap = {
+      heat_solid: ['NO₃⁻', 'CO₃²⁻', 'SO₄²⁻', 'SO₃²⁻', 'NH₄⁺', 'Zn²⁺', 'Pb²⁺', '²⁺', '⁻', '²⁻'],
+      flame: ['Na⁺', 'K⁺', 'Ca²⁺', 'Cu²⁺', '⁺', '²⁺'],
+      naoh: ['Zn²⁺', 'Al³⁺', 'Pb²⁺', 'Ca²⁺', 'Mg²⁺', 'Cu²⁺', 'Fe²⁺', 'Fe³⁺', 'NH₄⁺', '²⁺', '³⁺'],
+      nh3: ['Cu²⁺', 'Zn²⁺', 'Al³⁺', 'Pb²⁺', 'Fe²⁺', 'Fe³⁺', 'Ca²⁺', 'NH₄⁺', '²⁺', '³⁺'],
+      hcl: ['CO₃²⁻', 'SO₃²⁻', 'Pb²⁺', '²⁻', '⁻'],
+      agno3: ['Cl⁻', 'Br⁻', 'I⁻', 'SO₃²⁻', '⁻', '²⁻'],
+      bacl2: ['SO₄²⁻', 'SO₃²⁻', 'CO₃²⁻', '²⁻'],
+      pb_no3: ['Cl⁻', 'SO₄²⁻', 'SO₃²⁻', 'CO₃²⁻', '²⁻', '⁻'],
+      ki: ['Pb²⁺', '²⁺'],
+      brown_ring: ['NO₃⁻', '⁻']
+    };
+    const chips = symbolMap[testKey] || ['Pb²⁺', 'Al³⁺', 'Zn²⁺', 'SO₄²⁻', 'Cl⁻', '²⁺', '³⁺', '²⁻', '⁻'];
+    return chips.map(c => `
+      <button type="button" class="suggestion-chip" onclick="insertSuggestion('inf_${testKey}', '${c}')" title="Insert ion / symbol">${c}</button>
+    `).join('');
+  }
+
+  window.insertSuggestion = function(elemId, text) {
+    const elem = document.getElementById(elemId);
+    if (!elem) return;
+    const start = elem.selectionStart !== undefined ? elem.selectionStart : elem.value.length;
+    const end = elem.selectionEnd !== undefined ? elem.selectionEnd : elem.value.length;
+    const val = elem.value;
+
+    const isSubOrSuper = /^[²³⁺⁻₂₃₄]+$/.test(text);
+    let prefix = '';
+    if (!isSubOrSuper && start > 0) {
+      const prev = val[start - 1];
+      if (prev !== ' ' && prev !== '\n') prefix = ' ';
+    }
+    let suffix = '';
+    if (!isSubOrSuper && end < val.length) {
+      const next = val[end];
+      if (next !== ' ' && next !== '\n' && next !== ',' && next !== '.') suffix = ' ';
+    }
+
+    elem.value = val.substring(0, start) + prefix + text + suffix + val.substring(end);
+    const newPos = start + prefix.length + text.length;
+    elem.selectionStart = elem.selectionEnd = newPos;
+    elem.focus();
+    const testKey = elemId.replace(/^(obs|inf)_/, '');
+    saveTextState(testKey);
+    elem.dispatchEvent(new Event('input'));
+  };
+
+  /* ══════════════════════════════════════
+     KNEC 233/3 QUALITATIVE EVALUATION HELPERS
+  ══════════════════════════════════════ */
+  function extractIonsFromChunk(chunk) {
+    if (!chunk || typeof chunk !== 'string') return [];
+    const lower = chunk.toLowerCase()
+      .replace(/[\u2080-\u2089]/g, m => String.fromCharCode(m.charCodeAt(0) - 0x2080 + 48))
+      .replace(/[\u00B9\u00B2\u00B3]/g, m => m === '¹' ? '1' : m === '²' ? '2' : '3')
+      .replace(/[\u2070-\u2079]/g, m => String.fromCharCode(m.charCodeAt(0) - 0x2070 + 48))
+      .replace(/[⁺+]/g, '+')
+      .replace(/[⁻-]/g, '-');
+    const ions = [];
+
+    // Cations
+    if (lower.includes('pb') || lower.includes('lead')) ions.push('pb2+');
+    if (lower.includes('al') || lower.includes('aluminium') || lower.includes('aluminum')) ions.push('al3+');
+    if (lower.includes('zn') || lower.includes('zinc')) ions.push('zn2+');
+    if (lower.includes('cu') || lower.includes('copper')) ions.push('cu2+');
+    if (lower.includes('fe2') || lower.includes('iron(ii)') || lower.includes('iron (ii)')) ions.push('fe2+');
+    if (lower.includes('fe3') || lower.includes('iron(iii)') || lower.includes('iron (iii)')) ions.push('fe3+');
+    if (lower.includes('ca') || lower.includes('calcium')) ions.push('ca2+');
+    if (lower.includes('nh4') || lower.includes('ammonium')) ions.push('nh4+');
+    if (lower.includes('na') || lower.includes('sodium')) ions.push('na+');
+    if (lower.includes('k+') || lower.includes('potassium') || /\bk\b/i.test(chunk)) ions.push('k+');
+    if (lower.includes('mg') || lower.includes('magnesium')) ions.push('mg2+');
+    if (lower.includes('ba') || lower.includes('barium')) ions.push('ba2+');
+
+    // Anions
+    if (lower.includes('so4') || lower.includes('sulphate') || lower.includes('sulfate')) ions.push('so42-');
+    if (lower.includes('so3') || lower.includes('sulphite') || lower.includes('sulfite')) ions.push('so32-');
+    if (lower.includes('hco3') || lower.includes('hydrogen carbonate') || lower.includes('hydrogencarbonate') || lower.includes('bicarbonate')) {
+      ions.push('hco3-');
+    }
+    const lowerWithoutHco3 = lower
+      .replace(/hco3[⁻\-\^0-9]*/g, '')
+      .replace(/hydrogen\s*carbonate/g, '')
+      .replace(/hydrogencarbonate/g, '')
+      .replace(/bicarbonate/g, '');
+    if (lowerWithoutHco3.includes('co3') || lowerWithoutHco3.includes('carbonate')) {
+      ions.push('co32-');
+    }
+    if (lower.includes('cl') || lower.includes('chloride')) ions.push('cl-');
+    if (lower.includes('br') || lower.includes('bromide')) ions.push('br-');
+    if (lower.includes('i-') || lower.includes('iodide')) ions.push('i-');
+    if (lower.includes('no3') || lower.includes('nitrate')) ions.push('no3-');
+
+    return [...new Set(ions)];
+  }
+
+  function parseInferredIons(text) {
+    if (!text || typeof text !== 'string') {
+      return { ions: [], presentIons: [], absentIons: [], hasCharge: true, missingChargeSymbols: [], raw: '' };
+    }
+    const allIons = extractIonsFromChunk(text);
+    const lower = text.toLowerCase();
+
+    // Check if candidate distinguished present vs absent
+    const hasAbsent = lower.includes('absent') || lower.includes('not present') || lower.includes('not detected');
+    const lowerWithoutNotPresent = lower.replace(/not\s+present/g, '').replace(/absent/g, '').replace(/not\s+detected/g, '');
+    const hasPresent = lowerWithoutNotPresent.includes('present');
+
+    let presentIons = [];
+    let absentIons = [];
+
+    if (hasAbsent && !hasPresent) {
+      // Entire statement deduces absence of listed ions (e.g. "Cu2+, Fe2+, Fe3+ absent")
+      absentIons = [...allIons];
+      presentIons = [];
+    } else if (hasAbsent && hasPresent) {
+      // Multiple clauses separating present vs absent
+      const clauses = text.split(/[;/\n]|(?:\b(?:while|whereas|but)\b)/i);
+      if (clauses.length > 1) {
+        clauses.forEach(cl => {
+          const clLower = cl.toLowerCase();
+          const clIons = extractIonsFromChunk(cl);
+          if (clLower.includes('absent') || clLower.includes('not present') || clLower.includes('not detected')) {
+            absentIons.push(...clIons);
+          } else {
+            presentIons.push(...clIons);
+          }
+        });
+      } else {
+        const commaParts = text.split(/,\s*(?=[^,]*\b(?:present|absent)\b)/i);
+        commaParts.forEach(cl => {
+          const clLower = cl.toLowerCase();
+          const clIons = extractIonsFromChunk(cl);
+          if (clLower.includes('absent') || clLower.includes('not present') || clLower.includes('not detected')) {
+            absentIons.push(...clIons);
+          } else {
+            presentIons.push(...clIons);
+          }
+        });
+      }
+    } else {
+      // Standard deduction of present ions
+      presentIons = [...allIons];
+      absentIons = [];
+    }
+
+    presentIons = [...new Set(presentIons)];
+    absentIons = [...new Set(absentIons)];
+
+    // Detect if symbols lack charge notations
+    const hasAnyCharge = text.includes('+') || text.includes('-') || text.includes('²') || 
+                         text.includes('³') || text.includes('⁺') || text.includes('⁻') || 
+                         lower.includes('ion');
+    
+    const missingChargeSymbols = [];
+    const bareSymbolPatterns = [
+      { sym: 'Pb', regex: /\bPb\b(?![⁺²\^+-])/i },
+      { sym: 'Al', regex: /\bAl\b(?![⁺³\^+-])/i },
+      { sym: 'Zn', regex: /\bZn\b(?![⁺²\^+-])/i },
+      { sym: 'Cu', regex: /\bCu\b(?![⁺²\^+-])/i },
+      { sym: 'Fe', regex: /\bFe\b(?![⁺²³\^+-])/i },
+      { sym: 'Ca', regex: /\bCa\b(?![⁺²\^+-])/i },
+      { sym: 'Ba', regex: /\bBa\b(?![⁺²\^+-])/i },
+      { sym: 'Mg', regex: /\bMg\b(?![⁺²\^+-])/i },
+      { sym: 'Na', regex: /\bNa\b(?![⁺\^+-])/i },
+      { sym: 'SO4', regex: /\bSO4\b(?![⁻²\^+-])/i },
+      { sym: 'SO3', regex: /\bSO3\b(?![⁻²\^+-])/i },
+      { sym: 'HCO3', regex: /\bHCO3\b(?![⁻\^+-])/i },
+      { sym: 'CO3', regex: /\b(?<!H)CO3\b(?![⁻²\^+-])/i },
+      { sym: 'NO3', regex: /\bNO3\b(?![⁻\^+-])/i },
+      { sym: 'Cl', regex: /\bCl\b(?![⁻\^+-])/i },
+      { sym: 'Br', regex: /\bBr\b(?![⁻\^+-])/i }
+    ];
+
+    if (!hasAnyCharge) {
+      bareSymbolPatterns.forEach(b => {
+        if (b.regex.test(text)) {
+          missingChargeSymbols.push(b.sym);
+        }
+      });
+    }
+
+    return {
+      ions: allIons,
+      presentIons,
+      absentIons,
+      hasCharge: hasAnyCharge,
+      missingChargeSymbols: [...new Set(missingChargeSymbols)],
+      raw: text
+    };
+  }
+
+  function detectContradictoryIons(testKey, salt, inferredIons, obsText, rawInfText) {
+    const contradictions = [];
+    const obsLower = (obsText || '').toLowerCase();
+    const isWhiteOrColorless = obsLower.includes('white') || obsLower.includes('colorless') || obsLower.includes('colourless') || obsLower.includes('no ppt') || obsLower.includes('no precipitate') || obsLower.includes('clear');
+
+    let presentIons = Array.isArray(inferredIons) ? inferredIons : [];
+    if (rawInfText && typeof rawInfText === 'string') {
+      const parsed = parseInferredIons(rawInfText);
+      presentIons = parsed.presentIons;
+    } else if (inferredIons && Array.isArray(inferredIons.presentIons)) {
+      presentIons = inferredIons.presentIons;
+    }
+
+    // 1. Colored ions inferred as PRESENT on white precipitate or colorless solution
+    if (isWhiteOrColorless) {
+      if (presentIons.includes('cu2+')) {
+        contradictions.push({ ion: 'Cu²⁺', reason: 'Cu²⁺ forms blue precipitate / solution, which contradicts white/colorless observation' });
+      }
+      if (presentIons.includes('fe2+')) {
+        contradictions.push({ ion: 'Fe²⁺', reason: 'Fe²⁺ forms dirty-green precipitate, which contradicts white/colorless observation' });
+      }
+      if (presentIons.includes('fe3+')) {
+        contradictions.push({ ion: 'Fe³⁺', reason: 'Fe³⁺ forms reddish-brown precipitate, which contradicts white/colorless observation' });
+      }
+    }
+
+    // 2. Both Fe²⁺ and Fe³⁺ inferred together as PRESENT in a single test
+    if (presentIons.includes('fe2+') && presentIons.includes('fe3+')) {
+      contradictions.push({ ion: 'Fe²⁺ / Fe³⁺', reason: 'Fe²⁺ and Fe³⁺ are contradictory, mutually exclusive oxidation states' });
+    }
+
+    // 3. Zn²⁺ inferred as PRESENT when precipitate is insoluble in excess NH₃
+    if (testKey === 'nh3') {
+      const isInsolubleInExcess = obsLower.includes('insoluble in excess') || (obsLower.includes('insoluble') && !obsLower.includes('dissolv'));
+      if (isInsolubleInExcess && presentIons.includes('zn2+')) {
+        contradictions.push({ ion: 'Zn²⁺', reason: 'Zn²⁺ precipitate readily dissolves in excess aqueous NH₃ to form [Zn(NH₃)₄]²⁺' });
+      }
+    }
+
+    // 4. BaCl2: SO4²⁻ inferred as PRESENT when precipitate dissolved or no ppt formed
+    if (testKey === 'bacl2') {
+      const noPpt = obsLower.includes('no ppt') || obsLower.includes('no precipitate') || obsLower.includes('no visible');
+      const dissolved = obsLower.includes('dissolv') || obsLower.includes('soluble in');
+      if ((noPpt || dissolved) && presentIons.includes('so42-')) {
+        contradictions.push({ ion: 'SO₄²⁻', reason: 'BaSO₄ precipitate is completely insoluble in dilute hydrochloric acid' });
+      }
+    }
+
+    // 5. AgNO3: Halides inferred as PRESENT when no precipitate formed
+    if (testKey === 'agno3') {
+      const noPpt = obsLower.includes('no ppt') || obsLower.includes('no precipitate') || obsLower.includes('no visible');
+      if (noPpt && (presentIons.includes('cl-') || presentIons.includes('br-') || presentIons.includes('i-'))) {
+        contradictions.push({ ion: 'Halide (Cl⁻/Br⁻/I⁻)', reason: 'Silver halides form insoluble precipitates with aqueous AgNO₃' });
+      }
+    }
+
+    // 5b. Pb(NO3)2: Halides or Sulfate inferred when no ppt formed, or SO4²⁻ inferred when dissolved on warming
+    if (testKey === 'pb_no3') {
+      const noPpt = obsLower.includes('no ppt') || obsLower.includes('no precipitate') || obsLower.includes('no visible');
+      if (noPpt && (presentIons.includes('cl-') || presentIons.includes('so42-') || presentIons.includes('so32-') || presentIons.includes('co32-'))) {
+        contradictions.push({ ion: 'Anion (Cl⁻/SO₄²⁻)', reason: 'Pb²⁺ forms white precipitates with chloride, sulfate, sulfite, and carbonate' });
+      }
+      const dissolvedOnWarming = (obsLower.includes('dissolv') || obsLower.includes('soluble')) && (obsLower.includes('warm') || obsLower.includes('heat'));
+      if (dissolvedOnWarming && presentIons.includes('so42-')) {
+        contradictions.push({ ion: 'SO₄²⁻', reason: 'PbSO₄ remains completely insoluble on boiling; only PbCl₂ dissolves on warming' });
+      }
+    }
+
+    // 6. KI: Pb²⁺ inferred as PRESENT when no precipitate formed
+    if (testKey === 'ki') {
+      const noPpt = obsLower.includes('no ppt') || obsLower.includes('no precipitate') || obsLower.includes('no visible');
+      if (noPpt && presentIons.includes('pb2+')) {
+        contradictions.push({ ion: 'Pb²⁺', reason: 'Pb²⁺ forms a bright canary-yellow precipitate of PbI₂ with KI' });
+      }
+    }
+
+    return contradictions;
+  }
+
+  function evaluateObservationAccuracy(test, salt, obsText) {
+    const raw = (obsText || '').trim();
+    const lower = raw.toLowerCase();
+    const notes = [];
+    const warnings = [];
+    let score = 0.0;
+    const maxScore = 0.55;
+
+    if (!raw) {
+      return { score: 0.0, maxScore, notes: ['❌ Observation area left blank.'], warnings: [], tabooPenalty: false, expectedText: '' };
+    }
+
+    let saltKeyToUse = salt ? (salt.key || '') : '';
+    if (!saltKeyToUse && salt) {
+      const foundKey = Object.keys(SALTS).find(k => SALTS[k] === salt || (SALTS[k].formula && SALTS[k].formula === salt.formula) || (SALTS[k].name && SALTS[k].name === salt.name));
+      if (foundKey) saltKeyToUse = foundKey;
+    }
+    if (!saltKeyToUse) saltKeyToUse = currentSaltKey;
+
+    const correctKey = test.correct ? test.correct[saltKeyToUse] : null;
+    const correctOpt = (correctKey && test.options) ? test.options.find(o => o.key === correctKey) : null;
+    const expectedText = correctOpt ? correctOpt.text : (test.procedure || '');
+    const expLower = expectedText.toLowerCase();
+
+    // Taboo phrases
+    let tabooPenalty = false;
+    if (/white solution/i.test(raw)) {
+      tabooPenalty = true;
+      notes.push('🚨 KNEC Penalty: Never write "white solution" (-0.5 Mk). Use "white precipitate" or "colorless solution".');
+    }
+
+    // Warnings
+    if (/gas (evolved|produced|given off)/i.test(raw) && !/(effervescence|limewater|litmus|ammonia|pungent|choking|brown|relight|pop)/i.test(raw)) {
+      warnings.push('⚠️ KNEC Warning: State specific gas properties (e.g. effervescence, limewater milky, litmus change).');
+    }
+    if (/(precipitate|ppt)/i.test(raw) && !/(no ppt|no precipitate|no white ppt)/i.test(raw) && !/(excess|soluble|insoluble|dissolv)/i.test(raw) && ['naoh','nh3','agno3'].includes(test.key)) {
+      warnings.push('⚠️ KNEC Warning: Always specify precipitate solubility in excess reagent.');
+    }
+    if (/clear solution/i.test(raw) && !/colorless|colourless/i.test(raw)) {
+      warnings.push('💡 KNEC Tip: A colored solution can be clear; if it looks like water, write "colorless solution".');
+    }
+
+    // Reaction Ground-Truth Matching
+    if (test.key === 'heat_solid') {
+      if (expLower.includes('sublime') || expLower.includes('dense white fumes')) {
+        if (lower.includes('sublime') || lower.includes('white fumes') || lower.includes('deposit')) score = 0.55;
+        else score = 0.0;
+      } else if (expLower.includes('brown fumes') || expLower.includes('no₂') || expLower.includes('no2')) {
+        if (lower.includes('brown') || lower.includes('fumes') || lower.includes('relight') || lower.includes('rekindl')) score = 0.55;
+        else if (lower.includes('water') || lower.includes('droplet') || lower.includes('crackle')) score = 0.25;
+        else score = 0.0;
+      } else if (expLower.includes('blue') && expLower.includes('white')) {
+        if ((lower.includes('blue') || lower.includes('white')) && (lower.includes('droplet') || lower.includes('water') || lower.includes('condens'))) score = 0.55;
+        else if (lower.includes('water') || lower.includes('droplet')) score = 0.35;
+        else score = 0.0;
+      } else if (expLower.includes('yellow when hot') || expLower.includes('zno')) {
+        if (lower.includes('yellow') && (lower.includes('hot') || lower.includes('cool') || lower.includes('white'))) score = 0.55;
+        else if (lower.includes('yellow')) score = 0.25;
+        else score = 0.0;
+      } else if (expLower.includes('choking') || expLower.includes('so₂') || expLower.includes('so2')) {
+        if (lower.includes('choking') || lower.includes('pungent') || lower.includes('so2') || lower.includes('green') || lower.includes('brown')) score = 0.55;
+        else if (lower.includes('water') || lower.includes('droplet')) score = 0.25;
+        else score = 0.0;
+      } else if (expLower.includes('decomposes completely') || expLower.includes('alkaline')) {
+        if (lower.includes('ammonia') || lower.includes('litmus blue') || lower.includes('no residue')) score = 0.55;
+        else score = 0.0;
+      } else if (expLower.includes('limewater milky') || (expLower.includes('water droplets') && expLower.includes('co₂'))) {
+        if ((lower.includes('water') || lower.includes('droplet') || lower.includes('condens')) && (lower.includes('milky') || lower.includes('limewater') || lower.includes('co2') || lower.includes('co₂'))) score = 0.55;
+        else if (lower.includes('water') || lower.includes('droplet') || lower.includes('milky') || lower.includes('limewater')) score = 0.35;
+        else score = 0.0;
+      } else {
+        // Thermally stable (no change / crackles)
+        if (lower.includes('no change') || lower.includes('unchanged') || lower.includes('no gas') || lower.includes('crackle') || lower.includes('melts') || lower.includes('stable')) score = 0.55;
+        else score = 0.0;
+      }
+    } else if (test.key === 'flame') {
+      const flameExpected = expLower.includes('golden yellow') ? 'yellow'
+        : expLower.includes('lilac') ? 'lilac'
+        : expLower.includes('brick-red') ? 'brick-red'
+        : expLower.includes('blue-green') ? 'blue-green'
+        : expLower.includes('pale blue-white') ? 'pale blue'
+        : 'no colour';
+
+      if (flameExpected === 'no colour') {
+        if (lower.includes('no char') || lower.includes('no color') || lower.includes('no colour') || lower.includes('none')) score = 0.55;
+        else score = 0.0;
+      } else {
+        if (lower.includes(flameExpected) || (flameExpected === 'brick-red' && (lower.includes('red') || lower.includes('crimson'))) || (flameExpected === 'lilac' && lower.includes('violet'))) {
+          score = 0.55;
+        } else {
+          score = 0.0;
+        }
+      }
+    } else {
+      // Precipitation & Solution Tests (naoh, nh3, hcl, agno3, bacl2, ki, brown_ring, pb_no3)
+      const noPptRegex = /(?:no|without)\s+(?:white\s+|yellow\s+|cream\s+|blue\s+|green\s+|brown\s+|dense\s+|heavy\s+)?(?:ppt|precipitate)/i;
+      const expHasNoPpt = noPptRegex.test(expLower) || expLower.includes('no visible') || expLower.includes('no change') || expLower.includes('no brown ring') || ((expLower.includes('colorless') || expLower.includes('colourless')) && !expLower.includes('ppt') && !expLower.includes('precipitate'));
+      const hasExpectedPpt = (expLower.includes('ppt') || expLower.includes('precipitate') || expLower.includes('ring')) && !expHasNoPpt;
+
+      const studentHasExplicitNoPpt = noPptRegex.test(lower) || lower.includes('no visible') || lower.includes('remains clear') || lower.includes('no change') || lower.includes('no reaction') || lower.includes('no effervescence');
+      const studentOnlyColorless = (lower.includes('colorless') || lower.includes('colourless') || lower.includes('clear')) && !lower.includes('ppt') && !lower.includes('precipitate');
+      const studentHasNoPpt = studentHasExplicitNoPpt || studentOnlyColorless;
+      const studentPpt = (lower.includes('ppt') || lower.includes('precipitate') || lower.includes('ring')) && !studentHasExplicitNoPpt;
+
+      if (!hasExpectedPpt) {
+        // Expected is NO precipitate / NO visible reaction / Effervescence
+        const isEffervescenceExpected = expLower.includes('effervescence') || expLower.includes('bubbl') || expLower.includes('gas');
+        if (isEffervescenceExpected) {
+          if (lower.includes('effervescence') || lower.includes('bubbl') || lower.includes('gas') || lower.includes('milky') || lower.includes('green') || lower.includes('fizz')) {
+            score = 0.55;
+          } else {
+            score = 0.0;
+          }
+        } else {
+          if (studentPpt) {
+            score = 0.0;
+            notes.push('❌ Incorrect observation: No precipitate forms in this reaction.');
+          } else if (studentHasNoPpt) {
+            score = 0.55;
+          } else {
+            score = 0.0;
+            notes.push('❌ Incorrect observation: Expected no precipitate or no visible change.');
+          }
+        }
+      } else {
+        // Expected HAS precipitate
+        if (studentHasNoPpt) {
+          score = 0.0;
+          notes.push('❌ Incorrect observation: A precipitate should form in this test.');
+        } else {
+          const expColor = expLower.includes('blue') ? 'blue'
+            : expLower.includes('green') ? 'green'
+            : expLower.includes('reddish-brown') || expLower.includes('brown') ? 'brown'
+            : expLower.includes('yellow') ? 'yellow'
+            : expLower.includes('cream') ? 'cream'
+            : 'white';
+
+          const colorMatches = lower.includes(expColor) || (expColor === 'brown' && lower.includes('red'));
+
+          if (['naoh', 'nh3'].includes(test.key)) {
+            const expSolubleInExcess = expLower.includes('soluble in excess') || expLower.includes('dissolves in excess');
+            const expInsolubleInExcess = expLower.includes('insoluble in excess');
+            const studentSoluble = lower.includes('soluble in excess') || lower.includes('dissolves in excess') || lower.includes('dissolve in excess');
+            const studentInsoluble = lower.includes('insoluble in excess') || (lower.includes('insoluble') && !lower.includes('dissolv'));
+
+            if (colorMatches && ((expSolubleInExcess && studentSoluble) || (expInsolubleInExcess && studentInsoluble))) {
+              score = 0.55;
+            } else if (colorMatches && (studentSoluble || studentInsoluble)) {
+              score = 0.20;
+              notes.push('❌ Inaccurate: Incorrect precipitate solubility in excess reagent.');
+            } else if (colorMatches) {
+              score = 0.35; // Dropped marks for missing excess specification
+              notes.push('⚠️ Partial credit: State precipitate behavior in excess reagent accurately.');
+            } else {
+              score = 0.0;
+              notes.push('❌ Incorrect observation: Wrong precipitate colour or behavior.');
+            }
+          } else if (test.key === 'pb_no3') {
+            const expWarms = expLower.includes('warm') || expLower.includes('dissolv') || expLower.includes('heat');
+            const studentWarms = lower.includes('warm') || lower.includes('heat') || lower.includes('dissolv') || lower.includes('soluble');
+            if (colorMatches && studentPpt && expWarms && studentWarms) {
+              score = 0.55;
+            } else if (colorMatches && studentPpt && !expWarms) {
+              score = 0.55;
+            } else if (colorMatches && studentPpt) {
+              score = 0.35;
+              notes.push('⚠️ Partial credit: Note precipitate solubility on warming.');
+            } else {
+              score = 0.0;
+              notes.push('❌ Incorrect observation: Precipitation and warming behavior do not match.');
+            }
+          } else {
+            if (colorMatches && studentPpt) {
+              score = 0.55;
+            } else {
+              score = 0.0;
+              notes.push('❌ Incorrect observation: Wrong precipitate colour.');
+            }
+          }
+        }
+      }
+    }
+
+    if (tabooPenalty) {
+      score = Math.max(0.0, score - 0.5);
+    }
+
+    if (score >= 0.55) {
+      notes.push(`✅ Accurate observation recorded (+${score.toFixed(2)} Mk).`);
+    } else if (score > 0) {
+      notes.push(`⚠️ Partially accurate observation (+${score.toFixed(2)} Mk).`);
+    } else if (notes.length === 0) {
+      notes.push(`❌ Inaccurate observation (0.00 Mk). Expected: "${expectedText}".`);
+    }
+
+    return {
+      score: parseFloat(score.toFixed(2)),
+      maxScore,
+      notes,
+      warnings,
+      tabooPenalty,
+      expectedText
+    };
+  }
+
+  function evaluateInferenceAccuracy(test, salt, infText, obsText) {
+    const raw = (infText || '').trim();
+    const notes = [];
+    let score = 0.0;
+    const maxScore = 0.55;
+
+    if (!raw) {
+      return { score: 0.0, maxScore, notes: ['❌ Inference area left blank.'], ciPenalty: 0.0, chargePenalty: 0.0, contradictions: [] };
+    }
+
+    const parsed = parseInferredIons(raw);
+    const contradictions = detectContradictoryIons(test.key, salt, parsed.presentIons, obsText, raw);
+    
+    function normIon(s) {
+      if (!s || typeof s !== 'string') return '';
+      return s.toLowerCase()
+        .replace(/[\^_\s]/g, '')
+        .replace(/[\u2080-\u2089]/g, m => String.fromCharCode(m.charCodeAt(0) - 0x2080 + 48))
+        .replace(/[\u00B9\u00B2\u00B3]/g, m => m === '¹' ? '1' : m === '²' ? '2' : '3')
+        .replace(/[\u2070-\u2079]/g, m => String.fromCharCode(m.charCodeAt(0) - 0x2070 + 48))
+        .replace(/[⁺+]/g, '+').replace(/[⁻-]/g, '-');
+    }
+    const saltCation = normIon(salt ? salt.cation : '');
+    const saltAnion = normIon(salt ? salt.anion : '');
+    const saltKeyToUse = salt ? (salt.key || '') : currentSaltKey;
+    const lower = raw.toLowerCase()
+      .replace(/[\u2080-\u2089]/g, m => String.fromCharCode(m.charCodeAt(0) - 0x2080 + 48))
+      .replace(/[\u00B9\u00B2\u00B3]/g, m => m === '¹' ? '1' : m === '²' ? '2' : '3')
+      .replace(/[\u2070-\u2079]/g, m => String.fromCharCode(m.charCodeAt(0) - 0x2070 + 48))
+      .replace(/[⁺+]/g, '+').replace(/[⁻-]/g, '-');
+
+    const hasAbsent = lower.includes('absent') || lower.includes('not present') || lower.includes('not detected');
+
+    // Base Inference Evaluation
+    if (test.key === 'naoh') {
+      const amphotericCations = ['pb2+', 'al3+', 'zn2+'];
+      const isAmphotericSalt = amphotericCations.includes(saltCation);
+      if (isAmphotericSalt) {
+        const amphoCount = amphotericCations.filter(c => parsed.presentIons.includes(c)).length;
+        if (amphoCount === 3) score = 0.55;
+        else if (amphoCount === 2) score = 0.38;
+        else if (amphoCount === 1) score = 0.20;
+        else if (lower.includes('amphoteric')) score = 0.35;
+      } else if (parsed.presentIons.includes(saltCation)) {
+        score = 0.55;
+      } else if (['na+', 'k+'].includes(saltCation)) {
+        const mentionsAbsentGroup = parsed.absentIons.some(i => ['cu2+', 'fe2+', 'fe3+', 'al3+', 'pb2+', 'zn2+', 'ca2+', 'mg2+'].includes(i));
+        if (mentionsAbsentGroup || (hasAbsent && (lower.includes('cu') || lower.includes('fe') || lower.includes('al') || lower.includes('pb') || lower.includes('zn')))) {
+          score = 0.55;
+        } else if (parsed.presentIons.includes(saltCation)) {
+          score = 0.55;
+        }
+      }
+    } else if (test.key === 'nh3') {
+      const pptCations = ['cu2+', 'zn2+', 'pb2+', 'al3+', 'fe2+', 'fe3+'];
+      const isPptSalt = pptCations.includes(saltCation);
+      if (saltCation === 'zn2+') {
+        if (parsed.presentIons.includes('zn2+')) score = 0.55;
+      } else if (['pb2+', 'al3+'].includes(saltCation)) {
+        const hasInsol = parsed.presentIons.includes('pb2+') || parsed.presentIons.includes('al3+');
+        if (hasInsol && !parsed.presentIons.includes('zn2+')) score = 0.55;
+        else if (hasInsol) score = 0.35;
+      } else if (parsed.presentIons.includes(saltCation)) {
+        score = 0.55;
+      } else if (!isPptSalt) {
+        // Non-precipitating cations (Ca2+, NH4+, Na+, K+)
+        const hasAbsentPpt = parsed.absentIons.some(i => pptCations.includes(i)) || (hasAbsent && (lower.includes('cu') || lower.includes('fe') || lower.includes('al') || lower.includes('pb') || lower.includes('zn')));
+        if (parsed.presentIons.includes(saltCation) || hasAbsentPpt) {
+          score = 0.55;
+        }
+      }
+    } else if (test.key === 'flame') {
+      if (['na+', 'k+', 'ca2+', 'cu2+'].includes(saltCation)) {
+        if (parsed.presentIons.includes(saltCation)) score = 0.55;
+      } else {
+        const mentionsNaK = parsed.absentIons.includes('na+') || parsed.absentIons.includes('k+') || lower.includes('na') || lower.includes('k');
+        if (hasAbsent && mentionsNaK && !parsed.presentIons.includes('na+') && !parsed.presentIons.includes('k+')) {
+          score = 0.55;
+        }
+      }
+    } else if (test.key === 'bacl2') {
+      if (['so42-', 'so32-'].includes(saltAnion)) {
+        if (parsed.presentIons.includes(saltAnion)) score = 0.55;
+      } else {
+        const mentionsSO = parsed.absentIons.includes('so42-') || parsed.absentIons.includes('so32-') || lower.includes('so4') || lower.includes('so3') || lower.includes('sulfate') || lower.includes('sulphite');
+        if (hasAbsent && mentionsSO && !parsed.presentIons.includes('so42-') && !parsed.presentIons.includes('so32-')) {
+          score = 0.55;
+        }
+      }
+    } else if (test.key === 'agno3') {
+      if (['cl-', 'br-', 'i-', 'so32-'].includes(saltAnion)) {
+        if (parsed.presentIons.includes(saltAnion)) score = 0.55;
+      } else {
+        const mentionsHalide = parsed.absentIons.some(i => ['cl-', 'br-', 'i-'].includes(i)) || lower.includes('cl') || lower.includes('br') || lower.includes('i') || lower.includes('halide');
+        if (hasAbsent && mentionsHalide && !parsed.presentIons.some(i => ['cl-', 'br-', 'i-'].includes(i))) {
+          score = 0.55;
+        }
+      }
+    } else if (test.key === 'pb_no3') {
+      if (['cl-', 'so42-', 'so32-', 'co32-'].includes(saltAnion)) {
+        if (parsed.presentIons.includes(saltAnion)) score = 0.55;
+      } else {
+        const mentionsAnion = parsed.absentIons.some(i => ['cl-', 'so42-'].includes(i)) || lower.includes('cl') || lower.includes('so4') || lower.includes('chloride') || lower.includes('sulfate');
+        if (hasAbsent && mentionsAnion && !parsed.presentIons.some(i => ['cl-', 'so42-'].includes(i))) {
+          score = 0.55;
+        }
+      }
+    } else if (test.key === 'ki') {
+      if (saltCation === 'pb2+') {
+        if (parsed.presentIons.includes('pb2+')) score = 0.55;
+      } else {
+        const mentionsPb = parsed.absentIons.includes('pb2+') || lower.includes('pb') || lower.includes('lead');
+        if (hasAbsent && mentionsPb && !parsed.presentIons.includes('pb2+')) {
+          score = 0.55;
+        }
+      }
+    } else if (test.key === 'brown_ring') {
+      if (saltAnion === 'no3-') {
+        if (parsed.presentIons.includes('no3-')) score = 0.55;
+      } else {
+        const mentionsNO3 = parsed.absentIons.includes('no3-') || lower.includes('no3') || lower.includes('nitrate');
+        if (hasAbsent && mentionsNO3 && !parsed.presentIons.includes('no3-')) {
+          score = 0.55;
+        }
+      }
+    } else if (test.key === 'hcl') {
+      if (['co32-', 'hco3-', 'so32-'].includes(saltAnion) || saltCation === 'pb2+') {
+        if (saltAnion === 'co32-' || saltAnion === 'hco3-') {
+          if (parsed.presentIons.includes('co32-') || parsed.presentIons.includes('hco3-') || lower.includes('co3') || lower.includes('hco3') || lower.includes('carbonate')) {
+            score = 0.55;
+          }
+        } else if (parsed.presentIons.includes(saltAnion) || parsed.presentIons.includes(saltCation)) {
+          score = 0.55;
+        }
+      } else {
+        const mentionsAcidAnions = parsed.absentIons.some(i => ['co32-', 'hco3-', 'so32-'].includes(i)) || lower.includes('co3') || lower.includes('hco3') || lower.includes('so3') || lower.includes('carbonate');
+        if (hasAbsent && mentionsAcidAnions && !parsed.presentIons.some(i => ['co32-', 'hco3-', 'so32-'].includes(i))) {
+          score = 0.55;
+        }
+      }
+    } else if (test.key === 'heat_solid') {
+      if (salt && salt.formula && salt.formula.includes('H2O') && (lower.includes('water') || lower.includes('hydrat') || lower.includes('crystalliz'))) score = 0.55;
+      else if (saltAnion === 'no3-' && (lower.includes('no3') || lower.includes('nitrate') || parsed.presentIons.includes('no3-'))) score = 0.55;
+      else if (saltCation === 'nh4+' && (lower.includes('nh4') || lower.includes('ammonium') || lower.includes('sublim') || parsed.presentIons.includes('nh4+'))) score = 0.55;
+      else if ((saltKeyToUse === 'sodiumHydrogenCarbonate' || saltAnion === 'hco3-') && (lower.includes('hco3') || lower.includes('hydrogen carbonate') || lower.includes('bicarbonate') || parsed.presentIons.includes('hco3-') || lower.includes('co3'))) score = 0.55;
+      else if (saltCation === 'zn2+' && (lower.includes('zn') || parsed.presentIons.includes('zn2+'))) score = 0.55;
+      else if (saltAnion === 'so42-' && (lower.includes('so4') || lower.includes('so3') || parsed.presentIons.includes('so42-'))) score = 0.55;
+      else if (['sodiumChloride', 'potassiumSulfate'].includes(saltKeyToUse) && (lower.includes('stable') || lower.includes('unchanged') || lower.includes('no decomp'))) score = 0.55;
+      else score = 0.0;
+    }
+
+    // Penalties
+    let ciPenalty = 0.0;
+    if (contradictions.length > 0) {
+      ciPenalty = Math.min(1.0, contradictions.length * 0.5);
+      score = Math.max(0.0, score - ciPenalty);
+      contradictions.forEach(c => {
+        notes.push(`🚨 KNEC Deduction (-0.5 Mk): Contradictory ion ${c.ion} inferred. ${c.reason}.`);
+      });
+    }
+
+    let chargePenalty = 0.0;
+    if (score > 0 && parsed.missingChargeSymbols.length > 0) {
+      chargePenalty = 0.5;
+      score = Math.max(0.0, score - chargePenalty);
+      notes.push(`⚠️ Ionic Charge Penalty (-0.5 Mk): Element symbol(s) ${parsed.missingChargeSymbols.join(', ')} written without ionic charge notation.`);
+    }
+
+    if (score >= 0.55) {
+      notes.push(`✅ Accurate deduction recorded (+${score.toFixed(2)} Mk).`);
+    } else if (score > 0 && ciPenalty === 0 && chargePenalty === 0) {
+      notes.push(`⚠️ Partially accurate deduction (+${score.toFixed(2)} Mk).`);
+    }
+
+    return {
+      score: parseFloat(score.toFixed(2)),
+      maxScore,
+      notes,
+      ciPenalty,
+      chargePenalty,
+      contradictions,
+      missingChargeSymbols: parsed.missingChargeSymbols
+    };
+  }
+
+  function onCandidateTextChange(testKey) {
+    if (typeof document === 'undefined') return;
+    const obsElem = document.getElementById(`obs_${testKey}`);
+    const infElem = document.getElementById(`inf_${testKey}`);
+    const obsFeedback = document.getElementById(`obsFeedback_${testKey}`);
+    const infFeedback = document.getElementById(`infFeedback_${testKey}`);
+
+    const obsVal = (obsElem ? obsElem.value : '').trim();
+    const infVal = (infElem ? infElem.value : '').trim();
+    const salt = SALTS[currentSaltKey] || {};
+
+    // Live Observation Feedback
+    if (obsFeedback) {
+      const obsLines = [];
+      if (window.KnecPedagogy) {
+        const tabooHits = KnecPedagogy.detectTabooPhrases(obsVal, 'observation');
+        tabooHits.forEach(hit => {
+          obsLines.push(`<div class="taboo-nudge-alert ${hit.severity}">${hit.alert}</div>`);
+        });
+      } else {
+        if (/white solution/i.test(obsVal)) {
+          obsLines.push('<div class="feedback-line penalty">🚨 KNEC Penalty: Never write "white solution" (-0.5 Mk). Use "white precipitate" or "colorless solution".</div>');
+        }
+      }
+      if (/gas (evolved|produced|given off)/i.test(obsVal) && !/(effervescence|limewater|litmus|ammonia|pungent|choking|brown|relight|pop)/i.test(obsVal)) {
+        obsLines.push('<div class="feedback-line warning">⚠️ State specific gas properties (effervescence, odor, color, litmus/limewater test).</div>');
+      }
+      if (/(precipitate|ppt)/i.test(obsVal) && !/(no ppt|no precipitate|no white ppt)/i.test(obsVal) && !/(excess|soluble|insoluble|dissolv)/i.test(obsVal) && ['naoh','nh3','agno3'].includes(testKey)) {
+        obsLines.push('<div class="feedback-line info">💡 Tip: Always specify precipitate solubility in excess reagent.</div>');
+      }
+      obsFeedback.innerHTML = obsLines.join('');
+    }
+
+    // Live Inference Feedback
+    if (infFeedback) {
+      const infLines = [];
+      if (infVal) {
+        if (window.KnecPedagogy) {
+          const preview = KnecPedagogy.getFormulaPreview(infVal, 'inorganic');
+          if (preview.isValid) {
+            infLines.push(`<div class="chem-preview-box"><span class="chem-preview-badge valid">⚡ Formatted: ${preview.formattedText}</span></div>`);
+          }
+          const tabooHits = KnecPedagogy.detectTabooPhrases(infVal, 'inference');
+          tabooHits.forEach(hit => {
+            infLines.push(`<div class="taboo-nudge-alert ${hit.severity}">${hit.alert}</div>`);
+          });
+        }
+        const parsed = parseInferredIons(infVal);
+        if (!window.KnecPedagogy && parsed.missingChargeSymbols.length > 0) {
+          infLines.push(`<div class="feedback-line warning">⚠️ Missing charge: Element symbol written without ionic charge (e.g. ${parsed.missingChargeSymbols.join(', ')}) forfeits inference marks (-0.5 Mk).</div>`);
+        }
+        const contras = detectContradictoryIons(testKey, salt, parsed.presentIons, obsVal, infVal);
+        if (contras.length > 0) {
+          const cIons = contras.map(c => c.ion).join(', ');
+          infLines.push(`<div class="feedback-line penalty">🚨 Contradictory Ion: Inferring ${cIons} contradicts observation (-0.5 Mk).</div>`);
+        }
+      }
+      infFeedback.innerHTML = infLines.join('');
+    }
+  }
+
+  function saveTextState(testKey) {
+    const obsElem = document.getElementById(`obs_${testKey}`);
+    const infElem = document.getElementById(`inf_${testKey}`);
+    if (!testStates[testKey]) testStates[testKey] = { performed: true };
+    if (obsElem) testStates[testKey].obsText = obsElem.value;
+    if (infElem) testStates[testKey].infText = infElem.value;
+    updateProgress();
+    onCandidateTextChange(testKey);
+  }
+
+  function renderGrid() {
+    const grid = document.getElementById('testGrid');
+    grid.innerHTML = TESTS.map((test, idx) => {
+      const st = testStates[test.key] || { performed: false, stage: 'idle' };
+      const testLetter = String.fromCharCode(97 + idx); // a, b, c, d, e, f, g, h
+
+      let actionButtonsHtml = '';
+      if (test.key === 'heat_solid') {
+        if (!st.performed || st.stage === 'idle') {
+          actionButtonsHtml = `
+            <div class="heating-toolbar-group">
+              <div class="heating-mode-buttons">
+                <button class="btn-perform-test btn-step-heat-gentle" onclick="performTestStage('heat_solid', 'gentle_heat')">
+                  🔥 Step 1a: Gently Warm Heel
+                </button>
+                <button class="btn-perform-test btn-step-heat" onclick="performTestStage('heat_solid', 'step1_heat')">
+                  💥 Step 1b: Heat Strongly in Flame
+                </button>
+              </div>
+            </div>`;
+        } else {
+          const isHeatedStage = st.stage === 'gentle_heat' || st.stage === 'step1_heat' || st.stage === 'heated';
+          const isCooledStage = st.stage === 'cooled' || st.stage === 'cool_down';
+          const activeProbe = st.probe || '';
+
+          actionButtonsHtml = `
+            <div class="heating-lab-toolbar">
+              <!-- Primary Heating Control -->
+              <div class="heating-toolbar-row">
+                <button class="btn-perform-test btn-step-heat ${isHeatedStage ? 'active-stage-btn' : ''}" onclick="performTestStage('heat_solid', 'step1_heat')" title="Heat strongly in non-luminous flame">
+                  💥 ${st.stage === 'gentle_heat' ? 'Heat Strongly' : 'Heat in Flame'}
+                </button>
+                <button class="btn-perform-test btn-step-cool ${isCooledStage ? 'active-stage-btn' : ''}" onclick="performTestStage('heat_solid', 'cooled')" title="Allow tube to cool and observe hot vs cold residue color">
+                  ❄️ Allow Tube to Cool
+                </button>
+                <button class="btn-redo-test" onclick="redoTest('heat_solid')" title="Clean hard-glass tube and restart dry heating">
+                  <span class="redo-icon">↺</span> Clean &amp; Redo
+                </button>
+              </div>
+
+              <!-- Interactive Evolved Gas & Vapour Probes -->
+              <div class="heating-probe-selector-tray">
+                <span class="probe-tray-label">🔬 Introduce Gas Test Probe to Mouth of Tube:</span>
+                <div class="probe-chips-group">
+                  <button type="button" class="btn-probe-chip ${activeProbe === 'blue_litmus' ? 'active-probe' : ''}" onclick="performTestStage('heat_solid', 'test_gas_blue_litmus', 'blue_litmus')" title="Moist Blue Litmus Paper: Turns red for acidic fumes (NO₂, SO₂, HCl)">
+                    🔵 Moist Blue Litmus
+                  </button>
+                  <button type="button" class="btn-probe-chip ${activeProbe === 'red_litmus' ? 'active-probe' : ''}" onclick="performTestStage('heat_solid', 'test_gas_red_litmus', 'red_litmus')" title="Moist Red Litmus Paper: Turns blue for alkaline NH₃ gas">
+                    🔴 Moist Red Litmus
+                  </button>
+                  <button type="button" class="btn-probe-chip ${activeProbe === 'glowing_splint' ? 'active-probe' : ''}" onclick="performTestStage('heat_solid', 'test_splint', 'glowing_splint')" title="Glowing Wooden Splint: Rekindles / bursts into flame if O₂ gas is evolved">
+                    🪵 Glowing Splint
+                  </button>
+                  <button type="button" class="btn-probe-chip ${activeProbe === 'limewater' ? 'active-probe' : ''}" onclick="performTestStage('heat_solid', 'test_limewater', 'limewater')" title="Limewater (Calcium Hydroxide): Turns milky white for CO₂ gas">
+                    🥛 Limewater Test
+                  </button>
+                </div>
+              </div>
+            </div>`;
+        }
+      } else if (test.key === 'naoh' || test.key === 'nh3') {
+        const reagentName = test.key === 'naoh' ? 'NaOH' : 'NH₃';
+        if (!st.performed || st.stage === 'idle') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test" onclick="performTestStage('${test.key}', 'few_drops')">
+              💧 Step 1: Add Dropwise (2–3 drops ${reagentName})
+            </button>`;
+        } else if (st.stage === 'few_drops') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test btn-step-excess" onclick="performTestStage('${test.key}', 'excess')">
+              🧪 Step 2: Add in Excess (~5 cm³ ${reagentName})
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('${test.key}')" title="Wash test tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        } else {
+          actionButtonsHtml = `
+            <button class="btn-perform-test done" disabled>
+              ✅ Test Completed
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('${test.key}')" title="Wash test tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        }
+      } else if (test.key === 'agno3') {
+        if (!st.performed || st.stage === 'idle') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test btn-step-acid" onclick="performTestStage('agno3', 'step1_hno3')">
+              💧 Step 1: Add Dilute Nitric Acid (HNO₃)
+            </button>`;
+        } else if (st.stage === 'step1_hno3') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test btn-step-reagent" onclick="performTestStage('agno3', 'step2_agno3')">
+              🔬 Step 2: Follow with Silver Nitrate (AgNO₃)
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('agno3')" title="Wash tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        } else if (st.stage === 'step2_agno3') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test btn-step-ammonia" onclick="performTestStage('agno3', 'step3_nh3')">
+              🫧 Step 3: Test Precipitate with Aqueous NH₃
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('agno3')" title="Wash tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        } else {
+          actionButtonsHtml = `
+            <button class="btn-perform-test done" disabled>
+              ✅ Test Completed
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('agno3')" title="Wash tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        }
+      } else if (test.key === 'bacl2') {
+        if (!st.performed || st.stage === 'idle') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test btn-step-acid" onclick="performTestStage('bacl2', 'step1_acid')">
+              💧 Step 1: Add Dilute Acid (HCl / HNO₃)
+            </button>`;
+        } else if (st.stage === 'step1_acid') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test btn-step-reagent" onclick="performTestStage('bacl2', 'step2_bacl2')">
+              🧫 Step 2: Follow with Barium Chloride (BaCl₂)
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('bacl2')" title="Wash tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        } else {
+          actionButtonsHtml = `
+            <button class="btn-perform-test done" disabled>
+              ✅ Test Completed
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('bacl2')" title="Wash tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        }
+      } else if (test.key === 'brown_ring') {
+        if (!st.performed || st.stage === 'idle') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test btn-step-reagent" onclick="performTestStage('brown_ring', 'step1_feso4')">
+              🧪 Step 1: Add Fresh FeSO₄(aq) Solution
+            </button>`;
+        } else if (st.stage === 'step1_feso4') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test btn-step-heat" onclick="performTestStage('brown_ring', 'step2_h2so4')">
+              🟤 Step 2: Trickle Conc. H₂SO₄ down the side
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('brown_ring')" title="Wash tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        } else {
+          actionButtonsHtml = `
+            <button class="btn-perform-test done" disabled>
+              ✅ Test Completed
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('brown_ring')" title="Wash tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        }
+      } else if (test.key === 'hcl') {
+        if (!st.performed || st.stage === 'idle') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test btn-step-acid" onclick="performTestStage('hcl', 'step1_hcl')">
+              💧 Step 1: Add 2M HCl(aq)
+            </button>`;
+        } else if (st.stage === 'step1_hcl') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test btn-step-gas" onclick="performTestStage('hcl', 'step2_gas_warm')">
+              🧪 Step 2: Test Gas (Limewater) / Warm Gently
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('hcl')" title="Wash tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        } else {
+          actionButtonsHtml = `
+            <button class="btn-perform-test done" disabled>
+              ✅ Test Completed
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('hcl')" title="Wash tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        }
+      } else if (test.key === 'pb_no3') {
+        if (!st.performed || st.stage === 'idle') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test" onclick="performTestStage('pb_no3', 'few_drops')">
+              💧 Step 1: Add Lead(II) Nitrate [Pb(NO₃)₂]
+            </button>`;
+        } else if (st.stage === 'few_drops') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test btn-step-heat" onclick="performTestStage('pb_no3', 'heated')">
+              🔥 Step 2: Warm Mixture Gently in Bunsen Flame
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('pb_no3')" title="Wash tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        } else if (st.stage === 'heated') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test btn-step-cool" onclick="performTestStage('pb_no3', 'cooled')">
+              ❄️ Step 3: Cool Tube under Tap Water
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('pb_no3')" title="Wash tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        } else {
+          actionButtonsHtml = `
+            <button class="btn-perform-test done" disabled>
+              ✅ Test Completed
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('pb_no3')" title="Wash tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        }
+      } else if (test.key === 'ki') {
+        if (!st.performed || st.stage === 'idle') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test" onclick="performTestStage('ki', 'few_drops')">
+              💧 Step 1: Add KI Solution
+            </button>`;
+        } else if (st.stage === 'few_drops') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test btn-step-heat" onclick="performTestStage('ki', 'heated')">
+              🔥 Step 2: Warm Gently in Water Bath
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('ki')" title="Wash tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        } else if (st.stage === 'heated') {
+          actionButtonsHtml = `
+            <button class="btn-perform-test btn-step-cool" onclick="performTestStage('ki', 'cooled')">
+              ❄️ Step 3: Cool under Tap Water (Spangles)
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('ki')" title="Wash tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        } else {
+          actionButtonsHtml = `
+            <button class="btn-perform-test done" disabled>
+              ✅ Test Completed
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('ki')" title="Wash tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        }
+      } else if (test.key === 'flame') {
+        const modeGroupHtml = `
+          <div class="flame-optics-group" role="group" aria-label="Optical Viewport Filter" style="display:inline-flex; gap:3px; background:var(--card-bg-hover); padding:3px; border-radius:8px; border:1px solid var(--card-border);">
+            <button type="button" class="btn-secondary ${flameOpticalMode === 'naked' ? 'btn-primary-solid' : ''}" onclick="setFlameOpticalMode('naked')" style="font-size:0.75rem; font-weight:700; padding:4px 8px;" title="Naked Eye View: Observe direct flame emission without optical filter">
+              👁️ Naked Eye
+            </button>
+            <button type="button" class="btn-secondary ${flameOpticalMode === 'cobalt' ? 'btn-primary-solid' : ''}" onclick="setFlameOpticalMode('cobalt')" style="font-size:0.75rem; font-weight:700; padding:4px 8px;" title="Cobalt Blue Glass: Filter absorbs 589nm sodium emission">
+              🟦 Cobalt Blue
+            </button>
+            <button type="button" class="btn-secondary ${flameOpticalMode === 'split' ? 'btn-primary-solid' : ''}" onclick="setFlameOpticalMode('split')" style="font-size:0.75rem; font-weight:700; padding:4px 8px;" title="Dual Split-Optical Viewport: Side-by-side comparison of Naked Eye vs Cobalt Blue Glass">
+              🌓 Dual Split-View
+            </button>
+          </div>
+        `;
+
+        if (!st.performed) {
+          actionButtonsHtml = `
+            <div class="flame-inline-toolbar" style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+              <button class="btn-perform-test btn-step-heat" onclick="performFlameTestOnScreen()">
+                🔥 Dip Clean Glass Rod &amp; Introduce to Flame
+              </button>
+              ${modeGroupHtml}
+            </div>`;
+        } else {
+          actionButtonsHtml = `
+            <div class="flame-inline-toolbar" style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+              <button class="btn-perform-test done" disabled>
+                ✅ Flame Emission Observed
+              </button>
+              ${modeGroupHtml}
+              <button class="btn-redo-test" onclick="redoTest('flame')" title="Clean glass rod with HCl and redo test">
+                <span class="redo-icon">↺</span> Clean Rod &amp; Redo
+              </button>
+            </div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:6px; line-height:1.4;">
+              💡 <b>KNEC Guideline:</b> Clean borosilicate glass rod dipped in solution and placed in flame. Use Cobalt Blue Glass to absorb Na⁺ yellow emission (589 nm) and reveal K⁺ (lilac, 766 nm &amp; 404 nm).
+            </div>`;
+        }
+      } else {
+        if (!st.performed) {
+          actionButtonsHtml = `
+            <button class="btn-perform-test" onclick="performTest('${test.key}')">
+              ▶ Add Reagent & Perform Test
+            </button>`;
+        } else {
+          actionButtonsHtml = `
+            <button class="btn-perform-test done" disabled>
+              ✅ Reagent Added — Result Observed
+            </button>
+            <button class="btn-redo-test" onclick="redoTest('${test.key}')" title="Wash tube and redo test">
+              <span class="redo-icon">↺</span> Redo Test
+            </button>`;
+        }
+      }
+
+      return `
+        <div class="kcse-question-block">
+          <div class="test-card-top">
+            <div class="test-header-left">
+              <span class="test-step-badge">(${testLetter})</span>
+              <h3 class="test-title-text">${test.label}</h3>
+            </div>
+            <span class="timer-chip" style="font-size:0.75rem; padding:2px 8px;">1.1 Marks</span>
+          </div>
+
+          <div class="test-layout-grid">
+            <!-- Left Column: Tube / Flame Stage -->
+            <div class="apparatus-stage">
+              <div class="apparatus-view">
+                ${getTubeVisual(test, st)}
+              </div>
+              <div class="apparatus-status-tag" id="status_${test.key}" style="display:none !important;"></div>
+            </div>
+
+            <!-- Right Column: Procedure & 2-Column KCSE Table -->
+            <div>
+              <!-- Official KCSE Procedure Callout -->
+              <div style="font-size:0.84rem; color:var(--text-main); line-height:1.5; margin-bottom:12px; background:var(--card-bg-hover); padding:10px 14px; border-radius:8px; border:1px solid var(--card-border); border-left:3.5px solid var(--blue-accent);">
+                <span style="font-weight:800; color:var(--heading-color); display:flex; align-items:center; gap:6px; margin-bottom:3px;">
+                  📋 Procedure / Instructions:
+                </span>
+                <span>${test.procedure}</span>
+              </div>
+
+              <!-- Action Buttons with Multi-Step Transition & Redo -->
+              <div class="action-buttons-row">
+                ${actionButtonsHtml}
+              </div>
+
+              <!-- KCSE Observation & Inference Table -->
+              <table class="knec-table">
+                <thead>
+                  <tr>
+                    <th style="width:50%;">
+                      <span class="sci-tooltip">Observations <span class="sci-tip-text">Observations: Record sharp visual changes — color, effervescence, precipitate formation, or dissolving in excess.</span></span> (0.55 Mark)
+                    </th>
+                    <th style="width:50%;">
+                      <span class="sci-tooltip">Inferences <span class="sci-tip-text">Inferences: Deduce present/absent ions (e.g. Cu²⁺, Fe²⁺, Fe³⁺, Al³⁺, Zn²⁺, Pb²⁺, SO₄²⁻, CO₃²⁻, Cl⁻, NO₃⁻).</span></span> (0.55 Mark)
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <textarea class="kcse-input" id="obs_${test.key}" placeholder="Write exact observations (e.g. White ppt soluble in excess NaOH)..." oninput="saveTextState('${test.key}')">${st.obsText || ''}</textarea>
+                      
+                      <!-- Suggestion Chips -->
+                      <div class="suggestion-chips-container">
+                        ${getObsSuggestionChips(test.key)}
+                      </div>
+                      <div id="obsFeedback_${test.key}" class="live-feedback-strip"></div>
+                    </td>
+
+                    <td>
+                      <textarea class="kcse-input" id="inf_${test.key}" placeholder="Write deductions (e.g. Zn²⁺, Al³⁺, Pb²⁺ present)..." oninput="saveTextState('${test.key}')">${st.infText || ''}</textarea>
+                      
+                      <!-- Suggestion Chips -->
+                      <div class="suggestion-chips-container">
+                        ${getInfSuggestionChips(test.key)}
+                      </div>
+                      <div id="infFeedback_${test.key}" class="live-feedback-strip"></div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+
+    TESTS.forEach(test => {
+      onCandidateTextChange(test.key);
+    });
+  }
+
+  /* ══════════════════════════════════════
+     SVG VISUALS (Dropper Test Tube & Flame Loop)
+  ══════════════════════════════════════ */
+  function getTubeVisual(test, st) {
+    if (window.QualitativeBenchCore && typeof QualitativeBenchCore.renderApparatusSvg === 'function') {
+      return QualitativeBenchCore.renderApparatusSvg({
+        saltKey: currentSaltKey,
+        testId: test.id || test.key,
+        stage: st ? (st.stage || (st.performed ? 'done' : 'idle')) : 'idle',
+        isAdding: Boolean(st && st.isAdding),
+        isHeating: Boolean(st && st.isHeating),
+        isCooling: Boolean(st && st.isCooling),
+        isTestingProbe: Boolean(st && st.isTestingProbe),
+        probe: st ? st.probe : null,
+        prompt: test.prompt || test.name || test.title || '',
+        obsStr: test.correctObs || test.observation || '',
+        tubeId: `qual_${test.key || test.id}`,
+        isCobaltGlass: isCobaltGlassActive,
+        opticalMode: flameOpticalMode,
+        isIntroducing: Boolean(st && (st.isIntroducing || st.stage === 'introducing'))
+      });
+    }
+
+    if (test.key === 'flame') {
+      return getFlameVisual(st);
+    }
+
+    const performed = st && st.performed;
+    const stage = st ? (st.stage || 'idle') : 'idle';
+    const isExcess = stage === 'excess' || stage === 'step3_nh3' || stage === 'step2_bacl2' || stage === 'step2_gas_warm';
+    const isStep1 = stage === 'few_drops' || stage === 'step1_hno3' || stage === 'step1_acid' || stage === 'step1_hcl' || stage === 'step1_feso4';
+    const isHeated = stage === 'heated';
+    const isCooled = stage === 'cooled';
+    
+    // Liquid level: low (y=80) for initial dropwise/step 1, higher (y=54) for subsequent steps/excess
+    const liquidTopY = isStep1 ? 80 : 54;
+    const liquid = performed ? (st.color || 'rgba(56, 189, 248, 0.4)') : 'transparent';
+    const bubbles = performed && st.bubbling;
+    const isBrownRing = test.isBrownRing;
+    const isKI = test.key === 'ki';
+    const salt = SALTS[currentSaltKey] || {};
+    const testKey = test.key;
+
+    // Special Case 1: Brown Ring Test (NO3- with FeSO4 + conc H2SO4)
+    if (performed && isBrownRing) {
+      const isStep2 = stage === 'step2_h2so4' || stage === 'done';
+      const hasBrownRing = isStep2 && salt.anion === 'NO3-';
+
+      return `<svg width="86" height="136" viewBox="0 0 86 136">
+        <defs>
+          <linearGradient id="h2so4Grad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="rgba(241, 245, 249, 0.85)"/>
+            <stop offset="100%" stop-color="rgba(203, 213, 225, 0.95)"/>
+          </linearGradient>
+          <radialGradient id="ringGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#451A03" stop-opacity="1"/>
+            <stop offset="70%" stop-color="#78350F" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="#92400E" stop-opacity="0.2"/>
+          </radialGradient>
+        </defs>
+        
+        <!-- Wooden Test Tube Clamp -->
+        <g transform="translate(0, 48)">
+          <rect x="2" y="3" width="24" height="8" rx="2" fill="#78350F" stroke="#451A03" stroke-width="0.8"/>
+          <rect x="60" y="3" width="24" height="8" rx="2" fill="#78350F" stroke="#451A03" stroke-width="0.8"/>
+          <circle cx="14" cy="7" r="2.5" fill="#64748B"/>
+          <circle cx="72" cy="7" r="2.5" fill="#64748B"/>
+        </g>
+
+        <!-- Glass Test Tube Body & Lip -->
+        <rect x="23" y="32" width="40" height="4" rx="2" fill="rgba(255,255,255,0.18)" stroke="#94A3B8" stroke-width="1.2"/>
+        <path d="M 26,36 L 26,112 Q 26,130 43,130 Q 60,130 60,112 L 60,36 Z" fill="rgba(255,255,255,0.05)" stroke="#94A3B8" stroke-width="1.5"/>
+
+        ${isStep2 ? `
+          <!-- Lower Dense Layer (Conc. H2SO4) -->
+          <path d="M 27,94 L 27,112 Q 27,128 43,128 Q 59,128 59,112 L 59,94 Z" fill="url(#h2so4Grad)"/>
+          <ellipse cx="43" cy="94" rx="16" ry="3.5" fill="rgba(203, 213, 225, 0.95)"/>
+        ` : ''}
+
+        <!-- Upper Layer (Fresh FeSO4 Solution - pale green) -->
+        <path d="M 27,${isStep2 ? 66 : 78} L 27,${isStep2 ? 94 : 112} ${isStep2 ? '' : 'Q 27,128 43,128 Q 59,128 59,112'} L 59,${isStep2 ? 94 : 78} L 59,${isStep2 ? 66 : 78} Z" fill="rgba(16, 185, 129, 0.28)"/>
+        <ellipse cx="43" cy="${isStep2 ? 66 : 78}" rx="16" ry="3.5" fill="rgba(16, 185, 129, 0.4)"/>
+
+        <!-- Brown Ring [Fe(H2O)5(NO)]2+ Interface -->
+        ${hasBrownRing ? `
+          <g class="anim-brown-ring">
+            <ellipse cx="43" cy="94" rx="15.8" ry="4.5" fill="url(#ringGlow)" stroke="#B45309" stroke-width="1.5"/>
+            <ellipse cx="43" cy="94" rx="12" ry="2.5" fill="#290E02"/>
+          </g>
+        ` : ''}
+
+        <!-- Glass Reflection Specular Highlight -->
+        <path d="M 29,38 L 29,112 Q 29,126 43,126" fill="none" stroke="#FFF" stroke-width="1.2" stroke-linecap="round" opacity="0.25"/>
+      </svg>`;
+    }
+
+    // Special Case 2: Potassium Iodide Test for Lead (Pb2+ + 2I- -> PbI2 Yellow Precipitate with Heat/Spangles)
+    if (performed && isKI) {
+      const isLead = salt.cation === 'Pb2+';
+      return `<svg width="86" height="136" viewBox="0 0 86 136">
+        <!-- Wooden Test Tube Clamp -->
+        <g transform="translate(0, 48)">
+          <rect x="2" y="3" width="24" height="8" rx="2" fill="#78350F" stroke="#451A03" stroke-width="0.8"/>
+          <rect x="60" y="3" width="24" height="8" rx="2" fill="#78350F" stroke="#451A03" stroke-width="0.8"/>
+          <circle cx="14" cy="7" r="2.5" fill="#64748B"/>
+          <circle cx="72" cy="7" r="2.5" fill="#64748B"/>
+        </g>
+
+        <!-- Glass Body & Lip -->
+        <rect x="23" y="32" width="40" height="4" rx="2" fill="rgba(255,255,255,0.18)" stroke="#94A3B8" stroke-width="1.2"/>
+        <path d="M 26,36 L 26,112 Q 26,130 43,130 Q 60,130 60,112 L 60,36 Z" fill="rgba(255,255,255,0.05)" stroke="#94A3B8" stroke-width="1.5"/>
+
+        <!-- Liquid Phase -->
+        <path class="${isExcess ? 'anim-liquid-rise' : ''}" d="M 27,${liquidTopY} L 27,112 Q 27,128 43,128 Q 59,128 59,112 L 59,${liquidTopY} Z" fill="${isLead ? (isHeated ? 'rgba(250, 204, 21, 0.45)' : 'rgba(234, 179, 8, 0.35)') : 'rgba(56, 189, 248, 0.18)'}"/>
+        <ellipse cx="43" cy="${liquidTopY}" rx="16" ry="3.5" fill="${isLead ? 'rgba(250, 204, 21, 0.65)' : 'rgba(56, 189, 248, 0.3)'}" class="anim-meniscus-ripple"/>
+
+        ${stage === 'few_drops' ? `
+          <!-- Precision Dropper -->
+          <g class="anim-dropper" opacity="1" style="transition: transform 0.6s ease, opacity 0.4s ease; transform: translate(0px, ${st && st.isAdding ? '4px' : '0px'});">
+            <path class="${st && st.isAdding ? 'anim-dropper-bulb' : ''}" d="M 39,2 L 47,2 L 45,12 L 41,12 Z" fill="#EF4444" rx="2"/>
+            <rect x="41.5" y="12" width="3" height="15" fill="rgba(255,255,255,0.75)" stroke="#94A3B8" stroke-width="0.8"/>
+            <path d="M 41.5,27 L 44.5,27 L 43,35 Z" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
+            <!-- Poised Meniscus at Dropper Tip -->
+            <ellipse cx="43" cy="35" rx="1.2" ry="0.8" fill="#FACC15"/>
+          </g>
+          ${st && st.isAdding ? `
+            <ellipse cx="43" cy="36" rx="2" ry="2.8" fill="#FACC15" class="anim-droplet"/>
+          ` : ''}
+        ` : ''}
+
+        <!-- Heat Waves when warmed -->
+        ${isLead && isHeated ? `
+          <g class="anim-heat-wave">
+            <path d="M 36,46 Q 40,40 44,46" stroke="rgba(245, 158, 11, 0.7)" stroke-width="1.5" fill="none"/>
+            <path d="M 44,42 Q 48,36 52,42" stroke="rgba(245, 158, 11, 0.6)" stroke-width="1.5" fill="none"/>
+          </g>
+        ` : ''}
+
+        <!-- PbI2 Golden Precipitate and Shimmering Spangles -->
+        ${isLead && (isFewDrops || isCooled) ? `
+          <ellipse cx="43" cy="120" rx="14" ry="7" fill="#EAB308" opacity="0.9" class="anim-ppt-form"/>
+          <circle cx="34" cy="116" r="3" fill="#FACC15"/>
+          <circle cx="48" cy="118" r="3.2" fill="#CA8A04"/>
+          <circle cx="42" cy="112" r="2.5" fill="#FEF08A"/>
+          <circle cx="38" cy="122" r="2.8" fill="#FACC15"/>
+        ` : ''}
+
+        <!-- Sparkling Golden Spangles (Crystalline Flakes upon cooling) -->
+        ${isLead && isCooled ? `
+          <g class="anim-spangle" style="animation-delay: 0s;">
+            <polygon points="43,84 45,88 49,89 45,90 43,94 41,90 37,89 41,88" fill="#FEF08A"/>
+          </g>
+          <g class="anim-spangle" style="animation-delay: 0.4s;">
+            <polygon points="34,74 35.5,77 39,78 35.5,79 34,82 32.5,79 29,78 32.5,77" fill="#FDE047"/>
+          </g>
+          <g class="anim-spangle" style="animation-delay: 0.8s;">
+            <polygon points="52,98 53.5,101 57,102 53.5,103 52,106 50.5,103 47,102 50.5,101" fill="#FEF08A"/>
+          </g>
+        ` : ''}
+
+        <!-- Glass Reflection Specular Highlight -->
+        <path d="M 29,38 L 29,112 Q 29,126 43,126" fill="none" stroke="#FFF" stroke-width="1.2" stroke-linecap="round" opacity="0.25"/>
+      </svg>`;
+    }
+
+    // Standard Qualitative Reagent Test Tube (NaOH, NH3, HCl, AgNO3, BaCl2)
+    const isPpt = performed && st.ppt;
+    const isPptDissolved = performed && st.pptDissolved;
+    const isDeepBlue = performed && st.complexDeepBlue;
+
+    return `<svg width="86" height="136" viewBox="0 0 86 136">
+      <defs>
+        <radialGradient id="liquidGlow_${testKey}" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="${isDeepBlue ? '#1D4ED8' : liquid}" stop-opacity="${isDeepBlue ? '1' : '0.9'}"/>
+          <stop offset="100%" stop-color="${isDeepBlue ? '#1E40AF' : liquid}" stop-opacity="${isDeepBlue ? '0.9' : '0.7'}"/>
+        </radialGradient>
+      </defs>
+
+      <!-- Precision Reagent Dropper Pipette (Centered over Mouth) -->
+      <g class="anim-dropper" style="transition: transform 0.6s ease, opacity 0.4s ease; transform: translate(0px, ${performed && (!st || !st.isAdding) && (stage === 'excess' || stage === 'done') ? '-25px' : (st && st.isAdding ? '4px' : '0px')}); opacity: ${performed && (!st || !st.isAdding) && (stage === 'excess' || stage === 'done') ? '0' : (st && st.isAdding ? '1' : (performed ? '0.85' : '0.45'))};">
+        <path class="${st && st.isAdding ? 'anim-dropper-bulb' : ''}" d="M 39,2 L 47,2 L 45,12 L 41,12 Z" fill="#EF4444" rx="2"/>
+        <rect x="41.5" y="12" width="3" height="15" fill="rgba(255,255,255,0.75)" stroke="#94A3B8" stroke-width="0.8"/>
+        <path d="M 41.5,27 L 44.5,27 L 43,35 Z" fill="rgba(255,255,255,0.85)" stroke="#94A3B8" stroke-width="0.8"/>
+        <!-- Poised Meniscus at Dropper Tip -->
+        <ellipse cx="43" cy="35" rx="1.2" ry="0.8" fill="${st && st.color && st.color.startsWith('#') ? st.color : '#38BDF8'}"/>
+      </g>
+      ${st && st.isAdding ? `
+        <!-- Fast Gravitational Falling Reagent Droplet -->
+        <ellipse cx="43" cy="36" rx="2" ry="2.8" fill="${st && st.color && st.color.startsWith('#') ? st.color : '#38BDF8'}" class="anim-droplet"/>
+      ` : ''}
+
+      <!-- Wooden Test Tube Clamp -->
+      <g transform="translate(0, 48)">
+        <rect x="2" y="3" width="24" height="8" rx="2" fill="#78350F" stroke="#451A03" stroke-width="0.8"/>
+        <rect x="60" y="3" width="24" height="8" rx="2" fill="#78350F" stroke="#451A03" stroke-width="0.8"/>
+        <circle cx="14" cy="7" r="2.5" fill="#64748B"/>
+        <circle cx="72" cy="7" r="2.5" fill="#64748B"/>
+      </g>
+
+      <!-- Glass Test Tube Body & Lip -->
+      <rect x="23" y="32" width="40" height="4" rx="2" fill="rgba(255,255,255,0.18)" stroke="#94A3B8" stroke-width="1.2"/>
+      <path d="M 26,36 L 26,112 Q 26,130 43,130 Q 60,130 60,112 L 60,36 Z" fill="rgba(255,255,255,0.05)" stroke="#94A3B8" stroke-width="1.5"/>
+
+      <!-- Liquid Column with Volume Rise & Meniscus Ripple -->
+      ${performed ? `
+        <path class="${isExcess ? 'anim-liquid-rise' : ''}" d="M 27,${liquidTopY} L 27,112 Q 27,128 43,128 Q 59,128 59,112 L 59,${liquidTopY} Z" fill="url(#liquidGlow_${testKey})" opacity="0.9"/>
+        <ellipse cx="43" cy="${liquidTopY}" rx="16" ry="3.5" fill="${isDeepBlue ? '#1E40AF' : liquid}" opacity="0.95" class="${performed ? 'anim-meniscus-ripple' : ''}"/>
+      ` : ''}
+
+      <!-- Convection Heat Waves / Steam Wisps when warmed -->
+      ${(isHeated || st.stage === 'heated') ? `
+        <g class="anim-heat-wave">
+          <path d="M 36,${liquidTopY - 10} Q 40,${liquidTopY - 16} 44,${liquidTopY - 10}" stroke="rgba(245, 158, 11, 0.7)" stroke-width="1.5" fill="none"/>
+          <path d="M 44,${liquidTopY - 6} Q 48,${liquidTopY - 12} 52,${liquidTopY - 6}" stroke="rgba(245, 158, 11, 0.6)" stroke-width="1.5" fill="none"/>
+        </g>
+      ` : ''}
+
+      <!-- Precipitate Curd Mass at Base -->
+      ${performed && isPpt && !bubbles ? `
+        <g class="anim-ppt-form">
+          <ellipse cx="43" cy="120" rx="14.5" ry="7" fill="${liquid}" opacity="0.95" filter="brightness(0.9)"/>
+          <circle cx="34" cy="116" r="2.8" fill="${liquid}" filter="brightness(1.15)"/>
+          <circle cx="48" cy="118" r="3.2" fill="${liquid}" filter="brightness(0.85)"/>
+          <circle cx="41" cy="113" r="2.5" fill="${liquid}" filter="brightness(1.1)"/>
+          <circle cx="38" cy="122" r="2.8" fill="${liquid}" filter="brightness(0.9)"/>
+          <circle cx="46" cy="122" r="2.6" fill="${liquid}" filter="brightness(1.05)"/>
+        </g>
+      ` : ''}
+
+      <!-- Dissolving Precipitate (Transition Effect in Excess / Heat) -->
+      ${performed && isPptDissolved ? `
+        <g class="anim-ppt-dissolve">
+          <ellipse cx="43" cy="120" rx="12" ry="5" fill="#E2E8F0" opacity="0.4"/>
+          <circle cx="38" cy="118" r="2" fill="#E2E8F0" opacity="0.4"/>
+          <circle cx="46" cy="119" r="2" fill="#E2E8F0" opacity="0.4"/>
+        </g>
+      ` : ''}
+
+      <!-- Glistening White Needle-Like Crystals of PbCl2 upon cooling -->
+      ${(st.stage === 'cooled' && (testKey === 'pb_no3' || testKey === 'hcl') && (salt.anion === 'Cl-' || (salt.anion && salt.anion.includes('Cl')))) ? `
+        <g class="anim-spangle" style="animation-delay: 0s;">
+          <polygon points="38,102 46,92 47,93 39,103" fill="#FFFFFF" opacity="0.95"/>
+          <line x1="38" y1="102" x2="47" y2="93" stroke="#BAE6FD" stroke-width="0.6"/>
+        </g>
+        <g class="anim-spangle" style="animation-delay: 0.4s;">
+          <polygon points="34,115 48,108 48.5,109 34.5,116" fill="#FFFFFF" opacity="0.95"/>
+          <line x1="34" y1="115" x2="48.5" y2="109" stroke="#E0F2FE" stroke-width="0.6"/>
+        </g>
+        <g class="anim-spangle" style="animation-delay: 0.8s;">
+          <polygon points="42,122 52,112 52.5,113 42.5,123" fill="#FFFFFF" opacity="0.92"/>
+        </g>
+      ` : ''}
+
+      <!-- Bubbles & Froth Header for Acid Effervescence -->
+      ${bubbles ? `
+        <g class="anim-qual-froth">
+          <ellipse cx="43" cy="${liquidTopY}" rx="15" ry="3.5" fill="#FFF" opacity="0.8"/>
+        </g>
+        <circle cx="36" cy="112" r="2.4" fill="#FFF" opacity="0.8" class="bubble anim-qual-bubble"/>
+        <circle cx="46" cy="104" r="2.8" fill="#FFF" opacity="0.9" class="bubble anim-qual-bubble" style="animation-delay: 0.25s;"/>
+        <circle cx="40" cy="94" r="2.2" fill="#FFF" opacity="0.75" class="bubble anim-qual-bubble" style="animation-delay: 0.5s;"/>
+        <circle cx="48" cy="84" r="2.6" fill="#FFF" opacity="0.85" class="bubble anim-qual-bubble" style="animation-delay: 0.75s;"/>
+        <circle cx="34" cy="74" r="2.4" fill="#FFF" opacity="0.8" class="bubble anim-qual-bubble" style="animation-delay: 0.35s;"/>
+      ` : ''}
+
+      <!-- Glass Specular Highlight Curve -->
+      <path d="M 29,38 L 29,112 Q 29,126 43,126" fill="none" stroke="#FFF" stroke-width="1.2" stroke-linecap="round" opacity="0.25"/>
+    </svg>`;
+  }
+
+  function getFlameVisual(st) {
+    const performed = st && st.performed;
+    const salt = SALTS[currentSaltKey] || {};
+    const flameColors = {
+      'Na+': '#F59E0B',
+      'K+': '#A855F7',
+      'Ca2+': '#EF4444',
+      'Cu2+': '#10B981',
+      'Ba2+': '#84CC16',
+      'Pb2+': '#93C5FD'
+    };
+    const cobaltColors = {
+      'Na+': 'rgba(148, 163, 184, 0.22)',
+      'K+': '#F472B6',
+      'Ca2+': 'rgba(148, 163, 184, 0.35)',
+      'Cu2+': '#38BDF8',
+      'Ba2+': 'rgba(100, 116, 139, 0.3)',
+      'Pb2+': 'rgba(100, 116, 139, 0.3)'
+    };
+    const spectralLabels = {
+      'Na+': { naked: '589 nm Yellow', cobalt: '589 nm Absorbed' },
+      'K+': { naked: '766 nm Masked', cobalt: '766/404 nm Lilac' },
+      'Ca2+': { naked: '622 nm Brick-Red', cobalt: 'Attenuated' },
+      'Cu2+': { naked: '510 nm Viridian', cobalt: 'Transmitted' },
+      'Ba2+': { naked: '553 nm Apple-Green', cobalt: 'Absorbed' },
+      'Pb2+': { naked: '405 nm Gray-Blue', cobalt: 'Faint' }
+    };
+
+    const fcNaked = performed ? (flameColors[salt.cation] || 'rgba(56, 189, 248, 0.85)') : '#475569';
+    const fcCobalt = performed ? (cobaltColors[salt.cation] || 'rgba(148, 163, 184, 0.3)') : '#475569';
+    const spec = spectralLabels[salt.cation] || { naked: 'Emission', cobalt: 'Filtered' };
+    const lit = performed;
+
+    // 1. Dual Split-Optical Viewport Mode
+    if (performed && flameOpticalMode === 'split') {
+      return `
+        <svg width="170" height="136" viewBox="0 0 170 136">
+          <defs>
+            <clipPath id="clipLeft_${currentSaltKey}">
+              <rect x="0" y="0" width="85" height="136"/>
+            </clipPath>
+            <clipPath id="clipRight_${currentSaltKey}">
+              <rect x="85" y="0" width="85" height="136"/>
+            </clipPath>
+            <radialGradient id="fg_left_${currentSaltKey}" cx="50%" cy="65%" r="60%">
+              <stop offset="0%" stop-color="${fcNaked}" stop-opacity="${lit ? '0.92' : '0'}"/>
+              <stop offset="60%" stop-color="${fcNaked}" stop-opacity="${lit ? '0.45' : '0'}"/>
+              <stop offset="100%" stop-color="${fcNaked}" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="fg_right_${currentSaltKey}" cx="50%" cy="65%" r="60%">
+              <stop offset="0%" stop-color="${fcCobalt}" stop-opacity="${lit ? (salt.cation === 'Na+' ? '0.22' : '0.92') : '0'}"/>
+              <stop offset="60%" stop-color="${fcCobalt}" stop-opacity="${lit ? (salt.cation === 'Na+' ? '0.12' : '0.45') : '0'}"/>
+              <stop offset="100%" stop-color="${fcCobalt}" stop-opacity="0"/>
+            </radialGradient>
+            <linearGradient id="metalGradQualSplit" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#334155"/>
+              <stop offset="50%" stop-color="#64748B"/>
+              <stop offset="100%" stop-color="#1E293B"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Bunsen Burner Apparatus centered at x=85 -->
+          <path d="M 63,132 L 107,132 L 101,118 L 69,118 Z" fill="#1E293B" stroke="#0F172A" stroke-width="1"/>
+          <rect x="69" y="115" width="32" height="4" rx="1" fill="#475569"/>
+          <rect x="79" y="68" width="12" height="48" fill="url(#metalGradQualSplit)"/>
+          <rect x="77" y="98" width="16" height="10" rx="1" fill="#64748B" stroke="#334155" stroke-width="0.8"/>
+          <circle cx="85" cy="103" r="2.5" fill="#0F172A"/>
+          <ellipse cx="85" cy="68" rx="6" ry="2" fill="#0F172A"/>
+
+          <!-- Left Half: Naked Eye Direct Emission -->
+          <g clip-path="url(#clipLeft_${currentSaltKey})">
+            <circle cx="85" cy="42" r="42" fill="url(#fg_left_${currentSaltKey})"/>
+            <path class="${lit ? 'anim-flame-ion' : ''}" d="M 85,10 C 61,34 67,68 85,68 C 103,68 109,34 85,10 Z" fill="${fcNaked}" opacity="${lit ? '0.92' : '0.12'}"/>
+            <path class="${lit ? 'anim-flame-inner' : ''}" d="M 85,34 C 75,46 78,68 85,68 C 92,68 95,46 85,34 Z" fill="#E0F2FE" opacity="${lit ? '0.95' : '0.05'}"/>
+          </g>
+
+          <!-- Right Half: Cobalt Blue Glass Filter Transmission -->
+          <g clip-path="url(#clipRight_${currentSaltKey})">
+            <circle cx="85" cy="42" r="42" fill="url(#fg_right_${currentSaltKey})"/>
+            <path class="${lit ? 'anim-flame-ion' : ''}" d="M 85,10 C 61,34 67,68 85,68 C 103,68 109,34 85,10 Z" fill="${fcCobalt}" opacity="${lit ? (salt.cation === 'Na+' ? '0.22' : '0.92') : '0.12'}"/>
+            <path class="${lit ? 'anim-flame-inner' : ''}" d="M 85,34 C 75,46 78,68 85,68 C 92,68 95,46 85,34 Z" fill="#E0F2FE" opacity="${lit ? '0.45' : '0.05'}"/>
+            <rect x="85" y="4" width="81" height="128" rx="4" fill="rgba(30, 58, 138, 0.38)" stroke="#3B82F6" stroke-width="1.6"/>
+          </g>
+
+          <!-- Clean Borosilicate Glass Rod Dipped from Left -->
+          <g transform="translate(53, 42)">
+            <line x1="-16" y1="15.5" x2="30" y2="15.5" stroke="rgba(255,255,255,0.75)" stroke-width="3" stroke-linecap="round"/>
+            <line x1="-16" y1="15.5" x2="30" y2="15.5" stroke="#94A3B8" stroke-width="3" stroke-linecap="round" opacity="0.3"/>
+            <line x1="-15" y1="14.8" x2="28" y2="14.8" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round" opacity="0.85"/>
+            <ellipse cx="31" cy="15.5" rx="2.5" ry="2" fill="rgba(255,255,255,0.9)" stroke="#CBD5E1" stroke-width="0.6"/>
+            <circle cx="32" cy="15.5" r="2.2" fill="${fcNaked}" class="anim-spangle"/>
+          </g>
+
+          <!-- Central Optical Split Boundary Line & Alignment Notch -->
+          <line x1="85" y1="4" x2="85" y2="128" stroke="#38BDF8" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.85"/>
+          <circle cx="85" cy="42" r="3" fill="#38BDF8" stroke="#0F172A" stroke-width="1"/>
+
+          <!-- Spectral Telemetry Headers -->
+          <rect x="4" y="6" width="76" height="14" rx="3" fill="#0F172A" opacity="0.88"/>
+          <text x="42" y="16" font-size="7" font-weight="800" fill="#F8FAFC" text-anchor="middle" font-family="'JetBrains Mono', monospace">👁️ ${spec.naked}</text>
+
+          <rect x="88" y="6" width="78" height="14" rx="3" fill="#1E3A8A" opacity="0.94"/>
+          <text x="127" y="16" font-size="7" font-weight="800" fill="#93C5FD" text-anchor="middle" font-family="'JetBrains Mono', monospace">🟦 ${spec.cobalt}</text>
+        </svg>
+      `;
+    }
+
+    // 2. Single Optical View (Naked Eye or Full Cobalt Glass)
+    const isFiltered = (flameOpticalMode === 'cobalt') || (isCobaltGlassActive && flameOpticalMode !== 'naked');
+    const activeFc = isFiltered ? fcCobalt : fcNaked;
+
+    return `<svg width="100" height="136" viewBox="0 0 100 136">
+      <defs>
+        <radialGradient id="fg_${currentSaltKey}" cx="50%" cy="65%" r="60%">
+          <stop offset="0%" stop-color="${activeFc}" stop-opacity="${lit ? (isFiltered && salt.cation === 'Na+' ? '0.22' : '0.9') : '0'}"/>
+          <stop offset="60%" stop-color="${activeFc}" stop-opacity="${lit ? (isFiltered && salt.cation === 'Na+' ? '0.12' : '0.45') : '0'}"/>
+          <stop offset="100%" stop-color="${activeFc}" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="metalGradQual" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#334155"/>
+          <stop offset="50%" stop-color="#64748B"/>
+          <stop offset="100%" stop-color="#1E293B"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Bunsen Burner Apparatus -->
+      <!-- Heavy Cast Iron Base -->
+      <path d="M 28,132 L 72,132 L 66,118 L 34,118 Z" fill="#1E293B" stroke="#0F172A" stroke-width="1"/>
+      <rect x="34" y="115" width="32" height="4" rx="1" fill="#475569"/>
+
+      <!-- Metallic Barrel -->
+      <rect x="44" y="68" width="12" height="48" fill="url(#metalGradQual)"/>
+      
+      <!-- Air Intake Collar -->
+      <rect x="42" y="98" width="16" height="10" rx="1" fill="#64748B" stroke="#334155" stroke-width="0.8"/>
+      <circle cx="50" cy="103" r="2.5" fill="#0F172A"/>
+
+      <!-- Burner Orifice Tip -->
+      <ellipse cx="50" cy="68" rx="6" ry="2" fill="#0F172A"/>
+      
+      <!-- Flame Radial Glow -->
+      <circle cx="50" cy="42" r="42" fill="url(#fg_${currentSaltKey})"/>
+      
+      <!-- Bunsen Outer Emission Flame -->
+      <path class="${lit ? 'anim-flame-ion' : ''}" d="M 50,10 C 26,34 32,68 50,68 C 68,68 74,34 50,10 Z" fill="${activeFc}" opacity="${lit ? (isFiltered && salt.cation === 'Na+' ? '0.22' : '0.92') : '0.12'}"/>
+      
+      <!-- Flame Inner Core Cone -->
+      <path class="${lit ? 'anim-flame-inner' : ''}" d="M 50,34 C 40,46 43,68 50,68 C 57,68 60,46 50,34 Z" fill="#E0F2FE" opacity="${lit ? '0.95' : '0.05'}"/>
+
+      <!-- Clean Borosilicate Glass Rod with Sample Droplet (KNEC Standard) -->
+      ${performed ? `
+        <g transform="translate(18, 42)">
+          <line x1="-16" y1="15.5" x2="30" y2="15.5" stroke="rgba(255,255,255,0.75)" stroke-width="3" stroke-linecap="round"/>
+          <line x1="-16" y1="15.5" x2="30" y2="15.5" stroke="#94A3B8" stroke-width="3" stroke-linecap="round" opacity="0.3"/>
+          <line x1="-15" y1="14.8" x2="28" y2="14.8" stroke="#FFFFFF" stroke-width="1" stroke-linecap="round" opacity="0.85"/>
+          <ellipse cx="31" cy="15.5" rx="2.5" ry="2" fill="rgba(255,255,255,0.9)" stroke="#CBD5E1" stroke-width="0.6"/>
+          <circle cx="32" cy="15.5" r="2.2" fill="${activeFc}" class="anim-spangle"/>
+        </g>
+      ` : ''}
+
+      ${isFiltered ? `
+        <g>
+          <rect x="4" y="4" width="92" height="128" rx="6" fill="rgba(30, 58, 138, 0.38)" stroke="#3B82F6" stroke-width="1.8"/>
+          <rect x="8" y="8" width="60" height="14" rx="3" fill="#1E3A8A" opacity="0.92"/>
+          <text x="38" y="18" font-size="7" font-weight="700" fill="#93C5FD" text-anchor="middle">COBALT GLASS</text>
+        </g>
+      ` : (performed ? `
+        <g>
+          <rect x="6" y="6" width="60" height="12" rx="3" fill="#0F172A" opacity="0.85"/>
+          <text x="36" y="15" font-size="6.5" font-weight="700" fill="#F8FAFC" text-anchor="middle">NAKED EYE</text>
+        </g>
+      ` : '')}
+    </svg>`;
+  }
+
+  /* ══════════════════════════════════════
+     ACTIONS (Stepwise Perform & Redo)
+  ══════════════════════════════════════ */
+  window.redoTest = function(testKey) {
+    if (testStates[testKey]) {
+      const prevObs = testStates[testKey].obsText || '';
+      const prevInf = testStates[testKey].infText || '';
+      delete testStates[testKey];
+      testStates[testKey] = {
+        performed: false,
+        isAdding: false,
+        isHeating: false,
+        isCooling: false,
+        isTestingProbe: false,
+        isIntroducing: false,
+        stage: 'idle',
+        probe: null,
+        obsText: prevObs,
+        infText: prevInf
+      };
+      if (testKey === 'flame') {
+        isCobaltGlassActive = false;
+        flameOpticalMode = 'naked';
+        const btnCobalt = document.getElementById('btnCobaltGlass');
+        if (btnCobalt) btnCobalt.innerHTML = '🟦 Cobalt Blue Glass Filter: OFF';
+      }
+    }
+    renderAll();
+  };
+
+  window.performTestStage = function(testKey, targetStage, probeOption = null) {
+    const salt = SALTS[currentSaltKey] || {};
+    const test = TESTS.find(t => t.key === testKey);
+    if (!testStates[testKey]) testStates[testKey] = {};
+    const st = testStates[testKey];
+
+    const isDropperAction = ['few_drops', 'excess', 'step1_hno3', 'step2_agno3', 'step3_nh3', 'step1_acid', 'step2_bacl2', 'step1_hcl', 'step2_gas_warm', 'step1_feso4', 'step2_h2so4'].includes(targetStage) || testKey === 'naoh' || testKey === 'nh3' || testKey === 'agno3' || testKey === 'bacl2' || testKey === 'ki' || testKey === 'pb_no3';
+
+    st.performed = true;
+    st.stage = targetStage;
+    if (probeOption) st.probe = probeOption;
+
+    if (isDropperAction) {
+      st.isAdding = true;
+      setTimeout(() => {
+        if (testStates[testKey]) {
+          testStates[testKey].isAdding = false;
+          renderAll();
+        }
+      }, 650);
+    }
+
+    if (testKey === 'heat_solid') {
+      const res = (window.QualitativeBenchCore && typeof QualitativeBenchCore.resolveReactionState === 'function')
+        ? QualitativeBenchCore.resolveReactionState(currentSaltKey, 'heat_solid', targetStage)
+        : {};
+
+      if (targetStage === 'gentle_heat' || targetStage === 'warm' || targetStage === 'step1_heat' || targetStage === 'strong_heat' || targetStage === 'heated') {
+        st.isHeating = true;
+        st.isCooling = false;
+        st.isTestingProbe = false;
+        playFlameSound();
+        st.statusLabel = (targetStage === 'gentle_heat' || targetStage === 'warm')
+          ? '🔥 Gently warming tube heel... solid absorbing heat from flame...'
+          : '🔥 Heating strongly in flame... solid absorbing heat from flame...';
+
+        setTimeout(() => {
+          if (testStates['heat_solid'] && testStates['heat_solid'].isHeating) {
+            testStates['heat_solid'].isHeating = false;
+            if (res.decrepitates) {
+              playDecrepitationSound();
+            }
+            if (res.waterCondenses) {
+              playDropletSizzleSound();
+            }
+            testStates['heat_solid'].statusLabel = res.statusLabel || (
+              (targetStage === 'gentle_heat' || targetStage === 'warm')
+                ? 'Gentle Warming: Moisture & condensation observed'
+                : 'Step 1: Solid heated strongly in flame — Thermal changes observed'
+            );
+            renderAll();
+          }
+        }, 1500);
+      } else if (targetStage === 'cooled' || targetStage === 'cool_down') {
+        st.isCooling = true;
+        st.isHeating = false;
+        st.isTestingProbe = false;
+        st.statusLabel = '❄️ Tube removed from flame... cooling down to room temperature...';
+
+        setTimeout(() => {
+          if (testStates['heat_solid'] && testStates['heat_solid'].isCooling) {
+            testStates['heat_solid'].isCooling = false;
+            testStates['heat_solid'].statusLabel = res.statusLabel || 'Step 3: Allowed tube to cool — Residue color transitions observed';
+            renderAll();
+          }
+        }, 1300);
+      } else if (targetStage === 'test_splint' || (targetStage === 'step2_gas_test' && st.probe === 'glowing_splint')) {
+        st.isTestingProbe = true;
+        st.probe = 'glowing_splint';
+        st.statusLabel = '🪵 Introducing glowing splint into mouth of tube...';
+
+        setTimeout(() => {
+          if (testStates['heat_solid'] && testStates['heat_solid'].isTestingProbe) {
+            testStates['heat_solid'].isTestingProbe = false;
+            if (res.evolvesO2) {
+              playSplintRelightSound();
+              testStates['heat_solid'].statusLabel = 'Gas Test: Glowing splint bursts into flame (O₂ confirmed)';
+            } else {
+              playFlameSound();
+              testStates['heat_solid'].statusLabel = 'Gas Test: Glowing splint extinguished (No O₂ gas)';
+            }
+            renderAll();
+          }
+        }, 750);
+      } else if (targetStage === 'test_gas_blue_litmus' || (targetStage === 'step2_gas_test' && st.probe === 'blue_litmus')) {
+        st.isTestingProbe = true;
+        st.probe = 'blue_litmus';
+        st.statusLabel = '📄 Holding moist blue litmus paper at mouth of tube...';
+
+        setTimeout(() => {
+          if (testStates['heat_solid'] && testStates['heat_solid'].isTestingProbe) {
+            testStates['heat_solid'].isTestingProbe = false;
+            playFlameSound();
+            const turnsRed = res.evolvesNO2 || res.evolvesSO2 || (salt.cation === 'NH4+' && salt.anion === 'Cl-');
+            testStates['heat_solid'].statusLabel = turnsRed
+              ? 'Gas Test: Moist blue litmus turns red (Acidic gas NO₂/SO₂)'
+              : 'Gas Test: Moist blue litmus remains blue';
+            renderAll();
+          }
+        }, 750);
+      } else if (targetStage === 'test_gas_red_litmus' || (targetStage === 'step2_gas_test' && st.probe === 'red_litmus')) {
+        st.isTestingProbe = true;
+        st.probe = 'red_litmus';
+        st.statusLabel = '📄 Holding moist red litmus paper at mouth of tube...';
+
+        setTimeout(() => {
+          if (testStates['heat_solid'] && testStates['heat_solid'].isTestingProbe) {
+            testStates['heat_solid'].isTestingProbe = false;
+            playFlameSound();
+            const turnsBlue = res.evolvesNH3;
+            testStates['heat_solid'].statusLabel = turnsBlue
+              ? 'Gas Test: Moist red litmus turns blue (Alkaline NH₃ gas)'
+              : 'Gas Test: Moist red litmus remains red';
+            renderAll();
+          }
+        }, 750);
+      } else if (targetStage === 'test_limewater' || (targetStage === 'step2_gas_test' && st.probe === 'limewater')) {
+        st.isTestingProbe = true;
+        st.probe = 'limewater';
+        st.statusLabel = '🥛 Introducing limewater droplet into mouth of tube...';
+
+        setTimeout(() => {
+          if (testStates['heat_solid'] && testStates['heat_solid'].isTestingProbe) {
+            testStates['heat_solid'].isTestingProbe = false;
+            playFlameSound();
+            const turnsMilky = res.evolvesCO2;
+            testStates['heat_solid'].statusLabel = turnsMilky
+              ? 'Gas Test: Limewater turns milky white precipitate (CO₂ confirmed)'
+              : 'Gas Test: Limewater remains clear';
+            renderAll();
+          }
+        }, 750);
+      } else if (targetStage === 'step2_gas_test') {
+        playFlameSound();
+        if (res.evolvesO2) playSplintRelightSound();
+        st.statusLabel = 'Step 2: Evolved gases tested with litmus / splint — Completed';
+      }
+    } else if (testKey === 'naoh') {
+      playDropSplashSound(targetStage === 'excess');
+      if (targetStage === 'few_drops') {
+        if (['Zn2+', 'Al3+', 'Pb2+', 'Ca2+'].includes(salt.cation)) {
+          st.ppt = true;
+          st.pptDissolved = false;
+          st.color = '#F1F5F9';
+          st.statusLabel = 'Few Drops: White ppt formed';
+        } else if (salt.cation === 'Cu2+') {
+          st.ppt = true;
+          st.pptDissolved = false;
+          st.color = '#38BDF8';
+          st.statusLabel = 'Few Drops: Pale blue ppt formed';
+        } else if (salt.cation === 'Fe2+') {
+          st.ppt = true;
+          st.pptDissolved = false;
+          st.color = '#10B981';
+          st.statusLabel = 'Few Drops: Dirty green ppt formed';
+        } else if (salt.cation === 'Fe3+') {
+          st.ppt = true;
+          st.pptDissolved = false;
+          st.color = '#B45309';
+          st.statusLabel = 'Few Drops: Reddish-brown ppt';
+        } else if (salt.cation === 'NH4+') {
+          st.ppt = false;
+          st.color = '#475569';
+          st.statusLabel = 'Few Drops: No precipitate';
+        } else {
+          st.ppt = false;
+          st.color = '#475569';
+          st.statusLabel = 'Few Drops: No precipitate';
+        }
+      } else if (targetStage === 'excess') {
+        if (['Zn2+', 'Al3+', 'Pb2+'].includes(salt.cation)) {
+          st.ppt = false;
+          st.pptDissolved = true; // Soluble in excess NaOH!
+          st.color = 'rgba(56, 189, 248, 0.18)';
+          st.statusLabel = 'In Excess: White ppt dissolves (Colorless solution)';
+        } else if (salt.cation === 'Ca2+') {
+          st.ppt = true;
+          st.pptDissolved = false;
+          st.color = '#F1F5F9';
+          st.statusLabel = 'In Excess: White ppt remains insoluble';
+        } else if (salt.cation === 'Cu2+') {
+          st.ppt = true;
+          st.color = '#38BDF8';
+          st.statusLabel = 'In Excess: Pale blue ppt insoluble';
+        } else if (salt.cation === 'Fe2+') {
+          st.ppt = true;
+          st.color = '#10B981';
+          st.statusLabel = 'In Excess: Dirty green ppt insoluble';
+        } else if (salt.cation === 'Fe3+') {
+          st.ppt = true;
+          st.color = '#B45309';
+          st.statusLabel = 'In Excess: Reddish-brown ppt insoluble';
+        } else if (salt.cation === 'NH4+') {
+          st.ppt = false;
+          st.bubbling = true;
+          st.color = '#94A3B8';
+          st.statusLabel = 'In Excess: Pungent NH₃ gas evolved';
+        } else {
+          st.ppt = false;
+          st.color = '#475569';
+          st.statusLabel = 'In Excess: No precipitate';
+        }
+      }
+    } else if (testKey === 'nh3') {
+      playDropSplashSound(targetStage === 'excess');
+      if (targetStage === 'few_drops') {
+        if (salt.cation === 'Cu2+') {
+          st.ppt = true;
+          st.complexDeepBlue = false;
+          st.color = '#38BDF8';
+          st.statusLabel = 'Few Drops: Pale blue ppt formed';
+        } else if (['Zn2+', 'Al3+', 'Pb2+'].includes(salt.cation)) {
+          st.ppt = true;
+          st.pptDissolved = false;
+          st.color = '#F1F5F9';
+          st.statusLabel = 'Few Drops: White ppt formed';
+        } else if (salt.cation === 'Fe2+') {
+          st.ppt = true;
+          st.color = '#10B981';
+          st.statusLabel = 'Few Drops: Dirty green ppt formed';
+        } else if (salt.cation === 'Fe3+') {
+          st.ppt = true;
+          st.color = '#B45309';
+          st.statusLabel = 'Few Drops: Reddish-brown ppt';
+        } else {
+          st.ppt = false;
+          st.color = '#475569';
+          st.statusLabel = 'Few Drops: No precipitate';
+        }
+      } else if (targetStage === 'excess') {
+        if (salt.cation === 'Cu2+') {
+          st.ppt = false;
+          st.complexDeepBlue = true; // Tetraamminecopper(II) deep blue!
+          st.color = '#1D4ED8';
+          st.statusLabel = 'In Excess: Dissolves to form Deep Royal Blue solution';
+        } else if (salt.cation === 'Zn2+') {
+          st.ppt = false;
+          st.pptDissolved = true; // Tetraamminezinc(II) soluble!
+          st.color = 'rgba(56, 189, 248, 0.18)';
+          st.statusLabel = 'In Excess: White ppt dissolves (Colorless solution)';
+        } else if (['Al3+', 'Pb2+'].includes(salt.cation)) {
+          st.ppt = true;
+          st.pptDissolved = false;
+          st.color = '#F1F5F9';
+          st.statusLabel = 'In Excess: White ppt remains insoluble';
+        } else if (salt.cation === 'Fe2+') {
+          st.ppt = true;
+          st.color = '#10B981';
+          st.statusLabel = 'In Excess: Green ppt insoluble';
+        } else if (salt.cation === 'Fe3+') {
+          st.ppt = true;
+          st.color = '#B45309';
+          st.statusLabel = 'In Excess: Reddish-brown ppt insoluble';
+        } else {
+          st.ppt = false;
+          st.color = '#475569';
+          st.statusLabel = 'In Excess: No precipitate';
+        }
+      }
+    } else if (testKey === 'agno3') {
+      if (targetStage === 'step1_hno3') {
+        if (salt.anion === 'CO3^2-' || salt.anion === 'SO3^2-') {
+          playEffervescenceSound();
+          st.bubbling = true;
+          st.color = '#CBD5E1';
+          st.statusLabel = `Step 1: Dil. HNO₃ added — Effervescence (${salt.anion === 'CO3^2-' ? 'CO₂' : 'SO₂'} gas evolved)`;
+        } else {
+          playDropSplashSound();
+          st.bubbling = false;
+          st.ppt = false;
+          st.color = 'rgba(56, 189, 248, 0.2)';
+          st.statusLabel = 'Step 1: Dil. HNO₃ added — Solution acidified (no effervescence)';
+        }
+      } else if (targetStage === 'step2_agno3') {
+        playDropSplashSound();
+        if (salt.anion === 'Cl-') {
+          st.ppt = true;
+          st.pptDissolved = false;
+          st.color = '#F8FAFC';
+          st.statusLabel = 'Step 2: AgNO₃ added — Dense curdy white ppt (AgCl) formed';
+        } else if (salt.anion === 'Br-') {
+          st.ppt = true;
+          st.pptDissolved = false;
+          st.color = '#FEF08A';
+          st.statusLabel = 'Step 2: AgNO₃ added — Pale cream precipitate (AgBr) formed';
+        } else if (salt.anion === 'I-') {
+          st.ppt = true;
+          st.pptDissolved = false;
+          st.color = '#FACC15';
+          st.statusLabel = 'Step 2: AgNO₃ added — Bright yellow precipitate (AgI) formed';
+        } else if (salt.anion === 'SO3^2-') {
+          st.ppt = true;
+          st.pptDissolved = false;
+          st.color = '#E2E8F0';
+          st.statusLabel = 'Step 2: AgNO₃ added — White precipitate (Ag₂SO₃) formed';
+        } else {
+          st.ppt = false;
+          st.color = 'rgba(56, 189, 248, 0.2)';
+          st.statusLabel = 'Step 2: AgNO₃ added — No precipitate formed';
+        }
+      } else if (targetStage === 'step3_nh3') {
+        playDropSplashSound();
+        if (salt.anion === 'Cl-') {
+          st.ppt = false;
+          st.pptDissolved = true;
+          st.color = 'rgba(56, 189, 248, 0.18)';
+          st.statusLabel = 'Step 3: Dil. NH₃ added — White ppt dissolves completely (diamminesilver complex)';
+        } else if (salt.anion === 'Br-') {
+          st.ppt = true;
+          st.pptDissolved = false;
+          st.color = '#FEF08A';
+          st.statusLabel = 'Step 3: Dil. NH₃ added — Cream ppt is sparingly soluble in dilute NH₃ (soluble in conc. NH₃)';
+        } else if (salt.anion === 'I-') {
+          st.ppt = true;
+          st.pptDissolved = false;
+          st.color = '#FACC15';
+          st.statusLabel = 'Step 3: Dil. NH₃ added — Yellow ppt remains completely insoluble in aqueous NH₃';
+        } else {
+          st.statusLabel = 'Step 3: Dil. NH₃ added — Solution remains clear';
+        }
+      }
+    } else if (testKey === 'bacl2') {
+      if (targetStage === 'step1_acid') {
+        if (salt.anion === 'CO3^2-') {
+          playEffervescenceSound();
+          st.bubbling = true;
+          st.color = '#CBD5E1';
+          st.statusLabel = 'Step 1: Dil. Acid added — Effervescence of CO₂ gas';
+        } else if (salt.anion === 'SO3^2-') {
+          playEffervescenceSound();
+          st.bubbling = true;
+          st.color = '#CBD5E1';
+          st.statusLabel = 'Step 1: Dil. Acid added — Effervescence of pungent choking SO₂ gas';
+        } else {
+          playDropSplashSound();
+          st.bubbling = false;
+          st.ppt = false;
+          st.color = 'rgba(56, 189, 248, 0.2)';
+          st.statusLabel = 'Step 1: Dil. Acid added — Solution acidified';
+        }
+      } else if (targetStage === 'step2_bacl2') {
+        playDropSplashSound();
+        if (salt.anion === 'SO4^2-') {
+          st.ppt = true;
+          st.color = '#F8FAFC';
+          st.statusLabel = 'Step 2: BaCl₂ added — Dense white ppt (BaSO₄), insoluble in acid';
+        } else if (salt.anion === 'SO3^2-') {
+          st.ppt = true;
+          st.color = '#E2E8F0';
+          st.statusLabel = 'Step 2: BaCl₂ added — White ppt (BaSO₃), dissolves in dilute HCl with effervescence of SO₂';
+        } else {
+          st.ppt = false;
+          st.color = 'rgba(56, 189, 248, 0.2)';
+          st.statusLabel = 'Step 2: BaCl₂ added — No precipitate formed';
+        }
+      }
+    } else if (testKey === 'brown_ring') {
+      if (targetStage === 'step1_feso4') {
+        playDropSplashSound();
+        st.color = 'rgba(16, 185, 129, 0.25)';
+        st.statusLabel = 'Step 1: Fresh FeSO₄(aq) added — Pale green upper solution layer';
+      } else if (targetStage === 'step2_h2so4') {
+        playDropSplashSound();
+        if (salt.anion === 'NO3-') {
+          st.isBrownRing = true;
+          st.statusLabel = 'Step 2: Conc. H₂SO₄ trickled — Distinct brown ring at junction [Fe(H₂O)₅(NO)]²⁺';
+        } else {
+          st.isBrownRing = false;
+          st.statusLabel = 'Step 2: Conc. H₂SO₄ trickled — No brown ring formed at junction';
+        }
+      }
+    } else if (testKey === 'hcl') {
+      if (targetStage === 'step1_hcl') {
+        if (salt.anion === 'CO3^2-') {
+          playEffervescenceSound();
+          st.bubbling = true;
+          st.statusLabel = 'Step 1: 2M HCl added — Brisk effervescence of colorless gas';
+        } else if (salt.anion === 'SO3^2-') {
+          playEffervescenceSound();
+          st.bubbling = true;
+          st.statusLabel = 'Step 1: 2M HCl added — Effervescence of choking SO₂ gas';
+        } else if (salt.cation === 'Pb2+') {
+          playDropSplashSound();
+          st.ppt = true;
+          st.color = '#E2E8F0';
+          st.statusLabel = 'Step 1: 2M HCl added — White ppt (PbCl₂)';
+        } else {
+          playDropSplashSound();
+          st.ppt = false;
+          st.bubbling = false;
+          st.color = 'rgba(56, 189, 248, 0.2)';
+          st.statusLabel = 'Step 1: 2M HCl added — No visible reaction';
+        }
+      } else if (targetStage === 'step2_gas_warm') {
+        if (salt.anion === 'CO3^2-') {
+          st.statusLabel = 'Step 2: Gas tested — Colorless gas turns limewater milky (CO₂)';
+        } else if (salt.anion === 'SO3^2-') {
+          st.statusLabel = 'Step 2: Gas tested — Gas turns filter paper soaked in acidified K₂Cr₂O₇ from orange to green (SO₂)';
+        } else if (salt.cation === 'Pb2+') {
+          st.ppt = false;
+          st.pptDissolved = true;
+          st.color = 'rgba(56, 189, 248, 0.2)';
+          st.statusLabel = 'Step 2: Warmed — White ppt (PbCl₂) dissolves in hot water';
+        } else {
+          st.statusLabel = 'Step 2: Warmed — No visible change';
+        }
+      }
+    } else if (testKey === 'pb_no3') {
+      const isChloride = salt.anion === 'Cl-' || salt.anion === 'Cl⁻' || (salt.anion && salt.anion.includes('Cl'));
+      const isSulfate = salt.anion === 'SO4^2-' || salt.anion === 'SO42-' || (salt.anion && salt.anion.includes('SO4'));
+      const isSulfite = salt.anion === 'SO3^2-' || salt.anion === 'SO32-' || (salt.anion && salt.anion.includes('SO3'));
+      const isCarbonate = salt.anion === 'CO3^2-' || salt.anion === 'CO32-' || salt.anion === 'HCO3-' || (salt.anion && (salt.anion.includes('CO3') || salt.anion.includes('HCO3')));
+      const isIodide = salt.anion === 'I-' || salt.anion === 'I⁻' || (salt.anion && salt.anion.includes('I'));
+
+      if (targetStage === 'few_drops') {
+        playDropSplashSound();
+        if (isChloride || isSulfate || isSulfite || isCarbonate) {
+          st.ppt = true;
+          st.pptDissolved = false;
+          st.color = '#F8FAFC';
+          st.statusLabel = isChloride
+            ? 'Step 1: Pb(NO₃)₂ added — White precipitate of PbCl₂ formed'
+            : (isSulfate
+                ? 'Step 1: Pb(NO₃)₂ added — Dense white precipitate of PbSO₄ formed'
+                : 'Step 1: Pb(NO₃)₂ added — White precipitate formed');
+        } else if (isIodide) {
+          st.ppt = true;
+          st.color = '#FACC15';
+          st.statusLabel = 'Step 1: Pb(NO₃)₂ added — Bright yellow precipitate of PbI₂ formed';
+        } else {
+          st.ppt = false;
+          st.color = 'rgba(56, 189, 248, 0.2)';
+          st.statusLabel = 'Step 1: Pb(NO₃)₂ added — No precipitate formed';
+        }
+      } else if (targetStage === 'heated') {
+        playFlameSound();
+        if (isChloride) {
+          st.ppt = false;
+          st.pptDissolved = true;
+          st.color = 'rgba(56, 189, 248, 0.2)';
+          st.statusLabel = 'Step 2: Warmed gently — White precipitate of PbCl₂ dissolves completely to form a colourless solution';
+        } else if (isSulfate || isSulfite || isCarbonate) {
+          st.ppt = true;
+          st.pptDissolved = false;
+          st.color = '#F8FAFC';
+          st.statusLabel = isSulfate
+            ? 'Step 2: Warmed gently — White precipitate of PbSO₄ remains completely insoluble on boiling'
+            : 'Step 2: Warmed gently — White precipitate remains insoluble';
+        } else if (isIodide) {
+          st.ppt = false;
+          st.pptDissolved = true;
+          st.color = 'rgba(250, 204, 21, 0.35)';
+          st.statusLabel = 'Step 2: Warmed gently — Yellow precipitate of PbI₂ dissolves in hot water';
+        } else {
+          st.statusLabel = 'Step 2: Warmed gently — No change observed';
+        }
+      } else if (targetStage === 'cooled') {
+        playDropSplashSound();
+        if (isChloride) {
+          st.ppt = true;
+          st.pptDissolved = false;
+          st.color = '#F8FAFC';
+          st.statusLabel = 'Step 3: Cooled under tap water — White needle-like crystals of PbCl₂ reappear';
+        } else if (isIodide) {
+          st.ppt = true;
+          st.pptDissolved = false;
+          st.color = '#FACC15';
+          st.statusLabel = 'Step 3: Cooled under tap water — Golden shimmering spangles of PbI₂ recrystallize';
+        } else if (isSulfate || isSulfite || isCarbonate) {
+          st.ppt = true;
+          st.color = '#F8FAFC';
+          st.statusLabel = 'Step 3: Cooled — White precipitate persists';
+        } else {
+          st.statusLabel = 'Step 3: Cooled — Solution remains clear';
+        }
+      }
+    } else if (testKey === 'ki') {
+      if (targetStage === 'few_drops') {
+        playDropSplashSound();
+        if (salt.cation === 'Pb2+') {
+          st.ppt = true;
+          st.color = '#EAB308';
+          st.statusLabel = 'Step 1: KI Added — Bright canary-yellow ppt (PbI₂)';
+        } else {
+          st.ppt = false;
+          st.color = '#334155';
+          st.statusLabel = 'Step 1: KI Added — No precipitate';
+        }
+      } else if (targetStage === 'heated') {
+        playFlameSound();
+        if (salt.cation === 'Pb2+') {
+          st.ppt = false;
+          st.heated = true;
+          st.color = 'rgba(234, 179, 8, 0.45)';
+          st.statusLabel = 'Step 2: Warmed — Yellow ppt dissolves in hot water';
+        } else {
+          st.heated = true;
+          st.statusLabel = 'Step 2: Warmed — No change';
+        }
+      } else if (targetStage === 'cooled') {
+        playDropSplashSound();
+        if (salt.cation === 'Pb2+') {
+          st.spangles = true;
+          st.color = '#EAB308';
+          st.statusLabel = 'Step 3: Cooled — Golden crystalline spangles sparkle!';
+        } else {
+          st.statusLabel = 'Step 3: Cooled — No precipitate';
+        }
+      }
+    }
+
+    const correctKey = test.correct[currentSaltKey];
+    st.correctKey = correctKey;
+    renderAll();
+  };
+
+  window.performTest = function(testKey) {
+    if (testKey === 'flame') {
+      performFlameTestOnScreen();
+      return;
+    }
+    if (testKey === 'heat_solid') {
+      playFlameSound();
+    }
+    const test = TESTS.find(t => t.key === testKey);
+    const correctKey = test ? test.correct[currentSaltKey] : null;
+    const correctOpt = test ? test.options.find(o => o.key === correctKey) : null;
+
+    if ((testKey === 'hcl' || testKey === 'heat_solid') && correctOpt && correctOpt.bubble) {
+      playEffervescenceSound();
+    } else if (testKey !== 'heat_solid') {
+      playDropSplashSound();
+    }
+
+    if (!testStates[testKey]) testStates[testKey] = {};
+    testStates[testKey].performed = true;
+    testStates[testKey].stage = 'done';
+    testStates[testKey].color = correctOpt ? correctOpt.color : '#38BDF8';
+    testStates[testKey].bubbling = correctOpt ? !!correctOpt.bubble : false;
+    testStates[testKey].ppt = correctOpt ? (correctOpt.text.toLowerCase().includes('ppt') || correctOpt.text.toLowerCase().includes('precipitate')) : false;
+    testStates[testKey].correctKey = correctKey;
+    testStates[testKey].statusLabel = 'Reagent Added — Observed';
+
+    if (testKey !== 'flame' && testKey !== 'heat_solid') {
+      testStates[testKey].isAdding = true;
+      setTimeout(() => {
+        if (testStates[testKey]) {
+          testStates[testKey].isAdding = false;
+          renderAll();
+        }
+      }, 650);
+    }
+
+    renderAll();
+  };
+
+  function selectObs(testKey, optKey) {
+    const st = testStates[testKey];
+    if (!st || st.selectedKey) return;
+    st.selectedKey = optKey;
+    renderAll();
+  }
+
+  /* ══════════════════════════════════════
+     ON-SCREEN FLAME TEST & DUAL-OPTICAL VIEWPORT
+  ══════════════════════════════════════ */
+  let isCobaltGlassActive = false; // Default: Naked Eye (Filter OFF)
+  let flameOpticalMode = 'naked'; // Default: 'naked' (Naked Eye direct emission)
+
+  window.setFlameOpticalMode = function(mode) {
+    flameOpticalMode = mode;
+    isCobaltGlassActive = (mode === 'cobalt');
+    const btnCobalt = document.getElementById('btnCobaltGlass');
+    if (btnCobalt) {
+      btnCobalt.innerHTML = (mode === 'cobalt') ? '🟦 Cobalt Blue Glass Filter: ON' : '🟦 Cobalt Blue Glass Filter: OFF';
+    }
+    if (testStates['flame'] && testStates['flame'].performed && !testStates['flame'].isIntroducing) {
+      const fTest = TESTS.find(t => t.key === 'flame');
+      const correctKey = fTest ? fTest.correct[currentSaltKey] : null;
+      const correctOpt = fTest ? fTest.options.find(o => o.key === correctKey) : null;
+      const salt = SALTS[currentSaltKey] || {};
+
+      let flameColor = correctOpt ? correctOpt.color : '#38BDF8';
+      if (mode === 'cobalt') {
+        if (salt.cation === 'Na+') flameColor = 'rgba(100, 116, 139, 0.2)';
+        else if (salt.cation === 'K+') flameColor = '#C084FC';
+      }
+      testStates['flame'].color = flameColor;
+      if (mode === 'naked') {
+        testStates['flame'].statusLabel = `Observed: ${correctOpt ? correctOpt.text : 'Flame emission'}`;
+      } else if (mode === 'cobalt') {
+        testStates['flame'].statusLabel = (salt.cation === 'Na+')
+          ? 'Observed (Cobalt Glass): 589 nm yellow absorbed'
+          : `Observed (Cobalt Glass): Filtered emission`;
+      } else if (mode === 'split') {
+        testStates['flame'].statusLabel = 'Observed: Dual Split-View';
+      }
+    }
+    renderAll();
+  };
+
+  window.performFlameTestOnScreen = function() {
+    if (!testStates['flame']) testStates['flame'] = {};
+    const st = testStates['flame'];
+    if (st.isIntroducing || st.stage === 'introducing') return;
+
+    const fTest = TESTS.find(t => t.key === 'flame');
+    const correctKey = fTest ? fTest.correct[currentSaltKey] : null;
+    const correctOpt = fTest ? fTest.options.find(o => o.key === correctKey) : null;
+    const salt = SALTS[currentSaltKey] || {};
+
+    // 1. Physical Dipping & Introducing Delay (850ms)
+    st.performed = true;
+    st.stage = 'introducing';
+    st.isIntroducing = true;
+    st.bubbling = false;
+    st.correctKey = correctKey;
+    st.color = '#38BDF8'; // Unexcited pale blue non-luminous flame while entering
+    st.statusLabel = '🔥 Dipping clean glass rod into solution and introducing to flame...';
+    renderAll();
+
+    setTimeout(() => {
+      if (!testStates['flame']) return;
+      playFlameSound();
+      st.isIntroducing = false;
+      st.stage = 'done';
+
+      let flameColor = correctOpt ? correctOpt.color : '#38BDF8';
+      if (flameOpticalMode === 'cobalt') {
+        if (salt.cation === 'Na+') flameColor = 'rgba(100, 116, 139, 0.2)';
+        else if (salt.cation === 'K+') flameColor = '#C084FC';
+      }
+      st.color = flameColor;
+      if (flameOpticalMode === 'naked') {
+        st.statusLabel = `Observed: ${correctOpt ? correctOpt.text : 'Flame emission'}`;
+      } else if (flameOpticalMode === 'cobalt') {
+        st.statusLabel = (salt.cation === 'Na+')
+          ? 'Observed (Cobalt Glass): 589 nm yellow absorbed'
+          : `Observed (Cobalt Glass): Filtered flame emission`;
+      } else {
+        st.statusLabel = 'Observed: Dual Split-View';
+      }
+      renderAll();
+    }, 850);
+  };
+
+  window.toggleCobaltGlassInline = function() {
+    const nextMode = (flameOpticalMode === 'cobalt') ? 'naked' : 'cobalt';
+    setFlameOpticalMode(nextMode);
+  };
+
+  window.toggleCobaltGlass = function() {
+    toggleCobaltGlassInline();
+  };
+
+  function openFlameModal() {
+    performFlameTestOnScreen();
+  }
+
+  function closeFlameModal() {
+    if (typeof document !== 'undefined') {
+      const modal = document.getElementById('flameModal');
+      if (modal) modal.style.display = 'none';
+    }
+  }
+
+  // Backwards compatibility stubs
+  function resetFlameSteps() {}
+  function setFlameStep() {}
+  function setBenchActive() {}
+  function setFlameColor() {}
+  function flameDipHCl() {}
+  function flameDipSalt() {}
+  function flameIgnite() {}
+
+  /* ══════════════════════════════════════
+     SUBMIT IDENTIFICATION
+  ══════════════════════════════════════ */
+  async function submitIdentification() {
+    if (sessionSaved) return;
+    const cation = document.getElementById('cationSelect').value;
+    const anion  = document.getElementById('anionSelect').value;
+    if (!cation || !anion) { alert('Please select both a cation and an anion.'); return; }
+
+    const salt = SALTS[currentSaltKey];
+    const cationCorrect = cation === salt.cation;
+    const anionCorrect  = anion === salt.anion;
+    const fullyCorrect  = cationCorrect && anionCorrect;
+
+    const box = document.getElementById('idResultBox');
+    box.style.display = 'block';
+    box.innerHTML = `<div class="id-result-card" style="background:var(--blue-bg);border:1px solid var(--blue-accent);">
+      <div class="id-result-icon">⏳</div>
+      <div class="id-result-text"><h3>Saving…</h3></div>
+    </div>`;
+
+    try {
+      // 1. Sync any active text entered in the DOM into testStates
+      TESTS.forEach(test => {
+        const obsElem = document.getElementById(`obs_${test.key}`);
+        const infElem = document.getElementById(`inf_${test.key}`);
+        if (!testStates[test.key]) testStates[test.key] = {};
+        if (obsElem && obsElem.value.trim()) testStates[test.key].obsText = obsElem.value.trim();
+        if (infElem && infElem.value.trim()) testStates[test.key].infText = infElem.value.trim();
+      });
+
+      // 2. Build rich observations array with KNEC scoring
+      const observations = TESTS.map(test => {
+        const st = testStates[test.key];
+        const isPerformed = Boolean(st && (st.performed || st.stage || (st.obsText && st.obsText.trim())));
+        if (!isPerformed) {
+          return {
+            test: test.label,
+            observation: 'Not performed',
+            performed: false
+          };
+        }
+
+        const correctKey = test.correct ? test.correct[currentSaltKey] : null;
+        const correctOpt = (correctKey && test.options) ? test.options.find(o => o.key === correctKey) : null;
+        const benchObs = correctOpt?.text || st.statusLabel || 'Reaction observed on bench';
+
+        const userObs = (st.obsText || '').trim();
+        const userInf = (st.infText || '').trim();
+
+        const obsEval = evaluateObservationAccuracy(test, salt, userObs);
+        const infEval = evaluateInferenceAccuracy(test, salt, userInf, userObs);
+
+        let finalObs = userObs || benchObs;
+        if (userInf) {
+          finalObs += ` (Inference: ${userInf})`;
+        }
+
+        return {
+          test: test.label,
+          testKey: test.key,
+          observation: finalObs,
+          benchObservation: benchObs,
+          studentObservation: userObs,
+          studentInference: userInf,
+          obsScore: obsEval.score,
+          infScore: infEval.score,
+          totalItemScore: parseFloat((obsEval.score + infEval.score).toFixed(2)),
+          performed: true
+        };
+      });
+
+      const testsPerformedCount = Object.keys(testStates).filter(k => testStates[k] && (testStates[k].performed || testStates[k].stage)).length;
+
+      let testsCorrectCount = 0;
+      observations.forEach(o => {
+        if (o.performed && (o.totalItemScore >= 0.70 || (o.obsScore >= 0.35 && o.infScore >= 0.35))) {
+          testsCorrectCount++;
+        }
+      });
+
+      const saveRes = await Qualitative.save({
+        saltKey: currentSaltKey,
+        saltName: salt.name,
+        trueCation: salt.cation,
+        trueAnion: salt.anion,
+        studentCation: cation,
+        studentAnion: anion,
+        cationCorrect,
+        anionCorrect,
+        testsPerformed: testsPerformedCount,
+        testsCorrect: testsCorrectCount,
+        observations,
+        mode: assignmentId ? 'assignment' : 'selfPaced',
+        assignmentId: assignmentId ? parseInt(assignmentId, 10) : null
+      });
+
+      sessionSaved = true;
+      const isOfflineQueued = saveRes && saveRes.offlineQueued;
+      const submitBtn = document.getElementById('submitIdBtn');
+      if (submitBtn) {
+        submitBtn.textContent = isOfflineQueued ? '📦 Saved Offline' : '✅ Submitted';
+        submitBtn.disabled = true;
+      }
+
+      const offlinePill = isOfflineQueued ? `
+        <div style="margin-top:10px; padding:6px 12px; border-radius:6px; background:rgba(234,179,8,0.12); border:1px solid rgba(234,179,8,0.35); color:#FACC15; font-size:0.8rem; font-weight:600; display:flex; align-items:center; gap:6px;">
+          <span>🟡</span> <span><b>Saved Offline:</b> Analysis results are stored locally and will sync to your teacher on reconnect.</span>
+        </div>
+      ` : '';
+
+      box.innerHTML = `
+        <div class="id-result-card ${fullyCorrect ? 'correct' : 'incorrect'}">
+          <div class="id-result-icon">${fullyCorrect ? '🎉' : '⚠️'}</div>
+          <div class="id-result-text">
+            <h3>${fullyCorrect ? 'Correct Identification!' : 'Incorrect Identification'}</h3>
+            <p>The salt was <b>${esc(salt.name)} (${esc(salt.formula)})</b>. Cation: <b>${esc(salt.cationDisplay)}</b>  Anion: <b>${esc(salt.anionDisplay)}</b>.</p>
+            ${!cationCorrect ? `<p style="color:var(--red-accent);margin-top:4px;">✗ Your cation (${esc(cation)}) was incorrect.</p>` : ''}
+            ${!anionCorrect  ? `<p style="color:var(--red-accent);margin-top:4px;">✗ Your anion (${esc(anion)}) was incorrect.</p>` : ''}
+            ${offlinePill}
+          </div>
+        </div>`;
+    } catch (err) {
+      box.innerHTML = `<div class="id-result-card incorrect">
+        <div class="id-result-icon">❌</div>
+        <div class="id-result-text"><h3>Save Error</h3><p>${esc(err.message)}</p></div>
+      </div>`;
+    }
+  }
+
+  /* ══════════════════════════════════════
+     UTILS
+  ══════════════════════════════════════ */
+  function esc(s) {
+    const d = document.createElement('div');
+    d.textContent = s == null ? '' : String(s);
+    return d.innerHTML;
+  }
+
+  /* ══════════════════════════════════════
+     INORGANIC EXAMINER TIPS & TIMER HANDLERS
+  ══════════════════════════════════════ */
+  window.openExaminerTipsModal = function() {
+    const modal = document.getElementById('examinerTipsModal');
+    if (modal) modal.style.display = 'flex';
+  };
+  window.closeExaminerTipsModal = function() {
+    const modal = document.getElementById('examinerTipsModal');
+    if (modal) modal.style.display = 'none';
+  };
+
+  /* 45-Minute KCSE Exam Countdown Timer */
+  let timerInterval = null;
+  let timerSeconds = 45 * 60;
+  let isTimerRunning = false;
+
+  window.toggleExamTimer = function() {
+    const btn = document.getElementById('examTimerBtn');
+    const display = document.getElementById('timerDisplay');
+
+    if (isTimerRunning) {
+      clearInterval(timerInterval);
+      isTimerRunning = false;
+      if (btn) btn.innerHTML = '⏱️ Resume 45-Min Timer';
+      if (display) display.style.color = 'var(--text-muted)';
+    } else {
+      isTimerRunning = true;
+      if (btn) btn.innerHTML = '⏸️ Pause Exam Timer';
+      
+      timerInterval = setInterval(() => {
+        if (timerSeconds <= 0) {
+          clearInterval(timerInterval);
+          isTimerRunning = false;
+          alert('⏰ KCSE 45-Minute Exam Time is UP! Submitting your examination booklet now...');
+          submitIdentification();
+          return;
+        }
+
+        timerSeconds--;
+        const mins = Math.floor(timerSeconds / 60);
+        const secs = timerSeconds % 60;
+        const formatted = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+        if (display) {
+          display.textContent = `⏱️ ${formatted}`;
+          if (timerSeconds < 300) {
+            display.style.color = 'var(--red-accent)';
+            display.style.fontWeight = '800';
+          } else {
+            display.style.color = 'var(--purple-accent)';
+          }
+        }
+      }, 1000);
+    }
+  };
+
+  /* Web Audio Synthesizers for Inorganic Reactions */
+  let audioCtx = null;
+  let isSoundEnabled = true;
+
+  function initAudio() {
+    if (!audioCtx) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (AudioContext) audioCtx = new AudioContext();
+    }
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+  }
+
+  window.toggleSound = function() {
+    isSoundEnabled = !isSoundEnabled;
+    const btn = document.getElementById('soundToggleBtn');
+    if (btn) btn.innerHTML = isSoundEnabled ? '🔊 Sound ON' : '🔇 Mute';
+  };
+
+  function playFlameSound() {
+    if (!isSoundEnabled) return;
+    initAudio();
+    if (!audioCtx) return;
+    try {
+      const bufferSize = audioCtx.sampleRate * 0.8;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (audioCtx.sampleRate * 0.25));
+      }
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = buffer;
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(350, audioCtx.currentTime);
+      filter.frequency.exponentialRampToValueAtTime(140, audioCtx.currentTime + 0.7);
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(0.35, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.75);
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
+      noise.start();
+    } catch(e) {}
+  }
+
+  function playDecrepitationSound() {
+    if (window.QualitativeBenchCore && typeof QualitativeBenchCore.playDecrepitationSound === 'function') {
+      QualitativeBenchCore.playDecrepitationSound();
+      return;
+    }
+    if (!isSoundEnabled) return;
+    initAudio();
+    if (!audioCtx) return;
+    try {
+      const now = audioCtx.currentTime;
+      for (let i = 0; i < 9; i++) {
+        const popTime = now + (i * 0.045) + (Math.random() * 0.025);
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const filter = audioCtx.createBiquadFilter();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(1000 + Math.random() * 1500, popTime);
+        osc.frequency.exponentialRampToValueAtTime(150, popTime + 0.025);
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(1500, popTime);
+        gain.gain.setValueAtTime(0.2, popTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, popTime + 0.03);
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(popTime);
+        osc.stop(popTime + 0.035);
+      }
+    } catch(e) {}
+  }
+
+  function playSplintRelightSound() {
+    if (window.QualitativeBenchCore && typeof QualitativeBenchCore.playSplintRelightSound === 'function') {
+      QualitativeBenchCore.playSplintRelightSound();
+      return;
+    }
+    if (!isSoundEnabled) return;
+    initAudio();
+    if (!audioCtx) return;
+    try {
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const oscGain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(180, now);
+      osc.frequency.exponentialRampToValueAtTime(45, now + 0.12);
+      oscGain.gain.setValueAtTime(0.35, now);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+      osc.connect(oscGain);
+      oscGain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.15);
+    } catch(e) {}
+  }
+
+  function playDropletSizzleSound() {
+    if (window.QualitativeBenchCore && typeof QualitativeBenchCore.playDropletSizzleSound === 'function') {
+      QualitativeBenchCore.playDropletSizzleSound();
+      return;
+    }
+    if (!isSoundEnabled) return;
+    initAudio();
+    if (!audioCtx) return;
+    try {
+      const now = audioCtx.currentTime;
+      const bufferSize = Math.floor(audioCtx.sampleRate * 0.35);
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (audioCtx.sampleRate * 0.1));
+      }
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = buffer;
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'highpass';
+      filter.frequency.setValueAtTime(3200, now);
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.exponentialRampToValueAtTime(0.005, now + 0.3);
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
+      noise.start(now);
+    } catch(e) {}
+  }
+
+  function playEffervescenceSound() {
+    if (!isSoundEnabled) return;
+    initAudio();
+    if (!audioCtx) return;
+    try {
+      const bufferSize = audioCtx.sampleRate * 1.2;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * (0.3 + 0.7 * Math.sin(i / 120));
+      }
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = buffer;
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'highpass';
+      filter.frequency.setValueAtTime(2200, audioCtx.currentTime);
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1.1);
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
+      noise.start();
+    } catch(e) {}
+  }
+
+  function playDropSplashSound(isExcess = false) {
+    if (!isSoundEnabled) return;
+    initAudio();
+    if (!audioCtx) return;
+
+    // 1. Subtle pipette bulb squeeze click at t=0
+    try {
+      if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
+      const now = audioCtx.currentTime;
+      const squeezeOsc = audioCtx.createOscillator();
+      const squeezeGain = audioCtx.createGain();
+      squeezeOsc.type = 'sine';
+      squeezeOsc.frequency.setValueAtTime(360, now);
+      squeezeOsc.frequency.exponentialRampToValueAtTime(180, now + 0.035);
+      squeezeGain.gain.setValueAtTime(0.04, now);
+      squeezeGain.gain.exponentialRampToValueAtTime(0.001, now + 0.038);
+      squeezeOsc.connect(squeezeGain);
+      squeezeGain.connect(audioCtx.destination);
+      squeezeOsc.start(now);
+      squeezeOsc.stop(now + 0.04);
+    } catch(e) {}
+
+    // Helper: High-fidelity acoustic liquid droplet impact synthesis
+    function triggerSingleDropSplash(pitchBase = 780, volume = 0.28) {
+      if (!isSoundEnabled || !audioCtx) return;
+      try {
+        if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
+        const t = audioCtx.currentTime;
+
+        // A. Minnaert Bubble Cavity Resonance (organic "bloop / plop" upward sweep)
+        const bubbleOsc = audioCtx.createOscillator();
+        const bubbleGain = audioCtx.createGain();
+        bubbleOsc.type = 'sine';
+        bubbleOsc.frequency.setValueAtTime(pitchBase, t);
+        bubbleOsc.frequency.exponentialRampToValueAtTime(pitchBase * 2.35, t + 0.046);
+
+        bubbleGain.gain.setValueAtTime(volume, t);
+        bubbleGain.gain.exponentialRampToValueAtTime(0.001, t + 0.054);
+
+        bubbleOsc.connect(bubbleGain);
+        bubbleGain.connect(audioCtx.destination);
+        bubbleOsc.start(t);
+        bubbleOsc.stop(t + 0.058);
+
+        // B. Surface Tension Rupture Transient Pop (High-Frequency Impact)
+        const popOsc = audioCtx.createOscillator();
+        const popGain = audioCtx.createGain();
+        popOsc.type = 'triangle';
+        popOsc.frequency.setValueAtTime(3200, t);
+        popOsc.frequency.exponentialRampToValueAtTime(1200, t + 0.012);
+
+        popGain.gain.setValueAtTime(volume * 0.5, t);
+        popGain.gain.exponentialRampToValueAtTime(0.001, t + 0.015);
+
+        popOsc.connect(popGain);
+        popGain.connect(audioCtx.destination);
+        popOsc.start(t);
+        popOsc.stop(t + 0.018);
+
+        // C. Glass Vessel Resonant Body Tone (Faint organic test-tube ring)
+        const glassOsc = audioCtx.createOscillator();
+        const glassGain = audioCtx.createGain();
+        glassOsc.type = 'sine';
+        glassOsc.frequency.setValueAtTime(1550, t);
+
+        glassGain.gain.setValueAtTime(volume * 0.16, t);
+        glassGain.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
+
+        glassOsc.connect(glassGain);
+        glassGain.connect(audioCtx.destination);
+        glassOsc.start(t);
+        glassOsc.stop(t + 0.075);
+      } catch(e) {}
+    }
+
+    // 2. Schedule droplet impact at 350ms (synchronously matches 0.36s visual drop impact)
+    setTimeout(() => {
+      triggerSingleDropSplash(780, 0.28);
+    }, 350);
+
+    // If excess reagent added, schedule secondary and tertiary trailing droplets
+    if (isExcess) {
+      setTimeout(() => {
+        triggerSingleDropSplash(920, 0.22);
+      }, 480);
+      setTimeout(() => {
+        triggerSingleDropSplash(1060, 0.16);
+      }, 590);
+    }
+  }
+
+  /* Systematic Flowchart Handler */
+  let currentFlowTab = 'cations';
+  window.openFlowchartModal = function() {
+    document.getElementById('flowchartModal').style.display = 'flex';
+    renderFlowchart(currentFlowTab);
+  };
+  window.closeFlowchartModal = function() {
+    document.getElementById('flowchartModal').style.display = 'none';
+  };
+  window.switchFlowTab = function(tab) {
+    currentFlowTab = tab;
+    const btnCations = document.getElementById('tabFlowCations');
+    const btnAnions = document.getElementById('tabFlowAnions');
+    if (btnCations) btnCations.style.background = tab === 'cations' ? 'var(--blue-bg)' : 'transparent';
+    if (btnAnions) btnAnions.style.background = tab === 'anions' ? 'var(--blue-bg)' : 'transparent';
+    renderFlowchart(tab);
+  };
+
+  function renderFlowchart(tab) {
+    const container = document.getElementById('flowchartContent');
+    if (!container) return;
+    if (tab === 'cations') {
+      container.innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <div style="background:var(--card-bg); padding:14px 18px; border-radius:12px; border-left:4px solid var(--blue-accent);">
+            <b style="color:var(--blue-accent); font-size:0.95rem;">Step 1: Add 2M NaOH(aq) dropwise, then in excess</b>
+            <div style="margin-top:8px; display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px;">
+              <div style="background:var(--bg-dark); padding:10px; border-radius:8px; border:1px solid var(--card-border);">
+                <span style="color:var(--amber-accent); font-weight:700;">No ppt + Heat:</span> Pungent gas turns damp red litmus blue → <b>NH₄⁺</b>
+              </div>
+              <div style="background:var(--bg-dark); padding:10px; border-radius:8px; border:1px solid var(--card-border);">
+                <span style="color:var(--blue-accent); font-weight:700;">Blue ppt:</span> Insoluble in excess → <b>Cu²⁺</b>
+              </div>
+              <div style="background:var(--bg-dark); padding:10px; border-radius:8px; border:1px solid var(--card-border);">
+                <span style="color:var(--green-accent); font-weight:700;">Green ppt:</span> Insoluble in excess → <b>Fe²⁺</b>
+              </div>
+              <div style="background:var(--bg-dark); padding:10px; border-radius:8px; border:1px solid var(--card-border);">
+                <span style="color:#B45309; font-weight:700;">Red-Brown ppt:</span> Insoluble in excess → <b>Fe³⁺</b>
+              </div>
+              <div style="background:var(--bg-dark); padding:10px; border-radius:8px; border:1px solid var(--card-border);">
+                <span style="color:var(--text-main); font-weight:700;">White ppt (insoluble in excess):</span> → <b>Ca²⁺</b>
+              </div>
+              <div style="background:var(--bg-dark); padding:10px; border-radius:8px; border:1px solid var(--card-border); grid-column:span 2;">
+                <span style="color:var(--purple-accent); font-weight:700;">White ppt SOLUBLE in excess (Amphoteric):</span> → Suspect <b>Zn²⁺, Al³⁺, Pb²⁺</b>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:var(--card-bg); padding:14px 18px; border-radius:12px; border-left:4px solid var(--purple-accent);">
+            <b style="color:var(--purple-accent); font-size:0.95rem;">Step 2: Differentiate Amphoteric Cations (Zn²⁺, Al³⁺, Pb²⁺) using Dilute NH₃(aq)</b>
+            <div style="margin-top:8px; display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:10px;">
+              <div style="background:var(--bg-dark); padding:10px; border-radius:8px; border:1px solid var(--card-border);">
+                <span style="color:var(--green-accent); font-weight:700;">White ppt SOLUBLE in excess NH₃:</span> Confirms <b>Zn²⁺</b>
+              </div>
+              <div style="background:var(--bg-dark); padding:10px; border-radius:8px; border:1px solid var(--card-border);">
+                <span style="color:var(--red-accent); font-weight:700;">White ppt INSOLUBLE in excess NH₃:</span> Suspect <b>Al³⁺</b> or <b>Pb²⁺</b>
+              </div>
+            </div>
+          </div>
+
+          <div style="background:var(--card-bg); padding:14px 18px; border-radius:12px; border-left:4px solid var(--amber-accent);">
+            <b style="color:var(--amber-accent); font-size:0.95rem;">Step 3: Confirmatory Test for Pb²⁺ vs Al³⁺ using KI(aq) or HCl(aq)</b>
+            <div style="margin-top:8px; display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:10px;">
+              <div style="background:var(--bg-dark); padding:10px; border-radius:8px; border:1px solid var(--card-border);">
+                <span style="color:var(--amber-accent); font-weight:700;">Add KI(aq):</span> Bright canary-yellow ppt (PbI₂) dissolving on heating to golden sparkles → Confirms <b>Pb²⁺</b>
+              </div>
+              <div style="background:var(--bg-dark); padding:10px; border-radius:8px; border:1px solid var(--card-border);">
+                <span style="color:var(--text-muted); font-weight:700;">Add KI(aq):</span> No precipitate formed → Confirms <b>Al³⁺</b>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    } else {
+      container.innerHTML = `
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <div style="background:var(--card-bg); padding:14px 18px; border-radius:12px; border-left:4px solid var(--blue-accent);">
+            <b style="color:var(--blue-accent); font-size:0.95rem;">Test A: Carbonate Ion (CO₃²⁻)</b>
+            <p style="margin:4px 0 0 0; font-size:0.84rem; color:var(--text-muted);">Add dilute HCl: Effervescence of a colorless, odorless gas that turns calcium hydroxide (limewater) milky confirms <b>CO₃²⁻</b>.</p>
+          </div>
+          <div style="background:var(--card-bg); padding:14px 18px; border-radius:12px; border-left:4px solid var(--cyan-accent, #06B6D4);">
+            <b style="color:var(--cyan-accent, #06B6D4); font-size:0.95rem;">Test B: Sulfite Ion (SO₃²⁻)</b>
+            <p style="margin:4px 0 0 0; font-size:0.84rem; color:var(--text-muted);">Add dilute HCl: Effervescence of a choking, pungent gas (SO₂) that turns filter paper soaked in acidified potassium dichromate(VI) (K₂Cr₂O₇) from orange to green confirms <b>SO₃²⁻</b>. BaCl₂(aq) gives a white ppt of BaSO₃ that dissolves in dilute HCl.</p>
+          </div>
+          <div style="background:var(--card-bg); padding:14px 18px; border-radius:12px; border-left:4px solid var(--green-accent);">
+            <b style="color:var(--green-accent); font-size:0.95rem;">Test C: Sulfate Ion (SO₄²⁻)</b>
+            <p style="margin:4px 0 0 0; font-size:0.84rem; color:var(--text-muted);">Acidify with dilute HCl, then add BaCl₂(aq): Dense white precipitate of barium sulfate (BaSO₄) completely insoluble in dilute HCl confirms <b>SO₄²⁻</b>.</p>
+          </div>
+          <div style="background:var(--card-bg); padding:14px 18px; border-radius:12px; border-left:4px solid var(--purple-accent);">
+            <b style="color:var(--purple-accent); font-size:0.95rem;">Test D: Halide Ions (Cl⁻, Br⁻, I⁻) via Acidified AgNO₃(aq)</b>
+            <div style="margin-top:8px; display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px;">
+              <div style="background:var(--bg-dark); padding:10px; border-radius:8px; border:1px solid var(--card-border);">
+                <span style="color:#F8FAFC; font-weight:700;">White ppt (AgCl):</span> Readily dissolves in dilute aqueous NH₃ → Confirms <b>Cl⁻</b>
+              </div>
+              <div style="background:var(--bg-dark); padding:10px; border-radius:8px; border:1px solid var(--card-border);">
+                <span style="color:#FEF08A; font-weight:700;">Pale Cream ppt (AgBr):</span> Sparingly soluble in dilute NH₃, soluble in conc. NH₃ → Confirms <b>Br⁻</b>
+              </div>
+              <div style="background:var(--bg-dark); padding:10px; border-radius:8px; border:1px solid var(--card-border);">
+                <span style="color:#FACC15; font-weight:700;">Bright Yellow ppt (AgI):</span> Completely insoluble in both dilute and conc. NH₃ → Confirms <b>I⁻</b>
+              </div>
+            </div>
+          </div>
+          <div style="background:var(--card-bg); padding:14px 18px; border-radius:12px; border-left:4px solid var(--amber-accent);">
+            <b style="color:var(--amber-accent); font-size:0.95rem;">Test E: Nitrate Ion (NO₃⁻) — Brown Ring Test</b>
+            <p style="margin:4px 0 0 0; font-size:0.84rem; color:var(--text-muted);">Add freshly prepared FeSO₄(aq), slant the test tube, and carefully trickle concentrated H₂SO₄ down the side: A brown ring at the liquid-liquid interface confirms <b>NO₃⁻</b>.</p>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  /* KNEC Auto-Marking Evaluator Handler */
+  window.evaluateKnecMarking = function() {
+    let totalScore = 0;
+    const feedbackItems = [];
+    const salt = SALTS[currentSaltKey] || {};
+    let totalCiPenalties = 0;
+    let totalChargePenalties = 0;
+    let totalTabooPenalties = 0;
+
+    TESTS.forEach((test, idx) => {
+      const st = testStates[test.key] || {};
+      const obsText = (st.obsText || '').trim();
+      const infText = (st.infText || '').trim();
+
+      const obsResult = evaluateObservationAccuracy(test, salt, obsText);
+      const infResult = evaluateInferenceAccuracy(test, salt, infText, obsText);
+
+      if (obsResult.tabooPenalty) totalTabooPenalties += 0.5;
+      if (infResult.ciPenalty) totalCiPenalties += infResult.ciPenalty;
+      if (infResult.chargePenalty) totalChargePenalties += infResult.chargePenalty;
+
+      const testMark = parseFloat((obsResult.score + infResult.score).toFixed(2));
+      totalScore += testMark;
+
+      feedbackItems.push({
+        testLabel: test.label,
+        testKey: test.key,
+        stepLetter: String.fromCharCode(97 + idx),
+        score: testMark,
+        maxItemScore: 1.10,
+        obsScore: obsResult.score,
+        infScore: infResult.score,
+        obsText: obsText || '(None recorded)',
+        infText: infText || '(None recorded)',
+        expectedObs: obsResult.expectedText,
+        obsNotes: obsResult.notes,
+        obsWarnings: obsResult.warnings,
+        infNotes: infResult.notes,
+        ciPenalty: infResult.ciPenalty,
+        chargePenalty: infResult.chargePenalty,
+        tabooPenalty: obsResult.tabooPenalty
+      });
+    });
+
+    const finalScore = Math.min(10.0, Math.max(0, totalScore)).toFixed(1);
+    openKnecEvalModal(finalScore, feedbackItems, {
+      totalCiPenalties: parseFloat(totalCiPenalties.toFixed(1)),
+      totalChargePenalties: parseFloat(totalChargePenalties.toFixed(1)),
+      totalTabooPenalties: parseFloat(totalTabooPenalties.toFixed(1))
+    });
+  };
+
+  function openKnecEvalModal(finalScore, feedbackItems, penalties = {}) {
+    const q2Score = Math.min(15.0, Math.round((parseFloat(finalScore) * 1.5) * 10) / 10);
+    window.currentQualScore = q2Score;
+    if (typeof window !== 'undefined' && window.parent && window.parent !== window) {
+      try {
+        window.parent.postMessage({
+          type: 'VLK_Q_SCORED',
+          qNum: 2,
+          score: q2Score,
+          details: { finalScore, feedbackItems, penalties }
+        }, '*');
+      } catch(e) {}
+    }
+
+    const modal = document.getElementById('knecEvalModal');
+    if (modal) modal.style.display = 'flex';
+    const resBox = document.getElementById('knecEvalResults');
+    if (!resBox) return;
+
+    const numScore = parseFloat(finalScore);
+    const grade = numScore >= 8.5 ? 'A (Excellent KCSE Distinction Standard)' 
+                : numScore >= 6.5 ? 'B (Good Practical Recording)' 
+                : numScore >= 4.5 ? 'C (Average Practical Competence)' 
+                : 'D (Below KCSE Standard - Needs Revision)';
+    const gradeColor = numScore >= 8.5 ? 'var(--green-accent)' 
+                     : numScore >= 6.5 ? 'var(--blue-accent)' 
+                     : numScore >= 4.5 ? 'var(--amber-accent)' 
+                     : 'var(--red-accent)';
+
+    resBox.innerHTML = `
+      <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:14px; padding:20px; margin-bottom:20px; text-align:center;">
+        <div style="font-size:0.82rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.06em; font-weight:800;">Official KNEC Paper 3 Question 2 Performance</div>
+        <div style="display:flex; align-items:center; justify-content:center; gap:24px; margin:10px 0;">
+          <div>
+            <div style="font-family:var(--font-heading); font-size:2.6rem; font-weight:800; color:${gradeColor}; line-height:1;">${finalScore} <span style="font-size:1.3rem; color:var(--text-muted); font-weight:600;">/ 10.0</span></div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Raw Rubric Score</div>
+          </div>
+          <div style="width:1px; height:44px; background:var(--card-border);"></div>
+          <div>
+            <div style="font-family:var(--font-heading); font-size:2.6rem; font-weight:800; color:var(--purple-accent); line-height:1;">${q2Score.toFixed(1)} <span style="font-size:1.3rem; color:var(--text-muted); font-weight:600;">/ 15.0</span></div>
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">KNEC Scaled Q2 Marks</div>
+          </div>
+        </div>
+        <div style="display:inline-block; font-size:0.88rem; font-weight:800; color:${gradeColor}; background:var(--card-bg); padding:4px 14px; border-radius:20px; border:1px solid var(--card-border);">${grade}</div>
+
+        <!-- Penalty Badges Row -->
+        <div style="display:flex; justify-content:center; gap:10px; margin-top:14px; flex-wrap:wrap;">
+          <span style="font-size:0.76rem; font-weight:700; padding:4px 10px; border-radius:6px; background:${penalties.totalCiPenalties > 0 ? 'var(--red-bg)' : 'var(--card-bg)'}; color:${penalties.totalCiPenalties > 0 ? 'var(--red-accent)' : 'var(--text-muted)'}; border:1px solid var(--card-border);">
+            ${penalties.totalCiPenalties > 0 ? '🚨' : '✅'} Contradictory Ion Deductions: -${penalties.totalCiPenalties || 0} Mk
+          </span>
+          <span style="font-size:0.76rem; font-weight:700; padding:4px 10px; border-radius:6px; background:${penalties.totalChargePenalties > 0 ? 'var(--amber-bg)' : 'var(--card-bg)'}; color:${penalties.totalChargePenalties > 0 ? 'var(--amber-accent)' : 'var(--text-muted)'}; border:1px solid var(--card-border);">
+            ${penalties.totalChargePenalties > 0 ? '⚠️' : '✅'} Missing Charge Deductions: -${penalties.totalChargePenalties || 0} Mk
+          </span>
+          <span style="font-size:0.76rem; font-weight:700; padding:4px 10px; border-radius:6px; background:${penalties.totalTabooPenalties > 0 ? 'var(--red-bg)' : 'var(--card-bg)'}; color:${penalties.totalTabooPenalties > 0 ? 'var(--red-accent)' : 'var(--text-muted)'}; border:1px solid var(--card-border);">
+            ${penalties.totalTabooPenalties > 0 ? '🚨' : '✅'} Taboo Phrase Deductions: -${penalties.totalTabooPenalties || 0} Mk
+          </span>
+        </div>
+      </div>
+
+      <!-- Itemized Rubrics List -->
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        ${feedbackItems.map(item => `
+          <div style="background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; padding:14px 16px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+              <div>
+                <span style="display:inline-block; font-size:0.75rem; font-weight:800; background:var(--card-bg-hover); padding:2px 6px; border-radius:4px; margin-right:6px;">(${item.stepLetter})</span>
+                <b style="color:var(--heading-color); font-size:0.88rem;">${item.testLabel}</b>
+              </div>
+              <span style="font-family:var(--font-mono); font-size:0.84rem; font-weight:800; color:${item.score >= 0.8 ? 'var(--green-accent)' : item.score >= 0.4 ? 'var(--blue-accent)' : 'var(--red-accent)'}; white-space:nowrap;">${item.score.toFixed(2)} / ${item.maxItemScore.toFixed(2)} Mks</span>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:0.8rem;">
+              <!-- Observations Breakdown -->
+              <div style="background:var(--card-bg-hover); padding:10px 12px; border-radius:8px;">
+                <div style="display:flex; justify-content:space-between; font-weight:800; color:var(--text-main); margin-bottom:4px;">
+                  <span>Observations:</span>
+                  <span style="font-family:var(--font-mono); color:var(--blue-accent);">${item.obsScore.toFixed(2)} / 0.55 Mk</span>
+                </div>
+                <div style="color:var(--text-secondary); margin-bottom:4px;"><b>Candidate:</b> "${item.obsText}"</div>
+                <div style="color:var(--text-muted); font-size:0.76rem;"><b>Expected:</b> ${item.expectedObs}</div>
+                ${item.obsNotes.length > 0 ? `
+                  <ul style="margin:6px 0 0 14px; padding:0; font-size:0.75rem; color:var(--text-muted);">
+                    ${item.obsNotes.map(n => `<li style="margin-bottom:2px;">${n}</li>`).join('')}
+                  </ul>` : ''}
+                ${item.obsWarnings.length > 0 ? `
+                  <div style="margin-top:6px; font-size:0.75rem; color:var(--amber-accent);">
+                    ${item.obsWarnings.map(w => `<div>${w}</div>`).join('')}
+                  </div>` : ''}
+              </div>
+
+              <!-- Inferences Breakdown -->
+              <div style="background:var(--card-bg-hover); padding:10px 12px; border-radius:8px;">
+                <div style="display:flex; justify-content:space-between; font-weight:800; color:var(--text-main); margin-bottom:4px;">
+                  <span>Inferences / Deductions:</span>
+                  <span style="font-family:var(--font-mono); color:var(--blue-accent);">${item.infScore.toFixed(2)} / 0.55 Mk</span>
+                </div>
+                <div style="color:var(--text-secondary); margin-bottom:4px;"><b>Candidate:</b> "${item.infText}"</div>
+                ${item.infNotes.length > 0 ? `
+                  <ul style="margin:6px 0 0 14px; padding:0; font-size:0.75rem; color:var(--text-muted);">
+                    ${item.infNotes.map(n => `<li style="margin-bottom:2px;">${n}</li>`).join('')}
+                  </ul>` : ''}
+            </div>
+
+            ${(() => {
+              if (window.KnecPedagogy) {
+                const rat = KnecPedagogy.getExaminerRationale({
+                  testLabel: item.testLabel,
+                  stepLetter: item.stepLetter,
+                  score: item.score,
+                  maxScore: item.maxItemScore,
+                  candidateText: `${item.obsText} | ${item.infText}`,
+                  expectedText: `${item.expectedObs}`,
+                  testKey: item.testKey,
+                  penalties: {
+                    tabooPenalty: item.tabooPenalty,
+                    chargePenalty: item.chargePenalty,
+                    ciPenalty: item.ciPenalty
+                  },
+                  type: 'inorganic'
+                });
+                return `
+                  <div class="examiner-rationale-box ${rat.isFullMark ? 'full-marks' : ''}">
+                    <div class="examiner-rationale-header">
+                      <span>👨‍🏫 KNEC Examiner Rationale &bull; ${rat.knecClause}</span>
+                      <span>${rat.isFullMark ? '✅ Satisfied' : '⚠️ Deduction'}</span>
+                    </div>
+                    <div class="examiner-rationale-text">${rat.rationale}</div>
+                    ${rat.pedagogicalTip ? `<div class="examiner-rationale-tip">💡 Revision Pointer: ${rat.pedagogicalTip}</div>` : ''}
+                  </div>
+                `;
+              }
+              return '';
+            })()}
+          </div>
+        `).join('')}
+      </div>
+
+      <div style="text-align:right; margin-top:16px;">
+        <button class="btn-primary-solid" onclick="closeKnecEvalModal()" style="padding:8px 24px;">Close Mark Sheet</button>
+      </div>
+    `;
+  }
+
+  window.closeKnecEvalModal = function() {
+    const modal = document.getElementById('knecEvalModal');
+    if (modal) modal.style.display = 'none';
+  };
+
+  function initAssignmentBanner() {
+    if (assignmentId) {
+      const banner = document.getElementById('assignmentHeaderBanner');
+      const bannerTitle = document.getElementById('assignBannerTitle');
+      const bannerDue = document.getElementById('assignBannerDue');
+      if (banner) banner.style.display = 'flex';
+      if (typeof Assignments !== 'undefined' && Assignments.getMine) {
+        Assignments.getMine().then(data => {
+          const list = data.assignments || [];
+          const aId = parseInt(assignmentId, 10);
+          const match = list.find(a => a.id === aId);
+          if (match) {
+            if (bannerTitle) bannerTitle.textContent = match.title + (match.instructions ? ` — ${match.instructions}` : '');
+            if (bannerDue && match.due_date) {
+              bannerDue.textContent = `Due ${new Date(match.due_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+            }
+          }
+        }).catch(err => console.warn('Could not fetch qualitative assignment banner info:', err.message));
+      }
+    }
+  }
+
+  /* Boot */
+  if (typeof document !== 'undefined' && document.getElementById('testGrid')) {
+    newSample();
+    initAssignmentBanner();
+  }
+
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+      SALTS,
+      TESTS,
+      parseInferredIons,
+      detectContradictoryIons,
+      evaluateObservationAccuracy,
+      evaluateInferenceAccuracy
+    };
+  }

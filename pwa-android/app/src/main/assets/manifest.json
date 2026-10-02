@@ -1,0 +1,103 @@
+{
+  "id": "virtulab-kenya-app",
+  "short_name": "VirtuLab",
+  "name": "VirtuLab Kenya — KCSE Chemistry Virtual Laboratory",
+  "description": "Offline-First KCSE Chemistry Paper 3 virtual practical laboratory and diagnostic assessment simulator for Kenyan secondary school learners.",
+  "lang": "en-KE",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/shared/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "/shared/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "/shared/icon-512-maskable.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    }
+  ],
+  "start_url": "/student/home.html",
+  "scope": "/",
+  "background_color": "#0F172A",
+  "theme_color": "#0F172A",
+  "display": "standalone",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "minimal-ui",
+    "browser"
+  ],
+  "orientation": "any",
+  "prefer_related_applications": false,
+  "categories": [
+    "education",
+    "science"
+  ],
+  "shortcuts": [
+    {
+      "name": "Volumetric Titration",
+      "short_name": "Titration",
+      "description": "Perform KCSE Acid-Base & Redox Titration Practical",
+      "url": "/student/lab.html",
+      "icons": [{ "src": "/shared/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Qualitative Salt Analysis",
+      "short_name": "Qualitative",
+      "description": "Perform Systematic Cation & Anion Identification",
+      "url": "/student/qualitative.html",
+      "icons": [{ "src": "/shared/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Reaction Rates & Kinetics",
+      "short_name": "Rates",
+      "description": "Disappearing Cross & Collision Kinetics",
+      "url": "/student/rates.html",
+      "icons": [{ "src": "/shared/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Thermochemistry & Energy",
+      "short_name": "Energy",
+      "description": "Enthalpies of Solution & Neutralization",
+      "url": "/student/energy.html",
+      "icons": [{ "src": "/shared/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Organic Chemistry",
+      "short_name": "Organic",
+      "description": "Functional Groups & Unsaturation Tests",
+      "url": "/student/organic.html",
+      "icons": [{ "src": "/shared/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Gas Preparation",
+      "short_name": "Gas Prep",
+      "description": "Preparation, Drying & Collection of Gases",
+      "url": "/student/gas_prep.html",
+      "icons": [{ "src": "/shared/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Solubility Curves",
+      "short_name": "Solubility",
+      "description": "Solubility Determination & Crystallization Curves",
+      "url": "/student/solubility.html",
+      "icons": [{ "src": "/shared/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "KCSE Paper 3 Mock Exams",
+      "short_name": "Mock Exams",
+      "description": "Standardized 40-Mark Paper 3 Mock Practical Examinations",
+      "url": "/student/mock_exams.html",
+      "icons": [{ "src": "/shared/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

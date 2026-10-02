@@ -1,0 +1,581 @@
+/* ============================================================
+   VirtuLab Kenya — Mobile & Desktop PWA Installer Styles
+   Install Prompts, iOS Guide, Network Status & Storage Inspector
+   ============================================================ */
+
+/* ── 1. FLOATING INSTALL BANNER ── */
+.vlk-pwa-banner {
+  position: fixed;
+  bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%) translateY(140%);
+  width: calc(100% - 24px);
+  max-width: 440px;
+  background: rgba(15, 23, 42, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 242, 254, 0.35);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 24px rgba(2, 132, 199, 0.25);
+  padding: 14px 16px;
+  z-index: 100000;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #F8FAFC;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+}
+
+@media (min-width: 769px) {
+  .vlk-pwa-banner {
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+.vlk-pwa-banner.active {
+  transform: translateX(-50%) translateY(0);
+}
+
+.vlk-pwa-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.vlk-pwa-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.vlk-pwa-details {
+  flex: 1;
+}
+
+.vlk-pwa-title {
+  font-weight: 800;
+  font-size: 0.96rem;
+  color: #FFFFFF;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vlk-pwa-desc {
+  font-size: 0.8rem;
+  color: #94A3B8;
+  margin: 2px 0 0 0;
+  line-height: 1.35;
+}
+
+.vlk-pwa-close {
+  background: transparent;
+  border: none;
+  color: #64748B;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  border-radius: 6px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.vlk-pwa-close:hover {
+  color: #F8FAFC;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.vlk-pwa-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.vlk-pwa-btn-install {
+  flex: 1;
+  background: linear-gradient(135deg, #0284C7 0%, #00F2FE 100%);
+  color: #0F172A;
+  font-weight: 800;
+  font-size: 0.86rem;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.vlk-pwa-btn-install:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0, 242, 254, 0.4);
+}
+
+.vlk-pwa-btn-dismiss {
+  background: rgba(255, 255, 255, 0.08);
+  color: #CBD5E1;
+  font-weight: 600;
+  font-size: 0.82rem;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.vlk-pwa-btn-dismiss:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #FFFFFF;
+}
+
+/* ── 2. LIVE ONLINE / OFFLINE STATUS TOAST ── */
+.vlk-network-toast {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100px);
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(12px);
+  border-radius: 100px;
+  padding: 8px 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  z-index: 1000000;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  pointer-events: none;
+  max-width: 90vw;
+  text-align: center;
+}
+
+.vlk-network-toast.active {
+  transform: translateX(-50%) translateY(0);
+}
+
+.vlk-network-toast.offline {
+  border: 1.5px solid #F59E0B;
+  color: #FBBF24;
+}
+
+.vlk-network-toast.online {
+  border: 1.5px solid #10B981;
+  color: #34D399;
+}
+
+/* ── 3. RICH INSTALL MODAL & IOS SHEET ── */
+.vlk-install-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  z-index: 200000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.vlk-install-modal-backdrop.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.vlk-install-modal-card {
+  background: var(--b-surface, #0F172A);
+  color: var(--b-text, #F8FAFC);
+  border: 1.5px solid var(--b-border, #334155);
+  border-radius: 20px;
+  padding: 24px;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+  position: relative;
+  text-align: center;
+  transform: scale(0.95);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.vlk-install-modal-backdrop.active .vlk-install-modal-card {
+  transform: scale(1);
+}
+
+.vlk-perks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 18px 0;
+  text-align: left;
+}
+
+.vlk-perk-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.82rem;
+}
+
+.vlk-perk-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.vlk-ios-step-box {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px dashed #0284C7;
+  border-radius: 12px;
+  padding: 14px;
+  margin: 16px 0;
+  text-align: left;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+/* ── 4. AUTO-UPDATE TOAST ── */
+.vlk-update-toast {
+  position: fixed;
+  bottom: 80px;
+  left: 20px;
+  background: #0284C7;
+  color: #FFFFFF;
+  padding: 12px 18px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 10px 25px rgba(2, 132, 199, 0.4);
+  z-index: 100000;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+/* ── 5. MAIN PAGE DIRECT INSTALL UI COMPONENTS ── */
+
+/* Hero Install Button */
+.btn-acad-install-hero {
+  background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
+  color: #FFFFFF !important;
+  border: 1.5px solid rgba(56, 189, 248, 0.4);
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 22px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-acad-install-hero:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.45);
+  border-color: #38BDF8;
+}
+
+[data-theme="dark"] .btn-acad-install-hero {
+  background: linear-gradient(135deg, #0284C7 0%, #0C4A6E 100%);
+  border-color: rgba(56, 189, 248, 0.5);
+  box-shadow: 0 4px 16px rgba(2, 132, 199, 0.45);
+}
+
+[data-theme="green"] .btn-acad-install-hero {
+  background: linear-gradient(135deg, #059669 0%, #064E3B 100%);
+  border-color: rgba(52, 211, 153, 0.5);
+  box-shadow: 0 4px 16px rgba(5, 150, 105, 0.4);
+}
+
+.install-pill-badge {
+  background: #B8860B;
+  color: #FFFFFF;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 999px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Nav Bar Install Button */
+.btn-acad-install-nav {
+  background: rgba(2, 132, 199, 0.1);
+  border: 1.5px solid #0284C7;
+  color: #0284C7;
+  font-weight: 700;
+  font-size: 0.84rem;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.18s ease;
+}
+
+.btn-acad-install-nav:hover {
+  background: #0284C7;
+  color: #FFFFFF;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+}
+
+[data-theme="dark"] .btn-acad-install-nav {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: #38BDF8;
+  color: #38BDF8;
+}
+
+[data-theme="dark"] .btn-acad-install-nav:hover {
+  background: #38BDF8;
+  color: #0F172A;
+}
+
+[data-theme="green"] .btn-acad-install-nav {
+  background: rgba(52, 211, 153, 0.12);
+  border-color: #10B981;
+  color: #34D399;
+}
+
+[data-theme="green"] .btn-acad-install-nav:hover {
+  background: #10B981;
+  color: #06140B;
+}
+
+/* Dedicated Student Offline Installation Showcase Section */
+.student-offline-section {
+  max-width: 1300px;
+  margin: 40px auto 0;
+  padding: 0 28px;
+}
+
+.student-offline-card {
+  background: linear-gradient(135deg, rgba(11, 37, 69, 0.04) 0%, rgba(2, 132, 199, 0.07) 100%);
+  border: 2px solid var(--acad-border);
+  border-left: 6px solid #0284C7;
+  border-radius: 12px;
+  padding: 36px 32px;
+  box-shadow: var(--shadow-scholarly);
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 32px;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .student-offline-card {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(12, 74, 110, 0.35) 100%);
+  border-color: #1E3A5F;
+  border-left-color: #38BDF8;
+}
+
+[data-theme="green"] .student-offline-card {
+  background: linear-gradient(135deg, rgba(6, 20, 11, 0.95) 0%, rgba(6, 78, 59, 0.35) 100%);
+  border-color: #1E4D2B;
+  border-left-color: #10B981;
+}
+
+.student-offline-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: rgba(2, 132, 199, 0.12);
+  color: #0284C7;
+  border: 1px solid rgba(2, 132, 199, 0.3);
+  padding: 4px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+[data-theme="dark"] .student-offline-badge {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38BDF8;
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+[data-theme="green"] .student-offline-badge {
+  background: rgba(52, 211, 153, 0.15);
+  color: #34D399;
+  border-color: rgba(52, 211, 153, 0.4);
+}
+
+.student-offline-heading {
+  font-family: 'Cinzel', serif;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0 0 10px;
+  line-height: 1.25;
+}
+
+.student-offline-desc {
+  font-size: 0.94rem;
+  color: var(--text-body);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.student-offline-perks-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.student-offline-perk-box {
+  background: var(--acad-paper);
+  border: 1px solid var(--acad-border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.student-offline-perk-box strong {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  display: block;
+}
+
+.student-offline-perk-box span.perk-sub {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+  display: block;
+  margin-top: 2px;
+}
+
+.student-offline-action-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--acad-paper);
+  border: 1.5px solid var(--acad-border);
+  border-radius: 12px;
+  padding: 28px 24px;
+  text-align: center;
+  box-shadow: var(--shadow-scholarly);
+}
+
+.btn-student-install-big {
+  width: 100%;
+  background: linear-gradient(135deg, #0284C7 0%, #00F2FE 100%);
+  color: #0F172A;
+  font-weight: 800;
+  font-size: 1.05rem;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 4px 18px rgba(0, 242, 254, 0.4);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-bottom: 12px;
+}
+
+.btn-student-install-big:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 242, 254, 0.6);
+}
+
+.device-support-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.device-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--acad-paper-subtle);
+  border: 1px solid var(--acad-border);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+@media (max-width: 900px) {
+  .student-offline-card {
+    grid-template-columns: 1fr;
+    padding: 24px 20px;
+  }
+  .student-offline-perks-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .student-offline-section {
+    padding: 0 14px;
+    margin: 24px auto 0;
+  }
+  .student-offline-card {
+    padding: 20px 14px;
+    gap: 18px;
+    border-radius: 10px;
+    border-left-width: 4px;
+  }
+  .student-offline-heading {
+    font-size: 1.3rem;
+    line-height: 1.28;
+    margin-bottom: 8px;
+  }
+  .student-offline-desc {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+  .student-offline-perk-box {
+    padding: 10px 12px;
+  }
+  .student-offline-action-wrap {
+    padding: 18px 12px;
+    border-radius: 10px;
+  }
+  .btn-student-install-big {
+    font-size: 0.94rem;
+    padding: 12px 14px;
+    width: 100%;
+  }
+  .vlk-install-modal-card {
+    padding: 20px 16px;
+    max-width: min(440px, 94vw);
+    border-radius: 14px;
+  }
+  .vlk-pwa-banner {
+    width: calc(100% - 16px);
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    padding: 12px 14px;
+  }
+}

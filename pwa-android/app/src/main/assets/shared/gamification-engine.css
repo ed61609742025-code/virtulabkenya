@@ -1,0 +1,233 @@
+/* ============================================================
+   VirtuLab Kenya — Gamification & Daily Streaks Stylesheet
+   Streaks, XP Progression, Daily Challenges & Celebrations
+   ============================================================ */
+
+/* ── 1. STREAK FLAME & PULSE ANIMATION ── */
+@keyframes flameGlow {
+  0% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.4));
+  }
+  50% {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 12px rgba(239, 68, 68, 0.7));
+  }
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.4));
+  }
+}
+
+.streak-flame-icon {
+  display: inline-block;
+  animation: flameGlow 2s infinite ease-in-out;
+  transform-origin: center bottom;
+}
+
+.streak-pill-interactive {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(239, 68, 68, 0.1));
+  border: 1.5px solid #F59E0B;
+  color: #D97706;
+  padding: 6px 14px;
+  border-radius: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+[data-theme="dark"] .streak-pill-interactive {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(239, 68, 68, 0.15));
+  color: #FBBF24;
+  border-color: #F59E0B;
+}
+
+[data-theme="green"] .streak-pill-interactive {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(245, 158, 11, 0.15));
+  color: #34D399;
+  border-color: #10B981;
+}
+
+.streak-pill-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+}
+
+/* ── 2. XP LEVEL BAR & TIER BADGE ── */
+.gamification-hero-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--b-surface, #FFFFFF);
+  border: 1.5px solid var(--b-border, #E2E8F0);
+  border-radius: 14px;
+  padding: 12px 18px;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow-sm);
+  flex-wrap: wrap;
+}
+
+[data-theme="dark"] .gamification-hero-bar {
+  background: #1E293B;
+  border-color: #334155;
+}
+
+[data-theme="green"] .gamification-hero-bar {
+  background: #0B2518;
+  border-color: #134E34;
+}
+
+.xp-progress-wrap {
+  flex: 1;
+  min-width: 180px;
+}
+
+.xp-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--b-text-muted, #64748B);
+  margin-bottom: 5px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.xp-track {
+  height: 8px;
+  background: var(--b-surface-subtle, #F1F5F9);
+  border-radius: 100px;
+  overflow: hidden;
+  position: relative;
+}
+
+[data-theme="dark"] .xp-track {
+  background: #0F172A;
+}
+
+[data-theme="green"] .xp-track {
+  background: #061910;
+}
+
+.xp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0284C7, #10B981, #F59E0B);
+  border-radius: 100px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.level-badge-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--b-surface-subtle, #F8FAFC);
+  border: 1px solid var(--b-border, #E2E8F0);
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--b-text, #0F172A);
+}
+
+/* ── 3. DAILY CHEMISTRY BITE (MINI-CHALLENGE CARD) ── */
+.daily-challenge-card {
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.08), rgba(139, 92, 246, 0.06));
+  border: 2px solid var(--b-primary, #0284C7);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .daily-challenge-card {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(168, 85, 247, 0.08));
+  border-color: #38BDF8;
+}
+
+[data-theme="green"] .daily-challenge-card {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(245, 158, 11, 0.08));
+  border-color: #10B981;
+}
+
+.daily-challenge-card.completed {
+  border-color: #10B981;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.04));
+}
+
+.daily-tag-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.daily-xp-badge {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid #F59E0B;
+  color: #D97706;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+[data-theme="dark"] .daily-xp-badge {
+  color: #FBBF24;
+}
+
+.daily-timer-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.74rem;
+  color: var(--b-text-muted, #64748B);
+}
+
+/* ── 4. STREAK MILESTONE CELEBRATION TOAST ── */
+.streak-toast {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  background: var(--b-surface, #FFFFFF);
+  border: 2px solid #F59E0B;
+  border-radius: 14px;
+  padding: 14px 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 10000;
+  animation: streakSlideIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  max-width: 320px;
+}
+
+[data-theme="dark"] .streak-toast {
+  background: #1E293B;
+}
+
+[data-theme="green"] .streak-toast {
+  background: #0B2518;
+}
+
+@keyframes streakSlideIn {
+  from {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

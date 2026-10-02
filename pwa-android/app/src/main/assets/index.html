@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0F172A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" type="image/png" href="/shared/icon-192.png">
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.json">
+<title>VirtuLab Kenya — KCSE Chemistry Practical Laboratory</title>
+<meta name="description" content="Virtual chemistry laboratory for Kenyan secondary schools. Practise KCSE Paper 3 volumetric titrations, qualitative analysis, and reaction kinetics offline.">
+
+<script src="/shared/auth-guard.js"></script>
+<script>
+  var t = localStorage.getItem('vlk_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', t);
+</script>
+
+<!-- Clean Modern Typography -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/shared/pwa-installer.css">
+
+<style>
+  :root, [data-theme="light"] {
+    --page-bg: #F8FAFC;
+    --card-bg: #FFFFFF;
+    --card-subtle: #F1F5F9;
+    --card-border: #E2E8F0;
+    --card-border-strong: #CBD5E1;
+    --primary: #0B2545;
+    --primary-hover: #133D6B;
+    --accent: #0284C7;
+    --accent-subtle: rgba(2, 132, 199, 0.08);
+    --gold: #B45309;
+    --gold-subtle: rgba(180, 83, 9, 0.08);
+    --success: #059669;
+    --success-subtle: rgba(5, 150, 105, 0.08);
+    --text-primary: #0F172A;
+    --text-body: #334155;
+    --text-muted: #64748B;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-card: 0 4px 16px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-elevated: 0 12px 32px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+  }
+
+  [data-theme="dark"] {
+    --page-bg: #090E17;
+    --card-bg: #111A2E;
+    --card-subtle: #16223B;
+    --card-border: #1E2D4A;
+    --card-border-strong: #2D4166;
+    --primary: #38BDF8;
+    --primary-hover: #7DD3FC;
+    --accent: #38BDF8;
+    --accent-subtle: rgba(56, 189, 248, 0.12);
+    --gold: #F59E0B;
+    --gold-subtle: rgba(245, 158, 11, 0.15);
+    --success: #10B981;
+    --success-subtle: rgba(16, 185, 129, 0.12);
+    --text-primary: #F8FAFC;
+    --text-body: #CBD5E1;
+    --text-muted: #94A3B8;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-elevated: 0 12px 32px rgba(0, 0, 0, 0.55);
+  }
+
+  [data-theme="green"] {
+    --page-bg: #06140B;
+    --card-bg: #0E2415;
+    --card-subtle: #14331E;
+    --card-border: #1E4D2B;
+    --card-border-strong: #2D6A3E;
+    --primary: #34D399;
+    --primary-hover: #6EE7B7;
+    --accent: #10B981;
+    --accent-subtle: rgba(16, 185, 129, 0.12);
+    --gold: #EAB308;
+    --gold-subtle: rgba(234, 179, 8, 0.15);
+    --success: #34D399;
+    --success-subtle: rgba(52, 211, 153, 0.12);
+    --text-primary: #F0FDF4;
+    --text-body: #C2ECCF;
+    --text-muted: #86C198;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.45);
+    --shadow-elevated: 0 12px 32px rgba(0, 0, 0, 0.6);
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    background-color: var(--page-bg);
+    color: var(--text-primary);
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  /* ── SITE HEADER & NAVIGATION ── */
+  .site-header {
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--card-border);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: var(--shadow-sm);
+  }
+  .nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: inherit;
+  }
+  .logo-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    background: var(--primary);
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.1rem;
+  }
+  [data-theme="dark"] .logo-icon {
+    background: #0284C7;
+    color: #FFFFFF;
+  }
+  [data-theme="green"] .logo-icon {
+    background: #059669;
+    color: #FFFFFF;
+  }
+  .logo-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+  .logo-subtitle {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .nav-item {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-body);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .nav-item:hover {
+    color: var(--accent);
+  }
+
+  .nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* Theme Switcher */
+  .theme-toggle-group {
+    display: flex;
+    background: var(--card-subtle);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 2px;
+    gap: 2px;
+  }
+  .theme-btn {
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .theme-btn.active {
+    background: var(--card-bg);
+    color: var(--text-primary);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--card-border);
+  }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 9px 16px;
+    border-radius: 6px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    border: 1px solid transparent;
+  }
+  .btn-primary {
+    background: var(--primary);
+    color: #FFFFFF;
+  }
+  .btn-primary:hover {
+    background: var(--primary-hover);
+  }
+  [data-theme="dark"] .btn-primary {
+    background: #0284C7;
+    color: #FFFFFF;
+  }
+  [data-theme="dark"] .btn-primary:hover {
+    background: #0369A1;
+  }
+  [data-theme="green"] .btn-primary {
+    background: #059669;
+    color: #FFFFFF;
+  }
+  [data-theme="green"] .btn-primary:hover {
+    background: #047857;
+  }
+
+  .btn-outline {
+    background: var(--card-bg);
+    border-color: var(--card-border-strong);
+    color: var(--text-primary);
+  }
+  .btn-outline:hover {
+    border-color: var(--primary);
+    background: var(--card-subtle);
+  }
+
+  .btn-accent {
+    background: var(--accent);
+    color: #FFFFFF;
+  }
+  .btn-accent:hover {
+    background: #0369A1;
+  }
+
+  /* Mobile Controls */
+  .nav-mobile-btn {
+    display: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    border: 1px solid var(--card-border);
+    background: var(--card-subtle);
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .mobile-nav-drawer {
+    display: none;
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--card-border);
+    padding: 16px;
+  }
+  .mobile-nav-drawer.active {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .mobile-nav-link {
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-decoration: none;
+    background: var(--card-subtle);
+  }
+
+  /* ── HERO SECTION ── */
+  .hero-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 24px 56px;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .curriculum-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent-subtle);
+    border: 1px solid var(--card-border);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+  [data-theme="light"] .curriculum-tag {
+    color: #0369A1;
+  }
+  .hero-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    margin: 0 0 16px;
+  }
+  .hero-title span {
+    color: var(--accent);
+  }
+  .hero-desc {
+    font-size: 1.05rem;
+    color: var(--text-body);
+    line-height: 1.65;
+    margin-bottom: 24px;
+  }
+  .hero-cta-group {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  /* Apparatus Card */
+  .hero-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-elevated);
+    overflow: hidden;
+  }
+  .hero-card-header {
+    background: var(--card-subtle);
+    border-bottom: 1px solid var(--card-border);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+  }
+  .hero-card-body {
+    padding: 20px;
+  }
+  .apparatus-wrap {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .apparatus-svg {
+    width: 120px;
+    height: 160px;
+    flex-shrink: 0;
+  }
+  .readout-panel {
+    flex: 1;
+  }
+  .readout-box {
+    background: var(--card-subtle);
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+  }
+  .readout-label {
+    font-size: 0.68rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .readout-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--text-primary);
+  }
+  .readout-status {
+    background: var(--success-subtle);
+    border: 1px solid var(--success);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.74rem;
+    color: var(--success);
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .results-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    margin-top: 14px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .results-table th {
+    background: var(--card-subtle);
+    color: var(--text-primary);
+    font-weight: 700;
+    padding: 6px 8px;
+    border: 1px solid var(--card-border);
+    text-align: center;
+  }
+  .results-table td {
+    padding: 6px 8px;
+    border: 1px solid var(--card-border);
+    text-align: center;
+    color: var(--text-body);
+  }
+
+  /* ── METRICS STRIP ── */
+  .metrics-section {
+    background: var(--card-bg);
+    border-top: 1px solid var(--card-border);
+    border-bottom: 1px solid var(--card-border);
+    padding: 28px 24px;
+  }
+  .metrics-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .metric-box {
+    border-left: 3px solid var(--accent);
+    padding-left: 14px;
+  }
+  .metric-val {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.1;
+    margin-bottom: 2px;
+  }
+  .metric-tit {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+  }
+  .metric-sub {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+
+  /* ── EXPERIMENTS SECTION ── */
+  .section-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 24px;
+  }
+  .section-header {
+    text-align: center;
+    max-width: 680px;
+    margin: 0 auto 40px;
+  }
+  .section-title {
+    font-size: 1.85rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+    margin: 0 0 8px;
+  }
+  .section-subtitle {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+  }
+
+  .experiments-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .experiment-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .experiment-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0 0 8px;
+  }
+  .experiment-desc {
+    font-size: 0.85rem;
+    color: var(--text-body);
+    line-height: 1.55;
+    margin-bottom: 16px;
+  }
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+  .tag-pill {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 3px 6px;
+    background: var(--card-subtle);
+    border: 1px solid var(--card-border);
+    border-radius: 4px;
+    color: var(--text-muted);
+  }
+
+  /* ── PORTALS SECTION ── */
+  .portals-section {
+    background: var(--card-subtle);
+    border-top: 1px solid var(--card-border);
+    border-bottom: 1px solid var(--card-border);
+    padding: 60px 24px;
+  }
+  .portals-grid {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .portal-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .portal-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0 0 6px;
+  }
+  .portal-desc {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+  .portal-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 24px;
+    font-size: 0.85rem;
+    color: var(--text-body);
+  }
+  .portal-list li {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .portal-list li:last-child {
+    border-bottom: none;
+  }
+  .check-bullet {
+    color: var(--success);
+    font-weight: 800;
+  }
+
+  /* ── FOOTER ── */
+  .site-footer {
+    background: var(--card-bg);
+    border-top: 1px solid var(--card-border);
+    padding: 48px 24px 28px;
+    font-size: 0.85rem;
+  }
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 32px;
+    margin-bottom: 36px;
+  }
+  .footer-col-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-primary);
+    margin-bottom: 14px;
+  }
+  .footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .footer-links li {
+    margin-bottom: 8px;
+  }
+  .footer-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .footer-links a:hover {
+    color: var(--text-primary);
+    text-decoration: underline;
+  }
+  .footer-bottom {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 20px;
+    border-top: 1px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .hero-section {
+      grid-template-columns: 1fr;
+      padding: 36px 16px;
+    }
+    .metrics-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .experiments-grid {
+      grid-template-columns: 1fr;
+    }
+    .portals-grid {
+      grid-template-columns: 1fr;
+    }
+    .footer-inner {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .nav-menu, .nav-controls .btn {
+      display: none;
+    }
+    .nav-mobile-btn {
+      display: flex;
+    }
+    .hero-title {
+      font-size: 1.85rem;
+    }
+    .footer-inner {
+      grid-template-columns: 1fr;
+    }
+    .footer-bottom {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Main Navigation -->
+<header class="site-header">
+  <div class="nav-inner">
+    <a href="/" class="brand-logo">
+      <div class="vlk-brand-logo-wrap">
+        <img src="/shared/virtulab-logo.svg" alt="VirtuLab Kenya Logo" class="vlk-brand-logo-img" width="38" height="38">
+      </div>
+      <div>
+        <div class="logo-title">VirtuLab Kenya</div>
+        <div class="logo-subtitle">KCSE Chemistry Practical Lab</div>
+      </div>
+    </a>
+
+    <nav class="nav-menu" aria-label="Main Navigation">
+      <a href="#experiments" class="nav-item">Experiments</a>
+      <a href="#portals" class="nav-item">Get Started</a>
+      <a href="/student/lab.html?studyMode=guided" class="nav-item" style="color:var(--accent); font-weight:700;">Try Demo</a>
+    </nav>
+
+    <div class="nav-controls">
+      <!-- Theme Switcher -->
+      <div class="theme-toggle-group" aria-label="Appearance Mode">
+        <button type="button" class="theme-btn" data-theme="light" onclick="setTheme('light')">Light</button>
+        <button type="button" class="theme-btn" data-theme="dark" onclick="setTheme('dark')">Dark</button>
+        <button type="button" class="theme-btn" data-theme="green" onclick="setTheme('green')">Lab</button>
+      </div>
+
+      <a href="/student/login.html" class="btn btn-outline">Student Login</a>
+      <a href="/teacher/login.html" class="btn btn-primary">Teacher Portal</a>
+
+      <!-- Mobile Menu Toggle Button -->
+      <button type="button" class="nav-mobile-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()" aria-label="Toggle menu" aria-expanded="false">
+        ☰
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Drawer -->
+  <div class="mobile-nav-drawer" id="mobileNavDrawer">
+    <a href="/student/login.html" class="btn btn-primary" style="text-align:center;">Student Login</a>
+    <a href="/teacher/login.html" class="btn btn-outline" style="text-align:center;">Teacher Portal</a>
+    <a href="#experiments" class="mobile-nav-link" onclick="toggleMobileMenu()">Experiments</a>
+    <a href="#portals" class="mobile-nav-link" onclick="toggleMobileMenu()">Get Started</a>
+    <a href="/student/lab.html?studyMode=guided" class="mobile-nav-link" onclick="toggleMobileMenu()">Try Demo</a>
+    <a href="/terms.html" class="mobile-nav-link" onclick="toggleMobileMenu()">Terms of Service</a>
+    <a href="/privacy.html" class="mobile-nav-link" onclick="toggleMobileMenu()">Privacy Policy</a>
+  </div>
+</header>
+
+<!-- Hero Section -->
+<section class="hero-section">
+  <div>
+    <div class="curriculum-tag">
+      <span>KNEC KCSE Chemistry 233/3</span>
+    </div>
+
+    <h1 class="hero-title">
+      Practise Chemistry Practicals <span>Online</span>
+    </h1>
+
+    <p class="hero-desc">
+      A virtual science laboratory designed for Kenyan secondary schools. Conduct precision volumetric titrations, qualitative salt analysis, reaction kinetics, and thermochemistry on your phone, tablet, or computer.
+    </p>
+
+    <div class="hero-cta-group">
+      <a href="/student/login.html" class="btn btn-primary" style="padding: 11px 20px; font-size: 0.95rem;">
+        Start Practising →
+      </a>
+      <a href="/student/lab.html?studyMode=guided" class="btn btn-outline" style="padding: 11px 18px; font-size: 0.92rem;">
+        Try Interactive Demo
+      </a>
+      <button type="button" class="btn btn-outline" onclick="installVirtuLabApp()" style="padding: 11px 16px; font-size: 0.9rem;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>Install App (Offline)</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Interactive Apparatus & Ledger Illustration -->
+  <div class="hero-card">
+    <div class="hero-card-header">
+      <span>VOLUMETRIC TITRATION RIG</span>
+      <span style="color:var(--success);">READY</span>
+    </div>
+    <div class="hero-card-body">
+      <div class="apparatus-wrap">
+        <!-- SVG Apparatus Schematic -->
+        <svg class="apparatus-svg" viewBox="0 0 160 210">
+          <rect x="20" y="195" width="120" height="7" rx="2" fill="#334155"/>
+          <rect x="36" y="10" width="6" height="185" rx="2" fill="#475569"/>
+          <rect x="36" y="60" width="38" height="5" fill="#64748B"/>
+          <rect x="36" y="130" width="38" height="5" fill="#64748B"/>
+          <rect x="70" y="15" width="16" height="115" rx="3" fill="rgba(56, 189, 248, 0.2)" stroke="#0284C7" stroke-width="1.4"/>
+          <rect x="72" y="55" width="12" height="75" fill="rgba(2, 132, 199, 0.65)"/>
+          <line x1="72" y1="30" x2="78" y2="30" stroke="#0B2545" stroke-width="1"/>
+          <line x1="72" y1="50" x2="82" y2="50" stroke="#0B2545" stroke-width="1"/>
+          <line x1="72" y1="70" x2="78" y2="70" stroke="#0B2545" stroke-width="1"/>
+          <line x1="72" y1="90" x2="82" y2="90" stroke="#0B2545" stroke-width="1"/>
+          <path d="M73,130 L83,130 L80,140 L76,140 Z" fill="#0369A1"/>
+          <circle cx="78" cy="135" r="3.5" fill="#B45309"/>
+          <path d="M70,150 L86,150 L115,192 Q78,198 41,192 Z" fill="rgba(16, 185, 129, 0.2)" stroke="#059669" stroke-width="1.6"/>
+          <ellipse cx="78" cy="184" rx="26" ry="6" fill="rgba(16, 185, 129, 0.4)"/>
+        </svg>
+
+        <div class="readout-panel">
+          <div class="readout-box">
+            <div class="readout-label">Burette Reading</div>
+            <div class="readout-value">23.85 cm³</div>
+            <div style="font-size:0.72rem; color:var(--text-muted); margin-top:2px;">Tolerance: ±0.10 cm³</div>
+          </div>
+          <div class="readout-status">
+            Concordant Average: 23.83 cm³
+          </div>
+        </div>
+      </div>
+
+      <!-- Sample Results Table -->
+      <table class="results-table" aria-label="Sample Titration Results">
+        <thead>
+          <tr>
+            <th>Trial</th>
+            <th>Final (cm³)</th>
+            <th>Initial (cm³)</th>
+            <th>Titre (cm³)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Trial I</td>
+            <td>24.10</td>
+            <td>0.00</td>
+            <td>24.10</td>
+          </tr>
+          <tr>
+            <td>Trial II</td>
+            <td>47.95</td>
+            <td>24.10</td>
+            <td>23.85</td>
+          </tr>
+          <tr>
+            <td>Trial III</td>
+            <td>23.80</td>
+            <td>0.00</td>
+            <td>23.80</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Metrics Strip -->
+<section class="metrics-section">
+  <div class="metrics-grid">
+    <div class="metric-box">
+      <div class="metric-val">8 Modules</div>
+      <div class="metric-tit">KCSE Chemistry Practicals</div>
+      <div class="metric-sub">Titrations, Qualitative, Kinetics, Energetics, Solubility, Organic & Gas.</div>
+    </div>
+    <div class="metric-box">
+      <div class="metric-val">40 Marks</div>
+      <div class="metric-tit">Full Mock Exams</div>
+      <div class="metric-sub">KCSE Paper 3 booklets with instant marking and feedback.</div>
+    </div>
+    <div class="metric-box">
+      <div class="metric-val">±0.10 cm³</div>
+      <div class="metric-tit">Accuracy Standard</div>
+      <div class="metric-sub">Authentic meniscus reading and concordancy verification.</div>
+    </div>
+    <div class="metric-box">
+      <div class="metric-val">Offline</div>
+      <div class="metric-tit">Zero Data Required</div>
+      <div class="metric-sub">Install once and practise anywhere without an internet connection.</div>
+    </div>
+  </div>
+</section>
+
+<!-- Practical Modules -->
+<section id="experiments" class="section-container">
+  <div class="section-header">
+    <h2 class="section-title">Experiments You Can Do</h2>
+    <p class="section-subtitle">
+      Mapped directly to the KICD secondary chemistry syllabus and KCSE Paper 3 requirements.
+    </p>
+  </div>
+
+  <div class="experiments-grid">
+    <!-- Card 1 -->
+    <article class="experiment-card" style="border-top: 3px solid var(--gold);">
+      <div>
+        <h3 class="experiment-title">Volumetric Analysis</h3>
+        <p class="experiment-desc">
+          Acid-Base neutralization, redox titrations (KMnO₄ vs Fe²⁺), and precipitation titrations with automatic concordancy verification.
+        </p>
+        <div class="tag-row">
+          <span class="tag-pill">C₁V₁ = C₂V₂</span>
+          <span class="tag-pill">Redox Titration</span>
+          <span class="tag-pill">±0.10 cm³ Band</span>
+        </div>
+      </div>
+      <a href="/student/lab.html" class="btn btn-outline" style="width:100%;">Open Titration Bench →</a>
+    </article>
+
+    <!-- Card 2 -->
+    <article class="experiment-card" style="border-top: 3px solid var(--success);">
+      <div>
+        <h3 class="experiment-title">Qualitative Analysis</h3>
+        <p class="experiment-desc">
+          Systematic aqueous tests for 10 unknown cations and anions using NaOH and NH₃ dropwise and in excess, plus flame tests.
+        </p>
+        <div class="tag-row">
+          <span class="tag-pill">Cations &amp; Anions</span>
+          <span class="tag-pill">Precipitate Colors</span>
+          <span class="tag-pill">Flame Tests</span>
+        </div>
+      </div>
+      <a href="/student/qualitative.html" class="btn btn-outline" style="width:100%;">Open Qualitative Bench →</a>
+    </article>
+
+    <!-- Card 3 -->
+    <article class="experiment-card" style="border-top: 3px solid var(--accent);">
+      <div>
+        <h3 class="experiment-title">Physical &amp; Organic Chemistry</h3>
+        <p class="experiment-desc">
+          Reaction rates kinetics (disappearing cross), thermochemistry calorimetry (ΔH), solubility curves, and organic functional groups.
+        </p>
+        <div class="tag-row">
+          <span class="tag-pill">Rates (1/Time)</span>
+          <span class="tag-pill">ΔH Calorimetry</span>
+          <span class="tag-pill">Organic Tests</span>
+        </div>
+      </div>
+      <a href="/student/rates.html" class="btn btn-outline" style="width:100%;">Open Physical Labs →</a>
+    </article>
+  </div>
+</section>
+
+<!-- Portals Section -->
+<section id="portals" class="portals-section">
+  <div class="section-header">
+    <h2 class="section-title">Get Started</h2>
+    <p class="section-subtitle">
+      Select your portal to start practicing or manage class practicals.
+    </p>
+  </div>
+
+  <div class="portals-grid">
+    <!-- Student Portal -->
+    <div class="portal-card">
+      <div>
+        <h3 class="portal-title">Students</h3>
+        <p class="portal-desc">For secondary chemistry students preparing for KCSE Paper 3.</p>
+        <ul class="portal-list">
+          <li><span class="check-bullet">✓</span> Practice all 8 KCSE practical benches</li>
+          <li><span class="check-bullet">✓</span> Step-by-step guidance and immediate error correction</li>
+          <li><span class="check-bullet">✓</span> Timed 40-mark mock examination booklets</li>
+          <li><span class="check-bullet">✓</span> Works completely offline on mobile or PC</li>
+        </ul>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <a href="/student/login.html" class="btn btn-primary" style="width:100%;">Student Login →</a>
+        <a href="/student/register.html" class="btn btn-outline" style="width:100%;">Create Student Account</a>
+      </div>
+    </div>
+
+    <!-- Teacher Portal -->
+    <div class="portal-card">
+      <div>
+        <h3 class="portal-title">Teachers</h3>
+        <p class="portal-desc">For chemistry teachers, heads of department, and lab instructors.</p>
+        <ul class="portal-list">
+          <li><span class="check-bullet">✓</span> Real-time class rosters and student accuracy logs</li>
+          <li><span class="check-bullet">✓</span> Create custom practical assignments and due dates</li>
+          <li><span class="check-bullet">✓</span> Automated table concordancy and arithmetic marking</li>
+          <li><span class="check-bullet">✓</span> Downloadable class performance reports</li>
+        </ul>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <a href="/teacher/login.html" class="btn btn-primary" style="width:100%; background:var(--success);">Teacher Login →</a>
+        <a href="/teacher/register.html" class="btn btn-outline" style="width:100%;">Register as Teacher</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="logo-title" style="margin-bottom:6px;">VirtuLab Kenya</div>
+      <p style="color:var(--text-muted); font-size:0.84rem; line-height:1.55; margin-bottom:12px;">
+        A digital chemistry laboratory designed to support secondary school practical science education in Kenya.
+      </p>
+      <div style="font-size:0.78rem; color:var(--text-muted);">
+        Curriculum Reference: <b>KNEC Chemistry 233/3</b>
+      </div>
+    </div>
+
+    <div>
+      <div class="footer-col-title">Practicals</div>
+      <ul class="footer-links">
+        <li><a href="/student/lab.html">Volumetric Titrations</a></li>
+        <li><a href="/student/qualitative.html">Qualitative Salt Analysis</a></li>
+        <li><a href="/student/rates.html">Reaction Rates &amp; Kinetics</a></li>
+        <li><a href="/student/energy.html">Thermochemistry &amp; Enthalpy</a></li>
+        <li><a href="/student/solubility.html">Solubility Curves</a></li>
+        <li><a href="/student/organic.html">Organic Chemistry</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="footer-col-title">Portals</div>
+      <ul class="footer-links">
+        <li><a href="/student/login.html">Student Login</a></li>
+        <li><a href="/student/register.html">Student Sign Up</a></li>
+        <li><a href="/teacher/login.html">Teacher Portal</a></li>
+        <li><a href="/teacher/register.html">Teacher Sign Up</a></li>
+        <li><a href="/admin/dashboard.html">Admin Portal</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="footer-col-title">Legal &amp; Info</div>
+      <ul class="footer-links">
+        <li><a href="/terms.html">Terms of Service</a></li>
+        <li><a href="/privacy.html">Privacy Policy</a></li>
+        <li><a href="/student/mock_exams.html">KCSE Mock Exams Hub</a></li>
+        <li><a href="javascript:void(0)" onclick="installVirtuLabApp()">Install App (Offline)</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div>
+      © 2026 VirtuLab Kenya.
+    </div>
+    <div style="display:flex; gap:12px; align-items:center;">
+      <a href="/terms.html" style="color:var(--text-muted); text-decoration:none;">Terms</a>
+      <span>•</span>
+      <a href="/privacy.html" style="color:var(--text-muted); text-decoration:none;">Privacy</a>
+    </div>
+    <div style="width:100%; font-size:0.74rem; color:var(--text-muted); text-align:center; margin-top:8px; line-height:1.5;">
+      VirtuLab Kenya is an independent educational tool aligned with the KNEC Chemistry 233/3 syllabus. It is not affiliated with the Kenya National Examinations Council (KNEC).
+    </div>
+  </div>
+</footer>
+
+<script>
+  function setTheme(theme) {
+    localStorage.setItem('vlk_theme', theme);
+    document.documentElement.setAttribute('data-theme', theme);
+    updateThemeChips();
+  }
+
+  function updateThemeChips() {
+    const activeTheme = localStorage.getItem('vlk_theme') || 'light';
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-theme') === activeTheme);
+    });
+  }
+  updateThemeChips();
+
+  function toggleMobileMenu() {
+    const drawer = document.getElementById('mobileNavDrawer');
+    const btn = document.getElementById('mobileMenuBtn');
+    if (!drawer) return;
+    const isOpen = drawer.classList.toggle('active');
+    if (btn) btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+  }
+
+  window.installVirtuLabApp = window.installVirtuLabApp || function() {
+    if (window.VLKPwa && typeof window.VLKPwa.installDirectly === 'function') {
+      window.VLKPwa.installDirectly();
+    } else {
+      setTimeout(function() {
+        if (window.VLKPwa && typeof window.VLKPwa.installDirectly === 'function') {
+          window.VLKPwa.installDirectly();
+        }
+      }, 500);
+    }
+  };
+
+  function updateNavAuthLeads() {
+    if (!window.VLKAuthGuard) return;
+    const auth = VLKAuthGuard.getAuthState();
+
+    if (auth.isLoggedIn && auth.role === 'student') {
+      document.querySelectorAll('a[href="/student/login.html"]').forEach(el => {
+        el.setAttribute('href', '/student/home.html');
+        if (el.textContent.includes('Student Login')) {
+          el.textContent = 'Student Workstation';
+        }
+      });
+    } else if (auth.isLoggedIn && auth.role === 'teacher') {
+      document.querySelectorAll('a[href="/teacher/login.html"]').forEach(el => {
+        el.setAttribute('href', '/teacher/dashboard.html');
+      });
+    }
+  }
+  updateNavAuthLeads();
+</script>
+<script src="/shared/pwa-installer.js"></script>
+</body>
+</html>

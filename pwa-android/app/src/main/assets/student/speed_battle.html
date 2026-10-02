@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+  <title>KCSE Chemistry Speed Battle & Drill Arena — VirtuLab Kenya</title>
+  <script src="/shared/auth-guard.js"></script>
+  <script>
+    var t = localStorage.getItem('vlk_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', t);
+    if (window.VLKAuthGuard) {
+      VLKAuthGuard.guardPage('student');
+    }
+  </script>
+  <meta name="theme-color" content="#0F172A">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/shared/style.css?v=120.1">
+  <link rel="stylesheet" href="/shared/brilliant-theme.css?v=120.1">
+  <link rel="stylesheet" href="/shared/gamification-engine.css?v=120.1">
+  <link rel="stylesheet" href="/student/css/speed-battle.css?v=120.1">
+</head>
+<body class="battle-body">
+
+  <!-- Confetti Celebration Canvas -->
+  <canvas id="confettiCanvas"></canvas>
+
+  <!-- ══════════════════════════════════════
+       STREAMLINED ARCADE TOP BAR
+  ══════════════════════════════════════ -->
+  <header class="game-top-bar">
+    <div class="game-bar-left">
+      <a href="home.html" class="game-btn-icon" aria-label="Back to Workstation" title="Return to Workstation">
+        <span class="btn-icon">←</span>
+        <span class="btn-text">Workstation</span>
+      </a>
+      <div id="navStreakBadge" class="game-streak-pill" title="Daily Practical Streak">
+        <span class="flame-icon">🔥</span>
+        <span id="navStreakText">1-Day Streak</span>
+      </div>
+    </div>
+
+    <div class="game-bar-center">
+      <button type="button" class="game-mode-picker-btn" onclick="openTopicModal()" title="Change chemistry domain">
+        <span id="navModeIcon">⚡</span>
+        <span id="navModeName">Comprehensive Review</span>
+        <span class="picker-arrow">▾</span>
+      </button>
+    </div>
+
+    <div class="game-bar-right">
+      <button type="button" class="game-btn-icon" id="soundToggleBtn" onclick="toggleBattleSound()" title="Toggle Game Audio">
+        <span id="soundIcon">🔊</span>
+        <span id="soundText" class="btn-text">Sound ON</span>
+      </button>
+      
+      <div class="theme-quick-switch" title="Switch Theme">
+        <button type="button" class="theme-chip-btn" data-theme="dark" onclick="setAppTheme('dark')" title="Dark Mode">🌙</button>
+        <button type="button" class="theme-chip-btn" data-theme="light" onclick="setAppTheme('light')" title="Light Mode">☀️</button>
+        <button type="button" class="theme-chip-btn" data-theme="green" onclick="setAppTheme('green')" title="Lab Mode">🧪</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════
+       MAIN GAME ARENA CONTAINER
+  ══════════════════════════════════════ -->
+  <main class="game-main-container">
+    
+    <!-- ══════════════════════════════════════
+         ACTIVE QUIZ / DRILL SCREEN
+    ══════════════════════════════════════ -->
+    <section id="battleArenaCard" class="game-card arena-card" aria-live="polite">
+      
+      <!-- Direct Assignment Fast-Pass Banner (Shown if target URL exists) -->
+      <div id="battleAssignmentBanner" class="assignment-fastpass-banner" style="display:none; background:rgba(6,182,212,0.15); border:1.5px solid var(--cyan-accent, #0284C7); border-radius:12px; padding:10px 16px; margin-bottom:14px; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+        <div style="display:flex; align-items:center; gap:8px; font-size:0.84rem; font-weight:700; color:var(--heading-color);">
+          <span>📋</span>
+          <span>Prescribed Practical Assignment Loaded. Complete warmup or enter lab directly:</span>
+        </div>
+        <a id="battleSkipToTargetBtn" href="#" class="btn-game btn-game-primary" style="text-decoration:none; padding:8px 16px; font-size:0.8rem; font-weight:800; border-radius:8px;">
+          <span>Enter Practical Workbench →</span>
+        </a>
+      </div>
+
+      <!-- Top HUD Stats: Score, Combo Flame, Timer -->
+      <div class="game-hud">
+        <div class="hud-box hud-score">
+          <div class="hud-label">SCORE</div>
+          <div id="battleScoreDisplay" class="hud-value score-val">0</div>
+        </div>
+
+        <div class="hud-box hud-streak">
+          <div id="battleStreakBadge" class="combo-badge tier-0">
+            <span id="battleStreakIcon" class="combo-icon">⚡</span>
+            <span id="battleStreakText" class="combo-text">0x Normal</span>
+          </div>
+        </div>
+
+        <div class="hud-box hud-time">
+          <div class="hud-label" id="hudTimerLabel">TIME LEFT</div>
+          <div id="battleTimeDisplay" class="hud-value time-val">60s</div>
+        </div>
+      </div>
+
+      <!-- Animated Progress / Urgency Bar -->
+      <div class="timer-track" role="progressbar" aria-label="Remaining Time">
+        <div id="battleTimerBar" class="timer-fill"></div>
+      </div>
+
+      <!-- Question Box -->
+      <div class="question-container">
+        <div class="question-header">
+          <span id="battleCatBadge" class="category-pill">🔬 QUALITATIVE ANALYSIS</span>
+          <span id="battleQCounter" class="q-counter-pill">Drill In Progress</span>
+        </div>
+
+        <h1 id="battleQuestionText" class="question-text">
+          Loading question…
+        </h1>
+      </div>
+
+      <!-- Tactile 3D Option Buttons (A, B, C, D) -->
+      <div id="battleOptionsBox" class="options-grid">
+        <!-- Dynamically rendered options with keycaps & animations -->
+      </div>
+
+      <!-- Quick Explanation / Fact Strip (Shown after answering) -->
+      <div id="battleFactStrip" class="fact-strip" style="display:none;">
+        <span class="fact-icon" id="factIcon">💡</span>
+        <span class="fact-text" id="factText">Explanation goes here.</span>
+      </div>
+
+      <!-- Keyboard shortcuts footer note -->
+      <div class="keyboard-hints">
+        <span>Press <kbd>A</kbd> <kbd>B</kbd> <kbd>C</kbd> <kbd>D</kbd> or <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> to answer</span>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════
+         DIAGNOSTIC ASSESSMENT COMPLETE / RESULTS SCREEN
+    ══════════════════════════════════════ -->
+    <section id="battleGameOverCard" class="game-card results-card" style="display:none;">
+      
+      <!-- Victory Banner & Trophy Header -->
+      <div class="results-header">
+        <div id="resultsTrophy" class="results-trophy-icon">🏆</div>
+        <div id="resultsStarRating" class="star-rating">
+          <span class="star filled">⭐</span>
+          <span class="star filled">⭐</span>
+          <span class="star filled">⭐</span>
+        </div>
+        <h2 id="gameOverHeading" class="results-title">Diagnostic Assessment Complete</h2>
+        <p id="gameOverSubtitle" class="results-subtitle">Comprehensive Review evaluation recorded.</p>
+      </div>
+
+      <!-- Main Score & Rank Panel -->
+      <div class="results-score-panel">
+        <div class="score-label">TOTAL COMPETENCY SCORE</div>
+        <div id="finalScoreDisplay" class="score-number">0</div>
+        
+        <div id="newHighScoreNotice" class="new-record-pill" style="display:none;">
+          🌟 NEW PERSONAL BEST SCORE! 🌟
+        </div>
+
+        <div class="rank-eval-label">EVALUATED KNEC PERFORMANCE TIER</div>
+        <div id="finalRankDisplay" class="rank-badge">🧪 Foundational Practical Learner</div>
+      </div>
+
+      <!-- 4-Stat Arcade Grid -->
+      <div class="results-stats-grid">
+        <div class="stat-pill">
+          <span class="stat-icon">🎯</span>
+          <div class="stat-meta">
+            <span class="stat-name">Accuracy</span>
+            <span id="statAccuracy" class="stat-data green-text">0%</span>
+          </div>
+        </div>
+
+        <div class="stat-pill">
+          <span class="stat-icon">🔥</span>
+          <div class="stat-meta">
+            <span class="stat-name">Max Streak</span>
+            <span id="statMaxStreak" class="stat-data amber-text">0x</span>
+          </div>
+        </div>
+
+        <div class="stat-pill">
+          <span class="stat-icon">⚡</span>
+          <div class="stat-meta">
+            <span class="stat-name">Mean Speed</span>
+            <span id="statAvgSpeed" class="stat-data cyan-text">0.0s</span>
+          </div>
+        </div>
+
+        <div class="stat-pill">
+          <span class="stat-icon">⭐</span>
+          <div class="stat-meta">
+            <span class="stat-name">XP Earned</span>
+            <span id="statXPEarned" class="stat-data purple-text">+50 XP</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="results-actions">
+        <a id="gameOverProceedBtn" href="home.html" class="btn-game btn-game-primary">
+          <span>🧪 Proceed to Laboratory Workbench</span>
+          <span class="btn-arrow">→</span>
+        </a>
+
+        <div class="results-secondary-actions">
+          <button type="button" class="btn-game btn-game-secondary" onclick="startChemicalSpeedBattle()">
+            <span>🔄 Retake Drill</span>
+          </button>
+          <button type="button" class="btn-game btn-game-secondary" onclick="openTopicModal()">
+            <span>📋 Switch Domain</span>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ══════════════════════════════════════
+       TOPIC / DOMAIN SELECTOR MODAL
+  ══════════════════════════════════════ -->
+  <div id="battleTopicModal" class="modal-backdrop" style="display:none;" onclick="if(event.target===this) closeTopicModal()">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:1.4rem;">🎯</span>
+          <h3 style="margin:0; font-size:1.15rem; font-weight:800; color:var(--heading-color);">Select KCSE Chemistry Domain</h3>
+        </div>
+        <button type="button" class="btn-close-modal" onclick="closeTopicModal()" aria-label="Close">✕</button>
+      </div>
+
+      <p style="font-size:0.82rem; color:var(--text-muted); margin:0 0 16px 0;">
+        Choose a practical revision domain or game mode to sharpen your reaction times and deductions:
+      </p>
+
+      <div class="modal-modes-grid">
+        <div class="mode-select-card active" id="modeCard_blitz" onclick="selectAndStartMode('blitz')">
+          <span class="mode-icon">📚</span>
+          <div class="mode-info">
+            <div class="mode-title">Comprehensive Review</div>
+            <div class="mode-desc">All KCSE Paper 3 practical topics (60s rapid drill)</div>
+          </div>
+          <span class="mode-duration">60s</span>
+        </div>
+
+        <div class="mode-select-card" id="modeCard_qualitative" onclick="selectAndStartMode('qualitative')">
+          <span class="mode-icon">🔬</span>
+          <div class="mode-info">
+            <div class="mode-title">Qualitative Salt Analysis</div>
+            <div class="mode-desc">Cations, anions, gases & flame emission tests</div>
+          </div>
+          <span class="mode-duration">45s</span>
+        </div>
+
+        <div class="mode-select-card" id="modeCard_organic" onclick="selectAndStartMode('organic')">
+          <span class="mode-icon">⚗️</span>
+          <div class="mode-info">
+            <div class="mode-title">Organic Functional Groups</div>
+            <div class="mode-desc">Unsaturation, alcohols, acids & esterification</div>
+          </div>
+          <span class="mode-duration">45s</span>
+        </div>
+
+        <div class="mode-select-card" id="modeCard_titration" onclick="selectAndStartMode('titration')">
+          <span class="mode-icon">⚖️</span>
+          <div class="mode-info">
+            <div class="mode-title">Volumetric Titrations</div>
+            <div class="mode-desc">Indicators, meniscus, concordancy & stoichiometry</div>
+          </div>
+          <span class="mode-duration">45s</span>
+        </div>
+
+        <div class="mode-select-card" id="modeCard_energy" onclick="selectAndStartMode('energy')">
+          <span class="mode-icon">🌡️</span>
+          <div class="mode-info">
+            <div class="mode-title">Kinetics & Energetics</div>
+            <div class="mode-desc">Enthalpy changes (ΔH), reaction rates & catalysts</div>
+          </div>
+          <span class="mode-duration">45s</span>
+        </div>
+
+        <div class="mode-select-card survival-mode" id="modeCard_survival" onclick="selectAndStartMode('survival')">
+          <span class="mode-icon">🎯</span>
+          <div class="mode-info">
+            <div class="mode-title">Sudden Death (Zero-Error)</div>
+            <div class="mode-desc">15s clock. One wrong deduction and you're eliminated!</div>
+          </div>
+          <span class="mode-duration">15s</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/shared/api.js"></script>
+  <script src="/shared/theme.js"></script>
+  <script src="/shared/chemical-safety.js"></script>
+  <script src="/shared/page-transitions.js"></script>
+  <script src="/shared/gamification-engine.js"></script>
+  <script src="/student/js/speed-battle.js?v=120.1"></script>
+</body>
+</html>

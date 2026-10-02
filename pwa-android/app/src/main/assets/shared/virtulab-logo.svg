@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%" fill="none">
+  <defs>
+    <linearGradient id="vlkGradCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#0284C7"/>
+    </linearGradient>
+    <linearGradient id="vlkGradEmerald" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34D399"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <linearGradient id="vlkGradGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDE68A"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+    <linearGradient id="vlkGradV" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="50%" stop-color="#06B6D4"/>
+      <stop offset="100%" stop-color="#3B82F6"/>
+    </linearGradient>
+    <filter id="vlkGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="1.5" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Orbital Ring 1 (Tilted Left) -->
+  <ellipse cx="50" cy="48" rx="36" ry="14" transform="rotate(-28 50 48)" stroke="url(#vlkGradCyan)" stroke-width="2.5" stroke-opacity="0.85" stroke-dasharray="85 15"/>
+  <circle cx="21" cy="33" r="2.5" fill="#38BDF8" filter="url(#vlkGlow)"/>
+
+  <!-- Orbital Ring 2 (Tilted Right) -->
+  <ellipse cx="50" cy="48" rx="36" ry="14" transform="rotate(28 50 48)" stroke="url(#vlkGradEmerald)" stroke-width="2.5" stroke-opacity="0.85" stroke-dasharray="85 15"/>
+  <circle cx="79" cy="33" r="2.5" fill="#34D399" filter="url(#vlkGlow)"/>
+
+  <!-- Laboratory Flask Silhouette -->
+  <!-- Flask Lip & Neck -->
+  <rect x="43" y="16" width="14" height="4" rx="2" fill="url(#vlkGradCyan)"/>
+  <path d="M45 20 L45 36 L28 68 C25 74 29 80 36 80 L64 80 C71 80 75 74 72 68 L55 36 L55 20 Z" 
+        stroke="url(#vlkGradCyan)" stroke-width="3" stroke-linejoin="round" fill="#0A1528" fill-opacity="0.85"/>
+
+  <!-- Liquid inside flask with meniscus wave -->
+  <path d="M34 62 Q50 56 66 62 L69 68 C71 72 68 76 63 76 L37 76 C32 76 29 72 31 68 Z" 
+        fill="url(#vlkGradEmerald)" fill-opacity="0.4"/>
+  <path d="M34 62 Q50 56 66 62" stroke="url(#vlkGradEmerald)" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Graduation marks on flask -->
+  <line x1="42" y1="46" x2="48" y2="46" stroke="#38BDF8" stroke-width="1.5" stroke-linecap="round" opacity="0.75"/>
+  <line x1="39" y1="54" x2="47" y2="54" stroke="#38BDF8" stroke-width="1.5" stroke-linecap="round" opacity="0.75"/>
+  <line x1="36" y1="62" x2="46" y2="62" stroke="#38BDF8" stroke-width="1.5" stroke-linecap="round" opacity="0.75"/>
+
+  <!-- Chemical bubbles floating up -->
+  <circle cx="50" cy="68" r="2" fill="#6EE7B7" opacity="0.8"/>
+  <circle cx="46" cy="58" r="1.5" fill="#6EE7B7" opacity="0.9"/>
+  <circle cx="53" cy="50" r="2.2" fill="#38BDF8" opacity="0.85"/>
+  <circle cx="49" cy="38" r="1.8" fill="#38BDF8" opacity="0.95"/>
+  <circle cx="51" cy="26" r="1.2" fill="#FDE68A" opacity="0.9"/>
+
+  <!-- Stylized Energetic "V" Interlocking Front Ribbon -->
+  <path d="M31 38 L47 73 C48.5 76 51.5 76 53 73 L69 38" 
+        stroke="url(#vlkGradV)" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#vlkGlow)"/>
+  <path d="M31 38 L47 73 C48.5 76 51.5 76 53 73 L69 38" 
+        stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-opacity="0.85"/>
+
+  <!-- Center Atom Core / Spark -->
+  <circle cx="50" cy="48" r="4.5" fill="url(#vlkGradGold)" filter="url(#vlkGlow)"/>
+  <circle cx="50" cy="48" r="2" fill="#FFFFFF"/>
+
+  <!-- Sparkle Accents -->
+  <path d="M72 24 L73.5 28 L77.5 29.5 L73.5 31 L72 35 L70.5 31 L66.5 29.5 L70.5 28 Z" fill="url(#vlkGradGold)"/>
+  <path d="M26 68 L27 70.5 L29.5 71.5 L27 72.5 L26 75 L25 72.5 L22.5 71.5 L25 70.5 Z" fill="url(#vlkGradCyan)"/>
+</svg>

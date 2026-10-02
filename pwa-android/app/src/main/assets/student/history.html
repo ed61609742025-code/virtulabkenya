@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Grades & Performance Analytics — VirtuLab Kenya</title>
+<script src="/shared/auth-guard.js"></script>
+<script>
+  var t = localStorage.getItem('vlk_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  if (window.VLKAuthGuard) {
+    VLKAuthGuard.guardPage('student');
+  }
+</script>
+<meta name="theme-color" content="#0F172A">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400..800;1,6..72,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/style.css">
+<link rel="stylesheet" href="../shared/pwa-installer.css">
+<link rel="stylesheet" href="../shared/brilliant-theme.css">
+<link rel="stylesheet" href="../shared/gamification-engine.css">
+<link rel="stylesheet" href="css/dashboard.css">
+<link rel="stylesheet" href="css/mobile.css">
+<script src="/shared/theme.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" crossorigin="anonymous"></script>
+
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  .wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 16px 90px;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  /* Academic Institutional Banner */
+  .candidate-top-ribbon {
+    background: var(--acad-oxford);
+    color: #FFFFFF;
+    font-size: 0.76rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-align: center;
+    padding: 6px 16px;
+    border-bottom: 2px solid var(--acad-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  [data-theme="dark"] .candidate-top-ribbon { background: #0B1728; color: #E2E8F0; }
+  [data-theme="green"] .candidate-top-ribbon { background: #061F10; color: #D1FAE5; }
+
+  .history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  /* ── 1. KCSE READINESS SCORE CARD ── */
+  .readiness-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    border-top: 4px solid var(--acad-gold);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .readiness-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .readiness-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--heading-color);
+  }
+  .readiness-sub {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 3px;
+  }
+  .readiness-score-badge {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    background: var(--card-bg-hover);
+    border: 1.5px solid var(--acad-gold-border);
+    padding: 6px 14px;
+    border-radius: 100px;
+  }
+  .score-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: var(--acad-gold);
+  }
+  .score-status {
+    font-size: 0.76rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .readiness-progress-bar-wrap {
+    width: 100%;
+    height: 10px;
+    background: var(--card-bg-hover);
+    border: 1px solid var(--card-border);
+    border-radius: 100px;
+    overflow: hidden;
+    margin-bottom: 18px;
+  }
+  .readiness-progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #F59E0B, #10B981);
+    border-radius: 100px;
+    transition: width 0.4s ease;
+  }
+  .readiness-topics-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  @media (max-width: 1100px) {
+    .readiness-topics-grid {
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    }
+  }
+  @media (max-width: 580px) {
+    .readiness-topics-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .topic-item {
+    background: var(--card-bg-hover);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+  }
+  .topic-item:hover {
+    border-color: var(--cyan-accent);
+    transform: translateY(-1px);
+  }
+  .topic-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+  .topic-name {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--heading-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .topic-status {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  /* ── 2. CHARTS & ACHIEVEMENTS LAYOUT ── */
+  .analytics-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 330px;
+    gap: 20px;
+    align-items: start;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 1023px) {
+    .analytics-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  .student-charts-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: 16px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .student-chart-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: var(--shadow-sm);
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .widget-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow-sm);
+    box-sizing: border-box;
+  }
+  .widget-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--heading-color);
+    margin-bottom: 14px;
+  }
+  .stat-row-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .stat-row-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .stat-icon-circle {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .stat-icon-circle.green { background: rgba(16, 185, 129, 0.15); color: #10B981; }
+  .stat-icon-circle.purple { background: rgba(168, 85, 247, 0.15); color: #A855F7; }
+  .stat-icon-circle.blue { background: rgba(56, 189, 248, 0.15); color: #0284C7; }
+  .stat-text-label {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .stat-text-val {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: var(--heading-color);
+  }
+
+  .leaderboard-glass-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: var(--shadow-sm);
+    box-sizing: border-box;
+  }
+
+  /* ── 3. ATTEMPTS LIST & TABS ── */
+  .history-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  @media (max-width: 900px) {
+    .history-tabs {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding-bottom: 8px;
+    }
+    .history-tabs::-webkit-scrollbar {
+      display: none;
+    }
+  }
+  .tab-btn {
+    padding: 8px 18px;
+    border-radius: 100px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    border: 1px solid var(--card-border);
+    background: var(--card-bg);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .tab-btn.active {
+    background: var(--acad-oxford);
+    color: #FFF;
+    border-color: var(--acad-oxford);
+    box-shadow: 0 4px 14px rgba(11, 37, 69, 0.25);
+  }
+  [data-theme="dark"] .tab-btn.active {
+    background: #0284C7;
+    border-color: #0284C7;
+    color: #FFF;
+  }
+
+  /* ── 1. LOGO CREST & BANNER ── */
+  .seal-crest-small {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(2, 132, 199, 0.25), rgba(16, 185, 129, 0.25));
+    border: 1.5px solid var(--card-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    box-shadow: var(--shadow-sm);
+    flex-shrink: 0;
+  }
+
+  /* ── 2. READINESS SCORE CARD & MILESTONES ── */
+  .readiness-milestones {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-top: 5px;
+    margin-bottom: 16px;
+    padding: 0 4px;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .topic-item {
+    cursor: pointer;
+    user-select: none;
+  }
+  .topic-item.mastered {
+    border-color: rgba(16, 185, 129, 0.45);
+    background: rgba(16, 185, 129, 0.08);
+  }
+
+  /* ── 3. LEADERBOARD CARD (FLUID, ZERO HORIZONTAL SCROLL) ── */
+  .lb-list-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .lb-rank-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: var(--card-bg-hover);
+    border: 1px solid var(--card-border);
+    transition: all 0.2s ease;
+  }
+  .lb-rank-card:hover {
+    border-color: var(--cyan-accent);
+    transform: translateX(2px);
+  }
+  .lb-rank-card.is-you {
+    border: 1.5px solid var(--cyan-accent);
+    background: rgba(2, 132, 199, 0.08);
+    box-shadow: 0 0 14px rgba(2, 132, 199, 0.15);
+  }
+  .lb-rank-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+  .lb-medal {
+    font-size: 1.1rem;
+    min-width: 24px;
+    text-align: center;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .lb-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0284C7, #2563EB);
+    color: #FFF;
+    font-size: 0.72rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .lb-info {
+    min-width: 0;
+  }
+  .lb-name {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: var(--heading-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .lb-you-chip {
+    font-size: 0.6rem;
+    padding: 1px 6px;
+    border-radius: 100px;
+    background: var(--cyan-accent);
+    color: #FFF;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+  }
+  .lb-meta {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .lb-score-pill {
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .lb-acc {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.84rem;
+    font-weight: 900;
+    color: var(--green-accent);
+  }
+
+  /* ── 4. FILTER BAR & SEARCH INPUT ── */
+  .filter-bar-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .filter-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    flex: 1;
+  }
+  .search-input-pill {
+    padding: 9px 14px;
+    border: 1.5px solid var(--card-border);
+    border-radius: 10px;
+    font-size: 0.82rem;
+    background: var(--card-bg);
+    color: var(--text-main);
+    outline: none;
+    min-width: 220px;
+    flex: 1;
+    max-width: 380px;
+    transition: border-color 0.2s;
+  }
+  .search-input-pill:focus {
+    border-color: var(--cyan-accent);
+  }
+  .filter-select {
+    padding: 9px 12px;
+    border: 1.5px solid var(--card-border);
+    border-radius: 10px;
+    font-size: 0.82rem;
+    background: var(--card-bg);
+    color: var(--text-main);
+    outline: none;
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ── 5. EXPANDABLE SESSION ROWS & DIAGNOSTIC DETAILS ── */
+  .session-list-wrapper {
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .session-row {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--card-border);
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .session-row:last-child {
+    border-bottom: none;
+  }
+  .session-row:hover {
+    background: var(--card-bg-hover);
+  }
+  .session-row.is-expanded {
+    background: var(--card-bg-hover);
+    border-left: 3.5px solid var(--cyan-accent);
+  }
+  .session-row-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .session-row .s-title {
+    font-weight: 800;
+    font-size: 0.92rem;
+    color: var(--heading-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .session-row .s-meta {
+    font-size: 0.74rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+  .expand-indicator {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    transition: transform 0.2s ease;
+    margin-left: 4px;
+  }
+  .session-row.is-expanded .expand-indicator {
+    transform: rotate(180deg);
+  }
+
+  .drilldown-panel {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--card-border);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: fadeIn 0.2s ease-in-out;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .diagnostic-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+  }
+  .diagnostic-cell {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 8px 12px;
+  }
+  .diagnostic-cell-lbl {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    font-weight: 800;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+  }
+  .diagnostic-cell-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.86rem;
+    font-weight: 800;
+    color: var(--heading-color);
+    margin-top: 3px;
+  }
+
+  .mini-trials-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+    margin-top: 6px;
+    background: var(--card-bg);
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--card-border);
+  }
+  .mini-trials-table th, .mini-trials-table td {
+    padding: 7px 12px;
+    text-align: center;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .mini-trials-table th {
+    background: rgba(255,255,255,0.03);
+    color: var(--text-muted);
+    font-weight: 800;
+  }
+  .mini-trials-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .qual-detail-box {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-top: 6px;
+  }
+  @media (max-width: 600px) {
+    .qual-detail-box { grid-template-columns: 1fr; }
+  }
+
+  .obs-toggle-btn {
+    background: transparent;
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    color: var(--cyan-accent);
+    font-size: 0.76rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+  }
+  .obs-toggle-btn:hover {
+    background: rgba(2, 132, 199, 0.1);
+    border-color: var(--cyan-accent);
+  }
+  .obs-log-list {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-top: 6px;
+    font-size: 0.78rem;
+    line-height: 1.6;
+  }
+
+  .empty-state-card {
+    padding: 38px 20px;
+    text-align: center;
+    background: var(--card-bg);
+    border: 1.5px dashed var(--card-border);
+    border-radius: 16px;
+    margin: 12px 0;
+  }
+  .empty-state-icon {
+    font-size: 2.4rem;
+    margin-bottom: 10px;
+    display: inline-block;
+  }
+  .empty-state-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--heading-color);
+    margin-bottom: 4px;
+    font-family: 'Cinzel', serif;
+  }
+  .empty-state-desc {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    max-width: 440px;
+    margin: 0 auto 16px;
+    line-height: 1.5;
+  }
+  .empty-state-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 20px;
+    border-radius: 100px;
+    background: var(--cyan-btn-bg);
+    color: #FFF;
+    font-weight: 800;
+    font-size: 0.82rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+  .empty-state-btn:hover {
+    background: var(--cyan-btn-hover);
+    transform: translateY(-1px);
+  }
+
+  .result-pill { font-size: 0.72rem; font-weight: 800; padding: 4px 12px; border-radius: 100px; white-space: nowrap; }
+  .result-correct { background: var(--green-bg); color: var(--green-accent); border: 1px solid var(--green-accent); }
+  .result-incorrect { background: var(--red-bg); color: var(--red-accent); border: 1px solid var(--red-accent); }
+
+  .empty { color: var(--text-muted); font-size: 0.88rem; padding: 32px; text-align: center; background: var(--card-bg); border: 1px dashed var(--card-border); border-radius: 14px; }
+</style>
+</head>
+<body>
+
+
+<!-- Standardized Top Navigation Bar -->
+<nav class="top-nav" aria-label="Main Navigation">
+  <a href="home.html" class="nav-brand-academic" aria-label="VirtuLab Kenya Home">
+    <div class="seal-crest-small" style="background:transparent; border:none; box-shadow:none; padding:0;">
+      <img src="../shared/virtulab-logo.svg" alt="VirtuLab Kenya" width="36" height="36" style="display:block;" onerror="this.outerHTML='⚗️'">
+    </div>
+    <div style="display:flex; flex-direction:column;">
+      <div style="font-family:'Cinzel', serif; font-weight:900; font-size:1.1rem; color:var(--heading-color); line-height:1.1; letter-spacing:0.04em;">VirtuLab Kenya</div>
+      <div style="font-size:0.68rem; font-weight:700; color:var(--text-muted); letter-spacing:0.02em;">Chemistry Practical Workstation</div>
+    </div>
+  </a>
+
+  <!-- Central Welcome Header (Desktop Only) -->
+  <div class="navbar-welcome-message" style="display:flex; flex-direction:column; align-items:center; gap:2px;">
+    <div style="font-size:0.92rem; font-weight:800; color:var(--heading-color);">
+      Candidate: <span id="studentName">Tecla Rice</span>
+    </div>
+    <div style="display:flex; align-items:center; gap:6px; font-size:0.72rem; font-weight:700;">
+      <span style="color:#F59E0B; background:rgba(245, 158, 11, 0.12); padding:2px 8px; border-radius:100px; border:1px solid rgba(245, 158, 11, 0.3); display:inline-flex; align-items:center; gap:4px;">
+        🔥 <span id="streakCount">1</span>-Day Streak
+      </span>
+      <span style="color:var(--text-muted);" id="todayDate">Today: Aug 23, 2026</span>
+    </div>
+  </div>
+
+  <div class="nav-actions">
+    <!-- Language Switcher Controls -->
+    <div class="theme-toggle-group" title="Switch language / Lugha" aria-label="Language selector">
+      <button class="theme-btn-chip lang-btn-chip active" data-lang="en" onclick="setLanguage('en')" aria-label="Switch to English">🇬🇧 EN</button>
+      <button class="theme-btn-chip lang-btn-chip" data-lang="sw" onclick="setLanguage('sw')" aria-label="Badilisha kwenda Swahili">🇰🇪 SW</button>
+    </div>
+
+    <!-- Theme Switcher Controls: 3-chip on desktop, single toggle on mobile -->
+    <div class="theme-toggle-group theme-multi-btn-group" title="Switch appearance theme" aria-label="Theme selector">
+      <button class="theme-btn-chip" data-theme="dark" onclick="setTheme('dark')" aria-label="Dark mode">🌙 Dark</button>
+      <button class="theme-btn-chip" data-theme="light" onclick="setTheme('light')" aria-label="Light mode">☀️ Light</button>
+      <button class="theme-btn-chip" data-theme="green" onclick="setTheme('green')" aria-label="Lab mode">🧪 Lab</button>
+    </div>
+
+    <!-- Single Theme Toggle Button for Mobile -->
+    <button type="button" class="theme-single-toggle-btn" id="historyThemeToggleSingleBtn" onclick="cycleTheme()" data-tooltip="Toggle Theme" aria-label="Toggle visual theme">
+      <svg class="theme-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+    </button>
+
+    <!-- Profile Avatar Dropdown Trigger Button -->
+    <button class="user-avatar-btn" onclick="togglePasswordPanel()" title="Update Password / Logout" aria-label="User Account Settings" style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(16, 185, 129, 0.2));border:1.5px solid var(--card-border);color:var(--heading-color);display:flex;align-items:center;justify-content:center;cursor:pointer;">
+      👤
+    </button>
+  </div>
+</nav>
+
+<div class="wrap">
+  <!-- Header Bar -->
+  <div class="history-header">
+    <div>
+      <h1 style="font-family:'Cinzel', serif; font-size:1.5rem; font-weight:800; color:var(--heading-color); margin:0 0 4px 0;">📊 Grades &amp; Performance Analytics</h1>
+      <div style="font-size:0.84rem; color:var(--text-muted);">Track your KCSE Paper 3 readiness, exam scores, and detailed practical attempt history</div>
+    </div>
+    <div style="display:flex; align-items:center; gap:10px;">
+      <a href="home.html" class="btn btn-primary" style="padding:8px 18px; border-radius:100px; font-size:0.82rem; text-decoration:none; font-weight:800; background:var(--acad-oxford); color:#FFF;">← Return to Student Hub</a>
+    </div>
+  </div>
+
+  <!-- FEATURE 1: KCSE Paper 3 Exam Readiness Widget -->
+  <section class="readiness-card">
+    <div class="readiness-header">
+      <div>
+        <div class="readiness-title">🎯 KCSE Paper 3 Readiness Score</div>
+        <div class="readiness-sub">Calculated from lab accuracy, concordant titres, and syllabus coverage.</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <a href="certificate.html" id="certClaimBtn" class="btn btn-primary" style="font-size:0.75rem;padding:5px 12px;border-radius:100px;text-decoration:none;display:none;">📜 Claim Certificate</a>
+        <div class="readiness-score-badge">
+          <span class="score-num" id="readinessScoreNum">0%</span>
+          <span class="score-status" id="readinessStatus">Novice</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="readiness-progress-bar-wrap">
+      <div class="readiness-progress-bar-fill" id="readinessBarFill" style="width: 0%;"></div>
+    </div>
+    <div class="readiness-milestones">
+      <span>Novice (0–39%)</span>
+      <span>Developing (40–69%)</span>
+      <span>Competent (70–84%)</span>
+      <span>KCSE Ready (85–100%)</span>
+    </div>
+
+    <div class="readiness-topics-grid">
+      <div class="topic-item" data-topic="acidBase" onclick="switchTab('titration')" title="Jump to Acid-Base Titration logs">
+        <div class="topic-icon">🧪</div>
+        <div>
+          <div class="topic-name">Acid–Base</div>
+          <div class="topic-status" id="topicStatus-acidBase">Not started</div>
+        </div>
+      </div>
+
+      <div class="topic-item" data-topic="redox" onclick="switchTab('titration')" title="Jump to Redox Titration logs">
+        <div class="topic-icon">⚗️</div>
+        <div>
+          <div class="topic-name">Redox</div>
+          <div class="topic-status" id="topicStatus-redox">Not started</div>
+        </div>
+      </div>
+
+      <div class="topic-item" data-topic="precipitation" onclick="switchTab('titration')" title="Jump to Precipitation Titration logs">
+        <div class="topic-icon">💧</div>
+        <div>
+          <div class="topic-name">Precipitation</div>
+          <div class="topic-status" id="topicStatus-precipitation">Not started</div>
+        </div>
+      </div>
+
+      <div class="topic-item" data-topic="complexometric" onclick="switchTab('titration')" title="Jump to Complexometric Titration logs">
+        <div class="topic-icon">🧬</div>
+        <div>
+          <div class="topic-name">Complexometric</div>
+          <div class="topic-status" id="topicStatus-complexometric">Not started</div>
+        </div>
+      </div>
+
+      <div class="topic-item" data-topic="qualitative" onclick="switchTab('qualitative')" title="Jump to Qualitative Analysis logs">
+        <div class="topic-icon">🧫</div>
+        <div>
+          <div class="topic-name">Qualitative</div>
+          <div class="topic-status" id="topicStatus-qualitative">Not started</div>
+        </div>
+      </div>
+
+      <div class="topic-item" data-topic="organic" onclick="switchTab('organic')" title="Jump to Organic Chemistry logs">
+        <div class="topic-icon">⚗️</div>
+        <div>
+          <div class="topic-name">Organic</div>
+          <div class="topic-status" id="topicStatus-organic">Not started</div>
+        </div>
+      </div>
+
+      <div class="topic-item" data-topic="solubility" onclick="switchTab('solubility')" title="Jump to Solubility Curve logs">
+        <div class="topic-icon">🌡️</div>
+        <div>
+          <div class="topic-name">Solubility</div>
+          <div class="topic-status" id="topicStatus-solubility">Not started</div>
+        </div>
+      </div>
+
+      <div class="topic-item" data-topic="energy" onclick="switchTab('energy')" title="Jump to Thermochemistry logs">
+        <div class="topic-icon">🔥</div>
+        <div>
+          <div class="topic-name">Energy Changes</div>
+          <div class="topic-status" id="topicStatus-energy">Not started</div>
+        </div>
+      </div>
+
+      <div class="topic-item" data-topic="rates" onclick="switchTab('rates')" title="Jump to Reaction Rates logs">
+        <div class="topic-icon">⚡</div>
+        <div>
+          <div class="topic-name">Reaction Rates</div>
+          <div class="topic-status" id="topicStatus-rates">Not started</div>
+        </div>
+      </div>
+
+      <div class="topic-item" data-topic="gas" onclick="switchTab('gas')" title="Jump to Gas Preparation logs">
+        <div class="topic-icon">💨</div>
+        <div>
+          <div class="topic-name">Gas Preparation</div>
+          <div class="topic-status" id="topicStatus-gas">Not started</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURE 2: Personal Performance Analytics Charts & Achievements -->
+  <div class="analytics-grid" style="margin-bottom:28px;">
+    <div>
+      <section class="student-charts-section" style="margin-bottom:0;">
+        <h2 class="section-heading" style="font-size:1.05rem; margin-bottom:12px;">📈 Performance Analytics</h2>
+        <div class="student-charts-row">
+          <div class="student-chart-card">
+            <h3 style="font-size:0.88rem;font-weight:700;color:var(--heading-color);margin:0 0 10px 0;">30-Day Accuracy Trend</h3>
+            <div style="height: 180px; width: 100%; position: relative;">
+              <canvas id="studentTrendChart"></canvas>
+            </div>
+          </div>
+          <div class="student-chart-card">
+            <h3 style="font-size:0.88rem;font-weight:700;color:var(--heading-color);margin:0 0 10px 0;">By Practical Type</h3>
+            <div style="height: 180px; width: 100%; position: relative;">
+              <canvas id="studentTypeChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="leaderboard-column">
+      <!-- My Achievements Widget -->
+      <div class="widget-card">
+        <div class="widget-title">My Achievements</div>
+        
+        <div class="stat-row-item">
+          <div class="stat-icon-circle green">✓</div>
+          <div>
+            <div class="stat-text-label">Completed Labs</div>
+            <div class="stat-text-val" id="achieveCompletedLabs">⏳ -- / 15</div>
+          </div>
+        </div>
+
+        <div class="stat-row-item">
+          <div class="stat-icon-circle purple">🏅</div>
+          <div>
+            <div class="stat-text-label">Badges Earned</div>
+            <div class="stat-text-val" id="achieveBadgesEarned">⏳ -- Badges</div>
+          </div>
+        </div>
+
+        <div class="stat-row-item">
+          <div class="stat-icon-circle blue">⚖️</div>
+          <div>
+            <div class="stat-text-label">Top Skill</div>
+            <div class="stat-text-val" id="achieveTopSkill">⏳ Evaluating...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Leaderboard Card -->
+      <div class="leaderboard-glass-card">
+        <h2 class="section-heading" style="font-size:1rem; margin-bottom:12px;">Leaderboard</h2>
+        <div id="leaderboardBox">
+          <div class="empty-box">Loading leaderboard...</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- FEATURE 3: Detailed Session Attempt History Logs -->
+  <h2 class="section-heading" style="font-size:1.15rem; margin-bottom:14px;">📜 Detailed Attempt Logs</h2>
+  
+  <!-- Navigation Tabs -->
+  <div class="history-tabs">
+    <button class="tab-btn active" id="tabTitration" onclick="switchTab('titration')">🧪 Titration</button>
+    <button class="tab-btn" id="tabQualitative" onclick="switchTab('qualitative')">🧫 Qualitative Salt</button>
+    <button class="tab-btn" id="tabOrganic" onclick="switchTab('organic')">⚗️ Organic</button>
+    <button class="tab-btn" id="tabSolubility" onclick="switchTab('solubility')">🌡️ Solubility</button>
+    <button class="tab-btn" id="tabEnergy" onclick="switchTab('energy')">🔥 Energy</button>
+    <button class="tab-btn" id="tabRates" onclick="switchTab('rates')">⚡ Rates</button>
+    <button class="tab-btn" id="tabGas" onclick="switchTab('gas')">💨 Gas Prep</button>
+    <button class="tab-btn" id="tabComposite" onclick="switchTab('composite')">📋 Mock Exam (40 Mks)</button>
+    <button class="tab-btn" id="tabCPCAT" onclick="switchTab('cpcat')">📑 CPCAT Research</button>
+  </div>
+
+  <div class="filter-bar-wrap">
+    <div class="filter-bar-left">
+      <div class="search-input-wrap" style="position:relative; display:flex; align-items:center; flex:1; min-width:240px; max-width:440px;">
+        <label for="sessionSearchInput" class="sr-only">Search practical attempts</label>
+        <input type="search" id="sessionSearchInput" name="vlk_session_search" class="search-input-pill" placeholder="🔍 Search attempts by title, reagent, salt, or method..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-form-type="other" data-lpignore="true" oninput="onSearchFilterChange()" style="width:100%; padding-right:32px;">
+        <button type="button" id="searchClearBtn" onclick="clearSearchInput()" title="Clear search filter" style="position:absolute; right:10px; background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:0.85rem; display:none; padding:4px; line-height:1;">✕</button>
+      </div>
+
+      <div id="titrationFilters" style="display:flex; align-items:center;">
+        <label for="filterType" class="sr-only">Filter titration practical type</label>
+        <select id="filterType" class="filter-select" onchange="onTitrationTypeChange()">
+          <option value="">All titration practicals</option>
+          <option value="acidBase">Acid-Base Titration</option>
+          <option value="redox">Redox Titration</option>
+          <option value="precipitation">Precipitation Titration</option>
+          <option value="complexometric">Complexometric Titration</option>
+        </select>
+      </div>
+
+      <label for="filterStatus" class="sr-only">Filter results by status</label>
+      <select id="filterStatus" class="filter-select" onchange="onSearchFilterChange()">
+        <option value="all">All Results</option>
+        <option value="correct">✓ Correct / Passed Only</option>
+        <option value="incorrect">✗ Needs Review Only</option>
+      </select>
+    </div>
+
+    <div>
+      <button type="button" class="btn" onclick="exportCurrentTabCSV()" style="padding:9px 16px; font-size:0.82rem; border-radius:10px; font-weight:700; background:var(--card-bg-hover); border:1.5px solid var(--card-border); color:var(--heading-color); cursor:pointer;">📥 Export Tab CSV</button>
+    </div>
+  </div>
+
+  <div id="sessionsBox" class="session-list-wrapper"><div class="empty" style="border:none; background:transparent;">Loading sessions…</div></div>
+  <div id="paginationBox" style="display:flex;align-items:center;justify-content:center;gap:12px;margin-top:16px;"></div>
+</div>
+
+<!-- Mobile & Tablet Bottom Navigation Dock Bar -->
+<nav class="mobile-bottom-nav">
+  <button class="bottom-tab-item" onclick="window.location.href='home.html'">
+    <span class="bottom-tab-icon">🧪</span>
+    <span>Workbenches</span>
+  </button>
+  <button class="bottom-tab-item" onclick="window.location.href='home.html#reference'">
+    <span class="bottom-tab-icon">📚</span>
+    <span>Revision</span>
+  </button>
+  <button class="bottom-tab-item" onclick="window.location.href='home.html#achievements'">
+    <span class="bottom-tab-icon">🏆</span>
+    <span>Badges</span>
+  </button>
+  <button class="bottom-tab-item active" onclick="window.location.href='history.html'">
+    <span class="bottom-tab-icon">📊</span>
+    <span>Analytics</span>
+  </button>
+</nav>
+
+<!-- ══════════════════════════════════════
+     COMPREHENSIVE ACCOUNT SETTINGS & PROFILE MODAL
+══════════════════════════════════════ -->
+<div id="profileSettingsModal" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:25000; align-items:center; justify-content:center; backdrop-filter:blur(12px); padding:20px;">
+  <div style="background:var(--card-bg); border:1.5px solid var(--cyan-accent); border-radius:24px; max-width:640px; width:100%; max-height:90vh; overflow-y:auto; padding:28px; box-shadow:0 24px 60px rgba(0,0,0,0.5); position:relative; color:var(--text-main);">
+    
+    <!-- Modal Header with Avatar & Identity -->
+    <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:16px; margin-bottom:20px;">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <div style="width:58px; height:58px; border-radius:50%; background:linear-gradient(135deg, #0284C7 0%, #2563EB 100%); border:2.5px solid var(--cyan-accent); display:flex; align-items:center; justify-content:center; font-size:1.75rem; color:#FFF; box-shadow:0 0 20px rgba(2,132,199,0.35);">
+          👤
+        </div>
+        <div>
+          <div style="font-weight:900; font-size:1.25rem; color:var(--heading-color); font-family:var(--font-heading);" id="profHeaderName">Student Profile</div>
+          <div style="font-size:0.8rem; color:var(--cyan-accent); font-weight:700; display:flex; align-items:center; gap:8px; margin-top:2px;">
+            <span class="mwalimu-chip" style="font-size:0.68rem; padding:3px 10px; border-radius:100px; background:rgba(2,132,199,0.15); border:1px solid var(--cyan-accent);" id="profHeaderRole">🎓 Student Candidate</span>
+            <span id="profHeaderEmail" style="color:var(--text-muted);">student@virtulab.ke</span>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn" onclick="closeProfileModal()" style="padding:6px 14px; font-size:0.85rem; border-radius:100px; cursor:pointer;" title="Close settings">✕</button>
+    </div>
+
+    <!-- Vibrant Glassmorphic Stat Cards -->
+    <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; margin-bottom:24px;">
+      <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-top:3.5px solid var(--cyan-accent); border-radius:16px; padding:12px 10px; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+        <div style="font-size:0.65rem; font-weight:900; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em;">🧪 SESSIONS</div>
+        <div style="font-weight:900; font-size:1.2rem; color:var(--cyan-accent); margin-top:4px;" id="profStatSessions">⏳ --</div>
+      </div>
+
+      <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-top:3.5px solid var(--green-accent); border-radius:16px; padding:12px 10px; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+        <div style="font-size:0.65rem; font-weight:900; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em;">🎯 ACCURACY</div>
+        <div style="font-weight:900; font-size:1.2rem; color:var(--green-accent); margin-top:4px;" id="profStatAccuracy">⏳ --%</div>
+      </div>
+
+      <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-top:3.5px solid var(--amber-accent); border-radius:16px; padding:12px 10px; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+        <div style="font-size:0.65rem; font-weight:900; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em;">🔥 STREAK</div>
+        <div style="font-weight:900; font-size:1.2rem; color:var(--amber-accent); margin-top:4px;" id="profStatStreak">1 Day</div>
+      </div>
+
+      <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-top:3.5px solid var(--violet-accent); border-radius:16px; padding:12px 10px; text-align:center; box-shadow:0 4px 12px rgba(0,0,0,0.06);">
+        <div style="font-size:0.65rem; font-weight:900; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em;">🎖️ BADGES</div>
+        <div style="font-weight:900; font-size:1.2rem; color:var(--violet-accent); margin-top:4px;" id="profStatBadges">⏳ -- / 6</div>
+      </div>
+    </div>
+
+    <!-- Navigation Chips Tabs -->
+    <div style="display:flex; gap:8px; border-bottom:1px solid var(--card-border); padding-bottom:12px; margin-bottom:20px;">
+      <button type="button" class="theme-btn-chip active" id="tabProfDetails" onclick="switchProfTab('details')" style="flex:1; padding:10px 14px; font-weight:800; border-radius:12px;">👤 Personal Details</button>
+      <button type="button" class="theme-btn-chip" id="tabProfSecurity" onclick="switchProfTab('security')" style="flex:1; padding:10px 14px; font-weight:800; border-radius:12px;">🔒 Security & Password</button>
+      <button type="button" class="theme-btn-chip" id="tabProfPrefs" onclick="switchProfTab('prefs')" style="flex:1; padding:10px 14px; font-weight:800; border-radius:12px;">⚙️ App Preferences</button>
+    </div>
+
+    <!-- Tab 1: Personal Details -->
+    <div id="profPaneDetails">
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
+        <div>
+          <label for="profInputName" style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Full Name</label>
+          <input type="text" id="profInputName" placeholder="e.g. John Kamau" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
+        </div>
+        <div>
+          <label for="profInputEmail" style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Email Address</label>
+          <input type="email" id="profInputEmail" readonly placeholder="e.g. student@virtulab.ke" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--card-bg-hover); color:var(--text-muted); font-weight:700; cursor:not-allowed;">
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:22px;">
+        <div>
+          <label for="profInputForm" style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Form / Grade Level</label>
+          <select id="profInputForm" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
+            <option value="Form 1">Form 1 Secondary (KCSE 2029)</option>
+            <option value="Form 2">Form 2 Secondary (KCSE 2028)</option>
+            <option value="Form 3">Form 3 Secondary (KCSE 2027)</option>
+            <option value="Form 4" selected>Form 4 KCSE Candidate (Class of 2026)</option>
+          </select>
+        </div>
+        <div>
+          <label for="profInputSchool" style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">School / Teacher Code</label>
+          <input type="text" id="profInputSchool" placeholder="e.g. KCS-MANGU-8421 (Optional)" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-primary" onclick="saveProfileDetails()" style="padding:12px 24px; font-weight:800; border-radius:100px; width:100%; font-size:0.92rem;">Save Profile Details ✓</button>
+      <div id="profDetailsMsg" style="margin-top:12px; text-align:center;"></div>
+    </div>
+
+    <!-- Tab 2: Security & Password -->
+    <div id="profPaneSecurity" style="display:none;">
+      <div style="margin-bottom:16px;">
+        <label for="pwCurrent" style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Current Password</label>
+        <input type="password" id="pwCurrent" placeholder="Enter current security password" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
+      </div>
+      <div style="margin-bottom:16px;">
+        <label for="pwNew" style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">New Password</label>
+        <input type="password" id="pwNew" placeholder="Enter new password (min 6 characters)" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
+      </div>
+      <div style="margin-bottom:20px;">
+        <label for="pwConfirm" style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Confirm New Password</label>
+        <input type="password" id="pwConfirm" placeholder="Re-type new password to confirm" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
+      </div>
+
+      <button type="button" class="btn btn-primary" onclick="submitChangePassword()" style="padding:12px 24px; font-weight:800; border-radius:100px; width:100%; font-size:0.92rem;">Update Security Password 🔐</button>
+      <div id="pwMsg" style="margin-top:12px; text-align:center;"></div>
+    </div>
+
+    <!-- Tab 3: Preferences & Actions -->
+    <div id="profPanePrefs" style="display:none;">
+      <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:14px; margin-bottom:16px;">
+        <div>
+          <div style="font-size:0.88rem; font-weight:800; color:var(--heading-color);">Sound Effects & Acoustics</div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">Play realistic lab acoustic feedback during titrations and reactions</div>
+        </div>
+        <button type="button" class="btn" id="profSoundToggleBtn" onclick="toggleSound()" style="padding:8px 16px; font-size:0.82rem; font-weight:700; border-radius:100px;">🔊 Sound ON</button>
+      </div>
+
+      <div style="border-bottom:1px solid var(--card-border); padding-bottom:14px; margin-bottom:16px;">
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div>
+            <div style="font-size:0.88rem; font-weight:800; color:var(--heading-color);">Web Push Notifications</div>
+            <div style="font-size:0.75rem; color:var(--text-muted);" id="pushStatusText" class="vlk-push-status-text">Receive real-time alerts for teacher assignments and grades</div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <button type="button" class="vlk-push-test-btn btn btn-xs" id="pushTestBtn" onclick="VLKPush.sendTestNotification()" style="display:none; padding:8px 14px; font-size:0.78rem; border-radius:100px;">🔔 Test</button>
+            <button type="button" class="vlk-push-toggle-btn btn btn-secondary" id="pushToggleBtn" onclick="VLKPush.toggle()" style="padding:8px 16px; font-size:0.82rem; font-weight:700; border-radius:100px;">Enable Alerts</button>
+          </div>
+        </div>
+        <div style="margin-top:6px;">
+          <a href="javascript:void(0)" id="pushBatteryGuideBtn" class="vlk-push-guide-btn" onclick="VLKPush.openBatteryGuideModal()" style="font-size:0.75rem; color:var(--cyan-accent); text-decoration:none; display:none; align-items:center; gap:4px;">
+            <span>⚡ Phone Battery &amp; Notification Setup Guide (Tecno/Samsung/Infinix)</span>
+          </a>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:14px; margin-bottom:24px;">
+        <div>
+          <div style="font-size:0.88rem; font-weight:800; color:var(--heading-color);">Export Lab History</div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">Download a complete CSV copy of all recorded practical trials</div>
+        </div>
+        <button type="button" class="btn" onclick="exportLabHistoryCSV()" style="padding:8px 16px; font-size:0.82rem; font-weight:700; border-radius:100px;">📥 Export CSV</button>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end;">
+        <button type="button" class="btn" onclick="Auth.logout()" style="background:rgba(239, 68, 68, 0.15); color:var(--red-accent); border:1px solid var(--red-accent); padding:12px 24px; border-radius:100px; font-weight:800; width:100%; font-size:0.92rem;">🚪 Log Out of VirtuLab</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="../shared/api.js"></script>
+<script src="../shared/notifications-engine.js"></script>
+<script src="../shared/push-manager.js"></script>
+<script src="../shared/page-transitions.js"></script>
+<script src="../shared/brilliant-ui.js"></script>
+<script src="js/student-dashboard.js"></script>
+<script src="js/history.js?v=120"></script>
+</body>
+</html>

@@ -1,0 +1,620 @@
+/* =============================================================
+   VirtuLab Kenya — Mobile UI Overrides
+   Loaded only by: client/student/home.html (and sibling pages)
+   All rules scoped to max-width: 768px unless noted.
+   ============================================================= */
+
+/* ── A. Bottom Navigation Bar ─────────────────────────────── */
+/* Only show on mobile */
+.vlk-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .vlk-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: var(--bottom-nav-bg);
+    border-top: 1px solid var(--bottom-nav-border);
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+    z-index: 9000;
+    align-items: stretch;
+    justify-content: space-around;
+  }
+
+  .vlk-bottom-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    text-decoration: none;
+    color: var(--text-subtle, #64748B);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    min-height: 60px;
+    padding: 8px 4px;
+    transition: color 0.15s ease, background 0.15s ease;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    border-top: 2px solid transparent;
+  }
+
+  .vlk-bottom-nav-item.active {
+    color: var(--cyan-accent, #0284C7);
+    border-top-color: var(--cyan-accent, #0284C7);
+  }
+
+  .vlk-bottom-nav-item svg {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+  }
+
+  /* body already has padding-bottom:80px in dashboard.css — extend for safe area */
+  body {
+    padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+/* ── B. Hero Section — Colour Noise Reduction ─────────────── */
+@media (max-width: 768px) {
+  /* Unify the 4 competing accent colours in the hero into 1 visual band */
+  .dashboard-hero-wrap, .hero-summary-row {
+    gap: 8px !important;
+  }
+
+  /* Reduce streak/points pill size on mobile */
+  .streak-pill, .points-pill, .xp-pill {
+    font-size: 0.72rem !important;
+    padding: 4px 10px !important;
+  }
+}
+
+/* ── C. Top Nav Tap-Target & Mobile Single Theme Toggle ──── */
+/* Single theme toggle button is hidden on desktop by default */
+.theme-single-toggle-btn {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  /* On mobile / small screens, hide the 3-button theme group completely */
+  .theme-multi-btn-group,
+  .top-navbar .theme-toggle-group:has([data-theme]),
+  .nav-actions .theme-toggle-group:has([data-theme]) {
+    display: none !important;
+  }
+
+  /* Show the single, accessible, touch-friendly theme toggle button */
+  .theme-single-toggle-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 8px !important;
+    background: var(--card-bg-hover, #F8FAFC) !important;
+    border: 1.5px solid var(--card-border, #CBD5E1) !important;
+    color: var(--heading-color, #0F172A) !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease, color 0.15s ease !important;
+    flex-shrink: 0 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  .theme-single-toggle-btn:hover {
+    border-color: var(--acad-oxford, #0284C7) !important;
+    background: var(--card-bg, #FFFFFF) !important;
+    transform: translateY(-1px) !important;
+  }
+
+  .theme-single-toggle-btn:active {
+    transform: scale(0.92) !important;
+  }
+
+  .theme-single-toggle-btn svg {
+    width: 19px !important;
+    height: 19px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* All nav action buttons: ensure 44px tap targets */
+  .user-avatar-btn {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    width: 44px !important;
+    height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* Language switcher chips */
+  .lang-btn-chip {
+    min-height: 38px !important;
+    padding: 6px 10px !important;
+    font-size: 0.78rem !important;
+  }
+}
+
+/* ── D. Section Header Whitespace & Text Sizing ───────────── */
+@media (max-width: 768px) {
+  /* Increase section header whitespace */
+  .section-header, .lab-section-header, .topic-section-title {
+    margin-top: 24px !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* Minimum readable text size */
+  .card-desc, .card-subtitle, .module-card-desc, .assign-card-desc {
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Assignment and challenge description text */
+  .daily-challenge-desc, .challenge-body, .assign-desc {
+    font-size: 13px !important;
+  }
+
+  /* All primary action buttons: 48px min-height on mobile */
+  .btn-primary, .btn-start, .btn-launch, .start-btn, .complete-btn {
+    min-height: 48px !important;
+    font-size: 0.92rem !important;
+  }
+}
+
+/* ── E. Module Card Grid Fix — Prevent Right-Edge Clipping ── */
+@media (max-width: 768px) {
+  /* Module card grids: ensure 2-col fits 360px without overflow */
+  .module-cards-grid, .lab-cards-grid, .topic-cards-grid,
+  .practical-topics-grid, .diag-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+    padding: 0 !important;
+    width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  /* Individual module card: contain text, prevent overflow */
+  .module-card, .lab-card, .topic-card, .diag-card {
+    min-width: 0 !important;
+    overflow: hidden !important;
+    padding: 12px 10px !important;
+  }
+
+  .module-card-title, .lab-card-title, .topic-card-title {
+    font-size: 0.78rem !important;
+    line-height: 1.3 !important;
+    word-break: break-word !important;
+  }
+
+  /* Dashboard container: ensure no horizontal overflow */
+  .dashboard-container {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    overflow-x: hidden !important;
+  }
+}
+
+/* ── F. Daily Challenge Readability & Options ────────────── */
+@media (max-width: 768px) {
+  .quiz-option-btn, .challenge-option {
+    min-height: 48px !important;
+    font-size: 0.88rem !important;
+    padding: 10px 14px !important;
+    text-align: left !important;
+  }
+}
+
+/* ── G. Ultra-Compact Mobile Hero Command Bar ─────────────── */
+@media (max-width: 768px) {
+  .candidate-hero-bar {
+    padding: 10px 12px !important;
+    margin-bottom: 10px !important;
+    border-radius: 14px !important;
+    gap: 8px !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .hero-profile-box {
+    gap: 10px !important;
+    width: 100% !important;
+    flex: 1 1 100% !important;
+    align-items: center !important;
+  }
+
+  .hero-avatar {
+    width: 38px !important;
+    height: 38px !important;
+    font-size: 0.92rem !important;
+    border-radius: 10px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .candidate-name-title {
+    font-size: 1.05rem !important;
+    line-height: 1.15 !important;
+  }
+
+  .hero-role-chip {
+    font-size: 0.68rem !important;
+    padding: 2px 7px !important;
+  }
+
+  .hero-meta-row {
+    gap: 6px !important;
+    margin-top: 2px !important;
+  }
+
+  .hero-meta-chip {
+    font-size: 0.70rem !important;
+    padding: 2px 6px !important;
+  }
+
+  .hero-metrics-box {
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 6px !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 2px 0 !important;
+    grid-template-columns: none !important;
+  }
+  .hero-metrics-box::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .hero-metric-card {
+    padding: 4px 8px !important;
+    border-radius: 8px !important;
+    flex-shrink: 0 !important;
+    min-height: 34px !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
+
+  .hero-metric-card .metric-icon {
+    font-size: 1.05rem !important;
+  }
+
+  .hero-metric-card .metric-val {
+    font-size: 0.82rem !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+  }
+
+  .hero-metric-card .metric-lbl {
+    display: none !important;
+  }
+
+  .xp-metric-card {
+    grid-column: auto !important;
+    padding: 4px 10px !important;
+    min-width: 130px !important;
+    flex: 1 0 auto !important;
+    display: block !important;
+  }
+
+  .xp-metric-card .xp-header-row {
+    margin-bottom: 2px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+  }
+
+  .xp-metric-card .xp-level-badge {
+    font-size: 0.68rem !important;
+  }
+
+  .xp-metric-card .xp-points-badge {
+    font-size: 0.65rem !important;
+  }
+
+  .xp-metric-card .xp-track-bar {
+    height: 4px !important;
+  }
+
+  .xp-metric-card .xp-sub-text-row {
+    display: none !important;
+  }
+
+  .hero-warmup-btn {
+    grid-column: auto !important;
+    padding: 5px 10px !important;
+    min-height: 34px !important;
+    height: 34px !important;
+    font-size: 0.74rem !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    width: auto !important;
+    border-radius: 8px !important;
+  }
+}
+
+/* ── H. Compact Daily Challenge Card on Mobile ────────────── */
+@media (max-width: 768px) {
+  .daily-challenge-card {
+    padding: 10px 12px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    margin-bottom: 10px !important;
+    border-radius: 12px !important;
+    min-height: 50px !important;
+  }
+
+  .daily-challenge-left {
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+
+  .daily-tag-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    margin-bottom: 2px !important;
+  }
+
+  .daily-pill-badge {
+    font-size: 0.62rem !important;
+    padding: 1px 6px !important;
+  }
+
+  .daily-xp-badge {
+    font-size: 0.62rem !important;
+    padding: 1px 6px !important;
+  }
+
+  .daily-timer-text {
+    display: none !important;
+  }
+
+  .daily-title {
+    font-size: 0.86rem !important;
+    margin: 0 !important;
+    line-height: 1.2 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .daily-desc {
+    display: none !important;
+  }
+
+  .daily-challenge-right {
+    flex-shrink: 0 !important;
+  }
+
+  .daily-launch-btn {
+    width: auto !important;
+    min-height: 32px !important;
+    height: 32px !important;
+    padding: 4px 12px !important;
+    font-size: 0.78rem !important;
+    font-weight: 800 !important;
+    white-space: nowrap !important;
+  }
+}
+
+/* ── I. Smart Assignment Quick Alert Strip ─────────────────── */
+.assignment-alert-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: rgba(2, 132, 199, 0.08);
+  border: 1.5px solid rgba(2, 132, 199, 0.3);
+  border-radius: 10px;
+  padding: 8px 14px;
+  margin-bottom: 14px;
+  box-sizing: border-box;
+  transition: all 0.15s ease;
+}
+
+[data-theme="dark"] .assignment-alert-strip {
+  background: rgba(56, 189, 248, 0.1);
+  border-color: rgba(56, 189, 248, 0.3);
+}
+
+[data-theme="green"] .assignment-alert-strip {
+  background: rgba(52, 211, 153, 0.1);
+  border-color: rgba(52, 211, 153, 0.3);
+}
+
+.assignment-alert-strip .aas-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--heading-color);
+  min-width: 0;
+}
+
+.assignment-alert-strip .aas-icon {
+  font-size: 1.05rem;
+  flex-shrink: 0;
+}
+
+.assignment-alert-strip .aas-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.82rem;
+}
+
+.assignment-alert-strip .aas-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: #FFFFFF !important;
+  background: var(--cyan-accent, #0284C7);
+  border-radius: 6px;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s ease;
+}
+
+.assignment-alert-strip .aas-btn:hover {
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .assignment-alert-strip {
+    padding: 6px 10px !important;
+    margin-bottom: 10px !important;
+  }
+  .assignment-alert-strip .aas-text {
+    font-size: 0.78rem !important;
+  }
+  .assignment-alert-strip .aas-btn {
+    padding: 4px 9px !important;
+    font-size: 0.72rem !important;
+  }
+
+  /* Compact section header for topics */
+  .activity-zone-header {
+    margin-bottom: 10px !important;
+  }
+}
+
+/* ── J. Dismissible Study Tip ──────────────────────────────── */
+.tip-dismiss-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  background: rgba(245, 158, 11, 0.12);
+  color: #92400E;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.18s ease;
+  flex-shrink: 0;
+}
+
+.tip-dismiss-btn:hover {
+  background: #F59E0B;
+  color: #FFFFFF;
+  transform: scale(1.1);
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.35);
+}
+
+.tip-dismiss-btn:active {
+  transform: scale(0.92);
+}
+
+[data-theme="dark"] .tip-dismiss-btn {
+  border-color: rgba(245, 158, 11, 0.5);
+  background: rgba(245, 158, 11, 0.2);
+  color: #FBBF24;
+}
+
+[data-theme="dark"] .tip-dismiss-btn:hover {
+  background: #F59E0B;
+  color: #111827;
+}
+
+/* Dismiss Animation */
+.tip-card-dismissing {
+  opacity: 0 !important;
+  transform: translateY(-8px) scaleY(0.95) !important;
+  max-height: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important;
+  overflow: hidden !important;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Restore button */
+.tip-restore-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px dashed rgba(245, 158, 11, 0.4);
+  color: var(--text-muted);
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tip-restore-btn:hover {
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--heading-color);
+  border-style: solid;
+}
+
+/* ── K. Mobile Notification Center Responsive Sheet ───────── */
+@media (max-width: 640px) {
+  .notif-backdrop {
+    display: none;
+  }
+
+  .notif-dropdown {
+    position: fixed !important;
+    top: max(56px, calc(env(safe-area-inset-top, 0px) + 54px)) !important;
+    left: 10px !important;
+    right: 10px !important;
+    width: auto !important;
+    max-width: 440px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    max-height: calc(85dvh - 56px) !important;
+    max-height: calc(85vh - 56px) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(0, 0, 0, 0.1) !important;
+    z-index: 99999 !important;
+    transform-origin: top center !important;
+    padding: 14px 14px 12px !important;
+  }
+
+  .notif-close-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .notif-scroll-area {
+    max-height: calc(85dvh - 200px) !important;
+    max-height: calc(85vh - 200px) !important;
+  }
+}
+
+
+

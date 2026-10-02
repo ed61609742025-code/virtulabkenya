@@ -1,0 +1,558 @@
+/* ============================================================
+   VirtuLab Kenya — Subscription & Paystack UI Styles
+   ============================================================ */
+
+/* Navbar Pill Badge */
+.vlk-sub-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  border-radius: 999px;
+  border: 1px solid var(--card-border, #E2E8F0);
+  background: var(--card-bg, #FFFFFF);
+  color: var(--text-primary, var(--text-main, var(--ink, #0F172A)));
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* On small phones show compact text, hide full text */
+.vlk-pill-compact { display: none; }
+.vlk-pill-full { display: inline; }
+
+@media (max-width: 500px) {
+  .vlk-pill-compact { display: inline; }
+  .vlk-pill-full { display: none; }
+  .vlk-sub-pill { padding: 4px 8px; font-size: 0.70rem; }
+}
+
+.vlk-sub-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
+}
+
+.vlk-sub-pill.active-pass {
+  background: rgba(5, 150, 105, 0.08);
+  border-color: rgba(5, 150, 105, 0.35);
+  color: #059669;
+}
+
+.vlk-sub-pill.upgrade-needed {
+  background: rgba(2, 132, 199, 0.08);
+  border-color: rgba(2, 132, 199, 0.35);
+  color: #0284C7;
+}
+
+.vlk-sub-pill.grace-warning {
+  background: rgba(217, 119, 6, 0.1);
+  border-color: rgba(217, 119, 6, 0.4);
+  color: #D97706;
+  animation: vlkPulse 2s infinite ease-in-out;
+}
+
+@keyframes vlkPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.75; }
+}
+
+/* Modal Overlay & Container */
+.vlk-sub-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 16px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s;
+}
+
+.vlk-sub-modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.vlk-sub-modal {
+  background: var(--card-bg, #FFFFFF);
+  border: 1px solid var(--card-border, #E2E8F0);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 640px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  transform: scale(0.96) translateY(8px);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.vlk-sub-modal-overlay.active .vlk-sub-modal {
+  transform: scale(1) translateY(0);
+}
+
+/* Header */
+.vlk-sub-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--card-border, #E2E8F0);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.vlk-sub-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--heading-color, #0F172A);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vlk-sub-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted, #64748B);
+  font-size: 1.5rem;
+  line-height: 1;
+  padding: 4px;
+  border-radius: 8px;
+  transition: color 0.15s ease;
+}
+
+.vlk-sub-close-btn:hover {
+  color: var(--text-primary, var(--text-main, var(--ink, #0F172A)));
+}
+
+/* Body */
+.vlk-sub-body {
+  padding: 24px;
+}
+
+/* Current Status Banner */
+.vlk-current-status-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--acad-paper-subtle, var(--card-bg-hover, var(--panel2, #F8FAFC)));
+  border: 1px solid var(--card-border, #E2E8F0);
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.vlk-status-info h4 {
+  margin: 0 0 2px 0;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--heading-color, var(--text-main, #0F172A));
+}
+
+.vlk-status-info p {
+  margin: 0;
+  font-size: 0.76rem;
+  color: var(--text-muted, #64748B);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Pricing Grid */
+.vlk-plans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.vlk-plan-card {
+  position: relative;
+  background: var(--card-bg, #FFFFFF);
+  border: 2px solid var(--card-border, #E2E8F0);
+  border-radius: 14px;
+  padding: 18px 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.vlk-plan-card:hover {
+  border-color: var(--acad-navy, #0284C7);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(2, 132, 199, 0.1);
+}
+
+.vlk-plan-card.selected {
+  border-color: var(--acad-navy, #0284C7);
+  background: rgba(2, 132, 199, 0.03);
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
+}
+
+.vlk-plan-badge-rec {
+  position: absolute;
+  top: -10px;
+  right: 12px;
+  background: var(--acad-gold, #D97706);
+  color: #FFFFFF;
+  font-size: 0.62rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+}
+
+.vlk-plan-name {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--heading-color, #0F172A);
+  margin-bottom: 4px;
+}
+
+.vlk-plan-duration {
+  font-size: 0.72rem;
+  color: var(--text-muted, #64748B);
+  margin-bottom: 12px;
+}
+
+.vlk-plan-price {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: var(--acad-oxford, #0B2545);
+  font-family: 'JetBrains Mono', monospace;
+  margin-bottom: 12px;
+}
+
+.vlk-plan-price span {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted, #64748B);
+}
+
+.vlk-plan-features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 0.74rem;
+  color: var(--text-muted, #475569);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.vlk-plan-features li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vlk-plan-features li svg {
+  color: var(--acad-emerald, #059669);
+  flex-shrink: 0;
+}
+
+/* Phone & Checkout Form */
+.vlk-checkout-box {
+  background: var(--acad-paper-subtle, var(--card-bg-hover, var(--panel2, #F8FAFC)));
+  border: 1px solid var(--card-border, #E2E8F0);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.vlk-input-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--heading-color, var(--text-main, #0F172A));
+  margin-bottom: 6px;
+}
+
+.vlk-phone-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.vlk-phone-prefix {
+  position: absolute;
+  left: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-muted, #64748B);
+  pointer-events: none;
+}
+
+.vlk-phone-input {
+  width: 100%;
+  padding: 10px 14px 10px 58px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary, var(--text-main, var(--ink, #0F172A)));
+  background: var(--card-bg, #FFFFFF);
+  border: 1px solid var(--card-border, #CBD5E1);
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.vlk-phone-input:focus {
+  border-color: var(--acad-navy, #0284C7);
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+.vlk-mpesa-help {
+  font-size: 0.72rem;
+  color: var(--text-muted, #64748B);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 14px;
+}
+
+.vlk-mpesa-help svg {
+  color: #059669;
+}
+
+.vlk-pay-btn {
+  width: 100%;
+  padding: 12px 18px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  border-radius: 10px;
+  border: none;
+  background: #059669; /* Safaricom M-Pesa Green */
+  color: #FFFFFF;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.15s ease, transform 0.1s ease;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
+}
+
+.vlk-pay-btn:hover {
+  background: #047857;
+  transform: translateY(-1px);
+}
+
+.vlk-pay-btn:active {
+  transform: translateY(1px);
+}
+
+.vlk-pay-btn:disabled {
+  background: #94A3B8;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Toast Notifications */
+.vlk-sub-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 10000;
+  background: #0F172A;
+  color: #FFFFFF;
+  padding: 14px 18px;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transform: translateY(120px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+  border-left: 4px solid #059669;
+  max-width: 420px;
+}
+
+.vlk-sub-toast.show {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.vlk-sub-toast.success {
+  border-left-color: #059669;
+}
+
+.vlk-sub-toast.info {
+  border-left-color: #0284C7;
+}
+
+.vlk-sub-toast.error {
+  border-left-color: #EF4444;
+}
+
+@media (max-width: 640px) {
+  .vlk-sub-toast {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    max-width: none;
+  }
+}
+
+/* ── Hero Profile Subscription Chip ────────────────────────── */
+.vlk-hero-sub-chip {
+  cursor: pointer;
+}
+.vlk-hero-sub-chip:hover span {
+  filter: brightness(1.08);
+}
+
+/* ── Upgrade Banner ─────────────────────────────────────────── */
+.vlk-upgrade-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.06) 0%, rgba(11, 37, 69, 0.04) 100%);
+  border: 1px solid rgba(2, 132, 199, 0.22);
+  border-radius: 14px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.vlk-upgrade-banner--grace {
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.08) 0%, rgba(11, 37, 69, 0.04) 100%);
+  border-color: rgba(217, 119, 6, 0.30);
+}
+
+.vlk-upgrade-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+}
+
+.vlk-upgrade-icon {
+  font-size: 1.6rem;
+  flex-shrink: 0;
+}
+
+.vlk-upgrade-banner-title {
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--heading-color, #0F172A);
+  margin-bottom: 2px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.vlk-upgrade-banner-sub {
+  font-size: 0.76rem;
+  color: var(--text-muted, #64748B);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.vlk-upgrade-banner-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.vlk-upgrade-banner-btn {
+  padding: 8px 16px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  border-radius: 8px;
+  border: none;
+  background: #0284C7;
+  color: #FFFFFF;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, transform 0.1s ease;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.vlk-upgrade-banner-btn:hover {
+  background: #0369A1;
+  transform: translateY(-1px);
+}
+
+.vlk-upgrade-banner-btn--secondary {
+  background: transparent;
+  color: #0284C7;
+  border: 1.5px solid rgba(2, 132, 199, 0.4);
+}
+
+.vlk-upgrade-banner-btn--secondary:hover {
+  background: rgba(2, 132, 199, 0.08);
+  transform: translateY(-1px);
+}
+
+.vlk-upgrade-banner-btn--warn {
+  background: #D97706;
+}
+
+.vlk-upgrade-banner-btn--warn:hover {
+  background: #B45309;
+}
+
+@media (max-width: 640px) {
+  .vlk-upgrade-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+  }
+  .vlk-upgrade-banner-actions {
+    width: 100%;
+  }
+  .vlk-upgrade-banner-btn {
+    flex: 1;
+    text-align: center;
+    justify-content: center;
+  }
+}
+
+/* ── Dark & Lab Green Theme Overrides ───────────────────────── */
+[data-theme="dark"] .vlk-upgrade-banner {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.12) 0%, rgba(15, 26, 46, 0.75) 100%);
+  border-color: rgba(56, 189, 248, 0.28);
+}
+[data-theme="dark"] .vlk-upgrade-banner--grace {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(15, 26, 46, 0.75) 100%);
+  border-color: rgba(245, 158, 11, 0.4);
+}
+[data-theme="dark"] .vlk-plan-price {
+  color: var(--acad-oxford, #38BDF8);
+}
+
+[data-theme="green"] .vlk-upgrade-banner {
+  background: linear-gradient(135deg, rgba(52, 211, 153, 0.12) 0%, rgba(12, 33, 20, 0.75) 100%);
+  border-color: rgba(52, 211, 153, 0.28);
+}
+[data-theme="green"] .vlk-upgrade-banner--grace {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(12, 33, 20, 0.75) 100%);
+  border-color: rgba(251, 191, 36, 0.4);
+}
+[data-theme="green"] .vlk-plan-price {
+  color: var(--acad-oxford, #34D399);
+}
+

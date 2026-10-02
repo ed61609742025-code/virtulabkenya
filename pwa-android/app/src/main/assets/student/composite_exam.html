@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>KCSE Chemistry Paper 3 Composite Examination (40 Marks) | VirtuLab Kenya</title>
+<meta name="description" content="Simulate complete KNEC KCSE Chemistry Paper 3 (233/3) composite mock practical examination with realistic lab glassware, precision volumetric titrations, qualitative test-tubes, and organic analysis.">
+<script src="/shared/auth-guard.js"></script>
+<script>
+  var t = localStorage.getItem('vlk_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  if (window.VLKAuthGuard) {
+    VLKAuthGuard.guardPage('student');
+  }
+</script>
+<meta name="theme-color" content="#090E17">
+<link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400..800;1,6..72,400..700&family=JetBrains+Mono:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/shared/brilliant-theme.css">
+<link rel="stylesheet" href="css/lab.css">
+<link rel="stylesheet" href="css/qualitative.css">
+<link rel="stylesheet" href="css/organic.css">
+<link rel="stylesheet" href="css/composite_exam.css?v=120">
+<link rel="stylesheet" href="/shared/knec-graph-plotter.css">
+<!-- Extracted styles moved to css/composite_exam.css -->
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     TOPBAR — Clean Non-Overlapping Navigation
+══════════════════════════════════════ -->
+<nav class="top-navbar">
+  <a href="/student/home.html" class="nav-brand-academic" title="Back to Student Workstation">
+    <div class="vlk-brand-logo-wrap">
+      <img src="/shared/virtulab-logo.svg" alt="VirtuLab Kenya Logo" class="vlk-brand-logo-img" width="34" height="34">
+    </div>
+    <div style="display:flex; flex-direction:column;">
+      <span class="brand-title" style="font-weight:800; font-family:'Cinzel', serif; font-size:1.05rem; line-height:1.1; color:var(--heading-color);">VirtuLab</span>
+      <span class="brand-subtagline" style="font-size:0.65rem; font-family:'Newsreader', serif; font-style:italic; color:var(--cyan-accent); letter-spacing:0.01em;">Composite Exam Bench</span>
+    </div>
+  </a>
+  <div class="nav-actions">
+    <a href="/student/mock_exams.html" class="top-action-btn">📚 Mock Hub</a>
+    <a href="/student/home.html" class="top-action-btn">← Exit Exam</a>
+
+    <div style="position:relative; display:inline-block;">
+      <button type="button" onclick="toggleBenchSettings(event)" class="top-action-btn" title="Workbench Settings">
+        <span>⚙️ Settings</span>
+      </button>
+      
+      <div id="benchSettingsDropdown" style="display:none; position:absolute; right:0; top:36px; width:240px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; box-shadow:var(--shadow-lg); z-index:10000; padding:12px; flex-direction:column; gap:10px; text-align:left;">
+        <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+          <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">KCSE Practical Booklet</span>
+          <button type="button" onclick="printKCSEBooklet()" style="background:var(--card-bg); border:1px solid var(--card-border); color:var(--text-main); padding:4px 10px; font-size:0.75rem; border-radius:6px; cursor:pointer;">🖨️ Print</button>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Appearance Theme</span>
+          <div class="theme-toggle-group" style="width:100%;">
+            <button class="theme-btn-chip active" style="flex:1; padding:4px 6px;" data-theme="dark" onclick="setTheme('dark');">🌙 Dark</button>
+            <button class="theme-btn-chip" style="flex:1; padding:4px 6px;" data-theme="light" onclick="setTheme('light');">☀️ Light</button>
+            <button class="theme-btn-chip" style="flex:1; padding:4px 6px;" data-theme="green" onclick="setTheme('green');">🧪 Lab</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════
+     OFFICIAL KNEC EXAMINATION BRIEFING & COVER OVERLAY
+══════════════════════════════════════ -->
+<div id="examBriefingOverlay" class="exam-briefing-overlay" style="display:flex;">
+  <div class="exam-briefing-card">
+    <div class="briefing-header">
+      <div style="font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); font-weight:800; font-family:var(--font-mono);">
+        🇰🇪 Republic of Kenya · Kenya National Examinations Council
+      </div>
+      <h1 class="briefing-title" id="briefingExamTitle">
+        KCSE Chemistry Paper 3 (Practical) Mock Examination
+      </h1>
+      <div class="briefing-badge" id="briefingExamBadge">
+        KNEC Syllabus Code 233/3 · 40.0 Marks · 2 Hours 15 Minutes
+      </div>
+    </div>
+
+    <div class="briefing-candidate-strip">
+      <div>
+        <span style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Candidate:</span>
+        <div style="font-size:0.92rem; font-weight:800; color:var(--heading-color);" id="briefingCandidateName">Student Candidate</div>
+      </div>
+      <div>
+        <span style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Examination Mode:</span>
+        <div style="font-size:0.92rem; font-weight:800; color:var(--cyan-accent);" id="briefingModeText">Official Timed (135m)</div>
+      </div>
+      <div>
+        <span style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Centre Name:</span>
+        <div style="font-size:0.92rem; font-weight:800; color:var(--text-main);">VirtuLab Kenya Digital Examination Centre</div>
+      </div>
+    </div>
+
+    <div class="briefing-body">
+      <div class="briefing-section-title">📋 Instructions to Candidates</div>
+      <ol class="briefing-instructions-list">
+        <li>Answer <b>ALL THREE QUESTIONS</b> in the spaces and digital benches provided.</li>
+        <li>Record all quantitative burette volumes, thermometer readings, observations, and inferences accurately.</li>
+        <li>Mathematical tables and non-programmable electronic calculators may be used.</li>
+        <li>All calculations must show full analytical working; Error Carried Forward (e.c.f.) marks will be awarded.</li>
+        <li><b>Important:</b> The 135-minute countdown clock will begin immediately when you click <b>"Begin Examination"</b>.</li>
+      </ol>
+
+      <div class="briefing-section-title" style="margin-top:16px;">🧪 Examination Paper Structure</div>
+      <div class="briefing-structure-grid">
+        <div class="briefing-struct-item">
+          <span style="font-size:1.4rem;">🧪</span>
+          <div>
+            <b style="font-size:0.86rem; color:var(--heading-color);">Question 1 (15.0 Marks)</b>
+            <div style="font-size:0.78rem; color:var(--text-muted);" id="briefingQ1Desc">Quantitative Titration &amp; Stoichiometry</div>
+          </div>
+        </div>
+        <div class="briefing-struct-item">
+          <span style="font-size:1.4rem;">🧂</span>
+          <div>
+            <b style="font-size:0.86rem; color:var(--heading-color);">Question 2 (15.0 Marks)</b>
+            <div style="font-size:0.78rem; color:var(--text-muted);" id="briefingQ2Desc">Qualitative Inorganic Salt Analysis</div>
+          </div>
+        </div>
+        <div class="briefing-struct-item">
+          <span style="font-size:1.4rem;">🧫</span>
+          <div>
+            <b style="font-size:0.86rem; color:var(--heading-color);">Question 3 (10.0 Marks)</b>
+            <div style="font-size:0.78rem; color:var(--text-muted);" id="briefingQ3Desc">Organic Functional Group Analysis</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="briefing-actions">
+      <a href="/student/mock_exams.html" class="top-action-btn" style="padding:10px 18px; font-size:0.86rem;">
+        ← Return to Mock Hub
+      </a>
+      <button type="button" class="btn-start-exam-now" id="btnStartExamNow" onclick="startOfficialExamination()">
+        🚀 Begin Examination (Start Timer) →
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <!-- Prescribed Continuous Assessment Banner (Shown when assignmentId is present) -->
+  <div id="assignmentHeaderBanner" style="display:none; background:rgba(6,182,212,0.15); border:1.5px solid var(--cyan-accent); border-radius:12px; padding:12px 18px; margin-bottom:16px; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <span style="font-size:1.3rem;">📋</span>
+      <div>
+        <div style="font-size:0.75rem; font-weight:800; text-transform:uppercase; color:var(--cyan-accent); letter-spacing:0.04em;">PRESCRIBED CONTINUOUS ASSESSMENT ASSIGNMENT</div>
+        <div id="assignBannerTitle" style="font-size:0.95rem; font-weight:800; color:var(--heading-color);">KCSE Chemistry Paper 3 Practical Assignment</div>
+      </div>
+    </div>
+    <span style="font-size:0.76rem; font-family:var(--font-mono); font-weight:700; background:var(--card-bg); padding:4px 10px; border-radius:6px; border:1px solid var(--card-border);" id="assignBannerDue">Active Practical Assignment</span>
+  </div>
+
+  <!-- Official Examination Header -->
+  <div class="exam-header">
+    <div>
+      <div class="exam-header-title">
+        <span>🇰🇪 THE KENYA NATIONAL EXAMINATIONS COUNCIL (KNEC)</span>
+      </div>
+      <div class="exam-header-sub" id="examSubTitle">
+        KCSE Chemistry Paper 3 (Practical) Mock Examination — Code 233/3
+      </div>
+      <div class="exam-header-meta">
+        Candidate: <b id="candidateName" style="color:var(--heading-color);">Student Candidate</b> &nbsp;·&nbsp; Target Weighting: <b style="color:var(--amber-accent);">40.0 Marks Total</b> &nbsp;·&nbsp; Mode: <b id="modeIndicator" style="color:var(--cyan-accent);">Official Timed</b>
+      </div>
+    </div>
+    
+    <div style="text-align:right;">
+      <div id="examTimerDisplay" class="exam-timer-chip">
+        ⏱️ 135:00
+      </div>
+    </div>
+  </div>
+
+  <!-- Real-Time KNEC Examination Pacing Coach -->
+  <div class="pacing-coach-bar">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <span style="font-size:1.05rem;">⏱️</span>
+      <span style="font-size:0.8rem; font-weight:800; color:var(--heading-color);">KNEC Pacing Coach:</span>
+    </div>
+    <div class="pacing-milestones-scroller" id="pacingMilestonesContainer" style="display:flex; align-items:center; gap:8px;">
+      <div class="pacing-milestone active" id="paceQ1">
+        <span>🧪 Q1: Volumetric</span>
+        <span style="opacity:0.75;">(Target: 45 min)</span>
+      </div>
+      <div class="pacing-milestone" id="paceQ2">
+        <span>🧂 Q2: Qualitative</span>
+        <span style="opacity:0.75;">(Target: 45 min)</span>
+      </div>
+      <div class="pacing-milestone" id="paceQ3">
+        <span>🧫 Q3: Organic</span>
+        <span style="opacity:0.75;">(Target: 35 min)</span>
+      </div>
+      <div class="pacing-milestone" id="paceRev">
+        <span>📋 Final Review</span>
+        <span style="opacity:0.75;">(Target: 10 min)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Question Navigation Tabs -->
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
+    <div id="examTabsContainer" style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="exam-tab-btn active" id="btnQ1" onclick="switchQTab(1)">
+        🧪 Question 1: Volumetric Analysis (15.0 Mks)
+      </button>
+      <button class="exam-tab-btn" id="btnQ2" onclick="switchQTab(2)">
+        🧂 Question 2: Qualitative Inorganic Analysis (15.0 Mks)
+      </button>
+      <button class="exam-tab-btn" id="btnQ3" onclick="switchQTab(3)">
+        🧫 Question 3: Organic Analysis (10.0 Mks)
+      </button>
+    </div>
+
+    <button onclick="submitCompositeExam()" class="btn-submit-exam">
+      🚀 Submit KCSE Exam Booklet
+    </button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       QUESTION 1: VOLUMETRIC ANALYSIS (15.0 MARKS)
+  ══════════════════════════════════════════════════════════════ -->
+  <div id="paneQ1" class="exam-section-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <h2 style="font-size:1.2rem;font-weight:800;color:var(--heading-color);margin:0;font-family:var(--font-heading);" id="q1SectionTitle">
+        🧪 QUESTION 1: Volumetric Analysis
+      </h2>
+      <span class="timer-chip" id="q1MarksBadge" style="font-size:0.78rem;padding:3px 10px;background:var(--amber-bg);color:var(--amber-accent);border:1px solid var(--amber-border);">15.0 MARKS</span>
+    </div>
+
+    <!-- Multi-Procedure Selector (Shown for two-stage titrations e.g. Procedure I & Procedure II) -->
+    <div id="q1ProcedureNav" style="display:none; gap:8px; margin-bottom:14px; flex-wrap:wrap;"></div>
+
+    <div class="q1-parts-stack">
+
+      <!-- ════════════════════════════════════════════════════════════
+           PART 1: EXPERIMENTAL BRIEF & REAGENTS SPECIFICATION
+      ════════════════════════════════════════════════════════════ -->
+      <section class="q1-part-card" id="q1Part1Card">
+        <div class="q1-part-header">
+          <div class="q1-part-title">
+            <span>📋</span>
+            <span>Part 1: Experimental Brief &amp; Reagents Specification</span>
+          </div>
+          <span class="q1-part-badge">KNEC Practical Specifications</span>
+        </div>
+
+        <div class="exam-prompt-box" id="q1PromptBoxContent" style="margin-bottom:0; background:transparent; border:none; padding:0;">
+          <div class="q1-reagents-grid">
+            <!-- Col 1: Prescribed Reagents & Reaction Equation -->
+            <div class="q1-spec-box">
+              <div class="q1-spec-box-title">
+                <span>🫙</span> Prescribed Laboratory Reagents &amp; Reaction
+              </div>
+              <div class="q1-spec-item">
+                <span class="q1-spec-icon">🧪</span>
+                <div>
+                  <b style="color:var(--cyan-accent);">Burette (Titrant):</b> <span id="q1SolAName">Solution A</span>
+                </div>
+              </div>
+              <div class="q1-spec-item">
+                <span class="q1-spec-icon">⚗️</span>
+                <div>
+                  <b style="color:var(--heading-color);">Conical Flask (Analyte):</b> <span id="q1SolBName">Solution B</span>
+                </div>
+              </div>
+              <div class="q1-spec-item">
+                <span class="q1-spec-icon">💧</span>
+                <div>
+                  <b style="color:var(--amber-accent);">Endpoint Indicator:</b> <span id="q1IndicatorName">Indicator</span>
+                </div>
+              </div>
+              <!-- Chemical Equation Callout Hidden in Mock Exams -->
+              <div id="q1EquationRow" class="q1-equation-callout" style="display:none !important;">
+                <div style="font-size:0.70rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; margin-bottom:3px;">Chemical Equation:</div>
+                <code id="q1EquationDisplay" style="font-family:var(--font-mono); font-weight:700; color:var(--cyan-accent); font-size:0.86rem; word-break:break-all;"></code>
+              </div>
+            </div>
+
+            <!-- Col 2: Standard KNEC Procedure Flow -->
+            <div class="q1-spec-box">
+              <div class="q1-spec-box-title">
+                <span>📝</span> Standard KNEC Procedure Flow
+              </div>
+              <div class="q1-procedure-list">
+                <div class="q1-proc-step-item">
+                  <span class="q1-proc-step-num">1</span>
+                  <span>Pipette exactly <b>25.0 cm³</b> of Solution B into a clean 250 cm³ conical flask. Add 2–3 drops of indicator.</span>
+                </div>
+                <div class="q1-proc-step-item">
+                  <span class="q1-proc-step-num">2</span>
+                  <span>Fill the burette with Solution A and adjust the meniscus level precisely to <b>0.00 cm³</b>.</span>
+                </div>
+                <div class="q1-proc-step-item">
+                  <span class="q1-proc-step-num">3</span>
+                  <span>Titrate Solution B with Solution A with continuous swirling until the sharp characteristic endpoint is reached.</span>
+                </div>
+                <div class="q1-proc-step-item">
+                  <span class="q1-proc-step-num">4</span>
+                  <span>Record readings and repeat to complete <b>Table 1</b> with concordant titres (within ±0.10 cm³).</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ════════════════════════════════════════════════════════════
+           PART 2: VOLUMETRIC BENCH & OPTICAL OBSERVATION STAGE
+      ════════════════════════════════════════════════════════════ -->
+      <section class="q1-part-card" id="q1Part2Card">
+        <div class="q1-part-header">
+          <div class="q1-part-title">
+            <span>🔬</span>
+            <span>Part 2: Volumetric Laboratory Bench &amp; Optical Observation</span>
+          </div>
+          <span class="q1-part-badge badge-amber">Interactive Apparatus</span>
+        </div>
+
+        <div class="q1-bench-split-layout">
+          <!-- Left: Optical Observation Stage (SVG Apparatus Rig + Magnified Reading Lens) -->
+          <div class="q1-observation-stage">
+            <div class="apparatus-lens-row">
+              <!-- Realistic Apparatus SVG -->
+              <svg class="rig-svg" viewBox="0 0 240 380" xmlns="http://www.w3.org/2000/svg" style="width:155px; height:305px; flex-shrink:0;">
+                <defs>
+                  <linearGradient id="glassSheenExam" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.65"/>
+                    <stop offset="15%" stop-color="#BAE6FD" stop-opacity="0.25"/>
+                    <stop offset="60%" stop-color="#0284C7" stop-opacity="0.08"/>
+                    <stop offset="85%" stop-color="#38BDF8" stop-opacity="0.3"/>
+                    <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.75"/>
+                  </linearGradient>
+
+                  <linearGradient id="metalChromeExam" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#334155"/>
+                    <stop offset="25%" stop-color="#94A3B8"/>
+                    <stop offset="50%" stop-color="#F8FAFC"/>
+                    <stop offset="75%" stop-color="#64748B"/>
+                    <stop offset="100%" stop-color="#1E293B"/>
+                  </linearGradient>
+                  
+                  <linearGradient id="castIronBaseExam" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#475569"/>
+                    <stop offset="20%" stop-color="#334155"/>
+                    <stop offset="80%" stop-color="#1E293B"/>
+                    <stop offset="100%" stop-color="#0F172A"/>
+                  </linearGradient>
+
+                  <linearGradient id="brassScrewExam" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#B45309"/>
+                    <stop offset="50%" stop-color="#FDE047"/>
+                    <stop offset="100%" stop-color="#78350F"/>
+                  </linearGradient>
+
+                  <linearGradient id="liquidGradRig" x1="0" y1="0" x2="1" y2="0">
+                    <stop id="gradStop1" offset="0%" stop-color="#38BDF8" stop-opacity="0.95"/>
+                    <stop offset="30%" stop-color="#7DD3FC" stop-opacity="0.75"/>
+                    <stop id="gradStop2" offset="70%" stop-color="#0284C7" stop-opacity="0.85"/>
+                    <stop offset="100%" stop-color="#0369A1" stop-opacity="0.95"/>
+                  </linearGradient>
+
+                  <linearGradient id="porcelainTileExam" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#FFFFFF"/>
+                    <stop offset="70%" stop-color="#F1F5F9"/>
+                    <stop offset="100%" stop-color="#E2E8F0"/>
+                  </linearGradient>
+
+                  <filter id="apparatusShadowExam" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="rgba(0,0,0,0.5)"/>
+                  </filter>
+                </defs>
+
+                <!-- 1. Cast-Iron Retort Stand Base -->
+                <g filter="url(#apparatusShadowExam)">
+                  <rect x="25" y="348" width="160" height="14" rx="4" fill="url(#castIronBaseExam)" stroke="#64748B" stroke-width="1"/>
+                  <rect x="27" y="349" width="156" height="2" fill="rgba(255,255,255,0.4)" rx="1"/>
+                  <rect x="32" y="362" width="16" height="3" rx="1" fill="#000000"/>
+                  <rect x="162" y="362" width="16" height="3" rx="1" fill="#000000"/>
+                </g>
+
+                <!-- 2. Porcelain White Titration Tile (Under Flask) -->
+                <g filter="url(#apparatusShadowExam)">
+                  <rect x="80" y="338" width="95" height="12" rx="3" fill="url(#porcelainTileExam)" stroke="#CBD5E1" stroke-width="1.2"/>
+                  <rect x="82" y="339" width="91" height="2" fill="#FFFFFF" rx="1"/>
+                  <ellipse cx="129" cy="344" rx="26" ry="3" fill="rgba(56,189,248,0.15)"/>
+                </g>
+
+                <!-- 3. Vertical Chrome Steel Stand Rod -->
+                <rect x="42" y="15" width="10" height="335" rx="3" fill="url(#metalChromeExam)" stroke="#475569" stroke-width="0.8"/>
+                <rect x="45" y="15" width="2" height="335" fill="rgba(255,255,255,0.6)"/>
+
+                <!-- 4. Bosshead & Dual-Prong Articulated Clamp -->
+                <g id="clampAssembly">
+                  <rect x="38" y="90" width="18" height="24" rx="3" fill="#1E293B" stroke="#475569" stroke-width="1"/>
+                  <circle cx="34" cy="102" r="5" fill="url(#brassScrewExam)" stroke="#78350F" stroke-width="0.8"/>
+                  <line x1="34" y1="99" x2="34" y2="105" stroke="#451A03" stroke-width="1.2"/>
+                  <rect x="56" y="98" width="56" height="8" rx="2" fill="url(#metalChromeExam)" stroke="#475569" stroke-width="0.8"/>
+                  <path d="M 112,86 L 118,92 L 118,112 L 112,118" fill="none" stroke="#334155" stroke-width="4" stroke-linecap="round"/>
+                  <rect x="115" y="88" width="6" height="28" rx="2" fill="#DC2626" stroke="#991B1B" stroke-width="0.8"/>
+                  <circle cx="112" cy="102" r="4" fill="url(#brassScrewExam)"/>
+                </g>
+
+                <!-- 5. Precision 50 cm³ Borosilicate Glass Burette -->
+                <g id="buretteGlassRig">
+                  <rect x="120" y="10" width="18" height="200" rx="3" fill="url(#glassSheenExam)" stroke="#38BDF8" stroke-width="1.4" opacity="0.9"/>
+                  <rect id="buretteFill" x="122" y="10" width="14" height="196" rx="1" fill="url(#liquidGradRig)"/>
+                  <ellipse id="buretteMeniscusCap" cx="129" cy="10" rx="7" ry="1.8" fill="#7DD3FC" opacity="0.9"/>
+
+                  <!-- Millimeter Graduation Marks -->
+                  <g stroke="rgba(255,255,255,0.85)" stroke-width="0.75">
+                    <line x1="130" y1="18" x2="137" y2="18"/>
+                    <line x1="132" y1="36" x2="137" y2="36"/>
+                    <line x1="130" y1="54" x2="137" y2="54"/>
+                    <line x1="132" y1="72" x2="137" y2="72"/>
+                    <line x1="130" y1="90" x2="137" y2="90"/>
+                    <line x1="132" y1="108" x2="137" y2="108"/>
+                    <line x1="130" y1="126" x2="137" y2="126"/>
+                    <line x1="132" y1="144" x2="137" y2="144"/>
+                    <line x1="130" y1="162" x2="137" y2="162"/>
+                    <line x1="132" y1="180" x2="137" y2="180"/>
+                    <line x1="130" y1="198" x2="137" y2="198"/>
+                  </g>
+                  <g font-family="'JetBrains Mono', monospace" font-size="6" fill="#FFFFFF" font-weight="700">
+                    <text x="139" y="20">0</text>
+                    <text x="139" y="56">10</text>
+                    <text x="139" y="92">20</text>
+                    <text x="139" y="128">30</text>
+                    <text x="139" y="164">40</text>
+                    <text x="139" y="200">50</text>
+                  </g>
+                  <line x1="122" y1="12" x2="122" y2="208" stroke="#FFFFFF" stroke-width="1" opacity="0.65"/>
+                  <line x1="136" y1="12" x2="136" y2="208" stroke="#0284C7" stroke-width="0.8" opacity="0.5"/>
+
+                  <!-- Stopcock Valve Assembly -->
+                  <g id="stopcockAssembly">
+                    <rect x="117" y="210" width="24" height="12" rx="3" fill="url(#glassSheenExam)" stroke="#0284C7" stroke-width="1.2"/>
+                    <g id="stopcockValve" style="transform-origin: 129px 216px; transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);">
+                      <rect x="126" y="208" width="6" height="16" rx="2" fill="#0284C7" stroke="#38BDF8" stroke-width="0.8"/>
+                      <rect x="120" y="206" width="18" height="4" rx="1.5" fill="#F8FAFC" stroke="#94A3B8" stroke-width="0.8"/>
+                    </g>
+                    <path d="M 126,222 L 127,242 L 131,242 L 132,222 Z" fill="url(#glassSheenExam)" stroke="#38BDF8" stroke-width="1.2"/>
+                    <line x1="129" y1="222" x2="129" y2="242" stroke="#38BDF8" stroke-width="1.8"/>
+                  </g>
+                </g>
+
+                <!-- Animated Drip -->
+                <circle id="rigDrip" cx="129" cy="242" r="3.2" fill="#00F2FE" style="display:none;" />
+
+                <!-- 6. Erlenmeyer Conical Flask (250 cm³) -->
+                <g id="flaskContainer" style="transform-origin: 129px 310px; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);">
+                  <!-- Transparent Glass Base Tint -->
+                  <path d="M 118,256 L 118,268 L 94,334 Q 129,346 164,334 L 140,268 L 140,256 Z"
+                        fill="rgba(255,255,255,0.05)" stroke="none"/>
+
+                  <!-- Chemical Liquid Layer -->
+                  <path id="flaskRigBody" d="M 107.1,298 L 94,334 Q 129,346 164,334 L 150.9,298 Q 129,294 107.1,298 Z"
+                        fill="rgba(56,189,248,0.15)" stroke="none" style="display:none; transition: fill 0.35s ease; opacity: 0.9;"/>
+
+                  <!-- Meniscus Surface Ellipse -->
+                  <ellipse id="flaskLiquidSurface" cx="129" cy="298" rx="22" ry="4" fill="rgba(255,255,255,0.3)" style="display:none; transition: fill 0.35s ease, cy 0.2s ease, rx 0.2s ease;"/>
+
+                  <!-- Flask Volume Graduations (100, 150, 200 cm³) -->
+                  <g stroke="rgba(255,255,255,0.7)" stroke-width="0.8">
+                    <line x1="110" y1="318" x2="118" y2="318"/>
+                    <line x1="114" y1="304" x2="120" y2="304"/>
+                    <line x1="118" y1="290" x2="124" y2="290"/>
+                  </g>
+                  <g font-family="'JetBrains Mono', monospace" font-size="5" fill="rgba(255,255,255,0.85)">
+                    <text x="100" y="320">100</text>
+                    <text x="104" y="306">150</text>
+                    <text x="108" y="292">200</text>
+                  </g>
+                  <rect x="134" y="296" width="18" height="12" rx="2" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.35)" stroke-width="0.5"/>
+
+                  <!-- Glass Refraction & Highlights -->
+                  <path d="M 120,264 L 102,328 Q 112,334 122,332 L 132,270 Z" fill="rgba(255,255,255,0.16)" opacity="0.75" pointer-events="none"/>
+                  <path d="M 137,264 L 154,324" stroke="rgba(255,255,255,0.45)" stroke-width="1.2" stroke-linecap="round" fill="none" pointer-events="none"/>
+
+                  <!-- Outer Glass Wall & Rim -->
+                  <path id="flaskGlassWallExam" d="M 118,256 L 118,268 L 94,334 Q 129,346 164,334 L 140,268 L 140,256 Z"
+                        fill="none" stroke="#38BDF8" stroke-width="1.8" stroke-linejoin="round" pointer-events="none"/>
+                  <ellipse cx="129" cy="254" rx="15" ry="4" fill="url(#glassSheenExam)" stroke="#38BDF8" stroke-width="1.5"/>
+                  <ellipse cx="129" cy="254" rx="11" ry="2.8" fill="rgba(15,23,42,0.6)" stroke="#0284C7" stroke-width="0.8"/>
+                </g>
+              </svg>
+
+              <!-- Magnified Reading Lens -->
+              <div class="buret-lens-card">
+                <div style="font-size:0.75rem; font-weight:800; color:var(--cyan-accent); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.04em; display:flex; align-items:center; justify-content:space-between; width:100%;">
+                  <span>🔍 Burette Lens</span>
+                  <span style="font-size:0.60rem; color:#EF4444; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.35); border-radius:4px; padding:1px 5px; font-weight:800; letter-spacing:0.03em;">EYE LEVEL</span>
+                </div>
+                <div class="lens-viewfinder">
+                  <div class="lens-glass-glare"></div>
+                  <div class="lens-crosshair-line"></div>
+                  <svg id="lensSvg" viewBox="0 0 200 180" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%; display:block;">
+                    <!-- Default Initial Burette Lens Rendering at 0.00 cm³ -->
+                    <defs>
+                      <linearGradient id="lensTubeCeramicExam" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stop-color="#E2E8F0"/>
+                        <stop offset="10%" stop-color="#FFFFFF"/>
+                        <stop offset="90%" stop-color="#FFFFFF"/>
+                        <stop offset="100%" stop-color="#CBD5E1"/>
+                      </linearGradient>
+                      <linearGradient id="luminousLiquidFillExam" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.92"/>
+                        <stop offset="15%" stop-color="#0284C7" stop-opacity="0.88"/>
+                        <stop offset="60%" stop-color="#0369A1" stop-opacity="0.92"/>
+                        <stop offset="100%" stop-color="#0C4A6E" stop-opacity="0.98"/>
+                      </linearGradient>
+                      <linearGradient id="tubeSpecularExam" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.8"/>
+                        <stop offset="15%" stop-color="#FFFFFF" stop-opacity="0.2"/>
+                        <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.0"/>
+                      </linearGradient>
+                      <filter id="lensBeadGlowExam" x="-50%" y="-50%" width="200%" height="200%">
+                        <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#EF4444" flood-opacity="0.9"/>
+                      </filter>
+                    </defs>
+                    <rect x="12" y="0" width="176" height="180" rx="6" fill="url(#lensTubeCeramicExam)"/>
+                    <rect x="94" y="0" width="12" height="180" fill="#0284C7" opacity="0.25"/>
+                    <line x1="12" y1="0" x2="12" y2="180" stroke="#00F2FE" stroke-width="3" stroke-opacity="0.8"/>
+                    <line x1="188" y1="0" x2="188" y2="180" stroke="#00F2FE" stroke-width="3" stroke-opacity="0.8"/>
+                    <rect x="16" y="0" width="14" height="180" fill="url(#tubeSpecularExam)"/>
+                    <path d="M 12 80 Q 100 100 188 80 L 188 180 L 12 180 Z" fill="url(#luminousLiquidFillExam)"/>
+                    <rect x="16" y="90" width="14" height="90" fill="url(#tubeSpecularExam)"/>
+                    <!-- Initial Graduation Marks at 0.00 cm³ -->
+                    <line x1="12" y1="90" x2="68" y2="90" stroke="#0F172A" stroke-width="2.6" stroke-linecap="round"/>
+                    <line x1="132" y1="90" x2="188" y2="90" stroke="#0F172A" stroke-width="2.6" stroke-linecap="round"/>
+                    <text x="76" y="95" fill="#0F172A" font-size="14" font-family="'JetBrains Mono', monospace" font-weight="900">0.0</text>
+                    <line x1="12" y1="96" x2="38" y2="96" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="162" y1="96" x2="188" y2="96" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="12" y1="102" x2="38" y2="102" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="162" y1="102" x2="188" y2="102" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="12" y1="108" x2="38" y2="108" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="162" y1="108" x2="188" y2="108" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="12" y1="114" x2="38" y2="114" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="162" y1="114" x2="188" y2="114" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="12" y1="120" x2="52" y2="120" stroke="#1E293B" stroke-width="2.0" stroke-linecap="round"/>
+                    <line x1="148" y1="120" x2="188" y2="120" stroke="#1E293B" stroke-width="2.0" stroke-linecap="round"/>
+                    <line x1="12" y1="126" x2="38" y2="126" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="162" y1="126" x2="188" y2="126" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="12" y1="132" x2="38" y2="132" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="162" y1="132" x2="188" y2="132" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="12" y1="138" x2="38" y2="138" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="162" y1="138" x2="188" y2="138" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="12" y1="144" x2="38" y2="144" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="162" y1="144" x2="188" y2="144" stroke="#475569" stroke-width="1.3" stroke-linecap="round"/>
+                    <line x1="12" y1="150" x2="68" y2="150" stroke="#0F172A" stroke-width="2.6" stroke-linecap="round"/>
+                    <line x1="132" y1="150" x2="188" y2="150" stroke="#0F172A" stroke-width="2.6" stroke-linecap="round"/>
+                    <text x="76" y="155" fill="#0F172A" font-size="14" font-family="'JetBrains Mono', monospace" font-weight="900">1.0</text>
+                    <!-- Meniscus Boundary & Center Reticle Bead at y = 90 -->
+                    <path d="M 12 79 Q 100 99 188 79" stroke="#032B44" stroke-width="3" fill="none" opacity="0.85"/>
+                    <path d="M 12 80 Q 100 100 188 80" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+                    <circle cx="100" cy="90" r="4" fill="#EF4444" stroke="#FFFFFF" stroke-width="1.5" filter="url(#lensBeadGlowExam)"/>
+                    <line x1="12" y1="90" x2="32" y2="90" stroke="#EF4444" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="168" y1="90" x2="188" y2="90" stroke="#EF4444" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                </div>
+                <div class="lens-readout-badge" id="lensDigitalReadout">
+                  <span>🔍</span> Meniscus Viewfinder
+                </div>
+                <div style="font-size:0.68rem; color:var(--text-muted); margin-top:3px; font-family:'Newsreader', serif; font-style:italic;" id="lensReadoutSubText">
+                  Read scale at <b>bottom of meniscus</b> at eye level.
+                </div>
+              </div>
+            </div>
+
+            <!-- Live Flask Status HUD -->
+            <div class="q1-flask-status-hud">
+              <span id="flaskContentsLabel" style="color:var(--heading-color);">Flask: Empty</span>
+              <span style="font-size:0.68rem; color:var(--text-muted); font-family:var(--font-mono);">250 cm³ Conical Flask</span>
+            </div>
+
+            <!-- Authentic Chemistry Laboratory Reagent Bottles Shelf -->
+            <div class="bench-reagents-shelf">
+              <div class="bench-bottle-chip">
+                <span>🫙</span>
+                <span id="q1TitrantChip">Solution A (Burette)</span>
+              </div>
+              <div class="bench-bottle-chip">
+                <span>💧</span>
+                <span id="q1IndicatorChip">Indicator Dropper</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Laboratory Action Console -->
+          <div class="q1-action-console">
+            <!-- Console Section 1: Flask Preparation -->
+            <div class="q1-console-section">
+              <div class="q1-console-header">
+                <span class="q1-console-title-wrap">
+                  <span class="q1-console-step-badge step-cyan">1</span>
+                  <span class="q1-console-title">Flask Preparation</span>
+                </span>
+                <span class="q1-console-sub">Aliquot &amp; Indicator</span>
+              </div>
+
+              <div class="q1-prep-grid">
+                <div class="q1-prep-action-card">
+                  <button class="btn-bench btn-bench-cyan" id="btnPipette" onclick="pipetteSolutionB()">
+                    🧪 Pipette 25.0 cm³
+                  </button>
+                  <div id="pipetteStatus" class="prep-status-pill">Not Pipetted</div>
+                </div>
+                <div class="q1-prep-action-card">
+                  <button class="btn-bench btn-bench-blue" id="btnAddIndicator" onclick="addIndicatorDrop()">
+                    💧 Add Indicator (0/3)
+                  </button>
+                  <div id="indicatorStatus" class="prep-status-pill">0 Drops Added</div>
+                </div>
+              </div>
+
+              <button class="btn-bench btn-bench-amber btn-bench-swirl" onclick="swirlFlask()">
+                🌀 Swirl Conical Flask
+              </button>
+            </div>
+
+            <!-- Console Section 2: Burette Dispenser & Flow Controls -->
+            <div class="q1-console-section">
+              <div class="q1-console-header">
+                <span class="q1-console-title-wrap">
+                  <span class="q1-console-step-badge step-amber">2</span>
+                  <span class="q1-console-title">Titrant Delivery</span>
+                </span>
+                <span class="q1-console-sub">Burette Stopcock Controls</span>
+              </div>
+
+              <div class="q1-delivery-controls">
+                <div class="q1-vol-buttons-row">
+                  <button class="btn-bench btn-bench-vol btn-bench-cyan" onclick="addTitrantDirect(1.0)">+1.0 cm³</button>
+                  <button class="btn-bench btn-bench-vol btn-bench-cyan" onclick="addTitrantDirect(0.5)">+0.5 cm³</button>
+                  <button class="btn-bench btn-bench-vol btn-bench-teal" onclick="addTitrantDirect(0.1)">+0.10 cm³</button>
+                  <button class="btn-bench btn-bench-vol btn-bench-teal" onclick="addTitrantDirect(0.05)">💧 +0.05</button>
+                </div>
+
+                <div class="q1-flow-buttons-row">
+                  <button class="btn-bench btn-bench-blue" onclick="startContinuousTitration()" id="btnContinuous">
+                    ⚡ Continuous Run
+                  </button>
+                  <button class="btn-bench btn-bench-crimson" onclick="stopTitrate()">
+                    🔴 Stop Tap
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Console Section 3: Data Logging & Operations -->
+            <div class="q1-console-section">
+              <div class="q1-console-header">
+                <span class="q1-console-title-wrap">
+                  <span class="q1-console-step-badge step-emerald">3</span>
+                  <span class="q1-console-title">Trial Data Logging &amp; Bench Operations</span>
+                </span>
+                <span class="q1-console-sub">Table 1 Transfer</span>
+              </div>
+
+              <!-- Manual Data Logging Instructions & Wash Flask -->
+              <div class="q1-trial-target-bar">
+                <span class="q1-trial-target-label">Recording Instruction:</span>
+                <span class="q1-trial-target-badge" style="background:var(--card-bg-hover); color:var(--heading-color);">Manual Entry in Table 1</span>
+              </div>
+              <div style="font-size:0.78rem; color:var(--text-muted); margin-bottom:12px; line-height:1.45;">
+                Read the initial and final burette levels using the magnified meniscus viewfinder above and enter your readings directly into Table 1 below.
+              </div>
+
+              <div class="q1-ops-buttons-row">
+                <button type="button" class="btn-bench btn-bench-slate" style="width:100%; justify-content:center;" onclick="resetTitrationApparatus()">
+                  🔄 Wash Flask &amp; Refill Burette for Next Trial
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ════════════════════════════════════════════════════════════
+           PART 3: TITRATION RESULTS LOG (TABLE 1)
+      ════════════════════════════════════════════════════════════ -->
+      <section class="q1-part-card" id="q1Part3Card">
+        <div class="q1-part-header">
+          <div class="q1-part-title">
+            <span>📊</span>
+            <span id="q1TableTitle">Part 3: Titration Results Log (Table 1 — 5.0 Marks)</span>
+          </div>
+          <span class="q1-part-badge badge-emerald">5.0 Marks Allocated</span>
+        </div>
+
+
+        <!-- Live Concordancy Evaluation Banner -->
+        <div class="q1-concordant-hud" id="q1ConcordantHud">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:1.1rem;">⚖️</span>
+            <div>
+              <div style="font-size:0.72rem; font-weight:800; text-transform:uppercase; color:var(--cyan-accent); letter-spacing:0.03em;">Concordancy Verification (±0.10 cm³)</div>
+              <div id="q1ConcordantStatusText" style="font-size:0.80rem; font-weight:700; color:var(--text-muted);">Check 2 or 3 concordant trials in Table 1 below.</div>
+            </div>
+          </div>
+          <button type="button" class="btn-bench btn-bench-teal" style="width:auto; padding:5px 12px; font-size:0.74rem;" onclick="autoSelectConcordantTrials()">
+            ⚡ Auto-Select Concordant Titres
+          </button>
+        </div>
+
+        <div class="knec-table-scroll-wrap">
+          <table class="knec-titration-table" style="margin-bottom:0;">
+            <thead>
+              <tr>
+                <th>Burette Reading (cm³)</th>
+                <th style="text-align:center;">Trial I (Rough)</th>
+                <th style="text-align:center;">Trial II</th>
+                <th style="text-align:center;">Trial III</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><b>Final Reading (cm³)</b></td>
+                <td><input type="number" step="0.05" id="t1Final" class="calc-input" style="text-align:center;" placeholder="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
+                <td><input type="number" step="0.05" id="t2Final" class="calc-input" style="text-align:center;" placeholder="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
+                <td><input type="number" step="0.05" id="t3Final" class="calc-input" style="text-align:center;" placeholder="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
+              </tr>
+              <tr>
+                <td><b>Initial Reading (cm³)</b></td>
+                <td><input type="number" step="0.05" id="t1Init" class="calc-input" style="text-align:center;" value="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
+                <td><input type="number" step="0.05" id="t2Init" class="calc-input" style="text-align:center;" value="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
+                <td><input type="number" step="0.05" id="t3Init" class="calc-input" style="text-align:center;" value="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
+              </tr>
+              <tr style="background:var(--card-bg-hover);">
+                <td><b>Volume of Titrant Used (cm³)</b></td>
+                <td id="t1Used" style="text-align:center;font-weight:800;font-family:var(--font-mono);">0.00</td>
+                <td id="t2Used" style="text-align:center;font-weight:800;font-family:var(--font-mono);">0.00</td>
+                <td id="t3Used" style="text-align:center;font-weight:800;font-family:var(--font-mono);">0.00</td>
+              </tr>
+              <tr>
+                <td><b>Concordant Titres (±0.10 cm³)</b></td>
+                <td style="text-align:center;"><input type="checkbox" id="t1Concordant" onchange="onConcordantChanged()"></td>
+                <td style="text-align:center;"><input type="checkbox" id="t2Concordant" onchange="onConcordantChanged()"></td>
+                <td style="text-align:center;"><input type="checkbox" id="t3Concordant" onchange="onConcordantChanged()"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ════════════════════════════════════════════════════════════
+           PART 4: STOICHIOMETRIC CALCULATIONS
+      ════════════════════════════════════════════════════════════ -->
+      <section class="q1-part-card" id="q1Part4Card">
+        <div class="q1-part-header">
+          <div class="q1-part-title">
+            <span>📐</span>
+            <span id="q1CalcSectionTitle">Part 4: Stoichiometric Calculations (10.0 Marks)</span>
+          </div>
+          <span class="q1-part-badge badge-purple">10.0 Marks Allocated</span>
+        </div>
+
+        <div class="q1-ecf-notice-banner">
+          <span style="font-size:1.1rem;">ℹ️</span>
+          <span><b>KNEC Scoring Protocol:</b> Calculations are evaluated using <b>Error Carried Forward (e.c.f.)</b> based on your own concordant Table 1 titres. Ensure correct algebraic rounding and units.</span>
+        </div>
+
+        <div id="q1CalculationsContainer">
+          <!-- Default Step (a) -->
+          <div class="calc-step-card" id="card_avgTitre">
+            <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
+              (a) Calculate the average volume of Solution A used, V₁ <span style="color:var(--cyan-accent);">(1.0 Mark)</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <input type="number" step="0.01" id="ansAvgTitre" class="calc-input dynamic-calc-input" data-field="avgTitre" data-step-id="step_a" placeholder="e.g. 25.00" oninput="onDynamicQ1CalculationChanged('avgTitre', this.value)">
+              <span style="font-weight:700;color:var(--text-muted);">cm³</span>
+            </div>
+            <div id="stepFeedback_step_a" class="step-feedback-msg"></div>
+          </div>
+
+          <!-- Default Step (b) -->
+          <div class="calc-step-card" id="card_molesA">
+            <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
+              (b) Calculate the number of moles of Solution A (acid) in the average volume V₁ used <span style="color:var(--cyan-accent);">(2.0 Marks)</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <input type="number" step="0.0001" id="ansMolesA" class="calc-input dynamic-calc-input" data-field="molesA" data-step-id="step_b" placeholder="e.g. 0.00250" oninput="onDynamicQ1CalculationChanged('molesA', this.value)">
+              <span style="font-weight:700;color:var(--text-muted);">moles of acid</span>
+            </div>
+            <div id="stepFeedback_step_b" class="step-feedback-msg"></div>
+          </div>
+
+          <!-- Default Step (c) -->
+          <div class="calc-step-card" id="card_molesB">
+            <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
+              (c) Determine the number of moles of Solution B (base) in 25.0 cm³ of solution used <span style="color:var(--cyan-accent);">(2.0 Marks)</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <input type="number" step="0.0001" id="ansMolesB" class="calc-input dynamic-calc-input" data-field="molesB" data-step-id="step_c" placeholder="e.g. 0.00250" oninput="onDynamicQ1CalculationChanged('molesB', this.value)">
+              <span style="font-weight:700;color:var(--text-muted);">moles of base</span>
+            </div>
+            <div id="stepFeedback_step_c" class="step-feedback-msg"></div>
+          </div>
+
+          <!-- Default Step (d) -->
+          <div class="calc-step-card" id="card_molarityB">
+            <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
+              (d) Calculate the molar concentration (molarity) of Solution B in mol/dm³ <span style="color:var(--cyan-accent);">(3.0 Marks)</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <input type="number" step="0.001" id="ansMolarityB" class="calc-input dynamic-calc-input" data-field="molarityB" data-step-id="step_d" placeholder="e.g. 0.100" oninput="onDynamicQ1CalculationChanged('molarityB', this.value)">
+              <span style="font-weight:700;color:var(--text-muted);">mol/dm³ (M)</span>
+            </div>
+            <div id="stepFeedback_step_d" class="step-feedback-msg"></div>
+          </div>
+
+          <!-- Default Step (e) -->
+          <div class="calc-step-card" id="card_concGrams">
+            <div style="font-weight:700;font-size:0.86rem;color:var(--text-main);margin-bottom:8px;">
+              (e) Calculate the concentration of Solution B in g/dm³ (RFM = 40.0) <span style="color:var(--cyan-accent);">(2.0 Marks)</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+              <input type="number" step="0.01" id="ansConcGrams" class="calc-input dynamic-calc-input" data-field="concGrams" data-step-id="step_e" placeholder="e.g. 4.00" oninput="onDynamicQ1CalculationChanged('concGrams', this.value)">
+              <span style="font-weight:700;color:var(--text-muted);">g/dm³</span>
+            </div>
+            <div id="stepFeedback_step_e" class="step-feedback-msg"></div>
+          </div>
+        </div>
+
+        <!-- Multi-Procedure Next Step Button (e.g. Procedure I -> Procedure II) -->
+        <div id="q1NextProcedureRow" style="display:none; margin-top:18px; text-align:right;">
+          <button type="button" class="btn-next-step" onclick="switchTitrationProcedure(1)" id="btnProceedToProc2" style="font-size:0.88rem; padding:10px 20px;">
+            Proceed to Procedure II (Solubility) →
+          </button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       QUESTION 2: QUALITATIVE INORGANIC ANALYSIS (15.0 MARKS)
+  ══════════════════════════════════════════════════════════════ -->
+  <div id="paneQ2" class="exam-section-card" style="display:none;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <h2 id="q2HeadingTitle" style="font-size:1.2rem;font-weight:800;color:var(--heading-color);margin:0;font-family:var(--font-heading);">
+        🧂 QUESTION 2: Qualitative Inorganic Analysis
+      </h2>
+      <span class="timer-chip" id="q2MarksBadge" style="font-size:0.78rem;padding:3px 10px;background:var(--amber-bg);color:var(--amber-accent);border:1px solid var(--amber-border);">15.0 MARKS</span>
+    </div>
+
+    <div class="exam-prompt-box" style="display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+      <div id="q2WatchglassContainer" style="display:flex; flex-direction:column; align-items:center; flex-shrink:0;" title="Watch glass holding solid sample">
+      </div>
+      <div style="flex:1; min-width:260px;">
+        <b>You are provided with:</b><br>
+        • <b id="q2SampleName">Solid Y</b>: <span id="q2SampleDescText">An inorganic salt sample.</span><br>
+        <span id="q2AppearanceLine">• <b>Physical Appearance:</b> <span id="q2SampleAppearanceText" style="color:var(--cyan-accent); font-weight:700;">White crystalline solid</span><br></span>
+        <span id="q2ReagentsLine">• <b>Reagents Available:</b> Distilled water, 2M Aqueous Sodium Hydroxide (NaOH), 2M Aqueous Ammonia (NH₃), Dilute Nitric Acid (HNO₃), Barium Nitrate Solution Ba(NO₃)₂, and Potassium Iodide (KI) / Silver Nitrate (AgNO₃) solution.</span><br><br>
+        <span id="q2InstructionsText"><b>Instructions:</b> Observe the solid on the watch glass, dissolve in distilled water in a boiling tube, divide into portions, carry out the systematic tests below, and record your observations and inferences.</span>
+      </div>
+    </div>
+
+    <!-- Test Cards Grid Rendering Realistic Test Tubes with Clamps & Droppers -->
+    <div class="tests-grid" id="q2TestsGrid"></div>
+
+    <!-- Final Deductions (Inorganic Salt) -->
+    <div id="q2DeductionCard" class="exam-deductions-card" style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:16px;margin-top:16px;">
+      <div style="font-weight:800;font-size:0.88rem;color:var(--heading-color);margin-bottom:10px;">
+        (v) Final Identity Deductions (3.0 Marks)
+      </div>
+      <div class="exam-deductions-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <label for="q2CationSelect" style="font-size:0.78rem;font-weight:700;display:block;margin-bottom:4px;">Cation Present (1.5 Marks):</label>
+          <select id="q2CationSelect" class="calc-input" style="max-width:100%;" onchange="onQ2DeductionsChanged()">
+            <option value="">-- Select Cation --</option>
+            <option value="Pb2+">Lead(II) ion — Pb²⁺</option>
+            <option value="Fe2+">Iron(II) ion — Fe²⁺</option>
+            <option value="Fe3+">Iron(III) ion — Fe³⁺</option>
+            <option value="Zn2+">Zinc ion — Zn²⁺</option>
+            <option value="Al3+">Aluminium ion — Al³⁺</option>
+            <option value="Cu2+">Copper(II) ion — Cu²⁺</option>
+            <option value="Ca2+">Calcium ion — Ca²⁺</option>
+            <option value="NH4+">Ammonium ion — NH₄⁺</option>
+            <option value="Ba2+">Barium ion — Ba²⁺</option>
+          </select>
+        </div>
+        <div>
+          <label for="q2AnionSelect" style="font-size:0.78rem;font-weight:700;display:block;margin-bottom:4px;">Anion Present (1.5 Marks):</label>
+          <select id="q2AnionSelect" class="calc-input" style="max-width:100%;" onchange="onQ2DeductionsChanged()">
+            <option value="">-- Select Anion --</option>
+            <option value="NO3-">Nitrate ion — NO₃⁻</option>
+            <option value="SO42-">Sulfate ion — SO₄²⁻</option>
+            <option value="Cl-">Chloride ion — Cl⁻</option>
+            <option value="CO32-">Carbonate ion — CO₃²⁻</option>
+            <option value="SO32-">Sulfite ion — SO₃²⁻</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Final Deductions (Organic Functional Group) -->
+    <div id="q2OrganicDeductionCard" class="exam-deductions-card" style="display:none;background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:16px;margin-top:16px;">
+      <div style="font-weight:800;font-size:0.88rem;color:var(--heading-color);margin-bottom:10px;">
+        (v) Functional Group Deduction (2.0 Marks)
+      </div>
+      <div>
+        <label for="q2FGSelect" style="font-size:0.78rem;font-weight:700;display:block;margin-bottom:4px;">Functional Group Present in Sample (2.0 Marks):</label>
+        <select id="q2FGSelect" class="calc-input" style="max-width:100%;" onchange="onQ2OrganicDeductionChanged()">
+          <option value="">-- Select Functional Group --</option>
+          <option value="Alkanol (-OH)">Alkanol / Hydroxyl group (—OH)</option>
+          <option value="Carboxylic Acid (-COOH)">Carboxylic Acid group (—COOH)</option>
+          <option value="Alkene (>C=C<)">Alkene / Carbon-Carbon Double Bond (>C=C<)</option>
+          <option value="Alkyne (-C#C-)">Alkyne / Carbon-Carbon Triple Bond (—C≡C—)</option>
+          <option value="Alkane (C-C)">Alkane / Saturated Hydrocarbon</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       QUESTION 3: ORGANIC FUNCTIONAL GROUP ANALYSIS (10.0 MARKS)
+  ══════════════════════════════════════════════════════════════ -->
+  <div id="paneQ3" class="exam-section-card" style="display:none;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <h2 id="q3HeadingTitle" style="font-size:1.2rem;font-weight:800;color:var(--heading-color);margin:0;font-family:var(--font-heading);">
+        🧫 QUESTION 3: Organic Functional Group Analysis
+      </h2>
+      <span class="timer-chip" id="q3MarksBadge" style="font-size:0.78rem;padding:3px 10px;background:var(--amber-bg);color:var(--amber-accent);border:1px solid var(--amber-border);">10.0 MARKS</span>
+    </div>
+
+    <div class="exam-prompt-box">
+      <b>You are provided with:</b><br>
+      • <b id="q3SampleName">Liquid Z</b>: <span id="q3SampleDescText">An organic sample.</span><br>
+      <span id="q3ReagentsLine">• Reagents: Metallic spatula &amp; Bunsen burner, Blue and Red litmus paper, Acidified Potassium Manganate(VII) (KMnO₄) / Bromine water, and Solid Sodium Hydrogen Carbonate (NaHCO₃).</span><br><br>
+      <span id="q3InstructionsText"><b>Instructions:</b> Carry out the systematic organic tests below on the provided sample and record your observations and inferences in the spaces provided.</span>
+    </div>
+
+    <!-- Test Cards Grid Rendering Realistic Setups -->
+    <div class="tests-grid" id="q3TestsGrid"></div>
+
+    <!-- Final Deduction Card (Organic or Qualitative) -->
+    <div id="q3DeductionCard" class="exam-deductions-card" style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:16px;margin-top:16px;">
+      <div style="font-weight:800;font-size:0.88rem;color:var(--heading-color);margin-bottom:10px;">
+        (v) Functional Group Deduction (2.0 Marks)
+      </div>
+      <div>
+        <label for="q3FGSelect" style="font-size:0.78rem;font-weight:700;display:block;margin-bottom:4px;">Functional Group Present in Sample (2.0 Marks):</label>
+        <select id="q3FGSelect" class="calc-input" style="max-width:100%;" onchange="onQ3DeductionChanged()">
+          <option value="">-- Select Functional Group --</option>
+          <option value="Alkanol (-OH)">Alkanol / Hydroxyl group (—OH)</option>
+          <option value="Carboxylic Acid (-COOH)">Carboxylic Acid group (—COOH)</option>
+          <option value="Alkene (>C=C<)">Alkene / Carbon-Carbon Double Bond (>C=C<)</option>
+          <option value="Alkyne (-C#C-)">Alkyne / Carbon-Carbon Triple Bond (—C≡C—)</option>
+          <option value="Alkane (C-C)">Alkane / Saturated Hydrocarbon</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step-by-Step Question Navigation Bar -->
+  <div class="exam-nav-footer">
+    <button id="btnPrevQ" onclick="prevQTab()" class="top-action-btn" style="visibility:hidden;">
+      ← Previous Question
+    </button>
+    
+    <div class="q-progress-indicator" id="qProgressText">
+      Question 1 of 3: Volumetric Titration Analysis (15.0 Marks)
+    </div>
+
+    <button id="btnNextQ" onclick="nextQTab()" class="btn-next-step">
+      Next Question: Q2 Salt Analysis →
+    </button>
+  </div>
+
+  <div id="compositeSubmitMsg" style="margin-top:16px;"></div>
+
+  <!-- Printable Official KNEC Candidate Answer Booklet -->
+  <div id="knecPrintBooklet" class="knec-booklet-print-only">
+    <div style="text-align:center;border-bottom:2px solid #000;padding-bottom:10px;margin-bottom:14px;">
+      <div style="font-size:1.3rem;font-weight:900;letter-spacing:0.04em;">THE KENYA NATIONAL EXAMINATIONS COUNCIL</div>
+      <div style="font-size:1.05rem;font-weight:800;margin-top:2px;">KENYA CERTIFICATE OF SECONDARY EDUCATION (K.C.S.E.)</div>
+      <div style="font-size:0.95rem;font-weight:700;margin-top:2px;" id="printExamTitle">CHEMISTRY PAPER 3 (PRACTICAL) — CODE 233/3</div>
+      <div style="font-size:0.82rem;font-style:italic;margin-top:2px;">Official Candidate Response &amp; Examination Booklet</div>
+    </div>
+
+    <table style="width:100%;border-collapse:collapse;margin-bottom:14px;font-size:0.85rem;">
+      <tr>
+        <td style="padding:5px 8px;border:1px solid #000;"><b>Candidate Name:</b> <span id="printName">Student</span></td>
+        <td style="padding:5px 8px;border:1px solid #000;"><b>Index Number:</b> <span id="printIndex">KCSE-2026/0042</span></td>
+        <td style="padding:5px 8px;border:1px solid #000;"><b>School Code:</b> <span id="printSchool">SCH-001</span></td>
+      </tr>
+      <tr>
+        <td style="padding:5px 8px;border:1px solid #000;"><b>Date:</b> <span id="printDate">2026-08-23</span></td>
+        <td style="padding:5px 8px;border:1px solid #000;"><b>Time Allowed:</b> 2 Hours 15 Mins</td>
+        <td style="padding:5px 8px;border:1px solid #000;"><b>Total Mark:</b> <b id="printTotalScore">0.0 / 40.0 Marks</b></td>
+      </tr>
+    </table>
+
+    <div style="font-weight:800;font-size:0.95rem;margin-bottom:6px;border-bottom:1.5px solid #000;padding-bottom:2px;">QUESTION 1: Volumetric Analysis (15.0 Marks)</div>
+    <div id="printQ1Content" style="font-size:0.82rem;margin-bottom:12px;"></div>
+
+    <div style="font-weight:800;font-size:0.95rem;margin-bottom:6px;border-bottom:1.5px solid #000;padding-bottom:2px;">QUESTION 2: Inorganic Qualitative Salt Analysis (15.0 Marks)</div>
+    <div id="printQ2Content" style="font-size:0.82rem;margin-bottom:12px;"></div>
+
+    <div style="font-weight:800;font-size:0.95rem;margin-bottom:6px;border-bottom:1.5px solid #000;padding-bottom:2px;">QUESTION 3: Organic Functional Group Analysis (10.0 Marks)</div>
+    <div id="printQ3Content" style="font-size:0.82rem;margin-bottom:12px;"></div>
+
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;border:1.5px solid #000;padding:10px 14px;border-radius:4px;margin-top:14px;">
+      <div>
+        <div style="font-size:0.9rem;font-weight:900;">SUMMARY SCORE &amp; GRADE BREAKDOWN</div>
+        <div style="font-size:0.82rem;margin-top:3px;">
+          • Q1 Titration: <b id="pScoreQ1">0.0 / 15.0</b> &nbsp;|&nbsp;
+          • Q2 Salt Analysis: <b id="pScoreQ2">0.0 / 15.0</b> &nbsp;|&nbsp;
+          • Q3 Organic: <b id="pScoreQ3">0.0 / 10.0</b>
+        </div>
+        <div style="font-size:0.95rem;font-weight:800;margin-top:4px;">
+          FINAL GRADE: <span id="pGrade" style="font-size:1.05rem;font-weight:900;">E (0.0 / 40.0 Marks)</span>
+        </div>
+      </div>
+      <div style="text-align:right;font-size:0.8rem;">
+        <div style="border-bottom:1px solid #000;width:170px;height:24px;margin-bottom:3px;"></div>
+        <div>KNEC Examiner Signature &amp; Stamp</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     OFFICIAL KNEC CHIEF EXAMINER'S INTERACTIVE REPORT MODAL
+══════════════════════════════════════════════════════════════ -->
+<div id="compositeResultModal" class="kcse-modal-overlay">
+  <div class="kcse-modal-box" style="max-width:850px; max-height:90vh; overflow-y:auto;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;border-bottom:1px solid var(--card-border);padding-bottom:14px;">
+      <div>
+        <span style="background:var(--amber-accent);color:#FFF;padding:3px 10px;border-radius:6px;font-size:0.7rem;font-weight:800;font-family:var(--font-mono);letter-spacing:0.04em;">KNEC CHIEF EXAMINER'S REPORT</span>
+        <h2 style="font-size:1.25rem;font-weight:800;margin-top:6px;color:var(--heading-color);font-family:var(--font-heading);" id="modalExamTitle">KCSE Paper 3 Comprehensive Score Card</h2>
+        <small style="color:var(--text-muted);" id="modalExamSub">Chemistry Practical Examination (40.0 Marks Total)</small>
+      </div>
+      <div style="text-align:right;">
+        <div id="modalCompositeGrade" style="font-size:2.2rem;font-weight:900;color:var(--amber-accent);line-height:1;font-family:var(--font-heading);">Grade E</div>
+        <div id="modalCompositeScore" style="font-size:0.88rem;color:var(--text-muted);font-weight:700;margin-top:4px;font-family:var(--font-mono);">0.0 / 40.0 Marks (0%)</div>
+      </div>
+    </div>
+
+    <!-- 3 Questions Performance Overview Table -->
+    <div style="margin-bottom:16px;">
+      <table class="kcse-table" style="width:100%;">
+        <thead>
+          <tr>
+            <th style="text-align:left;">Practical Examination Question</th>
+            <th style="text-align:center;width:80px;">Max</th>
+            <th style="text-align:center;width:100px;">Awarded</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>🧪 <b>Question 1:</b> Volumetric Titration Analysis</td>
+            <td style="text-align:center;color:var(--text-muted);font-family:var(--font-mono);">15.0</td>
+            <td style="text-align:center;font-weight:800;color:var(--green-accent);font-family:var(--font-mono);" id="modalScoreQ1">0.0</td>
+          </tr>
+          <tr>
+            <td>🧂 <b>Question 2:</b> Inorganic Salt Qualitative Analysis</td>
+            <td style="text-align:center;color:var(--text-muted);font-family:var(--font-mono);">15.0</td>
+            <td style="text-align:center;font-weight:800;color:var(--green-accent);font-family:var(--font-mono);" id="modalScoreQ2">0.0</td>
+          </tr>
+          <tr>
+            <td id="modalRowQ3Title">🧫 <b>Question 3:</b> Organic Functional Group Analysis</td>
+            <td style="text-align:center;color:var(--text-muted);font-family:var(--font-mono);" id="modalMaxScoreQ3">10.0</td>
+            <td style="text-align:center;font-weight:800;color:var(--green-accent);font-family:var(--font-mono);" id="modalScoreQ3">0.0</td>
+          </tr>
+          <tr style="background:var(--amber-bg);font-weight:800;">
+            <td style="color:var(--heading-color);">🏆 Total Composite Practical Mark</td>
+            <td style="text-align:center;font-family:var(--font-mono);">40.0</td>
+            <td style="text-align:center;font-size:1.05rem;color:var(--amber-accent);font-family:var(--font-mono);" id="modalScoreTotal">0.0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Tab Controls inside Chief Examiner Report -->
+    <div style="display:flex; gap:8px; margin-bottom:14px; border-bottom:1px solid var(--card-border); padding-bottom:10px;">
+      <button class="examiner-tab-btn active" id="btnReportRubric" onclick="switchReportTab('rubric')">
+        📋 Official KNEC Rubric &amp; Critique
+      </button>
+      <button class="examiner-tab-btn" id="btnReportWorked" onclick="switchReportTab('worked')">
+        📐 Mathematical Model Worked Solutions
+      </button>
+    </div>
+
+    <!-- Container 1: Official Rubric & Chief Examiner Feedback -->
+    <div id="reportPaneRubric">
+      <!-- Chief Examiner Feedback & Diagnostic Insights -->
+      <div id="modalCompositeFeedback" style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-left:4px solid var(--amber-accent);border-radius:8px;padding:12px 16px;font-size:0.84rem;line-height:1.55;color:var(--text-main);margin-bottom:16px;">
+      </div>
+
+      <!-- Diagnostic Remediation Checklist -->
+      <div style="margin-bottom:20px; background:var(--bg-dark); border:1px solid var(--card-border); border-radius:10px; padding:14px;">
+        <div style="font-weight:800; font-size:0.88rem; color:var(--heading-color); margin-bottom:8px; display:flex; align-items:center; gap:6px;">
+          <span>📋</span> Detailed Item-by-Item KNEC Rubric &amp; Deductions:
+        </div>
+        <div id="modalDetailedRubricBox" style="font-size:0.8rem; display:flex; flex-direction:column; gap:6px;">
+        </div>
+      </div>
+    </div>
+
+    <!-- Container 2: Step-by-Step Worked Mathematical Calculations -->
+    <div id="reportPaneWorked" style="display:none; margin-bottom:20px; background:var(--bg-dark); border:1px solid var(--card-border); border-radius:10px; padding:16px;">
+      <div style="font-weight:800; font-size:0.9rem; color:var(--cyan-accent); margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+        <span>📐</span> Official KNEC Question 1 Worked Calculations &amp; Stoichiometric Models:
+      </div>
+      <div id="modalWorkedSolutionsList" style="display:flex; flex-direction:column; gap:12px;"></div>
+    </div>
+
+    <!-- Action Buttons & Targeted Remediation Links -->
+    <div style="display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;">
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="top-action-btn" onclick="window.location.href='/student/mock_exams.html'">📚 Mock Hub</button>
+        <button class="top-action-btn" onclick="printKCSEBooklet()" style="background:linear-gradient(135deg,#0284C7,#0369A1);color:#fff;border:none;font-weight:800;">📥 Download Marked Script (PDF)</button>
+        <button class="top-action-btn" onclick="printKCSEBooklet()">🖨️ Print Booklet</button>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <a href="/student/lab.html" class="top-action-btn" style="background:rgba(56,189,248,0.1); color:#38BDF8; border-color:#38BDF8;">🧪 Practice Volumetric</a>
+        <a href="/student/qualitative.html" class="top-action-btn" style="background:rgba(16,185,129,0.1); color:#10B981; border-color:#10B981;">🧂 Practice Salts</a>
+        <button class="btn-submit-exam" onclick="window.location.href='/student/history.html'">📊 View History →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Official KNEC Paper 3 Examination Script Print Container (Rendered exclusively for @media print) -->
+<div id="knecPrintContainer" class="knec-official-print-document" style="display:none;">
+  <!-- Header with Coat of Arms & Exam Metadata -->
+  <div class="knec-print-header">
+    <div class="knec-republic-text">REPUBLIC OF KENYA</div>
+    <div class="knec-council-text">THE KENYA NATIONAL EXAMINATIONS COUNCIL</div>
+    <div class="knec-exam-title">KENYA CERTIFICATE OF SECONDARY EDUCATION (KCSE)</div>
+    <div class="knec-paper-title">233/3 — CHEMISTRY PAPER 3 (PRACTICAL)</div>
+    <div class="knec-paper-subtitle" id="printExamTitle">Official Examination Booklet &amp; Marked Candidate Script</div>
+    <div class="knec-duration-text">Time: 2 Hours 15 Minutes &nbsp;·&nbsp; Maximum Marks: 40.0</div>
+  </div>
+
+  <!-- Candidate Identity & Official Examiner Scorecard Grid -->
+  <div class="knec-print-meta-grid">
+    <div class="knec-candidate-box">
+      <div class="knec-meta-row"><span>Candidate Name:</span> <b id="printCandidateName">—</b></div>
+      <div class="knec-meta-row"><span>Index Number:</span> <b id="printCandidateIndex">—</b></div>
+      <div class="knec-meta-row"><span>Centre Name:</span> <b id="printCentreName">VirtuLab Kenya Examination Centre</b></div>
+      <div class="knec-meta-row"><span>Date &amp; Session:</span> <b id="printExamDate">—</b></div>
+      <div class="knec-meta-row"><span>Examination Series:</span> <b id="printSeriesName">—</b></div>
+    </div>
+    <div class="knec-examiner-grid-wrapper">
+      <table class="knec-examiner-table">
+        <thead>
+          <tr>
+            <th>Question</th>
+            <th>Max Score</th>
+            <th>Candidate Mark</th>
+            <th>Examiner Initial</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Question 1 (Volumetric)</td>
+            <td>15.0</td>
+            <td id="pScoreQ1" class="knec-red-score">—</td>
+            <td>KNEC/CH</td>
+          </tr>
+          <tr>
+            <td>Question 2 (Qualitative)</td>
+            <td>15.0</td>
+            <td id="pScoreQ2" class="knec-red-score">—</td>
+            <td>KNEC/CH</td>
+          </tr>
+          <tr>
+            <td>Question 3 (Organic)</td>
+            <td>10.0</td>
+            <td id="pScoreQ3" class="knec-red-score">—</td>
+            <td>KNEC/CH</td>
+          </tr>
+          <tr class="knec-total-row">
+            <td><b>TOTAL SCORE</b></td>
+            <td><b>40.0</b></td>
+            <td id="printTotalScore" class="knec-red-score-total">—</td>
+            <td id="pGrade" class="knec-grade-badge">—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Question 1 Content -->
+  <div class="knec-print-section" id="printSectionQ1">
+    <div class="knec-section-heading">1. QUESTION 1: VOLUMETRIC ANALYSIS (15.0 MARKS)</div>
+    <div id="printQ1Content"></div>
+  </div>
+
+  <!-- Question 2 Content (Inorganic) -->
+  <div class="knec-print-section" id="printSectionQ2">
+    <div class="knec-section-heading">2. QUESTION 2: INORGANIC QUALITATIVE ANALYSIS (15.0 MARKS)</div>
+    <div id="printQ2Content"></div>
+  </div>
+
+  <!-- Question 3 Content (Organic) -->
+  <div class="knec-print-section" id="printSectionQ3">
+    <div class="knec-section-heading">3. QUESTION 3: ORGANIC FUNCTIONAL GROUP ANALYSIS (10.0 MARKS)</div>
+    <div id="printQ3Content"></div>
+  </div>
+
+  <!-- Additional Questions if polymorphic/written -->
+  <div id="printExtraQuestionsContainer"></div>
+
+  <!-- Chief Examiner Critique & Diagnostic Advice -->
+  <div class="knec-print-section knec-examiner-remarks-section" id="printExaminerRemarks">
+    <div class="knec-section-heading">CHIEF EXAMINER'S OFFICIAL REMARKS &amp; REMEDIAL CRITIQUE</div>
+    <div id="printDiagnosticNotes"></div>
+  </div>
+</div>
+
+<script src="/shared/api.js"></script>
+<script src="/shared/page-transitions.js"></script>
+<script src="/shared/chemical-safety.js"></script>
+<script src="/shared/brilliant-ui.js"></script>
+<script src="/shared/qualitative-bench-core.js"></script>
+<script src="/shared/organic-bench-core.js"></script>
+<script src="/shared/knec-graph-plotter.js"></script>
+<script src="/shared/knec-pedagogy.js"></script>
+<script src="js/composite-engine.js?v=120"></script>
+<script src="js/exam-offline-manager.js?v=120"></script>
+<script src="js/composite-exam-ui.js?v=120"></script>
+</body>
+</html>

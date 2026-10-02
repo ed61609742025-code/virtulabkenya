@@ -569,7 +569,7 @@ async function seedInitialSubscriptionPlans(targetPool) {
 
 async function seedDemoData(pool) {
   try {
-    // Seed a demo school (idempotent — skips if already exists)
+    // 1. Seed a demo school (idempotent — skips if already exists)
     await pool.query(`
       INSERT INTO schools (name, county, admin_code)
       VALUES ('VirtuLab Demo School', 'Nairobi', 'DEMO2025')
@@ -581,29 +581,104 @@ async function seedDemoData(pool) {
     if (schoolRes.rows.length === 0) return;
     const schoolId = schoolRes.rows[0].id;
 
-    // Seed test student (idempotent)
+    // 2. Seed a demo chemistry teacher
+    let teacherId = null;
+    const teacherExisting = await pool.query(`SELECT id FROM teachers WHERE email = 'teacher1@test.com' LIMIT 1`);
+    if (teacherExisting.rows.length === 0) {
+      const teacherHash = await bcrypt.hash('password123', 10);
+      const newTeacher = await pool.query(`
+        INSERT INTO teachers (school_id, name, email, password_hash, teacher_code)
+        VALUES ($1, 'Dr. M. Kimani (HOD Chemistry)', 'teacher1@test.com', $2, 'T-DEMO1')
+        ON CONFLICT (email) DO NOTHING
+        RETURNING id
+      `, [schoolId, teacherHash]);
+      if (newTeacher.rows.length > 0) teacherId = newTeacher.rows[0].id;
+    } else {
+      teacherId = teacherExisting.rows[0].id;
+    }
+
+    // 3. Seed test student (linked to teacher)
+    let studentId = null;
     const existing = await pool.query(`SELECT id FROM students WHERE email = 'student1@test.com' LIMIT 1`);
     if (existing.rows.length === 0) {
       const hash = await bcrypt.hash('password123', 10);
-      await pool.query(`
-        INSERT INTO students (school_id, name, email, password_hash, form)
-        VALUES ($1, 'Test Student', 'student1@test.com', $2, 'Form 3')
+      const newStudent = await pool.query(`
+        INSERT INTO students (school_id, teacher_id, name, email, password_hash, form)
+        VALUES ($1, $2, 'Test Student', 'student1@test.com', $3, 'Form 3')
         ON CONFLICT (email) DO NOTHING
-      `, [schoolId, hash]);
+        RETURNING id
+      `, [schoolId, teacherId, hash]);
+      if (newStudent.rows.length > 0) studentId = newStudent.rows[0].id;
       console.log('[Migrate] Demo student seeded: student1@test.com / password123');
+    } else {
+      studentId = existing.rows[0].id;
+      if (teacherId) {
+        await pool.query(`UPDATE students SET teacher_id = $1 WHERE id = $2 AND teacher_id IS NULL`, [teacherId, studentId]);
+      }
     }
 
-    // Seed test student 2
+    // 4. Seed test student 2
     const existing2 = await pool.query(`SELECT id FROM students WHERE email = 'demo@virtulab.co.ke' LIMIT 1`);
     if (existing2.rows.length === 0) {
       const hash2 = await bcrypt.hash('Demo1234!', 10);
       await pool.query(`
-        INSERT INTO students (school_id, name, email, password_hash, form)
-        VALUES ($1, 'Demo Student', 'demo@virtulab.co.ke', $2, 'Form 4')
+        INSERT INTO students (school_id, teacher_id, name, email, password_hash, form)
+        VALUES ($1, $2, 'Demo Student', 'demo@virtulab.co.ke', $3, 'Form 4')
         ON CONFLICT (email) DO NOTHING
-      `, [schoolId, hash2]);
+      `, [schoolId, teacherId, hash2]);
       console.log('[Migrate] Demo student 2 seeded: demo@virtulab.co.ke / Demo1234!');
     }
+
+    // 5. Seed Demo Assignments (KCSE Chemistry Paper 3 Tasks)
+    const demoAssignments = [
+      {
+        title: 'Volumetric Analysis: Standardization of HCl with Na2CO3',
+        type: 'weakBase',
+        instructions: 'Determine the exact concentration of Solution A (HCl) using 0.05M standard Solution B (anhydrous sodium carbonate) with methyl orange indicator. Record readings to 2 decimal places.',
+        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+      },
+      {
+        title: 'Qualitative Analysis: Systematic Identification of Salt X',
+        type: 'qualitative',
+        instructions: 'Carry out tests on Solid X: flame test, dissolution, addition of aqueous sodium hydroxide, and aqueous ammonia to identify the cation and anion present.',
+        dueDate: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString()
+      },
+      {
+        title: 'Thermochemistry: Molar Enthalpy of Neutralization',
+        type: 'energy',
+        instructions: 'Measure the temperature change when 50 cm³ of 2M HCl reacts with 50 cm³ of 2M NaOH in a plastic cup calorimeter. Calculate ΔH in kJ/mol.',
+        dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString()
+      }
+    ];
+
+    for (const a of demoAssignments) {
+      const aCheck = await pool.query(`SELECT id FROM assignments WHERE school_id = $1 AND title = $2 LIMIT 1`, [schoolId, a.title]);
+      if (aCheck.rows.length === 0) {
+        await pool.query(`
+          INSERT INTO assignments (teacher_id, school_id, title, titration_type, instructions, due_date)
+          VALUES ($1, $2, $3, $4, $5, $6)
+        `, [teacherId, schoolId, a.title, a.type, a.instructions, a.dueDate]);
+      }
+    }
+
+    // 6. Seed sample practical session for student1 so accuracy, charts, and streaks populate
+    if (studentId) {
+      const sessCheck = await pool.query(`SELECT id FROM practical_sessions WHERE student_id = $1 LIMIT 1`, [studentId]);
+      if (sessCheck.rows.length === 0) {
+        await pool.query(`
+          INSERT INTO practical_sessions (
+            student_id, titration_type, titration_title, indicator_used, indicator_correct,
+            trials_count, concordant_found, student_answer, true_conc, difference, score, mode
+          )
+          VALUES (
+            $1, 'weakBase', 'Standardization of Hydrochloric Acid', 'methyl orange', true,
+            3, true, 0.1020, 0.1000, 0.0020, 10, 'free'
+          )
+        `, [studentId]);
+        console.log('[Migrate] Demo practical session seeded for student1.');
+      }
+    }
+
   } catch (err) {
     console.warn('[Migrate] Demo data seeding note:', err.message);
   }

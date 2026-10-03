@@ -15,7 +15,9 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.webkit.*
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,6 +25,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
@@ -34,6 +39,7 @@ class MainActivity : AppCompatActivity() {
         const val CHANNEL_NAME = "VirtuLab Kenya Alerts"
     }
 
+    private lateinit var rootContainer: FrameLayout
     private lateinit var webView: WebView
 
     @Volatile
@@ -58,16 +64,42 @@ class MainActivity : AppCompatActivity() {
 
         createNotificationChannel()
 
-        // Seamless dark theme matching VirtuLab
-        window.statusBarColor = Color.parseColor("#0F172A")
-        window.navigationBarColor = Color.parseColor("#0F172A")
+        // Seamless theme container with full system safe-area insetting
+        val initialBg = Color.parseColor("#0F172A")
+        window.statusBarColor = initialBg
+        window.navigationBarColor = initialBg
+
+        rootContainer = FrameLayout(this).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            setBackgroundColor(initialBg)
+        }
 
         webView = WebView(this).apply {
-            setBackgroundColor(Color.parseColor("#0F172A"))
+            setBackgroundColor(initialBg)
             isVerticalScrollBarEnabled = true
             isHorizontalScrollBarEnabled = false
         }
-        setContentView(webView)
+
+        rootContainer.addView(
+            webView,
+            FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        )
+        setContentView(rootContainer)
+
+        // Protect web content from overlapping hardware status bar, notches & system bars
+        ViewCompat.setOnApplyWindowInsetsListener(rootContainer) { view, windowInsets ->
+            val insets = windowInsets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            view.setPadding(insets.left, insets.top, insets.right, insets.bottom)
+            windowInsets
+        }
 
         val settings = webView.settings
         settings.javaScriptEnabled = true
@@ -137,6 +169,13 @@ class MainActivity : AppCompatActivity() {
             fun requestNotificationPermission() {
                 runOnUiThread {
                     this@MainActivity.requestNotificationPermission()
+                }
+            }
+
+            @JavascriptInterface
+            fun syncTheme(theme: String) {
+                runOnUiThread {
+                    this@MainActivity.syncNativeTheme(theme)
                 }
             }
 
@@ -233,6 +272,12 @@ class MainActivity : AppCompatActivity() {
                 }
                 view.post {
                     view.evaluateJavascript("if (window.VLKPush && typeof window.VLKPush.syncUI === 'function') { window.VLKPush.syncUI(); }", null)
+                    view.evaluateJavascript(
+                        "(function() { return document.documentElement.getAttribute('data-theme') || localStorage.getItem('vlk_theme') || 'light'; })();"
+                    ) { result ->
+                        val theme = result?.replace("\"", "")?.trim() ?: "light"
+                        this@MainActivity.syncNativeTheme(theme)
+                    }
                 }
             }
         }
@@ -473,6 +518,27 @@ class MainActivity : AppCompatActivity() {
         val notificationManager = NotificationManagerCompat.from(this)
         val notificationId = (System.currentTimeMillis() % 100000).toInt()
         notificationManager.notify(notificationId, builder.build())
+    }
+
+    fun syncNativeTheme(theme: String) {
+        val isLight = theme.equals("light", ignoreCase = true)
+        val isGreen = theme.equals("green", ignoreCase = true)
+
+        val themeColor = when {
+            isLight -> Color.parseColor("#FFFFFF")
+            isGreen -> Color.parseColor("#0C2114")
+            else -> Color.parseColor("#0F172A")
+        }
+
+        if (::rootContainer.isInitialized) {
+            rootContainer.setBackgroundColor(themeColor)
+        }
+        window.statusBarColor = themeColor
+        window.navigationBarColor = themeColor
+
+        val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+        insetsController.isAppearanceLightStatusBars = isLight
+        insetsController.isAppearanceLightNavigationBars = isLight
     }
 }
 

@@ -28,6 +28,9 @@ function setTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem('vlk_theme', theme);
   updateThemeButtons();
+  if (typeof window !== 'undefined' && window.VirtuLabNative && typeof window.VirtuLabNative.syncTheme === 'function') {
+    try { window.VirtuLabNative.syncTheme(theme); } catch (e) {}
+  }
 }
 
 function cycleTheme() {

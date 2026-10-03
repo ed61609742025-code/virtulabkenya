@@ -316,11 +316,9 @@ body {
   touch-action: manipulation;
 }
 
-@media (display-mode: standalone) {
-  /* Standalone App styling adjustments for mobile notched displays */
-  .top-navbar {
-    padding-top: calc(8px + env(safe-area-inset-top, 0px));
-  }
+/* Android WebView edge-to-edge + PWA standalone: push navbar below status bar */
+.top-navbar {
+  padding-top: max(8px, env(safe-area-inset-top, 0px));
 }
 
 /* ══════════════════════════════════════

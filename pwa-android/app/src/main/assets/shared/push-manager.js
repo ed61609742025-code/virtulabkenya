@@ -90,7 +90,17 @@
     }, 4500);
   }
 
+  function isNativeApp() {
+    return (
+      typeof window !== 'undefined' &&
+      window.VirtuLabNative &&
+      typeof window.VirtuLabNative.supportsNotifications === 'function' &&
+      window.VirtuLabNative.supportsNotifications()
+    );
+  }
+
   function isSupported() {
+    if (isNativeApp()) return true;
     return (
       'serviceWorker' in navigator &&
       'PushManager' in window &&
@@ -99,6 +109,12 @@
   }
 
   function getPermission() {
+    if (isNativeApp()) {
+      if (typeof window.VirtuLabNative.hasNotificationPermission === 'function') {
+        return window.VirtuLabNative.hasNotificationPermission() ? 'granted' : 'default';
+      }
+      return 'granted';
+    }
     if (!('Notification' in window)) return 'unsupported';
     return Notification.permission; // 'default', 'granted', 'denied'
   }
@@ -129,6 +145,14 @@
   }
 
   async function isSubscribed() {
+    if (isNativeApp()) {
+      const disabled = localStorage.getItem('vlk_native_push_disabled') === 'true';
+      if (disabled) return false;
+      if (typeof window.VirtuLabNative.hasNotificationPermission === 'function') {
+        return window.VirtuLabNative.hasNotificationPermission();
+      }
+      return true;
+    }
     const sub = await getSubscription();
     return sub !== null;
   }
@@ -137,6 +161,26 @@
    * Subscribe to Web Push notifications.
    */
   async function subscribe() {
+    if (isNativeApp()) {
+      try {
+        localStorage.removeItem('vlk_native_push_disabled');
+        if (typeof window.VirtuLabNative.requestNotificationPermission === 'function') {
+          window.VirtuLabNative.requestNotificationPermission();
+        }
+        if (typeof window.VirtuLabNative.hasNotificationPermission === 'function' && window.VirtuLabNative.hasNotificationPermission()) {
+          showToast('Native Android alerts are active!', 'success');
+        } else {
+          showToast('Notification permission requested.', 'info');
+        }
+        syncUI();
+        window.dispatchEvent(new CustomEvent('vlk-push-changed', { detail: { subscribed: true } }));
+        return true;
+      } catch (err) {
+        console.error('[PushManager] Native subscribe failed:', err);
+        return false;
+      }
+    }
+
     if (!isSupported()) {
       showToast('Push Notifications are not supported by your current browser.', 'info');
       return false;
@@ -217,6 +261,14 @@
    * Unsubscribe from Web Push notifications.
    */
   async function unsubscribe() {
+    if (isNativeApp()) {
+      localStorage.setItem('vlk_native_push_disabled', 'true');
+      syncUI();
+      window.dispatchEvent(new CustomEvent('vlk-push-changed', { detail: { subscribed: false } }));
+      showToast('Notifications disabled in VirtuLab app.', 'info');
+      return true;
+    }
+
     try {
       const sub = await getSubscription();
       if (sub) {
@@ -263,6 +315,18 @@
    * Dispatch a diagnostic test notification.
    */
   async function sendTestNotification() {
+    if (isNativeApp()) {
+      if (typeof window.VirtuLabNative.showNotification === 'function') {
+        window.VirtuLabNative.showNotification(
+          '🧪 VirtuLab Android Alert',
+          'Native lab notifications are working perfectly on your device!',
+          '/student/home.html'
+        );
+        showToast('Native test notification dispatched!', 'success');
+        return;
+      }
+    }
+
     const token = getAuthToken();
     if (!token) {
       showToast('Please log in first.', 'info');
@@ -297,6 +361,7 @@
    * Synchronize UI toggles, badges, and labels across current page.
    */
   async function syncUI() {
+    const isNative = isNativeApp();
     const supported = isSupported();
     const perm = getPermission();
     const subscribed = supported ? await isSubscribed() : false;
@@ -310,22 +375,22 @@
       } else if (perm === 'denied') {
         btn.textContent = 'Blocked';
         btn.disabled = true;
-        btn.title = 'Push notifications blocked in browser address bar';
+        btn.title = 'Push notifications blocked in device settings';
         btn.style.opacity = '0.6';
       } else if (subscribed) {
-        btn.textContent = '🔔 Push ON';
+        btn.textContent = isNative ? '🔔 Alerts ON' : '🔔 Push ON';
         btn.classList.remove('btn-secondary');
         btn.classList.add('btn-primary');
         btn.disabled = false;
         btn.style.opacity = '1';
-        btn.title = 'Click to disable push notifications on this device';
+        btn.title = 'Click to disable notifications on this device';
       } else {
         btn.textContent = 'Enable Alerts';
         btn.classList.remove('btn-primary');
         btn.classList.add('btn-secondary');
         btn.disabled = false;
         btn.style.opacity = '1';
-        btn.title = 'Click to enable real-time push alerts';
+        btn.title = 'Click to enable real-time notifications';
       }
     });
 
@@ -334,9 +399,9 @@
       if (!supported) {
         lbl.textContent = 'Push alerts not supported in this browser';
       } else if (perm === 'denied') {
-        lbl.textContent = '⚠️ Blocked in browser settings';
+        lbl.textContent = '⚠️ Blocked in device settings';
       } else if (subscribed) {
-        lbl.textContent = '✓ Real-Time Push Alerts Active';
+        lbl.textContent = isNative ? '✓ Native Android Notifications Active' : '✓ Real-Time Push Alerts Active';
       } else {
         lbl.textContent = 'Push Alerts: Disabled';
       }
@@ -361,7 +426,7 @@
 
     // 3. Test Button visibility
     document.querySelectorAll('.vlk-push-test-btn, #pushTestBtn, #tPushTestBtn').forEach((btn) => {
-      btn.style.display = subscribed ? 'inline-block' : 'none';
+      btn.style.display = subscribed ? 'inline-flex' : 'none';
     });
 
     // 4. Battery Guide Button/Link visibility
@@ -370,7 +435,7 @@
     });
 
     // Request persistent storage if user has active subscription
-    if (subscribed) {
+    if (subscribed && !isNative) {
       requestPersistentStorage().catch(() => {});
     }
   }
@@ -563,6 +628,7 @@
   }
 
   window.VLKPush = {
+    isNativeApp,
     isSupported,
     getPermission,
     getSubscription,

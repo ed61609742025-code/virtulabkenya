@@ -280,6 +280,30 @@ requireStudentLogin();
     const activeNotifs = window.VLKNotifs ? window.VLKNotifs.filterActiveNotifications(rawList) : rawList;
     const unreadNotifs = activeNotifs.filter(n => !window.VLKNotifs || !window.VLKNotifs.isRead(n.id));
 
+    // In Native Android App: Trigger real system drawer notifications for unread assignments
+    if (window.VirtuLabNative && typeof window.VirtuLabNative.showNotification === 'function') {
+      try {
+        if (localStorage.getItem('vlk_native_push_disabled') !== 'true') {
+          const rawSeen = localStorage.getItem('vlk_native_notified_ids');
+          const seen = rawSeen ? JSON.parse(rawSeen) : {};
+          let hasNew = false;
+          unreadNotifs.forEach(n => {
+            if (n && n.id && !seen[n.id] && (n.type === 'pending_assignment' || n.type === 'marked_assignment')) {
+              seen[n.id] = Date.now();
+              hasNew = true;
+              const cleanTitle = (n.title || 'VirtuLab Kenya').replace(/^[^\w\s]+/, '').trim();
+              window.VirtuLabNative.showNotification(cleanTitle, n.message || '', n.targetUrl || '/student/home.html');
+            }
+          });
+          if (hasNew) {
+            localStorage.setItem('vlk_native_notified_ids', JSON.stringify(seen));
+          }
+        }
+      } catch (e) {
+        console.warn('[VirtuLabNative] notification dispatch error:', e);
+      }
+    }
+
     const badge = document.getElementById('notifBadge') || document.getElementById('notifCount');
     const bellBtn = document.getElementById('notifBellBtn');
     const list = document.getElementById('notifList');

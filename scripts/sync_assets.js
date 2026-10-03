@@ -11,6 +11,9 @@ const filesToSync = [
   ['client/student/css/dashboard.css', 'pwa-android/app/src/main/assets/student/css/dashboard.css'],
   ['client/student/css/mobile.css', 'pwa-android/app/src/main/assets/student/css/mobile.css'],
   ['client/student/js/home.js', 'pwa-android/app/src/main/assets/student/js/home.js'],
+  ['client/student/js/student-dashboard.js', 'pwa-android/app/src/main/assets/student/js/student-dashboard.js'],
+  ['client/shared/push-manager.js', 'pwa-android/app/src/main/assets/shared/push-manager.js'],
+  ['client/shared/notifications-engine.js', 'pwa-android/app/src/main/assets/shared/notifications-engine.js'],
   ['client/sw.js', 'pwa-android/app/src/main/assets/sw.js']
 ];
 

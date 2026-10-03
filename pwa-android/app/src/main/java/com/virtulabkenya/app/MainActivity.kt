@@ -1,7 +1,13 @@
 package com.virtulabkenya.app
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -12,21 +18,45 @@ import android.view.View
 import android.webkit.*
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import java.io.InputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
 class MainActivity : AppCompatActivity() {
 
+    companion object {
+        const val CHANNEL_ID = "virtulab_lab_alerts"
+        const val CHANNEL_NAME = "VirtuLab Kenya Alerts"
+    }
+
     private lateinit var webView: WebView
 
     @Volatile
     private var offlineFallbackActive = false
 
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            android.util.Log.d("VirtuLabPWA", "POST_NOTIFICATIONS granted")
+            webView.post {
+                webView.evaluateJavascript("if (window.VLKPush && typeof window.VLKPush.syncUI === 'function') { window.VLKPush.syncUI(); }", null)
+            }
+        } else {
+            android.util.Log.d("VirtuLabPWA", "POST_NOTIFICATIONS denied")
+        }
+    }
+
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        createNotificationChannel()
 
         // Seamless dark theme matching VirtuLab
         window.statusBarColor = Color.parseColor("#0F172A")
@@ -54,8 +84,8 @@ class MainActivity : AppCompatActivity() {
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true)
 
         val prefsInit = getSharedPreferences("virtulab_prefs", MODE_PRIVATE)
-        val initialUrl = prefsInit.getString("server_url", null)
-        if (initialUrl == null || initialUrl.contains("192.168.") || initialUrl.contains("localhost") || initialUrl.contains("127.0.0.1")) {
+        val configuredServerUrl = prefsInit.getString("server_url", null)
+        if (configuredServerUrl == null || configuredServerUrl.contains("192.168.") || configuredServerUrl.contains("localhost") || configuredServerUrl.contains("127.0.0.1")) {
             prefsInit.edit().putString("server_url", "https://virtulab-web.onrender.com").apply()
         }
 
@@ -90,6 +120,30 @@ class MainActivity : AppCompatActivity() {
             @JavascriptInterface
             fun isOffline(): Boolean {
                 return offlineFallbackActive
+            }
+
+            @JavascriptInterface
+            fun supportsNotifications(): Boolean {
+                return true
+            }
+
+            @JavascriptInterface
+            fun hasNotificationPermission(): Boolean {
+                return this@MainActivity.hasNotificationPermission()
+            }
+
+            @JavascriptInterface
+            fun requestNotificationPermission() {
+                runOnUiThread {
+                    this@MainActivity.requestNotificationPermission()
+                }
+            }
+
+            @JavascriptInterface
+            fun showNotification(title: String, message: String, targetUrl: String?) {
+                runOnUiThread {
+                    this@MainActivity.showNativeNotification(title, message, targetUrl)
+                }
             }
         }, "VirtuLabNative")
 
@@ -198,7 +252,29 @@ class MainActivity : AppCompatActivity() {
         // When offline: Intercepted seamlessly and served from local APK assets
         val prefs = getSharedPreferences("virtulab_prefs", MODE_PRIVATE)
         val serverBase = prefs.getString("server_url", "https://virtulab-web.onrender.com")?.trimEnd('/') ?: "https://virtulab-web.onrender.com"
-        webView.loadUrl("$serverBase/student/home.html")
+        val targetUrl = intent?.getStringExtra("NAVIGATE_URL")
+        val initialUrl = if (!targetUrl.isNullOrEmpty()) {
+            if (targetUrl.startsWith("http://") || targetUrl.startsWith("https://")) targetUrl else "$serverBase/${targetUrl.trimStart('/')}"
+        } else {
+            "$serverBase/student/home.html"
+        }
+        webView.loadUrl(initialUrl)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        val targetUrl = intent.getStringExtra("NAVIGATE_URL")
+        if (!targetUrl.isNullOrEmpty()) {
+            val prefs = getSharedPreferences("virtulab_prefs", MODE_PRIVATE)
+            val serverBase = prefs.getString("server_url", "https://virtulab-web.onrender.com")?.trimEnd('/') ?: "https://virtulab-web.onrender.com"
+            val fullUrl = if (targetUrl.startsWith("http://") || targetUrl.startsWith("https://")) {
+                targetUrl
+            } else {
+                "$serverBase/${targetUrl.trimStart('/')}"
+            }
+            webView.loadUrl(fullUrl)
+        }
     }
 
     private fun isNetworkAvailable(context: Context): Boolean {
@@ -325,4 +401,74 @@ class MainActivity : AppCompatActivity() {
             else -> MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext) ?: "application/octet-stream"
         }
     }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance).apply {
+                description = "Laboratory simulation alerts, announcements, and assignment reminders"
+                enableLights(true)
+                lightColor = Color.parseColor("#06B6D4")
+                enableVibration(true)
+            }
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+            notificationManager?.createNotificationChannel(channel)
+        }
+    }
+
+    fun hasNotificationPermission(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        } else {
+            NotificationManagerCompat.from(this).areNotificationsEnabled()
+        }
+    }
+
+    fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (!hasNotificationPermission()) {
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    fun showNativeNotification(title: String, message: String, targetUrl: String?) {
+        if (!hasNotificationPermission()) {
+            requestNotificationPermission()
+            return
+        }
+
+        val notifyIntent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            if (!targetUrl.isNullOrEmpty()) {
+                putExtra("NAVIGATE_URL", targetUrl)
+            }
+        }
+
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            System.currentTimeMillis().toInt(),
+            notifyIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0)
+        )
+
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(message))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setDefaults(NotificationCompat.DEFAULT_ALL)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
+
+        val notificationManager = NotificationManagerCompat.from(this)
+        val notificationId = (System.currentTimeMillis() % 100000).toInt()
+        notificationManager.notify(notificationId, builder.build())
+    }
 }
+

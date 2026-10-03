@@ -48,7 +48,7 @@ const corsOptions = {
     if (!origin) return callback(null, true);
     if (
       allowedOrigins.includes(origin) ||
-      origin.endsWith('.onrender.com') ||
+      (origin.endsWith('.onrender.com') && origin.includes('virtulab')) ||
       origin.startsWith('http://localhost:') ||
       origin.startsWith('http://127.0.0.1:') ||
       origin.startsWith('http://192.168.') ||
@@ -56,7 +56,7 @@ const corsOptions = {
     ) {
       return callback(null, true);
     }
-    return callback(null, true); // Allow all verified endpoints
+    return callback(null, false); // Deny unauthorized origins safely
   },
   credentials: true
 };

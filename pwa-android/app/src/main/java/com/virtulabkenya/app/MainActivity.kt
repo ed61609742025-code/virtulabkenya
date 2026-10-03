@@ -42,14 +42,13 @@ class MainActivity : AppCompatActivity() {
         val settings = webView.settings
         settings.javaScriptEnabled = true
         settings.domStorageEnabled = true
-        settings.databaseEnabled = true
-        settings.allowFileAccess = true
+        settings.allowFileAccess = false
         settings.allowContentAccess = true
         settings.mediaPlaybackRequiresUserGesture = false
         settings.useWideViewPort = true
         settings.loadWithOverviewMode = true
         settings.cacheMode = WebSettings.LOAD_DEFAULT
-        settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+        settings.mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
 
         CookieManager.getInstance().setAcceptCookie(true)
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true)
@@ -76,6 +75,21 @@ class MainActivity : AppCompatActivity() {
             fun setServer(url: String) {
                 val prefs = getSharedPreferences("virtulab_prefs", MODE_PRIVATE)
                 prefs.edit().putString("server_url", url.trim()).apply()
+            }
+
+            @JavascriptInterface
+            fun retryOnline() {
+                runOnUiThread {
+                    offlineFallbackActive = false
+                    val prefs = getSharedPreferences("virtulab_prefs", MODE_PRIVATE)
+                    val serverBase = prefs.getString("server_url", "https://virtulab-web.onrender.com")?.trimEnd('/') ?: "https://virtulab-web.onrender.com"
+                    webView.loadUrl("$serverBase/student/home.html")
+                }
+            }
+
+            @JavascriptInterface
+            fun isOffline(): Boolean {
+                return offlineFallbackActive
             }
         }, "VirtuLabNative")
 
@@ -140,6 +154,8 @@ class MainActivity : AppCompatActivity() {
 
             override fun onReceivedError(view: WebView, request: WebResourceRequest, error: WebResourceError) {
                 super.onReceivedError(view, request, error)
+                // Only trigger offline fallback if the main page document fails to load.
+                // Sub-resource failures (single image, font, CDN) must NOT drop the app into offline mode.
                 if (request.isForMainFrame) {
                     android.util.Log.w("VirtuLabPWA", "Main frame load failed: ${error.description}. Triggering offline asset fallback.")
                     if (!offlineFallbackActive) {
@@ -154,24 +170,10 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            @Suppress("DEPRECATION")
-            override fun onReceivedError(view: WebView, errorCode: Int, description: String?, failingUrl: String?) {
-                super.onReceivedError(view, errorCode, description, failingUrl)
-                if (!offlineFallbackActive) {
-                    offlineFallbackActive = true
-                    runOnUiThread {
-                        Toast.makeText(this@MainActivity, "Offline Mode: Running from local lab assets", Toast.LENGTH_SHORT).show()
-                        val prefs = getSharedPreferences("virtulab_prefs", MODE_PRIVATE)
-                        val serverBase = prefs.getString("server_url", "https://virtulab-web.onrender.com")?.trimEnd('/') ?: "https://virtulab-web.onrender.com"
-                        view.loadUrl("$serverBase/student/home.html")
-                    }
-                }
-            }
-
             override fun onPageFinished(view: WebView, url: String) {
                 super.onPageFinished(view, url)
-                // If loaded successfully online, clear the fallback flag for future navigations
-                if (isNetworkAvailable(this@MainActivity) && !url.contains("virtulab.local")) {
+                // If loaded successfully online (and NOT in asset fallback mode), keep online confirmed
+                if (!offlineFallbackActive && isNetworkAvailable(this@MainActivity) && !url.contains("virtulab.local")) {
                     offlineFallbackActive = false
                 }
             }

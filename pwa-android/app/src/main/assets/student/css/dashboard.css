@@ -271,7 +271,7 @@ html, body {
   align-items: center;
   justify-content: space-between;
   padding: 10px 20px;
-  padding-top: calc(10px + env(safe-area-inset-top, 0px));
+  padding-top: calc(10px + var(--vlk-status-bar-inset, 0px)) !important;
   max-width: 1360px;
   margin: 0 auto;
   gap: 12px;
@@ -281,8 +281,9 @@ html, body {
 }
 
 .candidate-top-ribbon + .top-navbar,
-.academic-top-header .top-navbar {
-  padding-top: 10px;
+.candidate-top-ribbon ~ .top-navbar,
+.academic-top-header:has(.candidate-top-ribbon) .top-navbar {
+  padding-top: 10px !important;
 }
 
 .nav-brand-academic {
@@ -1313,6 +1314,7 @@ html, body {
 
   .top-navbar {
     padding: 8px 12px;
+    padding-top: calc(8px + var(--vlk-status-bar-inset, 0px)) !important;
     gap: 8px;
   }
 
@@ -1472,6 +1474,7 @@ html, body {
 
   .top-navbar {
     padding: 6px 10px;
+    padding-top: calc(6px + var(--vlk-status-bar-inset, 0px)) !important;
     gap: 6px;
   }
 
@@ -1515,6 +1518,7 @@ html, body {
 @media (max-width: 400px) {
   .top-navbar {
     padding: 5px 6px;
+    padding-top: calc(5px + var(--vlk-status-bar-inset, 0px)) !important;
     gap: 4px;
   }
 
@@ -2748,6 +2752,7 @@ html, body {
   align-items: center;
   justify-content: space-between;
   padding: 12px 24px;
+  padding-top: calc(10px + var(--vlk-status-bar-inset, 0px)) !important;
   max-width: 1280px;
   margin: 0 auto;
   gap: 16px;
@@ -4487,6 +4492,7 @@ html, body {
   /* Top navbar */
   .top-navbar {
     padding: 8px 10px !important;
+    padding-top: calc(8px + var(--vlk-status-bar-inset, 0px)) !important;
     width: 100% !important;
     box-sizing: border-box !important;
   }
@@ -5191,5 +5197,22 @@ html, body {
 [data-theme="green"] .xp-earning-val {
   background: rgba(52, 211, 153, 0.2);
   color: #6EE7B7;
+}
+
+/* ════════════════════════════════════════════════════════════
+   UNIFIED STATUS BAR / SAFE-AREA OFFSET SAFEGUARD
+   ════════════════════════════════════════════════════════════ */
+.top-navbar {
+  padding-top: calc(8px + var(--vlk-status-bar-inset, 0px)) !important;
+}
+
+.candidate-top-ribbon {
+  padding-top: calc(6px + var(--vlk-status-bar-inset, 0px)) !important;
+}
+
+.candidate-top-ribbon + .top-navbar,
+.candidate-top-ribbon ~ .top-navbar,
+.academic-top-header:has(.candidate-top-ribbon) .top-navbar {
+  padding-top: 8px !important;
 }
 

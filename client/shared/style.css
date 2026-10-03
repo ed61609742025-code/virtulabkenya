@@ -303,6 +303,14 @@ body, .panel, .card, .auth-box, .btn, .bench, .rig-panel {
 [data-theme="dark"] .msg-ok, [data-theme="green"] .msg-ok { background: #143824; }
 [data-theme="dark"] .msg-err, [data-theme="green"] .msg-err { background: #3A1F17; }
 
+:root {
+  --vlk-status-bar-inset: env(safe-area-inset-top, 0px);
+}
+
+html.vlk-native-app {
+  --vlk-status-bar-inset: max(30px, env(safe-area-inset-top, 0px));
+}
+
 /* ── MOBILE PWA & TOUCH UX OPTIMIZATIONS ── */
 body {
   padding-top: 0;
@@ -319,13 +327,18 @@ body {
 /* Android WebView edge-to-edge + PWA standalone: safe spacing for top navbar */
 .top-navbar,
 .admin-navbar-wrap {
-  padding-top: calc(8px + env(safe-area-inset-top, 0px));
+  padding-top: calc(8px + var(--vlk-status-bar-inset, 0px)) !important;
+}
+
+.candidate-top-ribbon {
+  padding-top: calc(6px + var(--vlk-status-bar-inset, 0px)) !important;
 }
 
 /* When a candidate ribbon is already at the very top, navbar below it doesn't need safe-area padding */
 .candidate-top-ribbon + .top-navbar,
-.academic-top-header .top-navbar {
-  padding-top: 8px;
+.candidate-top-ribbon ~ .top-navbar,
+.academic-top-header:has(.candidate-top-ribbon) .top-navbar {
+  padding-top: 8px !important;
 }
 
 /* ══════════════════════════════════════

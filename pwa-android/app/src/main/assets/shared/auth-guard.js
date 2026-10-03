@@ -7,6 +7,15 @@
 (function(window) {
   'use strict';
 
+  // Synchronous detection of Android WebView wrapper app (VirtuLabApp)
+  try {
+    var isNative = !!(window.VirtuLabNative || (navigator.userAgent && navigator.userAgent.indexOf('VirtuLabApp') !== -1));
+    if (isNative && typeof document !== 'undefined' && document.documentElement) {
+      document.documentElement.classList.add('vlk-native-app');
+      document.documentElement.style.setProperty('--vlk-status-bar-inset', '30px');
+    }
+  } catch (e) {}
+
   function getStoredToken() {
     try {
       if (typeof localStorage !== 'undefined') {

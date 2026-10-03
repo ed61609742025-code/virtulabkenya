@@ -92,12 +92,8 @@ class MainActivity : AppCompatActivity() {
         )
         setContentView(rootContainer)
 
-        // Protect web content from overlapping hardware status bar, notches & system bars
-        ViewCompat.setOnApplyWindowInsetsListener(rootContainer) { view, windowInsets ->
-            val insets = windowInsets.getInsets(
-                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
-            )
-            view.setPadding(insets.left, insets.top, insets.right, insets.bottom)
+        // Allow WebView to layout edge-to-edge so CSS env(safe-area-inset-*) provides seamless theme and safe spacing without double padding
+        ViewCompat.setOnApplyWindowInsetsListener(rootContainer) { _, windowInsets ->
             windowInsets
         }
 

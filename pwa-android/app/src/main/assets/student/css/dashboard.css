@@ -271,13 +271,18 @@ html, body {
   align-items: center;
   justify-content: space-between;
   padding: 10px 20px;
-  padding-top: max(10px, env(safe-area-inset-top, 0px));
+  padding-top: calc(10px + env(safe-area-inset-top, 0px));
   max-width: 1360px;
   margin: 0 auto;
   gap: 12px;
   width: 100%;
   box-sizing: border-box;
   min-width: 0;
+}
+
+.candidate-top-ribbon + .top-navbar,
+.academic-top-header .top-navbar {
+  padding-top: 10px;
 }
 
 .nav-brand-academic {

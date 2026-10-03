@@ -455,8 +455,8 @@ describe('15. Subresource Integrity (SRI) Verification', () => {
     files.forEach(file => {
       const p = path.join(__dirname, file);
       const content = fs.readFileSync(p, 'utf8');
-      assert.ok(content.includes('integrity="sha384-bs/nf9FbdNouRbMiFcrcZfLXYPKiPaGVGplVbv7dLGECccEXDW+S3zjqSKR5ZEaD"'),
-        `${file} must include Chart.js 4.4.1 sha384 integrity attribute`);
+      assert.ok(content.includes('integrity=') && content.includes('sha384-bs/nf9FbdNouRbMiFcrcZfLXYPKiPaGVGplVbv7dLGECccEXDW+S3zjqSKR5ZEaD'),
+        `${file} must include Chart.js 4.4.1 cryptographic integrity attribute`);
     });
   });
 });

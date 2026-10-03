@@ -79,6 +79,7 @@ class MainActivity : AppCompatActivity() {
         settings.loadWithOverviewMode = true
         settings.cacheMode = WebSettings.LOAD_DEFAULT
         settings.mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
+        settings.userAgentString = "${settings.userAgentString} VirtuLabApp/1.0"
 
         CookieManager.getInstance().setAcceptCookie(true)
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true)
@@ -229,6 +230,9 @@ class MainActivity : AppCompatActivity() {
                 // If loaded successfully online (and NOT in asset fallback mode), keep online confirmed
                 if (!offlineFallbackActive && isNetworkAvailable(this@MainActivity) && !url.contains("virtulab.local")) {
                     offlineFallbackActive = false
+                }
+                view.post {
+                    view.evaluateJavascript("if (window.VLKPush && typeof window.VLKPush.syncUI === 'function') { window.VLKPush.syncUI(); }", null)
                 }
             }
         }

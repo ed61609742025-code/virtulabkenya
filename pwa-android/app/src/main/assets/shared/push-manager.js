@@ -91,12 +91,28 @@
   }
 
   function isNativeApp() {
-    return (
-      typeof window !== 'undefined' &&
-      window.VirtuLabNative &&
-      typeof window.VirtuLabNative.supportsNotifications === 'function' &&
-      window.VirtuLabNative.supportsNotifications()
-    );
+    try {
+      if (typeof window !== 'undefined' && window.VirtuLabNative) {
+        return true;
+      }
+      const ua = (navigator.userAgent || '').toLowerCase();
+      if (ua.includes('virtulabapp') || ua.includes('virtulab') || (ua.includes('android') && (ua.includes('wv') || ua.includes('version/4.0')))) {
+        return true;
+      }
+    } catch (e) {}
+    return false;
+  }
+
+  function hasNativeNotifications() {
+    try {
+      return (
+        typeof window !== 'undefined' &&
+        window.VirtuLabNative &&
+        typeof window.VirtuLabNative.showNotification === 'function'
+      );
+    } catch (e) {
+      return false;
+    }
   }
 
   function isSupported() {
@@ -110,10 +126,13 @@
 
   function getPermission() {
     if (isNativeApp()) {
-      if (typeof window.VirtuLabNative.hasNotificationPermission === 'function') {
-        return window.VirtuLabNative.hasNotificationPermission() ? 'granted' : 'default';
+      if (hasNativeNotifications()) {
+        if (typeof window.VirtuLabNative.hasNotificationPermission === 'function') {
+          return window.VirtuLabNative.hasNotificationPermission() ? 'granted' : 'default';
+        }
+        return 'granted';
       }
-      return 'granted';
+      return 'unsupported';
     }
     if (!('Notification' in window)) return 'unsupported';
     return Notification.permission; // 'default', 'granted', 'denied'
@@ -146,6 +165,7 @@
 
   async function isSubscribed() {
     if (isNativeApp()) {
+      if (!hasNativeNotifications()) return false;
       const disabled = localStorage.getItem('vlk_native_push_disabled') === 'true';
       if (disabled) return false;
       if (typeof window.VirtuLabNative.hasNotificationPermission === 'function') {
@@ -162,6 +182,10 @@
    */
   async function subscribe() {
     if (isNativeApp()) {
+      if (!hasNativeNotifications()) {
+        showToast('Please install the updated VirtuLab APK on your device to activate native notification drawer alerts.', 'info');
+        return false;
+      }
       try {
         localStorage.removeItem('vlk_native_push_disabled');
         if (typeof window.VirtuLabNative.requestNotificationPermission === 'function') {
@@ -316,13 +340,16 @@
    */
   async function sendTestNotification() {
     if (isNativeApp()) {
-      if (typeof window.VirtuLabNative.showNotification === 'function') {
+      if (hasNativeNotifications()) {
         window.VirtuLabNative.showNotification(
           '🧪 VirtuLab Android Alert',
           'Native lab notifications are working perfectly on your device!',
           '/student/home.html'
         );
         showToast('Native test notification dispatched!', 'success');
+        return;
+      } else {
+        showToast('Please install the updated VirtuLab APK on your device to test native alerts.', 'info');
         return;
       }
     }
@@ -362,13 +389,21 @@
    */
   async function syncUI() {
     const isNative = isNativeApp();
+    const hasNative = hasNativeNotifications();
     const supported = isSupported();
     const perm = getPermission();
     const subscribed = supported ? await isSubscribed() : false;
 
     // 1. Toggle Button
     document.querySelectorAll('.vlk-push-toggle-btn, #pushToggleBtn, #tPushToggleBtn').forEach((btn) => {
-      if (!supported) {
+      if (isNative && !hasNative) {
+        btn.textContent = 'Update APK';
+        btn.classList.remove('btn-secondary');
+        btn.classList.add('btn-primary');
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.title = 'Install latest app build for native Android notifications';
+      } else if (!supported) {
         btn.textContent = 'Not Supported';
         btn.disabled = true;
         btn.style.opacity = '0.5';
@@ -396,20 +431,25 @@
 
     // 2. Status Label
     document.querySelectorAll('.vlk-push-status-text, #pushStatusText, #tPushStatusText').forEach((lbl) => {
-      if (!supported) {
+      if (isNative && !hasNative) {
+        lbl.textContent = '📲 Install latest APK update for native notifications';
+      } else if (!supported) {
         lbl.textContent = 'Push alerts not supported in this browser';
       } else if (perm === 'denied') {
         lbl.textContent = '⚠️ Blocked in device settings';
       } else if (subscribed) {
         lbl.textContent = isNative ? '✓ Native Android Notifications Active' : '✓ Real-Time Push Alerts Active';
       } else {
-        lbl.textContent = 'Push Alerts: Disabled';
+        lbl.textContent = isNative ? 'Native Alerts: Disabled (Tap Enable)' : 'Push Alerts: Disabled';
       }
     });
 
     // 2b. Status Indicator Dot
     document.querySelectorAll('.notif-status-dot, #pushStatusDot').forEach((dot) => {
-      if (!supported) {
+      if (isNative && !hasNative) {
+        dot.style.background = '#F59E0B'; // Amber
+        dot.style.boxShadow = '0 0 6px rgba(245, 158, 11, 0.5)';
+      } else if (!supported) {
         dot.style.background = '#94A3B8';
         dot.style.boxShadow = 'none';
       } else if (perm === 'denied') {
@@ -419,14 +459,14 @@
         dot.style.background = '#10B981';
         dot.style.boxShadow = '0 0 8px rgba(16, 185, 129, 0.6)';
       } else {
-        dot.style.background = '#CBD5E1';
+        dot.style.background = isNative ? '#06B6D4' : '#CBD5E1';
         dot.style.boxShadow = 'none';
       }
     });
 
     // 3. Test Button visibility
     document.querySelectorAll('.vlk-push-test-btn, #pushTestBtn, #tPushTestBtn').forEach((btn) => {
-      btn.style.display = subscribed ? 'inline-flex' : 'none';
+      btn.style.display = (subscribed || (isNative && hasNative)) ? 'inline-flex' : 'none';
     });
 
     // 4. Battery Guide Button/Link visibility

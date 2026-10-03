@@ -169,6 +169,9 @@ requireStudentLogin();
     const isShowing = dropdown.style.display !== 'none';
     dropdown.style.display = isShowing ? 'none' : 'flex';
     if (backdrop) backdrop.style.display = isShowing ? 'none' : 'block';
+    if (!isShowing && window.VLKPush && typeof window.VLKPush.syncUI === 'function') {
+      window.VLKPush.syncUI();
+    }
   }
 
   document.addEventListener('click', (e) => {

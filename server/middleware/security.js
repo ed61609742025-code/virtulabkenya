@@ -3,6 +3,7 @@
 //  Feature #25: Helmet HTTP headers & HTTPS enforcement middleware
 // ============================================================
 
+const crypto = require('crypto');
 const helmet = require('helmet');
 
 // HTTPS Enforcer Middleware for Production deployments (e.g., Railway, Heroku)
@@ -20,17 +21,19 @@ function enforceHttps(req, res, next) {
 // Configured Helmet security headers
 const isProd = process.env.NODE_ENV === 'production';
 
-// NOTE [Security CSP Trade-off]:
-// 'unsafe-inline' is currently retained for scriptSrc and styleSrc because the client-side
-// architecture uses vanilla JavaScript with inline <script> blocks and event handlers across
-// HTML templates.
-// Remediation roadmap (Phase B): Extract inline scripts and attributes to dedicated JS modules
-// under client/*/js/ and adopt a per-request cryptographic nonce or sha256 hash CSP policy.
+// Dynamic cryptographic nonce policy:
+// Eliminates 'unsafe-inline' from scriptSrc by generating a per-request cryptographically secure nonce
+// (res.locals.cspNonce), which is dynamically injected into all <script> tags across HTML responses.
 const helmetHeaders = helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com", "https://accounts.google.com"],
+      scriptSrc: [
+        "'self'",
+        (req, res) => `'nonce-${res.locals.cspNonce}'`,
+        "https://cdnjs.cloudflare.com",
+        "https://accounts.google.com"
+      ],
       scriptSrcAttr: ["'unsafe-inline'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
       styleSrcAttr: ["'unsafe-inline'"],
@@ -50,6 +53,10 @@ const helmetHeaders = helmet({
 });
 
 function securityHeaders(req, res, next) {
+  if (!res.locals) res.locals = {};
+  if (!res.locals.cspNonce) {
+    res.locals.cspNonce = crypto.randomBytes(16).toString('base64');
+  }
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
   return helmetHeaders(req, res, next);
 }

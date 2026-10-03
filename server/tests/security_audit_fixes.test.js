@@ -123,6 +123,8 @@ describe('5. App Initialization & Security Headers', () => {
     securityHeaders(req, res, () => {});
     const csp = res.getHeader('content-security-policy') || '';
     assert.ok(csp.includes("connect-src 'self' https://cdnjs.cloudflare.com"), `CSP must allow cdnjs in connect-src. Got: ${csp}`);
+    assert.ok(csp.includes("'nonce-"), `CSP must contain dynamic cryptographic nonce in script-src. Got: ${csp}`);
+    assert.ok(!csp.includes("script-src 'self' 'unsafe-inline'"), `CSP must not contain 'unsafe-inline' in script-src. Got: ${csp}`);
   });
 
   it('should have sw.js bumped to virtulab-kenya-v113 or higher and handle offline CDN fallback gracefully', () => {
@@ -495,6 +497,76 @@ describe('17. WAI-ARIA and OpenGraph Social Cards', () => {
       assert.ok(html.includes('property="og:image"'), 'Must have og:image');
       assert.ok(html.includes('name="twitter:card"'), 'Must have twitter:card');
     });
+  });
+});
+
+// 18. Dynamic CSP Cryptographic Nonce Injection (Phase 2 Roadmap)
+describe('18. Dynamic CSP Cryptographic Nonce Injection & Elimination of unsafe-inline', () => {
+  const request = require('supertest');
+  const app = require('../index');
+
+  it('should inject matching dynamic nonce into <script> tags when serving HTML files', async () => {
+    const res = await request(app).get('/student/login.html');
+    assert.strictEqual(res.status, 200);
+
+    const csp = res.headers['content-security-policy'];
+    assert.ok(csp, 'Response must have Content-Security-Policy header');
+
+    const nonceMatch = csp.match(/'nonce-([^']+)'/);
+    assert.ok(nonceMatch, `CSP header must contain nonce directive. Got: ${csp}`);
+    const nonce = nonceMatch[1];
+    assert.ok(nonce && nonce.length >= 16, `Nonce must be a valid cryptographic token, got: ${nonce}`);
+
+    // All <script> tags in the returned HTML must have nonce="..."
+    const body = res.text;
+    const scriptMatches = body.match(/<script\b[^>]*>/gi) || [];
+    assert.ok(scriptMatches.length > 0, 'Response should contain at least one <script> tag');
+    
+    scriptMatches.forEach(tag => {
+      assert.ok(tag.includes(`nonce="${nonce}"`), `Script tag must contain dynamic nonce="${nonce}". Found: ${tag}`);
+    });
+  });
+
+  it('should inject matching dynamic nonce when serving root /', async () => {
+    const res = await request(app).get('/');
+    assert.strictEqual(res.status, 200);
+
+    const csp = res.headers['content-security-policy'];
+    assert.ok(csp, 'Response must have Content-Security-Policy header');
+
+    const nonceMatch = csp.match(/'nonce-([^']+)'/);
+    assert.ok(nonceMatch, `CSP header must contain nonce directive. Got: ${csp}`);
+    const nonce = nonceMatch[1];
+
+    const body = res.text;
+    const scriptMatches = body.match(/<script\b[^>]*>/gi) || [];
+    assert.ok(scriptMatches.length > 0, 'Response should contain at least one <script> tag');
+
+    scriptMatches.forEach(tag => {
+      assert.ok(tag.includes(`nonce="${nonce}"`), `Script tag must contain dynamic nonce="${nonce}". Found: ${tag}`);
+    });
+  });
+});
+
+// 19. Titration Workbench Colorimetry & Physics Specifications (Section 6)
+describe('19. Titration Workbench Colorimetry & Physics Specifications (Section 6)', () => {
+  const fs = require('fs');
+  const path = require('path');
+
+  it('should implement Section 6 colorimetry palette across acid-base practicals and engine fallbacks', () => {
+    const filePath = path.join(__dirname, '../../client/student/js/titration-workbench.js');
+    const content = fs.readFileSync(filePath, 'utf8');
+
+    // Section 6 Colorimetry Specifications:
+    // Acidic: rgba(224, 242, 254, 0.40)
+    // Equivalence: rgba(244, 114, 182, 0.65)
+    // Over-titrated: rgba(219, 39, 119, 0.90)
+    assert.ok(content.includes('rgba(224, 242, 254, 0.40)'), 'Must include Section 6 Acidic color (rgba(224, 242, 254, 0.40))');
+    assert.ok(content.includes('rgba(244, 114, 182, 0.65)'), 'Must include Section 6 Equivalence color (rgba(244, 114, 182, 0.65))');
+    assert.ok(content.includes('rgba(219, 39, 119, 0.90)'), 'Must include Section 6 Over-titrated color (rgba(219, 39, 119, 0.90))');
+
+    // Ensure deprecated lower-alpha 0.28 value is eliminated from colorimetry engine
+    assert.ok(!content.includes('rgba(224, 242, 254, 0.28)'), 'Deprecated rgba(224, 242, 254, 0.28) must be eliminated');
   });
 });
 

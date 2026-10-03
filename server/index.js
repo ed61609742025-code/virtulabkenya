@@ -76,6 +76,45 @@ app.use(express.json({
     req.rawBody = buf;
   }
 }));
+const fs = require('fs');
+const clientRoot = path.resolve(__dirname, '../client');
+
+// Intercept all HTML requests to dynamically inject the per-request CSP cryptographic nonce
+// into every <script> tag before serving, enabling strict CSP without 'unsafe-inline'
+app.use((req, res, next) => {
+  if (req.method !== 'GET' && req.method !== 'HEAD') return next();
+
+  let reqPath = req.path;
+  if (reqPath === '/') {
+    reqPath = '/index.html';
+  } else if (!reqPath.endsWith('.html')) {
+    return next();
+  }
+
+  const targetFile = path.normalize(path.join(clientRoot, reqPath));
+  if (!targetFile.startsWith(clientRoot)) {
+    return res.status(403).send('Forbidden');
+  }
+
+  fs.readFile(targetFile, 'utf8', (err, html) => {
+    if (err) {
+      if (err.code === 'ENOENT') return next();
+      return next(err);
+    }
+
+    const nonce = res.locals && res.locals.cspNonce;
+    const modifiedHtml = nonce
+      ? html.replace(/<script\b(?![^>]*\bnonce=)([^>]*)>/gi, (match, attrs) => `<script nonce="${nonce}"${attrs}>`)
+      : html;
+
+    res.setHeader('Content-Type', 'text/html; charset=UTF-8');
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    return res.send(modifiedHtml);
+  });
+});
+
 app.use(express.static(path.join(__dirname, '../client'), {
   setHeaders: (res, filePath) => {
     if (filePath.endsWith('.html') || filePath.endsWith('sw.js')) {

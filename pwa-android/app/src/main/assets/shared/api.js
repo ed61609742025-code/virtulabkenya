@@ -20,8 +20,17 @@ function getServerBaseUrl() {
       }
     }
   } catch (e) {}
-  if (typeof window !== 'undefined' && window.location.hostname && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-    return window.location.origin;
+  if (typeof window !== 'undefined' && window.location && window.location.hostname) {
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      return window.location.origin || '';
+    }
+    if (window.location.origin && window.location.origin.startsWith('http')) {
+      return window.location.origin;
+    }
+  }
+  // In Node/test environment without window.location, return empty string for relative paths
+  if (typeof window === 'undefined' || !window.location || !window.location.hostname) {
+    return '';
   }
   // Default to Render cloud server
   return 'https://virtulab-web.onrender.com';
@@ -73,7 +82,7 @@ const VLKServer = {
   async testHealth(url) {
     const serverUrl = url ? url.trim().replace(/\/+$/, '') : getServerBaseUrl();
     let target = serverUrl + '/api/health';
-    if (typeof window !== 'undefined' && window.location.hostname === 'virtulab.local' && (!url || url.trim() === getServerBaseUrl())) {
+    if (typeof window !== 'undefined' && window.location && window.location.hostname === 'virtulab.local' && (!url || url.trim() === getServerBaseUrl())) {
       target = '/api/health';
     }
     const controller = new AbortController();

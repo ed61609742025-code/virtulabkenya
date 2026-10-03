@@ -64,9 +64,12 @@ jobs:
 
     steps:
       - name: Trigger Render Deploy Webhook (if configured)
-        if: env.RENDER_HOOK != ''
         env:
           RENDER_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
         run: |
-          echo "Triggering zero-downtime production deployment on Render..."
-          curl -sS -X POST "$RENDER_HOOK"
+          if [ -n "$RENDER_HOOK" ]; then
+            echo "Triggering zero-downtime production deployment on Render..."
+            curl -sS -X POST "$RENDER_HOOK"
+          else
+            echo "RENDER_DEPLOY_HOOK_URL secret not configured. Skipping webhook trigger (Render automatically deploys on push)."
+          fi

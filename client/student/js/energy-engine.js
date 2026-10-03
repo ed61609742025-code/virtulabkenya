@@ -337,6 +337,39 @@ const EnergyEngine = (() => {
   // ============================================================
   // Initialization
   // ============================================================
+  function updateCanvasDimensions() {
+    if (rigCanvas && rigCanvas.parentElement) {
+      const pw = rigCanvas.parentElement.clientWidth;
+      const ph = rigCanvas.parentElement.clientHeight;
+      if (pw > 0 && rigCanvas.width !== pw) rigCanvas.width = pw;
+      if (ph > 0 && rigCanvas.height !== ph) rigCanvas.height = ph;
+    }
+    if (magCanvas && magCanvas.parentElement) {
+      const pw = magCanvas.parentElement.clientWidth;
+      const ph = Math.max(100, magCanvas.parentElement.clientHeight - 48);
+      if (pw > 0 && magCanvas.width !== pw) magCanvas.width = pw;
+      if (ph > 0 && magCanvas.height !== ph) magCanvas.height = ph;
+    }
+    if (profileCanvas && profileCanvas.parentElement) {
+      const pw = profileCanvas.parentElement.clientWidth;
+      const ph = 140;
+      if (pw > 0 && profileCanvas.width !== pw) profileCanvas.width = pw;
+      if (profileCanvas.height !== ph) profileCanvas.height = ph;
+    }
+    if (molCanvas && molCanvas.parentElement) {
+      const pw = molCanvas.parentElement.clientWidth;
+      const ph = 140;
+      if (pw > 0 && molCanvas.width !== pw) molCanvas.width = pw;
+      if (molCanvas.height !== ph) molCanvas.height = ph;
+    }
+    if (graphCanvas && graphCanvas.parentElement) {
+      const pw = graphCanvas.parentElement.clientWidth;
+      const ph = 320;
+      if (pw > 0 && graphCanvas.width !== pw) graphCanvas.width = pw;
+      if (graphCanvas.height !== ph) graphCanvas.height = ph;
+    }
+  }
+
   function init() {
     rigCanvas = document.getElementById('energyRigCanvas');
     if (rigCanvas) rigCtx = rigCanvas.getContext('2d');
@@ -356,10 +389,22 @@ const EnergyEngine = (() => {
       setupGraphEvents();
     }
 
+    updateCanvasDimensions();
+    window.addEventListener('resize', () => {
+      updateCanvasDimensions();
+      renderGraph();
+    }, { passive: true });
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => {
+        updateCanvasDimensions();
+        renderGraph();
+      }, 150);
+    }, { passive: true });
+
     initParticles();
     initConvectionCurrents();
     applyScenario('KCSE_2022_DISPLACEMENT');
-    requestAnimationFrame(simulationLoop);
+    rafId = requestAnimationFrame(simulationLoop);
     renderGraph();
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -1144,28 +1189,46 @@ const EnergyEngine = (() => {
   // ============================================================
   // Canvas Rendering Loop & Diagram Visualizers
   // ============================================================
-  let lastTimestamp = 0;
+  let rafId = null;
+  const TARGET_FRAME_MS = 28; // ~35 FPS: silky smooth for chemical thermals while saving 65% mobile GPU power & heat
+  let lastFrameTime = 0;
+
   function simulationLoop(timestamp) {
-    if (!lastTimestamp) lastTimestamp = timestamp;
-    const dt = Math.min(0.1, (timestamp - lastTimestamp) / 1000);
-    lastTimestamp = timestamp;
+    if (document.hidden) {
+      rafId = null;
+      return;
+    }
+
+    rafId = requestAnimationFrame(simulationLoop);
+
+    if (timestamp - lastFrameTime < TARGET_FRAME_MS) {
+      return;
+    }
+
+    const dt = Math.min(0.08, (timestamp - (lastFrameTime || timestamp)) / 1000);
+    lastFrameTime = timestamp;
 
     updatePhysics(dt);
     drawRig();
     drawMagLoupe();
     drawEnergyProfile();
     drawMolecularHUD(dt);
-
-    requestAnimationFrame(simulationLoop);
   }
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && !rafId) {
+      lastFrameTime = performance.now();
+      rafId = requestAnimationFrame(simulationLoop);
+    }
+  });
 
   // ──────────────────────────────────────────────
   // 1. HIGH-PRECISION APPARATUS RIG DIAGRAM
   // ──────────────────────────────────────────────
   function drawRig() {
     if (!rigCanvas || !rigCtx) return;
-    const w = rigCanvas.width = rigCanvas.parentElement.clientWidth;
-    const h = rigCanvas.height = rigCanvas.parentElement.clientHeight;
+    const w = rigCanvas.width || (rigCanvas.parentElement ? rigCanvas.parentElement.clientWidth : 300);
+    const h = rigCanvas.height || (rigCanvas.parentElement ? rigCanvas.parentElement.clientHeight : 250);
     rigCtx.clearRect(0, 0, w, h);
 
     const cx = w * 0.48;
@@ -1608,8 +1671,8 @@ const EnergyEngine = (() => {
   function drawMagLoupe() {
     if (!magCanvas || !magCtx) return;
     const colors = getThemeColors();
-    const w = magCanvas.width = magCanvas.parentElement.clientWidth;
-    const h = magCanvas.height = magCanvas.parentElement.clientHeight - 48;
+    const w = magCanvas.width || (magCanvas.parentElement ? magCanvas.parentElement.clientWidth : 200);
+    const h = magCanvas.height || (magCanvas.parentElement ? Math.max(100, magCanvas.parentElement.clientHeight - 48) : 150);
     magCtx.clearRect(0, 0, w, h);
 
     const cx = w * 0.5;
@@ -1684,8 +1747,8 @@ const EnergyEngine = (() => {
   function drawEnergyProfile() {
     if (!profileCanvas || !pCtx) return;
     const colors = getThemeColors();
-    const w = profileCanvas.width = profileCanvas.parentElement.clientWidth;
-    const h = profileCanvas.height = 140;
+    const w = profileCanvas.width || (profileCanvas.parentElement ? profileCanvas.parentElement.clientWidth : 300);
+    const h = profileCanvas.height || 140;
     pCtx.clearRect(0, 0, w, h);
 
     const isExo = currentScenario.deltaH_theoretical < 0;
@@ -1822,8 +1885,8 @@ const EnergyEngine = (() => {
   function drawMolecularHUD(dt) {
     if (!molCanvas || !mCtx) return;
     const colors = getThemeColors();
-    const w = molCanvas.width = molCanvas.parentElement.clientWidth;
-    const h = molCanvas.height = 140;
+    const w = molCanvas.width || (molCanvas.parentElement ? molCanvas.parentElement.clientWidth : 200);
+    const h = molCanvas.height || 140;
     mCtx.clearRect(0, 0, w, h);
 
     const speedMul = 1.0 + (currentTemp - 20) * 0.05;
@@ -1919,8 +1982,8 @@ const EnergyEngine = (() => {
   function renderGraph() {
     if (!graphCanvas || !gCtx) return;
     const colors = getThemeColors();
-    const w = graphCanvas.width = graphCanvas.parentElement.clientWidth;
-    const h = graphCanvas.height = 320;
+    const w = graphCanvas.width || (graphCanvas.parentElement ? graphCanvas.parentElement.clientWidth : 400);
+    const h = graphCanvas.height || 320;
     gCtx.clearRect(0, 0, w, h);
 
     const margin = { left: 48, right: 20, top: 22, bottom: 35 };

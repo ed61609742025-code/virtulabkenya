@@ -217,6 +217,9 @@ class MainActivity : AppCompatActivity() {
                         if (offlineFallbackActive || !isNetworkAvailable(this@MainActivity)) {
                             return getOfflineApiResponse(assetPath)
                         }
+                        if (isBackendHost) {
+                            return super.shouldInterceptRequest(view, request)
+                        }
                         return proxyLiveApiRequest(request, serverBase, assetPath, url.query)
                     }
 
@@ -535,6 +538,30 @@ class MainActivity : AppCompatActivity() {
         val insetsController = WindowCompat.getInsetsController(window, window.decorView)
         insetsController.isAppearanceLightStatusBars = isLight
         insetsController.isAppearanceLightNavigationBars = isLight
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (::webView.isInitialized) {
+            webView.onPause()
+            webView.pauseTimers()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (::webView.isInitialized) {
+            webView.onResume()
+            webView.resumeTimers()
+        }
+    }
+
+    override fun onDestroy() {
+        if (::webView.isInitialized) {
+            rootContainer.removeView(webView)
+            webView.destroy()
+        }
+        super.onDestroy()
     }
 }
 

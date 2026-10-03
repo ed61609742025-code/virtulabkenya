@@ -196,7 +196,7 @@ const RatesEngine = (function () {
       }, 150);
     });
 
-    requestAnimationFrame(renderLoop);
+    ratesRafId = requestAnimationFrame(renderLoop);
   }
 
   function setExperiment(expName) {
@@ -785,10 +785,31 @@ const RatesEngine = (function () {
     }
   }
 
-  function renderLoop() {
+  let ratesRafId = null;
+  let lastRatesFrame = 0;
+  const RATES_FRAME_MS = 28; // ~35 FPS: fluid kinetics apparatus while saving 65% mobile GPU power & heat
+
+  function renderLoop(timestamp) {
+    if (document.hidden) {
+      ratesRafId = null;
+      return;
+    }
+
+    ratesRafId = requestAnimationFrame(renderLoop);
+
+    if (timestamp - lastRatesFrame < RATES_FRAME_MS) {
+      return;
+    }
+    lastRatesFrame = timestamp;
     drawApparatus();
-    requestAnimationFrame(renderLoop);
   }
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && !ratesRafId) {
+      lastRatesFrame = performance.now();
+      ratesRafId = requestAnimationFrame(renderLoop);
+    }
+  });
 
   function drawApparatus() {
     if (!ctx || !canvas) return;

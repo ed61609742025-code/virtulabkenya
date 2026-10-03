@@ -322,7 +322,7 @@ const SolubilityEngine = (() => {
     applyScenario(state.activeScenario);
     initSolidParticles();
     state.lastTime = performance.now();
-    requestAnimationFrame(loop);
+    solRafId = requestAnimationFrame(loop);
     renderTable();
     generatePostLabQuestions();
   }
@@ -629,16 +629,38 @@ const SolubilityEngine = (() => {
   }
 
   // ── Canvas Rendering Engine ─────────────────────────────────────────
+  let solRafId = null;
+  let lastSolFrame = 0;
+  const SOL_FRAME_MS = 28; // ~35 FPS: silky smooth thermodynamics while saving 65% mobile GPU power & heat
+
   function loop(timestamp) {
-    const dt = Math.min(0.1, (timestamp - state.lastTime) / 1000);
+    if (document.hidden) {
+      solRafId = null;
+      return;
+    }
+
+    solRafId = requestAnimationFrame(loop);
+
+    if (timestamp - lastSolFrame < SOL_FRAME_MS) {
+      return;
+    }
+
+    const dt = Math.min(0.08, (timestamp - (state.lastTime || timestamp)) / 1000);
     state.lastTime = timestamp;
+    lastSolFrame = timestamp;
 
     updateThermalPhysics(dt);
     drawApparatus();
     drawMagnifiedThermometer();
-
-    requestAnimationFrame(loop);
   }
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && !solRafId) {
+      state.lastTime = performance.now();
+      lastSolFrame = performance.now();
+      solRafId = requestAnimationFrame(loop);
+    }
+  });
 
   function toggleDigitalTemp() {
     state.showDigitalTemp = !state.showDigitalTemp;

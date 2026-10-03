@@ -24,6 +24,18 @@
     }
     return next;
   };
+  window.toggleLanguage = function() {
+    var cur = (typeof getLanguage === 'function') ? getLanguage() : (localStorage.getItem('vlk_lang') || 'en');
+    var nxt = cur === 'sw' ? 'en' : 'sw';
+    if (typeof setLanguage === 'function') {
+      setLanguage(nxt);
+    } else {
+      localStorage.setItem('vlk_lang', nxt);
+      var badge = document.getElementById('langBadgeTag');
+      if (badge) badge.textContent = nxt.toUpperCase();
+    }
+    return nxt;
+  };
   try {
     if (localStorage.getItem('vlk_study_tip_dismissed') === 'true') {
       document.write('<style id="vlkStudyTipEarlyStyle">#studyTipCard{display:none!important;}#studyTipRestoreWrap{display:block!important;}</style>');
@@ -47,9 +59,9 @@
 <link rel="stylesheet" href="../shared/pwa-installer.css">
 <link rel="stylesheet" href="../shared/brilliant-theme.css">
 <link rel="stylesheet" href="../shared/gamification-engine.css">
-<link rel="stylesheet" href="css/dashboard.css?v=126">
+<link rel="stylesheet" href="css/dashboard.css?v=127">
 <link rel="stylesheet" href="css/skill-tree.css?v=126">
-<link rel="stylesheet" href="css/mobile.css?v=126">
+<link rel="stylesheet" href="css/mobile.css?v=127">
 <link rel="stylesheet" href="../shared/subscription-ui.css?v=126">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" crossorigin="anonymous"></script>
 
@@ -223,14 +235,15 @@
       </a>
 
       <div class="nav-actions">
-        <!-- Live Database Connection Status Pill -->
-        <div id="serverStatusWrap" style="display:inline-flex; align-items:center;"></div>
-
-        <!-- Language Switcher -->
-        <div class="lang-toggle-group" data-tooltip="Language" data-tooltip-pos="bottom">
-          <button class="lang-btn-chip active" id="btnLangEN" data-lang="en" onclick="setLanguage('en')" title="English">EN</button>
-          <button class="lang-btn-chip" id="btnLangSW" data-lang="sw" onclick="setLanguage('sw')" title="Kiswahili">SW</button>
-        </div>
+        <!-- Single Language Toggle Button -->
+        <button type="button" class="user-avatar-btn lang-single-toggle-btn" id="langToggleSingleBtn" onclick="toggleLanguage()" data-tooltip="Language: English (Switch to Kiswahili)" data-tooltip-pos="bottom" aria-label="Toggle language: currently English">
+          <svg class="lang-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10z"></path>
+          </svg>
+          <span class="lang-badge-tag" id="langBadgeTag">EN</span>
+        </button>
 
         <!-- Theme Toggle: 3-chip switcher for desktop, single toggle button for mobile -->
         <div class="theme-toggle-group theme-multi-btn-group" aria-label="Visual Theme Switcher">
@@ -1734,7 +1747,7 @@
 
   <script src="../shared/api.js?v=121"></script>
   <script src="../shared/auth-forms.js"></script>
-  <script src="../shared/i18n.js?v=120"></script>
+  <script src="../shared/i18n.js?v=127"></script>
   <script src="../shared/theme.js"></script>
   <script src="../shared/chemical-safety.js"></script>
   <script src="../shared/knec-grading.js"></script>
@@ -1749,11 +1762,6 @@
   <script src="../shared/subscription-ui.js?v=124"></script>
 
   <script src="js/home.js?v=120"></script>
-  <script>
-    if (window.VLKServer) {
-      VLKServer.mountStatusPill('serverStatusWrap');
-    }
-  </script>
 
   <!-- ── Mobile Bottom Navigation Bar (hidden on desktop via CSS) ── -->
   <nav class="vlk-bottom-nav" aria-label="Mobile Bottom Navigation" id="vlkBottomNav">

@@ -337,6 +337,13 @@ function setLanguage(lang) {
   updateLanguageButtons();
 }
 
+function toggleLanguage() {
+  const current = getLanguage();
+  const next = current === 'sw' ? 'en' : 'sw';
+  setLanguage(next);
+  return next;
+}
+
 function t(key) {
   const lang = getLanguage();
   return (translations[lang] && translations[lang][key]) || translations['en'][key] || key;
@@ -360,9 +367,24 @@ function applyTranslations() {
 
 function updateLanguageButtons() {
   const currentLang = getLanguage();
+  // Dual-chip button group support (if present)
   document.querySelectorAll('.lang-btn-chip').forEach(btn => {
     const lang = btn.getAttribute('data-lang') || (btn.id === 'btnLangSW' ? 'sw' : 'en');
     btn.classList.toggle('active', lang === currentLang);
+  });
+
+  // Single-toggle icon button support
+  document.querySelectorAll('.lang-single-toggle-btn, #langToggleSingleBtn').forEach(btn => {
+    const nextLang = currentLang === 'sw' ? 'English' : 'Kiswahili';
+    btn.setAttribute('data-lang', currentLang);
+    btn.setAttribute('aria-label', `Language: ${currentLang.toUpperCase()} (Switch to ${nextLang})`);
+    btn.setAttribute('data-tooltip', `Language: ${currentLang.toUpperCase()} (Switch to ${nextLang})`);
+    btn.setAttribute('title', `Language: ${currentLang.toUpperCase()} (Switch to ${nextLang})`);
+  });
+
+  // Language badge indicator tags
+  document.querySelectorAll('.lang-badge-tag, #langBadgeTag').forEach(tag => {
+    tag.textContent = currentLang.toUpperCase();
   });
 }
 
@@ -375,7 +397,9 @@ document.addEventListener('DOMContentLoaded', () => {
 if (typeof window !== 'undefined') {
   window.setLanguage = setLanguage;
   window.getLanguage = getLanguage;
+  window.toggleLanguage = toggleLanguage;
   window.t = t;
   window.applyTranslations = applyTranslations;
   window.updateLanguageButtons = updateLanguageButtons;
 }
+

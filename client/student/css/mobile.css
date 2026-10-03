@@ -185,12 +185,13 @@
   }
 
   /* All nav action buttons: ensure 44px tap targets */
-  .user-avatar-btn {
+  .user-avatar-btn,
+  .lang-single-toggle-btn {
     min-width: 44px !important;
     min-height: 44px !important;
     width: 44px !important;
     height: 44px !important;
-    display: flex !important;
+    display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
   }
@@ -490,7 +491,8 @@
     border-radius: 8px !important;
   }
 
-  .user-avatar-btn {
+  .user-avatar-btn,
+  .lang-single-toggle-btn {
     min-width: 34px !important;
     min-height: 34px !important;
     width: 34px !important;

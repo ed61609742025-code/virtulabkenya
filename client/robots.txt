@@ -1,0 +1,22 @@
+# ============================================================
+#  VirtuLab Kenya — Robots Exclusion Protocol
+#  https://virtulab.co.ke | https://virtulab-web.onrender.com
+# ============================================================
+
+User-agent: *
+Allow: /
+Allow: /index.html
+Allow: /terms.html
+Allow: /privacy.html
+Allow: /student/login.html
+Allow: /student/register.html
+Allow: /teacher/login.html
+Allow: /teacher/register.html
+
+# Disallow authenticated application workspaces & internal API endpoints
+Disallow: /api/
+Disallow: /student/
+Disallow: /teacher/
+Disallow: /admin/
+
+Sitemap: https://virtulab.co.ke/sitemap.xml

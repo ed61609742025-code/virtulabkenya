@@ -6,12 +6,13 @@
 <title>VirtuLab Kenya — Student Workstation</title>
 <script src="/shared/auth-guard.js"></script>
 <script>
+  window.VLK = window.VLK || {};
   var t = localStorage.getItem('vlk_theme') || 'light';
   document.documentElement.setAttribute('data-theme', t);
   if (window.VLKAuthGuard) {
     VLKAuthGuard.guardPage('student');
   }
-  window.cycleTheme = window.toggleTheme = function() {
+  window.VLK.cycleTheme = window.cycleTheme = window.toggleTheme = function() {
     var themes = ['light', 'dark', 'green'];
     var current = document.documentElement.getAttribute('data-theme') || 'light';
     var next = themes[(themes.indexOf(current) + 1) % themes.length];
@@ -24,7 +25,7 @@
     }
     return next;
   };
-  window.toggleLanguage = function() {
+  window.VLK.toggleLanguage = window.toggleLanguage = function() {
     var cur = (typeof getLanguage === 'function') ? getLanguage() : (localStorage.getItem('vlk_lang') || 'en');
     var nxt = cur === 'sw' ? 'en' : 'sw';
     if (typeof setLanguage === 'function') {
@@ -38,7 +39,7 @@
   };
   try {
     if (localStorage.getItem('vlk_study_tip_dismissed') === 'true') {
-      document.write('<style id="vlkStudyTipEarlyStyle">#studyTipCard{display:none!important;}#studyTipRestoreWrap{display:block!important;}</style>');
+      document.documentElement.classList.add('vlk-tip-dismissed');
     }
   } catch(e){}
 </script>
@@ -46,6 +47,20 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="description" content="VirtuLab Kenya — Interactive KCSE Chemistry Paper 3 virtual practical laboratory for secondary school students.">
+
+<!-- OpenGraph & Social Preview Meta Tags -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VirtuLab Kenya">
+<meta property="og:title" content="VirtuLab Kenya — KCSE Chemistry Virtual Laboratory">
+<meta property="og:description" content="Master KCSE Chemistry Paper 3 practicals with interactive virtual apparatus, real-time chemical reaction simulations, and KNEC rubrics.">
+<meta property="og:image" content="https://virtulab.co.ke/shared/chemistry_hero_badge.jpg">
+<meta property="og:url" content="https://virtulab.co.ke/student/home.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="VirtuLab Kenya — KCSE Chemistry Virtual Laboratory">
+<meta name="twitter:description" content="Master KCSE Chemistry Paper 3 practicals with interactive virtual apparatus, real-time chemical reaction simulations, and KNEC rubrics.">
+<meta name="twitter:image" content="https://virtulab.co.ke/shared/chemistry_hero_badge.jpg">
+
 <link rel="icon" type="image/png" href="/shared/icon-192.png">
 <link rel="shortcut icon" href="/favicon.ico">
 <link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
@@ -63,9 +78,11 @@
 <link rel="stylesheet" href="css/skill-tree.css?v=126">
 <link rel="stylesheet" href="css/mobile.css?v=127">
 <link rel="stylesheet" href="../shared/subscription-ui.css?v=126">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha384-bs/nf9FbdNouRbMiFcrcZfLXYPKiPaGVGplVbv7dLGECccEXDW+S3zjqSKR5ZEaD" crossorigin="anonymous"></script>
 
 <style>
+  html.vlk-tip-dismissed #studyTipCard { display: none !important; }
+  html.vlk-tip-dismissed #studyTipRestoreWrap { display: block !important; }
   :root, [data-theme="light"] {
     --acad-oxford: #0B2545;
     --acad-navy: #0284C7;
@@ -535,27 +552,27 @@
     </header>
 
     <!-- Sub-tabs Segmented Control -->
-    <nav class="student-subtabs-nav" aria-label="Workstation Views">
-      <button class="student-subtab-btn active" id="tabBtn_benches" onclick="switchStudentSubTab('benches')" data-tooltip="Lab workbenches and guided pathways" data-tooltip-pos="bottom">
+    <nav class="student-subtabs-nav" aria-label="Workstation Views" role="tablist">
+      <button class="student-subtab-btn active" id="tabBtn_benches" role="tab" aria-selected="true" aria-controls="panel_benches" onclick="switchStudentSubTab('benches')" data-tooltip="Lab workbenches and guided pathways" data-tooltip-pos="bottom">
         <span class="subtab-icon" aria-hidden="true">⚗️</span>
         <span data-i18n="tab_benches">Laboratory Benches</span>
       </button>
-      <button class="student-subtab-btn" id="tabBtn_reference" onclick="switchStudentSubTab('reference')" data-tooltip="KCSE reference tables and formulas" data-tooltip-pos="bottom">
+      <button class="student-subtab-btn" id="tabBtn_reference" role="tab" aria-selected="false" aria-controls="panel_reference" onclick="switchStudentSubTab('reference')" data-tooltip="KCSE reference tables and formulas" data-tooltip-pos="bottom">
         <span class="subtab-icon" aria-hidden="true">📖</span>
         <span data-i18n="tab_reference">Revision &amp; Reference</span>
       </button>
-      <button class="student-subtab-btn" id="tabBtn_achievements" onclick="switchStudentSubTab('achievements')" data-tooltip="Badges and session history" data-tooltip-pos="bottom">
+      <button class="student-subtab-btn" id="tabBtn_achievements" role="tab" aria-selected="false" aria-controls="panel_achievements" onclick="switchStudentSubTab('achievements')" data-tooltip="Badges and session history" data-tooltip-pos="bottom">
         <span class="subtab-icon" aria-hidden="true">🏆</span>
         <span data-i18n="tab_achievements">Badges &amp; History</span>
       </button>
-      <button class="student-subtab-btn" id="tabBtn_research" onclick="switchStudentSubTab('research')" data-tooltip="Assessments and surveys" data-tooltip-pos="bottom">
+      <button class="student-subtab-btn" id="tabBtn_research" role="tab" aria-selected="false" aria-controls="panel_research" onclick="switchStudentSubTab('research')" data-tooltip="Assessments and surveys" data-tooltip-pos="bottom">
         <span class="subtab-icon" aria-hidden="true">📋</span>
         <span data-i18n="tab_research">Assessments &amp; Surveys</span>
       </button>
     </nav>
 
     <!-- Tab 1: Laboratory Benches & Assignments -->
-    <div class="student-tab-panel active" id="panel_benches">
+    <div class="student-tab-panel active" id="panel_benches" role="tabpanel" aria-labelledby="tabBtn_benches">
 
       <!-- Upgrade / Pass Status Banner (shown/hidden by subscription-ui.js based on entitlement) -->
       <div id="vlkUpgradeBanner" style="display:none;"></div>
@@ -883,7 +900,7 @@
     </div>
 
     <!-- Tab 2: Revision & Reference Guide -->
-    <div class="student-tab-panel" id="panel_reference">
+    <div class="student-tab-panel" id="panel_reference" role="tabpanel" aria-labelledby="tabBtn_reference">
       
       <div style="margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
         <div>
@@ -1345,7 +1362,7 @@
     </div>
 
     <!-- Tab 3: Badges, Honors & Session History -->
-    <div class="student-tab-panel" id="panel_achievements">
+    <div class="student-tab-panel" id="panel_achievements" role="tabpanel" aria-labelledby="tabBtn_achievements">
       
       <div style="margin-bottom:20px;">
         <h2 class="section-heading-academic">
@@ -1508,7 +1525,7 @@
     </div>
 
     <!-- Tab 4: Assessments & Surveys -->
-    <div class="student-tab-panel" id="panel_research">
+    <div class="student-tab-panel" id="panel_research" role="tabpanel" aria-labelledby="tabBtn_research">
       
       <div style="margin-bottom:20px;">
         <h2 class="section-heading-academic">
@@ -1557,20 +1574,20 @@
   </main>
 
   <!-- Mobile & Tablet Bottom Navigation Dock -->
-  <nav class="mobile-bottom-nav">
-    <button class="bottom-tab-item active" id="mTabBtn_benches" onclick="switchStudentSubTab('benches')">
+  <nav class="mobile-bottom-nav" aria-label="Mobile Navigation Tabs" role="tablist">
+    <button class="bottom-tab-item active" id="mTabBtn_benches" role="tab" aria-selected="true" aria-controls="panel_benches" onclick="switchStudentSubTab('benches')">
       <span class="bottom-tab-icon">🧪</span>
       <span data-i18n="m_workbenches">Workbenches</span>
     </button>
-    <button class="bottom-tab-item" id="mTabBtn_reference" onclick="switchStudentSubTab('reference')">
+    <button class="bottom-tab-item" id="mTabBtn_reference" role="tab" aria-selected="false" aria-controls="panel_reference" onclick="switchStudentSubTab('reference')">
       <span class="bottom-tab-icon">📚</span>
       <span data-i18n="m_revision">Revision</span>
     </button>
-    <button class="bottom-tab-item" id="mTabBtn_achievements" onclick="switchStudentSubTab('achievements')">
+    <button class="bottom-tab-item" id="mTabBtn_achievements" role="tab" aria-selected="false" aria-controls="panel_achievements" onclick="switchStudentSubTab('achievements')">
       <span class="bottom-tab-icon">🏆</span>
       <span data-i18n="m_badges">Badges</span>
     </button>
-    <button class="bottom-tab-item" id="mTabBtn_research" onclick="switchStudentSubTab('research')">
+    <button class="bottom-tab-item" id="mTabBtn_research" role="tab" aria-selected="false" aria-controls="panel_research" onclick="switchStudentSubTab('research')">
       <span class="bottom-tab-icon">🔬</span>
       <span data-i18n="m_research">Research</span>
     </button>
@@ -1745,23 +1762,23 @@
     </div>
   </div>
 
-  <script src="../shared/api.js?v=121"></script>
-  <script src="../shared/auth-forms.js"></script>
-  <script src="../shared/i18n.js?v=127"></script>
-  <script src="../shared/theme.js"></script>
-  <script src="../shared/chemical-safety.js"></script>
-  <script src="../shared/knec-grading.js"></script>
-  <script src="../shared/notifications-engine.js?v=128"></script>
-  <script src="../shared/push-manager.js?v=128"></script>
-  <script src="../shared/page-transitions.js"></script>
-  <script src="../shared/pwa-installer.js"></script>
-  <script src="../shared/brilliant-ui.js"></script>
-  <script src="../shared/gamification-engine.js"></script>
-  <script src="js/skill-tree.js?v=120"></script>
-  <script src="js/student-dashboard.js?v=128"></script>
-  <script src="../shared/subscription-ui.js?v=124"></script>
+  <script defer src="../shared/api.js?v=121"></script>
+  <script defer src="../shared/auth-forms.js"></script>
+  <script defer src="../shared/i18n.js?v=127"></script>
+  <script defer src="../shared/theme.js"></script>
+  <script defer src="../shared/chemical-safety.js"></script>
+  <script defer src="../shared/knec-grading.js"></script>
+  <script defer src="../shared/notifications-engine.js?v=128"></script>
+  <script defer src="../shared/push-manager.js?v=128"></script>
+  <script defer src="../shared/page-transitions.js"></script>
+  <script defer src="../shared/pwa-installer.js"></script>
+  <script defer src="../shared/brilliant-ui.js"></script>
+  <script defer src="../shared/gamification-engine.js"></script>
+  <script defer src="js/skill-tree.js?v=120"></script>
+  <script defer src="js/student-dashboard.js?v=128"></script>
+  <script defer src="../shared/subscription-ui.js?v=124"></script>
 
-  <script src="js/home.js?v=120"></script>
+  <script defer src="js/home.js?v=120"></script>
 
   <!-- ── Mobile Bottom Navigation Bar (hidden on desktop via CSS) ── -->
   <nav class="vlk-bottom-nav" aria-label="Mobile Bottom Navigation" id="vlkBottomNav">

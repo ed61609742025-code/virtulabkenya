@@ -16,9 +16,16 @@
         const mBtn = document.getElementById(`mTabBtn_${t}`);
         const panel = document.getElementById(`panel_${t}`);
 
-        if (btn) btn.classList.toggle('active', t === tabId);
-        if (mBtn) mBtn.classList.toggle('active', t === tabId);
-        if (panel) panel.classList.toggle('active', t === tabId);
+        const isActive = (t === tabId);
+        if (btn) {
+          btn.classList.toggle('active', isActive);
+          btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        }
+        if (mBtn) {
+          mBtn.classList.toggle('active', isActive);
+          mBtn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        }
+        if (panel) panel.classList.toggle('active', isActive);
       });
 
       // Auto-scroll active subtab button into view on mobile
@@ -174,14 +181,15 @@ function dismissStudyTip() {
       card.classList.remove('tip-card-dismissing');
       if (restoreWrap) restoreWrap.style.display = 'block';
     }, 220);
+    document.documentElement.classList.add('vlk-tip-dismissed');
     try { localStorage.setItem('vlk_study_tip_dismissed', 'true'); } catch(e) {}
   }
 }
-window.dismissStudyTip = dismissStudyTip;
 
 function restoreStudyTip() {
   const card = document.getElementById('studyTipCard');
   const restoreWrap = document.getElementById('studyTipRestoreWrap');
+  document.documentElement.classList.remove('vlk-tip-dismissed');
   const earlyStyle = document.getElementById('vlkStudyTipEarlyStyle');
   if (earlyStyle) earlyStyle.remove();
   if (card) {
@@ -197,7 +205,12 @@ function restoreStudyTip() {
   if (restoreWrap) restoreWrap.style.display = 'none';
   try { localStorage.removeItem('vlk_study_tip_dismissed'); } catch(e) {}
 }
-window.restoreStudyTip = restoreStudyTip;
+
+window.VLK = window.VLK || {};
+window.VLK.switchStudentSubTab = window.switchStudentSubTab = switchStudentSubTab;
+window.VLK.toggleUserDropdown = window.toggleUserDropdown = toggleUserDropdown;
+window.VLK.dismissStudyTip = window.dismissStudyTip = dismissStudyTip;
+window.VLK.restoreStudyTip = window.restoreStudyTip = restoreStudyTip;
 
 function initStudyTipState() {
   try {

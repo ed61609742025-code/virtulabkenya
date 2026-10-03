@@ -303,5 +303,200 @@ describe('11. Modularized Student Scripts Verification', () => {
   });
 });
 
+// 12. Server-Side Protected Route Guarding (CWE-306 Remediation)
+describe('12. Server-Side Protected Route Guarding (CWE-306 / OWASP A01)', () => {
+  const { protectedRouteGuard } = require('../middleware/routeGuard');
+  const jwt = require('jsonwebtoken');
+
+  it('should redirect unauthenticated GET /student/home.html to /student/login.html with 302', () => {
+    let redirectedStatus = null;
+    let redirectedLocation = null;
+    let nextCalled = false;
+
+    const req = {
+      method: 'GET',
+      path: '/student/home.html',
+      originalUrl: '/student/home.html',
+      cookies: {},
+      headers: {}
+    };
+    const res = {
+      redirect: (status, url) => {
+        redirectedStatus = status;
+        redirectedLocation = url;
+      }
+    };
+    const next = () => { nextCalled = true; };
+
+    protectedRouteGuard(req, res, next);
+    assert.strictEqual(redirectedStatus, 302);
+    assert.ok(redirectedLocation.includes('/student/login.html?returnUrl='));
+    assert.strictEqual(nextCalled, false);
+  });
+
+  it('should allow authenticated student cookie to access /student/home.html', () => {
+    const validStudentToken = jwt.sign(
+      { id: 1, role: 'student', name: 'John Doe', email: 'john@student.co.ke' },
+      process.env.JWT_SECRET
+    );
+    let nextCalled = false;
+
+    const req = {
+      method: 'GET',
+      path: '/student/home.html',
+      originalUrl: '/student/home.html',
+      cookies: { vlk_token: validStudentToken },
+      headers: {}
+    };
+    const res = {
+      redirect: () => { assert.fail('Should not redirect authenticated student'); }
+    };
+    const next = () => { nextCalled = true; };
+
+    protectedRouteGuard(req, res, next);
+    assert.strictEqual(nextCalled, true);
+    assert.strictEqual(req.user.role, 'student');
+  });
+
+  it('should allow static assets like CSS and JS to bypass route guard', () => {
+    let nextCalled = false;
+    const req = {
+      method: 'GET',
+      path: '/student/css/dashboard.css',
+      cookies: {},
+      headers: {}
+    };
+    const res = {
+      redirect: () => { assert.fail('Should not redirect static CSS asset'); }
+    };
+    const next = () => { nextCalled = true; };
+
+    protectedRouteGuard(req, res, next);
+    assert.strictEqual(nextCalled, true);
+  });
+
+  it('should allow public login and register pages to bypass route guard', () => {
+    let nextCalled = false;
+    const req = {
+      method: 'GET',
+      path: '/student/login.html',
+      cookies: {},
+      headers: {}
+    };
+    const res = {
+      redirect: () => { assert.fail('Should not redirect login page'); }
+    };
+    const next = () => { nextCalled = true; };
+
+    protectedRouteGuard(req, res, next);
+    assert.strictEqual(nextCalled, true);
+  });
+});
+
+// 13. Permissions-Policy and Security Headers
+describe('13. Permissions-Policy and Extended Security Headers', () => {
+  const { securityHeaders } = require('../middleware/security');
+
+  it('should set Permissions-Policy header restricting camera, microphone, geolocation, and payment', () => {
+    const req = { headers: {} };
+    const res = {
+      headers: {},
+      setHeader: (k, v) => { res.headers[k.toLowerCase()] = v; },
+      getHeader: (k) => res.headers[k.toLowerCase()],
+      removeHeader: (k) => { delete res.headers[k.toLowerCase()]; }
+    };
+
+    securityHeaders(req, res, () => {});
+    const pp = res.getHeader('permissions-policy');
+    assert.ok(pp, 'Permissions-Policy header must be set');
+    assert.ok(pp.includes('camera=()'));
+    assert.ok(pp.includes('microphone=()'));
+    assert.ok(pp.includes('geolocation=()'));
+    assert.ok(pp.includes('payment=()'));
+  });
+});
+
+// 14. SEO & Robots.txt Verification
+describe('14. SEO & Robots.txt Verification', () => {
+  const fs = require('fs');
+  const path = require('path');
+
+  it('should have client/robots.txt with crawler directives', () => {
+    const robotsPath = path.join(__dirname, '../../client/robots.txt');
+    assert.ok(fs.existsSync(robotsPath), 'client/robots.txt must exist');
+    const content = fs.readFileSync(robotsPath, 'utf8');
+    assert.ok(content.includes('User-agent: *'));
+    assert.ok(content.includes('Allow: /index.html'));
+    assert.ok(content.includes('Disallow: /api/'));
+    assert.ok(content.includes('Disallow: /student/'));
+  });
+
+  it('should register GET /robots.txt on server', () => {
+    const app = require('../index');
+    const routerStack = app._router ? app._router.stack : [];
+    const hasRobotsRoute = routerStack.some(layer => layer.route && layer.route.path === '/robots.txt');
+    assert.ok(hasRobotsRoute, 'app must register GET /robots.txt route');
+  });
+});
+
+// 15. Subresource Integrity (SRI) on CDN Dependencies
+describe('15. Subresource Integrity (SRI) Verification', () => {
+  const fs = require('fs');
+  const path = require('path');
+
+  it('should specify integrity sha384 on Chart.js across all client HTML files', () => {
+    const files = [
+      '../../client/student/home.html',
+      '../../client/student/history.html',
+      '../../client/teacher/dashboard.html',
+      '../../client/teacher/research_portal.html'
+    ];
+
+    files.forEach(file => {
+      const p = path.join(__dirname, file);
+      const content = fs.readFileSync(p, 'utf8');
+      assert.ok(content.includes('integrity="sha384-bs/nf9FbdNouRbMiFcrcZfLXYPKiPaGVGplVbv7dLGECccEXDW+S3zjqSKR5ZEaD"'),
+        `${file} must include Chart.js 4.4.1 sha384 integrity attribute`);
+    });
+  });
+});
+
+// 16. Elimination of document.write() Anti-Pattern
+describe('16. Elimination of document.write() Anti-Pattern', () => {
+  const fs = require('fs');
+  const path = require('path');
+
+  it('should not contain document.write in home.html', () => {
+    const homeHtml = fs.readFileSync(path.join(__dirname, '../../client/student/home.html'), 'utf8');
+    assert.ok(!homeHtml.includes('document.write('), 'home.html must not execute document.write()');
+    assert.ok(homeHtml.includes('vlk-tip-dismissed'), 'home.html should use vlk-tip-dismissed class pattern');
+  });
+});
+
+// 17. WAI-ARIA and OpenGraph Attributes
+describe('17. WAI-ARIA and OpenGraph Social Cards', () => {
+  const fs = require('fs');
+  const path = require('path');
+
+  it('should have WAI-ARIA tablist, tab, and tabpanel in student home.html', () => {
+    const homeHtml = fs.readFileSync(path.join(__dirname, '../../client/student/home.html'), 'utf8');
+    assert.ok(homeHtml.includes('role="tablist"'), 'home.html must declare role=tablist');
+    assert.ok(homeHtml.includes('role="tab"'), 'home.html must declare role=tab');
+    assert.ok(homeHtml.includes('role="tabpanel"'), 'home.html must declare role=tabpanel');
+    assert.ok(homeHtml.includes('aria-controls="panel_benches"'), 'tab must control panel_benches');
+  });
+
+  it('should have OpenGraph and Twitter card meta tags in student home.html and index.html', () => {
+    const homeHtml = fs.readFileSync(path.join(__dirname, '../../client/student/home.html'), 'utf8');
+    const indexHtml = fs.readFileSync(path.join(__dirname, '../../client/index.html'), 'utf8');
+
+    [homeHtml, indexHtml].forEach(html => {
+      assert.ok(html.includes('property="og:title"'), 'Must have og:title');
+      assert.ok(html.includes('property="og:image"'), 'Must have og:image');
+      assert.ok(html.includes('name="twitter:card"'), 'Must have twitter:card');
+    });
+  });
+});
+
 
 

@@ -26,7 +26,7 @@ const isProd = process.env.NODE_ENV === 'production';
 // HTML templates.
 // Remediation roadmap (Phase B): Extract inline scripts and attributes to dedicated JS modules
 // under client/*/js/ and adopt a per-request cryptographic nonce or sha256 hash CSP policy.
-const securityHeaders = helmet({
+const helmetHeaders = helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
@@ -48,6 +48,11 @@ const securityHeaders = helmet({
   hsts: isProd ? { maxAge: 31536000, includeSubDomains: true } : false,
   crossOriginEmbedderPolicy: false
 });
+
+function securityHeaders(req, res, next) {
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+  return helmetHeaders(req, res, next);
+}
 
 module.exports = {
   enforceHttps,

@@ -62,6 +62,11 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 app.use(cookieParser());
+
+// ── Server-Side Protected Route Guarding (CWE-306 Remediation) ──
+const { protectedRouteGuard } = require('./middleware/routeGuard');
+app.use(protectedRouteGuard);
+
 // Allow up to 50mb strictly on AI exam assistant parse-paper endpoint for base64 scanned exam papers
 app.use('/api/ai-assistant/parse-paper', express.json({ limit: '50mb' }));
 // Standard 1mb payload limit across all general API routes with rawBody captured for HMAC webhook validation
@@ -85,6 +90,12 @@ app.use(express.static(path.join(__dirname, '../client'), {
 
 // Apply general API rate limiter to all /api/ routes
 app.use('/api/', apiLimiter);
+
+// ── Crawlability & SEO Routes ─────────────────────────────────
+app.get('/robots.txt', (req, res) => {
+  res.type('text/plain');
+  res.sendFile(path.join(__dirname, '../client/robots.txt'));
+});
 
 // ── Favicon Route ─────────────────────────────────────────────
 app.get('/favicon.ico', (req, res) => {

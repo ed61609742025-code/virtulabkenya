@@ -21,6 +21,14 @@
         if (panel) panel.classList.toggle('active', t === tabId);
       });
 
+      // Auto-scroll active subtab button into view on mobile
+      const activeBtn = document.getElementById(`tabBtn_${tabId}`);
+      if (activeBtn && typeof activeBtn.scrollIntoView === 'function' && window.innerWidth <= 768) {
+        try {
+          activeBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        } catch (err) {}
+      }
+
       // Update URL hash without jumping
       history.replaceState(null, null, `#${tabId}`);
 
@@ -32,13 +40,37 @@
       }
     }
 
-    // Toggle user dropdown
+    // Toggle user profile dropdown / mobile bottom sheet
     function toggleUserDropdown(e) {
       if (e) e.stopPropagation();
       const dropdown = document.getElementById('userDropdown');
+      const backdrop = document.getElementById('userBackdrop');
       if (dropdown) {
-        dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+        const isHidden = dropdown.style.display === 'none' || dropdown.style.display === '';
+        dropdown.style.display = isHidden ? 'block' : 'none';
+        if (backdrop) {
+          backdrop.style.display = isHidden ? 'block' : 'none';
+        }
+        // Sync avatar initials into sheet
+        const mainAvatar = document.getElementById('heroStudentAvatar');
+        const sheetAvatar = document.getElementById('sheetStudentAvatar');
+        if (mainAvatar && sheetAvatar) {
+          sheetAvatar.textContent = mainAvatar.textContent || 'ST';
+        }
+        if (isHidden && window.innerWidth <= 768) {
+          document.body.style.overflow = 'hidden';
+        } else {
+          document.body.style.overflow = '';
+        }
       }
+    }
+
+    function closeUserDropdown() {
+      const dropdown = document.getElementById('userDropdown');
+      const backdrop = document.getElementById('userBackdrop');
+      if (dropdown) dropdown.style.display = 'none';
+      if (backdrop) backdrop.style.display = 'none';
+      document.body.style.overflow = '';
     }
 
     // Toggle password update panel
@@ -60,18 +92,28 @@
           } catch (e) { /* non-fatal */ }
         }
       }
-      const dropdown = document.getElementById('userDropdown');
-      if (dropdown) dropdown.style.display = 'none';
+      closeUserDropdown();
     }
 
     // Close user dropdown on outer click
     document.addEventListener('click', (e) => {
       const userDropdown = document.getElementById('userDropdown');
       const userMenuBtn = document.getElementById('userMenuBtn');
+      const bnavProfile = document.getElementById('bnav-profile');
       if (userDropdown && userDropdown.style.display === 'block') {
-        if (!userDropdown.contains(e.target) && (!userMenuBtn || !userMenuBtn.contains(e.target))) {
-          userDropdown.style.display = 'none';
+        const clickedInside = userDropdown.contains(e.target) || 
+                              (userMenuBtn && userMenuBtn.contains(e.target)) ||
+                              (bnavProfile && bnavProfile.contains(e.target));
+        if (!clickedInside) {
+          closeUserDropdown();
         }
+      }
+    });
+
+    // Close overlays on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeUserDropdown();
       }
     });
 
@@ -118,6 +160,7 @@
 // Ensure globally accessible for inline HTML onclick handlers
 window.switchStudentSubTab = switchStudentSubTab;
 window.toggleUserDropdown = toggleUserDropdown;
+window.closeUserDropdown = closeUserDropdown;
 window.togglePasswordPanel = togglePasswordPanel;
 window.focusAssignmentsSection = focusAssignmentsSection;
 

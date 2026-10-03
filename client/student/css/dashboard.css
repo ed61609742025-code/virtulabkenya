@@ -1230,10 +1230,7 @@ html, body {
     padding: 12px 14px 120px !important;
   }
 
-  /* Hide duplicate top tabs nav on mobile since bottom dock is present */
-  .student-subtabs-nav {
-    display: none !important;
-  }
+  /* Subtabs nav display is managed with responsive scrollable chips in mobile.css */
 
   .candidate-hero-bar {
     padding: 14px 16px;
@@ -1592,6 +1589,199 @@ html, body {
 @keyframes notifFadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+/* ── STUDENT USER PROFILE DROPDOWN & SHEET BASE ── */
+.user-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: rgba(15, 23, 42, 0.5);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 99990;
+  animation: notifFadeIn 0.18s ease-out;
+}
+
+.user-dropdown-card {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  width: 270px;
+  background: var(--card-bg, #FFFFFF);
+  border: 1px solid var(--card-border, #E2E8F0);
+  border-radius: 18px;
+  box-shadow: 0 20px 50px -10px rgba(15, 23, 42, 0.22), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  z-index: 99999;
+  padding: 14px;
+  box-sizing: border-box;
+  animation: notifSlideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: top right;
+}
+
+[data-theme="dark"] .user-dropdown-card {
+  background: rgba(17, 26, 46, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-color: rgba(56, 189, 248, 0.22);
+  box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.7);
+}
+
+[data-theme="green"] .user-dropdown-card {
+  background: rgba(10, 24, 20, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-color: rgba(52, 211, 153, 0.25);
+  box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.7);
+}
+
+.user-sheet-drag-handle {
+  display: none;
+}
+
+.user-sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--card-border, #E2E8F0);
+}
+
+.user-sheet-profile-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.user-sheet-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--acad-navy, #0284C7) 0%, #0369A1 100%);
+  color: #FFFFFF;
+  font-weight: 800;
+  font-size: 0.88rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
+}
+
+.user-sheet-name {
+  font-weight: 800;
+  font-size: 0.94rem;
+  color: var(--heading-color);
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-sheet-role {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.user-sheet-close-btn {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+
+.user-sheet-close-btn:hover {
+  color: var(--heading-color);
+  background: var(--card-bg-hover);
+}
+
+.user-sheet-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.user-sheet-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-main);
+  text-decoration: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 8px;
+  width: 100%;
+  text-align: left;
+  transition: all 0.15s ease;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  box-sizing: border-box;
+}
+
+.user-sheet-link:hover {
+  background: var(--card-bg-hover);
+  color: var(--heading-color);
+  transform: translateX(2px);
+}
+
+.user-sheet-link:active {
+  transform: scale(0.98);
+}
+
+.user-sheet-link-icon {
+  font-size: 1.05rem;
+  width: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.user-sheet-link-pass {
+  color: var(--acad-navy, #0284C7);
+  background: rgba(2, 132, 199, 0.08);
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.user-sheet-link-pass:hover {
+  background: rgba(2, 132, 199, 0.15);
+  color: #0284C7;
+}
+
+.user-sheet-link-danger {
+  color: #EF4444 !important;
+  font-weight: 800;
+  margin-top: 4px;
+  border-top: 1px solid var(--card-border, #E2E8F0);
+  padding-top: 10px;
+  border-radius: 0 0 8px 8px;
+}
+
+.user-sheet-link-danger:hover {
+  background: rgba(239, 68, 68, 0.08) !important;
+  color: #DC2626 !important;
 }
 
 .notif-header {
@@ -3744,10 +3934,7 @@ html, body {
     padding: 8px 14px !important;
   }
 
-  /* Subtabs Nav on Mobile */
-  .student-subtabs-nav {
-    display: none !important; /* Managed cleanly by mobile bottom navigation dock */
-  }
+  /* Subtabs Nav on Mobile is styled as a responsive scroll track in mobile.css */
 
   /* Daily Challenge on Mobile */
   .daily-challenge-card {

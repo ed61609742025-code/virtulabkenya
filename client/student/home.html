@@ -317,43 +317,65 @@
           ⚡ <span>Upgrade</span>
         </button>
 
-        <!-- User Profile Dropdown -->
+        <!-- User Profile Dropdown / Bottom Sheet -->
         <div style="position:relative;">
           <button class="user-avatar-btn" id="userMenuBtn" onclick="toggleUserDropdown(event)" data-tooltip="Profile &amp; settings" data-tooltip-pos="bottom" aria-label="Student Profile">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
           </button>
-          <div id="userDropdown" class="notif-dropdown" style="display:none; position:absolute; right:0; top:46px; width:240px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:14px; box-shadow:var(--shadow-lg); z-index:1000; padding:12px;">
-            <div style="padding:8px 10px; border-bottom:1px solid var(--card-border); margin-bottom:8px;">
-              <div style="font-weight:800; font-size:0.92rem; color:var(--heading-color);" id="dropdownUserName">Student</div>
-              <div style="font-size:0.76rem; color:var(--text-muted); font-family:'JetBrains Mono', monospace; font-weight:700;" id="dropdownUserRole">KCSE Student</div>
+          <!-- User Profile Backdrop for Mobile Light Dismiss -->
+          <div id="userBackdrop" class="user-backdrop" onclick="toggleUserDropdown(event)" style="display:none;" aria-hidden="true"></div>
+
+          <div id="userDropdown" class="user-dropdown-card" style="display:none;" role="dialog" aria-label="Student Account &amp; Profile">
+            <!-- Mobile Sheet Drag Handle Bar -->
+            <div class="user-sheet-drag-handle" aria-hidden="true"></div>
+
+            <div class="user-sheet-header">
+              <div class="user-sheet-profile-info">
+                <div class="user-sheet-avatar" id="sheetStudentAvatar">ST</div>
+                <div style="min-width:0;">
+                  <div class="user-sheet-name" id="dropdownUserName">Student</div>
+                  <div class="user-sheet-role" id="dropdownUserRole">KCSE Student · Form 4</div>
+                </div>
+              </div>
+              <button type="button" class="user-sheet-close-btn" onclick="toggleUserDropdown(event)" aria-label="Close Profile Menu">&times;</button>
             </div>
-            <button onclick="window.VLKSubscriptionUI && window.VLKSubscriptionUI.openModal()" style="width:100%; text-align:left; display:flex; align-items:center; gap:8px; padding:8px 10px; font-size:0.84rem; font-weight:800; color:var(--acad-navy, #0284C7); background:rgba(2, 132, 199, 0.08); border:none; cursor:pointer; border-radius:6px; margin-bottom:6px;" class="dropdown-link-hover">
-              <span>⭐</span> KCSE Pass &amp; Billing
-            </button>
-            <a href="#assignments" onclick="focusAssignmentsSection(event)" style="display:flex; align-items:center; gap:10px; padding:8px 10px; font-size:0.84rem; font-weight:700; color:var(--cyan-accent); text-decoration:none; border-radius:6px;" class="dropdown-link-hover">
-              Teacher Assignments
-            </a>
-            <a href="mock_exams.html" style="display:flex; align-items:center; gap:10px; padding:8px 10px; font-size:0.84rem; font-weight:700; color:var(--text-main); text-decoration:none; border-radius:6px;" class="dropdown-link-hover">
-              KCSE Mock Exams
-            </a>
-            <a href="certificate.html" style="display:flex; align-items:center; gap:10px; padding:8px 10px; font-size:0.84rem; font-weight:700; color:var(--text-main); text-decoration:none; border-radius:6px;" class="dropdown-link-hover">
-              Certificate of Mastery
-            </a>
-            <a href="history.html" style="display:flex; align-items:center; gap:10px; padding:8px 10px; font-size:0.84rem; font-weight:700; color:var(--text-main); text-decoration:none; border-radius:6px;" class="dropdown-link-hover">
-              Session History
-            </a>
-            <button onclick="toggleTeacherLinkPanel()" style="width:100%; text-align:left; display:flex; align-items:center; gap:10px; padding:8px 10px; font-size:0.84rem; font-weight:700; color:var(--text-main); background:none; border:none; cursor:pointer; border-radius:6px;" class="dropdown-link-hover">
-              Classroom &amp; Teacher
-            </button>
-            <button onclick="togglePasswordPanel()" style="width:100%; text-align:left; display:flex; align-items:center; gap:10px; padding:8px 10px; font-size:0.84rem; font-weight:700; color:var(--text-main); background:none; border:none; cursor:pointer; border-radius:6px;" class="dropdown-link-hover">
-              Account &amp; Password
-            </button>
-            <button onclick="window.VLKPwa && window.VLKPwa.showInstallModal()" style="width:100%; text-align:left; display:flex; align-items:center; gap:10px; padding:8px 10px; font-size:0.84rem; color:var(--cyan-accent, #0284C7); background:none; border:none; cursor:pointer; border-radius:6px; font-weight:800;" class="dropdown-link-hover">
-              Install App (PWA)
-            </button>
-            <div style="border-top:1px solid var(--card-border); margin-top:8px; padding-top:8px;">
-              <button onclick="Auth.logout()" style="width:100%; text-align:left; display:flex; align-items:center; gap:10px; padding:8px 10px; font-size:0.84rem; color:#EF4444; background:none; border:none; cursor:pointer; border-radius:6px; font-weight:800;" data-i18n="logout">
-                Sign Out
+
+            <div class="user-sheet-actions">
+              <button type="button" onclick="window.VLKSubscriptionUI && window.VLKSubscriptionUI.openModal(); closeUserDropdown();" class="user-sheet-link user-sheet-link-pass">
+                <span class="user-sheet-link-icon">⭐</span>
+                <span>KCSE Pass &amp; Billing</span>
+              </button>
+              <a href="#assignments" onclick="focusAssignmentsSection(event); closeUserDropdown();" class="user-sheet-link">
+                <span class="user-sheet-link-icon">📋</span>
+                <span>Teacher Assignments</span>
+              </a>
+              <a href="mock_exams.html" class="user-sheet-link">
+                <span class="user-sheet-link-icon">📝</span>
+                <span>KCSE Mock Exams</span>
+              </a>
+              <a href="certificate.html" class="user-sheet-link">
+                <span class="user-sheet-link-icon">📜</span>
+                <span>Certificate of Mastery</span>
+              </a>
+              <a href="history.html" class="user-sheet-link">
+                <span class="user-sheet-link-icon">📊</span>
+                <span>Session History</span>
+              </a>
+              <button type="button" onclick="toggleTeacherLinkPanel(); closeUserDropdown();" class="user-sheet-link">
+                <span class="user-sheet-link-icon">🏫</span>
+                <span>Classroom &amp; Teacher</span>
+              </button>
+              <button type="button" onclick="togglePasswordPanel(); closeUserDropdown();" class="user-sheet-link">
+                <span class="user-sheet-link-icon">🔒</span>
+                <span>Security &amp; Password</span>
+              </button>
+              <button type="button" onclick="window.VLKPwa && window.VLKPwa.showInstallModal(); closeUserDropdown();" class="user-sheet-link">
+                <span class="user-sheet-link-icon">📲</span>
+                <span style="color:var(--cyan-accent, #0284C7); font-weight:800;">Install App (PWA)</span>
+              </button>
+              <button type="button" onclick="Auth.logout()" class="user-sheet-link user-sheet-link-danger" data-i18n="logout">
+                <span class="user-sheet-link-icon">🚪</span>
+                <span>Sign Out</span>
               </button>
             </div>
           </div>
@@ -502,15 +524,19 @@
     <!-- Sub-tabs Segmented Control -->
     <nav class="student-subtabs-nav" aria-label="Workstation Views">
       <button class="student-subtab-btn active" id="tabBtn_benches" onclick="switchStudentSubTab('benches')" data-tooltip="Lab workbenches and guided pathways" data-tooltip-pos="bottom">
+        <span class="subtab-icon" aria-hidden="true">⚗️</span>
         <span data-i18n="tab_benches">Laboratory Benches</span>
       </button>
       <button class="student-subtab-btn" id="tabBtn_reference" onclick="switchStudentSubTab('reference')" data-tooltip="KCSE reference tables and formulas" data-tooltip-pos="bottom">
+        <span class="subtab-icon" aria-hidden="true">📖</span>
         <span data-i18n="tab_reference">Revision &amp; Reference</span>
       </button>
       <button class="student-subtab-btn" id="tabBtn_achievements" onclick="switchStudentSubTab('achievements')" data-tooltip="Badges and session history" data-tooltip-pos="bottom">
+        <span class="subtab-icon" aria-hidden="true">🏆</span>
         <span data-i18n="tab_achievements">Badges &amp; History</span>
       </button>
       <button class="student-subtab-btn" id="tabBtn_research" onclick="switchStudentSubTab('research')" data-tooltip="Assessments and surveys" data-tooltip-pos="bottom">
+        <span class="subtab-icon" aria-hidden="true">📋</span>
         <span data-i18n="tab_research">Assessments &amp; Surveys</span>
       </button>
     </nav>
@@ -672,7 +698,7 @@
             </a>
 
             <!-- 8. Gas Preparation & Identification -->
-            <a href="gas.html" class="practice-banner-card" data-type="gas" style="border-left:4px solid #8B5CF6;">
+            <a href="gas_prep.html" class="practice-banner-card" data-type="gas" style="border-left:4px solid #8B5CF6;">
               <div class="practice-card-icon-badge" style="background:rgba(139,92,246,0.12); color:#7C3AED;">💨</div>
               <div style="flex:1; min-width:0;">
                 <div class="practice-text-title">Gas Preparation &amp; Analysis</div>

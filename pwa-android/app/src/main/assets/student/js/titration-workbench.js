@@ -50,7 +50,7 @@ requireStudentLogin();
           Pipette an aliquot volume of <b>${vol.toFixed(2)} cm³</b> of Solution A into a conical flask. Fill the burette with Solution B (${tc} M NaOH). Add 2–3 drops of phenolphthalein indicator and titrate until a permanent pale pink end-point is obtained. Record your burette readings in the table and repeat to obtain at least two concordant readings (within 0.10 cm³).
         </div>
       `,
-      flaskColors: ['var(--rig-body)', '#fbe4ee', '#f6b8d2', '#e8659f'],
+      flaskColors: ['rgba(224, 242, 254, 0.40)', 'rgba(251, 228, 238, 0.50)', 'rgba(244, 114, 182, 0.65)', 'rgba(219, 39, 119, 0.90)'],
       answerSymbol: 'HCl',
       equation: 'HCl(aq) + NaOH(aq) → NaCl(aq) + H2O(l)',
       questions: [
@@ -521,7 +521,7 @@ requireStudentLogin();
           Pipette an aliquot volume of <b>${vol.toFixed(2)} cm³</b> of dibasic acid solution A into a conical flask. Fill the burette with solution B (NaOH). Titrate using phenolphthalein indicator until a permanent pale pink color is obtained.
         </div>
       `,
-      flaskColors: ['var(--rig-body)', '#fbe4ee', '#f6b8d2', '#e8659f'],
+      flaskColors: ['rgba(224, 242, 254, 0.40)', 'rgba(251, 228, 238, 0.50)', 'rgba(244, 114, 182, 0.65)', 'rgba(219, 39, 119, 0.90)'],
       answerSymbol: 'H₂SO₄',
       equation: 'H2SO4(aq) + 2NaOH(aq) → Na2SO4(aq) + 2H2O(l)',
       questions: [
@@ -646,7 +646,7 @@ requireStudentLogin();
           Pipette an aliquot volume of <b>${vol.toFixed(2)} cm³</b> of solution A into a conical flask. Titrate against solution B (NaOH) using phenolphthalein indicator until a permanent faint pink endpoint is reached.
         </div>
       `,
-      flaskColors: ['var(--rig-body)', '#fbe4ee', '#f6b8d2', '#e8659f'],
+      flaskColors: ['rgba(224, 242, 254, 0.40)', 'rgba(251, 228, 238, 0.50)', 'rgba(244, 114, 182, 0.65)', 'rgba(219, 39, 119, 0.90)'],
       answerSymbol: 'H₃PO₄',
       equation: 'H3PO4(aq) + 3NaOH(aq) → Na3PO4(aq) + 3H2O(l)',
       questions: [
@@ -763,7 +763,7 @@ requireStudentLogin();
           Pipette an aliquot volume of <b>${vol.toFixed(2)} cm³</b> of diluted alkanoic acid solution A into a conical flask. Titrate with NaOH solution B using phenolphthalein indicator until a faint pink end-point is reached.
         </div>
       `,
-      flaskColors: ['var(--rig-body)', '#fbe4ee', '#f6b8d2', '#e8659f'],
+      flaskColors: ['rgba(224, 242, 254, 0.40)', 'rgba(251, 228, 238, 0.50)', 'rgba(244, 114, 182, 0.65)', 'rgba(219, 39, 119, 0.90)'],
       answerSymbol: 'CH₃COOH',
       equation: 'CH3COOH(aq) + NaOH(aq) → CH3COONa(aq) + H2O(l)',
       questions: [
@@ -1911,19 +1911,19 @@ requireStudentLogin();
       // Clean, unindicated fresh analyte solution
       stageColor = 'rgba(56, 189, 248, 0.12)';
     } else if (diff < -0.25) {
-      // Stage 0: Initial solution color before transition
+      // Stage 0: Initial solution color before transition (Section 6: Acidic rgba(224, 242, 254, 0.40))
       stageColor = (current && current.flaskColors && current.flaskColors[0] !== 'var(--rig-body)')
         ? current.flaskColors[0]
-        : 'rgba(224, 242, 254, 0.28)';
+        : 'rgba(224, 242, 254, 0.40)';
     } else if (diff < 0.00) {
       // Stage 1: Approaching endpoint (within 0.25 cm³), transient color flashes
-      stageColor = (current && current.flaskColors && current.flaskColors[1]) || '#fbe4ee';
+      stageColor = (current && current.flaskColors && current.flaskColors[1]) || 'rgba(251, 228, 238, 0.50)';
     } else if (diff < 0.40) {
-      // Stage 2: Permanent equivalence endpoint reached (0.00 to 0.40 cm³)
-      stageColor = (current && current.flaskColors && current.flaskColors[2]) || '#f6b8d2';
+      // Stage 2: Permanent equivalence endpoint reached (0.00 to 0.40 cm³) (Section 6: Equivalence rgba(244, 114, 182, 0.65))
+      stageColor = (current && current.flaskColors && current.flaskColors[2]) || 'rgba(244, 114, 182, 0.65)';
     } else {
-      // Stage 3: Over-titrated
-      stageColor = (current && current.flaskColors && current.flaskColors[3]) || '#e8659f';
+      // Stage 3: Over-titrated (Section 6: Over-titrated rgba(219, 39, 119, 0.90))
+      stageColor = (current && current.flaskColors && current.flaskColors[3]) || 'rgba(219, 39, 119, 0.90)';
     }
 
     // Liquid volume modeled above half of the flask height (~55% to 65% height):
@@ -1977,7 +1977,7 @@ requireStudentLogin();
         if (currentVolume - eqVol >= -0.25 && currentVolume - eqVol < 0.00) {
           const baseColor = (current && current.flaskColors && current.flaskColors[0] !== 'var(--rig-body)')
             ? current.flaskColors[0]
-            : 'rgba(224, 242, 254, 0.28)';
+            : 'rgba(224, 242, 254, 0.40)';
           if (flask) {
             flask.setAttribute('fill', baseColor);
             flask.style.fill = baseColor;
@@ -2129,6 +2129,12 @@ requireStudentLogin();
     return localStorage.getItem('vlk_muted') === 'true';
   }
 
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && audioCtx && audioCtx.state === 'running') {
+      audioCtx.suspend().catch(() => {});
+    }
+  });
+
   function toggleSound() {
     const muted = !isMuted();
     localStorage.setItem('vlk_muted', muted ? 'true' : 'false');
@@ -2265,7 +2271,7 @@ requireStudentLogin();
       const surface = document.getElementById('flaskLiquidSurface');
       const baseColor = (current && current.flaskColors && current.flaskColors[0] !== 'var(--rig-body)')
         ? current.flaskColors[0]
-        : 'rgba(224, 242, 254, 0.28)';
+        : 'rgba(224, 242, 254, 0.40)';
       if (flask) {
         flask.setAttribute('fill', baseColor);
         flask.style.fill = baseColor;

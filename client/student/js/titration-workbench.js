@@ -2129,6 +2129,12 @@ requireStudentLogin();
     return localStorage.getItem('vlk_muted') === 'true';
   }
 
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && audioCtx && audioCtx.state === 'running') {
+      audioCtx.suspend().catch(() => {});
+    }
+  });
+
   function toggleSound() {
     const muted = !isMuted();
     localStorage.setItem('vlk_muted', muted ? 'true' : 'false');

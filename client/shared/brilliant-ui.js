@@ -23,6 +23,12 @@
   window.addEventListener('keydown', markUserInteraction, { capture: true, passive: true });
   window.addEventListener('touchstart', markUserInteraction, { capture: true, passive: true });
 
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && bAudioCtx && bAudioCtx.state === 'running') {
+      bAudioCtx.suspend().catch(() => {});
+    }
+  });
+
   function getBAudioCtx() {
     if (!hasUserInteracted) return null;
     if (!bAudioCtx) {

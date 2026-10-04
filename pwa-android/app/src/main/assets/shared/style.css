@@ -326,6 +326,8 @@ body {
 
 /* Android WebView edge-to-edge + PWA standalone: safe spacing for top navbar */
 .top-navbar,
+.top-nav,
+.game-top-bar,
 .admin-navbar-wrap {
   padding-top: calc(8px + var(--vlk-status-bar-inset, 0px)) !important;
 }
@@ -337,6 +339,8 @@ body {
 /* When a candidate ribbon is already at the very top, navbar below it doesn't need safe-area padding */
 .candidate-top-ribbon + .top-navbar,
 .candidate-top-ribbon ~ .top-navbar,
+.candidate-top-ribbon + .top-nav,
+.candidate-top-ribbon ~ .top-nav,
 .academic-top-header:has(.candidate-top-ribbon) .top-navbar {
   padding-top: 8px !important;
 }

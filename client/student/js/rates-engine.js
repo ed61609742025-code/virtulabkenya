@@ -187,16 +187,19 @@ const RatesEngine = (function () {
 
     window.addEventListener('resize', () => {
       updateCanvasDimensions();
+      drawApparatus();
       drawGraph();
     });
     window.addEventListener('orientationchange', () => {
       setTimeout(() => {
         updateCanvasDimensions();
+        drawApparatus();
         drawGraph();
       }, 150);
     });
 
-    ratesRafId = requestAnimationFrame(renderLoop);
+    drawApparatus();
+    wakeRenderLoop();
   }
 
   function setExperiment(expName) {
@@ -243,6 +246,7 @@ const RatesEngine = (function () {
     resetCurrentExperiment();
     renderKnecTable();
     drawGraph();
+    wakeRenderLoop();
   }
 
   function setStudyMode(mode) {
@@ -309,6 +313,8 @@ const RatesEngine = (function () {
       updateSimulationPhysics(dt);
       updateHUD();
     }, 50);
+
+    wakeRenderLoop();
   }
 
   function pauseSimulation() {
@@ -789,13 +795,24 @@ const RatesEngine = (function () {
   let lastRatesFrame = 0;
   const RATES_FRAME_MS = 28; // ~35 FPS: fluid kinetics apparatus while saving 65% mobile GPU power & heat
 
+  function isRatesActivelyAnimating() {
+    return state.isRunning || 
+           state.currentExp === 'collision' || 
+           (state.syringe && state.syringe.bubbles && state.syringe.bubbles.length > 0);
+  }
+
   function renderLoop(timestamp) {
     if (document.hidden) {
       ratesRafId = null;
       return;
     }
 
-    ratesRafId = requestAnimationFrame(renderLoop);
+    const animating = isRatesActivelyAnimating();
+    if (animating) {
+      ratesRafId = requestAnimationFrame(renderLoop);
+    } else {
+      ratesRafId = null; // Sleep GPU when apparatus is idle
+    }
 
     if (timestamp - lastRatesFrame < RATES_FRAME_MS) {
       return;
@@ -804,10 +821,18 @@ const RatesEngine = (function () {
     drawApparatus();
   }
 
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && !ratesRafId) {
+  function wakeRenderLoop() {
+    if (!ratesRafId && !document.hidden && isRatesActivelyAnimating()) {
       lastRatesFrame = performance.now();
       ratesRafId = requestAnimationFrame(renderLoop);
+    } else {
+      drawApparatus();
+    }
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && !ratesRafId && isRatesActivelyAnimating()) {
+      wakeRenderLoop();
     }
   });
 

@@ -81,6 +81,7 @@ class MainActivity : AppCompatActivity() {
             setBackgroundColor(initialBg)
             isVerticalScrollBarEnabled = true
             isHorizontalScrollBarEnabled = false
+            overScrollMode = View.OVER_SCROLL_NEVER
         }
 
         rootContainer.addView(

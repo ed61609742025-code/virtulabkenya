@@ -392,11 +392,13 @@ const EnergyEngine = (() => {
     updateCanvasDimensions();
     window.addEventListener('resize', () => {
       updateCanvasDimensions();
+      drawAllCanvases(0);
       renderGraph();
     }, { passive: true });
     window.addEventListener('orientationchange', () => {
       setTimeout(() => {
         updateCanvasDimensions();
+        drawAllCanvases(0);
         renderGraph();
       }, 150);
     }, { passive: true });
@@ -404,7 +406,8 @@ const EnergyEngine = (() => {
     initParticles();
     initConvectionCurrents();
     applyScenario('KCSE_2022_DISPLACEMENT');
-    rafId = requestAnimationFrame(simulationLoop);
+    drawAllCanvases(0);
+    wakeSimulationLoop();
     renderGraph();
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -777,6 +780,8 @@ const EnergyEngine = (() => {
         mwalimuEl.innerHTML = 'Always take initial temperature readings at 30-second intervals for 2.0 minutes. <strong>Do not mix before 2.5 minutes!</strong> Record readings to <strong>1 decimal place</strong> (e.g. 22.0 or 22.5).';
       }
     }
+    drawAllCanvases(0);
+    wakeSimulationLoop();
   }
 
   function initTableData() {
@@ -851,6 +856,7 @@ const EnergyEngine = (() => {
     if (startBtn) startBtn.innerHTML = `<span class="action-icon">${isRunning ? '⏸️' : '▶️'}</span> <span class="action-text">${isRunning ? 'Pause Practical Clock' : 'Start Practical Clock'}</span>`;
     if (coolBtn) coolBtn.innerHTML = label;
     playClick();
+    wakeSimulationLoop();
   }
 
   function mixReactants() {
@@ -892,6 +898,7 @@ const EnergyEngine = (() => {
         radius: 1.5 + Math.random() * 2.5
       });
     }
+    wakeSimulationLoop();
   }
 
   function toggleStirrer() {
@@ -902,6 +909,7 @@ const EnergyEngine = (() => {
       btn.innerHTML = `<span class="action-icon">🌀</span> <span class="action-text">Stirrer: ${isStirring ? 'ACTIVE' : 'OFF'}</span>`;
     }
     playStirSound();
+    wakeSimulationLoop();
   }
 
   function toggleLid() {
@@ -912,6 +920,7 @@ const EnergyEngine = (() => {
       btn.innerHTML = `<span class="action-icon">🛡️</span> <span class="action-text">Lid: ${hasLidOn ? 'ON' : 'OFF'}</span>`;
     }
     playLidSound();
+    wakeSimulationLoop();
   }
 
   function toggleLabels() {
@@ -919,6 +928,7 @@ const EnergyEngine = (() => {
     const btn = document.getElementById('btnToggleLabels');
     if (btn) btn.classList.toggle('active', showApparatusLabels);
     playClick();
+    wakeSimulationLoop();
   }
 
   function toggleCatalyzedPathway() {
@@ -926,6 +936,7 @@ const EnergyEngine = (() => {
     const btn = document.getElementById('btnToggleCatalyst');
     if (btn) btn.classList.toggle('active', showCatalyzedCurve);
     playBeep(showCatalyzedCurve ? 750 : 500, 0.08);
+    wakeSimulationLoop();
   }
 
   function toggleBestFit() {
@@ -943,6 +954,7 @@ const EnergyEngine = (() => {
       btn.innerHTML = isFlameLit ? '🔥 Extinguish Spirit Lamp' : '🕯️ Light Spirit Lamp Burner';
     }
     if (isFlameLit) playFlameSound();
+    wakeSimulationLoop();
   }
 
   function weighBurner() {
@@ -1193,13 +1205,34 @@ const EnergyEngine = (() => {
   const TARGET_FRAME_MS = 28; // ~35 FPS: silky smooth for chemical thermals while saving 65% mobile GPU power & heat
   let lastFrameTime = 0;
 
+  function isEnergyActivelyAnimating() {
+    return isRunning || 
+           isFlameLit || 
+           isStirring || 
+           (typeof pourGrains !== 'undefined' && pourGrains.length > 0) || 
+           (typeof bubbleParticles !== 'undefined' && bubbleParticles.length > 0) || 
+           (typeof vaporParticles !== 'undefined' && vaporParticles.length > 0);
+  }
+
+  function drawAllCanvases(dt = 0) {
+    drawRig();
+    drawMagLoupe();
+    drawEnergyProfile();
+    drawMolecularHUD(dt);
+  }
+
   function simulationLoop(timestamp) {
     if (document.hidden) {
       rafId = null;
       return;
     }
 
-    rafId = requestAnimationFrame(simulationLoop);
+    const animating = isEnergyActivelyAnimating();
+    if (animating) {
+      rafId = requestAnimationFrame(simulationLoop);
+    } else {
+      rafId = null; // Sleep GPU when apparatus is idle
+    }
 
     if (timestamp - lastFrameTime < TARGET_FRAME_MS) {
       return;
@@ -1209,16 +1242,21 @@ const EnergyEngine = (() => {
     lastFrameTime = timestamp;
 
     updatePhysics(dt);
-    drawRig();
-    drawMagLoupe();
-    drawEnergyProfile();
-    drawMolecularHUD(dt);
+    drawAllCanvases(dt);
+  }
+
+  function wakeSimulationLoop() {
+    if (!rafId && !document.hidden && isEnergyActivelyAnimating()) {
+      lastFrameTime = performance.now();
+      rafId = requestAnimationFrame(simulationLoop);
+    } else {
+      drawAllCanvases(0);
+    }
   }
 
   document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && !rafId) {
-      lastFrameTime = performance.now();
-      rafId = requestAnimationFrame(simulationLoop);
+    if (!document.hidden && !rafId && isEnergyActivelyAnimating()) {
+      wakeSimulationLoop();
     }
   });
 

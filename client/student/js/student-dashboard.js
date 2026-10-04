@@ -1245,6 +1245,56 @@ requireStudentLogin();
   let cachedStudentAnalytics = null;
   let cachedStudentSessions = null;
 
+  // On-demand lazy loader for Chart.js (prevents 250KB from blocking initial page LCP)
+  let chartJsLoading = false;
+  let chartJsCallbacks = [];
+  function ensureChartJs(callback) {
+    if (typeof Chart !== 'undefined') {
+      if (callback) callback();
+      return;
+    }
+    if (callback) chartJsCallbacks.push(callback);
+    if (chartJsLoading) return;
+    chartJsLoading = true;
+
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js';
+    script.integrity = 'sha384-bs/nf9FbdNouRbMiFcrcZfLXYPKiPaGVGplVbv7dLGECccEXDW+S3zjqSKR5ZEaD sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==';
+    script.crossOrigin = 'anonymous';
+    script.defer = true;
+    script.onload = () => {
+      chartJsLoading = false;
+      const cbs = chartJsCallbacks;
+      chartJsCallbacks = [];
+      cbs.forEach(cb => { try { cb(); } catch(e){} });
+      if (typeof renderStudentCharts === 'function' && cachedStudentSessions) {
+        renderStudentCharts(cachedStudentSessions, cachedStudentAnalytics);
+      }
+    };
+    script.onerror = () => {
+      chartJsLoading = false;
+      chartJsCallbacks = [];
+    };
+    document.head.appendChild(script);
+  }
+  window.ensureChartJs = ensureChartJs;
+
+  // Idle prefetch: load Chart.js only when browser has finished all critical paints
+  if (typeof window !== 'undefined') {
+    const scheduleIdleChartLoad = () => {
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(() => ensureChartJs(), { timeout: 6000 });
+      } else {
+        setTimeout(() => ensureChartJs(), 4000);
+      }
+    };
+    if (document.readyState === 'complete') {
+      scheduleIdleChartLoad();
+    } else {
+      window.addEventListener('load', scheduleIdleChartLoad, { once: true });
+    }
+  }
+
   function getThemeChartColors() {
     const theme = document.documentElement.getAttribute('data-theme') || 'light';
     if (theme === 'dark') {

@@ -4,14 +4,45 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>VirtuLab Kenya — Student Workstation</title>
-<script src="/shared/auth-guard.js"></script>
 <script>
   window.VLK = window.VLK || {};
+  // Fast Inline Head Auth Guard — zero network latency, zero FOUC
+  (function() {
+    try {
+      var tok = (typeof localStorage !== 'undefined' && localStorage.getItem('vlk_token')) ||
+                (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('vlk_token'));
+      var curPath = window.location.pathname + window.location.search + window.location.hash;
+      var loginUrl = '/student/login.html?returnUrl=' + encodeURIComponent(curPath);
+      if (!tok) {
+        window.location.replace(loginUrl);
+        return;
+      }
+      var parts = tok.split('.');
+      if (parts.length >= 2) {
+        var base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+        var payload = JSON.parse(decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join('')));
+        if (payload.exp && (payload.exp * 1000) < Date.now()) {
+          try {
+            localStorage.removeItem('vlk_token');
+            localStorage.removeItem('vlk_user');
+            sessionStorage.removeItem('vlk_token');
+            sessionStorage.removeItem('vlk_user');
+          } catch(e) {}
+          window.location.replace('/student/login.html?expired=1&returnUrl=' + encodeURIComponent(curPath));
+          return;
+        }
+        if (payload.role && payload.role !== 'student' && payload.role !== 'admin') {
+          window.location.replace('/student/login.html?mismatch=' + encodeURIComponent(payload.role) + '&returnUrl=' + encodeURIComponent(curPath));
+          return;
+        }
+      }
+    } catch(e) {}
+  })();
+
   var t = localStorage.getItem('vlk_theme') || 'light';
   document.documentElement.setAttribute('data-theme', t);
-  if (window.VLKAuthGuard) {
-    VLKAuthGuard.guardPage('student');
-  }
   window.VLK.cycleTheme = window.cycleTheme = window.toggleTheme = function() {
     var themes = ['light', 'dark', 'green'];
     var current = document.documentElement.getAttribute('data-theme') || 'light';
@@ -45,6 +76,28 @@
       document.documentElement.classList.add('vlk-tip-dismissed');
     }
   } catch(e){}
+
+  // Pre-hydrate cached student name & streak to render hero bar on first frame
+  try {
+    var cachedRaw = localStorage.getItem('vlk_user');
+    if (cachedRaw) {
+      var cachedUser = JSON.parse(cachedRaw);
+      if (cachedUser && cachedUser.name) {
+        document.addEventListener('DOMContentLoaded', function() {
+          var nameEl = document.getElementById('studentName');
+          if (nameEl) nameEl.textContent = cachedUser.name;
+          var nameMobileEl = document.getElementById('studentNameMobile');
+          if (nameMobileEl) nameMobileEl.textContent = cachedUser.name;
+          var avatarEl = document.getElementById('heroStudentAvatar');
+          if (avatarEl) {
+            var parts = cachedUser.name.trim().split(/\s+/).filter(Boolean);
+            var initials = parts.length > 1 ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase() : parts[0].substring(0, 2).toUpperCase();
+            avatarEl.textContent = initials;
+          }
+        });
+      }
+    }
+  } catch(e) {}
 </script>
 <meta name="theme-color" content="#0F172A">
 <meta name="mobile-web-app-capable" content="yes">
@@ -69,19 +122,29 @@
 <link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.json">
 
-<!-- Typography -->
+<!-- Typography & CDN Hints -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<!-- Critical Layout & Dashboard Stylesheets (Render-Critical) -->
 <link rel="stylesheet" href="../shared/style.css">
-<link rel="stylesheet" href="../shared/pwa-installer.css">
-<link rel="stylesheet" href="../shared/brilliant-theme.css">
-<link rel="stylesheet" href="../shared/gamification-engine.css">
 <link rel="stylesheet" href="css/dashboard.css?v=128">
 <link rel="stylesheet" href="css/skill-tree.css?v=126">
 <link rel="stylesheet" href="css/mobile.css?v=128">
-<link rel="stylesheet" href="../shared/subscription-ui.css?v=126">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha384-bs/nf9FbdNouRbMiFcrcZfLXYPKiPaGVGplVbv7dLGECccEXDW+S3zjqSKR5ZEaD sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+
+<!-- Non-Critical Stylesheets (Asynchronously loaded to unblock LCP) -->
+<link rel="stylesheet" href="../shared/pwa-installer.css" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="../shared/brilliant-theme.css" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="../shared/gamification-engine.css" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="../shared/subscription-ui.css?v=126" media="print" onload="this.media='all'">
+<noscript>
+  <link rel="stylesheet" href="../shared/pwa-installer.css">
+  <link rel="stylesheet" href="../shared/brilliant-theme.css">
+  <link rel="stylesheet" href="../shared/gamification-engine.css">
+  <link rel="stylesheet" href="../shared/subscription-ui.css?v=126">
+</noscript>
 
 <style>
   html.vlk-tip-dismissed #studyTipCard { display: none !important; }
@@ -1768,6 +1831,7 @@
     </div>
   </div>
 
+  <script defer src="../shared/auth-guard.js"></script>
   <script defer src="../shared/api.js?v=121"></script>
   <script defer src="../shared/auth-forms.js"></script>
   <script defer src="../shared/i18n.js?v=127"></script>

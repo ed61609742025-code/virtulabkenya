@@ -41,7 +41,13 @@
 
       // Resize and re-align charts if switching to achievements tab
       if (tabId === 'achievements') {
-        if (typeof window.resizeStudentCharts === 'function') {
+        if (typeof window.ensureChartJs === 'function') {
+          window.ensureChartJs(() => {
+            if (typeof window.resizeStudentCharts === 'function') {
+              setTimeout(window.resizeStudentCharts, 60);
+            }
+          });
+        } else if (typeof window.resizeStudentCharts === 'function') {
           setTimeout(window.resizeStudentCharts, 60);
         }
       }

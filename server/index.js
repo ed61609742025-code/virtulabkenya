@@ -79,6 +79,8 @@ app.use(express.json({
 const fs = require('fs');
 const clientRoot = path.resolve(__dirname, '../client');
 
+const htmlFileCache = new Map();
+
 // Intercept all HTML requests to dynamically inject the per-request CSP cryptographic nonce
 // into every <script> tag before serving, enabling strict CSP without 'unsafe-inline'
 app.use((req, res, next) => {
@@ -96,22 +98,32 @@ app.use((req, res, next) => {
     return res.status(403).send('Forbidden');
   }
 
-  fs.readFile(targetFile, 'utf8', (err, html) => {
-    if (err) {
-      if (err.code === 'ENOENT') return next();
-      return next(err);
-    }
-
+  const sendWithNonce = (rawHtml) => {
     const nonce = res.locals && res.locals.cspNonce;
     const modifiedHtml = nonce
-      ? html.replace(/<script\b(?![^>]*\bnonce=)([^>]*)>/gi, (match, attrs) => `<script nonce="${nonce}"${attrs}>`)
-      : html;
+      ? rawHtml.replace(/<script\b(?![^>]*\bnonce=)([^>]*)>/gi, (match, attrs) => `<script nonce="${nonce}"${attrs}>`)
+      : rawHtml;
 
     res.setHeader('Content-Type', 'text/html; charset=UTF-8');
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
     return res.send(modifiedHtml);
+  };
+
+  if (isProd && htmlFileCache.has(targetFile)) {
+    return sendWithNonce(htmlFileCache.get(targetFile));
+  }
+
+  fs.readFile(targetFile, 'utf8', (err, html) => {
+    if (err) {
+      if (err.code === 'ENOENT') return next();
+      return next(err);
+    }
+    if (isProd) {
+      htmlFileCache.set(targetFile, html);
+    }
+    return sendWithNonce(html);
   });
 });
 
@@ -121,8 +133,10 @@ app.use(express.static(path.join(__dirname, '../client'), {
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
       res.setHeader('Pragma', 'no-cache');
       res.setHeader('Expires', '0');
+    } else if (filePath.match(/\.(woff2?|ttf|eot|svg|png|jpe?g|gif|webp|ico)$/i)) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
     } else {
-      res.setHeader('Cache-Control', 'public, max-age=3600');
+      res.setHeader('Cache-Control', 'public, max-age=604800, stale-while-revalidate=86400');
     }
   }
 }));

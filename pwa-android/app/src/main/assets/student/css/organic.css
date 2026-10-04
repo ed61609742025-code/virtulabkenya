@@ -224,6 +224,7 @@ html, body {
   align-items: center;
   justify-content: space-between;
   padding: 8px 20px;
+  padding-top: calc(8px + var(--vlk-status-bar-inset, 0px)) !important;
   max-width: 1440px;
   margin: 0 auto;
   gap: 10px;
@@ -1308,7 +1309,8 @@ html, body {
   }
 
   .top-navbar {
-    padding: 6px 10px !important;
+    padding: 6px 10px;
+    padding-top: calc(8px + var(--vlk-status-bar-inset, 0px)) !important;
     gap: 8px !important;
     box-sizing: border-box !important;
     width: 100% !important;
@@ -1586,7 +1588,8 @@ html, body {
 
 @media (max-width: 480px) {
   .top-navbar {
-    padding: 6px 8px !important;
+    padding: 6px 8px;
+    padding-top: calc(8px + var(--vlk-status-bar-inset, 0px)) !important;
     gap: 6px !important;
   }
   .nav-brand-academic {
@@ -1650,7 +1653,8 @@ html, body {
 
 @media (max-width: 380px) {
   .top-navbar {
-    padding: 5px 6px !important;
+    padding: 5px 6px;
+    padding-top: calc(8px + var(--vlk-status-bar-inset, 0px)) !important;
     gap: 4px !important;
   }
   .nav-brand-academic {

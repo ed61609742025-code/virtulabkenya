@@ -579,6 +579,22 @@ function computeSUSScore(responses = []) {
   }
 
   const susScore   = parseFloat((totalPoints * 2.5).toFixed(1));
+  return interpretSUSScore(susScore);
+}
+
+/**
+ * Standard System Usability Scale (SUS) Score Interpreter.
+ * Takes a pre-calculated SUS score (0–100) and maps it to percentile rank,
+ * letter grade, adjective rating, and acceptability criteria.
+ *
+ * References: Brooke (1996), Bangor et al. (2008), Sauro & Lewis (2016).
+ *
+ * @param {number} score - SUS score in range 0–100
+ * @returns {{ score: number, percentile: number, grade: string,
+ *             adjective: string, acceptability: string }}
+ */
+function interpretSUSScore(score = 0) {
+  const susScore   = parseFloat(parseFloat(score).toFixed(1)) || 0;
   const percentile = _susPercentile(susScore);
 
   let grade, adjective, acceptability;
@@ -641,5 +657,6 @@ module.exports = {
   computePairedTTest,
   computeCronbachsAlpha,
   computeSUSScore,
+  interpretSUSScore,
   computeTAMConstructs
 };

@@ -38,11 +38,17 @@ function renderMetrics(summary) {
   document.getElementById('metricHakeG').innerText = `g = ${g.toFixed(2)}`;
   document.getElementById('metricHakeCategory').innerText = summary.groupGain.category;
 
-  document.getElementById('metricCohensD').innerText = `d = ${summary.cohensD.d}`;
-  document.getElementById('metricCohensInterp').innerText = summary.cohensD.interpretation;
+  const dDz = summary.cohensD.d;
+  const dPooled = summary.cohensD.d_pooled;
+  document.getElementById('metricCohensD').innerText = `d = ${dDz}`;
+  document.getElementById('metricCohensInterp').innerText = dPooled
+    ? `${summary.cohensD.interpretation} (pooled d = ${dPooled})`
+    : summary.cohensD.interpretation;
 
+  const susGrade = summary.sus.interpretation ? summary.sus.interpretation.grade : 'Benchmark Score';
+  const susAlpha = summary.sus.cronbachAlpha ? ` • α = ${summary.sus.cronbachAlpha.alpha}` : '';
   document.getElementById('metricSUS').innerText = `${summary.sus.meanScore} / 100`;
-  document.getElementById('metricSUSGrade').innerText = summary.sus.interpretation.grade;
+  document.getElementById('metricSUSGrade').innerText = `${susGrade}${susAlpha}`;
 }
 
 function renderCharts(summary) {

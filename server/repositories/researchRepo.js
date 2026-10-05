@@ -175,7 +175,10 @@ async function getResearchSummary(teacherId = null) {
 
   const preDesc = stats.computeDescriptives(preScores);
   const postDesc = stats.computeDescriptives(postScores);
-  const cohensD = stats.computeCohensD(preScores, postScores);
+  const cohensD = stats.computeCohensD(preScores, postScores, true);
+  const cohensDPooled = stats.computeCohensD(preScores, postScores, false);
+  cohensD.d_pooled = cohensDPooled.d;
+  cohensD.sPooled = cohensDPooled.sPooled;
   const pairedT = stats.computePairedTTest(preScores, postScores);
 
   const gains = paired.map(p => p.hakes_g);
@@ -188,6 +191,18 @@ async function getResearchSummary(teacherId = null) {
   const susSurveys = await getSurveys('SUS');
   const susScores = susSurveys.map(s => parseFloat(s.score)).filter(s => !isNaN(s));
   const susDesc = stats.computeDescriptives(susScores);
+
+  // Compute Cronbach's alpha for SUS items if multiple respondents.
+  // Note: Even items (indices 1, 3, 5, 7, 9) in Brooke's SUS are negative/reverse-coded
+  // and must be recoded (6 - x) so all items measure usability in the same direction.
+  const susMatrix = susSurveys
+    .map(s => {
+      const resp = typeof s.responses === 'string' ? JSON.parse(s.responses) : s.responses;
+      if (!Array.isArray(resp) || resp.length !== 10) return null;
+      return resp.map((val, idx) => idx % 2 === 1 ? (6 - parseInt(val, 10)) : parseInt(val, 10));
+    })
+    .filter(Boolean);
+  const susCronbach = susMatrix.length >= 2 ? stats.computeCronbachsAlpha(susMatrix) : null;
 
   // Fetch TAM survey data
   const tamSurveys = await getSurveys('TAM');
@@ -206,11 +221,24 @@ async function getResearchSummary(teacherId = null) {
     }
   });
 
+  // Compute Cronbach's alpha for TAM items if multiple respondents
+  const tamMatrix = tamSurveys.map(t => {
+    const resp = typeof t.responses === 'string' ? JSON.parse(t.responses) : (t.responses || {});
+    return [
+      ...(resp.PU || []),
+      ...(resp.PEOU || []),
+      ...(resp.FC || []),
+      ...(resp.BI || [])
+    ];
+  }).filter(arr => arr.length >= 2);
+  const tamCronbach = tamMatrix.length >= 2 ? stats.computeCronbachsAlpha(tamMatrix) : null;
+
   const tamSummary = {
     PU: stats.computeDescriptives(puScores).mean,
     PEOU: stats.computeDescriptives(peouScores).mean,
     FC: stats.computeDescriptives(fcScores).mean,
     BI: stats.computeDescriptives(biScores).mean,
+    cronbachAlpha: tamCronbach,
     totalRespondents: tamSurveys.length
   };
 
@@ -226,7 +254,8 @@ async function getResearchSummary(teacherId = null) {
       count: susDesc.count,
       meanScore: susDesc.mean,
       stdDev: susDesc.stdDev,
-      interpretation: stats.computeSUSScore(Array(10).fill(Math.round(susDesc.mean / 20)))
+      cronbachAlpha: susCronbach,
+      interpretation: stats.interpretSUSScore(susDesc.mean)
     },
     tam: tamSummary,
     pairedList: paired
@@ -272,9 +301,10 @@ async function exportResearchDatasetCSV() {
   const rows = paired.map(p => {
     const sus = susMap[p.student_id] !== undefined ? susMap[p.student_id] : '';
     const tam = tamMap[p.student_id] || {};
+    const schoolNameSafe = (p.school_name || 'VirtuLab Partner School').replace(/"/g, '""');
     return [
       `STU-${String(p.student_id).padStart(4, '0')}`,
-      `"${p.school_name.replace(/"/g, '""')}"`,
+      `"${schoolNameSafe}"`,
       `"${p.student_form || 'Form 4'}"`,
       p.pre_score,
       p.pre_percentage,

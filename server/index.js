@@ -156,6 +156,12 @@ app.get('/favicon.ico', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/favicon.ico'));
 });
 
+// ── Lightweight Health & Ping Routes (Zero DB Overhead for Heartbeats) ──
+app.get(['/healthz', '/ping'], (req, res) => {
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.type('text/plain').status(200).send('OK');
+});
+
 // ── Health Check ──────────────────────────────────────────────
 // Health check endpoint — verifies server liveness and database connectivity
 app.get('/api/health', async (req, res) => {
@@ -314,6 +320,15 @@ if (require.main === module) {
       console.log(`Local Access:   http://localhost:${PORT}`);
       console.log(`Mobile Access:  http://${localIp}:${PORT}/student/home.html`);
       console.log(`Health Check:   http://localhost:${PORT}/api/health`);
+      console.log(`Heartbeat Ping: http://localhost:${PORT}/healthz`);
+
+      // Initialize background keep-alive heartbeat if on Render or in production
+      try {
+        const { startKeepAlive } = require('./utils/keepAlive');
+        startKeepAlive();
+      } catch (err) {
+        console.warn('[KeepAlive] Note:', err.message);
+      }
     });
   })();
 }

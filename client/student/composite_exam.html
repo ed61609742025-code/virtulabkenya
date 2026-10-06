@@ -1178,6 +1178,99 @@
   </div>
 </div>
 
+<!-- Targeted Competency Remediation Micro-Drill Modal (5-Minute Interactive Fix) -->
+<div id="remediationDrillModal" class="modal-backdrop" style="display:none; position:fixed; inset:0; z-index:10050; background:rgba(7,11,19,0.85); backdrop-filter:blur(8px); overflow-y:auto; padding:20px;">
+  <div class="modal-dialog drill-modal-dialog" style="max-width:720px; margin:30px auto; background:var(--card-bg, #0B132B); border:1px solid var(--card-border, #1E293B); border-radius:16px; box-shadow:0 20px 50px rgba(0,0,0,0.6); overflow:hidden;">
+    
+    <!-- Drill Header -->
+    <div class="drill-modal-header" style="background:linear-gradient(135deg, rgba(2,132,199,0.15), rgba(15,23,42,0.6)); border-bottom:1px solid var(--card-border); padding:16px 20px; display:flex; justify-content:space-between; align-items:center;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span id="drillHeaderIcon" style="font-size:1.6rem;">⚡</span>
+        <div>
+          <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--cyan-accent); font-weight:800;">KNEC Weak-Area Remediation Drill</div>
+          <h3 id="drillHeaderTitle" style="margin:0; font-size:1.15rem; color:var(--heading-color); font-weight:800;">Decimal Precision (D) Mastery</h3>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <!-- 5-Minute Countdown Timer Badge -->
+        <div id="drillTimerBadge" class="drill-timer-pill" style="display:flex; align-items:center; gap:6px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#EF4444; padding:5px 12px; border-radius:100px; font-family:var(--font-mono); font-weight:800; font-size:0.85rem;">
+          <span>⏱️</span>
+          <span id="drillTimerDisplay">05:00</span>
+        </div>
+        <button type="button" class="btn-close-modal" onclick="closeRemediationDrill()" style="background:transparent; border:none; color:var(--text-muted); font-size:1.4rem; cursor:pointer; padding:4px 8px; line-height:1;" aria-label="Close Drill">&times;</button>
+      </div>
+    </div>
+
+    <!-- Drill Body Content (Active Drill State) -->
+    <div id="drillActiveStage" style="padding:20px;">
+      <!-- Chief Examiner Rule Strip -->
+      <div class="drill-rule-banner" style="background:rgba(245,158,11,0.08); border-left:4px solid var(--amber-accent, #F59E0B); border-radius:8px; padding:12px 16px; margin-bottom:18px;">
+        <div style="font-size:0.75rem; text-transform:uppercase; font-weight:800; color:var(--amber-accent); margin-bottom:4px; display:flex; align-items:center; gap:6px;">
+          <span>👨‍🏫</span> KNEC Chief Examiner Standard:
+        </div>
+        <div id="drillExaminerRuleText" style="font-size:0.82rem; color:var(--text-main); line-height:1.5;"></div>
+      </div>
+
+      <!-- Interactive Questions Container -->
+      <form id="remediationDrillForm" onsubmit="event.preventDefault(); submitRemediationDrill();">
+        <div id="drillQuestionsList" style="display:flex; flex-direction:column; gap:16px;">
+          <!-- Dynamically populated questions -->
+        </div>
+
+        <!-- Footer Action Buttons -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:22px; padding-top:16px; border-top:1px solid var(--card-border); flex-wrap:wrap; gap:10px;">
+          <button type="button" class="btn btn-secondary" onclick="closeRemediationDrill()" style="font-size:0.82rem; padding:8px 16px;">
+            Exit Drill
+          </button>
+          <div style="display:flex; gap:10px;">
+            <button type="submit" id="btnSubmitDrill" class="btn-submit-exam" style="font-size:0.88rem; padding:9px 20px; font-weight:800; background:linear-gradient(135deg, #0284C7, #0369A1);">
+              ⚡ Submit for Instant KNEC Grading
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Drill Completed / Result Stage (Initially Hidden) -->
+    <div id="drillResultStage" style="display:none; padding:24px 20px;">
+      <div style="text-align:center; margin-bottom:20px;">
+        <div id="drillResultTrophy" style="font-size:2.8rem; margin-bottom:8px;">🎯</div>
+        <h3 id="drillResultStatus" style="font-size:1.3rem; font-weight:900; color:var(--heading-color); margin-bottom:4px;">Mastery Attained!</h3>
+        <p id="drillResultSummary" style="font-size:0.85rem; color:var(--text-muted); max-width:480px; margin:0 auto; line-height:1.5;"></p>
+        
+        <!-- Score & Boost Metric Strip -->
+        <div style="display:flex; justify-content:center; gap:14px; margin-top:16px; flex-wrap:wrap;">
+          <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:10px; padding:10px 18px; min-width:130px;">
+            <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Drill Score</div>
+            <div id="drillResultScore" style="font-size:1.4rem; font-weight:900; font-family:var(--font-mono); color:var(--cyan-accent);">30 / 30</div>
+          </div>
+          <div style="background:var(--card-bg-hover); border:1px solid rgba(16,185,129,0.3); border-radius:10px; padding:10px 18px; min-width:130px;">
+            <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Competency Boost</div>
+            <div id="drillResultBoost" style="font-size:1.4rem; font-weight:900; font-family:var(--font-mono); color:#10B981;">+25%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Itemized Question-by-Question Breakdown -->
+      <div style="background:var(--bg-dark); border:1px solid var(--card-border); border-radius:10px; padding:14px; margin-bottom:18px;">
+        <div style="font-weight:800; font-size:0.86rem; color:var(--heading-color); margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+          <span>📝</span> Itemized Chief Examiner Verification:
+        </div>
+        <div id="drillResultBreakdown" style="display:flex; flex-direction:column; gap:10px; font-size:0.82rem;"></div>
+      </div>
+
+      <!-- Bottom Action to Apply Boost & Return to Radar -->
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+        <button type="button" class="btn btn-secondary" onclick="closeRemediationDrill()">Close</button>
+        <button type="button" id="btnApplyBoost" class="btn-submit-exam" onclick="applyCompetencyBoost()" style="background:linear-gradient(135deg, #10B981, #059669); font-weight:800; padding:10px 22px;">
+          ✨ Apply Boost to Radar Chart →
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <!-- Official KNEC Paper 3 Examination Script Print Container (Rendered exclusively for @media print) -->
 <div id="knecPrintContainer" class="knec-official-print-document" style="display:none;">
   <!-- Header with Coat of Arms & Exam Metadata -->
@@ -1278,6 +1371,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha384-bs/nf9FbdNouRbMiFcrcZfLXYPKiPaGVGplVbv7dLGECccEXDW+S3zjqSKR5ZEaD sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
 <script src="js/composite-engine.js?v=120"></script>
 <script src="js/exam-offline-manager.js?v=120"></script>
+<script src="/shared/knec-remediation-drills.js?v=120"></script>
 <script src="js/composite-exam-ui.js?v=120"></script>
 </body>
 </html>

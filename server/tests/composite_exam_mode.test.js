@@ -504,4 +504,101 @@ describe('VirtuLab Kenya — Paper 3 Composite Practical Exam Mode (40.0 Marks)'
       assert.ok(scriptCode.includes('modalCandidateRadarChart'), 'Script review modal must support candidate radar chart');
     });
   });
+
+  describe('11. AI-Powered Weak-Area Remediation Drills (5-Minute KNEC Competency Fix)', () => {
+    const remediationDrillService = require('../services/remediationDrillService');
+
+    it('should provide standard drills covering all 5 KNEC competency axes (D, PA, AC/FA, INORG, ORG)', () => {
+      const catalog = remediationDrillService.getDrillCatalog();
+      assert.ok(catalog);
+      const expectedCodes = ['D', 'PA', 'AC/FA', 'INORG', 'ORG'];
+      for (const code of expectedCodes) {
+        assert.ok(catalog[code], `Catalog must have competency ${code}`);
+        assert.ok(catalog[code].length > 0, `Competency ${code} must have at least 1 drill`);
+        const item = catalog[code][0];
+        assert.ok(item.id);
+        assert.ok(item.title);
+        assert.strictEqual(item.competencyCode, code);
+        assert.ok(item.durationSeconds > 0);
+        assert.ok(item.questionCount >= 3);
+      }
+    });
+
+    it('should evaluate decimal formatting drill submission with deterministic accuracy and compute competency boost', () => {
+      // Perfect submission
+      const perfectEval = remediationDrillService.gradeDrillSubmission('D', 'drill_d_01', {
+        q1: ['A', 'C', 'E'],
+        q2: '0.00, 24.60',
+        q3: 'B'
+      });
+      assert.strictEqual(perfectEval.totalScore, 30);
+      assert.strictEqual(perfectEval.maxScore, 30);
+      assert.strictEqual(perfectEval.percentage, 100);
+      assert.strictEqual(perfectEval.isMastery, true);
+      assert.strictEqual(perfectEval.status, 'Mastery Achieved');
+      assert.ok(perfectEval.competencyBoost >= 20);
+      assert.strictEqual(perfectEval.itemizedReview.length, 3);
+      assert.ok(perfectEval.itemizedReview.every(r => r.isCorrect));
+
+      // Partial / incorrect submission
+      const flawedEval = remediationDrillService.gradeDrillSubmission('D', 'drill_d_01', {
+        q1: ['A'], // incomplete selections
+        q2: '24.6', // invalid formatting
+        q3: 'A' // wrong choice
+      });
+      assert.ok(flawedEval.totalScore < 30);
+      assert.strictEqual(flawedEval.isMastery, false);
+      assert.ok(flawedEval.percentage < 80);
+    });
+
+    it('should evaluate averaging concordancy drill and enforce KNEC outlier rejection', () => {
+      const concordantEval = remediationDrillService.gradeDrillSubmission('PA', 'drill_pa_01', {
+        q1: ['2', '3', '4'],
+        q2: '23.45',
+        q3: 'B'
+      });
+      assert.strictEqual(concordantEval.totalScore, 30);
+      assert.strictEqual(concordantEval.isMastery, true);
+      assert.strictEqual(concordantEval.percentage, 100);
+      assert.ok(concordantEval.competencyBoost >= 20);
+    });
+
+    it('should verify student composite exam HTML markup and scripts contain remediation drill modal and triggers', () => {
+      const examHtmlPath = path.join(rootDir, 'client', 'student', 'composite_exam.html');
+      const examHtml = fs.readFileSync(examHtmlPath, 'utf8');
+
+      // Drill modal elements
+      assert.ok(examHtml.includes('id="remediationDrillModal"'), 'Must have remediationDrillModal');
+      assert.ok(examHtml.includes('id="drillTimerBadge"'), 'Must have drillTimerBadge');
+      assert.ok(examHtml.includes('id="drillTimerDisplay"'), 'Must have drillTimerDisplay');
+      assert.ok(examHtml.includes('id="drillQuestionsList"'), 'Must have drillQuestionsList');
+      assert.ok(examHtml.includes('id="btnSubmitDrill"'), 'Must have btnSubmitDrill');
+      assert.ok(examHtml.includes('id="drillResultStage"'), 'Must have drillResultStage');
+      assert.ok(examHtml.includes('id="btnApplyBoost"'), 'Must have btnApplyBoost');
+      assert.ok(examHtml.includes('knec-remediation-drills.js'), 'Must load knec-remediation-drills.js');
+
+      // UI controller exports
+      const uiScriptPath = path.join(rootDir, 'client', 'student', 'js', 'composite-exam-ui.js');
+      const uiScript = fs.readFileSync(uiScriptPath, 'utf8');
+      assert.ok(uiScript.includes('btn-launch-drill'), 'Must render btn-launch-drill on competency cards');
+      assert.ok(uiScript.includes('window.launchRemediationDrill = launchRemediationDrill'));
+      assert.ok(uiScript.includes('window.closeRemediationDrill = closeRemediationDrill'));
+      assert.ok(uiScript.includes('window.submitRemediationDrill = submitRemediationDrill'));
+      assert.ok(uiScript.includes('window.applyCompetencyBoost = applyCompetencyBoost'));
+    });
+
+    it('should verify teacher dashboard contains drill preview modal and script exports', () => {
+      const dashHtmlPath = path.join(rootDir, 'client', 'teacher', 'dashboard.html');
+      const dashHtml = fs.readFileSync(dashHtmlPath, 'utf8');
+      assert.ok(dashHtml.includes('id="teacherDrillPreviewModal"'), 'Must have teacherDrillPreviewModal');
+      assert.ok(dashHtml.includes('knec-remediation-drills.js'), 'Must load knec-remediation-drills.js in teacher dashboard');
+
+      const teacherScriptPath = path.join(rootDir, 'client', 'teacher', 'js', 'teacher-composite-exams.js');
+      const teacherScript = fs.readFileSync(teacherScriptPath, 'utf8');
+      assert.ok(teacherScript.includes('window.previewTeacherRemediationDrill = previewTeacherRemediationDrill'));
+      assert.ok(teacherScript.includes('window.closeTeacherDrillPreview = closeTeacherDrillPreview'));
+      assert.ok(teacherScript.includes('window.assignDrillToStudent = assignDrillToStudent'));
+    });
+  });
 });
+

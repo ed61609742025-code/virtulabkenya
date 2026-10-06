@@ -1020,6 +1020,41 @@
       </div>
     </div>
 
+    <!-- Teacher Remediation Drill Preview & Assignment Modal -->
+    <div id="teacherDrillPreviewModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(6px); z-index:20050; align-items:center; justify-content:center; padding:16px;">
+      <div style="background:var(--card-bg); border:1px solid var(--card-border); border-radius:16px; max-width:760px; width:100%; max-height:90vh; overflow-y:auto; padding:24px; box-shadow:var(--shadow-lg); color:var(--text-main);">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--card-border); padding-bottom:14px; margin-bottom:16px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span id="tDrillHeaderIcon" style="font-size:1.6rem;">🎯</span>
+            <div>
+              <span style="background:var(--cyan-accent, #38BDF8); color:#000; font-size:0.68rem; font-weight:800; padding:2px 8px; border-radius:4px; font-family:var(--font-mono);">KNEC REMEDIATION DRILL PREVIEW</span>
+              <h3 id="tDrillHeaderTitle" style="font-size:1.15rem; font-weight:800; margin:2px 0 0 0; color:var(--heading-color);">Drill Title</h3>
+            </div>
+          </div>
+          <button type="button" class="btn btn-secondary" onclick="closeTeacherDrillPreview()" style="padding:4px 10px; font-size:0.85rem;">✕ Close</button>
+        </div>
+
+        <!-- Chief Examiner Pedagogical Rule -->
+        <div style="background:rgba(245,158,11,0.08); border-left:4px solid var(--amber-accent, #F59E0B); border-radius:8px; padding:12px 14px; margin-bottom:16px;">
+          <div style="font-size:0.75rem; text-transform:uppercase; font-weight:800; color:var(--amber-accent); margin-bottom:4px;">👨‍🏫 KNEC Examiner Standard &amp; Grading Rule:</div>
+          <div id="tDrillExaminerRule" style="font-size:0.82rem; color:var(--text-main); line-height:1.45;"></div>
+        </div>
+
+        <!-- Questions & Rubric Preview -->
+        <div id="tDrillQuestionsContainer" style="display:flex; flex-direction:column; gap:14px; margin-bottom:20px;">
+          <!-- Dynamically populated -->
+        </div>
+
+        <!-- Action Strip -->
+        <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--card-border); padding-top:16px;">
+          <button type="button" class="btn btn-secondary" onclick="closeTeacherDrillPreview()">Back to Candidate Script</button>
+          <button type="button" class="btn btn-primary" id="btnAssignDrillAction" onclick="assignDrillToStudent()" style="background:linear-gradient(135deg, #0284C7, #0369A1); font-weight:800;">
+            🚀 Assign Micro-Drill to Student
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- Tab Pane 8: Leaderboard & Badges -->
     <div id="paneLeaderboard" class="tab-pane">
       <h2 class="section-title">🏆 Class Leaderboard <span style="font-weight:400;font-size:0.72rem;color:var(--text-muted);">by accuracy, min. 3 sessions</span></h2>
@@ -1264,6 +1299,7 @@
 <script defer src="../shared/notifications-engine.js?v=120"></script>
 <script defer src="../shared/push-manager.js?v=120"></script>
 <script defer src="js/teacher-dashboard.js?v=120"></script>
+<script defer src="../shared/knec-remediation-drills.js?v=120"></script>
 <script defer src="js/teacher-composite-exams.js?v=120"></script>
 <script defer src="js/ai-exam-assistant.js?v=120"></script>
 <script>

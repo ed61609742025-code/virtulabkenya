@@ -7,6 +7,7 @@ const authMiddleware = require('../middleware/auth');
 const asyncHandler = require('../utils/asyncHandler');
 const { ForbiddenError, ValidationError } = require('../utils/AppError');
 const aiTutorService = require('../services/aiTutorService');
+const remediationDrillService = require('../services/remediationDrillService');
 
 const router = express.Router();
 
@@ -134,4 +135,99 @@ router.post('/explain', authMiddleware, authMiddleware.requireRole('student'), g
   }
 }));
 
+/**
+ * GET /api/feedback/drill-catalog
+ * Retrieve available micro-drills categorized by the 5 KNEC competency axes
+ */
+router.get('/drill-catalog', authMiddleware, asyncHandler(async (req, res) => {
+  const catalog = remediationDrillService.getDrillCatalog();
+  return res.json({ success: true, catalog });
+}));
+
+/**
+ * POST /api/feedback/remediation-drill
+ * Fetch a targeted micro-drill for a specific competency code
+ */
+router.post('/remediation-drill', authMiddleware, asyncHandler(async (req, res) => {
+  const { competencyCode, drillId } = req.body;
+  if (!competencyCode) {
+    throw new ValidationError('competencyCode is required.');
+  }
+
+  const rawDrill = remediationDrillService.getRemediationDrill(competencyCode, drillId);
+  if (!rawDrill) {
+    return res.status(404).json({ success: false, error: 'Remediation drill not found for this competency.' });
+  }
+
+  // Sanitize drill questions so correct answers/flags are omitted
+  const sanitized = {
+    id: rawDrill.id,
+    competencyCode: rawDrill.competencyCode,
+    title: rawDrill.title,
+    durationSeconds: rawDrill.durationSeconds,
+    knecMarkWeight: rawDrill.knecMarkWeight,
+    examinerRule: rawDrill.examinerRule,
+    objective: rawDrill.objective,
+    questions: rawDrill.questions.map(q => {
+      const qCopy = {
+        id: q.id,
+        type: q.type,
+        prompt: q.prompt
+      };
+      if (q.options) {
+        qCopy.options = q.options.map(opt => ({ id: opt.id, text: opt.text }));
+      }
+      return qCopy;
+    })
+  };
+
+  return res.json({ success: true, drill: sanitized });
+}));
+
+/**
+ * POST /api/feedback/grade-drill
+ * Grade student answers and compute score & competency boost
+ */
+router.post('/grade-drill', authMiddleware, asyncHandler(async (req, res) => {
+  const { competencyCode, drillId, answers } = req.body;
+  if (!competencyCode || !drillId) {
+    throw new ValidationError('competencyCode and drillId are required.');
+  }
+
+  const evaluation = remediationDrillService.gradeDrillSubmission(
+    competencyCode,
+    drillId,
+    answers || {}
+  );
+
+  return res.json({ success: true, evaluation });
+}));
+
+/**
+ * POST /api/feedback/drill-hint
+ * Provide Socratic AI hint during drill practice
+ */
+router.post('/drill-hint', authMiddleware, asyncHandler(async (req, res) => {
+  const { competencyCode, drillId, questionId, studentContext } = req.body;
+  if (!competencyCode || !drillId || !questionId) {
+    throw new ValidationError('competencyCode, drillId, and questionId are required.');
+  }
+
+  try {
+    const hint = await remediationDrillService.getDrillAiHint({
+      competencyCode,
+      drillId,
+      questionId,
+      studentContext
+    });
+    return res.json({ success: true, hint });
+  } catch (err) {
+    if (err.message === 'AI_NOT_CONFIGURED') {
+      return res.status(503).json({ error: 'AI coaching is not configured on this server.' });
+    }
+    return res.status(503).json({ error: 'AI hint is temporarily unavailable.' });
+  }
+}));
+
 module.exports = router;
+

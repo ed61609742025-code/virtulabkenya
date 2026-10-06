@@ -250,6 +250,16 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        onClick: (event, activeElements) => {
+          if (activeElements && activeElements.length > 0) {
+            const dataIndex = activeElements[0].index;
+            const codeMap = ['AC/FA', 'D', 'PA', 'INORG', 'ORG'];
+            const code = codeMap[dataIndex] || 'D';
+            if (typeof window.previewTeacherRemediationDrill === 'function') {
+              window.previewTeacherRemediationDrill(code);
+            }
+          }
+        },
         plugins: {
           legend: {
             display: true,
@@ -435,6 +445,19 @@
           <div style="position:relative; width:100%; max-width:440px; height:240px; margin:0 auto;">
             <canvas id="modalCandidateRadarChart"></canvas>
           </div>
+          ${cm.metrics ? `
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:8px; margin-top:12px; border-top:1px solid var(--card-border); padding-top:12px;">
+              ${Object.values(cm.metrics).map(m => `
+                <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:8px; padding:8px; display:flex; flex-direction:column; justify-content:space-between; gap:4px;">
+                  <div style="font-size:0.75rem; font-weight:800; color:var(--heading-color);">${escapeHtml(m.label)}</div>
+                  <div style="font-size:0.72rem; color:var(--text-muted); font-family:var(--font-mono);">${m.candidate}% vs ${m.cohort}%</div>
+                  <button type="button" class="btn btn-secondary" onclick="previewTeacherRemediationDrill('${m.code}')" style="font-size:0.68rem; padding:3px 6px; width:100%; margin-top:2px;" title="Preview KNEC Drill for this competency">
+                    🎯 Preview Drill
+                  </button>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
         </div>
       `;
     }
@@ -703,6 +726,99 @@
       .replace(/'/g, '&#039;');
   }
 
+  let currentPreviewDrillCode = null;
+
+  function previewTeacherRemediationDrill(code) {
+    currentPreviewDrillCode = code;
+    let drill = null;
+    if (window.KnecRemediation && typeof window.KnecRemediation.getDrill === 'function') {
+      drill = window.KnecRemediation.getDrill(code);
+    }
+    if (!drill) {
+      alert('Remediation drill catalog is initializing. Please try again.');
+      return;
+    }
+
+    const modal = document.getElementById('teacherDrillPreviewModal');
+    if (!modal) return;
+
+    const iconMap = { 'AC/FA': '🎯', 'D': '📏', 'PA': '⚖️', 'INORG': '🧂', 'ORG': '🧫' };
+    const iconEl = document.getElementById('tDrillHeaderIcon');
+    const titleEl = document.getElementById('tDrillHeaderTitle');
+    const ruleEl = document.getElementById('tDrillExaminerRule');
+    const containerEl = document.getElementById('tDrillQuestionsContainer');
+
+    if (iconEl) iconEl.textContent = iconMap[code] || '🎯';
+    if (titleEl) titleEl.textContent = `${drill.title} (${Math.round((drill.durationSeconds || 300) / 60)} Min Micro-Drill)`;
+    if (ruleEl) ruleEl.textContent = drill.examinerRule || '';
+
+    if (containerEl) {
+      containerEl.innerHTML = (drill.questions || []).map((q, idx) => {
+        let answerPreview = '';
+        if (q.type === 'single_choice' && q.options) {
+          answerPreview = `
+            <div style="display:flex; flex-direction:column; gap:4px; margin-top:6px;">
+              ${q.options.map(opt => {
+                const isCorrect = opt.id === q.correctOptionId;
+                return `
+                  <div style="padding:6px 10px; border-radius:6px; font-size:0.78rem; background:${isCorrect ? 'rgba(16,185,129,0.1)' : 'var(--card-bg)'}; border:1px solid ${isCorrect ? 'rgba(16,185,129,0.4)' : 'var(--card-border)'}; color:${isCorrect ? '#10B981' : 'var(--text-main)'}; font-weight:${isCorrect ? '700' : '400'};">
+                    ${isCorrect ? '✔ ' : '• '} (${escapeHtml(opt.id)}) ${escapeHtml(opt.text)}
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `;
+        } else if (q.type === 'multi_select' && q.options) {
+          answerPreview = `
+            <div style="display:flex; flex-direction:column; gap:4px; margin-top:6px;">
+              ${q.options.map(opt => {
+                const isCorrect = (q.correctOptionIds || []).includes(opt.id);
+                return `
+                  <div style="padding:6px 10px; border-radius:6px; font-size:0.78rem; background:${isCorrect ? 'rgba(16,185,129,0.1)' : 'var(--card-bg)'}; border:1px solid ${isCorrect ? 'rgba(16,185,129,0.4)' : 'var(--card-border)'}; color:${isCorrect ? '#10B981' : 'var(--text-main)'}; font-weight:${isCorrect ? '700' : '400'};">
+                    ${isCorrect ? '✔ ' : '• '} (${escapeHtml(opt.id)}) ${escapeHtml(opt.text)}
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `;
+        } else if (q.type === 'text_input') {
+          answerPreview = `
+            <div style="margin-top:6px; padding:6px 10px; border-radius:6px; font-size:0.78rem; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.4); color:#10B981; font-weight:700;">
+              ✔ Standard KNEC Answer: "${escapeHtml(q.correctAnswer)}"
+            </div>
+          `;
+        }
+
+        return `
+          <div style="background:var(--bg-dark); border:1px solid var(--card-border); border-radius:10px; padding:12px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <span style="font-size:0.72rem; font-weight:800; color:var(--cyan-accent); text-transform:uppercase;">Challenge ${idx + 1}</span>
+              <span style="font-size:0.7rem; color:var(--text-muted); font-family:var(--font-mono);">10 Marks</span>
+            </div>
+            <div style="font-size:0.84rem; font-weight:700; color:var(--heading-color);">${escapeHtml(q.prompt)}</div>
+            ${answerPreview}
+            <div style="margin-top:6px; font-size:0.75rem; color:var(--text-muted); font-style:italic;">
+              💡 <b>KNEC Examiner Scheme:</b> ${escapeHtml(q.explanation)}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    modal.style.display = 'flex';
+  }
+
+  function closeTeacherDrillPreview() {
+    const modal = document.getElementById('teacherDrillPreviewModal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  function assignDrillToStudent() {
+    const studentName = (currentReviewSession && currentReviewSession.student_name) || 'Candidate Student';
+    alert(`🎯 Remediation Micro-Drill assigned to ${studentName}! The student will be prompted to complete this drill upon logging in.`);
+    closeTeacherDrillPreview();
+  }
+
   // Export functions to global scope
   window.loadTeacherCompositeSessions = loadTeacherCompositeSessions;
   window.filterTeacherCompositeSessions = filterTeacherCompositeSessions;
@@ -711,4 +827,7 @@
   window.printCandidateScriptFromModal = printCandidateScriptFromModal;
   window.printTeacherScript = printTeacherScript;
   window.exportTeacherCompositeCsv = exportTeacherCompositeCsv;
+  window.previewTeacherRemediationDrill = previewTeacherRemediationDrill;
+  window.closeTeacherDrillPreview = closeTeacherDrillPreview;
+  window.assignDrillToStudent = assignDrillToStudent;
 })();

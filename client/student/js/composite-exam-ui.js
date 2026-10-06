@@ -2962,6 +2962,11 @@ requireStudentLogin();
               <span class="feedback-icon">👨‍🏫</span>
               <span>${escapeHtml(m.feedback)}</span>
             </div>
+
+            <!-- Targeted 5-Min Remediation Drill Trigger -->
+            <button type="button" class="btn-launch-drill ${!isMastery && (m.candidate < m.cohort || !isCompetent) ? 'pulse-recommend' : ''}" onclick="launchRemediationDrill('${m.code}', ${m.candidate}, ${m.cohort})">
+              <span>⚡</span> Launch 5-Min Remediation Drill
+            </button>
           </div>
         `;
       }).join('');
@@ -3035,6 +3040,18 @@ requireStudentLogin();
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        onClick: function(event, activeElements) {
+          if (activeElements && activeElements.length > 0) {
+            const dataIndex = activeElements[0].index;
+            const codeMap = ['AC/FA', 'D', 'PA', 'INORG', 'ORG'];
+            const code = codeMap[dataIndex] || 'D';
+            const cScore = candidateScores[dataIndex] || 0;
+            const bScore = cohortScores[dataIndex] || 60;
+            if (typeof window.launchRemediationDrill === 'function') {
+              window.launchRemediationDrill(code, cScore, bScore);
+            }
+          }
+        },
         animation: {
           duration: 750,
           easing: 'easeOutQuart'
@@ -3094,6 +3111,340 @@ requireStudentLogin();
     window._knecRadarChartInstance = knecRadarChartInstance;
   }
   window.renderCompetencyRadar = renderCompetencyRadar;
+
+  // ── TARGETED WEAK-AREA REMEDIATION MICRO-DRILL CONTROLLER ──
+  let _activeDrillTimer = null;
+  let _activeDrillData = null;
+  let _lastDrillEvaluation = null;
+
+  async function launchRemediationDrill(code, currentScore, benchmark) {
+    if (_activeDrillTimer) {
+      clearInterval(_activeDrillTimer);
+      _activeDrillTimer = null;
+    }
+
+    const modal = document.getElementById('remediationDrillModal');
+    if (!modal) return;
+
+    // 1. Resolve Drill
+    let drill = null;
+    if (window.KnecRemediation && typeof window.KnecRemediation.getDrill === 'function') {
+      drill = window.KnecRemediation.getDrill(code);
+    }
+
+    // Try fetching from server API if online, falling back gracefully
+    try {
+      const resp = await fetch('/api/feedback/remediation-drill', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ competencyCode: code })
+      });
+      if (resp.ok) {
+        const body = await resp.json();
+        if (body.drill) drill = body.drill;
+      }
+    } catch (e) {
+      // Offline fallback already loaded via window.KnecRemediation
+    }
+
+    if (!drill) {
+      alert('Remediation drill currently being loaded. Please try again.');
+      return;
+    }
+
+    _activeDrillData = {
+      code,
+      drill,
+      currentScore: currentScore || 0,
+      benchmark: benchmark || 60,
+      timeLeft: drill.durationSeconds || 300
+    };
+
+    // 2. Populate Header & Examiner Rule
+    const iconMap = { 'AC/FA': '🎯', 'D': '📏', 'PA': '⚖️', 'INORG': '🧂', 'ORG': '🧫' };
+    const iconEl = document.getElementById('drillHeaderIcon');
+    const titleEl = document.getElementById('drillHeaderTitle');
+    const ruleEl = document.getElementById('drillExaminerRuleText');
+    const timerDisplay = document.getElementById('drillTimerDisplay');
+
+    if (iconEl) iconEl.textContent = iconMap[code] || '⚡';
+    if (titleEl) titleEl.textContent = drill.title || 'KNEC Practical Drill';
+    if (ruleEl) ruleEl.textContent = drill.examinerRule || '';
+    if (timerDisplay) timerDisplay.textContent = '05:00';
+
+    // 3. Render Questions
+    const questionsContainer = document.getElementById('drillQuestionsList');
+    if (questionsContainer) {
+      questionsContainer.innerHTML = (drill.questions || []).map((q, idx) => {
+        let inputHtml = '';
+        if (q.type === 'single_choice' && q.options) {
+          inputHtml = `
+            <div class="drill-options-grid">
+              ${q.options.map(opt => `
+                <label class="drill-option-row">
+                  <input type="radio" name="drill_q_${q.id}" value="${escapeHtml(opt.id)}" required>
+                  <span><b>(${escapeHtml(opt.id)})</b> ${escapeHtml(opt.text)}</span>
+                </label>
+              `).join('')}
+            </div>
+          `;
+        } else if (q.type === 'multi_select' && q.options) {
+          inputHtml = `
+            <div class="drill-options-grid">
+              ${q.options.map(opt => `
+                <label class="drill-option-row">
+                  <input type="checkbox" name="drill_q_${q.id}" value="${escapeHtml(opt.id)}">
+                  <span><b>(${escapeHtml(opt.id)})</b> ${escapeHtml(opt.text)}</span>
+                </label>
+              `).join('')}
+            </div>
+          `;
+        } else if (q.type === 'text_input') {
+          inputHtml = `
+            <input type="text" class="drill-input-field" id="drill_input_${q.id}" placeholder="${escapeHtml(q.placeholder || 'Type your answer...')}" autocomplete="off" required>
+          `;
+        }
+
+        return `
+          <div class="drill-question-card">
+            <div class="drill-question-header">
+              <span class="drill-qnum-badge">Question ${idx + 1} of ${(drill.questions || []).length}</span>
+              <button type="button" class="drill-btn-hint" onclick="requestDrillAiHint('${escapeHtml(q.id)}')">
+                <span>💡</span> Ask Examiner Hint
+              </button>
+            </div>
+            <div style="font-size:0.86rem; color:var(--heading-color); font-weight:700; line-height:1.45;">
+              ${escapeHtml(q.prompt)}
+            </div>
+            ${inputHtml}
+            <div class="drill-hint-callout" id="drillHint_${escapeHtml(q.id)}"></div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 4. Timer Setup
+    const timerBadge = document.getElementById('drillTimerBadge');
+    if (timerBadge) timerBadge.style.color = '#EF4444';
+
+    _activeDrillTimer = setInterval(() => {
+      if (!_activeDrillData) return;
+      _activeDrillData.timeLeft--;
+      const min = Math.floor(Math.max(0, _activeDrillData.timeLeft) / 60);
+      const sec = Math.max(0, _activeDrillData.timeLeft) % 60;
+      if (timerDisplay) {
+        timerDisplay.textContent = `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+      }
+      if (_activeDrillData.timeLeft <= 0) {
+        clearInterval(_activeDrillTimer);
+        _activeDrillTimer = null;
+        submitRemediationDrill();
+      }
+    }, 1000);
+
+    // 5. Open Modal
+    const activeStage = document.getElementById('drillActiveStage');
+    const resultStage = document.getElementById('drillResultStage');
+    if (activeStage) activeStage.style.display = 'block';
+    if (resultStage) resultStage.style.display = 'none';
+    modal.style.display = 'block';
+  }
+  window.launchRemediationDrill = launchRemediationDrill;
+
+  function closeRemediationDrill() {
+    if (_activeDrillTimer) {
+      clearInterval(_activeDrillTimer);
+      _activeDrillTimer = null;
+    }
+    const modal = document.getElementById('remediationDrillModal');
+    if (modal) modal.style.display = 'none';
+  }
+  window.closeRemediationDrill = closeRemediationDrill;
+
+  async function requestDrillAiHint(questionId) {
+    if (!_activeDrillData) return;
+    const hintBox = document.getElementById(`drillHint_${questionId}`);
+    if (!hintBox) return;
+
+    if (hintBox.style.display === 'block') {
+      hintBox.style.display = 'none';
+      return;
+    }
+
+    hintBox.style.display = 'block';
+    hintBox.innerHTML = `<span>⏳ <i>Consulting KNEC Socratic Examiner Coach...</i></span>`;
+
+    try {
+      const resp = await fetch('/api/feedback/drill-hint', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          competencyCode: _activeDrillData.code,
+          drillId: _activeDrillData.drill.id,
+          questionId,
+          studentContext: 'Student clicked for a guiding hint.'
+        })
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data.hint) {
+          hintBox.innerHTML = `<span>👨‍🏫 <b>Examiner Socratic Hint:</b> ${escapeHtml(data.hint)}</span>`;
+          return;
+        }
+      }
+    } catch (e) {
+      // Use offline pedagogical fallback
+    }
+
+    const q = (_activeDrillData.drill.questions || []).find(item => item.id === questionId);
+    const fallbackHint = q ? (q.explanation || _activeDrillData.drill.examinerRule) : _activeDrillData.drill.examinerRule;
+    hintBox.innerHTML = `<span>👨‍🏫 <b>Examiner Rule Pointer:</b> ${escapeHtml(fallbackHint)}</span>`;
+  }
+  window.requestDrillAiHint = requestDrillAiHint;
+
+  async function submitRemediationDrill() {
+    if (!_activeDrillData) return;
+    if (_activeDrillTimer) {
+      clearInterval(_activeDrillTimer);
+      _activeDrillTimer = null;
+    }
+
+    const { code, drill } = _activeDrillData;
+    const answers = {};
+
+    (drill.questions || []).forEach(q => {
+      if (q.type === 'single_choice') {
+        const checked = document.querySelector(`input[name="drill_q_${q.id}"]:checked`);
+        answers[q.id] = checked ? checked.value : '';
+      } else if (q.type === 'multi_select') {
+        const checkedList = Array.from(document.querySelectorAll(`input[name="drill_q_${q.id}"]:checked`)).map(el => el.value);
+        answers[q.id] = checkedList;
+      } else if (q.type === 'text_input') {
+        const input = document.getElementById(`drill_input_${q.id}`);
+        answers[q.id] = input ? input.value : '';
+      }
+    });
+
+    let evalResult = null;
+
+    // Try server grading endpoint
+    try {
+      const resp = await fetch('/api/feedback/grade-drill', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          competencyCode: code,
+          drillId: drill.id,
+          answers
+        })
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data.evaluation) evalResult = data.evaluation;
+      }
+    } catch (e) {
+      // Offline fallback
+    }
+
+    if (!evalResult && window.KnecRemediation && typeof window.KnecRemediation.gradeDrill === 'function') {
+      evalResult = window.KnecRemediation.gradeDrill(code, drill.id, answers);
+    }
+
+    if (!evalResult) {
+      alert('Unable to evaluate drill. Please try again.');
+      return;
+    }
+
+    _lastDrillEvaluation = evalResult;
+
+    // Switch to Result View
+    const activeStage = document.getElementById('drillActiveStage');
+    const resultStage = document.getElementById('drillResultStage');
+    if (activeStage) activeStage.style.display = 'none';
+    if (resultStage) resultStage.style.display = 'block';
+
+    const trophyEl = document.getElementById('drillResultTrophy');
+    const statusEl = document.getElementById('drillResultStatus');
+    const summaryEl = document.getElementById('drillResultSummary');
+    const scoreEl = document.getElementById('drillResultScore');
+    const boostEl = document.getElementById('drillResultBoost');
+    const breakdownEl = document.getElementById('drillResultBreakdown');
+
+    if (trophyEl) trophyEl.textContent = evalResult.isMastery ? '🏆' : (evalResult.percentage >= 50 ? '🎯' : '📚');
+    if (statusEl) statusEl.textContent = evalResult.status || 'Evaluation Complete';
+    if (summaryEl) summaryEl.textContent = evalResult.chiefExaminerAdvice || '';
+    if (scoreEl) scoreEl.textContent = `${evalResult.totalScore} / ${evalResult.maxScore} (${evalResult.percentage}%)`;
+    if (boostEl) boostEl.textContent = `+${evalResult.competencyBoost}% Boost`;
+
+    if (breakdownEl && evalResult.itemizedReview) {
+      breakdownEl.innerHTML = evalResult.itemizedReview.map((item, idx) => `
+        <div class="drill-breakdown-item ${item.isCorrect ? 'correct' : 'incorrect'}">
+          <div style="font-weight:700; color:var(--heading-color); margin-bottom:2px;">
+            ${item.isCorrect ? '✔' : '✖'} Question ${idx + 1}: ${escapeHtml(item.prompt)}
+          </div>
+          <div style="color:var(--text-muted); font-size:0.78rem;">
+            Candidate Answer: <b>${escapeHtml(Array.isArray(item.studentAnswer) ? item.studentAnswer.join(', ') : (item.studentAnswer || '(none)'))}</b>
+          </div>
+          <div style="color:var(--text-main); margin-top:4px;">
+            ${escapeHtml(item.feedback)}
+          </div>
+        </div>
+      `).join('');
+    }
+  }
+  window.submitRemediationDrill = submitRemediationDrill;
+
+  function applyCompetencyBoost() {
+    if (!_lastDrillEvaluation || !_activeDrillData) {
+      closeRemediationDrill();
+      return;
+    }
+
+    const { competencyCode, competencyBoost } = _lastDrillEvaluation;
+
+    if (window._lastExamEvalData && window._lastExamEvalData.competencyMetrics) {
+      const cm = window._lastExamEvalData.competencyMetrics;
+      const codeKeyMap = {
+        'AC/FA': { key: 'accuracy', idx: 0 },
+        'D': { key: 'decimals', idx: 1 },
+        'PA': { key: 'averaging', idx: 2 },
+        'INORG': { key: 'inorganic', idx: 3 },
+        'ORG': { key: 'organic', idx: 4 }
+      };
+
+      const mapping = codeKeyMap[competencyCode];
+      if (mapping && cm.metrics && cm.metrics[mapping.key]) {
+        const metric = cm.metrics[mapping.key];
+        const prev = Number(metric.candidate) || 0;
+        const updated = Math.min(100, prev + competencyBoost);
+        metric.candidate = updated;
+        if (updated >= 80) metric.status = 'Mastery';
+        else if (updated >= 50) metric.status = 'Competent';
+
+        if (Array.isArray(cm.candidateScores) && cm.candidateScores.length > mapping.idx) {
+          cm.candidateScores[mapping.idx] = updated;
+        }
+
+        if (Array.isArray(cm.candidateScores)) {
+          const sum = cm.candidateScores.reduce((a, b) => a + b, 0);
+          cm.overallIndex = Math.round(sum / cm.candidateScores.length);
+          if (cm.cohortIndex) cm.delta = cm.overallIndex - cm.cohortIndex;
+        }
+
+        renderCompetencyRadar(cm);
+      }
+    }
+
+    closeRemediationDrill();
+
+    // Scroll to radar chart for immediate feedback
+    const radarCard = document.getElementById('reportPaneRadar');
+    if (radarCard) {
+      radarCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+  window.applyCompetencyBoost = applyCompetencyBoost;
+
 
   function nextQTab() {
     const totalTabs = Math.max(3, (window._examQuestionsList || []).length);

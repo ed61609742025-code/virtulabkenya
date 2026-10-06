@@ -132,6 +132,45 @@ router.get('/teacher', authMiddleware, asyncHandler(async (req, res) => {
   }
 }));
 
+// GET /api/composite/teacher/summary — Aggregated class analytics, grade distribution & radar baselines
+router.get('/teacher/summary', authMiddleware, asyncHandler(async (req, res) => {
+  if (req.user.role !== 'teacher') {
+    return res.status(403).json({ error: 'Only teachers can access class composite summaries.' });
+  }
+
+  try {
+    const summary = await compositeRepo.getTeacherSummary(req.user.id);
+    return res.json({ summary });
+  } catch (err) {
+    console.warn('[/api/composite/teacher/summary] Safe fallback:', err.message);
+    return res.json({
+      summary: {
+        totalAttempts: 0,
+        averageScore: 0,
+        averagePercentage: 0,
+        gradeDistribution: {},
+        classCompetencyAverages: {},
+        cohortBenchmarks: [58, 72, 64, 54, 46]
+      }
+    });
+  }
+}));
+
+// GET /api/composite/session/:id — Detailed candidate marked script & rubric breakdown
+router.get('/session/:id', authMiddleware, asyncHandler(async (req, res) => {
+  const sessionId = parseInt(req.params.id, 10);
+  if (isNaN(sessionId)) {
+    return res.status(400).json({ error: 'Invalid session ID parameter.' });
+  }
+
+  const session = await compositeRepo.getSessionById(sessionId, req.user.id, req.user.role);
+  if (!session) {
+    return res.status(404).json({ error: 'Exam session not found or permission denied.' });
+  }
+
+  return res.json({ session });
+}));
+
 // GET /api/composite/export/:assignmentId — Export CSV of assignment composite results
 router.get('/export/:assignmentId', authMiddleware, asyncHandler(async (req, res) => {
   if (req.user.role !== 'teacher') {

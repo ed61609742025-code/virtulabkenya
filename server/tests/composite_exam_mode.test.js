@@ -448,4 +448,60 @@ describe('VirtuLab Kenya — Paper 3 Composite Practical Exam Mode (40.0 Marks)'
       assert.ok(uiCode.includes("paneRadar.style.display = tab === 'radar'"), 'switchReportTab must toggle radar pane display');
     });
   });
+
+  // ── 10. Teacher Composite Mock Exam Manager & Candidate Script Review ─
+  describe('10. Teacher Composite Mock Exam Manager & Candidate Script Review', () => {
+    it('should compute aggregated class analytics and 12-point grade distribution in compositeRepo', async () => {
+      const compositeRepo = require('../repositories/compositeRepo');
+      assert.strictEqual(typeof compositeRepo.getTeacherSummary, 'function', 'compositeRepo must export getTeacherSummary');
+      assert.strictEqual(typeof compositeRepo.getSessionById, 'function', 'compositeRepo must export getSessionById');
+
+      // Test safe summary structure with no or unseeded teacher
+      const summary = await compositeRepo.getTeacherSummary(99999);
+      assert.ok(summary);
+      assert.strictEqual(typeof summary.totalAttempts, 'number');
+      assert.strictEqual(typeof summary.averageScore, 'number');
+      assert.strictEqual(typeof summary.averagePercentage, 'number');
+      assert.ok(summary.gradeDistribution);
+      assert.ok(summary.classCompetencyAverages);
+      assert.deepStrictEqual(summary.cohortBenchmarks, [58, 72, 64, 54, 46]);
+    });
+
+    it('should verify teacher dashboard HTML contains composite KPI grid, charts, and review modal', () => {
+      const dashPath = path.join(rootDir, 'client', 'teacher', 'dashboard.html');
+      const dashHtml = fs.readFileSync(dashPath, 'utf8');
+
+      // Check paneComposite structure
+      assert.ok(dashHtml.includes('id="paneComposite"'), 'Must have paneComposite tab pane');
+      assert.ok(dashHtml.includes('id="compositeKpiGrid"'), 'Must have compositeKpiGrid KPI strip');
+      assert.ok(dashHtml.includes('id="teacherCompositeGradeChart"'), 'Must have teacherCompositeGradeChart canvas');
+      assert.ok(dashHtml.includes('id="teacherCompositeRadarChart"'), 'Must have teacherCompositeRadarChart canvas');
+      assert.ok(dashHtml.includes('id="teacherCompSearchInput"'), 'Must have teacherCompSearchInput');
+      assert.ok(dashHtml.includes('id="teacherCompGradeFilter"'), 'Must have teacherCompGradeFilter');
+      assert.ok(dashHtml.includes('id="teacherCompSeriesFilter"'), 'Must have teacherCompSeriesFilter');
+      assert.ok(dashHtml.includes('id="compositeSessionsBox"'), 'Must have compositeSessionsBox');
+
+      // Check script review modal
+      assert.ok(dashHtml.includes('id="teacherScriptModal"'), 'Must have teacherScriptModal review dialog');
+      assert.ok(dashHtml.includes('id="scriptModalStudentName"'), 'Must have scriptModalStudentName');
+      assert.ok(dashHtml.includes('id="scriptModalContent"'), 'Must have scriptModalContent');
+
+      // Check script loader and tab switch handler
+      assert.ok(dashHtml.includes('teacher-composite-exams.js'), 'Must load teacher-composite-exams.js');
+      assert.ok(dashHtml.includes("tabId === 'paneComposite'"), 'Must trigger loadTeacherCompositeSessions on tab switch');
+    });
+
+    it('should verify teacher-composite-exams.js exports required dashboard handlers and CSV export', () => {
+      const scriptPath = path.join(rootDir, 'client', 'teacher', 'js', 'teacher-composite-exams.js');
+      assert.ok(fs.existsSync(scriptPath), 'teacher-composite-exams.js must exist');
+      const scriptCode = fs.readFileSync(scriptPath, 'utf8');
+
+      assert.ok(scriptCode.includes('window.loadTeacherCompositeSessions = loadTeacherCompositeSessions'));
+      assert.ok(scriptCode.includes('window.filterTeacherCompositeSessions = filterTeacherCompositeSessions'));
+      assert.ok(scriptCode.includes('window.reviewTeacherScript = reviewTeacherScript'));
+      assert.ok(scriptCode.includes('window.printTeacherScript = printTeacherScript'));
+      assert.ok(scriptCode.includes('window.exportTeacherCompositeCsv = exportTeacherCompositeCsv'));
+      assert.ok(scriptCode.includes('modalCandidateRadarChart'), 'Script review modal must support candidate radar chart');
+    });
+  });
 });

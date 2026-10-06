@@ -1085,9 +1085,12 @@
     </div>
 
     <!-- Tab Controls inside Chief Examiner Report -->
-    <div style="display:flex; gap:8px; margin-bottom:14px; border-bottom:1px solid var(--card-border); padding-bottom:10px;">
+    <div style="display:flex; gap:8px; margin-bottom:14px; border-bottom:1px solid var(--card-border); padding-bottom:10px; flex-wrap:wrap;">
       <button class="examiner-tab-btn active" id="btnReportRubric" onclick="switchReportTab('rubric')">
         📋 Official KNEC Rubric &amp; Critique
+      </button>
+      <button class="examiner-tab-btn" id="btnReportRadar" onclick="switchReportTab('radar')">
+        📊 Chief Examiner Competency Radar
       </button>
       <button class="examiner-tab-btn" id="btnReportWorked" onclick="switchReportTab('worked')">
         📐 Mathematical Model Worked Solutions
@@ -1110,7 +1113,48 @@
       </div>
     </div>
 
-    <!-- Container 2: Step-by-Step Worked Mathematical Calculations -->
+    <!-- Container 2: Multi-Axis Competency Radar & Benchmark Diagnostics -->
+    <div id="reportPaneRadar" style="display:none; margin-bottom:20px;">
+      <div class="radar-diagnostic-card">
+        <div class="radar-diagnostic-header">
+          <div>
+            <div style="font-weight:800; font-size:0.95rem; color:var(--heading-color); display:flex; align-items:center; gap:6px;">
+              <span>📊</span> Chief Examiner 5-Axis Practical Competency Radar
+            </div>
+            <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">
+              Direct comparison of candidate mastery against the KNEC National Mock Cohort Baseline (2024–2026 Standardization Index)
+            </div>
+          </div>
+          <div class="competency-index-box">
+            <span class="index-title">Competency Index</span>
+            <span class="index-score" id="radarOverallIndex">—</span>
+            <span class="index-delta" id="radarCohortDelta">—</span>
+          </div>
+        </div>
+
+        <!-- Radar Canvas Presentation -->
+        <div class="radar-chart-stage">
+          <div class="radar-canvas-container">
+            <canvas id="knecCompetencyRadarChart" aria-label="KNEC Practical Competency Radar Chart" role="img"></canvas>
+          </div>
+          <div class="radar-legend-strip">
+            <div class="legend-badge candidate-badge">
+              <span class="badge-dot"></span> Candidate Practical Mastery (%)
+            </div>
+            <div class="legend-badge benchmark-badge">
+              <span class="badge-dot"></span> KNEC National Cohort Baseline (%)
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Axis Detailed Competency Diagnostic Cards -->
+        <div class="competency-cards-grid" id="competencyCardsGrid">
+          <!-- Populated dynamically via composite-exam-ui.js -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Container 3: Step-by-Step Worked Mathematical Calculations -->
     <div id="reportPaneWorked" style="display:none; margin-bottom:20px; background:var(--bg-dark); border:1px solid var(--card-border); border-radius:10px; padding:16px;">
       <div style="font-weight:800; font-size:0.9rem; color:var(--cyan-accent); margin-bottom:12px; display:flex; align-items:center; gap:6px;">
         <span>📐</span> Official KNEC Question 1 Worked Calculations &amp; Stoichiometric Models:
@@ -1231,6 +1275,7 @@
 <script src="/shared/organic-bench-core.js"></script>
 <script src="/shared/knec-graph-plotter.js"></script>
 <script src="/shared/knec-pedagogy.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha384-bs/nf9FbdNouRbMiFcrcZfLXYPKiPaGVGplVbv7dLGECccEXDW+S3zjqSKR5ZEaD sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
 <script src="js/composite-engine.js?v=120"></script>
 <script src="js/exam-offline-manager.js?v=120"></script>
 <script src="js/composite-exam-ui.js?v=120"></script>

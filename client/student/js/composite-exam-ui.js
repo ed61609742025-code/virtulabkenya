@@ -2874,24 +2874,226 @@ requireStudentLogin();
     saveExamDraft();
   }
 
+  let knecRadarChartInstance = null;
+
   function switchReportTab(tab) {
     const paneRubric = document.getElementById('reportPaneRubric');
+    const paneRadar = document.getElementById('reportPaneRadar');
     const paneWorked = document.getElementById('reportPaneWorked');
     const btnRubric = document.getElementById('btnReportRubric');
+    const btnRadar = document.getElementById('btnReportRadar');
     const btnWorked = document.getElementById('btnReportWorked');
 
-    if (tab === 'rubric') {
-      if (paneRubric) paneRubric.style.display = 'block';
-      if (paneWorked) paneWorked.style.display = 'none';
-      if (btnRubric) btnRubric.className = 'examiner-tab-btn active';
-      if (btnWorked) btnWorked.className = 'examiner-tab-btn';
-    } else if (tab === 'worked') {
-      if (paneRubric) paneRubric.style.display = 'none';
-      if (paneWorked) paneWorked.style.display = 'block';
-      if (btnRubric) btnRubric.className = 'examiner-tab-btn';
-      if (btnWorked) btnWorked.className = 'examiner-tab-btn active';
+    if (paneRubric) paneRubric.style.display = tab === 'rubric' ? 'block' : 'none';
+    if (paneRadar) paneRadar.style.display = tab === 'radar' ? 'block' : 'none';
+    if (paneWorked) paneWorked.style.display = tab === 'worked' ? 'block' : 'none';
+
+    if (btnRubric) btnRubric.className = tab === 'rubric' ? 'examiner-tab-btn active' : 'examiner-tab-btn';
+    if (btnRadar) btnRadar.className = tab === 'radar' ? 'examiner-tab-btn active' : 'examiner-tab-btn';
+    if (btnWorked) btnWorked.className = tab === 'worked' ? 'examiner-tab-btn active' : 'examiner-tab-btn';
+
+    if (tab === 'radar') {
+      if (knecRadarChartInstance) {
+        knecRadarChartInstance.resize();
+      } else if (window._lastExamEvalData && window._lastExamEvalData.competencyMetrics) {
+        renderCompetencyRadar(window._lastExamEvalData.competencyMetrics);
+      }
     }
   }
+  window.switchReportTab = switchReportTab;
+
+  function renderCompetencyRadar(competencyData) {
+    if (!competencyData) return;
+
+    // 1. Overall Index & Delta Display
+    const idxEl = document.getElementById('radarOverallIndex');
+    if (idxEl) idxEl.textContent = `${competencyData.overallIndex}%`;
+    const deltaEl = document.getElementById('radarCohortDelta');
+    if (deltaEl) {
+      const delta = competencyData.delta != null ? competencyData.delta : (competencyData.overallIndex - competencyData.cohortIndex);
+      const isPositive = delta >= 0;
+      deltaEl.textContent = `${isPositive ? '+' : ''}${delta}% vs National Cohort Baseline (${competencyData.cohortIndex}%)`;
+      deltaEl.className = `index-delta ${isPositive ? 'positive' : 'negative'}`;
+    }
+
+    // 2. Render Competency Metric Cards Grid
+    const cardsGrid = document.getElementById('competencyCardsGrid');
+    if (cardsGrid && competencyData.metrics) {
+      const metricsList = Object.values(competencyData.metrics);
+      const iconMap = {
+        'AC/FA': '🎯',
+        'D': '📏',
+        'PA': '⚖️',
+        'INORG': '🧂',
+        'ORG': '🧫'
+      };
+      cardsGrid.innerHTML = metricsList.map(m => {
+        const icon = iconMap[m.code] || '🔬';
+        const isMastery = m.status === 'Mastery';
+        const isCompetent = m.status === 'Competent';
+        const badgeClass = isMastery ? 'badge-mastery' : (isCompetent ? 'badge-competent' : 'badge-review');
+        return `
+          <div class="competency-card">
+            <div class="competency-card-header">
+              <div class="competency-card-title">
+                <span class="competency-card-icon">${icon}</span>
+                <div>
+                  <div class="competency-name">${escapeHtml(m.label)}</div>
+                  <div class="competency-score-text">${Number(m.earned).toFixed(1)} / ${Number(m.max).toFixed(1)} Marks (${m.candidate}%)</div>
+                </div>
+              </div>
+              <span class="competency-status-badge ${badgeClass}">${m.status}</span>
+            </div>
+
+            <!-- Visual Bar Comparison -->
+            <div class="competency-comparison-bar-wrap">
+              <div class="bar-labels">
+                <span>Candidate: <b>${m.candidate}%</b></span>
+                <span>Cohort Baseline: <b>${m.cohort}%</b></span>
+              </div>
+              <div class="comparison-track">
+                <div class="comparison-fill candidate-fill" style="width:${Math.max(4, Math.min(100, m.candidate))}%;"></div>
+                <div class="cohort-benchmark-marker" style="left:${Math.min(100, m.cohort)}%;" title="KNEC Cohort Baseline: ${m.cohort}%"></div>
+              </div>
+            </div>
+
+            <!-- Chief Examiner Targeted Pointer -->
+            <div class="competency-card-feedback">
+              <span class="feedback-icon">👨‍🏫</span>
+              <span>${escapeHtml(m.feedback)}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 3. Render Chart.js Radar Chart
+    const canvas = document.getElementById('knecCompetencyRadarChart');
+    if (!canvas) return;
+
+    if (typeof Chart === 'undefined') {
+      console.warn('Chart.js not yet loaded for Competency Radar.');
+      return;
+    }
+
+    if (knecRadarChartInstance) {
+      knecRadarChartInstance.destroy();
+      knecRadarChartInstance = null;
+    }
+
+    const labels = competencyData.labels || [
+      'Accuracy (AC/FA)',
+      'Decimals (D)',
+      'Averaging (PA)',
+      'Inorganic Tests',
+      'Organic Deductions'
+    ];
+    const candidateScores = competencyData.candidateScores || [0, 0, 0, 0, 0];
+    const cohortScores = competencyData.cohortBenchmarks || [58, 72, 64, 54, 46];
+
+    const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+    const gridColor = isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.10)';
+    const angleLineColor = isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.10)';
+    const pointLabelColor = isDark ? '#E2E8F0' : '#1E293B';
+    const tickColor = isDark ? 'rgba(255, 255, 255, 0.55)' : 'rgba(0, 0, 0, 0.55)';
+
+    const ctx = canvas.getContext('2d');
+    knecRadarChartInstance = new Chart(ctx, {
+      type: 'radar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Candidate Mastery (%)',
+            data: candidateScores,
+            backgroundColor: 'rgba(56, 189, 248, 0.25)',
+            borderColor: '#0284C7',
+            pointBackgroundColor: '#38BDF8',
+            pointBorderColor: '#FFFFFF',
+            pointHoverBackgroundColor: '#FFFFFF',
+            pointHoverBorderColor: '#0284C7',
+            pointRadius: 5,
+            pointHoverRadius: 7,
+            borderWidth: 2.5
+          },
+          {
+            label: 'KNEC National Cohort Baseline (%)',
+            data: cohortScores,
+            backgroundColor: 'rgba(245, 158, 11, 0.10)',
+            borderColor: '#F59E0B',
+            borderDash: [5, 5],
+            pointBackgroundColor: '#F59E0B',
+            pointBorderColor: '#FFFFFF',
+            pointHoverBackgroundColor: '#FFFFFF',
+            pointHoverBorderColor: '#F59E0B',
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            borderWidth: 2
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: {
+          duration: 750,
+          easing: 'easeOutQuart'
+        },
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            backgroundColor: 'rgba(15, 23, 42, 0.95)',
+            titleColor: '#F8FAFC',
+            bodyColor: '#E2E8F0',
+            borderColor: 'rgba(255, 255, 255, 0.15)',
+            borderWidth: 1,
+            padding: 10,
+            cornerRadius: 8,
+            callbacks: {
+              label: function(context) {
+                return ` ${context.dataset.label}: ${context.raw}%`;
+              }
+            }
+          }
+        },
+        scales: {
+          r: {
+            min: 0,
+            max: 100,
+            beginAtZero: true,
+            ticks: {
+              stepSize: 20,
+              display: true,
+              color: tickColor,
+              backdropColor: 'transparent',
+              font: {
+                family: "'JetBrains Mono', monospace",
+                size: 9
+              }
+            },
+            grid: {
+              color: gridColor
+            },
+            angleLines: {
+              color: angleLineColor
+            },
+            pointLabels: {
+              color: pointLabelColor,
+              font: {
+                family: "'Plus Jakarta Sans', sans-serif",
+                size: 11,
+                weight: '700'
+              }
+            }
+          }
+        }
+      }
+    });
+    window._knecRadarChartInstance = knecRadarChartInstance;
+  }
+  window.renderCompetencyRadar = renderCompetencyRadar;
 
   function nextQTab() {
     const totalTabs = Math.max(3, (window._examQuestionsList || []).length);
@@ -3130,6 +3332,11 @@ requireStudentLogin();
           <div style="font-size:0.82rem; color:var(--text-main); font-family:var(--font-mono); margin-top:4px;">${s.workingHtml || ''}</div>
         </div>
       `).join('');
+    }
+
+    window._lastExamEvalData = evalData;
+    if (evalData.competencyMetrics) {
+      renderCompetencyRadar(evalData.competencyMetrics);
     }
 
     const modalEl = document.getElementById('compositeResultModal');

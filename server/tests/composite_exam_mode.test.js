@@ -360,4 +360,92 @@ describe('VirtuLab Kenya — Paper 3 Composite Practical Exam Mode (40.0 Marks)'
       assert.ok(hubHtml.includes('/student/composite_exam.html?series='));
     });
   });
+
+  // ── 9. Chief Examiner Competency Radar & Multi-Axis Analytics ─────
+  describe('9. Chief Examiner Competency Radar & Multi-Axis Analytics', () => {
+    it('should compute 5-axis competency metrics with accurate cohort benchmarks and status badges', () => {
+      const engine = new CompositeExamEngine({ presetKey: 'series_1' });
+      // Record ideal trials (25.00 cm³ = exact true titre)
+      engine.recordTrial(1, 25.00, 0.00);
+      engine.recordTrial(2, 25.00, 0.00);
+      engine.recordTrial(3, 25.00, 0.00);
+      engine.setConcordant(1, true);
+      engine.setConcordant(2, true);
+      engine.setConcordant(3, true);
+
+      // Supply correct calculations
+      engine.setQ1Answer('avgTitre', '25.00');
+      engine.setQ1Answer('molesA', '0.00250');
+      engine.setQ1Answer('molesB', '0.00250');
+      engine.setQ1Answer('molarityB', '0.100');
+      engine.setQ1Answer('concGrams', '4.00');
+
+      // Supply Q2 responses
+      engine.setQ2Deduction('Pb2+', 'NO3-');
+      // Supply Q3 responses
+      engine.setQ3OrganicDeduction('Alkene (>C=C<)');
+
+      const evalData = engine.evaluateExam();
+      assert.ok(evalData.competencyMetrics, 'evalData must include competencyMetrics');
+
+      const cm = evalData.competencyMetrics;
+      assert.strictEqual(cm.labels.length, 5, 'Must contain 5 competency labels');
+      assert.deepStrictEqual(cm.labels, [
+        'Accuracy (AC/FA)',
+        'Decimals (D)',
+        'Averaging (PA)',
+        'Inorganic Tests',
+        'Organic Deductions'
+      ]);
+
+      assert.strictEqual(cm.cohortBenchmarks.length, 5);
+      assert.deepStrictEqual(cm.cohortBenchmarks, [58, 72, 64, 54, 46]);
+      assert.strictEqual(cm.cohortIndex, 59);
+
+      // Check candidate titrimetric mastery
+      assert.strictEqual(cm.metrics.accuracy.candidate, 100);
+      assert.strictEqual(cm.metrics.accuracy.status, 'Mastery');
+      assert.strictEqual(cm.metrics.decimals.candidate, 100);
+      assert.strictEqual(cm.metrics.decimals.status, 'Mastery');
+      assert.strictEqual(cm.metrics.averaging.candidate, 100);
+      assert.strictEqual(cm.metrics.averaging.status, 'Mastery');
+      assert.ok(cm.overallIndex >= 0 && cm.overallIndex <= 100);
+    });
+
+    it('should include competency metrics inside the submitted exam payload', () => {
+      const engine = new CompositeExamEngine({ presetKey: 'series_1' });
+      const payload = engine.buildSubmissionPayload(105);
+      assert.ok(payload.details.competencyMetrics, 'Payload details must include competencyMetrics');
+      assert.ok(Array.isArray(payload.details.competencyMetrics.candidateScores));
+      assert.strictEqual(payload.details.competencyMetrics.candidateScores.length, 5);
+    });
+
+    it('should verify HTML markup contains radar tab button, canvas container, and competency cards', () => {
+      const htmlPath = path.join(rootDir, 'client', 'student', 'composite_exam.html');
+      const html = fs.readFileSync(htmlPath, 'utf8');
+
+      // Tab button and pane
+      assert.ok(html.includes('id="btnReportRadar"'), 'Must contain btnReportRadar button');
+      assert.ok(html.includes("switchReportTab('radar')"), 'Must wire switchReportTab to radar tab');
+      assert.ok(html.includes('id="reportPaneRadar"'), 'Must contain reportPaneRadar container');
+
+      // Canvas and cards
+      assert.ok(html.includes('id="knecCompetencyRadarChart"'), 'Must contain knecCompetencyRadarChart canvas');
+      assert.ok(html.includes('id="radarOverallIndex"'), 'Must contain radarOverallIndex element');
+      assert.ok(html.includes('id="competencyCardsGrid"'), 'Must contain competencyCardsGrid container');
+
+      // Chart.js script tag
+      assert.ok(html.includes('chart.umd.min.js'), 'Must load Chart.js');
+      assert.ok(html.includes('sha384-bs/nf9FbdNouRbMiFcrcZfLXYPKiPaGVGplVbv7dLGECccEXDW+S3zjqSKR5ZEaD'), 'Must preserve Chart.js SRI');
+    });
+
+    it('should verify UI controller exports renderCompetencyRadar and handles radar tab switching', () => {
+      const uiPath = path.join(rootDir, 'client', 'student', 'js', 'composite-exam-ui.js');
+      const uiCode = fs.readFileSync(uiPath, 'utf8');
+
+      assert.ok(uiCode.includes('function renderCompetencyRadar'), 'UI controller must declare renderCompetencyRadar');
+      assert.ok(uiCode.includes('knecRadarChartInstance'), 'UI controller must manage radar chart instance lifecycle');
+      assert.ok(uiCode.includes("paneRadar.style.display = tab === 'radar'"), 'switchReportTab must toggle radar pane display');
+    });
+  });
 });

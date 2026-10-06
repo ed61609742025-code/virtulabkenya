@@ -1,0 +1,19 @@
+name = "virtulabkenya-edge"
+main = "worker.js"
+compatibility_date = "2024-09-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Production environment for custom domain
+[env.production]
+name = "virtulabkenya-edge-prod"
+routes = [
+  { pattern = "virtulab.co.ke/*", zone_name = "virtulab.co.ke" },
+  { pattern = "www.virtulab.co.ke/*", zone_name = "virtulab.co.ke" }
+]
+
+# Upstream origin configuration (Render PaaS)
+[vars]
+ORIGIN_HOST = "virtulab-web.onrender.com"
+PRIMARY_POP = "NBO" # Nairobi, Kenya (KIXP)
+SECONDARY_POP = "MBA" # Mombasa, Kenya
+CACHE_STATIC_TTL_DAYS = 30

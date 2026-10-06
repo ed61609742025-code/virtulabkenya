@@ -5,6 +5,23 @@
 
 const rateLimit = require('express-rate-limit');
 
+/**
+ * Resolves genuine client IP with Cloudflare CDN & reverse-proxy priority.
+ * Evaluates CF-Connecting-IP -> True-Client-IP -> X-Forwarded-For -> req.ip.
+ *
+ * @param {import('express').Request} req
+ * @returns {string} Client IP address
+ */
+function getClientIp(req) {
+  const cfIp = req.headers['cf-connecting-ip'];
+  if (cfIp && typeof cfIp === 'string') return cfIp.trim();
+  const trueClientIp = req.headers['true-client-ip'];
+  if (trueClientIp && typeof trueClientIp === 'string') return trueClientIp.trim();
+  const forwarded = req.headers['x-forwarded-for'];
+  if (forwarded && typeof forwarded === 'string') return forwarded.split(',')[0].trim();
+  return req.ip || (req.socket && req.socket.remoteAddress) || '';
+}
+
 // Strict rate limiter for Auth endpoints (login, register, password change)
 // Limits each IP to 20 auth requests per 15 minutes window
 const authLimiter = process.env.NODE_ENV === 'test'
@@ -14,8 +31,9 @@ const authLimiter = process.env.NODE_ENV === 'test'
       max: parseInt(process.env.AUTH_RATE_LIMIT_MAX, 10) || 20,
       standardHeaders: true,
       legacyHeaders: false,
+      keyGenerator: (req) => getClientIp(req),
       skip: (req) => {
-        const ip = req.ip || (req.socket && req.socket.remoteAddress) || '';
+        const ip = getClientIp(req);
         return ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
       },
       message: { error: 'Too many authentication attempts from this IP. Please try again after 15 minutes.' }
@@ -31,8 +49,9 @@ const apiLimiter = process.env.NODE_ENV === 'test'
       max: 5000,
       standardHeaders: true,
       legacyHeaders: false,
+      keyGenerator: (req) => getClientIp(req),
       skip: (req) => {
-        const ip = req.ip || (req.socket && req.socket.remoteAddress) || '';
+        const ip = getClientIp(req);
         return ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
       },
       message: { error: 'Too many requests from this IP. Please slow down and try again later.' }
@@ -46,8 +65,9 @@ const clientErrorLimiter = process.env.NODE_ENV === 'test'
       max: 60,
       standardHeaders: true,
       legacyHeaders: false,
+      keyGenerator: (req) => getClientIp(req),
       skip: (req) => {
-        const ip = req.ip || (req.socket && req.socket.remoteAddress) || '';
+        const ip = getClientIp(req);
         return ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
       },
       message: { error: 'Too many error telemetry submissions from this IP. Please slow down.' }
@@ -62,14 +82,16 @@ const aiAssistantLimiter = process.env.NODE_ENV === 'test'
       max: 30,
       standardHeaders: true,
       legacyHeaders: false,
+      keyGenerator: (req) => getClientIp(req),
       skip: (req) => {
-        const ip = req.ip || (req.socket && req.socket.remoteAddress) || '';
+        const ip = getClientIp(req);
         return ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
       },
       message: { success: false, error: 'AI Assistant rate limit reached. Please wait a few minutes before submitting more requests.' }
     });
 
 module.exports = {
+  getClientIp,
   authLimiter,
   apiLimiter,
   clientErrorLimiter,

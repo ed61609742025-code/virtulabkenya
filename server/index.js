@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 3000;
 
 // ── Middleware ────────────────────────────────────────────────
 const { enforceHttps, securityHeaders } = require('./middleware/security');
-const { apiLimiter } = require('./middleware/rateLimiter');
+const { apiLimiter, getClientIp } = require('./middleware/rateLimiter');
 
 app.use(enforceHttps);
 app.use(securityHeaders);
@@ -135,8 +135,10 @@ app.use(express.static(path.join(__dirname, '../client'), {
       res.setHeader('Expires', '0');
     } else if (filePath.match(/\.(woff2?|ttf|eot|svg|png|jpe?g|gif|webp|ico)$/i)) {
       res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      res.setHeader('Cache-Tag', 'virtulab-static, virtulab-assets');
     } else {
       res.setHeader('Cache-Control', 'public, max-age=604800, stale-while-revalidate=86400');
+      res.setHeader('Cache-Tag', 'virtulab-static, virtulab-code');
     }
   }
 }));
@@ -181,6 +183,45 @@ app.get('/api/health', async (req, res) => {
     version: '1.0.0',
     message: 'Server is running. Welcome to VirtuLab Kenya.',
     timestamp: new Date().toISOString()
+  });
+});
+
+// ── Cloudflare Edge CDN & PoP Latency Diagnostics ────────────
+app.get('/api/edge/status', (req, res) => {
+  const cfRay = req.headers['cf-ray'] || null;
+  const cfCountry = req.headers['cf-ipcountry'] || null;
+  const cfConnectingIp = req.headers['cf-connecting-ip'] || null;
+  const clientIp = getClientIp(req);
+
+  // Extract Cloudflare Edge PoP 3-letter IATA airport code (e.g. NBO = Nairobi, MBA = Mombasa)
+  let edgePop = null;
+  if (cfRay && cfRay.includes('-')) {
+    edgePop = cfRay.split('-')[1].toUpperCase();
+  }
+
+  const isProxied = Boolean(cfRay || cfConnectingIp);
+  const isKenyaEdge = edgePop === 'NBO' || edgePop === 'MBA' || cfCountry === 'KE';
+
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.json({
+    success: true,
+    edge: {
+      isProxied,
+      edgePop,
+      popLocation: edgePop === 'NBO' ? 'Nairobi, Kenya (KIXP)' : (edgePop === 'MBA' ? 'Mombasa, Kenya' : (edgePop ? `${edgePop} Edge` : 'Direct Origin')),
+      country: cfCountry || 'Unknown',
+      isKenyaEdge,
+      clientIpMasked: clientIp ? clientIp.replace(/\.\d+$/, '.xxx') : 'unknown',
+      protocol: req.protocol,
+      httpVersion: req.httpVersion,
+      recommendedEdgeTtlDays: 30
+    },
+    origin: {
+      platform: 'Render PaaS',
+      region: process.env.RENDER_REGION || 'frankfurt',
+      status: 'operational',
+      timestamp: new Date().toISOString()
+    }
   });
 });
 

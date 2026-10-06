@@ -1,4 +1,17 @@
 requireStudentLogin();
+
+  // ── Universal Tactile Haptic Feedback Helper ──
+  function triggerHaptic(pattern = 15) {
+    if (typeof window !== 'undefined' && window.BrilliantUI && typeof window.BrilliantUI.vibrate === 'function') {
+      try { window.BrilliantUI.vibrate(pattern); } catch(e) {}
+      return;
+    }
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try { navigator.vibrate(pattern); } catch(e) {}
+    }
+  }
+  window.triggerHaptic = triggerHaptic;
+
   updateThemeButtons();
 
   function setTheme(theme) {
@@ -1490,7 +1503,7 @@ requireStudentLogin();
           </div>
 
           <div class="calc-input-row" style="flex-direction:column;gap:8px;width:100%;margin-top:auto;">
-            <input type="number" step="${q.step}" id="${inputId}" data-placeholder="${q.placeholder}" placeholder="${inputPlaceholder}" oninput="saveDraft()" ${isUnlocked ? '' : 'disabled'} aria-label="${cleanLabel}" style="width:100%; font-family:'JetBrains Mono', monospace; font-size:0.88rem; padding:10px 12px;">
+            <input type="number" step="${q.step}" id="${inputId}" data-placeholder="${q.placeholder}" placeholder="${inputPlaceholder}" oninput="saveDraft()" ${isUnlocked ? '' : 'disabled'} aria-label="${cleanLabel}" inputmode="decimal" autocomplete="off" autocorrect="off" spellcheck="false" style="width:100%; font-family:'JetBrains Mono', monospace; font-size:1rem; min-height:44px; padding:10px 12px; touch-action:manipulation;">
             <div class="calc-input-hint">${hintData.hint}</div>
             <button class="btn-cyan" id="${btnId}" onclick="checkQuestionStep(${idx})" style="width:100%;height:40px;font-weight:700;display:${isExamMode ? 'none' : 'block'};">${q.buttonLabel}</button>
           </div>
@@ -1502,6 +1515,7 @@ requireStudentLogin();
 
 
   function addIndicatorDrops() {
+    triggerHaptic(12);
     if (indicatorDropsCount >= 3) return;
 
     indicatorDropsCount++;
@@ -1572,6 +1586,7 @@ requireStudentLogin();
   }
 
   function resetBurette() {
+    triggerHaptic(20);
     if (transientColorTimeout) {
       clearTimeout(transientColorTimeout);
       transientColorTimeout = null;
@@ -2019,10 +2034,19 @@ requireStudentLogin();
         statusEl.innerHTML = `Delivered: <b>${currentVolume.toFixed(2)} cm³</b>. Keep adding titrant.`;
       }
     }
+    
+    // Haptic pulse when crossing exactly into permanent endpoint
+    if (diff >= 0.00 && diff < 0.40 && !window._lastEquivalenceVibrated) {
+      window._lastEquivalenceVibrated = true;
+      triggerHaptic([30, 40, 30]);
+    } else if (diff < 0.00) {
+      window._lastEquivalenceVibrated = false;
+    }
     updateTitrationCurve();
   }
 
   function recordTrial() {
+    triggerHaptic([25, 30, 40]);
     if (!indicatorAdded && !isSelfIndicatingExp(current)) return;
     trials.push(currentVolume);
     renderTrials();
@@ -2245,6 +2269,7 @@ requireStudentLogin();
   let transientColorTimeout = null;
 
   function swirlFlask() {
+    triggerHaptic([15, 20, 15]);
     playAudioTone('swirl');
     if (transientColorTimeout) {
       clearTimeout(transientColorTimeout);
@@ -2311,6 +2336,7 @@ requireStudentLogin();
   }
 
   function addHalfDrop() {
+    triggerHaptic(10);
     if (!indicatorAdded && !isSelfIndicatingExp(current)) return;
     animateStopcock();
     // Authentic KCSE Half-Drop: delivers 0.025 cm³ and touches inside neck wall
@@ -2332,6 +2358,7 @@ requireStudentLogin();
 
   function addVolume(amount) {
     if (!indicatorAdded && !isSelfIndicatingExp(current)) return;
+    triggerHaptic(amount >= 0.5 ? 20 : 12);
     animateStopcock();
     currentVolume = Math.min(MAX_BURETTE, Math.round((currentVolume + amount) * 1000) / 1000);
     updateRig();

@@ -1137,3 +1137,45 @@
 
 
 
+
+
+/* ── O. Practical Workbench Tactile Touch & Input Ergonomics ─ */
+@media (max-width: 768px) {
+  /* Enforce >= 44px touch targets across titration and bench controls */
+  .btn-tactile,
+  .btn-pill-action,
+  .btn-action-swirl,
+  .btn-action-record,
+  .btn-action-reset,
+  .btn-action-halfdrop,
+  .btn-perform-test,
+  .btn-redo-test,
+  .btn-probe-chip,
+  .suggestion-chip,
+  .parallax-btn,
+  .speed-btn-chip,
+  .rate-btn,
+  .sol-btn,
+  .sol-mini-btn {
+    min-height: 44px !important;
+    touch-action: manipulation !important;
+  }
+
+  /* Prevent involuntary auto-zoom on mobile keypad appearance (font-size >= 16px) */
+  .calc-input,
+  .wb-select,
+  .id-select,
+  .sol-select,
+  .results-table input,
+  .kcse-table input {
+    font-size: 16px !important;
+    min-height: 44px !important;
+    touch-action: manipulation !important;
+  }
+
+  /* Safe-area insets padding for notched devices */
+  .academic-top-header,
+  .top-navbar {
+    padding-top: max(8px, env(safe-area-inset-top, 0px)) !important;
+  }
+}

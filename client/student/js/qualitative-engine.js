@@ -2117,6 +2117,7 @@ if (typeof window !== 'undefined') {
      ACTIONS (Stepwise Perform & Redo)
   ══════════════════════════════════════ */
   window.redoTest = function(testKey) {
+    triggerQualHaptic(20);
     if (testStates[testKey]) {
       const prevObs = testStates[testKey].obsText || '';
       const prevInf = testStates[testKey].infText || '';
@@ -2144,6 +2145,7 @@ if (typeof window !== 'undefined') {
   };
 
   window.performTestStage = function(testKey, targetStage, probeOption = null) {
+    triggerQualHaptic(15);
     const salt = SALTS[currentSaltKey] || {};
     const test = TESTS.find(t => t.key === testKey);
     if (!testStates[testKey]) testStates[testKey] = {};
@@ -2822,6 +2824,7 @@ if (typeof window !== 'undefined') {
      SUBMIT IDENTIFICATION
   ══════════════════════════════════════ */
   async function submitIdentification() {
+    triggerQualHaptic([30, 40, 50]);
     if (sessionSaved) return;
     const cation = document.getElementById('cationSelect').value;
     const anion  = document.getElementById('anionSelect').value;

@@ -470,7 +470,7 @@
             <div class="bench-wing-helper" style="font-size:0.72rem; color:var(--text-secondary); line-height:1.45; background:var(--card-bg); border:1px solid var(--card-border); border-radius:6px; padding:6px 8px;">
               Add 1 to 3 drops to detect the sharp neutralization endpoint.
             </div>
-            <button class="btn-tactile btn-tactile-cyan btn-tactile-sm btn-cyan" id="addIndicatorBtn" onclick="addIndicatorDrops()" style="width:100%;font-weight:700;padding:8px 8px;font-size:0.78rem;line-height:1.3;" aria-label="Add drops of chemical indicator to conical flask">💧 Add Drop 1 of 3 (Phenolphthalein)</button>
+            <button class="btn-tactile btn-tactile-cyan btn-tactile-sm btn-cyan" id="addIndicatorBtn" onclick="addIndicatorDrops()" style="width:100%;font-weight:700;padding:10px 8px;font-size:0.78rem;line-height:1.3;min-height:44px;touch-action:manipulation;" aria-label="Add drops of chemical indicator to conical flask">💧 Add Drop 1 of 3 (Phenolphthalein)</button>
             <div id="indicatorMsg" style="font-size:0.74rem;"></div>
 
             <div style="border-top:1px dashed var(--card-border);margin:4px 0;"></div>
@@ -481,7 +481,7 @@
             <div class="bench-wing-helper" style="font-size:0.72rem; color:var(--text-secondary); line-height:1.45; background:var(--card-bg); border:1px solid var(--card-border); border-radius:6px; padding:6px 8px;">
               Swirl continuously during titration to verify if color persist.
             </div>
-            <button class="btn-tactile btn-tactile-surface btn-tactile-sm btn-action-swirl" onclick="swirlFlask()" style="width:100%;padding:8px 8px;font-size:0.78rem;font-weight:700;height:38px;" data-i18n="swirl_flask" title="Swirl conical flask to thoroughly mix delivered titrant and analyte" aria-label="Swirl conical flask">🌀 Swirl Flask</button>
+            <button class="btn-tactile btn-tactile-surface btn-tactile-sm btn-action-swirl" onclick="swirlFlask()" style="width:100%;padding:10px 8px;font-size:0.78rem;font-weight:700;min-height:44px;touch-action:manipulation;" data-i18n="swirl_flask" title="Swirl conical flask to thoroughly mix delivered titrant and analyte" aria-label="Swirl conical flask">🌀 Swirl Flask</button>
           </div>
 
           <!-- CENTER: Photorealistic Apparatus Rig + Precision Lens + Reagents Shelf -->
@@ -726,22 +726,22 @@
 
             <div id="titrationControls" class="is-locked" style="display:flex;flex-direction:column;gap:6px;">
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-                <button class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(1.0)" style="padding:8px 4px;font-size:0.78rem;font-weight:700;font-family:'JetBrains Mono',monospace;" title="Add 1.00 cm³ titrant (Coarse delivery)" aria-label="Add 1.00 cm³ titrant">+1 cm³</button>
-                <button class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(0.5)" style="padding:8px 4px;font-size:0.78rem;font-weight:700;font-family:'JetBrains Mono',monospace;" title="Add 0.50 cm³ titrant" aria-label="Add 0.50 cm³ titrant">+0.5 cm³</button>
+                <button class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(1.0)" style="padding:10px 4px;font-size:0.78rem;font-weight:700;font-family:'JetBrains Mono',monospace;min-height:44px;touch-action:manipulation;" title="Add 1.00 cm³ titrant (Coarse delivery)" aria-label="Add 1.00 cm³ titrant">+1 cm³</button>
+                <button class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(0.5)" style="padding:10px 4px;font-size:0.78rem;font-weight:700;font-family:'JetBrains Mono',monospace;min-height:44px;touch-action:manipulation;" title="Add 0.50 cm³ titrant" aria-label="Add 0.50 cm³ titrant">+0.5 cm³</button>
               </div>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-                <button class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(0.1)" style="padding:8px 4px;font-size:0.78rem;font-weight:700;font-family:'JetBrains Mono',monospace;" title="Add 0.10 cm³ titrant" aria-label="Add 0.10 cm³ titrant">+0.1 cm³</button>
-                <button class="btn-tactile btn-tactile-cyan btn-tactile-sm btn-pill-action" onclick="addVolume(0.05)" style="padding:8px 4px;font-size:0.78rem;font-weight:700;font-family:'JetBrains Mono',monospace;" title="Add single drop (0.05 cm³) for precision equivalence" aria-label="Add single drop of 0.05 cm³">💧 +0.05 cm³</button>
+                <button class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(0.1)" style="padding:10px 4px;font-size:0.78rem;font-weight:700;font-family:'JetBrains Mono',monospace;min-height:44px;touch-action:manipulation;" title="Add 0.10 cm³ titrant" aria-label="Add 0.10 cm³ titrant">+0.1 cm³</button>
+                <button class="btn-tactile btn-tactile-cyan btn-tactile-sm btn-pill-action" onclick="addVolume(0.05)" style="padding:10px 4px;font-size:0.78rem;font-weight:700;font-family:'JetBrains Mono',monospace;min-height:44px;touch-action:manipulation;" title="Add single drop (0.05 cm³) for precision equivalence" aria-label="Add single drop of 0.05 cm³">💧 +0.05 cm³</button>
               </div>
-              <button type="button" class="btn-tactile btn-tactile-cyan btn-tactile-sm btn-action-halfdrop" id="btnHalfDrop" onclick="addHalfDrop()" style="width:100%;padding:7px 4px;font-size:0.75rem;font-weight:700;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;justify-content:center;gap:4px;" title="Split a half-drop on burette tip and touch inner flask wall (+0.025 cm³)" aria-label="Add half-drop (+0.025 cm³) touching tip to flask">🖐️ Half-Drop (+0.025 cm³ · Touch Tip)</button>
+              <button type="button" class="btn-tactile btn-tactile-cyan btn-tactile-sm btn-action-halfdrop" id="btnHalfDrop" onclick="addHalfDrop()" style="width:100%;padding:10px 4px;font-size:0.75rem;font-weight:700;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;justify-content:center;gap:4px;min-height:44px;touch-action:manipulation;" title="Split a half-drop on burette tip and touch inner flask wall (+0.025 cm³)" aria-label="Add half-drop (+0.025 cm³) touching tip to flask">🖐️ Half-Drop (+0.025 cm³ · Touch Tip)</button>
             </div>
 
             <div style="border-top:1px dashed var(--card-border);margin:4px 0;"></div>
 
             <!-- Endpoint & Reset -->
             <div style="display:flex;flex-direction:column;gap:8px;">
-              <button class="btn-tactile btn-tactile-success btn-action-record" onclick="recordTrial()" style="width:100%;padding:8px 6px;font-size:0.80rem;font-weight:700;height:38px;" data-i18n="record_endpoint" title="Record the current burette volume in the KCSE Results Table once permanent endpoint is reached" aria-label="Record titration endpoint">✅ Record Endpoint</button>
-              <button class="btn-tactile btn-tactile-surface btn-action-reset" onclick="resetBurette()" style="width:100%;padding:7px 6px;font-size:0.78rem;font-weight:700;height:36px;" data-i18n="reset_burette" title="Refill burette to 0.00 cm³ and prepare a fresh conical flask aliquot for the next trial" aria-label="Reset burette and flask">🔄 Reset Burette</button>
+              <button class="btn-tactile btn-tactile-success btn-action-record" onclick="recordTrial()" style="width:100%;padding:10px 6px;font-size:0.80rem;font-weight:700;min-height:44px;touch-action:manipulation;" data-i18n="record_endpoint" title="Record the current burette volume in the KCSE Results Table once permanent endpoint is reached" aria-label="Record titration endpoint">✅ Record Endpoint</button>
+              <button class="btn-tactile btn-tactile-surface btn-action-reset" onclick="resetBurette()" style="width:100%;padding:10px 6px;font-size:0.78rem;font-weight:700;min-height:44px;touch-action:manipulation;" data-i18n="reset_burette" title="Refill burette to 0.00 cm³ and prepare a fresh conical flask aliquot for the next trial" aria-label="Reset burette and flask">🔄 Reset Burette</button>
             </div>
             
             <div id="statusText" style="font-size:0.75rem;color:var(--text-secondary);text-align:center;font-weight:600;font-family:var(--font-body);padding:2px 0;">Waiting to start…</div>
@@ -905,7 +905,7 @@
           <option value="weakAcid">Weak Acid – Strong Base (CH₃COOH vs NaOH)</option>
           <option value="weakBase">Weak Base – Strong Acid (NH₃ vs HCl)</option>
         </select>
-        <button type="button" onclick="resetWorkbench()" class="btn-pill-action" style="width:100%; margin-top:10px; height:40px; font-size:0.80rem; font-weight:700; display:flex; align-items:center; justify-content:center; gap:6px;" title="Flushes burette, washes conical flask, and resets experimental apparatus" aria-label="Wash apparatus and reset setup">
+        <button type="button" onclick="resetWorkbench()" class="btn-pill-action" style="width:100%; margin-top:10px; min-height:44px; font-size:0.80rem; font-weight:700; display:flex; align-items:center; justify-content:center; gap:6px; touch-action:manipulation;" title="Flushes burette, washes conical flask, and resets experimental apparatus" aria-label="Wash apparatus and reset setup">
           🔄 Switch Practical &amp; Reset Setup
         </button>
       </div>

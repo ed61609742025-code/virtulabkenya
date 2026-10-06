@@ -1113,6 +1113,9 @@ html, body {
   }
   .action-buttons-row .btn-perform-test,
   .action-buttons-row .btn-redo-test {
+  min-height: 44px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
     width: 100%;
     justify-content: center;
     text-align: center;
@@ -1124,6 +1127,9 @@ html, body {
 }
 
 .btn-perform-test {
+  min-height: 44px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -1345,6 +1351,9 @@ html, body {
 }
 
 .suggestion-chip {
+  min-height: 44px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   background: var(--card-bg, #1e293b);
   border: 1px solid var(--card-border, #334155);
   color: var(--text-main, #f8fafc);
@@ -2386,6 +2395,9 @@ html, body {
 }
 
 .btn-probe-chip {
+  min-height: 44px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   padding: 5px 11px;
   font-size: 0.78rem;
   font-weight: 700;
@@ -2468,4 +2480,24 @@ html, body {
   transform-box: fill-box;
   transform-origin: center center;
   animation: splintFlameBurst 0.28s infinite ease-in-out;
+}
+
+/* ── Mobile Ergonomics & Keypad Auto-Zoom Prevention ── */
+@media (max-width: 768px) {
+  .id-select, 
+  .specimen-select,
+  .knec-notes-input {
+    font-size: 16px !important;
+    min-height: 44px !important;
+    touch-action: manipulation;
+  }
+  .btn-submit-id {
+    min-height: 48px !important;
+    touch-action: manipulation;
+  }
+  .specimen-station-card,
+  .id-panel {
+    padding-left: max(14px, env(safe-area-inset-left, 0px));
+    padding-right: max(14px, env(safe-area-inset-right, 0px));
+  }
 }

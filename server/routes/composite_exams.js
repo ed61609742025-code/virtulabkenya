@@ -11,20 +11,30 @@ const { validateCompositeSave } = require('../middleware/validators');
 const pool = require('../db/pool');
 const compositeRepo = require('../repositories/compositeRepo');
 const { sendCsv, toCsvRow } = require('../utils/csv');
+const path = require('path');
 
-function calculateKnecGrade(totalScore) {
-  const score = Number(totalScore) || 0;
-  const pct = (score / 40.0) * 100;
-
-  if (pct >= 80) return 'A';
-  if (pct >= 70) return 'A-';
-  if (pct >= 60) return 'B+';
-  if (pct >= 55) return 'B';
-  if (pct >= 50) return 'C+';
-  if (pct >= 45) return 'C';
-  if (pct >= 40) return 'D+';
-  if (pct >= 35) return 'D';
-  return 'E';
+let calculateKnecGrade;
+try {
+  const knecGrading = require(path.join(__dirname, '../../client/shared/knec-grading.js'));
+  calculateKnecGrade = knecGrading.calculateKnecGrade;
+} catch (e) {
+  calculateKnecGrade = function (score, maxScore = 40.0) {
+    const s = Number(score) || 0;
+    const m = Number(maxScore) || 40.0;
+    const pct = (s / m) * 100.0;
+    if (pct >= 80.0) return 'A';
+    if (pct >= 75.0) return 'A-';
+    if (pct >= 70.0) return 'B+';
+    if (pct >= 65.0) return 'B';
+    if (pct >= 60.0) return 'B-';
+    if (pct >= 55.0) return 'C+';
+    if (pct >= 50.0) return 'C';
+    if (pct >= 45.0) return 'C-';
+    if (pct >= 40.0) return 'D+';
+    if (pct >= 35.0) return 'D';
+    if (pct >= 30.0) return 'D-';
+    return 'E';
+  };
 }
 
 // POST /api/composite — Save 40-mark composite practical exam session
@@ -40,9 +50,14 @@ router.post('/', apiLimiter, authMiddleware, authMiddleware.requireRole('student
     duration_seconds = 0
   } = req.body;
 
-  let q1 = Math.min(15, Math.max(0, Number(q1_score) || 0));
-  let q2 = Math.min(15, Math.max(0, Number(q2_score) || 0));
-  let q3 = Math.min(10, Math.max(0, Number(q3_score) || 0));
+  // Determine dynamic maximum marks per question (supports standard 15-15-10 and polymorphic 15-10-15 exams)
+  const maxQ1 = (details && details.q1 && typeof details.q1.maxScore === 'number') ? details.q1.maxScore : 15;
+  const maxQ2 = (details && details.q2 && typeof details.q2.maxScore === 'number') ? details.q2.maxScore : 15;
+  const maxQ3 = (details && details.q3 && typeof details.q3.maxScore === 'number') ? details.q3.maxScore : 10;
+
+  let q1 = Math.min(maxQ1, Math.max(0, Number(q1_score) || 0));
+  let q2 = Math.min(maxQ2, Math.max(0, Number(q2_score) || 0));
+  let q3 = Math.min(maxQ3, Math.max(0, Number(q3_score) || 0));
 
   // If this exam has written questions associated with an assignment, integrate their scores
   if (assignment_id) {
@@ -89,7 +104,9 @@ router.post('/', apiLimiter, authMiddleware, authMiddleware.requireRole('student
   return res.status(201).json({
     message: 'Composite practical exam saved successfully.',
     session: savedSession,
-    knec_grade: grade
+    knec_grade: grade,
+    total_score: total,
+    breakdown: { q1, q2, q3 }
   });
 }));
 

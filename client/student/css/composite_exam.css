@@ -251,6 +251,7 @@ html, body {
   max-width: 1400px;
   margin: 0 auto;
   padding: 20px 20px 80px;
+  padding-bottom: max(80px, env(safe-area-inset-bottom, 80px));
 }
 
 .exam-header {
@@ -1613,15 +1614,28 @@ iframe.lab-frame {
   .btn-perform-test,
   .btn-redo-test,
   .btn-next-step,
-  .btn-start-series {
-    min-height: 44px; /* Accessible 44px touch target on mobile */
+  .btn-start-series,
+  .btn-bench,
+  .exam-tab-btn,
+  .btn-submit-exam,
+  .top-action-btn,
+  .pacing-milestone {
+    min-height: 44px; /* WCAG 2.5.5 / 2.5.8 accessible touch target */
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    touch-action: manipulation; /* Eliminate 300ms tap delay */
   }
   .calc-input {
     max-width: 100%;
-    font-size: 1rem; /* Prevent iOS automatic zoom on focus */
+    min-height: 44px;
+    font-size: 16px !important; /* Prevent iOS/Android automatic zoom on focus */
+    touch-action: manipulation;
+  }
+  .chem-token-chip {
+    min-height: 38px;
+    padding: 6px 10px;
+    touch-action: manipulation;
   }
 }
 
@@ -2007,6 +2021,12 @@ iframe.lab-frame {
   background: var(--green-bg);
   color: var(--green-accent);
   border-color: var(--green-border);
+}
+.pacing-milestone.overdue {
+  background: var(--amber-bg);
+  color: var(--amber-accent);
+  border-color: var(--amber-accent);
+  box-shadow: 0 0 0 1px var(--amber-accent);
 }
 
 /* Smart Chemistry Quick-Palette */

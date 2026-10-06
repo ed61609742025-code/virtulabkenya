@@ -268,7 +268,7 @@ app.use('/api/organic', organicRoutes);
 
 // KCSE Composite practical exams (40 Marks total)
 const compositeRoutes = require('./routes/composite_exams');
-app.use('/api/composite', compositeRoutes);
+app.use(['/api/composite', '/api/composite-exams'], compositeRoutes);
 
 // KCSE Solubility Curves & Crystallization Module
 const solubilityRoutes = require('./routes/solubility');

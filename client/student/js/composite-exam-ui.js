@@ -1786,7 +1786,7 @@ requireStudentLogin();
             (${escapeHtml(q.letter || q.id)}) ${escapeHtml(q.label || '')} <span style="color:var(--cyan-accent);">${q.marksLabel || (q.marks ? `(${Number(q.marks).toFixed(1)} Marks)` : '')}</span>
           </div>
           <div class="calc-input-row" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-            <input type="number" step="${q.step || 'any'}" id="${inputId}" class="calc-input dynamic-calc-input" data-field="${fieldId}" data-step-id="${q.id}" placeholder="${q.placeholder || ''}" value="${currentVal}" oninput="onDynamicQ1CalculationChanged('${fieldId}', this.value, ${procIdx})">
+            <input type="number" step="${q.step || 'any'}" id="${inputId}" class="calc-input dynamic-calc-input" data-field="${fieldId}" data-step-id="${q.id}" placeholder="${q.placeholder || ''}" value="${currentVal}" inputmode="decimal" autocomplete="off" oninput="onDynamicQ1CalculationChanged('${fieldId}', this.value, ${procIdx})">
             <span class="calc-unit-badge" style="font-weight:700;color:var(--text-muted);">${escapeHtml(q.unit || '')}</span>
             ${!isStrict ? `<button type="button" class="btn-perform-test btn-check-step" style="padding:6px 14px;font-size:0.78rem;" onclick="checkDynamicQ1Step('${q.id}', ${procIdx})">Check (${escapeHtml(q.letter || q.id)})</button>` : ''}
           </div>
@@ -2797,6 +2797,42 @@ requireStudentLogin();
   }
 
   // ── Tab Navigation & Pacing Coach Update ────────────────────────────
+  function updatePacingCoach(currentTab = activeTab) {
+    const elapsed = (135 * 60) - timeLeft;
+    const questions = window._examQuestionsList || [];
+    const totalTabs = Math.max(3, questions.length);
+
+    for (let n = 1; n <= totalTabs; n++) {
+      const paceEl = document.getElementById(`paceQ${n}`);
+      if (!paceEl) continue;
+      if (n === currentTab) {
+        let isOverdue = false;
+        // KNEC Target Pacing thresholds:
+        // Q1: Target 45 min (2700s)
+        // Q2: Target 45 min (cumulative 90 min = 5400s)
+        // Q3: Target 35 min (cumulative 125 min = 7500s)
+        if (n === 1 && elapsed > 2700) isOverdue = true;
+        else if (n === 2 && elapsed > 5400) isOverdue = true;
+        else if (n === 3 && elapsed > 7500) isOverdue = true;
+
+        paceEl.className = isOverdue ? 'pacing-milestone overdue' : 'pacing-milestone active';
+      } else if (n < currentTab) {
+        paceEl.className = 'pacing-milestone completed';
+      } else {
+        paceEl.className = 'pacing-milestone';
+      }
+    }
+
+    const prev = document.getElementById('paceRev');
+    if (prev) {
+      if (timeLeft <= 600) {
+        prev.className = 'pacing-milestone active';
+      } else {
+        prev.className = 'pacing-milestone';
+      }
+    }
+  }
+
   function switchQTab(qNum) {
     activeTab = qNum;
     const questions = window._examQuestionsList || [];
@@ -2810,14 +2846,7 @@ requireStudentLogin();
     }
 
     // Update Pacing Coach Indicators
-    for (let n = 1; n <= totalTabs; n++) {
-      const paceEl = document.getElementById(`paceQ${n}`);
-      if (paceEl) {
-        paceEl.className = n === qNum ? 'pacing-milestone active' : (n < qNum ? 'pacing-milestone completed' : 'pacing-milestone');
-      }
-    }
-    const prev = document.getElementById('paceRev');
-    if (prev) prev.className = 'pacing-milestone';
+    updatePacingCoach(qNum);
 
     const prevBtn = document.getElementById('btnPrevQ');
     const nextBtn = document.getElementById('btnNextQ');
@@ -2906,6 +2935,7 @@ requireStudentLogin();
         timerEl.style.borderColor = 'var(--red-border)';
       }
     }
+    updatePacingCoach();
   }
 
   function startExamTimer() {

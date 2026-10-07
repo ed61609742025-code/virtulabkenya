@@ -120,7 +120,17 @@
         data: stateData
       };
 
-      // 1. Write to IndexedDB if available
+      // 1. Dual-write to localStorage synchronously FIRST as immediate backup
+      try {
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem(this.getStorageKey(examKey), JSON.stringify(payload));
+        }
+      } catch (lsErr) {
+        // LocalStorage may throw QuotaExceededError; IndexedDB handles large payloads
+        console.warn('[ExamOfflineManager] LocalStorage backup error (storage quota):', lsErr.message);
+      }
+
+      // 2. Write to IndexedDB if available
       try {
         const db = await this.openDatabase();
         if (db) {
@@ -134,16 +144,6 @@
         }
       } catch (idbErr) {
         console.warn('[ExamOfflineManager] IndexedDB save error:', idbErr);
-      }
-
-      // 2. Dual-write to localStorage as synchronous backup
-      try {
-        if (typeof localStorage !== 'undefined') {
-          localStorage.setItem(this.getStorageKey(examKey), JSON.stringify(payload));
-        }
-      } catch (lsErr) {
-        // LocalStorage may throw QuotaExceededError; IndexedDB handles large payloads
-        console.warn('[ExamOfflineManager] LocalStorage backup error (storage quota):', lsErr.message);
       }
 
       this.notifyStatus('saved', payload.savedAt);
@@ -161,6 +161,23 @@
       if (!examKey || !stateData) return;
 
       const performSave = () => {
+        // Immediate synchronous backup to localStorage
+        try {
+          const payload = {
+            examKey: String(examKey),
+            savedAt: new Date().toISOString(),
+            data: stateData
+          };
+          if (typeof localStorage !== 'undefined') {
+            localStorage.setItem(this.getStorageKey(examKey), JSON.stringify(payload));
+          }
+          this.notifyStatus('saved', payload.savedAt);
+          if (typeof window !== 'undefined' && window.dispatchEvent) {
+            window.dispatchEvent(new CustomEvent('vlk:draft_saved', { detail: payload }));
+          }
+        } catch (err) {
+          console.warn('[ExamOfflineManager] Failed to save draft to localStorage:', err);
+        }
         this.saveDraftIdb(examKey, stateData, immediate).catch(() => {});
       };
 
@@ -234,9 +251,16 @@
     }
 
     /**
-     * Check if a draft exists in either IndexedDB or localStorage
+     * Check if a draft exists (synchronous check against localStorage)
      */
-    async hasDraft(examKey) {
+    hasDraft(examKey) {
+      return !!this.loadDraft(examKey);
+    }
+
+    /**
+     * Check if a draft exists in either IndexedDB or localStorage (asynchronous)
+     */
+    async hasDraftIdb(examKey) {
       const draft = await this.loadDraftIdb(examKey);
       return !!draft;
     }
@@ -310,7 +334,16 @@
     async clearDraftIdb(examKey) {
       if (!examKey) return;
 
-      // 1. Clear IndexedDB
+      // 1. Clear localStorage synchronously first
+      try {
+        if (typeof localStorage !== 'undefined') {
+          localStorage.removeItem(this.getStorageKey(examKey));
+        }
+      } catch (err) {
+        console.warn('[ExamOfflineManager] Failed to clear localStorage draft:', err);
+      }
+
+      // 2. Clear IndexedDB
       try {
         const db = await this.openDatabase();
         if (db) {
@@ -326,15 +359,6 @@
         console.warn('[ExamOfflineManager] Failed to clear IndexedDB draft:', err);
       }
 
-      // 2. Clear localStorage
-      try {
-        if (typeof localStorage !== 'undefined') {
-          localStorage.removeItem(this.getStorageKey(examKey));
-        }
-      } catch (err) {
-        console.warn('[ExamOfflineManager] Failed to clear localStorage draft:', err);
-      }
-
       this.notifyStatus('cleared');
     }
 
@@ -342,6 +366,14 @@
      * Synchronous clear draft wrapper
      */
     clearDraft(examKey) {
+      if (!examKey) return;
+      try {
+        if (typeof localStorage !== 'undefined') {
+          localStorage.removeItem(this.getStorageKey(examKey));
+        }
+      } catch (err) {
+        console.warn('[ExamOfflineManager] Failed to clear localStorage draft:', err);
+      }
       this.clearDraftIdb(examKey).catch(() => {});
     }
 

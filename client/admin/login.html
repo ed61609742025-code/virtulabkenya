@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Admin Login — VirtuLab Kenya</title>
+<script src="/shared/auth-guard.js"></script>
+<script>
+  var t = localStorage.getItem('vlk_admin_theme') || localStorage.getItem('vlk_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  if (window.VLKAuthGuard) {
+    VLKAuthGuard.guardLoginPage('admin');
+  }
+</script>
+<meta name="theme-color" content="#0F172A">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared/style.css">
+<link rel="stylesheet" href="/shared/auth.css">
+<style>
+  .admin-auth-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    color: #F87171;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+  }
+  .btn-submit-admin {
+    width: 100%;
+    padding: 13px 18px;
+    background: linear-gradient(135deg, #0284C7, #0369A1);
+    color: #FFFFFF;
+    font-weight: 700;
+    font-size: 0.95rem;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+    transition: all 0.2s ease;
+  }
+  .btn-submit-admin:hover {
+    background: linear-gradient(135deg, #0369A1, #075985);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(2, 132, 199, 0.45);
+  }
+  .btn-demo-admin {
+    width: 100%;
+    padding: 11px 14px;
+    font-weight: 700;
+    font-size: 0.84rem;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1.5px solid rgba(56, 189, 248, 0.4);
+    color: var(--teal, #38BDF8);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .btn-demo-admin:hover {
+    background: rgba(56, 189, 248, 0.18);
+    border-color: var(--teal, #38BDF8);
+  }
+  .admin-credentials-hint {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px dashed rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-align: center;
+  }
+</style>
+</head>
+<body class="auth-page">
+
+<!-- Theme Controls -->
+<div class="theme-toggle-float" title="Switch appearance theme">
+  <button class="theme-btn" data-theme="dark" onclick="setTheme('dark')">Dark</button>
+  <button class="theme-btn" data-theme="light" onclick="setTheme('light')">Light</button>
+  <button class="theme-btn" data-theme="green" onclick="setTheme('green')">Lab</button>
+</div>
+
+<!-- Admin Login Card -->
+<div class="auth-card">
+  <div class="auth-header">
+    <div style="margin-bottom: 4px;">
+      <span class="admin-auth-badge">🛡️ Restricted Console</span>
+    </div>
+    <h1 class="auth-logo-title">VirtuLab Kenya</h1>
+    <p class="auth-sub">National Admin Portal — Sign in with system administrator credentials to access schools, teacher certifications, and national analytics.</p>
+  </div>
+
+  <form id="adminLoginForm" onsubmit="event.preventDefault(); doAdminLogin();">
+    <div class="auth-form-group">
+      <!-- Email Field -->
+      <div>
+        <div class="field-label-row">
+          <label for="adminEmail" class="field-label">Administrator Email</label>
+        </div>
+        <div class="input-wrapper">
+          <input type="email" id="adminEmail" class="auth-input" placeholder="admin@virtulab.co.ke" autocomplete="username" required>
+        </div>
+      </div>
+
+      <!-- Password Field -->
+      <div>
+        <div class="field-label-row">
+          <label for="adminPassword" class="field-label">Master Password</label>
+        </div>
+        <div class="input-wrapper">
+          <input type="password" id="adminPassword" class="auth-input" placeholder="••••••••••••" autocomplete="current-password" required>
+          <button type="button" class="toggle-pw-btn" onclick="togglePasswordVisibility()" title="Toggle password">Show</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Primary Login Button -->
+    <button type="submit" class="btn-submit-admin" id="submitBtn">
+      <span>Unlock Admin Console</span>
+      <span>🔐</span>
+    </button>
+  </form>
+
+  <!-- Quick Demo Sign-In Button -->
+  <div style="margin-top: 12px;">
+    <button type="button" class="btn-demo-admin" onclick="quickDemoAdminLogin()">
+      <span>⚡ Quick Demo / Super Admin Sign-In</span>
+    </button>
+    <div class="admin-credentials-hint">
+      Default Admin: <code style="color:#38BDF8; font-weight:700;">admin@virtulab.co.ke</code> / <code style="color:#38BDF8; font-weight:700;">VirtuLabAdmin2025!</code>
+    </div>
+  </div>
+
+  <!-- Error / Status Feedback Box -->
+  <div id="msg"></div>
+
+  <!-- Footer Navigation Links -->
+  <div class="auth-footer">
+    <p style="margin: 0 0 8px 0;">Are you a chemistry teacher? <a href="/teacher/login.html">Teacher Portal →</a></p>
+    <p style="margin: 0;">Are you a student? <a href="/student/login.html">Student Login →</a></p>
+  </div>
+</div>
+
+<script src="/shared/theme.js"></script>
+<script src="/shared/auth-forms.js"></script>
+<script src="/shared/api.js"></script>
+<script>
+  // Display alerts for role mismatch, returnUrl, or expired session
+  const urlParams = new URLSearchParams(window.location.search);
+  const mismatch = urlParams.get('mismatch');
+  const returnUrl = urlParams.get('returnUrl');
+  const expired = urlParams.get('expired');
+  const msgEl = document.getElementById('msg');
+
+  if (msgEl) {
+    if (expired) {
+      msgEl.innerHTML = `<div class="msg-alert err" style="margin-top:14px;">⏱️ Your administrator session has expired. Please sign in again.</div>`;
+    } else if (mismatch) {
+      msgEl.innerHTML = `<div class="msg-alert warn" style="margin-top:14px;">⚠️ Access restricted: You are signed in as <b>${escapeHtml(mismatch)}</b>. System Administrator credentials are required to enter the Admin Portal.</div>`;
+    } else if (returnUrl) {
+      msgEl.innerHTML = `<div class="msg-alert info" style="margin-top:14px;">🔐 <b>Administrator Authentication Required:</b> Sign in to proceed to the administrative console.</div>`;
+    }
+  }
+
+  function togglePasswordVisibility() {
+    const pwInput = document.getElementById('adminPassword');
+    const isPw = pwInput.type === 'password';
+    pwInput.type = isPw ? 'text' : 'password';
+    const btn = document.querySelector('.toggle-pw-btn');
+    if (btn) btn.textContent = isPw ? 'Hide' : 'Show';
+  }
+
+  function quickDemoAdminLogin() {
+    document.getElementById('adminEmail').value = 'admin@virtulab.co.ke';
+    document.getElementById('adminPassword').value = 'VirtuLabAdmin2025!';
+    doAdminLogin();
+  }
+
+  async function doAdminLogin() {
+    const email = document.getElementById('adminEmail').value.trim();
+    const password = document.getElementById('adminPassword').value;
+    const msg = document.getElementById('msg');
+    msg.innerHTML = '';
+
+    if (!email || !password) {
+      msg.innerHTML = '<div class="msg-alert err" style="margin-top:14px;">Please enter both your admin email and password.</div>';
+      return;
+    }
+
+    try {
+      msg.innerHTML = '<div class="msg-alert info" style="margin-top:14px;">Verifying administrator credentials…</div>';
+      await Auth.adminLogin(email, password);
+
+      const params = new URLSearchParams(window.location.search);
+      const target = params.get('returnUrl');
+      if (target && target.startsWith('/') && !target.includes('login.html')) {
+        window.location.href = target;
+      } else {
+        window.location.href = 'dashboard.html';
+      }
+    } catch (err) {
+      msg.innerHTML = '<div class="msg-alert err" style="margin-top:14px;">' + escapeHtml(err.message || 'Invalid administrator email or password') + '</div>';
+    }
+  }
+
+  setupFormKeyListeners('adminLoginForm', doAdminLogin);
+</script>
+</body>
+</html>

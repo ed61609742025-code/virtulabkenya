@@ -5,9 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>National Admin Portal — VirtuLab Kenya</title>
 <meta name="description" content="Institutional administrative console for secondary schools, verified chemistry teachers, active students, and KCSE Paper 3 analytics in VirtuLab Kenya.">
+<script src="/shared/auth-guard.js"></script>
 <script>
-  var t = localStorage.getItem('vlk_admin_theme') || 'light';
+  var t = localStorage.getItem('vlk_admin_theme') || localStorage.getItem('vlk_theme') || 'light';
   document.documentElement.setAttribute('data-theme', t);
+  if (window.VLKAuthGuard) {
+    VLKAuthGuard.guardPage('admin');
+  }
 </script>
 <meta name="theme-color" content="#F8FAFC">
 <meta name="mobile-web-app-capable" content="yes">

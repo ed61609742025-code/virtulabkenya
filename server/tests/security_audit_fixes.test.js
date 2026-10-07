@@ -393,6 +393,112 @@ describe('12. Server-Side Protected Route Guarding (CWE-306 / OWASP A01)', () =>
     protectedRouteGuard(req, res, next);
     assert.strictEqual(nextCalled, true);
   });
+
+  it('should redirect unauthenticated GET /admin/dashboard.html to /admin/login.html with 302', () => {
+    let redirectedStatus = null;
+    let redirectedLocation = null;
+    let nextCalled = false;
+
+    const req = {
+      method: 'GET',
+      path: '/admin/dashboard.html',
+      originalUrl: '/admin/dashboard.html',
+      cookies: {},
+      headers: {}
+    };
+    const res = {
+      redirect: (status, url) => {
+        redirectedStatus = status;
+        redirectedLocation = url;
+      }
+    };
+    const next = () => { nextCalled = true; };
+
+    protectedRouteGuard(req, res, next);
+    assert.strictEqual(redirectedStatus, 302);
+    assert.ok(redirectedLocation.includes('/admin/login.html?returnUrl='));
+    assert.strictEqual(nextCalled, false);
+  });
+
+  it('should redirect unauthenticated GET /teacher/dashboard.html to /teacher/login.html with 302', () => {
+    let redirectedStatus = null;
+    let redirectedLocation = null;
+    let nextCalled = false;
+
+    const req = {
+      method: 'GET',
+      path: '/teacher/dashboard.html',
+      originalUrl: '/teacher/dashboard.html',
+      cookies: {},
+      headers: {}
+    };
+    const res = {
+      redirect: (status, url) => {
+        redirectedStatus = status;
+        redirectedLocation = url;
+      }
+    };
+    const next = () => { nextCalled = true; };
+
+    protectedRouteGuard(req, res, next);
+    assert.strictEqual(redirectedStatus, 302);
+    assert.ok(redirectedLocation.includes('/teacher/login.html?returnUrl='));
+    assert.strictEqual(nextCalled, false);
+  });
+
+  it('should allow authenticated admin cookie to access /admin/dashboard.html', () => {
+    const validAdminToken = jwt.sign(
+      { id: 1, role: 'admin', name: 'Admin', email: 'admin@virtulab.co.ke' },
+      process.env.JWT_SECRET
+    );
+    let nextCalled = false;
+
+    const req = {
+      method: 'GET',
+      path: '/admin/dashboard.html',
+      originalUrl: '/admin/dashboard.html',
+      cookies: { vlk_token: validAdminToken },
+      headers: {}
+    };
+    const res = {
+      redirect: () => { assert.fail('Should not redirect authenticated admin'); }
+    };
+    const next = () => { nextCalled = true; };
+
+    protectedRouteGuard(req, res, next);
+    assert.strictEqual(nextCalled, true);
+    assert.strictEqual(req.user.role, 'admin');
+  });
+
+  it('should redirect teacher accessing /admin/dashboard.html to /admin/login.html with mismatch=teacher', () => {
+    const validTeacherToken = jwt.sign(
+      { id: 1, role: 'teacher', name: 'Teacher', email: 'teacher@demo.ac.ke' },
+      process.env.JWT_SECRET
+    );
+    let redirectedStatus = null;
+    let redirectedLocation = null;
+    let nextCalled = false;
+
+    const req = {
+      method: 'GET',
+      path: '/admin/dashboard.html',
+      originalUrl: '/admin/dashboard.html',
+      cookies: { vlk_token: validTeacherToken },
+      headers: {}
+    };
+    const res = {
+      redirect: (status, url) => {
+        redirectedStatus = status;
+        redirectedLocation = url;
+      }
+    };
+    const next = () => { nextCalled = true; };
+
+    protectedRouteGuard(req, res, next);
+    assert.strictEqual(redirectedStatus, 302);
+    assert.ok(redirectedLocation.includes('/admin/login.html?mismatch=teacher'));
+    assert.strictEqual(nextCalled, false);
+  });
 });
 
 // 13. Permissions-Policy and Security Headers

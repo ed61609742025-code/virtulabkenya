@@ -68,7 +68,9 @@ function protectedRouteGuard(req, res, next) {
   }
 
   const returnUrl = encodeURIComponent(req.originalUrl || req.url);
-  const targetLogin = (isTeacherPortal || isAdminPortal) ? '/teacher/login.html' : '/student/login.html';
+  const targetLogin = isAdminPortal
+    ? '/admin/login.html'
+    : (isTeacherPortal ? '/teacher/login.html' : '/student/login.html');
 
   if (!token) {
     return res.redirect(302, `${targetLogin}?returnUrl=${returnUrl}`);
@@ -85,13 +87,13 @@ function protectedRouteGuard(req, res, next) {
 
     // Enforce role authorization
     if (isAdminPortal && decoded.role !== 'admin') {
-      return res.redirect(302, `${targetLogin}?mismatch=admin&returnUrl=${returnUrl}`);
+      return res.redirect(302, `/admin/login.html?mismatch=${encodeURIComponent(decoded.role || 'user')}&returnUrl=${returnUrl}`);
     }
     if (isTeacherPortal && decoded.role !== 'teacher' && decoded.role !== 'admin') {
-      return res.redirect(302, `${targetLogin}?mismatch=teacher&returnUrl=${returnUrl}`);
+      return res.redirect(302, `/teacher/login.html?mismatch=${encodeURIComponent(decoded.role || 'user')}&returnUrl=${returnUrl}`);
     }
     if (isStudentPortal && decoded.role !== 'student' && decoded.role !== 'admin') {
-      return res.redirect(302, `${targetLogin}?mismatch=student&returnUrl=${returnUrl}`);
+      return res.redirect(302, `/student/login.html?mismatch=${encodeURIComponent(decoded.role || 'user')}&returnUrl=${returnUrl}`);
     }
 
     next();

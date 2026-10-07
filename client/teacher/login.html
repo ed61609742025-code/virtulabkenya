@@ -67,13 +67,24 @@
     </button>
   </form>
 
+  <!-- Quick Demo Teacher Sign-In -->
+  <div style="margin-top: 12px;">
+    <button type="button" class="btn-tactile btn-tactile-surface" onclick="quickTeacherDemoLogin()" style="width:100%; padding:10px 14px; font-weight:700; font-size:0.84rem; background:rgba(16,185,129,0.12); border:1.5px solid #10B981; color:#10B981; border-radius:10px; display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer;">
+      <span>⚡ Quick Demo / Verified Teacher Sign-In</span>
+    </button>
+    <div style="margin-top:8px; padding:6px 10px; background:rgba(15,23,42,0.6); border:1px dashed rgba(255,255,255,0.15); border-radius:8px; font-size:0.78rem; color:var(--text-muted); text-align:center;">
+      Default Teacher: <code style="color:#10B981; font-weight:700;">teacher@demo.ac.ke</code> / <code style="color:#10B981; font-weight:700;">password123</code>
+    </div>
+  </div>
+
   <!-- Error / Status Feedback Box -->
   <div id="msg"></div>
 
   <!-- Footer Navigation Links -->
   <div class="auth-footer">
     <p style="margin: 0 0 8px 0;">New teacher? <a href="register.html">Register your Class Account</a></p>
-    <p style="margin: 0;">Are you a student? <a href="../student/login.html">Student Login →</a></p>
+    <p style="margin: 0 0 8px 0;">Are you a student? <a href="../student/login.html">Student Login →</a></p>
+    <p style="margin: 0;">System Administrator? <a href="../admin/login.html">Admin Portal Login →</a></p>
   </div>
 </div>
 
@@ -148,6 +159,12 @@
     }, 2500);
   }
 
+  function quickTeacherDemoLogin() {
+    document.getElementById('email').value = 'teacher@demo.ac.ke';
+    document.getElementById('password').value = 'password123';
+    doLogin();
+  }
+
   async function doLogin() {
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
@@ -158,8 +175,33 @@
       msg.innerHTML = '<div class="msg-alert err">Please enter both your email address and password.</div>';
       return;
     }
+
+    const cleanEmail = email.toLowerCase();
+    const isAdminEmail = cleanEmail === 'admin@virtulab.co.ke' || cleanEmail.startsWith('admin@');
+
     try {
       msg.innerHTML = '<div class="msg-alert info">Signing in…</div>';
+
+      // If admin credentials are used on the teacher login form, authenticate directly via Admin Auth
+      if (isAdminEmail) {
+        try {
+          await Auth.adminLogin(email, password);
+          msg.innerHTML = '<div class="msg-alert info">Administrator account detected. Redirecting to Admin Portal…</div>';
+          const params = new URLSearchParams(window.location.search);
+          const target = params.get('returnUrl');
+          setTimeout(() => {
+            if (target && target.startsWith('/admin/') && !target.includes('login.html')) {
+              window.location.href = target;
+            } else {
+              window.location.href = '/admin/dashboard.html';
+            }
+          }, 350);
+          return;
+        } catch (adminErr) {
+          throw adminErr;
+        }
+      }
+
       await Auth.teacherLogin(email, password);
 
       const params = new URLSearchParams(window.location.search);
@@ -170,7 +212,12 @@
         window.location.href = 'dashboard.html';
       }
     } catch (err) {
-      msg.innerHTML = '<div class="msg-alert err">' + escapeHtml(err.message || 'Wrong email or password') + '</div>';
+      if (isAdminEmail) {
+        msg.innerHTML = '<div class="msg-alert err">' + escapeHtml(err.message || 'Invalid administrator password') +
+          '<div style="margin-top:8px;"><a href="/admin/login.html" style="color:var(--teal,#38BDF8);font-weight:700;text-decoration:underline;">Go to dedicated Admin Login Portal →</a></div></div>';
+      } else {
+        msg.innerHTML = '<div class="msg-alert err">' + escapeHtml(err.message || 'Wrong email or password') + '</div>';
+      }
     }
   }
 

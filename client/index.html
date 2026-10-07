@@ -1031,7 +1031,7 @@
         <li><a href="/student/register.html">Student Sign Up</a></li>
         <li><a href="/teacher/login.html">Teacher Portal</a></li>
         <li><a href="/teacher/register.html">Teacher Sign Up</a></li>
-        <li><a href="/admin/dashboard.html">Admin Portal</a></li>
+        <li><a href="/admin/login.html">Admin Portal</a></li>
       </ul>
     </div>
 
@@ -1110,6 +1110,11 @@
     } else if (auth.isLoggedIn && auth.role === 'teacher') {
       document.querySelectorAll('a[href="/teacher/login.html"]').forEach(el => {
         el.setAttribute('href', '/teacher/dashboard.html');
+      });
+    } else if (auth.isLoggedIn && auth.role === 'admin') {
+      document.querySelectorAll('a[href="/admin/login.html"]').forEach(el => {
+        el.setAttribute('href', '/admin/dashboard.html');
+        el.textContent = 'Admin Console (Active)';
       });
     }
   }

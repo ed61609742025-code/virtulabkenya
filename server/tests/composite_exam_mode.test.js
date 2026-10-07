@@ -609,6 +609,7 @@ describe('VirtuLab Kenya — Paper 3 Composite Practical Exam Mode (40.0 Marks)'
       assert.strictEqual(typeof examOfflineManager.openDatabase, 'function');
       assert.strictEqual(typeof examOfflineManager.saveDraftIdb, 'function');
       assert.strictEqual(typeof examOfflineManager.loadDraftIdb, 'function');
+      assert.strictEqual(typeof examOfflineManager.getAllDraftsIdb, 'function');
       assert.strictEqual(typeof examOfflineManager.clearDraftIdb, 'function');
       assert.strictEqual(typeof examOfflineManager.queueSubmissionIdb, 'function');
       assert.strictEqual(typeof examOfflineManager.getPendingSubmissionsIdb, 'function');
@@ -650,7 +651,17 @@ describe('VirtuLab Kenya — Paper 3 Composite Practical Exam Mode (40.0 Marks)'
       assert.ok(examHtml.includes('exam-offline-manager.js'), 'Must load exam-offline-manager.js script');
     });
 
-    it('should verify composite-exam-ui.js integrates 5-second auto-save loop, burette snapshot, and submission queue', () => {
+    it('should verify mock_exams.html contains activeDraftResumeBanner and draft resume logic', () => {
+      const mockHtmlPath = path.join(rootDir, 'client', 'student', 'mock_exams.html');
+      const mockHtml = fs.readFileSync(mockHtmlPath, 'utf8');
+
+      assert.ok(mockHtml.includes('id="activeDraftResumeBanner"'), 'Must have activeDraftResumeBanner element');
+      assert.ok(mockHtml.includes('exam-offline-manager.js'), 'Must load exam-offline-manager.js in mock exams hub');
+      assert.ok(mockHtml.includes('checkForActiveExamDrafts'), 'Must have checkForActiveExamDrafts function');
+      assert.ok(mockHtml.includes('discardDraftFromMockHub'), 'Must have discardDraftFromMockHub function');
+    });
+
+    it('should verify composite-exam-ui.js integrates 5-second auto-save loop, burette snapshot, toast, and submission queue', () => {
       const uiScriptPath = path.join(rootDir, 'client', 'student', 'js', 'composite-exam-ui.js');
       const uiScript = fs.readFileSync(uiScriptPath, 'utf8');
 
@@ -670,6 +681,10 @@ describe('VirtuLab Kenya — Paper 3 Composite Practical Exam Mode (40.0 Marks)'
 
       // Auto-save loop initialization
       assert.ok(uiScript.includes('ExamDraftManager.initBackgroundAutoSave(getExamSessionKey(), () => getExamDraftPayload(), 5000)'), 'Must initialize 5-second background auto-save loop');
+
+      // Candidate visual recovery toast
+      assert.ok(uiScript.includes('showDraftRecoveryToast'), 'Must define showDraftRecoveryToast');
+      assert.ok(uiScript.includes('discardAndResetExamDraft'), 'Must define discardAndResetExamDraft');
 
       // Submission lifecycle hooks
       assert.ok(uiScript.includes('ExamDraftManager.stopBackgroundAutoSave()'), 'Must stop background auto-save on submission');

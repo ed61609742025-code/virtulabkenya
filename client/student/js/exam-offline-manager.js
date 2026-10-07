@@ -242,6 +242,69 @@
     }
 
     /**
+     * Retrieve all saved exam drafts across all series or assignments from IndexedDB & localStorage
+     */
+    async getAllDraftsIdb() {
+      const drafts = [];
+      const seenKeys = new Set();
+
+      // 1. Read IndexedDB
+      try {
+        const db = await this.openDatabase();
+        if (db) {
+          const idbList = await new Promise((resolve, reject) => {
+            const tx = db.transaction(['drafts'], 'readonly');
+            const store = tx.objectStore('drafts');
+            const req = store.getAll();
+            req.onsuccess = () => resolve(req.result || []);
+            req.onerror = () => reject(req.error);
+          });
+
+          if (Array.isArray(idbList)) {
+            for (const item of idbList) {
+              if (item && item.examKey && item.data) {
+                drafts.push(item);
+                seenKeys.add(item.examKey);
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('[ExamOfflineManager] IndexedDB getAll drafts error:', err);
+      }
+
+      // 2. Read localStorage fallbacks
+      try {
+        if (typeof localStorage !== 'undefined') {
+          for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (k && k.startsWith(DRAFT_PREFIX)) {
+              const examKey = k.replace(DRAFT_PREFIX, '');
+              if (!seenKeys.has(examKey)) {
+                try {
+                  const raw = localStorage.getItem(k);
+                  const parsed = raw ? JSON.parse(raw) : null;
+                  if (parsed && parsed.data) {
+                    drafts.push({
+                      examKey,
+                      savedAt: parsed.savedAt || new Date().toISOString(),
+                      data: parsed.data
+                    });
+                    seenKeys.add(examKey);
+                  }
+                } catch (e) {}
+              }
+            }
+          }
+        }
+      } catch (lsErr) {
+        console.warn('[ExamOfflineManager] LocalStorage drafts scan error:', lsErr);
+      }
+
+      return drafts;
+    }
+
+    /**
      * Clear draft from both IndexedDB and localStorage (e.g. after successful submission)
      */
     async clearDraftIdb(examKey) {

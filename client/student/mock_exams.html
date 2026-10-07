@@ -611,6 +611,9 @@
        TAB 1: 40-MARK MOCK SIMULATIONS
   ══════════════════════════════════════ -->
   <div id="sectionSimulations" class="hub-tab-section">
+    <!-- Active In-Progress Draft Resume Banner -->
+    <div id="activeDraftResumeBanner" style="display:none; margin-bottom: 24px;"></div>
+
     <!-- Header & Mode Switcher -->
     <div class="hero-banner-mock">
       <div>
@@ -865,6 +868,7 @@
 <script src="/shared/page-transitions.js"></script>
 <script src="js/composite-engine.js"></script>
 <script src="js/kcse-past-papers-data.js"></script>
+<script src="js/exam-offline-manager.js"></script>
 <script>
   requireStudentLogin();
   let currentExamMode = 'strict';
@@ -1659,10 +1663,76 @@
     updateThemeButtonLabel();
   }
 
+  async function checkForActiveExamDrafts() {
+    if (!window.ExamDraftManager || typeof window.ExamDraftManager.getAllDraftsIdb !== 'function') return;
+    try {
+      const drafts = await ExamDraftManager.getAllDraftsIdb();
+      const banner = document.getElementById('activeDraftResumeBanner');
+      if (!banner) return;
+      if (!drafts || drafts.length === 0) {
+        banner.style.display = 'none';
+        return;
+      }
+
+      // Find the most recent draft
+      drafts.sort((a, b) => new Date(b.savedAt || 0) - new Date(a.savedAt || 0));
+      const latest = drafts[0];
+      const d = latest.data || {};
+      const seriesId = d.seriesParam || 'series1';
+      const mode = d.modeParam || 'exam';
+      const timeLeft = d.timeLeft != null ? Math.round(d.timeLeft / 60) : 135;
+      const bVol = typeof d.q1BuretteReading === 'number' && d.q1BuretteReading > 0 ? ` · Titre: ${d.q1BuretteReading.toFixed(2)} cm³` : '';
+      const savedTime = latest.savedAt ? new Date(latest.savedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'earlier';
+      const assignmentParam = d.assignmentId ? `&assignmentId=${encodeURIComponent(d.assignmentId)}` : '';
+
+      banner.innerHTML = `
+        <div style="background:var(--acad-gold-subtle); border:1.5px solid var(--acad-gold); border-radius:12px; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; box-shadow:0 4px 14px rgba(0,0,0,0.08);">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <div style="width:42px; height:42px; border-radius:10px; background:rgba(234,179,8,0.2); display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0;">💾</div>
+            <div>
+              <div style="font-weight:800; font-size:0.96rem; color:var(--heading-color);">
+                In-Progress KCSE Mock Exam Auto-Saved in IndexedDB
+              </div>
+              <div style="font-size:0.82rem; color:var(--text-muted); margin-top:2px;">
+                Series: <b>${escapeHtml(seriesId.toUpperCase())}</b> · Auto-saved at ${savedTime} (${timeLeft} mins remaining)${bVol}. All readings preserved.
+              </div>
+            </div>
+          </div>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <a href="composite_exam.html?series=${encodeURIComponent(seriesId)}&mode=${encodeURIComponent(mode)}${assignmentParam}" class="btn-start-series" style="padding:8px 18px; font-size:0.85rem; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+              ▶ Resume Exam Session
+            </a>
+            <button type="button" onclick="discardDraftFromMockHub('${encodeURIComponent(latest.examKey)}')" style="background:transparent; border:1px solid var(--card-border); color:var(--text-muted); padding:8px 12px; border-radius:8px; font-size:0.8rem; cursor:pointer;" title="Discard saved draft">
+              Discard
+            </button>
+          </div>
+        </div>
+      `;
+      banner.style.display = 'block';
+    } catch (err) {
+      console.warn('[MockExams] Could not inspect exam drafts:', err);
+    }
+  }
+
+  async function discardDraftFromMockHub(examKey) {
+    if (!confirm('Are you sure you want to discard this in-progress exam draft?')) return;
+    try {
+      if (window.ExamDraftManager) {
+        await ExamDraftManager.clearDraftIdb(decodeURIComponent(examKey));
+      }
+      checkForActiveExamDrafts();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  window.discardDraftFromMockHub = discardDraftFromMockHub;
+  window.checkForActiveExamDrafts = checkForActiveExamDrafts;
+
   updateThemeButtonLabel();
   renderSeriesCards();
   renderPastPaperCards();
   loadExamHistory();
+  setTimeout(checkForActiveExamDrafts, 200);
 </script>
 
 <!-- Mobile Bottom Navigation Bar -->

@@ -778,8 +778,61 @@ requireStudentLogin();
       updateLiveScoreDisplay();
       ExamDraftManager.notifyStatus('saved', draftWrapper.savedAt);
       console.log('[ExamOfflineManager] Candidate draft restored successfully for', sessionKey);
+      if (hadStarted) {
+        showDraftRecoveryToast(draftWrapper.savedAt, d);
+      }
     } catch (err) {
       console.warn('[ExamOfflineManager] Could not restore draft:', err);
+    }
+  }
+
+  function showDraftRecoveryToast(savedAt, d) {
+    let toast = document.getElementById('draftRecoveryToast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'draftRecoveryToast';
+      toast.style.cssText = 'position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:#0F172A; border:1.5px solid #F59E0B; border-radius:12px; padding:12px 18px; box-shadow:0 10px 25px rgba(0,0,0,0.55); z-index:99999; display:flex; align-items:center; gap:16px; font-size:0.84rem; color:#F8FAFC; max-width:92vw;';
+      document.body.appendChild(toast);
+    }
+    const timeStr = savedAt ? new Date(savedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'earlier';
+    const bReading = typeof d?.q1BuretteReading === 'number' && d.q1BuretteReading > 0 ? ` · Titre: ${d.q1BuretteReading.toFixed(2)} cm³` : '';
+    toast.innerHTML = `
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="font-size:1.3rem;">💾</span>
+        <div>
+          <div style="font-weight:700; color:#FACC15;">Exam Draft Restored from IndexedDB</div>
+          <div style="font-size:0.75rem; color:#94A3B8;">Auto-saved at ${timeStr}${bReading} · Readings and observations preserved</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button type="button" onclick="this.closest('#draftRecoveryToast').remove()" style="background:#22C55E; color:#FFFFFF; border:none; border-radius:6px; padding:6px 12px; font-weight:700; font-size:0.78rem; cursor:pointer;">
+          ✓ Continue
+        </button>
+        <button type="button" onclick="discardAndResetExamDraft()" style="background:transparent; color:#EF4444; border:1px solid rgba(239,68,68,0.4); border-radius:6px; padding:6px 10px; font-size:0.75rem; cursor:pointer;">
+          Discard Draft
+        </button>
+      </div>
+    `;
+    setTimeout(() => {
+      if (toast && toast.parentNode) {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.5s ease';
+        setTimeout(() => toast.remove(), 500);
+      }
+    }, 9000);
+  }
+
+  async function discardAndResetExamDraft() {
+    if (!confirm('Are you sure you want to discard your auto-saved exam draft and restart with fresh apparatus?')) return;
+    try {
+      if (window.ExamDraftManager) {
+        await ExamDraftManager.clearDraftIdb(getExamSessionKey());
+        ExamDraftManager.clearDraft(getExamSessionKey());
+      }
+      location.reload();
+    } catch (e) {
+      console.warn('Error discarding draft:', e);
+      location.reload();
     }
   }
 
@@ -787,6 +840,8 @@ requireStudentLogin();
   window.saveExamDraft = saveExamDraft;
   window.triggerDraftAutoSave = triggerDraftAutoSave;
   window.checkAndRestoreDraft = checkAndRestoreDraft;
+  window.showDraftRecoveryToast = showDraftRecoveryToast;
+  window.discardAndResetExamDraft = discardAndResetExamDraft;
 
   function initExamUI() {
     const p = engine.preset;

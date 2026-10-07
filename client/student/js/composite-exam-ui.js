@@ -507,66 +507,81 @@ requireStudentLogin();
     return assignmentId ? `assign_${assignmentId}` : `${seriesParam}_${modeParam}`;
   }
 
+  function getExamDraftPayload() {
+    // Gather Q1 Table Data
+    const tableData = [];
+    [1, 2, 3].forEach(n => {
+      const fin = document.getElementById(`t${n}Final`);
+      const init = document.getElementById(`t${n}Init`);
+      const used = document.getElementById(`t${n}Used`);
+      const conc = document.getElementById(`t${n}Concordant`);
+      tableData.push({
+        final: fin ? fin.value : '',
+        initial: init ? init.value : '',
+        used: used ? used.textContent : '',
+        concordant: conc ? conc.checked : false
+      });
+    });
+
+    // Gather Dynamic Calculation Inputs
+    const calcAnswers = {};
+    document.querySelectorAll('.dynamic-calc-input').forEach(input => {
+      if (input.id && input.value !== '') {
+        calcAnswers[input.id] = input.value;
+      }
+    });
+
+    // Gather Written Question Responses
+    const writtenAnswers = {};
+    document.querySelectorAll('textarea[id^="written_input_"]').forEach(el => {
+      if (el.value) writtenAnswers[el.id] = el.value;
+    });
+
+    return {
+      assignmentId: assignmentId || null,
+      seriesParam,
+      modeParam,
+      activeTab: (typeof activeTab !== 'undefined') ? activeTab : 1,
+      activeProcedureIndex: (typeof activeProcedureIndex !== 'undefined') ? activeProcedureIndex : 0,
+      activeTrial: (typeof activeTrial !== 'undefined') ? activeTrial : 1,
+      q1BuretteReading: typeof engine?.q1BuretteReading === 'number' ? engine.q1BuretteReading : 0.00,
+      isPipetted: (typeof isPipetted !== 'undefined') ? isPipetted : false,
+      indicatorDrops: (typeof indicatorDrops !== 'undefined') ? indicatorDrops : 0,
+      tableData,
+      calcAnswers,
+      writtenAnswers,
+      q1Trials: engine?.q1Trials || [],
+      q1Answers: engine?.q1Answers || {},
+      procedureTrials: engine?.procedureTrials || {},
+      procedureAnswers: engine?.procedureAnswers || {},
+      q2Obs: engine?.q2Obs || {},
+      q2Inf: engine?.q2Inf || {},
+      q2CationChoice: engine?.q2CationChoice || '',
+      q2AnionChoice: engine?.q2AnionChoice || '',
+      q2FunctionalGroupChoice: engine?.q2FunctionalGroupChoice || '',
+      q2TestStates: (typeof q2TestStates !== 'undefined') ? q2TestStates : {},
+      q3Obs: engine?.q3Obs || {},
+      q3Inf: engine?.q3Inf || {},
+      q3FunctionalGroupChoice: engine?.q3FunctionalGroupChoice || '',
+      q3TestStates: (typeof q3TestStates !== 'undefined') ? q3TestStates : {},
+      timeLeft: (typeof timeLeft !== 'undefined') ? timeLeft : 135 * 60,
+      savedAt: Date.now()
+    };
+  }
+
   function saveExamDraft(immediate = false) {
     if (!window.ExamDraftManager) return;
     try {
-      // Gather Q1 Table Data
-      const tableData = [];
-      [1, 2, 3].forEach(n => {
-        const fin = document.getElementById(`t${n}Final`);
-        const init = document.getElementById(`t${n}Init`);
-        const used = document.getElementById(`t${n}Used`);
-        const conc = document.getElementById(`t${n}Concordant`);
-        tableData.push({
-          final: fin ? fin.value : '',
-          initial: init ? init.value : '',
-          used: used ? used.textContent : '',
-          concordant: conc ? conc.checked : false
+      const draftPayload = getExamDraftPayload();
+      const sessionKey = getExamSessionKey();
+
+      // Dual-write: Synchronous localStorage fallback + Async IndexedDB
+      ExamDraftManager.saveDraft(sessionKey, draftPayload, immediate);
+      if (typeof ExamDraftManager.saveDraftIdb === 'function') {
+        ExamDraftManager.saveDraftIdb(sessionKey, draftPayload).catch(e => {
+          console.warn('[ExamOfflineManager] IndexedDB draft save failed:', e);
         });
-      });
-
-      // Gather Dynamic Calculation Inputs
-      const calcAnswers = {};
-      document.querySelectorAll('.dynamic-calc-input').forEach(input => {
-        if (input.id && input.value !== '') {
-          calcAnswers[input.id] = input.value;
-        }
-      });
-
-      // Gather Written Question Responses
-      const writtenAnswers = {};
-      document.querySelectorAll('textarea[id^="written_input_"]').forEach(el => {
-        if (el.value) writtenAnswers[el.id] = el.value;
-      });
-
-      const draftPayload = {
-        assignmentId: assignmentId || null,
-        seriesParam,
-        modeParam,
-        activeTab: (typeof activeTab !== 'undefined') ? activeTab : 1,
-        activeProcedureIndex: (typeof activeProcedureIndex !== 'undefined') ? activeProcedureIndex : 0,
-        tableData,
-        calcAnswers,
-        writtenAnswers,
-        q1Trials: engine?.q1Trials || [],
-        q1Answers: engine?.q1Answers || {},
-        procedureTrials: engine?.procedureTrials || {},
-        procedureAnswers: engine?.procedureAnswers || {},
-        q2Obs: engine?.q2Obs || {},
-        q2Inf: engine?.q2Inf || {},
-        q2CationChoice: engine?.q2CationChoice || '',
-        q2AnionChoice: engine?.q2AnionChoice || '',
-        q2FunctionalGroupChoice: engine?.q2FunctionalGroupChoice || '',
-        q2TestStates: (typeof q2TestStates !== 'undefined') ? q2TestStates : {},
-        q3Obs: engine?.q3Obs || {},
-        q3Inf: engine?.q3Inf || {},
-        q3FunctionalGroupChoice: engine?.q3FunctionalGroupChoice || '',
-        q3TestStates: (typeof q3TestStates !== 'undefined') ? q3TestStates : {},
-        timeLeft: (typeof timeLeft !== 'undefined') ? timeLeft : 135 * 60,
-        savedAt: Date.now()
-      };
-
-      ExamDraftManager.saveDraft(getExamSessionKey(), draftPayload, immediate);
+      }
     } catch (err) {
       console.warn('[ExamOfflineManager] Error saving exam draft:', err);
     }
@@ -576,14 +591,53 @@ requireStudentLogin();
     saveExamDraft(immediate);
   }
 
-  function checkAndRestoreDraft() {
+  async function checkAndRestoreDraft() {
     if (!window.ExamDraftManager) return;
     try {
       const sessionKey = getExamSessionKey();
-      const draftWrapper = ExamDraftManager.loadDraft(sessionKey);
+      let draftWrapper = null;
+      if (typeof ExamDraftManager.loadDraftIdb === 'function') {
+        draftWrapper = await ExamDraftManager.loadDraftIdb(sessionKey);
+      }
+      if (!draftWrapper || !draftWrapper.data) {
+        draftWrapper = ExamDraftManager.loadDraft(sessionKey);
+      }
       if (!draftWrapper || !draftWrapper.data) return;
 
       const d = draftWrapper.data;
+
+      // 0. Restore Titration Burette Reading & Pipette Setup
+      if (typeof d.q1BuretteReading === 'number') {
+        engine.q1BuretteReading = d.q1BuretteReading;
+        if (typeof updateBuretteRig === 'function') {
+          updateBuretteRig();
+        }
+      }
+      if (typeof d.activeTrial === 'number' && typeof setActiveTrial === 'function') {
+        setActiveTrial(d.activeTrial);
+      }
+      if (typeof d.isPipetted === 'boolean') {
+        isPipetted = d.isPipetted;
+        const pipEl = document.getElementById('pipetteStatus');
+        if (pipEl && isPipetted) {
+          pipEl.textContent = '✓ 25.0 cm³ Pipetted';
+          pipEl.style.color = 'var(--green-accent)';
+          pipEl.style.borderColor = 'rgba(16,185,129,0.3)';
+          pipEl.style.background = 'rgba(16,185,129,0.1)';
+        }
+      }
+      if (typeof d.indicatorDrops === 'number') {
+        indicatorDrops = d.indicatorDrops;
+        const indEl = document.getElementById('indicatorStatus');
+        const btnInd = document.getElementById('btnAddIndicator');
+        if (btnInd) btnInd.textContent = `💧 Add Indicator (${indicatorDrops}/3)`;
+        if (indEl && indicatorDrops > 0) {
+          indEl.textContent = `${indicatorDrops} Drop${indicatorDrops > 1 ? 's' : ''} Added`;
+          indEl.style.color = 'var(--cyan-accent)';
+          indEl.style.borderColor = 'rgba(6,182,212,0.3)';
+          indEl.style.background = 'rgba(6,182,212,0.1)';
+        }
+      }
 
       // 1. Restore Q1 Table Data & Trials
       if (Array.isArray(d.tableData)) {
@@ -729,6 +783,7 @@ requireStudentLogin();
     }
   }
 
+  window.getExamDraftPayload = getExamDraftPayload;
   window.saveExamDraft = saveExamDraft;
   window.triggerDraftAutoSave = triggerDraftAutoSave;
   window.checkAndRestoreDraft = checkAndRestoreDraft;
@@ -818,6 +873,9 @@ requireStudentLogin();
     if (window.ExamDraftManager) {
       ExamDraftManager.initConnectivityMonitor('offlineStatusBadge');
       ExamDraftManager.registerServiceWorker('/sw.js');
+      if (typeof ExamDraftManager.initBackgroundAutoSave === 'function') {
+        ExamDraftManager.initBackgroundAutoSave(getExamSessionKey(), () => getExamDraftPayload(), 5000);
+      }
       setTimeout(() => { checkAndRestoreDraft(); }, 500);
     }
 
@@ -3711,10 +3769,31 @@ requireStudentLogin();
     } catch(e) {
       console.warn('Could not post composite exam to server:', e);
       localStorage.setItem('vlk_last_composite_session', JSON.stringify(payload));
+      if (window.ExamDraftManager) {
+        try {
+          if (typeof ExamDraftManager.queueSubmissionIdb === 'function') {
+            await ExamDraftManager.queueSubmissionIdb({
+              url: '/composite',
+              method: 'POST',
+              payload
+            });
+          } else if (typeof ExamDraftManager.queueSubmission === 'function') {
+            ExamDraftManager.queueSubmission('/composite', payload);
+          }
+        } catch (queueErr) {
+          console.warn('[ExamOfflineManager] Error queuing offline submission:', queueErr);
+        }
+      }
     }
 
     try {
       if (window.ExamDraftManager) {
+        if (typeof ExamDraftManager.stopBackgroundAutoSave === 'function') {
+          ExamDraftManager.stopBackgroundAutoSave();
+        }
+        if (typeof ExamDraftManager.clearDraftIdb === 'function') {
+          await ExamDraftManager.clearDraftIdb(getExamSessionKey());
+        }
         ExamDraftManager.clearDraft(getExamSessionKey());
       }
     } catch (clearErr) {

@@ -600,5 +600,85 @@ describe('VirtuLab Kenya — Paper 3 Composite Practical Exam Mode (40.0 Marks)'
       assert.ok(teacherScript.includes('window.assignDrillToStudent = assignDrillToStudent'));
     });
   });
+
+  describe('Suite 12: Offline IndexedDB Exam Draft & Auto-Sync Engine', () => {
+    const offlineManagerPath = path.join(rootDir, 'client', 'student', 'js', 'exam-offline-manager.js');
+    const examOfflineManager = require(offlineManagerPath);
+
+    it('should export all required asynchronous IndexedDB methods and auto-save controls', () => {
+      assert.strictEqual(typeof examOfflineManager.openDatabase, 'function');
+      assert.strictEqual(typeof examOfflineManager.saveDraftIdb, 'function');
+      assert.strictEqual(typeof examOfflineManager.loadDraftIdb, 'function');
+      assert.strictEqual(typeof examOfflineManager.clearDraftIdb, 'function');
+      assert.strictEqual(typeof examOfflineManager.queueSubmissionIdb, 'function');
+      assert.strictEqual(typeof examOfflineManager.getPendingSubmissionsIdb, 'function');
+      assert.strictEqual(typeof examOfflineManager.flushOfflineQueueIdb, 'function');
+      assert.strictEqual(typeof examOfflineManager.initBackgroundAutoSave, 'function');
+      assert.strictEqual(typeof examOfflineManager.stopBackgroundAutoSave, 'function');
+      assert.strictEqual(typeof examOfflineManager.logAuditTimeline, 'function');
+      assert.strictEqual(typeof examOfflineManager.renderStatusBadge, 'function');
+    });
+
+    it('should operate background auto-save lifecycle without exceptions', () => {
+      let pollCount = 0;
+      const fakeState = {
+        q1BuretteReading: 23.45,
+        tableData: [{ final: '23.45', initial: '0.00', used: '23.45', concordant: true }],
+        calcAnswers: { ansAvgTitre: '23.45' },
+        q2Obs: { flame: 'Golden yellow flame' },
+        timeLeft: 5400
+      };
+
+      examOfflineManager.initBackgroundAutoSave('test_exam_session_12', () => {
+        pollCount++;
+        return fakeState;
+      }, 50);
+
+      assert.ok(examOfflineManager.backgroundAutoSaveTimer !== null, 'Timer must be created');
+
+      // Stop background auto save
+      examOfflineManager.stopBackgroundAutoSave();
+      assert.strictEqual(examOfflineManager.backgroundAutoSaveTimer, null, 'Timer must be cleaned up on stop');
+      assert.strictEqual(examOfflineManager.lastSavedHash, null, 'Hash cache must reset on stop');
+    });
+
+    it('should verify composite_exam.html includes offlineStatusBadge and exam-offline-manager.js', () => {
+      const examHtmlPath = path.join(rootDir, 'client', 'student', 'composite_exam.html');
+      const examHtml = fs.readFileSync(examHtmlPath, 'utf8');
+
+      assert.ok(examHtml.includes('id="offlineStatusBadge"'), 'Must have offlineStatusBadge element');
+      assert.ok(examHtml.includes('exam-offline-manager.js'), 'Must load exam-offline-manager.js script');
+    });
+
+    it('should verify composite-exam-ui.js integrates 5-second auto-save loop, burette snapshot, and submission queue', () => {
+      const uiScriptPath = path.join(rootDir, 'client', 'student', 'js', 'composite-exam-ui.js');
+      const uiScript = fs.readFileSync(uiScriptPath, 'utf8');
+
+      // Draft payload includes burette reading and apparatus state
+      assert.ok(uiScript.includes('getExamDraftPayload'), 'Must define getExamDraftPayload');
+      assert.ok(uiScript.includes('q1BuretteReading: typeof engine?.q1BuretteReading === \'number\''), 'Must capture q1BuretteReading in draft');
+      assert.ok(uiScript.includes('isPipetted: (typeof isPipetted !== \'undefined\')'), 'Must capture pipette state in draft');
+      assert.ok(uiScript.includes('indicatorDrops: (typeof indicatorDrops !== \'undefined\')'), 'Must capture indicator drops in draft');
+
+      // Draft restoration restores burette reading and rig visual
+      assert.ok(uiScript.includes('engine.q1BuretteReading = d.q1BuretteReading'), 'Must restore burette reading onto engine');
+      assert.ok(uiScript.includes('updateBuretteRig()'), 'Must update burette rig visualization');
+
+      // Dual-write save & restore
+      assert.ok(uiScript.includes('ExamDraftManager.saveDraftIdb(sessionKey, draftPayload)'), 'Must dual-write to saveDraftIdb');
+      assert.ok(uiScript.includes('ExamDraftManager.loadDraftIdb(sessionKey)'), 'Must load from loadDraftIdb');
+
+      // Auto-save loop initialization
+      assert.ok(uiScript.includes('ExamDraftManager.initBackgroundAutoSave(getExamSessionKey(), () => getExamDraftPayload(), 5000)'), 'Must initialize 5-second background auto-save loop');
+
+      // Submission lifecycle hooks
+      assert.ok(uiScript.includes('ExamDraftManager.stopBackgroundAutoSave()'), 'Must stop background auto-save on submission');
+      assert.ok(uiScript.includes('ExamDraftManager.clearDraftIdb(getExamSessionKey())'), 'Must clear IndexedDB draft on submission');
+      assert.ok(uiScript.includes('ExamDraftManager.queueSubmissionIdb'), 'Must queue offline submission on network failure');
+
+      // Window exports
+      assert.ok(uiScript.includes('window.getExamDraftPayload = getExamDraftPayload'), 'Must export getExamDraftPayload on window');
+    });
+  });
 });
 

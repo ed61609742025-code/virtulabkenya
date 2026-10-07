@@ -138,17 +138,22 @@ html, body {
   transition: background-color 0.15s ease, color 0.15s ease;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
 }
 
 /* ── 3. TOPBAR & REORGANIZED NAVIGATION ── */
 .admin-navbar-wrap {
   width: 100%;
+  max-width: 100vw;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 10000;
   transition: transform 0.25s ease;
+  box-sizing: border-box;
 }
 
 /* Glowing Dynamic Scroll Progress Bar */
@@ -170,21 +175,23 @@ html, body {
   align-items: center;
   justify-content: space-between;
   height: 64px;
-  padding: 0 24px;
+  padding: 0 16px;
   background: var(--topbar-bg);
   border-bottom: 1px solid var(--card-border);
   box-shadow: var(--shadow-sm);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   transition: height 0.25s cubic-bezier(0.16, 1, 0.3, 1), padding 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.25s ease;
-  gap: 16px;
+  gap: 10px;
   flex-wrap: nowrap;
+  max-width: 100vw;
+  box-sizing: border-box;
 }
 
 /* Compact sticky navbar upon scrolling */
 .admin-navbar-wrap.scrolled .admin-navbar {
-  height: 54px;
-  padding: 0 20px;
+  height: 52px;
+  padding: 0 16px;
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   box-shadow: 0 12px 32px -10px rgba(0, 0, 0, 0.22);
@@ -275,8 +282,10 @@ html, body {
 .nav-breadcrumb-wrap {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   margin-left: 2px;
+  min-width: 0;
+  flex-shrink: 1;
 }
 
 .breadcrumb-slash {
@@ -288,29 +297,34 @@ html, body {
 
 .nav-active-tab-label {
   font-family: var(--font-heading);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 700;
   color: var(--heading-color);
   background: var(--card-bg-hover);
   border: 1px solid var(--card-border);
-  padding: 3px 9px;
+  padding: 2px 8px;
   border-radius: 6px;
   letter-spacing: -0.01em;
   transition: opacity 0.15s ease;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
 }
 
 /* Rotating Live Telemetry Ticker */
 .admin-live-ticker-wrap {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 4px 11px;
+  gap: 7px;
+  padding: 3px 10px;
   background: var(--green-bg);
   border: 1px solid var(--green-border);
   border-radius: 100px;
   overflow: hidden;
-  max-width: 280px;
+  max-width: 210px;
+  min-width: 0;
+  flex-shrink: 1;
   box-shadow: 0 2px 6px rgba(16, 185, 129, 0.08);
 }
 
@@ -319,6 +333,7 @@ html, body {
   white-space: nowrap;
   display: flex;
   align-items: center;
+  min-width: 0;
 }
 
 .ticker-text {
@@ -329,6 +344,8 @@ html, body {
   transition: opacity 0.2s ease, transform 0.2s ease;
   white-space: nowrap;
   display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Live Topbar Nairobi Clock Pill */
@@ -336,15 +353,16 @@ html, body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 10px;
+  padding: 4px 9px;
   background: var(--card-bg-hover);
   border: 1px solid var(--card-border);
   border-radius: 8px;
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   font-weight: 700;
   color: var(--heading-color);
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .nav-clock-pill .clock-icon {
@@ -361,6 +379,10 @@ html, body {
 .nav-controls-group {
   display: flex;
   align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
   gap: 10px;
   margin-left: auto;
 }
@@ -695,34 +717,25 @@ html, body {
 }
 
 /* Responsive Breakpoints for Reorganized Header */
-@media (max-width: 1024px) {
-  .admin-live-status .status-live-text {
-    display: none;
-  }
-  .admin-live-status {
-    padding: 6px;
-    border-radius: 50%;
-  }
-  .admin-live-ticker-wrap {
-    max-width: 180px;
-  }
+
+/* 1. Large Laptops / Desktops (<= 1440px) */
+@media (max-width: 1440px) {
   .nav-clock-pill {
     display: none;
   }
   .theme-btn-chip .theme-text {
     display: none;
   }
+  .admin-live-ticker-wrap {
+    max-width: 170px;
+  }
 }
 
-@media (max-width: 768px) {
-  .admin-navbar {
-    padding: 0 14px;
-    gap: 8px;
-  }
-  .admin-brand-sub {
+/* 2. Standard Laptops (<= 1260px) */
+@media (max-width: 1260px) {
+  .nav-breadcrumb-wrap {
     display: none;
   }
-  .nav-breadcrumb-wrap,
   .admin-live-ticker-wrap {
     display: none;
   }
@@ -736,11 +749,49 @@ html, body {
   .profile-name-wrap {
     display: none;
   }
-  .admin-profile-btn {
-    padding: 3px 6px 3px 3px;
+}
+
+/* 3. Tablets / Smaller Displays (<= 1024px) */
+@media (max-width: 1024px) {
+  .admin-navbar {
+    padding: 0 12px;
+    gap: 8px;
+  }
+  .btn-nav-action .btn-action-label {
+    display: none;
+  }
+  .admin-brand-sub {
+    display: none;
+  }
+  .admin-live-status .status-live-text {
+    display: none;
+  }
+  .admin-live-status {
+    padding: 6px;
+    border-radius: 50%;
+  }
+  .hero-live-bulletin {
+    padding: 8px 12px;
+  }
+}
+
+/* 4. Mobile Devices (<= 768px) */
+@media (max-width: 768px) {
+  .admin-navbar {
+    padding: 0 10px;
+    gap: 6px;
+  }
+  .admin-badge {
+    display: none;
+  }
+  .nav-control-separator {
+    display: none;
   }
   .theme-toggle-group {
     display: none;
+  }
+  .admin-profile-btn {
+    padding: 3px 5px 3px 3px;
   }
   .hero-live-bulletin {
     flex-direction: column;
@@ -752,6 +803,15 @@ html, body {
     white-space: normal;
     font-size: 0.78rem;
   }
+  .admin-container {
+    padding: 16px 12px 60px;
+  }
+  .dot-sep {
+    display: none;
+  }
+  .admin-hero-title {
+    font-size: 1.22rem;
+  }
 }
 
 /* ── 4. ADMIN CONTAINER, HERO & KPI METRICS ── */
@@ -760,6 +820,7 @@ html, body {
   max-width: 1360px;
   margin: 0 auto;
   padding: 24px 24px 80px;
+  box-sizing: border-box;
 }
 
 /* ── 4A. EXECUTIVE HERO COMMAND BAR ── */
@@ -776,6 +837,8 @@ html, body {
   box-shadow: var(--shadow-sm);
   position: relative;
   overflow: hidden;
+  max-width: 100%;
+  box-sizing: border-box;
   background-image: radial-gradient(circle at 100% 0%, rgba(2, 132, 199, 0.08) 0%, transparent 60%),
                     radial-gradient(circle at 0% 100%, rgba(5, 150, 105, 0.05) 0%, transparent 50%);
 }
@@ -897,7 +960,7 @@ html, body {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 15px;
+  padding: 8px 14px;
   background: linear-gradient(135deg, rgba(2, 132, 199, 0.08), rgba(16, 185, 129, 0.08));
   border: 1px solid rgba(2, 132, 199, 0.2);
   border-left: 4px solid var(--blue-accent);
@@ -906,6 +969,9 @@ html, body {
   font-size: 0.84rem;
   color: var(--heading-color);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .bulletin-tag {
@@ -929,6 +995,8 @@ html, body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  flex: 1;
+  min-width: 0;
 }
 
 .admin-hero-meta-row {
@@ -1023,7 +1091,7 @@ html, body {
   transform: translateY(-1px);
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1080px) {
   .admin-hero-bar {
     flex-direction: column;
     align-items: flex-start;

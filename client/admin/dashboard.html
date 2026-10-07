@@ -31,23 +31,41 @@
 <!-- ══════════════════════════════════════
      TOPBAR — Navigation & Actions (Reorganized)
 ══════════════════════════════════════ -->
-<header class="admin-navbar-wrap">
-  <nav class="admin-navbar" aria-label="National Admin Navigation">
-    <!-- Left: Brand, Role Badge & Live Node Indicator -->
+<header class="admin-navbar-wrap" id="adminNavbarWrap">
+  <!-- Glowing Dynamic Scroll Progress Bar -->
+  <div class="navbar-scroll-progress" id="navbarScrollProgress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+
+  <nav class="admin-navbar" id="adminNavbar" aria-label="National Admin Navigation">
+    <!-- Left: Brand, Role Badge, Dynamic Breadcrumb & Rotating Telemetry Ticker -->
     <div class="nav-brand-group">
       <a href="/admin/dashboard.html" class="admin-brand" title="VirtuLab Kenya Administration Console">
         <span class="admin-brand-icon">🛡️</span>
         <span class="admin-brand-title">VirtuLab <span class="admin-brand-sub">Kenya</span></span>
         <span class="admin-badge" id="adminRoleBadge">Admin Portal</span>
       </a>
-      <div class="admin-live-status" title="Central Ministry of Education Virtual Laboratory Node Active">
+
+      <!-- Dynamic Breadcrumb Indicator -->
+      <div class="nav-breadcrumb-wrap" id="navBreadcrumbWrap" title="Active Console Section">
+        <span class="breadcrumb-slash">/</span>
+        <span class="nav-active-tab-label" id="navActiveTabLabel">Schools Directory</span>
+      </div>
+
+      <!-- Rotating Live Telemetry Ticker -->
+      <div class="admin-live-ticker-wrap" id="adminLiveTickerWrap" title="Live Cluster Telemetry Stream">
         <span class="status-pulse-dot"></span>
-        <span class="status-live-text">MoE Node · Live</span>
+        <div class="ticker-track">
+          <span class="ticker-text" id="tickerTrackText">MoE Central Node · Live 🟢</span>
+        </div>
       </div>
     </div>
 
     <!-- Right: Administrative Controls, Quick Actions & User Profile -->
     <div class="nav-controls-group">
+      <!-- Live Nairobi Clock Pill -->
+      <div class="nav-clock-pill" title="East Africa Time (Nairobi)">
+        <span class="clock-icon">🕒</span>
+        <span id="navTopLiveClock" class="clock-digits">--:--:-- EAT</span>
+      </div>
       <!-- ⚡ Quick Actions Dropdown -->
       <div class="nav-dropdown-wrap">
         <button type="button" class="btn-nav-action" id="btnAdminQuickActions" onclick="toggleAdminDropdown('adminQuickActionsMenu', event)" aria-expanded="false" aria-haspopup="true" title="Administrative Tools &amp; Action Modals">
@@ -190,6 +208,8 @@
         <span class="emblem-chip">🇰🇪 Republic of Kenya</span>
         <span class="dot-sep">·</span>
         <span class="ministry-chip">Ministry of Education · State Department for Basic Education</span>
+        <span class="dot-sep">·</span>
+        <span class="time-greeting-chip" id="heroTimeGreeting">👋 Welcome, Administrator</span>
       </div>
       <h1 class="admin-hero-title">
         <span>National Chemistry Virtual Laboratory</span>
@@ -198,6 +218,12 @@
       <p class="admin-hero-desc">
         Institutional oversight of secondary schools, verified STEM chemistry educators, real-time KCSE Paper 3 practical telemetry, and national accreditation telemetry across all 47 Counties.
       </p>
+
+      <!-- Live Rotating Announcement & System Bulletin -->
+      <div class="hero-live-bulletin" id="heroLiveBulletin">
+        <span class="bulletin-tag">📢 Live Notice:</span>
+        <span class="bulletin-text" id="heroBulletinText">Term III practical benchmarking active across 47 Counties · All regional nodes synchronized</span>
+      </div>
       
       <div class="admin-hero-meta-row">
         <div class="hero-meta-item">
@@ -1483,18 +1509,98 @@
 
   function initAdminClock() {
     function tick() {
-      const clockEl = document.getElementById('heroLiveClock');
-      if (!clockEl) return;
       const now = new Date();
       const timeStr = now.toLocaleTimeString('en-GB', { timeZone: 'Africa/Nairobi', hour12: false });
-      clockEl.textContent = `${timeStr} EAT`;
+      const heroClock = document.getElementById('heroLiveClock');
+      if (heroClock) heroClock.textContent = `${timeStr} EAT`;
+      const navClock = document.getElementById('navTopLiveClock');
+      if (navClock) navClock.textContent = `${timeStr} EAT`;
     }
     tick();
     setInterval(tick, 1000);
   }
 
+  function initDynamicHeader() {
+    const navbarWrap = document.getElementById('adminNavbarWrap');
+    const scrollBar = document.getElementById('navbarScrollProgress');
+
+    // Dynamic Scroll State & Live Scroll Progress Bar
+    window.addEventListener('scroll', () => {
+      const scrollY = window.scrollY || window.pageYOffset;
+      if (navbarWrap) {
+        if (scrollY > 15) {
+          navbarWrap.classList.add('scrolled');
+        } else {
+          navbarWrap.classList.remove('scrolled');
+        }
+      }
+
+      if (scrollBar) {
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = docHeight > 0 ? (scrollY / docHeight) * 100 : 0;
+        scrollBar.style.width = Math.min(100, Math.max(0, progress)) + '%';
+        scrollBar.setAttribute('aria-valuenow', Math.round(progress));
+      }
+    }, { passive: true });
+
+    // Live Rotating Telemetry Ticker
+    const tickerItems = [
+      'MoE Central Node · Live 🟢',
+      'Telemetry Sync: 18ms Latency ⚡',
+      'All 47 Counties Synchronized 🏛️',
+      'Real-Time Paper 3 Practical Node 🧪',
+      'Cluster SLA: 99.98% Operational 🛡️'
+    ];
+    let tickerIdx = 0;
+    const tickerEl = document.getElementById('tickerTrackText');
+    if (tickerEl) {
+      setInterval(() => {
+        tickerIdx = (tickerIdx + 1) % tickerItems.length;
+        tickerEl.style.opacity = '0';
+        tickerEl.style.transform = 'translateY(6px)';
+        setTimeout(() => {
+          tickerEl.textContent = tickerItems[tickerIdx];
+          tickerEl.style.opacity = '1';
+          tickerEl.style.transform = 'translateY(0)';
+        }, 200);
+      }, 3500);
+    }
+
+    // Dynamic Time-of-day greeting
+    const greetEl = document.getElementById('heroTimeGreeting');
+    if (greetEl) {
+      const h = new Date().getHours();
+      let greeting = 'Welcome, Administrator';
+      if (h >= 5 && h < 12) greeting = 'Good morning, Administrator';
+      else if (h >= 12 && h < 17) greeting = 'Good afternoon, Administrator';
+      else greeting = 'Good evening, Administrator';
+      greetEl.textContent = `👋 ${greeting}`;
+    }
+
+    // Dynamic rotating hero bulletin
+    const bulletinEl = document.getElementById('heroBulletinText');
+    if (bulletinEl) {
+      const notices = [
+        'Term III practical benchmarking active across 47 Counties · All regional nodes synchronized',
+        'TSC-accredited Chemistry practical rubrics updated for 2026 KNEC Paper 3 series',
+        'National mock examinations schedule: Qualitative & Organic chemistry module pipelines online',
+        'Automated database snapshots completed · Central MoE cluster running smoothly'
+      ];
+      let bIdx = 0;
+      setInterval(() => {
+        bIdx = (bIdx + 1) % notices.length;
+        bulletinEl.style.opacity = '0';
+        setTimeout(() => {
+          bulletinEl.textContent = notices[bIdx];
+          bulletinEl.style.opacity = '1';
+        }, 220);
+      }, 6000);
+    }
+  }
+
   async function initAdminDashboard() {
     initAdminClock();
+    initDynamicHeader();
     updateThemeButtons();
     const authenticated = await checkAdminAuth();
     if (!authenticated) return;
@@ -2807,6 +2913,24 @@
   function switchTab(tabId, btn) {
     document.querySelectorAll('.tab-strip .tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
+
+    const tabNames = {
+      'schoolsTab': 'Schools Directory',
+      'usersTab': 'User Directory',
+      'adminsTab': 'Admin Management',
+      'announcementsTab': 'Broadcast Bulletins',
+      'analyticsTab': 'KCSE Analytics',
+      'telemetryTab': 'Cluster Telemetry'
+    };
+
+    const labelEl = document.getElementById('navActiveTabLabel');
+    if (labelEl && tabNames[tabId]) {
+      labelEl.style.opacity = '0';
+      setTimeout(() => {
+        labelEl.textContent = tabNames[tabId];
+        labelEl.style.opacity = '1';
+      }, 140);
+    }
 
     ['schoolsTab', 'usersTab', 'adminsTab', 'announcementsTab', 'analyticsTab', 'telemetryTab'].forEach(id => {
       document.getElementById(id).style.display = (id === tabId) ? 'block' : 'none';

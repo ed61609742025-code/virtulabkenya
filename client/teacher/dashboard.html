@@ -90,9 +90,9 @@
       <div id="teacherSettingsDropdown" style="display:none; position:absolute; right:0; top:42px; width:240px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; box-shadow:var(--shadow-lg); z-index:10000; padding:14px; flex-direction:column; gap:10px; text-align:left;">
         <span style="font-size:0.8rem; font-weight:800; color:var(--heading-color); margin-bottom:4px; display:block;">Appearance Theme</span>
         <div class="theme-toggle-group" style="width:100%;">
-          <button class="theme-btn-chip" style="flex:1;" data-theme="dark" onclick="setTheme('dark'); reRenderCharts();">🌙 Dark</button>
-          <button class="theme-btn-chip" style="flex:1;" data-theme="light" onclick="setTheme('light'); reRenderCharts();">☀️ Light</button>
-          <button class="theme-btn-chip" style="flex:1;" data-theme="green" onclick="setTheme('green'); reRenderCharts();">🧪 Lab</button>
+          <button class="theme-btn-chip" style="flex:1;" data-theme="dark" onclick="setTheme('dark'); if (typeof window.reRenderCharts === 'function') window.reRenderCharts();">🌙 Dark</button>
+          <button class="theme-btn-chip" style="flex:1;" data-theme="light" onclick="setTheme('light'); if (typeof window.reRenderCharts === 'function') window.reRenderCharts();">☀️ Light</button>
+          <button class="theme-btn-chip" style="flex:1;" data-theme="green" onclick="setTheme('green'); if (typeof window.reRenderCharts === 'function') window.reRenderCharts();">🧪 Lab</button>
         </div>
       </div>
     </div>
@@ -1100,15 +1100,20 @@
 
         <!-- Security & Password -->
         <h3 style="font-family:var(--font-heading); font-size:1rem; color:var(--heading-color); border-top:1px solid var(--card-border); padding-top:16px; margin-bottom:14px;">🔒 Update Account Security Password</h3>
-        <div class="field" style="margin-bottom:10px;">
-          <label for="pwCurrent" style="font-size:0.8rem; font-weight:700;">Current Password</label>
-          <input type="password" id="pwCurrent" class="form-control" placeholder="Enter current security password">
-        </div>
-        <div class="field" style="margin-bottom:14px;">
-          <label for="pwNew" style="font-size:0.8rem; font-weight:700;">New Password</label>
-          <input type="password" id="pwNew" class="form-control" placeholder="Enter new password (min 6 characters)">
-        </div>
-        <button class="btn btn-primary" onclick="submitChangePassword()" style="padding:10px 22px; font-weight:800; border-radius:100px; width:100%;">Update Security Password 🔐</button>
+        <form id="changePasswordForm" onsubmit="event.preventDefault(); submitChangePassword();">
+          <input type="text" id="pwUsername" name="username" autocomplete="username"
+                 aria-hidden="true" tabindex="-1"
+                 style="position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;">
+          <div class="field" style="margin-bottom:10px;">
+            <label for="pwCurrent" style="font-size:0.8rem; font-weight:700;">Current Password</label>
+            <input type="password" id="pwCurrent" name="current-password" autocomplete="current-password" class="form-control" placeholder="Enter current security password" required>
+          </div>
+          <div class="field" style="margin-bottom:14px;">
+            <label for="pwNew" style="font-size:0.8rem; font-weight:700;">New Password</label>
+            <input type="password" id="pwNew" name="new-password" autocomplete="new-password" class="form-control" placeholder="Enter new password (min 6 characters)" required>
+          </div>
+          <button type="submit" class="btn btn-primary" style="padding:10px 22px; font-weight:800; border-radius:100px; width:100%;">Update Security Password 🔐</button>
+        </form>
         <div id="pwMsg" style="margin-top:10px; text-align:center;"></div>
 
         <!-- Web Push Notifications -->

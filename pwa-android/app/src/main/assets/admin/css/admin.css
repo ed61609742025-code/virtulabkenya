@@ -312,20 +312,37 @@ html, body {
   max-width: 140px;
 }
 
+/* Center: Dynamic Telemetry Ticker Container */
+.nav-center-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-width: 0;
+  padding: 0 12px;
+}
+
 /* Rotating Live Telemetry Ticker */
 .admin-live-ticker-wrap {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 3px 10px;
-  background: var(--green-bg);
-  border: 1px solid var(--green-border);
+  gap: 8px;
+  padding: 4px 13px;
+  background: var(--card-bg-hover);
+  border: 1px solid var(--card-border);
   border-radius: 100px;
   overflow: hidden;
-  max-width: 210px;
+  max-width: 320px;
   min-width: 0;
-  flex-shrink: 1;
-  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.admin-live-ticker-wrap:hover {
+  background: var(--card-bg);
+  border-color: var(--green-border);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.12);
 }
 
 .ticker-track {
@@ -338,7 +355,7 @@ html, body {
 
 .ticker-text {
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: 0.73rem;
   font-weight: 700;
   color: var(--green-accent);
   transition: opacity 0.2s ease, transform 0.2s ease;
@@ -726,17 +743,11 @@ html, body {
   .theme-btn-chip .theme-text {
     display: none;
   }
-  .admin-live-ticker-wrap {
-    max-width: 170px;
-  }
 }
 
-/* 2. Standard Laptops (<= 1260px) */
-@media (max-width: 1260px) {
+/* 2. Standard Laptops (<= 1200px) */
+@media (max-width: 1200px) {
   .nav-breadcrumb-wrap {
-    display: none;
-  }
-  .admin-live-ticker-wrap {
     display: none;
   }
   .btn-nav-link .btn-label,
@@ -751,8 +762,11 @@ html, body {
   }
 }
 
-/* 3. Tablets / Smaller Displays (<= 1024px) */
-@media (max-width: 1024px) {
+/* 3. Tablets / Smaller Displays (<= 960px) */
+@media (max-width: 960px) {
+  .nav-center-group {
+    display: none;
+  }
   .admin-navbar {
     padding: 0 12px;
     gap: 8px;

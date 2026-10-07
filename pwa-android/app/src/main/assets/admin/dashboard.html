@@ -36,7 +36,7 @@
   <div class="navbar-scroll-progress" id="navbarScrollProgress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
 
   <nav class="admin-navbar" id="adminNavbar" aria-label="National Admin Navigation">
-    <!-- Left: Brand, Role Badge, Dynamic Breadcrumb & Rotating Telemetry Ticker -->
+    <!-- Left: Brand, Role Badge & Dynamic Breadcrumb -->
     <div class="nav-brand-group">
       <a href="/admin/dashboard.html" class="admin-brand" title="VirtuLab Kenya Administration Console">
         <span class="admin-brand-icon">🛡️</span>
@@ -44,13 +44,15 @@
         <span class="admin-badge" id="adminRoleBadge">Admin Portal</span>
       </a>
 
-      <!-- Dynamic Breadcrumb Indicator -->
+      <!-- Dynamic Active Tab Breadcrumb -->
       <div class="nav-breadcrumb-wrap" id="navBreadcrumbWrap" title="Active Console Section">
         <span class="breadcrumb-slash">/</span>
         <span class="nav-active-tab-label" id="navActiveTabLabel">Schools Directory</span>
       </div>
+    </div>
 
-      <!-- Rotating Live Telemetry Ticker -->
+    <!-- Center: Live Rotating Telemetry Ticker Stream -->
+    <div class="nav-center-group" id="navCenterGroup">
       <div class="admin-live-ticker-wrap" id="adminLiveTickerWrap" title="Live Cluster Telemetry Stream">
         <span class="status-pulse-dot"></span>
         <div class="ticker-track">
@@ -205,7 +207,18 @@
   <section class="admin-hero-bar" aria-label="National Administration Overview">
     <div class="admin-hero-content">
       <div class="admin-hero-eyebrow">
-        <span class="emblem-chip">🇰🇪 Republic of Kenya</span>
+        <span class="emblem-chip">
+          <svg class="kenya-flag-svg" viewBox="0 0 24 16" width="16" height="11" aria-hidden="true" style="border-radius:1.5px;box-shadow:0 0 1px rgba(0,0,0,0.3);display:inline-block;vertical-align:middle;">
+            <rect width="24" height="4.5" fill="#000000"/>
+            <rect y="4.5" width="24" height="1" fill="#FFFFFF"/>
+            <rect y="5.5" width="24" height="5" fill="#B91C1C"/>
+            <rect y="10.5" width="24" height="1" fill="#FFFFFF"/>
+            <rect y="11.5" width="24" height="4.5" fill="#047857"/>
+            <ellipse cx="12" cy="8" rx="2.2" ry="4" fill="#991B1B" stroke="#FFFFFF" stroke-width="0.4"/>
+            <ellipse cx="12" cy="8" rx="0.6" ry="2.2" fill="#FFFFFF"/>
+          </svg>
+          <span>Republic of Kenya</span>
+        </span>
         <span class="dot-sep">·</span>
         <span class="ministry-chip">Ministry of Education · State Department for Basic Education</span>
         <span class="dot-sep">·</span>

@@ -19,19 +19,36 @@
 <link rel="stylesheet" href="/shared/style.css">
 <link rel="stylesheet" href="/shared/auth.css">
 <style>
+  .auth-card {
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--card-border);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.35);
+  }
+  .auth-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #0284C7 0%, #10B981 50%, #F59E0B 100%);
+  }
   .admin-auth-badge {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 4px 12px;
-    background: rgba(239, 68, 68, 0.15);
-    border: 1px solid rgba(239, 68, 68, 0.35);
-    color: #F87171;
+    gap: 7px;
+    padding: 5px 14px;
+    background: rgba(2, 132, 199, 0.12);
+    border: 1px solid rgba(2, 132, 199, 0.35);
+    color: var(--teal, #38BDF8);
     border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 700;
+    font-size: 0.74rem;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
     margin-bottom: 12px;
   }
   .btn-submit-admin {
@@ -39,7 +56,7 @@
     padding: 13px 18px;
     background: linear-gradient(135deg, #0284C7, #0369A1);
     color: #FFFFFF;
-    font-weight: 700;
+    font-weight: 800;
     font-size: 0.95rem;
     border: none;
     border-radius: 10px;
@@ -49,12 +66,13 @@
     justify-content: center;
     gap: 8px;
     box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .btn-submit-admin:hover {
     background: linear-gradient(135deg, #0369A1, #075985);
-    transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(2, 132, 199, 0.45);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(2, 132, 199, 0.5);
+    filter: brightness(1.06);
   }
 </style>
 </head>
@@ -70,11 +88,14 @@
 <!-- Admin Login Card -->
 <div class="auth-card">
   <div class="auth-header">
-    <div style="margin-bottom: 4px;">
-      <span class="admin-auth-badge">🛡️ Restricted Console</span>
+    <div class="vlk-brand-logo-wrap lg" style="margin: 0 auto 12px auto; display:flex; justify-content:center;">
+      <img src="/shared/virtulab-logo.svg" alt="VirtuLab Kenya Logo" class="vlk-brand-logo-img" width="56" height="56">
+    </div>
+    <div style="margin-bottom: 6px;">
+      <span class="admin-auth-badge">🛡️ MoE Central Node · Restricted Admin Access</span>
     </div>
     <h1 class="auth-logo-title">VirtuLab Kenya</h1>
-    <p class="auth-sub">National Admin Portal — Sign in with system administrator credentials to access schools, teacher certifications, and national analytics.</p>
+    <p class="auth-sub">National Admin Portal — Sign in with institutional administrator credentials to manage schools, teacher certifications, and national practical analytics.</p>
   </div>
 
   <form id="adminLoginForm" onsubmit="event.preventDefault(); doAdminLogin();">
@@ -92,7 +113,7 @@
       <!-- Password Field -->
       <div>
         <div class="field-label-row">
-          <label for="adminPassword" class="field-label">Master Password</label>
+          <label for="adminPassword" class="field-label">Master Security Password</label>
         </div>
         <div class="input-wrapper">
           <input type="password" id="adminPassword" class="auth-input" placeholder="••••••••••••" autocomplete="current-password" required>
@@ -111,8 +132,14 @@
   <!-- Error / Status Feedback Box -->
   <div id="msg"></div>
 
+  <!-- Security Reassurance Notice -->
+  <div style="margin-top:14px; padding:8px 12px; background:rgba(15,23,42,0.35); border:1px solid var(--card-border); border-radius:8px; font-size:0.74rem; color:var(--text-muted); text-align:center; display:flex; align-items:center; justify-content:center; gap:6px;">
+    <span>🔒</span>
+    <span>AES-256 GCM Session Encryption · Republic of Kenya MoE Node</span>
+  </div>
+
   <!-- Footer Navigation Links -->
-  <div class="auth-footer">
+  <div class="auth-footer" style="margin-top:16px;">
     <p style="margin: 0 0 8px 0;">Are you a chemistry teacher? <a href="/teacher/login.html">Teacher Portal →</a></p>
     <p style="margin: 0;">Are you a student? <a href="/student/login.html">Student Login →</a></p>
   </div>

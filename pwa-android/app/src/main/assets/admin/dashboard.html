@@ -5,9 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>National Admin Portal — VirtuLab Kenya</title>
 <meta name="description" content="Institutional administrative console for secondary schools, verified chemistry teachers, active students, and KCSE Paper 3 analytics in VirtuLab Kenya.">
+<script src="/shared/auth-guard.js"></script>
 <script>
-  var t = localStorage.getItem('vlk_admin_theme') || 'light';
+  var t = localStorage.getItem('vlk_admin_theme') || localStorage.getItem('vlk_theme') || 'light';
   document.documentElement.setAttribute('data-theme', t);
+  if (window.VLKAuthGuard) {
+    VLKAuthGuard.guardPage('admin');
+  }
 </script>
 <meta name="theme-color" content="#F8FAFC">
 <meta name="mobile-web-app-capable" content="yes">
@@ -179,30 +183,101 @@
 ══════════════════════════════════════ -->
 <div class="admin-container">
   
+  <!-- Executive Command Header -->
+  <section class="admin-hero-bar" aria-label="National Administration Overview">
+    <div class="admin-hero-content">
+      <div class="admin-hero-eyebrow">
+        <span class="emblem-chip">🇰🇪 Republic of Kenya</span>
+        <span class="dot-sep">·</span>
+        <span class="ministry-chip">Ministry of Education · State Department for Basic Education</span>
+      </div>
+      <h1 class="admin-hero-title">
+        <span>National Chemistry Virtual Laboratory</span>
+        <span class="admin-hero-badge">Central Administration Console</span>
+      </h1>
+      <p class="admin-hero-desc">
+        Institutional oversight of secondary schools, verified STEM chemistry educators, real-time KCSE Paper 3 practical telemetry, and national accreditation telemetry across all 47 Counties.
+      </p>
+      
+      <div class="admin-hero-meta-row">
+        <div class="hero-meta-item">
+          <span class="meta-icon">📅</span>
+          <span class="meta-label">Academic Calendar:</span>
+          <span class="meta-val">2026 Academic Year · Term III</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="meta-icon">🌐</span>
+          <span class="meta-label">Node Status:</span>
+          <span class="meta-val highlight-green">MoE Central · 99.98% SLA</span>
+        </div>
+        <div class="hero-meta-item">
+          <span class="meta-icon">🕒</span>
+          <span class="meta-label">Clock:</span>
+          <span class="meta-val font-mono" id="heroLiveClock">--:--:-- EAT</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-hero-actions">
+      <button type="button" class="btn-hero-primary" onclick="openRegisterSchoolModal()">
+        <span class="btn-icon">🏛️</span>
+        <span>+ Register School</span>
+      </button>
+      <button type="button" class="btn-hero-secondary" onclick="openMinistryReportModal()">
+        <span class="btn-icon">📄</span>
+        <span>MoE Official Report</span>
+      </button>
+      <button type="button" class="btn-hero-secondary" onclick="openAnnouncementModal()">
+        <span class="btn-icon">📢</span>
+        <span>Broadcast Notice</span>
+      </button>
+    </div>
+  </section>
+
   <!-- KPI Metrics Grid -->
   <div class="metrics-grid">
     <div class="metric-card accent-blue">
-      <div class="metric-label">🏛️ Registered Schools</div>
+      <div class="metric-card-top">
+        <div class="metric-icon-wrap blue">🏛️</div>
+        <span class="metric-trend positive">47 Counties</span>
+      </div>
+      <div class="metric-label">Registered Schools</div>
       <div class="metric-val" id="metricSchools">--</div>
       <div class="metric-subtitle">Across 47 Counties</div>
     </div>
     <div class="metric-card accent-green">
-      <div class="metric-label">👨‍🏫 Active Teachers</div>
+      <div class="metric-card-top">
+        <div class="metric-icon-wrap green">👨‍🏫</div>
+        <span class="metric-trend positive">TSC Verified</span>
+      </div>
+      <div class="metric-label">Active Teachers</div>
       <div class="metric-val" id="metricTeachers">--</div>
       <div class="metric-subtitle">Verified STEM Instructors</div>
     </div>
     <div class="metric-card accent-violet">
-      <div class="metric-label">🎓 Active Students</div>
+      <div class="metric-card-top">
+        <div class="metric-icon-wrap violet">🎓</div>
+        <span class="metric-trend positive">Secondary Lab</span>
+      </div>
+      <div class="metric-label">Active Students</div>
       <div class="metric-val" id="metricStudents">--</div>
       <div class="metric-subtitle">Secondary Lab Learners</div>
     </div>
     <div class="metric-card accent-fuchsia">
-      <div class="metric-label">🧪 Experiments Completed</div>
+      <div class="metric-card-top">
+        <div class="metric-icon-wrap fuchsia">🧪</div>
+        <span class="metric-trend positive">Live Practical</span>
+      </div>
+      <div class="metric-label">Experiments Completed</div>
       <div class="metric-val" id="metricExperiments">--</div>
       <div class="metric-subtitle">Paper 3 Virtual Practical Sessions</div>
     </div>
     <div class="metric-card accent-amber">
-      <div class="metric-label">🏆 KCSE Benchmark</div>
+      <div class="metric-card-top">
+        <div class="metric-icon-wrap amber">🏆</div>
+        <span class="metric-trend neutral">KNEC Target 80%</span>
+      </div>
+      <div class="metric-label">KCSE Benchmark</div>
       <div class="metric-val" id="metricPassRate" style="color:var(--amber-accent);">88%</div>
       <div class="metric-subtitle">National Target Pass Rate</div>
     </div>
@@ -1406,7 +1481,20 @@
     }
   }
 
+  function initAdminClock() {
+    function tick() {
+      const clockEl = document.getElementById('heroLiveClock');
+      if (!clockEl) return;
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('en-GB', { timeZone: 'Africa/Nairobi', hour12: false });
+      clockEl.textContent = `${timeStr} EAT`;
+    }
+    tick();
+    setInterval(tick, 1000);
+  }
+
   async function initAdminDashboard() {
+    initAdminClock();
     updateThemeButtons();
     const authenticated = await checkAdminAuth();
     if (!authenticated) return;

@@ -64,10 +64,27 @@ if (typeof document !== 'undefined') {
 }
 
 function getReadNotifIds() {
+  if (typeof window !== 'undefined' && window.VLKNotifs && typeof window.VLKNotifs.getReadTimestampsMap === 'function') {
+    const map = window.VLKNotifs.getReadTimestampsMap();
+    const readSet = new Set();
+    Object.keys(map).forEach(k => {
+      if (k.startsWith('asgn_marked_')) {
+        const id = parseInt(k.replace('asgn_marked_', ''), 10);
+        if (!isNaN(id)) readSet.add(id);
+      } else {
+        const id = parseInt(k, 10);
+        if (!isNaN(id)) readSet.add(id);
+      }
+    });
+    return Array.from(readSet);
+  }
   try { return JSON.parse(localStorage.getItem('vlk_read_notifs_' + (user ? user.id : 'anon')) || '[]'); }
   catch (e) { return []; }
 }
 function saveReadNotifIds(ids) {
+  if (typeof window !== 'undefined' && window.VLKNotifs && typeof window.VLKNotifs.markAllAsRead === 'function') {
+    window.VLKNotifs.markAllAsRead((ids || []).map(id => 'asgn_marked_' + id));
+  }
   try { localStorage.setItem('vlk_read_notifs_' + (user ? user.id : 'anon'), JSON.stringify(ids)); }
   catch (e) {}
 }
@@ -118,6 +135,9 @@ function markAllNotificationsRead() {
 
 if (typeof window !== 'undefined') {
   loadNotifications();
+  if (window.VLKNotifs && typeof window.VLKNotifs.subscribe === 'function') {
+    window.VLKNotifs.subscribe(() => { loadNotifications(); });
+  }
 }
 
   /* ══════════════════════════════════════

@@ -169,8 +169,13 @@ requireStudentLogin();
     const isShowing = dropdown.style.display !== 'none';
     dropdown.style.display = isShowing ? 'none' : 'flex';
     if (backdrop) backdrop.style.display = isShowing ? 'none' : 'block';
-    if (!isShowing && window.VLKPush && typeof window.VLKPush.syncUI === 'function') {
-      window.VLKPush.syncUI();
+    if (!isShowing) {
+      if (window.VLKNotifs && typeof window.VLKNotifs.syncWithServer === 'function') {
+        window.VLKNotifs.syncWithServer().catch(() => {});
+      }
+      if (window.VLKPush && typeof window.VLKPush.syncUI === 'function') {
+        window.VLKPush.syncUI();
+      }
     }
   }
 
@@ -426,6 +431,17 @@ requireStudentLogin();
         if (typeof loadAssignments === 'function') {
           loadAssignments();
         }
+      }
+    });
+  }
+
+  // Subscribe to real-time cross-device and cross-tab notification updates
+  if (typeof window !== 'undefined' && window.VLKNotifs && typeof window.VLKNotifs.subscribe === 'function') {
+    window.VLKNotifs.subscribe(() => {
+      if (studentNotificationsList && studentNotificationsList.length > 0) {
+        updateNotificationsUI(studentNotificationsList);
+      } else if (typeof loadAssignments === 'function') {
+        loadAssignments();
       }
     });
   }

@@ -259,6 +259,16 @@ CREATE TABLE IF NOT EXISTS student_notifications (
   created_at TIMESTAMP DEFAULT NOW()
 );
 
+-- Cross-device notification read state persistence table
+CREATE TABLE IF NOT EXISTS user_notification_reads (
+  user_id INTEGER NOT NULL,
+  user_role VARCHAR(20) NOT NULL,
+  notif_id VARCHAR(100) NOT NULL,
+  read_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  PRIMARY KEY (user_id, user_role, notif_id)
+);
+CREATE INDEX IF NOT EXISTS idx_unr_user ON user_notification_reads(user_id, user_role);
+
 -- Web Push subscriptions table (PWA Push Notifications)
 CREATE TABLE IF NOT EXISTS push_subscriptions (
   id SERIAL PRIMARY KEY,

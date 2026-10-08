@@ -4484,7 +4484,11 @@ let currentPage = 1;
     if (e) e.stopPropagation();
     const dropdown = document.getElementById('notifDropdown');
     if (!dropdown) return;
-    dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+    const isShowing = dropdown.style.display !== 'none';
+    dropdown.style.display = isShowing ? 'none' : 'block';
+    if (!isShowing && window.VLKNotifs && typeof window.VLKNotifs.syncWithServer === 'function') {
+      window.VLKNotifs.syncWithServer().catch(() => {});
+    }
   };
 
   document.addEventListener('click', (e) => {
@@ -4581,6 +4585,17 @@ let currentPage = 1;
     }
     loadSubmittedAssignments();
   };
+
+  // Subscribe to real-time cross-device and cross-tab notification updates
+  if (typeof window !== 'undefined' && window.VLKNotifs && typeof window.VLKNotifs.subscribe === 'function') {
+    window.VLKNotifs.subscribe(() => {
+      if (teacherNotificationsList && teacherNotificationsList.length > 0) {
+        window.updateTeacherNotificationsUI(teacherNotificationsList);
+      } else if (typeof loadSubmittedAssignments === 'function') {
+        loadSubmittedAssignments();
+      }
+    });
+  }
 
   // ── TEACHER PROFILE & ACCOUNT SETTINGS MANAGEMENT ────────────
   function loadTeacherProfile() {

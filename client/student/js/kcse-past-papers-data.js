@@ -1311,7 +1311,7 @@ const KCSE_PAST_PAPERS_ARCHIVE = [
   }
 ];
 
-// Helper to filter past papers by topic, decade, or keyword
+// Helper to filter past papers by topic, decade, keyword, or simulation status
 function filterPastPapers(options = {}) {
   let list = KCSE_PAST_PAPERS_ARCHIVE.slice();
   if (options.decade) {
@@ -1321,6 +1321,13 @@ function filterPastPapers(options = {}) {
   }
   if (options.topic && options.topic !== 'all') {
     list = list.filter(p => p.topics.some(t => t.toLowerCase().includes(options.topic.toLowerCase())));
+  }
+  if (options.status) {
+    if (options.status === 'playable' || options.status === 'simulated') {
+      list = list.filter(p => Boolean(p.playablePresetKey));
+    } else if (options.status === 'written' || options.status === 'unsimulated') {
+      list = list.filter(p => !p.playablePresetKey);
+    }
   }
   if (options.keyword && options.keyword.trim()) {
     const q = options.keyword.toLowerCase().trim();
@@ -1335,11 +1342,66 @@ function filterPastPapers(options = {}) {
   return list;
 }
 
+/**
+ * Returns all past practical questions that currently lack an interactive lab simulation
+ * @returns {Array<Object>} List of unsimulated questions with year, paperId, question title, and topics
+ */
+function getMissingSimulations() {
+  const missing = [];
+  KCSE_PAST_PAPERS_ARCHIVE.forEach(paper => {
+    if (!paper.playablePresetKey) {
+      (paper.questions || []).forEach((q, idx) => {
+        missing.push({
+          paperId: paper.id,
+          year: paper.year,
+          paperTitle: paper.title,
+          questionNumber: q.num || idx + 1,
+          questionTitle: q.title || `Question ${idx + 1}`,
+          topics: paper.topics || []
+        });
+      });
+    }
+  });
+  return missing;
+}
+
+/**
+ * Returns a high-level statistical breakdown of simulation coverage
+ * @returns {Object} Coverage metrics across papers and questions
+ */
+function getSimulationCoverageStats() {
+  const totalPapers = KCSE_PAST_PAPERS_ARCHIVE.length;
+  const playablePapers = KCSE_PAST_PAPERS_ARCHIVE.filter(p => Boolean(p.playablePresetKey)).length;
+  let totalQuestions = 0;
+  let simulatedQuestions = 0;
+
+  KCSE_PAST_PAPERS_ARCHIVE.forEach(p => {
+    const qCount = Array.isArray(p.questions) ? p.questions.length : 0;
+    totalQuestions += qCount;
+    if (p.playablePresetKey) {
+      simulatedQuestions += qCount;
+    }
+  });
+
+  const writtenOnlyQuestions = totalQuestions - simulatedQuestions;
+  return {
+    totalPapers,
+    playablePapers,
+    paperCoveragePercent: totalPapers > 0 ? Number(((playablePapers / totalPapers) * 100).toFixed(1)) : 0,
+    totalQuestions,
+    simulatedQuestions,
+    writtenOnlyQuestions,
+    questionCoveragePercent: totalQuestions > 0 ? Number(((simulatedQuestions / totalQuestions) * 100).toFixed(1)) : 0
+  };
+}
+
 // Export for browser and node testing environments
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     KCSE_LEAD_NOTES,
     KCSE_PAST_PAPERS_ARCHIVE,
-    filterPastPapers
+    filterPastPapers,
+    getMissingSimulations,
+    getSimulationCoverageStats
   };
 }

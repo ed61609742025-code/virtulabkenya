@@ -729,6 +729,13 @@
         <button type="button" class="filter-chip-btn" data-topic="Organic" onclick="setTopicFilter('Organic', this)">Organic Chemistry</button>
         <button type="button" class="filter-chip-btn" data-topic="Solubility" onclick="setTopicFilter('Solubility', this)">Solubility Curves</button>
       </div>
+
+      <div class="filter-pills-row">
+        <span class="filter-pill-label">Simulation Status:</span>
+        <button type="button" class="filter-chip-btn active" data-sim="all" onclick="setSimFilter('all', this)">All Past Papers</button>
+        <button type="button" class="filter-chip-btn" data-sim="playable" onclick="setSimFilter('playable', this)">🎮 40M Simulations Available (8)</button>
+        <button type="button" class="filter-chip-btn" data-sim="written" onclick="setSimFilter('written', this)">📝 Written Paper Archives (11)</button>
+      </div>
     </div>
 
     <!-- Results Status Count -->
@@ -1193,6 +1200,7 @@
   // ── Past Papers Archive Filters & Lead Notes ──
   let currentDecadeFilter = 'all';
   let currentTopicFilter = 'all';
+  let currentSimFilter = 'all';
   let leadNotesVisible = false;
 
   function setDecadeFilter(decade, btn) {
@@ -1205,6 +1213,13 @@
   function setTopicFilter(topic, btn) {
     currentTopicFilter = topic;
     document.querySelectorAll('[data-topic]').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderPastPaperCards();
+  }
+
+  function setSimFilter(simStatus, btn) {
+    currentSimFilter = simStatus;
+    document.querySelectorAll('[data-sim]').forEach(b => b.classList.remove('active'));
     if (btn) btn.classList.add('active');
     renderPastPaperCards();
   }
@@ -1341,6 +1356,7 @@
     const filtered = filterPastPapers({
       decade: currentDecadeFilter,
       topic: currentTopicFilter,
+      status: currentSimFilter,
       keyword: keyword
     });
 
@@ -1370,7 +1386,7 @@
           <div>
             <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:6px;">
               <span class="past-paper-year-badge">KCSE ${p.year}</span>
-              ${isPlayable ? '<span class="past-paper-playable-badge">🎮 40M Simulation Available</span>' : '<span style="font-size:0.72rem; color:var(--text-muted); font-family:var(--font-mono); font-weight:700;">Archived Exam</span>'}
+              ${isPlayable ? '<span class="past-paper-playable-badge">🎮 40M Simulation Available</span>' : '<span style="font-size:0.72rem; color:var(--text-muted); font-family:var(--font-mono); font-weight:700;">📝 Written Paper Archive</span>'}
             </div>
 
             <h3 class="past-paper-title">${escapeHtml(p.title)}</h3>
@@ -1383,17 +1399,26 @@
             </div>
 
             <ul class="past-q-summary-list">
-              <li class="past-q-item">
-                <span class="q-icon">🧪</span>
-                <div><b>Q1:</b> ${escapeHtml(q1Title)}</div>
+              <li class="past-q-item" style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span class="q-icon">🧪</span>
+                  <div><b>Q1:</b> ${escapeHtml(q1Title)}</div>
+                </div>
+                ${isPlayable ? '<span style="font-size:0.68rem; padding:2px 6px; border-radius:4px; font-weight:800; background:rgba(16,185,129,0.15); color:var(--emerald-accent); border:1px solid rgba(16,185,129,0.3); white-space:nowrap;">🟢 Simulated</span>' : '<span style="font-size:0.68rem; padding:2px 6px; border-radius:4px; font-weight:800; background:rgba(148,163,184,0.12); color:var(--text-muted); border:1px solid rgba(148,163,184,0.25); white-space:nowrap;">📝 Written Sheet</span>'}
               </li>
-              <li class="past-q-item">
-                <span class="q-icon">🧂</span>
-                <div><b>Q2:</b> ${escapeHtml(q2Title)}</div>
+              <li class="past-q-item" style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span class="q-icon">🧂</span>
+                  <div><b>Q2:</b> ${escapeHtml(q2Title)}</div>
+                </div>
+                ${isPlayable ? '<span style="font-size:0.68rem; padding:2px 6px; border-radius:4px; font-weight:800; background:rgba(16,185,129,0.15); color:var(--emerald-accent); border:1px solid rgba(16,185,129,0.3); white-space:nowrap;">🟢 Simulated</span>' : '<span style="font-size:0.68rem; padding:2px 6px; border-radius:4px; font-weight:800; background:rgba(148,163,184,0.12); color:var(--text-muted); border:1px solid rgba(148,163,184,0.25); white-space:nowrap;">📝 Written Sheet</span>'}
               </li>
-              <li class="past-q-item">
-                <span class="q-icon">🧫</span>
-                <div><b>Q3:</b> ${escapeHtml(q3Title)}</div>
+              <li class="past-q-item" style="display:flex; justify-content:space-between; align-items:center;">
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span class="q-icon">🧫</span>
+                  <div><b>Q3:</b> ${escapeHtml(q3Title)}</div>
+                </div>
+                ${isPlayable ? '<span style="font-size:0.68rem; padding:2px 6px; border-radius:4px; font-weight:800; background:rgba(16,185,129,0.15); color:var(--emerald-accent); border:1px solid rgba(16,185,129,0.3); white-space:nowrap;">🟢 Simulated</span>' : '<span style="font-size:0.68rem; padding:2px 6px; border-radius:4px; font-weight:800; background:rgba(148,163,184,0.12); color:var(--text-muted); border:1px solid rgba(148,163,184,0.25); white-space:nowrap;">📝 Written Sheet</span>'}
               </li>
             </ul>
           </div>
@@ -1487,6 +1512,21 @@
 
     if (currentModalTab === 'questions') {
       body.innerHTML = `
+        ${!p.playablePresetKey ? `
+          <div style="background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.3); border-radius:10px; padding:12px 16px; margin-bottom:18px; display:flex; align-items:center; gap:12px;">
+            <span style="font-size:1.4rem;">📝</span>
+            <div style="font-size:0.84rem; color:var(--text-main); line-height:1.45;">
+              <b>Written Examination Mode:</b> This past practical paper is currently available in structured written format with official experimental data and KNEC scoring rubrics. The interactive virtual workbench simulation is in development.
+            </div>
+          </div>
+        ` : `
+          <div style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.3); border-radius:10px; padding:12px 16px; margin-bottom:18px; display:flex; align-items:center; gap:12px;">
+            <span style="font-size:1.4rem;">🎮</span>
+            <div style="font-size:0.84rem; color:var(--text-main); line-height:1.45;">
+              <b>Full Interactive Simulation Ready:</b> You can launch this entire 40-mark paper in the virtual laboratory anytime by clicking <b>"Launch 40M Simulation"</b> above!
+            </div>
+          </div>
+        `}
         <div style="background:var(--acad-paper-subtle); border-left:4px solid var(--acad-gold); padding:12px 16px; border-radius:0 8px 8px 0; margin-bottom:20px; font-size:0.86rem; color:var(--text-muted);">
           <b>Candidate Instructions:</b> Answer ALL questions in the spaces provided. Mathematical tables and non-programmable electronic calculators may be used. All working must be clearly shown.
         </div>

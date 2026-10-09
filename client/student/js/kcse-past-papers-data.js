@@ -735,7 +735,7 @@ const KCSE_PAST_PAPERS_ARCHIVE = [
     title: 'KCSE 2000 Chemistry Paper 3 Practical (233/3)',
     badgeText: 'Official KNEC Paper · Double Indicator Volumetric Titration & Enthalpy of Solution',
     topics: ['Double Indicator Titration', 'Thermochemistry', 'Qualitative Analysis'],
-    playablePresetKey: null,
+    playablePresetKey: 'series_2000',
     totalMarks: 40.0,
     durationMinutes: 135,
     summary: 'Two-stage double indicator titration of 5.6 g/L sodium carbonate (Solution L) with hydrochloric acid (Solution M) using phenolphthalein then methyl orange to determine molar concentration. Determination of enthalpy of solution of Solid G (KNO₃). Qualitative analysis of two-cation mixture Solution P.',

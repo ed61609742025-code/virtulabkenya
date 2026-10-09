@@ -611,6 +611,9 @@
        TAB 1: 40-MARK MOCK SIMULATIONS
   ══════════════════════════════════════ -->
   <div id="sectionSimulations" class="hub-tab-section">
+    <!-- Active In-Progress Draft Resume Banner -->
+    <div id="activeDraftResumeBanner" style="display:none; margin-bottom: 24px;"></div>
+
     <!-- Header & Mode Switcher -->
     <div class="hero-banner-mock">
       <div>
@@ -730,8 +733,8 @@
       <div class="filter-pills-row">
         <span class="filter-pill-label">Simulation Status:</span>
         <button type="button" class="filter-chip-btn active" data-sim="all" onclick="setSimFilter('all', this)">All Past Papers</button>
-        <button type="button" class="filter-chip-btn" data-sim="playable" onclick="setSimFilter('playable', this)">🎮 40M Simulations Available (9)</button>
-        <button type="button" class="filter-chip-btn" data-sim="written" onclick="setSimFilter('written', this)">📝 Written Paper Archives (10)</button>
+        <button type="button" class="filter-chip-btn" data-sim="playable" onclick="setSimFilter('playable', this)">🎮 40M Simulations Available (10)</button>
+        <button type="button" class="filter-chip-btn" data-sim="written" onclick="setSimFilter('written', this)">📝 Written Paper Archives (9)</button>
       </div>
     </div>
 
@@ -872,6 +875,7 @@
 <script src="/shared/page-transitions.js"></script>
 <script src="js/composite-engine.js"></script>
 <script src="js/kcse-past-papers-data.js"></script>
+<script src="js/exam-offline-manager.js"></script>
 <script>
   requireStudentLogin();
   let currentExamMode = 'strict';
@@ -968,6 +972,15 @@
       q3: 'Solid G: Unsaturated Carboxylic Acid (Maleic Acid >C=C< / —COOH)'
     },
     {
+      key: 'series_2012',
+      num: 2012,
+      title: 'KCSE 2012 Official Practical Mock',
+      badge: 'Official KNEC Series · Iodometric Redox Titration & Devarda Reduction',
+      q1: '0.050 M Na₂S₂O₃ vs Liberated Iodine (I₂) · Starch Endpoint Discharge',
+      q2: 'Solid E: Lead(II) Nitrate Analysis (Pb²⁺ / NO₃⁻)',
+      q3: 'Solid F: Benzoic Acid Aromatic Carboxylic Acid (C₆H₅COOH)'
+    },
+    {
       key: 'series_2011',
       num: 2011,
       title: 'KCSE 2011 Official Practical Mock',
@@ -993,6 +1006,33 @@
       q1: '0.100 M HCl vs 0.100 M NaOH · Residual Acid Back-Titration',
       q2: 'Solid D: Basic Copper(II) Carbonate (Cu²⁺ / CO₃²⁻)',
       q3: 'Solid F: Unsaturated Carboxylic Acid (Maleic Acid >C=C< / —COOH)'
+    },
+    {
+      key: 'series_2007',
+      num: 2007,
+      title: 'KCSE 2007 Official Practical Mock',
+      badge: 'Official KNEC Series · Sulfuric Acid Standardization & Iron(III) Redox',
+      q1: 'Diluted H₂SO₄ vs Na₂CO₃ (8.00 g/dm³) · Acid Standardization Titration',
+      q2: 'Solid E: Iron(III) Sulfate Hydrate (Fe³⁺ / SO₄²⁻)',
+      q3: 'Liquid F: Ethanol Low-Molecular Alkanol (C₂H₅OH)'
+    },
+    {
+      key: 'series_2006',
+      num: 2006,
+      title: 'KCSE 2006 Official Practical Mock',
+      badge: 'Official KNEC Series · Hydrated Oxalic Acid KMnO₄ Redox Titration & Barium Salt',
+      q1: '0.060 M KMnO₄ vs Hydrated Oxalic Acid (4.50 g/250 cm³) · Water of Crystallization Titration',
+      q2: 'Solid E: Barium Salt Flame Test & Sulfate Reaction (Ba²⁺ / Cl⁻)',
+      q3: 'Solid F: Unsaturated Organic Acid (Alkene >C=C< / KMnO₄ & Bromine Water)'
+    },
+    {
+      key: 'series_2003',
+      num: 2003,
+      title: 'KCSE 2003 Official Practical Mock',
+      badge: 'Official KNEC Series · Iron(II) Redox Titration & Sulfite Salt Analysis',
+      q1: '0.020 M KMnO₄ vs Iron(II) Salt Solution · Redox Stoichiometry & Molar Mass',
+      q2: 'Solid P: Sodium Sulfite Reducing Agent Analysis (Na₂SO₃ / SO₃²⁻)',
+      q3: 'Solid Q: Dibasic Organic Acid Neutralization (—COOH / Litmus & NaHCO₃)'
     },
     {
       key: 'series_1998',
@@ -1699,10 +1739,87 @@
     updateThemeButtonLabel();
   }
 
+  async function checkForActiveExamDrafts() {
+    if (!window.ExamDraftManager || typeof window.ExamDraftManager.getAllDraftsIdb !== 'function') return;
+    try {
+      const drafts = await ExamDraftManager.getAllDraftsIdb();
+      const banner = document.getElementById('activeDraftResumeBanner');
+      if (!banner) return;
+      if (!drafts || drafts.length === 0) {
+        banner.style.display = 'none';
+        return;
+      }
+
+      // Find the most recent draft
+      drafts.sort((a, b) => new Date(b.savedAt || 0) - new Date(a.savedAt || 0));
+      const latest = drafts[0];
+      const d = latest.data || {};
+      const seriesId = d.seriesParam || 'series1';
+      const mode = d.modeParam || 'exam';
+      const timeLeft = d.timeLeft != null ? Math.round(d.timeLeft / 60) : 135;
+      const bVol = typeof d.q1BuretteReading === 'number' && d.q1BuretteReading > 0 ? ` · Titre: ${d.q1BuretteReading.toFixed(2)} cm³` : '';
+      const savedTime = latest.savedAt ? new Date(latest.savedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'earlier';
+      const assignmentParam = d.assignmentId ? `&assignmentId=${encodeURIComponent(d.assignmentId)}` : '';
+
+      banner.innerHTML = `
+        <div style="background:var(--acad-gold-subtle); border:1.5px solid var(--acad-gold); border-radius:12px; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; box-shadow:0 4px 14px rgba(0,0,0,0.08);">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <div style="width:42px; height:42px; border-radius:10px; background:rgba(234,179,8,0.2); display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0;">💾</div>
+            <div>
+              <div style="font-weight:800; font-size:0.96rem; color:var(--heading-color);">
+                In-Progress KCSE Mock Exam Auto-Saved in IndexedDB
+              </div>
+              <div style="font-size:0.82rem; color:var(--text-muted); margin-top:2px;">
+                Series: <b>${escapeHtml(seriesId.toUpperCase())}</b> · Auto-saved at ${savedTime} (${timeLeft} mins remaining)${bVol}. All readings preserved.
+              </div>
+            </div>
+          </div>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <a href="composite_exam.html?series=${encodeURIComponent(seriesId)}&mode=${encodeURIComponent(mode)}${assignmentParam}" class="btn-start-series" style="padding:8px 18px; font-size:0.85rem; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+              ▶ Resume Exam Session
+            </a>
+            <button type="button" onclick="discardDraftFromMockHub('${encodeURIComponent(latest.examKey)}')" style="background:transparent; border:1px solid var(--card-border); color:var(--text-muted); padding:8px 12px; border-radius:8px; font-size:0.8rem; cursor:pointer;" title="Discard saved draft">
+              Discard
+            </button>
+          </div>
+        </div>
+      `;
+      banner.style.display = 'block';
+    } catch (err) {
+      console.warn('[MockExams] Could not inspect exam drafts:', err);
+    }
+  }
+
+  async function discardDraftFromMockHub(examKey) {
+    if (!confirm('Are you sure you want to discard this in-progress exam draft?')) return;
+    try {
+      if (window.ExamDraftManager) {
+        await ExamDraftManager.clearDraftIdb(decodeURIComponent(examKey));
+      }
+      checkForActiveExamDrafts();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  window.discardDraftFromMockHub = discardDraftFromMockHub;
+  window.checkForActiveExamDrafts = checkForActiveExamDrafts;
+
+  function updateSimFilterPills() {
+    if (typeof getSimulationCoverageStats === 'function') {
+      const stats = getSimulationCoverageStats();
+      const btnPlayable = document.querySelector('[data-sim="playable"]');
+      const btnWritten = document.querySelector('[data-sim="written"]');
+      if (btnPlayable) btnPlayable.textContent = `🎮 40M Simulations Available (${stats.playablePapers})`;
+      if (btnWritten) btnWritten.textContent = `📝 Written Paper Archives (${stats.writtenOnlyPapers})`;
+    }
+  }
+
   updateThemeButtonLabel();
+  updateSimFilterPills();
   renderSeriesCards();
   renderPastPaperCards();
   loadExamHistory();
+  setTimeout(checkForActiveExamDrafts, 200);
 </script>
 
 <!-- Mobile Bottom Navigation Bar -->

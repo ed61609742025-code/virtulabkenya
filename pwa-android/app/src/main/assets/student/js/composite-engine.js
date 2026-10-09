@@ -2670,6 +2670,216 @@ const COMPOSITE_EXAM_PRESETS = {
     }
   },
 
+  // ── Series 2003: Official KCSE 2003 Standard Chemistry Practical (Paper 233/3) ──
+  series_2003: {
+    id: 'series_2003',
+    seriesKey: 'series_2003',
+    seriesNumber: 2003,
+    title: 'KCSE 2003 Standard Chemistry Practical Examination',
+    badgeText: 'KCSE 2003 Past National Paper · KMnO₄ Redox Stoichiometry & Sodium Sulfite Analysis',
+    durationMinutes: 135,
+    q1: {
+      type: 'titration',
+      calcType: 'redox_stoichiometry',
+      title: 'Question 1: Volumetric Redox Titration — Mole Ratio Determination (15.0 Marks)',
+      solutionA: '0.020 M Acidified Potassium Manganate(VII) Solution P',
+      solutionB: 'Solution of Solid Q containing 16.72 g/dm³ (Iron(II) Salt)',
+      acidFormula: 'KMnO4',
+      baseFormula: 'FeSO4',
+      indicator: 'Self-indicating (KMnO₄ permanent faint pink end-point)',
+      pipetteVolume: 25.0,
+      trueAcidMolarity: 0.0200,
+      trueBaseMolarity: 0.0601,
+      trueTitre: 15.00,
+      moleRatioAcid: 1,
+      moleRatioBase: 5,
+      acidRfm: 158.0,
+      baseRfm: 278.0,
+      titrantColor: '#7C3AED',
+      flaskBaseColor: 'rgba(236,253,245,0.4)',
+      flaskIndicatorColor: 'rgba(236,253,245,0.4)',
+      endpointColor: 'rgba(244,114,182,0.6)',
+      overtitratedColor: 'rgba(126,34,206,0.95)',
+      equation: 'MnO₄⁻(aq) + 5Fe²⁺(aq) + 8H⁺(aq) → Mn²⁺(aq) + 5Fe³⁺(aq) + 4H₂O(l)',
+      instructions: 'Pipette 25.0 cm³ of Solution Q into a clean conical flask. Fill the burette with 0.020 M acidified KMnO₄ Solution P. Titrate Solution Q with Solution P until the first permanent faint pink colour persists for at least 30 seconds.',
+      questions: [
+        {
+          id: 'step_a',
+          letter: 'a',
+          field: 'avgTitre',
+          label: 'Calculate the average volume of 0.020 M KMnO₄ Solution P used, V₁',
+          marks: 1.0,
+          marksLabel: '(1.0 Mark)',
+          placeholder: 'e.g. 15.00',
+          step: '0.01',
+          unit: 'cm³',
+          calcTheoretical: (ctx) => ctx.trueTitre,
+          calcEcf: (ctx) => ctx.expAvgFromTrials,
+          check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
+          feedbackSuccess: (val) => `✓ Correct: V₁ = ${val.toFixed(2)} cm³.`,
+          feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
+          working: (ctx) => `<b>(a) Average Titre:</b> V₁ = <b>${ctx.v1.toFixed(2)} cm³</b>`
+        },
+        {
+          id: 'step_b',
+          letter: 'b',
+          field: 'molesKmno4',
+          label: 'Calculate the number of moles of KMnO₄ used in the average titre V₁',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 0.00030',
+          step: '0.00001',
+          unit: 'moles of KMnO₄',
+          calcTheoretical: (ctx) => (0.0200 * ctx.trueTitre) / 1000.0,
+          calcEcf: (ctx) => {
+            const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_a')) || ctx.trueTitre;
+            return (0.0200 * v1) / 1000.0;
+          },
+          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+          feedbackSuccess: (val) => `✓ Correct: ${val} moles of KMnO₄.`,
+          feedbackFail: (ctx, expTheo) => `Formula: (0.020 × V₁) / 1000 = ${expTheo.toFixed(5)} mol.`,
+          working: (ctx) => `<b>(b) Moles of KMnO₄:</b> (0.020 × ${ctx.v1.toFixed(2)}) / 1000 = <b>${((0.0200 * ctx.v1) / 1000.0).toFixed(5)} mol</b>`
+        },
+        {
+          id: 'step_c',
+          letter: 'c',
+          field: 'molarityQ',
+          label: 'Calculate the concentration of Solution Q in mol/dm³ (RFM of Solid Q = 278.0, 4.18 g dissolved in 250 cm³)',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 0.0601',
+          step: '0.0001',
+          unit: 'mol/dm³ (M)',
+          calcTheoretical: () => (4.18 * 4.0) / 278.0,
+          calcEcf: () => (4.18 * 4.0) / 278.0,
+          check: (val) => Math.abs(val - ((4.18 * 4.0) / 278.0)) <= 0.005,
+          feedbackSuccess: (val) => `✓ Correct: Concentration of Solution Q = ${val} mol/dm³.`,
+          feedbackFail: () => `Formula: Mass conc = (4.18 × 1000) / 250 = 16.72 g/dm³. Molarity = 16.72 / 278.0 = 0.0601 mol/dm³.`,
+          working: () => `<b>(c) Molarity of Solution Q:</b> (4.18 × 4) / 278.0 = 16.72 / 278.0 = <b>0.0601 mol/dm³</b>`
+        },
+        {
+          id: 'step_d',
+          letter: 'd',
+          field: 'molesQ',
+          label: 'Calculate the number of moles of Solid Q present in 25.0 cm³ of Solution Q',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 0.00150',
+          step: '0.00001',
+          unit: 'moles of Q',
+          calcTheoretical: () => (((4.18 * 4.0) / 278.0) * 25.0) / 1000.0,
+          calcEcf: (ctx) => {
+            const mq = parseFloat(getAnswerValue(ctx.answers, 'molarityQ', 'step_c')) || ((4.18 * 4.0) / 278.0);
+            return (mq * 25.0) / 1000.0;
+          },
+          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+          feedbackSuccess: (val) => `✓ Correct: ${val} moles of Q in 25.0 cm³.`,
+          feedbackFail: (ctx, expTheo) => `Formula: (Molarity Q × 25.0) / 1000 = ${expTheo.toFixed(5)} mol.`,
+          working: (ctx) => `<b>(d) Moles of Q:</b> (0.0601 × 25.0) / 1000 = <b>0.00150 mol</b>`
+        },
+        {
+          id: 'step_e',
+          letter: 'e',
+          field: 'moleRatio',
+          label: 'Determine the mole ratio of Solid Q reacting with 1 mole of KMnO₄ (Moles of Q / Moles of KMnO₄)',
+          marks: 3.0,
+          marksLabel: '(3.0 Marks)',
+          placeholder: 'e.g. 5.0',
+          step: '0.1',
+          unit: '',
+          calcTheoretical: () => 5.0,
+          calcEcf: (ctx) => {
+            const mQ = parseFloat(getAnswerValue(ctx.answers, 'molesQ', 'step_d')) || 0.00150;
+            const mK = parseFloat(getAnswerValue(ctx.answers, 'molesKmno4', 'step_b')) || 0.00030;
+            return mK > 0 ? parseFloat((mQ / mK).toFixed(1)) : 5.0;
+          },
+          check: (val) => Math.abs(val - 5.0) <= 0.4,
+          feedbackSuccess: (val) => `✓ Correct: Mole ratio Q : KMnO₄ = ${val} : 1 (5 Fe²⁺ ions per 1 MnO₄⁻ ion).`,
+          feedbackFail: () => `Formula: Moles of Q (0.00150) / Moles of KMnO₄ (0.00030) = 5.0.`,
+          working: () => `<b>(e) Mole Ratio Q : KMnO₄:</b> 0.00150 / 0.00030 = <b>5 : 1</b>`
+        }
+      ]
+    },
+    q2: {
+      type: 'qualitative_single',
+      title: 'Question 2: Inorganic Salt Qualitative Analysis (15.0 Marks)',
+      sampleName: 'Solid V',
+      sampleDesc: 'A white water-soluble inorganic salt.',
+      trueSaltKey: 'sodiumSulfite',
+      trueSaltName: 'Sodium Sulfite — Na₂SO₃',
+      trueCation: 'Na+',
+      trueAnion: 'SO32-',
+      hasDeduction: true,
+      tests: [
+        {
+          id: 'q2_dissolve',
+          prompt: '(i) Dissolve Solid V in 15 cm³ distilled water. To portion 1, add 2M NaOH dropwise until in excess.',
+          correctObs: 'No precipitate formed; clear colourless solution remains',
+          correctInf: 'Transition metal ions, Mg²⁺, Ca²⁺ absent; Na⁺, K⁺, NH₄⁺ suspected'
+        },
+        {
+          id: 'q2_bacl2',
+          prompt: '(ii) To portion 2, add 4 drops Barium Chloride (BaCl₂) solution.',
+          correctObs: 'White precipitate formed',
+          correctInf: 'SO₄²⁻, SO₃²⁻, or CO₃²⁻ present (BaSO₃ / BaSO₄ / BaCO₃)'
+        },
+        {
+          id: 'q2_acid',
+          prompt: '(iii) To the mixture from (ii), add 2 cm³ 2M dilute hydrochloric acid (HCl) and warm gently.',
+          correctObs: 'White precipitate dissolves completely with effervescence of a choking pungent gas turning damp litmus red',
+          correctInf: 'SO₃²⁻ confirmed present (SO₂ gas evolved; SO₄²⁻ absent)'
+        },
+        {
+          id: 'q2_kmno4',
+          prompt: '(iv) To portion 3, add 3 drops of acidified Potassium Manganate(VII) (KMnO₄).',
+          correctObs: 'Purple colour of acidified KMnO₄ is rapidly decolorized to colourless',
+          correctInf: 'SO₃²⁻ confirmed acting as a reducing agent'
+        },
+        {
+          id: 'q2_dichromate',
+          prompt: '(v) To portion 4, add 4 drops of acidified Potassium Dichromate(VI) (K₂Cr₂O₇).',
+          correctObs: 'Orange potassium dichromate(VI) solution turns dark emerald green',
+          correctInf: 'SO₃²⁻ confirmed present; Cr³⁺ ions formed'
+        }
+      ]
+    },
+    q3: {
+      type: 'organic',
+      title: 'Question 3: Organic Functional Group Analysis (10.0 Marks)',
+      sampleName: 'Solid S',
+      sampleDesc: 'A pure, white crystalline dibasic organic acid.',
+      trueOrganicKey: 'org_acid',
+      trueOrganicName: 'Organic Carboxylic Acid (Oxalic Acid)',
+      trueFunctionalGroup: 'Carboxylic Acid (-COOH)',
+      tests: [
+        {
+          id: 'q3_ignition',
+          prompt: '(i) Place a small portion of Solid S on a clean metallic spatula and ignite in flame.',
+          correctObs: 'Melts and burns with a clear, non-sooty pale blue flame; leaves no carbon residue',
+          correctInf: 'Saturated organic compound / low carbon-to-hydrogen ratio'
+        },
+        {
+          id: 'q3_litmus',
+          prompt: '(ii) Dissolve rest of Solid S in 5 cm³ distilled water. Test with blue and red litmus paper.',
+          correctObs: 'Blue litmus paper turns red; red litmus retains colour (strongly acidic solution, pH ~ 2)',
+          correctInf: 'Acidic substance / carboxylic acid (—COOH) / H⁺ ions present'
+        },
+        {
+          id: 'q3_nahco3',
+          prompt: '(iii) To 2 cm³ of solution, add a half-spatula of solid Sodium Hydrogen Carbonate (NaHCO₃).',
+          correctObs: 'Brisk effervescence of a colourless gas that forms white precipitate with limewater (CO₂)',
+          correctInf: 'Carboxylic acid (—COOH) confirmed present'
+        },
+        {
+          id: 'q3_dichromate',
+          prompt: '(iv) To 2 cm³ of solution, add 3 drops acidified Potassium Dichromate(VI) and warm gently.',
+          correctObs: 'Orange colour of potassium dichromate(VI) solution persists (not reduced)',
+          correctInf: 'Alkanol (—OH) absent'
+        }
+      ]
+    }
+  },
+
   // ── Series 1998: Official KCSE 1998 Standard Chemistry Practical (Paper 233/3) ──
   series_1998: {
     id: 'series_1998',

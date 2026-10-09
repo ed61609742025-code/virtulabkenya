@@ -733,8 +733,8 @@
       <div class="filter-pills-row">
         <span class="filter-pill-label">Simulation Status:</span>
         <button type="button" class="filter-chip-btn active" data-sim="all" onclick="setSimFilter('all', this)">All Past Papers</button>
-        <button type="button" class="filter-chip-btn" data-sim="playable" onclick="setSimFilter('playable', this)">🎮 40M Simulations Available (9)</button>
-        <button type="button" class="filter-chip-btn" data-sim="written" onclick="setSimFilter('written', this)">📝 Written Paper Archives (10)</button>
+        <button type="button" class="filter-chip-btn" data-sim="playable" onclick="setSimFilter('playable', this)">🎮 40M Simulations Available (10)</button>
+        <button type="button" class="filter-chip-btn" data-sim="written" onclick="setSimFilter('written', this)">📝 Written Paper Archives (9)</button>
       </div>
     </div>
 
@@ -1024,6 +1024,15 @@
       q1: '0.060 M KMnO₄ vs Hydrated Oxalic Acid (4.50 g/250 cm³) · Water of Crystallization Titration',
       q2: 'Solid E: Barium Salt Flame Test & Sulfate Reaction (Ba²⁺ / Cl⁻)',
       q3: 'Solid F: Unsaturated Organic Acid (Alkene >C=C< / KMnO₄ & Bromine Water)'
+    },
+    {
+      key: 'series_2003',
+      num: 2003,
+      title: 'KCSE 2003 Official Practical Mock',
+      badge: 'Official KNEC Series · Iron(II) Redox Titration & Sulfite Salt Analysis',
+      q1: '0.020 M KMnO₄ vs Iron(II) Salt Solution · Redox Stoichiometry & Molar Mass',
+      q2: 'Solid P: Sodium Sulfite Reducing Agent Analysis (Na₂SO₃ / SO₃²⁻)',
+      q3: 'Solid Q: Dibasic Organic Acid Neutralization (—COOH / Litmus & NaHCO₃)'
     },
     {
       key: 'series_1998',
@@ -1795,7 +1804,18 @@
   window.discardDraftFromMockHub = discardDraftFromMockHub;
   window.checkForActiveExamDrafts = checkForActiveExamDrafts;
 
+  function updateSimFilterPills() {
+    if (typeof getSimulationCoverageStats === 'function') {
+      const stats = getSimulationCoverageStats();
+      const btnPlayable = document.querySelector('[data-sim="playable"]');
+      const btnWritten = document.querySelector('[data-sim="written"]');
+      if (btnPlayable) btnPlayable.textContent = `🎮 40M Simulations Available (${stats.playablePapers})`;
+      if (btnWritten) btnWritten.textContent = `📝 Written Paper Archives (${stats.writtenOnlyPapers})`;
+    }
+  }
+
   updateThemeButtonLabel();
+  updateSimFilterPills();
   renderSeriesCards();
   renderPastPaperCards();
   loadExamHistory();

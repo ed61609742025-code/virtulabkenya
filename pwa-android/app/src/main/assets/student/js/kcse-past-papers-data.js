@@ -605,7 +605,7 @@ const KCSE_PAST_PAPERS_ARCHIVE = [
     title: 'KCSE 2003 Chemistry Paper 3 Practical (233/3)',
     badgeText: 'Official KNEC Paper · KMnO₄ Redox Stoichiometry & Enthalpy of Solution/Neutralization',
     topics: ['Redox Volumetric Analysis', 'Thermochemistry & Hess Law', 'Qualitative Analysis'],
-    playablePresetKey: null,
+    playablePresetKey: 'series_2003',
     totalMarks: 40.0,
     durationMinutes: 135,
     summary: 'Titration of 0.02M KMnO₄ (Solution P) against Solid Q solution to deduce redox mole ratio. Procedure 2 investigates enthalpy of solution of dibasic acid Solid S and its enthalpy of neutralization with NaOH. Qualitative analysis of Solid V (sulfite).',

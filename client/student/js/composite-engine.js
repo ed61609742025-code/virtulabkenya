@@ -2246,6 +2246,220 @@ const COMPOSITE_EXAM_PRESETS = {
     }
   },
 
+  // ── Series 2006: Official KCSE 2006 Standard Chemistry Practical (Paper 233/3) ──
+  series_2006: {
+    id: 'series_2006',
+    seriesKey: 'series_2006',
+    seriesNumber: 2006,
+    title: 'KCSE 2006 Standard Chemistry Practical Examination',
+    badgeText: 'KCSE 2006 Past National Paper · Hydrated Oxalic Acid KMnO₄ Redox Titration & Barium Salt',
+    durationMinutes: 135,
+    q1: {
+      type: 'titration',
+      calcType: 'water_of_crystallization',
+      title: 'Question 1: Volumetric Redox Analysis — Water of Crystallization by KMnO₄ Titration (15.0 Marks)',
+      solutionA: '0.060 M Acidified Potassium Manganate(VII) Solution B',
+      solutionB: 'Solution of Hydrated Acid D·xH₂O (4.50 g in 250 cm³) Solution A',
+      acidFormula: 'KMnO4',
+      baseFormula: 'H2C2O4',
+      indicator: 'Self-indicating (KMnO₄ permanent faint pink end-point)',
+      pipetteVolume: 25.0,
+      trueAcidMolarity: 0.0600,
+      trueBaseMolarity: 0.1452,
+      trueTitre: 24.20,
+      moleRatioAcid: 2,
+      moleRatioBase: 5,
+      acidRfm: 158.0,
+      baseRfm: 126.0,
+      titrantColor: '#7C3AED',
+      flaskBaseColor: 'rgba(248,250,252,0.2)',
+      flaskIndicatorColor: 'rgba(248,250,252,0.2)',
+      endpointColor: 'rgba(236,72,153,0.5)',
+      overtitratedColor: 'rgba(126,34,206,0.9)',
+      equation: '2KMnO₄(aq) + 5H₂C₂O₄(aq) + 3H₂SO₄(aq) → 2MnSO₄(aq) + K₂SO₄(aq) + 10CO₂(g) + 8H₂O(l)',
+      instructions: 'Pipette 25.0 cm³ of Solution A (hydrated acid D·xH₂O) into a clean conical flask. Warm the solution gently to ~60 °C. Fill the burette with 0.060 M KMnO₄ Solution B. Titrate hot Solution A with Solution B until the first permanent faint pink colour persists for at least 30 seconds.',
+      questions: [
+        {
+          id: 'step_a',
+          letter: 'a',
+          field: 'avgTitre',
+          label: 'Calculate the average volume of 0.060 M KMnO₄ Solution B used, V₁',
+          marks: 1.0,
+          marksLabel: '(1.0 Mark)',
+          placeholder: 'e.g. 24.20',
+          step: '0.01',
+          unit: 'cm³',
+          calcTheoretical: (ctx) => ctx.trueTitre,
+          calcEcf: (ctx) => ctx.expAvgFromTrials,
+          check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
+          feedbackSuccess: (val) => `✓ Correct: V₁ = ${val.toFixed(2)} cm³.`,
+          feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
+          working: (ctx) => `<b>(a) Average Titre:</b> V₁ = <b>${ctx.v1.toFixed(2)} cm³</b>`
+        },
+        {
+          id: 'step_b',
+          letter: 'b',
+          field: 'molesKmno4',
+          label: 'Calculate the number of moles of KMnO₄ in the average volume of Solution B used',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 0.00145',
+          step: '0.00001',
+          unit: 'moles of KMnO₄',
+          calcTheoretical: (ctx) => (0.0600 * ctx.trueTitre) / 1000.0,
+          calcEcf: (ctx) => {
+            const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_a')) || ctx.trueTitre;
+            return (0.0600 * v1) / 1000.0;
+          },
+          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+          feedbackSuccess: (val) => `✓ Correct: ${val} moles of KMnO₄.`,
+          feedbackFail: (ctx, expTheo) => `Formula: (0.060 × V₁) / 1000 = ${expTheo.toFixed(5)} mol.`,
+          working: (ctx) => `<b>(b) Moles of KMnO₄:</b> (0.060 × ${ctx.v1.toFixed(2)}) / 1000 = <b>${((0.0600 * ctx.v1) / 1000.0).toFixed(5)} mol</b>`
+        },
+        {
+          id: 'step_c',
+          letter: 'c',
+          field: 'molesAcid',
+          label: 'Calculate the number of moles of acid D·xH₂O in 25.0 cm³ of Solution A (Mole ratio Acid : KMnO₄ = 5 : 2)',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 0.00363',
+          step: '0.00001',
+          unit: 'moles of Acid',
+          calcTheoretical: (ctx) => ((0.0600 * ctx.trueTitre) / 1000.0) * 2.5,
+          calcEcf: (ctx) => {
+            const mK = parseFloat(getAnswerValue(ctx.answers, 'molesKmno4', 'step_b')) || ((0.0600 * ctx.trueTitre) / 1000.0);
+            return mK * 2.5;
+          },
+          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+          feedbackSuccess: (val) => `✓ Correct: ${val} moles of acid in 25.0 cm³.`,
+          feedbackFail: (ctx, expTheo) => `Formula: Moles of KMnO₄ × (5 / 2) = ${expTheo.toFixed(5)} mol.`,
+          working: (ctx) => `<b>(c) Moles of Acid:</b> ${((0.0600 * ctx.v1) / 1000.0).toFixed(5)} × 2.5 = <b>${(((0.0600 * ctx.v1) / 1000.0) * 2.5).toFixed(5)} mol</b>`
+        },
+        {
+          id: 'step_d',
+          letter: 'd',
+          field: 'rfmAcid',
+          label: 'Calculate the relative formula mass (RFM) of acid D·xH₂O (prepared by dissolving 4.50 g in 250 cm³)',
+          marks: 3.0,
+          marksLabel: '(3.0 Marks)',
+          placeholder: 'e.g. 124.0',
+          step: '0.1',
+          unit: 'g/mol',
+          calcTheoretical: () => 124.0,
+          calcEcf: (ctx) => {
+            const mA25 = parseFloat(getAnswerValue(ctx.answers, 'molesAcid', 'step_c')) || 0.00363;
+            const mA250 = mA25 * 10.0;
+            return mA250 > 0 ? 4.50 / mA250 : 124.0;
+          },
+          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+          feedbackSuccess: (val) => `✓ Correct: RFM = ${val} g/mol.`,
+          feedbackFail: () => `Formula: Total moles in 250 cm³ = Moles in 25 cm³ × 10. RFM = 4.50 / Total moles (~124–126 g/mol).`,
+          working: (ctx) => `<b>(d) RFM of Acid:</b> 4.50 / (0.00363 × 10) = <b>124.0 g/mol</b>`
+        },
+        {
+          id: 'step_e',
+          letter: 'e',
+          field: 'valOfX',
+          label: 'Given that the anhydrous formula of acid D has RFM = 90.0 and H₂O = 18.0, determine the value of x in D·xH₂O',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 2',
+          step: '1',
+          unit: '',
+          calcTheoretical: () => 2,
+          calcEcf: (ctx) => {
+            const rfm = parseFloat(getAnswerValue(ctx.answers, 'rfmAcid', 'step_d')) || 124.0;
+            const x = (rfm - 90.0) / 18.0;
+            return Math.round(x);
+          },
+          check: (val) => Math.round(val) === 2,
+          feedbackSuccess: (val) => `✓ Correct: x = ${val} (Acid is H₂C₂O₄·2H₂O).`,
+          feedbackFail: () => `Formula: (RFM - 90.0) / 18.0 = 2.`,
+          working: () => `<b>(e) Value of x:</b> (124.0 - 90.0) / 18.0 = 34 / 18 = 1.89 ≈ <b>2</b>`
+        }
+      ]
+    },
+    q2: {
+      type: 'qualitative_single',
+      title: 'Question 2: Inorganic Salt Qualitative Analysis (15.0 Marks)',
+      sampleName: 'Solid E',
+      sampleDesc: 'A white crystalline inorganic salt containing barium ions.',
+      trueSaltKey: 'bariumChloride',
+      trueSaltName: 'Hydrated Barium Salt — Ba²⁺',
+      trueCation: 'Ba2+',
+      trueAnion: 'Cl-',
+      hasDeduction: true,
+      tests: [
+        {
+          id: 'q2_heat',
+          prompt: '(i) Heat a half-spatula of Solid E strongly in a dry hard-glass test tube.',
+          correctObs: 'Colourless liquid droplets condense on cooler upper walls of test tube; white anhydrous residue remains',
+          correctInf: 'Hydrated salt / contains water of crystallization'
+        },
+        {
+          id: 'q2_dissolve',
+          prompt: '(ii) Dissolve rest of Solid E in 10 cm³ distilled water. To portion 1, add 2 drops phenolphthalein indicator.',
+          correctObs: 'Colourless solution; phenolphthalein remains colourless (neutral solution)',
+          correctInf: 'Neutral salt solution; absence of free strong alkali OH⁻'
+        },
+        {
+          id: 'q2_acid',
+          prompt: '(iii) To portion 2, add 2 cm³ dilute hydrochloric acid (HCl).',
+          correctObs: 'No effervescence / no bubbles of gas evolved; clear solution persists',
+          correctInf: 'CO₃²⁻, HCO₃⁻, SO₃²⁻ absent'
+        },
+        {
+          id: 'q2_sulfate',
+          prompt: '(iv) To portion 3, add 1 cm³ aqueous Sodium Sulfate (Na₂SO₄).',
+          correctObs: 'Dense white precipitate formed immediately',
+          correctInf: 'Ba²⁺ confirmed present (BaSO₄ formed; Pb²⁺, Ca²⁺ also considered)'
+        },
+        {
+          id: 'q2_flame',
+          prompt: '(v) Perform flame test on Solid E using nichrome wire dipped in conc. HCl.',
+          correctObs: 'Persistent apple-green / pale green flame coloration',
+          correctInf: 'Ba²⁺ confirmed present'
+        }
+      ]
+    },
+    q3: {
+      type: 'organic',
+      title: 'Question 3: Organic Functional Group Analysis (10.0 Marks)',
+      sampleName: 'Solid F',
+      sampleDesc: 'A pure, white unsaturated organic crystalline solid.',
+      trueOrganicKey: 'org_alkene',
+      trueOrganicName: 'Unsaturated Organic Acid (Maleic / Cinnamic Acid)',
+      trueFunctionalGroup: 'Alkene (>C=C<)',
+      tests: [
+        {
+          id: 'q3_ignition',
+          prompt: '(i) Ignite one-third of Solid F on a clean metallic spatula in a non-luminous flame.',
+          correctObs: 'Melts and burns with a yellow luminous, smoky and sooty flame; leaves black carbon residue',
+          correctInf: 'Unsaturated organic compound / high carbon-to-hydrogen ratio (>C=C< or —C≡C—)'
+        },
+        {
+          id: 'q3_solubility',
+          prompt: '(ii) Dissolve rest of Solid F in 4 cm³ distilled water. Test with blue and red litmus paper.',
+          correctObs: 'Dissolves to form clear colourless solution; blue litmus paper turns red; red litmus retains colour',
+          correctInf: 'Acidic organic compound / contains ionizable H⁺ ions / carboxylic acid (—COOH)'
+        },
+        {
+          id: 'q3_kmno4',
+          prompt: '(iii) To portion 1, add 2–3 drops of acidified Potassium Manganate(VII) (KMnO₄).',
+          correctObs: 'Purple colour of acidified KMnO₄ solution is rapidly decolorized to colourless',
+          correctInf: 'Alkene (>C=C<) confirmed present; reducing unsaturated linkage oxidized'
+        },
+        {
+          id: 'q3_bromine',
+          prompt: '(iv) To portion 2, add 3 drops of Bromine water and shake gently.',
+          correctObs: 'Reddish-brown / yellow colour of bromine water is rapidly decolorized to colourless',
+          correctInf: 'Carbon-carbon double bond (>C=C<) confirmed present by electrophilic halogen addition'
+        }
+      ]
+    }
+  },
+
   // ── Series 2007: Official KCSE 2007 Standard Chemistry Practical (Paper 233/3) ──
   series_2007: {
     id: 'series_2007',

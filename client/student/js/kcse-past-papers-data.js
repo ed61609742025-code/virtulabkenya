@@ -477,7 +477,7 @@ const KCSE_PAST_PAPERS_ARCHIVE = [
     title: 'KCSE 2006 Chemistry Paper 3 Practical (233/3)',
     badgeText: 'Official KNEC Paper · Solubility Curve & Water of Crystallization by KMnO₄ Titration',
     topics: ['Solubility Curves', 'Redox Volumetric Analysis', 'Qualitative Analysis', 'Organic Analysis'],
-    playablePresetKey: null,
+    playablePresetKey: 'series_2006',
     totalMarks: 40.0,
     durationMinutes: 135,
     summary: 'Determination of the solubility curve of Solid A at different temperatures, followed by hot redox titration with 0.06M acidified KMnO₄ (Solution B) to deduce the water of crystallization x in D·xH₂O. Qualitative analysis of Solid E and Solid F.',

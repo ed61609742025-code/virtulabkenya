@@ -121,6 +121,25 @@ requireStudentLogin();
   let titrateInterval = null;
   let activeTrial = 1;
 
+  // Official Examination Lifecycle & Timer State
+  let timeLeft = 135 * 60;
+  let timerInterval = null;
+  let examStarted = false;
+
+  function startOfficialExamination() {
+    examStarted = true;
+    const overlay = document.getElementById('examBriefingOverlay');
+    if (overlay) overlay.style.display = 'none';
+    if (typeof startExamTimer === 'function') {
+      startExamTimer();
+    }
+    if (typeof saveExamDraft === 'function') {
+      saveExamDraft(true);
+    }
+  }
+  window.startOfficialExamination = startOfficialExamination;
+  window.startOfficialExaminationReal = startOfficialExamination;
+
   // Q1 Flask Chemistry State
   let isPipetted = false;
   let indicatorDrops = 0;
@@ -951,6 +970,16 @@ requireStudentLogin();
 
     populateBriefingOverlay();
     if (typeof updateTimerDisplay === 'function') updateTimerDisplay();
+
+    const btnStart = document.getElementById('btnStartExamNow');
+    if (btnStart) {
+      btnStart.onclick = startOfficialExamination;
+      btnStart.addEventListener('click', startOfficialExamination);
+    }
+    if (window.__examStartRequested) {
+      startOfficialExamination();
+    }
+
     setTimeout(() => { checkAndRestoreDraft(); }, 120);
   }
 
@@ -2890,9 +2919,6 @@ requireStudentLogin();
   }
 
   // 135-minute Countdown Timer Controller
-  let timeLeft = 135 * 60;
-  let timerInterval = null;
-  let examStarted = false;
   const timerEl = document.getElementById('examTimerDisplay');
 
   function updateTimerDisplay() {
@@ -2926,14 +2952,8 @@ requireStudentLogin();
     }, 1000);
   }
 
-  function startOfficialExamination() {
-    examStarted = true;
-    const overlay = document.getElementById('examBriefingOverlay');
-    if (overlay) overlay.style.display = 'none';
-    startExamTimer();
-    saveExamDraft(true);
-  }
   window.startOfficialExamination = startOfficialExamination;
+  window.startOfficialExaminationReal = startOfficialExamination;
   window.startExamTimer = startExamTimer;
 
   // ── Exam Submission & Chief Examiner Interactive Review ─────────────

@@ -12,6 +12,18 @@
   if (window.VLKAuthGuard) {
     VLKAuthGuard.guardPage('student');
   }
+
+  // Early resilient declaration of startOfficialExamination to prevent ReferenceError
+  // if candidate clicks "Begin Examination" before bottom scripts finish evaluating
+  window.__examStartRequested = false;
+  window.startOfficialExamination = function() {
+    window.__examStartRequested = true;
+    var overlay = document.getElementById('examBriefingOverlay');
+    if (overlay) overlay.style.display = 'none';
+    if (typeof window.startOfficialExaminationReal === 'function') {
+      window.startOfficialExaminationReal();
+    }
+  };
 </script>
 <meta name="theme-color" content="#090E17">
 <link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">

@@ -3311,6 +3311,213 @@ const COMPOSITE_EXAM_PRESETS = {
         }
       ]
     }
+  },
+
+  // ── Series 1994: Official KCSE 1994 Standard Chemistry Practical (Paper 233/3) ──
+  series_1994: {
+    id: 'series_1994',
+    seriesKey: 'series_1994',
+    seriesNumber: 1994,
+    title: 'KCSE 1994 Standard Chemistry Practical Examination',
+    badgeText: 'KCSE 1994 Past National Paper · Acid Basicity Determination & Calcium Salt Analysis',
+    durationMinutes: 135,
+    q1: {
+      type: 'titration',
+      calcType: 'acid_basicity',
+      title: 'Question 1: Volumetric Analysis — Acid Basicity Determination (15.0 Marks)',
+      solutionA: '0.300 M Sodium Hydroxide (Solution D)',
+      solutionB: '0.100 M Polyprotic Carboxylic Acid HₙA (Solution E)',
+      acidFormula: 'H3A',
+      baseFormula: 'NaOH',
+      indicator: 'Phenolphthalein',
+      pipetteVolume: 25.0,
+      trueAcidMolarity: 0.300,
+      trueBaseMolarity: 0.100,
+      trueTitre: 25.00,
+      moleRatioAcid: 3,
+      moleRatioBase: 1,
+      acidRfm: 40.0,
+      baseRfm: 192.0,
+      titrantColor: '#38BDF8',
+      flaskBaseColor: 'rgba(255,255,255,0.25)',
+      flaskIndicatorColor: 'rgba(255,255,255,0.25)',
+      endpointColor: 'rgba(236,72,153,0.7)',
+      overtitratedColor: 'rgba(219,39,119,0.95)',
+      equation: 'H₃A(aq) + 3NaOH(aq) → Na₃A(aq) + 3H₂O(l)',
+      instructions: 'Pipette 25.0 cm³ of Solution E (0.100 M Carboxylic Acid) into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with 0.300 M NaOH Solution D until the first permanent faint pink colour appears.',
+      questions: [
+        {
+          id: 'step_a',
+          letter: 'a',
+          field: 'avgTitre',
+          label: 'Calculate the average volume of 0.300 M NaOH Solution D used, V₁',
+          marks: 1.0,
+          marksLabel: '(1.0 Mark)',
+          placeholder: 'e.g. 25.00',
+          step: '0.01',
+          unit: 'cm³',
+          calcTheoretical: (ctx) => ctx.trueTitre,
+          calcEcf: (ctx) => ctx.expAvgFromTrials,
+          check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
+          feedbackSuccess: (val) => `✓ Correct: V₁ = ${val.toFixed(2)} cm³.`,
+          feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
+          working: (ctx) => `<b>(a) Average Titre:</b> V₁ = <b>${ctx.v1.toFixed(2)} cm³</b>`
+        },
+        {
+          id: 'step_b',
+          letter: 'b',
+          field: 'molesNaoh',
+          label: 'Calculate the number of moles of NaOH present in the average titre V₁ of Solution D',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 0.00750',
+          step: '0.00001',
+          unit: 'moles of NaOH',
+          calcTheoretical: (ctx) => (0.300 * ctx.trueTitre) / 1000.0,
+          calcEcf: (ctx) => {
+            const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_a')) || ctx.trueTitre;
+            return (0.300 * v1) / 1000.0;
+          },
+          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+          feedbackSuccess: (val) => `✓ Correct: ${val} moles of NaOH.`,
+          feedbackFail: (ctx, expTheo) => `Formula: (0.300 × V₁) / 1000 = ${expTheo.toFixed(5)} mol.`,
+          working: (ctx) => `<b>(b) Moles of NaOH:</b> (0.300 × ${ctx.v1.toFixed(2)}) / 1000 = <b>${((0.300 * ctx.v1) / 1000.0).toFixed(5)} mol</b>`
+        },
+        {
+          id: 'step_c',
+          letter: 'c',
+          field: 'molesAcid',
+          label: 'Calculate the number of moles of Carboxylic Acid in 25.0 cm³ of Solution E (0.100 M)',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 0.00250',
+          step: '0.00001',
+          unit: 'moles of Acid',
+          calcTheoretical: () => (0.100 * 25.0) / 1000.0,
+          calcEcf: () => (0.100 * 25.0) / 1000.0,
+          check: (val) => Math.abs(val - ((0.100 * 25.0) / 1000.0)) <= 0.0002,
+          feedbackSuccess: (val) => `✓ Correct: ${val} moles of acid.`,
+          feedbackFail: () => `Formula: (0.100 × 25.0) / 1000 = 0.00250 mol.`,
+          working: () => `<b>(c) Moles of Acid in 25.0 cm³:</b> (0.100 × 25.0) / 1000 = <b>0.00250 mol</b>`
+        },
+        {
+          id: 'step_d',
+          letter: 'd',
+          field: 'moleRatio',
+          label: 'Determine the number of moles of NaOH reacting with 1 mole of Carboxylic Acid (Moles of NaOH / Moles of Acid)',
+          marks: 3.0,
+          marksLabel: '(3.0 Marks)',
+          placeholder: 'e.g. 3.0',
+          step: '0.1',
+          unit: '',
+          calcTheoretical: () => 3.0,
+          calcEcf: (ctx) => {
+            const mB = parseFloat(getAnswerValue(ctx.answers, 'molesNaoh', 'step_b')) || 0.00750;
+            const mA = parseFloat(getAnswerValue(ctx.answers, 'molesAcid', 'step_c')) || 0.00250;
+            return mA > 0 ? parseFloat((mB / mA).toFixed(1)) : 3.0;
+          },
+          check: (val) => Math.abs(val - 3.0) <= 0.3,
+          feedbackSuccess: (val) => `✓ Correct: Mole ratio NaOH : Acid = ${val} : 1.`,
+          feedbackFail: () => `Formula: Moles of NaOH (0.00750) / Moles of Acid (0.00250) = 3.0.`,
+          working: () => `<b>(d) Mole Ratio NaOH : Acid:</b> 0.00750 / 0.00250 = <b>3.0 : 1</b>`
+        },
+        {
+          id: 'step_e',
+          letter: 'e',
+          field: 'basicity',
+          label: 'State the basicity (number of replaceable hydrogen ions per molecule, n) of the carboxylic acid',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 3',
+          step: '1',
+          unit: '',
+          calcTheoretical: () => 3,
+          calcEcf: () => 3,
+          check: (val) => Number(val) === 3,
+          feedbackSuccess: (val) => `✓ Correct: Basicity n = ${val} (Tribasic acid).`,
+          feedbackFail: () => `Since 3 moles of NaOH react with 1 mole of acid, basicity n = 3 (Tribasic acid).`,
+          working: () => `<b>(e) Basicity of Acid:</b> n = <b>3 (Tribasic)</b>`
+        }
+      ]
+    },
+    q2: {
+      type: 'qualitative_single',
+      title: 'Question 2: Inorganic Salt Qualitative Analysis (15.0 Marks)',
+      sampleName: 'Solid H',
+      sampleDesc: 'A white crystalline inorganic salt containing calcium.',
+      trueSaltKey: 'calciumChloride',
+      trueSaltName: 'Calcium Chloride Hydrate — CaCl₂·2H₂O',
+      trueCation: 'Ca2+',
+      trueAnion: 'Cl-',
+      hasDeduction: true,
+      tests: [
+        {
+          id: 'q2_flame',
+          prompt: '(i) Perform a flame test on Solid H using a clean nichrome wire dipped in concentrated HCl.',
+          correctObs: 'Persistent brick-red / orange-red flame coloration',
+          correctInf: 'Ca²⁺ confirmed present'
+        },
+        {
+          id: 'q2_heat',
+          prompt: '(ii) Heat a half-spatula of Solid H strongly in a dry test tube.',
+          correctObs: 'White crystalline solid decrepitates; colourless liquid droplets condense on upper cooler walls',
+          correctInf: 'Hydrated salt / contains water of crystallization'
+        },
+        {
+          id: 'q2_appearance',
+          prompt: '(iii) Dissolve remaining Solid H in 10 cm³ distilled water. To portion 1, add 2M NaOH dropwise to excess.',
+          correctObs: 'White precipitate formed, insoluble in excess sodium hydroxide',
+          correctInf: 'Ca²⁺ or Mg²⁺ present'
+        },
+        {
+          id: 'q2_nh3',
+          prompt: '(iv) To portion 2, add 2M aqueous ammonia dropwise until in excess.',
+          correctObs: 'No precipitate formed with aqueous ammonia; solution remains clear and colourless',
+          correctInf: 'Ca²⁺ confirmed present (Mg²⁺ is excluded as it forms a precipitate with aqueous ammonia)'
+        },
+        {
+          id: 'q2_anion',
+          prompt: '(v) To portion 3, add 3 drops dilute HNO₃ followed by silver nitrate (AgNO₃) solution.',
+          correctObs: 'Dense white precipitate formed, dissolves in aqueous ammonia to form a clear colourless solution',
+          correctInf: 'Cl⁻ confirmed present (AgCl formed)'
+        }
+      ]
+    },
+    q3: {
+      type: 'organic',
+      title: 'Question 3: Organic Functional Group Analysis (10.0 Marks)',
+      sampleName: 'Solid G',
+      sampleDesc: 'A pure white organic crystalline solid.',
+      trueOrganicKey: 'org_acid',
+      trueOrganicName: 'Saturated Carboxylic Acid (Citric Acid)',
+      trueFunctionalGroup: 'Carboxylic Acid (-COOH)',
+      tests: [
+        {
+          id: 'q3_ignition',
+          prompt: '(i) Ignite a small portion of Solid G on a clean metallic spatula in a Bunsen flame.',
+          correctObs: 'Melts and burns with a clear, non-sooty pale blue flame; leaves no carbon residue',
+          correctInf: 'Saturated organic compound / low carbon-to-hydrogen ratio'
+        },
+        {
+          id: 'q3_litmus',
+          prompt: '(ii) Dissolve Solid G in 5 cm³ distilled water. Test with moist blue and red litmus paper.',
+          correctObs: 'Moist blue litmus paper turns red; red litmus paper remains red (pH ~ 2–3)',
+          correctInf: 'Acidic substance / H⁺ ions present / Carboxylic acid (—COOH)'
+        },
+        {
+          id: 'q3_nahco3',
+          prompt: '(iii) To 2 cm³ of solution, add a half-spatula of solid Sodium Hydrogen Carbonate (NaHCO₃).',
+          correctObs: 'Brisk effervescence of a colourless gas that forms white precipitate with limewater (CO₂)',
+          correctInf: 'Carboxylic acid (—COOH) confirmed present; CO₂ gas evolved'
+        },
+        {
+          id: 'q3_kmno4',
+          prompt: '(iv) To 2 cm³ of solution, add 3 drops of acidified Potassium Manganate(VII) (KMnO₄) solution.',
+          correctObs: 'Purple colour of acidified KMnO₄ solution persists (not decolorized)',
+          correctInf: 'Alkene (>C=C<) and primary/secondary alkanol absent'
+        }
+      ]
+    }
   }
 };
 

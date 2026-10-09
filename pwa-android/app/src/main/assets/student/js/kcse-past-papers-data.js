@@ -1015,7 +1015,7 @@ const KCSE_PAST_PAPERS_ARCHIVE = [
     title: 'KCSE 1994 Chemistry Paper 3 Practical (233/3)',
     badgeText: 'Official KNEC Paper · Polyprotic Acid Basicity Determination & Enthalpy Neutralization',
     topics: ['Volumetric Titration / Basicity', 'Thermochemistry', 'Flame Tests', 'Qualitative Analysis'],
-    playablePresetKey: null,
+    playablePresetKey: 'series_1994',
     totalMarks: 40.0,
     durationMinutes: 135,
     summary: 'Titration of 0.2M NaOH against 0.1M carboxylic acid C₃H₅O(COOH)ₙ to deduce the basicity n. Determination of molar heat of neutralization of 1.0M NaOH with 0.63M Acid G. Flame tests on NaCl, KCl, CaCl₂, and Solid H.',

@@ -15,6 +15,10 @@ process.env.JWT_SECRET = 'test_secret_notifs_key_9988';
 const app = require('../index');
 const VLKNotifs = require('../../client/shared/notifications-engine.js');
 
+const pool = require('../db/pool');
+const originalQuery = pool.query;
+const mockDbReads = new Map();
+
 let server;
 let port = 0;
 let studentToken;
@@ -36,6 +40,38 @@ describe('VirtuLab Kenya — Cross-Device Notifications Synchronization Suite', 
       process.env.JWT_SECRET
     );
 
+    mockDbReads.clear();
+    pool.query = async (text, params) => {
+      const q = String(text || '');
+      if (q.includes('CREATE TABLE') || q.includes('CREATE INDEX')) {
+        return { rows: [] };
+      }
+      if (q.includes('FROM user_notification_reads')) {
+        const userId = params?.[0];
+        const role = params?.[1];
+        const rows = [];
+        for (const [key, ts] of mockDbReads.entries()) {
+          if (key.startsWith(`${userId}_${role}_`)) {
+            const notifId = key.substring(`${userId}_${role}_`.length);
+            rows.push({ notif_id: notifId, read_at: new Date(ts).toISOString() });
+          }
+        }
+        return { rows };
+      }
+      if (q.includes('INSERT INTO user_notification_reads')) {
+        const userId = params?.[0];
+        const role = params?.[1];
+        const notifId = params?.[2];
+        const now = new Date();
+        mockDbReads.set(`${userId}_${role}_${notifId}`, now.getTime());
+        return { rows: [{ notif_id: notifId, read_at: now.toISOString() }] };
+      }
+      if (q.includes('student_notifications')) {
+        return { rows: [] };
+      }
+      return { rows: [] };
+    };
+
     server = http.createServer(app);
     await new Promise((resolve) => {
       server.listen(0, '127.0.0.1', () => {
@@ -46,7 +82,11 @@ describe('VirtuLab Kenya — Cross-Device Notifications Synchronization Suite', 
   });
 
   after(async () => {
+    pool.query = originalQuery;
     if (server) {
+      if (typeof server.closeAllConnections === 'function') {
+        server.closeAllConnections();
+      }
       await new Promise((resolve) => server.close(resolve));
     }
   });

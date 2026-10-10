@@ -458,7 +458,135 @@
     font-weight: 700;
   }
 
-  /* Past Paper Card */
+  /* Decade Section Styles */
+  .decade-section-wrap {
+    margin-bottom: 36px;
+  }
+
+  .decade-section-header {
+    background: linear-gradient(135deg, rgba(11, 37, 69, 0.05), rgba(184, 134, 11, 0.08));
+    border: 1px solid var(--acad-gold-border);
+    border-left: 5px solid var(--acad-gold);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    box-shadow: var(--shadow-sm);
+  }
+
+  [data-theme="dark"] .decade-section-header {
+    background: linear-gradient(135deg, rgba(30, 58, 138, 0.22), rgba(245, 158, 11, 0.08));
+  }
+
+  [data-theme="green"] .decade-section-header {
+    background: linear-gradient(135deg, rgba(6, 78, 59, 0.22), rgba(234, 179, 8, 0.08));
+  }
+
+  .decade-header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .decade-header-icon {
+    font-size: 1.8rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+
+  .decade-header-title {
+    font-family: 'Cinzel', serif;
+    font-size: 1.18rem;
+    font-weight: 800;
+    color: var(--heading-color);
+    margin: 0;
+    letter-spacing: 0.02em;
+  }
+
+  .decade-header-desc {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin: 3px 0 0 0;
+    line-height: 1.4;
+    max-width: 680px;
+  }
+
+  .decade-header-badges {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .decade-count-badge {
+    font-size: 0.76rem;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    color: var(--text-main);
+    letter-spacing: 0.02em;
+  }
+
+  .decade-sim-badge {
+    font-size: 0.76rem;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    color: var(--emerald-accent, #10B981);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  /* Era Quick Jump Navigation */
+  .decade-quick-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    padding: 10px 16px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+  }
+
+  .decade-quick-nav-label {
+    font-size: 0.76rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+    margin-right: 4px;
+  }
+
+  .decade-jump-pill {
+    background: var(--acad-paper-subtle);
+    border: 1px solid var(--card-border);
+    border-radius: 50px;
+    padding: 4px 12px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .decade-jump-pill:hover {
+    border-color: var(--acad-gold);
+    color: var(--acad-gold);
+    background: var(--acad-gold-subtle);
+  }
+
+  /* Past Paper Card (aligned with 40-Mark Mock series-card) */
   .past-paper-card {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
@@ -468,6 +596,8 @@
     flex-direction: column;
     justify-content: space-between;
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    position: relative;
+    overflow: hidden;
   }
 
   .past-paper-card:hover {
@@ -476,16 +606,115 @@
     border-color: var(--acad-gold);
   }
 
-  .topic-tag {
-    display: inline-block;
-    padding: 3px 8px;
-    border-radius: 4px;
+  .past-card-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  .past-sim-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 3px 9px;
+    border-radius: 6px;
+    background: rgba(16, 185, 129, 0.12);
+    color: var(--emerald-accent, #10B981);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    white-space: nowrap;
+  }
+
+  .pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10B981;
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.7);
+    display: inline-block;
+  }
+
+  .past-card-topics-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 14px;
+  }
+
+  .past-topic-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
     font-weight: 700;
     background: rgba(56, 189, 248, 0.12);
-    color: var(--cyan-accent);
-    margin-right: 4px;
-    margin-bottom: 4px;
+    color: #0284C7;
+    border: 1px solid rgba(56, 189, 248, 0.25);
+  }
+
+  [data-theme="dark"] .past-topic-pill {
+    background: rgba(56, 189, 248, 0.16);
+    color: #38BDF8;
+  }
+
+  [data-theme="green"] .past-topic-pill {
+    background: rgba(52, 211, 153, 0.16);
+    color: #34D399;
+  }
+
+  .past-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--card-border);
+    padding-top: 14px;
+    margin-top: 14px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .past-card-meta {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+  }
+
+  .past-card-btn-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .btn-paper-scheme {
+    background: var(--card-bg);
+    color: var(--text-main);
+    border: 1.5px solid var(--card-border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.15s ease;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .btn-paper-scheme:hover {
+    border-color: var(--acad-gold);
+    color: var(--acad-gold);
+    background: var(--acad-gold-subtle);
   }
 
   /* Modal Backdrop & Dialog */
@@ -499,6 +728,10 @@
     justify-content: center;
     z-index: 100000;
     padding: 20px;
+  }
+
+  .past-paper-modal-backdrop.active {
+    display: flex;
   }
 
   .past-paper-modal-dialog {
@@ -739,16 +972,28 @@
       </div>
     </div>
 
+    <!-- Era Quick Jump Navigation Bar -->
+    <div class="decade-quick-nav" id="decadeQuickNav">
+      <span class="decade-quick-nav-label">Era Quick Jump:</span>
+      <button type="button" class="decade-jump-pill" onclick="scrollToDecadeSection('2020s')">🎓 2020s Contemporary (6 Papers)</button>
+      <button type="button" class="decade-jump-pill" onclick="scrollToDecadeSection('2010s')">🏛️ 2010s National (9 Papers)</button>
+      <button type="button" class="decade-jump-pill" onclick="scrollToDecadeSection('2000s')">📜 2000s Classic (8 Papers)</button>
+      <button type="button" class="decade-jump-pill" onclick="scrollToDecadeSection('1980s-1990s')">🏺 1980s–1990s Historical (8 Papers)</button>
+    </div>
+
     <!-- Results Status Count -->
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-      <div id="pastPapersResultCount" style="font-size:0.86rem; font-weight:700; color:var(--text-muted);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; padding-bottom:8px; border-bottom:1px solid var(--card-border); flex-wrap:wrap; gap:8px;">
+      <div id="pastPapersResultCount" style="font-size:0.88rem; font-weight:700; color:var(--text-muted);">
         Showing all available past practical papers
+      </div>
+      <div style="font-size:0.78rem; font-weight:700; color:var(--emerald-accent, #10B981); display:flex; align-items:center; gap:6px;">
+        <span class="pulse-dot"></span> 93 / 93 Practical Questions Fully Simulated
       </div>
     </div>
 
-    <!-- Past Papers Grid -->
-    <div class="series-grid" id="pastPapersContainer">
-      <!-- Populated dynamically from kcse-past-papers-data.js -->
+    <!-- Past Papers Container (Organized by Decades) -->
+    <div id="pastPapersContainer">
+      <!-- Populated dynamically into structured decade sections with .series-grid -->
     </div>
   </div>
 
@@ -1527,11 +1772,152 @@
     `;
   }
 
-  // ── Render Past Paper Archive Cards ──
+  // ── Decade Eras Configuration for Tab 2 Organization ──
+  const DECADE_CONFIG = [
+    {
+      key: '2020s',
+      title: '2020s National Practical Series (2020–2025)',
+      icon: '🎓',
+      desc: 'Contemporary KNEC Paper 3 format: micro-scale volumetric titrations, transition metal double salt alums, and organic unsaturation testing.',
+      filterFn: y => y >= 2020 && y <= 2029
+    },
+    {
+      key: '2010s',
+      title: '2010s National Practical Series (2010–2019)',
+      icon: '🏛️',
+      desc: 'Comprehensive practicals featuring thermochemical enthalpy changes, thiosulfate clock kinetics, and systematic cation/anion diagnostic matrices.',
+      filterFn: y => y >= 2010 && y <= 2019
+    },
+    {
+      key: '2000s',
+      title: '2000s National Practical Series (2000–2009)',
+      icon: '📜',
+      desc: 'Classic national practicals covering redox manganate(VII) standardization, double indicators, solubility curves, and amphoteric metal salts.',
+      filterFn: y => y >= 2000 && y <= 2009
+    },
+    {
+      key: '1980s-1990s',
+      title: '1980s–1990s Historical Practical Series (1989–1998)',
+      icon: '🏺',
+      desc: 'Foundational KNEC chemistry laboratory archives: back-titrations, water of crystallization (borax/oxalate), and thermal decomposition pathways.',
+      filterFn: y => y >= 1989 && y <= 1999
+    }
+  ];
+
+  function cleanQuestionTitle(title) {
+    if (!title) return '';
+    return title
+      .replace(/^Question\s+\d+:\s*/i, '')
+      .replace(/\s*\(\d+(\.\d+)?\s*Marks\)$/i, '')
+      .trim();
+  }
+
+  function scrollToDecadeSection(decadeKey) {
+    if (currentDecadeFilter !== 'all' && currentDecadeFilter !== decadeKey) {
+      currentDecadeFilter = 'all';
+      document.querySelectorAll('[data-decade]').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('data-decade') === 'all');
+      });
+      renderPastPaperCards();
+    }
+    setTimeout(() => {
+      const el = document.getElementById('decade-section-' + decadeKey);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 60);
+  }
+
+  function resetPastPaperFilters() {
+    currentDecadeFilter = 'all';
+    currentTopicFilter = 'all';
+    currentSimFilter = 'all';
+    const searchInput = document.getElementById('kcsePaperSearchInput');
+    if (searchInput) searchInput.value = '';
+
+    document.querySelectorAll('[data-decade]').forEach(b => b.classList.toggle('active', b.getAttribute('data-decade') === 'all'));
+    document.querySelectorAll('[data-topic]').forEach(b => b.classList.toggle('active', b.getAttribute('data-topic') === 'all'));
+    document.querySelectorAll('[data-sim]').forEach(b => b.classList.toggle('active', b.getAttribute('data-sim') === 'all'));
+
+    renderPastPaperCards();
+  }
+
+  function renderSinglePastPaperCard(p, seriesPresetMap) {
+    const sMatch = seriesPresetMap[p.playablePresetKey];
+    const isPlayable = Boolean(p.playablePresetKey);
+
+    const q1Summary = sMatch ? sMatch.q1 : (p.questions && p.questions[0] ? cleanQuestionTitle(p.questions[0].title) : 'Volumetric Titration Analysis');
+    const q2Summary = sMatch ? sMatch.q2 : (p.questions && p.questions[1] ? cleanQuestionTitle(p.questions[1].title) : 'Qualitative Salt Analysis');
+    const q3Summary = sMatch ? sMatch.q3 : (p.questions && p.questions[2] ? cleanQuestionTitle(p.questions[2].title) : 'Organic Functional Group Analysis');
+
+    return `
+      <div class="past-paper-card">
+        <div>
+          <div class="past-card-header-row">
+            <span class="series-badge">🇰🇪 KNEC KCSE ${p.year} National Paper</span>
+            ${isPlayable ? `
+              <span class="past-sim-chip" title="Complete 3-question interactive practical laboratory ready">
+                <span class="pulse-dot"></span> 40M Practical Lab
+              </span>
+            ` : `
+              <span style="font-size:0.72rem; color:var(--text-muted); font-family:var(--font-mono); font-weight:700;">📝 Written Archive</span>
+            `}
+          </div>
+
+          <h3 class="series-title">${escapeHtml(p.title)}</h3>
+
+          <div class="past-card-topics-row">
+            ${(p.topics || []).map(t => `<span class="past-topic-pill">${escapeHtml(t)}</span>`).join('')}
+          </div>
+
+          <ul class="series-questions-list">
+            <li class="series-q-item">
+              <span style="font-size:1.05rem; line-height:1;">🧪</span>
+              <div><b>Q1 (15M):</b> ${escapeHtml(q1Summary)}</div>
+            </li>
+            <li class="series-q-item">
+              <span style="font-size:1.05rem; line-height:1;">🧂</span>
+              <div><b>Q2 (15M):</b> ${escapeHtml(q2Summary)}</div>
+            </li>
+            <li class="series-q-item">
+              <span style="font-size:1.05rem; line-height:1;">🧫</span>
+              <div><b>Q3 (10M):</b> ${escapeHtml(q3Summary)}</div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="past-card-footer">
+          <span class="past-card-meta">
+            ⏱️ 135 Mins · 40.0 Marks
+          </span>
+          <div class="past-card-btn-group">
+            <button type="button" class="btn-paper-scheme" onclick="openPastPaperModal('${p.id}')" title="Inspect official examination question booklet, experimental procedures, and mark scheme">
+              📖 Paper &amp; Scheme
+            </button>
+            ${isPlayable ? `
+              <button type="button" class="btn-start-series" onclick="launchSeries('${p.playablePresetKey}')" title="Launch complete 40-mark KNEC simulation">
+                ⚡ Launch Simulation →
+              </button>
+            ` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // ── Render Past Paper Archive Cards Grouped By Decades ──
   function renderPastPaperCards() {
     const container = document.getElementById('pastPapersContainer');
     const countEl = document.getElementById('pastPapersResultCount');
     if (!container || typeof filterPastPapers !== 'function' || typeof KCSE_PAST_PAPERS_ARCHIVE === 'undefined') return;
+
+    // Fast lookup for series descriptions
+    const seriesPresetMap = {};
+    if (typeof SERIES_DATA !== 'undefined' && Array.isArray(SERIES_DATA)) {
+      SERIES_DATA.forEach(s => {
+        if (s.key) seriesPresetMap[s.key] = s;
+      });
+    }
 
     const keyword = document.getElementById('kcsePaperSearchInput') ? document.getElementById('kcsePaperSearchInput').value : '';
     const filtered = filterPastPapers({
@@ -1542,81 +1928,59 @@
     });
 
     if (countEl) {
-      countEl.textContent = `Showing ${filtered.length} of ${KCSE_PAST_PAPERS_ARCHIVE.length} past KCSE practical papers`;
+      if (filtered.length === KCSE_PAST_PAPERS_ARCHIVE.length) {
+        countEl.textContent = `Showing all ${filtered.length} KNEC past practical examination papers (1989–2025)`;
+      } else {
+        countEl.textContent = `Showing ${filtered.length} of ${KCSE_PAST_PAPERS_ARCHIVE.length} past practical papers matching criteria`;
+      }
     }
 
     if (filtered.length === 0) {
       container.innerHTML = `
-        <div style="grid-column: 1 / -1; padding: 36px 20px; text-align:center; color:var(--text-muted); background:var(--card-bg); border-radius:12px; border:1px dashed var(--card-border);">
-          <div style="font-size:2rem; margin-bottom:8px;">🔍</div>
-          <div style="font-weight:700; font-size:1rem; color:var(--heading-color);">No matching past papers found</div>
-          <div style="font-size:0.85rem; margin-top:4px;">Try loosening your decade or technique filters, or searching for broader terms like "titration", "lead", or "2011".</div>
+        <div style="padding: 48px 24px; text-align:center; color:var(--text-muted); background:var(--card-bg); border-radius:14px; border:1px dashed var(--card-border); margin: 20px 0;">
+          <div style="font-size:2.4rem; margin-bottom:12px;">🔍</div>
+          <div style="font-weight:800; font-size:1.1rem; color:var(--heading-color); font-family:'Cinzel', serif;">No matching past papers found</div>
+          <div style="font-size:0.88rem; margin-top:6px; max-width:540px; margin-left:auto; margin-right:auto; line-height:1.5;">
+            No practical papers matched your current filters. Try resetting the decade, technique, or search filters to explore all 31 national practical papers.
+          </div>
+          <button type="button" class="btn-paper-scheme" onclick="resetPastPaperFilters()" style="margin-top:16px;">
+            🔄 Reset All Filters
+          </button>
         </div>
       `;
       return;
     }
 
-    container.innerHTML = filtered.map(p => {
-      const isPlayable = Boolean(p.playablePresetKey);
-      const q1Title = p.questions && p.questions[0] ? p.questions[0].title : 'Quantitative Analysis';
-      const q2Title = p.questions && p.questions[1] ? p.questions[1].title : 'Inorganic Salt Qualitative Analysis';
-      const q3Title = p.questions && p.questions[2] ? p.questions[2].title : 'Organic Functional Group Analysis';
+    // Group filtered papers by decade era
+    let html = '';
+    DECADE_CONFIG.forEach(dec => {
+      const eraPapers = filtered.filter(p => dec.filterFn(p.year));
+      if (eraPapers.length === 0) return; // Skip eras with no matching papers
 
-      return `
-        <div class="past-paper-card">
-          <div>
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:6px;">
-              <span class="past-paper-year-badge">KCSE ${p.year}</span>
-              ${isPlayable ? '<span class="past-paper-playable-badge">🎮 40M Simulation Available</span>' : '<span style="font-size:0.72rem; color:var(--text-muted); font-family:var(--font-mono); font-weight:700;">📝 Written Paper Archive</span>'}
+      html += `
+        <div class="decade-section-wrap" id="decade-section-${dec.key}">
+          <div class="decade-section-header">
+            <div class="decade-header-left">
+              <span class="decade-header-icon">${dec.icon}</span>
+              <div>
+                <h3 class="decade-header-title">${escapeHtml(dec.title)}</h3>
+                <p class="decade-header-desc">${escapeHtml(dec.desc)}</p>
+              </div>
             </div>
-
-            <h3 class="past-paper-title">${escapeHtml(p.title)}</h3>
-            <div class="past-paper-topics">
-              ${(p.topics || []).map(t => `<span class="past-topic-pill">${escapeHtml(t)}</span>`).join('')}
+            <div class="decade-header-badges">
+              <span class="decade-count-badge">${eraPapers.length} National Paper${eraPapers.length > 1 ? 's' : ''}</span>
+              <span class="decade-sim-badge">⚡ 100% Simulated (${eraPapers.length * 3} Questions)</span>
             </div>
-
-            <div style="font-size:0.84rem; color:var(--text-muted); margin-bottom:14px; line-height:1.45;">
-              ${escapeHtml(p.summary || '')}
-            </div>
-
-            <ul class="past-q-summary-list">
-              <li class="past-q-item" style="display:flex; justify-content:space-between; align-items:center;">
-                <div style="display:flex; align-items:center; gap:8px;">
-                  <span class="q-icon">🧪</span>
-                  <div><b>Q1:</b> ${escapeHtml(q1Title)}</div>
-                </div>
-                ${isPlayable ? '<span style="font-size:0.68rem; padding:2px 6px; border-radius:4px; font-weight:800; background:rgba(16,185,129,0.15); color:var(--emerald-accent); border:1px solid rgba(16,185,129,0.3); white-space:nowrap;">🟢 Simulated</span>' : '<span style="font-size:0.68rem; padding:2px 6px; border-radius:4px; font-weight:800; background:rgba(148,163,184,0.12); color:var(--text-muted); border:1px solid rgba(148,163,184,0.25); white-space:nowrap;">📝 Written Sheet</span>'}
-              </li>
-              <li class="past-q-item" style="display:flex; justify-content:space-between; align-items:center;">
-                <div style="display:flex; align-items:center; gap:8px;">
-                  <span class="q-icon">🧂</span>
-                  <div><b>Q2:</b> ${escapeHtml(q2Title)}</div>
-                </div>
-                ${isPlayable ? '<span style="font-size:0.68rem; padding:2px 6px; border-radius:4px; font-weight:800; background:rgba(16,185,129,0.15); color:var(--emerald-accent); border:1px solid rgba(16,185,129,0.3); white-space:nowrap;">🟢 Simulated</span>' : '<span style="font-size:0.68rem; padding:2px 6px; border-radius:4px; font-weight:800; background:rgba(148,163,184,0.12); color:var(--text-muted); border:1px solid rgba(148,163,184,0.25); white-space:nowrap;">📝 Written Sheet</span>'}
-              </li>
-              <li class="past-q-item" style="display:flex; justify-content:space-between; align-items:center;">
-                <div style="display:flex; align-items:center; gap:8px;">
-                  <span class="q-icon">🧫</span>
-                  <div><b>Q3:</b> ${escapeHtml(q3Title)}</div>
-                </div>
-                ${isPlayable ? '<span style="font-size:0.68rem; padding:2px 6px; border-radius:4px; font-weight:800; background:rgba(16,185,129,0.15); color:var(--emerald-accent); border:1px solid rgba(16,185,129,0.3); white-space:nowrap;">🟢 Simulated</span>' : '<span style="font-size:0.68rem; padding:2px 6px; border-radius:4px; font-weight:800; background:rgba(148,163,184,0.12); color:var(--text-muted); border:1px solid rgba(148,163,184,0.25); white-space:nowrap;">📝 Written Sheet</span>'}
-              </li>
-            </ul>
           </div>
 
-          <div class="past-paper-card-footer">
-            <button type="button" class="btn-view-paper" onclick="openPastPaperModal('${p.id}')">
-              📖 View Paper &amp; Scheme
-            </button>
-            ${isPlayable ? `
-              <button type="button" class="btn-launch-sim" onclick="launchSeries('${p.playablePresetKey}')" title="Launch interactive 40-mark KNEC simulation">
-                ⚡ Start 40M Mock →
-              </button>
-            ` : ''}
+          <div class="series-grid">
+            ${eraPapers.map(p => renderSinglePastPaperCard(p, seriesPresetMap)).join('')}
           </div>
         </div>
       `;
-    }).join('');
+    });
+
+    container.innerHTML = html;
   }
 
   // ── Past Paper & Mark Scheme Modal Controller ──

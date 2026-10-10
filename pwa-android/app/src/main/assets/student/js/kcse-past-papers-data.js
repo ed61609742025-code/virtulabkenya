@@ -1211,17 +1211,17 @@ const KCSE_PAST_PAPERS_ARCHIVE = [
     id: 'kcse_1990',
     year: 1990,
     title: 'KCSE 1990 Chemistry Paper 3 Practical (233/3)',
-    badgeText: 'Official KNEC Paper · Organic Acid Solubility & Standardization Titration',
-    topics: ['Solubility Determination', 'Acid-Base Volumetric Analysis', 'Organic Analysis'],
-    playablePresetKey: null,
+    badgeText: 'Official KNEC Paper · Organic Acid Solubility, NaOH Standardization & Zinc Salt Analysis',
+    topics: ['Solubility Determination', 'Acid-Base Volumetric Analysis', 'Qualitative Analysis', 'Organic Analysis'],
+    playablePresetKey: 'series_1990',
     totalMarks: 40.0,
     durationMinutes: 135,
-    summary: 'Preparation of saturated solution of monobasic organic Solid D, standardization of NaOH Solution S₁ with dibasic acid Solution S₂, and titration of dissolved acid D to determine its solubility in g/100g water. Qualitative organic testing of Solid Q.',
+    summary: 'Standardization of NaOH Solution S₁ with 0.010 M dibasic acid Solution S₂ and determination of the solubility of monobasic organic acid Solid D (benzoic acid). Qualitative analysis of inorganic Solid Y (zinc sulfate hydrate ZnSO₄·7H₂O) and organic Solid Q (benzoic acid).',
     questions: [
       {
         num: 1,
-        title: 'Question 1: Solubility & Volumetric Standardization (24.0 Marks)',
-        procedure: 'Procedure A: Place Solid D in dry conical flask, add 100 cm³ distilled water, shake thoroughly, and leave to stand.\nProcedure B: Pipette 25.0 cm³ of 0.01M dibasic acid Solution S₂ into conical flask. Titrate with NaOH Solution S₁ using phenolphthalein indicator.\nProcedure C: Filter saturated solution of Solid D into dry flask. Pipette 10.0 cm³ of filtrate, add 25 cm³ water, and titrate with standardized NaOH Solution S₁.',
+        title: 'Question 1: Volumetric Standardization & Organic Acid Solubility Determination (18.0 Marks)',
+        procedure: 'Procedure A: Place all provided Solid D (benzoic acid) into a dry conical flask, add 100 cm³ distilled water, shake thoroughly, and allow to stand.\nProcedure B: Pipette 25.0 cm³ of 0.010 M dibasic acid Solution S₂ into a clean conical flask. Add 2–3 drops phenolphthalein indicator. Titrate with NaOH Solution S₁ from the burette until the first permanent faint pink colour appears.\nProcedure C: Filter the saturated solution of Solid D into a dry flask. Pipette 10.0 cm³ of the filtrate into a conical flask, add 25 cm³ distilled water, and titrate with standardized NaOH Solution S₁ using phenolphthalein.',
         table1: {
           title: 'Table A: Standardization of NaOH Solution S₁ with Dibasic Acid S₂',
           headers: ['Titration', '1st', '2nd', '3rd'],
@@ -1233,32 +1233,46 @@ const KCSE_PAST_PAPERS_ARCHIVE = [
           sampleValues: ['Final: 18.20', 'Final: 18.20', 'Final: 18.20', 'Initial: 0.00', 'Initial: 0.00', 'Initial: 0.00', 'Titre: 18.20', 'Titre: 18.20', 'Titre: 18.20']
         },
         calculations: [
-          '(i) Write equation for dibasic acid H₂A with NaOH: H₂A + 2NaOH → Na₂A + 2H₂O. (1 Mk)',
-          '(ii) Calculate concentration of NaOH Solution S₁ in mol/dm³. (3 Mks)',
-          '(iii) Calculate moles of monobasic Acid D in 10 cm³ of filtrate and in 100 cm³ saturated solution. (2 Mks)',
-          '(iv) Given molecular formula of Acid D is C₇H₆O₂, calculate solubility in g/100 cm³ water (RFM = 122.0). (2 Mks)'
+          '(i) Calculate the average volume of Solution S₁ used in Table A, V₁. (1 Mk)',
+          '(ii) Calculate the moles of dibasic acid in 25.0 cm³ of Solution S₂ (0.010 M). (2 Mks)',
+          '(iii) Calculate the concentration of NaOH Solution S₁ in mol/dm³ (Mole ratio H₂A : NaOH = 1 : 2). (2 Mks)',
+          '(iv) Calculate the moles of monobasic Acid D in 10.0 cm³ of filtrate. (2 Mks)',
+          '(v) Calculate the moles of Acid D in 100 cm³ of saturated solution. (1 Mk)',
+          '(vi) Given the formula of Acid D is C₇H₆O₂ (RFM = 122.0), calculate its solubility in g / 100 cm³ water. (2 Mks)'
         ]
       },
       {
         num: 2,
-        title: 'Question 2: Organic Functional Group Analysis of Solid Q (16.0 Marks)',
-        preamble: 'Solid Q is an organic solid.',
+        title: 'Question 2: Inorganic Salt Qualitative Analysis of Solid Y (12.0 Marks)',
+        preamble: 'Solid Y is a white crystalline inorganic salt containing zinc and sulfate.',
         tests: [
-          { step: '(a) (i)', prompt: 'Dissolve in water; test with pH paper.', obs: 'pH paper turns orange-red; pH = 2 – 3', inf: 'Acidic substance / carboxylic acid / H⁺ present' },
-          { step: '(a) (ii)', prompt: 'Add solid sodium hydrogen carbonate (NaHCO₃).', obs: 'Brisk effervescence of colourless gas that turns limewater milky', inf: 'Carboxylic acid (-COOH) confirmed present' },
-          { step: '(a) (iii)', prompt: 'Add 2 drops potassium manganate(VII).', obs: 'Purple KMnO₄ colour persists / not decolorized', inf: 'Alkene (>C=C<) absent' },
-          { step: '(b)', prompt: 'Ignite a little Solid Q on metallic spatula.', obs: 'Melts and burns with yellow luminous sooty flame', inf: 'Aromatic carboxylic acid / high carbon ratio' },
-          { step: '(c)', prompt: 'Add 4 cm³ ethanol and 2 drops conc. H₂SO₄; warm gently and pour into cold water.', obs: 'Pleasant, sweet fruity fragrance produced', inf: 'Ester formed; confirms carboxylic acid (-COOH)' }
+          { step: '(a)', prompt: 'Heat a spatula end-full of Solid Y gently in a clean dry test tube, then strongly.', obs: 'Colourless liquid droplets condense on upper cooler walls; white crystalline residue turns yellow on heating and cools to white', inf: 'Hydrated salt / water of crystallization present; Zn²⁺ indicated (ZnO residue)' },
+          { step: '(b) (i)', prompt: 'Dissolve remaining Solid Y in 10 cm³ distilled water. To portion 1, add 2 cm³ 2M dilute hydrochloric acid (HCl).', obs: 'No effervescence / no bubbles formed; clear colourless solution persists', inf: 'CO₃²⁻, SO₃²⁻ absent' },
+          { step: '(b) (ii)', prompt: 'To portion 2, add 2M aqueous sodium hydroxide (NaOH) dropwise until in excess.', obs: 'White precipitate formed, dissolves in excess sodium hydroxide to form a clear colourless solution', inf: 'Zn²⁺, Al³⁺, or Pb²⁺ present ([Zn(OH)₄]²⁻ formed)' },
+          { step: '(b) (iii)', prompt: 'To portion 3, add aqueous ammonia (NH₃(aq)) dropwise until in excess.', obs: 'White precipitate formed, dissolves in excess aqueous ammonia to form a clear colourless solution', inf: 'Zn²⁺ confirmed present (forms soluble [Zn(NH₃)₄]²⁺ complex; Al³⁺, Pb²⁺ are insoluble in excess NH₃)' },
+          { step: '(b) (iv)', prompt: 'To portion 4, add 3 drops barium nitrate (Ba(NO₃)₂) solution followed by dilute nitric acid (HNO₃).', obs: 'Dense white precipitate formed, insoluble in dilute nitric acid', inf: 'SO₄²⁻ confirmed present (BaSO₄ formed)' }
+        ]
+      },
+      {
+        num: 3,
+        title: 'Question 3: Organic Functional Group Analysis of Solid Q (10.0 Marks)',
+        preamble: 'Solid Q is a white organic crystalline solid.',
+        tests: [
+          { step: '(a)', prompt: 'Ignite a small portion of Solid Q on a clean metallic spatula in a Bunsen flame.', obs: 'Melts and burns with a luminous, highly smoky and sooty yellow flame; leaves black carbon residue', inf: 'Aromatic compound / high carbon-to-hydrogen ratio present' },
+          { step: '(b)', prompt: 'Dissolve Solid Q in 5 cm³ distilled water. Test with moist blue and red litmus paper.', obs: 'Moist blue litmus paper turns red; red litmus paper retains colour (acidic, pH ~ 2–3)', inf: 'Acidic organic substance / contains ionizable H⁺ ions / carboxylic acid (—COOH)' },
+          { step: '(c)', prompt: 'To 2 cm³ of solution, add a half-spatula of solid Sodium Hydrogen Carbonate (NaHCO₃).', obs: 'Brisk effervescence of a colourless gas that forms white precipitate with limewater (CO₂)', inf: 'Carboxylic acid (—COOH) confirmed present; CO₂ gas evolved' },
+          { step: '(d)', prompt: 'To 2 cm³ of solution, add 2–3 drops of acidified Potassium Manganate(VII) (KMnO₄) solution.', obs: 'Purple colour of acidified KMnO₄ solution persists / not decolorized', inf: 'Aliphatic alkene / alkyne (>C=C<) absent; stable benzene ring' },
+          { step: '(e)', prompt: 'To 2 cm³ of solution, add 3 cm³ ethanol and 2 drops concentrated sulfuric acid; warm gently and pour into cold water.', obs: 'Pleasant, sweet fruity fragrance produced (ethyl benzoate ester)', inf: 'Carboxylic acid (—COOH) confirmed present' }
         ]
       }
     ],
     markScheme: {
       q1Calculations: [
-        { item: 'Molarity of NaOH S₁', marks: '3.0 Mks', rubric: 'Moles H₂A = (0.01 × 25) / 1000 = 0.00025 mol. Moles NaOH = 0.00050 mol. Molarity S₁ = (0.00050 × 1000) / 25.0 = 0.020 M.' },
-        { item: 'Solubility of Acid D', marks: '4.0 Mks', rubric: 'Moles D in 10 cm³ = (0.020 × 18.2) / 1000 = 0.000364 mol. Moles in 100 cm³ = 0.00364 mol. Mass = 0.00364 × 122.0 = 0.444 g/100 cm³ water (Benzoic acid).' }
+        { item: 'Molarity of NaOH S₁', marks: '3.0 Mks', rubric: 'Moles H₂A = (0.010 × 25) / 1000 = 0.00025 mol. Moles NaOH = 0.00050 mol. Molarity S₁ = (0.00050 × 1000) / 25.0 = 0.020 M.' },
+        { item: 'Solubility of Acid D', marks: '4.0 Mks', rubric: 'Moles D in 10 cm³ = (0.020 × 18.2) / 1000 = 0.000364 mol. Moles in 100 cm³ = 0.00364 mol. Mass = 0.00364 × 122.0 = 0.444 g / 100 cm³ water (Benzoic acid).' }
       ],
-      qualitativeObservations: 'Benzoic acid burns with sooty flame and produces ethyl benzoate pleasant fruity ester.',
-      confidentialPrep: 'Solid D: Benzoic acid C₇H₆O₂. Solution S₁: 4.0 g NaOH in 1 L diluted 1:5 to 0.02 M. Solution S₂: 0.01 M oxalic acid. Solid Q: Benzoic acid.'
+      qualitativeObservations: 'Full marks for observations and inferences. Zn²⁺ soluble in both excess NaOH and excess aqueous ammonia; BaSO₄ insoluble in acid; Benzoic acid burns with sooty flame and forms pleasant fruity ester.',
+      confidentialPrep: 'Solid D: Benzoic acid C₇H₆O₂. Solution S₁: 4.0 g NaOH in 1 L diluted 1:5 to 0.020 M. Solution S₂: 0.010 M oxalic acid. Solid Y: Zinc sulfate heptahydrate ZnSO₄·7H₂O. Solid Q: Benzoic acid.'
     }
   },
 

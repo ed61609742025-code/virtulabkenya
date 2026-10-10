@@ -684,7 +684,7 @@ const KCSE_PAST_PAPERS_ARCHIVE = [
     title: 'KCSE 2002 Chemistry Paper 3 Practical (233/3)',
     badgeText: 'Official KNEC Paper · Hydrogen Peroxide / Iodide Clock Kinetics & Displacement Bench',
     topics: ['Chemical Kinetics / Clock Reaction', 'Qualitative Analysis', 'Organic Analysis'],
-    playablePresetKey: null,
+    playablePresetKey: 'series_2002',
     totalMarks: 40.0,
     durationMinutes: 135,
     summary: 'Kinetics of the reaction between hydrogen peroxide (Solution A) and potassium iodide (Solution D) in the presence of sodium thiosulphate and starch indicator. Qualitative displacement testing of Solution F with Solid G, and organic testing of Solid H.',

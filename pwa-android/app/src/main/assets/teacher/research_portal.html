@@ -4,18 +4,48 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Research & Learning Gain Analytics — VirtuLab Kenya</title>
-<script src="/shared/auth-guard.js"></script>
 <script>
+  (function() {
+    try {
+      var tok = (typeof localStorage !== 'undefined' && localStorage.getItem('vlk_token')) ||
+                (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('vlk_token'));
+      var curPath = window.location.pathname + window.location.search + window.location.hash;
+      var loginUrl = '/teacher/login.html?returnUrl=' + encodeURIComponent(curPath);
+      if (!tok) {
+        window.location.replace(loginUrl);
+        return;
+      }
+      var parts = tok.split('.');
+      if (parts.length >= 2) {
+        var base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+        var payload = JSON.parse(decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join('')));
+        if (payload.exp && (payload.exp * 1000) < Date.now()) {
+          try {
+            localStorage.removeItem('vlk_token');
+            localStorage.removeItem('vlk_user');
+            sessionStorage.removeItem('vlk_token');
+            sessionStorage.removeItem('vlk_user');
+          } catch(e) {}
+          window.location.replace('/teacher/login.html?expired=1&returnUrl=' + encodeURIComponent(curPath));
+          return;
+        }
+        if (payload.role && payload.role !== 'teacher' && payload.role !== 'admin') {
+          window.location.replace('/teacher/login.html?mismatch=' + encodeURIComponent(payload.role) + '&returnUrl=' + encodeURIComponent(curPath));
+          return;
+        }
+      }
+    } catch(e) {}
+  })();
+
   var t = localStorage.getItem('vlk_theme') || 'dark';
   document.documentElement.setAttribute('data-theme', t);
-  if (window.VLKAuthGuard) {
-    VLKAuthGuard.guardPage('teacher');
-  }
 </script>
 <meta name="theme-color" content="#0F172A">
 <link rel="stylesheet" href="../shared/style.css">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha384-bs/nf9FbdNouRbMiFcrcZfLXYPKiPaGVGplVbv7dLGECccEXDW+S3zjqSKR5ZEaD sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
 <style>
   .research-layout {
     max-width: 1360px;
@@ -200,6 +230,7 @@
 
 </div>
 
+<script src="/shared/auth-guard.js" defer></script>
 <script src="../shared/api.js"></script>
 <script src="../shared/theme.js"></script>
 <script src="js/research-portal.js"></script>

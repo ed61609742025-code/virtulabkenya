@@ -35,7 +35,7 @@
 <link rel="stylesheet" href="css/lab.css">
 <link rel="stylesheet" href="css/qualitative.css">
 <link rel="stylesheet" href="css/organic.css">
-<link rel="stylesheet" href="css/composite_exam.css?v=120">
+<link rel="stylesheet" href="css/composite_exam.css?v=146">
 <link rel="stylesheet" href="/shared/knec-graph-plotter.css">
 <!-- Extracted styles moved to css/composite_exam.css -->
 </head>
@@ -188,10 +188,11 @@
       </div>
     </div>
     
-    <div style="text-align:right;">
+    <div style="text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
       <div id="examTimerDisplay" class="exam-timer-chip">
         ⏱️ 135:00
       </div>
+      <div id="offlineStatusBadge" style="display:inline-flex;"></div>
     </div>
   </div>
 
@@ -739,15 +740,15 @@
             <tbody>
               <tr>
                 <td><b>Final Reading (cm³)</b></td>
-                <td><input type="number" step="0.05" id="t1Final" class="calc-input" style="text-align:center;" placeholder="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
-                <td><input type="number" step="0.05" id="t2Final" class="calc-input" style="text-align:center;" placeholder="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
-                <td><input type="number" step="0.05" id="t3Final" class="calc-input" style="text-align:center;" placeholder="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
+                <td><input type="number" step="0.05" id="t1Final" class="calc-input" style="text-align:center;" placeholder="0.00" inputmode="decimal" autocomplete="off" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
+                <td><input type="number" step="0.05" id="t2Final" class="calc-input" style="text-align:center;" placeholder="0.00" inputmode="decimal" autocomplete="off" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
+                <td><input type="number" step="0.05" id="t3Final" class="calc-input" style="text-align:center;" placeholder="0.00" inputmode="decimal" autocomplete="off" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
               </tr>
               <tr>
                 <td><b>Initial Reading (cm³)</b></td>
-                <td><input type="number" step="0.05" id="t1Init" class="calc-input" style="text-align:center;" value="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
-                <td><input type="number" step="0.05" id="t2Init" class="calc-input" style="text-align:center;" value="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
-                <td><input type="number" step="0.05" id="t3Init" class="calc-input" style="text-align:center;" value="0.00" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
+                <td><input type="number" step="0.05" id="t1Init" class="calc-input" style="text-align:center;" value="0.00" inputmode="decimal" autocomplete="off" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
+                <td><input type="number" step="0.05" id="t2Init" class="calc-input" style="text-align:center;" value="0.00" inputmode="decimal" autocomplete="off" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
+                <td><input type="number" step="0.05" id="t3Init" class="calc-input" style="text-align:center;" value="0.00" inputmode="decimal" autocomplete="off" oninput="onTableInputChanged()" onchange="onTableInputChanged()"></td>
               </tr>
               <tr style="background:var(--card-bg-hover);">
                 <td><b>Volume of Titrant Used (cm³)</b></td>
@@ -790,7 +791,7 @@
               (a) Calculate the average volume of Solution A used, V₁ <span style="color:var(--cyan-accent);">(1.0 Mark)</span>
             </div>
             <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-              <input type="number" step="0.01" id="ansAvgTitre" class="calc-input dynamic-calc-input" data-field="avgTitre" data-step-id="step_a" placeholder="e.g. 25.00" oninput="onDynamicQ1CalculationChanged('avgTitre', this.value)">
+              <input type="number" step="0.01" id="ansAvgTitre" class="calc-input dynamic-calc-input" data-field="avgTitre" data-step-id="step_a" placeholder="e.g. 25.00" inputmode="decimal" autocomplete="off" oninput="onDynamicQ1CalculationChanged('avgTitre', this.value)">
               <span style="font-weight:700;color:var(--text-muted);">cm³</span>
             </div>
             <div id="stepFeedback_step_a" class="step-feedback-msg"></div>
@@ -802,7 +803,7 @@
               (b) Calculate the number of moles of Solution A (acid) in the average volume V₁ used <span style="color:var(--cyan-accent);">(2.0 Marks)</span>
             </div>
             <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-              <input type="number" step="0.0001" id="ansMolesA" class="calc-input dynamic-calc-input" data-field="molesA" data-step-id="step_b" placeholder="e.g. 0.00250" oninput="onDynamicQ1CalculationChanged('molesA', this.value)">
+              <input type="number" step="0.0001" id="ansMolesA" class="calc-input dynamic-calc-input" data-field="molesA" data-step-id="step_b" placeholder="e.g. 0.00250" inputmode="decimal" autocomplete="off" oninput="onDynamicQ1CalculationChanged('molesA', this.value)">
               <span style="font-weight:700;color:var(--text-muted);">moles of acid</span>
             </div>
             <div id="stepFeedback_step_b" class="step-feedback-msg"></div>
@@ -814,7 +815,7 @@
               (c) Determine the number of moles of Solution B (base) in 25.0 cm³ of solution used <span style="color:var(--cyan-accent);">(2.0 Marks)</span>
             </div>
             <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-              <input type="number" step="0.0001" id="ansMolesB" class="calc-input dynamic-calc-input" data-field="molesB" data-step-id="step_c" placeholder="e.g. 0.00250" oninput="onDynamicQ1CalculationChanged('molesB', this.value)">
+              <input type="number" step="0.0001" id="ansMolesB" class="calc-input dynamic-calc-input" data-field="molesB" data-step-id="step_c" placeholder="e.g. 0.00250" inputmode="decimal" autocomplete="off" oninput="onDynamicQ1CalculationChanged('molesB', this.value)">
               <span style="font-weight:700;color:var(--text-muted);">moles of base</span>
             </div>
             <div id="stepFeedback_step_c" class="step-feedback-msg"></div>
@@ -826,7 +827,7 @@
               (d) Calculate the molar concentration (molarity) of Solution B in mol/dm³ <span style="color:var(--cyan-accent);">(3.0 Marks)</span>
             </div>
             <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-              <input type="number" step="0.001" id="ansMolarityB" class="calc-input dynamic-calc-input" data-field="molarityB" data-step-id="step_d" placeholder="e.g. 0.100" oninput="onDynamicQ1CalculationChanged('molarityB', this.value)">
+              <input type="number" step="0.001" id="ansMolarityB" class="calc-input dynamic-calc-input" data-field="molarityB" data-step-id="step_d" placeholder="e.g. 0.100" inputmode="decimal" autocomplete="off" oninput="onDynamicQ1CalculationChanged('molarityB', this.value)">
               <span style="font-weight:700;color:var(--text-muted);">mol/dm³ (M)</span>
             </div>
             <div id="stepFeedback_step_d" class="step-feedback-msg"></div>
@@ -838,7 +839,7 @@
               (e) Calculate the concentration of Solution B in g/dm³ (RFM = 40.0) <span style="color:var(--cyan-accent);">(2.0 Marks)</span>
             </div>
             <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-              <input type="number" step="0.01" id="ansConcGrams" class="calc-input dynamic-calc-input" data-field="concGrams" data-step-id="step_e" placeholder="e.g. 4.00" oninput="onDynamicQ1CalculationChanged('concGrams', this.value)">
+              <input type="number" step="0.01" id="ansConcGrams" class="calc-input dynamic-calc-input" data-field="concGrams" data-step-id="step_e" placeholder="e.g. 4.00" inputmode="decimal" autocomplete="off" oninput="onDynamicQ1CalculationChanged('concGrams', this.value)">
               <span style="font-weight:700;color:var(--text-muted);">g/dm³</span>
             </div>
             <div id="stepFeedback_step_e" class="step-feedback-msg"></div>
@@ -1097,9 +1098,12 @@
     </div>
 
     <!-- Tab Controls inside Chief Examiner Report -->
-    <div style="display:flex; gap:8px; margin-bottom:14px; border-bottom:1px solid var(--card-border); padding-bottom:10px;">
+    <div style="display:flex; gap:8px; margin-bottom:14px; border-bottom:1px solid var(--card-border); padding-bottom:10px; flex-wrap:wrap;">
       <button class="examiner-tab-btn active" id="btnReportRubric" onclick="switchReportTab('rubric')">
         📋 Official KNEC Rubric &amp; Critique
+      </button>
+      <button class="examiner-tab-btn" id="btnReportRadar" onclick="switchReportTab('radar')">
+        📊 Chief Examiner Competency Radar
       </button>
       <button class="examiner-tab-btn" id="btnReportWorked" onclick="switchReportTab('worked')">
         📐 Mathematical Model Worked Solutions
@@ -1122,7 +1126,48 @@
       </div>
     </div>
 
-    <!-- Container 2: Step-by-Step Worked Mathematical Calculations -->
+    <!-- Container 2: Multi-Axis Competency Radar & Benchmark Diagnostics -->
+    <div id="reportPaneRadar" style="display:none; margin-bottom:20px;">
+      <div class="radar-diagnostic-card">
+        <div class="radar-diagnostic-header">
+          <div>
+            <div style="font-weight:800; font-size:0.95rem; color:var(--heading-color); display:flex; align-items:center; gap:6px;">
+              <span>📊</span> Chief Examiner 5-Axis Practical Competency Radar
+            </div>
+            <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">
+              Direct comparison of candidate mastery against the KNEC National Mock Cohort Baseline (2024–2026 Standardization Index)
+            </div>
+          </div>
+          <div class="competency-index-box">
+            <span class="index-title">Competency Index</span>
+            <span class="index-score" id="radarOverallIndex">—</span>
+            <span class="index-delta" id="radarCohortDelta">—</span>
+          </div>
+        </div>
+
+        <!-- Radar Canvas Presentation -->
+        <div class="radar-chart-stage">
+          <div class="radar-canvas-container">
+            <canvas id="knecCompetencyRadarChart" aria-label="KNEC Practical Competency Radar Chart" role="img"></canvas>
+          </div>
+          <div class="radar-legend-strip">
+            <div class="legend-badge candidate-badge">
+              <span class="badge-dot"></span> Candidate Practical Mastery (%)
+            </div>
+            <div class="legend-badge benchmark-badge">
+              <span class="badge-dot"></span> KNEC National Cohort Baseline (%)
+            </div>
+          </div>
+        </div>
+
+        <!-- 5-Axis Detailed Competency Diagnostic Cards -->
+        <div class="competency-cards-grid" id="competencyCardsGrid">
+          <!-- Populated dynamically via composite-exam-ui.js -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Container 3: Step-by-Step Worked Mathematical Calculations -->
     <div id="reportPaneWorked" style="display:none; margin-bottom:20px; background:var(--bg-dark); border:1px solid var(--card-border); border-radius:10px; padding:16px;">
       <div style="font-weight:800; font-size:0.9rem; color:var(--cyan-accent); margin-bottom:12px; display:flex; align-items:center; gap:6px;">
         <span>📐</span> Official KNEC Question 1 Worked Calculations &amp; Stoichiometric Models:
@@ -1143,6 +1188,99 @@
         <button class="btn-submit-exam" onclick="window.location.href='/student/history.html'">📊 View History →</button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Targeted Competency Remediation Micro-Drill Modal (5-Minute Interactive Fix) -->
+<div id="remediationDrillModal" class="modal-backdrop" style="display:none; position:fixed; inset:0; z-index:10050; background:rgba(7,11,19,0.85); backdrop-filter:blur(8px); overflow-y:auto; padding:20px;">
+  <div class="modal-dialog drill-modal-dialog" style="max-width:720px; margin:30px auto; background:var(--card-bg, #0B132B); border:1px solid var(--card-border, #1E293B); border-radius:16px; box-shadow:0 20px 50px rgba(0,0,0,0.6); overflow:hidden;">
+    
+    <!-- Drill Header -->
+    <div class="drill-modal-header" style="background:linear-gradient(135deg, rgba(2,132,199,0.15), rgba(15,23,42,0.6)); border-bottom:1px solid var(--card-border); padding:16px 20px; display:flex; justify-content:space-between; align-items:center;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span id="drillHeaderIcon" style="font-size:1.6rem;">⚡</span>
+        <div>
+          <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--cyan-accent); font-weight:800;">KNEC Weak-Area Remediation Drill</div>
+          <h3 id="drillHeaderTitle" style="margin:0; font-size:1.15rem; color:var(--heading-color); font-weight:800;">Decimal Precision (D) Mastery</h3>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <!-- 5-Minute Countdown Timer Badge -->
+        <div id="drillTimerBadge" class="drill-timer-pill" style="display:flex; align-items:center; gap:6px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#EF4444; padding:5px 12px; border-radius:100px; font-family:var(--font-mono); font-weight:800; font-size:0.85rem;">
+          <span>⏱️</span>
+          <span id="drillTimerDisplay">05:00</span>
+        </div>
+        <button type="button" class="btn-close-modal" onclick="closeRemediationDrill()" style="background:transparent; border:none; color:var(--text-muted); font-size:1.4rem; cursor:pointer; padding:4px 8px; line-height:1;" aria-label="Close Drill">&times;</button>
+      </div>
+    </div>
+
+    <!-- Drill Body Content (Active Drill State) -->
+    <div id="drillActiveStage" style="padding:20px;">
+      <!-- Chief Examiner Rule Strip -->
+      <div class="drill-rule-banner" style="background:rgba(245,158,11,0.08); border-left:4px solid var(--amber-accent, #F59E0B); border-radius:8px; padding:12px 16px; margin-bottom:18px;">
+        <div style="font-size:0.75rem; text-transform:uppercase; font-weight:800; color:var(--amber-accent); margin-bottom:4px; display:flex; align-items:center; gap:6px;">
+          <span>👨‍🏫</span> KNEC Chief Examiner Standard:
+        </div>
+        <div id="drillExaminerRuleText" style="font-size:0.82rem; color:var(--text-main); line-height:1.5;"></div>
+      </div>
+
+      <!-- Interactive Questions Container -->
+      <form id="remediationDrillForm" onsubmit="event.preventDefault(); submitRemediationDrill();">
+        <div id="drillQuestionsList" style="display:flex; flex-direction:column; gap:16px;">
+          <!-- Dynamically populated questions -->
+        </div>
+
+        <!-- Footer Action Buttons -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:22px; padding-top:16px; border-top:1px solid var(--card-border); flex-wrap:wrap; gap:10px;">
+          <button type="button" class="btn btn-secondary" onclick="closeRemediationDrill()" style="font-size:0.82rem; padding:8px 16px;">
+            Exit Drill
+          </button>
+          <div style="display:flex; gap:10px;">
+            <button type="submit" id="btnSubmitDrill" class="btn-submit-exam" style="font-size:0.88rem; padding:9px 20px; font-weight:800; background:linear-gradient(135deg, #0284C7, #0369A1);">
+              ⚡ Submit for Instant KNEC Grading
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Drill Completed / Result Stage (Initially Hidden) -->
+    <div id="drillResultStage" style="display:none; padding:24px 20px;">
+      <div style="text-align:center; margin-bottom:20px;">
+        <div id="drillResultTrophy" style="font-size:2.8rem; margin-bottom:8px;">🎯</div>
+        <h3 id="drillResultStatus" style="font-size:1.3rem; font-weight:900; color:var(--heading-color); margin-bottom:4px;">Mastery Attained!</h3>
+        <p id="drillResultSummary" style="font-size:0.85rem; color:var(--text-muted); max-width:480px; margin:0 auto; line-height:1.5;"></p>
+        
+        <!-- Score & Boost Metric Strip -->
+        <div style="display:flex; justify-content:center; gap:14px; margin-top:16px; flex-wrap:wrap;">
+          <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:10px; padding:10px 18px; min-width:130px;">
+            <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Drill Score</div>
+            <div id="drillResultScore" style="font-size:1.4rem; font-weight:900; font-family:var(--font-mono); color:var(--cyan-accent);">30 / 30</div>
+          </div>
+          <div style="background:var(--card-bg-hover); border:1px solid rgba(16,185,129,0.3); border-radius:10px; padding:10px 18px; min-width:130px;">
+            <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Competency Boost</div>
+            <div id="drillResultBoost" style="font-size:1.4rem; font-weight:900; font-family:var(--font-mono); color:#10B981;">+25%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Itemized Question-by-Question Breakdown -->
+      <div style="background:var(--bg-dark); border:1px solid var(--card-border); border-radius:10px; padding:14px; margin-bottom:18px;">
+        <div style="font-weight:800; font-size:0.86rem; color:var(--heading-color); margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+          <span>📝</span> Itemized Chief Examiner Verification:
+        </div>
+        <div id="drillResultBreakdown" style="display:flex; flex-direction:column; gap:10px; font-size:0.82rem;"></div>
+      </div>
+
+      <!-- Bottom Action to Apply Boost & Return to Radar -->
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+        <button type="button" class="btn btn-secondary" onclick="closeRemediationDrill()">Close</button>
+        <button type="button" id="btnApplyBoost" class="btn-submit-exam" onclick="applyCompetencyBoost()" style="background:linear-gradient(135deg, #10B981, #059669); font-weight:800; padding:10px 22px;">
+          ✨ Apply Boost to Radar Chart →
+        </button>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -1243,8 +1381,10 @@
 <script src="/shared/organic-bench-core.js"></script>
 <script src="/shared/knec-graph-plotter.js"></script>
 <script src="/shared/knec-pedagogy.js"></script>
-<script src="js/composite-engine.js?v=120"></script>
-<script src="js/exam-offline-manager.js?v=120"></script>
-<script src="js/composite-exam-ui.js?v=120"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha384-bs/nf9FbdNouRbMiFcrcZfLXYPKiPaGVGplVbv7dLGECccEXDW+S3zjqSKR5ZEaD sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+<script src="js/composite-engine.js?v=146"></script>
+<script src="js/exam-offline-manager.js?v=146"></script>
+<script src="/shared/knec-remediation-drills.js?v=146"></script>
+<script src="js/composite-exam-ui.js?v=146"></script>
 </body>
 </html>

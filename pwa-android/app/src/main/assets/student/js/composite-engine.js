@@ -2880,6 +2880,218 @@ const COMPOSITE_EXAM_PRESETS = {
     }
   },
 
+  // ── Series 2002: Official KCSE 2002 Standard Chemistry Practical (Paper 233/3) ──
+  series_2002: {
+    id: 'series_2002',
+    seriesKey: 'series_2002',
+    seriesNumber: 2002,
+    title: 'KCSE 2002 Standard Chemistry Practical Examination',
+    badgeText: 'KCSE 2002 Past National Paper · Iodine Clock Kinetics / Iodometric Titration & Redox Displacement',
+    durationMinutes: 135,
+    q1: {
+      type: 'titration',
+      calcType: 'standard_molarity',
+      title: 'Question 1: Volumetric Analysis — Iodometric Titration & Clock Kinetics (15.0 Marks)',
+      solutionA: '0.050 M Sodium Thiosulphate (Na₂S₂O₃) Solution C',
+      solutionB: 'Solution A (Liberated Iodine from Hydrogen Peroxide and Iodide)',
+      acidFormula: 'Na2S2O3',
+      baseFormula: 'H2O2',
+      indicator: 'Starch Indicator',
+      pipetteVolume: 25.0,
+      trueAcidMolarity: 0.050,
+      trueBaseMolarity: 0.025,
+      trueTitre: 25.00,
+      moleRatioAcid: 2,
+      moleRatioBase: 1,
+      acidRfm: 158.0,
+      baseRfm: 34.0,
+      titrantColor: '#F8FAFC',
+      flaskBaseColor: 'rgba(217,119,6,0.35)',
+      flaskIndicatorColor: 'rgba(30,58,138,0.90)',
+      endpointColor: 'rgba(255,255,255,0.35)',
+      overtitratedColor: 'rgba(255,255,255,0.20)',
+      equation: 'H₂O₂(aq) + 2I⁻(aq) + 2H⁺(aq) → I₂(aq) + 2H₂O(l); I₂(aq) + 2Na₂S₂O₃(aq) → 2NaI(aq) + Na₂S₄O₆(aq)',
+      instructions: 'Pipette 25.0 cm³ of Solution A (liberated iodine reaction mixture) into a clean conical flask. Titrate with 0.050 M Sodium Thiosulphate Solution C from the burette until the reddish-brown iodine turns pale straw-yellow. Add 1 cm³ starch indicator (solution turns deep blue) and continue titrating dropwise with continuous swirling until the dark blue colour sharply discharges to colourless.',
+      questions: [
+        {
+          id: 'step_a',
+          letter: 'a',
+          field: 'avgTitre',
+          label: 'Calculate the average volume of 0.050 M Sodium Thiosulphate Solution C used, V₁',
+          marks: 1.0,
+          marksLabel: '(1.0 Mark)',
+          placeholder: 'e.g. 25.00',
+          step: '0.01',
+          unit: 'cm³',
+          calcTheoretical: (ctx) => ctx.trueTitre,
+          calcEcf: (ctx) => ctx.expAvgFromTrials,
+          check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
+          feedbackSuccess: (val) => `✓ Correct: V₁ = ${val.toFixed(2)} cm³.`,
+          feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
+          working: (ctx) => `<b>(a) Average Titre:</b> V₁ = <b>${ctx.v1.toFixed(2)} cm³</b>`
+        },
+        {
+          id: 'step_b',
+          letter: 'b',
+          field: 'molesThiosulphate',
+          label: 'Calculate the number of moles of sodium thiosulphate (Na₂S₂O₃) in the average volume V₁ used (0.050 M)',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 0.00125',
+          step: '0.00001',
+          unit: 'moles of Na₂S₂O₃',
+          calcTheoretical: (ctx) => (0.050 * ctx.trueTitre) / 1000.0,
+          calcEcf: (ctx) => {
+            const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_a')) || ctx.trueTitre;
+            return (0.050 * v1) / 1000.0;
+          },
+          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+          feedbackSuccess: (val) => `✓ Correct: ${val} moles of Na₂S₂O₃.`,
+          feedbackFail: (ctx, expTheo) => `Formula: (0.050 × V₁) / 1000 = ${expTheo.toFixed(5)} mol.`,
+          working: (ctx) => `<b>(b) Moles of Na₂S₂O₃:</b> (0.050 × ${ctx.v1.toFixed(2)}) / 1000 = <b>${((0.050 * ctx.v1) / 1000.0).toFixed(5)} mol</b>`
+        },
+        {
+          id: 'step_c',
+          letter: 'c',
+          field: 'molesIodine',
+          label: 'Determine the number of moles of iodine (I₂) in 25.0 cm³ of Solution A (Mole ratio I₂ : S₂O₃²⁻ = 1 : 2)',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 0.000625',
+          step: '0.000001',
+          unit: 'moles of I₂',
+          calcTheoretical: (ctx) => ((0.050 * ctx.trueTitre) / 1000.0) / 2.0,
+          calcEcf: (ctx) => {
+            const mThio = parseFloat(getAnswerValue(ctx.answers, 'molesThiosulphate', 'step_b')) || ((0.050 * ctx.trueTitre) / 1000.0);
+            return mThio / 2.0;
+          },
+          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+          feedbackSuccess: (val) => `✓ Correct: ${val} moles of I₂.`,
+          feedbackFail: (ctx, expTheo) => `Formula: Moles of Na₂S₂O₃ / 2 = ${expTheo.toFixed(6)} mol.`,
+          working: (ctx) => `<b>(c) Moles of I₂:</b> Moles of Thiosulphate / 2 = <b>${(((0.050 * ctx.v1) / 1000.0) / 2.0).toFixed(6)} mol</b>`
+        },
+        {
+          id: 'step_d',
+          letter: 'd',
+          field: 'molesH2O2',
+          label: 'Determine the number of moles of hydrogen peroxide (H₂O₂) in 25.0 cm³ of Solution A (Mole ratio H₂O₂ : I₂ = 1 : 1)',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 0.000625',
+          step: '0.000001',
+          unit: 'moles of H₂O₂',
+          calcTheoretical: (ctx) => ((0.050 * ctx.trueTitre) / 1000.0) / 2.0,
+          calcEcf: (ctx) => {
+            const mI2 = parseFloat(getAnswerValue(ctx.answers, 'molesIodine', 'step_c')) || (((0.050 * ctx.trueTitre) / 1000.0) / 2.0);
+            return mI2;
+          },
+          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+          feedbackSuccess: (val) => `✓ Correct: ${val} moles of H₂O₂ in 25.0 cm³.`,
+          feedbackFail: (ctx, expTheo) => `Formula: 1 : 1 stoichiometric ratio with I₂ = ${expTheo.toFixed(6)} mol.`,
+          working: (ctx) => `<b>(d) Moles of H₂O₂ in 25.0 cm³:</b> <b>${(((0.050 * ctx.v1) / 1000.0) / 2.0).toFixed(6)} mol</b>`
+        },
+        {
+          id: 'step_e',
+          letter: 'e',
+          field: 'molarityH2O2',
+          label: 'Calculate the molar concentration (molarity) of hydrogen peroxide (H₂O₂) Solution A in mol/dm³',
+          marks: 3.0,
+          marksLabel: '(3.0 Marks)',
+          placeholder: 'e.g. 0.025',
+          step: '0.001',
+          unit: 'mol/dm³ (M)',
+          calcTheoretical: (ctx) => ctx.trueBaseMolarity,
+          calcEcf: (ctx) => {
+            const mH2O2 = parseFloat(getAnswerValue(ctx.answers, 'molesH2O2', 'step_d')) || (((0.050 * ctx.trueTitre) / 1000.0) / 2.0);
+            return (mH2O2 * 1000.0) / 25.0;
+          },
+          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+          feedbackSuccess: (val) => `✓ Correct: Molarity of H₂O₂ = ${val} mol/dm³.`,
+          feedbackFail: (ctx, expTheo) => `Formula: (Moles of H₂O₂ × 1000) / 25.0 = ${expTheo.toFixed(4)} M.`,
+          working: (ctx) => `<b>(e) Molarity of H₂O₂:</b> (Moles of H₂O₂ × 1000) / 25.0 = <b>${ctx.trueBaseMolarity.toFixed(4)} mol/dm³</b>`
+        }
+      ]
+    },
+    q2: {
+      type: 'qualitative_single',
+      title: 'Question 2: Qualitative Analysis & Redox Displacement Bench (15.0 Marks)',
+      sampleName: 'Solution F and Solid G',
+      sampleDesc: 'Solution F is an aqueous solution of a heavy metal salt; Solid G is zinc metal granules (Zn).',
+      trueSaltKey: 'leadNitrate',
+      trueSaltName: 'Lead(II) Nitrate — Pb(NO₃)₂ & Zinc Metal Displacement',
+      trueCation: 'Pb2+',
+      trueAnion: 'NO3-',
+      hasDeduction: true,
+      tests: [
+        {
+          id: 'q2_displacement',
+          prompt: '(i) To 5 cm³ of Solution F in a test tube, add a spatula-end of Solid G (zinc granules), warm gently for 1 minute, shake for 3 minutes, and filter into a clean boiling tube.',
+          correctObs: 'Shiny grey metal is coated with a dark grey/black deposit (lead sponge); effervescence ceases; colourless filtrate obtained',
+          correctInf: 'Redox displacement occurred; Solid G (Zn) is more reactive than metal in F (Pb²⁺); Pb²⁺ reduced to Pb(s), Zn oxidized to Zn²⁺'
+        },
+        {
+          id: 'q2_barium',
+          prompt: '(ii) To 2 cm³ of the filtrate, add 4–5 drops of Barium Nitrate solution [Ba(NO₃)₂].',
+          correctObs: 'No precipitate formed; clear colourless solution persists',
+          correctInf: 'SO₄²⁻ and SO₃²⁻ absent'
+        },
+        {
+          id: 'q2_naoh',
+          prompt: '(iii) To 2 cm³ of the filtrate, add 2M Sodium Hydroxide (NaOH) dropwise until in excess.',
+          correctObs: 'White precipitate formed, dissolves in excess sodium hydroxide to form a clear colourless solution',
+          correctInf: 'Zn²⁺, Pb²⁺, or Al³⁺ present (amphoteric hydroxide)'
+        },
+        {
+          id: 'q2_ammonia',
+          prompt: '(iv) To 2 cm³ of the filtrate, add 2M aqueous ammonia (NH₃) dropwise until in excess.',
+          correctObs: 'White precipitate formed, dissolves in excess aqueous ammonia to give a clear colourless solution',
+          correctInf: 'Zn²⁺ confirmed present in filtrate (forms soluble [Zn(NH₃)₄]²⁺ complex; Pb²⁺ and Al³⁺ absent)'
+        },
+        {
+          id: 'q2_hcl',
+          prompt: '(v) To 2 cm³ of the original Solution F (before displacement), add 4 drops of 2M dilute hydrochloric acid (HCl) and boil the mixture.',
+          correctObs: 'White precipitate formed (PbCl₂), which dissolves on boiling to form a colourless solution and recrystallizes on cooling',
+          correctInf: 'Pb²⁺ confirmed present in original Solution F'
+        }
+      ]
+    },
+    q3: {
+      type: 'organic',
+      title: 'Question 3: Organic Functional Group Analysis (10.0 Marks)',
+      sampleName: 'Solid H',
+      sampleDesc: 'A pure, white unsaturated organic crystalline solid.',
+      trueOrganicKey: 'org_alkene',
+      trueOrganicName: 'Unsaturated Organic Acid (Maleic / Crotonic Acid)',
+      trueFunctionalGroup: 'Alkene (>C=C<)',
+      tests: [
+        {
+          id: 'q3_ignition',
+          prompt: '(i) Ignite one-third of Solid H on a clean metallic spatula in a non-luminous Bunsen burner flame.',
+          correctObs: 'Melts and burns with a luminous, yellow smoky and sooty flame; leaves black carbon residue',
+          correctInf: 'Unsaturated organic compound / high carbon-to-hydrogen ratio (>C=C< or —C≡C—)'
+        },
+        {
+          id: 'q3_solubility',
+          prompt: '(ii) Dissolve rest of Solid H in 5 cm³ distilled water. Test portion 1 with universal indicator solution (or paper).',
+          correctObs: 'Dissolves to form clear colourless solution; turns orange-red; pH = 2.5 – 3.0',
+          correctInf: 'Acidic organic compound / carboxylic acid (—COOH) group present / H⁺ ions present'
+        },
+        {
+          id: 'q3_kmno4',
+          prompt: '(iii) To portion 2, add 2–3 drops of acidified Potassium Manganate(VII) (KMnO₄) and shake.',
+          correctObs: 'Purple colour of acidified KMnO₄ solution is rapidly decolorized to colourless',
+          correctInf: 'Alkene (>C=C<) confirmed present; reducing unsaturated linkage oxidized'
+        },
+        {
+          id: 'q3_bromine',
+          prompt: '(iv) To portion 3, add 3–4 drops of Bromine water and shake gently.',
+          correctObs: 'Reddish-brown / yellow colour of bromine water is rapidly decolorized to colourless',
+          correctInf: 'Carbon-carbon double bond (>C=C<) confirmed present by electrophilic halogen addition'
+        }
+      ]
+    }
+  },
+
   // ── Series 2000: Official KCSE 2000 Standard Chemistry Practical (Paper 233/3) ──
   series_2000: {
     id: 'series_2000',
@@ -4704,7 +4916,7 @@ function generateRandomCompositePreset() {
     'series_1', 'series_2', 'series_3', 'series_4', 'series_5', 'series_6',
     'series_2024', 'series_2023', 'series_2022',
     'series_2013', 'series_2012', 'series_2011', 'series_2009', 'series_2008',
-    'series_2007', 'series_2006', 'series_2005', 'series_2003', 'series_2000',
+    'series_2007', 'series_2006', 'series_2005', 'series_2003', 'series_2002', 'series_2000',
     'series_1998', 'series_1996', 'series_1994', 'series_1993', 'series_1992', 'series_1990', 'series_1989'
   ];
   const q1PickKey = seriesKeys[Math.floor(Math.random() * seriesKeys.length)];

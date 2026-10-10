@@ -1127,20 +1127,25 @@
 
     <!-- Tab 2: Security & Password -->
     <div id="profPaneSecurity" style="display:none;">
-      <div style="margin-bottom:16px;">
-        <label for="pwCurrent" style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Current Password</label>
-        <input type="password" id="pwCurrent" placeholder="Enter current security password" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
-      </div>
-      <div style="margin-bottom:16px;">
-        <label for="pwNew" style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">New Password</label>
-        <input type="password" id="pwNew" placeholder="Enter new password (min 6 characters)" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
-      </div>
-      <div style="margin-bottom:20px;">
-        <label for="pwConfirm" style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Confirm New Password</label>
-        <input type="password" id="pwConfirm" placeholder="Re-type new password to confirm" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;">
-      </div>
+      <form id="studentChangePasswordForm" onsubmit="event.preventDefault(); submitChangePassword();">
+        <input type="text" id="pwUsername" name="username" autocomplete="username"
+               aria-hidden="true" tabindex="-1"
+               style="position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;">
+        <div style="margin-bottom:16px;">
+          <label for="pwCurrent" style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Current Password</label>
+          <input type="password" id="pwCurrent" name="current-password" autocomplete="current-password" placeholder="Enter current security password" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;" required>
+        </div>
+        <div style="margin-bottom:16px;">
+          <label for="pwNew" style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">New Password</label>
+          <input type="password" id="pwNew" name="new-password" autocomplete="new-password" placeholder="Enter new password (min 6 characters)" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;" required>
+        </div>
+        <div style="margin-bottom:20px;">
+          <label for="pwConfirm" style="font-size:0.8rem; font-weight:800; color:var(--heading-color); display:block; margin-bottom:6px;">Confirm New Password</label>
+          <input type="password" id="pwConfirm" name="confirm-password" autocomplete="new-password" placeholder="Re-type new password to confirm" style="width:100%; padding:11px 14px; border-radius:12px; border:1.5px solid var(--card-border); background:var(--bg-dark); color:var(--text-main); font-weight:700;" required>
+        </div>
 
-      <button type="button" class="btn btn-primary" onclick="submitChangePassword()" style="padding:12px 24px; font-weight:800; border-radius:100px; width:100%; font-size:0.92rem;">Update Security Password 🔐</button>
+        <button type="submit" class="btn btn-primary" style="padding:12px 24px; font-weight:800; border-radius:100px; width:100%; font-size:0.92rem;">Update Security Password 🔐</button>
+      </form>
       <div id="pwMsg" style="margin-top:12px; text-align:center;"></div>
     </div>
 
@@ -1189,11 +1194,11 @@
 </div>
 
 <script src="../shared/api.js"></script>
-<script src="../shared/notifications-engine.js?v=128"></script>
-<script src="../shared/push-manager.js?v=128"></script>
+<script src="../shared/notifications-engine.js?v=146"></script>
+<script src="../shared/push-manager.js?v=146"></script>
 <script src="../shared/page-transitions.js"></script>
 <script src="../shared/brilliant-ui.js"></script>
-<script src="js/student-dashboard.js?v=128"></script>
-<script src="js/history.js?v=120"></script>
+<script src="js/student-dashboard.js?v=146"></script>
+<script src="js/history.js?v=146"></script>
 </body>
 </html>

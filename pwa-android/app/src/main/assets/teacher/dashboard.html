@@ -4,13 +4,45 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Teacher Portal — VirtuLab Kenya</title>
-<script src="/shared/auth-guard.js"></script>
 <script>
+  window.VLK = window.VLK || {};
+  // Fast Inline Head Auth Guard — zero network latency, zero FOUC
+  (function() {
+    try {
+      var tok = (typeof localStorage !== 'undefined' && localStorage.getItem('vlk_token')) ||
+                (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('vlk_token'));
+      var curPath = window.location.pathname + window.location.search + window.location.hash;
+      var loginUrl = '/teacher/login.html?returnUrl=' + encodeURIComponent(curPath);
+      if (!tok) {
+        window.location.replace(loginUrl);
+        return;
+      }
+      var parts = tok.split('.');
+      if (parts.length >= 2) {
+        var base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+        var payload = JSON.parse(decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join('')));
+        if (payload.exp && (payload.exp * 1000) < Date.now()) {
+          try {
+            localStorage.removeItem('vlk_token');
+            localStorage.removeItem('vlk_user');
+            sessionStorage.removeItem('vlk_token');
+            sessionStorage.removeItem('vlk_user');
+          } catch(e) {}
+          window.location.replace('/teacher/login.html?expired=1&returnUrl=' + encodeURIComponent(curPath));
+          return;
+        }
+        if (payload.role && payload.role !== 'teacher' && payload.role !== 'admin') {
+          window.location.replace('/teacher/login.html?mismatch=' + encodeURIComponent(payload.role) + '&returnUrl=' + encodeURIComponent(curPath));
+          return;
+        }
+      }
+    } catch(e) {}
+  })();
+
   var t = localStorage.getItem('vlk_theme') || 'light';
   document.documentElement.setAttribute('data-theme', t);
-  if (window.VLKAuthGuard) {
-    VLKAuthGuard.guardPage('teacher');
-  }
 </script>
 <meta name="theme-color" content="#0F172A">
 <meta name="mobile-web-app-capable" content="yes">
@@ -21,11 +53,16 @@
 <link rel="manifest" href="/manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Critical Dashboard Stylesheets -->
 <link rel="stylesheet" href="../shared/style.css">
-<link rel="stylesheet" href="../shared/pwa-installer.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="css/dashboard.css">
+<!-- Non-Critical Overlay Stylesheets -->
+<link rel="stylesheet" href="../shared/pwa-installer.css" media="print" onload="this.media='all'">
+<noscript>
+  <link rel="stylesheet" href="../shared/pwa-installer.css">
+</noscript>
 
 </head>
 <body>
@@ -855,10 +892,167 @@
 
     <!-- Tab Pane 7: Composite Exams -->
     <div id="paneComposite" class="tab-pane">
-      <h2 class="section-title">📋 KCSE Composite Practical Exams (40 Marks)</h2>
-      <p class="hint" style="margin-bottom:14px;">Full KCSE Paper 3 Mock Examinations completed by your students with Q1 (15m), Q2 (15m), and Q3 (10m) breakdown.</p>
-      <div id="compositeClassDiagnostics" style="margin-bottom:18px;"></div>
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
+        <div>
+          <h2 class="section-title" style="margin-bottom:4px;">📋 KCSE Paper 3 Composite Practical Mock Exams (40 Marks)</h2>
+          <p class="hint" style="margin:0;">Full-scale national mock exam submissions with volumetric titration, inorganic salts, and organic qualitative analysis.</p>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button type="button" class="btn btn-secondary" onclick="exportTeacherCompositeCsv()" style="font-size:0.8rem; padding:7px 14px;">
+            📥 Export All CSV
+          </button>
+          <button type="button" class="btn btn-primary" onclick="loadTeacherCompositeSessions()" style="font-size:0.8rem; padding:7px 14px;">
+            🔄 Refresh Submissions
+          </button>
+        </div>
+      </div>
+
+      <!-- Class Aggregate KPI Metrics Strip -->
+      <div class="metrics-grid" id="compositeKpiGrid" style="margin-bottom:20px;">
+        <div class="metric-card">
+          <div class="metric-label">Total Submissions</div>
+          <div class="metric-val" id="compStatTotal">—</div>
+          <div class="metric-sub" id="compStatUniqueStudents">Candidates Sat</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Class Mean Score</div>
+          <div class="metric-val" id="compStatMeanScore" style="color:var(--cyan-accent);">—</div>
+          <div class="metric-sub" id="compStatMeanPct">out of 40.0 Marks</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Mean KNEC Grade</div>
+          <div class="metric-val" id="compStatMeanGrade" style="color:var(--amber-accent);">—</div>
+          <div class="metric-sub">12-Point Scale Standard</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Class Competency Index</div>
+          <div class="metric-val" id="compStatCompetencyIndex" style="color:var(--green-accent);">—</div>
+          <div class="metric-sub" id="compStatCohortDelta">vs 59% National Baseline</div>
+        </div>
+      </div>
+
+      <!-- Dual Visual Diagnostics: Grade Histogram + Radar Mastery -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(360px, 1fr)); gap:18px; margin-bottom:24px;">
+        <!-- Card 1: 12-Point KNEC Grade Distribution Histogram -->
+        <div style="background:var(--card-bg); border:1px solid var(--card-border); border-radius:14px; padding:18px; box-shadow:var(--shadow-sm);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div>
+              <div style="font-weight:800; font-size:0.9rem; color:var(--heading-color);">📊 12-Point KNEC Grade Distribution</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Class cohort spread from Grade A down to Grade E</div>
+            </div>
+            <span class="badge" style="background:rgba(2,132,199,0.12); color:#0284C7; font-size:0.7rem; font-weight:700;">National Bell Curve</span>
+          </div>
+          <div style="position:relative; width:100%; height:260px;">
+            <canvas id="teacherCompositeGradeChart" aria-label="Class Grade Distribution" role="img"></canvas>
+          </div>
+        </div>
+
+        <!-- Card 2: 5-Axis Class Competency Radar Chart -->
+        <div style="background:var(--card-bg); border:1px solid var(--card-border); border-radius:14px; padding:18px; box-shadow:var(--shadow-sm);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <div>
+              <div style="font-weight:800; font-size:0.9rem; color:var(--heading-color);">🎯 Class Competency Radar vs National Baseline</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Class averages across AC, Decimals, Averaging, Inorganic &amp; Organic</div>
+            </div>
+            <span class="badge" style="background:rgba(245,158,11,0.12); color:#F59E0B; font-size:0.7rem; font-weight:700;">5-Axis KNEC Benchmark</span>
+          </div>
+          <div style="position:relative; width:100%; height:260px;">
+            <canvas id="teacherCompositeRadarChart" aria-label="Class Competency Radar" role="img"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters & Search Toolbar -->
+      <div style="display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap; align-items:center; background:var(--card-bg); border:1px solid var(--card-border); border-radius:10px; padding:10px 14px;">
+        <div style="flex:1; min-width:200px;">
+          <input type="text" id="teacherCompSearchInput" class="form-control" placeholder="🔍 Search student name, email, or series..." oninput="filterTeacherCompositeSessions()" style="font-size:0.82rem; padding:6px 12px;">
+        </div>
+        <div>
+          <select id="teacherCompGradeFilter" class="form-control" onchange="filterTeacherCompositeSessions()" style="font-size:0.82rem; padding:6px 10px;">
+            <option value="">All Grades</option>
+            <option value="A">Grade A / A-</option>
+            <option value="B">Grade B+ / B / B-</option>
+            <option value="C">Grade C+ / C / C-</option>
+            <option value="D">Grade D+ / D / D-</option>
+            <option value="E">Grade E</option>
+          </select>
+        </div>
+        <div>
+          <select id="teacherCompSeriesFilter" class="form-control" onchange="filterTeacherCompositeSessions()" style="font-size:0.82rem; padding:6px 10px;">
+            <option value="">All Exam Series</option>
+            <option value="series_1">Series 1 (Standard Molarity)</option>
+            <option value="series_2">Series 2 (Water of Crystallization)</option>
+            <option value="series_3">Series 3 (Percentage Purity)</option>
+            <option value="series_4">Series 4 (Redox Stoichiometry)</option>
+            <option value="series_5">Series 5 (Relative Atomic Mass)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Candidate Submissions Ledger Box -->
       <div id="compositeSessionsBox"><div class="empty">Loading composite exam sessions…</div></div>
+    </div>
+
+    <!-- Interactive Teacher Marked Script Review Modal -->
+    <div id="teacherScriptModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(6px); z-index:20000; align-items:center; justify-content:center; padding:16px;">
+      <div style="background:var(--card-bg); border:1px solid var(--card-border); border-radius:16px; max-width:850px; width:100%; max-height:90vh; overflow-y:auto; padding:24px; box-shadow:var(--shadow-lg); color:var(--text-main);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid var(--card-border); padding-bottom:14px; margin-bottom:16px;">
+          <div>
+            <span style="background:var(--amber-accent); color:#fff; font-size:0.68rem; font-weight:800; padding:2px 8px; border-radius:4px; font-family:var(--font-mono);">KNEC MARKED SCRIPT REVIEW</span>
+            <h3 id="scriptModalStudentName" style="font-size:1.2rem; font-weight:800; margin-top:4px; color:var(--heading-color);">Student Name</h3>
+            <div id="scriptModalExamTitle" style="font-size:0.8rem; color:var(--text-muted);">Exam Series Title</div>
+          </div>
+          <div style="text-align:right;">
+            <div id="scriptModalGradeBadge" style="font-size:1.8rem; font-weight:900; color:var(--amber-accent); line-height:1;">Grade A</div>
+            <div id="scriptModalTotalScore" style="font-size:0.85rem; font-weight:700; color:var(--text-muted); font-family:var(--font-mono);">36.0 / 40.0 Marks</div>
+          </div>
+        </div>
+
+        <!-- Candidate Script Content: Radar & Question Breakdown -->
+        <div id="scriptModalContent" style="display:flex; flex-direction:column; gap:16px;">
+          <!-- Populated dynamically via teacher-composite-exams.js -->
+        </div>
+
+        <div style="display:flex; justify-content:space-between; margin-top:20px; border-top:1px solid var(--card-border); padding-top:14px;">
+          <button type="button" class="btn btn-secondary" onclick="closeTeacherScriptModal()">Close Review</button>
+          <button type="button" class="btn btn-primary" id="btnScriptModalPrint" onclick="printCandidateScriptFromModal()">🖨️ Print Marked Script</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Teacher Remediation Drill Preview & Assignment Modal -->
+    <div id="teacherDrillPreviewModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); backdrop-filter:blur(6px); z-index:20050; align-items:center; justify-content:center; padding:16px;">
+      <div style="background:var(--card-bg); border:1px solid var(--card-border); border-radius:16px; max-width:760px; width:100%; max-height:90vh; overflow-y:auto; padding:24px; box-shadow:var(--shadow-lg); color:var(--text-main);">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--card-border); padding-bottom:14px; margin-bottom:16px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span id="tDrillHeaderIcon" style="font-size:1.6rem;">🎯</span>
+            <div>
+              <span style="background:var(--cyan-accent, #38BDF8); color:#000; font-size:0.68rem; font-weight:800; padding:2px 8px; border-radius:4px; font-family:var(--font-mono);">KNEC REMEDIATION DRILL PREVIEW</span>
+              <h3 id="tDrillHeaderTitle" style="font-size:1.15rem; font-weight:800; margin:2px 0 0 0; color:var(--heading-color);">Drill Title</h3>
+            </div>
+          </div>
+          <button type="button" class="btn btn-secondary" onclick="closeTeacherDrillPreview()" style="padding:4px 10px; font-size:0.85rem;">✕ Close</button>
+        </div>
+
+        <!-- Chief Examiner Pedagogical Rule -->
+        <div style="background:rgba(245,158,11,0.08); border-left:4px solid var(--amber-accent, #F59E0B); border-radius:8px; padding:12px 14px; margin-bottom:16px;">
+          <div style="font-size:0.75rem; text-transform:uppercase; font-weight:800; color:var(--amber-accent); margin-bottom:4px;">👨‍🏫 KNEC Examiner Standard &amp; Grading Rule:</div>
+          <div id="tDrillExaminerRule" style="font-size:0.82rem; color:var(--text-main); line-height:1.45;"></div>
+        </div>
+
+        <!-- Questions & Rubric Preview -->
+        <div id="tDrillQuestionsContainer" style="display:flex; flex-direction:column; gap:14px; margin-bottom:20px;">
+          <!-- Dynamically populated -->
+        </div>
+
+        <!-- Action Strip -->
+        <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--card-border); padding-top:16px;">
+          <button type="button" class="btn btn-secondary" onclick="closeTeacherDrillPreview()">Back to Candidate Script</button>
+          <button type="button" class="btn btn-primary" id="btnAssignDrillAction" onclick="assignDrillToStudent()" style="background:linear-gradient(135deg, #0284C7, #0369A1); font-weight:800;">
+            🚀 Assign Micro-Drill to Student
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Tab Pane 8: Leaderboard & Badges -->
@@ -1103,12 +1297,16 @@
 <!-- Print-Only Dedicated Container for Official KNEC Marked Scripts -->
 <div id="teacherKnecPrintArea" style="display:none;"></div>
 
-<script src="../student/js/composite-engine.js?v=120"></script>
-<script src="../shared/api.js?v=120"></script>
-<script src="../shared/notifications-engine.js?v=120"></script>
-<script src="../shared/push-manager.js?v=120"></script>
-<script src="js/teacher-dashboard.js?v=120"></script>
-<script src="js/ai-exam-assistant.js?v=120"></script>
+<script defer src="/shared/auth-guard.js"></script>
+<script defer src="../shared/api.js?v=146"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha384-bs/nf9FbdNouRbMiFcrcZfLXYPKiPaGVGplVbv7dLGECccEXDW+S3zjqSKR5ZEaD sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script defer src="../student/js/composite-engine.js?v=146"></script>
+<script defer src="../shared/notifications-engine.js?v=146"></script>
+<script defer src="../shared/push-manager.js?v=146"></script>
+<script defer src="js/teacher-dashboard.js?v=146"></script>
+<script defer src="../shared/knec-remediation-drills.js?v=146"></script>
+<script defer src="js/teacher-composite-exams.js?v=146"></script>
+<script defer src="js/ai-exam-assistant.js?v=146"></script>
 <script>
   function switchTeacherTab(tabId) {
     document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
@@ -1138,6 +1336,10 @@
     if (btnId) {
       const btn = document.getElementById(btnId);
       if (btn) btn.classList.add('active');
+    }
+
+    if (tabId === 'paneComposite' && typeof window.loadTeacherCompositeSessions === 'function') {
+      window.loadTeacherCompositeSessions();
     }
   }
 

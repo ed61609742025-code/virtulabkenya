@@ -67,6 +67,25 @@ requireStudentLogin();
     const firstWord = clean.split(/\s+/)[0] || 'Sample';
     return firstWord;
   }
+
+  if (typeof window.escapeHtml !== 'function') {
+    window.escapeHtml = function(str) {
+      if (str == null) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    };
+  }
+  const escapeHtml = typeof window.escapeHtml === 'function' ? window.escapeHtml : function(s) { return String(s || ''); };
+
+  function setElemText(id, text) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = (text !== undefined && text !== null) ? String(text) : '';
+  }
+  window.setElemText = setElemText;
   const user = getUser();
   if (user) {
     const candName = document.getElementById('candidateName');
@@ -930,10 +949,6 @@ requireStudentLogin();
 
   function initExamUI() {
     const p = engine.preset;
-    const setElemText = (id, text) => {
-      const el = document.getElementById(id);
-      if (el) el.textContent = text;
-    };
 
     setElemText('examSubTitle', p.title + ' — Code 233/3');
     setElemText('printExamTitle', p.title.toUpperCase());

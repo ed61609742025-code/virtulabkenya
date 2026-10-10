@@ -282,30 +282,36 @@
             </div>
           </div>
 
-          <!-- Secondary Physics HUDs: Energy Profile Diagram & Sub-Microscopic Molecules -->
-          <div class="sub-huds-grid">
-            <div class="bench-card sub-hud-card">
-              <div class="sub-hud-header">
-                <div style="display:flex; align-items:center; gap:6px;">
-                  <span>📈</span>
-                  <span class="card-title">Energy Profile Diagram</span>
-                </div>
-                <button type="button" id="btnToggleCatalyst" onclick="EnergyEngine.toggleCatalyzedPathway()" class="btn-pill-toggle" title="Compare Uncatalyzed vs Catalyzed Pathway">
-                  ⚡ Catalyst Ea'
-                </button>
+          <!-- Real-Time Thermometric Observations & Telemetry Strip -->
+          <div class="bench-card therm-telemetry-card">
+            <div class="therm-telemetry-header">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span>🌡️</span>
+                <span class="card-title">Thermometric Observations &amp; Telemetry</span>
               </div>
-              <canvas id="energyProfileCanvas" class="sub-canvas"></canvas>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span class="condition-pill" id="pillStirStatus">Stirrer: OFF</span>
+                <span class="condition-pill" id="pillLidStatus">Lid: Sealed (EPS)</span>
+              </div>
             </div>
 
-            <div class="bench-card sub-hud-card">
-              <div class="sub-hud-header">
-                <div style="display:flex; align-items:center; gap:6px;">
-                  <span>🔬</span>
-                  <span class="card-title">Sub-Microscopic View</span>
-                </div>
-                <span class="kinetic-pill" id="kineticRateLabel">Rate: 1.00x</span>
+            <div class="therm-telemetry-grid">
+              <div class="telemetry-pill">
+                <span class="telemetry-lbl">Initial Steady (T₀)</span>
+                <span class="telemetry-val" id="telemetryT0">22.0 °C</span>
               </div>
-              <canvas id="molecularCanvas" class="sub-canvas"></canvas>
+              <div class="telemetry-pill">
+                <span class="telemetry-lbl">Live Thermometer</span>
+                <span class="telemetry-val highlight-cyan" id="telemetryLiveT">22.0 °C</span>
+              </div>
+              <div class="telemetry-pill">
+                <span class="telemetry-lbl">Peak Temp (T_max)</span>
+                <span class="telemetry-val highlight-amber" id="telemetryTMax">--.- °C</span>
+              </div>
+              <div class="telemetry-pill">
+                <span class="telemetry-lbl">Temp Rise (ΔT)</span>
+                <span class="telemetry-val highlight-emerald" id="telemetryDeltaT">+0.0 °C</span>
+              </div>
             </div>
           </div>
 

@@ -1351,6 +1351,35 @@ const EnergyEngine = (() => {
       const dtVal = currentTemp - currentScenario.initialTemp;
       rxnDelta.textContent = `${dtVal >= 0 ? '+' : ''}${dtVal.toFixed(1)} °C`;
     }
+
+    // Telemetry Observations Strip
+    const liveTElem = document.getElementById('telemetryLiveT');
+    if (liveTElem) {
+      liveTElem.textContent = studyMode === 'exam' ? '🔍 Read Scale' : `${currentTemp.toFixed(1)} °C`;
+    }
+    const t0Elem = document.getElementById('telemetryT0');
+    if (t0Elem) {
+      t0Elem.textContent = `${currentScenario.initialTemp.toFixed(1)} °C`;
+    }
+    const tMaxElem = document.getElementById('telemetryTMax');
+    if (tMaxElem) {
+      tMaxElem.textContent = isMixed ? `${Math.max(currentTemp, currentScenario.initialTemp).toFixed(1)} °C` : '--.- °C';
+    }
+    const deltaTElem = document.getElementById('telemetryDeltaT');
+    if (deltaTElem) {
+      const dtVal = currentTemp - currentScenario.initialTemp;
+      deltaTElem.textContent = `${dtVal >= 0 ? '+' : ''}${dtVal.toFixed(1)} °C`;
+    }
+    const stirPill = document.getElementById('pillStirStatus');
+    if (stirPill) {
+      stirPill.textContent = isStirring ? '🌀 Stirrer: Active' : 'Stirrer: OFF';
+      stirPill.style.color = isStirring ? 'var(--cyan-accent, #38BDF8)' : 'var(--text-muted)';
+    }
+    const lidPill = document.getElementById('pillLidStatus');
+    if (lidPill) {
+      lidPill.textContent = isLidOn ? '🛡️ Lid: Sealed (EPS)' : '⚠️ Lid: OFF (Heat Loss)';
+      lidPill.style.color = isLidOn ? 'var(--emerald-accent, #10B981)' : 'var(--amber-accent, #F59E0B)';
+    }
   }
 
   // ============================================================
@@ -1372,8 +1401,8 @@ const EnergyEngine = (() => {
   function drawAllCanvases(dt = 0) {
     drawRig();
     drawMagLoupe();
-    drawEnergyProfile();
-    drawMolecularHUD(dt);
+    if (profileCanvas && pCtx) drawEnergyProfile();
+    if (molCanvas && mCtx) drawMolecularHUD(dt);
   }
 
   function simulationLoop(timestamp) {

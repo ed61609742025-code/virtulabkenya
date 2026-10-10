@@ -801,11 +801,17 @@ html, body {
 .canvas-rig-wrapper {
   position: relative;
   width: 100%;
-  height: 380px;
+  height: 480px;
   background: radial-gradient(circle at 50% 40%, var(--card-bg-hover) 0%, var(--card-bg) 100%);
   border: 1px solid var(--card-border);
   border-radius: 14px;
   overflow: hidden;
+}
+
+@media (max-width: 680px) {
+  .canvas-rig-wrapper {
+    height: 380px;
+  }
 }
 
 #energyRigCanvas {
@@ -932,46 +938,79 @@ html, body {
   transition: width 0.15s ease;
 }
 
-/* Sub HUDs */
-.sub-huds-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+/* Thermometric Observations & Telemetry Strip */
+.therm-telemetry-card {
+  padding: 14px 18px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
 }
 
-@media (max-width: 680px) {
-  .sub-huds-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.sub-hud-card {
-  padding: 12px;
-}
-
-.sub-hud-header {
+.therm-telemetry-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.kinetic-pill {
-  font-size: 0.7rem;
-  font-family: var(--font-mono);
+.condition-pill {
+  font-size: 0.72rem;
   font-weight: 700;
-  color: #38BDF8;
-  background: rgba(56, 189, 248, 0.12);
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: var(--card-bg-hover);
+  color: var(--text-muted);
+  border: 1px solid var(--card-border);
+  transition: all 0.2s ease;
 }
 
-.sub-canvas {
-  width: 100%;
-  height: 150px;
-  display: block;
+.therm-telemetry-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .therm-telemetry-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.telemetry-pill {
   background: var(--card-bg-hover);
+  border: 1px solid var(--card-border);
   border-radius: 10px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.telemetry-lbl {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.telemetry-val {
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--heading-color);
+}
+
+.highlight-cyan {
+  color: var(--en-cyan, #38BDF8) !important;
+}
+
+.highlight-amber {
+  color: var(--en-amber, #F59E0B) !important;
+}
+
+.highlight-emerald {
+  color: var(--en-emerald, #10B981) !important;
 }
 
 /* ── 10. TAB 2: KNEC GRAPH BOARD ── */

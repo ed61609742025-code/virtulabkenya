@@ -597,7 +597,7 @@
       <span>🏆</span> 40-Mark Mock Simulations
     </button>
     <button type="button" class="hub-tab-btn" id="tabBtnPastPapers" onclick="switchHubTab('past_papers')">
-      <span>📚</span> KCSE Past Papers &amp; Mark Schemes (1989–2016)
+      <span>📚</span> KCSE Past Papers &amp; Mark Schemes (1989–2025)
     </button>
     <button type="button" class="hub-tab-btn" id="tabBtnSprints" onclick="switchHubTab('sprints')">
       <span>⚡</span> Section Sprints
@@ -680,14 +680,14 @@
   </div>
 
   <!-- ══════════════════════════════════════
-       TAB 2: KCSE PAST PAPERS & MARK SCHEMES ARCHIVE (1989–2016)
+       TAB 2: KCSE PAST PAPERS & MARK SCHEMES ARCHIVE (1989–2025)
   ══════════════════════════════════════ -->
   <div id="sectionPastPapers" class="hub-tab-section" style="display:none;">
     <!-- Archive Hero Banner -->
     <div style="background:linear-gradient(135deg, rgba(11,37,69,0.08), rgba(184,134,11,0.1)); border:1.5px solid var(--acad-gold-border); border-radius:16px; padding:24px 28px; margin-bottom:24px; display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap;">
       <div>
         <div style="font-family:'Cinzel', serif; font-size:1.35rem; font-weight:900; color:var(--heading-color); margin-bottom:6px;">
-          🇰🇪 KNEC KCSE Chemistry Practical Archive (1989–2016)
+          🇰🇪 KNEC KCSE Chemistry Practical Archive (1989–2025)
         </div>
         <div style="font-size:0.88rem; color:var(--text-muted); max-width:720px; line-height:1.5;">
           Official Kenyan National Examinations Council Paper 3 practical questions, step-by-step coordinated marking schemes, examiner deduction guidelines, and confidential school laboratory preparation requirements.
@@ -707,12 +707,13 @@
     <div class="past-filters-bar">
       <div class="filter-search-box">
         <span style="font-size:1.1rem;">🔍</span>
-        <input type="text" id="kcsePaperSearchInput" class="filter-input" placeholder="Search past practicals by year, chemical, procedure, ion or topic (e.g. 2013, displacement, KMnO4, lead, benzoic acid)..." oninput="onPastPaperFilterChange()">
+        <input type="text" id="kcsePaperSearchInput" class="filter-input" placeholder="Search past practicals by year, chemical, procedure, ion or topic (e.g. 2025, 2013, displacement, KMnO4, lead, benzoic acid)..." oninput="onPastPaperFilterChange()">
       </div>
 
       <div class="filter-pills-row">
         <span class="filter-pill-label">Decade:</span>
-        <button type="button" class="filter-chip-btn active" data-decade="all" onclick="setDecadeFilter('all', this)">All Years (1989–2016)</button>
+        <button type="button" class="filter-chip-btn active" data-decade="all" onclick="setDecadeFilter('all', this)">All Years (1989–2025)</button>
+        <button type="button" class="filter-chip-btn" data-decade="2020s" onclick="setDecadeFilter('2020s', this)">2020s Series</button>
         <button type="button" class="filter-chip-btn" data-decade="2010s" onclick="setDecadeFilter('2010s', this)">2010s Series</button>
         <button type="button" class="filter-chip-btn" data-decade="2000s" onclick="setDecadeFilter('2000s', this)">2000s Series</button>
         <button type="button" class="filter-chip-btn" data-decade="1980s-1990s" onclick="setDecadeFilter('1980s-1990s', this)">1980s–1990s Series</button>
@@ -733,8 +734,8 @@
       <div class="filter-pills-row">
         <span class="filter-pill-label">Simulation Status:</span>
         <button type="button" class="filter-chip-btn active" data-sim="all" onclick="setSimFilter('all', this)">All Past Papers</button>
-        <button type="button" class="filter-chip-btn" data-sim="playable" onclick="setSimFilter('playable', this)">🎮 40M Simulations Available (10)</button>
-        <button type="button" class="filter-chip-btn" data-sim="written" onclick="setSimFilter('written', this)">📝 Written Paper Archives (9)</button>
+        <button type="button" class="filter-chip-btn" data-sim="playable" onclick="setSimFilter('playable', this)">🎮 40M Simulations Available</button>
+        <button type="button" class="filter-chip-btn" data-sim="written" onclick="setSimFilter('written', this)">📝 Written Paper Archives</button>
       </div>
     </div>
 
@@ -936,13 +937,22 @@
       q3: 'Solid Z: Benzoic Acid Aromatic Carboxylic Acid'
     },
     {
-      key: 'series_2022',
-      num: 2022,
-      title: 'KCSE 2022 National Practical Paper Mock',
-      badge: 'Official KNEC Series · Sodium Carbonate, Magnesium Sulfate & Propanoic Acid',
-      q1: '0.100 M HCl vs Na₂CO₃ Solution (2:1 Mole Ratio) · Molar Concentration & g/dm³',
-      q2: 'Solid Y: Hydrated Magnesium Sulfate MgSO₄ Analysis (Mg²⁺ / SO₄²⁻)',
-      q3: 'Liquid Z: Propanoic Acid Carboxylic Group (CH₃CH₂COOH)'
+      key: 'series_2025',
+      num: 2025,
+      title: 'KCSE 2025 National Practical Paper Mock',
+      badge: 'Official KNEC Series · Ammonium Iron(II) Sulfate vs KMnO₄, Zinc Alum & Acrylic Acid',
+      q1: '0.020 M KMnO₄ vs Mohr\'s Salt (39.20 g/dm³) · Redox Titration & RFM Determination',
+      q2: 'Solid Y: Zinc Ammonium Sulfate Alum Analysis (Zn²⁺ / NH₄⁺ / SO₄²⁻)',
+      q3: 'Liquid Z: Unsaturated Carboxylic Acid Analysis (Acrylic Acid >C=C< / —COOH)'
+    },
+    {
+      key: 'series_2024',
+      num: 2024,
+      title: 'KCSE 2024 National Practical Paper Mock',
+      badge: 'Official KNEC Series · Sodium Hydrogen Carbonate Assay, Iron(III) & Butan-1-ol',
+      q1: '0.100 M HCl vs Commercial NaHCO₃ (10.00 g/dm³) · % Purity Determination',
+      q2: 'Solid Y: Iron(III) Chloride FeCl₃ Transition Analysis (Fe³⁺ / Cl⁻)',
+      q3: 'Liquid Z: Primary Alkanol (Butan-1-ol C₄H₉OH) Dichromate Oxidation'
     },
     {
       key: 'series_2023',
@@ -954,13 +964,85 @@
       q3: 'Liquid Z: Unsaturated Aliphatic Hydrocarbon (Hex-1-ene >C=C<)'
     },
     {
-      key: 'series_2024',
-      num: 2024,
-      title: 'KCSE 2024 National Practical Paper Mock',
-      badge: 'Official KNEC Series · Sodium Hydrogen Carbonate Assay, Iron(III) & Butan-1-ol',
-      q1: '0.100 M HCl vs Commercial NaHCO₃ (10.00 g/dm³) · % Purity Determination',
-      q2: 'Solid Y: Iron(III) Chloride FeCl₃ Transition Analysis (Fe³⁺ / Cl⁻)',
-      q3: 'Liquid Z: Primary Alkanol (Butan-1-ol C₄H₉OH) Dichromate Oxidation'
+      key: 'series_2022',
+      num: 2022,
+      title: 'KCSE 2022 National Practical Paper Mock',
+      badge: 'Official KNEC Series · Sodium Carbonate, Magnesium Sulfate & Propanoic Acid',
+      q1: '0.100 M HCl vs Na₂CO₃ Solution (2:1 Mole Ratio) · Molar Concentration & g/dm³',
+      q2: 'Solid Y: Hydrated Magnesium Sulfate MgSO₄ Analysis (Mg²⁺ / SO₄²⁻)',
+      q3: 'Liquid Z: Propanoic Acid Carboxylic Group (CH₃CH₂COOH)'
+    },
+    {
+      key: 'series_2021',
+      num: 2021,
+      title: 'KCSE 2021 National Practical Paper Mock',
+      badge: 'Official KNEC Series · KMnO₄ vs Ethanedioic Acid, Zinc Carbonate & Cyclohexene',
+      q1: '0.020 M KMnO₄ vs 0.050 M H₂C₂O₄·2H₂O (60°C Hot Redox Titration) · Concentration Determination',
+      q2: 'Solid Y: Zinc Carbonate ZnCO₃ Analysis (Zn²⁺ / CO₃²⁻)',
+      q3: 'Liquid Z: Cyclohexene Aliphatic Alkene (>C=C< / Bromine & KMnO₄)'
+    },
+    {
+      key: 'series_2020',
+      num: 2020,
+      title: 'KCSE 2020 National Practical Paper Mock',
+      badge: 'Official KNEC Series · Sodium Carbonate Standardization, Aluminum Sulfate & Ethanol',
+      q1: '0.100 M HCl vs 0.050 M Na₂CO₃ (5.30 g/dm³) · Methyl Orange Standardization',
+      q2: 'Solid F: Hydrated Aluminum Sulfate Al₂(SO₄)₃ Analysis (Al³⁺ / SO₄²⁻)',
+      q3: 'Liquid G: Ethanol Primary Alkanol Dichromate(VI) Oxidation (C₂H₅OH)'
+    },
+    {
+      key: 'series_2019',
+      num: 2019,
+      title: 'KCSE 2019 National Practical Paper Mock',
+      badge: 'Official KNEC Series · KMnO₄ vs Iron(II) Salt, Lead(II) Nitrate & Maleic Acid',
+      q1: '0.020 M KMnO₄ vs Mohr\'s Salt Fe²⁺ (1:5 Mole Ratio) · Redox Stoichiometry & g/dm³',
+      q2: 'Solid K: Lead(II) Nitrate Thermal Decomposition & KI Test (Pb²⁺ / NO₃⁻)',
+      q3: 'Solid L: Unsaturated Carboxylic Acid (Maleic Acid >C=C< / —COOH)'
+    },
+    {
+      key: 'series_2018',
+      num: 2018,
+      title: 'KCSE 2018 National Practical Paper Mock',
+      badge: 'Official KNEC Series · Sodium Hydroxide vs Ethanedioic Acid, Copper(II) & Benzoic Acid',
+      q1: '0.100 M NaOH vs 0.050 M H₂C₂O₄·2H₂O (2:1 Mole Ratio) · Neutralization Standardization',
+      q2: 'Solid W: Copper(II) Sulfate Hydrate CuSO₄·5H₂O (Cu²⁺ / SO₄²⁻)',
+      q3: 'Solid Q: Aromatic Carboxylic Acid Analysis (Benzoic Acid C₆H₅COOH)'
+    },
+    {
+      key: 'series_2017',
+      num: 2017,
+      title: 'KCSE 2017 National Practical Paper Mock',
+      badge: 'Official KNEC Series · Hydrochloric Acid vs Sodium Carbonate, Iron(II) & Hex-1-ene',
+      q1: '0.100 M HCl vs 0.050 M Na₂CO₃ (2:1 Mole Ratio) · Molar Concentration & Mass Conc',
+      q2: 'Solid Y: Hydrated Iron(II) Sulfate FeSO₄·7H₂O (Fe²⁺ / SO₄²⁻)',
+      q3: 'Liquid Z: Unsaturated Aliphatic Hydrocarbon (Hex-1-ene >C=C<)'
+    },
+    {
+      key: 'series_2016',
+      num: 2016,
+      title: 'KCSE 2016 National Practical Paper Mock',
+      badge: 'Official KNEC Series · NaOH Standardization vs HCl, Barium Salt & Ethanoic Acid',
+      q1: '0.200 M NaOH vs 0.200 M HCl · Acid-Base Neutralization Standardization',
+      q2: 'Solid M: Barium Chloride Flame Test & Salt Analysis (BaCl₂ / Ba²⁺ / Cl⁻)',
+      q3: 'Liquid N: Ethanoic Acid Carboxylic Group (CH₃COOH / NaHCO₃ Effervescence)'
+    },
+    {
+      key: 'series_2015',
+      num: 2015,
+      title: 'KCSE 2015 National Practical Paper Mock',
+      badge: 'Official KNEC Series · Sodium Thiosulfate vs Iodine, Zinc Sulfate & Butan-1-ol',
+      q1: '0.050 M Na₂S₂O₃ vs Liberated Iodine (I₂) · Starch Indicator Redox Titration',
+      q2: 'Solid P: Zinc Sulfate Hydrate ZnSO₄·7H₂O Analysis (Zn²⁺ / SO₄²⁻)',
+      q3: 'Liquid Q: Primary Alkanol (Butan-1-ol C₄H₉OH) Dichromate(VI) Oxidation'
+    },
+    {
+      key: 'series_2014',
+      num: 2014,
+      title: 'KCSE 2014 National Practical Paper Mock',
+      badge: 'Official KNEC Series · Hydrochloric Acid Neutralization, Calcium Nitrate & Maleic Acid',
+      q1: '0.100 M HCl vs 0.100 M NaOH · 1:1 Stoichiometric Neutralization Titration',
+      q2: 'Solid Q: Calcium Nitrate Flame Test & Thermal Decomposition (Ca(NO₃)₂ / Ca²⁺ / NO₃⁻)',
+      q3: 'Solid R: Unsaturated Carboxylic Acid (Maleic Acid >C=C< / —COOH / Bromine Water)'
     },
     {
       key: 'series_2013',

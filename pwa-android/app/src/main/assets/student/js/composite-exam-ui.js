@@ -68,18 +68,22 @@ requireStudentLogin();
     return firstWord;
   }
 
-  if (typeof window.escapeHtml !== 'function') {
-    window.escapeHtml = function(str) {
-      if (str == null) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-    };
+  function escapeHtml(str) {
+    if (typeof window !== 'undefined' && typeof window.escapeHtml === 'function' && window.escapeHtml !== escapeHtml) {
+      return window.escapeHtml(str);
+    }
+    if (str == null) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;')
+      .replace(/`/g, '&#96;');
   }
-  const escapeHtml = typeof window.escapeHtml === 'function' ? window.escapeHtml : function(s) { return String(s || ''); };
+  if (typeof window !== 'undefined' && typeof window.escapeHtml !== 'function') {
+    window.escapeHtml = escapeHtml;
+  }
 
   function setElemText(id, text) {
     const el = document.getElementById(id);

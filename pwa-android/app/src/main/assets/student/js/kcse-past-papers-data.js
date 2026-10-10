@@ -1079,15 +1079,15 @@ const KCSE_PAST_PAPERS_ARCHIVE = [
     year: 1993,
     title: 'KCSE 1993 Chemistry Paper 3 Practical (233/3)',
     badgeText: 'Official KNEC Paper · Ammonium Salt Distillation & Back-Titration RFM Determination',
-    topics: ['Volumetric Back-Titration', 'Qualitative Analysis'],
-    playablePresetKey: null,
+    topics: ['Volumetric Back-Titration', 'Qualitative Analysis', 'Organic Analysis'],
+    playablePresetKey: 'series_1993',
     totalMarks: 40.0,
     durationMinutes: 135,
-    summary: 'Standardization of diluted NaOH Solution D with 0.01M monobasic acid Solution C. Boiling 1.0 g ammonium salt Solid B with known excess NaOH to expel ammonia, followed by back-titrating residual alkali to find RFM. Qualitative tests on Solid F.',
+    summary: 'Standardization of diluted NaOH Solution D with 0.01M monobasic acid Solution C. Boiling 1.0 g ammonium salt Solid B with known excess NaOH to expel ammonia, followed by back-titrating residual alkali to find RFM. Qualitative tests on Solid F and Solid G.',
     questions: [
       {
         num: 1,
-        title: 'Question 1: Ammonium Salt Back-Titration (26.0 Marks)',
+        title: 'Question 1: Ammonium Salt Back-Titration (15.0 Marks)',
         procedure: 'Procedure I: Dilute 25 cm³ NaOH Solution A with 175 cm³ water (Solution D). Titrate 25 cm³ Solution D with 0.01M monobasic acid Solution C using phenolphthalein.\nProcedure II: Dissolve 1.0 g ammonium salt Solid B in 25 cm³ NaOH Solution A in conical flask. Boil gently for 10 minutes to expel ammonia gas completely. Cool, transfer to 100 ml volumetric flask, dilute to mark (Solution E). Titrate 25 cm³ portions of Solution E with Solution C.',
         table1: {
           title: 'Table 1: Titration of Diluted NaOH Solution D with Acid C',
@@ -1108,13 +1108,24 @@ const KCSE_PAST_PAPERS_ARCHIVE = [
       },
       {
         num: 2,
-        title: 'Question 2: Qualitative Analysis of Solid F (14.0 Marks)',
+        title: 'Question 2: Qualitative Analysis of Solid F (15.0 Marks)',
         preamble: 'Solid F is an inorganic salt.',
         tests: [
           { step: '(a)', prompt: 'Dissolve Solid F in boiling tube half-full with water. To portion 1, add NaOH dropwise to excess.', obs: 'No precipitate formed', inf: 'Transition metals and Mg²⁺, Ca²⁺ absent' },
           { step: '(b)', prompt: 'To portion 2, add 6 drops barium chloride solution.', obs: 'White precipitate formed', inf: 'SO₄²⁻, SO₃²⁻, or CO₃²⁻ present' },
           { step: '(c)', prompt: 'To portion 3, add 3 drops iodine solution.', obs: 'Brown colour of iodine is decolorized to colourless', inf: 'Reducing agent present (SO₃²⁻)' },
           { step: '(d)', prompt: 'To portion 4, add dilute HCl, warm gently, test vapours with filter paper dipped in K₂Cr₂O₇.', obs: 'Effervescence of choking gas; orange paper turns green', inf: 'SO₂ gas evolved; SO₃²⁻ confirmed present' }
+        ]
+      },
+      {
+        num: 3,
+        title: 'Question 3: Organic Functional Group Analysis of Solid G (10.0 Marks)',
+        preamble: 'Solid G is an organic solid.',
+        tests: [
+          { step: '(a)', prompt: 'Ignite a small portion of Solid G on a clean metallic spatula in a Bunsen flame.', obs: 'Melts and burns with a luminous, smoky and sooty yellow flame; leaves black carbon residue', inf: 'Unsaturated organic compound / high carbon-to-hydrogen ratio (>C=C<)' },
+          { step: '(b)', prompt: 'Dissolve Solid G in 5 cm³ distilled water. Test with moist blue and red litmus paper.', obs: 'Moist blue litmus paper turns red; red litmus paper remains red (strongly acidic, pH ~ 2)', inf: 'Acidic substance / H⁺ ions present / Carboxylic acid (—COOH)' },
+          { step: '(c)', prompt: 'To 2 cm³ of solution, add a half-spatula of solid Sodium Hydrogen Carbonate (NaHCO₃).', obs: 'Brisk effervescence of a colourless gas that forms white precipitate with limewater (CO₂)', inf: 'Carboxylic acid (—COOH) confirmed present; CO₂ gas evolved' },
+          { step: '(d)', prompt: 'To 2 cm³ of solution, add 3 drops of Bromine water and shake gently.', obs: 'Reddish-brown colour of bromine water is rapidly decolorized to colourless', inf: 'Carbon-carbon double bond (>C=C<) confirmed present' }
         ]
       }
     ],

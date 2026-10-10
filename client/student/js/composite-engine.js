@@ -3518,6 +3518,218 @@ const COMPOSITE_EXAM_PRESETS = {
         }
       ]
     }
+  },
+
+  // ── Series 1993: Official KCSE 1993 Standard Chemistry Practical (Paper 233/3) ──
+  series_1993: {
+    id: 'series_1993',
+    seriesKey: 'series_1993',
+    seriesNumber: 1993,
+    title: 'KCSE 1993 Standard Chemistry Practical Examination',
+    badgeText: 'KCSE 1993 Past National Paper · Ammonium Salt Back-Titration & Sodium Sulfite Analysis',
+    durationMinutes: 135,
+    q1: {
+      type: 'titration',
+      calcType: 'back_titration',
+      title: 'Question 1: Volumetric Analysis — Ammonium Salt Back-Titration (15.0 Marks)',
+      solutionA: '0.080 M Hydrochloric Acid (Solution C)',
+      solutionB: 'Residual Sodium Hydroxide Solution E (from reaction with Solid B)',
+      acidFormula: 'HCl',
+      baseFormula: 'NaOH',
+      indicator: 'Phenolphthalein',
+      pipetteVolume: 25.0,
+      trueAcidMolarity: 0.080,
+      trueBaseMolarity: 0.04992,
+      trueTitre: 15.60,
+      moleRatioAcid: 1,
+      moleRatioBase: 1,
+      acidRfm: 36.5,
+      baseRfm: 40.0,
+      titrantColor: '#38BDF8',
+      flaskBaseColor: 'rgba(255,255,255,0.25)',
+      flaskIndicatorColor: 'rgba(236,72,153,0.7)',
+      endpointColor: 'rgba(255,255,255,0.25)',
+      overtitratedColor: 'rgba(255,255,255,0.15)',
+      equation: 'HCl(aq) + NaOH(aq) → NaCl(aq) + H₂O(l)',
+      instructions: 'Pipette 25.0 cm³ of Solution E (residual NaOH solution) into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with 0.080 M HCl Solution C until the pink colour is just discharged to colourless.',
+      questions: [
+        {
+          id: 'step_a',
+          letter: 'a',
+          field: 'avgTitre',
+          label: 'Calculate the average volume of 0.080 M HCl Solution C used, V₁',
+          marks: 1.0,
+          marksLabel: '(1.0 Mark)',
+          placeholder: 'e.g. 15.60',
+          step: '0.01',
+          unit: 'cm³',
+          calcTheoretical: (ctx) => ctx.trueTitre,
+          calcEcf: (ctx) => ctx.expAvgFromTrials,
+          check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
+          feedbackSuccess: (val) => `✓ Correct: V₁ = ${val.toFixed(2)} cm³.`,
+          feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
+          working: (ctx) => `<b>(a) Average Titre:</b> V₁ = <b>${ctx.v1.toFixed(2)} cm³</b>`
+        },
+        {
+          id: 'step_b',
+          letter: 'b',
+          field: 'molesHcl',
+          label: 'Calculate the number of moles of HCl in the average titre V₁ of Solution C',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 0.00125',
+          step: '0.00001',
+          unit: 'moles of HCl',
+          calcTheoretical: (ctx) => (0.080 * ctx.trueTitre) / 1000.0,
+          calcEcf: (ctx) => {
+            const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_a')) || ctx.trueTitre;
+            return (0.080 * v1) / 1000.0;
+          },
+          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+          feedbackSuccess: (val) => `✓ Correct: ${val} moles of HCl.`,
+          feedbackFail: (ctx, expTheo) => `Formula: (0.080 × V₁) / 1000 = ${expTheo.toFixed(5)} mol.`,
+          working: (ctx) => `<b>(b) Moles of HCl:</b> (0.080 × ${ctx.v1.toFixed(2)}) / 1000 = <b>${((0.080 * ctx.v1) / 1000.0).toFixed(5)} mol</b>`
+        },
+        {
+          id: 'step_c',
+          letter: 'c',
+          field: 'molesResidual',
+          label: 'Calculate the total number of unreacted moles of NaOH present in the 100 cm³ of Solution E',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 0.00500',
+          step: '0.00001',
+          unit: 'moles of NaOH',
+          calcTheoretical: (ctx) => ((0.080 * ctx.trueTitre) / 1000.0) * 4.0,
+          calcEcf: (ctx) => {
+            const mH = parseFloat(getAnswerValue(ctx.answers, 'molesHcl', 'step_b')) || ((0.080 * ctx.trueTitre) / 1000.0);
+            return mH * 4.0;
+          },
+          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+          feedbackSuccess: (val) => `✓ Correct: ${val} unreacted moles of NaOH in 100 cm³.`,
+          feedbackFail: (ctx, expTheo) => `Formula: Moles of HCl in 25 cm³ × (100 / 25) = ${expTheo.toFixed(5)} mol.`,
+          working: (ctx) => `<b>(c) Unreacted Moles of NaOH in 100 cm³:</b> ${((0.080 * ctx.v1) / 1000.0).toFixed(5)} × 4 = <b>${(((0.080 * ctx.v1) / 1000.0) * 4.0).toFixed(5)} mol</b>`
+        },
+        {
+          id: 'step_d',
+          letter: 'd',
+          field: 'molesReacted',
+          label: 'Calculate the moles of NaOH that reacted with 1.00 g of ammonium salt Solid B (Initial moles = 0.0237 mol)',
+          marks: 3.0,
+          marksLabel: '(3.0 Marks)',
+          placeholder: 'e.g. 0.0187',
+          step: '0.0001',
+          unit: 'moles reacted',
+          calcTheoretical: (ctx) => 0.0237 - (((0.080 * ctx.trueTitre) / 1000.0) * 4.0),
+          calcEcf: (ctx) => {
+            const mRes = parseFloat(getAnswerValue(ctx.answers, 'molesResidual', 'step_c')) || (((0.080 * ctx.trueTitre) / 1000.0) * 4.0);
+            return 0.0237 - mRes;
+          },
+          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+          feedbackSuccess: (val) => `✓ Correct: ${val} moles of NaOH reacted.`,
+          feedbackFail: (ctx, expTheo) => `Formula: 0.0237 - Residual Moles = ${expTheo.toFixed(4)} mol.`,
+          working: (ctx) => `<b>(d) Moles of NaOH Reacted:</b> 0.0237 - ${(((0.080 * ctx.v1) / 1000.0) * 4.0).toFixed(5)} = <b>${(0.0237 - (((0.080 * ctx.v1) / 1000.0) * 4.0)).toFixed(4)} mol</b>`
+        },
+        {
+          id: 'step_e',
+          letter: 'e',
+          field: 'rfmSalt',
+          label: 'Given that 1 mole of NaOH reacts with 1 mole of Solid B, calculate the relative formula mass (RFM) of Solid B (1.00 g sample)',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 53.5',
+          step: '0.1',
+          unit: 'g/mol',
+          calcTheoretical: () => 53.5,
+          calcEcf: (ctx) => {
+            const mReacted = parseFloat(getAnswerValue(ctx.answers, 'molesReacted', 'step_d')) || 0.0187;
+            return mReacted > 0 ? parseFloat((1.00 / mReacted).toFixed(1)) : 53.5;
+          },
+          check: (val) => Math.abs(val - 53.5) <= 3.5,
+          feedbackSuccess: (val) => `✓ Correct: RFM of Solid B = ${val} g/mol (Ammonium Chloride NH₄Cl).`,
+          feedbackFail: () => `Formula: Mass (1.00 g) / Moles Reacted (0.0187) = 53.5 g/mol.`,
+          working: () => `<b>(e) RFM of Solid B:</b> 1.00 / 0.0187 = <b>53.5 g/mol (NH₄Cl)</b>`
+        }
+      ]
+    },
+    q2: {
+      type: 'qualitative_single',
+      title: 'Question 2: Inorganic Salt Qualitative Analysis (15.0 Marks)',
+      sampleName: 'Solid F',
+      sampleDesc: 'A white crystalline inorganic salt containing sulfite.',
+      trueSaltKey: 'sodiumSulfite',
+      trueSaltName: 'Sodium Sulfite — Na₂SO₃',
+      trueCation: 'Na+',
+      trueAnion: 'SO32-',
+      hasDeduction: true,
+      tests: [
+        {
+          id: 'q2_dissolve',
+          prompt: '(i) Dissolve Solid F in 15 cm³ distilled water. To portion 1, add 2M NaOH dropwise to excess.',
+          correctObs: 'No precipitate formed; clear colourless solution remains',
+          correctInf: 'Transition metal ions, Mg²⁺, Ca²⁺ absent; Na⁺, K⁺, NH₄⁺ suspected'
+        },
+        {
+          id: 'q2_bacl2',
+          prompt: '(ii) To portion 2, add 4 drops Barium Chloride (BaCl₂) solution.',
+          correctObs: 'White precipitate formed',
+          correctInf: 'SO₄²⁻, SO₃²⁻, or CO₃²⁻ present (BaSO₃ / BaSO₄ / BaCO₃)'
+        },
+        {
+          id: 'q2_acid_warm',
+          prompt: '(iii) To the mixture from (ii), add 2 cm³ 2M dilute hydrochloric acid (HCl) and warm gently.',
+          correctObs: 'White precipitate dissolves completely with effervescence of a choking pungent gas turning damp blue litmus red',
+          correctInf: 'SO₃²⁻ confirmed present (SO₂ gas evolved; SO₄²⁻ absent)'
+        },
+        {
+          id: 'q2_dichromate_paper',
+          prompt: '(iv) Test the gas evolved in (iii) using filter paper moistened with acidified Potassium Dichromate(VI).',
+          correctObs: 'Orange filter paper turns dark emerald green',
+          correctInf: 'SO₂ gas confirmed (Cr³⁺ ions formed)'
+        },
+        {
+          id: 'q2_iodine',
+          prompt: '(v) To portion 3, add 3 drops of brown Iodine solution.',
+          correctObs: 'Brown colour of iodine solution is rapidly decolorized to colourless',
+          correctInf: 'SO₃²⁻ confirmed acting as a reducing agent (I₂ reduced to I⁻)'
+        }
+      ]
+    },
+    q3: {
+      type: 'organic',
+      title: 'Question 3: Organic Functional Group Analysis (10.0 Marks)',
+      sampleName: 'Solid G',
+      sampleDesc: 'A pure white organic crystalline solid.',
+      trueOrganicKey: 'org_alkene',
+      trueOrganicName: 'Unsaturated Carboxylic Acid (Maleic Acid)',
+      trueFunctionalGroup: 'Alkene (>C=C<)',
+      tests: [
+        {
+          id: 'q3_ignition',
+          prompt: '(i) Ignite a small portion of Solid G on a clean metallic spatula in a Bunsen flame.',
+          correctObs: 'Melts and burns with a luminous, smoky and sooty yellow flame; leaves black carbon residue',
+          correctInf: 'Unsaturated organic compound / high carbon-to-hydrogen ratio (>C=C<)'
+        },
+        {
+          id: 'q3_litmus',
+          prompt: '(ii) Dissolve Solid G in 5 cm³ distilled water. Test with moist blue and red litmus paper.',
+          correctObs: 'Moist blue litmus paper turns red; red litmus paper remains red (strongly acidic, pH ~ 2)',
+          correctInf: 'Acidic substance / H⁺ ions present / Carboxylic acid (—COOH)'
+        },
+        {
+          id: 'q3_nahco3',
+          prompt: '(iii) To 2 cm³ of solution, add a half-spatula of solid Sodium Hydrogen Carbonate (NaHCO₃).',
+          correctObs: 'Brisk effervescence of a colourless gas that forms white precipitate with limewater (CO₂)',
+          correctInf: 'Carboxylic acid (—COOH) confirmed present; CO₂ gas evolved'
+        },
+        {
+          id: 'q3_bromine',
+          prompt: '(iv) To 2 cm³ of solution, add 3 drops of Bromine water and shake gently.',
+          correctObs: 'Reddish-brown colour of bromine water is rapidly decolorized to colourless',
+          correctInf: 'Carbon-carbon double bond (>C=C<) confirmed present'
+        }
+      ]
+    }
   }
 };
 

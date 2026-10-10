@@ -7842,6 +7842,271 @@ const COMPOSITE_EXAM_PRESETS = {
     }
   },
 
+  // ── Series 2004: Official KCSE 2004 Standard Chemistry Practical (Paper 233/3) ──
+  series_2004: {
+    id: 'series_2004',
+    seriesKey: 'series_2004',
+    seriesNumber: 2004,
+    title: 'KCSE 2004 Standard Chemistry Practical Examination',
+    badgeText: 'KCSE 2004 Past National Paper · Solid D Cooling Curve, Redox Stoichiometry & Organic Tests',
+    durationMinutes: 135,
+    q1: {
+      type: 'titration',
+      simulationType: 'energy',
+      scenarioKey: 'KCSE_2004_COOLING_CURVE',
+      calcType: 'standard_molarity',
+      title: 'Question 1: Thermometric Analysis & Volumetric Neutralization (15.0 Marks)',
+      hasMultipleProcedures: true,
+      solutionA: '0.100 M Sodium Hydroxide (Solution B)',
+      solutionB: 'Dilute Hydrochloric Acid (Solution C)',
+      acidFormula: 'HCl',
+      baseFormula: 'NaOH',
+      indicator: 'Phenolphthalein',
+      pipetteVolume: 25.0,
+      trueAcidMolarity: 0.100,
+      trueBaseMolarity: 0.100,
+      trueTitre: 25.00,
+      moleRatioAcid: 1,
+      moleRatioBase: 1,
+      acidRfm: 36.5,
+      baseRfm: 40.0,
+      titrantColor: '#38BDF8',
+      flaskBaseColor: 'rgba(255,255,255,0.2)',
+      flaskIndicatorColor: 'rgba(255,255,255,0.2)',
+      endpointColor: 'rgba(236,72,153,0.5)',
+      overtitratedColor: 'rgba(219,39,119,0.9)',
+      equation: 'HCl(aq) + NaOH(aq) → NaCl(aq) + H₂O(l)',
+      instructions: 'Procedure I investigates the thermometric cooling curve of Solid D to determine its freezing point. Procedure II involves standardizing Solution C with 0.100 M NaOH Solution B using phenolphthalein indicator.',
+      procedureSteps: [
+        'Procedure I: Heat the boiling tube containing Solid D in a boiling water bath until fully melted at 85.0 °C. Remove from water bath, start stopwatch at t = 0s, stir gently with thermometer and record temperature every 30s in Table 1.',
+        'Procedure II: Fill the burette with 0.100 M NaOH Solution B. Pipette 25.0 cm³ of Acid Solution C into a conical flask.',
+        'Add 2–3 drops of phenolphthalein indicator.',
+        'Titrate with Solution B until the first permanent faint pink colour persists.',
+        'Record readings and repeat to complete Table 2 with concordant titres within ±0.10 cm³.'
+      ],
+      procedures: [
+        {
+          procedureIndex: 1,
+          title: 'Procedure I: Cooling Curve & Freezing Point Determination of Solid D',
+          tableTitle: 'Table 1: Temperature Readings for Cooling of Solid D',
+          tableMarks: 4.0,
+          simulationType: 'energy',
+          scenarioKey: 'KCSE_2004_COOLING_CURVE',
+          instructions: 'Heat the boiling tube containing Solid D in a water bath until completely melted. Remove the tube, start the clock, and record temperature every 30 seconds for 7.0 minutes as it cools in air. Complete Table 1.',
+          questions: [
+            {
+              id: 'step_1a',
+              letter: 'a',
+              field: 'freezingPointD',
+              label: 'From your cooling curve graph, determine the freezing point of Solid D in °C',
+              marks: 2.0,
+              marksLabel: '(2.0 Marks)',
+              placeholder: 'e.g. 69.0',
+              step: '0.1',
+              unit: '°C',
+              calcTheoretical: () => 69.0,
+              calcEcf: () => 69.0,
+              check: (val) => Math.abs(val - 69.0) <= 1.5,
+              feedbackSuccess: (val) => `✓ Correct: Freezing point of Solid D = ${val.toFixed(1)} °C.`,
+              feedbackFail: () => `Expected around 69.0 °C (horizontal plateau region on cooling curve).`,
+              working: () => `<b>(a) Freezing Point:</b> T_freezing = <b>69.0 °C</b>`
+            },
+            {
+              id: 'step_1b',
+              letter: 'b',
+              field: 'plateauDuration',
+              label: 'Calculate the duration of the solidification plateau (constant temperature region) in minutes',
+              marks: 1.0,
+              marksLabel: '(1.0 Mark)',
+              placeholder: 'e.g. 2.0',
+              step: '0.1',
+              unit: 'minutes',
+              calcTheoretical: () => 2.0,
+              calcEcf: () => 2.0,
+              check: (val) => val >= 1.0 && val <= 3.5,
+              feedbackSuccess: (val) => `✓ Correct: Solidification duration = ${val} min.`,
+              feedbackFail: () => `Plateau lasts from approx t = 2.0 min to t = 4.0 min (duration ≈ 2.0 min).`,
+              working: () => `<b>(b) Duration of Plateau:</b> 4.0 - 2.0 = <b>2.0 minutes</b>`
+            },
+            {
+              id: 'step_1c',
+              letter: 'c',
+              field: 'latentHeatExplanation',
+              label: 'Explain why the temperature remains constant between 2.0 minutes and 4.0 minutes',
+              marks: 2.0,
+              marksLabel: '(2.0 Marks)',
+              placeholder: 'e.g. Latent heat of fusion released during solidification balances heat lost to the surroundings.',
+              calcTheoretical: () => 1,
+              calcEcf: () => 1,
+              check: (val) => typeof val === 'string' && /(latent\s*heat|fusion|solidif|crystalliz|equilibrium|balances|offsets)/i.test(val),
+              feedbackSuccess: () => `✓ Correct: Latent heat of fusion released during crystallization offsets cooling.`,
+              feedbackFail: () => `State that latent heat of fusion released during phase change balances heat loss to surroundings.`,
+              working: () => `<b>(c) Explanation:</b> Latent heat of fusion released during solidification offsets heat lost to the environment.`
+            }
+          ]
+        },
+        {
+          procedureIndex: 2,
+          title: 'Procedure II: Standardization Titration of Acid Solution C',
+          tableTitle: 'Table 2: Titration of Acid Solution C with 0.100 M NaOH Solution B',
+          tableMarks: 4.0,
+          solutionA: '0.100 M Sodium Hydroxide (Solution B)',
+          solutionB: 'Dilute Hydrochloric Acid (Solution C)',
+          indicator: 'Phenolphthalein',
+          pipetteVolume: 25.0,
+          trueTitre: 25.00,
+          titrantColor: '#38BDF8',
+          flaskBaseColor: 'rgba(255,255,255,0.2)',
+          endpointColor: 'rgba(236,72,153,0.5)',
+          instructions: 'Pipette 25.0 cm³ of Acid Solution C into a conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with 0.100 M NaOH Solution B until the colourless solution turns to permanent faint pink. Complete Table 2.',
+          procedureSteps: [
+            'Fill burette with 0.100 M NaOH Solution B to 0.00 cm³.',
+            'Pipette 25.0 cm³ of Acid Solution C into a clean conical flask.',
+            'Add 2–3 drops of phenolphthalein indicator.',
+            'Titrate with Solution B until first permanent pink colour appears.',
+            'Record initial and final readings and complete Table 2.'
+          ],
+          questions: [
+            {
+              id: 'step_2a',
+              letter: 'd',
+              field: 'avgTitre',
+              label: 'Calculate the average volume of 0.100 M NaOH Solution B used, V₁',
+              marks: 1.0,
+              marksLabel: '(1.0 Mark)',
+              placeholder: 'e.g. 25.00',
+              step: '0.01',
+              unit: 'cm³',
+              calcTheoretical: (ctx) => ctx.trueTitre,
+              calcEcf: (ctx) => ctx.expAvgFromTrials,
+              check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
+              feedbackSuccess: (val) => `✓ Correct: V₁ = ${val.toFixed(2)} cm³.`,
+              feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
+              working: (ctx) => `<b>(d) Average Titre V₁:</b> <b>${ctx.v1.toFixed(2)} cm³</b>`
+            },
+            {
+              id: 'step_2b',
+              letter: 'e',
+              field: 'molesNaohUsed',
+              label: 'Calculate the moles of NaOH present in average volume V₁ of Solution B',
+              marks: 1.0,
+              marksLabel: '(1.0 Mark)',
+              placeholder: 'e.g. 0.00250',
+              step: '0.00001',
+              unit: 'moles of NaOH',
+              calcTheoretical: (ctx) => (0.100 * ctx.trueTitre) / 1000.0,
+              calcEcf: (ctx) => {
+                const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_2a')) || ctx.trueTitre;
+                return (0.100 * v1) / 1000.0;
+              },
+              check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+              feedbackSuccess: (val) => `✓ Correct: ${val} moles of NaOH.`,
+              feedbackFail: (ctx, expTheo) => `Formula: (0.100 × V₁) / 1000 = ${expTheo.toFixed(5)} mol.`,
+              working: (ctx) => `<b>(e) Moles of NaOH in V₁:</b> (0.100 × ${ctx.v1.toFixed(2)}) / 1000 = <b>${((0.100 * ctx.v1) / 1000.0).toFixed(5)} mol</b>`
+            },
+            {
+              id: 'step_2c',
+              letter: 'f',
+              field: 'molarityAcidC',
+              label: 'Calculate the molar concentration (molarity) of Acid Solution C (Mole ratio NaOH : Acid = 1 : 1)',
+              marks: 2.0,
+              marksLabel: '(2.0 Marks)',
+              placeholder: 'e.g. 0.100',
+              step: '0.001',
+              unit: 'mol/dm³',
+              calcTheoretical: () => 0.100,
+              calcEcf: (ctx) => {
+                const mB = parseFloat(getAnswerValue(ctx.answers, 'molesNaohUsed', 'step_2b')) || 0.00250;
+                return (mB * 1000.0) / 25.0;
+              },
+              check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+              feedbackSuccess: (val) => `✓ Correct: Concentration of Acid C = ${val} mol/dm³.`,
+              feedbackFail: () => `Formula: (Moles of Acid in 25 cm³ × 1000) / 25.0 = 0.100 mol/dm³.`,
+              working: () => `<b>(f) Molarity of Acid C:</b> (0.00250 × 1000) / 25.0 = <b>0.100 mol/dm³</b>`
+            }
+          ]
+        }
+      ]
+    },
+    q2: {
+      type: 'qualitative_single',
+      title: 'Question 2: Inorganic Salt Qualitative Analysis (15.0 Marks)',
+      sampleName: 'Solid E',
+      sampleDesc: 'A pale light-green crystalline inorganic double salt.',
+      trueSaltKey: 'ferrousAmmoniumSulfate',
+      trueSaltName: 'Hydrated Ammonium Iron(II) Sulfate (Mohr\'s Salt) — (NH₄)₂Fe(SO₄)₂·6H₂O',
+      trueCation: 'Fe2+',
+      trueAnion: 'SO4^2-',
+      hasDeduction: true,
+      tests: [
+        {
+          id: 'q2_heat',
+          prompt: '(i) Heat a half-spatula of Solid E strongly in a dry test tube; test vapours with moist litmus papers.',
+          correctObs: 'Colourless liquid droplets condense on upper walls; pungent gas evolves turning moist red litmus blue; solid residue turns reddish-brown',
+          correctInf: 'Hydrated salt; basic gas (NH₃) evolved confirming NH₄⁺ present; iron oxide residue'
+        },
+        {
+          id: 'q2_naoh',
+          prompt: '(ii) Dissolve remaining Solid E in 10 cm³ distilled water. To portion 1, add 2M sodium hydroxide (NaOH) dropwise until in excess.',
+          correctObs: 'Dirty-green precipitate formed, insoluble in excess sodium hydroxide; turns brown on standing at surface',
+          correctInf: 'Fe²⁺ confirmed present (Fe(OH)₂ oxidized to Fe(OH)₃ by atmospheric oxygen)'
+        },
+        {
+          id: 'q2_ammonia',
+          prompt: '(iii) To portion 2, add aqueous ammonia (NH₃(aq)) dropwise until in excess.',
+          correctObs: 'Dirty-green precipitate formed, insoluble in excess aqueous ammonia',
+          correctInf: 'Fe²⁺ confirmed present'
+        },
+        {
+          id: 'q2_barium',
+          prompt: '(iv) To portion 3, add 3 drops barium nitrate (Ba(NO₃)₂) solution followed by 2 cm³ 2M dilute nitric acid (HNO₃).',
+          correctObs: 'Dense white precipitate formed, insoluble in dilute nitric acid',
+          correctInf: 'SO₄²⁻ confirmed present (BaSO₄ formed)'
+        }
+      ]
+    },
+    q3: {
+      type: 'organic_single',
+      title: 'Question 3: Organic Functional Group Analysis (10.0 Marks)',
+      sampleName: 'Solid G',
+      sampleDesc: 'A white organic crystalline solid.',
+      trueCompoundKey: 'maleicAcid',
+      trueCompoundName: 'Unsaturated Dicarboxylic Acid (Maleic Acid / HOOC-CH=CH-COOH)',
+      tests: [
+        {
+          id: 'q3_ignition',
+          prompt: '(i) Place a small amount of Solid G on a clean metallic spatula and ignite using a Bunsen flame.',
+          correctObs: 'Melts and burns with a luminous, highly smoky and sooty yellow flame; leaves black carbon residue',
+          correctInf: 'Unsaturated organic compound / high carbon-to-hydrogen ratio present (>C=C<)'
+        },
+        {
+          id: 'q3_litmus',
+          prompt: '(ii) Dissolve Solid G in 5 cm³ distilled water. Test with moist blue and red litmus papers.',
+          correctObs: 'Moist blue litmus paper turns red; red litmus paper retains colour (acidic, pH ~ 2–3)',
+          correctInf: 'Acidic organic substance / contains ionizable H⁺ ions / carboxylic acid (—COOH)'
+        },
+        {
+          id: 'q3_nahco3',
+          prompt: '(iii) To 2 cm³ of solution, add a half-spatula of solid Sodium Hydrogen Carbonate (NaHCO₃).',
+          correctObs: 'Brisk effervescence of a colourless gas that forms white precipitate with limewater (CO₂)',
+          correctInf: 'Carboxylic acid (—COOH) confirmed present; CO₂ gas evolved'
+        },
+        {
+          id: 'q3_kmno4',
+          prompt: '(iv) To 2 cm³ of solution, add 2–3 drops of acidified Potassium Manganate(VII) (KMnO₄) solution.',
+          correctObs: 'Purple colour of acidified KMnO₄ solution is rapidly decolorized to colourless',
+          correctInf: 'Carbon-carbon double bond (>C=C<) confirmed present'
+        },
+        {
+          id: 'q3_bromine',
+          prompt: '(v) To 2 cm³ of solution, add 3–4 drops of bromine water and shake gently.',
+          correctObs: 'Reddish-brown colour of bromine water is rapidly decolorized to colourless',
+          correctInf: 'Alkene (>C=C<) confirmed present by addition reaction'
+        }
+      ]
+    }
+  },
+
   // ── Series 2005: Official KCSE 2005 Standard Chemistry Practical (Paper 233/3) ──
   series_2005: {
     id: 'series_2005',
@@ -8356,7 +8621,7 @@ function generateRandomCompositePreset() {
     'series_2021', 'series_2020', 'series_2019', 'series_2018',
     'series_2017', 'series_2016', 'series_2015', 'series_2014',
     'series_2013', 'series_2012', 'series_2011', 'series_2009', 'series_2008',
-    'series_2007', 'series_2006', 'series_2005', 'series_2003', 'series_2002', 'series_2000',
+    'series_2007', 'series_2006', 'series_2005', 'series_2004', 'series_2003', 'series_2002', 'series_2000',
     'series_1998', 'series_1996', 'series_1995', 'series_1994', 'series_1993', 'series_1992', 'series_1990', 'series_1989'
   ];
   const q1PickKey = seriesKeys[Math.floor(Math.random() * seriesKeys.length)];

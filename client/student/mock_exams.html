@@ -1357,9 +1357,18 @@
       num: 2005,
       title: 'KCSE 2005 Official Practical Mock',
       badge: 'Official KNEC Series · Citric Acid Neutralization Enthalpy & Alum Analysis',
-      q1: '0.3125 M NaOH Standardization & Neutralization Enthalpy of Acid L (192.0 g/mol)',
+      q1: '0.3125 M NaOH Standardization & Thermometric Neutralization Enthalpy of Acid L (ΔT ≈ 5.0 °C / 192.0 g/mol)',
       q2: 'Solid N: Ammonium Aluminum Sulfate Analysis (NH₄Al(SO₄)₂·12H₂O / Al³⁺ / NH₄⁺ / SO₄²⁻)',
       q3: 'Solid Q: Aromatic Carboxylic Acid Analysis (Benzoic Acid Ar-COOH / Litmus & NaHCO₃)'
+    },
+    {
+      key: 'series_2004',
+      num: 2004,
+      title: 'KCSE 2004 Official Practical Mock',
+      badge: 'Official KNEC Series · Solid D Cooling Curve, Redox Stoichiometry & Organic Tests',
+      q1: 'Solid D Thermometric Cooling Curve (Freezing Point at 69.0 °C Plateau) & Volumetric Neutralization',
+      q2: 'Solid E: Iron(II) Ammonium Sulfate Mohr\'s Salt Analysis (Fe²⁺ / NH₄⁺ / SO₄²⁻)',
+      q3: 'Solid G: Organic Ignition & Functional Group Tests (>C=C< / Carboxylic Acid)'
     },
     {
       key: 'series_2003',
@@ -1894,6 +1903,11 @@
             <button type="button" class="btn-paper-scheme" onclick="openPastPaperModal('${p.id}')" title="Inspect official examination question booklet, experimental procedures, and mark scheme">
               📖 Paper &amp; Scheme
             </button>
+            ${p.workbenchUrl ? `
+              <a href="${p.workbenchUrl}" target="_blank" class="btn-paper-scheme" style="text-decoration:none; display:inline-flex; align-items:center; gap:5px; font-weight:700; color:var(--emerald-accent); border-color:var(--emerald-accent);" title="Open realistic interactive thermometry workbench simulation">
+                🌡️ Workbench Simulation ↗
+              </a>
+            ` : ''}
             ${isPlayable ? `
               <button type="button" class="btn-start-series" onclick="launchSeries('${p.playablePresetKey}')" title="Launch complete 40-mark KNEC simulation">
                 ⚡ Launch Simulation →
@@ -2007,6 +2021,11 @@
     if (actionBtns) {
       if (paper.playablePresetKey) {
         actionBtns.innerHTML = `
+          ${paper.workbenchUrl ? `
+            <a href="${paper.workbenchUrl}" target="_blank" class="btn-paper-scheme" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px; font-size:0.85rem; padding:8px 14px; font-weight:700; color:var(--emerald-accent); border-color:var(--emerald-accent);" title="Open realistic thermometry laboratory workbench simulation">
+              🌡️ Workbench Simulation ↗
+            </a>
+          ` : ''}
           <button type="button" class="btn-start-series" onclick="launchSeries('${paper.playablePresetKey}')">
             ⚡ Launch 40M Simulation →
           </button>
@@ -2014,6 +2033,11 @@
         `;
       } else {
         actionBtns.innerHTML = `
+          ${paper.workbenchUrl ? `
+            <a href="${paper.workbenchUrl}" target="_blank" class="btn-paper-scheme" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px; font-size:0.85rem; padding:8px 14px; font-weight:700; color:var(--emerald-accent); border-color:var(--emerald-accent);" title="Open realistic thermometry laboratory workbench simulation">
+              🌡️ Workbench Simulation ↗
+            </a>
+          ` : ''}
           <button type="button" class="top-action-btn" onclick="closePastPaperModal()">Close</button>
         `;
       }

@@ -1342,6 +1342,7 @@ const KCSE_PAST_PAPERS_ARCHIVE = [
     badgeText: 'Official KNEC Paper · Citric Acid Neutralization Enthalpy, Alum & Benzoic Acid Analysis',
     topics: ['Thermochemistry', 'Volumetric Analysis', 'Qualitative Analysis', 'Organic Analysis'],
     playablePresetKey: 'series_2005',
+    workbenchUrl: '/student/energy.html?scenario=KCSE_2005_NEUTRALIZATION',
     totalMarks: 40.0,
     durationMinutes: 135,
     summary: 'Standardization and thermometric enthalpy of neutralization of Acid L (60.0 g/dm³ citric acid monohydrate) with 0.3125 M NaOH Solution K to determine relative formula mass. Qualitative analysis of inorganic Solid N (ammonium aluminum sulfate, ammonium alum) and organic Solid Q (benzoic acid).',
@@ -1402,6 +1403,81 @@ const KCSE_PAST_PAPERS_ARCHIVE = [
       ],
       qualitativeObservations: 'Ammonium alum NH₄Al(SO₄)₂ shows Al³⁺ white precipitate soluble in excess NaOH but insoluble in excess NH₃, NH₄⁺ evolution with warm alkali, and SO₄²⁻ with Ba(NO₃)₂. Benzoic acid produces ethyl benzoate pleasant fruity ester.',
       confidentialPrep: 'Solution K: 0.3125 M NaOH (12.5 g/L). Solution L: 60.0 g citric acid monohydrate in 1 L (0.3125 M). Solid N: Ammonium aluminum sulfate (Ammonium alum). Solid Q: Benzoic acid.'
+    }
+  },
+
+  // ── KCSE 2004 ──
+  {
+    id: 'kcse_2004',
+    year: 2004,
+    title: 'KCSE 2004 Chemistry Paper 3 Practical (233/3)',
+    badgeText: 'Official KNEC Paper · Cooling Curve Freezing Point, Mohr\'s Salt & Maleic Acid Analysis',
+    topics: ['Thermochemistry', 'Volumetric Analysis', 'Qualitative Analysis', 'Organic Analysis'],
+    playablePresetKey: 'series_2004',
+    workbenchUrl: '/student/energy.html?scenario=KCSE_2004_COOLING_CURVE',
+    totalMarks: 40.0,
+    durationMinutes: 135,
+    summary: 'Thermometric cooling curve & freezing point determination of Solid D (stearic acid, melting in boiling water bath to 85.0 °C, cooling in air, constant temperature plateau at 69.0 °C due to latent heat of fusion). Volumetric standardization of dilute HCl Solution C with 0.100 M NaOH Solution B. Qualitative analysis of Solid E (hydrated ammonium iron(II) sulfate double salt / Mohr\'s salt) and organic analysis of Solid G (maleic acid).',
+    questions: [
+      {
+        num: 1,
+        title: 'Question 1: Thermometric Cooling Curve & Volumetric Neutralization (20.0 Marks)',
+        procedure: 'Procedure I: You are provided with a boiling tube containing Solid D. Place the boiling tube in a 250 ml beaker containing boiling water. Heat until all Solid D melts and temperature reaches 85.0 °C. Remove the tube from the water bath, clamp in air, start the stopwatch at t = 0 min, stir gently with a thermometer and record the temperature every 30 seconds for 7.0 minutes in Table 1.\nProcedure II: Pipette 25.0 cm³ of Acid Solution C into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with 0.100 M NaOH Solution B from the burette until the first permanent faint pink colour appears. Complete Table 2.',
+        table1: {
+          title: 'Table 1: Temperature Readings for Cooling Curve of Solid D',
+          headers: ['Time (min)', '0.0', '0.5', '1.0', '1.5', '2.0', '2.5', '3.0', '3.5', '4.0', '4.5', '5.0', '5.5', '6.0', '6.5', '7.0'],
+          sampleValues: ['85.0', '79.5', '74.5', '70.5', '69.0', '69.0', '69.0', '69.0', '69.0', '66.5', '63.5', '60.5', '57.0', '54.0', '51.5']
+        },
+        table2: {
+          title: 'Table 2: Titration of Acid Solution C with 0.100 M NaOH Solution B',
+          headers: ['Titration', 'I', 'II', 'III'],
+          sampleValues: ['Final: 25.00', 'Final: 25.00', 'Final: 25.00', 'Initial: 0.00', 'Initial: 0.00', 'Initial: 0.00', 'Titre: 25.00', 'Titre: 25.00', 'Titre: 25.00']
+        },
+        calculations: [
+          '(a) On the grid provided, plot a cooling curve of temperature (°C) against time (min). (3 Mks)',
+          '(b) From your cooling curve graph, determine the freezing point (melting point) of Solid D. (1 Mk)',
+          '(c) Determine the duration of the solidification plateau (constant temperature region). (1 Mk)',
+          '(d) Explain why the temperature remains constant between 2.0 minutes and 4.0 minutes. (1 Mk)',
+          '(e) Calculate the average volume of 0.100 M NaOH Solution B used in Table 2, V₁. (1 Mk)',
+          '(f) Calculate the number of moles of NaOH present in volume V₁. (1 Mk)',
+          '(g) Calculate the concentration of Acid Solution C in mol/dm³ (Mole ratio 1 : 1). (2 Mks)'
+        ]
+      },
+      {
+        num: 2,
+        title: 'Question 2: Inorganic Salt Qualitative Analysis of Solid E (10.0 Marks)',
+        preamble: 'Solid E is a pale light-green crystalline inorganic double salt containing two cations and one anion.',
+        tests: [
+          { step: '(a)', prompt: 'Heat a half-spatula of Solid E strongly in a dry test tube; test vapours with moist litmus papers.', obs: 'Water droplets condense on cooler upper walls; pungent gas evolves turning moist red litmus blue; solid residue turns reddish-brown', inf: 'Hydrated salt; basic gas (NH₃) evolved confirming NH₄⁺ present; iron(III) oxide residue' },
+          { step: '(b)', prompt: 'Dissolve remaining Solid E in 10 cm³ distilled water. Divide into 3 portions.', obs: 'Solid dissolves completely to give a clear pale-green solution', inf: 'Soluble salt; absence of insoluble transition metal oxides/carbonates' },
+          { step: '(c)', prompt: 'To portion 1, add 2M sodium hydroxide (NaOH) dropwise until in excess.', obs: 'Dirty-green precipitate formed, insoluble in excess sodium hydroxide; turns brown on standing at surface', inf: 'Fe²⁺ confirmed present (Fe(OH)₂ oxidized to Fe(OH)₃ by atmospheric oxygen)' },
+          { step: '(d)', prompt: 'To portion 2, add aqueous ammonia (NH₃(aq)) dropwise until in excess.', obs: 'Dirty-green precipitate formed, insoluble in excess aqueous ammonia', inf: 'Fe²⁺ confirmed present' },
+          { step: '(e)', prompt: 'To portion 3, add 3 drops barium nitrate (Ba(NO₃)₂) solution followed by 2 cm³ 2M dilute nitric acid (HNO₃).', obs: 'Dense white precipitate formed, insoluble in dilute nitric acid', inf: 'SO₄²⁻ confirmed present (BaSO₄ formed)' }
+        ]
+      },
+      {
+        num: 3,
+        title: 'Question 3: Organic Functional Group Analysis of Solid G (10.0 Marks)',
+        preamble: 'Solid G is a white organic crystalline solid.',
+        tests: [
+          { step: '(a)', prompt: 'Place a small amount of Solid G on a clean metallic spatula and ignite using a Bunsen flame.', obs: 'Melts and burns with a luminous, highly smoky and sooty yellow flame; leaves black carbon residue', inf: 'Unsaturated organic compound / high carbon-to-hydrogen ratio present (>C=C<)' },
+          { step: '(b)', prompt: 'Dissolve Solid G in 5 cm³ distilled water. Test with moist blue and red litmus papers.', obs: 'Moist blue litmus paper turns red; red litmus paper retains colour (acidic, pH ~ 2–3)', inf: 'Acidic organic substance / contains ionizable H⁺ ions / carboxylic acid (—COOH)' },
+          { step: '(c)', prompt: 'To 2 cm³ of solution, add a half-spatula of solid Sodium Hydrogen Carbonate (NaHCO₃).', obs: 'Brisk effervescence of a colourless gas that forms white precipitate with limewater (CO₂)', inf: 'Carboxylic acid (—COOH) confirmed present; CO₂ gas evolved' },
+          { step: '(d)', prompt: 'To 2 cm³ of solution, add 2–3 drops of acidified Potassium Manganate(VII) (KMnO₄) solution.', obs: 'Purple colour of acidified KMnO₄ solution is rapidly decolorized to colourless', inf: 'Carbon-carbon double bond (>C=C<) confirmed present' },
+          { step: '(e)', prompt: 'To 2 cm³ of solution, add 3–4 drops of bromine water and shake gently.', obs: 'Reddish-brown colour of bromine water is rapidly decolorized to colourless', inf: 'Alkene (>C=C<) confirmed present by addition reaction' }
+        ]
+      }
+    ],
+    markScheme: {
+      q1Calculations: [
+        { item: 'Freezing point of Solid D', marks: '1.0 Mk', rubric: 'Freezing point = 69.0 °C (acceptable 68.0 °C – 70.0 °C) deduced from horizontal plateau on cooling curve.' },
+        { item: 'Solidification duration', marks: '1.0 Mk', rubric: 'Duration of plateau = 4.0 - 2.0 = 2.0 minutes (acceptable 1.5 – 2.5 min).' },
+        { item: 'Plateau explanation', marks: '1.0 Mk', rubric: 'Temperature remains constant because the latent heat of fusion released during crystallization offsets the rate of heat lost to the surroundings.' },
+        { item: 'Moles of NaOH', marks: '1.0 Mk', rubric: 'Moles = (0.100 × 25.00) / 1000 = 0.00250 mol.' },
+        { item: 'Molarity of Acid C', marks: '2.0 Mks', rubric: 'Moles Acid C = Moles NaOH = 0.00250 mol. Molarity = (0.00250 × 1000) / 25.0 = 0.100 mol/dm³.' }
+      ],
+      qualitativeObservations: 'Mohr\'s salt (NH₄)₂Fe(SO₄)₂·6H₂O confirms Fe²⁺ (dirty-green ppt insoluble in excess alkali turning brown), NH₄⁺ (alkaline pungent gas on warming), and SO₄²⁻ (white ppt with Ba(NO₃)₂ insoluble in HNO₃). Maleic acid confirms unsaturated carboxylic acid (-COOH and >C=C<).',
+      confidentialPrep: 'Solid D: 10.0 g pure stearic acid in dry boiling tube fitted with thermometer and stirrer. Solution B: 0.100 M NaOH (4.0 g/L). Solution C: 0.100 M HCl (8.6 cm³ conc. HCl in 1 L). Solid E: Hydrated ammonium iron(II) sulfate (Mohr\'s salt). Solid G: Maleic acid.'
     }
   },
 

@@ -3525,6 +3525,227 @@ const COMPOSITE_EXAM_PRESETS = {
     }
   },
 
+  // ── Series 1995: Official KCSE 1995 Standard Chemistry Practical (Paper 233/3) ──
+  series_1995: {
+    id: 'series_1995',
+    seriesKey: 'series_1995',
+    seriesNumber: 1995,
+    title: 'KCSE 1995 Standard Chemistry Practical Examination',
+    badgeText: 'KCSE 1995 Past National Paper · Hess\'s Law Thermochemical Neutralization & Potassium Nitrate Analysis',
+    durationMinutes: 135,
+    q1: {
+      type: 'titration',
+      calcType: 'standard_molarity',
+      title: 'Question 1: Volumetric Analysis — Thermochemical Acid-Base Neutralization (15.0 Marks)',
+      solutionA: '0.200 M Sodium Hydroxide (Solution K)',
+      solutionB: 'Hydrochloric Acid Solution J (Reaction of KHCO₃ with 2.0M HCl)',
+      acidFormula: 'HCl',
+      baseFormula: 'NaOH',
+      indicator: 'Phenolphthalein',
+      pipetteVolume: 25.0,
+      trueAcidMolarity: 0.200,
+      trueBaseMolarity: 0.200,
+      trueTitre: 25.00,
+      moleRatioAcid: 1,
+      moleRatioBase: 1,
+      acidRfm: 36.5,
+      baseRfm: 40.0,
+      titrantColor: '#38BDF8',
+      flaskBaseColor: 'rgba(255,255,255,0.2)',
+      flaskIndicatorColor: 'rgba(255,255,255,0.2)',
+      endpointColor: 'rgba(236,72,153,0.5)',
+      overtitratedColor: 'rgba(219,39,119,0.9)',
+      equation: 'HCl(aq) + NaOH(aq) → NaCl(aq) + H₂O(l)',
+      instructions: 'Fill the burette with 0.200 M Sodium Hydroxide Solution K. Pipette 25.0 cm³ of Hydrochloric Acid Solution J into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate Solution J with Solution K until the colourless solution turns to the first permanent faint pink colour.',
+      questions: [
+        {
+          id: 'step_a',
+          letter: 'a',
+          field: 'avgTitre',
+          label: 'Calculate the average volume of 0.200 M NaOH Solution K used, V₁',
+          marks: 1.0,
+          marksLabel: '(1.0 Mark)',
+          placeholder: 'e.g. 25.00',
+          step: '0.01',
+          unit: 'cm³',
+          calcTheoretical: (ctx) => ctx.trueTitre,
+          calcEcf: (ctx) => ctx.expAvgFromTrials,
+          check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
+          feedbackSuccess: (val) => `✓ Correct: V₁ = ${val.toFixed(2)} cm³.`,
+          feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
+          working: (ctx) => `<b>(a) Average Titre:</b> V₁ = <b>${ctx.v1.toFixed(2)} cm³</b>`
+        },
+        {
+          id: 'step_b',
+          letter: 'b',
+          field: 'molesNaohK',
+          label: 'Calculate the number of moles of NaOH present in the average volume V₁ of Solution K (0.200 M)',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 0.00500',
+          step: '0.00001',
+          unit: 'moles of NaOH',
+          calcTheoretical: (ctx) => (0.200 * ctx.trueTitre) / 1000.0,
+          calcEcf: (ctx) => {
+            const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_a')) || ctx.trueTitre;
+            return (0.200 * v1) / 1000.0;
+          },
+          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+          feedbackSuccess: (val) => `✓ Correct: ${val} moles of NaOH.`,
+          feedbackFail: (ctx, expTheo) => `Formula: (0.200 × V₁) / 1000 = ${expTheo.toFixed(5)} mol.`,
+          working: (ctx) => `<b>(b) Moles of NaOH in V₁:</b> (0.200 × ${ctx.v1.toFixed(2)}) / 1000 = <b>${((0.200 * ctx.v1) / 1000.0).toFixed(5)} mol</b>`
+        },
+        {
+          id: 'step_c',
+          letter: 'c',
+          field: 'molesHclJ',
+          label: 'Calculate the number of moles of HCl in 25.0 cm³ of Solution J (Mole ratio HCl : NaOH = 1 : 1)',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 0.00500',
+          step: '0.00001',
+          unit: 'moles of HCl',
+          calcTheoretical: (ctx) => (0.200 * ctx.trueTitre) / 1000.0,
+          calcEcf: (ctx) => {
+            const mK = parseFloat(getAnswerValue(ctx.answers, 'molesNaohK', 'step_b')) || ((0.200 * ctx.trueTitre) / 1000.0);
+            return mK;
+          },
+          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+          feedbackSuccess: (val) => `✓ Correct: ${val} moles of HCl in 25.0 cm³.`,
+          feedbackFail: (ctx, expTheo) => `Formula: Moles of NaOH = ${expTheo.toFixed(5)} mol.`,
+          working: (ctx) => `<b>(c) Moles of HCl in 25.0 cm³:</b> <b>${((0.200 * ctx.v1) / 1000.0).toFixed(5)} mol</b>`
+        },
+        {
+          id: 'step_d',
+          letter: 'd',
+          field: 'molarityHclJ',
+          label: 'Calculate the molar concentration (molarity) of HCl in Solution J in mol/dm³',
+          marks: 3.0,
+          marksLabel: '(3.0 Marks)',
+          placeholder: 'e.g. 0.200',
+          step: '0.001',
+          unit: 'mol/dm³ (M)',
+          calcTheoretical: (ctx) => ctx.trueBaseMolarity,
+          calcEcf: (ctx) => {
+            const mJ = parseFloat(getAnswerValue(ctx.answers, 'molesHclJ', 'step_c')) || ((0.200 * ctx.trueTitre) / 1000.0);
+            return (mJ * 1000.0) / 25.0;
+          },
+          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+          feedbackSuccess: (val) => `✓ Correct: Molarity of Solution J = ${val} mol/dm³.`,
+          feedbackFail: (ctx, expTheo) => `Formula: (Moles of HCl × 1000) / 25.0 = ${expTheo.toFixed(3)} M.`,
+          working: (ctx) => `<b>(d) Molarity of Solution J:</b> (Moles of HCl × 1000) / 25.0 = <b>${ctx.trueBaseMolarity.toFixed(4)} mol/dm³</b>`
+        },
+        {
+          id: 'step_e',
+          letter: 'e',
+          field: 'concGramsHcl',
+          label: 'Calculate the mass concentration of HCl in Solution J in g/dm³ (H = 1.0, Cl = 35.5)',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 7.30',
+          step: '0.01',
+          unit: 'g/dm³',
+          calcTheoretical: (ctx) => ctx.trueBaseMolarity * 36.5,
+          calcEcf: (ctx) => {
+            const molJ = parseFloat(getAnswerValue(ctx.answers, 'molarityHclJ', 'step_d')) || ctx.trueBaseMolarity;
+            return molJ * 36.5;
+          },
+          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+          feedbackSuccess: (val) => `✓ Correct: Concentration = ${val} g/dm³.`,
+          feedbackFail: (ctx, expTheo) => `Formula: Molarity × 36.5 = ${expTheo.toFixed(2)} g/dm³.`,
+          working: (ctx) => `<b>(e) Mass Concentration of HCl:</b> ${ctx.trueBaseMolarity.toFixed(4)} M × 36.5 = <b>${(ctx.trueBaseMolarity * 36.5).toFixed(2)} g/dm³</b>`
+        }
+      ]
+    },
+    q2: {
+      type: 'qualitative_single',
+      title: 'Question 2: Metal Reactivity Qualitative Tests on Solid L (15.0 Marks)',
+      sampleName: 'Solid L',
+      sampleDesc: 'A silvery-grey lustrous flexible metal ribbon (Magnesium metal).',
+      trueSaltKey: 'magnesium',
+      trueSaltName: 'Magnesium Metal — Mg & Reactivity Bench',
+      trueCation: 'Mg2+',
+      trueAnion: 'Cl-',
+      hasDeduction: true,
+      tests: [
+        {
+          id: 'q2_appearance',
+          prompt: '(i) Describe the physical appearance and flexibility of Solid L.',
+          correctObs: 'Silvery-grey lustrous, shiny flexible metallic ribbon',
+          correctInf: 'Metallic element; malleable and ductile metal'
+        },
+        {
+          id: 'q2_heat',
+          prompt: '(ii) Hold a piece of Solid L with a pair of crucible tongs and heat it strongly in a Bunsen burner flame.',
+          correctObs: 'Burns with a brilliant dazzling white flame; leaves a white powdery ash (MgO)',
+          correctInf: 'Highly reactive alkaline earth metal (Mg); oxidized to magnesium oxide'
+        },
+        {
+          id: 'q2_water',
+          prompt: '(iii) Place a small piece of Solid L in a test tube containing 3 cm³ distilled water and warm gently.',
+          correctObs: 'Slow evolution of tiny gas bubbles on metal surface; gas gives a pop sound with burning splint',
+          correctInf: 'Metal reacts slowly with warm water; hydrogen gas (H₂) evolved; metal is above hydrogen in reactivity series'
+        },
+        {
+          id: 'q2_acid',
+          prompt: '(iv) To a piece of Solid L in a test tube, add 3 cm³ 2M dilute hydrochloric acid (HCl); test gas with a burning splint.',
+          correctObs: 'Rapid and vigorous effervescence; test tube becomes warm; gas burns with a sharp "pop" sound',
+          correctInf: 'Hydrogen gas (H₂) evolved; Mg displaces H⁺ ions rapidly; exothermic reaction; Mg²⁺ formed'
+        },
+        {
+          id: 'q2_displacement',
+          prompt: '(v) Place a cleaned piece of Solid L into 3 cm³ Lead(II) Nitrate solution [Pb(NO₃)₂].',
+          correctObs: 'Silvery metal is coated with a spongy dark grey/black deposit of metallic lead; solution remains colourless',
+          correctInf: 'Redox displacement: Mg(s) + Pb²⁺(aq) → Mg²⁺(aq) + Pb(s); Mg is higher than Pb in electrochemical series'
+        },
+        {
+          id: 'q2_naoh',
+          prompt: '(vi) To 2 cm³ of the solution from reaction (iv) [Mg + HCl], add 2M NaOH dropwise until in excess.',
+          correctObs: 'White precipitate formed, insoluble in excess sodium hydroxide',
+          correctInf: 'Mg²⁺ confirmed present (Mg(OH)₂ formed; insoluble in excess alkali; distinct from Zn²⁺, Al³⁺, Pb²⁺)'
+        }
+      ]
+    },
+    q3: {
+      type: 'qualitative_single',
+      simulationType: 'qualitative',
+      title: 'Question 3: Qualitative Analysis of Solid N (10.0 Marks)',
+      sampleName: 'Solid N',
+      sampleDesc: 'A pure, white crystalline inorganic potassium salt.',
+      trueSaltKey: 'potassiumNitrate',
+      trueSaltName: 'Potassium Nitrate — KNO₃',
+      trueCation: 'K+',
+      trueAnion: 'NO3-',
+      hasDeduction: true,
+      tests: [
+        {
+          id: 'q3_appearance',
+          prompt: '(i) Describe the appearance of Solid N and dissolve half a spatula-end in 5 cm³ distilled water.',
+          correctObs: 'White crystalline solid dissolves completely to form a clear colourless neutral solution',
+          correctInf: 'Soluble salt; absence of coloured transition metal ions'
+        },
+        {
+          id: 'q3_flame',
+          prompt: '(ii) Perform a flame test on Solid N using a clean nichrome wire dipped in conc. HCl into a non-luminous Bunsen burner flame.',
+          correctObs: 'Persistent lilac / purple flame coloration',
+          correctInf: 'K⁺ confirmed present'
+        },
+        {
+          id: 'q3_heat',
+          prompt: '(iii) Heat a spatula-end of Solid N strongly in a dry test tube and test any gas evolved with a glowing wooden splint.',
+          correctObs: 'Solid decrepitates and melts into a colourless liquid; gas evolved relights / rekindles a glowing splint',
+          correctInf: 'Oxygen gas (O₂) evolved; thermal decomposition of nitrate: 2KNO₃(s) → 2KNO₂(s) + O₂(g); NO₃⁻ present'
+        },
+        {
+          id: 'q3_reduction',
+          prompt: '(iv) To 2 cm³ of the aqueous solution of Solid N, add 2 cm³ 2M NaOH, add a piece of aluminium foil, and warm gently; test gas with moist red litmus paper.',
+          correctObs: 'Effervescence of a pungent choking alkaline gas that turns moist red litmus paper blue',
+          correctInf: 'Ammonia gas (NH₃) evolved via Devarda-type aluminium reduction; NO₃⁻ confirmed present'
+        }
+      ]
+    }
+  },
+
   // ── Series 1994: Official KCSE 1994 Standard Chemistry Practical (Paper 233/3) ──
   series_1994: {
     id: 'series_1994',
@@ -4917,7 +5138,7 @@ function generateRandomCompositePreset() {
     'series_2024', 'series_2023', 'series_2022',
     'series_2013', 'series_2012', 'series_2011', 'series_2009', 'series_2008',
     'series_2007', 'series_2006', 'series_2005', 'series_2003', 'series_2002', 'series_2000',
-    'series_1998', 'series_1996', 'series_1994', 'series_1993', 'series_1992', 'series_1990', 'series_1989'
+    'series_1998', 'series_1996', 'series_1995', 'series_1994', 'series_1993', 'series_1992', 'series_1990', 'series_1989'
   ];
   const q1PickKey = seriesKeys[Math.floor(Math.random() * seriesKeys.length)];
   const q2PickKey = seriesKeys[Math.floor(Math.random() * seriesKeys.length)];

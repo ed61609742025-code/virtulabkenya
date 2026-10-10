@@ -963,7 +963,7 @@ const KCSE_PAST_PAPERS_ARCHIVE = [
     title: 'KCSE 1995 Chemistry Paper 3 Practical (233/3)',
     badgeText: 'Official KNEC Paper · Hess\'s Law Thermochemical Cycle & Metal Reactivity',
     topics: ['Thermochemistry & Hess Law', 'Qualitative Analysis', 'Flame Tests'],
-    playablePresetKey: null,
+    playablePresetKey: 'series_1995',
     totalMarks: 40.0,
     durationMinutes: 135,
     summary: 'Determination of enthalpy change for reactions of KHCO₃ and MgCO₃ with 2.0M HCl, and applying Hess\'s Law to determine the enthalpy of formation of MgCO₃. Qualitative identification of metal reactivity with Solid L and thermal decomposition of Solid N (KNO₃).',

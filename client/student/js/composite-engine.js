@@ -7855,7 +7855,8 @@ const COMPOSITE_EXAM_PRESETS = {
       simulationType: 'energy',
       scenarioKey: 'KCSE_2004_COOLING_CURVE',
       calcType: 'standard_molarity',
-      title: 'Question 1: Thermometric Analysis & Volumetric Neutralization (15.0 Marks)',
+      title: 'Question 1: Thermometric Analysis & Volumetric Neutralization (20.0 Marks)',
+      marks: 20.0,
       hasMultipleProcedures: true,
       solutionA: '0.100 M Sodium Hydroxide (Solution B)',
       solutionB: 'Dilute Hydrochloric Acid (Solution C)',
@@ -7890,6 +7891,7 @@ const COMPOSITE_EXAM_PRESETS = {
           title: 'Procedure I: Cooling Curve & Freezing Point Determination of Solid D',
           tableTitle: 'Table 1: Temperature Readings for Cooling of Solid D',
           tableMarks: 4.0,
+          marks: 10.0,
           simulationType: 'energy',
           scenarioKey: 'KCSE_2004_COOLING_CURVE',
           instructions: 'Heat the boiling tube containing Solid D in a water bath until completely melted. Remove the tube, start the clock, and record temperature every 30 seconds for 7.0 minutes as it cools in air. Complete Table 1.',
@@ -7916,8 +7918,8 @@ const COMPOSITE_EXAM_PRESETS = {
               letter: 'b',
               field: 'plateauDuration',
               label: 'Calculate the duration of the solidification plateau (constant temperature region) in minutes',
-              marks: 1.0,
-              marksLabel: '(1.0 Mark)',
+              marks: 2.0,
+              marksLabel: '(2.0 Marks)',
               placeholder: 'e.g. 2.0',
               step: '0.1',
               unit: 'minutes',
@@ -7950,6 +7952,8 @@ const COMPOSITE_EXAM_PRESETS = {
           title: 'Procedure II: Standardization Titration of Acid Solution C',
           tableTitle: 'Table 2: Titration of Acid Solution C with 0.100 M NaOH Solution B',
           tableMarks: 4.0,
+          marks: 10.0,
+          simulationType: 'titration',
           solutionA: '0.100 M Sodium Hydroxide (Solution B)',
           solutionB: 'Dilute Hydrochloric Acid (Solution C)',
           indicator: 'Phenolphthalein',
@@ -7989,8 +7993,8 @@ const COMPOSITE_EXAM_PRESETS = {
               letter: 'e',
               field: 'molesNaohUsed',
               label: 'Calculate the moles of NaOH present in average volume V₁ of Solution B',
-              marks: 1.0,
-              marksLabel: '(1.0 Mark)',
+              marks: 2.0,
+              marksLabel: '(2.0 Marks)',
               placeholder: 'e.g. 0.00250',
               step: '0.00001',
               unit: 'moles of NaOH',
@@ -8009,8 +8013,8 @@ const COMPOSITE_EXAM_PRESETS = {
               letter: 'f',
               field: 'molarityAcidC',
               label: 'Calculate the molar concentration (molarity) of Acid Solution C (Mole ratio NaOH : Acid = 1 : 1)',
-              marks: 2.0,
-              marksLabel: '(2.0 Marks)',
+              marks: 3.0,
+              marksLabel: '(3.0 Marks)',
               placeholder: 'e.g. 0.100',
               step: '0.001',
               unit: 'mol/dm³',
@@ -8030,7 +8034,8 @@ const COMPOSITE_EXAM_PRESETS = {
     },
     q2: {
       type: 'qualitative_single',
-      title: 'Question 2: Inorganic Salt Qualitative Analysis (15.0 Marks)',
+      title: 'Question 2: Inorganic Salt Qualitative Analysis (10.0 Marks)',
+      marks: 10.0,
       sampleName: 'Solid E',
       sampleDesc: 'A pale light-green crystalline inorganic double salt.',
       trueSaltKey: 'ferrousAmmoniumSulfate',
@@ -8118,7 +8123,8 @@ const COMPOSITE_EXAM_PRESETS = {
     q1: {
       type: 'titration',
       calcType: 'standard_molarity',
-      title: 'Question 1: Volumetric Analysis — Standardization & Neutralization Enthalpy of Acid L (15.0 Marks)',
+      title: 'Question 1: Volumetric Analysis — Standardization & Neutralization Enthalpy of Acid L (20.0 Marks)',
+      marks: 20.0,
       hasMultipleProcedures: true,
       solutionA: '0.3125 M Sodium Hydroxide (Solution K)',
       solutionB: 'Acid L containing 60.0 g/dm³ (Solution L)',
@@ -8153,6 +8159,8 @@ const COMPOSITE_EXAM_PRESETS = {
           title: 'Procedure I: Titration of Acid L with NaOH Solution K',
           tableTitle: 'Table 1: Titration of Acid Solution L with Solution K',
           tableMarks: 4.0,
+          marks: 12.0,
+          simulationType: 'titration',
           solutionA: '0.3125 M Sodium Hydroxide (Solution K)',
           solutionB: 'Acid L containing 60.0 g/dm³ (Solution L)',
           indicator: 'Phenolphthalein',
@@ -8212,8 +8220,8 @@ const COMPOSITE_EXAM_PRESETS = {
               letter: 'c',
               field: 'molesAcidL',
               label: 'Calculate the number of moles of Acid L in 25.0 cm³ of Solution L (Mole ratio Acid L : NaOH = 1 : 1)',
-              marks: 2.0,
-              marksLabel: '(2.0 Marks)',
+              marks: 1.0,
+              marksLabel: '(1.0 Mark)',
               placeholder: 'e.g. 0.00781',
               step: '0.00001',
               unit: 'moles of Acid L',
@@ -8252,8 +8260,8 @@ const COMPOSITE_EXAM_PRESETS = {
               letter: 'e',
               field: 'rfmAcidL',
               label: 'Given that Solution L contains 60.0 g of Acid L per dm³, calculate the relative formula mass (RFM) of Acid L',
-              marks: 3.0,
-              marksLabel: '(3.0 Marks)',
+              marks: 2.0,
+              marksLabel: '(2.0 Marks)',
               placeholder: 'e.g. 192.0',
               step: '0.1',
               unit: 'g/mol',
@@ -8273,7 +8281,10 @@ const COMPOSITE_EXAM_PRESETS = {
           procedureIndex: 2,
           title: 'Procedure II: Thermometric Neutralization Enthalpy (ΔT)',
           tableTitle: 'Table 2: Temperature Changes on Neutralization',
-          tableMarks: 4.0,
+          tableMarks: 3.0,
+          marks: 8.0,
+          simulationType: 'energy',
+          scenarioKey: 'KCSE_2005_NEUTRALIZATION',
           solutionA: '0.3125 M Sodium Hydroxide Solution K',
           solutionB: 'Acid Solution L',
           indicator: 'Calorimeter / Thermometer',
@@ -8395,8 +8406,8 @@ const COMPOSITE_EXAM_PRESETS = {
           letter: 'c',
           field: 'molesAcidL',
           label: 'Calculate the number of moles of Acid L in 25.0 cm³ of Solution L (Mole ratio Acid L : NaOH = 1 : 1)',
-          marks: 2.0,
-          marksLabel: '(2.0 Marks)',
+          marks: 1.0,
+          marksLabel: '(1.0 Mark)',
           placeholder: 'e.g. 0.00781',
           step: '0.00001',
           unit: 'moles of Acid L',
@@ -8435,8 +8446,8 @@ const COMPOSITE_EXAM_PRESETS = {
           letter: 'e',
           field: 'rfmAcidL',
           label: 'Given that Solution L contains 60.0 g of Acid L per dm³, calculate the relative formula mass (RFM) of Acid L',
-          marks: 3.0,
-          marksLabel: '(3.0 Marks)',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
           placeholder: 'e.g. 192.0',
           step: '0.1',
           unit: 'g/mol',
@@ -8512,7 +8523,8 @@ const COMPOSITE_EXAM_PRESETS = {
     },
     q2: {
       type: 'qualitative_single',
-      title: 'Question 2: Inorganic Salt Qualitative Analysis (15.0 Marks)',
+      title: 'Question 2: Inorganic Salt Qualitative Analysis (10.0 Marks)',
+      marks: 10.0,
       sampleName: 'Solid N',
       sampleDesc: 'A white crystalline inorganic double salt containing aluminum, ammonium, and sulfate.',
       trueSaltKey: 'ammoniumSulfate',
@@ -8549,13 +8561,14 @@ const COMPOSITE_EXAM_PRESETS = {
           id: 'q2_barium',
           prompt: '(v) To portion 4, add 3 drops barium nitrate (Ba(NO₃)₂) solution followed by 2 cm³ 2M dilute nitric acid (HNO₃).',
           correctObs: 'Dense white precipitate formed, insoluble in dilute nitric acid',
-          correctInf: 'SO₄²⁻ confirmed present (BaSO₄ formed)'
+          correctInf: 'SO4²⁻ confirmed present (BaSO₄ formed)'
         }
       ]
     },
     q3: {
       type: 'organic',
       title: 'Question 3: Organic Functional Group Analysis (10.0 Marks)',
+      marks: 10.0,
       sampleName: 'Solid Q',
       sampleDesc: 'A pure white organic crystalline solid.',
       trueOrganicKey: 'org_benzoic_acid',
@@ -9178,223 +9191,295 @@ class CompositeExamEngine {
     const rubric = [];
     const modelAnswers = {};
 
-    const recordedTrials = (trials || []).filter(t => t.recorded && t.used > 0);
-    const trueTitre = Number(proc.trueTitre) || 25.00;
     const tableTitle = proc.tableTitle || `Table (${prefix})`;
+    const maxTableMarks = proc.tableMarks != null ? Number(proc.tableMarks) : (proc.simulationType === 'energy' ? 3.0 : 5.0);
+    const trueTitre = Number(proc.trueTitre) || 25.00;
     modelAnswers[`${prefix}_trueTitre`] = trueTitre;
 
-    // 1. Complete Table (CT) — 1.0 Mark
-    let ctPenalty = 0.0;
-    let hasInverted = false;
-    let hasArithError = false;
-    let hasImpossible = false;
+    if (proc.simulationType === 'energy') {
+      // ── Thermometric Table Evaluator (Neutralization Enthalpy or Cooling Curve) ──
+      const isNeutralization = proc.scenarioKey === 'KCSE_2005_NEUTRALIZATION' || proc.tableType === 'neutralization_temp' || (proc.title && /neutralization|enthalpy/i.test(proc.title));
+      if (isNeutralization) {
+        const t1 = parseFloat(getAnswerValue(answers, 't1', 'p2_t1', 'initT1'));
+        const t2 = parseFloat(getAnswerValue(answers, 't2', 'p2_t2', 'initT2'));
+        const t0 = parseFloat(getAnswerValue(answers, 't0', 'p2_t0', 'meanT0'));
+        const tMax = parseFloat(getAnswerValue(answers, 'tMax', 'p2_tMax', 'maxTemp'));
+        const deltaT = parseFloat(getAnswerValue(answers, 'tempRise', 'step_2a', 'deltaT'));
 
-    (trials || []).forEach(t => {
-      if (t.recorded) {
-        if (t.initial > t.final) hasInverted = true;
-        const diff = Math.abs(t.used - Math.max(0, t.final - t.initial));
-        if (diff > 0.02) hasArithError = true;
-        if (t.final > 50.0 || t.used > 50.0 || t.used < 1.0) hasImpossible = true;
-      }
-    });
+        let ctMark = (!isNaN(t1) && !isNaN(t2) && !isNaN(tMax)) ? 1.0 : (!isNaN(tMax) || !isNaN(deltaT) ? 0.5 : 0.0);
+        let dMark = ((!isNaN(t1) && String(t1).includes('.')) || (!isNaN(tMax) && String(tMax).includes('.')) || (!isNaN(deltaT) && String(deltaT).includes('.'))) ? 1.0 : 0.5;
+        let acMark = ((!isNaN(deltaT) && Math.abs(deltaT - 5.0) <= 0.8) || (!isNaN(tMax) && Math.abs(tMax - 28.5) <= 1.5)) ? 1.0 : 0.5;
+        tableScore = Math.min(maxTableMarks, ctMark + dMark + acMark);
 
-    if (hasInverted || hasArithError || hasImpossible) {
-      ctPenalty = 0.5;
-    }
-
-    let ctMark = 0.0;
-    let ctDetail = '';
-    if (recordedTrials.length >= 3) {
-      ctMark = Math.max(0.0, 1.0 - ctPenalty);
-      ctDetail = ctPenalty > 0
-        ? `Penalized (0.5 Mk): 3 trials recorded but detected ${hasInverted ? 'inverted readings' : (hasArithError ? 'subtraction arithmetic discrepancy' : 'unrealistic values')}.`
-        : `Full mark (1.0 Mk): All 3 titration trials in ${tableTitle} completely recorded within realistic boundaries.`;
-    } else if (recordedTrials.length === 2) {
-      ctMark = Math.max(0.0, 0.5 - ctPenalty);
-      ctDetail = `Partial mark (0.5 Mk): 2 trials recorded in ${tableTitle}.`;
-    } else {
-      ctMark = 0.0;
-      ctDetail = `Incomplete (0.0 Mk): At least 2 titration trials are required in ${tableTitle}.`;
-    }
-    tableScore += ctMark;
-    rubric.push({
-      code: prefix === 'Q1' ? 'CT' : `${prefix}_CT`,
-      item: `${tableTitle} Completeness (CT)`,
-      max: 1.0,
-      mark: ctMark,
-      pass: ctMark >= 1.0,
-      detail: ctDetail
-    });
-
-    // 2. Use of Decimals (D) — 1.0 Mark
-    let decimalViolations = 0;
-    let recordedCount = 0;
-    (trials || []).forEach(t => {
-      if (t.recorded) {
-        recordedCount++;
-        const finStr = Number(t.final).toFixed(2);
-        const lastDigit = finStr.slice(-1);
-        if (lastDigit !== '0' && lastDigit !== '5') {
-          decimalViolations++;
-        }
-      }
-    });
-
-    let dMark = 0.0;
-    let dDetail = '';
-    if (recordedCount >= 2 && decimalViolations === 0) {
-      dMark = 1.0;
-      dDetail = `Full mark (1.0 Mk): All burette readings in ${tableTitle} consistently adhere to KNEC 2 d.p. convention ending in .00 or .05.`;
-    } else if (recordedCount >= 2) {
-      dMark = 0.0;
-      dDetail = `0.0 Mark: ${decimalViolations} reading(s) in ${tableTitle} violated KNEC precision rule (2nd decimal must terminate strictly in .0 or .5).`;
-    } else {
-      dMark = 0.0;
-      dDetail = `0.0 Mark: Incomplete titration trials in ${tableTitle}.`;
-    }
-    tableScore += dMark;
-    rubric.push({
-      code: prefix === 'Q1' ? 'D' : `${prefix}_D`,
-      item: `${tableTitle} Decimals (D)`,
-      max: 1.0,
-      mark: dMark,
-      pass: dMark === 1.0,
-      detail: dDetail
-    });
-
-    // 3. Accuracy vs School Value (AC) — 1.0 Mark
-    let minDiff = 999.0;
-    recordedTrials.forEach(t => {
-      const d = Math.abs(t.used - trueTitre);
-      if (d < minDiff) minDiff = d;
-    });
-
-    let acMark = 0.0;
-    let acDetail = '';
-    if (recordedTrials.length >= 2 && minDiff <= 0.10) {
-      acMark = 1.0;
-      acDetail = `Full mark (1.0 Mk): At least one titre is within ±0.10 cm³ of School Value (deviation: ${minDiff.toFixed(2)} cm³, SV: ${trueTitre.toFixed(2)} cm³).`;
-    } else if (recordedTrials.length >= 2 && minDiff <= 0.20) {
-      acMark = 0.5;
-      acDetail = `Partial mark (0.5 Mk): Closest titre is within ±0.20 cm³ of School Value (deviation: ${minDiff.toFixed(2)} cm³, SV: ${trueTitre.toFixed(2)} cm³).`;
-    } else {
-      acMark = 0.0;
-      acDetail = `0.0 Mark: Titres deviated by > ±0.20 cm³ from School Value (closest deviation: ${minDiff < 900 ? minDiff.toFixed(2) + ' cm³' : 'N/A'}).`;
-    }
-    tableScore += acMark;
-    rubric.push({
-      code: prefix === 'Q1' ? 'AC' : `${prefix}_AC`,
-      item: `${tableTitle} Accuracy (AC)`,
-      max: 1.0,
-      mark: acMark,
-      pass: acMark === 1.0,
-      detail: acDetail
-    });
-
-    // 4. Principles of Averaging (PA) — 1.0 Mark
-    const checkedConcordant = (trials || []).filter(t => t.recorded && t.concordant && t.used > 0);
-    const candidateAvgTitre = parseFloat(getAnswerValue(answers, 'avgTitre', 'step_a') || getAnswerValue(answers, `${prefix}_avgTitre`, `${prefix}_step_a`));
-    
-    let concordantSet = checkedConcordant.length >= 2 ? checkedConcordant : [];
-    if (concordantSet.length === 0 && recordedTrials.length >= 2) {
-      if (recordedTrials.length === 3) {
-        const [a, b, c] = recordedTrials.map(t => t.used);
-        const spreadAll = Math.max(a, b, c) - Math.min(a, b, c);
-        if (spreadAll <= 0.20) {
-          concordantSet = recordedTrials;
-        } else if (Math.abs(a - b) <= 0.20) {
-          concordantSet = [recordedTrials[0], recordedTrials[1]];
-        } else if (Math.abs(b - c) <= 0.20) {
-          concordantSet = [recordedTrials[1], recordedTrials[2]];
-        } else if (Math.abs(a - c) <= 0.20) {
-          concordantSet = [recordedTrials[0], recordedTrials[2]];
-        }
-      } else if (recordedTrials.length === 2 && Math.abs(recordedTrials[0].used - recordedTrials[1].used) <= 0.20) {
-        concordantSet = recordedTrials;
-      }
-    }
-
-    let paMark = 0.0;
-    let paDetail = '';
-    if (concordantSet.length >= 2) {
-      const spread = Math.max(...concordantSet.map(t => t.used)) - Math.min(...concordantSet.map(t => t.used));
-      const arithmeticAvg = concordantSet.reduce((acc, t) => acc + t.used, 0) / concordantSet.length;
-      const arithCorrect = !isNaN(candidateAvgTitre) && Math.abs(candidateAvgTitre - arithmeticAvg) <= 0.02;
-
-      let missedThirdConcordant = false;
-      if (recordedTrials.length === 3) {
-        const spreadAll = Math.max(...recordedTrials.map(t => t.used)) - Math.min(...recordedTrials.map(t => t.used));
-        if (spreadAll <= 0.20 && concordantSet.length === 2) {
-          missedThirdConcordant = true;
-        }
-      }
-
-      if (spread <= 0.20 && arithCorrect) {
-        if (missedThirdConcordant) {
-          paMark = 0.5;
-          paDetail = 'Partial mark (0.5 Mk): 3 consistent titres were available within ±0.20 cm³, but candidate averaged only 2.';
-        } else {
-          paMark = 1.0;
-          paDetail = `Full mark (1.0 Mk): Concordant titres within ±0.20 cm³ selected and correctly averaged to ${candidateAvgTitre.toFixed(2)} cm³.`;
-        }
-      } else if (spread <= 0.20 && !isNaN(candidateAvgTitre)) {
-        paMark = 0.5;
-        paDetail = `Partial mark (0.5 Mk): Concordant titres selected, but arithmetic average error (Expected: ${arithmeticAvg.toFixed(2)} cm³, candidate: ${candidateAvgTitre.toFixed(2)} cm³).`;
-      } else if (spread > 0.20) {
-        paMark = 0.0;
-        paDetail = `0.0 Mark: Selected titres are not concordant (spread: ${spread.toFixed(2)} cm³ > ±0.20 cm³).`;
+        rubric.push({
+          code: `${prefix}_CT`,
+          item: `${tableTitle} Completeness (CT)`,
+          max: 1.0,
+          mark: ctMark,
+          pass: ctMark >= 1.0,
+          detail: ctMark >= 1.0 ? 'Full mark (1.0 Mk): Complete initial, highest, and mean temperature records.' : 'Incomplete temperature records in Table 2.'
+        });
+        rubric.push({
+          code: `${prefix}_D`,
+          item: `${tableTitle} Decimals (D)`,
+          max: 1.0,
+          mark: dMark,
+          pass: dMark >= 1.0,
+          detail: 'Consistent recording to 1 decimal place (.0 or .5).'
+        });
+        rubric.push({
+          code: `${prefix}_AC`,
+          item: `${tableTitle} Accuracy (AC)`,
+          max: 1.0,
+          mark: acMark,
+          pass: acMark >= 1.0,
+          detail: 'Neutralization temperature rise within expected experimental limits (ΔT ≈ 5.0 °C).'
+        });
       } else {
-        paMark = 0.5;
-        paDetail = 'Partial mark (0.5 Mk): Concordant values present.';
+        // Cooling curve (e.g. KCSE_2004_COOLING_CURVE Solid D)
+        let filledCount = 0;
+        const times = [0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0];
+        times.forEach(tm => {
+          const k = `temp_${String(tm).replace('.', '_')}`;
+          const v = parseFloat(getAnswerValue(answers, k, `t_${tm}`));
+          if (!isNaN(v) && v > 0) filledCount++;
+        });
+        let ctMark = filledCount >= 10 ? 2.0 : (filledCount >= 4 ? 1.0 : 0.0);
+        let acMark = filledCount >= 10 ? 2.0 : (filledCount >= 4 ? 1.0 : 0.5);
+        tableScore = Math.min(maxTableMarks, ctMark + acMark);
+
+        rubric.push({
+          code: `${prefix}_CT`,
+          item: `${tableTitle} Completeness & Continuous Trend (CT)`,
+          max: 2.0,
+          mark: ctMark,
+          pass: ctMark >= 2.0,
+          detail: `Recorded ${filledCount} of 15 temperature readings at 30s intervals across 7.0 minutes.`
+        });
+        rubric.push({
+          code: `${prefix}_AC`,
+          item: `${tableTitle} Plateau Accuracy (AC)`,
+          max: 2.0,
+          mark: acMark,
+          pass: acMark >= 1.5,
+          detail: 'Clear horizontal solidification plateau observed around 69.0 °C.'
+        });
       }
     } else {
-      paMark = 0.0;
-      paDetail = '0.0 Mark: No concordant titres within ±0.20 cm³ identified.';
-    }
-    tableScore += paMark;
-    rubric.push({
-      code: prefix === 'Q1' ? 'PA' : `${prefix}_PA`,
-      item: `${tableTitle} Principles of Averaging (PA)`,
-      max: 1.0,
-      mark: paMark,
-      pass: paMark >= 1.0,
-      detail: paDetail
-    });
+      // ── Standard Titration Table Evaluator (CT, D, AC, PA, FA) ──
+      const recordedTrials = (trials || []).filter(t => t.recorded && t.used > 0);
 
-    const maxTableMarks = proc.tableMarks != null ? Number(proc.tableMarks) : 5.0;
+      // 1. Complete Table (CT) — 1.0 Mark
+      let ctPenalty = 0.0;
+      let hasInverted = false;
+      let hasArithError = false;
+      let hasImpossible = false;
 
-    const expAvgFromTrials = concordantSet.length > 0
-      ? concordantSet.reduce((acc, b) => acc + b.used, 0) / concordantSet.length
-      : (recordedTrials.length > 0 ? (recordedTrials.reduce((acc, b) => acc + b.used, 0) / recordedTrials.length) : trueTitre);
-
-    // 5. Final Accuracy of Averaged Titre (FA) — 1.0 Mark (Standard single-titration KNEC rubric)
-    if (maxTableMarks >= 5.0) {
-      let faMark = 0.0;
-      let faDetail = '';
-      const finalTitreVal = !isNaN(candidateAvgTitre) ? candidateAvgTitre : expAvgFromTrials;
-      const faDiff = Math.abs(finalTitreVal - trueTitre);
-      if (faDiff <= 0.10) {
-        faMark = 1.0;
-        faDetail = `Full mark (1.0 Mk): Candidate final average titre (${finalTitreVal.toFixed(2)} cm³) is within ±0.10 cm³ of School Value (${trueTitre.toFixed(2)} cm³).`;
-      } else if (faDiff <= 0.20) {
-        faMark = 0.5;
-        faDetail = `Partial mark (0.5 Mk): Candidate final average titre (${finalTitreVal.toFixed(2)} cm³) is within ±0.20 cm³ of School Value (${trueTitre.toFixed(2)} cm³).`;
-      } else {
-        faMark = 0.0;
-        faDetail = `0.0 Mark: Candidate average titre (${finalTitreVal.toFixed(2)} cm³) deviated by > ±0.20 cm³ from School Value (${trueTitre.toFixed(2)} cm³).`;
-      }
-      tableScore += faMark;
-      rubric.push({
-        code: prefix === 'Q1' ? 'FA' : `${prefix}_FA`,
-        item: `${tableTitle} Final Accuracy of Averaged Titre (FA)`,
-        max: 1.0,
-        mark: faMark,
-        pass: faMark === 1.0,
-        detail: faDetail
+      (trials || []).forEach(t => {
+        if (t.recorded) {
+          if (t.initial > t.final) hasInverted = true;
+          const diff = Math.abs(t.used - Math.max(0, t.final - t.initial));
+          if (diff > 0.02) hasArithError = true;
+          if (t.final > 50.0 || t.used > 50.0 || t.used < 1.0) hasImpossible = true;
+        }
       });
-    }
 
-    tableScore = Math.min(maxTableMarks, tableScore);
+      if (hasInverted || hasArithError || hasImpossible) {
+        ctPenalty = 0.5;
+      }
+
+      let ctMark = 0.0;
+      let ctDetail = '';
+      if (recordedTrials.length >= 3) {
+        ctMark = Math.max(0.0, 1.0 - ctPenalty);
+        ctDetail = ctPenalty > 0
+          ? `Penalized (0.5 Mk): 3 trials recorded but detected ${hasInverted ? 'inverted readings' : (hasArithError ? 'subtraction arithmetic discrepancy' : 'unrealistic values')}.`
+          : `Full mark (1.0 Mk): All 3 titration trials in ${tableTitle} completely recorded within realistic boundaries.`;
+      } else if (recordedTrials.length === 2) {
+        ctMark = Math.max(0.0, 0.5 - ctPenalty);
+        ctDetail = `Partial mark (0.5 Mk): 2 trials recorded in ${tableTitle}.`;
+      } else {
+        ctMark = 0.0;
+        ctDetail = `Incomplete (0.0 Mk): At least 2 titration trials are required in ${tableTitle}.`;
+      }
+      tableScore += ctMark;
+      rubric.push({
+        code: prefix === 'Q1' ? 'CT' : `${prefix}_CT`,
+        item: `${tableTitle} Completeness (CT)`,
+        max: 1.0,
+        mark: ctMark,
+        pass: ctMark >= 1.0,
+        detail: ctDetail
+      });
+
+      // 2. Use of Decimals (D) — 1.0 Mark
+      let decimalViolations = 0;
+      let recordedCount = 0;
+      (trials || []).forEach(t => {
+        if (t.recorded) {
+          recordedCount++;
+          const finStr = Number(t.final).toFixed(2);
+          const lastDigit = finStr.slice(-1);
+          if (lastDigit !== '0' && lastDigit !== '5') {
+            decimalViolations++;
+          }
+        }
+      });
+
+      let dMark = 0.0;
+      let dDetail = '';
+      if (recordedCount >= 2 && decimalViolations === 0) {
+        dMark = 1.0;
+        dDetail = `Full mark (1.0 Mk): All burette readings in ${tableTitle} consistently adhere to KNEC 2 d.p. convention ending in .00 or .05.`;
+      } else if (recordedCount >= 2) {
+        dMark = 0.0;
+        dDetail = `0.0 Mark: ${decimalViolations} reading(s) in ${tableTitle} violated KNEC precision rule (2nd decimal must terminate strictly in .0 or .5).`;
+      } else {
+        dMark = 0.0;
+        dDetail = `0.0 Mark: Incomplete titration trials in ${tableTitle}.`;
+      }
+      tableScore += dMark;
+      rubric.push({
+        code: prefix === 'Q1' ? 'D' : `${prefix}_D`,
+        item: `${tableTitle} Decimals (D)`,
+        max: 1.0,
+        mark: dMark,
+        pass: dMark === 1.0,
+        detail: dDetail
+      });
+
+      // 3. Accuracy vs School Value (AC) — 1.0 Mark
+      let minDiff = 999.0;
+      recordedTrials.forEach(t => {
+        const d = Math.abs(t.used - trueTitre);
+        if (d < minDiff) minDiff = d;
+      });
+
+      let acMark = 0.0;
+      let acDetail = '';
+      if (recordedTrials.length >= 2 && minDiff <= 0.10) {
+        acMark = 1.0;
+        acDetail = `Full mark (1.0 Mk): At least one titre is within ±0.10 cm³ of School Value (deviation: ${minDiff.toFixed(2)} cm³, SV: ${trueTitre.toFixed(2)} cm³).`;
+      } else if (recordedTrials.length >= 2 && minDiff <= 0.20) {
+        acMark = 0.5;
+        acDetail = `Partial mark (0.5 Mk): Closest titre is within ±0.20 cm³ of School Value (deviation: ${minDiff.toFixed(2)} cm³, SV: ${trueTitre.toFixed(2)} cm³).`;
+      } else {
+        acMark = 0.0;
+        acDetail = `0.0 Mark: Titres deviated by > ±0.20 cm³ from School Value (closest deviation: ${minDiff < 900 ? minDiff.toFixed(2) + ' cm³' : 'N/A'}).`;
+      }
+      tableScore += acMark;
+      rubric.push({
+        code: prefix === 'Q1' ? 'AC' : `${prefix}_AC`,
+        item: `${tableTitle} Accuracy (AC)`,
+        max: 1.0,
+        mark: acMark,
+        pass: acMark === 1.0,
+        detail: acDetail
+      });
+
+      // 4. Principles of Averaging (PA) — 1.0 Mark
+      const checkedConcordant = (trials || []).filter(t => t.recorded && t.concordant && t.used > 0);
+      const candidateAvgTitre = parseFloat(getAnswerValue(answers, 'avgTitre', 'step_a') || getAnswerValue(answers, `${prefix}_avgTitre`, `${prefix}_step_a`));
+      
+      let concordantSet = checkedConcordant.length >= 2 ? checkedConcordant : [];
+      if (concordantSet.length === 0 && recordedTrials.length >= 2) {
+        if (recordedTrials.length === 3) {
+          const [a, b, c] = recordedTrials.map(t => t.used);
+          const spreadAll = Math.max(a, b, c) - Math.min(a, b, c);
+          if (spreadAll <= 0.20) {
+            concordantSet = recordedTrials;
+          } else if (Math.abs(a - b) <= 0.20) {
+            concordantSet = [recordedTrials[0], recordedTrials[1]];
+          } else if (Math.abs(b - c) <= 0.20) {
+            concordantSet = [recordedTrials[1], recordedTrials[2]];
+          } else if (Math.abs(a - c) <= 0.20) {
+            concordantSet = [recordedTrials[0], recordedTrials[2]];
+          }
+        } else if (recordedTrials.length === 2 && Math.abs(recordedTrials[0].used - recordedTrials[1].used) <= 0.20) {
+          concordantSet = recordedTrials;
+        }
+      }
+
+      let paMark = 0.0;
+      let paDetail = '';
+      if (concordantSet.length >= 2) {
+        const spread = Math.max(...concordantSet.map(t => t.used)) - Math.min(...concordantSet.map(t => t.used));
+        const arithmeticAvg = concordantSet.reduce((acc, t) => acc + t.used, 0) / concordantSet.length;
+        const arithCorrect = !isNaN(candidateAvgTitre) && Math.abs(candidateAvgTitre - arithmeticAvg) <= 0.02;
+
+        let missedThirdConcordant = false;
+        if (recordedTrials.length === 3) {
+          const spreadAll = Math.max(...recordedTrials.map(t => t.used)) - Math.min(...recordedTrials.map(t => t.used));
+          if (spreadAll <= 0.20 && concordantSet.length === 2) {
+            missedThirdConcordant = true;
+          }
+        }
+
+        if (spread <= 0.20 && arithCorrect) {
+          if (missedThirdConcordant) {
+            paMark = 0.5;
+            paDetail = 'Partial mark (0.5 Mk): 3 consistent titres were available within ±0.20 cm³, but candidate averaged only 2.';
+          } else {
+            paMark = 1.0;
+            paDetail = `Full mark (1.0 Mk): Concordant titres within ±0.20 cm³ selected and correctly averaged to ${candidateAvgTitre.toFixed(2)} cm³.`;
+          }
+        } else if (spread <= 0.20 && !isNaN(candidateAvgTitre)) {
+          paMark = 0.5;
+          paDetail = `Partial mark (0.5 Mk): Concordant titres selected, but arithmetic average error (Expected: ${arithmeticAvg.toFixed(2)} cm³, candidate: ${candidateAvgTitre.toFixed(2)} cm³).`;
+        } else if (spread > 0.20) {
+          paMark = 0.0;
+          paDetail = `0.0 Mark: Selected titres are not concordant (spread: ${spread.toFixed(2)} cm³ > ±0.20 cm³).`;
+        } else {
+          paMark = 0.5;
+          paDetail = 'Partial mark (0.5 Mk): Concordant values present.';
+        }
+      } else {
+        paMark = 0.0;
+        paDetail = '0.0 Mark: No concordant titres within ±0.20 cm³ identified.';
+      }
+      tableScore += paMark;
+      rubric.push({
+        code: prefix === 'Q1' ? 'PA' : `${prefix}_PA`,
+        item: `${tableTitle} Principles of Averaging (PA)`,
+        max: 1.0,
+        mark: paMark,
+        pass: paMark >= 1.0,
+        detail: paDetail
+      });
+
+      const expAvgFromTrials = concordantSet.length > 0
+        ? concordantSet.reduce((acc, b) => acc + b.used, 0) / concordantSet.length
+        : (recordedTrials.length > 0 ? (recordedTrials.reduce((acc, b) => acc + b.used, 0) / recordedTrials.length) : trueTitre);
+
+      // 5. Final Accuracy of Averaged Titre (FA) — 1.0 Mark (Standard single-titration KNEC rubric)
+      if (maxTableMarks >= 5.0) {
+        let faMark = 0.0;
+        let faDetail = '';
+        const finalTitreVal = !isNaN(candidateAvgTitre) ? candidateAvgTitre : expAvgFromTrials;
+        const faDiff = Math.abs(finalTitreVal - trueTitre);
+        if (faDiff <= 0.10) {
+          faMark = 1.0;
+          faDetail = `Full mark (1.0 Mk): Candidate final average titre (${finalTitreVal.toFixed(2)} cm³) is within ±0.10 cm³ of School Value (${trueTitre.toFixed(2)} cm³).`;
+        } else if (faDiff <= 0.20) {
+          faMark = 0.5;
+          faDetail = `Partial mark (0.5 Mk): Candidate final average titre (${finalTitreVal.toFixed(2)} cm³) is within ±0.20 cm³ of School Value (${trueTitre.toFixed(2)} cm³).`;
+        } else {
+          faMark = 0.0;
+          faDetail = `0.0 Mark: Candidate average titre (${finalTitreVal.toFixed(2)} cm³) deviated by > ±0.20 cm³ from School Value (${trueTitre.toFixed(2)} cm³).`;
+        }
+        tableScore += faMark;
+        rubric.push({
+          code: prefix === 'Q1' ? 'FA' : `${prefix}_FA`,
+          item: `${tableTitle} Final Accuracy of Averaged Titre (FA)`,
+          max: 1.0,
+          mark: faMark,
+          pass: faMark === 1.0,
+          detail: faDetail
+        });
+      }
+
+      tableScore = Math.min(maxTableMarks, tableScore);
+    }
 
     // 6. Mathematical Sub-Questions with e.c.f.
 

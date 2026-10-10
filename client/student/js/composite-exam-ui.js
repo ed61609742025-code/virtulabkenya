@@ -85,6 +85,30 @@ requireStudentLogin();
     window.escapeHtml = escapeHtml;
   }
 
+  function cleanQuestionTitle(rawTitle, qNum) {
+    if (!rawTitle || typeof rawTitle !== 'string') return `Question ${qNum}`;
+    let clean = rawTitle.trim();
+    clean = clean.replace(/^(?:Question\s+\d+|Q\d+)[\s:\-–—]+/i, '').trim();
+    clean = clean.replace(/\s*\(\s*\d+(?:\.\d+)?\s*(?:Marks?|Mks)\s*\)$/i, '').trim();
+    return clean || `Question ${qNum}`;
+  }
+  window.cleanQuestionTitle = cleanQuestionTitle;
+
+  function getShortQuestionTitle(rawTitle, qNum, simType) {
+    const clean = cleanQuestionTitle(rawTitle, qNum);
+    const firstPart = clean.split(/[—–:\-]/)[0].trim();
+    if (firstPart.length > 0 && firstPart.length <= 26) return firstPart;
+    if (simType === 'titration') return 'Volumetric Analysis';
+    if (simType === 'qualitative') return 'Qualitative Analysis';
+    if (simType === 'organic') return 'Organic Analysis';
+    if (simType === 'energy') return 'Thermochemistry';
+    if (simType === 'rates') return 'Reaction Kinetics';
+    if (simType === 'gas') return 'Gas Chemistry';
+    if (simType === 'solubility') return 'Solubility Practical';
+    return firstPart.slice(0, 24);
+  }
+  window.getShortQuestionTitle = getShortQuestionTitle;
+
   function setElemText(id, text) {
     const el = document.getElementById(id);
     if (el) el.textContent = (text !== undefined && text !== null) ? String(text) : '';
@@ -251,6 +275,196 @@ requireStudentLogin();
   }
   window.renderQ1ProcedureFlow = renderQ1ProcedureFlow;
 
+  function onEnergyTableInputChanged(field, value, procIdx) {
+    if (typeof procIdx !== 'number') procIdx = activeProcedureIndex;
+    const numVal = parseFloat(value);
+    const storedVal = !isNaN(numVal) ? numVal : value;
+    engine.setQ1Answer(field, storedVal, procIdx);
+
+    const pAnswers = (engine.procedureStates && engine.procedureStates[procIdx] && engine.procedureStates[procIdx].answers) || engine.q1Answers || {};
+
+    // Auto calculate mean T0 if T1 and T2 are present
+    if (field === 't1' || field === 't2') {
+      const t1 = parseFloat(pAnswers['t1']);
+      const t2 = parseFloat(pAnswers['t2']);
+      if (!isNaN(t1) && !isNaN(t2)) {
+        const t0 = parseFloat(((t1 + t2) / 2).toFixed(1));
+        const t0Input = document.getElementById('ans_energy_t0');
+        if (t0Input && !t0Input.value) {
+          t0Input.value = t0.toFixed(1);
+          engine.setQ1Answer('t0', t0, procIdx);
+        }
+      }
+    }
+
+    // Auto calculate deltaT if T_max and T0 are present
+    if (field === 'tMax' || field === 't0') {
+      const t0 = parseFloat(pAnswers['t0']);
+      const tMax = parseFloat(pAnswers['tMax']);
+      if (!isNaN(t0) && !isNaN(tMax)) {
+        const dt = parseFloat((tMax - t0).toFixed(1));
+        const dtInput = document.getElementById('ans_energy_deltaT');
+        if (dtInput && !dtInput.value) {
+          dtInput.value = dt.toFixed(1);
+          engine.setQ1Answer('deltaT', dt, procIdx);
+          engine.setQ1Answer('tempRise', dt, procIdx);
+          engine.setQ1Answer('step_2a', dt, procIdx);
+          const qInput = document.getElementById('ans_proc_' + procIdx + '_step_2a') || document.getElementById('ans_proc_' + procIdx + '_tempRise');
+          if (qInput && !qInput.value) qInput.value = dt.toFixed(1);
+        }
+      }
+    }
+    updateLiveScoreDisplay();
+    saveExamDraft();
+  }
+  window.onEnergyTableInputChanged = onEnergyTableInputChanged;
+
+  function getEnergyWorkbenchHtml(proc, procIdx) {
+    const scenarioKey = proc.scenarioKey || (proc.title && /cooling/i.test(proc.title) ? 'KCSE_2004_COOLING_CURVE' : 'KCSE_2005_NEUTRALIZATION');
+    const simUrl = `/student/energy.html?scenario=${encodeURIComponent(scenarioKey)}&embed=true`;
+
+    return `
+      <div class="q1-part-header">
+        <div class="q1-part-title">
+          <span>🔥</span>
+          <span>${escapeHtml(proc.title || 'Thermochemistry Laboratory Bench')}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="q1-part-badge badge-amber">${Number(proc.marks || 8).toFixed(1)} Marks Allocated</span>
+          <a href="${simUrl}" target="_blank" class="btn btn-sm btn-secondary" style="font-size:0.75rem;padding:4px 10px;text-decoration:none;font-weight:700;" title="Open simulator in dedicated tab if needed">
+            ↗ Open Full Window
+          </a>
+        </div>
+      </div>
+
+      <div class="exam-prompt-box" style="margin:16px; font-size:0.88rem; line-height:1.6; white-space:pre-wrap;">
+        <b>Apparatus &amp; Practical Objectives:</b><br>
+        ${escapeHtml(proc.instructions || 'Measure volumes using measuring cylinders and record temperatures carefully using the precision thermometer.')}
+      </div>
+
+      <div style="margin:0 16px 16px 16px; border-radius:12px; overflow:hidden; border:1.5px solid var(--card-border); background:#0B132B; box-shadow:0 4px 20px rgba(0,0,0,0.3); position:relative;">
+        <iframe
+          src="${simUrl}"
+          style="width:100%; height:750px; border:none; display:block;"
+          title="${escapeHtml(proc.title || 'Thermochemistry Simulation')}"
+          allow="fullscreen"
+        ></iframe>
+      </div>
+    `;
+  }
+
+  function getNeutralizationTableHtml(proc, procIdx) {
+    const pAnswers = (engine.procedureStates && engine.procedureStates[procIdx] && engine.procedureStates[procIdx].answers) || engine.q1Answers || {};
+    const t1Val = pAnswers['t1'] !== undefined ? pAnswers['t1'] : '';
+    const t2Val = pAnswers['t2'] !== undefined ? pAnswers['t2'] : '';
+    const t0Val = pAnswers['t0'] !== undefined ? pAnswers['t0'] : '';
+    const tMaxVal = pAnswers['tMax'] !== undefined ? pAnswers['tMax'] : '';
+    const dtVal = pAnswers['deltaT'] !== undefined ? pAnswers['deltaT'] : (pAnswers['tempRise'] !== undefined ? pAnswers['tempRise'] : '');
+
+    return `
+      <div class="q1-part-header">
+        <div class="q1-part-title">
+          <span>📊</span>
+          <span id="q1TableTitle">${escapeHtml(proc.tableTitle || 'Table 2: Temperature Changes on Neutralization')} (${Number(proc.tableMarks || 3).toFixed(1)} Marks)</span>
+        </div>
+        <span class="q1-part-badge badge-emerald">${Number(proc.tableMarks || 3).toFixed(1)} Marks Allocated</span>
+      </div>
+
+      <div style="padding:14px; background:rgba(14,165,233,0.08); border:1px solid rgba(14,165,233,0.25); border-radius:8px; margin:0 16px 14px 16px; font-size:0.84rem; color:var(--text-muted); line-height:1.5;">
+        💡 <b>Data Entry Instruction:</b> Record all thermometer temperatures steadily to 1 decimal place (e.g. <code>23.5</code> or <code>28.5</code> °C).
+      </div>
+
+      <div class="knec-table-scroll-wrap" style="padding:0 16px 16px 16px;">
+        <table class="knec-titration-table" style="margin-bottom:0; max-width:700px;">
+          <thead>
+            <tr>
+              <th style="width:65%;">Thermometric Measurement</th>
+              <th style="text-align:center; width:35%;">Recorded Reading (°C)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Initial steady temperature of Acid Solution L, T₁ (°C)</b></td>
+              <td>
+                <input type="number" step="0.1" id="ans_energy_t1" class="calc-input energy-table-input" style="text-align:center;" placeholder="e.g. 23.5" value="${escapeHtml(t1Val)}" oninput="onEnergyTableInputChanged('t1', this.value, ${procIdx})" onchange="onEnergyTableInputChanged('t1', this.value, ${procIdx})">
+              </td>
+            </tr>
+            <tr>
+              <td><b>Initial steady temperature of NaOH Solution K, T₂ (°C)</b></td>
+              <td>
+                <input type="number" step="0.1" id="ans_energy_t2" class="calc-input energy-table-input" style="text-align:center;" placeholder="e.g. 23.5" value="${escapeHtml(t2Val)}" oninput="onEnergyTableInputChanged('t2', this.value, ${procIdx})" onchange="onEnergyTableInputChanged('t2', this.value, ${procIdx})">
+              </td>
+            </tr>
+            <tr style="background:var(--card-bg-hover);">
+              <td><b>Mean initial temperature, T₀ = (T₁ + T₂) / 2 (°C)</b></td>
+              <td>
+                <input type="number" step="0.1" id="ans_energy_t0" class="calc-input energy-table-input" style="text-align:center; font-weight:800;" placeholder="e.g. 23.5" value="${escapeHtml(t0Val)}" oninput="onEnergyTableInputChanged('t0', this.value, ${procIdx})" onchange="onEnergyTableInputChanged('t0', this.value, ${procIdx})">
+              </td>
+            </tr>
+            <tr>
+              <td><b>Highest temperature reached by mixture, T_max (°C)</b></td>
+              <td>
+                <input type="number" step="0.1" id="ans_energy_tMax" class="calc-input energy-table-input" style="text-align:center;" placeholder="e.g. 28.5" value="${escapeHtml(tMaxVal)}" oninput="onEnergyTableInputChanged('tMax', this.value, ${procIdx})" onchange="onEnergyTableInputChanged('tMax', this.value, ${procIdx})">
+              </td>
+            </tr>
+            <tr style="background:var(--card-bg-hover);">
+              <td><b>Temperature change, ΔT = T_max - T₀ (°C)</b></td>
+              <td>
+                <input type="number" step="0.1" id="ans_energy_deltaT" class="calc-input energy-table-input" style="text-align:center; font-weight:800; color:var(--cyan-accent);" placeholder="e.g. 5.0" value="${escapeHtml(dtVal)}" oninput="onEnergyTableInputChanged('deltaT', this.value, ${procIdx})" onchange="onEnergyTableInputChanged('deltaT', this.value, ${procIdx})">
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  function getCoolingCurveTableHtml(proc, procIdx) {
+    const pAnswers = (engine.procedureStates && engine.procedureStates[procIdx] && engine.procedureStates[procIdx].answers) || engine.q1Answers || {};
+    const times = [0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0];
+
+    const rowsHtml = times.map(tm => {
+      const k = `temp_${String(tm).replace('.', '_')}`;
+      const val = pAnswers[k] !== undefined ? pAnswers[k] : '';
+      return `
+        <tr>
+          <td style="text-align:center; font-weight:700; font-family:var(--font-mono);">${tm.toFixed(1)}</td>
+          <td style="text-align:center;">
+            <input type="number" step="0.5" id="ans_energy_${k}" class="calc-input energy-table-input" style="text-align:center;" placeholder="e.g. ${tm === 0 ? '85.0' : (tm >= 2 && tm <= 4 ? '69.0' : '65.0')}" value="${escapeHtml(val)}" oninput="onEnergyTableInputChanged('${k}', this.value, ${procIdx})" onchange="onEnergyTableInputChanged('${k}', this.value, ${procIdx})">
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    return `
+      <div class="q1-part-header">
+        <div class="q1-part-title">
+          <span>📊</span>
+          <span id="q1TableTitle">${escapeHtml(proc.tableTitle || 'Table 1: Temperature Readings for Cooling of Solid D')} (${Number(proc.tableMarks || 4).toFixed(1)} Marks)</span>
+        </div>
+        <span class="q1-part-badge badge-emerald">${Number(proc.tableMarks || 4).toFixed(1)} Marks Allocated</span>
+      </div>
+
+      <div style="padding:14px; background:rgba(14,165,233,0.08); border:1px solid rgba(14,165,233,0.25); border-radius:8px; margin:0 16px 14px 16px; font-size:0.84rem; color:var(--text-muted); line-height:1.5;">
+        💡 <b>Data Entry Instruction:</b> Record temperature readings in the table every 30 seconds (0.5 min) as Solid D cools. Readings should show steady cooling to the freezing plateau at 69.0 °C.
+      </div>
+
+      <div class="knec-table-scroll-wrap" style="padding:0 16px 16px 16px;">
+        <table class="knec-titration-table" style="margin-bottom:0; max-width:600px;">
+          <thead>
+            <tr>
+              <th style="text-align:center; width:50%;">Time (Minutes)</th>
+              <th style="text-align:center; width:50%;">Temperature of Solid D (°C)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsHtml}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
   function switchTitrationProcedure(procIdx) {
     stopTitrate();
     activeProcedureIndex = procIdx;
@@ -261,6 +475,16 @@ requireStudentLogin();
 
     const proc = engine.preset.q1.procedures[procIdx] || {};
     const totalProcs = engine.preset.q1.procedures.length;
+
+    // Cache initial volumetric bench and table HTML if not already cached
+    const q1Part2Card = document.getElementById('q1Part2Card');
+    const q1Part3Card = document.getElementById('q1Part3Card');
+    if (!window._originalQ1Part2Html && q1Part2Card && q1Part2Card.querySelector('.q1-action-console')) {
+      window._originalQ1Part2Html = q1Part2Card.innerHTML;
+    }
+    if (!window._originalQ1Part3Html && q1Part3Card && q1Part3Card.querySelector('#t1Final')) {
+      window._originalQ1Part3Html = q1Part3Card.innerHTML;
+    }
 
     // Update Procedure Selector Buttons
     for (let i = 0; i < totalProcs; i++) {
@@ -283,54 +507,81 @@ requireStudentLogin();
     }
     renderQ1ProcedureFlow(proc.instructions, proc.procedureSteps, proc);
 
-    // Update Reagents Shelf
-    const titrantChip = document.getElementById('q1TitrantChip');
-    if (titrantChip) {
-      const solA = proc.solutionA || '';
-      titrantChip.textContent = `Titrant: ${solA ? solA.split(' ')[0] : 'Acid'}`;
-    }
-    const indicatorChip = document.getElementById('q1IndicatorChip');
-    if (indicatorChip) {
-      indicatorChip.textContent = `Indicator: ${proc.indicator || 'Phenolphthalein'}`;
-    }
-    const pipStatus = document.getElementById('pipetteStatus');
-    if (pipStatus) {
-      pipStatus.textContent = 'Not Pipetted';
-      pipStatus.style.color = 'var(--text-muted)';
-      pipStatus.style.borderColor = 'var(--card-border)';
-      pipStatus.style.background = 'var(--bg-dark)';
-    }
-    const indStatus = document.getElementById('indicatorStatus');
-    if (indStatus) {
-      indStatus.textContent = '0 Drops Added';
-      indStatus.style.color = 'var(--text-muted)';
-      indStatus.style.borderColor = 'var(--card-border)';
-      indStatus.style.background = 'var(--bg-dark)';
-    }
+    if (proc.simulationType === 'energy') {
+      // ── Render Thermochemistry Bench & Dynamic Temperature Table ──
+      if (q1Part2Card) {
+        q1Part2Card.innerHTML = getEnergyWorkbenchHtml(proc, procIdx);
+      }
+      if (q1Part3Card) {
+        const isNeutralization = proc.scenarioKey === 'KCSE_2005_NEUTRALIZATION' || proc.tableType === 'neutralization_temp' || (proc.title && /neutralization|enthalpy/i.test(proc.title));
+        q1Part3Card.innerHTML = isNeutralization ? getNeutralizationTableHtml(proc, procIdx) : getCoolingCurveTableHtml(proc, procIdx);
+      }
+    } else {
+      // ── Restore Volumetric Titration Bench & Table 1 ──
+      if (q1Part2Card && window._originalQ1Part2Html) {
+        if (!q1Part2Card.querySelector('.q1-action-console')) {
+          q1Part2Card.innerHTML = window._originalQ1Part2Html;
+        }
+      }
+      if (q1Part3Card && window._originalQ1Part3Html) {
+        if (!q1Part3Card.querySelector('#t1Final')) {
+          q1Part3Card.innerHTML = window._originalQ1Part3Html;
+        }
+      }
 
-    // Update Table Title & Record Button Target
-    const tableTitleEl = document.getElementById('q1TableTitle');
-    if (tableTitleEl) {
-      tableTitleEl.textContent = `${proc.tableTitle || `Table ${procIdx + 1}: Titration Results`} (${Number(proc.tableMarks || 4).toFixed(1)} Marks)`;
-    }
-    const lblActiveTable = document.getElementById('lblActiveTable');
-    if (lblActiveTable) {
-      lblActiveTable.textContent = `Table ${procIdx + 1}`;
-    }
+      // Update Reagents Shelf
+      const titrantChip = document.getElementById('q1TitrantChip');
+      if (titrantChip) {
+        const solA = proc.solutionA || '';
+        titrantChip.textContent = `Titrant: ${solA ? solA.split(' ')[0] : 'Acid'}`;
+      }
+      const indicatorChip = document.getElementById('q1IndicatorChip');
+      if (indicatorChip) {
+        indicatorChip.textContent = `Indicator: ${proc.indicator || 'Phenolphthalein'}`;
+      }
+      const pipStatus = document.getElementById('pipetteStatus');
+      if (pipStatus) {
+        pipStatus.textContent = 'Not Pipetted';
+        pipStatus.style.color = 'var(--text-muted)';
+        pipStatus.style.borderColor = 'var(--card-border)';
+        pipStatus.style.background = 'var(--bg-dark)';
+      }
+      const indStatus = document.getElementById('indicatorStatus');
+      if (indStatus) {
+        indStatus.textContent = '0 Drops Added';
+        indStatus.style.color = 'var(--text-muted)';
+        indStatus.style.borderColor = 'var(--card-border)';
+        indStatus.style.background = 'var(--bg-dark)';
+      }
 
-    // Load saved trials for this procedure
-    const pTrials = engine.getProcedureTrials(procIdx);
-    [1, 2, 3].forEach(n => {
-      const t = (pTrials && pTrials[n - 1]) || {};
-      const finEl = document.getElementById(`t${n}Final`);
-      const initEl = document.getElementById(`t${n}Init`);
-      const usedEl = document.getElementById(`t${n}Used`);
-      const concEl = document.getElementById(`t${n}Concordant`);
-      if (finEl) finEl.value = t.recorded && t.final ? Number(t.final).toFixed(2) : '';
-      if (initEl) initEl.value = t.recorded ? Number(t.initial).toFixed(2) : '0.00';
-      if (usedEl) usedEl.textContent = t.recorded && t.used ? Number(t.used).toFixed(2) : '0.00';
-      if (concEl) concEl.checked = !!t.concordant;
-    });
+      // Update Table Title & Record Button Target
+      const tableTitleEl = document.getElementById('q1TableTitle');
+      if (tableTitleEl) {
+        tableTitleEl.textContent = `${proc.tableTitle || `Table ${procIdx + 1}: Titration Results`} (${Number(proc.tableMarks || 4).toFixed(1)} Marks)`;
+      }
+      const lblActiveTable = document.getElementById('lblActiveTable');
+      if (lblActiveTable) {
+        lblActiveTable.textContent = `Table ${procIdx + 1}`;
+      }
+
+      // Load saved trials for this procedure
+      const pTrials = engine.getProcedureTrials(procIdx);
+      [1, 2, 3].forEach(n => {
+        const t = (pTrials && pTrials[n - 1]) || {};
+        const finEl = document.getElementById(`t${n}Final`);
+        const initEl = document.getElementById(`t${n}Init`);
+        const usedEl = document.getElementById(`t${n}Used`);
+        const concEl = document.getElementById(`t${n}Concordant`);
+        if (finEl) finEl.value = t.recorded && t.final ? Number(t.final).toFixed(2) : '';
+        if (initEl) initEl.value = t.recorded ? Number(t.initial).toFixed(2) : '0.00';
+        if (usedEl) usedEl.textContent = t.recorded && t.used ? Number(t.used).toFixed(2) : '0.00';
+        if (concEl) concEl.checked = !!t.concordant;
+      });
+
+      // Reset apparatus for fresh titration in this procedure
+      resetTitrationApparatus();
+      updateConcordancyFeedbackHUD();
+    }
 
     // Update Calculations for this procedure
     renderQ1CalculationsForProcedure(procIdx);
@@ -346,10 +597,6 @@ requireStudentLogin();
         btnProceed.onclick = () => switchTitrationProcedure(procIdx + 1);
       }
     }
-
-    // Reset apparatus for fresh titration in this procedure
-    resetTitrationApparatus();
-    updateConcordancyFeedbackHUD();
   }
 
   // Track dynamic stages for Question 2 & 3 test cards
@@ -416,7 +663,7 @@ requireStudentLogin();
         <div>
           <span class="badge" style="background:var(--cyan-bg);color:var(--cyan-accent);font-weight:800;font-size:0.75rem;">${spec.badge}</span>
           <h2 style="font-size:1.2rem;font-weight:800;color:var(--heading-color);margin:4px 0 0;font-family:var(--font-heading);">
-            QUESTION ${q.number}: ${escapeHtml(q.title || spec.title)}
+            QUESTION ${q.number}: ${escapeHtml(cleanQuestionTitle(q.title || spec.title, q.number))}
           </h2>
         </div>
         <div style="display:flex;align-items:center;gap:10px;">
@@ -451,7 +698,7 @@ requireStudentLogin();
       tabsContainer.innerHTML = questions.map(q => {
         const icon = getSimulationTypeIcon(q.simulationType);
         const isActive = q.number === activeNum;
-        const qTitle = escapeHtml(q.title || `Question ${q.number}`);
+        const qTitle = escapeHtml(cleanQuestionTitle(q.title, q.number));
         const qMarks = Number(q.marks || 10).toFixed(1);
         return `
           <button class="exam-tab-btn ${isActive ? 'active' : ''}" id="btnQ${q.number}" onclick="switchQTab(${q.number})">
@@ -469,7 +716,7 @@ requireStudentLogin();
         const icon = getSimulationTypeIcon(q.simulationType);
         const isActive = q.number === activeNum;
         const isCompleted = q.number < activeNum;
-        const shortTitle = escapeHtml(q.title ? q.title.split(':')[0].trim() : `Q${q.number}`);
+        const shortTitle = escapeHtml(getShortQuestionTitle(q.title, q.number, q.simulationType));
         const targetMins = Math.max(15, Math.round(((Number(q.marks) || 10) / totalMarks) * totalExamMins));
         const statusClass = isActive ? 'active' : (isCompleted ? 'completed' : '');
 
@@ -529,7 +776,7 @@ requireStudentLogin();
             pane.innerHTML = window._initialPaneTemplates.paneQ1;
           }
           const titleEl = document.getElementById('q1SectionTitle');
-          if (titleEl) titleEl.innerHTML = `🧪 QUESTION ${q.number}: ${escapeHtml(q.title || 'Volumetric Analysis')}`;
+          if (titleEl) titleEl.innerHTML = `🧪 QUESTION ${q.number}: ${escapeHtml(cleanQuestionTitle(q.title || 'Volumetric Analysis', q.number))}`;
           const badgeEl = document.getElementById('q1MarksBadge');
           if (badgeEl) badgeEl.textContent = `${Number(q.marks || 15).toFixed(1)} MARKS`;
 
@@ -546,7 +793,7 @@ requireStudentLogin();
             pane.innerHTML = window._initialPaneTemplates.paneQ2;
           }
           const h2 = document.getElementById('q2HeadingTitle');
-          if (h2) h2.innerHTML = `🧂 QUESTION ${q.number}: ${escapeHtml(q.title || 'Inorganic Qualitative Analysis')}`;
+          if (h2) h2.innerHTML = `🧂 QUESTION ${q.number}: ${escapeHtml(cleanQuestionTitle(q.title || 'Inorganic Qualitative Analysis', q.number))}`;
           const mBadge = document.getElementById('q2MarksBadge');
           if (mBadge) mBadge.textContent = `${Number(q.marks || 15).toFixed(1)} MARKS`;
           renderQ2TestsGrid();
@@ -580,19 +827,28 @@ requireStudentLogin();
         cfg?.examConfig?.q3?.trueSaltKey ||
         cfg?.q3?.trueSaltKey
       );
+
+      let q1Marks = Number(cfg?.examConfig?.q1?.marks || cfg?.q1?.marks || 15);
+      const multiQ1 = (cfg?.examConfig?.q1?.hasMultipleProcedures && cfg?.examConfig?.q1?.procedures) ||
+                      (cfg?.q1?.hasMultipleProcedures && cfg?.q1?.procedures);
+      if (Array.isArray(multiQ1) && multiQ1.length > 0) {
+        const sumProcs = multiQ1.reduce((sum, p) => sum + (Number(p.marks) || 0), 0);
+        if (sumProcs > 0) q1Marks = sumProcs;
+      }
+
       questions = [
         {
           number: 1,
           title: cfg?.examConfig?.q1?.title || cfg?.q1?.title || 'Volumetric Analysis',
           simulationType: 'titration',
-          marks: Number(cfg?.examConfig?.q1?.marks || cfg?.q1?.marks || 15),
+          marks: q1Marks,
           config: cfg?.examConfig?.q1 || cfg?.q1 || {}
         },
         {
           number: 2,
           title: cfg?.examConfig?.q2?.title || cfg?.q2?.title || (isQ2Org ? 'Organic Functional Group Analysis' : 'Qualitative Inorganic Analysis'),
           simulationType: isQ2Org ? 'organic' : 'qualitative',
-          marks: Number(cfg?.examConfig?.q2?.marks || cfg?.q2?.marks || (isQ2Org ? 10 : 15)),
+          marks: Number(cfg?.examConfig?.q2?.marks || cfg?.q2?.marks || (isQ2Org ? 10 : 10)),
           config: cfg?.examConfig?.q2 || cfg?.q2 || {}
         },
         {
@@ -631,9 +887,9 @@ requireStudentLogin();
       });
     });
 
-    // Gather Dynamic Calculation Inputs
+    // Gather Dynamic Calculation Inputs & Energy Table Inputs
     const calcAnswers = {};
-    document.querySelectorAll('.dynamic-calc-input').forEach(input => {
+    document.querySelectorAll('.dynamic-calc-input, .energy-table-input').forEach(input => {
       if (input.id && input.value !== '') {
         calcAnswers[input.id] = input.value;
       }

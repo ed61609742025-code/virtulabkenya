@@ -4218,6 +4218,242 @@ const COMPOSITE_EXAM_PRESETS = {
         }
       ]
     }
+  },
+
+  // ── Series 1989: Official KCSE 1989 Standard Chemistry Practical (Paper 233/3) ──
+  series_1989: {
+    id: 'series_1989',
+    seriesKey: 'series_1989',
+    seriesNumber: 1989,
+    title: 'KCSE 1989 Standard Chemistry Practical Examination',
+    badgeText: 'KCSE 1989 Past National Paper · NaOH Standardization, HCl Dilution & Mohr Salt Analysis',
+    durationMinutes: 135,
+    q1: {
+      type: 'titration',
+      calcType: 'standard_molarity',
+      title: 'Question 1: Volumetric Analysis — Standardization of NaOH & Acid Dilution (15.0 Marks)',
+      solutionA: 'Sodium Hydroxide (NaOH) Solution W₁₂',
+      solutionB: '0.050 M Dibasic Acid (H₂C₂O₄·2H₂O) Solution W₁₁',
+      acidFormula: 'H2C2O4',
+      baseFormula: 'NaOH',
+      indicator: 'Phenolphthalein',
+      pipetteVolume: 25.0,
+      trueAcidMolarity: 0.050,
+      trueBaseMolarity: 0.100,
+      trueTitre: 25.00,
+      moleRatioAcid: 1,
+      moleRatioBase: 2,
+      acidRfm: 126.0,
+      baseRfm: 40.0,
+      titrantColor: '#38BDF8',
+      flaskBaseColor: 'rgba(255,255,255,0.2)',
+      flaskIndicatorColor: 'rgba(255,255,255,0.2)',
+      endpointColor: 'rgba(236,72,153,0.5)',
+      overtitratedColor: 'rgba(219,39,119,0.9)',
+      equation: 'H₂C₂O₄(aq) + 2NaOH(aq) → Na₂C₂O₄(aq) + 2H₂O(l)',
+      instructions: 'Fill the burette with Sodium Hydroxide Solution W₁₂. Pipette 25.0 cm³ of 0.050 M Dibasic Acid Solution W₁₁ into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with Solution W₁₂ until the colourless solution turns to the first permanent faint pink colour.',
+      questions: [
+        {
+          id: 'step_a',
+          letter: 'a',
+          field: 'avgTitre',
+          label: 'Calculate the average volume of NaOH Solution W₁₂ used, V₁',
+          marks: 1.0,
+          marksLabel: '(1.0 Mark)',
+          placeholder: 'e.g. 25.00',
+          step: '0.01',
+          unit: 'cm³',
+          calcTheoretical: (ctx) => ctx.trueTitre,
+          calcEcf: (ctx) => ctx.expAvgFromTrials,
+          check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
+          feedbackSuccess: (val) => `✓ Correct: V₁ = ${val.toFixed(2)} cm³.`,
+          feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
+          working: (ctx) => `<b>(a) Average Titre:</b> V₁ = <b>${ctx.v1.toFixed(2)} cm³</b>`
+        },
+        {
+          id: 'step_b',
+          letter: 'b',
+          field: 'molarityW11',
+          label: 'Calculate the molar concentration of dibasic acid Solution W₁₁ (prepared by dissolving 6.30 g H₂C₂O₄·2H₂O per litre, RFM = 126.0)',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 0.050',
+          step: '0.001',
+          unit: 'mol/dm³',
+          calcTheoretical: () => 0.050,
+          calcEcf: () => 0.050,
+          check: (val) => Math.abs(val - 0.050) <= 0.005,
+          feedbackSuccess: (val) => `✓ Correct: Molarity of Solution W₁₁ = ${val} mol/dm³.`,
+          feedbackFail: () => `Formula: Mass concentration (6.30 g/dm³) / RFM (126.0) = 0.050 mol/dm³.`,
+          working: () => `<b>(b) Molarity of Solution W₁₁:</b> 6.30 / 126.0 = <b>0.050 mol/dm³</b>`
+        },
+        {
+          id: 'step_c',
+          letter: 'c',
+          field: 'molesNaohW12',
+          label: 'Calculate the moles of NaOH in V₁ that reacted with 25.0 cm³ of Solution W₁₁ (Mole ratio H₂A : NaOH = 1 : 2)',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 0.00250',
+          step: '0.00001',
+          unit: 'moles of NaOH',
+          calcTheoretical: () => 0.00250,
+          calcEcf: (ctx) => {
+            const mW = parseFloat(getAnswerValue(ctx.answers, 'molarityW11', 'step_b')) || 0.050;
+            return ((mW * 25.0) / 1000.0) * 2.0;
+          },
+          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+          feedbackSuccess: (val) => `✓ Correct: ${val} moles of NaOH.`,
+          feedbackFail: (ctx, expTheo) => `Formula: ((Molarity W₁₁ × 25.0) / 1000) × 2 = ${expTheo.toFixed(5)} mol.`,
+          working: () => `<b>(c) Moles of NaOH in V₁:</b> ((0.050 × 25.0) / 1000) × 2 = <b>0.00250 mol</b>`
+        },
+        {
+          id: 'step_d',
+          letter: 'd',
+          field: 'molarityNaohW12',
+          label: 'Calculate the molar concentration (molarity) of NaOH Solution W₁₂ in mol/dm³',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 0.100',
+          step: '0.001',
+          unit: 'mol/dm³ (M)',
+          calcTheoretical: (ctx) => (0.00250 * 1000.0) / ctx.trueTitre,
+          calcEcf: (ctx) => {
+            const mB = parseFloat(getAnswerValue(ctx.answers, 'molesNaohW12', 'step_c')) || 0.00250;
+            const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_a')) || ctx.trueTitre;
+            return (mB * 1000.0) / v1;
+          },
+          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+          feedbackSuccess: (val) => `✓ Correct: Molarity of Solution W₁₂ = ${val} mol/dm³.`,
+          feedbackFail: (ctx, expTheo) => `Formula: (Moles of NaOH × 1000) / V₁ = ${expTheo.toFixed(3)} mol/dm³.`,
+          working: (ctx) => `<b>(d) Molarity of Solution W₁₂:</b> (0.00250 × 1000) / ${ctx.v1.toFixed(2)} = <b>0.100 mol/dm³</b>`
+        },
+        {
+          id: 'step_e',
+          letter: 'e',
+          field: 'molarityDilutedHcl',
+          label: 'In Part II, 25.0 cm³ of standardized NaOH Solution W₁₂ required 23.15 cm³ of diluted HCl Solution W₁₀. Calculate the molarity of Solution W₁₀ (Mole ratio 1 : 1)',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 0.108',
+          step: '0.001',
+          unit: 'mol/dm³',
+          calcTheoretical: () => (0.100 * 25.0) / 23.15,
+          calcEcf: (ctx) => {
+            const mB = parseFloat(getAnswerValue(ctx.answers, 'molarityNaohW12', 'step_d')) || 0.100;
+            return (mB * 25.0) / 23.15;
+          },
+          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+          feedbackSuccess: (val) => `✓ Correct: Molarity of diluted HCl W₁₀ = ${val} mol/dm³.`,
+          feedbackFail: (ctx, expTheo) => `Formula: (Molarity W₁₂ × 25.0) / 23.15 = ${expTheo.toFixed(3)} mol/dm³.`,
+          working: () => `<b>(e) Molarity of Solution W₁₀:</b> (0.100 × 25.0) / 23.15 = <b>0.108 mol/dm³</b>`
+        },
+        {
+          id: 'step_f',
+          letter: 'f',
+          field: 'molarityConcHcl',
+          label: 'Given that 10.0 cm³ of concentrated HCl Solution W₉ was diluted to 100 cm³ to prepare Solution W₁₀, calculate the molarity of original Solution W₉',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 1.08',
+          step: '0.01',
+          unit: 'mol/dm³',
+          calcTheoretical: () => ((0.100 * 25.0) / 23.15) * 10.0,
+          calcEcf: (ctx) => {
+            const mDil = parseFloat(getAnswerValue(ctx.answers, 'molarityDilutedHcl', 'step_e')) || 0.108;
+            return mDil * 10.0;
+          },
+          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+          feedbackSuccess: (val) => `✓ Correct: Concentration of Solution W₉ = ${val} mol/dm³.`,
+          feedbackFail: (ctx, expTheo) => `Formula: Molarity of W₁₀ × (100 / 10) = ${expTheo.toFixed(2)} mol/dm³.`,
+          working: () => `<b>(f) Concentration of original Solution W₉:</b> 0.108 × 10 = <b>1.08 mol/dm³</b>`
+        }
+      ]
+    },
+    q2: {
+      type: 'qualitative_single',
+      title: 'Question 2: Inorganic Salt Qualitative Analysis (15.0 Marks)',
+      sampleName: 'Solid Y',
+      sampleDesc: 'A pale-green crystalline inorganic double salt containing iron(II), ammonium, and sulfate.',
+      trueSaltKey: 'ironSulfate',
+      trueSaltName: "Mohr's Salt — Ammonium Iron(II) Sulfate Hydrate (NH₄)₂Fe(SO₄)₂·6H₂O",
+      trueCation: 'Fe2+',
+      trueAnion: 'SO4^2-',
+      hasDeduction: true,
+      tests: [
+        {
+          id: 'q2_heat',
+          prompt: '(i) Heat a half-spatula of Solid Y in a clean dry hard-glass test tube, first gently then strongly. Test vapours with moist red and blue litmus papers.',
+          correctObs: 'Colourless liquid droplets condense on upper cooler walls; pungent colourless gas evolved turning moist red litmus blue; white sublimation ring deposits on upper walls; residue turns reddish-brown',
+          correctInf: 'Hydrated salt / water of crystallization present; basic gas (NH₃) evolved confirming NH₄⁺ present; Fe²⁺ oxidized to Fe³⁺'
+        },
+        {
+          id: 'q2_acid',
+          prompt: '(ii) Place a half-spatula of Solid Y in a test tube, add 2 cm³ of 2M dilute hydrochloric acid (HCl).',
+          correctObs: 'Dissolves readily to form a clear pale-green solution; no effervescence / no bubbles of gas evolved',
+          correctInf: 'CO₃²⁻, SO₃²⁻ absent; stable Fe²⁺ solution formed'
+        },
+        {
+          id: 'q2_naoh_warm',
+          prompt: '(iii) Dissolve the remaining Solid Y in 10 cm³ distilled water. To portion 1, add 2M sodium hydroxide (NaOH) dropwise until in excess, then warm gently and test vapours with moist red litmus paper.',
+          correctObs: 'Dirty green precipitate formed, insoluble in excess NaOH, turns reddish-brown on standing at surface; on warming, a pungent gas is evolved that turns moist red litmus blue',
+          correctInf: 'Fe²⁺ confirmed present (Fe(OH)₂ formed, oxidized by air to Fe(OH)₃); NH₄⁺ confirmed present (NH₃ gas evolved)'
+        },
+        {
+          id: 'q2_ammonia',
+          prompt: '(iv) To portion 2, add aqueous ammonia (NH₃(aq)) dropwise until in excess.',
+          correctObs: 'Dirty green precipitate formed, insoluble in excess aqueous ammonia',
+          correctInf: 'Fe²⁺ confirmed present (does not form soluble ammine complex)'
+        },
+        {
+          id: 'q2_barium',
+          prompt: '(v) To portion 3, add 3 drops barium nitrate (Ba(NO₃)₂) solution followed by 2 cm³ 2M dilute nitric acid (HNO₃).',
+          correctObs: 'Dense white precipitate formed, insoluble in dilute nitric acid',
+          correctInf: 'SO₄²⁻ confirmed present (BaSO₄ formed)'
+        }
+      ]
+    },
+    q3: {
+      type: 'organic',
+      title: 'Question 3: Organic Functional Group Analysis (10.0 Marks)',
+      sampleName: 'Solid Z',
+      sampleDesc: 'A pure white organic crystalline solid.',
+      trueOrganicKey: 'org_alkene',
+      trueOrganicName: 'Unsaturated Carboxylic Acid (Maleic Acid)',
+      trueFunctionalGroup: 'Alkene (>C=C<)',
+      tests: [
+        {
+          id: 'q3_ignition',
+          prompt: '(i) Ignite a small portion of Solid Z on a clean metallic spatula in a Bunsen flame.',
+          correctObs: 'Melts and burns with a luminous, smoky and sooty yellow flame; leaves black carbon residue',
+          correctInf: 'Unsaturated organic compound / high carbon-to-hydrogen ratio (>C=C<)'
+        },
+        {
+          id: 'q3_litmus',
+          prompt: '(ii) Dissolve Solid Z in 5 cm³ distilled water. Test with moist blue and red litmus paper.',
+          correctObs: 'Moist blue litmus paper turns red; red litmus paper remains red (strongly acidic, pH ~ 2)',
+          correctInf: 'Acidic substance / H⁺ ions present / Carboxylic acid (—COOH)'
+        },
+        {
+          id: 'q3_nahco3',
+          prompt: '(iii) To 2 cm³ of solution, add a half-spatula of solid Sodium Hydrogen Carbonate (NaHCO₃).',
+          correctObs: 'Brisk effervescence of a colourless gas that forms white precipitate with limewater (CO₂)',
+          correctInf: 'Carboxylic acid (—COOH) confirmed present; CO₂ gas evolved'
+        },
+        {
+          id: 'q3_kmno4',
+          prompt: '(iv) To 2 cm³ of solution, add 3 drops of acidified Potassium Manganate(VII) (KMnO₄) solution.',
+          correctObs: 'Purple colour of acidified KMnO₄ is rapidly decolorized to colourless',
+          correctInf: 'Alkene (>C=C<) confirmed present'
+        },
+        {
+          id: 'q3_bromine',
+          prompt: '(v) To 2 cm³ of solution, add 3 drops of Bromine water and shake gently.',
+          correctObs: 'Reddish-brown colour of bromine water is rapidly decolorized to colourless',
+          correctInf: 'Carbon-carbon double bond (>C=C<) confirmed present by electrophilic halogen addition'
+        }
+      ]
+    }
   }
 };
 
@@ -4234,7 +4470,7 @@ function generateRandomCompositePreset() {
     'series_2024', 'series_2023', 'series_2022',
     'series_2013', 'series_2012', 'series_2011', 'series_2009', 'series_2008',
     'series_2007', 'series_2006', 'series_2003', 'series_2000',
-    'series_1998', 'series_1996', 'series_1994', 'series_1993', 'series_1992', 'series_1990'
+    'series_1998', 'series_1996', 'series_1994', 'series_1993', 'series_1992', 'series_1990', 'series_1989'
   ];
   const q1PickKey = seriesKeys[Math.floor(Math.random() * seriesKeys.length)];
   const q2PickKey = seriesKeys[Math.floor(Math.random() * seriesKeys.length)];

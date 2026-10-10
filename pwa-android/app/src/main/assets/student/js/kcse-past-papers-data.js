@@ -1281,45 +1281,58 @@ const KCSE_PAST_PAPERS_ARCHIVE = [
     id: 'kcse_1989',
     year: 1989,
     title: 'KCSE 1989 Chemistry Paper 3 Practical (233/3)',
-    badgeText: 'Official KNEC Paper · Standardizing NaOH, Dilution & Metal Calorimetry Mass per Unit Length',
-    topics: ['Volumetric Analysis', 'Thermochemistry', 'Qualitative Analysis'],
-    playablePresetKey: null,
+    badgeText: 'Official KNEC Paper · NaOH Standardization, HCl Dilution & Mohr\'s Salt Analysis',
+    topics: ['Volumetric Analysis', 'Qualitative Analysis', 'Organic Analysis'],
+    playablePresetKey: 'series_1989',
     totalMarks: 40.0,
     durationMinutes: 135,
-    summary: 'Standardization of NaOH Solution W₁₂ with dibasic acid Solution W₁₁ (6.3 g/L H₂C₂O₄·2H₂O). Dilution of conc. HCl Solution W₉ and calorimetric reaction with magnesium ribbon metal M to determine its mass per unit length. Qualitative tests on Solid Y.',
+    summary: 'Standardization of NaOH Solution W₁₂ with 0.050 M dibasic acid Solution W₁₁ (6.30 g/dm³ H₂C₂O₄·2H₂O) and determining the concentration of concentrated HCl Solution W₉ via 1:10 dilution. Qualitative analysis of inorganic Solid Y (Mohr\'s salt, ammonium iron(II) sulfate) and organic Solid Z (unsaturated carboxylic acid).',
     questions: [
       {
         num: 1,
-        title: 'Question 1: Volumetric Analysis & Metal Calorimetry (30.0 Marks)',
-        procedure: 'Part I: Titrate 25.0 cm³ NaOH Solution W₁₂ with dibasic acid Solution W₁₁ (6.3 g/L H₂C₂O₄·2H₂O) using phenolphthalein.\nPart II: Dilute 10 cm³ conc. HCl Solution W₉ with 90 cm³ water (Solution W₁₀). Titrate 25 cm³ NaOH Solution W₁₂ with Solution W₁₀.\nPart III: Measure 10 cm³ conc. HCl Solution W₉ into boiling tube wrapped in tissue. Cut three 2 cm pieces of Metal M (magnesium ribbon). Measure initial temp, add 2 cm piece of M, and record highest temperature reached.',
+        title: 'Question 1: Volumetric Analysis — Standardization of NaOH & HCl Dilution (18.0 Marks)',
+        procedure: 'Part I: Pipette 25.0 cm³ of 0.050 M dibasic acid Solution W₁₁ (6.30 g/dm³ H₂C₂O₄·2H₂O) into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with NaOH Solution W₁₂ until the first permanent faint pink colour appears.\nPart II: Dilute 10.0 cm³ of concentrated HCl Solution W₉ with distilled water to 100 cm³ in a volumetric flask (Solution W₁₀). Pipette 25.0 cm³ of standardized NaOH Solution W₁₂ into a conical flask and titrate with diluted HCl Solution W₁₀.',
         table1: {
           title: 'Table A: Standardization of NaOH Solution W₁₂ with Dibasic Acid W₁₁',
           headers: ['Titration', '1st', '2nd', '3rd'],
           sampleValues: ['Final: 25.00', 'Final: 25.00', 'Final: 25.00', 'Initial: 0.00', 'Initial: 0.00', 'Initial: 0.00', 'Titre: 25.00', 'Titre: 25.00', 'Titre: 25.00']
         },
         table2: {
-          title: 'Table C: Temperature Rise of Metal M with HCl',
-          headers: ['Piece of Metal M (2 cm)', '1st', '2nd', '3rd'],
-          sampleValues: ['Highest Temp (°C): 44.0', '44.0', '44.5', 'Initial Temp (°C): 22.0', '22.0', '22.0', 'Change ΔT (°C): 22.0', '22.0', '22.5']
+          title: 'Table B: Titration of Standardized NaOH W₁₂ with Diluted HCl W₁₀',
+          headers: ['Titration', '1st', '2nd', '3rd'],
+          sampleValues: ['Final: 23.15', 'Final: 23.15', 'Final: 23.15', 'Initial: 0.00', 'Initial: 0.00', 'Initial: 0.00', 'Titre: 23.15', 'Titre: 23.15', 'Titre: 23.15']
         },
         calculations: [
-          '(i) Calculate concentration of dibasic acid Solution W₁₁ in mol/dm³ (RFM = 126.0). (1 Mk)',
-          '(ii) Calculate concentration of NaOH Solution W₁₂ in mol/dm³. (2 Mks)',
-          '(iii) Calculate concentration of original conc. HCl Solution W₉. (3 Mks)',
-          '(iv) Calculate heat of reaction: Heat = 42 × ΔT Joules. (1 Mk)',
-          '(v) Given molar heat of reaction is 440 kJ/mol of M, calculate moles of M used in 2 cm piece. (2 Mks)',
-          '(vi) Calculate mass per unit length of Metal M (M = 24.0 g/mol). (2 Mks)'
+          '(i) Calculate the average volume of Solution W₁₂ used in Table A, V₁. (1 Mk)',
+          '(ii) Calculate the molar concentration of dibasic acid Solution W₁₁ (RFM = 126.0). (2 Mks)',
+          '(iii) Calculate the moles of NaOH in V₁ that reacted with 25.0 cm³ of Solution W₁₁ (Mole ratio 1 : 2). (2 Mks)',
+          '(iv) Calculate the concentration of NaOH Solution W₁₂ in mol/dm³. (2 Mks)',
+          '(v) Calculate the concentration of diluted HCl Solution W₁₀ in mol/dm³. (2 Mks)',
+          '(vi) Calculate the concentration of original concentrated HCl Solution W₉. (2 Mks)'
         ]
       },
       {
         num: 2,
-        title: 'Question 2: Qualitative Analysis of Solid Y (10.0 Marks)',
-        preamble: 'Solid Y is an inorganic salt.',
+        title: 'Question 2: Inorganic Salt Qualitative Analysis of Solid Y (12.0 Marks)',
+        preamble: 'Solid Y is a pale-green crystalline inorganic double salt.',
         tests: [
-          { step: '(a)', prompt: 'Heat half-spatula of Solid Y in dry test tube gently then strongly.', obs: 'Pungent gas evolved turning moist red litmus blue; white sublimes', inf: 'NH₄⁺ present' },
-          { step: '(b)', prompt: 'Add 1 cm³ dilute HCl to half-spatula of Solid Y.', obs: 'No effervescence; solid dissolves', inf: 'CO₃²⁻ absent' },
-          { step: '(c) (i)', prompt: 'Dissolve in water. Add dilute NaOH dropwise to excess; warm gently.', obs: 'Green precipitate formed, insoluble in excess NaOH; turns brown on surface; pungent gas evolved turning red litmus blue', inf: 'Fe²⁺ present; NH₄⁺ confirmed present' },
-          { step: '(c) (ii)', prompt: 'To portion 2, add aqueous ammonia dropwise to excess.', obs: 'Green precipitate formed, insoluble in excess aqueous ammonia', inf: 'Fe²⁺ confirmed present' }
+          { step: '(a)', prompt: 'Heat a half-spatula of Solid Y in a clean dry hard-glass test tube gently then strongly; test vapours with moist litmus papers.', obs: 'Colourless liquid droplets condense on upper cooler walls; pungent gas evolved turning moist red litmus blue; white sublimation ring deposits on upper walls; residue turns reddish-brown', inf: 'Hydrated salt; basic gas (NH₃) evolved confirming NH₄⁺ present; Fe²⁺ oxidized to Fe³⁺' },
+          { step: '(b)', prompt: 'Place a half-spatula of Solid Y in a test tube, add 2 cm³ 2M dilute hydrochloric acid (HCl).', obs: 'Dissolves readily to form a clear pale-green solution; no effervescence / no bubbles formed', inf: 'CO₃²⁻, SO₃²⁻ absent; Fe²⁺ solution formed' },
+          { step: '(c) (i)', prompt: 'Dissolve remaining Solid Y in 10 cm³ distilled water. To portion 1, add 2M sodium hydroxide (NaOH) dropwise to excess, warm gently and test vapours with moist red litmus paper.', obs: 'Dirty green precipitate formed, insoluble in excess NaOH, turns brown on standing; pungent gas evolved turning red litmus blue', inf: 'Fe²⁺ present; NH₄⁺ confirmed present' },
+          { step: '(c) (ii)', prompt: 'To portion 2, add aqueous ammonia (NH₃(aq)) dropwise until in excess.', obs: 'Dirty green precipitate formed, insoluble in excess aqueous ammonia', inf: 'Fe²⁺ confirmed present' },
+          { step: '(c) (iii)', prompt: 'To portion 3, add 3 drops barium nitrate (Ba(NO₃)₂) solution followed by 2 cm³ 2M dilute nitric acid (HNO₃).', obs: 'Dense white precipitate formed, insoluble in dilute nitric acid', inf: 'SO₄²⁻ confirmed present (BaSO₄ formed)' }
+        ]
+      },
+      {
+        num: 3,
+        title: 'Question 3: Organic Functional Group Analysis of Solid Z (10.0 Marks)',
+        preamble: 'Solid Z is a white organic crystalline solid.',
+        tests: [
+          { step: '(a)', prompt: 'Ignite a small portion of Solid Z on a clean metallic spatula in a Bunsen flame.', obs: 'Melts and burns with a luminous, smoky and sooty yellow flame; leaves black carbon residue', inf: 'Unsaturated organic compound / high carbon-to-hydrogen ratio (>C=C<)' },
+          { step: '(b)', prompt: 'Dissolve Solid Z in 5 cm³ distilled water. Test with moist blue and red litmus paper.', obs: 'Moist blue litmus paper turns red; red litmus paper remains red (strongly acidic, pH ~ 2)', inf: 'Acidic substance / H⁺ ions present / Carboxylic acid (—COOH)' },
+          { step: '(c)', prompt: 'To 2 cm³ of solution, add a half-spatula of solid Sodium Hydrogen Carbonate (NaHCO₃).', obs: 'Brisk effervescence of a colourless gas that forms white precipitate with limewater (CO₂)', inf: 'Carboxylic acid (—COOH) confirmed present; CO₂ gas evolved' },
+          { step: '(d)', prompt: 'To 2 cm³ of solution, add 3 drops of acidified Potassium Manganate(VII) (KMnO₄) solution.', obs: 'Purple colour of acidified KMnO₄ is rapidly decolorized to colourless', inf: 'Alkene (>C=C<) confirmed present' },
+          { step: '(e)', prompt: 'To 2 cm³ of solution, add 3 drops of Bromine water and shake gently.', obs: 'Reddish-brown colour of bromine water is rapidly decolorized to colourless', inf: 'Carbon-carbon double bond (>C=C<) confirmed present' }
         ]
       }
     ],
@@ -1327,11 +1340,11 @@ const KCSE_PAST_PAPERS_ARCHIVE = [
       q1Calculations: [
         { item: 'Molarity of dibasic acid W₁₁', marks: '1.0 Mk', rubric: '6.30 / 126.0 = 0.050 M.' },
         { item: 'Molarity of NaOH W₁₂', marks: '2.0 Mks', rubric: '(0.050 × 25.0 × 2) / 25.0 = 0.100 M.' },
-        { item: 'Heat of reaction', marks: '1.0 Mk', rubric: 'Heat = 42 × 22.0 = 924 Joules (0.924 kJ).' },
-        { item: 'Moles & Mass per unit length', marks: '4.0 Mks', rubric: 'Moles M = 0.924 / 440 = 0.0021 mol. Mass of 2 cm = 0.0021 × 24.0 = 0.0504 g. Mass per cm = 0.0504 / 2 = 0.0252 g/cm.' }
+        { item: 'Molarity of diluted HCl W₁₀', marks: '2.0 Mks', rubric: '(0.100 × 25.0) / 23.15 = 0.108 M.' },
+        { item: 'Concentration of conc. HCl W₉', marks: '2.0 Mks', rubric: '0.108 × 10 = 1.08 M.' }
       ],
-      qualitativeObservations: 'Ammonium iron(II) sulfate shows both Fe²⁺ green precipitate and NH₄⁺ gas evolution with warm NaOH.',
-      confidentialPrep: 'Solution W₉: 90 cm³ conc. HCl in 1 L (~1.08 M). Solution W₁₁: 6.30 g oxalic acid in 1 L (0.05 M). Solution W₁₂: 3.20 g NaOH pellets in 1 L (0.08 M). Metal M: Clean magnesium ribbon. Solid Y: Mohr\'s salt (NH₄)₂Fe(SO₄)₂·6H₂O.'
+      qualitativeObservations: 'Mohr\'s salt (NH₄)₂Fe(SO₄)₂·6H₂O demonstrates Fe²⁺ dirty green precipitate with NaOH/NH₃, NH₄⁺ ammonia evolution on heating, and SO₄²⁻ with Ba(NO₃)₂. Solid Z demonstrates unsaturation (>C=C<) and carboxylic acid (—COOH).',
+      confidentialPrep: 'Solution W₉: ~1.08 M HCl. Solution W₁₁: 6.30 g oxalic acid dihydrate in 1 L (0.050 M). Solution W₁₂: 4.0 g NaOH in 1 L (0.100 M). Solid Y: Mohr\'s salt (NH₄)₂Fe(SO₄)₂·6H₂O. Solid Z: Maleic acid.'
     }
   }
 ];

@@ -171,6 +171,63 @@ requireStudentLogin();
     }).join('');
   }
 
+  function renderQ1ProcedureFlow(instructionsText, procedureSteps, q1Config = {}) {
+    const listEl = document.getElementById('q1ProcedureList');
+    if (!listEl) return;
+
+    let steps = [];
+    if (Array.isArray(procedureSteps) && procedureSteps.length > 0) {
+      steps = procedureSteps.map(s => String(s).trim()).filter(Boolean);
+    } else if (instructionsText && typeof instructionsText === 'string') {
+      const cleanText = instructionsText.trim();
+      const numberedRegex = /(?:^|\n|\s+)(?:(?:[1-9]\d?[\.\)]|\((?:[1-9]\d?|[a-f])\)|Step\s+[1-9]\d?:?))\s+/i;
+      if (numberedRegex.test(cleanText)) {
+        const rawParts = cleanText.split(/(?:^|\n|\s+)(?=(?:[1-9]\d?[\.\)]|\((?:[1-9]\d?|[a-f])\)|Step\s+[1-9]\d?:?)\s+)/i);
+        steps = rawParts
+          .map(p => p.replace(/^(?:[1-9]\d?[\.\)]|\((?:[1-9]\d?|[a-f])\)|Step\s+[1-9]\d?:?)\s*/i, '').trim())
+          .filter(p => p.length > 5);
+      } else {
+        const sentences = cleanText
+          .split(/(?<=[.!?])\s+(?=[A-Z0-9])/)
+          .map(s => s.trim())
+          .filter(Boolean);
+        steps = sentences.length > 0 ? sentences : [cleanText];
+      }
+    }
+
+    const mentionsTable = steps.some(s => /table\s*[123B]/i.test(s));
+    if (!mentionsTable) {
+      const tblNum = (q1Config.procedureIndex != null ? q1Config.procedureIndex : (activeProcedureIndex + 1)) || 1;
+      steps.push(`Record your initial and final burette readings in <b>Table ${tblNum}</b> and repeat the titration to complete the table with concordant titres within ±0.10 cm³.`);
+    }
+
+    if (steps.length === 0) {
+      steps = [
+        'Fill the burette with the titrant solution and adjust the meniscus level precisely to 0.00 cm³.',
+        'Pipette 25.0 cm³ of the analyte solution into a clean conical flask and add 2–3 drops of indicator.',
+        'Titrate with continuous swirling until the sharp characteristic endpoint is reached.',
+        'Record readings and repeat to complete the table with concordant titres.'
+      ];
+    }
+
+    function highlightLabTerms(text) {
+      return text
+        .replace(/(\b\d+(?:\.\d+)?\s*(?:cm³|cm3|g\/dm³|mol\/dm³|M|drops|d\.p\.)\b)/gi, '<b>$1</b>')
+        .replace(/\b(Table\s*[123B])\b/gi, '<b>$1</b>')
+        .replace(/\b(0\.00\s*cm³)\b/gi, '<b>$1</b>')
+        .replace(/\b(Solution\s+[A-Z0-9₁₂₃₄₅₆₇₈₉₀]+)\b/gi, '<b>$1</b>')
+        .replace(/\b(Solid\s+[A-Z0-9]+)\b/gi, '<b>$1</b>');
+    }
+
+    listEl.innerHTML = steps.map((step, idx) => `
+      <div class="q1-proc-step-item">
+        <span class="q1-proc-step-num">${idx + 1}</span>
+        <span>${highlightLabTerms(escapeHtml(step).replace(/&lt;b&gt;/g, '<b>').replace(/&lt;\/b&gt;/g, '</b>'))}</span>
+      </div>
+    `).join('');
+  }
+  window.renderQ1ProcedureFlow = renderQ1ProcedureFlow;
+
   function switchTitrationProcedure(procIdx) {
     stopTitrate();
     activeProcedureIndex = procIdx;
@@ -188,21 +245,20 @@ requireStudentLogin();
       if (btn) btn.className = i === procIdx ? 'exam-tab-btn active' : 'exam-tab-btn';
     }
 
-    // Update Prompt Box for this Procedure
-    const promptBox = document.getElementById('q1PromptBoxContent');
-    if (promptBox) {
-      promptBox.innerHTML = `
-        <div style="font-weight:800; font-size:1.0rem; color:var(--cyan-accent); margin-bottom:6px;">
-          ${escapeHtml(proc.title || `Procedure ${procIdx === 0 ? 'I' : 'II'}`)}
-        </div>
-        <b>You are provided with:</b><br>
-        • <b>${escapeHtml(proc.solutionA || 'Solution in Burette')}</b> in the burette.<br>
-        • <b>${escapeHtml(window.sanitizeAnalyteDisplay(proc.solutionB, proc.questions || engine?.preset?.q1?.questions) || 'Solution in Flask')}</b>.<br>
-        • <b>${escapeHtml(proc.indicator || 'Indicator')}</b>.<br><br>
-        <b>Instructions &amp; Procedure:</b><br>
-        <div style="white-space:pre-wrap; line-height:1.5;">${escapeHtml(window.sanitizeInstructions(proc.instructions || 'Pipette 25.0 cm³ into conical flask, add indicator drops, and titrate to endpoint.', proc.questions || engine?.preset?.q1?.questions))}</div>
-      `;
+    // Update Col 1 (Reagents) & Col 2 (Procedure Flow) in place without breaking layout!
+    const reagentsTitle = document.getElementById('q1ReagentsTitle');
+    if (reagentsTitle) {
+      reagentsTitle.textContent = `${proc.title || `Procedure ${procIdx === 0 ? 'I' : 'II'}`}: Prescribed Reagents`;
     }
+    setElemText('q1SolAName', proc.solutionA || 'Solution in Burette');
+    setElemText('q1SolBName', window.sanitizeAnalyteDisplay(proc.solutionB, proc.questions || engine?.preset?.q1?.questions) || 'Solution in Flask');
+    setElemText('q1IndicatorName', proc.indicator || 'Indicator');
+
+    const procTitle = document.getElementById('q1ProcedureTitle');
+    if (procTitle) {
+      procTitle.textContent = `${proc.title || `Procedure ${procIdx === 0 ? 'I' : 'II'}`}: Instructions & Flow`;
+    }
+    renderQ1ProcedureFlow(proc.instructions, proc.procedureSteps, proc);
 
     // Update Reagents Shelf
     const titrantChip = document.getElementById('q1TitrantChip');
@@ -218,11 +274,15 @@ requireStudentLogin();
     if (pipStatus) {
       pipStatus.textContent = 'Not Pipetted';
       pipStatus.style.color = 'var(--text-muted)';
+      pipStatus.style.borderColor = 'var(--card-border)';
+      pipStatus.style.background = 'var(--bg-dark)';
     }
     const indStatus = document.getElementById('indicatorStatus');
     if (indStatus) {
       indStatus.textContent = '0 Drops Added';
       indStatus.style.color = 'var(--text-muted)';
+      indStatus.style.borderColor = 'var(--card-border)';
+      indStatus.style.background = 'var(--bg-dark)';
     }
 
     // Update Table Title & Record Button Target
@@ -256,6 +316,12 @@ requireStudentLogin();
     const nextProcRow = document.getElementById('q1NextProcedureRow');
     if (nextProcRow) {
       nextProcRow.style.display = (procIdx < totalProcs - 1) ? 'block' : 'none';
+      const btnProceed = document.getElementById('btnProceedToProc2');
+      if (btnProceed && procIdx < totalProcs - 1) {
+        const nextProc = engine.preset.q1.procedures[procIdx + 1];
+        btnProceed.textContent = `Proceed to ${nextProc?.title || 'Procedure II'} →`;
+        btnProceed.onclick = () => switchTitrationProcedure(procIdx + 1);
+      }
     }
 
     // Reset apparatus for fresh titration in this procedure
@@ -921,6 +987,11 @@ requireStudentLogin();
     if (p.q1?.hasMultipleProcedures && Array.isArray(p.q1.procedures) && p.q1.procedures.length > 1) {
       switchTitrationProcedure(0);
     } else {
+      const procTitleEl = document.getElementById('q1ProcedureTitle');
+      if (procTitleEl) {
+        procTitleEl.textContent = p.q1?.procedureTitle || 'Standard KNEC Procedure Flow';
+      }
+      renderQ1ProcedureFlow(p.q1?.instructions, p.q1?.procedureSteps, p.q1);
       try { renderQ1Calculations(); } catch(e) { console.error('renderQ1Calculations error:', e); }
     }
 
@@ -1949,8 +2020,23 @@ requireStudentLogin();
     saveExamDraft();
   }
 
-  function checkDynamicQ1Step(stepId) {
-    const questions = getQ1CalculationQuestions();
+  function checkDynamicQ1Step(stepId, procIdx = null) {
+    const pIdx = (procIdx != null) ? procIdx : activeProcedureIndex;
+    const hasMulti = engine?.preset?.q1?.hasMultipleProcedures && Array.isArray(engine?.preset?.q1?.procedures) && engine.preset.q1.procedures.length > 1;
+    let questions = [];
+    let proc = engine?.preset?.q1 || {};
+    let procAnswers = engine?.q1Answers || {};
+    let trials = engine?.q1Trials || [];
+
+    if (hasMulti) {
+      proc = engine.preset.q1.procedures[pIdx] || {};
+      questions = Array.isArray(proc.questions) && proc.questions.length > 0 ? proc.questions : [];
+      procAnswers = engine.getProcedureAnswers(pIdx);
+      trials = engine.getProcedureTrials(pIdx);
+    } else {
+      questions = getQ1CalculationQuestions();
+    }
+
     const q = questions.find(item => item.id === stepId || item.letter === stepId);
     if (!q) return;
 
@@ -1958,31 +2044,30 @@ requireStudentLogin();
     if (!fb) return;
 
     const fieldId = q.field || q.id;
-    const inputId = fieldId === 'avgTitre' ? 'ansAvgTitre' : (fieldId === 'molesB' ? 'ansMolesB' : (fieldId === 'molesA' ? 'ansMolesA' : (fieldId === 'molarityA' ? 'ansMolarityA' : (fieldId === 'concGrams' ? 'ansConcGrams' : `ans_${fieldId}`))));
+    const inputId = hasMulti ? `ans_proc_${pIdx}_${fieldId}` : (fieldId === 'avgTitre' ? 'ansAvgTitre' : (fieldId === 'molesB' ? 'ansMolesB' : (fieldId === 'molesA' ? 'ansMolesA' : (fieldId === 'molarityA' ? 'ansMolarityA' : (fieldId === 'concGrams' ? 'ansConcGrams' : `ans_${fieldId}`)))));
     const el = document.getElementById(inputId);
-    const ansVal = typeof window.getAnswerValue === 'function' ? window.getAnswerValue(engine.q1Answers, fieldId, q.id) : engine.q1Answers[fieldId];
+    const ansVal = typeof window.getAnswerValue === 'function' ? window.getAnswerValue(procAnswers, fieldId, q.id) : procAnswers[fieldId];
     const val = parseFloat(el && el.value !== '' ? el.value : ansVal);
 
-    const p = engine.preset.q1;
-    const recordedTrials = engine.q1Trials.filter(t => t.recorded && t.used > 0);
-    const checkedConcordant = engine.q1Trials.filter(t => t.recorded && t.concordant && t.used > 0);
-    const avgRecorded = recordedTrials.length > 0 ? recordedTrials.reduce((a, b) => a + b.used, 0) / recordedTrials.length : p.trueTitre;
+    const recordedTrials = trials.filter(t => t.recorded && t.used > 0);
+    const checkedConcordant = trials.filter(t => t.recorded && t.concordant && t.used > 0);
+    const avgRecorded = recordedTrials.length > 0 ? recordedTrials.reduce((a, b) => a + b.used, 0) / recordedTrials.length : (proc.trueTitre || 25.0);
     const expAvgFromTrials = checkedConcordant.length > 0 ? checkedConcordant.reduce((a, b) => a + b.used, 0) / checkedConcordant.length : avgRecorded;
 
     const evalCtx = {
-      trueTitre: p.trueTitre || 25.00,
+      trueTitre: proc.trueTitre || 25.00,
       expAvgFromTrials,
-      trueAcidMolarity: Number(p.trueAcidMolarity) || 0.100,
-      trueBaseMolarity: Number(p.trueBaseMolarity) || 0.100,
-      pipetteVol: Number(p.pipetteVolume) || 25.0,
-      ratioA: Number(p.moleRatioAcid || p.ratioA) || 1,
-      ratioB: Number(p.moleRatioBase || p.ratioB) || 1,
-      acidRfm: Number(p.acidRfm) || 36.5,
-      baseRfm: Number(p.baseRfm) || 40.0,
-      answers: engine.q1Answers,
-      t1: engine.q1Trials[0]?.used || p.trueTitre,
-      t2: engine.q1Trials[1]?.used || p.trueTitre,
-      v1: parseFloat(typeof window.getAnswerValue === 'function' ? window.getAnswerValue(engine.q1Answers, 'avgTitre', 'step_a') : (engine.q1Answers.avgTitre || engine.q1Answers.step_a)) || expAvgFromTrials
+      trueAcidMolarity: Number(proc.trueAcidMolarity || engine.preset.q1.trueAcidMolarity) || 0.100,
+      trueBaseMolarity: Number(proc.trueBaseMolarity || engine.preset.q1.trueBaseMolarity) || 0.100,
+      pipetteVol: Number(proc.pipetteVolume || engine.preset.q1.pipetteVolume) || 25.0,
+      ratioA: Number(proc.moleRatioAcid || proc.ratioA || engine.preset.q1.moleRatioAcid) || 1,
+      ratioB: Number(proc.moleRatioBase || proc.ratioB || engine.preset.q1.moleRatioBase) || 1,
+      acidRfm: Number(proc.acidRfm || engine.preset.q1.acidRfm) || 36.5,
+      baseRfm: Number(proc.baseRfm || engine.preset.q1.baseRfm) || 40.0,
+      answers: procAnswers,
+      t1: trials[0]?.used || proc.trueTitre || 25.0,
+      t2: trials[1]?.used || proc.trueTitre || 25.0,
+      v1: parseFloat(typeof window.getAnswerValue === 'function' ? window.getAnswerValue(procAnswers, 'avgTitre', 'step_a', 'step_1a') : (procAnswers.avgTitre || procAnswers.step_a || procAnswers.step_1a)) || expAvgFromTrials
     };
 
     const expTheo = typeof q.calcTheoretical === 'function' ? q.calcTheoretical(evalCtx) : null;

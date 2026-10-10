@@ -848,4 +848,56 @@ describe('KNEC Paper 3 Examination Suite Standards', () => {
     const searchResults = filterPastPapers({ keyword: '2013' });
     assert.ok(searchResults.some(p => p.year === 2013), 'Keyword search for 2013 must include 2013 paper');
   });
+
+  it('should validate all 7 authentic two-procedure titration past papers (1989, 1990, 1993, 1996, 1998, 2000, 2005)', () => {
+    const multiPresets = [
+      'series_1989', 'series_1990', 'series_1993', 'series_1996',
+      'series_1998', 'series_2000', 'series_2005'
+    ];
+
+    multiPresets.forEach(key => {
+      assert.ok(COMPOSITE_EXAM_PRESETS[key], `Preset ${key} must exist`);
+      const engine = new CompositeExamEngine({ presetKey: key });
+      assert.strictEqual(engine.preset.q1.hasMultipleProcedures, true, `${key} must have hasMultipleProcedures = true`);
+      assert.ok(Array.isArray(engine.preset.q1.procedures), `${key} must have procedures array`);
+      assert.strictEqual(engine.preset.q1.procedures.length, 2, `${key} must have exactly 2 procedures`);
+      assert.ok(Array.isArray(engine.preset.q1.procedureSteps) && engine.preset.q1.procedureSteps.length >= 4, `${key} Q1 must have authentic procedureSteps`);
+
+      // Verify each procedure has distinct tables, instructions, and questions
+      const proc1 = engine.preset.q1.procedures[0];
+      const proc2 = engine.preset.q1.procedures[1];
+
+      assert.ok(proc1.title.includes('Procedure I'), `${key} proc1 title must mention Procedure I`);
+      assert.ok(proc2.title.includes('Procedure II'), `${key} proc2 title must mention Procedure II`);
+      assert.ok(proc1.tableTitle.includes('Table 1'), `${key} proc1 must have Table 1`);
+      assert.ok(proc2.tableTitle.includes('Table 2'), `${key} proc2 must have Table 2`);
+      assert.ok(Array.isArray(proc1.procedureSteps) && proc1.procedureSteps.length >= 4, `${key} proc1 must have steps`);
+      assert.ok(Array.isArray(proc2.procedureSteps) && proc2.procedureSteps.length >= 4, `${key} proc2 must have steps`);
+      assert.ok(Array.isArray(proc1.questions) && proc1.questions.length >= 2, `${key} proc1 must have calculation steps`);
+      assert.ok(Array.isArray(proc2.questions) && proc2.questions.length >= 2, `${key} proc2 must have calculation steps`);
+
+      // Verify independent trial recording in both procedures
+      const titre1 = proc1.trueTitre || 25.00;
+      const titre2 = proc2.trueTitre || 25.00;
+
+      engine.recordTrial(1, titre1, 0.00, 0);
+      engine.recordTrial(2, titre1, 0.00, 0);
+      engine.setConcordant(1, true, 0);
+      engine.setConcordant(2, true, 0);
+
+      engine.recordTrial(1, titre2, 0.00, 1);
+      engine.recordTrial(2, titre2, 0.00, 1);
+      engine.setConcordant(1, true, 1);
+      engine.setConcordant(2, true, 1);
+
+      const t1 = engine.getProcedureTrials(0);
+      const t2 = engine.getProcedureTrials(1);
+      assert.strictEqual(t1[0].used, titre1, `${key} Proc 1 trial 1 used volume must match titre1`);
+      assert.strictEqual(t2[0].used, titre2, `${key} Proc 2 trial 1 used volume must match titre2`);
+
+      // Verify overall worked solutions generation
+      const worked = engine.generateWorkedSolutions();
+      assert.ok(Object.keys(worked).length >= 6, `${key} must generate combined worked solutions across procedures`);
+    });
+  });
 });

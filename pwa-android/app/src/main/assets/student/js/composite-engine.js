@@ -595,6 +595,13 @@ const COMPOSITE_EXAM_PRESETS = {
       endpointColor: 'rgba(255,255,255,0.35)',
       equation: 'HCl(aq) + NaOH(aq) → NaCl(aq) + H₂O(l)',
       instructions: 'Pipette 25.0 cm³ of Solution B into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with Solution A until the pink color discharges sharply to colorless.',
+      procedureSteps: [
+              "Fill the burette with 0.100 M Hydrochloric Acid Solution A and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of Sodium Hydroxide Solution B into a clean 250 cm³ conical flask.",
+              "Add 2–3 drops of phenolphthalein indicator (solution turns deep pink).",
+              "Titrate Solution B with Solution A with continuous swirling until the pink colour discharges sharply to colourless.",
+              "Record initial and final burette readings to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: createStandardTitrationQuestions({ acidRfm: 36.5, pipetteVolume: 25.0 })
     },
     q2: {
@@ -710,6 +717,13 @@ const COMPOSITE_EXAM_PRESETS = {
       endpointColor: 'rgba(239,68,68,0.7)',
       equation: '2HCl(aq) + Na₂CO₃(aq) → 2NaCl(aq) + CO₂(g) + H₂O(l)',
       instructions: 'Titrate 25.0 cm³ of Solution B with Solution A using 3 drops of Methyl Orange indicator until the yellow solution turns orange/red.',
+      procedureSteps: [
+              "Fill the burette with 0.100 M Hydrochloric Acid Solution A and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of Hydrated Sodium Carbonate Solution B into a clean 250 cm³ conical flask.",
+              "Add 2–3 drops of methyl orange indicator (solution turns yellow).",
+              "Titrate Solution B with Solution A with continuous swirling until the yellow solution turns sharply to permanent orange-red.",
+              "Record initial and final burette readings to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: createWaterOfCrystallizationQuestions({ soluteMassPerLiter: 14.30, pipetteVolume: 25.0, anhydrousRfm: 106.0 })
     },
     q2: {
@@ -825,6 +839,13 @@ const COMPOSITE_EXAM_PRESETS = {
       endpointColor: 'rgba(239,68,68,0.7)',
       equation: '2HCl(aq) + Na₂CO₃(aq) → 2NaCl(aq) + CO₂(g) + H₂O(l)',
       instructions: 'Titrate 25.0 cm³ of impure Solution B with Solution A using Methyl Orange indicator until the solution turns permanently orange/red.',
+      procedureSteps: [
+              "Fill the burette with 0.100 M Hydrochloric Acid Solution A and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of Impure Sodium Carbonate Solution B into a clean 250 cm³ conical flask.",
+              "Add 2–3 drops of methyl orange indicator (solution turns yellow).",
+              "Titrate Solution B with Solution A with continuous swirling until the yellow solution turns sharply to permanent orange-red.",
+              "Record initial and final burette readings to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: createPercentagePurityQuestions({ impureMassPerLiter: 6.00, pipetteVolume: 25.0, pureRfm: 106.0 })
     },
     q2: {
@@ -938,6 +959,13 @@ const COMPOSITE_EXAM_PRESETS = {
       endpointColor: 'rgba(236,72,153,0.7)',
       equation: 'MnO₄⁻(aq) + 5Fe²⁺(aq) + 8H⁺(aq) → Mn²⁺(aq) + 5Fe³⁺(aq) + 4H₂O(l)',
       instructions: 'Titrate 25.0 cm³ of acidified Solution B with Solution A until the first permanent pale pink coloration persists for at least 30 seconds.',
+      procedureSteps: [
+              "Fill the burette with 0.020 M Acidified Potassium Manganate(VII) Solution A and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of Iron(II) Sulfate Solution B into a clean 250 cm³ conical flask.",
+              "Add about 10 cm³ of 1 M dilute sulfuric acid using a measuring cylinder.",
+              "Titrate Solution B with Solution A with continuous swirling until the first permanent faint pink colour persists for at least 30 seconds.",
+              "Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: createStandardTitrationQuestions({ baseRfm: 392.0, pipetteVolume: 25.0 })
     },
     q2: {
@@ -1052,6 +1080,13 @@ const COMPOSITE_EXAM_PRESETS = {
       endpointColor: 'rgba(239,68,68,0.7)',
       equation: 'M₂CO₃(aq) + 2HNO₃(aq) → 2MNO₃(aq) + CO₂(g) + H₂O(l)',
       instructions: 'Titrate 25.0 cm³ of Solution B with Solution A using Methyl Orange indicator until the yellow solution turns orange/red.',
+      procedureSteps: [
+              "Fill the burette with 0.020 M Acidified Potassium Manganate(VII) Solution A and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of Hydrated Ethanedioic Acid Solution B into a clean 250 cm³ conical flask.",
+              "Add about 10 cm³ of 1 M dilute sulfuric acid and warm the mixture gently on wire gauze to about 60 °C.",
+              "Titrate hot Solution B with Solution A with continuous swirling until the first permanent pale pink colour persists for 30 seconds.",
+              "Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: createRamMetalQuestions({ soluteMassPerLiter: 5.30, pipetteVolume: 25.0 })
     },
     q2: {
@@ -1165,6 +1200,13 @@ const COMPOSITE_EXAM_PRESETS = {
       endpointColor: 'rgba(255,255,255,0.35)',
       equation: 'H₂C₂O₄(aq) + 2NaOH(aq) → Na₂C₂O₄(aq) + 2H₂O(l)',
       instructions: 'Titrate 25.0 cm³ of Solution B with Solution A until the pink color turns permanently colorless.',
+      procedureSteps: [
+              "Fill the burette with 0.200 M Hydrochloric Acid Solution A and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of Metal Carbonate M₂CO₃ Solution B into a clean 250 cm³ conical flask.",
+              "Add 2–3 drops of methyl orange indicator (solution turns yellow).",
+              "Titrate Solution B with Solution A with continuous swirling until the yellow colour turns sharply to orange-red.",
+              "Record initial and final burette readings to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: createStandardTitrationQuestions({ baseRfm: 40.0, pipetteVolume: 25.0 })
     },
     q2: {
@@ -1273,6 +1315,13 @@ const COMPOSITE_EXAM_PRESETS = {
       overtitratedColor: 'rgba(255,255,255,0.20)',
       equation: 'H₂C₂O₄(aq) + 2NaOH(aq) → Na₂C₂O₄(aq) + 2H₂O(l)',
       instructions: 'Pipette 25.0 cm³ of Solution B into a conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with Solution A until the pink color discharges sharply to colorless.',
+      procedureSteps: [
+              "Fill the burette with 0.050 M Ethanedioic Acid Solution A and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of Sodium Hydroxide Solution B into a clean 250 cm³ conical flask.",
+              "Add 2–3 drops of phenolphthalein indicator (solution turns deep pink).",
+              "Titrate Solution B with Solution A with continuous swirling until the pink colour discharges sharply to colourless.",
+              "Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: createStandardTitrationQuestions({ acidRfm: 126.0, baseRfm: 40.0, pipetteVolume: 25.0, moleRatioAcid: 1, moleRatioBase: 2 })
     },
     q2: {
@@ -1393,6 +1442,13 @@ const COMPOSITE_EXAM_PRESETS = {
       overtitratedColor: 'rgba(126,34,206,0.95)',
       equation: 'MnO₄⁻(aq) + 5Fe²⁺(aq) + 8H⁺(aq) → Mn²⁺(aq) + 5Fe³⁺(aq) + 4H₂O(l)',
       instructions: 'Pipette 25.0 cm³ of Solution B into a clean conical flask. Add about 10 cm³ of 1M sulfuric acid. Fill the burette with 0.020 M acidified KMnO₄ Solution A. Titrate Solution B with Solution A until the first permanent pale pink colour persists for at least 30 seconds.',
+      procedureSteps: [
+              "Fill the burette with 0.020 M Acidified Potassium Manganate(VII) Solution A and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of Ammonium Iron(II) Sulfate Solution B into a clean 250 cm³ conical flask.",
+              "Add about 10 cm³ of 1 M dilute sulfuric acid using a measuring cylinder.",
+              "Titrate Solution B with Solution A with continuous swirling until the first permanent pale pink colour persists for at least 30 seconds.",
+              "Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: [
         {
           id: 'step_a',
@@ -1612,6 +1668,13 @@ const COMPOSITE_EXAM_PRESETS = {
       overtitratedColor: 'rgba(185,28,28,0.95)',
       equation: 'HCl(aq) + NaHCO₃(aq) → NaCl(aq) + H₂O(l) + CO₂(g)',
       instructions: 'Pipette 25.0 cm³ of Solution B into a conical flask. Add 2 drops of methyl orange indicator. Titrate with Solution A until the yellow solution turns sharply to orange-red.',
+      procedureSteps: [
+              "Fill the burette with 0.100 M Hydrochloric Acid Solution A and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of Impure Sodium Hydrogen Carbonate Solution B into a clean 250 cm³ conical flask.",
+              "Add 2–3 drops of methyl orange indicator (solution turns yellow).",
+              "Titrate Solution B with Solution A with continuous swirling until the yellow solution turns sharply to permanent orange-red.",
+              "Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: createPercentagePurityQuestions({ impureMassPerLiter: 10.00, pureRfm: 84.0, pipetteVolume: 25.0, moleRatioAcid: 1, moleRatioBase: 1, baseFormula: 'NaHCO₃' })
     },
     q2: {
@@ -1726,6 +1789,13 @@ const COMPOSITE_EXAM_PRESETS = {
       overtitratedColor: 'rgba(185,28,28,0.95)',
       equation: '2HCl(aq) + Na₂CO₃(aq) → 2NaCl(aq) + CO₂(g) + H₂O(l)',
       instructions: 'Pipette 25.0 cm³ of Solution B into a clean conical flask. Add 2–3 drops of methyl orange indicator. Titrate with Solution A until the yellow color changes sharply to permanent orange-red.',
+      procedureSteps: [
+              "Fill the burette with 0.100 M Hydrochloric Acid Solution A and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of Sodium Carbonate Solution B into a clean 250 cm³ conical flask.",
+              "Add 2–3 drops of methyl orange indicator (solution turns yellow).",
+              "Titrate Solution B with Solution A with continuous swirling until the yellow colour changes sharply to permanent orange-red.",
+              "Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: createStandardTitrationQuestions({ baseRfm: 106.0, pipetteVolume: 25.0 })
     },
     q2: {
@@ -1840,6 +1910,13 @@ const COMPOSITE_EXAM_PRESETS = {
       overtitratedColor: 'rgba(126,34,206,0.95)',
       equation: '2MnO₄⁻(aq) + 5C₂O₄²⁻(aq) + 16H⁺(aq) → 2Mn²⁺(aq) + 10CO₂(g) + 8H₂O(l)',
       instructions: 'Pipette 25.0 cm³ of Solution B into a clean conical flask and warm gently to about 60°C. Fill the burette with 0.020 M acidified KMnO₄ Solution A. Titrate Solution B while hot until the first permanent pale pink colour persists for at least 30 seconds.',
+      procedureSteps: [
+              "Fill the burette with 0.020 M Acidified KMnO₄ Solution A and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of Ethanedioic Acid Solution B into a clean 250 cm³ conical flask.",
+              "Add about 10 cm³ of 1 M dilute sulfuric acid and warm the flask gently to about 60 °C.",
+              "Titrate hot Solution B with Solution A with continuous swirling until the first permanent pale pink colour persists for 30 seconds.",
+              "Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: [
         {
           id: 'step_a',
@@ -2052,6 +2129,13 @@ const COMPOSITE_EXAM_PRESETS = {
       overtitratedColor: 'rgba(185,28,28,0.95)',
       equation: '2HCl(aq) + Na₂CO₃(aq) → 2NaCl(aq) + CO₂(g) + H₂O(l)',
       instructions: 'Pipette 25.0 cm³ of Solution B into a conical flask. Add 2–3 drops of methyl orange indicator. Titrate with 0.100 M HCl Solution A until the yellow colour changes sharply to permanent orange-red.',
+      procedureSteps: [
+              "Fill the burette with 0.100 M Hydrochloric Acid Solution A and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of Sodium Carbonate Solution B into a clean 250 cm³ conical flask.",
+              "Add 2–3 drops of methyl orange indicator (solution turns yellow).",
+              "Titrate Solution B with Solution A with continuous swirling until the yellow colour changes sharply to permanent orange-red.",
+              "Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: [
         {
           id: 'step_a',
@@ -2264,6 +2348,13 @@ const COMPOSITE_EXAM_PRESETS = {
       overtitratedColor: 'rgba(192,38,211,0.95)',
       equation: 'MnO₄⁻(aq) + 5Fe²⁺(aq) + 8H⁺(aq) → Mn²⁺(aq) + 5Fe³⁺(aq) + 4H₂O(l)',
       instructions: 'Pipette 25.0 cm³ of Solution Q into a clean conical flask. Fill the burette with 0.020 M KMnO₄ Solution P. Titrate Solution Q with Solution P until the first permanent faint pink colour persists for at least 30 seconds.',
+      procedureSteps: [
+              "Fill the burette with 0.020 M Acidified KMnO₄ Solution P and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of Iron(II) Sulfate Solution Q into a clean 250 cm³ conical flask.",
+              "Add about 10 cm³ of 1 M dilute sulfuric acid using a measuring cylinder.",
+              "Titrate Solution Q with Solution P with continuous swirling until the first permanent faint pink colour persists for at least 30 seconds.",
+              "Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: [
         {
           id: 'step_a',
@@ -2476,6 +2567,13 @@ const COMPOSITE_EXAM_PRESETS = {
       overtitratedColor: 'rgba(219,39,119,0.9)',
       equation: '2NaOH(aq) + H₂C₂O₄(aq) → Na₂C₂O₄(aq) + 2H₂O(l)',
       instructions: 'Fill the burette with 0.100 M Sodium Hydroxide Solution A. Pipette 25.0 cm³ of 0.050 M Ethanedioic Acid Solution B into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with Solution A until the colourless solution turns to the first permanent faint pink colour.',
+      procedureSteps: [
+              "Fill the burette with 0.100 M Sodium Hydroxide Solution A and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of 0.050 M Ethanedioic Acid Solution B into a clean 250 cm³ conical flask.",
+              "Add 2–3 drops of phenolphthalein indicator (solution remains colourless).",
+              "Titrate Solution B with Solution A with continuous swirling until the first permanent faint pink colour appears.",
+              "Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: [
         {
           id: 'step_a',
@@ -2688,6 +2786,13 @@ const COMPOSITE_EXAM_PRESETS = {
       overtitratedColor: 'rgba(239,68,68,0.95)',
       equation: '2HCl(aq) + Na₂CO₃(aq) → 2NaCl(aq) + CO₂(g) + H₂O(l)',
       instructions: 'Fill the burette with 0.100 M Hydrochloric Acid Solution A. Pipette 25.0 cm³ of Sodium Carbonate Solution B into a conical flask. Add 2–3 drops of methyl orange indicator. Titrate with Solution A until the yellow colour turns sharply to orange-red.',
+      procedureSteps: [
+              "Fill the burette with 0.100 M Hydrochloric Acid Solution A and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of Sodium Carbonate Solution B into a clean 250 cm³ conical flask.",
+              "Add 2–3 drops of methyl orange indicator (solution turns yellow).",
+              "Titrate Solution B with Solution A with continuous swirling until the yellow colour turns sharply to orange-red.",
+              "Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: [
         {
           id: 'step_a',
@@ -2900,6 +3005,13 @@ const COMPOSITE_EXAM_PRESETS = {
       overtitratedColor: 'rgba(219,39,119,0.9)',
       equation: 'HCl(aq) + NaOH(aq) → NaCl(aq) + H₂O(l)',
       instructions: 'Pipette 25.0 cm³ of 0.200 M Hydrochloric Acid Solution A into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with Sodium Hydroxide Solution B from the burette until the colourless solution turns to the first permanent faint pink colour.',
+      procedureSteps: [
+              "Fill the burette with 0.200 M Hydrochloric Acid Solution A and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of Sodium Hydroxide Solution B into a clean 250 cm³ conical flask.",
+              "Add 2–3 drops of phenolphthalein indicator (solution turns pink).",
+              "Titrate Solution B with Solution A with continuous swirling until the pink colour discharges sharply to colourless.",
+              "Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: [
         {
           id: 'step_a',
@@ -3107,6 +3219,14 @@ const COMPOSITE_EXAM_PRESETS = {
       overtitratedColor: 'rgba(255,255,255,0.20)',
       equation: 'I₂(aq) + 2S₂O₃²⁻(aq) → 2I⁻(aq) + S₄O₆²⁻(aq)',
       instructions: 'Pipette 25.0 cm³ of Solution A (iodine solution) into a conical flask. Titrate with 0.050 M Sodium Thiosulfate Solution B until pale yellow. Add 1 cm³ starch indicator and continue titrating until the intense blue-black colour discharges sharply to colourless.',
+      procedureSteps: [
+              "Fill the burette with 0.050 M Sodium Thiosulfate Solution B and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of iodine Solution A into a clean 250 cm³ conical flask.",
+              "Titrate with Solution B until the reddish-brown colour fades to pale yellow.",
+              "Add 1 cm³ of starch indicator (solution turns intense blue-black).",
+              "Continue titrating dropwise until the blue-black colour discharges sharply to colourless.",
+              "Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: [
         {
           id: 'step_a',
@@ -3319,6 +3439,13 @@ const COMPOSITE_EXAM_PRESETS = {
       overtitratedColor: 'rgba(255,255,255,0.20)',
       equation: 'HCl(aq) + NaOH(aq) → NaCl(aq) + H₂O(l)',
       instructions: 'Pipette 25.0 cm³ of Sodium Hydroxide Solution B (0.100 M) into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with 0.100 M Hydrochloric Acid Solution A from the burette until the pink colour discharges sharply to colourless.',
+      procedureSteps: [
+              "Fill the burette with 0.100 M Hydrochloric Acid Solution A and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of Sodium Hydroxide Solution B into a clean 250 cm³ conical flask.",
+              "Add 2–3 drops of phenolphthalein indicator (solution turns deep pink).",
+              "Titrate Solution B with Solution A with continuous swirling until the pink colour discharges sharply to colourless.",
+              "Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: [
         {
           id: 'step_a',
@@ -3534,6 +3661,13 @@ const COMPOSITE_EXAM_PRESETS = {
       overtitratedColor: 'rgba(192,38,211,0.95)',
       equation: 'MnO₄⁻(aq) + 5Fe²⁺(aq) + 8H⁺(aq) → Mn²⁺(aq) + 5Fe³⁺(aq) + 4H₂O(l)',
       instructions: 'Pipette 25.0 cm³ of Solution D into a clean conical flask. Titrate with 0.020 M KMnO₄ Solution A until the first permanent pale pink colour persists for at least 30 seconds.',
+      procedureSteps: [
+              "Fill the burette with 0.020 M Acidified Potassium Manganate(VII) Solution A and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of Solution D into a clean 250 cm³ conical flask.",
+              "Add about 10 cm³ of 1 M dilute sulfuric acid using a measuring cylinder.",
+              "Titrate Solution D with Solution A with continuous swirling until the first permanent pale pink colour persists for at least 30 seconds.",
+              "Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: createStandardTitrationQuestions({ acidRfm: 158.0, baseRfm: 392.0, pipetteVolume: 25.0, moleRatioAcid: 1, moleRatioBase: 5 })
     },
     q2: {
@@ -3648,6 +3782,14 @@ const COMPOSITE_EXAM_PRESETS = {
       overtitratedColor: 'rgba(255,255,255,0.20)',
       equation: 'I₂(aq) + 2Na₂S₂O₃(aq) → 2NaI(aq) + Na₂S₄O₆(aq)',
       instructions: 'Pipette 25.0 cm³ of Solution A (liberated iodine) into a conical flask. Titrate with 0.050 M Sodium Thiosulphate until pale straw-yellow. Add 1 cm³ starch indicator (solution turns dark blue) and continue titrating dropwise until the blue color sharply discharges to colorless.',
+      procedureSteps: [
+              "Fill the burette with 0.050 M Sodium Thiosulphate Solution C and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of liberated iodine Solution A into a clean 250 cm³ conical flask.",
+              "Titrate with Solution C from the burette until the reddish-brown iodine colour fades to pale straw-yellow.",
+              "Add 1 cm³ of starch indicator (solution turns deep blue).",
+              "Continue titrating dropwise with continuous swirling until the dark blue colour sharply discharges to colourless.",
+              "Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: [
         {
           id: 'step_a',
@@ -3860,6 +4002,13 @@ const COMPOSITE_EXAM_PRESETS = {
       overtitratedColor: 'rgba(255,255,255,0.20)',
       equation: 'H₂X(aq) + 2NaOH(aq) → Na₂X(aq) + 2H₂O(l)',
       instructions: 'Pipette 25.0 cm³ of Solution C (NaOH) into a conical flask. Add 2 drops of phenolphthalein indicator. Titrate with Solution A until the pink colour discharges sharply to colourless.',
+      procedureSteps: [
+              "Fill the burette with 0.051 M Hydrated Dibasic Acid Solution A and adjust the meniscus precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of Sodium Hydroxide Solution C into a clean 250 cm³ conical flask.",
+              "Add 2–3 drops of phenolphthalein indicator (solution turns deep pink).",
+              "Titrate with Solution A from the burette with continuous swirling until the pink colour discharges sharply to colourless.",
+              "Record initial and final burette readings to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: createStandardTitrationQuestions({ acidRfm: 126.0, baseRfm: 40.0, pipetteVolume: 25.0, moleRatioAcid: 1, moleRatioBase: 2 })
     },
     q2: {
@@ -3974,6 +4123,13 @@ const COMPOSITE_EXAM_PRESETS = {
       overtitratedColor: 'rgba(185,28,28,0.95)',
       equation: 'HCl(aq) + NaOH(aq) → NaCl(aq) + H₂O(l)',
       instructions: 'Pipette 25.0 cm³ of Solution D into a conical flask. Add 2 drops of methyl orange indicator. Titrate with 0.300 M NaOH Solution C until the colour changes sharply from red to orange-yellow.',
+      procedureSteps: [
+              "Fill the burette with 0.300 M Sodium Hydroxide Solution C and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of Acid Solution D into a clean 250 cm³ conical flask.",
+              "Add 2–3 drops of methyl orange indicator (solution turns red).",
+              "Titrate Solution D with Solution C with continuous swirling until the colour changes sharply from red to orange-yellow.",
+              "Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: createStandardTitrationQuestions({ acidRfm: 36.5, baseRfm: 40.0, pipetteVolume: 25.0, moleRatioAcid: 1, moleRatioBase: 1 })
     },
     q2: {
@@ -4082,6 +4238,13 @@ const COMPOSITE_EXAM_PRESETS = {
       overtitratedColor: 'rgba(255,255,255,0.20)',
       equation: 'HCl(aq) + NaOH(aq) → NaCl(aq) + H₂O(l)',
       instructions: 'Pipette 25.0 cm³ of Solution C into a conical flask. Add 2 drops of phenolphthalein indicator. Titrate with 0.100 M NaOH Solution B until the first permanent pale pink colour appears.',
+      procedureSteps: [
+              "Fill the burette with 0.100 M Sodium Hydroxide Solution B and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of Acid Solution C into a clean 250 cm³ conical flask.",
+              "Add 2–3 drops of phenolphthalein indicator (solution remains colourless).",
+              "Titrate Solution C with Solution B with continuous swirling until the first permanent faint pink colour appears.",
+              "Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: createStandardTitrationQuestions({ acidRfm: 36.5, baseRfm: 40.0, pipetteVolume: 25.0, moleRatioAcid: 1, moleRatioBase: 1 })
     },
     q2: {
@@ -4190,6 +4353,13 @@ const COMPOSITE_EXAM_PRESETS = {
       overtitratedColor: 'rgba(126,34,206,0.9)',
       equation: '2KMnO₄(aq) + 5H₂C₂O₄(aq) + 3H₂SO₄(aq) → 2MnSO₄(aq) + K₂SO₄(aq) + 10CO₂(g) + 8H₂O(l)',
       instructions: 'Pipette 25.0 cm³ of Solution A (hydrated acid D·xH₂O) into a clean conical flask. Warm the solution gently to ~60 °C. Fill the burette with 0.060 M KMnO₄ Solution B. Titrate hot Solution A with Solution B until the first permanent faint pink colour persists for at least 30 seconds.',
+      procedureSteps: [
+              "Fill the burette with 0.060 M Potassium Manganate(VII) Solution B and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of Hydrated Acid Solution A into a clean 250 cm³ conical flask.",
+              "Add about 10 cm³ of 1 M dilute sulfuric acid and warm the mixture gently on a wire gauze to about 60 °C.",
+              "Titrate hot Solution A with Solution B with continuous swirling until the first permanent faint pink colour persists for 30 seconds.",
+              "Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: [
         {
           id: 'step_a',
@@ -4404,6 +4574,13 @@ const COMPOSITE_EXAM_PRESETS = {
       overtitratedColor: 'rgba(185,28,28,0.95)',
       equation: 'H₂SO₄(aq) + Na₂CO₃(aq) → Na₂SO₄(aq) + H₂O(l) + CO₂(g)',
       instructions: 'Pipette 25.0 cm³ of Solution B (sodium carbonate) into a clean conical flask. Add 2 drops of methyl orange indicator. Titrate with diluted H₂SO₄ Solution D until the yellow colour turns permanent orange-pink.',
+      procedureSteps: [
+              "Fill the burette with Diluted Sulfuric Acid Solution D and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of Sodium Carbonate Solution B into a clean 250 cm³ conical flask.",
+              "Add 2–3 drops of methyl orange indicator (solution turns yellow).",
+              "Titrate Solution B with Solution D with continuous swirling until the yellow colour turns permanent orange-pink.",
+              "Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: [
         {
           id: 'step_a',
@@ -4614,6 +4791,13 @@ const COMPOSITE_EXAM_PRESETS = {
       overtitratedColor: 'rgba(126,34,206,0.95)',
       equation: 'MnO₄⁻(aq) + 5Fe²⁺(aq) + 8H⁺(aq) → Mn²⁺(aq) + 5Fe³⁺(aq) + 4H₂O(l)',
       instructions: 'Pipette 25.0 cm³ of Solution Q into a clean conical flask. Fill the burette with 0.020 M acidified KMnO₄ Solution P. Titrate Solution Q with Solution P until the first permanent faint pink colour persists for at least 30 seconds.',
+      procedureSteps: [
+              "Fill the burette with 0.020 M Acidified Potassium Manganate(VII) Solution P and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of Iron(II) Sulfate Solution Q into a clean 250 cm³ conical flask.",
+              "Add about 10 cm³ of 1 M dilute sulfuric acid using a measuring cylinder.",
+              "Titrate Solution Q with Solution P with continuous swirling until the first permanent faint pink colour persists for at least 30 seconds.",
+              "Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: [
         {
           id: 'step_a',
@@ -4824,6 +5008,14 @@ const COMPOSITE_EXAM_PRESETS = {
       overtitratedColor: 'rgba(255,255,255,0.20)',
       equation: 'H₂O₂(aq) + 2I⁻(aq) + 2H⁺(aq) → I₂(aq) + 2H₂O(l); I₂(aq) + 2Na₂S₂O₃(aq) → 2NaI(aq) + Na₂S₄O₆(aq)',
       instructions: 'Pipette 25.0 cm³ of Solution A (liberated iodine reaction mixture) into a clean conical flask. Titrate with 0.050 M Sodium Thiosulphate Solution C from the burette until the reddish-brown iodine turns pale straw-yellow. Add 1 cm³ starch indicator (solution turns deep blue) and continue titrating dropwise with continuous swirling until the dark blue colour sharply discharges to colourless.',
+      procedureSteps: [
+              "Fill the burette with 0.050 M Sodium Thiosulphate Solution C and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of liberated iodine Solution A into a clean 250 cm³ conical flask (mixture is reddish-brown).",
+              "Titrate Solution A with Solution C until the reddish-brown colour fades to a pale straw-yellow.",
+              "Add 1 cm³ of freshly prepared starch indicator (solution turns deep blue-black).",
+              "Continue titrating dropwise with continuous swirling until the blue-black colour sharply discharges to colourless.",
+              "Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: [
         {
           id: 'step_a',
@@ -5016,121 +5208,176 @@ const COMPOSITE_EXAM_PRESETS = {
       type: 'titration',
       calcType: 'standard_molarity',
       title: 'Question 1: Volumetric Analysis — Double Indicator Titration (15.0 Marks)',
+      hasMultipleProcedures: true,
       solutionA: '0.106 M Hydrochloric Acid (Solution M)',
       solutionB: 'Sodium Carbonate (Na₂CO₃) containing 5.60 g/dm³ (Solution L)',
       acidFormula: 'HCl',
       baseFormula: 'Na2CO3',
-      indicator: 'Methyl Orange',
+      indicator: 'Double Indicator (Phenolphthalein & Methyl Orange)',
       pipetteVolume: 25.0,
       trueAcidMolarity: 0.1057,
       trueBaseMolarity: 0.0528,
-      trueTitre: 25.00,
-      moleRatioAcid: 2,
+      trueTitre: 12.50,
+      moleRatioAcid: 1,
       moleRatioBase: 1,
       acidRfm: 36.5,
       baseRfm: 106.0,
       titrantColor: '#38BDF8',
       flaskBaseColor: 'rgba(251,191,36,0.25)',
-      flaskIndicatorColor: 'rgba(245,158,11,0.85)',
-      endpointColor: 'rgba(239,68,68,0.7)',
-      overtitratedColor: 'rgba(185,28,28,0.95)',
-      equation: 'Na₂CO₃(aq) + 2HCl(aq) → 2NaCl(aq) + H₂O(l) + CO₂(g)',
-      instructions: 'Pipette 25.0 cm³ of Solution L (5.60 g/dm³ Na₂CO₃) into a conical flask. Add 2–3 drops of methyl orange indicator. Titrate with 0.106 M HCl Solution M until the yellow colour changes sharply to permanent orange-red.',
-      questions: [
+      flaskIndicatorColor: 'rgba(236,72,153,0.85)',
+      endpointColor: 'rgba(255,255,255,0.3)',
+      overtitratedColor: 'rgba(255,255,255,0.2)',
+      equation: 'Stage 1: Na₂CO₃ + HCl → NaHCO₃ + NaCl; Stage 2: NaHCO₃ + HCl → NaCl + H₂O + CO₂',
+      instructions: 'Procedure I: Pipette 25.0 cm³ of Solution L into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with 0.106 M HCl Solution M until the pink colour discharges sharply to colourless. Complete Table 1.',
+      procedureSteps: [
+        'Fill the burette with 0.106 M Hydrochloric Acid Solution M and adjust the meniscus level precisely to 0.00 cm³.',
+        'Pipette exactly 25.0 cm³ of Sodium Carbonate Solution L into a clean 250 cm³ conical flask.',
+        'Add 2–3 drops of phenolphthalein indicator (solution turns bright pink).',
+        'Titrate with Solution M with continuous swirling until the pink colour is discharged sharply to colourless.',
+        'Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³.'
+      ],
+      procedures: [
         {
-          id: 'step_a',
-          letter: 'a',
-          field: 'avgTitre',
-          label: 'Calculate the average volume of 0.106 M HCl Solution M used, V₁',
-          marks: 1.0,
-          marksLabel: '(1.0 Mark)',
-          placeholder: 'e.g. 25.00',
-          step: '0.01',
-          unit: 'cm³',
-          calcTheoretical: (ctx) => ctx.trueTitre,
-          calcEcf: (ctx) => ctx.expAvgFromTrials,
-          check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
-          feedbackSuccess: (val) => `✓ Correct: V₁ = ${val.toFixed(2)} cm³.`,
-          feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
-          working: (ctx) => `<b>(a) Average Titre:</b> V₁ = <b>${ctx.v1.toFixed(2)} cm³</b>`
+          procedureIndex: 1,
+          title: 'Procedure I: Phenolphthalein Stage (CO₃²⁻ + H⁺ → HCO₃⁻)',
+          tableTitle: 'Table 1: Titration to Phenolphthalein Endpoint (V₁)',
+          tableMarks: 4.0,
+          solutionA: '0.106 M Hydrochloric Acid (Solution M)',
+          solutionB: 'Sodium Carbonate Solution L (5.60 g/dm³)',
+          indicator: 'Phenolphthalein',
+          pipetteVolume: 25.0,
+          trueTitre: 12.50,
+          titrantColor: '#38BDF8',
+          flaskBaseColor: 'rgba(255,255,255,0.2)',
+          endpointColor: 'rgba(255,255,255,0.3)',
+          instructions: 'Fill the burette with 0.106 M HCl Solution M. Pipette 25.0 cm³ of Solution L into a conical flask. Add 2–3 drops of phenolphthalein indicator (turns pink). Titrate with Solution M until the pink colour discharges to colourless. Complete Table 1.',
+          procedureSteps: [
+            'Fill the burette with 0.106 M HCl Solution M and adjust the meniscus level precisely to 0.00 cm³.',
+            'Pipette exactly 25.0 cm³ of Solution L (Na₂CO₃) into a clean 250 cm³ conical flask.',
+            'Add 2–3 drops of phenolphthalein indicator (solution turns bright pink).',
+            'Titrate with Solution M until the pink colour sharply discharges to colourless.',
+            'Record initial and final readings to complete Table 1 with concordant titres within ±0.10 cm³.'
+          ],
+          questions: [
+            {
+              id: 'step_1a',
+              letter: 'a',
+              field: 'avgTitre',
+              label: 'Calculate the average volume of Solution M used to phenolphthalein endpoint, V₁',
+              marks: 1.0,
+              marksLabel: '(1.0 Mark)',
+              placeholder: 'e.g. 12.50',
+              step: '0.01',
+              unit: 'cm³',
+              calcTheoretical: (ctx) => ctx.trueTitre,
+              calcEcf: (ctx) => ctx.expAvgFromTrials,
+              check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
+              feedbackSuccess: (val) => `✓ Correct: V₁ = ${val.toFixed(2)} cm³.`,
+              feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
+              working: (ctx) => `<b>(a) Average Titre V₁:</b> <b>${ctx.v1.toFixed(2)} cm³</b>`
+            },
+            {
+              id: 'step_1b',
+              letter: 'b',
+              field: 'molesHclStage1',
+              label: 'Calculate the number of moles of HCl reacting in Stage 1 in volume V₁ (0.106 M)',
+              marks: 2.0,
+              marksLabel: '(2.0 Marks)',
+              placeholder: 'e.g. 0.00132',
+              step: '0.00001',
+              unit: 'moles of HCl',
+              calcTheoretical: () => (0.106 * 12.50) / 1000.0,
+              calcEcf: (ctx) => {
+                const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_1a')) || 12.50;
+                return (0.106 * v1) / 1000.0;
+              },
+              check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+              feedbackSuccess: (val) => `✓ Correct: ${val} moles of HCl in Stage 1.`,
+              feedbackFail: (ctx, expTheo) => `Formula: (0.106 × V₁) / 1000 = ${expTheo.toFixed(5)} mol.`,
+              working: (ctx) => `<b>(b) Moles of HCl in V₁:</b> (0.106 × ${ctx.v1.toFixed(2)}) / 1000 = <b>${((0.106 * ctx.v1) / 1000.0).toFixed(5)} mol</b>`
+            }
+          ]
         },
         {
-          id: 'step_b',
-          letter: 'b',
-          field: 'molarityL',
-          label: 'Calculate the molar concentration of Solution L (Na₂CO₃) in mol/dm³ (Na = 23.0, C = 12.0, O = 16.0)',
-          marks: 2.0,
-          marksLabel: '(2.0 Marks)',
-          placeholder: 'e.g. 0.0528',
-          step: '0.0001',
-          unit: 'mol/dm³ (M)',
-          calcTheoretical: () => 5.60 / 106.0,
-          calcEcf: () => 5.60 / 106.0,
-          check: (val) => Math.abs(val - (5.60 / 106.0)) <= 0.005,
-          feedbackSuccess: (val) => `✓ Correct: Concentration of Solution L = ${val} mol/dm³.`,
-          feedbackFail: () => `Formula: Molarity = 5.60 / 106.0 = 0.0528 mol/dm³.`,
-          working: () => `<b>(b) Molarity of Solution L:</b> 5.60 / 106.0 = <b>0.0528 mol/dm³</b>`
-        },
-        {
-          id: 'step_c',
-          letter: 'c',
-          field: 'molesL',
-          label: 'Calculate the number of moles of Na₂CO₃ present in 25.0 cm³ of Solution L',
-          marks: 2.0,
-          marksLabel: '(2.0 Marks)',
-          placeholder: 'e.g. 0.00132',
-          step: '0.00001',
-          unit: 'moles of Na₂CO₃',
-          calcTheoretical: () => ((5.60 / 106.0) * 25.0) / 1000.0,
-          calcEcf: (ctx) => {
-            const mL = parseFloat(getAnswerValue(ctx.answers, 'molarityL', 'step_b')) || (5.60 / 106.0);
-            return (mL * 25.0) / 1000.0;
-          },
-          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
-          feedbackSuccess: (val) => `✓ Correct: ${val} moles of Na₂CO₃ in 25.0 cm³.`,
-          feedbackFail: (ctx, expTheo) => `Formula: (Molarity L × 25.0) / 1000 = ${expTheo.toFixed(5)} mol.`,
-          working: (ctx) => `<b>(c) Moles of Na₂CO₃:</b> (0.0528 × 25.0) / 1000 = <b>0.00132 mol</b>`
-        },
-        {
-          id: 'step_d',
-          letter: 'd',
-          field: 'molesM',
-          label: 'Calculate the number of moles of HCl reacting with Na₂CO₃ in 25.0 cm³ (Mole ratio HCl : Na₂CO₃ = 2 : 1)',
-          marks: 2.0,
-          marksLabel: '(2.0 Marks)',
-          placeholder: 'e.g. 0.00264',
-          step: '0.00001',
-          unit: 'moles of HCl',
-          calcTheoretical: () => (((5.60 / 106.0) * 25.0) / 1000.0) * 2.0,
-          calcEcf: (ctx) => {
-            const mNa = parseFloat(getAnswerValue(ctx.answers, 'molesL', 'step_c')) || (((5.60 / 106.0) * 25.0) / 1000.0);
-            return mNa * 2.0;
-          },
-          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
-          feedbackSuccess: (val) => `✓ Correct: ${val} moles of HCl.`,
-          feedbackFail: (ctx, expTheo) => `Formula: Moles of Na₂CO₃ × 2 = ${expTheo.toFixed(5)} mol.`,
-          working: (ctx) => `<b>(d) Moles of HCl:</b> 0.00132 × 2 = <b>0.00264 mol</b>`
-        },
-        {
-          id: 'step_e',
-          letter: 'e',
-          field: 'molarityM',
-          label: 'Calculate the molar concentration of HCl Solution M in mol/dm³',
-          marks: 3.0,
-          marksLabel: '(3.0 Marks)',
-          placeholder: 'e.g. 0.106',
-          step: '0.001',
-          unit: 'mol/dm³ (M)',
-          calcTheoretical: (ctx) => ((((5.60 / 106.0) * 25.0) / 1000.0) * 2.0 * 1000.0) / ctx.trueTitre,
-          calcEcf: (ctx) => {
-            const mHCl = parseFloat(getAnswerValue(ctx.answers, 'molesM', 'step_d')) || ((((5.60 / 106.0) * 25.0) / 1000.0) * 2.0);
-            const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_a')) || ctx.trueTitre;
-            return (mHCl * 1000.0) / v1;
-          },
-          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
-          feedbackSuccess: (val) => `✓ Correct: Molarity of Solution M = ${val} mol/dm³.`,
-          feedbackFail: (ctx, expTheo) => `Formula: (Moles of HCl × 1000) / V₁ = ${expTheo.toFixed(3)} mol/dm³.`,
-          working: (ctx) => `<b>(e) Molarity of Solution M:</b> (0.00264 × 1000) / ${ctx.v1.toFixed(2)} = <b>0.106 mol/dm³</b>`
+          procedureIndex: 2,
+          title: 'Procedure II: Methyl Orange Stage (Complete Neutralization to CO₂)',
+          tableTitle: 'Table 2: Titration to Methyl Orange Endpoint (V₂)',
+          tableMarks: 4.0,
+          solutionA: '0.106 M Hydrochloric Acid (Solution M)',
+          solutionB: 'Sodium Carbonate Solution L (5.60 g/dm³)',
+          indicator: 'Methyl Orange',
+          pipetteVolume: 25.0,
+          trueTitre: 25.00,
+          titrantColor: '#38BDF8',
+          flaskBaseColor: 'rgba(251,191,36,0.25)',
+          endpointColor: 'rgba(239,68,68,0.7)',
+          instructions: 'Pipette a fresh 25.0 cm³ of Solution L into a clean conical flask. Add 2–3 drops of methyl orange indicator (turns yellow). Titrate with Solution M until the yellow colour changes sharply to permanent orange-red. Complete Table 2.',
+          procedureSteps: [
+            'Fill the burette with Solution M and reset the meniscus level to 0.00 cm³.',
+            'Pipette a fresh 25.0 cm³ aliquot of Solution L into a clean conical flask.',
+            'Add 2–3 drops of methyl orange indicator (solution turns yellow).',
+            'Titrate with Solution M until the yellow colour turns to distinct permanent orange-red.',
+            'Record initial and final readings to complete Table 2 with concordant titres within ±0.10 cm³.'
+          ],
+          questions: [
+            {
+              id: 'step_2a',
+              letter: 'a',
+              field: 'avgTitre',
+              label: 'Calculate the average volume of Solution M used to methyl orange endpoint, V₂',
+              marks: 1.0,
+              marksLabel: '(1.0 Mark)',
+              placeholder: 'e.g. 25.00',
+              step: '0.01',
+              unit: 'cm³',
+              calcTheoretical: () => 25.00,
+              calcEcf: (ctx) => ctx.expAvgFromTrials,
+              check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
+              feedbackSuccess: (val) => `✓ Correct: V₂ = ${val.toFixed(2)} cm³.`,
+              feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
+              working: (ctx) => `<b>(a) Average Titre V₂:</b> <b>${ctx.v1.toFixed(2)} cm³</b>`
+            },
+            {
+              id: 'step_2b',
+              letter: 'b',
+              field: 'molesLTotal',
+              label: 'Determine total moles of Na₂CO₃ neutralized in 25.0 cm³ (Mole ratio HCl : Na₂CO₃ = 2 : 1 in complete neutralization)',
+              marks: 2.0,
+              marksLabel: '(2.0 Marks)',
+              placeholder: 'e.g. 0.00132',
+              step: '0.00001',
+              unit: 'moles of Na₂CO₃',
+              calcTheoretical: () => ((0.106 * 25.00) / 1000.0) / 2.0,
+              calcEcf: (ctx) => {
+                const v2 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_2a')) || 25.00;
+                return ((0.106 * v2) / 1000.0) / 2.0;
+              },
+              check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+              feedbackSuccess: (val) => `✓ Correct: ${val} moles of Na₂CO₃.`,
+              feedbackFail: (ctx, expTheo) => `Formula: ((0.106 × V₂) / 1000) / 2 = ${expTheo.toFixed(5)} mol.`,
+              working: () => `<b>(b) Total Moles of Na₂CO₃:</b> ((0.106 × 25.00) / 1000) / 2 = <b>0.00132 mol</b>`
+            },
+            {
+              id: 'step_2c',
+              letter: 'c',
+              field: 'molarityLConfirmed',
+              label: 'Determine the molar concentration of Solution L in mol/dm³',
+              marks: 2.0,
+              marksLabel: '(2.0 Marks)',
+              placeholder: 'e.g. 0.0528',
+              step: '0.0001',
+              unit: 'mol/dm³ (M)',
+              calcTheoretical: () => (((0.106 * 25.00) / 1000.0) / 2.0) * (1000.0 / 25.0),
+              calcEcf: (ctx) => {
+                const mTotal = parseFloat(getAnswerValue(ctx.answers, 'molesLTotal', 'step_2b')) || 0.001325;
+                return (mTotal * 1000.0) / 25.0;
+              },
+              check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+              feedbackSuccess: (val) => `✓ Correct: Molarity of Solution L = ${val} mol/dm³.`,
+              feedbackFail: () => `Formula: (Moles of Na₂CO₃ × 1000) / 25.0 = 0.0528 mol/dm³.`,
+              working: () => `<b>(c) Molarity of Solution L:</b> (0.001325 × 1000) / 25.0 = <b>0.053 mol/dm³</b>`
+            }
+          ]
         }
       ]
     },
@@ -5231,9 +5478,10 @@ const COMPOSITE_EXAM_PRESETS = {
     q1: {
       type: 'titration',
       calcType: 'percentage_purity',
-      title: 'Question 1: Volumetric Analysis — Carbonate Percentage Purity (15.0 Marks)',
+      title: 'Question 1: Volumetric Analysis — Industrial Carbonate Percentage Purity (20.0 Marks)',
+      hasMultipleProcedures: true,
       solutionA: '0.210 M Hydrochloric Acid (Solution M)',
-      solutionB: 'Impure Carbonate (6.00 g/dm³ sample in Solution B)',
+      solutionB: 'Sodium Carbonate Solution N (8.8 g/dm³)',
       acidFormula: 'HCl',
       baseFormula: 'Na2CO3',
       indicator: 'Screened Methyl Orange',
@@ -5252,8 +5500,155 @@ const COMPOSITE_EXAM_PRESETS = {
       flaskIndicatorColor: 'rgba(245,158,11,0.85)',
       endpointColor: 'rgba(239,68,68,0.7)',
       equation: '2HCl(aq) + Na₂CO₃(aq) → 2NaCl(aq) + CO₂(g) + H₂O(l)',
-      instructions: 'Titrate 25.0 cm³ of impure Solution B with Solution A using screened methyl orange indicator until the colour changes sharply from green to pink.',
-      questions: createPercentagePurityQuestions({ impureMassPerLiter: 6.00, pipetteVolume: 25.0, pureRfm: 106.0 })
+      instructions: 'Procedure I: Pipette 25.0 cm³ of HCl Solution M into a conical flask. Add 2–3 drops of screened methyl orange indicator. Titrate with Sodium Hydroxide Solution N from the burette until the colour changes sharply from green to pink. Complete Table 1.',
+      procedureSteps: [
+        'Fill the burette with 0.100 M Sodium Hydroxide Solution N and adjust the meniscus level precisely to 0.00 cm³.',
+        'Pipette exactly 25.0 cm³ of Hydrochloric Acid Solution M into a clean 250 cm³ conical flask.',
+        'Add 2–3 drops of screened methyl orange indicator (solution turns green).',
+        'Titrate with Solution N with continuous swirling until the colour changes sharply to pink.',
+        'Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³.'
+      ],
+      procedures: [
+        {
+          procedureIndex: 1,
+          title: 'Procedure I: Standardization of Hydrochloric Acid (Solution M)',
+          tableTitle: 'Table 1: Titration of Acid Solution M with Solution N',
+          tableMarks: 4.0,
+          solutionA: '0.100 M Sodium Hydroxide Solution N',
+          solutionB: 'Hydrochloric Acid Solution M',
+          indicator: 'Screened Methyl Orange',
+          pipetteVolume: 25.0,
+          trueTitre: 25.00,
+          titrantColor: '#38BDF8',
+          flaskBaseColor: 'rgba(251,191,36,0.25)',
+          endpointColor: 'rgba(239,68,68,0.7)',
+          instructions: 'Fill the burette with Solution N. Pipette 25.0 cm³ of Solution M into a conical flask. Add screened methyl orange indicator. Titrate until the colour changes from green to pink. Complete Table 1.',
+          procedureSteps: [
+            'Fill the burette with Solution N and adjust the meniscus to 0.00 cm³.',
+            'Pipette exactly 25.0 cm³ of Acid Solution M into a clean conical flask.',
+            'Add 2–3 drops of screened methyl orange indicator.',
+            'Titrate with Solution N until the colour changes sharply from green to pink.',
+            'Record initial and final readings to complete Table 1 with concordant titres.'
+          ],
+          questions: [
+            {
+              id: 'step_1a',
+              letter: 'a',
+              field: 'avgTitre',
+              label: 'Calculate the average volume of Solution N used in Procedure I, V₁',
+              marks: 1.0,
+              marksLabel: '(1.0 Mark)',
+              placeholder: 'e.g. 25.00',
+              step: '0.01',
+              unit: 'cm³',
+              calcTheoretical: () => 25.00,
+              calcEcf: (ctx) => ctx.expAvgFromTrials,
+              check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
+              feedbackSuccess: (val) => `✓ Correct: V₁ = ${val.toFixed(2)} cm³.`,
+              feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
+              working: (ctx) => `<b>(a) Average Titre V₁:</b> <b>${ctx.v1.toFixed(2)} cm³</b>`
+            },
+            {
+              id: 'step_1b',
+              letter: 'b',
+              field: 'molarityHclM',
+              label: 'Calculate the molar concentration of Hydrochloric Acid Solution M in mol/dm³ (0.100 M NaOH N)',
+              marks: 2.0,
+              marksLabel: '(2.0 Marks)',
+              placeholder: 'e.g. 0.100',
+              step: '0.001',
+              unit: 'mol/dm³ (M)',
+              calcTheoretical: () => (0.100 * 25.00) / 25.0,
+              calcEcf: (ctx) => {
+                const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_1a')) || 25.00;
+                return (0.100 * v1) / 25.0;
+              },
+              check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+              feedbackSuccess: (val) => `✓ Correct: Molarity of Solution M = ${val} mol/dm³.`,
+              feedbackFail: (ctx, expTheo) => `Formula: (0.100 × V₁) / 25.0 = ${expTheo.toFixed(3)} mol/dm³.`,
+              working: () => `<b>(b) Molarity of Solution M:</b> (0.100 × 25.00) / 25.0 = <b>0.100 mol/dm³</b>`
+            }
+          ]
+        },
+        {
+          procedureIndex: 2,
+          title: 'Procedure II: Back-Titration of Residual Acid Solution Q (Impure Carbonate)',
+          tableTitle: 'Table 2: Back-Titration of Residual Acid Solution Q with Solution N',
+          tableMarks: 4.0,
+          solutionA: '0.100 M Sodium Hydroxide Solution N',
+          solutionB: 'Residual Acid Solution Q (Impure Carbonate reaction mixture made to 250 cm³)',
+          indicator: 'Screened Methyl Orange',
+          pipetteVolume: 25.0,
+          trueTitre: 12.50,
+          titrantColor: '#38BDF8',
+          flaskBaseColor: 'rgba(251,191,36,0.25)',
+          endpointColor: 'rgba(239,68,68,0.7)',
+          instructions: 'Pipette 25.0 cm³ of Residual Acid Solution Q into a clean conical flask. Add 2–3 drops screened methyl orange indicator. Titrate with 0.100 M NaOH Solution N from the burette until the colour changes sharply from green to pink. Complete Table 2.',
+          procedureSteps: [
+            'Fill the burette with 0.100 M NaOH Solution N and adjust meniscus to 0.00 cm³.',
+            'Pipette exactly 25.0 cm³ of Residual Acid Solution Q into a clean conical flask.',
+            'Add 2–3 drops of screened methyl orange indicator.',
+            'Titrate with Solution N until the colour changes sharply from green to pink.',
+            'Record initial and final readings to complete Table 2 with concordant titres.'
+          ],
+          questions: [
+            {
+              id: 'step_2a',
+              letter: 'a',
+              field: 'avgTitre',
+              label: 'Calculate the average volume of Solution N used in Procedure II, V₂',
+              marks: 1.0,
+              marksLabel: '(1.0 Mark)',
+              placeholder: 'e.g. 12.50',
+              step: '0.01',
+              unit: 'cm³',
+              calcTheoretical: () => 12.50,
+              calcEcf: (ctx) => ctx.expAvgFromTrials,
+              check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
+              feedbackSuccess: (val) => `✓ Correct: V₂ = ${val.toFixed(2)} cm³.`,
+              feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
+              working: (ctx) => `<b>(a) Average Titre V₂:</b> <b>${ctx.v1.toFixed(2)} cm³</b>`
+            },
+            {
+              id: 'step_2b',
+              letter: 'b',
+              field: 'molesUnreactedQ',
+              label: 'Calculate total moles of unreacted HCl in 250 cm³ of Solution Q',
+              marks: 2.0,
+              marksLabel: '(2.0 Marks)',
+              placeholder: 'e.g. 0.0125',
+              step: '0.0001',
+              unit: 'moles of HCl',
+              calcTheoretical: () => ((0.100 * 12.50) / 1000.0) * 10.0,
+              calcEcf: (ctx) => {
+                const v2 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_2a')) || 12.50;
+                return ((0.100 * v2) / 1000.0) * 10.0;
+              },
+              check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+              feedbackSuccess: (val) => `✓ Correct: ${val} moles of unreacted HCl in 250 cm³.`,
+              feedbackFail: (ctx, expTheo) => `Formula: ((0.100 × V₂) / 1000) × 10 = ${expTheo.toFixed(4)} mol.`,
+              working: () => `<b>(b) Unreacted Moles of HCl:</b> ((0.100 × 12.50) / 1000) × 10 = <b>0.0125 mol</b>`
+            },
+            {
+              id: 'step_2c',
+              letter: 'c',
+              field: 'purityCarbonate',
+              label: 'Determine the percentage purity of the industrial carbonate sample (6.00 g/dm³ sample dissolved, RFM = 106.0)',
+              marks: 2.5,
+              marksLabel: '(2.5 Marks)',
+              placeholder: 'e.g. 88.3',
+              step: '0.1',
+              unit: '%',
+              calcTheoretical: () => 88.3,
+              calcEcf: () => 88.3,
+              check: (val) => Math.abs(val - 88.3) <= 4.0,
+              feedbackSuccess: (val) => `✓ Correct: Percentage purity of carbonate = ${val}%.`,
+              feedbackFail: () => `Expected around 88.3% purity based on reaction stoichiometry.`,
+              working: () => `<b>(c) Percentage Purity:</b> (Pure Carbonate Mass / Impure Mass) × 100 = <b>88.3%</b>`
+            }
+          ]
+        }
+      ]
     },
     q2: {
       type: 'qualitative_single',
@@ -5346,9 +5741,10 @@ const COMPOSITE_EXAM_PRESETS = {
     q1: {
       type: 'titration',
       calcType: 'standard_molarity',
-      title: 'Question 1: Volumetric Analysis — KMnO₄ Redox Standardization (15.0 Marks)',
-      solutionA: '0.012 M Acidified Potassium Manganate(VII) (KMnO₄)',
-      solutionB: 'Ammonium Iron(II) Sulfate Solution (23.5 g/dm³)',
+      title: 'Question 1: Volumetric Analysis — Two-Stage KMnO₄ Redox Titration (20.0 Marks)',
+      hasMultipleProcedures: true,
+      solutionA: '0.012 M Acidified Potassium Manganate(VII) (KMnO₄ Solution A)',
+      solutionB: 'Ammonium Iron(II) Sulfate Solution B (23.5 g/dm³)',
       acidFormula: 'KMnO4',
       baseFormula: 'FeSO4',
       indicator: 'Potassium Manganate(VII)',
@@ -5366,8 +5762,216 @@ const COMPOSITE_EXAM_PRESETS = {
       endpointColor: 'rgba(236,72,153,0.7)',
       overtitratedColor: 'rgba(192,38,211,0.95)',
       equation: 'MnO₄⁻(aq) + 5Fe²⁺(aq) + 8H⁺(aq) → Mn²⁺(aq) + 5Fe³⁺(aq) + 4H₂O(l)',
-      instructions: 'Pipette 25.0 cm³ of Solution B into a conical flask. Titrate with 0.012 M KMnO₄ Solution A until the first permanent pale pink colour persists for at least 30 seconds.',
-      questions: createStandardTitrationQuestions({ acidRfm: 158.0, baseRfm: 392.0, pipetteVolume: 25.0, moleRatioAcid: 1, moleRatioBase: 5 })
+      instructions: 'Procedure I: Pipette 25.0 cm³ of Solution B into a conical flask. Add about 10 cm³ of 1M sulfuric acid. Titrate with 0.012 M KMnO₄ Solution A until the first permanent pale pink colour persists for at least 30 seconds. Complete Table 1.',
+      procedureSteps: [
+        'Fill the burette with 0.012 M acidified KMnO₄ Solution A and adjust the upper meniscus precisely to 0.00 cm³.',
+        'Pipette exactly 25.0 cm³ of Ammonium Iron(II) Sulfate Solution B into a clean conical flask.',
+        'Add about 10 cm³ of 1M dilute sulfuric acid using a measuring cylinder.',
+        'Titrate with Solution A with continuous swirling until the first permanent pale pink colour persists for 30 seconds.',
+        'Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³.'
+      ],
+      procedures: [
+        {
+          procedureIndex: 1,
+          title: 'Procedure I: Titration of Iron(II) Solution B with KMnO₄ Solution A',
+          tableTitle: 'Table 1: Titration of Solution B with KMnO₄ Solution A',
+          tableMarks: 4.0,
+          solutionA: '0.012 M Acidified KMnO₄ Solution A',
+          solutionB: 'Ammonium Iron(II) Sulfate Solution B',
+          indicator: 'Self-indicating (KMnO₄)',
+          pipetteVolume: 25.0,
+          trueTitre: 25.00,
+          titrantColor: '#701A75',
+          flaskBaseColor: 'rgba(56,189,248,0.25)',
+          endpointColor: 'rgba(236,72,153,0.7)',
+          instructions: 'Fill the burette with Solution A. Pipette 25.0 cm³ of Solution B into a conical flask. Add 10 cm³ dilute sulfuric acid. Titrate with Solution A until the pale pink colour persists. Complete Table 1.',
+          procedureSteps: [
+            'Fill the burette with 0.012 M acidified KMnO₄ Solution A and adjust meniscus to 0.00 cm³.',
+            'Pipette exactly 25.0 cm³ of Solution B into a conical flask.',
+            'Add 10 cm³ of 1M dilute sulfuric acid.',
+            'Titrate with Solution A until the first permanent pale pink colour persists.',
+            'Record initial and final readings to complete Table 1 with concordant titres.'
+          ],
+          questions: [
+            {
+              id: 'step_1a',
+              letter: 'a',
+              field: 'avgTitre',
+              label: 'Calculate the average volume of KMnO₄ Solution A used in Procedure I, V₁',
+              marks: 1.0,
+              marksLabel: '(1.0 Mark)',
+              placeholder: 'e.g. 25.00',
+              step: '0.01',
+              unit: 'cm³',
+              calcTheoretical: () => 25.00,
+              calcEcf: (ctx) => ctx.expAvgFromTrials,
+              check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
+              feedbackSuccess: (val) => `✓ Correct: V₁ = ${val.toFixed(2)} cm³.`,
+              feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
+              working: (ctx) => `<b>(a) Average Titre V₁:</b> <b>${ctx.v1.toFixed(2)} cm³</b>`
+            },
+            {
+              id: 'step_1b',
+              letter: 'b',
+              field: 'molesKmno4P1',
+              label: 'Calculate the number of moles of KMnO₄ present in volume V₁ of Solution A (0.012 M)',
+              marks: 1.5,
+              marksLabel: '(1.5 Marks)',
+              placeholder: 'e.g. 0.00030',
+              step: '0.00001',
+              unit: 'moles of KMnO₄',
+              calcTheoretical: () => (0.012 * 25.00) / 1000.0,
+              calcEcf: (ctx) => {
+                const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_1a')) || 25.00;
+                return (0.012 * v1) / 1000.0;
+              },
+              check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+              feedbackSuccess: (val) => `✓ Correct: ${val} moles of KMnO₄.`,
+              feedbackFail: (ctx, expTheo) => `Formula: (0.012 × V₁) / 1000 = ${expTheo.toFixed(5)} mol.`,
+              working: () => `<b>(b) Moles of KMnO₄:</b> (0.012 × 25.00) / 1000 = <b>0.00030 mol</b>`
+            },
+            {
+              id: 'step_1c',
+              letter: 'c',
+              field: 'molesFe2P1',
+              label: 'Determine the number of moles of Fe²⁺ ions in 25.0 cm³ of Solution B (Mole ratio Fe²⁺ : MnO₄⁻ = 5 : 1)',
+              marks: 1.5,
+              marksLabel: '(1.5 Marks)',
+              placeholder: 'e.g. 0.00150',
+              step: '0.00001',
+              unit: 'moles of Fe²⁺',
+              calcTheoretical: () => ((0.012 * 25.00) / 1000.0) * 5.0,
+              calcEcf: (ctx) => {
+                const mK = parseFloat(getAnswerValue(ctx.answers, 'molesKmno4P1', 'step_1b')) || 0.00030;
+                return mK * 5.0;
+              },
+              check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+              feedbackSuccess: (val) => `✓ Correct: ${val} moles of Fe²⁺.`,
+              feedbackFail: (ctx, expTheo) => `Formula: Moles of KMnO₄ × 5 = ${expTheo.toFixed(5)} mol.`,
+              working: () => `<b>(c) Moles of Fe²⁺:</b> 0.00030 × 5 = <b>0.00150 mol</b>`
+            },
+            {
+              id: 'step_1d',
+              letter: 'd',
+              field: 'molarityFe2',
+              label: 'Calculate the molar concentration of Fe²⁺ in Solution B in mol/dm³',
+              marks: 2.0,
+              marksLabel: '(2.0 Marks)',
+              placeholder: 'e.g. 0.060',
+              step: '0.001',
+              unit: 'mol/dm³ (M)',
+              calcTheoretical: () => (((0.012 * 25.00) / 1000.0) * 5.0 * 1000.0) / 25.0,
+              calcEcf: (ctx) => {
+                const mFe = parseFloat(getAnswerValue(ctx.answers, 'molesFe2P1', 'step_1c')) || 0.00150;
+                return (mFe * 1000.0) / 25.0;
+              },
+              check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+              feedbackSuccess: (val) => `✓ Correct: Molarity of Solution B = ${val} mol/dm³.`,
+              feedbackFail: () => `Formula: (Moles of Fe²⁺ × 1000) / 25.0 = 0.060 mol/dm³.`,
+              working: () => `<b>(d) Molarity of Solution B:</b> (0.00150 × 1000) / 25.0 = <b>0.060 mol/dm³</b>`
+            }
+          ]
+        },
+        {
+          procedureIndex: 2,
+          title: 'Procedure II: Titration of Warm Ethanedioic Acid (Solution C) with KMnO₄',
+          tableTitle: 'Table 2: Titration of Hot Ethanedioic Acid with KMnO₄ Solution A',
+          tableMarks: 4.0,
+          solutionA: '0.012 M Acidified KMnO₄ Solution A',
+          solutionB: '0.050 M Ethanedioic Acid (H₂C₂O₄·2H₂O) Solution C',
+          indicator: 'Self-indicating (KMnO₄)',
+          pipetteVolume: 25.0,
+          trueTitre: 20.00,
+          titrantColor: '#701A75',
+          flaskBaseColor: 'rgba(255,255,255,0.2)',
+          endpointColor: 'rgba(236,72,153,0.7)',
+          instructions: 'Pipette 25.0 cm³ of Ethanedioic Acid Solution C into a conical flask. Add 10 cm³ of 1M dilute sulfuric acid. Warm gently to about 65°C. Titrate hot with Solution A until the first permanent faint pink colour persists. Complete Table 2.',
+          procedureSteps: [
+            'Fill the burette with Solution A and reset the meniscus to 0.00 cm³.',
+            'Pipette exactly 25.0 cm³ of Ethanedioic Acid Solution C into a clean conical flask.',
+            'Add 10 cm³ of 1M dilute sulfuric acid and warm the mixture gently to about 65°C.',
+            'Titrate the hot mixture with Solution A until the first permanent faint pink colour persists.',
+            'Record initial and final readings to complete Table 2 with concordant titres.'
+          ],
+          questions: [
+            {
+              id: 'step_2a',
+              letter: 'a',
+              field: 'avgTitre',
+              label: 'Calculate the average volume of KMnO₄ Solution A used in Procedure II, V₂',
+              marks: 1.0,
+              marksLabel: '(1.0 Mark)',
+              placeholder: 'e.g. 20.00',
+              step: '0.01',
+              unit: 'cm³',
+              calcTheoretical: () => 20.00,
+              calcEcf: (ctx) => ctx.expAvgFromTrials,
+              check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
+              feedbackSuccess: (val) => `✓ Correct: V₂ = ${val.toFixed(2)} cm³.`,
+              feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
+              working: (ctx) => `<b>(a) Average Titre V₂:</b> <b>${ctx.v1.toFixed(2)} cm³</b>`
+            },
+            {
+              id: 'step_2b',
+              letter: 'b',
+              field: 'molesOxalicP2',
+              label: 'Calculate the number of moles of ethanedioic acid in 25.0 cm³ of Solution C (0.050 M)',
+              marks: 1.5,
+              marksLabel: '(1.5 Marks)',
+              placeholder: 'e.g. 0.00125',
+              step: '0.00001',
+              unit: 'moles of H₂C₂O₄',
+              calcTheoretical: () => (0.050 * 25.0) / 1000.0,
+              calcEcf: () => (0.050 * 25.0) / 1000.0,
+              check: (val) => Math.abs(val - 0.00125) <= 0.00015,
+              feedbackSuccess: (val) => `✓ Correct: ${val} moles of ethanedioic acid.`,
+              feedbackFail: () => `Formula: (0.050 × 25.0) / 1000 = 0.00125 mol.`,
+              working: () => `<b>(b) Moles of Ethanedioic Acid:</b> (0.050 × 25.0) / 1000 = <b>0.00125 mol</b>`
+            },
+            {
+              id: 'step_2c',
+              letter: 'c',
+              field: 'molesKmno4P2',
+              label: 'Calculate the moles of KMnO₄ reacting in volume V₂ of Procedure II (0.012 M)',
+              marks: 1.5,
+              marksLabel: '(1.5 Marks)',
+              placeholder: 'e.g. 0.00024',
+              step: '0.00001',
+              unit: 'moles of KMnO₄',
+              calcTheoretical: () => (0.012 * 20.00) / 1000.0,
+              calcEcf: (ctx) => {
+                const v2 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_2a')) || 20.00;
+                return (0.012 * v2) / 1000.0;
+              },
+              check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+              feedbackSuccess: (val) => `✓ Correct: ${val} moles of KMnO₄ in V₂.`,
+              feedbackFail: (ctx, expTheo) => `Formula: (0.012 × V₂) / 1000 = ${expTheo.toFixed(5)} mol.`,
+              working: () => `<b>(c) Moles of KMnO₄ in V₂:</b> (0.012 × 20.00) / 1000 = <b>0.00024 mol</b>`
+            },
+            {
+              id: 'step_2d',
+              letter: 'd',
+              field: 'moleRatioRedox',
+              label: 'Determine the mole ratio in which ethanedioic acid reacts with potassium manganate(VII) (Moles H₂C₂O₄ / Moles KMnO₄)',
+              marks: 2.0,
+              marksLabel: '(2.0 Marks)',
+              placeholder: 'e.g. 2.5',
+              step: '0.1',
+              unit: 'ratio (5 : 2)',
+              calcTheoretical: () => 2.5,
+              calcEcf: (ctx) => {
+                const mOx = parseFloat(getAnswerValue(ctx.answers, 'molesOxalicP2', 'step_2b')) || 0.00125;
+                const mK2 = parseFloat(getAnswerValue(ctx.answers, 'molesKmno4P2', 'step_2c')) || 0.00024;
+                return mK2 > 0 ? parseFloat((mOx / mK2).toFixed(1)) : 2.5;
+              },
+              check: (val) => Math.abs(val - 2.5) <= 0.4,
+              feedbackSuccess: (val) => `✓ Correct: Mole ratio = ${val} : 1 (5 C₂O₄²⁻ : 2 MnO₄⁻).`,
+              feedbackFail: () => `Formula: Moles Ethanedioic Acid / Moles KMnO₄ = 2.5 (5 : 2).`,
+              working: () => `<b>(d) Reaction Mole Ratio:</b> 0.00125 / 0.00024 = <b>2.5 (5 C₂O₄²⁻ : 2 MnO₄⁻)</b>`
+            }
+          ]
+        }
+      ]
     },
     q2: {
       type: 'qualitative_single',
@@ -5469,6 +6073,13 @@ const COMPOSITE_EXAM_PRESETS = {
       overtitratedColor: 'rgba(219,39,119,0.9)',
       equation: 'HCl(aq) + NaOH(aq) → NaCl(aq) + H₂O(l)',
       instructions: 'Fill the burette with 0.200 M Sodium Hydroxide Solution K. Pipette 25.0 cm³ of Hydrochloric Acid Solution J into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate Solution J with Solution K until the colourless solution turns to the first permanent faint pink colour.',
+      procedureSteps: [
+              "Fill the burette with 0.200 M Sodium Hydroxide Solution K and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of Hydrochloric Acid Solution J into a clean 250 cm³ conical flask.",
+              "Add 2–3 drops of phenolphthalein indicator (solution remains colourless).",
+              "Titrate Solution J with Solution K with continuous swirling until the colourless solution turns to the first permanent faint pink colour.",
+              "Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: [
         {
           id: 'step_a',
@@ -5690,6 +6301,13 @@ const COMPOSITE_EXAM_PRESETS = {
       overtitratedColor: 'rgba(219,39,119,0.95)',
       equation: 'H₃A(aq) + 3NaOH(aq) → Na₃A(aq) + 3H₂O(l)',
       instructions: 'Pipette 25.0 cm³ of Solution E (0.100 M Carboxylic Acid) into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with 0.300 M NaOH Solution D until the first permanent faint pink colour appears.',
+      procedureSteps: [
+              "Fill the burette with 0.300 M Sodium Hydroxide Solution D and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of Carboxylic Acid Solution E into a clean 250 cm³ conical flask.",
+              "Add 2–3 drops of phenolphthalein indicator (solution remains colourless).",
+              "Titrate Solution E with Solution D with continuous swirling until the first permanent faint pink colour appears.",
+              "Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: [
         {
           id: 'step_a',
@@ -5877,15 +6495,16 @@ const COMPOSITE_EXAM_PRESETS = {
       type: 'titration',
       calcType: 'back_titration',
       title: 'Question 1: Volumetric Analysis — Ammonium Salt Back-Titration (15.0 Marks)',
+      hasMultipleProcedures: true,
       solutionA: '0.080 M Hydrochloric Acid (Solution C)',
-      solutionB: 'Residual Sodium Hydroxide Solution E (from reaction with Solid B)',
+      solutionB: 'Diluted Sodium Hydroxide Solution D',
       acidFormula: 'HCl',
       baseFormula: 'NaOH',
       indicator: 'Phenolphthalein',
       pipetteVolume: 25.0,
       trueAcidMolarity: 0.080,
-      trueBaseMolarity: 0.04992,
-      trueTitre: 15.60,
+      trueBaseMolarity: 0.080,
+      trueTitre: 25.00,
       moleRatioAcid: 1,
       moleRatioBase: 1,
       acidRfm: 36.5,
@@ -5896,104 +6515,216 @@ const COMPOSITE_EXAM_PRESETS = {
       endpointColor: 'rgba(255,255,255,0.25)',
       overtitratedColor: 'rgba(255,255,255,0.15)',
       equation: 'HCl(aq) + NaOH(aq) → NaCl(aq) + H₂O(l)',
-      instructions: 'Pipette 25.0 cm³ of Solution E (residual NaOH solution) into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with 0.080 M HCl Solution C until the pink colour is just discharged to colourless.',
-      questions: [
+      instructions: 'Procedure I: Pipette 25.0 cm³ of Diluted Sodium Hydroxide Solution D into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with 0.080 M HCl Solution C until the pink colour is just discharged to colourless. Complete Table 1.',
+      procedureSteps: [
+        'Fill the burette with 0.080 M Hydrochloric Acid Solution C and adjust the meniscus to 0.00 cm³.',
+        'Pipette exactly 25.0 cm³ of Diluted Sodium Hydroxide Solution D into a clean 250 cm³ conical flask.',
+        'Add 2–3 drops of phenolphthalein indicator (solution turns pink).',
+        'Titrate with Solution C until the pink colour discharges sharply to colourless.',
+        'Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³.'
+      ],
+      procedures: [
         {
-          id: 'step_a',
-          letter: 'a',
-          field: 'avgTitre',
-          label: 'Calculate the average volume of 0.080 M HCl Solution C used, V₁',
-          marks: 1.0,
-          marksLabel: '(1.0 Mark)',
-          placeholder: 'e.g. 15.60',
-          step: '0.01',
-          unit: 'cm³',
-          calcTheoretical: (ctx) => ctx.trueTitre,
-          calcEcf: (ctx) => ctx.expAvgFromTrials,
-          check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
-          feedbackSuccess: (val) => `✓ Correct: V₁ = ${val.toFixed(2)} cm³.`,
-          feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
-          working: (ctx) => `<b>(a) Average Titre:</b> V₁ = <b>${ctx.v1.toFixed(2)} cm³</b>`
+          procedureIndex: 1,
+          title: 'Procedure I: Titration of Diluted Sodium Hydroxide (Solution D)',
+          tableTitle: 'Table 1: Titration of Solution D with Acid Solution C',
+          tableMarks: 4.0,
+          solutionA: '0.080 M Hydrochloric Acid (Solution C)',
+          solutionB: 'Diluted Sodium Hydroxide Solution D',
+          indicator: 'Phenolphthalein',
+          pipetteVolume: 25.0,
+          trueTitre: 25.00,
+          titrantColor: '#38BDF8',
+          flaskBaseColor: 'rgba(255,255,255,0.25)',
+          endpointColor: 'rgba(255,255,255,0.25)',
+          instructions: 'Fill the burette with 0.080 M HCl Solution C. Pipette 25.0 cm³ of Solution D into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with Solution C until the pink colour is discharged. Complete Table 1.',
+          procedureSteps: [
+            'Fill the burette with 0.080 M Hydrochloric Acid Solution C and adjust meniscus to 0.00 cm³.',
+            'Pipette exactly 25.0 cm³ of Solution D into a clean conical flask.',
+            'Add 2–3 drops of phenolphthalein indicator.',
+            'Titrate with Solution C until the pink colour discharges to colourless.',
+            'Record initial and final readings to complete Table 1 with concordant titres.'
+          ],
+          questions: [
+            {
+              id: 'step_1a',
+              letter: 'a',
+              field: 'avgTitre',
+              label: 'Calculate the average volume of 0.080 M HCl Solution C used for Solution D, V₁',
+              marks: 1.0,
+              marksLabel: '(1.0 Mark)',
+              placeholder: 'e.g. 25.00',
+              step: '0.01',
+              unit: 'cm³',
+              calcTheoretical: () => 25.00,
+              calcEcf: (ctx) => ctx.expAvgFromTrials,
+              check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
+              feedbackSuccess: (val) => `✓ Correct: V₁ = ${val.toFixed(2)} cm³.`,
+              feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
+              working: (ctx) => `<b>(a) Average Titre V₁:</b> <b>${ctx.v1.toFixed(2)} cm³</b>`
+            },
+            {
+              id: 'step_1b',
+              letter: 'b',
+              field: 'molesHclUsed',
+              label: 'Calculate the number of moles of HCl present in the average titre V₁ of Solution C (0.080 M)',
+              marks: 1.0,
+              marksLabel: '(1.0 Mark)',
+              placeholder: 'e.g. 0.00200',
+              step: '0.00001',
+              unit: 'moles of HCl',
+              calcTheoretical: (ctx) => (0.080 * (ctx.trueTitre || 25.00)) / 1000.0,
+              calcEcf: (ctx) => {
+                const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_1a')) || 25.00;
+                return (0.080 * v1) / 1000.0;
+              },
+              check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+              feedbackSuccess: (val) => `✓ Correct: ${val} moles of HCl.`,
+              feedbackFail: (ctx, expTheo) => `Formula: (0.080 × V₁) / 1000 = ${expTheo.toFixed(5)} mol.`,
+              working: (ctx) => `<b>(b) Moles of HCl:</b> (0.080 × ${ctx.v1.toFixed(2)}) / 1000 = <b>${((0.080 * ctx.v1) / 1000.0).toFixed(5)} mol</b>`
+            },
+            {
+              id: 'step_1c',
+              letter: 'c',
+              field: 'molarityNaohD',
+              label: 'Calculate the molar concentration of Diluted Sodium Hydroxide Solution D in mol/dm³',
+              marks: 1.0,
+              marksLabel: '(1.0 Mark)',
+              placeholder: 'e.g. 0.080',
+              step: '0.001',
+              unit: 'mol/dm³ (M)',
+              calcTheoretical: () => (0.080 * 25.00) / 25.0,
+              calcEcf: (ctx) => {
+                const mHcl = parseFloat(getAnswerValue(ctx.answers, 'molesHclUsed', 'step_1b')) || 0.00200;
+                return (mHcl * 1000.0) / 25.0;
+              },
+              check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+              feedbackSuccess: (val) => `✓ Correct: Molarity of Solution D = ${val} mol/dm³.`,
+              feedbackFail: (ctx, expTheo) => `Formula: (Moles of HCl × 1000) / 25.0 = ${expTheo.toFixed(3)} mol/dm³.`,
+              working: (ctx) => `<b>(c) Molarity of Solution D:</b> (${((0.080 * ctx.v1) / 1000.0).toFixed(5)} × 1000) / 25.0 = <b>0.080 mol/dm³</b>`
+            }
+          ]
         },
         {
-          id: 'step_b',
-          letter: 'b',
-          field: 'molesHcl',
-          label: 'Calculate the number of moles of HCl in the average titre V₁ of Solution C',
-          marks: 2.0,
-          marksLabel: '(2.0 Marks)',
-          placeholder: 'e.g. 0.00125',
-          step: '0.00001',
-          unit: 'moles of HCl',
-          calcTheoretical: (ctx) => (0.080 * ctx.trueTitre) / 1000.0,
-          calcEcf: (ctx) => {
-            const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_a')) || ctx.trueTitre;
-            return (0.080 * v1) / 1000.0;
-          },
-          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
-          feedbackSuccess: (val) => `✓ Correct: ${val} moles of HCl.`,
-          feedbackFail: (ctx, expTheo) => `Formula: (0.080 × V₁) / 1000 = ${expTheo.toFixed(5)} mol.`,
-          working: (ctx) => `<b>(b) Moles of HCl:</b> (0.080 × ${ctx.v1.toFixed(2)}) / 1000 = <b>${((0.080 * ctx.v1) / 1000.0).toFixed(5)} mol</b>`
-        },
-        {
-          id: 'step_c',
-          letter: 'c',
-          field: 'molesResidual',
-          label: 'Calculate the total number of unreacted moles of NaOH present in the 100 cm³ of Solution E',
-          marks: 2.0,
-          marksLabel: '(2.0 Marks)',
-          placeholder: 'e.g. 0.00500',
-          step: '0.00001',
-          unit: 'moles of NaOH',
-          calcTheoretical: (ctx) => ((0.080 * ctx.trueTitre) / 1000.0) * 4.0,
-          calcEcf: (ctx) => {
-            const mH = parseFloat(getAnswerValue(ctx.answers, 'molesHcl', 'step_b')) || ((0.080 * ctx.trueTitre) / 1000.0);
-            return mH * 4.0;
-          },
-          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
-          feedbackSuccess: (val) => `✓ Correct: ${val} unreacted moles of NaOH in 100 cm³.`,
-          feedbackFail: (ctx, expTheo) => `Formula: Moles of HCl in 25 cm³ × (100 / 25) = ${expTheo.toFixed(5)} mol.`,
-          working: (ctx) => `<b>(c) Unreacted Moles of NaOH in 100 cm³:</b> ${((0.080 * ctx.v1) / 1000.0).toFixed(5)} × 4 = <b>${(((0.080 * ctx.v1) / 1000.0) * 4.0).toFixed(5)} mol</b>`
-        },
-        {
-          id: 'step_d',
-          letter: 'd',
-          field: 'molesReacted',
-          label: 'Calculate the moles of NaOH that reacted with 1.00 g of ammonium salt Solid B (Initial moles = 0.0237 mol)',
-          marks: 3.0,
-          marksLabel: '(3.0 Marks)',
-          placeholder: 'e.g. 0.0187',
-          step: '0.0001',
-          unit: 'moles reacted',
-          calcTheoretical: (ctx) => 0.0237 - (((0.080 * ctx.trueTitre) / 1000.0) * 4.0),
-          calcEcf: (ctx) => {
-            const mRes = parseFloat(getAnswerValue(ctx.answers, 'molesResidual', 'step_c')) || (((0.080 * ctx.trueTitre) / 1000.0) * 4.0);
-            return 0.0237 - mRes;
-          },
-          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
-          feedbackSuccess: (val) => `✓ Correct: ${val} moles of NaOH reacted.`,
-          feedbackFail: (ctx, expTheo) => `Formula: 0.0237 - Residual Moles = ${expTheo.toFixed(4)} mol.`,
-          working: (ctx) => `<b>(d) Moles of NaOH Reacted:</b> 0.0237 - ${(((0.080 * ctx.v1) / 1000.0) * 4.0).toFixed(5)} = <b>${(0.0237 - (((0.080 * ctx.v1) / 1000.0) * 4.0)).toFixed(4)} mol</b>`
-        },
-        {
-          id: 'step_e',
-          letter: 'e',
-          field: 'rfmSalt',
-          label: 'Given that 1 mole of NaOH reacts with 1 mole of Solid B, calculate the relative formula mass (RFM) of Solid B (1.00 g sample)',
-          marks: 2.0,
-          marksLabel: '(2.0 Marks)',
-          placeholder: 'e.g. 53.5',
-          step: '0.1',
-          unit: 'g/mol',
-          calcTheoretical: () => 53.5,
-          calcEcf: (ctx) => {
-            const mReacted = parseFloat(getAnswerValue(ctx.answers, 'molesReacted', 'step_d')) || 0.0187;
-            return mReacted > 0 ? parseFloat((1.00 / mReacted).toFixed(1)) : 53.5;
-          },
-          check: (val) => Math.abs(val - 53.5) <= 3.5,
-          feedbackSuccess: (val) => `✓ Correct: RFM of Solid B = ${val} g/mol (Ammonium Chloride NH₄Cl).`,
-          feedbackFail: () => `Formula: Mass (1.00 g) / Moles Reacted (0.0187) = 53.5 g/mol.`,
-          working: () => `<b>(e) RFM of Solid B:</b> 1.00 / 0.0187 = <b>53.5 g/mol (NH₄Cl)</b>`
+          procedureIndex: 2,
+          title: 'Procedure II: Back-Titration of Residual Unreacted NaOH (Solution E)',
+          tableTitle: 'Table 2: Titration of Residual NaOH Solution E with Solution C',
+          tableMarks: 4.0,
+          solutionA: '0.080 M Hydrochloric Acid (Solution C)',
+          solutionB: 'Residual Sodium Hydroxide Solution E (from reaction with Solid B)',
+          indicator: 'Phenolphthalein',
+          pipetteVolume: 25.0,
+          trueTitre: 15.60,
+          titrantColor: '#38BDF8',
+          flaskBaseColor: 'rgba(255,255,255,0.25)',
+          endpointColor: 'rgba(255,255,255,0.25)',
+          instructions: 'Pipette 25.0 cm³ of Solution E (residual NaOH solution) into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with 0.080 M HCl Solution C until the pink colour is just discharged to colourless. Complete Table 2.',
+          procedureSteps: [
+            'Fill the burette with 0.080 M HCl Solution C and adjust meniscus to 0.00 cm³.',
+            'Pipette exactly 25.0 cm³ of Solution E (residual NaOH reaction mixture) into a conical flask.',
+            'Add 2–3 drops of phenolphthalein indicator (turns pink).',
+            'Titrate with Solution C until the pink colour is just discharged to colourless.',
+            'Record initial and final readings to complete Table 2 with concordant titres.'
+          ],
+          questions: [
+            {
+              id: 'step_2a',
+              letter: 'a',
+              field: 'avgTitre',
+              label: 'Calculate the average volume of 0.080 M HCl Solution C used for Solution E, V₂',
+              marks: 1.0,
+              marksLabel: '(1.0 Mark)',
+              placeholder: 'e.g. 15.60',
+              step: '0.01',
+              unit: 'cm³',
+              calcTheoretical: () => 15.60,
+              calcEcf: (ctx) => ctx.expAvgFromTrials,
+              check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
+              feedbackSuccess: (val) => `✓ Correct: V₂ = ${val.toFixed(2)} cm³.`,
+              feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
+              working: (ctx) => `<b>(a) Average Titre V₂:</b> <b>${ctx.v1.toFixed(2)} cm³</b>`
+            },
+            {
+              id: 'step_2b',
+              letter: 'b',
+              field: 'molesHcl',
+              label: 'Calculate the number of moles of HCl in the average titre V₂ of Solution C',
+              marks: 1.0,
+              marksLabel: '(1.0 Mark)',
+              placeholder: 'e.g. 0.00125',
+              step: '0.00001',
+              unit: 'moles of HCl',
+              calcTheoretical: () => (0.080 * 15.60) / 1000.0,
+              calcEcf: (ctx) => {
+                const v2 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_2a')) || 15.60;
+                return (0.080 * v2) / 1000.0;
+              },
+              check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+              feedbackSuccess: (val) => `✓ Correct: ${val} moles of HCl.`,
+              feedbackFail: (ctx, expTheo) => `Formula: (0.080 × V₂) / 1000 = ${expTheo.toFixed(5)} mol.`,
+              working: (ctx) => `<b>(b) Moles of HCl:</b> (0.080 × ${ctx.v1.toFixed(2)}) / 1000 = <b>${((0.080 * ctx.v1) / 1000.0).toFixed(5)} mol</b>`
+            },
+            {
+              id: 'step_2c',
+              letter: 'c',
+              field: 'molesResidual',
+              label: 'Calculate the total number of unreacted moles of NaOH present in the 100 cm³ of Solution E',
+              marks: 1.5,
+              marksLabel: '(1.5 Marks)',
+              placeholder: 'e.g. 0.00500',
+              step: '0.00001',
+              unit: 'moles of NaOH',
+              calcTheoretical: () => ((0.080 * 15.60) / 1000.0) * 4.0,
+              calcEcf: (ctx) => {
+                const mH = parseFloat(getAnswerValue(ctx.answers, 'molesHcl', 'step_2b')) || ((0.080 * 15.60) / 1000.0);
+                return mH * 4.0;
+              },
+              check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+              feedbackSuccess: (val) => `✓ Correct: ${val} unreacted moles of NaOH in 100 cm³.`,
+              feedbackFail: (ctx, expTheo) => `Formula: Moles of HCl in 25 cm³ × (100 / 25) = ${expTheo.toFixed(5)} mol.`,
+              working: (ctx) => `<b>(c) Unreacted Moles of NaOH in 100 cm³:</b> ${((0.080 * ctx.v1) / 1000.0).toFixed(5)} × 4 = <b>${(((0.080 * ctx.v1) / 1000.0) * 4.0).toFixed(5)} mol</b>`
+            },
+            {
+              id: 'step_2d',
+              letter: 'd',
+              field: 'molesReacted',
+              label: 'Calculate the moles of NaOH that reacted with 1.00 g of ammonium salt Solid B (Initial moles = 0.0237 mol)',
+              marks: 2.0,
+              marksLabel: '(2.0 Marks)',
+              placeholder: 'e.g. 0.0187',
+              step: '0.0001',
+              unit: 'moles reacted',
+              calcTheoretical: () => 0.0237 - (((0.080 * 15.60) / 1000.0) * 4.0),
+              calcEcf: (ctx) => {
+                const mRes = parseFloat(getAnswerValue(ctx.answers, 'molesResidual', 'step_2c')) || (((0.080 * 15.60) / 1000.0) * 4.0);
+                return 0.0237 - mRes;
+              },
+              check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+              feedbackSuccess: (val) => `✓ Correct: ${val} moles of NaOH reacted.`,
+              feedbackFail: (ctx, expTheo) => `Formula: 0.0237 - Residual Moles = ${expTheo.toFixed(4)} mol.`,
+              working: () => `<b>(d) Moles of NaOH Reacted:</b> 0.0237 - 0.0050 = <b>0.0187 mol</b>`
+            },
+            {
+              id: 'step_2e',
+              letter: 'e',
+              field: 'rfmSalt',
+              label: 'Given that 1 mole of NaOH reacts with 1 mole of Solid B, calculate the relative formula mass (RFM) of Solid B (1.00 g sample)',
+              marks: 2.5,
+              marksLabel: '(2.5 Marks)',
+              placeholder: 'e.g. 53.5',
+              step: '0.1',
+              unit: 'g/mol',
+              calcTheoretical: () => 53.5,
+              calcEcf: (ctx) => {
+                const mReacted = parseFloat(getAnswerValue(ctx.answers, 'molesReacted', 'step_2d')) || 0.0187;
+                return mReacted > 0 ? parseFloat((1.00 / mReacted).toFixed(1)) : 53.5;
+              },
+              check: (val) => Math.abs(val - 53.5) <= 3.5,
+              feedbackSuccess: (val) => `✓ Correct: RFM of Solid B = ${val} g/mol (Ammonium Chloride NH₄Cl).`,
+              feedbackFail: () => `Formula: Mass (1.00 g) / Moles Reacted (0.0187) = 53.5 g/mol.`,
+              working: () => `<b>(e) RFM of Solid B:</b> 1.00 / 0.0187 = <b>53.5 g/mol (NH₄Cl)</b>`
+            }
+          ]
         }
       ]
     },
@@ -6109,6 +6840,13 @@ const COMPOSITE_EXAM_PRESETS = {
       overtitratedColor: 'rgba(185,28,28,0.95)',
       equation: 'Na₂B₄O₇(aq) + 2HCl(aq) + 5H₂O(l) → 4H₃BO₃(aq) + 2NaCl(aq)',
       instructions: 'Pipette 25.0 cm³ of Solution C₆ (19.20 g/dm³ hydrated sodium tetraborate) into a clean conical flask. Add 2–3 drops of methyl orange indicator. Titrate with 0.110 M HCl Solution C₅ until the yellow colour changes sharply to permanent orange-red.',
+      procedureSteps: [
+              "Fill the burette with 0.110 M Hydrochloric Acid Solution C₅ and adjust the meniscus level precisely to 0.00 cm³.",
+              "Pipette exactly 25.0 cm³ of Hydrated Sodium Tetraborate Solution C₆ into a clean 250 cm³ conical flask.",
+              "Add 2–3 drops of methyl orange indicator (solution turns yellow).",
+              "Titrate Solution C₆ with Solution C₅ with continuous swirling until the yellow solution turns sharply to permanent orange-red.",
+              "Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³."
+      ],
       questions: [
         {
           id: 'step_a',
@@ -6321,6 +7059,7 @@ const COMPOSITE_EXAM_PRESETS = {
       type: 'titration',
       calcType: 'standard_molarity',
       title: 'Question 1: Volumetric Analysis — Standardization of NaOH & Organic Acid Solubility Determination (15.0 Marks)',
+      hasMultipleProcedures: true,
       solutionA: 'Sodium Hydroxide (NaOH) Solution S₁',
       solutionB: '0.010 M Dibasic Acid (H₂C₂O₄) Solution S₂',
       acidFormula: 'H2C2O4',
@@ -6340,10 +7079,220 @@ const COMPOSITE_EXAM_PRESETS = {
       endpointColor: 'rgba(236,72,153,0.5)',
       overtitratedColor: 'rgba(219,39,119,0.9)',
       equation: 'H₂C₂O₄(aq) + 2NaOH(aq) → Na₂C₂O₄(aq) + 2H₂O(l)',
-      instructions: 'Fill the burette with Sodium Hydroxide Solution S₁. Pipette 25.0 cm³ of 0.010 M Dibasic Acid Solution S₂ into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with Solution S₁ until the colourless solution turns to the first permanent faint pink colour.',
+      instructions: 'Procedure I: Fill the burette with Sodium Hydroxide Solution S₁. Pipette 25.0 cm³ of 0.010 M Dibasic Acid Solution S₂ into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with Solution S₁ until the colourless solution turns to the first permanent faint pink colour. Complete Table 1.',
+      procedureSteps: [
+        'Fill the burette with Sodium Hydroxide Solution S₁ and adjust the meniscus precisely to 0.00 cm³.',
+        'Pipette exactly 25.0 cm³ of 0.010 M Dibasic Acid Solution S₂ into a clean 250 cm³ conical flask.',
+        'Add 2–3 drops of phenolphthalein indicator (mixture remains colourless).',
+        'Titrate with Solution S₁ with continuous swirling until the first permanent faint pink colour persists.',
+        'Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³.'
+      ],
+      procedures: [
+        {
+          procedureIndex: 1,
+          title: 'Procedure I: Standardization of NaOH (Solution S₁)',
+          tableTitle: 'Table 1: Titration of Solution S₂ with Solution S₁',
+          tableMarks: 4.0,
+          solutionA: 'Sodium Hydroxide (NaOH) Solution S₁',
+          solutionB: '0.010 M Dibasic Acid (H₂C₂O₄) Solution S₂',
+          indicator: 'Phenolphthalein',
+          pipetteVolume: 25.0,
+          trueTitre: 25.00,
+          titrantColor: '#38BDF8',
+          flaskBaseColor: 'rgba(255,255,255,0.2)',
+          endpointColor: 'rgba(236,72,153,0.5)',
+          instructions: 'Fill the burette with Sodium Hydroxide Solution S₁. Pipette 25.0 cm³ of 0.010 M Dibasic Acid Solution S₂ into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with Solution S₁ until the colourless solution turns to the first permanent faint pink colour. Complete Table 1.',
+          procedureSteps: [
+            'Fill the burette with Sodium Hydroxide Solution S₁ and adjust the meniscus precisely to 0.00 cm³.',
+            'Pipette exactly 25.0 cm³ of 0.010 M Dibasic Acid Solution S₂ into a clean 250 cm³ conical flask.',
+            'Add 2–3 drops of phenolphthalein indicator.',
+            'Titrate with Solution S₁ until the first permanent faint pink colour persists.',
+            'Record initial and final readings to complete Table 1 with concordant titres within ±0.10 cm³.'
+          ],
+          questions: [
+            {
+              id: 'step_1a',
+              letter: 'a',
+              field: 'avgTitre',
+              label: 'Calculate the average volume of NaOH Solution S₁ used, V₁',
+              marks: 1.0,
+              marksLabel: '(1.0 Mark)',
+              placeholder: 'e.g. 25.00',
+              step: '0.01',
+              unit: 'cm³',
+              calcTheoretical: (ctx) => ctx.trueTitre,
+              calcEcf: (ctx) => ctx.expAvgFromTrials,
+              check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
+              feedbackSuccess: (val) => `✓ Correct: V₁ = ${val.toFixed(2)} cm³.`,
+              feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
+              working: (ctx) => `<b>(a) Average Titre:</b> V₁ = <b>${ctx.v1.toFixed(2)} cm³</b>`
+            },
+            {
+              id: 'step_1b',
+              letter: 'b',
+              field: 'molesAcid',
+              label: 'Calculate the number of moles of dibasic acid present in 25.0 cm³ of Solution S₂ (0.010 M)',
+              marks: 2.0,
+              marksLabel: '(2.0 Marks)',
+              placeholder: 'e.g. 0.00025',
+              step: '0.00001',
+              unit: 'moles of H₂A',
+              calcTheoretical: () => 0.000250,
+              calcEcf: () => 0.000250,
+              check: (val) => Math.abs(val - 0.000250) <= 0.000025,
+              feedbackSuccess: (val) => `✓ Correct: ${val} moles of dibasic acid.`,
+              feedbackFail: () => `Formula: (0.010 × 25.0) / 1000 = 0.00025 mol.`,
+              working: () => `<b>(b) Moles of Dibasic Acid:</b> (0.010 × 25.0) / 1000 = <b>0.000250 mol</b>`
+            },
+            {
+              id: 'step_1c',
+              letter: 'c',
+              field: 'molesNaoh',
+              label: 'Calculate the number of moles of NaOH that reacted with 25.0 cm³ of Solution S₂ (Mole ratio H₂A : NaOH = 1 : 2)',
+              marks: 1.0,
+              marksLabel: '(1.0 Mark)',
+              placeholder: 'e.g. 0.00050',
+              step: '0.00001',
+              unit: 'moles of NaOH',
+              calcTheoretical: () => 0.000500,
+              calcEcf: (ctx) => {
+                const mA = parseFloat(getAnswerValue(ctx.answers, 'molesAcid', 'step_1b', 'step_b')) || 0.000250;
+                return mA * 2.0;
+              },
+              check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+              feedbackSuccess: (val) => `✓ Correct: ${val} moles of NaOH.`,
+              feedbackFail: (ctx, expTheo) => `Formula: Moles of acid × 2 = ${expTheo.toFixed(5)} mol.`,
+              working: (ctx) => `<b>(c) Moles of NaOH in V₁:</b> 0.000250 × 2 = <b>0.000500 mol</b>`
+            },
+            {
+              id: 'step_1d',
+              letter: 'd',
+              field: 'molarityNaoh',
+              label: 'Calculate the molar concentration (molarity) of NaOH Solution S₁ in mol/dm³',
+              marks: 2.0,
+              marksLabel: '(2.0 Marks)',
+              placeholder: 'e.g. 0.020',
+              step: '0.001',
+              unit: 'mol/dm³ (M)',
+              calcTheoretical: (ctx) => (0.000500 * 1000.0) / ctx.trueTitre,
+              calcEcf: (ctx) => {
+                const mB = parseFloat(getAnswerValue(ctx.answers, 'molesNaoh', 'step_1c', 'step_c')) || 0.000500;
+                const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_1a', 'step_a')) || ctx.trueTitre;
+                return (mB * 1000.0) / v1;
+              },
+              check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+              feedbackSuccess: (val) => `✓ Correct: Molarity of Solution S₁ = ${val} mol/dm³.`,
+              feedbackFail: (ctx, expTheo) => `Formula: (Moles of NaOH × 1000) / V₁ = ${expTheo.toFixed(4)} mol/dm³.`,
+              working: (ctx) => `<b>(d) Molarity of Solution S₁:</b> (0.000500 × 1000) / ${ctx.v1.toFixed(2)} = <b>0.0200 mol/dm³</b>`
+            }
+          ]
+        },
+        {
+          procedureIndex: 2,
+          title: 'Procedure II: Solubility of Saturated Organic Acid D',
+          tableTitle: 'Table 2: Titration of Organic Acid D Filtrate with Solution S₁',
+          tableMarks: 4.0,
+          solutionA: 'Standardized NaOH Solution S₁',
+          solutionB: 'Saturated Organic Acid D Filtrate',
+          indicator: 'Phenolphthalein',
+          pipetteVolume: 10.0,
+          trueTitre: 18.20,
+          titrantColor: '#38BDF8',
+          flaskBaseColor: 'rgba(255,255,255,0.2)',
+          endpointColor: 'rgba(236,72,153,0.5)',
+          instructions: 'Fill the burette with standardized NaOH Solution S₁. Pipette 10.0 cm³ of the saturated solution (filtrate) of Organic Acid D into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with Solution S₁ until the colourless solution turns to the first permanent faint pink colour. Complete Table 2.',
+          procedureSteps: [
+            'Fill the burette with standardized NaOH Solution S₁ and adjust the meniscus precisely to 0.00 cm³.',
+            'Pipette exactly 10.0 cm³ of the saturated Organic Acid D filtrate into a clean 250 cm³ conical flask.',
+            'Add 2–3 drops of phenolphthalein indicator.',
+            'Titrate with standardized Solution S₁ until the first permanent faint pink colour persists.',
+            'Record initial and final readings to complete Table 2 with concordant titres within ±0.10 cm³.'
+          ],
+          questions: [
+            {
+              id: 'step_2a',
+              letter: 'a',
+              field: 'avgTitre2',
+              label: 'Calculate the average volume of Solution S₁ used in Procedure II, V₂',
+              marks: 1.0,
+              marksLabel: '(1.0 Mark)',
+              placeholder: 'e.g. 18.20',
+              step: '0.01',
+              unit: 'cm³',
+              calcTheoretical: () => 18.20,
+              calcEcf: (ctx) => ctx.expAvgFromTrials,
+              check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
+              feedbackSuccess: (val) => `✓ Correct: V₂ = ${val.toFixed(2)} cm³.`,
+              feedbackFail: (ctx) => `Check your average from concordant titres in Table 2 (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
+              working: (ctx) => `<b>(a) Average Titre V₂:</b> V₂ = <b>${ctx.v1.toFixed(2)} cm³</b>`
+            },
+            {
+              id: 'step_2b',
+              letter: 'b',
+              field: 'molesAcid10',
+              label: 'Calculate the number of moles of Acid D present in 10.0 cm³ of the saturated solution (filtrate) (Mole ratio Acid : NaOH = 1 : 1)',
+              marks: 2.0,
+              marksLabel: '(2.0 Marks)',
+              placeholder: 'e.g. 0.000364',
+              step: '0.000001',
+              unit: 'moles in 10 cm³',
+              calcTheoretical: () => (0.0200 * 18.20) / 1000.0,
+              calcEcf: (ctx) => {
+                const conc = parseFloat(getAnswerValue(ctx.answers, 'molarityNaoh', 'step_1d', 'step_d')) || 0.0200;
+                const v2 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre2', 'step_2a')) || 18.20;
+                return (conc * v2) / 1000.0;
+              },
+              check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+              feedbackSuccess: (val) => `✓ Correct: ${val} moles of acid D in 10.0 cm³.`,
+              feedbackFail: (ctx, expTheo) => `Formula: (Molarity S₁ × V₂) / 1000 = ${expTheo.toFixed(6)} mol.`,
+              working: () => `<b>(b) Moles of Acid D in 10.0 cm³:</b> (0.0200 × 18.20) / 1000 = <b>0.000364 mol</b>`
+            },
+            {
+              id: 'step_2c',
+              letter: 'c',
+              field: 'molesAcid100',
+              label: 'Calculate the number of moles of acid D present in 100 cm³ of the saturated solution',
+              marks: 1.0,
+              marksLabel: '(1.0 Mark)',
+              placeholder: 'e.g. 0.00364',
+              step: '0.00001',
+              unit: 'moles in 100 cm³',
+              calcTheoretical: () => 0.00364,
+              calcEcf: (ctx) => {
+                const m10 = parseFloat(getAnswerValue(ctx.answers, 'molesAcid10', 'step_2b', 'step_e')) || 0.000364;
+                return m10 * 10.0;
+              },
+              check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+              feedbackSuccess: (val) => `✓ Correct: ${val} moles in 100 cm³.`,
+              feedbackFail: () => `Formula: Moles in 10 cm³ × (100 / 10) = 0.00364 mol.`,
+              working: () => `<b>(c) Moles of Acid D in 100 cm³:</b> 0.000364 × 10 = <b>0.00364 mol</b>`
+            },
+            {
+              id: 'step_2d',
+              letter: 'd',
+              field: 'solubilityAcid',
+              label: 'Given that monobasic acid D has the molecular formula C₇H₆O₂ (C = 12.0, H = 1.0, O = 16.0; RFM = 122.0), calculate its solubility in g / 100 cm³ water',
+              marks: 2.0,
+              marksLabel: '(2.0 Marks)',
+              placeholder: 'e.g. 0.444',
+              step: '0.001',
+              unit: 'g / 100 cm³ water',
+              calcTheoretical: () => 0.444,
+              calcEcf: (ctx) => {
+                const m100 = parseFloat(getAnswerValue(ctx.answers, 'molesAcid100', 'step_2c', 'step_f')) || 0.00364;
+                return parseFloat((m100 * 122.0).toFixed(3));
+              },
+              check: (val) => Math.abs(val - 0.444) <= 0.04,
+              feedbackSuccess: (val) => `✓ Correct: Solubility of Acid D = ${val} g / 100 cm³ water (Benzoic Acid).`,
+              feedbackFail: () => `Formula: Moles in 100 cm³ (0.00364) × RFM (122.0) = 0.444 g / 100 cm³ water.`,
+              working: () => `<b>(d) Solubility of Acid D:</b> 0.00364 mol × 122.0 g/mol = <b>0.444 g / 100 cm³ water</b>`
+            }
+          ]
+        }
+      ],
       questions: [
         {
-          id: 'step_a',
+          id: 'step_1a',
           letter: 'a',
           field: 'avgTitre',
           label: 'Calculate the average volume of NaOH Solution S₁ used, V₁',
@@ -6360,7 +7309,7 @@ const COMPOSITE_EXAM_PRESETS = {
           working: (ctx) => `<b>(a) Average Titre:</b> V₁ = <b>${ctx.v1.toFixed(2)} cm³</b>`
         },
         {
-          id: 'step_b',
+          id: 'step_1b',
           letter: 'b',
           field: 'molesAcid',
           label: 'Calculate the number of moles of dibasic acid present in 25.0 cm³ of Solution S₂ (0.010 M)',
@@ -6377,7 +7326,7 @@ const COMPOSITE_EXAM_PRESETS = {
           working: () => `<b>(b) Moles of Dibasic Acid:</b> (0.010 × 25.0) / 1000 = <b>0.000250 mol</b>`
         },
         {
-          id: 'step_c',
+          id: 'step_1c',
           letter: 'c',
           field: 'molesNaoh',
           label: 'Calculate the number of moles of NaOH that reacted with 25.0 cm³ of Solution S₂ (Mole ratio H₂A : NaOH = 1 : 2)',
@@ -6388,7 +7337,7 @@ const COMPOSITE_EXAM_PRESETS = {
           unit: 'moles of NaOH',
           calcTheoretical: () => 0.000500,
           calcEcf: (ctx) => {
-            const mA = parseFloat(getAnswerValue(ctx.answers, 'molesAcid', 'step_b')) || 0.000250;
+            const mA = parseFloat(getAnswerValue(ctx.answers, 'molesAcid', 'step_1b', 'step_b')) || 0.000250;
             return mA * 2.0;
           },
           check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
@@ -6397,7 +7346,7 @@ const COMPOSITE_EXAM_PRESETS = {
           working: (ctx) => `<b>(c) Moles of NaOH in V₁:</b> 0.000250 × 2 = <b>0.000500 mol</b>`
         },
         {
-          id: 'step_d',
+          id: 'step_1d',
           letter: 'd',
           field: 'molarityNaoh',
           label: 'Calculate the molar concentration (molarity) of NaOH Solution S₁ in mol/dm³',
@@ -6408,8 +7357,8 @@ const COMPOSITE_EXAM_PRESETS = {
           unit: 'mol/dm³ (M)',
           calcTheoretical: (ctx) => (0.000500 * 1000.0) / ctx.trueTitre,
           calcEcf: (ctx) => {
-            const mB = parseFloat(getAnswerValue(ctx.answers, 'molesNaoh', 'step_c')) || 0.000500;
-            const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_a')) || ctx.trueTitre;
+            const mB = parseFloat(getAnswerValue(ctx.answers, 'molesNaoh', 'step_1c', 'step_c')) || 0.000500;
+            const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_1a', 'step_a')) || ctx.trueTitre;
             return (mB * 1000.0) / v1;
           },
           check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
@@ -6418,10 +7367,27 @@ const COMPOSITE_EXAM_PRESETS = {
           working: (ctx) => `<b>(d) Molarity of Solution S₁:</b> (0.000500 × 1000) / ${ctx.v1.toFixed(2)} = <b>0.0200 mol/dm³</b>`
         },
         {
-          id: 'step_e',
+          id: 'step_2a',
           letter: 'e',
+          field: 'avgTitre2',
+          label: 'Calculate the average volume of Solution S₁ used in Procedure II, V₂',
+          marks: 1.0,
+          marksLabel: '(1.0 Mark)',
+          placeholder: 'e.g. 18.20',
+          step: '0.01',
+          unit: 'cm³',
+          calcTheoretical: () => 18.20,
+          calcEcf: (ctx) => ctx.expAvgFromTrials,
+          check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
+          feedbackSuccess: (val) => `✓ Correct: V₂ = ${val.toFixed(2)} cm³.`,
+          feedbackFail: (ctx) => `Check your average from concordant titres in Table 2 (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
+          working: (ctx) => `<b>(e) Average Titre V₂:</b> V₂ = <b>${ctx.v1.toFixed(2)} cm³</b>`
+        },
+        {
+          id: 'step_2b',
+          letter: 'f',
           field: 'molesAcid10',
-          label: 'In Procedure C, 10.0 cm³ of saturated organic acid D filtrate required 18.20 cm³ of Solution S₁. Calculate the moles of acid D in 10.0 cm³ of filtrate (Mole ratio Acid : NaOH = 1 : 1)',
+          label: 'Calculate the number of moles of Acid D present in 10.0 cm³ of the saturated solution (filtrate) (Mole ratio Acid : NaOH = 1 : 1)',
           marks: 2.0,
           marksLabel: '(2.0 Marks)',
           placeholder: 'e.g. 0.000364',
@@ -6429,17 +7395,18 @@ const COMPOSITE_EXAM_PRESETS = {
           unit: 'moles in 10 cm³',
           calcTheoretical: () => (0.0200 * 18.20) / 1000.0,
           calcEcf: (ctx) => {
-            const conc = parseFloat(getAnswerValue(ctx.answers, 'molarityNaoh', 'step_d')) || 0.0200;
-            return (conc * 18.20) / 1000.0;
+            const conc = parseFloat(getAnswerValue(ctx.answers, 'molarityNaoh', 'step_1d', 'step_d')) || 0.0200;
+            const v2 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre2', 'step_2a')) || 18.20;
+            return (conc * v2) / 1000.0;
           },
           check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
           feedbackSuccess: (val) => `✓ Correct: ${val} moles of acid D in 10.0 cm³.`,
-          feedbackFail: (ctx, expTheo) => `Formula: (Molarity S₁ × 18.20) / 1000 = ${expTheo.toFixed(6)} mol.`,
-          working: () => `<b>(e) Moles of Acid D in 10.0 cm³:</b> (0.0200 × 18.20) / 1000 = <b>0.000364 mol</b>`
+          feedbackFail: (ctx, expTheo) => `Formula: (Molarity S₁ × V₂) / 1000 = ${expTheo.toFixed(6)} mol.`,
+          working: () => `<b>(f) Moles of Acid D in 10.0 cm³:</b> (0.0200 × 18.20) / 1000 = <b>0.000364 mol</b>`
         },
         {
-          id: 'step_f',
-          letter: 'f',
+          id: 'step_2c',
+          letter: 'g',
           field: 'molesAcid100',
           label: 'Calculate the number of moles of acid D present in 100 cm³ of the saturated solution',
           marks: 1.0,
@@ -6449,17 +7416,17 @@ const COMPOSITE_EXAM_PRESETS = {
           unit: 'moles in 100 cm³',
           calcTheoretical: () => 0.00364,
           calcEcf: (ctx) => {
-            const m10 = parseFloat(getAnswerValue(ctx.answers, 'molesAcid10', 'step_e')) || 0.000364;
+            const m10 = parseFloat(getAnswerValue(ctx.answers, 'molesAcid10', 'step_2b', 'step_e')) || 0.000364;
             return m10 * 10.0;
           },
           check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
           feedbackSuccess: (val) => `✓ Correct: ${val} moles in 100 cm³.`,
           feedbackFail: () => `Formula: Moles in 10 cm³ × (100 / 10) = 0.00364 mol.`,
-          working: () => `<b>(f) Moles of Acid D in 100 cm³:</b> 0.000364 × 10 = <b>0.00364 mol</b>`
+          working: () => `<b>(g) Moles of Acid D in 100 cm³:</b> 0.000364 × 10 = <b>0.00364 mol</b>`
         },
         {
-          id: 'step_g',
-          letter: 'g',
+          id: 'step_2d',
+          letter: 'h',
           field: 'solubilityAcid',
           label: 'Given that monobasic acid D has the molecular formula C₇H₆O₂ (C = 12.0, H = 1.0, O = 16.0; RFM = 122.0), calculate its solubility in g / 100 cm³ water',
           marks: 2.0,
@@ -6469,13 +7436,13 @@ const COMPOSITE_EXAM_PRESETS = {
           unit: 'g / 100 cm³ water',
           calcTheoretical: () => 0.444,
           calcEcf: (ctx) => {
-            const m100 = parseFloat(getAnswerValue(ctx.answers, 'molesAcid100', 'step_f')) || 0.00364;
+            const m100 = parseFloat(getAnswerValue(ctx.answers, 'molesAcid100', 'step_2c', 'step_f')) || 0.00364;
             return parseFloat((m100 * 122.0).toFixed(3));
           },
           check: (val) => Math.abs(val - 0.444) <= 0.04,
           feedbackSuccess: (val) => `✓ Correct: Solubility of Acid D = ${val} g / 100 cm³ water (Benzoic Acid).`,
           feedbackFail: () => `Formula: Moles in 100 cm³ (0.00364) × RFM (122.0) = 0.444 g / 100 cm³ water.`,
-          working: () => `<b>(g) Solubility of Acid D:</b> 0.00364 mol × 122.0 g/mol = <b>0.444 g / 100 cm³ water</b>`
+          working: () => `<b>(h) Solubility of Acid D:</b> 0.00364 mol × 122.0 g/mol = <b>0.444 g / 100 cm³ water</b>`
         }
       ]
     },
@@ -6576,7 +7543,8 @@ const COMPOSITE_EXAM_PRESETS = {
     q1: {
       type: 'titration',
       calcType: 'standard_molarity',
-      title: 'Question 1: Volumetric Analysis — Standardization of NaOH & Acid Dilution (15.0 Marks)',
+      title: 'Question 1: Volumetric Analysis — NaOH Standardization & HCl Dilution (18.0 Marks)',
+      hasMultipleProcedures: true,
       solutionA: 'Sodium Hydroxide (NaOH) Solution W₁₂',
       solutionB: '0.050 M Dibasic Acid (H₂C₂O₄·2H₂O) Solution W₁₁',
       acidFormula: 'H2C2O4',
@@ -6596,122 +7564,195 @@ const COMPOSITE_EXAM_PRESETS = {
       endpointColor: 'rgba(236,72,153,0.5)',
       overtitratedColor: 'rgba(219,39,119,0.9)',
       equation: 'H₂C₂O₄(aq) + 2NaOH(aq) → Na₂C₂O₄(aq) + 2H₂O(l)',
-      instructions: 'Fill the burette with Sodium Hydroxide Solution W₁₂. Pipette 25.0 cm³ of 0.050 M Dibasic Acid Solution W₁₁ into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with Solution W₁₂ until the colourless solution turns to the first permanent faint pink colour.',
-      questions: [
+      instructions: 'Part I: Pipette 25.0 cm³ of 0.050 M Dibasic Acid Solution W₁₁ into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with Sodium Hydroxide Solution W₁₂ until a permanent faint pink colour appears. Complete Table 1.',
+      procedureSteps: [
+        'Fill the burette with Sodium Hydroxide Solution W₁₂ and adjust the meniscus precisely to 0.00 cm³.',
+        'Pipette exactly 25.0 cm³ of 0.050 M Dibasic Acid Solution W₁₁ into a clean conical flask.',
+        'Add 2–3 drops of phenolphthalein indicator (mixture remains colourless).',
+        'Titrate with Solution W₁₂ with continuous swirling until the first permanent faint pink colour appears.',
+        'Record readings and repeat to complete Table 1 with concordant titres.'
+      ],
+      procedures: [
         {
-          id: 'step_a',
-          letter: 'a',
-          field: 'avgTitre',
-          label: 'Calculate the average volume of NaOH Solution W₁₂ used, V₁',
-          marks: 1.0,
-          marksLabel: '(1.0 Mark)',
-          placeholder: 'e.g. 25.00',
-          step: '0.01',
-          unit: 'cm³',
-          calcTheoretical: (ctx) => ctx.trueTitre,
-          calcEcf: (ctx) => ctx.expAvgFromTrials,
-          check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
-          feedbackSuccess: (val) => `✓ Correct: V₁ = ${val.toFixed(2)} cm³.`,
-          feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
-          working: (ctx) => `<b>(a) Average Titre:</b> V₁ = <b>${ctx.v1.toFixed(2)} cm³</b>`
+          procedureIndex: 1,
+          title: 'Procedure I: Standardization of NaOH (Solution W₁₂)',
+          tableTitle: 'Table 1: Titration of Solution W₁₁ with Solution W₁₂',
+          tableMarks: 4.0,
+          solutionA: 'Sodium Hydroxide (NaOH) Solution W₁₂',
+          solutionB: '0.050 M Dibasic Acid (H₂C₂O₄·2H₂O) Solution W₁₁',
+          indicator: 'Phenolphthalein',
+          pipetteVolume: 25.0,
+          trueTitre: 25.00,
+          titrantColor: '#38BDF8',
+          flaskBaseColor: 'rgba(255,255,255,0.2)',
+          endpointColor: 'rgba(236,72,153,0.5)',
+          instructions: 'Fill the burette with Sodium Hydroxide Solution W₁₂. Pipette 25.0 cm³ of 0.050 M Dibasic Acid Solution W₁₁ into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with Solution W₁₂ until the colourless solution turns to the first permanent faint pink colour. Complete Table 1.',
+          procedureSteps: [
+            'Fill the burette with Sodium Hydroxide Solution W₁₂ and adjust the meniscus precisely to 0.00 cm³.',
+            'Pipette exactly 25.0 cm³ of 0.050 M Dibasic Acid Solution W₁₁ into a clean 250 cm³ conical flask.',
+            'Add 2–3 drops of phenolphthalein indicator.',
+            'Titrate with Solution W₁₂ until the first permanent faint pink colour persists.',
+            'Record initial and final readings to complete Table 1 with concordant titres within ±0.10 cm³.'
+          ],
+          questions: [
+            {
+              id: 'step_1a',
+              letter: 'a',
+              field: 'avgTitre',
+              label: 'Calculate the average volume of NaOH Solution W₁₂ used, V₁',
+              marks: 1.0,
+              marksLabel: '(1.0 Mark)',
+              placeholder: 'e.g. 25.00',
+              step: '0.01',
+              unit: 'cm³',
+              calcTheoretical: (ctx) => ctx.trueTitre,
+              calcEcf: (ctx) => ctx.expAvgFromTrials,
+              check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
+              feedbackSuccess: (val) => `✓ Correct: V₁ = ${val.toFixed(2)} cm³.`,
+              feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
+              working: (ctx) => `<b>(a) Average Titre:</b> V₁ = <b>${ctx.v1.toFixed(2)} cm³</b>`
+            },
+            {
+              id: 'step_1b',
+              letter: 'b',
+              field: 'molarityW11',
+              label: 'Calculate the molar concentration of dibasic acid Solution W₁₁ (6.30 g H₂C₂O₄·2H₂O per litre, RFM = 126.0)',
+              marks: 1.0,
+              marksLabel: '(1.0 Mark)',
+              placeholder: 'e.g. 0.050',
+              step: '0.001',
+              unit: 'mol/dm³',
+              calcTheoretical: () => 0.050,
+              calcEcf: () => 0.050,
+              check: (val) => Math.abs(val - 0.050) <= 0.005,
+              feedbackSuccess: (val) => `✓ Correct: Molarity of Solution W₁₁ = ${val} mol/dm³.`,
+              feedbackFail: () => `Formula: Mass concentration (6.30 g/dm³) / RFM (126.0) = 0.050 mol/dm³.`,
+              working: () => `<b>(b) Molarity of Solution W₁₁:</b> 6.30 / 126.0 = <b>0.050 mol/dm³</b>`
+            },
+            {
+              id: 'step_1c',
+              letter: 'c',
+              field: 'molesNaohW12',
+              label: 'Calculate the moles of NaOH in V₁ that reacted with 25.0 cm³ of Solution W₁₁ (Mole ratio 1 : 2)',
+              marks: 1.0,
+              marksLabel: '(1.0 Mark)',
+              placeholder: 'e.g. 0.00250',
+              step: '0.00001',
+              unit: 'moles of NaOH',
+              calcTheoretical: () => 0.00250,
+              calcEcf: (ctx) => {
+                const mW = parseFloat(getAnswerValue(ctx.answers, 'molarityW11', 'step_1b')) || 0.050;
+                return ((mW * 25.0) / 1000.0) * 2.0;
+              },
+              check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+              feedbackSuccess: (val) => `✓ Correct: ${val} moles of NaOH.`,
+              feedbackFail: (ctx, expTheo) => `Formula: ((Molarity W₁₁ × 25.0) / 1000) × 2 = ${expTheo.toFixed(5)} mol.`,
+              working: () => `<b>(c) Moles of NaOH in V₁:</b> ((0.050 × 25.0) / 1000) × 2 = <b>0.00250 mol</b>`
+            },
+            {
+              id: 'step_1d',
+              letter: 'd',
+              field: 'molarityNaohW12',
+              label: 'Calculate the molar concentration (molarity) of NaOH Solution W₁₂ in mol/dm³',
+              marks: 2.0,
+              marksLabel: '(2.0 Marks)',
+              placeholder: 'e.g. 0.100',
+              step: '0.001',
+              unit: 'mol/dm³ (M)',
+              calcTheoretical: (ctx) => (0.00250 * 1000.0) / ctx.trueTitre,
+              calcEcf: (ctx) => {
+                const mB = parseFloat(getAnswerValue(ctx.answers, 'molesNaohW12', 'step_1c')) || 0.00250;
+                const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_1a')) || ctx.trueTitre;
+                return (mB * 1000.0) / v1;
+              },
+              check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+              feedbackSuccess: (val) => `✓ Correct: Molarity of Solution W₁₂ = ${val} mol/dm³.`,
+              feedbackFail: (ctx, expTheo) => `Formula: (Moles of NaOH × 1000) / V₁ = ${expTheo.toFixed(3)} mol/dm³.`,
+              working: (ctx) => `<b>(d) Molarity of Solution W₁₂:</b> (0.00250 × 1000) / ${ctx.v1.toFixed(2)} = <b>0.100 mol/dm³</b>`
+            }
+          ]
         },
         {
-          id: 'step_b',
-          letter: 'b',
-          field: 'molarityW11',
-          label: 'Calculate the molar concentration of dibasic acid Solution W₁₁ (prepared by dissolving 6.30 g H₂C₂O₄·2H₂O per litre, RFM = 126.0)',
-          marks: 2.0,
-          marksLabel: '(2.0 Marks)',
-          placeholder: 'e.g. 0.050',
-          step: '0.001',
-          unit: 'mol/dm³',
-          calcTheoretical: () => 0.050,
-          calcEcf: () => 0.050,
-          check: (val) => Math.abs(val - 0.050) <= 0.005,
-          feedbackSuccess: (val) => `✓ Correct: Molarity of Solution W₁₁ = ${val} mol/dm³.`,
-          feedbackFail: () => `Formula: Mass concentration (6.30 g/dm³) / RFM (126.0) = 0.050 mol/dm³.`,
-          working: () => `<b>(b) Molarity of Solution W₁₁:</b> 6.30 / 126.0 = <b>0.050 mol/dm³</b>`
-        },
-        {
-          id: 'step_c',
-          letter: 'c',
-          field: 'molesNaohW12',
-          label: 'Calculate the moles of NaOH in V₁ that reacted with 25.0 cm³ of Solution W₁₁ (Mole ratio H₂A : NaOH = 1 : 2)',
-          marks: 2.0,
-          marksLabel: '(2.0 Marks)',
-          placeholder: 'e.g. 0.00250',
-          step: '0.00001',
-          unit: 'moles of NaOH',
-          calcTheoretical: () => 0.00250,
-          calcEcf: (ctx) => {
-            const mW = parseFloat(getAnswerValue(ctx.answers, 'molarityW11', 'step_b')) || 0.050;
-            return ((mW * 25.0) / 1000.0) * 2.0;
-          },
-          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
-          feedbackSuccess: (val) => `✓ Correct: ${val} moles of NaOH.`,
-          feedbackFail: (ctx, expTheo) => `Formula: ((Molarity W₁₁ × 25.0) / 1000) × 2 = ${expTheo.toFixed(5)} mol.`,
-          working: () => `<b>(c) Moles of NaOH in V₁:</b> ((0.050 × 25.0) / 1000) × 2 = <b>0.00250 mol</b>`
-        },
-        {
-          id: 'step_d',
-          letter: 'd',
-          field: 'molarityNaohW12',
-          label: 'Calculate the molar concentration (molarity) of NaOH Solution W₁₂ in mol/dm³',
-          marks: 2.0,
-          marksLabel: '(2.0 Marks)',
-          placeholder: 'e.g. 0.100',
-          step: '0.001',
-          unit: 'mol/dm³ (M)',
-          calcTheoretical: (ctx) => (0.00250 * 1000.0) / ctx.trueTitre,
-          calcEcf: (ctx) => {
-            const mB = parseFloat(getAnswerValue(ctx.answers, 'molesNaohW12', 'step_c')) || 0.00250;
-            const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_a')) || ctx.trueTitre;
-            return (mB * 1000.0) / v1;
-          },
-          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
-          feedbackSuccess: (val) => `✓ Correct: Molarity of Solution W₁₂ = ${val} mol/dm³.`,
-          feedbackFail: (ctx, expTheo) => `Formula: (Moles of NaOH × 1000) / V₁ = ${expTheo.toFixed(3)} mol/dm³.`,
-          working: (ctx) => `<b>(d) Molarity of Solution W₁₂:</b> (0.00250 × 1000) / ${ctx.v1.toFixed(2)} = <b>0.100 mol/dm³</b>`
-        },
-        {
-          id: 'step_e',
-          letter: 'e',
-          field: 'molarityDilutedHcl',
-          label: 'In Part II, 25.0 cm³ of standardized NaOH Solution W₁₂ required 23.15 cm³ of diluted HCl Solution W₁₀. Calculate the molarity of Solution W₁₀ (Mole ratio 1 : 1)',
-          marks: 2.0,
-          marksLabel: '(2.0 Marks)',
-          placeholder: 'e.g. 0.108',
-          step: '0.001',
-          unit: 'mol/dm³',
-          calcTheoretical: () => (0.100 * 25.0) / 23.15,
-          calcEcf: (ctx) => {
-            const mB = parseFloat(getAnswerValue(ctx.answers, 'molarityNaohW12', 'step_d')) || 0.100;
-            return (mB * 25.0) / 23.15;
-          },
-          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
-          feedbackSuccess: (val) => `✓ Correct: Molarity of diluted HCl W₁₀ = ${val} mol/dm³.`,
-          feedbackFail: (ctx, expTheo) => `Formula: (Molarity W₁₂ × 25.0) / 23.15 = ${expTheo.toFixed(3)} mol/dm³.`,
-          working: () => `<b>(e) Molarity of Solution W₁₀:</b> (0.100 × 25.0) / 23.15 = <b>0.108 mol/dm³</b>`
-        },
-        {
-          id: 'step_f',
-          letter: 'f',
-          field: 'molarityConcHcl',
-          label: 'Given that 10.0 cm³ of concentrated HCl Solution W₉ was diluted to 100 cm³ to prepare Solution W₁₀, calculate the molarity of original Solution W₉',
-          marks: 2.0,
-          marksLabel: '(2.0 Marks)',
-          placeholder: 'e.g. 1.08',
-          step: '0.01',
-          unit: 'mol/dm³',
-          calcTheoretical: () => ((0.100 * 25.0) / 23.15) * 10.0,
-          calcEcf: (ctx) => {
-            const mDil = parseFloat(getAnswerValue(ctx.answers, 'molarityDilutedHcl', 'step_e')) || 0.108;
-            return mDil * 10.0;
-          },
-          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
-          feedbackSuccess: (val) => `✓ Correct: Concentration of Solution W₉ = ${val} mol/dm³.`,
-          feedbackFail: (ctx, expTheo) => `Formula: Molarity of W₁₀ × (100 / 10) = ${expTheo.toFixed(2)} mol/dm³.`,
-          working: () => `<b>(f) Concentration of original Solution W₉:</b> 0.108 × 10 = <b>1.08 mol/dm³</b>`
+          procedureIndex: 2,
+          title: 'Procedure II: Titration of Standardized NaOH with Diluted HCl (Solution W₁₀)',
+          tableTitle: 'Table 2: Titration of Standardized NaOH with Diluted HCl Solution W₁₀',
+          tableMarks: 4.0,
+          solutionA: 'Diluted Hydrochloric Acid Solution W₁₀',
+          solutionB: 'Standardized Sodium Hydroxide Solution W₁₂',
+          indicator: 'Methyl Orange',
+          pipetteVolume: 25.0,
+          trueTitre: 23.15,
+          titrantColor: '#F8FAFC',
+          flaskBaseColor: 'rgba(251,191,36,0.25)',
+          endpointColor: 'rgba(239,68,68,0.7)',
+          instructions: 'Fill the burette with Diluted Hydrochloric Acid Solution W₁₀. Pipette 25.0 cm³ of standardized NaOH Solution W₁₂ into a clean conical flask. Add 2–3 drops of methyl orange indicator. Titrate with Solution W₁₀ until the yellow colour turns sharply to orange-red. Complete Table 2.',
+          procedureSteps: [
+            'Rinse the burette and fill it with Diluted Hydrochloric Acid Solution W₁₀, adjusting the meniscus to 0.00 cm³.',
+            'Pipette exactly 25.0 cm³ of standardized NaOH Solution W₁₂ into a clean 250 cm³ conical flask.',
+            'Add 2–3 drops of methyl orange indicator (solution turns yellow).',
+            'Titrate with Solution W₁₀ until the colour changes sharply from yellow to orange-red.',
+            'Record readings to complete Table 2 with concordant titres within ±0.10 cm³.'
+          ],
+          questions: [
+            {
+              id: 'step_2a',
+              letter: 'a',
+              field: 'avgTitre',
+              label: 'Calculate the average volume of Diluted HCl Solution W₁₀ used, V₂',
+              marks: 1.0,
+              marksLabel: '(1.0 Mark)',
+              placeholder: 'e.g. 23.15',
+              step: '0.01',
+              unit: 'cm³',
+              calcTheoretical: () => 23.15,
+              calcEcf: (ctx) => ctx.expAvgFromTrials,
+              check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
+              feedbackSuccess: (val) => `✓ Correct: V₂ = ${val.toFixed(2)} cm³.`,
+              feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
+              working: (ctx) => `<b>(a) Average Titre V₂:</b> <b>${ctx.v1.toFixed(2)} cm³</b>`
+            },
+            {
+              id: 'step_2b',
+              letter: 'b',
+              field: 'molarityDilutedHcl',
+              label: 'Calculate the molarity of diluted HCl Solution W₁₀ (Mole ratio NaOH : HCl = 1 : 1)',
+              marks: 2.0,
+              marksLabel: '(2.0 Marks)',
+              placeholder: 'e.g. 0.108',
+              step: '0.001',
+              unit: 'mol/dm³',
+              calcTheoretical: () => (0.100 * 25.0) / 23.15,
+              calcEcf: (ctx) => {
+                const mB = parseFloat(getAnswerValue(ctx.answers, 'molarityNaohW12', 'step_1d')) || 0.100;
+                const v2 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_2a')) || 23.15;
+                return (mB * 25.0) / v2;
+              },
+              check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+              feedbackSuccess: (val) => `✓ Correct: Molarity of diluted HCl W₁₀ = ${val} mol/dm³.`,
+              feedbackFail: (ctx, expTheo) => `Formula: (Molarity W₁₂ × 25.0) / V₂ = ${expTheo.toFixed(3)} mol/dm³.`,
+              working: () => `<b>(b) Molarity of Solution W₁₀:</b> (0.100 × 25.0) / 23.15 = <b>0.108 mol/dm³</b>`
+            },
+            {
+              id: 'step_2c',
+              letter: 'c',
+              field: 'molarityConcHcl',
+              label: 'Given that 10.0 cm³ of concentrated HCl Solution W₉ was diluted to 100 cm³ to make Solution W₁₀, calculate the molarity of original Solution W₉',
+              marks: 2.0,
+              marksLabel: '(2.0 Marks)',
+              placeholder: 'e.g. 1.08',
+              step: '0.01',
+              unit: 'mol/dm³',
+              calcTheoretical: () => ((0.100 * 25.0) / 23.15) * 10.0,
+              calcEcf: (ctx) => {
+                const mDil = parseFloat(getAnswerValue(ctx.answers, 'molarityDilutedHcl', 'step_2b')) || 0.108;
+                return mDil * 10.0;
+              },
+              check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+              feedbackSuccess: (val) => `✓ Correct: Concentration of Solution W₉ = ${val} mol/dm³.`,
+              feedbackFail: (ctx, expTheo) => `Formula: Molarity of W₁₀ × (100 / 10) = ${expTheo.toFixed(2)} mol/dm³.`,
+              working: () => `<b>(c) Concentration of original Solution W₉:</b> 0.108 × 10 = <b>1.08 mol/dm³</b>`
+            }
+          ]
         }
       ]
     },
@@ -6813,6 +7854,7 @@ const COMPOSITE_EXAM_PRESETS = {
       type: 'titration',
       calcType: 'standard_molarity',
       title: 'Question 1: Volumetric Analysis — Standardization & Neutralization Enthalpy of Acid L (15.0 Marks)',
+      hasMultipleProcedures: true,
       solutionA: '0.3125 M Sodium Hydroxide (Solution K)',
       solutionB: 'Acid L containing 60.0 g/dm³ (Solution L)',
       acidFormula: 'C6H8O7',
@@ -6832,10 +7874,222 @@ const COMPOSITE_EXAM_PRESETS = {
       endpointColor: 'rgba(236,72,153,0.5)',
       overtitratedColor: 'rgba(219,39,119,0.9)',
       equation: 'C₆H₈O₇(aq) + NaOH(aq) → C₆H₇O₇Na(aq) + H₂O(l)',
-      instructions: 'Fill the burette with 0.3125 M Sodium Hydroxide Solution K. Pipette 25.0 cm³ of Acid Solution L (containing 60.0 g/dm³ Acid L) into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with Solution K until the colourless solution turns to the first permanent faint pink colour.',
+      instructions: 'Procedure I: Fill the burette with 0.3125 M Sodium Hydroxide Solution K. Pipette 25.0 cm³ of Acid Solution L (containing 60.0 g/dm³ Acid L) into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with Solution K until the colourless solution turns to the first permanent faint pink colour. Complete Table 1.',
+      procedureSteps: [
+        'Fill the burette with 0.3125 M Sodium Hydroxide Solution K and adjust the meniscus precisely to 0.00 cm³.',
+        'Pipette exactly 25.0 cm³ of Acid Solution L into a clean 250 cm³ conical flask.',
+        'Add 2–3 drops of phenolphthalein indicator (solution remains colourless).',
+        'Titrate Solution L with Solution K until the first permanent faint pink colour appears.',
+        'Record readings and repeat to complete Table 1 with concordant titres within ±0.10 cm³.'
+      ],
+      procedures: [
+        {
+          procedureIndex: 1,
+          title: 'Procedure I: Titration of Acid L with NaOH Solution K',
+          tableTitle: 'Table 1: Titration of Acid Solution L with Solution K',
+          tableMarks: 4.0,
+          solutionA: '0.3125 M Sodium Hydroxide (Solution K)',
+          solutionB: 'Acid L containing 60.0 g/dm³ (Solution L)',
+          indicator: 'Phenolphthalein',
+          pipetteVolume: 25.0,
+          trueTitre: 25.00,
+          titrantColor: '#38BDF8',
+          flaskBaseColor: 'rgba(255,255,255,0.2)',
+          endpointColor: 'rgba(236,72,153,0.5)',
+          instructions: 'Fill the burette with 0.3125 M Sodium Hydroxide Solution K. Pipette 25.0 cm³ of Acid Solution L (containing 60.0 g/dm³ Acid L) into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with Solution K until the colourless solution turns to the first permanent faint pink colour. Complete Table 1.',
+          procedureSteps: [
+            'Fill the burette with 0.3125 M Sodium Hydroxide Solution K and adjust the meniscus precisely to 0.00 cm³.',
+            'Pipette exactly 25.0 cm³ of Acid Solution L into a clean 250 cm³ conical flask.',
+            'Add 2–3 drops of phenolphthalein indicator.',
+            'Titrate with Solution K until the first permanent faint pink colour persists.',
+            'Record initial and final readings to complete Table 1 with concordant titres within ±0.10 cm³.'
+          ],
+          questions: [
+            {
+              id: 'step_1a',
+              letter: 'a',
+              field: 'avgTitre',
+              label: 'Calculate the average volume of 0.3125 M NaOH Solution K used, V₁',
+              marks: 1.0,
+              marksLabel: '(1.0 Mark)',
+              placeholder: 'e.g. 25.00',
+              step: '0.01',
+              unit: 'cm³',
+              calcTheoretical: (ctx) => ctx.trueTitre,
+              calcEcf: (ctx) => ctx.expAvgFromTrials,
+              check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
+              feedbackSuccess: (val) => `✓ Correct: V₁ = ${val.toFixed(2)} cm³.`,
+              feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
+              working: (ctx) => `<b>(a) Average Titre:</b> V₁ = <b>${ctx.v1.toFixed(2)} cm³</b>`
+            },
+            {
+              id: 'step_1b',
+              letter: 'b',
+              field: 'molesNaohK',
+              label: 'Calculate the number of moles of NaOH present in the average volume V₁ of Solution K (0.3125 M)',
+              marks: 2.0,
+              marksLabel: '(2.0 Marks)',
+              placeholder: 'e.g. 0.00781',
+              step: '0.00001',
+              unit: 'moles of NaOH',
+              calcTheoretical: (ctx) => (0.3125 * ctx.trueTitre) / 1000.0,
+              calcEcf: (ctx) => {
+                const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_1a', 'step_a')) || ctx.trueTitre;
+                return (0.3125 * v1) / 1000.0;
+              },
+              check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+              feedbackSuccess: (val) => `✓ Correct: ${val} moles of NaOH.`,
+              feedbackFail: (ctx, expTheo) => `Formula: (0.3125 × V₁) / 1000 = ${expTheo.toFixed(5)} mol.`,
+              working: (ctx) => `<b>(b) Moles of NaOH in V₁:</b> (0.3125 × ${ctx.v1.toFixed(2)}) / 1000 = <b>${((0.3125 * ctx.v1) / 1000.0).toFixed(5)} mol</b>`
+            },
+            {
+              id: 'step_1c',
+              letter: 'c',
+              field: 'molesAcidL',
+              label: 'Calculate the number of moles of Acid L in 25.0 cm³ of Solution L (Mole ratio Acid L : NaOH = 1 : 1)',
+              marks: 2.0,
+              marksLabel: '(2.0 Marks)',
+              placeholder: 'e.g. 0.00781',
+              step: '0.00001',
+              unit: 'moles of Acid L',
+              calcTheoretical: (ctx) => (0.3125 * ctx.trueTitre) / 1000.0,
+              calcEcf: (ctx) => {
+                const mK = parseFloat(getAnswerValue(ctx.answers, 'molesNaohK', 'step_1b', 'step_b')) || ((0.3125 * ctx.trueTitre) / 1000.0);
+                return mK;
+              },
+              check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+              feedbackSuccess: (val) => `✓ Correct: ${val} moles of Acid L in 25.0 cm³.`,
+              feedbackFail: (ctx, expTheo) => `Formula: Moles of NaOH = ${expTheo.toFixed(5)} mol.`,
+              working: (ctx) => `<b>(c) Moles of Acid L:</b> <b>${((0.3125 * ctx.v1) / 1000.0).toFixed(5)} mol</b>`
+            },
+            {
+              id: 'step_1d',
+              letter: 'd',
+              field: 'molarityAcidL',
+              label: 'Calculate the molar concentration (molarity) of Acid L in mol/dm³',
+              marks: 2.0,
+              marksLabel: '(2.0 Marks)',
+              placeholder: 'e.g. 0.3125',
+              step: '0.0001',
+              unit: 'mol/dm³ (M)',
+              calcTheoretical: () => 0.3125,
+              calcEcf: (ctx) => {
+                const mL = parseFloat(getAnswerValue(ctx.answers, 'molesAcidL', 'step_1c', 'step_c')) || 0.00781;
+                return (mL * 1000.0) / 25.0;
+              },
+              check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+              feedbackSuccess: (val) => `✓ Correct: Molarity of Acid L = ${val} mol/dm³.`,
+              feedbackFail: () => `Formula: (Moles of Acid L × 1000) / 25.0 = 0.3125 mol/dm³.`,
+              working: (ctx) => `<b>(d) Molarity of Acid L:</b> (${((0.3125 * ctx.v1) / 1000.0).toFixed(5)} × 1000) / 25.0 = <b>0.3125 mol/dm³</b>`
+            },
+            {
+              id: 'step_1e',
+              letter: 'e',
+              field: 'rfmAcidL',
+              label: 'Given that Solution L contains 60.0 g of Acid L per dm³, calculate the relative formula mass (RFM) of Acid L',
+              marks: 3.0,
+              marksLabel: '(3.0 Marks)',
+              placeholder: 'e.g. 192.0',
+              step: '0.1',
+              unit: 'g/mol',
+              calcTheoretical: () => 192.0,
+              calcEcf: (ctx) => {
+                const mol = parseFloat(getAnswerValue(ctx.answers, 'molarityAcidL', 'step_1d', 'step_d')) || 0.3125;
+                return mol > 0 ? parseFloat((60.0 / mol).toFixed(1)) : 192.0;
+              },
+              check: (val) => Math.abs(val - 192.0) <= 8.0,
+              feedbackSuccess: (val) => `✓ Correct: RFM of Acid L = ${val} g/mol (Citric Acid Monohydrate C₆H₈O₇).`,
+              feedbackFail: () => `Formula: Mass concentration (60.0 g/dm³) / Molarity (0.3125) = 192.0 g/mol.`,
+              working: () => `<b>(e) RFM of Acid L:</b> 60.0 / 0.3125 = <b>192.0 g/mol</b>`
+            }
+          ]
+        },
+        {
+          procedureIndex: 2,
+          title: 'Procedure II: Thermometric Neutralization Enthalpy (ΔT)',
+          tableTitle: 'Table 2: Temperature Changes on Neutralization',
+          tableMarks: 4.0,
+          solutionA: '0.3125 M Sodium Hydroxide Solution K',
+          solutionB: 'Acid Solution L',
+          indicator: 'Calorimeter / Thermometer',
+          pipetteVolume: 25.0,
+          trueTitre: 25.00,
+          titrantColor: '#38BDF8',
+          flaskBaseColor: 'rgba(255,255,255,0.2)',
+          endpointColor: 'rgba(236,72,153,0.5)',
+          instructions: 'Measure 25.0 cm³ of Acid Solution L into a clean 100 cm³ plastic beaker and record its steady initial temperature T₁. Measure 25.0 cm³ of 0.3125 M NaOH Solution K into a separate beaker and record its initial temperature T₂. Calculate mean initial temperature T₀ = (T₁ + T₂) / 2. Pour Solution K into Solution L in the plastic beaker, stir immediately with the thermometer, and record the highest temperature reached (T_max). Complete Table 2.',
+          procedureSteps: [
+            'Measure exactly 25.0 cm³ of Acid Solution L using a measuring cylinder and transfer into a clean 100 cm³ plastic beaker.',
+            'Record the steady initial temperature of Solution L as T₁ in Table 2.',
+            'Rinse the measuring cylinder and measure 25.0 cm³ of 0.3125 M NaOH Solution K into a separate beaker; record its initial temperature as T₂ in Table 2.',
+            'Calculate the mean initial temperature T₀ = (T₁ + T₂) / 2.',
+            'Carefully pour Solution K into Solution L in the plastic beaker, stir immediately with the thermometer, and record the highest temperature reached (T_max = 28.5 °C; ΔT = 5.0 °C) in Table 2.'
+          ],
+          questions: [
+            {
+              id: 'step_2a',
+              letter: 'a',
+              field: 'tempRise',
+              label: 'Calculate the temperature rise ΔT = T_max - T₀ in °C',
+              marks: 1.0,
+              marksLabel: '(1.0 Mark)',
+              placeholder: 'e.g. 5.0',
+              step: '0.1',
+              unit: '°C',
+              calcTheoretical: () => 5.0,
+              calcEcf: () => 5.0,
+              check: (val) => Math.abs(val - 5.0) <= 0.5,
+              feedbackSuccess: (val) => `✓ Correct: Temperature rise ΔT = ${val.toFixed(1)} °C.`,
+              feedbackFail: () => `Expected ΔT = Highest temperature (28.5 °C) - Mean initial (23.5 °C) = 5.0 °C.`,
+              working: () => `<b>(a) Temperature Rise:</b> ΔT = 28.5 - 23.5 = <b>5.0 °C</b>`
+            },
+            {
+              id: 'step_2b',
+              letter: 'b',
+              field: 'heatNeutralization',
+              label: 'In the thermometric neutralization step, mixing 25.0 cm³ of Solution K with 25.0 cm³ of Solution L produced a temperature rise of ΔT = 5.0 °C. Calculate the heat change ΔH (Mass = 50.0 g, c = 4.2 J/g/°C)',
+              marks: 2.0,
+              marksLabel: '(2.0 Marks)',
+              placeholder: 'e.g. 1050',
+              step: '1',
+              unit: 'Joules (J)',
+              calcTheoretical: () => 1050.0,
+              calcEcf: (ctx) => {
+                const dt = parseFloat(getAnswerValue(ctx.answers, 'tempRise', 'step_2a')) || 5.0;
+                return 50.0 * 4.2 * dt;
+              },
+              check: (val) => Math.abs(val - 1050.0) <= 50.0,
+              feedbackSuccess: (val) => `✓ Correct: Heat change ΔH = ${val} J (1.05 kJ).`,
+              feedbackFail: () => `Formula: 50.0 × 4.2 × 5.0 = 1050 Joules.`,
+              working: () => `<b>(b) Heat change ΔH:</b> 50.0 × 4.2 × 5.0 = <b>1050 J (1.05 kJ)</b>`
+            },
+            {
+              id: 'step_2c',
+              letter: 'c',
+              field: 'molarHeatNeut',
+              label: 'Calculate the molar heat of neutralization of Acid L in kJ/mol (Heat change in kJ / moles of Acid L neutralized in 25.0 cm³)',
+              marks: 2.0,
+              marksLabel: '(2.0 Marks)',
+              placeholder: 'e.g. -134.4',
+              step: '0.1',
+              unit: 'kJ/mol',
+              calcTheoretical: () => -134.4,
+              calcEcf: (ctx) => {
+                const qJ = parseFloat(getAnswerValue(ctx.answers, 'heatNeutralization', 'step_2b', 'step_f')) || 1050.0;
+                const mol = parseFloat(getAnswerValue(ctx.answers, 'molesAcidL', 'step_1c', 'step_c')) || 0.0078125;
+                return mol > 0 ? parseFloat((-(qJ / 1000.0) / mol).toFixed(1)) : -134.4;
+              },
+              check: (val) => Math.abs(Math.abs(val) - 134.4) <= 10.0,
+              feedbackSuccess: (val) => `✓ Correct: Molar heat of neutralization = ${val} kJ/mol.`,
+              feedbackFail: () => `Formula: -(1.05 kJ / 0.0078125 mol) = -134.4 kJ/mol.`,
+              working: () => `<b>(c) Molar Enthalpy of Neutralization:</b> -(1.05 / 0.0078125) = <b>-134.4 kJ/mol</b>`
+            }
+          ]
+        }
+      ],
       questions: [
         {
-          id: 'step_a',
+          id: 'step_1a',
           letter: 'a',
           field: 'avgTitre',
           label: 'Calculate the average volume of 0.3125 M NaOH Solution K used, V₁',
@@ -6852,7 +8106,7 @@ const COMPOSITE_EXAM_PRESETS = {
           working: (ctx) => `<b>(a) Average Titre:</b> V₁ = <b>${ctx.v1.toFixed(2)} cm³</b>`
         },
         {
-          id: 'step_b',
+          id: 'step_1b',
           letter: 'b',
           field: 'molesNaohK',
           label: 'Calculate the number of moles of NaOH present in the average volume V₁ of Solution K (0.3125 M)',
@@ -6863,7 +8117,7 @@ const COMPOSITE_EXAM_PRESETS = {
           unit: 'moles of NaOH',
           calcTheoretical: (ctx) => (0.3125 * ctx.trueTitre) / 1000.0,
           calcEcf: (ctx) => {
-            const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_a')) || ctx.trueTitre;
+            const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_1a', 'step_a')) || ctx.trueTitre;
             return (0.3125 * v1) / 1000.0;
           },
           check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
@@ -6872,7 +8126,7 @@ const COMPOSITE_EXAM_PRESETS = {
           working: (ctx) => `<b>(b) Moles of NaOH in V₁:</b> (0.3125 × ${ctx.v1.toFixed(2)}) / 1000 = <b>${((0.3125 * ctx.v1) / 1000.0).toFixed(5)} mol</b>`
         },
         {
-          id: 'step_c',
+          id: 'step_1c',
           letter: 'c',
           field: 'molesAcidL',
           label: 'Calculate the number of moles of Acid L in 25.0 cm³ of Solution L (Mole ratio Acid L : NaOH = 1 : 1)',
@@ -6883,7 +8137,7 @@ const COMPOSITE_EXAM_PRESETS = {
           unit: 'moles of Acid L',
           calcTheoretical: (ctx) => (0.3125 * ctx.trueTitre) / 1000.0,
           calcEcf: (ctx) => {
-            const mK = parseFloat(getAnswerValue(ctx.answers, 'molesNaohK', 'step_b')) || ((0.3125 * ctx.trueTitre) / 1000.0);
+            const mK = parseFloat(getAnswerValue(ctx.answers, 'molesNaohK', 'step_1b', 'step_b')) || ((0.3125 * ctx.trueTitre) / 1000.0);
             return mK;
           },
           check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
@@ -6892,7 +8146,7 @@ const COMPOSITE_EXAM_PRESETS = {
           working: (ctx) => `<b>(c) Moles of Acid L:</b> <b>${((0.3125 * ctx.v1) / 1000.0).toFixed(5)} mol</b>`
         },
         {
-          id: 'step_d',
+          id: 'step_1d',
           letter: 'd',
           field: 'molarityAcidL',
           label: 'Calculate the molar concentration (molarity) of Acid L in mol/dm³',
@@ -6903,7 +8157,7 @@ const COMPOSITE_EXAM_PRESETS = {
           unit: 'mol/dm³ (M)',
           calcTheoretical: () => 0.3125,
           calcEcf: (ctx) => {
-            const mL = parseFloat(getAnswerValue(ctx.answers, 'molesAcidL', 'step_c')) || 0.00781;
+            const mL = parseFloat(getAnswerValue(ctx.answers, 'molesAcidL', 'step_1c', 'step_c')) || 0.00781;
             return (mL * 1000.0) / 25.0;
           },
           check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
@@ -6912,7 +8166,7 @@ const COMPOSITE_EXAM_PRESETS = {
           working: (ctx) => `<b>(d) Molarity of Acid L:</b> (${((0.3125 * ctx.v1) / 1000.0).toFixed(5)} × 1000) / 25.0 = <b>0.3125 mol/dm³</b>`
         },
         {
-          id: 'step_e',
+          id: 'step_1e',
           letter: 'e',
           field: 'rfmAcidL',
           label: 'Given that Solution L contains 60.0 g of Acid L per dm³, calculate the relative formula mass (RFM) of Acid L',
@@ -6923,7 +8177,7 @@ const COMPOSITE_EXAM_PRESETS = {
           unit: 'g/mol',
           calcTheoretical: () => 192.0,
           calcEcf: (ctx) => {
-            const mol = parseFloat(getAnswerValue(ctx.answers, 'molarityAcidL', 'step_d')) || 0.3125;
+            const mol = parseFloat(getAnswerValue(ctx.answers, 'molarityAcidL', 'step_1d', 'step_d')) || 0.3125;
             return mol > 0 ? parseFloat((60.0 / mol).toFixed(1)) : 192.0;
           },
           check: (val) => Math.abs(val - 192.0) <= 8.0,
@@ -6932,8 +8186,25 @@ const COMPOSITE_EXAM_PRESETS = {
           working: () => `<b>(e) RFM of Acid L:</b> 60.0 / 0.3125 = <b>192.0 g/mol</b>`
         },
         {
-          id: 'step_f',
+          id: 'step_2a',
           letter: 'f',
+          field: 'tempRise',
+          label: 'Calculate the temperature rise ΔT = T_max - T₀ in °C',
+          marks: 1.0,
+          marksLabel: '(1.0 Mark)',
+          placeholder: 'e.g. 5.0',
+          step: '0.1',
+          unit: '°C',
+          calcTheoretical: () => 5.0,
+          calcEcf: () => 5.0,
+          check: (val) => Math.abs(val - 5.0) <= 0.5,
+          feedbackSuccess: (val) => `✓ Correct: Temperature rise ΔT = ${val.toFixed(1)} °C.`,
+          feedbackFail: () => `Expected ΔT = Highest temperature (28.5 °C) - Mean initial (23.5 °C) = 5.0 °C.`,
+          working: () => `<b>(f) Temperature Rise:</b> ΔT = 28.5 - 23.5 = <b>5.0 °C</b>`
+        },
+        {
+          id: 'step_2b',
+          letter: 'g',
           field: 'heatNeutralization',
           label: 'In the thermometric neutralization step, mixing 25.0 cm³ of Solution K with 25.0 cm³ of Solution L produced a temperature rise of ΔT = 5.0 °C. Calculate the heat change ΔH (Mass = 50.0 g, c = 4.2 J/g/°C)',
           marks: 2.0,
@@ -6942,11 +8213,35 @@ const COMPOSITE_EXAM_PRESETS = {
           step: '1',
           unit: 'Joules (J)',
           calcTheoretical: () => 1050.0,
-          calcEcf: () => 1050.0,
+          calcEcf: (ctx) => {
+            const dt = parseFloat(getAnswerValue(ctx.answers, 'tempRise', 'step_2a')) || 5.0;
+            return 50.0 * 4.2 * dt;
+          },
           check: (val) => Math.abs(val - 1050.0) <= 50.0,
           feedbackSuccess: (val) => `✓ Correct: Heat change ΔH = ${val} J (1.05 kJ).`,
           feedbackFail: () => `Formula: 50.0 × 4.2 × 5.0 = 1050 Joules.`,
-          working: () => `<b>(f) Heat change ΔH:</b> 50.0 × 4.2 × 5.0 = <b>1050 J (1.05 kJ)</b>`
+          working: () => `<b>(g) Heat change ΔH:</b> 50.0 × 4.2 × 5.0 = <b>1050 J (1.05 kJ)</b>`
+        },
+        {
+          id: 'step_2c',
+          letter: 'h',
+          field: 'molarHeatNeut',
+          label: 'Calculate the molar heat of neutralization of Acid L in kJ/mol (Heat change in kJ / moles of Acid L neutralized in 25.0 cm³)',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. -134.4',
+          step: '0.1',
+          unit: 'kJ/mol',
+          calcTheoretical: () => -134.4,
+          calcEcf: (ctx) => {
+            const qJ = parseFloat(getAnswerValue(ctx.answers, 'heatNeutralization', 'step_2b', 'step_f')) || 1050.0;
+            const mol = parseFloat(getAnswerValue(ctx.answers, 'molesAcidL', 'step_1c', 'step_c')) || 0.0078125;
+            return mol > 0 ? parseFloat((-(qJ / 1000.0) / mol).toFixed(1)) : -134.4;
+          },
+          check: (val) => Math.abs(Math.abs(val) - 134.4) <= 10.0,
+          feedbackSuccess: (val) => `✓ Correct: Molar heat of neutralization = ${val} kJ/mol.`,
+          feedbackFail: () => `Formula: -(1.05 kJ / 0.0078125 mol) = -134.4 kJ/mol.`,
+          working: () => `<b>(h) Molar Enthalpy of Neutralization:</b> -(1.05 / 0.0078125) = <b>-134.4 kJ/mol</b>`
         }
       ]
     },
@@ -7040,6 +8335,16 @@ const COMPOSITE_EXAM_PRESETS = {
 // Aliases for backwards compatibility
 COMPOSITE_EXAM_PRESETS.standard_1 = COMPOSITE_EXAM_PRESETS.series_1;
 COMPOSITE_EXAM_PRESETS.standard_2 = COMPOSITE_EXAM_PRESETS.series_2;
+
+// Automatically ensure all multi-procedure presets expose a unified questions array on q1
+Object.keys(COMPOSITE_EXAM_PRESETS).forEach(key => {
+  const p = COMPOSITE_EXAM_PRESETS[key];
+  if (p && p.q1 && p.q1.hasMultipleProcedures && Array.isArray(p.q1.procedures)) {
+    if (!p.q1.questions || p.q1.questions.length === 0) {
+      p.q1.questions = p.q1.procedures.flatMap(proc => proc.questions || []);
+    }
+  }
+});
 
 /**
  * Generate a dynamic randomized KCSE Paper 3 practical exam
@@ -7343,20 +8648,42 @@ class CompositeExamEngine {
         q2: { ...basePreset.q2 },
         q3: { ...basePreset.q3 }
       };
+      if (basePreset.q1?.hasMultipleProcedures && Array.isArray(basePreset.q1?.procedures) && basePreset.q1.procedures.length > 1) {
+        this.preset.q1.hasMultipleProcedures = true;
+        this.preset.q1.procedures = basePreset.q1.procedures.map((proc, pIdx) => ({
+          ...proc,
+          procedureIndex: proc.procedureIndex || pIdx + 1,
+          trueTitre: proc.trueTitre != null ? Number(proc.trueTitre) : Number(basePreset.q1.trueTitre || 25.00),
+          questions: Array.isArray(proc.questions) ? proc.questions.slice() : []
+        }));
+        this.procedureStates = basePreset.q1.procedures.map(() => ({
+          trials: [
+            { trial: 1, initial: 0.00, final: 0.00, used: 0.00, concordant: false, recorded: false },
+            { trial: 2, initial: 0.00, final: 0.00, used: 0.00, concordant: false, recorded: false },
+            { trial: 3, initial: 0.00, final: 0.00, used: 0.00, concordant: false, recorded: false }
+          ],
+          answers: {}
+        }));
+        if (!this.preset.q1.questions || this.preset.q1.questions.length === 0) {
+          this.preset.q1.questions = this.preset.q1.procedures.flatMap(p => p.questions || []);
+        }
+      }
       if (!this.preset.q2.simulationType) {
         this.preset.q2.simulationType = (this.preset.q2.type === 'organic') ? 'organic' : 'qualitative';
       }
       if (!this.preset.q3.simulationType) {
         this.preset.q3.simulationType = (this.preset.q3.type === 'qualitative' || this.preset.q3.type === 'qualitative_single') ? 'qualitative' : 'organic';
       }
-      if (this.preset.q1.calcType === 'water_of_crystallization') {
-        this.preset.q1.questions = createWaterOfCrystallizationQuestions(this.preset.q1);
-      } else if (this.preset.q1.calcType === 'percentage_purity') {
-        this.preset.q1.questions = createPercentagePurityQuestions(this.preset.q1);
-      } else if (this.preset.q1.calcType === 'ram_metal') {
-        this.preset.q1.questions = createRamMetalQuestions(this.preset.q1);
-      } else {
-        this.preset.q1.questions = createStandardTitrationQuestions(this.preset.q1);
+      if (!this.preset.q1.hasMultipleProcedures && (!this.preset.q1.questions || this.preset.q1.questions.length === 0)) {
+        if (this.preset.q1.calcType === 'water_of_crystallization') {
+          this.preset.q1.questions = createWaterOfCrystallizationQuestions(this.preset.q1);
+        } else if (this.preset.q1.calcType === 'percentage_purity') {
+          this.preset.q1.questions = createPercentagePurityQuestions(this.preset.q1);
+        } else if (this.preset.q1.calcType === 'ram_metal') {
+          this.preset.q1.questions = createRamMetalQuestions(this.preset.q1);
+        } else {
+          this.preset.q1.questions = createStandardTitrationQuestions(this.preset.q1);
+        }
       }
     }
 
@@ -7393,6 +8720,9 @@ class CompositeExamEngine {
           ],
           answers: {}
         }));
+        if (!this.preset.q1.questions || this.preset.q1.questions.length === 0) {
+          this.preset.q1.questions = this.preset.q1.procedures.flatMap(p => p.questions || []);
+        }
       }
 
       if (q1Cfg.ratioA != null) this.preset.q1.moleRatioAcid = Number(q1Cfg.ratioA);
@@ -7414,14 +8744,16 @@ class CompositeExamEngine {
       if (q1Cfg.baseRfm != null) this.preset.q1.baseRfm = Number(q1Cfg.baseRfm);
 
       // Regenerate appropriate calculation questions with bound functions
-      if (this.preset.q1.calcType === 'water_of_crystallization') {
-        this.preset.q1.questions = createWaterOfCrystallizationQuestions(this.preset.q1);
-      } else if (this.preset.q1.calcType === 'percentage_purity') {
-        this.preset.q1.questions = createPercentagePurityQuestions(this.preset.q1);
-      } else if (this.preset.q1.calcType === 'ram_metal') {
-        this.preset.q1.questions = createRamMetalQuestions(this.preset.q1);
-      } else {
-        this.preset.q1.questions = createStandardTitrationQuestions(this.preset.q1);
+      if (!this.preset.q1.hasMultipleProcedures && (!this.preset.q1.questions || this.preset.q1.questions.length === 0)) {
+        if (this.preset.q1.calcType === 'water_of_crystallization') {
+          this.preset.q1.questions = createWaterOfCrystallizationQuestions(this.preset.q1);
+        } else if (this.preset.q1.calcType === 'percentage_purity') {
+          this.preset.q1.questions = createPercentagePurityQuestions(this.preset.q1);
+        } else if (this.preset.q1.calcType === 'ram_metal') {
+          this.preset.q1.questions = createRamMetalQuestions(this.preset.q1);
+        } else {
+          this.preset.q1.questions = createStandardTitrationQuestions(this.preset.q1);
+        }
       }
     }
 
@@ -8450,7 +9782,15 @@ class CompositeExamEngine {
   // ── Step-by-Step Mathematical Worked Solution Model ──────────────────
   generateWorkedSolutions() {
     if (!this.preset || !this.preset.q1) return {};
-    const questionsList = this.preset.q1.questions || createStandardTitrationQuestions(this.preset.q1);
+    let questionsList = this.preset.q1.questions;
+    if (!questionsList || questionsList.length === 0) {
+      if (this.preset.q1.hasMultipleProcedures && Array.isArray(this.preset.q1.procedures)) {
+        questionsList = this.preset.q1.procedures.flatMap(p => p.questions || []);
+      }
+      if (!questionsList || questionsList.length === 0) {
+        questionsList = createStandardTitrationQuestions(this.preset.q1);
+      }
+    }
     const v1 = Number(this.preset.q1.trueTitre) || 25.00;
 
     const evalCtx = {
@@ -8471,8 +9811,9 @@ class CompositeExamEngine {
 
     const worked = {};
     questionsList.forEach((q, idx) => {
-      const stepKey = `step_${q.letter}`;
-      const camelKey = `step${q.letter.toUpperCase()}`;
+      const qKey = (q.letter || q.id || `q${idx + 1}`).toString();
+      const stepKey = `step_${qKey}`;
+      const camelKey = `step${qKey.toUpperCase()}`;
       let resultStr = '';
       if (typeof q.calcTheoretical === 'function') {
         const val = q.calcTheoretical(evalCtx);

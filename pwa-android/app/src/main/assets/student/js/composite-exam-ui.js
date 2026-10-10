@@ -171,6 +171,63 @@ requireStudentLogin();
     }).join('');
   }
 
+  function renderQ1ProcedureFlow(instructionsText, procedureSteps, q1Config = {}) {
+    const listEl = document.getElementById('q1ProcedureList');
+    if (!listEl) return;
+
+    let steps = [];
+    if (Array.isArray(procedureSteps) && procedureSteps.length > 0) {
+      steps = procedureSteps.map(s => String(s).trim()).filter(Boolean);
+    } else if (instructionsText && typeof instructionsText === 'string') {
+      const cleanText = instructionsText.trim();
+      const numberedRegex = /(?:^|\n|\s+)(?:(?:[1-9]\d?[\.\)]|\((?:[1-9]\d?|[a-f])\)|Step\s+[1-9]\d?:?))\s+/i;
+      if (numberedRegex.test(cleanText)) {
+        const rawParts = cleanText.split(/(?:^|\n|\s+)(?=(?:[1-9]\d?[\.\)]|\((?:[1-9]\d?|[a-f])\)|Step\s+[1-9]\d?:?)\s+)/i);
+        steps = rawParts
+          .map(p => p.replace(/^(?:[1-9]\d?[\.\)]|\((?:[1-9]\d?|[a-f])\)|Step\s+[1-9]\d?:?)\s*/i, '').trim())
+          .filter(p => p.length > 5);
+      } else {
+        const sentences = cleanText
+          .split(/(?<=[.!?])\s+(?=[A-Z0-9])/)
+          .map(s => s.trim())
+          .filter(Boolean);
+        steps = sentences.length > 0 ? sentences : [cleanText];
+      }
+    }
+
+    const mentionsTable = steps.some(s => /table\s*[123B]/i.test(s));
+    if (!mentionsTable) {
+      const tblNum = (q1Config.procedureIndex != null ? q1Config.procedureIndex : (activeProcedureIndex + 1)) || 1;
+      steps.push(`Record your initial and final burette readings in <b>Table ${tblNum}</b> and repeat the titration to complete the table with concordant titres within ±0.10 cm³.`);
+    }
+
+    if (steps.length === 0) {
+      steps = [
+        'Fill the burette with the titrant solution and adjust the meniscus level precisely to 0.00 cm³.',
+        'Pipette 25.0 cm³ of the analyte solution into a clean conical flask and add 2–3 drops of indicator.',
+        'Titrate with continuous swirling until the sharp characteristic endpoint is reached.',
+        'Record readings and repeat to complete the table with concordant titres.'
+      ];
+    }
+
+    function highlightLabTerms(text) {
+      return text
+        .replace(/(\b\d+(?:\.\d+)?\s*(?:cm³|cm3|g\/dm³|mol\/dm³|M|drops|d\.p\.)\b)/gi, '<b>$1</b>')
+        .replace(/\b(Table\s*[123B])\b/gi, '<b>$1</b>')
+        .replace(/\b(0\.00\s*cm³)\b/gi, '<b>$1</b>')
+        .replace(/\b(Solution\s+[A-Z0-9₁₂₃₄₅₆₇₈₉₀]+)\b/gi, '<b>$1</b>')
+        .replace(/\b(Solid\s+[A-Z0-9]+)\b/gi, '<b>$1</b>');
+    }
+
+    listEl.innerHTML = steps.map((step, idx) => `
+      <div class="q1-proc-step-item">
+        <span class="q1-proc-step-num">${idx + 1}</span>
+        <span>${highlightLabTerms(escapeHtml(step).replace(/&lt;b&gt;/g, '<b>').replace(/&lt;\/b&gt;/g, '</b>'))}</span>
+      </div>
+    `).join('');
+  }
+  window.renderQ1ProcedureFlow = renderQ1ProcedureFlow;
+
   function switchTitrationProcedure(procIdx) {
     stopTitrate();
     activeProcedureIndex = procIdx;
@@ -188,21 +245,20 @@ requireStudentLogin();
       if (btn) btn.className = i === procIdx ? 'exam-tab-btn active' : 'exam-tab-btn';
     }
 
-    // Update Prompt Box for this Procedure
-    const promptBox = document.getElementById('q1PromptBoxContent');
-    if (promptBox) {
-      promptBox.innerHTML = `
-        <div style="font-weight:800; font-size:1.0rem; color:var(--cyan-accent); margin-bottom:6px;">
-          ${escapeHtml(proc.title || `Procedure ${procIdx === 0 ? 'I' : 'II'}`)}
-        </div>
-        <b>You are provided with:</b><br>
-        • <b>${escapeHtml(proc.solutionA || 'Solution in Burette')}</b> in the burette.<br>
-        • <b>${escapeHtml(window.sanitizeAnalyteDisplay(proc.solutionB, proc.questions || engine?.preset?.q1?.questions) || 'Solution in Flask')}</b>.<br>
-        • <b>${escapeHtml(proc.indicator || 'Indicator')}</b>.<br><br>
-        <b>Instructions &amp; Procedure:</b><br>
-        <div style="white-space:pre-wrap; line-height:1.5;">${escapeHtml(window.sanitizeInstructions(proc.instructions || 'Pipette 25.0 cm³ into conical flask, add indicator drops, and titrate to endpoint.', proc.questions || engine?.preset?.q1?.questions))}</div>
-      `;
+    // Update Col 1 (Reagents) & Col 2 (Procedure Flow) in place without breaking layout!
+    const reagentsTitle = document.getElementById('q1ReagentsTitle');
+    if (reagentsTitle) {
+      reagentsTitle.textContent = `${proc.title || `Procedure ${procIdx === 0 ? 'I' : 'II'}`}: Prescribed Reagents`;
     }
+    setElemText('q1SolAName', proc.solutionA || 'Solution in Burette');
+    setElemText('q1SolBName', window.sanitizeAnalyteDisplay(proc.solutionB, proc.questions || engine?.preset?.q1?.questions) || 'Solution in Flask');
+    setElemText('q1IndicatorName', proc.indicator || 'Indicator');
+
+    const procTitle = document.getElementById('q1ProcedureTitle');
+    if (procTitle) {
+      procTitle.textContent = `${proc.title || `Procedure ${procIdx === 0 ? 'I' : 'II'}`}: Instructions & Flow`;
+    }
+    renderQ1ProcedureFlow(proc.instructions, proc.procedureSteps, proc);
 
     // Update Reagents Shelf
     const titrantChip = document.getElementById('q1TitrantChip');
@@ -218,11 +274,15 @@ requireStudentLogin();
     if (pipStatus) {
       pipStatus.textContent = 'Not Pipetted';
       pipStatus.style.color = 'var(--text-muted)';
+      pipStatus.style.borderColor = 'var(--card-border)';
+      pipStatus.style.background = 'var(--bg-dark)';
     }
     const indStatus = document.getElementById('indicatorStatus');
     if (indStatus) {
       indStatus.textContent = '0 Drops Added';
       indStatus.style.color = 'var(--text-muted)';
+      indStatus.style.borderColor = 'var(--card-border)';
+      indStatus.style.background = 'var(--bg-dark)';
     }
 
     // Update Table Title & Record Button Target
@@ -256,6 +316,12 @@ requireStudentLogin();
     const nextProcRow = document.getElementById('q1NextProcedureRow');
     if (nextProcRow) {
       nextProcRow.style.display = (procIdx < totalProcs - 1) ? 'block' : 'none';
+      const btnProceed = document.getElementById('btnProceedToProc2');
+      if (btnProceed && procIdx < totalProcs - 1) {
+        const nextProc = engine.preset.q1.procedures[procIdx + 1];
+        btnProceed.textContent = `Proceed to ${nextProc?.title || 'Procedure II'} →`;
+        btnProceed.onclick = () => switchTitrationProcedure(procIdx + 1);
+      }
     }
 
     // Reset apparatus for fresh titration in this procedure
@@ -526,66 +592,81 @@ requireStudentLogin();
     return assignmentId ? `assign_${assignmentId}` : `${seriesParam}_${modeParam}`;
   }
 
+  function getExamDraftPayload() {
+    // Gather Q1 Table Data
+    const tableData = [];
+    [1, 2, 3].forEach(n => {
+      const fin = document.getElementById(`t${n}Final`);
+      const init = document.getElementById(`t${n}Init`);
+      const used = document.getElementById(`t${n}Used`);
+      const conc = document.getElementById(`t${n}Concordant`);
+      tableData.push({
+        final: fin ? fin.value : '',
+        initial: init ? init.value : '',
+        used: used ? used.textContent : '',
+        concordant: conc ? conc.checked : false
+      });
+    });
+
+    // Gather Dynamic Calculation Inputs
+    const calcAnswers = {};
+    document.querySelectorAll('.dynamic-calc-input').forEach(input => {
+      if (input.id && input.value !== '') {
+        calcAnswers[input.id] = input.value;
+      }
+    });
+
+    // Gather Written Question Responses
+    const writtenAnswers = {};
+    document.querySelectorAll('textarea[id^="written_input_"]').forEach(el => {
+      if (el.value) writtenAnswers[el.id] = el.value;
+    });
+
+    return {
+      assignmentId: assignmentId || null,
+      seriesParam,
+      modeParam,
+      activeTab: (typeof activeTab !== 'undefined') ? activeTab : 1,
+      activeProcedureIndex: (typeof activeProcedureIndex !== 'undefined') ? activeProcedureIndex : 0,
+      activeTrial: (typeof activeTrial !== 'undefined') ? activeTrial : 1,
+      q1BuretteReading: typeof engine?.q1BuretteReading === 'number' ? engine.q1BuretteReading : 0.00,
+      isPipetted: (typeof isPipetted !== 'undefined') ? isPipetted : false,
+      indicatorDrops: (typeof indicatorDrops !== 'undefined') ? indicatorDrops : 0,
+      tableData,
+      calcAnswers,
+      writtenAnswers,
+      q1Trials: engine?.q1Trials || [],
+      q1Answers: engine?.q1Answers || {},
+      procedureTrials: engine?.procedureTrials || {},
+      procedureAnswers: engine?.procedureAnswers || {},
+      q2Obs: engine?.q2Obs || {},
+      q2Inf: engine?.q2Inf || {},
+      q2CationChoice: engine?.q2CationChoice || '',
+      q2AnionChoice: engine?.q2AnionChoice || '',
+      q2FunctionalGroupChoice: engine?.q2FunctionalGroupChoice || '',
+      q2TestStates: (typeof q2TestStates !== 'undefined') ? q2TestStates : {},
+      q3Obs: engine?.q3Obs || {},
+      q3Inf: engine?.q3Inf || {},
+      q3FunctionalGroupChoice: engine?.q3FunctionalGroupChoice || '',
+      q3TestStates: (typeof q3TestStates !== 'undefined') ? q3TestStates : {},
+      timeLeft: (typeof timeLeft !== 'undefined') ? timeLeft : 135 * 60,
+      savedAt: Date.now()
+    };
+  }
+
   function saveExamDraft(immediate = false) {
     if (!window.ExamDraftManager) return;
     try {
-      // Gather Q1 Table Data
-      const tableData = [];
-      [1, 2, 3].forEach(n => {
-        const fin = document.getElementById(`t${n}Final`);
-        const init = document.getElementById(`t${n}Init`);
-        const used = document.getElementById(`t${n}Used`);
-        const conc = document.getElementById(`t${n}Concordant`);
-        tableData.push({
-          final: fin ? fin.value : '',
-          initial: init ? init.value : '',
-          used: used ? used.textContent : '',
-          concordant: conc ? conc.checked : false
+      const draftPayload = getExamDraftPayload();
+      const sessionKey = getExamSessionKey();
+
+      // Dual-write: Synchronous localStorage fallback + Async IndexedDB
+      ExamDraftManager.saveDraft(sessionKey, draftPayload, immediate);
+      if (typeof ExamDraftManager.saveDraftIdb === 'function') {
+        ExamDraftManager.saveDraftIdb(sessionKey, draftPayload).catch(e => {
+          console.warn('[ExamOfflineManager] IndexedDB draft save failed:', e);
         });
-      });
-
-      // Gather Dynamic Calculation Inputs
-      const calcAnswers = {};
-      document.querySelectorAll('.dynamic-calc-input').forEach(input => {
-        if (input.id && input.value !== '') {
-          calcAnswers[input.id] = input.value;
-        }
-      });
-
-      // Gather Written Question Responses
-      const writtenAnswers = {};
-      document.querySelectorAll('textarea[id^="written_input_"]').forEach(el => {
-        if (el.value) writtenAnswers[el.id] = el.value;
-      });
-
-      const draftPayload = {
-        assignmentId: assignmentId || null,
-        seriesParam,
-        modeParam,
-        activeTab: (typeof activeTab !== 'undefined') ? activeTab : 1,
-        activeProcedureIndex: (typeof activeProcedureIndex !== 'undefined') ? activeProcedureIndex : 0,
-        tableData,
-        calcAnswers,
-        writtenAnswers,
-        q1Trials: engine?.q1Trials || [],
-        q1Answers: engine?.q1Answers || {},
-        procedureTrials: engine?.procedureTrials || {},
-        procedureAnswers: engine?.procedureAnswers || {},
-        q2Obs: engine?.q2Obs || {},
-        q2Inf: engine?.q2Inf || {},
-        q2CationChoice: engine?.q2CationChoice || '',
-        q2AnionChoice: engine?.q2AnionChoice || '',
-        q2FunctionalGroupChoice: engine?.q2FunctionalGroupChoice || '',
-        q2TestStates: (typeof q2TestStates !== 'undefined') ? q2TestStates : {},
-        q3Obs: engine?.q3Obs || {},
-        q3Inf: engine?.q3Inf || {},
-        q3FunctionalGroupChoice: engine?.q3FunctionalGroupChoice || '',
-        q3TestStates: (typeof q3TestStates !== 'undefined') ? q3TestStates : {},
-        timeLeft: (typeof timeLeft !== 'undefined') ? timeLeft : 135 * 60,
-        savedAt: Date.now()
-      };
-
-      ExamDraftManager.saveDraft(getExamSessionKey(), draftPayload, immediate);
+      }
     } catch (err) {
       console.warn('[ExamOfflineManager] Error saving exam draft:', err);
     }
@@ -595,14 +676,53 @@ requireStudentLogin();
     saveExamDraft(immediate);
   }
 
-  function checkAndRestoreDraft() {
+  async function checkAndRestoreDraft() {
     if (!window.ExamDraftManager) return;
     try {
       const sessionKey = getExamSessionKey();
-      const draftWrapper = ExamDraftManager.loadDraft(sessionKey);
+      let draftWrapper = null;
+      if (typeof ExamDraftManager.loadDraftIdb === 'function') {
+        draftWrapper = await ExamDraftManager.loadDraftIdb(sessionKey);
+      }
+      if (!draftWrapper || !draftWrapper.data) {
+        draftWrapper = ExamDraftManager.loadDraft(sessionKey);
+      }
       if (!draftWrapper || !draftWrapper.data) return;
 
       const d = draftWrapper.data;
+
+      // 0. Restore Titration Burette Reading & Pipette Setup
+      if (typeof d.q1BuretteReading === 'number') {
+        engine.q1BuretteReading = d.q1BuretteReading;
+        if (typeof updateBuretteRig === 'function') {
+          updateBuretteRig();
+        }
+      }
+      if (typeof d.activeTrial === 'number' && typeof setActiveTrial === 'function') {
+        setActiveTrial(d.activeTrial);
+      }
+      if (typeof d.isPipetted === 'boolean') {
+        isPipetted = d.isPipetted;
+        const pipEl = document.getElementById('pipetteStatus');
+        if (pipEl && isPipetted) {
+          pipEl.textContent = '✓ 25.0 cm³ Pipetted';
+          pipEl.style.color = 'var(--green-accent)';
+          pipEl.style.borderColor = 'rgba(16,185,129,0.3)';
+          pipEl.style.background = 'rgba(16,185,129,0.1)';
+        }
+      }
+      if (typeof d.indicatorDrops === 'number') {
+        indicatorDrops = d.indicatorDrops;
+        const indEl = document.getElementById('indicatorStatus');
+        const btnInd = document.getElementById('btnAddIndicator');
+        if (btnInd) btnInd.textContent = `💧 Add Indicator (${indicatorDrops}/3)`;
+        if (indEl && indicatorDrops > 0) {
+          indEl.textContent = `${indicatorDrops} Drop${indicatorDrops > 1 ? 's' : ''} Added`;
+          indEl.style.color = 'var(--cyan-accent)';
+          indEl.style.borderColor = 'rgba(6,182,212,0.3)';
+          indEl.style.background = 'rgba(6,182,212,0.1)';
+        }
+      }
 
       // 1. Restore Q1 Table Data & Trials
       if (Array.isArray(d.tableData)) {
@@ -743,14 +863,70 @@ requireStudentLogin();
       updateLiveScoreDisplay();
       ExamDraftManager.notifyStatus('saved', draftWrapper.savedAt);
       console.log('[ExamOfflineManager] Candidate draft restored successfully for', sessionKey);
+      if (hadStarted) {
+        showDraftRecoveryToast(draftWrapper.savedAt, d);
+      }
     } catch (err) {
       console.warn('[ExamOfflineManager] Could not restore draft:', err);
     }
   }
 
+  function showDraftRecoveryToast(savedAt, d) {
+    let toast = document.getElementById('draftRecoveryToast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'draftRecoveryToast';
+      toast.style.cssText = 'position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:#0F172A; border:1.5px solid #F59E0B; border-radius:12px; padding:12px 18px; box-shadow:0 10px 25px rgba(0,0,0,0.55); z-index:99999; display:flex; align-items:center; gap:16px; font-size:0.84rem; color:#F8FAFC; max-width:92vw;';
+      document.body.appendChild(toast);
+    }
+    const timeStr = savedAt ? new Date(savedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'earlier';
+    const bReading = typeof d?.q1BuretteReading === 'number' && d.q1BuretteReading > 0 ? ` · Titre: ${d.q1BuretteReading.toFixed(2)} cm³` : '';
+    toast.innerHTML = `
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="font-size:1.3rem;">💾</span>
+        <div>
+          <div style="font-weight:700; color:#FACC15;">Exam Draft Restored from IndexedDB</div>
+          <div style="font-size:0.75rem; color:#94A3B8;">Auto-saved at ${timeStr}${bReading} · Readings and observations preserved</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button type="button" onclick="this.closest('#draftRecoveryToast').remove()" style="background:#22C55E; color:#FFFFFF; border:none; border-radius:6px; padding:6px 12px; font-weight:700; font-size:0.78rem; cursor:pointer;">
+          ✓ Continue
+        </button>
+        <button type="button" onclick="discardAndResetExamDraft()" style="background:transparent; color:#EF4444; border:1px solid rgba(239,68,68,0.4); border-radius:6px; padding:6px 10px; font-size:0.75rem; cursor:pointer;">
+          Discard Draft
+        </button>
+      </div>
+    `;
+    setTimeout(() => {
+      if (toast && toast.parentNode) {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.5s ease';
+        setTimeout(() => toast.remove(), 500);
+      }
+    }, 9000);
+  }
+
+  async function discardAndResetExamDraft() {
+    if (!confirm('Are you sure you want to discard your auto-saved exam draft and restart with fresh apparatus?')) return;
+    try {
+      if (window.ExamDraftManager) {
+        await ExamDraftManager.clearDraftIdb(getExamSessionKey());
+        ExamDraftManager.clearDraft(getExamSessionKey());
+      }
+      location.reload();
+    } catch (e) {
+      console.warn('Error discarding draft:', e);
+      location.reload();
+    }
+  }
+
+  window.getExamDraftPayload = getExamDraftPayload;
   window.saveExamDraft = saveExamDraft;
   window.triggerDraftAutoSave = triggerDraftAutoSave;
   window.checkAndRestoreDraft = checkAndRestoreDraft;
+  window.showDraftRecoveryToast = showDraftRecoveryToast;
+  window.discardAndResetExamDraft = discardAndResetExamDraft;
 
   function initExamUI() {
     const p = engine.preset;
@@ -811,6 +987,11 @@ requireStudentLogin();
     if (p.q1?.hasMultipleProcedures && Array.isArray(p.q1.procedures) && p.q1.procedures.length > 1) {
       switchTitrationProcedure(0);
     } else {
+      const procTitleEl = document.getElementById('q1ProcedureTitle');
+      if (procTitleEl) {
+        procTitleEl.textContent = p.q1?.procedureTitle || 'Standard KNEC Procedure Flow';
+      }
+      renderQ1ProcedureFlow(p.q1?.instructions, p.q1?.procedureSteps, p.q1);
       try { renderQ1Calculations(); } catch(e) { console.error('renderQ1Calculations error:', e); }
     }
 
@@ -837,6 +1018,9 @@ requireStudentLogin();
     if (window.ExamDraftManager) {
       ExamDraftManager.initConnectivityMonitor('offlineStatusBadge');
       ExamDraftManager.registerServiceWorker('/sw.js');
+      if (typeof ExamDraftManager.initBackgroundAutoSave === 'function') {
+        ExamDraftManager.initBackgroundAutoSave(getExamSessionKey(), () => getExamDraftPayload(), 5000);
+      }
       setTimeout(() => { checkAndRestoreDraft(); }, 500);
     }
 
@@ -1815,7 +1999,7 @@ requireStudentLogin();
             (${escapeHtml(q.letter || q.id)}) ${escapeHtml(q.label || '')} <span style="color:var(--cyan-accent);">${q.marksLabel || (q.marks ? `(${Number(q.marks).toFixed(1)} Marks)` : '')}</span>
           </div>
           <div class="calc-input-row" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-            <input type="number" step="${q.step || 'any'}" id="${inputId}" class="calc-input dynamic-calc-input" data-field="${fieldId}" data-step-id="${q.id}" placeholder="${q.placeholder || ''}" value="${currentVal}" oninput="onDynamicQ1CalculationChanged('${fieldId}', this.value, ${procIdx})">
+            <input type="number" step="${q.step || 'any'}" id="${inputId}" class="calc-input dynamic-calc-input" data-field="${fieldId}" data-step-id="${q.id}" placeholder="${q.placeholder || ''}" value="${currentVal}" inputmode="decimal" autocomplete="off" oninput="onDynamicQ1CalculationChanged('${fieldId}', this.value, ${procIdx})">
             <span class="calc-unit-badge" style="font-weight:700;color:var(--text-muted);">${escapeHtml(q.unit || '')}</span>
             ${!isStrict ? `<button type="button" class="btn-perform-test btn-check-step" style="padding:6px 14px;font-size:0.78rem;" onclick="checkDynamicQ1Step('${q.id}', ${procIdx})">Check (${escapeHtml(q.letter || q.id)})</button>` : ''}
           </div>
@@ -1836,8 +2020,23 @@ requireStudentLogin();
     saveExamDraft();
   }
 
-  function checkDynamicQ1Step(stepId) {
-    const questions = getQ1CalculationQuestions();
+  function checkDynamicQ1Step(stepId, procIdx = null) {
+    const pIdx = (procIdx != null) ? procIdx : activeProcedureIndex;
+    const hasMulti = engine?.preset?.q1?.hasMultipleProcedures && Array.isArray(engine?.preset?.q1?.procedures) && engine.preset.q1.procedures.length > 1;
+    let questions = [];
+    let proc = engine?.preset?.q1 || {};
+    let procAnswers = engine?.q1Answers || {};
+    let trials = engine?.q1Trials || [];
+
+    if (hasMulti) {
+      proc = engine.preset.q1.procedures[pIdx] || {};
+      questions = Array.isArray(proc.questions) && proc.questions.length > 0 ? proc.questions : [];
+      procAnswers = engine.getProcedureAnswers(pIdx);
+      trials = engine.getProcedureTrials(pIdx);
+    } else {
+      questions = getQ1CalculationQuestions();
+    }
+
     const q = questions.find(item => item.id === stepId || item.letter === stepId);
     if (!q) return;
 
@@ -1845,31 +2044,30 @@ requireStudentLogin();
     if (!fb) return;
 
     const fieldId = q.field || q.id;
-    const inputId = fieldId === 'avgTitre' ? 'ansAvgTitre' : (fieldId === 'molesB' ? 'ansMolesB' : (fieldId === 'molesA' ? 'ansMolesA' : (fieldId === 'molarityA' ? 'ansMolarityA' : (fieldId === 'concGrams' ? 'ansConcGrams' : `ans_${fieldId}`))));
+    const inputId = hasMulti ? `ans_proc_${pIdx}_${fieldId}` : (fieldId === 'avgTitre' ? 'ansAvgTitre' : (fieldId === 'molesB' ? 'ansMolesB' : (fieldId === 'molesA' ? 'ansMolesA' : (fieldId === 'molarityA' ? 'ansMolarityA' : (fieldId === 'concGrams' ? 'ansConcGrams' : `ans_${fieldId}`)))));
     const el = document.getElementById(inputId);
-    const ansVal = typeof window.getAnswerValue === 'function' ? window.getAnswerValue(engine.q1Answers, fieldId, q.id) : engine.q1Answers[fieldId];
+    const ansVal = typeof window.getAnswerValue === 'function' ? window.getAnswerValue(procAnswers, fieldId, q.id) : procAnswers[fieldId];
     const val = parseFloat(el && el.value !== '' ? el.value : ansVal);
 
-    const p = engine.preset.q1;
-    const recordedTrials = engine.q1Trials.filter(t => t.recorded && t.used > 0);
-    const checkedConcordant = engine.q1Trials.filter(t => t.recorded && t.concordant && t.used > 0);
-    const avgRecorded = recordedTrials.length > 0 ? recordedTrials.reduce((a, b) => a + b.used, 0) / recordedTrials.length : p.trueTitre;
+    const recordedTrials = trials.filter(t => t.recorded && t.used > 0);
+    const checkedConcordant = trials.filter(t => t.recorded && t.concordant && t.used > 0);
+    const avgRecorded = recordedTrials.length > 0 ? recordedTrials.reduce((a, b) => a + b.used, 0) / recordedTrials.length : (proc.trueTitre || 25.0);
     const expAvgFromTrials = checkedConcordant.length > 0 ? checkedConcordant.reduce((a, b) => a + b.used, 0) / checkedConcordant.length : avgRecorded;
 
     const evalCtx = {
-      trueTitre: p.trueTitre || 25.00,
+      trueTitre: proc.trueTitre || 25.00,
       expAvgFromTrials,
-      trueAcidMolarity: Number(p.trueAcidMolarity) || 0.100,
-      trueBaseMolarity: Number(p.trueBaseMolarity) || 0.100,
-      pipetteVol: Number(p.pipetteVolume) || 25.0,
-      ratioA: Number(p.moleRatioAcid || p.ratioA) || 1,
-      ratioB: Number(p.moleRatioBase || p.ratioB) || 1,
-      acidRfm: Number(p.acidRfm) || 36.5,
-      baseRfm: Number(p.baseRfm) || 40.0,
-      answers: engine.q1Answers,
-      t1: engine.q1Trials[0]?.used || p.trueTitre,
-      t2: engine.q1Trials[1]?.used || p.trueTitre,
-      v1: parseFloat(typeof window.getAnswerValue === 'function' ? window.getAnswerValue(engine.q1Answers, 'avgTitre', 'step_a') : (engine.q1Answers.avgTitre || engine.q1Answers.step_a)) || expAvgFromTrials
+      trueAcidMolarity: Number(proc.trueAcidMolarity || engine.preset.q1.trueAcidMolarity) || 0.100,
+      trueBaseMolarity: Number(proc.trueBaseMolarity || engine.preset.q1.trueBaseMolarity) || 0.100,
+      pipetteVol: Number(proc.pipetteVolume || engine.preset.q1.pipetteVolume) || 25.0,
+      ratioA: Number(proc.moleRatioAcid || proc.ratioA || engine.preset.q1.moleRatioAcid) || 1,
+      ratioB: Number(proc.moleRatioBase || proc.ratioB || engine.preset.q1.moleRatioBase) || 1,
+      acidRfm: Number(proc.acidRfm || engine.preset.q1.acidRfm) || 36.5,
+      baseRfm: Number(proc.baseRfm || engine.preset.q1.baseRfm) || 40.0,
+      answers: procAnswers,
+      t1: trials[0]?.used || proc.trueTitre || 25.0,
+      t2: trials[1]?.used || proc.trueTitre || 25.0,
+      v1: parseFloat(typeof window.getAnswerValue === 'function' ? window.getAnswerValue(procAnswers, 'avgTitre', 'step_a', 'step_1a') : (procAnswers.avgTitre || procAnswers.step_a || procAnswers.step_1a)) || expAvgFromTrials
     };
 
     const expTheo = typeof q.calcTheoretical === 'function' ? q.calcTheoretical(evalCtx) : null;
@@ -2826,6 +3024,42 @@ requireStudentLogin();
   }
 
   // ── Tab Navigation & Pacing Coach Update ────────────────────────────
+  function updatePacingCoach(currentTab = activeTab) {
+    const elapsed = (135 * 60) - timeLeft;
+    const questions = window._examQuestionsList || [];
+    const totalTabs = Math.max(3, questions.length);
+
+    for (let n = 1; n <= totalTabs; n++) {
+      const paceEl = document.getElementById(`paceQ${n}`);
+      if (!paceEl) continue;
+      if (n === currentTab) {
+        let isOverdue = false;
+        // KNEC Target Pacing thresholds:
+        // Q1: Target 45 min (2700s)
+        // Q2: Target 45 min (cumulative 90 min = 5400s)
+        // Q3: Target 35 min (cumulative 125 min = 7500s)
+        if (n === 1 && elapsed > 2700) isOverdue = true;
+        else if (n === 2 && elapsed > 5400) isOverdue = true;
+        else if (n === 3 && elapsed > 7500) isOverdue = true;
+
+        paceEl.className = isOverdue ? 'pacing-milestone overdue' : 'pacing-milestone active';
+      } else if (n < currentTab) {
+        paceEl.className = 'pacing-milestone completed';
+      } else {
+        paceEl.className = 'pacing-milestone';
+      }
+    }
+
+    const prev = document.getElementById('paceRev');
+    if (prev) {
+      if (timeLeft <= 600) {
+        prev.className = 'pacing-milestone active';
+      } else {
+        prev.className = 'pacing-milestone';
+      }
+    }
+  }
+
   function switchQTab(qNum) {
     activeTab = qNum;
     const questions = window._examQuestionsList || [];
@@ -2839,14 +3073,7 @@ requireStudentLogin();
     }
 
     // Update Pacing Coach Indicators
-    for (let n = 1; n <= totalTabs; n++) {
-      const paceEl = document.getElementById(`paceQ${n}`);
-      if (paceEl) {
-        paceEl.className = n === qNum ? 'pacing-milestone active' : (n < qNum ? 'pacing-milestone completed' : 'pacing-milestone');
-      }
-    }
-    const prev = document.getElementById('paceRev');
-    if (prev) prev.className = 'pacing-milestone';
+    updatePacingCoach(qNum);
 
     const prevBtn = document.getElementById('btnPrevQ');
     const nextBtn = document.getElementById('btnNextQ');
@@ -2874,24 +3101,577 @@ requireStudentLogin();
     saveExamDraft();
   }
 
+  let knecRadarChartInstance = null;
+
   function switchReportTab(tab) {
     const paneRubric = document.getElementById('reportPaneRubric');
+    const paneRadar = document.getElementById('reportPaneRadar');
     const paneWorked = document.getElementById('reportPaneWorked');
     const btnRubric = document.getElementById('btnReportRubric');
+    const btnRadar = document.getElementById('btnReportRadar');
     const btnWorked = document.getElementById('btnReportWorked');
 
-    if (tab === 'rubric') {
-      if (paneRubric) paneRubric.style.display = 'block';
-      if (paneWorked) paneWorked.style.display = 'none';
-      if (btnRubric) btnRubric.className = 'examiner-tab-btn active';
-      if (btnWorked) btnWorked.className = 'examiner-tab-btn';
-    } else if (tab === 'worked') {
-      if (paneRubric) paneRubric.style.display = 'none';
-      if (paneWorked) paneWorked.style.display = 'block';
-      if (btnRubric) btnRubric.className = 'examiner-tab-btn';
-      if (btnWorked) btnWorked.className = 'examiner-tab-btn active';
+    if (paneRubric) paneRubric.style.display = tab === 'rubric' ? 'block' : 'none';
+    if (paneRadar) paneRadar.style.display = tab === 'radar' ? 'block' : 'none';
+    if (paneWorked) paneWorked.style.display = tab === 'worked' ? 'block' : 'none';
+
+    if (btnRubric) btnRubric.className = tab === 'rubric' ? 'examiner-tab-btn active' : 'examiner-tab-btn';
+    if (btnRadar) btnRadar.className = tab === 'radar' ? 'examiner-tab-btn active' : 'examiner-tab-btn';
+    if (btnWorked) btnWorked.className = tab === 'worked' ? 'examiner-tab-btn active' : 'examiner-tab-btn';
+
+    if (tab === 'radar') {
+      if (knecRadarChartInstance) {
+        knecRadarChartInstance.resize();
+      } else if (window._lastExamEvalData && window._lastExamEvalData.competencyMetrics) {
+        renderCompetencyRadar(window._lastExamEvalData.competencyMetrics);
+      }
     }
   }
+  window.switchReportTab = switchReportTab;
+
+  function renderCompetencyRadar(competencyData) {
+    if (!competencyData) return;
+
+    // 1. Overall Index & Delta Display
+    const idxEl = document.getElementById('radarOverallIndex');
+    if (idxEl) idxEl.textContent = `${competencyData.overallIndex}%`;
+    const deltaEl = document.getElementById('radarCohortDelta');
+    if (deltaEl) {
+      const delta = competencyData.delta != null ? competencyData.delta : (competencyData.overallIndex - competencyData.cohortIndex);
+      const isPositive = delta >= 0;
+      deltaEl.textContent = `${isPositive ? '+' : ''}${delta}% vs National Cohort Baseline (${competencyData.cohortIndex}%)`;
+      deltaEl.className = `index-delta ${isPositive ? 'positive' : 'negative'}`;
+    }
+
+    // 2. Render Competency Metric Cards Grid
+    const cardsGrid = document.getElementById('competencyCardsGrid');
+    if (cardsGrid && competencyData.metrics) {
+      const metricsList = Object.values(competencyData.metrics);
+      const iconMap = {
+        'AC/FA': '🎯',
+        'D': '📏',
+        'PA': '⚖️',
+        'INORG': '🧂',
+        'ORG': '🧫'
+      };
+      cardsGrid.innerHTML = metricsList.map(m => {
+        const icon = iconMap[m.code] || '🔬';
+        const isMastery = m.status === 'Mastery';
+        const isCompetent = m.status === 'Competent';
+        const badgeClass = isMastery ? 'badge-mastery' : (isCompetent ? 'badge-competent' : 'badge-review');
+        return `
+          <div class="competency-card">
+            <div class="competency-card-header">
+              <div class="competency-card-title">
+                <span class="competency-card-icon">${icon}</span>
+                <div>
+                  <div class="competency-name">${escapeHtml(m.label)}</div>
+                  <div class="competency-score-text">${Number(m.earned).toFixed(1)} / ${Number(m.max).toFixed(1)} Marks (${m.candidate}%)</div>
+                </div>
+              </div>
+              <span class="competency-status-badge ${badgeClass}">${m.status}</span>
+            </div>
+
+            <!-- Visual Bar Comparison -->
+            <div class="competency-comparison-bar-wrap">
+              <div class="bar-labels">
+                <span>Candidate: <b>${m.candidate}%</b></span>
+                <span>Cohort Baseline: <b>${m.cohort}%</b></span>
+              </div>
+              <div class="comparison-track">
+                <div class="comparison-fill candidate-fill" style="width:${Math.max(4, Math.min(100, m.candidate))}%;"></div>
+                <div class="cohort-benchmark-marker" style="left:${Math.min(100, m.cohort)}%;" title="KNEC Cohort Baseline: ${m.cohort}%"></div>
+              </div>
+            </div>
+
+            <!-- Chief Examiner Targeted Pointer -->
+            <div class="competency-card-feedback">
+              <span class="feedback-icon">👨‍🏫</span>
+              <span>${escapeHtml(m.feedback)}</span>
+            </div>
+
+            <!-- Targeted 5-Min Remediation Drill Trigger -->
+            <button type="button" class="btn-launch-drill ${!isMastery && (m.candidate < m.cohort || !isCompetent) ? 'pulse-recommend' : ''}" onclick="launchRemediationDrill('${m.code}', ${m.candidate}, ${m.cohort})">
+              <span>⚡</span> Launch 5-Min Remediation Drill
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 3. Render Chart.js Radar Chart
+    const canvas = document.getElementById('knecCompetencyRadarChart');
+    if (!canvas) return;
+
+    if (typeof Chart === 'undefined') {
+      console.warn('Chart.js not yet loaded for Competency Radar.');
+      return;
+    }
+
+    if (knecRadarChartInstance) {
+      knecRadarChartInstance.destroy();
+      knecRadarChartInstance = null;
+    }
+
+    const labels = competencyData.labels || [
+      'Accuracy (AC/FA)',
+      'Decimals (D)',
+      'Averaging (PA)',
+      'Inorganic Tests',
+      'Organic Deductions'
+    ];
+    const candidateScores = competencyData.candidateScores || [0, 0, 0, 0, 0];
+    const cohortScores = competencyData.cohortBenchmarks || [58, 72, 64, 54, 46];
+
+    const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+    const gridColor = isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.10)';
+    const angleLineColor = isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.10)';
+    const pointLabelColor = isDark ? '#E2E8F0' : '#1E293B';
+    const tickColor = isDark ? 'rgba(255, 255, 255, 0.55)' : 'rgba(0, 0, 0, 0.55)';
+
+    const ctx = canvas.getContext('2d');
+    knecRadarChartInstance = new Chart(ctx, {
+      type: 'radar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Candidate Mastery (%)',
+            data: candidateScores,
+            backgroundColor: 'rgba(56, 189, 248, 0.25)',
+            borderColor: '#0284C7',
+            pointBackgroundColor: '#38BDF8',
+            pointBorderColor: '#FFFFFF',
+            pointHoverBackgroundColor: '#FFFFFF',
+            pointHoverBorderColor: '#0284C7',
+            pointRadius: 5,
+            pointHoverRadius: 7,
+            borderWidth: 2.5
+          },
+          {
+            label: 'KNEC National Cohort Baseline (%)',
+            data: cohortScores,
+            backgroundColor: 'rgba(245, 158, 11, 0.10)',
+            borderColor: '#F59E0B',
+            borderDash: [5, 5],
+            pointBackgroundColor: '#F59E0B',
+            pointBorderColor: '#FFFFFF',
+            pointHoverBackgroundColor: '#FFFFFF',
+            pointHoverBorderColor: '#F59E0B',
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            borderWidth: 2
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        onClick: function(event, activeElements) {
+          if (activeElements && activeElements.length > 0) {
+            const dataIndex = activeElements[0].index;
+            const codeMap = ['AC/FA', 'D', 'PA', 'INORG', 'ORG'];
+            const code = codeMap[dataIndex] || 'D';
+            const cScore = candidateScores[dataIndex] || 0;
+            const bScore = cohortScores[dataIndex] || 60;
+            if (typeof window.launchRemediationDrill === 'function') {
+              window.launchRemediationDrill(code, cScore, bScore);
+            }
+          }
+        },
+        animation: {
+          duration: 750,
+          easing: 'easeOutQuart'
+        },
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            backgroundColor: 'rgba(15, 23, 42, 0.95)',
+            titleColor: '#F8FAFC',
+            bodyColor: '#E2E8F0',
+            borderColor: 'rgba(255, 255, 255, 0.15)',
+            borderWidth: 1,
+            padding: 10,
+            cornerRadius: 8,
+            callbacks: {
+              label: function(context) {
+                return ` ${context.dataset.label}: ${context.raw}%`;
+              }
+            }
+          }
+        },
+        scales: {
+          r: {
+            min: 0,
+            max: 100,
+            beginAtZero: true,
+            ticks: {
+              stepSize: 20,
+              display: true,
+              color: tickColor,
+              backdropColor: 'transparent',
+              font: {
+                family: "'JetBrains Mono', monospace",
+                size: 9
+              }
+            },
+            grid: {
+              color: gridColor
+            },
+            angleLines: {
+              color: angleLineColor
+            },
+            pointLabels: {
+              color: pointLabelColor,
+              font: {
+                family: "'Plus Jakarta Sans', sans-serif",
+                size: 11,
+                weight: '700'
+              }
+            }
+          }
+        }
+      }
+    });
+    window._knecRadarChartInstance = knecRadarChartInstance;
+  }
+  window.renderCompetencyRadar = renderCompetencyRadar;
+
+  // ── TARGETED WEAK-AREA REMEDIATION MICRO-DRILL CONTROLLER ──
+  let _activeDrillTimer = null;
+  let _activeDrillData = null;
+  let _lastDrillEvaluation = null;
+
+  async function launchRemediationDrill(code, currentScore, benchmark) {
+    if (_activeDrillTimer) {
+      clearInterval(_activeDrillTimer);
+      _activeDrillTimer = null;
+    }
+
+    const modal = document.getElementById('remediationDrillModal');
+    if (!modal) return;
+
+    // 1. Resolve Drill
+    let drill = null;
+    if (window.KnecRemediation && typeof window.KnecRemediation.getDrill === 'function') {
+      drill = window.KnecRemediation.getDrill(code);
+    }
+
+    // Try fetching from server API if online, falling back gracefully
+    try {
+      const resp = await fetch('/api/feedback/remediation-drill', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ competencyCode: code })
+      });
+      if (resp.ok) {
+        const body = await resp.json();
+        if (body.drill) drill = body.drill;
+      }
+    } catch (e) {
+      // Offline fallback already loaded via window.KnecRemediation
+    }
+
+    if (!drill) {
+      alert('Remediation drill currently being loaded. Please try again.');
+      return;
+    }
+
+    _activeDrillData = {
+      code,
+      drill,
+      currentScore: currentScore || 0,
+      benchmark: benchmark || 60,
+      timeLeft: drill.durationSeconds || 300
+    };
+
+    // 2. Populate Header & Examiner Rule
+    const iconMap = { 'AC/FA': '🎯', 'D': '📏', 'PA': '⚖️', 'INORG': '🧂', 'ORG': '🧫' };
+    const iconEl = document.getElementById('drillHeaderIcon');
+    const titleEl = document.getElementById('drillHeaderTitle');
+    const ruleEl = document.getElementById('drillExaminerRuleText');
+    const timerDisplay = document.getElementById('drillTimerDisplay');
+
+    if (iconEl) iconEl.textContent = iconMap[code] || '⚡';
+    if (titleEl) titleEl.textContent = drill.title || 'KNEC Practical Drill';
+    if (ruleEl) ruleEl.textContent = drill.examinerRule || '';
+    if (timerDisplay) timerDisplay.textContent = '05:00';
+
+    // 3. Render Questions
+    const questionsContainer = document.getElementById('drillQuestionsList');
+    if (questionsContainer) {
+      questionsContainer.innerHTML = (drill.questions || []).map((q, idx) => {
+        let inputHtml = '';
+        if (q.type === 'single_choice' && q.options) {
+          inputHtml = `
+            <div class="drill-options-grid">
+              ${q.options.map(opt => `
+                <label class="drill-option-row">
+                  <input type="radio" name="drill_q_${q.id}" value="${escapeHtml(opt.id)}" required>
+                  <span><b>(${escapeHtml(opt.id)})</b> ${escapeHtml(opt.text)}</span>
+                </label>
+              `).join('')}
+            </div>
+          `;
+        } else if (q.type === 'multi_select' && q.options) {
+          inputHtml = `
+            <div class="drill-options-grid">
+              ${q.options.map(opt => `
+                <label class="drill-option-row">
+                  <input type="checkbox" name="drill_q_${q.id}" value="${escapeHtml(opt.id)}">
+                  <span><b>(${escapeHtml(opt.id)})</b> ${escapeHtml(opt.text)}</span>
+                </label>
+              `).join('')}
+            </div>
+          `;
+        } else if (q.type === 'text_input') {
+          inputHtml = `
+            <input type="text" class="drill-input-field" id="drill_input_${q.id}" placeholder="${escapeHtml(q.placeholder || 'Type your answer...')}" autocomplete="off" required>
+          `;
+        }
+
+        return `
+          <div class="drill-question-card">
+            <div class="drill-question-header">
+              <span class="drill-qnum-badge">Question ${idx + 1} of ${(drill.questions || []).length}</span>
+              <button type="button" class="drill-btn-hint" onclick="requestDrillAiHint('${escapeHtml(q.id)}')">
+                <span>💡</span> Ask Examiner Hint
+              </button>
+            </div>
+            <div style="font-size:0.86rem; color:var(--heading-color); font-weight:700; line-height:1.45;">
+              ${escapeHtml(q.prompt)}
+            </div>
+            ${inputHtml}
+            <div class="drill-hint-callout" id="drillHint_${escapeHtml(q.id)}"></div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 4. Timer Setup
+    const timerBadge = document.getElementById('drillTimerBadge');
+    if (timerBadge) timerBadge.style.color = '#EF4444';
+
+    _activeDrillTimer = setInterval(() => {
+      if (!_activeDrillData) return;
+      _activeDrillData.timeLeft--;
+      const min = Math.floor(Math.max(0, _activeDrillData.timeLeft) / 60);
+      const sec = Math.max(0, _activeDrillData.timeLeft) % 60;
+      if (timerDisplay) {
+        timerDisplay.textContent = `${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+      }
+      if (_activeDrillData.timeLeft <= 0) {
+        clearInterval(_activeDrillTimer);
+        _activeDrillTimer = null;
+        submitRemediationDrill();
+      }
+    }, 1000);
+
+    // 5. Open Modal
+    const activeStage = document.getElementById('drillActiveStage');
+    const resultStage = document.getElementById('drillResultStage');
+    if (activeStage) activeStage.style.display = 'block';
+    if (resultStage) resultStage.style.display = 'none';
+    modal.style.display = 'block';
+  }
+  window.launchRemediationDrill = launchRemediationDrill;
+
+  function closeRemediationDrill() {
+    if (_activeDrillTimer) {
+      clearInterval(_activeDrillTimer);
+      _activeDrillTimer = null;
+    }
+    const modal = document.getElementById('remediationDrillModal');
+    if (modal) modal.style.display = 'none';
+  }
+  window.closeRemediationDrill = closeRemediationDrill;
+
+  async function requestDrillAiHint(questionId) {
+    if (!_activeDrillData) return;
+    const hintBox = document.getElementById(`drillHint_${questionId}`);
+    if (!hintBox) return;
+
+    if (hintBox.style.display === 'block') {
+      hintBox.style.display = 'none';
+      return;
+    }
+
+    hintBox.style.display = 'block';
+    hintBox.innerHTML = `<span>⏳ <i>Consulting KNEC Socratic Examiner Coach...</i></span>`;
+
+    try {
+      const resp = await fetch('/api/feedback/drill-hint', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          competencyCode: _activeDrillData.code,
+          drillId: _activeDrillData.drill.id,
+          questionId,
+          studentContext: 'Student clicked for a guiding hint.'
+        })
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data.hint) {
+          hintBox.innerHTML = `<span>👨‍🏫 <b>Examiner Socratic Hint:</b> ${escapeHtml(data.hint)}</span>`;
+          return;
+        }
+      }
+    } catch (e) {
+      // Use offline pedagogical fallback
+    }
+
+    const q = (_activeDrillData.drill.questions || []).find(item => item.id === questionId);
+    const fallbackHint = q ? (q.explanation || _activeDrillData.drill.examinerRule) : _activeDrillData.drill.examinerRule;
+    hintBox.innerHTML = `<span>👨‍🏫 <b>Examiner Rule Pointer:</b> ${escapeHtml(fallbackHint)}</span>`;
+  }
+  window.requestDrillAiHint = requestDrillAiHint;
+
+  async function submitRemediationDrill() {
+    if (!_activeDrillData) return;
+    if (_activeDrillTimer) {
+      clearInterval(_activeDrillTimer);
+      _activeDrillTimer = null;
+    }
+
+    const { code, drill } = _activeDrillData;
+    const answers = {};
+
+    (drill.questions || []).forEach(q => {
+      if (q.type === 'single_choice') {
+        const checked = document.querySelector(`input[name="drill_q_${q.id}"]:checked`);
+        answers[q.id] = checked ? checked.value : '';
+      } else if (q.type === 'multi_select') {
+        const checkedList = Array.from(document.querySelectorAll(`input[name="drill_q_${q.id}"]:checked`)).map(el => el.value);
+        answers[q.id] = checkedList;
+      } else if (q.type === 'text_input') {
+        const input = document.getElementById(`drill_input_${q.id}`);
+        answers[q.id] = input ? input.value : '';
+      }
+    });
+
+    let evalResult = null;
+
+    // Try server grading endpoint
+    try {
+      const resp = await fetch('/api/feedback/grade-drill', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          competencyCode: code,
+          drillId: drill.id,
+          answers
+        })
+      });
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data.evaluation) evalResult = data.evaluation;
+      }
+    } catch (e) {
+      // Offline fallback
+    }
+
+    if (!evalResult && window.KnecRemediation && typeof window.KnecRemediation.gradeDrill === 'function') {
+      evalResult = window.KnecRemediation.gradeDrill(code, drill.id, answers);
+    }
+
+    if (!evalResult) {
+      alert('Unable to evaluate drill. Please try again.');
+      return;
+    }
+
+    _lastDrillEvaluation = evalResult;
+
+    // Switch to Result View
+    const activeStage = document.getElementById('drillActiveStage');
+    const resultStage = document.getElementById('drillResultStage');
+    if (activeStage) activeStage.style.display = 'none';
+    if (resultStage) resultStage.style.display = 'block';
+
+    const trophyEl = document.getElementById('drillResultTrophy');
+    const statusEl = document.getElementById('drillResultStatus');
+    const summaryEl = document.getElementById('drillResultSummary');
+    const scoreEl = document.getElementById('drillResultScore');
+    const boostEl = document.getElementById('drillResultBoost');
+    const breakdownEl = document.getElementById('drillResultBreakdown');
+
+    if (trophyEl) trophyEl.textContent = evalResult.isMastery ? '🏆' : (evalResult.percentage >= 50 ? '🎯' : '📚');
+    if (statusEl) statusEl.textContent = evalResult.status || 'Evaluation Complete';
+    if (summaryEl) summaryEl.textContent = evalResult.chiefExaminerAdvice || '';
+    if (scoreEl) scoreEl.textContent = `${evalResult.totalScore} / ${evalResult.maxScore} (${evalResult.percentage}%)`;
+    if (boostEl) boostEl.textContent = `+${evalResult.competencyBoost}% Boost`;
+
+    if (breakdownEl && evalResult.itemizedReview) {
+      breakdownEl.innerHTML = evalResult.itemizedReview.map((item, idx) => `
+        <div class="drill-breakdown-item ${item.isCorrect ? 'correct' : 'incorrect'}">
+          <div style="font-weight:700; color:var(--heading-color); margin-bottom:2px;">
+            ${item.isCorrect ? '✔' : '✖'} Question ${idx + 1}: ${escapeHtml(item.prompt)}
+          </div>
+          <div style="color:var(--text-muted); font-size:0.78rem;">
+            Candidate Answer: <b>${escapeHtml(Array.isArray(item.studentAnswer) ? item.studentAnswer.join(', ') : (item.studentAnswer || '(none)'))}</b>
+          </div>
+          <div style="color:var(--text-main); margin-top:4px;">
+            ${escapeHtml(item.feedback)}
+          </div>
+        </div>
+      `).join('');
+    }
+  }
+  window.submitRemediationDrill = submitRemediationDrill;
+
+  function applyCompetencyBoost() {
+    if (!_lastDrillEvaluation || !_activeDrillData) {
+      closeRemediationDrill();
+      return;
+    }
+
+    const { competencyCode, competencyBoost } = _lastDrillEvaluation;
+
+    if (window._lastExamEvalData && window._lastExamEvalData.competencyMetrics) {
+      const cm = window._lastExamEvalData.competencyMetrics;
+      const codeKeyMap = {
+        'AC/FA': { key: 'accuracy', idx: 0 },
+        'D': { key: 'decimals', idx: 1 },
+        'PA': { key: 'averaging', idx: 2 },
+        'INORG': { key: 'inorganic', idx: 3 },
+        'ORG': { key: 'organic', idx: 4 }
+      };
+
+      const mapping = codeKeyMap[competencyCode];
+      if (mapping && cm.metrics && cm.metrics[mapping.key]) {
+        const metric = cm.metrics[mapping.key];
+        const prev = Number(metric.candidate) || 0;
+        const updated = Math.min(100, prev + competencyBoost);
+        metric.candidate = updated;
+        if (updated >= 80) metric.status = 'Mastery';
+        else if (updated >= 50) metric.status = 'Competent';
+
+        if (Array.isArray(cm.candidateScores) && cm.candidateScores.length > mapping.idx) {
+          cm.candidateScores[mapping.idx] = updated;
+        }
+
+        if (Array.isArray(cm.candidateScores)) {
+          const sum = cm.candidateScores.reduce((a, b) => a + b, 0);
+          cm.overallIndex = Math.round(sum / cm.candidateScores.length);
+          if (cm.cohortIndex) cm.delta = cm.overallIndex - cm.cohortIndex;
+        }
+
+        renderCompetencyRadar(cm);
+      }
+    }
+
+    closeRemediationDrill();
+
+    // Scroll to radar chart for immediate feedback
+    const radarCard = document.getElementById('reportPaneRadar');
+    if (radarCard) {
+      radarCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+  window.applyCompetencyBoost = applyCompetencyBoost;
+
 
   function nextQTab() {
     const totalTabs = Math.max(3, (window._examQuestionsList || []).length);
@@ -2932,6 +3712,7 @@ requireStudentLogin();
         timerEl.style.borderColor = 'var(--red-border)';
       }
     }
+    updatePacingCoach();
   }
 
   function startExamTimer() {
@@ -3122,6 +3903,11 @@ requireStudentLogin();
       `).join('');
     }
 
+    window._lastExamEvalData = evalData;
+    if (evalData.competencyMetrics) {
+      renderCompetencyRadar(evalData.competencyMetrics);
+    }
+
     const modalEl = document.getElementById('compositeResultModal');
     if (modalEl) modalEl.style.display = 'flex';
 
@@ -3143,10 +3929,31 @@ requireStudentLogin();
     } catch(e) {
       console.warn('Could not post composite exam to server:', e);
       localStorage.setItem('vlk_last_composite_session', JSON.stringify(payload));
+      if (window.ExamDraftManager) {
+        try {
+          if (typeof ExamDraftManager.queueSubmissionIdb === 'function') {
+            await ExamDraftManager.queueSubmissionIdb({
+              url: '/composite',
+              method: 'POST',
+              payload
+            });
+          } else if (typeof ExamDraftManager.queueSubmission === 'function') {
+            ExamDraftManager.queueSubmission('/composite', payload);
+          }
+        } catch (queueErr) {
+          console.warn('[ExamOfflineManager] Error queuing offline submission:', queueErr);
+        }
+      }
     }
 
     try {
       if (window.ExamDraftManager) {
+        if (typeof ExamDraftManager.stopBackgroundAutoSave === 'function') {
+          ExamDraftManager.stopBackgroundAutoSave();
+        }
+        if (typeof ExamDraftManager.clearDraftIdb === 'function') {
+          await ExamDraftManager.clearDraftIdb(getExamSessionKey());
+        }
         ExamDraftManager.clearDraft(getExamSessionKey());
       }
     } catch (clearErr) {

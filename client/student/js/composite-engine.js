@@ -9196,6 +9196,9 @@ class CompositeExamEngine {
     const trueTitre = Number(proc.trueTitre) || 25.00;
     modelAnswers[`${prefix}_trueTitre`] = trueTitre;
 
+    let candidateAvgTitre = parseFloat(getAnswerValue(answers, 'avgTitre', 'step_a') || getAnswerValue(answers, `${prefix}_avgTitre`, `${prefix}_step_a`));
+    let expAvgFromTrials = trueTitre;
+
     if (proc.simulationType === 'energy') {
       // ── Thermometric Table Evaluator (Neutralization Enthalpy or Cooling Curve) ──
       const isNeutralization = proc.scenarioKey === 'KCSE_2005_NEUTRALIZATION' || proc.tableType === 'neutralization_temp' || (proc.title && /neutralization|enthalpy/i.test(proc.title));
@@ -9379,7 +9382,7 @@ class CompositeExamEngine {
 
       // 4. Principles of Averaging (PA) — 1.0 Mark
       const checkedConcordant = (trials || []).filter(t => t.recorded && t.concordant && t.used > 0);
-      const candidateAvgTitre = parseFloat(getAnswerValue(answers, 'avgTitre', 'step_a') || getAnswerValue(answers, `${prefix}_avgTitre`, `${prefix}_step_a`));
+      candidateAvgTitre = parseFloat(getAnswerValue(answers, 'avgTitre', 'step_a') || getAnswerValue(answers, `${prefix}_avgTitre`, `${prefix}_step_a`));
       
       let concordantSet = checkedConcordant.length >= 2 ? checkedConcordant : [];
       if (concordantSet.length === 0 && recordedTrials.length >= 2) {
@@ -9447,7 +9450,7 @@ class CompositeExamEngine {
         detail: paDetail
       });
 
-      const expAvgFromTrials = concordantSet.length > 0
+      expAvgFromTrials = concordantSet.length > 0
         ? concordantSet.reduce((acc, b) => acc + b.used, 0) / concordantSet.length
         : (recordedTrials.length > 0 ? (recordedTrials.reduce((acc, b) => acc + b.used, 0) / recordedTrials.length) : trueTitre);
 

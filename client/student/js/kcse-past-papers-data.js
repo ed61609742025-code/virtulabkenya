@@ -545,56 +545,69 @@ const KCSE_PAST_PAPERS_ARCHIVE = [
     id: 'kcse_2005',
     year: 2005,
     title: 'KCSE 2005 Chemistry Paper 3 Practical (233/3)',
-    badgeText: 'Official KNEC Paper · Cooling Curve / Freezing Point & Thermometric Enthalpy Neutralization',
-    topics: ['Freezing Point / Cooling Curves', 'Thermochemistry', 'Qualitative Analysis', 'Organic Analysis'],
-    playablePresetKey: null,
+    badgeText: 'Official KNEC Paper · Citric Acid Neutralization Enthalpy, Alum & Benzoic Acid Analysis',
+    topics: ['Thermochemistry', 'Volumetric Analysis', 'Qualitative Analysis', 'Organic Analysis'],
+    playablePresetKey: 'series_2005',
     totalMarks: 40.0,
     durationMinutes: 135,
-    summary: 'Cooling curve of Solid M in water bath to determine freezing point, followed by thermometric enthalpy of neutralization of Acid L with NaOH Solution K to find relative formula mass. Qualitative tests on Solid N and Solid Q.',
+    summary: 'Standardization and thermometric enthalpy of neutralization of Acid L (60.0 g/dm³ citric acid monohydrate) with 0.3125 M NaOH Solution K to determine relative formula mass. Qualitative analysis of inorganic Solid N (ammonium aluminum sulfate, ammonium alum) and organic Solid Q (benzoic acid).',
     questions: [
       {
         num: 1,
-        title: 'Question 1 & 2: Cooling Curve & Enthalpy of Neutralization (20.0 Marks)',
-        procedure: 'Question 1: Melt Solid M in test tube immersed in hot water bath until completely liquefied (~85 °C). Remove test tube, insert thermometer, start stopwatch, and record temperature every 30 seconds for 3.5 minutes as it solidifies.\nQuestion 2: Measure 25.0 cm³ Solution K (NaOH) into beaker, record temp T₁. Measure 25.0 cm³ Solution L (60.0 g/L Acid L) into another beaker, record temp T₂. Mix, stir, and record maximum temperature T₃.',
+        title: 'Question 1: Volumetric Standardization & Enthalpy of Neutralization of Acid L (18.0 Marks)',
+        procedure: 'Procedure I: Measure 25.0 cm³ Solution K (0.3125 M NaOH) into a beaker and record its initial temperature T₁. Measure 25.0 cm³ Solution L (60.0 g/dm³ Acid L) into another beaker and record initial temperature T₂. Mix the two solutions, stir gently with a thermometer, and record the highest temperature reached T₃.\nProcedure II: Pipette 25.0 cm³ of Acid Solution L into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with 0.3125 M NaOH Solution K from the burette until the first permanent faint pink colour appears.',
         table1: {
-          title: 'Table 1: Cooling Curve Data for Solid M',
-          headers: ['Time (min)', '0', '0.5', '1.0', '1.5', '2.0', '2.5', '3.0', '3.5'],
-          sampleValues: ['82.0', '73.0', '69.0', '68.0', '68.0', '68.0', '66.0', '65.0']
+          title: 'Table 1: Titration of Acid Solution L with 0.3125 M NaOH Solution K',
+          headers: ['Titration', 'I', 'II', 'III'],
+          sampleValues: ['Final: 25.00', 'Final: 25.00', 'Final: 25.00', 'Initial: 0.00', 'Initial: 0.00', 'Initial: 0.00', 'Titre: 25.00', 'Titre: 25.00', 'Titre: 25.00']
         },
         table2: {
-          title: 'Table 2: Thermometric Neutralization Data',
+          title: 'Table 2: Thermometric Neutralization Data for Solution K & Solution L',
           headers: ['Trial', 'I', 'II'],
           sampleValues: ['Initial Temp K (T₁): 26.0', '26.0', 'Initial Temp L (T₂): 25.0', '26.0', 'Highest Temp (T₃): 30.5', '31.0', 'Average Initial: 25.5', '26.0', 'ΔT (°C): 5.0', '5.0']
         },
         calculations: [
-          '(a) Plot cooling curve (time on x-axis, temperature on y-axis) and state freezing point of Solid M. (4 Mks)',
-          '(b) Calculate heat change for reaction: Heat = 50.0 × 4.2 × ΔT Joules. (2 Mks)',
-          '(c) Given molar heat of neutralization is 134.4 kJ/mol, calculate moles of Acid L used. (2 Mks)',
-          '(d) Calculate concentration of Acid L in mol/dm³. (2 Mks)',
-          '(e) Calculate relative formula mass of Acid L (contains 60.0 g/L). (2 Mks)'
+          '(a) Calculate the average volume of Solution K used in Table 1, V₁. (1 Mk)',
+          '(b) Calculate the moles of NaOH present in the average volume V₁ of Solution K. (2 Mks)',
+          '(c) Calculate the moles of Acid L in 25.0 cm³ of Solution L (Mole ratio 1 : 1). (2 Mks)',
+          '(d) Calculate the concentration of Acid L in mol/dm³. (2 Mks)',
+          '(e) Given Solution L contains 60.0 g/dm³, calculate the relative formula mass of Acid L. (3 Mks)',
+          '(f) Calculate the heat change for the neutralization: Heat = 50.0 × 4.2 × ΔT Joules. (2 Mks)'
         ]
       },
       {
         num: 2,
-        title: 'Question 3: Qualitative Analysis of Solid N and Solid Q (10.0 Marks)',
-        preamble: 'Solid N and Solid Q are unknown compounds.',
+        title: 'Question 2: Inorganic Salt Qualitative Analysis of Solid N (12.0 Marks)',
+        preamble: 'Solid N is a white crystalline inorganic double salt.',
         tests: [
-          { step: '(a) (i)', prompt: 'Heat one-third of Solid N in dry test tube; test gases with litmus.', obs: 'Cracking sound; colourless liquid droplets condense; pungent gas evolves turning moist red litmus blue', inf: 'Hydrated salt; basic gas (NH₃); NH₄⁺ present' },
-          { step: '(a) (ii)', prompt: 'Dissolve Solid N in water. To portion I, add aqueous ammonia dropwise to excess.', obs: 'White precipitate formed, insoluble in excess aqueous ammonia', inf: 'Al³⁺, Pb²⁺, or Mg²⁺ present' },
-          { step: '(a) (iii)', prompt: 'To portion III, add barium nitrate followed by dilute HCl.', obs: 'Dense white precipitate insoluble in dilute HCl', inf: 'SO₄²⁻ confirmed present' },
-          { step: '(b) (ii)', prompt: 'Dissolve Solid Q in water. To 2 cm³, add solid NaHCO₃.', obs: 'Brisk effervescence of colourless gas turning limewater milky', inf: 'Carboxylic acid (-COOH) confirmed present' }
+          { step: '(a)', prompt: 'Heat a half-spatula of Solid N gently in a clean dry test tube, then strongly; test vapours with moist red and blue litmus papers.', obs: 'Cracking sound; colourless liquid droplets condense on upper walls; pungent gas evolves turning moist red litmus blue; white sublimation ring deposits on upper walls', inf: 'Hydrated salt / water of crystallization present; basic gas (NH₃) evolved confirming NH₄⁺ present' },
+          { step: '(b) (i)', prompt: 'Dissolve remaining Solid N in 10 cm³ distilled water. To portion 1, add 2M sodium hydroxide (NaOH) dropwise until in excess, then warm gently and test vapours with moist red litmus paper.', obs: 'White precipitate formed, dissolves in excess NaOH to form a clear colourless solution; on warming, a pungent gas is evolved that turns moist red litmus blue', inf: 'Al³⁺, Pb²⁺, or Zn²⁺ present ([Al(OH)₄]⁻ formed); NH₄⁺ confirmed present' },
+          { step: '(b) (ii)', prompt: 'To portion 2, add aqueous ammonia (NH₃(aq)) dropwise until in excess.', obs: 'White precipitate formed, insoluble in excess aqueous ammonia', inf: 'Al³⁺ or Pb²⁺ confirmed present (Zn²⁺ is excluded as it dissolves in excess NH₃)' },
+          { step: '(b) (iii)', prompt: 'To portion 3, add 3 drops potassium iodide (KI) solution.', obs: 'No yellow precipitate formed; clear colourless solution persists', inf: 'Pb²⁺ absent; Al³⁺ confirmed present' },
+          { step: '(b) (iv)', prompt: 'To portion 4, add 3 drops barium nitrate (Ba(NO₃)₂) solution followed by 2 cm³ 2M dilute nitric acid (HNO₃).', obs: 'Dense white precipitate formed, insoluble in dilute nitric acid', inf: 'SO₄²⁻ confirmed present (BaSO₄ formed)' }
+        ]
+      },
+      {
+        num: 3,
+        title: 'Question 3: Organic Functional Group Analysis of Solid Q (10.0 Marks)',
+        preamble: 'Solid Q is a white organic crystalline solid.',
+        tests: [
+          { step: '(a)', prompt: 'Ignite a small portion of Solid Q on a clean metallic spatula in a Bunsen flame.', obs: 'Melts and burns with a luminous, highly smoky and sooty yellow flame; leaves black carbon residue', inf: 'Aromatic compound / high carbon-to-hydrogen ratio present' },
+          { step: '(b)', prompt: 'Dissolve Solid Q in 5 cm³ distilled water. Test with moist blue and red litmus paper.', obs: 'Moist blue litmus paper turns red; red litmus paper retains colour (acidic, pH ~ 2–3)', inf: 'Acidic organic substance / contains ionizable H⁺ ions / carboxylic acid (—COOH)' },
+          { step: '(c)', prompt: 'To 2 cm³ of solution, add a half-spatula of solid Sodium Hydrogen Carbonate (NaHCO₃).', obs: 'Brisk effervescence of a colourless gas that forms white precipitate with limewater (CO₂)', inf: 'Carboxylic acid (—COOH) confirmed present; CO₂ gas evolved' },
+          { step: '(d)', prompt: 'To 2 cm³ of solution, add 2–3 drops of acidified Potassium Manganate(VII) (KMnO₄) solution.', obs: 'Purple colour of acidified KMnO₄ solution persists / not decolorized', inf: 'Aliphatic alkene / alkyne (>C=C<) absent; stable benzene ring' },
+          { step: '(e)', prompt: 'To 2 cm³ of solution, add 3 cm³ ethanol and 2 drops concentrated sulfuric acid; warm gently and pour into cold water.', obs: 'Pleasant, sweet fruity fragrance produced (ethyl benzoate ester)', inf: 'Carboxylic acid (—COOH) confirmed present' }
         ]
       }
     ],
     markScheme: {
       q1Calculations: [
-        { item: 'Freezing Point of M', marks: '1.0 Mk', rubric: 'Horizontal plateau temperature = 68.0 °C (accept 67.5 – 68.5 °C).' },
         { item: 'Heat change', marks: '2.0 Mks', rubric: 'Heat = 50 × 4.2 × 5.0 = 1050 Joules (1.05 kJ).' },
-        { item: 'Moles of Acid L', marks: '2.0 Mks', rubric: 'Moles = 1.05 / 134.4 = 0.00781 mol.' },
+        { item: 'Moles of Acid L', marks: '2.0 Mks', rubric: 'Moles = (0.3125 × 25.0) / 1000 = 0.00781 mol.' },
         { item: 'Molarity & RFM', marks: '4.0 Mks', rubric: 'Molarity = (0.00781 × 1000) / 25.0 = 0.3125 M. RFM = 60.0 / 0.3125 = 192.0 (Citric acid monohydrate).' }
       ],
-      qualitativeObservations: 'Freezing plateau must show at least 3 constant temperature readings.',
-      confidentialPrep: 'Solid M: Stearic acid or naphthalene (melting point ~68 °C). Solution K: 37.32 g NaOH in 1 L (0.93 M). Solution L: 60.0 g citric acid monohydrate in 1 L. Solid N: Ammonium aluminium sulphate (Ammonium alum). Solid Q: Benzoic acid.'
+      qualitativeObservations: 'Ammonium alum NH₄Al(SO₄)₂ shows Al³⁺ white precipitate soluble in excess NaOH but insoluble in excess NH₃, NH₄⁺ evolution with warm alkali, and SO₄²⁻ with Ba(NO₃)₂. Benzoic acid produces ethyl benzoate pleasant fruity ester.',
+      confidentialPrep: 'Solution K: 0.3125 M NaOH (12.5 g/L). Solution L: 60.0 g citric acid monohydrate in 1 L (0.3125 M). Solid N: Ammonium aluminum sulfate (Ammonium alum). Solid Q: Benzoic acid.'
     }
   },
 

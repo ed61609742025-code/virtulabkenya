@@ -4454,6 +4454,241 @@ const COMPOSITE_EXAM_PRESETS = {
         }
       ]
     }
+  },
+
+  // ── Series 2005: Official KCSE 2005 Standard Chemistry Practical (Paper 233/3) ──
+  series_2005: {
+    id: 'series_2005',
+    seriesKey: 'series_2005',
+    seriesNumber: 2005,
+    title: 'KCSE 2005 Standard Chemistry Practical Examination',
+    badgeText: 'KCSE 2005 Past National Paper · Citric Acid Neutralization Enthalpy & Alum Analysis',
+    durationMinutes: 135,
+    q1: {
+      type: 'titration',
+      calcType: 'standard_molarity',
+      title: 'Question 1: Volumetric Analysis — Standardization & Neutralization Enthalpy of Acid L (15.0 Marks)',
+      solutionA: '0.3125 M Sodium Hydroxide (Solution K)',
+      solutionB: 'Acid L containing 60.0 g/dm³ (Solution L)',
+      acidFormula: 'C6H8O7',
+      baseFormula: 'NaOH',
+      indicator: 'Phenolphthalein',
+      pipetteVolume: 25.0,
+      trueAcidMolarity: 0.3125,
+      trueBaseMolarity: 0.3125,
+      trueTitre: 25.00,
+      moleRatioAcid: 1,
+      moleRatioBase: 1,
+      acidRfm: 192.0,
+      baseRfm: 40.0,
+      titrantColor: '#38BDF8',
+      flaskBaseColor: 'rgba(255,255,255,0.2)',
+      flaskIndicatorColor: 'rgba(255,255,255,0.2)',
+      endpointColor: 'rgba(236,72,153,0.5)',
+      overtitratedColor: 'rgba(219,39,119,0.9)',
+      equation: 'C₆H₈O₇(aq) + NaOH(aq) → C₆H₇O₇Na(aq) + H₂O(l)',
+      instructions: 'Fill the burette with 0.3125 M Sodium Hydroxide Solution K. Pipette 25.0 cm³ of Acid Solution L (containing 60.0 g/dm³ Acid L) into a clean conical flask. Add 2–3 drops of phenolphthalein indicator. Titrate with Solution K until the colourless solution turns to the first permanent faint pink colour.',
+      questions: [
+        {
+          id: 'step_a',
+          letter: 'a',
+          field: 'avgTitre',
+          label: 'Calculate the average volume of 0.3125 M NaOH Solution K used, V₁',
+          marks: 1.0,
+          marksLabel: '(1.0 Mark)',
+          placeholder: 'e.g. 25.00',
+          step: '0.01',
+          unit: 'cm³',
+          calcTheoretical: (ctx) => ctx.trueTitre,
+          calcEcf: (ctx) => ctx.expAvgFromTrials,
+          check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
+          feedbackSuccess: (val) => `✓ Correct: V₁ = ${val.toFixed(2)} cm³.`,
+          feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
+          working: (ctx) => `<b>(a) Average Titre:</b> V₁ = <b>${ctx.v1.toFixed(2)} cm³</b>`
+        },
+        {
+          id: 'step_b',
+          letter: 'b',
+          field: 'molesNaohK',
+          label: 'Calculate the number of moles of NaOH present in the average volume V₁ of Solution K (0.3125 M)',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 0.00781',
+          step: '0.00001',
+          unit: 'moles of NaOH',
+          calcTheoretical: (ctx) => (0.3125 * ctx.trueTitre) / 1000.0,
+          calcEcf: (ctx) => {
+            const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_a')) || ctx.trueTitre;
+            return (0.3125 * v1) / 1000.0;
+          },
+          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+          feedbackSuccess: (val) => `✓ Correct: ${val} moles of NaOH.`,
+          feedbackFail: (ctx, expTheo) => `Formula: (0.3125 × V₁) / 1000 = ${expTheo.toFixed(5)} mol.`,
+          working: (ctx) => `<b>(b) Moles of NaOH in V₁:</b> (0.3125 × ${ctx.v1.toFixed(2)}) / 1000 = <b>${((0.3125 * ctx.v1) / 1000.0).toFixed(5)} mol</b>`
+        },
+        {
+          id: 'step_c',
+          letter: 'c',
+          field: 'molesAcidL',
+          label: 'Calculate the number of moles of Acid L in 25.0 cm³ of Solution L (Mole ratio Acid L : NaOH = 1 : 1)',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 0.00781',
+          step: '0.00001',
+          unit: 'moles of Acid L',
+          calcTheoretical: (ctx) => (0.3125 * ctx.trueTitre) / 1000.0,
+          calcEcf: (ctx) => {
+            const mK = parseFloat(getAnswerValue(ctx.answers, 'molesNaohK', 'step_b')) || ((0.3125 * ctx.trueTitre) / 1000.0);
+            return mK;
+          },
+          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+          feedbackSuccess: (val) => `✓ Correct: ${val} moles of Acid L in 25.0 cm³.`,
+          feedbackFail: (ctx, expTheo) => `Formula: Moles of NaOH = ${expTheo.toFixed(5)} mol.`,
+          working: (ctx) => `<b>(c) Moles of Acid L:</b> <b>${((0.3125 * ctx.v1) / 1000.0).toFixed(5)} mol</b>`
+        },
+        {
+          id: 'step_d',
+          letter: 'd',
+          field: 'molarityAcidL',
+          label: 'Calculate the molar concentration (molarity) of Acid L in mol/dm³',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 0.3125',
+          step: '0.0001',
+          unit: 'mol/dm³ (M)',
+          calcTheoretical: () => 0.3125,
+          calcEcf: (ctx) => {
+            const mL = parseFloat(getAnswerValue(ctx.answers, 'molesAcidL', 'step_c')) || 0.00781;
+            return (mL * 1000.0) / 25.0;
+          },
+          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+          feedbackSuccess: (val) => `✓ Correct: Molarity of Acid L = ${val} mol/dm³.`,
+          feedbackFail: () => `Formula: (Moles of Acid L × 1000) / 25.0 = 0.3125 mol/dm³.`,
+          working: (ctx) => `<b>(d) Molarity of Acid L:</b> (${((0.3125 * ctx.v1) / 1000.0).toFixed(5)} × 1000) / 25.0 = <b>0.3125 mol/dm³</b>`
+        },
+        {
+          id: 'step_e',
+          letter: 'e',
+          field: 'rfmAcidL',
+          label: 'Given that Solution L contains 60.0 g of Acid L per dm³, calculate the relative formula mass (RFM) of Acid L',
+          marks: 3.0,
+          marksLabel: '(3.0 Marks)',
+          placeholder: 'e.g. 192.0',
+          step: '0.1',
+          unit: 'g/mol',
+          calcTheoretical: () => 192.0,
+          calcEcf: (ctx) => {
+            const mol = parseFloat(getAnswerValue(ctx.answers, 'molarityAcidL', 'step_d')) || 0.3125;
+            return mol > 0 ? parseFloat((60.0 / mol).toFixed(1)) : 192.0;
+          },
+          check: (val) => Math.abs(val - 192.0) <= 8.0,
+          feedbackSuccess: (val) => `✓ Correct: RFM of Acid L = ${val} g/mol (Citric Acid Monohydrate C₆H₈O₇).`,
+          feedbackFail: () => `Formula: Mass concentration (60.0 g/dm³) / Molarity (0.3125) = 192.0 g/mol.`,
+          working: () => `<b>(e) RFM of Acid L:</b> 60.0 / 0.3125 = <b>192.0 g/mol</b>`
+        },
+        {
+          id: 'step_f',
+          letter: 'f',
+          field: 'heatNeutralization',
+          label: 'In the thermometric neutralization step, mixing 25.0 cm³ of Solution K with 25.0 cm³ of Solution L produced a temperature rise of ΔT = 5.0 °C. Calculate the heat change ΔH (Mass = 50.0 g, c = 4.2 J/g/°C)',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 1050',
+          step: '1',
+          unit: 'Joules (J)',
+          calcTheoretical: () => 1050.0,
+          calcEcf: () => 1050.0,
+          check: (val) => Math.abs(val - 1050.0) <= 50.0,
+          feedbackSuccess: (val) => `✓ Correct: Heat change ΔH = ${val} J (1.05 kJ).`,
+          feedbackFail: () => `Formula: 50.0 × 4.2 × 5.0 = 1050 Joules.`,
+          working: () => `<b>(f) Heat change ΔH:</b> 50.0 × 4.2 × 5.0 = <b>1050 J (1.05 kJ)</b>`
+        }
+      ]
+    },
+    q2: {
+      type: 'qualitative_single',
+      title: 'Question 2: Inorganic Salt Qualitative Analysis (15.0 Marks)',
+      sampleName: 'Solid N',
+      sampleDesc: 'A white crystalline inorganic double salt containing aluminum, ammonium, and sulfate.',
+      trueSaltKey: 'ammoniumSulfate',
+      trueSaltName: 'Ammonium Aluminum Sulfate Hydrate (Ammonium Alum) — NH₄Al(SO₄)₂·12H₂O',
+      trueCation: 'NH4+',
+      trueAnion: 'SO4^2-',
+      hasDeduction: true,
+      tests: [
+        {
+          id: 'q2_heat',
+          prompt: '(i) Heat a half-spatula of Solid N gently in a clean dry test tube, then strongly; test vapours with moist red and blue litmus papers.',
+          correctObs: 'Cracking sound; colourless liquid droplets condense on upper walls; pungent gas evolves turning moist red litmus blue; white sublimation ring deposits on upper walls',
+          correctInf: 'Hydrated salt / water of crystallization present; basic gas (NH₃) evolved confirming NH₄⁺ present'
+        },
+        {
+          id: 'q2_naoh_warm',
+          prompt: '(ii) Dissolve remaining Solid N in 10 cm³ distilled water. To portion 1, add 2M sodium hydroxide (NaOH) dropwise until in excess, then warm gently and test vapours with moist red litmus paper.',
+          correctObs: 'White precipitate formed, dissolves in excess NaOH to form a clear colourless solution; on warming, a pungent gas is evolved that turns moist red litmus blue',
+          correctInf: 'Al³⁺, Pb²⁺, or Zn²⁺ present ([Al(OH)₄]⁻ formed); NH₄⁺ confirmed present'
+        },
+        {
+          id: 'q2_ammonia',
+          prompt: '(iii) To portion 2, add aqueous ammonia (NH₃(aq)) dropwise until in excess.',
+          correctObs: 'White precipitate formed, insoluble in excess aqueous ammonia',
+          correctInf: 'Al³⁺ or Pb²⁺ confirmed present (Zn²⁺ is excluded as it dissolves in excess NH₃)'
+        },
+        {
+          id: 'q2_ki',
+          prompt: '(iv) To portion 3, add 3 drops potassium iodide (KI) solution.',
+          correctObs: 'No yellow precipitate formed; clear colourless solution persists',
+          correctInf: 'Pb²⁺ absent; Al³⁺ confirmed present'
+        },
+        {
+          id: 'q2_barium',
+          prompt: '(v) To portion 4, add 3 drops barium nitrate (Ba(NO₃)₂) solution followed by 2 cm³ 2M dilute nitric acid (HNO₃).',
+          correctObs: 'Dense white precipitate formed, insoluble in dilute nitric acid',
+          correctInf: 'SO₄²⁻ confirmed present (BaSO₄ formed)'
+        }
+      ]
+    },
+    q3: {
+      type: 'organic',
+      title: 'Question 3: Organic Functional Group Analysis (10.0 Marks)',
+      sampleName: 'Solid Q',
+      sampleDesc: 'A pure white organic crystalline solid.',
+      trueOrganicKey: 'org_benzoic_acid',
+      trueOrganicName: 'Benzoic Acid — C₆H₅COOH',
+      trueFunctionalGroup: 'Carboxylic Acid (-COOH)',
+      tests: [
+        {
+          id: 'q3_ignition',
+          prompt: '(i) Ignite a small portion of Solid Q on a clean metallic spatula in a Bunsen flame.',
+          correctObs: 'Melts and burns with a luminous, highly smoky and sooty yellow flame; leaves black carbon residue',
+          correctInf: 'Aromatic compound / high carbon-to-hydrogen ratio present'
+        },
+        {
+          id: 'q3_litmus',
+          prompt: '(ii) Dissolve Solid Q in 5 cm³ distilled water. Test with moist blue and red litmus paper.',
+          correctObs: 'Moist blue litmus paper turns red; red litmus paper retains colour (acidic, pH ~ 2–3)',
+          correctInf: 'Acidic organic substance / contains ionizable H⁺ ions / carboxylic acid (—COOH)'
+        },
+        {
+          id: 'q3_nahco3',
+          prompt: '(iii) To 2 cm³ of solution, add a half-spatula of solid Sodium Hydrogen Carbonate (NaHCO₃).',
+          correctObs: 'Brisk effervescence of a colourless gas that forms white precipitate with limewater (CO₂)',
+          correctInf: 'Carboxylic acid (—COOH) confirmed present; CO₂ gas evolved'
+        },
+        {
+          id: 'q3_kmno4',
+          prompt: '(iv) To 2 cm³ of solution, add 2–3 drops of acidified Potassium Manganate(VII) (KMnO₄) solution.',
+          correctObs: 'Purple colour of acidified KMnO₄ solution persists / not decolorized',
+          correctInf: 'Aliphatic alkene / alkyne (>C=C<) absent; stable benzene ring'
+        },
+        {
+          id: 'q3_ester',
+          prompt: '(v) To 2 cm³ of solution, add 3 cm³ ethanol and 2 drops concentrated sulfuric acid; warm gently and pour into cold water.',
+          correctObs: 'Pleasant, sweet fruity fragrance produced (ethyl benzoate ester)',
+          correctInf: 'Carboxylic acid (—COOH) confirmed present'
+        }
+      ]
+    }
   }
 };
 
@@ -4469,7 +4704,7 @@ function generateRandomCompositePreset() {
     'series_1', 'series_2', 'series_3', 'series_4', 'series_5', 'series_6',
     'series_2024', 'series_2023', 'series_2022',
     'series_2013', 'series_2012', 'series_2011', 'series_2009', 'series_2008',
-    'series_2007', 'series_2006', 'series_2003', 'series_2000',
+    'series_2007', 'series_2006', 'series_2005', 'series_2003', 'series_2000',
     'series_1998', 'series_1996', 'series_1994', 'series_1993', 'series_1992', 'series_1990', 'series_1989'
   ];
   const q1PickKey = seriesKeys[Math.floor(Math.random() * seriesKeys.length)];

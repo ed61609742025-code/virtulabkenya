@@ -1147,7 +1147,7 @@ const KCSE_PAST_PAPERS_ARCHIVE = [
     title: 'KCSE 1992 Chemistry Paper 3 Practical (233/3)',
     badgeText: 'Official KNEC Paper · Iodate/Sulphite Kinetics & Borax Crystallization Water',
     topics: ['Chemical Kinetics', 'Volumetric Analysis', 'Qualitative Analysis'],
-    playablePresetKey: null,
+    playablePresetKey: 'series_1992',
     totalMarks: 40.0,
     durationMinutes: 135,
     summary: 'Reaction rates of potassium iodate C₂ with acidified sodium hydrogen sulphite C₃. Question 2 involves titrating basic sodium tetraborate Na₂B₄O₇·nH₂O with 0.11M HCl to deduce the hydration coefficient n. Qualitative tests on Solid C₇.',

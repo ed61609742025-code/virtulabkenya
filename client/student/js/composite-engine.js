@@ -3730,6 +3730,238 @@ const COMPOSITE_EXAM_PRESETS = {
         }
       ]
     }
+  },
+
+  // ── Series 1992: Official KCSE 1992 Standard Chemistry Practical (Paper 233/3) ──
+  series_1992: {
+    id: 'series_1992',
+    seriesKey: 'series_1992',
+    seriesNumber: 1992,
+    title: 'KCSE 1992 Standard Chemistry Practical Examination',
+    badgeText: 'KCSE 1992 Past National Paper · Borax Water of Crystallization & Barium Salt Analysis',
+    durationMinutes: 135,
+    q1: {
+      type: 'titration',
+      calcType: 'water_of_crystallization',
+      title: 'Question 1: Volumetric Analysis — Borax Water of Crystallization (15.0 Marks)',
+      solutionA: '0.110 M Hydrochloric Acid (Solution C₅)',
+      solutionB: 'Hydrated Sodium Tetraborate Na₂B₄O₇·nH₂O (19.20 g/dm³) Solution C₆',
+      acidFormula: 'HCl',
+      baseFormula: 'Na2B4O7',
+      indicator: 'Methyl Orange',
+      pipetteVolume: 25.0,
+      trueAcidMolarity: 0.110,
+      trueBaseMolarity: 0.0627,
+      trueTitre: 28.50,
+      moleRatioAcid: 2,
+      moleRatioBase: 1,
+      acidRfm: 36.5,
+      baseRfm: 381.2,
+      titrantColor: '#38BDF8',
+      flaskBaseColor: 'rgba(251,191,36,0.25)',
+      flaskIndicatorColor: 'rgba(245,158,11,0.85)',
+      endpointColor: 'rgba(239,68,68,0.7)',
+      overtitratedColor: 'rgba(185,28,28,0.95)',
+      equation: 'Na₂B₄O₇(aq) + 2HCl(aq) + 5H₂O(l) → 4H₃BO₃(aq) + 2NaCl(aq)',
+      instructions: 'Pipette 25.0 cm³ of Solution C₆ (19.20 g/dm³ hydrated sodium tetraborate) into a clean conical flask. Add 2–3 drops of methyl orange indicator. Titrate with 0.110 M HCl Solution C₅ until the yellow colour changes sharply to permanent orange-red.',
+      questions: [
+        {
+          id: 'step_a',
+          letter: 'a',
+          field: 'avgTitre',
+          label: 'Calculate the average volume of 0.110 M HCl Solution C₅ used, V₁',
+          marks: 1.0,
+          marksLabel: '(1.0 Mark)',
+          placeholder: 'e.g. 28.50',
+          step: '0.01',
+          unit: 'cm³',
+          calcTheoretical: (ctx) => ctx.trueTitre,
+          calcEcf: (ctx) => ctx.expAvgFromTrials,
+          check: (val, ctx) => Math.abs(val - ctx.expAvgFromTrials) <= 0.20,
+          feedbackSuccess: (val) => `✓ Correct: V₁ = ${val.toFixed(2)} cm³.`,
+          feedbackFail: (ctx) => `Check your average from concordant titres (expected around ${ctx.expAvgFromTrials.toFixed(2)} cm³).`,
+          working: (ctx) => `<b>(a) Average Titre:</b> V₁ = <b>${ctx.v1.toFixed(2)} cm³</b>`
+        },
+        {
+          id: 'step_b',
+          letter: 'b',
+          field: 'molesHcl',
+          label: 'Calculate the number of moles of HCl present in the average titre V₁ of Solution C₅',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 0.00314',
+          step: '0.00001',
+          unit: 'moles of HCl',
+          calcTheoretical: (ctx) => (0.110 * ctx.trueTitre) / 1000.0,
+          calcEcf: (ctx) => {
+            const v1 = parseFloat(getAnswerValue(ctx.answers, 'avgTitre', 'step_a')) || ctx.trueTitre;
+            return (0.110 * v1) / 1000.0;
+          },
+          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+          feedbackSuccess: (val) => `✓ Correct: ${val} moles of HCl.`,
+          feedbackFail: (ctx, expTheo) => `Formula: (0.110 × V₁) / 1000 = ${expTheo.toFixed(5)} mol.`,
+          working: (ctx) => `<b>(b) Moles of HCl:</b> (0.110 × ${ctx.v1.toFixed(2)}) / 1000 = <b>${((0.110 * ctx.v1) / 1000.0).toFixed(5)} mol</b>`
+        },
+        {
+          id: 'step_c',
+          letter: 'c',
+          field: 'molesBorax',
+          label: 'Calculate the number of moles of sodium tetraborate in 25.0 cm³ of Solution C₆ (Mole ratio Acid : Base = 2 : 1)',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 0.00157',
+          step: '0.00001',
+          unit: 'moles of Borax',
+          calcTheoretical: (ctx) => ((0.110 * ctx.trueTitre) / 1000.0) / 2.0,
+          calcEcf: (ctx) => {
+            const mH = parseFloat(getAnswerValue(ctx.answers, 'molesHcl', 'step_b')) || ((0.110 * ctx.trueTitre) / 1000.0);
+            return mH / 2.0;
+          },
+          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+          feedbackSuccess: (val) => `✓ Correct: ${val} moles of sodium tetraborate in 25.0 cm³.`,
+          feedbackFail: (ctx, expTheo) => `Formula: Moles of HCl / 2 = ${expTheo.toFixed(5)} mol.`,
+          working: (ctx) => `<b>(c) Moles of Borax in 25.0 cm³:</b> ${((0.110 * ctx.v1) / 1000.0).toFixed(5)} / 2 = <b>${(((0.110 * ctx.v1) / 1000.0) / 2.0).toFixed(5)} mol</b>`
+        },
+        {
+          id: 'step_d',
+          letter: 'd',
+          field: 'molarityBorax',
+          label: 'Calculate the molar concentration (molarity) of Solution C₆ in mol/dm³',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 0.0627',
+          step: '0.0001',
+          unit: 'mol/dm³ (M)',
+          calcTheoretical: (ctx) => (((0.110 * ctx.trueTitre) / 1000.0) / 2.0 * 1000.0) / 25.0,
+          calcEcf: (ctx) => {
+            const mB = parseFloat(getAnswerValue(ctx.answers, 'molesBorax', 'step_c')) || (((0.110 * ctx.trueTitre) / 1000.0) / 2.0);
+            return (mB * 1000.0) / 25.0;
+          },
+          check: (val, ctx, expTheo, expEcf) => (Math.abs(val - expTheo) / (expTheo || 1) <= 0.08) || (Math.abs(val - expEcf) / (expEcf || 1) <= 0.08),
+          feedbackSuccess: (val) => `✓ Correct: Molarity of Solution C₆ = ${val} mol/dm³.`,
+          feedbackFail: (ctx, expTheo) => `Formula: (Moles of Borax × 1000) / 25.0 = ${expTheo.toFixed(4)} mol/dm³.`,
+          working: (ctx) => `<b>(d) Molarity of Solution C₆:</b> (${(((0.110 * ctx.v1) / 1000.0) / 2.0).toFixed(5)} × 1000) / 25.0 = <b>0.0627 mol/dm³</b>`
+        },
+        {
+          id: 'step_e',
+          letter: 'e',
+          field: 'rfmBorax',
+          label: 'Calculate the relative formula mass (RFM) of hydrated sodium tetraborate (prepared with 19.20 g/dm³)',
+          marks: 2.0,
+          marksLabel: '(2.0 Marks)',
+          placeholder: 'e.g. 306.2',
+          step: '0.1',
+          unit: 'g/mol',
+          calcTheoretical: () => 306.2,
+          calcEcf: (ctx) => {
+            const mol = parseFloat(getAnswerValue(ctx.answers, 'molarityBorax', 'step_d')) || 0.0627;
+            return mol > 0 ? parseFloat((19.20 / mol).toFixed(1)) : 306.2;
+          },
+          check: (val) => Math.abs(val - 306.2) <= 15.0,
+          feedbackSuccess: (val) => `✓ Correct: RFM of hydrated borax = ${val} g/mol.`,
+          feedbackFail: () => `Formula: Mass concentration (19.20 g/dm³) / Molarity (0.0627) = 306.2 g/mol.`,
+          working: () => `<b>(e) RFM of Hydrated Borax:</b> 19.20 / 0.0627 = <b>306.2 g/mol</b>`
+        },
+        {
+          id: 'step_f',
+          letter: 'f',
+          field: 'valueN',
+          label: 'Determine the value of n in Na₂B₄O₇·nH₂O (Na = 23.0, B = 10.8, O = 16.0, H = 1.0; Anhydrous RFM = 201.2)',
+          marks: 1.0,
+          marksLabel: '(1.0 Mark)',
+          placeholder: 'e.g. 6',
+          step: '1',
+          unit: '',
+          calcTheoretical: () => 6,
+          calcEcf: (ctx) => {
+            const rfm = parseFloat(getAnswerValue(ctx.answers, 'rfmBorax', 'step_e')) || 306.2;
+            return Math.round((rfm - 201.2) / 18.0);
+          },
+          check: (val) => Number(val) === 6 || Number(val) === 10,
+          feedbackSuccess: (val) => `✓ Correct: n = ${val} (Na₂B₄O₇·${val}H₂O).`,
+          feedbackFail: () => `Formula: (306.2 - 201.2) / 18 = 105 / 18 ≈ 6.`,
+          working: () => `<b>(f) Value of n:</b> (306.2 - 201.2) / 18.0 = 105.0 / 18.0 = <b>6</b>`
+        }
+      ]
+    },
+    q2: {
+      type: 'qualitative_single',
+      title: 'Question 2: Inorganic Salt Qualitative Analysis (15.0 Marks)',
+      sampleName: 'Solid C₇',
+      sampleDesc: 'A white crystalline inorganic salt containing barium.',
+      trueSaltKey: 'bariumChloride',
+      trueSaltName: 'Barium Chloride Hydrate — BaCl₂·2H₂O',
+      trueCation: 'Ba2+',
+      trueAnion: 'Cl-',
+      hasDeduction: true,
+      tests: [
+        {
+          id: 'q2_flame',
+          prompt: '(i) Perform a flame test on Solid C₇ using a clean nichrome wire dipped in concentrated HCl.',
+          correctObs: 'Persistent pale green / apple-green flame coloration',
+          correctInf: 'Ba²⁺ confirmed present'
+        },
+        {
+          id: 'q2_heat',
+          prompt: '(ii) Heat a half-spatula of Solid C₇ gently in a dry test tube.',
+          correctObs: 'White crystalline solid decrepitates; colourless liquid droplets condense on upper cooler walls',
+          correctInf: 'Hydrated salt / contains water of crystallization'
+        },
+        {
+          id: 'q2_sulfuric',
+          prompt: '(iii) Dissolve remaining Solid C₇ in 10 cm³ distilled water. To portion 1, add 2M dilute sulfuric acid (H₂SO₄).',
+          correctObs: 'Dense white precipitate formed, insoluble in dilute acids',
+          correctInf: 'Ba²⁺ or Pb²⁺ present (BaSO₄ formed)'
+        },
+        {
+          id: 'q2_naoh',
+          prompt: '(iv) To portion 2, add 2M aqueous NaOH dropwise until in excess.',
+          correctObs: 'White precipitate formed, insoluble in excess sodium hydroxide',
+          correctInf: 'Ba²⁺ confirmed present (Pb²⁺ is excluded as it dissolves in excess NaOH)'
+        },
+        {
+          id: 'q2_anion',
+          prompt: '(v) To portion 3, add 3 drops dilute HNO₃ followed by silver nitrate (AgNO₃) solution.',
+          correctObs: 'Dense white precipitate formed, dissolves in aqueous ammonia to form a clear colourless solution',
+          correctInf: 'Cl⁻ confirmed present (AgCl formed)'
+        }
+      ]
+    },
+    q3: {
+      type: 'organic',
+      title: 'Question 3: Organic Functional Group Analysis (10.0 Marks)',
+      sampleName: 'Solid C₈',
+      sampleDesc: 'A pure white organic crystalline solid.',
+      trueOrganicKey: 'org_alkene',
+      trueOrganicName: 'Unsaturated Carboxylic Acid (Maleic Acid)',
+      trueFunctionalGroup: 'Alkene (>C=C<)',
+      tests: [
+        {
+          id: 'q3_ignition',
+          prompt: '(i) Ignite a small portion of Solid C₈ on a clean metallic spatula in a Bunsen flame.',
+          correctObs: 'Melts and burns with a luminous, smoky and sooty yellow flame; leaves black carbon residue',
+          correctInf: 'Unsaturated organic compound / high carbon-to-hydrogen ratio (>C=C<)'
+        },
+        {
+          id: 'q3_litmus',
+          prompt: '(ii) Dissolve Solid C₈ in 5 cm³ distilled water. Test with moist blue and red litmus paper.',
+          correctObs: 'Moist blue litmus paper turns red; red litmus paper remains red (strongly acidic, pH ~ 2)',
+          correctInf: 'Acidic substance / H⁺ ions present / Carboxylic acid (—COOH)'
+        },
+        {
+          id: 'q3_nahco3',
+          prompt: '(iii) To 2 cm³ of solution, add a half-spatula of solid Sodium Hydrogen Carbonate (NaHCO₃).',
+          correctObs: 'Brisk effervescence of a colourless gas that forms white precipitate with limewater (CO₂)',
+          correctInf: 'Carboxylic acid (—COOH) confirmed present; CO₂ gas evolved'
+        },
+        {
+          id: 'q3_kmno4',
+          prompt: '(iv) To 2 cm³ of solution, add 3 drops of acidified Potassium Manganate(VII) (KMnO₄) solution.',
+          correctObs: 'Purple colour of acidified KMnO₄ is rapidly decolorized to colourless',
+          correctInf: 'Alkene (>C=C<) confirmed present'
+        }
+      ]
+    }
   }
 };
 
@@ -3743,8 +3975,10 @@ COMPOSITE_EXAM_PRESETS.standard_2 = COMPOSITE_EXAM_PRESETS.series_2;
 function generateRandomCompositePreset() {
   const seriesKeys = [
     'series_1', 'series_2', 'series_3', 'series_4', 'series_5', 'series_6',
-    'series_2022', 'series_2023', 'series_2024',
-    'series_2013', 'series_2011', 'series_2009', 'series_2008', 'series_1998', 'series_1996'
+    'series_2024', 'series_2023', 'series_2022',
+    'series_2013', 'series_2012', 'series_2011', 'series_2009', 'series_2008',
+    'series_2007', 'series_2006', 'series_2003', 'series_2000',
+    'series_1998', 'series_1996', 'series_1994', 'series_1993', 'series_1992'
   ];
   const q1PickKey = seriesKeys[Math.floor(Math.random() * seriesKeys.length)];
   const q2PickKey = seriesKeys[Math.floor(Math.random() * seriesKeys.length)];

@@ -7,7 +7,7 @@ const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 const config = require('../config');
 
-const DEFAULT_MODEL = config.gemini?.defaultModel || 'gemini-3.5-flash-lite';
+const DEFAULT_MODEL = config.gemini?.defaultModel || 'gemini-2.5-flash';
 const EXAM_MAX_TOKENS = config.gemini?.examAssistantMaxTokens || 8192;
 
 /**

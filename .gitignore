@@ -15,4 +15,5 @@ Thumbs.db
 pwa-android/.gradle/
 pwa-android/app/build/
 pwa-android/local.properties
+builds/
 pwa-android/.idea/

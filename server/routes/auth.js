@@ -43,7 +43,7 @@ function setCookieToken(res, token) {
 const authMiddleware = require('../middleware/auth');
 const { withTransaction } = require('../db/transaction');
 const pool = require('../db/pool');
-const { authLimiter } = require('../middleware/rateLimiter');
+const { authLimiter, loginLimiter } = require('../middleware/rateLimiter');
 const { validateStudentRegister, validateTeacherRegister, validateLogin } = require('../middleware/validators');
 const asyncHandler = require('../utils/asyncHandler');
 const config = require('../config');
@@ -144,7 +144,7 @@ router.get('/config', (req, res) => {
 
 // ── POST /api/auth/student/google ──────────────────────────────
 // Student Sign-in & Registration via Google Identity Services
-router.post('/student/google', authLimiter, asyncHandler(async (req, res) => {
+router.post('/student/google', loginLimiter, asyncHandler(async (req, res) => {
   const { credential, form, schoolCode, teacherCode } = req.body;
 
   if (!credential) {
@@ -461,7 +461,7 @@ router.post('/teacher/register', authLimiter, validateTeacherRegister, asyncHand
 }));
 
 // ── POST /api/auth/student/login ───────────────────────────────
-router.post('/student/login', authLimiter, validateLogin, asyncHandler(async (req, res) => {
+router.post('/student/login', loginLimiter, validateLogin, asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   const result = await pool.query(
@@ -515,7 +515,7 @@ router.post('/student/login', authLimiter, validateLogin, asyncHandler(async (re
 }));
 
 // ── POST /api/auth/teacher/login ───────────────────────────────
-router.post('/teacher/login', authLimiter, validateLogin, asyncHandler(async (req, res) => {
+router.post('/teacher/login', loginLimiter, validateLogin, asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   const result = await pool.query(
@@ -718,7 +718,7 @@ router.post('/student/:id/reset-password', authLimiter, authMiddleware, authMidd
 
 // ── POST /api/auth/admin/login ─────────────────────────────────
 // System Administrator authentication endpoint with multi-admin support & DB verification
-router.post('/admin/login', authLimiter, validateLogin, asyncHandler(async (req, res) => {
+router.post('/admin/login', loginLimiter, validateLogin, asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(400).json({ error: 'Email and password are required.' });

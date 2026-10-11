@@ -22,7 +22,7 @@ function getClientIp(req) {
   return req.ip || (req.socket && req.socket.remoteAddress) || '';
 }
 
-// Strict rate limiter for Auth endpoints (login, register, password change)
+// Strict rate limiter for Auth endpoints (registration, password changes, resets)
 // Limits each IP to 20 auth requests per 15 minutes window
 const authLimiter = process.env.NODE_ENV === 'test'
   ? (req, res, next) => next()
@@ -33,10 +33,36 @@ const authLimiter = process.env.NODE_ENV === 'test'
       legacyHeaders: false,
       keyGenerator: (req) => getClientIp(req),
       skip: (req) => {
-        const ip = getClientIp(req);
-        return ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
+        if (process.env.NODE_ENV === 'development') {
+          const ip = getClientIp(req);
+          return ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
+        }
+        return false;
       },
       message: { error: 'Too many authentication attempts from this IP. Please try again after 15 minutes.' }
+    });
+
+// Dedicated strict burst limiter for high-risk login endpoints (prevent credential stuffing)
+// Limits to 10 login attempts per 15 minutes per IP by default (configurable via LOGIN_RATE_LIMIT_MAX)
+const loginLimiter = process.env.NODE_ENV === 'test'
+  ? (req, res, next) => next()
+  : rateLimit({
+      windowMs: 15 * 60 * 1000, // 15 minutes
+      max: parseInt(process.env.LOGIN_RATE_LIMIT_MAX, 10) || 10,
+      standardHeaders: true,
+      legacyHeaders: false,
+      keyGenerator: (req) => getClientIp(req),
+      skip: (req) => {
+        if (process.env.NODE_ENV === 'development') {
+          const ip = getClientIp(req);
+          return ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
+        }
+        return false;
+      },
+      message: {
+        success: false,
+        error: 'Too many login attempts from this IP. Please wait 15 minutes before trying again.'
+      }
     });
 
 // General API rate limiter for standard endpoints
@@ -93,6 +119,7 @@ const aiAssistantLimiter = process.env.NODE_ENV === 'test'
 module.exports = {
   getClientIp,
   authLimiter,
+  loginLimiter,
   apiLimiter,
   clientErrorLimiter,
   aiAssistantLimiter

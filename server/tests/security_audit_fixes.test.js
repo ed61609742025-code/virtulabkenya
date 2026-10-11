@@ -72,6 +72,7 @@ describe('3. Rate Limiter Middleware Verification', () => {
 
   it('should export all required rate limiters', () => {
     assert.ok(typeof rateLimiters.authLimiter === 'function');
+    assert.ok(typeof rateLimiters.loginLimiter === 'function');
     assert.ok(typeof rateLimiters.apiLimiter === 'function');
     assert.ok(typeof rateLimiters.clientErrorLimiter === 'function');
     assert.ok(typeof rateLimiters.aiAssistantLimiter === 'function');

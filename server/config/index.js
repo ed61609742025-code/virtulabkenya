@@ -9,7 +9,7 @@ module.exports = {
     teacherCodeLength: 8,
     tempPasswordPrefix: 'VLK-',
     adminEmail: process.env.ADMIN_EMAIL || 'admin@virtulab.co.ke',
-    adminPassword: process.env.ADMIN_PASSWORD || 'VirtuLabAdmin2025!',
+    adminPassword: process.env.ADMIN_PASSWORD || null,
     adminPasswordHash: process.env.ADMIN_PASSWORD_HASH || '$2b$10$/7LKjURiipL1GKB1kGpRs.jilU05AAuNZe2H6TM9tapOdsfGGfWJu'
   },
   pagination: {
@@ -44,7 +44,7 @@ module.exports = {
     ]
   },
   gemini: {
-    defaultModel: process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite',
+    defaultModel: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
     maxOutputTokens: parseInt(process.env.GEMINI_MAX_OUTPUT_TOKENS, 10) || 8192,
     temperature: 0.6,
     examAssistantMaxTokens: parseInt(process.env.GEMINI_EXAM_MAX_TOKENS, 10) || 8192

@@ -47,6 +47,7 @@ describe('Student Google Authentication (OAuth2 / GIS)', () => {
     if (server) {
       await new Promise(resolve => server.close(resolve));
     }
+    await pool.end().catch(() => {});
   });
 
   it('GET /api/auth/config — should return public client auth config', async () => {

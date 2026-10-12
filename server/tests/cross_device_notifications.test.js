@@ -89,6 +89,7 @@ describe('VirtuLab Kenya — Cross-Device Notifications Synchronization Suite', 
       }
       await new Promise((resolve) => server.close(resolve));
     }
+    await pool.end().catch(() => {});
   });
 
   // ────────────────────────────────────────────────────────────

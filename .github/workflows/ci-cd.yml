@@ -30,10 +30,18 @@ jobs:
         working-directory: ./server
         run: node scripts/bump_version.js --dry-run --sync-html
 
+      - name: Prepare test environment (.env)
+        working-directory: ./server
+        run: cp .env.example .env
+
       - name: Execute Unit Test Suite (no database required)
         working-directory: ./server
-        # Runs standalone pure-logic unit tests that work without a live PostgreSQL instance.
-        # Integration tests (node_api, google_auth) require a Postgres service and run separately.
+        env:
+          NODE_ENV: test
+          DATABASE_URL: postgresql://test:test@127.0.0.1:5432/virtulab_test
+          JWT_SECRET: test_jwt_secret_for_ci_pipeline_32chars_minimum
+          ADMIN_EMAIL: admin@virtulab.co.ke
+          ADMIN_PASSWORD_HASH: $2b$10$/7LKjURiipL1GKB1kGpRs.jilU05AAuNZe2H6TM9tapOdsfGGfWJu
         run: npm test
 
   docker-build:

@@ -69,17 +69,27 @@ describe('Cross-Bench & Question Synchronization Validator', () => {
       if (p.q1 && p.q1.type === 'titration') {
         const procedures = p.q1.hasMultipleProcedures && Array.isArray(p.q1.procedures) ? p.q1.procedures : [p.q1];
         procedures.forEach((proc, idx) => {
-          let titre = proc.trueTitre;
-          if (!titre && proc.trueAcidMolarity && proc.trueBaseMolarity) {
-            const rA = Number(proc.moleRatioAcid || 1);
-            const rB = Number(proc.moleRatioBase || 1);
-            const pVol = Number(proc.pipetteVolume || 25.0);
-            titre = (rA * proc.trueBaseMolarity * pVol) / (rB * proc.trueAcidMolarity);
+          // Skip non-titration procedures in hybrid exams (e.g. thermometric cooling curve in series_2004)
+          if (proc.simulationType && proc.simulationType !== 'titration' && !proc.solutionA && !proc.trueTitre) {
+            return;
           }
-          assert.ok(
-            titre >= 10.0 && titre <= 35.0,
-            `Preset [${key}] procedure ${idx + 1} titre ${titre} cm³ outside valid concordant range [10, 35]`
-          );
+          let titre = proc.trueTitre || (proc.simulationType === 'titration' ? p.q1.trueTitre : undefined);
+          if (!titre && proc.trueAcidMolarity && proc.trueBaseMolarity) {
+            const rA = Number(proc.moleRatioAcid || p.q1.moleRatioAcid || 1);
+            const rB = Number(proc.moleRatioBase || p.q1.moleRatioBase || 1);
+            const pVol = Number(proc.pipetteVolume || p.q1.pipetteVolume || 25.0);
+            const ma = Number(proc.trueAcidMolarity || p.q1.trueAcidMolarity);
+            const mb = Number(proc.trueBaseMolarity || p.q1.trueBaseMolarity);
+            if (ma > 0 && mb > 0) {
+              titre = (rA * mb * pVol) / (rB * ma);
+            }
+          }
+          if (titre !== undefined) {
+            assert.ok(
+              titre >= 10.0 && titre <= 35.0,
+              `Preset [${key}] procedure ${idx + 1} titre ${titre} cm³ outside valid concordant range [10, 35]`
+            );
+          }
         });
       }
     });

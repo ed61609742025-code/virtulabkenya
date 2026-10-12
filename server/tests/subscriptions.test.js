@@ -60,6 +60,7 @@ describe('VirtuLab Kenya — Subscription & Payment System', () => {
     if (server) {
       await new Promise((resolve) => server.close(resolve));
     }
+    await pool.end().catch(() => {});
   });
 
   beforeEach(() => {

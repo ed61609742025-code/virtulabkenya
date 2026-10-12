@@ -303,6 +303,7 @@ describe('VirtuLab Kenya — Dissertation Research Pipeline Simulation', () => {
     }
     pool.query = originalQuery;
     pool.connect = originalConnect;
+    await pool.end().catch(() => {});
   });
 
   // ─────────────────────────────────────────────────────────────

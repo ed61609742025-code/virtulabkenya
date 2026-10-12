@@ -20,65 +20,86 @@
     {
       dayIndex: 0, // Sunday
       title: 'Sunday Capstone: 40-Mark Mock Speed Run',
+      title_sw: 'Jumapili: Mtihani Kamili wa Alama 40 kwa Kasi',
       topic: 'Comprehensive Paper 3 Revision',
+      topic_sw: 'Marudio Kamili ya Karatasi ya 3',
       icon: '🏆',
       mode: 'blitz',
       xpReward: 100,
-      description: 'Test your reflexes across all 3 KCSE Paper 3 practical questions.'
+      description: 'Test your reflexes across all 3 KCSE Paper 3 practical questions.',
+      description_sw: 'Pima wepesi wako katika maswali yote 3 ya vitendo ya KCSE.'
     },
     {
       dayIndex: 1, // Monday
       title: 'Monday Volumetric Standardisation Blitz',
+      title_sw: 'Jumatatu: Mbinu za Upimaji wa Kiasi cha Miili (Titration)',
       topic: 'Acid-Base & Redox Titrations',
+      topic_sw: 'Titration za Asidi-Besi na Redox',
       icon: '⚖️',
       mode: 'titration',
       xpReward: 100,
-      description: 'Concordancy, meniscus alignment, and stoichiometric calculations.'
+      description: 'Concordancy, meniscus alignment, and stoichiometric calculations.',
+      description_sw: 'Usahihi wa vipimo, usomaji wa meniscus, na hesabu za kikemia.'
     },
     {
       dayIndex: 2, // Tuesday
       title: 'Tuesday Qualitative Salt Spotting',
+      title_sw: 'Jumanne: Utambuzi wa Chumvi za Kikemia (Qualitative)',
       topic: 'Cations & Anion Precipitates',
+      topic_sw: 'Kationi na Anioni katika Usimbaji',
       icon: '🔬',
       mode: 'qualitative',
       xpReward: 100,
-      description: 'Systematic reagent deductions and flame emission diagnostics.'
+      description: 'Systematic reagent deductions and flame emission diagnostics.',
+      description_sw: 'Utambuzi wa vitendanishi na vipimo vya miali ya moto.'
     },
     {
       dayIndex: 3, // Wednesday
       title: 'Wednesday Thermochemistry Heat Challenge',
+      title_sw: 'Jumatano: Mabadiliko ya Joto na Nishati ya Kikemia',
       topic: 'Energy Changes & Enthalpy',
+      topic_sw: 'Mabadiliko ya Nishati na Enthalpy',
       icon: '🔥',
       mode: 'energy',
       xpReward: 100,
-      description: 'Calorimeter temperature jumps (ΔT) and heat of reaction equations.'
+      description: 'Calorimeter temperature jumps (ΔT) and heat of reaction equations.',
+      description_sw: 'Vipimo vya kalori (ΔT) na mlinganyo wa joto la mgawanyiko.'
     },
     {
       dayIndex: 4, // Thursday
       title: 'Thursday Chemical Kinetics Rate Sprint',
+      title_sw: 'Alhamisi: Kasi ya Matendo ya Kikemia (Kinetics)',
       topic: 'Reaction Rates & Collision Theory',
+      topic_sw: 'Viwango vya Kasi ya Mgawanyiko',
       icon: '⚡',
       mode: 'energy', // shared rates/energy mode
       xpReward: 100,
-      description: 'Disappearing cross timing, 1/t rate calculations, and graphs.'
+      description: 'Disappearing cross timing, 1/t rate calculations, and graphs.',
+      description_sw: 'Muda wa kupotea kwa msalaba na grafu za 1/t.'
     },
     {
       dayIndex: 5, // Friday
       title: 'Friday Organic Functional Group Blitz',
+      title_sw: 'Ijumaa: Vikundi vya Kikaboni (Organic Chemistry)',
       topic: 'Unsaturation, Alkanols & Acids',
+      topic_sw: 'Uharibifu wa Rangi, Alkanoli na Asidi',
       icon: '⚗️',
       mode: 'organic',
       xpReward: 100,
-      description: 'Bromine water, KMnO₄ unsaturation, and esterification scents.'
+      description: 'Bromine water, KMnO₄ unsaturation, and esterification scents.',
+      description_sw: 'Maji ya bromini, KMnO₄ na harufu za ester.'
     },
     {
       dayIndex: 6, // Saturday
       title: 'Saturday Zero-Error Sudden Death',
+      title_sw: 'Jumamosi: Changamoto ya Dakika za Mwisho Bila Makosa',
       topic: 'Precision Survival Challenge',
+      topic_sw: 'Usahihi na Uangalifu Mkubwa',
       icon: '🎯',
       mode: 'survival',
       xpReward: 120,
-      description: '15-second survival clock. Single mistake results in instant elimination.'
+      description: '15-second survival clock. Single mistake results in instant elimination.',
+      description_sw: 'Saa ya sekunde 15 ya usalama. Kosa moja linamaliza jaribio.'
     }
   ];
 
@@ -292,8 +313,13 @@
       isCompleted = lastCompleted === todayStr;
     } catch (e) {}
 
+    const isSw = typeof window !== 'undefined' && typeof window.getLanguage === 'function' && window.getLanguage() === 'sw';
+
     return {
       ...challenge,
+      title: (isSw && challenge.title_sw) ? challenge.title_sw : challenge.title,
+      description: (isSw && challenge.description_sw) ? challenge.description_sw : challenge.description,
+      topic: (isSw && challenge.topic_sw) ? challenge.topic_sw : challenge.topic,
       isCompleted
     };
   }

@@ -2556,7 +2556,8 @@ requireStudentLogin();
     if (daily.isCompleted) {
       if (dailyCard) dailyCard.classList.add('completed');
       if (launchBtn) {
-        launchBtn.innerHTML = `Daily Challenge Completed!`;
+        const isSw = typeof window !== 'undefined' && typeof window.getLanguage === 'function' && window.getLanguage() === 'sw';
+        launchBtn.innerHTML = isSw ? 'Umekamilisha Changamoto ya Leo!' : 'Daily Challenge Completed!';
         launchBtn.style.background = '#10B981';
         launchBtn.style.borderColor = '#10B981';
       }

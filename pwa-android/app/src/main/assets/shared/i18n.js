@@ -363,6 +363,14 @@ function applyTranslations() {
       }
     }
   });
+
+  if (typeof window !== 'undefined' && typeof window.updateGamificationDashboardUI === 'function') {
+    try {
+      window.updateGamificationDashboardUI();
+    } catch (e) {
+      console.warn('Could not re-render gamification UI on language change:', e);
+    }
+  }
 }
 
 function updateLanguageButtons() {

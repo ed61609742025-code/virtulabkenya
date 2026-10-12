@@ -465,9 +465,6 @@ requireStudentLogin();
       window._vlk_student_assignments = assignments;
 
       updateNotificationsUI(assignments);
-      if (typeof renderAdaptiveRecommendation === 'function') {
-        renderAdaptiveRecommendation(window.latestSessions || cachedStudentSessions || []);
-      }
 
       const progressHeader = document.getElementById('caProgressHeader');
 
@@ -1774,50 +1771,7 @@ requireStudentLogin();
 
     const queue = [];
 
-    // ── Priority 1: Overdue or Pending Teacher Assignments ──
-    const assignments = Array.isArray(window._vlk_student_assignments) ? window._vlk_student_assignments : [];
-    const pendingAssignments = assignments
-      .filter(a => a && !a.submitted)
-      .sort((a, b) => {
-        const aDue = a.due_date ? new Date(a.due_date).getTime() : Infinity;
-        const bDue = b.due_date ? new Date(b.due_date).getTime() : Infinity;
-        return aDue - bDue;
-      });
-
-    pendingAssignments.slice(0, 2).forEach(a => {
-      const isPastDue = a.due_date && (new Date(a.due_date).setHours(23, 59, 59, 999) < now);
-      const { targetUrl, battleMode } = typeof getAssignmentTargetUrl === 'function'
-        ? getAssignmentTargetUrl(a)
-        : { targetUrl: 'lab.html', battleMode: 'acidBase' };
-      const dueStr = a.due_date ? formatDate(a.due_date) : 'Soon';
-
-      queue.push({
-        topic: {
-          key: 'assignment-' + a.id,
-          title: a.title || 'Teacher Practical Assignment',
-          icon: isPastDue ? '🚨' : '📌',
-          url: targetUrl,
-          warmupMode: battleMode || 'acidBase',
-          paperTag: `📋 Teacher Assessment · Due ${dueStr}`,
-          timeTag: '⏱️ ~15 mins',
-          xpTag: '✨ +75 XP',
-          total: 0,
-          accuracy: 0
-        },
-        reasonBadge: isPastDue ? '🚨 Overdue Teacher Assignment' : '📌 Prescribed by Teacher',
-        badgeColor: isPastDue ? '#EF4444' : '#F59E0B',
-        badgeBg: isPastDue ? 'rgba(239, 68, 68, 0.18)' : 'rgba(245, 158, 11, 0.18)',
-        desc: isPastDue
-          ? `This prescribed practical was due on ${dueStr}. Complete it now to submit your titration/analysis table for teacher grading.`
-          : `Assigned by your Chemistry instructor (Due ${dueStr}). Complete this practical to update your Continuous Assessment record.`,
-        masteryLabel: isPastDue ? 'Status: Overdue Submission' : 'Status: Pending Submission',
-        masteryGoal: 'Target: Submit for Grading',
-        masteryPct: isPastDue ? 15 : 30,
-        actionText: isPastDue ? 'Complete Overdue Lab →' : 'Start Assignment →'
-      });
-    });
-
-    // ── Priority 2: Weak Spots (Attempted topics with < 75% accuracy) ──
+    // ── Priority 1: Weak Spots (Attempted topics with < 75% accuracy) ──
     const weakTopics = topicList
       .filter(t => t.total > 0 && t.accuracy < 75)
       .sort((a, b) => a.accuracy - b.accuracy);

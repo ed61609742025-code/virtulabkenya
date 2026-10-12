@@ -1022,29 +1022,57 @@
       </section>
 
       <!-- Zone 2: Continuous Assessment & Teacher Assignments -->
-      <section id="zone_assignments" class="activity-zone-wrap zone-priority" style="margin-top: 28px;">
-        <div class="priority-card-block" style="width: 100%;">
-          <div class="block-header">
-            <div class="block-title-row">
-              <h3 class="block-title" data-i18n="prescribed_ca">Teacher Assignments</h3>
-              <span class="dash-section-badge badge-cyan" id="caProgressPercentBadge">0% Complete</span>
-            </div>
-            <!-- Task Progress Header -->
-            <div class="ca-progress-header" id="caProgressHeader">
-              <div class="ca-progress-bar-wrap" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                <div class="ca-progress-fill" id="caProgressFill" style="width: 0%;"></div>
+      <section id="zone_assignments" class="activity-zone-wrap zone-assignments-upgraded" style="margin-top: 28px;">
+        <div class="ca-card-header">
+          <div class="ca-header-left">
+            <div class="ca-header-icon-box" aria-hidden="true">📋</div>
+            <div>
+              <div class="ca-title-cluster">
+                <h2 class="section-heading-academic" data-i18n="prescribed_ca">Teacher Assignments</h2>
+                <span class="dash-section-badge badge-cyan" id="caProgressPercentBadge">0% Complete</span>
               </div>
-              <div class="ca-stat-chips" id="caStatChips">
-                <div class="ca-stat-chip chip-marked" id="statChipMarked">0 Graded</div>
-                <div class="ca-stat-chip chip-review" id="statChipReview">0 Under Review</div>
-                <div class="ca-stat-chip chip-pending" id="statChipPending">0 Pending</div>
+              <div class="ca-subtitle-row">
+                <span class="section-subheading">Prescribed KCSE Paper 3 practical assessments &amp; rubric evaluations</span>
+                <button type="button" class="ca-instructor-pill" id="caInstructorPill" onclick="toggleTeacherLinkPanel()" title="Manage linked Chemistry teacher">
+                  🔗 Link Teacher Code
+                </button>
               </div>
             </div>
           </div>
+          <div class="ca-header-right">
+            <button type="button" class="ca-refresh-btn" onclick="loadAssignments()" title="Refresh assignments" aria-label="Refresh assignments">
+              ↻ Refresh
+            </button>
+          </div>
+        </div>
 
-          <div id="assignmentsList" class="assignments-grid-container">
-            <div class="empty-box">Loading assignments…</div>
+        <!-- Task Progress & Interactive Filter Bar -->
+        <div class="ca-progress-header" id="caProgressHeader" style="display: none;">
+          <div class="ca-progress-top-row">
+            <span class="ca-progress-label">Continuous Assessment Completion</span>
+            <span class="ca-progress-fraction" id="caProgressFractionText">0 / 0 Submitted</span>
           </div>
+          <div class="ca-progress-bar-wrap" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+            <div class="ca-progress-fill" id="caProgressFill" style="width: 0%;"></div>
+          </div>
+          <div class="ca-stat-chips" id="caStatChips" role="tablist" aria-label="Filter assignments by status">
+            <button type="button" class="ca-stat-chip chip-all active" id="statChipAll" onclick="filterTeacherAssignments('all')">
+              All
+            </button>
+            <button type="button" class="ca-stat-chip chip-pending" id="statChipPending" onclick="filterTeacherAssignments('pending')">
+              <b>0</b> Pending
+            </button>
+            <button type="button" class="ca-stat-chip chip-review" id="statChipReview" onclick="filterTeacherAssignments('review')">
+              <b>0</b> Under Review
+            </button>
+            <button type="button" class="ca-stat-chip chip-marked" id="statChipMarked" onclick="filterTeacherAssignments('marked')">
+              <b>0</b> Graded
+            </button>
+          </div>
+        </div>
+
+        <div id="assignmentsList" class="assignments-grid-container">
+          <div class="empty-box">Loading assignments…</div>
         </div>
       </section>
 

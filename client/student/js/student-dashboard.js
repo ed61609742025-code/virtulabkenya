@@ -446,6 +446,66 @@ requireStudentLogin();
     });
   }
 
+  let currentAssignmentStatusFilter = 'all';
+
+  function getAssignmentDisciplineMeta(a) {
+    const t = (a.titration_type || a.type || a.title || '').toLowerCase();
+    if (t.includes('kcsecomposite') || t.includes('composite') || t.includes('mock')) {
+      return { icon: '🏆', label: 'KCSE Paper 3 Mock · 40m', accent: '#D97706', bg: 'rgba(245, 158, 11, 0.12)' };
+    }
+    if (t.includes('qualitative') || a.salt_key) {
+      return { icon: '🧫', label: 'Qualitative Salt ID · Q2 (14m)', accent: '#6366F1', bg: 'rgba(99, 102, 241, 0.12)' };
+    }
+    if (t.includes('organic') || a.compound_key) {
+      return { icon: '🌿', label: 'Organic Analysis · Q3 (8m)', accent: '#10B981', bg: 'rgba(16, 185, 129, 0.12)' };
+    }
+    if (t.includes('solubility') || a.solute_key) {
+      return { icon: '🌡️', label: 'Solubility Curves · Q1b (10m)', accent: '#0284C7', bg: 'rgba(2, 132, 199, 0.12)' };
+    }
+    if (t.includes('energy') || t.includes('enthalpy') || t.includes('neutralization') || t.includes('displacement') || t.includes('solution') || a.en_system_id) {
+      return { icon: '🔥', label: 'Thermochemistry (ΔH) · Q1b (12m)', accent: '#EF4444', bg: 'rgba(239, 68, 68, 0.12)' };
+    }
+    if (t.includes('rate') || t.includes('kinetic') || a.rate_exp_type) {
+      return { icon: '⏱️', label: 'Reaction Rates · Q1b (12m)', accent: '#EAB308', bg: 'rgba(234, 179, 8, 0.12)' };
+    }
+    if (t.includes('gas') || a.gas_key) {
+      return { icon: '💨', label: 'Gas Preparation · Q2b (10m)', accent: '#8B5CF6', bg: 'rgba(139, 92, 246, 0.12)' };
+    }
+    if (t.includes('redox')) {
+      return { icon: '⚗️', label: 'Redox Titration · Q1 (15m)', accent: '#8B5CF6', bg: 'rgba(139, 92, 246, 0.12)' };
+    }
+    if (t.includes('precipit') || t.includes('mohr')) {
+      return { icon: '💧', label: 'Precipitation Titration · Q1 (12m)', accent: '#0284C7', bg: 'rgba(2, 132, 199, 0.12)' };
+    }
+    return { icon: '🧪', label: 'Volumetric Titration · Q1 (15m)', accent: '#059669', bg: 'rgba(16, 185, 129, 0.12)' };
+  }
+
+  function filterTeacherAssignments(statusFilter) {
+    currentAssignmentStatusFilter = statusFilter || 'all';
+    ['all', 'pending', 'review', 'marked'].forEach(key => {
+      const btnId = 'statChip' + key.charAt(0).toUpperCase() + key.slice(1);
+      const btn = document.getElementById(btnId);
+      if (btn) btn.classList.toggle('active', key === currentAssignmentStatusFilter);
+    });
+
+    const cards = document.querySelectorAll('#assignmentsList .assignment-card-box');
+    let visibleCount = 0;
+    cards.forEach(card => {
+      const st = card.getAttribute('data-assign-status') || 'pending';
+      const show = currentAssignmentStatusFilter === 'all' ||
+        (currentAssignmentStatusFilter === 'pending' && (st === 'pending' || st === 'overdue')) ||
+        (currentAssignmentStatusFilter === st);
+      card.style.display = show ? 'flex' : 'none';
+      if (show) visibleCount++;
+    });
+
+    const filterEmptyEl = document.getElementById('caFilterEmptyNotice');
+    if (filterEmptyEl) {
+      filterEmptyEl.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+  }
+  window.filterTeacherAssignments = filterTeacherAssignments;
+
   async function loadAssignments() {
     const box = document.getElementById('assignmentsList');
     if (!box) return;
@@ -467,38 +527,68 @@ requireStudentLogin();
       updateNotificationsUI(assignments);
 
       const progressHeader = document.getElementById('caProgressHeader');
+      const instructorPill = document.getElementById('caInstructorPill');
+      const hasTeacher = !!(currentStudentUser && (currentStudentUser.teacherName || currentStudentUser.teacherId || currentStudentUser.teacherCode));
+
+      if (instructorPill) {
+        if (hasTeacher) {
+          const tName = currentStudentUser.teacherName || (currentStudentUser.teacherCode ? `Code: ${currentStudentUser.teacherCode}` : 'Connected');
+          instructorPill.innerHTML = `👨‍🏫 Instructor: <strong>${escapeHtml(tName)}</strong>`;
+          instructorPill.classList.add('is-linked');
+        } else {
+          instructorPill.innerHTML = `🔗 Link Teacher Code`;
+          instructorPill.classList.remove('is-linked');
+        }
+      }
 
       if (assignments.length === 0) {
         const alertStrip = document.getElementById('assignmentAlertStrip');
         if (alertStrip) alertStrip.style.display = 'none';
         if (progressHeader) progressHeader.style.display = 'none';
-        const hasTeacher = !!(currentStudentUser && (currentStudentUser.teacherName || currentStudentUser.teacherId || currentStudentUser.teacherCode));
+
+        const progressBadge = document.getElementById('caProgressPercentBadge');
+        if (progressBadge) {
+          progressBadge.textContent = hasTeacher ? '✓ All Caught Up' : 'Not Connected';
+          progressBadge.className = hasTeacher ? 'dash-section-badge badge-green' : 'dash-section-badge badge-cyan';
+        }
+
         if (!hasTeacher) {
           box.innerHTML = `
-            <div class="empty-box-celebrate" style="border-style: solid; border-color: rgba(2, 132, 199, 0.3);">
-              <div class="empty-celebrate-badge" style="background: linear-gradient(135deg, #0284C7 0%, #2563EB 100%);" aria-hidden="true">🔗</div>
-              <div style="font-weight: 800; font-size: 1.05rem; color: var(--heading-color);">Connect Your Chemistry Teacher</div>
-              <div style="font-size: 0.84rem; max-width: 400px; line-height: 1.45; color: var(--text-muted);">
-                Link your teacher's code to automatically receive continuous assessment practicals, KCSE mock exams, and teacher evaluations.
+            <div class="ca-empty-showcase is-unlinked">
+              <div class="ca-empty-icon-ring is-blue" aria-hidden="true">🔗</div>
+              <div class="ca-empty-content">
+                <h4 class="ca-empty-title">Connect Your Chemistry Instructor</h4>
+                <p class="ca-empty-desc">
+                  Link your teacher's class code to automatically receive prescribed KCSE Paper 3 practical assessments, timed mocks, and official rubric evaluations.
+                </p>
+                <div class="ca-empty-features">
+                  <span class="ca-feature-pill">📋 Prescribed Practicals</span>
+                  <span class="ca-feature-pill">📊 Teacher Rubric Grading</span>
+                  <span class="ca-feature-pill">🏆 Class Leaderboard</span>
+                </div>
               </div>
-              <button type="button" class="hero-warmup-btn" onclick="toggleTeacherLinkPanel()" style="padding: 8px 20px; font-size: 0.84rem; min-height: 38px; border-radius: 10px; cursor: pointer; border: none;">
+              <button type="button" class="ca-empty-cta-btn" onclick="toggleTeacherLinkPanel()">
                 🔗 Enter Teacher Code →
               </button>
             </div>
           `;
         } else {
           box.innerHTML = `
-            <div class="empty-box-celebrate">
-              <div class="empty-celebrate-badge" aria-hidden="true">🎉</div>
-              <div style="font-weight: 800; font-size: 1.05rem; color: var(--heading-color);">All Caught Up! Zero Backlog</div>
-              <div style="font-size: 0.85rem; line-height: 1.5; max-width: 360px; color: var(--text-muted);">
-                Superb work! You've cleared every practical prescribed by <strong>${escapeHtml(currentStudentUser?.teacherName || 'your instructor')}</strong>. Keep your winning momentum alive!
+            <div class="ca-empty-showcase is-celebrate">
+              <div class="ca-empty-icon-ring is-emerald" aria-hidden="true">🎉</div>
+              <div class="ca-empty-content">
+                <h4 class="ca-empty-title">All Caught Up! Zero Assignment Backlog</h4>
+                <p class="ca-empty-desc">
+                  Outstanding work! You have completed every practical prescribed by <strong>${escapeHtml(currentStudentUser?.teacherName || 'your instructor')}</strong>. Keep sharpening your skills on the free benches!
+                </p>
+                <div class="ca-empty-features">
+                  <span class="ca-feature-pill">✓ 100% Submitted</span>
+                  <span class="ca-feature-pill">⚡ Ready for Next Lab</span>
+                </div>
               </div>
-              <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 4px;">
-                <a href="#skillTreeContainer" class="hero-warmup-btn" style="padding: 8px 20px; font-size: 0.84rem; min-height: 38px; border-radius: 10px;">
-                  🧪 Practice Free Lab Benches →
-                </a>
-              </div>
+              <a href="#skillTreeContainer" class="ca-empty-cta-btn is-emerald">
+                🧪 Practice Free Lab Benches →
+              </a>
             </div>
           `;
         }
@@ -532,6 +622,8 @@ requireStudentLogin();
       }
       const progressFill = document.getElementById('caProgressFill');
       const progressBadge = document.getElementById('caProgressPercentBadge');
+      const progressFraction = document.getElementById('caProgressFractionText');
+      const statAll = document.getElementById('statChipAll');
       const statMarked = document.getElementById('statChipMarked');
       const statReview = document.getElementById('statChipReview');
       const statPending = document.getElementById('statChipPending');
@@ -539,8 +631,11 @@ requireStudentLogin();
       if (progressFill) {
         progressFill.style.width = percentComplete + '%';
       }
+      if (progressFraction) {
+        progressFraction.textContent = `${submittedCount} of ${totalCount} Submitted (${percentComplete}%)`;
+      }
       if (progressBadge) {
-        progressBadge.textContent = `${percentComplete}% Complete (${submittedCount} / ${totalCount} Submitted)`;
+        progressBadge.textContent = `${percentComplete}% Complete`;
         if (percentComplete === 100) {
           progressBadge.className = 'dash-section-badge badge-green';
         } else if (percentComplete > 0) {
@@ -549,9 +644,10 @@ requireStudentLogin();
           progressBadge.className = 'dash-section-badge badge-amber';
         }
       }
-      if (statMarked) statMarked.innerHTML = `<b>${markedCount}</b> Graded`;
-      if (statReview) statReview.innerHTML = `<b>${reviewCount}</b> Under Review`;
-      if (statPending) statPending.innerHTML = `<b>${pendingCount}</b> Pending`;
+      if (statAll) statAll.innerHTML = `All <b>(${totalCount})</b>`;
+      if (statMarked) statMarked.innerHTML = `✓ <b>${markedCount}</b> Graded`;
+      if (statReview) statReview.innerHTML = `🔎 <b>${reviewCount}</b> Under Review`;
+      if (statPending) statPending.innerHTML = `⏳ <b>${pendingCount}</b> Pending`;
 
       const alertStrip = document.getElementById('assignmentAlertStrip');
       const aasText = document.getElementById('aasText');
@@ -570,82 +666,132 @@ requireStudentLogin();
         }
       }
 
-      box.innerHTML = assignments.map(a => {
+      const cardsHtml = assignments.map(a => {
         const isSubmitted = !!a.submitted;
-        const score = a.score || (a.evaluation && a.evaluation.score) || a.cs_total_score || a.gas_total_score || a.en_total_score || a.rate_total_score || a.sol_total_score;
+        const score = a.score ?? (a.evaluation && a.evaluation.score) ?? a.cs_total_score ?? a.gas_total_score ?? a.en_total_score ?? a.rate_total_score ?? a.sol_total_score;
         const isGraded = typeof score === 'number' || a.submission_status === 'marked' || a.marked_at != null || a.status === 'marked';
         const isPastDue = !isSubmitted && a.due_date && (new Date(a.due_date).setHours(23, 59, 59, 999) < Date.now());
 
         const { targetUrl, battleMode } = getAssignmentTargetUrl(a);
         const warmupUrl = `speed_battle.html?mode=${battleMode}&target=${encodeURIComponent(targetUrl)}`;
+        const disc = getAssignmentDisciplineMeta(a);
 
+        let statusType = 'pending';
         let statusChipHtml = '';
+        let scoreBadgeHtml = '';
         let statusHtml = '';
+
         if (isSubmitted) {
           if (isGraded) {
-            statusChipHtml = `<span class="assign-status-chip is-marked">Graded</span>`;
+            statusType = 'marked';
+            statusChipHtml = `<span class="assign-status-chip is-marked">✓ Graded</span>`;
+            if (typeof score === 'number') {
+              scoreBadgeHtml = `<span class="assign-score-pill">${Number(score).toFixed(1)} Marks</span>`;
+            } else if (a.correct != null) {
+              scoreBadgeHtml = `<span class="assign-score-pill ${a.correct ? 'is-pass' : 'is-retry'}">${a.correct ? '✓ Pass' : '✗ Review'}</span>`;
+            }
             statusHtml = `
               <button type="button" class="submitted-pill" onclick="openAssignmentFeedbackModalById(${a.id})">
-                View Feedback &amp; Rubric
+                <span>📊 View Feedback &amp; Rubric →</span>
               </button>
             `;
           } else {
-            statusChipHtml = `<span class="assign-status-chip is-review">Under Review</span>`;
+            statusType = 'review';
+            statusChipHtml = `<span class="assign-status-chip is-review">🔎 Under Review</span>`;
             statusHtml = `
               <button type="button" class="submitted-pill is-review" onclick="openAssignmentFeedbackModalById(${a.id})">
-                Under Teacher Marking
+                <span>⏳ Submitted · View Details →</span>
               </button>
             `;
           }
         } else if (isPastDue) {
-          statusChipHtml = `<span class="assign-status-chip is-overdue">Overdue</span>`;
+          statusType = 'overdue';
+          statusChipHtml = `<span class="assign-status-chip is-overdue">🚨 Overdue</span>`;
           statusHtml = `
             <div class="assign-actions-row">
               <a href="${targetUrl}" class="pending-pill-btn is-overdue-btn" aria-label="Complete overdue assignment: ${escapeHtml(a.title)}">
-                Complete Now →
+                Complete Overdue Lab →
               </a>
               <a href="${warmupUrl}" class="assign-warmup-icon-btn" title="Take optional 45s pre-lab warmup" aria-label="Warmup Drill">
-                ⚡ Warmup
+                ⚡ 45s Warmup
               </a>
             </div>
           `;
         } else {
-          statusChipHtml = `<span class="assign-status-chip is-pending">Pending</span>`;
+          statusType = 'pending';
+          statusChipHtml = `<span class="assign-status-chip is-pending">⏳ Pending</span>`;
           statusHtml = `
             <div class="assign-actions-row">
               <a href="${targetUrl}" class="pending-pill-btn" aria-label="Start assignment: ${escapeHtml(a.title)}">
-                Start Assignment →
+                Start Practical →
               </a>
               <a href="${warmupUrl}" class="assign-warmup-icon-btn" title="Take optional 45s pre-lab warmup" aria-label="Warmup Drill">
-                ⚡ Warmup
+                ⚡ 45s Warmup
               </a>
             </div>
           `;
         }
 
-        const dueBase = a.due_date ? `Due ${formatDate(a.due_date)}` : 'No deadline';
-        const dueLabel = isPastDue ? `<span style="color:#DC2626; font-weight:700;">⚠️ ${dueBase}</span>` : dueBase;
+        const dueBase = a.due_date ? `Due ${formatDate(a.due_date)}` : 'Flexible deadline';
+        const dueLabel = isPastDue
+          ? `<span class="assign-due-badge is-overdue">⚠️ ${dueBase}</span>`
+          : `<span class="assign-due-badge">📅 ${dueBase}</span>`;
+
+        const instructionsSnippet = a.instructions
+          ? escapeHtml(a.instructions)
+          : (isSubmitted
+              ? 'Practical session recorded and linked to your Continuous Assessment ledger.'
+              : 'Complete the practical workbench table and submit your findings for KNEC rubric grading.');
 
         return `
-          <div class="assignment-card-box">
-            <div class="assign-card-top">
-              ${statusChipHtml}
-              <span class="assign-card-due">${dueLabel}</span>
+          <div class="assignment-card-box status-${statusType}" data-assign-status="${statusType}">
+            <div>
+              <div class="assign-card-top">
+                <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                  ${statusChipHtml}
+                  ${scoreBadgeHtml}
+                </div>
+                ${dueLabel}
+              </div>
+
+              <div class="assign-card-main-row">
+                <div class="assign-disc-icon" style="background:${disc.bg}; color:${disc.accent};" aria-hidden="true">
+                  ${disc.icon}
+                </div>
+                <div style="min-width:0; flex:1;">
+                  <div class="assign-disc-tag" style="color:${disc.accent};">${escapeHtml(disc.label)}</div>
+                  <h4 class="assign-card-title">${escapeHtml(a.title || 'Prescribed Practical')}</h4>
+                </div>
+              </div>
+
+              <p class="assign-card-desc">${instructionsSnippet}</p>
             </div>
-            <div class="assign-card-title">${escapeHtml(a.title)}</div>
-            ${statusHtml}
+
+            <div class="assign-card-footer">
+              ${statusHtml}
+            </div>
           </div>
         `;
       }).join('');
+
+      box.innerHTML = cardsHtml + `
+        <div id="caFilterEmptyNotice" class="empty-box" style="display:none; grid-column: 1 / -1; padding: 20px; text-align:center;">
+          No assignments match the selected filter. <button type="button" onclick="filterTeacherAssignments('all')" style="background:none; border:none; color:var(--cyan-accent); font-weight:800; cursor:pointer; text-decoration:underline;">Show All (${totalCount})</button>
+        </div>
+      `;
+
+      if (currentAssignmentStatusFilter !== 'all') {
+        filterTeacherAssignments(currentAssignmentStatusFilter);
+      }
     } catch (err) {
       console.warn('Could not load assignments dynamically:', err);
       if (box) {
         box.innerHTML = `
-          <div class="empty-box" style="grid-column: 1 / -1; padding: 24px 16px; text-align: center; color: var(--text-muted); font-size: 0.85rem; border: 1.5px dashed var(--card-border); border-radius: 8px;">
+          <div class="empty-box" style="grid-column: 1 / -1; padding: 24px 16px; text-align: center; color: var(--text-muted); font-size: 0.85rem; border: 1.5px dashed var(--card-border); border-radius: 12px;">
             <div style="font-size: 1.3rem; margin-bottom: 6px;">⚠️</div>
             <div style="font-weight: 700; color: var(--heading-color); margin-bottom: 4px;">Unable to load assignments right now</div>
             <div style="font-size: 0.78rem; margin-bottom: 12px;">${escapeHtml(err.message || 'Please check your connection or link your teacher code.')}</div>
-            <button class="btn btn-secondary" onclick="loadAssignments()" style="padding: 6px 16px; font-size: 0.78rem; font-weight: 700; border-radius: 6px; cursor: pointer;">🔄 Retry</button>
+            <button class="btn btn-secondary" onclick="loadAssignments()" style="padding: 6px 16px; font-size: 0.78rem; font-weight: 700; border-radius: 8px; cursor: pointer;">🔄 Retry</button>
           </div>
         `;
       }

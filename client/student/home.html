@@ -624,19 +624,23 @@
     <nav class="student-subtabs-nav" aria-label="Workstation Views" role="tablist">
       <button class="student-subtab-btn active" id="tabBtn_benches" role="tab" aria-selected="true" aria-controls="panel_benches" onclick="switchStudentSubTab('benches')" data-tooltip="Lab workbenches and guided pathways" data-tooltip-pos="bottom">
         <span class="subtab-icon" aria-hidden="true">⚗️</span>
-        <span data-i18n="tab_benches">Laboratory Benches</span>
+        <span class="subtab-label-desktop" data-i18n="tab_benches">Laboratory Benches</span>
+        <span class="subtab-label-mobile" data-i18n="m_workbenches">Workbenches</span>
       </button>
       <button class="student-subtab-btn" id="tabBtn_reference" role="tab" aria-selected="false" aria-controls="panel_reference" onclick="switchStudentSubTab('reference')" data-tooltip="KCSE reference tables and formulas" data-tooltip-pos="bottom">
         <span class="subtab-icon" aria-hidden="true">📖</span>
-        <span data-i18n="tab_reference">Revision &amp; Reference</span>
+        <span class="subtab-label-desktop" data-i18n="tab_reference">Revision &amp; Reference</span>
+        <span class="subtab-label-mobile" data-i18n="m_revision">Revision</span>
       </button>
       <button class="student-subtab-btn" id="tabBtn_achievements" role="tab" aria-selected="false" aria-controls="panel_achievements" onclick="switchStudentSubTab('achievements')" data-tooltip="Badges and session history" data-tooltip-pos="bottom">
         <span class="subtab-icon" aria-hidden="true">🏆</span>
-        <span data-i18n="tab_achievements">Badges &amp; History</span>
+        <span class="subtab-label-desktop" data-i18n="tab_achievements">Badges &amp; History</span>
+        <span class="subtab-label-mobile" data-i18n="m_badges">Badges</span>
       </button>
       <button class="student-subtab-btn" id="tabBtn_research" role="tab" aria-selected="false" aria-controls="panel_research" onclick="switchStudentSubTab('research')" data-tooltip="Assessments and surveys" data-tooltip-pos="bottom">
         <span class="subtab-icon" aria-hidden="true">📋</span>
-        <span data-i18n="tab_research">Assessments &amp; Surveys</span>
+        <span class="subtab-label-desktop" data-i18n="tab_research">Assessments &amp; Surveys</span>
+        <span class="subtab-label-mobile" data-i18n="m_research">Research</span>
       </button>
     </nav>
 
@@ -950,7 +954,7 @@
               <div class="guidance-card rec-card" style="margin-top: 14px;">
                 <div class="guidance-header">
                   <span class="guidance-title" data-i18n="prescribed_practical">Suggested Practical</span>
-                  <span class="guidance-badge rec-badge" id="recReasonBadge" data-i18n="syllabus_focus">Syllabus Focus</span>
+                  <span class="guidance-badge rec-badge" id="recReasonBadge">Syllabus Focus</span>
                 </div>
                 <h4 class="rec-title" id="recTitle">Redox Titration (Fe²⁺ vs KMnO₄)</h4>
                 <p class="guidance-body" id="recDesc">

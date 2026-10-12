@@ -510,6 +510,14 @@ html, body {
   transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.subtab-label-desktop {
+  display: inline;
+}
+
+.subtab-label-mobile {
+  display: none;
+}
+
 .student-subtab-btn:hover {
   color: var(--heading-color);
   background: rgba(0, 0, 0, 0.04);

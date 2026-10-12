@@ -7,7 +7,7 @@ function validateEnv() {
   const isTest = process.env.NODE_ENV === 'test'
     || process.env.npm_lifecycle_event === 'test'
     || (Array.isArray(process.execArgv) && process.execArgv.includes('--test'))
-    || (Array.isArray(process.argv) && process.argv.some(arg => arg.includes('--test') || arg.includes('test')));
+    || (Array.isArray(process.argv) && process.argv.includes('--test'));
 
   // In test environments, automatically supply safe dummy defaults if not already provided
   if (isTest) {
@@ -49,7 +49,15 @@ function validateEnv() {
     }
 
     if (process.env.ADMIN_PASSWORD && !process.env.ADMIN_PASSWORD_HASH) {
-      securityErrors.push('Plaintext ADMIN_PASSWORD is set without ADMIN_PASSWORD_HASH in production.');
+      try {
+        const bcrypt = require('bcrypt');
+        process.env.ADMIN_PASSWORD_HASH = (process.env.ADMIN_PASSWORD.startsWith('$2a$') || process.env.ADMIN_PASSWORD.startsWith('$2b$'))
+          ? process.env.ADMIN_PASSWORD
+          : bcrypt.hashSync(process.env.ADMIN_PASSWORD, 10);
+        console.info('[Security Setup] Automatically derived ADMIN_PASSWORD_HASH from ADMIN_PASSWORD for secure production authentication.');
+      } catch (hashErr) {
+        securityErrors.push('Failed to derive ADMIN_PASSWORD_HASH from ADMIN_PASSWORD: ' + hashErr.message);
+      }
     }
 
     if (securityErrors.length > 0) {

@@ -468,7 +468,7 @@
                 <span class="user-sheet-link-icon">🔒</span>
                 <span>Security &amp; Password</span>
               </button>
-              <button type="button" onclick="window.VLKPwa && window.VLKPwa.showInstallModal(); closeUserDropdown();" class="user-sheet-link">
+              <button type="button" onclick="(window.installVirtuLabApp || (window.VLKPwa && window.VLKPwa.installDirectly))(); closeUserDropdown();" class="user-sheet-link">
                 <span class="user-sheet-link-icon">📲</span>
                 <span style="color:var(--cyan-accent, #0284C7); font-weight:800;">Install App (PWA)</span>
               </button>
@@ -694,20 +694,54 @@
               </button>
             </div>
 
-            <!-- Study Tip Card -->
-            <div class="guidance-card tip-card" id="studyTipCard">
+            <!-- Upgraded Interactive Examiner Study Tip Card -->
+            <div class="guidance-card tip-card upgraded-tip-card" id="studyTipCard">
               <div class="guidance-header">
-                <span class="guidance-title" data-i18n="mwalimu_diag_title">Study Tip</span>
-                <div style="display:flex; align-items:center; gap:8px;">
-                  <span class="guidance-badge" data-i18n="pedagogical_hint">Tip</span>
+                <div class="tip-header-left">
+                  <span class="tip-category-badge badge-warning" id="stCategoryBadge">🚨 KNEC MARKING TRAP</span>
+                  <span class="tip-counter" id="stCounter">Tip 1/12</span>
+                </div>
+                <div class="tip-header-actions">
+                  <button type="button" class="tip-tool-btn tip-save-btn" id="stSaveBtn" onclick="toggleSaveCurrentTip()" title="Save to Exam Pocket" aria-label="Save tip to Exam Pocket">
+                    <span id="stSaveIcon">⭐</span>
+                  </button>
+                  <button type="button" class="tip-tool-btn tip-nav-btn" onclick="cycleStudyTip(-1)" title="Previous examiner tip" aria-label="Previous tip">‹</button>
+                  <button type="button" class="tip-tool-btn tip-nav-btn" onclick="cycleStudyTip(1)" title="Next examiner tip" aria-label="Next tip">›</button>
                   <button type="button" class="tip-dismiss-btn" onclick="dismissStudyTip()" aria-label="Dismiss study tip" title="Dismiss study tip">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                   </button>
                 </div>
               </div>
-              <p id="mwalimuMessage" class="guidance-body">
-                Analyzing your practical logs to suggest focused revision areas…
-              </p>
+
+              <div class="tip-content-body">
+                <h4 class="tip-title" id="stTitle">Burette Reading Precision (Table 1)</h4>
+                <p id="mwalimuMessage" class="guidance-body tip-text">
+                  KNEC Paper 3 penalizes any titre recorded to only 1 decimal place. Always record initial &amp; final readings to 2 decimal places ending strictly in .00 or .50 (e.g. 24.50 cm³, not 24.5 cm³).
+                </p>
+              </div>
+
+              <!-- Interactive Active Recall Micro-Quiz -->
+              <div class="tip-quiz-box" id="stQuizBox">
+                <button type="button" class="tip-quiz-toggle-btn" id="stQuizToggleBtn" onclick="toggleTipQuiz()">
+                  <span class="quiz-btn-label" id="stQuizBtnLabel">⚡ Quick Recall Test (+10 XP)</span>
+                  <span class="quiz-chevron" id="stQuizChevron">▼</span>
+                </button>
+                <div class="tip-quiz-content" id="stQuizContent" style="display:none;">
+                  <p class="quiz-question" id="stQuizQuestion">Loading question…</p>
+                  <div class="quiz-options-group" id="stQuizOptions"></div>
+                  <div class="quiz-feedback" id="stQuizFeedback" style="display:none;"></div>
+                </div>
+              </div>
+
+              <!-- Action & Navigation Bar -->
+              <div class="tip-action-bar">
+                <a id="stActionBtn" href="lab.html?studyMode=guided" class="tip-action-btn" data-tooltip="Practice this specific technique now" data-tooltip-pos="top">
+                  <span id="stActionText">Practice Burette Drill →</span>
+                </a>
+                <button type="button" class="tip-next-chip" onclick="cycleStudyTip(1)">
+                  <span>Next Tip ➔</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -992,6 +1026,7 @@
       <nav class="quick-jump-bar" aria-label="Reference Jump Navigation">
         <span style="font-size:0.76rem; font-weight:800; color:var(--heading-color); margin-right:4px;">Jump to:</span>
         <a href="titration_theory.html" class="quick-jump-chip" style="background:var(--cyan-accent); color:#000; font-weight:800;">📖 Titration Guide (15 Marks) →</a>
+        <a href="#ref-pocket" class="quick-jump-chip">⭐ Saved Tips</a>
         <a href="#ref-indicators" class="quick-jump-chip">Indicators</a>
         <a href="#ref-gases" class="quick-jump-chip">Gas Tests</a>
         <a href="#ref-cations" class="quick-jump-chip">Cation Tests</a>
@@ -1000,6 +1035,28 @@
         <a href="#ref-organic" class="quick-jump-chip">Organic Groups</a>
         <a href="#ref-physical" class="quick-jump-chip">Formulas</a>
       </nav>
+
+      <!-- Exam Day Pocket: Saved Examiner Tips (Populated via localStorage) -->
+      <div class="saved-tips-pocket-wrap" id="ref-pocket" style="margin-bottom:20px;">
+        <div class="saved-tips-card">
+          <div class="saved-tips-header" onclick="toggleSavedTipsPocket()" role="button" tabindex="0" aria-expanded="false">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div class="saved-tips-badge-icon">⭐</div>
+              <div>
+                <h3 class="saved-tips-title">My Exam Day Pocket (Saved Examiner Tips)</h3>
+                <p class="saved-tips-sub">Bookmarked KNEC rubrics &amp; rules for rapid morning revision before Paper 3</p>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span class="saved-tips-count-chip" id="savedTipsCountChip">0 Saved</span>
+              <span class="saved-tips-chevron" id="savedTipsChevron">▼</span>
+            </div>
+          </div>
+          <div class="saved-tips-body" id="savedTipsBody" style="display:none;">
+            <div id="savedTipsListContainer" class="saved-tips-grid"></div>
+          </div>
+        </div>
+      </div>
 
       <!-- Featured Volumetric Analysis Theory Banner -->
       <div style="background:linear-gradient(135deg, var(--card-bg) 0%, rgba(2, 132, 199, 0.12) 100%); border:2px solid var(--cyan-accent); border-radius:16px; padding:18px 20px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px; box-shadow:var(--shadow-md);">

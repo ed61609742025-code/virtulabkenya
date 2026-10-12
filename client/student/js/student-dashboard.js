@@ -934,17 +934,469 @@ requireStudentLogin();
     document.body.style.overflow = 'hidden';
   }
 
-  function updateMwalimuAdvice(sessions) {
+  // ── INTERACTIVE EXAMINER STUDY TIPS & ACTIVE RECALL ENGINE ──
+  const STUDY_TIPS_LIBRARY = [
+    {
+      id: 'tip-burette-decimals',
+      topic: 'volumetric',
+      category: '🚨 KNEC MARKING TRAP',
+      badgeClass: 'badge-danger',
+      title: 'Burette Reading Precision (Table 1)',
+      body: 'KNEC Paper 3 penalizes any burette reading recorded to only 1 decimal place. Always record initial and final titres to 2 decimal places ending strictly in .00 or .50 (e.g. 24.50 cm³, not 24.5 cm³).',
+      actionText: 'Practice Titration Bench →',
+      actionUrl: 'lab.html?type=acidBase&studyMode=guided',
+      quickCheck: {
+        question: 'Which burette reading forfeits accuracy marks on KCSE Table 1?',
+        options: [
+          { text: 'A) 22.50 cm³', correct: false, explanation: 'Valid! Recorded to 2 decimal places ending in .50.' },
+          { text: 'B) 18.4 cm³', correct: true, explanation: 'Correct! Recording to 1 decimal place loses the Table 1 decimal precision mark.' },
+          { text: 'C) 0.00 cm³', correct: false, explanation: 'Valid! Initial zero reading properly formatted to 2 decimal places.' }
+        ]
+      }
+    },
+    {
+      id: 'tip-concordancy-rule',
+      topic: 'volumetric',
+      category: '🧪 TECHNIQUE & ACCURACY',
+      badgeClass: 'badge-info',
+      title: 'Averaging Concordant Titres (±0.10 cm³)',
+      body: 'Never include your rough (first) trial in the final average! Only average 2 or 3 consecutive titres that differ by no more than ±0.10 cm³ to earn full concordancy marks.',
+      actionText: 'Practice Concordancy Run →',
+      actionUrl: 'lab.html?type=acidBase',
+      quickCheck: {
+        question: 'Given titres: Trial 1 (Rough) = 24.50, Trial 2 = 23.80, Trial 3 = 23.90 cm³. Which values should be averaged?',
+        options: [
+          { text: 'A) Trials 2 & 3 only (23.80 + 23.90)', correct: true, explanation: 'Correct! They are within ±0.10 cm³ and exclude the rough trial.' },
+          { text: 'B) All three trials (24.50 + 23.80 + 23.90)', correct: false, explanation: 'Never include the rough trial or values differing by >0.20 cm³!' }
+        ]
+      }
+    },
+    {
+      id: 'tip-redox-kmno4',
+      topic: 'redox',
+      category: '🧪 TECHNIQUE & ACCURACY',
+      badgeClass: 'badge-info',
+      title: 'Redox Self-Indicating KMnO₄ Endpoint',
+      body: 'Potassium permanganate (KMnO₄) is self-indicating! Stop adding titrant at the very first permanent faint pink tint. Also read the top of the dark KMnO₄ meniscus in the burette.',
+      actionText: 'Practice Redox Titration →',
+      actionUrl: 'lab.html?type=redox',
+      quickCheck: {
+        question: 'What indicates the equivalence point when titrating Fe²⁺ against acidified KMnO₄?',
+        options: [
+          { text: 'A) First permanent faint pink color', correct: true, explanation: 'Correct! One drop of excess MnO₄⁻ imparts a permanent pale pink tint.' },
+          { text: 'B) Deep dark purple coloration', correct: false, explanation: 'Over-titrated! Deep purple means excess KMnO₄ was added beyond endpoint.' }
+        ]
+      }
+    },
+    {
+      id: 'tip-dibasic-ratio',
+      topic: 'dibasic',
+      category: '⚡ FORMULA & CALCULATION',
+      badgeClass: 'badge-success',
+      title: 'Dibasic Acid 1:2 Mole Ratio Rule',
+      body: 'Sulfuric acid (H₂SO₄) and oxalic acid (H₂C₂O₄) react with NaOH in a 1:2 stoichiometric ratio (H₂X + 2NaOH → Na₂X + 2H₂O). Always divide moles of NaOH by 2 to find moles of acid!',
+      actionText: 'Practice Dibasic Acid Lab →',
+      actionUrl: 'lab.html?type=dibasic',
+      quickCheck: {
+        question: 'If 0.0040 moles of NaOH neutralized H₂SO₄, how many moles of H₂SO₄ reacted?',
+        options: [
+          { text: 'A) 0.0020 moles', correct: true, explanation: 'Correct! Since 1 mole of H₂SO₄ reacts with 2 moles of NaOH, moles of acid = 0.0040 / 2.' },
+          { text: 'B) 0.0080 moles', correct: false, explanation: 'Multiplying by 2 reverses the stoichiometric ratio.' }
+        ]
+      }
+    },
+    {
+      id: 'tip-al-pb-distinction',
+      topic: 'qualitative',
+      category: '📝 EXACT OBSERVATION',
+      badgeClass: 'badge-purple',
+      title: 'Distinguishing Al³⁺ from Pb²⁺ in Question 2',
+      body: 'Both Al³⁺ and Pb²⁺ form white precipitates soluble in excess NaOH and insoluble in excess NH₃. Add aqueous Potassium Iodide (KI): Pb²⁺ forms a bright yellow precipitate (PbI₂), while Al³⁺ gives no precipitate!',
+      actionText: 'Practice Qualitative Salts →',
+      actionUrl: 'qualitative.html',
+      quickCheck: {
+        question: 'Which reagent confirms Pb²⁺ over Al³⁺ after both form white precipitates in NH₃(aq)?',
+        options: [
+          { text: 'A) Aqueous Potassium Iodide (KI)', correct: true, explanation: 'Correct! Pb²⁺(aq) + 2I⁻(aq) → PbI₂(s) bright yellow precipitate.' },
+          { text: 'B) Excess dilute Nitric Acid', correct: false, explanation: 'Nitric acid does not precipitate either cation.' }
+        ]
+      }
+    },
+    {
+      id: 'tip-zn-excess-nh3',
+      topic: 'qualitative',
+      category: '📝 EXACT OBSERVATION',
+      badgeClass: 'badge-purple',
+      title: 'Confirming Zn²⁺ with Aqueous Ammonia',
+      body: 'Zn²⁺, Al³⁺, and Pb²⁺ all dissolve in excess NaOH. However, in excess aqueous ammonia (NH₃), only Zn²⁺ dissolves to form a colorless complex ion [Zn(NH₃)₄]²⁺!',
+      actionText: 'Test Cation Separations →',
+      actionUrl: 'qualitative.html',
+      quickCheck: {
+        question: 'A solution gives a white precipitate soluble in both excess NaOH(aq) and excess NH₃(aq). Which ion is present?',
+        options: [
+          { text: 'A) Zn²⁺', correct: true, explanation: 'Correct! Only Zn²⁺ forms soluble ammine complexes in excess ammonia.' },
+          { text: 'B) Pb²⁺', correct: false, explanation: 'Pb(OH)₂ is insoluble in excess aqueous ammonia.' }
+        ]
+      }
+    },
+    {
+      id: 'tip-so3-so4-distinction',
+      topic: 'qualitative',
+      category: '📝 EXACT OBSERVATION',
+      badgeClass: 'badge-purple',
+      title: 'Sulfite (SO₃²⁻) vs Sulfate (SO₄²⁻) Anion Test',
+      body: 'Both anions form white precipitates with Ba(NO₃)₂ or BaCl₂. Adding dilute HCl or HNO₃ dissolves white BaSO₃ precipitate with effervescence, whereas BaSO₄ remains insoluble!',
+      actionText: 'Practice Anion Identification →',
+      actionUrl: 'qualitative.html',
+      quickCheck: {
+        question: 'After adding BaCl₂(aq), a white precipitate dissolves upon adding dilute HCl. What is the anion?',
+        options: [
+          { text: 'A) Sulfite (SO₃²⁻) or Carbonate (CO₃²⁻)', correct: true, explanation: 'Correct! BaSO₃ and BaCO₃ dissolve in dilute acid; BaSO₄ does not.' },
+          { text: 'B) Sulfate (SO₄²⁻)', correct: false, explanation: 'Barium sulfate (BaSO₄) is insoluble in dilute HCl.' }
+        ]
+      }
+    },
+    {
+      id: 'tip-br2-organic-keyword',
+      topic: 'organic',
+      category: '🚨 KNEC MARKING TRAP',
+      badgeClass: 'badge-danger',
+      title: 'Organic Unsaturation Keyword Rule (Question 3)',
+      body: 'When testing alkenes/alkynes with bromine water or acidified KMnO₄, never write "turns clear". Always write: "Yellow/orange bromine water is decolorized immediately."',
+      actionText: 'Practice Organic Lab →',
+      actionUrl: 'organic.html',
+      quickCheck: {
+        question: 'Why does writing "Bromine water turns clear" lose marks in KCSE Paper 3?',
+        options: [
+          { text: 'A) "Clear" describes transparency, not color ("colorless" or "decolorized" is required)', correct: true, explanation: 'Correct! Colored solutions can also be clear (transparent). Use "decolorized".' },
+          { text: 'B) Bromine water turns green instead', correct: false, explanation: 'Acidified K₂Cr₂O₇ turns green; bromine water turns colorless.' }
+        ]
+      }
+    },
+    {
+      id: 'tip-enthalpy-cooling-curve',
+      topic: 'energy',
+      category: '⚡ FORMULA & CALCULATION',
+      badgeClass: 'badge-success',
+      title: 'Thermochemistry ΔT Cooling Extrapolation',
+      body: 'In enthalpy experiments (ΔH = -mcΔT / n), always extrapolate the cooling line back to the vertical line at the time of mixing to find the true peak ΔT corrected for heat loss!',
+      actionText: 'Practice Calorimetry →',
+      actionUrl: 'energy.html',
+      quickCheck: {
+        question: 'In ΔH calculations, what must always be included with the final numerical value?',
+        options: [
+          { text: 'A) Explicit + or - sign and kJ/mol units (e.g. -57.2 kJ/mol)', correct: true, explanation: 'Correct! Omitting the negative sign for exothermic reactions forfeits half the mark.' },
+          { text: 'B) Only the positive number in Joules', correct: false, explanation: 'Molar enthalpy requires kJ/mol and an explicit sign.' }
+        ]
+      }
+    },
+    {
+      id: 'tip-rates-disappearing-cross',
+      topic: 'rates',
+      category: '⚡ FORMULA & CALCULATION',
+      badgeClass: 'badge-info',
+      title: 'Reaction Rates & Reciprocal Time (1/t)',
+      body: 'In the sodium thiosulfate disappearing cross practical, rate of reaction is represented by 1/t (s⁻¹). Plotting 1/t against concentration yields a straight line through the origin!',
+      actionText: 'Practice Reaction Rates →',
+      actionUrl: 'rates.html',
+      quickCheck: {
+        question: 'If the cross disappears in 20 seconds, what is the rate (1/t) value recorded in the table?',
+        options: [
+          { text: 'A) 0.050 s⁻¹', correct: true, explanation: 'Correct! 1 / 20 = 0.050 s⁻¹.' },
+          { text: 'B) 20.0 s⁻¹', correct: false, explanation: '20 s is the time t, not the reciprocal 1/t.' }
+        ]
+      }
+    },
+    {
+      id: 'tip-ammonia-drying',
+      topic: 'gas',
+      category: '🚨 KNEC MARKING TRAP',
+      badgeClass: 'badge-danger',
+      title: 'Drying Ammonia Gas (Calcium Oxide Only)',
+      body: 'Ammonia (NH₃) is the only common alkaline gas. Never dry it with conc. H₂SO₄ (reacts to form ammonium sulfate) or anhydrous CaCl₂ (forms CaCl₂·8NH₃ adduct). Always use Calcium Oxide (CaO)!',
+      actionText: 'Practice Gas Preparation →',
+      actionUrl: 'gas_prep.html',
+      quickCheck: {
+        question: 'How is dry ammonia gas collected in the laboratory?',
+        options: [
+          { text: 'A) Upward delivery (downward displacement of air)', correct: true, explanation: 'Correct! Ammonia is less dense than air and very soluble in water.' },
+          { text: 'B) Over water', correct: false, explanation: 'Ammonia is extremely soluble in water and cannot be collected over water.' }
+        ]
+      }
+    },
+    {
+      id: 'tip-table1-units',
+      topic: 'general',
+      category: '🚨 KNEC MARKING TRAP',
+      badgeClass: 'badge-warning',
+      title: 'Mandatory Units & Working Steps',
+      body: 'Never write bare numbers in Paper 3 calculations! Always state clear working steps and attach units: cm³ for volume, mol/dm³ (or M) for molarity, and g/dm³ for mass concentration.',
+      actionText: 'Explore KNEC Rubric Guide →',
+      actionUrl: 'titration_theory.html',
+      quickCheck: {
+        question: 'How do you convert molarity (mol/dm³) into mass concentration (g/dm³)?',
+        options: [
+          { text: 'A) Multiply Molarity by Relative Formula Mass (Molarity × RFM)', correct: true, explanation: 'Correct! Mass conc (g/dm³) = Molarity (mol/dm³) × Molar Mass (g/mol).' },
+          { text: 'B) Divide Molarity by 1000', correct: false, explanation: 'Dividing by 1000 converts dm³ to cm³, not to grams.' }
+        ]
+      }
+    }
+  ];
+
+  let currentTipIndex = 0;
+
+  function getSavedTipIds() {
+    try {
+      const raw = localStorage.getItem('vlk_saved_tips');
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function getAnsweredQuizIds() {
+    try {
+      const raw = localStorage.getItem('vlk_answered_tip_quizzes');
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function renderStudyTipByIndex(idx) {
+    if (!STUDY_TIPS_LIBRARY.length) return;
+    currentTipIndex = ((idx % STUDY_TIPS_LIBRARY.length) + STUDY_TIPS_LIBRARY.length) % STUDY_TIPS_LIBRARY.length;
+    const tip = STUDY_TIPS_LIBRARY[currentTipIndex];
+
+    const badgeEl = document.getElementById('stCategoryBadge');
+    const counterEl = document.getElementById('stCounter');
+    const titleEl = document.getElementById('stTitle');
     const msgEl = document.getElementById('mwalimuMessage');
-    if (!msgEl) return;
+    const actionBtn = document.getElementById('stActionBtn');
+    const actionText = document.getElementById('stActionText');
+    const saveBtn = document.getElementById('stSaveBtn');
+    const saveIcon = document.getElementById('stSaveIcon');
+
+    if (badgeEl) {
+      badgeEl.textContent = tip.category;
+      badgeEl.className = `tip-category-badge ${tip.badgeClass || 'badge-warning'}`;
+    }
+    if (counterEl) {
+      counterEl.textContent = `Tip ${currentTipIndex + 1}/${STUDY_TIPS_LIBRARY.length}`;
+    }
+    if (titleEl) {
+      titleEl.textContent = tip.title;
+    }
+    if (msgEl) {
+      msgEl.textContent = tip.body;
+    }
+    if (actionBtn) {
+      actionBtn.href = tip.actionUrl || 'lab.html';
+    }
+    if (actionText) {
+      actionText.textContent = tip.actionText || 'Practice Now →';
+    }
+
+    const savedIds = getSavedTipIds();
+    const isSaved = savedIds.includes(tip.id);
+    if (saveBtn) {
+      saveBtn.classList.toggle('is-saved', isSaved);
+      saveBtn.title = isSaved ? 'Saved in Exam Pocket (Click to remove)' : 'Save to Exam Pocket';
+    }
+    if (saveIcon) {
+      saveIcon.textContent = isSaved ? '🌟' : '⭐';
+    }
+
+    // Populate Quick Recall Quiz
+    const qBox = document.getElementById('stQuizBox');
+    const qQuestion = document.getElementById('stQuizQuestion');
+    const qOptions = document.getElementById('stQuizOptions');
+    const qFeedback = document.getElementById('stQuizFeedback');
+    const qBtnLabel = document.getElementById('stQuizBtnLabel');
+
+    if (qBox && tip.quickCheck) {
+      qBox.style.display = 'block';
+      const answeredIds = getAnsweredQuizIds();
+      const alreadyDone = answeredIds.includes(tip.id);
+
+      if (qBtnLabel) {
+        qBtnLabel.textContent = alreadyDone ? '✓ Quick Recall Completed' : '⚡ Quick Recall Test (+10 XP)';
+      }
+      if (qQuestion) {
+        qQuestion.textContent = tip.quickCheck.question;
+      }
+      if (qFeedback) {
+        qFeedback.style.display = 'none';
+        qFeedback.textContent = '';
+      }
+      if (qOptions) {
+        qOptions.innerHTML = tip.quickCheck.options.map((opt, oIdx) => `
+          <button type="button" class="quiz-opt-btn" onclick="answerTipQuiz('${tip.id}', ${oIdx})">
+            ${escapeHtml(opt.text)}
+          </button>
+        `).join('');
+      }
+    } else if (qBox) {
+      qBox.style.display = 'none';
+    }
+  }
+
+  function cycleStudyTip(delta = 1) {
+    if (window.BrilliantUI && window.BrilliantUI.audio) {
+      window.BrilliantUI.audio.playClick();
+    }
+    renderStudyTipByIndex(currentTipIndex + delta);
+  }
+
+  function toggleTipQuiz() {
+    const content = document.getElementById('stQuizContent');
+    const chevron = document.getElementById('stQuizChevron');
+    if (!content) return;
+    const isHidden = content.style.display === 'none';
+    content.style.display = isHidden ? 'block' : 'none';
+    if (chevron) chevron.classList.toggle('open', isHidden);
+  }
+
+  function answerTipQuiz(tipId, optIdx) {
+    const tip = STUDY_TIPS_LIBRARY.find(t => t.id === tipId);
+    if (!tip || !tip.quickCheck) return;
+
+    const chosen = tip.quickCheck.options[optIdx];
+    if (!chosen) return;
+
+    const qOptions = document.getElementById('stQuizOptions');
+    const qFeedback = document.getElementById('stQuizFeedback');
+    const qBtnLabel = document.getElementById('stQuizBtnLabel');
+
+    if (qOptions) {
+      const btns = qOptions.querySelectorAll('.quiz-opt-btn');
+      btns.forEach((btn, i) => {
+        const opt = tip.quickCheck.options[i];
+        if (opt && opt.correct) {
+          btn.classList.add('is-correct');
+        } else if (i === optIdx && !chosen.correct) {
+          btn.classList.add('is-wrong');
+        }
+      });
+    }
+
+    if (qFeedback) {
+      qFeedback.style.display = 'block';
+      qFeedback.className = `quiz-feedback ${chosen.correct ? 'fb-ok' : 'fb-err'}`;
+      qFeedback.textContent = chosen.explanation;
+    }
+
+    if (chosen.correct) {
+      const answeredIds = getAnsweredQuizIds();
+      if (!answeredIds.includes(tipId)) {
+        answeredIds.push(tipId);
+        try {
+          localStorage.setItem('vlk_answered_tip_quizzes', JSON.stringify(answeredIds));
+        } catch (e) {}
+
+        if (window.GamificationEngine && typeof window.GamificationEngine.addXP === 'function') {
+          window.GamificationEngine.addXP(10, 'Examiner Tip Quick Recall');
+          if (typeof updateGamificationDashboardUI === 'function') {
+            updateGamificationDashboardUI();
+          }
+        }
+      }
+      if (qBtnLabel) {
+        qBtnLabel.textContent = '✓ Quick Recall Mastered (+10 XP)';
+      }
+      if (window.BrilliantUI && window.BrilliantUI.audio) {
+        window.BrilliantUI.audio.playClick();
+      }
+    }
+  }
+
+  function toggleSaveCurrentTip() {
+    const tip = STUDY_TIPS_LIBRARY[currentTipIndex];
+    if (!tip) return;
+
+    let savedIds = getSavedTipIds();
+    const exists = savedIds.includes(tip.id);
+    if (exists) {
+      savedIds = savedIds.filter(id => id !== tip.id);
+    } else {
+      savedIds.push(tip.id);
+    }
+
+    try {
+      localStorage.setItem('vlk_saved_tips', JSON.stringify(savedIds));
+    } catch (e) {}
+
+    renderStudyTipByIndex(currentTipIndex);
+    renderSavedTipsPocket();
+  }
+
+  function removeSavedTip(tipId) {
+    let savedIds = getSavedTipIds().filter(id => id !== tipId);
+    try {
+      localStorage.setItem('vlk_saved_tips', JSON.stringify(savedIds));
+    } catch (e) {}
+    renderStudyTipByIndex(currentTipIndex);
+    renderSavedTipsPocket();
+  }
+
+  function toggleSavedTipsPocket() {
+    const body = document.getElementById('savedTipsBody');
+    const chevron = document.getElementById('savedTipsChevron');
+    if (!body) return;
+    const isHidden = body.style.display === 'none';
+    body.style.display = isHidden ? 'block' : 'none';
+    if (chevron) chevron.classList.toggle('open', isHidden);
+  }
+
+  function renderSavedTipsPocket() {
+    const countChip = document.getElementById('savedTipsCountChip');
+    const container = document.getElementById('savedTipsListContainer');
+    const savedIds = getSavedTipIds();
+
+    if (countChip) {
+      countChip.textContent = `${savedIds.length} Saved`;
+    }
+    if (!container) return;
+
+    const savedTips = STUDY_TIPS_LIBRARY.filter(t => savedIds.includes(t.id));
+    if (savedTips.length === 0) {
+      container.innerHTML = `
+        <div style="grid-column: 1 / -1; text-align: center; padding: 18px 12px; color: var(--text-muted); font-size: 0.82rem;">
+          No tips bookmarked yet. Click the <b>⭐ Save</b> button on any Examiner Study Tip card on your workbench to build your personal KCSE Paper 3 morning revision sheet!
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = savedTips.map(tip => `
+      <div class="saved-tip-pocket-item">
+        <div>
+          <div class="saved-tip-pocket-top">
+            <span class="tip-category-badge ${tip.badgeClass || 'badge-warning'}">${escapeHtml(tip.category)}</span>
+            <button type="button" onclick="removeSavedTip('${tip.id}')" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:0.85rem;" title="Remove from pocket">✕</button>
+          </div>
+          <h4 class="saved-tip-pocket-title" style="margin-top:6px;">${escapeHtml(tip.title)}</h4>
+          <p class="saved-tip-pocket-text" style="margin-top:4px;">${escapeHtml(tip.body)}</p>
+        </div>
+        <div class="saved-tip-pocket-actions">
+          <a href="${escapeHtml(tip.actionUrl)}" style="font-size:0.76rem; font-weight:800; color:var(--cyan-accent); text-decoration:none;">${escapeHtml(tip.actionText)}</a>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  window.cycleStudyTip = cycleStudyTip;
+  window.toggleTipQuiz = toggleTipQuiz;
+  window.answerTipQuiz = answerTipQuiz;
+  window.toggleSaveCurrentTip = toggleSaveCurrentTip;
+  window.removeSavedTip = removeSavedTip;
+  window.toggleSavedTipsPocket = toggleSavedTipsPocket;
+
+  function updateMwalimuAdvice(sessions) {
+    renderSavedTipsPocket();
 
     if (!sessions || sessions.length === 0) {
-      const welcomeTips = [
-        "Jambo! Welcome to VirtuLab Kenya. Start your first Acid-Base titration in Guided Practice mode — I'll guide you step-by-step to master KCSE Paper 3!",
-        "Karibu! Begin with Volumetric Titration or Qualitative Analysis. I will analyze your observations in real-time and provide KNEC examiner tips as you practice!",
-        "Habari! Ready to boost your KCSE Paper 3 score? Practice Acid-Base or Organic Chemistry and I'll give you customized tips based on your accuracy!"
-      ];
-      msgEl.textContent = welcomeTips[Math.floor(Math.random() * welcomeTips.length)];
+      renderStudyTipByIndex(0);
       return;
     }
 
@@ -953,71 +1405,43 @@ requireStudentLogin();
     const recentCorrectCount = sessions.slice(0, 5).filter(s => s.correct).length;
     const isStreak = recentCorrectCount >= 3;
 
-    // Helper to get dynamic item from array based on session ID or rotational seed
-    const pickTip = (arr, seed = 0) => arr[(Math.abs(seed) + Math.floor(Date.now() / 60000)) % arr.length];
+    let matchedIdx = 0;
 
     if (incorrectSessions.length > 0 && (!isStreak || !lastSession.correct)) {
       const recentError = incorrectSessions[0];
-      const typeStr = (recentError.titration_title || recentError.titration_type || recentError.salt_key || recentError.compound_name || '').toLowerCase();
-      const seed = recentError.id || recentError.session_id || Date.now();
+      const typeStr = (recentError.titration_title || recentError.titration_type || recentError.salt_key || recentError.compound_name || recentError.gas_key || recentError.system_id || '').toLowerCase();
 
       if (typeStr.includes('redox') || typeStr.includes('kmno4')) {
-        const tips = [
-          "Tip on Redox Titration (KMnO₄): Potassium permanganate is self-indicating! Stop adding KMnO₄ at the very first permanent faint pink color in the conical flask.",
-          "Redox Tip: Always titrate against warm oxalic acid or Fe²⁺ solution. Ensure you read the top of the dark KMnO₄ meniscus accurately!",
-          "KNEC Redox Mark: Remember that KMnO₄ acts as its own indicator. Adding excess KMnO₄ turns the solution deep purple and forfeits accuracy marks!"
-        ];
-        msgEl.textContent = pickTip(tips, seed);
+        matchedIdx = STUDY_TIPS_LIBRARY.findIndex(t => t.id === 'tip-redox-kmno4');
       } else if (typeStr.includes('dibasic') || typeStr.includes('h2so4') || typeStr.includes('sulfuric')) {
-        const tips = [
-          "Tip on Dibasic Acid Titration: Sulfuric acid (H₂SO₄) reacts in a 1:2 mole ratio with NaOH. Always multiply acid volume by 2 when calculating molarity!",
-          "Dibasic Acid Tip: Pay close attention near the endpoint. Add titrant drop-by-drop near color transition to ensure ±0.05 mL accuracy for full KCSE marks!",
-          "KNEC Titration Rule: Record all burette readings to 2 decimal places ending strictly in .00 or .50 (e.g. 23.50 cm³, not 23.5 cm)!"
-        ];
-        msgEl.textContent = pickTip(tips, seed);
+        matchedIdx = STUDY_TIPS_LIBRARY.findIndex(t => t.id === 'tip-dibasic-ratio');
       } else if (typeStr.includes('qualitative') || recentError.salt_key || recentError.student_cation) {
-        const tips = [
-          "Tip on Qualitative Salt ID: Zn²⁺, Al³⁺, and Pb²⁺ all form white ppts soluble in excess NaOH. Use excess NH₃(aq) to confirm Zn²⁺ (soluble) vs Al³⁺/Pb²⁺ (insoluble)!",
-          "Salt Analysis Tip: To distinguish Pb²⁺ from Al³⁺, add dilute KI(aq). Pb²⁺ forms a bright yellow precipitate of PbI₂, while Al³⁺ gives no precipitate!",
-          "KNEC Observation Rule: Write full descriptive observations (e.g. 'White precipitate soluble in excess to form a colorless solution') to earn maximum KCSE marks!"
-        ];
-        msgEl.textContent = pickTip(tips, seed);
+        const cationStr = (recentError.student_cation || recentError.true_cation || '').toLowerCase();
+        if (cationStr.includes('zn')) {
+          matchedIdx = STUDY_TIPS_LIBRARY.findIndex(t => t.id === 'tip-zn-excess-nh3');
+        } else if (recentError.anion_correct === false) {
+          matchedIdx = STUDY_TIPS_LIBRARY.findIndex(t => t.id === 'tip-so3-so4-distinction');
+        } else {
+          matchedIdx = STUDY_TIPS_LIBRARY.findIndex(t => t.id === 'tip-al-pb-distinction');
+        }
       } else if (typeStr.includes('organic') || recentError.compound_name || recentError.student_functional_group) {
-        const tips = [
-          "Tip on Organic Chemistry: Alkenes decolorise bromine water immediately without sunlight. Alkanes require UV light for substitution to occur!",
-          "Organic Tip: Carboxylic acids (-COOH) react with NaHCO₃ to produce effervescence of CO₂ gas that turns lime water milky. This is the official KNEC test!",
-          "Organic Functional Groups: Warm primary alcohols with acidified K₂Cr₂O₇ — orange dichromate turns green as Cr³⁺ ions are formed."
-        ];
-        msgEl.textContent = pickTip(tips, seed);
-      } else if (typeStr.includes('precipit') || typeStr.includes('mohr')) {
-        const tips = [
-          "Tip on Mohr's Method (Precipitation Titration): Potassium chromate forms a reddish-brown precipitate of Ag₂CrO₄ at the endpoint. Stop at the first permanent reddish-brown tint!",
-          "Precipitation Titration Tip: Vigorous shaking during titration ensures complete precipitation of silver chloride before the endpoint color change."
-        ];
-        msgEl.textContent = pickTip(tips, seed);
+        matchedIdx = STUDY_TIPS_LIBRARY.findIndex(t => t.id === 'tip-br2-organic-keyword');
+      } else if (typeStr.includes('energy') || recentError.en_system_id) {
+        matchedIdx = STUDY_TIPS_LIBRARY.findIndex(t => t.id === 'tip-enthalpy-cooling-curve');
+      } else if (typeStr.includes('rate') || recentError.rate_exp_type) {
+        matchedIdx = STUDY_TIPS_LIBRARY.findIndex(t => t.id === 'tip-rates-disappearing-cross');
+      } else if (typeStr.includes('gas') || recentError.gas_key) {
+        matchedIdx = STUDY_TIPS_LIBRARY.findIndex(t => t.id === 'tip-ammonia-drying');
       } else {
-        const tips = [
-          "Tip on Volumetric Analysis: Always discard your first trial (rough) and average only concordant titres that differ by no more than ±0.10 cm³!",
-          "Burette Reading Tip: Ensure eye level is directly horizontal with the lower meniscus of colorless liquids to prevent parallax error!",
-          "KNEC Marking Tip: Always state units clearly (e.g. cm³, mol/dm³, g/dm³) in your final calculation steps to avoid penalty marks!"
-        ];
-        msgEl.textContent = pickTip(tips, seed);
+        matchedIdx = STUDY_TIPS_LIBRARY.findIndex(t => t.id === 'tip-concordancy-rule');
       }
-    } else if (isStreak) {
-      const streakTips = [
-        `Hongera! 🎯 Excellent accuracy streak (${recentCorrectCount}/5 recent correct)! You are building solid paper 3 practical precision. Try KCSE Exam Mode next!`,
-        `Superb work! 🌟 You've maintained high accuracy across your recent sessions. Challenge your speed in the 15-minute KCSE Exam Mode!`,
-        `Mastery streak active! 🔥 Your observations and calculations are highly accurate. Explore Qualitative or Organic Chemistry to cover the full KCSE Paper 3 syllabus!`
-      ];
-      msgEl.textContent = pickTip(streakTips, sessions.length);
     } else {
-      const generalTips = [
-        "Hongera! Your recent session was accurate. Keep practicing different titrations and salt IDs to build complete KCSE Paper 3 mastery!",
-        "Great job! Remember: KNEC Paper 3 evaluates burette accuracy (±0.05 cm³), concordant titres, and standard observation terminology.",
-        "Solid progress! Try testing your knowledge in Qualitative Salt Analysis or Organic Functional Groups to earn your Chemistry Prodigy badge!"
-      ];
-      msgEl.textContent = pickTip(generalTips, sessions.length);
+      // Rotate based on session count so student sees fresh high-yield tips as they progress
+      matchedIdx = sessions.length % STUDY_TIPS_LIBRARY.length;
     }
+
+    if (matchedIdx < 0) matchedIdx = 0;
+    renderStudyTipByIndex(matchedIdx);
   }
 
   function updateReadinessScore(sessions) {
@@ -2078,6 +2502,7 @@ requireStudentLogin();
       ];
       cachedStudentSessions = fallbackSessions;
       updateReadinessScore(fallbackSessions);
+      updateMwalimuAdvice(fallbackSessions);
       try {
         renderStudentCharts(fallbackSessions, null);
       } catch (chartErr) {
@@ -2706,6 +3131,8 @@ requireStudentLogin();
     }
   }
 
+  renderStudyTipByIndex(0);
+  renderSavedTipsPocket();
   loadBadges();
   loadLeaderboard();
   loadAssignments();

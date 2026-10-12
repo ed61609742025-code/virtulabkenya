@@ -468,7 +468,7 @@
                 <span class="user-sheet-link-icon">🔒</span>
                 <span>Security &amp; Password</span>
               </button>
-              <button type="button" onclick="window.VLKPwa && window.VLKPwa.showInstallModal(); closeUserDropdown();" class="user-sheet-link">
+              <button type="button" onclick="(window.installVirtuLabApp || (window.VLKPwa && window.VLKPwa.installDirectly))(); closeUserDropdown();" class="user-sheet-link">
                 <span class="user-sheet-link-icon">📲</span>
                 <span style="color:var(--cyan-accent, #0284C7); font-weight:800;">Install App (PWA)</span>
               </button>

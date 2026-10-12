@@ -143,22 +143,191 @@
   box-sizing: border-box;
 }
 
-/* Connecting Line between nodes on desktop */
+/* Static pseudo-line retired in favor of dynamic SVG connectors */
 .st-nodes-track::before {
-  content: '';
-  position: absolute;
-  top: 50px;
-  left: 12%;
-  right: 12%;
-  height: 3px;
-  background: var(--b-border-strong);
-  border-radius: 4px;
-  z-index: 1;
-  pointer-events: none;
+  display: none !important;
 }
 
-.st-nodes-track.track-count-1::before {
-  display: none;
+/* Dynamic SVG Connector Overlay */
+.st-connector-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: visible;
+}
+
+/* Subtle background conduit track (gives tactile 3D depth) */
+.st-connector-bg {
+  fill: none;
+  stroke: var(--b-border-strong, #CBD5E1);
+  stroke-width: 5px;
+  stroke-linecap: round;
+  transition: stroke 0.3s ease;
+}
+
+[data-theme="dark"] .st-connector-bg {
+  stroke: rgba(255, 255, 255, 0.12);
+}
+
+/* Dynamic foreground progress paths */
+.st-connector-path {
+  fill: none;
+  stroke-linecap: round;
+  transition: stroke 0.3s ease, filter 0.3s ease;
+}
+
+/* State 1: Conquered & Mastered Practical Link (Emerald) */
+.st-connector-path.st-path-completed {
+  stroke: #10B981;
+  stroke-width: 3.5px;
+  filter: drop-shadow(0 0 3px rgba(16, 185, 129, 0.35));
+}
+
+[data-theme="dark"] .st-connector-path.st-path-completed {
+  stroke: #34D399;
+  filter: drop-shadow(0 0 5px rgba(52, 211, 153, 0.45));
+}
+
+/* State 2: Active Transition Link into Next-Up Practical (Cyan / Sky) */
+.st-connector-path.st-path-active {
+  stroke: #0284C7;
+  stroke-width: 3.5px;
+  stroke-dasharray: 8 6;
+  animation: stDashFlow 1.2s linear infinite;
+  filter: drop-shadow(0 0 4px rgba(2, 132, 199, 0.45));
+}
+
+[data-theme="dark"] .st-connector-path.st-path-active {
+  stroke: #38BDF8;
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.55));
+}
+
+/* State 3: Upcoming / Locked Practical Link (Muted Dashed) */
+.st-connector-path.st-path-upcoming {
+  stroke: var(--b-border-strong, #CBD5E1);
+  stroke-width: 2.5px;
+  stroke-dasharray: 4 6;
+  opacity: 0.65;
+}
+
+[data-theme="dark"] .st-connector-path.st-path-upcoming {
+  stroke: rgba(255, 255, 255, 0.2);
+  opacity: 0.75;
+}
+
+@keyframes stDashFlow {
+  to {
+    stroke-dashoffset: -28;
+  }
+}
+
+/* ── INTER-BRANCH MILESTONE BRIDGE CONNECTORS ── */
+.st-branch-bridge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: -18px auto;
+  position: relative;
+  z-index: 3;
+  pointer-events: none;
+  width: 100%;
+}
+
+.st-bridge-line {
+  width: 3px;
+  height: 22px;
+  background: var(--b-border-strong, #CBD5E1);
+  transition: all 0.3s ease;
+  border-radius: 2px;
+}
+
+[data-theme="dark"] .st-bridge-line {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.st-bridge-badge {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--b-surface, #FFFFFF);
+  border: 2px solid var(--b-border-strong, #CBD5E1);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: var(--b-text-muted, #64748B);
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+[data-theme="dark"] .st-bridge-badge {
+  background: var(--card-bg, #1E293B);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #94A3B8;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+}
+
+/* Bridge State: Completed */
+.st-branch-bridge.bridge-completed .st-bridge-line {
+  background: #10B981;
+}
+
+[data-theme="dark"] .st-branch-bridge.bridge-completed .st-bridge-line {
+  background: #34D399;
+}
+
+.st-branch-bridge.bridge-completed .st-bridge-badge {
+  border-color: #10B981;
+  background: #ECFDF5;
+  color: #059669;
+}
+
+[data-theme="dark"] .st-branch-bridge.bridge-completed .st-bridge-badge {
+  background: rgba(16, 185, 129, 0.18);
+  border-color: #34D399;
+  color: #34D399;
+}
+
+/* Bridge State: Active Transition into Next Branch */
+.st-branch-bridge.bridge-active .st-bridge-line {
+  background: #0284C7;
+  box-shadow: 0 0 8px rgba(2, 132, 199, 0.4);
+}
+
+[data-theme="dark"] .st-branch-bridge.bridge-active .st-bridge-line {
+  background: #38BDF8;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.45);
+}
+
+.st-branch-bridge.bridge-active .st-bridge-badge {
+  border-color: #0284C7;
+  background: #F0F9FF;
+  color: #0284C7;
+  animation: stBridgePulse 2s infinite ease-in-out;
+}
+
+[data-theme="dark"] .st-branch-bridge.bridge-active .st-bridge-badge {
+  background: rgba(2, 132, 199, 0.2);
+  border-color: #38BDF8;
+  color: #38BDF8;
+}
+
+@keyframes stBridgePulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.4);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 6px rgba(2, 132, 199, 0);
+  }
 }
 
 .st-nodes-track.track-count-1 {
@@ -1018,6 +1187,20 @@
     box-sizing: border-box !important;
     padding: 14px 2px 6px !important;
     align-items: start !important;
+    position: relative !important;
+    overflow: visible !important;
+  }
+
+  .st-branch-bridge {
+    margin: -12px auto !important;
+  }
+  .st-bridge-line {
+    height: 16px !important;
+  }
+  .st-bridge-badge {
+    width: 26px !important;
+    height: 26px !important;
+    font-size: 0.70rem !important;
   }
 
   /* 4 nodes: 2x2 grid on mobile so every node has ample room and fits inside the card cleanly */

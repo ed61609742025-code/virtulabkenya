@@ -304,7 +304,7 @@
       <div class="skill-tree-pathway">
     `;
 
-    PATHWAY_DATA.forEach((branch) => {
+    PATHWAY_DATA.forEach((branch, bIdx) => {
       const isCapstoneBranch = !!branch.isCapstone;
       const nodeCount = branch.nodes.length;
       html += `
@@ -317,6 +317,7 @@
             </div>
 
             <div class="st-nodes-track track-count-${nodeCount}" style="--node-count: ${nodeCount};">
+              <svg class="st-connector-svg" aria-hidden="true"></svg>
         `;
 
       branch.nodes.forEach((node) => {
@@ -380,13 +381,49 @@
       });
 
       html += `
-          </div>
+            </div>
         </section>
       `;
+
+      // Inter-branch milestone bridge (connects sequential syllabus branches)
+      if (bIdx < PATHWAY_DATA.length - 1) {
+        const isBranchCompleted = branch.nodes.every(n => n.progress && n.progress.completed);
+        const nextBranch = PATHWAY_DATA[bIdx + 1];
+        const isNextBranchActive = nextBranch && nextBranch.nodes.some(n => !n.progress || !n.progress.completed) && isBranchCompleted;
+
+        let bridgeState = 'bridge-upcoming';
+        let bridgeIcon = '↓';
+        if (isBranchCompleted) {
+          if (isNextBranchActive) {
+            bridgeState = 'bridge-active';
+            bridgeIcon = '⚡';
+          } else {
+            bridgeState = 'bridge-completed';
+            bridgeIcon = '✓';
+          }
+        }
+
+        html += `
+          <div class="st-branch-bridge ${bridgeState}" aria-hidden="true" title="KCSE Syllabus Milestone Bridge">
+            <div class="st-bridge-line"></div>
+            <div class="st-bridge-badge">
+              <span class="st-bridge-icon">${bridgeIcon}</span>
+            </div>
+            <div class="st-bridge-line"></div>
+          </div>
+        `;
+      }
     });
 
     html += `</div>`;
     container.innerHTML = html;
+
+    // Trigger SVG connector drawing after DOM layout stabilizes
+    requestAnimationFrame(() => {
+      drawSkillTreeConnectors();
+      setTimeout(drawSkillTreeConnectors, 120);
+    });
+    setupResizeObserver();
   }
 
   // ── 3. Interactive Node Details Popover / Modal ───────────────
@@ -472,13 +509,129 @@
 
     if (isTree) {
       renderSkillTree();
+      requestAnimationFrame(() => {
+        drawSkillTreeConnectors();
+      });
     }
+  }
+
+  // ── 5. Dynamic SVG Connectors Between Practical Nodes ─────────
+  function drawSkillTreeConnectors() {
+    const container = document.getElementById('skillTreeContainer');
+    if (!container || container.style.display === 'none' || container.offsetParent === null) {
+      return;
+    }
+
+    const tracks = container.querySelectorAll('.st-nodes-track');
+    if (!tracks.length) return;
+
+    tracks.forEach((track) => {
+      let svg = track.querySelector('.st-connector-svg');
+      if (!svg) {
+        svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('class', 'st-connector-svg');
+        svg.setAttribute('aria-hidden', 'true');
+        track.insertBefore(svg, track.firstChild);
+      }
+
+      const nodeWrappers = Array.from(track.querySelectorAll('.st-node-wrapper'));
+      if (nodeWrappers.length < 2) {
+        svg.innerHTML = '';
+        return;
+      }
+
+      const trackRect = track.getBoundingClientRect();
+      if (trackRect.width <= 0 || trackRect.height <= 0) return;
+
+      svg.setAttribute('viewBox', `0 0 ${trackRect.width} ${trackRect.height}`);
+      svg.setAttribute('width', `${trackRect.width}`);
+      svg.setAttribute('height', `${trackRect.height}`);
+
+      const points = nodeWrappers.map((wrapper) => {
+        const circle = wrapper.querySelector('.st-node-circle');
+        if (!circle) return null;
+        const cRect = circle.getBoundingClientRect();
+        return {
+          x: (cRect.left + cRect.width / 2) - trackRect.left,
+          y: (cRect.top + cRect.height / 2) - trackRect.top,
+          isCompleted: wrapper.classList.contains('completed'),
+          isActive: wrapper.classList.contains('active')
+        };
+      }).filter(Boolean);
+
+      if (points.length < 2) {
+        svg.innerHTML = '';
+        return;
+      }
+
+      let pathsHtml = '';
+
+      for (let i = 0; i < points.length - 1; i++) {
+        const p1 = points[i];
+        const p2 = points[i + 1];
+
+        let d = '';
+        const dy = p2.y - p1.y;
+
+        if (Math.abs(dy) < 16) {
+          // Same horizontal row
+          d = `M ${p1.x.toFixed(1)} ${p1.y.toFixed(1)} L ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
+        } else {
+          // Multi-row transition (e.g. mobile 2x2 grid)
+          const cp1x = p1.x.toFixed(1);
+          const cp1y = (p1.y + dy * 0.55).toFixed(1);
+          const cp2x = p2.x.toFixed(1);
+          const cp2y = (p2.y - dy * 0.55).toFixed(1);
+          d = `M ${p1.x.toFixed(1)} ${p1.y.toFixed(1)} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
+        }
+
+        // Determine segment visual state
+        let segClass = 'st-path-upcoming';
+        if (p1.isCompleted && p2.isCompleted) {
+          segClass = 'st-path-completed';
+        } else if (p1.isCompleted && (p2.isActive || !p2.isCompleted)) {
+          segClass = 'st-path-active';
+        } else if (p1.isActive) {
+          segClass = 'st-path-upcoming';
+        }
+
+        pathsHtml += `
+          <path d="${d}" class="st-connector-bg" />
+          <path d="${d}" class="st-connector-path ${segClass}" />
+        `;
+      }
+
+      svg.innerHTML = pathsHtml;
+    });
+  }
+
+  let resizeDebounce = null;
+  function handleSkillTreeResize() {
+    if (resizeDebounce) clearTimeout(resizeDebounce);
+    resizeDebounce = setTimeout(() => {
+      drawSkillTreeConnectors();
+    }, 60);
+  }
+  window.addEventListener('resize', handleSkillTreeResize);
+  window.addEventListener('orientationchange', handleSkillTreeResize);
+
+  let treeResizeObserver = null;
+  function setupResizeObserver() {
+    if (typeof ResizeObserver === 'undefined') return;
+    if (treeResizeObserver) treeResizeObserver.disconnect();
+    const container = document.getElementById('skillTreeContainer');
+    if (!container) return;
+    treeResizeObserver = new ResizeObserver(() => {
+      drawSkillTreeConnectors();
+    });
+    treeResizeObserver.observe(container);
   }
 
   // ── Public API ───────────────────────────────────────────────
   window.SkillTree = {
     render: renderSkillTree,
     renderSkillTree: renderSkillTree,
+    drawConnectors: drawSkillTreeConnectors,
     openModal: openNodeModal,
     closeModal: closeNodeModal,
     switchView: switchPathwayView,

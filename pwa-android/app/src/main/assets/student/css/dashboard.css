@@ -5224,3 +5224,26 @@ html, body {
   padding-top: 8px !important;
 }
 
+
+
+/* ── ADAPTIVE COACHING & EXAMINER GUIDANCE ── */
+.zone-coaching {
+  margin-top: 6px;
+  margin-bottom: 22px;
+}
+
+.coaching-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  align-items: stretch;
+}
+
+.coaching-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.coaching-col .guidance-card {
+  height: 100%;
+}

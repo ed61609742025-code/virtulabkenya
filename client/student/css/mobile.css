@@ -742,6 +742,18 @@
   }
 }
 
+
+  /* Adaptive Coaching Section on Mobile */
+  .zone-coaching {
+    margin-top: 4px !important;
+    margin-bottom: 14px !important;
+  }
+
+  .coaching-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
 /* ── I. Smart Assignment Quick Alert Strip ─────────────────── */
 .assignment-alert-strip {
   display: flex;

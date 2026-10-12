@@ -681,6 +681,56 @@
         <a href="#zone_assignments" onclick="focusAssignmentsSection(event)" class="aas-btn" id="aasBtn">View Assignment →</a>
       </div>
 
+      <!-- Zone 0: Adaptive Examiner Coaching & Suggested Practical (Personalized Guidance) -->
+      <section class="activity-zone-wrap zone-coaching" id="zone_coaching" aria-label="Personalized Examiner Coaching & Recommendations">
+        <div class="coaching-grid">
+          
+          <!-- Column 1: Examiner Study Tip (Dismissible) -->
+          <div class="coaching-col coaching-tip-wrap">
+            <!-- Study Tip Restore Bar (Appears when tip is dismissed) -->
+            <div id="studyTipRestoreWrap" style="display:none; margin-bottom:10px; text-align:right;">
+              <button type="button" class="tip-restore-btn" onclick="restoreStudyTip()" title="Show examiner study tip">
+                <span>💡 Show Study Tip</span>
+              </button>
+            </div>
+
+            <!-- Study Tip Card -->
+            <div class="guidance-card tip-card" id="studyTipCard">
+              <div class="guidance-header">
+                <span class="guidance-title" data-i18n="mwalimu_diag_title">Study Tip</span>
+                <div style="display:flex; align-items:center; gap:8px;">
+                  <span class="guidance-badge" data-i18n="pedagogical_hint">Tip</span>
+                  <button type="button" class="tip-dismiss-btn" onclick="dismissStudyTip()" aria-label="Dismiss study tip" title="Dismiss study tip">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                  </button>
+                </div>
+              </div>
+              <p id="mwalimuMessage" class="guidance-body">
+                Analyzing your practical logs to suggest focused revision areas…
+              </p>
+            </div>
+          </div>
+
+          <!-- Column 2: Suggested Practical Card (Targeted Adaptive Revision) -->
+          <div class="coaching-col coaching-rec-wrap" id="adaptiveRecCard">
+            <div class="guidance-card rec-card">
+              <div class="guidance-header">
+                <span class="guidance-title" data-i18n="prescribed_practical">Suggested Practical</span>
+                <span class="guidance-badge rec-badge" id="recReasonBadge">Syllabus Focus</span>
+              </div>
+              <h4 class="rec-title" id="recTitle">Redox Titration (Fe²⁺ vs KMnO₄)</h4>
+              <p class="guidance-body" id="recDesc">
+                Practice self-indicating titration transitions without external indicators.
+              </p>
+              <a id="recActionBtn" href="lab.html?studyMode=guided" class="rec-cta-btn" data-tooltip="Launch this practical simulation session" data-tooltip-pos="top">
+                <span data-i18n="launch_prescribed">Start Session →</span>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
       <!-- Zone 1 (PRIMARY): Practical Chemistry Topics (Pathway & Grid) -->
       <section class="activity-zone-wrap zone-pathway" id="zone_pathway">
         <div class="activity-zone-header">
@@ -895,78 +945,30 @@
         </div>
       </section>
 
-      <!-- Zone 2: Continuous Assessment & Teacher Assignments + Study Guidance -->
+      <!-- Zone 2: Continuous Assessment & Teacher Assignments -->
       <section id="zone_assignments" class="activity-zone-wrap zone-priority" style="margin-top: 28px;">
-        <div class="priority-action-grid">
-          
-          <!-- Left: Teacher Assignments Block -->
-          <div class="priority-card-block">
-            <div class="block-header">
-              <div class="block-title-row">
-                <h3 class="block-title" data-i18n="prescribed_ca">Teacher Assignments</h3>
-                <span class="dash-section-badge badge-cyan" id="caProgressPercentBadge">0% Complete</span>
-              </div>
-              <!-- Task Progress Header -->
-              <div class="ca-progress-header" id="caProgressHeader">
-                <div class="ca-progress-bar-wrap" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                  <div class="ca-progress-fill" id="caProgressFill" style="width: 0%;"></div>
-                </div>
-                <div class="ca-stat-chips" id="caStatChips">
-                  <div class="ca-stat-chip chip-marked" id="statChipMarked">0 Graded</div>
-                  <div class="ca-stat-chip chip-review" id="statChipReview">0 Under Review</div>
-                  <div class="ca-stat-chip chip-pending" id="statChipPending">0 Pending</div>
-                </div>
-              </div>
+        <div class="priority-card-block" style="width: 100%;">
+          <div class="block-header">
+            <div class="block-title-row">
+              <h3 class="block-title" data-i18n="prescribed_ca">Teacher Assignments</h3>
+              <span class="dash-section-badge badge-cyan" id="caProgressPercentBadge">0% Complete</span>
             </div>
-
-            <div id="assignmentsList" class="assignments-grid-container">
-              <div class="empty-box">Loading assignments…</div>
-            </div>
-          </div>
-
-          <!-- Right: Study Guidance & Targeted Suggestions -->
-          <div class="priority-side-block" id="adaptiveRecCardWrap">
-            <div id="adaptiveRecCard">
-              <!-- Study Tip Restore Bar (Appears when tip is dismissed) -->
-              <div id="studyTipRestoreWrap" style="display:none; margin-bottom:10px; text-align:right;">
-                <button type="button" class="tip-restore-btn" onclick="restoreStudyTip()" title="Show examiner study tip">
-                  <span>💡 Show Study Tip</span>
-                </button>
+            <!-- Task Progress Header -->
+            <div class="ca-progress-header" id="caProgressHeader">
+              <div class="ca-progress-bar-wrap" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                <div class="ca-progress-fill" id="caProgressFill" style="width: 0%;"></div>
               </div>
-
-              <!-- Study Tip Card (Dismissible) -->
-              <div class="guidance-card tip-card" id="studyTipCard">
-                <div class="guidance-header">
-                  <span class="guidance-title" data-i18n="mwalimu_diag_title">Study Tip</span>
-                  <div style="display:flex; align-items:center; gap:8px;">
-                    <span class="guidance-badge" data-i18n="pedagogical_hint">Tip</span>
-                    <button type="button" class="tip-dismiss-btn" onclick="dismissStudyTip()" aria-label="Dismiss study tip" title="Dismiss study tip">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                    </button>
-                  </div>
-                </div>
-                <p id="mwalimuMessage" class="guidance-body">
-                  Analyzing your practical logs to suggest focused revision areas…
-                </p>
-              </div>
-
-              <!-- Suggested Practical Card -->
-              <div class="guidance-card rec-card" style="margin-top: 14px;">
-                <div class="guidance-header">
-                  <span class="guidance-title" data-i18n="prescribed_practical">Suggested Practical</span>
-                  <span class="guidance-badge rec-badge" id="recReasonBadge">Syllabus Focus</span>
-                </div>
-                <h4 class="rec-title" id="recTitle">Redox Titration (Fe²⁺ vs KMnO₄)</h4>
-                <p class="guidance-body" id="recDesc">
-                  Practice self-indicating titration transitions without external indicators.
-                </p>
-                <a id="recActionBtn" href="lab.html?studyMode=guided" class="rec-cta-btn" data-tooltip="Launch this practical simulation session" data-tooltip-pos="top">
-                  <span data-i18n="launch_prescribed">Start Session →</span>
-                </a>
+              <div class="ca-stat-chips" id="caStatChips">
+                <div class="ca-stat-chip chip-marked" id="statChipMarked">0 Graded</div>
+                <div class="ca-stat-chip chip-review" id="statChipReview">0 Under Review</div>
+                <div class="ca-stat-chip chip-pending" id="statChipPending">0 Pending</div>
               </div>
             </div>
           </div>
 
+          <div id="assignmentsList" class="assignments-grid-container">
+            <div class="empty-box">Loading assignments…</div>
+          </div>
         </div>
       </section>
 

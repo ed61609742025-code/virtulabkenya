@@ -745,20 +745,62 @@
             </div>
           </div>
 
-          <!-- Column 2: Suggested Practical Card (Targeted Adaptive Revision) -->
+          <!-- Column 2: Upgraded Suggested Practical Card (Targeted Adaptive Recommender) -->
           <div class="coaching-col coaching-rec-wrap" id="adaptiveRecCard">
-            <div class="guidance-card rec-card">
+            <div class="guidance-card rec-card upgraded-rec-card">
               <div class="guidance-header">
-                <span class="guidance-title" data-i18n="prescribed_practical">Suggested Practical</span>
-                <span class="guidance-badge rec-badge" id="recReasonBadge">Syllabus Focus</span>
+                <div class="rec-header-left">
+                  <span class="guidance-badge rec-badge" id="recReasonBadge">🆕 New Syllabus Topic</span>
+                  <span class="rec-counter" id="recCounter">1/4</span>
+                </div>
+                <div class="rec-header-actions">
+                  <button type="button" class="rec-tool-btn" onclick="cycleRecommendedPractical(-1)" title="Previous recommendation" aria-label="Previous recommendation">‹</button>
+                  <button type="button" class="rec-tool-btn" onclick="cycleRecommendedPractical(1)" title="Next recommendation" aria-label="Next recommendation">›</button>
+                </div>
               </div>
-              <h4 class="rec-title" id="recTitle">Redox Titration (Fe²⁺ vs KMnO₄)</h4>
-              <p class="guidance-body" id="recDesc">
-                Practice self-indicating titration transitions without external indicators.
-              </p>
-              <a id="recActionBtn" href="lab.html?studyMode=guided" class="rec-cta-btn" data-tooltip="Launch this practical simulation session" data-tooltip-pos="top">
-                <span data-i18n="launch_prescribed">Start Session →</span>
-              </a>
+
+              <div class="rec-content-body">
+                <div class="rec-title-row">
+                  <span class="rec-icon-badge" id="recIcon">⚗️</span>
+                  <div style="min-width:0; flex:1;">
+                    <h4 class="rec-title" id="recTitle">Redox Titration (Fe²⁺ vs KMnO₄)</h4>
+                    <div class="rec-meta-pills" id="recMetaPills">
+                      <span class="rec-meta-pill" id="recPaperTag">📋 Paper 3 · Q1 (15 Marks)</span>
+                      <span class="rec-meta-pill" id="recTimeTag">⏱️ ~15 mins</span>
+                      <span class="rec-meta-pill rec-xp-pill" id="recXpTag">✨ +50 XP</span>
+                    </div>
+                  </div>
+                </div>
+                <p class="guidance-body rec-desc-text" id="recDesc">
+                  Practice self-indicating KMnO₄ endpoints (first permanent pale pink tint) and 5:1 Fe²⁺:MnO₄⁻ stoichiometric calculations.
+                </p>
+              </div>
+
+              <!-- Topic Mastery & Target Bar -->
+              <div class="rec-mastery-box" id="recMasteryBox">
+                <div class="rec-mastery-top">
+                  <span class="rec-mastery-label" id="recMasteryLabel">Current Mastery: Not Started (0 runs)</span>
+                  <span class="rec-mastery-goal" id="recMasteryGoal">Goal: 80%+ (3★)</span>
+                </div>
+                <div class="rec-mastery-track">
+                  <div class="rec-mastery-fill" id="recMasteryFill" style="width: 8%;"></div>
+                </div>
+              </div>
+
+              <!-- Dual-Action Launch Bar -->
+              <div class="rec-action-bar">
+                <a id="recActionBtn" href="lab.html?type=redox" class="rec-cta-btn" data-tooltip="Launch this practical simulation session" data-tooltip-pos="top">
+                  <span id="recActionText" data-i18n="launch_prescribed">Start Practical →</span>
+                </a>
+                <div class="rec-secondary-actions">
+                  <a id="recWarmupBtn" href="speed_battle.html?mode=redox" class="rec-warmup-chip" title="Take a quick 45-second warmup drill on this topic">
+                    <span>⚡ 45s Warmup</span>
+                  </a>
+                  <button type="button" class="rec-cycle-chip" onclick="cycleRecommendedPractical(1)" title="View next suggested practical">
+                    <span>Next ↻</span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 

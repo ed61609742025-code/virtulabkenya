@@ -465,6 +465,9 @@ requireStudentLogin();
       window._vlk_student_assignments = assignments;
 
       updateNotificationsUI(assignments);
+      if (typeof renderAdaptiveRecommendation === 'function') {
+        renderAdaptiveRecommendation(window.latestSessions || cachedStudentSessions || []);
+      }
 
       const progressHeader = document.getElementById('caProgressHeader');
 
@@ -1559,110 +1562,376 @@ requireStudentLogin();
     setStreak(Math.max(1, streak));
   }
 
-  function computeAdaptiveRecommendation(sessions) {
+  let adaptiveRecQueue = [];
+  let currentRecIndex = 0;
+
+  function buildAdaptiveRecommendationsQueue(sessions) {
     const topics = {
-      acidBase: { key: 'acidBase', title: 'Acid-Base Titration (HCl vs NaOH)', icon: '🧪', url: 'lab.html?type=acidBase', total: 0, correct: 0, lastTime: 0 },
-      redox: { key: 'redox', title: 'Redox Titration (Fe²⁺ vs KMnO₄)', icon: '⚗️', url: 'lab.html?type=redox', total: 0, correct: 0, lastTime: 0 },
-      precipitation: { key: 'precipitation', title: 'Precipitation Titration (Mohr\'s Method)', icon: '💧', url: 'lab.html?type=precipitation', total: 0, correct: 0, lastTime: 0 },
-      complexometric: { key: 'complexometric', title: 'Complexometric Titration (EDTA)', icon: '🧬', url: 'lab.html?type=complexometric', total: 0, correct: 0, lastTime: 0 },
-      qualitative: { key: 'qualitative', title: 'Qualitative Salt Analysis', icon: '🧫', url: 'qualitative.html', total: 0, correct: 0, lastTime: 0 }
+      acidBase: {
+        key: 'acidBase',
+        title: 'Acid-Base Titration (HCl vs NaOH)',
+        icon: '🧪',
+        url: 'lab.html?type=acidBase',
+        warmupMode: 'acidBase',
+        paperTag: '📋 Paper 3 · Q1 (15 Marks)',
+        timeTag: '⏱️ ~15 mins',
+        xpTag: '✨ +50 XP',
+        focusHint: 'Master 2 decimal place burette readings (.00 or .05) and ±0.20 cm³ concordancy.',
+        total: 0,
+        correct: 0,
+        lastTime: 0
+      },
+      redox: {
+        key: 'redox',
+        title: 'Redox Titration (Fe²⁺ vs KMnO₄)',
+        icon: '⚗️',
+        url: 'lab.html?type=redox',
+        warmupMode: 'redox',
+        paperTag: '📋 Paper 3 · Q1 (15 Marks)',
+        timeTag: '⏱️ ~15 mins',
+        xpTag: '✨ +55 XP',
+        focusHint: 'Practice self-indicating KMnO₄ endpoints (first permanent pale pink tint) and 5:1 Fe²⁺:MnO₄⁻ stoichiometric ratios.',
+        total: 0,
+        correct: 0,
+        lastTime: 0
+      },
+      dibasic: {
+        key: 'dibasic',
+        title: 'Dibasic Acid Standardisation (H₂X)',
+        icon: '⚖️',
+        url: 'lab.html?type=dibasic',
+        warmupMode: 'acidBase',
+        paperTag: '📋 Paper 3 · Q1 (15 Marks)',
+        timeTag: '⏱️ ~15 mins',
+        xpTag: '✨ +55 XP',
+        focusHint: 'Master 1:2 acid-to-NaOH stoichiometric mole ratios and Relative Formula Mass (RFM) calculations.',
+        total: 0,
+        correct: 0,
+        lastTime: 0
+      },
+      precipitation: {
+        key: 'precipitation',
+        title: "Precipitation Titration (Mohr's Method)",
+        icon: '💧',
+        url: 'lab.html?type=precipitation',
+        warmupMode: 'precipitation',
+        paperTag: '📋 Paper 3 · Q1 (12 Marks)',
+        timeTag: '⏱️ ~12 mins',
+        xpTag: '✨ +50 XP',
+        focusHint: 'Detect the brick-red Ag₂CrO₄ endpoint precipitate using K₂CrO₄ indicator.',
+        total: 0,
+        correct: 0,
+        lastTime: 0
+      },
+      qualitative: {
+        key: 'qualitative',
+        title: 'Qualitative Inorganic Salt Analysis',
+        icon: '🧫',
+        url: 'qualitative.html',
+        warmupMode: 'qualitative',
+        paperTag: '📋 Paper 3 · Q2 (14 Marks)',
+        timeTag: '⏱️ ~15 mins',
+        xpTag: '✨ +60 XP',
+        focusHint: 'Identify unknown cations and anions using dropwise/excess NaOH, aqueous NH₃, and Ba(NO₃)₂.',
+        total: 0,
+        correct: 0,
+        lastTime: 0
+      },
+      organic: {
+        key: 'organic',
+        title: 'Organic Functional Group Identification',
+        icon: '🌿',
+        url: 'organic.html',
+        warmupMode: 'organic',
+        paperTag: '📋 Paper 3 · Q3 (8 Marks)',
+        timeTag: '⏱️ ~10 mins',
+        xpTag: '✨ +50 XP',
+        focusHint: 'Distinguish alkenes, alkanols, and carboxylic acids using Br₂ water, acidified H⁺/KMnO₄, and NaHCO₃.',
+        total: 0,
+        correct: 0,
+        lastTime: 0
+      },
+      energy: {
+        key: 'energy',
+        title: 'Thermochemistry & Enthalpy (ΔH)',
+        icon: '🔥',
+        url: 'energy.html',
+        warmupMode: 'energy',
+        paperTag: '📋 Paper 3 · Q1b (12 Marks)',
+        timeTag: '⏱️ ~12 mins',
+        xpTag: '✨ +55 XP',
+        focusHint: 'Extrapolate cooling curves for ΔT and compute molar enthalpy ΔH = -mcΔT / (1000 × n) with mandatory +/- sign.',
+        total: 0,
+        correct: 0,
+        lastTime: 0
+      },
+      rates: {
+        key: 'rates',
+        title: 'Reaction Rates & Chemical Kinetics',
+        icon: '⏱️',
+        url: 'rates.html',
+        warmupMode: 'rates',
+        paperTag: '📋 Paper 3 · Q1b (12 Marks)',
+        timeTag: '⏱️ ~12 mins',
+        xpTag: '✨ +55 XP',
+        focusHint: 'Plot disappearing cross (Na₂S₂O₃ + HCl) 1/t vs concentration graphs and evaluate rate tangents.',
+        total: 0,
+        correct: 0,
+        lastTime: 0
+      },
+      solubility: {
+        key: 'solubility',
+        title: 'Solubility Curves & Crystallization',
+        icon: '🌡️',
+        url: 'solubility.html',
+        warmupMode: 'solubility',
+        paperTag: '📋 Paper 3 · Q1b (10 Marks)',
+        timeTag: '⏱️ ~10 mins',
+        xpTag: '✨ +45 XP',
+        focusHint: 'Record crystallization temperatures and plot smooth solubility curves (g / 100g water vs °C).',
+        total: 0,
+        correct: 0,
+        lastTime: 0
+      },
+      gas: {
+        key: 'gas',
+        title: 'Gas Preparation & Confirmatory Tests',
+        icon: '💨',
+        url: 'gas_prep.html',
+        warmupMode: 'gas',
+        paperTag: '📋 Paper 3 · Q2b (10 Marks)',
+        timeTag: '⏱️ ~10 mins',
+        xpTag: '✨ +50 XP',
+        focusHint: 'Select appropriate drying agents (CaO for NH₃ vs conc. H₂SO₄) and gas collection methods.',
+        total: 0,
+        correct: 0,
+        lastTime: 0
+      }
     };
 
     const now = Date.now();
+    const allSessions = (Array.isArray(window.latestSessions) && window.latestSessions.length > 0)
+      ? window.latestSessions
+      : (sessions || []);
 
-    (sessions || []).forEach(s => {
-      const rawType = (s.titration_title || s.titration_type || s.titrationKey || '').toLowerCase();
+    allSessions.forEach(s => {
+      const rawType = (
+        s.titration_title ||
+        s.titration_type ||
+        s.titrationKey ||
+        s.salt_key ||
+        s.salt_name ||
+        s.compound_name ||
+        s.compound_key ||
+        s.solute_key ||
+        s.solute_name ||
+        s.system_id ||
+        s.en_system_id ||
+        s.experiment_type ||
+        s.rate_exp_type ||
+        s.gas_key ||
+        s.gas_name ||
+        ''
+      ).toLowerCase();
+
       let topicKey = 'acidBase';
-
-      if (rawType.includes('redox')) topicKey = 'redox';
-      else if (rawType.includes('precipit')) topicKey = 'precipitation';
-      else if (rawType.includes('complex')) topicKey = 'complexometric';
-      else if (rawType.includes('qualitative')) topicKey = 'qualitative';
+      if (rawType.includes('redox') || rawType.includes('kmno4')) topicKey = 'redox';
+      else if (rawType.includes('dibasic') || rawType.includes('h2x') || rawType.includes('h2so4') || rawType.includes('oxalic')) topicKey = 'dibasic';
+      else if (rawType.includes('precipit') || rawType.includes('mohr')) topicKey = 'precipitation';
+      else if (rawType.includes('qualitative') || s.salt_key || s.salt_name || s.student_cation) topicKey = 'qualitative';
+      else if (rawType.includes('organic') || s.compound_name || s.compound_key || s.student_functional_group) topicKey = 'organic';
+      else if (rawType.includes('solubility') || s.solute_key || s.solute_name || s.crystallization_temp != null) topicKey = 'solubility';
+      else if (rawType.includes('energy') || rawType.includes('enthalpy') || s.system_id || s.en_system_id) topicKey = 'energy';
+      else if (rawType.includes('rate') || rawType.includes('kinetic') || s.experiment_type || s.rate_exp_type || s.method) topicKey = 'rates';
+      else if (rawType.includes('gas') || s.gas_key || s.gas_name) topicKey = 'gas';
       else topicKey = 'acidBase';
 
       const t = topics[topicKey];
+      if (!t) return;
       t.total++;
-      if (s.correct) t.correct++;
+
+      const passed = !!(
+        s.correct === true ||
+        s.correct === 1 ||
+        s.overall_correct === true ||
+        (s.score_pct != null && s.score_pct >= 50) ||
+        (s.total_score != null && s.total_score >= 6) ||
+        (s.sol_total_score != null && s.sol_total_score >= 3) ||
+        (s.en_total_score != null && s.en_total_score >= 8) ||
+        (s.rate_total_score != null && s.rate_total_score >= 8) ||
+        (s.gas_total_score != null && s.gas_total_score >= 6)
+      );
+      if (passed) t.correct++;
+
       const sTime = new Date(s.created_at || s.submitted_at || 0).getTime();
       if (sTime > t.lastTime) t.lastTime = sTime;
     });
 
-    const topicList = Object.values(topics);
-
-    // 1. Check for Unexplored topics (total === 0)
-    const unexplored = topicList.filter(t => t.total === 0);
-    if (unexplored.length > 0) {
-      const rec = unexplored[0];
-      return {
-        topic: rec,
-        reasonBadge: '🆕 New Syllabus Topic',
-        badgeColor: '#3B82F6',
-        badgeBg: 'rgba(59,130,246,0.2)',
-        desc: `You haven't practiced ${rec.title} yet. Explore this topic to build balanced KCSE Paper 3 coverage!`
-      };
-    }
-
-    // 2. Check for Weakest Topic (accuracy < 70%)
-    const scored = topicList.map(t => ({
+    const topicList = Object.values(topics).map(t => ({
       ...t,
-      accuracy: t.total > 0 ? (t.correct / t.total) * 100 : 100
-    })).sort((a, b) => a.accuracy - b.accuracy);
+      accuracy: t.total > 0 ? Math.round((t.correct / t.total) * 100) : 0
+    }));
 
-    const weakest = scored[0];
-    if (weakest.accuracy < 70) {
-      return {
-        topic: weakest,
-        reasonBadge: `⚠️ Weak Spot (${weakest.accuracy.toFixed(0)}% Accuracy)`,
+    const queue = [];
+
+    // ── Priority 1: Overdue or Pending Teacher Assignments ──
+    const assignments = Array.isArray(window._vlk_student_assignments) ? window._vlk_student_assignments : [];
+    const pendingAssignments = assignments
+      .filter(a => a && !a.submitted)
+      .sort((a, b) => {
+        const aDue = a.due_date ? new Date(a.due_date).getTime() : Infinity;
+        const bDue = b.due_date ? new Date(b.due_date).getTime() : Infinity;
+        return aDue - bDue;
+      });
+
+    pendingAssignments.slice(0, 2).forEach(a => {
+      const isPastDue = a.due_date && (new Date(a.due_date).setHours(23, 59, 59, 999) < now);
+      const { targetUrl, battleMode } = typeof getAssignmentTargetUrl === 'function'
+        ? getAssignmentTargetUrl(a)
+        : { targetUrl: 'lab.html', battleMode: 'acidBase' };
+      const dueStr = a.due_date ? formatDate(a.due_date) : 'Soon';
+
+      queue.push({
+        topic: {
+          key: 'assignment-' + a.id,
+          title: a.title || 'Teacher Practical Assignment',
+          icon: isPastDue ? '🚨' : '📌',
+          url: targetUrl,
+          warmupMode: battleMode || 'acidBase',
+          paperTag: `📋 Teacher Assessment · Due ${dueStr}`,
+          timeTag: '⏱️ ~15 mins',
+          xpTag: '✨ +75 XP',
+          total: 0,
+          accuracy: 0
+        },
+        reasonBadge: isPastDue ? '🚨 Overdue Teacher Assignment' : '📌 Prescribed by Teacher',
+        badgeColor: isPastDue ? '#EF4444' : '#F59E0B',
+        badgeBg: isPastDue ? 'rgba(239, 68, 68, 0.18)' : 'rgba(245, 158, 11, 0.18)',
+        desc: isPastDue
+          ? `This prescribed practical was due on ${dueStr}. Complete it now to submit your titration/analysis table for teacher grading.`
+          : `Assigned by your Chemistry instructor (Due ${dueStr}). Complete this practical to update your Continuous Assessment record.`,
+        masteryLabel: isPastDue ? 'Status: Overdue Submission' : 'Status: Pending Submission',
+        masteryGoal: 'Target: Submit for Grading',
+        masteryPct: isPastDue ? 15 : 30,
+        actionText: isPastDue ? 'Complete Overdue Lab →' : 'Start Assignment →'
+      });
+    });
+
+    // ── Priority 2: Weak Spots (Attempted topics with < 75% accuracy) ──
+    const weakTopics = topicList
+      .filter(t => t.total > 0 && t.accuracy < 75)
+      .sort((a, b) => a.accuracy - b.accuracy);
+
+    weakTopics.slice(0, 2).forEach(t => {
+      queue.push({
+        topic: t,
+        reasonBadge: `⚠️ Weak Spot (${t.accuracy}% Accuracy)`,
         badgeColor: '#EF4444',
-        badgeBg: 'rgba(239,68,68,0.2)',
-        desc: `Your accuracy in ${weakest.title} is currently ${weakest.accuracy.toFixed(0)}% across ${weakest.total} attempt(s). Run a targeted session to boost precision.`
-      };
-    }
+        badgeBg: 'rgba(239, 68, 68, 0.18)',
+        desc: `Your accuracy in ${t.title} is ${t.accuracy}% across ${t.total} run${t.total === 1 ? '' : 's'}. ${t.focusHint}`,
+        masteryLabel: `Current Mastery: ${t.accuracy}% (${t.total} run${t.total === 1 ? '' : 's'})`,
+        masteryGoal: 'Goal: 80%+ (3★)',
+        masteryPct: Math.max(12, t.accuracy),
+        actionText: 'Fix Weak Spot →'
+      });
+    });
 
-    // 3. Spaced Repetition check (> 3 days since last practice)
+    // ── Priority 3: Unexplored Syllabus Topics (0 attempts) ──
+    const unexplored = topicList.filter(t => t.total === 0);
+    // Prioritize diverse KCSE Paper 3 coverage (Redox, Qualitative, Organic, Energy, etc.)
+    const preferredOrder = ['redox', 'qualitative', 'organic', 'energy', 'rates', 'dibasic', 'solubility', 'gas', 'precipitation', 'acidBase'];
+    unexplored.sort((a, b) => preferredOrder.indexOf(a.key) - preferredOrder.indexOf(b.key));
+
+    unexplored.slice(0, 3).forEach(t => {
+      queue.push({
+        topic: t,
+        reasonBadge: '🆕 Unexplored Syllabus Topic',
+        badgeColor: '#3B82F6',
+        badgeBg: 'rgba(59, 130, 246, 0.18)',
+        desc: `You haven't practiced ${t.title} yet. ${t.focusHint}`,
+        masteryLabel: 'Current Mastery: Not Started (0 runs)',
+        masteryGoal: 'Goal: 80%+ (3★)',
+        masteryPct: 8,
+        actionText: 'Start Practical →'
+      });
+    });
+
+    // ── Priority 4: Spaced Repetition Refreshers (> 3 days since last practice) ──
     const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
-    const stale = topicList.filter(t => t.lastTime > 0 && (now - t.lastTime) > THREE_DAYS_MS)
+    const stale = topicList
+      .filter(t => t.total > 0 && t.lastTime > 0 && (now - t.lastTime) > THREE_DAYS_MS)
       .sort((a, b) => a.lastTime - b.lastTime);
 
-    if (stale.length > 0) {
-      const rec = stale[0];
-      const daysAgo = Math.max(1, Math.floor((now - rec.lastTime) / (24 * 60 * 60 * 1000)));
-      return {
-        topic: rec,
+    stale.slice(0, 2).forEach(t => {
+      const daysAgo = Math.max(1, Math.floor((now - t.lastTime) / (24 * 60 * 60 * 1000)));
+      queue.push({
+        topic: t,
         reasonBadge: `📅 Spaced Refresher (${daysAgo}d ago)`,
         badgeColor: '#EAB308',
-        badgeBg: 'rgba(234,179,8,0.2)',
-        desc: `It's been ${daysAgo} day(s) since your last ${rec.title} session. Run a quick refresher to keep your memory sharp!`
-      };
-    }
+        badgeBg: 'rgba(234, 179, 8, 0.18)',
+        desc: `It's been ${daysAgo} day${daysAgo === 1 ? '' : 's'} since your last ${t.title} session. ${t.focusHint}`,
+        masteryLabel: `Current Mastery: ${t.accuracy}% (${t.total} run${t.total === 1 ? '' : 's'})`,
+        masteryGoal: 'Goal: Keep Sharp (85%+)',
+        masteryPct: Math.max(15, t.accuracy),
+        actionText: 'Run Refresher →'
+      });
+    });
 
-    // 4. Mastery Challenge: High accuracy across all topics -> Recommend KCSE Exam Mode
-    return {
+    // ── Priority 5: 40-Mark KCSE Paper 3 Composite Mock Capstone ──
+    const coveredCount = topicList.filter(t => t.total > 0).length;
+    const coveragePct = Math.round((coveredCount / topicList.length) * 100);
+    queue.push({
       topic: {
-        key: 'exam',
-        title: 'KCSE Exam Mode (Paper 3 Simulation)',
-        icon: '⏱️',
-        url: 'lab.html?studyMode=exam'
+        key: 'compositeExam',
+        title: 'KCSE Paper 3 Full Composite Mock (Q1 + Q2 + Q3)',
+        icon: '🏆',
+        url: 'composite_exam.html',
+        warmupMode: 'acidBase',
+        paperTag: '📋 Full Paper 3 · 40 Marks',
+        timeTag: '⏱️ 2¼ Hours Timed',
+        xpTag: '✨ +120 XP',
+        total: coveredCount,
+        accuracy: coveragePct
       },
-      reasonBadge: '🏆 High Mastery (Exam Ready)',
+      reasonBadge: coveredCount >= 6 ? '🏆 Distinction Capstone Ready' : '🎯 National Exam Simulation',
       badgeColor: '#10B981',
-      badgeBg: 'rgba(16,185,129,0.2)',
-      desc: 'Outstanding job! You have achieved high accuracy across all syllabus topics. Challenge your speed in the 15-minute KCSE Exam Mode!'
-    };
+      badgeBg: 'rgba(16, 185, 129, 0.18)',
+      desc: 'Challenge yourself under real KNEC examination conditions combining Q1 Volumetric Titration (15m), Q2 Qualitative Salt Analysis (15m), and Q3 Organic Functional ID (10m).',
+      masteryLabel: `Syllabus Coverage: ${coveredCount}/10 Benches Practiced`,
+      masteryGoal: 'Pass Mark: 20/40 (Distinction: 32+)',
+      masteryPct: Math.max(12, coveragePct),
+      actionText: 'Launch 40-Mark Mock →'
+    });
+
+    return queue.slice(0, 5);
   }
 
-  function renderAdaptiveRecommendation(sessions) {
-    const card = document.getElementById('adaptiveRecCard');
-    if (!card) return;
+  function computeAdaptiveRecommendation(sessions) {
+    adaptiveRecQueue = buildAdaptiveRecommendationsQueue(sessions);
+    if (currentRecIndex >= adaptiveRecQueue.length) {
+      currentRecIndex = 0;
+    }
+    return adaptiveRecQueue[currentRecIndex] || adaptiveRecQueue[0];
+  }
 
-    const rec = computeAdaptiveRecommendation(sessions);
+  function renderAdaptiveRecommendationByIndex(idx) {
+    const card = document.getElementById('adaptiveRecCard');
+    if (!card || !adaptiveRecQueue || adaptiveRecQueue.length === 0) return;
+
+    const total = adaptiveRecQueue.length;
+    currentRecIndex = ((idx % total) + total) % total;
+    const rec = adaptiveRecQueue[currentRecIndex];
     if (!rec || !rec.topic) return;
 
     const recIconEl = document.getElementById('recIcon');
     if (recIconEl) recIconEl.textContent = rec.topic.icon || '🎯';
-    document.getElementById('recTitle').textContent = rec.topic.title;
-    document.getElementById('recDesc').textContent = rec.desc;
-    
+
+    const titleEl = document.getElementById('recTitle');
+    if (titleEl) titleEl.textContent = rec.topic.title;
+
+    const descEl = document.getElementById('recDesc');
+    if (descEl) descEl.textContent = rec.desc;
+
     const badge = document.getElementById('recReasonBadge');
     if (badge) {
       badge.textContent = rec.reasonBadge;
@@ -1670,13 +1939,66 @@ requireStudentLogin();
       badge.style.background = rec.badgeBg;
     }
 
+    const counterEl = document.getElementById('recCounter');
+    if (counterEl) {
+      counterEl.textContent = `${currentRecIndex + 1}/${total}`;
+    }
+
+    const paperTagEl = document.getElementById('recPaperTag');
+    if (paperTagEl && rec.topic.paperTag) paperTagEl.textContent = rec.topic.paperTag;
+
+    const timeTagEl = document.getElementById('recTimeTag');
+    if (timeTagEl && rec.topic.timeTag) timeTagEl.textContent = rec.topic.timeTag;
+
+    const xpTagEl = document.getElementById('recXpTag');
+    if (xpTagEl && rec.topic.xpTag) xpTagEl.textContent = rec.topic.xpTag;
+
+    const masteryLabelEl = document.getElementById('recMasteryLabel');
+    if (masteryLabelEl && rec.masteryLabel) masteryLabelEl.textContent = rec.masteryLabel;
+
+    const masteryGoalEl = document.getElementById('recMasteryGoal');
+    if (masteryGoalEl && rec.masteryGoal) masteryGoalEl.textContent = rec.masteryGoal;
+
+    const masteryFillEl = document.getElementById('recMasteryFill');
+    if (masteryFillEl) {
+      masteryFillEl.style.width = `${Math.min(100, Math.max(6, rec.masteryPct || 10))}%`;
+    }
+
     const actionBtn = document.getElementById('recActionBtn');
     if (actionBtn) {
       actionBtn.href = rec.topic.url;
     }
 
+    const actionTextEl = document.getElementById('recActionText');
+    if (actionTextEl && rec.actionText) {
+      actionTextEl.textContent = rec.actionText;
+    }
+
+    const warmupBtn = document.getElementById('recWarmupBtn');
+    if (warmupBtn) {
+      const mode = rec.topic.warmupMode || 'acidBase';
+      warmupBtn.href = `speed_battle.html?mode=${encodeURIComponent(mode)}&target=${encodeURIComponent(rec.topic.url)}`;
+    }
+
     card.style.display = 'block';
   }
+
+  function renderAdaptiveRecommendation(sessions) {
+    adaptiveRecQueue = buildAdaptiveRecommendationsQueue(sessions);
+    currentRecIndex = 0;
+    renderAdaptiveRecommendationByIndex(0);
+  }
+
+  function cycleRecommendedPractical(delta) {
+    if (!adaptiveRecQueue || adaptiveRecQueue.length === 0) {
+      adaptiveRecQueue = buildAdaptiveRecommendationsQueue(window.latestSessions || cachedStudentSessions || []);
+    }
+    renderAdaptiveRecommendationByIndex(currentRecIndex + (delta || 1));
+    if (window.BrilliantUI && window.BrilliantUI.audio) {
+      window.BrilliantUI.audio.playClick();
+    }
+  }
+  window.cycleRecommendedPractical = cycleRecommendedPractical;
 
   let studentTrendChartInstance = null;
   let studentTypeChartInstance = null;
@@ -2685,6 +3007,9 @@ requireStudentLogin();
 
       const allSessions = [...titrationSessions, ...qualSessions, ...organicSessions, ...solubilitySessions, ...energySessions, ...ratesSessions, ...gasSessions, ...compositeSessions];
       window.latestSessions = allSessions;
+      if (typeof renderAdaptiveRecommendation === 'function') {
+        renderAdaptiveRecommendation(allSessions);
+      }
 
       const totalCount = allSessions.length;
       let correctCount = 0;
@@ -3133,6 +3458,7 @@ requireStudentLogin();
 
   renderStudyTipByIndex(0);
   renderSavedTipsPocket();
+  renderAdaptiveRecommendation([]);
   loadBadges();
   loadLeaderboard();
   loadAssignments();

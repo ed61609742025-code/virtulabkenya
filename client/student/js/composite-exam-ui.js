@@ -2558,9 +2558,22 @@ requireStudentLogin();
         const letter = String.fromCharCode(97 + idx);
         const promptTitle = getCleanTestPromptTitle(t?.prompt, letter);
 
-        const actionBtn = !st.performed
-          ? `<button class="btn-perform-test" onclick="performQ2OrganicTest('${t.id}')">🧪 Perform Organic Test</button>`
-          : `<button class="btn-perform-test done" disabled>✅ Test Observed</button><button class="btn-redo-test" onclick="redoQ2OrganicTest('${t.id}')">↺ Redo</button>`;
+        const actions = window.OrganicBenchCore
+          ? OrganicBenchCore.getOrganicActions(t.id, t.prompt, st.stage || (st.performed ? 'done' : 'idle'))
+          : [];
+
+        let actionBtn = '';
+        if (actions.length > 0) {
+          actionBtn = actions.map(act => {
+            if (act.disabled) return `<button class="${act.cls}" disabled>${act.label}</button>`;
+            if (act.isRedo) return `<button class="${act.cls}" onclick="redoQ2OrganicTest('${t.id}')">${act.label}</button>`;
+            return `<button class="${act.cls}" onclick="performQ2OrganicTest('${t.id}', '${act.stage}')">${act.label}</button>`;
+          }).join(' ');
+        } else {
+          actionBtn = !st.performed
+            ? `<button class="btn-perform-test" onclick="performQ2OrganicTest('${t.id}', 'stage1')">🧪 Perform Organic Test</button>`
+            : `<button class="btn-perform-test done" disabled>✅ Test Observed</button><button class="btn-redo-test" onclick="redoQ2OrganicTest('${t.id}')">↺ Redo</button>`;
+        }
 
         return `
           <div class="kcse-question-block">
@@ -2748,6 +2761,7 @@ requireStudentLogin();
           saltKey,
           testId,
           stage,
+          isAdding: Boolean(st && st.isAdding),
           prompt: t.prompt || '',
           obsStr: t.correctObs || t.observation || t.obs || '',
           tubeId: `${qKey}_${testId}`
@@ -2757,6 +2771,7 @@ requireStudentLogin();
         saltKey,
         testId,
         stage,
+        isAdding: Boolean(st && st.isAdding),
         prompt: t.prompt || '',
         obsStr: t.correctObs || t.observation || t.obs || '',
         tubeId: `${qKey}_${testId}`
@@ -2780,6 +2795,7 @@ requireStudentLogin();
     const st = q2TestStates[testId];
     st.performed = true;
     st.stage = stage;
+    st.isAdding = true;
 
     const p = engine.preset?.q2 || {};
     const saltKey = String(p.trueSaltKey || 'Pb(NO3)2');
@@ -2801,10 +2817,17 @@ requireStudentLogin();
     renderQ2TestsGrid();
     updateLiveScoreDisplay();
     saveExamDraft(true);
+
+    setTimeout(() => {
+      if (q2TestStates[testId]) {
+        q2TestStates[testId].isAdding = false;
+        renderQ2TestsGrid();
+      }
+    }, 650);
   }
 
   function redoQ2Test(testId) {
-    q2TestStates[testId] = { performed: false, stage: 'idle' };
+    q2TestStates[testId] = { performed: false, stage: 'idle', isAdding: false };
     renderQ2TestsGrid();
     saveExamDraft(true);
   }
@@ -2836,11 +2859,12 @@ requireStudentLogin();
     saveExamDraft();
   }
 
-  function performQ2OrganicTest(testId) {
+  function performQ2OrganicTest(testId, stage = 'stage1') {
     if (!q2TestStates[testId]) q2TestStates[testId] = {};
     const st = q2TestStates[testId];
     st.performed = true;
-    st.stage = 'done';
+    st.stage = stage;
+    st.isAdding = true;
     const p = engine?.preset?.q2 || {};
     const orgKey = String(p.trueOrganicKey || 'Ethanol');
     const tests = Array.isArray(p.tests) ? p.tests : [];
@@ -2848,7 +2872,7 @@ requireStudentLogin();
     const prompt = t.prompt || '';
 
     if (window.OrganicBenchCore) {
-      const r = OrganicBenchCore.resolveOrganicReactionState(orgKey, testId, true, prompt);
+      const r = OrganicBenchCore.resolveOrganicReactionState(orgKey, testId, stage, prompt);
       st.statusLabel = r.statusLabel;
       OrganicBenchCore.playOrganicSound(r.soundType);
     } else {
@@ -2858,6 +2882,13 @@ requireStudentLogin();
     renderQ2TestsGrid();
     updateLiveScoreDisplay();
     saveExamDraft(true);
+
+    setTimeout(() => {
+      if (q2TestStates[testId]) {
+        q2TestStates[testId].isAdding = false;
+        renderQ2TestsGrid();
+      }
+    }, 650);
   }
 
   function redoQ2OrganicTest(testId) {
@@ -2987,9 +3018,22 @@ requireStudentLogin();
       const letter = String.fromCharCode(97 + idx);
       const promptTitle = getCleanTestPromptTitle(t?.prompt, letter);
 
-      let actionBtn = !st.performed
-        ? `<button class="btn-perform-test" onclick="performQ3Test('${t.id}')">🧪 Perform Organic Test</button>`
-        : `<button class="btn-perform-test done" disabled>✅ Test Observed</button><button class="btn-redo-test" onclick="redoQ3Test('${t.id}')">↺ Redo</button>`;
+      const actions = window.OrganicBenchCore
+        ? OrganicBenchCore.getOrganicActions(t.id, t.prompt, st.stage || (st.performed ? 'done' : 'idle'))
+        : [];
+
+      let actionBtn = '';
+      if (actions.length > 0) {
+        actionBtn = actions.map(act => {
+          if (act.disabled) return `<button class="${act.cls}" disabled>${act.label}</button>`;
+          if (act.isRedo) return `<button class="${act.cls}" onclick="redoQ3Test('${t.id}')">${act.label}</button>`;
+          return `<button class="${act.cls}" onclick="performQ3Test('${t.id}', '${act.stage}')">${act.label}</button>`;
+        }).join(' ');
+      } else {
+        actionBtn = !st.performed
+          ? `<button class="btn-perform-test" onclick="performQ3Test('${t.id}', 'stage1')">🧪 Perform Organic Test</button>`
+          : `<button class="btn-perform-test done" disabled>✅ Test Observed</button><button class="btn-redo-test" onclick="redoQ3Test('${t.id}')">↺ Redo</button>`;
+      }
 
       return `
         <div class="kcse-question-block">
@@ -3049,6 +3093,8 @@ requireStudentLogin();
 
   function getOrganicVisualHtml(testId, st, prompt = '', qKey = 'q3') {
     const performed = Boolean(st && st.performed);
+    const stage = st ? (st.stage || (st.performed ? 'done' : 'idle')) : 'idle';
+    const isAdding = Boolean(st && st.isAdding);
     const p = engine.preset?.[qKey] || engine.preset?.q3 || {};
     const orgKey = String(p.trueOrganicKey || 'Ethanol');
 
@@ -3057,6 +3103,8 @@ requireStudentLogin();
         testId,
         sampleKey: orgKey,
         performed,
+        stage,
+        isAdding,
         prompt,
         tubeId: `${qKey}_${testId}`
       });
@@ -3144,6 +3192,7 @@ requireStudentLogin();
     const st = q3TestStates[testId];
     st.performed = true;
     st.stage = stage;
+    st.isAdding = true;
     const p = engine?.preset?.q3 || {};
     const isQualitative = Boolean(
       p.simulationType === 'qualitative' ||
@@ -3169,6 +3218,13 @@ requireStudentLogin();
       renderQ3TestsGrid();
       updateLiveScoreDisplay();
       saveExamDraft(true);
+
+      setTimeout(() => {
+        if (q3TestStates[testId]) {
+          q3TestStates[testId].isAdding = false;
+          renderQ3TestsGrid();
+        }
+      }, 650);
       return;
     }
 
@@ -3178,7 +3234,7 @@ requireStudentLogin();
     const prompt = t.prompt || '';
 
     if (window.OrganicBenchCore) {
-      const r = OrganicBenchCore.resolveOrganicReactionState(orgKey, testId, true, prompt);
+      const r = OrganicBenchCore.resolveOrganicReactionState(orgKey, testId, stage, prompt);
       st.statusLabel = r.statusLabel;
       OrganicBenchCore.playOrganicSound(r.soundType);
     } else {

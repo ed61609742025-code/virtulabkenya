@@ -1292,8 +1292,8 @@
     const tId = (testId || '').toLowerCase();
 
     const performed = stage !== 'idle' && stage !== 'untested' && Boolean(stage);
-    const isExcess = stage === 'excess' || stage === 'step3_nh3' || stage === 'step2_bacl2' || stage === 'step2_gas_warm' || (stage !== 'few_drops' && stage !== 'step1' && pStr.includes('excess'));
-    const isStep1 = stage === 'few_drops' || stage === 'step1' || stage === 'step1_hno3' || stage === 'step1_acid' || stage === 'step1_hcl' || stage === 'step1_feso4' || stage === 'inspected';
+    const isExcess = stage === 'excess' || stage === 'step3_nh3' || stage === 'step2_bacl2' || stage === 'step2_acid' || stage === 'step2_agno3' || stage === 'step2_hno3' || stage === 'step2_h2so4' || stage === 'step2_gas_warm' || stage === 'step2_gas_test' || stage === 'dissolved' || (stage !== 'few_drops' && stage !== 'step1' && pStr.includes('excess'));
+    const isStep1 = stage === 'few_drops' || stage === 'step1' || stage === 'step1_hno3' || stage === 'step1_acid' || stage === 'step1_barium' || stage === 'step1_agno3' || stage === 'step1_h2o2' || stage === 'step1_water' || stage === 'step1_hcl' || stage === 'step1_feso4' || stage === 'inspected';
     const isHeated = stage === 'heated' || stage === 'warm' || stage === 'step2_warm' || (!isStep1 && stage !== 'cooled' && stage !== 'few_drops' && stage !== 'idle' && (tId.includes('heat') || tId.includes('ignit') || (pStr.includes('heat') && !pStr.includes('portion') && !pStr.includes('drop'))));
     const isCooled = stage === 'cooled' || stage === 'step3_cool' || stage === 'cool_down';
 
@@ -1329,7 +1329,7 @@
     );
 
     const isAgNO3 = tId.includes('agno3') || pStr.includes('silver nitrate') || pStr.includes('agno3') || (pStr.includes('hno3') && pStr.includes('silver'));
-    const isBaCl2 = tId.includes('bacl2') || tId.includes('barium') || pStr.includes('barium') || pStr.includes('ba(no3)2') || pStr.includes('bacl2');
+    const isBaCl2 = tId.includes('bacl2') || tId.includes('barium') || pStr.includes('barium') || pStr.includes('ba(no3)2') || pStr.includes('ba(no₃)₂') || pStr.includes('bacl2');
     const isPbNO3 = tId.includes('pb_no3') || tId.includes('pbno3') || (pStr.includes('lead') && (pStr.includes('nitrate') || pStr.includes('(ii)'))) || pStr.includes('pb(no3)2') || pStr.includes('pb(no₃)₂');
     const isNaOH = tId.includes('naoh') || pStr.includes('naoh') || pStr.includes('sodium hydroxide');
     const isNH3 = !isAgNO3 && !isPbNO3 && (tId.includes('nh3') || pStr.includes('ammonia') || pStr.includes('nh₃') || pStr.includes('nh3'));
@@ -1342,6 +1342,7 @@
     const isHCl = !isNaHCO3 && (tId.includes('hcl') || tId.includes('acid') || pStr.includes('hydrochloric') || (!pStr.includes('nahco3') && !pStr.includes('carbonate') && pStr.includes('limewater')));
     const isResidueTest = tId.includes('residue') || pStr.includes('residue');
     const isH2O2 = tId.includes('h2o2') || tId.includes('peroxide') || pStr.includes('hydrogen peroxide') || pStr.includes('h2o2') || pStr.includes('h₂o₂');
+    const isH2O2WithNaOH = isH2O2 && (tId.includes('naoh') || pStr.includes('naoh') || pStr.includes('sodium hydroxide'));
     const isZincDisplacement = tId.includes('displacement') || tId.includes('zinc_dust') ||
       pStr.includes('zinc dust') || pStr.includes('zinc powder') || pStr.includes('solid e') ||
       (pStr.includes('zinc') && (pStr.includes('shake') || pStr.includes('filtrate') || pStr.includes('dust')));
@@ -1374,6 +1375,54 @@
     if (performed) {
       if (isBrownRing) {
         // Handled in SVG generator
+      } else if (isH2O2WithNaOH) {
+        // Special Sequence: H2O2 followed by NaOH dropwise to excess
+        const isStep1H2O2 = stage === 'step1_h2o2' || stage === 'added_h2o2' || (isStep1 && stage !== 'few_drops');
+        if (isStep1H2O2) {
+          if (cation === 'Fe2+') {
+            ppt = false;
+            liquidColor = 'rgba(217, 119, 6, 0.45)';
+            statusLabel = 'Step 1 (H₂O₂ Added): Pale green Fe²⁺ oxidised to yellowish-brown Fe³⁺ solution';
+          } else if (cation === 'Mn4+' || cation === 'Mn2+' || pStr.includes('solid d')) {
+            bubbling = true;
+            evolvesO2 = true;
+            soundType = 'effervescence';
+            statusLabel = 'Step 1 (H₂O₂ Added): Vigorous effervescence of O₂ gas';
+          } else {
+            statusLabel = 'Step 1 (H₂O₂ Added): 1 cm³ hydrogen peroxide added';
+          }
+        } else if (stage === 'few_drops' || stage === 'step2') {
+          if (cation === 'Fe2+' || cation === 'Fe3+') {
+            ppt = true;
+            pptColor = '#991B1B'; // Reddish-brown Fe(OH)3 because Fe2+ was oxidized in Step 1!
+            statusLabel = 'Step 2 (Dropwise NaOH Added): Reddish-brown precipitate formed (Fe(OH)₃)';
+          } else if (['Zn2+', 'Al3+', 'Pb2+', 'Ca2+'].includes(cation)) {
+            ppt = true;
+            pptColor = '#FFFFFF';
+            statusLabel = 'Step 2 (Dropwise NaOH Added): White precipitate formed';
+          } else if (cation === 'Cu2+') {
+            ppt = true;
+            pptColor = '#38BDF8';
+            statusLabel = 'Step 2 (Dropwise NaOH Added): Pale blue precipitate formed';
+          } else {
+            statusLabel = 'Step 2 (Dropwise NaOH Added): Reagent added dropwise';
+          }
+        } else {
+          // Excess NaOH
+          if (cation === 'Fe2+' || cation === 'Fe3+') {
+            ppt = true;
+            pptColor = '#991B1B';
+            statusLabel = 'Step 3 (Excess NaOH Added): Reddish-brown precipitate insoluble in excess NaOH';
+          } else if (['Zn2+', 'Al3+', 'Pb2+'].includes(cation)) {
+            pptDissolved = true;
+            liquidColor = 'rgba(255, 255, 255, 0.2)';
+            statusLabel = 'Step 3 (Excess NaOH Added): White precipitate dissolves in excess NaOH';
+          } else {
+            ppt = true;
+            pptColor = '#FFFFFF';
+            statusLabel = 'Step 3 (Excess NaOH Added): Precipitate remains insoluble in excess';
+          }
+        }
       } else if (isKI) {
         if (cation === 'Pb2+') {
           ppt = !isHeated;
@@ -1385,6 +1434,7 @@
           statusLabel = 'No precipitate formed';
         }
       } else if (isNaOH) {
+        const isNaOHWithHeat = pStr.includes('warm') || pStr.includes('heat');
         if (cation === 'Pb2+' || cation === 'Al3+' || cation === 'Zn2+') {
           if (isExcess) {
             pptDissolved = true;
@@ -1416,10 +1466,15 @@
           pptColor = '#991B1B'; // Oxidizes rapidly in air to dark reddish-brown hydrated MnO2
           statusLabel = isExcess ? 'In Excess: Reddish-brown precipitate insoluble' : 'Few Drops: Precipitate formed rapidly darkening to reddish-brown in air';
         } else if (cation === 'NH4+' || cation === 'Na+' || cation === 'K+') {
-          bubbling = isHeated;
-          statusLabel = (cation === 'NH4+' && isHeated)
-            ? 'Warmed: Pungent gas evolved (NH₃) turning moist red litmus blue'
-            : 'No precipitate formed';
+          if (cation === 'NH4+' && (isHeated || stage === 'heated')) {
+            bubbling = true;
+            evolvesNH3 = true;
+            soundType = 'effervescence';
+            statusLabel = 'Warmed Gently: Pungent gas evolved (NH₃) turning moist red litmus blue';
+          } else {
+            bubbling = false;
+            statusLabel = isStep1 ? 'Few Drops: No precipitate formed' : 'No precipitate formed';
+          }
         }
       } else if (isNH3) {
         if (cation === 'Zn2+') {
@@ -1463,73 +1518,217 @@
           statusLabel = 'No precipitate formed with drops or excess NH₃';
         }
       } else if (isAgNO3) {
-        if (anion === 'Cl-' || anion === 'Cl⁻' || (anion && anion.includes('Cl')) || oStr.includes('agcl') || oStr.includes('white precipitate') || oStr.includes('white ppt')) {
-          if (stage === 'step3_nh3' || isExcess) {
-            pptDissolved = true;
-            liquidColor = 'rgba(255, 255, 255, 0.2)';
-            statusLabel = 'In Aqueous NH₃: White AgCl precipitate readily dissolves';
-          } else if (stage === 'step2_agno3' || !isStep1) {
+        const agPos = Math.min(pStr.indexOf('silver') !== -1 ? pStr.indexOf('silver') : 9999, pStr.indexOf('agno') !== -1 ? pStr.indexOf('agno') : 9999);
+        const acidAgPos = Math.min(pStr.indexOf('hno3') !== -1 ? pStr.indexOf('hno3') : 9999, pStr.indexOf('hno₃') !== -1 ? pStr.indexOf('hno₃') : 9999, pStr.indexOf('nitric') !== -1 ? pStr.indexOf('nitric') : 9999, pStr.indexOf('acid') !== -1 ? pStr.indexOf('acid') : 9999);
+        const isAgFirst = (agPos < acidAgPos);
+
+        const isCl = anion === 'Cl-' || anion === 'Cl⁻' || (anion && anion.includes('Cl')) || oStr.includes('agcl') || oStr.includes('white precipitate') || oStr.includes('white ppt');
+        const isBr = anion === 'Br-' || anion === 'Br⁻' || (anion && anion.includes('Br')) || oStr.includes('agbr') || oStr.includes('cream');
+        const isI = anion === 'I-' || anion === 'I⁻' || (anion && anion.includes('I')) || oStr.includes('agi') || oStr.includes('yellow ppt') || oStr.includes('bright yellow');
+        const isCO3orSO3 = anion === 'CO3^2-' || anion === 'CO32-' || anion === 'SO3^2-' || anion === 'SO32-' || (anion && (anion.includes('CO3') || anion.includes('SO3')));
+
+        if (stage === 'step1_agno3' || (isAgFirst && isStep1)) {
+          // AgNO3 added first
+          if (isCl) {
             ppt = true;
             pptColor = '#FFFFFF';
-            statusLabel = 'AgNO₃ Added: Dense white precipitate of AgCl formed';
+            statusLabel = 'Step 1 (AgNO₃ Added): Dense curdy white precipitate of AgCl formed';
+          } else if (isBr) {
+            ppt = true;
+            pptColor = '#FEF08A';
+            statusLabel = 'Step 1 (AgNO₃ Added): Pale cream precipitate of AgBr formed';
+          } else if (isI) {
+            ppt = true;
+            pptColor = '#FACC15';
+            statusLabel = 'Step 1 (AgNO₃ Added): Bright yellow precipitate of AgI formed';
+          } else if (isCO3orSO3) {
+            ppt = true;
+            pptColor = '#FFFFFF';
+            statusLabel = 'Step 1 (AgNO₃ Added): White precipitate formed';
           } else {
-            statusLabel = 'Dilute HNO₃ Added: Acidified stock solution';
+            statusLabel = 'Step 1 (AgNO₃ Added): No precipitate formed';
           }
-        } else if (anion === 'Br-' || anion === 'Br⁻' || (anion && anion.includes('Br')) || oStr.includes('agbr') || oStr.includes('cream')) {
-          if (stage === 'step3_nh3' || isExcess) {
+        } else if (stage === 'step2_acid' || stage === 'step2_hno3' || (isAgFirst && (stage === 'excess' || stage === 'done'))) {
+          // Dilute acid added second to test AgNO3 precipitate
+          if (isCl) {
+            ppt = true;
+            pptColor = '#FFFFFF';
+            statusLabel = 'Step 2 (Dilute HNO₃ Added): Dense white precipitate persists / insoluble in dilute HNO₃ (AgCl)';
+          } else if (isBr) {
+            ppt = true;
+            pptColor = '#FEF08A';
+            statusLabel = 'Step 2 (Dilute HNO₃ Added): Pale cream precipitate persists / insoluble in dilute HNO₃ (AgBr)';
+          } else if (isI) {
+            ppt = true;
+            pptColor = '#FACC15';
+            statusLabel = 'Step 2 (Dilute HNO₃ Added): Bright yellow precipitate persists / insoluble in dilute HNO₃ (AgI)';
+          } else if (isCO3orSO3) {
+            ppt = false;
+            pptDissolved = true;
+            bubbling = true;
+            soundType = 'effervescence';
+            statusLabel = 'Step 2 (Dilute HNO₃ Added): White precipitate dissolves with effervescence';
+          } else {
+            statusLabel = 'Step 2 (Dilute HNO₃ Added): Solution remains clear';
+          }
+        } else if (stage === 'step1_hno3' || stage === 'step1_acid') {
+          // Dilute HNO3 added first (Order A)
+          if (isCO3orSO3) {
+            bubbling = true;
+            soundType = 'effervescence';
+            statusLabel = 'Step 1 (Dilute HNO₃ Added): Effervescence of gas';
+          } else {
+            bubbling = false;
+            statusLabel = 'Step 1 (Dilute HNO₃ Added): Acidified stock solution (no effervescence)';
+          }
+        } else if (stage === 'step2_agno3' || (!isAgFirst && !isStep1 && stage !== 'step3_nh3')) {
+          // AgNO3 added second
+          if (isCl) {
+            ppt = true;
+            pptColor = '#FFFFFF';
+            statusLabel = 'Step 2 (AgNO₃ Added): Dense curdy white precipitate of AgCl formed';
+          } else if (isBr) {
+            ppt = true;
+            pptColor = '#FEF08A';
+            statusLabel = 'Step 2 (AgNO₃ Added): Pale cream precipitate of AgBr formed';
+          } else if (isI) {
+            ppt = true;
+            pptColor = '#FACC15';
+            statusLabel = 'Step 2 (AgNO₃ Added): Bright yellow precipitate of AgI formed';
+          } else {
+            statusLabel = 'Step 2 (AgNO₃ Added): No precipitate formed';
+          }
+        } else if (stage === 'step3_nh3' || isExcess) {
+          // Aqueous ammonia added to precipitate
+          if (isCl) {
+            pptDissolved = true;
+            liquidColor = 'rgba(255, 255, 255, 0.2)';
+            statusLabel = 'Step 3 (Aqueous NH₃ Added): White AgCl precipitate readily dissolves to form colourless solution';
+          } else if (isBr) {
             ppt = true;
             pptDissolved = false;
             pptColor = '#FEF08A';
-            statusLabel = 'In Aqueous NH₃: Pale cream precipitate is sparingly soluble';
-          } else if (stage === 'step2_agno3' || !isStep1) {
-            ppt = true;
-            pptColor = '#FEF08A';
-            statusLabel = 'AgNO₃ Added: Pale cream precipitate of AgBr formed';
-          } else {
-            statusLabel = 'Dilute HNO₃ Added: Acidified stock solution';
-          }
-        } else if (anion === 'I-' || anion === 'I⁻' || (anion && anion.includes('I')) || oStr.includes('agi') || oStr.includes('yellow ppt') || oStr.includes('bright yellow')) {
-          if (stage === 'step3_nh3' || isExcess) {
+            statusLabel = 'Step 3 (Aqueous NH₃ Added): Pale cream AgBr precipitate is sparingly soluble';
+          } else if (isI) {
             ppt = true;
             pptDissolved = false;
             pptColor = '#FACC15';
-            statusLabel = 'In Aqueous NH₃: Yellow precipitate remains completely insoluble';
-          } else if (stage === 'step2_agno3' || !isStep1) {
-            ppt = true;
-            pptColor = '#FACC15';
-            statusLabel = 'AgNO₃ Added: Bright yellow precipitate of AgI formed';
+            statusLabel = 'Step 3 (Aqueous NH₃ Added): Yellow AgI precipitate remains completely insoluble';
           } else {
-            statusLabel = 'Dilute HNO₃ Added: Acidified stock solution';
+            statusLabel = 'Step 3 (Aqueous NH₃ Added): Solution remains clear';
           }
         } else {
           statusLabel = 'No precipitate formed';
         }
       } else if (isBaCl2) {
-        if (anion === 'SO3^2-' || anion === 'SO32-' || (anion && anion.includes('SO3')) || oStr.includes('baso3') || (oStr.includes('white precipitate') && oStr.includes('dissolv'))) {
-          if (stage === 'step2_bacl2' || !isStep1) {
+        // Order detection between Barium and Acid:
+        const baPos = Math.min(
+          pStr.indexOf('barium') !== -1 ? pStr.indexOf('barium') : 9999,
+          pStr.indexOf('bacl') !== -1 ? pStr.indexOf('bacl') : 9999,
+          pStr.indexOf('ba(') !== -1 ? pStr.indexOf('ba(') : 9999
+        );
+        const acidPos = Math.min(
+          pStr.indexOf('acid') !== -1 ? pStr.indexOf('acid') : 9999,
+          pStr.indexOf('hno3') !== -1 ? pStr.indexOf('hno3') : 9999,
+          pStr.indexOf('hno₃') !== -1 ? pStr.indexOf('hno₃') : 9999,
+          pStr.indexOf('hcl') !== -1 ? pStr.indexOf('hcl') : 9999
+        );
+        const isBariumFirst = (baPos < acidPos);
+        const isSulfate = anion === 'SO4^2-' || anion === 'SO42-' || (anion && anion.includes('SO4')) || oStr.includes('baso4') || (oStr.includes('white precipitate') && !oStr.includes('dissolv') && !oStr.includes('effervesc'));
+        const isSulfite = anion === 'SO3^2-' || anion === 'SO32-' || (anion && anion.includes('SO3')) || oStr.includes('baso3') || (oStr.includes('white precipitate') && (oStr.includes('dissolv') || oStr.includes('so2')));
+        const isCarbonate = anion === 'CO3^2-' || anion === 'CO32-' || anion === 'HCO3-' || (anion && (anion.includes('CO3') || anion.includes('HCO3')));
+
+        if (stage === 'step1_barium' || (isBariumFirst && isStep1)) {
+          // Barium salt added first (cold)
+          if (isSulfate) {
             ppt = true;
             pptColor = '#FFFFFF';
-            if (stage === 'excess' || stage === 'step2_acid' || stage === 'acid' || isExcess || pStr.includes('acid') || pStr.includes('hcl') || oStr.includes('dissolv')) {
-              pptDissolved = true;
-              bubbling = true;
-              statusLabel = 'Dilute Acid Added: White BaSO₃ precipitate dissolves with effervescence of pungent SO₂ gas';
-            } else {
-              statusLabel = 'Ba²⁺ Added: White precipitate of BaSO₃ formed (dissolves in acid)';
-            }
+            pptDissolved = false;
+            bubbling = false;
+            statusLabel = 'Step 1 (Ba²⁺ Added): Dense white precipitate of BaSO₄ formed';
+          } else if (isSulfite) {
+            ppt = true;
+            pptColor = '#FFFFFF';
+            pptDissolved = false;
+            bubbling = false;
+            statusLabel = 'Step 1 (Ba²⁺ Added): White precipitate of BaSO₃ formed';
+          } else if (isCarbonate) {
+            ppt = true;
+            pptColor = '#FFFFFF';
+            pptDissolved = false;
+            bubbling = false;
+            statusLabel = 'Step 1 (Ba²⁺ Added): White precipitate of BaCO₃ formed';
+          } else {
+            ppt = false;
+            statusLabel = 'Step 1 (Ba²⁺ Added): No precipitate formed';
           }
-        } else if (anion === 'CO3^2-' || anion === 'CO32-' || anion === 'HCO3-' || (anion && (anion.includes('CO3') || anion.includes('HCO3')))) {
-          if (isStep1) {
+        } else if (stage === 'step2_acid' || (isBariumFirst && (stage === 'excess' || stage === 'done'))) {
+          // Dilute acid added second to precipitate from Step 1
+          if (isSulfate) {
+            ppt = true;
+            pptColor = '#FFFFFF';
+            pptDissolved = false;
+            bubbling = false;
+            statusLabel = 'Step 2 (Dilute Acid Added): Dense white precipitate persists / insoluble in dilute acid (BaSO₄ confirmed)';
+          } else if (isSulfite) {
+            ppt = false;
+            pptDissolved = true;
             bubbling = true;
-            statusLabel = 'Acid Added: Vigorous effervescence of CO₂ gas';
+            soundType = 'effervescence';
+            statusLabel = 'Step 2 (Dilute Acid Added): White precipitate dissolves with effervescence of choking SO₂ gas';
+          } else if (isCarbonate) {
+            ppt = false;
+            pptDissolved = true;
+            bubbling = true;
+            soundType = 'effervescence';
+            statusLabel = 'Step 2 (Dilute Acid Added): White precipitate dissolves with vigorous effervescence of CO₂ gas';
+          } else {
+            statusLabel = 'Step 2 (Dilute Acid Added): Solution remains clear (no precipitate)';
           }
-        } else if (anion === 'SO4^2-' || anion === 'SO42-' || (anion && anion.includes('SO4')) || oStr.includes('baso4') || oStr.includes('white precipitate') || oStr.includes('white ppt')) {
-          ppt = true;
-          pptColor = '#FFFFFF';
-          statusLabel = (pStr.includes('acid') || pStr.includes('hno3') || pStr.includes('hcl') || oStr.includes('insoluble'))
-            ? 'Ba²⁺ & Dilute Acid Added: Dense white precipitate of BaSO₄ formed (insoluble in dilute acid)'
-            : 'Ba²⁺ Added: Dense white precipitate of BaSO₄ formed';
+        } else if (stage === 'step1_acid') {
+          // Dilute acid added first (Order B)
+          if (isCarbonate) {
+            bubbling = true;
+            soundType = 'effervescence';
+            statusLabel = 'Step 1 (Dilute Acid Added): Vigorous effervescence of CO₂ gas';
+          } else if (isSulfite) {
+            bubbling = true;
+            soundType = 'effervescence';
+            statusLabel = 'Step 1 (Dilute Acid Added): Effervescence of pungent choking SO₂ gas';
+          } else {
+            bubbling = false;
+            statusLabel = 'Step 1 (Dilute Acid Added): Solution acidified (no effervescence)';
+          }
+        } else if (stage === 'step2_bacl2' || (!isBariumFirst && (stage === 'excess' || stage === 'done'))) {
+          // Barium salt added second to acidified solution (Order B)
+          if (isSulfate) {
+            ppt = true;
+            pptColor = '#FFFFFF';
+            pptDissolved = false;
+            statusLabel = 'Step 2 (Ba²⁺ Added): Dense white precipitate of BaSO₄ formed (insoluble in acid)';
+          } else {
+            ppt = false;
+            statusLabel = 'Step 2 (Ba²⁺ Added): No precipitate formed in acidified solution';
+          }
         } else {
-          statusLabel = 'No precipitate formed';
+          // Fallback or generic barium test
+          if (isSulfate) {
+            ppt = true;
+            pptColor = '#FFFFFF';
+            statusLabel = 'Ba²⁺ & Dilute Acid Added: Dense white precipitate of BaSO₄ formed (insoluble in acid)';
+          } else if (isSulfite) {
+            ppt = false;
+            pptDissolved = true;
+            bubbling = true;
+            soundType = 'effervescence';
+            statusLabel = 'Ba²⁺ & Dilute Acid Added: White precipitate dissolves with effervescence of SO₂ gas';
+          } else if (isCarbonate) {
+            bubbling = true;
+            soundType = 'effervescence';
+            statusLabel = 'Ba²⁺ & Dilute Acid Added: Effervescence of CO₂ gas';
+          } else {
+            statusLabel = 'No precipitate formed';
+          }
         }
       } else if (isPbNO3) {
         // KNEC Standard Method for Halides & Anions: Lead(II) Nitrate with warming & cooling
@@ -3302,18 +3501,27 @@
       }
     }
 
-    // 0b. Dissolving Solid in Distilled Water
+    // 0b. Dissolving Solid in Distilled Water & Dividing into Portions / Filtration
     if (
       pStr.includes('dissolv') ||
       (pStr.includes('distilled water') && (pStr.includes('solid') || pStr.includes('spatula') || pStr.includes('portion')))
     ) {
+      const hasPortionsOrFilter = pStr.includes('portion') || pStr.includes('divide') || pStr.includes('filter');
       if (!stage || stage === 'idle') {
         return [
-          { stage: 'dissolved', label: '💧 Add Distilled Water & Dissolve', cls: 'btn-perform-test btn-step-dissolve' }
+          { stage: 'step1_water', label: '💧 Step 1: Add Distilled Water & Dissolve Solid', cls: 'btn-perform-test btn-step-dissolve' }
+        ];
+      } else if (stage === 'step1_water' && hasPortionsOrFilter) {
+        const step2Label = pStr.includes('filter')
+          ? '🔬 Step 2: Filter Mixture & Retain Filtrate / Residue'
+          : '🧪 Step 2: Divide Stock Solution into Portions';
+        return [
+          { stage: 'dissolved', label: step2Label, cls: 'btn-perform-test btn-step-reagent' },
+          { stage: 'idle', label: '↺ Redo', cls: 'btn-redo-test', isRedo: true }
         ];
       } else {
         return [
-          { stage: 'done', label: '✅ Stock Solution Formed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'done', label: hasPortionsOrFilter ? '✅ Stock Portions Prepared' : '✅ Stock Solution Formed', cls: 'btn-perform-test done', disabled: true },
           { stage: 'idle', label: '↺ Redo', cls: 'btn-redo-test', isRedo: true }
         ];
       }
@@ -3339,11 +3547,70 @@
       }
     }
 
-    // 1. NaOH or NH3: Step 1 (Dropwise) -> Step 2 (Excess)
-    const isNaOH = tId.includes('naoh') || pStr.includes('naoh') || pStr.includes('sodium hydroxide');
+    // 1. Hydrogen Peroxide (H2O2) Followed by NaOH Dropwise until in Excess
+    const isH2O2 = tId.includes('h2o2') || tId.includes('peroxide') ||
+      pStr.includes('hydrogen peroxide') || pStr.includes('h2o2') || pStr.includes('h₂o₂');
+    const isNaOHReagent = tId.includes('naoh') || pStr.includes('naoh') || pStr.includes('sodium hydroxide');
+    if (isH2O2 && isNaOHReagent) {
+      if (!stage || stage === 'idle') {
+        return [
+          { stage: 'step1_h2o2', label: '💧 Step 1: Add 1 cm³ Hydrogen Peroxide (H₂O₂)', cls: 'btn-perform-test' }
+        ];
+      } else if (stage === 'step1_h2o2' || stage === 'added_h2o2') {
+        return [
+          { stage: 'few_drops', label: '💧 Step 2: Add 2M NaOH Dropwise (2–3 drops)', cls: 'btn-perform-test' },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      } else if (stage === 'few_drops' || stage === 'step2') {
+        return [
+          { stage: 'excess', label: '🧪 Step 3: Add 2M NaOH in Excess (~5 cm³)', cls: 'btn-perform-test btn-step-excess' },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      } else {
+        return [
+          { stage: 'done', label: '✅ Test Completed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      }
+    }
+
+    // 1b. NaOH with Warming / Heat (Ammonium Ion NH4+ Test)
+    const isNaOHWithHeat = isNaOHReagent && (pStr.includes('warm') || pStr.includes('heat'));
+    if (isNaOHWithHeat) {
+      const hasExcessOrDropwise = pStr.includes('excess') || pStr.includes('dropwise');
+      if (!stage || stage === 'idle') {
+        return [
+          { stage: 'few_drops', label: hasExcessOrDropwise ? '💧 Step 1: Add 2M NaOH Dropwise (2–3 drops)' : '💧 Step 1: Add 2M Sodium Hydroxide (NaOH)', cls: 'btn-perform-test' }
+        ];
+      } else if (stage === 'few_drops' || stage === 'step1') {
+        if (hasExcessOrDropwise) {
+          return [
+            { stage: 'excess', label: '🧪 Step 2: Add 2M NaOH in Excess (~5 cm³)', cls: 'btn-perform-test btn-step-excess' },
+            { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+          ];
+        } else {
+          return [
+            { stage: 'heated', label: '🔥 Step 2: Warm Gently & Test Gas with Moist Red Litmus', cls: 'btn-perform-test btn-step-heat' },
+            { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+          ];
+        }
+      } else if (stage === 'excess') {
+        return [
+          { stage: 'heated', label: '🔥 Step 3: Warm Gently & Test Gas with Moist Red Litmus', cls: 'btn-perform-test btn-step-heat' },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      } else {
+        return [
+          { stage: 'done', label: '✅ NH₃ Gas Test Completed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      }
+    }
+
+    // 1c. Standard NaOH or NH3: Step 1 (Dropwise) -> Step 2 (Excess)
     const isNH3 = tId.includes('nh3') || pStr.includes('nh3') || pStr.includes('ammonia') || pStr.includes('aqueous ammonia') || pStr.includes('nh₄oh') || pStr.includes('nh4oh');
-    if (isNaOH || isNH3) {
-      const reagentLabel = isNaOH ? 'NaOH' : 'NH₃';
+    if (isNaOHReagent || isNH3) {
+      const reagentLabel = isNaOHReagent ? 'NaOH' : 'NH₃';
       if (!stage || stage === 'idle') {
         return [
           { stage: 'few_drops', label: `💧 Step 1: Add Dropwise (2–3 drops ${reagentLabel})`, cls: 'btn-perform-test' }
@@ -3361,20 +3628,187 @@
       }
     }
 
+    // 1d. Barium Nitrate [Ba(NO3)2] / Barium Chloride [BaCl2] + Dilute Acid (Order A & Order B)
+    const isBa = tId.includes('bacl2') || tId.includes('barium') || pStr.includes('barium') || pStr.includes('ba(no3)2') || pStr.includes('ba(no₃)₂') || pStr.includes('bacl2');
+    if (isBa) {
+      const hasAcid = pStr.includes('acid') || pStr.includes('hno3') || pStr.includes('hno₃') || pStr.includes('hcl') || pStr.includes('nitric') || pStr.includes('hydrochloric');
+      const baLabel = (pStr.includes('nitrate') || pStr.includes('ba(no3)2') || pStr.includes('ba(no₃)₂')) ? 'Barium Nitrate [Ba(NO₃)₂]' : 'Barium Chloride [BaCl₂]';
+      const acidLabel = (pStr.includes('hno3') || pStr.includes('hno₃') || pStr.includes('nitric')) ? 'Dilute Nitric Acid (HNO₃)' : (pStr.includes('h2so4') || pStr.includes('sulfuric') || pStr.includes('sulphuric')) ? 'Dilute Sulfuric Acid (H₂SO₄)' : 'Dilute Hydrochloric Acid (HCl)';
+
+      const baPos = Math.min(
+        pStr.indexOf('barium') !== -1 ? pStr.indexOf('barium') : 9999,
+        pStr.indexOf('bacl') !== -1 ? pStr.indexOf('bacl') : 9999,
+        pStr.indexOf('ba(') !== -1 ? pStr.indexOf('ba(') : 9999
+      );
+      const acidPos = Math.min(
+        pStr.indexOf('acid') !== -1 ? pStr.indexOf('acid') : 9999,
+        pStr.indexOf('hno3') !== -1 ? pStr.indexOf('hno3') : 9999,
+        pStr.indexOf('hno₃') !== -1 ? pStr.indexOf('hno₃') : 9999,
+        pStr.indexOf('hcl') !== -1 ? pStr.indexOf('hcl') : 9999,
+        pStr.indexOf('nitric') !== -1 ? pStr.indexOf('nitric') : 9999,
+        pStr.indexOf('hydrochloric') !== -1 ? pStr.indexOf('hydrochloric') : 9999
+      );
+      const isBariumFirst = (baPos < acidPos);
+
+      if (hasAcid) {
+        if (isBariumFirst) {
+          // Order A: Barium added first, then dilute acid
+          if (!stage || stage === 'idle') {
+            return [
+              { stage: 'step1_barium', label: `💧 Step 1: Add 3 Drops ${baLabel}`, cls: 'btn-perform-test btn-step-reagent' }
+            ];
+          } else if (stage === 'step1_barium' || stage === 'step1') {
+            return [
+              { stage: 'step2_acid', label: `🧪 Step 2: Follow with ${acidLabel}`, cls: 'btn-perform-test btn-step-acid' },
+              { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+            ];
+          } else {
+            return [
+              { stage: 'done', label: '✅ Test Completed', cls: 'btn-perform-test done', disabled: true },
+              { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+            ];
+          }
+        } else {
+          // Order B: Dilute acid added first, then barium
+          if (!stage || stage === 'idle') {
+            return [
+              { stage: 'step1_acid', label: `💧 Step 1: Add 3 Drops ${acidLabel}`, cls: 'btn-perform-test btn-step-acid' }
+            ];
+          } else if (stage === 'step1_acid' || stage === 'step1') {
+            return [
+              { stage: 'step2_bacl2', label: `🧫 Step 2: Follow with ${baLabel}`, cls: 'btn-perform-test btn-step-reagent' },
+              { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+            ];
+          } else {
+            return [
+              { stage: 'done', label: '✅ Test Completed', cls: 'btn-perform-test done', disabled: true },
+              { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+            ];
+          }
+        }
+      } else {
+        // Single reagent barium addition
+        if (!stage || stage === 'idle') {
+          return [
+            { stage: 'step1_barium', label: `💧 Step 1: Add 3 Drops ${baLabel}`, cls: 'btn-perform-test' }
+          ];
+        } else {
+          return [
+            { stage: 'done', label: '✅ Test Completed', cls: 'btn-perform-test done', disabled: true },
+            { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+          ];
+        }
+      }
+    }
+
+    // 1e. Silver Nitrate (AgNO3) + Dilute HNO3 / Aqueous NH3 (Halide Confirmation)
+    const isAgNO3 = tId.includes('agno3') || pStr.includes('silver nitrate') || pStr.includes('agno3') || (pStr.includes('hno3') && pStr.includes('silver'));
+    if (isAgNO3) {
+      const hasNH3 = pStr.includes('ammonia') || pStr.includes('nh3') || pStr.includes('nh₃');
+      const agPos = Math.min(pStr.indexOf('silver') !== -1 ? pStr.indexOf('silver') : 9999, pStr.indexOf('agno') !== -1 ? pStr.indexOf('agno') : 9999);
+      const acidAgPos = Math.min(pStr.indexOf('hno3') !== -1 ? pStr.indexOf('hno3') : 9999, pStr.indexOf('hno₃') !== -1 ? pStr.indexOf('hno₃') : 9999, pStr.indexOf('nitric') !== -1 ? pStr.indexOf('nitric') : 9999, pStr.indexOf('acid') !== -1 ? pStr.indexOf('acid') : 9999);
+      const isAgFirst = (agPos < acidAgPos);
+
+      if (isAgFirst) {
+        if (!stage || stage === 'idle') {
+          return [
+            { stage: 'step1_agno3', label: '💧 Step 1: Add 3 Drops Silver Nitrate (AgNO₃)', cls: 'btn-perform-test' }
+          ];
+        } else if (stage === 'step1_agno3' || stage === 'step1') {
+          return [
+            { stage: 'step2_acid', label: '🧪 Step 2: Follow with Dilute Nitric Acid (HNO₃)', cls: 'btn-perform-test btn-step-acid' },
+            { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+          ];
+        } else if (stage === 'step2_acid' && hasNH3) {
+          return [
+            { stage: 'step3_nh3', label: '🫧 Step 3: Test Precipitate with Aqueous NH₃', cls: 'btn-perform-test btn-step-ammonia' },
+            { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+          ];
+        } else {
+          return [
+            { stage: 'done', label: '✅ Halide Test Completed', cls: 'btn-perform-test done', disabled: true },
+            { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+          ];
+        }
+      } else {
+        if (!stage || stage === 'idle') {
+          return [
+            { stage: 'step1_hno3', label: '💧 Step 1: Add 3 Drops Dilute Nitric Acid (HNO₃)', cls: 'btn-perform-test btn-step-acid' }
+          ];
+        } else if (stage === 'step1_hno3' || stage === 'step1') {
+          return [
+            { stage: 'step2_agno3', label: '🔬 Step 2: Follow with Silver Nitrate (AgNO₃)', cls: 'btn-perform-test btn-step-reagent' },
+            { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+          ];
+        } else if (stage === 'step2_agno3' && hasNH3) {
+          return [
+            { stage: 'step3_nh3', label: '🫧 Step 3: Test Precipitate with Aqueous NH₃', cls: 'btn-perform-test btn-step-ammonia' },
+            { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+          ];
+        } else {
+          return [
+            { stage: 'done', label: '✅ Halide Test Completed', cls: 'btn-perform-test done', disabled: true },
+            { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+          ];
+        }
+      }
+    }
+
+    // 1f. Brown Ring Test (FeSO4 + conc H2SO4)
+    const isBrownRing = tId.includes('brown_ring') || tId.includes('ring') || (pStr.includes('feso4') && pStr.includes('h2so4')) || pStr.includes('brown ring');
+    if (isBrownRing) {
+      if (!stage || stage === 'idle') {
+        return [
+          { stage: 'step1_feso4', label: '🧪 Step 1: Add Fresh FeSO₄(aq) Solution', cls: 'btn-perform-test btn-step-reagent' }
+        ];
+      } else if (stage === 'step1_feso4' || stage === 'step1') {
+        return [
+          { stage: 'step2_h2so4', label: '🟤 Step 2: Trickle Conc. H₂SO₄ Down Tube Wall', cls: 'btn-perform-test btn-step-heat' },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      } else {
+        return [
+          { stage: 'done', label: '✅ Brown Ring Observed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      }
+    }
+
+    // 1g. Dilute Acid (2M HCl / H2SO4) + Gas Test / Warming
+    const isHClOrAcid = tId.includes('hcl') || tId.includes('h2so4') || (pStr.includes('hydrochloric') && !pStr.includes('barium')) || (pStr.includes('sulfuric') && !pStr.includes('barium') && !pStr.includes('ring'));
+    if (isHClOrAcid) {
+      const hasGasOrWarm = pStr.includes('gas') || pStr.includes('limewater') || pStr.includes('warm') || pStr.includes('heat') || pStr.includes('splint') || pStr.includes('dichromate');
+      if (!stage || stage === 'idle') {
+        return [
+          { stage: 'step1_hcl', label: '💧 Step 1: Add 2M HCl / Dilute Acid', cls: 'btn-perform-test btn-step-acid' }
+        ];
+      } else if ((stage === 'step1_hcl' || stage === 'step1') && hasGasOrWarm) {
+        return [
+          { stage: 'step2_gas_warm', label: '🧪 Step 2: Test Gas (Limewater / Dichromate) & Warm Gently', cls: 'btn-perform-test btn-step-gas' },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      } else {
+        return [
+          { stage: 'done', label: '✅ Reaction Observed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      }
+    }
+
     // 2. Potassium Iodide (KI): Step 1 (Add KI) -> Step 2 (Warm) -> Step 3 (Cool)
     if (tId.includes('ki') || pStr.includes('potassium iodide') || pStr.includes('iodide')) {
       if (!stage || stage === 'idle') {
         return [
           { stage: 'few_drops', label: '💧 Step 1: Add 2–3 drops KI Solution', cls: 'btn-perform-test' }
         ];
-      } else if (stage === 'few_drops' || stage === 'stage1') {
+      } else if (stage === 'few_drops' || stage === 'stage1' || stage === 'step1') {
         return [
           { stage: 'heated', label: '🔥 Step 2: Warm Gently in Bunsen Flame', cls: 'btn-perform-test btn-step-heat' },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else if (stage === 'heated') {
         return [
-          { stage: 'cooled', label: '❄️ Step 3: Allow to Cool under Tap', cls: 'btn-perform-test btn-step-cool' },
+          { stage: 'cooled', label: '❄️ Step 3: Allow to Cool under Tap Water', cls: 'btn-perform-test btn-step-cool' },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else {
@@ -3394,14 +3828,14 @@
         return [
           { stage: 'few_drops', label: '💧 Step 1: Add 2–3 drops Lead(II) Nitrate [Pb(NO₃)₂]', cls: 'btn-perform-test' }
         ];
-      } else if (stage === 'few_drops' || stage === 'stage1') {
+      } else if (stage === 'few_drops' || stage === 'stage1' || stage === 'step1') {
         return [
           { stage: 'heated', label: '🔥 Step 2: Warm Gently in Bunsen Flame', cls: 'btn-perform-test btn-step-heat' },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else if (stage === 'heated' || stage === 'warm' || stage === 'step2_warm') {
         return [
-          { stage: 'cooled', label: '❄️ Step 3: Allow to Cool under Tap', cls: 'btn-perform-test btn-step-cool' },
+          { stage: 'cooled', label: '❄️ Step 3: Allow to Cool under Tap Water', cls: 'btn-perform-test btn-step-cool' },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else {
@@ -3413,8 +3847,6 @@
     }
 
     // 2c. Hydrogen Peroxide (H2O2) Test: Step 1 (Add H2O2) -> Step 2 (Test Gas with Glowing Splint if effervescent/catalytic)
-    const isH2O2 = tId.includes('h2o2') || tId.includes('peroxide') ||
-      pStr.includes('hydrogen peroxide') || pStr.includes('h2o2') || pStr.includes('h₂o₂');
     if (isH2O2) {
       const hasGasOrSplint = pStr.includes('splint') || pStr.includes('gas') || pStr.includes('effervesc') ||
         pStr.includes('solid d') || pStr.includes('mno2') || pStr.includes('manganese') || pStr.includes('catalyst') ||
@@ -3459,7 +3891,22 @@
       }
     }
 
-    // 6. Heating solid
+    // 2e. Zinc Dust / Solid E Displacement Test
+    const isZinc = tId.includes('zinc') || pStr.includes('zinc dust') || pStr.includes('solid e');
+    if (isZinc) {
+      if (!stage || stage === 'idle') {
+        return [
+          { stage: 'few_drops', label: '🥄 Step 1: Add Spatula-End of Zinc Dust (Solid E) & Shake', cls: 'btn-perform-test' }
+        ];
+      } else {
+        return [
+          { stage: 'done', label: '✅ Displacement Reaction Observed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      }
+    }
+
+    // 6. Heating solid in dry hard-glass tube
     if (
       (pStr.includes('heat') && (pStr.includes('dry') || pStr.includes('strongly') || pStr.includes('solid') || pStr.includes('spatula'))) ||
       tId.includes('heat') ||
@@ -3476,7 +3923,7 @@
         ];
       } else if (stage === 'step2_gas_test' || stage.startsWith('test_gas') || stage === 'test_splint' || stage === 'test_limewater') {
         return [
-          { stage: 'cooled', label: '❄️ Step 3: Allow Tube to Cool', cls: 'btn-perform-test btn-step-cool' },
+          { stage: 'cooled', label: '❄️ Step 3: Allow Tube to Cool to Room Temp', cls: 'btn-perform-test btn-step-cool' },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else {
@@ -3487,15 +3934,22 @@
       }
     }
 
-    // Default 1-step test
+    // Default Reagent-Specific or Step 1 Action (no generic "Perform Test Procedure")
+    let dynamicLabel = '🧪 Step 1: Add Reagent & Observe Reaction';
+    if (pStr.includes('lead') || pStr.includes('pb(no3)')) dynamicLabel = '💧 Step 1: Add 2–3 Drops Lead(II) Nitrate [Pb(NO₃)₂]';
+    else if (pStr.includes('iodide') || pStr.includes('ki')) dynamicLabel = '💧 Step 1: Add 2–3 Drops KI Solution';
+    else if (pStr.includes('chlorine water')) dynamicLabel = '💧 Step 1: Add Fresh Chlorine Water & Shake';
+    else if (pStr.includes('sulfate') || pStr.includes('h2so4')) dynamicLabel = '💧 Step 1: Add Dilute Sulfuric Acid (H₂SO₄)';
+    else if (pStr.includes('portion') || pStr.includes('solution')) dynamicLabel = '💧 Step 1: Add Test Reagent to Portion';
+
     if (!stage || stage === 'idle') {
       return [
-        { stage: 'stage1', label: '🧪 Perform Test Procedure', cls: 'btn-perform-test' }
+        { stage: 'stage1', label: dynamicLabel, cls: 'btn-perform-test' }
       ];
     } else {
       return [
         { stage: 'done', label: '✅ Reaction Observed', cls: 'btn-perform-test done', disabled: true },
-        { stage: 'idle', label: '↺ Redo', cls: 'btn-redo-test', isRedo: true }
+        { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
       ];
     }
   }

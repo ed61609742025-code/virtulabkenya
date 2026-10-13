@@ -1823,15 +1823,27 @@
     const tId = String(testId).toLowerCase();
     const pStr = String(prompt).toLowerCase();
 
-    // 1. Specific chemical reagents in prompt ALWAYS take highest priority over generic procedures like "water bath"
+    const stage = String(options.stage || (performed ? 'done' : 'idle')).toLowerCase();
+
+    // 1. Multi-stage routing for water + litmus procedure
+    if (stage === 'step1_water') {
+      return renderSolubilitySvg({ sampleKey, performed: true, isAdding, tubeId });
+    }
+    if (stage === 'step2_litmus') {
+      return renderLitmusSvg({ sampleKey, performed: true, tubeId });
+    }
+
+    const effWarming = Boolean(isWarming || isHeating || stage === 'step2_warm' || stage === 'warm' || stage === 'heated');
+
+    // 2. Specific chemical reagents in prompt ALWAYS take highest priority over generic procedures like "water bath"
     if (pStr.includes('dichromate') || pStr.includes('cr2o7') || pStr.includes('k2cr2o7')) {
-      return renderDecolorizationSvg({ sampleKey, testType: 'dichromate', performed, isAdding, isHeating, isWarming, tubeId });
+      return renderDecolorizationSvg({ sampleKey, testType: 'dichromate', performed, isAdding, isHeating: effWarming, isWarming: effWarming, tubeId });
     }
     if (pStr.includes('kmno4') || pStr.includes('manganate') || pStr.includes('permanganate')) {
-      return renderDecolorizationSvg({ sampleKey, testType: 'kmno4', performed, isAdding, isHeating, isWarming, tubeId });
+      return renderDecolorizationSvg({ sampleKey, testType: 'kmno4', performed, isAdding, isHeating: effWarming, isWarming: effWarming, tubeId });
     }
     if (pStr.includes('bromine') || pStr.includes('br2')) {
-      return renderDecolorizationSvg({ sampleKey, testType: 'bromine', performed, isAdding, isHeating, isWarming, tubeId });
+      return renderDecolorizationSvg({ sampleKey, testType: 'bromine', performed, isAdding, isHeating: effWarming, isWarming: effWarming, tubeId });
     }
     if (pStr.includes('nahco3') || pStr.includes('na2co3') || pStr.includes('carbonate') || pStr.includes('effervesc')) {
       return renderEffervescenceSvg({ sampleKey, performed, isAdding, tubeId });
@@ -1850,15 +1862,15 @@
       return renderSolubilitySvg({ sampleKey, performed, isAdding, tubeId });
     }
 
-    // 2. Fallback to explicit testId when prompt is generic, unspecific, or empty
+    // 3. Fallback to explicit testId when prompt is generic, unspecific, or empty
     if (tId.includes('dichromate') || tId.includes('cr2o7')) {
-      return renderDecolorizationSvg({ sampleKey, testType: 'dichromate', performed, isAdding, isHeating, isWarming, tubeId });
+      return renderDecolorizationSvg({ sampleKey, testType: 'dichromate', performed, isAdding, isHeating: effWarming, isWarming: effWarming, tubeId });
     }
     if (tId.includes('kmno4') || tId.includes('manganate') || tId.includes('permanganate')) {
-      return renderDecolorizationSvg({ sampleKey, testType: 'kmno4', performed, isAdding, isHeating, isWarming, tubeId });
+      return renderDecolorizationSvg({ sampleKey, testType: 'kmno4', performed, isAdding, isHeating: effWarming, isWarming: effWarming, tubeId });
     }
     if (tId.includes('bromine') || tId.includes('br2')) {
-      return renderDecolorizationSvg({ sampleKey, testType: 'bromine', performed, isAdding, isHeating, isWarming, tubeId });
+      return renderDecolorizationSvg({ sampleKey, testType: 'bromine', performed, isAdding, isHeating: effWarming, isWarming: effWarming, tubeId });
     }
     if (tId.includes('nahco3') || tId.includes('carbonate') || tId.includes('effervesc')) {
       return renderEffervescenceSvg({ sampleKey, performed, isAdding, tubeId });
@@ -1881,10 +1893,13 @@
   }
 
   // ── 4. Reaction State & Multi-Stage Action Button Resolver ─────
-  function resolveOrganicReactionState(sampleKey, testId, performed = false, prompt = '') {
+  function resolveOrganicReactionState(sampleKey, testId, stageOrPerformed = false, prompt = '') {
     const sample = resolveSample(sampleKey);
     const tId = String(testId).toLowerCase();
     const pStr = String(prompt).toLowerCase();
+
+    const performed = Boolean(stageOrPerformed && stageOrPerformed !== 'idle' && stageOrPerformed !== 'untested');
+    const stage = (typeof stageOrPerformed === 'string') ? stageOrPerformed : (performed ? 'done' : 'idle');
 
     let statusLabel = 'Ready to test';
     let soundType = 'drop';
@@ -1892,32 +1907,51 @@
     const isMethanoic = sample.compoundKey === 'methanoic_acid' || sample.key === 'org_methanoic_acid';
     const isBenzoic = sample.compoundKey === 'benzoic_acid' || sample.key === 'org_benzoic_acid';
 
-    if (pStr.includes('bromine') || tId.includes('bromine')) {
+    if (stage === 'step1_water') {
+      const isMiscible = sample.solubility ? Boolean(sample.solubility.isMiscible) : (sample.fgKey === 'alkanol' || (sample.fgKey === 'alkanoic_acid' && !isBenzoic));
+      statusLabel = isMiscible ? 'Step 1 (Water Added): Miscible, forms clear homogeneous solution' : 'Step 1 (Water Added): Immiscible, forms two separate layers';
+      soundType = 'drop';
+    } else if (stage === 'step2_litmus' || pStr.includes('litmus') || tId.includes('litmus')) {
+      const isAcidic = sample.fgKey === 'alkanoic_acid';
+      statusLabel = performed ? (isAcidic ? 'Litmus: Moist blue litmus turns red; red remains red (pH ~3, Carboxylic acid confirmed)' : 'Litmus: Neutral, moist red and blue litmus papers remain unchanged (pH ~7)') : 'Awaiting Litmus Strips';
+      soundType = 'drop';
+    } else if (pStr.includes('bromine') || tId.includes('bromine')) {
       const isDecolorized = sample.bromine?.isDecolorized || sample.fgKey === 'alkene' || sample.fgKey === 'alkyne';
       statusLabel = performed ? (isDecolorized ? 'Bromine Water: Rapidly decolourized to colourless' : 'Bromine Water: Reddish-brown colour persists') : 'Awaiting Bromine Water';
       soundType = 'drop';
     } else if (pStr.includes('dichromate') || pStr.includes('cr2o7') || tId.includes('dichromate')) {
       const turnsGreen = sample.dichromate?.turnsGreen || sample.fgKey === 'alkanol';
-      statusLabel = performed ? (turnsGreen ? 'K₂Cr₂O₇: Orange turns emerald green (Cr³⁺ reduced)' : 'K₂Cr₂O₇: Orange colour persists') : 'Awaiting K₂Cr₂O₇';
-      soundType = 'flame';
+      if (stage === 'step1_reagent') {
+        statusLabel = 'Step 1 (K₂Cr₂O₇ Added): Orange acidified potassium dichromate added';
+        soundType = 'drop';
+      } else {
+        statusLabel = performed ? (turnsGreen ? 'Warmed: Orange turns emerald green (Cr³⁺ reduced by alcohol)' : 'Warmed: Orange colour persists') : 'Awaiting K₂Cr₂O₇';
+        soundType = 'flame';
+      }
     } else if (pStr.includes('kmno4') || pStr.includes('manganate') || pStr.includes('permanganate') || tId.includes('kmno4')) {
       const isDecolorized = sample.kmno4?.isDecolorized || sample.fgKey === 'alkene' || sample.fgKey === 'alkanol' || isMethanoic;
-      statusLabel = performed
-        ? (isDecolorized
-            ? (isMethanoic
-                ? 'KMnO₄: Purple acidified KMnO₄ rapidly decolourized with gentle CO₂ effervescence'
-                : 'KMnO₄: Purple acidified KMnO₄ rapidly decolourized')
-            : 'KMnO₄: Purple colour remains unchanged')
-        : 'Awaiting KMnO₄';
-      soundType = (performed && isMethanoic) ? 'effervescence' : 'drop';
+      if (stage === 'step1_reagent') {
+        statusLabel = 'Step 1 (KMnO₄ Added): Purple acidified potassium manganate(VII) added';
+        soundType = 'drop';
+      } else {
+        statusLabel = performed
+          ? (isDecolorized
+              ? (isMethanoic
+                  ? 'Warmed: Purple acidified KMnO₄ rapidly decolourized with gentle CO₂ effervescence'
+                  : 'Warmed: Purple acidified KMnO₄ rapidly decolourized')
+              : 'Warmed: Purple colour remains unchanged')
+          : 'Awaiting KMnO₄';
+        soundType = (performed && isMethanoic) ? 'effervescence' : 'drop';
+      }
     } else if (pStr.includes('nahco3') || pStr.includes('carbonate') || pStr.includes('effervesc') || tId.includes('nahco3') || tId.includes('carbonate')) {
       const hasEff = sample.carbonate?.hasEffervescence || sample.fgKey === 'alkanoic_acid';
-      statusLabel = performed ? (hasEff ? 'NaHCO₃: Vigorous effervescence of CO₂ gas' : 'NaHCO₃: No effervescence observed') : 'Awaiting Solid NaHCO₃';
-      soundType = hasEff ? 'effervescence' : 'drop';
-    } else if (pStr.includes('litmus') || pStr.includes('ph') || tId.includes('litmus')) {
-      const isAcidic = sample.fgKey === 'alkanoic_acid';
-      statusLabel = performed ? (isAcidic ? 'Litmus: Moist blue litmus turns red (Acidic, pH 3)' : 'Litmus: Neutral, no colour change (pH 7)') : 'Awaiting Litmus Strips';
-      soundType = 'drop';
+      if (stage === 'step2_limewater') {
+        statusLabel = hasEff ? 'Step 2 (Limewater Test): Gas turns limewater milky (CO₂ confirmed from -COOH group)' : 'Step 2 (Limewater Test): Limewater remains clear';
+        soundType = hasEff ? 'effervescence' : 'drop';
+      } else {
+        statusLabel = performed ? (hasEff ? 'Solid NaHCO₃ Added: Vigorous effervescence of CO₂ gas' : 'Solid NaHCO₃ Added: No effervescence observed') : 'Awaiting Solid NaHCO₃';
+        soundType = hasEff ? 'effervescence' : 'drop';
+      }
     } else if (pStr.includes('ignit') || pStr.includes('flame') || pStr.includes('burn') || (pStr.includes('spatula') && (pStr.includes('flame') || pStr.includes('burn') || pStr.includes('heat') || pStr.includes('ignit'))) || tId.includes('ignit')) {
       const isSooty = sample.isSooty || sample.fgKey === 'alkene' || sample.fgKey === 'alkyne' || isBenzoic;
       statusLabel = performed ? (isSooty ? 'Ignition: Luminous smoky sooty yellow flame' : 'Ignition: Clear non-sooty pale blue flame') : 'Awaiting Bunsen Flame';
@@ -1937,20 +1971,167 @@
     return {
       sample,
       performed,
+      stage,
       statusLabel,
       soundType
     };
   }
 
-  function getOrganicActions(testId, prompt, performed = false) {
-    if (!performed) {
+  function getOrganicActions(testId, prompt, stageOrPerformed = 'idle') {
+    const stage = (typeof stageOrPerformed === 'string')
+      ? stageOrPerformed
+      : (stageOrPerformed ? 'done' : 'idle');
+    const pStr = String(prompt || '').toLowerCase();
+    const tId = String(testId || '').toLowerCase();
+
+    // 1. Water + Litmus multi-step
+    const isWaterWithLitmus = (pStr.includes('water') || tId.includes('solub')) && (pStr.includes('litmus') || pStr.includes('ph'));
+    if (isWaterWithLitmus) {
+      if (!stage || stage === 'idle') {
+        return [
+          { stage: 'step1_water', label: '💧 Step 1: Add 2 cm³ Distilled Water & Shake Thoroughly', cls: 'btn-perform-test btn-step-dissolve' }
+        ];
+      } else if (stage === 'step1_water' || stage === 'step1') {
+        return [
+          { stage: 'step2_litmus', label: '📄 Step 2: Test Mixture with Moist Red & Blue Litmus Paper', cls: 'btn-perform-test btn-step-litmus' },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      } else {
+        return [
+          { stage: 'done', label: '✅ Water & Litmus Test Completed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      }
+    }
+
+    // 2. Acidified KMnO4 / K2Cr2O7 with Warming
+    const isOxidant = pStr.includes('kmno4') || pStr.includes('dichromate') || pStr.includes('cr2o7') || pStr.includes('manganate') || tId.includes('kmno4') || tId.includes('dichromate');
+    const hasWarm = pStr.includes('warm') || pStr.includes('heat') || pStr.includes('water bath');
+    if (isOxidant && hasWarm) {
+      const oxidantName = (pStr.includes('dichromate') || pStr.includes('cr2o7') || tId.includes('dichromate'))
+        ? 'Acidified K₂Cr₂O₇ Solution'
+        : 'Acidified KMnO₄ Solution';
+      if (!stage || stage === 'idle') {
+        return [
+          { stage: 'step1_reagent', label: `💧 Step 1: Add 3–4 Drops ${oxidantName}`, cls: 'btn-perform-test' }
+        ];
+      } else if (stage === 'step1_reagent' || stage === 'step1') {
+        return [
+          { stage: 'step2_warm', label: '🔥 Step 2: Warm Gently in Water Bath', cls: 'btn-perform-test btn-step-heat' },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      } else {
+        return [
+          { stage: 'done', label: '✅ Oxidation Test Completed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      }
+    }
+
+    // 3. NaHCO3 + Limewater
+    const isCarbonate = pStr.includes('nahco3') || pStr.includes('carbonate') || tId.includes('nahco3');
+    const hasGasLimewater = pStr.includes('limewater') || pStr.includes('gas');
+    if (isCarbonate && hasGasLimewater) {
+      if (!stage || stage === 'idle') {
+        return [
+          { stage: 'step1_nahco3', label: '🥄 Step 1: Add Spatula-End of Solid NaHCO₃', cls: 'btn-perform-test' }
+        ];
+      } else if (stage === 'step1_nahco3' || stage === 'step1') {
+        return [
+          { stage: 'step2_limewater', label: '🥛 Step 2: Bubble Evolved Gas Through Limewater', cls: 'btn-perform-test btn-step-gas' },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      } else {
+        return [
+          { stage: 'done', label: '✅ Effervescence & Gas Confirmed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      }
+    }
+
+    // 4. Ignition on spatula
+    if (pStr.includes('ignit') || pStr.includes('burn') || (pStr.includes('spatula') && (pStr.includes('flame') || pStr.includes('bunsen'))) || tId.includes('ignit')) {
+      if (!stage || stage === 'idle') {
+        return [
+          { stage: 'stage1', label: '🔥 Step 1: Scoop on Spatula & Burn in Bunsen Flame', cls: 'btn-perform-test btn-step-heat' }
+        ];
+      } else {
+        return [
+          { stage: 'done', label: '✅ Combustion Flame Observed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      }
+    }
+
+    // 5. Bromine water
+    if (pStr.includes('bromine') || tId.includes('bromine')) {
+      if (!stage || stage === 'idle') {
+        return [
+          { stage: 'stage1', label: '💧 Step 1: Add 2–3 Drops Bromine Water & Shake', cls: 'btn-perform-test' }
+        ];
+      } else {
+        return [
+          { stage: 'done', label: '✅ Bromine Decolourization Observed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      }
+    }
+
+    // 6. Litmus test
+    if (pStr.includes('litmus') || tId.includes('litmus') || pStr.includes('ph paper')) {
+      if (!stage || stage === 'idle') {
+        return [
+          { stage: 'stage1', label: '📄 Step 1: Dip Moist Red & Blue Litmus Papers', cls: 'btn-perform-test btn-step-litmus' }
+        ];
+      } else {
+        return [
+          { stage: 'done', label: '✅ Litmus Reaction Recorded', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      }
+    }
+
+    // 7. Water solubility / miscibility
+    if (pStr.includes('solub') || pStr.includes('miscib') || pStr.includes('water')) {
+      if (!stage || stage === 'idle') {
+        return [
+          { stage: 'stage1', label: '💧 Step 1: Add 2 cm³ Distilled Water & Shake', cls: 'btn-perform-test btn-step-dissolve' }
+        ];
+      } else {
+        return [
+          { stage: 'done', label: '✅ Miscibility Observed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      }
+    }
+
+    // 8. Solid NaHCO3 alone
+    if (isCarbonate) {
+      if (!stage || stage === 'idle') {
+        return [
+          { stage: 'stage1', label: '🥄 Step 1: Add Spatula-End of Solid NaHCO₃', cls: 'btn-perform-test' }
+        ];
+      } else {
+        return [
+          { stage: 'done', label: '✅ Reaction Observed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      }
+    }
+
+    // Default dynamic
+    let actionLabel = '🧪 Step 1: Add Reagent & Observe Reaction';
+    if (pStr.includes('kmno4')) actionLabel = '💧 Step 1: Add Acidified KMnO₄ Solution';
+    else if (pStr.includes('dichromate')) actionLabel = '💧 Step 1: Add Acidified K₂Cr₂O₇ Solution';
+
+    if (!stage || stage === 'idle') {
       return [
-        { stage: 'done', label: '🧪 Perform Test Procedure', cls: 'btn-perform-test' }
+        { stage: 'stage1', label: actionLabel, cls: 'btn-perform-test' }
       ];
     } else {
       return [
-        { stage: 'done', label: '✅ Test Completed', cls: 'btn-perform-test done', disabled: true },
-        { stage: 'idle', label: '↺ Redo', cls: 'btn-redo-test', isRedo: true }
+        { stage: 'done', label: '✅ Reaction Observed', cls: 'btn-perform-test done', disabled: true },
+        { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
       ];
     }
   }

@@ -6,6 +6,9 @@
 (function () {
   'use strict';
 
+  let _lastSessions = [];
+  let _selectedBranchId = null;
+
   const PATHWAY_DATA = [
     {
       id: 'branch-volumetric',
@@ -253,7 +256,10 @@
     const container = document.getElementById('skillTreeContainer');
     if (!container) return;
 
-    let sessions = Array.isArray(sessionsParam) ? sessionsParam : [];
+    if (Array.isArray(sessionsParam) && sessionsParam.length) {
+      _lastSessions = sessionsParam;
+    }
+    let sessions = _lastSessions.length ? _lastSessions : [];
     if (!sessions.length) {
       try {
         const raw = localStorage.getItem('vlk_cached_sessions');
@@ -267,19 +273,37 @@
     let totalNodesCount = 0;
     let activeNodeFound = false;
 
-    // Count and evaluate nodes
+    // Count and evaluate nodes, and compute branch completion stats
+    let activeBranchId = null;
     PATHWAY_DATA.forEach(branch => {
+      let branchCompletedCount = 0;
       branch.nodes.forEach(node => {
         totalNodesCount++;
         totalPossibleStars += 3;
         const prog = getNodeProgress(node, sessions);
         node.progress = prog;
         totalEarnedStars += prog.stars;
-        if (prog.completed) totalCompletedNodes++;
+        if (prog.completed) {
+          totalCompletedNodes++;
+          branchCompletedCount++;
+        }
       });
+      branch.isCompleted = (branchCompletedCount === branch.nodes.length && branch.nodes.length > 0);
+      branch.completedCount = branchCompletedCount;
+      if (!activeBranchId && !branch.isCompleted) {
+        activeBranchId = branch.id;
+      }
     });
 
+    if (!activeBranchId && PATHWAY_DATA.length > 0) {
+      activeBranchId = PATHWAY_DATA[PATHWAY_DATA.length - 1].id;
+    }
+
     const syllabusPct = Math.round((totalCompletedNodes / totalNodesCount) * 100);
+
+    const savedMode = localStorage.getItem('vlk_skilltree_mode') || 'focus';
+    const isFocusMode = (savedMode === 'focus');
+    const targetBranchId = _selectedBranchId || activeBranchId;
 
     let html = `
       <!-- Compact Pathway Stats Banner -->
@@ -301,10 +325,55 @@
         </div>
       </div>
 
+      <!-- Progressive Disclosure Branch Navigation Chips -->
+      <div class="st-branch-nav-chips" role="tablist" aria-label="Syllabus Branches">
+    `;
+
+    PATHWAY_DATA.forEach(branch => {
+      const isBranchActive = (branch.id === targetBranchId && isFocusMode);
+      const isComplete = branch.isCompleted;
+      const isCurrent = (branch.id === activeBranchId);
+
+      let statusIcon = '○';
+      let statusClass = 'status-upcoming';
+      if (isComplete) {
+        statusIcon = '✓';
+        statusClass = 'status-completed';
+      } else if (isCurrent) {
+        statusIcon = '⚡';
+        statusClass = 'status-active';
+      }
+
+      html += `
+        <button type="button" class="st-branch-chip ${isBranchActive ? 'active' : ''}" 
+          onclick="SkillTree.selectBranch('${branch.id}')"
+          role="tab"
+          aria-selected="${isBranchActive ? 'true' : 'false'}"
+          title="${branch.title} (${branch.completedCount}/${branch.nodes.length} Completed)">
+          <span class="st-chip-status ${statusClass}">${statusIcon}</span>
+          <span>${branch.title}</span>
+        </button>
+      `;
+    });
+
+    html += `
+        <button type="button" class="st-branch-chip st-chip-all ${!isFocusMode ? 'active' : ''}" 
+          onclick="SkillTree.toggleFullTree(${isFocusMode ? 'true' : 'false'})"
+          role="tab"
+          aria-selected="${!isFocusMode ? 'true' : 'false'}"
+          title="Display all 5 branches at once">
+          <span>${!isFocusMode ? '🗺️ All Branches (5)' : '🗺️ View All (5)'}</span>
+        </button>
+      </div>
+
       <div class="skill-tree-pathway">
     `;
 
-    PATHWAY_DATA.forEach((branch, bIdx) => {
+    const branchesToRender = isFocusMode
+      ? PATHWAY_DATA.filter(b => b.id === targetBranchId)
+      : PATHWAY_DATA;
+
+    branchesToRender.forEach((branch, bIdx) => {
       const isCapstoneBranch = !!branch.isCapstone;
       const nodeCount = branch.nodes.length;
       html += `
@@ -385,11 +454,11 @@
         </section>
       `;
 
-      // Inter-branch milestone bridge (connects sequential syllabus branches)
-      if (bIdx < PATHWAY_DATA.length - 1) {
-        const isBranchCompleted = branch.nodes.every(n => n.progress && n.progress.completed);
-        const nextBranch = PATHWAY_DATA[bIdx + 1];
-        const isNextBranchActive = nextBranch && nextBranch.nodes.some(n => !n.progress || !n.progress.completed) && isBranchCompleted;
+      // Inter-branch milestone bridge (only if multiple branches rendered)
+      if (branchesToRender.length > 1 && bIdx < branchesToRender.length - 1) {
+        const isBranchCompleted = branch.isCompleted;
+        const nextBranch = branchesToRender[bIdx + 1];
+        const isNextBranchActive = nextBranch && !nextBranch.isCompleted && isBranchCompleted;
 
         let bridgeState = 'bridge-upcoming';
         let bridgeIcon = '↓';
@@ -416,6 +485,28 @@
     });
 
     html += `</div>`;
+
+    // Footer Expand / Collapse Toggle Button
+    if (isFocusMode) {
+      html += `
+        <div class="st-expand-footer-wrap">
+          <button type="button" class="st-expand-pathway-btn" onclick="SkillTree.toggleFullTree(true)">
+            <span class="st-expand-btn-icon">🗺️</span>
+            <span class="st-expand-btn-text">View Full Syllabus Tree (All 5 Branches · 13 Practicals) ↓</span>
+          </button>
+        </div>
+      `;
+    } else {
+      html += `
+        <div class="st-expand-footer-wrap">
+          <button type="button" class="st-expand-pathway-btn" onclick="SkillTree.toggleFullTree(false)">
+            <span class="st-expand-btn-icon">⚡</span>
+            <span class="st-expand-btn-text">Collapse to Current Focus Tier ↑</span>
+          </button>
+        </div>
+      `;
+    }
+
     container.innerHTML = html;
 
     // Trigger SVG connector drawing after DOM layout stabilizes
@@ -627,6 +718,30 @@
     treeResizeObserver.observe(container);
   }
 
+  function selectBranch(branchId) {
+    _selectedBranchId = branchId;
+    try {
+      localStorage.setItem('vlk_skilltree_mode', 'focus');
+    } catch (e) {}
+    renderSkillTree();
+  }
+
+  function toggleFullTree(showAll) {
+    if (typeof showAll === 'boolean') {
+      try {
+        localStorage.setItem('vlk_skilltree_mode', showAll ? 'all' : 'focus');
+      } catch (e) {}
+    } else {
+      const current = localStorage.getItem('vlk_skilltree_mode') || 'focus';
+      const next = (current === 'focus') ? 'all' : 'focus';
+      try {
+        localStorage.setItem('vlk_skilltree_mode', next);
+      } catch (e) {}
+    }
+    _selectedBranchId = null;
+    renderSkillTree();
+  }
+
   // ── Public API ───────────────────────────────────────────────
   window.SkillTree = {
     render: renderSkillTree,
@@ -635,6 +750,8 @@
     openModal: openNodeModal,
     closeModal: closeNodeModal,
     switchView: switchPathwayView,
+    selectBranch: selectBranch,
+    toggleFullTree: toggleFullTree,
     data: PATHWAY_DATA
   };
 

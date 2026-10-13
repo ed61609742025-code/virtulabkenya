@@ -102,6 +102,11 @@
     </div>
 
     <div class="nav-actions">
+      <!-- Diagnostic Drills & KNEC Rubric Button -->
+      <button type="button" class="theme-btn-chip" onclick="window.KnecRemediation && window.KnecRemediation.openWorkbenchDrillsMenu('qualitative')" title="KNEC Inorganic Cation/Anion Micro-Drills & Qualitative Sprint" style="padding:4px 8px; font-size:0.75rem; border:1px solid rgba(16,185,129,0.35); background:rgba(16,185,129,0.1); color:#10B981; font-weight:700; cursor:pointer;">
+        🎯 <span class="btn-text-full">Diagnostic Drills</span>
+      </button>
+
       <!-- Guided Tutorial Button -->
       <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm" onclick="TutorialEngine.start('qualitative')" style="padding:4px 8px; font-size:0.75rem; white-space:nowrap;">
         🧭 <span class="btn-text-full">Guided Tutorial</span><span class="btn-text-short">Tutorial</span>
@@ -538,6 +543,7 @@
 <script defer src="../shared/tutorial-engine.js"></script>
 <script defer src="/shared/qualitative-bench-core.js?v=155"></script>
 <script defer src="/shared/knec-pedagogy.js?v=155"></script>
+<script defer src="/shared/knec-remediation-drills.js?v=163"></script>
 <script defer src="js/qualitative-engine.js?v=155"></script>
 <script defer src="../shared/ai-tutor.js"></script>
 <script defer src="../shared/pwa-installer.js"></script>

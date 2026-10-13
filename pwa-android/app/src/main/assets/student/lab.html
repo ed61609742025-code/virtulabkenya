@@ -112,6 +112,11 @@
         📖 <span class="btn-text-full">Theory Guide</span>
       </a>
 
+      <!-- Diagnostic Drills & KNEC Rubric Button -->
+      <button type="button" class="theme-btn-chip" onclick="window.KnecRemediation && window.KnecRemediation.openWorkbenchDrillsMenu('titration')" title="KNEC Condition (D, PA, AC/FA) Micro-Drills & Titration Sprint" style="padding:4px 8px; font-size:0.75rem; border:1px solid rgba(2,132,199,0.35); background:rgba(2,132,199,0.1); color:var(--cyan-accent); font-weight:700; cursor:pointer;">
+        🎯 <span class="btn-text-full">Diagnostic Drills</span>
+      </button>
+
       <!-- Guided Tutorial Button -->
       <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm" onclick="TutorialEngine.start('titration')" style="padding:4px 8px; font-size:0.75rem; white-space:nowrap;">
         🧭 <span class="btn-text-full">Guided Tutorial</span><span class="btn-text-short">Tutorial</span>
@@ -982,6 +987,7 @@
 <script defer src="../shared/brilliant-ui.js"></script>
 <script defer src="../shared/tutorial-engine.js"></script>
 <script defer src="/shared/knec-pedagogy.js"></script>
+<script defer src="/shared/knec-remediation-drills.js?v=163"></script>
 <script defer src="js/titration-workbench.js?v=152"></script>
 <script defer src="../shared/ai-tutor.js"></script>
 <script defer src="../shared/pwa-installer.js"></script>

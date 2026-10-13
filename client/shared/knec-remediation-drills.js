@@ -357,10 +357,473 @@
     };
   }
 
+  // ── Standalone Interactive Modal UI & Controller ─────────────
+  let _activeDrill = null;
+  let _drillTimerInterval = null;
+
+  function ensureStylesInDOM() {
+    if (document.getElementById('vlk-remediation-drill-styles')) return;
+    const style = document.createElement('style');
+    style.id = 'vlk-remediation-drill-styles';
+    style.textContent = `
+      .vlk-drill-backdrop {
+        position: fixed; inset: 0; z-index: 100050;
+        background: rgba(10, 15, 29, 0.85);
+        backdrop-filter: blur(8px);
+        overflow-y: auto; padding: 20px;
+        display: none; box-sizing: border-box;
+      }
+      .vlk-drill-dialog {
+        max-width: 680px; margin: 30px auto;
+        background: var(--card-bg, #0F172A);
+        border: 1.5px solid var(--card-border, #334155);
+        border-radius: 16px;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+        overflow: hidden; color: var(--text-main, #F8FAFC);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      }
+      .vlk-drill-header {
+        background: linear-gradient(135deg, rgba(2, 132, 199, 0.18), rgba(15, 23, 42, 0.7));
+        border-bottom: 1px solid var(--card-border, #334155);
+        padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;
+      }
+      .vlk-drill-timer-pill {
+        display: flex; align-items: center; gap: 6px;
+        background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35);
+        color: #EF4444; padding: 5px 12px; border-radius: 100px;
+        font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.85rem;
+      }
+      .vlk-drill-rule-banner {
+        background: rgba(245, 158, 11, 0.09);
+        border-left: 4px solid #F59E0B;
+        border-radius: 8px; padding: 12px 16px; margin-bottom: 18px;
+        font-size: 0.84rem; line-height: 1.5;
+      }
+      .vlk-drill-option-label {
+        display: flex; align-items: flex-start; gap: 10px;
+        background: var(--card-bg-hover, #1E293B);
+        border: 1px solid var(--card-border, #334155);
+        border-radius: 8px; padding: 10px 14px; cursor: pointer;
+        font-size: 0.88rem; transition: all 0.15s ease;
+      }
+      .vlk-drill-option-label:hover {
+        border-color: #0284C7; background: rgba(2, 132, 199, 0.1);
+      }
+      .vlk-drill-menu-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 14px; margin-top: 14px;
+      }
+      .vlk-drill-menu-card {
+        background: var(--card-bg-hover, #1E293B);
+        border: 1.5px solid var(--card-border, #334155);
+        border-radius: 12px; padding: 14px 16px;
+        cursor: pointer; text-align: left;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        display: flex; flex-direction: column; justify-content: space-between;
+      }
+      .vlk-drill-menu-card:hover {
+        border-color: #0284C7; transform: translateY(-2px);
+        box-shadow: 0 6px 18px rgba(2, 132, 199, 0.18);
+      }
+      .vlk-drill-btn {
+        display: inline-flex; align-items: center; justify-content: center;
+        padding: 9px 18px; border-radius: 8px; font-weight: 800;
+        font-size: 0.85rem; cursor: pointer; border: none;
+        transition: all 0.15s ease;
+      }
+      .vlk-drill-btn-primary {
+        background: linear-gradient(135deg, #0284C7, #0369A1);
+        color: #FFF; box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+      }
+      .vlk-drill-btn-primary:hover {
+        filter: brightness(1.1); transform: translateY(-1px);
+      }
+      .vlk-drill-btn-secondary {
+        background: var(--card-bg-hover, #1E293B);
+        color: var(--text-muted, #94A3B8);
+        border: 1px solid var(--card-border, #334155);
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function ensureModalInDOM() {
+    ensureStylesInDOM();
+    if (!document.getElementById('vlkRemediationDrillModal')) {
+      const modalEl = document.createElement('div');
+      modalEl.id = 'vlkRemediationDrillModal';
+      modalEl.className = 'vlk-drill-backdrop';
+      modalEl.innerHTML = `
+        <div class="vlk-drill-dialog">
+          <div class="vlk-drill-header">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span id="vlkDrillIcon" style="font-size:1.6rem;">⚡</span>
+              <div>
+                <div style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--cyan-accent, #0284C7); font-weight:800;">KNEC Practical Remediation Micro-Drill</div>
+                <h3 id="vlkDrillTitle" style="margin:0; font-size:1.1rem; color:var(--heading-color, #FFF); font-weight:800;">Drill</h3>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div class="vlk-drill-timer-pill">
+                <span>⏱️</span>
+                <span id="vlkDrillTimerDisplay">05:00</span>
+              </div>
+              <button type="button" onclick="window.KnecRemediation.closeModal()" style="background:transparent; border:none; color:var(--text-muted, #94A3B8); font-size:1.5rem; cursor:pointer; line-height:1;" aria-label="Close Drill">&times;</button>
+            </div>
+          </div>
+
+          <div id="vlkDrillActiveStage" style="padding:20px;">
+            <div class="vlk-drill-rule-banner">
+              <div style="font-size:0.75rem; text-transform:uppercase; font-weight:800; color:#F59E0B; margin-bottom:4px; display:flex; align-items:center; gap:6px;">
+                <span>👨‍🏫</span> KNEC Chief Examiner Standard:
+              </div>
+              <div id="vlkDrillRuleText"></div>
+            </div>
+
+            <form id="vlkDrillForm" onsubmit="event.preventDefault(); window.KnecRemediation.submitModal();">
+              <div id="vlkDrillQuestionsList" style="display:flex; flex-direction:column; gap:16px;"></div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:22px; padding-top:16px; border-top:1px solid var(--card-border, #334155); flex-wrap:wrap; gap:10px;">
+                <button type="button" class="vlk-drill-btn vlk-drill-btn-secondary" onclick="window.KnecRemediation.closeModal()">Exit Drill</button>
+                <button type="submit" class="vlk-drill-btn vlk-drill-btn-primary">⚡ Submit for Instant KNEC Grading</button>
+              </div>
+            </form>
+          </div>
+
+          <div id="vlkDrillResultStage" style="display:none; padding:24px 20px;">
+            <div style="text-align:center; margin-bottom:20px;">
+              <div id="vlkDrillResultTrophy" style="font-size:2.8rem; margin-bottom:8px;">🎯</div>
+              <h3 id="vlkDrillResultStatus" style="font-size:1.3rem; font-weight:900; margin-bottom:4px;">Mastery Attained!</h3>
+              <p id="vlkDrillResultSummary" style="font-size:0.85rem; color:var(--text-muted, #94A3B8); max-width:480px; margin:0 auto; line-height:1.5;"></p>
+              <div style="display:flex; justify-content:center; gap:14px; margin-top:16px;">
+                <div style="background:var(--card-bg-hover, #1E293B); border:1px solid var(--card-border, #334155); border-radius:10px; padding:10px 18px;">
+                  <div style="font-size:0.7rem; color:var(--text-muted, #94A3B8); text-transform:uppercase; font-weight:700;">Score</div>
+                  <div id="vlkDrillResultScore" style="font-size:1.4rem; font-weight:900; font-family:'JetBrains Mono', monospace; color:var(--cyan-accent, #0284C7);">30 / 30</div>
+                </div>
+                <div style="background:var(--card-bg-hover, #1E293B); border:1px solid rgba(16,185,129,0.3); border-radius:10px; padding:10px 18px;">
+                  <div style="font-size:0.7rem; color:var(--text-muted, #94A3B8); text-transform:uppercase; font-weight:700;">Status</div>
+                  <div id="vlkDrillResultBadge" style="font-size:1.1rem; font-weight:900; font-family:'JetBrains Mono', monospace; color:#10B981;">Mastered</div>
+                </div>
+              </div>
+            </div>
+            <div style="background:rgba(0,0,0,0.25); border:1px solid var(--card-border, #334155); border-radius:10px; padding:14px; margin-bottom:18px;">
+              <div style="font-weight:800; font-size:0.86rem; margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+                <span>📝</span> Itemized Chief Examiner Verification:
+              </div>
+              <div id="vlkDrillResultBreakdown" style="display:flex; flex-direction:column; gap:10px; font-size:0.82rem;"></div>
+            </div>
+            <div style="display:flex; justify-content:flex-end;">
+              <button type="button" class="vlk-drill-btn vlk-drill-btn-secondary" onclick="window.KnecRemediation.closeModal()">Close &amp; Return to Lab</button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modalEl);
+    }
+
+    if (!document.getElementById('vlkWorkbenchDrillsMenuModal')) {
+      const menuEl = document.createElement('div');
+      menuEl.id = 'vlkWorkbenchDrillsMenuModal';
+      menuEl.className = 'vlk-drill-backdrop';
+      menuEl.innerHTML = `
+        <div class="vlk-drill-dialog" style="max-width:640px;">
+          <div class="vlk-drill-header">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="font-size:1.5rem;">🎯</span>
+              <div>
+                <h3 id="vlkMenuTitle" style="margin:0; font-size:1.1rem; font-weight:800;">Diagnostic Drills &amp; KNEC Rubric</h3>
+                <span id="vlkMenuSub" style="font-size:0.75rem; color:var(--text-muted, #94A3B8);">Micro-drills to eliminate systematic deductions</span>
+              </div>
+            </div>
+            <button type="button" onclick="window.KnecRemediation.closeWorkbenchDrillsMenu()" style="background:transparent; border:none; color:var(--text-muted, #94A3B8); font-size:1.5rem; cursor:pointer; line-height:1;">&times;</button>
+          </div>
+          <div style="padding:20px;">
+            <div id="vlkMenuCardsList" class="vlk-drill-menu-grid"></div>
+            <div style="display:flex; justify-content:flex-end; margin-top:18px; padding-top:14px; border-top:1px solid var(--card-border, #334155);">
+              <button type="button" class="vlk-drill-btn vlk-drill-btn-secondary" onclick="window.KnecRemediation.closeWorkbenchDrillsMenu()">Back to Workbench</button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(menuEl);
+    }
+  }
+
+  function openDrillModal(code) {
+    const lookupCode = (code === 'AC') ? 'AC/FA' : code;
+    const drill = getDrill(lookupCode);
+    if (!drill) {
+      alert(`Drill for rule "${code}" could not be loaded.`);
+      return;
+    }
+
+    ensureModalInDOM();
+    _activeDrill = {
+      code,
+      lookupCode,
+      drill,
+      timeLeft: drill.durationSeconds || 300
+    };
+
+    const modal = document.getElementById('vlkRemediationDrillModal');
+    const titleEl = document.getElementById('vlkDrillTitle');
+    const iconEl = document.getElementById('vlkDrillIcon');
+    const ruleEl = document.getElementById('vlkDrillRuleText');
+    const timerDisplay = document.getElementById('vlkDrillTimerDisplay');
+    const qList = document.getElementById('vlkDrillQuestionsList');
+    const activeStage = document.getElementById('vlkDrillActiveStage');
+    const resultStage = document.getElementById('vlkDrillResultStage');
+
+    const iconMap = { 'D': '📏', 'PA': '⚖️', 'AC': '🎯', 'AC/FA': '🎯', 'INORG': '🧂', 'ORG': '🧫' };
+    if (iconEl) iconEl.textContent = iconMap[code] || '⚡';
+    if (titleEl) titleEl.textContent = drill.title;
+    if (ruleEl) ruleEl.textContent = drill.examinerRule;
+    if (timerDisplay) timerDisplay.textContent = '05:00';
+
+    if (activeStage) activeStage.style.display = 'block';
+    if (resultStage) resultStage.style.display = 'none';
+
+    if (qList) {
+      qList.innerHTML = (drill.questions || []).map((q, idx) => {
+        let inputHtml = '';
+        if (q.type === 'single_choice' && q.options) {
+          inputHtml = `
+            <div style="display:grid; gap:8px; margin-top:8px;">
+              ${q.options.map(opt => `
+                <label class="vlk-drill-option-label">
+                  <input type="radio" name="q_${q.id}" value="${opt.id}" required>
+                  <span><b>(${opt.id})</b> ${opt.text}</span>
+                </label>
+              `).join('')}
+            </div>
+          `;
+        } else if (q.type === 'multi_select' && q.options) {
+          inputHtml = `
+            <div style="display:grid; gap:8px; margin-top:8px;">
+              ${q.options.map(opt => `
+                <label class="vlk-drill-option-label">
+                  <input type="checkbox" name="q_${q.id}" value="${opt.id}">
+                  <span><b>(${opt.id})</b> ${opt.text}</span>
+                </label>
+              `).join('')}
+            </div>
+          `;
+        } else if (q.type === 'text_input') {
+          inputHtml = `
+            <div style="margin-top:8px;">
+              <input type="text" name="q_${q.id}" placeholder="${q.placeholder || 'Type your answer...'}" style="width:100%; padding:10px 14px; font-size:0.9rem; border-radius:8px; border:1px solid var(--card-border, #334155); background:var(--card-bg, #0F172A); color:#FFF; box-sizing:border-box;" required autocomplete="off">
+            </div>
+          `;
+        }
+
+        return `
+          <div style="background:rgba(255,255,255,0.03); border:1px solid var(--card-border, #334155); border-radius:10px; padding:12px 14px;">
+            <div style="font-size:0.72rem; text-transform:uppercase; font-weight:800; color:var(--cyan-accent, #0284C7); margin-bottom:4px;">
+              Question ${idx + 1} of ${drill.questions.length}
+            </div>
+            <div style="font-weight:700; font-size:0.88rem; line-height:1.45; margin-bottom:6px;">
+              ${q.prompt}
+            </div>
+            ${inputHtml}
+          </div>
+        `;
+      }).join('');
+    }
+
+    if (_drillTimerInterval) clearInterval(_drillTimerInterval);
+    _drillTimerInterval = setInterval(() => {
+      if (!_activeDrill) return;
+      _activeDrill.timeLeft--;
+      if (timerDisplay) {
+        const m = String(Math.floor(_activeDrill.timeLeft / 60)).padStart(2, '0');
+        const s = String(_activeDrill.timeLeft % 60).padStart(2, '0');
+        timerDisplay.textContent = `${m}:${s}`;
+      }
+      if (_activeDrill.timeLeft <= 0) {
+        clearInterval(_drillTimerInterval);
+        submitDrillModal();
+      }
+    }, 1000);
+
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDrillModal() {
+    if (_drillTimerInterval) {
+      clearInterval(_drillTimerInterval);
+      _drillTimerInterval = null;
+    }
+    _activeDrill = null;
+    const modal = document.getElementById('vlkRemediationDrillModal');
+    if (modal) modal.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  function submitDrillModal() {
+    if (!_activeDrill) return;
+    if (_drillTimerInterval) {
+      clearInterval(_drillTimerInterval);
+      _drillTimerInterval = null;
+    }
+
+    const { code, lookupCode, drill } = _activeDrill;
+    const form = document.getElementById('vlkDrillForm');
+    const answers = {};
+
+    (drill.questions || []).forEach(q => {
+      if (q.type === 'single_choice') {
+        const selected = form ? form.querySelector(`input[name="q_${q.id}"]:checked`) : null;
+        answers[q.id] = selected ? selected.value : '';
+      } else if (q.type === 'multi_select') {
+        const checks = form ? form.querySelectorAll(`input[name="q_${q.id}"]:checked`) : [];
+        answers[q.id] = Array.from(checks).map(c => c.value);
+      } else if (q.type === 'text_input') {
+        const input = form ? form.querySelector(`input[name="q_${q.id}"]`) : null;
+        answers[q.id] = input ? input.value.trim() : '';
+      }
+    });
+
+    const evalResult = gradeDrill(lookupCode, drill.id, answers);
+
+    try {
+      localStorage.setItem('vlk_knec_drill_mastery_' + code, evalResult.totalScore.toString());
+    } catch (e) {}
+
+    const activeStage = document.getElementById('vlkDrillActiveStage');
+    const resultStage = document.getElementById('vlkDrillResultStage');
+    const trophyEl = document.getElementById('vlkDrillResultTrophy');
+    const statusEl = document.getElementById('vlkDrillResultStatus');
+    const summaryEl = document.getElementById('vlkDrillResultSummary');
+    const scoreEl = document.getElementById('vlkDrillResultScore');
+    const badgeResEl = document.getElementById('vlkDrillResultBadge');
+    const breakdownEl = document.getElementById('vlkDrillResultBreakdown');
+
+    if (activeStage) activeStage.style.display = 'none';
+    if (resultStage) resultStage.style.display = 'block';
+
+    if (trophyEl) trophyEl.textContent = evalResult.isMastery ? '🏆' : '🎯';
+    if (statusEl) statusEl.textContent = evalResult.status;
+    if (summaryEl) summaryEl.textContent = evalResult.chiefExaminerAdvice;
+    if (scoreEl) scoreEl.textContent = `${evalResult.totalScore} / ${evalResult.maxScore}`;
+    if (badgeResEl) {
+      badgeResEl.textContent = evalResult.isMastery ? 'Mastery Attained' : 'Needs Practice';
+      badgeResEl.style.color = evalResult.isMastery ? '#10B981' : '#F59E0B';
+    }
+
+    if (breakdownEl) {
+      breakdownEl.innerHTML = (evalResult.itemizedReview || []).map((item, idx) => `
+        <div style="background:rgba(255,255,255,0.03); border-left:3px solid ${item.isCorrect ? '#10B981' : '#EF4444'}; border-radius:6px; padding:8px 12px;">
+          <div style="font-weight:700; margin-bottom:2px;">Q${idx + 1}: ${item.prompt}</div>
+          <div style="color:${item.isCorrect ? '#10B981' : '#EF4444'}; font-weight:700; font-size:0.78rem;">${item.feedback}</div>
+        </div>
+      `).join('');
+    }
+
+    if (window.BrilliantUI) {
+      if (evalResult.isMastery) {
+        window.BrilliantUI.audio.playSuccess();
+        window.BrilliantUI.celebrate();
+      } else {
+        window.BrilliantUI.audio.playClick();
+      }
+    }
+  }
+
+  function openWorkbenchDrillsMenu(benchType) {
+    ensureModalInDOM();
+    const modal = document.getElementById('vlkWorkbenchDrillsMenuModal');
+    const titleEl = document.getElementById('vlkMenuTitle');
+    const subEl = document.getElementById('vlkMenuSub');
+    const listEl = document.getElementById('vlkMenuCardsList');
+    if (!modal || !listEl) return;
+
+    let items = [];
+    if (benchType === 'titration') {
+      titleEl.textContent = '🧪 Titration Diagnostic & KNEC Rubric Drills';
+      subEl.textContent = 'Paper 3 Question 1 (15 Marks) mark-deduction eliminators';
+      items = [
+        { code: 'D', icon: '📏', title: '2-Decimal Precision & .0/.5 Rule', penalty: '-1.0 Mark Penalty', desc: 'Strict burette 2-decimal formatting and half-millimeter eye-level interpolation.' },
+        { code: 'PA', icon: '⚖️', title: 'Concordancy Selection & Averaging', penalty: '-1.0 Mark Penalty', desc: 'Identify ±0.20 cm³ concordant titres, discard outliers, state explicit working.' },
+        { code: 'AC/FA', icon: '🎯', title: 'Optical Meniscus Alignment & Accuracy', penalty: '-1.0 Mark Penalty', desc: 'Match teacher baseline within ±0.1 cm³ reading at bottom of curved meniscus.' },
+        { speedMode: 'titration', icon: '⏱️', title: '60s Titration Speed Sprint', penalty: 'High Yield Sprint', desc: 'Fast-paced rapid recall on indicator transitions, titrant choice, and stoichiometry.' }
+      ];
+    } else if (benchType === 'qualitative') {
+      titleEl.textContent = '🔍 Qualitative Analysis Diagnostic Drills';
+      subEl.textContent = 'Paper 3 Question 2 (15 Marks) precipitate & deduction mastery';
+      items = [
+        { code: 'INORG', icon: '🧂', title: 'Inorganic Cation & Anion Deductions', penalty: '-3.0 Marks Risk', desc: 'Formulate exact ionic formula deductions (Pb²⁺, Zn²⁺, Al³⁺, SO₄²⁻) with observations.' },
+        { speedMode: 'qualitative', icon: '⏱️', title: '60s Qualitative Speed Sprint', penalty: 'High Yield Sprint', desc: 'Rapid precipitate color matching, excess NaOH/NH₃ solubility, and flame tests.' }
+      ];
+    } else if (benchType === 'organic') {
+      titleEl.textContent = '⚗️ Organic Chemistry Diagnostic Drills';
+      subEl.textContent = 'Paper 3 Question 3 (10 Marks) functional group deduction mastery';
+      items = [
+        { code: 'ORG', icon: '🧫', title: 'Organic Functional Group Deductions', penalty: '-3.0 Marks Risk', desc: 'Differentiate C=C unsaturation, R-OH alkanols, and R-COOH carboxylic acids in Paper 3 format.' },
+        { speedMode: 'organic', icon: '⏱️', title: '45s Organic Speed Sprint', penalty: 'High Yield Sprint', desc: 'Unsaturation tests with Br₂/KMnO₄, oxidation, and esterification aroma recognition.' }
+      ];
+    } else if (benchType === 'rates' || benchType === 'energy') {
+      titleEl.textContent = '⚡ Kinetics & Energetics Diagnostic Drills';
+      subEl.textContent = 'Physical chemistry calculations, reaction rate graphs, and thermochemistry';
+      items = [
+        { speedMode: 'energy', icon: '⏱️', title: '45s Kinetics & Energetics Sprint', penalty: 'High Yield Sprint', desc: 'Enthalpy calculations (ΔH = mcΔT), polystyrene insulation, cooling curves, and rate plots.' }
+      ];
+    }
+
+    listEl.innerHTML = items.map(item => {
+      if (item.code) {
+        return `
+          <div class="vlk-drill-menu-card" onclick="window.KnecRemediation.closeWorkbenchDrillsMenu(); window.KnecRemediation.openModal('${item.code}');">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <span style="font-size:1.3rem;">${item.icon}</span>
+                <span style="background:rgba(239,68,68,0.15); color:#EF4444; border:1px solid rgba(239,68,68,0.3); font-size:0.7rem; font-weight:800; padding:2px 8px; border-radius:100px;">${item.penalty}</span>
+              </div>
+              <h4 style="margin:0 0 6px; font-size:0.95rem; font-weight:800;">${item.title}</h4>
+              <p style="margin:0; font-size:0.8rem; color:var(--text-muted, #94A3B8); line-height:1.4;">${item.desc}</p>
+            </div>
+            <div style="margin-top:12px; display:flex; justify-content:flex-end;">
+              <span style="font-size:0.78rem; font-weight:800; color:var(--cyan-accent, #0284C7);">Practice 5-Min Rule →</span>
+            </div>
+          </div>
+        `;
+      } else {
+        return `
+          <div class="vlk-drill-menu-card" onclick="window.location.href='speed_battle.html?mode=${item.speedMode}';">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <span style="font-size:1.3rem;">${item.icon}</span>
+                <span style="background:rgba(2,132,199,0.15); color:var(--cyan-accent, #0284C7); border:1px solid rgba(2,132,199,0.3); font-size:0.7rem; font-weight:800; padding:2px 8px; border-radius:100px;">${item.penalty}</span>
+              </div>
+              <h4 style="margin:0 0 6px; font-size:0.95rem; font-weight:800;">${item.title}</h4>
+              <p style="margin:0; font-size:0.8rem; color:var(--text-muted, #94A3B8); line-height:1.4;">${item.desc}</p>
+            </div>
+            <div style="margin-top:12px; display:flex; justify-content:flex-end;">
+              <span style="font-size:0.78rem; font-weight:800; color:var(--cyan-accent, #0284C7);">Start Timed Sprint ⚡</span>
+            </div>
+          </div>
+        `;
+      }
+    }).join('');
+
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeWorkbenchDrillsMenu() {
+    const modal = document.getElementById('vlkWorkbenchDrillsMenuModal');
+    if (modal) modal.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
   // Expose global interface
   window.KnecRemediation = {
     DRILL_CATALOG,
     getDrill,
-    gradeDrill
+    gradeDrill,
+    openModal: openDrillModal,
+    closeModal: closeDrillModal,
+    submitModal: submitDrillModal,
+    openWorkbenchDrillsMenu,
+    closeWorkbenchDrillsMenu
   };
 })();

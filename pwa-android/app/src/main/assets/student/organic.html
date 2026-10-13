@@ -63,6 +63,11 @@
     </div>
 
     <div class="nav-actions">
+      <!-- Diagnostic Drills & KNEC Rubric Button -->
+      <button type="button" class="theme-btn-chip" onclick="window.KnecRemediation && window.KnecRemediation.openWorkbenchDrillsMenu('organic')" title="KNEC Organic Functional Group Micro-Drills & Organic Sprint" style="padding:4px 8px; font-size:0.75rem; border:1px solid rgba(139,92,246,0.35); background:rgba(139,92,246,0.1); color:#A78BFA; font-weight:700; cursor:pointer;">
+        🎯 <span class="btn-text-full">Diagnostic Drills</span>
+      </button>
+
       <!-- Tutorial Button (Enlarged for readability on phones & desktop) -->
       <button type="button" class="btn-tactile btn-tactile-primary nav-btn-tutorial" onclick="TutorialEngine.start('organic')" title="Start Step-by-Step Tutorial">
         <span class="tutorial-icon">🧭</span> <span class="tutorial-btn-text">Tutorial</span>
@@ -370,6 +375,7 @@
 <script src="../shared/tutorial-engine.js"></script>
 <script src="/shared/organic-bench-core.js?v=155"></script>
 <script src="/shared/knec-pedagogy.js?v=155"></script>
+<script defer src="/shared/knec-remediation-drills.js?v=163"></script>
 <script src="js/organic-engine.js?v=155"></script>
 <script src="../shared/ai-tutor.js"></script>
 <script src="../shared/pwa-installer.js"></script>

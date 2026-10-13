@@ -44,6 +44,22 @@ if (typeof document !== 'undefined') {
   updateSoundButton();
 }
 
+/* ── Universal Tactile Haptic Feedback Helper ── */
+function triggerQualHaptic(pattern = 15) {
+  if (typeof window !== 'undefined' && window.VirtuLabNative && typeof window.VirtuLabNative.hapticFeedback === 'function') {
+    try { window.VirtuLabNative.hapticFeedback(); return; } catch(e){}
+  }
+  if (typeof window !== 'undefined' && window.BrilliantUI && typeof window.BrilliantUI.vibrate === 'function') {
+    try { window.BrilliantUI.vibrate(pattern); return; } catch(e){}
+  }
+  if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+    try { navigator.vibrate(pattern); } catch(e){}
+  }
+}
+window.triggerQualHaptic = triggerQualHaptic;
+
+
+
 /* ── Notifications ── */
 const user = typeof getUser === 'function' ? getUser() : null;
 

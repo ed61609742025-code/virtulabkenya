@@ -1280,6 +1280,21 @@
     } catch(e) {}
   }
 
+  // Helper: Extract human-friendly sample label (e.g. "Solid W", "Solid E", "Solid Specimen")
+  function extractSampleName(prompt = '', salt = {}, saltKey = '') {
+    const pStr = String(prompt || '');
+    const pMatch = pStr.match(/\b(solid|substance|sample)\s+([A-Za-z0-9]+)\b/i);
+    if (pMatch) {
+      const type = pMatch[1].charAt(0).toUpperCase() + pMatch[1].slice(1).toLowerCase();
+      return `${type} ${pMatch[2].toUpperCase()}`;
+    }
+    if (salt && salt.sampleName) return salt.sampleName;
+    if (salt && salt.name && /solid\s+[A-Za-z0-9]+/i.test(salt.name)) return salt.name;
+    const keyMatch = String(saltKey || '').match(/solid_?([a-z0-9]+)/i);
+    if (keyMatch) return `Solid ${keyMatch[1].toUpperCase()}`;
+    return (salt && salt.name) ? salt.name : 'Solid Specimen';
+  }
+
   // ── 3. Reaction Physics & State Resolver ───────────────────────
   function resolveReactionState(saltKey, testId, stage = 'idle', prompt = '', obsStr = '', options = {}) {
     if (typeof obsStr === 'object' && obsStr !== null) {
@@ -1991,162 +2006,171 @@
         }
         soundType = 'flame';
       } else if (isHeat) {
-        const isGentleHeat = stage === 'gentle_heat' || stage === 'warm';
-        const isCooled = stage === 'cooled' || stage === 'cool_down';
-        decrepitates = false;
-        evolvesO2 = false;
-        evolvesNO2 = false;
-        evolvesNH3 = false;
-        evolvesCO2 = false;
-        evolvesSO2 = false;
-        decomposesCompletely = false;
-        residueColorHot = salt.crystalColor || '#FFFFFF';
-        residueColorCold = salt.crystalColor || '#FFFFFF';
+        if (stage === 'step1_spatula') {
+          const sampleLabel = extractSampleName(prompt, salt, saltKey);
+          statusLabel = `Step 1 (Spatula Transfer): Half-spatula of ${sampleLabel} placed into dry hard-glass tube`;
+          soundType = 'drop';
+          residueColor = salt.crystalColor || '#FFFFFF';
+        } else {
+          const isGentleHeat = stage === 'gentle_heat' || stage === 'warm';
+          const isCooled = stage === 'cooled' || stage === 'cool_down';
+          decrepitates = false;
+          evolvesO2 = false;
+          evolvesNO2 = false;
+          evolvesNH3 = false;
+          evolvesCO2 = false;
+          evolvesSO2 = false;
+          decomposesCompletely = false;
+          residueColorHot = salt.crystalColor || '#FFFFFF';
+          residueColorCold = salt.crystalColor || '#FFFFFF';
 
-        if (anion === 'NO3-') {
-          liquidColor = 'rgba(180, 83, 9, 0.55)';
-          gasType = 'no2_brown';
-          gasColor = '#78350F';
-          evolvesNO2 = true;
-          evolvesO2 = true;
+          if (anion === 'NO3-') {
+            liquidColor = 'rgba(180, 83, 9, 0.55)';
+            gasType = 'no2_brown';
+            gasColor = '#78350F';
+            evolvesNO2 = true;
+            evolvesO2 = true;
 
-          if (cation === 'Pb2+') {
-            decrepitates = true;
-            residueColorHot = '#CA8A04'; // PbO reddish-brown/orange hot
-            residueColorCold = '#FACC15'; // PbO bright yellow cold
-            statusLabel = isCooled
-              ? 'Cooled: Reddish-brown residue cooled to bright yellow powder (PbO formation)'
-              : (isGentleHeat
-                ? 'Gently Warmed: Solid crackles softly; faint fumes begin to appear'
-                : 'Heated: Decrepitates; brown fumes of NO₂; rekindles glowing splint (O₂); reddish-brown hot, yellow cold');
+            if (cation === 'Pb2+') {
+              decrepitates = true;
+              residueColorHot = '#CA8A04'; // PbO reddish-brown/orange hot
+              residueColorCold = '#FACC15'; // PbO bright yellow cold
+              statusLabel = isCooled
+                ? 'Cooled: Reddish-brown residue cooled to bright yellow powder (PbO formation)'
+                : (isGentleHeat
+                  ? 'Gently Warmed: Solid crackles softly; faint fumes begin to appear'
+                  : 'Heated: Decrepitates; brown fumes of NO₂; rekindles glowing splint (O₂); reddish-brown hot, yellow cold');
+            } else if (cation === 'Zn2+') {
+              waterCondenses = true;
+              residueColorHot = '#FACC15'; // ZnO canary-yellow hot
+              residueColorCold = '#FFFFFF'; // ZnO white cold
+              statusLabel = isCooled
+                ? 'Cooled: Canary-yellow residue cooled back to pure white powder (ZnO formation)'
+                : 'Heated Strongly: Brown fumes of NO₂; rekindles glowing splint (O₂); yellow hot, white cold';
+            } else {
+              // aluminumNitrate
+              waterCondenses = true;
+              residueColorHot = '#FFFFFF';
+              residueColorCold = '#FFFFFF';
+              statusLabel = isCooled
+                ? 'Cooled: White residue (Al₂O₃) cooled to room temperature'
+                : 'Heated Strongly: Brown fumes of NO₂ evolved; rekindles glowing splint (O₂)';
+            }
+            residueColor = isCooled ? residueColorCold : residueColorHot;
+          } else if (cation === 'NH4+') {
+            if (anion === 'Cl-') {
+              sublimes = true;
+              gasType = 'sublimate_deposit';
+              gasColor = '#FFFFFF';
+              evolvesNH3 = true;
+              residueColorHot = '#FFFFFF';
+              residueColorCold = '#FFFFFF';
+              residueColor = '#FFFFFF';
+              statusLabel = isCooled
+                ? 'Cooled: Dense white sublimate ring deposited firmly on upper cooler glass walls'
+                : 'Heated: Sublimes; dense white fumes deposit on upper cooler walls (sublimation ring)';
+            } else {
+              // (NH4)2CO3
+              decomposesCompletely = true;
+              waterCondenses = true;
+              gasType = 'nh3_co2';
+              gasColor = '#FFFFFF';
+              evolvesNH3 = true;
+              evolvesCO2 = true;
+              residueColorHot = null;
+              residueColorCold = null;
+              residueColor = null; // disappears completely!
+              statusLabel = isCooled
+                ? 'Cooled: Hard-glass tube is completely empty (no residue remains)'
+                : 'Heated: Decomposes completely; alkaline gas (NH₃) turns red litmus blue; CO₂ turns limewater milky';
+            }
           } else if (cation === 'Zn2+') {
             waterCondenses = true;
-            residueColorHot = '#FACC15'; // ZnO canary-yellow hot
-            residueColorCold = '#FFFFFF'; // ZnO white cold
-            statusLabel = isCooled
-              ? 'Cooled: Canary-yellow residue cooled back to pure white powder (ZnO formation)'
-              : 'Heated Strongly: Brown fumes of NO₂; rekindles glowing splint (O₂); yellow hot, white cold';
-          } else {
-            // aluminumNitrate
-            waterCondenses = true;
-            residueColorHot = '#FFFFFF';
+            gasType = 'steam';
+            residueColorHot = '#FACC15';
             residueColorCold = '#FFFFFF';
+            residueColor = isCooled ? residueColorCold : residueColorHot;
             statusLabel = isCooled
-              ? 'Cooled: White residue (Al₂O₃) cooled to room temperature'
-              : 'Heated Strongly: Brown fumes of NO₂ evolved; rekindles glowing splint (O₂)';
-          }
-          residueColor = isCooled ? residueColorCold : residueColorHot;
-        } else if (cation === 'NH4+') {
-          if (anion === 'Cl-') {
-            sublimes = true;
-            gasType = 'sublimate_deposit';
+              ? 'Cooled: Yellow hot residue cooled back to white powder (ZnO)'
+              : 'Heated: Solid turns yellow when hot, white on cooling (ZnO formation)';
+          } else if (cation === 'Cu2+') {
+            waterCondenses = true;
+            gasType = 'steam';
+            residueColorHot = '#F1F5F9';
+            residueColorCold = '#F1F5F9';
+            residueColor = '#F1F5F9';
+            statusLabel = isCooled
+              ? 'Cooled: White anhydrous CuSO₄ powder remains stable in dry tube'
+              : 'Heated: Blue crystals dehydrate to white anhydrous powder; water droplets condense';
+          } else if (cation === 'Fe2+') {
+            waterCondenses = true;
+            evolvesSO2 = true;
+            gasType = 'so2_steam';
+            residueColorHot = '#451A03';
+            residueColorCold = '#451A03';
+            residueColor = '#451A03';
+            statusLabel = isCooled
+              ? 'Cooled: Dirty brown/black residue of Fe₂O₃ cooled to room temperature'
+              : 'Heated: Pale green crystals turn dirty brown; water droplets condense; choking SO₂ gas evolved';
+          } else if (anion === 'SO3^2-') {
+            evolvesSO2 = true;
+            gasType = 'so2_pungent';
+            residueColor = '#FFFFFF';
+            statusLabel = 'Heated Strongly: Solid remains stable; faint choking sulfurous smell of SO₂';
+          } else if (anion === 'MnO4-' || saltKey === 'potassiumPermanganate' || (salt.name && salt.name.includes('Permanganate'))) {
+            decrepitates = true;
+            evolvesO2 = true;
+            gasType = 'o2_gas';
+            residueColorHot = '#0F172A';
+            residueColorCold = '#0F172A';
+            residueColor = '#0F172A';
+            statusLabel = isCooled
+              ? 'Cooled: Black/dark greenish-black residue of K₂MnO₄ and MnO₂ cooled to room temperature'
+              : (isGentleHeat
+                ? 'Gently Warmed: Purple crystals begin absorbing heat; faint crackling audible'
+                : 'Heated: Decrepitates crackling loudly; decomposes to black residue (K₂MnO₄ + MnO₂); evolves colourless gas that relights glowing splint (O₂)');
+          } else if (anion === 'Cr2O7^2-' || saltKey === 'potassiumDichromate' || (salt.name && salt.name.includes('Dichromate'))) {
+            evolvesO2 = true;
+            gasType = 'o2_gas';
+            residueColorHot = '#7C2D12';
+            residueColorCold = '#14532D';
+            residueColor = isCooled ? residueColorCold : residueColorHot;
+            statusLabel = isCooled
+              ? 'Cooled: Orange crystals converted to dark green residue of Cr₂O₃ and K₂CrO₄'
+              : (isGentleHeat
+                ? 'Gently Warmed: Bright orange crystals begin darkening as heat is absorbed'
+                : 'Heated Strongly: Orange crystals darken to reddish-brown hot; decomposes evolving O₂ gas that relights glowing splint');
+          } else if (anion === 'Br-' || anion === 'I-') {
+            decrepitates = true;
+            residueColor = salt.crystalColor || '#FFFFFF';
+            statusLabel = 'Heated Strongly: White crystalline solid crackles; melts at high temperature; no gas evolved';
+          } else if (anion === 'HCO3-' || saltKey === 'sodiumHydrogenCarbonate') {
+            waterCondenses = true;
+            evolvesCO2 = true;
+            gasType = 'co2_steam';
             gasColor = '#FFFFFF';
-            evolvesNH3 = true;
             residueColorHot = '#FFFFFF';
             residueColorCold = '#FFFFFF';
             residueColor = '#FFFFFF';
             statusLabel = isCooled
-              ? 'Cooled: Dense white sublimate ring deposited firmly on upper cooler glass walls'
-              : 'Heated: Sublimes; dense white fumes deposit on upper cooler walls (sublimation ring)';
+              ? 'Cooled: White solid residue of Na₂CO₃ remains stable'
+              : 'Heated: Colorless water droplets condense on cooler upper walls; colorless gas turns limewater milky (CO₂); white residue remains';
+          } else if (anion === 'CO3^2-') {
+            residueColor = '#FFFFFF';
+            statusLabel = 'Heated: White solid remains thermally stable in Bunsen flame; no gas evolved';
           } else {
-            // (NH4)2CO3
-            decomposesCompletely = true;
-            waterCondenses = true;
-            gasType = 'nh3_co2';
-            gasColor = '#FFFFFF';
-            evolvesNH3 = true;
-            evolvesCO2 = true;
-            residueColorHot = null;
-            residueColorCold = null;
-            residueColor = null; // disappears completely!
-            statusLabel = isCooled
-              ? 'Cooled: Hard-glass tube is completely empty (no residue remains)'
-              : 'Heated: Decomposes completely; alkaline gas (NH₃) turns red litmus blue; CO₂ turns limewater milky';
+            residueColor = salt.crystalColor || '#FFFFFF';
+            statusLabel = 'Heated Strongly: Thermal decomposition observed';
           }
-        } else if (cation === 'Zn2+') {
-          waterCondenses = true;
-          gasType = 'steam';
-          residueColorHot = '#FACC15';
-          residueColorCold = '#FFFFFF';
-          residueColor = isCooled ? residueColorCold : residueColorHot;
-          statusLabel = isCooled
-            ? 'Cooled: Yellow hot residue cooled back to white powder (ZnO)'
-            : 'Heated: Solid turns yellow when hot, white on cooling (ZnO formation)';
-        } else if (cation === 'Cu2+') {
-          waterCondenses = true;
-          gasType = 'steam';
-          residueColorHot = '#F1F5F9';
-          residueColorCold = '#F1F5F9';
-          residueColor = '#F1F5F9';
-          statusLabel = isCooled
-            ? 'Cooled: White anhydrous CuSO₄ powder remains stable in dry tube'
-            : 'Heated: Blue crystals dehydrate to white anhydrous powder; water droplets condense';
-        } else if (cation === 'Fe2+') {
-          waterCondenses = true;
-          evolvesSO2 = true;
-          gasType = 'so2_steam';
-          residueColorHot = '#451A03';
-          residueColorCold = '#451A03';
-          residueColor = '#451A03';
-          statusLabel = isCooled
-            ? 'Cooled: Dirty brown/black residue of Fe₂O₃ cooled to room temperature'
-            : 'Heated: Pale green crystals turn dirty brown; water droplets condense; choking SO₂ gas evolved';
-        } else if (anion === 'SO3^2-') {
-          evolvesSO2 = true;
-          gasType = 'so2_pungent';
-          residueColor = '#FFFFFF';
-          statusLabel = 'Heated Strongly: Solid remains stable; faint choking sulfurous smell of SO₂';
-        } else if (anion === 'MnO4-' || saltKey === 'potassiumPermanganate' || (salt.name && salt.name.includes('Permanganate'))) {
-          decrepitates = true;
-          evolvesO2 = true;
-          gasType = 'o2_gas';
-          residueColorHot = '#0F172A';
-          residueColorCold = '#0F172A';
-          residueColor = '#0F172A';
-          statusLabel = isCooled
-            ? 'Cooled: Black/dark greenish-black residue of K₂MnO₄ and MnO₂ cooled to room temperature'
-            : (isGentleHeat
-              ? 'Gently Warmed: Purple crystals begin absorbing heat; faint crackling audible'
-              : 'Heated: Decrepitates crackling loudly; decomposes to black residue (K₂MnO₄ + MnO₂); evolves colourless gas that relights glowing splint (O₂)');
-        } else if (anion === 'Cr2O7^2-' || saltKey === 'potassiumDichromate' || (salt.name && salt.name.includes('Dichromate'))) {
-          evolvesO2 = true;
-          gasType = 'o2_gas';
-          residueColorHot = '#7C2D12';
-          residueColorCold = '#14532D';
-          residueColor = isCooled ? residueColorCold : residueColorHot;
-          statusLabel = isCooled
-            ? 'Cooled: Orange crystals converted to dark green residue of Cr₂O₃ and K₂CrO₄'
-            : (isGentleHeat
-              ? 'Gently Warmed: Bright orange crystals begin darkening as heat is absorbed'
-              : 'Heated Strongly: Orange crystals darken to reddish-brown hot; decomposes evolving O₂ gas that relights glowing splint');
-        } else if (anion === 'Br-' || anion === 'I-') {
-          decrepitates = true;
-          residueColor = salt.crystalColor || '#FFFFFF';
-          statusLabel = 'Heated Strongly: White crystalline solid crackles; melts at high temperature; no gas evolved';
-        } else if (anion === 'HCO3-' || saltKey === 'sodiumHydrogenCarbonate') {
-          waterCondenses = true;
-          evolvesCO2 = true;
-          gasType = 'co2_steam';
-          gasColor = '#FFFFFF';
-          residueColorHot = '#FFFFFF';
-          residueColorCold = '#FFFFFF';
-          residueColor = '#FFFFFF';
-          statusLabel = isCooled
-            ? 'Cooled: White solid residue of Na₂CO₃ remains stable'
-            : 'Heated: Colorless water droplets condense on cooler upper walls; colorless gas turns limewater milky (CO₂); white residue remains';
-        } else if (anion === 'CO3^2-') {
-          residueColor = '#FFFFFF';
-          statusLabel = 'Heated: White solid remains thermally stable in Bunsen flame; no gas evolved';
-        } else {
-          residueColor = salt.crystalColor || '#FFFFFF';
-          statusLabel = 'Heated Strongly: Thermal decomposition observed';
+          soundType = decrepitates ? 'decrepitate' : 'flame';
         }
-        soundType = decrepitates ? 'decrepitate' : 'flame';
       }
     } else {
-      if (isPhysicalAppearance) statusLabel = 'Solid Specimen Y on Watch Glass';
+      const sampleLabel = extractSampleName(prompt, salt, saltKey);
+      if (isPhysicalAppearance) statusLabel = `${sampleLabel} on Watch Glass`;
       else if (isDissolving) statusLabel = 'Awaiting Distilled Water';
-      else if (isHeat || isFlameTest) statusLabel = 'Awaiting Bunsen Flame';
+      else if (isHeat) statusLabel = `Dry Hard-Glass Tube Ready (Add ${sampleLabel})`;
+      else if (isFlameTest) statusLabel = 'Awaiting Bunsen Flame';
       else statusLabel = 'Awaiting Reagent';
     }
 
@@ -2722,7 +2746,7 @@
         <g transform="translate(18, 136)">
           <rect x="0" y="0" width="154" height="20" rx="4" fill="rgba(15,23,42,0.92)" stroke="#334155" stroke-width="1"/>
           <text x="77" y="14" font-size="8.5" font-weight="800" fill="#38BDF8" text-anchor="middle" font-family="'JetBrains Mono', monospace">
-            ${performed ? 'CRYSTALLINE HABIT: OBSERVED' : 'SOLID SPECIMEN Y · KNEC 233/3'}
+            ${performed ? 'CRYSTALLINE HABIT: OBSERVED' : `${extractSampleName(prompt, salt, saltKey).toUpperCase()} · KNEC 233/3`}
           </text>
         </g>
       </svg>
@@ -2734,6 +2758,7 @@
     const {
       saltKey = 'leadNitrate',
       stage = 'idle',
+      isAdding = false,
       isHeating = false,
       isCooling = false,
       isTestingProbe = false,
@@ -2746,6 +2771,7 @@
     } = options;
 
     const salt = resolveSalt(saltKey);
+    const sampleLabel = extractSampleName(prompt, salt, saltKey);
     const performed = stage !== 'idle' && stage !== 'untested' && Boolean(stage);
     const cation = salt.cation;
     const anion = salt.anion;
@@ -2754,6 +2780,10 @@
     const isCooled = stage === 'cooled' || stage === 'cool_down';
     const isStrongHeat = stage === 'heated' || stage === 'strong_heat' || stage === 'step1_heat';
     const isGasTestStage = stage === 'step2_gas_test' || stage.startsWith('test_gas') || stage === 'test_splint' || stage === 'test_limewater';
+    const isSpatulaStage = stage === 'step1_spatula';
+    const isAddingSpatula = isAdding || (isSpatulaStage && isAdding);
+    const hasSolidInTube = performed && stage !== 'idle';
+    const isActivelyHeating = (isStrongHeat || isGentleHeat || isHeating) && !isSpatulaStage && !isCooled;
 
     const isHydrated = salt.appearance?.toLowerCase().includes('hydrat') ||
       salt.formula?.includes('H2O') ||
@@ -2790,8 +2820,8 @@
 
     // Residue Color Transitions (Hot vs Cold & Absorption Phase)
     let hotPowderColor = salt.crystalColor || '#FFFFFF';
-    let residueVisible = true;
-    if (performed) {
+    let residueVisible = hasSolidInTube;
+    if (performed && !isSpatulaStage) {
       if (decomposesCompletely && !isGentleHeat && !isHeating) {
         residueVisible = false; // Ammonium carbonate leaves NO residue!
       } else if (cation === 'Zn2+') {
@@ -2821,10 +2851,16 @@
     const splintIgnites = isTestingProbe ? false : evolvesO2;
     const limewaterMilky = isTestingProbe ? false : evolvesCO2;
 
-    // Status Banner Text with Realistic Heating Delays
-    let badgeText = 'SOLID SPECIMEN Y IN HARD-GLASS TUBE';
+    // Status Banner Text with Realistic Heating Delays and Dynamic Specimen Labels
+    let badgeText = `${sampleLabel.toUpperCase()} IN DRY HARD-GLASS TUBE`;
     let badgeColor = '#38BDF8';
-    if (isHeating) {
+    if (!performed || stage === 'idle') {
+      badgeText = `DRY HARD-GLASS TUBE READY · ADD ${sampleLabel.toUpperCase()}`;
+      badgeColor = '#94A3B8';
+    } else if (isSpatulaStage) {
+      badgeText = isAdding ? `🥄 INTRODUCING ${sampleLabel.toUpperCase()} VIA SPATULA...` : `🥄 ${sampleLabel.toUpperCase()} PLACED IN DRY TUBE`;
+      badgeColor = '#38BDF8';
+    } else if (isHeating || isActivelyHeating) {
       badgeText = isGentleHeat ? '🔥 GENTLE WARMING: SOLID ABSORBING HEAT...' : '🔥 HEATING STRONGLY: SOLID ABSORBING HEAT...';
       badgeColor = '#F59E0B';
     } else if (isCooling) {
@@ -2901,6 +2937,30 @@
             <stop offset="70%" stop-color="#F97316" stop-opacity="0.8"/>
             <stop offset="100%" stop-color="#EF4444" stop-opacity="0"/>
           </radialGradient>
+          <linearGradient id="spatulaMetal_${tubeId}" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#E2E8F0"/>
+            <stop offset="25%" stop-color="#FFFFFF"/>
+            <stop offset="60%" stop-color="#94A3B8"/>
+            <stop offset="85%" stop-color="#64748B"/>
+            <stop offset="100%" stop-color="#475569"/>
+          </linearGradient>
+          <linearGradient id="spatulaBladeGrad_${tubeId}" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#F8FAFC"/>
+            <stop offset="40%" stop-color="#CBD5E1"/>
+            <stop offset="75%" stop-color="#94A3B8"/>
+            <stop offset="100%" stop-color="#64748B"/>
+          </linearGradient>
+          <style>
+            @keyframes crystalFall_${tubeId} {
+              0% { transform: translateY(0px) scale(0.85); opacity: 0; }
+              20% { opacity: 1; }
+              80% { opacity: 0.9; }
+              100% { transform: translateY(68px) scale(1.1); opacity: 0; }
+            }
+            .anim-cryst-stream_${tubeId} {
+              animation: crystalFall_${tubeId} 0.7s ease-in infinite;
+            }
+          </style>
         </defs>
 
         <!-- Retort Stand Heavy Rod & Base -->
@@ -2930,7 +2990,7 @@
           ` : ''}
 
           <!-- Decrepitation Sparkles (Violently Snapping Crystal Fragments) -->
-          ${performed && !isHeating && decrepitates && !isCooled ? `
+          ${performed && !isHeating && decrepitates && !isCooled && !isSpatulaStage ? `
             <g class="anim-spangle anim-decrepitate">
               <circle cx="28" cy="106" r="2" fill="#FDE047"/>
               <circle cx="38" cy="102" r="1.6" fill="#F59E0B"/>
@@ -2942,7 +3002,7 @@
           ` : ''}
 
           <!-- Condensed Water Droplets on Upper Cooler Walls -->
-          ${performed && !isHeating && isHydrated ? `
+          ${performed && !isHeating && isHydrated && !isSpatulaStage ? `
             <g opacity="0.92">
               <ellipse cx="23" cy="50" rx="2.2" ry="2.8" fill="#BAE6FD"/>
               <ellipse cx="43" cy="58" rx="2.4" ry="3.0" fill="#BAE6FD"/>
@@ -2951,12 +3011,12 @@
               <ellipse cx="24" cy="62" rx="1.8" ry="2.2" fill="#BAE6FD"/>
               <ellipse cx="42" cy="74" rx="1.9" ry="2.4" fill="#BAE6FD"/>
               <line x1="23" y1="52" x2="23" y2="62" stroke="#BAE6FD" stroke-width="0.9" opacity="0.6"/>
-              <line x1="43" y1="60" x2="43" y2="70" stroke="#BAE6FD" stroke-width="0.9" opacity="0.5"/>
+              <line x1="43" y1="60" x2="43" y2="70" stroke="#BAE6FD" stroke-width="0.5"/>
             </g>
           ` : ''}
 
           <!-- Dense Brown NO2 Fumes Inside Tube -->
-          ${performed && !isHeating && evolvesNO2 && !isCooled ? `
+          ${performed && !isHeating && evolvesNO2 && !isCooled && !isSpatulaStage ? `
             <g class="anim-heat-wave">
               <ellipse cx="33" cy="68" rx="10.5" ry="22" fill="url(#no2Fumes_${tubeId})"/>
               <ellipse cx="33" cy="38" rx="11.5" ry="24" fill="url(#no2Fumes_${tubeId})"/>
@@ -2964,7 +3024,7 @@
           ` : ''}
 
           <!-- Sublimation Deposit Ring on Upper Cooler Walls for Ammonium Salts -->
-          ${performed && !isHeating && sublimes ? `
+          ${performed && !isHeating && sublimes && !isSpatulaStage ? `
             <g opacity="0.95">
               <ellipse cx="33" cy="45" rx="11" ry="3.8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
               <ellipse cx="33" cy="48" rx="10" ry="2.6" fill="#F8FAFC"/>
@@ -2974,6 +3034,53 @@
 
           <!-- Glass Specular Flank Highlight -->
           <path d="M 24,16 L 24,112 Q 24,125 33,125" fill="none" stroke="#FFFFFF" stroke-width="1.3" opacity="0.38"/>
+
+          <!-- ── Stainless Steel Laboratory Spatula Actions at Mouth ── -->
+          ${!performed || stage === 'idle' ? `
+            <!-- Spatula Poised at Mouth Lip Holding Half-Spatula Scoop of Solid -->
+            <g transform="translate(6, -10)" style="filter: drop-shadow(0 2px 5px rgba(0,0,0,0.45));">
+              <!-- Long Stainless Steel Hexagonal Handle & Shaft -->
+              <path d="M 68,-28 L 72,-25 L 38,5 L 34,2 Z" fill="url(#spatulaMetal_${tubeId})" stroke="#475569" stroke-width="0.7"/>
+              <line x1="70" y1="-26" x2="36" y2="3" stroke="#FFFFFF" stroke-width="0.9" opacity="0.8"/>
+              <!-- Flat Tapered Spatula Blade -->
+              <path d="M 38,5 L 42,8 L 26,20 C 22,22 18,20 19,16 L 34,2 Z" fill="url(#spatulaBladeGrad_${tubeId})" stroke="#334155" stroke-width="0.8"/>
+              <!-- Half-Spatula Heap of Solid Crystals on Blade -->
+              <path d="M 32,6 Q 25,15 22,17 Q 26,20 34,11 Z" fill="${salt.crystalColor || '#FFFFFF'}" stroke="rgba(0,0,0,0.2)" stroke-width="0.5"/>
+              <circle cx="28" cy="12" r="1.6" fill="${salt.crystalHighlight || '#FFFFFF'}"/>
+              <circle cx="30" cy="9" r="1.3" fill="${salt.crystalSecondary || '#CBD5E1'}"/>
+              <circle cx="25" cy="15" r="1.4" fill="${salt.crystalColor || '#FFFFFF'}"/>
+              <circle cx="26" cy="14" r="1.1" fill="${salt.crystalHighlight || '#FFFFFF'}"/>
+              <!-- "½ Spatula" Micro Indicator Badge -->
+              <rect x="36" y="-12" width="28" height="9" rx="2" fill="rgba(15,23,42,0.9)" stroke="#38BDF8" stroke-width="0.6"/>
+              <text x="50" y="-5.5" font-size="5.5" font-weight="800" fill="#38BDF8" text-anchor="middle" font-family="'JetBrains Mono', monospace">½ SPATULA</text>
+            </g>
+          ` : ''}
+
+          ${isSpatulaStage ? `
+            <!-- Spatula in Active Dispensing Pose Inside Mouth Lip -->
+            <g transform="translate(${isAdding ? '3, -2' : '10, -14'})" style="transition: transform 0.4s ease; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.45));">
+              <!-- Stainless Steel Shaft -->
+              <path d="M 68,-26 L 72,-23 L 38,7 L 34,4 Z" fill="url(#spatulaMetal_${tubeId})" stroke="#475569" stroke-width="0.7"/>
+              <line x1="70" y1="-24" x2="36" y2="5" stroke="#FFFFFF" stroke-width="0.9" opacity="0.8"/>
+              <!-- Tipped Spatula Blade Inside Tube Lip -->
+              <path d="M 38,7 L 42,10 L 25,23 C 21,25 18,22 20,18 L 34,4 Z" fill="url(#spatulaBladeGrad_${tubeId})" stroke="#334155" stroke-width="0.8"/>
+              <!-- Residual trace powder on tip -->
+              <circle cx="25" cy="19" r="1.3" fill="${salt.crystalColor || '#FFFFFF'}"/>
+              <circle cx="27" cy="16" r="1.1" fill="${salt.crystalHighlight || '#FFFFFF'}"/>
+            </g>
+            <!-- Cascading Stream of Powder Crystals Dropping down Tube Bore -->
+            ${isAdding ? `
+              <g class="anim-cryst-stream_${tubeId}">
+                <circle cx="28" cy="26" r="1.8" fill="${salt.crystalColor || '#FFFFFF'}"/>
+                <circle cx="34" cy="38" r="1.5" fill="${salt.crystalSecondary || '#CBD5E1'}"/>
+                <circle cx="29" cy="50" r="1.9" fill="${salt.crystalHighlight || '#FFFFFF'}"/>
+                <circle cx="35" cy="64" r="1.6" fill="${salt.crystalColor || '#FFFFFF'}"/>
+                <circle cx="30" cy="76" r="1.8" fill="${salt.crystalSecondary || '#CBD5E1'}"/>
+                <circle cx="33" cy="88" r="1.7" fill="${salt.crystalHighlight || '#FFFFFF'}"/>
+                <line x1="31" y1="22" x2="33" y2="94" stroke="${salt.crystalColor || '#FFFFFF'}" stroke-width="1.2" stroke-dasharray="2,4" opacity="0.75"/>
+              </g>
+            ` : ''}
+          ` : ''}
 
           <!-- ── Interactive Gas Probes at Mouth ── -->
           ${performed && activeProbe === 'blue_litmus' ? `
@@ -3035,11 +3142,20 @@
         </g>
 
         <!-- Billowing NO2 Gas Fumes Escaping from Tube Mouth into Air -->
-        ${performed && !isHeating && evolvesNO2 && !isCooled ? `
+        ${performed && !isHeating && evolvesNO2 && !isCooled && !isSpatulaStage ? `
           <g class="anim-heat-wave" transform="translate(38, 14)">
             <circle cx="24" cy="18" r="9.5" fill="url(#no2Fumes_${tubeId})" opacity="0.88"/>
             <circle cx="16" cy="8" r="13.5" fill="url(#no2Fumes_${tubeId})" opacity="0.78"/>
             <circle cx="8" cy="-2" r="16.5" fill="url(#no2Fumes_${tubeId})" opacity="0.62"/>
+          </g>
+        ` : ''}
+
+        <!-- Stainless Steel Micro-Spatula Resting on Lab Bench Surface -->
+        ${performed && !isSpatulaStage ? `
+          <g transform="translate(70, 184) rotate(-2)" opacity="0.92" style="filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));">
+            <line x1="0" y1="3" x2="38" y2="3" stroke="url(#spatulaMetal_${tubeId})" stroke-width="2.6" stroke-linecap="round"/>
+            <line x1="0" y1="2" x2="38" y2="2" stroke="#FFFFFF" stroke-width="0.8" opacity="0.85"/>
+            <path d="M 36,1 L 50,0 C 54,0 54,6 50,6 L 36,5 Z" fill="url(#spatulaBladeGrad_${tubeId})" stroke="#475569" stroke-width="0.6"/>
           </g>
         ` : ''}
 
@@ -3064,7 +3180,7 @@
               <path d="M 25,24 C 23,12 27,6 30,6 C 33,6 37,12 35,24 Z" fill="url(#flameOuter_${tubeId})" opacity="0.8"/>
               <path d="M 27,24 C 26,16 28,10 30,10 C 32,10 34,16 33,24 Z" fill="url(#flameInner_${tubeId})" opacity="0.9"/>
             </g>
-          ` : (performed ? `
+          ` : (isActivelyHeating ? `
             <!-- Roaring Non-Luminous Bunsen Flame & Heat Waves -->
             <g class="anim-flame heatWave anim-heat-wave">
               <!-- Outer Blue Cone -->
@@ -3073,7 +3189,7 @@
               <path d="M 26,24 C 24,14 27,6 30,6 C 33,6 36,14 34,24 Z" fill="url(#flameInner_${tubeId})"/>
             </g>
           ` : `
-            <!-- Pilot Flame -->
+            <!-- Pilot Flame (Burner resting on low pilot before heating) -->
             <path d="M 28,24 C 27,18 29,14 30,14 C 31,14 33,18 32,24 Z" fill="#38BDF8" opacity="0.6"/>
           `))}
         </g>
@@ -3489,9 +3605,11 @@
       (tId.includes('appearance') && !pStr.includes('water')) ||
       (tId === 't1' && pStr.includes('describe') && pStr.includes('solid'))
     ) {
+      const salt = resolveSalt(testKeyOverride || tId || '');
+      const sampleLabel = extractSampleName(prompt, salt, testKeyOverride || tId);
       if (!stage || stage === 'idle') {
         return [
-          { stage: 'inspected', label: '🔍 Inspect Solid Specimen Y', cls: 'btn-perform-test btn-step-inspect' }
+          { stage: 'inspected', label: `🔍 Inspect ${sampleLabel}`, cls: 'btn-perform-test btn-step-inspect' }
         ];
       } else {
         return [
@@ -3908,22 +4026,38 @@
 
     // 6. Heating solid in dry hard-glass tube
     if (
-      (pStr.includes('heat') && (pStr.includes('dry') || pStr.includes('strongly') || pStr.includes('solid') || pStr.includes('spatula'))) ||
+      (pStr.includes('heat') && (pStr.includes('dry') || pStr.includes('strongly') || pStr.includes('solid') || pStr.includes('spatula') || pStr.includes('test tube'))) ||
       tId.includes('heat') ||
       tId.includes('ignit')
     ) {
+      const salt = resolveSalt(testKeyOverride || tId || '');
+      const sampleLabel = extractSampleName(prompt, salt, testKeyOverride || tId);
+      const isGentle = pStr.includes('gently') || pStr.includes('warm');
+
       if (!stage || stage === 'idle') {
         return [
-          { stage: 'heated', label: '🔥 Step 1: Heat Strongly in Bunsen Flame', cls: 'btn-perform-test btn-step-heat' }
+          { stage: 'step1_spatula', label: `🥄 Step 1: Place a Half-Spatula of ${sampleLabel} into Dry Test Tube`, cls: 'btn-perform-test btn-step-spatula' }
         ];
-      } else if (stage === 'heated' || stage === 'step1_heat') {
+      } else if (stage === 'step1_spatula') {
+        const heatLabel = isGentle ? '🔥 Step 2: Warm Gently in Bunsen Flame' : '🔥 Step 2: Heat Strongly in Bunsen Flame';
         return [
-          { stage: 'step2_gas_test', label: '🧪 Step 2: Test Gas (Moist Litmus / Splint)', cls: 'btn-perform-test btn-step-gas' },
+          { stage: 'heated', label: heatLabel, cls: 'btn-perform-test btn-step-heat' },
+          { stage: 'idle', label: '↺ Empty & Clean Tube', cls: 'btn-redo-test', isRedo: true }
+        ];
+      } else if (stage === 'heated' || stage === 'step1_heat' || stage === 'strong_heat') {
+        return [
+          { stage: 'step2_gas_test', label: '🧪 Step 3: Test Gas (Moist Litmus / Splint)', cls: 'btn-perform-test btn-step-gas' },
+          { stage: 'cooled', label: '❄️ Step 3: Allow Tube to Cool to Room Temp', cls: 'btn-perform-test btn-step-cool' },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else if (stage === 'step2_gas_test' || stage.startsWith('test_gas') || stage === 'test_splint' || stage === 'test_limewater') {
         return [
-          { stage: 'cooled', label: '❄️ Step 3: Allow Tube to Cool to Room Temp', cls: 'btn-perform-test btn-step-cool' },
+          { stage: 'cooled', label: '❄️ Step 4: Allow Tube to Cool to Room Temp', cls: 'btn-perform-test btn-step-cool' },
+          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
+        ];
+      } else if (stage === 'cooled' || stage === 'cool_down') {
+        return [
+          { stage: 'done', label: '✅ Thermal Observation Recorded', cls: 'btn-perform-test done', disabled: true },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else {
@@ -3959,6 +4093,7 @@
     SALTS,
     resolveSalt,
     parseAndSynthesizeSalt,
+    extractSampleName,
     resolveReactionState,
     renderTubeSvg,
     renderTestTubeApparatusSvg: renderTubeSvg,

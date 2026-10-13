@@ -2837,7 +2837,7 @@ requireStudentLogin();
         q2TestStates[testId].isAdding = false;
         renderQ2TestsGrid();
       }
-    }, 650);
+    }, stage === 'step1_spatula' ? 950 : 650);
   }
 
   function redoQ2Test(testId) {
@@ -3252,7 +3252,7 @@ requireStudentLogin();
           q3TestStates[testId].isAdding = false;
           renderQ3TestsGrid();
         }
-      }, 650);
+      }, stage === 'step1_spatula' ? 950 : 650);
       return;
     }
 

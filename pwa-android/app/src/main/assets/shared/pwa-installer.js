@@ -23,7 +23,7 @@
   // ── 2. SERVICE WORKER REGISTRATION & UPDATE PROMPT ─────────
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
+      navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' })
         .then((reg) => {
           console.log('[VirtuLab PWA] Service Worker active with scope:', reg.scope);
           // Check for service worker updates immediately on page load

@@ -3,7 +3,7 @@
 //  Feature #1: Offline Support, Smart Caching & Sync
 // ============================================================
 
-const CACHE_NAME = 'virtulab-kenya-v152';
+const CACHE_NAME = 'virtulab-kenya-v154';
 
 const PRECACHE_ASSETS = [
   '/',
@@ -128,11 +128,12 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME).then(async (cache) => {
       console.log('[Service Worker] Precaching core assets for offline usage...');
       const results = await Promise.allSettled(
-        PRECACHE_ASSETS.map((url) =>
-          cache.add(url).catch((err) => {
+        PRECACHE_ASSETS.map((url) => {
+          const req = url.startsWith('http') ? url : new Request(url, { cache: 'reload' });
+          return cache.add(req).catch((err) => {
             console.warn(`[Service Worker] Warning: Precache skipped for ${url}:`, err.message);
-          })
-        )
+          });
+        })
       );
       return results;
     }).then(() => self.skipWaiting())
@@ -219,9 +220,9 @@ self.addEventListener('fetch', (event) => {
   const isHtmlOrScript = event.request.mode === 'navigate' || url.pathname.endsWith('.html') || url.pathname.endsWith('.js') || url.pathname.endsWith('.css');
 
   if (isHtmlOrScript) {
-    // Network-First Strategy for HTML, JS and CSS (always fresh online, fallback to cache when offline)
+    // Network-First Strategy for HTML, JS and CSS (always revalidate online, fallback to cache when offline)
     event.respondWith(
-      fetch(event.request).then((networkResponse) => {
+      fetch(event.request, { cache: 'no-cache' }).then((networkResponse) => {
         if (networkResponse && networkResponse.status === 200) {
           const responseClone = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
@@ -231,7 +232,7 @@ self.addEventListener('fetch', (event) => {
         }
         return networkResponse;
       }).catch(async () => {
-        const cached = await caches.match(event.request);
+        const cached = (await caches.match(event.request)) || (await caches.match(event.request, { ignoreSearch: true }));
         if (cached) return cached;
         if (event.request.mode === 'navigate') {
           const reqPath = url.pathname.toLowerCase();

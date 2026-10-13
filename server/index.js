@@ -138,7 +138,7 @@ app.use(express.static(path.join(__dirname, '../client'), {
       res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
       res.setHeader('Cache-Tag', 'virtulab-static, virtulab-assets');
     } else {
-      res.setHeader('Cache-Control', 'public, max-age=604800, stale-while-revalidate=86400');
+      res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
       res.setHeader('Cache-Tag', 'virtulab-static, virtulab-code');
     }
   }

@@ -311,12 +311,23 @@ if (document.readyState === 'loading') {
           }
         }
       });
+
+      // 4. Restore saved filter state (defaults to 'knec_rules' to keep the page clean)
+      let savedFilter = 'knec_rules';
+      try {
+        savedFilter = localStorage.getItem('vlk_drills_filter') || 'knec_rules';
+      } catch (e) {}
+      filterDiagnosticDrills(savedFilter, false);
     } catch (err) {
       console.warn('[Diagnostic Drills] Error hydrating stats:', err);
     }
   }
 
-  function filterDiagnosticDrills(filter) {
+  function filterDiagnosticDrills(filter, scrollIntoView = false) {
+    try {
+      localStorage.setItem('vlk_drills_filter', filter);
+    } catch (e) {}
+
     const chips = document.querySelectorAll('.drill-filter-chip');
     chips.forEach(c => c.classList.toggle('active', c.getAttribute('data-filter') === filter));
 
@@ -327,11 +338,12 @@ if (document.readyState === 'loading') {
     if (filter === 'knec_rules') {
       if (knecPanel) knecPanel.style.display = 'block';
       if (cardsGrid) cardsGrid.style.display = 'none';
-      if (knecPanel) knecPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      if (scrollIntoView && knecPanel) knecPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     } else if (filter === 'speed') {
       if (knecPanel) knecPanel.style.display = 'none';
       if (cardsGrid) cardsGrid.style.display = 'grid';
       cards.forEach(c => c.style.display = 'flex');
+      if (scrollIntoView && cardsGrid) cardsGrid.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     } else if (filter === 'paper3') {
       if (knecPanel) knecPanel.style.display = 'block';
       if (cardsGrid) cardsGrid.style.display = 'grid';
@@ -339,11 +351,13 @@ if (document.readyState === 'loading') {
         const cat = c.getAttribute('data-category') || '';
         c.style.display = cat.includes('paper3') ? 'flex' : 'none';
       });
+      if (scrollIntoView && knecPanel) knecPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     } else {
       // 'all'
       if (knecPanel) knecPanel.style.display = 'block';
       if (cardsGrid) cardsGrid.style.display = 'grid';
       cards.forEach(c => c.style.display = 'flex');
+      if (scrollIntoView && knecPanel) knecPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   }
 

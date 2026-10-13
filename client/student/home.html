@@ -129,15 +129,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <!-- Critical Layout & Dashboard Stylesheets (Render-Critical) -->
-<link rel="stylesheet" href="../shared/style.css?v=160">
-<link rel="stylesheet" href="css/dashboard.css?v=160">
-<link rel="stylesheet" href="css/skill-tree.css?v=160">
-<link rel="stylesheet" href="css/mobile.css?v=160">
+<link rel="stylesheet" href="../shared/style.css?v=161">
+<link rel="stylesheet" href="css/dashboard.css?v=161">
+<link rel="stylesheet" href="css/skill-tree.css?v=161">
+<link rel="stylesheet" href="css/mobile.css?v=161">
 
 <!-- Non-Critical Stylesheets (Asynchronously loaded to unblock LCP) -->
-<link rel="stylesheet" href="../shared/pwa-installer.css?v=160" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="../shared/brilliant-theme.css?v=160" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="../shared/gamification-engine.css?v=160" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="../shared/pwa-installer.css?v=161" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="../shared/brilliant-theme.css?v=161" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="../shared/gamification-engine.css?v=161" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="../shared/subscription-ui.css?v=160" media="print" onload="this.media='all'">
 <noscript>
   <link rel="stylesheet" href="../shared/pwa-installer.css?v=160">
@@ -869,19 +869,19 @@
           </div>
         </div>
 
-        <!-- Interactive Filter & Segmented Control Bar -->
+        <!-- Interactive Segmented View Control Bar -->
         <div class="drill-filter-bar" role="tablist" aria-label="Filter practical diagnostic drills">
-          <button type="button" class="drill-filter-chip active" id="drillFilterAll" data-filter="all" onclick="filterDiagnosticDrills('all')">
-            ⚡ All Diagnostic Drills (11)
+          <button type="button" class="drill-filter-chip active" id="drillFilterKnec" data-filter="knec_rules" onclick="filterDiagnosticDrills('knec_rules', true)">
+            🎯 KNEC Rubric Eliminators (5)
           </button>
-          <button type="button" class="drill-filter-chip" id="drillFilterPaper3" data-filter="paper3" onclick="filterDiagnosticDrills('paper3')">
-            📋 KCSE Paper 3 Focus (Q1, Q2, Q3)
+          <button type="button" class="drill-filter-chip" id="drillFilterSpeed" data-filter="speed" onclick="filterDiagnosticDrills('speed', true)">
+            ⏱️ Timed Speed Sprints (6)
           </button>
-          <button type="button" class="drill-filter-chip" id="drillFilterSpeed" data-filter="speed" onclick="filterDiagnosticDrills('speed')">
-            ⏱️ Timed Speed Sprints (45s–60s)
+          <button type="button" class="drill-filter-chip" id="drillFilterPaper3" data-filter="paper3" onclick="filterDiagnosticDrills('paper3', true)">
+            📋 Paper 3 Core Only
           </button>
-          <button type="button" class="drill-filter-chip" id="drillFilterKnec" data-filter="knec_rules" onclick="filterDiagnosticDrills('knec_rules')">
-            🎯 KNEC Mark-Deduction Eliminators (5)
+          <button type="button" class="drill-filter-chip" id="drillFilterAll" data-filter="all" onclick="filterDiagnosticDrills('all', true)">
+            ⚡ All Drills (11)
           </button>
         </div>
 
@@ -968,8 +968,8 @@
           </div>
         </div>
 
-        <!-- Section 2: Rapid Diagnostic Speed Sprints Grid -->
-        <div class="drill-card-grid drill-card-grid-upgraded" id="drillCardGrid">
+        <!-- Section 2: Rapid Diagnostic Speed Sprints Grid (Segmented View) -->
+        <div class="drill-card-grid drill-card-grid-upgraded" id="drillCardGrid" style="display:none;">
           <!-- 1. All Topics / Comprehensive Review -->
           <a href="speed_battle.html?mode=blitz" class="drill-item-card-upgraded theme-blitz" data-category="speed all" data-tooltip="60s timed assessment covering all practical competencies" data-tooltip-pos="top" aria-label="Comprehensive Review drill">
             <div class="drill-card-top-row">
@@ -2199,27 +2199,27 @@
     </div>
   </div>
 
-  <script defer src="../shared/auth-guard.js?v=160"></script>
-  <script defer src="../shared/api.js?v=160"></script>
-  <script defer src="../shared/auth-forms.js?v=160"></script>
-  <script defer src="../shared/i18n.js?v=160"></script>
-  <script defer src="../shared/theme.js?v=160"></script>
-  <script defer src="../shared/chemical-safety.js?v=160"></script>
-  <script defer src="../shared/knec-grading.js?v=160"></script>
-  <script defer src="../shared/notifications-engine.js?v=160"></script>
-  <script defer src="../shared/push-manager.js?v=160"></script>
-  <script defer src="../shared/page-transitions.js?v=160"></script>
-  <script defer src="../shared/pwa-installer.js?v=160"></script>
-  <script defer src="../shared/brilliant-ui.js?v=160"></script>
-  <script defer src="../shared/gamification-engine.js?v=160"></script>
-  <script defer src="/shared/knec-remediation-drills.js?v=160"></script>
-  <script defer src="js/skill-tree.js?v=160"></script>
-  <script defer src="js/student-dashboard.js?v=160"></script>
-  <script defer src="../shared/subscription-ui.js?v=160"></script>
+  <script defer src="../shared/auth-guard.js?v=161"></script>
+  <script defer src="../shared/api.js?v=161"></script>
+  <script defer src="../shared/auth-forms.js?v=161"></script>
+  <script defer src="../shared/i18n.js?v=161"></script>
+  <script defer src="../shared/theme.js?v=161"></script>
+  <script defer src="../shared/chemical-safety.js?v=161"></script>
+  <script defer src="../shared/knec-grading.js?v=161"></script>
+  <script defer src="../shared/notifications-engine.js?v=161"></script>
+  <script defer src="../shared/push-manager.js?v=161"></script>
+  <script defer src="../shared/page-transitions.js?v=161"></script>
+  <script defer src="../shared/pwa-installer.js?v=161"></script>
+  <script defer src="../shared/brilliant-ui.js?v=161"></script>
+  <script defer src="../shared/gamification-engine.js?v=161"></script>
+  <script defer src="/shared/knec-remediation-drills.js?v=161"></script>
+  <script defer src="js/skill-tree.js?v=161"></script>
+  <script defer src="js/student-dashboard.js?v=161"></script>
+  <script defer src="../shared/subscription-ui.js?v=161"></script>
 
   <!-- Chart.js deferred at bottom of body with SRI hash to satisfy security audit while unblocking head LCP -->
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha384-bs/nf9FbdNouRbMiFcrcZfLXYPKiPaGVGplVbv7dLGECccEXDW+S3zjqSKR5ZEaD sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script defer src="js/home.js?v=160"></script>
+  <script defer src="js/home.js?v=161"></script>
 
   <!-- ── Mobile Bottom Navigation Bar (hidden on desktop via CSS) ── -->
   <nav class="vlk-bottom-nav" aria-label="Mobile Bottom Navigation" id="vlkBottomNav">

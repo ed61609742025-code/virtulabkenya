@@ -129,21 +129,21 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <!-- Critical Layout & Dashboard Stylesheets (Render-Critical) -->
-<link rel="stylesheet" href="../shared/style.css?v=154">
-<link rel="stylesheet" href="css/dashboard.css?v=154">
-<link rel="stylesheet" href="css/skill-tree.css?v=154">
-<link rel="stylesheet" href="css/mobile.css?v=154">
+<link rel="stylesheet" href="../shared/style.css?v=159">
+<link rel="stylesheet" href="css/dashboard.css?v=159">
+<link rel="stylesheet" href="css/skill-tree.css?v=159">
+<link rel="stylesheet" href="css/mobile.css?v=159">
 
 <!-- Non-Critical Stylesheets (Asynchronously loaded to unblock LCP) -->
-<link rel="stylesheet" href="../shared/pwa-installer.css?v=154" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="../shared/brilliant-theme.css?v=154" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="../shared/gamification-engine.css?v=154" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="../shared/subscription-ui.css?v=154" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="../shared/pwa-installer.css?v=159" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="../shared/brilliant-theme.css?v=159" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="../shared/gamification-engine.css?v=159" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="../shared/subscription-ui.css?v=159" media="print" onload="this.media='all'">
 <noscript>
-  <link rel="stylesheet" href="../shared/pwa-installer.css?v=154">
-  <link rel="stylesheet" href="../shared/brilliant-theme.css?v=154">
-  <link rel="stylesheet" href="../shared/gamification-engine.css?v=154">
-  <link rel="stylesheet" href="../shared/subscription-ui.css?v=154">
+  <link rel="stylesheet" href="../shared/pwa-installer.css?v=159">
+  <link rel="stylesheet" href="../shared/brilliant-theme.css?v=159">
+  <link rel="stylesheet" href="../shared/gamification-engine.css?v=159">
+  <link rel="stylesheet" href="../shared/subscription-ui.css?v=159">
 </noscript>
 
 <style>
@@ -807,149 +807,63 @@
         </div>
       </section>
 
-      <!-- Zone 1 (PRIMARY): Practical Chemistry Topics (Pathway & Grid) -->
-      <section class="activity-zone-wrap zone-pathway" id="zone_pathway">
-        <div class="activity-zone-header">
-          <div class="activity-zone-title-box">
+      <!-- Zone 2: Continuous Assessment & Teacher Assignments (High Priority Prescriptions) -->
+      <section id="zone_assignments" class="activity-zone-wrap zone-assignments-upgraded" style="margin-top: 6px; margin-bottom: 24px;">
+        <div class="ca-card-header">
+          <div class="ca-header-left">
+            <div class="ca-header-icon-box" aria-hidden="true">📋</div>
             <div>
-              <h2 class="section-heading-academic">
-                <span data-i18n="pathway_heading">Practical Chemistry Topics</span>
-              </h2>
-              <div class="section-subheading" data-i18n="pathway_sub">
-                Choose a topic or follow the guided pathway:
+              <div class="ca-title-cluster">
+                <h2 class="section-heading-academic" data-i18n="prescribed_ca">Teacher Assignments</h2>
+                <span class="dash-section-badge badge-cyan" id="caProgressPercentBadge">0% Complete</span>
+              </div>
+              <div class="ca-subtitle-row">
+                <span class="section-subheading">Prescribed KCSE Paper 3 practical assessments &amp; rubric evaluations</span>
+                <button type="button" class="ca-instructor-pill" id="caInstructorPill" onclick="toggleTeacherLinkPanel()" title="Manage linked Chemistry teacher">
+                  🔗 Link Teacher Code
+                </button>
               </div>
             </div>
           </div>
-          
-          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-            <span class="dash-section-badge badge-green">40 Marks Syllabus</span>
-            <!-- View Toggle Switcher -->
-            <div class="pathway-view-toggle">
-              <button type="button" class="view-toggle-btn active" id="btnViewTree" onclick="SkillTree.switchView('tree')" data-tooltip="Pathway view" data-tooltip-pos="bottom">
-                <span data-i18n="btn_learning_pathway">Pathway View</span>
-              </button>
-              <button type="button" class="view-toggle-btn" id="btnViewGrid" onclick="SkillTree.switchView('grid')" data-tooltip="Grid view" data-tooltip-pos="bottom">
-                <span data-i18n="btn_discipline_grid">Grid View</span>
-              </button>
-            </div>
+          <div class="ca-header-right">
+            <button type="button" class="ca-refresh-btn" onclick="loadAssignments()" title="Refresh assignments" aria-label="Refresh assignments">
+              ↻ Refresh
+            </button>
           </div>
         </div>
 
-        <!-- Interactive Visual Skill Tree Pathway View -->
-        <div id="skillTreeContainer">
-          <div style="text-align:center; padding:36px; font-family:'JetBrains Mono', monospace; font-size:0.88rem; color:var(--text-muted);">
-            Loading practical pathway…
+        <!-- Task Progress & Interactive Filter Bar -->
+        <div class="ca-progress-header" id="caProgressHeader" style="display: none;">
+          <div class="ca-progress-top-row">
+            <span class="ca-progress-label">Continuous Assessment Completion</span>
+            <span class="ca-progress-fraction" id="caProgressFractionText">0 / 0 Submitted</span>
+          </div>
+          <div class="ca-progress-bar-wrap" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+            <div class="ca-progress-fill" id="caProgressFill" style="width: 0%;"></div>
+          </div>
+          <div class="ca-stat-chips" id="caStatChips" role="tablist" aria-label="Filter assignments by status">
+            <button type="button" class="ca-stat-chip chip-all active" id="statChipAll" onclick="filterTeacherAssignments('all')">
+              All
+            </button>
+            <button type="button" class="ca-stat-chip chip-pending" id="statChipPending" onclick="filterTeacherAssignments('pending')">
+              <b>0</b> Pending
+            </button>
+            <button type="button" class="ca-stat-chip chip-review" id="statChipReview" onclick="filterTeacherAssignments('review')">
+              <b>0</b> Under Review
+            </button>
+            <button type="button" class="ca-stat-chip chip-marked" id="statChipMarked" onclick="filterTeacherAssignments('marked')">
+              <b>0</b> Graded
+            </button>
           </div>
         </div>
 
-        <!-- Grid View Wrap -->
-        <div id="practiceGridWrap" style="display:none;">
-          <!-- Search and Filter Bar -->
-          <div class="search-filter-bar" style="border-radius:12px; margin-bottom:20px; background:var(--card-bg-hover); border:1px solid var(--card-border); padding:14px 18px;">
-            <div class="search-input-wrap">
-              <input type="text" id="experimentSearchInput" oninput="filterPractices()" placeholder="Filter practicals (e.g. Titration, Qualitative Salt, Thermochemistry, Kinetics, Organic...)">
-            </div>
-            <div class="filter-chips" style="margin-top:12px;">
-              <button class="filter-chip active" data-filter="all" onclick="setPracticeFilter('all')">All Practicals</button>
-              <button class="filter-chip" data-filter="acidBase" onclick="setPracticeFilter('acidBase')">Volumetric</button>
-              <button class="filter-chip" data-filter="qualitative" onclick="setPracticeFilter('qualitative')">Qualitative Salts</button>
-              <button class="filter-chip" data-filter="rates" onclick="setPracticeFilter('rates')">Kinetics</button>
-              <button class="filter-chip" data-filter="energy" onclick="setPracticeFilter('energy')">Thermochemistry</button>
-              <button class="filter-chip" data-filter="solubility" onclick="setPracticeFilter('solubility')">Solubility</button>
-              <button class="filter-chip" data-filter="organic" onclick="setPracticeFilter('organic')">Organic Chemistry</button>
-            </div>
-          </div>
-
-          <!-- Laboratory Bench Cards Grid -->
-          <div class="practice-2col-grid" id="practiceGrid">
-            
-            <!-- 1. Guided Volumetric Analysis -->
-            <a href="lab.html?studyMode=guided" class="practice-banner-card" data-type="acidBase" style="border-left:4px solid var(--acad-gold);">
-              <div class="practice-card-icon-badge" style="background:rgba(217,119,6,0.12); color:#D97706;">🧪</div>
-              <div style="flex:1; min-width:0;">
-                <div class="practice-text-title">Guided Volumetric Analysis</div>
-                <div class="practice-text-desc">Step-by-step meniscus alignment, indicator selection, and calculations.</div>
-              </div>
-            </a>
-
-            <!-- 2. Volumetric Workbench -->
-            <a href="lab.html" class="practice-banner-card" data-type="acidBase" style="border-left:4px solid var(--acad-navy);">
-              <div class="practice-card-icon-badge" style="background:rgba(2,132,199,0.12); color:#0284C7;">⚗️</div>
-              <div style="flex:1; min-width:0;">
-                <div class="practice-text-title">Volumetric Analysis Workbench</div>
-                <div class="practice-text-desc">Acid-Base, KMnO₄ Redox, Mohr's Precipitation, and EDTA Complexometry.</div>
-              </div>
-            </a>
-
-            <!-- 3. Qualitative Salt Analysis -->
-            <a href="qualitative.html" class="practice-banner-card" data-type="qualitative" style="border-left:4px solid var(--acad-emerald);">
-              <div class="practice-card-icon-badge" style="background:rgba(16,185,129,0.12); color:#059669;">🔬</div>
-              <div style="flex:1; min-width:0;">
-                <div class="practice-text-title">Systematic Qualitative Analysis</div>
-                <div class="practice-text-desc">Identify 10 unknown cations and anions via aqueous reagents and flame tests.</div>
-              </div>
-            </a>
-
-            <!-- 4. Reaction Rates & Kinetics -->
-            <a href="rates.html" class="practice-banner-card" data-type="rates" style="border-left:4px solid #F59E0B;">
-              <div class="practice-card-icon-badge" style="background:rgba(245,158,11,0.12); color:#D97706;">⚡</div>
-              <div style="flex:1; min-width:0;">
-                <div class="practice-text-title">Reaction Rates &amp; Kinetics</div>
-                <div class="practice-text-desc">Disappearing cross method, rate graphs (1/t vs conc), and temperature effects.</div>
-              </div>
-            </a>
-
-            <!-- 5. Thermochemistry & Enthalpy -->
-            <a href="energy.html" class="practice-banner-card" data-type="energy" style="border-left:4px solid #EF4444;">
-              <div class="practice-card-icon-badge" style="background:rgba(239,68,68,0.12); color:#DC2626;">🌡️</div>
-              <div style="flex:1; min-width:0;">
-                <div class="practice-text-title">Thermochemistry &amp; Energy Changes</div>
-                <div class="practice-text-desc">Calorimetric measurement of neutralization, solution, and displacement enthalpies (ΔH).</div>
-              </div>
-            </a>
-
-            <!-- 6. Solubility Curves -->
-            <a href="solubility.html" class="practice-banner-card" data-type="solubility" style="border-left:4px solid #0284C7;">
-              <div class="practice-card-icon-badge" style="background:rgba(2,132,199,0.12); color:#0284C7;">❄️</div>
-              <div style="flex:1; min-width:0;">
-                <div class="practice-text-title">Solubility Curves &amp; Crystallization</div>
-                <div class="practice-text-desc">Determine crystallization inception points across solute masses and plot curves.</div>
-              </div>
-            </a>
-
-            <!-- 7. Organic Chemistry Lab -->
-            <a href="organic.html" class="practice-banner-card" data-type="organic" style="border-left:4px solid #10B981;">
-              <div class="practice-card-icon-badge" style="background:rgba(16,185,129,0.12); color:#059669;">🌿</div>
-              <div style="flex:1; min-width:0;">
-                <div class="practice-text-title">Organic Chemistry &amp; Functional Groups</div>
-                <div class="practice-text-desc">Test for unsaturation (Br₂/KMnO₄), combustion sootiness, and esterification.</div>
-              </div>
-            </a>
-
-            <!-- 8. Gas Preparation & Identification -->
-            <a href="gas_prep.html" class="practice-banner-card" data-type="gas" style="border-left:4px solid #8B5CF6;">
-              <div class="practice-card-icon-badge" style="background:rgba(139,92,246,0.12); color:#7C3AED;">💨</div>
-              <div style="flex:1; min-width:0;">
-                <div class="practice-text-title">Gas Preparation &amp; Analysis</div>
-                <div class="practice-text-desc">Generate and test H₂, O₂, CO₂, Cl₂, NH₃, and SO₂ with confirmatory tests.</div>
-              </div>
-            </a>
-
-            <!-- 9. KCSE Mock Exam -->
-            <a href="mock_exams.html" class="practice-banner-card" data-type="all" style="border-left:4px solid var(--acad-gold); grid-column: 1 / -1; background:var(--card-bg-hover);">
-              <div class="practice-card-icon-badge" style="background:rgba(245,158,11,0.15); color:#D97706;">🏆</div>
-              <div style="flex:1; min-width:0;">
-                <div class="practice-text-title">KCSE Paper 3 National Mock Examination (40 Marks)</div>
-                <div class="practice-text-desc">Full 40-mark timed mock exam with automated grading rubric.</div>
-              </div>
-            </a>
-
-          </div>
+        <div id="assignmentsList" class="assignments-grid-container">
+          <div class="empty-box">Loading assignments…</div>
         </div>
       </section>
 
       <!-- Zone 3: Practical Diagnostic Drills Hub -->
-      <section class="activity-zone-wrap zone-drills zone-drills-upgraded">
+      <section class="activity-zone-wrap zone-drills zone-drills-upgraded" id="zone_drills" style="margin-top: 0; margin-bottom: 24px;">
         <!-- Upgraded Academic Header -->
         <div class="drill-hub-header">
           <div class="drill-header-left">
@@ -1190,58 +1104,144 @@
         </div>
       </section>
 
-      <!-- Zone 2: Continuous Assessment & Teacher Assignments -->
-      <section id="zone_assignments" class="activity-zone-wrap zone-assignments-upgraded" style="margin-top: 28px;">
-        <div class="ca-card-header">
-          <div class="ca-header-left">
-            <div class="ca-header-icon-box" aria-hidden="true">📋</div>
+      <!-- Zone 1 (PRIMARY): Practical Chemistry Topics (Pathway & Grid) -->
+      <section class="activity-zone-wrap zone-pathway" id="zone_pathway" style="margin-top: 0; margin-bottom: 24px;">
+        <div class="activity-zone-header">
+          <div class="activity-zone-title-box">
             <div>
-              <div class="ca-title-cluster">
-                <h2 class="section-heading-academic" data-i18n="prescribed_ca">Teacher Assignments</h2>
-                <span class="dash-section-badge badge-cyan" id="caProgressPercentBadge">0% Complete</span>
-              </div>
-              <div class="ca-subtitle-row">
-                <span class="section-subheading">Prescribed KCSE Paper 3 practical assessments &amp; rubric evaluations</span>
-                <button type="button" class="ca-instructor-pill" id="caInstructorPill" onclick="toggleTeacherLinkPanel()" title="Manage linked Chemistry teacher">
-                  🔗 Link Teacher Code
-                </button>
+              <h2 class="section-heading-academic">
+                <span data-i18n="pathway_heading">Practical Chemistry Topics</span>
+              </h2>
+              <div class="section-subheading" data-i18n="pathway_sub">
+                Choose a topic or follow the guided pathway:
               </div>
             </div>
           </div>
-          <div class="ca-header-right">
-            <button type="button" class="ca-refresh-btn" onclick="loadAssignments()" title="Refresh assignments" aria-label="Refresh assignments">
-              ↻ Refresh
-            </button>
+          
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <span class="dash-section-badge badge-green">40 Marks Syllabus</span>
+            <!-- View Toggle Switcher -->
+            <div class="pathway-view-toggle">
+              <button type="button" class="view-toggle-btn active" id="btnViewTree" onclick="SkillTree.switchView('tree')" data-tooltip="Pathway view" data-tooltip-pos="bottom">
+                <span data-i18n="btn_learning_pathway">Pathway View</span>
+              </button>
+              <button type="button" class="view-toggle-btn" id="btnViewGrid" onclick="SkillTree.switchView('grid')" data-tooltip="Grid view" data-tooltip-pos="bottom">
+                <span data-i18n="btn_discipline_grid">Grid View</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- Task Progress & Interactive Filter Bar -->
-        <div class="ca-progress-header" id="caProgressHeader" style="display: none;">
-          <div class="ca-progress-top-row">
-            <span class="ca-progress-label">Continuous Assessment Completion</span>
-            <span class="ca-progress-fraction" id="caProgressFractionText">0 / 0 Submitted</span>
-          </div>
-          <div class="ca-progress-bar-wrap" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-            <div class="ca-progress-fill" id="caProgressFill" style="width: 0%;"></div>
-          </div>
-          <div class="ca-stat-chips" id="caStatChips" role="tablist" aria-label="Filter assignments by status">
-            <button type="button" class="ca-stat-chip chip-all active" id="statChipAll" onclick="filterTeacherAssignments('all')">
-              All
-            </button>
-            <button type="button" class="ca-stat-chip chip-pending" id="statChipPending" onclick="filterTeacherAssignments('pending')">
-              <b>0</b> Pending
-            </button>
-            <button type="button" class="ca-stat-chip chip-review" id="statChipReview" onclick="filterTeacherAssignments('review')">
-              <b>0</b> Under Review
-            </button>
-            <button type="button" class="ca-stat-chip chip-marked" id="statChipMarked" onclick="filterTeacherAssignments('marked')">
-              <b>0</b> Graded
-            </button>
+        <!-- Interactive Visual Skill Tree Pathway View -->
+        <div id="skillTreeContainer">
+          <div style="text-align:center; padding:36px; font-family:'JetBrains Mono', monospace; font-size:0.88rem; color:var(--text-muted);">
+            Loading practical pathway…
           </div>
         </div>
 
-        <div id="assignmentsList" class="assignments-grid-container">
-          <div class="empty-box">Loading assignments…</div>
+        <!-- Grid View Wrap -->
+        <div id="practiceGridWrap" style="display:none;">
+          <!-- Search and Filter Bar -->
+          <div class="search-filter-bar" style="border-radius:12px; margin-bottom:20px; background:var(--card-bg-hover); border:1px solid var(--card-border); padding:14px 18px;">
+            <div class="search-input-wrap">
+              <input type="text" id="experimentSearchInput" oninput="filterPractices()" placeholder="Filter practicals (e.g. Titration, Qualitative Salt, Thermochemistry, Kinetics, Organic...)">
+            </div>
+            <div class="filter-chips" style="margin-top:12px;">
+              <button class="filter-chip active" data-filter="all" onclick="setPracticeFilter('all')">All Practicals</button>
+              <button class="filter-chip" data-filter="acidBase" onclick="setPracticeFilter('acidBase')">Volumetric</button>
+              <button class="filter-chip" data-filter="qualitative" onclick="setPracticeFilter('qualitative')">Qualitative Salts</button>
+              <button class="filter-chip" data-filter="rates" onclick="setPracticeFilter('rates')">Kinetics</button>
+              <button class="filter-chip" data-filter="energy" onclick="setPracticeFilter('energy')">Thermochemistry</button>
+              <button class="filter-chip" data-filter="solubility" onclick="setPracticeFilter('solubility')">Solubility</button>
+              <button class="filter-chip" data-filter="organic" onclick="setPracticeFilter('organic')">Organic Chemistry</button>
+            </div>
+          </div>
+
+          <!-- Laboratory Bench Cards Grid -->
+          <div class="practice-2col-grid" id="practiceGrid">
+            
+            <!-- 1. Guided Volumetric Analysis -->
+            <a href="lab.html?studyMode=guided" class="practice-banner-card" data-type="acidBase" style="border-left:4px solid var(--acad-gold);">
+              <div class="practice-card-icon-badge" style="background:rgba(217,119,6,0.12); color:#D97706;">🧪</div>
+              <div style="flex:1; min-width:0;">
+                <div class="practice-text-title">Guided Volumetric Analysis</div>
+                <div class="practice-text-desc">Step-by-step meniscus alignment, indicator selection, and calculations.</div>
+              </div>
+            </a>
+
+            <!-- 2. Volumetric Workbench -->
+            <a href="lab.html" class="practice-banner-card" data-type="acidBase" style="border-left:4px solid var(--acad-navy);">
+              <div class="practice-card-icon-badge" style="background:rgba(2,132,199,0.12); color:#0284C7;">⚗️</div>
+              <div style="flex:1; min-width:0;">
+                <div class="practice-text-title">Volumetric Analysis Workbench</div>
+                <div class="practice-text-desc">Acid-Base, KMnO₄ Redox, Mohr's Precipitation, and EDTA Complexometry.</div>
+              </div>
+            </a>
+
+            <!-- 3. Qualitative Salt Analysis -->
+            <a href="qualitative.html" class="practice-banner-card" data-type="qualitative" style="border-left:4px solid var(--acad-emerald);">
+              <div class="practice-card-icon-badge" style="background:rgba(16,185,129,0.12); color:#059669;">🔬</div>
+              <div style="flex:1; min-width:0;">
+                <div class="practice-text-title">Systematic Qualitative Analysis</div>
+                <div class="practice-text-desc">Identify 10 unknown cations and anions via aqueous reagents and flame tests.</div>
+              </div>
+            </a>
+
+            <!-- 4. Reaction Rates & Kinetics -->
+            <a href="rates.html" class="practice-banner-card" data-type="rates" style="border-left:4px solid #F59E0B;">
+              <div class="practice-card-icon-badge" style="background:rgba(245,158,11,0.12); color:#D97706;">⚡</div>
+              <div style="flex:1; min-width:0;">
+                <div class="practice-text-title">Reaction Rates &amp; Kinetics</div>
+                <div class="practice-text-desc">Disappearing cross method, rate graphs (1/t vs conc), and temperature effects.</div>
+              </div>
+            </a>
+
+            <!-- 5. Thermochemistry & Enthalpy -->
+            <a href="energy.html" class="practice-banner-card" data-type="energy" style="border-left:4px solid #EF4444;">
+              <div class="practice-card-icon-badge" style="background:rgba(239,68,68,0.12); color:#DC2626;">🌡️</div>
+              <div style="flex:1; min-width:0;">
+                <div class="practice-text-title">Thermochemistry &amp; Energy Changes</div>
+                <div class="practice-text-desc">Calorimetric measurement of neutralization, solution, and displacement enthalpies (ΔH).</div>
+              </div>
+            </a>
+
+            <!-- 6. Solubility Curves -->
+            <a href="solubility.html" class="practice-banner-card" data-type="solubility" style="border-left:4px solid #0284C7;">
+              <div class="practice-card-icon-badge" style="background:rgba(2,132,199,0.12); color:#0284C7;">❄️</div>
+              <div style="flex:1; min-width:0;">
+                <div class="practice-text-title">Solubility Curves &amp; Crystallization</div>
+                <div class="practice-text-desc">Determine crystallization inception points across solute masses and plot curves.</div>
+              </div>
+            </a>
+
+            <!-- 7. Organic Chemistry Lab -->
+            <a href="organic.html" class="practice-banner-card" data-type="organic" style="border-left:4px solid #10B981;">
+              <div class="practice-card-icon-badge" style="background:rgba(16,185,129,0.12); color:#059669;">🌿</div>
+              <div style="flex:1; min-width:0;">
+                <div class="practice-text-title">Organic Chemistry &amp; Functional Groups</div>
+                <div class="practice-text-desc">Test for unsaturation (Br₂/KMnO₄), combustion sootiness, and esterification.</div>
+              </div>
+            </a>
+
+            <!-- 8. Gas Preparation & Identification -->
+            <a href="gas_prep.html" class="practice-banner-card" data-type="gas" style="border-left:4px solid #8B5CF6;">
+              <div class="practice-card-icon-badge" style="background:rgba(139,92,246,0.12); color:#7C3AED;">💨</div>
+              <div style="flex:1; min-width:0;">
+                <div class="practice-text-title">Gas Preparation &amp; Analysis</div>
+                <div class="practice-text-desc">Generate and test H₂, O₂, CO₂, Cl₂, NH₃, and SO₂ with confirmatory tests.</div>
+              </div>
+            </a>
+
+            <!-- 9. KCSE Mock Exam -->
+            <a href="mock_exams.html" class="practice-banner-card" data-type="all" style="border-left:4px solid var(--acad-gold); grid-column: 1 / -1; background:var(--card-bg-hover);">
+              <div class="practice-card-icon-badge" style="background:rgba(245,158,11,0.15); color:#D97706;">🏆</div>
+              <div style="flex:1; min-width:0;">
+                <div class="practice-text-title">KCSE Paper 3 National Mock Examination (40 Marks)</div>
+                <div class="practice-text-desc">Full 40-mark timed mock exam with automated grading rubric.</div>
+              </div>
+            </a>
+
+          </div>
         </div>
       </section>
 
@@ -2217,27 +2217,27 @@
     </div>
   </div>
 
-  <script defer src="../shared/auth-guard.js?v=158"></script>
-  <script defer src="../shared/api.js?v=158"></script>
-  <script defer src="../shared/auth-forms.js?v=158"></script>
-  <script defer src="../shared/i18n.js?v=158"></script>
-  <script defer src="../shared/theme.js?v=158"></script>
-  <script defer src="../shared/chemical-safety.js?v=158"></script>
-  <script defer src="../shared/knec-grading.js?v=158"></script>
-  <script defer src="../shared/notifications-engine.js?v=158"></script>
-  <script defer src="../shared/push-manager.js?v=158"></script>
-  <script defer src="../shared/page-transitions.js?v=158"></script>
-  <script defer src="../shared/pwa-installer.js?v=158"></script>
-  <script defer src="../shared/brilliant-ui.js?v=158"></script>
-  <script defer src="../shared/gamification-engine.js?v=158"></script>
-  <script defer src="/shared/knec-remediation-drills.js?v=158"></script>
-  <script defer src="js/skill-tree.js?v=158"></script>
-  <script defer src="js/student-dashboard.js?v=158"></script>
-  <script defer src="../shared/subscription-ui.js?v=158"></script>
+  <script defer src="../shared/auth-guard.js?v=159"></script>
+  <script defer src="../shared/api.js?v=159"></script>
+  <script defer src="../shared/auth-forms.js?v=159"></script>
+  <script defer src="../shared/i18n.js?v=159"></script>
+  <script defer src="../shared/theme.js?v=159"></script>
+  <script defer src="../shared/chemical-safety.js?v=159"></script>
+  <script defer src="../shared/knec-grading.js?v=159"></script>
+  <script defer src="../shared/notifications-engine.js?v=159"></script>
+  <script defer src="../shared/push-manager.js?v=159"></script>
+  <script defer src="../shared/page-transitions.js?v=159"></script>
+  <script defer src="../shared/pwa-installer.js?v=159"></script>
+  <script defer src="../shared/brilliant-ui.js?v=159"></script>
+  <script defer src="../shared/gamification-engine.js?v=159"></script>
+  <script defer src="/shared/knec-remediation-drills.js?v=159"></script>
+  <script defer src="js/skill-tree.js?v=159"></script>
+  <script defer src="js/student-dashboard.js?v=159"></script>
+  <script defer src="../shared/subscription-ui.js?v=159"></script>
 
   <!-- Chart.js deferred at bottom of body with SRI hash to satisfy security audit while unblocking head LCP -->
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha384-bs/nf9FbdNouRbMiFcrcZfLXYPKiPaGVGplVbv7dLGECccEXDW+S3zjqSKR5ZEaD sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script defer src="js/home.js?v=158"></script>
+  <script defer src="js/home.js?v=159"></script>
 
   <!-- ── Mobile Bottom Navigation Bar (hidden on desktop via CSS) ── -->
   <nav class="vlk-bottom-nav" aria-label="Mobile Bottom Navigation" id="vlkBottomNav">

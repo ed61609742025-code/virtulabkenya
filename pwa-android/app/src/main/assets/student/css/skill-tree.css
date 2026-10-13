@@ -88,6 +88,24 @@
   padding: 10px 0 30px;
 }
 
+@media (min-width: 1024px) {
+  .skill-tree-pathway {
+    gap: 18px;
+    padding: 6px 0 20px;
+  }
+  .st-branch {
+    padding: 16px 20px !important;
+    border-radius: 16px !important;
+  }
+  .st-branch-header {
+    margin-bottom: 12px !important;
+    padding-bottom: 8px !important;
+  }
+  .st-nodes-track {
+    padding: 12px 6px 8px !important;
+  }
+}
+
 /* Branch Section Container */
 .st-branch {
   position: relative;

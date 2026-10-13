@@ -6666,6 +6666,41 @@ html, body {
   gap: 12px;
 }
 
+@media (min-width: 1024px) {
+  .knec-rules-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: 10px;
+  }
+  .knec-rule-card {
+    padding: 12px 10px;
+  }
+  .knec-rule-title {
+    font-size: 0.82rem;
+    line-height: 1.25;
+  }
+  .knec-rule-desc {
+    font-size: 0.70rem;
+    line-height: 1.35;
+  }
+  .knec-rule-footer {
+    padding-top: 6px;
+  }
+}
+
+@media (min-width: 680px) and (max-width: 1023px) {
+  .knec-rules-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+}
+
+@media (max-width: 679px) {
+  .knec-rules-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+}
+
 .knec-rule-card {
   background: var(--card-bg);
   border: 1.5px solid var(--card-border);
@@ -6784,6 +6819,13 @@ html, body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(285px, 1fr));
   gap: 16px;
+}
+
+@media (min-width: 1024px) {
+  .drill-card-grid-upgraded {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
 }
 
 .drill-item-card-upgraded {

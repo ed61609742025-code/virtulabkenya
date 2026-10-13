@@ -129,21 +129,21 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <!-- Critical Layout & Dashboard Stylesheets (Render-Critical) -->
-<link rel="stylesheet" href="../shared/style.css?v=159">
-<link rel="stylesheet" href="css/dashboard.css?v=159">
-<link rel="stylesheet" href="css/skill-tree.css?v=159">
-<link rel="stylesheet" href="css/mobile.css?v=159">
+<link rel="stylesheet" href="../shared/style.css?v=160">
+<link rel="stylesheet" href="css/dashboard.css?v=160">
+<link rel="stylesheet" href="css/skill-tree.css?v=160">
+<link rel="stylesheet" href="css/mobile.css?v=160">
 
 <!-- Non-Critical Stylesheets (Asynchronously loaded to unblock LCP) -->
-<link rel="stylesheet" href="../shared/pwa-installer.css?v=159" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="../shared/brilliant-theme.css?v=159" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="../shared/gamification-engine.css?v=159" media="print" onload="this.media='all'">
-<link rel="stylesheet" href="../shared/subscription-ui.css?v=159" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="../shared/pwa-installer.css?v=160" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="../shared/brilliant-theme.css?v=160" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="../shared/gamification-engine.css?v=160" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="../shared/subscription-ui.css?v=160" media="print" onload="this.media='all'">
 <noscript>
-  <link rel="stylesheet" href="../shared/pwa-installer.css?v=159">
-  <link rel="stylesheet" href="../shared/brilliant-theme.css?v=159">
-  <link rel="stylesheet" href="../shared/gamification-engine.css?v=159">
-  <link rel="stylesheet" href="../shared/subscription-ui.css?v=159">
+  <link rel="stylesheet" href="../shared/pwa-installer.css?v=160">
+  <link rel="stylesheet" href="../shared/brilliant-theme.css?v=160">
+  <link rel="stylesheet" href="../shared/gamification-engine.css?v=160">
+  <link rel="stylesheet" href="../shared/subscription-ui.css?v=160">
 </noscript>
 
 <style>
@@ -672,15 +672,6 @@
         </div>
       </div>
 
-      <!-- Smart Assignment Alert Strip (Appears dynamically when assignments exist) -->
-      <div id="assignmentAlertStrip" class="assignment-alert-strip" style="display:none;">
-        <div class="aas-left">
-          <span class="aas-icon">📋</span>
-          <span class="aas-text" id="aasText">Teacher Assignment</span>
-        </div>
-        <a href="#zone_assignments" onclick="focusAssignmentsSection(event)" class="aas-btn" id="aasBtn">View Assignment →</a>
-      </div>
-
       <!-- Zone 0: Adaptive Examiner Coaching & Suggested Practical (Personalized Guidance) -->
       <section class="activity-zone-wrap zone-coaching" id="zone_coaching" aria-label="Personalized Examiner Coaching & Recommendations">
         <div class="coaching-grid">
@@ -787,17 +778,14 @@
                 </div>
               </div>
 
-              <!-- Dual-Action Launch Bar -->
+              <!-- Action Launch Bar -->
               <div class="rec-action-bar">
                 <a id="recActionBtn" href="lab.html?type=redox" class="rec-cta-btn" data-tooltip="Launch this practical simulation session" data-tooltip-pos="top">
                   <span id="recActionText" data-i18n="launch_prescribed">Start Practical →</span>
                 </a>
                 <div class="rec-secondary-actions">
-                  <a id="recWarmupBtn" href="speed_battle.html?mode=redox" class="rec-warmup-chip" title="Take a quick 45-second warmup drill on this topic">
-                    <span>⚡ 45s Warmup</span>
-                  </a>
                   <button type="button" class="rec-cycle-chip" onclick="cycleRecommendedPractical(1)" title="View next suggested practical">
-                    <span>Next ↻</span>
+                    <span>Next Lab ↻</span>
                   </button>
                 </div>
               </div>
@@ -878,12 +866,6 @@
                 <span class="section-subheading" data-i18n="drills_sub">Timed high-yield diagnostics &amp; KNEC marking rubric micro-drills to eliminate systematic deductions.</span>
               </div>
             </div>
-          </div>
-          <div class="drill-header-right">
-            <a href="speed_battle.html?warmup=true" class="drill-warmup-cta" id="drillQuickWarmupBtn" title="Launch 40-second Pre-Lab Warmup" data-tooltip="Complete daily 40-second diagnostic sprint" data-tooltip-pos="bottom">
-              <span class="warmup-cta-icon">🔥</span>
-              <span class="warmup-cta-text" id="drillWarmupCtaText">Start 40s Daily Warmup →</span>
-            </a>
           </div>
         </div>
 
@@ -2217,27 +2199,27 @@
     </div>
   </div>
 
-  <script defer src="../shared/auth-guard.js?v=159"></script>
-  <script defer src="../shared/api.js?v=159"></script>
-  <script defer src="../shared/auth-forms.js?v=159"></script>
-  <script defer src="../shared/i18n.js?v=159"></script>
-  <script defer src="../shared/theme.js?v=159"></script>
-  <script defer src="../shared/chemical-safety.js?v=159"></script>
-  <script defer src="../shared/knec-grading.js?v=159"></script>
-  <script defer src="../shared/notifications-engine.js?v=159"></script>
-  <script defer src="../shared/push-manager.js?v=159"></script>
-  <script defer src="../shared/page-transitions.js?v=159"></script>
-  <script defer src="../shared/pwa-installer.js?v=159"></script>
-  <script defer src="../shared/brilliant-ui.js?v=159"></script>
-  <script defer src="../shared/gamification-engine.js?v=159"></script>
-  <script defer src="/shared/knec-remediation-drills.js?v=159"></script>
-  <script defer src="js/skill-tree.js?v=159"></script>
-  <script defer src="js/student-dashboard.js?v=159"></script>
-  <script defer src="../shared/subscription-ui.js?v=159"></script>
+  <script defer src="../shared/auth-guard.js?v=160"></script>
+  <script defer src="../shared/api.js?v=160"></script>
+  <script defer src="../shared/auth-forms.js?v=160"></script>
+  <script defer src="../shared/i18n.js?v=160"></script>
+  <script defer src="../shared/theme.js?v=160"></script>
+  <script defer src="../shared/chemical-safety.js?v=160"></script>
+  <script defer src="../shared/knec-grading.js?v=160"></script>
+  <script defer src="../shared/notifications-engine.js?v=160"></script>
+  <script defer src="../shared/push-manager.js?v=160"></script>
+  <script defer src="../shared/page-transitions.js?v=160"></script>
+  <script defer src="../shared/pwa-installer.js?v=160"></script>
+  <script defer src="../shared/brilliant-ui.js?v=160"></script>
+  <script defer src="../shared/gamification-engine.js?v=160"></script>
+  <script defer src="/shared/knec-remediation-drills.js?v=160"></script>
+  <script defer src="js/skill-tree.js?v=160"></script>
+  <script defer src="js/student-dashboard.js?v=160"></script>
+  <script defer src="../shared/subscription-ui.js?v=160"></script>
 
   <!-- Chart.js deferred at bottom of body with SRI hash to satisfy security audit while unblocking head LCP -->
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha384-bs/nf9FbdNouRbMiFcrcZfLXYPKiPaGVGplVbv7dLGECccEXDW+S3zjqSKR5ZEaD sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script defer src="js/home.js?v=159"></script>
+  <script defer src="js/home.js?v=160"></script>
 
   <!-- ── Mobile Bottom Navigation Bar (hidden on desktop via CSS) ── -->
   <nav class="vlk-bottom-nav" aria-label="Mobile Bottom Navigation" id="vlkBottomNav">

@@ -527,19 +527,7 @@ requireStudentLogin();
       updateNotificationsUI(assignments);
 
       const progressHeader = document.getElementById('caProgressHeader');
-      const instructorPill = document.getElementById('caInstructorPill');
       const hasTeacher = !!(currentStudentUser && (currentStudentUser.teacherName || currentStudentUser.teacherId || currentStudentUser.teacherCode));
-
-      if (instructorPill) {
-        if (hasTeacher) {
-          const tName = currentStudentUser.teacherName || (currentStudentUser.teacherCode ? `Code: ${currentStudentUser.teacherCode}` : 'Connected');
-          instructorPill.innerHTML = `👨‍🏫 Instructor: <strong>${escapeHtml(tName)}</strong>`;
-          instructorPill.classList.add('is-linked');
-        } else {
-          instructorPill.innerHTML = `🔗 Link Teacher Code`;
-          instructorPill.classList.remove('is-linked');
-        }
-      }
 
       if (assignments.length === 0) {
         const alertStrip = document.getElementById('assignmentAlertStrip');
@@ -579,7 +567,7 @@ requireStudentLogin();
               <div class="ca-empty-content">
                 <h4 class="ca-empty-title">All Caught Up! Zero Assignment Backlog</h4>
                 <p class="ca-empty-desc">
-                  Outstanding work! You have completed every practical prescribed by <strong>${escapeHtml(currentStudentUser?.teacherName || 'your instructor')}</strong>. Keep sharpening your skills on the free benches!
+                  Outstanding work! You have completed every prescribed practical assessment. Keep sharpening your skills on the free benches!
                 </p>
                 <div class="ca-empty-features">
                   <span class="ca-feature-pill">✓ 100% Submitted</span>

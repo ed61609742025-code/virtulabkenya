@@ -949,74 +949,243 @@
       </section>
 
       <!-- Zone 3: Practical Diagnostic Drills Hub -->
-      <section class="activity-zone-wrap zone-drills">
-        <div class="activity-zone-header">
-          <div class="activity-zone-title-box">
+      <section class="activity-zone-wrap zone-drills zone-drills-upgraded">
+        <!-- Upgraded Academic Header -->
+        <div class="drill-hub-header">
+          <div class="drill-header-left">
+            <div class="drill-header-icon-box" aria-hidden="true">⚡</div>
             <div>
-              <h2 class="section-heading-academic" data-i18n="drills_title">
-                Practical Diagnostic Drills
-              </h2>
-              <div class="section-subheading" data-i18n="drills_sub">
-                Timed quizzes by topic:
+              <div class="drill-title-cluster">
+                <h2 class="section-heading-academic" data-i18n="drills_title">Practical Diagnostic Drills</h2>
+                <span class="dash-section-badge badge-amber" id="drillTotalCountBadge">6 Sprints · 5 KNEC Rules</span>
+                <span class="drill-top-score-badge" id="drillTopRecordBadge">🏆 Best: <b id="drillTopScoreVal">0</b> pts</span>
+              </div>
+              <div class="drill-subtitle-row">
+                <span class="section-subheading" data-i18n="drills_sub">Timed high-yield diagnostics &amp; KNEC marking rubric micro-drills to eliminate systematic deductions.</span>
               </div>
             </div>
           </div>
-          <span class="dash-section-badge badge-amber" data-i18n="drills_badge">Quick Drills</span>
+          <div class="drill-header-right">
+            <a href="speed_battle.html?warmup=true" class="drill-warmup-cta" id="drillQuickWarmupBtn" title="Launch 40-second Pre-Lab Warmup" data-tooltip="Complete daily 40-second diagnostic sprint" data-tooltip-pos="bottom">
+              <span class="warmup-cta-icon">🔥</span>
+              <span class="warmup-cta-text" id="drillWarmupCtaText">Start 40s Daily Warmup →</span>
+            </a>
+          </div>
         </div>
 
-        <div class="drill-card-grid">
-          <!-- 1. All Topics -->
-          <a href="speed_battle.html?mode=blitz" class="drill-item-card" data-tooltip="60s timed assessment covering all practical competencies" data-tooltip-pos="top" aria-label="Comprehensive Review drill: 60 seconds timed quiz on all practical competencies">
-            <div>
-              <div class="drill-card-title" data-i18n="drill_comp_title">Comprehensive Review</div>
-              <div class="drill-card-desc" data-i18n="drill_comp_desc">All practical competencies</div>
+        <!-- Interactive Filter & Segmented Control Bar -->
+        <div class="drill-filter-bar" role="tablist" aria-label="Filter practical diagnostic drills">
+          <button type="button" class="drill-filter-chip active" id="drillFilterAll" data-filter="all" onclick="filterDiagnosticDrills('all')">
+            ⚡ All Diagnostic Drills (11)
+          </button>
+          <button type="button" class="drill-filter-chip" id="drillFilterPaper3" data-filter="paper3" onclick="filterDiagnosticDrills('paper3')">
+            📋 KCSE Paper 3 Focus (Q1, Q2, Q3)
+          </button>
+          <button type="button" class="drill-filter-chip" id="drillFilterSpeed" data-filter="speed" onclick="filterDiagnosticDrills('speed')">
+            ⏱️ Timed Speed Sprints (45s–60s)
+          </button>
+          <button type="button" class="drill-filter-chip" id="drillFilterKnec" data-filter="knec_rules" onclick="filterDiagnosticDrills('knec_rules')">
+            🎯 KNEC Mark-Deduction Eliminators (5)
+          </button>
+        </div>
+
+        <!-- Sub-panel: KNEC Marking Criteria Micro-Drills (Deduction Eliminators) -->
+        <div class="knec-deduction-panel" id="knecDeductionPanel">
+          <div class="knec-panel-header">
+            <div class="knec-panel-title-wrap">
+              <span class="knec-panel-badge">KNEC 233/3 RUBRIC</span>
+              <h3 class="knec-panel-title">Examiner Mark-Deduction Eliminators (5-Min Micro-Drills)</h3>
             </div>
-            <span class="drill-time-chip" style="background:rgba(2,132,199,0.12); color:var(--cyan-accent); border:1px solid rgba(2,132,199,0.3);" aria-label="Time limit: 60 seconds">60s</span>
+            <span class="knec-panel-tip">Offline-first · 3 diagnostic questions each · Official examiner rationales</span>
+          </div>
+
+          <div class="knec-rules-grid">
+            <!-- Rule D -->
+            <div class="knec-rule-card" onclick="openHomeRemediationDrill('D')">
+              <div class="knec-rule-top">
+                <span class="knec-rule-code rule-code-d">Condition (D)</span>
+                <span class="knec-penalty-pill">-1.0 Mark Penalty</span>
+              </div>
+              <h4 class="knec-rule-title">2-Decimal Precision &amp; .0/.5 Rule</h4>
+              <p class="knec-rule-desc">Master strict burette 2-decimal recording and eye-level half-millimeter interpolation.</p>
+              <div class="knec-rule-footer">
+                <span class="knec-status-chip" id="knecStatusBadge_D">⏱️ 5-Min Drill</span>
+                <button type="button" class="knec-rule-btn" onclick="event.stopPropagation(); openHomeRemediationDrill('D');">Practice Rule →</button>
+              </div>
+            </div>
+
+            <!-- Rule PA -->
+            <div class="knec-rule-card" onclick="openHomeRemediationDrill('PA')">
+              <div class="knec-rule-top">
+                <span class="knec-rule-code rule-code-pa">Condition (PA)</span>
+                <span class="knec-penalty-pill">-1.0 Mark Penalty</span>
+              </div>
+              <h4 class="knec-rule-title">Concordancy Selection &amp; Averaging</h4>
+              <p class="knec-rule-desc">Identify ±0.20 cm³ concordant titres, discard outliers, and state explicit arithmetic working.</p>
+              <div class="knec-rule-footer">
+                <span class="knec-status-chip" id="knecStatusBadge_PA">⏱️ 5-Min Drill</span>
+                <button type="button" class="knec-rule-btn" onclick="event.stopPropagation(); openHomeRemediationDrill('PA');">Practice Rule →</button>
+              </div>
+            </div>
+
+            <!-- Rule AC/FA -->
+            <div class="knec-rule-card" onclick="openHomeRemediationDrill('AC/FA')">
+              <div class="knec-rule-top">
+                <span class="knec-rule-code rule-code-ac">Condition (AC/FA)</span>
+                <span class="knec-penalty-pill">-1.0 Mark Penalty</span>
+              </div>
+              <h4 class="knec-rule-title">Optical Meniscus Alignment &amp; Accuracy</h4>
+              <p class="knec-rule-desc">Align eye level at the bottom of the curved meniscus to match teacher baseline within ±0.1 cm³.</p>
+              <div class="knec-rule-footer">
+                <span class="knec-status-chip" id="knecStatusBadge_AC">⏱️ 5-Min Drill</span>
+                <button type="button" class="knec-rule-btn" onclick="event.stopPropagation(); openHomeRemediationDrill('AC/FA');">Practice Rule →</button>
+              </div>
+            </div>
+
+            <!-- Rule INORG -->
+            <div class="knec-rule-card" onclick="openHomeRemediationDrill('INORG')">
+              <div class="knec-rule-top">
+                <span class="knec-rule-code rule-code-inorg">Question 2</span>
+                <span class="knec-penalty-pill">-3.0 Marks Risk</span>
+              </div>
+              <h4 class="knec-rule-title">Inorganic Cation &amp; Anion Deductions</h4>
+              <p class="knec-rule-desc">Formulate exact ionic formula deductions (Pb²⁺, Zn²⁺, Al³⁺, SO₄²⁻) with clear observations.</p>
+              <div class="knec-rule-footer">
+                <span class="knec-status-chip" id="knecStatusBadge_INORG">⏱️ 5-Min Drill</span>
+                <button type="button" class="knec-rule-btn" onclick="event.stopPropagation(); openHomeRemediationDrill('INORG');">Practice Rule →</button>
+              </div>
+            </div>
+
+            <!-- Rule ORG -->
+            <div class="knec-rule-card" onclick="openHomeRemediationDrill('ORG')">
+              <div class="knec-rule-top">
+                <span class="knec-rule-code rule-code-org">Question 3</span>
+                <span class="knec-penalty-pill">-3.0 Marks Risk</span>
+              </div>
+              <h4 class="knec-rule-title">Organic Functional Group Deductions</h4>
+              <p class="knec-rule-desc">Differentiate C=C unsaturation, R-OH alkanols, and R-COOH carboxylic acids in Paper 3 format.</p>
+              <div class="knec-rule-footer">
+                <span class="knec-status-chip" id="knecStatusBadge_ORG">⏱️ 5-Min Drill</span>
+                <button type="button" class="knec-rule-btn" onclick="event.stopPropagation(); openHomeRemediationDrill('ORG');">Practice Rule →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Rapid Diagnostic Speed Sprints Grid -->
+        <div class="drill-card-grid drill-card-grid-upgraded" id="drillCardGrid">
+          <!-- 1. All Topics / Comprehensive Review -->
+          <a href="speed_battle.html?mode=blitz" class="drill-item-card-upgraded theme-blitz" data-category="speed all" data-tooltip="60s timed assessment covering all practical competencies" data-tooltip-pos="top" aria-label="Comprehensive Review drill">
+            <div class="drill-card-top-row">
+              <div class="drill-icon-box is-blitz">📚</div>
+              <div class="drill-badge-cluster">
+                <span class="drill-knec-tag">KCSE 233/3 · ALL TOPICS</span>
+                <span class="drill-time-pill is-cyan">⏱️ 60s Blitz</span>
+              </div>
+            </div>
+            <div class="drill-card-body">
+              <h3 class="drill-card-title" data-i18n="drill_comp_title">Comprehensive Review</h3>
+              <p class="drill-card-desc" data-i18n="drill_comp_desc">Fast-paced 60s diagnostic testing titrations, qualitative salts, flame colors, and organic deductions.</p>
+            </div>
+            <div class="drill-card-footer">
+              <span class="drill-score-chip" id="bestScore_blitz">⭐ Best: --</span>
+              <span class="drill-cta-link">Start 60s Drill →</span>
+            </div>
           </a>
 
-          <!-- 2. Qualitative Salt Analysis -->
-          <a href="speed_battle.html?mode=qualitative" class="drill-item-card" data-tooltip="45s drill on cation and anion precipitates and flame tests" data-tooltip-pos="top" aria-label="Qualitative Salts Question 2 drill: 45 seconds timed quiz on cations, anions, and flame tests">
-            <div>
-              <div class="drill-card-title" data-i18n="drill_qual_title">Qualitative Salts (Q2)</div>
-              <div class="drill-card-desc" data-i18n="drill_qual_desc">Cations, anions &amp; flame tests</div>
+          <!-- 2. Qualitative Salt Analysis (Q2) -->
+          <a href="speed_battle.html?mode=qualitative" class="drill-item-card-upgraded theme-qualitative" data-category="paper3 speed all" data-tooltip="45s drill on cation and anion precipitates and flame tests" data-tooltip-pos="top" aria-label="Qualitative Salts Question 2 drill">
+            <div class="drill-card-top-row">
+              <div class="drill-icon-box is-emerald">🔬</div>
+              <div class="drill-badge-cluster">
+                <span class="drill-knec-tag">KCSE 233/3 · Q2 · 10 MARKS</span>
+                <span class="drill-time-pill is-emerald">⏱️ 45s Sprint</span>
+              </div>
             </div>
-            <span class="drill-time-chip" style="background:rgba(16,185,129,0.12); color:#047857; border:1px solid rgba(16,185,129,0.3);" aria-label="Time limit: 45 seconds">45s</span>
+            <div class="drill-card-body">
+              <h3 class="drill-card-title" data-i18n="drill_qual_title">Qualitative Salts (Q2)</h3>
+              <p class="drill-card-desc" data-i18n="drill_qual_desc">Cation precipitation with NaOH/NH₃, amphoteric dissolves, Ba(NO₃)₂ tests, and flame colors.</p>
+            </div>
+            <div class="drill-card-footer">
+              <span class="drill-score-chip" id="bestScore_qualitative">⭐ Best: --</span>
+              <span class="drill-cta-link">Practice Salts →</span>
+            </div>
           </a>
 
-          <!-- 3. Volumetric Titrations -->
-          <a href="speed_battle.html?mode=titration" class="drill-item-card" data-tooltip="45s sprint on indicator endpoints and concordancy calculations" data-tooltip-pos="top" aria-label="Volumetric Titration Question 1 drill: 45 seconds timed quiz on indicators and concordancy">
-            <div>
-              <div class="drill-card-title" data-i18n="drill_vol_title">Volumetric Titration (Q1)</div>
-              <div class="drill-card-desc" data-i18n="drill_vol_desc">Indicators &amp; concordancy</div>
+          <!-- 3. Volumetric Titration (Q1) -->
+          <a href="speed_battle.html?mode=titration" class="drill-item-card-upgraded theme-titration" data-category="paper3 speed all" data-tooltip="45s sprint on indicator endpoints and concordancy calculations" data-tooltip-pos="top" aria-label="Volumetric Titration Question 1 drill">
+            <div class="drill-card-top-row">
+              <div class="drill-icon-box is-amber">⚖️</div>
+              <div class="drill-badge-cluster">
+                <span class="drill-knec-tag">KCSE 233/3 · Q1 · 15 MARKS</span>
+                <span class="drill-time-pill is-amber">⏱️ 45s Sprint</span>
+              </div>
             </div>
-            <span class="drill-time-chip" style="background:rgba(245,158,11,0.14); color:var(--b-amber-text, #92400E); border:1px solid rgba(245,158,11,0.4);" aria-label="Time limit: 45 seconds">45s</span>
+            <div class="drill-card-body">
+              <h3 class="drill-card-title" data-i18n="drill_vol_title">Volumetric Titration (Q1)</h3>
+              <p class="drill-card-desc" data-i18n="drill_vol_desc">Indicator endpoints (phenolphthalein/methyl orange), concordancy rules, and 2-decimal burette readings.</p>
+            </div>
+            <div class="drill-card-footer">
+              <span class="drill-score-chip" id="bestScore_titration">⭐ Best: --</span>
+              <span class="drill-cta-link">Practice Titration →</span>
+            </div>
           </a>
 
-          <!-- 4. Organic Functional Groups -->
-          <a href="speed_battle.html?mode=organic" class="drill-item-card" data-tooltip="45s identification of alkenes, alkanols, and carboxylic acids" data-tooltip-pos="top" aria-label="Organic Groups Question 3 drill: 45 seconds timed quiz on unsaturation and alcohols">
-            <div>
-              <div class="drill-card-title" data-i18n="drill_org_title">Organic Groups (Q3)</div>
-              <div class="drill-card-desc" data-i18n="drill_org_desc">Unsaturation &amp; alcohols</div>
+          <!-- 4. Organic Functional Groups (Q3) -->
+          <a href="speed_battle.html?mode=organic" class="drill-item-card-upgraded theme-organic" data-category="paper3 speed all" data-tooltip="45s identification of alkenes, alkanols, and carboxylic acids" data-tooltip-pos="top" aria-label="Organic Groups Question 3 drill">
+            <div class="drill-card-top-row">
+              <div class="drill-icon-box is-purple">⚗️</div>
+              <div class="drill-badge-cluster">
+                <span class="drill-knec-tag">KCSE 233/3 · Q3 · 10 MARKS</span>
+                <span class="drill-time-pill is-purple">⏱️ 45s Sprint</span>
+              </div>
             </div>
-            <span class="drill-time-chip" style="background:rgba(139,92,246,0.12); color:#6D28D9; border:1px solid rgba(139,92,246,0.3);" aria-label="Time limit: 45 seconds">45s</span>
+            <div class="drill-card-body">
+              <h3 class="drill-card-title" data-i18n="drill_org_title">Organic Groups (Q3)</h3>
+              <p class="drill-card-desc" data-i18n="drill_org_desc">Unsaturation with Br₂/KMnO₄, primary/secondary alkanol oxidation, and esterification aroma tests.</p>
+            </div>
+            <div class="drill-card-footer">
+              <span class="drill-score-chip" id="bestScore_organic">⭐ Best: --</span>
+              <span class="drill-cta-link">Practice Organic →</span>
+            </div>
           </a>
 
-          <!-- 5. Kinetics & Thermochemistry -->
-          <a href="speed_battle.html?mode=energy" class="drill-item-card" data-tooltip="45s drill on reaction rates and enthalpy calculations" data-tooltip-pos="top" aria-label="Kinetics and Energetics drill: 45 seconds timed quiz on reaction rate and cooling curves">
-            <div>
-              <div class="drill-card-title" data-i18n="drill_kin_title">Kinetics &amp; Energetics</div>
-              <div class="drill-card-desc" data-i18n="drill_kin_desc">ΔH, rate &amp; cooling curves</div>
+          <!-- 5. Kinetics & Energetics -->
+          <a href="speed_battle.html?mode=energy" class="drill-item-card-upgraded theme-energy" data-category="speed all" data-tooltip="45s drill on reaction rates and enthalpy calculations" data-tooltip-pos="top" aria-label="Kinetics and Energetics drill">
+            <div class="drill-card-top-row">
+              <div class="drill-icon-box is-rose">🌡️</div>
+              <div class="drill-badge-cluster">
+                <span class="drill-knec-tag">KCSE 233/3 · PHYSICAL LAB</span>
+                <span class="drill-time-pill is-rose">⏱️ 45s Sprint</span>
+              </div>
             </div>
-            <span class="drill-time-chip" style="background:rgba(236,72,153,0.12); color:#BE185D; border:1px solid rgba(236,72,153,0.3);" aria-label="Time limit: 45 seconds">45s</span>
+            <div class="drill-card-body">
+              <h3 class="drill-card-title" data-i18n="drill_kin_title">Kinetics &amp; Energetics</h3>
+              <p class="drill-card-desc" data-i18n="drill_kin_desc">Enthalpy calculations (ΔH = mcΔT), polystyrene insulation, cooling curves, and reaction rate plots.</p>
+            </div>
+            <div class="drill-card-footer">
+              <span class="drill-score-chip" id="bestScore_energy">⭐ Best: --</span>
+              <span class="drill-cta-link">Practice Energy →</span>
+            </div>
           </a>
 
-          <!-- 6. Sudden Death Drill -->
-          <a href="speed_battle.html?mode=survival" class="drill-item-card" data-tooltip="15s per question sudden-death sprint" data-tooltip-pos="top" aria-label="Sudden Death sprint: 15 seconds per question">
-            <div>
-              <div class="drill-card-title" data-i18n="drill_surv_title">Sudden Death</div>
-              <div class="drill-card-desc" data-i18n="drill_surv_desc">15s per question</div>
+          <!-- 6. Sudden Death Sprint -->
+          <a href="speed_battle.html?mode=survival" class="drill-item-card-upgraded theme-survival" data-category="speed all" data-tooltip="15s per question sudden-death sprint" data-tooltip-pos="top" aria-label="Sudden Death sprint">
+            <div class="drill-card-top-row">
+              <div class="drill-icon-box is-red">🎯</div>
+              <div class="drill-badge-cluster">
+                <span class="drill-knec-tag">HIGH INTENSITY · SURVIVAL</span>
+                <span class="drill-time-pill is-red">⏱️ 15s / Question</span>
+              </div>
             </div>
-            <span class="drill-time-chip" style="background:rgba(239,68,68,0.12); color:#B91C1C; border:1px solid rgba(239,68,68,0.3);" aria-label="Time limit: 15 seconds per question">15s</span>
+            <div class="drill-card-body">
+              <h3 class="drill-card-title" data-i18n="drill_surv_title">Sudden Death</h3>
+              <p class="drill-card-desc" data-i18n="drill_surv_desc">High-pressure rapid recall. One incorrect inference or hesitation eliminates you from the leaderboard.</p>
+            </div>
+            <div class="drill-card-footer">
+              <span class="drill-score-chip" id="bestScore_survival">⭐ Best: --</span>
+              <span class="drill-cta-link">Enter Arena ⚡</span>
+            </div>
           </a>
         </div>
       </section>
@@ -1964,26 +2133,111 @@
     </div>
   </div>
 
-  <script defer src="../shared/auth-guard.js?v=154"></script>
-  <script defer src="../shared/api.js?v=154"></script>
-  <script defer src="../shared/auth-forms.js?v=154"></script>
-  <script defer src="../shared/i18n.js?v=154"></script>
-  <script defer src="../shared/theme.js?v=154"></script>
-  <script defer src="../shared/chemical-safety.js?v=154"></script>
-  <script defer src="../shared/knec-grading.js?v=154"></script>
-  <script defer src="../shared/notifications-engine.js?v=154"></script>
-  <script defer src="../shared/push-manager.js?v=154"></script>
-  <script defer src="../shared/page-transitions.js?v=154"></script>
-  <script defer src="../shared/pwa-installer.js?v=154"></script>
-  <script defer src="../shared/brilliant-ui.js?v=154"></script>
-  <script defer src="../shared/gamification-engine.js?v=154"></script>
-  <script defer src="js/skill-tree.js?v=154"></script>
-  <script defer src="js/student-dashboard.js?v=154"></script>
-  <script defer src="../shared/subscription-ui.js?v=154"></script>
+  <!-- Targeted KNEC Competency Remediation Micro-Drill Modal for Student Workstation -->
+  <div id="homeRemediationDrillModal" class="modal-backdrop" style="display:none; position:fixed; inset:0; z-index:10050; background:rgba(7,11,19,0.85); backdrop-filter:blur(8px); overflow-y:auto; padding:20px;">
+    <div class="modal-dialog drill-modal-dialog" style="max-width:720px; margin:30px auto; background:var(--card-bg, #0B132B); border:1px solid var(--card-border, #1E293B); border-radius:16px; box-shadow:0 20px 50px rgba(0,0,0,0.6); overflow:hidden;">
+      
+      <!-- Drill Header -->
+      <div class="drill-modal-header" style="background:linear-gradient(135deg, rgba(2,132,199,0.15), rgba(15,23,42,0.6)); border-bottom:1px solid var(--card-border); padding:16px 20px; display:flex; justify-content:space-between; align-items:center;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <span id="homeDrillHeaderIcon" style="font-size:1.6rem;">⚡</span>
+          <div>
+            <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--cyan-accent); font-weight:800;">KNEC Weak-Area Remediation Drill</div>
+            <h3 id="homeDrillHeaderTitle" style="margin:0; font-size:1.15rem; color:var(--heading-color); font-weight:800;">Decimal Precision (D) Mastery</h3>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div id="homeDrillTimerBadge" class="drill-timer-pill" style="display:flex; align-items:center; gap:6px; background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:#EF4444; padding:5px 12px; border-radius:100px; font-family:var(--font-mono); font-weight:800; font-size:0.85rem;">
+            <span>⏱️</span>
+            <span id="homeDrillTimerDisplay">05:00</span>
+          </div>
+          <button type="button" class="btn-close-modal" onclick="closeHomeRemediationDrill()" style="background:transparent; border:none; color:var(--text-muted); font-size:1.4rem; cursor:pointer; padding:4px 8px; line-height:1;" aria-label="Close Drill">&times;</button>
+        </div>
+      </div>
+
+      <!-- Drill Body Content (Active Drill State) -->
+      <div id="homeDrillActiveStage" style="padding:20px;">
+        <!-- Chief Examiner Rule Strip -->
+        <div class="drill-rule-banner" style="background:rgba(245,158,11,0.08); border-left:4px solid var(--amber-accent, #F59E0B); border-radius:8px; padding:12px 16px; margin-bottom:18px;">
+          <div style="font-size:0.75rem; text-transform:uppercase; font-weight:800; color:var(--amber-accent); margin-bottom:4px; display:flex; align-items:center; gap:6px;">
+            <span>👨‍🏫</span> KNEC Chief Examiner Standard:
+          </div>
+          <div id="homeDrillExaminerRuleText" style="font-size:0.82rem; color:var(--text-main); line-height:1.5;"></div>
+        </div>
+
+        <!-- Interactive Questions Container -->
+        <form id="homeRemediationDrillForm" onsubmit="event.preventDefault(); submitHomeRemediationDrill();">
+          <div id="homeDrillQuestionsList" style="display:flex; flex-direction:column; gap:16px;">
+            <!-- Dynamically populated questions -->
+          </div>
+
+          <!-- Footer Action Buttons -->
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:22px; padding-top:16px; border-top:1px solid var(--card-border); flex-wrap:wrap; gap:10px;">
+            <button type="button" class="btn btn-secondary" onclick="closeHomeRemediationDrill()" style="font-size:0.82rem; padding:8px 16px;">
+              Exit Drill
+            </button>
+            <button type="submit" id="homeBtnSubmitDrill" class="btn-submit-exam" style="font-size:0.88rem; padding:9px 20px; font-weight:800; background:linear-gradient(135deg, #0284C7, #0369A1);">
+              ⚡ Submit for Instant KNEC Grading
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Drill Completed / Result Stage (Initially Hidden) -->
+      <div id="homeDrillResultStage" style="display:none; padding:24px 20px;">
+        <div style="text-align:center; margin-bottom:20px;">
+          <div id="homeDrillResultTrophy" style="font-size:2.8rem; margin-bottom:8px;">🎯</div>
+          <h3 id="homeDrillResultStatus" style="font-size:1.3rem; font-weight:900; color:var(--heading-color); margin-bottom:4px;">Mastery Attained!</h3>
+          <p id="homeDrillResultSummary" style="font-size:0.85rem; color:var(--text-muted); max-width:480px; margin:0 auto; line-height:1.5;"></p>
+          
+          <div style="display:flex; justify-content:center; gap:14px; margin-top:16px; flex-wrap:wrap;">
+            <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:10px; padding:10px 18px; min-width:130px;">
+              <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">Drill Score</div>
+              <div id="homeDrillResultScore" style="font-size:1.4rem; font-weight:900; font-family:var(--font-mono); color:var(--cyan-accent);">30 / 30</div>
+            </div>
+            <div style="background:var(--card-bg-hover); border:1px solid rgba(16,185,129,0.3); border-radius:10px; padding:10px 18px; min-width:130px;">
+              <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase; font-weight:700;">KNEC Status</div>
+              <div id="homeDrillResultBadge" style="font-size:1.1rem; font-weight:900; font-family:var(--font-mono); color:#10B981;">Mastered</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-dark); border:1px solid var(--card-border); border-radius:10px; padding:14px; margin-bottom:18px;">
+          <div style="font-weight:800; font-size:0.86rem; color:var(--heading-color); margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+            <span>📝</span> Itemized Chief Examiner Verification:
+          </div>
+          <div id="homeDrillResultBreakdown" style="display:flex; flex-direction:column; gap:10px; font-size:0.82rem;"></div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+          <button type="button" class="btn btn-secondary" onclick="closeHomeRemediationDrill()">Close &amp; Keep Practicing</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script defer src="../shared/auth-guard.js?v=158"></script>
+  <script defer src="../shared/api.js?v=158"></script>
+  <script defer src="../shared/auth-forms.js?v=158"></script>
+  <script defer src="../shared/i18n.js?v=158"></script>
+  <script defer src="../shared/theme.js?v=158"></script>
+  <script defer src="../shared/chemical-safety.js?v=158"></script>
+  <script defer src="../shared/knec-grading.js?v=158"></script>
+  <script defer src="../shared/notifications-engine.js?v=158"></script>
+  <script defer src="../shared/push-manager.js?v=158"></script>
+  <script defer src="../shared/page-transitions.js?v=158"></script>
+  <script defer src="../shared/pwa-installer.js?v=158"></script>
+  <script defer src="../shared/brilliant-ui.js?v=158"></script>
+  <script defer src="../shared/gamification-engine.js?v=158"></script>
+  <script defer src="/shared/knec-remediation-drills.js?v=158"></script>
+  <script defer src="js/skill-tree.js?v=158"></script>
+  <script defer src="js/student-dashboard.js?v=158"></script>
+  <script defer src="../shared/subscription-ui.js?v=158"></script>
 
   <!-- Chart.js deferred at bottom of body with SRI hash to satisfy security audit while unblocking head LCP -->
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha384-bs/nf9FbdNouRbMiFcrcZfLXYPKiPaGVGplVbv7dLGECccEXDW+S3zjqSKR5ZEaD sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script defer src="js/home.js?v=154"></script>
+  <script defer src="js/home.js?v=158"></script>
 
   <!-- ── Mobile Bottom Navigation Bar (hidden on desktop via CSS) ── -->
   <nav class="vlk-bottom-nav" aria-label="Mobile Bottom Navigation" id="vlkBottomNav">

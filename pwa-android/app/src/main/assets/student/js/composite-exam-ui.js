@@ -821,9 +821,23 @@ requireStudentLogin();
         cfg?.examConfig?.q2?.trueOrganicKey ||
         cfg?.q2?.trueOrganicKey
       );
-      const isQ3Qual = Boolean(
+      const isQ3Org = Boolean(
+        cfg?.examConfig?.q3?.simulationType === 'organic' ||
+        cfg?.q3?.simulationType === 'organic' ||
+        cfg?.examConfig?.q3?.type === 'organic' ||
+        cfg?.q3?.type === 'organic' ||
+        cfg?.examConfig?.q3?.trueOrganicKey ||
+        cfg?.q3?.trueOrganicKey ||
+        cfg?.examConfig?.q3?.trueFunctionalGroup ||
+        cfg?.q3?.trueFunctionalGroup
+      );
+      const isQ3Qual = !isQ3Org && Boolean(
         cfg?.examConfig?.q3?.simulationType === 'qualitative' ||
         cfg?.q3?.simulationType === 'qualitative' ||
+        cfg?.examConfig?.q3?.type === 'qualitative' ||
+        cfg?.q3?.type === 'qualitative' ||
+        cfg?.examConfig?.q3?.type === 'qualitative_single' ||
+        cfg?.q3?.type === 'qualitative_single' ||
         cfg?.examConfig?.q3?.trueSaltKey ||
         cfg?.q3?.trueSaltKey
       );
@@ -2918,11 +2932,18 @@ requireStudentLogin();
     const grid = document.getElementById('q3TestsGrid');
     if (!grid) return;
 
-    const isQualitative = Boolean(
+    const isOrganic = Boolean(
+      p.simulationType === 'organic' ||
+      p.type === 'organic' ||
+      p.trueOrganicKey ||
+      p.trueFunctionalGroup
+    );
+    const isQualitative = !isOrganic && Boolean(
       p.simulationType === 'qualitative' ||
+      p.type === 'qualitative' ||
+      p.type === 'qualitative_single' ||
       p.trueSaltKey ||
-      (!p.trueFunctionalGroup && !p.trueOrganicKey) ||
-      (p.sampleName && /solid/i.test(p.sampleName))
+      p.trueCation
     );
 
     const tests = Array.isArray(p.tests) ? p.tests : [];
@@ -3194,11 +3215,18 @@ requireStudentLogin();
     st.stage = stage;
     st.isAdding = true;
     const p = engine?.preset?.q3 || {};
-    const isQualitative = Boolean(
+    const isOrganic = Boolean(
+      p.simulationType === 'organic' ||
+      p.type === 'organic' ||
+      p.trueOrganicKey ||
+      p.trueFunctionalGroup
+    );
+    const isQualitative = !isOrganic && Boolean(
       p.simulationType === 'qualitative' ||
+      p.type === 'qualitative' ||
+      p.type === 'qualitative_single' ||
       p.trueSaltKey ||
-      (!p.trueFunctionalGroup && !p.trueOrganicKey) ||
-      (p.sampleName && /solid/i.test(p.sampleName))
+      p.trueCation
     );
 
     if (isQualitative) {

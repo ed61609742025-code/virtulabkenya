@@ -1385,17 +1385,17 @@
 
     if (testType === 'bromine') {
       const isDecolorized = sample.bromine?.isDecolorized || sample.fgKey === 'alkene' || sample.fgKey === 'alkyne';
-      liquidColor = performed ? (isDecolorized ? 'rgba(240, 249, 255, 0.22)' : 'rgba(185, 28, 28, 0.88)') : 'rgba(217, 119, 6, 0.82)';
-      meniscusColor = performed ? (isDecolorized ? 'rgba(240, 249, 255, 0.5)' : '#B91C1C') : '#D97706';
+      liquidColor = performed ? (isDecolorized ? 'rgba(240, 249, 255, 0.22)' : 'rgba(217, 119, 6, 0.82)') : 'rgba(56, 189, 248, 0.28)';
+      meniscusColor = performed ? (isDecolorized ? 'rgba(240, 249, 255, 0.5)' : '#D97706') : 'rgba(56, 189, 248, 0.45)';
       dropperColor = '#B91C1C';
       testLabel = 'Bromine Water (Br₂/H₂O)';
 
-      if (!performed || !isDecolorized) {
+      if (performed && !isDecolorized) {
         halogenVapor = `
           <!-- Halogen Bromine Dense Vapor -->
           <ellipse cx="80" cy="108" rx="23" ry="8" fill="rgba(220, 38, 38, 0.22)"/>
         `;
-      } else {
+      } else if (performed && isDecolorized) {
         schlierenWaves = `
           <!-- Bleached Colorless Solution with Schlieren Density Waves -->
           <path d="M 62,130 Q 80,135 98,130" stroke="rgba(255,255,255,0.45)" stroke-width="1.0" fill="none"/>
@@ -1406,8 +1406,8 @@
       const isMethanoic = sample.compoundKey === 'methanoic_acid' || sample.key === 'org_methanoic_acid';
       const isDecolorized = sample.kmno4?.isDecolorized || sample.fgKey === 'alkene' || sample.fgKey === 'alkanol' || isMethanoic;
       const isThermalDelay = isHeating || isWarming;
-      liquidColor = (performed && !isThermalDelay) ? (isDecolorized ? 'rgba(240, 249, 255, 0.22)' : 'rgba(107, 33, 168, 0.92)') : 'rgba(107, 33, 168, 0.92)';
-      meniscusColor = (performed && !isThermalDelay) ? (isDecolorized ? 'rgba(240, 249, 255, 0.5)' : '#7E22CE') : '#7E22CE';
+      liquidColor = (performed && !isThermalDelay) ? (isDecolorized ? 'rgba(240, 249, 255, 0.22)' : 'rgba(107, 33, 168, 0.92)') : (performed ? 'rgba(107, 33, 168, 0.92)' : 'rgba(56, 189, 248, 0.28)');
+      meniscusColor = (performed && !isThermalDelay) ? (isDecolorized ? 'rgba(240, 249, 255, 0.5)' : '#7E22CE') : (performed ? '#7E22CE' : 'rgba(56, 189, 248, 0.45)');
       dropperColor = '#6B21A8';
       testLabel = 'Acidified KMnO₄';
       if (isThermalDelay) showHeating = true;
@@ -1430,8 +1430,8 @@
     } else if (testType === 'dichromate') {
       const turnsGreen = sample.dichromate?.turnsGreen || sample.fgKey === 'alkanol';
       const isThermalDelay = isHeating || isWarming;
-      liquidColor = (performed && !isThermalDelay) ? (turnsGreen ? 'rgba(5, 150, 105, 0.92)' : 'rgba(234, 88, 12, 0.88)') : 'rgba(234, 88, 12, 0.88)';
-      meniscusColor = (performed && !isThermalDelay) ? (turnsGreen ? '#10B981' : '#F97316') : '#F97316';
+      liquidColor = (performed && !isThermalDelay) ? (turnsGreen ? 'rgba(5, 150, 105, 0.92)' : 'rgba(234, 88, 12, 0.88)') : (performed ? 'rgba(234, 88, 12, 0.88)' : 'rgba(56, 189, 248, 0.28)');
+      meniscusColor = (performed && !isThermalDelay) ? (turnsGreen ? '#10B981' : '#F97316') : (performed ? '#F97316' : 'rgba(56, 189, 248, 0.45)');
       dropperColor = '#EA580C';
       testLabel = 'K₂Cr₂O₇ / Heat';
       showHeating = true;
@@ -1482,7 +1482,7 @@
         ${schlierenWaves}
 
         <!-- Precision Dropper Pipette -->
-        <g style="transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease; transform: translate(0px, ${performed ? '-30px' : (isAdding ? '6px' : '0px')}); opacity: ${performed ? '0' : '1'};">
+        <g style="transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease; transform: translate(0px, ${isAdding ? '6px' : (performed ? '-30px' : '0px')}); opacity: ${performed && !isAdding ? '0' : '1'};">
           <ellipse cx="80" cy="8" rx="${isAdding ? '7.5' : '8.5'}" ry="${isAdding ? '5.5' : '6.5'}" fill="url(#dropperBulb_${tubeId})"/>
           <rect x="78" y="14" width="4" height="20" fill="rgba(255,255,255,0.7)" stroke="#64748B" stroke-width="0.7"/>
           <path d="M 78,34 L 82,34 L 81,42 L 79,42 Z" fill="${dropperColor}" stroke="#991B1B" stroke-width="0.6"/>
@@ -1519,8 +1519,76 @@
   // 4. Solid Sodium Carbonate / Hydrogen Carbonate (NaHCO₃) Effervescence Test
   function renderEffervescenceSvg(options = {}) {
     const { sampleKey = 'org_alkene', performed = false, isAdding = false, tubeId = 'eff_1' } = options;
+    const stage = String(options.stage || (performed ? 'done' : 'idle')).toLowerCase();
     const sample = resolveSample(sampleKey);
     const hasEffervescence = sample.carbonate?.hasEffervescence || sample.fgKey === 'alkanoic_acid';
+    const isLimewaterStage = (stage === 'step2_limewater');
+
+    if (isLimewaterStage) {
+      // Twin-Tube Delivery Setup: Reaction tube + Limewater tube
+      const limewaterFill = hasEffervescence ? 'rgba(255, 255, 255, 0.82)' : 'rgba(56, 189, 248, 0.22)';
+      const limewaterMeniscus = hasEffervescence ? '#FFFFFF' : 'rgba(56, 189, 248, 0.45)';
+
+      return `
+        <svg width="180" height="215" viewBox="0 0 180 215" style="max-width:100%; height:auto; display:block; filter:drop-shadow(0 4px 10px rgba(0,0,0,0.35));">
+          ${getCommonDefs(tubeId)}
+
+          <!-- Tube 1 (Left): Reaction Mixture -->
+          <path d="M 28,42 L 28,172 C 28,190 38,198 50,198 C 62,198 72,190 72,172 L 72,42 Z" fill="url(#pyrexGlass_${tubeId})" stroke="#94A3B8" stroke-width="1.2"/>
+          <path d="M 30,43 L 30,171 C 30,188 39,196 50,196 C 61,196 70,188 70,171 L 70,43" fill="none" stroke="url(#glassWallRefract_${tubeId})" stroke-width="1.0"/>
+          <!-- Fluid Column in Reaction Tube -->
+          <path d="M 30,116 L 30,171 C 30,188 39,196 50,196 C 61,196 70,188 70,171 L 70,116 Z" fill="rgba(56, 189, 248, 0.28)"/>
+          <ellipse cx="50" cy="116" rx="20" ry="3.5" fill="rgba(56, 189, 248, 0.45)"/>
+          <!-- White NaHCO3 solid at base -->
+          <ellipse cx="50" cy="192" rx="14" ry="4.5" fill="#FFFFFF" opacity="0.95"/>
+          ${hasEffervescence ? `
+            <!-- Active CO2 Bubbles in Tube 1 -->
+            <g class="anim-bubble">
+              <circle cx="42" cy="170" r="1.8" fill="#FFFFFF" opacity="0.9"/>
+              <circle cx="56" cy="155" r="2.2" fill="#FFFFFF" opacity="0.9"/>
+              <circle cx="46" cy="138" r="2.4" fill="#FFFFFF" opacity="0.9"/>
+              <circle cx="54" cy="122" r="1.8" fill="#FFFFFF" opacity="0.9"/>
+            </g>
+            <ellipse cx="50" cy="116" rx="20" ry="5" fill="rgba(255,255,255,0.9)" class="anim-froth"/>
+          ` : ''}
+
+          <!-- Rubber Stopper on Tube 1 -->
+          <path d="M 27,44 L 73,44 L 69,32 L 31,32 Z" fill="#334155" stroke="#0F172A" stroke-width="0.8"/>
+
+          <!-- Delivery Tube (Glass U-tube with bend into Limewater) -->
+          <path d="M 50,34 L 50,16 Q 50,10 60,10 L 115,10 Q 125,10 125,18 L 125,160" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="3" stroke-linecap="round"/>
+          <path d="M 50,34 L 50,16 Q 50,10 60,10 L 115,10 Q 125,10 125,18 L 125,160" fill="none" stroke="rgba(56,189,248,0.5)" stroke-width="1.2" stroke-linecap="round"/>
+
+          <!-- Tube 2 (Right): Calcium Hydroxide (Limewater) -->
+          <path d="M 108,62 L 108,172 C 108,190 116,198 125,198 C 134,198 142,190 142,172 L 142,62 Z" fill="url(#pyrexGlass_${tubeId})" stroke="#94A3B8" stroke-width="1.2"/>
+          <path d="M 110,63 L 110,171 C 110,188 117,196 125,196 C 133,196 140,188 140,171 L 140,63" fill="none" stroke="url(#glassWallRefract_${tubeId})" stroke-width="1.0"/>
+          <ellipse cx="125" cy="62" rx="17" ry="3.5" fill="rgba(255,255,255,0.22)" stroke="#38BDF8" stroke-width="0.8"/>
+
+          <!-- Limewater Liquid Column -->
+          <path d="M 110,120 L 110,171 C 110,188 117,196 125,196 C 133,196 140,188 140,171 L 140,120 Z" fill="${limewaterFill}"/>
+          <ellipse cx="125" cy="120" rx="15" ry="3.2" fill="${limewaterMeniscus}"/>
+
+          ${hasEffervescence ? `
+            <!-- CO2 gas bubbling out of delivery tube tip in Limewater -->
+            <g class="anim-bubble">
+              <circle cx="125" cy="158" r="1.8" fill="#FFFFFF"/>
+              <circle cx="122" cy="146" r="2.2" fill="#FFFFFF"/>
+              <circle cx="127" cy="134" r="2.6" fill="#FFFFFF"/>
+              <circle cx="124" cy="122" r="2.0" fill="#FFFFFF"/>
+            </g>
+            <!-- White CaCO3 milky suspension and precipitate -->
+            <ellipse cx="125" cy="192" rx="11" ry="3.5" fill="#FFFFFF" opacity="0.95"/>
+            <text x="125" y="105" font-size="5.5" font-weight="800" fill="#FFFFFF" text-anchor="middle" style="text-shadow:0 1px 2px #000;">Milky (CaCO₃)</text>
+          ` : `
+            <text x="125" y="105" font-size="5.5" font-weight="700" fill="rgba(255,255,255,0.7)" text-anchor="middle">Clear Ca(OH)₂</text>
+          `}
+
+          <!-- Tube Labels -->
+          <text x="50" y="210" font-size="6.5" font-weight="800" fill="var(--text-muted, #94A3B8)" text-anchor="middle">Reaction Tube</text>
+          <text x="125" y="210" font-size="6.5" font-weight="800" fill="${hasEffervescence ? '#38BDF8' : 'var(--text-muted, #94A3B8)'}" text-anchor="middle">Limewater Tube</text>
+        </svg>
+      `;
+    }
 
     const bubblesAndFroth = performed && hasEffervescence ? `
       <!-- Vigorous CO2 Effervescence Bubble Cascade -->
@@ -1592,7 +1660,7 @@
         ${bubblesAndFroth}
 
         <!-- Spatula Delivering Solid Crystalline NaHCO3 Powder -->
-        <g style="transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease; transform: translate(${performed ? '-30px, -20px' : (isAdding ? '8px, 6px' : '0px, 0px')}); opacity: ${performed ? '0' : '1'};">
+        <g style="transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease; transform: translate(${isAdding ? '8px, 6px' : (performed ? '-30px, -20px' : '0px, 0px')}); opacity: ${performed && !isAdding ? '0' : '1'};">
           <line x1="28" y1="26" x2="76" y2="26" stroke="url(#spatulaMetal_${tubeId})" stroke-width="3" stroke-linecap="round"/>
           <ellipse cx="76" cy="26" rx="6" ry="3" fill="url(#spatulaMetal_${tubeId})" stroke="#475569" stroke-width="0.6"/>
           <circle cx="76" cy="25" r="2.4" fill="#FFFFFF"/>
@@ -1785,7 +1853,7 @@
         ${fluidMarkup}
 
         <!-- Water Dropper Pipette -->
-        <g style="transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); transform: translate(0px, ${performed ? '-30px' : (isAdding ? '6px' : '0px')}); opacity: ${performed ? '0' : '1'};">
+        <g style="transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); transform: translate(0px, ${isAdding ? '6px' : (performed ? '-30px' : '0px')}); opacity: ${performed && !isAdding ? '0' : '1'};">
           <ellipse cx="80" cy="8" rx="${isAdding ? '7.5' : '8.5'}" ry="${isAdding ? '5.5' : '6.5'}" fill="url(#dropperBulb_${tubeId})"/>
           <rect x="78" y="14" width="4" height="20" fill="rgba(255,255,255,0.7)" stroke="#64748B" stroke-width="0.7"/>
           <path d="M 78,34 L 82,34 L 81,42 L 79,42 Z" fill="rgba(255,255,255,0.85)" stroke="#38BDF8" stroke-width="0.6"/>
@@ -1832,6 +1900,9 @@
     if (stage === 'step2_litmus') {
       return renderLitmusSvg({ sampleKey, performed: true, tubeId });
     }
+    if (stage === 'step1_nahco3' || stage === 'step2_limewater') {
+      return renderEffervescenceSvg({ sampleKey, performed: true, isAdding, stage, tubeId });
+    }
 
     const effWarming = Boolean(isWarming || isHeating || stage === 'step2_warm' || stage === 'warm' || stage === 'heated');
 
@@ -1846,7 +1917,7 @@
       return renderDecolorizationSvg({ sampleKey, testType: 'bromine', performed, isAdding, isHeating: effWarming, isWarming: effWarming, tubeId });
     }
     if (pStr.includes('nahco3') || pStr.includes('na2co3') || pStr.includes('carbonate') || pStr.includes('effervesc')) {
-      return renderEffervescenceSvg({ sampleKey, performed, isAdding, tubeId });
+      return renderEffervescenceSvg({ sampleKey, performed, isAdding, stage, tubeId });
     }
     if (pStr.includes('litmus') || pStr.includes('ph paper') || pStr.includes('universal indicator')) {
       return renderLitmusSvg({ sampleKey, performed, tubeId });
@@ -1908,16 +1979,25 @@
     const isBenzoic = sample.compoundKey === 'benzoic_acid' || sample.key === 'org_benzoic_acid';
 
     if (stage === 'step1_water') {
+      const isSolidSample = isBenzoic || Boolean(sample.label && sample.label.includes('Solid'));
       const isMiscible = sample.solubility ? Boolean(sample.solubility.isMiscible) : (sample.fgKey === 'alkanol' || (sample.fgKey === 'alkanoic_acid' && !isBenzoic));
-      statusLabel = isMiscible ? 'Step 1 (Water Added): Miscible, forms clear homogeneous solution' : 'Step 1 (Water Added): Immiscible, forms two separate layers';
+      if (isSolidSample) {
+        statusLabel = isMiscible
+          ? 'Step 1 (Water Added): White solid dissolves completely to form clear colourless solution'
+          : 'Step 1 (Water Added): Sparingly soluble in cold water; white crystalline flakes settle at bottom';
+      } else {
+        statusLabel = isMiscible
+          ? 'Step 1 (Water Added): Miscible, forms clear homogeneous solution'
+          : 'Step 1 (Water Added): Immiscible, forms two separate layers';
+      }
       soundType = 'drop';
     } else if (stage === 'step2_litmus' || pStr.includes('litmus') || tId.includes('litmus')) {
       const isAcidic = sample.fgKey === 'alkanoic_acid';
-      statusLabel = performed ? (isAcidic ? 'Litmus: Moist blue litmus turns red; red remains red (pH ~3, Carboxylic acid confirmed)' : 'Litmus: Neutral, moist red and blue litmus papers remain unchanged (pH ~7)') : 'Awaiting Litmus Strips';
+      statusLabel = performed ? (isAcidic ? 'Litmus: Moist blue litmus paper turns red; red litmus paper remains red (pH ~3, Carboxylic acid confirmed)' : 'Litmus: Neutral, moist red and blue litmus papers remain unchanged (pH ~7)') : 'Awaiting Litmus Strips';
       soundType = 'drop';
     } else if (pStr.includes('bromine') || tId.includes('bromine')) {
       const isDecolorized = sample.bromine?.isDecolorized || sample.fgKey === 'alkene' || sample.fgKey === 'alkyne';
-      statusLabel = performed ? (isDecolorized ? 'Bromine Water: Rapidly decolourized to colourless' : 'Bromine Water: Reddish-brown colour persists') : 'Awaiting Bromine Water';
+      statusLabel = performed ? (isDecolorized ? 'Bromine Water: Rapidly decolourized to colourless' : 'Bromine Water: Yellow-orange colour of bromine water persists (not decolourized)') : 'Awaiting Bromine Water';
       soundType = 'drop';
     } else if (pStr.includes('dichromate') || pStr.includes('cr2o7') || tId.includes('dichromate')) {
       const turnsGreen = sample.dichromate?.turnsGreen || sample.fgKey === 'alkanol';
@@ -1946,15 +2026,18 @@
     } else if (pStr.includes('nahco3') || pStr.includes('carbonate') || pStr.includes('effervesc') || tId.includes('nahco3') || tId.includes('carbonate')) {
       const hasEff = sample.carbonate?.hasEffervescence || sample.fgKey === 'alkanoic_acid';
       if (stage === 'step2_limewater') {
-        statusLabel = hasEff ? 'Step 2 (Limewater Test): Gas turns limewater milky (CO₂ confirmed from -COOH group)' : 'Step 2 (Limewater Test): Limewater remains clear';
+        statusLabel = hasEff ? 'Step 2 (Limewater Test): Gas forms white precipitate with calcium hydroxide (turns limewater milky, CO₂ confirmed)' : 'Step 2 (Limewater Test): Limewater remains clear';
+        soundType = hasEff ? 'effervescence' : 'drop';
+      } else if (stage === 'step1_nahco3') {
+        statusLabel = hasEff ? 'Step 1 (Solid NaHCO₃ Added): Vigorous effervescence of colourless gas (CO₂ evolved)' : 'Step 1 (Solid NaHCO₃ Added): No effervescence observed';
         soundType = hasEff ? 'effervescence' : 'drop';
       } else {
-        statusLabel = performed ? (hasEff ? 'Solid NaHCO₃ Added: Vigorous effervescence of CO₂ gas' : 'Solid NaHCO₃ Added: No effervescence observed') : 'Awaiting Solid NaHCO₃';
+        statusLabel = performed ? (hasEff ? 'Solid NaHCO₃ Added: Vigorous effervescence of colourless gas' : 'Solid NaHCO₃ Added: No effervescence observed') : 'Awaiting Solid NaHCO₃';
         soundType = hasEff ? 'effervescence' : 'drop';
       }
     } else if (pStr.includes('ignit') || pStr.includes('flame') || pStr.includes('burn') || (pStr.includes('spatula') && (pStr.includes('flame') || pStr.includes('burn') || pStr.includes('heat') || pStr.includes('ignit'))) || tId.includes('ignit')) {
       const isSooty = sample.isSooty || sample.fgKey === 'alkene' || sample.fgKey === 'alkyne' || isBenzoic;
-      statusLabel = performed ? (isSooty ? 'Ignition: Luminous smoky sooty yellow flame' : 'Ignition: Clear non-sooty pale blue flame') : 'Awaiting Bunsen Flame';
+      statusLabel = performed ? (isSooty ? 'Ignition: Melts then burns with a bright, smoky luminous yellow sooty flame leaving black carbon soot' : 'Ignition: Clear non-sooty pale blue flame') : 'Awaiting Bunsen Flame';
       soundType = 'flame';
     } else if (pStr.includes('ester') || pStr.includes('fruity') || pStr.includes('water bath') || tId.includes('ester')) {
       const isFruity = sample.esterification?.isFruity ?? (sample.fgKey === 'alkanol');
@@ -2028,10 +2111,9 @@
       }
     }
 
-    // 3. NaHCO3 + Limewater
+    // 3. NaHCO3 + Limewater testing
     const isCarbonate = pStr.includes('nahco3') || pStr.includes('carbonate') || tId.includes('nahco3');
-    const hasGasLimewater = pStr.includes('limewater') || pStr.includes('gas');
-    if (isCarbonate && hasGasLimewater) {
+    if (isCarbonate) {
       if (!stage || stage === 'idle') {
         return [
           { stage: 'step1_nahco3', label: '🥄 Step 1: Add Spatula-End of Solid NaHCO₃', cls: 'btn-perform-test' }
@@ -2100,20 +2182,6 @@
       } else {
         return [
           { stage: 'done', label: '✅ Miscibility Observed', cls: 'btn-perform-test done', disabled: true },
-          { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
-        ];
-      }
-    }
-
-    // 8. Solid NaHCO3 alone
-    if (isCarbonate) {
-      if (!stage || stage === 'idle') {
-        return [
-          { stage: 'stage1', label: '🥄 Step 1: Add Spatula-End of Solid NaHCO₃', cls: 'btn-perform-test' }
-        ];
-      } else {
-        return [
-          { stage: 'done', label: '✅ Reaction Observed', cls: 'btn-perform-test done', disabled: true },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       }

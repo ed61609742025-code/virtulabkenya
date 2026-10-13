@@ -3935,6 +3935,7 @@ const COMPOSITE_EXAM_PRESETS = {
     },
     q3: {
       type: 'organic',
+      simulationType: 'organic',
       title: 'Question 3: Organic Functional Group Analysis (10.0 Marks)',
       sampleName: 'Solid F',
       sampleDesc: 'A pure white organic crystalline aromatic solid.',
@@ -9084,13 +9085,18 @@ class CompositeExamEngine {
 
     if (q3Cfg) {
       Object.assign(this.preset.q3, q3Cfg);
-      const isQualitative = q3Cfg.simulationType === 'qualitative' || (
-        q3Cfg.simulationType !== 'organic' && (
-          Boolean(q3Cfg.trueSaltKey) ||
-          Boolean(q3Cfg.trueCation) ||
-          (q3Cfg.sampleName && /solid/i.test(q3Cfg.sampleName)) ||
-          (q3Cfg.tests && q3Cfg.tests.some(t => /naoh|ammonia|nh3|precipitation|cation|anion|heat|dissolv/i.test(t.prompt || '')))
-        )
+      const isOrganic = Boolean(
+        q3Cfg.simulationType === 'organic' ||
+        q3Cfg.type === 'organic' ||
+        q3Cfg.trueOrganicKey ||
+        q3Cfg.trueFunctionalGroup
+      );
+      const isQualitative = !isOrganic && (
+        q3Cfg.simulationType === 'qualitative' ||
+        q3Cfg.type === 'qualitative' ||
+        q3Cfg.type === 'qualitative_single' ||
+        Boolean(q3Cfg.trueSaltKey) ||
+        Boolean(q3Cfg.trueCation)
       );
       if (isQualitative) {
         this.preset.q3.simulationType = 'qualitative';
@@ -9956,7 +9962,17 @@ class CompositeExamEngine {
     let score = 0.0;
     const rubric = [];
     const tests = this.preset.q3.tests || [];
-    const isQualitative = this.preset.q3.simulationType === 'qualitative' || this.preset.q3.trueSaltKey || (!this.preset.q3.trueFunctionalGroup && !this.preset.q3.trueOrganicKey);
+    const isOrganic = Boolean(
+      this.preset.q3.simulationType === 'organic' ||
+      this.preset.q3.type === 'organic' ||
+      this.preset.q3.trueOrganicKey ||
+      this.preset.q3.trueFunctionalGroup
+    );
+    const isQualitative = !isOrganic && (
+      this.preset.q3.simulationType === 'qualitative' ||
+      this.preset.q3.type === 'qualitative' ||
+      this.preset.q3.trueSaltKey
+    );
 
     if (isQualitative) {
       // Qualitative Scoring for Question 3 (e.g. Solid P)
@@ -10288,7 +10304,17 @@ class CompositeExamEngine {
 
     // 4. Inorganic Confirmatory Tests
     const isQ2Inorg = this.preset?.q2?.simulationType !== 'organic';
-    const isQ3Inorg = this.preset?.q3?.simulationType === 'qualitative' || this.preset?.q3?.trueSaltKey || (this.preset?.q3?.sampleName && /solid/i.test(this.preset?.q3?.sampleName));
+    const isQ3Organic = Boolean(
+      this.preset?.q3?.simulationType === 'organic' ||
+      this.preset?.q3?.type === 'organic' ||
+      this.preset?.q3?.trueOrganicKey ||
+      this.preset?.q3?.trueFunctionalGroup
+    );
+    const isQ3Inorg = !isQ3Organic && (
+      this.preset?.q3?.simulationType === 'qualitative' ||
+      this.preset?.q3?.type === 'qualitative' ||
+      this.preset?.q3?.trueSaltKey
+    );
 
     let inorgEarned = 0;
     let inorgMax = 0;

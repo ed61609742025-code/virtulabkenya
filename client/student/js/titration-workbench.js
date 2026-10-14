@@ -12,6 +12,27 @@ requireStudentLogin();
   }
   window.triggerHaptic = triggerHaptic;
 
+  // ── Universal Screen Reader Live Announcer (WCAG 4.1.3 AA) ──
+  let lastAnnouncedStage = null;
+  function announceToScreenReader(message) {
+    const announcer = document.getElementById('vlkScreenReaderAnnouncer');
+    if (!announcer) return;
+    announcer.textContent = '';
+    setTimeout(() => {
+      announcer.textContent = message;
+    }, 60);
+  }
+  window.announceToScreenReader = announceToScreenReader;
+
+  function closeExamModal() {
+    const modal = document.getElementById('examResultModal');
+    if (modal) {
+      modal.style.display = 'none';
+      announceToScreenReader('Score modal closed. Returned to workbench.');
+    }
+  }
+  window.closeExamModal = closeExamModal;
+
   updateThemeButtons();
 
   function setTheme(theme) {
@@ -1541,6 +1562,7 @@ requireStudentLogin();
     document.querySelectorAll('#indicatorMsg, .indicatorMsg').forEach(msg => {
       msg.innerHTML = bannerHtml;
     });
+    announceToScreenReader(`Added drop ${indicatorDropsCount} of 3 of ${current.indicatorAnswer} indicator.`);
 
     const pillInd = document.getElementById('pillIndicator');
     if (pillInd) {
@@ -1967,6 +1989,26 @@ requireStudentLogin();
     }
 
     const flaskLabel = document.getElementById('flaskLabel');
+    // Accessible reaction endpoint announcements (WCAG 4.1.3 AA)
+    if (diff >= 0.40) {
+      if (lastAnnouncedStage !== 'over') {
+        lastAnnouncedStage = 'over';
+        announceToScreenReader(`Solution over-titrated at ${currentVolume.toFixed(2)} cm³. Excess titrant added.`);
+      }
+    } else if (diff >= 0.00) {
+      if (lastAnnouncedStage !== 'endpoint') {
+        lastAnnouncedStage = 'endpoint';
+        announceToScreenReader(`Permanent neutralization endpoint reached at ${currentVolume.toFixed(2)} cm³! Ready to record trial.`);
+      }
+    } else if (diff >= -0.25) {
+      if (lastAnnouncedStage !== 'near') {
+        lastAnnouncedStage = 'near';
+        announceToScreenReader(`Approaching endpoint at ${currentVolume.toFixed(2)} cm³. Use single drops and swirl.`);
+      }
+    } else {
+      lastAnnouncedStage = 'pre';
+    }
+
     if (flaskLabel && current) {
       const baseName = current.analyteName ? current.analyteName.split(',')[0].split('—')[0].trim() : 'Analyte';
       const indName = current.indicatorName ? current.indicatorName.split(' ')[0] : 'Indicator';
@@ -2049,6 +2091,7 @@ requireStudentLogin();
     triggerHaptic([25, 30, 40]);
     if (!indicatorAdded && !isSelfIndicatingExp(current)) return;
     trials.push(currentVolume);
+    announceToScreenReader(`Trial ${trials.length} recorded with titre volume ${currentVolume.toFixed(2)} cm³.`);
     renderTrials();
     if (trials.length >= 2) {
       updateStepProgress(3, 'Calculate Molarity & Mass');
@@ -2269,6 +2312,7 @@ requireStudentLogin();
   let transientColorTimeout = null;
 
   function swirlFlask() {
+    announceToScreenReader('Swirled conical flask to mix solution.');
     triggerHaptic([15, 20, 15]);
     playAudioTone('swirl');
     if (transientColorTimeout) {
@@ -2361,6 +2405,7 @@ requireStudentLogin();
     triggerHaptic(amount >= 0.5 ? 20 : 12);
     animateStopcock();
     currentVolume = Math.min(MAX_BURETTE, Math.round((currentVolume + amount) * 1000) / 1000);
+    announceToScreenReader(`Added ${amount} cm³ titrant. Current burette reading is ${currentVolume.toFixed(2)} cm³.`);
     updateRig();
     saveDraft();
     spawnMultipleDrops(amount);
@@ -3771,3 +3816,82 @@ requireStudentLogin();
   initTutorial();
   initTitrationCurveCanvas();
   setTimeout(drawTitrationCurve, 100);
+
+  // ── Universal Keyboard Shortcuts (WCAG 2.1.1 AA) ──
+  document.addEventListener('keydown', function(e) {
+    const tag = (e.target.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || tag === 'select' || e.target.isContentEditable) {
+      if (e.key === 'Escape') {
+        e.target.blur();
+      }
+      return;
+    }
+
+    if (e.key === 'Escape') {
+      const examModal = document.getElementById('examResultModal');
+      if (examModal && (examModal.style.display === 'flex' || examModal.style.display === 'block')) {
+        closeExamModal();
+        return;
+      }
+      const dropdown = document.getElementById('benchSettingsDropdown');
+      if (dropdown && dropdown.style.display === 'flex') {
+        dropdown.style.display = 'none';
+        return;
+      }
+    }
+
+    // Space or Plus (+): deliver single drop (0.05 cm³) or coarse delivery (+0.5 cm³) if Shift held
+    if (e.code === 'Space' || e.key === '+') {
+      e.preventDefault();
+      if (typeof addVolume === 'function') {
+        addVolume(e.shiftKey ? 0.5 : 0.05);
+      }
+      return;
+    }
+
+    // 'S' or 's': swirl flask
+    if (e.key === 's' || e.key === 'S') {
+      e.preventDefault();
+      if (typeof swirlFlask === 'function') {
+        swirlFlask();
+      }
+      return;
+    }
+
+    // 'R' or 'r': record endpoint trial
+    if (e.key === 'r' || e.key === 'R') {
+      e.preventDefault();
+      if (typeof recordTrial === 'function') {
+        recordTrial();
+      }
+      return;
+    }
+
+    // 'H' or 'h': deliver half drop
+    if (e.key === 'h' || e.key === 'H') {
+      e.preventDefault();
+      if (typeof addHalfDrop === 'function') {
+        addHalfDrop();
+      }
+      return;
+    }
+  });
+
+  // Focus trap for #examResultModal
+  const resultModalEl = document.getElementById('examResultModal');
+  if (resultModalEl) {
+    resultModalEl.addEventListener('keydown', function(e) {
+      if (e.key !== 'Tab') return;
+      const focusables = resultModalEl.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), [tabindex]:not([tabindex="-1"])');
+      if (!focusables || focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    });
+  }

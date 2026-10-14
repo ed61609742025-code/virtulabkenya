@@ -14,7 +14,19 @@
 <title>VirtuLab Kenya — KCSE Chemistry Practical Laboratory</title>
 <meta name="description" content="Virtual chemistry laboratory for Kenyan secondary schools. Practise KCSE Paper 3 volumetric titrations, qualitative analysis, and reaction kinetics offline.">
 
-<script src="/shared/auth-guard.js"></script>
+<!-- OpenGraph & Social Preview Cards -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="VirtuLab Kenya">
+<meta property="og:title" content="VirtuLab Kenya — KCSE Chemistry Practical Laboratory">
+<meta property="og:description" content="Virtual chemistry laboratory for Kenyan secondary schools. Practise KCSE Paper 3 volumetric titrations, qualitative analysis, and reaction kinetics offline.">
+<meta property="og:image" content="https://virtulab.co.ke/shared/chemistry_hero_badge.jpg">
+<meta property="og:url" content="https://virtulab.co.ke/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="VirtuLab Kenya — KCSE Chemistry Practical Laboratory">
+<meta name="twitter:description" content="Virtual chemistry laboratory for Kenyan secondary schools. Practise KCSE Paper 3 volumetric titrations, qualitative analysis, and reaction kinetics offline.">
+<meta name="twitter:image" content="https://virtulab.co.ke/shared/chemistry_hero_badge.jpg">
+
+<script src="/shared/auth-guard.js?v=164"></script>
 <script>
   var t = localStorage.getItem('vlk_theme') || 'light';
   document.documentElement.setAttribute('data-theme', t);
@@ -24,8 +36,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/shared/style.css">
-<link rel="stylesheet" href="/shared/pwa-installer.css">
+<link rel="stylesheet" href="/shared/style.css?v=164">
+<link rel="stylesheet" href="/shared/pwa-installer.css?v=164">
 
 <style>
   :root, [data-theme="light"] {
@@ -519,6 +531,11 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+  .experiment-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card);
   }
   .experiment-title {
     font-size: 1.1rem;
@@ -889,12 +906,12 @@
   </div>
 
   <div class="experiments-grid">
-    <!-- Card 1 -->
+    <!-- Card 1: Volumetric Analysis -->
     <article class="experiment-card" style="border-top: 3px solid var(--gold);">
       <div>
-        <h3 class="experiment-title">Volumetric Analysis</h3>
+        <h3 class="experiment-title">Volumetric Titrations</h3>
         <p class="experiment-desc">
-          Acid-Base neutralization, redox titrations (KMnO₄ vs Fe²⁺), and precipitation titrations with automatic concordancy verification.
+          Acid-Base neutralization, redox titrations (KMnO₄ vs Fe²⁺), and back-titrations with authentic meniscus readouts and automatic concordancy verification.
         </p>
         <div class="tag-row">
           <span class="tag-pill">C₁V₁ = C₂V₂</span>
@@ -905,36 +922,84 @@
       <a href="/student/lab.html" class="btn btn-outline" style="width:100%;">Open Titration Bench →</a>
     </article>
 
-    <!-- Card 2 -->
+    <!-- Card 2: Qualitative Analysis -->
     <article class="experiment-card" style="border-top: 3px solid var(--success);">
       <div>
-        <h3 class="experiment-title">Qualitative Analysis</h3>
+        <h3 class="experiment-title">Qualitative Salt Analysis</h3>
         <p class="experiment-desc">
-          Systematic aqueous tests for 10 unknown cations and anions using NaOH and NH₃ dropwise and in excess, plus flame tests.
+          Systematic aqueous tests for 10 unknown cations and anions using NaOH and NH₃ dropwise and in excess, precipitate solubility checks, and flame tests.
         </p>
         <div class="tag-row">
           <span class="tag-pill">Cations &amp; Anions</span>
-          <span class="tag-pill">Precipitate Colors</span>
+          <span class="tag-pill">Precipitates</span>
           <span class="tag-pill">Flame Tests</span>
         </div>
       </div>
       <a href="/student/qualitative.html" class="btn btn-outline" style="width:100%;">Open Qualitative Bench →</a>
     </article>
 
-    <!-- Card 3 -->
+    <!-- Card 3: Reaction Rates & Kinetics -->
     <article class="experiment-card" style="border-top: 3px solid var(--accent);">
       <div>
-        <h3 class="experiment-title">Physical &amp; Organic Chemistry</h3>
+        <h3 class="experiment-title">Reaction Rates &amp; Kinetics</h3>
         <p class="experiment-desc">
-          Reaction rates kinetics (disappearing cross), thermochemistry calorimetry (ΔH), solubility curves, and organic functional groups.
+          Disappearing cross experiment with sodium thiosulphate and HCl. Vary concentration and temperature with automatic 1/t rate curve plotting.
         </p>
         <div class="tag-row">
-          <span class="tag-pill">Rates (1/Time)</span>
-          <span class="tag-pill">ΔH Calorimetry</span>
-          <span class="tag-pill">Organic Tests</span>
+          <span class="tag-pill">Disappearing Cross</span>
+          <span class="tag-pill">1/Time Rates</span>
+          <span class="tag-pill">Graph Plotting</span>
         </div>
       </div>
-      <a href="/student/rates.html" class="btn btn-outline" style="width:100%;">Open Physical Labs →</a>
+      <a href="/student/rates.html" class="btn btn-outline" style="width:100%;">Open Kinetics Bench →</a>
+    </article>
+
+    <!-- Card 4: Thermochemistry & Calorimetry -->
+    <article class="experiment-card" style="border-top: 3px solid #F59E0B;">
+      <div>
+        <h3 class="experiment-title">Thermochemistry &amp; Enthalpy</h3>
+        <p class="experiment-desc">
+          Measure heat of neutralization, solution, and displacement. Interactive digital thermometer readings, cooling curve extrapolation, and ΔH calculations.
+        </p>
+        <div class="tag-row">
+          <span class="tag-pill">ΔH Neutralization</span>
+          <span class="tag-pill">q = mcΔT</span>
+          <span class="tag-pill">Cooling Curves</span>
+        </div>
+      </div>
+      <a href="/student/energy.html" class="btn btn-outline" style="width:100%;">Open Thermochemistry Bench →</a>
+    </article>
+
+    <!-- Card 5: Solubility Curves -->
+    <article class="experiment-card" style="border-top: 3px solid #0D9488;">
+      <div>
+        <h3 class="experiment-title">Solubility &amp; Crystallization</h3>
+        <p class="experiment-desc">
+          Heat solute solutions to complete dissolution, observe crystallization temperatures on cooling, and plot authentic KNEC solubility curves.
+        </p>
+        <div class="tag-row">
+          <span class="tag-pill">Saturation Temp</span>
+          <span class="tag-pill">Solubility Curves</span>
+          <span class="tag-pill">Fractional Cryst.</span>
+        </div>
+      </div>
+      <a href="/student/solubility.html" class="btn btn-outline" style="width:100%;">Open Solubility Bench →</a>
+    </article>
+
+    <!-- Card 6: Organic Chemistry -->
+    <article class="experiment-card" style="border-top: 3px solid #8B5CF6;">
+      <div>
+        <h3 class="experiment-title">Organic Chemistry Tests</h3>
+        <p class="experiment-desc">
+          Test alkanes, alkenes, and alkanols with bromine water, acidified KMnO₄/K₂Cr₂O₇, sodium metal, burning splint, and esterification scent synthesis.
+        </p>
+        <div class="tag-row">
+          <span class="tag-pill">Bromine Water</span>
+          <span class="tag-pill">Unsaturation</span>
+          <span class="tag-pill">Esterification</span>
+        </div>
+      </div>
+      <a href="/student/organic.html" class="btn btn-outline" style="width:100%;">Open Organic Bench →</a>
     </article>
   </div>
 </section>
@@ -1019,7 +1084,7 @@
         <li><a href="/student/register.html">Student Sign Up</a></li>
         <li><a href="/teacher/login.html">Teacher Portal</a></li>
         <li><a href="/teacher/register.html">Teacher Sign Up</a></li>
-        <li><a href="/admin/dashboard.html">Admin Portal</a></li>
+        <li><a href="/admin/login.html">Admin Portal</a></li>
       </ul>
     </div>
 
@@ -1099,10 +1164,15 @@
       document.querySelectorAll('a[href="/teacher/login.html"]').forEach(el => {
         el.setAttribute('href', '/teacher/dashboard.html');
       });
+    } else if (auth.isLoggedIn && auth.role === 'admin') {
+      document.querySelectorAll('a[href="/admin/login.html"]').forEach(el => {
+        el.setAttribute('href', '/admin/dashboard.html');
+        el.textContent = 'Admin Console (Active)';
+      });
     }
   }
   updateNavAuthLeads();
 </script>
-<script src="/shared/pwa-installer.js"></script>
+<script src="/shared/pwa-installer.js?v=164"></script>
 </body>
 </html>

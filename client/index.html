@@ -806,21 +806,49 @@
     <div class="hero-card-body">
       <div class="apparatus-wrap">
         <!-- SVG Apparatus Schematic -->
-        <svg class="apparatus-svg" viewBox="0 0 160 210">
+        <svg class="apparatus-svg" viewBox="0 0 160 210" aria-label="Volumetric Titration Apparatus Assembly">
+          <!-- 1. Retort Stand Base & Rod -->
           <rect x="20" y="195" width="120" height="7" rx="2" fill="#334155"/>
-          <rect x="36" y="10" width="6" height="185" rx="2" fill="#475569"/>
-          <rect x="36" y="60" width="38" height="5" fill="#64748B"/>
-          <rect x="36" y="130" width="38" height="5" fill="#64748B"/>
-          <rect x="70" y="15" width="16" height="115" rx="3" fill="rgba(56, 189, 248, 0.2)" stroke="#0284C7" stroke-width="1.4"/>
-          <rect x="72" y="55" width="12" height="75" fill="rgba(2, 132, 199, 0.65)"/>
-          <line x1="72" y1="30" x2="78" y2="30" stroke="#0B2545" stroke-width="1"/>
-          <line x1="72" y1="50" x2="82" y2="50" stroke="#0B2545" stroke-width="1"/>
-          <line x1="72" y1="70" x2="78" y2="70" stroke="#0B2545" stroke-width="1"/>
-          <line x1="72" y1="90" x2="82" y2="90" stroke="#0B2545" stroke-width="1"/>
-          <path d="M73,130 L83,130 L80,140 L76,140 Z" fill="#0369A1"/>
-          <circle cx="78" cy="135" r="3.5" fill="#B45309"/>
-          <path d="M70,150 L86,150 L115,192 Q78,198 41,192 Z" fill="rgba(16, 185, 129, 0.2)" stroke="#059669" stroke-width="1.6"/>
-          <ellipse cx="78" cy="184" rx="26" ry="6" fill="rgba(16, 185, 129, 0.4)"/>
+          <rect x="34" y="10" width="6" height="185" rx="2" fill="#475569"/>
+          
+          <!-- 2. Dual Clamp Arms (Gripping tube safely above stopcock) -->
+          <rect x="34" y="45" width="38" height="5" fill="#64748B"/>
+          <rect x="34" y="90" width="38" height="5" fill="#64748B"/>
+          <circle cx="72" cy="47.5" r="3" fill="#B45309"/>
+          <circle cx="72" cy="92.5" r="3" fill="#B45309"/>
+
+          <!-- 3. Burette Tube (50 cm³, 0 at top, 50 at bottom) -->
+          <rect x="66" y="15" width="16" height="115" rx="3" fill="rgba(56, 189, 248, 0.15)" stroke="#0284C7" stroke-width="1.4"/>
+          <!-- Liquid Column (Meniscus at 23.85 cm³ ~ y=68 down to stopcock at y=130) -->
+          <rect x="68" y="68" width="12" height="62" fill="rgba(2, 132, 199, 0.65)"/>
+          <ellipse cx="74" cy="68" rx="6" ry="1.5" fill="#38BDF8"/>
+
+          <!-- Burette Graduation Marks & Explicit Orientation Numerals (0 at top, 50 at bottom) -->
+          <line x1="68" y1="20" x2="74" y2="20" stroke="#0B2545" stroke-width="1"/>
+          <text x="86" y="23" font-size="7" font-family="'JetBrains Mono', monospace" font-weight="700" fill="var(--text-muted)">0</text>
+          
+          <line x1="68" y1="44" x2="72" y2="44" stroke="#0B2545" stroke-width="0.8"/>
+          <text x="86" y="47" font-size="6.5" font-family="'JetBrains Mono', monospace" font-weight="600" fill="var(--text-muted)">10</text>
+          
+          <line x1="68" y1="68" x2="75" y2="68" stroke="#EF4444" stroke-width="1.2"/>
+          <text x="86" y="71" font-size="6.8" font-family="'JetBrains Mono', monospace" font-weight="800" fill="#EF4444">23.85</text>
+          
+          <line x1="68" y1="92" x2="72" y2="92" stroke="#0B2545" stroke-width="0.8"/>
+          <text x="86" y="95" font-size="6.5" font-family="'JetBrains Mono', monospace" font-weight="600" fill="var(--text-muted)">35</text>
+          
+          <line x1="68" y1="116" x2="74" y2="116" stroke="#0B2545" stroke-width="1"/>
+          <text x="86" y="119" font-size="7" font-family="'JetBrains Mono', monospace" font-weight="700" fill="var(--text-muted)">50</text>
+
+          <!-- Stopcock Valve & Delivery Jet Nozzle -->
+          <path d="M69,130 L79,130 L76,142 L72,142 Z" fill="#0369A1"/>
+          <rect x="66" y="133" width="16" height="4" rx="1.5" fill="#B45309"/>
+
+          <!-- 4. Porcelain White Titration Tile (Under conical flask for sharp endpoint detection) -->
+          <rect x="52" y="193" width="44" height="2.5" rx="1" fill="#FFFFFF" stroke="#CBD5E1"/>
+
+          <!-- 5. Conical Flask (250 cm³) with Pale Pink Phenolphthalein Endpoint -->
+          <path d="M66,150 L82,150 L110,192 Q74,196 38,192 Z" fill="rgba(244, 63, 94, 0.22)" stroke="#E11D48" stroke-width="1.5"/>
+          <ellipse cx="74" cy="184" rx="28" ry="6" fill="rgba(244, 63, 94, 0.45)"/>
         </svg>
 
         <div class="readout-panel">
@@ -835,34 +863,34 @@
         </div>
       </div>
 
-      <!-- Sample Results Table -->
-      <table class="results-table" aria-label="Sample Titration Results">
+      <!-- Official KNEC Table 1: Titre Volume Determination (Authentic KCSE Paper 3 Standard) -->
+      <table class="results-table" aria-label="Official KNEC Paper 3 Titration Table">
         <thead>
           <tr>
-            <th>Trial</th>
-            <th>Final (cm³)</th>
-            <th>Initial (cm³)</th>
-            <th>Titre (cm³)</th>
+            <th style="text-align:left;">Burette Reading (cm³)</th>
+            <th>I</th>
+            <th>II</th>
+            <th>III</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Trial I</td>
-            <td>24.10</td>
-            <td>0.00</td>
-            <td>24.10</td>
-          </tr>
-          <tr>
-            <td>Trial II</td>
-            <td>47.95</td>
+            <td style="text-align:left;">Final burette reading</td>
             <td>24.10</td>
             <td>23.85</td>
+            <td>23.80</td>
           </tr>
           <tr>
-            <td>Trial III</td>
-            <td>23.80</td>
+            <td style="text-align:left;">Initial burette reading</td>
             <td>0.00</td>
-            <td>23.80</td>
+            <td>0.00</td>
+            <td>0.00</td>
+          </tr>
+          <tr>
+            <td style="text-align:left; font-weight:700;">Volume of solution used</td>
+            <td style="font-weight:700; color:var(--success);">24.10</td>
+            <td style="font-weight:700; color:var(--success);">23.85</td>
+            <td style="font-weight:700; color:var(--success);">23.80</td>
           </tr>
         </tbody>
       </table>
@@ -1158,18 +1186,59 @@
         el.setAttribute('href', '/student/home.html');
         if (el.textContent.includes('Student Login')) {
           el.textContent = 'Student Workstation';
+        } else if (el.textContent.includes('Start Practising')) {
+          el.textContent = 'Continue Practising →';
         }
       });
+      document.querySelectorAll('a[href="/student/register.html"]').forEach(el => {
+        el.setAttribute('href', '/student/home.html');
+        el.textContent = 'Open Workstation';
+      });
+
+      // Synchronize Mobile Drawer with active student session
+      const drawer = document.getElementById('mobileNavDrawer');
+      if (drawer && !document.getElementById('mobileActiveUserChip')) {
+        const user = auth.user || {};
+        const userName = user.name || user.email || 'Candidate';
+        const userPill = document.createElement('div');
+        userPill.id = 'mobileActiveUserChip';
+        userPill.style.cssText = 'padding:10px 14px; border-radius:8px; background:var(--card-subtle); border:1px solid var(--card-border); font-size:0.82rem; font-weight:700; color:var(--text-primary); display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;';
+        userPill.innerHTML = `<span>🎓 ${escapeHtml(userName)}</span><span style="color:var(--success); font-size:0.75rem;">● Online</span>`;
+        drawer.insertBefore(userPill, drawer.firstChild);
+      }
     } else if (auth.isLoggedIn && auth.role === 'teacher') {
       document.querySelectorAll('a[href="/teacher/login.html"]').forEach(el => {
         el.setAttribute('href', '/teacher/dashboard.html');
+        if (el.textContent.includes('Teacher Portal') || el.textContent.includes('Teacher Login')) {
+          el.textContent = 'Teacher Dashboard';
+        }
       });
+      document.querySelectorAll('a[href="/teacher/register.html"]').forEach(el => {
+        el.setAttribute('href', '/teacher/dashboard.html');
+        el.textContent = 'Open Dashboard';
+      });
+
+      const drawer = document.getElementById('mobileNavDrawer');
+      if (drawer && !document.getElementById('mobileActiveUserChip')) {
+        const user = auth.user || {};
+        const userName = user.name || user.email || 'Teacher';
+        const userPill = document.createElement('div');
+        userPill.id = 'mobileActiveUserChip';
+        userPill.style.cssText = 'padding:10px 14px; border-radius:8px; background:var(--card-subtle); border:1px solid var(--card-border); font-size:0.82rem; font-weight:700; color:var(--text-primary); display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;';
+        userPill.innerHTML = `<span>👨‍🏫 ${escapeHtml(userName)}</span><span style="color:var(--success); font-size:0.75rem;">● Online</span>`;
+        drawer.insertBefore(userPill, drawer.firstChild);
+      }
     } else if (auth.isLoggedIn && auth.role === 'admin') {
       document.querySelectorAll('a[href="/admin/login.html"]').forEach(el => {
         el.setAttribute('href', '/admin/dashboard.html');
         el.textContent = 'Admin Console (Active)';
       });
     }
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
   updateNavAuthLeads();
 </script>

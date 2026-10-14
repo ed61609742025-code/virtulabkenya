@@ -88,7 +88,7 @@
       </div>
       <div style="display:flex; flex-direction:column;">
         <span class="brand-title" style="font-weight:800; font-family:'Cinzel', serif; font-size:1.05rem; line-height:1.1; color:var(--heading-color);">VirtuLab</span>
-        <span class="brand-subtagline" style="font-size:0.65rem; font-family:'Newsreader', serif; font-style:italic; color:var(--cyan-accent); letter-spacing:0.01em;">Titration Bench</span>
+        <span class="brand-subtagline" style="font-size:0.75rem; font-family:'Newsreader', serif; font-style:italic; color:var(--cyan-accent); letter-spacing:0.01em;">Titration Bench</span>
       </div>
     </a>
 
@@ -105,34 +105,34 @@
 
     <div class="nav-actions">
       <!-- Session Timer Badge -->
-      <div class="session-timer-badge" style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:6px;padding:4px 8px;font-size:0.75rem;font-weight:700;color:var(--cyan-accent);display:flex;align-items:center;gap:4px;font-family:'JetBrains Mono',monospace;">
+      <div class="session-timer-badge" style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:6px;padding:8px 12px;min-height:40px;font-size:0.8rem;font-weight:700;color:var(--cyan-accent);display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;">
         <span>⏱️</span>
         <span id="sessionTimerText">00:00</span>
       </div>
 
       <!-- Theory & Mark Scheme Guide Button -->
-      <a href="titration_theory.html" class="theme-btn-chip" title="View KCSE Volumetric Analysis Theory & Mark Scheme" style="padding:4px 8px; font-size:0.75rem; text-decoration:none; display:inline-flex; align-items:center; gap:4px;">
+      <a href="titration_theory.html" class="theme-btn-chip" title="View KCSE Volumetric Analysis Theory & Mark Scheme" style="border:1px solid var(--card-border); background:var(--card-bg-hover); color:var(--text-main);">
         📖 <span class="btn-text-full">Theory Guide</span>
       </a>
 
       <!-- Diagnostic Drills & KNEC Rubric Button -->
-      <button type="button" class="theme-btn-chip" onclick="window.KnecRemediation && window.KnecRemediation.openWorkbenchDrillsMenu('titration')" title="KNEC Condition (D, PA, AC/FA) Micro-Drills & Titration Sprint" style="padding:4px 8px; font-size:0.75rem; border:1px solid rgba(2,132,199,0.35); background:rgba(2,132,199,0.1); color:var(--cyan-accent); font-weight:700; cursor:pointer;">
+      <button type="button" class="theme-btn-chip" onclick="window.KnecRemediation && window.KnecRemediation.openWorkbenchDrillsMenu('titration')" title="KNEC Condition (D, PA, AC/FA) Micro-Drills & Titration Sprint" style="border:1.5px solid rgba(2,132,199,0.35); background:rgba(2,132,199,0.12); color:var(--cyan-accent); font-weight:700; cursor:pointer;">
         🎯 <span class="btn-text-full">Diagnostic Drills</span>
       </button>
 
       <!-- Guided Tutorial Button -->
-      <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm" onclick="TutorialEngine.start('titration')" style="padding:4px 8px; font-size:0.75rem; white-space:nowrap;">
+      <button type="button" class="btn-tactile btn-tactile-primary" onclick="TutorialEngine.start('titration')" style="min-height:40px; padding:8px 12px; font-size:0.78rem; white-space:nowrap; touch-action:manipulation;">
         🧭 <span class="btn-text-full">Guided Tutorial</span><span class="btn-text-short">Tutorial</span>
       </button>
 
       <!-- Reagent Safety (SDS) Button -->
-      <button class="nav-btn nav-btn-safety" onclick="window.VLKSafety && window.VLKSafety.openSDSModal('HCl')" title="View Chemical Safety & SDS Hazards" style="padding:4px 8px; font-size:0.75rem;">
+      <button class="nav-btn nav-btn-safety" onclick="window.VLKSafety && window.VLKSafety.openSDSModal('HCl')" title="View Chemical Safety & SDS Hazards">
         ⚠️ <span class="btn-text-full">SDS</span>
       </button>
 
       <!-- Settings Dropdown Button -->
       <div style="position:relative;">
-        <button type="button" class="nav-btn nav-btn-settings" onclick="toggleBenchSettings(event)" title="Workbench Settings & Tools" style="padding:4px 8px; font-size:0.75rem;">
+        <button type="button" class="nav-btn nav-btn-settings" onclick="toggleBenchSettings(event)" title="Workbench Settings & Tools">
           ⚙️ <span class="btn-text-full">Settings</span>
         </button>
         
@@ -175,7 +175,7 @@
       </div>
 
       <!-- Exit Button -->
-      <a href="/student/home.html" class="btn-back-link" style="padding:4px 8px; font-size:0.75rem; border-radius:6px;" title="Exit to Workstation" data-i18n="back">← Exit</a>
+      <a href="/student/home.html" class="btn-back-link" title="Exit to Workstation" data-i18n="back">← Exit</a>
     </div>
   </nav>
 
@@ -732,7 +732,7 @@
               Coarse additions early; use single drops (+0.05 cm³) near endpoint.
             </div>
 
-            <div class="keyboard-helper-pill" style="font-size:0.68rem;color:var(--text-tertiary);background:var(--card-bg);border:1px solid var(--card-border);border-radius:6px;padding:4px 6px;display:flex;align-items:center;justify-content:center;gap:4px;font-family:var(--font-mono);margin-bottom:2px;" title="Keyboard shortcuts available when not typing">
+            <div class="keyboard-helper-pill" style="font-size:0.75rem;color:var(--text-tertiary);background:var(--card-bg);border:1px solid var(--card-border);border-radius:6px;padding:4px 6px;display:flex;align-items:center;justify-content:center;gap:4px;font-family:var(--font-mono);margin-bottom:2px;" title="Keyboard shortcuts available when not typing">
               <span>⌨️ <kbd style="background:var(--card-bg-hover);padding:1px 4px;border-radius:3px;border:1px solid var(--card-border);color:var(--text-main);">Space</kbd> Drop · <kbd style="background:var(--card-bg-hover);padding:1px 4px;border-radius:3px;border:1px solid var(--card-border);color:var(--text-main);">S</kbd> Swirl · <kbd style="background:var(--card-bg-hover);padding:1px 4px;border-radius:3px;border:1px solid var(--card-border);color:var(--text-main);">R</kbd> Record</span>
             </div>
 

@@ -1526,7 +1526,7 @@ requireStudentLogin();
           <div class="calc-input-row" style="flex-direction:column;gap:8px;width:100%;margin-top:auto;">
             <input type="number" step="${q.step}" id="${inputId}" data-placeholder="${q.placeholder}" placeholder="${inputPlaceholder}" oninput="saveDraft()" ${isUnlocked ? '' : 'disabled'} aria-label="${cleanLabel}" inputmode="decimal" autocomplete="off" autocorrect="off" spellcheck="false" style="width:100%; font-family:'JetBrains Mono', monospace; font-size:1rem; min-height:44px; padding:10px 12px; touch-action:manipulation;">
             <div class="calc-input-hint">${hintData.hint}</div>
-            <button class="btn-cyan" id="${btnId}" onclick="checkQuestionStep(${idx})" style="width:100%;height:40px;font-weight:700;display:${isExamMode ? 'none' : 'block'};">${q.buttonLabel}</button>
+            <button class="btn-cyan" id="${btnId}" onclick="checkQuestionStep(${idx})" style="width:100%;min-height:44px;font-weight:700;touch-action:manipulation;display:${isExamMode ? 'none' : 'block'};">${q.buttonLabel}</button>
           </div>
           <div id="${msgId}" style="margin-top:8px;"></div>
         </div>

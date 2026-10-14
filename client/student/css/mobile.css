@@ -1184,6 +1184,10 @@
   /* Enforce >= 44px touch targets across titration and bench controls */
   .btn-tactile,
   .btn-pill-action,
+  .nav-btn,
+  .btn-back-link,
+  .theme-btn-chip,
+  .session-timer-badge,
   .btn-action-swirl,
   .btn-action-record,
   .btn-action-reset,

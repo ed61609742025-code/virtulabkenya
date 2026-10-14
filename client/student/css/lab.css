@@ -281,7 +281,7 @@ html, body {
   background: rgba(255, 255, 255, 0.16);
   padding: 1px 6px;
   border-radius: 3px;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 700;
 }
 
@@ -334,7 +334,7 @@ html, body {
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
@@ -349,15 +349,16 @@ html, body {
 
 .theme-btn-chip {
   font-family: inherit;
-  font-size: 0.76rem;
+  font-size: 0.78rem;
   font-weight: 600;
-  padding: 6px 10px;
-  min-height: 36px;
+  padding: 8px 12px;
+  min-height: 40px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 4px;
   border-radius: 6px;
-  border: none;
+  border: 1px solid transparent;
   background: transparent;
   color: var(--text-muted);
   cursor: pointer;
@@ -374,24 +375,48 @@ html, body {
   color: #FFFFFF;
 }
 
+.nav-btn {
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 8px 12px;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border-radius: 6px;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg-hover);
+  color: var(--text-main);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  touch-action: manipulation;
+  text-decoration: none;
+}
+.nav-btn:hover {
+  background: var(--card-bg);
+  border-color: var(--cyan-accent);
+}
+
 .btn-back-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 4px;
-  padding: 6px 10px;
-  min-height: 36px;
+  padding: 8px 12px;
+  min-height: 40px;
   border-radius: 6px;
   background: var(--card-bg-hover);
   border: 1px solid var(--card-border);
   color: var(--text-muted);
   font-family: inherit;
-  font-size: 0.76rem;
+  font-size: 0.78rem;
   font-weight: 600;
   text-decoration: none;
   transition: background-color 0.15s ease, color 0.15s ease;
   touch-action: manipulation;
-}
   white-space: nowrap;
 }
 .btn-back-link:hover {
@@ -539,6 +564,9 @@ html, body {
   min-width: 90px;
   flex: 1;
   text-decoration: none;
+
+  min-height: 48px;
+  touch-action: manipulation;
 }
 
 .workflow-step-item:focus-visible .workflow-step-node {
@@ -574,7 +602,7 @@ html, body {
 }
 
 .workflow-step-sub {
-  font-size: 0.67rem;
+  font-size: 0.75rem;
   color: var(--text-tertiary);
   margin-top: 2px;
   white-space: nowrap;
@@ -980,7 +1008,7 @@ html, body {
 }
 
 .lens-readout-sub {
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
   margin-top: 4px;
   line-height: 1.25;
@@ -1012,7 +1040,7 @@ html, body {
 }
 
 .parallax-label {
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--text-muted);
   text-transform: uppercase;
@@ -1020,7 +1048,7 @@ html, body {
 }
 
 .parallax-status-chip {
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 800;
   padding: 2px 8px;
   border-radius: 999px;
@@ -1051,10 +1079,10 @@ html, body {
   background: transparent;
   border: none;
   color: #CBD5E1;
-  font-size: 0.72rem;
+  font-size: 0.76rem;
   font-weight: 700;
   padding: 8px 4px;
-  min-height: 38px;
+  min-height: 40px;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -1154,7 +1182,7 @@ html, body {
   }
 
   .candidate-top-ribbon {
-    font-size: 0.68rem;
+    font-size: 0.75rem;
     padding: 3px 8px;
     gap: 4px;
     line-height: 1.25;
@@ -1184,7 +1212,7 @@ html, body {
 
   .brand-subtagline {
     display: block !important;
-    font-size: 0.60rem !important;
+    font-size: 0.75rem !important;
   }
 
   .nav-actions {
@@ -1199,7 +1227,7 @@ html, body {
   .knec-exam-subbar {
     padding: 4px 10px;
     gap: 10px;
-    font-size: 0.68rem;
+    font-size: 0.75rem;
     overflow-x: auto;
     white-space: nowrap;
     -webkit-overflow-scrolling: touch;
@@ -1288,7 +1316,7 @@ html, body {
 
   .bench-bottle-chip {
     padding: 3px 6px !important;
-    font-size: 0.68rem !important;
+    font-size: 0.75rem !important;
     gap: 4px !important;
   }
 
@@ -1857,7 +1885,7 @@ html, body {
   gap: 5px;
   padding: 3px 8px;
   border-radius: 999px;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 700;
   font-family: var(--font-mono);
   background: var(--green-bg);
@@ -1992,7 +2020,7 @@ html, body {
 }
 
 .reagent-meta-tag {
-  font-size: 0.67rem;
+  font-size: 0.75rem;
   color: var(--text-tertiary);
   font-family: var(--font-body);
   font-weight: 600;
@@ -2440,7 +2468,7 @@ html, body {
 }
 
 .curve-telemetry-item .telemetry-label {
-  font-size: 0.67rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   font-weight: 700;

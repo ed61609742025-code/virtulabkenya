@@ -48,6 +48,28 @@ requireStudentLogin();
     });
   }
 
+  // Mobile Thumb-Zone Dock Intersection Observer
+  function initMobileDockObserver() {
+    const apparatus = document.getElementById('apparatusCard');
+    const dock = document.getElementById('mobileWorkbenchDock');
+    if (!apparatus || !dock) return;
+
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          // When apparatus card is out of view on mobile viewports (<= 768px), activate dock
+          if (!entry.isIntersecting && window.innerWidth <= 768) {
+            dock.classList.add('is-active');
+          } else {
+            dock.classList.remove('is-active');
+          }
+        });
+      }, { threshold: 0.15 });
+      observer.observe(apparatus);
+    }
+  }
+  initMobileDockObserver();
+
   const urlParams = new URLSearchParams(window.location.search);
   const linkedAssignmentId = urlParams.get('assignment');
   const linkedType = urlParams.get('type');
@@ -2007,6 +2029,32 @@ requireStudentLogin();
       }
     } else {
       lastAnnouncedStage = 'pre';
+    }
+
+    // Phase 3: Dynamic Visual Silhouette Highlighting
+    const titrationControlsEl = document.getElementById('titrationControls');
+    const recordBtn = document.querySelector('.btn-action-record');
+    const dockRecordBtn = document.getElementById('dockRecordBtn');
+    const dockVol = document.getElementById('dockLiveVol');
+    const dockSwatch = document.getElementById('dockFlaskSwatch');
+
+    if (dockVol) dockVol.textContent = `${currentVolume.toFixed(2)} cm³`;
+    if (dockSwatch) dockSwatch.style.background = stageColor;
+
+    if (titrationControlsEl) {
+      if (diff >= -2.0 && diff < 0.00) {
+        titrationControlsEl.classList.add('approaching-endpoint');
+      } else {
+        titrationControlsEl.classList.remove('approaching-endpoint');
+      }
+    }
+
+    if (diff >= 0.00 && diff < 0.40) {
+      if (recordBtn) recordBtn.classList.add('endpoint-ready');
+      if (dockRecordBtn) dockRecordBtn.classList.add('endpoint-ready');
+    } else {
+      if (recordBtn) recordBtn.classList.remove('endpoint-ready');
+      if (dockRecordBtn) dockRecordBtn.classList.remove('endpoint-ready');
     }
 
     if (flaskLabel && current) {

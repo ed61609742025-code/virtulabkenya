@@ -1223,3 +1223,135 @@
     padding-top: max(8px, env(safe-area-inset-top, 0px)) !important;
   }
 }
+
+
+/* ── P. Mobile Thumb-Zone Sticky Workbench Dock ───────────── */
+@media (min-width: 769px) {
+  .mobile-workbench-dock {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .mobile-workbench-dock {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1.5px solid var(--card-border);
+    padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px));
+    z-index: 8500;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.35);
+    transform: translateY(120%);
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  [data-theme="light"] .mobile-workbench-dock {
+    background: rgba(255, 255, 255, 0.96);
+    border-top-color: #CBD5E1;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.12);
+  }
+
+  [data-theme="green"] .mobile-workbench-dock {
+    background: rgba(6, 26, 14, 0.96);
+    border-top-color: rgba(52, 211, 153, 0.3);
+  }
+
+  .mobile-workbench-dock.is-active {
+    transform: translateY(0);
+  }
+
+  .dock-telemetry {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .dock-flask-swatch {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--card-border);
+    background: rgba(56, 189, 248, 0.2);
+    transition: background 0.25s ease, border-color 0.25s ease;
+    flex-shrink: 0;
+  }
+
+  .dock-vol-wrap {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+  }
+
+  .dock-vol-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    font-family: var(--font-body);
+  }
+
+  .dock-vol-val {
+    font-size: 0.92rem;
+    font-weight: 800;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--cyan-accent);
+  }
+
+  .dock-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    justify-content: flex-end;
+  }
+
+  .dock-btn {
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 8px 12px;
+    min-height: 44px;
+    border-radius: 8px;
+    border: 1px solid var(--card-border);
+    cursor: pointer;
+    touch-action: manipulation;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: all 0.14s ease;
+  }
+
+  .dock-btn-drop {
+    background: var(--blue-accent);
+    color: #FFFFFF;
+    border-color: var(--blue-accent);
+  }
+  .dock-btn-drop:active {
+    transform: scale(0.96);
+  }
+
+  .dock-btn-swirl {
+    background: var(--card-bg-hover);
+    color: var(--text-main);
+  }
+
+  .dock-btn-record {
+    background: #059669;
+    color: #FFFFFF;
+    border-color: #059669;
+  }
+  .dock-btn-record:active {
+    transform: scale(0.96);
+  }
+}

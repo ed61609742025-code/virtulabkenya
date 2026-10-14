@@ -225,4 +225,51 @@ describe('VirtuLab Kenya — Mobile Tactile Touch & Responsive Ergonomics Suite'
     });
   });
 
+  // ─────────────────────────────────────────────────────────────
+  //  7. Mobile Thumb-Zone Dock & Precision Drop Visual Hierarchy
+  // ─────────────────────────────────────────────────────────────
+  describe('7. Mobile Thumb-Zone Sticky Dock & Precision Silhouettes', () => {
+
+    it('should include #mobileWorkbenchDock in lab.html with drop, swirl, and record controls', () => {
+      const labPath = path.join(rootDir, 'client/student/lab.html');
+      const content = fs.readFileSync(labPath, 'utf8');
+
+      assert.ok(content.includes('id="mobileWorkbenchDock"'), 'lab.html must declare #mobileWorkbenchDock');
+      assert.ok(content.includes('class="dock-flask-swatch"'), 'dock must include flask color swatch');
+      assert.ok(content.includes('id="dockLiveVol"'), 'dock must include live volume readout');
+      assert.ok(content.includes('class="dock-btn dock-btn-drop"'), 'dock must provide quick drop button');
+      assert.ok(content.includes('class="dock-btn dock-btn-swirl"'), 'dock must provide quick swirl button');
+      assert.ok(content.includes('id="dockRecordBtn"'), 'dock must provide quick record button');
+    });
+
+    it('should declare mobile-workbench-dock styles with safe-area padding and 44px buttons', () => {
+      const mobilePath = path.join(rootDir, 'client/student/css/mobile.css');
+      const content = fs.readFileSync(mobilePath, 'utf8');
+
+      assert.ok(content.includes('.mobile-workbench-dock'), 'mobile.css must define .mobile-workbench-dock');
+      assert.ok(content.includes('position: fixed;'), 'mobile-workbench-dock must be fixed');
+      assert.ok(content.includes('env(safe-area-inset-bottom'), 'dock must pad for notched gesture devices');
+      assert.ok(content.includes('.dock-btn') && content.includes('min-height: 44px;'), 'dock buttons must satisfy 44px touch target');
+    });
+
+    it('should define near-equivalence precision pulse and silhouette styling in lab.css', () => {
+      const labCssPath = path.join(rootDir, 'client/student/css/lab.css');
+      const content = fs.readFileSync(labCssPath, 'utf8');
+
+      assert.ok(content.includes('.btn-tactile-cyan'), 'lab.css must define distinct cyan silhouette');
+      assert.ok(content.includes('#titrationControls.approaching-endpoint'), 'lab.css must style near-endpoint state');
+      assert.ok(content.includes('precisionDropPulse'), 'lab.css must include precision drop pulse animation');
+      assert.ok(content.includes('.btn-action-record.endpoint-ready'), 'lab.css must pulse record button at endpoint');
+    });
+
+    it('should integrate dock synchronization and near-endpoint state into titration-workbench.js', () => {
+      const benchPath = path.join(rootDir, 'client/student/js/titration-workbench.js');
+      const content = fs.readFileSync(benchPath, 'utf8');
+
+      assert.ok(content.includes("titrationControlsEl.classList.add('approaching-endpoint')"), 'titration-workbench.js must add approaching-endpoint class');
+      assert.ok(content.includes("initMobileDockObserver"), 'titration-workbench.js must define and initialize mobile dock observer');
+      assert.ok(content.includes("dockVol.textContent"), 'titration-workbench.js must synchronize live dock volume');
+    });
+  });
+
 });

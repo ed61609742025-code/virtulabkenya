@@ -203,7 +203,7 @@
 <!-- Collapsible Scratchpad Drawer (Hidden by default) -->
 <div id="scratchpadDrawer" style="display:none;background:var(--card-bg);border:1px solid var(--cyan-accent);border-radius:12px;padding:16px;margin:16px 20px 0;box-shadow:0 4px 20px rgba(0,0,0,0.4);">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-    <div style="font-size:0.88rem;font-weight:700;color:var(--heading-color);font-family:'Cinzel', serif;">📝 Rough Work Scratchpad (KNEC Candidate Working)</div>
+    <div style="font-size:0.88rem;font-weight:700;color:var(--heading-color);font-family:var(--font-heading);">📝 Rough Work Scratchpad (KNEC Candidate Working)</div>
     <button type="button" class="btn-pill-action" style="padding:2px 8px;font-size:0.7rem;" onclick="toggleScratchpad()">✕ Close</button>
   </div>
   <textarea id="scratchpadText" placeholder="Draft your raw buret readings, trial math, or C1V1=C2V2 working here..." style="width:100%;height:90px;background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:8px;padding:10px;color:var(--text-main);font-family:'JetBrains Mono',monospace;font-size:0.82rem;outline:none;resize:vertical;"></textarea>
@@ -463,7 +463,7 @@
       
       <!-- Card 4: Interactive Apparatus Simulation & Bench Controls -->
       <div class="apparatus-card wb-card glow-card card-apparatus" id="apparatusCard">
-        <div class="wb-card-title" style="margin-bottom:14px; font-family:'Cinzel', serif;">
+        <div class="wb-card-title" style="margin-bottom:14px; font-family:var(--font-heading);">
           <span>🔬 Interactive Volumetric Apparatus &amp; Burette Assembly</span>
           <span style="font-size:0.72rem; font-weight:700; color:var(--cyan-accent-strong); font-family:var(--font-mono);">Class-A Glassware</span>
         </div>
@@ -472,7 +472,7 @@
           
           <!-- LEFT SIDE: Indicator & Swirl Controls -->
           <div class="bench-left-wing" style="display:flex;flex-direction:column;gap:10px;background:var(--card-bg-hover);border:1.5px solid var(--card-border);border-radius:12px;padding:14px;">
-            <div class="bench-wing-title" style="font-weight:800;font-size:0.78rem;color:var(--heading-color);text-transform:uppercase;letter-spacing:0.04em;display:flex;align-items:center;gap:6px;font-family:'Cinzel', serif;border-bottom:1px solid var(--card-border);padding-bottom:6px;">
+            <div class="bench-wing-title" style="font-weight:800;font-size:0.78rem;color:var(--heading-color);text-transform:uppercase;letter-spacing:0.04em;display:flex;align-items:center;gap:6px;font-family:var(--font-body);letter-spacing:0.04em;border-bottom:1px solid var(--card-border);padding-bottom:6px;">
               <span>💧 Indicator</span>
             </div>
             <div class="bench-wing-helper" style="font-size:0.72rem; color:var(--text-secondary); line-height:1.45; background:var(--card-bg); border:1px solid var(--card-border); border-radius:6px; padding:6px 8px;">
@@ -483,7 +483,7 @@
 
             <div style="border-top:1px dashed var(--card-border);margin:4px 0;"></div>
 
-            <div class="bench-wing-title" style="font-weight:800;font-size:0.78rem;color:var(--heading-color);text-transform:uppercase;letter-spacing:0.04em;display:flex;align-items:center;gap:6px;font-family:'Cinzel', serif;border-bottom:1px solid var(--card-border);padding-bottom:6px;">
+            <div class="bench-wing-title" style="font-weight:800;font-size:0.78rem;color:var(--heading-color);text-transform:uppercase;letter-spacing:0.04em;display:flex;align-items:center;gap:6px;font-family:var(--font-body);letter-spacing:0.04em;border-bottom:1px solid var(--card-border);padding-bottom:6px;">
               <span>🌀 Flask Motion</span>
             </div>
             <div class="bench-wing-helper" style="font-size:0.72rem; color:var(--text-secondary); line-height:1.45; background:var(--card-bg); border:1px solid var(--card-border); border-radius:6px; padding:6px 8px;">
@@ -725,7 +725,7 @@
           <div class="bench-right-wing" style="display:flex;flex-direction:column;gap:10px;background:var(--card-bg-hover);border:1.5px solid var(--card-border);border-radius:12px;padding:14px;">
             
             <!-- Stopcock Titrant Controls -->
-            <div class="bench-wing-title" style="font-weight:800;font-size:0.78rem;color:var(--heading-color);text-transform:uppercase;letter-spacing:0.04em;display:flex;align-items:center;gap:6px;font-family:'Cinzel', serif;border-bottom:1px solid var(--card-border);padding-bottom:6px;">
+            <div class="bench-wing-title" style="font-weight:800;font-size:0.78rem;color:var(--heading-color);text-transform:uppercase;letter-spacing:0.04em;display:flex;align-items:center;gap:6px;font-family:var(--font-body);letter-spacing:0.04em;border-bottom:1px solid var(--card-border);padding-bottom:6px;">
               <span>🚰 Add Titrant</span>
             </div>
             <div class="bench-wing-helper" style="font-size:0.72rem; color:var(--text-secondary); line-height:1.45; background:var(--card-bg); border:1px solid var(--card-border); border-radius:6px; padding:6px 8px;">
@@ -765,7 +765,7 @@
       <!-- Card 4B: Dynamic pH Titration Curve & Equivalence Buffers (Desktop & Laptop Screens Only) -->
       <div class="wb-card card-curve-telemetry curve-desktop-only" id="titrationCurveCard" style="margin-top:20px;">
         <div class="curve-card-header">
-          <div class="wb-card-title" style="margin:0; border:none; padding:0; font-family:'Cinzel', serif;">
+          <div class="wb-card-title" style="margin:0; border:none; padding:0; font-family:var(--font-heading);">
             <span>📈 Real-Time pH Titration Curve &amp; Buffer Dynamics</span>
             <span class="curve-spec-pill" title="Class-A Physical Chemistry Telemetry">Class-A Telemetry</span>
           </div>
@@ -854,7 +854,7 @@
       <!-- Card 5: Results Table (KCSE Format) -->
       <div class="wb-card card-results-table" id="resultsTableCard" style="margin-top:20px;">
         <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1.5px solid var(--card-border);padding-bottom:12px;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
-          <div class="wb-card-title" data-i18n="results_table_title" style="margin:0; border:none; padding:0; font-family:'Cinzel', serif;">
+          <div class="wb-card-title" data-i18n="results_table_title" style="margin:0; border:none; padding:0; font-family:var(--font-heading);">
             <span>📊 Table 1: Titre Volume Determination (KCSE Format)</span>
             <span style="font-size:0.74rem; font-weight:700; color:var(--cyan-accent-strong); font-family:var(--font-mono); margin-left:8px;">[5.0 Marks]</span>
           </div>
@@ -871,7 +871,7 @@
       <div class="wb-card card-calc" id="kcseCalcCard" style="margin-top:20px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;border-bottom:1.5px solid var(--card-border);padding-bottom:12px;flex-wrap:wrap;gap:10px;">
           <div>
-            <div class="wb-card-title" id="calcSectionTitle" style="margin:0; border:none; padding:0; font-family:'Cinzel', serif;">
+            <div class="wb-card-title" id="calcSectionTitle" style="margin:0; border:none; padding:0; font-family:var(--font-heading);">
               <span>🧮 Section 1 Calculations: Stoichiometry &amp; Analysis</span>
             </div>
             <div id="calcSectionSub" style="font-size:0.76rem; font-family:var(--font-body); font-weight:600; color:var(--text-secondary); margin-top:4px;">KNEC Examination Standard: 10.0 Marks Total (2.0 Marks per Question) · Practical Total: 15.0 Marks</div>
@@ -887,7 +887,7 @@
         <!-- Final KCSE Titration Submission Box -->
         <div class="calc-field-group" id="submitCardBox" style="opacity:0.4;pointer-events:none;background:var(--card-bg-hover);border:1.5px solid var(--cyan-accent);border-radius:10px;padding:16px;margin-top:14px;">
           <div class="calc-input-row" style="flex-direction:column;gap:12px;width:100%;">
-            <button class="btn-submit-titration" id="btnSubmitTitration" onclick="submitSession()" style="width:100%;height:48px;font-weight:800;font-size:0.95rem;font-family:'Cinzel', serif;" data-i18n="submit_titration">Submit Full KCSE Titration →</button>
+            <button class="btn-submit-titration" id="btnSubmitTitration" onclick="submitSession()" style="width:100%;height:48px;font-weight:800;font-size:0.95rem;font-family:var(--font-heading);" data-i18n="submit_titration">Submit Full KCSE Titration →</button>
           </div>
           <div id="resultMsg"></div>
           <div id="aiFeedbackBox" style="display:none;"></div>
@@ -1036,6 +1036,23 @@
     }
   });
 </script>
+
+<!-- Mobile Thumb-Zone Sticky Dock (Screens < 768px when apparatus scrolls) -->
+<div id="mobileWorkbenchDock" class="mobile-workbench-dock" role="toolbar" aria-label="Quick Burette Controls">
+  <div class="dock-telemetry">
+    <div class="dock-flask-swatch" id="dockFlaskSwatch" title="Current flask liquid color"></div>
+    <div class="dock-vol-wrap">
+      <span class="dock-vol-label">Burette</span>
+      <span class="dock-vol-val" id="dockLiveVol">0.00 cm³</span>
+    </div>
+  </div>
+  <div class="dock-actions">
+    <button type="button" class="dock-btn dock-btn-drop" onclick="addVolume(0.05)" title="Add single drop (0.05 cm³)" aria-label="Add single drop">💧 Drop</button>
+    <button type="button" class="dock-btn dock-btn-swirl" onclick="swirlFlask()" title="Swirl conical flask" aria-label="Swirl conical flask">🌀 Swirl</button>
+    <button type="button" class="dock-btn dock-btn-record" id="dockRecordBtn" onclick="recordTrial()" title="Record titration endpoint" aria-label="Record titration endpoint">✅ Record</button>
+  </div>
+</div>
+
 </body>
 </html>
 

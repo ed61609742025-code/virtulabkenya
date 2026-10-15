@@ -165,6 +165,7 @@ class StemButton extends StatelessWidget {
           backgroundColor: bg,
           foregroundColor: fg,
           elevation: 0,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
             side: border,
@@ -185,9 +186,16 @@ class StemButton extends StatelessWidget {
                 children: [
                   if (icon != null) ...[
                     Icon(icon, size: 18, color: fg),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 6),
                   ],
-                  Text(label, style: StemTypography.textTheme.labelLarge?.copyWith(color: fg)),
+                  Flexible(
+                    child: Text(
+                      label,
+                      style: StemTypography.textTheme.labelLarge?.copyWith(color: fg),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  ),
                 ],
               ),
       ),

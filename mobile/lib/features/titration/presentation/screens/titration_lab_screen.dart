@@ -205,7 +205,10 @@ class _TitrationLabScreenState extends State<TitrationLabScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: widget.onBack,
         ),
-        title: Text('Titration Workbench (Q1)', style: StemTypography.textTheme.headlineSmall),
+        title: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text('Titration Workbench (Q1)', style: StemTypography.textTheme.headlineSmall),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh, color: StemColors.secondary),
@@ -217,92 +220,106 @@ class _TitrationLabScreenState extends State<TitrationLabScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // 1. Telemetry Bar
+            // 1. Telemetry Bar (Adaptive / Scrollable)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               color: StemColors.surfacePanel,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TelemetryBadge(
-                    label: 'Burette Reading',
-                    value: '${_buretteReading.toStringAsFixed(2)} cm³',
-                    statusColor: StemColors.secondary,
-                  ),
-                  TelemetryBadge(
-                    label: 'pH',
-                    value: currentPh.toStringAsFixed(1),
-                    statusColor: currentPh < 7.0 ? StemColors.labDanger : StemColors.labSuccess,
-                  ),
-                  TelemetryBadge(
-                    label: 'Trial',
-                    value: _currentTrialNumber == 1 ? 'Rough' : 'Accurate ${_currentTrialNumber - 1}',
-                    statusColor: StemColors.labWarning,
-                  ),
-                ],
+              width: double.infinity,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                child: Row(
+                  children: [
+                    TelemetryBadge(
+                      label: 'Burette Reading',
+                      value: '${_buretteReading.toStringAsFixed(2)} cm³',
+                      statusColor: StemColors.secondary,
+                    ),
+                    const SizedBox(width: 8),
+                    TelemetryBadge(
+                      label: 'pH',
+                      value: currentPh.toStringAsFixed(1),
+                      statusColor: currentPh < 7.0 ? StemColors.labDanger : StemColors.labSuccess,
+                    ),
+                    const SizedBox(width: 8),
+                    TelemetryBadge(
+                      label: 'Trial',
+                      value: _currentTrialNumber == 1 ? 'Rough' : 'Accurate ${_currentTrialNumber - 1}',
+                      statusColor: StemColors.labWarning,
+                    ),
+                  ],
+                ),
               ),
             ),
 
-            // 2. Interactive Apparatus Stage
+            // 2. Interactive Apparatus Stage (Responsive LayoutBuilder)
             Expanded(
-              child: Stack(
-                children: [
-                  // Burette on left
-                  Positioned(
-                    top: 10,
-                    bottom: 10,
-                    left: 10,
-                    width: 100,
-                    child: BuretteWidget(
-                      currentVolume: _buretteReading,
-                      isDispensing: _isDispensing,
-                      flowRate: _flowRate,
-                      onToggleTap: _toggleDispensing,
-                      onFlowRateChanged: (val) => setState(() => _flowRate = val),
-                    ),
-                  ),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final isWide = constraints.maxWidth >= 600;
+                  final buretteWidth = isWide ? 140.0 : 100.0;
+                  final flaskLeft = isWide ? 150.0 : 105.0;
 
-                  // Conical Flask below burette tip
-                  Positioned(
-                    bottom: 20,
-                    left: 110,
-                    child: ConicalFlaskWidget(
-                      currentVolume: 25.0 + _buretteReading,
-                      solutionColor: solutionColor,
-                      isSwirling: _isDispensing,
-                    ),
-                  ),
-
-                  // Floating 10x Meniscus Magnifier on Top Right
-                  Positioned(
-                    top: 15,
-                    right: 15,
-                    child: MeniscusZoomViewfinder(currentVolume: _buretteReading),
-                  ),
-
-                  // Single Drop Addition & Reagent Controls on Right Center
-                  Positioned(
-                    right: 15,
-                    bottom: 80,
-                    child: Column(
-                      children: [
-                        FloatingActionButton.small(
-                          heroTag: 'drop_btn',
-                          backgroundColor: StemColors.surfacePanelElevated,
-                          foregroundColor: StemColors.secondary,
-                          tooltip: 'Add Single 0.05 cm³ Drop',
-                          onPressed: _addSingleDrop,
-                          child: const Icon(Icons.water_drop_outlined),
+                  return Stack(
+                    children: [
+                      // Burette on left
+                      Positioned(
+                        top: 10,
+                        bottom: 10,
+                        left: 10,
+                        width: buretteWidth,
+                        child: BuretteWidget(
+                          currentVolume: _buretteReading,
+                          isDispensing: _isDispensing,
+                          flowRate: _flowRate,
+                          onToggleTap: _toggleDispensing,
+                          onFlowRateChanged: (val) => setState(() => _flowRate = val),
                         ),
-                        const SizedBox(height: 6),
-                        Text(
-                          '+0.05 cm³',
-                          style: TextStyle(fontSize: 10, color: StemColors.textSecondary),
+                      ),
+
+                      // Conical Flask below burette tip
+                      Positioned(
+                        bottom: 20,
+                        left: flaskLeft,
+                        child: ConicalFlaskWidget(
+                          currentVolume: 25.0 + _buretteReading,
+                          solutionColor: solutionColor,
+                          isSwirling: _isDispensing,
                         ),
-                      ],
-                    ),
-                  ),
-                ],
+                      ),
+
+                      // Floating 10x Meniscus Magnifier on Top Right
+                      Positioned(
+                        top: 15,
+                        right: 15,
+                        child: MeniscusZoomViewfinder(currentVolume: _buretteReading),
+                      ),
+
+                      // Single Drop Addition & Reagent Controls on Right Center
+                      Positioned(
+                        right: 15,
+                        bottom: 40,
+                        child: Column(
+                          children: [
+                            FloatingActionButton.small(
+                              heroTag: 'drop_btn',
+                              backgroundColor: StemColors.surfacePanelElevated,
+                              foregroundColor: StemColors.secondary,
+                              tooltip: 'Add Single 0.05 cm³ Drop',
+                              onPressed: _addSingleDrop,
+                              child: const Icon(Icons.water_drop_outlined),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              '+0.05 cm³',
+                              style: TextStyle(fontSize: 10, color: StemColors.textSecondary),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
 
@@ -313,28 +330,38 @@ class _TitrationLabScreenState extends State<TitrationLabScreen> {
                 color: StemColors.surfacePanel,
                 border: Border(top: BorderSide(color: StemColors.borderSubtle)),
               ),
-              child: Column(
-                children: [
-                  // Recorded Trials row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 840),
+                  child: Column(
                     children: [
-                      _trialPill('Rough', _getTrialVolume(1)),
-                      _trialPill('Trial 1', _getTrialVolume(2)),
-                      _trialPill('Trial 2', _getTrialVolume(3)),
+                      // Recorded Trials row (Overflow Protected)
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
+                        child: Row(
+                          children: [
+                            _trialPill('Rough', _getTrialVolume(1)),
+                            const SizedBox(width: 8),
+                            _trialPill('Trial 1', _getTrialVolume(2)),
+                            const SizedBox(width: 8),
+                            _trialPill('Trial 2', _getTrialVolume(3)),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      // Record Reading Button
+                      StemButton(
+                        label: _currentTrialNumber < 3
+                            ? 'Record Reading for Trial $_currentTrialNumber'
+                            : 'Submit Titration for KNEC Grading',
+                        icon: Icons.edit_note,
+                        type: _currentTrialNumber == 3 ? StemButtonType.success : StemButtonType.primary,
+                        onPressed: _recordTrial,
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 10),
-                  // Record Reading Button
-                  StemButton(
-                    label: _currentTrialNumber < 3
-                        ? 'Record Reading for Trial $_currentTrialNumber'
-                        : 'Submit Titration for KNEC Grading',
-                    icon: Icons.edit_note,
-                    type: _currentTrialNumber == 3 ? StemButtonType.success : StemButtonType.primary,
-                    onPressed: _recordTrial,
-                  ),
-                ],
+                ),
               ),
             ),
           ],

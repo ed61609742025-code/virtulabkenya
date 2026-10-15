@@ -238,12 +238,16 @@ class _CompositeMockExamScreenState extends State<CompositeMockExamScreen>
             );
           },
         ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('KCSE Mock Exam (40 Mks)', style: StemTypography.textTheme.headlineSmall),
-            Text('Chemistry Paper 3 Practical', style: StemTypography.textTheme.bodySmall),
-          ],
+        title: FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('KCSE Mock Exam (40 Mks)', style: StemTypography.textTheme.headlineSmall),
+              Text('Chemistry Paper 3 Practical', style: StemTypography.textTheme.bodySmall),
+            ],
+          ),
         ),
         actions: [
           // Timer Widget
@@ -280,6 +284,8 @@ class _CompositeMockExamScreenState extends State<CompositeMockExamScreen>
         ],
         bottom: TabBar(
           controller: _tabController,
+          isScrollable: true,
+          tabAlignment: TabAlignment.start,
           indicatorColor: StemColors.secondary,
           labelColor: Colors.white,
           unselectedLabelColor: StemColors.textSecondary,
@@ -304,11 +310,16 @@ class _CompositeMockExamScreenState extends State<CompositeMockExamScreen>
           color: StemColors.surfacePanel,
           border: Border(top: BorderSide(color: StemColors.borderSubtle)),
         ),
-        child: StemButton(
-          label: 'Submit Official KCSE Exam',
-          icon: Icons.check_circle,
-          type: StemButtonType.primary,
-          onPressed: _submitExam,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 840),
+            child: StemButton(
+              label: 'Submit Official KCSE Exam',
+              icon: Icons.check_circle,
+              type: StemButtonType.primary,
+              onPressed: _submitExam,
+            ),
+          ),
         ),
       ),
     );
@@ -317,56 +328,61 @@ class _CompositeMockExamScreenState extends State<CompositeMockExamScreen>
   Widget _buildQuestion1Tab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          StemCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('QUESTION 1: VOLUMETRIC ANALYSIS (15 MARKS)', style: StemTypography.textTheme.titleMedium),
-                const SizedBox(height: 6),
-                Text(
-                  'You are provided with Solution A (0.10M HCl) and Solution B (NaOH). You are required to determine the concentration of Solution B by titration.',
-                  style: StemTypography.textTheme.bodyMedium,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 840),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              StemCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('QUESTION 1: VOLUMETRIC ANALYSIS (15 MARKS)', style: StemTypography.textTheme.titleMedium),
+                    const SizedBox(height: 6),
+                    Text(
+                      'You are provided with Solution A (0.10M HCl) and Solution B (NaOH). You are required to determine the concentration of Solution B by titration.',
+                      style: StemTypography.textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 12),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (ctx) => TitrationLabScreen(onBack: () => Navigator.pop(ctx)),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.science, size: 18),
+                      label: const Text('Open Interactive Titration Apparatus'),
+                      style: ElevatedButton.styleFrom(backgroundColor: StemColors.surfacePanelElevated),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 12),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (ctx) => TitrationLabScreen(onBack: () => Navigator.pop(ctx)),
+              ),
+              const SizedBox(height: 16),
+              StemCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Candidate Recorded Results', style: StemTypography.textTheme.titleMedium),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: _q1AverageController,
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      decoration: const InputDecoration(
+                        labelText: 'Average Titre Volume (cm³)',
+                        helperText: 'Must be within +/- 0.10 cm³ concordancy',
+                        prefixIcon: Icon(Icons.straighten, color: StemColors.secondary),
                       ),
-                    );
-                  },
-                  icon: const Icon(Icons.science, size: 18),
-                  label: const Text('Open Interactive Titration Apparatus'),
-                  style: ElevatedButton.styleFrom(backgroundColor: StemColors.surfacePanelElevated),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
-          StemCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Candidate Recorded Results', style: StemTypography.textTheme.titleMedium),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _q1AverageController,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  decoration: const InputDecoration(
-                    labelText: 'Average Titre Volume (cm³)',
-                    helperText: 'Must be within +/- 0.10 cm³ concordancy',
-                    prefixIcon: Icon(Icons.straighten, color: StemColors.secondary),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -374,62 +390,67 @@ class _CompositeMockExamScreenState extends State<CompositeMockExamScreen>
   Widget _buildQuestion2Tab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          StemCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('QUESTION 2: QUALITATIVE SALT ANALYSIS (13 MARKS)', style: StemTypography.textTheme.titleMedium),
-                const SizedBox(height: 6),
-                Text(
-                  'Perform systematic tests on Unknown Solid X using 2M NaOH, 2M NH3, Ba(NO3)2, and dilute HNO3 to identify the cation and anion.',
-                  style: StemTypography.textTheme.bodyMedium,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 840),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              StemCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('QUESTION 2: QUALITATIVE SALT ANALYSIS (13 MARKS)', style: StemTypography.textTheme.titleMedium),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Perform systematic tests on Unknown Solid X using 2M NaOH, 2M NH3, Ba(NO3)2, and dilute HNO3 to identify the cation and anion.',
+                      style: StemTypography.textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 12),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (ctx) => QualitativeLabScreen(onBack: () => Navigator.pop(ctx)),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.biotech, size: 18),
+                      label: const Text('Open Interactive Test Tube Rack'),
+                      style: ElevatedButton.styleFrom(backgroundColor: StemColors.surfacePanelElevated),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 12),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (ctx) => QualitativeLabScreen(onBack: () => Navigator.pop(ctx)),
+              ),
+              const SizedBox(height: 16),
+              StemCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Candidate Deductions', style: StemTypography.textTheme.titleMedium),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: _q2CationController,
+                      decoration: const InputDecoration(
+                        labelText: 'Identified Cation (e.g. Zn2+, Pb2+, Fe2+)',
+                        prefixIcon: Icon(Icons.add_circle_outline, color: StemColors.secondary),
                       ),
-                    );
-                  },
-                  icon: const Icon(Icons.biotech, size: 18),
-                  label: const Text('Open Interactive Test Tube Rack'),
-                  style: ElevatedButton.styleFrom(backgroundColor: StemColors.surfacePanelElevated),
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: _q2AnionController,
+                      decoration: const InputDecoration(
+                        labelText: 'Identified Anion (e.g. SO4 2-, Cl-, CO3 2-)',
+                        prefixIcon: Icon(Icons.remove_circle_outline, color: StemColors.secondary),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
-          StemCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Candidate Deductions', style: StemTypography.textTheme.titleMedium),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _q2CationController,
-                  decoration: const InputDecoration(
-                    labelText: 'Identified Cation (e.g. Zn2+, Pb2+, Fe2+)',
-                    prefixIcon: Icon(Icons.add_circle_outline, color: StemColors.secondary),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _q2AnionController,
-                  decoration: const InputDecoration(
-                    labelText: 'Identified Anion (e.g. SO4 2-, Cl-, CO3 2-)',
-                    prefixIcon: Icon(Icons.remove_circle_outline, color: StemColors.secondary),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -437,40 +458,45 @@ class _CompositeMockExamScreenState extends State<CompositeMockExamScreen>
   Widget _buildQuestion3Tab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          StemCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('QUESTION 3: FLAME EMISSION TEST (12 MARKS)', style: StemTypography.textTheme.titleMedium),
-                const SizedBox(height: 6),
-                Text(
-                  'Perform flame tests using a cleaned platinum wire to record the characteristic cation emission color in a non-luminous flame.',
-                  style: StemTypography.textTheme.bodyMedium,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 840),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              StemCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('QUESTION 3: FLAME EMISSION TEST (12 MARKS)', style: StemTypography.textTheme.titleMedium),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Perform flame tests using a cleaned platinum wire to record the characteristic cation emission color in a non-luminous flame.',
+                      style: StemTypography.textTheme.bodyMedium,
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          StemCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Flame Emission Observations', style: StemTypography.textTheme.titleMedium),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _q3FlameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Observed Flame Color & Confirmed Cation',
-                    prefixIcon: Icon(Icons.local_fire_department, color: StemColors.secondary),
-                  ),
+              ),
+              const SizedBox(height: 16),
+              StemCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Flame Emission Observations', style: StemTypography.textTheme.titleMedium),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: _q3FlameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Observed Flame Color & Confirmed Cation',
+                        prefixIcon: Icon(Icons.local_fire_department, color: StemColors.secondary),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

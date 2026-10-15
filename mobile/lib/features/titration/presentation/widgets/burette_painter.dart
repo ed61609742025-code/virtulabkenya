@@ -19,59 +19,107 @@ class BuretteWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: CustomPaint(
-            size: const Size(80, double.infinity),
-            painter: BurettePainter(
-              currentVolume: currentVolume,
-              isDispensing: isDispensing,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isCompact = constraints.maxWidth < 140;
+
+        return Column(
+          children: [
+            Expanded(
+              child: CustomPaint(
+                size: Size(constraints.maxWidth.clamp(60.0, 100.0), double.infinity),
+                painter: BurettePainter(
+                  currentVolume: currentVolume,
+                  isDispensing: isDispensing,
+                ),
+              ),
             ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        // Tactile Stopcock Valve Controller
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: StemColors.surfacePanel,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: StemColors.borderSubtle),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                icon: Icon(
-                  isDispensing ? Icons.stop_circle : Icons.play_circle_fill,
-                  color: isDispensing ? StemColors.labDanger : StemColors.labSuccess,
-                  size: 32,
-                ),
-                onPressed: onToggleTap,
-                tooltip: isDispensing ? 'Close Stopcock' : 'Open Stopcock (Dropwise)',
+            const SizedBox(height: 6),
+            // Tactile Stopcock Valve Controller (Adaptive)
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: isCompact ? 6 : 10,
+                vertical: 6,
               ),
-              const SizedBox(width: 8),
-              SizedBox(
-                width: 100,
-                child: SliderTheme(
-                  data: SliderTheme.of(context).copyWith(
-                    activeTrackColor: StemColors.primary,
-                    thumbColor: StemColors.secondary,
-                    trackHeight: 3,
-                  ),
-                  child: Slider(
-                    value: flowRate,
-                    min: 0.1,
-                    max: 1.0,
-                    onChanged: onFlowRateChanged,
-                  ),
-                ),
+              decoration: BoxDecoration(
+                color: StemColors.surfacePanel,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: StemColors.borderSubtle),
               ),
-            ],
-          ),
-        ),
-      ],
+              child: isCompact
+                  ? Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                          icon: Icon(
+                            isDispensing ? Icons.stop_circle : Icons.play_circle_fill,
+                            color: isDispensing ? StemColors.labDanger : StemColors.labSuccess,
+                            size: 30,
+                          ),
+                          onPressed: onToggleTap,
+                          tooltip: isDispensing ? 'Close Stopcock' : 'Open Stopcock (Dropwise)',
+                        ),
+                        SizedBox(
+                          width: (constraints.maxWidth - 16).clamp(50.0, 100.0),
+                          height: 24,
+                          child: SliderTheme(
+                            data: SliderTheme.of(context).copyWith(
+                              activeTrackColor: StemColors.primary,
+                              thumbColor: StemColors.secondary,
+                              trackHeight: 3,
+                              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+                              overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
+                            ),
+                            child: Slider(
+                              value: flowRate,
+                              min: 0.1,
+                              max: 1.0,
+                              onChanged: onFlowRateChanged,
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
+                          icon: Icon(
+                            isDispensing ? Icons.stop_circle : Icons.play_circle_fill,
+                            color: isDispensing ? StemColors.labDanger : StemColors.labSuccess,
+                            size: 30,
+                          ),
+                          onPressed: onToggleTap,
+                          tooltip: isDispensing ? 'Close Stopcock' : 'Open Stopcock (Dropwise)',
+                        ),
+                        const SizedBox(width: 4),
+                        Flexible(
+                          child: SliderTheme(
+                            data: SliderTheme.of(context).copyWith(
+                              activeTrackColor: StemColors.primary,
+                              thumbColor: StemColors.secondary,
+                              trackHeight: 3,
+                              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+                              overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
+                            ),
+                            child: Slider(
+                              value: flowRate,
+                              min: 0.1,
+                              max: 1.0,
+                              onChanged: onFlowRateChanged,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

@@ -161,9 +161,12 @@ class _QualitativeLabScreenState extends State<QualitativeLabScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: widget.onBack,
         ),
-        title: Text(
-          _isFlameTestMode ? 'Flame Test Bench (Q2/Q3)' : 'Qualitative Salt Analysis (Q2)',
-          style: StemTypography.textTheme.headlineSmall,
+        title: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            _isFlameTestMode ? 'Flame Test Bench (Q2/Q3)' : 'Qualitative Salt Analysis (Q2)',
+            style: StemTypography.textTheme.headlineSmall,
+          ),
         ),
         actions: [
           IconButton(
@@ -174,10 +177,11 @@ class _QualitativeLabScreenState extends State<QualitativeLabScreen> {
         ],
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            // 1. Salt & Bench Mode Switcher
-            Container(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isLandscape = constraints.maxHeight < 550 && constraints.maxWidth > constraints.maxHeight;
+
+            final saltHeader = Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               color: StemColors.surfacePanel,
               child: Row(
@@ -232,126 +236,177 @@ class _QualitativeLabScreenState extends State<QualitativeLabScreen> {
                   ),
                 ],
               ),
-            ),
+            );
 
-            // 2. Interactive Apparatus Stage
-            Expanded(
-              child: Container(
-                margin: const EdgeInsets.all(12),
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: StemColors.surfacePanel,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: StemColors.borderSubtle),
-                ),
-                child: _isFlameTestMode
-                    ? _buildFlameTestStage()
-                    : _buildTestTubeStage(),
+            final stageWidget = Container(
+              margin: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: StemColors.surfacePanel,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: StemColors.borderSubtle),
               ),
-            ),
+              child: _isFlameTestMode
+                  ? _buildFlameTestStage()
+                  : _buildTestTubeStage(),
+            );
 
-            // 3. Reagents Shelf or Flame Action Controls
-            Container(
+            final controlsWidget = Container(
               padding: const EdgeInsets.all(12),
               decoration: const BoxDecoration(
                 color: StemColors.surfacePanel,
                 border: Border(top: BorderSide(color: StemColors.borderSubtle)),
               ),
-              child: _isFlameTestMode
-                  ? _buildFlameControls()
-                  : _buildReagentShelf(),
-            ),
-          ],
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 840),
+                  child: _isFlameTestMode
+                      ? _buildFlameControls()
+                      : _buildReagentShelf(),
+                ),
+              ),
+            );
+
+            if (isLandscape) {
+              return Row(
+                children: [
+                  Expanded(
+                    flex: 5,
+                    child: stageWidget,
+                  ),
+                  Expanded(
+                    flex: 5,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          saltHeader,
+                          controlsWidget,
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }
+
+            return Column(
+              children: [
+                saltHeader,
+                Expanded(child: stageWidget),
+                controlsWidget,
+              ],
+            );
+          },
         ),
       ),
     );
   }
 
   Widget _buildTestTubeStage() {
-    return Column(
-      children: [
-        // Live Observation Banner
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: StemColors.surfaceBase,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: StemColors.borderSubtle),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'LIVE OBSERVATION & INFERENCE',
-                style: StemTypography.textTheme.labelSmall?.copyWith(color: StemColors.secondary),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                _currentReaction != null
-                    ? _currentReaction!.observation
-                    : 'Select a reagent from the shelf below to add dropwise into the test tube.',
-                style: StemTypography.textTheme.bodyMedium?.copyWith(color: Colors.white),
-              ),
-              if (_currentReaction != null) ...[
-                const SizedBox(height: 4),
-                Text(
-                  'Inference: ${_currentReaction!.inference}',
-                  style: TextStyle(fontSize: 12, color: StemColors.labSuccess, fontStyle: FontStyle.italic),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Live Observation Banner
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: StemColors.surfaceBase,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: StemColors.borderSubtle),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'LIVE OBSERVATION & INFERENCE',
+                        style: StemTypography.textTheme.labelSmall?.copyWith(color: StemColors.secondary),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        _currentReaction != null
+                            ? _currentReaction!.observation
+                            : 'Select a reagent from the shelf below to add dropwise into the test tube.',
+                        style: StemTypography.textTheme.bodyMedium?.copyWith(color: Colors.white),
+                      ),
+                      if (_currentReaction != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          'Inference: ${_currentReaction!.inference}',
+                          style: TextStyle(fontSize: 12, color: StemColors.labSuccess, fontStyle: FontStyle.italic),
+                        ),
+                      ],
+                    ],
+                  ),
                 ),
+                const SizedBox(height: 8),
+                // Test Tubes on Rack
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    // Tube 1: Salt Solution
+                    Flexible(
+                      child: TestTubeWidget(
+                        label: 'Original Salt Solution',
+                        solutionColor: const Color(0x33B2EBF2),
+                        precipitateColor: Colors.transparent,
+                        hasPrecipitate: false,
+                        isSolubleInExcess: false,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // Tube 2: Active Reaction Tube
+                    Flexible(
+                      child: TestTubeWidget(
+                        label: _activeReagent != null
+                            ? '+ ${_reagentName(_activeReagent!)}'
+                            : 'Reaction Tube',
+                        solutionColor: const Color(0x44B2EBF2),
+                        precipitateColor: _currentReaction?.precipitateColor ?? Colors.transparent,
+                        hasPrecipitate: _currentReaction?.hasPrecipitate ?? false,
+                        isSolubleInExcess: _currentReaction?.isSolubleInExcess ?? false,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
               ],
-            ],
+            ),
           ),
-        ),
-        const Spacer(),
-        // Test Tubes on Rack
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            // Tube 1: Salt Solution
-            TestTubeWidget(
-              label: 'Original Salt Solution',
-              solutionColor: const Color(0x33B2EBF2),
-              precipitateColor: Colors.transparent,
-              hasPrecipitate: false,
-              isSolubleInExcess: false,
-            ),
-            // Tube 2: Active Reaction Tube
-            TestTubeWidget(
-              label: _activeReagent != null
-                  ? '+ ${_reagentName(_activeReagent!)}'
-                  : 'Reaction Tube',
-              solutionColor: const Color(0x44B2EBF2),
-              precipitateColor: _currentReaction?.precipitateColor ?? Colors.transparent,
-              hasPrecipitate: _currentReaction?.hasPrecipitate ?? false,
-              isSolubleInExcess: _currentReaction?.isSolubleInExcess ?? false,
-            ),
-          ],
-        ),
-        const Spacer(),
-      ],
+        );
+      },
     );
   }
 
   Widget _buildFlameTestStage() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          BunsenBurnerWidget(
-            emissionColor: _flameColor,
-            isWireInFlame: _isWireInFlame,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            _isWireInFlame
-                ? 'Heating platinum wire coated with ${_selectedSalt.id} in non-luminous flame...'
-                : 'Dip wire in clean HCl, moisten with ${_selectedSalt.id}, then introduce to flame.',
-            textAlign: TextAlign.center,
-            style: StemTypography.textTheme.bodySmall,
-          ),
-        ],
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            BunsenBurnerWidget(
+              emissionColor: _flameColor,
+              isWireInFlame: _isWireInFlame,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              _isWireInFlame
+                  ? 'Heating platinum wire coated with ${_selectedSalt.id} in non-luminous flame...'
+                  : 'Dip wire in clean HCl, moisten with ${_selectedSalt.id}, then introduce to flame.',
+              textAlign: TextAlign.center,
+              style: StemTypography.textTheme.bodySmall,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -380,8 +435,11 @@ class _QualitativeLabScreenState extends State<QualitativeLabScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 8,
+          runSpacing: 4,
           children: [
             Text('REAGENTS SHELF (KNEC STANDARD)', style: StemTypography.textTheme.labelSmall),
             Text('${_recordedObservations.length} tests logged', style: TextStyle(fontSize: 11, color: StemColors.secondary)),
@@ -417,7 +475,9 @@ class _QualitativeLabScreenState extends State<QualitativeLabScreen> {
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        constraints: const BoxConstraints(minHeight: 44),
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           color: StemColors.surfacePanelElevated,
           borderRadius: BorderRadius.circular(8),

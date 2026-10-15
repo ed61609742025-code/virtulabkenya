@@ -33,6 +33,7 @@ class TestTubeWidget extends StatelessWidget {
         ),
         const SizedBox(height: 6),
         Container(
+          constraints: const BoxConstraints(maxWidth: 120),
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
           decoration: BoxDecoration(
             color: StemColors.surfacePanel,
@@ -41,6 +42,9 @@ class TestTubeWidget extends StatelessWidget {
           ),
           child: Text(
             label,
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.bold,

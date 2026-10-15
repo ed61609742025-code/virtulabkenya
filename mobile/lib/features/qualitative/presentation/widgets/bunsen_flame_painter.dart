@@ -165,12 +165,25 @@ class BunsenFlamePainter extends CustomPainter {
           ..strokeWidth = 2.0,
       );
 
-      // Cation Emission Glow Halo
+      // Cation Emission Spectral Glow & Atmospheric Bloom
       if (emissionColor != Colors.transparent) {
+        // 1. Broad outer spectral diffusion aura
+        final broadGlowPaint = Paint()
+          ..color = emissionColor.withOpacity(0.25)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 28);
+        canvas.drawCircle(Offset(centerX, chimneyTopY - 35), 45.0, broadGlowPaint);
+
+        // 2. Focused middle emission halo
         final glowPaint = Paint()
-          ..color = emissionColor.withOpacity(0.4)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12);
-        canvas.drawCircle(Offset(centerX, chimneyTopY - 35), 16.0, glowPaint);
+          ..color = emissionColor.withOpacity(0.60)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14);
+        canvas.drawCircle(Offset(centerX, chimneyTopY - 35), 22.0, glowPaint);
+
+        // 3. Bright ionization core
+        final coreGlowPaint = Paint()
+          ..color = Colors.white.withOpacity(0.75)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
+        canvas.drawCircle(Offset(centerX, chimneyTopY - 35), 6.0, coreGlowPaint);
       }
     }
   }

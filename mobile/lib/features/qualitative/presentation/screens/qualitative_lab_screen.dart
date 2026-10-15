@@ -19,6 +19,7 @@ class QualitativeLabScreen extends StatefulWidget {
 class _QualitativeLabScreenState extends State<QualitativeLabScreen> {
   SaltDefinition _selectedSalt = QualitativeEngine.availableSalts[0]; // Salt A (ZnSO4)
   bool _isFlameTestMode = false;
+  bool _useWhiteContrastPlate = false; // Dual Contrast Plate: false = Black Card, true = White Tile
 
   // Test tube reaction state
   Reagent? _activeReagent;
@@ -238,13 +239,51 @@ class _QualitativeLabScreenState extends State<QualitativeLabScreen> {
               ),
             );
 
-            final stageWidget = Container(
+            final hasEmission = _isFlameTestMode && _isWireInFlame && _flameColor != Colors.transparent;
+            final stageWidget = AnimatedContainer(
+              duration: const Duration(milliseconds: 350),
+              curve: Curves.easeInOut,
               margin: const EdgeInsets.all(8),
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: StemColors.surfacePanel,
+                gradient: _isFlameTestMode
+                    ? const LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          StemColors.qualitativeDarkroom,
+                          Color(0xFF070B14),
+                        ],
+                      )
+                    : const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          StemColors.qualitativeStageBase,
+                          StemColors.qualitativeBenchSurface,
+                        ],
+                      ),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: StemColors.borderSubtle),
+                border: Border.all(
+                  color: hasEmission
+                      ? _flameColor.withOpacity(0.5)
+                      : StemColors.borderSubtle,
+                  width: hasEmission ? 1.5 : 1.0,
+                ),
+                boxShadow: [
+                  if (hasEmission)
+                    BoxShadow(
+                      color: _flameColor.withOpacity(0.25),
+                      blurRadius: 28,
+                      spreadRadius: 2,
+                    )
+                  else
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.35),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                ],
               ),
               child: _isFlameTestMode
                   ? _buildFlameTestStage()
@@ -340,42 +379,110 @@ class _QualitativeLabScreenState extends State<QualitativeLabScreen> {
                         const SizedBox(height: 4),
                         Text(
                           'Inference: ${_currentReaction!.inference}',
-                          style: TextStyle(fontSize: 12, color: StemColors.labSuccess, fontStyle: FontStyle.italic),
+                          style: const TextStyle(fontSize: 12, color: StemColors.labSuccess, fontStyle: FontStyle.italic),
                         ),
                       ],
                     ],
                   ),
                 ),
-                const SizedBox(height: 8),
-                // Test Tubes on Rack
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                const SizedBox(height: 10),
+
+                // Dual Contrast Plate Selection Bar
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 6,
+                  runSpacing: 6,
                   children: [
-                    // Tube 1: Salt Solution
-                    Flexible(
-                      child: TestTubeWidget(
-                        label: 'Original Salt Solution',
-                        solutionColor: const Color(0x33B2EBF2),
-                        precipitateColor: Colors.transparent,
-                        hasPrecipitate: false,
-                        isSolubleInExcess: false,
+                    Text(
+                      'Contrast Plate: ',
+                      style: StemTypography.textTheme.labelSmall?.copyWith(
+                        color: StemColors.textSecondary,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    // Tube 2: Active Reaction Tube
-                    Flexible(
-                      child: TestTubeWidget(
-                        label: _activeReagent != null
-                            ? '+ ${_reagentName(_activeReagent!)}'
-                            : 'Reaction Tube',
-                        solutionColor: const Color(0x44B2EBF2),
-                        precipitateColor: _currentReaction?.precipitateColor ?? Colors.transparent,
-                        hasPrecipitate: _currentReaction?.hasPrecipitate ?? false,
-                        isSolubleInExcess: _currentReaction?.isSolubleInExcess ?? false,
-                      ),
+                    _buildContrastPill(
+                      label: 'Black Card',
+                      sublabel: 'White ppts',
+                      isSelected: !_useWhiteContrastPlate,
+                      onTap: () {
+                        setState(() {
+                          _useWhiteContrastPlate = false;
+                        });
+                      },
+                      cardColor: StemColors.qualitativeContrastBlack,
+                      textColor: Colors.white,
+                    ),
+                    _buildContrastPill(
+                      label: 'White Tile',
+                      sublabel: 'Colored ppts',
+                      isSelected: _useWhiteContrastPlate,
+                      onTap: () {
+                        setState(() {
+                          _useWhiteContrastPlate = true;
+                        });
+                      },
+                      cardColor: StemColors.qualitativeContrastWhite,
+                      textColor: const Color(0xFF0F172A),
                     ),
                   ],
+                ),
+                const SizedBox(height: 10),
+
+                // Chemical-resistant Bench with Interactive Contrast Plate
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  decoration: BoxDecoration(
+                    color: _useWhiteContrastPlate
+                        ? StemColors.qualitativeContrastWhite
+                        : StemColors.qualitativeContrastBlack,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: _useWhiteContrastPlate
+                          ? const Color(0xFFCBD5E1)
+                          : const Color(0xFF334155),
+                      width: 1.5,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.35),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      // Tube 1: Salt Solution
+                      Flexible(
+                        child: TestTubeWidget(
+                          label: 'Original Salt Solution',
+                          solutionColor: const Color(0x33B2EBF2),
+                          precipitateColor: Colors.transparent,
+                          hasPrecipitate: false,
+                          isSolubleInExcess: false,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // Tube 2: Active Reaction Tube
+                      Flexible(
+                        child: TestTubeWidget(
+                          label: _activeReagent != null
+                              ? '+ ${_reagentName(_activeReagent!)}'
+                              : 'Reaction Tube',
+                          solutionColor: const Color(0x44B2EBF2),
+                          precipitateColor: _currentReaction?.precipitateColor ?? Colors.transparent,
+                          hasPrecipitate: _currentReaction?.hasPrecipitate ?? false,
+                          isSolubleInExcess: _currentReaction?.isSolubleInExcess ?? false,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 8),
               ],
@@ -386,24 +493,158 @@ class _QualitativeLabScreenState extends State<QualitativeLabScreen> {
     );
   }
 
+  Widget _buildContrastPill({
+    required String label,
+    required String sublabel,
+    required bool isSelected,
+    required VoidCallback onTap,
+    required Color cardColor,
+    required Color textColor,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          constraints: const BoxConstraints(minHeight: 44),
+          decoration: BoxDecoration(
+            color: isSelected ? cardColor : StemColors.surfacePanel,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isSelected ? StemColors.primary : StemColors.borderSubtle,
+              width: isSelected ? 1.5 : 1.0,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(
+                  color: cardColor,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: isSelected ? StemColors.primary : StemColors.borderSubtle,
+                    width: 1,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 5),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: isSelected ? textColor : StemColors.textSecondary,
+                    ),
+                  ),
+                  Text(
+                    sublabel,
+                    style: TextStyle(
+                      fontSize: 8,
+                      color: isSelected ? textColor.withOpacity(0.85) : StemColors.textMuted,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildFlameTestStage() {
+    final hasEmission = _isWireInFlame && _flameColor != Colors.transparent;
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            BunsenBurnerWidget(
-              emissionColor: _flameColor,
-              isWireInFlame: _isWireInFlame,
+            // Darkroom fume hood status badge
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: StemColors.qualitativeDarkroom.withOpacity(0.85),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: hasEmission ? _flameColor.withOpacity(0.5) : StemColors.borderSubtle,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.dark_mode_outlined,
+                    size: 14,
+                    color: hasEmission ? _flameColor : StemColors.secondary,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    'FUME HOOD DARKROOM BENCH',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
+                      color: hasEmission ? _flameColor : StemColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                // Reactive atmospheric spectral bloom in darkroom
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 400),
+                  width: 200,
+                  height: 200,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        hasEmission
+                            ? _flameColor.withOpacity(0.35)
+                            : const Color(0xFF0284C7).withOpacity(0.12),
+                        Colors.transparent,
+                      ],
+                      radius: 0.7,
+                    ),
+                  ),
+                ),
+                BunsenBurnerWidget(
+                  emissionColor: _flameColor,
+                  isWireInFlame: _isWireInFlame,
+                ),
+              ],
             ),
             const SizedBox(height: 16),
-            Text(
-              _isWireInFlame
-                  ? 'Heating platinum wire coated with ${_selectedSalt.id} in non-luminous flame...'
-                  : 'Dip wire in clean HCl, moisten with ${_selectedSalt.id}, then introduce to flame.',
-              textAlign: TextAlign.center,
-              style: StemTypography.textTheme.bodySmall,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: StemColors.surfaceBase.withOpacity(0.7),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: StemColors.borderSubtle),
+              ),
+              child: Text(
+                _isWireInFlame
+                    ? 'Heating platinum wire coated with ${_selectedSalt.id} in non-luminous flame...'
+                    : 'Dip wire in clean HCl, moisten with ${_selectedSalt.id}, then introduce to flame.',
+                textAlign: TextAlign.center,
+                style: StemTypography.textTheme.bodySmall,
+              ),
             ),
           ],
         ),

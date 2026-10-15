@@ -115,7 +115,7 @@ class TestTubePainter extends CustomPainter {
       }
     }
 
-    // 3. Borosilicate Glass Test Tube
+    // 3. Borosilicate Glass Test Tube & Depth Outline
     final tubeOutline = Path()
       // Lip rim
       ..moveTo(tubeLeft - 3, topY)
@@ -132,8 +132,16 @@ class TestTubePainter extends CustomPainter {
       ..lineTo(tubeLeft - 3, topY)
       ..close();
 
+    // Soft glass depth shadow (ensures definition against both light tile and dark card)
+    final shadowPaint = Paint()
+      ..color = Colors.black.withOpacity(0.25)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3.0
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2);
+    canvas.drawPath(tubeOutline, shadowPaint);
+
     final glassPaint = Paint()
-      ..color = const Color(0x99FFFFFF)
+      ..color = const Color(0xCCFFFFFF)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.8;
     canvas.drawPath(tubeOutline, glassPaint);

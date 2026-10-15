@@ -41,4 +41,12 @@ class StemColors {
   static const Color flameCool = Color(0xFFFFB800); // Luminous yellow
   static const Color flameHotOuter = Color(0xFF2563EB); // Non-luminous blue
   static const Color flameHotInner = Color(0xFF0EA5E9); // Inner cone light cyan
+
+  // Qualitative Analysis Bench Surfaces & Contrast Cards
+  static const Color qualitativeStageBase = Color(0xFF0F172A); // Slate 900
+  static const Color qualitativeStageElevated = Color(0xFF1E293B); // Slate 800
+  static const Color qualitativeDarkroom = Color(0xFF030712); // Gray 950 (Fume hood / Darkroom)
+  static const Color qualitativeContrastBlack = Color(0xFF090D16); // High-contrast matte black card
+  static const Color qualitativeContrastWhite = Color(0xFFF1F5F9); // High-contrast ceramic white tile
+  static const Color qualitativeBenchSurface = Color(0xFF1A2234); // Chemical-resistant epoxy benchtop
 }

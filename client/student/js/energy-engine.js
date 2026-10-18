@@ -852,7 +852,7 @@ const EnergyEngine = (() => {
           <td style="font-weight:700;">${minVal}</td>
           <td style="font-weight:700;">${t}</td>
           <td>
-            ${isMixTime ? '<span style="color:var(--en-primary);font-weight:900;">[ MIX ⚗️ ]</span>' : 
+            ${isMixTime ? '<span style="color:var(--en-primary);font-weight:900;">[ MIX REACTANTS ]</span>' : 
             `<input type="text" class="en-table-input" id="tbl_temp_${t}" placeholder="—" onchange="EnergyEngine.onTableInputChange(${t})">`}
           </td>
           <td>
@@ -1021,14 +1021,14 @@ const EnergyEngine = (() => {
 
     const statusEl = document.getElementById('labStatusBanner');
     if (statusEl) {
-      statusEl.textContent = `⚡ Reactants mixed at t = ${simTime.toFixed(0)}s! Reaction in progress...`;
+      statusEl.textContent = `Reactants mixed at t = ${simTime.toFixed(0)}s! Reaction in progress...`;
       statusEl.style.color = 'var(--en-primary)';
     }
 
     const mixBtn = document.getElementById('btnMixReactants');
     if (mixBtn) {
       mixBtn.classList.remove('pulse-ready');
-      mixBtn.innerHTML = `<span class="action-icon">✅</span> <span class="action-text">Reactants Mixed</span>`;
+      mixBtn.innerHTML = `<span class="action-icon">${window.VLKIcons ? window.VLKIcons.svg('check-circle') : '✓'}</span> <span class="action-text">Reactants Mixed</span>`;
       mixBtn.style.opacity = '0.7';
     }
 
@@ -1061,7 +1061,7 @@ const EnergyEngine = (() => {
     const btn = document.getElementById('btnToggleStir');
     if (btn) {
       btn.classList.toggle('active', isStirring);
-      btn.innerHTML = `<span class="action-icon">🌀</span> <span class="action-text">Stirrer: ${isStirring ? 'ACTIVE' : 'OFF'}</span>`;
+      btn.innerHTML = `<span class="action-icon">${window.VLKIcons ? window.VLKIcons.svg('swirl') : ''}</span> <span class="action-text">Stirrer: ${isStirring ? 'ACTIVE' : 'OFF'}</span>`;
     }
     playStirSound();
     wakeSimulationLoop();
@@ -1072,7 +1072,7 @@ const EnergyEngine = (() => {
     const btn = document.getElementById('btnToggleLid');
     if (btn) {
       btn.classList.toggle('active', hasLidOn);
-      btn.innerHTML = `<span class="action-icon">🛡️</span> <span class="action-text">Lid: ${hasLidOn ? 'ON' : 'OFF'}</span>`;
+      btn.innerHTML = `<span class="action-icon">${window.VLKIcons ? window.VLKIcons.svg('shield') : ''}</span> <span class="action-text">Lid: ${hasLidOn ? 'ON' : 'OFF'}</span>`;
     }
     playLidSound();
     wakeSimulationLoop();
@@ -1106,7 +1106,7 @@ const EnergyEngine = (() => {
     const btn = document.getElementById('btnToggleFlame');
     if (btn) {
       btn.classList.toggle('active', isFlameLit);
-      btn.innerHTML = isFlameLit ? '🔥 Extinguish Spirit Lamp' : '🕯️ Light Spirit Lamp Burner';
+      btn.innerHTML = isFlameLit ? 'Extinguish Spirit Lamp' : 'Light Spirit Lamp Burner';
     }
     if (isFlameLit) playFlameSound();
     wakeSimulationLoop();
@@ -1322,13 +1322,13 @@ const EnergyEngine = (() => {
     if (clockEl) {
       const mins = Math.floor(simTime / 60);
       const secs = Math.floor(simTime % 60);
-      clockEl.textContent = `⏱️ ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      clockEl.innerHTML = `${window.VLKIcons ? window.VLKIcons.svg('timer') : ''} ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     }
 
     const digitalTempEl = document.getElementById('digitalTempDisplay');
     if (digitalTempEl) {
       if (studyMode === 'exam') {
-        digitalTempEl.textContent = '🔒 Read Scale';
+        digitalTempEl.textContent = 'Read Scale';
       } else {
         digitalTempEl.textContent = `${currentTemp.toFixed(1)} °C`;
       }
@@ -1355,7 +1355,7 @@ const EnergyEngine = (() => {
     // Telemetry Observations Strip
     const liveTElem = document.getElementById('telemetryLiveT');
     if (liveTElem) {
-      liveTElem.textContent = studyMode === 'exam' ? '🔍 Read Scale' : `${currentTemp.toFixed(1)} °C`;
+      liveTElem.textContent = studyMode === 'exam' ? 'Read Scale' : `${currentTemp.toFixed(1)} °C`;
     }
     const t0Elem = document.getElementById('telemetryT0');
     if (t0Elem) {
@@ -1372,12 +1372,12 @@ const EnergyEngine = (() => {
     }
     const stirPill = document.getElementById('pillStirStatus');
     if (stirPill) {
-      stirPill.textContent = isStirring ? '🌀 Stirrer: Active' : 'Stirrer: OFF';
+      stirPill.textContent = isStirring ? 'Stirrer: Active' : 'Stirrer: OFF';
       stirPill.style.color = isStirring ? 'var(--cyan-accent, #38BDF8)' : 'var(--text-muted)';
     }
     const lidPill = document.getElementById('pillLidStatus');
     if (lidPill) {
-      lidPill.textContent = isLidOn ? '🛡️ Lid: Sealed (EPS)' : '⚠️ Lid: OFF (Heat Loss)';
+      lidPill.textContent = isLidOn ? 'Lid: Sealed (EPS)' : 'Lid: OFF (Heat Loss)';
       lidPill.style.color = isLidOn ? 'var(--emerald-accent, #10B981)' : 'var(--amber-accent, #F59E0B)';
     }
   }
@@ -2731,7 +2731,7 @@ const EnergyEngine = (() => {
       }
 
       if (assignmentId) {
-        alert('🎉 Practical Assignment Submitted Successfully!\nYour teacher will review your rubric marks and release final comments.');
+        alert('Practical Assignment Submitted Successfully!\nYour teacher will review your rubric marks and release final comments.');
       }
     } catch (err) {
       console.warn('Energy session saved locally in offline queue:', err.message);
@@ -2801,11 +2801,11 @@ const EnergyEngine = (() => {
       const mins = Math.floor(examTimeRemaining / 60);
       const secs = examTimeRemaining % 60;
       const timerEl = document.getElementById('enExamTimerBadge');
-      if (timerEl) timerEl.textContent = `⏱️ ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      if (timerEl) timerEl.innerHTML = `${window.VLKIcons ? window.VLKIcons.svg('timer') : ''} ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 
       if (examTimeRemaining <= 0) {
         clearInterval(examTimerInterval);
-        alert('⏱️ KNEC Time is up! Submitting Question 1 Examination Booklet.');
+        alert('KNEC Time is up! Submitting Question 1 Examination Booklet.');
         submitWorksheet();
       }
     }, 1000);
@@ -2816,9 +2816,9 @@ const EnergyEngine = (() => {
     const btn = document.getElementById('soundToggleBtn');
     const icon = document.getElementById('soundIcon');
     const text = document.getElementById('soundText');
-    if (icon) icon.textContent = soundEnabled ? '🔊' : '🔇';
+    if (icon) icon.innerHTML = window.VLKIcons ? window.VLKIcons.svg(soundEnabled ? 'volume' : 'volume-x') : (soundEnabled ? 'ON' : 'OFF');
     if (text) text.textContent = soundEnabled ? 'Sound ON' : 'Sound OFF';
-    if (btn && !icon && !text) btn.textContent = soundEnabled ? '🔊 Sound ON' : '🔇 Sound OFF';
+    if (btn && !icon && !text) btn.innerHTML = `${window.VLKIcons ? window.VLKIcons.svg(soundEnabled ? 'volume' : 'volume-x') : ''} ${soundEnabled ? 'Sound ON' : 'Sound OFF'}`;
     if (soundEnabled) playClick();
   }
 
@@ -2861,9 +2861,9 @@ const EnergyEngine = (() => {
           name: rKey,
           formula: rKey,
           signalWord: 'WARNING',
-          pictograms: ['⚠️'],
+          pictograms: ['WARNING'],
           hazards: ['Mild irritant. Avoid contact with eyes or open cuts.'],
-          ppe: ['🥽 Chemical Safety Glasses', '🧤 Protective Gloves'],
+          ppe: ['Chemical Safety Glasses', 'Protective Gloves'],
           firstAid: 'Wash skin thoroughly with cold water. Flush eyes for 15 minutes.'
         };
       }

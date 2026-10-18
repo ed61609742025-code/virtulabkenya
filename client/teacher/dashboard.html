@@ -54,7 +54,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Precision Vector Icon System -->
+<script src="/shared/vlk-icons.js?v=164"></script>
 <!-- Critical Dashboard Stylesheets -->
 <link rel="stylesheet" href="../shared/style.css">
 <link rel="stylesheet" href="css/dashboard.css">
@@ -77,22 +79,35 @@
   </div>
   
   <div class="nav-actions">
-    <a href="/teacher/research_portal.html" class="btn" style="background:var(--blue-bg);color:var(--blue-accent);border:1px solid var(--blue-border);font-weight:700;">📊 Research & Efficacy</a>
-    <a href="/admin/dashboard.html" class="btn" style="background:var(--amber-bg);color:var(--amber-accent);border:1px solid var(--amber-border);font-weight:700;">🛡️ Admin Portal</a>
-    <button class="btn btn-secondary" onclick="window.print()" title="Print or save PDF class performance report">🖨️ Print Report</button>
+    <a href="/teacher/research_portal.html" class="btn" style="background:var(--blue-bg);color:var(--blue-accent);border:1px solid var(--blue-border);font-weight:700;">
+      <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;width:15px;height:15px;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Research &amp; Efficacy
+    </a>
+    <a href="/admin/dashboard.html" class="btn" style="background:var(--amber-bg);color:var(--amber-accent);border:1px solid var(--amber-border);font-weight:700;">
+      <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;width:15px;height:15px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Admin Portal
+    </a>
+    <button class="btn btn-secondary" onclick="window.print()" title="Print or save PDF class performance report">
+      <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;width:15px;height:15px;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print Report
+    </button>
     
     <!-- Compact Settings Cog Dropdown -->
     <div style="position:relative; display:inline-block;">
       <button type="button" class="btn" onclick="toggleTeacherSettings(event)" style="cursor:pointer; display:flex; align-items:center; gap:6px;" title="Portal Settings">
-        <span>⚙️ Settings</span>
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span>Settings</span>
       </button>
       
       <div id="teacherSettingsDropdown" style="display:none; position:absolute; right:0; top:42px; width:240px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; box-shadow:var(--shadow-lg); z-index:10000; padding:14px; flex-direction:column; gap:10px; text-align:left;">
         <span style="font-size:0.8rem; font-weight:800; color:var(--heading-color); margin-bottom:4px; display:block;">Appearance Theme</span>
         <div class="theme-toggle-group" style="width:100%;">
-          <button class="theme-btn-chip" style="flex:1;" data-theme="dark" onclick="setTheme('dark'); if (typeof window.reRenderCharts === 'function') window.reRenderCharts();">🌙 Dark</button>
-          <button class="theme-btn-chip" style="flex:1;" data-theme="light" onclick="setTheme('light'); if (typeof window.reRenderCharts === 'function') window.reRenderCharts();">☀️ Light</button>
-          <button class="theme-btn-chip" style="flex:1;" data-theme="green" onclick="setTheme('green'); if (typeof window.reRenderCharts === 'function') window.reRenderCharts();">🧪 Lab</button>
+          <button class="theme-btn-chip" style="flex:1;" data-theme="dark" onclick="setTheme('dark'); if (typeof window.reRenderCharts === 'function') window.reRenderCharts();">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:middle;margin-right:4px;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>Dark
+          </button>
+          <button class="theme-btn-chip" style="flex:1;" data-theme="light" onclick="setTheme('light'); if (typeof window.reRenderCharts === 'function') window.reRenderCharts();">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:middle;margin-right:4px;"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>Light
+          </button>
+          <button class="theme-btn-chip" style="flex:1;" data-theme="green" onclick="setTheme('green'); if (typeof window.reRenderCharts === 'function') window.reRenderCharts();">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:middle;margin-right:4px;"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/></svg>Lab
+          </button>
         </div>
       </div>
     </div>
@@ -106,53 +121,96 @@
   <aside class="teacher-sidebar">
     <div class="sidebar-group-title">Dashboard &amp; Classroom</div>
     <button class="sidebar-nav-btn active" id="btnTabOverview" onclick="switchTeacherTab('paneOverview')">
-      <span>📊 Class Overview</span>
+      <span style="display:flex;align-items:center;gap:8px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span>Class Overview</span>
+      </span>
     </button>
     <button class="sidebar-nav-btn" id="btnTabStudents" onclick="switchTeacherTab('paneStudents')">
-      <span>👥 Student Roster</span>
+      <span style="display:flex;align-items:center;gap:8px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Student Roster</span>
+      </span>
     </button>
 
     <div class="sidebar-group-title">Exam Studio</div>
     <button class="sidebar-nav-btn" id="btnTabAiAssistant" onclick="switchTeacherTab('paneAiAssistant')">
-      <span style="display:flex;align-items:center;gap:6px;">🤖 Walimu AI Exam Setter <span class="pill pill-info" style="font-size:0.62rem;padding:2px 6px;margin-left:auto;">AI</span></span>
+      <span style="display:flex;align-items:center;gap:8px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
+        <span>Walimu AI Exam Setter</span>
+        <span class="pill pill-info" style="font-size:0.62rem;padding:2px 6px;margin-left:auto;">AI</span>
+      </span>
     </button>
     <button class="sidebar-nav-btn" id="btnTabAssignments" onclick="switchTeacherTab('paneAssignments')">
-      <span>📝 Assignments &amp; Grading</span>
+      <span style="display:flex;align-items:center;gap:8px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg>
+        <span>Assignments &amp; Grading</span>
+      </span>
       <span class="badge-count" id="ungradedBadge" style="display:none;">0</span>
     </button>
 
     <div class="sidebar-group-title">KCSE Lab Modules</div>
     <button class="sidebar-nav-btn" id="btnTabTitration" onclick="switchTeacherTab('paneTitration')">
-      <span>🧪 Volumetric Titrations</span>
+      <span style="display:flex;align-items:center;gap:8px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><rect x="10" y="2" width="4" height="18" rx="1"/><path d="M10 5h4M10 8h2M10 11h4M10 14h2M10 17h4"/><path d="M12 20v2"/><circle cx="12" cy="18" r="1.5"/></svg>
+        <span>Volumetric Titrations</span>
+      </span>
     </button>
     <button class="sidebar-nav-btn" id="btnTabQualitative" onclick="switchTeacherTab('paneQualitative')">
-      <span>🧂 Qualitative Analysis</span>
+      <span style="display:flex;align-items:center;gap:8px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M14.5 2v17.5c0 1.4-1.1 2.5-2.5 2.5s-2.5-1.1-2.5-2.5V2"/><path d="M8.5 2h7"/><path d="M9.5 12h5"/></svg>
+        <span>Qualitative Analysis</span>
+      </span>
     </button>
     <button class="sidebar-nav-btn" id="btnTabOrganic" onclick="switchTeacherTab('paneOrganic')">
-      <span>⚗️ Organic Chemistry</span>
+      <span style="display:flex;align-items:center;gap:8px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><circle cx="12" cy="12" r="2.5"/><path d="M4.93 4.93c4.24-4.24 12.38 3.9 8.14 8.14-4.24 4.24-12.38-3.9-8.14-8.14z"/><path d="M19.07 4.93c-4.24-4.24-12.38 3.9-8.14 8.14 4.24 4.24 12.38-3.9 8.14-8.14z"/></svg>
+        <span>Organic Chemistry</span>
+      </span>
     </button>
     <button class="sidebar-nav-btn" id="btnTabSolubility" onclick="switchTeacherTab('paneSolubility')">
-      <span>🌡️ Solubility Curves</span>
+      <span style="display:flex;align-items:center;gap:8px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/><circle cx="11.5" cy="17.5" r="1.5" fill="currentColor"/></svg>
+        <span>Solubility Curves</span>
+      </span>
     </button>
     <button class="sidebar-nav-btn" id="btnTabEnergy" onclick="switchTeacherTab('paneEnergy')">
-      <span>🔥 Energy Changes</span>
+      <span style="display:flex;align-items:center;gap:8px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M8.5 14.5A3.5 3.5 0 0 0 12 18a3.5 3.5 0 0 0 3.5-3.5c0-2-1.5-3.5-2.5-5-.5-1-1-2.5-1-3.5 0 0-2.5 2.5-2.5 5 0 1-.5 1.5-1 2.5z"/><path d="M12 2c5 4.5 7 9 7 13a7 7 0 1 1-14 0c0-4 3-7.5 7-13z"/></svg>
+        <span>Energy Changes</span>
+      </span>
     </button>
     <button class="sidebar-nav-btn" id="btnTabRates" onclick="switchTeacherTab('paneRates')">
-      <span>⚡ Reaction Rates</span>
+      <span style="display:flex;align-items:center;gap:8px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span>Reaction Rates</span>
+      </span>
     </button>
     <button class="sidebar-nav-btn" id="btnTabGas" onclick="switchTeacherTab('paneGas')">
-      <span>💨 Gas Preparation</span>
+      <span style="display:flex;align-items:center;gap:8px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg>
+        <span>Gas Preparation</span>
+      </span>
     </button>
     <button class="sidebar-nav-btn" id="btnTabComposite" onclick="switchTeacherTab('paneComposite')">
-      <span>📋 Composite Mock Exams</span>
+      <span style="display:flex;align-items:center;gap:8px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/></svg>
+        <span>Composite Mock Exams</span>
+      </span>
     </button>
 
     <div class="sidebar-group-title">Reports & Settings</div>
     <button class="sidebar-nav-btn" id="btnTabLeaderboard" onclick="switchTeacherTab('paneLeaderboard')">
-      <span>🏆 Leaderboard & Badges</span>
+      <span style="display:flex;align-items:center;gap:8px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+        <span>Leaderboard &amp; Badges</span>
+      </span>
     </button>
     <button class="sidebar-nav-btn" id="btnTabSettings" onclick="switchTeacherTab('paneSettings')">
-      <span>⚙️ Account & Security</span>
+      <span style="display:flex;align-items:center;gap:8px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span>Account &amp; Security</span>
+      </span>
     </button>
   </aside>
 
@@ -160,7 +218,9 @@
   <main class="teacher-content">
     <div class="teacher-hero-card">
       <div class="teacher-hero-left">
-        <div class="teacher-avatar-badge">👨‍🏫</div>
+        <div class="teacher-avatar-badge" style="display:flex;align-items:center;justify-content:center;">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:24px;height:24px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
         <div class="teacher-hero-meta">
           <h1>Welcome back, <span id="teacherName">Teacher</span></h1>
           <p>Senior Chemistry Instructor & Laboratory Practical Examiner</p>
@@ -169,13 +229,17 @@
       <div id="teacherCodeBanner" class="teacher-code-pill-box">
         <span style="font-size:0.78rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em;">Class Link Code:</span>
         <code id="teacherCodePill">—</code>
-        <button class="btn btn-sm btn-primary" onclick="copyTeacherCode()" title="Copy teacher code to share with students">📋 Copy Code</button>
+        <button class="btn btn-sm btn-primary" onclick="copyTeacherCode()" title="Copy teacher code to share with students">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:middle;margin-right:4px;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy Code
+        </button>
       </div>
     </div>
 
     <!-- Tab Pane 1: Overview -->
     <div id="paneOverview" class="tab-pane active">
-      <h2 class="section-title">📊 Class Performance Overview</h2>
+      <h2 class="section-title">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Class Performance Overview
+      </h2>
       <div id="statStrip" class="stat-strip"></div>
       <div class="charts-row">
         <div class="chart-card">
@@ -195,14 +259,19 @@
       <!-- AI Exam Assistant Hero Quick Launch Banner -->
       <div class="ai-hero-banner" style="margin-bottom:22px;">
         <div class="ai-hero-title-group">
-          <div class="ai-hero-icon">🤖</div>
+          <div class="ai-hero-icon" style="display:flex;align-items:center;justify-content:center;">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:26px;height:26px;"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
+          </div>
           <div>
             <h3 style="margin:0 0 4px;font-family:var(--font-heading);font-size:1.1rem;color:var(--heading-color);">Set Practical Exams in Seconds with Walimu AI Assistant</h3>
             <p style="margin:0;font-size:0.84rem;color:var(--text-muted);">Have an exam paper? Upload it (PDF/Image/Text). Or just share an idea — our AI examiner configures the complete simulation bench, chemical stoichiometry, and KNEC marking scheme.</p>
           </div>
         </div>
         <button class="btn btn-primary" onclick="switchTeacherTab('paneAiAssistant')" style="background:linear-gradient(135deg, #10B981, #059669);border:none;font-weight:800;padding:10px 22px;border-radius:100px;display:flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(16,185,129,0.3);flex-shrink:0;">
-          <span>✨ Launch AI Exam Assistant →</span>
+          <span style="display:inline-flex;align-items:center;gap:6px;">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3Z"/></svg>
+            Launch AI Exam Assistant &rarr;
+          </span>
         </button>
       </div>
 
@@ -210,7 +279,9 @@
       <div class="stat-strip" id="assignmentStatStrip" style="margin-bottom:20px;">
         <div class="stat-card">
           <div class="stat-card-top">
-            <span class="stat-card-icon" style="background:var(--blue-bg);color:var(--blue-accent);">📋</span>
+            <span class="stat-card-icon" style="background:var(--blue-bg);color:var(--blue-accent);display:inline-flex;align-items:center;justify-content:center;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg>
+            </span>
             <span class="pill pill-info" style="font-size:0.68rem;">Active</span>
           </div>
           <div class="stat-value" id="statAssignmentsCount">0</div>
@@ -220,7 +291,9 @@
 
         <div class="stat-card">
           <div class="stat-card-top">
-            <span class="stat-card-icon" style="background:var(--amber-bg);color:var(--amber-accent);">⏳</span>
+            <span class="stat-card-icon" style="background:var(--amber-bg);color:var(--amber-accent);display:inline-flex;align-items:center;justify-content:center;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </span>
             <span class="pill pill-warn" style="font-size:0.68rem;">Action Req.</span>
           </div>
           <div class="stat-value" id="statPendingCount" style="color:var(--amber-accent);">0</div>
@@ -230,7 +303,9 @@
 
         <div class="stat-card">
           <div class="stat-card-top">
-            <span class="stat-card-icon" style="background:var(--green-bg);color:var(--green-accent);">✓</span>
+            <span class="stat-card-icon" style="background:var(--green-bg);color:var(--green-accent);display:inline-flex;align-items:center;justify-content:center;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
             <span class="pill pill-ok" style="font-size:0.68rem;">Released</span>
           </div>
           <div class="stat-value" id="statMarkedCount" style="color:var(--green-accent);">0</div>
@@ -240,7 +315,9 @@
 
         <div class="stat-card">
           <div class="stat-card-top">
-            <span class="stat-card-icon" style="background:rgba(124, 58, 237, 0.15);color:var(--violet-accent);">🎓</span>
+            <span class="stat-card-icon" style="background:rgba(124, 58, 237, 0.15);color:var(--violet-accent);display:inline-flex;align-items:center;justify-content:center;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+            </span>
             <span class="pill" style="background:rgba(124, 58, 237, 0.15);color:var(--violet-accent);font-size:0.68rem;">KNEC Lab</span>
           </div>
           <div class="stat-value" id="statSubmissionsTotal">0</div>
@@ -253,13 +330,19 @@
       <div class="console-section-card">
         <div class="section-header-row">
           <div class="section-header-title-group">
-            <h2>📥 Submitted Assignments & Marking Console</h2>
+            <h2>
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>Submitted Assignments &amp; Marking Console
+            </h2>
             <p>Review student practical lab booklets, evaluate calculations, release KNEC marks, and export data.</p>
           </div>
           <div class="table-filter-pills" id="submissionFilterTabs">
             <button class="filter-pill-btn active" id="filterTabAll" onclick="filterSubmissionsTab('all', this)">All Submissions</button>
-            <button class="filter-pill-btn" id="filterTabPending" onclick="filterSubmissionsTab('pending', this)">🟡 Pending Approval</button>
-            <button class="filter-pill-btn" id="filterTabMarked" onclick="filterSubmissionsTab('marked', this)">🟢 Marked & Released</button>
+            <button class="filter-pill-btn" id="filterTabPending" onclick="filterSubmissionsTab('pending', this)">
+              <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#F59E0B;margin-right:6px;"></span>Pending Approval
+            </button>
+            <button class="filter-pill-btn" id="filterTabMarked" onclick="filterSubmissionsTab('marked', this)">
+              <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#10B981;margin-right:6px;"></span>Marked &amp; Released
+            </button>
           </div>
         </div>
 
@@ -272,15 +355,21 @@
       <div class="console-section-card">
         <div class="section-header-row">
           <div class="section-header-title-group">
-            <h2>🛠️ Active Practical Assignments</h2>
+            <h2>
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/></svg>Active Practical Assignments
+            </h2>
             <p>Monitor student completion rates, issue due date reminders, download CSV scorecards, or modify exam parameters.</p>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <button class="btn btn-outline btn-sm" onclick="switchTeacherTab('paneAiAssistant')">
-              <span>🤖 Walimu AI Exam Setter</span>
+              <span style="display:inline-flex;align-items:center;gap:6px;">
+                <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>Walimu AI Exam Setter
+              </span>
             </button>
             <button class="btn btn-primary btn-sm" onclick="scrollToCreateAssignment()">
-              <span>➕ Create New Assignment</span>
+              <span style="display:inline-flex;align-items:center;gap:6px;">
+                <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Create New Assignment
+              </span>
             </button>
           </div>
         </div>
@@ -305,14 +394,18 @@
         <!-- Top Form Row: Title and Practical Type -->
         <div class="row">
           <div class="field" style="flex: 2;">
-            <label for="aTitle">📝 Assignment Title</label>
+            <label for="aTitle">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Assignment Title
+            </label>
             <input type="text" id="aTitle" class="form-control" placeholder="e.g. KCSE Chemistry Paper 3 Term 2 National Mock">
             <span class="field-hint">A clear exam or practical title shown to your students</span>
           </div>
           <div class="field" style="flex: 1.2;">
-            <label for="aType">⚗️ Practical Module Type</label>
+            <label for="aType">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/></svg>Practical Module Type
+            </label>
             <select id="aType" class="form-control" onchange="toggleCompositeConfigPanel()">
-              <option value="kcseComposite">🏆 KCSE Composite Practical Exam (40 Marks Total)</option>
+              <option value="kcseComposite">KCSE Composite Practical Exam (40 Marks Total)</option>
               <option value="acidBase">Acid-Base Titration (Neutralization)</option>
               <option value="redox">Redox Titration (Manganate / Iron)</option>
               <option value="precipitation">Precipitation Titration</option>
@@ -321,12 +414,12 @@
               <option value="tribasic">Tribasic Acid Titration (H₃PO₄)</option>
               <option value="weakAcid">Weak Acid – Strong Base</option>
               <option value="weakBase">Weak Base – Strong Acid</option>
-              <option value="qualitative">🧪 Qualitative Salt Analysis (Inorganic ID)</option>
-              <option value="organic">🧫 Organic Chemistry (Functional Groups)</option>
-              <option value="solubility">🌡️ Solubility Curves & Crystallization</option>
-              <option value="energy">🔥 Energy Changes (Enthalpy / Thermochemistry)</option>
-              <option value="rates">⚡ Reaction Rates & Kinetics</option>
-              <option value="gas">💨 Gas Preparation & Testing</option>
+              <option value="qualitative">Qualitative Salt Analysis (Inorganic ID)</option>
+              <option value="organic">Organic Chemistry (Functional Groups)</option>
+              <option value="solubility">Solubility Curves &amp; Crystallization</option>
+              <option value="energy">Energy Changes (Enthalpy / Thermochemistry)</option>
+              <option value="rates">Reaction Rates &amp; Kinetics</option>
+              <option value="gas">Gas Preparation &amp; Testing</option>
             </select>
             <span class="field-hint">Determines the virtual laboratory setup and KNEC scoring rubric</span>
           </div>
@@ -335,12 +428,16 @@
         <!-- Second Row: Due Date and Instructions -->
         <div class="row" style="margin-top: 6px;">
           <div class="field" style="flex: 1;">
-            <label for="aDue">📅 Due Date & Deadline</label>
+            <label for="aDue">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Due Date &amp; Deadline
+            </label>
             <input type="date" id="aDue" class="form-control">
             <span class="field-hint">Students receive auto-reminders before this date</span>
           </div>
           <div class="field" style="flex: 2;">
-            <label for="aInstructions">📋 Practical Instructions & Teacher Notes</label>
+            <label for="aInstructions">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg>Practical Instructions &amp; Teacher Notes
+            </label>
             <input type="text" id="aInstructions" class="form-control" placeholder="e.g. Complete two concordant titres within 0.20 cm³ and record qualitative observations.">
             <span class="field-hint">Special laboratory instructions displayed at the top of the student booklet</span>
           </div>
@@ -350,7 +447,10 @@
         <div id="kcseCompositeConfigPanel" class="kcse-blueprint-panel">
           <div class="blueprint-header">
             <div class="blueprint-header-title">
-              <span>⚙️ KCSE Composite Practical Exam Question Setter (40 Marks)</span>
+              <span style="display:inline-flex;align-items:center;gap:6px;">
+                <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                KCSE Composite Practical Exam Question Setter (40 Marks)
+              </span>
             </div>
             <span class="blueprint-badge">KNEC Paper 3 Blueprint</span>
           </div>
@@ -358,7 +458,7 @@
           <!-- Series Template Selector Banner -->
           <div class="field" style="margin-bottom:18px; background:var(--card-bg); padding:14px; border-radius:12px; border:1px solid var(--card-border);">
             <label for="cfgSeriesPreset" style="font-weight:800; color:var(--amber-accent); margin-bottom:6px;">
-              📋 National Standard Mock Series Template
+              National Standard Mock Series Template
             </label>
             <select id="cfgSeriesPreset" class="form-control" onchange="applySeriesPreset()">
               <option value="series_1">Series 1: National Classic (HCl/NaOH · Lead Nitrate · Ethanol)</option>
@@ -370,7 +470,7 @@
               <option value="series_2022">KCSE 2022: National Practical (HCl/Na₂CO₃ · MgSO₄ · Propanoic Acid)</option>
               <option value="series_2023">KCSE 2023: National Practical (H₂C₂O₄/NaOH · Ca(NO₃)₂ · Hex-1-ene)</option>
               <option value="series_2024">KCSE 2024: National Practical (HCl/NaHCO₃ · FeCl₃ · Butan-1-ol)</option>
-              <option value="custom">✏️ Custom Modular Combination</option>
+              <option value="custom">Custom Modular Combination</option>
             </select>
             <span class="field-hint" style="margin-top:4px;">Instantly sets standard KNEC reagents across all 3 exam questions</span>
           </div>
@@ -378,7 +478,10 @@
           <!-- Question 1 Card -->
           <div class="blueprint-question-card">
             <div class="question-card-title">
-              <span>🧪 Question 1: Volumetric Analysis Settings</span>
+              <span style="display:inline-flex;align-items:center;gap:6px;">
+                <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><rect x="10" y="2" width="4" height="18" rx="1"/><path d="M10 5h4M10 8h2M10 11h4M10 14h2M10 17h4"/><path d="M12 20v2"/><circle cx="12" cy="18" r="1.5"/></svg>
+                Question 1: Volumetric Analysis Settings
+              </span>
               <span class="question-marks-badge">15 Marks</span>
             </div>
             
@@ -392,7 +495,7 @@
                 <option value="weakBase">HCl + NH₃(aq) (Strong Acid – Weak Base Ammonia 1:1)</option>
                 <option value="carbonate">2HCl + Na₂CO₃ (Strong Acid – Sodium Carbonate 2:1)</option>
                 <option value="redox_kmnO4">KMnO₄ + 5FeSO₄ (Redox Titration 1:5)</option>
-                <option value="custom">✏️ Custom Reagents & Manual Ratio</option>
+                <option value="custom">Custom Reagents &amp; Manual Ratio</option>
               </select>
             </div>
 
@@ -440,7 +543,10 @@
             <!-- Q2 Config -->
             <div class="blueprint-question-card" style="margin-bottom:0;">
               <div class="question-card-title">
-                <span>🧂 Question 2: Inorganic Salt Analysis</span>
+                <span style="display:inline-flex;align-items:center;gap:6px;">
+                  <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M14.5 2v17.5c0 1.4-1.1 2.5-2.5 2.5s-2.5-1.1-2.5-2.5V2"/><path d="M8.5 2h7"/><path d="M9.5 12h5"/></svg>
+                  Question 2: Inorganic Salt Analysis
+                </span>
                 <span class="question-marks-badge">15 Marks</span>
               </div>
               <div class="field">
@@ -458,7 +564,7 @@
                   <option value="NH4Cl">Ammonium Chloride — NH₄Cl</option>
                   <option value="Na2CO3">Sodium Carbonate — Na₂CO₃</option>
                   <option value="NaHCO3">Sodium Hydrogen Carbonate — NaHCO₃</option>
-                  <option value="random">🎲 Random Salt Assignment per Student</option>
+                  <option value="random">Random Salt Assignment per Student</option>
                 </select>
               </div>
             </div>
@@ -466,7 +572,10 @@
             <!-- Q3 Config -->
             <div class="blueprint-question-card" style="margin-bottom:0;">
               <div class="question-card-title">
-                <span>🧫 Question 3: Organic Functional Group</span>
+                <span style="display:inline-flex;align-items:center;gap:6px;">
+                  <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><circle cx="12" cy="12" r="2.5"/><path d="M4.93 4.93c4.24-4.24 12.38 3.9 8.14 8.14-4.24 4.24-12.38-3.9-8.14-8.14z"/><path d="M19.07 4.93c-4.24-4.24-12.38 3.9-8.14 8.14 4.24 4.24 12.38-3.9 8.14-8.14z"/></svg>
+                  Question 3: Organic Functional Group
+                </span>
                 <span class="question-marks-badge">10 Marks</span>
               </div>
               <div class="field">
@@ -481,7 +590,7 @@
                   <option value="Ethyne">Ethyne — C₂H₂ (Alkyne Gas)</option>
                   <option value="Ethyl Ethanoate">Ethyl Ethanoate — CH₃COOC₂H₅ (Ester)</option>
                   <option value="Hexane">Hexane — C₆H₁₄ (Saturated Alkane)</option>
-                  <option value="random">🎲 Random Organic Sample per Student</option>
+                  <option value="random">Random Organic Sample per Student</option>
                 </select>
               </div>
             </div>
@@ -493,13 +602,13 @@
         <div style="margin-top:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
           <div style="display:flex; align-items:center; gap:10px;">
             <button class="btn btn-primary" id="aSaveBtn" onclick="saveAssignment()" style="padding:10px 24px; font-size:0.9rem;">
-              <span>🚀 Publish Practical Assignment</span>
+              <span style="display:inline-flex;align-items:center;gap:6px;">
+                <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Publish Practical Assignment
+              </span>
             </button>
           </div>
           <div id="assignMsg" style="margin:0;"></div>
         </div>
-
-      </div>
 
     </div>
 
@@ -507,14 +616,18 @@
     <div id="paneAiAssistant" class="tab-pane">
       <div class="ai-hero-banner">
         <div class="ai-hero-title-group">
-          <div class="ai-hero-icon">🤖</div>
+          <div class="ai-hero-icon" style="display:flex;align-items:center;justify-content:center;">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:26px;height:26px;"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
+          </div>
           <div>
             <h2 style="margin:0 0 4px;font-family:var(--font-heading);font-size:1.4rem;color:var(--heading-color);">Walimu AI Exam Studio</h2>
             <p style="margin:0;font-size:0.88rem;color:var(--text-muted);">AI-powered KNEC KCSE Chemistry practical exam setter, question extractor &amp; curriculum co-pilot</p>
           </div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn btn-sm btn-secondary" onclick="openInManualStudio()" title="Switch to manual form editor">✏️ Open Manual Studio</button>
+          <button class="btn btn-sm btn-secondary" onclick="openInManualStudio()" title="Switch to manual form editor">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>Open Manual Studio
+          </button>
         </div>
       </div>
 
@@ -524,10 +637,16 @@
       <!-- Mode Selector Pills -->
       <div class="ai-mode-toggle-group">
         <button class="ai-mode-btn active" id="aiModeBtnIdea" onclick="setAiExamMode('idea')">
-          <span>💡 From an Idea or Syllabus Topic</span>
+          <span style="display:inline-flex;align-items:center;gap:6px;">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>
+            From an Idea or Syllabus Topic
+          </span>
         </button>
         <button class="ai-mode-btn" id="aiModeBtnUpload" onclick="setAiExamMode('upload')">
-          <span>📄 Upload Exam Paper (PDF / Image / Text)</span>
+          <span style="display:inline-flex;align-items:center;gap:6px;">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Upload Exam Paper (PDF / Image / Text)
+          </span>
         </button>
       </div>
 
@@ -545,12 +664,12 @@
         <div style="margin-top:12px;">
           <span style="font-size:0.75rem;font-weight:800;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;">Or pick an instant national curriculum template:</span>
           <div class="ai-chips-wrap">
-            <button type="button" class="ai-chip" onclick="selectAiTemplate('classic')">🧪 Neutralization Classic (HCl/NaOH · Pb²⁺ · Ethanol)</button>
-            <button type="button" class="ai-chip" onclick="selectAiTemplate('redox')">⚡ Redox Practical (KMnO₄/Fe²⁺ · ZnSO₄ · Alkene)</button>
-            <button type="button" class="ai-chip" onclick="selectAiTemplate('energy')">🔥 Thermochemistry &amp; Neutralization Enthalpy</button>
-            <button type="button" class="ai-chip" onclick="selectAiTemplate('rates')">⏱️ Reaction Rates (Disappearing Cross &amp; Gas)</button>
-            <button type="button" class="ai-chip" onclick="selectAiTemplate('gas')">💨 Gas Preparation &amp; Confirmatory Tests</button>
-            <button type="button" class="ai-chip" onclick="selectAiTemplate('twosalt')">🧂 Advanced Two-Salt Separation (Merit Challenge)</button>
+            <button type="button" class="ai-chip" onclick="selectAiTemplate('classic')">Neutralization Classic (HCl/NaOH · Pb²⁺ · Ethanol)</button>
+            <button type="button" class="ai-chip" onclick="selectAiTemplate('redox')">Redox Practical (KMnO₄/Fe²⁺ · ZnSO₄ · Alkene)</button>
+            <button type="button" class="ai-chip" onclick="selectAiTemplate('energy')">Thermochemistry &amp; Neutralization Enthalpy</button>
+            <button type="button" class="ai-chip" onclick="selectAiTemplate('rates')">Reaction Rates (Disappearing Cross &amp; Gas)</button>
+            <button type="button" class="ai-chip" onclick="selectAiTemplate('gas')">Gas Preparation &amp; Confirmatory Tests</button>
+            <button type="button" class="ai-chip" onclick="selectAiTemplate('twosalt')">Advanced Two-Salt Separation (Merit Challenge)</button>
           </div>
         </div>
 
@@ -568,14 +687,14 @@
           <div>
             <label for="aiTypeSelect" style="font-size:0.78rem;font-weight:800;color:var(--heading-color);display:block;margin-bottom:4px;">Exam Format</label>
             <select id="aiTypeSelect" class="form-control">
-              <option value="kcseComposite" selected>🏆 KCSE Composite Mock (40 Marks, 3 Questions)</option>
+              <option value="kcseComposite" selected>KCSE Composite Mock (40 Marks, 3 Questions)</option>
               <option value="acidBase">Acid-Base Volumetric Titration</option>
               <option value="redox">Redox Volumetric Titration</option>
-              <option value="qualitative">🧂 Qualitative Salt Analysis</option>
-              <option value="organic">⚗️ Organic Chemistry Tests</option>
-              <option value="energy">🔥 Thermochemistry / Enthalpy</option>
-              <option value="rates">⚡ Reaction Rates &amp; Kinetics</option>
-              <option value="gas">💨 Gas Preparation &amp; Collection</option>
+              <option value="qualitative">Qualitative Salt Analysis</option>
+              <option value="organic">Organic Chemistry Tests</option>
+              <option value="energy">Thermochemistry / Enthalpy</option>
+              <option value="rates">Reaction Rates &amp; Kinetics</option>
+              <option value="gas">Gas Preparation &amp; Collection</option>
             </select>
           </div>
           <div>
@@ -594,7 +713,10 @@
 
         <div style="margin-top:20px;display:flex;justify-content:flex-end;">
           <button type="button" class="btn btn-primary ai-action-btn" onclick="submitAiIdeaExam()" style="padding:12px 28px;font-size:0.92rem;font-weight:800;border-radius:100px;background:linear-gradient(135deg, #10B981, #059669);box-shadow:0 4px 14px rgba(16,185,129,0.35);">
-            <span>🚀 Generate Exam with AI</span>
+            <span style="display:inline-flex;align-items:center;gap:6px;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3Z"/></svg>
+              Generate Exam with AI
+            </span>
           </button>
         </div>
       </div>
@@ -609,7 +731,9 @@
         <div class="ai-drop-zone" id="aiDropZone" role="button" tabindex="0" aria-label="Upload exam paper PDF, photo scan, or text file" onclick="document.getElementById('aiFileInput').click()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();document.getElementById('aiFileInput').click();}" ondragover="handleAiDragOver(event)" ondragleave="handleAiDragLeave(event)" ondrop="handleAiFileDrop(event)">
           <input type="file" id="aiFileInput" style="display:none;" accept=".pdf,.png,.jpg,.jpeg,.webp,.txt" multiple onchange="handleAiFileSelect(event)">
           <div id="aiDropZoneNotice">
-            <span class="ai-drop-icon">📑</span>
+            <span class="ai-drop-icon" style="display:inline-flex;align-items:center;justify-content:center;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" style="width:36px;height:36px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </span>
             <div style="font-weight:800;font-size:0.95rem;color:var(--heading-color);margin-bottom:4px;">Drag and drop Question Paper, Confidential Prep Guide, or multiple photo scans here</div>
             <div style="font-size:0.8rem;color:var(--text-muted);">Supports multiple PDF, PNG, JPG, JPEG, WEBP, and TXT files · or click to browse</div>
           </div>
@@ -621,7 +745,7 @@
               </div>
               <div style="display:flex;gap:6px;">
                 <button type="button" class="btn btn-sm btn-secondary" onclick="document.getElementById('aiFileInput').click()" style="font-size:0.75rem;padding:3px 10px;border-radius:6px;font-weight:700;">
-                  ➕ Add More Files
+                  <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:middle;margin-right:4px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add More Files
                 </button>
                 <button type="button" class="btn btn-sm btn-outline-danger" onclick="clearAllAiFiles()" style="font-size:0.75rem;padding:3px 8px;border-radius:6px;">
                   Clear All
@@ -635,7 +759,7 @@
             </div>
 
             <div style="font-size:0.74rem;color:var(--text-muted);display:flex;align-items:center;gap:6px;padding-top:4px;border-top:1px dashed var(--card-border);width:100%;">
-              <span>💡 <b>Tip:</b> Tag each file as <b>Question Paper</b>, <b>Confidential Instructions</b>, or <b>Marking Scheme</b> so Walimu AI cross-references them accurately.</span>
+              <span><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:middle;margin-right:4px;"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg><b>Tip:</b> Tag each file as <b>Question Paper</b>, <b>Confidential Instructions</b>, or <b>Marking Scheme</b> so Walimu AI cross-references them accurately.</span>
             </div>
           </div>
         </div>
@@ -652,7 +776,10 @@
 
         <div style="display:flex;justify-content:flex-end;">
           <button type="button" class="btn btn-primary ai-action-btn" onclick="submitAiPaperUpload()" style="padding:12px 28px;font-size:0.92rem;font-weight:800;border-radius:100px;background:linear-gradient(135deg, #10B981, #059669);box-shadow:0 4px 14px rgba(16,185,129,0.35);">
-            <span>⚡ Analyze Paper &amp; Set Exam</span>
+            <span style="display:inline-flex;align-items:center;gap:6px;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3Z"/></svg>
+              Analyze Paper &amp; Set Exam
+            </span>
           </button>
         </div>
       </div>
@@ -672,7 +799,7 @@
           <div style="flex:1;min-width:280px;">
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap;">
               <span class="badge" style="background:#10B981;color:#fff;" id="resBadgeForm">Form 4</span>
-              <span class="badge" style="background:rgba(14,165,233,0.2);color:#0284C7;" id="resBadgeType">🏆 Composite 40M</span>
+              <span class="badge" style="background:rgba(14,165,233,0.2);color:#0284C7;" id="resBadgeType">Composite 40M</span>
               <span class="badge" style="background:rgba(245,158,11,0.2);color:#D97706;" id="resBadgeDuration">135 Mins</span>
             </div>
             <input type="text" id="resExamTitle" class="form-control" aria-label="Exam Title" style="font-size:1.15rem;font-weight:800;font-family:var(--font-heading);color:var(--heading-color);background:transparent;border:1px dashed var(--card-border);padding:6px 10px;" value="KCSE Chemistry Practical Examination">
@@ -680,13 +807,19 @@
           
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <button type="button" class="btn btn-outline" onclick="exportAiExamJson()" title="Download JSON blueprint">
-              <span>💾 Export JSON</span>
+              <span style="display:inline-flex;align-items:center;gap:6px;">
+                <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export JSON
+              </span>
             </button>
             <button type="button" class="btn btn-outline" onclick="printAiExamBooklet()" title="Print complete exam booklet">
-              <span>🖨️ Print Booklet</span>
+              <span style="display:inline-flex;align-items:center;gap:6px;">
+                <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print Booklet
+              </span>
             </button>
             <button type="button" class="btn btn-primary" onclick="publishAiExamToClass()" style="background:linear-gradient(135deg, #10B981, #059669);font-weight:800;box-shadow:0 4px 12px rgba(16,185,129,0.35);">
-              <span>🚀 Publish Exam to Class</span>
+              <span style="display:inline-flex;align-items:center;gap:6px;">
+                <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Publish Exam to Class
+              </span>
             </button>
           </div>
         </div>
@@ -694,16 +827,24 @@
         <!-- 4 Sub-Tabs Strip -->
         <div class="ai-subtab-strip" role="tablist" aria-label="AI Exam Assistant View Tabs">
           <button type="button" class="ai-subtab-btn active" id="subTabBtn_blueprint" role="tab" aria-selected="true" aria-controls="subTabPane_blueprint" onclick="switchAiResultSubTab('blueprint')">
-            <span>⚙️ Simulation Blueprint</span>
+            <span style="display:inline-flex;align-items:center;gap:6px;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Simulation Blueprint
+            </span>
           </button>
           <button type="button" class="ai-subtab-btn" id="subTabBtn_studentPaper" role="tab" aria-selected="false" aria-controls="subTabPane_studentPaper" onclick="switchAiResultSubTab('studentPaper')">
-            <span>📜 Student Question Paper</span>
+            <span style="display:inline-flex;align-items:center;gap:6px;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Student Question Paper
+            </span>
           </button>
           <button type="button" class="ai-subtab-btn" id="subTabBtn_markingScheme" role="tab" aria-selected="false" aria-controls="subTabPane_markingScheme" onclick="switchAiResultSubTab('markingScheme')">
-            <span>🎯 KNEC Marking Scheme</span>
+            <span style="display:inline-flex;align-items:center;gap:6px;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>KNEC Marking Scheme
+            </span>
           </button>
           <button type="button" class="ai-subtab-btn" id="subTabBtn_technicianGuide" role="tab" aria-selected="false" aria-controls="subTabPane_technicianGuide" onclick="switchAiResultSubTab('technicianGuide')">
-            <span>🧪 Lab Technician Instructions</span>
+            <span style="display:inline-flex;align-items:center;gap:6px;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/></svg>Lab Technician Instructions
+            </span>
           </button>
         </div>
 
@@ -716,7 +857,7 @@
         <!-- Conversational Refinement Drawer ("Walimu AI Co-Pilot") -->
         <div class="ai-refine-drawer">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-            <span style="font-size:1.1rem;">💬</span>
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
             <span style="font-weight:800;font-size:0.88rem;color:var(--heading-color);">Refine with Walimu AI Co-Pilot</span>
             <span style="font-size:0.75rem;color:var(--text-muted);margin-left:auto;">Need modifications? Press Enter to refine:</span>
           </div>
@@ -724,7 +865,7 @@
           <div class="ai-refine-input-row">
             <input type="text" id="aiRefineInput" class="ai-refine-input" aria-label="Walimu AI Co-Pilot instructions" placeholder="e.g. 'Use 20 cm³ pipette instead', 'Change indicator to methyl orange', 'Replace lead with zinc'..." onkeydown="if(event.key==='Enter'){event.preventDefault();submitAiRefinement();}">
             <button type="button" class="btn btn-primary" onclick="submitAiRefinement()" style="padding:9px 18px;font-weight:800;border-radius:8px;">
-              <span>Refine ⚡</span>
+              <span>Refine Blueprint</span>
             </button>
           </div>
 
@@ -748,23 +889,27 @@
     <div id="paneStudents" class="tab-pane">
       <div class="roster-header-bar">
         <div>
-          <h2 class="section-title" style="margin:0 0 4px 0;">👥 Class Roster & Student Performance</h2>
+          <h2 class="section-title" style="margin:0 0 4px 0;">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Class Roster &amp; Student Performance
+          </h2>
           <p class="hint" style="margin:0;">Manage enrolled students, sync class rosters, review practical trial metrics, and issue credentials.</p>
         </div>
         <div class="roster-header-actions">
           <div class="teacher-code-badge">
             <span class="tc-label">Class Code:</span>
             <code id="teacherCodeRosterPill" class="tc-code">—</code>
-            <button class="btn btn-sm" onclick="copyTeacherCode()" title="Copy Teacher Code">📋 Copy</button>
+            <button class="btn btn-sm" onclick="copyTeacherCode()" title="Copy Teacher Code">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:middle;margin-right:4px;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy
+            </button>
           </div>
           <button class="btn btn-primary" onclick="openBulkImportModal()">
-            <span>📥</span> Bulk Import CSV / Excel
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Bulk Import CSV / Excel
           </button>
           <button class="btn" onclick="downloadCsvTemplate()" title="Download a pre-formatted CSV template">
-            <span>📄</span> Template
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Template
           </button>
           <button class="btn" onclick="exportClassRosterCSV()" title="Export current student roster to CSV">
-            <span>📤</span> Export Roster
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export Roster
           </button>
         </div>
       </div>
@@ -797,7 +942,9 @@
       <!-- Roster Search & Filter Toolbar -->
       <div class="roster-filter-toolbar">
         <div class="search-input-wrap">
-          <span class="search-icon">🔍</span>
+          <span class="search-icon" style="display:inline-flex;align-items:center;justify-content:center;">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </span>
           <input type="text" id="rosterSearchInput" class="roster-search-input" placeholder="Search students by name or email..." oninput="filterRoster()">
           <button type="button" id="rosterSearchClear" class="search-clear-btn" onclick="clearRosterSearch()" style="display:none;">✕</button>
         </div>
@@ -816,7 +963,9 @@
             <option value="accuracy_desc">Sort: Highest Accuracy</option>
             <option value="recent_active">Sort: Recently Active</option>
           </select>
-          <button class="btn btn-sm" onclick="loadStudents()" title="Refresh Roster">🔄 Refresh</button>
+          <button class="btn btn-sm" onclick="loadStudents()" title="Refresh Roster">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:middle;margin-right:4px;"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>Refresh
+          </button>
         </div>
       </div>
 
@@ -828,7 +977,9 @@
 
     <!-- Tab Pane 4: Titration Sessions -->
     <div id="paneTitration" class="tab-pane">
-      <h2 class="section-title">🧪 Volumetric Titration Sessions</h2>
+      <h2 class="section-title">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;"><rect x="10" y="2" width="4" height="18" rx="1"/><path d="M10 5h4M10 8h2M10 11h4M10 14h2M10 17h4"/><path d="M12 20v2"/><circle cx="12" cy="18" r="1.5"/></svg>Volumetric Titration Sessions
+      </h2>
       <div class="filters">
         <select id="filterType">
           <option value="">All titration types</option>
@@ -850,42 +1001,54 @@
 
     <!-- Tab Pane 5: Qualitative Sessions -->
     <div id="paneQualitative" class="tab-pane">
-      <h2 class="section-title">🧂 Qualitative Salt Analysis Sessions</h2>
+      <h2 class="section-title">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;"><path d="M14.5 2v17.5c0 1.4-1.1 2.5-2.5 2.5s-2.5-1.1-2.5-2.5V2"/><path d="M8.5 2h7"/><path d="M9.5 12h5"/></svg>Qualitative Salt Analysis Sessions
+      </h2>
       <p class="hint" style="margin-bottom:14px;">All unknown-salt cation/anion identification sessions completed by your students.</p>
       <div id="qualSessionsBox"><div class="empty">Loading qualitative sessions…</div></div>
     </div>
 
     <!-- Tab Pane 6: Organic Sessions -->
     <div id="paneOrganic" class="tab-pane">
-      <h2 class="section-title">⚗️ Organic Chemistry Sessions</h2>
+      <h2 class="section-title">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;"><circle cx="12" cy="12" r="2.5"/><path d="M4.93 4.93c4.24-4.24 12.38 3.9 8.14 8.14-4.24 4.24-12.38-3.9-8.14-8.14z"/><path d="M19.07 4.93c-4.24-4.24-12.38 3.9-8.14 8.14 4.24 4.24 12.38-3.9 8.14-8.14z"/></svg>Organic Chemistry Sessions
+      </h2>
       <p class="hint" style="margin-bottom:14px;">All functional-group identification sessions completed by your students.</p>
       <div id="organicSessionsBox"><div class="empty">Loading organic sessions…</div></div>
     </div>
 
     <!-- Tab Pane: Solubility Curves -->
     <div id="paneSolubility" class="tab-pane">
-      <h2 class="section-title">🌡️ Solubility Curves & Crystallization Sessions</h2>
+      <h2 class="section-title">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/><circle cx="11.5" cy="17.5" r="1.5" fill="currentColor"/></svg>Solubility Curves &amp; Crystallization Sessions
+      </h2>
       <p class="hint" style="margin-bottom:14px;">All crystallization temperature determinations and KNEC graph sessions completed by your students.</p>
       <div id="solubilitySessionsBox"><div class="empty">Loading solubility sessions…</div></div>
     </div>
 
     <!-- Tab Pane: Energy Changes / Thermochemistry -->
     <div id="paneEnergy" class="tab-pane">
-      <h2 class="section-title">🔥 Energy Changes in Reactions (Thermochemistry)</h2>
+      <h2 class="section-title">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;"><path d="M8.5 14.5A3.5 3.5 0 0 0 12 18a3.5 3.5 0 0 0 3.5-3.5c0-2-1.5-3.5-2.5-5-.5-1-1-2.5-1-3.5 0 0-2.5 2.5-2.5 5 0 1-.5 1.5-1 2.5z"/><path d="M12 2c5 4.5 7 9 7 13a7 7 0 1 1-14 0c0-4 3-7.5 7-13z"/></svg>Energy Changes in Reactions (Thermochemistry)
+      </h2>
       <p class="hint" style="margin-bottom:14px;">All enthalpy determination sessions (neutralization, displacement, solution, combustion) and 15-mark rubrics.</p>
       <div id="energySessionsBox"><div class="empty">Loading energy sessions…</div></div>
     </div>
 
     <!-- Tab Pane: Reaction Rates & Chemical Kinetics -->
     <div id="paneRates" class="tab-pane">
-      <h2 class="section-title">⚡ Reaction Rates & Chemical Kinetics Sessions</h2>
+      <h2 class="section-title">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Reaction Rates &amp; Chemical Kinetics Sessions
+      </h2>
       <p class="hint" style="margin-bottom:14px;">All disappearing cross timing runs, gas syringe kinetics, mass loss, catalysts, and 15-mark KNEC collision theory scorecards.</p>
       <div id="ratesSessionsBox"><div class="empty">Loading reaction rates sessions…</div></div>
     </div>
 
     <!-- Tab Pane: Gas Preparation & Collection -->
     <div id="paneGas" class="tab-pane">
-      <h2 class="section-title">💨 Gas Preparation & Collection Sessions</h2>
+      <h2 class="section-title">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg>Gas Preparation &amp; Collection Sessions
+      </h2>
       <p class="hint" style="margin-bottom:14px;">All inorganic gas synthesis, drying agent selections, collection apparatus setups, and confirmatory testing scorecards.</p>
       <div id="gasSessionsBox"><div class="empty">Loading gas preparation sessions…</div></div>
     </div>
@@ -894,15 +1057,17 @@
     <div id="paneComposite" class="tab-pane">
       <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
         <div>
-          <h2 class="section-title" style="margin-bottom:4px;">📋 KCSE Paper 3 Composite Practical Mock Exams (40 Marks)</h2>
+          <h2 class="section-title" style="margin-bottom:4px;">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/></svg>KCSE Paper 3 Composite Practical Mock Exams (40 Marks)
+          </h2>
           <p class="hint" style="margin:0;">Full-scale national mock exam submissions with volumetric titration, inorganic salts, and organic qualitative analysis.</p>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <button type="button" class="btn btn-secondary" onclick="exportTeacherCompositeCsv()" style="font-size:0.8rem; padding:7px 14px;">
-            📥 Export All CSV
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:middle;margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export All CSV
           </button>
           <button type="button" class="btn btn-primary" onclick="loadTeacherCompositeSessions()" style="font-size:0.8rem; padding:7px 14px;">
-            🔄 Refresh Submissions
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:middle;margin-right:4px;"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>Refresh Submissions
           </button>
         </div>
       </div>
@@ -937,7 +1102,9 @@
         <div style="background:var(--card-bg); border:1px solid var(--card-border); border-radius:14px; padding:18px; box-shadow:var(--shadow-sm);">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
             <div>
-              <div style="font-weight:800; font-size:0.9rem; color:var(--heading-color);">📊 12-Point KNEC Grade Distribution</div>
+              <div style="font-weight:800; font-size:0.9rem; color:var(--heading-color);">
+                <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;vertical-align:middle;margin-right:5px;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>12-Point KNEC Grade Distribution
+              </div>
               <div style="font-size:0.75rem; color:var(--text-muted);">Class cohort spread from Grade A down to Grade E</div>
             </div>
             <span class="badge" style="background:rgba(2,132,199,0.12); color:#0284C7; font-size:0.7rem; font-weight:700;">National Bell Curve</span>
@@ -951,7 +1118,9 @@
         <div style="background:var(--card-bg); border:1px solid var(--card-border); border-radius:14px; padding:18px; box-shadow:var(--shadow-sm);">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
             <div>
-              <div style="font-weight:800; font-size:0.9rem; color:var(--heading-color);">🎯 Class Competency Radar vs National Baseline</div>
+              <div style="font-weight:800; font-size:0.9rem; color:var(--heading-color);">
+                <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;vertical-align:middle;margin-right:5px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Class Competency Radar vs National Baseline
+              </div>
               <div style="font-size:0.75rem; color:var(--text-muted);">Class averages across AC, Decimals, Averaging, Inorganic &amp; Organic</div>
             </div>
             <span class="badge" style="background:rgba(245,158,11,0.12); color:#F59E0B; font-size:0.7rem; font-weight:700;">5-Axis KNEC Benchmark</span>
@@ -965,7 +1134,7 @@
       <!-- Filters & Search Toolbar -->
       <div style="display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap; align-items:center; background:var(--card-bg); border:1px solid var(--card-border); border-radius:10px; padding:10px 14px;">
         <div style="flex:1; min-width:200px;">
-          <input type="text" id="teacherCompSearchInput" class="form-control" placeholder="🔍 Search student name, email, or series..." oninput="filterTeacherCompositeSessions()" style="font-size:0.82rem; padding:6px 12px;">
+          <input type="text" id="teacherCompSearchInput" class="form-control" placeholder="Search student name, email, or series..." oninput="filterTeacherCompositeSessions()" style="font-size:0.82rem; padding:6px 12px;">
         </div>
         <div>
           <select id="teacherCompGradeFilter" class="form-control" onchange="filterTeacherCompositeSessions()" style="font-size:0.82rem; padding:6px 10px;">
@@ -1015,7 +1184,9 @@
 
         <div style="display:flex; justify-content:space-between; margin-top:20px; border-top:1px solid var(--card-border); padding-top:14px;">
           <button type="button" class="btn btn-secondary" onclick="closeTeacherScriptModal()">Close Review</button>
-          <button type="button" class="btn btn-primary" id="btnScriptModalPrint" onclick="printCandidateScriptFromModal()">🖨️ Print Marked Script</button>
+          <button type="button" class="btn btn-primary" id="btnScriptModalPrint" onclick="printCandidateScriptFromModal()">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:5px;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print Marked Script
+          </button>
         </div>
       </div>
     </div>
@@ -1025,7 +1196,9 @@
       <div style="background:var(--card-bg); border:1px solid var(--card-border); border-radius:16px; max-width:760px; width:100%; max-height:90vh; overflow-y:auto; padding:24px; box-shadow:var(--shadow-lg); color:var(--text-main);">
         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--card-border); padding-bottom:14px; margin-bottom:16px;">
           <div style="display:flex; align-items:center; gap:10px;">
-            <span id="tDrillHeaderIcon" style="font-size:1.6rem;">🎯</span>
+            <span id="tDrillHeaderIcon" style="display:inline-flex;align-items:center;justify-content:center;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:24px;height:24px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            </span>
             <div>
               <span style="background:var(--cyan-accent, #38BDF8); color:#000; font-size:0.68rem; font-weight:800; padding:2px 8px; border-radius:4px; font-family:var(--font-mono);">KNEC REMEDIATION DRILL PREVIEW</span>
               <h3 id="tDrillHeaderTitle" style="font-size:1.15rem; font-weight:800; margin:2px 0 0 0; color:var(--heading-color);">Drill Title</h3>
@@ -1036,7 +1209,9 @@
 
         <!-- Chief Examiner Pedagogical Rule -->
         <div style="background:rgba(245,158,11,0.08); border-left:4px solid var(--amber-accent, #F59E0B); border-radius:8px; padding:12px 14px; margin-bottom:16px;">
-          <div style="font-size:0.75rem; text-transform:uppercase; font-weight:800; color:var(--amber-accent); margin-bottom:4px;">👨‍🏫 KNEC Examiner Standard &amp; Grading Rule:</div>
+          <div style="font-size:0.75rem; text-transform:uppercase; font-weight:800; color:var(--amber-accent); margin-bottom:4px;">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>KNEC Examiner Standard &amp; Grading Rule:
+          </div>
           <div id="tDrillExaminerRule" style="font-size:0.82rem; color:var(--text-main); line-height:1.45;"></div>
         </div>
 
@@ -1049,7 +1224,9 @@
         <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--card-border); padding-top:16px;">
           <button type="button" class="btn btn-secondary" onclick="closeTeacherDrillPreview()">Back to Candidate Script</button>
           <button type="button" class="btn btn-primary" id="btnAssignDrillAction" onclick="assignDrillToStudent()" style="background:linear-gradient(135deg, #0284C7, #0369A1); font-weight:800;">
-            🚀 Assign Micro-Drill to Student
+            <span style="display:inline-flex;align-items:center;gap:6px;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:15px;height:15px;"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Assign Micro-Drill to Student
+            </span>
           </button>
         </div>
       </div>
@@ -1057,28 +1234,34 @@
 
     <!-- Tab Pane 8: Leaderboard & Badges -->
     <div id="paneLeaderboard" class="tab-pane">
-      <h2 class="section-title">🏆 Class Leaderboard <span style="font-weight:400;font-size:0.72rem;color:var(--text-muted);">by accuracy, min. 3 sessions</span></h2>
+      <h2 class="section-title">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>Class Leaderboard <span style="font-weight:400;font-size:0.72rem;color:var(--text-muted);">by accuracy, min. 3 sessions</span>
+      </h2>
       <div id="leaderboardBox" style="margin-bottom:32px;"><div class="empty">Loading leaderboard…</div></div>
 
-      <h2 class="section-title">🎖️ Unlocked Class Badges</h2>
+      <h2 class="section-title">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89L17 22l-5-3-5 3 1.52-9.11"/></svg>Unlocked Class Badges
+      </h2>
       <div id="classBadgesList"><div class="empty">Loading badges…</div></div>
     </div>
 
     <!-- Tab Pane 9: Settings & Profile -->
     <div id="paneSettings" class="tab-pane">
-      <h2 class="section-title">⚙️ Instructor Profile & Account Settings</h2>
+      <h2 class="section-title">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;vertical-align:middle;margin-right:6px;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Instructor Profile &amp; Account Settings
+      </h2>
       
       <div style="background:var(--card-bg); border:1.5px solid var(--card-border); border-radius:20px; padding:24px; max-width:680px; box-shadow:var(--shadow-sm); margin-bottom:24px;">
         
         <!-- Profile Identity Header -->
         <div style="display:flex; align-items:center; gap:16px; border-bottom:1px solid var(--card-border); padding-bottom:16px; margin-bottom:20px;">
-          <div style="width:54px; height:54px; border-radius:50%; background:linear-gradient(135deg, #10B981 0%, #059669 100%); border:2px solid var(--green-accent); display:flex; align-items:center; justify-content:center; font-size:1.6rem; color:#FFF;">
-            👨‍🏫
+          <div style="width:54px; height:54px; border-radius:50%; background:linear-gradient(135deg, #10B981 0%, #059669 100%); border:2px solid var(--green-accent); display:flex; align-items:center; justify-content:center; color:#FFF;">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:28px;height:28px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           </div>
           <div>
             <div style="font-weight:900; font-size:1.2rem; color:var(--heading-color); font-family:var(--font-heading);" id="tProfHeaderName">Teacher Instructor</div>
             <div style="font-size:0.8rem; color:var(--green-accent); font-weight:700;">
-              <span>👨‍🏫 Verified Chemistry Instructor</span> · <span id="tProfHeaderEmail" style="color:var(--text-muted);">teacher@virtulab.ke</span>
+              <span style="display:inline-flex;align-items:center;gap:4px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>Verified Chemistry Instructor</span> · <span id="tProfHeaderEmail" style="color:var(--text-muted);">teacher@virtulab.ke</span>
             </div>
           </div>
         </div>
@@ -1095,11 +1278,13 @@
           </div>
         </div>
 
-        <button class="btn btn-primary" onclick="saveTeacherProfileDetails()" style="padding:10px 22px; font-weight:800; border-radius:100px; width:100%; margin-bottom:20px;">Save Profile Information ✓</button>
+        <button class="btn btn-primary" onclick="saveTeacherProfileDetails()" style="padding:10px 22px; font-weight:800; border-radius:100px; width:100%; margin-bottom:20px;">Save Profile Information</button>
         <div id="tProfMsg" style="margin-bottom:14px; text-align:center;"></div>
 
         <!-- Security & Password -->
-        <h3 style="font-family:var(--font-heading); font-size:1rem; color:var(--heading-color); border-top:1px solid var(--card-border); padding-top:16px; margin-bottom:14px;">🔒 Update Account Security Password</h3>
+        <h3 style="font-family:var(--font-heading); font-size:1rem; color:var(--heading-color); border-top:1px solid var(--card-border); padding-top:16px; margin-bottom:14px;">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Update Account Security Password
+        </h3>
         <form id="changePasswordForm" onsubmit="event.preventDefault(); submitChangePassword();">
           <input type="text" id="pwUsername" name="username" autocomplete="username"
                  aria-hidden="true" tabindex="-1"
@@ -1112,12 +1297,14 @@
             <label for="pwNew" style="font-size:0.8rem; font-weight:700;">New Password</label>
             <input type="password" id="pwNew" name="new-password" autocomplete="new-password" class="form-control" placeholder="Enter new password (min 6 characters)" required>
           </div>
-          <button type="submit" class="btn btn-primary" style="padding:10px 22px; font-weight:800; border-radius:100px; width:100%;">Update Security Password 🔐</button>
+          <button type="submit" class="btn btn-primary" style="padding:10px 22px; font-weight:800; border-radius:100px; width:100%;">Update Security Password</button>
         </form>
         <div id="pwMsg" style="margin-top:10px; text-align:center;"></div>
 
         <!-- Web Push Notifications -->
-        <h3 style="font-family:var(--font-heading); font-size:1rem; color:var(--heading-color); border-top:1px solid var(--card-border); padding-top:16px; margin-bottom:14px;">🔔 Web Push Notifications & Examiner Alerts</h3>
+        <h3 style="font-family:var(--font-heading); font-size:1rem; color:var(--heading-color); border-top:1px solid var(--card-border); padding-top:16px; margin-bottom:14px;">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;vertical-align:middle;margin-right:6px;"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Web Push Notifications &amp; Examiner Alerts
+        </h3>
         <div style="background:var(--bg-dark); border:1px solid var(--card-border); border-radius:12px; padding:14px; margin-bottom:18px;">
           <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
             <div>
@@ -1125,21 +1312,27 @@
               <div style="font-size:0.75rem; color:var(--text-muted);" id="tPushStatusText" class="vlk-push-status-text">Receive device alerts when students submit practicals and mock exams</div>
             </div>
             <div style="display:flex; gap:8px; align-items:center;">
-              <button type="button" class="vlk-push-test-btn btn btn-xs" id="tPushTestBtn" onclick="VLKPush.sendTestNotification()" style="display:none; padding:6px 12px; font-size:0.75rem; border-radius:100px;">🔔 Test Alert</button>
+              <button type="button" class="vlk-push-test-btn btn btn-xs" id="tPushTestBtn" onclick="VLKPush.sendTestNotification()" style="display:none; padding:6px 12px; font-size:0.75rem; border-radius:100px;">
+                <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;vertical-align:middle;margin-right:4px;"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Test Alert
+              </button>
               <button type="button" class="vlk-push-toggle-btn btn btn-secondary" id="tPushToggleBtn" onclick="VLKPush.toggle()" style="padding:6px 14px; font-size:0.78rem; font-weight:700; border-radius:100px;">Enable Alerts</button>
             </div>
           </div>
           <div style="margin-top:8px; border-top:1px dashed var(--card-border); padding-top:8px; text-align:right;">
             <a href="javascript:void(0)" id="tPushBatteryGuideBtn" class="vlk-push-guide-btn" onclick="VLKPush.openBatteryGuideModal()" style="font-size:0.74rem; color:var(--cyan-accent); text-decoration:none; display:none; align-items:center; gap:4px; justify-content:flex-end;">
-              <span>⚡ Mobile Battery &amp; Notification Optimization Guide</span>
+              <span>Mobile Battery &amp; Notification Optimization Guide</span>
             </a>
           </div>
         </div>
 
         <!-- Account Actions -->
         <div style="border-top:1px solid var(--card-border); padding-top:16px; margin-top:20px; display:flex; gap:12px;">
-          <button class="btn" onclick="exportTeacherClassReportCSV()" style="flex:1; justify-content:center; padding:10px; font-weight:700;">📥 Export Class CSV Report</button>
-          <button class="btn" onclick="Auth.logout()" style="flex:1; justify-content:center; background:rgba(239, 68, 68, 0.15); color:var(--red-accent); border:1px solid var(--red-accent); padding:10px; font-weight:800;">🚪 Log Out</button>
+          <button class="btn" onclick="exportTeacherClassReportCSV()" style="flex:1; justify-content:center; padding:10px; font-weight:700;">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export Class CSV Report
+          </button>
+          <button class="btn" onclick="Auth.logout()" style="flex:1; justify-content:center; background:rgba(239, 68, 68, 0.15); color:var(--red-accent); border:1px solid var(--red-accent); padding:10px; font-weight:800;">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:6px;"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Log Out
+          </button>
         </div>
 
       </div>
@@ -1166,9 +1359,11 @@
   <div class="modal-card modal-card-large" onclick="event.stopPropagation()">
     <div class="modal-header">
       <div style="display:flex; align-items:center; gap:10px;">
-        <div class="modal-icon-badge">📥</div>
+        <div class="modal-icon-badge" style="display:flex;align-items:center;justify-content:center;">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </div>
         <div>
-          <h3 class="modal-title">Bulk Student CSV Import & Class Roster Sync</h3>
+          <h3 class="modal-title">Bulk Student CSV Import &amp; Class Roster Sync</h3>
           <p class="modal-subtitle">Quickly register and link your entire class from CSV files or directly from Excel / Google Sheets.</p>
         </div>
       </div>
@@ -1178,16 +1373,22 @@
     <!-- Import Step 1: Data Input & Configuration -->
     <div id="importInputSection">
       <div class="import-tabs-nav">
-        <button class="import-tab-btn active" id="tabBtnDropzone" onclick="switchImportTab('dropzone')">📁 Upload CSV / Text File</button>
-        <button class="import-tab-btn" id="tabBtnPaste" onclick="switchImportTab('paste')">📋 Paste Excel / Google Sheets Rows</button>
+        <button class="import-tab-btn active" id="tabBtnDropzone" onclick="switchImportTab('dropzone')">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:6px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload CSV / Text File
+        </button>
+        <button class="import-tab-btn" id="tabBtnPaste" onclick="switchImportTab('paste')">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:6px;"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg>Paste Excel / Google Sheets Rows
+        </button>
       </div>
 
       <!-- Tab Content: File Dropzone -->
       <div id="tabContentDropzone" class="import-tab-content active">
         <div class="csv-drop-zone" id="csvDropZone" onclick="document.getElementById('csvFileInput').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDropFile(event)">
           <input type="file" id="csvFileInput" accept=".csv,text/csv,text/plain" style="display:none;" onchange="handleCsvFileSelected(event)">
-          <div class="drop-zone-icon">📄</div>
-          <div class="drop-zone-title">Click to browse or drag & drop student CSV file here</div>
+          <div class="drop-zone-icon" style="display:flex;align-items:center;justify-content:center;">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" style="width:36px;height:36px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div class="drop-zone-title">Click to browse or drag &amp; drop student CSV file here</div>
           <div class="drop-zone-hint">Supports comma (,), semicolon (;), or tab-delimited files (.csv, .txt)</div>
           <div id="selectedFileNameBadge" class="selected-file-badge" style="display:none;"></div>
         </div>
@@ -1196,7 +1397,7 @@
       <!-- Tab Content: Copy-Paste -->
       <div id="tabContentPaste" class="import-tab-content">
         <div class="paste-zone-header">
-          <label for="csvPasteArea" class="field-label">Copy & paste rows directly from your spreadsheet:</label>
+          <label for="csvPasteArea" class="field-label">Copy &amp; paste rows directly from your spreadsheet:</label>
           <button class="btn btn-sm" onclick="insertSamplePasteData()">Load Sample Rows</button>
         </div>
         <textarea id="csvPasteArea" class="csv-paste-textarea" rows="6" placeholder="Example:&#10;Kamau Brian&#9;kamau.brian@school.ac.ke&#9;Form 3&#10;Achieng Grace&#9;achieng.grace@school.ac.ke&#9;Form 3&#10;Wanjiku Mercy&#9;wanjiku.mercy@school.ac.ke&#9;Form 4" oninput="handlePasteChange()"></textarea>
@@ -1255,7 +1456,9 @@
         <div style="display:flex; gap:10px;">
           <button class="btn" onclick="resetBulkImportForm()">Reset / Clear</button>
           <button class="btn btn-primary" id="btnSubmitBulkImport" onclick="executeBulkImport()" disabled>
-            <span>📥</span> Import Valid Students
+            <span style="display:inline-flex;align-items:center;gap:6px;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Import Valid Students
+            </span>
           </button>
         </div>
       </div>
@@ -1264,7 +1467,9 @@
     <!-- Step 3: Success & Printable Credential Slips -->
     <div id="importSuccessSection" style="display:none;">
       <div class="import-success-banner">
-        <div class="success-icon">🎉</div>
+        <div class="success-icon" style="display:flex;align-items:center;justify-content:center;">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:28px;height:28px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
         <div>
           <h4 class="success-title" id="importSuccessTitle">Roster Synchronized Successfully!</h4>
           <p class="success-desc" id="importSuccessDesc">All valid student accounts have been registered and linked to your class.</p>
@@ -1277,8 +1482,12 @@
           <p class="hint" style="margin:0;">Hand out these slips during practical lab periods so students can immediately sign in.</p>
         </div>
         <div style="display:flex; gap:8px;">
-          <button class="btn" onclick="copyCredentialsList()">📋 Copy All (Text)</button>
-          <button class="btn btn-primary" onclick="printStudentCredentialSlips()">🖨️ Print Credential Handouts</button>
+          <button class="btn" onclick="copyCredentialsList()">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:middle;margin-right:4px;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy All (Text)
+          </button>
+          <button class="btn btn-primary" onclick="printStudentCredentialSlips()">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:middle;margin-right:4px;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print Credential Handouts
+          </button>
           <button class="btn" onclick="closeBulkImportModal()">✓ Done</button>
         </div>
       </div>

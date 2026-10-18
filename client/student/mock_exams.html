@@ -23,7 +23,8 @@
 
 <!-- Academic & Technical Typography -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,400..800;1,6..72,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="/shared/vlk-icons.js?v=164"></script>
 <link rel="stylesheet" href="../shared/style.css">
 <link rel="stylesheet" href="../shared/brilliant-theme.css">
 <link rel="stylesheet" href="css/dashboard.css">
@@ -170,7 +171,7 @@
   }
 
   .series-title {
-    font-family: 'Cinzel', serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 1.12rem;
     font-weight: 800;
     color: var(--heading-color);
@@ -499,7 +500,7 @@
   }
 
   .decade-header-title {
-    font-family: 'Cinzel', serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 1.18rem;
     font-weight: 800;
     color: var(--heading-color);
@@ -811,14 +812,20 @@
       <img src="/shared/virtulab-logo.svg" alt="VirtuLab Kenya Logo" class="vlk-brand-logo-img" width="34" height="34">
     </div>
     <div style="display:flex; flex-direction:column;">
-      <span class="brand-title" style="font-weight:800; font-family:'Cinzel', serif; font-size:1.05rem; line-height:1.1; color:var(--heading-color);">VirtuLab</span>
-      <span class="brand-subtagline" style="font-size:0.65rem; font-family:'Newsreader', serif; font-style:italic; color:var(--cyan-accent); letter-spacing:0.01em;">Mock Exams Center</span>
+      <span class="brand-title" style="font-weight:800; font-size:1.05rem; line-height:1.1; color:var(--heading-color);">VirtuLab</span>
+      <span class="brand-subtagline" style="font-size:0.68rem; font-weight:600; color:var(--cyan-accent); letter-spacing:0.02em;">Mock Examination Center</span>
     </div>
   </a>
   <div class="nav-actions">
-    <button type="button" class="top-action-btn" id="themeToggleBtn" onclick="cycleTheme()" title="Switch Appearance Theme">🌙 Theme</button>
-    <a href="/student/home.html" class="top-action-btn">🏠 Student Workstation</a>
-    <a href="/student/history.html" class="top-action-btn">📜 Full History</a>
+    <button type="button" class="top-action-btn" id="themeToggleBtn" onclick="cycleTheme()" title="Switch Appearance Theme">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>Theme
+    </button>
+    <a href="/student/home.html" class="top-action-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Workstation
+    </a>
+    <a href="/student/history.html" class="top-action-btn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Grade Ledger
+    </a>
   </div>
 </nav>
 
@@ -827,16 +834,16 @@
   <!-- Academic Hub Navigation Tabs -->
   <div class="hub-main-tabs" role="tablist" aria-label="Mock Hub Sections">
     <button type="button" class="hub-tab-btn active" id="tabBtnSimulations" onclick="switchHubTab('simulations')">
-      <span>🏆</span> 40-Mark Mock Simulations
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H8v4h8v-4h-1c-.55 0-1-.45-1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg> 40-Mark Mock Simulations
     </button>
     <button type="button" class="hub-tab-btn" id="tabBtnPastPapers" onclick="switchHubTab('past_papers')">
-      <span>📚</span> KCSE Past Papers &amp; Mark Schemes (1989–2025)
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> KCSE Past Papers &amp; Mark Schemes (1989–2025)
     </button>
     <button type="button" class="hub-tab-btn" id="tabBtnSprints" onclick="switchHubTab('sprints')">
-      <span>⚡</span> Section Sprints
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Section Sprints
     </button>
     <button type="button" class="hub-tab-btn" id="tabBtnHistory" onclick="switchHubTab('history')">
-      <span>📜</span> Grade Ledger &amp; Attempts
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg> Grade Ledger &amp; Attempts
     </button>
   </div>
 
@@ -850,8 +857,8 @@
     <!-- Header & Mode Switcher -->
     <div class="hero-banner-mock">
       <div>
-        <div style="font-family:'Cinzel', serif; font-size:1.45rem; font-weight:900; color:var(--heading-color); margin-bottom:6px;">
-          🇰🇪 KNEC KCSE Chemistry Paper 3 Mock Examinations
+        <div style="font-size:1.35rem; font-weight:800; color:var(--heading-color); margin-bottom:6px; display:flex; align-items:center; gap:8px;">
+          <span class="series-badge" style="margin:0;">KNEC 233/3</span> KCSE Chemistry Paper 3 Mock Examinations
         </div>
         <div style="font-size:0.9rem; color:var(--text-muted); max-width:650px; line-height:1.5;">
           Standardized 40-Mark composite practical examinations mapped directly to the KNEC Paper 3 (233/3) syllabus. Complete full-length papers or targeted section sprints with precision virtual glassware.
@@ -865,10 +872,10 @@
         </div>
         <div class="mode-selector-pill">
           <button type="button" class="mode-pill-btn active" id="btnModeStrict" onclick="setExamMode('strict')">
-            ⏱️ Official Timed (135m)
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Timed Official (135m)
           </button>
           <button type="button" class="mode-pill-btn" id="btnModeGuided" onclick="setExamMode('guided')">
-            💡 Guided Practice
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>Guided Practice
           </button>
         </div>
         <div id="modeHelpText" style="font-size:0.75rem; color:var(--text-muted); margin-top:6px;">
@@ -880,7 +887,9 @@
     <!-- Adaptive Random Mock Banner -->
     <div style="background:linear-gradient(135deg, rgba(56,189,248,0.1), rgba(16,185,129,0.08)); border:1.5px dashed var(--blue-accent); border-radius:14px; padding:20px 24px; margin-bottom:28px; display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;">
       <div style="display:flex; align-items:center; gap:14px;">
-        <div style="font-size:2rem;">🎲</div>
+        <div style="width:42px; height:42px; border-radius:10px; background:rgba(2,132,199,0.12); color:#0284C7; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+        </div>
         <div>
           <div style="font-weight:800; font-size:1.05rem; color:var(--heading-color);">
             Adaptive Randomized KCSE National Mock Generator
@@ -891,14 +900,14 @@
         </div>
       </div>
       <button type="button" class="btn-start-series" style="background:linear-gradient(135deg, #0284C7, #0369A1);" onclick="launchSeries('random')">
-        ⚡ Generate &amp; Start Adaptive Paper →
+        Generate &amp; Start Adaptive Paper &rarr;
       </button>
     </div>
 
     <!-- National Mock Exam Series Grid -->
     <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:16px;">
       <div>
-        <h2 style="font-family:'Cinzel', serif; font-size:1.25rem; font-weight:800; color:var(--heading-color); margin:0;">
+        <h2 style="font-size:1.25rem; font-weight:800; color:var(--heading-color); margin:0;">
           National KCSE Practical Examination Series (40.0 Marks Each)
         </h2>
         <p style="font-size:0.84rem; color:var(--text-muted); margin:4px 0 0 0;">
@@ -919,15 +928,15 @@
     <!-- Archive Hero Banner -->
     <div style="background:linear-gradient(135deg, rgba(11,37,69,0.08), rgba(184,134,11,0.1)); border:1.5px solid var(--acad-gold-border); border-radius:16px; padding:24px 28px; margin-bottom:24px; display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap;">
       <div>
-        <div style="font-family:'Cinzel', serif; font-size:1.35rem; font-weight:900; color:var(--heading-color); margin-bottom:6px;">
-          🇰🇪 KNEC KCSE Chemistry Practical Archive (1989–2025)
+        <div style="font-size:1.35rem; font-weight:800; color:var(--heading-color); margin-bottom:6px; display:flex; align-items:center; gap:8px;">
+          <span class="series-badge" style="margin:0;">KNEC ARCHIVE</span> KCSE Chemistry Practical Archive (1989–2025)
         </div>
         <div style="font-size:0.88rem; color:var(--text-muted); max-width:720px; line-height:1.5;">
           Official Kenyan National Examinations Council Paper 3 practical questions, step-by-step coordinated marking schemes, examiner deduction guidelines, and confidential school laboratory preparation requirements.
         </div>
       </div>
       <button type="button" class="top-action-btn" onclick="toggleLeadNotes()" style="background:var(--card-bg); border-color:var(--acad-gold); color:var(--acad-gold); font-weight:700;">
-        📖 Examiner Lead Notes &amp; Ion Tables
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Examiner Lead Notes &amp; Ion Tables
       </button>
     </div>
 
@@ -939,7 +948,7 @@
     <!-- Search & Filter Controls -->
     <div class="past-filters-bar">
       <div class="filter-search-box">
-        <span style="font-size:1.1rem;">🔍</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-muted); flex-shrink:0;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" id="kcsePaperSearchInput" class="filter-input" placeholder="Search past practicals by year, chemical, procedure, ion or topic (e.g. 2025, 2013, displacement, KMnO4, lead, benzoic acid)..." oninput="onPastPaperFilterChange()">
       </div>
 
@@ -967,18 +976,18 @@
       <div class="filter-pills-row">
         <span class="filter-pill-label">Simulation Status:</span>
         <button type="button" class="filter-chip-btn active" data-sim="all" onclick="setSimFilter('all', this)">All Past Papers</button>
-        <button type="button" class="filter-chip-btn" data-sim="playable" onclick="setSimFilter('playable', this)">🎮 40M Simulations Available</button>
-        <button type="button" class="filter-chip-btn" data-sim="written" onclick="setSimFilter('written', this)">📝 Written Paper Archives</button>
+        <button type="button" class="filter-chip-btn" data-sim="playable" onclick="setSimFilter('playable', this)">40M Simulations Available</button>
+        <button type="button" class="filter-chip-btn" data-sim="written" onclick="setSimFilter('written', this)">Written Paper Archives</button>
       </div>
     </div>
 
     <!-- Era Quick Jump Navigation Bar -->
     <div class="decade-quick-nav" id="decadeQuickNav">
       <span class="decade-quick-nav-label">Era Quick Jump:</span>
-      <button type="button" class="decade-jump-pill" onclick="scrollToDecadeSection('2020s')">🎓 2020s Contemporary (6 Papers)</button>
-      <button type="button" class="decade-jump-pill" onclick="scrollToDecadeSection('2010s')">🏛️ 2010s National (9 Papers)</button>
-      <button type="button" class="decade-jump-pill" onclick="scrollToDecadeSection('2000s')">📜 2000s Classic (8 Papers)</button>
-      <button type="button" class="decade-jump-pill" onclick="scrollToDecadeSection('1980s-1990s')">🏺 1980s–1990s Historical (8 Papers)</button>
+      <button type="button" class="decade-jump-pill" onclick="scrollToDecadeSection('2020s')">2020s Contemporary (6 Papers)</button>
+      <button type="button" class="decade-jump-pill" onclick="scrollToDecadeSection('2010s')">2010s National (9 Papers)</button>
+      <button type="button" class="decade-jump-pill" onclick="scrollToDecadeSection('2000s')">2000s Classic (8 Papers)</button>
+      <button type="button" class="decade-jump-pill" onclick="scrollToDecadeSection('1980s-1990s')">1980s–1990s Historical (8 Papers)</button>
     </div>
 
     <!-- Results Status Count -->
@@ -1002,8 +1011,8 @@
   ══════════════════════════════════════ -->
   <div id="sectionSprints" class="hub-tab-section" style="display:none;">
     <div style="margin-bottom:16px;">
-      <h2 style="font-family:'Cinzel', serif; font-size:1.2rem; font-weight:800; color:var(--heading-color); margin:0;">
-        ⚡ Modular Paper 3 Section Sprints
+      <h2 style="font-size:1.2rem; font-weight:800; color:var(--heading-color); margin:0; display:flex; align-items:center; gap:8px;">
+        <span class="series-badge" style="margin:0;">MODULAR</span> Paper 3 Section Sprints
       </h2>
       <p style="font-size:0.84rem; color:var(--text-muted); margin:4px 0 0 0;">
         Targeted single-question practice sessions to master specific practical competencies.
@@ -1012,7 +1021,9 @@
 
     <div class="mini-mocks-grid">
       <a href="/student/lab.html" class="mini-mock-card">
-        <div class="mini-mock-icon" style="background:rgba(56,189,248,0.15); color:#0284C7;">🧪</div>
+        <div class="mini-mock-icon" style="background:rgba(56,189,248,0.15); color:#0284C7;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.31M14 2v7.31M8.5 2h7M14 9.3a6.5 6.5 0 1 1-4 0"/><line x1="6" y1="16" x2="18" y2="16"/></svg>
+        </div>
         <div>
           <div style="font-weight:800; font-size:0.92rem; color:var(--heading-color);">Volumetric Analysis Sprint</div>
           <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">Question 1 Focus · 15.0 Marks · Titration table &amp; stoichiometry</div>
@@ -1020,7 +1031,9 @@
       </a>
 
       <a href="/student/qualitative.html" class="mini-mock-card">
-        <div class="mini-mock-icon" style="background:rgba(16,185,129,0.15); color:#059669;">🧂</div>
+        <div class="mini-mock-icon" style="background:rgba(16,185,129,0.15); color:#059669;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="4" width="14" height="16" rx="3"/><line x1="9" y1="2" x2="15" y2="2"/><circle cx="10" cy="10" r="1"/><circle cx="14" cy="10" r="1"/><circle cx="12" cy="14" r="1"/></svg>
+        </div>
         <div>
           <div style="font-weight:800; font-size:0.92rem; color:var(--heading-color);">Qualitative Salt Analysis Sprint</div>
           <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">Question 2 Focus · 15.0 Marks · Cation &amp; anion observation ledger</div>
@@ -1028,7 +1041,9 @@
       </a>
 
       <a href="/student/organic.html" class="mini-mock-card">
-        <div class="mini-mock-icon" style="background:rgba(245,158,11,0.15); color:#D97706;">🧫</div>
+        <div class="mini-mock-icon" style="background:rgba(245,158,11,0.15); color:#D97706;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="11" r="2"/><circle cx="15" cy="14" r="1.5"/></svg>
+        </div>
         <div>
           <div style="font-weight:800; font-size:0.92rem; color:var(--heading-color);">Organic Chemistry Sprint</div>
           <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">Question 3 Focus · 10.0 Marks · Flame, unsaturation &amp; functional groups</div>
@@ -1036,7 +1051,9 @@
       </a>
 
       <a href="/student/energy.html" class="mini-mock-card">
-        <div class="mini-mock-icon" style="background:rgba(239,68,68,0.15); color:#DC2626;">🔥</div>
+        <div class="mini-mock-icon" style="background:rgba(239,68,68,0.15); color:#DC2626;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 17c1.38 0 2.5-1.12 2.5-2.5 0-1.63-1.5-3.5-1.5-3.5S10.5 12.87 10.5 14.5"/><path d="M12 2c-3.5 4.5-7 7.5-7 12a7 7 0 0 0 14 0c0-4.5-3.5-7.5-7-12z"/></svg>
+        </div>
         <div>
           <div style="font-weight:800; font-size:0.92rem; color:var(--heading-color);">Thermochemistry Sprint</div>
           <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">Enthalpy of Neutralization &amp; Displacement calorimetry</div>
@@ -1050,10 +1067,12 @@
   ══════════════════════════════════════ -->
   <div id="sectionHistory" class="hub-tab-section" style="display:none;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-      <h2 style="font-family:'Cinzel', serif; font-size:1.2rem; font-weight:800; color:var(--heading-color); margin:0;">
-        📜 Your Mock Examination History &amp; Grade Ledger
+      <h2 style="font-size:1.2rem; font-weight:800; color:var(--heading-color); margin:0; display:flex; align-items:center; gap:8px;">
+        <span class="series-badge" style="margin:0;">LEDGER</span> Mock Examination History &amp; Grade Ledger
       </h2>
-      <button class="top-action-btn" onclick="loadExamHistory()">🔄 Refresh</button>
+      <button class="top-action-btn" onclick="loadExamHistory()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px;"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>Refresh
+      </button>
     </div>
 
     <div class="history-table-container">
@@ -1073,7 +1092,7 @@
     <!-- Modal Header -->
     <div style="display:flex; justify-content:space-between; align-items:center; padding:18px 24px; border-bottom:1px solid var(--card-border); background:var(--card-bg);">
       <div>
-        <div id="modalPaperTitle" style="font-family:'Cinzel', serif; font-weight:800; font-size:1.15rem; color:var(--heading-color);">
+        <div id="modalPaperTitle" style="font-weight:800; font-size:1.15rem; color:var(--heading-color);">
           KCSE Chemistry Paper 3 Practical
         </div>
         <div id="modalPaperBadge" style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">
@@ -1081,7 +1100,9 @@
         </div>
       </div>
       <div style="display:flex; align-items:center; gap:8px;">
-        <button type="button" class="top-action-btn" onclick="printModalPaper()" title="Print Paper Booklet">🖨️ Print</button>
+        <button type="button" class="top-action-btn" onclick="printModalPaper()" title="Print Paper Booklet">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print
+        </button>
         <button type="button" class="top-action-btn modal-close-btn" onclick="closePastPaperModal()" title="Close Viewer">✕</button>
       </div>
     </div>
@@ -1089,13 +1110,13 @@
     <!-- Modal Sub-Tabs -->
     <div class="modal-tab-bar">
       <button type="button" class="modal-tab-btn active" id="modalTabBtnQuestions" onclick="switchModalTab('questions')">
-        📄 Examination Questions &amp; Procedures
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Examination Questions &amp; Procedures
       </button>
       <button type="button" class="modal-tab-btn" id="modalTabBtnScheme" onclick="switchModalTab('scheme')">
-        🎯 Coordinated Mark Scheme
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Coordinated Mark Scheme
       </button>
       <button type="button" class="modal-tab-btn" id="modalTabBtnPrep" onclick="switchModalTab('prep')">
-        🧪 Confidential Preparation Guide
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px;"><path d="M10 2v7.31M14 2v7.31M8.5 2h7M14 9.3a6.5 6.5 0 1 1-4 0"/><line x1="6" y1="16" x2="18" y2="16"/></svg>Confidential Preparation Guide
       </button>
     </div>
 
@@ -1483,15 +1504,15 @@
           
           <ul class="series-questions-list">
             <li class="series-q-item">
-              <span>🧪</span>
+              <span class="q-icon-pill" style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:6px; background:rgba(56,189,248,0.12); color:#0284C7; flex-shrink:0;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.31M14 2v7.31M8.5 2h7M14 9.3a6.5 6.5 0 1 1-4 0"/></svg></span>
               <div><b>Q1 (15M):</b> ${s.q1}</div>
             </li>
             <li class="series-q-item">
-              <span>🧂</span>
+              <span class="q-icon-pill" style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:6px; background:rgba(16,185,129,0.12); color:#059669; flex-shrink:0;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="4" width="14" height="16" rx="3"/><line x1="9" y1="2" x2="15" y2="2"/></svg></span>
               <div><b>Q2 (15M):</b> ${s.q2}</div>
             </li>
             <li class="series-q-item">
-              <span>🧫</span>
+              <span class="q-icon-pill" style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:6px; background:rgba(245,158,11,0.12); color:#D97706; flex-shrink:0;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="11" r="2"/></svg></span>
               <div><b>Q3 (10M):</b> ${s.q3}</div>
             </li>
           </ul>
@@ -1499,10 +1520,10 @@
 
         <div class="series-card-footer">
           <span style="font-size:0.8rem; font-weight:700; color:var(--text-muted); font-family:var(--font-mono);">
-            ⏱️ 135 Mins · 40 Marks
+            135 Mins · 40.0 Marks
           </span>
           <button type="button" class="btn-start-series" onclick="launchSeries('${s.key}')">
-            Start Paper 3 →
+            Start Paper 3 &rarr;
           </button>
         </div>
       </div>
@@ -1683,8 +1704,8 @@
 
     container.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; border-bottom:1px solid var(--card-border); padding-bottom:12px;">
-        <h3 style="font-family:'Cinzel', serif; font-size:1.15rem; font-weight:800; color:var(--heading-color); margin:0;">
-          📘 ${escapeHtml(ln.title)}
+        <h3 style="font-size:1.15rem; font-weight:800; color:var(--heading-color); margin:0; display:flex; align-items:center; gap:8px;">
+          <span class="series-badge" style="margin:0;">GUIDE</span> ${escapeHtml(ln.title)}
         </h3>
         <button type="button" class="top-action-btn" onclick="toggleLeadNotes()" style="padding:4px 10px; font-size:0.75rem;">✕ Close Guide</button>
       </div>
@@ -1786,28 +1807,28 @@
     {
       key: '2020s',
       title: '2020s National Practical Series (2020–2025)',
-      icon: '🎓',
+      icon: '',
       desc: 'Contemporary KNEC Paper 3 format: micro-scale volumetric titrations, transition metal double salt alums, and organic unsaturation testing.',
       filterFn: y => y >= 2020 && y <= 2029
     },
     {
       key: '2010s',
       title: '2010s National Practical Series (2010–2019)',
-      icon: '🏛️',
+      icon: '',
       desc: 'Comprehensive practicals featuring thermochemical enthalpy changes, thiosulfate clock kinetics, and systematic cation/anion diagnostic matrices.',
       filterFn: y => y >= 2010 && y <= 2019
     },
     {
       key: '2000s',
       title: '2000s National Practical Series (2000–2009)',
-      icon: '📜',
+      icon: '',
       desc: 'Classic national practicals covering redox manganate(VII) standardization, double indicators, solubility curves, and amphoteric metal salts.',
       filterFn: y => y >= 2000 && y <= 2009
     },
     {
       key: '1980s-1990s',
       title: '1980s–1990s Historical Practical Series (1989–1998)',
-      icon: '🏺',
+      icon: '',
       desc: 'Foundational KNEC chemistry laboratory archives: back-titrations, water of crystallization (borax/oxalate), and thermal decomposition pathways.',
       filterFn: y => y >= 1989 && y <= 1999
     }
@@ -1863,13 +1884,13 @@
       <div class="past-paper-card">
         <div>
           <div class="past-card-header-row">
-            <span class="series-badge">🇰🇪 KNEC KCSE ${p.year} National Paper</span>
+            <span class="series-badge">KNEC KCSE ${p.year} National Paper</span>
             ${isPlayable ? `
               <span class="past-sim-chip" title="Complete 3-question interactive practical laboratory ready">
                 <span class="pulse-dot"></span> 40M Practical Lab
               </span>
             ` : `
-              <span style="font-size:0.72rem; color:var(--text-muted); font-family:var(--font-mono); font-weight:700;">📝 Written Archive</span>
+              <span style="font-size:0.72rem; color:var(--text-muted); font-family:var(--font-mono); font-weight:700;">Written Archive</span>
             `}
           </div>
 
@@ -1881,15 +1902,15 @@
 
           <ul class="series-questions-list">
             <li class="series-q-item">
-              <span style="font-size:1.05rem; line-height:1;">🧪</span>
+              <span class="q-icon-pill" style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:6px; background:rgba(56,189,248,0.12); color:#0284C7; flex-shrink:0;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.31M14 2v7.31M8.5 2h7M14 9.3a6.5 6.5 0 1 1-4 0"/></svg></span>
               <div><b>Q1 (15M):</b> ${escapeHtml(q1Summary)}</div>
             </li>
             <li class="series-q-item">
-              <span style="font-size:1.05rem; line-height:1;">🧂</span>
+              <span class="q-icon-pill" style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:6px; background:rgba(16,185,129,0.12); color:#059669; flex-shrink:0;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="4" width="14" height="16" rx="3"/><line x1="9" y1="2" x2="15" y2="2"/></svg></span>
               <div><b>Q2 (15M):</b> ${escapeHtml(q2Summary)}</div>
             </li>
             <li class="series-q-item">
-              <span style="font-size:1.05rem; line-height:1;">🧫</span>
+              <span class="q-icon-pill" style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:6px; background:rgba(245,158,11,0.12); color:#D97706; flex-shrink:0;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="11" r="2"/></svg></span>
               <div><b>Q3 (10M):</b> ${escapeHtml(q3Summary)}</div>
             </li>
           </ul>
@@ -1897,20 +1918,20 @@
 
         <div class="past-card-footer">
           <span class="past-card-meta">
-            ⏱️ 135 Mins · 40.0 Marks
+            135 Mins · 40.0 Marks
           </span>
           <div class="past-card-btn-group">
             <button type="button" class="btn-paper-scheme" onclick="openPastPaperModal('${p.id}')" title="Inspect official examination question booklet, experimental procedures, and mark scheme">
-              📖 Paper &amp; Scheme
+              Paper &amp; Mark Scheme
             </button>
             ${p.workbenchUrl ? `
               <a href="${p.workbenchUrl}" target="_blank" class="btn-paper-scheme" style="text-decoration:none; display:inline-flex; align-items:center; gap:5px; font-weight:700; color:var(--emerald-accent); border-color:var(--emerald-accent);" title="Open realistic interactive thermometry workbench simulation">
-                🌡️ Workbench Simulation ↗
+                Workbench Simulation &rarr;
               </a>
             ` : ''}
             ${isPlayable ? `
               <button type="button" class="btn-start-series" onclick="launchSeries('${p.playablePresetKey}')" title="Launch complete 40-mark KNEC simulation">
-                ⚡ Launch Simulation →
+                Launch Simulation &rarr;
               </button>
             ` : ''}
           </div>
@@ -1952,13 +1973,15 @@
     if (filtered.length === 0) {
       container.innerHTML = `
         <div style="padding: 48px 24px; text-align:center; color:var(--text-muted); background:var(--card-bg); border-radius:14px; border:1px dashed var(--card-border); margin: 20px 0;">
-          <div style="font-size:2.4rem; margin-bottom:12px;">🔍</div>
-          <div style="font-weight:800; font-size:1.1rem; color:var(--heading-color); font-family:'Cinzel', serif;">No matching past papers found</div>
+          <div style="width:48px; height:48px; border-radius:12px; background:rgba(100,116,139,0.1); color:var(--text-muted); display:inline-flex; align-items:center; justify-content:center; margin-bottom:12px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+          <div style="font-weight:800; font-size:1.1rem; color:var(--heading-color);">No matching past papers found</div>
           <div style="font-size:0.88rem; margin-top:6px; max-width:540px; margin-left:auto; margin-right:auto; line-height:1.5;">
             No practical papers matched your current filters. Try resetting the decade, technique, or search filters to explore all 31 national practical papers.
           </div>
           <button type="button" class="btn-paper-scheme" onclick="resetPastPaperFilters()" style="margin-top:16px;">
-            🔄 Reset All Filters
+            Reset All Filters
           </button>
         </div>
       `;
@@ -1975,7 +1998,6 @@
         <div class="decade-section-wrap" id="decade-section-${dec.key}">
           <div class="decade-section-header">
             <div class="decade-header-left">
-              <span class="decade-header-icon">${dec.icon}</span>
               <div>
                 <h3 class="decade-header-title">${escapeHtml(dec.title)}</h3>
                 <p class="decade-header-desc">${escapeHtml(dec.desc)}</p>
@@ -1983,7 +2005,7 @@
             </div>
             <div class="decade-header-badges">
               <span class="decade-count-badge">${eraPapers.length} National Paper${eraPapers.length > 1 ? 's' : ''}</span>
-              <span class="decade-sim-badge">⚡ 100% Simulated (${eraPapers.length * 3} Questions)</span>
+              <span class="decade-sim-badge">Fully Simulated (${eraPapers.length * 3} Questions)</span>
             </div>
           </div>
 
@@ -2023,11 +2045,11 @@
         actionBtns.innerHTML = `
           ${paper.workbenchUrl ? `
             <a href="${paper.workbenchUrl}" target="_blank" class="btn-paper-scheme" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px; font-size:0.85rem; padding:8px 14px; font-weight:700; color:var(--emerald-accent); border-color:var(--emerald-accent);" title="Open realistic thermometry laboratory workbench simulation">
-              🌡️ Workbench Simulation ↗
+              Workbench Simulation &rarr;
             </a>
           ` : ''}
           <button type="button" class="btn-start-series" onclick="launchSeries('${paper.playablePresetKey}')">
-            ⚡ Launch 40M Simulation →
+            Launch 40M Simulation &rarr;
           </button>
           <button type="button" class="top-action-btn" onclick="closePastPaperModal()">Close</button>
         `;
@@ -2035,7 +2057,7 @@
         actionBtns.innerHTML = `
           ${paper.workbenchUrl ? `
             <a href="${paper.workbenchUrl}" target="_blank" class="btn-paper-scheme" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px; font-size:0.85rem; padding:8px 14px; font-weight:700; color:var(--emerald-accent); border-color:var(--emerald-accent);" title="Open realistic thermometry laboratory workbench simulation">
-              🌡️ Workbench Simulation ↗
+              Workbench Simulation &rarr;
             </a>
           ` : ''}
           <button type="button" class="top-action-btn" onclick="closePastPaperModal()">Close</button>
@@ -2083,14 +2105,18 @@
       body.innerHTML = `
         ${!p.playablePresetKey ? `
           <div style="background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.3); border-radius:10px; padding:12px 16px; margin-bottom:18px; display:flex; align-items:center; gap:12px;">
-            <span style="font-size:1.4rem;">📝</span>
+            <div style="width:32px; height:32px; border-radius:8px; background:rgba(245,158,11,0.15); color:#D97706; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+            </div>
             <div style="font-size:0.84rem; color:var(--text-main); line-height:1.45;">
               <b>Written Examination Mode:</b> This past practical paper is currently available in structured written format with official experimental data and KNEC scoring rubrics. The interactive virtual workbench simulation is in development.
             </div>
           </div>
         ` : `
           <div style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.3); border-radius:10px; padding:12px 16px; margin-bottom:18px; display:flex; align-items:center; gap:12px;">
-            <span style="font-size:1.4rem;">🎮</span>
+            <div style="width:32px; height:32px; border-radius:8px; background:rgba(16,185,129,0.15); color:#059669; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4m-2-2v4m7-2h.01m3 0h.01"/></svg>
+            </div>
             <div style="font-size:0.84rem; color:var(--text-main); line-height:1.45;">
               <b>Full Interactive Simulation Ready:</b> You can launch this entire 40-mark paper in the virtual laboratory anytime by clicking <b>"Launch 40M Simulation"</b> above!
             </div>
@@ -2102,7 +2128,7 @@
 
         ${(p.questions || []).map((q) => `
           <div style="margin-bottom:24px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; padding:20px;">
-            <h4 style="font-family:'Cinzel', serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin-bottom:12px;">
+            <h4 style="font-size:1.05rem; font-weight:800; color:var(--heading-color); margin-bottom:12px;">
               ${escapeHtml(q.title)}
             </h4>
 
@@ -2203,7 +2229,7 @@
 
         <!-- Question 1 Calculations Scheme -->
         <div style="margin-bottom:24px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; padding:20px;">
-          <h4 style="font-family:'Cinzel', serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin-bottom:12px;">
+          <h4 style="font-size:1.05rem; font-weight:800; color:var(--heading-color); margin-bottom:12px;">
             Question 1: Volumetric / Thermochemical Scoring Rubric
           </h4>
           ${ms.q1Calculations && ms.q1Calculations.length ? `
@@ -2230,7 +2256,7 @@
 
         <!-- Qualitative Observations Scheme -->
         <div style="margin-bottom:24px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; padding:20px;">
-          <h4 style="font-family:'Cinzel', serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin-bottom:12px;">
+          <h4 style="font-size:1.05rem; font-weight:800; color:var(--heading-color); margin-bottom:12px;">
             Questions 2 &amp; 3: Qualitative Observation &amp; Inference Scoring Notes
           </h4>
           <div style="font-size:0.86rem; line-height:1.6; color:var(--text-normal); background:var(--surface-color); padding:14px; border-radius:8px; border:1px solid var(--card-border);">
@@ -2246,7 +2272,7 @@
         </div>
 
         <div style="background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; padding:20px;">
-          <h4 style="font-family:'Cinzel', serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin-bottom:12px;">
+          <h4 style="font-size:1.05rem; font-weight:800; color:var(--heading-color); margin-bottom:12px;">
             Reagents &amp; Solutions Preparation Recipes
           </h4>
           <div style="font-size:0.88rem; line-height:1.7; color:var(--text-normal); background:var(--surface-color); padding:16px; border-radius:8px; border:1px solid var(--card-border); font-family:var(--font-mono); white-space:pre-line;">
@@ -2277,9 +2303,9 @@
     const btn = document.getElementById('themeToggleBtn');
     if (!btn) return;
     const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
-    if (currentTheme === 'dark') btn.textContent = '🌙 Dark';
-    else if (currentTheme === 'green') btn.textContent = '🧪 Lab';
-    else btn.textContent = '☀️ Light';
+    if (currentTheme === 'dark') btn.textContent = 'Dark';
+    else if (currentTheme === 'green') btn.textContent = 'Lab';
+    else btn.textContent = 'Light';
   }
 
   function cycleTheme() {
@@ -2315,7 +2341,9 @@
       banner.innerHTML = `
         <div style="background:var(--acad-gold-subtle); border:1.5px solid var(--acad-gold); border-radius:12px; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; box-shadow:0 4px 14px rgba(0,0,0,0.08);">
           <div style="display:flex; align-items:center; gap:14px;">
-            <div style="width:42px; height:42px; border-radius:10px; background:rgba(234,179,8,0.2); display:flex; align-items:center; justify-content:center; font-size:1.4rem; flex-shrink:0;">💾</div>
+            <div style="width:42px; height:42px; border-radius:10px; background:rgba(234,179,8,0.2); display:flex; align-items:center; justify-content:center; color:var(--heading-color); flex-shrink:0;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            </div>
             <div>
               <div style="font-weight:800; font-size:0.96rem; color:var(--heading-color);">
                 In-Progress KCSE Mock Exam Auto-Saved in IndexedDB
@@ -2327,7 +2355,7 @@
           </div>
           <div style="display:flex; gap:10px; align-items:center;">
             <a href="composite_exam.html?series=${encodeURIComponent(seriesId)}&mode=${encodeURIComponent(mode)}${assignmentParam}" class="btn-start-series" style="padding:8px 18px; font-size:0.85rem; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
-              ▶ Resume Exam Session
+              Resume Exam Session &rarr;
             </a>
             <button type="button" onclick="discardDraftFromMockHub('${encodeURIComponent(latest.examKey)}')" style="background:transparent; border:1px solid var(--card-border); color:var(--text-muted); padding:8px 12px; border-radius:8px; font-size:0.8rem; cursor:pointer;" title="Discard saved draft">
               Discard
@@ -2360,8 +2388,8 @@
       const stats = getSimulationCoverageStats();
       const btnPlayable = document.querySelector('[data-sim="playable"]');
       const btnWritten = document.querySelector('[data-sim="written"]');
-      if (btnPlayable) btnPlayable.textContent = `🎮 40M Simulations Available (${stats.playablePapers})`;
-      if (btnWritten) btnWritten.textContent = `📝 Written Paper Archives (${stats.writtenOnlyPapers})`;
+      if (btnPlayable) btnPlayable.textContent = `40M Simulations Available (${stats.playablePapers})`;
+      if (btnWritten) btnWritten.textContent = `Written Paper Archives (${stats.writtenOnlyPapers})`;
     }
   }
 

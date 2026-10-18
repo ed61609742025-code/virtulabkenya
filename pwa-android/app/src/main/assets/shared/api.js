@@ -6,22 +6,24 @@
 function getServerBaseUrl() {
   try {
     const custom = localStorage.getItem('vlk_server_url');
-    if (custom && (custom.includes('192.168.') || custom.includes('localhost') || custom.includes('127.0.0.1'))) {
-      localStorage.removeItem('vlk_server_url');
-    } else if (custom && custom.trim()) {
+    if (custom && custom.trim()) {
       return custom.trim().replace(/\/+$/, '');
     }
   } catch (e) {}
   try {
     if (typeof window !== 'undefined' && window.VirtuLabNative && typeof window.VirtuLabNative.getServer === 'function') {
       const nativeUrl = window.VirtuLabNative.getServer();
-      if (nativeUrl && !nativeUrl.includes('192.168.') && !nativeUrl.includes('localhost')) {
+      if (nativeUrl && nativeUrl.trim()) {
         return nativeUrl.trim().replace(/\/+$/, '');
       }
     }
   } catch (e) {}
   if (typeof window !== 'undefined' && window.location && window.location.hostname) {
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      // If frontend is running on a static dev port other than 3000 (e.g. VS Code Live Server on 5500)
+      if (window.location.port && window.location.port !== '3000' && window.location.port !== '80' && window.location.port !== '443') {
+        return `http://${window.location.hostname}:3000`;
+      }
       return window.location.origin || '';
     }
     if (window.location.origin && window.location.origin.startsWith('http')) {
@@ -726,17 +728,20 @@ async function apiRequest(method, endpoint, body, retries = 2) {
           };
         }
 
-        // If 401 Unauthorized, clear stale token
+        // If 401 Unauthorized, clear stale token and redirect if on a protected page
         if (res.status === 401) {
           clearToken();
-          const path = (window.location.pathname || '').toLowerCase();
-          const currentTarget = encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
-          if (path.includes('/student/') && !path.endsWith('login.html')) {
-            window.location.replace('/student/login.html?expired=1&returnUrl=' + currentTarget);
-          } else if (path.includes('/teacher/') && !path.endsWith('login.html')) {
-            window.location.replace('/teacher/login.html?expired=1&returnUrl=' + currentTarget);
-          } else if (path.includes('/admin/')) {
-            window.location.replace('/teacher/login.html?expired=1&returnUrl=' + currentTarget);
+          const isAuthCall = typeof endpoint === 'string' && (endpoint.includes('/auth/') || endpoint.includes('/login'));
+          if (!isAuthCall) {
+            const path = (window.location.pathname || '').toLowerCase();
+            const currentTarget = encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
+            if (path.includes('/student/') && !path.endsWith('login.html')) {
+              window.location.replace('/student/login.html?expired=1&returnUrl=' + currentTarget);
+            } else if (path.includes('/teacher/') && !path.endsWith('login.html')) {
+              window.location.replace('/teacher/login.html?expired=1&returnUrl=' + currentTarget);
+            } else if (path.includes('/admin/') && !path.endsWith('login.html')) {
+              window.location.replace('/admin/login.html?expired=1&returnUrl=' + currentTarget);
+            }
           }
           throw new Error(data.error || 'Session expired. Please log in again.');
         }
@@ -831,7 +836,7 @@ const Auth = {
     if (role === 'teacher') {
       window.location.href = '/teacher/login.html';
     } else if (role === 'admin') {
-      window.location.reload();
+      window.location.href = '/admin/login.html';
     } else {
       window.location.href = '/student/login.html';
     }
@@ -1278,6 +1283,13 @@ function requireAdminLogin(onSuccess) {
   const user = getUser();
   if (!isLoggedIn() || user?.role !== 'admin') {
     clearToken();
+    const path = (window.location.pathname || '').toLowerCase();
+    if (!path.endsWith('/admin/login.html') && !path.endsWith('login.html')) {
+      const returnUrl = encodeURIComponent(window.location.pathname + window.location.search + window.location.hash);
+      const role = user?.role;
+      const qs = role ? `?mismatch=${encodeURIComponent(role)}&returnUrl=${returnUrl}` : `?returnUrl=${returnUrl}`;
+      window.location.replace('/admin/login.html' + qs);
+    }
     return false;
   }
   if (typeof onSuccess === 'function') onSuccess(user);

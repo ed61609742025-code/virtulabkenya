@@ -280,5 +280,8 @@
   };
 
   global.RatesBenchCore = RatesBenchCore;
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = RatesBenchCore;
+  }
 
-})(typeof window !== 'undefined' ? window : this);
+})(typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : this));

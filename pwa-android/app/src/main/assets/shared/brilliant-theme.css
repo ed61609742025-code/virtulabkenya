@@ -594,3 +594,15 @@
     padding-bottom: 84px !important;
   }
 }
+
+
+/* ── 8. MOBILE THERMAL & GPU BATTERY OPTIMIZATION ── */
+@media (max-width: 768px) {
+  /* Eliminate multi-pass GPU framebuffer blur filters on mobile */
+  *,
+  *::before,
+  *::after {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}

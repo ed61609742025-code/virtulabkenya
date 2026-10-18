@@ -4,6 +4,26 @@
    Prestigious Kenyan Academic Examination Design System
 ══════════════════════════════════════════════════════════════ */
 
+/* ── 0. UNIVERSAL ACCESSIBILITY & FOCUS STYLES (WCAG 2.4.7 AA) ── */
+:focus-visible {
+  outline: 2px solid var(--cyan-accent, #0369A1) !important;
+  outline-offset: 2px !important;
+  border-radius: inherit;
+}
+
+/* Accessible Screen Reader Only Utility (WCAG 4.1.3 AA) */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
 /* ── 1. THEME TOKENS ── */
 :root, [data-theme="light"] {
   --bg-dark: #F6F3EE;
@@ -43,10 +63,10 @@
   --violet-bg: #F5F3FF;
   --violet-border: #DDD6FE;
 
-  --cyan-accent: #0284C7;
-  --cyan-accent-strong: #0369A1;
-  --cyan-btn-bg: #0284C7;
-  --cyan-btn-hover: #0369A1;
+  --cyan-accent: #0369A1;
+  --cyan-accent-strong: #075985;
+  --cyan-btn-bg: #0369A1;
+  --cyan-btn-hover: #075985;
 
   --locked-bg: #F1F5F9;
   --locked-border: #CBD5E1;
@@ -261,7 +281,7 @@ html, body {
   background: rgba(255, 255, 255, 0.16);
   padding: 1px 6px;
   border-radius: 3px;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 700;
 }
 
@@ -314,7 +334,7 @@ html, body {
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
@@ -329,17 +349,23 @@ html, body {
 
 .theme-btn-chip {
   font-family: inherit;
-  font-size: 0.70rem;
+  font-size: 0.78rem;
   font-weight: 600;
-  padding: 3px 6px;
-  border-radius: 4px;
-  border: none;
+  padding: 8px 12px;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-radius: 6px;
+  border: 1px solid transparent;
   background: transparent;
   color: var(--text-muted);
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.12s ease;
   text-decoration: none;
+  touch-action: manipulation;
 }
 .theme-btn-chip:hover {
   color: var(--text-main);
@@ -349,20 +375,48 @@ html, body {
   color: #FFFFFF;
 }
 
+.nav-btn {
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 8px 12px;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border-radius: 6px;
+  border: 1px solid var(--card-border);
+  background: var(--card-bg-hover);
+  color: var(--text-main);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  touch-action: manipulation;
+  text-decoration: none;
+}
+.nav-btn:hover {
+  background: var(--card-bg);
+  border-color: var(--cyan-accent);
+}
+
 .btn-back-link {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
-  padding: 4px 8px;
+  padding: 8px 12px;
+  min-height: 40px;
   border-radius: 6px;
   background: var(--card-bg-hover);
   border: 1px solid var(--card-border);
   color: var(--text-muted);
   font-family: inherit;
-  font-size: 0.74rem;
+  font-size: 0.78rem;
   font-weight: 600;
   text-decoration: none;
   transition: background-color 0.15s ease, color 0.15s ease;
+  touch-action: manipulation;
   white-space: nowrap;
 }
 .btn-back-link:hover {
@@ -510,6 +564,9 @@ html, body {
   min-width: 90px;
   flex: 1;
   text-decoration: none;
+
+  min-height: 48px;
+  touch-action: manipulation;
 }
 
 .workflow-step-item:focus-visible .workflow-step-node {
@@ -545,7 +602,7 @@ html, body {
 }
 
 .workflow-step-sub {
-  font-size: 0.67rem;
+  font-size: 0.75rem;
   color: var(--text-tertiary);
   margin-top: 2px;
   white-space: nowrap;
@@ -951,7 +1008,7 @@ html, body {
 }
 
 .lens-readout-sub {
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   color: var(--text-muted);
   margin-top: 4px;
   line-height: 1.25;
@@ -964,15 +1021,15 @@ html, body {
 /* ── Burette Parallax Perspective Alignment Controls ── */
 .parallax-view-controls {
   margin-top: 8px;
-  background: rgba(15, 23, 42, 0.85);
+  background: rgba(15, 23, 42, 0.92);
   border: 1px solid var(--card-border);
-  border-radius: 8px;
-  padding: 6px 8px;
-  width: 154px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  border-radius: 10px;
+  padding: 8px 10px;
+  width: 172px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
 }
 
 .parallax-ctrl-header {
@@ -983,7 +1040,7 @@ html, body {
 }
 
 .parallax-label {
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--text-muted);
   text-transform: uppercase;
@@ -991,9 +1048,9 @@ html, body {
 }
 
 .parallax-status-chip {
-  font-size: 0.60rem;
+  font-size: 0.75rem;
   font-weight: 800;
-  padding: 1px 6px;
+  padding: 2px 8px;
   border-radius: 999px;
   background: rgba(16, 185, 129, 0.18);
   color: #10B981;
@@ -1010,31 +1067,38 @@ html, body {
 
 .parallax-btn-group {
   display: flex;
-  gap: 2px;
-  background: rgba(30, 41, 59, 0.8);
-  padding: 2px;
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  gap: 4px;
+  background: rgba(30, 41, 59, 0.85);
+  padding: 3px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .parallax-btn {
   flex: 1;
   background: transparent;
   border: none;
-  color: var(--text-muted);
-  font-size: 0.60rem;
+  color: #CBD5E1;
+  font-size: 0.76rem;
   font-weight: 700;
-  padding: 4px 2px;
-  border-radius: 4px;
+  padding: 8px 4px;
+  min-height: 40px;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.15s ease;
   white-space: nowrap;
   text-align: center;
+  touch-action: manipulation;
 }
 
 .parallax-btn:hover {
-  color: #F8FAFC;
-  background: rgba(255, 255, 255, 0.08);
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.parallax-btn:focus-visible {
+  outline: 2px solid #38BDF8 !important;
+  outline-offset: 1px;
 }
 
 .parallax-btn.active {
@@ -1118,7 +1182,7 @@ html, body {
   }
 
   .candidate-top-ribbon {
-    font-size: 0.68rem;
+    font-size: 0.75rem;
     padding: 3px 8px;
     gap: 4px;
     line-height: 1.25;
@@ -1148,7 +1212,7 @@ html, body {
 
   .brand-subtagline {
     display: block !important;
-    font-size: 0.60rem !important;
+    font-size: 0.75rem !important;
   }
 
   .nav-actions {
@@ -1163,7 +1227,7 @@ html, body {
   .knec-exam-subbar {
     padding: 4px 10px;
     gap: 10px;
-    font-size: 0.68rem;
+    font-size: 0.75rem;
     overflow-x: auto;
     white-space: nowrap;
     -webkit-overflow-scrolling: touch;
@@ -1252,7 +1316,7 @@ html, body {
 
   .bench-bottle-chip {
     padding: 3px 6px !important;
-    font-size: 0.68rem !important;
+    font-size: 0.75rem !important;
     gap: 4px !important;
   }
 
@@ -1821,7 +1885,7 @@ html, body {
   gap: 5px;
   padding: 3px 8px;
   border-radius: 999px;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   font-weight: 700;
   font-family: var(--font-mono);
   background: var(--green-bg);
@@ -1956,7 +2020,7 @@ html, body {
 }
 
 .reagent-meta-tag {
-  font-size: 0.67rem;
+  font-size: 0.75rem;
   color: var(--text-tertiary);
   font-family: var(--font-body);
   font-weight: 600;
@@ -2404,7 +2468,7 @@ html, body {
 }
 
 .curve-telemetry-item .telemetry-label {
-  font-size: 0.67rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   font-weight: 700;
@@ -2580,4 +2644,65 @@ html, body {
   margin-bottom: 4px;
   font-family: var(--font-academic);
   font-size: 0.82rem;
+}
+
+
+/* ── Precision Drop & Coarse Silhouette Distinction ── */
+.btn-tactile-cyan {
+  background: linear-gradient(135deg, #0284C7, #0369A1);
+  color: #FFFFFF !important;
+  border: 1.5px solid #38BDF8 !important;
+  box-shadow: 0 3px 0 #075985, 0 2px 6px rgba(2, 132, 199, 0.25);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+.btn-tactile-cyan:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0369A1, #0284C7);
+  box-shadow: 0 4px 0 #075985, 0 4px 12px rgba(56, 189, 248, 0.4);
+  transform: translateY(-1px);
+}
+.btn-tactile-cyan:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #075985;
+}
+
+/* Near Equivalence Pulse & Visual Highlighting */
+#titrationControls.approaching-endpoint .btn-tactile-amber {
+  opacity: 0.65;
+  filter: grayscale(0.2);
+  transition: opacity 0.25s ease, filter 0.25s ease;
+}
+
+#titrationControls.approaching-endpoint .btn-tactile-cyan,
+.btn-precision-highlight {
+  border-color: #38BDF8 !important;
+  animation: precisionDropPulse 1.6s ease-in-out infinite !important;
+}
+
+@keyframes precisionDropPulse {
+  0%, 100% {
+    box-shadow: 0 3px 0 #075985, 0 0 8px rgba(56, 189, 248, 0.4);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 3px 0 #075985, 0 0 18px rgba(56, 189, 248, 0.9), 0 0 6px #FFFFFF;
+    transform: scale(1.02);
+  }
+}
+
+.btn-action-record.endpoint-ready,
+.dock-btn-record.endpoint-ready {
+  animation: recordPulse 1.5s ease-in-out infinite !important;
+  border-color: #34D399 !important;
+}
+
+@keyframes recordPulse {
+  0%, 100% {
+    box-shadow: 0 3px 0 #065F46, 0 0 8px rgba(16, 185, 129, 0.5);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 3px 0 #065F46, 0 0 20px rgba(52, 211, 153, 0.95);
+    transform: scale(1.02);
+  }
 }

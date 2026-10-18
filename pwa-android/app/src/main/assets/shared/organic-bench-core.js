@@ -1701,7 +1701,7 @@
       <g transform="translate(10, 6)">
         <rect x="0" y="0" width="170" height="22" rx="6" fill="${isFruity ? 'rgba(244, 114, 182, 0.22)' : 'rgba(148, 163, 184, 0.18)'}" stroke="${isFruity ? '#F472B6' : '#94A3B8'}" stroke-width="1.2"/>
         <text x="85" y="14.5" font-size="7.5" font-weight="800" fill="${isFruity ? '#F472B6' : '#CBD5E1'}" text-anchor="middle">
-          ${isFruity ? '👃 Sweet Fruity Ester Aroma' : '👃 Pungent Acid Smell (No Ester)'}
+          ${isFruity ? 'Sweet Fruity Ester Aroma' : 'Pungent Acid Smell (No Ester)'}
         </text>
       </g>
     ` : '';
@@ -2072,16 +2072,16 @@
     if (isWaterWithLitmus) {
       if (!stage || stage === 'idle') {
         return [
-          { stage: 'step1_water', label: '💧 Step 1: Add 2 cm³ Distilled Water & Shake Thoroughly', cls: 'btn-perform-test btn-step-dissolve' }
+          { stage: 'step1_water', label: 'Step 1: Add 2 cm³ Distilled Water & Shake Thoroughly', cls: 'btn-perform-test btn-step-dissolve' }
         ];
       } else if (stage === 'step1_water' || stage === 'step1') {
         return [
-          { stage: 'step2_litmus', label: '📄 Step 2: Test Mixture with Moist Red & Blue Litmus Paper', cls: 'btn-perform-test btn-step-litmus' },
+          { stage: 'step2_litmus', label: 'Step 2: Test Mixture with Moist Red & Blue Litmus Paper', cls: 'btn-perform-test btn-step-litmus' },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else {
         return [
-          { stage: 'done', label: '✅ Water & Litmus Test Completed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'done', label: 'Water & Litmus Test Completed', cls: 'btn-perform-test done', disabled: true },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       }
@@ -2096,16 +2096,16 @@
         : 'Acidified KMnO₄ Solution';
       if (!stage || stage === 'idle') {
         return [
-          { stage: 'step1_reagent', label: `💧 Step 1: Add 3–4 Drops ${oxidantName}`, cls: 'btn-perform-test' }
+          { stage: 'step1_reagent', label: `Step 1: Add 3–4 Drops ${oxidantName}`, cls: 'btn-perform-test' }
         ];
       } else if (stage === 'step1_reagent' || stage === 'step1') {
         return [
-          { stage: 'step2_warm', label: '🔥 Step 2: Warm Gently in Water Bath', cls: 'btn-perform-test btn-step-heat' },
+          { stage: 'step2_warm', label: 'Step 2: Warm Gently in Water Bath', cls: 'btn-perform-test btn-step-heat' },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else {
         return [
-          { stage: 'done', label: '✅ Oxidation Test Completed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'done', label: 'Oxidation Test Completed', cls: 'btn-perform-test done', disabled: true },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       }
@@ -2116,16 +2116,16 @@
     if (isCarbonate) {
       if (!stage || stage === 'idle') {
         return [
-          { stage: 'step1_nahco3', label: '🥄 Step 1: Add Spatula-End of Solid NaHCO₃', cls: 'btn-perform-test' }
+          { stage: 'step1_nahco3', label: 'Step 1: Add Spatula-End of Solid NaHCO₃', cls: 'btn-perform-test' }
         ];
       } else if (stage === 'step1_nahco3' || stage === 'step1') {
         return [
-          { stage: 'step2_limewater', label: '🥛 Step 2: Bubble Evolved Gas Through Limewater', cls: 'btn-perform-test btn-step-gas' },
+          { stage: 'step2_limewater', label: 'Step 2: Bubble Evolved Gas Through Limewater', cls: 'btn-perform-test btn-step-gas' },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else {
         return [
-          { stage: 'done', label: '✅ Effervescence & Gas Confirmed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'done', label: 'Effervescence & Gas Confirmed', cls: 'btn-perform-test done', disabled: true },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       }
@@ -2135,11 +2135,11 @@
     if (pStr.includes('ignit') || pStr.includes('burn') || (pStr.includes('spatula') && (pStr.includes('flame') || pStr.includes('bunsen'))) || tId.includes('ignit')) {
       if (!stage || stage === 'idle') {
         return [
-          { stage: 'stage1', label: '🔥 Step 1: Scoop on Spatula & Burn in Bunsen Flame', cls: 'btn-perform-test btn-step-heat' }
+          { stage: 'stage1', label: 'Step 1: Scoop on Spatula & Burn in Bunsen Flame', cls: 'btn-perform-test btn-step-heat' }
         ];
       } else {
         return [
-          { stage: 'done', label: '✅ Combustion Flame Observed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'done', label: 'Combustion Flame Observed', cls: 'btn-perform-test done', disabled: true },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       }
@@ -2149,11 +2149,11 @@
     if (pStr.includes('bromine') || tId.includes('bromine')) {
       if (!stage || stage === 'idle') {
         return [
-          { stage: 'stage1', label: '💧 Step 1: Add 2–3 Drops Bromine Water & Shake', cls: 'btn-perform-test' }
+          { stage: 'stage1', label: 'Step 1: Add 2–3 Drops Bromine Water & Shake', cls: 'btn-perform-test' }
         ];
       } else {
         return [
-          { stage: 'done', label: '✅ Bromine Decolourization Observed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'done', label: 'Bromine Decolourization Observed', cls: 'btn-perform-test done', disabled: true },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       }
@@ -2163,11 +2163,11 @@
     if (pStr.includes('litmus') || tId.includes('litmus') || pStr.includes('ph paper')) {
       if (!stage || stage === 'idle') {
         return [
-          { stage: 'stage1', label: '📄 Step 1: Dip Moist Red & Blue Litmus Papers', cls: 'btn-perform-test btn-step-litmus' }
+          { stage: 'stage1', label: 'Step 1: Dip Moist Red & Blue Litmus Papers', cls: 'btn-perform-test btn-step-litmus' }
         ];
       } else {
         return [
-          { stage: 'done', label: '✅ Litmus Reaction Recorded', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'done', label: 'Litmus Reaction Recorded', cls: 'btn-perform-test done', disabled: true },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       }
@@ -2177,20 +2177,20 @@
     if (pStr.includes('solub') || pStr.includes('miscib') || pStr.includes('water')) {
       if (!stage || stage === 'idle') {
         return [
-          { stage: 'stage1', label: '💧 Step 1: Add 2 cm³ Distilled Water & Shake', cls: 'btn-perform-test btn-step-dissolve' }
+          { stage: 'stage1', label: 'Step 1: Add 2 cm³ Distilled Water & Shake', cls: 'btn-perform-test btn-step-dissolve' }
         ];
       } else {
         return [
-          { stage: 'done', label: '✅ Miscibility Observed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'done', label: 'Miscibility Observed', cls: 'btn-perform-test done', disabled: true },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       }
     }
 
     // Default dynamic
-    let actionLabel = '🧪 Step 1: Add Reagent & Observe Reaction';
-    if (pStr.includes('kmno4')) actionLabel = '💧 Step 1: Add Acidified KMnO₄ Solution';
-    else if (pStr.includes('dichromate')) actionLabel = '💧 Step 1: Add Acidified K₂Cr₂O₇ Solution';
+    let actionLabel = 'Step 1: Add Reagent & Observe Reaction';
+    if (pStr.includes('kmno4')) actionLabel = 'Step 1: Add Acidified KMnO₄ Solution';
+    else if (pStr.includes('dichromate')) actionLabel = 'Step 1: Add Acidified K₂Cr₂O₇ Solution';
 
     if (!stage || stage === 'idle') {
       return [
@@ -2198,7 +2198,7 @@
       ];
     } else {
       return [
-        { stage: 'done', label: '✅ Reaction Observed', cls: 'btn-perform-test done', disabled: true },
+        { stage: 'done', label: 'Reaction Observed', cls: 'btn-perform-test done', disabled: true },
         { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
       ];
     }

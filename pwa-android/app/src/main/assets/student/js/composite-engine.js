@@ -9023,7 +9023,7 @@ class CompositeExamEngine {
       if (q1Cfg.baseRfm != null) this.preset.q1.baseRfm = Number(q1Cfg.baseRfm);
 
       // Regenerate appropriate calculation questions with bound functions
-      if (!this.preset.q1.hasMultipleProcedures && (!this.preset.q1.questions || this.preset.q1.questions.length === 0)) {
+      if (!this.preset.q1.hasMultipleProcedures && (!this.preset.q1.questions || this.preset.q1.questions.length === 0 || typeof this.preset.q1.questions[0]?.calcTheoretical !== 'function')) {
         if (this.preset.q1.calcType === 'water_of_crystallization') {
           this.preset.q1.questions = createWaterOfCrystallizationQuestions(this.preset.q1);
         } else if (this.preset.q1.calcType === 'percentage_purity') {
@@ -9100,6 +9100,8 @@ class CompositeExamEngine {
       );
       if (isQualitative) {
         this.preset.q3.simulationType = 'qualitative';
+        delete this.preset.q3.trueOrganicKey;
+        delete this.preset.q3.trueFunctionalGroup;
         const saltKey = q3Cfg.trueSaltKey || q3Cfg.salt;
         if (saltKey) this.preset.q3.trueSaltKey = saltKey;
         if (!Array.isArray(q3Cfg.tests) || q3Cfg.tests.length === 0) {
@@ -9962,21 +9964,20 @@ class CompositeExamEngine {
     let score = 0.0;
     const rubric = [];
     const tests = this.preset.q3.tests || [];
-    const isOrganic = Boolean(
-      this.preset.q3.simulationType === 'organic' ||
-      this.preset.q3.type === 'organic' ||
-      this.preset.q3.trueOrganicKey ||
-      this.preset.q3.trueFunctionalGroup
-    );
-    const isQualitative = !isOrganic && (
+    const isQualitative = Boolean(
       this.preset.q3.simulationType === 'qualitative' ||
       this.preset.q3.type === 'qualitative' ||
-      this.preset.q3.trueSaltKey
+      this.preset.q3.type === 'qualitative_single' ||
+      (this.preset.q3.simulationType !== 'organic' && (this.preset.q3.trueSaltKey || this.preset.q3.trueCation))
     );
+    const isOrganic = !isQualitative;
 
     if (isQualitative) {
       // Qualitative Scoring for Question 3 (e.g. Solid P)
-      const perTestMax = tests.length > 0 ? parseFloat((10.0 / tests.length).toFixed(1)) : 2.0;
+      const totalMarks = this.preset.q3.marks || 10.0;
+      const hasDeduction = Boolean(this.preset.q3.trueCation || this.preset.q3.trueAnion);
+      const testMarksPool = hasDeduction ? (totalMarks - 3.0) : totalMarks;
+      const perTestMax = tests.length > 0 ? parseFloat((testMarksPool / tests.length).toFixed(1)) : 2.0;
       const perHalfMax = parseFloat((perTestMax / 2.0).toFixed(1));
       const obsStopWords = ['with', 'from', 'form', 'forms', 'formed', 'solution', 'added', 'give', 'gives', 'given', 'there', 'when', 'that', 'this', 'remain', 'remains'];
       const infStopWords = ['the', 'and', 'ion', 'ions', 'may', 'present', 'absent', 'probable', 'suspected', 'confirmed', 'with', 'from'];
@@ -10023,9 +10024,38 @@ class CompositeExamEngine {
         });
       });
 
+      if (hasDeduction) {
+        const catMax = 1.5;
+        const aniMax = 1.5;
+        const trueCation = (this.preset.q3.trueCation || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        const candidateCation = (this.q3FunctionalGroupChoice || this.q3CationChoice || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        const cationCorrect = candidateCation.length > 0 && (candidateCation.includes(trueCation) || trueCation.includes(candidateCation));
+
+        const hasCharge = (this.q3FunctionalGroupChoice || this.q3CationChoice || '').includes('+') || (this.q3FunctionalGroupChoice || this.q3CationChoice || '').includes('²') || (this.q3FunctionalGroupChoice || this.q3CationChoice || '').includes('³') || (this.q3FunctionalGroupChoice || this.q3CationChoice || '').toLowerCase().includes('ion');
+        if (cationCorrect && hasCharge) {
+          score += catMax;
+          rubric.push({ code: 'Q3_CAT', item: `Cation Deduction (${this.preset.q3.trueCation})`, max: catMax, mark: catMax, pass: true, detail: 'Full mark (1.5 Mks): Correct cation with valid ionic charge.' });
+        } else if (cationCorrect) {
+          score += 1.0;
+          rubric.push({ code: 'Q3_CAT', item: 'Cation Deduction (-0.5 Charge Penalty)', max: catMax, mark: 1.0, pass: false, detail: 'Element identified but missing ionic charge superscript.' });
+        } else {
+          rubric.push({ code: 'Q3_CAT', item: 'Cation Deduction', max: catMax, mark: 0.0, pass: false, detail: `Expected: ${this.preset.q3.trueCation}` });
+        }
+
+        const trueAnion = (this.preset.q3.trueAnion || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        const candidateAnion = (this.q3AnionChoice || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        const anionCorrect = candidateAnion.length > 0 && (candidateAnion.includes(trueAnion) || trueAnion.includes(candidateAnion));
+        if (anionCorrect) {
+          score += aniMax;
+          rubric.push({ code: 'Q3_ANI', item: `Anion Deduction (${this.preset.q3.trueAnion})`, max: aniMax, mark: aniMax, pass: true, detail: 'Full mark (1.5 Mks): Correct anion identified.' });
+        } else {
+          rubric.push({ code: 'Q3_ANI', item: 'Anion Deduction', max: aniMax, mark: 0.0, pass: false, detail: `Expected: ${this.preset.q3.trueAnion}` });
+        }
+      }
+
       return {
-        totalScore: Math.min(10.0, parseFloat(score.toFixed(1))),
-        maxScore: 10.0,
+        totalScore: Math.min(totalMarks, parseFloat(score.toFixed(1))),
+        maxScore: totalMarks,
         rubric
       };
     }
@@ -10152,11 +10182,11 @@ class CompositeExamEngine {
   generateWorkedSolutions() {
     if (!this.preset || !this.preset.q1) return {};
     let questionsList = this.preset.q1.questions;
-    if (!questionsList || questionsList.length === 0) {
+    if (!questionsList || questionsList.length === 0 || typeof questionsList[0]?.calcTheoretical !== 'function') {
       if (this.preset.q1.hasMultipleProcedures && Array.isArray(this.preset.q1.procedures)) {
         questionsList = this.preset.q1.procedures.flatMap(p => p.questions || []);
       }
-      if (!questionsList || questionsList.length === 0) {
+      if (!questionsList || questionsList.length === 0 || typeof questionsList[0]?.calcTheoretical !== 'function') {
         questionsList = createStandardTitrationQuestions(this.preset.q1);
       }
     }

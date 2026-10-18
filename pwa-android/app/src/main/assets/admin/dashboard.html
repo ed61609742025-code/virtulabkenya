@@ -25,6 +25,7 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/shared/style.css">
 <link rel="stylesheet" href="css/admin.css?v=152">
+<script src="/shared/vlk-icons.js?v=164"></script>
 </head>
 <body>
 
@@ -39,7 +40,9 @@
     <!-- Left: Brand, Role Badge & Dynamic Breadcrumb -->
     <div class="nav-brand-group">
       <a href="/admin/dashboard.html" class="admin-brand" title="VirtuLab Kenya Administration Console">
-        <span class="admin-brand-icon">🛡️</span>
+        <span class="admin-brand-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </span>
         <span class="admin-brand-title">VirtuLab <span class="admin-brand-sub">Kenya</span></span>
         <span class="admin-badge" id="adminRoleBadge">Admin Portal</span>
       </a>
@@ -56,7 +59,7 @@
       <div class="admin-live-ticker-wrap" id="adminLiveTickerWrap" title="Live Cluster Telemetry Stream">
         <span class="status-pulse-dot"></span>
         <div class="ticker-track">
-          <span class="ticker-text" id="tickerTrackText">MoE Central Node · Live 🟢</span>
+          <span class="ticker-text" id="tickerTrackText">MoE Central Node · Live Online</span>
         </div>
       </div>
     </div>
@@ -65,13 +68,15 @@
     <div class="nav-controls-group">
       <!-- Live Nairobi Clock Pill -->
       <div class="nav-clock-pill" title="East Africa Time (Nairobi)">
-        <span class="clock-icon">🕒</span>
+        <span class="clock-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </span>
         <span id="navTopLiveClock" class="clock-digits">--:--:-- EAT</span>
       </div>
-      <!-- ⚡ Quick Actions Dropdown -->
+      <!-- Quick Actions Dropdown -->
       <div class="nav-dropdown-wrap">
         <button type="button" class="btn-nav-action" id="btnAdminQuickActions" onclick="toggleAdminDropdown('adminQuickActionsMenu', event)" aria-expanded="false" aria-haspopup="true" title="Administrative Tools &amp; Action Modals">
-          <span>⚡</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
           <span class="btn-action-label">Quick Actions</span>
           <span class="dropdown-chevron">▾</span>
         </button>
@@ -81,21 +86,27 @@
             <span class="dropdown-header-sub">Operational tools &amp; modals</span>
           </div>
           <button type="button" class="dropdown-item" id="btnAddAdminTop" onclick="openAddAdminModal(); closeAllAdminDropdowns();" role="menuitem">
-            <span class="dropdown-item-icon">🛡️</span>
+            <span class="dropdown-item-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </span>
             <div class="dropdown-item-content">
               <span class="dropdown-item-title">+ Add Administrator</span>
               <span class="dropdown-item-desc">Create or promote portal manager</span>
             </div>
           </button>
           <button type="button" class="dropdown-item" onclick="openMinistryReportModal(); closeAllAdminDropdowns();" role="menuitem">
-            <span class="dropdown-item-icon">📄</span>
+            <span class="dropdown-item-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            </span>
             <div class="dropdown-item-content">
               <span class="dropdown-item-title">Ministry Official Report</span>
               <span class="dropdown-item-desc">Printable MoE accreditation document</span>
             </div>
           </button>
           <button type="button" class="dropdown-item" onclick="openAnnouncementModal(); closeAllAdminDropdowns();" role="menuitem">
-            <span class="dropdown-item-icon">📢</span>
+            <span class="dropdown-item-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"/></svg>
+            </span>
             <div class="dropdown-item-content">
               <span class="dropdown-item-title">Post Broadcast</span>
               <span class="dropdown-item-desc">School-wide bulletin to teachers &amp; students</span>
@@ -103,7 +114,9 @@
           </button>
           <div class="dropdown-divider"></div>
           <button type="button" class="dropdown-item" onclick="Admin.exportSchoolsReport(); closeAllAdminDropdowns();" role="menuitem">
-            <span class="dropdown-item-icon">📥</span>
+            <span class="dropdown-item-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            </span>
             <div class="dropdown-item-content">
               <span class="dropdown-item-title">Export Schools CSV</span>
               <span class="dropdown-item-desc">Download registered secondary schools list</span>
@@ -114,16 +127,25 @@
 
       <!-- Quick Link to Teacher Portal -->
       <a href="/teacher/dashboard.html" class="btn-nav-link" title="Switch to Teacher View &amp; KCSE Classrooms">
-        <span>👨‍🏫</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
         <span class="btn-label">Teacher View</span>
         <span class="link-arrow">→</span>
       </a>
 
       <!-- Compact Theme Switcher -->
       <div class="theme-toggle-group" title="Appearance Theme" role="group" aria-label="Theme Switcher">
-        <button type="button" class="theme-btn-chip" data-theme="dark" onclick="setTheme('dark')" title="Dark Mode">🌙 <span class="theme-text">Dark</span></button>
-        <button type="button" class="theme-btn-chip active" data-theme="light" onclick="setTheme('light')" title="Light Mode">☀️ <span class="theme-text">Light</span></button>
-        <button type="button" class="theme-btn-chip" data-theme="green" onclick="setTheme('green')" title="Lab Emerald Mode">🧪 <span class="theme-text">Lab</span></button>
+        <button type="button" class="theme-btn-chip" data-theme="dark" onclick="setTheme('dark')" title="Dark Mode">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <span class="theme-text">Dark</span>
+        </button>
+        <button type="button" class="theme-btn-chip active" data-theme="light" onclick="setTheme('light')" title="Light Mode">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <span class="theme-text">Light</span>
+        </button>
+        <button type="button" class="theme-btn-chip" data-theme="green" onclick="setTheme('green')" title="Lab Emerald Mode">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/></svg>
+          <span class="theme-text">Lab</span>
+        </button>
       </div>
 
       <div class="nav-control-separator"></div>
@@ -153,25 +175,33 @@
 
           <div class="dropdown-section-label">Quick Navigation</div>
           <button type="button" class="dropdown-item" onclick="switchTab('schoolsTab', document.querySelector('.tab-btn:nth-child(1)')); closeAllAdminDropdowns();" role="menuitem">
-            <span class="dropdown-item-icon">🏛️</span>
+            <span class="dropdown-item-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+            </span>
             <div class="dropdown-item-content">
               <span class="dropdown-item-title">Registered Schools</span>
             </div>
           </button>
           <button type="button" class="dropdown-item" onclick="switchTab('usersTab', document.querySelector('.tab-btn:nth-child(2)')); closeAllAdminDropdowns();" role="menuitem">
-            <span class="dropdown-item-icon">👥</span>
+            <span class="dropdown-item-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </span>
             <div class="dropdown-item-content">
               <span class="dropdown-item-title">User Directory</span>
             </div>
           </button>
           <button type="button" class="dropdown-item" onclick="switchTab('adminsTab', document.querySelector('.tab-btn:nth-child(3)')); closeAllAdminDropdowns();" role="menuitem">
-            <span class="dropdown-item-icon">🛡️</span>
+            <span class="dropdown-item-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </span>
             <div class="dropdown-item-content">
               <span class="dropdown-item-title">Admin Management</span>
             </div>
           </button>
           <button type="button" class="dropdown-item" onclick="switchTab('telemetryTab', document.querySelector('.tab-btn:nth-child(6)')); closeAllAdminDropdowns();" role="menuitem">
-            <span class="dropdown-item-icon">⚙️</span>
+            <span class="dropdown-item-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            </span>
             <div class="dropdown-item-content">
               <span class="dropdown-item-title">System Health &amp; Logs</span>
             </div>
@@ -180,7 +210,9 @@
           <div class="dropdown-divider"></div>
 
           <button type="button" class="dropdown-item item-danger" onclick="Auth.logout()" role="menuitem">
-            <span class="dropdown-item-icon">🚪</span>
+            <span class="dropdown-item-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            </span>
             <div class="dropdown-item-content">
               <span class="dropdown-item-title" style="color:var(--red-accent);font-weight:700;">Sign Out</span>
               <span class="dropdown-item-desc">Securely exit admin portal</span>
@@ -191,7 +223,7 @@
 
       <!-- Quick 1-Click Logout -->
       <button type="button" class="btn-nav-logout" onclick="Auth.logout()" title="Logout from Admin Portal">
-        <span>🚪</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         <span class="logout-text">Logout</span>
       </button>
     </div>
@@ -222,7 +254,7 @@
         <span class="dot-sep">·</span>
         <span class="ministry-chip">Ministry of Education · State Department for Basic Education</span>
         <span class="dot-sep">·</span>
-        <span class="time-greeting-chip" id="heroTimeGreeting">👋 Welcome, Administrator</span>
+        <span class="time-greeting-chip" id="heroTimeGreeting">Welcome, Administrator</span>
       </div>
       <h1 class="admin-hero-title">
         <span>National Chemistry Virtual Laboratory</span>
@@ -234,23 +266,32 @@
 
       <!-- Live Rotating Announcement & System Bulletin -->
       <div class="hero-live-bulletin" id="heroLiveBulletin">
-        <span class="bulletin-tag">📢 Live Notice:</span>
+        <span class="bulletin-tag">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"/></svg>
+          Live Notice:
+        </span>
         <span class="bulletin-text" id="heroBulletinText">Term III practical benchmarking active across 47 Counties · All regional nodes synchronized</span>
       </div>
       
       <div class="admin-hero-meta-row">
         <div class="hero-meta-item">
-          <span class="meta-icon">📅</span>
+          <span class="meta-icon">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          </span>
           <span class="meta-label">Academic Calendar:</span>
           <span class="meta-val">2026 Academic Year · Term III</span>
         </div>
         <div class="hero-meta-item">
-          <span class="meta-icon">🌐</span>
+          <span class="meta-icon">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </span>
           <span class="meta-label">Node Status:</span>
           <span class="meta-val highlight-green">MoE Central · 99.98% SLA</span>
         </div>
         <div class="hero-meta-item">
-          <span class="meta-icon">🕒</span>
+          <span class="meta-icon">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </span>
           <span class="meta-label">Clock:</span>
           <span class="meta-val font-mono" id="heroLiveClock">--:--:-- EAT</span>
         </div>
@@ -259,15 +300,21 @@
 
     <div class="admin-hero-actions">
       <button type="button" class="btn-hero-primary" onclick="openRegisterSchoolModal()">
-        <span class="btn-icon">🏛️</span>
+        <span class="btn-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+        </span>
         <span>+ Register School</span>
       </button>
       <button type="button" class="btn-hero-secondary" onclick="openMinistryReportModal()">
-        <span class="btn-icon">📄</span>
+        <span class="btn-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </span>
         <span>MoE Official Report</span>
       </button>
       <button type="button" class="btn-hero-secondary" onclick="openAnnouncementModal()">
-        <span class="btn-icon">📢</span>
+        <span class="btn-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"/></svg>
+        </span>
         <span>Broadcast Notice</span>
       </button>
     </div>
@@ -277,7 +324,9 @@
   <div class="metrics-grid">
     <div class="metric-card accent-blue">
       <div class="metric-card-top">
-        <div class="metric-icon-wrap blue">🏛️</div>
+        <div class="metric-icon-wrap blue">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+        </div>
         <span class="metric-trend positive">47 Counties</span>
       </div>
       <div class="metric-label">Registered Schools</div>
@@ -286,7 +335,9 @@
     </div>
     <div class="metric-card accent-green">
       <div class="metric-card-top">
-        <div class="metric-icon-wrap green">👨‍🏫</div>
+        <div class="metric-icon-wrap green">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
+        </div>
         <span class="metric-trend positive">TSC Verified</span>
       </div>
       <div class="metric-label">Active Teachers</div>
@@ -295,7 +346,9 @@
     </div>
     <div class="metric-card accent-violet">
       <div class="metric-card-top">
-        <div class="metric-icon-wrap violet">🎓</div>
+        <div class="metric-icon-wrap violet">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+        </div>
         <span class="metric-trend positive">Secondary Lab</span>
       </div>
       <div class="metric-label">Active Students</div>
@@ -304,7 +357,9 @@
     </div>
     <div class="metric-card accent-fuchsia">
       <div class="metric-card-top">
-        <div class="metric-icon-wrap fuchsia">🧪</div>
+        <div class="metric-icon-wrap fuchsia">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/></svg>
+        </div>
         <span class="metric-trend positive">Live Practical</span>
       </div>
       <div class="metric-label">Experiments Completed</div>
@@ -313,7 +368,9 @@
     </div>
     <div class="metric-card accent-amber">
       <div class="metric-card-top">
-        <div class="metric-icon-wrap amber">🏆</div>
+        <div class="metric-icon-wrap amber">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+        </div>
         <span class="metric-trend neutral">KNEC Target 80%</span>
       </div>
       <div class="metric-label">KCSE Benchmark</div>
@@ -325,26 +382,44 @@
   <!-- Tab Navigation -->
   <div class="tab-strip">
     <button class="tab-btn active" onclick="switchTab('schoolsTab', this)">
-      <span>🏛️ Schools</span>
+      <span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+        Schools
+      </span>
       <span class="tab-counter" id="tabCountSchools">0</span>
     </button>
     <button class="tab-btn" onclick="switchTab('usersTab', this)">
-      <span>👥 User Roster</span>
+      <span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        User Roster
+      </span>
       <span class="tab-counter" id="tabCountUsers">0</span>
     </button>
     <button class="tab-btn" onclick="switchTab('adminsTab', this)">
-      <span>🛡️ Admin Team</span>
+      <span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Admin Team
+      </span>
       <span class="tab-counter" id="tabCountAdmins">0</span>
     </button>
     <button class="tab-btn" onclick="switchTab('announcementsTab', this)">
-      <span>📢 Broadcasts</span>
+      <span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"/></svg>
+        Broadcasts
+      </span>
       <span class="tab-counter" id="tabCountAnn">0</span>
     </button>
     <button class="tab-btn" onclick="switchTab('analyticsTab', this)">
-      <span>📊 KCSE Analytics</span>
+      <span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        KCSE Analytics
+      </span>
     </button>
     <button class="tab-btn" onclick="switchTab('telemetryTab', this)">
-      <span>⚙️ Health & Logs</span>
+      <span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Health &amp; Logs
+      </span>
     </button>
   </div>
 
@@ -352,7 +427,10 @@
   <div id="schoolsTab" class="card-panel">
     <div class="panel-header">
       <div>
-        <h3 class="panel-title">🏛️ Registered Kenyan Secondary Schools</h3>
+        <h3 class="panel-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+          Registered Kenyan Secondary Schools
+        </h3>
         <p style="margin:4px 0 0 0; font-size:0.8rem; color:var(--text-muted);">
           Institutional directory of secondary schools across Kenya participating in virtual chemistry practicals.
         </p>
@@ -362,8 +440,14 @@
         <select id="countyFilterSelect" class="form-control filter-select" onchange="filterSchools(this.value)">
           <option value="all">All Counties</option>
         </select>
-        <button class="btn-secondary" onclick="openMinistryReportModal()">📄 Printable Report</button>
-        <button class="btn-secondary" onclick="Admin.exportSchoolsReport()">📥 Export CSV</button>
+        <button class="btn-secondary" onclick="openMinistryReportModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Printable Report
+        </button>
+        <button class="btn-secondary" onclick="Admin.exportSchoolsReport()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export CSV
+        </button>
         <button class="btn-primary-solid" onclick="openRegisterSchoolModal()">+ Register School</button>
       </div>
     </div>
@@ -371,7 +455,9 @@
     <!-- Regional County Coverage Filter Strip -->
     <div class="county-coverage-bar" id="countyCoverageBar">
       <div class="county-label-wrap">
-        <span>📍</span>
+        <span>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </span>
         <span>County Coverage:</span>
       </div>
       <div class="county-pill-group" id="countyPillGroup">
@@ -405,7 +491,10 @@
   <div id="usersTab" class="card-panel" style="display:none;">
     <div class="panel-header">
       <div>
-        <h3 class="panel-title">👥 Platform User Directory</h3>
+        <h3 class="panel-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Platform User Directory
+        </h3>
         <p style="margin:4px 0 0 0; font-size:0.8rem; color:var(--text-muted);">
           Verified chemistry educators and enrolled secondary school candidates.
         </p>
@@ -434,7 +523,10 @@
           </button>
         </div>
         <input type="text" id="userSearch" class="form-control search-control" placeholder="Search user, email or school..." oninput="filterUsers()">
-        <button class="btn-secondary" onclick="Admin.exportUsersReport()">📥 Export CSV</button>
+        <button class="btn-secondary" onclick="Admin.exportUsersReport()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export CSV
+        </button>
       </div>
     </div>
     <div class="table-responsive">
@@ -462,7 +554,10 @@
   <div id="adminsTab" class="card-panel" style="display:none;">
     <div class="panel-header">
       <div>
-        <h3 class="panel-title">🛡️ System Administrators & Role-Based Access Control</h3>
+        <h3 class="panel-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          System Administrators &amp; Role-Based Access Control
+        </h3>
         <p style="margin:4px 0 0 0; font-size:0.8rem; color:var(--text-muted);">
           Manage institutional access levels, invite national coordinators, and monitor admin activity.
         </p>
@@ -492,7 +587,10 @@
   <!-- Tab 4: Broadcast Announcements -->
   <div id="announcementsTab" class="card-panel" style="display:none;">
     <div class="panel-header">
-      <h3 class="panel-title">📢 Published System Broadcast Announcements</h3>
+      <h3 class="panel-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"/></svg>
+        Published System Broadcast Announcements
+      </h3>
       <button class="btn-primary-solid" onclick="openAnnouncementModal()">+ Create New Announcement</button>
     </div>
     <div class="table-responsive">
@@ -518,7 +616,10 @@
   <div id="analyticsTab" class="card-panel" style="display:none;">
     <div class="panel-header">
       <div>
-        <h3 class="panel-title">📊 KCSE Practical Paper 3 Performance & Module Analytics</h3>
+        <h3 class="panel-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          KCSE Practical Paper 3 Performance &amp; Module Analytics
+        </h3>
         <p style="margin:4px 0 0 0; font-size:0.8rem; color:var(--text-muted);">
           Real-time performance indicators and accuracy benchmarks aligned with KNEC Paper 3 standards.
         </p>
@@ -528,7 +629,10 @@
       <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:18px;display:flex;flex-direction:column;justify-content:space-between;">
         <div>
           <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-            <h4 style="margin:0 0 6px 0;color:var(--blue-accent);font-family:var(--font-heading);">🧪 Volumetric Analysis</h4>
+            <h4 style="margin:0 0 6px 0;color:var(--blue-accent);font-family:var(--font-heading);display:inline-flex;align-items:center;gap:6px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/></svg>
+              Volumetric Analysis
+            </h4>
             <span class="role-badge" style="background:var(--blue-bg);color:var(--blue-accent);border:1px solid var(--blue-border);">Titrations</span>
           </div>
           <p style="font-size:0.8rem;color:var(--text-muted);margin:0 0 12px 0;">Acid-Base, Redox Manganate VII, Dibasic, Tribasic titrations.</p>
@@ -548,10 +652,13 @@
       <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:18px;display:flex;flex-direction:column;justify-content:space-between;">
         <div>
           <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-            <h4 style="margin:0 0 6px 0;color:var(--amber-accent);font-family:var(--font-heading);">🧂 Qualitative Analysis</h4>
-            <span class="role-badge" style="background:var(--amber-bg);color:var(--amber-accent);border:1px solid var(--amber-border);">Salts & Ions</span>
+            <h4 style="margin:0 0 6px 0;color:var(--amber-accent);font-family:var(--font-heading);display:inline-flex;align-items:center;gap:6px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
+              Qualitative Analysis
+            </h4>
+            <span class="role-badge" style="background:var(--amber-bg);color:var(--amber-accent);border:1px solid var(--amber-border);">Salts &amp; Ions</span>
           </div>
-          <p style="font-size:0.8rem;color:var(--text-muted);margin:0 0 12px 0;">Cation (Fe²⁺, Cu²⁺, Zn²⁺, Al³⁺, Pb²⁺, Ba²⁺) & Anion tests.</p>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin:0 0 12px 0;">Cation (Fe²⁺, Cu²⁺, Zn²⁺, Al³⁺, Pb²⁺, Ba²⁺) &amp; Anion tests.</p>
           <div style="font-size:2rem;font-weight:800;font-family:var(--font-mono);" id="statQualAccuracy">--%</div>
         </div>
         <div>
@@ -568,7 +675,10 @@
       <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:18px;display:flex;flex-direction:column;justify-content:space-between;">
         <div>
           <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-            <h4 style="margin:0 0 6px 0;color:var(--green-accent);font-family:var(--font-heading);">⚗️ Organic Chemistry</h4>
+            <h4 style="margin:0 0 6px 0;color:var(--green-accent);font-family:var(--font-heading);display:inline-flex;align-items:center;gap:6px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/></svg>
+              Organic Chemistry
+            </h4>
             <span class="role-badge" style="background:var(--green-bg);color:var(--green-accent);border:1px solid var(--green-border);">Synthetics</span>
           </div>
           <p style="font-size:0.8rem;color:var(--text-muted);margin:0 0 12px 0;">Alkanes, Alkenes, Alkanols, Alkanoic acids, KMnO₄, NaHCO₃ tests.</p>
@@ -588,7 +698,10 @@
       <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:18px;display:flex;flex-direction:column;justify-content:space-between;">
         <div>
           <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-            <h4 style="margin:0 0 6px 0;color:var(--violet-accent);font-family:var(--font-heading);">📋 Composite Exams</h4>
+            <h4 style="margin:0 0 6px 0;color:var(--violet-accent);font-family:var(--font-heading);display:inline-flex;align-items:center;gap:6px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              Composite Exams
+            </h4>
             <span class="role-badge" style="background:var(--violet-bg);color:var(--violet-accent);border:1px solid var(--violet-border);">KNEC Mock</span>
           </div>
           <p style="font-size:0.8rem;color:var(--text-muted);margin:0 0 12px 0;">Timed 40-mark Paper 3 comprehensive mock practicals.</p>
@@ -610,8 +723,9 @@
     <div class="grade-dist-card">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
         <div>
-          <h4 style="margin:0;font-size:1rem;color:var(--heading-color);font-family:var(--font-heading);">
-            🏆 KNEC Paper 3 National Competency & Grade Distribution
+          <h4 style="margin:0;font-size:1rem;color:var(--heading-color);font-family:var(--font-heading);display:inline-flex;align-items:center;gap:6px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+            KNEC Paper 3 National Competency &amp; Grade Distribution
           </h4>
           <p style="margin:4px 0 0 0;font-size:0.78rem;color:var(--text-muted);">
             Aggregated candidate grading tiers across practical lab sessions and mock examinations.
@@ -667,8 +781,9 @@
     <div style="margin-top:20px;">
       <div class="panel-header" style="padding-bottom:10px;margin-bottom:12px;">
         <div>
-          <h4 style="margin:0;font-size:1rem;color:var(--heading-color);font-family:var(--font-heading);">
-            🏛️ Institutional Practical Science Activity Leaderboard
+          <h4 style="margin:0;font-size:1rem;color:var(--heading-color);font-family:var(--font-heading);display:inline-flex;align-items:center;gap:6px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+            Institutional Practical Science Activity Leaderboard
           </h4>
           <p style="margin:4px 0 0 0;font-size:0.78rem;color:var(--text-muted);">
             Ranked secondary schools by practical volume, candidate engagement, and benchmark scoring.
@@ -700,7 +815,10 @@
   <div id="telemetryTab" class="card-panel" style="display:none;">
     <div class="panel-header" style="flex-wrap:wrap;gap:12px;align-items:center;border-bottom:none;padding-bottom:0;margin-bottom:12px;">
       <div>
-        <h3 class="panel-title" style="margin:0;">⚙️ Infrastructure Health & Live Cluster Diagnostics</h3>
+        <h3 class="panel-title" style="margin:0;display:inline-flex;align-items:center;gap:6px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Infrastructure Health &amp; Live Cluster Diagnostics
+        </h3>
         <p style="margin:4px 0 0 0;font-size:0.8rem;color:var(--text-muted);">
           Real-time cluster telemetry across PostgreSQL database, Cloud Node, Gemini AI engine, and Push service.
         </p>
@@ -708,7 +826,8 @@
       <div style="display:flex;align-items:center;gap:12px;">
         <span id="healthLastChecked" style="font-size:0.75rem;color:var(--text-muted);font-family:var(--font-mono);">Status: Checking...</span>
         <button type="button" class="btn-secondary" onclick="loadSystemHealth(true)" id="btnRefreshHealth" style="font-size:0.78rem;padding:6px 12px;display:inline-flex;align-items:center;gap:6px;">
-          <span>🔄</span> Refresh Diagnostics
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          Refresh Diagnostics
         </button>
       </div>
     </div>
@@ -721,7 +840,10 @@
     </div>
 
     <div class="panel-header">
-      <h3 class="panel-title">🛡️ Security Audit Logs & System Activity</h3>
+      <h3 class="panel-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Security Audit Logs &amp; System Activity
+      </h3>
     </div>
     <div class="table-responsive" style="margin-bottom:24px;">
       <table class="admin-table">
@@ -741,7 +863,10 @@
     </div>
 
     <div class="panel-header">
-      <h3 class="panel-title">⚙️ System Telemetry & Client Exception Logs</h3>
+      <h3 class="panel-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        System Telemetry &amp; Client Exception Logs
+      </h3>
     </div>
     <div class="table-responsive">
       <table class="admin-table">
@@ -772,7 +897,15 @@
     <!-- Non-printing Toolbar -->
     <div class="ministry-toolbar">
       <div style="display:flex;align-items:center;gap:10px;">
-        <span style="font-size:1.4rem;">🇰🇪</span>
+        <svg class="kenya-flag-svg" viewBox="0 0 24 16" width="22" height="15" aria-hidden="true" style="border-radius:2px;box-shadow:0 0 1px rgba(0,0,0,0.3);display:inline-block;vertical-align:middle;">
+          <rect width="24" height="4.5" fill="#000000"/>
+          <rect y="4.5" width="24" height="1" fill="#FFFFFF"/>
+          <rect y="5.5" width="24" height="5" fill="#B91C1C"/>
+          <rect y="10.5" width="24" height="1" fill="#FFFFFF"/>
+          <rect y="11.5" width="24" height="4.5" fill="#047857"/>
+          <ellipse cx="12" cy="8" rx="2.2" ry="4" fill="#991B1B" stroke="#FFFFFF" stroke-width="0.4"/>
+          <ellipse cx="12" cy="8" rx="0.6" ry="2.2" fill="#FFFFFF"/>
+        </svg>
         <div>
           <div style="font-weight:800;font-size:0.95rem;color:var(--heading-color);">Ministry of Education Directory Report</div>
           <div style="font-size:0.75rem;color:var(--text-muted);">CBC Senior Secondary Practical Science Accreditation</div>
@@ -783,8 +916,9 @@
         <select id="repCountyFilter" class="form-control filter-select" style="min-width:140px;" onchange="renderMinistryReport(this.value)">
           <option value="all">All Counties (National)</option>
         </select>
-        <button type="button" class="btn-primary-solid" onclick="printMinistryReport()">
-          🖨️ Print / Save as PDF
+        <button type="button" class="btn-primary-solid" onclick="printMinistryReport()" style="display:inline-flex;align-items:center;gap:6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Print / Save as PDF
         </button>
         <button type="button" class="modal-close-btn" onclick="closeMinistryReportModal()" style="margin-left:6px;">&times;</button>
       </div>
@@ -795,11 +929,21 @@
       <div class="ministry-sheet" id="ministryReportPrintArea">
         <!-- Official Government Header -->
         <div class="ministry-header-block">
-          <div class="ministry-emblem">🇰🇪</div>
+          <div class="ministry-emblem" style="margin-bottom:8px;">
+            <svg class="kenya-flag-svg" viewBox="0 0 24 16" width="48" height="32" aria-hidden="true" style="border-radius:3px;box-shadow:0 0 2px rgba(0,0,0,0.3);display:inline-block;">
+              <rect width="24" height="4.5" fill="#000000"/>
+              <rect y="4.5" width="24" height="1" fill="#FFFFFF"/>
+              <rect y="5.5" width="24" height="5" fill="#B91C1C"/>
+              <rect y="10.5" width="24" height="1" fill="#FFFFFF"/>
+              <rect y="11.5" width="24" height="4.5" fill="#047857"/>
+              <ellipse cx="12" cy="8" rx="2.2" ry="4" fill="#991B1B" stroke="#FFFFFF" stroke-width="0.4"/>
+              <ellipse cx="12" cy="8" rx="0.6" ry="2.2" fill="#FFFFFF"/>
+            </svg>
+          </div>
           <h1 class="ministry-title-main">Republic of Kenya</h1>
           <h2 class="ministry-title-sub">Ministry of Education · State Department for Basic Education</h2>
           <div style="font-size:0.75rem;color:#64748B;margin-top:2px;">CENTRE FOR MATHEMATICS, SCIENCE AND TECHNOLOGY EDUCATION IN AFRICA (CEMASTEA)</div>
-          <div class="ministry-title-doc">VirtuLab Kenya · Institutional Directory & Practical Science Audit</div>
+          <div class="ministry-title-doc">VirtuLab Kenya · Institutional Directory &amp; Practical Science Audit</div>
         </div>
 
         <!-- Metadata Grid -->
@@ -923,7 +1067,9 @@
             <span id="sdModalCounty" class="role-badge" style="background:var(--blue-bg);color:var(--blue-accent);padding:1px 7px;font-size:0.7rem;">County</span>
             <span class="code-chip" id="sdModalCodeChip" style="font-size:0.72rem;padding:2px 8px;cursor:pointer;" title="Click to copy registration code">
               <code id="sdModalCode">CODE</code>
-              <span class="copy-icon">📋</span>
+              <span class="copy-icon">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              </span>
             </span>
           </div>
         </div>
@@ -935,21 +1081,27 @@
       <!-- 3 Summary Metrics -->
       <div class="school-metric-pills">
         <div class="school-metric-pill">
-          <div style="font-size:1.4rem;">👨‍🏫</div>
+          <div style="color:var(--blue-accent);display:flex;align-items:center;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
+          </div>
           <div>
             <div class="val" id="sdStatTeachers">0</div>
             <div class="lbl">Teachers</div>
           </div>
         </div>
         <div class="school-metric-pill">
-          <div style="font-size:1.4rem;">🎓</div>
+          <div style="color:var(--violet-accent);display:flex;align-items:center;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+          </div>
           <div>
             <div class="val" id="sdStatStudents">0</div>
             <div class="lbl">Students</div>
           </div>
         </div>
         <div class="school-metric-pill">
-          <div style="font-size:1.4rem;">🧪</div>
+          <div style="color:var(--green-accent);display:flex;align-items:center;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/></svg>
+          </div>
           <div>
             <div class="val" id="sdStatExperiments">0</div>
             <div class="lbl">Lab Sessions</div>
@@ -960,15 +1112,24 @@
       <!-- Subtab Nav inside modal -->
       <div class="subtab-nav" style="margin-top:16px;">
         <button class="subtab-btn active" id="btnSdTabTeachers" onclick="switchSchoolModalTab('teachers', this)">
-          <span>👨‍🏫 Teachers</span>
+          <span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
+            Teachers
+          </span>
           <span class="pill-badge" id="sdCountTeachers">0</span>
         </button>
         <button class="subtab-btn" id="btnSdTabStudents" onclick="switchSchoolModalTab('students', this)">
-          <span>🎓 Students</span>
+          <span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+            Students
+          </span>
           <span class="pill-badge" id="sdCountStudents">0</span>
         </button>
         <button class="subtab-btn" id="btnSdTabExperiments" onclick="switchSchoolModalTab('experiments', this)">
-          <span>🧪 Experiment Breakdown</span>
+          <span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/></svg>
+            Experiment Breakdown
+          </span>
         </button>
       </div>
 
@@ -989,9 +1150,15 @@
     </div>
 
     <div style="padding:12px 20px;border-top:1px solid var(--card-border);display:flex;justify-content:space-between;align-items:center;background:var(--card-bg-hover);">
-      <button type="button" id="sdBtnShareInvite" class="btn-secondary" style="font-size:0.8rem;">✉️ Copy Teacher Invite</button>
+      <button type="button" id="sdBtnShareInvite" class="btn-secondary" style="font-size:0.8rem;display:inline-flex;align-items:center;gap:6px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Copy Teacher Invite
+      </button>
       <div style="display:flex;gap:8px;">
-        <button type="button" id="sdBtnEditSchool" class="btn-secondary" style="font-size:0.8rem;">✏️ Edit School</button>
+        <button type="button" id="sdBtnEditSchool" class="btn-secondary" style="font-size:0.8rem;display:inline-flex;align-items:center;gap:6px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Edit School
+        </button>
         <button type="button" class="btn-primary-solid" onclick="closeSchoolDetailsModal()" style="font-size:0.8rem;">Done</button>
       </div>
     </div>
@@ -1045,8 +1212,9 @@
 
       <div style="margin-top:20px;display:flex;justify-content:flex-end;gap:10px;">
         <button type="button" class="btn-secondary" onclick="closeUserPwModal()">Cancel</button>
-        <button type="button" class="btn-primary-solid" id="btnConfirmResetPw" onclick="submitUserPwReset()">
-          🔑 Confirm & Reset Password
+        <button type="button" class="btn-primary-solid" id="btnConfirmResetPw" onclick="submitUserPwReset()" style="display:inline-flex;align-items:center;gap:6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></svg>
+          Confirm &amp; Reset Password
         </button>
       </div>
     </div>
@@ -1054,7 +1222,9 @@
     <!-- State 2: Success & Credentials Card -->
     <div id="upwSuccessContainer" class="modal-body" style="display:none;">
       <div style="text-align:center;margin-bottom:14px;">
-        <div style="font-size:2rem;margin-bottom:4px;">🎉</div>
+        <div style="margin-bottom:8px;color:var(--green-accent);">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
         <h4 style="margin:0;color:var(--heading-color);font-size:1.05rem;">Password Successfully Reset</h4>
         <p style="margin:4px 0 0 0;font-size:0.8rem;color:var(--text-muted);" id="upwSuccessSubtitle">
           The new temporary credentials have been generated.
@@ -1064,16 +1234,18 @@
       <div style="background:var(--card-bg-hover);border:2px solid var(--blue-border);border-radius:12px;padding:16px;margin-bottom:16px;text-align:center;">
         <div style="font-size:0.75rem;text-transform:uppercase;color:var(--text-muted);font-weight:700;letter-spacing:0.04em;">Temporary Password</div>
         <div style="font-family:var(--font-mono);font-size:1.6rem;font-weight:800;color:var(--blue-accent);letter-spacing:0.05em;margin:8px 0;" id="upwGeneratedDisplay">VLK-XXXXXX</div>
-        <button type="button" class="btn-secondary" id="btnCopyUpw" style="font-size:0.8rem;padding:5px 12px;">
-          📋 Copy Password
+        <button type="button" class="btn-secondary" id="btnCopyUpw" style="font-size:0.8rem;padding:5px 12px;display:inline-flex;align-items:center;gap:6px;margin:0 auto;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy Password
         </button>
       </div>
 
       <div id="upwEmailStatus" style="margin-bottom:16px;"></div>
 
       <div style="display:flex;flex-direction:column;gap:8px;">
-        <button type="button" class="btn-secondary" id="btnCopyShareMsg" style="width:100%;font-size:0.8rem;justify-content:center;">
-          💬 Copy WhatsApp / SMS Share Message
+        <button type="button" class="btn-secondary" id="btnCopyShareMsg" style="width:100%;font-size:0.8rem;justify-content:center;display:inline-flex;align-items:center;gap:6px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Copy WhatsApp / SMS Share Message
         </button>
         <button type="button" class="btn-primary-solid" onclick="closeUserPwModal()" style="width:100%;font-size:0.8rem;justify-content:center;">
           Done
@@ -1117,7 +1289,10 @@
 <div id="registerSchoolModal" class="modal-overlay" style="display:none;">
   <div class="modal-box">
     <div class="modal-header">
-      <h3>🏛️ Register New Secondary School</h3>
+      <h3 style="display:inline-flex;align-items:center;gap:8px;margin:0;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+        Register New Secondary School
+      </h3>
       <button class="modal-close-btn" onclick="closeRegisterSchoolModal()">&times;</button>
     </div>
     <div class="modal-body">
@@ -1196,7 +1371,10 @@
 <div id="editSchoolModal" class="modal-overlay" style="display:none;">
   <div class="modal-box">
     <div class="modal-header">
-      <h3>✏️ Edit School Registration</h3>
+      <h3 style="display:inline-flex;align-items:center;gap:8px;margin:0;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Edit School Registration
+      </h3>
       <button class="modal-close-btn" onclick="closeEditSchoolModal()">&times;</button>
     </div>
     <div class="modal-body">
@@ -1276,7 +1454,10 @@
 <div id="announcementModal" class="modal-overlay" style="display:none;">
   <div class="modal-box">
     <div class="modal-header">
-      <h3>📢 Create System Broadcast Announcement</h3>
+      <h3 style="display:inline-flex;align-items:center;gap:8px;margin:0;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"/></svg>
+        Create System Broadcast Announcement
+      </h3>
       <button class="modal-close-btn" onclick="closeAnnouncementModal()">&times;</button>
     </div>
     <div class="modal-body">
@@ -1288,9 +1469,9 @@
         <div class="form-group">
           <label for="annTypeSelect">Alert Category</label>
           <select id="annTypeSelect" class="form-control">
-            <option value="info">ℹ️ General Info</option>
-            <option value="exam">🧪 Exam / Practical Mock Notice</option>
-            <option value="warning">⚠️ Maintenance Alert</option>
+            <option value="info">General Information</option>
+            <option value="exam">Exam / Practical Mock Notice</option>
+            <option value="warning">Maintenance Alert</option>
           </select>
         </div>
         <div class="form-group">
@@ -1311,7 +1492,10 @@
 <div id="addAdminModal" class="modal-overlay" style="display:none;">
   <div class="modal-box" style="max-width:440px;">
     <div class="modal-header">
-      <h3>🛡️ Add New Administrator</h3>
+      <h3 style="display:inline-flex;align-items:center;gap:8px;margin:0;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Add New Administrator
+      </h3>
       <button class="modal-close-btn" onclick="closeAddAdminModal()">&times;</button>
     </div>
     <div class="modal-body">
@@ -1327,14 +1511,17 @@
         <div class="form-group">
           <label for="adminRoleSelect">Access Level / Role</label>
           <select id="adminRoleSelect" class="form-control">
-            <option value="admin">Administrator (Schools, Users, Broadcasts & Analytics)</option>
-            <option value="superadmin">Super Administrator (Full Access & Team Management)</option>
+            <option value="admin">Administrator (Schools, Users, Broadcasts &amp; Analytics)</option>
+            <option value="superadmin">Super Administrator (Full Access &amp; Team Management)</option>
           </select>
         </div>
         <div class="form-group">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
             <label for="newAdminPasswordInput" style="margin:0;">Initial Password</label>
-            <button type="button" onclick="generateAdminPassword()" style="background:none; border:none; color:var(--blue-accent); font-size:0.75rem; font-weight:700; cursor:pointer; padding:0;">🎲 Generate Secure</button>
+            <button type="button" onclick="generateAdminPassword()" style="background:none; border:none; color:var(--blue-accent); font-size:0.75rem; font-weight:700; cursor:pointer; padding:0; display:inline-flex; align-items:center; gap:4px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><circle cx="15.5" cy="15.5" r="1.5"/></svg>
+              Generate Secure
+            </button>
           </div>
           <input type="text" id="newAdminPasswordInput" class="form-control" placeholder="Minimum 6 characters" required style="font-family:var(--font-mono);">
         </div>
@@ -1352,7 +1539,9 @@
 <div id="adminLoginModal" class="modal-overlay" style="display:none;background:rgba(9, 14, 23, 0.95);backdrop-filter:blur(8px);">
   <div class="modal-box" style="max-width:420px;">
     <div style="text-align:center;padding:28px 24px 12px;">
-      <div style="font-size:2.2rem;margin-bottom:6px;">🛡️</div>
+      <div style="margin-bottom:8px;color:var(--blue-accent);display:flex;justify-content:center;">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
       <h2 style="margin:0 0 6px 0;font-family:var(--font-heading);color:var(--heading-color);font-size:1.3rem;">Admin Portal Login</h2>
       <p style="margin:0;font-size:0.84rem;color:var(--text-muted);">Please enter your system administrator credentials to continue.</p>
     </div>
@@ -1367,7 +1556,10 @@
           <input type="password" id="adminPasswordInput" class="form-control" placeholder="••••••••••••" required autocomplete="current-password">
         </div>
         <div id="adminLoginMsg" style="margin-bottom:14px;font-size:0.85rem;text-align:center;"></div>
-        <button type="submit" class="btn-primary-solid" style="width:100%;justify-content:center;padding:10px;font-size:0.9rem;">Unlock Admin Console 🔐</button>
+        <button type="submit" class="btn-primary-solid" style="width:100%;justify-content:center;padding:10px;font-size:0.9rem;display:inline-flex;align-items:center;gap:8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Unlock Admin Console
+        </button>
         <div style="text-align:center;margin-top:14px;">
           <a href="/teacher/dashboard.html" style="font-size:0.8rem;color:var(--text-muted);text-decoration:none;">← Return to Teacher Dashboard</a>
         </div>
@@ -1558,11 +1750,11 @@
 
     // Live Rotating Telemetry Ticker
     const tickerItems = [
-      'MoE Central Node · Live 🟢',
-      'Telemetry Sync: 18ms Latency ⚡',
-      'All 47 Counties Synchronized 🏛️',
-      'Real-Time Paper 3 Practical Node 🧪',
-      'Cluster SLA: 99.98% Operational 🛡️'
+      'MoE Central Node · Live Online',
+      'Telemetry Sync: 18ms Latency · High Speed',
+      'All 47 Counties Synchronized · National Grid',
+      'Real-Time Paper 3 Practical Node · Operational',
+      'Cluster SLA: 99.98% Operational · Verified'
     ];
     let tickerIdx = 0;
     const tickerEl = document.getElementById('tickerTrackText');
@@ -1587,7 +1779,7 @@
       if (h >= 5 && h < 12) greeting = 'Good morning, Administrator';
       else if (h >= 12 && h < 17) greeting = 'Good afternoon, Administrator';
       else greeting = 'Good evening, Administrator';
-      greetEl.textContent = `👋 ${greeting}`;
+      greetEl.textContent = greeting;
     }
 
     // Dynamic rotating hero bulletin
@@ -1806,11 +1998,11 @@
           const avgScore = parseFloat(s.avg_score) || 85.0;
           let readinessBadge = '';
           if (avgScore >= 80) {
-            readinessBadge = '<span class="status-badge active">🏅 Exemplary</span>';
+            readinessBadge = '<span class="status-badge active">Exemplary</span>';
           } else if (avgScore >= 65) {
-            readinessBadge = '<span class="role-badge" style="background:var(--blue-bg);color:var(--blue-accent);">⭐ Proficient</span>';
+            readinessBadge = '<span class="role-badge" style="background:var(--blue-bg);color:var(--blue-accent);">Proficient</span>';
           } else {
-            readinessBadge = '<span class="role-badge" style="background:var(--amber-bg);color:var(--amber-accent);">📈 Developing</span>';
+            readinessBadge = '<span class="role-badge" style="background:var(--amber-bg);color:var(--amber-accent);">Developing</span>';
           }
 
           return `
@@ -1848,8 +2040,8 @@
     tbody.innerHTML = list.map(a => {
       const isActive = a.is_active !== false;
       const statusBadge = isActive
-        ? '<span class="status-badge active">🟢 Active</span>'
-        : '<span class="status-badge inactive">🔴 Inactive</span>';
+        ? '<span class="status-badge active"><span class="pulse-dot online" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor;margin-right:4px;"></span>Active</span>'
+        : '<span class="status-badge inactive">Inactive</span>';
 
       const actionText = isActive ? 'Deactivate' : 'Activate';
       const newStatus = !isActive;
@@ -1932,10 +2124,13 @@
             <div style="display:flex;align-items:center;gap:6px;">
               <span class="code-chip" onclick="copyToClipboard('${adminCode}', 'Admin Code copied: ${adminCode}')" title="Click to copy registration code">
                 <code>${adminCode}</code>
-                <span class="copy-icon">📋</span>
+                <span class="copy-icon">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                </span>
               </span>
-              <button type="button" class="btn-table-action" onclick="copyTeacherInvite('${escapeHtml(s.name).replace(/'/g, "\\'")}', '${adminCode}')" title="Copy ready-to-share teacher invite message with link" style="font-size:0.72rem;padding:3px 7px;">
-                ✉️ Invite
+              <button type="button" class="btn-table-action" onclick="copyTeacherInvite('${escapeHtml(s.name).replace(/'/g, "\\'")}', '${adminCode}')" title="Copy ready-to-share teacher invite message with link" style="font-size:0.72rem;padding:3px 7px;display:inline-flex;align-items:center;gap:4px;">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                Invite
               </button>
             </div>
           </td>
@@ -1944,9 +2139,9 @@
           <td><span class="status-badge active">Active</span></td>
           <td>
             <div style="display:flex;gap:6px;">
-              <button onclick="openSchoolDetailsModal(${s.id})" class="btn-table-action" style="color:var(--blue-accent);font-weight:700;">👁️ View</button>
-              <button onclick="editSchool(${s.id}, '${escapeHtml(s.name).replace(/'/g, "\\'")}', '${escapeHtml(s.county || 'Nairobi')}', '${adminCode}')" class="btn-table-action">✏️ Edit</button>
-              <button onclick="deleteSchool(${s.id}, '${escapeHtml(s.name).replace(/'/g, "\\'")}')" class="btn-table-action" style="color:var(--red-accent);">🗑️ Delete</button>
+              <button onclick="openSchoolDetailsModal(${s.id})" class="btn-table-action" style="color:var(--blue-accent);font-weight:700;">View</button>
+              <button onclick="editSchool(${s.id}, '${escapeHtml(s.name).replace(/'/g, "\\'")}', '${escapeHtml(s.county || 'Nairobi')}', '${adminCode}')" class="btn-table-action">Edit</button>
+              <button onclick="deleteSchool(${s.id}, '${escapeHtml(s.name).replace(/'/g, "\\'")}')" class="btn-table-action" style="color:var(--red-accent);">Delete</button>
             </div>
           </td>
         </tr>
@@ -2013,13 +2208,15 @@
       if (teachers.length === 0) {
         tContainer.innerHTML = `
           <div class="empty-callout">
-            <div style="font-size:2rem;margin-bottom:6px;">👨‍🏫</div>
+            <div style="color:var(--blue-accent);margin-bottom:8px;display:flex;justify-content:center;">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
+            </div>
             <h4 style="margin:0 0 6px 0;color:var(--heading-color);">No STEM Teachers Registered Yet</h4>
             <p style="margin:0 0 14px 0;font-size:0.83rem;color:var(--text-muted);max-width:440px;margin-left:auto;margin-right:auto;">
               Teachers register using this school's admin registration code: <b style="font-family:var(--font-mono);color:var(--blue-accent);">${escapeHtml(s.admin_code)}</b>.
             </p>
             <button type="button" class="btn-primary-solid" onclick="copyTeacherInvite('${escapeHtml(s.name).replace(/'/g, "\\'")}', '${escapeHtml(s.admin_code)}')">
-              ✉️ Copy Teacher Onboarding Message
+              Copy Teacher Onboarding Message
             </button>
           </div>
         `;
@@ -2057,7 +2254,9 @@
       if (students.length === 0) {
         sContainer.innerHTML = `
           <div class="empty-callout">
-            <div style="font-size:2rem;margin-bottom:6px;">🎓</div>
+            <div style="color:var(--violet-accent);margin-bottom:8px;display:flex;justify-content:center;">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+            </div>
             <h4 style="margin:0 0 6px 0;color:var(--heading-color);">No Enrolled Students Yet</h4>
             <p style="margin:0;font-size:0.83rem;color:var(--text-muted);max-width:440px;margin-left:auto;margin-right:auto;">
               Students enroll in VirtuLab Kenya by joining a verified teacher's classroom code.
@@ -2100,22 +2299,34 @@
       expContainer.innerHTML = `
         <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));gap:12px;margin-top:6px;">
           <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:12px 14px;">
-            <div style="font-size:0.75rem;font-weight:700;color:var(--blue-accent);text-transform:uppercase;">🧪 Volumetric</div>
+            <div style="font-size:0.75rem;font-weight:700;color:var(--blue-accent);text-transform:uppercase;display:inline-flex;align-items:center;gap:4px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/></svg>
+              Volumetric
+            </div>
             <div style="font-family:var(--font-mono);font-size:1.4rem;font-weight:800;color:var(--heading-color);margin-top:2px;">${stats.titrations_count || 0}</div>
             <div style="font-size:0.7rem;color:var(--text-muted);">Titration Sessions</div>
           </div>
           <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:12px 14px;">
-            <div style="font-size:0.75rem;font-weight:700;color:var(--amber-accent);text-transform:uppercase;">🧂 Qualitative</div>
+            <div style="font-size:0.75rem;font-weight:700;color:var(--amber-accent);text-transform:uppercase;display:inline-flex;align-items:center;gap:4px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
+              Qualitative
+            </div>
             <div style="font-family:var(--font-mono);font-size:1.4rem;font-weight:800;color:var(--heading-color);margin-top:2px;">${stats.qualitative_count || 0}</div>
-            <div style="font-size:0.7rem;color:var(--text-muted);">Salt & Ion Tests</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);">Salt &amp; Ion Tests</div>
           </div>
           <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:12px 14px;">
-            <div style="font-size:0.75rem;font-weight:700;color:var(--green-accent);text-transform:uppercase;">⚗️ Organic</div>
+            <div style="font-size:0.75rem;font-weight:700;color:var(--green-accent);text-transform:uppercase;display:inline-flex;align-items:center;gap:4px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/></svg>
+              Organic
+            </div>
             <div style="font-family:var(--font-mono);font-size:1.4rem;font-weight:800;color:var(--heading-color);margin-top:2px;">${stats.organic_count || 0}</div>
             <div style="font-size:0.7rem;color:var(--text-muted);">Organic Practicals</div>
           </div>
           <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:12px 14px;">
-            <div style="font-size:0.75rem;font-weight:700;color:var(--violet-accent);text-transform:uppercase;">📋 Composite</div>
+            <div style="font-size:0.75rem;font-weight:700;color:var(--violet-accent);text-transform:uppercase;display:inline-flex;align-items:center;gap:4px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              Composite
+            </div>
             <div style="font-family:var(--font-mono);font-size:1.4rem;font-weight:800;color:var(--heading-color);margin-top:2px;">${stats.composite_count || 0}</div>
             <div style="font-size:0.7rem;color:var(--text-muted);">40-Mark Mock Exams</div>
           </div>
@@ -2358,7 +2569,7 @@
           <td>
             <div style="display:flex;gap:6px;">
               <button type="button" onclick="openToggleUserStatusModal(${u.id}, '${u.role}', '${safeName}', '${safeEmail}', '${u.status || 'active'}')" class="btn-table-action ${actionBtnClass}">${toggleActionText}</button>
-              <button type="button" onclick="openResetUserPwModal(${u.id}, '${u.role}', '${safeName}', '${safeEmail}')" class="btn-table-action">🔑 Reset PW</button>
+              <button type="button" onclick="openResetUserPwModal(${u.id}, '${u.role}', '${safeName}', '${safeEmail}')" class="btn-table-action">${VLKIcons.svg('key', {size: 13})} Reset PW</button>
             </div>
           </td>
         </tr>
@@ -2399,7 +2610,7 @@
     const confirmBtn = document.getElementById('btnConfirmResetPw');
     if (confirmBtn) {
       confirmBtn.disabled = false;
-      confirmBtn.innerHTML = '🔑 Confirm & Reset Password';
+      confirmBtn.innerHTML = `${VLKIcons.svg('key', {size: 14})} Confirm & Reset Password`;
     }
 
     modal.style.display = 'flex';
@@ -2436,7 +2647,7 @@
     const confirmBtn = document.getElementById('btnConfirmResetPw');
     if (confirmBtn) {
       confirmBtn.disabled = true;
-      confirmBtn.innerHTML = '⏳ Resetting...';
+      confirmBtn.innerHTML = 'Resetting...';
     }
 
     try {
@@ -2462,8 +2673,8 @@
           `;
         } else {
           emailStatusEl.innerHTML = `
-            <div style="background:var(--amber-bg);color:var(--amber-accent);border:1px solid var(--amber-border);border-radius:8px;padding:8px 12px;font-size:0.78rem;">
-              ℹ️ Copy the credentials above to share directly with the user via WhatsApp or SMS.
+            <div style="background:var(--amber-bg);color:var(--amber-accent);border:1px solid var(--amber-border);border-radius:8px;padding:8px 12px;font-size:0.78rem;display:flex;align-items:center;gap:6px;">
+              ${VLKIcons.svg('info', {size: 14})} Copy credentials above to share directly with user via WhatsApp or SMS.
             </div>
           `;
         }
@@ -2481,7 +2692,7 @@
       document.getElementById('upwErrorMsg').innerHTML = `<div style="color:var(--red-accent);font-size:0.83rem;">Error: ${escapeHtml(err.message)}</div>`;
       if (confirmBtn) {
         confirmBtn.disabled = false;
-        confirmBtn.innerHTML = '🔑 Confirm & Reset Password';
+        confirmBtn.innerHTML = `${VLKIcons.svg('key', {size: 14})} Confirm & Reset Password`;
       }
     }
   }
@@ -2513,8 +2724,9 @@
       titleEl.textContent = `Suspend ${role} Account`;
       impactEl.innerHTML = `
         <p style="margin:0 0 8px 0;">Are you sure you want to <b>suspend</b> this ${role.toLowerCase()} account?</p>
-        <div style="background:var(--red-bg);color:var(--red-accent);border:1px solid var(--red-border);border-radius:8px;padding:10px 12px;font-size:0.8rem;">
-          ⚠️ <b>Impact:</b> ${escapeHtml(name)} will be locked out of VirtuLab Kenya and prevented from accessing practical simulations, assignments, and school classrooms until reactivated.
+        <div style="background:var(--red-bg);color:var(--red-accent);border:1px solid var(--red-border);border-radius:8px;padding:10px 12px;font-size:0.8rem;display:flex;align-items:flex-start;gap:8px;">
+          ${VLKIcons.svg('alert-triangle', {size: 16})}
+          <div><b>Impact:</b> ${escapeHtml(name)} will be locked out of VirtuLab Kenya and prevented from accessing practical simulations, assignments, and school classrooms until reactivated.</div>
         </div>
       `;
       confirmBtn.className = 'btn-danger';
@@ -2523,8 +2735,9 @@
       titleEl.textContent = `Reactivate ${role} Account`;
       impactEl.innerHTML = `
         <p style="margin:0 0 8px 0;">Are you sure you want to <b>reactivate</b> this ${role.toLowerCase()} account?</p>
-        <div style="background:var(--green-bg);color:var(--green-accent);border:1px solid var(--green-border);border-radius:8px;padding:10px 12px;font-size:0.8rem;">
-          ✓ <b>Impact:</b> Full platform access will be immediately restored for ${escapeHtml(name)}.
+        <div style="background:var(--green-bg);color:var(--green-accent);border:1px solid var(--green-border);border-radius:8px;padding:10px 12px;font-size:0.8rem;display:flex;align-items:center;gap:8px;">
+          ${VLKIcons.svg('check', {size: 16})}
+          <div><b>Impact:</b> Full platform access will be immediately restored for ${escapeHtml(name)}.</div>
         </div>
       `;
       confirmBtn.className = 'btn-primary-solid';
@@ -2571,7 +2784,7 @@
     const btn = document.getElementById('btnRefreshHealth');
     if (btn) {
       btn.disabled = true;
-      btn.innerHTML = '<span>⏳</span> Diagnosing...';
+      btn.innerHTML = `${VLKIcons.svg('activity', {size: 14})} Diagnosing...`;
     }
 
     try {
@@ -2594,8 +2807,8 @@
       const grid = document.getElementById('infraHealthGrid');
       if (grid) {
         grid.innerHTML = `
-          <div style="grid-column:1/-1;background:var(--red-bg);color:var(--red-accent);border:1px solid var(--red-border);border-radius:10px;padding:16px;text-align:center;font-size:0.85rem;">
-            ⚠️ Diagnostic telemetry error: ${escapeHtml(err.message)}
+          <div style="grid-column:1/-1;background:var(--red-bg);color:var(--red-accent);border:1px solid var(--red-border);border-radius:10px;padding:16px;text-align:center;font-size:0.85rem;display:flex;align-items:center;justify-content:center;gap:8px;">
+            ${VLKIcons.svg('alert-triangle', {size: 16})} Diagnostic telemetry error: ${escapeHtml(err.message)}
           </div>
         `;
       }
@@ -2606,7 +2819,7 @@
       isHealthLoading = false;
       if (btn) {
         btn.disabled = false;
-        btn.innerHTML = '<span>🔄</span> Refresh Diagnostics';
+        btn.innerHTML = `${VLKIcons.svg('refresh', {size: 14})} Refresh Diagnostics`;
       }
     }
   }
@@ -2643,7 +2856,7 @@
         <div>
           <div class="infra-header">
             <div class="infra-title-wrap">
-              <div class="infra-icon" style="color:var(--blue-accent);">🗄️</div>
+              <div class="infra-icon" style="color:var(--blue-accent);">${VLKIcons.svg('database', {size: 20})}</div>
               <div>
                 <div class="infra-name">PostgreSQL Database</div>
                 <div class="infra-subtitle">${escapeHtml(db.provider || 'PostgreSQL Cluster')}</div>
@@ -2677,7 +2890,7 @@
         <div>
           <div class="infra-header">
             <div class="infra-title-wrap">
-              <div class="infra-icon" style="color:var(--violet-accent);">☁️</div>
+              <div class="infra-icon" style="color:var(--violet-accent);">${VLKIcons.svg('cloud', {size: 20})}</div>
               <div>
                 <div class="infra-name">Cloud Runtime Host</div>
                 <div class="infra-subtitle">${escapeHtml(srv.serviceName || 'virtulab-web')}</div>
@@ -2711,7 +2924,7 @@
         <div>
           <div class="infra-header">
             <div class="infra-title-wrap">
-              <div class="infra-icon" style="color:var(--amber-accent);">✨</div>
+              <div class="infra-icon" style="color:var(--amber-accent);">${VLKIcons.svg('sparkles', {size: 20})}</div>
               <div>
                 <div class="infra-name">Google Gemini AI</div>
                 <div class="infra-subtitle">Multimodal KCSE Engine</div>
@@ -2745,7 +2958,7 @@
         <div>
           <div class="infra-header">
             <div class="infra-title-wrap">
-              <div class="infra-icon" style="color:var(--green-accent);">🔔</div>
+              <div class="infra-icon" style="color:var(--green-accent);">${VLKIcons.svg('bell', {size: 20})}</div>
               <div>
                 <div class="infra-name">Web Push / VAPID</div>
                 <div class="infra-subtitle">Service Worker Notifications</div>
@@ -2813,8 +3026,8 @@
 
       const isSuper = a.role === 'superadmin';
       const roleBadge = isSuper
-        ? '<span class="role-badge superadmin">👑 Super Admin</span>'
-        : '<span class="role-badge admin">🛡️ Admin</span>';
+        ? `<span class="role-badge superadmin">${VLKIcons.svg('crown', {size: 12})} Super Admin</span>`
+        : `<span class="role-badge admin">${VLKIcons.svg('shield', {size: 12})} Admin</span>`;
 
       const toggleActionText = isSuspended ? 'Activate' : 'Suspend';
       const newStatus = isSuspended ? 'active' : 'suspended';
@@ -2843,7 +3056,7 @@
             <div style="display:flex;gap:6px;">
               ${isMe ? '<span style="font-size:0.74rem;color:var(--text-muted);padding:4px;font-weight:600;">Active Session</span>' : `
                 <button onclick="toggleAdminStatus(${a.id}, '${newStatus}')" class="btn-table-action">${toggleActionText}</button>
-                <button onclick="resetAdminPw(${a.id}, '${escapeHtml(a.name).replace(/'/g, "\\'")}')" class="btn-table-action">🔑 Reset PW</button>
+                <button onclick="resetAdminPw(${a.id}, '${escapeHtml(a.name).replace(/'/g, "\\'")}')" class="btn-table-action">${VLKIcons.svg('key', {size: 13})} Reset PW</button>
               `}
             </div>
           </td>

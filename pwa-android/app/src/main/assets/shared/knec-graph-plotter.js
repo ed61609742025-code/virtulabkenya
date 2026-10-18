@@ -586,6 +586,112 @@
       ctx.fillText(`Δy = ${(y2 - y1).toFixed(1)}`, pCorner.px + 14, (pCorner.py + p2.py) / 2);
     }
 
+    /**
+     * Evaluate graph according to official KNEC KCSE Paper 3 marking principles (S, P, C).
+     * @param {Object} [options]
+     * @param {Array<{x: number, y: number}>} [options.expectedPoints] - Reference data points from candidate's table
+     * @param {number} [options.xTolerance] - Tolerance along x-axis
+     * @param {number} [options.yTolerance] - Tolerance along y-axis
+     * @returns {{ scaleMark: number, plotMark: number, curveMark: number, totalScore: number, maxScore: number, rubric: Array }}
+     */
+    evaluateKNECRubric(options = {}) {
+      const expected = Array.isArray(options.expectedPoints) ? options.expectedPoints : [];
+      const xTol = Number(options.xTolerance) || ((this.xMax - this.xMin) * 0.05);
+      const yTol = Number(options.yTolerance) || ((this.yMax - this.yMin) * 0.05);
+
+      const rubric = [];
+      let totalScore = 0.0;
+
+      // 1. Scale (S) — 1.0 Mark: Must occupy > 50% of the grid in both dimensions
+      let scaleMark = 0.0;
+      let scaleDetail = '';
+      if (this.points.length >= 2) {
+        const minX = Math.min(...this.points.map(p => p.x));
+        const maxX = Math.max(...this.points.map(p => p.x));
+        const minY = Math.min(...this.points.map(p => p.y));
+        const maxY = Math.max(...this.points.map(p => p.y));
+
+        const spanX = (maxX - minX) / (this.xMax - this.xMin || 1);
+        const spanY = (maxY - minY) / (this.yMax - this.yMin || 1);
+
+        if (spanX >= 0.50 && spanY >= 0.50) {
+          scaleMark = 1.0;
+          scaleDetail = `Full mark (1.0 Mk): Plotted points span > 50% of grid in both x (${(spanX * 100).toFixed(0)}%) and y (${(spanY * 100).toFixed(0)}%) axes.`;
+        } else if (spanX >= 0.50 || spanY >= 0.50) {
+          scaleMark = 0.5;
+          scaleDetail = `Partial mark (0.5 Mk): Points span > 50% on one axis only (x: ${(spanX * 100).toFixed(0)}%, y: ${(spanY * 100).toFixed(0)}%).`;
+        } else {
+          scaleMark = 0.0;
+          scaleDetail = '0.0 Mark: Scale too compressed (< 50% of available grid area used).';
+        }
+      } else {
+        scaleDetail = '0.0 Mark: At least 2 plotted points required to evaluate scale.';
+      }
+      totalScore += scaleMark;
+      rubric.push({ code: 'S', item: 'Scale (S)', max: 1.0, mark: scaleMark, pass: scaleMark >= 1.0, detail: scaleDetail });
+
+      // 2. Plotting (P) — 1.0 Mark: Accuracy of points vs reference readings
+      let plotMark = 0.0;
+      let plotDetail = '';
+      if (expected.length > 0) {
+        let matchedCount = 0;
+        for (const exp of expected) {
+          const hasMatch = this.points.some(p => Math.abs(p.x - exp.x) <= xTol && Math.abs(p.y - exp.y) <= yTol);
+          if (hasMatch) matchedCount++;
+        }
+        const ratio = matchedCount / expected.length;
+        if (ratio >= 0.80) {
+          plotMark = 1.0;
+          plotDetail = `Full mark (1.0 Mk): ${matchedCount}/${expected.length} points correctly plotted within KNEC grid tolerance.`;
+        } else if (ratio >= 0.50) {
+          plotMark = 0.5;
+          plotDetail = `Partial mark (0.5 Mk): ${matchedCount}/${expected.length} points correctly plotted.`;
+        } else {
+          plotMark = 0.0;
+          plotDetail = `0.0 Mark: Less than 50% of points plotted within allowable grid boundaries (${matchedCount}/${expected.length}).`;
+        }
+      } else {
+        if (this.points.length >= 4) {
+          plotMark = 1.0;
+          plotDetail = `Full mark (1.0 Mk): ${this.points.length} coordinate points plotted.`;
+        } else if (this.points.length >= 2) {
+          plotMark = 0.5;
+          plotDetail = `Partial mark (0.5 Mk): ${this.points.length} points plotted (minimum 4 required for full mark).`;
+        } else {
+          plotMark = 0.0;
+          plotDetail = '0.0 Mark: Insufficient points plotted.';
+        }
+      }
+      totalScore += plotMark;
+      rubric.push({ code: 'P', item: 'Plotting Accuracy (P)', max: 1.0, mark: plotMark, pass: plotMark >= 1.0, detail: plotDetail });
+
+      // 3. Curve / Line (C) — 1.0 Mark: Smooth curvature or best-fit line
+      let curveMark = 0.0;
+      let curveDetail = '';
+      if (this.points.length >= 3) {
+        if (this.mode === 'curve' || this.mode === 'line') {
+          curveMark = 1.0;
+          curveDetail = `Full mark (1.0 Mk): Smooth ${this.mode === 'curve' ? 'continuous curve of best fit' : 'straight line of best fit'} rendered.`;
+        } else {
+          curveMark = 0.5;
+          curveDetail = 'Partial mark (0.5 Mk): Points plotted but continuous curve/line not active.';
+        }
+      } else {
+        curveDetail = '0.0 Mark: Minimum 3 plotted points needed for curve evaluation.';
+      }
+      totalScore += curveMark;
+      rubric.push({ code: 'C', item: 'Smooth Curve / Line (C)', max: 1.0, mark: curveMark, pass: curveMark >= 1.0, detail: curveDetail });
+
+      return {
+        scaleMark,
+        plotMark,
+        curveMark,
+        totalScore: parseFloat(totalScore.toFixed(1)),
+        maxScore: 3.0,
+        rubric
+      };
+    }
+
     toDataURL() {
       return this.canvas ? this.canvas.toDataURL('image/png') : '';
     }

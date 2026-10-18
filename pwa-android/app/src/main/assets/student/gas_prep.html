@@ -27,7 +27,8 @@
 <link rel="manifest" href="/manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="/shared/vlk-icons.js?v=164"></script>
 <link rel="stylesheet" href="/shared/style.css">
 <link rel="stylesheet" href="/shared/brilliant-theme.css">
 <link rel="stylesheet" href="/shared/tutorial-engine.css">
@@ -48,71 +49,77 @@
         <img src="/shared/virtulab-logo.svg" alt="VirtuLab Kenya Logo" class="vlk-brand-logo-img" width="34" height="34">
       </div>
       <div style="display:flex; flex-direction:column;">
-        <span class="brand-title" style="font-weight:800; font-family:'Cinzel', serif; font-size:1.05rem; line-height:1.1; color:var(--heading-color);">VirtuLab</span>
-        <span class="brand-subtagline" style="font-size:0.65rem; font-family:'Newsreader', serif; font-style:italic; color:var(--cyan-accent); letter-spacing:0.01em;">Gas Preparation Bench</span>
+        <span class="brand-title" style="font-weight:800; font-size:1.05rem; line-height:1.1; color:var(--heading-color);">VirtuLab</span>
+        <span class="brand-subtagline" style="font-size:0.65rem; color:var(--cyan-accent); letter-spacing:0.01em;">Gas Preparation Bench</span>
       </div>
     </a>
 
     <!-- Desktop Workbench Switcher (Hidden on Mobile) -->
     <div class="nav-modules-pill">
-      <a href="lab.html" class="theme-btn-chip">🧪 Titration</a>
-      <a href="qualitative.html" class="theme-btn-chip">🔍 Qualitative</a>
-      <a href="organic.html" class="theme-btn-chip">⚗️ Organic</a>
-      <a href="solubility.html" class="theme-btn-chip">🌡️ Solubility</a>
-      <a href="energy.html" class="theme-btn-chip">🔥 Energy</a>
-      <a href="rates.html" class="theme-btn-chip">⚡ Rates</a>
-      <a href="gas_prep.html" class="theme-btn-chip active">💨 Gas Prep</a>
-      <a href="mock_exams.html" class="theme-btn-chip">📋 Mock Hub</a>
+      <a href="lab.html" class="theme-btn-chip"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg> Titration</a>
+      <a href="qualitative.html" class="theme-btn-chip"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18h8M3 22h18M14 22a7 7 0 1 0 0-14h-1M9 14h2M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2M12 6V3a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3"/></svg> Qualitative</a>
+      <a href="organic.html" class="theme-btn-chip"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg> Organic</a>
+      <a href="solubility.html" class="theme-btn-chip"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="2" x2="12" y2="22"/><line x1="20" y1="7" x2="4" y2="17"/><line x1="4" y1="7" x2="20" y2="17"/><line x1="12" y1="6" x2="15" y2="3"/><line x1="12" y1="6" x2="9" y2="3"/><line x1="12" y1="18" x2="15" y2="21"/><line x1="12" y1="18" x2="9" y2="21"/></svg> Solubility</a>
+      <a href="energy.html" class="theme-btn-chip"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A3.5 3.5 0 0 0 12 18a3.5 3.5 0 0 0 3.5-3.5c0-2-1.5-3.5-2.5-5-.5-1-1-2.5-1-3.5 0 0-2.5 2.5-2.5 5 0 1-.5 1.5-1 2.5z"/><path d="M12 2c5 4.5 7 9 7 13a7 7 0 1 1-14 0c0-4 3-7.5 7-13z"/></svg> Energy</a>
+      <a href="rates.html" class="theme-btn-chip"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Rates</a>
+      <a href="gas_prep.html" class="theme-btn-chip active"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg> Gas Prep</a>
+      <a href="mock_exams.html" class="theme-btn-chip"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg> Mock Hub</a>
     </div>
 
     <div class="nav-actions">
       <!-- Session Timer Badge -->
       <div class="session-timer-badge" style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:6px;padding:4px 8px;font-size:0.75rem;font-weight:700;color:var(--cyan-accent);display:flex;align-items:center;gap:4px;font-family:'JetBrains Mono',monospace;">
-        <span>⏱️</span>
-        <span id="sessionTimerText">00:00</span>
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span id="sessionTimerText" class="tabular-nums">00:00</span>
       </div>
 
       <!-- Guided Tutorial Button -->
-      <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm" onclick="TutorialEngine.start('gas_prep')" style="padding:4px 8px; font-size:0.75rem; white-space:nowrap;">
-        🧭 <span class="btn-text-full">Guided Tutorial</span><span class="btn-text-short">Tutorial</span>
+      <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm" onclick="TutorialEngine.start('gas_prep')" style="padding:4px 8px; font-size:0.75rem; white-space:nowrap; display:inline-flex; align-items:center; gap:4px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg> <span class="btn-text-full">Guided Tutorial</span><span class="btn-text-short">Tutorial</span>
       </button>
 
       <!-- Study Mode Toggle -->
       <div class="theme-toggle-group">
-        <button type="button" class="theme-btn-chip active" id="btnModePractice" onclick="setStudyMode('practice')">🎓 <span class="btn-text-full">Practice</span></button>
-        <button type="button" class="theme-btn-chip" id="btnModeExam" onclick="setStudyMode('exam')">📝 <span class="btn-text-full">Exam</span></button>
+        <button type="button" class="theme-btn-chip active" id="btnModePractice" onclick="setStudyMode('practice')" style="display:inline-flex; align-items:center; gap:4px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> <span class="btn-text-full">Practice</span></button>
+        <button type="button" class="theme-btn-chip" id="btnModeExam" onclick="setStudyMode('exam')" style="display:inline-flex; align-items:center; gap:4px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg> <span class="btn-text-full">Exam</span></button>
       </div>
 
       <!-- Quick Reagent Safety SDS Button -->
-      <button type="button" class="nav-btn nav-btn-safety" onclick="openCurrentGasSafety()" title="View Chemical Safety Data Sheets" style="padding:4px 8px; font-size:0.75rem;">
-        ⚠️ <span class="btn-text-full">SDS Hazards</span><span class="btn-text-short">SDS</span>
+      <button type="button" class="nav-btn nav-btn-safety" onclick="openCurrentGasSafety()" title="View Chemical Safety Data Sheets" style="padding:4px 8px; font-size:0.75rem; display:inline-flex; align-items:center; gap:4px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> <span class="btn-text-full">SDS Hazards</span><span class="btn-text-short">SDS</span>
       </button>
 
       <!-- Settings Dropdown -->
       <div style="position:relative;">
-        <button type="button" class="nav-btn nav-btn-settings" onclick="toggleBenchSettings(event)" title="Workbench Settings & Tools" style="padding:4px 8px; font-size:0.75rem;">
-          ⚙️ <span class="btn-text-full">Settings</span><span class="btn-text-short">⚙️</span>
+        <button type="button" class="nav-btn nav-btn-settings" onclick="toggleBenchSettings(event)" title="Workbench Settings & Tools" style="padding:4px 8px; font-size:0.75rem; display:inline-flex; align-items:center; gap:4px;">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> <span class="btn-text-full">Settings</span>
         </button>
         
         <div id="benchSettingsDropdown" style="display:none; position:absolute; right:0; top:36px; width:250px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; box-shadow:var(--shadow-lg); z-index:100000; padding:12px; flex-direction:column; gap:10px; text-align:left;">
           <!-- Sound Toggle -->
           <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
             <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Sound Effects</span>
-            <button type="button" id="soundToggleBtnGas" onclick="toggleSound()" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border);">🔊 Sound ON</button>
+            <button type="button" id="soundToggleBtnGas" onclick="toggleSound()" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border); display:inline-flex; align-items:center; gap:4px;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+              <span>Sound ON</span>
+            </button>
           </div>
 
           <!-- Scratchpad Toggle -->
           <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
             <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Scratchpad</span>
-            <button type="button" onclick="toggleScratchpad()" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border);">📝 Rough Work</button>
+            <button type="button" onclick="toggleScratchpad()" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border); display:inline-flex; align-items:center; gap:4px;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+              <span>Rough Work</span>
+            </button>
           </div>
 
           <!-- Language Selector Row -->
           <div style="display:flex; flex-direction:column; gap:6px; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
             <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Language / Lugha</span>
             <div class="theme-toggle-group" style="width:100%;">
-              <button class="theme-btn-chip lang-btn-chip active" style="flex:1;" data-lang="en" onclick="setLanguage('en')">🇬🇧 EN</button>
-              <button class="theme-btn-chip lang-btn-chip" style="flex:1;" data-lang="sw" onclick="setLanguage('sw')">🇰🇪 SW</button>
+              <button class="theme-btn-chip lang-btn-chip active" style="flex:1;" data-lang="en" onclick="setLanguage('en')">EN</button>
+              <button class="theme-btn-chip lang-btn-chip" style="flex:1;" data-lang="sw" onclick="setLanguage('sw')">SW</button>
             </div>
           </div>
 
@@ -120,28 +127,43 @@
           <div style="display:flex; flex-direction:column; gap:6px; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
             <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Appearance Theme</span>
             <div class="theme-toggle-group" style="width:100%;">
-              <button class="theme-btn-chip" style="flex:1;" data-theme="light" onclick="setTheme('light')">☀️ Light</button>
-              <button class="theme-btn-chip active" style="flex:1;" data-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
-              <button class="theme-btn-chip" style="flex:1;" data-theme="green" onclick="setTheme('green')">🧪 Lab</button>
+              <button class="theme-btn-chip" style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:4px;" data-theme="light" onclick="setTheme('light')">
+                <svg class="theme-icon-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                Light
+              </button>
+              <button class="theme-btn-chip active" style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:4px;" data-theme="dark" onclick="setTheme('dark')">
+                <svg class="theme-icon-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                Dark
+              </button>
+              <button class="theme-btn-chip" style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:4px;" data-theme="green" onclick="setTheme('green')">
+                <svg class="theme-icon-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31M14 2v7.31M8.5 2h7M14 9.3a6.5 6.5 0 1 1-4 0"/><line x1="6" y1="16" x2="18" y2="16"/></svg>
+                Lab
+              </button>
             </div>
           </div>
 
           <div style="display:flex; flex-direction:column; gap:6px;">
-            <button type="button" onclick="openCurrentGasSafety()" style="background:var(--red-bg);border:1px solid var(--red-border);color:var(--red-accent);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
-              ⚠️ Reagent Safety (SDS)
+            <button type="button" onclick="openCurrentGasSafety()" style="background:var(--red-bg);border:1px solid var(--red-border);color:var(--red-accent);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;display:inline-flex;align-items:center;gap:6px;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              Reagent Safety (SDS)
             </button>
-            <button type="button" onclick="window.print()" style="background:var(--card-bg-hover);border:1px solid var(--card-border);color:var(--text-main);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
-              🖨️ Print Practical Record
+            <button type="button" onclick="window.print()" style="background:var(--card-bg-hover);border:1px solid var(--card-border);color:var(--text-main);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;display:inline-flex;align-items:center;gap:6px;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              Print Practical Record
             </button>
-            <button type="button" onclick="saveSession()" style="background:var(--blue-accent);border:none;color:#FFF;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;">
-              💾 Save Session
+            <button type="button" onclick="saveSession()" style="background:var(--blue-accent);border:none;color:#FFF;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;display:inline-flex;align-items:center;gap:6px;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Save Session
             </button>
           </div>
         </div>
       </div>
 
       <!-- Exit Button -->
-      <a href="/student/home.html" class="rate-nav-back-btn" style="padding:4px 8px; font-size:0.75rem; border-radius:6px; text-decoration:none;" title="Exit to Workstation">← Exit</a>
+      <a href="/student/home.html" class="rate-nav-back-btn" style="padding:4px 8px; font-size:0.75rem; border-radius:6px; text-decoration:none; display:inline-flex; align-items:center; gap:4px;" title="Exit to Workstation">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Exit
+      </a>
     </div>
   </nav>
 
@@ -169,8 +191,11 @@
 <!-- Collapsible Scratchpad Drawer -->
 <div id="scratchpadDrawer" style="display:none;background:var(--card-bg);border:1px solid var(--cyan-accent);border-radius:12px;padding:16px;margin:16px 20px 0;box-shadow:0 4px 20px rgba(0,0,0,0.4);">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-    <div style="font-size:0.88rem;font-weight:700;color:var(--heading-color);font-family:'Cinzel', serif;">📝 Rough Work Scratchpad (KNEC Candidate Working)</div>
-    <button type="button" class="theme-btn-chip" style="padding:2px 8px;font-size:0.7rem;" onclick="toggleScratchpad()">✕ Close</button>
+    <div style="font-size:0.88rem;font-weight:700;color:var(--heading-color);display:inline-flex;align-items:center;gap:6px;">
+      <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+      Rough Work Scratchpad (KNEC Candidate Working)
+    </div>
+    <button type="button" class="theme-btn-chip" style="padding:2px 8px;font-size:0.7rem;" onclick="toggleScratchpad()">Close</button>
   </div>
   <textarea id="scratchpadText" placeholder="Draft your gas preparation equations, drying agent selection notes, observation inferences, and confirmatory test equations here..." style="width:100%;height:90px;background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:8px;padding:10px;color:var(--text-main);font-family:'JetBrains Mono',monospace;font-size:0.82rem;outline:none;resize:vertical;"></textarea>
 </div>
@@ -184,7 +209,7 @@
   <!-- Prescribed Continuous Assessment Banner (Shown when assignmentId is present) -->
   <div id="assignmentHeaderBanner" style="display:none; grid-column: 1 / -1; background:rgba(6,182,212,0.15); border:1.5px solid var(--cyan-accent); border-radius:12px; padding:12px 18px; margin-bottom:14px; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
     <div style="display:flex; align-items:center; gap:10px;">
-      <span style="font-size:1.3rem;">📋</span>
+      <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:22px;height:22px;color:var(--cyan-accent);"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg>
       <div>
         <div style="font-size:0.75rem; font-weight:800; text-transform:uppercase; color:var(--cyan-accent); letter-spacing:0.04em;">PRESCRIBED CONTINUOUS ASSESSMENT ASSIGNMENT</div>
         <div id="assignBannerTitle" style="font-size:0.95rem; font-weight:800; color:var(--heading-color);">Gas Preparation &amp; Collection Practical Assignment</div>
@@ -196,8 +221,8 @@
   <!-- Official KNEC Practical Examination Proctor Banner -->
   <div id="gasExamProctorBanner" style="display:none; grid-column: 1 / -1; background:var(--red-bg); border:1px solid var(--red-border); border-radius:12px; padding:12px 18px; margin-bottom:14px; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
     <div style="display:flex; align-items:center; gap:10px;">
-      <div style="background:var(--red-accent); color:#FFF; padding:4px 8px; border-radius:6px; font-weight:800; font-size:0.72rem; font-family:var(--font-mono); letter-spacing:0.05em;">
-        🔒 KNEC EXAM MODE
+      <div style="background:var(--red-accent); color:#FFF; padding:4px 8px; border-radius:6px; font-weight:800; font-size:0.72rem; font-family:var(--font-mono); letter-spacing:0.05em; display:inline-flex; align-items:center; gap:4px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:13px;height:13px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> KNEC EXAM MODE
       </div>
       <div>
         <div style="font-size:0.95rem; font-weight:800; color:var(--heading-color); font-family:var(--font-heading);">Chemistry Paper 3 (233/3) — Question 3: Gas Preparation &amp; Qualitative Testing</div>
@@ -212,7 +237,10 @@
   <!-- LEFT COLUMN: Gas Selection & Apparatus Configuration -->
   <section class="gas-card-panel">
     <div class="gas-panel-header">
-      <h2 class="gas-panel-title"><span>💨</span> 1. Select Gas to Prepare</h2>
+      <h2 class="gas-panel-title" style="display:inline-flex;align-items:center;gap:8px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:20px;height:20px;color:var(--cyan-accent);"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+        1. Select Gas to Prepare
+      </h2>
       <span class="knec-badge-pill">KCSE Paper 3</span>
     </div>
 
@@ -233,29 +261,29 @@
 
     <!-- Reagents & Properties Summary -->
     <div style="font-size: 0.82rem; line-height: 1.5; color: var(--text-main);">
-      <p style="margin: 0 0 6px;"><b>🧪 Reactants:</b> <span id="reactantsText">Hydrogen Peroxide + Manganese(IV) Oxide</span></p>
-      <p style="margin: 0 0 6px;"><b>⚖️ Density vs Air:</b> <span id="densityText">Slightly denser than air</span></p>
-      <p style="margin: 0 0 6px;"><b>💧 Solubility in H₂O:</b> <span id="solubilityText">Slightly soluble in water</span></p>
+      <p style="margin: 0 0 6px;"><b>Reactants:</b> <span id="reactantsText">Hydrogen Peroxide + Manganese(IV) Oxide</span></p>
+      <p style="margin: 0 0 6px;"><b>Density vs Air:</b> <span id="densityText">Slightly denser than air</span></p>
+      <p style="margin: 0 0 6px;"><b>Solubility in H₂O:</b> <span id="solubilityText">Slightly soluble in water</span></p>
     </div>
 
     <!-- KCSE Schematic Preview Badge -->
     <div id="gasDiagramPreviewBox" style="margin-top:10px; padding:10px 12px; background:var(--blue-bg); border:1.5px solid var(--blue-border); border-radius:10px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
       <div style="display:flex; align-items:center; gap:8px;">
-        <span style="font-size:1.2rem;">📐</span>
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:20px;height:20px;color:var(--blue-accent);"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
         <div>
           <div style="font-size:0.72rem; font-weight:800; color:var(--blue-accent); text-transform:uppercase; letter-spacing:0.04em;">KCSE Textbook Schematic</div>
           <div id="gasDiagramPreviewText" style="font-size:0.78rem; font-weight:700; color:var(--heading-color);">O₂: Catalytic Decomposition Apparatus</div>
         </div>
       </div>
-      <button type="button" class="theme-btn-chip" onclick="openBlueprintModal()" style="font-size:0.72rem; padding:4px 9px; font-weight:700; border:1px solid var(--blue-border); background:var(--card-bg);">
-        🔍 Blueprint
+      <button type="button" class="theme-btn-chip" onclick="openBlueprintModal()" style="font-size:0.72rem; padding:4px 9px; font-weight:700; border:1px solid var(--blue-border); background:var(--card-bg); display:inline-flex; align-items:center; gap:4px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Blueprint
       </button>
     </div>
 
     <!-- Configuration: Drying Agent Selection -->
     <div style="margin-top: 8px;">
       <label for="dryingSelect" style="font-size: 0.82rem; font-weight: 700; color: var(--heading-color); display: block; margin-bottom: 6px;">
-        🧴 2. Select Drying Agent:
+        2. Select Drying Agent:
       </label>
       <select id="dryingSelect" class="form-control" onchange="onDryingChange(this.value)">
         <option value="concH2SO4">Concentrated Sulphuric Acid (H₂SO₄)</option>
@@ -268,7 +296,7 @@
     <!-- Configuration: Collection Method Selection -->
     <div style="margin-top: 8px;">
       <label for="collectionSelect" style="font-size: 0.82rem; font-weight: 700; color: var(--heading-color); display: block; margin-bottom: 6px;">
-        🏺 3. Select Collection Method:
+        3. Select Collection Method:
       </label>
       <select id="collectionSelect" class="form-control" onchange="onCollectionChange(this.value)">
         <option value="overWater">Over Water (Downward displacement of water)</option>
@@ -280,13 +308,16 @@
 
     <!-- Heat Requirement Toggle -->
     <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: var(--card-bg-hover); border-radius: 8px;">
-      <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-main);">🔥 Bunsen Burner Heating</span>
+      <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-main); display:inline-flex; align-items:center; gap:6px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:15px;height:15px;color:var(--amber-accent);"><path d="M8.5 14.5A3.5 3.5 0 0 0 12 18a3.5 3.5 0 0 0 3.5-3.5c0-2-1.5-3.5-2.5-5-.5-1-1-2.5-1-3.5 0 0-2.5 2.5-2.5 5 0 1-.5 1.5-1 2.5z"/><path d="M12 2c5 4.5 7 9 7 13a7 7 0 1 1-14 0c0-4 3-7.5 7-13z"/></svg>
+        Bunsen Burner Heating
+      </span>
       <button id="heatBtn" class="theme-btn-chip" onclick="toggleHeating()">Heating: OFF</button>
     </div>
 
     <!-- Generation Trigger Button -->
     <button id="runReactionBtn" class="btn btn-primary" style="width: 100%; padding: 12px; font-weight: 800; font-size: 0.9rem;" onclick="generateGas()">
-      ⚡ Generate & Collect Gas
+      Generate &amp; Collect Gas
     </button>
   </section>
 
@@ -294,15 +325,20 @@
   <section class="gas-card-panel" style="display: flex; flex-direction: column;">
     <div class="gas-panel-header" style="flex-wrap: wrap; gap: 8px;">
       <div style="display:flex; align-items:center; gap:8px;">
-        <h2 class="gas-panel-title"><span>🔬</span> Simulation Stage</h2>
+        <h2 class="gas-panel-title" style="display:inline-flex;align-items:center;gap:8px;">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:20px;height:20px;color:var(--cyan-accent);"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/></svg>
+          Simulation Stage
+        </h2>
         <span id="reactionStatusBadge" class="knec-badge-pill" style="background: var(--blue-bg); color: var(--blue-accent); border-color: var(--blue-border);">Ready</span>
       </div>
       <div style="display:flex; align-items:center; gap:6px;">
-        <button type="button" class="theme-btn-chip active" id="btnToggleLabels" onclick="toggleApparatusLabels()" title="Toggle Scientific Textbook Labels">
-          🏷️ Labels: ON
+        <button type="button" class="theme-btn-chip active" id="btnToggleLabels" onclick="toggleApparatusLabels()" title="Toggle Scientific Textbook Labels" style="display:inline-flex;align-items:center;gap:4px;">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          <span id="lblToggleText">Labels: ON</span>
         </button>
-        <button type="button" class="theme-btn-chip" onclick="openBlueprintModal()" title="View KNEC Official Textbook Blueprint Schematic">
-          📐 KCSE Blueprint
+        <button type="button" class="theme-btn-chip" onclick="openBlueprintModal()" title="View KNEC Official Textbook Blueprint Schematic" style="display:inline-flex;align-items:center;gap:4px;">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+          KCSE Blueprint
         </button>
       </div>
     </div>
@@ -311,8 +347,9 @@
     <div class="apparatus-stage">
       
       <!-- Fume Cupboard Active Warning Banner (Displayed for toxic gases: Cl₂, SO₂) -->
-      <div id="stageFumeHoodBanner" class="fume-hood-banner" style="display:none;">
-        <span>☣️</span> FUME CUPBOARD ACTIVE • TOXIC GAS VENTILATION PROTOCOL
+      <div id="stageFumeHoodBanner" class="fume-hood-banner" style="display:none;align-items:center;gap:6px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:16px;height:16px;"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        FUME CUPBOARD ACTIVE • TOXIC GAS VENTILATION PROTOCOL
       </div>
 
       <!-- Interactive Component Specification Tooltip -->
@@ -1067,7 +1104,10 @@
   <!-- RIGHT COLUMN: Confirmatory Gas Testing & KNEC Marks -->
   <section class="gas-card-panel">
     <div class="gas-panel-header">
-      <h2 class="gas-panel-title"><span>🧪</span> 4. Gas Testing Station</h2>
+      <h2 class="gas-panel-title" style="display:inline-flex;align-items:center;gap:8px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:20px;height:20px;color:var(--cyan-accent);"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/></svg>
+        4. Gas Testing Station
+      </h2>
       <span class="knec-badge-pill">Paper 3 (Q3)</span>
     </div>
 
@@ -1078,32 +1118,33 @@
     <!-- Test Tools Grid -->
     <div class="test-reagent-grid">
       <button class="test-tool-btn" id="btnTestGlowing" onclick="runTest('glowingSplint')">
-        <span>🪵</span> Glowing Splint
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:16px;height:16px;"><line x1="5" y1="19" x2="19" y2="5"/><path d="M16 4l4 4"/></svg> Glowing Splint
       </button>
       <button class="test-tool-btn" id="btnTestBurning" onclick="runTest('burningSplint')">
-        <span>🔥</span> Burning Splint
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:16px;height:16px;"><path d="M8.5 14.5A3.5 3.5 0 0 0 12 18a3.5 3.5 0 0 0 3.5-3.5c0-2-1.5-3.5-2.5-5-.5-1-1-2.5-1-3.5 0 0-2.5 2.5-2.5 5 0 1-.5 1.5-1 2.5z"/><path d="M12 2c5 4.5 7 9 7 13a7 7 0 1 1-14 0c0-4 3-7.5 7-13z"/></svg> Burning Splint
       </button>
       <button class="test-tool-btn" id="btnTestLitmus" onclick="runTest('dampLitmus')">
-        <span>📑</span> Moist Litmus
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:16px;height:16px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Moist Litmus
       </button>
       <button class="test-tool-btn" id="btnTestLime" onclick="runTest('limeWater')">
-        <span>🥛</span> Lime Water
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:16px;height:16px;"><path d="M6 2v16a4 4 0 0 0 4 4h4a4 4 0 0 0 4-4V2"/><path d="M6 6h12"/></svg> Lime Water
       </button>
       <button class="test-tool-btn" id="btnTestDichromate" onclick="runTest('dichromate')">
-        <span>🟠</span> K₂Cr₂O₇ Paper
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:16px;height:16px;"><circle cx="12" cy="12" r="9"/></svg> K₂Cr₂O₇ Paper
       </button>
       <button class="test-tool-btn" id="btnTestStarch" onclick="runTest('starchIodide')">
-        <span>📜</span> Starch-Iodide
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:16px;height:16px;"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg> Starch-Iodide
       </button>
       <button class="test-tool-btn" id="btnTestHcl" onclick="runTest('hclRod')">
-        <span>🧪</span> Conc HCl Rod
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:16px;height:16px;"><line x1="4" y1="20" x2="20" y2="4"/><circle cx="18" cy="6" r="2"/></svg> Conc HCl Rod
       </button>
     </div>
 
     <!-- Observation Log Feed -->
     <div style="margin-top: 10px;">
-      <h3 style="font-size: 0.82rem; font-weight: 700; color: var(--heading-color); margin-bottom: 6px;">
-        📝 Practical Observation Record:
+      <h3 style="font-size: 0.82rem; font-weight: 700; color: var(--heading-color); margin-bottom: 6px; display:flex; align-items:center; gap:6px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:15px;height:15px;color:var(--cyan-accent);"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg>
+        Practical Observation Record:
       </h3>
       <div id="obsFeed" class="observation-log">
         <div style="color: var(--text-muted); text-align: center; padding: 16px;">
@@ -1114,8 +1155,9 @@
 
     <!-- KNEC Theory Practical Questions -->
     <div id="theoryQuestionSection" style="margin-top: 10px; border-top: 1px dashed var(--card-border); padding-top: 10px;">
-      <h3 style="font-size: 0.85rem; font-weight: 700; color: var(--heading-color); margin-bottom: 8px;">
-        📋 KNEC Examiner Questions
+      <h3 style="font-size: 0.85rem; font-weight: 700; color: var(--heading-color); margin-bottom: 8px; display:flex; align-items:center; gap:6px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:15px;height:15px;color:var(--cyan-accent);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        KNEC Examiner Questions
       </h3>
       <div id="questionsContainer"></div>
     </div>
@@ -1127,8 +1169,9 @@
         <span class="score-badge-large" id="scoreDisplay">0.0 / 10.0</span>
       </div>
 
-      <button id="saveGasSessionBtn" class="btn btn-primary" style="width: 100%; padding: 12px; font-weight: 800;" onclick="saveSession()">
-        💾 Submit & Save Practical Session
+      <button id="saveGasSessionBtn" class="btn btn-primary" style="width: 100%; padding: 12px; font-weight: 800; display:inline-flex; align-items:center; justify-content:center; gap:6px;" onclick="saveSession()">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+        Submit &amp; Save Practical Session
       </button>
     </div>
   </section>
@@ -1140,18 +1183,18 @@
   <div class="blueprint-modal-content">
     <div class="blueprint-modal-header">
       <div style="display:flex; align-items:center; gap:10px;">
-        <span style="font-size:1.5rem;">📐</span>
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:26px;height:26px;color:var(--blue-accent);"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
         <div>
           <h2 style="font-size:1.15rem; font-weight:800; color:var(--heading-color); margin:0;">
             KCSE Laboratory Setup Blueprint: <span id="blueprintGasTitle" style="color:var(--blue-accent);">Oxygen (O₂)</span>
           </h2>
           <span style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono);">
-            KNEC Form 2 & Form 3 Practical Chemistry Paper 3 Blueprint Standard
+            KNEC Form 2 &amp; Form 3 Practical Chemistry Paper 3 Blueprint Standard
           </span>
         </div>
       </div>
       <button type="button" class="theme-btn-chip" onclick="closeBlueprintModal()" style="font-size:0.85rem; padding:6px 14px; font-weight:700;">
-        ✕ Close
+        Close
       </button>
     </div>
 
@@ -1169,7 +1212,8 @@
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:4px;">
       <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:10px; padding:14px;">
         <h4 style="margin:0 0 8px; font-size:0.86rem; color:var(--heading-color); display:flex; align-items:center; gap:6px;">
-          <span>⚠️</span> Critical KNEC Examination Precautions
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:16px;height:16px;color:var(--amber-accent);"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Critical KNEC Examination Precautions
         </h4>
         <ul id="blueprintPrecautionsList" style="margin:0; padding-left:18px; font-size:0.78rem; color:var(--text-main); line-height:1.6;">
           <li><b>Thistle Funnel Safety Seal:</b> Stem must dip below the liquid surface to prevent evolved gas from escaping into the lab room.</li>
@@ -1180,7 +1224,8 @@
 
       <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:10px; padding:14px;">
         <h4 style="margin:0 0 8px; font-size:0.86rem; color:var(--heading-color); display:flex; align-items:center; gap:6px;">
-          <span>🧪</span> Chemical Equation & State Symbols
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:16px;height:16px;color:var(--cyan-accent);"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/></svg>
+          Chemical Equation &amp; State Symbols
         </h4>
         <div id="blueprintEquationBox" style="background:var(--card-bg); border:1px dashed var(--blue-border); border-radius:8px; padding:10px; font-family:var(--font-mono); font-size:0.82rem; color:var(--blue-accent); text-align:center; margin-bottom:8px;">
           2H₂O₂(aq)  —[MnO₂]→  2H₂O(l) + O₂(g)
@@ -1325,7 +1370,7 @@
     }
     const btn = document.getElementById('soundToggleBtnGas');
     if (btn) {
-      btn.textContent = isEnabled ? '🔊 Sound ON' : '🔇 Sound OFF';
+      btn.textContent = isEnabled ? 'Sound ON' : 'Sound OFF';
     }
   }
 
@@ -1365,7 +1410,7 @@
     if (group) group.style.display = labelsVisible ? 'inline' : 'none';
     if (btn) {
       btn.classList.toggle('active', labelsVisible);
-      btn.innerText = labelsVisible ? '🏷️ Labels: ON' : '🏷️ Labels: OFF';
+      btn.innerText = labelsVisible ? 'Labels: ON' : 'Labels: OFF';
     }
   }
 
@@ -1888,7 +1933,7 @@
     const bunsen = document.getElementById('bunsenGroup');
     const wire = document.getElementById('wireGauzeCenter');
     if (engine.heatingEnabled) {
-      btn.innerText = 'Heating: ON 🔥';
+      btn.innerText = 'Heating: ON';
       btn.classList.add('active');
       if (bunsen) bunsen.style.display = 'block';
       if (wire) wire.setAttribute('fill', '#EF4444');
@@ -1950,16 +1995,16 @@
     vis.style.display = 'block';
 
     const testTitles = {
-      glowingSplint: '🪵 Glowing Splint Test',
-      burningSplint: '🔥 Burning Splint Test',
-      dampLitmus: '📑 Moist Litmus Paper Test',
-      limeWater: '🥛 Lime Water (Ca(OH)₂) Test',
-      dichromate: '🟠 Acidified K₂Cr₂O₇ Paper',
-      starchIodide: '📜 Moist Starch-Iodide Test',
-      hclRod: '🧪 Glass Rod with Conc. HCl'
+      glowingSplint: 'Glowing Splint Test',
+      burningSplint: 'Burning Splint Test',
+      dampLitmus: 'Moist Litmus Paper Test',
+      limeWater: 'Lime Water (Ca(OH)₂) Test',
+      dichromate: 'Acidified K₂Cr₂O₇ Paper',
+      starchIodide: 'Moist Starch-Iodide Test',
+      hclRod: 'Glass Rod with Conc. HCl'
     };
 
-    if (titleEl) titleEl.innerText = testTitles[testKey] || '🧪 Confirmatory Test';
+    if (titleEl) titleEl.innerText = testTitles[testKey] || 'Confirmatory Test';
     if (resultText) resultText.innerText = obs.result;
     if (resultTag) {
       resultTag.className = `visualizer-result-tag ${obs.status === 'success' ? 'success' : 'warn'}`;
@@ -1997,7 +2042,7 @@
               <animateTransform attributeName="transform" type="scale" values="1 1; 1.08 1.15; 0.95 0.98; 1 1" origin="140 74" dur="0.3s" repeatCount="indefinite"/>
             </path>
             <ellipse cx="140" cy="65" rx="3.5" ry="5" fill="#FFFFFF"/>
-            <text x="140" y="20" font-size="11" font-weight="800" fill="#FACC15" font-family="'JetBrains Mono', monospace" text-anchor="middle" filter="drop-shadow(0 0 3px #EA580C)">🔥 RELIGHTS WITH FLAME!</text>
+            <text x="140" y="20" font-size="11" font-weight="800" fill="#FACC15" font-family="'JetBrains Mono', monospace" text-anchor="middle" filter="drop-shadow(0 0 3px #EA580C)">RELIGHTS WITH FLAME</text>
           ` : `
             <circle cx="140" cy="70" r="3" fill="#334155"/>
             <path d="M 140,68 Q 144,55 138,42 Q 142,32 139,22" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="3 2" opacity="0.6">
@@ -2032,17 +2077,17 @@
             <path d="M 140,18 L 144,32 L 158,32 L 146,40 L 150,54 L 140,44 L 130,54 L 134,40 L 122,32 L 136,32 Z" fill="#FACC15" stroke="#EA580C" stroke-width="1">
               <animateTransform attributeName="transform" type="rotate" from="0 140 38" to="360 140 38" dur="1.2s" repeatCount="indefinite"/>
             </path>
-            <text x="140" y="20" font-size="11" font-weight="800" fill="#38BDF8" font-family="'JetBrains Mono', monospace" text-anchor="middle" filter="drop-shadow(0 0 4px #0284C7)">💥 SQUEAKY POP! (2H₂ + O₂)</text>
+            <text x="140" y="20" font-size="11" font-weight="800" fill="#38BDF8" font-family="'JetBrains Mono', monospace" text-anchor="middle" filter="drop-shadow(0 0 4px #0284C7)">SQUEAKY POP (2H₂ + O₂)</text>
           ` : (isO2Burn ? `
             <circle cx="140" cy="42" r="16" fill="#FDE047" opacity="0.8">
               <animate attributeName="r" values="14;20;14" dur="0.5s" repeatCount="indefinite"/>
             </circle>
             <path d="M 140,24 C 132,36 134,48 140,54 C 146,48 148,36 140,24 Z" fill="#F97316"/>
-            <text x="140" y="20" font-size="10.5" font-weight="800" fill="#FACC15" font-family="'JetBrains Mono', monospace" text-anchor="middle">🔥 BURNS MORE BRIGHTLY</text>
+            <text x="140" y="20" font-size="10.5" font-weight="800" fill="#FACC15" font-family="'JetBrains Mono', monospace" text-anchor="middle">BURNS MORE BRIGHTLY</text>
           ` : `
             <circle cx="140" cy="45" r="2.5" fill="#334155"/>
             <path d="M 140,42 Q 144,30 137,20" fill="none" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="2 2" opacity="0.7"/>
-            <text x="140" y="20" font-size="10" font-weight="700" fill="#EF4444" font-family="'JetBrains Mono', monospace" text-anchor="middle">💨 FLAME EXTINGUISHED</text>
+            <text x="140" y="20" font-size="10" font-weight="700" fill="#EF4444" font-family="'JetBrains Mono', monospace" text-anchor="middle">FLAME EXTINGUISHED</text>
           `)}
         </svg>
       `;
@@ -2117,7 +2162,7 @@
             <circle cx="146" cy="88" r="1.8" fill="#94A3B8"/>
             <circle cx="138" cy="98" r="1.4" fill="#CBD5E1"/>
             <text x="140" y="124" font-size="9" font-weight="700" fill="#38BDF8" font-family="'JetBrains Mono', monospace" text-anchor="middle">CaCO₃(s) Precipitate Formed</text>
-            <text x="140" y="16" font-size="10" font-weight="800" fill="#F8FAFC" font-family="'JetBrains Mono', monospace" text-anchor="middle">🥛 TURNS MILKY WHITE</text>
+            <text x="140" y="16" font-size="10" font-weight="800" fill="#F8FAFC" font-family="'JetBrains Mono', monospace" text-anchor="middle">TURNS MILKY WHITE</text>
           ` : `
             <text x="140" y="124" font-size="9" fill="#94A3B8" font-family="'JetBrains Mono', monospace" text-anchor="middle">Lime Water (Ca(OH)₂)</text>
             <text x="140" y="16" font-size="10" font-weight="700" fill="#94A3B8" font-family="'JetBrains Mono', monospace" text-anchor="middle">Remains Clear & Colourless</text>
@@ -2134,7 +2179,7 @@
           <rect x="133" y="12" width="14" height="68" rx="2" fill="${isSO2 ? '#10B981' : '#EA580C'}" stroke="#94A3B8" stroke-width="1"/>
           
           ${isSO2 ? `
-            <text x="140" y="16" font-size="10" font-weight="800" fill="#10B981" font-family="'JetBrains Mono', monospace" text-anchor="middle">🟠 ➔ 🟢 TURNS EMERALD GREEN</text>
+            <text x="140" y="16" font-size="10" font-weight="800" fill="#10B981" font-family="'JetBrains Mono', monospace" text-anchor="middle">TURNS EMERALD GREEN</text>
             <text x="140" y="112" font-size="8.5" fill="#6EE7B7" font-family="'JetBrains Mono', monospace" text-anchor="middle">Cr₂O₇²⁻ reduced to Cr³⁺</text>
           ` : `
             <text x="140" y="16" font-size="10" font-weight="700" fill="#EA580C" font-family="'JetBrains Mono', monospace" text-anchor="middle">Filter Paper Remains Orange</text>
@@ -2152,7 +2197,7 @@
           <rect x="133" y="12" width="14" height="68" rx="2" fill="${isCl2 ? '#1E1B4B' : '#F8FAFC'}" stroke="#64748B" stroke-width="1"/>
           
           ${isCl2 ? `
-            <text x="140" y="16" font-size="10" font-weight="800" fill="#818CF8" font-family="'JetBrains Mono', monospace" text-anchor="middle">📜 ➔ 🖤 TURNS DEEP BLUE-BLACK</text>
+            <text x="140" y="16" font-size="10" font-weight="800" fill="#818CF8" font-family="'JetBrains Mono', monospace" text-anchor="middle">TURNS DEEP BLUE-BLACK</text>
             <text x="140" y="112" font-size="8.5" fill="#A5B4FC" font-family="'JetBrains Mono', monospace" text-anchor="middle">I⁻ oxidized to I₂ (Starch Complex)</text>
           ` : `
             <text x="140" y="16" font-size="10" font-weight="700" fill="#94A3B8" font-family="'JetBrains Mono', monospace" text-anchor="middle">Paper Strip Remains White</text>
@@ -2185,7 +2230,7 @@
                 <animate attributeName="opacity" values="0.9;0.5;0" dur="0.9s" repeatCount="indefinite"/>
               </circle>
             </g>
-            <text x="140" y="16" font-size="10" font-weight="800" fill="#F8FAFC" font-family="'JetBrains Mono', monospace" text-anchor="middle" filter="drop-shadow(0 0 4px #38BDF8)">☁️ DENSE WHITE FUMES (NH₄Cl)</text>
+            <text x="140" y="16" font-size="10" font-weight="800" fill="#F8FAFC" font-family="'JetBrains Mono', monospace" text-anchor="middle" filter="drop-shadow(0 0 4px #38BDF8)">DENSE WHITE FUMES (NH₄Cl)</text>
             <text x="140" y="112" font-size="8.5" fill="#38BDF8" font-family="'JetBrains Mono', monospace" text-anchor="middle">NH₃(g) + HCl(g) → NH₄Cl(s)</text>
           ` : `
             <text x="140" y="16" font-size="10" font-weight="700" fill="#94A3B8" font-family="'JetBrains Mono', monospace" text-anchor="middle">No Dense White Fumes</text>
@@ -2313,7 +2358,7 @@
   function initApparatusInspectionTooltips() {
     const tooltipEl = document.getElementById('componentSpecTooltip');
     if (!tooltipEl) return;
-    const defaultHint = '💡 Hover over apparatus parts to inspect laboratory specifications';
+    const defaultHint = 'Hover over apparatus parts to inspect laboratory specifications';
     tooltipEl.textContent = defaultHint;
     tooltipEl.style.opacity = '0.75';
 

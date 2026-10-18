@@ -127,6 +127,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="../shared/vlk-icons.js"></script>
 
 <!-- Critical Layout & Dashboard Stylesheets (Render-Critical) -->
 <link rel="stylesheet" href="../shared/style.css?v=163">
@@ -389,7 +390,7 @@
             <!-- Scroll Area -->
             <div id="notifList" class="notif-scroll-area">
               <div class="notif-empty-state">
-                <div class="notif-empty-icon" aria-hidden="true">✨</div>
+                <div class="notif-empty-icon" aria-hidden="true"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:28px; height:28px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
                 <div class="notif-empty-title">All Caught Up!</div>
                 <div class="notif-empty-sub">No unread lab notices or prescribed tasks.</div>
               </div>
@@ -441,39 +442,39 @@
 
             <div class="user-sheet-actions">
               <button type="button" onclick="window.VLKSubscriptionUI && window.VLKSubscriptionUI.openModal(); closeUserDropdown();" class="user-sheet-link user-sheet-link-pass">
-                <span class="user-sheet-link-icon">⭐</span>
+                <span class="user-sheet-link-icon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
                 <span>KCSE Pass &amp; Billing</span>
               </button>
               <a href="#assignments" onclick="focusAssignmentsSection(event); closeUserDropdown();" class="user-sheet-link">
-                <span class="user-sheet-link-icon">📋</span>
+                <span class="user-sheet-link-icon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg></span>
                 <span>Teacher Assignments</span>
               </a>
               <a href="mock_exams.html" class="user-sheet-link">
-                <span class="user-sheet-link-icon">📝</span>
+                <span class="user-sheet-link-icon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="10" y2="18"/><line x1="14" y1="18" x2="16" y2="18"/></svg></span>
                 <span>KCSE Mock Exams</span>
               </a>
               <a href="certificate.html" class="user-sheet-link">
-                <span class="user-sheet-link-icon">📜</span>
+                <span class="user-sheet-link-icon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
                 <span>Certificate of Mastery</span>
               </a>
               <a href="history.html" class="user-sheet-link">
-                <span class="user-sheet-link-icon">📊</span>
+                <span class="user-sheet-link-icon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span>
                 <span>Session History</span>
               </a>
               <button type="button" onclick="toggleTeacherLinkPanel(); closeUserDropdown();" class="user-sheet-link">
-                <span class="user-sheet-link-icon">🏫</span>
+                <span class="user-sheet-link-icon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span>
                 <span>Classroom &amp; Teacher</span>
               </button>
               <button type="button" onclick="togglePasswordPanel(); closeUserDropdown();" class="user-sheet-link">
-                <span class="user-sheet-link-icon">🔒</span>
+                <span class="user-sheet-link-icon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
                 <span>Security &amp; Password</span>
               </button>
               <button type="button" onclick="(window.installVirtuLabApp || (window.VLKPwa && window.VLKPwa.installDirectly))(); closeUserDropdown();" class="user-sheet-link">
-                <span class="user-sheet-link-icon">📲</span>
+                <span class="user-sheet-link-icon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></span>
                 <span style="color:var(--cyan-accent, #0284C7); font-weight:800;">Install App (PWA)</span>
               </button>
               <button type="button" onclick="Auth.logout()" class="user-sheet-link user-sheet-link-danger" data-i18n="logout">
-                <span class="user-sheet-link-icon">🚪</span>
+                <span class="user-sheet-link-icon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
                 <span>Sign Out</span>
               </button>
             </div>
@@ -580,7 +581,7 @@
       <div class="hero-metrics-box">
         <!-- Daily Streak Pill -->
         <div id="heroStreakPill" class="hero-metric-card" onclick="window.GamificationEngine && window.GamificationEngine.showStreakToast('Keep practicing daily to build your streak!')">
-          <div class="metric-icon">🔥</div>
+          <div class="metric-icon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A3.5 3.5 0 0 0 12 18a3.5 3.5 0 0 0 3.5-3.5c0-2-1.5-3.5-2.5-5-.5-1-1-2.5-1-3.5 0 0-2.5 2.5-2.5 5 0 1-.5 1.5-1 2.5z"/><path d="M12 2c5 4.5 7 9 7 13a7 7 0 1 1-14 0c0-4 3-7.5 7-13z"/></svg></div>
           <div class="metric-body">
             <div class="metric-val"><span id="streakCount">1</span>-Day</div>
             <div class="metric-lbl">Daily Streak</div>
@@ -591,8 +592,8 @@
         <!-- XP & Level Progress Card -->
         <div class="hero-metric-card xp-metric-card" onclick="openXPPerksModal()" data-tooltip="Click to view XP breakdown, level perks, and syllabus rank roadmap" data-tooltip-pos="bottom" role="button" tabindex="0" aria-label="Candidate Level and XP Progress Breakdown" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openXPPerksModal();}">
           <div class="xp-header-row">
-            <span class="xp-level-badge"><span id="heroLevelIcon" style="margin-right:4px;">🧪</span><span id="heroLevelTitle">Level 1: Form 1 Apprentice</span></span>
-            <span id="heroXPText" class="xp-points-badge">120 / 250 XP</span>
+            <span class="xp-level-badge"><span id="heroLevelIcon" style="margin-right:4px;display:inline-flex;align-items:center;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg></span><span id="heroLevelTitle">Level 1: Form 1 Apprentice</span></span>
+            <span id="heroXPText" class="xp-points-badge tabular-nums">120 / 250 XP</span>
           </div>
           <div class="xp-track-bar">
             <div class="xp-track-fill" id="heroXPBar" style="width: 48%;"></div>
@@ -606,9 +607,9 @@
 
         <!-- Progress Analytics Quick-Jump -->
         <div id="heroAnalyticsPill" class="hero-metric-card" onclick="switchStudentSubTab('achievements', true); document.getElementById('analyticsSection')?.scrollIntoView({behavior:'smooth'});" data-tooltip="Track 30-day accuracy trend &amp; topic mastery" data-tooltip-pos="bottom" style="cursor:pointer;">
-          <div class="metric-icon">📈</div>
+          <div class="metric-icon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
           <div class="metric-body">
-            <div class="metric-val" id="heroAccuracyVal">--%</div>
+            <div class="metric-val tabular-nums" id="heroAccuracyVal">--%</div>
             <div class="metric-lbl">Accuracy Trend</div>
           </div>
         </div>
@@ -623,22 +624,22 @@
     <!-- Sub-tabs Segmented Control -->
     <nav class="student-subtabs-nav" aria-label="Workstation Views" role="tablist">
       <button class="student-subtab-btn active" id="tabBtn_benches" role="tab" aria-selected="true" aria-controls="panel_benches" onclick="switchStudentSubTab('benches')" data-tooltip="Lab workbenches and guided pathways" data-tooltip-pos="bottom">
-        <span class="subtab-icon" aria-hidden="true">⚗️</span>
+        <span class="subtab-icon" aria-hidden="true"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg></span>
         <span class="subtab-label-desktop" data-i18n="tab_benches">Laboratory Benches</span>
         <span class="subtab-label-mobile" data-i18n="m_workbenches">Workbenches</span>
       </button>
       <button class="student-subtab-btn" id="tabBtn_reference" role="tab" aria-selected="false" aria-controls="panel_reference" onclick="switchStudentSubTab('reference')" data-tooltip="KCSE reference tables and formulas" data-tooltip-pos="bottom">
-        <span class="subtab-icon" aria-hidden="true">📖</span>
+        <span class="subtab-icon" aria-hidden="true"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
         <span class="subtab-label-desktop" data-i18n="tab_reference">Revision &amp; Reference</span>
         <span class="subtab-label-mobile" data-i18n="m_revision">Revision</span>
       </button>
       <button class="student-subtab-btn" id="tabBtn_achievements" role="tab" aria-selected="false" aria-controls="panel_achievements" onclick="switchStudentSubTab('achievements')" data-tooltip="Badges and session history" data-tooltip-pos="bottom">
-        <span class="subtab-icon" aria-hidden="true">🏆</span>
+        <span class="subtab-icon" aria-hidden="true"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></span>
         <span class="subtab-label-desktop" data-i18n="tab_achievements">Badges &amp; History</span>
         <span class="subtab-label-mobile" data-i18n="m_badges">Badges</span>
       </button>
       <button class="student-subtab-btn" id="tabBtn_research" role="tab" aria-selected="false" aria-controls="panel_research" onclick="switchStudentSubTab('research')" data-tooltip="Assessments and surveys" data-tooltip-pos="bottom">
-        <span class="subtab-icon" aria-hidden="true">📋</span>
+        <span class="subtab-icon" aria-hidden="true"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg></span>
         <span class="subtab-label-desktop" data-i18n="tab_research">Assessments &amp; Surveys</span>
         <span class="subtab-label-mobile" data-i18n="m_research">Research</span>
       </button>
@@ -681,7 +682,7 @@
             <!-- Study Tip Restore Bar (Appears when tip is dismissed) -->
             <div id="studyTipRestoreWrap" style="display:none; margin-bottom:10px; text-align:right;">
               <button type="button" class="tip-restore-btn" onclick="restoreStudyTip()" title="Show examiner study tip">
-                <span>💡 Show Study Tip</span>
+                <span style="display:inline-flex; align-items:center; gap:6px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg> Show Study Tip</span>
               </button>
             </div>
 
@@ -689,17 +690,17 @@
             <div class="guidance-card tip-card upgraded-tip-card" id="studyTipCard">
               <div class="guidance-header">
                 <div class="tip-header-left">
-                  <span class="tip-category-badge badge-warning" id="stCategoryBadge">🚨 KNEC MARKING TRAP</span>
+                  <span class="tip-category-badge badge-warning" id="stCategoryBadge" style="display:inline-flex; align-items:center; gap:4px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> KNEC MARKING TRAP</span>
                   <span class="tip-counter" id="stCounter">Tip 1/12</span>
                 </div>
                 <div class="tip-header-actions">
                   <button type="button" class="tip-tool-btn tip-save-btn" id="stSaveBtn" onclick="toggleSaveCurrentTip()" title="Save to Exam Pocket" aria-label="Save tip to Exam Pocket">
-                    <span id="stSaveIcon">⭐</span>
+                    <span id="stSaveIcon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
                   </button>
                   <button type="button" class="tip-tool-btn tip-nav-btn" onclick="cycleStudyTip(-1)" title="Previous examiner tip" aria-label="Previous tip">‹</button>
                   <button type="button" class="tip-tool-btn tip-nav-btn" onclick="cycleStudyTip(1)" title="Next examiner tip" aria-label="Next tip">›</button>
                   <button type="button" class="tip-dismiss-btn" onclick="dismissStudyTip()" aria-label="Dismiss study tip" title="Dismiss study tip">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="18" x2="18" y2="18"></line></svg>
                   </button>
                 </div>
               </div>
@@ -714,7 +715,7 @@
               <!-- Interactive Active Recall Micro-Quiz -->
               <div class="tip-quiz-box" id="stQuizBox">
                 <button type="button" class="tip-quiz-toggle-btn" id="stQuizToggleBtn" onclick="toggleTipQuiz()">
-                  <span class="quiz-btn-label" id="stQuizBtnLabel">⚡ Quick Recall Test (+10 XP)</span>
+                  <span class="quiz-btn-label" id="stQuizBtnLabel" style="display:inline-flex; align-items:center; gap:5px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Quick Recall Test (+10 XP)</span>
                   <span class="quiz-chevron" id="stQuizChevron">▼</span>
                 </button>
                 <div class="tip-quiz-content" id="stQuizContent" style="display:none;">
@@ -741,7 +742,7 @@
             <div class="guidance-card rec-card upgraded-rec-card">
               <div class="guidance-header">
                 <div class="rec-header-left">
-                  <span class="guidance-badge rec-badge" id="recReasonBadge">🆕 New Syllabus Topic</span>
+                  <span class="guidance-badge rec-badge" id="recReasonBadge" style="display:inline-flex; align-items:center; gap:4px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> New Syllabus Topic</span>
                   <span class="rec-counter" id="recCounter">1/4</span>
                 </div>
                 <div class="rec-header-actions">
@@ -752,13 +753,13 @@
 
               <div class="rec-content-body">
                 <div class="rec-title-row">
-                  <span class="rec-icon-badge" id="recIcon">⚗️</span>
+                  <span class="rec-icon-badge" id="recIcon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg></span>
                   <div style="min-width:0; flex:1;">
                     <h4 class="rec-title" id="recTitle">Redox Titration (Fe²⁺ vs KMnO₄)</h4>
                     <div class="rec-meta-pills" id="recMetaPills">
-                      <span class="rec-meta-pill" id="recPaperTag">📋 Paper 3 · Q1 (15 Marks)</span>
-                      <span class="rec-meta-pill" id="recTimeTag">⏱️ ~15 mins</span>
-                      <span class="rec-meta-pill rec-xp-pill" id="recXpTag">✨ +50 XP</span>
+                      <span class="rec-meta-pill" id="recPaperTag" style="display:inline-flex; align-items:center; gap:4px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg> Paper 3 · Q1 (15 Marks)</span>
+                      <span class="rec-meta-pill" id="recTimeTag" style="display:inline-flex; align-items:center; gap:4px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M10 2h4"/><path d="M19 5l-1.5 1.5"/></svg> ~15 mins</span>
+                      <span class="rec-meta-pill rec-xp-pill" id="recXpTag" style="display:inline-flex; align-items:center; gap:4px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3Z"/><path d="M5 3v4M3 5h4M19 17v4M17 19h4"/></svg> +50 XP</span>
                     </div>
                   </div>
                 </div>
@@ -799,7 +800,7 @@
       <section id="zone_assignments" class="activity-zone-wrap zone-assignments-upgraded" style="margin-top: 6px; margin-bottom: 24px;">
         <div class="ca-card-header">
           <div class="ca-header-left">
-            <div class="ca-header-icon-box" aria-hidden="true">📋</div>
+            <div class="ca-header-icon-box" aria-hidden="true"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg></div>
             <div>
               <div class="ca-title-cluster">
                 <h2 class="section-heading-academic" data-i18n="prescribed_ca">Teacher Assignments</h2>
@@ -812,7 +813,7 @@
           </div>
           <div class="ca-header-right">
             <button type="button" class="ca-refresh-btn" onclick="loadAssignments()" title="Refresh assignments" aria-label="Refresh assignments">
-              ↻ Refresh
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Refresh
             </button>
           </div>
         </div>
@@ -905,7 +906,7 @@
             
             <!-- 1. Guided Volumetric Analysis -->
             <a href="lab.html?studyMode=guided" class="practice-banner-card" data-type="acidBase" style="border-left:4px solid var(--acad-gold);">
-              <div class="practice-card-icon-badge" style="background:rgba(217,119,6,0.12); color:#D97706;">🧪</div>
+              <div class="practice-card-icon-badge" style="background:rgba(217,119,6,0.12); color:#D97706;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2v17.5c0 1.4-1.1 2.5-2.5 2.5s-2.5-1.1-2.5-2.5V2"/><path d="M8.5 2h7"/><path d="M9.5 12h5"/></svg></div>
               <div style="flex:1; min-width:0;">
                 <div class="practice-text-title">Guided Volumetric Analysis</div>
                 <div class="practice-text-desc">Step-by-step meniscus alignment, indicator selection, and calculations.</div>
@@ -914,7 +915,7 @@
 
             <!-- 2. Volumetric Workbench -->
             <a href="lab.html" class="practice-banner-card" data-type="acidBase" style="border-left:4px solid var(--acad-navy);">
-              <div class="practice-card-icon-badge" style="background:rgba(2,132,199,0.12); color:#0284C7;">⚗️</div>
+              <div class="practice-card-icon-badge" style="background:rgba(2,132,199,0.12); color:#0284C7;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg></div>
               <div style="flex:1; min-width:0;">
                 <div class="practice-text-title">Volumetric Analysis Workbench</div>
                 <div class="practice-text-desc">Acid-Base, KMnO₄ Redox, Mohr's Precipitation, and EDTA Complexometry.</div>
@@ -923,7 +924,7 @@
 
             <!-- 3. Qualitative Salt Analysis -->
             <a href="qualitative.html" class="practice-banner-card" data-type="qualitative" style="border-left:4px solid var(--acad-emerald);">
-              <div class="practice-card-icon-badge" style="background:rgba(16,185,129,0.12); color:#059669;">🔬</div>
+              <div class="practice-card-icon-badge" style="background:rgba(16,185,129,0.12); color:#059669;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18h8M3 22h18M14 22a7 7 0 1 0 0-14h-1M9 14h2M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2M12 6V3a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3"/></svg></div>
               <div style="flex:1; min-width:0;">
                 <div class="practice-text-title">Systematic Qualitative Analysis</div>
                 <div class="practice-text-desc">Identify 10 unknown cations and anions via aqueous reagents and flame tests.</div>
@@ -932,7 +933,7 @@
 
             <!-- 4. Reaction Rates & Kinetics -->
             <a href="rates.html" class="practice-banner-card" data-type="rates" style="border-left:4px solid #F59E0B;">
-              <div class="practice-card-icon-badge" style="background:rgba(245,158,11,0.12); color:#D97706;">⚡</div>
+              <div class="practice-card-icon-badge" style="background:rgba(245,158,11,0.12); color:#D97706;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
               <div style="flex:1; min-width:0;">
                 <div class="practice-text-title">Reaction Rates &amp; Kinetics</div>
                 <div class="practice-text-desc">Disappearing cross method, rate graphs (1/t vs conc), and temperature effects.</div>
@@ -941,7 +942,7 @@
 
             <!-- 5. Thermochemistry & Enthalpy -->
             <a href="energy.html" class="practice-banner-card" data-type="energy" style="border-left:4px solid #EF4444;">
-              <div class="practice-card-icon-badge" style="background:rgba(239,68,68,0.12); color:#DC2626;">🌡️</div>
+              <div class="practice-card-icon-badge" style="background:rgba(239,68,68,0.12); color:#DC2626;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/><circle cx="11.5" cy="17.5" r="1.5" fill="currentColor"/></svg></div>
               <div style="flex:1; min-width:0;">
                 <div class="practice-text-title">Thermochemistry &amp; Energy Changes</div>
                 <div class="practice-text-desc">Calorimetric measurement of neutralization, solution, and displacement enthalpies (ΔH).</div>
@@ -950,7 +951,7 @@
 
             <!-- 6. Solubility Curves -->
             <a href="solubility.html" class="practice-banner-card" data-type="solubility" style="border-left:4px solid #0284C7;">
-              <div class="practice-card-icon-badge" style="background:rgba(2,132,199,0.12); color:#0284C7;">❄️</div>
+              <div class="practice-card-icon-badge" style="background:rgba(2,132,199,0.12); color:#0284C7;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><line x1="20" y1="7" x2="4" y2="17"/><line x1="4" y1="7" x2="20" y2="17"/><line x1="12" y1="6" x2="15" y2="3"/><line x1="12" y1="6" x2="9" y2="3"/><line x1="12" y1="18" x2="15" y2="21"/><line x1="12" y1="18" x2="9" y2="21"/></svg></div>
               <div style="flex:1; min-width:0;">
                 <div class="practice-text-title">Solubility Curves &amp; Crystallization</div>
                 <div class="practice-text-desc">Determine crystallization inception points across solute masses and plot curves.</div>
@@ -959,7 +960,7 @@
 
             <!-- 7. Organic Chemistry Lab -->
             <a href="organic.html" class="practice-banner-card" data-type="organic" style="border-left:4px solid #10B981;">
-              <div class="practice-card-icon-badge" style="background:rgba(16,185,129,0.12); color:#059669;">🌿</div>
+              <div class="practice-card-icon-badge" style="background:rgba(16,185,129,0.12); color:#059669;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></div>
               <div style="flex:1; min-width:0;">
                 <div class="practice-text-title">Organic Chemistry &amp; Functional Groups</div>
                 <div class="practice-text-desc">Test for unsaturation (Br₂/KMnO₄), combustion sootiness, and esterification.</div>
@@ -968,7 +969,7 @@
 
             <!-- 8. Gas Preparation & Identification -->
             <a href="gas_prep.html" class="practice-banner-card" data-type="gas" style="border-left:4px solid #8B5CF6;">
-              <div class="practice-card-icon-badge" style="background:rgba(139,92,246,0.12); color:#7C3AED;">💨</div>
+              <div class="practice-card-icon-badge" style="background:rgba(139,92,246,0.12); color:#7C3AED;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg></div>
               <div style="flex:1; min-width:0;">
                 <div class="practice-text-title">Gas Preparation &amp; Analysis</div>
                 <div class="practice-text-desc">Generate and test H₂, O₂, CO₂, Cl₂, NH₃, and SO₂ with confirmatory tests.</div>
@@ -977,7 +978,7 @@
 
             <!-- 9. KCSE Mock Exam -->
             <a href="mock_exams.html" class="practice-banner-card" data-type="all" style="border-left:4px solid var(--acad-gold); grid-column: 1 / -1; background:var(--card-bg-hover);">
-              <div class="practice-card-icon-badge" style="background:rgba(245,158,11,0.15); color:#D97706;">🏆</div>
+              <div class="practice-card-icon-badge" style="background:rgba(245,158,11,0.15); color:#D97706;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></div>
               <div style="flex:1; min-width:0;">
                 <div class="practice-text-title">KCSE Paper 3 National Mock Examination (40 Marks)</div>
                 <div class="practice-text-desc">Full 40-mark timed mock exam with automated grading rubric.</div>
@@ -1007,8 +1008,8 @@
       <!-- Quick Jump Pills Bar -->
       <nav class="quick-jump-bar" aria-label="Reference Jump Navigation">
         <span style="font-size:0.76rem; font-weight:800; color:var(--heading-color); margin-right:4px;">Jump to:</span>
-        <a href="titration_theory.html" class="quick-jump-chip" style="background:var(--cyan-accent); color:#000; font-weight:800;">📖 Titration Guide (15 Marks) →</a>
-        <a href="#ref-pocket" class="quick-jump-chip">⭐ Saved Tips</a>
+        <a href="titration_theory.html" class="quick-jump-chip" style="background:var(--cyan-accent); color:#000; font-weight:800; display:inline-flex; align-items:center; gap:5px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> Titration Guide (15 Marks) →</a>
+        <a href="#ref-pocket" class="quick-jump-chip" style="display:inline-flex; align-items:center; gap:5px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Saved Tips</a>
         <a href="#ref-indicators" class="quick-jump-chip">Indicators</a>
         <a href="#ref-gases" class="quick-jump-chip">Gas Tests</a>
         <a href="#ref-cations" class="quick-jump-chip">Cation Tests</a>
@@ -1023,7 +1024,7 @@
         <div class="saved-tips-card">
           <div class="saved-tips-header" onclick="toggleSavedTipsPocket()" role="button" tabindex="0" aria-expanded="false">
             <div style="display:flex; align-items:center; gap:12px;">
-              <div class="saved-tips-badge-icon">⭐</div>
+              <div class="saved-tips-badge-icon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
               <div>
                 <h3 class="saved-tips-title">My Exam Day Pocket (Saved Examiner Tips)</h3>
                 <p class="saved-tips-sub">Bookmarked KNEC rubrics &amp; rules for rapid morning revision before Paper 3</p>
@@ -1043,7 +1044,7 @@
       <!-- Featured Volumetric Analysis Theory Banner -->
       <div style="background:linear-gradient(135deg, var(--card-bg) 0%, rgba(2, 132, 199, 0.12) 100%); border:2px solid var(--cyan-accent); border-radius:16px; padding:18px 20px; margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px; box-shadow:var(--shadow-md);">
         <div style="display:flex; align-items:center; gap:14px;">
-          <div style="width:48px; height:48px; border-radius:12px; background:var(--cyan-accent); color:#000; display:flex; align-items:center; justify-content:center; font-size:1.6rem; flex-shrink:0;">🧪</div>
+          <div style="width:48px; height:48px; border-radius:12px; background:var(--cyan-accent); color:#000; display:flex; align-items:center; justify-content:center; flex-shrink:0;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:24px; height:24px;" aria-hidden="true"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg></div>
           <div>
             <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:2px;">
               <span style="font-family:'JetBrains Mono',monospace; font-size:0.68rem; font-weight:800; background:var(--cyan-accent); color:#000; padding:2px 7px; border-radius:4px;">KCSE PAPER 3 · Q1</span>
@@ -1492,7 +1493,7 @@
         <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
           <div>
             <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.15rem; font-weight:800; color:var(--heading-color); margin:0 0 4px 0;">
-              📊 Performance Trajectory &amp; Practice Velocity
+              <span style="display:inline-flex; align-items:center; gap:6px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Performance Trajectory &amp; Practice Velocity</span>
             </h3>
             <p style="font-size:0.82rem; color:var(--text-muted); margin:0;">
               Live telemetry tracking your 30-day practical accuracy, syllabus coverage, and KNEC benchmark progression.
@@ -1507,34 +1508,34 @@
         <!-- 4-Card KPI Ribbon -->
         <div class="analytics-kpi-ribbon">
           <div class="analytics-kpi-card">
-            <div class="kpi-icon-wrap" style="background:rgba(16,185,129,0.12); color:#10B981;">🎯</div>
+            <div class="kpi-icon-wrap" style="background:rgba(16,185,129,0.12); color:#10B981;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
             <div class="kpi-data">
-              <div class="kpi-value" id="kpiAccuracyVal">--%</div>
+              <div class="kpi-value tabular-nums" id="kpiAccuracyVal">--%</div>
               <div class="kpi-label">Overall Accuracy</div>
               <div class="kpi-subtext" id="kpiAccuracySub">KNEC Passing Standard</div>
             </div>
           </div>
 
           <div class="analytics-kpi-card">
-            <div class="kpi-icon-wrap" style="background:rgba(56,189,248,0.12); color:var(--cyan-accent);">🧪</div>
+            <div class="kpi-icon-wrap" style="background:rgba(56,189,248,0.12); color:var(--cyan-accent);"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg></div>
             <div class="kpi-data">
-              <div class="kpi-value" id="kpiTotalSessions">--</div>
+              <div class="kpi-value tabular-nums" id="kpiTotalSessions">--</div>
               <div class="kpi-label">Practicals Logged</div>
               <div class="kpi-subtext" id="kpiDisciplinesCount">Across 8 Disciplines</div>
             </div>
           </div>
 
           <div class="analytics-kpi-card">
-            <div class="kpi-icon-wrap" style="background:rgba(245,158,11,0.14); color:var(--amber-accent);">⚡</div>
+            <div class="kpi-icon-wrap" style="background:rgba(245,158,11,0.14); color:var(--amber-accent);"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
             <div class="kpi-data">
-              <div class="kpi-value" id="kpiWeeklySessions">--</div>
+              <div class="kpi-value tabular-nums" id="kpiWeeklySessions">--</div>
               <div class="kpi-label">Weekly Velocity</div>
               <div class="kpi-subtext" id="kpiVelocityTarget">Target: 3+ per week</div>
             </div>
           </div>
 
           <div class="analytics-kpi-card">
-            <div class="kpi-icon-wrap" style="background:rgba(139,92,246,0.14); color:#8B5CF6;">🏆</div>
+            <div class="kpi-icon-wrap" style="background:rgba(139,92,246,0.14); color:#8B5CF6;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></div>
             <div class="kpi-data">
               <div class="kpi-value" id="kpiTopDiscipline" style="font-size:1.05rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">--</div>
               <div class="kpi-label">Top Competency</div>
@@ -1549,7 +1550,7 @@
           <div class="student-chart-card">
             <div class="student-chart-header">
               <div>
-                <h4 class="student-chart-title">📈 30-Day Practical Accuracy Trajectory</h4>
+                <h4 class="student-chart-title"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-right:4px;"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg> 30-Day Practical Accuracy Trajectory</h4>
                 <div class="student-chart-subtitle" id="trendGainSubtitle">Chronological score progression across sessions</div>
               </div>
               <div class="knec-benchmark-legend">
@@ -1566,7 +1567,7 @@
           <div class="student-chart-card">
             <div class="student-chart-header">
               <div>
-                <h4 class="student-chart-title" id="secondaryChartTitle">🔬 Syllabus Discipline Mastery</h4>
+                <h4 class="student-chart-title" id="secondaryChartTitle"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="margin-right:4px;"><path d="M6 18h8M3 22h18M14 22a7 7 0 1 0 0-14h-1M9 14h2M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2M12 6V3a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3"/></svg> Syllabus Discipline Mastery</h4>
                 <div class="student-chart-subtitle" id="secondaryChartSubtitle">Distribution of practical sessions by chemistry domain</div>
               </div>
               <div class="chart-toggle-group">
@@ -1690,19 +1691,19 @@
   <!-- Mobile & Tablet Bottom Navigation Dock -->
   <nav class="mobile-bottom-nav" aria-label="Mobile Navigation Tabs" role="tablist">
     <button class="bottom-tab-item active" id="mTabBtn_benches" role="tab" aria-selected="true" aria-controls="panel_benches" onclick="switchStudentSubTab('benches')">
-      <span class="bottom-tab-icon">🧪</span>
+      <span class="bottom-tab-icon" aria-hidden="true"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg></span>
       <span data-i18n="m_workbenches">Workbenches</span>
     </button>
     <button class="bottom-tab-item" id="mTabBtn_reference" role="tab" aria-selected="false" aria-controls="panel_reference" onclick="switchStudentSubTab('reference')">
-      <span class="bottom-tab-icon">📚</span>
+      <span class="bottom-tab-icon" aria-hidden="true"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
       <span data-i18n="m_revision">Revision</span>
     </button>
     <button class="bottom-tab-item" id="mTabBtn_achievements" role="tab" aria-selected="false" aria-controls="panel_achievements" onclick="switchStudentSubTab('achievements')">
-      <span class="bottom-tab-icon">🏆</span>
+      <span class="bottom-tab-icon" aria-hidden="true"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></span>
       <span data-i18n="m_badges">Badges</span>
     </button>
     <button class="bottom-tab-item" id="mTabBtn_research" role="tab" aria-selected="false" aria-controls="panel_research" onclick="switchStudentSubTab('research')">
-      <span class="bottom-tab-icon">🔬</span>
+      <span class="bottom-tab-icon" aria-hidden="true"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18h8M3 22h18M14 22a7 7 0 1 0 0-14h-1M9 14h2M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2M12 6V3a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3"/></svg></span>
       <span data-i18n="m_research">Research</span>
     </button>
   </nav>
@@ -1765,7 +1766,7 @@
       <!-- Modal Header -->
       <div class="xp-modal-header">
         <div class="xp-modal-header-left">
-          <div class="xp-modal-icon-badge" id="xpModalIcon">🧪</div>
+          <div class="xp-modal-icon-badge" id="xpModalIcon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg></div>
           <div>
             <h3 class="xp-modal-title" id="xpModalTitle">Candidate Rank &amp; XP Progression</h3>
             <div class="xp-modal-sub" id="xpModalSubtitle">KCSE Paper 3 Analytical Mastery Pathway</div>
@@ -1785,8 +1786,8 @@
               <h4 class="xp-hud-title" id="xpHudLevelTitle">Form 1 Apprentice</h4>
             </div>
             <div class="xp-hud-score">
-              <span class="xp-hud-current" id="xpHudCurrentXP">120</span>
-              <span class="xp-hud-target" id="xpHudTargetXP">/ 250 XP</span>
+              <span class="xp-hud-current tabular-nums" id="xpHudCurrentXP">120</span>
+              <span class="xp-hud-target tabular-nums" id="xpHudTargetXP">/ 250 XP</span>
             </div>
           </div>
           
@@ -1795,7 +1796,7 @@
           </div>
 
           <div class="xp-hud-meta">
-            <span class="xp-hud-remaining" id="xpHudRemainingText">⚡ <strong>130 XP</strong> needed to reach next level</span>
+            <span class="xp-hud-remaining" id="xpHudRemainingText"><span style="display:inline-flex; align-items:center; gap:4px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> <strong>130 XP</strong> needed to reach next level</span></span>
             <span class="xp-hud-percent" id="xpHudPercentText">48% to Rank</span>
           </div>
         </div>
@@ -1818,48 +1819,48 @@
 
         <div class="xp-earning-grid">
           <div class="xp-earning-item">
-            <div class="xp-earning-icon">🎯</div>
+            <div class="xp-earning-icon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
             <div class="xp-earning-info">
               <div class="xp-earning-name">Daily Quick Quiz</div>
               <div class="xp-earning-desc">3 rapid diagnostic questions</div>
             </div>
-            <span class="xp-earning-val">+100 XP</span>
+            <span class="xp-earning-val tabular-nums">+100 XP</span>
           </div>
 
           <div class="xp-earning-item">
-            <div class="xp-earning-icon">🧪</div>
+            <div class="xp-earning-icon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg></div>
             <div class="xp-earning-info">
               <div class="xp-earning-name">Guided Lab Practical</div>
               <div class="xp-earning-desc">Full simulation with rubric feedback</div>
             </div>
-            <span class="xp-earning-val">+75 XP</span>
+            <span class="xp-earning-val tabular-nums">+75 XP</span>
           </div>
 
           <div class="xp-earning-item">
-            <div class="xp-earning-icon">⚡</div>
+            <div class="xp-earning-icon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
             <div class="xp-earning-info">
               <div class="xp-earning-name">Diagnostic Speed Battle</div>
               <div class="xp-earning-desc">60s blitz &amp; sudden-death survival</div>
             </div>
-            <span class="xp-earning-val">+50 XP</span>
+            <span class="xp-earning-val tabular-nums">+50 XP</span>
           </div>
 
           <div class="xp-earning-item">
-            <div class="xp-earning-icon">📝</div>
+            <div class="xp-earning-icon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg></div>
             <div class="xp-earning-info">
               <div class="xp-earning-name">Teacher Assignment</div>
               <div class="xp-earning-desc">Submitted continuous assessment lab</div>
             </div>
-            <span class="xp-earning-val">+150 XP</span>
+            <span class="xp-earning-val tabular-nums">+150 XP</span>
           </div>
 
           <div class="xp-earning-item">
-            <div class="xp-earning-icon">👑</div>
+            <div class="xp-earning-icon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/></svg></div>
             <div class="xp-earning-info">
               <div class="xp-earning-name">National 40-Mark Mock</div>
               <div class="xp-earning-desc">Full 3-question timed examination</div>
             </div>
-            <span class="xp-earning-val">+250 XP</span>
+            <span class="xp-earning-val tabular-nums">+250 XP</span>
           </div>
         </div>
 

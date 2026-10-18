@@ -317,12 +317,14 @@ const SolubilityEngine = (() => {
         resizeCanvas(graphCanvas);
         renderGraph();
       }
+      drawAllSolubilityCanvases();
     });
 
     applyScenario(state.activeScenario);
     initSolidParticles();
     state.lastTime = performance.now();
-    solRafId = requestAnimationFrame(loop);
+    drawAllSolubilityCanvases();
+    wakeSolubilityLoop();
     renderTable();
     generatePostLabQuestions();
   }
@@ -454,6 +456,7 @@ const SolubilityEngine = (() => {
         updateStatusBanner('Burner extinguished. Solution ready for cooling.', 'idle');
       }
     }
+    wakeSolubilityLoop();
   }
 
   function startCooling(method = 'AIR') {
@@ -469,6 +472,7 @@ const SolubilityEngine = (() => {
     } else {
       updateStatusBanner('❄️ Boiling tube cooling in air. Stir continuously to observe first crystal cloudiness accurately.', 'cooling');
     }
+    wakeSolubilityLoop();
   }
 
   function stirSolution() {
@@ -481,6 +485,7 @@ const SolubilityEngine = (() => {
       state.supercooledDiff = 0.0;
     }
     updateStatusBanner('🥄 Stirred solution with thermometer. Solution thoroughly mixed for thermal equilibrium.', 'idle');
+    wakeSolubilityLoop();
   }
 
   function addWaterBurette(amt = 2.0) {
@@ -495,6 +500,7 @@ const SolubilityEngine = (() => {
     initSolidParticles();
     state.status = 'IDLE';
     state.crystTemp = null;
+    wakeSolubilityLoop();
   }
 
   function resetSimulation() {
@@ -509,6 +515,7 @@ const SolubilityEngine = (() => {
     initSolidParticles();
     updateStatusBanner('Ready. Select solute mass & water volume, heat to dissolve, then cool to crystallize.', 'idle');
     updateUIValues();
+    wakeSolubilityLoop();
   }
 
   function initSolidParticles() {
@@ -633,13 +640,30 @@ const SolubilityEngine = (() => {
   let lastSolFrame = 0;
   const SOL_FRAME_MS = 28; // ~35 FPS: silky smooth thermodynamics while saving 65% mobile GPU power & heat
 
+  function isSolubilityActivelyAnimating() {
+    return state.burnerMode !== 'OFF' || 
+           state.coolingMode !== 'NONE' || 
+           state.isStirring || 
+           (state.status === 'CRYSTALLIZING' && state.crystalParticles && state.crystalParticles.length < 70);
+  }
+
+  function drawAllSolubilityCanvases() {
+    drawApparatus();
+    drawMagnifiedThermometer();
+  }
+
   function loop(timestamp) {
     if (document.hidden) {
       solRafId = null;
       return;
     }
 
-    solRafId = requestAnimationFrame(loop);
+    const animating = isSolubilityActivelyAnimating();
+    if (animating) {
+      solRafId = requestAnimationFrame(loop);
+    } else {
+      solRafId = null; // Sleep GPU when idle
+    }
 
     if (timestamp - lastSolFrame < SOL_FRAME_MS) {
       return;
@@ -650,15 +674,22 @@ const SolubilityEngine = (() => {
     lastSolFrame = timestamp;
 
     updateThermalPhysics(dt);
-    drawApparatus();
-    drawMagnifiedThermometer();
+    drawAllSolubilityCanvases();
   }
 
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && !solRafId) {
+  function wakeSolubilityLoop() {
+    if (!solRafId && !document.hidden && isSolubilityActivelyAnimating()) {
       state.lastTime = performance.now();
       lastSolFrame = performance.now();
       solRafId = requestAnimationFrame(loop);
+    } else {
+      drawAllSolubilityCanvases();
+    }
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && !solRafId && isSolubilityActivelyAnimating()) {
+      wakeSolubilityLoop();
     }
   });
 
@@ -674,6 +705,7 @@ const SolubilityEngine = (() => {
       btn.style.color = state.showDigitalTemp ? 'var(--text-muted)' : '#F59E0B';
       btn.style.borderColor = state.showDigitalTemp ? 'var(--card-border)' : '#F59E0B';
     }
+    wakeSolubilityLoop();
   }
 
   function updateThermalPhysics(dt) {

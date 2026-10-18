@@ -1,4 +1,38 @@
 requireStudentLogin();
+
+  // ── Universal Tactile Haptic Feedback Helper ──
+  function triggerHaptic(pattern = 15) {
+    if (typeof window !== 'undefined' && window.BrilliantUI && typeof window.BrilliantUI.vibrate === 'function') {
+      try { window.BrilliantUI.vibrate(pattern); } catch(e) {}
+      return;
+    }
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try { navigator.vibrate(pattern); } catch(e) {}
+    }
+  }
+  window.triggerHaptic = triggerHaptic;
+
+  // ── Universal Screen Reader Live Announcer (WCAG 4.1.3 AA) ──
+  let lastAnnouncedStage = null;
+  function announceToScreenReader(message) {
+    const announcer = document.getElementById('vlkScreenReaderAnnouncer');
+    if (!announcer) return;
+    announcer.textContent = '';
+    setTimeout(() => {
+      announcer.textContent = message;
+    }, 60);
+  }
+  window.announceToScreenReader = announceToScreenReader;
+
+  function closeExamModal() {
+    const modal = document.getElementById('examResultModal');
+    if (modal) {
+      modal.style.display = 'none';
+      announceToScreenReader('Score modal closed. Returned to workbench.');
+    }
+  }
+  window.closeExamModal = closeExamModal;
+
   updateThemeButtons();
 
   function setTheme(theme) {
@@ -13,6 +47,28 @@ requireStudentLogin();
       btn.classList.toggle('active', btn.getAttribute('data-theme') === activeTheme);
     });
   }
+
+  // Mobile Thumb-Zone Dock Intersection Observer
+  function initMobileDockObserver() {
+    const apparatus = document.getElementById('apparatusCard');
+    const dock = document.getElementById('mobileWorkbenchDock');
+    if (!apparatus || !dock) return;
+
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          // When apparatus card is out of view on mobile viewports (<= 768px), activate dock
+          if (!entry.isIntersecting && window.innerWidth <= 768) {
+            dock.classList.add('is-active');
+          } else {
+            dock.classList.remove('is-active');
+          }
+        });
+      }, { threshold: 0.15 });
+      observer.observe(apparatus);
+    }
+  }
+  initMobileDockObserver();
 
   const urlParams = new URLSearchParams(window.location.search);
   const linkedAssignmentId = urlParams.get('assignment');
@@ -1490,9 +1546,9 @@ requireStudentLogin();
           </div>
 
           <div class="calc-input-row" style="flex-direction:column;gap:8px;width:100%;margin-top:auto;">
-            <input type="number" step="${q.step}" id="${inputId}" data-placeholder="${q.placeholder}" placeholder="${inputPlaceholder}" oninput="saveDraft()" ${isUnlocked ? '' : 'disabled'} aria-label="${cleanLabel}" style="width:100%; font-family:'JetBrains Mono', monospace; font-size:0.88rem; padding:10px 12px;">
+            <input type="number" step="${q.step}" id="${inputId}" data-placeholder="${q.placeholder}" placeholder="${inputPlaceholder}" oninput="saveDraft()" ${isUnlocked ? '' : 'disabled'} aria-label="${cleanLabel}" inputmode="decimal" autocomplete="off" autocorrect="off" spellcheck="false" style="width:100%; font-family:'JetBrains Mono', monospace; font-size:1rem; min-height:44px; padding:10px 12px; touch-action:manipulation;">
             <div class="calc-input-hint">${hintData.hint}</div>
-            <button class="btn-cyan" id="${btnId}" onclick="checkQuestionStep(${idx})" style="width:100%;height:40px;font-weight:700;display:${isExamMode ? 'none' : 'block'};">${q.buttonLabel}</button>
+            <button class="btn-cyan" id="${btnId}" onclick="checkQuestionStep(${idx})" style="width:100%;min-height:44px;font-weight:700;touch-action:manipulation;display:${isExamMode ? 'none' : 'block'};">${q.buttonLabel}</button>
           </div>
           <div id="${msgId}" style="margin-top:8px;"></div>
         </div>
@@ -1502,6 +1558,7 @@ requireStudentLogin();
 
 
   function addIndicatorDrops() {
+    triggerHaptic(12);
     if (indicatorDropsCount >= 3) return;
 
     indicatorDropsCount++;
@@ -1527,6 +1584,7 @@ requireStudentLogin();
     document.querySelectorAll('#indicatorMsg, .indicatorMsg').forEach(msg => {
       msg.innerHTML = bannerHtml;
     });
+    announceToScreenReader(`Added drop ${indicatorDropsCount} of 3 of ${current.indicatorAnswer} indicator.`);
 
     const pillInd = document.getElementById('pillIndicator');
     if (pillInd) {
@@ -1572,6 +1630,7 @@ requireStudentLogin();
   }
 
   function resetBurette() {
+    triggerHaptic(20);
     if (transientColorTimeout) {
       clearTimeout(transientColorTimeout);
       transientColorTimeout = null;
@@ -1952,6 +2011,52 @@ requireStudentLogin();
     }
 
     const flaskLabel = document.getElementById('flaskLabel');
+    // Accessible reaction endpoint announcements (WCAG 4.1.3 AA)
+    if (diff >= 0.40) {
+      if (lastAnnouncedStage !== 'over') {
+        lastAnnouncedStage = 'over';
+        announceToScreenReader(`Solution over-titrated at ${currentVolume.toFixed(2)} cm³. Excess titrant added.`);
+      }
+    } else if (diff >= 0.00) {
+      if (lastAnnouncedStage !== 'endpoint') {
+        lastAnnouncedStage = 'endpoint';
+        announceToScreenReader(`Permanent neutralization endpoint reached at ${currentVolume.toFixed(2)} cm³! Ready to record trial.`);
+      }
+    } else if (diff >= -0.25) {
+      if (lastAnnouncedStage !== 'near') {
+        lastAnnouncedStage = 'near';
+        announceToScreenReader(`Approaching endpoint at ${currentVolume.toFixed(2)} cm³. Use single drops and swirl.`);
+      }
+    } else {
+      lastAnnouncedStage = 'pre';
+    }
+
+    // Phase 3: Dynamic Visual Silhouette Highlighting
+    const titrationControlsEl = document.getElementById('titrationControls');
+    const recordBtn = document.querySelector('.btn-action-record');
+    const dockRecordBtn = document.getElementById('dockRecordBtn');
+    const dockVol = document.getElementById('dockLiveVol');
+    const dockSwatch = document.getElementById('dockFlaskSwatch');
+
+    if (dockVol) dockVol.textContent = `${currentVolume.toFixed(2)} cm³`;
+    if (dockSwatch) dockSwatch.style.background = stageColor;
+
+    if (titrationControlsEl) {
+      if (diff >= -2.0 && diff < 0.00) {
+        titrationControlsEl.classList.add('approaching-endpoint');
+      } else {
+        titrationControlsEl.classList.remove('approaching-endpoint');
+      }
+    }
+
+    if (diff >= 0.00 && diff < 0.40) {
+      if (recordBtn) recordBtn.classList.add('endpoint-ready');
+      if (dockRecordBtn) dockRecordBtn.classList.add('endpoint-ready');
+    } else {
+      if (recordBtn) recordBtn.classList.remove('endpoint-ready');
+      if (dockRecordBtn) dockRecordBtn.classList.remove('endpoint-ready');
+    }
+
     if (flaskLabel && current) {
       const baseName = current.analyteName ? current.analyteName.split(',')[0].split('—')[0].trim() : 'Analyte';
       const indName = current.indicatorName ? current.indicatorName.split(' ')[0] : 'Indicator';
@@ -2019,12 +2124,22 @@ requireStudentLogin();
         statusEl.innerHTML = `Delivered: <b>${currentVolume.toFixed(2)} cm³</b>. Keep adding titrant.`;
       }
     }
+    
+    // Haptic pulse when crossing exactly into permanent endpoint
+    if (diff >= 0.00 && diff < 0.40 && !window._lastEquivalenceVibrated) {
+      window._lastEquivalenceVibrated = true;
+      triggerHaptic([30, 40, 30]);
+    } else if (diff < 0.00) {
+      window._lastEquivalenceVibrated = false;
+    }
     updateTitrationCurve();
   }
 
   function recordTrial() {
+    triggerHaptic([25, 30, 40]);
     if (!indicatorAdded && !isSelfIndicatingExp(current)) return;
     trials.push(currentVolume);
+    announceToScreenReader(`Trial ${trials.length} recorded with titre volume ${currentVolume.toFixed(2)} cm³.`);
     renderTrials();
     if (trials.length >= 2) {
       updateStepProgress(3, 'Calculate Molarity & Mass');
@@ -2245,6 +2360,8 @@ requireStudentLogin();
   let transientColorTimeout = null;
 
   function swirlFlask() {
+    announceToScreenReader('Swirled conical flask to mix solution.');
+    triggerHaptic([15, 20, 15]);
     playAudioTone('swirl');
     if (transientColorTimeout) {
       clearTimeout(transientColorTimeout);
@@ -2311,6 +2428,7 @@ requireStudentLogin();
   }
 
   function addHalfDrop() {
+    triggerHaptic(10);
     if (!indicatorAdded && !isSelfIndicatingExp(current)) return;
     animateStopcock();
     // Authentic KCSE Half-Drop: delivers 0.025 cm³ and touches inside neck wall
@@ -2332,8 +2450,10 @@ requireStudentLogin();
 
   function addVolume(amount) {
     if (!indicatorAdded && !isSelfIndicatingExp(current)) return;
+    triggerHaptic(amount >= 0.5 ? 20 : 12);
     animateStopcock();
     currentVolume = Math.min(MAX_BURETTE, Math.round((currentVolume + amount) * 1000) / 1000);
+    announceToScreenReader(`Added ${amount} cm³ titrant. Current burette reading is ${currentVolume.toFixed(2)} cm³.`);
     updateRig();
     saveDraft();
     spawnMultipleDrops(amount);
@@ -3744,3 +3864,82 @@ requireStudentLogin();
   initTutorial();
   initTitrationCurveCanvas();
   setTimeout(drawTitrationCurve, 100);
+
+  // ── Universal Keyboard Shortcuts (WCAG 2.1.1 AA) ──
+  document.addEventListener('keydown', function(e) {
+    const tag = (e.target.tagName || '').toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || tag === 'select' || e.target.isContentEditable) {
+      if (e.key === 'Escape') {
+        e.target.blur();
+      }
+      return;
+    }
+
+    if (e.key === 'Escape') {
+      const examModal = document.getElementById('examResultModal');
+      if (examModal && (examModal.style.display === 'flex' || examModal.style.display === 'block')) {
+        closeExamModal();
+        return;
+      }
+      const dropdown = document.getElementById('benchSettingsDropdown');
+      if (dropdown && dropdown.style.display === 'flex') {
+        dropdown.style.display = 'none';
+        return;
+      }
+    }
+
+    // Space or Plus (+): deliver single drop (0.05 cm³) or coarse delivery (+0.5 cm³) if Shift held
+    if (e.code === 'Space' || e.key === '+') {
+      e.preventDefault();
+      if (typeof addVolume === 'function') {
+        addVolume(e.shiftKey ? 0.5 : 0.05);
+      }
+      return;
+    }
+
+    // 'S' or 's': swirl flask
+    if (e.key === 's' || e.key === 'S') {
+      e.preventDefault();
+      if (typeof swirlFlask === 'function') {
+        swirlFlask();
+      }
+      return;
+    }
+
+    // 'R' or 'r': record endpoint trial
+    if (e.key === 'r' || e.key === 'R') {
+      e.preventDefault();
+      if (typeof recordTrial === 'function') {
+        recordTrial();
+      }
+      return;
+    }
+
+    // 'H' or 'h': deliver half drop
+    if (e.key === 'h' || e.key === 'H') {
+      e.preventDefault();
+      if (typeof addHalfDrop === 'function') {
+        addHalfDrop();
+      }
+      return;
+    }
+  });
+
+  // Focus trap for #examResultModal
+  const resultModalEl = document.getElementById('examResultModal');
+  if (resultModalEl) {
+    resultModalEl.addEventListener('keydown', function(e) {
+      if (e.key !== 'Tab') return;
+      const focusables = resultModalEl.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), [tabindex]:not([tabindex="-1"])');
+      if (!focusables || focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    });
+  }

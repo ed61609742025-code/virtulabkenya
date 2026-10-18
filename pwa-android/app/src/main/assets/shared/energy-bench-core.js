@@ -220,5 +220,8 @@
   };
 
   global.EnergyBenchCore = EnergyBenchCore;
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = EnergyBenchCore;
+  }
 
-})(typeof window !== 'undefined' ? window : this);
+})(typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : this));

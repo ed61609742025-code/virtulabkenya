@@ -75,7 +75,9 @@
   function guardPage(requiredRole) {
     var token = getStoredToken();
     var currentPath = window.location.pathname + window.location.search + window.location.hash;
-    var targetLogin = requiredRole === 'teacher' ? '/teacher/login.html' : '/student/login.html';
+    var targetLogin = requiredRole === 'admin'
+      ? '/admin/login.html'
+      : (requiredRole === 'teacher' ? '/teacher/login.html' : '/student/login.html');
     var returnUrlParam = encodeURIComponent(currentPath);
 
     if (!token) {
@@ -132,6 +134,8 @@
         window.location.replace(returnUrl);
       } else if (role === 'teacher') {
         window.location.replace('/teacher/dashboard.html');
+      } else if (role === 'admin') {
+        window.location.replace('/admin/dashboard.html');
       } else {
         window.location.replace('/student/home.html');
       }

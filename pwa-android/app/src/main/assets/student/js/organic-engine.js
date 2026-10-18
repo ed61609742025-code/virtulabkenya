@@ -205,49 +205,49 @@ if (typeof window === 'undefined') {
       key: 'solubility',
       label: 'Solubility & Miscibility in Distilled Water',
       procedure: 'To 2 cm³ of the sample in a clean dry test tube, add 2 cm³ of distilled water and shake the mixture thoroughly.',
-      actionLabel: '💧 Add Distilled Water & Shake',
+      actionLabel: 'Add Distilled Water & Shake',
       marks: '1.4 Marks'
     },
     {
       key: 'ignition',
       label: 'Ignition & Combustion on Metallic Spatula',
       procedure: 'Place 2-3 drops of the sample on a clean metallic spatula and ignite directly in a non-luminous Bunsen burner flame.',
-      actionLabel: '🔥 Ignite Sample on Spatula',
+      actionLabel: 'Ignite Sample on Spatula',
       marks: '1.4 Marks'
     },
     {
       key: 'bromine',
       label: 'Acidified Bromine Water Test (Br₂/H₂O)',
       procedure: 'To 2 cm³ of the sample in a test tube, add 3-4 drops of acidified bromine water and warm gently.',
-      actionLabel: '🧪 Add Bromine Water',
+      actionLabel: 'Add Bromine Water',
       marks: '1.4 Marks'
     },
     {
       key: 'dichromate',
       label: 'Acidified Potassium Dichromate(VI) Oxidation',
       procedure: 'To 2 cm³ of the sample, add 1 cm³ of acidified potassium dichromate(VI) (K₂Cr₂O₇/H₂SO₄) and heat in a boiling water bath for 2 minutes.',
-      actionLabel: '🌡️ Add K₂Cr₂O₇ & Warm',
+      actionLabel: 'Add K₂Cr₂O₇ & Warm',
       marks: '1.4 Marks'
     },
     {
       key: 'carbonate',
       label: 'Solid Sodium Carbonate / Hydrogen Carbonate',
       procedure: 'To 2 cm³ of the sample solution, add a half-spatula of solid sodium carbonate (Na₂CO₃) powder.',
-      actionLabel: '🥄 Add Solid Na₂CO₃',
+      actionLabel: 'Add Solid Na₂CO₃',
       marks: '1.4 Marks'
     },
     {
       key: 'esterification',
       label: 'Esterification Aroma Reaction',
       procedure: 'To 2 cm³ of the sample, add 2 cm³ of ethanoic acid and 3 drops of concentrated H₂SO₄. Warm in a water bath, then pour the mixture into a beaker containing water and note the odor.',
-      actionLabel: '🍬 Warm in Water Bath & Smell',
+      actionLabel: 'Warm in Water Bath & Smell',
       marks: '1.4 Marks'
     },
     {
       key: 'litmus',
       label: 'Litmus Paper & Universal pH Testing',
       procedure: 'Dip moist blue and red litmus paper strips into the sample solution and record the color changes.',
-      actionLabel: '📄 Dip Litmus Strips',
+      actionLabel: 'Dip Litmus Strips',
       marks: '1.4 Marks'
     }
   ];
@@ -378,7 +378,7 @@ if (typeof window === 'undefined') {
       if (infVal && window.KnecPedagogy) {
         const prev = KnecPedagogy.getFormulaPreview(infVal, 'organic');
         if (prev.isValid) {
-          lines.push(`<div class="chem-preview-box"><span class="chem-preview-badge valid">⚡ Formatted: ${prev.formattedText}</span></div>`);
+          lines.push(`<div class="chem-preview-box"><span class="chem-preview-badge valid">Formatted: ${prev.formattedText}</span></div>`);
         }
         const hits = KnecPedagogy.detectTabooPhrases(infVal, 'organic_neutral');
         hits.forEach(h => lines.push(`<div class="taboo-nudge-alert ${h.severity}">${h.alert}</div>`));
@@ -958,13 +958,13 @@ if (typeof window === 'undefined') {
           </button>`;
       } else {
         const sensoryIcons = {
-          esterification: '👃',
-          ignition: '🔥',
-          carbonate: '🫧',
-          bromine: '🧪',
-          dichromate: '🧪',
-          litmus: '📄',
-          solubility: '💧'
+          esterification: '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:24px;height:24px;"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>',
+          ignition: '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:24px;height:24px;"><path d="M8.5 14.5A3.5 3.5 0 0 0 12 18a3.5 3.5 0 0 0 3.5-3.5c0-2-1.5-3.5-2.5-5-.5-1-1-2.5-1-3.5 0 0-2.5 2.5-2.5 5 0 1-.5 1.5-1 2.5z"/><path d="M12 2c5 4.5 7 9 7 13a7 7 0 1 1-14 0c0-4 3-7.5 7-13z"/></svg>',
+          carbonate: '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:24px;height:24px;"><circle cx="12" cy="12" r="10"/><path d="M8 12a4 4 0 0 1 8 0"/></svg>',
+          bromine: '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:24px;height:24px;"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/></svg>',
+          dichromate: '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:24px;height:24px;"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/></svg>',
+          litmus: '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:24px;height:24px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>',
+          solubility: '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:24px;height:24px;"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>'
         };
         const sensoryTitles = {
           esterification: 'Sensory Odour / Scent Evidence',
@@ -975,20 +975,22 @@ if (typeof window === 'undefined') {
           litmus: 'Acid-Base Litmus Evidence',
           solubility: 'Miscibility / Phase Evidence'
         };
-        const icon = sensoryIcons[test.key] || '👁️';
+        const defaultIcon = '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:24px;height:24px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+        const icon = sensoryIcons[test.key] || defaultIcon;
         const title = sensoryTitles[test.key] || 'Sensory Evidence / Result';
 
         actionButtonsHtml = `
           <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-            <button class="btn-perform-test done" disabled>
-              ✅ Test Completed — Result Observed
+            <button class="btn-perform-test done" disabled style="display:inline-flex;align-items:center;gap:6px;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:16px;height:16px;"><polyline points="20 6 9 17 4 12"/></svg>
+              Test Completed — Result Observed
             </button>
             <button class="btn-redo-test" onclick="redoTest('${test.key}')" title="Clean test tube and redo test">
               <span class="redo-icon">↺</span> Redo Test
             </button>
           </div>
           <div class="sensory-observation-callout" style="margin-top:10px; padding:10px 14px; border-radius:8px; background:rgba(6,182,212,0.12); border:1.5px solid var(--cyan-accent); color:var(--text-main); font-size:0.86rem; display:flex; align-items:center; gap:12px; box-shadow:0 2px 8px rgba(0,0,0,0.15);">
-            <span style="font-size:1.6rem; flex-shrink:0;">${icon}</span>
+            <span style="flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; color:var(--cyan-accent);">${icon}</span>
             <div style="flex:1;">
               <span style="font-size:0.72rem; font-weight:800; text-transform:uppercase; color:var(--cyan-accent); letter-spacing:0.04em; display:block; margin-bottom:2px;">
                 ${title}
@@ -1022,7 +1024,8 @@ if (typeof window === 'undefined') {
               <!-- Official KCSE Procedure Callout -->
               <div style="font-size:0.84rem; color:var(--text-main); line-height:1.5; margin-bottom:12px; background:var(--bg-dark); padding:10px 14px; border-radius:8px; border-left:3px solid var(--violet-accent); border:1px solid var(--card-border); border-left-width:3px;">
                 <span style="font-weight:800; color:var(--heading-color); display:flex; align-items:center; gap:6px; margin-bottom:3px;">
-                  📋 Procedure / Instructions:
+                  <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:15px;height:15px;color:var(--cyan-accent);"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg>
+                  Procedure / Instructions:
                 </span>
                 <span>${test.procedure}</span>
               </div>
@@ -1102,7 +1105,7 @@ if (typeof window === 'undefined') {
         if (testStates[testKey]) {
           testStates[testKey].isAdding = false;
           testStates[testKey].isHeating = true;
-          testStates[testKey].statusLabel = '🔥 Warming mixture in flame... solution absorbing heat...';
+          testStates[testKey].statusLabel = 'Warming mixture in flame... solution absorbing heat...';
           playAudioTone('flame');
           renderGrid();
 
@@ -1133,7 +1136,7 @@ if (typeof window === 'undefined') {
         if (testStates[testKey]) {
           testStates[testKey].isAdding = false;
           testStates[testKey].isHeating = true;
-          testStates[testKey].statusLabel = '🔥 Warming in warm water bath... absorbing heat...';
+          testStates[testKey].statusLabel = 'Warming in warm water bath... absorbing heat...';
           playAudioTone('flame');
           renderGrid();
 
@@ -1449,13 +1452,17 @@ if (typeof window === 'undefined') {
     resBox.style.display = 'block';
     resBox.innerHTML = `
       <div class="id-result-card ${fgCorrect && compCorrect && testsCorrectCount >= 5 ? 'correct' : 'incorrect'}">
-        <div class="id-result-icon">${fgCorrect && compCorrect && testsCorrectCount >= 5 ? '🏆' : '⚠️'}</div>
+        <div class="id-result-icon">
+          ${fgCorrect && compCorrect && testsCorrectCount >= 5 
+            ? '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:32px;height:32px;color:var(--amber-accent);"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>' 
+            : '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:32px;height:32px;color:var(--amber-accent);"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'}
+        </div>
         <div class="id-result-text" style="flex:1;">
           <h3>KCSE Examination Performance: ${totalScore} / ${maxScore} Marks (${percentage}%)</h3>
           <p><strong>Actual Sample Identity:</strong> ${sample.name} (${sample.fgName})</p>
           <p style="margin-top:4px;">
-            • <b>Functional Group:</b> ${fgCorrect ? '<span style="color:var(--green-accent); font-weight:700;">✅ Correct (+2.5 Marks)</span>' : '<span style="color:var(--red-accent); font-weight:700;">❌ Incorrect (Expected: ' + sample.fgName + ')</span>'}<br>
-            • <b>Molecular Formula:</b> ${compCorrect ? '<span style="color:var(--green-accent); font-weight:700;">✅ Correct (+2.5 Marks)</span>' : '<span style="color:var(--red-accent); font-weight:700;">❌ Incorrect (Expected: ' + sample.name + ')</span>'}<br>
+            • <b>Functional Group:</b> ${fgCorrect ? '<span style="color:var(--green-accent); font-weight:700;">Correct (+2.5 Marks)</span>' : '<span style="color:var(--red-accent); font-weight:700;">Incorrect (Expected: ' + sample.fgName + ')</span>'}<br>
+            • <b>Molecular Formula:</b> ${compCorrect ? '<span style="color:var(--green-accent); font-weight:700;">Correct (+2.5 Marks)</span>' : '<span style="color:var(--red-accent); font-weight:700;">Incorrect (Expected: ' + sample.name + ')</span>'}<br>
             • <b>Observations &amp; Inferences Score:</b> ${testMarks.toFixed(1)} / 9.8 Marks (${testsCorrectCount} / 7 Tests Verified Correct)
           </p>
 
@@ -1463,7 +1470,7 @@ if (typeof window === 'undefined') {
             ${testEvaluations.map((te, idx) => `
               <div style="background:var(--card-bg-hover, rgba(255,255,255,0.04)); border:1px solid var(--card-border); border-radius:8px; padding:8px 12px; font-size:0.8rem;">
                 <div style="display:flex; justify-content:space-between; font-weight:700; margin-bottom:4px;">
-                  <span>${te.isPassed ? '✅' : '❌'} (${String.fromCharCode(97 + idx)}) ${te.label}</span>
+                  <span>${te.isPassed ? '<span style="color:var(--green-accent);font-weight:800;margin-right:4px;">&#10003;</span>' : '<span style="color:var(--red-accent);font-weight:800;margin-right:4px;">&#10005;</span>'}(${String.fromCharCode(97 + idx)}) ${te.label}</span>
                   <span style="color:${te.isPassed ? 'var(--green-accent)' : 'var(--red-accent)'}; font-family:var(--font-mono);">${te.totalItem.toFixed(1)} / 1.4 Mks</span>
                 </div>
                 <div style="color:var(--text-secondary); font-size:0.76rem;"><b>Obs:</b> "${escapeHtml(te.userObs || 'None')}" — <span style="color:${te.obsEval.pass ? 'var(--green-accent)' : 'var(--red-accent)'};">${te.obsEval.note}</span></div>
@@ -1473,7 +1480,10 @@ if (typeof window === 'undefined') {
           </div>
         </div>
         <div style="margin-top:12px;">
-          <button class="btn-primary-solid" onclick="newSample()">⚗️ Next Sample</button>
+          <button class="btn-primary-solid" onclick="newSample()" style="display:inline-flex;align-items:center;gap:6px;">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Next Sample
+          </button>
         </div>
       </div>
     `;
@@ -1506,13 +1516,13 @@ if (typeof window === 'undefined') {
     if (typeof Organic !== 'undefined' && Organic.save) {
       Organic.save(payload).then(() => {
         if (assignmentId) {
-          alert('🎉 Practical Assignment Submitted Successfully!\nYour teacher will review your functional group analysis deductions.');
+          alert('Practical Assignment Submitted Successfully!\nYour teacher will review your functional group analysis deductions.');
         }
       }).catch(err => console.warn('Organic session offline sync:', err.message));
     } else if (typeof apiRequest === 'function') {
       apiRequest('POST', '/organic', payload).then(() => {
         if (assignmentId) {
-          alert('🎉 Practical Assignment Submitted Successfully!\nYour teacher will review your functional group analysis deductions.');
+          alert('Practical Assignment Submitted Successfully!\nYour teacher will review your functional group analysis deductions.');
         }
       }).catch(err => console.warn('Organic session offline sync:', err.message));
     }
@@ -1586,7 +1596,7 @@ if (typeof window === 'undefined') {
           <div style="background:var(--card-bg-hover, rgba(255,255,255,0.04)); border:1px solid var(--card-border); border-radius:8px; padding:10px 14px; margin-bottom:8px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
               <span style="font-weight:700; color:var(--purple-accent); font-size:0.85rem;">
-                ${isPassed ? '✅' : '❌'} (${String.fromCharCode(97 + i)}) ${t.label}
+                ${isPassed ? '<span style="color:var(--green-accent);font-weight:800;margin-right:4px;">&#10003;</span>' : '<span style="color:var(--red-accent);font-weight:800;margin-right:4px;">&#10005;</span>'} (${String.fromCharCode(97 + i)}) ${t.label}
               </span>
               <span style="font-weight:800; font-family:var(--font-mono); color:${isPassed ? 'var(--green-accent)' : 'var(--red-accent)'}; font-size:0.85rem;">
                 ${testScore.toFixed(1)} / 1.4 Mks
@@ -1616,11 +1626,11 @@ if (typeof window === 'undefined') {
                 return `
                   <div class="examiner-rationale-box ${rat.isFullMark ? 'full-marks' : ''}">
                     <div class="examiner-rationale-header">
-                      <span>👨‍🏫 KNEC Examiner Rationale &bull; ${rat.knecClause}</span>
-                      <span>${rat.isFullMark ? '✅ Satisfied' : '⚠️ Deduction'}</span>
+                      <span>KNEC Examiner Rationale &bull; ${rat.knecClause}</span>
+                      <span>${rat.isFullMark ? 'Satisfied' : 'Deduction'}</span>
                     </div>
                     <div class="examiner-rationale-text">${rat.rationale}</div>
-                    ${rat.pedagogicalTip ? `<div class="examiner-rationale-tip">💡 Revision Pointer: ${rat.pedagogicalTip}</div>` : ''}
+                    ${rat.pedagogicalTip ? `<div class="examiner-rationale-tip">Revision Pointer: ${rat.pedagogicalTip}</div>` : ''}
                   </div>
                 `;
               }

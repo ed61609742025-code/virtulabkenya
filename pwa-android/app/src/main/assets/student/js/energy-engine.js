@@ -27,6 +27,54 @@ const EnergyEngine = (() => {
 
   // Comprehensive Reaction Systems Registry (KNEC Past Practicals)
   const SYSTEMS = {
+    'KCSE_2004_COOLING_CURVE': {
+      id: 'KCSE_2004_COOLING_CURVE',
+      name: 'KCSE 2004 Cooling Curve: Freezing Point of Solid D',
+      knecYear: 'KCSE 2004 Paper 3 (Question 1)',
+      apparatusType: 'COOLING',
+      category: 'cooling_curve',
+      rigTitle: 'Solid D Freezing Point Boiling Tube Rig',
+      reactantA: 'Hot Melted Solid D (Boiling Tube)',
+      reactantB: 'Water Bath & Clamp Stand',
+      massB: 10.0,
+      freezingPoint: 69.0, // °C (Pure Stearic Acid Solidification Plateau)
+      initialTemp: 85.0,
+      coolingRate: 0.0055,
+      deltaH_theoretical: -198.0, // kJ/kg latent heat of fusion
+      graphType: 'TIME_TEMP',
+      totalTimeSec: 420, // 7.0 minutes
+      timeStepSec: 30,
+      briefing: 'Heat Solid D in a boiling water bath until fully melted at 85.0°C. Remove the boiling tube, start the practical clock at t = 0s, stir gently with the thermometer, and record temperature every 30s for 7.0 minutes. Identify the solidification plateau and determine the freezing point of Solid D.',
+      safetyReagents: ['StearicAcid']
+    },
+    'KCSE_2005_NEUTRALIZATION': {
+      id: 'KCSE_2005_NEUTRALIZATION',
+      name: 'KCSE 2005 Thermometric Neutralization: Citric Acid + NaOH',
+      knecYear: 'KCSE 2005 Paper 3 (Procedure I)',
+      apparatusType: 'CALORIMETER',
+      category: 'neutralization',
+      reactantA: '0.3125M NaOH (Solution K)',
+      volumeA: 25.0, // cm³
+      reactantB: '60.0 g/dm³ Acid L Citric Acid (Solution L)',
+      volumeB: 25.0, // cm³
+      concA: 0.3125,
+      concB: 0.3125,
+      deltaH_theoretical: -134.4, // kJ/mol (Citric acid enthalpy of neutralization)
+      ea_uncatalyzed: 48.0,
+      ea_catalyzed: 28.0,
+      initialTemp: 23.5,
+      coolingRate: 0.0028,
+      reactionSpeed: 0.14,
+      initialColor: { r: 235, g: 245, b: 255, a: 0.3 },
+      finalColor: { r: 235, g: 245, b: 255, a: 0.3 },
+      depositColor: null,
+      graphType: 'TIME_TEMP',
+      mixingTimeSec: 150, // 2.5 min
+      totalTimeSec: 360,
+      timeStepSec: 30,
+      briefing: 'Measure 25.0 cm³ of 0.3125M NaOH Solution K into a polystyrene cup. Record initial temp every 30s for 2.0 min. At 2.5 min, add 25.0 cm³ of Acid Solution L (citric acid), stir continuously and record maximum temperature rise (ΔT ≈ 5.0°C; heat evolved ≈ 1050 J).',
+      safetyReagents: ['NaOH', 'CitricAcid']
+    },
     'KCSE_2022_DISPLACEMENT': {
       id: 'KCSE_2022_DISPLACEMENT',
       name: 'Displacement Enthalpy: Zn + CuSO₄',
@@ -392,22 +440,28 @@ const EnergyEngine = (() => {
     updateCanvasDimensions();
     window.addEventListener('resize', () => {
       updateCanvasDimensions();
+      drawAllCanvases(0);
       renderGraph();
     }, { passive: true });
     window.addEventListener('orientationchange', () => {
       setTimeout(() => {
         updateCanvasDimensions();
+        drawAllCanvases(0);
         renderGraph();
       }, 150);
     }, { passive: true });
 
     initParticles();
     initConvectionCurrents();
-    applyScenario('KCSE_2022_DISPLACEMENT');
-    rafId = requestAnimationFrame(simulationLoop);
-    renderGraph();
 
     const urlParams = new URLSearchParams(window.location.search);
+    const scenarioParam = urlParams.get('scenario') || urlParams.get('preset') || 'KCSE_2022_DISPLACEMENT';
+    applyScenario(SYSTEMS[scenarioParam] ? scenarioParam : 'KCSE_2022_DISPLACEMENT');
+
+    drawAllCanvases(0);
+    wakeSimulationLoop();
+    renderGraph();
+
     const assignmentId = urlParams.get('assignment') || urlParams.get('assignmentId');
     if (assignmentId) {
       const banner = document.getElementById('assignmentHeaderBanner');
@@ -723,7 +777,7 @@ const EnergyEngine = (() => {
     const titleEl = document.getElementById('stageApparatusTitle');
     if (titleEl) {
       if (currentScenario.apparatusType === 'COMBUSTION') titleEl.textContent = 'Copper Can Calorimeter & Spirit Lamp';
-      else if (currentScenario.apparatusType === 'COOLING') titleEl.textContent = 'Stearic Acid Boiling Tube Rig';
+      else if (currentScenario.apparatusType === 'COOLING') titleEl.textContent = currentScenario.rigTitle || 'Solid D Boiling Tube Rig';
       else titleEl.textContent = 'Polystyrene Cup Calorimeter (EPS)';
     }
 
@@ -777,6 +831,8 @@ const EnergyEngine = (() => {
         mwalimuEl.innerHTML = 'Always take initial temperature readings at 30-second intervals for 2.0 minutes. <strong>Do not mix before 2.5 minutes!</strong> Record readings to <strong>1 decimal place</strong> (e.g. 22.0 or 22.5).';
       }
     }
+    drawAllCanvases(0);
+    wakeSimulationLoop();
   }
 
   function initTableData() {
@@ -796,7 +852,7 @@ const EnergyEngine = (() => {
           <td style="font-weight:700;">${minVal}</td>
           <td style="font-weight:700;">${t}</td>
           <td>
-            ${isMixTime ? '<span style="color:var(--en-primary);font-weight:900;">[ MIX ⚗️ ]</span>' : 
+            ${isMixTime ? '<span style="color:var(--en-primary);font-weight:900;">[ MIX REACTANTS ]</span>' : 
             `<input type="text" class="en-table-input" id="tbl_temp_${t}" placeholder="—" onchange="EnergyEngine.onTableInputChange(${t})">`}
           </td>
           <td>
@@ -829,6 +885,11 @@ const EnergyEngine = (() => {
     if (coolBox) coolBox.style.display = (currentScenario.apparatusType === 'COOLING') ? 'block' : 'none';
     if (sandboxBox) sandboxBox.style.display = (currentScenario.id === 'THERMO_SANDBOX') ? 'block' : 'none';
 
+    const mixBtn = document.getElementById('btnMixReactants');
+    if (mixBtn) {
+      mixBtn.style.display = (currentScenario.apparatusType === 'COOLING') ? 'none' : 'flex';
+    }
+
     const titleA = document.getElementById('reagentTitleA');
     if (titleA) titleA.textContent = currentScenario.reactantA || 'Solution A';
     const subA = document.getElementById('reagentSubA');
@@ -838,6 +899,105 @@ const EnergyEngine = (() => {
     if (titleB) titleB.textContent = currentScenario.reactantB || 'Reagent B';
     const subB = document.getElementById('reagentSubB');
     if (subB) subB.textContent = currentScenario.massB ? `Reducing Agent · Mass: ${currentScenario.massB.toFixed(2)} g` : (currentScenario.volumeB ? `Volume: ${currentScenario.volumeB.toFixed(1)} cm³` : 'Standard Reagent');
+
+    // Adapt Worksheet calculation labels based on experiment type
+    const calcDtBox = document.getElementById('calc_dt')?.closest('.calc-box');
+    const calcQBox = document.getElementById('calc_q')?.closest('.calc-box');
+    const calcMolesBox = document.getElementById('calc_moles')?.closest('.calc-box');
+    const calcDhBox = document.getElementById('calc_deltah')?.closest('.calc-box');
+    const calcEqBox = document.getElementById('calc_equation')?.closest('.calc-box');
+
+    if (currentScenario.apparatusType === 'COOLING') {
+      if (calcDtBox) {
+        const h = calcDtBox.querySelector('.calc-heading');
+        const s = calcDtBox.querySelector('.calc-sub');
+        if (h) h.textContent = '(a) Freezing Point of Solid (°C)';
+        if (s) s.textContent = 'Constant temperature plateau from cooling curve (e.g. 69.0 °C)';
+        const inp = document.getElementById('calc_dt');
+        if (inp) inp.placeholder = 'e.g. 69.0';
+      }
+      if (calcQBox) {
+        const h = calcQBox.querySelector('.calc-heading');
+        const s = calcQBox.querySelector('.calc-sub');
+        if (h) h.textContent = '(b) Duration of Solidification Plateau (minutes)';
+        if (s) s.textContent = 'Time span where liquid and solid coexist in equilibrium';
+        const inp = document.getElementById('calc_q');
+        if (inp) inp.placeholder = 'e.g. 2.0';
+        const u = calcQBox.querySelector('.calc-unit');
+        if (u) u.textContent = 'min';
+      }
+      if (calcMolesBox) {
+        const h = calcMolesBox.querySelector('.calc-heading');
+        const s = calcMolesBox.querySelector('.calc-sub');
+        if (h) h.textContent = '(c) Latent Heat Evolved during Freezing Q (Joules)';
+        if (s) s.textContent = 'Q = mass (10.0g) × specific latent heat of fusion (198 J/g)';
+        const inp = document.getElementById('calc_moles');
+        if (inp) inp.placeholder = 'e.g. 1980';
+        const u = calcMolesBox.querySelector('.calc-unit');
+        if (u) u.textContent = 'Joules (J)';
+      }
+      if (calcDhBox) {
+        const h = calcDhBox.querySelector('.calc-heading');
+        const s = calcDhBox.querySelector('.calc-sub');
+        if (h) h.textContent = '(d) Specific Latent Heat of Fusion (kJ/kg)';
+        if (s) s.textContent = 'Standard heat evolved during phase crystallization (approx. -198 kJ/kg)';
+        const inp = document.getElementById('calc_deltah');
+        if (inp) inp.placeholder = 'e.g. -198.0';
+        const u = calcDhBox.querySelector('.calc-unit');
+        if (u) u.textContent = 'kJ / kg';
+      }
+      if (calcEqBox) {
+        const h = calcEqBox.querySelector('.calc-heading');
+        if (h) h.textContent = '(e) Scientific Explanation: Why Temperature Remains Constant at Plateau';
+        const inp = document.getElementById('calc_equation');
+        if (inp) inp.placeholder = 'e.g. Temperature remains constant because latent heat of fusion released during crystallization balances heat loss to surroundings.';
+      }
+    } else {
+      if (calcDtBox) {
+        const h = calcDtBox.querySelector('.calc-heading');
+        const s = calcDtBox.querySelector('.calc-sub');
+        if (h) h.textContent = '(a) Maximum Temperature Change (ΔT)';
+        if (s) s.textContent = 'ΔT = T_extrapolated - T_initial (from graph extrapolation)';
+        const inp = document.getElementById('calc_dt');
+        if (inp) inp.placeholder = 'e.g. 18.5';
+      }
+      if (calcQBox) {
+        const h = calcQBox.querySelector('.calc-heading');
+        const s = calcQBox.querySelector('.calc-sub');
+        if (h) h.textContent = '(b) Quantity of Heat Evolved / Absorbed (Q)';
+        if (s) s.textContent = 'Q = m · c · ΔT (c = 4.2 J/g/°C, density = 1.0 g/cm³)';
+        const inp = document.getElementById('calc_q');
+        if (inp) inp.placeholder = 'e.g. 1942.5';
+        const u = calcQBox.querySelector('.calc-unit');
+        if (u) u.textContent = 'Joules (J)';
+      }
+      if (calcMolesBox) {
+        const h = calcMolesBox.querySelector('.calc-heading');
+        const s = calcMolesBox.querySelector('.calc-sub');
+        if (h) h.textContent = '(c) Moles of Limiting Reactant (n)';
+        if (s) s.textContent = 'n = (Molarity × Volume) / 1000 or n = mass / RAM';
+        const inp = document.getElementById('calc_moles');
+        if (inp) inp.placeholder = 'e.g. 0.0125';
+        const u = calcMolesBox.querySelector('.calc-unit');
+        if (u) u.textContent = 'moles';
+      }
+      if (calcDhBox) {
+        const h = calcDhBox.querySelector('.calc-heading');
+        const s = calcDhBox.querySelector('.calc-sub');
+        if (h) h.textContent = '(d) Molar Enthalpy of Reaction (ΔH)';
+        if (s) s.textContent = 'ΔH = ± Q / (n · 1000) [Must include +/- sign!]';
+        const inp = document.getElementById('calc_deltah');
+        if (inp) inp.placeholder = 'e.g. -217.0';
+        const u = calcDhBox.querySelector('.calc-unit');
+        if (u) u.textContent = 'kJ / mol';
+      }
+      if (calcEqBox) {
+        const h = calcEqBox.querySelector('.calc-heading');
+        if (h) h.textContent = '(e) Thermochemical Equation with State Symbols';
+        const inp = document.getElementById('calc_equation');
+        if (inp) inp.placeholder = 'e.g. Zn(s) + Cu²⁺(aq) → Zn²⁺(aq) + Cu(s)  ΔH = -217 kJ/mol';
+      }
+    }
   }
 
   // ============================================================
@@ -851,6 +1011,7 @@ const EnergyEngine = (() => {
     if (startBtn) startBtn.innerHTML = `<span class="action-icon">${isRunning ? '⏸️' : '▶️'}</span> <span class="action-text">${isRunning ? 'Pause Practical Clock' : 'Start Practical Clock'}</span>`;
     if (coolBtn) coolBtn.innerHTML = label;
     playClick();
+    wakeSimulationLoop();
   }
 
   function mixReactants() {
@@ -860,14 +1021,14 @@ const EnergyEngine = (() => {
 
     const statusEl = document.getElementById('labStatusBanner');
     if (statusEl) {
-      statusEl.textContent = `⚡ Reactants mixed at t = ${simTime.toFixed(0)}s! Reaction in progress...`;
+      statusEl.textContent = `Reactants mixed at t = ${simTime.toFixed(0)}s! Reaction in progress...`;
       statusEl.style.color = 'var(--en-primary)';
     }
 
     const mixBtn = document.getElementById('btnMixReactants');
     if (mixBtn) {
       mixBtn.classList.remove('pulse-ready');
-      mixBtn.innerHTML = `<span class="action-icon">✅</span> <span class="action-text">Reactants Mixed</span>`;
+      mixBtn.innerHTML = `<span class="action-icon">${window.VLKIcons ? window.VLKIcons.svg('check-circle') : '✓'}</span> <span class="action-text">Reactants Mixed</span>`;
       mixBtn.style.opacity = '0.7';
     }
 
@@ -892,6 +1053,7 @@ const EnergyEngine = (() => {
         radius: 1.5 + Math.random() * 2.5
       });
     }
+    wakeSimulationLoop();
   }
 
   function toggleStirrer() {
@@ -899,9 +1061,10 @@ const EnergyEngine = (() => {
     const btn = document.getElementById('btnToggleStir');
     if (btn) {
       btn.classList.toggle('active', isStirring);
-      btn.innerHTML = `<span class="action-icon">🌀</span> <span class="action-text">Stirrer: ${isStirring ? 'ACTIVE' : 'OFF'}</span>`;
+      btn.innerHTML = `<span class="action-icon">${window.VLKIcons ? window.VLKIcons.svg('swirl') : ''}</span> <span class="action-text">Stirrer: ${isStirring ? 'ACTIVE' : 'OFF'}</span>`;
     }
     playStirSound();
+    wakeSimulationLoop();
   }
 
   function toggleLid() {
@@ -909,9 +1072,10 @@ const EnergyEngine = (() => {
     const btn = document.getElementById('btnToggleLid');
     if (btn) {
       btn.classList.toggle('active', hasLidOn);
-      btn.innerHTML = `<span class="action-icon">🛡️</span> <span class="action-text">Lid: ${hasLidOn ? 'ON' : 'OFF'}</span>`;
+      btn.innerHTML = `<span class="action-icon">${window.VLKIcons ? window.VLKIcons.svg('shield') : ''}</span> <span class="action-text">Lid: ${hasLidOn ? 'ON' : 'OFF'}</span>`;
     }
     playLidSound();
+    wakeSimulationLoop();
   }
 
   function toggleLabels() {
@@ -919,6 +1083,7 @@ const EnergyEngine = (() => {
     const btn = document.getElementById('btnToggleLabels');
     if (btn) btn.classList.toggle('active', showApparatusLabels);
     playClick();
+    wakeSimulationLoop();
   }
 
   function toggleCatalyzedPathway() {
@@ -926,6 +1091,7 @@ const EnergyEngine = (() => {
     const btn = document.getElementById('btnToggleCatalyst');
     if (btn) btn.classList.toggle('active', showCatalyzedCurve);
     playBeep(showCatalyzedCurve ? 750 : 500, 0.08);
+    wakeSimulationLoop();
   }
 
   function toggleBestFit() {
@@ -940,9 +1106,10 @@ const EnergyEngine = (() => {
     const btn = document.getElementById('btnToggleFlame');
     if (btn) {
       btn.classList.toggle('active', isFlameLit);
-      btn.innerHTML = isFlameLit ? '🔥 Extinguish Spirit Lamp' : '🕯️ Light Spirit Lamp Burner';
+      btn.innerHTML = isFlameLit ? 'Extinguish Spirit Lamp' : 'Light Spirit Lamp Burner';
     }
     if (isFlameLit) playFlameSound();
+    wakeSimulationLoop();
   }
 
   function weighBurner() {
@@ -1155,13 +1322,13 @@ const EnergyEngine = (() => {
     if (clockEl) {
       const mins = Math.floor(simTime / 60);
       const secs = Math.floor(simTime % 60);
-      clockEl.textContent = `⏱️ ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      clockEl.innerHTML = `${window.VLKIcons ? window.VLKIcons.svg('timer') : ''} ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     }
 
     const digitalTempEl = document.getElementById('digitalTempDisplay');
     if (digitalTempEl) {
       if (studyMode === 'exam') {
-        digitalTempEl.textContent = '🔒 Read Scale';
+        digitalTempEl.textContent = 'Read Scale';
       } else {
         digitalTempEl.textContent = `${currentTemp.toFixed(1)} °C`;
       }
@@ -1184,6 +1351,35 @@ const EnergyEngine = (() => {
       const dtVal = currentTemp - currentScenario.initialTemp;
       rxnDelta.textContent = `${dtVal >= 0 ? '+' : ''}${dtVal.toFixed(1)} °C`;
     }
+
+    // Telemetry Observations Strip
+    const liveTElem = document.getElementById('telemetryLiveT');
+    if (liveTElem) {
+      liveTElem.textContent = studyMode === 'exam' ? 'Read Scale' : `${currentTemp.toFixed(1)} °C`;
+    }
+    const t0Elem = document.getElementById('telemetryT0');
+    if (t0Elem) {
+      t0Elem.textContent = `${currentScenario.initialTemp.toFixed(1)} °C`;
+    }
+    const tMaxElem = document.getElementById('telemetryTMax');
+    if (tMaxElem) {
+      tMaxElem.textContent = isMixed ? `${Math.max(currentTemp, currentScenario.initialTemp).toFixed(1)} °C` : '--.- °C';
+    }
+    const deltaTElem = document.getElementById('telemetryDeltaT');
+    if (deltaTElem) {
+      const dtVal = currentTemp - currentScenario.initialTemp;
+      deltaTElem.textContent = `${dtVal >= 0 ? '+' : ''}${dtVal.toFixed(1)} °C`;
+    }
+    const stirPill = document.getElementById('pillStirStatus');
+    if (stirPill) {
+      stirPill.textContent = isStirring ? 'Stirrer: Active' : 'Stirrer: OFF';
+      stirPill.style.color = isStirring ? 'var(--cyan-accent, #38BDF8)' : 'var(--text-muted)';
+    }
+    const lidPill = document.getElementById('pillLidStatus');
+    if (lidPill) {
+      lidPill.textContent = isLidOn ? 'Lid: Sealed (EPS)' : 'Lid: OFF (Heat Loss)';
+      lidPill.style.color = isLidOn ? 'var(--emerald-accent, #10B981)' : 'var(--amber-accent, #F59E0B)';
+    }
   }
 
   // ============================================================
@@ -1193,13 +1389,34 @@ const EnergyEngine = (() => {
   const TARGET_FRAME_MS = 28; // ~35 FPS: silky smooth for chemical thermals while saving 65% mobile GPU power & heat
   let lastFrameTime = 0;
 
+  function isEnergyActivelyAnimating() {
+    return isRunning || 
+           isFlameLit || 
+           isStirring || 
+           (typeof pourGrains !== 'undefined' && pourGrains.length > 0) || 
+           (typeof bubbleParticles !== 'undefined' && bubbleParticles.length > 0) || 
+           (typeof vaporParticles !== 'undefined' && vaporParticles.length > 0);
+  }
+
+  function drawAllCanvases(dt = 0) {
+    drawRig();
+    drawMagLoupe();
+    if (profileCanvas && pCtx) drawEnergyProfile();
+    if (molCanvas && mCtx) drawMolecularHUD(dt);
+  }
+
   function simulationLoop(timestamp) {
     if (document.hidden) {
       rafId = null;
       return;
     }
 
-    rafId = requestAnimationFrame(simulationLoop);
+    const animating = isEnergyActivelyAnimating();
+    if (animating) {
+      rafId = requestAnimationFrame(simulationLoop);
+    } else {
+      rafId = null; // Sleep GPU when apparatus is idle
+    }
 
     if (timestamp - lastFrameTime < TARGET_FRAME_MS) {
       return;
@@ -1209,16 +1426,21 @@ const EnergyEngine = (() => {
     lastFrameTime = timestamp;
 
     updatePhysics(dt);
-    drawRig();
-    drawMagLoupe();
-    drawEnergyProfile();
-    drawMolecularHUD(dt);
+    drawAllCanvases(dt);
+  }
+
+  function wakeSimulationLoop() {
+    if (!rafId && !document.hidden && isEnergyActivelyAnimating()) {
+      lastFrameTime = performance.now();
+      rafId = requestAnimationFrame(simulationLoop);
+    } else {
+      drawAllCanvases(0);
+    }
   }
 
   document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && !rafId) {
-      lastFrameTime = performance.now();
-      rafId = requestAnimationFrame(simulationLoop);
+    if (!document.hidden && !rafId && isEnergyActivelyAnimating()) {
+      wakeSimulationLoop();
     }
   });
 
@@ -2085,6 +2307,8 @@ const EnergyEngine = (() => {
     // KNEC Dual-Line Extrapolation Tool
     if (showExtrapolationLine && currentScenario.mixingTimeSec) {
       drawKNECDualExtrapolation(margin, pw, ph, timeMax, tempMin, tempMax);
+    } else if (showExtrapolationLine && currentScenario.apparatusType === 'COOLING') {
+      drawCoolingPlateauGuideline(margin, pw, ph, timeMax, tempMin, tempMax);
     }
 
     // Line of Best Fit
@@ -2182,6 +2406,31 @@ const EnergyEngine = (() => {
       gCtx.fillStyle = '#EA580C';
       gCtx.fillText(`ΔT = ${dtExtrap.toFixed(1)} °C`, x1 + 8, (baseY1 + y1) * 0.5 + 3);
     }
+  }
+
+  function drawCoolingPlateauGuideline(margin, pw, ph, timeMax, tempMin, tempMax) {
+    const fp = currentScenario.freezingPoint || 69.0;
+    const fpY = margin.top + ph - ((fp - tempMin) / (tempMax - tempMin)) * ph;
+
+    gCtx.strokeStyle = '#06B6D4';
+    gCtx.lineWidth = 2.2;
+    gCtx.setLineDash([4, 4]);
+    gCtx.beginPath();
+    gCtx.moveTo(margin.left, fpY);
+    gCtx.lineTo(margin.left + pw, fpY);
+    gCtx.stroke();
+    gCtx.setLineDash([]);
+
+    // Solidification Plateau Highlight Vertex
+    gCtx.fillStyle = '#06B6D4';
+    gCtx.beginPath();
+    gCtx.arc(margin.left + pw * 0.45, fpY, 5, 0, Math.PI * 2);
+    gCtx.fill();
+
+    gCtx.font = '800 11px JetBrains Mono';
+    gCtx.fillStyle = '#06B6D4';
+    gCtx.textAlign = 'right';
+    gCtx.fillText(`Solidification Plateau (Freezing Point) = ${fp.toFixed(1)} °C`, margin.left + pw - 10, fpY - 8);
   }
 
   function drawBestFitLine(margin, pw, ph, timeMax, tempMin, tempMax) {
@@ -2321,53 +2570,97 @@ const EnergyEngine = (() => {
       rubrics.push({ item: 'Graph Plotting (P)', mark: '0.5 / 3.0 (Plot all data points)', pass: false });
     }
 
-    // 5. Calculations
-    const studentDT = parseFloat(document.getElementById('calc_dt')?.value);
-    const studentQ = parseFloat(document.getElementById('calc_q')?.value);
-    const studentMoles = parseFloat(document.getElementById('calc_moles')?.value);
-    const studentDeltaH = parseFloat(document.getElementById('calc_deltah')?.value);
-    const studentEq = document.getElementById('calc_equation')?.value?.trim();
+    // 5. Calculations / Scientific Analysis (9.0 Marks)
+    if (currentScenario.apparatusType === 'COOLING') {
+      const studentFp = parseFloat(document.getElementById('calc_dt')?.value);
+      const studentDuration = parseFloat(document.getElementById('calc_q')?.value);
+      const studentLatentQ = parseFloat(document.getElementById('calc_moles')?.value);
+      const studentLf = parseFloat(document.getElementById('calc_deltah')?.value);
+      const studentExplanation = document.getElementById('calc_equation')?.value?.trim();
 
-    if (!isNaN(studentDT) && studentDT > 0) {
-      score += 1.5;
-      rubrics.push({ item: 'Temperature Change (ΔT from graph)', mark: '1.5 / 1.5', pass: true });
-    } else {
-      rubrics.push({ item: 'Temperature Change (ΔT)', mark: '0.0 / 1.5', pass: false });
-    }
-
-    if (!isNaN(studentQ) && studentQ > 0) {
-      score += 2.0;
-      rubrics.push({ item: 'Heat Quantity (Q = mcΔT in Joules)', mark: '2.0 / 2.0', pass: true });
-    } else {
-      rubrics.push({ item: 'Heat Quantity (Q = mcΔT)', mark: '0.0 / 2.0', pass: false });
-    }
-
-    if (!isNaN(studentMoles) && studentMoles > 0) {
-      score += 2.0;
-      rubrics.push({ item: 'Moles of limiting reagent (n)', mark: '2.0 / 2.0', pass: true });
-    } else {
-      rubrics.push({ item: 'Moles of limiting reagent', mark: '0.0 / 2.0', pass: false });
-    }
-
-    const isTheoreticalExo = currentScenario.deltaH_theoretical < 0;
-    if (!isNaN(studentDeltaH)) {
-      const studentExo = studentDeltaH < 0;
-      if (studentExo === isTheoreticalExo && Math.abs(studentDeltaH) > 10) {
+      const trueFp = currentScenario.freezingPoint || 69.0;
+      if (!isNaN(studentFp) && Math.abs(studentFp - trueFp) <= 2.0) {
         score += 2.5;
-        rubrics.push({ item: 'Molar Enthalpy (ΔH = ±Q/n with correct sign & units)', mark: '2.5 / 2.5', pass: true });
+        rubrics.push({ item: 'Freezing Point (T_f from Plateau)', mark: '2.5 / 2.5', pass: true });
       } else {
+        rubrics.push({ item: 'Freezing Point (T_f from Plateau)', mark: `0.5 / 2.5 (Expected around ${trueFp.toFixed(1)} °C)`, pass: false });
+      }
+
+      if (!isNaN(studentDuration) && studentDuration >= 1.0 && studentDuration <= 4.0) {
+        score += 2.0;
+        rubrics.push({ item: 'Duration of Solidification Plateau', mark: '2.0 / 2.0', pass: true });
+      } else {
+        rubrics.push({ item: 'Duration of Solidification Plateau', mark: '0.5 / 2.0 (Expected 1.5–3.0 min)', pass: false });
+      }
+
+      if (!isNaN(studentLatentQ) && studentLatentQ > 0) {
+        score += 2.0;
+        rubrics.push({ item: 'Latent Heat Q = m · L_f (Joules)', mark: '2.0 / 2.0', pass: true });
+      } else {
+        rubrics.push({ item: 'Latent Heat Q', mark: '0.0 / 2.0', pass: false });
+      }
+
+      if (!isNaN(studentLf) && Math.abs(Math.abs(studentLf) - 198.0) <= 25.0) {
+        score += 1.5;
+        rubrics.push({ item: 'Specific Latent Heat of Fusion L_f', mark: '1.5 / 1.5', pass: true });
+      } else {
+        rubrics.push({ item: 'Specific Latent Heat of Fusion L_f', mark: '0.5 / 1.5', pass: false });
+      }
+
+      if (studentExplanation && /(latent\s*heat|phase|crystalliz|solidif|equilibrium|offsets|balances)/i.test(studentExplanation)) {
         score += 1.0;
-        rubrics.push({ item: 'Molar Enthalpy ΔH', mark: '1.0 / 2.5 (Sign / magnitude penalty)', pass: false });
+        rubrics.push({ item: 'Explanation: Constant Temperature Plateau', mark: '1.0 / 1.0', pass: true });
+      } else {
+        rubrics.push({ item: 'Explanation: Constant Temperature Plateau', mark: '0.0 / 1.0 (Mention latent heat of fusion)', pass: false });
       }
     } else {
-      rubrics.push({ item: 'Molar Enthalpy ΔH', mark: '0.0 / 2.5', pass: false });
-    }
+      const studentDT = parseFloat(document.getElementById('calc_dt')?.value);
+      const studentQ = parseFloat(document.getElementById('calc_q')?.value);
+      const studentMoles = parseFloat(document.getElementById('calc_moles')?.value);
+      const studentDeltaH = parseFloat(document.getElementById('calc_deltah')?.value);
+      const studentEq = document.getElementById('calc_equation')?.value?.trim();
 
-    if (studentEq && studentEq.length > 5) {
-      score += 1.0;
-      rubrics.push({ item: 'Thermochemical Equation with State Symbols', mark: '1.0 / 1.0', pass: true });
-    } else {
-      rubrics.push({ item: 'Thermochemical Equation', mark: '0.0 / 1.0', pass: false });
+      if (!isNaN(studentDT) && studentDT > 0) {
+        score += 1.5;
+        rubrics.push({ item: 'Temperature Change (ΔT from graph)', mark: '1.5 / 1.5', pass: true });
+      } else {
+        rubrics.push({ item: 'Temperature Change (ΔT)', mark: '0.0 / 1.5', pass: false });
+      }
+
+      if (!isNaN(studentQ) && studentQ > 0) {
+        score += 2.0;
+        rubrics.push({ item: 'Heat Quantity (Q = mcΔT in Joules)', mark: '2.0 / 2.0', pass: true });
+      } else {
+        rubrics.push({ item: 'Heat Quantity (Q = mcΔT)', mark: '0.0 / 2.0', pass: false });
+      }
+
+      if (!isNaN(studentMoles) && studentMoles > 0) {
+        score += 2.0;
+        rubrics.push({ item: 'Moles of limiting reagent (n)', mark: '2.0 / 2.0', pass: true });
+      } else {
+        rubrics.push({ item: 'Moles of limiting reagent', mark: '0.0 / 2.0', pass: false });
+      }
+
+      const isTheoreticalExo = currentScenario.deltaH_theoretical < 0;
+      if (!isNaN(studentDeltaH)) {
+        const studentExo = studentDeltaH < 0;
+        if (studentExo === isTheoreticalExo && Math.abs(studentDeltaH) > 10) {
+          score += 2.5;
+          rubrics.push({ item: 'Molar Enthalpy (ΔH = ±Q/n with correct sign & units)', mark: '2.5 / 2.5', pass: true });
+        } else {
+          score += 1.0;
+          rubrics.push({ item: 'Molar Enthalpy ΔH', mark: '1.0 / 2.5 (Sign / magnitude penalty)', pass: false });
+        }
+      } else {
+        rubrics.push({ item: 'Molar Enthalpy ΔH', mark: '0.0 / 2.5', pass: false });
+      }
+
+      if (studentEq && studentEq.length > 5) {
+        score += 1.0;
+        rubrics.push({ item: 'Thermochemical Equation with State Symbols', mark: '1.0 / 1.0', pass: true });
+      } else {
+        rubrics.push({ item: 'Thermochemical Equation', mark: '0.0 / 1.0', pass: false });
+      }
     }
 
     renderScoreCard(score, rubrics);
@@ -2438,7 +2731,7 @@ const EnergyEngine = (() => {
       }
 
       if (assignmentId) {
-        alert('🎉 Practical Assignment Submitted Successfully!\nYour teacher will review your rubric marks and release final comments.');
+        alert('Practical Assignment Submitted Successfully!\nYour teacher will review your rubric marks and release final comments.');
       }
     } catch (err) {
       console.warn('Energy session saved locally in offline queue:', err.message);
@@ -2508,11 +2801,11 @@ const EnergyEngine = (() => {
       const mins = Math.floor(examTimeRemaining / 60);
       const secs = examTimeRemaining % 60;
       const timerEl = document.getElementById('enExamTimerBadge');
-      if (timerEl) timerEl.textContent = `⏱️ ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+      if (timerEl) timerEl.innerHTML = `${window.VLKIcons ? window.VLKIcons.svg('timer') : ''} ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 
       if (examTimeRemaining <= 0) {
         clearInterval(examTimerInterval);
-        alert('⏱️ KNEC Time is up! Submitting Question 1 Examination Booklet.');
+        alert('KNEC Time is up! Submitting Question 1 Examination Booklet.');
         submitWorksheet();
       }
     }, 1000);
@@ -2523,9 +2816,9 @@ const EnergyEngine = (() => {
     const btn = document.getElementById('soundToggleBtn');
     const icon = document.getElementById('soundIcon');
     const text = document.getElementById('soundText');
-    if (icon) icon.textContent = soundEnabled ? '🔊' : '🔇';
+    if (icon) icon.innerHTML = window.VLKIcons ? window.VLKIcons.svg(soundEnabled ? 'volume' : 'volume-x') : (soundEnabled ? 'ON' : 'OFF');
     if (text) text.textContent = soundEnabled ? 'Sound ON' : 'Sound OFF';
-    if (btn && !icon && !text) btn.textContent = soundEnabled ? '🔊 Sound ON' : '🔇 Sound OFF';
+    if (btn && !icon && !text) btn.innerHTML = `${window.VLKIcons ? window.VLKIcons.svg(soundEnabled ? 'volume' : 'volume-x') : ''} ${soundEnabled ? 'Sound ON' : 'Sound OFF'}`;
     if (soundEnabled) playClick();
   }
 
@@ -2568,9 +2861,9 @@ const EnergyEngine = (() => {
           name: rKey,
           formula: rKey,
           signalWord: 'WARNING',
-          pictograms: ['⚠️'],
+          pictograms: ['WARNING'],
           hazards: ['Mild irritant. Avoid contact with eyes or open cuts.'],
-          ppe: ['🥽 Chemical Safety Glasses', '🧤 Protective Gloves'],
+          ppe: ['Chemical Safety Glasses', 'Protective Gloves'],
           firstAid: 'Wash skin thoroughly with cold water. Flush eyes for 15 minutes.'
         };
       }

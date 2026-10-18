@@ -292,5 +292,8 @@
   };
 
   global.GasPrepBenchCore = GasPrepBenchCore;
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = GasPrepBenchCore;
+  }
 
-})(typeof window !== 'undefined' ? window : this);
+})(typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : this));

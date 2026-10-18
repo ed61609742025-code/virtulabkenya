@@ -251,5 +251,8 @@
   };
 
   global.SolubilityBenchCore = SolubilityBenchCore;
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = SolubilityBenchCore;
+  }
 
-})(typeof window !== 'undefined' ? window : this);
+})(typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : this));

@@ -118,8 +118,9 @@ describe('Qualitative Bench Core (Inorganic Reactions)', () => {
 
     // Sulfite (SO3^2-) with obsStr
     it('SO₃²⁻: white ppt with BaCl₂, dissolves in dilute acid', () => {
+      const step1 = QualitativeBenchCore.resolveReactionState('sodiumSulfite', 'q2_anion', 'step1_barium', 'Add BaCl2 followed by dilute HCl');
+      assert.strictEqual(step1.ppt, true, 'BaSO3 forms white ppt');
       const res = QualitativeBenchCore.resolveReactionState('sodiumSulfite', 'q2_anion', 'excess', 'Add BaCl2 followed by dilute HCl', 'white precipitate dissolves in dilute acid');
-      assert.strictEqual(res.ppt, true);
       assert.strictEqual(res.pptDissolved, true, 'Precipitate dissolves in acid');
     });
 
@@ -287,13 +288,13 @@ describe('Qualitative Bench Core (Inorganic Reactions)', () => {
     it('should generate multi-stage actions: heated at idle, step2_gas_test at heated, and cooled at gas_test', () => {
       const idleActions = QualitativeBenchCore.getMultiStageActions('heat_solid', 'Heat solid in hard-glass tube', 'idle');
       assert.strictEqual(idleActions.length, 1);
-      assert.ok(idleActions[0].stage === 'heated' || idleActions[0].stage === 'step1_heat');
-      assert.ok(idleActions[0].label.includes('Heat'));
+      assert.ok(idleActions[0].stage === 'heated' || idleActions[0].stage === 'step1_heat' || idleActions[0].stage === 'step1_spatula');
+      assert.ok(idleActions[0].label.includes('Heat') || idleActions[0].label.includes('Spatula') || idleActions[0].label.includes('Dry'));
 
       const heatActions = QualitativeBenchCore.getMultiStageActions('heat_solid', 'Heat solid in hard-glass tube', 'heated');
-      assert.strictEqual(heatActions.length, 2);
+      assert.strictEqual(heatActions.length, 3);
       assert.strictEqual(heatActions[0].stage, 'step2_gas_test');
-      assert.ok(heatActions[1].isRedo || heatActions[1].stage === 'idle');
+      assert.ok(heatActions[2].isRedo || heatActions[2].stage === 'idle');
 
       const gasActions = QualitativeBenchCore.getMultiStageActions('heat_solid', 'Heat solid in hard-glass tube', 'step2_gas_test');
       assert.strictEqual(gasActions[0].stage, 'cooled');

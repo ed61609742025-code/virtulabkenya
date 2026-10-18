@@ -1308,7 +1308,7 @@
 
     const performed = stage !== 'idle' && stage !== 'untested' && Boolean(stage);
     const isExcess = stage === 'excess' || stage === 'step3_nh3' || stage === 'step2_bacl2' || stage === 'step2_acid' || stage === 'step2_agno3' || stage === 'step2_hno3' || stage === 'step2_h2so4' || stage === 'step2_gas_warm' || stage === 'step2_gas_test' || stage === 'dissolved' || (stage !== 'few_drops' && stage !== 'step1' && pStr.includes('excess'));
-    const isStep1 = stage === 'few_drops' || stage === 'step1' || stage === 'step1_hno3' || stage === 'step1_acid' || stage === 'step1_barium' || stage === 'step1_agno3' || stage === 'step1_h2o2' || stage === 'step1_water' || stage === 'step1_hcl' || stage === 'step1_feso4' || stage === 'inspected';
+    const isStep1 = stage === 'few_drops' || stage === 'step1' || stage === 'stage1' || stage === 'step1_hno3' || stage === 'step1_acid' || stage === 'step1_barium' || stage === 'step1_agno3' || stage === 'step1_h2o2' || stage === 'step1_water' || stage === 'step1_hcl' || stage === 'step1_feso4' || stage === 'inspected';
     const isHeated = stage === 'heated' || stage === 'warm' || stage === 'step2_warm' || (!isStep1 && stage !== 'cooled' && stage !== 'few_drops' && stage !== 'idle' && (tId.includes('heat') || tId.includes('ignit') || (pStr.includes('heat') && !pStr.includes('portion') && !pStr.includes('drop'))));
     const isCooled = stage === 'cooled' || stage === 'step3_cool' || stage === 'cool_down';
 
@@ -1596,7 +1596,7 @@
             bubbling = false;
             statusLabel = 'Step 1 (Dilute HNO₃ Added): Acidified stock solution (no effervescence)';
           }
-        } else if (stage === 'step2_agno3' || (!isAgFirst && !isStep1 && stage !== 'step3_nh3')) {
+        } else if (stage === 'step2_agno3' || stage === 'stage1' || (!isAgFirst && !isStep1 && stage !== 'step3_nh3')) {
           // AgNO3 added second
           if (isCl) {
             ppt = true;
@@ -1660,7 +1660,9 @@
             pptColor = '#FFFFFF';
             pptDissolved = false;
             bubbling = false;
-            statusLabel = 'Step 1 (Ba²⁺ Added): Dense white precipitate of BaSO₄ formed';
+            statusLabel = oStr.includes('insoluble')
+              ? 'Step 1 (Ba²⁺ Added): Dense white precipitate of BaSO₄ formed (insoluble in dilute acid)'
+              : 'Step 1 (Ba²⁺ Added): Dense white precipitate of BaSO₄ formed';
           } else if (isSulfite) {
             ppt = true;
             pptColor = '#FFFFFF';

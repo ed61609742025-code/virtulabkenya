@@ -27,6 +27,7 @@
 <meta name="twitter:image" content="https://virtulab.co.ke/shared/chemistry_hero_badge.jpg">
 
 <script src="/shared/auth-guard.js?v=164"></script>
+<script src="/shared/vlk-icons.js?v=164"></script>
 <script>
   var t = localStorage.getItem('vlk_theme') || 'light';
   document.documentElement.setAttribute('data-theme', t);
@@ -751,7 +752,7 @@
 
       <!-- Mobile Menu Toggle Button -->
       <button type="button" class="nav-mobile-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()" aria-label="Toggle menu" aria-expanded="false">
-        ☰
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
     </div>
   </div>
@@ -1203,7 +1204,7 @@
         const userPill = document.createElement('div');
         userPill.id = 'mobileActiveUserChip';
         userPill.style.cssText = 'padding:10px 14px; border-radius:8px; background:var(--card-subtle); border:1px solid var(--card-border); font-size:0.82rem; font-weight:700; color:var(--text-primary); display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;';
-        userPill.innerHTML = `<span>🎓 ${escapeHtml(userName)}</span><span style="color:var(--success); font-size:0.75rem;">● Online</span>`;
+        userPill.innerHTML = `<span style="display:inline-flex; align-items:center; gap:6px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg> ${escapeHtml(userName)}</span><span style="color:var(--success); font-size:0.75rem;">● Online</span>`;
         drawer.insertBefore(userPill, drawer.firstChild);
       }
     } else if (auth.isLoggedIn && auth.role === 'teacher') {
@@ -1225,7 +1226,7 @@
         const userPill = document.createElement('div');
         userPill.id = 'mobileActiveUserChip';
         userPill.style.cssText = 'padding:10px 14px; border-radius:8px; background:var(--card-subtle); border:1px solid var(--card-border); font-size:0.82rem; font-weight:700; color:var(--text-primary); display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;';
-        userPill.innerHTML = `<span>👨‍🏫 ${escapeHtml(userName)}</span><span style="color:var(--success); font-size:0.75rem;">● Online</span>`;
+        userPill.innerHTML = `<span style="display:inline-flex; align-items:center; gap:6px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> ${escapeHtml(userName)}</span><span style="color:var(--success); font-size:0.75rem;">● Online</span>`;
         drawer.insertBefore(userPill, drawer.firstChild);
       }
     } else if (auth.isLoggedIn && auth.role === 'admin') {

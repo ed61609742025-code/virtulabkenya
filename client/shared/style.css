@@ -923,6 +923,36 @@ button:not(:disabled):active {
 
 
 /* ══════════════════════════════════════════════════════════════
+   PRECISION VECTOR ICON SYSTEM & TYPOGRAPHIC CADENCE
+   Monochrome SVG icons scaling seamlessly with text size and
+   tabular numeric alignment for zero-jitter laboratory telemetry.
+   ══════════════════════════════════════════════════════════════ */
+.vlk-icon {
+  width: 1.15em;
+  height: 1.15em;
+  display: inline-block;
+  vertical-align: -0.18em;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+.tabular-nums,
+[data-tnum],
+.session-timer-badge span:last-child,
+.knec-subbar-val,
+.telemetry-val,
+.readout-value,
+.kcse-table td,
+.results-table td {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1, "zero" 1;
+}
+
+/* ══════════════════════════════════════════════════════════════
    MOBILE THERMAL & GPU BATTERY OPTIMIZATION
    Eliminate multi-pass GPU framebuffer blur shaders on mobile viewports
    to prevent GPU core clock saturation, device heating and battery drain.
@@ -935,3 +965,4 @@ button:not(:disabled):active {
     -webkit-backdrop-filter: none !important;
   }
 }
+

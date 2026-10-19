@@ -516,6 +516,7 @@ if (typeof window !== 'undefined') {
     currentSaltKey = keys[Math.floor(Math.random() * keys.length)];
     sampleCounter++;
     Object.keys(testStates).forEach(k => delete testStates[k]);
+    revealedRubricMap = {};
     sessionSaved = false;
     isCobaltGlassActive = false;
     flameOpticalMode = 'naked';
@@ -1315,6 +1316,214 @@ if (typeof window !== 'undefined') {
     onCandidateTextChange(testKey);
   }
 
+  /* ══════════════════════════════════════
+     KNEC MODEL ANSWERS & RUBRIC DISCLOSURE
+  ══════════════════════════════════════ */
+  let revealedRubricMap = {};
+
+  window.toggleTestRubricAnswer = function(testKey) {
+    revealedRubricMap[testKey] = !revealedRubricMap[testKey];
+    renderGrid();
+  };
+
+  function getExpectedObservationForSaltTest(testKey, salt) {
+    const test = TESTS.find(t => t.key === testKey);
+    if (!test) return '';
+    const s = salt || SALTS[currentSaltKey] || {};
+    const saltKey = s.key || currentSaltKey;
+    const correctKey = test.correct ? test.correct[saltKey] : null;
+    const correctOpt = (correctKey && test.options) ? test.options.find(o => o.key === correctKey) : null;
+    return correctOpt ? correctOpt.text : (test.procedure || 'Observation recorded');
+  }
+
+  function getExpectedInferenceForSaltTest(testKey, salt) {
+    const s = salt || SALTS[currentSaltKey] || {};
+    const cation = s.cation || '';
+    const anion = s.anion || '';
+    const catDisplay = s.cationDisplay || cation;
+    const anDisplay = s.anionDisplay || anion;
+
+    if (testKey === 'heat_solid') {
+      if (s.formula && (s.formula.includes('H2O') || s.formula.includes('·') || s.formula.includes('.'))) {
+        return 'Hydrated salt (water of crystallization present); evolves H₂O(g)';
+      }
+      if (anion === 'NO3-') {
+        return 'NO₃⁻ present (decomposes thermally to evolve brown NO₂ gas and O₂)';
+      }
+      if (cation === 'NH4+') {
+        return 'NH₄⁺ present (sublimes or evolves alkaline NH₃ gas)';
+      }
+      if (anion === 'HCO3-') {
+        return 'HCO₃⁻ present (decomposes on heating to evolve CO₂ gas and H₂O)';
+      }
+      if (anion === 'CO3^2-') {
+        return 'CO₃²⁻ present (decomposes to evolve CO₂ or thermally stable)';
+      }
+      if (cation === 'Zn2+') {
+        return 'Zn²⁺ present (ZnO residue is yellow when hot, white on cooling)';
+      }
+      if (anion === 'SO4^2-' || anion === 'SO3^2-') {
+        return 'SO₄²⁻ or SO₃²⁻ present (decomposes on strong heating to SO₂ gas)';
+      }
+      return 'Thermally stable anhydrous salt; hydrated water, NO₃⁻, and HCO₃⁻ absent';
+    }
+
+    if (testKey === 'naoh') {
+      if (['Zn2+', 'Al3+', 'Pb2+'].includes(cation)) {
+        return 'Zn²⁺, Al³⁺, or Pb²⁺ present (amphoteric cation; white ppt dissolves in excess NaOH)';
+      }
+      if (['Ca2+', 'Mg2+'].includes(cation)) {
+        return 'Ca²⁺ (or Mg²⁺) present (white ppt insoluble in excess NaOH)';
+      }
+      if (cation === 'Cu2+') {
+        return 'Cu²⁺ present (pale blue precipitate insoluble in excess NaOH)';
+      }
+      if (cation === 'Fe2+') {
+        return 'Fe²⁺ present (dirty green precipitate insoluble in excess NaOH)';
+      }
+      if (cation === 'Fe3+') {
+        return 'Fe³⁺ present (reddish-brown precipitate insoluble in excess NaOH)';
+      }
+      if (cation === 'NH4+') {
+        return 'NH₄⁺ present (no ppt formed; pungent alkaline NH₃ gas evolved on warming)';
+      }
+      return 'Na⁺ or K⁺ present (Cu²⁺, Fe²⁺, Fe³⁺, Al³⁺, Pb²⁺, Zn²⁺, Ca²⁺ absent)';
+    }
+
+    if (testKey === 'nh3') {
+      if (cation === 'Zn2+') {
+        return 'Zn²⁺ confirmed (white ppt dissolves in excess NH₃ to form colorless complex [Zn(NH₃)₄]²⁺)';
+      }
+      if (['Al3+', 'Pb2+'].includes(cation)) {
+        return 'Al³⁺ or Pb²⁺ present (white ppt insoluble in excess aqueous NH₃; Zn²⁺ absent)';
+      }
+      if (cation === 'Cu2+') {
+        return 'Cu²⁺ confirmed (pale blue ppt dissolves in excess NH₃ to form deep royal blue [Cu(NH₃)₄]²⁺)';
+      }
+      if (cation === 'Fe2+') {
+        return 'Fe²⁺ present (dirty green precipitate insoluble in excess aqueous NH₃)';
+      }
+      if (cation === 'Fe3+') {
+        return 'Fe³⁺ present (reddish-brown precipitate insoluble in excess aqueous NH₃)';
+      }
+      return 'Ca²⁺, Na⁺, K⁺, or NH₄⁺ present (Cu²⁺, Fe²⁺, Fe³⁺, Al³⁺, Pb²⁺, Zn²⁺ absent)';
+    }
+
+    if (testKey === 'flame') {
+      if (cation === 'Na+') return 'Na⁺ present (golden yellow flame emission at 589 nm)';
+      if (cation === 'K+') return 'K⁺ present (characteristic lilac flame, visible as crimson/purple through cobalt blue glass)';
+      if (cation === 'Ca2+') return 'Ca²⁺ present (brick-red / crimson flame emission)';
+      if (cation === 'Cu2+') return 'Cu²⁺ present (characteristic blue-green / viridian flame emission)';
+      if (cation === 'Pb2+') return 'Pb²⁺ present (pale blue-white flame emission)';
+      return 'Na⁺, K⁺, Ca²⁺, and Cu²⁺ absent (no characteristic flame emission)';
+    }
+
+    if (testKey === 'hcl') {
+      if (anion === 'CO3^2-' || anion === 'HCO3-') {
+        return 'CO₃²⁻ or HCO₃⁻ present (brisk effervescence of CO₂ gas turning limewater milky)';
+      }
+      if (anion === 'SO3^2-') {
+        return 'SO₃²⁻ present (choking SO₂ gas turns acidified K₂Cr₂O₇ from orange to green)';
+      }
+      if (cation === 'Pb2+') {
+        return 'Pb²⁺ present (forms white precipitate of PbCl₂, soluble in hot water)';
+      }
+      return 'CO₃²⁻, HCO₃⁻, SO₃²⁻, and Pb²⁺ absent (no effervescence or precipitate with dilute HCl)';
+    }
+
+    if (testKey === 'agno3') {
+      if (anion === 'Cl-') {
+        return 'Cl⁻ confirmed (curdy white ppt of AgCl dissolves completely in dilute aqueous NH₃)';
+      }
+      if (anion === 'Br-') {
+        return 'Br⁻ confirmed (pale cream ppt of AgBr sparingly soluble in dil. NH₃, soluble in conc. NH₃)';
+      }
+      if (anion === 'I-') {
+        return 'I⁻ confirmed (bright yellow ppt of AgI completely insoluble in both dil. and conc. NH₃)';
+      }
+      if (anion === 'SO3^2-') {
+        return 'SO₃²⁻ present (white precipitate of Ag₂SO₃ dissolves in dilute HNO₃)';
+      }
+      return 'Cl⁻, Br⁻, I⁻, and SO₃²⁻ absent (no precipitate with acidified silver nitrate)';
+    }
+
+    if (testKey === 'pb_no3') {
+      if (anion === 'Cl-') {
+        return 'Cl⁻ present (white ppt of PbCl₂ dissolves on warming, recrystallizes on cooling)';
+      }
+      if (anion === 'SO4^2-') {
+        return 'SO₄²⁻ present (dense white ppt of PbSO₄ insoluble on boiling/warming)';
+      }
+      if (anion === 'SO3^2-' || anion === 'CO3^2-') {
+        return 'SO₃²⁻ or CO₃²⁻ present (white precipitate formed with Pb²⁺)';
+      }
+      if (anion === 'I-') {
+        return 'I⁻ present (canary-yellow ppt of PbI₂ dissolves on heating to golden spangles on cooling)';
+      }
+      return 'Cl⁻, SO₄²⁻, SO₃²⁻, CO₃²⁻, and I⁻ absent (no precipitate with lead(II) nitrate)';
+    }
+
+    if (testKey === 'bacl2') {
+      if (anion === 'SO4^2-') {
+        return 'SO₄²⁻ confirmed (dense white ppt of BaSO₄ completely insoluble in dilute HCl)';
+      }
+      if (anion === 'SO3^2-') {
+        return 'SO₃²⁻ present (white ppt of BaSO₃ dissolves in dilute HCl with effervescence of choking SO₂ gas)';
+      }
+      return 'SO₄²⁻ and SO₃²⁻ absent (no precipitate with acidified barium chloride)';
+    }
+
+    if (testKey === 'ki') {
+      if (cation === 'Pb2+') {
+        return 'Pb²⁺ confirmed (canary-yellow ppt of PbI₂ dissolves on heating to golden glistening spangles on cooling)';
+      }
+      return 'Pb²⁺ absent (no yellow precipitate with potassium iodide)';
+    }
+
+    if (testKey === 'brown_ring') {
+      if (anion === 'NO3-') {
+        return 'NO₃⁻ confirmed (characteristic brown ring [Fe(H₂O)₅(NO)]²⁺ formed at acid-solution junction)';
+      }
+      return 'NO₃⁻ absent (no brown ring formed at junction of liquid layers)';
+    }
+
+    return `${catDisplay} or ${anDisplay} present`;
+  }
+
+  function getRubricTipForSaltTest(testKey, salt) {
+    if (testKey === 'heat_solid') {
+      return 'Senior Examiner Tip: Always test evolved gases immediately with moist litmus papers and a glowing splint. Do not confuse water of crystallization condensation with thermal decomposition.';
+    }
+    if (testKey === 'naoh') {
+      return 'Senior Examiner Tip: Must record both dropwise precipitate appearance AND behavior in excess NaOH. Never write "white solution" (-0.5 Mk penalty); write "colorless solution".';
+    }
+    if (testKey === 'nh3') {
+      return 'Senior Examiner Tip: Aqueous NH₃ is critical to differentiate amphoteric ions: Zn²⁺ dissolves in excess to form [Zn(NH₃)₄]²⁺, whereas Al³⁺ and Pb²⁺ remain insoluble.';
+    }
+    if (testKey === 'flame') {
+      return 'Senior Examiner Tip: Ensure glass rod is cleaned in conc. HCl before each test. Use cobalt blue glass to filter out intense 589 nm yellow sodium emission to unmask lilac potassium.';
+    }
+    if (testKey === 'hcl') {
+      return 'Senior Examiner Tip: Differentiate CO₂ vs SO₂ immediately: CO₂ turns limewater milky, whereas SO₂ turns orange acidified K₂Cr₂O₇ to emerald green.';
+    }
+    if (testKey === 'agno3') {
+      return 'Senior Examiner Tip: Sample must be acidified with dilute HNO₃ first to prevent false Ag₂CO₃ precipitation. Halides are distinguished by AgX color and solubility in aqueous NH₃.';
+    }
+    if (testKey === 'pb_no3') {
+      return 'Senior Examiner Tip: Always test thermal solubility by warming! PbCl₂ dissolves upon heating and recrystallizes on cooling, while PbSO₄ remains insoluble.';
+    }
+    if (testKey === 'bacl2') {
+      return 'Senior Examiner Tip: Dilute HCl must be present to distinguish BaSO₄ (insoluble in acid) from BaSO₃ / BaCO₃ (which dissolve with effervescence in acid).';
+    }
+    if (testKey === 'ki') {
+      return 'Senior Examiner Tip: KI provides conclusive confirmation of Pb²⁺ via bright canary-yellow PbI₂ that dissolves upon heating and deposits golden spangles on cooling.';
+    }
+    if (testKey === 'brown_ring') {
+      return 'Senior Examiner Tip: Trickle concentrated H₂SO₄ slowly down the tilted tube wall without shaking. Mixing generates heat that decomposes the fragile nitrosyl complex ring.';
+    }
+    return 'Senior Examiner Tip: Write ionic symbols with correct superscripts and charges (e.g. Pb²⁺, SO₄²⁻) to avoid charge penalties.';
+  }
+
   function renderGrid() {
     const grid = document.getElementById('testGrid');
     grid.innerHTML = TESTS.map((test, idx) => {
@@ -1616,6 +1825,88 @@ if (typeof window !== 'undefined') {
         }
       }
 
+      const salt = SALTS[currentSaltKey] || {};
+      const hasRun = Boolean(st && (st.performed || (st.stage && st.stage !== 'idle') || (st.statusLabel && !st.statusLabel.toLowerCase().includes('awaiting'))));
+
+      let sensoryCalloutHtml = '';
+      if (hasRun) {
+        const sensoryIcons = {
+          heat_solid: '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:24px;height:24px;"><path d="M8.5 14.5A3.5 3.5 0 0 0 12 18a3.5 3.5 0 0 0 3.5-3.5c0-2-1.5-3.5-2.5-5-.5-1-1-2.5-1-3.5 0 0-2.5 2.5-2.5 5 0 1-.5 1.5-1 2.5z"/><path d="M12 2c5 4.5 7 9 7 13a7 7 0 1 1-14 0c0-4 3-7.5 7-13z"/></svg>',
+          flame: '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:24px;height:24px;"><path d="M8.5 14.5A3.5 3.5 0 0 0 12 18a3.5 3.5 0 0 0 3.5-3.5c0-2-1.5-3.5-2.5-5-.5-1-1-2.5-1-3.5 0 0-2.5 2.5-2.5 5 0 1-.5 1.5-1 2.5z"/><path d="M12 2c5 4.5 7 9 7 13a7 7 0 1 1-14 0c0-4 3-7.5 7-13z"/></svg>',
+          naoh: '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:24px;height:24px;"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/></svg>',
+          nh3: '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:24px;height:24px;"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/></svg>',
+          hcl: '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:24px;height:24px;"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/></svg>',
+          agno3: '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:24px;height:24px;"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/></svg>',
+          pb_no3: '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:24px;height:24px;"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/></svg>',
+          bacl2: '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:24px;height:24px;"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/></svg>',
+          ki: '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:24px;height:24px;"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/></svg>',
+          brown_ring: '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:24px;height:24px;"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/></svg>'
+        };
+        const sensoryTitles = {
+          heat_solid: 'Thermal Decomposition & Evolved Gas Evidence',
+          flame: 'Flame Emission Spectroscopy Evidence',
+          naoh: 'Precipitation & Excess Solubility Evidence',
+          nh3: 'Ammonia Complexation & Solubility Evidence',
+          hcl: 'Dilute Acid & Effervescence Evidence',
+          agno3: 'Acidified AgNO₃ Halide Evidence',
+          pb_no3: 'Lead(II) Nitrate Reaction Evidence',
+          bacl2: 'Acidified BaCl₂ Sulfate/Sulfite Evidence',
+          ki: 'Potassium Iodide (KI) Reaction Evidence',
+          brown_ring: 'Nitrate Ring Junction Evidence'
+        };
+        const defaultIcon = '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:24px;height:24px;"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>';
+        const icon = sensoryIcons[test.key] || defaultIcon;
+        const title = sensoryTitles[test.key] || 'Sensory Reaction Evidence';
+        const sensoryText = st.statusLabel || getExpectedObservationForSaltTest(test.key, salt);
+
+        sensoryCalloutHtml = `
+          <div class="sensory-observation-callout" style="margin-top:10px; padding:10px 14px; border-radius:8px; background:rgba(6,182,212,0.12); border:1.5px solid var(--cyan-accent); color:var(--text-main); font-size:0.86rem; display:flex; align-items:center; gap:12px; box-shadow:0 2px 8px rgba(0,0,0,0.15);">
+            <span style="flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; color:var(--cyan-accent);">${icon}</span>
+            <div style="flex:1;">
+              <span style="font-size:0.72rem; font-weight:800; text-transform:uppercase; color:var(--cyan-accent); letter-spacing:0.04em; display:block; margin-bottom:2px;">
+                ${title}
+              </span>
+              <span style="font-weight:700; color:var(--heading-color); font-size:0.92rem;">${sensoryText}</span>
+            </div>
+          </div>
+        `;
+      }
+
+      const isRevealed = Boolean(revealedRubricMap[test.key]);
+      const expectedObs = getExpectedObservationForSaltTest(test.key, salt);
+      const expectedInf = getExpectedInferenceForSaltTest(test.key, salt);
+      const rubricTip = getRubricTipForSaltTest(test.key, salt);
+
+      const rubricRevealHtml = `
+        <div class="test-card-rubric-wrap" style="margin-top:12px; border-top:1px dashed var(--card-border); padding-top:10px;">
+          <button type="button" class="btn-secondary btn-rubric-reveal" onclick="toggleTestRubricAnswer('${test.key}')" style="font-size:0.78rem; font-weight:700; padding:6px 12px; border-radius:6px; display:inline-flex; align-items:center; gap:6px; color:var(--cyan-accent); border-color:rgba(6,182,212,0.4); background:rgba(6,182,212,0.06);">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            ${isRevealed ? 'Hide KNEC Model Answer' : 'Show KNEC Model Answer & Rubric'}
+          </button>
+          ${isRevealed ? `
+            <div class="knec-answer-card" style="margin-top:10px; background:var(--card-bg-hover, rgba(255,255,255,0.03)); border:1.5px solid var(--cyan-accent); border-radius:8px; padding:12px 14px; font-size:0.83rem; line-height:1.5;">
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid var(--card-border); padding-bottom:6px;">
+                <span style="font-weight:800; color:var(--cyan-accent); text-transform:uppercase; font-size:0.75rem; letter-spacing:0.04em;">Official KNEC Marking Scheme — ${esc(salt.name)} (${esc(salt.formula)})</span>
+                <span style="font-family:var(--font-mono); font-size:0.75rem; color:var(--text-muted); font-weight:700;">1.1 Marks Total</span>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:8px;">
+                <div style="background:var(--card-bg); padding:8px 10px; border-radius:6px; border:1px solid var(--card-border);">
+                  <div style="font-weight:800; font-size:0.76rem; text-transform:uppercase; margin-bottom:3px; color:var(--blue-accent);">Expected Observation (0.55 Mk):</div>
+                  <div style="color:var(--text-main); font-size:0.82rem; font-weight:600;">${expectedObs}</div>
+                </div>
+                <div style="background:var(--card-bg); padding:8px 10px; border-radius:6px; border:1px solid var(--card-border);">
+                  <div style="font-weight:800; font-size:0.76rem; text-transform:uppercase; margin-bottom:3px; color:var(--purple-accent);">Expected Deduction / Inference (0.55 Mk):</div>
+                  <div style="color:var(--text-main); font-size:0.82rem; font-weight:600;">${expectedInf}</div>
+                </div>
+              </div>
+              <div style="background:rgba(234,179,8,0.08); border-left:3px solid var(--amber-accent); padding:6px 10px; border-radius:4px; font-size:0.78rem; color:var(--text-main);">
+                <b style="color:var(--amber-accent);">Senior Examiner Pointer:</b> ${rubricTip}
+              </div>
+            </div>
+          ` : ''}
+        </div>
+      `;
+
       return `
         <div class="kcse-question-block">
           <div class="test-card-top">
@@ -1649,6 +1940,7 @@ if (typeof window !== 'undefined') {
               <div class="action-buttons-row">
                 ${actionButtonsHtml}
               </div>
+              ${sensoryCalloutHtml}
 
               <!-- KCSE Observation & Inference Table -->
               <table class="knec-table">
@@ -1686,6 +1978,7 @@ if (typeof window !== 'undefined') {
                   </tr>
                 </tbody>
               </table>
+              ${rubricRevealHtml}
             </div>
           </div>
         </div>`;
@@ -2962,19 +3255,54 @@ if (typeof window !== 'undefined') {
         </div>
       ` : '';
 
+      const cationMarks = cationCorrect ? 2.5 : 0;
+      const anionMarks = anionCorrect ? 2.5 : 0;
+      const testMarksRaw = observations.reduce((acc, o) => acc + (o.totalItemScore || 0), 0);
+      const testMarks = parseFloat(testMarksRaw.toFixed(1));
+      const totalScore = parseFloat((cationMarks + anionMarks + testMarks).toFixed(1));
+      const maxScore = 15.0; // Scaled KCSE Q2 standard: 5.0 marks for ID, 10.0 marks for observations/inferences
+      const percentage = Math.round((totalScore / maxScore) * 100);
+
       box.innerHTML = `
-        <div class="id-result-card ${fullyCorrect ? 'correct' : 'incorrect'}">
+        <div class="id-result-card ${fullyCorrect && testsCorrectCount >= 4 ? 'correct' : 'incorrect'}">
           <div class="id-result-icon">
-            ${fullyCorrect 
-              ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
-              : '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'}
+            ${fullyCorrect && testsCorrectCount >= 4 
+              ? '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:32px;height:32px;color:var(--amber-accent);"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>' 
+              : '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:32px;height:32px;color:var(--amber-accent);"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'}
           </div>
-          <div class="id-result-text">
-            <h3>${fullyCorrect ? 'Correct Identification!' : 'Incorrect Identification'}</h3>
-            <p>The salt was <b>${esc(salt.name)} (${esc(salt.formula)})</b>. Cation: <b>${esc(salt.cationDisplay)}</b> &bull; Anion: <b>${esc(salt.anionDisplay)}</b>.</p>
-            ${!cationCorrect ? `<p style="color:var(--red-accent);margin-top:4px;">Incomplete / Incorrect Cation: Expected ${esc(salt.cationDisplay)}, selected ${esc(cation)}.</p>` : ''}
-            ${!anionCorrect  ? `<p style="color:var(--red-accent);margin-top:4px;">Incomplete / Incorrect Anion: Expected ${esc(salt.anionDisplay)}, selected ${esc(anion)}.</p>` : ''}
+          <div class="id-result-text" style="flex:1;">
+            <h3>KCSE Paper 3 Performance: ${totalScore} / ${maxScore} Marks (${percentage}%)</h3>
+            <p><strong>Actual Salt Sample Identity:</strong> ${esc(salt.name)} (${esc(salt.formula)})</p>
+            <p style="margin-top:4px; line-height:1.6;">
+              • <b>Cation Identified:</b> ${cationCorrect ? '<span style="color:var(--green-accent); font-weight:700;">Correct (+2.5 Marks)</span>' : '<span style="color:var(--red-accent); font-weight:700;">Incorrect (Expected: ' + esc(salt.cationDisplay) + ', Selected: ' + esc(cation) + ')</span>'}<br>
+              • <b>Anion Identified:</b> ${anionCorrect ? '<span style="color:var(--green-accent); font-weight:700;">Correct (+2.5 Marks)</span>' : '<span style="color:var(--red-accent); font-weight:700;">Incorrect (Expected: ' + esc(salt.anionDisplay) + ', Selected: ' + esc(anion) + ')</span>'}<br>
+              • <b>Observations &amp; Inferences:</b> ${testMarks.toFixed(1)} / 10.0 Marks (${testsCorrectCount} / ${TESTS.length} Tests Verified Correct)
+            </p>
+
+            <div style="margin-top:12px; display:flex; flex-direction:column; gap:8px;">
+              ${observations.map((o, idx) => {
+                const isPassed = o.performed && (o.totalItemScore >= 0.70 || (o.obsScore >= 0.35 && o.infScore >= 0.35));
+                const expObs = getExpectedObservationForSaltTest(o.testKey, salt);
+                const expInf = getExpectedInferenceForSaltTest(o.testKey, salt);
+                return `
+                  <div style="background:var(--card-bg-hover, rgba(255,255,255,0.04)); border:1px solid var(--card-border); border-radius:8px; padding:8px 12px; font-size:0.8rem;">
+                    <div style="display:flex; justify-content:space-between; font-weight:700; margin-bottom:4px;">
+                      <span>${isPassed ? '<span style="color:var(--green-accent);font-weight:800;margin-right:4px;">&#10003;</span>' : '<span style="color:var(--red-accent);font-weight:800;margin-right:4px;">&#10005;</span>'}(${String.fromCharCode(97 + idx)}) ${esc(o.test)}</span>
+                      <span style="color:${isPassed ? 'var(--green-accent)' : 'var(--red-accent)'}; font-family:var(--font-mono);">${(o.totalItemScore || 0).toFixed(2)} / 1.10 Mks</span>
+                    </div>
+                    <div style="color:var(--text-secondary); font-size:0.76rem;"><b>Candidate Obs:</b> "${esc(o.studentObservation || 'None')}" — <span style="color:${(o.obsScore >= 0.35) ? 'var(--green-accent)' : 'var(--red-accent)'}; font-weight:600;">Expected: ${esc(expObs)}</span></div>
+                    <div style="color:var(--text-secondary); font-size:0.76rem;"><b>Candidate Inf:</b> "${esc(o.studentInference || 'None')}" — <span style="color:${(o.infScore >= 0.35) ? 'var(--green-accent)' : 'var(--red-accent)'}; font-weight:600;">Expected: ${esc(expInf)}</span></div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
             ${offlinePill}
+          </div>
+          <div style="margin-top:12px;">
+            <button class="btn-primary-solid" onclick="newSample()" style="display:inline-flex;align-items:center;gap:6px;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+              Next Salt Sample
+            </button>
           </div>
         </div>`;
     } catch (err) {
@@ -3442,6 +3770,9 @@ if (typeof window !== 'undefined') {
       const testMark = parseFloat((obsResult.score + infResult.score).toFixed(2));
       totalScore += testMark;
 
+      const expectedObs = obsResult.expectedText || getExpectedObservationForSaltTest(test.key, salt);
+      const expectedInf = getExpectedInferenceForSaltTest(test.key, salt);
+
       feedbackItems.push({
         testLabel: test.label,
         testKey: test.key,
@@ -3452,7 +3783,8 @@ if (typeof window !== 'undefined') {
         infScore: infResult.score,
         obsText: obsText || '(None recorded)',
         infText: infText || '(None recorded)',
-        expectedObs: obsResult.expectedText,
+        expectedObs: expectedObs,
+        expectedInf: expectedInf,
         obsNotes: obsResult.notes,
         obsWarnings: obsResult.warnings,
         infNotes: infResult.notes,
@@ -3567,11 +3899,12 @@ if (typeof window !== 'undefined') {
                   <span style="font-family:var(--font-mono); color:var(--blue-accent);">${item.infScore.toFixed(2)} / 0.55 Mk</span>
                 </div>
                 <div style="color:var(--text-secondary); margin-bottom:4px;"><b>Candidate:</b> "${item.infText}"</div>
+                <div style="color:var(--text-muted); font-size:0.76rem;"><b>Expected Deduction:</b> ${item.expectedInf}</div>
                 ${item.infNotes.length > 0 ? `
                   <ul style="margin:6px 0 0 14px; padding:0; font-size:0.75rem; color:var(--text-muted);">
                     ${item.infNotes.map(n => `<li style="margin-bottom:2px;">${n}</li>`).join('')}
                   </ul>` : ''}
-            </div>
+              </div>
 
             ${(() => {
               if (window.KnecPedagogy) {

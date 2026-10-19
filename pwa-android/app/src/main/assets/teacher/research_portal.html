@@ -45,6 +45,7 @@
 <meta name="theme-color" content="#0F172A">
 <link rel="stylesheet" href="../shared/style.css">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="/shared/vlk-icons.js?v=165"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" integrity="sha384-bs/nf9FbdNouRbMiFcrcZfLXYPKiPaGVGplVbv7dLGECccEXDW+S3zjqSKR5ZEaD sha512-CQBWl4fJHWbryGE+Pc7UAxWMUMNMWzWxF4SQo9CgkJIN1kx6djDQZjh3Y8SZ1d+6I+1zze6Z7kHXO7q3UyZAWw==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
 <style>
   .research-layout {
@@ -113,8 +114,9 @@
     <span>Teacher Research Portal</span>
   </a>
   <div class="nav-actions">
-    <button class="btn" style="background:var(--green-bg); color:var(--green-accent); border:1px solid var(--green-accent);" onclick="downloadResearchCSV()">
-      📥 Export CSV (SPSS/R Dataset)
+    <button class="btn" style="background:var(--green-bg); color:var(--green-accent); border:1px solid var(--green-accent); display:inline-flex; align-items:center; gap:6px;" onclick="downloadResearchCSV()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span>Export CSV (SPSS/R Dataset)</span>
     </button>
     <a href="dashboard.html" class="btn btn-secondary" style="text-decoration:none;">← Class Dashboard</a>
     <button class="btn" onclick="Auth.logout()">Log out</button>
@@ -140,37 +142,55 @@
   <!-- KPI SUMMARY METRICS -->
   <div class="res-metrics-grid">
     <div class="res-card">
-      <div class="res-metric-sub">👥 Paired Cohort (N)</div>
+      <div class="res-metric-sub" style="display:flex; align-items:center; gap:6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Paired Cohort (N)</span>
+      </div>
       <div class="res-metric-val" id="metricSample">--</div>
       <div class="res-metric-sub">Completing Pre & Post Tests</div>
     </div>
 
     <div class="res-card">
-      <div class="res-metric-sub">📉 Baseline Pre-Test (M ± SD)</div>
+      <div class="res-metric-sub" style="display:flex; align-items:center; gap:6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--blue-accent)" stroke-width="2"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+        <span>Baseline Pre-Test (M ± SD)</span>
+      </div>
       <div class="res-metric-val" style="color:var(--blue-accent);" id="metricPreMean">--</div>
       <div class="res-metric-sub">Out of 40.0 Marks</div>
     </div>
 
     <div class="res-card">
-      <div class="res-metric-sub">📈 Post-Intervention (M ± SD)</div>
+      <div class="res-metric-sub" style="display:flex; align-items:center; gap:6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green-accent)" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        <span>Post-Intervention (M ± SD)</span>
+      </div>
       <div class="res-metric-val" style="color:var(--green-accent);" id="metricPostMean">--</div>
       <div class="res-metric-sub">Out of 40.0 Marks</div>
     </div>
 
     <div class="res-card">
-      <div class="res-metric-sub">🎯 Hake's Gain (Normalized g)</div>
+      <div class="res-metric-sub" style="display:flex; align-items:center; gap:6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--amber-accent)" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+        <span>Hake's Gain (Normalized g)</span>
+      </div>
       <div class="res-metric-val" style="color:var(--amber-accent);" id="metricHakeG">g = --</div>
       <div class="res-metric-sub" id="metricHakeCategory">Calculating...</div>
     </div>
 
     <div class="res-card">
-      <div class="res-metric-sub">📐 Cohen's d Effect Size</div>
+      <div class="res-metric-sub" style="display:flex; align-items:center; gap:6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/></svg>
+        <span>Cohen's d Effect Size</span>
+      </div>
       <div class="res-metric-val" id="metricCohensD">d = --</div>
       <div class="res-metric-sub" id="metricCohensInterp">Calculating...</div>
     </div>
 
     <div class="res-card">
-      <div class="res-metric-sub">⭐ System Usability Scale (SUS)</div>
+      <div class="res-metric-sub" style="display:flex; align-items:center; gap:6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--violet-accent)" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <span>System Usability Scale (SUS)</span>
+      </div>
       <div class="res-metric-val" style="color:var(--violet-accent);" id="metricSUS">-- / 100</div>
       <div class="res-metric-sub" id="metricSUSGrade">Benchmark Score</div>
     </div>
@@ -179,8 +199,9 @@
   <!-- CHARTS SECTION -->
   <div class="charts-grid-2">
     <div class="res-card">
-      <h3 style="font-size:0.92rem; font-weight:700; color:var(--heading-color); margin:0 0 12px;">
-        📊 Pre-Test vs Post-Test Competency Comparison
+      <h3 style="font-size:0.92rem; font-weight:700; color:var(--heading-color); margin:0 0 12px; display:flex; align-items:center; gap:8px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span>Pre-Test vs Post-Test Competency Comparison</span>
       </h3>
       <div style="height:260px; position:relative;">
         <canvas id="chartPrePostCanvas"></canvas>
@@ -188,8 +209,9 @@
     </div>
 
     <div class="res-card">
-      <h3 style="font-size:0.92rem; font-weight:700; color:var(--heading-color); margin:0 0 12px;">
-        🕸️ Technology Acceptance Model (TAM 3) Construct Radar
+      <h3 style="font-size:0.92rem; font-weight:700; color:var(--heading-color); margin:0 0 12px; display:flex; align-items:center; gap:8px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+        <span>Technology Acceptance Model (TAM 3) Construct Radar</span>
       </h3>
       <div style="height:260px; position:relative;">
         <canvas id="chartTAMCanvas"></canvas>
@@ -200,8 +222,9 @@
   <!-- PAIRED STUDENT GAINS TABLE -->
   <div class="res-card">
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
-      <h3 style="font-size:0.95rem; font-weight:700; color:var(--heading-color); margin:0;">
-        📋 Student-Level Paired Achievement & Learning Gains
+      <h3 style="font-size:0.95rem; font-weight:700; color:var(--heading-color); margin:0; display:flex; align-items:center; gap:8px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+        <span>Student-Level Paired Achievement &amp; Learning Gains</span>
       </h3>
       <span style="font-size:0.75rem; color:var(--text-muted); font-family:'JetBrains Mono', monospace;">
         Hake's g = (%Post - %Pre) / (100% - %Pre)

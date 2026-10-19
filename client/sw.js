@@ -3,7 +3,7 @@
 //  Feature #1: Offline Support, Smart Caching & Sync
 // ============================================================
 
-const CACHE_NAME = 'virtulab-kenya-v164';
+const CACHE_NAME = 'virtulab-kenya-v165';
 
 const PRECACHE_ASSETS = [
   '/',
@@ -14,10 +14,12 @@ const PRECACHE_ASSETS = [
   '/favicon.ico',
   'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js',
   '/shared/auth-guard.js',
+  '/shared/vlk-icons.js',
   '/shared/style.css',
   '/shared/knec-graph-plotter.css',
   '/shared/knec-graph-plotter.js',
   '/shared/knec-pedagogy.js',
+  '/shared/knec-remediation-drills.js',
   '/shared/qualitative-bench-core.js',
   '/shared/organic-bench-core.js',
   '/shared/rates-bench-core.js',
@@ -118,6 +120,8 @@ const PRECACHE_ASSETS = [
   '/teacher/js/teacher-dashboard.js',
   '/teacher/js/research-portal.js',
   '/teacher/js/ai-exam-assistant.js',
+  '/teacher/js/teacher-composite-exams.js',
+  '/admin/login.html',
   '/admin/dashboard.html',
   '/admin/css/admin.css'
 ];

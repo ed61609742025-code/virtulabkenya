@@ -230,7 +230,7 @@ describe('Priority 4: Low-Bandwidth & Offline PWA Stress-Testing Suite', () => {
     const swPath = path.join(rootDir, 'client/sw.js');
     const swContent = fs.readFileSync(swPath, 'utf8');
 
-    it('should verify that all 114 precached assets exist on disk in client/', () => {
+    it('should verify that all 118 precached assets exist on disk in client/', () => {
       const match = swContent.match(/const PRECACHE_ASSETS = \[([\s\S]*?)\];/);
       assert.ok(match, 'PRECACHE_ASSETS array must be defined in sw.js');
       

@@ -57,7 +57,8 @@
     toast.id = 'vlkUpdateToast';
     toast.className = 'vlk-update-toast';
     toast.innerHTML = `
-      <span>🔄 New VirtuLab updates ready!</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+      <span>New VirtuLab updates ready!</span>
       <button type="button" style="background:#FFFFFF; color:#0284C7; border:none; padding:4px 10px; border-radius:6px; font-weight:800; cursor:pointer;" onclick="window.location.reload()">
         Update Now
       </button>
@@ -74,8 +75,8 @@
     toast.id = 'vlkNetworkToast';
     toast.className = `vlk-network-toast ${isOnline ? 'online' : 'offline'}`;
     toast.innerHTML = isOnline
-      ? `<span>🟢</span> <span>Back Online — Cloud Sync Resumed</span>`
-      : `<span>⚡</span> <span>Offline Mode Active — 8 Practical Benches Ready (0 MB data)</span>`;
+      ? `<span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#22C55E; margin-right:8px; vertical-align:middle; box-shadow:0 0 8px #22C55E;"></span><span>Back Online — Cloud Sync Resumed</span>`
+      : `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:8px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span>Offline Mode Active — 8 Practical Benches Ready (0 MB data)</span>`;
 
     document.body.appendChild(toast);
 
@@ -111,7 +112,10 @@
     toast.style.pointerEvents = 'auto';
     toast.style.cursor = 'pointer';
     toast.onclick = () => toast.remove();
-    toast.innerHTML = `<span>${type === 'success' ? '🚀' : '💡'}</span> <span>${message}</span>`;
+    const iconSvg = type === 'success'
+      ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><polyline points="20 6 9 17 4 12"/></svg>'
+      : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle; margin-right:6px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+    toast.innerHTML = `${iconSvg}<span>${message}</span>`;
 
     document.body.appendChild(toast);
     setTimeout(() => {
@@ -145,22 +149,28 @@
         
         <div class="vlk-perks-list">
           <div class="vlk-perk-item">
-            <span class="vlk-perk-icon">⚡</span>
+            <span class="vlk-perk-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </span>
             <div><strong>100% Offline Practical Lab</strong><br>Run all 8 KCSE chemistry practical benches with zero mobile data bundles required.</div>
           </div>
           <div class="vlk-perk-item">
-            <span class="vlk-perk-icon">🚀</span>
+            <span class="vlk-perk-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg>
+            </span>
             <div><strong>Instant Home Screen Access</strong><br>Launches full screen like a native app with no browser address bar distractions.</div>
           </div>
           <div class="vlk-perk-item">
-            <span class="vlk-perk-icon">💾</span>
+            <span class="vlk-perk-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            </span>
             <div><strong>Local Save &amp; Cloud Auto-Sync</strong><br>Titration ledgers, salt analysis, and mock scores save offline and sync when online.</div>
           </div>
         </div>
 
         ${isIOS ? `
           <div class="vlk-ios-step-box">
-            <strong>📲 How to install on iPhone &amp; iPad:</strong>
+            <strong>How to install on iPhone &amp; iPad:</strong>
             <ol style="margin:8px 0 0 16px; padding:0; font-size:0.82rem; line-height:1.6;">
               <li>Tap the <strong>Share</strong> button <svg style="display:inline-block; vertical-align:middle;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> in Safari at the bottom bar.</li>
               <li>Scroll down and tap <strong>"Add to Home Screen"</strong> ⊞.</li>
@@ -168,7 +178,7 @@
             </ol>
           </div>
           <button type="button" class="vlk-pwa-btn-install" style="width:100%;" onclick="document.getElementById('vlkInstallModal').remove()">
-            Got It! 👍
+            Got It
           </button>
         ` : deferredPrompt ? `
           <button type="button" class="vlk-pwa-btn-install" style="width:100%; font-size:0.95rem; padding:12px 16px;" id="vlkModalInstallBtn">
@@ -177,7 +187,7 @@
           </button>
         ` : `
           <div class="vlk-ios-step-box" style="border-color:#0284C7; background:rgba(2, 132, 199, 0.08);">
-            <strong>📲 Quick Install Instructions:</strong>
+            <strong>Quick Install Instructions:</strong>
             <ol style="margin:8px 0 0 16px; padding:0; font-size:0.82rem; line-height:1.6;">
               ${isAndroid ? `
                 <li>Tap the <strong>browser menu (⋮)</strong> at top right.</li>
@@ -191,7 +201,7 @@
             </ol>
           </div>
           <button type="button" class="vlk-pwa-btn-install" style="width:100%;" onclick="document.getElementById('vlkInstallModal').remove()">
-            Understood 👍
+            Understood
           </button>
         `}
       </div>
@@ -207,7 +217,7 @@
           const res = await deferredPrompt.userChoice;
           console.log('[VirtuLab PWA] Install choice:', res.outcome);
           if (res.outcome === 'accepted') {
-            showPwaStatusToast('✅ VirtuLab installed successfully! Open it from your home screen.', 'success');
+            showPwaStatusToast('VirtuLab installed successfully! Open it from your home screen.', 'success');
             deferredPrompt = null;
           }
         }
@@ -219,7 +229,7 @@
   async function installDirectly() {
     isStandaloneMode = checkStandalone();
     if (isStandaloneMode) {
-      showPwaStatusToast('🎉 VirtuLab Kenya is already installed and running on your device!', 'success');
+      showPwaStatusToast('VirtuLab Kenya is already installed and running on your device!', 'success');
       return;
     }
 
@@ -229,7 +239,7 @@
         const res = await deferredPrompt.userChoice;
         console.log('[VirtuLab PWA] Direct install choice:', res.outcome);
         if (res.outcome === 'accepted') {
-          showPwaStatusToast('✅ VirtuLab installed successfully! Open it from your home screen.', 'success');
+          showPwaStatusToast('VirtuLab installed successfully! Open it from your home screen.', 'success');
           deferredPrompt = null;
         } else {
           showPwaStatusToast('Installation dismissed. You can install anytime from the main page.', 'info');
@@ -252,7 +262,7 @@
     if (modal) modal.remove();
     const banner = document.getElementById('vlkPwaBanner');
     if (banner) banner.remove();
-    showPwaStatusToast('🎉 VirtuLab Kenya installed! Ready for 100% offline chemistry practicals.', 'success');
+    showPwaStatusToast('VirtuLab Kenya installed! Ready for 100% offline chemistry practicals.', 'success');
   });
 
   function createFloatingBanner() {
@@ -273,7 +283,7 @@
       <div class="vlk-pwa-header">
         <img src="${iconSrc}" alt="VirtuLab Kenya" class="vlk-pwa-icon">
         <div class="vlk-pwa-details">
-          <h4 class="vlk-pwa-title">VirtuLab Kenya 🧪</h4>
+          <h4 class="vlk-pwa-title">VirtuLab Kenya</h4>
           <p class="vlk-pwa-desc">Install for offline lab simulations & fast access</p>
         </div>
         <button class="vlk-pwa-close" id="vlkPwaClose" aria-label="Close">&times;</button>

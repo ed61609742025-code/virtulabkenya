@@ -137,6 +137,9 @@ app.use(express.static(path.join(__dirname, '../client'), {
     } else if (filePath.match(/\.(woff2?|ttf|eot|svg|png|jpe?g|gif|webp|ico)$/i)) {
       res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
       res.setHeader('Cache-Tag', 'virtulab-static, virtulab-assets');
+    } else if (filePath.match(/\.(js|css)$/i)) {
+      res.setHeader('Cache-Control', 'public, max-age=604800, stale-while-revalidate=86400');
+      res.setHeader('Cache-Tag', 'virtulab-static, virtulab-code');
     } else {
       res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
       res.setHeader('Cache-Tag', 'virtulab-static, virtulab-code');

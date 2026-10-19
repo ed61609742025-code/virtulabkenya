@@ -37,7 +37,9 @@ function updateSoundButton() {
   const btn = document.getElementById('soundToggleBtn');
   if (btn) {
     const muted = isMuted();
-    btn.innerHTML = muted ? '🔇 Muted' : '🔊 Sound ON';
+    btn.innerHTML = muted 
+      ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><line x1="1" y1="1" x2="23" y2="23"/><path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V4a3 3 0 0 0-5.94-.6"/><path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2a7 7 0 0 1-.11 1.23"/></svg>Muted' 
+      : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>Sound ON';
   }
 }
 if (typeof document !== 'undefined') {
@@ -129,7 +131,7 @@ async function loadNotifications() {
         const isRead = readIds.includes(a.id);
         return `<div style="padding:10px 12px;border-bottom:1px solid var(--card-border);background:${isRead ? 'transparent' : 'rgba(16,185,129,0.12)'};border-radius:8px;margin-bottom:6px;">
           <div style="font-size:0.82rem;font-weight:700;color:var(--heading-color);display:flex;align-items:center;justify-content:space-between;">
-            <span>${isRead ? '📜' : '🟢'} ${esc(a.title)}</span>
+            <span style="display:inline-flex;align-items:center;gap:6px;"><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${isRead ? '#94A3B8' : '#10B981'};"></span>${esc(a.title)}</span>
             <span style="font-size:0.7rem;color:var(--text-muted);">${a.marked_at ? new Date(a.marked_at).toLocaleDateString() : ''}</span>
           </div>
           <div style="font-size:0.78rem;color:var(--text-muted);margin-top:4px;">Assignment marked by teacher! View grade on Dashboard.</div>
@@ -276,7 +278,6 @@ if (typeof window !== 'undefined') {
     {
       key:'heat_solid',
       label:'Dry Thermal Heating of Solid in Hard-Glass Tube (Bunsen Flame)',
-      icon:'🔥',
       reagent:'Hard-glass boiling tube + Bunsen flame',
       isHeat:true,
       procedure:'Place about one-third of the solid salt sample into a clean, dry hard-glass boiling tube. Clamp the tube at approx. 35° and heat gently, then strongly in a non-luminous Bunsen flame. Test any evolved gas with moist red/blue litmus papers or a glowing wooden splint, and observe any condensation or residue color transitions.',
@@ -301,7 +302,6 @@ if (typeof window !== 'undefined') {
     {
       key:'naoh',
       label:'Test with 2M Sodium Hydroxide Solution (NaOH)',
-      icon:'🧴',
       reagent:'2M NaOH(aq)',
       procedure:'To about 2 cm³ of the aqueous solution of the unknown salt in a clean test tube, add 2M sodium hydroxide solution dropwise (2–3 drops) until in excess (approx. 5 cm³), shaking the test tube gently after each addition. Observe whether a precipitate forms and whether it dissolves in excess.',
       options: [
@@ -321,7 +321,6 @@ if (typeof window !== 'undefined') {
     {
       key:'nh3',
       label:'Test with 2M Aqueous Ammonia [NH₃(aq)]',
-      icon:'🫧',
       reagent:'2M NH₃(aq)',
       procedure:'To about 2 cm³ of the aqueous solution of the unknown salt in a clean test tube, add 2M aqueous ammonia dropwise (2–3 drops) until in excess (approx. 5 cm³), shaking thoroughly after each addition. Observe if any precipitate dissolves to form a complex ion.',
       options: [
@@ -341,7 +340,6 @@ if (typeof window !== 'undefined') {
     {
       key:'flame',
       label:'Clean Glass Rod Flame Emission Test (KICD Standard)',
-      icon:'🔥',
       reagent:'Clean glass rod + salt solution',
       isFlame:true,
       procedure:'Dip a clean glass rod into the aqueous solution of the unknown salt and place it into the non-luminous Bunsen burner flame. Observe the characteristic flame emission colour (and through cobalt blue glass for potassium).',
@@ -362,7 +360,6 @@ if (typeof window !== 'undefined') {
     {
       key:'hcl',
       label:'Test with Dilute Hydrochloric Acid [2M HCl(aq)]',
-      icon:'⚗️',
       reagent:'2M HCl(aq)',
       procedure:'To about 2 cm³ of the aqueous solution of the unknown salt in a clean test tube, add 3–4 drops of 2M hydrochloric acid. Warm gently if necessary and test any evolved gas with calcium hydroxide solution (limewater) or moist litmus papers.',
       options: [
@@ -380,7 +377,6 @@ if (typeof window !== 'undefined') {
     {
       key:'agno3',
       label:'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]',
-      icon:'🔬',
       reagent:'Dil. HNO₃ + AgNO₃(aq)',
       procedure:'To about 2 cm³ of the aqueous solution of the unknown salt in a clean test tube, add 3–4 drops of dilute nitric(V) acid, followed by 3–4 drops of silver nitrate solution. If a precipitate forms, test its solubility with dilute aqueous ammonia.',
       options: [
@@ -398,7 +394,6 @@ if (typeof window !== 'undefined') {
     {
       key:'pb_no3',
       label:'Test with Lead(II) Nitrate Solution [Pb(NO₃)₂(aq)] & Warm (KCSE Standard)',
-      icon:'🧪',
       reagent:'0.5M Pb(NO₃)₂(aq) + Bunsen warming',
       procedure:'To about 2 cm³ of the aqueous solution of the unknown salt in a clean test tube, add 3–4 drops of lead(II) nitrate solution. Warm the mixture gently over a Bunsen flame and allow it to cool.',
       options: [
@@ -416,7 +411,6 @@ if (typeof window !== 'undefined') {
     {
       key:'bacl2',
       label:'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]',
-      icon:'🧫',
       reagent:'Dil. HCl + BaCl₂(aq)',
       procedure:'To about 2 cm³ of the aqueous solution of the unknown salt in a clean test tube, add 3–4 drops of dilute hydrochloric acid, followed by 3–4 drops of barium chloride solution. Observe whether a dense, acid-insoluble white precipitate forms.',
       options: [
@@ -433,7 +427,6 @@ if (typeof window !== 'undefined') {
     {
       key:'ki',
       label:'Test with Potassium Iodide Solution [1M KI(aq)]',
-      icon:'🟡',
       reagent:'1M KI(aq)',
       procedure:'To about 2 cm³ of the aqueous solution of the unknown salt in a clean test tube, add 3–4 drops of 1M potassium iodide solution. Heat the mixture gently in a water bath, then allow it to cool under tap water to observe golden spangles.',
       options: [
@@ -449,7 +442,6 @@ if (typeof window !== 'undefined') {
     {
       key:'brown_ring',
       label:'Brown Ring Test for Nitrates [NO₃⁻]',
-      icon:'🟤',
       reagent:'FeSO₄(aq) + conc. H₂SO₄',
       isBrownRing:true,
       procedure:'To about 2 cm³ of the aqueous solution of the unknown salt in a clean test tube, add 2 cm³ of freshly prepared iron(II) sulfate solution. Slant the test tube at 45°, and carefully trickle concentrated sulfuric(VI) acid down the inside wall of the tube without shaking.',
@@ -528,7 +520,7 @@ if (typeof window !== 'undefined') {
     isCobaltGlassActive = false;
     flameOpticalMode = 'naked';
     const btnCobaltInit = document.getElementById('btnCobaltGlass');
-    if (btnCobaltInit) btnCobaltInit.innerHTML = '🟦 Cobalt Blue Glass Filter: OFF';
+    if (btnCobaltInit) btnCobaltInit.innerHTML = '<span style="display:inline-block;width:10px;height:10px;background:#3B82F6;border-radius:2px;margin-right:6px;vertical-align:middle;"></span>Cobalt Blue Glass Filter: OFF';
 
     const salt = SALTS[currentSaltKey];
 
@@ -554,7 +546,7 @@ if (typeof window !== 'undefined') {
     const submitBtn = document.getElementById('submitIdBtn');
     if (submitBtn) {
       submitBtn.disabled = false;
-      submitBtn.textContent = '✅ Submit Identification';
+      submitBtn.textContent = 'Submit Identification';
     }
     const idResultBox = document.getElementById('idResultBox');
     if (idResultBox) idResultBox.style.display = 'none';
@@ -871,7 +863,7 @@ if (typeof window !== 'undefined') {
     const maxScore = 0.55;
 
     if (!raw) {
-      return { score: 0.0, maxScore, notes: ['❌ Observation area left blank.'], warnings: [], tabooPenalty: false, expectedText: '' };
+      return { score: 0.0, maxScore, notes: ['Observation area left blank.'], warnings: [], tabooPenalty: false, expectedText: '' };
     }
 
     let saltKeyToUse = salt ? (salt.key || '') : '';
@@ -890,18 +882,18 @@ if (typeof window !== 'undefined') {
     let tabooPenalty = false;
     if (/white solution/i.test(raw)) {
       tabooPenalty = true;
-      notes.push('🚨 KNEC Penalty: Never write "white solution" (-0.5 Mk). Use "white precipitate" or "colorless solution".');
+      notes.push('KNEC Penalty: Never write "white solution" (-0.5 Mk). Use "white precipitate" or "colorless solution".');
     }
 
     // Warnings
     if (/gas (evolved|produced|given off)/i.test(raw) && !/(effervescence|limewater|litmus|ammonia|pungent|choking|brown|relight|pop)/i.test(raw)) {
-      warnings.push('⚠️ KNEC Warning: State specific gas properties (e.g. effervescence, limewater milky, litmus change).');
+      warnings.push('KNEC Warning: State specific gas properties (e.g. effervescence, limewater milky, litmus change).');
     }
     if (/(precipitate|ppt)/i.test(raw) && !/(no ppt|no precipitate|no white ppt)/i.test(raw) && !/(excess|soluble|insoluble|dissolv)/i.test(raw) && ['naoh','nh3','agno3'].includes(test.key)) {
-      warnings.push('⚠️ KNEC Warning: Always specify precipitate solubility in excess reagent.');
+      warnings.push('KNEC Warning: Always specify precipitate solubility in excess reagent.');
     }
     if (/clear solution/i.test(raw) && !/colorless|colourless/i.test(raw)) {
-      warnings.push('💡 KNEC Tip: A colored solution can be clear; if it looks like water, write "colorless solution".');
+      warnings.push('KNEC Tip: A colored solution can be clear; if it looks like water, write "colorless solution".');
     }
 
     // Reaction Ground-Truth Matching
@@ -978,19 +970,19 @@ if (typeof window !== 'undefined') {
         } else {
           if (studentPpt) {
             score = 0.0;
-            notes.push('❌ Incorrect observation: No precipitate forms in this reaction.');
+            notes.push('Incorrect observation: No precipitate forms in this reaction.');
           } else if (studentHasNoPpt) {
             score = 0.55;
           } else {
             score = 0.0;
-            notes.push('❌ Incorrect observation: Expected no precipitate or no visible change.');
+            notes.push('Incorrect observation: Expected no precipitate or no visible change.');
           }
         }
       } else {
         // Expected HAS precipitate
         if (studentHasNoPpt) {
           score = 0.0;
-          notes.push('❌ Incorrect observation: A precipitate should form in this test.');
+          notes.push('Incorrect observation: A precipitate should form in this test.');
         } else {
           const expColor = expLower.includes('blue') ? 'blue'
             : expLower.includes('green') ? 'green'
@@ -1011,13 +1003,13 @@ if (typeof window !== 'undefined') {
               score = 0.55;
             } else if (colorMatches && (studentSoluble || studentInsoluble)) {
               score = 0.20;
-              notes.push('❌ Inaccurate: Incorrect precipitate solubility in excess reagent.');
+              notes.push('Inaccurate: Incorrect precipitate solubility in excess reagent.');
             } else if (colorMatches) {
               score = 0.35; // Dropped marks for missing excess specification
-              notes.push('⚠️ Partial credit: State precipitate behavior in excess reagent accurately.');
+              notes.push('Partial credit: State precipitate behavior in excess reagent accurately.');
             } else {
               score = 0.0;
-              notes.push('❌ Incorrect observation: Wrong precipitate colour or behavior.');
+              notes.push('Incorrect observation: Wrong precipitate colour or behavior.');
             }
           } else if (test.key === 'pb_no3') {
             const expWarms = expLower.includes('warm') || expLower.includes('dissolv') || expLower.includes('heat');
@@ -1028,17 +1020,17 @@ if (typeof window !== 'undefined') {
               score = 0.55;
             } else if (colorMatches && studentPpt) {
               score = 0.35;
-              notes.push('⚠️ Partial credit: Note precipitate solubility on warming.');
+              notes.push('Partial credit: Note precipitate solubility on warming.');
             } else {
               score = 0.0;
-              notes.push('❌ Incorrect observation: Precipitation and warming behavior do not match.');
+              notes.push('Incorrect observation: Precipitation and warming behavior do not match.');
             }
           } else {
             if (colorMatches && studentPpt) {
               score = 0.55;
             } else {
               score = 0.0;
-              notes.push('❌ Incorrect observation: Wrong precipitate colour.');
+              notes.push('Incorrect observation: Wrong precipitate colour.');
             }
           }
         }
@@ -1050,11 +1042,11 @@ if (typeof window !== 'undefined') {
     }
 
     if (score >= 0.55) {
-      notes.push(`✅ Accurate observation recorded (+${score.toFixed(2)} Mk).`);
+      notes.push(`Accurate observation recorded (+${score.toFixed(2)} Mk).`);
     } else if (score > 0) {
-      notes.push(`⚠️ Partially accurate observation (+${score.toFixed(2)} Mk).`);
+      notes.push(`Partially accurate observation (+${score.toFixed(2)} Mk).`);
     } else if (notes.length === 0) {
-      notes.push(`❌ Inaccurate observation (0.00 Mk). Expected: "${expectedText}".`);
+      notes.push(`Inaccurate observation (0.00 Mk). Expected: "${expectedText}".`);
     }
 
     return {
@@ -1074,7 +1066,7 @@ if (typeof window !== 'undefined') {
     const maxScore = 0.55;
 
     if (!raw) {
-      return { score: 0.0, maxScore, notes: ['❌ Inference area left blank.'], ciPenalty: 0.0, chargePenalty: 0.0, contradictions: [] };
+      return { score: 0.0, maxScore, notes: ['Inference area left blank.'], ciPenalty: 0.0, chargePenalty: 0.0, contradictions: [] };
     }
 
     const parsed = parseInferredIons(raw);
@@ -1224,7 +1216,7 @@ if (typeof window !== 'undefined') {
       ciPenalty = Math.min(1.0, contradictions.length * 0.5);
       score = Math.max(0.0, score - ciPenalty);
       contradictions.forEach(c => {
-        notes.push(`🚨 KNEC Deduction (-0.5 Mk): Contradictory ion ${c.ion} inferred. ${c.reason}.`);
+        notes.push(`KNEC Deduction (-0.5 Mk): Contradictory ion ${c.ion} inferred. ${c.reason}.`);
       });
     }
 
@@ -1232,13 +1224,13 @@ if (typeof window !== 'undefined') {
     if (score > 0 && parsed.missingChargeSymbols.length > 0) {
       chargePenalty = 0.5;
       score = Math.max(0.0, score - chargePenalty);
-      notes.push(`⚠️ Ionic Charge Penalty (-0.5 Mk): Element symbol(s) ${parsed.missingChargeSymbols.join(', ')} written without ionic charge notation.`);
+      notes.push(`Ionic Charge Penalty (-0.5 Mk): Element symbol(s) ${parsed.missingChargeSymbols.join(', ')} written without ionic charge notation.`);
     }
 
     if (score >= 0.55) {
-      notes.push(`✅ Accurate deduction recorded (+${score.toFixed(2)} Mk).`);
+      notes.push(`Accurate deduction recorded (+${score.toFixed(2)} Mk).`);
     } else if (score > 0 && ciPenalty === 0 && chargePenalty === 0) {
-      notes.push(`⚠️ Partially accurate deduction (+${score.toFixed(2)} Mk).`);
+      notes.push(`Partially accurate deduction (+${score.toFixed(2)} Mk).`);
     }
 
     return {
@@ -1273,14 +1265,14 @@ if (typeof window !== 'undefined') {
         });
       } else {
         if (/white solution/i.test(obsVal)) {
-          obsLines.push('<div class="feedback-line penalty">🚨 KNEC Penalty: Never write "white solution" (-0.5 Mk). Use "white precipitate" or "colorless solution".</div>');
+          obsLines.push('<div class="feedback-line penalty">KNEC Penalty: Never write "white solution" (-0.5 Mk). Use "white precipitate" or "colorless solution".</div>');
         }
       }
       if (/gas (evolved|produced|given off)/i.test(obsVal) && !/(effervescence|limewater|litmus|ammonia|pungent|choking|brown|relight|pop)/i.test(obsVal)) {
-        obsLines.push('<div class="feedback-line warning">⚠️ State specific gas properties (effervescence, odor, color, litmus/limewater test).</div>');
+        obsLines.push('<div class="feedback-line warning">State specific gas properties (effervescence, odor, color, litmus/limewater test).</div>');
       }
       if (/(precipitate|ppt)/i.test(obsVal) && !/(no ppt|no precipitate|no white ppt)/i.test(obsVal) && !/(excess|soluble|insoluble|dissolv)/i.test(obsVal) && ['naoh','nh3','agno3'].includes(testKey)) {
-        obsLines.push('<div class="feedback-line info">💡 Tip: Always specify precipitate solubility in excess reagent.</div>');
+        obsLines.push('<div class="feedback-line info">Tip: Always specify precipitate solubility in excess reagent.</div>');
       }
       obsFeedback.innerHTML = obsLines.join('');
     }
@@ -1292,7 +1284,7 @@ if (typeof window !== 'undefined') {
         if (window.KnecPedagogy) {
           const preview = KnecPedagogy.getFormulaPreview(infVal, 'inorganic');
           if (preview.isValid) {
-            infLines.push(`<div class="chem-preview-box"><span class="chem-preview-badge valid">⚡ Formatted: ${preview.formattedText}</span></div>`);
+            infLines.push(`<div class="chem-preview-box"><span class="chem-preview-badge valid">Formatted: ${preview.formattedText}</span></div>`);
           }
           const tabooHits = KnecPedagogy.detectTabooPhrases(infVal, 'inference');
           tabooHits.forEach(hit => {
@@ -1301,12 +1293,12 @@ if (typeof window !== 'undefined') {
         }
         const parsed = parseInferredIons(infVal);
         if (!window.KnecPedagogy && parsed.missingChargeSymbols.length > 0) {
-          infLines.push(`<div class="feedback-line warning">⚠️ Missing charge: Element symbol written without ionic charge (e.g. ${parsed.missingChargeSymbols.join(', ')}) forfeits inference marks (-0.5 Mk).</div>`);
+          infLines.push(`<div class="feedback-line warning">Missing charge: Element symbol written without ionic charge (e.g. ${parsed.missingChargeSymbols.join(', ')}) forfeits inference marks (-0.5 Mk).</div>`);
         }
         const contras = detectContradictoryIons(testKey, salt, parsed.presentIons, obsVal, infVal);
         if (contras.length > 0) {
           const cIons = contras.map(c => c.ion).join(', ');
-          infLines.push(`<div class="feedback-line penalty">🚨 Contradictory Ion: Inferring ${cIons} contradicts observation (-0.5 Mk).</div>`);
+          infLines.push(`<div class="feedback-line penalty">Contradictory Ion: Inferring ${cIons} contradicts observation (-0.5 Mk).</div>`);
         }
       }
       infFeedback.innerHTML = infLines.join('');
@@ -1336,10 +1328,10 @@ if (typeof window !== 'undefined') {
             <div class="heating-toolbar-group">
               <div class="heating-mode-buttons">
                 <button class="btn-perform-test btn-step-heat-gentle" onclick="performTestStage('heat_solid', 'gentle_heat')">
-                  🔥 Step 1a: Gently Warm Heel
+                  Step 1a: Gently Warm Heel
                 </button>
                 <button class="btn-perform-test btn-step-heat" onclick="performTestStage('heat_solid', 'step1_heat')">
-                  💥 Step 1b: Heat Strongly in Flame
+                  Step 1b: Heat Strongly in Flame
                 </button>
               </div>
             </div>`;
@@ -1353,10 +1345,10 @@ if (typeof window !== 'undefined') {
               <!-- Primary Heating Control -->
               <div class="heating-toolbar-row">
                 <button class="btn-perform-test btn-step-heat ${isHeatedStage ? 'active-stage-btn' : ''}" onclick="performTestStage('heat_solid', 'step1_heat')" title="Heat strongly in non-luminous flame">
-                  💥 ${st.stage === 'gentle_heat' ? 'Heat Strongly' : 'Heat in Flame'}
+                  ${st.stage === 'gentle_heat' ? 'Heat Strongly' : 'Heat in Flame'}
                 </button>
                 <button class="btn-perform-test btn-step-cool ${isCooledStage ? 'active-stage-btn' : ''}" onclick="performTestStage('heat_solid', 'cooled')" title="Allow tube to cool and observe hot vs cold residue color">
-                  ❄️ Allow Tube to Cool
+                  Allow Tube to Cool
                 </button>
                 <button class="btn-redo-test" onclick="redoTest('heat_solid')" title="Clean hard-glass tube and restart dry heating">
                   <span class="redo-icon">↺</span> Clean &amp; Redo
@@ -1365,19 +1357,19 @@ if (typeof window !== 'undefined') {
 
               <!-- Interactive Evolved Gas & Vapour Probes -->
               <div class="heating-probe-selector-tray">
-                <span class="probe-tray-label">🔬 Introduce Gas Test Probe to Mouth of Tube:</span>
+                <span class="probe-tray-label">Introduce Gas Test Probe to Mouth of Tube:</span>
                 <div class="probe-chips-group">
                   <button type="button" class="btn-probe-chip ${activeProbe === 'blue_litmus' ? 'active-probe' : ''}" onclick="performTestStage('heat_solid', 'test_gas_blue_litmus', 'blue_litmus')" title="Moist Blue Litmus Paper: Turns red for acidic fumes (NO₂, SO₂, HCl)">
-                    🔵 Moist Blue Litmus
+                    Moist Blue Litmus
                   </button>
                   <button type="button" class="btn-probe-chip ${activeProbe === 'red_litmus' ? 'active-probe' : ''}" onclick="performTestStage('heat_solid', 'test_gas_red_litmus', 'red_litmus')" title="Moist Red Litmus Paper: Turns blue for alkaline NH₃ gas">
-                    🔴 Moist Red Litmus
+                    Moist Red Litmus
                   </button>
                   <button type="button" class="btn-probe-chip ${activeProbe === 'glowing_splint' ? 'active-probe' : ''}" onclick="performTestStage('heat_solid', 'test_splint', 'glowing_splint')" title="Glowing Wooden Splint: Rekindles / bursts into flame if O₂ gas is evolved">
-                    🪵 Glowing Splint
+                    Glowing Splint
                   </button>
                   <button type="button" class="btn-probe-chip ${activeProbe === 'limewater' ? 'active-probe' : ''}" onclick="performTestStage('heat_solid', 'test_limewater', 'limewater')" title="Limewater (Calcium Hydroxide): Turns milky white for CO₂ gas">
-                    🥛 Limewater Test
+                    Limewater Test
                   </button>
                 </div>
               </div>
@@ -1388,12 +1380,12 @@ if (typeof window !== 'undefined') {
         if (!st.performed || st.stage === 'idle') {
           actionButtonsHtml = `
             <button class="btn-perform-test" onclick="performTestStage('${test.key}', 'few_drops')">
-              💧 Step 1: Add Dropwise (2–3 drops ${reagentName})
+              Step 1: Add Dropwise (2–3 drops ${reagentName})
             </button>`;
         } else if (st.stage === 'few_drops') {
           actionButtonsHtml = `
             <button class="btn-perform-test btn-step-excess" onclick="performTestStage('${test.key}', 'excess')">
-              🧪 Step 2: Add in Excess (~5 cm³ ${reagentName})
+              Step 2: Add in Excess (~5 cm³ ${reagentName})
             </button>
             <button class="btn-redo-test" onclick="redoTest('${test.key}')" title="Wash test tube and redo test">
               <span class="redo-icon">↺</span> Redo Test
@@ -1401,7 +1393,7 @@ if (typeof window !== 'undefined') {
         } else {
           actionButtonsHtml = `
             <button class="btn-perform-test done" disabled>
-              ✅ Test Completed
+              Test Completed
             </button>
             <button class="btn-redo-test" onclick="redoTest('${test.key}')" title="Wash test tube and redo test">
               <span class="redo-icon">↺</span> Redo Test
@@ -1411,12 +1403,12 @@ if (typeof window !== 'undefined') {
         if (!st.performed || st.stage === 'idle') {
           actionButtonsHtml = `
             <button class="btn-perform-test btn-step-acid" onclick="performTestStage('agno3', 'step1_hno3')">
-              💧 Step 1: Add Dilute Nitric Acid (HNO₃)
+              Step 1: Add Dilute Nitric Acid (HNO₃)
             </button>`;
         } else if (st.stage === 'step1_hno3') {
           actionButtonsHtml = `
             <button class="btn-perform-test btn-step-reagent" onclick="performTestStage('agno3', 'step2_agno3')">
-              🔬 Step 2: Follow with Silver Nitrate (AgNO₃)
+              Step 2: Follow with Silver Nitrate (AgNO₃)
             </button>
             <button class="btn-redo-test" onclick="redoTest('agno3')" title="Wash tube and redo test">
               <span class="redo-icon">↺</span> Redo Test
@@ -1424,7 +1416,7 @@ if (typeof window !== 'undefined') {
         } else if (st.stage === 'step2_agno3') {
           actionButtonsHtml = `
             <button class="btn-perform-test btn-step-ammonia" onclick="performTestStage('agno3', 'step3_nh3')">
-              🫧 Step 3: Test Precipitate with Aqueous NH₃
+              Step 3: Test Precipitate with Aqueous NH₃
             </button>
             <button class="btn-redo-test" onclick="redoTest('agno3')" title="Wash tube and redo test">
               <span class="redo-icon">↺</span> Redo Test
@@ -1432,7 +1424,7 @@ if (typeof window !== 'undefined') {
         } else {
           actionButtonsHtml = `
             <button class="btn-perform-test done" disabled>
-              ✅ Test Completed
+              Test Completed
             </button>
             <button class="btn-redo-test" onclick="redoTest('agno3')" title="Wash tube and redo test">
               <span class="redo-icon">↺</span> Redo Test
@@ -1442,12 +1434,12 @@ if (typeof window !== 'undefined') {
         if (!st.performed || st.stage === 'idle') {
           actionButtonsHtml = `
             <button class="btn-perform-test btn-step-acid" onclick="performTestStage('bacl2', 'step1_acid')">
-              💧 Step 1: Add Dilute Acid (HCl / HNO₃)
+              Step 1: Add Dilute Acid (HCl / HNO₃)
             </button>`;
         } else if (st.stage === 'step1_acid') {
           actionButtonsHtml = `
             <button class="btn-perform-test btn-step-reagent" onclick="performTestStage('bacl2', 'step2_bacl2')">
-              🧫 Step 2: Follow with Barium Chloride (BaCl₂)
+              Step 2: Follow with Barium Chloride (BaCl₂)
             </button>
             <button class="btn-redo-test" onclick="redoTest('bacl2')" title="Wash tube and redo test">
               <span class="redo-icon">↺</span> Redo Test
@@ -1455,7 +1447,7 @@ if (typeof window !== 'undefined') {
         } else {
           actionButtonsHtml = `
             <button class="btn-perform-test done" disabled>
-              ✅ Test Completed
+              Test Completed
             </button>
             <button class="btn-redo-test" onclick="redoTest('bacl2')" title="Wash tube and redo test">
               <span class="redo-icon">↺</span> Redo Test
@@ -1465,12 +1457,12 @@ if (typeof window !== 'undefined') {
         if (!st.performed || st.stage === 'idle') {
           actionButtonsHtml = `
             <button class="btn-perform-test btn-step-reagent" onclick="performTestStage('brown_ring', 'step1_feso4')">
-              🧪 Step 1: Add Fresh FeSO₄(aq) Solution
+              Step 1: Add Fresh FeSO₄(aq) Solution
             </button>`;
         } else if (st.stage === 'step1_feso4') {
           actionButtonsHtml = `
             <button class="btn-perform-test btn-step-heat" onclick="performTestStage('brown_ring', 'step2_h2so4')">
-              🟤 Step 2: Trickle Conc. H₂SO₄ down the side
+              Step 2: Trickle Conc. H₂SO₄ down the side
             </button>
             <button class="btn-redo-test" onclick="redoTest('brown_ring')" title="Wash tube and redo test">
               <span class="redo-icon">↺</span> Redo Test
@@ -1478,7 +1470,7 @@ if (typeof window !== 'undefined') {
         } else {
           actionButtonsHtml = `
             <button class="btn-perform-test done" disabled>
-              ✅ Test Completed
+              Test Completed
             </button>
             <button class="btn-redo-test" onclick="redoTest('brown_ring')" title="Wash tube and redo test">
               <span class="redo-icon">↺</span> Redo Test
@@ -1488,12 +1480,12 @@ if (typeof window !== 'undefined') {
         if (!st.performed || st.stage === 'idle') {
           actionButtonsHtml = `
             <button class="btn-perform-test btn-step-acid" onclick="performTestStage('hcl', 'step1_hcl')">
-              💧 Step 1: Add 2M HCl(aq)
+              Step 1: Add 2M HCl(aq)
             </button>`;
         } else if (st.stage === 'step1_hcl') {
           actionButtonsHtml = `
             <button class="btn-perform-test btn-step-gas" onclick="performTestStage('hcl', 'step2_gas_warm')">
-              🧪 Step 2: Test Gas (Limewater) / Warm Gently
+              Step 2: Test Gas (Limewater) / Warm Gently
             </button>
             <button class="btn-redo-test" onclick="redoTest('hcl')" title="Wash tube and redo test">
               <span class="redo-icon">↺</span> Redo Test
@@ -1501,7 +1493,7 @@ if (typeof window !== 'undefined') {
         } else {
           actionButtonsHtml = `
             <button class="btn-perform-test done" disabled>
-              ✅ Test Completed
+              Test Completed
             </button>
             <button class="btn-redo-test" onclick="redoTest('hcl')" title="Wash tube and redo test">
               <span class="redo-icon">↺</span> Redo Test
@@ -1511,12 +1503,12 @@ if (typeof window !== 'undefined') {
         if (!st.performed || st.stage === 'idle') {
           actionButtonsHtml = `
             <button class="btn-perform-test" onclick="performTestStage('pb_no3', 'few_drops')">
-              💧 Step 1: Add Lead(II) Nitrate [Pb(NO₃)₂]
+              Step 1: Add Lead(II) Nitrate [Pb(NO₃)₂]
             </button>`;
         } else if (st.stage === 'few_drops') {
           actionButtonsHtml = `
             <button class="btn-perform-test btn-step-heat" onclick="performTestStage('pb_no3', 'heated')">
-              🔥 Step 2: Warm Mixture Gently in Bunsen Flame
+              Step 2: Warm Mixture Gently in Bunsen Flame
             </button>
             <button class="btn-redo-test" onclick="redoTest('pb_no3')" title="Wash tube and redo test">
               <span class="redo-icon">↺</span> Redo Test
@@ -1524,7 +1516,7 @@ if (typeof window !== 'undefined') {
         } else if (st.stage === 'heated') {
           actionButtonsHtml = `
             <button class="btn-perform-test btn-step-cool" onclick="performTestStage('pb_no3', 'cooled')">
-              ❄️ Step 3: Cool Tube under Tap Water
+              Step 3: Cool Tube under Tap Water
             </button>
             <button class="btn-redo-test" onclick="redoTest('pb_no3')" title="Wash tube and redo test">
               <span class="redo-icon">↺</span> Redo Test
@@ -1532,7 +1524,7 @@ if (typeof window !== 'undefined') {
         } else {
           actionButtonsHtml = `
             <button class="btn-perform-test done" disabled>
-              ✅ Test Completed
+              Test Completed
             </button>
             <button class="btn-redo-test" onclick="redoTest('pb_no3')" title="Wash tube and redo test">
               <span class="redo-icon">↺</span> Redo Test
@@ -1542,12 +1534,12 @@ if (typeof window !== 'undefined') {
         if (!st.performed || st.stage === 'idle') {
           actionButtonsHtml = `
             <button class="btn-perform-test" onclick="performTestStage('ki', 'few_drops')">
-              💧 Step 1: Add KI Solution
+              Step 1: Add KI Solution
             </button>`;
         } else if (st.stage === 'few_drops') {
           actionButtonsHtml = `
             <button class="btn-perform-test btn-step-heat" onclick="performTestStage('ki', 'heated')">
-              🔥 Step 2: Warm Gently in Water Bath
+              Step 2: Warm Gently in Water Bath
             </button>
             <button class="btn-redo-test" onclick="redoTest('ki')" title="Wash tube and redo test">
               <span class="redo-icon">↺</span> Redo Test
@@ -1555,7 +1547,7 @@ if (typeof window !== 'undefined') {
         } else if (st.stage === 'heated') {
           actionButtonsHtml = `
             <button class="btn-perform-test btn-step-cool" onclick="performTestStage('ki', 'cooled')">
-              ❄️ Step 3: Cool under Tap Water (Spangles)
+              Step 3: Cool under Tap Water (Spangles)
             </button>
             <button class="btn-redo-test" onclick="redoTest('ki')" title="Wash tube and redo test">
               <span class="redo-icon">↺</span> Redo Test
@@ -1563,7 +1555,7 @@ if (typeof window !== 'undefined') {
         } else {
           actionButtonsHtml = `
             <button class="btn-perform-test done" disabled>
-              ✅ Test Completed
+              Test Completed
             </button>
             <button class="btn-redo-test" onclick="redoTest('ki')" title="Wash tube and redo test">
               <span class="redo-icon">↺</span> Redo Test
@@ -1573,13 +1565,13 @@ if (typeof window !== 'undefined') {
         const modeGroupHtml = `
           <div class="flame-optics-group" role="group" aria-label="Optical Viewport Filter" style="display:inline-flex; gap:3px; background:var(--card-bg-hover); padding:3px; border-radius:8px; border:1px solid var(--card-border);">
             <button type="button" class="btn-secondary ${flameOpticalMode === 'naked' ? 'btn-primary-solid' : ''}" onclick="setFlameOpticalMode('naked')" style="font-size:0.75rem; font-weight:700; padding:4px 8px;" title="Naked Eye View: Observe direct flame emission without optical filter">
-              👁️ Naked Eye
+              Naked Eye
             </button>
             <button type="button" class="btn-secondary ${flameOpticalMode === 'cobalt' ? 'btn-primary-solid' : ''}" onclick="setFlameOpticalMode('cobalt')" style="font-size:0.75rem; font-weight:700; padding:4px 8px;" title="Cobalt Blue Glass: Filter absorbs 589nm sodium emission">
-              🟦 Cobalt Blue
+              Cobalt Blue
             </button>
             <button type="button" class="btn-secondary ${flameOpticalMode === 'split' ? 'btn-primary-solid' : ''}" onclick="setFlameOpticalMode('split')" style="font-size:0.75rem; font-weight:700; padding:4px 8px;" title="Dual Split-Optical Viewport: Side-by-side comparison of Naked Eye vs Cobalt Blue Glass">
-              🌓 Dual Split-View
+              Dual Split-View
             </button>
           </div>
         `;
@@ -1588,7 +1580,7 @@ if (typeof window !== 'undefined') {
           actionButtonsHtml = `
             <div class="flame-inline-toolbar" style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
               <button class="btn-perform-test btn-step-heat" onclick="performFlameTestOnScreen()">
-                🔥 Dip Clean Glass Rod &amp; Introduce to Flame
+                Dip Clean Glass Rod &amp; Introduce to Flame
               </button>
               ${modeGroupHtml}
             </div>`;
@@ -1596,7 +1588,7 @@ if (typeof window !== 'undefined') {
           actionButtonsHtml = `
             <div class="flame-inline-toolbar" style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
               <button class="btn-perform-test done" disabled>
-                ✅ Flame Emission Observed
+                Flame Emission Observed
               </button>
               ${modeGroupHtml}
               <button class="btn-redo-test" onclick="redoTest('flame')" title="Clean glass rod with HCl and redo test">
@@ -1604,7 +1596,7 @@ if (typeof window !== 'undefined') {
               </button>
             </div>
             <div style="font-size:0.75rem; color:var(--text-muted); margin-top:6px; line-height:1.4;">
-              💡 <b>KNEC Guideline:</b> Clean borosilicate glass rod dipped in solution and placed in flame. Use Cobalt Blue Glass to absorb Na⁺ yellow emission (589 nm) and reveal K⁺ (lilac, 766 nm &amp; 404 nm).
+              <b>KNEC Guideline:</b> Clean borosilicate glass rod dipped in solution and placed in flame. Use Cobalt Blue Glass to absorb Na⁺ yellow emission (589 nm) and reveal K⁺ (lilac, 766 nm &amp; 404 nm).
             </div>`;
         }
       } else {
@@ -1616,7 +1608,7 @@ if (typeof window !== 'undefined') {
         } else {
           actionButtonsHtml = `
             <button class="btn-perform-test done" disabled>
-              ✅ Reagent Added — Result Observed
+              Reagent Added — Result Observed
             </button>
             <button class="btn-redo-test" onclick="redoTest('${test.key}')" title="Wash tube and redo test">
               <span class="redo-icon">↺</span> Redo Test
@@ -1648,7 +1640,7 @@ if (typeof window !== 'undefined') {
               <!-- Official KCSE Procedure Callout -->
               <div style="font-size:0.84rem; color:var(--text-main); line-height:1.5; margin-bottom:12px; background:var(--card-bg-hover); padding:10px 14px; border-radius:8px; border:1px solid var(--card-border); border-left:3.5px solid var(--blue-accent);">
                 <span style="font-weight:800; color:var(--heading-color); display:flex; align-items:center; gap:6px; margin-bottom:3px;">
-                  📋 Procedure / Instructions:
+                  Procedure / Instructions:
                 </span>
                 <span>${test.procedure}</span>
               </div>
@@ -2073,10 +2065,10 @@ if (typeof window !== 'undefined') {
 
           <!-- Spectral Telemetry Headers -->
           <rect x="4" y="6" width="76" height="14" rx="3" fill="#0F172A" opacity="0.88"/>
-          <text x="42" y="16" font-size="7" font-weight="800" fill="#F8FAFC" text-anchor="middle" font-family="'JetBrains Mono', monospace">👁️ ${spec.naked}</text>
+          <text x="42" y="16" font-size="7" font-weight="800" fill="#F8FAFC" text-anchor="middle" font-family="'JetBrains Mono', monospace">${spec.naked}</text>
 
           <rect x="88" y="6" width="78" height="14" rx="3" fill="#1E3A8A" opacity="0.94"/>
-          <text x="127" y="16" font-size="7" font-weight="800" fill="#93C5FD" text-anchor="middle" font-family="'JetBrains Mono', monospace">🟦 ${spec.cobalt}</text>
+          <text x="127" y="16" font-size="7" font-weight="800" fill="#93C5FD" text-anchor="middle" font-family="'JetBrains Mono', monospace">${spec.cobalt}</text>
         </svg>
       `;
     }
@@ -2174,7 +2166,7 @@ if (typeof window !== 'undefined') {
         isCobaltGlassActive = false;
         flameOpticalMode = 'naked';
         const btnCobalt = document.getElementById('btnCobaltGlass');
-        if (btnCobalt) btnCobalt.innerHTML = '🟦 Cobalt Blue Glass Filter: OFF';
+        if (btnCobalt) btnCobalt.innerHTML = 'Cobalt Blue Glass Filter: OFF';
       }
     }
     renderAll();
@@ -2214,8 +2206,8 @@ if (typeof window !== 'undefined') {
         st.isTestingProbe = false;
         playFlameSound();
         st.statusLabel = (targetStage === 'gentle_heat' || targetStage === 'warm')
-          ? '🔥 Gently warming tube heel... solid absorbing heat from flame...'
-          : '🔥 Heating strongly in flame... solid absorbing heat from flame...';
+          ? 'Gently warming tube heel... solid absorbing heat from flame...'
+          : 'Heating strongly in flame... solid absorbing heat from flame...';
 
         setTimeout(() => {
           if (testStates['heat_solid'] && testStates['heat_solid'].isHeating) {
@@ -2238,7 +2230,7 @@ if (typeof window !== 'undefined') {
         st.isCooling = true;
         st.isHeating = false;
         st.isTestingProbe = false;
-        st.statusLabel = '❄️ Tube removed from flame... cooling down to room temperature...';
+        st.statusLabel = 'Tube removed from flame... cooling down to room temperature...';
 
         setTimeout(() => {
           if (testStates['heat_solid'] && testStates['heat_solid'].isCooling) {
@@ -2250,7 +2242,7 @@ if (typeof window !== 'undefined') {
       } else if (targetStage === 'test_splint' || (targetStage === 'step2_gas_test' && st.probe === 'glowing_splint')) {
         st.isTestingProbe = true;
         st.probe = 'glowing_splint';
-        st.statusLabel = '🪵 Introducing glowing splint into mouth of tube...';
+        st.statusLabel = 'Introducing glowing splint into mouth of tube...';
 
         setTimeout(() => {
           if (testStates['heat_solid'] && testStates['heat_solid'].isTestingProbe) {
@@ -2268,7 +2260,7 @@ if (typeof window !== 'undefined') {
       } else if (targetStage === 'test_gas_blue_litmus' || (targetStage === 'step2_gas_test' && st.probe === 'blue_litmus')) {
         st.isTestingProbe = true;
         st.probe = 'blue_litmus';
-        st.statusLabel = '📄 Holding moist blue litmus paper at mouth of tube...';
+        st.statusLabel = 'Holding moist blue litmus paper at mouth of tube...';
 
         setTimeout(() => {
           if (testStates['heat_solid'] && testStates['heat_solid'].isTestingProbe) {
@@ -2284,7 +2276,7 @@ if (typeof window !== 'undefined') {
       } else if (targetStage === 'test_gas_red_litmus' || (targetStage === 'step2_gas_test' && st.probe === 'red_litmus')) {
         st.isTestingProbe = true;
         st.probe = 'red_litmus';
-        st.statusLabel = '📄 Holding moist red litmus paper at mouth of tube...';
+        st.statusLabel = 'Holding moist red litmus paper at mouth of tube...';
 
         setTimeout(() => {
           if (testStates['heat_solid'] && testStates['heat_solid'].isTestingProbe) {
@@ -2300,7 +2292,7 @@ if (typeof window !== 'undefined') {
       } else if (targetStage === 'test_limewater' || (targetStage === 'step2_gas_test' && st.probe === 'limewater')) {
         st.isTestingProbe = true;
         st.probe = 'limewater';
-        st.statusLabel = '🥛 Introducing limewater droplet into mouth of tube...';
+        st.statusLabel = 'Introducing limewater droplet into mouth of tube...';
 
         setTimeout(() => {
           if (testStates['heat_solid'] && testStates['heat_solid'].isTestingProbe) {
@@ -2755,7 +2747,7 @@ if (typeof window !== 'undefined') {
     isCobaltGlassActive = (mode === 'cobalt');
     const btnCobalt = document.getElementById('btnCobaltGlass');
     if (btnCobalt) {
-      btnCobalt.innerHTML = (mode === 'cobalt') ? '🟦 Cobalt Blue Glass Filter: ON' : '🟦 Cobalt Blue Glass Filter: OFF';
+      btnCobalt.innerHTML = (mode === 'cobalt') ? 'Cobalt Blue Glass Filter: ON' : 'Cobalt Blue Glass Filter: OFF';
     }
     if (testStates['flame'] && testStates['flame'].performed && !testStates['flame'].isIntroducing) {
       const fTest = TESTS.find(t => t.key === 'flame');
@@ -2799,7 +2791,7 @@ if (typeof window !== 'undefined') {
     st.bubbling = false;
     st.correctKey = correctKey;
     st.color = '#38BDF8'; // Unexcited pale blue non-luminous flame while entering
-    st.statusLabel = '🔥 Dipping clean glass rod into solution and introducing to flame...';
+    st.statusLabel = 'Dipping clean glass rod into solution and introducing to flame...';
     renderAll();
 
     setTimeout(() => {
@@ -2874,7 +2866,9 @@ if (typeof window !== 'undefined') {
     const box = document.getElementById('idResultBox');
     box.style.display = 'block';
     box.innerHTML = `<div class="id-result-card" style="background:var(--blue-bg);border:1px solid var(--blue-accent);">
-      <div class="id-result-icon">⏳</div>
+      <div class="id-result-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin 1s linear infinite;"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      </div>
       <div class="id-result-text"><h3>Saving…</h3></div>
     </div>`;
 
@@ -2958,30 +2952,36 @@ if (typeof window !== 'undefined') {
       const isOfflineQueued = saveRes && saveRes.offlineQueued;
       const submitBtn = document.getElementById('submitIdBtn');
       if (submitBtn) {
-        submitBtn.textContent = isOfflineQueued ? '📦 Saved Offline' : '✅ Submitted';
+        submitBtn.textContent = isOfflineQueued ? 'Saved Offline' : 'Submitted';
         submitBtn.disabled = true;
       }
 
       const offlinePill = isOfflineQueued ? `
         <div style="margin-top:10px; padding:6px 12px; border-radius:6px; background:rgba(234,179,8,0.12); border:1px solid rgba(234,179,8,0.35); color:#FACC15; font-size:0.8rem; font-weight:600; display:flex; align-items:center; gap:6px;">
-          <span>🟡</span> <span><b>Saved Offline:</b> Analysis results are stored locally and will sync to your teacher on reconnect.</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> <span><b>Saved Offline:</b> Analysis results are stored locally and will sync to your teacher on reconnect.</span>
         </div>
       ` : '';
 
       box.innerHTML = `
         <div class="id-result-card ${fullyCorrect ? 'correct' : 'incorrect'}">
-          <div class="id-result-icon">${fullyCorrect ? '🎉' : '⚠️'}</div>
+          <div class="id-result-icon">
+            ${fullyCorrect 
+              ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
+              : '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'}
+          </div>
           <div class="id-result-text">
             <h3>${fullyCorrect ? 'Correct Identification!' : 'Incorrect Identification'}</h3>
-            <p>The salt was <b>${esc(salt.name)} (${esc(salt.formula)})</b>. Cation: <b>${esc(salt.cationDisplay)}</b>  Anion: <b>${esc(salt.anionDisplay)}</b>.</p>
-            ${!cationCorrect ? `<p style="color:var(--red-accent);margin-top:4px;">✗ Your cation (${esc(cation)}) was incorrect.</p>` : ''}
-            ${!anionCorrect  ? `<p style="color:var(--red-accent);margin-top:4px;">✗ Your anion (${esc(anion)}) was incorrect.</p>` : ''}
+            <p>The salt was <b>${esc(salt.name)} (${esc(salt.formula)})</b>. Cation: <b>${esc(salt.cationDisplay)}</b> &bull; Anion: <b>${esc(salt.anionDisplay)}</b>.</p>
+            ${!cationCorrect ? `<p style="color:var(--red-accent);margin-top:4px;">Incomplete / Incorrect Cation: Expected ${esc(salt.cationDisplay)}, selected ${esc(cation)}.</p>` : ''}
+            ${!anionCorrect  ? `<p style="color:var(--red-accent);margin-top:4px;">Incomplete / Incorrect Anion: Expected ${esc(salt.anionDisplay)}, selected ${esc(anion)}.</p>` : ''}
             ${offlinePill}
           </div>
         </div>`;
     } catch (err) {
       box.innerHTML = `<div class="id-result-card incorrect">
-        <div class="id-result-icon">❌</div>
+        <div class="id-result-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        </div>
         <div class="id-result-text"><h3>Save Error</h3><p>${esc(err.message)}</p></div>
       </div>`;
     }
@@ -3070,7 +3070,11 @@ if (typeof window !== 'undefined') {
   window.toggleSound = function() {
     isSoundEnabled = !isSoundEnabled;
     const btn = document.getElementById('soundToggleBtn');
-    if (btn) btn.innerHTML = isSoundEnabled ? '🔊 Sound ON' : '🔇 Mute';
+    if (btn) {
+      btn.innerHTML = isSoundEnabled
+        ? '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg> Sound ON'
+        : '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg> Mute';
+    }
   };
 
   function playFlameSound() {
@@ -3514,13 +3518,13 @@ if (typeof window !== 'undefined') {
         <!-- Penalty Badges Row -->
         <div style="display:flex; justify-content:center; gap:10px; margin-top:14px; flex-wrap:wrap;">
           <span style="font-size:0.76rem; font-weight:700; padding:4px 10px; border-radius:6px; background:${penalties.totalCiPenalties > 0 ? 'var(--red-bg)' : 'var(--card-bg)'}; color:${penalties.totalCiPenalties > 0 ? 'var(--red-accent)' : 'var(--text-muted)'}; border:1px solid var(--card-border);">
-            ${penalties.totalCiPenalties > 0 ? '🚨' : '✅'} Contradictory Ion Deductions: -${penalties.totalCiPenalties || 0} Mk
+            ${penalties.totalCiPenalties > 0 ? '[Deduction]' : '[Nil]'} Contradictory Ion Deductions: -${penalties.totalCiPenalties || 0} Mk
           </span>
           <span style="font-size:0.76rem; font-weight:700; padding:4px 10px; border-radius:6px; background:${penalties.totalChargePenalties > 0 ? 'var(--amber-bg)' : 'var(--card-bg)'}; color:${penalties.totalChargePenalties > 0 ? 'var(--amber-accent)' : 'var(--text-muted)'}; border:1px solid var(--card-border);">
-            ${penalties.totalChargePenalties > 0 ? '⚠️' : '✅'} Missing Charge Deductions: -${penalties.totalChargePenalties || 0} Mk
+            ${penalties.totalChargePenalties > 0 ? '[Deduction]' : '[Nil]'} Missing Charge Deductions: -${penalties.totalChargePenalties || 0} Mk
           </span>
           <span style="font-size:0.76rem; font-weight:700; padding:4px 10px; border-radius:6px; background:${penalties.totalTabooPenalties > 0 ? 'var(--red-bg)' : 'var(--card-bg)'}; color:${penalties.totalTabooPenalties > 0 ? 'var(--red-accent)' : 'var(--text-muted)'}; border:1px solid var(--card-border);">
-            ${penalties.totalTabooPenalties > 0 ? '🚨' : '✅'} Taboo Phrase Deductions: -${penalties.totalTabooPenalties || 0} Mk
+            ${penalties.totalTabooPenalties > 0 ? '[Deduction]' : '[Nil]'} Taboo Phrase Deductions: -${penalties.totalTabooPenalties || 0} Mk
           </span>
         </div>
       </div>
@@ -3589,11 +3593,11 @@ if (typeof window !== 'undefined') {
                 return `
                   <div class="examiner-rationale-box ${rat.isFullMark ? 'full-marks' : ''}">
                     <div class="examiner-rationale-header">
-                      <span>👨‍🏫 KNEC Examiner Rationale &bull; ${rat.knecClause}</span>
-                      <span>${rat.isFullMark ? '✅ Satisfied' : '⚠️ Deduction'}</span>
+                      <span>KNEC Examiner Rationale &bull; ${rat.knecClause}</span>
+                      <span>${rat.isFullMark ? 'Satisfied' : 'Deduction'}</span>
                     </div>
                     <div class="examiner-rationale-text">${rat.rationale}</div>
-                    ${rat.pedagogicalTip ? `<div class="examiner-rationale-tip">💡 Revision Pointer: ${rat.pedagogicalTip}</div>` : ''}
+                    ${rat.pedagogicalTip ? `<div class="examiner-rationale-tip">Revision Pointer: ${rat.pedagogicalTip}</div>` : ''}
                   </div>
                 `;
               }

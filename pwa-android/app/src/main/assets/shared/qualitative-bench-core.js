@@ -1975,7 +1975,7 @@
         const isCobaltGlass = (effMode === 'cobalt');
         const isSplit = (effMode === 'split');
         if (stage === 'introducing' || (options && options.isIntroducing)) {
-          statusLabel = '🔥 Dipping clean glass rod in solution and introducing to non-luminous flame...';
+          statusLabel = 'Dipping clean glass rod in solution and introducing to non-luminous flame...';
         } else if (isSplit) {
           statusLabel = (cation === 'Na+' || salt.key.includes('sodium') || salt.name.includes('Sodium'))
             ? 'Dual Split-View: Naked Eye (589 nm Golden Yellow) | Cobalt Glass (Absorbed / Invisible)'
@@ -2860,57 +2860,57 @@
       badgeText = `DRY HARD-GLASS TUBE READY · ADD ${sampleLabel.toUpperCase()}`;
       badgeColor = '#94A3B8';
     } else if (isSpatulaStage) {
-      badgeText = isAdding ? `🥄 INTRODUCING ${sampleLabel.toUpperCase()} VIA SPATULA...` : `🥄 ${sampleLabel.toUpperCase()} PLACED IN DRY TUBE`;
+      badgeText = isAdding ? `INTRODUCING ${sampleLabel.toUpperCase()} VIA SPATULA...` : `${sampleLabel.toUpperCase()} PLACED IN DRY TUBE`;
       badgeColor = '#38BDF8';
     } else if (isHeating || isActivelyHeating) {
-      badgeText = isGentleHeat ? '🔥 GENTLE WARMING: SOLID ABSORBING HEAT...' : '🔥 HEATING STRONGLY: SOLID ABSORBING HEAT...';
+      badgeText = isGentleHeat ? 'GENTLE WARMING: SOLID ABSORBING HEAT...' : 'HEATING STRONGLY: SOLID ABSORBING HEAT...';
       badgeColor = '#F59E0B';
     } else if (isCooling) {
-      badgeText = '❄️ TUBE REMOVED FROM FLAME: COOLING DOWN...';
+      badgeText = 'TUBE REMOVED FROM FLAME: COOLING DOWN...';
       badgeColor = '#38BDF8';
     } else if (isCooled) {
-      badgeText = cation === 'Zn2+' ? '❄️ COOLED: ZnO REVERTED TO WHITE' :
-        (cation === 'Pb2+' ? '❄️ COOLED: PbO TURNED YELLOW' :
-        (anion === 'Cr2O7^2-' || saltKey === 'potassiumDichromate' ? '❄️ COOLED: DARK GREEN Cr₂O₃ RESIDUE' :
-        (decomposesCompletely ? '❄️ COOLED: TUBE IS EMPTY (NO RESIDUE)' : '❄️ COOLED TO ROOM TEMPERATURE')));
+      badgeText = cation === 'Zn2+' ? 'COOLED: ZnO REVERTED TO WHITE' :
+        (cation === 'Pb2+' ? 'COOLED: PbO TURNED YELLOW' :
+        (anion === 'Cr2O7^2-' || saltKey === 'potassiumDichromate' ? 'COOLED: DARK GREEN Cr₂O₃ RESIDUE' :
+        (decomposesCompletely ? 'COOLED: TUBE IS EMPTY (NO RESIDUE)' : 'COOLED TO ROOM TEMPERATURE')));
       badgeColor = '#38BDF8';
     } else if (activeProbe === 'glowing_splint') {
       if (isTestingProbe) {
-        badgeText = '🪵 INTRODUCING GLOWING SPLINT TO TUBE MOUTH...';
+        badgeText = 'INTRODUCING GLOWING SPLINT TO TUBE MOUTH...';
         badgeColor = '#F59E0B';
       } else {
-        badgeText = splintIgnites ? '🪵 SPLINT REKINDLES INTO FLAME (O₂)' : '🪵 SPLINT EXTINGUISHED (NO O₂)';
+        badgeText = splintIgnites ? 'SPLINT REKINDLES INTO FLAME (O₂)' : 'SPLINT EXTINGUISHED (NO O₂)';
         badgeColor = splintIgnites ? '#F59E0B' : '#94A3B8';
       }
     } else if (activeProbe === 'blue_litmus') {
       if (isTestingProbe) {
-        badgeText = '🔵 HOLDING MOIST BLUE LITMUS AT MOUTH...';
+        badgeText = 'HOLDING MOIST BLUE LITMUS AT MOUTH...';
         badgeColor = '#3B82F6';
       } else {
-        badgeText = isAcidicGas ? '🔵 BLUE LITMUS: TURNED RED (ACIDIC)' : '🔵 BLUE LITMUS: UNCHANGED (BLUE)';
+        badgeText = isAcidicGas ? 'BLUE LITMUS: TURNED RED (ACIDIC)' : 'BLUE LITMUS: UNCHANGED (BLUE)';
         badgeColor = isAcidicGas ? '#EF4444' : '#38BDF8';
       }
     } else if (activeProbe === 'red_litmus') {
       if (isTestingProbe) {
-        badgeText = '🔴 HOLDING MOIST RED LITMUS AT MOUTH...';
+        badgeText = 'HOLDING MOIST RED LITMUS AT MOUTH...';
         badgeColor = '#EF4444';
       } else {
-        badgeText = evolvesNH3 ? '🔴 RED LITMUS: TURNED BLUE (ALKALINE)' : '🔴 RED LITMUS: UNCHANGED (RED)';
+        badgeText = evolvesNH3 ? 'RED LITMUS: TURNED BLUE (ALKALINE)' : 'RED LITMUS: UNCHANGED (RED)';
         badgeColor = evolvesNH3 ? '#38BDF8' : '#EF4444';
       }
     } else if (activeProbe === 'limewater') {
       if (isTestingProbe) {
-        badgeText = '🥛 INTRODUCING LIMEWATER DROPLET AT MOUTH...';
+        badgeText = 'INTRODUCING LIMEWATER DROPLET AT MOUTH...';
         badgeColor = '#94A3B8';
       } else {
-        badgeText = limewaterMilky ? '🥛 LIMEWATER: TURNED MILKY (CO₂)' : '🥛 LIMEWATER: REMAINED CLEAR';
+        badgeText = limewaterMilky ? 'LIMEWATER: TURNED MILKY (CO₂)' : 'LIMEWATER: REMAINED CLEAR';
         badgeColor = limewaterMilky ? '#E2E8F0' : '#94A3B8';
       }
     } else if (isStrongHeat) {
-      badgeText = decrepitates ? '💥 STRONG HEAT: DECREPITATION CRACKLE' : '🔥 HEATING STRONGLY (NON-LUMINOUS)';
+      badgeText = decrepitates ? 'STRONG HEAT: DECREPITATION CRACKLE' : 'HEATING STRONGLY (NON-LUMINOUS)';
       badgeColor = '#F59E0B';
     } else if (isGentleHeat) {
-      badgeText = '🔥 GENTLY WARMING TUBE HEEL';
+      badgeText = 'GENTLY WARMING TUBE HEEL';
       badgeColor = '#38BDF8';
     }
 
@@ -3433,11 +3433,11 @@
           <!-- Spectral Telemetry Headers -->
           <g transform="translate(6, 8)">
             <rect x="0" y="0" width="80" height="16" rx="3" fill="#0F172A" opacity="0.92"/>
-            <text x="40" y="11" font-size="7" font-weight="800" fill="#F8FAFC" text-anchor="middle" font-family="'JetBrains Mono', monospace">👁️ ${spec.naked}</text>
+            <text x="40" y="11" font-size="7" font-weight="800" fill="#F8FAFC" text-anchor="middle" font-family="'JetBrains Mono', monospace">${spec.naked}</text>
           </g>
           <g transform="translate(94, 8)">
             <rect x="0" y="0" width="80" height="16" rx="3" fill="#1E3A8A" opacity="0.95"/>
-            <text x="40" y="11" font-size="7" font-weight="800" fill="#93C5FD" text-anchor="middle" font-family="'JetBrains Mono', monospace">🟦 ${spec.cobalt}</text>
+            <text x="40" y="11" font-size="7" font-weight="800" fill="#93C5FD" text-anchor="middle" font-family="'JetBrains Mono', monospace">${spec.cobalt}</text>
           </g>
         </svg>
       `;
@@ -3516,7 +3516,7 @@
           <g transform="translate(10, 10)">
             <rect x="0" y="0" width="${introducing ? '94' : '78'}" height="16" rx="3" fill="#0F172A" opacity="0.88"/>
             <text x="${introducing ? '47' : '39'}" y="11" font-size="7.2" font-weight="800" fill="${introducing ? '#38BDF8' : '#F8FAFC'}" text-anchor="middle" font-family="'JetBrains Mono', monospace">
-              ${introducing ? '🔥 INTRODUCING...' : '👁️ NAKED EYE'}
+              ${introducing ? 'INTRODUCING...' : 'NAKED EYE'}
             </text>
           </g>
         ` : '')}
@@ -3611,11 +3611,11 @@
       const sampleLabel = extractSampleName(prompt, salt, testKeyOverride || tId);
       if (!stage || stage === 'idle') {
         return [
-          { stage: 'inspected', label: `🔍 Inspect ${sampleLabel}`, cls: 'btn-perform-test btn-step-inspect' }
+          { stage: 'inspected', label: `Inspect ${sampleLabel}`, cls: 'btn-perform-test btn-step-inspect' }
         ];
       } else {
         return [
-          { stage: 'done', label: '✅ Sample Inspected', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'done', label: 'Sample Inspected', cls: 'btn-perform-test done', disabled: true },
           { stage: 'idle', label: '↺ Re-examine', cls: 'btn-redo-test', isRedo: true }
         ];
       }
@@ -3629,19 +3629,19 @@
       const hasPortionsOrFilter = pStr.includes('portion') || pStr.includes('divide') || pStr.includes('filter');
       if (!stage || stage === 'idle') {
         return [
-          { stage: 'step1_water', label: '💧 Step 1: Add Distilled Water & Dissolve Solid', cls: 'btn-perform-test btn-step-dissolve' }
+          { stage: 'step1_water', label: 'Step 1: Add Distilled Water & Dissolve Solid', cls: 'btn-perform-test btn-step-dissolve' }
         ];
       } else if (stage === 'step1_water' && hasPortionsOrFilter) {
         const step2Label = pStr.includes('filter')
-          ? '🔬 Step 2: Filter Mixture & Retain Filtrate / Residue'
-          : '🧪 Step 2: Divide Stock Solution into Portions';
+          ? 'Step 2: Filter Mixture & Retain Filtrate / Residue'
+          : 'Step 2: Divide Stock Solution into Portions';
         return [
           { stage: 'dissolved', label: step2Label, cls: 'btn-perform-test btn-step-reagent' },
           { stage: 'idle', label: '↺ Redo', cls: 'btn-redo-test', isRedo: true }
         ];
       } else {
         return [
-          { stage: 'done', label: hasPortionsOrFilter ? '✅ Stock Portions Prepared' : '✅ Stock Solution Formed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'done', label: hasPortionsOrFilter ? 'Stock Portions Prepared' : 'Stock Solution Formed', cls: 'btn-perform-test done', disabled: true },
           { stage: 'idle', label: '↺ Redo', cls: 'btn-redo-test', isRedo: true }
         ];
       }
@@ -3657,11 +3657,11 @@
     ) {
       if (!stage || stage === 'idle') {
         return [
-          { stage: 'flame_tested', label: '🔥 Place Glass Rod into Flame', cls: 'btn-perform-test btn-step-heat' }
+          { stage: 'flame_tested', label: 'Place Glass Rod into Flame', cls: 'btn-perform-test btn-step-heat' }
         ];
       } else {
         return [
-          { stage: 'done', label: '✅ Flame Color Recorded', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'done', label: 'Flame Color Recorded', cls: 'btn-perform-test done', disabled: true },
           { stage: 'idle', label: '↺ Redo', cls: 'btn-redo-test', isRedo: true }
         ];
       }
@@ -3674,21 +3674,21 @@
     if (isH2O2 && isNaOHReagent) {
       if (!stage || stage === 'idle') {
         return [
-          { stage: 'step1_h2o2', label: '💧 Step 1: Add 1 cm³ Hydrogen Peroxide (H₂O₂)', cls: 'btn-perform-test' }
+          { stage: 'step1_h2o2', label: 'Step 1: Add 1 cm³ Hydrogen Peroxide (H₂O₂)', cls: 'btn-perform-test' }
         ];
       } else if (stage === 'step1_h2o2' || stage === 'added_h2o2') {
         return [
-          { stage: 'few_drops', label: '💧 Step 2: Add 2M NaOH Dropwise (2–3 drops)', cls: 'btn-perform-test' },
+          { stage: 'few_drops', label: 'Step 2: Add 2M NaOH Dropwise (2–3 drops)', cls: 'btn-perform-test' },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else if (stage === 'few_drops' || stage === 'step2') {
         return [
-          { stage: 'excess', label: '🧪 Step 3: Add 2M NaOH in Excess (~5 cm³)', cls: 'btn-perform-test btn-step-excess' },
+          { stage: 'excess', label: 'Step 3: Add 2M NaOH in Excess (~5 cm³)', cls: 'btn-perform-test btn-step-excess' },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else {
         return [
-          { stage: 'done', label: '✅ Test Completed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'done', label: 'Test Completed', cls: 'btn-perform-test done', disabled: true },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       }
@@ -3700,28 +3700,28 @@
       const hasExcessOrDropwise = pStr.includes('excess') || pStr.includes('dropwise');
       if (!stage || stage === 'idle') {
         return [
-          { stage: 'few_drops', label: hasExcessOrDropwise ? '💧 Step 1: Add 2M NaOH Dropwise (2–3 drops)' : '💧 Step 1: Add 2M Sodium Hydroxide (NaOH)', cls: 'btn-perform-test' }
+          { stage: 'few_drops', label: hasExcessOrDropwise ? 'Step 1: Add 2M NaOH Dropwise (2–3 drops)' : 'Step 1: Add 2M Sodium Hydroxide (NaOH)', cls: 'btn-perform-test' }
         ];
       } else if (stage === 'few_drops' || stage === 'step1') {
         if (hasExcessOrDropwise) {
           return [
-            { stage: 'excess', label: '🧪 Step 2: Add 2M NaOH in Excess (~5 cm³)', cls: 'btn-perform-test btn-step-excess' },
+            { stage: 'excess', label: 'Step 2: Add 2M NaOH in Excess (~5 cm³)', cls: 'btn-perform-test btn-step-excess' },
             { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
           ];
         } else {
           return [
-            { stage: 'heated', label: '🔥 Step 2: Warm Gently & Test Gas with Moist Red Litmus', cls: 'btn-perform-test btn-step-heat' },
+            { stage: 'heated', label: 'Step 2: Warm Gently & Test Gas with Moist Red Litmus', cls: 'btn-perform-test btn-step-heat' },
             { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
           ];
         }
       } else if (stage === 'excess') {
         return [
-          { stage: 'heated', label: '🔥 Step 3: Warm Gently & Test Gas with Moist Red Litmus', cls: 'btn-perform-test btn-step-heat' },
+          { stage: 'heated', label: 'Step 3: Warm Gently & Test Gas with Moist Red Litmus', cls: 'btn-perform-test btn-step-heat' },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else {
         return [
-          { stage: 'done', label: '✅ NH₃ Gas Test Completed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'done', label: 'NH₃ Gas Test Completed', cls: 'btn-perform-test done', disabled: true },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       }
@@ -3733,16 +3733,16 @@
       const reagentLabel = isNaOHReagent ? 'NaOH' : 'NH₃';
       if (!stage || stage === 'idle') {
         return [
-          { stage: 'few_drops', label: `💧 Step 1: Add Dropwise (2–3 drops ${reagentLabel})`, cls: 'btn-perform-test' }
+          { stage: 'few_drops', label: `Step 1: Add Dropwise (2–3 drops ${reagentLabel})`, cls: 'btn-perform-test' }
         ];
       } else if (stage === 'few_drops' || stage === 'step1') {
         return [
-          { stage: 'excess', label: `🧪 Step 2: Add in Excess (~5 cm³ ${reagentLabel})`, cls: 'btn-perform-test btn-step-excess' },
+          { stage: 'excess', label: `Step 2: Add in Excess (~5 cm³ ${reagentLabel})`, cls: 'btn-perform-test btn-step-excess' },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else {
         return [
-          { stage: 'done', label: '✅ Test Completed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'done', label: 'Test Completed', cls: 'btn-perform-test done', disabled: true },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       }
@@ -3775,16 +3775,16 @@
           // Order A: Barium added first, then dilute acid
           if (!stage || stage === 'idle') {
             return [
-              { stage: 'step1_barium', label: `💧 Step 1: Add 3 Drops ${baLabel}`, cls: 'btn-perform-test btn-step-reagent' }
+              { stage: 'step1_barium', label: `Step 1: Add 3 Drops ${baLabel}`, cls: 'btn-perform-test btn-step-reagent' }
             ];
           } else if (stage === 'step1_barium' || stage === 'step1') {
             return [
-              { stage: 'step2_acid', label: `🧪 Step 2: Follow with ${acidLabel}`, cls: 'btn-perform-test btn-step-acid' },
+              { stage: 'step2_acid', label: `Step 2: Follow with ${acidLabel}`, cls: 'btn-perform-test btn-step-acid' },
               { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
             ];
           } else {
             return [
-              { stage: 'done', label: '✅ Test Completed', cls: 'btn-perform-test done', disabled: true },
+              { stage: 'done', label: 'Test Completed', cls: 'btn-perform-test done', disabled: true },
               { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
             ];
           }
@@ -3792,16 +3792,16 @@
           // Order B: Dilute acid added first, then barium
           if (!stage || stage === 'idle') {
             return [
-              { stage: 'step1_acid', label: `💧 Step 1: Add 3 Drops ${acidLabel}`, cls: 'btn-perform-test btn-step-acid' }
+              { stage: 'step1_acid', label: `Step 1: Add 3 Drops ${acidLabel}`, cls: 'btn-perform-test btn-step-acid' }
             ];
           } else if (stage === 'step1_acid' || stage === 'step1') {
             return [
-              { stage: 'step2_bacl2', label: `🧫 Step 2: Follow with ${baLabel}`, cls: 'btn-perform-test btn-step-reagent' },
+              { stage: 'step2_bacl2', label: `Step 2: Follow with ${baLabel}`, cls: 'btn-perform-test btn-step-reagent' },
               { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
             ];
           } else {
             return [
-              { stage: 'done', label: '✅ Test Completed', cls: 'btn-perform-test done', disabled: true },
+              { stage: 'done', label: 'Test Completed', cls: 'btn-perform-test done', disabled: true },
               { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
             ];
           }
@@ -3810,11 +3810,11 @@
         // Single reagent barium addition
         if (!stage || stage === 'idle') {
           return [
-            { stage: 'step1_barium', label: `💧 Step 1: Add 3 Drops ${baLabel}`, cls: 'btn-perform-test' }
+            { stage: 'step1_barium', label: `Step 1: Add 3 Drops ${baLabel}`, cls: 'btn-perform-test' }
           ];
         } else {
           return [
-            { stage: 'done', label: '✅ Test Completed', cls: 'btn-perform-test done', disabled: true },
+            { stage: 'done', label: 'Test Completed', cls: 'btn-perform-test done', disabled: true },
             { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
           ];
         }
@@ -3832,42 +3832,42 @@
       if (isAgFirst) {
         if (!stage || stage === 'idle') {
           return [
-            { stage: 'step1_agno3', label: '💧 Step 1: Add 3 Drops Silver Nitrate (AgNO₃)', cls: 'btn-perform-test' }
+            { stage: 'step1_agno3', label: 'Step 1: Add 3 Drops Silver Nitrate (AgNO₃)', cls: 'btn-perform-test' }
           ];
         } else if (stage === 'step1_agno3' || stage === 'step1') {
           return [
-            { stage: 'step2_acid', label: '🧪 Step 2: Follow with Dilute Nitric Acid (HNO₃)', cls: 'btn-perform-test btn-step-acid' },
+            { stage: 'step2_acid', label: 'Step 2: Follow with Dilute Nitric Acid (HNO₃)', cls: 'btn-perform-test btn-step-acid' },
             { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
           ];
         } else if (stage === 'step2_acid' && hasNH3) {
           return [
-            { stage: 'step3_nh3', label: '🫧 Step 3: Test Precipitate with Aqueous NH₃', cls: 'btn-perform-test btn-step-ammonia' },
+            { stage: 'step3_nh3', label: 'Step 3: Test Precipitate with Aqueous NH₃', cls: 'btn-perform-test btn-step-ammonia' },
             { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
           ];
         } else {
           return [
-            { stage: 'done', label: '✅ Halide Test Completed', cls: 'btn-perform-test done', disabled: true },
+            { stage: 'done', label: 'Halide Test Completed', cls: 'btn-perform-test done', disabled: true },
             { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
           ];
         }
       } else {
         if (!stage || stage === 'idle') {
           return [
-            { stage: 'step1_hno3', label: '💧 Step 1: Add 3 Drops Dilute Nitric Acid (HNO₃)', cls: 'btn-perform-test btn-step-acid' }
+            { stage: 'step1_hno3', label: 'Step 1: Add 3 Drops Dilute Nitric Acid (HNO₃)', cls: 'btn-perform-test btn-step-acid' }
           ];
         } else if (stage === 'step1_hno3' || stage === 'step1') {
           return [
-            { stage: 'step2_agno3', label: '🔬 Step 2: Follow with Silver Nitrate (AgNO₃)', cls: 'btn-perform-test btn-step-reagent' },
+            { stage: 'step2_agno3', label: 'Step 2: Follow with Silver Nitrate (AgNO₃)', cls: 'btn-perform-test btn-step-reagent' },
             { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
           ];
         } else if (stage === 'step2_agno3' && hasNH3) {
           return [
-            { stage: 'step3_nh3', label: '🫧 Step 3: Test Precipitate with Aqueous NH₃', cls: 'btn-perform-test btn-step-ammonia' },
+            { stage: 'step3_nh3', label: 'Step 3: Test Precipitate with Aqueous NH₃', cls: 'btn-perform-test btn-step-ammonia' },
             { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
           ];
         } else {
           return [
-            { stage: 'done', label: '✅ Halide Test Completed', cls: 'btn-perform-test done', disabled: true },
+            { stage: 'done', label: 'Halide Test Completed', cls: 'btn-perform-test done', disabled: true },
             { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
           ];
         }
@@ -3879,16 +3879,16 @@
     if (isBrownRing) {
       if (!stage || stage === 'idle') {
         return [
-          { stage: 'step1_feso4', label: '🧪 Step 1: Add Fresh FeSO₄(aq) Solution', cls: 'btn-perform-test btn-step-reagent' }
+          { stage: 'step1_feso4', label: 'Step 1: Add Fresh FeSO₄(aq) Solution', cls: 'btn-perform-test btn-step-reagent' }
         ];
       } else if (stage === 'step1_feso4' || stage === 'step1') {
         return [
-          { stage: 'step2_h2so4', label: '🟤 Step 2: Trickle Conc. H₂SO₄ Down Tube Wall', cls: 'btn-perform-test btn-step-heat' },
+          { stage: 'step2_h2so4', label: 'Step 2: Trickle Conc. H₂SO₄ Down Tube Wall', cls: 'btn-perform-test btn-step-heat' },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else {
         return [
-          { stage: 'done', label: '✅ Brown Ring Observed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'done', label: 'Brown Ring Observed', cls: 'btn-perform-test done', disabled: true },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       }
@@ -3900,16 +3900,16 @@
       const hasGasOrWarm = pStr.includes('gas') || pStr.includes('limewater') || pStr.includes('warm') || pStr.includes('heat') || pStr.includes('splint') || pStr.includes('dichromate');
       if (!stage || stage === 'idle') {
         return [
-          { stage: 'step1_hcl', label: '💧 Step 1: Add 2M HCl / Dilute Acid', cls: 'btn-perform-test btn-step-acid' }
+          { stage: 'step1_hcl', label: 'Step 1: Add 2M HCl / Dilute Acid', cls: 'btn-perform-test btn-step-acid' }
         ];
       } else if ((stage === 'step1_hcl' || stage === 'step1') && hasGasOrWarm) {
         return [
-          { stage: 'step2_gas_warm', label: '🧪 Step 2: Test Gas (Limewater / Dichromate) & Warm Gently', cls: 'btn-perform-test btn-step-gas' },
+          { stage: 'step2_gas_warm', label: 'Step 2: Test Gas (Limewater / Dichromate) & Warm Gently', cls: 'btn-perform-test btn-step-gas' },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else {
         return [
-          { stage: 'done', label: '✅ Reaction Observed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'done', label: 'Reaction Observed', cls: 'btn-perform-test done', disabled: true },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       }
@@ -3919,21 +3919,21 @@
     if (tId.includes('ki') || pStr.includes('potassium iodide') || pStr.includes('iodide')) {
       if (!stage || stage === 'idle') {
         return [
-          { stage: 'few_drops', label: '💧 Step 1: Add 2–3 drops KI Solution', cls: 'btn-perform-test' }
+          { stage: 'few_drops', label: 'Step 1: Add 2–3 drops KI Solution', cls: 'btn-perform-test' }
         ];
       } else if (stage === 'few_drops' || stage === 'stage1' || stage === 'step1') {
         return [
-          { stage: 'heated', label: '🔥 Step 2: Warm Gently in Bunsen Flame', cls: 'btn-perform-test btn-step-heat' },
+          { stage: 'heated', label: 'Step 2: Warm Gently in Bunsen Flame', cls: 'btn-perform-test btn-step-heat' },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else if (stage === 'heated') {
         return [
-          { stage: 'cooled', label: '❄️ Step 3: Allow to Cool under Tap Water', cls: 'btn-perform-test btn-step-cool' },
+          { stage: 'cooled', label: 'Step 3: Allow to Cool under Tap Water', cls: 'btn-perform-test btn-step-cool' },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else {
         return [
-          { stage: 'done', label: '✅ Test Completed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'done', label: 'Test Completed', cls: 'btn-perform-test done', disabled: true },
           { stage: 'idle', label: '↺ Redo', cls: 'btn-redo-test', isRedo: true }
         ];
       }
@@ -3946,21 +3946,21 @@
     if (isPbNO3) {
       if (!stage || stage === 'idle') {
         return [
-          { stage: 'few_drops', label: '💧 Step 1: Add 2–3 drops Lead(II) Nitrate [Pb(NO₃)₂]', cls: 'btn-perform-test' }
+          { stage: 'few_drops', label: 'Step 1: Add 2–3 drops Lead(II) Nitrate [Pb(NO₃)₂]', cls: 'btn-perform-test' }
         ];
       } else if (stage === 'few_drops' || stage === 'stage1' || stage === 'step1') {
         return [
-          { stage: 'heated', label: '🔥 Step 2: Warm Gently in Bunsen Flame', cls: 'btn-perform-test btn-step-heat' },
+          { stage: 'heated', label: 'Step 2: Warm Gently in Bunsen Flame', cls: 'btn-perform-test btn-step-heat' },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else if (stage === 'heated' || stage === 'warm' || stage === 'step2_warm') {
         return [
-          { stage: 'cooled', label: '❄️ Step 3: Allow to Cool under Tap Water', cls: 'btn-perform-test btn-step-cool' },
+          { stage: 'cooled', label: 'Step 3: Allow to Cool under Tap Water', cls: 'btn-perform-test btn-step-cool' },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else {
         return [
-          { stage: 'done', label: '✅ Observation Recorded', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'done', label: 'Observation Recorded', cls: 'btn-perform-test done', disabled: true },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       }
@@ -3973,16 +3973,16 @@
         tId.includes('peroxide');
       if (!stage || stage === 'idle') {
         return [
-          { stage: 'added_h2o2', label: '💧 Step 1: Add 1 cm³ Hydrogen Peroxide (H₂O₂)', cls: 'btn-perform-test' }
+          { stage: 'added_h2o2', label: 'Step 1: Add 1 cm³ Hydrogen Peroxide (H₂O₂)', cls: 'btn-perform-test' }
         ];
       } else if ((stage === 'added_h2o2' || stage === 'few_drops' || stage === 'stage1') && hasGasOrSplint) {
         return [
-          { stage: 'splint_test', label: '🪵 Step 2: Test Gas with Glowing Splint', cls: 'btn-perform-test btn-step-gas' },
+          { stage: 'splint_test', label: 'Step 2: Test Gas with Glowing Splint', cls: 'btn-perform-test btn-step-gas' },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else {
         return [
-          { stage: 'done', label: '✅ Reaction Observed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'done', label: 'Reaction Observed', cls: 'btn-perform-test done', disabled: true },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       }
@@ -3996,16 +3996,16 @@
       const hasLimewaterOrGas = pStr.includes('limewater') || pStr.includes('calcium hydroxide') || pStr.includes('gas') || pStr.includes('effervesc');
       if (!stage || stage === 'idle') {
         return [
-          { stage: 'added_nahco3', label: '🥄 Step 1: Add Spatula-End of Solid NaHCO₃', cls: 'btn-perform-test' }
+          { stage: 'added_nahco3', label: 'Step 1: Add Spatula-End of Solid NaHCO₃', cls: 'btn-perform-test' }
         ];
       } else if ((stage === 'added_nahco3' || stage === 'few_drops' || stage === 'stage1') && hasLimewaterOrGas) {
         return [
-          { stage: 'limewater_test', label: '🧪 Step 2: Test Gas with Limewater (Ca(OH)₂)', cls: 'btn-perform-test btn-step-gas' },
+          { stage: 'limewater_test', label: 'Step 2: Test Gas with Limewater (Ca(OH)₂)', cls: 'btn-perform-test btn-step-gas' },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else {
         return [
-          { stage: 'done', label: '✅ Reaction Observed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'done', label: 'Reaction Observed', cls: 'btn-perform-test done', disabled: true },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       }
@@ -4016,11 +4016,11 @@
     if (isZinc) {
       if (!stage || stage === 'idle') {
         return [
-          { stage: 'few_drops', label: '🥄 Step 1: Add Spatula-End of Zinc Dust (Solid E) & Shake', cls: 'btn-perform-test' }
+          { stage: 'few_drops', label: 'Step 1: Add Spatula-End of Zinc Dust (Solid E) & Shake', cls: 'btn-perform-test' }
         ];
       } else {
         return [
-          { stage: 'done', label: '✅ Displacement Reaction Observed', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'done', label: 'Displacement Reaction Observed', cls: 'btn-perform-test done', disabled: true },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       }
@@ -4038,45 +4038,45 @@
 
       if (!stage || stage === 'idle') {
         return [
-          { stage: 'step1_spatula', label: `🥄 Step 1: Place a Half-Spatula of ${sampleLabel} into Dry Test Tube`, cls: 'btn-perform-test btn-step-spatula' }
+          { stage: 'step1_spatula', label: `Step 1: Place a Half-Spatula of ${sampleLabel} into Dry Test Tube`, cls: 'btn-perform-test btn-step-spatula' }
         ];
       } else if (stage === 'step1_spatula') {
-        const heatLabel = isGentle ? '🔥 Step 2: Warm Gently in Bunsen Flame' : '🔥 Step 2: Heat Strongly in Bunsen Flame';
+        const heatLabel = isGentle ? 'Step 2: Warm Gently in Bunsen Flame' : 'Step 2: Heat Strongly in Bunsen Flame';
         return [
           { stage: 'heated', label: heatLabel, cls: 'btn-perform-test btn-step-heat' },
           { stage: 'idle', label: '↺ Empty & Clean Tube', cls: 'btn-redo-test', isRedo: true }
         ];
       } else if (stage === 'heated' || stage === 'step1_heat' || stage === 'strong_heat') {
         return [
-          { stage: 'step2_gas_test', label: '🧪 Step 3: Test Gas (Moist Litmus / Splint)', cls: 'btn-perform-test btn-step-gas' },
-          { stage: 'cooled', label: '❄️ Step 3: Allow Tube to Cool to Room Temp', cls: 'btn-perform-test btn-step-cool' },
+          { stage: 'step2_gas_test', label: 'Step 3: Test Gas (Moist Litmus / Splint)', cls: 'btn-perform-test btn-step-gas' },
+          { stage: 'cooled', label: 'Step 3: Allow Tube to Cool to Room Temp', cls: 'btn-perform-test btn-step-cool' },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else if (stage === 'step2_gas_test' || stage.startsWith('test_gas') || stage === 'test_splint' || stage === 'test_limewater') {
         return [
-          { stage: 'cooled', label: '❄️ Step 4: Allow Tube to Cool to Room Temp', cls: 'btn-perform-test btn-step-cool' },
+          { stage: 'cooled', label: 'Step 4: Allow Tube to Cool to Room Temp', cls: 'btn-perform-test btn-step-cool' },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else if (stage === 'cooled' || stage === 'cool_down') {
         return [
-          { stage: 'done', label: '✅ Thermal Observation Recorded', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'done', label: 'Thermal Observation Recorded', cls: 'btn-perform-test done', disabled: true },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       } else {
         return [
-          { stage: 'done', label: '✅ Thermal Observation Recorded', cls: 'btn-perform-test done', disabled: true },
+          { stage: 'done', label: 'Thermal Observation Recorded', cls: 'btn-perform-test done', disabled: true },
           { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
         ];
       }
     }
 
     // Default Reagent-Specific or Step 1 Action (no generic "Perform Test Procedure")
-    let dynamicLabel = '🧪 Step 1: Add Reagent & Observe Reaction';
-    if (pStr.includes('lead') || pStr.includes('pb(no3)')) dynamicLabel = '💧 Step 1: Add 2–3 Drops Lead(II) Nitrate [Pb(NO₃)₂]';
-    else if (pStr.includes('iodide') || pStr.includes('ki')) dynamicLabel = '💧 Step 1: Add 2–3 Drops KI Solution';
-    else if (pStr.includes('chlorine water')) dynamicLabel = '💧 Step 1: Add Fresh Chlorine Water & Shake';
-    else if (pStr.includes('sulfate') || pStr.includes('h2so4')) dynamicLabel = '💧 Step 1: Add Dilute Sulfuric Acid (H₂SO₄)';
-    else if (pStr.includes('portion') || pStr.includes('solution')) dynamicLabel = '💧 Step 1: Add Test Reagent to Portion';
+    let dynamicLabel = 'Step 1: Add Reagent & Observe Reaction';
+    if (pStr.includes('lead') || pStr.includes('pb(no3)')) dynamicLabel = 'Step 1: Add 2–3 Drops Lead(II) Nitrate [Pb(NO₃)₂]';
+    else if (pStr.includes('iodide') || pStr.includes('ki')) dynamicLabel = 'Step 1: Add 2–3 Drops KI Solution';
+    else if (pStr.includes('chlorine water')) dynamicLabel = 'Step 1: Add Fresh Chlorine Water & Shake';
+    else if (pStr.includes('sulfate') || pStr.includes('h2so4')) dynamicLabel = 'Step 1: Add Dilute Sulfuric Acid (H₂SO₄)';
+    else if (pStr.includes('portion') || pStr.includes('solution')) dynamicLabel = 'Step 1: Add Test Reagent to Portion';
 
     if (!stage || stage === 'idle') {
       return [
@@ -4084,7 +4084,7 @@
       ];
     } else {
       return [
-        { stage: 'done', label: '✅ Reaction Observed', cls: 'btn-perform-test done', disabled: true },
+        { stage: 'done', label: 'Reaction Observed', cls: 'btn-perform-test done', disabled: true },
         { stage: 'idle', label: '↺ Redo Test', cls: 'btn-redo-test', isRedo: true }
       ];
     }

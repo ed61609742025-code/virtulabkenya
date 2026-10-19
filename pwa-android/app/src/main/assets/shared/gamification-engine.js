@@ -8,11 +8,11 @@
 
   // ── 1. LEVEL TIERS CONFIGURATION ───────────────────────────
   const LEVEL_TIERS = [
-    { level: 1, title: 'Form 1 Apprentice', icon: '🧪', minXP: 0, maxXP: 250 },
-    { level: 2, title: 'Form 2 Experimenter', icon: '🔬', minXP: 250, maxXP: 700 },
-    { level: 3, title: 'Form 3 Analytical Chemist', icon: '⚗️', minXP: 700, maxXP: 1600 },
-    { level: 4, title: 'Form 4 Master Chemist', icon: '⚡', minXP: 1600, maxXP: 3200 },
-    { level: 5, title: 'KCSE Distinction Scholar', icon: '👑', minXP: 3200, maxXP: 6000 }
+    { level: 1, title: 'Form 1 Apprentice', iconName: 'flask', icon: '', minXP: 0, maxXP: 250 },
+    { level: 2, title: 'Form 2 Experimenter', iconName: 'microscope', icon: '', minXP: 250, maxXP: 700 },
+    { level: 3, title: 'Form 3 Analytical Chemist', iconName: 'burette', icon: '', minXP: 700, maxXP: 1600 },
+    { level: 4, title: 'Form 4 Master Chemist', iconName: 'zap', icon: '', minXP: 1600, maxXP: 3200 },
+    { level: 5, title: 'KCSE Distinction Scholar', iconName: 'award', icon: '', minXP: 3200, maxXP: 6000 }
   ];
 
   // ── 2. ROTATING DAILY CHALLENGES (DAY 0 TO 6) ──────────────
@@ -23,7 +23,8 @@
       title_sw: 'Jumapili: Mtihani Kamili wa Alama 40 kwa Kasi',
       topic: 'Comprehensive Paper 3 Revision',
       topic_sw: 'Marudio Kamili ya Karatasi ya 3',
-      icon: '🏆',
+      iconName: 'trophy',
+      icon: '',
       mode: 'blitz',
       xpReward: 100,
       description: 'Test your reflexes across all 3 KCSE Paper 3 practical questions.',
@@ -35,7 +36,8 @@
       title_sw: 'Jumatatu: Mbinu za Upimaji wa Kiasi cha Miili (Titration)',
       topic: 'Acid-Base & Redox Titrations',
       topic_sw: 'Titration za Asidi-Besi na Redox',
-      icon: '⚖️',
+      iconName: 'burette',
+      icon: '',
       mode: 'titration',
       xpReward: 100,
       description: 'Concordancy, meniscus alignment, and stoichiometric calculations.',
@@ -47,7 +49,8 @@
       title_sw: 'Jumanne: Utambuzi wa Chumvi za Kikemia (Qualitative)',
       topic: 'Cations & Anion Precipitates',
       topic_sw: 'Kationi na Anioni katika Usimbaji',
-      icon: '🔬',
+      iconName: 'microscope',
+      icon: '',
       mode: 'qualitative',
       xpReward: 100,
       description: 'Systematic reagent deductions and flame emission diagnostics.',
@@ -59,7 +62,8 @@
       title_sw: 'Jumatano: Mabadiliko ya Joto na Nishati ya Kikemia',
       topic: 'Energy Changes & Enthalpy',
       topic_sw: 'Mabadiliko ya Nishati na Enthalpy',
-      icon: '🔥',
+      iconName: 'flame',
+      icon: '',
       mode: 'energy',
       xpReward: 100,
       description: 'Calorimeter temperature jumps (ΔT) and heat of reaction equations.',
@@ -71,7 +75,8 @@
       title_sw: 'Alhamisi: Kasi ya Matendo ya Kikemia (Kinetics)',
       topic: 'Reaction Rates & Collision Theory',
       topic_sw: 'Viwango vya Kasi ya Mgawanyiko',
-      icon: '⚡',
+      iconName: 'timer',
+      icon: '',
       mode: 'energy', // shared rates/energy mode
       xpReward: 100,
       description: 'Disappearing cross timing, 1/t rate calculations, and graphs.',
@@ -83,7 +88,8 @@
       title_sw: 'Ijumaa: Vikundi vya Kikaboni (Organic Chemistry)',
       topic: 'Unsaturation, Alkanols & Acids',
       topic_sw: 'Uharibifu wa Rangi, Alkanoli na Asidi',
-      icon: '⚗️',
+      iconName: 'flask',
+      icon: '',
       mode: 'organic',
       xpReward: 100,
       description: 'Bromine water, KMnO₄ unsaturation, and esterification scents.',
@@ -95,7 +101,8 @@
       title_sw: 'Jumamosi: Changamoto ya Dakika za Mwisho Bila Makosa',
       topic: 'Precision Survival Challenge',
       topic_sw: 'Usahihi na Uangalifu Mkubwa',
-      icon: '🎯',
+      iconName: 'target',
+      icon: '',
       mode: 'survival',
       xpReward: 120,
       description: '15-second survival clock. Single mistake results in instant elimination.',
@@ -224,7 +231,7 @@
       // Streak freeze used automatically
       data.freezeCount -= 1;
       data.count += 1;
-      showStreakToast(`🛡️ Streak Freeze preserved your ${data.count}-day streak!`);
+      showStreakToast(`Streak Freeze preserved your ${data.count}-day streak!`);
     } else {
       // Reset streak
       data.count = 1;
@@ -237,7 +244,7 @@
     // Milestone celebrations (3, 7, 14, 30 days)
     if ([3, 7, 14, 30].includes(data.count)) {
       GamificationAudio.playStreakReward();
-      showStreakToast(`🔥 Milestone! ${data.count}-Day Practical Streak achieved!`);
+      showStreakToast(`Milestone Achieved: ${data.count}-Day Practical Streak recorded!`);
     }
 
     return data;
@@ -343,8 +350,11 @@
     const toast = document.createElement('div');
     toast.id = 'vlkStreakToast';
     toast.className = 'streak-toast';
+    const flameSvg = (window.VLKIcons && typeof window.VLKIcons.svg === 'function')
+      ? window.VLKIcons.svg('flame', { size: 22, strokeWidth: 2 })
+      : '';
     toast.innerHTML = `
-      <span style="font-size:1.6rem;" class="streak-flame-icon">🔥</span>
+      <span class="streak-flame-icon" style="color:var(--amber-accent, #F59E0B); display:inline-flex; align-items:center;">${flameSvg}</span>
       <div style="font-size:0.82rem; font-weight:700; color:var(--b-text, #0F172A); line-height:1.4;">
         ${message}
       </div>
@@ -360,8 +370,11 @@
     const toast = document.createElement('div');
     toast.className = 'streak-toast';
     toast.style.borderColor = '#0284C7';
+    const starSvg = (window.VLKIcons && typeof window.VLKIcons.svg === 'function')
+      ? window.VLKIcons.svg('star', { size: 20, strokeWidth: 2 })
+      : '';
     toast.innerHTML = `
-      <span style="font-size:1.4rem;">⭐</span>
+      <span style="color:#0284C7; display:inline-flex; align-items:center;">${starSvg}</span>
       <div style="font-size:0.82rem; font-weight:800; color:#0284C7;">
         ${message}
       </div>
@@ -376,10 +389,13 @@
   function showLevelUpCelebration(tier) {
     const modal = document.createElement('div');
     modal.className = 'tut-modal-overlay active';
+    const awardSvg = (window.VLKIcons && typeof window.VLKIcons.svg === 'function')
+      ? window.VLKIcons.svg(tier.iconName || 'award', { size: 48, strokeWidth: 1.75 })
+      : '';
     modal.innerHTML = `
       <div class="tut-modal-card">
-        <div style="font-size:3rem; margin-bottom:6px;">${tier.icon}🎉</div>
-        <h2 style="font-family:'Cinzel', serif; font-size:1.45rem; color:var(--b-text, #0F172A); margin:0;">Level Up!</h2>
+        <div style="margin-bottom:12px; display:inline-flex; align-items:center; justify-content:center; width:64px; height:64px; border-radius:50%; background:rgba(2,132,199,0.12); color:#0284C7;">${awardSvg}</div>
+        <h2 style="font-family:'Cinzel', serif; font-size:1.45rem; color:var(--b-text, #0F172A); margin:0;">Level Up</h2>
         <div style="font-size:1.05rem; font-weight:900; color:#0284C7; margin:8px 0 12px 0;">
           Level ${tier.level}: ${tier.title}
         </div>
@@ -387,7 +403,7 @@
           Congratulations! Your analytical chemistry skills and diagnostic speed have elevated you to the next performance tier.
         </p>
         <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-full btn-tactile-lg" onclick="this.closest('.tut-modal-overlay').remove()">
-          Continue Practical Mastery 🚀
+          Continue Practical Mastery &rarr;
         </button>
       </div>
     `;

@@ -20,7 +20,7 @@
           id: 'node-acid-base',
           title: 'Acid-Base Standardisation',
           sublabel: 'HCl vs NaOH',
-          icon: '🧪',
+          iconName: 'burette',
           url: 'lab.html?type=acidBase',
           syllabus: 'KNEC Form 4 Volumetric Standardisation',
           skills: ['Meniscus viewfinder alignment (0.10 cm³ precision)', 'Drop-wise stopcock manipulation', 'Titre concordancy within ±0.10 cm³', 'Molarity & mass concentration stoichiometry'],
@@ -31,7 +31,7 @@
           id: 'node-redox',
           title: 'Redox Titration',
           sublabel: 'Fe²⁺ vs KMnO₄',
-          icon: '🔮',
+          iconName: 'flask',
           url: 'lab.html?type=redox',
           syllabus: 'KNEC Form 4 Redox & Transition Elements',
           skills: ['Self-indicating KMnO₄ end-point recognition', 'Sulfuric acid acidification', 'Molar ratio stoichiometry (5 Fe²⁺ : 1 MnO₄⁻)', 'Redox equivalence detection'],
@@ -42,7 +42,7 @@
           id: 'node-polyprotic',
           title: 'Polyprotic & Weak Acids',
           sublabel: 'H₂SO₄ / CH₃COOH',
-          icon: '⚖️',
+          iconName: 'calculator',
           url: 'lab.html?type=dibasic',
           syllabus: 'KNEC Form 4 Basicity & Mole Concept',
           skills: ['Dibasic and tribasic neutralization ratios (1:2 and 1:3)', 'Weak acid partial dissociation', 'Phenolphthalein end-point stability', 'Relative Formula Mass (RFM) determination'],
@@ -53,7 +53,7 @@
           id: 'node-precipitation',
           title: 'Precipitation & Complexometry',
           sublabel: 'AgNO₃ / EDTA',
-          icon: '💎',
+          iconName: 'droplet',
           url: 'lab.html?type=precipitation',
           syllabus: 'KNEC Form 4 Mohr\'s & Hardness Titration',
           skills: ['Mohr\'s chromate indicator end-point', 'EDTA chelation of Ca²⁺ and Mg²⁺', 'Water hardness quantification', 'Silver halide precipitation'],
@@ -72,7 +72,7 @@
           id: 'node-cations',
           title: 'Cation Precipitation Bench',
           sublabel: 'NaOH & NH₃ Tests',
-          icon: '🔬',
+          iconName: 'test-tube',
           url: 'qualitative.html',
           syllabus: 'KNEC Form 4 Qualitative Inorganic Chemistry',
           skills: ['Differential precipitate color observation', 'Amphoteric hydroxide solubility in excess reagent (Zn²⁺, Al³⁺, Pb²⁺)', 'Complex ion amine formation ([Cu(NH₃)₄]²⁺)', 'Oxidation state transitions (Fe²⁺ → Fe³⁺)'],
@@ -83,7 +83,7 @@
           id: 'node-anions',
           title: 'Anion & Gas Evolution',
           sublabel: 'CO₃²⁻, SO₄²⁻, Cl⁻',
-          icon: '⚗️',
+          iconName: 'flask',
           url: 'qualitative.html',
           syllabus: 'KNEC Form 4 Anion Confirmatory Testing',
           skills: ['Effervescence & lime water testing for CO₃²⁻', 'Ba(NO₃)₂ precipitation of SO₄²⁻ and SO₃²⁻', 'AgNO₃ confirmation of Cl⁻ / Br⁻ halides', 'Nitrate reduction to NH₃ gas'],
@@ -94,7 +94,7 @@
           id: 'node-flame',
           title: 'Flame Emission Spectroscopy',
           sublabel: 'Clean Glass Rod Bench',
-          icon: '🔥',
+          iconName: 'flame',
           url: 'qualitative.html',
           syllabus: 'KNEC Flame Test Cation Identification',
           skills: ['Clean glass rod preparation', 'Non-luminous Bunsen flame positioning', 'Solution sampling technique', 'Characteristic emission spectra (Na⁺ Golden, K⁺ Lilac, Ca²⁺ Brick Red, Cu²⁺ Green)', 'Cobalt blue glass filter evaluation'],
@@ -113,7 +113,7 @@
           id: 'node-rates',
           title: 'Reaction Rates & Kinetics',
           sublabel: 'Disappearing Cross',
-          icon: '⚡',
+          iconName: 'timer',
           url: 'rates.html',
           syllabus: 'KNEC Form 4 Rates of Reaction & Equilibrium',
           skills: ['Disappearing cross optical extinction timing', 'Concentration and temperature coefficient calculation', 'Rate curves ($1/t$ vs concentration plotting)', 'Collision theory & activation energy dynamics'],
@@ -124,7 +124,7 @@
           id: 'node-energy',
           title: 'Thermochemistry & Enthalpies',
           sublabel: 'Calorimetry ΔH',
-          icon: '🌡️',
+          iconName: 'thermometer',
           url: 'energy.html',
           syllabus: 'KNEC Form 4 Energy Changes in Chemical Reactions',
           skills: ['Polystyrene cup calorimetry insulation', 'Neutralization, solution & displacement temperature extrapolation', 'Enthalpy calculation ($\Delta H = -mc\Delta T / n$)', 'Energy level diagrams & thermochemical equations'],
@@ -135,7 +135,7 @@
           id: 'node-solubility',
           title: 'Solubility & Crystallization',
           sublabel: 'Solute Curves',
-          icon: '❄️',
+          iconName: 'snowflake',
           url: 'solubility.html',
           syllabus: 'KNEC Form 3 Topic 4: Solubility of Salts',
           skills: ['Serial water dilution technique', 'First crystallization temperature detection', 'Solubility curve extrapolation (g solute / 100g H₂O)', 'Fractional crystallization yield calculation'],
@@ -154,7 +154,7 @@
           id: 'node-gas-prep',
           title: 'Gas Preparation Lab',
           sublabel: 'O₂, CO₂, Cl₂, NH₃',
-          icon: '💨',
+          iconName: 'wind',
           url: 'gas_prep.html',
           syllabus: 'KNEC Form 2 & 3 Inorganic Gas Practicals',
           skills: ['Reactant combination selection (e.g. MnO₂ + H₂O₂)', 'Appropriate drying agent matching (CaO, H₂SO₄, CaCl₂)', 'Collection method choice based on density & solubility', 'Confirmatory gas tests (splint, litmus, starch-iodide)'],
@@ -165,7 +165,7 @@
           id: 'node-organic',
           title: 'Organic Functional Groups',
           sublabel: 'Br₂, KMnO₄, NaHCO₃',
-          icon: '🌿',
+          iconName: 'leaf',
           url: 'organic.html',
           syllabus: 'KNEC Form 4 Organic Chemistry II (Paper 3 Q3)',
           skills: ['Combustion flame sooty vs luminous observation', 'Bromine water & acidified KMnO₄ unsaturation testing', 'Sodium hydrogen carbonate effervescence (—COOH)', 'Acidified K₂Cr₂O₇ oxidation of alkanols'],
@@ -185,7 +185,7 @@
           id: 'node-composite-exam',
           title: '40-Mark KCSE Mock Exam',
           sublabel: 'Q1 + Q2 + Q3 Timed',
-          icon: '🏆',
+          iconName: 'trophy',
           url: 'mock_exams.html',
           syllabus: 'Official KNEC KCSE Chemistry Practical (233/3)',
           skills: ['40-Minute full examination timing', 'Question 1: Volumetric Titration (15 Marks)', 'Question 2: Qualitative Salt Analysis (15 Marks)', 'Question 3: Organic Functional Groups (10 Marks)'],
@@ -334,13 +334,13 @@
       const isComplete = branch.isCompleted;
       const isCurrent = (branch.id === activeBranchId);
 
-      let statusIcon = '○';
+      let statusIcon = '&bull;';
       let statusClass = 'status-upcoming';
       if (isComplete) {
-        statusIcon = '✓';
+        statusIcon = '&check;';
         statusClass = 'status-completed';
       } else if (isCurrent) {
-        statusIcon = '⚡';
+        statusIcon = '&bull;';
         statusClass = 'status-active';
       }
 
@@ -362,7 +362,7 @@
           role="tab"
           aria-selected="${!isFocusMode ? 'true' : 'false'}"
           title="Display all 5 branches at once">
-          <span>${!isFocusMode ? '🗺️ All Branches (5)' : '🗺️ View All (5)'}</span>
+          <span>${!isFocusMode ? 'All Branches (5)' : 'View All (5)'}</span>
         </button>
       </div>
 
@@ -411,17 +411,21 @@
         // Render 3 stars
         let starsHtml = '';
         for (let s = 1; s <= 3; s++) {
-          starsHtml += `<span class="${s <= prog.stars ? '' : 'st-star-empty'}">★</span>`;
+          starsHtml += `<svg class="st-star ${s <= prog.stars ? 'is-filled' : 'st-star-empty'}" viewBox="0 0 24 24" width="12" height="12" fill="${s <= prog.stars ? '#F59E0B' : 'none'}" stroke="#F59E0B" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
         }
 
         const estTime = node.isCapstone ? '~40 mins' : (node.maxMarks >= 15 ? '~15 mins' : '~10 mins');
         const shortTag = (branch.tag || '').replace(/\s*\(.*\)/, '').trim();
 
+        const nodeIconSvg = (window.VLKIcons && typeof window.VLKIcons.svg === 'function')
+          ? window.VLKIcons.svg(node.iconName || 'flask', { size: 24, strokeWidth: 1.75 })
+          : '';
+
         html += `
           <div class="st-node-wrapper ${stateClass}" onclick="SkillTree.openModal('${node.id}')" role="button" tabindex="0" aria-label="${node.title}">
-            ${isNodeActive ? '<span class="st-node-beacon"><span class="st-beacon-pulse-dot"></span>NEXT UP ⚡</span>' : ''}
+            ${isNodeActive ? '<span class="st-node-beacon"><span class="st-beacon-pulse-dot"></span>NEXT UP</span>' : ''}
             <div class="st-node-circle">
-              <span>${node.icon}</span>
+              <span>${nodeIconSvg}</span>
             </div>
             <div class="st-node-stars">
               ${starsHtml}
@@ -433,17 +437,17 @@
             <div class="st-node-tooltip" role="tooltip">
               <div class="st-tooltip-header">
                 <span class="st-tooltip-tag">${shortTag || 'PRACTICAL'}</span>
-                <span class="st-tooltip-time">⏱️ ${estTime}</span>
+                <span class="st-tooltip-time">${estTime}</span>
               </div>
               <div class="st-tooltip-title">${node.title}</div>
               <div class="st-tooltip-sub">${node.syllabus}</div>
               <div class="st-tooltip-meta">
                 <span class="st-tooltip-status ${prog.completed ? 'status-done' : (isNodeActive ? 'status-next' : 'status-ready')}">
-                  ${prog.completed ? `✓ Mastered (${prog.maxScore > 0 ? prog.maxScore.toFixed(1) : node.maxMarks}/${node.maxMarks} Mks)` : (isNodeActive ? '⚡ Next Recommended' : 'Ready to Attempt')}
+                  ${prog.completed ? `Mastered (${prog.maxScore > 0 ? prog.maxScore.toFixed(1) : node.maxMarks}/${node.maxMarks} Mks)` : (isNodeActive ? 'Next Recommended' : 'Ready to Attempt')}
                 </span>
                 <span class="st-tooltip-stars">${starsHtml}</span>
               </div>
-              <div class="st-tooltip-hint">Click node for full KNEC rubric &amp; simulation →</div>
+              <div class="st-tooltip-hint">Click node for full KNEC rubric &amp; simulation &rarr;</div>
             </div>
           </div>
         `;
@@ -461,14 +465,14 @@
         const isNextBranchActive = nextBranch && !nextBranch.isCompleted && isBranchCompleted;
 
         let bridgeState = 'bridge-upcoming';
-        let bridgeIcon = '↓';
+        let bridgeIcon = '&darr;';
         if (isBranchCompleted) {
           if (isNextBranchActive) {
             bridgeState = 'bridge-active';
-            bridgeIcon = '⚡';
+            bridgeIcon = '&darr;';
           } else {
             bridgeState = 'bridge-completed';
-            bridgeIcon = '✓';
+            bridgeIcon = '&check;';
           }
         }
 
@@ -491,8 +495,8 @@
       html += `
         <div class="st-expand-footer-wrap">
           <button type="button" class="st-expand-pathway-btn" onclick="SkillTree.toggleFullTree(true)">
-            <span class="st-expand-btn-icon">🗺️</span>
-            <span class="st-expand-btn-text">View Full Syllabus Tree (All 5 Branches · 13 Practicals) ↓</span>
+            <span class="st-expand-btn-icon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg></span>
+            <span class="st-expand-btn-text">View Full Syllabus Tree (All 5 Branches · 13 Practicals) &darr;</span>
           </button>
         </div>
       `;
@@ -500,8 +504,8 @@
       html += `
         <div class="st-expand-footer-wrap">
           <button type="button" class="st-expand-pathway-btn" onclick="SkillTree.toggleFullTree(false)">
-            <span class="st-expand-btn-icon">⚡</span>
-            <span class="st-expand-btn-text">Collapse to Current Focus Tier ↑</span>
+            <span class="st-expand-btn-icon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><polyline points="18 15 12 9 6 15"/></svg></span>
+            <span class="st-expand-btn-text">Collapse to Current Focus Tier &uarr;</span>
           </button>
         </div>
       `;
@@ -537,9 +541,14 @@
     if (!modal) return;
 
     const prog = foundNode.progress || { maxScore: 0, stars: 0, attempts: 0 };
-    const starsStr = '★'.repeat(prog.stars) + '☆'.repeat(3 - prog.stars);
+    const starsStr = prog.stars > 0 ? `${prog.stars} / 3 Stars Mastered` : 'Not Attempted';
 
-    document.getElementById('stModalIcon').textContent = foundNode.icon;
+    const modalIconEl = document.getElementById('stModalIcon');
+    if (modalIconEl) {
+      modalIconEl.innerHTML = (window.VLKIcons && typeof window.VLKIcons.svg === 'function')
+        ? window.VLKIcons.svg(foundNode.iconName || 'flask', { size: 36, strokeWidth: 1.75 })
+        : '';
+    }
     document.getElementById('stModalTitle').textContent = foundNode.title;
     document.getElementById('stModalSyllabus').textContent = foundNode.syllabus;
     document.getElementById('stModalDesc').textContent = `Target question mapped to KCSE Chemistry Practical. Master key precision techniques and earn up to ${foundNode.maxMarks} marks.`;
@@ -547,7 +556,7 @@
     const skillsContainer = document.getElementById('stModalSkillsList');
     if (skillsContainer && foundNode.skills) {
       skillsContainer.innerHTML = `
-        <strong>🎯 Core Practical Competencies:</strong>
+        <strong>Core Practical Competencies:</strong>
         <ul>
           ${foundNode.skills.map(s => `<li>${s}</li>`).join('')}
         </ul>
@@ -571,7 +580,7 @@
     const launchBtn = document.getElementById('stModalLaunchBtn');
     if (launchBtn) {
       launchBtn.href = foundNode.url;
-      launchBtn.textContent = prog.completed ? 'Launch Experiment (Practice Again) →' : 'Start Practical Experiment →';
+      launchBtn.textContent = prog.completed ? 'Launch Experiment (Practice Again) \u2192' : 'Start Practical Experiment \u2192';
     }
 
     modal.classList.add('open');

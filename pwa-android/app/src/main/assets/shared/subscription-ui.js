@@ -56,16 +56,16 @@
 
     if (!status || !status.isActive) {
       pill.className = 'vlk-sub-pill upgrade-needed';
-      pill.innerHTML = '⚡ <span class="vlk-pill-full">Upgrade (KES 500)</span><span class="vlk-pill-compact">Upgrade</span>';
+      pill.innerHTML = '<span class="vlk-pill-full">Upgrade (KES 500)</span><span class="vlk-pill-compact">Upgrade</span>';
       pill.title = 'Upgrade to an active KCSE term pass';
     } else if (status.isGracePeriod) {
       pill.className = 'vlk-sub-pill grace-warning';
-      pill.innerHTML = `⚠️ <span class="vlk-pill-full">Grace Period (${status.graceDaysLeft || 1}d left)</span><span class="vlk-pill-compact">${status.graceDaysLeft || 1}d</span>`;
+      pill.innerHTML = `<span class="vlk-pill-full">Grace Period (${status.graceDaysLeft || 1}d left)</span><span class="vlk-pill-compact">${status.graceDaysLeft || 1}d</span>`;
       pill.title = 'Pass expired — 3-day grace period active. Click to renew.';
     } else {
       pill.className = 'vlk-sub-pill active-pass';
       const days = status.daysRemaining !== null ? status.daysRemaining : '∞';
-      pill.innerHTML = `⭐ <span class="vlk-pill-full">${status.planName || 'Term Pass'} (${days}d left)</span><span class="vlk-pill-compact">${days}d</span>`;
+      pill.innerHTML = `<span class="vlk-pill-full">${status.planName || 'Term Pass'} (${days}d left)</span><span class="vlk-pill-compact">${days}d</span>`;
       pill.title = `Active: ${status.planName}. Click to manage.`;
     }
     pill.style.display = 'inline-flex';
@@ -80,14 +80,14 @@
     if (!chip) return;
 
     if (!status || !status.isActive) {
-      chip.innerHTML = `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;background:rgba(2,132,199,0.10);border:1px solid rgba(2,132,199,0.3);color:#0284C7;font-size:0.72rem;font-weight:800;">⚡ Free Tier · Upgrade →</span>`;
+      chip.innerHTML = `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;background:rgba(2,132,199,0.10);border:1px solid rgba(2,132,199,0.3);color:#0284C7;font-size:0.72rem;font-weight:800;">Free Tier &middot; Upgrade &rarr;</span>`;
     } else if (status.isGracePeriod) {
-      chip.innerHTML = `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;background:rgba(217,119,6,0.10);border:1px solid rgba(217,119,6,0.35);color:#D97706;font-size:0.72rem;font-weight:800;animation:vlkPulse 2s infinite ease-in-out;">⚠️ Grace Period · ${status.graceDaysLeft || 1}d left</span>`;
+      chip.innerHTML = `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;background:rgba(217,119,6,0.10);border:1px solid rgba(217,119,6,0.35);color:#D97706;font-size:0.72rem;font-weight:800;animation:vlkPulse 2s infinite ease-in-out;">Grace Period &middot; ${status.graceDaysLeft || 1}d left</span>`;
     } else if (status.source === 'school') {
-      chip.innerHTML = `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;background:rgba(5,150,105,0.09);border:1px solid rgba(5,150,105,0.3);color:#059669;font-size:0.72rem;font-weight:800;">🏫 ${status.planName || 'School License'}</span>`;
+      chip.innerHTML = `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;background:rgba(5,150,105,0.09);border:1px solid rgba(5,150,105,0.3);color:#059669;font-size:0.72rem;font-weight:800;">${status.planName || 'School License'}</span>`;
     } else {
       const days = status.daysRemaining !== null ? `${status.daysRemaining}d left` : 'Active';
-      chip.innerHTML = `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;background:rgba(5,150,105,0.09);border:1px solid rgba(5,150,105,0.3);color:#059669;font-size:0.72rem;font-weight:800;">⭐ ${status.planName || 'Term Pass'} · ${days}</span>`;
+      chip.innerHTML = `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;background:rgba(5,150,105,0.09);border:1px solid rgba(5,150,105,0.3);color:#059669;font-size:0.72rem;font-weight:800;">${status.planName || 'Term Pass'} &middot; ${days}</span>`;
     }
     chip.style.display = 'inline-block';
   }
@@ -111,20 +111,24 @@
     banner.innerHTML = isGrace ? `
       <div class="vlk-upgrade-banner vlk-upgrade-banner--grace" role="alert">
         <div class="vlk-upgrade-banner-left">
-          <span class="vlk-upgrade-icon">⚠️</span>
+          <span class="vlk-upgrade-icon" style="color:var(--amber-accent);display:inline-flex;align-items:center;">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </span>
           <div>
             <div class="vlk-upgrade-banner-title">Your pass expired — ${status.graceDaysLeft || 1} grace day${(status.graceDaysLeft || 1) !== 1 ? 's' : ''} remaining</div>
             <div class="vlk-upgrade-banner-sub">Renew now to keep uninterrupted access to all 8 KCSE practicals and Walimu AI.</div>
           </div>
         </div>
         <button class="vlk-upgrade-banner-btn vlk-upgrade-banner-btn--warn" onclick="window.VLKSubscriptionUI && window.VLKSubscriptionUI.openModal()">
-          Renew Pass →
+          Renew Pass &rarr;
         </button>
       </div>
     ` : `
       <div class="vlk-upgrade-banner" role="complementary">
         <div class="vlk-upgrade-banner-left">
-          <span class="vlk-upgrade-icon">🧪</span>
+          <span class="vlk-upgrade-icon" style="color:var(--cyan-accent);display:inline-flex;align-items:center;">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg>
+          </span>
           <div>
             <div class="vlk-upgrade-banner-title">Unlock all 8 KCSE Practicals + Walimu AI Tutor</div>
             <div class="vlk-upgrade-banner-sub">Full titration, qualitative, organic, composite 40-mark mocks &amp; AI co-pilot. From <strong>KES 200</strong>.</div>
@@ -132,7 +136,7 @@
         </div>
         <div class="vlk-upgrade-banner-actions">
           <button class="vlk-upgrade-banner-btn" onclick="window.VLKSubscriptionUI && window.VLKSubscriptionUI.openModal(1)">
-            Get Term Pass (KES 500) →
+            Get Term Pass (KES 500) &rarr;
           </button>
           <button class="vlk-upgrade-banner-btn vlk-upgrade-banner-btn--secondary" onclick="window.VLKSubscriptionUI && window.VLKSubscriptionUI.openModal(2)">
             30-Day Sprint (KES 200)
@@ -192,7 +196,7 @@
         statusBox.innerHTML = `
           <div class="vlk-status-info">
             <h4>${cachedStatus.planName}</h4>
-            <p>${cachedStatus.source === 'school' ? '🏫 Institutional School License' : '👤 Direct Student Pass'} · ${cachedStatus.daysRemaining !== null ? `${cachedStatus.daysRemaining} days remaining` : 'Permanent'}</p>
+            <p>${cachedStatus.source === 'school' ? 'Institutional School License' : 'Direct Student Pass'} &middot; ${cachedStatus.daysRemaining !== null ? `${cachedStatus.daysRemaining} days remaining` : 'Permanent'}</p>
           </div>
           <span style="font-size:0.75rem; font-weight:800; color:#059669; background:rgba(5,150,105,0.1); padding:4px 10px; border-radius:999px;">ACTIVE</span>
         `;
@@ -263,7 +267,7 @@
     const plan = cachedPlans ? cachedPlans.find(p => p.id === planId) : null;
     const btn = document.getElementById('vlkPaySubmitBtn');
     if (btn && plan) {
-      btn.innerHTML = `<span>Pay KES ${Math.round(plan.price_kes)} via M-Pesa / Card</span> →`;
+      btn.innerHTML = `<span>Pay KES ${Math.round(plan.price_kes)} via M-Pesa / Card</span> &rarr;`;
     }
   }
 
@@ -279,9 +283,14 @@
       document.body.appendChild(toast);
     }
     toast.className = `vlk-sub-toast ${type} show`;
+    const toastIcon = type === 'success'
+      ? '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><polyline points="20 6 9 17 4 12"/></svg>'
+      : (type === 'error'
+        ? '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+        : '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>');
     toast.innerHTML = `
       <div style="display:flex; align-items:center; gap:8px;">
-        <span style="font-size:1.15rem;">${type === 'success' ? '🎉' : type === 'error' ? '⚠️' : 'ℹ️'}</span>
+        <span style="display:inline-flex; align-items:center;">${toastIcon}</span>
         <div>${message}</div>
       </div>
     `;

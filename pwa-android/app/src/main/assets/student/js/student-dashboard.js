@@ -126,7 +126,7 @@ requireStudentLogin();
 
     try {
       const data = await Students.linkTeacher(teacherCode);
-      msg.innerHTML = `<span style="color:var(--green-accent);">✓ ${escapeHtml(data.message || 'Successfully linked to teacher!')}</span>`;
+      msg.innerHTML = `<span style="color:var(--green-accent);display:inline-flex;align-items:center;gap:6px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><polyline points="20 6 9 17 4 12"/></svg> ${escapeHtml(data.message || 'Successfully linked to teacher!')}</span>`;
       input.value = '';
       
       if (data.student) {
@@ -138,7 +138,7 @@ requireStudentLogin();
       if (typeof loadAssignments === 'function') loadAssignments();
       if (typeof loadStudentNotifications === 'function') loadStudentNotifications();
     } catch (err) {
-      msg.innerHTML = `<span style="color:var(--red-accent);">✗ ${escapeHtml(err.message || 'Failed to link teacher. Check code and try again.')}</span>`;
+      msg.innerHTML = `<span style="color:var(--red-accent);display:inline-flex;align-items:center;gap:6px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> ${escapeHtml(err.message || 'Failed to link teacher. Check code and try again.')}</span>`;
     }
   }
   window.submitLinkTeacher = submitLinkTeacher;
@@ -241,7 +241,7 @@ requireStudentLogin();
       rawList.push({
         id: 'asgn_pending_' + a.id,
         assignmentId: a.id,
-        title: '📝 Prescribed Assignment: ' + (a.title || 'Continuous Assessment'),
+        title: 'Prescribed Assignment: ' + (a.title || 'Continuous Assessment'),
         message: `${dueText} — ${a.instructions || 'Click to open practical workbench and submit responses.'}`,
         timestamp: a.created_at ? new Date(a.created_at).getTime() : Date.now(),
         type: 'pending_assignment',
@@ -257,7 +257,7 @@ requireStudentLogin();
       rawList.push({
         id: 'asgn_marked_' + a.id,
         assignmentId: a.id,
-        title: '🏆 Graded: ' + (a.title || 'Practical Assignment Marked'),
+        title: 'Graded: ' + (a.title || 'Practical Assignment Marked'),
         message: `${scoreText}Your teacher marked this session. Click to view feedback & rubric.`,
         timestamp: a.marked_at ? new Date(a.marked_at).getTime() : Date.now(),
         type: 'marked_assignment',
@@ -274,7 +274,7 @@ requireStudentLogin();
       rawList.push({
         id: 'notif_streak_' + streakVal,
         assignmentId: null,
-        title: '🔥 Active Practice Streak',
+        title: 'Active Practice Streak',
         message: `${streakVal}-Day Lab Practice Streak active! Keep up the momentum for KCSE Paper 3.`,
         timestamp: Date.now() - 3600000,
         type: 'streak',
@@ -338,7 +338,7 @@ requireStudentLogin();
       if (activeNotifs.length === 0) {
         list.innerHTML = `
           <div class="notif-empty-state">
-            <div class="notif-empty-icon" aria-hidden="true">✨</div>
+            <div class="notif-empty-icon" aria-hidden="true"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
             <div class="notif-empty-title">All Caught Up!</div>
             <div class="notif-empty-sub">No unread lab notices or prescribed tasks. Read notices automatically expire after 24 hours.</div>
           </div>
@@ -352,15 +352,19 @@ requireStudentLogin();
         const timeAgo = window.VLKNotifs ? window.VLKNotifs.formatTimeAgo(n.timestamp) : '';
         const itemType = n.type || 'general';
 
-        let icon = '📢';
-        if (itemType === 'pending_assignment') icon = '📝';
-        else if (itemType === 'marked_assignment') icon = '🏆';
-        else if (itemType === 'streak') icon = '🔥';
+        let iconSvg = '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>';
+        if (itemType === 'pending_assignment') {
+          iconSvg = '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg>';
+        } else if (itemType === 'marked_assignment') {
+          iconSvg = '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89L17 22l-5-3-5 3 1.52-9.11"/></svg>';
+        } else if (itemType === 'streak') {
+          iconSvg = '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A3.5 3.5 0 0 0 12 18a3.5 3.5 0 0 0 3.5-3.5c0-2-1.5-3.5-2.5-5-.5-1-1-2.5-1-3.5 0 0-2.5 2.5-2.5 5 0 1-.5 1.5-1 2.5z"/><path d="M12 2c5 4.5 7 9 7 13a7 7 0 1 1-14 0c0-4 3-7.5 7-13z"/></svg>';
+        }
 
         return `
           <div class="notif-card-item ${isRead ? 'read' : 'unread'} notif-type-${itemType}" onclick="clickNotifItem('${n.id}', ${n.assignmentId ? n.assignmentId : 'null'})">
             <div class="notif-item-icon-box" aria-hidden="true">
-              <span>${icon}</span>
+              <span>${iconSvg}</span>
             </div>
             <div class="notif-item-content">
               <div class="notif-item-top">
@@ -383,9 +387,9 @@ requireStudentLogin();
                   </span>
                 ` : '')}
                 ${n.isPermanent ? `
-                  <span class="notif-perm-pill">⭐ Record</span>
+                  <span class="notif-perm-pill">Record</span>
                 ` : (isRead && hoursLeft != null ? `
-                  <span class="notif-expiry-pill">⏳ Disappears in ${hoursLeft}h</span>
+                  <span class="notif-expiry-pill">Expires in ${hoursLeft}h</span>
                 ` : '')}
               </div>
             </div>
@@ -451,33 +455,33 @@ requireStudentLogin();
   function getAssignmentDisciplineMeta(a) {
     const t = (a.titration_type || a.type || a.title || '').toLowerCase();
     if (t.includes('kcsecomposite') || t.includes('composite') || t.includes('mock')) {
-      return { icon: '🏆', label: 'KCSE Paper 3 Mock · 40m', accent: '#D97706', bg: 'rgba(245, 158, 11, 0.12)' };
+      return { icon: '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>', label: 'KCSE Paper 3 Mock · 40m', accent: '#D97706', bg: 'rgba(245, 158, 11, 0.12)' };
     }
     if (t.includes('qualitative') || a.salt_key) {
-      return { icon: '🧫', label: 'Qualitative Salt ID · Q2 (14m)', accent: '#6366F1', bg: 'rgba(99, 102, 241, 0.12)' };
+      return { icon: '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18h8M3 22h18M14 22a7 7 0 1 0 0-14h-1M9 14h2M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2M12 6V3a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3"/></svg>', label: 'Qualitative Salt ID · Q2 (14m)', accent: '#6366F1', bg: 'rgba(99, 102, 241, 0.12)' };
     }
     if (t.includes('organic') || a.compound_key) {
-      return { icon: '🌿', label: 'Organic Analysis · Q3 (8m)', accent: '#10B981', bg: 'rgba(16, 185, 129, 0.12)' };
+      return { icon: '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>', label: 'Organic Analysis · Q3 (8m)', accent: '#10B981', bg: 'rgba(16, 185, 129, 0.12)' };
     }
     if (t.includes('solubility') || a.solute_key) {
-      return { icon: '🌡️', label: 'Solubility Curves · Q1b (10m)', accent: '#0284C7', bg: 'rgba(2, 132, 199, 0.12)' };
+      return { icon: '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><line x1="20" y1="7" x2="4" y2="17"/><line x1="4" y1="7" x2="20" y2="17"/><line x1="12" y1="6" x2="15" y2="3"/><line x1="12" y1="6" x2="9" y2="3"/><line x1="12" y1="18" x2="15" y2="21"/><line x1="12" y1="18" x2="9" y2="21"/></svg>', label: 'Solubility Curves · Q1b (10m)', accent: '#0284C7', bg: 'rgba(2, 132, 199, 0.12)' };
     }
     if (t.includes('energy') || t.includes('enthalpy') || t.includes('neutralization') || t.includes('displacement') || t.includes('solution') || a.en_system_id) {
-      return { icon: '🔥', label: 'Thermochemistry (ΔH) · Q1b (12m)', accent: '#EF4444', bg: 'rgba(239, 68, 68, 0.12)' };
+      return { icon: '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/><circle cx="11.5" cy="17.5" r="1.5" fill="currentColor"/></svg>', label: 'Thermochemistry (ΔH) · Q1b (12m)', accent: '#EF4444', bg: 'rgba(239, 68, 68, 0.12)' };
     }
     if (t.includes('rate') || t.includes('kinetic') || a.rate_exp_type) {
-      return { icon: '⏱️', label: 'Reaction Rates · Q1b (12m)', accent: '#EAB308', bg: 'rgba(234, 179, 8, 0.12)' };
+      return { icon: '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>', label: 'Reaction Rates · Q1b (12m)', accent: '#EAB308', bg: 'rgba(234, 179, 8, 0.12)' };
     }
     if (t.includes('gas') || a.gas_key) {
-      return { icon: '💨', label: 'Gas Preparation · Q2b (10m)', accent: '#8B5CF6', bg: 'rgba(139, 92, 246, 0.12)' };
+      return { icon: '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg>', label: 'Gas Preparation · Q2b (10m)', accent: '#8B5CF6', bg: 'rgba(139, 92, 246, 0.12)' };
     }
     if (t.includes('redox')) {
-      return { icon: '⚗️', label: 'Redox Titration · Q1 (15m)', accent: '#8B5CF6', bg: 'rgba(139, 92, 246, 0.12)' };
+      return { icon: '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg>', label: 'Redox Titration · Q1 (15m)', accent: '#8B5CF6', bg: 'rgba(139, 92, 246, 0.12)' };
     }
     if (t.includes('precipit') || t.includes('mohr')) {
-      return { icon: '💧', label: 'Precipitation Titration · Q1 (12m)', accent: '#0284C7', bg: 'rgba(2, 132, 199, 0.12)' };
+      return { icon: '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>', label: 'Precipitation Titration · Q1 (12m)', accent: '#0284C7', bg: 'rgba(2, 132, 199, 0.12)' };
     }
-    return { icon: '🧪', label: 'Volumetric Titration · Q1 (15m)', accent: '#059669', bg: 'rgba(16, 185, 129, 0.12)' };
+    return { icon: '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2v17.5c0 1.4-1.1 2.5-2.5 2.5s-2.5-1.1-2.5-2.5V2"/><path d="M8.5 2h7"/><path d="M9.5 12h5"/></svg>', label: 'Volumetric Titration · Q1 (15m)', accent: '#059669', bg: 'rgba(16, 185, 129, 0.12)' };
   }
 
   function filterTeacherAssignments(statusFilter) {
@@ -536,46 +540,50 @@ requireStudentLogin();
 
         const progressBadge = document.getElementById('caProgressPercentBadge');
         if (progressBadge) {
-          progressBadge.textContent = hasTeacher ? '✓ All Caught Up' : 'Not Connected';
+          progressBadge.textContent = hasTeacher ? 'All Caught Up' : 'Not Connected';
           progressBadge.className = hasTeacher ? 'dash-section-badge badge-green' : 'dash-section-badge badge-cyan';
         }
 
         if (!hasTeacher) {
           box.innerHTML = `
             <div class="ca-empty-showcase is-unlinked">
-              <div class="ca-empty-icon-ring is-blue" aria-hidden="true">🔗</div>
+              <div class="ca-empty-icon-ring is-blue" aria-hidden="true">
+                <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              </div>
               <div class="ca-empty-content">
                 <h4 class="ca-empty-title">Connect Your Chemistry Instructor</h4>
                 <p class="ca-empty-desc">
                   Link your teacher's class code to automatically receive prescribed KCSE Paper 3 practical assessments, timed mocks, and official rubric evaluations.
                 </p>
                 <div class="ca-empty-features">
-                  <span class="ca-feature-pill">📋 Prescribed Practicals</span>
-                  <span class="ca-feature-pill">📊 Teacher Rubric Grading</span>
-                  <span class="ca-feature-pill">🏆 Class Leaderboard</span>
+                  <span class="ca-feature-pill">Prescribed Practicals</span>
+                  <span class="ca-feature-pill">Teacher Rubric Grading</span>
+                  <span class="ca-feature-pill">Class Leaderboard</span>
                 </div>
               </div>
               <button type="button" class="ca-empty-cta-btn" onclick="toggleTeacherLinkPanel()">
-                🔗 Enter Teacher Code →
+                Enter Teacher Code &rarr;
               </button>
             </div>
           `;
         } else {
           box.innerHTML = `
             <div class="ca-empty-showcase is-celebrate">
-              <div class="ca-empty-icon-ring is-emerald" aria-hidden="true">🎉</div>
+              <div class="ca-empty-icon-ring is-emerald" aria-hidden="true">
+                <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              </div>
               <div class="ca-empty-content">
                 <h4 class="ca-empty-title">All Caught Up! Zero Assignment Backlog</h4>
                 <p class="ca-empty-desc">
                   Outstanding work! You have completed every prescribed practical assessment. Keep sharpening your skills on the free benches!
                 </p>
                 <div class="ca-empty-features">
-                  <span class="ca-feature-pill">✓ 100% Submitted</span>
-                  <span class="ca-feature-pill">⚡ Ready for Next Lab</span>
+                  <span class="ca-feature-pill">100% Submitted</span>
+                  <span class="ca-feature-pill">Ready for Next Lab</span>
                 </div>
               </div>
               <a href="#skillTreeContainer" class="ca-empty-cta-btn is-emerald">
-                🧪 Practice Free Lab Benches →
+                Practice Free Lab Benches &rarr;
               </a>
             </div>
           `;
@@ -633,9 +641,9 @@ requireStudentLogin();
         }
       }
       if (statAll) statAll.innerHTML = `All <b>(${totalCount})</b>`;
-      if (statMarked) statMarked.innerHTML = `✓ <b>${markedCount}</b> Graded`;
-      if (statReview) statReview.innerHTML = `🔎 <b>${reviewCount}</b> Under Review`;
-      if (statPending) statPending.innerHTML = `⏳ <b>${pendingCount}</b> Pending`;
+      if (statMarked) statMarked.innerHTML = `<b>${markedCount}</b> Graded`;
+      if (statReview) statReview.innerHTML = `<b>${reviewCount}</b> Under Review`;
+      if (statPending) statPending.innerHTML = `<b>${pendingCount}</b> Pending`;
 
       const alertStrip = document.getElementById('assignmentAlertStrip');
       const aasText = document.getElementById('aasText');
@@ -672,49 +680,49 @@ requireStudentLogin();
         if (isSubmitted) {
           if (isGraded) {
             statusType = 'marked';
-            statusChipHtml = `<span class="assign-status-chip is-marked">✓ Graded</span>`;
+            statusChipHtml = `<span class="assign-status-chip is-marked">Graded</span>`;
             if (typeof score === 'number') {
               scoreBadgeHtml = `<span class="assign-score-pill">${Number(score).toFixed(1)} Marks</span>`;
             } else if (a.correct != null) {
-              scoreBadgeHtml = `<span class="assign-score-pill ${a.correct ? 'is-pass' : 'is-retry'}">${a.correct ? '✓ Pass' : '✗ Review'}</span>`;
+              scoreBadgeHtml = `<span class="assign-score-pill ${a.correct ? 'is-pass' : 'is-retry'}">${a.correct ? 'Pass' : 'Review'}</span>`;
             }
             statusHtml = `
               <button type="button" class="submitted-pill" onclick="openAssignmentFeedbackModalById(${a.id})">
-                <span>📊 View Feedback &amp; Rubric →</span>
+                <span>View Feedback &amp; Rubric &rarr;</span>
               </button>
             `;
           } else {
             statusType = 'review';
-            statusChipHtml = `<span class="assign-status-chip is-review">🔎 Under Review</span>`;
+            statusChipHtml = `<span class="assign-status-chip is-review">Under Review</span>`;
             statusHtml = `
               <button type="button" class="submitted-pill is-review" onclick="openAssignmentFeedbackModalById(${a.id})">
-                <span>⏳ Submitted · View Details →</span>
+                <span>Submitted · View Details &rarr;</span>
               </button>
             `;
           }
         } else if (isPastDue) {
           statusType = 'overdue';
-          statusChipHtml = `<span class="assign-status-chip is-overdue">🚨 Overdue</span>`;
+          statusChipHtml = `<span class="assign-status-chip is-overdue">Overdue</span>`;
           statusHtml = `
             <div class="assign-actions-row">
               <a href="${targetUrl}" class="pending-pill-btn is-overdue-btn" aria-label="Complete overdue assignment: ${escapeHtml(a.title)}">
-                Complete Overdue Lab →
+                Complete Overdue Lab &rarr;
               </a>
               <a href="${warmupUrl}" class="assign-warmup-icon-btn" title="Take optional 45s pre-lab warmup" aria-label="Warmup Drill">
-                ⚡ 45s Warmup
+                45s Warmup
               </a>
             </div>
           `;
         } else {
           statusType = 'pending';
-          statusChipHtml = `<span class="assign-status-chip is-pending">⏳ Pending</span>`;
+          statusChipHtml = `<span class="assign-status-chip is-pending">Pending</span>`;
           statusHtml = `
             <div class="assign-actions-row">
               <a href="${targetUrl}" class="pending-pill-btn" aria-label="Start assignment: ${escapeHtml(a.title)}">
-                Start Practical →
+                Start Practical &rarr;
               </a>
               <a href="${warmupUrl}" class="assign-warmup-icon-btn" title="Take optional 45s pre-lab warmup" aria-label="Warmup Drill">
-                ⚡ 45s Warmup
+                45s Warmup
               </a>
             </div>
           `;
@@ -722,8 +730,8 @@ requireStudentLogin();
 
         const dueBase = a.due_date ? `Due ${formatDate(a.due_date)}` : 'Flexible deadline';
         const dueLabel = isPastDue
-          ? `<span class="assign-due-badge is-overdue">⚠️ ${dueBase}</span>`
-          : `<span class="assign-due-badge">📅 ${dueBase}</span>`;
+          ? `<span class="assign-due-badge is-overdue">${dueBase}</span>`
+          : `<span class="assign-due-badge">${dueBase}</span>`;
 
         const instructionsSnippet = a.instructions
           ? escapeHtml(a.instructions)
@@ -776,10 +784,12 @@ requireStudentLogin();
       if (box) {
         box.innerHTML = `
           <div class="empty-box" style="grid-column: 1 / -1; padding: 24px 16px; text-align: center; color: var(--text-muted); font-size: 0.85rem; border: 1.5px dashed var(--card-border); border-radius: 12px;">
-            <div style="font-size: 1.3rem; margin-bottom: 6px;">⚠️</div>
+            <div style="display:flex; justify-content:center; margin-bottom: 8px;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;color:#F59E0B;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
             <div style="font-weight: 700; color: var(--heading-color); margin-bottom: 4px;">Unable to load assignments right now</div>
             <div style="font-size: 0.78rem; margin-bottom: 12px;">${escapeHtml(err.message || 'Please check your connection or link your teacher code.')}</div>
-            <button class="btn btn-secondary" onclick="loadAssignments()" style="padding: 6px 16px; font-size: 0.78rem; font-weight: 700; border-radius: 8px; cursor: pointer;">🔄 Retry</button>
+            <button class="btn btn-secondary" onclick="loadAssignments()" style="padding: 6px 16px; font-size: 0.78rem; font-weight: 700; border-radius: 8px; cursor: pointer;">Retry</button>
           </div>
         `;
       }
@@ -821,8 +831,8 @@ requireStudentLogin();
 
     const isCorrect = !!a.correct;
     document.getElementById('afStatus').innerHTML = isCorrect
-      ? '<span class="pill pill-ok" style="font-size:1.1rem;padding:6px 14px;">✓ Correct (Pass)</span>'
-      : '<span class="pill pill-warn" style="font-size:1.1rem;padding:6px 14px;">✗ Review Needed</span>';
+      ? '<span class="pill pill-ok" style="font-size:1.1rem;padding:6px 14px;display:inline-flex;align-items:center;gap:6px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><polyline points="20 6 9 17 4 12"/></svg> Pass (Concordant)</span>'
+      : '<span class="pill pill-warn" style="font-size:1.1rem;padding:6px 14px;display:inline-flex;align-items:center;gap:6px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Needs Revision</span>';
 
     // Polymorphic details object
     let d = {};
@@ -873,7 +883,7 @@ requireStudentLogin();
     // 1. Composite Exam
     if (a.q1_score != null || a.q2_score != null || a.q3_score != null || a.cs_total_score != null) {
       details.push(`
-        <div style="margin-bottom:10px;font-weight:800;color:var(--heading-color);">📋 KCSE Paper 3 Composite Exam Mark Breakdown</div>
+        <div style="margin-bottom:10px;font-weight:800;color:var(--heading-color);">KCSE Paper 3 Composite Exam Mark Breakdown</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:0.84rem;margin-bottom:8px;">
           <div>Q1 Volumetric Titration: <b>${a.q1_score != null ? Number(a.q1_score).toFixed(1) + ' / 15' : '—'}</b></div>
           <div>Q2 Qualitative Salt ID: <b>${a.q2_score != null ? Number(a.q2_score).toFixed(1) + ' / 15' : '—'}</b></div>
@@ -957,7 +967,7 @@ requireStudentLogin();
       }
 
       details.push(`
-        <div style="margin-bottom:10px;font-weight:800;color:var(--heading-color);">🧪 Volumetric Analysis Details</div>
+        <div style="margin-bottom:10px;font-weight:800;color:var(--heading-color);">Volumetric Analysis Details</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:0.83rem;margin-bottom:10px;background:var(--card-bg);padding:8px 10px;border-radius:8px;border:1px solid var(--card-border);">
           <div>Practical: <b>${escapeHtml(titTitle)}</b></div>
           <div>Indicator: <b>${escapeHtml(indUsed)}</b></div>
@@ -966,7 +976,7 @@ requireStudentLogin();
         </div>
 
         <div style="margin:10px 0;background:var(--card-bg);padding:10px 12px;border-radius:8px;border:1px solid var(--card-border);font-size:0.82rem;line-height:1.65;">
-          <div style="font-weight:800;margin-bottom:6px;color:var(--heading-color);">📊 KCSE Volumetric Calculations Breakdown:</div>
+          <div style="font-weight:800;margin-bottom:6px;color:var(--heading-color);">KCSE Volumetric Calculations Breakdown:</div>
           ${d.molesTitrant != null ? `<div>• (b) Moles of titrant in average titre: <b>${Number(d.molesTitrant).toExponential(4)} mol</b></div>` : ''}
           ${d.molesAnalyte != null ? `<div>• (c) Moles of analyte reacted: <b>${Number(d.molesAnalyte).toExponential(4)} mol</b></div>` : ''}
           <div>• (d) Molar concentration: <b>${studentMolarity != null ? Number(studentMolarity).toFixed(4) + ' mol/dm³' : '—'}</b> ${targetMolarity != null ? `<span style="color:var(--text-muted);font-size:0.76rem;">(Standard: ${Number(targetMolarity).toFixed(4)} M)</span>` : ''}</div>
@@ -991,10 +1001,10 @@ requireStudentLogin();
     // 3. Qualitative Salt Analysis
     if (a.salt_key || a.cation_correct != null || a.anion_correct != null) {
       details.push(`
-        <div style="margin-bottom:10px;font-weight:800;color:var(--heading-color);">🧫 Qualitative Salt Analysis Details</div>
+        <div style="margin-bottom:10px;font-weight:800;color:var(--heading-color);">Qualitative Salt Analysis Details</div>
         <div>Salt Analyzed: <b>${escapeHtml(a.salt_name || a.salt_key || '—')}</b></div>
-        <div>Cation Identified: <b>${escapeHtml(a.student_cation || '—')}</b> (${a.cation_correct ? '✓ Correct' : '✗ Incorrect'})</div>
-        <div>Anion Identified: <b>${escapeHtml(a.student_anion || '—')}</b> (${a.anion_correct ? '✓ Correct' : '✗ Incorrect'})</div>
+        <div>Cation Identified: <b>${escapeHtml(a.student_cation || '—')}</b> (${a.cation_correct ? 'Correct' : 'Incorrect'})</div>
+        <div>Anion Identified: <b>${escapeHtml(a.student_anion || '—')}</b> (${a.anion_correct ? 'Correct' : 'Incorrect'})</div>
         <div>Observations Performed: <b>${a.q_tests_performed ?? '—'} tests (${a.q_tests_correct ?? '—'} accurate)</b></div>
       `);
     }
@@ -1002,9 +1012,9 @@ requireStudentLogin();
     // 4. Organic Chemistry
     if (a.compound_key || a.functional_group_correct != null) {
       details.push(`
-        <div style="margin-bottom:10px;font-weight:800;color:var(--heading-color);">⚗️ Organic Chemistry Identification</div>
+        <div style="margin-bottom:10px;font-weight:800;color:var(--heading-color);">Organic Chemistry Identification</div>
         <div>Organic Sample: <b>${escapeHtml(a.compound_name || a.compound_key || '—')}</b></div>
-        <div>Identified Functional Group: <b>${escapeHtml(a.student_functional_group || '—')}</b> (${a.functional_group_correct ? '✓ Correct' : '✗ Mismatch'})</div>
+        <div>Identified Functional Group: <b>${escapeHtml(a.student_functional_group || '—')}</b> (${a.functional_group_correct ? 'Correct' : 'Mismatch'})</div>
         <div>Confirmatory Tests: <b>${a.o_tests_performed ?? '—'} performed (${a.o_tests_correct ?? '—'} correct)</b></div>
       `);
     }
@@ -1012,7 +1022,7 @@ requireStudentLogin();
     // 5. Solubility Curves
     if (a.solute_key || a.sol_total_score != null) {
       details.push(`
-        <div style="margin-bottom:10px;font-weight:800;color:var(--heading-color);">🌡️ Solubility Curves & Crystallization</div>
+        <div style="margin-bottom:10px;font-weight:800;color:var(--heading-color);">Solubility Curves &amp; Crystallization</div>
         <div>Target Solute: <b>${escapeHtml(a.solute_name || a.solute_key || '—')}</b></div>
         <div>Crystallization Temp: <b>${a.crystallization_temp != null ? a.crystallization_temp + ' °C' : '—'}</b> (Theoretical: ${a.theoretical_temp != null ? a.theoretical_temp + ' °C' : '—'}, Δ ${a.temp_difference != null ? a.temp_difference + ' °C' : '—'})</div>
         <div>Mark Breakdown: Accuracy <b>${a.sol_accuracy_score ?? 0}/2.0</b> · Graph <b>${a.sol_graph_score ?? 0}/3.0</b> · Total: <b>${Number(a.sol_total_score || 0).toFixed(1)} / 5.0 Marks</b></div>
@@ -1022,7 +1032,7 @@ requireStudentLogin();
     // 6. Thermochemistry Energy Changes
     if (a.en_system_id || a.en_total_score != null) {
       details.push(`
-        <div style="margin-bottom:10px;font-weight:800;color:var(--heading-color);">🔥 Thermochemistry & Energy Changes</div>
+        <div style="margin-bottom:10px;font-weight:800;color:var(--heading-color);">Thermochemistry &amp; Energy Changes</div>
         <div>Reaction System: <b>${escapeHtml(a.en_system_name || a.en_system_id || '—')}</b></div>
         <div>Temp Change (ΔT): <b>${a.en_temp_change != null ? a.en_temp_change + ' °C' : '—'}</b> (Initial: ${a.en_initial_temp || 0}°C → Peak: ${a.en_final_temp || 0}°C)</div>
         <div>Heat Energy Q: <b>${a.en_heat_quantity != null ? a.en_heat_quantity + ' J' : '—'}</b> · Moles: <b>${a.en_moles != null ? a.en_moles + ' mol' : '—'}</b></div>
@@ -1034,7 +1044,7 @@ requireStudentLogin();
     // 7. Reaction Rates & Kinetics
     if (a.rate_exp_type || a.rate_total_score != null) {
       details.push(`
-        <div style="margin-bottom:10px;font-weight:800;color:var(--heading-color);">⚡ Reaction Rates & Chemical Kinetics</div>
+        <div style="margin-bottom:10px;font-weight:800;color:var(--heading-color);">Reaction Rates &amp; Chemical Kinetics</div>
         <div>Experiment: <b>${escapeHtml(a.rate_exp_title || a.rate_exp_type || '—')}</b></div>
         <div>Dilution Table 1: <b>${Number(a.rate_table_score || 0).toFixed(1)} / 5.0</b> · Rate Graph: <b>${Number(a.rate_graph_score || 0).toFixed(1)} / 4.0</b> · Calculations: <b>${Number(a.rate_calc_score || 0).toFixed(1)} / 6.0</b></div>
         <div>Total Score: <b>${Number(a.rate_total_score || 0).toFixed(1)} / 15.0 Marks (${escapeHtml(a.rate_grade || '—')})</b></div>
@@ -1044,10 +1054,10 @@ requireStudentLogin();
     // 8. Gas Preparation
     if (a.gas_key || a.gas_total_score != null) {
       details.push(`
-        <div style="margin-bottom:10px;font-weight:800;color:var(--heading-color);">💨 Gas Preparation & Confirmatory Testing</div>
+        <div style="margin-bottom:10px;font-weight:800;color:var(--heading-color);">Gas Preparation &amp; Confirmatory Testing</div>
         <div>Gas Synthesized: <b>${escapeHtml(a.gas_name || a.gas_key || '—')}</b></div>
-        <div>Drying Agent: <b>${escapeHtml(a.gas_drying_agent || '—')}</b> (${a.gas_drying_correct ? '✓ Correct' : '✗ Incorrect'})</div>
-        <div>Collection Method: <b>${escapeHtml(a.gas_collection_method || '—')}</b> (${a.gas_collection_correct ? '✓ Correct' : '✗ Incorrect'})</div>
+        <div>Drying Agent: <b>${escapeHtml(a.gas_drying_agent || '—')}</b> (${a.gas_drying_correct ? 'Correct' : 'Incorrect'})</div>
+        <div>Collection Method: <b>${escapeHtml(a.gas_collection_method || '—')}</b> (${a.gas_collection_correct ? 'Correct' : 'Incorrect'})</div>
         <div>Tests Performed: <b>${a.gas_tests_performed ?? 0} (${a.gas_tests_correct ?? 0} correct)</b> · Total: <b>${Number(a.gas_total_score || 0).toFixed(1)} / 10.0 Marks</b></div>
       `);
     }
@@ -1059,7 +1069,7 @@ requireStudentLogin();
     const commentEl = document.getElementById('afComments');
     if (commentEl) {
       const comment = a.teacher_feedback
-        ? `💬 <b>Teacher Comments & Guidance:</b><br>"${escapeHtml(a.teacher_feedback)}"`
+        ? `<b>Teacher Evaluation &amp; Guidance:</b><br>"${escapeHtml(a.teacher_feedback)}"`
         : '<i>No written comments added by teacher.</i>';
       commentEl.innerHTML = comment;
     }
@@ -1073,11 +1083,11 @@ requireStudentLogin();
     {
       id: 'tip-burette-decimals',
       topic: 'volumetric',
-      category: '🚨 KNEC MARKING TRAP',
+      category: 'KNEC MARKING TRAP',
       badgeClass: 'badge-danger',
       title: 'Burette Reading Precision (Table 1)',
       body: 'KNEC Paper 3 penalizes any burette reading recorded to only 1 decimal place. Always record initial and final titres to 2 decimal places ending strictly in .00 or .50 (e.g. 24.50 cm³, not 24.5 cm³).',
-      actionText: 'Practice Titration Bench →',
+      actionText: 'Practice Titration Bench &rarr;',
       actionUrl: 'lab.html?type=acidBase&studyMode=guided',
       quickCheck: {
         question: 'Which burette reading forfeits accuracy marks on KCSE Table 1?',
@@ -1091,11 +1101,11 @@ requireStudentLogin();
     {
       id: 'tip-concordancy-rule',
       topic: 'volumetric',
-      category: '🧪 TECHNIQUE & ACCURACY',
+      category: 'TECHNIQUE & ACCURACY',
       badgeClass: 'badge-info',
       title: 'Averaging Concordant Titres (±0.10 cm³)',
       body: 'Never include your rough (first) trial in the final average! Only average 2 or 3 consecutive titres that differ by no more than ±0.10 cm³ to earn full concordancy marks.',
-      actionText: 'Practice Concordancy Run →',
+      actionText: 'Practice Concordancy Run &rarr;',
       actionUrl: 'lab.html?type=acidBase',
       quickCheck: {
         question: 'Given titres: Trial 1 (Rough) = 24.50, Trial 2 = 23.80, Trial 3 = 23.90 cm³. Which values should be averaged?',
@@ -1108,11 +1118,11 @@ requireStudentLogin();
     {
       id: 'tip-redox-kmno4',
       topic: 'redox',
-      category: '🧪 TECHNIQUE & ACCURACY',
+      category: 'TECHNIQUE & ACCURACY',
       badgeClass: 'badge-info',
       title: 'Redox Self-Indicating KMnO₄ Endpoint',
       body: 'Potassium permanganate (KMnO₄) is self-indicating! Stop adding titrant at the very first permanent faint pink tint. Also read the top of the dark KMnO₄ meniscus in the burette.',
-      actionText: 'Practice Redox Titration →',
+      actionText: 'Practice Redox Titration &rarr;',
       actionUrl: 'lab.html?type=redox',
       quickCheck: {
         question: 'What indicates the equivalence point when titrating Fe²⁺ against acidified KMnO₄?',
@@ -1125,11 +1135,11 @@ requireStudentLogin();
     {
       id: 'tip-dibasic-ratio',
       topic: 'dibasic',
-      category: '⚡ FORMULA & CALCULATION',
+      category: 'FORMULA & CALCULATION',
       badgeClass: 'badge-success',
       title: 'Dibasic Acid 1:2 Mole Ratio Rule',
       body: 'Sulfuric acid (H₂SO₄) and oxalic acid (H₂C₂O₄) react with NaOH in a 1:2 stoichiometric ratio (H₂X + 2NaOH → Na₂X + 2H₂O). Always divide moles of NaOH by 2 to find moles of acid!',
-      actionText: 'Practice Dibasic Acid Lab →',
+      actionText: 'Practice Dibasic Acid Lab &rarr;',
       actionUrl: 'lab.html?type=dibasic',
       quickCheck: {
         question: 'If 0.0040 moles of NaOH neutralized H₂SO₄, how many moles of H₂SO₄ reacted?',
@@ -1142,11 +1152,11 @@ requireStudentLogin();
     {
       id: 'tip-al-pb-distinction',
       topic: 'qualitative',
-      category: '📝 EXACT OBSERVATION',
+      category: 'EXACT OBSERVATION',
       badgeClass: 'badge-purple',
       title: 'Distinguishing Al³⁺ from Pb²⁺ in Question 2',
       body: 'Both Al³⁺ and Pb²⁺ form white precipitates soluble in excess NaOH and insoluble in excess NH₃. Add aqueous Potassium Iodide (KI): Pb²⁺ forms a bright yellow precipitate (PbI₂), while Al³⁺ gives no precipitate!',
-      actionText: 'Practice Qualitative Salts →',
+      actionText: 'Practice Qualitative Salts &rarr;',
       actionUrl: 'qualitative.html',
       quickCheck: {
         question: 'Which reagent confirms Pb²⁺ over Al³⁺ after both form white precipitates in NH₃(aq)?',
@@ -1159,11 +1169,11 @@ requireStudentLogin();
     {
       id: 'tip-zn-excess-nh3',
       topic: 'qualitative',
-      category: '📝 EXACT OBSERVATION',
+      category: 'EXACT OBSERVATION',
       badgeClass: 'badge-purple',
       title: 'Confirming Zn²⁺ with Aqueous Ammonia',
       body: 'Zn²⁺, Al³⁺, and Pb²⁺ all dissolve in excess NaOH. However, in excess aqueous ammonia (NH₃), only Zn²⁺ dissolves to form a colorless complex ion [Zn(NH₃)₄]²⁺!',
-      actionText: 'Test Cation Separations →',
+      actionText: 'Test Cation Separations &rarr;',
       actionUrl: 'qualitative.html',
       quickCheck: {
         question: 'A solution gives a white precipitate soluble in both excess NaOH(aq) and excess NH₃(aq). Which ion is present?',
@@ -1176,11 +1186,11 @@ requireStudentLogin();
     {
       id: 'tip-so3-so4-distinction',
       topic: 'qualitative',
-      category: '📝 EXACT OBSERVATION',
+      category: 'EXACT OBSERVATION',
       badgeClass: 'badge-purple',
       title: 'Sulfite (SO₃²⁻) vs Sulfate (SO₄²⁻) Anion Test',
       body: 'Both anions form white precipitates with Ba(NO₃)₂ or BaCl₂. Adding dilute HCl or HNO₃ dissolves white BaSO₃ precipitate with effervescence, whereas BaSO₄ remains insoluble!',
-      actionText: 'Practice Anion Identification →',
+      actionText: 'Practice Anion Identification &rarr;',
       actionUrl: 'qualitative.html',
       quickCheck: {
         question: 'After adding BaCl₂(aq), a white precipitate dissolves upon adding dilute HCl. What is the anion?',
@@ -1193,11 +1203,11 @@ requireStudentLogin();
     {
       id: 'tip-br2-organic-keyword',
       topic: 'organic',
-      category: '🚨 KNEC MARKING TRAP',
+      category: 'KNEC MARKING TRAP',
       badgeClass: 'badge-danger',
       title: 'Organic Unsaturation Keyword Rule (Question 3)',
       body: 'When testing alkenes/alkynes with bromine water or acidified KMnO₄, never write "turns clear". Always write: "Yellow/orange bromine water is decolorized immediately."',
-      actionText: 'Practice Organic Lab →',
+      actionText: 'Practice Organic Lab &rarr;',
       actionUrl: 'organic.html',
       quickCheck: {
         question: 'Why does writing "Bromine water turns clear" lose marks in KCSE Paper 3?',
@@ -1210,11 +1220,11 @@ requireStudentLogin();
     {
       id: 'tip-enthalpy-cooling-curve',
       topic: 'energy',
-      category: '⚡ FORMULA & CALCULATION',
+      category: 'FORMULA & CALCULATION',
       badgeClass: 'badge-success',
       title: 'Thermochemistry ΔT Cooling Extrapolation',
       body: 'In enthalpy experiments (ΔH = -mcΔT / n), always extrapolate the cooling line back to the vertical line at the time of mixing to find the true peak ΔT corrected for heat loss!',
-      actionText: 'Practice Calorimetry →',
+      actionText: 'Practice Calorimetry &rarr;',
       actionUrl: 'energy.html',
       quickCheck: {
         question: 'In ΔH calculations, what must always be included with the final numerical value?',
@@ -1227,11 +1237,11 @@ requireStudentLogin();
     {
       id: 'tip-rates-disappearing-cross',
       topic: 'rates',
-      category: '⚡ FORMULA & CALCULATION',
+      category: 'FORMULA & CALCULATION',
       badgeClass: 'badge-info',
       title: 'Reaction Rates & Reciprocal Time (1/t)',
       body: 'In the sodium thiosulfate disappearing cross practical, rate of reaction is represented by 1/t (s⁻¹). Plotting 1/t against concentration yields a straight line through the origin!',
-      actionText: 'Practice Reaction Rates →',
+      actionText: 'Practice Reaction Rates &rarr;',
       actionUrl: 'rates.html',
       quickCheck: {
         question: 'If the cross disappears in 20 seconds, what is the rate (1/t) value recorded in the table?',
@@ -1244,11 +1254,11 @@ requireStudentLogin();
     {
       id: 'tip-ammonia-drying',
       topic: 'gas',
-      category: '🚨 KNEC MARKING TRAP',
+      category: 'KNEC MARKING TRAP',
       badgeClass: 'badge-danger',
       title: 'Drying Ammonia Gas (Calcium Oxide Only)',
       body: 'Ammonia (NH₃) is the only common alkaline gas. Never dry it with conc. H₂SO₄ (reacts to form ammonium sulfate) or anhydrous CaCl₂ (forms CaCl₂·8NH₃ adduct). Always use Calcium Oxide (CaO)!',
-      actionText: 'Practice Gas Preparation →',
+      actionText: 'Practice Gas Preparation &rarr;',
       actionUrl: 'gas_prep.html',
       quickCheck: {
         question: 'How is dry ammonia gas collected in the laboratory?',
@@ -1261,11 +1271,11 @@ requireStudentLogin();
     {
       id: 'tip-table1-units',
       topic: 'general',
-      category: '🚨 KNEC MARKING TRAP',
+      category: 'KNEC MARKING TRAP',
       badgeClass: 'badge-warning',
       title: 'Mandatory Units & Working Steps',
       body: 'Never write bare numbers in Paper 3 calculations! Always state clear working steps and attach units: cm³ for volume, mol/dm³ (or M) for molarity, and g/dm³ for mass concentration.',
-      actionText: 'Explore KNEC Rubric Guide →',
+      actionText: 'Explore KNEC Rubric Guide &rarr;',
       actionUrl: 'titration_theory.html',
       quickCheck: {
         question: 'How do you convert molarity (mol/dm³) into mass concentration (g/dm³)?',
@@ -1338,7 +1348,9 @@ requireStudentLogin();
       saveBtn.title = isSaved ? 'Saved in Exam Pocket (Click to remove)' : 'Save to Exam Pocket';
     }
     if (saveIcon) {
-      saveIcon.textContent = isSaved ? '🌟' : '⭐';
+      saveIcon.innerHTML = isSaved
+        ? '<svg class="vlk-icon" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.75" style="width:14px;height:14px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'
+        : '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" style="width:14px;height:14px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
     }
 
     // Populate Quick Recall Quiz
@@ -1354,7 +1366,7 @@ requireStudentLogin();
       const alreadyDone = answeredIds.includes(tip.id);
 
       if (qBtnLabel) {
-        qBtnLabel.textContent = alreadyDone ? '✓ Quick Recall Completed' : '⚡ Quick Recall Test (+10 XP)';
+        qBtnLabel.textContent = alreadyDone ? 'Quick Recall Completed' : 'Quick Recall Test (+10 XP)';
       }
       if (qQuestion) {
         qQuestion.textContent = tip.quickCheck.question;
@@ -1436,7 +1448,7 @@ requireStudentLogin();
         }
       }
       if (qBtnLabel) {
-        qBtnLabel.textContent = '✓ Quick Recall Mastered (+10 XP)';
+        qBtnLabel.textContent = 'Quick Recall Mastered (+10 XP)';
       }
       if (window.BrilliantUI && window.BrilliantUI.audio) {
         window.BrilliantUI.audio.playClick();
@@ -1496,7 +1508,7 @@ requireStudentLogin();
     if (savedTips.length === 0) {
       container.innerHTML = `
         <div style="grid-column: 1 / -1; text-align: center; padding: 18px 12px; color: var(--text-muted); font-size: 0.82rem;">
-          No tips bookmarked yet. Click the <b>⭐ Save</b> button on any Examiner Study Tip card on your workbench to build your personal KCSE Paper 3 morning revision sheet!
+          No tips bookmarked yet. Click the <b>Save</b> button on any Examiner Study Tip card on your workbench to build your personal KCSE Paper 3 morning revision sheet!
         </div>
       `;
       return;
@@ -1507,7 +1519,7 @@ requireStudentLogin();
         <div>
           <div class="saved-tip-pocket-top">
             <span class="tip-category-badge ${tip.badgeClass || 'badge-warning'}">${escapeHtml(tip.category)}</span>
-            <button type="button" onclick="removeSavedTip('${tip.id}')" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:0.85rem;" title="Remove from pocket">✕</button>
+            <button type="button" onclick="removeSavedTip('${tip.id}')" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer; font-size:1rem; line-height:1;" title="Remove from pocket">&times;</button>
           </div>
           <h4 class="saved-tip-pocket-title" style="margin-top:6px;">${escapeHtml(tip.title)}</h4>
           <p class="saved-tip-pocket-text" style="margin-top:4px;">${escapeHtml(tip.body)}</p>
@@ -1627,17 +1639,17 @@ requireStudentLogin();
     if (barFill) barFill.style.width = totalReadiness + '%';
     if (certBtn) certBtn.style.display = (totalReadiness >= 20 || sessions.length > 0) ? 'inline-block' : 'none';
 
-    let statusText = 'Novice 🔰';
-    if (totalReadiness >= 85) statusText = 'KCSE Ready 🎯';
-    else if (totalReadiness >= 70) statusText = 'Competent 🧪';
-    else if (totalReadiness >= 40) statusText = 'Developing 📈';
+    let statusText = 'Novice';
+    if (totalReadiness >= 85) statusText = 'Distinction Ready';
+    else if (totalReadiness >= 70) statusText = 'Competent';
+    else if (totalReadiness >= 40) statusText = 'Developing';
     if (statusEl) statusEl.textContent = statusText;
 
     for (const [key, count] of Object.entries(topicCounts)) {
       const el = document.getElementById('topicStatus-' + key);
       const item = document.querySelector(`.topic-item[data-topic="${key}"]`);
       if (el) {
-        el.textContent = count > 0 ? `${count} session${count > 1 ? 's' : ''} ✓` : 'Not started';
+        el.textContent = count > 0 ? `${count} session${count > 1 ? 's' : ''}` : 'Not started';
       }
       if (item) {
         if (count > 0) item.classList.add('mastered');
@@ -1701,12 +1713,12 @@ requireStudentLogin();
       acidBase: {
         key: 'acidBase',
         title: 'Acid-Base Titration (HCl vs NaOH)',
-        icon: '🧪',
+        iconName: 'burette',
         url: 'lab.html?type=acidBase',
         warmupMode: 'acidBase',
-        paperTag: '📋 Paper 3 · Q1 (15 Marks)',
-        timeTag: '⏱️ ~15 mins',
-        xpTag: '✨ +50 XP',
+        paperTag: 'Paper 3 · Q1 (15 Marks)',
+        timeTag: '~15 mins',
+        xpTag: '+50 XP',
         focusHint: 'Master 2 decimal place burette readings (.00 or .05) and ±0.20 cm³ concordancy.',
         total: 0,
         correct: 0,
@@ -1715,12 +1727,12 @@ requireStudentLogin();
       redox: {
         key: 'redox',
         title: 'Redox Titration (Fe²⁺ vs KMnO₄)',
-        icon: '⚗️',
+        iconName: 'flask',
         url: 'lab.html?type=redox',
         warmupMode: 'redox',
-        paperTag: '📋 Paper 3 · Q1 (15 Marks)',
-        timeTag: '⏱️ ~15 mins',
-        xpTag: '✨ +55 XP',
+        paperTag: 'Paper 3 · Q1 (15 Marks)',
+        timeTag: '~15 mins',
+        xpTag: '+55 XP',
         focusHint: 'Practice self-indicating KMnO₄ endpoints (first permanent pale pink tint) and 5:1 Fe²⁺:MnO₄⁻ stoichiometric ratios.',
         total: 0,
         correct: 0,
@@ -1729,12 +1741,12 @@ requireStudentLogin();
       dibasic: {
         key: 'dibasic',
         title: 'Dibasic Acid Standardisation (H₂X)',
-        icon: '⚖️',
+        iconName: 'burette',
         url: 'lab.html?type=dibasic',
         warmupMode: 'acidBase',
-        paperTag: '📋 Paper 3 · Q1 (15 Marks)',
-        timeTag: '⏱️ ~15 mins',
-        xpTag: '✨ +55 XP',
+        paperTag: 'Paper 3 · Q1 (15 Marks)',
+        timeTag: '~15 mins',
+        xpTag: '+55 XP',
         focusHint: 'Master 1:2 acid-to-NaOH stoichiometric mole ratios and Relative Formula Mass (RFM) calculations.',
         total: 0,
         correct: 0,
@@ -1743,12 +1755,12 @@ requireStudentLogin();
       precipitation: {
         key: 'precipitation',
         title: "Precipitation Titration (Mohr's Method)",
-        icon: '💧',
+        iconName: 'droplet',
         url: 'lab.html?type=precipitation',
         warmupMode: 'precipitation',
-        paperTag: '📋 Paper 3 · Q1 (12 Marks)',
-        timeTag: '⏱️ ~12 mins',
-        xpTag: '✨ +50 XP',
+        paperTag: 'Paper 3 · Q1 (12 Marks)',
+        timeTag: '~12 mins',
+        xpTag: '+50 XP',
         focusHint: 'Detect the brick-red Ag₂CrO₄ endpoint precipitate using K₂CrO₄ indicator.',
         total: 0,
         correct: 0,
@@ -1757,12 +1769,12 @@ requireStudentLogin();
       qualitative: {
         key: 'qualitative',
         title: 'Qualitative Inorganic Salt Analysis',
-        icon: '🧫',
+        iconName: 'test-tube',
         url: 'qualitative.html',
         warmupMode: 'qualitative',
-        paperTag: '📋 Paper 3 · Q2 (14 Marks)',
-        timeTag: '⏱️ ~15 mins',
-        xpTag: '✨ +60 XP',
+        paperTag: 'Paper 3 · Q2 (14 Marks)',
+        timeTag: '~15 mins',
+        xpTag: '+60 XP',
         focusHint: 'Identify unknown cations and anions using dropwise/excess NaOH, aqueous NH₃, and Ba(NO₃)₂.',
         total: 0,
         correct: 0,
@@ -1771,12 +1783,12 @@ requireStudentLogin();
       organic: {
         key: 'organic',
         title: 'Organic Functional Group Identification',
-        icon: '🌿',
+        iconName: 'leaf',
         url: 'organic.html',
         warmupMode: 'organic',
-        paperTag: '📋 Paper 3 · Q3 (8 Marks)',
-        timeTag: '⏱️ ~10 mins',
-        xpTag: '✨ +50 XP',
+        paperTag: 'Paper 3 · Q3 (8 Marks)',
+        timeTag: '~10 mins',
+        xpTag: '+50 XP',
         focusHint: 'Distinguish alkenes, alkanols, and carboxylic acids using Br₂ water, acidified H⁺/KMnO₄, and NaHCO₃.',
         total: 0,
         correct: 0,
@@ -1785,12 +1797,12 @@ requireStudentLogin();
       energy: {
         key: 'energy',
         title: 'Thermochemistry & Enthalpy (ΔH)',
-        icon: '🔥',
+        iconName: 'flame',
         url: 'energy.html',
         warmupMode: 'energy',
-        paperTag: '📋 Paper 3 · Q1b (12 Marks)',
-        timeTag: '⏱️ ~12 mins',
-        xpTag: '✨ +55 XP',
+        paperTag: 'Paper 3 · Q1b (12 Marks)',
+        timeTag: '~12 mins',
+        xpTag: '+55 XP',
         focusHint: 'Extrapolate cooling curves for ΔT and compute molar enthalpy ΔH = -mcΔT / (1000 × n) with mandatory +/- sign.',
         total: 0,
         correct: 0,
@@ -1799,12 +1811,12 @@ requireStudentLogin();
       rates: {
         key: 'rates',
         title: 'Reaction Rates & Chemical Kinetics',
-        icon: '⏱️',
+        iconName: 'timer',
         url: 'rates.html',
         warmupMode: 'rates',
-        paperTag: '📋 Paper 3 · Q1b (12 Marks)',
-        timeTag: '⏱️ ~12 mins',
-        xpTag: '✨ +55 XP',
+        paperTag: 'Paper 3 · Q1b (12 Marks)',
+        timeTag: '~12 mins',
+        xpTag: '+55 XP',
         focusHint: 'Plot disappearing cross (Na₂S₂O₃ + HCl) 1/t vs concentration graphs and evaluate rate tangents.',
         total: 0,
         correct: 0,
@@ -1813,12 +1825,12 @@ requireStudentLogin();
       solubility: {
         key: 'solubility',
         title: 'Solubility Curves & Crystallization',
-        icon: '🌡️',
+        iconName: 'thermometer',
         url: 'solubility.html',
         warmupMode: 'solubility',
-        paperTag: '📋 Paper 3 · Q1b (10 Marks)',
-        timeTag: '⏱️ ~10 mins',
-        xpTag: '✨ +45 XP',
+        paperTag: 'Paper 3 · Q1b (10 Marks)',
+        timeTag: '~10 mins',
+        xpTag: '+45 XP',
         focusHint: 'Record crystallization temperatures and plot smooth solubility curves (g / 100g water vs °C).',
         total: 0,
         correct: 0,
@@ -1827,12 +1839,12 @@ requireStudentLogin();
       gas: {
         key: 'gas',
         title: 'Gas Preparation & Confirmatory Tests',
-        icon: '💨',
+        iconName: 'wind',
         url: 'gas_prep.html',
         warmupMode: 'gas',
-        paperTag: '📋 Paper 3 · Q2b (10 Marks)',
-        timeTag: '⏱️ ~10 mins',
-        xpTag: '✨ +50 XP',
+        paperTag: 'Paper 3 · Q2b (10 Marks)',
+        timeTag: '~10 mins',
+        xpTag: '+50 XP',
         focusHint: 'Select appropriate drying agents (CaO for NH₃ vs conc. H₂SO₄) and gas collection methods.',
         total: 0,
         correct: 0,
@@ -1913,14 +1925,14 @@ requireStudentLogin();
     weakTopics.slice(0, 2).forEach(t => {
       queue.push({
         topic: t,
-        reasonBadge: `⚠️ Weak Spot (${t.accuracy}% Accuracy)`,
+        reasonBadge: `Focus Area: ${t.accuracy}% Accuracy`,
         badgeColor: '#EF4444',
         badgeBg: 'rgba(239, 68, 68, 0.18)',
         desc: `Your accuracy in ${t.title} is ${t.accuracy}% across ${t.total} run${t.total === 1 ? '' : 's'}. ${t.focusHint}`,
         masteryLabel: `Current Mastery: ${t.accuracy}% (${t.total} run${t.total === 1 ? '' : 's'})`,
-        masteryGoal: 'Goal: 80%+ (3★)',
+        masteryGoal: 'Goal: &ge;80% (Distinction)',
         masteryPct: Math.max(12, t.accuracy),
-        actionText: 'Fix Weak Spot →'
+        actionText: 'Fix Weak Spot &rarr;'
       });
     });
 
@@ -1933,14 +1945,14 @@ requireStudentLogin();
     unexplored.slice(0, 3).forEach(t => {
       queue.push({
         topic: t,
-        reasonBadge: '🆕 Unexplored Syllabus Topic',
+        reasonBadge: 'Unexplored Syllabus Topic',
         badgeColor: '#3B82F6',
         badgeBg: 'rgba(59, 130, 246, 0.18)',
         desc: `You haven't practiced ${t.title} yet. ${t.focusHint}`,
         masteryLabel: 'Current Mastery: Not Started (0 runs)',
-        masteryGoal: 'Goal: 80%+ (3★)',
+        masteryGoal: 'Goal: &ge;80% (Distinction)',
         masteryPct: 8,
-        actionText: 'Start Practical →'
+        actionText: 'Start Practical &rarr;'
       });
     });
 
@@ -1954,14 +1966,14 @@ requireStudentLogin();
       const daysAgo = Math.max(1, Math.floor((now - t.lastTime) / (24 * 60 * 60 * 1000)));
       queue.push({
         topic: t,
-        reasonBadge: `📅 Spaced Refresher (${daysAgo}d ago)`,
+        reasonBadge: `Spaced Refresher (${daysAgo}d ago)`,
         badgeColor: '#EAB308',
         badgeBg: 'rgba(234, 179, 8, 0.18)',
         desc: `It's been ${daysAgo} day${daysAgo === 1 ? '' : 's'} since your last ${t.title} session. ${t.focusHint}`,
         masteryLabel: `Current Mastery: ${t.accuracy}% (${t.total} run${t.total === 1 ? '' : 's'})`,
-        masteryGoal: 'Goal: Keep Sharp (85%+)',
+        masteryGoal: 'Goal: Maintain Distinction (&ge;85%)',
         masteryPct: Math.max(15, t.accuracy),
-        actionText: 'Run Refresher →'
+        actionText: 'Run Refresher &rarr;'
       });
     });
 
@@ -1972,23 +1984,23 @@ requireStudentLogin();
       topic: {
         key: 'compositeExam',
         title: 'KCSE Paper 3 Full Composite Mock (Q1 + Q2 + Q3)',
-        icon: '🏆',
+        iconName: 'trophy',
         url: 'composite_exam.html',
         warmupMode: 'acidBase',
-        paperTag: '📋 Full Paper 3 · 40 Marks',
-        timeTag: '⏱️ 2¼ Hours Timed',
-        xpTag: '✨ +120 XP',
+        paperTag: 'Full Paper 3 · 40 Marks',
+        timeTag: '2¼ Hours Timed',
+        xpTag: '+120 XP',
         total: coveredCount,
         accuracy: coveragePct
       },
-      reasonBadge: coveredCount >= 6 ? '🏆 Distinction Capstone Ready' : '🎯 National Exam Simulation',
+      reasonBadge: coveredCount >= 6 ? 'Distinction Capstone Ready' : 'National Exam Simulation',
       badgeColor: '#10B981',
       badgeBg: 'rgba(16, 185, 129, 0.18)',
       desc: 'Challenge yourself under real KNEC examination conditions combining Q1 Volumetric Titration (15m), Q2 Qualitative Salt Analysis (15m), and Q3 Organic Functional ID (10m).',
       masteryLabel: `Syllabus Coverage: ${coveredCount}/10 Benches Practiced`,
       masteryGoal: 'Pass Mark: 20/40 (Distinction: 32+)',
       masteryPct: Math.max(12, coveragePct),
-      actionText: 'Launch 40-Mark Mock →'
+      actionText: 'Launch 40-Mark Mock &rarr;'
     });
 
     return queue.slice(0, 5);
@@ -2012,7 +2024,14 @@ requireStudentLogin();
     if (!rec || !rec.topic) return;
 
     const recIconEl = document.getElementById('recIcon');
-    if (recIconEl) recIconEl.textContent = rec.topic.icon || '🎯';
+    if (recIconEl) {
+      const iconKey = rec.topic.iconName || 'target';
+      if (window.VLKIcons && typeof window.VLKIcons.svg === 'function') {
+        recIconEl.innerHTML = window.VLKIcons.svg(iconKey, { size: 28, strokeWidth: 1.75 });
+      } else {
+        recIconEl.textContent = '';
+      }
+    }
 
     const titleEl = document.getElementById('recTitle');
     if (titleEl) titleEl.textContent = rec.topic.title;
@@ -2197,7 +2216,7 @@ requireStudentLogin();
       if (btnVelocity) btnVelocity.classList.remove('active');
       if (typeCanvas) typeCanvas.style.display = 'block';
       if (velocityCanvas) velocityCanvas.style.display = 'none';
-      if (title) title.textContent = '🔬 Syllabus Discipline Mastery';
+      if (title) title.textContent = 'Syllabus Discipline Mastery';
       if (subtitle) subtitle.textContent = 'Distribution of practical sessions by chemistry domain';
       if (studentTypeChartInstance) studentTypeChartInstance.resize();
     } else {
@@ -2205,7 +2224,7 @@ requireStudentLogin();
       if (btnVelocity) btnVelocity.classList.add('active');
       if (typeCanvas) typeCanvas.style.display = 'none';
       if (velocityCanvas) velocityCanvas.style.display = 'block';
-      if (title) title.textContent = '⚡ 4-Week Practice Velocity';
+      if (title) title.textContent = '4-Week Practice Velocity';
       if (subtitle) subtitle.textContent = 'Completed practicals per week vs KNEC target pace (3+/wk)';
       if (studentVelocityChartInstance) {
         studentVelocityChartInstance.resize();
@@ -2943,13 +2962,29 @@ requireStudentLogin();
     if (!grid) return;
 
     const DEFAULT_KCSE_BADGES = [
-      { id: 'b_burette', name: 'Burette Accuracy Master', icon: '⚖️', desc: 'Titre concordancy within ±0.10 cm³', progress: 'In Progress', progress_pct: 65, colorClass: 'teal' },
-      { id: 'b_flame', name: 'Flame Emission Specialist', icon: '🔥', desc: 'Identify 5 metal cations by flame color', progress: 'In Progress', progress_pct: 40, colorClass: 'fire' },
-      { id: 'b_cation', name: 'Cation Qualitative Sleuth', icon: '🔬', desc: 'Systematic NaOH & NH₃ precipitation', progress: 'In Progress', progress_pct: 50, colorClass: 'blue' },
-      { id: 'b_kinetics', name: 'Reaction Rates & Kinetics Ace', icon: '⚡', desc: 'Disappearing cross & rate tangents', progress: 'In Progress', progress_pct: 35, colorClass: 'orange' },
-      { id: 'b_organic', name: 'Organic Functional Group Pro', icon: '⚗️', desc: 'Bromine water & alkanol oxidation', progress: 'In Progress', progress_pct: 20, colorClass: 'purple' },
-      { id: 'b_precision', name: 'Zero-Error KCSE Champion', icon: '🎯', desc: 'Score 100% on Paper 3 composite test', progress: 'Locked', progress_pct: 10, colorClass: 'silver' }
+      { id: 'b_burette', name: 'Burette Accuracy Master', iconName: 'burette', desc: 'Titre concordancy within ±0.10 cm³', progress: 'In Progress', progress_pct: 65, colorClass: 'teal' },
+      { id: 'b_flame', name: 'Flame Emission Specialist', iconName: 'flame', desc: 'Identify 5 metal cations by flame color', progress: 'In Progress', progress_pct: 40, colorClass: 'fire' },
+      { id: 'b_cation', name: 'Cation Qualitative Sleuth', iconName: 'microscope', desc: 'Systematic NaOH & NH₃ precipitation', progress: 'In Progress', progress_pct: 50, colorClass: 'blue' },
+      { id: 'b_kinetics', name: 'Reaction Rates & Kinetics Ace', iconName: 'timer', desc: 'Disappearing cross & rate tangents', progress: 'In Progress', progress_pct: 35, colorClass: 'orange' },
+      { id: 'b_organic', name: 'Organic Functional Group Pro', iconName: 'flask', desc: 'Bromine water & alkanol oxidation', progress: 'In Progress', progress_pct: 20, colorClass: 'purple' },
+      { id: 'b_precision', name: 'Zero-Error KCSE Champion', iconName: 'target', desc: 'Score 100% on Paper 3 composite test', progress: 'Locked', progress_pct: 10, colorClass: 'silver' }
     ];
+
+    const getBadgeIconHtml = (b) => {
+      const map = {
+        'b_burette': 'burette',
+        'b_flame': 'flame',
+        'b_cation': 'microscope',
+        'b_kinetics': 'timer',
+        'b_organic': 'flask',
+        'b_precision': 'target'
+      };
+      const key = b.iconName || map[b.id] || 'award';
+      if (window.VLKIcons && typeof window.VLKIcons.svg === 'function') {
+        return window.VLKIcons.svg(key, { size: 18, strokeWidth: 1.75 });
+      }
+      return '';
+    };
 
     try {
       const data = await Badges.getMine();
@@ -2964,10 +2999,10 @@ requireStudentLogin();
 
         return `
           <div class="badge-card" data-tooltip="${escapeHtml(b.desc || b.name)}" data-tooltip-pos="top">
-            <div class="badge-icon-box ${colorClass}">${b.icon || '🎯'}</div>
+            <div class="badge-icon-box ${colorClass}">${getBadgeIconHtml(b)}</div>
             <div style="flex:1; min-width:0;">
               <div class="badge-title-text">${escapeHtml(b.name)}</div>
-              <div class="badge-progress-text">${escapeHtml(b.unlocked ? 'Achieved ★' : (b.progress || b.desc || 'In Progress'))}</div>
+              <div class="badge-progress-text">${escapeHtml(b.unlocked ? 'Achieved' : (b.progress || b.desc || 'In Progress'))}</div>
               <div class="badge-progress-bar-track">
                 <div class="badge-progress-bar-fill ${colorClass}" style="width: ${progressPct}%;"></div>
               </div>
@@ -2979,7 +3014,7 @@ requireStudentLogin();
       console.warn('Using offline default badges:', err);
       grid.innerHTML = DEFAULT_KCSE_BADGES.map((b) => `
         <div class="badge-card" data-tooltip="${escapeHtml(b.desc || b.name)}" data-tooltip-pos="top">
-          <div class="badge-icon-box ${b.colorClass}">${b.icon}</div>
+          <div class="badge-icon-box ${b.colorClass}">${getBadgeIconHtml(b)}</div>
           <div style="flex:1; min-width:0;">
             <div class="badge-title-text">${escapeHtml(b.name)}</div>
             <div class="badge-progress-text">${escapeHtml(b.desc)}</div>
@@ -3010,7 +3045,7 @@ requireStudentLogin();
         return;
       }
 
-      const medals = ['🥇', '🥈', '🥉'];
+      const medals = ['1st', '2nd', '3rd'];
       const items = list.slice(0, 6).map((r, i) => {
         const isYou = data.you && r.studentId === data.you.studentId;
         const rankDisplay = i < 3 ? medals[i] : `#${r.rank || (i + 1)}`;
@@ -3187,7 +3222,7 @@ requireStudentLogin();
 
     if (nameEl) nameEl.textContent = user.name || 'Student Candidate';
     if (emailEl) emailEl.textContent = user.email || 'student@virtulab.ke';
-    if (roleEl) roleEl.textContent = user.role === 'teacher' ? '👨‍🏫 Teacher Instructor' : '🎓 KCSE Candidate Student';
+    if (roleEl) roleEl.textContent = user.role === 'teacher' ? 'Teacher Instructor' : 'KCSE Candidate Student';
 
     const inputName = document.getElementById('profInputName');
     const inputEmail = document.getElementById('profInputEmail');
@@ -3247,7 +3282,7 @@ requireStudentLogin();
     });
     updateStudentAvatar(newName);
 
-    if (msg) msg.innerHTML = '<div class="msg msg-ok">✓ Profile details updated successfully!</div>';
+    if (msg) msg.innerHTML = '<div class="msg msg-ok">Profile details updated successfully!</div>';
   };
 
   window.exportLabHistoryCSV = function() {
@@ -3298,7 +3333,7 @@ requireStudentLogin();
     }
     try {
       await Auth.changePassword(currentPassword, newPassword);
-      if (msg) msg.innerHTML = '<div class="msg msg-ok">✓ Security password updated successfully!</div>';
+      if (msg) msg.innerHTML = '<div class="msg msg-ok">Security password updated successfully!</div>';
       if (document.getElementById('pwCurrent')) document.getElementById('pwCurrent').value = '';
       if (document.getElementById('pwNew')) document.getElementById('pwNew').value = '';
       if (document.getElementById('pwConfirm')) document.getElementById('pwConfirm').value = '';
@@ -3315,16 +3350,19 @@ requireStudentLogin();
         const banner = document.getElementById('systemBroadcastBanner');
         if (banner && activeAlerts.length > 0) {
           banner.style.display = 'block';
+          const broadcastSvg = (window.VLKIcons && typeof window.VLKIcons.svg === 'function')
+            ? window.VLKIcons.svg('broadcast', { size: 22 })
+            : '';
           banner.innerHTML = activeAlerts.map(a => `
             <div id="ann-card-${a.id}" style="background:linear-gradient(135deg, rgba(6,182,212,0.15), rgba(245,158,11,0.15));border:1.5px solid var(--amber-accent, #F59E0B);border-radius:12px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
               <div style="display:flex;align-items:flex-start;gap:12px;">
-                <div style="font-size:1.4rem;">📢</div>
+                <div style="color:var(--amber-accent);display:inline-flex;align-items:center;">${broadcastSvg}</div>
                 <div>
                   <div style="font-weight:800;font-size:0.95rem;color:var(--heading-color);">${escapeHtml(a.title)}</div>
                   <div style="font-size:0.84rem;color:var(--text-main);margin-top:2px;">${escapeHtml(a.message)}</div>
                 </div>
               </div>
-              <button onclick="dismissAnnouncement(${a.id})" style="background:transparent;border:none;color:var(--text-muted);font-weight:800;font-size:1.1rem;cursor:pointer;padding:0 4px;" title="Dismiss notice">✕</button>
+              <button onclick="dismissAnnouncement(${a.id})" style="background:transparent;border:none;color:var(--text-muted);font-weight:800;font-size:1.1rem;cursor:pointer;padding:0 4px;" title="Dismiss notice">&times;</button>
             </div>
           `).join('');
         }
@@ -3377,7 +3415,15 @@ requireStudentLogin();
     if (xpTextEl) xpTextEl.textContent = `${xp.totalXP} / ${xp.nextLevelXP} XP`;
     if (xpBarEl) xpBarEl.style.width = `${xp.progressPercent}%`;
     if (tierNameEl) tierNameEl.textContent = xp.title.replace('Form ', 'F').replace('KCSE ', '');
-    if (levelIconEl) levelIconEl.textContent = xp.icon;
+    if (levelIconEl) {
+      const tierIconMap = { 1: 'flask', 2: 'microscope', 3: 'burette', 4: 'zap', 5: 'award' };
+      const iconKey = tierIconMap[xp.level] || 'flask';
+      if (window.VLKIcons && typeof window.VLKIcons.svg === 'function') {
+        levelIconEl.innerHTML = window.VLKIcons.svg(iconKey, { size: 18, strokeWidth: 1.75 });
+      } else {
+        levelIconEl.textContent = '';
+      }
+    }
 
     // 3. Daily Challenge Card
     const daily = window.GamificationEngine.getDailyChallenge();
@@ -3407,7 +3453,7 @@ requireStudentLogin();
     {
       level: 1,
       title: 'Form 1 Apprentice',
-      icon: '🧪',
+      iconName: 'flask',
       minXP: 0,
       maxXP: 250,
       perks: 'Basic apparatus calibration, lab safety badges & volumetric pipetting.'
@@ -3415,7 +3461,7 @@ requireStudentLogin();
     {
       level: 2,
       title: 'Form 2 Experimenter',
-      icon: '🔬',
+      iconName: 'microscope',
       minXP: 250,
       maxXP: 700,
       perks: 'Acid-base indicator transition endpoints, solubility curves & dissolution bench.'
@@ -3423,7 +3469,7 @@ requireStudentLogin();
     {
       level: 3,
       title: 'Form 3 Analytical Chemist',
-      icon: '⚗️',
+      iconName: 'burette',
       minXP: 700,
       maxXP: 1600,
       perks: 'Precision volumetric burette concordancy (Table 1), redox titrations & enthalpy calorimetry.'
@@ -3431,7 +3477,7 @@ requireStudentLogin();
     {
       level: 4,
       title: 'Form 4 Master Chemist',
-      icon: '⚡',
+      iconName: 'zap',
       minXP: 1600,
       maxXP: 3200,
       perks: 'Qualitative inorganic cation/anion precipitation benches, gas tests & organic functional deductions.'
@@ -3439,7 +3485,7 @@ requireStudentLogin();
     {
       level: 5,
       title: 'KCSE Distinction Scholar',
-      icon: '👑',
+      iconName: 'award',
       minXP: 3200,
       maxXP: 6000,
       perks: 'Full 40-mark national mock capstone, gold certificate eligibility & examiner marking rubric access.'
@@ -3467,7 +3513,14 @@ requireStudentLogin();
     const remainingEl = document.getElementById('xpHudRemainingText');
     const percentEl = document.getElementById('xpHudPercentText');
 
-    if (iconEl) iconEl.textContent = xp.icon || '🧪';
+    if (iconEl) {
+      const currentTier = LEVEL_TIER_PERKS.find(t => t.level === xp.level) || LEVEL_TIER_PERKS[0];
+      if (window.VLKIcons && typeof window.VLKIcons.svg === 'function') {
+        iconEl.innerHTML = window.VLKIcons.svg(currentTier.iconName || 'flask', { size: 28, strokeWidth: 1.75 });
+      } else {
+        iconEl.textContent = '';
+      }
+    }
     if (badgeEl) badgeEl.textContent = `Level ${xp.level}`;
     if (titleEl) titleEl.textContent = xp.title;
     if (currentXpEl) currentXpEl.textContent = (xp.totalXP || 0).toLocaleString();
@@ -3480,9 +3533,9 @@ requireStudentLogin();
 
     if (remainingEl) {
       if (nextTier) {
-        remainingEl.innerHTML = `⚡ <strong>${remainingXP.toLocaleString()} XP</strong> needed to reach Level ${nextTier.level}: ${nextTier.title}`;
+        remainingEl.innerHTML = `<strong>${remainingXP.toLocaleString()} XP</strong> needed to reach Level ${nextTier.level}: ${nextTier.title}`;
       } else {
-        remainingEl.innerHTML = `👑 <strong>Max Academic Rank Achieved!</strong> You have reached top distinction level.`;
+        remainingEl.innerHTML = `<strong>Top Academic Rank Achieved!</strong> You have reached distinction level.`;
       }
     }
 
@@ -3491,21 +3544,25 @@ requireStudentLogin();
     if (tiersListEl) {
       tiersListEl.innerHTML = LEVEL_TIER_PERKS.map(tier => {
         let statusCls = 'tier-locked';
-        let statusBadge = '<span>🔒 Locked</span>';
+        let statusBadge = '<span class="xp-status-chip is-locked">Locked</span>';
 
         if (xp.level > tier.level) {
           statusCls = 'tier-completed';
-          statusBadge = '<span>✓ Unlocked</span>';
+          statusBadge = '<span class="xp-status-chip is-unlocked">Unlocked</span>';
         } else if (xp.level === tier.level) {
           statusCls = 'tier-active';
-          statusBadge = '<span>⚡ Current Rank</span>';
+          statusBadge = '<span class="xp-status-chip is-active">Current Rank</span>';
         }
+
+        const tierIconSvg = (window.VLKIcons && typeof window.VLKIcons.svg === 'function')
+          ? window.VLKIcons.svg(tier.iconName || 'flask', { size: 18, strokeWidth: 1.75 })
+          : '';
 
         return `
           <div class="xp-tier-card ${statusCls}">
             <div class="xp-tier-top">
               <div class="xp-tier-name-row">
-                <span class="xp-tier-icon">${tier.icon}</span>
+                <span class="xp-tier-icon">${tierIconSvg}</span>
                 <span class="xp-tier-title">Level ${tier.level}: ${tier.title}</span>
               </div>
               <div style="display:flex; align-items:center; gap:8px;">

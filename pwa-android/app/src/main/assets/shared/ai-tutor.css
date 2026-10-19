@@ -58,7 +58,7 @@
 
 .vlk-ai-header {
   background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(37, 99, 235, 0.15));
-  padding: 14px 18px;
+  padding: 12px 16px;
   border-bottom: 1px solid var(--card-border, #232E42);
   display: flex;
   align-items: center;
@@ -67,12 +67,34 @@
 
 .vlk-ai-header h3 {
   margin: 0;
-  font-size: 0.95rem;
+  font-size: 0.90rem;
   font-weight: 700;
   color: var(--heading-color, #FFFFFF);
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.vlk-ai-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.vlk-ai-action-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted, #94A3B8);
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.vlk-ai-action-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-main, #FFFFFF);
 }
 
 .vlk-ai-close {
@@ -81,52 +103,115 @@
   color: var(--text-muted, #94A3B8);
   font-size: 1.2rem;
   cursor: pointer;
+  padding: 0 4px;
+}
+
+.vlk-ai-context-banner {
+  background: rgba(59, 130, 246, 0.10);
+  border-bottom: 1px solid rgba(59, 130, 246, 0.20);
+  padding: 6px 14px;
+  font-size: 0.72rem;
+  color: #38BDF8;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 600;
+}
+
+.vlk-ai-context-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 6px #10B981;
+  flex-shrink: 0;
 }
 
 .vlk-ai-body {
-  padding: 16px;
-  max-height: 380px;
+  padding: 14px;
+  max-height: 420px;
   overflow-y: auto;
   font-size: 0.85rem;
   color: var(--text-main, #F1F5F9);
   line-height: 1.5;
+  display: flex;
+  flex-direction: column;
 }
 
 .vlk-ai-chips {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .vlk-ai-chip {
   background: var(--card-bg-hover, #1C2638);
   border: 1px solid var(--card-border, #232E42);
   color: var(--text-main, #F1F5F9);
-  padding: 6px 12px;
+  padding: 5px 10px;
   border-radius: 20px;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
+  white-space: nowrap;
 }
 
 .vlk-ai-chip:hover {
   background: var(--blue-accent, #3B82F6);
   color: #FFFFFF;
+  border-color: #60A5FA;
+}
+
+.vlk-ai-chat-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+  max-height: 240px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.vlk-ai-msg {
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 0.80rem;
+  line-height: 1.45;
+  max-width: 90%;
+  animation: vlkFadeIn 0.2s ease;
+}
+
+@keyframes vlkFadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.vlk-ai-msg.user {
+  background: linear-gradient(135deg, #2563EB, #1D4ED8);
+  color: #FFFFFF;
+  align-self: flex-end;
+  border-bottom-right-radius: 3px;
+}
+
+.vlk-ai-msg.assistant {
+  background: var(--bg-dark, #0B1320);
+  border: 1px solid var(--card-border, #232E42);
+  color: var(--text-main, #F1F5F9);
+  align-self: flex-start;
+  border-bottom-left-radius: 3px;
 }
 
 .vlk-ai-response-box {
   background: var(--bg-dark, #0B1320);
   border: 1px solid var(--card-border, #232E42);
   border-radius: 12px;
-  padding: 12px 14px;
-  margin-top: 10px;
-  display: none;
-}
-
-.vlk-ai-response-box.active {
-  display: block;
+  padding: 10px 12px;
+  margin-top: 8px;
 }
 
 .vlk-knec-eval-card {

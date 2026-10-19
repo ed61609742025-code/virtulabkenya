@@ -3979,6 +3979,43 @@ if (typeof window !== 'undefined') {
     initAssignmentBanner();
   }
 
+  /* ── Mwalimu AI Tutor Context Registration ── */
+  if (typeof window !== 'undefined') {
+    window.VLK = window.VLK || {};
+    const registerQualAiContext = () => {
+      if (typeof window.VLK.registerLabContext === 'function') {
+        window.VLK.registerLabContext(() => {
+          const salt = (typeof SALTS !== 'undefined' && currentSaltKey && SALTS[currentSaltKey]) ? SALTS[currentSaltKey] : null;
+          const completedTests = Object.keys(testStates || {}).map(k => {
+            const tDef = (typeof TESTS !== 'undefined' && Array.isArray(TESTS)) ? TESTS.find(t => t.key === k) : null;
+            const state = testStates[k];
+            const opt = tDef && tDef.options ? tDef.options.find(o => o.key === state.optionKey) : null;
+            return `${tDef ? tDef.label : k}: "${opt ? opt.text : (state.observation || 'Performed')}"`;
+          });
+          const cat = document.getElementById('cationSelect')?.value || '';
+          const an = document.getElementById('anionSelect')?.value || '';
+          const fbCard = document.getElementById('idFeedbackCard')?.innerText?.trim() || null;
+
+          return {
+            labType: 'Qualitative Salt Analysis (Inorganic)',
+            practicalTitle: salt ? `Unknown Inorganic Salt Sample S (${salt.appearance})` : 'Qualitative Analysis',
+            sampleAppearance: salt ? salt.appearance : 'Unknown Crystalline Solid',
+            sampleSolubility: salt ? salt.solubility : 'Unknown',
+            testsCompletedList: completedTests,
+            selectedCation: cat || 'Not yet selected',
+            selectedAnion: an || 'Not yet selected',
+            lastErrorOrFeedback: fbCard,
+            stage: completedTests.length === 0 ? 'Preliminary flame and solubility tests' : (cat || an ? 'Deducing salt ions & submitting final identification' : 'Executing confirmatory reagent tests')
+          };
+        });
+      }
+    };
+    registerQualAiContext();
+    if (typeof document !== 'undefined') {
+      document.addEventListener('DOMContentLoaded', registerQualAiContext);
+    }
+  }
+
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
       SALTS,

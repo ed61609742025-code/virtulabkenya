@@ -1737,6 +1737,38 @@ if (typeof window === 'undefined') {
     }
   }
 
+  /* ── Mwalimu AI Tutor Context Registration ── */
+  if (typeof window !== 'undefined') {
+    window.VLK = window.VLK || {};
+    const registerOrganicAiContext = () => {
+      if (typeof window.VLK.registerLabContext === 'function') {
+        window.VLK.registerLabContext(() => {
+          const sample = (typeof SAMPLES !== 'undefined' && currentSampleKey && SAMPLES[currentSampleKey]) ? SAMPLES[currentSampleKey] : null;
+          const completedTests = Object.keys(testStates || {}).map(k => {
+            const tDef = (typeof TESTS !== 'undefined' && Array.isArray(TESTS)) ? TESTS.find(t => t.key === k) : null;
+            return `${tDef ? tDef.label : k}`;
+          });
+          const fgSelect = document.getElementById('functionalGroupSelect')?.value;
+          const fbCard = document.getElementById('organicFeedbackCard')?.innerText?.trim() || null;
+
+          return {
+            labType: 'Organic Chemistry Qualitative Analysis',
+            practicalTitle: sample ? `Sample ${sample.label} (${sample.name})` : 'Organic Analysis',
+            sampleAppearance: sample ? `${sample.label} (Liquid / Solid organic)` : 'Organic Unknown',
+            testsCompletedList: completedTests,
+            selectedFunctionalGroup: fgSelect || 'Not selected',
+            lastErrorOrFeedback: fbCard,
+            stage: completedTests.length === 0 ? 'Starting physical and solubility observations' : (fgSelect ? 'Submitting final functional group deduction' : 'Executing reagent tests (Bromine, Dichromate, Na₂CO₃)')
+          };
+        });
+      }
+    };
+    registerOrganicAiContext();
+    if (typeof document !== 'undefined') {
+      document.addEventListener('DOMContentLoaded', registerOrganicAiContext);
+    }
+  }
+
   if (typeof document !== 'undefined') {
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', init);

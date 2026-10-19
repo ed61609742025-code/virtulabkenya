@@ -52,23 +52,91 @@ async function callGemini(prompt, maxTokens = 2048) {
 }
 
 /**
+ * Formats structured lab context for Socratic AI tutoring.
+ */
+function formatLabContext(context = {}) {
+  const lines = [];
+  if (context.labType) lines.push(`- Laboratory Module: ${context.labType}`);
+  if (context.practicalTitle) lines.push(`- Practical / Title: ${context.practicalTitle}`);
+  if (context.gasName) lines.push(`- Target Gas: ${context.gasName}`);
+  if (context.reactants) lines.push(`- Active Reactants: ${context.reactants}`);
+  if (context.analyte) lines.push(`- Analyte (Solution A): ${context.analyte}`);
+  if (context.titrant) lines.push(`- Titrant (Solution B): ${context.titrant}`);
+  if (context.indicator) lines.push(`- Indicator: ${context.indicator}`);
+  if (context.analyteVolume) lines.push(`- Pipette Aliquot Volume: ${context.analyteVolume}`);
+  if (context.buretteVolume) lines.push(`- Current Burette Volume: ${context.buretteVolume}`);
+  if (Array.isArray(context.recordedTrials) && context.recordedTrials.length > 0) {
+    lines.push(`- Recorded Titres: ${context.recordedTrials.join(', ')}`);
+  }
+  if (context.sampleAppearance) lines.push(`- Specimen Appearance: ${context.sampleAppearance}`);
+  if (context.sampleSolubility) lines.push(`- Specimen Solubility: ${context.sampleSolubility}`);
+  if (Array.isArray(context.testsCompletedList) && context.testsCompletedList.length > 0) {
+    lines.push(`- Tests Completed: ${context.testsCompletedList.join('; ')}`);
+  }
+  if (context.selectedCation) lines.push(`- Candidate Cation: ${context.selectedCation}`);
+  if (context.selectedAnion) lines.push(`- Candidate Anion: ${context.selectedAnion}`);
+  if (context.selectedDrying) lines.push(`- Selected Drying Agent: ${context.selectedDrying}`);
+  if (context.selectedCollection) lines.push(`- Selected Collection Method: ${context.selectedCollection}`);
+  if (context.heatingEnabled) lines.push(`- Thermal State: ${context.heatingEnabled}`);
+  if (context.gasGenerated) lines.push(`- Reaction Evolution: ${context.gasGenerated}`);
+  if (Array.isArray(context.testsPerformed) && context.testsPerformed.length > 0) {
+    lines.push(`- Confirmatory Tests: ${context.testsPerformed.join('; ')}`);
+  }
+  if (context.selectedFunctionalGroup) lines.push(`- Deduced Functional Group: ${context.selectedFunctionalGroup}`);
+  if (context.activeStep || context.stage) {
+    lines.push(`- Current Step / Stage: ${context.activeStep || context.stage}`);
+  }
+  if (context.lastErrorOrFeedback) {
+    lines.push(`- Recent Observation / Feedback / Alert: "${context.lastErrorOrFeedback}"`);
+  }
+  if (context.additionalNotes) {
+    lines.push(`- Additional Lab Context: ${context.additionalNotes}`);
+  }
+
+  // Fallbacks for legacy callers
+  if (lines.length === 0) {
+    if (context.reagents) lines.push(`- Reagents: ${context.reagents}`);
+    if (context.observation) lines.push(`- Observation: ${context.observation}`);
+    if (context.titrationTitle) lines.push(`- Titration: ${context.titrationTitle}`);
+    if (context.studentAverage) lines.push(`- Student Average: ${context.studentAverage}`);
+    if (context.studentAnswer) lines.push(`- Student Answer: ${context.studentAnswer}`);
+  }
+
+  return lines.length > 0 ? lines.join('\n') : '- General laboratory workbench mode';
+}
+
+/**
  * Generate a Socratic, hint-based response during practice experiments.
  * Never gives direct answers — coaches with guiding questions based on KNEC syllabus.
  */
-async function generateSocraticHint({ experimentType, context, studentQuery }) {
-  const prompt = `You are a supportive KCSE Chemistry Paper 3 (Practical) lab tutor helping a Kenyan secondary school student during a ${experimentType || 'chemistry'} practice lab.
+async function generateSocraticHint({ experimentType, context = {}, studentQuery, history = [] }) {
+  const formattedContext = formatLabContext(context);
 
-Strict Instruction: DO NOT give direct answers or write out the exact conclusion. Guide the student using 2 short, conversational Socratic questions/hints based on the KNEC KCSE syllabus.
+  let conversationHistoryText = '';
+  if (Array.isArray(history) && history.length > 0) {
+    const recent = history.slice(-6);
+    conversationHistoryText = '\nRecent Discussion:\n' + recent.map(h => `${h.role === 'user' ? 'Student' : 'Mwalimu AI'}: ${h.text}`).join('\n') + '\n';
+  }
 
-Experiment Context:
-- Type: ${experimentType}
-- Current State/Reagents: ${context?.reagents || context?.titrationTitle || 'Standard setup'}
-- Current Reaction/Observation: ${context?.observation || 'In progress'}
-- Student Question/Issue: ${studentQuery || 'How do I proceed?'}
+  const prompt = `You are "Mwalimu AI", a dedicated, supportive KCSE Chemistry Paper 3 (233/3 Practical) tutor at VirtuLab Kenya.
+You are assisting a Kenyan secondary school student who is actively performing a virtual chemistry laboratory experiment.
 
-Provide a 2-sentence guiding hint to help them deduce the next step themselves.`;
+Strict Pedagogical Directives:
+1. DO NOT give away the final numerical value, unknown chemical identity, or final answer directly.
+2. Provide 2 to 3 concise, friendly Socratic sentences that guide the student to deduce the correct next step, identify their error, or apply the relevant KCSE concept.
+3. Explicitly reference their live lab context (their specific reagents, recorded readings, tests run, or recent feedback) so the coaching feels completely immediate and situated.
+4. Uphold official KNEC KCSE practical standards (e.g., concordant titres within ±0.10 cm³, white precipitate soluble in excess NH₃(aq), dense white fumes with conc. HCl, downward delivery for dense gases, over water for insoluble gases).
 
-  return callGemini(prompt, 1500);
+Current Laboratory Context:
+- Module: ${experimentType || 'Chemistry Practical'}
+${formattedContext}
+${conversationHistoryText}
+Student's Question / Issue:
+"${studentQuery || 'What should I observe or do next?'}"
+
+Provide your Socratic guidance (2-3 sentences max) to help the student think through and solve the problem themselves:`;
+
+  return callGemini(prompt, 1000);
 }
 
 /**

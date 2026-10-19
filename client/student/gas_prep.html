@@ -1254,6 +1254,42 @@
 
   let engine = new GasPrepEngine();
 
+  // ── Mwalimu AI Tutor Context Registration ──
+  if (typeof window !== 'undefined') {
+    window.VLK = window.VLK || {};
+    const registerGasAiContext = () => {
+      if (typeof window.VLK.registerLabContext === 'function') {
+        window.VLK.registerLabContext(() => {
+          const gas = engine.currentGas || {};
+          const tests = (engine.testsPerformed || []).map(k => {
+            const obs = engine.testObservations && engine.testObservations[k];
+            return `${k}: ${obs ? obs.result : 'Tested'}`;
+          });
+          const dryingFb = document.getElementById('dryingFeedback')?.innerText?.trim();
+          const collFb = document.getElementById('collectionFeedback')?.innerText?.trim();
+          const lastError = (dryingFb && !dryingFb.toLowerCase().includes('optimal') && !dryingFb.toLowerCase().includes('suitable')) ? dryingFb :
+                            (collFb && !collFb.toLowerCase().includes('optimal') && !collFb.toLowerCase().includes('acceptable')) ? collFb : null;
+
+          return {
+            labType: 'Gas Preparation & Collection',
+            practicalTitle: `${gas.name || 'Gas'} (${gas.formula || ''}) Preparation`,
+            gasName: `${gas.name || 'Gas'} (${gas.formula || ''})`,
+            reactants: gas.reactants || 'Reaction mixture',
+            selectedDrying: engine.selectedDrying || 'None selected',
+            selectedCollection: engine.selectedCollection || 'None selected',
+            heatingEnabled: engine.heatingEnabled ? 'Heating ON (Bunsen burner)' : 'Heating OFF (Cold reaction)',
+            gasGenerated: engine.gasGenerated ? 'Gas generated and collected' : 'Reaction not yet started',
+            testsPerformed: tests,
+            lastErrorOrFeedback: lastError,
+            stage: !engine.gasGenerated ? 'Assembling apparatus & selecting drying/collection' : (tests.length === 0 ? 'Gas collected in jar; ready for confirmatory tests' : 'Running confirmatory tests & answering theory questions')
+          };
+        });
+      }
+    };
+    registerGasAiContext();
+    document.addEventListener('DOMContentLoaded', registerGasAiContext);
+  }
+
   if (assignmentId) {
     const banner = document.getElementById('assignmentHeaderBanner');
     const bannerTitle = document.getElementById('assignBannerTitle');

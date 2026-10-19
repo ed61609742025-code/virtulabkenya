@@ -27,13 +27,14 @@ function guardAssessmentMode(req, res, next) {
  * Socratic hint coaching during practice experiments.
  */
 router.post('/tutor-hint', authMiddleware, authMiddleware.requireRole('student'), guardAssessmentMode, asyncHandler(async (req, res) => {
-  const { experimentType, context, studentQuery } = req.body;
+  const { experimentType, context, studentQuery, history } = req.body;
 
   try {
     const hint = await aiTutorService.generateSocraticHint({
       experimentType: experimentType || 'Chemistry Practical',
       context: context || {},
-      studentQuery: studentQuery || 'What should I observe or do next?'
+      studentQuery: studentQuery || 'What should I observe or do next?',
+      history: Array.isArray(history) ? history : []
     });
     return res.json({ success: true, hint });
   } catch (err) {

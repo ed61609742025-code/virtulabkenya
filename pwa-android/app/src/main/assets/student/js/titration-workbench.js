@@ -3943,3 +3943,60 @@ requireStudentLogin();
       }
     });
   }
+
+  // ── Mwalimu AI Tutor Context Registration ──
+  if (typeof window !== 'undefined') {
+    window.VLK = window.VLK || {};
+    const registerTitrationAiContext = () => {
+      if (typeof window.VLK.registerLabContext === 'function') {
+        window.VLK.registerLabContext(() => {
+          let activeStep = 'Burette Titration Stage';
+          const stepE = document.getElementById('stepEBox');
+          const stepD = document.getElementById('stepDBox');
+          const stepC = document.getElementById('stepCBox');
+          const stepB = document.getElementById('stepBBox');
+          const stepA = document.getElementById('stepABox');
+
+          if (stepE && !stepE.classList.contains('locked') && stepE.style.display !== 'none') {
+            activeStep = 'Step (e): Mass / Final Concentration Calculation';
+          } else if (stepD && !stepD.classList.contains('locked') && stepD.style.display !== 'none') {
+            activeStep = 'Step (d): Molar Concentration (Molarity) Calculation';
+          } else if (stepC && !stepC.classList.contains('locked') && stepC.style.display !== 'none') {
+            activeStep = 'Step (c): Moles of Analyte Calculation';
+          } else if (stepB && !stepB.classList.contains('locked') && stepB.style.display !== 'none') {
+            activeStep = 'Step (b): Moles of Titrant in Average Titre';
+          } else if (stepA && stepA.style.display !== 'none') {
+            activeStep = 'Step (a): Concordant Average Titre Calculation';
+          }
+
+          const msgs = ['massConcMsg', 'molarityMsg', 'molesAnalyteMsg', 'molesTitrantMsg', 'avgMsg']
+            .map(id => document.getElementById(id)?.innerText?.trim())
+            .filter(Boolean);
+          const lastError = msgs.length ? msgs[0] : null;
+
+          const trialList = Array.isArray(trials) ? trials.map((t, idx) => {
+            const vol = typeof t === 'object' && t !== null && t.titre !== undefined ? t.titre : t;
+            return `Trial ${idx + 1}: ${Number(vol).toFixed(2)} cm³`;
+          }) : [];
+
+          return {
+            labType: 'Volumetric Analysis (Titration)',
+            practicalTitle: current ? current.title : 'Titration Lab',
+            analyte: current ? current.analyteName : 'Analyte Solution A',
+            titrant: current ? `${current.titrantName} (${sessionTitrantConc} M)` : 'Titrant Solution B',
+            indicator: selectedIndicator ? `${selectedIndicator} (${indicatorAdded ? 'Added to flask' : 'Not yet added'})` : 'None selected',
+            analyteVolume: `${sessionAnalyteVolume} cm³`,
+            buretteVolume: `${(currentVolume || 0).toFixed(2)} cm³`,
+            recordedTrials: trialList,
+            activeStep: activeStep,
+            lastErrorOrFeedback: lastError,
+            stage: trialList.length >= 2 ? 'Calculating Results' : 'Delivering Titrant & Recording Trials'
+          };
+        });
+      }
+    };
+    registerTitrationAiContext();
+    if (typeof document !== 'undefined') {
+      document.addEventListener('DOMContentLoaded', registerTitrationAiContext);
+    }
+  }

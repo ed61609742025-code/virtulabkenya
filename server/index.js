@@ -12,6 +12,7 @@ const express = require('express');
 const cors = require('cors');
 const compression = require('compression');
 const cookieParser = require('cookie-parser');
+const zlib = require('zlib');
 
 const app = express();
 app.set('trust proxy', 1);
@@ -191,33 +192,82 @@ app.get('/api/health', async (req, res) => {
 });
 
 // ── Cloudflare Edge CDN & PoP Latency Diagnostics ────────────
+const KENYA_ISPS = {
+  '33771': 'Safaricom PLC',
+  '37061': 'Airtel Networks Kenya',
+  '36914': 'Telkom Kenya',
+  '36926': 'KENET (Kenya Education Network)',
+  '37153': 'Jamii Telecommunications (Faiba)',
+  '30844': 'Liquid Intelligent Technologies Kenya'
+};
+
 app.get('/api/edge/status', (req, res) => {
   const cfRay = req.headers['cf-ray'] || null;
-  const cfCountry = req.headers['cf-ipcountry'] || null;
+  const cfCountry = req.headers['cf-ipcountry'] || req.headers['x-edge-country'] || null;
   const cfConnectingIp = req.headers['cf-connecting-ip'] || null;
   const clientIp = getClientIp(req);
 
-  // Extract Cloudflare Edge PoP 3-letter IATA airport code (e.g. NBO = Nairobi, MBA = Mombasa)
-  let edgePop = null;
-  if (cfRay && cfRay.includes('-')) {
+  // Extract Cloudflare Edge PoP (e.g. NBO = Nairobi, MBA = Mombasa)
+  let edgePop = req.headers['x-edge-pop'] || null;
+  if (!edgePop && cfRay && cfRay.includes('-')) {
     edgePop = cfRay.split('-')[1].toUpperCase();
   }
 
-  const isProxied = Boolean(cfRay || cfConnectingIp);
+  const isProxied = Boolean(cfRay || cfConnectingIp || req.headers['x-edge-pop']);
   const isKenyaEdge = edgePop === 'NBO' || edgePop === 'MBA' || cfCountry === 'KE';
 
+  // Autonomous System Number (ASN) & ISP identification
+  const rawAsn = req.headers['x-edge-asn'] || req.headers['cf-connecting-asn'] || req.headers['cf-asn'] || null;
+  const clientAsn = rawAsn ? String(rawAsn).replace(/^(AS|as)/, '') : null;
+  const knownKenyaIsp = (clientAsn && KENYA_ISPS[clientAsn]) || req.headers['x-edge-isp'] || null;
+
+  // Pop location description
+  let popLocation = 'Direct Origin';
+  if (edgePop === 'NBO') {
+    popLocation = 'Nairobi, Kenya (KIXP)';
+  } else if (edgePop === 'MBA') {
+    popLocation = 'Mombasa, Kenya';
+  } else if (edgePop) {
+    popLocation = `${edgePop} Edge`;
+  }
+
+  // Routing classification
+  const routingType = isKenyaEdge
+    ? 'In-Country KIXP Direct Peering'
+    : (isProxied ? 'Global Edge Transit' : 'Direct Origin');
+
+  // Compression capabilities & Brotli support
+  const acceptEncoding = (req.headers['accept-encoding'] || '').toLowerCase();
+  const brotliNegotiated = acceptEncoding.includes('br');
+  const brotliSupported = typeof zlib.createBrotliCompress === 'function';
+
   res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Cache-Tag', 'virtulab-api, virtulab-edge');
+  res.setHeader('Vary', 'Accept-Encoding');
+  if (edgePop) {
+    res.setHeader('X-Edge-PoP', edgePop);
+  }
+  if (popLocation !== 'Direct Origin') {
+    res.setHeader('X-Edge-Location', popLocation);
+  }
+
   res.json({
     success: true,
     edge: {
       isProxied,
       edgePop,
-      popLocation: edgePop === 'NBO' ? 'Nairobi, Kenya (KIXP)' : (edgePop === 'MBA' ? 'Mombasa, Kenya' : (edgePop ? `${edgePop} Edge` : 'Direct Origin')),
+      popLocation,
       country: cfCountry || 'Unknown',
       isKenyaEdge,
+      routingType,
+      clientAsn: clientAsn ? Number(clientAsn) || clientAsn : null,
+      knownKenyaIsp,
       clientIpMasked: clientIp ? clientIp.replace(/\.\d+$/, '.xxx') : 'unknown',
       protocol: req.protocol,
       httpVersion: req.httpVersion,
+      brotliNegotiated,
+      brotliSupported,
+      compression: brotliNegotiated ? 'br' : (acceptEncoding.includes('gzip') ? 'gzip' : 'none'),
       recommendedEdgeTtlDays: 30
     },
     origin: {

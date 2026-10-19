@@ -11,6 +11,7 @@
     "bump-version": "node scripts/bump_version.js",
     "bump-version:sync": "node scripts/bump_version.js --sync-html",
     "bump-version:check": "node scripts/bump_version.js --dry-run",
+    "purge:edge": "node ../scripts/purge_edge_cache.js",
     "lint": "eslint .",
     "format:check": "prettier --check ."
   },

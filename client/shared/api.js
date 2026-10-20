@@ -943,6 +943,9 @@ const Students = {
   async getProfile() {
     return apiRequest('GET', '/students/profile');
   },
+  async updateProfile(payload) {
+    return apiRequest('PUT', '/students/profile', payload);
+  },
   async bulkImport(payload) {
     return apiRequest('POST', '/students/bulk-import', payload);
   },

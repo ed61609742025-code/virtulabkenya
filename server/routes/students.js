@@ -74,6 +74,38 @@ router.get('/profile', authMiddleware, authMiddleware.requireRole('student'), as
   });
 }));
 
+// PUT /api/students/profile — Student updates their personal & academic details
+router.put('/profile', apiLimiter, authMiddleware, authMiddleware.requireRole('student'), asyncHandler(async (req, res) => {
+  const studentId = req.user.id;
+  const { name, form } = req.body;
+
+  if (!name || typeof name !== 'string' || !name.trim()) {
+    return res.status(400).json({ error: 'Name cannot be empty.' });
+  }
+
+  const cleanName = name.trim();
+  const cleanForm = form && typeof form === 'string' ? form.trim() : null;
+
+  const result = await pool.query(
+    `UPDATE students
+     SET name = $1,
+         form = COALESCE($2, form)
+     WHERE id = $3
+     RETURNING id, name, email, form, school_id, teacher_id`,
+    [cleanName, cleanForm, studentId]
+  );
+
+  if (result.rows.length === 0) {
+    return res.status(404).json({ error: 'Student profile not found.' });
+  }
+
+  return res.json({
+    success: true,
+    message: 'Profile details saved successfully!',
+    student: result.rows[0]
+  });
+}));
+
 // POST /api/students/link-teacher — Student links or changes their teacher using a teacher code
 router.post('/link-teacher', apiLimiter, authMiddleware, authMiddleware.requireRole('student'), asyncHandler(async (req, res) => {
   const studentId = req.user.id;

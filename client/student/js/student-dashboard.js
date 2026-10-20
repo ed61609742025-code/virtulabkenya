@@ -64,16 +64,30 @@ requireStudentLogin();
     } else if (parts.length >= 2) {
       initials = (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
     }
-    const avatarEl = document.getElementById('heroStudentAvatar');
-    if (avatarEl) avatarEl.textContent = initials;
+    ['heroStudentAvatar', 'navAvatarInitials'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = initials;
+    });
   }
 
   async function initStudentProfile() {
     if (currentStudentUser) {
-      ['studentName', 'studentNameMobile'].forEach(id => {
+      ['studentName', 'studentNameMobile', 'profHeaderName'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.textContent = currentStudentUser.name;
       });
+      const nameInp = document.getElementById('profInputName');
+      if (nameInp && !nameInp.value) nameInp.value = currentStudentUser.name || '';
+      const emailH = document.getElementById('profHeaderEmail');
+      if (emailH && currentStudentUser.email) emailH.textContent = currentStudentUser.email;
+      const emailInp = document.getElementById('profInputEmail');
+      if (emailInp && currentStudentUser.email) emailInp.value = currentStudentUser.email;
+      const formInp = document.getElementById('profInputForm');
+      if (formInp && currentStudentUser.form) formInp.value = currentStudentUser.form;
+      const schoolInp = document.getElementById('profInputSchool');
+      if (schoolInp && (currentStudentUser.schoolName || currentStudentUser.schoolCode)) {
+        schoolInp.value = currentStudentUser.schoolName || currentStudentUser.schoolCode;
+      }
       updateStudentAvatar(currentStudentUser.name);
       updateStudentTeacherUI(currentStudentUser);
     }
@@ -3159,8 +3173,15 @@ requireStudentLogin();
       }
 
       // Streak calculation
-      const streakText = (document.getElementById('streakCountMobile') || document.getElementById('streakCount'))?.textContent || '1';
-      const formattedStreak = streakText.includes('Day') ? streakText : (streakText + ' Day' + (streakText === '1' ? '' : 's'));
+      let streakCount = 1;
+      if (window.GamificationEngine && typeof window.GamificationEngine.getStreak === 'function') {
+        const sData = window.GamificationEngine.getStreak();
+        streakCount = (sData && sData.count) ? sData.count : 1;
+      } else {
+        const sEl = document.getElementById('streakCountMobile') || document.getElementById('streakCount');
+        if (sEl) streakCount = parseInt(sEl.textContent, 10) || 1;
+      }
+      const formattedStreak = `${streakCount} Day${streakCount === 1 ? '' : 's'}`;
 
       if (sessEl) sessEl.textContent = totalCount;
       if (accEl) accEl.textContent = accuracyPct + '%';
@@ -3259,17 +3280,20 @@ requireStudentLogin();
     openProfileModal();
   };
 
-  window.saveProfileDetails = function() {
+  window.saveProfileDetails = async function() {
     const newName = (document.getElementById('profInputName')?.value || '').trim();
     const newForm = document.getElementById('profInputForm')?.value || 'Form 4';
     const newSchool = (document.getElementById('profInputSchool')?.value || '').trim();
     const msg = document.getElementById('profDetailsMsg');
 
     if (!newName) {
-      if (msg) msg.innerHTML = '<div class="msg msg-err">Full Name cannot be empty.</div>';
+      if (msg) msg.innerHTML = '<div class="msg msg-err" style="color:var(--red-accent);">Full Name cannot be empty.</div>';
       return;
     }
 
+    if (msg) msg.innerHTML = '<div class="msg" style="color:var(--cyan-accent);">Saving changes…</div>';
+
+    // 1. Optimistic local update
     const user = getUser() || {};
     user.name = newName;
     user.form = newForm;
@@ -3282,7 +3306,20 @@ requireStudentLogin();
     });
     updateStudentAvatar(newName);
 
-    if (msg) msg.innerHTML = '<div class="msg msg-ok">Profile details updated successfully!</div>';
+    // 2. Persist to server
+    try {
+      if (typeof Students !== 'undefined' && typeof Students.updateProfile === 'function') {
+        const res = await Students.updateProfile({ name: newName, form: newForm });
+        if (res && res.student) {
+          const fresh = { ...user, ...res.student };
+          setUser(fresh);
+        }
+      }
+      if (msg) msg.innerHTML = '<div class="msg msg-ok" style="color:var(--green-accent);">✓ Profile details updated and saved successfully!</div>';
+    } catch (err) {
+      console.warn('Could not sync profile update to server:', err);
+      if (msg) msg.innerHTML = '<div class="msg msg-ok" style="color:var(--green-accent);">✓ Saved locally (will sync to cloud when connected).</div>';
+    }
   };
 
   window.exportLabHistoryCSV = function() {

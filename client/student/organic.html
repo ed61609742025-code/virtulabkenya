@@ -66,7 +66,7 @@
     <div class="nav-actions">
       <!-- Diagnostic Drills & KNEC Rubric Button -->
       <button type="button" class="theme-btn-chip" onclick="window.KnecRemediation && window.KnecRemediation.openWorkbenchDrillsMenu('organic')" title="KNEC Organic Functional Group Micro-Drills & Organic Sprint" style="padding:4px 8px; font-size:0.75rem; border:1px solid rgba(139,92,246,0.35); background:rgba(139,92,246,0.1); color:#A78BFA; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> <span class="btn-text-full">Diagnostic Drills</span>
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> <span class="btn-text-full">Diagnostic Drills</span><span class="btn-text-short">Drills</span>
       </button>
 
       <!-- Tutorial Button (Enlarged for readability on phones & desktop) -->
@@ -256,15 +256,15 @@
     <div class="header-actions">
       <button class="btn-secondary" onclick="openFlowchartModal()" style="display:inline-flex;align-items:center;gap:6px;">
         <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-        Systematic Flowchart
+        <span class="btn-text-full">Systematic Flowchart</span><span class="btn-text-short">Flowchart</span>
       </button>
       <button class="btn-secondary btn-autoscore" onclick="evaluateKnecMarking()" style="display:inline-flex;align-items:center;gap:6px;">
         <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-        Auto-Score KCSE Marks
+        <span class="btn-text-full">Auto-Score KCSE Marks</span><span class="btn-text-short">Score</span>
       </button>
       <button class="btn-primary-solid" id="newSampleBtn" onclick="newSample()" style="display:inline-flex;align-items:center;gap:6px;">
         <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        New Sample
+        <span class="btn-text-full">New Sample</span><span class="btn-text-short">Sample</span>
       </button>
     </div>
   </div>
@@ -457,6 +457,43 @@
       }
     }
   });
+</script>
+<!-- Mobile Thumb-Zone Quick Action Dock (< 768px) -->
+<div id="mobileOrganicDock" class="mobile-organic-dock" role="toolbar" aria-label="Quick Workbench Controls">
+  <div class="dock-telemetry">
+    <div class="dock-badge-pulse" id="dockOrganicProgressBadge">
+      <span class="dock-dot"></span>
+      <span id="dockProgressText" class="tabular-nums">0/7 Done</span>
+    </div>
+  </div>
+  <div class="dock-actions">
+    <button type="button" class="dock-btn dock-btn-autoscore" onclick="evaluateKnecMarking()" title="Auto-score KCSE Marks" aria-label="Auto-score marks">
+      <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <span>Score</span>
+    </button>
+    <button type="button" class="dock-btn dock-btn-sample" onclick="newSample()" title="Get new organic sample" aria-label="New Organic Sample">
+      <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      <span>Sample</span>
+    </button>
+    <button type="button" class="dock-btn dock-btn-identify" onclick="scrollToIdentification()" title="Scroll to Final Organic Identification" aria-label="Identify Compound">
+      <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4"/><path d="M12 16V8"/></svg>
+      <span>Identify</span>
+    </button>
+  </div>
+</div>
+
+<script>
+  window.scrollToIdentification = function() {
+    if (window.triggerOrganicHaptic) window.triggerOrganicHaptic(15);
+    const idPanel = document.querySelector('.id-panel');
+    if (idPanel) {
+      idPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const select = document.getElementById('fgSelect');
+      if (select) {
+        setTimeout(function() { select.focus(); }, 350);
+      }
+    }
+  };
 </script>
 </body>
 </html>

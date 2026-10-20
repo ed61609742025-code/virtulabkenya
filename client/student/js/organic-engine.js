@@ -324,7 +324,16 @@ if (typeof window === 'undefined') {
     `).join('');
   }
 
+  window.triggerOrganicHaptic = function(durationMs = 12) {
+    try {
+      if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+        navigator.vibrate(durationMs);
+      }
+    } catch (e) {}
+  };
+
   window.insertSuggestion = function(elemId, text) {
+    if (window.triggerOrganicHaptic) window.triggerOrganicHaptic(10);
     const elem = document.getElementById(elemId);
     if (!elem) return;
     const start = elem.selectionStart !== undefined ? elem.selectionStart : elem.value.length;
@@ -415,6 +424,10 @@ if (typeof window === 'undefined') {
     const badge = document.getElementById('organicStepBadge');
     if (badge) {
       badge.textContent = `${performedCount} of ${totalTests} Tests Done`;
+    }
+    const dockProgressText = document.getElementById('dockProgressText');
+    if (dockProgressText) {
+      dockProgressText.textContent = `${performedCount}/${totalTests} Done`;
     }
   }
 
@@ -1078,6 +1091,7 @@ if (typeof window === 'undefined') {
      PERFORM & REDO ACTIONS
   ══════════════════════════════════════ */
   window.performTest = function(testKey) {
+    if (window.triggerOrganicHaptic) window.triggerOrganicHaptic(15);
     const reg = (window.OrganicBenchCore && window.OrganicBenchCore.SAMPLES) || SAMPLES;
     const sample = reg[currentSampleKey] || reg['org_alcohol'];
     const expected = sample[testKey];
@@ -1187,6 +1201,7 @@ if (typeof window === 'undefined') {
   };
 
   window.redoTest = function(testKey) {
+    if (window.triggerOrganicHaptic) window.triggerOrganicHaptic(15);
     playAudioTone('clink');
     if (testStates[testKey]) {
       testStates[testKey].isAdding = false;

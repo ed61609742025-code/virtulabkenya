@@ -320,12 +320,12 @@ html, body {
 
 @media (max-width: 860px) {
   .top-navbar {
-    padding: 6px 10px;
-    flex-wrap: wrap;
+    padding: 8px 14px;
+    flex-wrap: nowrap;
     gap: 6px;
   }
   .nav-modules-pill {
-    order: 3;
+    display: none !important;
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -343,7 +343,7 @@ html, body {
   .btn-text-short { display: inline !important; }
   .nav-actions {
     gap: 4px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
   }
   .nav-actions .btn-tactile,
   .nav-actions .nav-btn {
@@ -446,7 +446,7 @@ html, body {
   }
   .page-header-title {
     font-size: 1.05rem;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 6px;
   }
   .page-header-subtitle {
@@ -454,7 +454,7 @@ html, body {
   }
   .header-actions {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 6px;
     width: 100%;
   }
@@ -2482,7 +2482,7 @@ html, body {
   animation: splintFlameBurst 0.28s infinite ease-in-out;
 }
 
-/* ── Mobile Ergonomics & Keypad Auto-Zoom Prevention ── */
+/* ── COMPREHENSIVE MOBILE RESPONSIVE DESIGN SYSTEM (KCSE WORKBENCH) ── */
 @media (max-width: 768px) {
   .id-select, 
   .specimen-select,
@@ -2498,6 +2498,683 @@ html, body {
   .specimen-station-card,
   .id-panel {
     padding-left: max(14px, env(safe-area-inset-left, 0px));
-    padding-right: max(14px, env(safe-area-inset-right, 0px));
+
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   13. COMPREHENSIVE MOBILE RESPONSIVE ENGINE (KCSE WORKBENCH)
+   Optimized for Handhelds, Tablets & Foldables (320px – 768px)
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Global Viewport & Safe-Area Inset Handling ── */
+@media (max-width: 768px) {
+  body {
+    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  .page-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 10px 10px calc(80px + env(safe-area-inset-bottom, 0px)) !important;
+    box-sizing: border-box !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-container {
+    padding: 8px 8px calc(80px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+/* ── Top Navigation Bar: Minimalist & Clean ── */
+@media (max-width: 860px) {
+  .top-navbar {
+    padding: 8px 12px !important;
+    flex-wrap: nowrap !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+  }
+  .nav-modules-pill {
+    display: none !important;
+  }
+  .ribbon-full { display: none !important; }
+  .ribbon-mobile { display: inline !important; }
+  .btn-text-full { display: none !important; }
+  .btn-text-short { display: inline !important; }
+
+  .nav-brand-academic {
+    gap: 8px !important;
+  }
+  .brand-title {
+    font-size: 0.95rem !important;
+  }
+  .brand-subtagline {
+    font-size: 0.6rem !important;
+  }
+
+  .nav-actions {
+    gap: 6px !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+  }
+  .nav-actions .btn-tactile,
+  .nav-actions .nav-btn,
+  .nav-actions .theme-btn-chip {
+    min-height: 38px !important;
+    padding: 6px 10px !important;
+    font-size: 0.74rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    border-radius: 8px !important;
+    touch-action: manipulation;
+  }
+  .nav-btn-settings {
+    padding: 6px 8px !important;
+  }
+}
+
+/* ── Page Header & Compact Action Buttons ── */
+@media (max-width: 768px) {
+  .page-header {
+    padding: 14px 14px !important;
+    border-radius: 12px !important;
+    margin-bottom: 14px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+  }
+  .page-header-title {
+    font-size: 1.12rem !important;
+    line-height: 1.3 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+    margin: 0 !important;
+  }
+  .page-header-subtitle {
+    font-size: 0.78rem !important;
+    line-height: 1.45 !important;
+    margin: 4px 0 0 0 !important;
+    color: var(--text-muted) !important;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .header-actions {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+    width: 100% !important;
+    margin-top: 4px !important;
+  }
+  .header-actions .btn-secondary,
+  .header-actions .btn-primary-solid {
+    min-height: 42px !important;
+    padding: 8px 10px !important;
+    font-size: 0.78rem !important;
+    font-weight: 700 !important;
+    border-radius: 8px !important;
+    justify-content: center !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    touch-action: manipulation !important;
+  }
+  .header-actions .btn-secondary:active,
+  .header-actions .btn-primary-solid:active {
+    transform: scale(0.97) !important;
+  }
+  .header-actions .btn-header-newsample,
+  .header-actions #newSampleBtn {
+    grid-column: span 2 !important;
+    background: var(--blue-accent) !important;
+    color: #FFFFFF !important;
+    font-weight: 800 !important;
+  }
+}
+
+/* ── Specimen Station Card: Side-by-Side Compact Layout ── */
+@media (max-width: 768px) {
+  .specimen-station-card {
+    padding: 14px 14px !important;
+    border-radius: 12px !important;
+    margin-bottom: 14px !important;
+  }
+  .specimen-station-main {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 12px !important;
+  }
+  .watchglass-viewport {
+    width: 105px !important;
+    height: 85px !important;
+    padding: 6px !important;
+    flex-shrink: 0 !important;
+    border-radius: 12px !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  .watchglass-dish-svg {
+    width: 92px !important;
+    height: 60px !important;
+  }
+  .watchglass-label {
+    font-size: 0.58rem !important;
+    padding: 1px 6px !important;
+    margin-top: 2px !important;
+    letter-spacing: 0.04em !important;
+    white-space: nowrap !important;
+  }
+  .specimen-info-col {
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+  .specimen-header-line {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    margin-bottom: 4px !important;
+    flex-wrap: wrap !important;
+  }
+  .specimen-badge {
+    font-size: 0.72rem !important;
+    padding: 3px 8px !important;
+  }
+  .knec-q-tag {
+    font-size: 0.65rem !important;
+    padding: 2px 6px !important;
+  }
+  .specimen-title {
+    font-size: 1.05rem !important;
+    line-height: 1.25 !important;
+    margin: 2px 0 6px 0 !important;
+  }
+  .specimen-instruction {
+    display: none !important;
+  }
+  .specimen-props-row {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 6px !important;
+    flex-wrap: wrap !important;
+  }
+  .specimen-prop-chip {
+    padding: 4px 8px !important;
+    font-size: 0.72rem !important;
+    border-radius: 6px !important;
+    width: auto !important;
+    flex: 1 1 auto !important;
+    justify-content: flex-start !important;
+  }
+  .specimen-prep-callout {
+    margin-top: 10px !important;
+    padding: 8px 10px !important;
+    font-size: 0.76rem !important;
+    gap: 8px !important;
+    border-radius: 8px !important;
+  }
+  .prep-callout-icon svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .watchglass-viewport {
+    width: 90px !important;
+    height: 80px !important;
+    padding: 4px !important;
+  }
+  .watchglass-dish-svg {
+    width: 80px !important;
+    height: 52px !important;
+  }
+  .specimen-title {
+    font-size: 0.96rem !important;
+  }
+}
+
+/* ── Progress Strip ── */
+@media (max-width: 768px) {
+  .progress-strip {
+    padding: 8px 12px !important;
+    margin-bottom: 14px !important;
+    gap: 8px !important;
+    border-radius: 8px !important;
+  }
+  .progress-label {
+    font-size: 0.68rem !important;
+  }
+  .progress-track {
+    height: 5px !important;
+  }
+  .progress-count {
+    font-size: 0.72rem !important;
+  }
+}
+
+/* ── Test Cards & Apparatus Visuals ── */
+@media (max-width: 768px) {
+  .tests-grid {
+    gap: 12px !important;
+    margin-bottom: 18px !important;
+  }
+  .kcse-question-block {
+    padding: 12px 12px !important;
+    border-radius: 12px !important;
+  }
+  .test-card-top {
+    margin-bottom: 10px !important;
+    padding-bottom: 8px !important;
+    gap: 8px !important;
+  }
+  .test-step-badge {
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 0.72rem !important;
+  }
+  .test-title-text {
+    font-size: 0.88rem !important;
+    line-height: 1.3 !important;
+  }
+  .test-layout-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  /* Apparatus Stage: Compact & Perfectly Scaled */
+  .apparatus-stage {
+    min-height: 125px !important;
+    height: 135px !important;
+    padding: 6px !important;
+    border-radius: 10px !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  .apparatus-view {
+    height: 100% !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  .apparatus-view svg {
+    max-height: 122px !important;
+    width: auto !important;
+    display: block !important;
+  }
+
+  /* Action Buttons & Probe Controls */
+  .action-buttons-row {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 6px !important;
+    margin-bottom: 8px !important;
+  }
+  .action-buttons-row .btn-perform-test,
+  .action-buttons-row .btn-redo-test {
+    width: 100% !important;
+    min-height: 44px !important;
+    padding: 9px 12px !important;
+    font-size: 0.82rem !important;
+    border-radius: 8px !important;
+    justify-content: center !important;
+    text-align: center !important;
+    touch-action: manipulation !important;
+    box-sizing: border-box !important;
+  }
+  .heating-mode-buttons {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+    width: 100% !important;
+  }
+  .heating-mode-buttons .btn-perform-test {
+    width: 100% !important;
+    min-height: 44px !important;
+  }
+  .heating-toolbar-row {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+    width: 100% !important;
+  }
+  .heating-toolbar-row .btn-perform-test,
+  .heating-toolbar-row .btn-redo-test {
+    width: 100% !important;
+    min-height: 44px !important;
+  }
+  .probe-chips-group {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 6px !important;
+    width: 100% !important;
+  }
+  .btn-probe-chip {
+    min-height: 40px !important;
+    padding: 6px 8px !important;
+    font-size: 0.74rem !important;
+    justify-content: center !important;
+    text-align: center !important;
+    border-radius: 6px !important;
+    touch-action: manipulation !important;
+  }
+  .flame-inline-toolbar {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 8px !important;
+  }
+  .flame-inline-toolbar .btn-perform-test,
+  .flame-inline-toolbar .btn-redo-test {
+    width: 100% !important;
+    min-height: 44px !important;
+  }
+  .flame-optics-group {
+    width: 100% !important;
+    display: flex !important;
+  }
+  .flame-optics-group button {
+    flex: 1 !important;
+    min-height: 38px !important;
+    padding: 6px 4px !important;
+    font-size: 0.72rem !important;
+    touch-action: manipulation !important;
+  }
+  .sensory-observation-callout {
+    margin-top: 8px !important;
+    padding: 8px 10px !important;
+    font-size: 0.8rem !important;
+    border-radius: 8px !important;
+    gap: 8px !important;
+  }
+  .sensory-observation-callout svg {
+    width: 20px !important;
+    height: 20px !important;
+    flex-shrink: 0 !important;
+  }
+}
+
+/* ── Observation & Inference Table Controls ── */
+@media (max-width: 680px) {
+  .test-layout-grid .knec-table:not(.knec-titration-table),
+  .qual-obs-table {
+    display: flex !important;
+    flex-direction: column !important;
+    border: 1px solid var(--card-border) !important;
+    border-radius: 10px !important;
+    width: 100% !important;
+    margin-top: 6px !important;
+    background: var(--card-bg) !important;
+    overflow: hidden !important;
+  }
+  .test-layout-grid .knec-table:not(.knec-titration-table) thead,
+  .qual-obs-table thead {
+    display: none !important;
+  }
+  .test-layout-grid .knec-table:not(.knec-titration-table) tbody,
+  .test-layout-grid .knec-table:not(.knec-titration-table) tr,
+  .qual-obs-table tbody,
+  .qual-obs-table tr {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+  .test-layout-grid .knec-table:not(.knec-titration-table) td,
+  .qual-obs-table td {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    border-right: none !important;
+    padding: 10px 10px !important;
+    box-sizing: border-box !important;
+  }
+  .test-layout-grid .knec-table:not(.knec-titration-table) td:first-child,
+  .qual-obs-table td:first-child {
+    border-bottom: 1.5px dashed var(--card-border) !important;
+  }
+  .test-layout-grid .knec-table:not(.knec-titration-table) td:first-child::before,
+  .qual-obs-table td:first-child::before {
+    content: "Observations (0.55 Mk)" !important;
+    font-family: var(--font-body) !important;
+    font-size: 0.76rem !important;
+    font-weight: 800 !important;
+    color: var(--cyan-accent) !important;
+    letter-spacing: 0.04em !important;
+    text-transform: uppercase !important;
+    margin-bottom: 6px !important;
+    display: block !important;
+  }
+  .test-layout-grid .knec-table:not(.knec-titration-table) td:last-child::before,
+  .qual-obs-table td:last-child::before {
+    content: "Inferences / Deductions (0.55 Mk)" !important;
+    font-family: var(--font-body) !important;
+    font-size: 0.76rem !important;
+    font-weight: 800 !important;
+    color: var(--green-accent) !important;
+    letter-spacing: 0.04em !important;
+    text-transform: uppercase !important;
+    margin-bottom: 6px !important;
+    display: block !important;
+  }
+  .kcse-input {
+    min-height: 58px !important;
+    font-size: 16px !important;
+    line-height: 1.45 !important;
+    padding: 8px 10px !important;
+    border-radius: 8px !important;
+    touch-action: manipulation !important;
+    box-sizing: border-box !important;
+  }
+  .suggestion-chips-container {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    margin-top: 8px !important;
+    width: 100% !important;
+  }
+  .suggestion-chip {
+    min-height: 38px !important;
+    min-width: 38px !important;
+    height: auto !important;
+    padding: 6px 12px !important;
+    font-size: 0.84rem !important;
+    font-weight: 700 !important;
+    border-radius: 8px !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+  .suggestion-chip:active {
+    transform: scale(0.93) !important;
+  }
+  .knec-answer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+}
+
+/* ── Final Salt Identification Panel ── */
+@media (max-width: 768px) {
+  .id-panel {
+    padding: 16px 14px !important;
+    border-radius: 12px !important;
+    margin-bottom: 20px !important;
+  }
+  .id-panel-title {
+    font-size: 1.05rem !important;
+  }
+  .id-panel-sub {
+    font-size: 0.78rem !important;
+    margin-bottom: 12px !important;
+  }
+  .id-row {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+  .id-select {
+    font-size: 16px !important;
+    min-height: 48px !important;
+    height: 48px !important;
+    border-radius: 10px !important;
+    padding: 10px 12px !important;
+    touch-action: manipulation !important;
+  }
+  .id-actions-group {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 8px !important;
+  }
+  .btn-submit-id,
+  .btn-id-autoscore {
+    width: 100% !important;
+    min-height: 48px !important;
+    font-size: 0.92rem !important;
+    font-weight: 800 !important;
+    border-radius: 10px !important;
+    justify-content: center !important;
+    text-align: center !important;
+    touch-action: manipulation !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    box-sizing: border-box !important;
+  }
+  .btn-submit-id:active,
+  .btn-id-autoscore:active {
+    transform: scale(0.97) !important;
+  }
+}
+
+/* ── Mobile Thumb-Zone Sticky Action Dock (< 768px) ── */
+.mobile-qual-dock {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-qual-dock {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    padding: 6px 14px;
+    padding-bottom: max(6px, env(safe-area-inset-bottom, 0px));
+    background: rgba(255, 255, 255, 0.96);
+    border-top: 1.5px solid var(--card-border);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    z-index: 9000;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    box-sizing: border-box;
+  }
+  [data-theme="dark"] .mobile-qual-dock {
+    background: rgba(15, 23, 42, 0.96);
+    border-top-color: rgba(56, 189, 248, 0.25);
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.45);
+  }
+  [data-theme="green"] .mobile-qual-dock {
+    background: rgba(11, 31, 19, 0.96);
+    border-top-color: rgba(52, 211, 153, 0.25);
+    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.45);
+  }
+  .mobile-qual-dock .dock-telemetry {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .dock-badge-pulse {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    font-weight: 800;
+    color: var(--cyan-accent);
+    background: var(--blue-bg);
+    border: 1px solid var(--blue-border);
+    padding: 5px 10px;
+    border-radius: 100px;
+  }
+  .dock-badge-pulse .dock-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--green-accent);
+    animation: dockDotPulse 1.8s infinite ease-in-out;
+  }
+  @keyframes dockDotPulse {
+    0%, 100% { opacity: 0.6; transform: scale(0.9); }
+    50% { opacity: 1; transform: scale(1.2); }
+  }
+  .mobile-qual-dock .dock-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    justify-content: flex-end;
+  }
+  .mobile-qual-dock .dock-btn {
+    height: 40px;
+    padding: 5px 10px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    border-radius: 8px;
+    border: 1px solid var(--card-border);
+    background: var(--card-bg-hover);
+    color: var(--text-main);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+  .mobile-qual-dock .dock-btn:active {
+    transform: scale(0.94);
+  }
+  .mobile-qual-dock .dock-btn svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+  }
+  .mobile-qual-dock .dock-btn-autoscore {
+    border-color: var(--green-border);
+    background: var(--green-bg);
+    color: var(--green-accent);
+  }
+  .mobile-qual-dock .dock-btn-identify {
+    background: var(--blue-accent);
+    color: #FFFFFF;
+    border-color: transparent;
+    font-weight: 800;
+    box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3); /* dock-btn-identify */
+  }
+}
+
   }
 }

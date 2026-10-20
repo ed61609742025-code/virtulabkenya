@@ -65,7 +65,7 @@
 <!-- Critical Workbench Stylesheets -->
 <link rel="stylesheet" href="../shared/style.css">
 <link rel="stylesheet" href="../shared/brilliant-theme.css">
-<link rel="stylesheet" href="css/qualitative.css?v=152">
+<link rel="stylesheet" href="css/qualitative.css?v=165">
 <!-- Non-Critical Dialog & Overlay Stylesheets -->
 <link rel="stylesheet" href="../shared/tutorial-engine.css" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="../shared/ai-tutor.css" media="print" onload="this.media='all'">
@@ -105,23 +105,23 @@
 
     <div class="nav-actions">
       <!-- Diagnostic Drills & KNEC Rubric Button -->
-      <button type="button" class="theme-btn-chip" onclick="window.KnecRemediation && window.KnecRemediation.openWorkbenchDrillsMenu('qualitative')" title="KNEC Inorganic Cation/Anion Micro-Drills & Qualitative Sprint" style="padding:4px 8px; font-size:0.75rem; border:1px solid rgba(16,185,129,0.35); background:rgba(16,185,129,0.1); color:#10B981; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:5px;">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> <span class="btn-text-full">Diagnostic Drills</span>
+      <button type="button" class="theme-btn-chip btn-nav-drills" onclick="window.KnecRemediation && window.KnecRemediation.openWorkbenchDrillsMenu('qualitative')" title="KNEC Inorganic Cation/Anion Micro-Drills & Qualitative Sprint">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> <span class="btn-text-full">Diagnostic Drills</span><span class="btn-text-short">Drills</span>
       </button>
 
       <!-- Guided Tutorial Button -->
-      <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm" onclick="TutorialEngine.start('qualitative')" style="padding:4px 8px; font-size:0.75rem; white-space:nowrap; display:inline-flex; align-items:center; gap:5px;">
+      <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm btn-nav-tutorial" onclick="TutorialEngine.start('qualitative')">
         <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg> <span class="btn-text-full">Guided Tutorial</span><span class="btn-text-short">Tutorial</span>
       </button>
 
       <!-- Reagent Safety (SDS) Button -->
-      <button class="nav-btn nav-btn-safety" onclick="window.VLKSafety && window.VLKSafety.openSDSModal('NaOH')" title="View Chemical Safety & SDS Hazards" style="padding:4px 8px; font-size:0.75rem; display:inline-flex; align-items:center; gap:5px;">
+      <button class="nav-btn nav-btn-safety" onclick="window.VLKSafety && window.VLKSafety.openSDSModal('NaOH')" title="View Chemical Safety & SDS Hazards">
         <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> <span class="btn-text-full">SDS Hazards</span><span class="btn-text-short">SDS</span>
       </button>
 
       <!-- Compact Settings Dropdown -->
       <div style="position:relative;">
-        <button type="button" class="nav-btn nav-btn-settings" onclick="toggleBenchSettings(event)" title="Workbench Settings" style="padding:4px 8px; font-size:0.75rem; display:inline-flex; align-items:center; gap:5px;">
+        <button type="button" class="nav-btn nav-btn-settings" onclick="toggleBenchSettings(event)" title="Workbench Settings">
           <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> <span class="btn-text-full">Settings</span>
         </button>
         
@@ -176,20 +176,20 @@
       <p class="page-header-subtitle">Carry out systematic reagent tests on the unknown inorganic salt sample. Record precise observations using KNEC examination terminology and make deductions for each step.</p>
     </div>
     <div class="header-actions">
-      <button id="examTimerBtn" class="btn-secondary" onclick="toggleExamTimer()" style="display:inline-flex; align-items:center; gap:6px;">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M10 2h4"/><path d="M19 5l-1.5 1.5"/></svg> Start 45-Min Timer
+      <button id="examTimerBtn" class="btn-secondary btn-header-timer" onclick="toggleExamTimer()">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M10 2h4"/><path d="M19 5l-1.5 1.5"/></svg> <span class="btn-text-full">Start 45-Min Timer</span><span class="btn-text-short">Timer</span>
       </button>
-      <button class="btn-secondary" onclick="openExaminerTipsModal()" style="border-color:var(--amber-accent); color:var(--amber-accent); display:inline-flex; align-items:center; gap:6px;">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg> Examiner Tips
+      <button class="btn-secondary btn-header-tips" onclick="openExaminerTipsModal()">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg> <span class="btn-text-full">Examiner Tips</span><span class="btn-text-short">Tips</span>
       </button>
-      <button class="btn-secondary btn-autoscore" onclick="evaluateKnecMarking()" style="border-color:var(--green-accent); color:var(--green-accent); font-weight:700; display:inline-flex; align-items:center; gap:6px;" title="Auto-score your observations and deductions against official KNEC marking scheme">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Auto-Score KCSE Marks
+      <button class="btn-secondary btn-autoscore" onclick="evaluateKnecMarking()" title="Auto-score your observations and deductions against official KNEC marking scheme">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> <span class="btn-text-full">Auto-Score KCSE Marks</span><span class="btn-text-short">Auto-Score</span>
       </button>
-      <button class="btn-secondary" onclick="openFlowchartModal()" style="display:inline-flex; align-items:center; gap:6px;">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg> Systematic Flowchart
+      <button class="btn-secondary btn-header-flowchart" onclick="openFlowchartModal()">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg> <span class="btn-text-full">Systematic Flowchart</span><span class="btn-text-short">Flowchart</span>
       </button>
-      <button class="btn-primary-solid" id="newSampleBtn" onclick="newSample()" style="display:inline-flex; align-items:center; gap:6px;">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> New Sample
+      <button class="btn-primary-solid btn-header-newsample" id="newSampleBtn" onclick="newSample()">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> <span class="btn-text-full">New Sample</span><span class="btn-text-short">New Sample</span>
       </button>
     </div>
   </div>
@@ -334,9 +334,9 @@
           <option value="NO3-">NO₃⁻ (Nitrate)</option>
         </select>
       </div>
-      <div class="id-group" style="display:flex; gap:8px; align-items:flex-end;">
+      <div class="id-group id-actions-group">
         <button id="submitIdBtn" class="btn-submit-id" onclick="submitIdentification()" data-i18n="submit_id_btn">Submit Identification</button>
-        <button type="button" class="btn-secondary" onclick="evaluateKnecMarking()" style="border-color:var(--green-accent); color:var(--green-accent); font-weight:700; padding:10px 16px; border-radius:8px; white-space:nowrap; display:inline-flex; align-items:center; gap:6px;" title="Auto-score observations and deductions">
+        <button type="button" class="btn-secondary btn-id-autoscore" onclick="evaluateKnecMarking()" title="Auto-score observations and deductions">
           <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Auto-Score Marks
         </button>
       </div>
@@ -554,7 +554,7 @@
 <script defer src="/shared/qualitative-bench-core.js?v=155"></script>
 <script defer src="/shared/knec-pedagogy.js?v=155"></script>
 <script defer src="/shared/knec-remediation-drills.js?v=163"></script>
-<script defer src="js/qualitative-engine.js?v=163"></script>
+<script defer src="js/qualitative-engine.js?v=165"></script>
 <script defer src="../shared/ai-tutor.js"></script>
 <script defer src="../shared/pwa-installer.js"></script>
 <script defer src="../shared/page-transitions.js"></script>
@@ -581,6 +581,43 @@
       }
     }
   });
+</script>
+<!-- Mobile Thumb-Zone Quick Action Dock (< 768px) -->
+<div id="mobileQualDock" class="mobile-qual-dock" role="toolbar" aria-label="Quick Workbench Controls">
+  <div class="dock-telemetry">
+    <div class="dock-badge-pulse" id="dockQualProgressBadge">
+      <span class="dock-dot"></span>
+      <span id="dockProgressText" class="tabular-nums">0/6 Done</span>
+    </div>
+  </div>
+  <div class="dock-actions">
+    <button type="button" class="dock-btn dock-btn-autoscore" onclick="evaluateKnecMarking()" title="Auto-score KCSE Marks" aria-label="Auto-score marks">
+      <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <span>Score</span>
+    </button>
+    <button type="button" class="dock-btn dock-btn-sample" onclick="newSample()" title="Get new salt sample" aria-label="New Salt Sample">
+      <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      <span>Sample</span>
+    </button>
+    <button type="button" class="dock-btn dock-btn-identify" onclick="scrollToIdentification()" title="Scroll to Final Salt Identification" aria-label="Identify Salt">
+      <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4"/><path d="M12 16V8"/></svg>
+      <span>Identify</span>
+    </button>
+  </div>
+</div>
+
+<script>
+  window.scrollToIdentification = function() {
+    if (window.triggerQualHaptic) window.triggerQualHaptic(15);
+    const idPanel = document.querySelector('.id-panel');
+    if (idPanel) {
+      idPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const select = document.getElementById('cationSelect');
+      if (select) {
+        setTimeout(function() { select.focus(); }, 350);
+      }
+    }
+  };
 </script>
 </body>
 </html>

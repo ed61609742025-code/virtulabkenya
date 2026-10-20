@@ -573,6 +573,8 @@ if (typeof window !== 'undefined') {
     const txt = document.getElementById('progressCount') || document.getElementById('qualProgressCount');
     if (fill) fill.style.width = `${pct}%`;
     if (txt) txt.textContent = `${performedCount} / ${totalTests} Tests Performed (${filledCount} Recorded)`;
+    const dockTxt = document.getElementById('dockProgressText');
+    if (dockTxt) dockTxt.textContent = `${performedCount}/${totalTests} Done`;
   }
 
   function getObsSuggestionChips(testKey) {
@@ -604,6 +606,7 @@ if (typeof window !== 'undefined') {
   }
 
   window.insertSuggestion = function(elemId, text) {
+    triggerQualHaptic(12);
     const elem = document.getElementById(elemId);
     if (!elem) return;
     const start = elem.selectionStart !== undefined ? elem.selectionStart : elem.value.length;
@@ -1889,7 +1892,7 @@ if (typeof window !== 'undefined') {
                 <span style="font-weight:800; color:var(--cyan-accent); text-transform:uppercase; font-size:0.75rem; letter-spacing:0.04em;">Official KNEC Marking Scheme — ${esc(salt.name)} (${esc(salt.formula)})</span>
                 <span style="font-family:var(--font-mono); font-size:0.75rem; color:var(--text-muted); font-weight:700;">1.1 Marks Total</span>
               </div>
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:8px;">
+              <div class="knec-answer-grid">
                 <div style="background:var(--card-bg); padding:8px 10px; border-radius:6px; border:1px solid var(--card-border);">
                   <div style="font-weight:800; font-size:0.76rem; text-transform:uppercase; margin-bottom:3px; color:var(--blue-accent);">Expected Observation (0.55 Mk):</div>
                   <div style="color:var(--text-main); font-size:0.82rem; font-weight:600;">${expectedObs}</div>

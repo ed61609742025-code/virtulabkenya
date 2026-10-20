@@ -1892,10 +1892,6 @@ requireStudentLogin();
 
       <!-- Specular Highlight Stripe on Left of Bore -->
       <rect x="36" y="0" width="4" height="160" fill="#FFFFFF" opacity="0.35"/>
-
-      <!-- Optical Reticle Precision Center Notch at eye level (y = 80) -->
-      <line x1="77" y1="${centerY - 4}" x2="77" y2="${centerY + 4}" stroke="${currentParallaxAngle === 0 ? '#10B981' : '#F59E0B'}" stroke-width="1.5" stroke-linecap="round"/>
-      <line x1="83" y1="${centerY - 4}" x2="83" y2="${centerY + 4}" stroke="${currentParallaxAngle === 0 ? '#10B981' : '#F59E0B'}" stroke-width="1.5" stroke-linecap="round"/>
     `;
 
     lensSvg.innerHTML = defsSvg + tubeGeometry + liquidBody + ticksSvg + meniscusArc + glassOverlays;
@@ -1914,8 +1910,8 @@ requireStudentLogin();
     if (lensSubtitle) {
       if (currentParallaxAngle === 0) {
         lensSubtitle.innerHTML = isKmno4
-          ? 'Read at <b style="color:var(--heading-color);">top edge</b> (0° calibrated eye level).'
-          : 'Read at <b style="color:var(--heading-color);">bottom of meniscus</b> at 0° eye level.';
+          ? 'Read at <b style="color:var(--heading-color);">top edge</b>.'
+          : 'Read at <b style="color:var(--heading-color);">bottom of meniscus</b>.';
       } else {
         lensSubtitle.innerHTML = `<span style="color:#F59E0B;font-weight:700;">⚠️ Parallax Error:</span> Front &amp; rear lines split! Align to 0° eye level.`;
       }

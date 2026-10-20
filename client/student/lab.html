@@ -684,7 +684,7 @@
                   <div class="loupe-metallic-bezel">
                     <div class="loupe-lens-viewport" role="img" aria-label="Magnified burette scale showing liquid meniscus level at eye level">
                       <div class="lens-glass-glare"></div>
-                      <div class="lens-crosshair-line" id="lensCrosshairLine"></div>
+                      
                       <svg id="lensSvg" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;"></svg>
                     </div>
                   </div>
@@ -699,17 +699,6 @@
                     </div>
                   </div>
 
-                  <!-- Parallax Perspective Alignment Controls (KNEC Full Marks Training) -->
-                  <div class="parallax-view-controls" title="Adjust eye-level angle relative to burette scale to eliminate parallax error">
-                    <div class="parallax-ctrl-header">
-                      <span class="parallax-label">Sightline:</span>
-                      <span class="parallax-status-chip" id="parallaxStatusChip" style="display:flex;align-items:center;gap:4px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> 0° Calibrated</span>
-                    </div>
-                    <div class="parallax-btn-group" role="group" aria-label="Sightline Angle Selector">
-                      <button type="button" class="parallax-btn" id="btnParallaxLow" onclick="setParallaxAngle(-8)" title="Viewing from below (-8°): Meniscus bottom projects downward on scale, apparent volume decreases">▼ -8° Low</button>
-                      <button type="button" class="parallax-btn active" id="btnParallaxZero" onclick="setParallaxAngle(0)" title="Viewing at eye level (0°): Front and rear graduation lines align, zero parallax error">0° Level</button>
-                      <button type="button" class="parallax-btn" id="btnParallaxHigh" onclick="setParallaxAngle(8)" title="Viewing from above (+8°): Meniscus bottom projects upward on scale, apparent volume increases">▲ +8° High</button>
-                    </div>
                   </div>
                 </div>
               </div>

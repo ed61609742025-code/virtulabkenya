@@ -316,11 +316,13 @@ const SolubilityEngine = (() => {
       if (graphCanvas) {
         resizeCanvas(graphCanvas);
         renderGraph();
+    updateWorkflowStepper(state.trials.length >= 4 ? 5 : 5);
       }
       drawAllSolubilityCanvases();
     });
 
     applyScenario(state.activeScenario);
+    updateWorkflowStepper(0);
     initSolidParticles();
     state.lastTime = performance.now();
     drawAllSolubilityCanvases();
@@ -337,6 +339,56 @@ const SolubilityEngine = (() => {
     const context = c.getContext('2d');
     context.resetTransform();
     context.scale(dpr, dpr);
+  }
+
+
+  let currentWorkflowStep = 0;
+
+  function jumpToStep(stepIdx) {
+    updateWorkflowStepper(stepIdx);
+    if (stepIdx === 0 || stepIdx === 1) {
+      document.querySelector('.bench-left-wing')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else if (stepIdx === 2 || stepIdx === 3) {
+      document.querySelector('.bench-right-wing')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else if (stepIdx === 4) {
+      document.getElementById('btnRecordPoint')?.focus();
+    } else if (stepIdx === 5) {
+      document.querySelector('.sol-graph-card')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  function updateWorkflowStepper(forcedStep) {
+    if (typeof forcedStep === 'number') currentWorkflowStep = forcedStep;
+    
+    const track = document.getElementById('solStepTrack');
+    const badge = document.getElementById('solStepBadge');
+    const fill = document.getElementById('solProgressFill');
+    if (!track) return;
+
+    const stepLabels = [
+      'Step 1 of 6: Specimen Setup',
+      'Step 2 of 6: Initial Water Added',
+      'Step 3 of 6: Water Bath Heating',
+      'Step 4 of 6: Air Cooling & Stirring',
+      'Step 5 of 6: Record Crystallization T₁',
+      'Step 6 of 6: Dilute, Plot & Calculate'
+    ];
+
+    if (badge) badge.textContent = stepLabels[currentWorkflowStep] || stepLabels[0];
+    if (fill) fill.style.width = `${((currentWorkflowStep + 0.6) / 6) * 100}%`;
+
+    for (let i = 0; i < 6; i++) {
+      const item = document.getElementById(`solWfStep${i}`);
+      if (!item) continue;
+      item.classList.remove('completed', 'active', 'upcoming');
+      if (i < currentWorkflowStep) {
+        item.classList.add('completed');
+      } else if (i === currentWorkflowStep) {
+        item.classList.add('active');
+      } else {
+        item.classList.add('upcoming');
+      }
+    }
   }
 
   function applyScenario(scenarioKey) {
@@ -445,6 +497,7 @@ const SolubilityEngine = (() => {
       state.targetTemp = 96.0;
       playSound('burner');
       updateStatusBanner('🔥 Roaring blue flame heating water bath. Crystals dissolving as temperature rises.', 'heating');
+      updateWorkflowStepper(2);
     } else if (mode === 'GENTLE') {
       state.status = 'HEATING';
       state.targetTemp = 75.0;
@@ -471,6 +524,7 @@ const SolubilityEngine = (() => {
       updateStatusBanner('🧊 Fast ice bath cooling active! Stir rapidly to prevent uneven crystallization.', 'cooling');
     } else {
       updateStatusBanner('❄️ Boiling tube cooling in air. Stir continuously to observe first crystal cloudiness accurately.', 'cooling');
+      updateWorkflowStepper(3);
     }
     wakeSolubilityLoop();
   }
@@ -497,6 +551,7 @@ const SolubilityEngine = (() => {
     playSound('water');
     updateUIValues();
     updateStatusBanner(`💧 Added ${amt.toFixed(1)} cm³ distilled water from burette (New Volume: ${state.volume.toFixed(1)} cm³). Reheat to dissolve crystals completely.`, 'idle');
+    updateWorkflowStepper(2);
     initSolidParticles();
     state.status = 'IDLE';
     state.crystTemp = null;
@@ -743,6 +798,28 @@ const SolubilityEngine = (() => {
       state.status = 'IDLE';
     }
 
+    // Supercooling penalty accumulation if cooling without stirring
+    if (state.coolingMode !== 'NONE') {
+      if (!state.isStirring && state.temp <= satTemp + 2.0 && state.temp >= satTemp - 3.5) {
+        state.supercooledDiff = Math.min(2.5, state.supercooledDiff + dt * 0.35);
+      }
+      
+      const supercoolBadge = document.getElementById('solSupercoolBadge');
+      const supercoolDot = document.getElementById('solSupercoolDot');
+      const supercoolText = document.getElementById('solSupercoolText');
+      if (supercoolBadge && supercoolDot && supercoolText) {
+        if (state.supercooledDiff > 0.5) {
+          supercoolDot.style.background = '#F59E0B';
+          supercoolText.textContent = `Supercooled: -${state.supercooledDiff.toFixed(1)}°C (Stir to Nucleate)`;
+          supercoolBadge.style.borderColor = 'rgba(245, 158, 11, 0.4)';
+        } else {
+          supercoolDot.style.background = '#10B981';
+          supercoolText.textContent = 'Thermal Equilibrium: OK';
+          supercoolBadge.style.borderColor = 'var(--card-border)';
+        }
+      }
+    }
+
     // Crystallization detection threshold
     const effectiveSatTemp = state.isStirring ? satTemp : (satTemp - state.supercooledDiff);
     if (state.coolingMode !== 'NONE' && state.temp <= effectiveSatTemp) {
@@ -784,68 +861,73 @@ const SolubilityEngine = (() => {
 
   function drawApparatus() {
     if (!canvas || !ctx) return;
-    const w = canvas.getBoundingClientRect().width;
-    const h = canvas.getBoundingClientRect().height;
+    const rect = canvas.getBoundingClientRect();
+    const w = rect.width || 320;
+    const h = rect.height || 330;
 
     ctx.clearRect(0, 0, w, h);
 
     const cx = w * 0.5;
-    const cy = h * 0.45;
     const now = performance.now();
+    const benchY = h - 22;
 
-    // ── 0. Laboratory Workbench Shadow & Surface ───────────────────────
-    const benchY = cy + 92;
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+    // ── 0. Laboratory Bench Surface & Soft Ambient Shadows ──
+    const shadowGrad = ctx.createRadialGradient(cx, benchY, 10, cx, benchY, 110);
+    shadowGrad.addColorStop(0, 'rgba(0, 0, 0, 0.45)');
+    shadowGrad.addColorStop(0.7, 'rgba(0, 0, 0, 0.15)');
+    shadowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = shadowGrad;
     ctx.beginPath();
-    ctx.ellipse(cx - 85, benchY, 45, 6, 0, 0, Math.PI * 2);
-    ctx.ellipse(cx, benchY, 40, 5, 0, 0, Math.PI * 2);
+    ctx.ellipse(cx, benchY + 2, 100, 10, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // ── 1. Heavy Cast-Iron Retort Stand Base & Stainless Steel Rod ─────
-    // Beveled Cast-Iron Base Block
-    const baseGrad = ctx.createLinearGradient(cx - 128, cy + 86, cx - 42, cy + 92);
-    baseGrad.addColorStop(0, '#334155');
+    // ── 1. Heavy Cast-Iron Retort Stand Base & Stainless Steel Rod ──
+    const baseW = 90;
+    const baseX = cx - 120;
+    const baseY = benchY - 8;
+    const baseGrad = ctx.createLinearGradient(baseX, baseY, baseX, baseY + 12);
+    baseGrad.addColorStop(0, '#475569');
     baseGrad.addColorStop(0.3, '#1E293B');
-    baseGrad.addColorStop(0.7, '#0F172A');
+    baseGrad.addColorStop(0.8, '#0F172A');
     baseGrad.addColorStop(1, '#1E293B');
 
     ctx.fillStyle = baseGrad;
-    ctx.strokeStyle = '#475569';
+    ctx.strokeStyle = '#64748B';
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.roundRect(cx - 128, cy + 84, 86, 9, 3);
+    ctx.roundRect(baseX, baseY, baseW, 12, 3);
     ctx.fill();
     ctx.stroke();
 
-    // Base top specular highlight
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+    // Base Specular Highlight
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.moveTo(cx - 126, cy + 85);
-    ctx.lineTo(cx - 44, cy + 85);
+    ctx.moveTo(baseX + 2, baseY + 1.5);
+    ctx.lineTo(baseX + baseW - 2, baseY + 1.5);
     ctx.stroke();
 
-    // Stainless Steel Vertical Support Rod (with metallic cylindrical reflection)
-    const rodX = cx - 85;
+    // Vertical Stainless Steel Rod
+    const rodX = cx - 75;
+    const rodTopY = 18;
     const rodGrad = ctx.createLinearGradient(rodX - 3, 0, rodX + 3, 0);
     rodGrad.addColorStop(0, '#475569');
-    rodGrad.addColorStop(0.35, '#E2E8F0');
+    rodGrad.addColorStop(0.35, '#F8FAFC');
     rodGrad.addColorStop(0.7, '#94A3B8');
     rodGrad.addColorStop(1, '#334155');
 
     ctx.fillStyle = rodGrad;
-    ctx.fillRect(rodX - 2.5, cy - 90, 5, 174);
+    ctx.fillRect(rodX - 3, rodTopY, 6, (baseY - rodTopY));
 
     // Rod Top Cap
     ctx.fillStyle = '#64748B';
     ctx.beginPath();
-    ctx.arc(rodX, cy - 90, 3, 0, Math.PI * 2);
+    ctx.arc(rodX, rodTopY, 3.5, 0, Math.PI * 2);
     ctx.fill();
 
-    // ── 2. Bosshead Clamp & Protective Cork Jaws ───────────────────────
-    // Bosshead Mounting Bracket on Upper Neck
-    const bossY = cy - 42;
-    const bossGrad = ctx.createLinearGradient(rodX - 7, bossY - 6, rodX + 7, bossY + 6);
+    // ── 2. Bosshead Clamp with Brass Knurled Thumbscrew ──
+    const bossY = 76;
+    const bossGrad = ctx.createLinearGradient(rodX - 7, bossY - 7, rodX + 7, bossY + 7);
     bossGrad.addColorStop(0, '#475569');
     bossGrad.addColorStop(0.5, '#1E293B');
     bossGrad.addColorStop(1, '#0F172A');
@@ -854,187 +936,182 @@ const SolubilityEngine = (() => {
     ctx.strokeStyle = '#64748B';
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.roundRect(rodX - 6, bossY - 6, 12, 12, 2);
+    ctx.roundRect(rodX - 6.5, bossY - 7, 13, 14, 2);
     ctx.fill();
     ctx.stroke();
 
-    // Brass Thumbscrew on Bosshead
+    // Brass Thumbscrew
     ctx.fillStyle = '#D97706';
-    ctx.fillRect(rodX - 11, bossY - 2.5, 5, 5);
+    ctx.fillRect(rodX - 12, bossY - 3, 5.5, 6);
     ctx.beginPath();
-    ctx.arc(rodX - 12, bossY, 3, 0, Math.PI * 2);
+    ctx.arc(rodX - 13, bossY, 3.5, 0, Math.PI * 2);
     ctx.fill();
 
-    // Steel Clamp Extension Arm
+    // Chrome Clamp Extension Arm reaching to boiling tube
     ctx.fillStyle = rodGrad;
-    ctx.fillRect(rodX + 6, bossY - 2, (cx - 15) - (rodX + 6), 4);
+    ctx.fillRect(rodX + 6.5, bossY - 2.5, (cx - 15) - (rodX + 6.5), 5);
 
-    // Two-Prong Clamp with Vinyl/Cork Protective Red-Brown Jaws
-    ctx.fillStyle = '#9A3412';
+    // Two-Prong Cork Jaws holding boiling tube
+    ctx.fillStyle = '#DC2626';
     ctx.beginPath();
-    ctx.roundRect(cx - 16, bossY - 5, 4, 10, 2);
-    ctx.roundRect(cx + 12, bossY - 5, 4, 10, 2);
+    ctx.roundRect(cx - 16, bossY - 6, 4.5, 12, 2);
+    ctx.roundRect(cx + 11.5, bossY - 6, 4.5, 12, 2);
     ctx.fill();
 
-    // Clamp adjustment thumbscrew
-    ctx.fillStyle = '#D97706';
-    ctx.fillRect(cx - 19, bossY - 3, 4, 6);
+    // Clamp screw
+    ctx.fillStyle = '#F59E0B';
+    ctx.fillRect(cx - 19, bossY - 3.5, 4, 7);
 
-    // ── 3. Iron Tripod Stand & Glowing Ceramic Wire Gauze ──────────────
-    // Splayed Cast-Iron Tripod Legs
+    // ── 3. Cast-Iron Tripod Stand & Glowing Ceramic Wire Gauze ──
+    const gauzeY = 202;
+    // Tripod Legs
     ctx.strokeStyle = '#334155';
-    ctx.lineWidth = 2.5;
+    ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.moveTo(cx - 46, cy + 54);
-    ctx.lineTo(cx - 62, cy + 90);
-    ctx.moveTo(cx + 46, cy + 54);
-    ctx.lineTo(cx + 62, cy + 90);
-    ctx.moveTo(cx - 3, cy + 54);
-    ctx.lineTo(cx - 6, cy + 90);
+    ctx.moveTo(cx - 52, gauzeY + 2);
+    ctx.lineTo(cx - 72, benchY - 2);
+    ctx.moveTo(cx + 52, gauzeY + 2);
+    ctx.lineTo(cx + 72, benchY - 2);
+    ctx.moveTo(cx - 4, gauzeY + 2);
+    ctx.lineTo(cx - 8, benchY - 2);
     ctx.stroke();
 
-    // Tripod Circular Support Ring
+    // Tripod Ring
     ctx.strokeStyle = '#475569';
-    ctx.lineWidth = 2.5;
+    ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.moveTo(cx - 48, cy + 54);
-    ctx.lineTo(cx + 48, cy + 54);
+    ctx.moveTo(cx - 55, gauzeY + 2);
+    ctx.lineTo(cx + 55, gauzeY + 2);
     ctx.stroke();
 
-    // Wire Gauze Mesh Grid
-    ctx.strokeStyle = 'rgba(148, 163, 184, 0.4)';
+    // Ceramic Wire Gauze
+    ctx.strokeStyle = 'rgba(148, 163, 184, 0.45)';
     ctx.lineWidth = 1;
-    for (let gx = cx - 44; gx <= cx + 44; gx += 4) {
+    for (let gx = cx - 52; gx <= cx + 52; gx += 4) {
       ctx.beginPath();
-      ctx.moveTo(gx, cy + 52);
-      ctx.lineTo(gx, cy + 55);
+      ctx.moveTo(gx, gauzeY - 1);
+      ctx.lineTo(gx, gauzeY + 3);
       ctx.stroke();
     }
 
-    // Ceramic Center Refractory Disc
+    // Gauze Disc & Incandescence Glow
     const isHeating = state.burnerMode !== 'OFF';
     if (isHeating) {
-      // Dynamic Red-Hot Thermal Incandescence Glow
-      const glowGrad = ctx.createRadialGradient(cx, cy + 53, 2, cx, cy + 53, 30);
+      const glowGrad = ctx.createRadialGradient(cx, gauzeY, 3, cx, gauzeY, 34);
       glowGrad.addColorStop(0, 'rgba(254, 240, 138, 0.95)');
-      glowGrad.addColorStop(0.3, 'rgba(245, 158, 11, 0.85)');
-      glowGrad.addColorStop(0.65, 'rgba(239, 68, 68, 0.55)');
+      glowGrad.addColorStop(0.35, 'rgba(245, 158, 11, 0.85)');
+      glowGrad.addColorStop(0.7, 'rgba(239, 68, 68, 0.55)');
       glowGrad.addColorStop(1, 'rgba(239, 68, 68, 0)');
 
       ctx.fillStyle = glowGrad;
       ctx.beginPath();
-      ctx.ellipse(cx, cy + 53, 30, 6, 0, 0, Math.PI * 2);
+      ctx.ellipse(cx, gauzeY, 34, 7, 0, 0, Math.PI * 2);
       ctx.fill();
     }
 
-    ctx.fillStyle = isHeating ? 'rgba(254, 202, 202, 0.8)' : 'rgba(241, 245, 249, 0.75)';
+    ctx.fillStyle = isHeating ? 'rgba(254, 202, 202, 0.85)' : 'rgba(241, 245, 249, 0.8)';
     ctx.beginPath();
-    ctx.ellipse(cx, cy + 53.5, 24, 2.5, 0, 0, Math.PI * 2);
+    ctx.ellipse(cx, gauzeY, 26, 3, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // ── 4. Realistic Bunsen Burner & Multi-Layer Flame Physics ──────────
-    // Cast-Iron Hexagonal Burner Base
-    const bBaseGrad = ctx.createLinearGradient(cx - 16, cy + 86, cx + 16, cy + 90);
+    // ── 4. Realistic Bunsen Burner & Multi-Layer Physics Flame ──
+    const burnerBaseY = benchY - 6;
+    const bBaseGrad = ctx.createLinearGradient(cx - 18, burnerBaseY, cx + 18, burnerBaseY + 6);
     bBaseGrad.addColorStop(0, '#475569');
     bBaseGrad.addColorStop(0.4, '#1E293B');
     bBaseGrad.addColorStop(1, '#0F172A');
 
     ctx.fillStyle = bBaseGrad;
     ctx.beginPath();
-    ctx.roundRect(cx - 16, cy + 85, 32, 6, 2);
+    ctx.roundRect(cx - 18, burnerBaseY, 36, 7, 2);
     ctx.fill();
 
-    // Brass Gas Inlet Barb & Rubber Tubing
+    // Gas Inlet
     ctx.fillStyle = '#D97706';
-    ctx.fillRect(cx + 12, cy + 82, 7, 4);
+    ctx.fillRect(cx + 13, burnerBaseY - 4, 8, 4);
 
+    // Rubber Tubing curving away
     ctx.strokeStyle = '#475569';
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 3.5;
     ctx.beginPath();
-    ctx.moveTo(cx + 18, cy + 84);
-    ctx.quadraticCurveTo(cx + 34, cy + 86, cx + 46, cy + 92);
+    ctx.moveTo(cx + 20, burnerBaseY - 2);
+    ctx.quadraticCurveTo(cx + 40, burnerBaseY, cx + 55, benchY + 4);
     ctx.stroke();
 
-    // Rotatable Brass Air Collar
+    // Brass Air Collar
+    const collarY = burnerBaseY - 9;
     ctx.fillStyle = '#D97706';
-    ctx.fillRect(cx - 7, cy + 78, 14, 6);
+    ctx.fillRect(cx - 8, collarY, 16, 7);
     // Air hole
     ctx.fillStyle = state.burnerMode === 'ROARING' ? '#0F172A' : '#92400E';
     ctx.beginPath();
-    ctx.arc(cx, cy + 81, 1.8, 0, Math.PI * 2);
+    ctx.arc(cx, collarY + 3.5, 2, 0, Math.PI * 2);
     ctx.fill();
 
-    // Polished Nickel Chimney Barrel
-    const chimGrad = ctx.createLinearGradient(cx - 5, 0, cx + 5, 0);
+    // Nickel Barrel Chimney
+    const chimTopY = gauzeY + 16;
+    const chimGrad = ctx.createLinearGradient(cx - 5.5, 0, cx + 5.5, 0);
     chimGrad.addColorStop(0, '#64748B');
     chimGrad.addColorStop(0.35, '#F1F5F9');
     chimGrad.addColorStop(0.7, '#94A3B8');
     chimGrad.addColorStop(1, '#334155');
 
     ctx.fillStyle = chimGrad;
-    ctx.fillRect(cx - 4.5, cy + 62, 9, 17);
+    ctx.fillRect(cx - 5, chimTopY, 10, collarY - chimTopY);
 
-    // ── Dynamic Physics Flame Rendering ──────────────────────────────
+    // Dynamic Flame Physics
     if (state.burnerMode !== 'OFF') {
       const isBlue = state.burnerMode === 'ROARING';
-      const flutter = Math.sin(now * 0.02) * 1.5 + Math.cos(now * 0.035) * 0.8;
-      const flutter2 = Math.sin(now * 0.045) * 1.2;
+      const flutter = Math.sin(now * 0.025) * 1.6 + Math.cos(now * 0.04) * 0.9;
+      const flutter2 = Math.sin(now * 0.05) * 1.3;
 
       if (isBlue) {
-        // 🔥 ROARING NON-LUMINOUS BLUE FLAME (High-Heat Laboratory Flame)
-        const flameH = 24 + Math.sin(now * 0.025) * 2;
+        // 🔥 ROARING NON-LUMINOUS BLUE FLAME
+        const flameH = 22 + Math.sin(now * 0.03) * 2.5;
 
-        // Radiant Light Reflection onto Gauze
-        const radGlow = ctx.createRadialGradient(cx, cy + 54, 2, cx, cy + 54, 22);
-        radGlow.addColorStop(0, 'rgba(56, 189, 248, 0.45)');
+        // Radiant cyan glow on gauze
+        const radGlow = ctx.createRadialGradient(cx, gauzeY + 2, 2, cx, gauzeY + 2, 26);
+        radGlow.addColorStop(0, 'rgba(56, 189, 248, 0.5)');
         radGlow.addColorStop(1, 'rgba(56, 189, 248, 0)');
         ctx.fillStyle = radGlow;
         ctx.beginPath();
-        ctx.arc(cx, cy + 54, 22, 0, Math.PI * 2);
+        ctx.arc(cx, gauzeY + 2, 26, 0, Math.PI * 2);
         ctx.fill();
 
-        // 1. Outer Oxidizing Sheath (Faint Violet/Cyan Mantle)
-        ctx.fillStyle = 'rgba(56, 189, 248, 0.35)';
+        // 1. Outer Sheath (Faint Cyan/Violet)
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.4)';
         ctx.beginPath();
-        ctx.moveTo(cx - 6, cy + 62);
-        ctx.quadraticCurveTo(cx + flutter * 0.7, cy + 62 - flameH, cx + 6, cy + 62);
+        ctx.moveTo(cx - 6.5, chimTopY);
+        ctx.quadraticCurveTo(cx + flutter * 0.8, chimTopY - flameH, cx + 6.5, chimTopY);
         ctx.fill();
 
-        // 2. Striking Bright Inner Strike Cone (Hottest Kinetic Zone)
+        // 2. Bright Inner Strike Cone
         const innerH = flameH * 0.65;
-        const innerGrad = ctx.createLinearGradient(0, cy + 62, 0, cy + 62 - innerH);
+        const innerGrad = ctx.createLinearGradient(0, chimTopY, 0, chimTopY - innerH);
         innerGrad.addColorStop(0, '#0284C7');
         innerGrad.addColorStop(0.4, '#00F2FE');
-        innerGrad.addColorStop(1, '#E0F2FE');
+        innerGrad.addColorStop(1, '#F0F9FF');
 
         ctx.fillStyle = innerGrad;
         ctx.beginPath();
-        ctx.moveTo(cx - 3.8, cy + 62);
-        ctx.quadraticCurveTo(cx + flutter2, cy + 62 - innerH, cx + 3.8, cy + 62);
+        ctx.moveTo(cx - 4, chimTopY);
+        ctx.quadraticCurveTo(cx + flutter2, chimTopY - innerH, cx + 4, chimTopY);
         ctx.fill();
 
-        // 3. Dark Unburnt Gas Base Zone at Chimney Tip
-        ctx.fillStyle = 'rgba(15, 23, 42, 0.6)';
+        // 3. Dark Base Zone
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.65)';
         ctx.beginPath();
-        ctx.moveTo(cx - 3.5, cy + 62);
-        ctx.lineTo(cx + 3.5, cy + 62);
-        ctx.lineTo(cx, cy + 59);
+        ctx.moveTo(cx - 3.5, chimTopY);
+        ctx.lineTo(cx + 3.5, chimTopY);
+        ctx.lineTo(cx, chimTopY - 4);
         ctx.closePath();
         ctx.fill();
 
       } else {
-        // 🔥 GENTLE LUMINOUS YELLOW FLAME (Warming Flame)
-        const flameH = 18 + Math.sin(now * 0.015) * 1.5;
+        // 🔥 GENTLE LUMINOUS YELLOW FLAME
+        const flameH = 18 + Math.sin(now * 0.02) * 1.8;
 
-        // Outer Golden Glow
-        ctx.fillStyle = 'rgba(245, 158, 11, 0.35)';
-        ctx.beginPath();
-        ctx.moveTo(cx - 7, cy + 62);
-        ctx.quadraticCurveTo(cx + flutter, cy + 62 - flameH - 3, cx + 7, cy + 62);
-        ctx.fill();
-
-        // Mid Flame (Orange-Yellow)
-        const yelGrad = ctx.createLinearGradient(0, cy + 62, 0, cy + 62 - flameH);
+        const yelGrad = ctx.createLinearGradient(0, chimTopY, 0, chimTopY - flameH);
         yelGrad.addColorStop(0, '#EA580C');
         yelGrad.addColorStop(0.45, '#F59E0B');
         yelGrad.addColorStop(0.85, '#FDE047');
@@ -1042,111 +1119,103 @@ const SolubilityEngine = (() => {
 
         ctx.fillStyle = yelGrad;
         ctx.beginPath();
-        ctx.moveTo(cx - 5, cy + 62);
-        ctx.quadraticCurveTo(cx + flutter * 0.8, cy + 62 - flameH, cx + 5, cy + 62);
-        ctx.fill();
-
-        // Bright Inner Core
-        ctx.fillStyle = '#FFFBEB';
-        ctx.beginPath();
-        ctx.moveTo(cx - 2.5, cy + 62);
-        ctx.quadraticCurveTo(cx + flutter * 0.4, cy + 62 - flameH * 0.55, cx + 2.5, cy + 62);
+        ctx.moveTo(cx - 5.5, chimTopY);
+        ctx.quadraticCurveTo(cx + flutter, chimTopY - flameH, cx + 5.5, chimTopY);
         ctx.fill();
       }
     }
 
-    // ── 5. Large Borosilicate 250ml Glass Beaker & Generous Water Bath ──
-    const bkW = 90;
-    const bkH = 56;
+    // ── 5. Large Borosilicate 250ml Glass Water Bath Beaker ──
+    const bkW = 104;
+    const bkH = 74;
     const bkX = cx - bkW / 2;
-    const bkY = (cy + 52) - bkH; // cy - 4
+    const bkY = gauzeY - bkH;
 
-    // Beaker Glass Outlines (Double refractive glass lines)
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
-    ctx.lineWidth = 1.8;
+    // Glass walls
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+    ctx.lineWidth = 2;
     ctx.beginPath();
-    // Spout lip left
     ctx.moveTo(bkX - 4, bkY);
-    ctx.lineTo(bkX, bkY + 4);
-    ctx.lineTo(bkX, bkY + bkH - 4);
+    ctx.lineTo(bkX, bkY + 5);
+    ctx.lineTo(bkX, bkY + bkH - 5);
     ctx.quadraticCurveTo(bkX, bkY + bkH, bkX + 6, bkY + bkH);
     ctx.lineTo(bkX + bkW - 6, bkY + bkH);
-    ctx.quadraticCurveTo(bkX + bkW, bkY + bkH, bkX + bkW, bkY + bkH - 4);
+    ctx.quadraticCurveTo(bkX + bkW, bkY + bkH, bkX + bkW, bkY + bkH - 5);
     ctx.lineTo(bkX + bkW, bkY);
     ctx.stroke();
 
-    // Etched White Volume Graduations on Beaker (50, 100, 150, 200, 250 ml)
+    // Etched White Volume Graduations (50, 100, 150, 200, 250 mL)
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
     ctx.lineWidth = 1;
-    [12, 20, 28, 36, 44].forEach(gy => {
+    [15, 27, 39, 51, 63].forEach(gy => {
       ctx.beginPath();
       ctx.moveTo(bkX + 3, bkY + gy);
-      ctx.lineTo(bkX + 10, bkY + gy);
+      ctx.lineTo(bkX + 11, bkY + gy);
       ctx.stroke();
     });
 
-    // Deep Water Bath Liquid (~80% full)
+    // Water Bath Liquid (~75% full)
     const isIce = state.coolingMode === 'ICE';
-    const waterGrad = ctx.createLinearGradient(0, bkY + 10, 0, bkY + bkH);
+    const waterGrad = ctx.createLinearGradient(0, bkY + 14, 0, bkY + bkH);
     if (isIce) {
-      waterGrad.addColorStop(0, 'rgba(186, 230, 253, 0.48)');
-      waterGrad.addColorStop(1, 'rgba(125, 211, 252, 0.35)');
+      waterGrad.addColorStop(0, 'rgba(186, 230, 253, 0.52)');
+      waterGrad.addColorStop(1, 'rgba(125, 211, 252, 0.38)');
     } else {
-      waterGrad.addColorStop(0, 'rgba(56, 189, 248, 0.32)');
-      waterGrad.addColorStop(1, 'rgba(2, 132, 199, 0.22)');
+      waterGrad.addColorStop(0, 'rgba(56, 189, 248, 0.35)');
+      waterGrad.addColorStop(1, 'rgba(2, 132, 199, 0.24)');
     }
 
     ctx.fillStyle = waterGrad;
-    ctx.fillRect(bkX + 1.5, bkY + 10, bkW - 3, bkH - 12);
+    ctx.fillRect(bkX + 1.5, bkY + 14, bkW - 3, bkH - 16);
 
-    // Water Surface Meniscus
-    ctx.strokeStyle = isIce ? 'rgba(224, 242, 254, 0.75)' : 'rgba(56, 189, 248, 0.65)';
+    // Water Bath Meniscus
+    ctx.strokeStyle = isIce ? 'rgba(224, 242, 254, 0.8)' : 'rgba(56, 189, 248, 0.7)';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.ellipse(cx, bkY + 10, (bkW - 4) / 2, 2.5, 0, 0, Math.PI * 2);
+    ctx.ellipse(cx, bkY + 14, (bkW - 4) / 2, 3, 0, 0, Math.PI * 2);
     ctx.stroke();
 
-    // Dynamic Hot Water Boiling / Convection Bubbles
-    if (state.temp > 50) {
-      const bubbleCount = Math.min(10, Math.floor((state.temp - 45) / 5));
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+    // Convection Boiling Bubbles
+    if (state.temp > 48) {
+      const bubbleCount = Math.min(12, Math.floor((state.temp - 44) / 4));
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
       for (let b = 0; b < bubbleCount; b++) {
-        const bx = cx - 32 + (b * 7.5) + Math.sin(now * 0.006 + b) * 3;
-        const by = (bkY + bkH - 4) - ((now * 0.04 + b * 12) % (bkH - 16));
+        const bx = cx - 36 + (b * 6.5) + Math.sin(now * 0.007 + b) * 3;
+        const by = (bkY + bkH - 6) - ((now * 0.045 + b * 14) % (bkH - 22));
         ctx.beginPath();
-        ctx.arc(bx, by, 1.3, 0, Math.PI * 2);
+        ctx.arc(bx, by, 1.4, 0, Math.PI * 2);
         ctx.fill();
       }
     }
 
-    // Floating Translucent Ice Cubes in Ice Bath Mode
+    // Ice cubes if ice mode
     if (isIce) {
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
-      ctx.strokeStyle = 'rgba(186, 230, 253, 0.85)';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+      ctx.strokeStyle = 'rgba(186, 230, 253, 0.9)';
       ctx.lineWidth = 1;
-      [-24, -6, 14].forEach(ix => {
+      [-28, -8, 16].forEach(ix => {
         ctx.beginPath();
-        ctx.roundRect(cx + ix, bkY + 12, 10, 9, 1.5);
+        ctx.roundRect(cx + ix, bkY + 16, 11, 10, 2);
         ctx.fill();
         ctx.stroke();
       });
     }
 
-    // Glass Vertical Reflection Highlight
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.18)';
-    ctx.fillRect(bkX + 4, bkY + 2, 3.5, bkH - 4);
+    // Beaker Specular Reflection
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.fillRect(bkX + 4, bkY + 4, 4, bkH - 8);
 
-    // ── 6. Pyrex Boiling Tube ($25 \times 150\text{mm}$) Deeply Immersed ──
-    const tubeRadius = 12.5;
-    const tubeTopY = cy - 70;
-    const tubeBotY = cy + 46; // Dipped deep inside the water bath
+    // ── 6. Pyrex Boiling Tube ($25 	imes 150	ext{mm}$) Immersed Deeply ──
+    const tubeRadius = 13.5;
+    const tubeTopY = 48;
+    const tubeBotY = gauzeY - 14;
 
-    // Tube Glass Outline & Flanged Top Lip
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
-    ctx.lineWidth = 2;
+    // Tube glass wall
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.95)';
+    ctx.lineWidth = 2.2;
     ctx.beginPath();
-    // Top flanged lip
-    ctx.ellipse(cx, tubeTopY, tubeRadius + 2.5, 2, 0, 0, Math.PI * 2);
+    // Top flanged rim
+    ctx.ellipse(cx, tubeTopY, tubeRadius + 2.5, 2.5, 0, 0, Math.PI * 2);
     ctx.stroke();
 
     ctx.beginPath();
@@ -1156,9 +1225,9 @@ const SolubilityEngine = (() => {
     ctx.lineTo(cx + tubeRadius, tubeTopY);
     ctx.stroke();
 
-    // Solution inside Boiling Tube (Completely immersed below water bath level)
+    // Solution inside Boiling Tube
     const model = SALT_MODELS[state.solute];
-    const fillHeight = Math.min(42, 16 + state.volume * 1.1);
+    const fillHeight = Math.min(52, 22 + state.volume * 1.5);
     const solColor = model ? model.solutionColor : 'rgba(215, 240, 255, 0.3)';
 
     ctx.fillStyle = solColor;
@@ -1169,111 +1238,129 @@ const SolubilityEngine = (() => {
     ctx.lineTo(cx + (tubeRadius - 1.5), tubeBotY + 1.5 - fillHeight);
     ctx.fill();
 
-    // Solution Top Meniscus
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+    // Solution Meniscus
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.ellipse(cx, tubeBotY + 1.5 - fillHeight, tubeRadius - 2, 1.5, 0, 0, Math.PI * 2);
+    ctx.ellipse(cx, tubeBotY + 1.5 - fillHeight, tubeRadius - 2, 2, 0, 0, Math.PI * 2);
     ctx.stroke();
 
-    // Undissolved Solid Salt Crystals (Faceted 3D Shading at bottom curve)
+    // Undissolved Solid Salt Crystals
     if (state.solidParticles.length > 0) {
       const saltColor = model ? model.color : '#FFFFFF';
       state.solidParticles.forEach((p, idx) => {
-        ctx.fillStyle = idx % 2 === 0 ? saltColor : 'rgba(255, 255, 255, 0.75)';
+        ctx.fillStyle = idx % 2 === 0 ? saltColor : 'rgba(255, 255, 255, 0.8)';
         ctx.beginPath();
-        ctx.arc(cx + p.x * 0.26, tubeBotY + 2 + p.y * 0.08, p.size * 0.45, 0, Math.PI * 2);
+        ctx.arc(cx + p.x * 0.28, tubeBotY + 2 + p.y * 0.08, p.size * 0.45, 0, Math.PI * 2);
         ctx.fill();
       });
     }
 
-    // Floating Precipitating Crystals (Nucleation during crystallization)
+    // Floating Crystal Nucleation Particles
     if (state.status === 'CRYSTALLIZING' || state.crystalParticles.length > 0) {
       const saltColor = model ? model.color : '#FFFFFF';
       state.crystalParticles.forEach((cp, idx) => {
-        ctx.fillStyle = idx % 2 === 0 ? '#FFF' : saltColor;
+        ctx.fillStyle = idx % 2 === 0 ? '#FFFFFF' : saltColor;
         ctx.beginPath();
-        ctx.arc(cx + cp.x * 0.28, tubeBotY - fillHeight + 6 + cp.y * 0.45, cp.size * 0.45, 0, Math.PI * 2);
+        ctx.arc(cx + cp.x * 0.3, tubeBotY - fillHeight + 6 + cp.y * 0.5, cp.size * 0.45, 0, Math.PI * 2);
         ctx.fill();
       });
     }
 
-    // Boiling Tube Glass Specular Reflection Streak
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.22)';
-    ctx.fillRect(cx - tubeRadius + 2.5, tubeTopY + 2, 2.5, (tubeBotY - tubeTopY) + 6);
+    // Boiling Tube Specular Reflection
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+    ctx.fillRect(cx - tubeRadius + 2.5, tubeTopY + 4, 3, (tubeBotY - tubeTopY) + 4);
 
-    // ── 7. Precision Laboratory Thermometer & Stirrer ──────────────────
-    const stirOffset = state.isStirring ? Math.sin(now * 0.02) * 3.5 : 0;
-    const thX = cx + stirOffset;
-    const thTopY = cy - 86;
-    const thBotY = cy + 44; // Bulb rests deep in the immersed solute solution
+    // ── 7. Animated Glass Loop Stirrer ──
+    const stirAnimOffset = state.isStirring ? Math.sin(now * 0.02) * 12 : 0;
+    const stirrerX = cx - 4;
+    const stirrerTopY = 24 + stirAnimOffset;
+    const stirrerBotY = (tubeBotY - 6) + stirAnimOffset;
 
-    // Thermometer Yellow Contrast Backing Stripe (Authentic Lab Thermometer)
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    // Glass handle rod
+    ctx.moveTo(stirrerX, stirrerTopY);
+    ctx.lineTo(stirrerX, stirrerBotY);
+    ctx.stroke();
+
+    // Glass loop ring at bottom
+    ctx.beginPath();
+    ctx.ellipse(stirrerX, stirrerBotY, 7, 3, 0, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // ── 8. Laboratory Thermometer Stem & Mercury Bulb ──
+    const thX = cx + 4;
+    const thTopY = 20;
+    const thBotY = tubeBotY + 1;
+
+    // Yellow Contrast Backing Stripe
     ctx.fillStyle = '#FEF08A';
-    ctx.fillRect(thX - 1.2, thTopY, 2.4, thBotY - thTopY);
+    ctx.fillRect(thX - 1.5, thTopY, 3, thBotY - thTopY);
 
-    // Degree Ticks on Glass Stem
-    ctx.strokeStyle = 'rgba(15, 23, 42, 0.7)';
+    // Degree Ticks
+    ctx.strokeStyle = 'rgba(15, 23, 42, 0.75)';
     ctx.lineWidth = 0.8;
-    for (let ty = thTopY + 6; ty < thBotY - 6; ty += 5) {
+    for (let ty = thTopY + 8; ty < thBotY - 8; ty += 6) {
       ctx.beginPath();
-      ctx.moveTo(thX + 1.2, ty);
-      ctx.lineTo(thX + 2.5, ty);
+      ctx.moveTo(thX + 1.5, ty);
+      ctx.lineTo(thX + 3, ty);
       ctx.stroke();
     }
 
-    // Thermometer Outer Glass Stem
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
-    ctx.lineWidth = 1.2;
+    // Outer Glass Stem
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.lineWidth = 1.3;
     ctx.beginPath();
-    ctx.roundRect(thX - 2, thTopY, 4, (thBotY - thTopY), 1.5);
+    ctx.roundRect(thX - 2.5, thTopY, 5, (thBotY - thTopY), 2);
     ctx.stroke();
 
-    // Red Mercury/Alcohol Capillary Thread
-    const mercuryHeight = Math.min((thBotY - thTopY) - 10, Math.max(3, (state.temp / 100) * ((thBotY - thTopY) - 12)));
+    // Red Mercury/Alcohol Thread
+    const mercuryHeight = Math.min((thBotY - thTopY) - 12, Math.max(4, (state.temp / 100) * ((thBotY - thTopY) - 14)));
     ctx.fillStyle = '#EF4444';
-    ctx.fillRect(thX - 0.7, thBotY - 2 - mercuryHeight, 1.4, mercuryHeight);
+    ctx.fillRect(thX - 0.9, thBotY - 2 - mercuryHeight, 1.8, mercuryHeight);
 
-    // Thermometer Mercury Bulb at Bottom
+    // Mercury Bulb
     ctx.fillStyle = '#DC2626';
     ctx.beginPath();
-    ctx.arc(thX, thBotY + 1, 3.5, 0, Math.PI * 2);
+    ctx.arc(thX, thBotY + 2, 4, 0, Math.PI * 2);
     ctx.fill();
 
-    // Specular Shine on Bulb
-    ctx.fillStyle = '#FFF';
+    // Bulb Shine
+    ctx.fillStyle = '#FFFFFF';
     ctx.beginPath();
-    ctx.arc(thX - 1, thBotY - 0.5, 1, 0, Math.PI * 2);
+    ctx.arc(thX - 1.2, thBotY + 0.5, 1.2, 0, Math.PI * 2);
     ctx.fill();
   }
 
   // ── Magnified Precision Thermometer Stem View ────────────────────────
   function drawMagnifiedThermometer() {
     if (!magCanvas || !magCtx) return;
-    const w = magCanvas.getBoundingClientRect().width;
-    const h = magCanvas.getBoundingClientRect().height;
+    const w = 160;
+    const h = 160;
 
     magCtx.clearRect(0, 0, w, h);
 
-    const cx = w * 0.38;
-    const cy = h * 0.50; // Sightline position at vertical center
-    const zoomSpan = 5.0; // 5.0°C visible span across the height
-    const pxPerDeg = (h * 0.82) / zoomSpan;
+    const cx = 64;
+    const cy = 80; // Sightline position at vertical center (h / 2)
+    const zoomSpan = 5.0; // 5.0°C visible span
+    const pxPerDeg = (h * 0.72) / zoomSpan;
 
-    // 1. Backing Glass Stem Cylinder with cylindrical lighting
+    // 1. Backing Glass Stem Cylinder with cylindrical shading
     const tubeWidth = 28;
     const tubeGrad = magCtx.createLinearGradient(cx - tubeWidth / 2, 0, cx + tubeWidth / 2, 0);
-    tubeGrad.addColorStop(0, 'rgba(255, 255, 255, 0.16)');
-    tubeGrad.addColorStop(0.2, 'rgba(255, 255, 255, 0.05)');
-    tubeGrad.addColorStop(0.5, 'rgba(0, 0, 0, 0.25)');
-    tubeGrad.addColorStop(0.8, 'rgba(255, 255, 255, 0.05)');
-    tubeGrad.addColorStop(1, 'rgba(255, 255, 255, 0.14)');
+    tubeGrad.addColorStop(0, 'rgba(255, 255, 255, 0.22)');
+    tubeGrad.addColorStop(0.2, 'rgba(255, 255, 255, 0.08)');
+    tubeGrad.addColorStop(0.5, 'rgba(0, 0, 0, 0.35)');
+    tubeGrad.addColorStop(0.8, 'rgba(255, 255, 255, 0.08)');
+    tubeGrad.addColorStop(1, 'rgba(255, 255, 255, 0.2)');
 
     magCtx.fillStyle = tubeGrad;
     magCtx.fillRect(cx - tubeWidth / 2, 0, tubeWidth, h);
 
     // Glass Edge Outlines
-    magCtx.strokeStyle = 'rgba(255, 255, 255, 0.22)';
+    magCtx.strokeStyle = 'rgba(255, 255, 255, 0.28)';
     magCtx.lineWidth = 1.5;
     magCtx.beginPath();
     magCtx.moveTo(cx - tubeWidth / 2, 0);
@@ -1282,12 +1369,16 @@ const SolubilityEngine = (() => {
     magCtx.lineTo(cx + tubeWidth / 2, h);
     magCtx.stroke();
 
-    // 2. Capillary Channel (Bore)
-    const boreWidth = 6;
-    magCtx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+    // 2. Yellow Contrast Stripe behind Capillary (Class-A Thermometer Standard)
+    const boreWidth = 8;
+    magCtx.fillStyle = 'rgba(254, 240, 138, 0.5)';
+    magCtx.fillRect(cx - boreWidth / 2 - 1, 0, boreWidth + 2, h);
+
+    // 3. Capillary Channel Bore
+    magCtx.fillStyle = 'rgba(0, 0, 0, 0.55)';
     magCtx.fillRect(cx - boreWidth / 2, 0, boreWidth, h);
 
-    // 3. Calibrated Graduations (Ticks) & Digits
+    // 4. Calibrated 0.1°C Graduations & Labels
     const minVisibleT = state.temp - (zoomSpan * 0.65);
     const maxVisibleT = state.temp + (zoomSpan * 0.65);
     const startTick = Math.floor(minVisibleT * 10) / 10;
@@ -1309,30 +1400,30 @@ const SolubilityEngine = (() => {
         magCtx.lineWidth = 2;
         magCtx.beginPath();
         magCtx.moveTo(cx + tubeWidth / 2, y);
-        magCtx.lineTo(cx + tubeWidth / 2 + 14, y);
+        magCtx.lineTo(cx + tubeWidth / 2 + 15, y);
         magCtx.stroke();
 
-        // Numerical temperature label
+        // Numerical temperature label in JetBrains Mono
         magCtx.font = "bold 11px 'JetBrains Mono', monospace";
         magCtx.fillStyle = '#FFFFFF';
-        magCtx.fillText(`${Math.round(t)}°`, cx + tubeWidth / 2 + 17, y);
+        magCtx.fillText(`${Math.round(t)}°`, cx + tubeWidth / 2 + 18, y);
       } else if (isHalfDegree) {
         // Medium 0.5°C graduation mark
         magCtx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
         magCtx.lineWidth = 1.5;
         magCtx.beginPath();
         magCtx.moveTo(cx + tubeWidth / 2, y);
-        magCtx.lineTo(cx + tubeWidth / 2 + 9, y);
+        magCtx.lineTo(cx + tubeWidth / 2 + 10, y);
         magCtx.stroke();
 
-        // Dot indicator for 0.5°
-        magCtx.fillStyle = 'rgba(56, 189, 248, 0.7)';
+        // Cyan dot indicator for 0.5°
+        magCtx.fillStyle = 'rgba(56, 189, 248, 0.8)';
         magCtx.beginPath();
-        magCtx.arc(cx + tubeWidth / 2 + 13, y, 1.5, 0, Math.PI * 2);
+        magCtx.arc(cx + tubeWidth / 2 + 14, y, 1.8, 0, Math.PI * 2);
         magCtx.fill();
       } else {
         // Minor 0.1°C graduation mark
-        magCtx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+        magCtx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
         magCtx.lineWidth = 1;
         magCtx.beginPath();
         magCtx.moveTo(cx + tubeWidth / 2, y);
@@ -1341,7 +1432,7 @@ const SolubilityEngine = (() => {
       }
     }
 
-    // 4. Liquid Mercury/Alcohol Column
+    // 5. Liquid Mercury/Alcohol Column up to cy = 80 (where eye-level sightline aligns)
     const fluidGrad = magCtx.createLinearGradient(cx - boreWidth / 2, 0, cx + boreWidth / 2, 0);
     fluidGrad.addColorStop(0, '#991B1B');
     fluidGrad.addColorStop(0.3, '#EF4444');
@@ -1351,26 +1442,25 @@ const SolubilityEngine = (() => {
     magCtx.fillStyle = fluidGrad;
     magCtx.fillRect(cx - boreWidth / 2, cy, boreWidth, h - cy);
 
-    // 5. Convex Meniscus Cap Dome
+    // Convex Meniscus Cap Dome
     magCtx.beginPath();
     magCtx.arc(cx, cy, boreWidth / 2, Math.PI, 0, false);
     magCtx.fillStyle = '#F87171';
     magCtx.fill();
 
-    // 6. Realistic Glass Reflection Streak
+    // 6. Glass Reflection Streak
     magCtx.fillStyle = 'rgba(255, 255, 255, 0.35)';
     magCtx.fillRect(cx - tubeWidth / 2 + 4, 0, 2.5, h);
 
-    // 7. Eye-Level Reading Alignment Pointer (Left side arrow)
-    magCtx.fillStyle = '#38BDF8';
+    // 7. Eye-Level Reading Alignment Pointer (Left side triangle pointer)
+    magCtx.fillStyle = '#EF4444';
     magCtx.beginPath();
-    magCtx.moveTo(cx - tubeWidth / 2 - 9, cy);
-    magCtx.lineTo(cx - tubeWidth / 2 - 3, cy - 4);
-    magCtx.lineTo(cx - tubeWidth / 2 - 3, cy + 4);
+    magCtx.moveTo(cx - tubeWidth / 2 - 10, cy);
+    magCtx.lineTo(cx - tubeWidth / 2 - 3, cy - 4.5);
+    magCtx.lineTo(cx - tubeWidth / 2 - 3, cy + 4.5);
     magCtx.closePath();
     magCtx.fill();
   }
-
   // ── KNEC Graph Canvas & Analysis Engine ─────────────────────────────
   function setupGraphCrosshairEvents() {
     if (!graphCanvas) return;
@@ -1826,6 +1916,12 @@ const SolubilityEngine = (() => {
   // ── Audio Synthesis & Status Helpers ────────────────────────────────
   function playSound(type) {
     if (!state.soundEnabled) return;
+    if (type === 'crystal' || type === 'chime') {
+      if (window.SolubilityBenchCore && typeof window.SolubilityBenchCore.playCrystalNucleationChime === 'function') {
+        window.SolubilityBenchCore.playCrystalNucleationChime();
+        return;
+      }
+    }
     if (window.VLKAudio && typeof window.VLKAudio.play === 'function') {
       window.VLKAudio.play(type);
     }
@@ -2240,6 +2336,9 @@ const SolubilityEngine = (() => {
     updateCandidateSolubility,
     setStudyMode,
     submitExamBooklet,
-    submitSession
+    submitSession,
+    jumpToStep,
+    updateWorkflowStepper,
+    get trials() { return state.trials; }
   };
 })();

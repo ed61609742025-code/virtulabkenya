@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Revision &amp; Reference Handbook — VirtuLab Kenya</title>
+<script>
+  window.VLK = window.VLK || {};
+  // Inline Auth Guard
+  (function() {
+    try {
+      var tok = (typeof localStorage !== 'undefined' && localStorage.getItem('vlk_token')) ||
+                (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('vlk_token'));
+      var curPath = window.location.pathname + window.location.search + window.location.hash;
+      if (!tok) {
+        window.location.replace('/student/login.html?returnUrl=' + encodeURIComponent(curPath));
+        return;
+      }
+    } catch(e) {}
+  })();
+
+  var t = localStorage.getItem('vlk_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', t);
+  window.VLK.cycleTheme = window.cycleTheme = window.toggleTheme = function() {
+    var themes = ['light', 'dark', 'green'];
+    var current = document.documentElement.getAttribute('data-theme') || 'light';
+    var next = themes[(themes.indexOf(current) + 1) % themes.length];
+    if (typeof setTheme === 'function') {
+      setTheme(next);
+    } else {
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('vlk_theme', next);
+      if (typeof updateThemeButtons === 'function') updateThemeButtons();
+    }
+    return next;
+  };
+</script>
+<meta name="theme-color" content="#0F172A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<link rel="icon" type="image/png" href="/shared/icon-192.png">
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.json">
+
+<!-- Fonts & Icons -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="../shared/vlk-icons.js"></script>
+
+<!-- Stylesheets -->
+<link rel="stylesheet" href="../shared/style.css?v=165">
+<link rel="stylesheet" href="css/dashboard.css?v=165">
+<link rel="stylesheet" href="css/mobile.css?v=165">
+<link rel="stylesheet" href="../shared/brilliant-theme.css?v=165">
+
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    margin: 0;
+    padding: 0;
+    padding-bottom: 90px;
+    background: var(--bg-dark);
+    color: var(--text-main);
+  }
+  .reference-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+  }
+  .reference-header {
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 22px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .knec-reference-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 22px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .knec-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 10px;
+    margin-top: 12px;
+    border: 1px solid var(--card-border);
+  }
+  .knec-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.86rem;
+  }
+  .knec-table th {
+    background: var(--card-bg-hover);
+    color: var(--heading-color);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 800;
+    text-align: left;
+    padding: 10px 14px;
+    border: 1px solid var(--card-border);
+    white-space: nowrap;
+  }
+  .knec-table td {
+    padding: 10px 14px;
+    border: 1px solid var(--card-border);
+    font-size: 0.84rem;
+    line-height: 1.5;
+    color: var(--text-main);
+  }
+  .knec-table tr:nth-child(even) td {
+    background: var(--card-bg-hover);
+  }
+  .flame-procedure-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+    gap: 18px;
+    margin-bottom: 18px;
+    align-items: stretch;
+  }
+  @media (max-width: 768px) {
+    .flame-procedure-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav" aria-label="Main Navigation">
+    <div class="top-navbar">
+      <a href="home.html" class="nav-brand-academic" data-tooltip="Home" data-tooltip-pos="bottom">
+        <div class="vlk-brand-logo-wrap">
+          <img src="/shared/virtulab-logo.svg" alt="VirtuLab Kenya Logo" class="vlk-brand-logo-img" width="36" height="36">
+        </div>
+        <div>
+          <div class="nav-brand-title" style="font-size:1.15rem; font-weight:800; letter-spacing:-0.02em; color:var(--heading-color); line-height:1.1;">
+            <span class="brand-word-virtu">VirtuLab</span> <span class="brand-word-kenya">Kenya</span>
+          </div>
+          <div class="nav-brand-motto" style="font-size:0.62rem; font-weight:700; color:var(--acad-navy, #0284C7); letter-spacing:0.04em; text-transform:uppercase;">
+            Revision Handbook
+          </div>
+        </div>
+      </a>
+
+      <div class="nav-actions">
+        <a href="home.html" class="btn btn-secondary" style="font-size:0.8rem; font-weight:800; text-decoration:none; padding:7px 14px; border-radius:100px; display:inline-flex; align-items:center; gap:6px;">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px; height:14px;"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          <span>Workstation</span>
+        </a>
+
+        <!-- Theme Toggle Switcher -->
+        <div class="theme-toggle-group theme-multi-btn-group" aria-label="Visual Theme Switcher">
+          <button class="theme-btn-chip" data-theme="light" onclick="setTheme('light')" aria-label="Light Theme">Light</button>
+          <button class="theme-btn-chip" data-theme="dark" onclick="setTheme('dark')" aria-label="Dark Theme">Dark</button>
+          <button class="theme-btn-chip" data-theme="green" onclick="setTheme('green')" aria-label="Lab Theme">Lab</button>
+        </div>
+
+        <button type="button" class="theme-single-toggle-btn" onclick="cycleTheme()" aria-label="Toggle visual theme">
+          <svg class="theme-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+
+        <a href="profile.html" class="user-avatar-btn" data-tooltip="Profile &amp; settings" aria-label="Student Profile">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Reference Guide Workspace -->
+  <main class="reference-container">
+
+    <!-- Header Banner -->
+    <header class="reference-header">
+      <div>
+        <h1 style="font-size:1.45rem; font-weight:800; color:var(--heading-color); margin:0 0 4px 0; letter-spacing:-0.02em;">
+          📘 KCSE Chemistry Paper 3 Revision Handbook
+        </h1>
+        <p style="font-size:0.86rem; color:var(--text-muted); margin:0;">
+          Authoritative observational criteria, confirmatory tests, flame spectroscopy, and practical chemistry formulas.
+        </p>
+      </div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <a href="titration_theory.html" class="btn btn-primary" style="padding:9px 18px; border-radius:10px; font-size:0.84rem; font-weight:800; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+          <span>Titration Theory Guide &rarr;</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Quick Jump Pills Bar -->
+    <nav class="quick-jump-bar" aria-label="Reference Jump Navigation" style="margin-bottom:20px;">
+      <span style="font-size:0.76rem; font-weight:800; color:var(--heading-color); margin-right:4px;">Jump to:</span>
+      <a href="#ref-pocket" class="quick-jump-chip" style="display:inline-flex; align-items:center; gap:5px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Saved Tips</a>
+      <a href="#ref-indicators" class="quick-jump-chip">Indicators</a>
+      <a href="#ref-gases" class="quick-jump-chip">Gas Tests</a>
+      <a href="#ref-cations" class="quick-jump-chip">Cation Tests</a>
+      <a href="#ref-flame" class="quick-jump-chip">Flame Tests</a>
+      <a href="#ref-anions" class="quick-jump-chip">Anion Tests</a>
+      <a href="#ref-organic" class="quick-jump-chip">Organic Groups</a>
+      <a href="#ref-physical" class="quick-jump-chip">Formulas</a>
+    </nav>
+
+    <!-- Exam Day Pocket: Saved Examiner Tips -->
+    <div class="saved-tips-pocket-wrap" id="ref-pocket" style="margin-bottom:20px;">
+      <div class="saved-tips-card">
+        <div class="saved-tips-header" onclick="toggleSavedTipsPocket()" role="button" tabindex="0" aria-expanded="false">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div class="saved-tips-badge-icon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+            <div>
+              <h3 class="saved-tips-title">My Exam Day Pocket (Saved Examiner Tips)</h3>
+              <p class="saved-tips-sub">Bookmarked KNEC rubrics &amp; rules for rapid morning revision before Paper 3</p>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span class="saved-tips-count-chip" id="savedTipsCountChip">0 Saved</span>
+            <span class="saved-tips-chevron" id="savedTipsChevron">▼</span>
+          </div>
+        </div>
+        <div class="saved-tips-body" id="savedTipsBody" style="display:none;">
+          <div id="savedTipsListContainer" class="saved-tips-grid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1. Indicators Reference Card -->
+    <div class="knec-reference-card" id="ref-indicators">
+      <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0 0 8px 0;">
+        Acid-Base Indicators
+      </h3>
+      <p style="font-size:0.84rem; font-weight:500; color:var(--text-muted); margin-bottom:12px;">Standard colour transition endpoints at titration equivalence.</p>
+      <div class="knec-table-wrap">
+        <table class="knec-table" aria-label="Indicator Table">
+          <thead>
+            <tr>
+              <th>Indicator</th>
+              <th style="text-align:center;">Acid</th>
+              <th style="text-align:center;">Endpoint</th>
+              <th style="text-align:center;">Base</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Phenolphthalein</b></td>
+              <td style="text-align:center; color:var(--text-muted); font-weight:600;">Colorless</td>
+              <td style="text-align:center; color:#EC4899; font-weight:800;">Pale Pink</td>
+              <td style="text-align:center; color:#DB2777; font-weight:700;">Pink</td>
+            </tr>
+            <tr>
+              <td><b>Methyl Orange</b></td>
+              <td style="text-align:center; color:#EF4444; font-weight:700;">Pink / Red</td>
+              <td style="text-align:center; color:#F59E0B; font-weight:800;">Orange</td>
+              <td style="text-align:center; color:#FBBF24; font-weight:700;">Yellow</td>
+            </tr>
+            <tr>
+              <td><b>Litmus Paper</b></td>
+              <td style="text-align:center; color:#EF4444; font-weight:700;">Red</td>
+              <td style="text-align:center; color:var(--text-muted); font-weight:800;">Purple</td>
+              <td style="text-align:center; color:#3B82F6; font-weight:700;">Blue</td>
+            </tr>
+            <tr>
+              <td><b>Screened Methyl Orange</b></td>
+              <td style="text-align:center; color:#991B1B; font-weight:700;">Violet / Red</td>
+              <td style="text-align:center; color:var(--text-muted); font-weight:800;">Grey</td>
+              <td style="text-align:center; color:#10B981; font-weight:700;">Green</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 2. Gas Confirmatory Tests Card -->
+    <div class="knec-reference-card" id="ref-gases">
+      <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0 0 8px 0;">
+        Gas Confirmatory Tests
+      </h3>
+      <p style="font-size:0.84rem; font-weight:500; color:var(--text-muted); margin-bottom:12px;">Standard confirmatory reagent methods for common laboratory gases.</p>
+      <div class="knec-table-wrap">
+        <table class="knec-table" aria-label="Gas Tests Table">
+          <thead>
+            <tr>
+              <th>Gas</th>
+              <th>Reagent Method</th>
+              <th>Expected Observation</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Carbon Dioxide (CO₂)</b></td>
+              <td>Bubble through Limewater</td>
+              <td>White precipitate (turns milky Ca(OH)₂)</td>
+            </tr>
+            <tr>
+              <td><b>Sulfur Dioxide (SO₂)</b></td>
+              <td>Acidified KMnO₄ or K₂Cr₂O₇</td>
+              <td>Purple decolourises / Orange turns green</td>
+            </tr>
+            <tr>
+              <td><b>Chlorine Gas (Cl₂)</b></td>
+              <td>Damp Coloured Litmus</td>
+              <td>Turns red then bleaches white</td>
+            </tr>
+            <tr>
+              <td><b>Ammonia Gas (NH₃)</b></td>
+              <td>Damp Red Litmus Paper</td>
+              <td>Turns blue (alkaline gas)</td>
+            </tr>
+            <tr>
+              <td><b>Hydrogen Gas (H₂)</b></td>
+              <td>Burning splint at test tube mouth</td>
+              <td>Burns with a 'pop' sound</td>
+            </tr>
+            <tr>
+              <td><b>Oxygen Gas (O₂)</b></td>
+              <td>Glowing wooden splint</td>
+              <td>Relights a glowing wooden splint</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 3. Qualitative Cation Separation Guide -->
+    <div class="knec-reference-card" id="ref-cations">
+      <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0 0 8px 0;">
+        Cation Tests &amp; Separation
+      </h3>
+      <p style="font-size:0.84rem; font-weight:500; color:var(--text-muted); margin-bottom:14px;">Deduce cations by adding aqueous NaOH followed by aqueous NH₃ dropwise until in excess.</p>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap:14px; width:100%; box-sizing:border-box;">
+        
+        <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:10px; padding:14px;">
+          <b style="color:var(--cyan-accent); font-size:0.94rem;">Cu²⁺ (Copper II)</b>
+          <div style="font-size:0.84rem; margin-top:6px; line-height:1.5; color:var(--text-main);">
+            • <b>NaOH:</b> Pale blue precipitate, insoluble in excess.<br>
+            • <b>NH₃(aq):</b> Pale blue precipitate, soluble in excess to form a <b>deep royal blue solution</b> [Cu(NH₃)₄]²⁺.
+          </div>
+        </div>
+
+        <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:10px; padding:14px;">
+          <b style="color:#10B981; font-size:0.94rem;">Fe²⁺ (Iron II)</b>
+          <div style="font-size:0.84rem; margin-top:6px; line-height:1.5; color:var(--text-main);">
+            • <b>NaOH:</b> Dirty green precipitate, insoluble in excess.<br>
+            • <b>NH₃(aq):</b> Dirty green precipitate, insoluble in excess (turns brown in air).
+          </div>
+        </div>
+
+        <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:10px; padding:14px;">
+          <b style="color:#F59E0B; font-size:0.94rem;">Fe³⁺ (Iron III)</b>
+          <div style="font-size:0.84rem; margin-top:6px; line-height:1.5; color:var(--text-main);">
+            • <b>NaOH:</b> Red-brown precipitate, insoluble in excess.<br>
+            • <b>NH₃(aq):</b> Red-brown precipitate, insoluble in excess.
+          </div>
+        </div>
+
+        <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:10px; padding:14px;">
+          <b style="color:var(--heading-color); font-size:0.94rem;">Zn²⁺ (Zinc)</b>
+          <div style="font-size:0.84rem; margin-top:6px; line-height:1.5; color:var(--text-main);">
+            • <b>NaOH:</b> White precipitate, <b>soluble in excess</b> [Zn(OH)₄]²⁻.<br>
+            • <b>NH₃(aq):</b> White precipitate, <b>soluble in excess</b> [Zn(NH₃)₄]²⁺.
+          </div>
+        </div>
+
+        <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:10px; padding:14px;">
+          <b style="color:var(--text-muted); font-size:0.94rem;">Al³⁺ &amp; Pb²⁺</b>
+          <div style="font-size:0.84rem; margin-top:6px; line-height:1.5; color:var(--text-main);">
+            • <b>NaOH:</b> White precipitate, soluble in excess.<br>
+            • <b>NH₃(aq):</b> White precipitate, <b>insoluble in excess</b>.<br>
+            • <i>Distinguish Pb²⁺:</i> Add KI(aq) &rarr; Yellow ppt (PbI₂).
+          </div>
+        </div>
+
+        <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:10px; padding:14px;">
+          <b style="color:var(--text-muted); font-size:0.94rem;">Ca²⁺ &amp; Mg²⁺</b>
+          <div style="font-size:0.84rem; margin-top:6px; line-height:1.5; color:var(--text-main);">
+            • <b>NaOH:</b> White precipitate, insoluble in excess.<br>
+            • <b>NH₃(aq):</b> Ca²⁺ gives no precipitate. Mg²⁺ gives slight white precipitate.
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 4. Flame Emission Spectroscopy Tests -->
+    <div class="knec-reference-card" id="ref-flame" style="border-top:4px solid #F59E0B;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+        <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0;">
+          Flame Emission Tests
+        </h3>
+        <span style="font-family:'JetBrains Mono', monospace; font-size:0.76rem; background:rgba(245,158,11,0.15); color:#854D0E; border:1px solid rgba(245,158,11,0.4); padding:3px 10px; border-radius:6px; font-weight:800;">
+          Qualitative Standard
+        </span>
+      </div>
+      <p style="font-size:0.84rem; font-weight:500; color:var(--text-muted); margin-bottom:16px;">
+        Excitation of metal ions in a non-luminous Bunsen burner flame produces characteristic emission colours.
+      </p>
+
+      <div class="flame-procedure-grid">
+        <!-- Flame Test Schematic Diagram -->
+        <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:12px; padding:16px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
+          <div style="font-family:'JetBrains Mono', monospace; font-size:0.76rem; color:var(--text-muted); font-weight:800; margin-bottom:10px;">
+            FLAME TEST APPARATUS SCHEMATIC
+          </div>
+          <svg viewBox="0 0 280 160" style="width:100%; max-width:280px; height:auto;">
+            <path d="M20,135 Q45,148 70,135" fill="none" stroke="#64748B" stroke-width="2.5"/>
+            <path d="M24,136 Q45,145 66,136" fill="rgba(56,189,248,0.25)"/>
+            <text x="45" y="154" font-size="8.5" fill="var(--text-muted)" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="bold">Conc. HCl</text>
+
+            <rect x="92" y="118" width="36" height="24" rx="2" fill="rgba(56,189,248,0.08)" stroke="#64748B" stroke-width="1.5"/>
+            <rect x="93" y="125" width="34" height="16" fill="rgba(56,189,248,0.28)"/>
+            <ellipse cx="110" cy="125" rx="17" ry="2.5" fill="rgba(56,189,248,0.45)"/>
+            <text x="110" y="154" font-size="8.5" fill="var(--text-muted)" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="bold">Salt Solution</text>
+
+            <rect x="200" y="130" width="40" height="8" rx="2" fill="#334155"/>
+            <rect x="216" y="70" width="8" height="60" fill="#64748B"/>
+            <circle cx="220" cy="120" r="3" fill="#475569"/>
+            <text x="220" y="154" font-size="8.5" fill="var(--text-muted)" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-weight="bold">Bunsen Burner</text>
+
+            <path d="M216,70 Q210,35 220,10 Q230,35 224,70 Z" fill="rgba(2,132,199,0.35)" stroke="#0284C7" stroke-width="1.2"/>
+            <path d="M217,70 Q213,48 220,32 Q227,48 223,70 Z" fill="rgba(56,189,248,0.85)"/>
+            <path d="M215,50 Q205,30 220,15 Q235,30 225,50 Z" fill="rgba(245,158,11,0.55)"/>
+
+            <rect x="110" y="30" width="105" height="6" rx="3" fill="rgba(56,189,248,0.3)" stroke="#38BDF8" stroke-width="1.2" transform="rotate(-32 162 33)"/>
+            <circle cx="215" cy="35" r="4.5" fill="#FCD34D" stroke="#EA580C" stroke-width="1"/>
+            <text x="135" y="85" font-size="8" fill="var(--acad-gold)" font-weight="bold" font-family="'JetBrains Mono', monospace">Clean Glass Rod</text>
+          </svg>
+        </div>
+
+        <!-- Standard Experimental Steps -->
+        <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:12px; padding:16px; display:flex; flex-direction:column; justify-content:center;">
+          <b style="color:var(--heading-color); font-size:0.94rem; margin-bottom:8px;">
+            Three-Step Flame Test Procedure
+          </b>
+          <ol style="margin:0 0 12px 0; padding-left:20px; font-size:0.84rem; line-height:1.5; color:var(--text-main); font-weight:500;">
+            <li><b>Clean Glass Rod:</b> Dip a clean glass rod into concentrated <code>HCl</code> and hold the tip in a non-luminous Bunsen flame until no colour is imparted.</li>
+            <li><b>Dip into Salt Solution:</b> Dip the clean glass rod into the aqueous solution of the unknown salt to pick up a liquid droplet.</li>
+            <li><b>Observe Flame Emission:</b> Place the glass rod tip with the solution droplet into the non-luminous Bunsen flame and observe the persistent characteristic flame colour produced.</li>
+          </ol>
+          <div style="font-size:0.8rem; font-weight:600; color:var(--text-muted); background:var(--card-bg); border-left:4px solid var(--acad-gold); padding:8px 12px; border-radius:6px;">
+            In the KNEC KCSE standard practical, a clean glass rod is dipped directly into the salt solution and introduced into a non-luminous Bunsen flame.
+          </div>
+        </div>
+      </div>
+
+      <!-- Flame Colors 6-Grid -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 160px), 1fr)); gap:12px; width:100%; box-sizing:border-box;">
+        <div style="background:var(--card-bg-hover); border:1px solid rgba(245,158,11,0.5); border-radius:10px; padding:12px;">
+          <b style="color:#854D0E; font-size:0.92rem;">Sodium (Na⁺)</b>
+          <div style="font-size:0.8rem; font-weight:800; color:var(--heading-color);">Persistent Golden Yellow</div>
+          <div style="font-size:0.76rem; color:var(--text-muted); margin-top:2px;">Masks other ions; intense emission.</div>
+        </div>
+
+        <div style="background:var(--card-bg-hover); border:1px solid rgba(168,85,247,0.5); border-radius:10px; padding:12px;">
+          <b style="color:#7C3AED; font-size:0.92rem;">Potassium (K⁺)</b>
+          <div style="font-size:0.8rem; font-weight:800; color:var(--heading-color);">Lilac / Pale Violet</div>
+          <div style="font-size:0.76rem; color:var(--text-muted); margin-top:2px;">View through cobalt glass if Na⁺ present.</div>
+        </div>
+
+        <div style="background:var(--card-bg-hover); border:1px solid rgba(239,68,68,0.5); border-radius:10px; padding:12px;">
+          <b style="color:#B91C1C; font-size:0.92rem;">Calcium (Ca²⁺)</b>
+          <div style="font-size:0.8rem; font-weight:800; color:var(--heading-color);">Brick Red / Orange-Red</div>
+          <div style="font-size:0.76rem; color:var(--text-muted); margin-top:2px;">Distinct from crimson lithium.</div>
+        </div>
+
+        <div style="background:var(--card-bg-hover); border:1px solid rgba(16,185,129,0.5); border-radius:10px; padding:12px;">
+          <b style="color:#047857; font-size:0.92rem;">Copper II (Cu²⁺)</b>
+          <div style="font-size:0.8rem; font-weight:800; color:var(--heading-color);">Blue-Green Flame</div>
+          <div style="font-size:0.76rem; color:var(--text-muted); margin-top:2px;">Characteristic emission.</div>
+        </div>
+
+        <div style="background:var(--card-bg-hover); border:1px solid rgba(132,204,22,0.5); border-radius:10px; padding:12px;">
+          <b style="color:#4D7C0F; font-size:0.92rem;">Barium (Ba²⁺)</b>
+          <div style="font-size:0.8rem; font-weight:800; color:var(--heading-color);">Pale Apple Green</div>
+          <div style="font-size:0.76rem; color:var(--text-muted); margin-top:2px;">Dull yellowish-green emission.</div>
+        </div>
+
+        <div style="background:var(--card-bg-hover); border:1px solid rgba(148,163,184,0.5); border-radius:10px; padding:12px;">
+          <b style="color:var(--text-muted); font-size:0.92rem;">Lead (Pb²⁺) / Zinc</b>
+          <div style="font-size:0.8rem; font-weight:800; color:var(--heading-color);">Faint Greyish-Blue</div>
+          <div style="font-size:0.76rem; color:var(--text-muted); margin-top:2px;">Confirm via aqueous test reagents.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Anion Confirmation Guide -->
+    <div class="knec-reference-card" id="ref-anions">
+      <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0 0 8px 0;">
+        Anion Identification
+      </h3>
+      <p style="font-size:0.84rem; font-weight:500; color:var(--text-muted); margin-bottom:12px;">Distinguish and confirm common Paper 3 inorganic anions.</p>
+      <div class="knec-table-wrap">
+        <table class="knec-table" aria-label="Anion Identification Table">
+          <thead>
+            <tr>
+              <th>Anion</th>
+              <th>Test Reagent</th>
+              <th>Observation &amp; Deduction</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Sulfate (SO₄²⁻)</b></td>
+              <td>Ba(NO₃)₂ followed by dil. HNO₃</td>
+              <td>White precipitate, <b>insoluble in dilute HNO₃</b> (BaSO₄)</td>
+            </tr>
+            <tr>
+              <td><b>Sulfite (SO₃²⁻)</b></td>
+              <td>Ba(NO₃)₂ followed by dil. HNO₃</td>
+              <td>White precipitate, <b>soluble in dilute HNO₃</b> with choking SO₂ gas</td>
+            </tr>
+            <tr>
+              <td><b>Carbonate (CO₃²⁻)</b></td>
+              <td>Dilute HNO₃ or HCl</td>
+              <td>Effervescence; gas turns <b>limewater milky</b></td>
+            </tr>
+            <tr>
+              <td><b>Chloride (Cl⁻)</b></td>
+              <td>AgNO₃ followed by dil. HNO₃</td>
+              <td>White precipitate (AgCl), insoluble in HNO₃, soluble in excess NH₃(aq)</td>
+            </tr>
+            <tr>
+              <td><b>Nitrate (NO₃⁻)</b></td>
+              <td>Devarda's alloy + NaOH &amp; warm</td>
+              <td>Pungent ammonia gas evolved; turns <b>moist red litmus paper blue</b></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 6. Organic Chemistry Functional Group Identification -->
+    <div class="knec-reference-card" id="ref-organic">
+      <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0 0 8px 0;">
+        Organic Chemistry Functional Groups
+      </h3>
+      <p style="font-size:0.84rem; font-weight:500; color:var(--text-muted); margin-bottom:12px;">Paper 3 Question 3 organic qualitative deduction tests.</p>
+      <div class="knec-table-wrap">
+        <table class="knec-table" aria-label="Organic Reactions Table">
+          <thead>
+            <tr>
+              <th>Class / Group</th>
+              <th>Diagnostic Test</th>
+              <th>Expected Observation &amp; Inference</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Alkenes &amp; Alkynes</b> (C=C / C≡C)</td>
+              <td>Bromine Water / Acidified KMnO₄</td>
+              <td>Bromine water decolourised immediately; KMnO₄ purple turns colourless (Unsaturation)</td>
+            </tr>
+            <tr>
+              <td><b>Alkanols (–OH)</b></td>
+              <td>Acidified K₂Cr₂O₇ &amp; warm / Sodium metal</td>
+              <td>Orange dichromate turns green (Cr³⁺); Na metal dissolves with 'pop' H₂ gas</td>
+            </tr>
+            <tr>
+              <td><b>Carboxylic Acids (–COOH)</b></td>
+              <td>Blue Litmus / Solid NaHCO₃ or Na₂CO₃</td>
+              <td>Blue litmus turns red; rapid effervescence of CO₂ gas turning limewater milky</td>
+            </tr>
+            <tr>
+              <td><b>Esterification Reaction</b></td>
+              <td>Alkanol + Carboxylic Acid + Conc. H₂SO₄</td>
+              <td>Fruity, pleasant-smelling ester liquid formed upon warming</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 7. Physical Chemistry & Formulas Master Card -->
+    <div class="knec-reference-card" id="ref-physical" style="border-top:4px solid var(--acad-gold);">
+      <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0 0 8px 0;">
+        Key Formulas &amp; Volumetric Concordancy
+      </h3>
+      <p style="font-size:0.84rem; font-weight:500; color:var(--text-muted); margin-bottom:14px;">Essential mathematical relationships for Paper 3 calculations.</p>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap:14px; width:100%; box-sizing:border-box;">
+        
+        <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:10px; padding:16px;">
+          <b style="color:var(--acad-gold); font-size:0.96rem;">Titration Concordancy Standard</b>
+          <div style="font-size:0.84rem; margin-top:6px; line-height:1.55; color:var(--text-main);">
+            • <b>Concordancy Criterion:</b> Titres must agree within <b>±0.10 cm³</b> (acceptable ±0.20 cm³).<br>
+            • <b>Average Titre Calculation:</b> <code>Titre<sub>avg</sub> = (V₁ + V₂) / 2</code> using concordant values.<br>
+            • <b>Molarity Equation:</b> <code>(M<sub>a</sub> · V<sub>a</sub>) / n<sub>a</sub> = (M<sub>b</sub> · V<sub>b</sub>) / n<sub>b</sub></code>.
+          </div>
+        </div>
+
+        <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:10px; padding:16px;">
+          <b style="color:#EF4444; font-size:0.96rem;">Thermochemistry Enthalpy (ΔH)</b>
+          <div style="font-size:0.84rem; margin-top:6px; line-height:1.55; color:var(--text-main);">
+            • <b>Heat Absorbed/Evolved:</b> <code>Q = m · c · ΔT</code> (c = 4.2 J/g·°C, ρ = 1.0 g/cm³).<br>
+            • <b>Molar Enthalpy:</b> <code>ΔH = -(Q / (n × 1000)) kJ/mol</code>.<br>
+            • <i>Sign Convention:</i> Negative (–ΔH) = Exothermic; Positive (+ΔH) = Endothermic.
+          </div>
+        </div>
+
+        <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:10px; padding:16px;">
+          <b style="color:var(--cyan-accent); font-size:0.96rem;">Reaction Rates &amp; Solubility</b>
+          <div style="font-size:0.84rem; margin-top:6px; line-height:1.55; color:var(--text-main);">
+            • <b>Reaction Rate:</b> <code>Rate = 1 / time (s⁻¹)</code>.<br>
+            • <b>Solubility Definition:</b> Max grams of solute dissolved in 100g of H₂O at temperature T.<br>
+            • <b>Crystallization Temperature:</b> First appearance of crystals on cooling.
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="vlk-bottom-nav" aria-label="Mobile Bottom Navigation" id="vlkBottomNav">
+    <a href="home.html" class="vlk-bottom-nav-item" aria-label="Home" id="bnav-home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="lab.html" class="vlk-bottom-nav-item" aria-label="Lab" id="bnav-lab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31M14 2v7.31M8.5 2h7M14 9.3a6.5 6.5 0 1 1-4 0"/><line x1="6" y1="16" x2="18" y2="16"/></svg>
+      <span>Lab</span>
+    </a>
+    <a href="reference.html" class="vlk-bottom-nav-item active" aria-label="Revision" id="bnav-reference">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      <span>Revision</span>
+    </a>
+    <a href="history.html" class="vlk-bottom-nav-item" aria-label="History" id="bnav-history">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>History</span>
+    </a>
+    <a href="profile.html" class="vlk-bottom-nav-item" aria-label="Profile" id="bnav-profile">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Me</span>
+    </a>
+  </nav>
+
+  <!-- Core Scripts -->
+  <script defer src="../shared/auth-guard.js?v=165"></script>
+  <script defer src="../shared/api.js?v=165"></script>
+  <script defer src="../shared/theme.js?v=165"></script>
+  <script defer src="../shared/brilliant-ui.js?v=165"></script>
+  <script defer src="js/student-dashboard.js?v=165"></script>
+
+  <script>
+    // Smooth scrolling for jump chips
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.quick-jump-chip').forEach(function(chip) {
+        chip.addEventListener('click', function(e) {
+          var targetId = chip.getAttribute('href');
+          if (targetId && targetId.startsWith('#')) {
+            var targetEl = document.querySelector(targetId);
+            if (targetEl) {
+              e.preventDefault();
+              targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }
+        });
+      });
+    });
+
+    // Saved tips pocket toggler
+    function toggleSavedTipsPocket() {
+      var body = document.getElementById('savedTipsBody');
+      var chevron = document.getElementById('savedTipsChevron');
+      if (body) {
+        var isHidden = body.style.display === 'none' || body.style.display === '';
+        body.style.display = isHidden ? 'block' : 'none';
+        if (chevron) chevron.textContent = isHidden ? '▲' : '▼';
+      }
+    }
+    window.toggleSavedTipsPocket = toggleSavedTipsPocket;
+  </script>
+
+</body>
+</html>

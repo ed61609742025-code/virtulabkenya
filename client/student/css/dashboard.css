@@ -1,5 +1,122 @@
-/* ============================================================
-   VirtuLab Kenya — Student Academic Workstation Stylesheet
+/* Minimalist Command Bar & Student Profile Link Styles */
+.minimalist-hero-bar {
+  padding: 16px 22px !important;
+  margin-bottom: 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
+  border-radius: 18px !important;
+}
+
+.mini-hero-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.mini-hero-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.mini-hero-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--cyan-accent);
+  background: rgba(2, 132, 199, 0.12);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 2px 8px;
+  text-transform: uppercase;
+}
+
+.mini-hero-syllabus {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.mini-hero-title {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: var(--heading-color);
+  letter-spacing: -0.025em;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.mini-hero-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.mini-metric-card {
+  padding: 8px 14px !important;
+  border-radius: 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  cursor: pointer;
+}
+
+.mini-metric-card .metric-val {
+  font-size: 0.96rem !important;
+  font-weight: 800 !important;
+}
+
+.mini-metric-card .metric-lbl {
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  color: var(--text-muted) !important;
+}
+
+.nav-avatar-link {
+  text-decoration: none !important;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #0284C7 0%, #2563EB 100%);
+  color: #FFFFFF !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
+  border: 1.5px solid var(--cyan-accent);
+  transition: transform 0.15s ease;
+}
+
+.nav-avatar-link:hover {
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .minimalist-hero-bar {
+    padding: 12px 14px !important;
+    gap: 12px !important;
+  }
+  .mini-hero-title {
+    font-size: 1.15rem !important;
+  }
+  .mini-hero-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .mini-metric-card {
+    padding: 6px 10px !important;
+  }
+}
+
    Scholarly, authoritative design system for KCSE Chemistry candidates
    ============================================================ */
 

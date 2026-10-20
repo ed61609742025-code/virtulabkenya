@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Candidate Profile & Settings — VirtuLab Kenya</title>
+<script>
+  window.VLK = window.VLK || {};
+  // Fast Inline Head Auth Guard — zero network latency, zero FOUC
+  (function() {
+    try {
+      var tok = (typeof localStorage !== 'undefined' && localStorage.getItem('vlk_token')) ||
+                (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('vlk_token'));
+      var curPath = window.location.pathname + window.location.search + window.location.hash;
+      var loginUrl = '/student/login.html?returnUrl=' + encodeURIComponent(curPath);
+      if (!tok) {
+        window.location.replace(loginUrl);
+        return;
+      }
+      var parts = tok.split('.');
+      if (parts.length >= 2) {
+        var base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+        var payload = JSON.parse(decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join('')));
+        if (payload.exp && (payload.exp * 1000) < Date.now()) {
+          try {
+            localStorage.removeItem('vlk_token');
+            localStorage.removeItem('vlk_user');
+            sessionStorage.removeItem('vlk_token');
+            sessionStorage.removeItem('vlk_user');
+          } catch(e) {}
+          window.location.replace('/student/login.html?expired=1&returnUrl=' + encodeURIComponent(curPath));
+          return;
+        }
+        if (payload.role && payload.role !== 'student' && payload.role !== 'admin') {
+          window.location.replace('/student/login.html?mismatch=' + encodeURIComponent(payload.role) + '&returnUrl=' + encodeURIComponent(curPath));
+          return;
+        }
+      }
+    } catch(e) {}
+  })();
+
+  var t = localStorage.getItem('vlk_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', t);
+  window.VLK.cycleTheme = window.cycleTheme = window.toggleTheme = function() {
+    var themes = ['light', 'dark', 'green'];
+    var current = document.documentElement.getAttribute('data-theme') || 'light';
+    var next = themes[(themes.indexOf(current) + 1) % themes.length];
+    if (typeof setTheme === 'function') {
+      setTheme(next);
+    } else {
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('vlk_theme', next);
+      if (typeof updateThemeButtons === 'function') updateThemeButtons();
+    }
+    if (window.VirtuLabNative && typeof window.VirtuLabNative.syncTheme === 'function') {
+      try { window.VirtuLabNative.syncTheme(next); } catch(e){}
+    }
+    return next;
+  };
+</script>
+<meta name="theme-color" content="#0F172A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<link rel="icon" type="image/png" href="/shared/icon-192.png">
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.json">
+
+<!-- Fonts & Icons -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="../shared/vlk-icons.js"></script>
+
+<!-- Stylesheets -->
+<link rel="stylesheet" href="../shared/style.css?v=165">
+<link rel="stylesheet" href="css/dashboard.css?v=165">
+<link rel="stylesheet" href="css/mobile.css?v=165">
+<link rel="stylesheet" href="../shared/pwa-installer.css?v=165">
+<link rel="stylesheet" href="../shared/brilliant-theme.css?v=165">
+<link rel="stylesheet" href="../shared/subscription-ui.css?v=165">
+
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    margin: 0;
+    padding: 0;
+    padding-bottom: 90px;
+    background: var(--bg-dark);
+    color: var(--text-main);
+  }
+  .profile-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+  }
+  .profile-header-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 22px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 18px;
+  }
+  .profile-avatar-large {
+    width: 68px;
+    height: 68px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #0284C7 0%, #2563EB 100%);
+    border: 3px solid var(--cyan-accent);
+    color: #FFFFFF;
+    font-size: 1.75rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25);
+    flex-shrink: 0;
+  }
+  .profile-title-cluster {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1 1 260px;
+    min-width: 0;
+  }
+  .profile-heading-name {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--heading-color);
+    margin: 0 0 4px;
+    letter-spacing: -0.02em;
+  }
+  .profile-meta-chips {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+  .prof-role-badge {
+    background: rgba(2, 132, 199, 0.12);
+    color: var(--cyan-accent);
+    border: 1px solid var(--card-border);
+    border-radius: 100px;
+    padding: 3px 10px;
+    font-weight: 800;
+    font-size: 0.72rem;
+  }
+  .profile-kpi-ribbon {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+  @media (max-width: 640px) {
+    .profile-kpi-ribbon {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .prof-kpi-box {
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    border-radius: 16px;
+    padding: 14px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+  }
+  .prof-kpi-lbl {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+  }
+  .prof-kpi-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: var(--heading-color);
+    margin-top: 4px;
+  }
+  .settings-section-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    border-radius: 18px;
+    padding: 22px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .settings-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .settings-card-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--card-bg-hover);
+    color: var(--cyan-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .settings-card-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--heading-color);
+    margin: 0;
+  }
+  .settings-card-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .form-grid-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 600px) {
+    .form-grid-2col {
+      grid-template-columns: 1fr;
+    }
+  }
+  .form-group label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: var(--heading-color);
+    margin-bottom: 6px;
+  }
+  .form-control-input {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1.5px solid var(--card-border);
+    background: var(--card-bg-hover);
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 600;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .form-control-input:focus {
+    border-color: var(--cyan-accent);
+  }
+  .form-control-input:disabled, .form-control-input[readonly] {
+    opacity: 0.75;
+    cursor: not-allowed;
+  }
+  .status-msg-box {
+    margin-top: 12px;
+    font-size: 0.86rem;
+    font-weight: 700;
+  }
+  .status-msg-box .msg-ok { color: var(--green-accent); }
+  .status-msg-box .msg-err { color: var(--red-accent); }
+</style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav" aria-label="Main Navigation">
+    <div class="top-navbar">
+      <a href="home.html" class="nav-brand-academic" data-tooltip="Home" data-tooltip-pos="bottom">
+        <div class="vlk-brand-logo-wrap">
+          <img src="/shared/virtulab-logo.svg" alt="VirtuLab Kenya Logo" class="vlk-brand-logo-img" width="36" height="36">
+        </div>
+        <div>
+          <div class="nav-brand-title" style="font-size:1.15rem; font-weight:800; letter-spacing:-0.02em; color:var(--heading-color); line-height:1.1;">
+            <span class="brand-word-virtu">VirtuLab</span> <span class="brand-word-kenya">Kenya</span>
+          </div>
+          <div class="nav-brand-motto" style="font-size:0.62rem; font-weight:700; color:var(--acad-navy, #0284C7); letter-spacing:0.04em; text-transform:uppercase;">
+            Candidate Profile
+          </div>
+        </div>
+      </a>
+
+      <div class="nav-actions">
+        <!-- Return to Workstation Button -->
+        <a href="home.html" class="btn btn-secondary" style="font-size:0.8rem; font-weight:800; text-decoration:none; padding:7px 14px; border-radius:100px; display:inline-flex; align-items:center; gap:6px;">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px; height:14px;"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          <span>Workstation</span>
+        </a>
+
+        <!-- Theme Toggle Switcher -->
+        <div class="theme-toggle-group theme-multi-btn-group" aria-label="Visual Theme Switcher">
+          <button class="theme-btn-chip" data-theme="light" onclick="setTheme('light')" aria-label="Light Theme">Light</button>
+          <button class="theme-btn-chip" data-theme="dark" onclick="setTheme('dark')" aria-label="Dark Theme">Dark</button>
+          <button class="theme-btn-chip" data-theme="green" onclick="setTheme('green')" aria-label="Lab Theme">Lab</button>
+        </div>
+
+        <button type="button" class="theme-single-toggle-btn" onclick="cycleTheme()" aria-label="Toggle visual theme">
+          <svg class="theme-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Profile Workspace Main Container -->
+  <main class="profile-container">
+
+    <!-- Candidate Profile Header Card -->
+    <header class="profile-header-card">
+      <div class="profile-title-cluster">
+        <div class="profile-avatar-large" id="heroStudentAvatar">ST</div>
+        <div style="min-width:0;">
+          <h1 class="profile-heading-name" id="profHeaderName">Student Candidate</h1>
+          <div class="profile-meta-chips">
+            <span class="prof-role-badge" id="profHeaderRole">🎓 KCSE Candidate</span>
+            <span id="profHeaderEmail">student@virtulab.ke</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+        <button type="button" onclick="exportLabHistoryCSV()" class="btn" style="padding:8px 16px; border-radius:10px; font-size:0.82rem; font-weight:700; background:var(--card-bg-hover); border:1px solid var(--card-border); color:var(--text-main); display:inline-flex; align-items:center; gap:6px;">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px; height:14px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Export Records</span>
+        </button>
+        <button type="button" onclick="Auth.logout()" class="btn" style="padding:8px 18px; border-radius:10px; font-size:0.82rem; font-weight:800; background:rgba(239, 68, 68, 0.12); color:var(--red-accent); border:1px solid rgba(239, 68, 68, 0.3);">
+          Sign Out
+        </button>
+      </div>
+    </header>
+
+    <!-- Practical Telemetry & Milestone KPIs -->
+    <section class="profile-kpi-ribbon" aria-label="Student Practical Statistics">
+      <div class="prof-kpi-box" style="border-top:3.5px solid var(--cyan-accent);">
+        <div class="prof-kpi-lbl">Sessions Logged</div>
+        <div class="prof-kpi-val" id="profStatSessions">--</div>
+      </div>
+      <div class="prof-kpi-box" style="border-top:3.5px solid var(--green-accent);">
+        <div class="prof-kpi-lbl">Rubric Accuracy</div>
+        <div class="prof-kpi-val" id="profStatAccuracy">--%</div>
+      </div>
+      <div class="prof-kpi-box" style="border-top:3.5px solid var(--amber-accent);">
+        <div class="prof-kpi-lbl">Daily Streak</div>
+        <div class="prof-kpi-val" id="profStatStreak">--</div>
+      </div>
+      <div class="prof-kpi-box" style="border-top:3.5px solid var(--violet-accent);">
+        <div class="prof-kpi-lbl">Mastery Badges</div>
+        <div class="prof-kpi-val" id="profStatBadges">--</div>
+      </div>
+    </section>
+
+    <!-- Section 1: Candidate Identity Details -->
+    <section class="settings-section-card">
+      <div class="settings-card-header">
+        <div class="settings-card-icon">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px; height:20px;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <div>
+          <h2 class="settings-card-title">Personal & Academic Identity</h2>
+          <div class="settings-card-desc">Your formal candidate information displayed on certificates and practical rubrics</div>
+        </div>
+      </div>
+
+      <div class="form-grid-2col">
+        <div class="form-group">
+          <label for="profInputName">Full Name</label>
+          <input type="text" id="profInputName" class="form-control-input" placeholder="e.g. Amani Mwangi">
+        </div>
+        <div class="form-group">
+          <label for="profInputEmail">Email Address</label>
+          <input type="email" id="profInputEmail" class="form-control-input" readonly placeholder="student@virtulab.ke">
+        </div>
+      </div>
+
+      <div class="form-grid-2col">
+        <div class="form-group">
+          <label for="profInputForm">Form / Class Level</label>
+          <select id="profInputForm" class="form-control-input">
+            <option value="Form 1">Form 1 Secondary (KCSE 2029)</option>
+            <option value="Form 2">Form 2 Secondary (KCSE 2028)</option>
+            <option value="Form 3">Form 3 Secondary (KCSE 2027)</option>
+            <option value="Form 4" selected>Form 4 KCSE Candidate (Class of 2026)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="profInputSchool">School Name or Candidate Index</label>
+          <input type="text" id="profInputSchool" class="form-control-input" placeholder="e.g. Alliance High School / Index 11200001">
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-primary" onclick="saveProfileDetails()" style="padding:10px 24px; font-weight:800; border-radius:10px;">
+        Save Changes
+      </button>
+      <div id="profDetailsMsg" class="status-msg-box"></div>
+    </section>
+
+    <!-- Section 2: Classroom & Teacher Connection -->
+    <section class="settings-section-card" id="classroomSection">
+      <div class="settings-card-header">
+        <div class="settings-card-icon" style="color:var(--green-accent);">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px; height:20px;"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        </div>
+        <div>
+          <h2 class="settings-card-title">Classroom &amp; Teacher Connection</h2>
+          <div class="settings-card-desc">Synchronizes practical assignments, mock exam schedules, and teacher feedback</div>
+        </div>
+      </div>
+
+      <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:12px; padding:14px 18px; margin-bottom:18px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <div>
+          <div style="font-size:0.75rem; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Current Linked Instructor:</div>
+          <div id="linkedTeacherStatusName" style="font-size:1.05rem; font-weight:800; color:var(--heading-color); margin-top:3px;">None (Independent Candidate)</div>
+          <div id="linkedTeacherSchoolName" style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;"></div>
+        </div>
+        <div id="linkedTeacherCodeBadge" style="display:none;">
+          <span style="font-size:0.75rem; font-weight:700; color:var(--text-muted);">Code:</span>
+          <code id="linkedTeacherCodeVal" style="font-size:0.92rem; font-weight:800; color:var(--cyan-accent); background:rgba(2, 132, 199, 0.12); padding:4px 10px; border-radius:6px;">—</code>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr auto; gap:12px; max-width:480px; align-items:end;">
+        <div class="form-group" style="margin-bottom:0;">
+          <label for="studentTeacherCodeInput">Enter 6-Digit Teacher Code</label>
+          <input type="text" id="studentTeacherCodeInput" class="form-control-input" placeholder="e.g. TCH8X2" style="text-transform:uppercase; font-family:'JetBrains Mono', monospace;">
+        </div>
+        <button type="button" class="btn btn-primary" onclick="submitLinkTeacher()" style="padding:10px 22px; font-weight:800; border-radius:10px; height:42px;">
+          Connect Teacher
+        </button>
+      </div>
+      <div id="teacherLinkMsg" class="status-msg-box"></div>
+    </section>
+
+    <!-- Section 3: Security & Password Update -->
+    <section class="settings-section-card" id="securitySection">
+      <div class="settings-card-header">
+        <div class="settings-card-icon" style="color:var(--amber-accent);">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px; height:20px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div>
+          <h2 class="settings-card-title">Security &amp; Account Password</h2>
+          <div class="settings-card-desc">Keep your candidate workstation account safe with a strong password</div>
+        </div>
+      </div>
+
+      <form id="changePasswordForm" autocomplete="on" onsubmit="submitChangePassword(); return false;">
+        <div class="form-grid-2col">
+          <div class="form-group">
+            <label for="pwCurrent">Current Password</label>
+            <input type="password" id="pwCurrent" name="current-password" autocomplete="current-password" class="form-control-input" placeholder="Enter current password">
+          </div>
+          <div class="form-group">
+            <label for="pwNew">New Password (Min. 6 chars)</label>
+            <input type="password" id="pwNew" name="new-password" autocomplete="new-password" class="form-control-input" placeholder="Enter new secure password">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" style="padding:10px 24px; font-weight:800; border-radius:10px;">
+          Update Password
+        </button>
+        <div id="pwMsg" class="status-msg-box"></div>
+      </form>
+    </section>
+
+    <!-- Section 4: KCSE Pass & Subscription Billing -->
+    <section class="settings-section-card">
+      <div class="settings-card-header">
+        <div class="settings-card-icon" style="color:var(--violet-accent);">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px; height:20px;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div>
+          <h2 class="settings-card-title">KCSE Pass &amp; Subscription</h2>
+          <div class="settings-card-desc">Unlimited access to Paper 3 National Mocks, automated rubrics, and offline modes</div>
+        </div>
+      </div>
+
+      <div style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:12px; padding:16px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;">
+        <div>
+          <div style="font-size:0.75rem; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Pass Status:</div>
+          <div style="font-size:1.1rem; font-weight:800; color:var(--heading-color); margin-top:2px;">Standard Candidate Access</div>
+          <div style="font-size:0.82rem; color:var(--text-muted); margin-top:2px;">Unlock complete mock exam feedback and teacher grading.</div>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="window.VLKSubscriptionUI && window.VLKSubscriptionUI.openModal()" style="padding:10px 20px; font-weight:800; border-radius:10px;">
+          Manage Subscription
+        </button>
+      </div>
+    </section>
+
+    <!-- Section 5: App Preferences & Offline Capabilities -->
+    <section class="settings-section-card">
+      <div class="settings-card-header">
+        <div class="settings-card-icon" style="color:var(--cyan-accent);">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:20px; height:20px;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </div>
+        <div>
+          <h2 class="settings-card-title">Preferences &amp; Device Setup</h2>
+          <div class="settings-card-desc">Customize theme, language, and progressive web app install</div>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; padding:10px 0; border-bottom:1px solid var(--card-border);">
+          <div>
+            <div style="font-size:0.9rem; font-weight:800; color:var(--heading-color);">Visual Theme</div>
+            <div style="font-size:0.78rem; color:var(--text-muted);">Choose contrast scheme for high-clarity lab simulations</div>
+          </div>
+          <div class="theme-toggle-group">
+            <button class="theme-btn-chip active" data-theme="light" onclick="setTheme('light')">☀️ Light</button>
+            <button class="theme-btn-chip" data-theme="dark" onclick="setTheme('dark')">🌙 Dark</button>
+            <button class="theme-btn-chip" data-theme="green" onclick="setTheme('green')">🧪 Lab</button>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; padding:10px 0; border-bottom:1px solid var(--card-border);">
+          <div>
+            <div style="font-size:0.9rem; font-weight:800; color:var(--heading-color);">Language / Lugha</div>
+            <div style="font-size:0.78rem; color:var(--text-muted);">Switch interface language between English and Kiswahili</div>
+          </div>
+          <div class="theme-toggle-group">
+            <button class="theme-btn-chip" onclick="setLanguage('en')">🇬🇧 English</button>
+            <button class="theme-btn-chip" onclick="setLanguage('sw')">🇰🇪 Kiswahili</button>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; padding:10px 0;">
+          <div>
+            <div style="font-size:0.9rem; font-weight:800; color:var(--heading-color);">Install VirtuLab App (PWA)</div>
+            <div style="font-size:0.78rem; color:var(--text-muted);">Install on your phone or tablet for zero-data offline simulations</div>
+          </div>
+          <button type="button" class="btn btn-secondary" onclick="(window.installVirtuLabApp || (window.VLKPwa && window.VLKPwa.installDirectly))()" style="padding:8px 18px; border-radius:10px; font-size:0.82rem; font-weight:800;">
+            Install App
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="vlk-bottom-nav" aria-label="Mobile Bottom Navigation" id="vlkBottomNav">
+    <a href="home.html" class="vlk-bottom-nav-item" aria-label="Home" id="bnav-home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="lab.html" class="vlk-bottom-nav-item" aria-label="Lab" id="bnav-lab">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31M14 2v7.31M8.5 2h7M14 9.3a6.5 6.5 0 1 1-4 0"/><line x1="6" y1="16" x2="18" y2="16"/></svg>
+      <span>Lab</span>
+    </a>
+    <a href="reference.html" class="vlk-bottom-nav-item" aria-label="Revision" id="bnav-reference">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      <span>Revision</span>
+    </a>
+    <a href="history.html" class="vlk-bottom-nav-item" aria-label="History" id="bnav-history">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>History</span>
+    </a>
+    <a href="profile.html" class="vlk-bottom-nav-item active" aria-label="Profile" id="bnav-profile">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Me</span>
+    </a>
+  </nav>
+
+  <!-- Core Scripts -->
+  <script defer src="../shared/auth-guard.js?v=165"></script>
+  <script defer src="../shared/api.js?v=165"></script>
+  <script defer src="../shared/auth-forms.js?v=165"></script>
+  <script defer src="../shared/i18n.js?v=165"></script>
+  <script defer src="../shared/theme.js?v=165"></script>
+  <script defer src="../shared/notifications-engine.js?v=165"></script>
+  <script defer src="../shared/push-manager.js?v=165"></script>
+  <script defer src="../shared/pwa-installer.js?v=165"></script>
+  <script defer src="../shared/brilliant-ui.js?v=165"></script>
+  <script defer src="../shared/subscription-ui.js?v=165"></script>
+  <script defer src="js/student-dashboard.js?v=165"></script>
+
+  <script>
+    // Hydrate profile fields on load
+    document.addEventListener('DOMContentLoaded', function() {
+      try {
+        var rawUser = localStorage.getItem('vlk_user');
+        if (rawUser) {
+          var user = JSON.parse(rawUser);
+          if (user) {
+            if (user.name) {
+              var nameH = document.getElementById('profHeaderName');
+              var nameI = document.getElementById('profInputName');
+              if (nameH) nameH.textContent = user.name;
+              if (nameI) nameI.value = user.name;
+              var avatarEl = document.getElementById('heroStudentAvatar');
+              if (avatarEl) {
+                var parts = user.name.trim().split(/\s+/).filter(Boolean);
+                var initials = parts.length > 1 ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase() : parts[0].substring(0, 2).toUpperCase();
+                avatarEl.textContent = initials;
+              }
+            }
+            if (user.email) {
+              var emailH = document.getElementById('profHeaderEmail');
+              var emailI = document.getElementById('profInputEmail');
+              if (emailH) emailH.textContent = user.email;
+              if (emailI) emailI.value = user.email;
+            }
+            if (user.form) {
+              var formI = document.getElementById('profInputForm');
+              if (formI) formI.value = user.form;
+            }
+            if (user.schoolCode || user.schoolName) {
+              var schoolI = document.getElementById('profInputSchool');
+              if (schoolI) schoolI.value = user.schoolCode || user.schoolName;
+            }
+          }
+        }
+      } catch (e) {}
+
+      // Trigger statistics telemetry calculation
+      if (typeof updateProfileStatsUI === 'function') {
+        setTimeout(updateProfileStatsUI, 100);
+      }
+    });
+  </script>
+
+</body>
+</html>

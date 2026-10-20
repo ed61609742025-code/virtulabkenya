@@ -374,7 +374,12 @@ window.VLK.getLabContext = function() {
           assistantBubble.textContent = 'Mwalimu AI could not generate guidance right now. Please try again.';
         }
       } catch (err) {
-        assistantBubble.textContent = err.message || 'Mwalimu AI is currently offline or unreachable.';
+        console.warn('[AI Tutor Client Warning]:', err);
+        let fallbackMsg = err.message || 'Mwalimu AI is connecting...';
+        if (fallbackMsg.includes('unavailable') || fallbackMsg.includes('503') || fallbackMsg.includes('Failed to fetch')) {
+          fallbackMsg = '⚡ Mwalimu AI is in offline mode. Review your latest observation card or check the KCSE guidance chips above!';
+        }
+        assistantBubble.textContent = fallbackMsg;
       } finally {
         sendBtn.disabled = false;
         chatThread.scrollTop = chatThread.scrollHeight;

@@ -38,10 +38,13 @@ router.post('/tutor-hint', authMiddleware, authMiddleware.requireRole('student')
     });
     return res.json({ success: true, hint });
   } catch (err) {
-    if (err.message === 'AI_NOT_CONFIGURED') {
-      return res.status(503).json({ error: 'AI Assistant is not configured on this server.' });
-    }
-    return res.status(503).json({ error: 'AI Assistant is temporarily unavailable.' });
+    console.warn('[Feedback Route Tutor Hint] Fallback triggered:', err.message);
+    const fallbackHint = aiTutorService.generatePedagogicalFallback({
+      experimentType: experimentType || 'Chemistry Practical',
+      context: context || {},
+      studentQuery: studentQuery || 'What should I observe or do next?'
+    });
+    return res.json({ success: true, hint: fallbackHint, fallback: true });
   }
 }));
 

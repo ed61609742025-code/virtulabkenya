@@ -1,180 +1,117 @@
 /**
  * VirtuLab Kenya — Student Home Workstation Script
  */
+
 // Tab switching handler
-    function switchStudentSubTab(tabId, isUserGesture = true) {
-      const tabs = ['benches', 'reference', 'achievements', 'research'];
-      if (!tabs.includes(tabId)) tabId = 'benches';
+function switchStudentSubTab(tabId, isUserGesture = true) {
+  if (tabId === 'reference') {
+    window.location.href = 'reference.html';
+    return;
+  }
+  if (tabId === 'achievements') {
+    window.location.href = 'history.html';
+    return;
+  }
+  const tabs = ['benches', 'research'];
+  if (!tabs.includes(tabId)) tabId = 'benches';
 
-      if (isUserGesture && window.BrilliantUI) {
-        window.BrilliantUI.audio.playClick();
-        window.BrilliantUI.vibrate(10);
-      }
+  if (isUserGesture && window.BrilliantUI) {
+    window.BrilliantUI.audio.playClick();
+    window.BrilliantUI.vibrate(10);
+  }
 
-      tabs.forEach(t => {
-        const btn = document.getElementById(`tabBtn_${t}`);
-        const mBtn = document.getElementById(`mTabBtn_${t}`);
-        const panel = document.getElementById(`panel_${t}`);
+  tabs.forEach(t => {
+    const btn = document.getElementById(`tabBtn_${t}`);
+    const mBtn = document.getElementById(`mTabBtn_${t}`);
+    const panel = document.getElementById(`panel_${t}`);
 
-        const isActive = (t === tabId);
-        if (btn) {
-          btn.classList.toggle('active', isActive);
-          btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
-        }
-        if (mBtn) {
-          mBtn.classList.toggle('active', isActive);
-          mBtn.setAttribute('aria-selected', isActive ? 'true' : 'false');
-        }
-        if (panel) panel.classList.toggle('active', isActive);
-      });
-
-      // Auto-scroll active subtab button into view on mobile
-      const activeBtn = document.getElementById(`tabBtn_${tabId}`);
-      if (activeBtn && typeof activeBtn.scrollIntoView === 'function' && window.innerWidth <= 768) {
-        try {
-          activeBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-        } catch (err) {}
-      }
-
-      // Update URL hash without jumping
-      history.replaceState(null, null, `#${tabId}`);
-
-      // Resize and re-align charts if switching to achievements tab
-      if (tabId === 'achievements') {
-        if (typeof window.ensureChartJs === 'function') {
-          window.ensureChartJs(() => {
-            if (typeof window.resizeStudentCharts === 'function') {
-              setTimeout(window.resizeStudentCharts, 60);
-            }
-          });
-        } else if (typeof window.resizeStudentCharts === 'function') {
-          setTimeout(window.resizeStudentCharts, 60);
-        }
-      }
+    const isActive = (t === tabId);
+    if (btn) {
+      btn.classList.toggle('active', isActive);
+      btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
     }
-
-    // Toggle user profile dropdown / mobile bottom sheet
-    function toggleUserDropdown(e) {
-      if (e) e.stopPropagation();
-      const dropdown = document.getElementById('userDropdown');
-      const backdrop = document.getElementById('userBackdrop');
-      if (dropdown) {
-        const isHidden = dropdown.style.display === 'none' || dropdown.style.display === '';
-        dropdown.style.display = isHidden ? 'block' : 'none';
-        if (backdrop) {
-          backdrop.style.display = isHidden ? 'block' : 'none';
-        }
-        // Sync avatar initials into sheet
-        const mainAvatar = document.getElementById('heroStudentAvatar');
-        const sheetAvatar = document.getElementById('sheetStudentAvatar');
-        if (mainAvatar && sheetAvatar) {
-          sheetAvatar.textContent = mainAvatar.textContent || 'ST';
-        }
-        if (isHidden && window.innerWidth <= 768) {
-          document.body.style.overflow = 'hidden';
-        } else {
-          document.body.style.overflow = '';
-        }
-      }
+    if (mBtn) {
+      mBtn.classList.toggle('active', isActive);
+      mBtn.setAttribute('aria-selected', isActive ? 'true' : 'false');
     }
+    if (panel) panel.classList.toggle('active', isActive);
+  });
 
-    function closeUserDropdown() {
-      const dropdown = document.getElementById('userDropdown');
-      const backdrop = document.getElementById('userBackdrop');
-      if (dropdown) dropdown.style.display = 'none';
-      if (backdrop) backdrop.style.display = 'none';
-      document.body.style.overflow = '';
-    }
+  // Auto-scroll active subtab button into view on mobile
+  const activeBtn = document.getElementById(`tabBtn_${tabId}`);
+  if (activeBtn && typeof activeBtn.scrollIntoView === 'function' && window.innerWidth <= 768) {
+    try {
+      activeBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    } catch (err) {}
+  }
 
-    // Toggle password update panel
-    function togglePasswordPanel() {
-      const wrap = document.getElementById('passwordPanelWrap');
-      if (wrap) {
-        wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
-        if (wrap.style.display === 'block') {
-          wrap.scrollIntoView({ behavior: 'smooth' });
-          // Populate hidden username field from JWT so the browser password
-          // manager knows which account this credential change belongs to.
-          try {
-            const tok = localStorage.getItem('vlk_token') || sessionStorage.getItem('vlk_token');
-            if (tok) {
-              const payload = JSON.parse(atob(tok.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
-              const emailField = document.getElementById('pwUsername');
-              if (emailField && payload.email) emailField.value = payload.email;
-            }
-          } catch (e) { /* non-fatal */ }
-        }
-      }
-      closeUserDropdown();
-    }
+  // Update URL hash without jumping
+  history.replaceState(null, null, `#${tabId}`);
+}
 
-    // Close user dropdown on outer click
-    document.addEventListener('click', (e) => {
-      const userDropdown = document.getElementById('userDropdown');
-      const userMenuBtn = document.getElementById('userMenuBtn');
-      const bnavProfile = document.getElementById('bnav-profile');
-      if (userDropdown && userDropdown.style.display === 'block') {
-        const clickedInside = userDropdown.contains(e.target) || 
-                              (userMenuBtn && userMenuBtn.contains(e.target)) ||
-                              (bnavProfile && bnavProfile.contains(e.target));
-        if (!clickedInside) {
-          closeUserDropdown();
+// Redirect helpers for Profile & Settings
+function toggleUserDropdown(e) {
+  if (e) e.stopPropagation();
+  window.location.href = 'profile.html';
+}
+
+function closeUserDropdown() {}
+
+function togglePasswordPanel() {
+  window.location.href = 'profile.html#securitySection';
+}
+
+function toggleTeacherLinkPanel() {
+  window.location.href = 'profile.html#classroomSection';
+}
+
+// Focus assignments section helper
+function focusAssignmentsSection(e) {
+  if (e) e.preventDefault();
+  switchStudentSubTab('benches', !!e);
+  const targetEl = document.getElementById('zone_assignments');
+  if (targetEl) {
+    targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  history.replaceState(null, null, '#assignments');
+}
+
+// Handle initial tab hash on page load
+window.addEventListener('DOMContentLoaded', () => {
+  const hash = window.location.hash.replace('#', '');
+  if (hash === 'assignments') {
+    focusAssignmentsSection();
+  } else if (hash === 'reference') {
+    window.location.href = 'reference.html';
+  } else if (hash === 'achievements') {
+    window.location.href = 'history.html';
+  } else if (hash && ['benches', 'research'].includes(hash)) {
+    switchStudentSubTab(hash, false);
+  }
+
+  // Smooth scroll for quick-jump navigation
+  document.querySelectorAll('.quick-jump-chip').forEach(chip => {
+    chip.addEventListener('click', (e) => {
+      const targetId = chip.getAttribute('href');
+      if (targetId === '#assignments') {
+        focusAssignmentsSection(e);
+      } else if (targetId && targetId.startsWith('#')) {
+        const targetEl = document.querySelector(targetId);
+        if (targetEl) {
+          e.preventDefault();
+          targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       }
     });
-
-    // Close overlays on Escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeUserDropdown();
-      }
-    });
-
-    // Focus assignments section helper
-    function focusAssignmentsSection(e) {
-      if (e) e.preventDefault();
-      switchStudentSubTab('benches', !!e);
-      const targetEl = document.getElementById('zone_assignments');
-      if (targetEl) {
-        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-      const dropdown = document.getElementById('userDropdown');
-      if (dropdown) dropdown.style.display = 'none';
-      history.replaceState(null, null, '#assignments');
-    }
-    window.focusAssignmentsSection = focusAssignmentsSection;
-
-    // Handle initial tab hash on page load
-    window.addEventListener('DOMContentLoaded', () => {
-      const hash = window.location.hash.replace('#', '');
-      if (hash === 'assignments') {
-        focusAssignmentsSection();
-      } else if (hash && ['benches', 'reference', 'achievements', 'research'].includes(hash)) {
-        switchStudentSubTab(hash, false);
-      }
-
-      // Smooth scroll for quick-jump navigation
-      document.querySelectorAll('.quick-jump-chip').forEach(chip => {
-        chip.addEventListener('click', (e) => {
-          const targetId = chip.getAttribute('href');
-          if (targetId === '#assignments') {
-            focusAssignmentsSection(e);
-          } else if (targetId && targetId.startsWith('#')) {
-            const targetEl = document.querySelector(targetId);
-            if (targetEl) {
-              e.preventDefault();
-              targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-          }
-        });
-      });
-    });
+  });
+});
 
 // Ensure globally accessible for inline HTML onclick handlers
 window.switchStudentSubTab = switchStudentSubTab;
 window.toggleUserDropdown = toggleUserDropdown;
 window.closeUserDropdown = closeUserDropdown;
 window.togglePasswordPanel = togglePasswordPanel;
+window.toggleTeacherLinkPanel = toggleTeacherLinkPanel;
 window.focusAssignmentsSection = focusAssignmentsSection;
 
 function dismissStudyTip() {
@@ -228,6 +165,7 @@ function initStudyTipState() {
     }
   } catch(e) {}
 }
+
 if (document.readyState === 'loading') {
   window.addEventListener('DOMContentLoaded', initStudyTipState);
 } else {
@@ -235,20 +173,21 @@ if (document.readyState === 'loading') {
 }
 
 // Highlight active bottom nav item based on current page
-    (function() {
-      const page = window.location.pathname.split('/').pop() || 'home.html';
-      const map = {
-        'home.html': 'bnav-home',
-        'lab.html': 'bnav-lab',
-        'mock_exams.html': 'bnav-exams',
-        'composite_exam.html': 'bnav-exams',
-        'history.html': 'bnav-history'
-      };
-      const activeId = map[page];
-      if (activeId) {
-        document.querySelectorAll('.vlk-bottom-nav-item').forEach(el => el.classList.remove('active'));
-        const el = document.getElementById(activeId);
-        if (el) el.classList.add('active');
-      }
-    })();
-
+(function() {
+  const page = window.location.pathname.split('/').pop() || 'home.html';
+  const map = {
+    'home.html': 'bnav-home',
+    'lab.html': 'bnav-lab',
+    'mock_exams.html': 'bnav-exams',
+    'composite_exam.html': 'bnav-exams',
+    'reference.html': 'bnav-reference',
+    'history.html': 'bnav-history',
+    'profile.html': 'bnav-profile'
+  };
+  const activeId = map[page];
+  if (activeId) {
+    document.querySelectorAll('.vlk-bottom-nav-item').forEach(el => el.classList.remove('active'));
+    const el = document.getElementById(activeId);
+    if (el) el.classList.add('active');
+  }
+})();

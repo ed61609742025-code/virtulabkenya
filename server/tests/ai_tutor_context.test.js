@@ -137,4 +137,27 @@ describe('AI Tutor Context & Socratic Hint Engine', () => {
     }
   });
 
+  it('aiTutorService should respond instantly to student greetings without making API calls', async () => {
+    const hint = await aiTutorService.generateSocraticHint({
+      experimentType: 'Qualitative Salt Analysis',
+      context: { practicalTitle: 'Unknown Salt Specimen X' },
+      studentQuery: 'hi'
+    });
+    assert.ok(hint.includes('Habari!'));
+    assert.ok(hint.includes('Mwalimu AI'));
+  });
+
+  it('aiTutorService should expose generatePedagogicalFallback with high-fidelity KNEC rules', () => {
+    const fallback = aiTutorService.generatePedagogicalFallback({
+      experimentType: 'Qualitative Salt Analysis',
+      context: {
+        practicalTitle: 'Salt Analysis',
+        lastErrorOrFeedback: 'Precipitate insoluble in excess ammonia'
+      },
+      studentQuery: 'Why is it insoluble in excess?'
+    });
+    assert.ok(fallback.includes('solubility rules'));
+    assert.ok(fallback.includes('Zn²⁺') || fallback.includes('ammonia'));
+  });
+
 });

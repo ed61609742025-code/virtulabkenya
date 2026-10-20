@@ -1,3 +1,108 @@
+
+  /* ══════════════════════════════════════════════════════════
+     ORGANIC PRACTICAL WORKFLOW STEPPER & KNEC TELEMETRY
+  ══════════════════════════════════════════════════════════ */
+  let currentWorkflowStep = 0;
+
+  function jumpToStep(stepIdx) {
+    if (typeof triggerOrganicHaptic === 'function') triggerOrganicHaptic(15);
+    updateWorkflowStepper(stepIdx);
+    if (stepIdx === 0) {
+      const el = document.getElementById('block_solubility') || document.querySelector('.tests-grid') || document.querySelector('.task-card');
+      el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else if (stepIdx === 1) {
+      const el = document.getElementById('block_ignition') || document.querySelector('.tests-grid');
+      el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else if (stepIdx === 2) {
+      const el = document.getElementById('block_bromine') || document.querySelector('.tests-grid');
+      el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else if (stepIdx === 3) {
+      const el = document.getElementById('block_dichromate') || document.querySelector('.tests-grid');
+      el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else if (stepIdx === 4) {
+      const el = document.getElementById('block_carbonate') || document.getElementById('block_esterification') || document.querySelector('.tests-grid');
+      el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else if (stepIdx === 5) {
+      const idPanel = document.querySelector('.id-panel');
+      if (idPanel) {
+        idPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const fg = document.getElementById('fgSelect');
+        if (fg) setTimeout(() => fg.focus(), 350);
+      }
+    }
+  }
+  window.jumpToStep = jumpToStep;
+
+  function updateWorkflowStepper(forcedStep) {
+    if (typeof forcedStep === 'number') currentWorkflowStep = forcedStep;
+    const badge = document.getElementById('organicStepBadge');
+    const fill = document.getElementById('organicProgressFill');
+    const dockBadge = document.getElementById('dockProgressText');
+
+    const stepLabels = [
+      'Step 1 of 6: Physical State, Solubility & Litmus',
+      'Step 2 of 6: Ignition & Flame Test (Sootiness)',
+      'Step 3 of 6: Unsaturation Test (Bromine Water)',
+      'Step 4 of 6: Alkanol Oxidation (Acidified K₂Cr₂O₇)',
+      'Step 5 of 6: Carboxylic Effervescence & Esterification',
+      'Step 6 of 6: Functional Group Deduction & KCSE Scoring'
+    ];
+
+    if (badge && stepLabels[currentWorkflowStep]) {
+      badge.textContent = stepLabels[currentWorkflowStep];
+    }
+    if (fill) {
+      fill.style.width = Math.round(((currentWorkflowStep + 1) / 6) * 100) + '%';
+    }
+    if (dockBadge) {
+      dockBadge.textContent = `${currentWorkflowStep + 1}/6 Step`;
+    }
+
+    for (let i = 0; i < 6; i++) {
+      const stepEl = document.getElementById('organicWfStep' + i);
+      if (stepEl) {
+        if (i < currentWorkflowStep) {
+          stepEl.className = 'workflow-step-item completed';
+          stepEl.removeAttribute('aria-current');
+        } else if (i === currentWorkflowStep) {
+          stepEl.className = 'workflow-step-item active';
+          stepEl.setAttribute('aria-current', 'step');
+        } else {
+          stepEl.className = 'workflow-step-item upcoming';
+          stepEl.removeAttribute('aria-current');
+        }
+      }
+    }
+  }
+  window.updateWorkflowStepper = updateWorkflowStepper;
+
+  /* Session Timer Interval */
+  let sessionSeconds = 0;
+  let sessionTimerInterval = null;
+  function startSessionTimer() {
+    if (sessionTimerInterval) clearInterval(sessionTimerInterval);
+    sessionSeconds = 0;
+    sessionTimerInterval = setInterval(() => {
+      sessionSeconds++;
+      const m = Math.floor(sessionSeconds / 60).toString().padStart(2, '0');
+      const s = (sessionSeconds % 60).toString().padStart(2, '0');
+      const el = document.getElementById('sessionTimerText');
+      if (el) el.textContent = `${m}:${s}`;
+    }, 1000);
+  }
+  window.startSessionTimer = startSessionTimer;
+
+  function updateKnecCandidateMeta() {
+    try {
+      const u = typeof getUser === 'function' ? getUser() : (JSON.parse(localStorage.getItem('vlk_user') || '{}'));
+      const nameEl = document.getElementById('knecCandidateName');
+      const idxEl = document.getElementById('knecCandidateIndex');
+      if (nameEl) nameEl.textContent = 'CANDIDATE: ' + ((u && (u.name || u.full_name || u.username)) ? (u.name || u.full_name || u.username).toUpperCase() : 'PRACTICE MODE');
+      if (idxEl) idxEl.textContent = 'INDEX: ' + ((u && (u.index_number || u.indexNumber || u.admission_number || u.id)) ? String(u.index_number || u.indexNumber || u.admission_number || u.id).padStart(8, '0') : '23330101/001');
+    } catch(e) {}
+  }
+  window.updateKnecCandidateMeta = updateKnecCandidateMeta;
+
 /**
  * VirtuLab Kenya — Organic Chemistry Qualitative Engine
  * Implements KNEC Paper 3 Organic Qualitative Analysis
@@ -1091,6 +1196,20 @@ if (typeof window === 'undefined') {
      PERFORM & REDO ACTIONS
   ══════════════════════════════════════ */
   window.performTest = function(testKey) {
+    if (typeof updateWorkflowStepper === 'function') {
+      if (testKey === 'solubility' || testKey === 'litmus') {
+        if (currentWorkflowStep < 1) updateWorkflowStepper(1);
+      } else if (testKey === 'ignition') {
+        if (currentWorkflowStep < 2) updateWorkflowStepper(2);
+      } else if (testKey === 'bromine') {
+        if (currentWorkflowStep < 3) updateWorkflowStepper(3);
+      } else if (testKey === 'dichromate') {
+        if (currentWorkflowStep < 4) updateWorkflowStepper(4);
+      } else if (testKey === 'carbonate' || testKey === 'esterification') {
+        if (currentWorkflowStep < 5) updateWorkflowStepper(5);
+      }
+    }
+
     if (window.triggerOrganicHaptic) window.triggerOrganicHaptic(15);
     const reg = (window.OrganicBenchCore && window.OrganicBenchCore.SAMPLES) || SAMPLES;
     const sample = reg[currentSampleKey] || reg['org_alcohol'];
@@ -1217,6 +1336,7 @@ if (typeof window === 'undefined') {
      IDENTIFICATION & SUBMISSION
   ══════════════════════════════════════ */
   window.newSample = function() {
+    if (typeof updateWorkflowStepper === "function") updateWorkflowStepper(0);
     const reg = (window.OrganicBenchCore && window.OrganicBenchCore.SAMPLES) || SAMPLES;
     const keys = Object.keys(reg);
     const otherKeys = keys.filter(k => k !== currentSampleKey);
@@ -1721,6 +1841,10 @@ if (typeof window === 'undefined') {
      INITIALIZATION
   ══════════════════════════════════════ */
   function init() {
+    if (typeof updateKnecCandidateMeta === 'function') updateKnecCandidateMeta();
+    if (typeof startSessionTimer === 'function') startSessionTimer();
+    if (typeof updateWorkflowStepper === 'function') updateWorkflowStepper(0);
+
     const sample = SAMPLES[currentSampleKey];
     const badge = document.getElementById('sampleIdBadge');
     if (badge) badge.textContent = `Sample: ${sample.label}`;

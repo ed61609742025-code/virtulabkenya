@@ -63,36 +63,26 @@
       <a href="mock_exams.html" class="theme-btn-chip"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg> Mock Hub</a>
     </div>
 
-    <div class="nav-actions">
+        <div class="nav-actions">
+      <!-- Session Timer Badge -->
+      <div class="session-timer-badge" id="sessionTimerBadge" style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:6px;padding:6px 12px;min-height:38px;font-size:0.8rem;font-weight:700;color:var(--cyan-accent);display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;" title="Current Bench Practical Duration">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M10 2h4"/><path d="M19 5l-1.5 1.5"/></svg>
+        <span id="sessionTimerText" class="tabular-nums">00:00</span>
+      </div>
+
       <!-- Diagnostic Drills & KNEC Rubric Button -->
       <button type="button" class="theme-btn-chip" onclick="window.KnecRemediation && window.KnecRemediation.openWorkbenchDrillsMenu('organic')" title="KNEC Organic Functional Group Micro-Drills & Organic Sprint" style="padding:4px 8px; font-size:0.75rem; border:1px solid rgba(139,92,246,0.35); background:rgba(139,92,246,0.1); color:#A78BFA; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> <span class="btn-text-full">Diagnostic Drills</span><span class="btn-text-short">Drills</span>
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="6" r="6"/><circle cx="12" cy="2" r="2"/></svg> <span class="btn-text-full">Diagnostic Drills</span><span class="btn-text-short">Drills</span>
       </button>
 
-      <!-- Tutorial Button (Enlarged for readability on phones & desktop) -->
+      <!-- Tutorial Button -->
       <button type="button" class="btn-tactile btn-tactile-primary nav-btn-tutorial" onclick="TutorialEngine.start('organic')" title="Start Step-by-Step Tutorial" style="display:inline-flex; align-items:center; gap:4px;">
         <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg> <span class="tutorial-btn-text">Tutorial</span>
       </button>
 
-      <!-- Theme Switcher: 3-chip switcher for desktop (Matches Home Page) -->
-      <div class="theme-toggle-group theme-multi-btn-group" aria-label="Visual Theme Switcher">
-        <button class="theme-btn-chip active" data-theme="light" data-theme-val="light" onclick="setTheme('light')" data-tooltip="Light mode" data-tooltip-pos="bottom" aria-label="Light Theme">
-          <svg class="theme-icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-          <span class="theme-label">Light</span>
-        </button>
-        <button class="theme-btn-chip" data-theme="dark" data-theme-val="dark" onclick="setTheme('dark')" data-tooltip="Dark mode" data-tooltip-pos="bottom" aria-label="Dark Theme">
-          <svg class="theme-icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-          <span class="theme-label">Dark</span>
-        </button>
-        <button class="theme-btn-chip" data-theme="green" data-theme-val="green" onclick="setTheme('green')" data-tooltip="Lab mode" data-tooltip-pos="bottom" aria-label="Lab Theme">
-          <svg class="theme-icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31M14 2v7.31M8.5 2h7M14 9.3a6.5 6.5 0 1 1-4 0"></path><line x1="6" y1="16" x2="18" y2="16"></line></svg>
-          <span class="theme-label">Lab</span>
-        </button>
-      </div>
-
-      <!-- Single Theme Toggle Button (Mobile / Small Screens) -->
-      <button type="button" class="theme-single-toggle-btn" id="themeToggleSingleBtn" onclick="cycleTheme()" data-tooltip="Theme: Light (Tap to switch)" data-tooltip-pos="bottom" aria-label="Toggle visual theme" title="Toggle visual theme">
-        <svg class="theme-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+      <!-- Reagent Safety (SDS) Button -->
+      <button class="nav-btn nav-btn-safety" onclick="window.VLKSafety && window.VLKSafety.openSDSModal('Ethanol')" title="View Chemical Safety & SDS Hazards" style="display:inline-flex; align-items:center; gap:4px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> <span class="btn-text-full">SDS Hazards</span><span class="btn-text-short">SDS</span>
       </button>
 
       <!-- Settings Dropdown Button -->
@@ -129,15 +119,6 @@
             </button>
           </div>
 
-          <!-- Safety SDS Option -->
-          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
-            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Chemical Safety</span>
-            <button type="button" onclick="window.VLKSafety && window.VLKSafety.openSDSModal('Ethanol')" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border); color:var(--red-accent); display:inline-flex; align-items:center; gap:4px;">
-              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-              <span>View SDS</span>
-            </button>
-          </div>
-
           <!-- Language Selector Row -->
           <div style="display:flex; flex-direction:column; gap:6px; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
             <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Language / Lugha</span>
@@ -151,18 +132,9 @@
           <div style="display:flex; flex-direction:column; gap:6px; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
             <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Appearance Theme</span>
             <div class="theme-toggle-group" style="width:100%;">
-              <button class="theme-btn-chip" style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:4px;" data-theme="light" onclick="setTheme('light')">
-                <svg class="theme-icon-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-                Light
-              </button>
-              <button class="theme-btn-chip active" style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:4px;" data-theme="dark" onclick="setTheme('dark')">
-                <svg class="theme-icon-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                Dark
-              </button>
-              <button class="theme-btn-chip" style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:4px;" data-theme="green" onclick="setTheme('green')">
-                <svg class="theme-icon-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31M14 2v7.31M8.5 2h7M14 9.3a6.5 6.5 0 1 1-4 0"/><line x1="6" y1="16" x2="18" y2="16"/></svg>
-                Lab
-              </button>
+              <button class="theme-btn-chip active" style="flex:1;" data-theme="light" onclick="setTheme('light')">Light</button>
+              <button class="theme-btn-chip" style="flex:1;" data-theme="dark" onclick="setTheme('dark')">Dark</button>
+              <button class="theme-btn-chip" style="flex:1;" data-theme="green" onclick="setTheme('green')">Lab</button>
             </div>
           </div>
 
@@ -170,33 +142,27 @@
             <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
             Print Practical Booklet
           </button>
-
-          <a href="/student/home.html" style="background:var(--card-bg-hover);border:1px solid var(--card-border);color:var(--text-main);padding:6px 10px;border-radius:6px;text-decoration:none;font-size:0.75rem;font-weight:700;display:flex;align-items:center;gap:6px;">
-            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-            Exit to Workstation
-          </a>
         </div>
       </div>
+
+      <!-- Exit Button -->
+      <a href="/student/home.html" class="nav-btn nav-btn-exit" title="Exit to Workstation" style="display:inline-flex; align-items:center; gap:4px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> <span class="btn-text-full">Exit</span>
+      </a>
     </div>
   </nav>
 
-  <!-- Official KNEC Practical Ledger Sub-Header -->
-  <div class="knec-exam-subbar">
-    <div class="knec-subbar-item">
-      <span class="knec-subbar-label">Examination:</span>
-      <span class="knec-subbar-val">KCSE Chemistry Paper 3</span>
+    <!-- Official KNEC Examination Sub-Bar -->
+  <div class="knec-exam-subbar" aria-label="Examination Details">
+    <div class="knec-candidate-meta">
+      <span class="knec-tag-pill">KNEC PAPER 233/3</span>
+      <span class="knec-q-badge">QUESTION 3 (10.0 MARKS)</span>
+      <span class="knec-cand-name" id="knecCandidateName">CANDIDATE: PRACTICE MODE</span>
+      <span class="knec-index-num" id="knecCandidateIndex">INDEX: 00000000/001</span>
     </div>
-    <div class="knec-subbar-item">
-      <span class="knec-subbar-label">Section:</span>
-      <span class="knec-subbar-val">Question 3 (Organic Bench)</span>
-    </div>
-    <div class="knec-subbar-item">
-      <span class="knec-subbar-label">Sample:</span>
-      <span class="knec-subbar-val" id="knecSubbarSample">Unknown Liquid</span>
-    </div>
-    <div class="knec-subbar-item knec-score-item">
-      <span class="knec-subbar-label">Max Score:</span>
-      <span class="knec-subbar-val" style="color:var(--amber-accent); font-weight:800;">10.0 Marks</span>
+    <div class="knec-live-status-group">
+      <span class="knec-status-dot pulse" id="knecLiveStatusDot"></span>
+      <span class="knec-status-label" id="knecLiveStatusText">ORGANIC BENCH READY • SAMPLE ACTIVE</span>
     </div>
   </div>
 </header>
@@ -221,14 +187,51 @@
   <!-- Interactive Step-by-Step Tutorial Container -->
   <div id="tutorialDrawer" style="display:none;"></div>
 
-  <!-- Brilliant Segmented Practical Workflow Progress Bar -->
-  <div class="workflow-progress-card">
-    <div class="workflow-progress-label">
-      <span class="workflow-progress-title">PRACTICAL WORKFLOW</span>
-      <span id="organicStepBadge" class="badge">Diagnostic Tests</span>
+    <!-- Interactive Practical Workflow Stepper & Breadcrumbs -->
+  <nav class="workflow-stepper-card" id="organicWorkflowStepper" aria-label="Practical Examination Workflow">
+    <div class="workflow-stepper-top">
+      <div class="workflow-title-wrap">
+        <span class="workflow-title-label" style="display:flex;align-items:center;gap:6px;">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg> PRACTICAL WORKFLOW
+        </span>
+        <span id="organicStepBadge" class="workflow-step-badge">Step 1 of 6: Physical State, Solubility &amp; Litmus</span>
+      </div>
+      <div class="workflow-jump-hint" id="organicProgressHint" style="display:flex;align-items:center;gap:6px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>Progress auto-advances on practical actions</span>
+      </div>
     </div>
-    <div class="workflow-progress-bar-wrap" id="organicStepProgress"></div>
-  </div>
+    
+    <div class="workflow-stepper-track" role="list">
+      <button type="button" class="workflow-step-item active" id="organicWfStep0" onclick="jumpToStep(0)" role="listitem" aria-current="step" title="Step 1: Physical State, Solubility in H2O &amp; Litmus Test">
+        <span class="step-num">1</span>
+        <span class="step-info"><span class="step-name">Physical</span><span class="step-sub">Solubility &amp; pH</span></span>
+      </button>
+      <button type="button" class="workflow-step-item upcoming" id="organicWfStep1" onclick="jumpToStep(1)" role="listitem" title="Step 2: Ignition &amp; Flame Test (Sootiness / C:H Ratio)">
+        <span class="step-num">2</span>
+        <span class="step-info"><span class="step-name">Combustion</span><span class="step-sub">Flame &amp; Soot</span></span>
+      </button>
+      <button type="button" class="workflow-step-item upcoming" id="organicWfStep2" onclick="jumpToStep(2)" role="listitem" title="Step 3: Unsaturation Testing with Bromine Water">
+        <span class="step-num">3</span>
+        <span class="step-info"><span class="step-name">Unsaturation</span><span class="step-sub">Bromine Water</span></span>
+      </button>
+      <button type="button" class="workflow-step-item upcoming" id="organicWfStep3" onclick="jumpToStep(3)" role="listitem" title="Step 4: Alkanol Oxidation with Acidified K2Cr2O7">
+        <span class="step-num">4</span>
+        <span class="step-info"><span class="step-name">Oxidation</span><span class="step-sub">K₂Cr₂O₇ / Alkanol</span></span>
+      </button>
+      <button type="button" class="workflow-step-item upcoming" id="organicWfStep4" onclick="jumpToStep(4)" role="listitem" title="Step 5: Carboxylic Acid Effervescence (Na2CO3) &amp; Esterification">
+        <span class="step-num">5</span>
+        <span class="step-info"><span class="step-name">Carboxylic</span><span class="step-sub">Na₂CO₃ &amp; Esters</span></span>
+      </button>
+      <button type="button" class="workflow-step-item upcoming" id="organicWfStep5" onclick="jumpToStep(5)" role="listitem" title="Step 6: Functional Group Deduction &amp; KNEC Scoring (10.0 Marks)">
+        <span class="step-num">6</span>
+        <span class="step-info"><span class="step-name">Deduction</span><span class="step-sub">Grade 10M</span></span>
+      </button>
+    </div>
+    <div class="workflow-stepper-progress" aria-hidden="true">
+      <div class="workflow-progress-fill" id="organicProgressFill" style="width:16.6%;"></div>
+    </div>
+  </nav>
 
   <!-- Prescribed Continuous Assessment Banner (Shown when assignmentId is present) -->
   <div id="assignmentHeaderBanner" style="display:none; background:rgba(6,182,212,0.15); border:1.5px solid var(--cyan-accent); border-radius:12px; padding:12px 18px; margin-bottom:16px; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">

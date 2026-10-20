@@ -56,6 +56,7 @@
 <link rel="stylesheet" href="css/dashboard.css?v=165">
 <link rel="stylesheet" href="css/mobile.css?v=165">
 <link rel="stylesheet" href="../shared/brilliant-theme.css?v=165">
+<link rel="stylesheet" href="../shared/tutorial-engine.css?v=165">
 
 <style>
   *, *::before, *::after {
@@ -213,6 +214,8 @@
     <!-- Quick Jump Pills Bar -->
     <nav class="quick-jump-bar" aria-label="Reference Jump Navigation" style="margin-bottom:20px;">
       <span style="font-size:0.76rem; font-weight:800; color:var(--heading-color); margin-right:4px;">Jump to:</span>
+      <a href="#ref-tutorials" class="quick-jump-chip" style="display:inline-flex; align-items:center; gap:5px; border-color:var(--cyan-accent); color:var(--cyan-accent); font-weight:800;">🧭 Guided Tutorials</a>
+      <a href="#ref-drills" class="quick-jump-chip" style="display:inline-flex; align-items:center; gap:5px; border-color:#F59E0B; color:#F59E0B; font-weight:800;">🎯 Diagnostic Drills</a>
       <a href="#ref-pocket" class="quick-jump-chip" style="display:inline-flex; align-items:center; gap:5px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Saved Tips</a>
       <a href="#ref-indicators" class="quick-jump-chip">Indicators</a>
       <a href="#ref-gases" class="quick-jump-chip">Gas Tests</a>
@@ -245,7 +248,381 @@
       </div>
     </div>
 
-    <!-- 1. Indicators Reference Card -->
+        <!-- ==========================================
+         SECTION 1: INTERACTIVE PRACTICAL TUTORIALS
+         ========================================== -->
+    <div class="knec-reference-card" id="ref-tutorials" style="border:1.5px solid rgba(2,132,199,0.35); background:var(--card-bg); margin-bottom:24px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+        <div>
+          <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(2,132,199,0.12); color:var(--cyan-accent); font-size:0.72rem; font-weight:800; padding:3px 10px; border-radius:100px; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:6px;">
+            <span>🧭</span> Practical Mastery Guides
+          </div>
+          <h2 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.25rem; font-weight:800; color:var(--heading-color); margin:0 0 4px 0;">
+            Interactive Practical Guided Tutorials
+          </h2>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin:0; max-width:740px; line-height:1.5;">
+            Master laboratory technique, apparatus alignment, and prediction checkpoints across all 7 KCSE practical disciplines. Walk through the interactive steps right here in the handbook, or launch directly onto the live bench.
+          </p>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button type="button" class="btn btn-secondary" onclick="window.TutorialEngine && window.TutorialEngine.start('titration')" style="font-size:0.8rem; font-weight:800; padding:7px 14px; border-radius:100px; display:inline-flex; align-items:center; gap:6px;">
+            <span>▶ Resume Last Tutorial</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Interactive Tutorial Drawer (Renders Step-by-Step, Question Checkpoints & Progress) -->
+      <div id="tutorialDrawer" style="display:none; margin-bottom:20px; border-radius:14px; overflow:hidden;"></div>
+
+      <!-- Tutorials Grid -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:16px;">
+        
+        <!-- 1. Titration -->
+        <div class="tutorial-card-handbook" style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:14px; padding:18px; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span style="background:rgba(2,132,199,0.15); color:var(--cyan-accent); font-size:0.7rem; font-weight:800; padding:3px 8px; border-radius:6px;">KCSE Question 1 · 15 Marks</span>
+              <span style="font-size:1.3rem;">🧪</span>
+            </div>
+            <h3 style="font-size:1rem; font-weight:800; color:var(--heading-color); margin:0 0 6px 0;">
+              Acid-Base Volumetric Standardisation
+            </h3>
+            <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.45; margin:0 0 14px 0;">
+              Burette zero meniscus reading, aliquot pipetting, rough trial, concordant titres within ±0.10 cm³, and stoichiometry calculations.
+            </p>
+            <div style="font-size:0.75rem; color:var(--text-main); font-weight:600; margin-bottom:14px; display:flex; flex-wrap:wrap; gap:8px;">
+              <span style="background:var(--card-bg); padding:3px 8px; border-radius:4px; border:1px solid var(--card-border);">5 Guided Steps</span>
+              <span style="background:var(--card-bg); padding:3px 8px; border-radius:4px; border:1px solid var(--card-border);">Concordancy Rubric</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center; margin-top:8px;">
+            <button type="button" class="btn btn-primary" onclick="launchHandbookTutorial('titration')" style="flex:1; padding:8px 12px; font-size:0.78rem; font-weight:800; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; gap:5px;">
+              <span>▶ Start Tutorial</span>
+            </button>
+            <a href="lab.html" class="btn btn-secondary" style="padding:8px 12px; font-size:0.78rem; font-weight:800; border-radius:8px; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:4px;" title="Open Volumetric Bench">
+              <span>Workbench &rarr;</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 2. Qualitative Inorganic -->
+        <div class="tutorial-card-handbook" style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:14px; padding:18px; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span style="background:rgba(16,185,129,0.15); color:#10B981; font-size:0.7rem; font-weight:800; padding:3px 8px; border-radius:6px;">KCSE Question 2 · 15 Marks</span>
+              <span style="font-size:1.3rem;">🔍</span>
+            </div>
+            <h3 style="font-size:1rem; font-weight:800; color:var(--heading-color); margin:0 0 6px 0;">
+              Qualitative Inorganic Salt Analysis
+            </h3>
+            <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.45; margin:0 0 14px 0;">
+              Physical appearance, flame emission, dropwise &amp; excess NaOH / NH₃, amphoteric hydroxides, and confirmatory anion identification.
+            </p>
+            <div style="font-size:0.75rem; color:var(--text-main); font-weight:600; margin-bottom:14px; display:flex; flex-wrap:wrap; gap:8px;">
+              <span style="background:var(--card-bg); padding:3px 8px; border-radius:4px; border:1px solid var(--card-border);">5 Guided Steps</span>
+              <span style="background:var(--card-bg); padding:3px 8px; border-radius:4px; border:1px solid var(--card-border);">Ionic Deductions</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center; margin-top:8px;">
+            <button type="button" class="btn btn-primary" onclick="launchHandbookTutorial('qualitative')" style="flex:1; padding:8px 12px; font-size:0.78rem; font-weight:800; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; gap:5px;">
+              <span>▶ Start Tutorial</span>
+            </button>
+            <a href="qualitative.html" class="btn btn-secondary" style="padding:8px 12px; font-size:0.78rem; font-weight:800; border-radius:8px; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:4px;" title="Open Qualitative Bench">
+              <span>Workbench &rarr;</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 3. Organic Chemistry -->
+        <div class="tutorial-card-handbook" style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:14px; padding:18px; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span style="background:rgba(139,92,246,0.15); color:#A78BFA; font-size:0.7rem; font-weight:800; padding:3px 8px; border-radius:6px;">KCSE Question 3 · 10 Marks</span>
+              <span style="font-size:1.3rem;">⚗️</span>
+            </div>
+            <h3 style="font-size:1rem; font-weight:800; color:var(--heading-color); margin:0 0 6px 0;">
+              Organic Chemistry Qualitative Analysis
+            </h3>
+            <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.45; margin:0 0 14px 0;">
+              Combustion flame sootiness, bromine water / KMnO₄ unsaturation addition, NaHCO₃ acidity bubbling, and esterification aroma.
+            </p>
+            <div style="font-size:0.75rem; color:var(--text-main); font-weight:600; margin-bottom:14px; display:flex; flex-wrap:wrap; gap:8px;">
+              <span style="background:var(--card-bg); padding:3px 8px; border-radius:4px; border:1px solid var(--card-border);">5 Guided Steps</span>
+              <span style="background:var(--card-bg); padding:3px 8px; border-radius:4px; border:1px solid var(--card-border);">Functional Groups</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center; margin-top:8px;">
+            <button type="button" class="btn btn-primary" onclick="launchHandbookTutorial('organic')" style="flex:1; padding:8px 12px; font-size:0.78rem; font-weight:800; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; gap:5px;">
+              <span>▶ Start Tutorial</span>
+            </button>
+            <a href="organic.html" class="btn btn-secondary" style="padding:8px 12px; font-size:0.78rem; font-weight:800; border-radius:8px; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:4px;" title="Open Organic Bench">
+              <span>Workbench &rarr;</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 4. Chemical Kinetics (Rates) -->
+        <div class="tutorial-card-handbook" style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:14px; padding:18px; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span style="background:rgba(244,63,94,0.15); color:#FB7185; font-size:0.7rem; font-weight:800; padding:3px 8px; border-radius:6px;">Physical Practical · Kinetics</span>
+              <span style="font-size:1.3rem;">⚡</span>
+            </div>
+            <h3 style="font-size:1rem; font-weight:800; color:var(--heading-color); margin:0 0 6px 0;">
+              Reaction Rates &amp; Collision Theory
+            </h3>
+            <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.45; margin:0 0 14px 0;">
+              Disappearing cross method with Na₂S₂O₃ and HCl, concentration series, stopwatch timing, reciprocal rate (1/t), and order deduction.
+            </p>
+            <div style="font-size:0.75rem; color:var(--text-main); font-weight:600; margin-bottom:14px; display:flex; flex-wrap:wrap; gap:8px;">
+              <span style="background:var(--card-bg); padding:3px 8px; border-radius:4px; border:1px solid var(--card-border);">5 Guided Steps</span>
+              <span style="background:var(--card-bg); padding:3px 8px; border-radius:4px; border:1px solid var(--card-border);">1/t Rate Graphs</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center; margin-top:8px;">
+            <button type="button" class="btn btn-primary" onclick="launchHandbookTutorial('rates')" style="flex:1; padding:8px 12px; font-size:0.78rem; font-weight:800; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; gap:5px;">
+              <span>▶ Start Tutorial</span>
+            </button>
+            <a href="rates.html" class="btn btn-secondary" style="padding:8px 12px; font-size:0.78rem; font-weight:800; border-radius:8px; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:4px;" title="Open Kinetics Bench">
+              <span>Workbench &rarr;</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 5. Thermochemistry (Energy) -->
+        <div class="tutorial-card-handbook" style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:14px; padding:18px; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span style="background:rgba(217,119,6,0.15); color:#F59E0B; font-size:0.7rem; font-weight:800; padding:3px 8px; border-radius:6px;">Physical Practical · Enthalpy</span>
+              <span style="font-size:1.3rem;">🔥</span>
+            </div>
+            <h3 style="font-size:1rem; font-weight:800; color:var(--heading-color); margin:0 0 6px 0;">
+              Thermochemistry &amp; Energy Changes
+            </h3>
+            <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.45; margin:0 0 14px 0;">
+              Polystyrene calorimeter insulation, baseline T₁ and peak T₂, temperature rise ΔT, heat evolved q = mcΔT, and molar enthalpy -ΔH.
+            </p>
+            <div style="font-size:0.75rem; color:var(--text-main); font-weight:600; margin-bottom:14px; display:flex; flex-wrap:wrap; gap:8px;">
+              <span style="background:var(--card-bg); padding:3px 8px; border-radius:4px; border:1px solid var(--card-border);">5 Guided Steps</span>
+              <span style="background:var(--card-bg); padding:3px 8px; border-radius:4px; border:1px solid var(--card-border);">Enthalpy Signs</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center; margin-top:8px;">
+            <button type="button" class="btn btn-primary" onclick="launchHandbookTutorial('energy')" style="flex:1; padding:8px 12px; font-size:0.78rem; font-weight:800; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; gap:5px;">
+              <span>▶ Start Tutorial</span>
+            </button>
+            <a href="energy.html" class="btn btn-secondary" style="padding:8px 12px; font-size:0.78rem; font-weight:800; border-radius:8px; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:4px;" title="Open Thermochemistry Bench">
+              <span>Workbench &rarr;</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 6. Solubility & Crystallization -->
+        <div class="tutorial-card-handbook" style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:14px; padding:18px; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span style="background:rgba(6,182,212,0.15); color:var(--cyan-accent); font-size:0.7rem; font-weight:800; padding:3px 8px; border-radius:6px;">Physical Practical · Solubility</span>
+              <span style="font-size:1.3rem;">❄️</span>
+            </div>
+            <h3 style="font-size:1rem; font-weight:800; color:var(--heading-color); margin:0 0 6px 0;">
+              Solubility Curves &amp; Crystallization
+            </h3>
+            <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.45; margin:0 0 14px 0;">
+              Weighing solute, water bath uniform dissolution, air cooling to first crystal glimmer (T_crys), and curve-based deposition analysis.
+            </p>
+            <div style="font-size:0.75rem; color:var(--text-main); font-weight:600; margin-bottom:14px; display:flex; flex-wrap:wrap; gap:8px;">
+              <span style="background:var(--card-bg); padding:3px 8px; border-radius:4px; border:1px solid var(--card-border);">5 Guided Steps</span>
+              <span style="background:var(--card-bg); padding:3px 8px; border-radius:4px; border:1px solid var(--card-border);">g / 100g H₂O</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center; margin-top:8px;">
+            <button type="button" class="btn btn-primary" onclick="launchHandbookTutorial('solubility')" style="flex:1; padding:8px 12px; font-size:0.78rem; font-weight:800; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; gap:5px;">
+              <span>▶ Start Tutorial</span>
+            </button>
+            <a href="solubility.html" class="btn btn-secondary" style="padding:8px 12px; font-size:0.78rem; font-weight:800; border-radius:8px; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:4px;" title="Open Solubility Bench">
+              <span>Workbench &rarr;</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 7. Gas Preparation -->
+        <div class="tutorial-card-handbook" style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:14px; padding:18px; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span style="background:rgba(99,102,241,0.15); color:#818CF8; font-size:0.7rem; font-weight:800; padding:3px 8px; border-radius:6px;">Laboratory Techniques</span>
+              <span style="font-size:1.3rem;">💨</span>
+            </div>
+            <h3 style="font-size:1rem; font-weight:800; color:var(--heading-color); margin:0 0 6px 0;">
+              Gas Preparation &amp; Collection
+            </h3>
+            <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.45; margin:0 0 14px 0;">
+              Reactant compatibility, drying agent selection (concentrated H₂SO₄, CaO, CaCl₂), delivery methods, and confirmatory splint tests.
+            </p>
+            <div style="font-size:0.75rem; color:var(--text-main); font-weight:600; margin-bottom:14px; display:flex; flex-wrap:wrap; gap:8px;">
+              <span style="background:var(--card-bg); padding:3px 8px; border-radius:4px; border:1px solid var(--card-border);">4 Guided Steps</span>
+              <span style="background:var(--card-bg); padding:3px 8px; border-radius:4px; border:1px solid var(--card-border);">Drying &amp; Collection</span>
+            </div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center; margin-top:8px;">
+            <button type="button" class="btn btn-primary" onclick="launchHandbookTutorial('gas_prep')" style="flex:1; padding:8px 12px; font-size:0.78rem; font-weight:800; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; gap:5px;">
+              <span>▶ Start Tutorial</span>
+            </button>
+            <a href="gas_prep.html" class="btn btn-secondary" style="padding:8px 12px; font-size:0.78rem; font-weight:800; border-radius:8px; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:4px;" title="Open Gas Prep Bench">
+              <span>Workbench &rarr;</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==========================================
+         SECTION 2: KNEC DIAGNOSTIC DRILLS & SPRINTS
+         ========================================== -->
+    <div class="knec-reference-card" id="ref-drills" style="border:1.5px solid rgba(245,158,11,0.35); background:var(--card-bg); margin-bottom:24px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+        <div>
+          <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(245,158,11,0.12); color:#F59E0B; font-size:0.72rem; font-weight:800; padding:3px 10px; border-radius:100px; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:6px;">
+            <span>🎯</span> Mark-Deduction Eliminators
+          </div>
+          <h2 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.25rem; font-weight:800; color:var(--heading-color); margin:0 0 4px 0;">
+            KNEC Diagnostic Micro-Drills &amp; Sprints
+          </h2>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin:0; max-width:740px; line-height:1.5;">
+            Master the strict KNEC Paper 3 rubrics and eliminate point deductions before examination day. Complete targeted 5-minute diagnostic drills or test your rapid recall in timed speed sprints.
+          </p>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button type="button" class="btn btn-secondary" onclick="window.KnecRemediation && window.KnecRemediation.openWorkbenchDrillsMenu('titration')" style="font-size:0.8rem; font-weight:800; padding:7px 14px; border-radius:100px; display:inline-flex; align-items:center; gap:6px;">
+            <span>📋 All Drill Menus</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Drills Grid -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:16px;">
+
+        <!-- Drill 1: Condition D -->
+        <div class="drill-card-handbook" style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:14px; padding:18px; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span style="background:rgba(239,68,68,0.15); color:#EF4444; font-size:0.7rem; font-weight:800; padding:3px 8px; border-radius:6px; border:1px solid rgba(239,68,68,0.3);">-1.0 Mark Penalty</span>
+              <span style="font-size:1.3rem;">📏</span>
+            </div>
+            <h3 style="font-size:1rem; font-weight:800; color:var(--heading-color); margin:0 0 6px 0;">
+              Condition (D): 2-Decimal Precision &amp; .0/.5 Rule
+            </h3>
+            <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.45; margin:0 0 14px 0;">
+              Burette initial, final, and titre readings must terminate strictly in .00 or .50/.05. Eliminates common 1 d.p. pen slips.
+            </p>
+          </div>
+          <button type="button" class="btn btn-primary" onclick="window.KnecRemediation && window.KnecRemediation.openModal('D')" style="width:100%; padding:9px 14px; font-size:0.8rem; font-weight:800; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; gap:6px;">
+            <span>Start 5-Min Drill ⚡</span>
+          </button>
+        </div>
+
+        <!-- Drill 2: Condition PA -->
+        <div class="drill-card-handbook" style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:14px; padding:18px; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span style="background:rgba(239,68,68,0.15); color:#EF4444; font-size:0.7rem; font-weight:800; padding:3px 8px; border-radius:6px; border:1px solid rgba(239,68,68,0.3);">-1.0 Mark Penalty</span>
+              <span style="font-size:1.3rem;">⚖️</span>
+            </div>
+            <h3 style="font-size:1rem; font-weight:800; color:var(--heading-color); margin:0 0 6px 0;">
+              Condition (PA): Concordancy &amp; Principle of Averaging
+            </h3>
+            <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.45; margin:0 0 14px 0;">
+              Select concordant titres strictly within ±0.20 cm³, discard discordant outliers, and show explicit arithmetic working expression.
+            </p>
+          </div>
+          <button type="button" class="btn btn-primary" onclick="window.KnecRemediation && window.KnecRemediation.openModal('PA')" style="width:100%; padding:9px 14px; font-size:0.8rem; font-weight:800; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; gap:6px;">
+            <span>Start 5-Min Drill ⚡</span>
+          </button>
+        </div>
+
+        <!-- Drill 3: Condition AC/FA -->
+        <div class="drill-card-handbook" style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:14px; padding:18px; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span style="background:rgba(239,68,68,0.15); color:#EF4444; font-size:0.7rem; font-weight:800; padding:3px 8px; border-radius:6px; border:1px solid rgba(239,68,68,0.3);">-1.0 Mark Penalty</span>
+              <span style="font-size:1.3rem;">🎯</span>
+            </div>
+            <h3 style="font-size:1rem; font-weight:800; color:var(--heading-color); margin:0 0 6px 0;">
+              Condition (AC/FA): Meniscus Alignment &amp; Accuracy
+            </h3>
+            <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.45; margin:0 0 14px 0;">
+              Eye-level meniscus alignment, parallax error prevention, and matching teacher baseline titre within ±0.10 cm³.
+            </p>
+          </div>
+          <button type="button" class="btn btn-primary" onclick="window.KnecRemediation && window.KnecRemediation.openModal('AC/FA')" style="width:100%; padding:9px 14px; font-size:0.8rem; font-weight:800; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; gap:6px;">
+            <span>Start 5-Min Drill ⚡</span>
+          </button>
+        </div>
+
+        <!-- Drill 4: Condition INORG -->
+        <div class="drill-card-handbook" style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:14px; padding:18px; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span style="background:rgba(239,68,68,0.15); color:#EF4444; font-size:0.7rem; font-weight:800; padding:3px 8px; border-radius:6px; border:1px solid rgba(239,68,68,0.3);">-3.0 Marks Risk</span>
+              <span style="font-size:1.3rem;">🧂</span>
+            </div>
+            <h3 style="font-size:1rem; font-weight:800; color:var(--heading-color); margin:0 0 6px 0;">
+              Inorganic Cation &amp; Anion Deductions
+            </h3>
+            <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.45; margin:0 0 14px 0;">
+              Formulate exact ionic notation (Pb²⁺, Zn²⁺, Al³⁺, Ba²⁺, SO₄²⁻, Cl⁻, CO₃²⁻) without penalised trailing text or punctuation.
+            </p>
+          </div>
+          <button type="button" class="btn btn-primary" onclick="window.KnecRemediation && window.KnecRemediation.openModal('INORG')" style="width:100%; padding:9px 14px; font-size:0.8rem; font-weight:800; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; gap:6px;">
+            <span>Start 5-Min Drill ⚡</span>
+          </button>
+        </div>
+
+        <!-- Drill 5: Condition ORG -->
+        <div class="drill-card-handbook" style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:14px; padding:18px; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span style="background:rgba(239,68,68,0.15); color:#EF4444; font-size:0.7rem; font-weight:800; padding:3px 8px; border-radius:6px; border:1px solid rgba(239,68,68,0.3);">-3.0 Marks Risk</span>
+              <span style="font-size:1.3rem;">🧫</span>
+            </div>
+            <h3 style="font-size:1rem; font-weight:800; color:var(--heading-color); margin:0 0 6px 0;">
+              Organic Functional Group Deductions
+            </h3>
+            <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.45; margin:0 0 14px 0;">
+              Differentiate >C=C< unsaturation, R-OH alkanols, and R-COOH carboxylic acids strictly following standard Paper 3 criteria.
+            </p>
+          </div>
+          <button type="button" class="btn btn-primary" onclick="window.KnecRemediation && window.KnecRemediation.openModal('ORG')" style="width:100%; padding:9px 14px; font-size:0.8rem; font-weight:800; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; gap:6px;">
+            <span>Start 5-Min Drill ⚡</span>
+          </button>
+        </div>
+
+        <!-- Speed Sprints Card -->
+        <div class="drill-card-handbook" style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-radius:14px; padding:18px; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span style="background:rgba(2,132,199,0.15); color:var(--cyan-accent); font-size:0.7rem; font-weight:800; padding:3px 8px; border-radius:6px;">Timed Recall</span>
+              <span style="font-size:1.3rem;">⏱️</span>
+            </div>
+            <h3 style="font-size:1rem; font-weight:800; color:var(--heading-color); margin:0 0 6px 0;">
+              KCSE Speed Sprints (45s–60s)
+            </h3>
+            <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.45; margin:0 0 14px 0;">
+              Rapid-fire drills on indicator transitions, precipitate colors, kinetics plots, and enthalpy calculations.
+            </p>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+            <a href="speed_battle.html?mode=titration" class="btn btn-secondary" style="padding:7px 8px; font-size:0.75rem; font-weight:800; text-decoration:none; text-align:center;">Titration 60s</a>
+            <a href="speed_battle.html?mode=qualitative" class="btn btn-secondary" style="padding:7px 8px; font-size:0.75rem; font-weight:800; text-decoration:none; text-align:center;">Qualitative 60s</a>
+            <a href="speed_battle.html?mode=organic" class="btn btn-secondary" style="padding:7px 8px; font-size:0.75rem; font-weight:800; text-decoration:none; text-align:center;">Organic 45s</a>
+            <a href="speed_battle.html?mode=energy" class="btn btn-secondary" style="padding:7px 8px; font-size:0.75rem; font-weight:800; text-decoration:none; text-align:center;">Kinetics 45s</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+<!-- 1. Indicators Reference Card -->
     <div class="knec-reference-card" id="ref-indicators">
       <h3 style="font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; font-weight:800; color:var(--heading-color); margin:0 0 8px 0;">
         Acid-Base Indicators
@@ -660,6 +1037,34 @@
   <script defer src="../shared/theme.js?v=165"></script>
   <script defer src="../shared/brilliant-ui.js?v=165"></script>
   <script defer src="js/student-dashboard.js?v=165"></script>
+  <script defer src="../shared/tutorial-engine.js?v=165"></script>
+  <script defer src="/shared/knec-pedagogy.js"></script>
+  <script defer src="/shared/knec-remediation-drills.js?v=165"></script>
+  <script>
+    function launchHandbookTutorial(discipline) {
+      if (window.TutorialEngine) {
+        window.TutorialEngine.init({
+          discipline: discipline,
+          containerId: 'tutorialDrawer'
+        });
+        window.TutorialEngine.start(discipline);
+        var drawer = document.getElementById('tutorialDrawer');
+        if (drawer) {
+          drawer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    }
+    window.launchHandbookTutorial = launchHandbookTutorial;
+
+    document.addEventListener('DOMContentLoaded', function() {
+      if (window.TutorialEngine) {
+        window.TutorialEngine.init({
+          discipline: 'titration',
+          containerId: 'tutorialDrawer'
+        });
+      }
+    });
+  </script>
 
   <script>
     // Smooth scrolling for jump chips

@@ -204,15 +204,6 @@
         <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M10 2h4"/><path d="M19 5l-1.5 1.5"/></svg>
         <span id="sessionTimerText" class="tabular-nums">00:00</span>
       </div>
-      <!-- Diagnostic Drills & KNEC Rubric Button -->
-      <button type="button" class="theme-btn-chip btn-nav-drills" onclick="window.KnecRemediation && window.KnecRemediation.openWorkbenchDrillsMenu('qualitative')" title="KNEC Inorganic Cation/Anion Micro-Drills & Qualitative Sprint">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> <span class="btn-text-full">Diagnostic Drills</span><span class="btn-text-short">Drills</span>
-      </button>
-
-      <!-- Guided Tutorial Button -->
-      <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm btn-nav-tutorial" onclick="TutorialEngine.start('qualitative')">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg> <span class="btn-text-full">Guided Tutorial</span><span class="btn-text-short">Tutorial</span>
-      </button>
 
       <!-- Reagent Safety (SDS) Button -->
       <button class="nav-btn nav-btn-safety" onclick="window.VLKSafety && window.VLKSafety.openSDSModal('NaOH')" title="View Chemical Safety & SDS Hazards">
@@ -278,9 +269,6 @@
      MAIN PAGE CONTENT
 ══════════════════════════════════════ -->
 <div class="page-container">
-
-  <!-- Interactive Step-by-Step Tutorial Container -->
-  <div id="tutorialDrawer" style="display:none;"></div>
 
   <!-- Page Header -->
   <div class="page-header">
@@ -721,12 +709,7 @@
 <script defer src="../shared/ai-tutor.js"></script>
 <script defer src="../shared/pwa-installer.js"></script>
 <script defer src="../shared/page-transitions.js"></script>
-<script>
-  if (window.TutorialEngine) {
-    window.TutorialEngine.init({
-      discipline: 'qualitative',
-      containerId: 'tutorialDrawer'
-    });
+<script>);
   }
 
   

@@ -211,16 +211,6 @@
         <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> <span class="btn-text-full">Theory Guide</span><span class="btn-text-short">Theory</span>
       </a>
 
-      <!-- Diagnostic Drills & KNEC Rubric Button -->
-      <button type="button" class="theme-btn-chip" onclick="window.KnecRemediation && window.KnecRemediation.openWorkbenchDrillsMenu('titration')" title="KNEC Condition (D, PA, AC/FA) Micro-Drills & Titration Sprint" style="border:1.5px solid rgba(2,132,199,0.35); background:rgba(2,132,199,0.12); color:var(--cyan-accent); font-weight:700; cursor:pointer;">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> <span class="btn-text-full">Diagnostic Drills</span><span class="btn-text-short">Drills</span>
-      </button>
-
-      <!-- Guided Tutorial Button -->
-      <button type="button" class="btn-tactile btn-tactile-primary" onclick="TutorialEngine.start('titration')" style="min-height:40px; padding:8px 12px; font-size:0.78rem; white-space:nowrap; touch-action:manipulation;">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg> <span class="btn-text-full">Guided Tutorial</span><span class="btn-text-short">Tutorial</span>
-      </button>
-
       <!-- Reagent Safety (SDS) Button -->
       <button class="nav-btn nav-btn-safety" onclick="window.VLKSafety && window.VLKSafety.openSDSModal('HCl')" title="View Chemical Safety & SDS Hazards">
         <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> <span class="btn-text-full">SDS</span>
@@ -310,9 +300,6 @@
 
 <!-- Main Workbench Grid Container -->
 <div class="workbench-container">
-  
-  <!-- Interactive Step-by-Step Tutorial Container -->
-  <div id="tutorialDrawer" style="display:none;"></div>
 
   <div id="assignmentBanner" style="display:none;align-items:center;gap:8px;background:var(--card-bg-hover);border:1px solid var(--cyan-accent);border-radius:10px;padding:10px 16px;margin-bottom:16px;font-size:0.83rem;color:var(--text-main);">
     <span style="background:var(--cyan-btn-bg);color:#FFF;padding:2px 8px;border-radius:100px;font-size:0.7rem;font-weight:700;">ASSIGNMENT</span>
@@ -1109,14 +1096,7 @@
   // Initialize Brilliant Segmented Step Progress
   if (window.BrilliantUI) {
     window.BrilliantUI.renderSegmentedProgress('titrationStepProgress', 5, 0);
-  }
-
-  // Initialize Interactive Step-by-Step Practical Tutorial
-  if (window.TutorialEngine) {
-    window.TutorialEngine.init({
-      discipline: 'titration',
-      containerId: 'tutorialDrawer'
-    });
+  });
   }
 
   window.toggleBenchSettings = function(e) {

@@ -460,6 +460,8 @@
       </div>
 
       <form id="changePasswordForm" autocomplete="on" onsubmit="submitChangePassword(); return false;">
+        <!-- Hidden username field for Chromium & WCAG password manager accessibility -->
+        <input type="email" id="pwUsernameHidden" name="username" autocomplete="username" style="display:none;" aria-hidden="true" tabindex="-1">
         <div class="form-grid-2col">
           <div class="form-group">
             <label for="pwCurrent">Current Password</label>
@@ -614,6 +616,8 @@
               var emailI = document.getElementById('profInputEmail');
               if (emailH) emailH.textContent = user.email;
               if (emailI) emailI.value = user.email;
+              var emailPw = document.getElementById('pwUsernameHidden');
+              if (emailPw) emailPw.value = user.email;
             }
             if (user.form) {
               var formI = document.getElementById('profInputForm');

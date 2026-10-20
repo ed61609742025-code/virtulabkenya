@@ -2897,6 +2897,49 @@ const EnergyEngine = (() => {
     if (modal) modal.style.display = 'none';
   }
 
+  // ── Universal AI Tutor Lab Context Provider ──
+  const getEnergyContext = () => {
+    const sc = currentScenario || {};
+    const tempDiff = currentTemp - (sc.initialTemp || 22.0);
+    const sign = tempDiff >= 0 ? '+' : '';
+    const tempChangeStr = `${sign}${tempDiff.toFixed(1)} °C`;
+
+    let thermalStatus = '';
+    if (sc.category === 'combustion') {
+      thermalStatus = isFlameLit ? `Burner lit, current burner mass: ${currentBurnerMass.toFixed(2)} g` : 'Burner extinguished';
+    } else {
+      thermalStatus = isMixed ? 'Reactants mixed into calorimeter' : 'Reactants unmixed (pre-reaction stage)';
+    }
+
+    const lastAlert = (() => {
+      const el = document.querySelector('.alert-error, .alert-warning, #energyFeedbackCard, .feedback-card');
+      return (el && el.offsetParent !== null && el.innerText.trim()) ? el.innerText.trim().slice(0, 160) : undefined;
+    })();
+
+    return {
+      labType: 'Thermochemistry & Energy Changes',
+      practicalTitle: sc.name || 'Thermochemistry Practical',
+      category: sc.category || 'calorimetry',
+      activeStep: sc.knecYear ? `KNEC Standard: ${sc.knecYear}` : undefined,
+      reactants: `${sc.reactantA || 'Solution A'} + ${sc.reactantB || 'Reactant B'}`,
+      initialTemp: `${Number(sc.initialTemp || 22.0).toFixed(1)} °C`,
+      currentTemp: `${Number(currentTemp || 22.0).toFixed(1)} °C`,
+      tempChange: tempChangeStr,
+      thermalStatus,
+      recordedTrials: studentPlottedPoints.length > 0 ? [`${studentPlottedPoints.length} graph data points plotted`] : [],
+      lastErrorOrFeedback: lastAlert
+    };
+  };
+
+  if (typeof window !== 'undefined') {
+    window.VLK = window.VLK || {};
+    if (typeof window.VLK.registerLabContext === 'function') {
+      window.VLK.registerLabContext(getEnergyContext);
+    } else {
+      window.VLK._pendingContextProvider = getEnergyContext;
+    }
+  }
+
   return {
     init,
     applyScenario,

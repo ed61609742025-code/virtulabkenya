@@ -48,7 +48,9 @@ function updateSpeechBtnState(speaking) {
 
 // ── Universal Laboratory Context Hook ──
 window.VLK = window.VLK || {};
-window.VLK._labContextProvider = null;
+if (window.VLK._pendingContextProvider && !window.VLK._labContextProvider) {
+  window.VLK._labContextProvider = window.VLK._pendingContextProvider;
+}
 
 window.VLK.registerLabContext = function(providerFn) {
   window.VLK._labContextProvider = providerFn;
@@ -232,6 +234,27 @@ window.VLK.getLabContext = function() {
           { label: '🔥 Smoky vs Clean Flame', text: 'What does a yellow luminous sooty flame tell me about the carbon:hydrogen ratio?' },
           { label: '🍋 Alkanol vs Carboxylic', text: 'How do I differentiate an alkanol from an alkanoic acid using sodium carbonate?' },
           { label: '🏷️ Functional Group Deduction', text: 'How do I deduce the correct functional group from my completed observations?' }
+        );
+      } else if (labType.includes('rate') || labType.includes('kinetic')) {
+        prompts.push(
+          { label: '⏱️ Disappearing Cross', text: 'How does varying the concentration of sodium thiosulfate affect the reaction rate (1/t)?' },
+          { label: '📈 Tangent & Gradient', text: 'How do I draw a tangent at a given time on a gas volume curve to calculate the rate?' },
+          { label: '💥 Collision Theory', text: 'How do temperature and surface area increase the frequency of effective collisions?' },
+          { label: '⚡ Catalyst Role', text: 'Why does adding a catalyst like MnO₂ lower activation energy without being consumed?' }
+        );
+      } else if (labType.includes('energy') || labType.includes('thermo')) {
+        prompts.push(
+          { label: '🔥 Exothermic vs Endothermic', text: 'How do I deduce whether this reaction is exothermic (negative ΔH) or endothermic from temperature changes?' },
+          { label: '🔢 Q = mcΔT Heat Formula', text: 'How do I calculate heat evolved using Q = m·c·ΔT and find the molar enthalpy change?' },
+          { label: '📉 Extrapolation Graph', text: 'Why must temperature be extrapolated back to the time of mixing on a KNEC thermochemistry cooling curve?' },
+          { label: '🕯️ Combustion Enthalpy', text: 'How do I calculate molar heat of combustion from the mass of fuel burned in the spirit lamp?' }
+        );
+      } else if (labType.includes('solubil') || labType.includes('crystal')) {
+        prompts.push(
+          { label: '❄️ Crystallization Temp', text: 'How do I identify the exact temperature when crystals first appear upon cooling?' },
+          { label: '📊 Solubility (g/100g H₂O)', text: 'How do I calculate solubility in grams of solute per 100g of water from my mass and volume?' },
+          { label: '📈 Curve Interpretation', text: 'What does the slope of this solubility curve tell me about the heat of solution?' },
+          { label: '💧 Serial Dilution', text: 'Why does adding 2.0 cm³ water increments lower the crystallization temperature in serial dilution?' }
         );
       } else {
         prompts.push(

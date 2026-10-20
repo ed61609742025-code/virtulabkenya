@@ -1703,6 +1703,69 @@ const RatesEngine = (function () {
     if (modal) modal.style.display = 'none';
   }
 
+  // ── Universal AI Tutor Lab Context Provider ──
+  const ratesExpNames = {
+    cross: 'Disappearing Cross (Na₂S₂O₃ + HCl)',
+    syringe: 'Gas Syringe Kinetics (CaCO₃/Mg + HCl)',
+    mass: 'Mass Loss on Balance (CaCO₃ + HCl)',
+    catalyst: 'Catalytic Decomposition (H₂O₂ + Catalyst)',
+    collision: 'Collision Theory & Activation Energy Simulation'
+  };
+
+  const getRatesContext = () => {
+    let expDetails = '';
+    let conditionText = '';
+    let trialCount = 0;
+
+    if (state.currentExp === 'cross') {
+      conditionText = `Thio: ${state.cross.volumeThio} cm³, H₂O: ${state.cross.volumeWater} cm³, Temp: ${state.cross.temperature}°C, Conc: ${state.cross.concThio} M`;
+      trialCount = (state.cross.recordedData || []).length;
+      expDetails = state.cross.disappeared ? `Cross disappeared at t = ${Number(state.cross.disappearTime || 0).toFixed(1)}s` : (state.isRunning ? 'Reaction evolving (turbidity increasing)' : 'Idle');
+    } else if (state.currentExp === 'syringe') {
+      conditionText = `Reactant: ${state.syringe.reactant}, Acid Conc: ${state.syringe.acidConc} M, Solid Mass: ${state.syringe.massSolid} g`;
+      trialCount = (state.syringe.recordedData || []).length;
+      expDetails = `Current Gas Volume: ${Number(state.syringe.currentVol || 0).toFixed(1)} cm³ / ${state.syringe.maxVol} cm³`;
+    } else if (state.currentExp === 'mass') {
+      conditionText = `Form: ${state.massLoss.form}, Initial Mass: ${Number(state.massLoss.initialMass || 0).toFixed(2)} g`;
+      trialCount = (state.massLoss.recordedData || []).length;
+      const loss = (state.massLoss.initialMass - state.massLoss.currentMass).toFixed(2);
+      expDetails = `Current Mass: ${Number(state.massLoss.currentMass || 0).toFixed(2)} g (Mass Lost: ${loss} g)`;
+    } else if (state.currentExp === 'catalyst') {
+      conditionText = `Catalyst: ${state.catalyst.selectedCat}, H₂O₂ Volume: ${state.catalyst.h2o2Vol} cm³, Temp: ${state.catalyst.temp}°C`;
+      trialCount = (state.catalyst.recordedData || []).length;
+      expDetails = `Catalyst active: ${state.catalyst.selectedCat !== 'NONE' ? state.catalyst.selectedCat : 'None'}`;
+    } else if (state.currentExp === 'collision') {
+      conditionText = `Temp: ${state.collision.temp}°C, Ea: ${state.collision.ea} kJ/mol, Catalyst: ${state.collision.catalyst ? 'YES' : 'NO'}`;
+      expDetails = 'Collision particle simulation';
+    }
+
+    const lastAlert = (() => {
+      const el = document.querySelector('.alert-error, .alert-warning, #rateFeedbackCard, .feedback-card');
+      return (el && el.offsetParent !== null && el.innerText.trim()) ? el.innerText.trim().slice(0, 160) : undefined;
+    })();
+
+    return {
+      labType: 'Reaction Rates & Chemical Kinetics',
+      practicalTitle: ratesExpNames[state.currentExp] || `Kinetics Experiment (${state.currentExp})`,
+      activeExperiment: state.currentExp,
+      reactionConditions: conditionText,
+      activeStep: `Experiment: ${ratesExpNames[state.currentExp] || state.currentExp}`,
+      elapsedTime: `${Number(state.timer || 0).toFixed(1)} s`,
+      reactionProgress: expDetails,
+      recordedTrials: [`${trialCount} trial readings logged`],
+      lastErrorOrFeedback: lastAlert
+    };
+  };
+
+  if (typeof window !== 'undefined') {
+    window.VLK = window.VLK || {};
+    if (typeof window.VLK.registerLabContext === 'function') {
+      window.VLK.registerLabContext(getRatesContext);
+    } else {
+      window.VLK._pendingContextProvider = getRatesContext;
+    }
+  }
+
   // ══════════════════════════════════════════════════════════
   // PUBLIC API
   // ══════════════════════════════════════════════════════════

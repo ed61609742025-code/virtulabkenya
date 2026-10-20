@@ -2179,6 +2179,46 @@ const SolubilityEngine = (() => {
     if (modal) modal.style.display = 'flex';
   }
 
+  // ── Universal AI Tutor Lab Context Provider ──
+  const getSolubilityContext = () => {
+    const sc = (typeof SCENARIOS !== 'undefined' && SCENARIOS[state.activeScenario]) ? SCENARIOS[state.activeScenario] : {};
+    const saltModel = (typeof SALT_MODELS !== 'undefined' && SALT_MODELS[state.solute]) ? SALT_MODELS[state.solute] : {};
+    
+    let trialsSummary = [];
+    if (Array.isArray(state.trials) && state.trials.length > 0) {
+      trialsSummary = state.trials.map(t => `Vol: ${t.volume} cm³, Temp: ${t.crystallizationTemp}°C, Sol: ${t.solubility} g/100g`);
+    }
+
+    const lastAlert = (() => {
+      const el = document.querySelector('.alert-error, .alert-warning, #solCalcFeedback, .feedback-card');
+      return (el && el.offsetParent !== null && el.innerText.trim()) ? el.innerText.trim().slice(0, 160) : undefined;
+    })();
+
+    return {
+      labType: 'Solubility Curves & Crystallization',
+      practicalTitle: sc.title || 'Solubility Practical',
+      solute: saltModel.name || state.solute,
+      saltMass: `${Number(state.mass || 0).toFixed(2)} g`,
+      waterVolume: `${Number(state.volume || 0).toFixed(1)} cm³`,
+      solutionTemp: `${Number(state.temp || 0).toFixed(1)} °C`,
+      burnerMode: state.burnerMode,
+      coolingMode: state.coolingMode,
+      crystTemp: state.crystTemp ? `${Number(state.crystTemp).toFixed(1)} °C` : undefined,
+      activeStep: sc.modeType ? `Mode: ${sc.modeType}` : undefined,
+      recordedTrials: trialsSummary,
+      lastErrorOrFeedback: lastAlert
+    };
+  };
+
+  if (typeof window !== 'undefined') {
+    window.VLK = window.VLK || {};
+    if (typeof window.VLK.registerLabContext === 'function') {
+      window.VLK.registerLabContext(getSolubilityContext);
+    } else {
+      window.VLK._pendingContextProvider = getSolubilityContext;
+    }
+  }
+
   return {
     init,
     applyScenario,

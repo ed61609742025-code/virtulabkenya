@@ -83,6 +83,22 @@ function formatLabContext(context = {}) {
     lines.push(`- Confirmatory Tests: ${context.testsPerformed.join('; ')}`);
   }
   if (context.selectedFunctionalGroup) lines.push(`- Deduced Functional Group: ${context.selectedFunctionalGroup}`);
+  if (context.activeExperiment) lines.push(`- Active Kinetics Experiment: ${context.activeExperiment}`);
+  if (context.reactionConditions) lines.push(`- Reaction Conditions: ${context.reactionConditions}`);
+  if (context.reactionProgress) lines.push(`- Reaction Progress: ${context.reactionProgress}`);
+  if (context.elapsedTime) lines.push(`- Elapsed Timer: ${context.elapsedTime}`);
+  if (context.category) lines.push(`- Practical Category: ${context.category}`);
+  if (context.initialTemp) lines.push(`- Initial Temperature: ${context.initialTemp}`);
+  if (context.currentTemp) lines.push(`- Current Temperature: ${context.currentTemp}`);
+  if (context.tempChange) lines.push(`- Temperature Change (ΔT): ${context.tempChange}`);
+  if (context.thermalStatus) lines.push(`- Thermal Apparatus State: ${context.thermalStatus}`);
+  if (context.solute) lines.push(`- Solute Salt: ${context.solute}`);
+  if (context.saltMass) lines.push(`- Solute Mass: ${context.saltMass}`);
+  if (context.waterVolume) lines.push(`- Water Volume: ${context.waterVolume}`);
+  if (context.solutionTemp) lines.push(`- Solution Temperature: ${context.solutionTemp}`);
+  if (context.burnerMode) lines.push(`- Burner State: ${context.burnerMode}`);
+  if (context.coolingMode) lines.push(`- Cooling State: ${context.coolingMode}`);
+  if (context.crystTemp) lines.push(`- Crystallization Temperature: ${context.crystTemp}`);
   if (context.activeStep || context.stage) {
     lines.push(`- Current Step / Stage: ${context.activeStep || context.stage}`);
   }

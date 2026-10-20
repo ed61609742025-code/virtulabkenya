@@ -205,6 +205,7 @@ const RatesEngine = (function () {
   function setExperiment(expName) {
     stopSimulation();
     state.currentExp = expName;
+    updateWorkflowStepper(0);
 
     // Update Tab UI
     document.querySelectorAll('.rate-exp-tab').forEach(tab => {
@@ -293,6 +294,7 @@ const RatesEngine = (function () {
   // SIMULATION TIMING & RUN LOOP
   // ══════════════════════════════════════════════════════════
   function startSimulation() {
+    updateWorkflowStepper(2);
     if (state.isRunning) return;
     state.isRunning = true;
 
@@ -462,6 +464,47 @@ const RatesEngine = (function () {
   function updateHUD() {
     const timeVal = document.getElementById('rateHudTime');
     if (timeVal) timeVal.textContent = state.timer.toFixed(1) + ' s';
+
+    // Update Telemetry Panel
+    const statusBadge = document.getElementById('rateTelemetryStatus');
+    const statusText = document.getElementById('rateTelemetryStateText');
+    if (statusBadge && statusText) {
+      if (state.isRunning) {
+        statusBadge.className = 'rate-status-badge active';
+        statusBadge.textContent = 'RUNNING';
+        statusText.textContent = 'Reaction in Progress • Timing';
+      } else if (state.timer > 0) {
+        statusBadge.className = 'rate-status-badge complete';
+        statusBadge.textContent = 'COMPLETE';
+        statusText.textContent = 'Obscuration / Endpoint Reached';
+      } else {
+        statusBadge.className = 'rate-status-badge idle';
+        statusBadge.textContent = 'READY';
+        statusText.textContent = 'Awaiting Trigger';
+      }
+    }
+
+    const turbPct = document.getElementById('rateTurbidityPct');
+    const turbFill = document.getElementById('rateTurbidityFill');
+    if (turbPct && turbFill) {
+      const pctVal = state.currentExp === 'cross' 
+        ? Math.round(state.cross.turbidity * 100)
+        : (state.currentExp === 'syringe' 
+            ? Math.min(100, Math.round((state.syringe.currentVol / (state.syringe.maxVol || 50)) * 100))
+            : Math.min(100, Math.round(state.timer * 2)));
+      turbPct.textContent = pctVal + '%';
+      turbFill.style.width = pctVal + '%';
+    }
+
+    const instantVal = document.getElementById('rateInstantVal');
+    if (instantVal) {
+      if (state.timer > 0) {
+        const rateCalc = 1 / Math.max(0.1, state.timer);
+        instantVal.textContent = rateCalc.toFixed(4);
+      } else {
+        instantVal.textContent = '0.0000';
+      }
+    }
 
     const metricVal = document.getElementById('rateHudMetric');
     if (metricVal) {
@@ -660,6 +703,7 @@ const RatesEngine = (function () {
   // RECORDING READINGS & KNEC TABLE RENDERING
   // ══════════════════════════════════════════════════════════
   function recordReading() {
+    updateWorkflowStepper(3);
     if (state.currentExp === 'cross') {
       const time = state.cross.disappeared ? state.cross.disappearTime : state.timer;
       if (time <= 0.5) return;
@@ -1348,6 +1392,7 @@ const RatesEngine = (function () {
   }
 
   function toggleTangent() {
+    updateWorkflowStepper(4);
     state.tangent.active = !state.tangent.active;
     const chip = document.getElementById('btnTangentTool');
     if (chip) chip.classList.toggle('active', state.tangent.active);
@@ -1557,6 +1602,7 @@ const RatesEngine = (function () {
   }
 
   function gradeKnecWorksheet() {
+    updateWorkflowStepper(5);
     let tableScore = 0.0;
     let graphScore = 0.0;
     let calcScore = 0.0;
@@ -1744,7 +1790,65 @@ const RatesEngine = (function () {
       return (el && el.offsetParent !== null && el.innerText.trim()) ? el.innerText.trim().slice(0, 160) : undefined;
     })();
 
-    return {
+    
+  function jumpToStep(stepIdx) {
+    updateWorkflowStepper(stepIdx);
+    if (stepIdx === 0) {
+      document.getElementById('rateScenarioStrip')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else if (stepIdx === 1) {
+      document.querySelector('.bench-left-wing')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else if (stepIdx === 2) {
+      const btn = document.getElementById('btnStartSim');
+      if (btn) {
+        btn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        btn.focus();
+      }
+    } else if (stepIdx === 3) {
+      document.getElementById('rateTableCard')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else if (stepIdx === 4) {
+      document.getElementById('rateGraphCard')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else if (stepIdx === 5) {
+      document.getElementById('knecExamCard')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  function updateWorkflowStepper(forcedStep) {
+    if (typeof forcedStep === 'number') currentWorkflowStep = forcedStep;
+    const badge = document.getElementById('rateStepBadge');
+    const fill = document.getElementById('rateProgressFill');
+
+    const stepLabels = [
+      'Step 1 of 6: Select Experiment & Reagents',
+      'Step 2 of 6: Configure Volumes & Conditions',
+      'Step 3 of 6: Trigger Reaction & Stopwatch',
+      'Step 4 of 6: Record Obscuration Time / Gas Vol',
+      'Step 5 of 6: Plot KNEC Rate Curve & Tangent',
+      'Step 6 of 6: Evaluate Questions & Grade (15M)'
+    ];
+
+    if (badge && stepLabels[currentWorkflowStep]) {
+      badge.textContent = stepLabels[currentWorkflowStep];
+    }
+    if (fill) {
+      fill.style.width = Math.round(((currentWorkflowStep + 1) / 6) * 100) + '%';
+    }
+
+    for (let i = 0; i < 6; i++) {
+      const stepEl = document.getElementById('rateWfStep' + i);
+      if (stepEl) {
+        if (i < currentWorkflowStep) {
+          stepEl.className = 'workflow-step-item completed';
+        } else if (i === currentWorkflowStep) {
+          stepEl.className = 'workflow-step-item active';
+        } else {
+          stepEl.className = 'workflow-step-item upcoming';
+        }
+      }
+    }
+  }
+
+
+  return {
       labType: 'Reaction Rates & Chemical Kinetics',
       practicalTitle: ratesExpNames[state.currentExp] || `Kinetics Experiment (${state.currentExp})`,
       activeExperiment: state.currentExp,

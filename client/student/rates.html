@@ -1,32 +1,24 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Reaction Rates & Chemical Kinetics (KCSE Paper 3) — VirtuLab Kenya</title>
+  <title>Reaction Rates &amp; Chemical Kinetics (KCSE Paper 3) — VirtuLab Kenya</title>
   <meta name="description" content="Simulate KNEC KCSE Chemistry Paper 3 reaction rate practicals: Disappearing cross (Na2S2O3 + HCl), gas syringe kinetics, mass loss, catalysts, and collision theory.">
   <script src="/shared/auth-guard.js"></script>
   <script>
-    // Ensure signature KNEC KCSE white academic workstation is active by default
-    var t = localStorage.getItem('vlk_theme');
-    if (!localStorage.getItem('vlk_practical_white_init')) {
-      t = 'light';
-      localStorage.setItem('vlk_theme', 'light');
-      localStorage.setItem('vlk_practical_white_init', 'true');
-    } else if (!t) {
-      t = 'light';
-    }
+    var t = localStorage.getItem('vlk_theme') || 'dark';
     document.documentElement.setAttribute('data-theme', t);
     if (window.VLKAuthGuard) {
       VLKAuthGuard.guardPage('student');
     }
-    if (window.location.search.includes('embedded=1') || window.location.search.includes('embed=true')) {
+    if (window.location.search.includes('embed=true') || window.location.search.includes('embedded=1')) {
       const style = document.createElement('style');
-      style.innerHTML = '.top-navbar, .academic-top-header, .candidate-top-ribbon { display: none !important; } body { padding-top: 0 !important; margin: 0 !important; } .rate-page-wrap { padding-top: 10px !important; }';
+      style.innerHTML = '.top-navbar, .candidate-top-ribbon, .academic-top-header { display: none !important; } body { padding-top: 0 !important; margin: 0 !important; } .rate-page-wrap { padding-top: 10px !important; }';
       document.head.appendChild(style);
     }
   </script>
-  <meta name="theme-color" content="#F6F3EE">
+  <meta name="theme-color" content="#090E17">
   <link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
   <link rel="manifest" href="/manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,7 +29,7 @@
   <link rel="stylesheet" href="/shared/style.css">
   <link rel="stylesheet" href="/shared/brilliant-theme.css">
   <link rel="stylesheet" href="/shared/tutorial-engine.css">
-  <link rel="stylesheet" href="/student/css/rates.css?v=152">
+  <link rel="stylesheet" href="/student/css/rates.css?v=165">
   <link rel="stylesheet" href="/shared/ai-tutor.css">
   <link rel="stylesheet" href="/shared/pwa-installer.css">
   <link rel="stylesheet" href="/shared/knec-graph-plotter.css">
@@ -48,19 +40,18 @@
        UNIFIED STICKY ACADEMIC HEADER
   ══════════════════════════════════════ -->
   <header class="academic-top-header">
-    <!-- Topbar Navigation Bar -->
-    <nav class="top-navbar">
+    <nav class="top-navbar" aria-label="Main Navigation">
       <a href="/student/home.html" class="nav-brand-academic" title="Back to Student Workstation">
         <div class="vlk-brand-logo-wrap">
           <img src="/shared/virtulab-logo.svg" alt="VirtuLab Kenya Logo" class="vlk-brand-logo-img" width="34" height="34">
         </div>
         <div style="display:flex; flex-direction:column;">
           <span class="brand-title" style="font-weight:800; font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; line-height:1.1; color:var(--heading-color);">VirtuLab</span>
-          <span class="brand-subtagline" style="font-size:0.65rem; font-family:'JetBrains Mono', monospace; font-weight:700; text-transform:uppercase; color:var(--cyan-accent); letter-spacing:0.04em;">Reaction Rates Bench</span>
+          <span class="brand-subtagline" style="font-size:0.65rem; font-family:'JetBrains Mono', monospace; font-weight:700; text-transform:uppercase; color:var(--rate-amber); letter-spacing:0.04em;">Reaction Rates Bench</span>
         </div>
       </a>
 
-      <!-- Desktop Workbench Switcher (Hidden on Mobile) -->
+      <!-- Desktop Workbench Switcher -->
       <div class="nav-modules-pill">
         <a href="lab.html" class="theme-btn-chip"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg> Titration</a>
         <a href="qualitative.html" class="theme-btn-chip"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18h8M3 22h18M14 22a7 7 0 1 0 0-14h-1M9 14h2M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2M12 6V3a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3"/></svg> Qualitative</a>
@@ -74,32 +65,39 @@
       <div class="nav-actions">
         <!-- Practice / Exam Toggle -->
         <div class="theme-toggle-group">
-          <button type="button" class="theme-btn-chip active" id="btnModePractice" onclick="RatesEngine.setStudyMode('practice')" style="display:inline-flex; align-items:center; gap:4px;">
-            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> Practice
-          </button>
-          <button type="button" class="theme-btn-chip" id="btnModeExam" onclick="RatesEngine.setStudyMode('exam')" style="display:inline-flex; align-items:center; gap:4px;">
-            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg> Exam
-          </button>
+          <button type="button" class="theme-btn-chip active" id="btnModePractice" onclick="RatesEngine.setStudyMode('practice')">Practice</button>
+          <button type="button" class="theme-btn-chip" id="btnModeExam" onclick="RatesEngine.setStudyMode('exam')">Exam Mode</button>
         </div>
 
+        <!-- Session Timer Badge -->
+        <div class="session-timer-badge" id="sessionTimerBadge" title="Continuous Lab Session Timer">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span id="sessionTimerText" class="tabular-nums">00:00</span>
+        </div>
+
+        <!-- Quick Theme Toggle -->
+        <button type="button" class="theme-btn-chip" id="btnQuickThemeToggle" onclick="toggleQuickTheme()" title="Toggle Light / Dark Workbench Theme" style="padding:4px 8px; font-size:0.75rem; display:inline-flex; align-items:center; gap:4px;">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg> Dark
+        </button>
+
         <!-- Guided Tutorial Button -->
-        <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm" onclick="TutorialEngine.start('rates')" style="padding:4px 8px; font-size:0.75rem; white-space:nowrap; display:inline-flex; align-items:center; gap:4px;">
-          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg> <span class="btn-text-full">Guided Tutorial</span><span class="btn-text-short">Tutorial</span>
+        <button type="button" class="theme-btn-chip" onclick="window.TutorialEngine &amp;&amp; window.TutorialEngine.start()" title="Interactive Kinetics Step-by-Step Tutorial" style="padding:4px 8px; font-size:0.75rem; display:inline-flex; align-items:center; gap:4px;">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg> <span class="btn-text-full">Tutorial</span>
         </button>
 
         <!-- Theory & Kinetics Revision Link -->
         <a href="rates_theory.html" class="theme-btn-chip" title="Open Reaction Rates &amp; Collision Theory Revision Guide" style="padding:4px 8px; font-size:0.75rem; text-decoration:none; display:inline-flex; align-items:center; gap:4px;">
-          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> <span class="btn-text-full">Theory Guide</span><span class="btn-text-short">Theory</span>
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> <span class="btn-text-full">Theory</span>
         </a>
 
         <!-- Diagnostic Drills Button -->
-        <button type="button" class="theme-btn-chip" onclick="window.KnecRemediation && window.KnecRemediation.openWorkbenchDrillsMenu('rates')" title="Kinetics &amp; Energetics Diagnostic Sprint" style="padding:4px 8px; font-size:0.75rem; border:1px solid rgba(244,63,94,0.35); background:rgba(244,63,94,0.1); color:#FB7185; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
-          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> <span class="btn-text-full">Diagnostic Drills</span>
+        <button type="button" class="theme-btn-chip" onclick="window.KnecRemediation &amp;&amp; window.KnecRemediation.openWorkbenchDrillsMenu('rates')" title="Kinetics &amp; Energetics Diagnostic Sprint" style="padding:4px 8px; font-size:0.75rem; border:1px solid rgba(244,63,94,0.35); background:rgba(244,63,94,0.1); color:#FB7185; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="6" r="6"/><circle cx="12" cy="2" r="2"/></svg> <span class="btn-text-full">Drills</span>
         </button>
 
         <!-- Reagent Safety SDS Button -->
         <button type="button" class="nav-btn nav-btn-safety" onclick="openSafetyModal()" title="View Chemical Safety Data Sheets" style="padding:4px 8px; font-size:0.75rem; display:inline-flex; align-items:center; gap:4px;">
-          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> <span class="btn-text-full">SDS Hazards</span><span class="btn-text-short">SDS</span>
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> <span class="btn-text-full">SDS</span>
         </button>
 
         <!-- Settings Dropdown -->
@@ -112,7 +110,7 @@
             <!-- Sound Toggle Row -->
             <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
               <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Sound Effects</span>
-              <button type="button" id="soundToggleBtnRates" onclick="RatesEngine.toggleSound()" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border); display:inline-flex; align-items:center; gap:5px;">
+              <button type="button" id="soundToggleBtn" onclick="RatesEngine.toggleSound()" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border); display:inline-flex; align-items:center; gap:5px;">
                 <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg> Sound ON
               </button>
             </div>
@@ -143,6 +141,20 @@
         </a>
       </div>
     </nav>
+
+    <!-- KNEC Examination Sub-Bar -->
+    <div class="knec-exam-subbar" aria-label="Examination Details">
+      <div class="knec-candidate-meta">
+        <span class="knec-tag-pill">KNEC PAPER 233/3</span>
+        <span class="knec-q-badge">QUESTION 2 (15 MARKS)</span>
+        <span class="knec-cand-name" id="knecCandidateName">CANDIDATE: PRACTICE MODE</span>
+        <span class="knec-index-num" id="knecCandidateIndex">INDEX: 00000000/001</span>
+      </div>
+      <div class="knec-live-status-group">
+        <span class="knec-status-dot pulse" id="knecLiveStatusDot"></span>
+        <span class="knec-status-label" id="knecLiveStatusText">APPARATUS READY • OBSCURATION SENSOR CALIBRATED</span>
+      </div>
+    </div>
   </header>
 
   <!-- ══════════════════════════════════════
@@ -153,253 +165,352 @@
     <!-- Interactive Step-by-Step Tutorial Container -->
     <div id="tutorialDrawer" style="display:none; max-width:1300px; margin:0 auto 16px auto;"></div>
 
-    <!-- Hero Banner & Syllabus Badge -->
-    <div class="rate-hero-banner">
-      <div class="rate-hero-left">
-        <div class="rate-hero-badge-icon" style="display:flex; align-items:center; justify-content:center;">
-          <svg class="vlk-icon" style="width:24px; height:24px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        </div>
-        <div>
-          <h1 class="rate-hero-title">Rates of Reaction &amp; Chemical Kinetics</h1>
-          <p class="rate-hero-subtitle">KNEC KCSE Form 4 Chemistry Topic 1 • Quantitative Practical Investigation</p>
-        </div>
-      </div>
-      <div style="display:flex; gap:8px; align-items:center;">
-        <span class="rate-stage-chip" id="rateStageChip">Na₂S₂O₃ + HCl Precipitation</span>
-      </div>
-    </div>
-
     <!-- Prescribed Continuous Assessment Banner (Shown when assignmentId is present) -->
-    <div id="assignmentHeaderBanner" style="display:none; background:rgba(6,182,212,0.15); border:1.5px solid var(--cyan-accent); border-radius:12px; padding:12px 18px; margin-bottom:16px; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+    <div id="assignmentHeaderBanner" style="display:none; background:rgba(217,119,6,0.12); border:1.5px solid var(--rate-amber); border-radius:12px; padding:12px 18px; margin-bottom:16px; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
       <div style="display:flex; align-items:center; gap:10px;">
-        <svg class="vlk-icon" style="width:22px; height:22px; color:var(--cyan-accent);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg>
+        <svg class="vlk-icon" style="width:22px; height:22px; color:var(--rate-amber);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg>
         <div>
-          <div style="font-size:0.75rem; font-weight:800; text-transform:uppercase; color:var(--cyan-accent); letter-spacing:0.04em;">PRESCRIBED CONTINUOUS ASSESSMENT ASSIGNMENT</div>
+          <div style="font-size:0.75rem; font-weight:800; text-transform:uppercase; color:var(--rate-amber); letter-spacing:0.04em;">PRESCRIBED CONTINUOUS ASSESSMENT ASSIGNMENT</div>
           <div id="assignBannerTitle" style="font-size:0.95rem; font-weight:800; color:var(--heading-color);">Reaction Kinetics &amp; Rates of Reaction Practical Assignment</div>
         </div>
       </div>
       <span style="font-size:0.76rem; font-family:var(--font-mono); font-weight:700; background:var(--card-bg); padding:4px 10px; border-radius:6px; border:1px solid var(--card-border);" id="assignBannerDue">Active Practical Assignment</span>
     </div>
 
-    <!-- 5-Experiment Segmented Switcher -->
-    <div class="rate-exp-nav-wrap">
-      <div class="rate-experiment-tabs">
-        <button class="rate-exp-tab active" data-exp="cross" onclick="RatesEngine.setExperiment('cross')">
-          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2v17.5c0 1.4-1.1 2.5-2.5 2.5s-2.5-1.1-2.5-2.5V2"/><path d="M8.5 2h7"/><path d="M14.5 16h-5"/></svg> 1. Disappearing Cross
+    <!-- Interactive Practical Workflow Stepper & Breadcrumbs -->
+    <nav class="workflow-stepper-card" id="ratesWorkflowStepper" aria-label="Practical Examination Workflow">
+      <div class="workflow-stepper-top">
+        <div class="workflow-title-wrap">
+          <span class="workflow-title-label" style="display:flex;align-items:center;gap:6px;">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg> PRACTICAL WORKFLOW
+          </span>
+          <span id="rateStepBadge" class="workflow-step-badge">Step 1 of 6: Select Experiment &amp; Reagents</span>
+        </div>
+        <div class="workflow-jump-hint" id="rateProgressHint" style="display:flex;align-items:center;gap:6px;">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>Progress auto-advances on practical actions</span>
+        </div>
+      </div>
+      
+      <div class="workflow-stepper-track" role="list">
+        <button type="button" class="workflow-step-item active" id="rateWfStep0" onclick="RatesEngine.jumpToStep(0)" role="listitem" aria-current="step" title="Step 1: Select Kinetic Experiment System">
+          <span class="step-num">1</span>
+          <span class="step-info"><span class="step-name">System</span><span class="step-sub">Select Exp</span></span>
         </button>
-        <button class="rate-exp-tab" data-exp="syringe" onclick="RatesEngine.setExperiment('syringe')">
-          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg> 2. Gas Syringe (CaCO₃)
+        <button type="button" class="workflow-step-item upcoming" id="rateWfStep1" onclick="RatesEngine.jumpToStep(1)" role="listitem" title="Step 2: Configure Reagent Volumes & Conditions">
+          <span class="step-num">2</span>
+          <span class="step-info"><span class="step-name">Reagents</span><span class="step-sub">Volumes &amp; Temp</span></span>
         </button>
-        <button class="rate-exp-tab" data-exp="mass" onclick="RatesEngine.setExperiment('mass')">
-          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="16" y1="14" x2="16" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg> 3. Loss in Mass
+        <button type="button" class="workflow-step-item upcoming" id="rateWfStep2" onclick="RatesEngine.jumpToStep(2)" role="listitem" title="Step 3: Trigger Reaction & Synchronized Precision Stopwatch">
+          <span class="step-num">3</span>
+          <span class="step-info"><span class="step-name">Trigger</span><span class="step-sub">Mix &amp; Timer</span></span>
         </button>
-        <button class="rate-exp-tab" data-exp="catalyst" onclick="RatesEngine.setExperiment('catalyst')">
-          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A3.5 3.5 0 0 0 12 18a3.5 3.5 0 0 0 3.5-3.5c0-2-1.5-3.5-2.5-5-.5-1-1-2.5-1-3.5 0 0-2.5 2.5-2.5 5 0 1-.5 1.5-1 2.5z"/><path d="M12 2c5 4.5 7 9 7 13a7 7 0 1 1-14 0c0-4 3-7.5 7-13z"/></svg> 4. Catalysts (H₂O₂)
+        <button type="button" class="workflow-step-item upcoming" id="rateWfStep3" onclick="RatesEngine.jumpToStep(3)" role="listitem" title="Step 4: Record Obscuration Time / Gas Volume">
+          <span class="step-num">4</span>
+          <span class="step-info"><span class="step-name">Record</span><span class="step-sub">Log Readings</span></span>
         </button>
-        <button class="rate-exp-tab" data-exp="collision" onclick="RatesEngine.setExperiment('collision')">
-          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12a15.3 15.3 0 0 1 10-4 15.3 15.3 0 0 1 10 4 15.3 15.3 0 0 1-10 4 15.3 15.3 0 0 1-10-4z"/></svg> 5. Collision Theory
+        <button type="button" class="workflow-step-item upcoming" id="rateWfStep4" onclick="RatesEngine.jumpToStep(4)" role="listitem" title="Step 5: Construct KNEC Rate Curve & Tangent Tool">
+          <span class="step-num">5</span>
+          <span class="step-info"><span class="step-name">Graph</span><span class="step-sub">Plot &amp; Slope</span></span>
+        </button>
+        <button type="button" class="workflow-step-item upcoming" id="rateWfStep5" onclick="RatesEngine.jumpToStep(5)" role="listitem" title="Step 6: Answer KNEC Questions & Grade (15 Marks)">
+          <span class="step-num">6</span>
+          <span class="step-info"><span class="step-name">Evaluate</span><span class="step-sub">Grade 15M</span></span>
+        </button>
+      </div>
+      <div class="workflow-stepper-progress" aria-hidden="true">
+        <div class="workflow-progress-fill" id="rateProgressFill" style="width:16.6%;"></div>
+      </div>
+    </nav>
+
+    <!-- 5-Experiment Segmented Switcher Strip -->
+    <div class="rate-exp-nav-wrap" id="rateScenarioStrip">
+      <div class="rate-exp-tabs-container" role="tablist" aria-label="Kinetics Practical Systems">
+        <button class="rate-exp-tab active" data-exp="cross" onclick="RatesEngine.setExperiment('cross')" role="tab" aria-selected="true">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="12" y1="8" x2="12" y2="16"/></svg> 1. Disappearing Cross (Na₂S₂O₃ + HCl)
+        </button>
+        <button class="rate-exp-tab" data-exp="syringe" onclick="RatesEngine.setExperiment('syringe')" role="tab" aria-selected="false">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg> 2. Gas Syringe (CaCO₃ / Mg)
+        </button>
+        <button class="rate-exp-tab" data-exp="mass" onclick="RatesEngine.setExperiment('mass')" role="tab" aria-selected="false">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="16" y1="14" x2="16" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg> 3. Loss in Mass Balance
+        </button>
+        <button class="rate-exp-tab" data-exp="catalyst" onclick="RatesEngine.setExperiment('catalyst')" role="tab" aria-selected="false">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A3.5 3.5 0 0 0 12 18a3.5 3.5 0 0 0 3.5-3.5c0-2-1.5-3.5-2.5-5-.5-1-1-2.5-1-3.5 0 0-2.5 2.5-2.5 5 0 1-.5 1.5-1 2.5z"/><path d="M12 2c5 4.5 7 9 7 13a7 7 0 1 1-14 0c0-4 3-7.5 7-13z"/></svg> 4. Catalysts (H₂O₂ Decomposition)
+        </button>
+        <button class="rate-exp-tab" data-exp="collision" onclick="RatesEngine.setExperiment('collision')" role="tab" aria-selected="false">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12a15.3 15.3 0 0 1 10-4 15.3 15.3 0 0 1 10 4 15.3 15.3 0 0 1-10 4 15.3 15.3 0 0 1-10-4z"/></svg> 5. 2D Collision Theory
         </button>
       </div>
     </div>
 
-    <!-- 2-Column Workbench Grid -->
-    <div class="rate-workbench-grid">
+    <!-- ══════════════════════════════════════
+         FLANKED 3-COLUMN APPARATUS WORKBENCH
+    ══════════════════════════════════════ -->
+    <div class="bench-apparatus-container" id="ratesWorkbenchRig">
+      <div class="bench-layout-grid">
 
-      <!-- Left Column: Simulation Viewport & Apparatus -->
-      <div class="rate-apparatus-card">
-        <div class="rate-card-header">
-          <h2 class="rate-card-title"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18h8M3 22h18M14 22a7 7 0 1 0 0-14h-1M9 14h2M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2M12 6V3a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3"/></svg> Real-Time Kinetic Apparatus</h2>
-          <div style="display:flex; gap:6px;">
-            <button class="theme-btn-chip speed-btn-chip active" data-speed="1" onclick="RatesEngine.setSimSpeed(1)">1x</button>
-            <button class="theme-btn-chip speed-btn-chip" data-speed="2" onclick="RatesEngine.setSimSpeed(2)">2x</button>
-            <button class="theme-btn-chip speed-btn-chip" data-speed="5" onclick="RatesEngine.setSimSpeed(5)">5x</button>
+        <!-- ── COLUMN 1: LEFT WING — REAGENTS & PARAMETERS ── -->
+        <aside class="bench-left-wing" aria-label="Reagents Shelf and Control Parameters">
+          <div class="bench-wing-title">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg> REAGENT PARAMETERS
           </div>
-        </div>
 
-        <!-- Simulation Viewport -->
-        <div class="rate-sim-viewport">
-          <canvas id="rateSimCanvas" class="rate-sim-canvas"></canvas>
-
-          <!-- Floating HUD Pill -->
-          <div class="rate-hud-overlay">
-            <div class="rate-hud-pill">
-              <span style="display:inline-flex; align-items:center; gap:4px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Time:</span>
-              <span class="rate-hud-val tabular-nums" id="rateHudTime">0.0 s</span>
+          <!-- SECTION 1: EXP 1 DISAPPEARING CROSS CONTROLS -->
+          <div id="ctrlSecCross" class="rate-ctrl-section">
+            <div class="rate-ctrl-sec-header">
+              <span class="rate-sec-num">1</span>
+              <span class="rate-sec-title">Thiosulfate Dilution &amp; Temp</span>
             </div>
-            <div class="rate-hud-pill">
-              <span id="rateHudMetric">Turbidity: 0%</span>
-            </div>
-          </div>
 
-          <!-- Disappearing Cross Inset Box (Exp 1) -->
-          <div class="rate-cross-box" id="rateCrossBox">
-            <span class="rate-cross-label">Top-Down View</span>
-            <div class="rate-cross-graphic">
-              <div class="rate-cross-line-1"></div>
-              <div class="rate-cross-line-2"></div>
-              <div class="rate-cross-cloud-cover" id="rateCrossCloudCover"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Action Controls -->
-        <div class="rate-apparatus-actions">
-          <button id="btnStartSim" class="rate-btn rate-btn-primary" style="flex:1.5;" onclick="RatesEngine.toggleSimulation()">
-            <span style="display:inline-flex; align-items:center; gap:6px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg> Start Mixing &amp; Timer</span>
-          </button>
-          <button class="rate-btn rate-btn-record" style="flex:1;" onclick="RatesEngine.recordReading()">
-            <span style="display:inline-flex; align-items:center; gap:6px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Record Reading</span>
-          </button>
-          <button class="rate-btn" style="flex:0.8;" onclick="RatesEngine.resetCurrentExperiment()">
-            <span style="display:inline-flex; align-items:center; gap:6px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Reset</span>
-          </button>
-        </div>
-        </div>
-      </div>
-
-      <!-- Right Column: Interactive Controls & Parameters -->
-      <div class="rate-controls-card">
-        
-        <!-- SECTION 1: EXP 1 DISAPPEARING CROSS CONTROLS -->
-        <div id="ctrlSecCross" class="rate-ctrl-section">
-          <div class="rate-ctrl-sec-header">
-            <span class="rate-sec-num">1</span>
-            <span class="rate-sec-title">Thiosulfate Dilution & Temperature</span>
-          </div>
-
-          <div class="rate-param-row">
-            <div class="rate-slider-group">
-              <div class="rate-slider-header">
-                <span>Vol Na₂S₂O₃</span>
-                <span id="crossThioVal" class="rate-slider-val">50.0 cm³</span>
+            <div class="rate-param-row">
+              <div class="rate-slider-group">
+                <div class="rate-slider-header">
+                  <span>Vol Na₂S₂O₃</span>
+                  <span id="crossThioVal" class="rate-slider-val tabular-nums">50.0 cm³</span>
+                </div>
+                <input type="range" class="rate-slider" min="10" max="50" step="10" value="50" oninput="RatesEngine.setVolumeThio(this.value)" aria-label="Volume of Sodium Thiosulfate">
               </div>
-              <input type="range" class="rate-slider" min="10" max="50" step="10" value="50" oninput="RatesEngine.setVolumeThio(this.value)">
+
+              <div class="rate-slider-group">
+                <div class="rate-slider-header">
+                  <span>Distilled Water</span>
+                  <span id="crossWaterVal" class="rate-slider-val tabular-nums">0.0 cm³</span>
+                </div>
+                <div class="rate-calc-chip">
+                  <svg class="vlk-icon" style="color:var(--cyan-accent);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg> <span id="crossWaterChipText" class="tabular-nums">0.0 cm³ (Auto: 50 − V)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="rate-slider-group" style="margin-top:12px;">
+              <div class="rate-slider-header">
+                <span>Reaction Temperature</span>
+                <span id="crossTempVal" class="rate-slider-val tabular-nums">25 °C</span>
+              </div>
+              <input type="range" class="rate-slider" min="20" max="60" step="5" value="25" oninput="RatesEngine.setCrossTemp(this.value)" aria-label="Reaction Temperature">
+            </div>
+          </div>
+
+          <!-- SECTION 2: EXP 2 GAS SYRINGE CONTROLS -->
+          <div id="ctrlSecSyringe" class="rate-ctrl-section" style="display:none;">
+            <div class="rate-ctrl-sec-header">
+              <span class="rate-sec-num">2</span>
+              <span class="rate-sec-title">Gas Evolution Parameters</span>
+            </div>
+
+            <div style="margin-bottom:10px;">
+              <label class="rate-ctrl-sublabel">Reactant Solid</label>
+              <select class="rate-select" onchange="RatesEngine.setSyringeReactant(this.value)" aria-label="Select Gas Syringe Reactant">
+                <option value="CaCO3">Calcium Carbonate (CaCO₃ + 2HCl → CO₂)</option>
+                <option value="Mg">Magnesium Ribbon (Mg + 2HCl → H₂)</option>
+              </select>
             </div>
 
             <div class="rate-slider-group">
               <div class="rate-slider-header">
-                <span>Distilled Water</span>
-                <span id="crossWaterVal" class="rate-slider-val">0.0 cm³</span>
+                <span>Hydrochloric Acid Conc</span>
+                <span id="syringeAcidConcVal" class="rate-slider-val tabular-nums">2.0 M</span>
               </div>
-              <div class="rate-calc-chip">
-                <svg class="vlk-icon" style="color:var(--cyan-accent);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg> <span id="crossWaterChipText" class="tabular-nums">0.0 cm³ (Auto: 50 − V)</span>
-              </div>
+              <input type="range" class="rate-slider" min="0.5" max="3.0" step="0.5" value="2.0" oninput="RatesEngine.setSyringeAcidConc(this.value)" aria-label="Acid Concentration">
             </div>
           </div>
 
-          <div class="rate-slider-group" style="margin-top:12px;">
-            <div class="rate-slider-header">
-              <span>Reaction Temperature</span>
-              <span id="crossTempVal" class="rate-slider-val tabular-nums">25 °C</span>
+          <!-- SECTION 3: EXP 3 MASS LOSS CONTROLS -->
+          <div id="ctrlSecMass" class="rate-ctrl-section" style="display:none;">
+            <div class="rate-ctrl-sec-header">
+              <span class="rate-sec-num">3</span>
+              <span class="rate-sec-title">Surface Area / Particle Size</span>
             </div>
-            <input type="range" class="rate-slider" min="20" max="60" step="5" value="25" oninput="RatesEngine.setCrossTemp(this.value)">
-          </div>
-        </div>
 
-        <!-- SECTION 2: EXP 2 GAS SYRINGE CONTROLS -->
-        <div id="ctrlSecSyringe" class="rate-ctrl-section" style="display:none;">
-          <div class="rate-ctrl-sec-header">
-            <span class="rate-sec-num">2</span>
-            <span class="rate-sec-title">Gas Evolution Parameters</span>
-          </div>
-
-          <div style="margin-bottom:10px;">
-            <select class="rate-select" onchange="RatesEngine.setSyringeReactant(this.value)">
-              <option value="CaCO3">Calcium Carbonate (CaCO₃ + 2HCl → CO₂)</option>
-              <option value="Mg">Magnesium Ribbon (Mg + 2HCl → H₂)</option>
-            </select>
-          </div>
-
-          <div class="rate-slider-group">
-            <div class="rate-slider-header">
-              <span>Hydrochloric Acid Concentration</span>
-              <span id="syringeAcidConcVal" class="rate-slider-val tabular-nums">2.0 M</span>
+            <div class="rate-btn-group" style="margin-top:8px;">
+              <button type="button" class="rate-btn mass-form-btn active" data-form="CHIPS" style="flex:1;" onclick="RatesEngine.setMassLossForm('CHIPS')">Large Chips</button>
+              <button type="button" class="rate-btn mass-form-btn" data-form="GRANULES" style="flex:1;" onclick="RatesEngine.setMassLossForm('GRANULES')">Granules</button>
+              <button type="button" class="rate-btn mass-form-btn" data-form="POWDER" style="flex:1;" onclick="RatesEngine.setMassLossForm('POWDER')">Fine Powder</button>
             </div>
-            <input type="range" class="rate-slider" min="0.5" max="3.0" step="0.5" value="2.0" oninput="RatesEngine.setSyringeAcidConc(this.value)">
-          </div>
-        </div>
-
-        <!-- SECTION 3: EXP 3 MASS LOSS CONTROLS -->
-        <div id="ctrlSecMass" class="rate-ctrl-section" style="display:none;">
-          <div class="rate-ctrl-sec-header">
-            <span class="rate-sec-num">3</span>
-            <span class="rate-sec-title">Surface Area / Particle Size</span>
           </div>
 
-          <div class="rate-btn-group" style="margin-top:8px;">
-            <button class="rate-btn mass-form-btn active" data-form="CHIPS" style="flex:1;" onclick="RatesEngine.setMassLossForm('CHIPS')">Large Chips</button>
-            <button class="rate-btn mass-form-btn" data-form="GRANULES" style="flex:1;" onclick="RatesEngine.setMassLossForm('GRANULES')">Granules</button>
-            <button class="rate-btn mass-form-btn" data-form="POWDER" style="flex:1;" onclick="RatesEngine.setMassLossForm('POWDER')">Fine Powder</button>
-          </div>
-        </div>
-
-        <!-- SECTION 4: EXP 4 CATALYSTS CONTROLS -->
-        <div id="ctrlSecCatalyst" class="rate-ctrl-section" style="display:none;">
-          <div class="rate-ctrl-sec-header">
-            <span class="rate-sec-num">4</span>
-            <span class="rate-sec-title">Catalyst Selection (H₂O₂ Decomposition)</span>
-          </div>
-
-          <div>
-            <select class="rate-select" onchange="RatesEngine.setCatalyst(this.value)">
-              <option value="MnO2">Manganese(IV) Oxide (MnO₂) — Fast Black Solid</option>
-              <option value="CuO">Copper(II) Oxide (CuO) — Moderate</option>
-              <option value="Fe2O3">Iron(III) Oxide (Fe₂O₃) — Slow</option>
-              <option value="KI">Potassium Iodide (KI) — Homogeneous</option>
-              <option value="CATALASE">Catalase Enzyme (Liver / Potato extract)</option>
-              <option value="NONE">No Catalyst (Uncatalysed Control)</option>
-            </select>
-          </div>
-
-          <div class="rate-slider-group" style="margin-top:12px;">
-            <div class="rate-slider-header">
-              <span>Solution Temperature</span>
-              <span id="catalystTempVal" class="rate-slider-val tabular-nums">25 °C</span>
+          <!-- SECTION 4: EXP 4 CATALYSTS CONTROLS -->
+          <div id="ctrlSecCatalyst" class="rate-ctrl-section" style="display:none;">
+            <div class="rate-ctrl-sec-header">
+              <span class="rate-sec-num">4</span>
+              <span class="rate-sec-title">Catalyst Selection (H₂O₂ Decomposition)</span>
             </div>
-            <input type="range" class="rate-slider" min="15" max="65" step="5" value="25" oninput="RatesEngine.setCatalystTemp(this.value)">
-          </div>
-        </div>
 
-        <!-- SECTION 5: EXP 5 COLLISION THEORY CONTROLS -->
-        <div id="ctrlSecCollision" class="rate-ctrl-section" style="display:none;">
-          <div class="rate-ctrl-sec-header">
-            <span class="rate-sec-num">5</span>
-            <span class="rate-sec-title">Maxwell-Boltzmann &amp; Activation Energy</span>
-          </div>
+            <div>
+              <label class="rate-ctrl-sublabel">Catalyst Type</label>
+              <select class="rate-select" onchange="RatesEngine.setCatalyst(this.value)" aria-label="Select Catalyst">
+                <option value="MnO2">Manganese(IV) Oxide (MnO₂) — Fast Black Solid</option>
+                <option value="CuO">Copper(II) Oxide (CuO) — Moderate</option>
+                <option value="Fe2O3">Iron(III) Oxide (Fe₂O₃) — Slow</option>
+                <option value="KI">Potassium Iodide (KI) — Homogeneous</option>
+                <option value="CATALASE">Catalase Enzyme (Liver / Potato extract)</option>
+                <option value="NONE">No Catalyst (Uncatalysed Control)</option>
+              </select>
+            </div>
 
-          <div class="rate-param-row">
-            <div class="rate-slider-group">
+            <div class="rate-slider-group" style="margin-top:12px;">
               <div class="rate-slider-header">
-                <span>Temperature (K)</span>
-                <span id="collisionTempVal" class="rate-slider-val tabular-nums">300 K</span>
+                <span>Solution Temperature</span>
+                <span id="catalystTempVal" class="rate-slider-val tabular-nums">25 °C</span>
               </div>
-              <input type="range" class="rate-slider" min="250" max="500" step="25" value="300" oninput="RatesEngine.setCollisionTemp(this.value)">
-            </div>
-
-            <div class="rate-slider-group">
-              <div class="rate-slider-header">
-                <span>Activation Energy (Ea)</span>
-                <span id="collisionEaVal" class="rate-slider-val tabular-nums">45 kJ/mol</span>
-              </div>
-              <input type="range" class="rate-slider" min="20" max="80" step="5" value="45" oninput="RatesEngine.setCollisionEa(this.value)">
+              <input type="range" class="rate-slider" min="15" max="65" step="5" value="25" oninput="RatesEngine.setCatalystTemp(this.value)" aria-label="Solution Temperature">
             </div>
           </div>
 
-          <button id="btnCollisionCatalyst" class="rate-btn" style="width:100%; margin-top:10px; display:inline-flex; align-items:center; justify-content:center; gap:6px;" onclick="RatesEngine.toggleCollisionCatalyst()">
-            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Catalyst (Lower Ea Pathway)
-          </button>
-        </div>
+          <!-- SECTION 5: EXP 5 COLLISION THEORY CONTROLS -->
+          <div id="ctrlSecCollision" class="rate-ctrl-section" style="display:none;">
+            <div class="rate-ctrl-sec-header">
+              <span class="rate-sec-num">5</span>
+              <span class="rate-sec-title">Maxwell-Boltzmann &amp; Activation Energy</span>
+            </div>
+
+            <div class="rate-param-row">
+              <div class="rate-slider-group">
+                <div class="rate-slider-header">
+                  <span>Temperature (K)</span>
+                  <span id="collisionTempVal" class="rate-slider-val tabular-nums">300 K</span>
+                </div>
+                <input type="range" class="rate-slider" min="250" max="500" step="25" value="300" oninput="RatesEngine.setCollisionTemp(this.value)" aria-label="Temperature in Kelvin">
+              </div>
+
+              <div class="rate-slider-group">
+                <div class="rate-slider-header">
+                  <span>Activation Energy (Ea)</span>
+                  <span id="collisionEaVal" class="rate-slider-val tabular-nums">45 kJ/mol</span>
+                </div>
+                <input type="range" class="rate-slider" min="20" max="80" step="5" value="45" oninput="RatesEngine.setCollisionEa(this.value)" aria-label="Activation Energy">
+              </div>
+            </div>
+
+            <button type="button" id="btnCollisionCatalyst" class="rate-btn" style="width:100%; margin-top:10px; display:inline-flex; align-items:center; justify-content:center; gap:6px;" onclick="RatesEngine.toggleCollisionCatalyst()">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add Catalyst (Lower Ea Pathway)
+            </button>
+          </div>
+
+          <!-- Sim Speed Controls -->
+          <div style="margin-top:auto; padding-top:10px; border-top:1px solid var(--card-border); display:flex; align-items:center; justify-content:space-between;">
+            <span style="font-size:0.75rem; font-weight:700; color:var(--text-muted);">Simulation Speed:</span>
+            <div style="display:flex; gap:6px;">
+              <button type="button" class="theme-btn-chip speed-btn-chip active" data-speed="1" onclick="RatesEngine.setSimSpeed(1)">1x</button>
+              <button type="button" class="theme-btn-chip speed-btn-chip" data-speed="2" onclick="RatesEngine.setSimSpeed(2)">2x</button>
+              <button type="button" class="theme-btn-chip speed-btn-chip" data-speed="5" onclick="RatesEngine.setSimSpeed(5)">5x</button>
+            </div>
+          </div>
+        </aside>
+
+        <!-- ── COLUMN 2: CENTER RIG — HIGH FIDELITY SIMULATION ── -->
+        <section class="bench-center-rig" aria-label="Kinetic Reaction Rig and Simulation Viewport">
+          <div class="rate-rig-header">
+            <span class="rate-stage-chip" id="rateStageChip">Na₂S₂O₃ + HCl Precipitation</span>
+          </div>
+
+          <!-- Simulation Viewport -->
+          <div class="rate-sim-viewport" id="rateSimViewport">
+            <canvas id="rateSimCanvas" class="rate-sim-canvas" width="560" height="340"></canvas>
+
+            <!-- Floating HUD Overlay -->
+            <div class="rate-hud-overlay">
+              <div class="rate-hud-pill">
+                <span style="display:inline-flex; align-items:center; gap:4px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Time:</span>
+                <span class="rate-hud-val tabular-nums" id="rateHudTime">0.0 s</span>
+              </div>
+              <div class="rate-hud-pill">
+                <span id="rateHudMetric" class="tabular-nums">Turbidity: 0%</span>
+              </div>
+            </div>
+
+            <!-- Disappearing Cross Optical Loupe / Inset Box (Exp 1) -->
+            <div class="rate-cross-box" id="rateCrossBox" title="Top-down optical view through conical flask to black 'X'">
+              <span class="rate-cross-label">Top-Down Obscuration</span>
+              <div class="rate-cross-graphic">
+                <div class="rate-cross-line-1"></div>
+                <div class="rate-cross-line-2"></div>
+                <div class="rate-cross-cloud-cover" id="rateCrossCloudCover"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tactile Workbench Action Controls -->
+          <div class="rate-apparatus-actions">
+            <button type="button" id="btnStartSim" class="rate-btn rate-btn-primary" style="flex:1.5;" onclick="RatesEngine.toggleSimulation()">
+              <span style="display:inline-flex; align-items:center; gap:6px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg> Start Mixing &amp; Timer</span>
+            </button>
+            <button type="button" class="rate-btn rate-btn-record" style="flex:1;" onclick="RatesEngine.recordReading()">
+              <span style="display:inline-flex; align-items:center; gap:6px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Record Reading</span>
+            </button>
+            <button type="button" class="rate-btn" style="flex:0.8;" onclick="RatesEngine.resetCurrentExperiment()">
+              <span style="display:inline-flex; align-items:center; gap:6px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Reset</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- ── COLUMN 3: RIGHT WING — OBSERVATIONS & SENSORS ── -->
+        <aside class="bench-right-wing" aria-label="Reaction Telemetry and Sensors">
+          <div class="bench-wing-title">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> KINETIC TELEMETRY
+          </div>
+
+          <!-- Telemetry Live Metric Cards -->
+          <div class="rate-telemetry-card">
+            <div class="rate-telemetry-header">
+              <span class="rate-telemetry-label">REACTION STATE</span>
+              <span class="rate-status-badge idle" id="rateTelemetryStatus">READY</span>
+            </div>
+            <div class="rate-telemetry-value" id="rateTelemetryStateText">Awaiting Trigger</div>
+          </div>
+
+          <div class="rate-telemetry-card">
+            <div class="rate-telemetry-header">
+              <span class="rate-telemetry-label">COLLOIDAL TURBIDITY INDEX</span>
+              <span class="rate-telemetry-pct" id="rateTurbidityPct">0%</span>
+            </div>
+            <div class="rate-meter-track">
+              <div class="rate-meter-fill" id="rateTurbidityFill" style="width:0%;"></div>
+            </div>
+            <div class="rate-meter-legend">
+              <span>Transparent</span>
+              <span>Complete Obscuration</span>
+            </div>
+          </div>
+
+          <div class="rate-telemetry-card">
+            <div class="rate-telemetry-header">
+              <span class="rate-telemetry-label">INSTANTANEOUS RATE (dy/dx)</span>
+              <span class="rate-telemetry-sub" id="rateUnitsLabel">s⁻¹</span>
+            </div>
+            <div class="rate-telemetry-mono" id="rateInstantVal">0.0000</div>
+          </div>
+
+          <!-- Examiner Tips Prompt -->
+          <div class="examiner-tip-box" style="margin-top:auto; padding:12px; background:rgba(217,119,6,0.08); border:1.5px solid rgba(217,119,6,0.25); border-radius:10px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+              <span style="font-size:0.75rem; font-weight:800; color:var(--rate-amber); display:inline-flex; align-items:center; gap:5px;">
+                <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> KNEC EXAMINER TIP
+              </span>
+              <button type="button" class="btn-micro" onclick="openExaminerTipsModal()" title="Read KNEC Question 2 Examiner Guidelines">Read Tips</button>
+            </div>
+            <p style="font-size:0.74rem; line-height:1.4; color:var(--text-muted); margin:0;">
+              Ensure you start the stopwatch the exact moment the acid is tipped into the thiosulfate solution, and look directly from above until the cross is obscured.
+            </p>
+          </div>
+        </aside>
 
       </div>
     </div>
 
-    <!-- KNEC Table & Interactive Graph Grid -->
+    <!-- ══════════════════════════════════════
+         KNEC TABLE & INTERACTIVE GRAPH GRID
+    ══════════════════════════════════════ -->
     <div class="rate-analysis-grid">
       
-      <!-- Left: KNEC Data Table -->
-      <div class="rate-table-card">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-          <h3 style="font-size:0.95rem; font-family:var(--font-heading); margin:0;">KNEC Table 1: Experimental Readings</h3>
+      <!-- Left: KNEC Data Table Card -->
+      <div class="rate-table-card" id="rateTableCard">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; border-bottom:1px solid var(--card-border); padding-bottom:10px;">
+          <div>
+            <span style="background:var(--rate-amber); color:#FFF; padding:2px 8px; border-radius:4px; font-size:0.68rem; font-weight:800; font-family:var(--font-mono);">TABLE 1</span>
+            <h3 style="font-size:0.98rem; font-family:var(--font-heading); margin:4px 0 0 0; color:var(--heading-color);">KNEC Experimental Readings &amp; Reciprocals</h3>
+          </div>
           <span style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono); font-weight:700;">5.0 Marks</span>
         </div>
         <div class="rate-table-scroll-hint">
@@ -413,34 +524,39 @@
         </div>
       </div>
 
-      <!-- Right: Interactive SAPC Graph -->
-      <div class="rate-graph-card">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-          <h3 style="font-size:0.95rem; font-family:var(--font-heading); margin:0;">KNEC Rate Graph (SAPC Rubric)</h3>
+      <!-- Right: Interactive SAPC Graph Card -->
+      <div class="rate-graph-card" id="rateGraphCard">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; border-bottom:1px solid var(--card-border); padding-bottom:10px;">
+          <div>
+            <span style="background:var(--cyan-accent); color:#FFF; padding:2px 8px; border-radius:4px; font-size:0.68rem; font-weight:800; font-family:var(--font-mono);">SAPC RUBRIC</span>
+            <h3 style="font-size:0.98rem; font-family:var(--font-heading); margin:4px 0 0 0; color:var(--heading-color);">KNEC Reaction Rate Graph</h3>
+          </div>
           <div class="rate-graph-toolbar">
-            <button id="btnTangentTool" class="rate-tangent-chip" onclick="RatesEngine.toggleTangent()" style="display:inline-flex; align-items:center; gap:4px;">
+            <button type="button" id="btnTangentTool" class="rate-tangent-chip" onclick="RatesEngine.toggleTangent()" style="display:inline-flex; align-items:center; gap:4px;">
               <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Tangent Tool (dy/dx)
             </button>
-            <button id="btnOpenKnecPlotter" class="rate-tangent-chip" onclick="toggleKnecPlotterModal()" style="margin-left:6px; display:inline-flex; align-items:center; gap:4px;">
+            <button type="button" id="btnOpenKnecPlotter" class="rate-tangent-chip" onclick="toggleKnecPlotterModal()" style="margin-left:6px; display:inline-flex; align-items:center; gap:4px;">
               <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg> KNEC Millimeter Sheet
             </button>
           </div>
         </div>
         <div class="rate-graph-container">
-          <canvas id="rateGraphCanvas" class="rate-graph-canvas"></canvas>
+          <canvas id="rateGraphCanvas" class="rate-graph-canvas" width="560" height="340"></canvas>
         </div>
       </div>
 
     </div>
 
-    <!-- KNEC Exam Questions Worksheet -->
+    <!-- ══════════════════════════════════════
+         KNEC EXAM QUESTIONS WORKSHEET
+    ══════════════════════════════════════ -->
     <div class="rate-knec-exam-card" id="knecExamCard">
       <div class="rate-exam-card-header">
         <div>
           <span style="background:var(--rate-amber); color:#FFF; padding:3px 10px; border-radius:6px; font-size:0.7rem; font-weight:800; font-family:var(--font-mono);">KNEC PAPER 3</span>
           <h2 style="margin:4px 0 0; font-size:1.15rem; font-family:var(--font-heading); color:var(--heading-color);">Question 2: Quantitative Reaction Rates Examination (15.0 Marks)</h2>
         </div>
-        <button class="rate-btn rate-btn-primary rate-btn-grade-exam" onclick="RatesEngine.gradeKnecWorksheet()">
+        <button type="button" class="rate-btn rate-btn-primary rate-btn-grade-exam" onclick="RatesEngine.gradeKnecWorksheet()">
           ✓ Grade Worksheet (15 Marks)
         </button>
       </div>
@@ -451,7 +567,7 @@
   </main>
 
   <!-- ══════════════════════════════════════
-       MODALS: Result & Safety
+       MODALS: Result, Safety & Examiner Tips
   ══════════════════════════════════════ -->
 
   <!-- KNEC Graph Sheet Modal -->
@@ -461,7 +577,7 @@
         <h3 style="margin:0; font-family:var(--font-heading); font-size:1.15rem; font-weight:800; color:var(--heading-color, #F8FAFC); display:inline-flex; align-items:center; gap:6px;">
           <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg> Official KNEC Millimeter Graph Sheet (Reaction Kinetics)
         </h3>
-        <button class="kg-btn" onclick="toggleKnecPlotterModal()" style="font-size:0.9rem; padding:4px 12px;">✕ Close</button>
+        <button type="button" class="kg-btn" onclick="toggleKnecPlotterModal()" style="font-size:0.9rem; padding:4px 12px;">✕ Close</button>
       </div>
       <div id="knecRatesPlotterContainer"></div>
     </div>
@@ -481,46 +597,71 @@
         </div>
       </div>
 
-      <div style="margin-bottom:16px;">
+      <div style="overflow-x:auto;">
         <table class="rate-table" style="width:100%;">
           <thead>
             <tr>
-              <th>Marking Criterion</th>
-              <th style="text-align:center;">Max</th>
-              <th style="text-align:center;">Awarded</th>
+              <th>Evaluation Parameter</th>
+              <th>Max</th>
+              <th>Awarded</th>
+              <th>KNEC Assessment Criteria</th>
             </tr>
           </thead>
           <tbody id="rateExamBreakdownTableBody"></tbody>
         </table>
       </div>
 
-      <div id="rateExamFeedbackNotes" style="background:var(--card-bg-hover); border:1px solid var(--card-border); border-left:4px solid var(--rate-amber); border-radius:8px; padding:12px 14px; font-size:0.82rem; line-height:1.55; color:var(--text-muted); margin-bottom:18px;"></div>
+      <div id="rateExamFeedbackNotes" style="margin-top:16px; font-size:0.88rem; color:var(--text-muted); line-height:1.5; background:var(--card-bg-hover); padding:12px 14px; border-radius:8px; border-left:3px solid var(--rate-amber);"></div>
 
-      <div style="display:flex; gap:10px; justify-content:space-between;">
-        <button class="rate-btn" onclick="RatesEngine.closeResultModal()">✕ Close</button>
-        <button class="rate-btn rate-btn-record" onclick="window.print()" style="display:inline-flex; align-items:center; gap:6px;">
-          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Print Report
-        </button>
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:18px;">
+        <button type="button" class="rate-btn" onclick="RatesEngine.closeResultModal()">Review Worksheet</button>
+        <button type="button" class="rate-btn rate-btn-primary" onclick="window.print()">Print Examination Sheet</button>
       </div>
     </div>
   </div>
 
-  <!-- Chemical Safety SDS Modal -->
+  <!-- Safety SDS Modal -->
   <div id="safetyModal" class="rate-modal-overlay">
-    <div class="rate-modal-dialog">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; border-bottom:1px solid var(--card-border); padding-bottom:12px;">
-        <h3 style="margin:0; font-family:var(--font-heading); color:var(--red-accent); display:inline-flex; align-items:center; gap:6px;">
-          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Chemical Safety &amp; SDS
+    <div class="rate-modal-dialog" style="max-width:540px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; border-bottom:1px solid var(--card-border); padding-bottom:10px;">
+        <h3 style="margin:0; font-size:1.1rem; font-family:var(--font-heading); color:var(--heading-color); display:flex; align-items:center; gap:8px;">
+          <svg class="vlk-icon" style="color:#DC2626;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Laboratory Safety Data Sheet (SDS)
         </h3>
-        <button class="rate-btn" style="padding:4px 10px;" onclick="closeSafetyModal()">✕</button>
+        <button type="button" class="btn-micro" onclick="closeSafetyModal()">✕</button>
       </div>
-      <div style="font-size:0.84rem; line-height:1.6; color:var(--text-main);">
-        <p><strong>1. Sodium Thiosulfate (Na₂S₂O₃):</strong> Low acute toxicity. Reaction with HCl produces sulfur precipitate and sulfur dioxide gas.</p>
-        <p><strong>2. Hydrochloric Acid (HCl 2.0M):</strong> Corrosive. Causes skin and eye irritation. In virtual lab, handled safely without chemical contact.</p>
-        <p><strong>3. Sulfur Dioxide (SO₂ Gas Hazard):</strong> Choking, pungent gas released in the disappearing cross practical. In physical labs, rooms must be well ventilated. In VirtuLab, zero environmental or health hazard.</p>
-        <p><strong>4. Hydrogen Peroxide (H₂O₂ 20 vol):</strong> Strong oxidizer. Rapid exothermic decomposition with MnO₂ catalyst producing oxygen gas.</p>
+      <div style="display:flex; flex-direction:column; gap:10px; font-size:0.85rem; color:var(--text-muted); line-height:1.5;">
+        <div><strong>• Hydrochloric Acid (HCl 2.0M):</strong> Corrosive. Causes burns and eye damage. Wear splash goggles. In case of skin contact, rinse with copious cold water.</div>
+        <div><strong>• Sulfur Dioxide (SO₂ Gas):</strong> Released during thiosulfate precipitation (Na₂S₂O₃ + 2HCl → 2NaCl + SO₂ + S + H₂O). Pungent and chokes asthmatics. Keep room ventilated. Dispose into sodium carbonate wash bowl immediately after timing.</div>
+        <div><strong>• Hydrogen Peroxide (H₂O₂ 20 Vol):</strong> Strong oxidizer and skin irritant. Causes white blanching of skin. Handle with dropper.</div>
+        <div><strong>• Finely Divided Powders:</strong> Flammable and respiratory irritants. Avoid aerosolizing calcium carbonate powder.</div>
       </div>
-      <button class="rate-btn rate-btn-primary" style="width:100%; margin-top:14px;" onclick="closeSafetyModal()">Understood ✓</button>
+      <button type="button" class="rate-btn rate-btn-primary" style="width:100%; margin-top:14px;" onclick="closeSafetyModal()">Understood ✓</button>
+    </div>
+  </div>
+
+  <!-- Examiner Tips Modal -->
+  <div id="examinerTipsModal" class="rate-modal-overlay">
+    <div class="rate-modal-dialog" style="max-width:560px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; border-bottom:1px solid var(--card-border); padding-bottom:10px;">
+        <h3 style="margin:0; font-size:1.1rem; font-family:var(--font-heading); color:var(--rate-amber); display:flex; align-items:center; gap:8px;">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg> KNEC Question 2 Practical Guidelines
+        </h3>
+        <button type="button" class="btn-micro" onclick="closeExaminerTipsModal()">✕</button>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:12px; font-size:0.86rem; color:var(--text-muted); line-height:1.5;">
+        <div><strong>1. Timing Accuracy (Stopwatch):</strong> The stopwatch must be started simultaneously as the acid hits the thiosulfate solution, with constant steady swirl. Record time $t$ to nearest second or 1 decimal place.</div>
+        <div><strong>2. Reciprocal Calculation ($1/t$):</strong> Record $1/t$ consistently to 3 decimal places (e.g., 0.025, 0.040). An extra or missing decimal point loses the accuracy mark in KNEC Table 1.</div>
+        <div><strong>3. SAPC Graph Rubric (4.0 Marks):</strong>
+          <ul style="margin:4px 0 0 18px; padding:0;">
+            <li><strong>S (Scale):</strong> Plot covers more than 50% of the grid without awkward intervals like 3, 7, 9.</li>
+            <li><strong>A (Axes):</strong> Both axes correctly labeled with units (e.g. $1/t$ ($s^{-1}$) on y-axis, Volume ($cm^3$) on x-axis).</li>
+            <li><strong>P (Plotting):</strong> All experimental points accurately plotted to within $pm 0.5$ small square.</li>
+            <li><strong>C (Curve / Best-Fit Line):</strong> Smooth curve or straight line passing through the origin $(0,0)$ with balanced distribution of points.</li>
+          </ul>
+        </div>
+        <div><strong>4. Tangent Construction ($dy/dx$):</strong> When asked for the instantaneous rate at time $t$, draw a neat tangent at that point, construct a right-angled gradient triangle with $Delta y$ and $Delta x ge 4	ext{cm}$, and evaluate with correct units.</div>
+      </div>
+      <button type="button" class="rate-btn rate-btn-primary" style="width:100%; margin-top:14px;" onclick="closeExaminerTipsModal()">Got It, Back to Workbench</button>
     </div>
   </div>
 
@@ -534,7 +675,7 @@
   <script src="/shared/tutorial-engine.js"></script>
   <script src="/shared/ai-tutor.js"></script>
   <script src="/shared/rates-bench-core.js"></script>
-  <script src="/student/js/rates-engine.js?v=152"></script>
+  <script src="/student/js/rates-engine.js?v=165"></script>
   <script src="/shared/knec-remediation-drills.js?v=163"></script>
   <script src="/shared/knec-graph-plotter.js"></script>
   <script>
@@ -594,13 +735,13 @@
           : '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg> Light';
       }
     }
-    updateQuickThemeIcon(document.documentElement.getAttribute('data-theme') || 'light');
+    updateQuickThemeIcon(document.documentElement.getAttribute('data-theme') || 'dark');
 
     // Observe theme changes to trigger RatesEngine graph re-draw
     const themeObserver = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
-          const curTheme = document.documentElement.getAttribute('data-theme') || 'light';
+          const curTheme = document.documentElement.getAttribute('data-theme') || 'dark';
           updateQuickThemeIcon(curTheme);
           if (window.RatesEngine && typeof window.RatesEngine.drawGraph === 'function') {
             window.RatesEngine.drawGraph();
@@ -627,6 +768,24 @@
       const m = document.getElementById('safetyModal');
       if (m) m.style.display = 'none';
     }
+    function openExaminerTipsModal() {
+      const m = document.getElementById('examinerTipsModal');
+      if (m) m.style.display = 'flex';
+    }
+    function closeExaminerTipsModal() {
+      const m = document.getElementById('examinerTipsModal');
+      if (m) m.style.display = 'none';
+    }
+
+    // Session Timer Simulation
+    let sessionSecs = 0;
+    setInterval(() => {
+      sessionSecs++;
+      const mins = Math.floor(sessionSecs / 60);
+      const secs = sessionSecs % 60;
+      const el = document.getElementById('sessionTimerText');
+      if (el) el.textContent = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+    }, 1000);
   </script>
 </body>
 </html>

@@ -1909,9 +1909,7 @@ requireStudentLogin();
     const lensSubtitle = document.getElementById('lensGuidanceSub') || document.querySelector('.lens-readout-sub');
     if (lensSubtitle) {
       if (currentParallaxAngle === 0) {
-        lensSubtitle.innerHTML = isKmno4
-          ? 'Read at <b style="color:var(--heading-color);">top edge</b>.'
-          : 'Read at <b style="color:var(--heading-color);">bottom of meniscus</b>.';
+        lensSubtitle.innerHTML = isKmno4 ? 'Read at <b>top edge</b>.' : 'Read at <b>bottom of meniscus</b>.';
       } else {
         lensSubtitle.innerHTML = `<span style="color:#F59E0B;font-weight:700;">⚠️ Parallax Error:</span> Front &amp; rear lines split! Align to 0° eye level.`;
       }

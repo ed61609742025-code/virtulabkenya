@@ -968,7 +968,15 @@ html, body {
 }
 
 .lens-crosshair-line {
-  display: none !important;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1.5px;
+  background: #EF4444;
+  box-shadow: 0 0 6px rgba(239, 68, 68, 0.85);
+  z-index: 10;
+  pointer-events: none;
 }
 
 .lens-eye-level-tag {
@@ -1000,14 +1008,19 @@ html, body {
 }
 
 .lens-readout-sub {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  margin-top: 4px;
-  line-height: 1.25;
+  font-size: 0.78rem;
+  color: var(--heading-color);
+  background: var(--card-bg, rgba(15, 23, 42, 0.8));
+  border: 1px solid var(--card-border);
+  padding: 3px 8px;
+  border-radius: 6px;
+  margin-top: 5px;
+  line-height: 1.3;
   font-family: var(--font-body);
-  font-weight: 600;
+  font-weight: 700;
   text-align: center;
-  max-width: 160px;
+  max-width: 170px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* ── Burette Parallax Perspective Alignment Controls ── */
@@ -2799,65 +2812,72 @@ html, body {
     line-height: 1.45 !important;
   }
 
-  /* ── 4. Prescribed Reagents Ledger: Compact 1-Column List ── */
+  /* ── 4. Prescribed Reagents Ledger: Compact 2-Column Summary (< 768px) ── */
   .card-reagents {
-    padding: 10px 12px !important;
+    padding: 8px 10px !important;
+    margin-bottom: 10px !important;
   }
   .reagents-header-bar {
-    margin-bottom: 6px !important;
+    margin-bottom: 4px !important;
   }
-  .reagents-subtitle {
-    font-size: 0.70rem !important;
-    margin-bottom: 8px !important;
-    line-height: 1.35 !important;
+  .reagents-subtitle,
+  .reagents-footer-bar {
+    display: none !important; /* Hide verbose subtitle and footer on mobile */
   }
   .reagents-ledger-grid {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 5px !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 6px !important;
   }
   .reagent-info-item {
-    padding: 6px 8px !important;
-    border-radius: 8px !important;
-    gap: 6px !important;
-    display: flex !important;
+    padding: 5px 7px !important;
+    border-radius: 6px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 3px !important;
+    min-height: auto !important;
+  }
+  .reagent-item-left {
+    width: 100% !important;
+    gap: 4px !important;
+    flex: none !important;
+  }
+  .reagent-icon-badge {
+    display: none !important;
+  }
+  .reagent-label-row .sci-tooltip {
+    font-size: 0.68rem !important;
+    font-weight: 700 !important;
+  }
+  .sci-tip-icon,
+  .reagent-meta-tag {
+    display: none !important;
+  }
+  .reagent-val-box {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+  }
+  .reagent-spec-pill {
+    display: block !important;
+    text-align: center !important;
+    font-size: 0.72rem !important;
+    padding: 2px 6px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .reagent-item-concordance {
+    grid-column: span 2 !important;
+    flex-direction: row !important;
     align-items: center !important;
     justify-content: space-between !important;
   }
-  .reagent-item-left {
-    display: flex !important;
-    align-items: center !important;
-    gap: 7px !important;
-    min-width: 0 !important;
-    flex: 1 !important;
+  .reagent-item-concordance .reagent-val-box {
+    width: auto !important;
   }
-  .reagent-icon-badge {
-    width: 26px !important;
-    height: 26px !important;
-    border-radius: 6px !important;
-    flex-shrink: 0 !important;
-  }
-  .reagent-icon-badge svg {
-    width: 13px !important;
-    height: 13px !important;
-  }
-  .reagent-content {
-    min-width: 0 !important;
-  }
-  .reagent-label-row .sci-tooltip {
-    font-size: 0.74rem !important;
-  }
-  .reagent-meta-tag {
-    display: none !important; /* Save height on mobile */
-  }
-  .reagent-val-box {
-    max-width: 48% !important;
-    margin-left: auto !important;
-  }
-  .reagent-spec-pill {
-    font-size: 0.72rem !important;
-    padding: 3px 7px !important;
-    border-radius: 6px !important;
+  .reagent-item-concordance .reagent-spec-pill {
+    display: inline-block !important;
+    width: auto !important;
   }
 
   /* ── 5. Apparatus Simulation Stage: Stacked, Centered & Touch-Friendly ── */
@@ -3104,125 +3124,8 @@ html, body {
     touch-action: manipulation !important;
   }
 
-  /* ── 8. Mobile Thumb-Zone Sticky Dock (< 768px) ── */
+  /* ── 8. Mobile Thumb-Zone Sticky Dock (Disabled per user request) ── */
   .mobile-workbench-dock {
-    display: flex !important;
-    position: fixed !important;
-    bottom: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    height: 60px !important;
-    padding: 6px 12px !important;
-    padding-bottom: max(6px, env(safe-area-inset-bottom, 0px)) !important;
-    background: rgba(255, 255, 255, 0.96) !important;
-    border-top: 1.5px solid var(--card-border) !important;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08) !important;
-    backdrop-filter: blur(14px) !important;
-    -webkit-backdrop-filter: blur(14px) !important;
-    z-index: 9000 !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 6px !important;
-    box-sizing: border-box !important;
-  }
-  [data-theme="dark"] .mobile-workbench-dock {
-    background: rgba(15, 23, 42, 0.96) !important;
-    border-top-color: rgba(56, 189, 248, 0.25) !important;
-    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.45) !important;
-  }
-  [data-theme="green"] .mobile-workbench-dock {
-    background: rgba(11, 31, 19, 0.96) !important;
-    border-top-color: rgba(52, 211, 153, 0.25) !important;
-    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.45) !important;
-  }
-  .mobile-workbench-dock .dock-telemetry {
-    display: flex !important;
-    align-items: center !important;
-    gap: 6px !important;
-    flex-shrink: 0 !important;
-  }
-  .dock-flask-swatch {
-    width: 22px !important;
-    height: 22px !important;
-    border-radius: 50% !important;
-    border: 2px solid #FFFFFF !important;
-    box-shadow: 0 0 6px rgba(0, 0, 0, 0.2) !important;
-    background: rgba(56, 189, 248, 0.2) !important;
-    flex-shrink: 0 !important;
-    transition: background 0.3s ease !important;
-  }
-  .dock-vol-wrap {
-    display: flex !important;
-    flex-direction: column !important;
-    line-height: 1.1 !important;
-  }
-  .dock-vol-label {
-    font-size: 0.60rem !important;
-    text-transform: uppercase !important;
-    font-weight: 700 !important;
-    color: var(--text-tertiary) !important;
-    letter-spacing: 0.04em !important;
-  }
-  .dock-vol-val {
-    font-family: var(--font-mono) !important;
-    font-size: 0.78rem !important;
-    font-weight: 800 !important;
-    color: var(--cyan-accent) !important;
-  }
-  .mobile-workbench-dock .dock-actions {
-    display: flex !important;
-    align-items: center !important;
-    gap: 5px !important;
-    flex: 1 !important;
-    justify-content: flex-end !important;
-  }
-  .mobile-workbench-dock .dock-btn {
-    height: 40px !important;
-    padding: 4px 8px !important;
-    font-size: 0.72rem !important;
-    font-weight: 700 !important;
-    border-radius: 8px !important;
-    border: 1px solid var(--card-border) !important;
-    background: var(--card-bg-hover) !important;
-    color: var(--text-main) !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 3px !important;
-    cursor: pointer !important;
-    touch-action: manipulation !important;
-    -webkit-tap-highlight-color: transparent !important;
-    transition: all 0.15s ease !important;
-    white-space: nowrap !important;
-  }
-  .mobile-workbench-dock .dock-btn:active {
-    transform: scale(0.94) !important;
-  }
-  .mobile-workbench-dock .dock-btn svg {
-    width: 14px !important;
-    height: 14px !important;
-    flex-shrink: 0 !important;
-  }
-  .mobile-workbench-dock .dock-btn-drop {
-    border-color: var(--cyan-accent) !important;
-    color: var(--cyan-accent) !important;
-    background: var(--blue-bg) !important;
-  }
-  .mobile-workbench-dock .dock-btn-swirl {
-    border-color: var(--card-border) !important;
-    color: var(--text-main) !important;
-  }
-  .mobile-workbench-dock .dock-btn-record {
-    border-color: var(--green-border) !important;
-    background: var(--green-bg) !important;
-    color: var(--green-accent) !important;
-    font-weight: 800 !important;
-  }
-  .mobile-workbench-dock .dock-btn-calc {
-    background: var(--blue-accent) !important;
-    color: #FFFFFF !important;
-    border-color: transparent !important;
-    font-weight: 800 !important;
-    box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3) !important;
+    display: none !important;
   }
 }

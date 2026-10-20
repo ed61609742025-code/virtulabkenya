@@ -60,6 +60,125 @@ function triggerQualHaptic(pattern = 15) {
 }
 window.triggerQualHaptic = triggerQualHaptic;
 
+/* ══════════════════════════════════════════════════════════
+   QUALITATIVE PRACTICAL WORKFLOW STEPPER & KNEC TELEMETRY
+══════════════════════════════════════════════════════════ */
+let currentWorkflowStep = 0;
+
+function jumpToStep(stepIdx) {
+  if (typeof triggerQualHaptic === 'function') triggerQualHaptic(15);
+  updateWorkflowStepper(stepIdx);
+  if (stepIdx === 0) {
+    document.querySelector('.specimen-station-card')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else if (stepIdx === 1) {
+    const prep = document.querySelector('.specimen-prep-callout') || document.querySelector('.specimen-station-card');
+    prep?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else if (stepIdx === 2) {
+    const flameModal = document.getElementById('flameModal');
+    if (flameModal && (flameModal.style.display === 'none' || !flameModal.classList.contains('active'))) {
+      if (typeof openFlameModal === 'function') {
+        openFlameModal();
+      } else if (typeof performFlameTestOnScreen === 'function') {
+        performFlameTestOnScreen();
+      }
+    } else {
+      document.getElementById('burnerSvg')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  } else if (stepIdx === 3) {
+    const testGrid = document.getElementById('testGrid');
+    if (testGrid) {
+      testGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const card = document.querySelector('[data-test-key="naoh"]') || testGrid;
+      card?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  } else if (stepIdx === 4) {
+    const testGrid = document.getElementById('testGrid');
+    if (testGrid) {
+      testGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const card = document.querySelector('[data-test-key="barium"]') || document.querySelector('[data-test-key="acid"]') || testGrid;
+      card?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  } else if (stepIdx === 5) {
+    const idPanel = document.querySelector('.id-panel');
+    if (idPanel) {
+      idPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const cat = document.getElementById('cationSelect');
+      if (cat) cat.focus();
+    }
+  }
+}
+window.jumpToStep = jumpToStep;
+
+function updateWorkflowStepper(forcedStep) {
+  if (typeof forcedStep === 'number') currentWorkflowStep = forcedStep;
+  const badge = document.getElementById('qualStepBadge');
+  const fill = document.getElementById('qualProgressFill');
+  const dockBadge = document.getElementById('dockProgressText');
+
+  const stepLabels = [
+    'Step 1 of 6: Specimen Solid S & Appearance',
+    'Step 2 of 6: Prepare Stock Solution in Boiling Tube',
+    'Step 3 of 6: Non-Luminous Flame Test with Cobalt Glass',
+    'Step 4 of 6: Cation Precipitation Tests (NaOH & NH₃)',
+    'Step 5 of 6: Anion Confirmatory Tests (Ba²⁺, Ag⁺, Acid)',
+    'Step 6 of 6: Systematic Salt Deduction & KNEC Scoring'
+  ];
+
+  if (badge && stepLabels[currentWorkflowStep]) {
+    badge.textContent = stepLabels[currentWorkflowStep];
+  }
+  if (fill) {
+    fill.style.width = Math.round(((currentWorkflowStep + 1) / 6) * 100) + '%';
+  }
+  if (dockBadge) {
+    dockBadge.textContent = `${currentWorkflowStep + 1}/6 Step`;
+  }
+
+  for (let i = 0; i < 6; i++) {
+    const stepEl = document.getElementById('qualWfStep' + i);
+    if (stepEl) {
+      if (i < currentWorkflowStep) {
+        stepEl.className = 'workflow-step-item completed';
+        stepEl.removeAttribute('aria-current');
+      } else if (i === currentWorkflowStep) {
+        stepEl.className = 'workflow-step-item active';
+        stepEl.setAttribute('aria-current', 'step');
+      } else {
+        stepEl.className = 'workflow-step-item upcoming';
+        stepEl.removeAttribute('aria-current');
+      }
+    }
+  }
+}
+window.updateWorkflowStepper = updateWorkflowStepper;
+
+/* Session Timer Interval */
+let sessionSeconds = 0;
+let sessionTimerInterval = null;
+function startSessionTimer() {
+  if (sessionTimerInterval) clearInterval(sessionTimerInterval);
+  sessionSeconds = 0;
+  sessionTimerInterval = setInterval(() => {
+    sessionSeconds++;
+    const m = Math.floor(sessionSeconds / 60).toString().padStart(2, '0');
+    const s = (sessionSeconds % 60).toString().padStart(2, '0');
+    const el = document.getElementById('sessionTimerText');
+    if (el) el.textContent = `${m}:${s}`;
+  }, 1000);
+}
+
+function updateKnecCandidateMeta() {
+  try {
+    const u = typeof getUser === 'function' ? getUser() : (JSON.parse(localStorage.getItem('vlk_user') || '{}'));
+    const nameEl = document.getElementById('knecCandidateName');
+    const idxEl = document.getElementById('knecCandidateIndex');
+    if (nameEl) nameEl.textContent = 'CANDIDATE: ' + ((u && (u.name || u.full_name || u.username)) ? (u.name || u.full_name || u.username).toUpperCase() : 'PRACTICE MODE');
+    if (idxEl) idxEl.textContent = 'INDEX: ' + ((u && (u.index_number || u.indexNumber || u.admission_number || u.id)) ? String(u.index_number || u.indexNumber || u.admission_number || u.id).padStart(8, '0') : '23330101/001');
+  } catch(e) {}
+}
+
+
+
 
 
 /* ── Notifications ── */
@@ -512,6 +631,7 @@ if (typeof window !== 'undefined') {
   }
 
   function newSample() {
+    if (typeof updateWorkflowStepper === "function") updateWorkflowStepper(0);
     const keys = Object.keys(SALTS);
     currentSaltKey = keys[Math.floor(Math.random() * keys.length)];
     sampleCounter++;
@@ -575,6 +695,17 @@ if (typeof window !== 'undefined') {
     if (txt) txt.textContent = `${performedCount} / ${totalTests} Tests Performed (${filledCount} Recorded)`;
     const dockTxt = document.getElementById('dockProgressText');
     if (dockTxt) dockTxt.textContent = `${performedCount}/${totalTests} Done`;
+
+    if (typeof currentWorkflowStep !== 'undefined' && typeof updateWorkflowStepper === 'function') {
+      const isCationDone = Boolean(testStates['naoh']?.performed || testStates['nh3']?.performed);
+      const isAnionDone = Boolean(testStates['barium']?.performed || testStates['silver']?.performed || testStates['acid']?.performed);
+      if (isAnionDone && currentWorkflowStep < 4) {
+        updateWorkflowStepper(4);
+      } else if (isCationDone && currentWorkflowStep < 3) {
+        updateWorkflowStepper(3);
+      }
+    }
+
   }
 
   function getObsSuggestionChips(testKey) {
@@ -3125,6 +3256,7 @@ if (typeof window !== 'undefined') {
   };
 
   function openFlameModal() {
+    if (typeof currentWorkflowStep !== "undefined" && currentWorkflowStep < 2 && typeof updateWorkflowStepper === "function") updateWorkflowStepper(2);
     performFlameTestOnScreen();
   }
 
@@ -3751,6 +3883,7 @@ if (typeof window !== 'undefined') {
 
   /* KNEC Auto-Marking Evaluator Handler */
   window.evaluateKnecMarking = function() {
+    if (typeof updateWorkflowStepper === "function") updateWorkflowStepper(5);
     let totalScore = 0;
     const feedbackItems = [];
     const salt = SALTS[currentSaltKey] || {};

@@ -104,6 +104,11 @@
     </div>
 
     <div class="nav-actions">
+      <!-- Session Timer Badge -->
+      <div class="session-timer-badge" id="sessionTimerBadge" style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:6px;padding:6px 12px;min-height:38px;font-size:0.8rem;font-weight:700;color:var(--cyan-accent);display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;" title="Current Bench Practical Duration">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M10 2h4"/><path d="M19 5l-1.5 1.5"/></svg>
+        <span id="sessionTimerText" class="tabular-nums">00:00</span>
+      </div>
       <!-- Diagnostic Drills & KNEC Rubric Button -->
       <button type="button" class="theme-btn-chip btn-nav-drills" onclick="window.KnecRemediation && window.KnecRemediation.openWorkbenchDrillsMenu('qualitative')" title="KNEC Inorganic Cation/Anion Micro-Drills & Qualitative Sprint">
         <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> <span class="btn-text-full">Diagnostic Drills</span><span class="btn-text-short">Drills</span>
@@ -153,9 +158,25 @@
             </div>
           </div>
         </div>
-      </div>
+      <!-- Exit Button -->
+      <a href="/student/home.html" class="nav-btn nav-btn-exit" title="Exit to Workstation" style="display:inline-flex; align-items:center; gap:4px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> <span class="btn-text-full">Exit</span>
+      </a>
     </div>
   </nav>
+  <!-- KNEC Examination Sub-Bar -->
+  <div class="knec-exam-subbar" aria-label="Examination Details">
+    <div class="knec-candidate-meta">
+      <span class="knec-tag-pill">KNEC PAPER 233/3</span>
+      <span class="knec-q-badge">QUESTION 2 (15.0 MARKS)</span>
+      <span class="knec-cand-name" id="knecCandidateName">CANDIDATE: PRACTICE MODE</span>
+      <span class="knec-index-num" id="knecCandidateIndex">INDEX: 00000000/001</span>
+    </div>
+    <div class="knec-live-status-group">
+      <span class="knec-status-dot pulse" id="knecLiveStatusDot"></span>
+      <span class="knec-status-label" id="knecLiveStatusText">INORGANIC BENCH READY • SAMPLE S ACTIVE</span>
+    </div>
+  </div>
 </header>
 
 <!-- ══════════════════════════════════════
@@ -205,6 +226,53 @@
     </div>
     <span style="font-size:0.76rem; font-family:var(--font-mono); font-weight:700; background:var(--card-bg); padding:4px 10px; border-radius:6px; border:1px solid var(--card-border);" id="assignBannerDue">Active Practical Assignment</span>
   </div>
+  <!-- Interactive Practical Workflow Stepper & Breadcrumbs -->
+  <nav class="workflow-stepper-card" id="qualitativeWorkflowStepper" aria-label="Practical Examination Workflow">
+    <div class="workflow-stepper-top">
+      <div class="workflow-title-wrap">
+        <span class="workflow-title-label" style="display:flex;align-items:center;gap:6px;">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg> PRACTICAL WORKFLOW
+        </span>
+        <span id="qualStepBadge" class="workflow-step-badge">Step 1 of 6: Specimen Solid S &amp; Appearance</span>
+      </div>
+      <div class="workflow-jump-hint" id="qualProgressHint" style="display:flex;align-items:center;gap:6px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>Progress auto-advances on practical actions</span>
+      </div>
+    </div>
+    
+    <div class="workflow-stepper-track" role="list">
+      <button type="button" class="workflow-step-item active" id="qualWfStep0" onclick="jumpToStep(0)" role="listitem" aria-current="step" title="Step 1: Inspect Solid Specimen S &amp; Physical Appearance">
+        <span class="step-num">1</span>
+        <span class="step-info"><span class="step-name">Solid S</span><span class="step-sub">Appearance</span></span>
+      </button>
+      <button type="button" class="workflow-step-item upcoming" id="qualWfStep1" onclick="jumpToStep(1)" role="listitem" title="Step 2: Prepare Stock Solution in Boiling Tube">
+        <span class="step-num">2</span>
+        <span class="step-info"><span class="step-name">Solution</span><span class="step-sub">Portioning</span></span>
+      </button>
+      <button type="button" class="workflow-step-item upcoming" id="qualWfStep2" onclick="jumpToStep(2)" role="listitem" title="Step 3: Non-Luminous Flame Test with Cobalt Glass">
+        <span class="step-num">3</span>
+        <span class="step-info"><span class="step-name">Flame Test</span><span class="step-sub">Burner &amp; Glass</span></span>
+      </button>
+      <button type="button" class="workflow-step-item upcoming" id="qualWfStep3" onclick="jumpToStep(3)" role="listitem" title="Step 4: Cation Precipitation Tests (NaOH &amp; NH3)">
+        <span class="step-num">4</span>
+        <span class="step-info"><span class="step-name">Cations</span><span class="step-sub">NaOH &amp; NH₃</span></span>
+      </button>
+      <button type="button" class="workflow-step-item upcoming" id="qualWfStep4" onclick="jumpToStep(4)" role="listitem" title="Step 5: Anion Confirmatory Tests (Ba²⁺, Ag⁺, Acid)">
+        <span class="step-num">5</span>
+        <span class="step-info"><span class="step-name">Anions</span><span class="step-sub">Ba²⁺, Ag⁺, Acid</span></span>
+      </button>
+      <button type="button" class="workflow-step-item upcoming" id="qualWfStep5" onclick="jumpToStep(5)" role="listitem" title="Step 6: Systematic Salt Deduction &amp; KNEC Scoring">
+        <span class="step-num">6</span>
+        <span class="step-info"><span class="step-name">Deduction</span><span class="step-sub">Grade 15M</span></span>
+      </button>
+    </div>
+    <div class="workflow-stepper-progress" aria-hidden="true">
+      <div class="workflow-progress-fill" id="qualProgressFill" style="width:16.6%;"></div>
+    </div>
+  </nav>
+
+
 
   <!-- KNEC Question 2 Specimen Solid S Station Card -->
   <section class="specimen-station-card">

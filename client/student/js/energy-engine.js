@@ -5,6 +5,8 @@
 // ============================================================
 
 const EnergyEngine = (() => {
+  let currentWorkflowStep = 0;
+  let digitalTempRevealed = false;
   let rigCanvas, rigCtx;
   let magCanvas, magCtx;
   let profileCanvas, pCtx;
@@ -322,7 +324,82 @@ const EnergyEngine = (() => {
   function getThemeColors() {
     const theme = document.documentElement.getAttribute('data-theme') || 'dark';
     if (theme === 'light') {
-      return {
+      
+  function jumpToStep(stepIdx) {
+    updateWorkflowStepper(stepIdx);
+    if (stepIdx === 0) {
+      document.getElementById('energyScenarioStrip')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else if (stepIdx === 1) {
+      document.getElementById('benchApparatusWrap')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else if (stepIdx === 2) {
+      const mixBtn = document.getElementById('btnMix');
+      if (mixBtn) {
+        mixBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        mixBtn.focus();
+      }
+    } else if (stepIdx === 3) {
+      document.getElementById('thermTableCard')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else if (stepIdx === 4) {
+      document.getElementById('thermGraphCard')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else if (stepIdx === 5) {
+      document.getElementById('calcSectionEnergy')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  function updateWorkflowStepper(forcedStep) {
+    if (typeof forcedStep === 'number') currentWorkflowStep = forcedStep;
+    const badge = document.getElementById('energyStepBadge');
+    const fill = document.getElementById('energyProgressFill');
+
+    const stepLabels = [
+      'Step 1 of 6: Setup Calorimeter & Specimen',
+      'Step 2 of 6: Record Initial Temp (0 to 2.0 min)',
+      'Step 3 of 6: Mix Reactants at 2.5 min',
+      'Step 4 of 6: Stir & Log Peak Exotherm/Endotherm',
+      'Step 5 of 6: Extrapolate Cooling Curve',
+      'Step 6 of 6: Compute Heat Q, Moles & ΔH'
+    ];
+
+    if (badge && stepLabels[currentWorkflowStep]) {
+      badge.textContent = stepLabels[currentWorkflowStep];
+    }
+    if (fill) {
+      fill.style.width = Math.round(((currentWorkflowStep + 1) / 6) * 100) + '%';
+    }
+
+    for (let i = 0; i < 6; i++) {
+      const stepEl = document.getElementById('energyWfStep' + i);
+      if (stepEl) {
+        if (i < currentWorkflowStep) {
+          stepEl.className = 'workflow-step-item completed';
+        } else if (i === currentWorkflowStep) {
+          stepEl.className = 'workflow-step-item active';
+        } else {
+          stepEl.className = 'workflow-step-item upcoming';
+        }
+      }
+    }
+  }
+
+  function toggleDigitalTemp() {
+    digitalTempRevealed = !digitalTempRevealed;
+    const digitalTempEl = document.getElementById('digitalTempDisplay');
+    if (digitalTempEl) {
+      if (studyMode === 'exam' && !digitalTempRevealed) {
+        digitalTempEl.textContent = 'Read Scale';
+      } else {
+        digitalTempEl.textContent = Number(currentTemp || 22.0).toFixed(1) + ' °C';
+      }
+    }
+    const btn = document.getElementById('btnToggleDigital');
+    if (btn) {
+      btn.classList.toggle('active', digitalTempRevealed);
+      btn.title = digitalTempRevealed ? 'Hide Digital Scale' : 'Show Digital Readout';
+    }
+  }
+
+
+  return {
         cardBg: '#FFFFFF',
         cardBgHover: '#F8FAFC',
         cardBorder: '#CBD5E1',
@@ -1015,6 +1092,7 @@ const EnergyEngine = (() => {
   }
 
   function mixReactants() {
+    updateWorkflowStepper(2);
     if (isMixed) return;
     isMixed = true;
     playPourSound();
@@ -2462,6 +2540,7 @@ const EnergyEngine = (() => {
   }
 
   function autoPlotFromTable() {
+    updateWorkflowStepper(4);
     studentPlottedPoints = [];
     if (currentScenario.apparatusType === 'CALORIMETER' || currentScenario.apparatusType === 'COOLING') {
       const totalSec = currentScenario.totalTimeSec || 360;
@@ -2506,6 +2585,7 @@ const EnergyEngine = (() => {
   // KNEC Auto-Evaluation & Marking Engine (15 Marks)
   // ============================================================
   function submitWorksheet() {
+    updateWorkflowStepper(5);
     let score = 0;
     const rubrics = [];
 

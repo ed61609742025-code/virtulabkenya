@@ -129,7 +129,14 @@
                           (window.location.pathname === '/' || window.location.pathname.endsWith('/index.html'));
     
     // Avoid double injection if hardcoded or already inserted
-    if (document.getElementById('vlkBrilliantBottomNav') || document.querySelector('.mobile-bottom-nav')) return;
+    if (
+      document.getElementById('vlkBrilliantBottomNav') ||
+      document.getElementById('vlkBottomNav') ||
+      document.querySelector('.vlk-bottom-nav') ||
+      document.querySelector('.mobile-bottom-nav') ||
+      document.querySelector('.b-mobile-bottom-nav') ||
+      document.body.classList.contains('no-bottom-nav')
+    ) return;
     
     if (isStudentPage) {
       document.body.classList.add('has-bottom-nav');
@@ -155,24 +162,24 @@
         },
         {
           id: 'nav-revision',
-          href: `${basePath}home.html#reference`,
+          href: `${basePath}reference.html`,
           icon: '📚',
           label: 'Revision',
-          match: ['#reference']
-        },
-        {
-          id: 'nav-badges',
-          href: `${basePath}home.html#achievements`,
-          icon: '🏆',
-          label: 'Badges',
-          match: ['#achievements']
+          match: ['reference.html']
         },
         {
           id: 'nav-analytics',
           href: `${basePath}history.html`,
           icon: '📊',
-          label: 'Analytics',
+          label: 'History',
           match: ['history.html', 'certificate.html']
+        },
+        {
+          id: 'nav-profile',
+          href: `${basePath}profile.html`,
+          icon: '👤',
+          label: 'Me',
+          match: ['profile.html']
         }
       ];
 

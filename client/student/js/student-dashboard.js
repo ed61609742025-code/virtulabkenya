@@ -3412,6 +3412,8 @@ requireStudentLogin();
     const levelIconEl = document.getElementById('heroLevelIcon');
     
     if (levelTitleEl) levelTitleEl.textContent = `Level ${xp.level}: ${xp.title}`;
+    const shortLevelEl = document.getElementById('heroLevelTitleShort');
+    if (shortLevelEl) shortLevelEl.textContent = `Level ${xp.level}`;
     if (xpTextEl) xpTextEl.textContent = `${xp.totalXP} / ${xp.nextLevelXP} XP`;
     if (xpBarEl) xpBarEl.style.width = `${xp.progressPercent}%`;
     if (tierNameEl) tierNameEl.textContent = xp.title.replace('Form ', 'F').replace('KCSE ', '');

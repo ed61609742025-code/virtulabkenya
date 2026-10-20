@@ -117,6 +117,55 @@
   }
 }
 
+.hero-warmup-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.84rem;
+  font-weight: 800;
+  text-decoration: none;
+  background: var(--acad-oxford, #0B2545);
+  color: #FFFFFF !important;
+  border: 1.5px solid transparent;
+  box-shadow: 0 2px 8px rgba(11, 37, 69, 0.2);
+  transition: all 0.16s ease;
+  white-space: nowrap;
+}
+
+[data-theme="dark"] .hero-warmup-btn {
+  background: #0284C7;
+  color: #FFFFFF !important;
+  box-shadow: 0 2px 10px rgba(2, 132, 199, 0.35);
+}
+
+[data-theme="green"] .hero-warmup-btn {
+  background: #059669;
+  color: #FFFFFF !important;
+  box-shadow: 0 2px 10px rgba(5, 150, 105, 0.35);
+}
+
+.hero-warmup-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+}
+
+.hero-warmup-btn:active {
+  transform: translateY(0);
+}
+
+.hero-lvl-short {
+  display: none;
+}
+
+.hero-lvl-full {
+  display: inline;
+}
+
+/* ============================================================
    Scholarly, authoritative design system for KCSE Chemistry candidates
    ============================================================ */
 

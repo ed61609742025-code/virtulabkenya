@@ -595,6 +595,13 @@
   }
 }
 
+/* Suppress obsolete .b-mobile-bottom-nav whenever standard .vlk-bottom-nav is in the DOM */
+body:has(.vlk-bottom-nav) .b-mobile-bottom-nav,
+.vlk-bottom-nav ~ .b-mobile-bottom-nav,
+.vlk-bottom-nav + .b-mobile-bottom-nav,
+body.has-bottom-nav .vlk-bottom-nav ~ .b-mobile-bottom-nav {
+  display: none !important;
+}
 
 /* ── 8. MOBILE THERMAL & GPU BATTERY OPTIMIZATION ── */
 @media (max-width: 768px) {

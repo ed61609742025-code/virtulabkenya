@@ -9,6 +9,8 @@ const RatesEngine = (function () {
   // ══════════════════════════════════════════════════════════
   // STATE DEFINITIONS
   // ══════════════════════════════════════════════════════════
+  let currentWorkflowStep = 0;
+
   const state = {
     assignmentId: null,
     currentExp: 'cross', // 'cross' | 'syringe' | 'mass' | 'catalyst' | 'collision'
@@ -1790,7 +1792,19 @@ const RatesEngine = (function () {
       return (el && el.offsetParent !== null && el.innerText.trim()) ? el.innerText.trim().slice(0, 160) : undefined;
     })();
 
-    
+    return {
+      labType: 'Reaction Rates & Chemical Kinetics',
+      practicalTitle: ratesExpNames[state.currentExp] || `Kinetics Experiment (${state.currentExp})`,
+      activeExperiment: state.currentExp,
+      reactionConditions: conditionText,
+      activeStep: `Experiment: ${ratesExpNames[state.currentExp] || state.currentExp}`,
+      elapsedTime: `${Number(state.timer || 0).toFixed(1)} s`,
+      reactionProgress: expDetails,
+      recordedTrials: [`${trialCount} trial readings logged`],
+      lastErrorOrFeedback: lastAlert
+    };
+  };
+
   function jumpToStep(stepIdx) {
     updateWorkflowStepper(stepIdx);
     if (stepIdx === 0) {
@@ -1847,21 +1861,9 @@ const RatesEngine = (function () {
     }
   }
 
-
-  return {
-      labType: 'Reaction Rates & Chemical Kinetics',
-      practicalTitle: ratesExpNames[state.currentExp] || `Kinetics Experiment (${state.currentExp})`,
-      activeExperiment: state.currentExp,
-      reactionConditions: conditionText,
-      activeStep: `Experiment: ${ratesExpNames[state.currentExp] || state.currentExp}`,
-      elapsedTime: `${Number(state.timer || 0).toFixed(1)} s`,
-      reactionProgress: expDetails,
-      recordedTrials: [`${trialCount} trial readings logged`],
-      lastErrorOrFeedback: lastAlert
-    };
-  };
-
   if (typeof window !== 'undefined') {
+    window.jumpToStep = jumpToStep;
+    window.updateWorkflowStepper = updateWorkflowStepper;
     window.VLK = window.VLK || {};
     if (typeof window.VLK.registerLabContext === 'function') {
       window.VLK.registerLabContext(getRatesContext);
@@ -1897,11 +1899,20 @@ const RatesEngine = (function () {
     drawGraph,
     updateCanvasDimensions,
     gradeKnecWorksheet,
-    closeResultModal
+    closeResultModal,
+    jumpToStep,
+    updateWorkflowStepper
   };
 })();
 
 // Auto-initialize when DOM is ready
+if (typeof window !== 'undefined') {
+  window.RatesEngine = RatesEngine;
+}
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = RatesEngine;
+}
+
 if (typeof document !== 'undefined') {
   document.addEventListener('DOMContentLoaded', () => {
     RatesEngine.init();

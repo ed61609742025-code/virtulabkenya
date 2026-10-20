@@ -324,7 +324,66 @@ const EnergyEngine = (() => {
   function getThemeColors() {
     const theme = document.documentElement.getAttribute('data-theme') || 'dark';
     if (theme === 'light') {
-      
+      return {
+        cardBg: '#FFFFFF',
+        cardBgHover: '#F8FAFC',
+        cardBorder: '#CBD5E1',
+        textMain: '#0F172A',
+        textMuted: '#64748B',
+        headingColor: '#0F172A',
+        gridPaper: '#FFFFFF',
+        gridMajor: 'rgba(234, 88, 12, 0.35)',
+        gridMinor: 'rgba(234, 88, 12, 0.12)',
+        primary: '#EA580C',
+        cupOuter: '#E2E8F0',
+        cupInner: '#F8FAFC',
+        cupBorder: '#94A3B8',
+        labelBg: 'rgba(255, 255, 255, 0.95)',
+        labelBorder: '#CBD5E1',
+        labelText: '#0F172A'
+      };
+    } else if (theme === 'green') {
+      return {
+        cardBg: '#102617',
+        cardBgHover: '#15331F',
+        cardBorder: '#1F4A2A',
+        textMain: '#D4EDD8',
+        textMuted: '#7AB885',
+        headingColor: '#39E87A',
+        gridPaper: '#0A1A0F',
+        gridMajor: 'rgba(57, 232, 122, 0.35)',
+        gridMinor: 'rgba(57, 232, 122, 0.12)',
+        primary: '#39E87A',
+        cupOuter: '#142D1A',
+        cupInner: '#1C3D24',
+        cupBorder: '#1F4A2A',
+        labelBg: 'rgba(16, 38, 23, 0.95)',
+        labelBorder: '#1F4A2A',
+        labelText: '#D4EDD8'
+      };
+    } else {
+      // Dark Slate Blue (default)
+      return {
+        cardBg: '#151D2A',
+        cardBgHover: '#1C2638',
+        cardBorder: '#232E42',
+        textMain: '#F1F5F9',
+        textMuted: '#94A3B8',
+        headingColor: '#FFFFFF',
+        gridPaper: '#0B1320',
+        gridMajor: 'rgba(249, 115, 22, 0.38)',
+        gridMinor: 'rgba(249, 115, 22, 0.14)',
+        primary: '#F97316',
+        cupOuter: '#1E293B',
+        cupInner: '#334155',
+        cupBorder: '#475569',
+        labelBg: 'rgba(21, 29, 42, 0.95)',
+        labelBorder: '#232E42',
+        labelText: '#F1F5F9'
+      };
+    }
+  }
+
   function jumpToStep(stepIdx) {
     updateWorkflowStepper(stepIdx);
     if (stepIdx === 0) {
@@ -395,67 +454,6 @@ const EnergyEngine = (() => {
     if (btn) {
       btn.classList.toggle('active', digitalTempRevealed);
       btn.title = digitalTempRevealed ? 'Hide Digital Scale' : 'Show Digital Readout';
-    }
-  }
-
-
-  return {
-        cardBg: '#FFFFFF',
-        cardBgHover: '#F8FAFC',
-        cardBorder: '#CBD5E1',
-        textMain: '#0F172A',
-        textMuted: '#64748B',
-        headingColor: '#0F172A',
-        gridPaper: '#FFFFFF',
-        gridMajor: 'rgba(234, 88, 12, 0.35)',
-        gridMinor: 'rgba(234, 88, 12, 0.12)',
-        primary: '#EA580C',
-        cupOuter: '#E2E8F0',
-        cupInner: '#F8FAFC',
-        cupBorder: '#94A3B8',
-        labelBg: 'rgba(255, 255, 255, 0.95)',
-        labelBorder: '#CBD5E1',
-        labelText: '#0F172A'
-      };
-    } else if (theme === 'green') {
-      return {
-        cardBg: '#102617',
-        cardBgHover: '#15331F',
-        cardBorder: '#1F4A2A',
-        textMain: '#D4EDD8',
-        textMuted: '#7AB885',
-        headingColor: '#39E87A',
-        gridPaper: '#0A1A0F',
-        gridMajor: 'rgba(57, 232, 122, 0.35)',
-        gridMinor: 'rgba(57, 232, 122, 0.12)',
-        primary: '#39E87A',
-        cupOuter: '#142D1A',
-        cupInner: '#1C3D24',
-        cupBorder: '#1F4A2A',
-        labelBg: 'rgba(16, 38, 23, 0.95)',
-        labelBorder: '#1F4A2A',
-        labelText: '#D4EDD8'
-      };
-    } else {
-      // Dark Slate Blue (default)
-      return {
-        cardBg: '#151D2A',
-        cardBgHover: '#1C2638',
-        cardBorder: '#232E42',
-        textMain: '#F1F5F9',
-        textMuted: '#94A3B8',
-        headingColor: '#FFFFFF',
-        gridPaper: '#0B1320',
-        gridMajor: 'rgba(249, 115, 22, 0.38)',
-        gridMinor: 'rgba(249, 115, 22, 0.14)',
-        primary: '#F97316',
-        cupOuter: '#1E293B',
-        cupInner: '#334155',
-        cupBorder: '#475569',
-        labelBg: 'rgba(21, 29, 42, 0.95)',
-        labelBorder: '#232E42',
-        labelText: '#F1F5F9'
-      };
     }
   }
 
@@ -3012,6 +3010,8 @@ const EnergyEngine = (() => {
   };
 
   if (typeof window !== 'undefined') {
+    window.jumpToStep = jumpToStep;
+    window.updateWorkflowStepper = updateWorkflowStepper;
     window.VLK = window.VLK || {};
     if (typeof window.VLK.registerLabContext === 'function') {
       window.VLK.registerLabContext(getEnergyContext);
@@ -3051,9 +3051,18 @@ const EnergyEngine = (() => {
     renderCanvases: renderGraph,
     playClick,
     openSafetyModal,
-    closeSafetyModal
+    closeSafetyModal,
+    jumpToStep,
+    updateWorkflowStepper
   };
 })();
+
+if (typeof window !== 'undefined') {
+  window.EnergyEngine = EnergyEngine;
+}
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = EnergyEngine;
+}
 
 // Auto-boot on DOM ready
 document.addEventListener('DOMContentLoaded', () => {

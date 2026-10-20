@@ -966,3 +966,234 @@ button:not(:disabled):active {
   }
 }
 
+
+
+/* ══════════════════════════════════════════════════════════
+   PRECISION WORKBENCH SWITCHER DROPDOWN (ALL LAB BENCHES)
+══════════════════════════════════════════════════════════ */
+.workbench-dropdown-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.workbench-dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--card-bg, #FFFFFF);
+  border: 1.5px solid var(--card-border, #E2E8F0);
+  padding: 6px 12px;
+  min-height: 38px;
+  border-radius: 8px;
+  color: var(--text-main, #0F172A);
+  font-family: var(--font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.workbench-dropdown-trigger:hover {
+  background: var(--card-bg-hover, #F8FAFC);
+  border-color: var(--cyan-accent, #06B6D4);
+  color: var(--heading-color, #0F172A);
+}
+
+.workbench-dropdown-trigger[aria-expanded="true"] {
+  border-color: var(--cyan-accent, #06B6D4);
+  box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+}
+
+.workbench-dropdown-trigger[aria-expanded="true"] .workbench-trigger-chevron {
+  transform: rotate(180deg);
+}
+
+.workbench-trigger-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 800;
+  color: var(--heading-color, #0F172A);
+}
+
+.workbench-trigger-icon {
+  width: 17px;
+  height: 17px;
+  color: var(--cyan-accent, #06B6D4);
+  flex-shrink: 0;
+}
+
+.workbench-trigger-pill {
+  font-size: 0.65rem;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-weight: 700;
+  text-transform: uppercase;
+  background: var(--card-bg-hover, #F1F5F9);
+  border: 1px solid var(--card-border, #E2E8F0);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--text-muted, #64748B);
+  letter-spacing: 0.04em;
+}
+
+.workbench-trigger-chevron {
+  width: 14px;
+  height: 14px;
+  color: var(--text-muted, #64748B);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.workbench-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 320px;
+  background: var(--card-bg, #FFFFFF);
+  border: 1.5px solid var(--card-border, #E2E8F0);
+  border-radius: 12px;
+  box-shadow: var(--shadow-xl, 0 10px 25px -5px rgba(0, 0, 0, 0.3));
+  z-index: 100000;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  animation: wbDropdownFadeIn 0.15s ease-out;
+}
+
+@keyframes wbDropdownFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.workbench-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px 8px;
+  border-bottom: 1px solid var(--card-border, #E2E8F0);
+  margin-bottom: 4px;
+}
+
+.workbench-menu-title {
+  font-size: 0.68rem;
+  font-weight: 800;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  color: var(--text-muted, #64748B);
+  letter-spacing: 0.06em;
+}
+
+.workbench-menu-tag {
+  font-size: 0.65rem;
+  font-weight: 800;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  background: rgba(6, 182, 212, 0.15);
+  color: var(--cyan-accent, #06B6D4);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.workbench-menu-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.workbench-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--text-main, #0F172A);
+  background: transparent;
+  border: 1px solid transparent;
+  transition: all 0.12s ease;
+}
+
+.workbench-menu-item:hover {
+  background: var(--card-bg-hover, #F8FAFC);
+  border-color: var(--card-border, #E2E8F0);
+}
+
+.workbench-menu-item.active {
+  background: var(--card-bg-hover, #F1F5F9);
+  border-color: var(--cyan-accent, #06B6D4);
+}
+
+.workbench-item-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--card-bg, #FFFFFF);
+  border: 1px solid var(--card-border, #E2E8F0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cyan-accent, #06B6D4);
+  flex-shrink: 0;
+}
+
+.workbench-menu-item.active .workbench-item-icon {
+  background: var(--cyan-accent, #06B6D4);
+  color: #FFFFFF;
+}
+
+.workbench-item-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.workbench-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.workbench-item-name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--heading-color, #0F172A);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.workbench-item-qbadge {
+  font-size: 0.62rem;
+  font-weight: 800;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  background: var(--card-bg, #FFFFFF);
+  border: 1px solid var(--card-border, #E2E8F0);
+  color: var(--text-muted, #64748B);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.workbench-item-current-tag {
+  font-size: 0.62rem;
+  font-weight: 800;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  background: var(--cyan-accent, #06B6D4);
+  color: #FFFFFF;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.workbench-item-desc {
+  font-size: 0.68rem;
+  color: var(--text-tertiary, #94A3B8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

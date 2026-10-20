@@ -1470,3 +1470,29 @@ html, body {
   color: var(--red-accent);
   padding: 8px 12px;
 }
+
+
+/* ── 15. PRINT MEDIA & BOOKLET ISOLATION ── */
+.sol-print-booklet-only {
+  display: none !important;
+}
+
+@media print {
+  .top-navbar,
+  .academic-top-header,
+  .candidate-top-ribbon,
+  .knec-exam-subbar,
+  .sol-scenario-strip,
+  .workflow-stepper-card,
+  .sol-briefing-bar,
+  .sol-apparatus-card,
+  .sol-graph-btn-group,
+  .sol-btn,
+  .nav-actions {
+    display: none !important;
+  }
+
+  .sol-print-booklet-only {
+    display: block !important;
+  }
+}

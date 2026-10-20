@@ -26,7 +26,7 @@ function generatePedagogicalFallback({ experimentType = '', context = {}, studen
     if (err.includes('concordant') || err.includes('titre') || err.includes('±0.10')) {
       return `In KNEC KCSE Paper 3, titres are only concordant if they fall within ±0.10 cm³ of each other. Check your initial and final meniscus readings to eliminate parallax errors, and reject any non-concordant outlier trial.`;
     }
-    if (err.includes('drying') || err.includes('ammonia') || err.includes('h2so4')) {
+    if (err.includes('drying') || (err.includes('ammonia') && (err.includes('gas') || err.includes('dry'))) || err.includes('h2so4')) {
       return `Remember that ammonia is a basic alkaline gas (NH₃). It chemically reacts with concentrated sulfuric acid to form ammonium sulfate, so it cannot be dried with H₂SO₄. Quicklime (CaO) must be used instead.`;
     }
     if (err.includes('precipitate') || err.includes('excess') || err.includes('insoluble')) {

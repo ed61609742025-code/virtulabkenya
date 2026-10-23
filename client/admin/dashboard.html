@@ -2228,7 +2228,10 @@
           <td>${statusBadge}</td>
           <td><small style="font-family:var(--font-mono);color:var(--text-muted);">${new Date(a.created_at || Date.now()).toLocaleDateString()}</small></td>
           <td>
-            <button onclick="toggleAnnouncementStatus(${a.id}, ${newStatus})" class="btn-table-action">${actionText}</button>
+            <div style="display:inline-flex;gap:6px;align-items:center;">
+              <button onclick="toggleAnnouncementStatus(${a.id}, ${newStatus})" class="btn-table-action">${actionText}</button>
+              <button onclick="deleteAnnouncementPrompt(${a.id}, '${escapeHtml(a.title).replace(/'/g, "\\'")}')" class="btn-table-action" style="color:var(--red-accent,#EF4444);border-color:rgba(239,68,68,0.35);" title="Delete announcement">&times; Delete</button>
+            </div>
           </td>
         </tr>
       `;

@@ -1328,6 +1328,7 @@ if (typeof window !== 'undefined') {
   window.Auth = Auth;
   window.Composite = Composite;
   window.Announcements = Announcements;
+  window.Notifications = Notifications;
   window.ErrorTracker = ErrorTracker;
   window.Assignments = Assignments;
   window.Badges = Badges;

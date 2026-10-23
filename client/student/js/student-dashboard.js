@@ -174,6 +174,7 @@ requireStudentLogin();
   }
 
   let studentNotificationsList = [];
+  let cachedActiveAnnouncements = [];
 
   function toggleNotifDropdown(e) {
     if (e) e.stopPropagation();
@@ -247,6 +248,24 @@ requireStudentLogin();
 
   function updateNotificationsUI(assignments) {
     let rawList = [];
+
+    // 0. Active System Broadcast Announcements (Top Priority)
+    (cachedActiveAnnouncements || []).forEach(a => {
+      const cat = a.type || 'info';
+      const catLabels = { info: 'System Notice', exam: 'Exam Practical Alert', warning: 'Urgent Bulletin' };
+      rawList.push({
+        id: 'ann_' + a.id,
+        announcementId: a.id,
+        title: (cat === 'exam' ? '📋 ' : cat === 'warning' ? '⚠️ ' : '📢 ') + (a.title || 'Broadcast Notice'),
+        message: a.message || '',
+        timestamp: a.created_at ? new Date(a.created_at).getTime() : Date.now(),
+        type: 'announcement',
+        category: cat,
+        categoryLabel: catLabels[cat] || 'System Notice',
+        targetUrl: null,
+        isPermanent: false
+      });
+    });
 
     // 1. Pending Prescribed Continuous Assessments
     (assignments || []).filter(a => !a.submitted).forEach(a => {
@@ -367,7 +386,9 @@ requireStudentLogin();
         const itemType = n.type || 'general';
 
         let iconSvg = '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>';
-        if (itemType === 'pending_assignment') {
+        if (itemType === 'announcement') {
+          iconSvg = '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"/></svg>';
+        } else if (itemType === 'pending_assignment') {
           iconSvg = '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg>';
         } else if (itemType === 'marked_assignment') {
           iconSvg = '<svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.48 12.89L17 22l-5-3-5 3 1.52-9.11"/></svg>';
@@ -389,12 +410,16 @@ requireStudentLogin();
                 ${escapeHtml(n.message)}
               </div>
               <div class="notif-item-footer">
-                ${n.targetUrl ? `
+                ${itemType === 'announcement' ? `
+                  <span class="notif-action-chip notif-chip-ann">
+                    <span>${escapeHtml(n.categoryLabel || 'Official Notice')}</span>
+                  </span>
+                ` : (n.targetUrl ? `
                   <span class="notif-action-chip">
                     <span>Open Practical</span>
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
                   </span>
-                ` : (n.rawAssignment && n.rawAssignment.submitted ? `
+                `) : (n.rawAssignment && n.rawAssignment.submitted ? `
                   <span class="notif-action-chip notif-chip-rubric">
                     <span>View Rubric Feedback</span>
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -415,6 +440,24 @@ requireStudentLogin();
 
   function clickNotifItem(notifId, assignmentId) {
     if (window.VLKNotifs) window.VLKNotifs.markAsRead(notifId);
+    if (notifId && String(notifId).startsWith('ann_')) {
+      const annId = String(notifId).replace(/^ann_/, '');
+      try {
+        localStorage.setItem('vlk_dismiss_ann_' + annId, 'true');
+        sessionStorage.setItem('vlk_dismiss_ann_' + annId, 'true');
+      } catch(e) {}
+      const card = document.getElementById('ann-card-' + annId);
+      if (card) {
+        card.style.opacity = '0';
+        setTimeout(() => {
+          card.remove();
+          const banner = document.getElementById('systemBroadcastBanner');
+          if (banner && banner.querySelectorAll('.system-announcement-card').length === 0) {
+            banner.style.display = 'none';
+          }
+        }, 200);
+      }
+    }
     if (assignmentId && studentNotificationsList) {
       const match = studentNotificationsList.find(item => item.assignmentId === assignmentId && item.id === notifId) ||
                     studentNotificationsList.find(item => item.assignmentId === assignmentId);
@@ -439,7 +482,17 @@ requireStudentLogin();
     if (window.VLKNotifs) {
       window.VLKNotifs.markAllAsRead(activeNotifs.map(n => n.id));
     }
-    loadAssignments();
+    (cachedActiveAnnouncements || []).forEach(a => {
+      try {
+        localStorage.setItem('vlk_dismiss_ann_' + a.id, 'true');
+        sessionStorage.setItem('vlk_dismiss_ann_' + a.id, 'true');
+      } catch(e) {}
+    });
+    const banner = document.getElementById('systemBroadcastBanner');
+    if (banner) banner.style.display = 'none';
+
+    updateNotificationsUI(window._vlk_student_assignments || []);
+    if (typeof loadAssignments === 'function') loadAssignments();
   }
 
   // Listen for Service Worker background push click / dismiss events to sync in-app notifications
@@ -3382,37 +3435,78 @@ requireStudentLogin();
   async function loadSystemAnnouncements() {
     try {
       const res = await Announcements.getActive();
-      if (res.success && res.announcements && res.announcements.length > 0) {
-        const activeAlerts = res.announcements.filter(a => !sessionStorage.getItem('vlk_dismiss_ann_' + a.id));
-        const banner = document.getElementById('systemBroadcastBanner');
-        if (banner && activeAlerts.length > 0) {
-          banner.style.display = 'block';
-          const broadcastSvg = (window.VLKIcons && typeof window.VLKIcons.svg === 'function')
-            ? window.VLKIcons.svg('broadcast', { size: 22 })
-            : '';
-          banner.innerHTML = activeAlerts.map(a => `
-            <div id="ann-card-${a.id}" style="background:linear-gradient(135deg, rgba(6,182,212,0.15), rgba(245,158,11,0.15));border:1.5px solid var(--amber-accent, #F59E0B);border-radius:12px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
-              <div style="display:flex;align-items:flex-start;gap:12px;">
-                <div style="color:var(--amber-accent);display:inline-flex;align-items:center;">${broadcastSvg}</div>
-                <div>
-                  <div style="font-weight:800;font-size:0.95rem;color:var(--heading-color);">${escapeHtml(a.title)}</div>
-                  <div style="font-size:0.84rem;color:var(--text-main);margin-top:2px;">${escapeHtml(a.message)}</div>
-                </div>
-              </div>
-              <button onclick="dismissAnnouncement(${a.id})" style="background:transparent;border:none;color:var(--text-muted);font-weight:800;font-size:1.1rem;cursor:pointer;padding:0 4px;" title="Dismiss notice">&times;</button>
-            </div>
-          `).join('');
-        }
+      if (res && res.success && Array.isArray(res.announcements)) {
+        cachedActiveAnnouncements = res.announcements;
+        renderSystemBroadcastBanner();
+        updateNotificationsUI(window._vlk_student_assignments || []);
       }
     } catch (e) {
-      console.warn('Could not load announcements:', e);
+      console.warn('[Broadcasts] Could not load system announcements:', e);
     }
   }
 
+  function renderSystemBroadcastBanner() {
+    const banner = document.getElementById('systemBroadcastBanner');
+    if (!banner) return;
+
+    const activeAlerts = (cachedActiveAnnouncements || []).filter(a => {
+      const isDismissed = localStorage.getItem('vlk_dismiss_ann_' + a.id) || sessionStorage.getItem('vlk_dismiss_ann_' + a.id);
+      const isRead = window.VLKNotifs && window.VLKNotifs.isRead('ann_' + a.id);
+      return !isDismissed && !isRead;
+    });
+
+    if (activeAlerts.length === 0) {
+      banner.style.display = 'none';
+      banner.innerHTML = '';
+      return;
+    }
+
+    banner.style.display = 'flex';
+    banner.innerHTML = activeAlerts.map(a => {
+      const cat = a.type || 'info';
+      const catLabel = cat === 'exam' ? 'Practical Mock Notice' : (cat === 'warning' ? 'Urgent Alert' : 'National Notice');
+      const timeStr = a.created_at ? new Date(a.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Today';
+
+      return `
+        <div id="ann-card-${a.id}" class="system-announcement-card type-${cat}">
+          <div class="ann-icon-box" aria-hidden="true">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"/></svg>
+          </div>
+          <div class="ann-content-wrap">
+            <div class="ann-tag-row">
+              <span class="ann-pill">${catLabel}</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--text-muted);">${timeStr}</span>
+            </div>
+            <div class="ann-title">${escapeHtml(a.title)}</div>
+            <div class="ann-message">${escapeHtml(a.message)}</div>
+          </div>
+          <button type="button" class="ann-dismiss-btn" onclick="dismissAnnouncement(${a.id})" title="Dismiss notice" aria-label="Dismiss notice">&times;</button>
+        </div>
+      `;
+    }).join('');
+  }
+
   function dismissAnnouncement(id) {
-    sessionStorage.setItem('vlk_dismiss_ann_' + id, 'true');
+    try {
+      localStorage.setItem('vlk_dismiss_ann_' + id, 'true');
+      sessionStorage.setItem('vlk_dismiss_ann_' + id, 'true');
+    } catch(e) {}
+    if (window.VLKNotifs && typeof window.VLKNotifs.markAsRead === 'function') {
+      window.VLKNotifs.markAsRead('ann_' + id);
+    }
     const el = document.getElementById('ann-card-' + id);
-    if (el) el.remove();
+    if (el) {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(-6px)';
+      setTimeout(() => {
+        el.remove();
+        const banner = document.getElementById('systemBroadcastBanner');
+        if (banner && banner.querySelectorAll('.system-announcement-card').length === 0) {
+          banner.style.display = 'none';
+        }
+      }, 250);
+    }
+    updateNotificationsUI(window._vlk_student_assignments || []);
   }
 
   // Explicit window exports for inline HTML event handlers

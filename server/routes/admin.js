@@ -195,12 +195,31 @@ router.post('/announcements', validateAnnouncementCreate, asyncHandler(async (re
     type: type || 'info'
   });
 
+  // Fan-out to student in-app notifications so all active student workstations receive it
+  try {
+    await pool.query(`
+      INSERT INTO student_notifications (student_id, title, message, type, link)
+      SELECT id, $1, $2, 'announcement', '/student/home.html'
+      FROM students
+      WHERE status IS NULL OR status != 'suspended'
+    `, [title, message]);
+  } catch (fanoutErr) {
+    console.warn('[Announcement Fanout Warning]:', fanoutErr.message);
+  }
+
   // Broadcast push notification to all subscribers
   pushService.broadcast({
     title: `📢 Announcement: ${title}`,
     body: message,
-    data: { url: '/student/home.html' }
+    data: { url: '/student/home.html', notifId: `ann_${announcement.id}` }
   }).catch(err => console.warn('[Announcement Push Warning]:', err.message));
+
+  await auditRepo.logAuditEvent({
+    adminEmail: req.user.email,
+    action: `Created system broadcast announcement: "${title}"`,
+    details: { announcementId: announcement.id, type: type || 'info' },
+    ipAddress: req.ip
+  });
 
   return res.status(201).json({ success: true, announcement });
 }));
@@ -507,6 +526,32 @@ router.patch('/announcements/:id/toggle', asyncHandler(async (req, res) => {
   }
 
   return res.json({ success: true, announcement });
+}));
+
+// DELETE /api/admin/announcements/:id — Delete broadcast announcement
+router.delete('/announcements/:id', asyncHandler(async (req, res) => {
+  const deleted = await announcementRepo.deleteAnnouncement(req.params.id);
+  if (!deleted) {
+    return res.status(404).json({ error: 'Announcement not found' });
+  }
+
+  try {
+    await pool.query(`
+      DELETE FROM student_notifications
+      WHERE type = 'announcement' AND (link LIKE '%' || $1 || '%' OR link = '/student/home.html')
+    `, [req.params.id]);
+  } catch (cleanErr) {
+    console.warn('[Announcement Cleanup Warning]:', cleanErr.message);
+  }
+
+  await auditRepo.logAuditEvent({
+    adminEmail: req.user.email,
+    action: `Deleted announcement ID: ${req.params.id}`,
+    details: { announcementId: req.params.id },
+    ipAddress: req.ip
+  });
+
+  return res.json({ success: true, message: 'Announcement deleted successfully' });
 }));
 
 // GET /api/admin/analytics — Detailed performance & practical module breakdown

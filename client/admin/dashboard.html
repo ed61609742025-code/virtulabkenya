@@ -24,7 +24,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/shared/style.css">
-<link rel="stylesheet" href="css/admin.css?v=152">
+<link rel="stylesheet" href="css/admin.css?v=153">
 <script src="/shared/vlk-icons.js?v=164"></script>
 </head>
 <body>
@@ -112,6 +112,15 @@
               <span class="dropdown-item-desc">School-wide bulletin to teachers &amp; students</span>
             </div>
           </button>
+          <div class="dropdown-section-label" style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+            <span>Theme Mode</span>
+            <div style="display:inline-flex; gap:3px; background:var(--card-bg-hover); padding:2px; border-radius:6px; border:1px solid var(--card-border);">
+              <button type="button" class="theme-btn-chip" data-theme="dark" onclick="setTheme('dark'); closeAllAdminDropdowns();" title="Dark Theme" style="padding:2px 6px; font-size:0.68rem;">Dark</button>
+              <button type="button" class="theme-btn-chip" data-theme="light" onclick="setTheme('light'); closeAllAdminDropdowns();" title="Light Theme" style="padding:2px 6px; font-size:0.68rem;">Light</button>
+              <button type="button" class="theme-btn-chip" data-theme="green" onclick="setTheme('green'); closeAllAdminDropdowns();" title="Lab Theme" style="padding:2px 6px; font-size:0.68rem;">Lab</button>
+            </div>
+          </div>
+
           <div class="dropdown-divider"></div>
           <button type="button" class="dropdown-item" onclick="Admin.exportSchoolsReport(); closeAllAdminDropdowns();" role="menuitem">
             <span class="dropdown-item-icon">
@@ -206,6 +215,15 @@
               <span class="dropdown-item-title">System Health &amp; Logs</span>
             </div>
           </button>
+
+          <div class="dropdown-section-label" style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+            <span>Theme Mode</span>
+            <div style="display:inline-flex; gap:3px; background:var(--card-bg-hover); padding:2px; border-radius:6px; border:1px solid var(--card-border);">
+              <button type="button" class="theme-btn-chip" data-theme="dark" onclick="setTheme('dark'); closeAllAdminDropdowns();" title="Dark Theme" style="padding:2px 6px; font-size:0.68rem;">Dark</button>
+              <button type="button" class="theme-btn-chip" data-theme="light" onclick="setTheme('light'); closeAllAdminDropdowns();" title="Light Theme" style="padding:2px 6px; font-size:0.68rem;">Light</button>
+              <button type="button" class="theme-btn-chip" data-theme="green" onclick="setTheme('green'); closeAllAdminDropdowns();" title="Lab Theme" style="padding:2px 6px; font-size:0.68rem;">Lab</button>
+            </div>
+          </div>
 
           <div class="dropdown-divider"></div>
 
@@ -436,7 +454,10 @@
         </p>
       </div>
       <div class="panel-actions">
-        <input type="text" id="schoolSearch" class="form-control search-control" placeholder="Search school or county..." oninput="filterSchools()">
+        <div class="search-input-wrap" style="position:relative;display:inline-flex;align-items:center;">
+          <input type="text" id="schoolSearch" class="form-control search-control" style="padding-right:28px;" placeholder="Search school or county..." oninput="handleSearchInput('schoolSearch', 'schoolSearchClear', filterSchools)">
+          <button type="button" id="schoolSearchClear" class="search-clear-btn" onclick="clearSearch('schoolSearch', 'schoolSearchClear', filterSchools)" style="display:none;position:absolute;right:8px;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.85rem;padding:2px 4px;" title="Clear search">&times;</button>
+        </div>
         <select id="countyFilterSelect" class="form-control filter-select" onchange="filterSchools(this.value)">
           <option value="all">All Counties</option>
         </select>
@@ -522,7 +543,10 @@
             <span class="pill-badge" id="uCountSuspended">0</span>
           </button>
         </div>
-        <input type="text" id="userSearch" class="form-control search-control" placeholder="Search user, email or school..." oninput="filterUsers()">
+        <div class="search-input-wrap" style="position:relative;display:inline-flex;align-items:center;">
+          <input type="text" id="userSearch" class="form-control search-control" style="padding-right:28px;" placeholder="Search user, email or school..." oninput="handleSearchInput('userSearch', 'userSearchClear', filterUsers)">
+          <button type="button" id="userSearchClear" class="search-clear-btn" onclick="clearSearch('userSearch', 'userSearchClear', filterUsers)" style="display:none;position:absolute;right:8px;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.85rem;padding:2px 4px;" title="Clear search">&times;</button>
+        </div>
         <button class="btn-secondary" onclick="Admin.exportUsersReport()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Export CSV
@@ -714,6 +738,103 @@
           <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:var(--text-muted);font-family:var(--font-mono);margin-top:4px;">
             <span id="statCompositeMeta">Completed: --</span>
             <span>KNEC Dist: 32/40</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 5: Thermochemistry & Energy Changes -->
+      <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:18px;display:flex;flex-direction:column;justify-content:space-between;">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <h4 style="margin:0 0 6px 0;color:#F97316;font-family:var(--font-heading);display:inline-flex;align-items:center;gap:6px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+              Thermochemistry
+            </h4>
+            <span class="role-badge orange">Enthalpy ΔH</span>
+          </div>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin:0 0 12px 0;">Solution, neutralization, displacement &amp; molar enthalpy tests.</p>
+          <div style="font-size:2rem;font-weight:800;font-family:var(--font-mono);" id="statEnergyAccuracy">--%</div>
+        </div>
+        <div>
+          <div class="progress-bar-wrap">
+            <div id="barEnergyFill" class="progress-bar-fill orange" style="width:0%;"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:var(--text-muted);font-family:var(--font-mono);margin-top:4px;">
+            <span id="statEnergyMeta">Total Sessions: --</span>
+            <span>Target: 80%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 6: Reaction Rates & Kinetics -->
+      <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:18px;display:flex;flex-direction:column;justify-content:space-between;">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <h4 style="margin:0 0 6px 0;color:#06B6D4;font-family:var(--font-heading);display:inline-flex;align-items:center;gap:6px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Reaction Rates
+            </h4>
+            <span class="role-badge cyan">Kinetics</span>
+          </div>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin:0 0 12px 0;">Disappearing cross, gas syringe, collision theory &amp; rate curves.</p>
+          <div style="font-size:2rem;font-weight:800;font-family:var(--font-mono);" id="statRatesAccuracy">--%</div>
+        </div>
+        <div>
+          <div class="progress-bar-wrap">
+            <div id="barRatesFill" class="progress-bar-fill cyan" style="width:0%;"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:var(--text-muted);font-family:var(--font-mono);margin-top:4px;">
+            <span id="statRatesMeta">Total Sessions: --</span>
+            <span>Target: 80%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 7: Solubility Curves -->
+      <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:18px;display:flex;flex-direction:column;justify-content:space-between;">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <h4 style="margin:0 0 6px 0;color:#14B8A6;font-family:var(--font-heading);display:inline-flex;align-items:center;gap:6px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
+              Solubility Curves
+            </h4>
+            <span class="role-badge teal">Crystallization</span>
+          </div>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin:0 0 12px 0;">Solubility graphs, saturation points &amp; cooling crystallization.</p>
+          <div style="font-size:2rem;font-weight:800;font-family:var(--font-mono);" id="statSolAccuracy">--%</div>
+        </div>
+        <div>
+          <div class="progress-bar-wrap">
+            <div id="barSolFill" class="progress-bar-fill teal" style="width:0%;"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:var(--text-muted);font-family:var(--font-mono);margin-top:4px;">
+            <span id="statSolMeta">Total Sessions: --</span>
+            <span>Target: 80%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 8: Gas Preparation & Collection -->
+      <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:12px;padding:18px;display:flex;flex-direction:column;justify-content:space-between;">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <h4 style="margin:0 0 6px 0;color:#6366F1;font-family:var(--font-heading);display:inline-flex;align-items:center;gap:6px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+              Gas Preparation
+            </h4>
+            <span class="role-badge indigo">Inorganic Gases</span>
+          </div>
+          <p style="font-size:0.8rem;color:var(--text-muted);margin:0 0 12px 0;">Apparatus setups, drying agents, collection methods &amp; gas tests.</p>
+          <div style="font-size:2rem;font-weight:800;font-family:var(--font-mono);" id="statGasAccuracy">--%</div>
+        </div>
+        <div>
+          <div class="progress-bar-wrap">
+            <div id="barGasFill" class="progress-bar-fill indigo" style="width:0%;"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:0.72rem;color:var(--text-muted);font-family:var(--font-mono);margin-top:4px;">
+            <span id="statGasMeta">Total Sessions: --</span>
+            <span>Target: 80%</span>
+          </div>
           </div>
         </div>
       </div>
@@ -1625,14 +1746,31 @@
   }
 
   document.addEventListener('click', (e) => {
-    if (!e.target.closest('.nav-dropdown-wrap')) {
+    if (!e.target.closest('.nav-dropdown-wrap')) closeAllAdminDropdowns();
+    if (false) {
       closeAllAdminDropdowns();
+      if (typeof closeSchoolDetailsModal === 'function') closeSchoolDetailsModal();
+      if (typeof closeRegisterSchoolModal === 'function') closeRegisterSchoolModal();
+      if (typeof closeEditSchoolModal === 'function') closeEditSchoolModal();
+      if (typeof closeAnnouncementModal === 'function') closeAnnouncementModal();
+      if (typeof closeAddAdminModal === 'function') closeAddAdminModal();
+      if (typeof closeMinistryReportModal === 'function') closeMinistryReportModal();
+      if (typeof closeUserPwModal === 'function') closeUserPwModal();
+      if (typeof closeUserStatusModal === 'function') closeUserStatusModal();
     }
   });
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       closeAllAdminDropdowns();
+      if (typeof closeSchoolDetailsModal === 'function') closeSchoolDetailsModal();
+      if (typeof closeRegisterSchoolModal === 'function') closeRegisterSchoolModal();
+      if (typeof closeEditSchoolModal === 'function') closeEditSchoolModal();
+      if (typeof closeAnnouncementModal === 'function') closeAnnouncementModal();
+      if (typeof closeAddAdminModal === 'function') closeAddAdminModal();
+      if (typeof closeMinistryReportModal === 'function') closeMinistryReportModal();
+      if (typeof closeUserPwModal === 'function') closeUserPwModal();
+      if (typeof closeUserStatusModal === 'function') closeUserStatusModal();
     }
   });
 
@@ -1951,6 +2089,42 @@
       const bar = document.getElementById('barCompositeFill');
       if (bar) bar.style.width = pct + '%';
     }
+    if (data.energy) {
+      const acc = Math.min(100, Math.max(0, parseFloat(data.energy.accuracy) || 0));
+      const elAcc = document.getElementById('statEnergyAccuracy');
+      const elMeta = document.getElementById('statEnergyMeta');
+      const barE = document.getElementById('barEnergyFill');
+      if (elAcc) elAcc.textContent = acc + '%';
+      if (elMeta) elMeta.textContent = `Total: ${data.energy.total} | Avg: ${data.energy.avgScore}`;
+      if (barE) barE.style.width = acc + '%';
+    }
+    if (data.rates) {
+      const acc = Math.min(100, Math.max(0, parseFloat(data.rates.accuracy) || 0));
+      const elAcc = document.getElementById('statRatesAccuracy');
+      const elMeta = document.getElementById('statRatesMeta');
+      const barR = document.getElementById('barRatesFill');
+      if (elAcc) elAcc.textContent = acc + '%';
+      if (elMeta) elMeta.textContent = `Total: ${data.rates.total} | Avg: ${data.rates.avgScore}`;
+      if (barR) barR.style.width = acc + '%';
+    }
+    if (data.solubility) {
+      const acc = Math.min(100, Math.max(0, parseFloat(data.solubility.accuracy) || 0));
+      const elAcc = document.getElementById('statSolAccuracy');
+      const elMeta = document.getElementById('statSolMeta');
+      const barS = document.getElementById('barSolFill');
+      if (elAcc) elAcc.textContent = acc + '%';
+      if (elMeta) elMeta.textContent = `Total: ${data.solubility.total} | Avg: ${data.solubility.avgScore}`;
+      if (barS) barS.style.width = acc + '%';
+    }
+    if (data.gas) {
+      const acc = Math.min(100, Math.max(0, parseFloat(data.gas.accuracy) || 0));
+      const elAcc = document.getElementById('statGasAccuracy');
+      const elMeta = document.getElementById('statGasMeta');
+      const barG = document.getElementById('barGasFill');
+      if (elAcc) elAcc.textContent = acc + '%';
+      if (elMeta) elMeta.textContent = `Total: ${data.gas.total} | Avg: ${data.gas.avgScore}`;
+      if (barG) barG.style.width = acc + '%';
+    }
 
     // 5. Grade Distribution
     if (data.gradeDistribution) {
@@ -2179,7 +2353,11 @@
       const totalExperiments = (parseInt(stats.titrations_count, 10) || 0) +
                                (parseInt(stats.qualitative_count, 10) || 0) +
                                (parseInt(stats.organic_count, 10) || 0) +
-                               (parseInt(stats.composite_count, 10) || 0);
+                               (parseInt(stats.composite_count, 10) || 0) +
+                               (parseInt(stats.solubility_count, 10) || 0) +
+                               (parseInt(stats.energy_count, 10) || 0) +
+                               (parseInt(stats.rates_count, 10) || 0) +
+                               (parseInt(stats.gas_count, 10) || 0);
 
       // Header
       document.getElementById('sdModalAvatar').textContent = getInitials(s.name);
@@ -2330,6 +2508,38 @@
             <div style="font-family:var(--font-mono);font-size:1.4rem;font-weight:800;color:var(--heading-color);margin-top:2px;">${stats.composite_count || 0}</div>
             <div style="font-size:0.7rem;color:var(--text-muted);">40-Mark Mock Exams</div>
           </div>
+          <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:12px 14px;">
+            <div style="font-size:0.75rem;font-weight:700;color:#F97316;text-transform:uppercase;display:inline-flex;align-items:center;gap:4px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+              Thermochem
+            </div>
+            <div style="font-family:var(--font-mono);font-size:1.4rem;font-weight:800;color:var(--heading-color);margin-top:2px;">${stats.energy_count || 0}</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);">Enthalpy ΔH Sessions</div>
+          </div>
+          <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:12px 14px;">
+            <div style="font-size:0.75rem;font-weight:700;color:#06B6D4;text-transform:uppercase;display:inline-flex;align-items:center;gap:4px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Rates
+            </div>
+            <div style="font-family:var(--font-mono);font-size:1.4rem;font-weight:800;color:var(--heading-color);margin-top:2px;">${stats.rates_count || 0}</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);">Kinetics &amp; Dilution</div>
+          </div>
+          <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:12px 14px;">
+            <div style="font-size:0.75rem;font-weight:700;color:#14B8A6;text-transform:uppercase;display:inline-flex;align-items:center;gap:4px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"/></svg>
+              Solubility
+            </div>
+            <div style="font-family:var(--font-mono);font-size:1.4rem;font-weight:800;color:var(--heading-color);margin-top:2px;">${stats.solubility_count || 0}</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);">Curves &amp; Crystals</div>
+          </div>
+          <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:12px 14px;">
+            <div style="font-size:0.75rem;font-weight:700;color:#6366F1;text-transform:uppercase;display:inline-flex;align-items:center;gap:4px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+              Gas Prep
+            </div>
+            <div style="font-family:var(--font-mono);font-size:1.4rem;font-weight:800;color:var(--heading-color);margin-top:2px;">${stats.gas_count || 0}</div>
+            <div style="font-size:0.7rem;color:var(--text-muted);">Inorganic Gas Tests</div>
+          </div>
         </div>
       `;
 
@@ -2471,10 +2681,34 @@
     renderSchools(filtered);
   }
 
+  function handleSearchInput(inputId, clearBtnId, filterFn) {
+    const input = document.getElementById(inputId);
+    const clearBtn = document.getElementById(clearBtnId);
+    if (clearBtn) {
+      clearBtn.style.display = input && input.value ? 'inline-block' : 'none';
+    }
+    if (typeof filterFn === 'function') filterFn();
+  }
+
+  function clearSearch(inputId, clearBtnId, filterFn) {
+    const input = document.getElementById(inputId);
+    const clearBtn = document.getElementById(clearBtnId);
+    if (input) {
+      input.value = '';
+      input.focus();
+    }
+    if (clearBtn) {
+      clearBtn.style.display = 'none';
+    }
+    if (typeof filterFn === 'function') filterFn();
+  }
+
   function resetSchoolFilters() {
     const searchInput = document.getElementById('schoolSearch');
     const select = document.getElementById('countyFilterSelect');
     if (searchInput) searchInput.value = '';
+    const clearBtn = document.getElementById('schoolSearchClear');
+    if (clearBtn) clearBtn.style.display = 'none';
     if (select) select.value = 'all';
     filterSchools('all');
   }

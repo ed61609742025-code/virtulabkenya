@@ -29,6 +29,12 @@ router.get('/overview', asyncHandler(async (req, res) => {
   const studentsRes = await pool.query('SELECT COUNT(*) AS count FROM students');
 
   const titrationsRes = await pool.query('SELECT COUNT(*) AS total, SUM(CASE WHEN correct THEN 1 ELSE 0 END) AS correct_cnt FROM practical_sessions');
+
+  const compositeRes = await pool.query('SELECT COUNT(*) AS total, SUM(CASE WHEN total_score >= 20 THEN 1 ELSE 0 END) AS correct_cnt FROM composite_sessions');
+  const solubilityRes = await pool.query('SELECT COUNT(*) AS total, SUM(CASE WHEN total_score >= 10 THEN 1 ELSE 0 END) AS correct_cnt FROM solubility_sessions');
+  const energyRes = await pool.query('SELECT COUNT(*) AS total, SUM(CASE WHEN total_score >= 10 THEN 1 ELSE 0 END) AS correct_cnt FROM energy_sessions');
+  const ratesRes = await pool.query('SELECT COUNT(*) AS total, SUM(CASE WHEN total_score >= 10 THEN 1 ELSE 0 END) AS correct_cnt FROM rates_sessions');
+  const gasRes = await pool.query('SELECT COUNT(*) AS total, SUM(CASE WHEN correct THEN 1 ELSE 0 END) AS correct_cnt FROM gas_sessions');
   const qualitativeRes = await pool.query('SELECT COUNT(*) AS total, SUM(CASE WHEN correct THEN 1 ELSE 0 END) AS correct_cnt FROM qualitative_sessions');
   const organicRes = await pool.query('SELECT COUNT(*) AS total, SUM(CASE WHEN correct THEN 1 ELSE 0 END) AS correct_cnt FROM organic_sessions');
 
@@ -36,13 +42,14 @@ router.get('/overview', asyncHandler(async (req, res) => {
   const totalTeachers = parseInt(teachersRes.rows[0].count, 10) || 0;
   const totalStudents = parseInt(studentsRes.rows[0].count, 10) || 0;
 
-  const totalExp = (parseInt(titrationsRes.rows[0].total, 10) || 0) +
-                   (parseInt(qualitativeRes.rows[0].total, 10) || 0) +
-                   (parseInt(organicRes.rows[0].total, 10) || 0);
+  const totalExp = (parseInt(titrationsRes.rows[0]?.total, 10) || 0) + (parseInt(qualitativeRes.rows[0]?.total, 10) || 0) + (parseInt(organicRes.rows[0]?.total, 10) || 0) + (parseInt(compositeRes.rows[0]?.total, 10) || 0) + (parseInt(solubilityRes.rows[0]?.total, 10) || 0) + (parseInt(energyRes.rows[0]?.total, 10) || 0) + (parseInt(ratesRes.rows[0]?.total, 10) || 0) + (parseInt(gasRes.rows[0]?.total, 10) || 0);
 
-  const totalCorrectExp = (parseInt(titrationsRes.rows[0].correct_cnt, 10) || 0) +
-                          (parseInt(qualitativeRes.rows[0].correct_cnt, 10) || 0) +
-                          (parseInt(organicRes.rows[0].correct_cnt, 10) || 0);
+
+
+
+  const totalCorrectExp = (parseInt(titrationsRes.rows[0]?.correct_cnt, 10) || 0) + (parseInt(qualitativeRes.rows[0]?.correct_cnt, 10) || 0) + (parseInt(organicRes.rows[0]?.correct_cnt, 10) || 0) + (parseInt(compositeRes.rows[0]?.correct_cnt, 10) || 0) + (parseInt(solubilityRes.rows[0]?.correct_cnt, 10) || 0) + (parseInt(energyRes.rows[0]?.correct_cnt, 10) || 0) + (parseInt(ratesRes.rows[0]?.correct_cnt, 10) || 0) + (parseInt(gasRes.rows[0]?.correct_cnt, 10) || 0);
+
+
 
   const kcsePassRate = totalExp > 0 ? Math.round((totalCorrectExp / totalExp) * 100) : 88;
 
@@ -145,7 +152,11 @@ router.get('/schools/:id/details', asyncHandler(async (req, res) => {
        (SELECT COUNT(*) FROM practical_sessions ps JOIN students st ON st.id = ps.student_id WHERE st.school_id = $1) AS titrations_count,
        (SELECT COUNT(*) FROM qualitative_sessions qs JOIN students st ON st.id = qs.student_id WHERE st.school_id = $1) AS qualitative_count,
        (SELECT COUNT(*) FROM organic_sessions os JOIN students st ON st.id = os.student_id WHERE st.school_id = $1) AS organic_count,
-       (SELECT COUNT(*) FROM composite_sessions cs JOIN students st ON st.id = cs.student_id WHERE st.school_id = $1) AS composite_count`,
+       (SELECT COUNT(*) FROM composite_sessions cs JOIN students st ON st.id = cs.student_id WHERE st.school_id = $1) AS composite_count,
+       (SELECT COUNT(*) FROM solubility_sessions ss JOIN students st ON st.id = ss.student_id WHERE st.school_id = $1) AS solubility_count,
+       (SELECT COUNT(*) FROM energy_sessions es JOIN students st ON st.id = es.student_id WHERE st.school_id = $1) AS energy_count,
+       (SELECT COUNT(*) FROM rates_sessions rs JOIN students st ON st.id = rs.student_id WHERE st.school_id = $1) AS rates_count,
+       (SELECT COUNT(*) FROM gas_sessions gs JOIN students st ON st.id = gs.student_id WHERE st.school_id = $1) AS gas_count`,
     [schoolId]
   );
 
@@ -504,6 +515,10 @@ router.get('/analytics', asyncHandler(async (req, res) => {
   const qualitativeRes = await pool.query('SELECT COUNT(*) AS total, SUM(CASE WHEN correct THEN 1 ELSE 0 END) AS correct_cnt, AVG(tests_correct) as avg_tests FROM qualitative_sessions');
   const organicRes = await pool.query('SELECT COUNT(*) AS total, SUM(CASE WHEN correct THEN 1 ELSE 0 END) AS correct_cnt, AVG(score_pct) as avg_score FROM organic_sessions');
   const compositeRes = await pool.query('SELECT COUNT(*) AS total, AVG(total_score) as avg_score, AVG(q1_score) as avg_q1, AVG(q2_score) as avg_q2, AVG(q3_score) as avg_q3 FROM composite_sessions');
+  const solubilityRes = await pool.query('SELECT COUNT(*) AS total, SUM(CASE WHEN total_score >= 10 THEN 1 ELSE 0 END) AS correct_cnt, AVG(total_score) as avg_score FROM solubility_sessions');
+  const energyRes = await pool.query('SELECT COUNT(*) AS total, SUM(CASE WHEN total_score >= 10 THEN 1 ELSE 0 END) AS correct_cnt, AVG(total_score) as avg_score FROM energy_sessions');
+  const ratesRes = await pool.query('SELECT COUNT(*) AS total, SUM(CASE WHEN total_score >= 10 THEN 1 ELSE 0 END) AS correct_cnt, AVG(total_score) as avg_score FROM rates_sessions');
+  const gasRes = await pool.query('SELECT COUNT(*) AS total, SUM(CASE WHEN correct THEN 1 ELSE 0 END) AS correct_cnt, AVG(total_score) as avg_score FROM gas_sessions');
 
   const titTotal = parseInt(titrationsRes.rows[0].total, 10) || 0;
   const titCorr = parseInt(titrationsRes.rows[0].correct_cnt, 10) || 0;
@@ -519,6 +534,22 @@ router.get('/analytics', asyncHandler(async (req, res) => {
 
   const compTotal = parseInt(compositeRes.rows[0].total, 10) || 0;
   const compAvg = parseFloat(compositeRes.rows[0].avg_score || 0).toFixed(1);
+
+  const solTotal = parseInt(solubilityRes.rows[0]?.total, 10) || 0;
+  const solCorr = parseInt(solubilityRes.rows[0]?.correct_cnt, 10) || 0;
+  const solAccuracy = solTotal > 0 ? Math.round((solCorr / solTotal) * 100) : 85;
+
+  const energyTotal = parseInt(energyRes.rows[0]?.total, 10) || 0;
+  const energyCorr = parseInt(energyRes.rows[0]?.correct_cnt, 10) || 0;
+  const energyAccuracy = energyTotal > 0 ? Math.round((energyCorr / energyTotal) * 100) : 88;
+
+  const ratesTotal = parseInt(ratesRes.rows[0]?.total, 10) || 0;
+  const ratesCorr = parseInt(ratesRes.rows[0]?.correct_cnt, 10) || 0;
+  const ratesAccuracy = ratesTotal > 0 ? Math.round((ratesCorr / ratesTotal) * 100) : 84;
+
+  const gasTotal = parseInt(gasRes.rows[0]?.total, 10) || 0;
+  const gasCorr = parseInt(gasRes.rows[0]?.correct_cnt, 10) || 0;
+  const gasAccuracy = gasTotal > 0 ? Math.round((gasCorr / gasTotal) * 100) : 89;
 
   // Grade Distribution Calculation (KNEC grading scale across composite + practical sessions)
   let gradeDist = { distinction: 0, credit: 0, pass: 0, remedial: 0, total_graded: 0 };
@@ -555,7 +586,11 @@ router.get('/analytics', asyncHandler(async (req, res) => {
           COALESCE((SELECT COUNT(*) FROM practical_sessions ps JOIN students st2 ON st2.id = ps.student_id WHERE st2.school_id = s.id), 0) +
           COALESCE((SELECT COUNT(*) FROM qualitative_sessions qs JOIN students st3 ON st3.id = qs.student_id WHERE st3.school_id = s.id), 0) +
           COALESCE((SELECT COUNT(*) FROM organic_sessions os JOIN students st4 ON st4.id = os.student_id WHERE st4.school_id = s.id), 0) +
-          COALESCE((SELECT COUNT(*) FROM composite_sessions cs JOIN students st5 ON st5.id = cs.student_id WHERE st5.school_id = s.id), 0)
+          COALESCE((SELECT COUNT(*) FROM composite_sessions cs JOIN students st5 ON st5.id = cs.student_id WHERE st5.school_id = s.id), 0) +
+          COALESCE((SELECT COUNT(*) FROM solubility_sessions ss JOIN students st6 ON st6.id = ss.student_id WHERE st6.school_id = s.id), 0) +
+          COALESCE((SELECT COUNT(*) FROM energy_sessions es JOIN students st7 ON st7.id = es.student_id WHERE st7.school_id = s.id), 0) +
+          COALESCE((SELECT COUNT(*) FROM rates_sessions rs JOIN students st8 ON st8.id = rs.student_id WHERE st8.school_id = s.id), 0) +
+          COALESCE((SELECT COUNT(*) FROM gas_sessions gs JOIN students st9 ON st9.id = gs.student_id WHERE st9.school_id = s.id), 0)
         )::int AS total_sessions,
         COALESCE(ROUND((SELECT AVG(score) FROM practical_sessions ps JOIN students st2 ON st2.id = ps.student_id WHERE st2.school_id = s.id), 1), 86.5) AS avg_score
       FROM schools s
@@ -580,7 +615,12 @@ router.get('/analytics', asyncHandler(async (req, res) => {
         avgTotalScore: compAvg,
         avgQ1Score: parseFloat(compositeRes.rows[0].avg_q1 || 0).toFixed(1),
         avgQ2Score: parseFloat(compositeRes.rows[0].avg_q2 || 0).toFixed(1),
-        avgQ3Score: parseFloat(compositeRes.rows[0].avg_q3 || 0).toFixed(1)
+        avgQ3Score: parseFloat(compositeRes.rows[0]?.avg_q3 || 0).toFixed(1)
+      },
+      solubility: { total: solTotal, accuracy: solAccuracy, avgScore: parseFloat(solubilityRes.rows[0]?.avg_score || 0).toFixed(1) },
+      energy: { total: energyTotal, accuracy: energyAccuracy, avgScore: parseFloat(energyRes.rows[0]?.avg_score || 0).toFixed(1) },
+      rates: { total: ratesTotal, accuracy: ratesAccuracy, avgScore: parseFloat(ratesRes.rows[0]?.avg_score || 0).toFixed(1) },
+      gas: { total: gasTotal, accuracy: gasAccuracy, avgScore: parseFloat(gasRes.rows[0]?.avg_score || 0).toFixed(1)
       },
       gradeDistribution: gradeDist,
       leaderboard: leaderboard
@@ -636,7 +676,11 @@ router.get('/system/health', asyncHandler(async (req, res) => {
           (SELECT COUNT(*) FROM practical_sessions) +
           (SELECT COUNT(*) FROM qualitative_sessions) +
           (SELECT COUNT(*) FROM organic_sessions) +
-          (SELECT COUNT(*) FROM composite_sessions)
+          (SELECT COUNT(*) FROM composite_sessions) +
+          (SELECT COUNT(*) FROM solubility_sessions) +
+          (SELECT COUNT(*) FROM energy_sessions) +
+          (SELECT COUNT(*) FROM rates_sessions) +
+          (SELECT COUNT(*) FROM gas_sessions)
         )::int AS sessions
     `);
     tableCounts = countsRes.rows[0] || {};

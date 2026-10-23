@@ -3434,7 +3434,7 @@ requireStudentLogin();
 
   async function loadSystemAnnouncements() {
     try {
-      const res = await Announcements.getActive();
+      const res = await Announcements.getActive('students');
       if (res && res.success && Array.isArray(res.announcements)) {
         cachedActiveAnnouncements = res.announcements;
         renderSystemBroadcastBanner();

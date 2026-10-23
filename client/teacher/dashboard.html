@@ -89,6 +89,38 @@
       <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;width:15px;height:15px;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Print Report
     </button>
     
+    <!-- Notification Bell & Examiner Broadcast Center -->
+    <div style="position:relative; display:inline-block;">
+      <button type="button" class="btn" id="notifBellBtn" onclick="toggleTeacherNotifDropdown(event)" style="cursor:pointer; display:flex; align-items:center; gap:6px; position:relative;" title="Notifications & Examiner Alerts" aria-label="Notifications">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span>Notices</span>
+        <span class="badge-count" id="notifBadge" style="display:none; position:absolute; top:-6px; right:-6px; background:#EF4444; color:#FFF; font-size:0.68rem; font-weight:800; border-radius:100px; padding:1px 6px; line-height:1.2;">0</span>
+      </button>
+      <!-- Notification Backdrop for Mobile Light Dismiss -->
+      <div id="notifBackdrop" class="notif-backdrop" onclick="toggleTeacherNotifDropdown(event)" style="display:none;" aria-hidden="true"></div>
+
+      <!-- Notification Dropdown Card -->
+      <div id="notifDropdown" class="notif-dropdown" style="display:none;" role="region" aria-label="Teacher Notifications & Alerts Panel">
+        <div class="notif-header" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--card-border);">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;color:var(--amber-accent);"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            <h4 style="margin:0; font-size:0.92rem; font-weight:800; color:var(--heading-color);">Examiner Notices</h4>
+          </div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <button type="button" class="btn btn-xs" onclick="markAllTeacherNotificationsRead()" style="font-size:0.72rem; padding:3px 8px; font-weight:700;">Mark all read</button>
+            <button type="button" class="modal-close-btn" onclick="toggleTeacherNotifDropdown(event)" style="font-size:1.1rem; line-height:1; background:transparent; border:none; color:var(--text-muted); cursor:pointer;">&times;</button>
+          </div>
+        </div>
+        <div id="notifList" class="notif-scroll-area" style="max-height:360px; overflow-y:auto; display:flex; flex-direction:column; gap:8px;">
+          <div style="text-align:center; padding:20px 12px; color:var(--text-muted);">
+            <div style="font-size:1.8rem; margin-bottom:6px;">✨</div>
+            <div style="font-size:0.84rem; font-weight:700; color:var(--heading-color);">No Active Notifications</div>
+            <div style="font-size:0.75rem; margin-top:2px; line-height:1.4;">All student submissions and examiner notices are up to date.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Compact Settings Cog Dropdown -->
     <div style="position:relative; display:inline-block;">
       <button type="button" class="btn" onclick="toggleTeacherSettings(event)" style="cursor:pointer; display:flex; align-items:center; gap:6px;" title="Portal Settings">
@@ -216,6 +248,8 @@
 
   <!-- Main Content Viewport -->
   <main class="teacher-content">
+    <!-- Top-Priority System Broadcast Banner -->
+    <div id="systemBroadcastBanner" class="system-broadcast-container" style="display:none;" role="region" aria-label="Official Broadcast Notices"></div>
     <div class="teacher-hero-card">
       <div class="teacher-hero-left">
         <div class="teacher-avatar-badge" style="display:flex;align-items:center;justify-content:center;">

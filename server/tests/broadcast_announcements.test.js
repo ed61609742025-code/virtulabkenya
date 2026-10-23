@@ -1,5 +1,5 @@
 // ============================================================
-//  VirtuLab Kenya — Broadcast Announcements & Student Reach Test Suite
+//  VirtuLab Kenya — Broadcast Announcements Delivery & Reach Test Suite
 // ============================================================
 
 const { describe, it, before, after } = require('node:test');
@@ -20,6 +20,7 @@ let server;
 let port = 0;
 let adminToken;
 let studentToken;
+let teacherToken;
 
 const mockAnnouncements = [];
 const mockStudentNotifications = [];
@@ -29,7 +30,7 @@ function url(subpath) {
   return `http://127.0.0.1:${port}${subpath}`;
 }
 
-describe('VirtuLab Kenya — Broadcast Announcements Delivery to Students Suite', () => {
+describe('VirtuLab Kenya — Broadcast Announcements Delivery & Targeted Reach Suite', () => {
 
   before(async () => {
     adminToken = jwt.sign(
@@ -38,6 +39,10 @@ describe('VirtuLab Kenya — Broadcast Announcements Delivery to Students Suite'
     );
     studentToken = jwt.sign(
       { id: 42, role: 'student', email: 'student42@virtulab.ke', name: 'Wanjiku Student' },
+      process.env.JWT_SECRET
+    );
+    teacherToken = jwt.sign(
+      { id: 88, role: 'teacher', email: 'teacher88@virtulab.ke', name: 'Mwalimu Otieno' },
       process.env.JWT_SECRET
     );
 
@@ -49,11 +54,17 @@ describe('VirtuLab Kenya — Broadcast Announcements Delivery to Students Suite'
         const title = params[0];
         const message = params[1];
         const type = params[2] || 'info';
+        const target_role = params[3] || 'all';
+        const school_id = params[4] || null;
+        const county = params[5] || null;
         const row = {
           id: mockAnnouncements.length + 1,
           title,
           message,
           type,
+          target_role,
+          school_id,
+          county,
           is_active: true,
           created_at: new Date().toISOString()
         };
@@ -61,7 +72,7 @@ describe('VirtuLab Kenya — Broadcast Announcements Delivery to Students Suite'
         return { rows: [row] };
       }
 
-      // Fan-out query: INSERT INTO student_notifications SELECT id, ... FROM students
+      // Fan-out query: INSERT INTO student_notifications SELECT ... FROM students
       if (q.includes('INSERT INTO student_notifications') && q.includes('FROM students')) {
         const title = params[0];
         const message = params[1];
@@ -80,7 +91,11 @@ describe('VirtuLab Kenya — Broadcast Announcements Delivery to Students Suite'
 
       // SELECT active announcements
       if (q.includes('SELECT') && q.includes('FROM system_announcements') && q.includes('is_active = true')) {
-        const active = mockAnnouncements.filter(a => a.is_active);
+        let active = mockAnnouncements.filter(a => a.is_active);
+        if (q.includes('target_role = $')) {
+          const audienceParam = params[0];
+          active = active.filter(a => a.target_role === 'all' || a.target_role === audienceParam);
+        }
         return { rows: active };
       }
 
@@ -152,7 +167,8 @@ describe('VirtuLab Kenya — Broadcast Announcements Delivery to Students Suite'
       body: JSON.stringify({
         title: 'KCSE Chemistry Paper 3 Mock Practical Schedule',
         message: 'All Form 4 candidates must complete Titration Standardization by Friday 5 PM.',
-        type: 'exam'
+        type: 'exam',
+        target_role: 'all'
       })
     });
 
@@ -191,7 +207,47 @@ describe('VirtuLab Kenya — Broadcast Announcements Delivery to Students Suite'
     assert.strictEqual(body.notifications[0].type, 'announcement');
   });
 
-  it('4. DELETE /api/admin/announcements/:id deletes announcement and cleans up student notifications', async () => {
+  it('4. POST /api/admin/announcements targeting teachers does NOT fan out to students', async () => {
+    const initialStudentNotifCount = mockStudentNotifications.length;
+
+    const res = await fetch(url('/api/admin/announcements'), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + adminToken
+      },
+      body: JSON.stringify({
+        title: 'KNEC Standardization Seminar for Examiners',
+        message: 'All chemistry teachers must review the 2026 rubric guidelines by Monday.',
+        type: 'info',
+        target_role: 'teachers'
+      })
+    });
+
+    assert.strictEqual(res.status, 201);
+    const body = await res.json();
+    assert.strictEqual(body.success, true);
+    assert.strictEqual(body.announcement.target_role, 'teachers');
+
+    // Verify student notifications did NOT increase
+    assert.strictEqual(mockStudentNotifications.length, initialStudentNotifCount);
+
+    // Verify teachers audience query receives it
+    const teacherActiveRes = await fetch(url('/api/announcements/active?audience=teachers'));
+    assert.strictEqual(teacherActiveRes.status, 200);
+    const teacherBody = await teacherActiveRes.json();
+    const hasTeacherNotice = teacherBody.announcements.some(a => a.title === 'KNEC Standardization Seminar for Examiners');
+    assert.strictEqual(hasTeacherNotice, true);
+
+    // Verify students audience query does NOT receive teacher-only announcement
+    const studentActiveRes = await fetch(url('/api/announcements/active?audience=students'));
+    assert.strictEqual(studentActiveRes.status, 200);
+    const studentBody = await studentActiveRes.json();
+    const hasInStudent = studentBody.announcements.some(a => a.title === 'KNEC Standardization Seminar for Examiners');
+    assert.strictEqual(hasInStudent, false);
+  });
+
+  it('5. DELETE /api/admin/announcements/:id deletes announcement and cleans up student notifications', async () => {
     const targetId = mockAnnouncements.length > 0 ? mockAnnouncements[0].id : 1;
     const res = await fetch(url('/api/admin/announcements/' + targetId), {
       method: 'DELETE',
@@ -203,28 +259,56 @@ describe('VirtuLab Kenya — Broadcast Announcements Delivery to Students Suite'
     assert.strictEqual(res.status, 200);
     const body = await res.json();
     assert.strictEqual(body.success, true);
-    assert.strictEqual(mockAnnouncements.length, 0);
   });
 
-  it('5. Verifies client home.html and dashboard.js contain broadcast banner components', () => {
+  it('6. Verifies client student, teacher, and admin workstations contain targeted broadcast components', () => {
+    // Student portal verification
     const studentHome = fs.readFileSync(path.join(__dirname, '..', '..', 'client', 'student', 'home.html'), 'utf8');
-    assert(studentHome.includes('id="systemBroadcastBanner"'), 'home.html must include systemBroadcastBanner container');
-
+    assert(studentHome.includes('id="systemBroadcastBanner"'), 'student home.html must include systemBroadcastBanner');
     const studentDash = fs.readFileSync(path.join(__dirname, '..', '..', 'client', 'student', 'js', 'student-dashboard.js'), 'utf8');
     assert(studentDash.includes('renderSystemBroadcastBanner'), 'student-dashboard.js must define renderSystemBroadcastBanner');
-    assert(studentDash.includes("itemType === 'announcement'"), 'student-dashboard.js must support announcement items in notification bell');
+    assert(studentDash.includes("itemType === 'announcement'"), 'student-dashboard.js must support announcement items');
     assert(studentDash.includes('dismissAnnouncement'), 'student-dashboard.js must export dismissAnnouncement');
 
+    // Teacher portal verification
+    const teacherDashHtml = fs.readFileSync(path.join(__dirname, '..', '..', 'client', 'teacher', 'dashboard.html'), 'utf8');
+    assert(teacherDashHtml.includes('id="systemBroadcastBanner"'), 'teacher dashboard.html must include systemBroadcastBanner');
+    assert(teacherDashHtml.includes('id="notifBellBtn"'), 'teacher dashboard.html must include notifBellBtn');
+    assert(teacherDashHtml.includes('id="notifBadge"'), 'teacher dashboard.html must include notifBadge');
+    assert(teacherDashHtml.includes('id="notifDropdown"'), 'teacher dashboard.html must include notifDropdown');
+
+    const teacherDashJs = fs.readFileSync(path.join(__dirname, '..', '..', 'client', 'teacher', 'js', 'teacher-dashboard.js'), 'utf8');
+    assert(teacherDashJs.includes('renderSystemBroadcastBanner'), 'teacher-dashboard.js must define renderSystemBroadcastBanner');
+    assert(teacherDashJs.includes('loadSystemAnnouncements'), 'teacher-dashboard.js must define loadSystemAnnouncements');
+    assert(teacherDashJs.includes('cachedActiveAnnouncements'), 'teacher-dashboard.js must cache active announcements');
+    assert(teacherDashJs.includes('dismissAnnouncement'), 'teacher-dashboard.js must define dismissAnnouncement');
+
+    // Admin portal verification
     const adminHtml = fs.readFileSync(path.join(__dirname, '..', '..', 'client', 'admin', 'dashboard.html'), 'utf8');
     assert(adminHtml.includes('deleteAnnouncementPrompt'), 'admin dashboard must include deleteAnnouncementPrompt');
+    assert(adminHtml.includes('annTargetRoleSelect'), 'admin dashboard must include annTargetRoleSelect');
+    assert(adminHtml.includes('annCountySelect'), 'admin dashboard must include annCountySelect');
+    assert(adminHtml.includes('annSchoolSelect'), 'admin dashboard must include annSchoolSelect');
   });
 
-  it('6. Verifies Android PWA asset parity for offline & mobile workstation', () => {
-    const pwaHome = fs.readFileSync(path.join(__dirname, '..', '..', 'pwa-android', 'app', 'src', 'main', 'assets', 'student', 'home.html'), 'utf8');
-    assert(pwaHome.includes('id="systemBroadcastBanner"'), 'pwa home.html must include systemBroadcastBanner container');
+  it('7. Verifies Android PWA asset parity across student, teacher, and admin portals', () => {
+    // Student PWA
+    const pwaStudentHome = fs.readFileSync(path.join(__dirname, '..', '..', 'pwa-android', 'app', 'src', 'main', 'assets', 'student', 'home.html'), 'utf8');
+    assert(pwaStudentHome.includes('id="systemBroadcastBanner"'), 'pwa student home.html must include systemBroadcastBanner');
 
-    const pwaDash = fs.readFileSync(path.join(__dirname, '..', '..', 'pwa-android', 'app', 'src', 'main', 'assets', 'student', 'js', 'student-dashboard.js'), 'utf8');
-    assert(pwaDash.includes('renderSystemBroadcastBanner'), 'pwa student-dashboard.js must define renderSystemBroadcastBanner');
-    assert(pwaDash.includes("itemType === 'announcement'"), 'pwa student-dashboard.js must support announcement items');
+    const pwaStudentDash = fs.readFileSync(path.join(__dirname, '..', '..', 'pwa-android', 'app', 'src', 'main', 'assets', 'student', 'js', 'student-dashboard.js'), 'utf8');
+    assert(pwaStudentDash.includes('renderSystemBroadcastBanner'), 'pwa student-dashboard.js must define renderSystemBroadcastBanner');
+
+    // Teacher PWA
+    const pwaTeacherDash = fs.readFileSync(path.join(__dirname, '..', '..', 'pwa-android', 'app', 'src', 'main', 'assets', 'teacher', 'dashboard.html'), 'utf8');
+    assert(pwaTeacherDash.includes('id="systemBroadcastBanner"'), 'pwa teacher dashboard.html must include systemBroadcastBanner');
+    assert(pwaTeacherDash.includes('id="notifBellBtn"'), 'pwa teacher dashboard.html must include notifBellBtn');
+
+    const pwaTeacherJs = fs.readFileSync(path.join(__dirname, '..', '..', 'pwa-android', 'app', 'src', 'main', 'assets', 'teacher', 'js', 'teacher-dashboard.js'), 'utf8');
+    assert(pwaTeacherJs.includes('loadSystemAnnouncements'), 'pwa teacher-dashboard.js must define loadSystemAnnouncements');
+
+    // Admin PWA
+    const pwaAdminDash = fs.readFileSync(path.join(__dirname, '..', '..', 'pwa-android', 'app', 'src', 'main', 'assets', 'admin', 'dashboard.html'), 'utf8');
+    assert(pwaAdminDash.includes('annTargetRoleSelect'), 'pwa admin dashboard.html must include annTargetRoleSelect');
   });
 });

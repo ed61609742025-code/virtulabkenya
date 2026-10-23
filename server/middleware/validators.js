@@ -106,6 +106,11 @@ const validateAnnouncementCreate = [
   body('title').trim().notEmpty().withMessage('Announcement title is required.').isLength({ max: 200 }).withMessage('Title must be at most 200 characters.').escape(),
   body('message').trim().notEmpty().withMessage('Announcement message is required.').isLength({ max: 2000 }).withMessage('Message must be at most 2000 characters.').escape(),
   body('type').optional().isIn(['info', 'warning', 'success', 'alert', 'exam']).withMessage('Invalid announcement type. Must be one of: info, warning, success, alert, exam.'),
+  body('target_role').optional().isIn(['all', 'students', 'teachers']).withMessage('Invalid target role. Must be one of: all, students, teachers.'),
+  body('targetRole').optional().isIn(['all', 'students', 'teachers']).withMessage('Invalid target role. Must be one of: all, students, teachers.'),
+  body('county').optional({ checkFalsy: true }).trim().escape(),
+  body('school_id').optional({ checkFalsy: true }).customSanitizer(v => (v === '' || v === 'all' || v === null || isNaN(v)) ? null : parseInt(v, 10)),
+  body('schoolId').optional({ checkFalsy: true }).customSanitizer(v => (v === '' || v === 'all' || v === null || isNaN(v)) ? null : parseInt(v, 10)),
   handleValidationErrors
 ];
 

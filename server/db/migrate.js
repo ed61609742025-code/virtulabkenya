@@ -204,9 +204,16 @@ const migrations = [
      title VARCHAR(200) NOT NULL,
      message TEXT NOT NULL,
      type VARCHAR(50) DEFAULT 'info',
+     target_role VARCHAR(20) DEFAULT 'all',
+     school_id INTEGER REFERENCES schools(id) ON DELETE CASCADE,
+     county VARCHAR(100),
      is_active BOOLEAN DEFAULT TRUE,
      created_at TIMESTAMP DEFAULT NOW()
    )`,
+  // Ensure system_announcements targeting columns exist
+  `ALTER TABLE system_announcements ADD COLUMN IF NOT EXISTS target_role VARCHAR(20) DEFAULT 'all'`,
+  `ALTER TABLE system_announcements ADD COLUMN IF NOT EXISTS school_id INTEGER REFERENCES schools(id) ON DELETE CASCADE`,
+  `ALTER TABLE system_announcements ADD COLUMN IF NOT EXISTS county VARCHAR(100)`,
   // Ensure teacher status exists
   `ALTER TABLE teachers ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'active'`,
   // Ensure student status exists

@@ -623,6 +623,7 @@
           <tr>
             <th>Title</th>
             <th>Category</th>
+            <th>Audience</th>
             <th>Message Details</th>
             <th>Status</th>
             <th>Date Posted</th>
@@ -630,7 +631,7 @@
           </tr>
         </thead>
         <tbody id="announcementsTableBody">
-          <tr><td colspan="6" style="text-align:center;color:var(--text-muted);">Loading announcements...</td></tr>
+          <tr><td colspan="7" style="text-align:center;color:var(--text-muted);">Loading announcements...</td></tr>
         </tbody>
       </table>
     </div>
@@ -1596,6 +1597,28 @@
           </select>
         </div>
         <div class="form-group">
+          <label for="annTargetRoleSelect">Target Audience</label>
+          <select id="annTargetRoleSelect" class="form-control">
+            <option value="all">All Users (National Broadcast — Students &amp; Teachers)</option>
+            <option value="students">Students Only (Candidate Workstations)</option>
+            <option value="teachers">Teachers Only (Instructor Workstations)</option>
+          </select>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;" class="form-group">
+          <div>
+            <label for="annCountySelect">County Scope (Optional)</label>
+            <select id="annCountySelect" class="form-control">
+              <option value="all">All Counties (National)</option>
+            </select>
+          </div>
+          <div>
+            <label for="annSchoolSelect">School Scope (Optional)</label>
+            <select id="annSchoolSelect" class="form-control">
+              <option value="all">All Schools (National)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
           <label for="annMessageInput">Message Details</label>
           <textarea id="annMessageInput" class="form-control" rows="3" placeholder="Write full details for students and teachers..." required></textarea>
         </div>
@@ -2207,7 +2230,7 @@
   function renderAnnouncements(list) {
     const tbody = document.getElementById('announcementsTableBody');
     if (!list || list.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:24px;">No broadcast announcements published yet.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">No broadcast announcements published yet.</td></tr>';
       return;
     }
 
@@ -2220,10 +2243,27 @@
       const actionText = isActive ? 'Deactivate' : 'Activate';
       const newStatus = !isActive;
 
+      const role = a.target_role || 'all';
+      let audienceBadge = '<span class="status-badge" style="background:var(--card-bg-hover);border:1px solid var(--card-border);font-size:0.75rem;font-weight:700;">All Users</span>';
+      if (role === 'students') {
+        audienceBadge = '<span class="status-badge" style="background:rgba(16,185,129,0.15);color:var(--green-accent,#10B981);border:1px solid rgba(16,185,129,0.3);font-size:0.75rem;font-weight:700;">Students Only</span>';
+      } else if (role === 'teachers') {
+        audienceBadge = '<span class="status-badge" style="background:rgba(14,165,233,0.15);color:var(--blue-accent,#0284C7);border:1px solid rgba(14,165,233,0.3);font-size:0.75rem;font-weight:700;">Teachers Only</span>';
+      }
+
+      let scopeMeta = '';
+      if (a.county) {
+        scopeMeta += `<div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px;">📍 ${escapeHtml(a.county)}</div>`;
+      }
+      if (a.school_name) {
+        scopeMeta += `<div style="font-size:0.72rem;color:var(--text-muted);margin-top:2px;">🏫 ${escapeHtml(a.school_name)}</div>`;
+      }
+
       return `
         <tr>
           <td><b>${escapeHtml(a.title)}</b></td>
           <td><span style="background:var(--card-bg-hover);border:1px solid var(--card-border);padding:2px 8px;border-radius:6px;font-size:0.75rem;font-weight:700;">${escapeHtml(a.type || 'info')}</span></td>
+          <td>${audienceBadge}${scopeMeta}</td>
           <td style="font-size:0.83rem;color:var(--text-muted);">${escapeHtml(a.message)}</td>
           <td>${statusBadge}</td>
           <td><small style="font-family:var(--font-mono);color:var(--text-muted);">${new Date(a.created_at || Date.now()).toLocaleDateString()}</small></td>
@@ -3435,6 +3475,19 @@
   }
 
   function openAnnouncementModal() {
+    const countySelect = document.getElementById('annCountySelect');
+    if (countySelect && typeof allSchools !== 'undefined' && Array.isArray(allSchools)) {
+      const counties = [...new Set(allSchools.map(s => s.county).filter(Boolean))].sort();
+      countySelect.innerHTML = '<option value="all">All 47 Counties (National)</option>' +
+        counties.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+    }
+    const schoolSelect = document.getElementById('annSchoolSelect');
+    if (schoolSelect && typeof allSchools !== 'undefined' && Array.isArray(allSchools)) {
+      schoolSelect.innerHTML = '<option value="all">All Schools (National)</option>' +
+        allSchools.map(s => `<option value="${s.id}">${escapeHtml(s.name)} (${escapeHtml(s.county || 'Kenya')})</option>`).join('');
+    }
+    const msg = document.getElementById('annModalMsg');
+    if (msg) msg.innerHTML = '';
     document.getElementById('announcementModal').style.display = 'flex';
   }
 
@@ -3446,11 +3499,14 @@
     e.preventDefault();
     const title = document.getElementById('annTitleInput').value;
     const type = document.getElementById('annTypeSelect').value;
+    const target_role = document.getElementById('annTargetRoleSelect')?.value || 'all';
+    const county = document.getElementById('annCountySelect')?.value || 'all';
+    const school_id = document.getElementById('annSchoolSelect')?.value || 'all';
     const message = document.getElementById('annMessageInput').value;
     const msg = document.getElementById('annModalMsg');
 
     try {
-      const res = await Admin.createAnnouncement(title, message, type);
+      const res = await Admin.createAnnouncement(title, message, type, { target_role, county, school_id });
       if (res.success) {
         msg.innerHTML = '<div style="color:var(--green-accent);font-size:0.85rem;font-weight:700;">✓ Broadcast announcement published!</div>';
         showToast(`Broadcast "${title}" published!`, 'success');

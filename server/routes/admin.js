@@ -188,36 +188,75 @@ router.delete('/schools/:id', asyncHandler(async (req, res) => {
 
 // POST /api/admin/announcements — Create broadcast announcement
 router.post('/announcements', validateAnnouncementCreate, asyncHandler(async (req, res) => {
-  const { title, message, type } = req.body;
+  const { title, message, type, target_role, targetRole, county, school_id, schoolId } = req.body;
+  const cleanTargetRole = target_role || targetRole || 'all';
+  const cleanCounty = county && county !== 'all' ? county.trim() : null;
+  const cleanSchoolId = (school_id || schoolId) ? (parseInt(school_id || schoolId, 10) || null) : null;
+
   const announcement = await announcementRepo.createAnnouncement({
     title,
     message,
-    type: type || 'info'
+    type: type || 'info',
+    target_role: cleanTargetRole,
+    county: cleanCounty,
+    school_id: cleanSchoolId
   });
 
-  // Fan-out to student in-app notifications so all active student workstations receive it
-  try {
-    await pool.query(`
-      INSERT INTO student_notifications (student_id, title, message, type, link)
-      SELECT id, $1, $2, 'announcement', '/student/home.html'
-      FROM students
-      WHERE status IS NULL OR status != 'suspended'
-    `, [title, message]);
-  } catch (fanoutErr) {
-    console.warn('[Announcement Fanout Warning]:', fanoutErr.message);
+  // Fan-out to student in-app notifications if targeted to students or all users
+  if (cleanTargetRole === 'all' || cleanTargetRole === 'students') {
+    try {
+      let studentQuery = 'INSERT INTO student_notifications (student_id, title, message, type, link) ' +
+        'SELECT st.id, $1, $2, \'announcement\', \'/student/home.html\' ' +
+        'FROM students st';
+      const joins = [];
+      const wheres = ["(st.status IS NULL OR st.status != 'suspended')"];
+      const params = [title, message];
+
+      if (cleanSchoolId) {
+        params.push(cleanSchoolId);
+        wheres.push('st.school_id = $' + params.length);
+      }
+      if (cleanCounty) {
+        joins.push('JOIN schools sc ON sc.id = st.school_id');
+        params.push(cleanCounty);
+        wheres.push('sc.county = $' + params.length);
+      }
+
+      if (joins.length > 0) studentQuery += ' ' + joins.join(' ');
+      studentQuery += ' WHERE ' + wheres.join(' AND ');
+
+      await pool.query(studentQuery, params);
+    } catch (fanoutErr) {
+      console.warn('[Announcement Fanout Warning]:', fanoutErr.message);
+    }
   }
 
-  // Broadcast push notification to all subscribers
+  // Determine Web Push recipient role filter and destination
+  let pushRoleFilter = null;
+  if (cleanTargetRole === 'students') {
+    pushRoleFilter = 'student';
+  } else if (cleanTargetRole === 'teachers') {
+    pushRoleFilter = 'teacher';
+  }
+  const targetUrl = cleanTargetRole === 'teachers' ? '/teacher/dashboard.html' : '/student/home.html';
+
+  // Broadcast push notification to subscribers
   pushService.broadcast({
-    title: `📢 Announcement: ${title}`,
+    title: '📢 Announcement: ' + title,
     body: message,
-    data: { url: '/student/home.html', notifId: `ann_${announcement.id}` }
-  }).catch(err => console.warn('[Announcement Push Warning]:', err.message));
+    data: { url: targetUrl, notifId: 'ann_' + announcement.id }
+  }, pushRoleFilter).catch(err => console.warn('[Announcement Push Warning]:', err.message));
 
   await auditRepo.logAuditEvent({
     adminEmail: req.user.email,
-    action: `Created system broadcast announcement: "${title}"`,
-    details: { announcementId: announcement.id, type: type || 'info' },
+    action: 'Created system broadcast announcement: "' + title + '" (Audience: ' + cleanTargetRole + ')',
+    details: {
+      announcementId: announcement.id,
+      type: type || 'info',
+      target_role: cleanTargetRole,
+      county: cleanCounty,
+      school_id: cleanSchoolId
+    },
     ipAddress: req.ip
   });
 

@@ -4501,15 +4501,150 @@ let currentPage = 1;
     }
   });
 
+    let cachedActiveAnnouncements = [];
+
+  async function loadSystemAnnouncements() {
+    try {
+      if (typeof Announcements !== 'undefined' && typeof Announcements.getActive === 'function') {
+        const res = await Announcements.getActive('teachers');
+        if (res && res.success && Array.isArray(res.announcements)) {
+          cachedActiveAnnouncements = res.announcements;
+          renderSystemBroadcastBanner();
+          if (typeof window.updateTeacherNotificationsUI === 'function') {
+            window.updateTeacherNotificationsUI(teacherNotificationsList || []);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('[Broadcasts] Could not load teacher system announcements:', e);
+    }
+  }
+
+  function renderSystemBroadcastBanner() {
+    const banner = document.getElementById('systemBroadcastBanner');
+    if (!banner) return;
+
+    const activeAlerts = (cachedActiveAnnouncements || []).filter(a => {
+      const isDismissed = localStorage.getItem('vlk_dismiss_ann_' + a.id) || sessionStorage.getItem('vlk_dismiss_ann_' + a.id);
+      const isRead = window.VLKNotifs && window.VLKNotifs.isRead('ann_' + a.id);
+      return !isDismissed && !isRead;
+    });
+
+    if (activeAlerts.length === 0) {
+      banner.style.display = 'none';
+      banner.innerHTML = '';
+      return;
+    }
+
+    banner.style.display = 'flex';
+    banner.innerHTML = activeAlerts.map(a => {
+      const cat = a.type || 'info';
+      const catLabel = cat === 'exam' ? 'Practical Mock Notice' : (cat === 'warning' ? 'Urgent Alert' : 'Examiner Notice');
+      const timeStr = a.created_at ? new Date(a.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Today';
+
+      return `
+        <div id="ann-card-${a.id}" class="system-announcement-card type-${cat}">
+          <div class="ann-icon-box" aria-hidden="true">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px;"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"/></svg>
+          </div>
+          <div class="ann-content-wrap">
+            <div class="ann-tag-row">
+              <span class="ann-pill">${catLabel}</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--text-muted);">${timeStr}</span>
+            </div>
+            <div class="ann-title">${escapeHtml(a.title)}</div>
+            <div class="ann-message">${escapeHtml(a.message)}</div>
+          </div>
+          <button type="button" class="ann-dismiss-btn" onclick="dismissAnnouncement(${a.id})" title="Dismiss notice" aria-label="Dismiss notice">&times;</button>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function dismissAnnouncement(id) {
+    try {
+      localStorage.setItem('vlk_dismiss_ann_' + id, 'true');
+      sessionStorage.setItem('vlk_dismiss_ann_' + id, 'true');
+    } catch(e) {}
+    if (window.VLKNotifs && typeof window.VLKNotifs.markAsRead === 'function') {
+      window.VLKNotifs.markAsRead('ann_' + id);
+    }
+    const el = document.getElementById('ann-card-' + id);
+    if (el) {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(-6px)';
+      setTimeout(() => {
+        el.remove();
+        const banner = document.getElementById('systemBroadcastBanner');
+        if (banner && banner.querySelectorAll('.system-announcement-card').length === 0) {
+          banner.style.display = 'none';
+        }
+      }, 250);
+    }
+    if (typeof window.updateTeacherNotificationsUI === 'function') {
+      window.updateTeacherNotificationsUI(teacherNotificationsList || []);
+    }
+  }
+
+  window.toggleTeacherNotifDropdown = function(e) {
+    if (e) e.stopPropagation();
+    const dropdown = document.getElementById('notifDropdown');
+    const backdrop = document.getElementById('notifBackdrop');
+    if (!dropdown) return;
+    const isShowing = dropdown.style.display !== 'none';
+    dropdown.style.display = isShowing ? 'none' : 'flex';
+    if (backdrop) backdrop.style.display = isShowing ? 'none' : 'block';
+    if (!isShowing) {
+      if (window.VLKNotifs && typeof window.VLKNotifs.syncWithServer === 'function') {
+        window.VLKNotifs.syncWithServer().catch(() => {});
+      }
+    }
+  };
+
+  document.addEventListener('click', (e) => {
+    const dropdown = document.getElementById('notifDropdown');
+    const backdrop = document.getElementById('notifBackdrop');
+    const bellBtn = document.getElementById('notifBellBtn');
+    if (dropdown && dropdown.style.display !== 'none') {
+      if (!dropdown.contains(e.target) && (!bellBtn || !bellBtn.contains(e.target))) {
+        dropdown.style.display = 'none';
+        if (backdrop) backdrop.style.display = 'none';
+      }
+    }
+  });
+
   window.updateTeacherNotificationsUI = function(submissions) {
-    let rawList = (submissions || []).map(s => ({
-      id: 'teacher_sub_' + (s.id || s.submission_id),
-      studentName: s.student_name || 'Student',
-      title: '📥 New Assignment Submission',
-      message: `${s.student_name || 'Student'} submitted "${s.assignment_title || s.title || 'Practical Assignment'}".`,
-      timestamp: s.submitted_at || s.created_at || Date.now(),
-      raw: s
-    }));
+    let rawList = [];
+
+    // 0. Active System Broadcast Announcements (Top Priority)
+    (cachedActiveAnnouncements || []).forEach(a => {
+      const cat = a.type || 'info';
+      const catLabels = { info: 'Examiner Notice', exam: 'Practical Mock Notice', warning: 'Urgent Alert' };
+      rawList.push({
+        id: 'ann_' + a.id,
+        announcementId: a.id,
+        title: (cat === 'exam' ? '📋 ' : cat === 'warning' ? '⚠️ ' : '📢 ') + (a.title || 'Broadcast Notice'),
+        message: a.message || '',
+        timestamp: a.created_at ? new Date(a.created_at).getTime() : Date.now(),
+        type: 'announcement',
+        category: cat,
+        categoryLabel: catLabels[cat] || 'System Notice',
+        raw: a
+      });
+    });
+
+    // 1. Student Practical Submissions
+    (submissions || []).forEach(s => {
+      rawList.push({
+        id: 'teacher_sub_' + (s.id || s.submission_id),
+        studentName: s.student_name || 'Student',
+        title: '📥 New Assignment Submission',
+        message: `${s.student_name || 'Student'} submitted "${s.assignment_title || s.title || 'Practical Assignment'}".`,
+        timestamp: s.submitted_at || s.created_at || Date.now(),
+        type: 'submission',
+        raw: s
+      });
+    });
 
     teacherNotificationsList = rawList;
 
@@ -4539,7 +4674,7 @@ let currentPage = 1;
           <div style="text-align:center; padding:20px 12px; color:var(--text-muted);">
             <div style="font-size:1.8rem; margin-bottom:6px;">✨</div>
             <div style="font-size:0.84rem; font-weight:700; color:var(--heading-color);">No Active Notifications</div>
-            <div style="font-size:0.75rem; margin-top:2px; line-height:1.4;">Read notices automatically expire after 24 hours.</div>
+            <div style="font-size:0.75rem; margin-top:2px; line-height:1.4;">All student submissions and examiner notices are up to date.</div>
           </div>
         `;
         return;
@@ -4547,13 +4682,14 @@ let currentPage = 1;
 
       list.innerHTML = activeNotifs.map(n => {
         const isRead = window.VLKNotifs ? window.VLKNotifs.isRead(n.id) : false;
+        const isAnn = n.type === 'announcement';
         const hoursLeft = window.VLKNotifs ? window.VLKNotifs.getRemainingHours(n.id) : null;
         const timeAgo = window.VLKNotifs ? window.VLKNotifs.formatTimeAgo(n.timestamp) : '';
 
         return `
-          <div class="notif-item ${isRead ? 'read-active' : 'unread'}" onclick="clickTeacherNotifItem('${n.id}')">
+          <div class="notif-item ${isRead ? 'read-active' : 'unread'} ${isAnn ? 'notif-announcement' : ''}" onclick="clickTeacherNotifItem('${n.id}')">
             <div style="font-size:0.84rem; font-weight:800; color:var(--heading-color); display:flex; align-items:center; justify-content:space-between; margin-bottom:3px;">
-              <span>${isRead ? '📜' : '🟢'} ${escapeHtml(n.title)}</span>
+              <span>${isAnn ? '📢' : (isRead ? '📜' : '🟢')} ${escapeHtml(n.title)}</span>
               <span style="font-size:0.7rem; color:var(--text-muted); font-weight:600;">${timeAgo}</span>
             </div>
             <div style="font-size:0.78rem; color:var(--text-muted); line-height:1.4;">
@@ -4572,10 +4708,32 @@ let currentPage = 1;
 
   window.clickTeacherNotifItem = function(notifId) {
     if (window.VLKNotifs) window.VLKNotifs.markAsRead(notifId);
+    if (notifId && String(notifId).startsWith('ann_')) {
+      const annId = String(notifId).replace(/^ann_/, '');
+      try {
+        localStorage.setItem('vlk_dismiss_ann_' + annId, 'true');
+        sessionStorage.setItem('vlk_dismiss_ann_' + annId, 'true');
+      } catch(e) {}
+      const card = document.getElementById('ann-card-' + annId);
+      if (card) {
+        card.style.opacity = '0';
+        setTimeout(() => {
+          card.remove();
+          const banner = document.getElementById('systemBroadcastBanner');
+          if (banner && banner.querySelectorAll('.system-announcement-card').length === 0) {
+            banner.style.display = 'none';
+          }
+        }, 200);
+      }
+    }
     const dropdown = document.getElementById('notifDropdown');
+    const backdrop = document.getElementById('notifBackdrop');
     if (dropdown) dropdown.style.display = 'none';
-    if (typeof switchTeacherTab === 'function') switchTeacherTab('paneAssignments');
-    loadSubmittedAssignments();
+    if (backdrop) backdrop.style.display = 'none';
+    if (!String(notifId).startsWith('ann_')) {
+      if (typeof switchTeacherTab === 'function') switchTeacherTab('paneAssignments');
+      loadSubmittedAssignments();
+    }
   };
 
   window.markAllTeacherNotificationsRead = function() {
@@ -4583,8 +4741,21 @@ let currentPage = 1;
     if (window.VLKNotifs) {
       window.VLKNotifs.markAllAsRead(activeNotifs.map(n => n.id));
     }
+    (cachedActiveAnnouncements || []).forEach(a => {
+      try {
+        localStorage.setItem('vlk_dismiss_ann_' + a.id, 'true');
+        sessionStorage.setItem('vlk_dismiss_ann_' + a.id, 'true');
+      } catch(e) {}
+    });
+    const banner = document.getElementById('systemBroadcastBanner');
+    if (banner) banner.style.display = 'none';
     loadSubmittedAssignments();
   };
+
+  window.dismissAnnouncement = dismissAnnouncement;
+  window.renderSystemBroadcastBanner = renderSystemBroadcastBanner;
+  window.loadSystemAnnouncements = loadSystemAnnouncements;
+  loadSystemAnnouncements();
 
   // Subscribe to real-time cross-device and cross-tab notification updates
   if (typeof window !== 'undefined' && window.VLKNotifs && typeof window.VLKNotifs.subscribe === 'function') {

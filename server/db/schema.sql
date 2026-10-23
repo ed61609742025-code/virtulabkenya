@@ -180,6 +180,9 @@ CREATE TABLE IF NOT EXISTS system_announcements (
   title VARCHAR(200) NOT NULL,
   message TEXT NOT NULL,
   type VARCHAR(50) DEFAULT 'info',
+  target_role VARCHAR(20) DEFAULT 'all',
+  school_id INTEGER REFERENCES schools(id) ON DELETE CASCADE,
+  county VARCHAR(100),
   is_active BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMP DEFAULT NOW()
 );

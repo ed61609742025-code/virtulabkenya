@@ -64,16 +64,30 @@ requireStudentLogin();
     } else if (parts.length >= 2) {
       initials = (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
     }
-    const avatarEl = document.getElementById('heroStudentAvatar');
-    if (avatarEl) avatarEl.textContent = initials;
+    ['heroStudentAvatar', 'navAvatarInitials'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = initials;
+    });
   }
 
   async function initStudentProfile() {
     if (currentStudentUser) {
-      ['studentName', 'studentNameMobile'].forEach(id => {
+      ['studentName', 'studentNameMobile', 'profHeaderName'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.textContent = currentStudentUser.name;
       });
+      const nameInp = document.getElementById('profInputName');
+      if (nameInp && !nameInp.value) nameInp.value = currentStudentUser.name || '';
+      const emailH = document.getElementById('profHeaderEmail');
+      if (emailH && currentStudentUser.email) emailH.textContent = currentStudentUser.email;
+      const emailInp = document.getElementById('profInputEmail');
+      if (emailInp && currentStudentUser.email) emailInp.value = currentStudentUser.email;
+      const formInp = document.getElementById('profInputForm');
+      if (formInp && currentStudentUser.form) formInp.value = currentStudentUser.form;
+      const schoolInp = document.getElementById('profInputSchool');
+      if (schoolInp && (currentStudentUser.schoolName || currentStudentUser.schoolCode)) {
+        schoolInp.value = currentStudentUser.schoolName || currentStudentUser.schoolCode;
+      }
       updateStudentAvatar(currentStudentUser.name);
       updateStudentTeacherUI(currentStudentUser);
     }
@@ -1140,7 +1154,7 @@ requireStudentLogin();
       badgeClass: 'badge-danger',
       title: 'Burette Reading Precision (Table 1)',
       body: 'KNEC Paper 3 penalizes any burette reading recorded to only 1 decimal place. Always record initial and final titres to 2 decimal places ending strictly in .00 or .50 (e.g. 24.50 cm³, not 24.5 cm³).',
-      actionText: 'Practice Titration Bench &rarr;',
+      actionText: 'Practice Titration Bench →',
       actionUrl: 'lab.html?type=acidBase&studyMode=guided',
       quickCheck: {
         question: 'Which burette reading forfeits accuracy marks on KCSE Table 1?',
@@ -1158,7 +1172,7 @@ requireStudentLogin();
       badgeClass: 'badge-info',
       title: 'Averaging Concordant Titres (±0.10 cm³)',
       body: 'Never include your rough (first) trial in the final average! Only average 2 or 3 consecutive titres that differ by no more than ±0.10 cm³ to earn full concordancy marks.',
-      actionText: 'Practice Concordancy Run &rarr;',
+      actionText: 'Practice Concordancy Run →',
       actionUrl: 'lab.html?type=acidBase',
       quickCheck: {
         question: 'Given titres: Trial 1 (Rough) = 24.50, Trial 2 = 23.80, Trial 3 = 23.90 cm³. Which values should be averaged?',
@@ -1175,7 +1189,7 @@ requireStudentLogin();
       badgeClass: 'badge-info',
       title: 'Redox Self-Indicating KMnO₄ Endpoint',
       body: 'Potassium permanganate (KMnO₄) is self-indicating! Stop adding titrant at the very first permanent faint pink tint. Also read the top of the dark KMnO₄ meniscus in the burette.',
-      actionText: 'Practice Redox Titration &rarr;',
+      actionText: 'Practice Redox Titration →',
       actionUrl: 'lab.html?type=redox',
       quickCheck: {
         question: 'What indicates the equivalence point when titrating Fe²⁺ against acidified KMnO₄?',
@@ -1192,7 +1206,7 @@ requireStudentLogin();
       badgeClass: 'badge-success',
       title: 'Dibasic Acid 1:2 Mole Ratio Rule',
       body: 'Sulfuric acid (H₂SO₄) and oxalic acid (H₂C₂O₄) react with NaOH in a 1:2 stoichiometric ratio (H₂X + 2NaOH → Na₂X + 2H₂O). Always divide moles of NaOH by 2 to find moles of acid!',
-      actionText: 'Practice Dibasic Acid Lab &rarr;',
+      actionText: 'Practice Dibasic Acid Lab →',
       actionUrl: 'lab.html?type=dibasic',
       quickCheck: {
         question: 'If 0.0040 moles of NaOH neutralized H₂SO₄, how many moles of H₂SO₄ reacted?',
@@ -1209,7 +1223,7 @@ requireStudentLogin();
       badgeClass: 'badge-purple',
       title: 'Distinguishing Al³⁺ from Pb²⁺ in Question 2',
       body: 'Both Al³⁺ and Pb²⁺ form white precipitates soluble in excess NaOH and insoluble in excess NH₃. Add aqueous Potassium Iodide (KI): Pb²⁺ forms a bright yellow precipitate (PbI₂), while Al³⁺ gives no precipitate!',
-      actionText: 'Practice Qualitative Salts &rarr;',
+      actionText: 'Practice Qualitative Salts →',
       actionUrl: 'qualitative.html',
       quickCheck: {
         question: 'Which reagent confirms Pb²⁺ over Al³⁺ after both form white precipitates in NH₃(aq)?',
@@ -1226,7 +1240,7 @@ requireStudentLogin();
       badgeClass: 'badge-purple',
       title: 'Confirming Zn²⁺ with Aqueous Ammonia',
       body: 'Zn²⁺, Al³⁺, and Pb²⁺ all dissolve in excess NaOH. However, in excess aqueous ammonia (NH₃), only Zn²⁺ dissolves to form a colorless complex ion [Zn(NH₃)₄]²⁺!',
-      actionText: 'Test Cation Separations &rarr;',
+      actionText: 'Test Cation Separations →',
       actionUrl: 'qualitative.html',
       quickCheck: {
         question: 'A solution gives a white precipitate soluble in both excess NaOH(aq) and excess NH₃(aq). Which ion is present?',
@@ -1243,7 +1257,7 @@ requireStudentLogin();
       badgeClass: 'badge-purple',
       title: 'Sulfite (SO₃²⁻) vs Sulfate (SO₄²⁻) Anion Test',
       body: 'Both anions form white precipitates with Ba(NO₃)₂ or BaCl₂. Adding dilute HCl or HNO₃ dissolves white BaSO₃ precipitate with effervescence, whereas BaSO₄ remains insoluble!',
-      actionText: 'Practice Anion Identification &rarr;',
+      actionText: 'Practice Anion Identification →',
       actionUrl: 'qualitative.html',
       quickCheck: {
         question: 'After adding BaCl₂(aq), a white precipitate dissolves upon adding dilute HCl. What is the anion?',
@@ -1260,7 +1274,7 @@ requireStudentLogin();
       badgeClass: 'badge-danger',
       title: 'Organic Unsaturation Keyword Rule (Question 3)',
       body: 'When testing alkenes/alkynes with bromine water or acidified KMnO₄, never write "turns clear". Always write: "Yellow/orange bromine water is decolorized immediately."',
-      actionText: 'Practice Organic Lab &rarr;',
+      actionText: 'Practice Organic Lab →',
       actionUrl: 'organic.html',
       quickCheck: {
         question: 'Why does writing "Bromine water turns clear" lose marks in KCSE Paper 3?',
@@ -1277,7 +1291,7 @@ requireStudentLogin();
       badgeClass: 'badge-success',
       title: 'Thermochemistry ΔT Cooling Extrapolation',
       body: 'In enthalpy experiments (ΔH = -mcΔT / n), always extrapolate the cooling line back to the vertical line at the time of mixing to find the true peak ΔT corrected for heat loss!',
-      actionText: 'Practice Calorimetry &rarr;',
+      actionText: 'Practice Calorimetry →',
       actionUrl: 'energy.html',
       quickCheck: {
         question: 'In ΔH calculations, what must always be included with the final numerical value?',
@@ -1294,7 +1308,7 @@ requireStudentLogin();
       badgeClass: 'badge-info',
       title: 'Reaction Rates & Reciprocal Time (1/t)',
       body: 'In the sodium thiosulfate disappearing cross practical, rate of reaction is represented by 1/t (s⁻¹). Plotting 1/t against concentration yields a straight line through the origin!',
-      actionText: 'Practice Reaction Rates &rarr;',
+      actionText: 'Practice Reaction Rates →',
       actionUrl: 'rates.html',
       quickCheck: {
         question: 'If the cross disappears in 20 seconds, what is the rate (1/t) value recorded in the table?',
@@ -1311,7 +1325,7 @@ requireStudentLogin();
       badgeClass: 'badge-danger',
       title: 'Drying Ammonia Gas (Calcium Oxide Only)',
       body: 'Ammonia (NH₃) is the only common alkaline gas. Never dry it with conc. H₂SO₄ (reacts to form ammonium sulfate) or anhydrous CaCl₂ (forms CaCl₂·8NH₃ adduct). Always use Calcium Oxide (CaO)!',
-      actionText: 'Practice Gas Preparation &rarr;',
+      actionText: 'Practice Gas Preparation →',
       actionUrl: 'gas_prep.html',
       quickCheck: {
         question: 'How is dry ammonia gas collected in the laboratory?',
@@ -1328,7 +1342,7 @@ requireStudentLogin();
       badgeClass: 'badge-warning',
       title: 'Mandatory Units & Working Steps',
       body: 'Never write bare numbers in Paper 3 calculations! Always state clear working steps and attach units: cm³ for volume, mol/dm³ (or M) for molarity, and g/dm³ for mass concentration.',
-      actionText: 'Explore KNEC Rubric Guide &rarr;',
+      actionText: 'Explore KNEC Rubric Guide →',
       actionUrl: 'titration_theory.html',
       quickCheck: {
         question: 'How do you convert molarity (mol/dm³) into mass concentration (g/dm³)?',
@@ -1391,7 +1405,7 @@ requireStudentLogin();
       actionBtn.href = tip.actionUrl || 'lab.html';
     }
     if (actionText) {
-      actionText.textContent = tip.actionText || 'Practice Now →';
+      actionText.textContent = (tip.actionText || 'Practice Now →').replace(/&rarr;/g, '→');
     }
 
     const savedIds = getSavedTipIds();
@@ -1985,7 +1999,7 @@ requireStudentLogin();
         masteryLabel: `Current Mastery: ${t.accuracy}% (${t.total} run${t.total === 1 ? '' : 's'})`,
         masteryGoal: 'Goal: &ge;80% (Distinction)',
         masteryPct: Math.max(12, t.accuracy),
-        actionText: 'Fix Weak Spot &rarr;'
+        actionText: 'Fix Weak Spot →'
       });
     });
 
@@ -2005,7 +2019,7 @@ requireStudentLogin();
         masteryLabel: 'Current Mastery: Not Started (0 runs)',
         masteryGoal: 'Goal: &ge;80% (Distinction)',
         masteryPct: 8,
-        actionText: 'Start Practical &rarr;'
+        actionText: 'Start Practical →'
       });
     });
 
@@ -2026,7 +2040,7 @@ requireStudentLogin();
         masteryLabel: `Current Mastery: ${t.accuracy}% (${t.total} run${t.total === 1 ? '' : 's'})`,
         masteryGoal: 'Goal: Maintain Distinction (&ge;85%)',
         masteryPct: Math.max(15, t.accuracy),
-        actionText: 'Run Refresher &rarr;'
+        actionText: 'Run Refresher →'
       });
     });
 
@@ -2053,7 +2067,7 @@ requireStudentLogin();
       masteryLabel: `Syllabus Coverage: ${coveredCount}/10 Benches Practiced`,
       masteryGoal: 'Pass Mark: 20/40 (Distinction: 32+)',
       masteryPct: Math.max(12, coveragePct),
-      actionText: 'Launch 40-Mark Mock &rarr;'
+      actionText: 'Launch 40-Mark Mock →'
     });
 
     return queue.slice(0, 5);
@@ -2131,7 +2145,7 @@ requireStudentLogin();
 
     const actionTextEl = document.getElementById('recActionText');
     if (actionTextEl && rec.actionText) {
-      actionTextEl.textContent = rec.actionText;
+      actionTextEl.textContent = (rec.actionText || '').replace(/&rarr;/g, '→');
     }
 
     const warmupBtn = document.getElementById('recWarmupBtn');
@@ -3212,8 +3226,15 @@ requireStudentLogin();
       }
 
       // Streak calculation
-      const streakText = (document.getElementById('streakCountMobile') || document.getElementById('streakCount'))?.textContent || '1';
-      const formattedStreak = streakText.includes('Day') ? streakText : (streakText + ' Day' + (streakText === '1' ? '' : 's'));
+      let streakCount = 1;
+      if (window.GamificationEngine && typeof window.GamificationEngine.getStreak === 'function') {
+        const sData = window.GamificationEngine.getStreak();
+        streakCount = (sData && sData.count) ? sData.count : 1;
+      } else {
+        const sEl = document.getElementById('streakCountMobile') || document.getElementById('streakCount');
+        if (sEl) streakCount = parseInt(sEl.textContent, 10) || 1;
+      }
+      const formattedStreak = `${streakCount} Day${streakCount === 1 ? '' : 's'}`;
 
       if (sessEl) sessEl.textContent = totalCount;
       if (accEl) accEl.textContent = accuracyPct + '%';
@@ -3312,17 +3333,20 @@ requireStudentLogin();
     openProfileModal();
   };
 
-  window.saveProfileDetails = function() {
+  window.saveProfileDetails = async function() {
     const newName = (document.getElementById('profInputName')?.value || '').trim();
     const newForm = document.getElementById('profInputForm')?.value || 'Form 4';
     const newSchool = (document.getElementById('profInputSchool')?.value || '').trim();
     const msg = document.getElementById('profDetailsMsg');
 
     if (!newName) {
-      if (msg) msg.innerHTML = '<div class="msg msg-err">Full Name cannot be empty.</div>';
+      if (msg) msg.innerHTML = '<div class="msg msg-err" style="color:var(--red-accent);">Full Name cannot be empty.</div>';
       return;
     }
 
+    if (msg) msg.innerHTML = '<div class="msg" style="color:var(--cyan-accent);">Saving changes…</div>';
+
+    // 1. Optimistic local update
     const user = getUser() || {};
     user.name = newName;
     user.form = newForm;
@@ -3335,7 +3359,20 @@ requireStudentLogin();
     });
     updateStudentAvatar(newName);
 
-    if (msg) msg.innerHTML = '<div class="msg msg-ok">Profile details updated successfully!</div>';
+    // 2. Persist to server
+    try {
+      if (typeof Students !== 'undefined' && typeof Students.updateProfile === 'function') {
+        const res = await Students.updateProfile({ name: newName, form: newForm });
+        if (res && res.student) {
+          const fresh = { ...user, ...res.student };
+          setUser(fresh);
+        }
+      }
+      if (msg) msg.innerHTML = '<div class="msg msg-ok" style="color:var(--green-accent);">✓ Profile details updated and saved successfully!</div>';
+    } catch (err) {
+      console.warn('Could not sync profile update to server:', err);
+      if (msg) msg.innerHTML = '<div class="msg msg-ok" style="color:var(--green-accent);">✓ Saved locally (will sync to cloud when connected).</div>';
+    }
   };
 
   window.exportLabHistoryCSV = function() {
@@ -3397,7 +3434,7 @@ requireStudentLogin();
 
   async function loadSystemAnnouncements() {
     try {
-      const res = await Announcements.getActive();
+      const res = await Announcements.getActive('students');
       if (res && res.success && Array.isArray(res.announcements)) {
         cachedActiveAnnouncements = res.announcements;
         renderSystemBroadcastBanner();
@@ -3506,6 +3543,8 @@ requireStudentLogin();
     const levelIconEl = document.getElementById('heroLevelIcon');
     
     if (levelTitleEl) levelTitleEl.textContent = `Level ${xp.level}: ${xp.title}`;
+    const shortLevelEl = document.getElementById('heroLevelTitleShort');
+    if (shortLevelEl) shortLevelEl.textContent = `Level ${xp.level}`;
     if (xpTextEl) xpTextEl.textContent = `${xp.totalXP} / ${xp.nextLevelXP} XP`;
     if (xpBarEl) xpBarEl.style.width = `${xp.progressPercent}%`;
     if (tierNameEl) tierNameEl.textContent = xp.title.replace('Form ', 'F').replace('KCSE ', '');

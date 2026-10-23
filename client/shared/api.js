@@ -1157,8 +1157,18 @@ const Admin = {
   async getAnnouncements() {
     return apiRequest('GET', '/admin/announcements');
   },
-  async createAnnouncement(title, message, type) {
-    return apiRequest('POST', '/admin/announcements', { title, message, type });
+  async createAnnouncement(title, message, type, options = {}) {
+    if (typeof options === 'string') {
+      options = { target_role: options };
+    }
+    return apiRequest('POST', '/admin/announcements', {
+      title,
+      message,
+      type: type || 'info',
+      target_role: options?.target_role || options?.targetRole || 'all',
+      county: options?.county || null,
+      school_id: options?.school_id || options?.schoolId || null
+    });
   },
   async toggleAnnouncement(id, isActive) {
     return apiRequest('PATCH', '/admin/announcements/' + id + '/toggle', { isActive });
@@ -1187,8 +1197,13 @@ const Admin = {
 };
 
 const Announcements = {
-  async getActive() {
-    return apiRequest('GET', '/announcements/active');
+  async getActive(audience, params = {}) {
+    const q = new URLSearchParams();
+    if (audience) q.append('audience', audience);
+    if (params.schoolId || params.school_id) q.append('school_id', params.schoolId || params.school_id);
+    if (params.county) q.append('county', params.county);
+    const qs = q.toString() ? '?' + q.toString() : '';
+    return apiRequest('GET', `/announcements/active${qs}`);
   }
 };
 

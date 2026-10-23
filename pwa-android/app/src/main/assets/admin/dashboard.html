@@ -945,8 +945,12 @@
           Real-time cluster telemetry across PostgreSQL database, Cloud Node, Gemini AI engine, and Push service.
         </p>
       </div>
-      <div style="display:flex;align-items:center;gap:12px;">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
         <span id="healthLastChecked" style="font-size:0.75rem;color:var(--text-muted);font-family:var(--font-mono);">Status: Checking...</span>
+        <button type="button" class="telemetry-auto-btn" id="btnToggleAutoRefresh" onclick="toggleTelemetryAutoRefresh()" title="Toggle live telemetry polling every 15 seconds">
+          <span class="pulse-dot" id="autoRefreshPulseDot" style="background-color:var(--text-muted);width:7px;height:7px;"></span>
+          <span id="autoRefreshLabel">Auto-refresh (15s): OFF</span>
+        </button>
         <button type="button" class="btn-secondary" onclick="loadSystemHealth(true)" id="btnRefreshHealth" style="font-size:0.78rem;padding:6px 12px;display:inline-flex;align-items:center;gap:6px;">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
           Refresh Diagnostics
@@ -3054,6 +3058,65 @@
   }
 
   let isHealthLoading = false;
+  let telemetryAutoTimer = null;
+  let telemetryCountdownTimer = null;
+  let telemetrySecondsRemaining = 15;
+
+  function toggleTelemetryAutoRefresh() {
+    const btn = document.getElementById('btnToggleAutoRefresh');
+    const label = document.getElementById('autoRefreshLabel');
+    const pulse = document.getElementById('autoRefreshPulseDot');
+
+    if (telemetryAutoTimer) {
+      stopTelemetryAutoRefresh();
+      showToast('Live telemetry auto-refresh stopped.', 'info', 2000);
+    } else {
+      telemetrySecondsRemaining = 15;
+      if (btn) btn.classList.add('active');
+      if (label) label.textContent = 'Auto-refresh: 15s';
+      if (pulse) {
+        pulse.className = 'pulse-dot online';
+        pulse.style.backgroundColor = '';
+      }
+      loadSystemHealth();
+
+      telemetryCountdownTimer = setInterval(() => {
+        telemetrySecondsRemaining -= 1;
+        if (telemetrySecondsRemaining <= 0) {
+          telemetrySecondsRemaining = 15;
+        }
+        if (label && telemetryAutoTimer) {
+          label.textContent = `Auto-refresh: ${telemetrySecondsRemaining}s`;
+        }
+      }, 1000);
+
+      telemetryAutoTimer = setInterval(() => {
+        loadSystemHealth();
+      }, 15000);
+
+      showToast('Live telemetry auto-refresh active (every 15s).', 'success', 2500);
+    }
+  }
+
+  function stopTelemetryAutoRefresh() {
+    if (telemetryAutoTimer) {
+      clearInterval(telemetryAutoTimer);
+      telemetryAutoTimer = null;
+    }
+    if (telemetryCountdownTimer) {
+      clearInterval(telemetryCountdownTimer);
+      telemetryCountdownTimer = null;
+    }
+    const btn = document.getElementById('btnToggleAutoRefresh');
+    const label = document.getElementById('autoRefreshLabel');
+    const pulse = document.getElementById('autoRefreshPulseDot');
+    if (btn) btn.classList.remove('active');
+    if (label) label.textContent = 'Auto-refresh (15s): OFF';
+    if (pulse) {
+      pulse.className = 'pulse-dot';
+      pulse.style.backgroundColor = 'var(--text-muted)';
+    }
+  }
 
   async function loadSystemHealth(isManual = false) {
     if (isHealthLoading) return;
@@ -3074,7 +3137,7 @@
         if (timeEl) timeEl.textContent = `Checked: ${timeStr}`;
 
         if (isManual) {
-          showToast(`Cluster Diagnostic: DB ${res.database?.latencyMs}ms · AI ${res.gemini?.status} · Region ${res.server?.region}`, 'success', 5000);
+          showToast(`Cluster Diagnostic: DB ${res.database?.latencyMs}ms · ${res.database?.pool?.active || 0} active conns · ${res.vapid?.subscribers?.totalSubscriptions || 0} push devices`, 'success', 5000);
         }
       } else {
         throw new Error(res?.error || 'Diagnostic query failed');
@@ -3109,6 +3172,15 @@
     const srv = data.server || {};
     const ai = data.gemini || {};
     const push = data.vapid || {};
+    const subs = push.subscribers || {
+      totalSubscriptions: 0,
+      students: 0,
+      teachers: 0,
+      admins: 0,
+      activeLast24h: 0,
+      activeLast7d: 0,
+      devices: { android: 0, ios: 0, windows: 0, mac: 0, linuxOther: 0 }
+    };
 
     const dbIsOnline = db.status === 'healthy';
     const dbStatusBadge = dbIsOnline
@@ -3127,13 +3199,23 @@
       ? `<span class="status-indicator-badge online"><span class="pulse-dot online"></span> VAPID Active</span>`
       : `<span class="status-indicator-badge online"><span class="pulse-dot online"></span> Ephemeral</span>`;
 
+    // Database Pool Saturation
+    const poolActive = db.pool?.active !== undefined ? db.pool.active : Math.max(0, (db.pool?.total || 1) - (db.pool?.idle || 0));
+    const poolMax = db.pool?.max || 20;
+    const poolSatPct = db.pool?.saturationPct !== undefined ? db.pool.saturationPct : Math.min(100, Math.round((poolActive / poolMax) * 100));
+    const poolColor = poolSatPct > 80 ? 'red' : poolSatPct > 50 ? 'amber' : 'blue';
+
+    // Server Memory Heap
+    const heapPct = srv.memory?.heapUtilizationPct !== undefined ? srv.memory.heapUtilizationPct : 50;
+    const heapColor = heapPct > 85 ? 'red' : heapPct > 70 ? 'amber' : 'green';
+
     grid.innerHTML = `
-      <!-- Card 1: PostgreSQL Connection Pool -->
+      <!-- Card 1: PostgreSQL Connection Pool & Cluster Storage -->
       <div class="infra-card">
         <div>
           <div class="infra-header">
             <div class="infra-title-wrap">
-              <div class="infra-icon" style="color:var(--blue-accent);">${VLKIcons.svg('database', {size: 20})}</div>
+              <div class="infra-icon" style="color:var(--blue-accent);background:rgba(2,132,199,0.1);padding:8px;border-radius:10px;">${VLKIcons.svg('database', {size: 20})}</div>
               <div>
                 <div class="infra-name">PostgreSQL Database</div>
                 <div class="infra-subtitle">${escapeHtml(db.provider || 'PostgreSQL Cluster')}</div>
@@ -3141,18 +3223,29 @@
             </div>
             ${dbStatusBadge}
           </div>
+
+          <div style="margin-bottom:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.78rem;">
+              <span class="infra-metric-label">Connection Pool Saturation</span>
+              <span class="infra-metric-val">${poolActive} / ${poolMax} Active (${poolSatPct}%)</span>
+            </div>
+            <div class="telemetry-meter-wrap" title="Pool Saturation: ${poolSatPct}% (${poolActive}/${poolMax} active connections)">
+              <div class="telemetry-meter-fill ${poolColor}" style="width:${poolSatPct}%;"></div>
+            </div>
+          </div>
+
           <div class="infra-metric-rows">
             <div class="infra-metric-row">
-              <span class="infra-metric-label">Connection Pool</span>
-              <span class="infra-metric-val">${db.pool?.total || 1} / ${db.pool?.max || 20} Active</span>
+              <span class="infra-metric-label">Idle / Waiting</span>
+              <span class="infra-metric-val">${db.pool?.idle || 0} idle · ${db.pool?.waiting || 0} waiting</span>
             </div>
             <div class="infra-metric-row">
-              <span class="infra-metric-label">Idle / Waiting</span>
-              <span class="infra-metric-val">${db.pool?.idle || 0} idle · ${db.pool?.waiting || 0} wait</span>
+              <span class="infra-metric-label">DB Size &amp; Backends</span>
+              <span class="infra-metric-val">${escapeHtml(db.sizePretty || 'N/A')} · ${db.activeBackends || 1} client session${db.activeBackends === 1 ? '' : 's'}</span>
             </div>
             <div class="infra-metric-row">
               <span class="infra-metric-label">Cluster Entities</span>
-              <span class="infra-metric-val">${db.counts?.schools || 0} sch · ${db.counts?.teachers || 0} tch · ${db.counts?.students || 0} stu</span>
+              <span class="infra-metric-val">${db.counts?.schools || 0} sch · ${db.counts?.teachers || 0} tch · ${db.counts?.students || 0} stu · ${db.counts?.sessions || 0} sess</span>
             </div>
           </div>
         </div>
@@ -3162,12 +3255,12 @@
         </div>
       </div>
 
-      <!-- Card 2: Cloud Runtime & Node -->
+      <!-- Card 2: Cloud Runtime & Node Engine -->
       <div class="infra-card">
         <div>
           <div class="infra-header">
             <div class="infra-title-wrap">
-              <div class="infra-icon" style="color:var(--violet-accent);">${VLKIcons.svg('cloud', {size: 20})}</div>
+              <div class="infra-icon" style="color:var(--violet-accent);background:rgba(139,92,246,0.1);padding:8px;border-radius:10px;">${VLKIcons.svg('cloud', {size: 20})}</div>
               <div>
                 <div class="infra-name">Cloud Runtime Host</div>
                 <div class="infra-subtitle">${escapeHtml(srv.serviceName || 'virtulab-web')}</div>
@@ -3175,18 +3268,29 @@
             </div>
             ${srvStatusBadge}
           </div>
+
+          <div style="margin-bottom:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.78rem;">
+              <span class="infra-metric-label">Heap Memory Allocation</span>
+              <span class="infra-metric-val">${srv.memory?.heapUsed || '--'} / ${srv.memory?.heapTotal || '--'} (${heapPct}%)</span>
+            </div>
+            <div class="telemetry-meter-wrap" title="Heap Utilization: ${heapPct}% (${srv.memory?.heapUsed || ''})">
+              <div class="telemetry-meter-fill ${heapColor}" style="width:${heapPct}%;"></div>
+            </div>
+          </div>
+
           <div class="infra-metric-rows">
             <div class="infra-metric-row">
-              <span class="infra-metric-label">Cluster Region</span>
-              <span class="infra-metric-val">${escapeHtml(srv.region || 'Frankfurt, EU')}</span>
+              <span class="infra-metric-label">Host Specs &amp; CPU</span>
+              <span class="infra-metric-val">${escapeHtml(srv.os?.platform || 'linux')} (${escapeHtml(srv.os?.arch || 'x64')}) · ${srv.os?.cpus || 1} vCPU</span>
             </div>
             <div class="infra-metric-row">
-              <span class="infra-metric-label">Node Runtime</span>
-              <span class="infra-metric-val">${escapeHtml(srv.nodeVersion || 'v20.x')} (${escapeHtml(srv.env || 'prod')})</span>
+              <span class="infra-metric-label">System Host RAM</span>
+              <span class="infra-metric-val">${srv.os?.freeMem || '--'} free / ${srv.os?.totalMem || '--'} (${srv.os?.memUtilizationPct || 0}% used)</span>
             </div>
             <div class="infra-metric-row">
-              <span class="infra-metric-label">Memory Allocation</span>
-              <span class="infra-metric-val">RSS ${srv.memory?.rss || '--'} · Heap ${srv.memory?.heapUsed || '--'}</span>
+              <span class="infra-metric-label">Node Runtime &amp; Region</span>
+              <span class="infra-metric-val">${escapeHtml(srv.nodeVersion || 'v20.x')} · ${escapeHtml(srv.region || 'Frankfurt, EU')}</span>
             </div>
           </div>
         </div>
@@ -3196,12 +3300,12 @@
         </div>
       </div>
 
-      <!-- Card 3: Google Gemini AI Engine -->
+      <!-- Card 3: Google Gemini AI Multimodal Engine -->
       <div class="infra-card">
         <div>
           <div class="infra-header">
             <div class="infra-title-wrap">
-              <div class="infra-icon" style="color:var(--amber-accent);">${VLKIcons.svg('sparkles', {size: 20})}</div>
+              <div class="infra-icon" style="color:var(--amber-accent);background:rgba(245,158,11,0.1);padding:8px;border-radius:10px;">${VLKIcons.svg('sparkles', {size: 20})}</div>
               <div>
                 <div class="infra-name">Google Gemini AI</div>
                 <div class="infra-subtitle">Multimodal KCSE Engine</div>
@@ -3222,44 +3326,70 @@
               <span class="infra-metric-label">Core Capabilities</span>
               <span class="infra-metric-val" style="font-size:0.75rem;">Vision OCR + Socratic Hints</span>
             </div>
+            <div class="infra-metric-row">
+              <span class="infra-metric-label">Context Quota</span>
+              <span class="infra-metric-val" style="font-size:0.75rem;">1M Token Window · 8k Max Output</span>
+            </div>
           </div>
         </div>
         <div class="infra-footer-tag">
           <span>Quota Window: <b>Standard</b></span>
-          <span style="color:var(--blue-accent);">Token Limit: 8,192</span>
+          <span style="color:var(--blue-accent);">Paper 3 Socratic Engine</span>
         </div>
       </div>
 
-      <!-- Card 4: Web Push & VAPID Broadcasts -->
+      <!-- Card 4: Web Push & VAPID Delivery Network -->
       <div class="infra-card">
         <div>
           <div class="infra-header">
             <div class="infra-title-wrap">
-              <div class="infra-icon" style="color:var(--green-accent);">${VLKIcons.svg('bell', {size: 20})}</div>
+              <div class="infra-icon" style="color:var(--green-accent);background:rgba(16,185,129,0.1);padding:8px;border-radius:10px;">${VLKIcons.svg('bell', {size: 20})}</div>
               <div>
                 <div class="infra-name">Web Push / VAPID</div>
-                <div class="infra-subtitle">Service Worker Notifications</div>
+                <div class="infra-subtitle">PWA Notification Network</div>
               </div>
             </div>
             ${pushStatusBadge}
           </div>
+
           <div class="infra-metric-rows">
+            <div class="infra-metric-row">
+              <span class="infra-metric-label">Subscribers</span>
+              <span class="infra-metric-val"><b>${subs.totalSubscriptions || 0} devices</b> (${subs.activeLast24h || 0} active 24h)</span>
+            </div>
+
+            <div style="margin-top:2px;margin-bottom:4px;">
+              <div style="font-size:0.72rem;color:var(--text-muted);font-weight:600;margin-bottom:3px;">Audience Segments:</div>
+              <div class="telemetry-chip-row">
+                <span class="telemetry-chip role-student">🎓 ${subs.students || 0} Students</span>
+                <span class="telemetry-chip role-teacher">👨‍🏫 ${subs.teachers || 0} Teachers</span>
+                <span class="telemetry-chip role-admin">🛡️ ${subs.admins || 0} Admins</span>
+              </div>
+            </div>
+
+            <div style="margin-top:2px;margin-bottom:4px;">
+              <div style="font-size:0.72rem;color:var(--text-muted);font-weight:600;margin-bottom:3px;">Device Platforms:</div>
+              <div class="telemetry-chip-row">
+                <span class="telemetry-chip device">Android: ${subs.devices?.android || 0}</span>
+                <span class="telemetry-chip device">iOS: ${subs.devices?.ios || 0}</span>
+                <span class="telemetry-chip device">Win: ${subs.devices?.windows || 0}</span>
+                <span class="telemetry-chip device">Mac: ${subs.devices?.mac || 0}</span>
+                ${(subs.devices?.linuxOther || 0) > 0 ? `<span class="telemetry-chip device">Linux: ${subs.devices.linuxOther}</span>` : ''}
+              </div>
+            </div>
+
             <div class="infra-metric-row">
               <span class="infra-metric-label">Delivery Protocol</span>
               <span class="infra-metric-val">${escapeHtml(push.protocol || 'RFC 8292')}</span>
             </div>
             <div class="infra-metric-row">
-              <span class="infra-metric-label">VAPID Key Pair</span>
+              <span class="infra-metric-label">VAPID Key</span>
               <span class="infra-metric-val"><code>${escapeHtml(push.keyPreview || 'Ready')}</code></span>
-            </div>
-            <div class="infra-metric-row">
-              <span class="infra-metric-label">Broadcast Audience</span>
-              <span class="infra-metric-val">PWA Offline Sync</span>
             </div>
           </div>
         </div>
         <div class="infra-footer-tag">
-          <span>Subject: <b style="font-size:0.68rem;">admin@virtulab.co.ke</b></span>
+          <span>Subject: <b style="font-size:0.68rem;">${escapeHtml(push.subject || 'admin@virtulab.co.ke')}</b></span>
           <span style="color:var(--green-accent);">SW Push API</span>
         </div>
       </div>
@@ -3441,6 +3571,8 @@
 
     if (tabId === 'telemetryTab') {
       loadSystemHealth();
+    } else {
+      stopTelemetryAutoRefresh();
     }
   }
 

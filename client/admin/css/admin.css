@@ -2202,6 +2202,110 @@ html, body {
   justify-content: space-between;
 }
 
+/* ── Live Telemetry Visual Meters & Badges ── */
+.telemetry-meter-wrap {
+  width: 100%;
+  background: var(--card-bg-hover, rgba(0,0,0,0.05));
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  height: 8px;
+  overflow: hidden;
+  margin: 6px 0 10px 0;
+  position: relative;
+}
+
+.telemetry-meter-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.35s ease, background-color 0.25s ease;
+}
+
+.telemetry-meter-fill.green {
+  background: var(--green-accent, #10B981);
+}
+
+.telemetry-meter-fill.blue {
+  background: var(--blue-accent, #0284C7);
+}
+
+.telemetry-meter-fill.amber {
+  background: var(--amber-accent, #F59E0B);
+}
+
+.telemetry-meter-fill.red {
+  background: var(--red-accent, #EF4444);
+}
+
+.telemetry-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 4px;
+}
+
+.telemetry-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: var(--card-bg-hover);
+  border: 1px solid var(--card-border);
+  color: var(--text-main);
+}
+
+.telemetry-chip.role-student {
+  border-color: rgba(16, 185, 129, 0.35);
+  background: rgba(16, 185, 129, 0.08);
+  color: var(--green-accent, #10B981);
+}
+
+.telemetry-chip.role-teacher {
+  border-color: rgba(14, 165, 233, 0.35);
+  background: rgba(14, 165, 233, 0.08);
+  color: var(--blue-accent, #0284C7);
+}
+
+.telemetry-chip.role-admin {
+  border-color: rgba(139, 92, 246, 0.35);
+  background: rgba(139, 92, 246, 0.08);
+  color: var(--violet-accent, #8B5CF6);
+}
+
+.telemetry-chip.device {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+}
+
+.telemetry-auto-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text-muted);
+  transition: all 0.15s ease;
+}
+
+.telemetry-auto-btn:hover {
+  background: var(--card-bg-hover);
+  border-color: var(--blue-accent);
+  color: var(--text-main);
+}
+
+.telemetry-auto-btn.active {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: var(--green-accent, #10B981);
+}
+
 /* ── 15. USER ROSTER ENHANCEMENTS & FILTER CHIPS ── */
 .filter-chip-group {
   display: flex;

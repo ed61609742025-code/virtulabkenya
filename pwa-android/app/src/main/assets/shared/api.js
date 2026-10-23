@@ -1189,6 +1189,18 @@ const Announcements = {
   }
 };
 
+const Notifications = {
+  async getMine() {
+    return apiRequest('GET', '/notifications/mine');
+  },
+  async markRead(notifId) {
+    return apiRequest('POST', '/notifications/mark-read', { notifId });
+  },
+  async markAllRead(notifIds) {
+    return apiRequest('POST', '/notifications/mark-all-read', { notifIds });
+  }
+};
+
 const Composite = {
   async save(data) {
     return apiRequest('POST', '/composite', data);
@@ -1325,6 +1337,7 @@ if (typeof window !== 'undefined') {
   window.Auth = Auth;
   window.Composite = Composite;
   window.Announcements = Announcements;
+  window.Notifications = Notifications;
   window.ErrorTracker = ErrorTracker;
   window.Assignments = Assignments;
   window.Badges = Badges;

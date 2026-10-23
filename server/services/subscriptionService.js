@@ -17,6 +17,64 @@ class SubscriptionService {
    * Get all active subscription plans.
    * @param {string} [targetAudience] - 'student' | 'school' | undefined
    */
+  async seedDefaultPlans() {
+    try {
+      const defaultPlans = [
+        {
+          plan_code: 'student_pass_30',
+          name: 'Candidate 30-Day KCSE Pass',
+          target_audience: 'student',
+          price_kes: 250.00,
+          duration_days: 30,
+          max_students: 1,
+          description: 'Full unlimited access to all 8 Chemistry practical simulators, AI Socratic tutor, and KNEC Paper 3 mock series.',
+          features: { all_labs: true, ai_tutor: true, kcse_mocks: true }
+        },
+        {
+          plan_code: 'student_termly_90',
+          name: 'Student Full Term Chemistry Pass',
+          target_audience: 'student',
+          price_kes: 650.00,
+          duration_days: 90,
+          max_students: 1,
+          description: 'Term-long comprehensive access with offline PWA package, revision notes, and progressive competency mastery test.',
+          features: { all_labs: true, ai_tutor: true, kcse_mocks: true, offline_pack: true }
+        },
+        {
+          plan_code: 'school_term_license',
+          name: 'Institutional CBC Term License',
+          target_audience: 'school',
+          price_kes: 4500.00,
+          duration_days: 90,
+          max_students: 250,
+          description: 'Secondary school STEM accreditation license for up to 250 students with teacher assignment portal and automated grading rubrics.',
+          features: { all_labs: true, teacher_portal: true, auto_grading: true, knec_rubrics: true }
+        },
+        {
+          plan_code: 'school_annual_license',
+          name: 'Annual MoE Accredited Multi-Lab License',
+          target_audience: 'school',
+          price_kes: 12000.00,
+          duration_days: 365,
+          max_students: 1000,
+          description: 'Whole-school multi-class annual subscription covering up to 1,000 students, unlimited teacher accounts, and curriculum inspection reports.',
+          features: { all_labs: true, teacher_portal: true, unlimited_classes: true, curriculum_reports: true, priority_support: true }
+        }
+      ];
+
+      for (const p of defaultPlans) {
+        await pool.query(
+          `INSERT INTO subscription_plans (plan_code, name, target_audience, price_kes, duration_days, max_students, description, features, is_active)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, TRUE)
+           ON CONFLICT (plan_code) DO NOTHING`,
+          [p.plan_code, p.name, p.target_audience, p.price_kes, p.duration_days, p.max_students, p.description, JSON.stringify(p.features)]
+        );
+      }
+    } catch (e) {
+      console.warn('[SubscriptionService] Notice: Auto-seed skipped:', e.message);
+    }
+  }
+
   async getPlans(targetAudience) {
     let query = 'SELECT * FROM subscription_plans WHERE is_active = TRUE';
     const params = [];
@@ -27,8 +85,37 @@ class SubscriptionService {
     }
 
     query += ' ORDER BY price_kes ASC';
-    const result = await pool.query(query, params);
-    return result.rows;
+    try {
+      let result = await pool.query(query, params);
+      if (!result.rows || result.rows.length === 0) {
+        await this.seedDefaultPlans();
+        result = await pool.query(query, params);
+      }
+      return result.rows || [];
+    } catch (err) {
+      return [];
+    }
+  }
+
+  async getAllPlansAdmin() {
+    let query = `
+      SELECT sp.*,
+             COUNT(s.id)::int AS active_subscribers_count
+      FROM subscription_plans sp
+      LEFT JOIN subscriptions s ON sp.id = s.plan_id AND s.status IN ('active', 'grace_period') AND s.expires_at > NOW()
+      GROUP BY sp.id
+      ORDER BY sp.target_audience DESC, sp.price_kes ASC
+    `;
+    try {
+      let result = await pool.query(query);
+      if (!result.rows || result.rows.length === 0) {
+        await this.seedDefaultPlans();
+        result = await pool.query(query);
+      }
+      return result.rows || [];
+    } catch (err) {
+      return [];
+    }
   }
 
   /**

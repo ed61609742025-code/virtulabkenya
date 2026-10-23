@@ -1191,6 +1191,12 @@ const Admin = {
   exportSchoolsReport() {
     return downloadFile('/admin/export/schools', 'virtulab_schools_report.csv');
   },
+  getSubscriptionsOverview() {
+    return Subscriptions.adminGetOverview();
+  },
+  exportTransactionsReport() {
+    return Subscriptions.exportTransactionsReport();
+  },
   exportUsersReport() {
     return downloadFile('/admin/export/users', 'virtulab_users_report.csv');
   }

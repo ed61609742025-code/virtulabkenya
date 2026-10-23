@@ -19,6 +19,7 @@ const requireAuth = require('../middleware/auth');
 const { requireRole } = require('../middleware/auth');
 const paystackService = require('../services/paystackService');
 const subscriptionService = require('../services/subscriptionService');
+const auditRepo = require('../repositories/auditRepo');
 
 /**
  * GET /api/subscriptions/plans
@@ -263,18 +264,27 @@ router.get('/verify/:reference', requireAuth, async (req, res) => {
  */
 router.post('/admin/activate', requireAuth, requireRole('admin'), async (req, res) => {
   try {
-    const { subscriberType, studentId, schoolId, planId, notes, referenceCode } = req.body;
+    let { subscriberType, studentId, schoolId, planId, notes, referenceCode, studentEmail } = req.body;
 
     if (!planId) {
       return res.status(400).json({ error: 'planId is required.' });
     }
 
+    if (subscriberType === 'student' && !studentId && studentEmail) {
+      const stuRes = await pool.query('SELECT id FROM students WHERE LOWER(email) = LOWER($1)', [studentEmail.trim()]);
+      if (stuRes.rows && stuRes.rows[0]) {
+        studentId = stuRes.rows[0].id;
+      } else {
+        return res.status(404).json({ error: `Student with email "${studentEmail}" was not found.` });
+      }
+    }
+
     if (subscriberType === 'student' && !studentId) {
-      return res.status(400).json({ error: 'studentId is required for student activation.' });
+      return res.status(400).json({ error: 'studentId or studentEmail is required for candidate activation.' });
     }
 
     if (subscriberType === 'school' && !schoolId) {
-      return res.status(400).json({ error: 'schoolId is required for school activation.' });
+      return res.status(400).json({ error: 'schoolId is required for institutional school activation.' });
     }
 
     const plan = await subscriptionService.getPlan(planId);
@@ -309,6 +319,12 @@ router.post('/admin/activate', requireAuth, requireRole('admin'), async (req, re
       }
     });
 
+    await auditRepo.logAuditEvent({
+      adminEmail: req.user.email,
+      action: 'MANUAL_LICENSE_ACTIVATION',
+      details: `Issued ${plan.name} to ${subscriberType} (${subscriberType === 'school' ? 'School ID: ' + schoolId : 'Student ID: ' + studentId}). Ref: ${ref}`
+    });
+
     res.json({
       success: true,
       message: `Successfully activated ${plan.name} for ${subscriberType}.`,
@@ -322,61 +338,266 @@ router.post('/admin/activate', requireAuth, requireRole('admin'), async (req, re
 
 /**
  * GET /api/subscriptions/admin/overview
- * Admin-only: Overview of subscription metrics, revenue, and recent transactions
+ * Overview of subscription metrics, revenue, active licenses, and recent transactions
  */
 router.get('/admin/overview', requireAuth, requireRole('admin'), async (req, res) => {
   try {
-    // 1. Total revenue
-    const revRes = await pool.query(
-      `SELECT COALESCE(SUM(amount_kes), 0) AS total_revenue_kes,
-              COUNT(*) AS total_success_count
-       FROM payment_transactions
-       WHERE status = 'success'`
-    );
+    // 1. Total revenue & count
+    let totalRevenue = 0;
+    let totalSuccessCount = 0;
+    try {
+      const revRes = await pool.query(
+        `SELECT COALESCE(SUM(amount_kes), 0) AS total_revenue_kes,
+                COUNT(*) AS total_success_count
+         FROM payment_transactions
+         WHERE status = 'success'`
+      );
+      totalRevenue = parseFloat(revRes.rows[0]?.total_revenue_kes || 0);
+      totalSuccessCount = parseInt(revRes.rows[0]?.total_success_count || 0, 10);
+    } catch (_e) {}
 
     // 2. Active subscriptions count
-    const subsCountRes = await pool.query(
-      `SELECT subscriber_type, COUNT(*) AS count
-       FROM subscriptions
-       WHERE status IN ('active', 'grace_period') AND expires_at > NOW()
-       GROUP BY subscriber_type`
-    );
-
     let activeStudents = 0;
     let activeSchools = 0;
-    (subsCountRes.rows || []).forEach(r => {
-      if (r.subscriber_type === 'student') activeStudents = parseInt(r.count, 10);
-      if (r.subscriber_type === 'school') activeSchools = parseInt(r.count, 10);
-    });
+    try {
+      const subsCountRes = await pool.query(
+        `SELECT subscriber_type, COUNT(*) AS count
+         FROM subscriptions
+         WHERE status IN ('active', 'grace_period') AND expires_at > NOW()
+         GROUP BY subscriber_type`
+      );
+      (subsCountRes.rows || []).forEach(r => {
+        if (r.subscriber_type === 'student') activeStudents = parseInt(r.count, 10);
+        if (r.subscriber_type === 'school') activeSchools = parseInt(r.count, 10);
+      });
+    } catch (_e) {}
 
-    // 3. Recent transactions
-    const txRes = await pool.query(
-      `SELECT pt.id, pt.reference_code, pt.user_type, pt.user_id, pt.school_id,
-              pt.amount_kes, pt.status, pt.channel, pt.gateway, pt.paid_at, pt.created_at,
-              sp.name AS plan_name,
-              s.name AS school_name
-       FROM payment_transactions pt
-       LEFT JOIN subscriptions sub ON pt.subscription_id = sub.id
-       LEFT JOIN subscription_plans sp ON sub.plan_id = sp.id
-       LEFT JOIN schools s ON pt.school_id = s.id
-       ORDER BY pt.created_at DESC
-       LIMIT 50`
-    );
+    // 3. Plans count
+    let totalPlans = 0;
+    try {
+      const plans = await subscriptionService.getAllPlansAdmin();
+      totalPlans = plans.length;
+    } catch (_e) {}
+
+    // 4. Recent transactions
+    let transactions = [];
+    try {
+      const txRes = await pool.query(
+        `SELECT pt.id, pt.reference_code, pt.user_type, pt.user_id, pt.school_id,
+                pt.amount_kes, pt.status, pt.channel, pt.gateway, pt.paid_at, pt.created_at,
+                sp.name AS plan_name,
+                s.name AS school_name,
+                u.name AS student_name,
+                u.email AS student_email
+         FROM payment_transactions pt
+         LEFT JOIN subscriptions sub ON pt.subscription_id = sub.id
+         LEFT JOIN subscription_plans sp ON sub.plan_id = sp.id
+         LEFT JOIN schools s ON pt.school_id = s.id
+         LEFT JOIN students u ON pt.user_type = 'student' AND pt.user_id = u.id
+         ORDER BY pt.created_at DESC
+         LIMIT 60`
+      );
+      transactions = txRes.rows || [];
+    } catch (_e) {}
+
+    // 5. Active & historical subscriptions
+    let activeSubscriptions = [];
+    try {
+      const subRes = await pool.query(
+        `SELECT s.id, s.subscriber_type, s.student_id, s.school_id, s.status,
+                s.starts_at, s.expires_at, s.auto_renew, s.created_at,
+                sp.name AS plan_name, sp.plan_code, sp.price_kes, sp.duration_days,
+                sch.name AS school_name, sch.county AS school_county,
+                stu.name AS student_name, stu.email AS student_email,
+                ROUND(EXTRACT(EPOCH FROM (s.expires_at - NOW())) / 86400)::int AS days_remaining
+         FROM subscriptions s
+         LEFT JOIN subscription_plans sp ON s.plan_id = sp.id
+         LEFT JOIN schools sch ON s.school_id = sch.id
+         LEFT JOIN students stu ON s.student_id = stu.id
+         ORDER BY s.expires_at DESC
+         LIMIT 60`
+      );
+      activeSubscriptions = subRes.rows || [];
+    } catch (_e) {}
 
     res.json({
       success: true,
       metrics: {
-        totalRevenueKes: parseFloat(revRes.rows[0]?.total_revenue_kes || 0),
-        totalSuccessTransactions: parseInt(revRes.rows[0]?.total_success_count || 0, 10),
+        totalRevenueKes: totalRevenue,
+        totalSuccessTransactions: totalSuccessCount,
         activeStudentSubscriptions: activeStudents,
-        activeSchoolSubscriptions: activeSchools
+        activeSchoolSubscriptions: activeSchools,
+        totalActiveSubscriptions: activeStudents + activeSchools,
+        totalPlans
       },
-      recentTransactions: txRes.rows
+      recentTransactions: transactions,
+      activeSubscriptions
     });
   } catch (err) {
     console.error('[Admin Subscription Overview Error]:', err.message);
     res.status(500).json({ error: 'Failed to retrieve administrative billing overview.' });
   }
 });
+
+/**
+ * GET /api/subscriptions/admin/plans
+ * Returns all subscription plans with active subscriber statistics
+ */
+router.get('/admin/plans', requireAuth, requireRole('admin'), async (req, res) => {
+  try {
+    const plans = await subscriptionService.getAllPlansAdmin();
+    res.json({ success: true, plans });
+  } catch (err) {
+    console.error('[Admin Get Plans Error]:', err.message);
+    res.status(500).json({ error: 'Failed to retrieve plans.' });
+  }
+});
+
+/**
+ * POST /api/subscriptions/admin/plans
+ * Admin creates a new subscription plan
+ */
+router.post('/admin/plans', requireAuth, requireRole('admin'), async (req, res) => {
+  try {
+    const { name, plan_code, target_audience, price_kes, duration_days, max_students, description, features } = req.body;
+    if (!name || !target_audience || price_kes === undefined || !duration_days) {
+      return res.status(400).json({ error: 'name, target_audience, price_kes, and duration_days are required.' });
+    }
+    const code = plan_code || name.toLowerCase().replace(/[^a-z0-9]+/g, '_');
+    const featuresJson = typeof features === 'object' ? JSON.stringify(features) : (features || '{}');
+
+    const insertRes = await pool.query(
+      `INSERT INTO subscription_plans (plan_code, name, target_audience, price_kes, duration_days, max_students, description, features, is_active)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, TRUE)
+       RETURNING *`,
+      [code, name, target_audience, parseFloat(price_kes), parseInt(duration_days, 10), parseInt(max_students || 1, 10), description || '', featuresJson]
+    );
+
+    await auditRepo.logAuditEvent({
+      adminEmail: req.user.email,
+      action: 'CREATE_SUBSCRIPTION_PLAN',
+      details: `Created plan "${name}" (${code}) at KES ${price_kes}`
+    });
+
+    res.json({ success: true, plan: insertRes.rows[0] });
+  } catch (err) {
+    console.error('[Admin Create Plan Error]:', err.message);
+    res.status(500).json({ error: err.message || 'Failed to create subscription plan.' });
+  }
+});
+
+/**
+ * PATCH /api/subscriptions/admin/plans/:id/toggle
+ * Toggle plan is_active state
+ */
+router.patch('/admin/plans/:id/toggle', requireAuth, requireRole('admin'), async (req, res) => {
+  try {
+    const planId = parseInt(req.params.id, 10);
+    const updateRes = await pool.query(
+      `UPDATE subscription_plans
+       SET is_active = NOT is_active
+       WHERE id = $1
+       RETURNING *`,
+      [planId]
+    );
+
+    if (!updateRes.rows[0]) {
+      return res.status(404).json({ error: 'Subscription plan not found.' });
+    }
+
+    const plan = updateRes.rows[0];
+    await auditRepo.logAuditEvent({
+      adminEmail: req.user.email,
+      action: 'TOGGLE_SUBSCRIPTION_PLAN',
+      details: `Plan "${plan.name}" status changed to ${plan.is_active ? 'Active' : 'Inactive'}`
+    });
+
+    res.json({ success: true, plan });
+  } catch (err) {
+    console.error('[Admin Toggle Plan Error]:', err.message);
+    res.status(500).json({ error: 'Failed to toggle plan status.' });
+  }
+});
+
+/**
+ * POST /api/subscriptions/admin/extend
+ * Extends active subscription term by X days
+ */
+router.post('/admin/extend', requireAuth, requireRole('admin'), async (req, res) => {
+  try {
+    const { subscriptionId, days, notes } = req.body;
+    if (!subscriptionId || !days) {
+      return res.status(400).json({ error: 'subscriptionId and days are required.' });
+    }
+    const extendDays = parseInt(days, 10);
+
+    const subRes = await pool.query('SELECT * FROM subscriptions WHERE id = $1', [subscriptionId]);
+    const sub = subRes.rows[0];
+    if (!sub) {
+      return res.status(404).json({ error: 'Subscription not found.' });
+    }
+
+    const now = new Date();
+    const currentExpires = new Date(sub.expires_at);
+    const baseDate = currentExpires > now ? currentExpires : now;
+    const newExpiry = new Date(baseDate.getTime() + extendDays * 24 * 60 * 60 * 1000);
+
+    const updateRes = await pool.query(
+      `UPDATE subscriptions
+       SET expires_at = $1, status = 'active', updated_at = NOW()
+       WHERE id = $2
+       RETURNING *`,
+      [newExpiry, subscriptionId]
+    );
+
+    await auditRepo.logAuditEvent({
+      adminEmail: req.user.email,
+      action: 'EXTEND_SUBSCRIPTION',
+      details: `Extended license #${subscriptionId} by ${extendDays} days. Note: ${notes || 'Admin manual extension'}`
+    });
+
+    res.json({ success: true, subscription: updateRes.rows[0] });
+  } catch (err) {
+    console.error('[Admin Extend Subscription Error]:', err.message);
+    res.status(500).json({ error: err.message || 'Failed to extend subscription.' });
+  }
+});
+
+/**
+ * POST /api/subscriptions/admin/revoke
+ * Cancel or revoke an active subscription
+ */
+router.post('/admin/revoke', requireAuth, requireRole('admin'), async (req, res) => {
+  try {
+    const { subscriptionId, reason } = req.body;
+    if (!subscriptionId) {
+      return res.status(400).json({ error: 'subscriptionId is required.' });
+    }
+
+    const updateRes = await pool.query(
+      `UPDATE subscriptions
+       SET status = 'cancelled', expires_at = NOW(), updated_at = NOW()
+       WHERE id = $1
+       RETURNING *`,
+      [subscriptionId]
+    );
+
+    if (!updateRes.rows[0]) {
+      return res.status(404).json({ error: 'Subscription not found.' });
+    }
+
+    await auditRepo.logAuditEvent({
+      adminEmail: req.user.email,
+      action: 'REVOKE_SUBSCRIPTION',
+      details: `Revoked license #${subscriptionId}. Reason: ${reason || 'Administrative action'}`
+    });
+
+    res.json({ success: true, subscription: updateRes.rows[0] });
+  } catch (err) {
+    console.error('[Admin Revoke Subscription Error]:', err.message);
+    res.status(500).json({ error: err.message || 'Failed to revoke subscription.' });
+  }
+});
+
 
 module.exports = router;

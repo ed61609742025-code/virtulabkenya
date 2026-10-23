@@ -85,6 +85,15 @@
             <span class="dropdown-header-title">Administrative Actions</span>
             <span class="dropdown-header-sub">Operational tools &amp; modals</span>
           </div>
+          <button type="button" class="dropdown-item" onclick="openManualLicenseModal(); closeAllAdminDropdowns();" role="menuitem">
+            <span class="dropdown-item-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+            </span>
+            <div class="dropdown-item-content">
+              <span class="dropdown-item-title">+ Issue School/Student License</span>
+              <span class="dropdown-item-desc">Activate manual bank or cheque grant</span>
+            </div>
+          </button>
           <button type="button" class="dropdown-item" id="btnAddAdminTop" onclick="openAddAdminModal(); closeAllAdminDropdowns();" role="menuitem">
             <span class="dropdown-item-icon">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -426,6 +435,13 @@
         Broadcasts
       </span>
       <span class="tab-counter" id="tabCountAnn">0</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('subscriptionsTab', this)">
+      <span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+        Licensing &amp; Billing
+      </span>
+      <span class="tab-counter" id="tabCountSubs">0</span>
     </button>
     <button class="tab-btn" onclick="switchTab('analyticsTab', this)">
       <span>
@@ -1011,11 +1027,345 @@
     </div>
   </div>
 
+  <!-- Tab 6: Subscription & Licensing Console -->
+  <div id="subscriptionsTab" class="card-panel" style="display:none;">
+    <!-- Panel Header with Actions -->
+    <div class="panel-header" style="flex-wrap:wrap;gap:12px;align-items:center;">
+      <div>
+        <h3 class="panel-title" style="margin:0;display:inline-flex;align-items:center;gap:6px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          Institutional Licensing &amp; Subscription Console
+        </h3>
+        <p style="margin:4px 0 0 0;font-size:0.8rem;color:var(--text-muted);">
+          Oversee secondary school institution licenses, candidate KCSE practical passes, subscription tier plans, and M-Pesa/Paystack reconciliation audit ledger.
+        </p>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <button type="button" class="btn-secondary" onclick="loadBillingOverview(true)" id="btnRefreshBilling" style="font-size:0.78rem;padding:6px 12px;display:inline-flex;align-items:center;gap:6px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          Refresh Ledger
+        </button>
+        <button type="button" class="btn-secondary" onclick="Admin.exportTransactionsReport()" style="font-size:0.78rem;padding:6px 12px;display:inline-flex;align-items:center;gap:6px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export CSV
+        </button>
+        <button type="button" class="btn-secondary" onclick="openCreatePlanModal()" style="font-size:0.78rem;padding:6px 12px;display:inline-flex;align-items:center;gap:6px;">
+          + Create Plan
+        </button>
+        <button type="button" class="btn-primary-solid" onclick="openManualLicenseModal()" style="font-size:0.78rem;padding:6px 14px;display:inline-flex;align-items:center;gap:6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Issue License
+        </button>
+      </div>
+    </div>
+
+    <!-- 4 Billing KPI Cards -->
+    <div class="metrics-grid" style="grid-template-columns:repeat(auto-fit, minmax(210px, 1fr));gap:14px;margin-bottom:20px;">
+      <div class="metric-card" style="border-left:4px solid var(--green-accent);">
+        <div class="metric-val" id="metricBillingRev" style="color:var(--green-accent);">KES 0</div>
+        <div class="metric-label">Total Verified Revenue</div>
+        <div class="metric-subtitle" id="metricBillingTxCount">0 successful transactions</div>
+      </div>
+      <div class="metric-card" style="border-left:4px solid var(--blue-accent);">
+        <div class="metric-val" id="metricBillingSchoolSubs" style="color:var(--blue-accent);">0</div>
+        <div class="metric-label">Active School Licenses</div>
+        <div class="metric-subtitle">Institutional Multi-Lab Passes</div>
+      </div>
+      <div class="metric-card" style="border-left:4px solid var(--violet-accent);">
+        <div class="metric-val" id="metricBillingStudentSubs" style="color:var(--violet-accent);">0</div>
+        <div class="metric-label">Active Candidate Passes</div>
+        <div class="metric-subtitle">Direct Student Subscriptions</div>
+      </div>
+      <div class="metric-card" style="border-left:4px solid var(--amber-accent);">
+        <div class="metric-val" id="metricBillingPlansCount" style="color:var(--amber-accent);">0</div>
+        <div class="metric-label">Active Tier Plans</div>
+        <div class="metric-subtitle">Curriculum Pricing Tiers</div>
+      </div>
+    </div>
+
+    <!-- Section 1: Active Entitlements & Institutional Licenses -->
+    <div class="panel-header" style="margin-top:10px;">
+      <div>
+        <h4 style="margin:0;font-size:0.95rem;color:var(--heading-color);display:inline-flex;align-items:center;gap:6px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          Active Institutional &amp; Candidate Licenses
+        </h4>
+        <p style="margin:2px 0 0 0;font-size:0.75rem;color:var(--text-muted);">
+          Real-time roster of secondary schools and student candidates with unexpired laboratory entitlements.
+        </p>
+      </div>
+      <div class="search-input-wrap" style="position:relative;display:inline-flex;align-items:center;">
+        <input type="text" id="licenseSearch" class="form-control search-control" style="padding-right:28px;" placeholder="Search school, candidate, plan..." oninput="handleSearchInput('licenseSearch', 'licenseSearchClear', filterLicenses)">
+        <button type="button" id="licenseSearchClear" class="search-clear-btn" onclick="clearSearch('licenseSearch', 'licenseSearchClear', filterLicenses)" style="display:none;position:absolute;right:8px;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.85rem;padding:2px 4px;" title="Clear search">&times;</button>
+      </div>
+    </div>
+    <div class="table-responsive" style="margin-bottom:24px;">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Subscriber Entity</th>
+            <th>Target Type</th>
+            <th>License Plan</th>
+            <th>Duration &amp; Expiry</th>
+            <th>Days Remaining</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="licensesTableBody">
+          <tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">Loading active licenses...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 2: Subscription Plans & Pricing Catalog -->
+    <div class="panel-header">
+      <div>
+        <h4 style="margin:0;font-size:0.95rem;color:var(--heading-color);display:inline-flex;align-items:center;gap:6px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+          Subscription Tier Plans &amp; Curriculum Catalog
+        </h4>
+        <p style="margin:2px 0 0 0;font-size:0.75rem;color:var(--text-muted);">
+          Active commercial tiers and institutional licenses offered on the platform.
+        </p>
+      </div>
+      <button type="button" class="btn-primary-solid" onclick="openCreatePlanModal()" style="font-size:0.75rem;padding:5px 12px;">+ Add New Plan</button>
+    </div>
+    <div class="plans-grid" id="billingPlansGrid">
+      <div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:20px;">Loading subscription plans...</div>
+    </div>
+
+    <!-- Section 3: Payment Transactions & Gateway Audit Ledger -->
+    <div class="panel-header" style="flex-wrap:wrap;gap:10px;align-items:center;">
+      <div>
+        <h4 style="margin:0;font-size:0.95rem;color:var(--heading-color);display:inline-flex;align-items:center;gap:6px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          Payment Transactions &amp; Reconciliation Audit Ledger
+        </h4>
+        <p style="margin:2px 0 0 0;font-size:0.75rem;color:var(--text-muted);">
+          Real-time transaction history from Paystack (M-Pesa / Card) and manual administrative approvals.
+        </p>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <select id="txFilterStatus" class="form-control filter-select" style="min-width:130px;" onchange="filterTransactions()">
+          <option value="all">All Statuses</option>
+          <option value="success">Success</option>
+          <option value="pending">Pending</option>
+          <option value="failed">Failed / Abandoned</option>
+        </select>
+        <select id="txFilterChannel" class="form-control filter-select" style="min-width:130px;" onchange="filterTransactions()">
+          <option value="all">All Channels</option>
+          <option value="mobile_money">M-Pesa / Mobile</option>
+          <option value="card">Debit / Credit Card</option>
+          <option value="manual">Manual Admin Issue</option>
+        </select>
+        <div class="search-input-wrap" style="position:relative;display:inline-flex;align-items:center;">
+          <input type="text" id="txSearch" class="form-control search-control" style="padding-right:28px;" placeholder="Search ref or institution..." oninput="handleSearchInput('txSearch', 'txSearchClear', filterTransactions)">
+          <button type="button" id="txSearchClear" class="search-clear-btn" onclick="clearSearch('txSearch', 'txSearchClear', filterTransactions)" style="display:none;position:absolute;right:8px;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.85rem;padding:2px 4px;" title="Clear search">&times;</button>
+        </div>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Reference Code</th>
+            <th>Subscriber / Entity</th>
+            <th>Plan Name</th>
+            <th>Channel / Gateway</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="transactionsTableBody">
+          <tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:24px;">Loading transactions ledger...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
 </div>
 
 <!-- ══════════════════════════════════════
      MODALS: Register School, Edit School, Announcements, Login
 ══════════════════════════════════════ -->
+
+
+<!-- Modal: Issue Manual License -->
+<div id="manualLicenseModal" class="modal-overlay" style="display:none;">
+  <div class="modal-box" style="max-width:520px;">
+    <div class="modal-header">
+      <h3 style="display:inline-flex;align-items:center;gap:8px;margin:0;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+        Issue Institutional / Candidate License
+      </h3>
+      <button type="button" class="modal-close-btn" onclick="closeManualLicenseModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form onsubmit="submitManualLicense(event)">
+        <div class="form-group">
+          <label style="font-weight:700;display:block;margin-bottom:6px;">Subscriber Target Type</label>
+          <div style="display:flex;gap:16px;">
+            <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:0.85rem;">
+              <input type="radio" name="subTargetType" value="school" checked onchange="onSubscriberTypeChange('school')">
+              Secondary School Institution
+            </label>
+            <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:0.85rem;">
+              <input type="radio" name="subTargetType" value="student" onchange="onSubscriberTypeChange('student')">
+              Individual Student Candidate
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group" id="mlGroupSchool">
+          <label for="mlSchoolSelect">Select Secondary School Institution</label>
+          <select id="mlSchoolSelect" class="form-control">
+            <option value="">-- Choose Institutional School --</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="mlGroupStudent" style="display:none;">
+          <label for="mlStudentEmail">Candidate Student Email Address</label>
+          <input type="email" id="mlStudentEmail" class="form-control" placeholder="e.g. candidate@domain.com">
+          <small style="color:var(--text-muted);font-size:0.75rem;">Enter registered email of the student candidate.</small>
+        </div>
+
+        <div class="form-group">
+          <label for="mlPlanSelect">Select License / Subscription Plan</label>
+          <select id="mlPlanSelect" class="form-control" required>
+            <option value="">-- Select Subscription Tier --</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="mlReferenceInput">Payment Reference / Receipt Code</label>
+          <input type="text" id="mlReferenceInput" class="form-control" placeholder="e.g. RTGS-KCB-99482, MPESA-QAB9981, CHEQUE-55102">
+        </div>
+
+        <div class="form-group">
+          <label for="mlNotesInput">Administrative Notes / Justification</label>
+          <textarea id="mlNotesInput" class="form-control" rows="2" placeholder="e.g. Approved under MoE STEM practical modernization voucher 2026."></textarea>
+        </div>
+
+        <div id="mlModalMsg" style="margin-bottom:12px;"></div>
+
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;">
+          <button type="button" class="btn-secondary" onclick="closeManualLicenseModal()">Cancel</button>
+          <button type="submit" id="mlSubmitBtn" class="btn-primary-solid">
+            Confirm &amp; Issue License
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Create Subscription Plan -->
+<div id="createPlanModal" class="modal-overlay" style="display:none;">
+  <div class="modal-box" style="max-width:520px;">
+    <div class="modal-header">
+      <h3 style="display:inline-flex;align-items:center;gap:8px;margin:0;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+        Create Subscription Tier Plan
+      </h3>
+      <button type="button" class="modal-close-btn" onclick="closeCreatePlanModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form onsubmit="submitCreatePlan(event)">
+        <div class="form-group">
+          <label for="cpNameInput">Plan Title</label>
+          <input type="text" id="cpNameInput" class="form-control" placeholder="e.g. KCSE Chemistry Mock Special Pass" required>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-group">
+            <label for="cpCodeInput">Plan Code (Unique Key)</label>
+            <input type="text" id="cpCodeInput" class="form-control" placeholder="e.g. kcse_mock_pass" required>
+          </div>
+          <div class="form-group">
+            <label for="cpTargetSelect">Target Audience</label>
+            <select id="cpTargetSelect" class="form-control" required>
+              <option value="school">School Institution</option>
+              <option value="student">Student Candidate</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="form-group">
+            <label for="cpPriceInput">Price (KES)</label>
+            <input type="number" id="cpPriceInput" class="form-control" min="0" step="50" placeholder="e.g. 1500" required>
+          </div>
+          <div class="form-group">
+            <label for="cpDurationInput">Duration (Days)</label>
+            <input type="number" id="cpDurationInput" class="form-control" min="1" placeholder="e.g. 90" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="cpMaxStudentsInput">Student Seat Limit (For School Licenses)</label>
+          <input type="number" id="cpMaxStudentsInput" class="form-control" min="1" value="250">
+        </div>
+
+        <div class="form-group">
+          <label for="cpDescInput">Plan Description</label>
+          <textarea id="cpDescInput" class="form-control" rows="2" placeholder="Summary of benefits, access levels, and exam rubrics included."></textarea>
+        </div>
+
+        <div id="cpModalMsg" style="margin-bottom:12px;"></div>
+
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;">
+          <button type="button" class="btn-secondary" onclick="closeCreatePlanModal()">Cancel</button>
+          <button type="submit" id="cpSubmitBtn" class="btn-primary-solid">Create &amp; Publish Plan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Extend License Term -->
+<div id="extendLicenseModal" class="modal-overlay" style="display:none;">
+  <div class="modal-box" style="max-width:440px;">
+    <div class="modal-header">
+      <h3 style="margin:0;font-size:1.05rem;color:var(--heading-color);">Extend License Term</h3>
+      <button type="button" class="modal-close-btn" onclick="closeExtendLicenseModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form onsubmit="submitExtendLicense(event)">
+        <input type="hidden" id="elSubscriptionId">
+        <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:12px 14px;margin-bottom:14px;">
+          <div style="font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;font-weight:700;">Subscriber Entity</div>
+          <div style="font-weight:800;color:var(--heading-color);font-size:1.05rem;" id="elSubscriberName">School Name</div>
+          <div style="font-size:0.8rem;color:var(--blue-accent);margin-top:2px;" id="elCurrentExpires">Current Expiry: --</div>
+        </div>
+
+        <div class="form-group">
+          <label for="elDaysSelect">Extend Term By</label>
+          <select id="elDaysSelect" class="form-control">
+            <option value="30">+ 30 Days (1 Month)</option>
+            <option value="90" selected>+ 90 Days (1 Term)</option>
+            <option value="180">+ 180 Days (2 Terms)</option>
+            <option value="365">+ 365 Days (Full Academic Year)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="elNotesInput">Extension Justification / Note</label>
+          <input type="text" id="elNotesInput" class="form-control" placeholder="e.g. MoE term extension granted">
+        </div>
+
+        <div id="elModalMsg" style="margin-bottom:12px;"></div>
+
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;">
+          <button type="button" class="btn-secondary" onclick="closeExtendLicenseModal()">Cancel</button>
+          <button type="submit" id="elSubmitBtn" class="btn-primary-solid">Confirm Term Extension</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 <!-- Modal 0D: Ministry Directory & Official Inspection Report -->
 <div id="ministryReportModal" class="modal-overlay" style="display:none;">
@@ -3548,6 +3898,7 @@
     btn.classList.add('active');
 
     const tabNames = {
+      'subscriptionsTab': 'Licensing & Subscriptions',
       'schoolsTab': 'Schools Directory',
       'usersTab': 'User Directory',
       'adminsTab': 'Admin Management',
@@ -3565,12 +3916,14 @@
       }, 140);
     }
 
-    ['schoolsTab', 'usersTab', 'adminsTab', 'announcementsTab', 'analyticsTab', 'telemetryTab'].forEach(id => {
+    ['schoolsTab', 'usersTab', 'adminsTab', 'announcementsTab', 'subscriptionsTab', 'analyticsTab', 'telemetryTab'].forEach(id => {
       document.getElementById(id).style.display = (id === tabId) ? 'block' : 'none';
     });
 
     if (tabId === 'telemetryTab') {
       loadSystemHealth();
+    } else if (tabId === 'subscriptionsTab') {
+      loadBillingOverview();
     } else {
       stopTelemetryAutoRefresh();
     }

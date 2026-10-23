@@ -741,6 +741,63 @@ router.get('/export/users', asyncHandler(async (req, res) => {
   sendCsv(res, 'virtulab_users_export.csv', headerRow, dataRows);
 }));
 
+// GET /api/admin/export/transactions — Download CSV export of payment transactions
+router.get('/export/transactions', asyncHandler(async (req, res) => {
+  let txRows = [];
+  try {
+    const txRes = await pool.query(`
+      SELECT pt.id, pt.reference_code, pt.user_type, pt.amount_kes, pt.currency,
+             pt.status, pt.channel, pt.gateway, pt.paid_at, pt.created_at,
+             sp.name AS plan_name,
+             COALESCE(s.name, u.name, 'N/A') AS subscriber_name
+      FROM payment_transactions pt
+      LEFT JOIN subscriptions sub ON pt.subscription_id = sub.id
+      LEFT JOIN subscription_plans sp ON sub.plan_id = sp.id
+      LEFT JOIN schools s ON pt.school_id = s.id
+      LEFT JOIN students u ON pt.user_type = 'student' AND pt.user_id = u.id
+      ORDER BY pt.created_at DESC
+    `);
+    txRows = txRes.rows || [];
+  } catch (_e) {}
+
+  const headers = [
+    'Transaction ID',
+    'Reference Code',
+    'Subscriber Type',
+    'Institution / Student',
+    'Plan Name',
+    'Gateway',
+    'Channel',
+    'Amount (KES)',
+    'Status',
+    'Paid At',
+    'Created At'
+  ];
+  const headerRow = toCsvRow(headers);
+
+  const dataRows = txRows.map(t => toCsvRow([
+    t.id,
+    t.reference_code,
+    t.user_type,
+    t.subscriber_name,
+    t.plan_name || 'N/A',
+    t.gateway,
+    t.channel,
+    t.amount_kes,
+    t.status,
+    t.paid_at ? new Date(t.paid_at).toISOString() : '—',
+    t.created_at ? new Date(t.created_at).toISOString() : '—'
+  ]));
+
+  await auditRepo.logAuditEvent({
+    adminEmail: req.user.email,
+    action: 'EXPORT_TRANSACTIONS_CSV',
+    details: `Exported ${dataRows.length} payment transactions to CSV`
+  });
+
+  sendCsv(res, 'virtulab_payment_transactions.csv', headerRow, dataRows);
+}));
+
 // GET /api/admin/system/health — Infrastructure diagnostics & cluster service status
 router.get('/system/health', asyncHandler(async (req, res) => {
   const startPing = Date.now();

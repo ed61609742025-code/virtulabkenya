@@ -223,7 +223,7 @@
           </div>
 
           <div class="dropdown-section-label">Quick Navigation</div>
-          <button type="button" class="dropdown-item" onclick="switchTab('schoolsTab', document.querySelector('.tab-btn:nth-child(1)')); closeAllAdminDropdowns();" role="menuitem">
+          <button type="button" class="dropdown-item" onclick="switchTab('schoolsTab'); closeAllAdminDropdowns();" role="menuitem">
             <span class="dropdown-item-icon">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
             </span>
@@ -231,7 +231,7 @@
               <span class="dropdown-item-title">Registered Schools</span>
             </div>
           </button>
-          <button type="button" class="dropdown-item" onclick="switchTab('usersTab', document.querySelector('.tab-btn:nth-child(2)')); closeAllAdminDropdowns();" role="menuitem">
+          <button type="button" class="dropdown-item" onclick="switchTab('usersTab'); closeAllAdminDropdowns();" role="menuitem">
             <span class="dropdown-item-icon">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             </span>
@@ -239,7 +239,7 @@
               <span class="dropdown-item-title">User Directory</span>
             </div>
           </button>
-          <button type="button" class="dropdown-item" onclick="switchTab('adminsTab', document.querySelector('.tab-btn:nth-child(3)')); closeAllAdminDropdowns();" role="menuitem">
+          <button type="button" class="dropdown-item" onclick="switchTab('adminsTab'); closeAllAdminDropdowns();" role="menuitem">
             <span class="dropdown-item-icon">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             </span>
@@ -247,7 +247,31 @@
               <span class="dropdown-item-title">Admin Management</span>
             </div>
           </button>
-          <button type="button" class="dropdown-item" onclick="switchTab('telemetryTab', document.querySelector('.tab-btn:nth-child(6)')); closeAllAdminDropdowns();" role="menuitem">
+          <button type="button" class="dropdown-item" onclick="switchTab('announcementsTab'); closeAllAdminDropdowns();" role="menuitem">
+            <span class="dropdown-item-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"/></svg>
+            </span>
+            <div class="dropdown-item-content">
+              <span class="dropdown-item-title">Broadcast Bulletins</span>
+            </div>
+          </button>
+          <button type="button" class="dropdown-item" onclick="switchTab('subscriptionsTab'); closeAllAdminDropdowns();" role="menuitem">
+            <span class="dropdown-item-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+            </span>
+            <div class="dropdown-item-content">
+              <span class="dropdown-item-title">Licensing &amp; Billing</span>
+            </div>
+          </button>
+          <button type="button" class="dropdown-item" onclick="switchTab('analyticsTab'); closeAllAdminDropdowns();" role="menuitem">
+            <span class="dropdown-item-icon">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            </span>
+            <div class="dropdown-item-content">
+              <span class="dropdown-item-title">KCSE Analytics</span>
+            </div>
+          </button>
+          <button type="button" class="dropdown-item" onclick="switchTab('telemetryTab'); closeAllAdminDropdowns();" role="menuitem">
             <span class="dropdown-item-icon">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             </span>

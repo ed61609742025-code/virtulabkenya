@@ -4424,6 +4424,472 @@
       .replace(/`/g, '&#96;');
   }
 
+  
+  // ════════════════════════════════════════════════════════════════════
+  // ── SUBSCRIPTION & INSTITUTIONAL LICENSING CONSOLE ──────────────────
+  // ════════════════════════════════════════════════════════════════════
+  let allLicenses = [];
+  let allBillingPlans = [];
+  let allTransactions = [];
+  let billingOverviewLoaded = false;
+
+  async function loadBillingOverview(force = false) {
+    if (billingOverviewLoaded && !force) return;
+    const btn = document.getElementById('btnRefreshBilling');
+    if (btn) btn.disabled = true;
+
+    try {
+      const [overviewRes, plansRes] = await Promise.all([
+        apiRequest('GET', '/subscriptions/admin/overview').catch(err => ({ success: false, error: err.message })),
+        apiRequest('GET', '/subscriptions/admin/plans').catch(() => ({ success: false, plans: [] }))
+      ]);
+
+      if (overviewRes && overviewRes.success) {
+        billingOverviewLoaded = true;
+        const metrics = overviewRes.metrics || {};
+
+        const revEl = document.getElementById('metricBillingRev');
+        if (revEl) revEl.textContent = 'KES ' + (parseFloat(metrics.totalRevenueKes || 0)).toLocaleString();
+
+        const txCountEl = document.getElementById('metricBillingTxCount');
+        if (txCountEl) txCountEl.textContent = (metrics.totalSuccessTransactions || 0) + ' successful transactions';
+
+        const schoolSubsEl = document.getElementById('metricBillingSchoolSubs');
+        if (schoolSubsEl) schoolSubsEl.textContent = metrics.activeSchoolSubscriptions || 0;
+
+        const studentSubsEl = document.getElementById('metricBillingStudentSubs');
+        if (studentSubsEl) studentSubsEl.textContent = metrics.activeStudentSubscriptions || 0;
+
+        const plansCountEl = document.getElementById('metricBillingPlansCount');
+        if (plansCountEl) plansCountEl.textContent = metrics.totalPlans || (plansRes.plans ? plansRes.plans.length : 0);
+
+        const tabCountEl = document.getElementById('tabCountSubs');
+        if (tabCountEl) tabCountEl.textContent = metrics.totalActiveSubscriptions || 0;
+
+        allLicenses = overviewRes.activeSubscriptions || [];
+        allTransactions = overviewRes.recentTransactions || [];
+        renderLicenses(allLicenses);
+        renderTransactions(allTransactions);
+      } else {
+        const licBody = document.getElementById('licensesTableBody');
+        if (licBody) licBody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">No active institutional licenses found.</td></tr>';
+        const txBody = document.getElementById('transactionsTableBody');
+        if (txBody) txBody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:24px;">No transaction records available.</td></tr>';
+      }
+
+      if (plansRes && plansRes.plans) {
+        allBillingPlans = plansRes.plans;
+        renderPlans(allBillingPlans);
+      }
+    } catch (err) {
+      console.error('[loadBillingOverview Error]:', err);
+      showToast('Failed to load billing overview: ' + err.message, 'error');
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  }
+
+  function renderLicenses(list) {
+    const tbody = document.getElementById('licensesTableBody');
+    if (!tbody) return;
+    if (!list || list.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">No licenses found matching your query.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = list.map(l => {
+      const isSchool = l.subscriber_type === 'school';
+      const entityName = isSchool
+        ? (l.school_name || ('School #' + l.school_id))
+        : (l.student_name || l.student_email || ('Student #' + l.student_id));
+      const entitySub = isSchool ? (l.school_county || 'Secondary School') : (l.student_email || 'Candidate');
+      const targetBadge = isSchool
+        ? '<span class="role-badge" style="background:var(--blue-bg);color:var(--blue-accent);border:1px solid var(--blue-border);">🏫 School</span>'
+        : '<span class="role-badge" style="background:var(--violet-bg);color:var(--violet-accent);border:1px solid var(--violet-border);">👤 Student</span>';
+
+      const days = parseInt(l.days_remaining, 10);
+      let daysBadge = '';
+      if (isNaN(days) || days <= 0) {
+        daysBadge = '<span class="status-badge suspended">Expired</span>';
+      } else if (days <= 14) {
+        daysBadge = '<span class="status-badge" style="background:var(--amber-bg);color:var(--amber-accent);border:1px solid var(--amber-border);">' + days + ' days left</span>';
+      } else {
+        daysBadge = '<span class="status-badge active">' + days + ' days</span>';
+      }
+
+      const statusBadge = l.status === 'active'
+        ? '<span class="status-badge active">Active</span>'
+        : l.status === 'grace_period'
+          ? '<span class="status-badge" style="background:var(--amber-bg);color:var(--amber-accent);">Grace Period</span>'
+          : '<span class="status-badge suspended">Inactive</span>';
+
+      const expDate = l.expires_at ? new Date(l.expires_at).toLocaleDateString('en-GB') : 'N/A';
+      const safeName = escapeHtml(entityName).replace(/'/g, "\\'");
+
+      return `
+        <tr>
+          <td>
+            <div style="font-weight:700;color:var(--heading-color);">${escapeHtml(entityName)}</div>
+            <small style="color:var(--text-muted);">${escapeHtml(entitySub)}</small>
+          </td>
+          <td>${targetBadge}</td>
+          <td><b>${escapeHtml(l.plan_name || l.plan_code || 'Standard Pass')}</b></td>
+          <td><small style="font-family:var(--font-mono);color:var(--text-muted);">${expDate}</small></td>
+          <td>${daysBadge}</td>
+          <td>${statusBadge}</td>
+          <td>
+            <div style="display:inline-flex;gap:6px;align-items:center;">
+              <button type="button" class="btn-table-action" onclick="openExtendLicenseModal(${l.id}, '${safeName}', '${l.expires_at || ''}')" title="Extend Term">+ Extend</button>
+              <button type="button" class="btn-table-action" style="color:var(--red-accent);border-color:rgba(239,68,68,0.35);" onclick="revokeSubscriptionPrompt(${l.id}, '${safeName}')" title="Revoke License">&times; Revoke</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function renderPlans(plans) {
+    const grid = document.getElementById('billingPlansGrid');
+    if (!grid) return;
+    if (!plans || plans.length === 0) {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:24px;">No subscription plans configured yet. Click "+ Add New Plan" to configure curriculum tiers.</div>';
+      return;
+    }
+
+    grid.innerHTML = plans.map(p => {
+      const isSchool = p.target_audience === 'school';
+      const audienceBadge = isSchool
+        ? '<span class="role-badge" style="background:var(--blue-bg);color:var(--blue-accent);border:1px solid var(--blue-border);">Institutional School</span>'
+        : '<span class="role-badge" style="background:var(--violet-bg);color:var(--violet-accent);border:1px solid var(--violet-border);">Candidate Student</span>';
+
+      const toggleAction = p.is_active
+        ? '<button type="button" class="btn-table-action" onclick="togglePlanStatus(' + p.id + ')" style="color:var(--red-accent);border-color:rgba(239,68,68,0.35);">Deactivate</button>'
+        : '<button type="button" class="btn-table-action" onclick="togglePlanStatus(' + p.id + ')" style="color:var(--green-accent);border-color:rgba(16,185,129,0.35);">Activate</button>';
+
+      return `
+        <div class="card-panel" style="padding:16px;border-radius:12px;display:flex;flex-direction:column;justify-content:space-between;border:1px solid ${p.is_active ? 'var(--card-border)' : 'rgba(239,68,68,0.3)'};opacity:${p.is_active ? '1' : '0.75'};">
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+              <div>
+                <h4 style="margin:0 0 4px 0;font-size:1.05rem;color:var(--heading-color);">${escapeHtml(p.name)}</h4>
+                <code style="font-size:0.75rem;font-family:var(--font-mono);color:var(--text-muted);">${escapeHtml(p.plan_code)}</code>
+              </div>
+              ${audienceBadge}
+            </div>
+            <p style="font-size:0.8rem;color:var(--text-muted);margin:0 0 12px 0;">${escapeHtml(p.description || 'Full KCSE virtual chemistry laboratory curriculum access.')}</p>
+            <div style="font-size:1.6rem;font-weight:800;font-family:var(--font-mono);color:var(--heading-color);margin-bottom:8px;">
+              KES ${parseFloat(p.price_kes || 0).toLocaleString()}
+              <span style="font-size:0.78rem;font-weight:500;color:var(--text-muted);font-family:inherit;">/ ${p.duration_days} days</span>
+            </div>
+            ${isSchool ? '<div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:8px;">Seat Limit: <b>' + (p.max_students || 250) + ' Students</b></div>' : ''}
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid var(--card-border);margin-top:8px;">
+            <span class="status-badge ${p.is_active ? 'active' : 'suspended'}">${p.is_active ? 'Active Tier' : 'Archived'}</span>
+            ${toggleAction}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderTransactions(txs) {
+    const tbody = document.getElementById('transactionsTableBody');
+    if (!tbody) return;
+    if (!txs || txs.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:24px;">No transaction records found matching filters.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = txs.map(t => {
+      const isSuccess = t.status === 'success';
+      const statusBadge = isSuccess
+        ? '<span class="status-badge active">Verified</span>'
+        : t.status === 'pending'
+          ? '<span class="status-badge" style="background:var(--amber-bg);color:var(--amber-accent);">Pending</span>'
+          : '<span class="status-badge suspended">Failed</span>';
+
+      const entityName = t.school_name || t.student_name || t.student_email || (t.user_type === 'school' ? ('School #' + t.school_id) : ('User #' + t.user_id));
+      const dateStr = t.paid_at || t.created_at;
+      const formattedDate = dateStr ? new Date(dateStr).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' }) : 'N/A';
+      const channelName = t.channel === 'mobile_money' ? 'M-Pesa' : t.channel === 'card' ? 'Card' : (t.channel || 'Manual');
+
+      return `
+        <tr>
+          <td><small style="font-family:var(--font-mono);color:var(--text-muted);">${formattedDate}</small></td>
+          <td><code style="font-family:var(--font-mono);font-size:0.75rem;color:var(--blue-accent);">${escapeHtml(t.reference_code)}</code></td>
+          <td><b>${escapeHtml(entityName)}</b></td>
+          <td>${escapeHtml(t.plan_name || 'Standard Plan')}</td>
+          <td><span style="font-size:0.75rem;font-weight:700;">${escapeHtml(channelName)}</span></td>
+          <td style="font-family:var(--font-mono);font-weight:700;">KES ${parseFloat(t.amount_kes || 0).toLocaleString()}</td>
+          <td>${statusBadge}</td>
+          <td>
+            <button type="button" class="btn-table-action" onclick="copyToClipboard('${escapeHtml(t.reference_code)}')" title="Copy Reference">Copy Ref</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function filterLicenses(query) {
+    if (!query) {
+      renderLicenses(allLicenses);
+      return;
+    }
+    const q = query.toLowerCase().trim();
+    const filtered = allLicenses.filter(l => {
+      const sName = (l.school_name || '').toLowerCase();
+      const stName = (l.student_name || '').toLowerCase();
+      const stEmail = (l.student_email || '').toLowerCase();
+      const pName = (l.plan_name || '').toLowerCase();
+      const status = (l.status || '').toLowerCase();
+      return sName.includes(q) || stName.includes(q) || stEmail.includes(q) || pName.includes(q) || status.includes(q);
+    });
+    renderLicenses(filtered);
+  }
+
+  function filterTransactions() {
+    const statusVal = document.getElementById('txFilterStatus') ? document.getElementById('txFilterStatus').value : 'all';
+    const channelVal = document.getElementById('txFilterChannel') ? document.getElementById('txFilterChannel').value : 'all';
+    const searchVal = (document.getElementById('txSearch') ? document.getElementById('txSearch').value : '').toLowerCase().trim();
+
+    let filtered = allTransactions.slice();
+    if (statusVal !== 'all') {
+      filtered = filtered.filter(t => t.status === statusVal);
+    }
+    if (channelVal !== 'all') {
+      filtered = filtered.filter(t => t.channel === channelVal || (channelVal === 'manual' && t.gateway === 'manual'));
+    }
+    if (searchVal) {
+      filtered = filtered.filter(t => {
+        const ref = (t.reference_code || '').toLowerCase();
+        const ent = (t.school_name || t.student_name || t.student_email || '').toLowerCase();
+        return ref.includes(searchVal) || ent.includes(searchVal);
+      });
+    }
+    renderTransactions(filtered);
+  }
+
+  async function togglePlanStatus(planId) {
+    try {
+      await apiRequest('PATCH', '/subscriptions/admin/plans/' + planId + '/toggle');
+      showToast('Subscription tier updated successfully.', 'info');
+      loadBillingOverview(true);
+    } catch (err) {
+      showToast('Failed to toggle plan: ' + err.message, 'error');
+    }
+  }
+
+  async function revokeSubscriptionPrompt(subId, entityName) {
+    const reason = prompt('Revoke license for "' + entityName + '"?\nEnter cancellation justification:');
+    if (reason === null) return;
+    try {
+      await apiRequest('POST', '/subscriptions/admin/revoke', { subscriptionId: subId, reason: reason || 'Revoked by admin' });
+      showToast('License successfully revoked.', 'info');
+      loadBillingOverview(true);
+    } catch (err) {
+      showToast('Failed to revoke license: ' + err.message, 'error');
+    }
+  }
+
+  function openManualLicenseModal() {
+    const modal = document.getElementById('manualLicenseModal');
+    if (!modal) return;
+    modal.style.display = 'flex';
+    const msg = document.getElementById('mlModalMsg');
+    if (msg) msg.innerHTML = '';
+
+    const schoolSelect = document.getElementById('mlSchoolSelect');
+    if (schoolSelect && allSchools) {
+      schoolSelect.innerHTML = '<option value="">-- Choose Institutional School --</option>' +
+        allSchools.map(s => '<option value="' + s.id + '">' + escapeHtml(s.name) + ' (' + escapeHtml(s.county || 'Nairobi') + ')</option>').join('');
+    }
+
+    const planSelect = document.getElementById('mlPlanSelect');
+    if (planSelect && allBillingPlans) {
+      planSelect.innerHTML = '<option value="">-- Select Subscription Tier --</option>' +
+        allBillingPlans.filter(p => p.is_active).map(p => '<option value="' + p.id + '">' + escapeHtml(p.name) + ' — KES ' + p.price_kes + ' (' + p.duration_days + ' days)</option>').join('');
+    }
+  }
+
+  function closeManualLicenseModal() {
+    const modal = document.getElementById('manualLicenseModal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  function onSubscriberTypeChange(type) {
+    const groupSchool = document.getElementById('mlGroupSchool');
+    const groupStudent = document.getElementById('mlGroupStudent');
+    if (type === 'student') {
+      if (groupSchool) groupSchool.style.display = 'none';
+      if (groupStudent) groupStudent.style.display = 'block';
+    } else {
+      if (groupSchool) groupSchool.style.display = 'block';
+      if (groupStudent) groupStudent.style.display = 'none';
+    }
+  }
+
+  async function submitManualLicense(e) {
+    e.preventDefault();
+    const btn = document.getElementById('mlSubmitBtn');
+    const msg = document.getElementById('mlModalMsg');
+    const radios = document.getElementsByName('subTargetType');
+    let subType = 'school';
+    for (const r of radios) {
+      if (r.checked) subType = r.value;
+    }
+
+    const schoolId = document.getElementById('mlSchoolSelect') ? document.getElementById('mlSchoolSelect').value : null;
+    const studentEmail = document.getElementById('mlStudentEmail') ? document.getElementById('mlStudentEmail').value : null;
+    const planId = document.getElementById('mlPlanSelect') ? document.getElementById('mlPlanSelect').value : null;
+    const referenceCode = document.getElementById('mlReferenceInput') ? document.getElementById('mlReferenceInput').value : null;
+    const notes = document.getElementById('mlNotesInput') ? document.getElementById('mlNotesInput').value : null;
+
+    if (!planId) {
+      if (msg) msg.innerHTML = '<span style="color:var(--red-accent);">Please select a license plan tier.</span>';
+      return;
+    }
+    if (subType === 'school' && !schoolId) {
+      if (msg) msg.innerHTML = '<span style="color:var(--red-accent);">Please select a secondary school.</span>';
+      return;
+    }
+    if (subType === 'student' && !studentEmail) {
+      if (msg) msg.innerHTML = '<span style="color:var(--red-accent);">Please provide candidate student email.</span>';
+      return;
+    }
+
+    try {
+      if (btn) btn.disabled = true;
+      if (msg) msg.innerHTML = '<span style="color:var(--blue-accent);">Issuing license entitlement...</span>';
+
+      await apiRequest('POST', '/subscriptions/admin/activate', {
+        subscriberType: subType,
+        schoolId: subType === 'school' ? parseInt(schoolId, 10) : null,
+        studentEmail: subType === 'student' ? studentEmail : null,
+        planId: parseInt(planId, 10),
+        referenceCode: referenceCode || undefined,
+        notes: notes || undefined
+      });
+
+      showToast('License issued successfully!', 'success');
+      closeManualLicenseModal();
+      loadBillingOverview(true);
+    } catch (err) {
+      if (msg) msg.innerHTML = '<span style="color:var(--red-accent);">' + escapeHtml(err.message || 'Failed to issue license') + '</span>';
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  }
+
+  function openCreatePlanModal() {
+    const modal = document.getElementById('createPlanModal');
+    if (!modal) return;
+    modal.style.display = 'flex';
+    const msg = document.getElementById('cpModalMsg');
+    if (msg) msg.innerHTML = '';
+  }
+
+  function closeCreatePlanModal() {
+    const modal = document.getElementById('createPlanModal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  async function submitCreatePlan(e) {
+    e.preventDefault();
+    const btn = document.getElementById('cpSubmitBtn');
+    const msg = document.getElementById('cpModalMsg');
+
+    const name = document.getElementById('cpNameInput') ? document.getElementById('cpNameInput').value : '';
+    const planCode = document.getElementById('cpCodeInput') ? document.getElementById('cpCodeInput').value : '';
+    const target = document.getElementById('cpTargetSelect') ? document.getElementById('cpTargetSelect').value : 'school';
+    const price = document.getElementById('cpPriceInput') ? document.getElementById('cpPriceInput').value : 0;
+    const duration = document.getElementById('cpDurationInput') ? document.getElementById('cpDurationInput').value : 30;
+    const maxStudents = document.getElementById('cpMaxStudentsInput') ? document.getElementById('cpMaxStudentsInput').value : 250;
+    const desc = document.getElementById('cpDescInput') ? document.getElementById('cpDescInput').value : '';
+
+    try {
+      if (btn) btn.disabled = true;
+      if (msg) msg.innerHTML = '<span style="color:var(--blue-accent);">Publishing plan...</span>';
+
+      await apiRequest('POST', '/subscriptions/admin/plans', {
+        name,
+        plan_code: planCode,
+        target_audience: target,
+        price_kes: parseFloat(price),
+        duration_days: parseInt(duration, 10),
+        max_students: parseInt(maxStudents || 250, 10),
+        description: desc
+      });
+
+      showToast('Plan "' + name + '" created successfully!', 'success');
+      closeCreatePlanModal();
+      loadBillingOverview(true);
+    } catch (err) {
+      if (msg) msg.innerHTML = '<span style="color:var(--red-accent);">' + escapeHtml(err.message || 'Failed to create plan') + '</span>';
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  }
+
+  function openExtendLicenseModal(subId, subscriberName, currentExpires) {
+    const modal = document.getElementById('extendLicenseModal');
+    if (!modal) return;
+    modal.style.display = 'flex';
+    const idInput = document.getElementById('elSubscriptionId');
+    if (idInput) idInput.value = subId;
+    const nameEl = document.getElementById('elSubscriberName');
+    if (nameEl) nameEl.textContent = subscriberName || 'Subscriber';
+    const expText = currentExpires ? new Date(currentExpires).toLocaleDateString('en-GB') : 'Unknown';
+    const expEl = document.getElementById('elCurrentExpires');
+    if (expEl) expEl.textContent = 'Current Expiry: ' + expText;
+    const msg = document.getElementById('elModalMsg');
+    if (msg) msg.innerHTML = '';
+  }
+
+  function closeExtendLicenseModal() {
+    const modal = document.getElementById('extendLicenseModal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  async function submitExtendLicense(e) {
+    e.preventDefault();
+    const btn = document.getElementById('elSubmitBtn');
+    const msg = document.getElementById('elModalMsg');
+    const subId = document.getElementById('elSubscriptionId') ? document.getElementById('elSubscriptionId').value : null;
+    const days = document.getElementById('elDaysSelect') ? document.getElementById('elDaysSelect').value : 90;
+    const notes = document.getElementById('elNotesInput') ? document.getElementById('elNotesInput').value : '';
+
+    try {
+      if (btn) btn.disabled = true;
+      if (msg) msg.innerHTML = '<span style="color:var(--blue-accent);">Extending license term...</span>';
+
+      await apiRequest('POST', '/subscriptions/admin/extend', {
+        subscriptionId: parseInt(subId, 10),
+        days: parseInt(days, 10),
+        notes: notes || undefined
+      });
+
+      showToast('License extended by ' + days + ' days!', 'success');
+      closeExtendLicenseModal();
+      loadBillingOverview(true);
+    } catch (err) {
+      if (msg) msg.innerHTML = '<span style="color:var(--red-accent);">' + escapeHtml(err.message || 'Failed to extend license') + '</span>';
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  }
+
+  async function deleteAnnouncementPrompt(id, title) {
+    if (!confirm('Are you sure you want to delete broadcast announcement "' + (title || 'Notice') + '"? This action cannot be undone.')) return;
+    try {
+      await apiRequest('DELETE', '/admin/announcements/' + id);
+      showToast('Announcement deleted successfully.', 'success');
+      initAdminDashboard();
+    } catch (err) {
+      showToast('Failed to delete announcement: ' + err.message, 'error');
+    }
+  }
+
+
   document.addEventListener('DOMContentLoaded', initAdminDashboard);
 </script>
 </body>

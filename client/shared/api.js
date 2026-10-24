@@ -1201,7 +1201,7 @@ const Admin = {
     return Subscriptions.adminGetOverview();
   },
   exportTransactionsReport() {
-    return Subscriptions.exportTransactionsReport();
+    return downloadFile('/admin/export/transactions', 'virtulab_transactions_ledger.csv');
   },
   exportUsersReport() {
     return downloadFile('/admin/export/users', 'virtulab_users_report.csv');
@@ -1355,6 +1355,27 @@ const Subscriptions = {
   },
   async adminActivate(data) {
     return apiRequest('POST', '/subscriptions/admin/activate', data);
+  },
+  async adminGetOverview() {
+    return apiRequest('GET', '/subscriptions/admin/overview');
+  },
+  async adminGetPlans() {
+    return apiRequest('GET', '/subscriptions/admin/plans');
+  },
+  async adminCreatePlan(data) {
+    return apiRequest('POST', '/subscriptions/admin/plans', data);
+  },
+  async adminTogglePlan(planId) {
+    return apiRequest('PATCH', '/subscriptions/admin/plans/' + planId + '/toggle');
+  },
+  async adminExtend(data) {
+    return apiRequest('POST', '/subscriptions/admin/extend', data);
+  },
+  async adminRevoke(subscriptionId, reason) {
+    return apiRequest('POST', '/subscriptions/admin/revoke', { subscriptionId, reason });
+  },
+  exportTransactionsReport() {
+    return downloadFile('/admin/export/transactions', 'virtulab_transactions_ledger.csv');
   }
 };
 

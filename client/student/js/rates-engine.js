@@ -1031,7 +1031,7 @@ const RatesEngine = (function () {
         const timeOffset = (state.timer || 0) * 1.5;
         const px = cx - baseHalfW + 12 + ((Math.sin(i * 47.3 + timeOffset) * 0.5 + 0.5) * (baseHalfW * 2 - 24));
         const py = liquidTopY + 8 + ((Math.cos(i * 29.1 + timeOffset * 0.7) * 0.5 + 0.5) * (flaskBaseY - liquidTopY - 14));
-        const pr = (1.0 + (Math.sin(i * 13) * 0.5 + 0.5) * 2.0) * scale;
+        const pr = Math.max(0.4, (1.0 + (Math.sin(i * 13) * 0.5 + 0.5) * 2.0) * scale);
         ctx.beginPath();
         ctx.arc(px, py, pr, 0, Math.PI * 2);
         ctx.fill();
@@ -1043,7 +1043,7 @@ const RatesEngine = (function () {
     // ── 6. Liquid Meniscus ──
     ctx.save();
     ctx.beginPath();
-    ctx.ellipse(cx, liquidTopY, 40 * scale, 4 * scale, 0, 0, Math.PI * 2);
+    ctx.ellipse(cx, liquidTopY, Math.max(1, 40 * scale), Math.max(0.5, 4 * scale), 0, 0, Math.PI * 2);
     ctx.fillStyle = `rgba(${redCh}, ${grnCh}, ${bluCh}, ${0.5 + turb * 0.45})`;
     ctx.fill();
     ctx.strokeStyle = turb > 0.4 ? 'rgba(234, 179, 8, 0.7)' : 'rgba(56, 189, 248, 0.7)';
@@ -1101,7 +1101,7 @@ const RatesEngine = (function () {
     ctx.save();
     ctx.fillStyle = 'rgba(0,0,0,0.4)';
     ctx.beginPath();
-    ctx.arc(eyeX + 2, eyeY + 3, eyeR, 0, Math.PI * 2);
+    ctx.arc(eyeX + 2, eyeY + 3, Math.max(1, eyeR), 0, Math.PI * 2);
     ctx.fill();
 
     const rimGrad = ctx.createLinearGradient(eyeX - eyeR, eyeY - eyeR, eyeX + eyeR, eyeY + eyeR);
@@ -1110,12 +1110,12 @@ const RatesEngine = (function () {
     rimGrad.addColorStop(1, '#0F172A');
     ctx.fillStyle = rimGrad;
     ctx.beginPath();
-    ctx.arc(eyeX, eyeY, eyeR + 3, 0, Math.PI * 2);
+    ctx.arc(eyeX, eyeY, Math.max(1, eyeR + 3), 0, Math.PI * 2);
     ctx.fill();
 
     // Lens Interior
     ctx.beginPath();
-    ctx.arc(eyeX, eyeY, eyeR, 0, Math.PI * 2);
+    ctx.arc(eyeX, eyeY, Math.max(1, eyeR), 0, Math.PI * 2);
     ctx.fillStyle = '#FFFFFF';
     ctx.fill();
     ctx.clip(); // Clip to lens circle
@@ -1145,7 +1145,8 @@ const RatesEngine = (function () {
         const lx = eyeX - eyeR + 10 + (Math.sin(j * 17.3 + (state.timer || 0)) * 0.5 + 0.5) * (eyeR * 2 - 20);
         const ly = eyeY - eyeR + 10 + (Math.cos(j * 31.7 + (state.timer || 0)) * 0.5 + 0.5) * (eyeR * 2 - 20);
         ctx.beginPath();
-        ctx.arc(lx, ly, 1.2 + Math.sin(j) * 1.5, 0, Math.PI * 2);
+        const microR = Math.max(0.4, 0.8 + (Math.sin(j * 17) * 0.5 + 0.5) * 1.4);
+        ctx.arc(lx, ly, microR, 0, Math.PI * 2);
         ctx.fill();
       }
     }
@@ -1154,13 +1155,13 @@ const RatesEngine = (function () {
     ctx.strokeStyle = 'rgba(56, 189, 248, 0.6)';
     ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.arc(eyeX, eyeY, eyeR - 2, 0, Math.PI * 2);
+    ctx.arc(eyeX, eyeY, Math.max(1, eyeR - 2), 0, Math.PI * 2);
     ctx.stroke();
 
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.arc(eyeX - 4, eyeY - 4, eyeR - 8, Math.PI * 1.1, Math.PI * 1.6);
+    ctx.arc(eyeX - 4, eyeY - 4, Math.max(1, eyeR - 8), Math.PI * 1.1, Math.PI * 1.6);
     ctx.stroke();
 
     ctx.restore(); // Exit lens clip
@@ -1242,7 +1243,7 @@ const RatesEngine = (function () {
     ctx.fillStyle = isLight ? '#0284C7' : '#FFFFFF';
     state.syringe.bubbles.forEach(b => {
       ctx.beginPath();
-      ctx.arc(cx - 30 + (b.x % 60), b.y - 40, b.r, 0, Math.PI * 2);
+      ctx.arc(cx - 30 + (b.x % 60), b.y - 40, Math.max(0.5, b.r || 2), 0, Math.PI * 2);
       ctx.fill();
     });
   }
@@ -1336,7 +1337,7 @@ const RatesEngine = (function () {
         const bx = cx - 15 + Math.random() * 30;
         const by = cy + 20 - Math.random() * 80;
         ctx.beginPath();
-        ctx.arc(bx, by, 2 + Math.random() * 2.5, 0, Math.PI * 2);
+        ctx.arc(bx, by, Math.max(0.5, 2 + Math.random() * 2.5), 0, Math.PI * 2);
         ctx.fill();
       }
     }
@@ -1353,7 +1354,7 @@ const RatesEngine = (function () {
     // Draw Particles
     state.collision.particles.forEach(p => {
       ctx.beginPath();
-      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.arc(p.x, p.y, Math.max(1, p.radius || 6), 0, Math.PI * 2);
       if (p.type === 'A') ctx.fillStyle = '#EF4444'; // Red reactant A
       else if (p.type === 'B') ctx.fillStyle = '#3B82F6'; // Blue reactant B
       else ctx.fillStyle = '#A855F7'; // Purple product AB

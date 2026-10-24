@@ -9,6 +9,8 @@ const RatesEngine = (function () {
   // ══════════════════════════════════════════════════════════
   // STATE DEFINITIONS
   // ══════════════════════════════════════════════════════════
+  let currentWorkflowStep = 0;
+
   const state = {
     assignmentId: null,
     currentExp: 'cross', // 'cross' | 'syringe' | 'mass' | 'catalyst' | 'collision'
@@ -205,6 +207,7 @@ const RatesEngine = (function () {
   function setExperiment(expName) {
     stopSimulation();
     state.currentExp = expName;
+    updateWorkflowStepper(0);
 
     // Update Tab UI
     document.querySelectorAll('.rate-exp-tab').forEach(tab => {
@@ -293,6 +296,7 @@ const RatesEngine = (function () {
   // SIMULATION TIMING & RUN LOOP
   // ══════════════════════════════════════════════════════════
   function startSimulation() {
+    updateWorkflowStepper(2);
     if (state.isRunning) return;
     state.isRunning = true;
 
@@ -462,6 +466,47 @@ const RatesEngine = (function () {
   function updateHUD() {
     const timeVal = document.getElementById('rateHudTime');
     if (timeVal) timeVal.textContent = state.timer.toFixed(1) + ' s';
+
+    // Update Telemetry Panel
+    const statusBadge = document.getElementById('rateTelemetryStatus');
+    const statusText = document.getElementById('rateTelemetryStateText');
+    if (statusBadge && statusText) {
+      if (state.isRunning) {
+        statusBadge.className = 'rate-status-badge active';
+        statusBadge.textContent = 'RUNNING';
+        statusText.textContent = 'Reaction in Progress • Timing';
+      } else if (state.timer > 0) {
+        statusBadge.className = 'rate-status-badge complete';
+        statusBadge.textContent = 'COMPLETE';
+        statusText.textContent = 'Obscuration / Endpoint Reached';
+      } else {
+        statusBadge.className = 'rate-status-badge idle';
+        statusBadge.textContent = 'READY';
+        statusText.textContent = 'Awaiting Trigger';
+      }
+    }
+
+    const turbPct = document.getElementById('rateTurbidityPct');
+    const turbFill = document.getElementById('rateTurbidityFill');
+    if (turbPct && turbFill) {
+      const pctVal = state.currentExp === 'cross' 
+        ? Math.round(state.cross.turbidity * 100)
+        : (state.currentExp === 'syringe' 
+            ? Math.min(100, Math.round((state.syringe.currentVol / (state.syringe.maxVol || 50)) * 100))
+            : Math.min(100, Math.round(state.timer * 2)));
+      turbPct.textContent = pctVal + '%';
+      turbFill.style.width = pctVal + '%';
+    }
+
+    const instantVal = document.getElementById('rateInstantVal');
+    if (instantVal) {
+      if (state.timer > 0) {
+        const rateCalc = 1 / Math.max(0.1, state.timer);
+        instantVal.textContent = rateCalc.toFixed(4);
+      } else {
+        instantVal.textContent = '0.0000';
+      }
+    }
 
     const metricVal = document.getElementById('rateHudMetric');
     if (metricVal) {
@@ -660,6 +705,7 @@ const RatesEngine = (function () {
   // RECORDING READINGS & KNEC TABLE RENDERING
   // ══════════════════════════════════════════════════════════
   function recordReading() {
+    updateWorkflowStepper(3);
     if (state.currentExp === 'cross') {
       const time = state.cross.disappeared ? state.cross.disappearTime : state.timer;
       if (time <= 0.5) return;
@@ -985,7 +1031,7 @@ const RatesEngine = (function () {
         const timeOffset = (state.timer || 0) * 1.5;
         const px = cx - baseHalfW + 12 + ((Math.sin(i * 47.3 + timeOffset) * 0.5 + 0.5) * (baseHalfW * 2 - 24));
         const py = liquidTopY + 8 + ((Math.cos(i * 29.1 + timeOffset * 0.7) * 0.5 + 0.5) * (flaskBaseY - liquidTopY - 14));
-        const pr = (1.0 + (Math.sin(i * 13) * 0.5 + 0.5) * 2.0) * scale;
+        const pr = Math.max(0.4, (1.0 + (Math.sin(i * 13) * 0.5 + 0.5) * 2.0) * scale);
         ctx.beginPath();
         ctx.arc(px, py, pr, 0, Math.PI * 2);
         ctx.fill();
@@ -997,7 +1043,7 @@ const RatesEngine = (function () {
     // ── 6. Liquid Meniscus ──
     ctx.save();
     ctx.beginPath();
-    ctx.ellipse(cx, liquidTopY, 40 * scale, 4 * scale, 0, 0, Math.PI * 2);
+    ctx.ellipse(cx, liquidTopY, Math.max(1, 40 * scale), Math.max(0.5, 4 * scale), 0, 0, Math.PI * 2);
     ctx.fillStyle = `rgba(${redCh}, ${grnCh}, ${bluCh}, ${0.5 + turb * 0.45})`;
     ctx.fill();
     ctx.strokeStyle = turb > 0.4 ? 'rgba(234, 179, 8, 0.7)' : 'rgba(56, 189, 248, 0.7)';
@@ -1055,7 +1101,7 @@ const RatesEngine = (function () {
     ctx.save();
     ctx.fillStyle = 'rgba(0,0,0,0.4)';
     ctx.beginPath();
-    ctx.arc(eyeX + 2, eyeY + 3, eyeR, 0, Math.PI * 2);
+    ctx.arc(eyeX + 2, eyeY + 3, Math.max(1, eyeR), 0, Math.PI * 2);
     ctx.fill();
 
     const rimGrad = ctx.createLinearGradient(eyeX - eyeR, eyeY - eyeR, eyeX + eyeR, eyeY + eyeR);
@@ -1064,12 +1110,12 @@ const RatesEngine = (function () {
     rimGrad.addColorStop(1, '#0F172A');
     ctx.fillStyle = rimGrad;
     ctx.beginPath();
-    ctx.arc(eyeX, eyeY, eyeR + 3, 0, Math.PI * 2);
+    ctx.arc(eyeX, eyeY, Math.max(1, eyeR + 3), 0, Math.PI * 2);
     ctx.fill();
 
     // Lens Interior
     ctx.beginPath();
-    ctx.arc(eyeX, eyeY, eyeR, 0, Math.PI * 2);
+    ctx.arc(eyeX, eyeY, Math.max(1, eyeR), 0, Math.PI * 2);
     ctx.fillStyle = '#FFFFFF';
     ctx.fill();
     ctx.clip(); // Clip to lens circle
@@ -1099,7 +1145,8 @@ const RatesEngine = (function () {
         const lx = eyeX - eyeR + 10 + (Math.sin(j * 17.3 + (state.timer || 0)) * 0.5 + 0.5) * (eyeR * 2 - 20);
         const ly = eyeY - eyeR + 10 + (Math.cos(j * 31.7 + (state.timer || 0)) * 0.5 + 0.5) * (eyeR * 2 - 20);
         ctx.beginPath();
-        ctx.arc(lx, ly, 1.2 + Math.sin(j) * 1.5, 0, Math.PI * 2);
+        const microR = Math.max(0.4, 0.8 + (Math.sin(j * 17) * 0.5 + 0.5) * 1.4);
+        ctx.arc(lx, ly, microR, 0, Math.PI * 2);
         ctx.fill();
       }
     }
@@ -1108,13 +1155,13 @@ const RatesEngine = (function () {
     ctx.strokeStyle = 'rgba(56, 189, 248, 0.6)';
     ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.arc(eyeX, eyeY, eyeR - 2, 0, Math.PI * 2);
+    ctx.arc(eyeX, eyeY, Math.max(1, eyeR - 2), 0, Math.PI * 2);
     ctx.stroke();
 
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.arc(eyeX - 4, eyeY - 4, eyeR - 8, Math.PI * 1.1, Math.PI * 1.6);
+    ctx.arc(eyeX - 4, eyeY - 4, Math.max(1, eyeR - 8), Math.PI * 1.1, Math.PI * 1.6);
     ctx.stroke();
 
     ctx.restore(); // Exit lens clip
@@ -1196,7 +1243,7 @@ const RatesEngine = (function () {
     ctx.fillStyle = isLight ? '#0284C7' : '#FFFFFF';
     state.syringe.bubbles.forEach(b => {
       ctx.beginPath();
-      ctx.arc(cx - 30 + (b.x % 60), b.y - 40, b.r, 0, Math.PI * 2);
+      ctx.arc(cx - 30 + (b.x % 60), b.y - 40, Math.max(0.5, b.r || 2), 0, Math.PI * 2);
       ctx.fill();
     });
   }
@@ -1290,7 +1337,7 @@ const RatesEngine = (function () {
         const bx = cx - 15 + Math.random() * 30;
         const by = cy + 20 - Math.random() * 80;
         ctx.beginPath();
-        ctx.arc(bx, by, 2 + Math.random() * 2.5, 0, Math.PI * 2);
+        ctx.arc(bx, by, Math.max(0.5, 2 + Math.random() * 2.5), 0, Math.PI * 2);
         ctx.fill();
       }
     }
@@ -1307,7 +1354,7 @@ const RatesEngine = (function () {
     // Draw Particles
     state.collision.particles.forEach(p => {
       ctx.beginPath();
-      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.arc(p.x, p.y, Math.max(1, p.radius || 6), 0, Math.PI * 2);
       if (p.type === 'A') ctx.fillStyle = '#EF4444'; // Red reactant A
       else if (p.type === 'B') ctx.fillStyle = '#3B82F6'; // Blue reactant B
       else ctx.fillStyle = '#A855F7'; // Purple product AB
@@ -1348,6 +1395,7 @@ const RatesEngine = (function () {
   }
 
   function toggleTangent() {
+    updateWorkflowStepper(4);
     state.tangent.active = !state.tangent.active;
     const chip = document.getElementById('btnTangentTool');
     if (chip) chip.classList.toggle('active', state.tangent.active);
@@ -1557,6 +1605,7 @@ const RatesEngine = (function () {
   }
 
   function gradeKnecWorksheet() {
+    updateWorkflowStepper(5);
     let tableScore = 0.0;
     let graphScore = 0.0;
     let calcScore = 0.0;
@@ -1757,7 +1806,65 @@ const RatesEngine = (function () {
     };
   };
 
+  function jumpToStep(stepIdx) {
+    updateWorkflowStepper(stepIdx);
+    if (stepIdx === 0) {
+      document.getElementById('rateScenarioStrip')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else if (stepIdx === 1) {
+      document.querySelector('.bench-left-wing')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else if (stepIdx === 2) {
+      const btn = document.getElementById('btnStartSim');
+      if (btn) {
+        btn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        btn.focus();
+      }
+    } else if (stepIdx === 3) {
+      document.getElementById('rateTableCard')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else if (stepIdx === 4) {
+      document.getElementById('rateGraphCard')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else if (stepIdx === 5) {
+      document.getElementById('knecExamCard')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  function updateWorkflowStepper(forcedStep) {
+    if (typeof forcedStep === 'number') currentWorkflowStep = forcedStep;
+    const badge = document.getElementById('rateStepBadge');
+    const fill = document.getElementById('rateProgressFill');
+
+    const stepLabels = [
+      'Step 1 of 6: Select Experiment & Reagents',
+      'Step 2 of 6: Configure Volumes & Conditions',
+      'Step 3 of 6: Trigger Reaction & Stopwatch',
+      'Step 4 of 6: Record Obscuration Time / Gas Vol',
+      'Step 5 of 6: Plot KNEC Rate Curve & Tangent',
+      'Step 6 of 6: Evaluate Questions & Grade (15M)'
+    ];
+
+    if (badge && stepLabels[currentWorkflowStep]) {
+      badge.textContent = stepLabels[currentWorkflowStep];
+    }
+    if (fill) {
+      fill.style.width = Math.round(((currentWorkflowStep + 1) / 6) * 100) + '%';
+    }
+
+    for (let i = 0; i < 6; i++) {
+      const stepEl = document.getElementById('rateWfStep' + i);
+      if (stepEl) {
+        if (i < currentWorkflowStep) {
+          stepEl.className = 'workflow-step-item completed';
+        } else if (i === currentWorkflowStep) {
+          stepEl.className = 'workflow-step-item active';
+        } else {
+          stepEl.className = 'workflow-step-item upcoming';
+        }
+      }
+    }
+  }
+
   if (typeof window !== 'undefined') {
+    window.jumpToStep = jumpToStep;
+    window.updateWorkflowStepper = updateWorkflowStepper;
     window.VLK = window.VLK || {};
     if (typeof window.VLK.registerLabContext === 'function') {
       window.VLK.registerLabContext(getRatesContext);
@@ -1793,11 +1900,20 @@ const RatesEngine = (function () {
     drawGraph,
     updateCanvasDimensions,
     gradeKnecWorksheet,
-    closeResultModal
+    closeResultModal,
+    jumpToStep,
+    updateWorkflowStepper
   };
 })();
 
 // Auto-initialize when DOM is ready
+if (typeof window !== 'undefined') {
+  window.RatesEngine = RatesEngine;
+}
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = RatesEngine;
+}
+
 if (typeof document !== 'undefined') {
   document.addEventListener('DOMContentLoaded', () => {
     RatesEngine.init();

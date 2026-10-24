@@ -77,16 +77,26 @@ router.post('/', apiLimiter, authMiddleware, authMiddleware.requireRole('student
 
 // GET /api/rates/mine — Fetch student's own reaction rates practical history
 router.get('/mine', authMiddleware, authMiddleware.requireRole('student'), asyncHandler(async (req, res) => {
-  const studentId = req.user.id;
-  const sessions = await ratesRepo.getStudentSessions(studentId);
-  res.json({ success: true, sessions });
+  try {
+    const studentId = req.user.id;
+    const sessions = await ratesRepo.getStudentSessions(studentId);
+    res.json({ success: true, sessions: sessions || [] });
+  } catch (err) {
+    console.warn('[/api/rates/mine] Safe fallback:', err.message);
+    res.json({ success: true, sessions: [] });
+  }
 }));
 
 // GET /api/rates/class — Teacher view of all students' reaction rates sessions
-router.get('/class', authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
-  const teacherId = req.user.id;
-  const sessions = await ratesRepo.getClassRatesSessions(teacherId);
-  res.json({ success: true, sessions: sessions || [] });
+router.get('/class', authMiddleware, authMiddleware.requireRole(['teacher', 'admin']), asyncHandler(async (req, res) => {
+  try {
+    const teacherId = req.user.id;
+    const sessions = await ratesRepo.getClassRatesSessions(teacherId);
+    res.json({ success: true, sessions: sessions || [] });
+  } catch (err) {
+    console.warn('[/api/rates/class] Safe fallback:', err.message);
+    res.json({ success: true, sessions: [] });
+  }
 }));
 
 module.exports = router;

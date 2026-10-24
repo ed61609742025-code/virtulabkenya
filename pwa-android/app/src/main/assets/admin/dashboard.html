@@ -1988,7 +1988,7 @@
 
 <!-- Modal 5: Add Administrator -->
 <div id="addAdminModal" class="modal-overlay" style="display:none;">
-  <div class="modal-box" style="max-width:440px;">
+  <div class="modal-box" style="max-width:540px;">
     <div class="modal-header">
       <h3 style="display:inline-flex;align-items:center;gap:8px;margin:0;">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -2008,10 +2008,22 @@
         </div>
         <div class="form-group">
           <label for="adminRoleSelect">Access Level / Role</label>
-          <select id="adminRoleSelect" class="form-control">
-            <option value="admin">Administrator (Schools, Users, Broadcasts &amp; Analytics)</option>
-            <option value="superadmin">Super Administrator (Full Access &amp; Team Management)</option>
+          <select id="adminRoleSelect" class="form-control" onchange="onAdminRoleChange('add')">
+            <option value="admin">General Administrator (Schools, Users, Broadcasts &amp; Analytics)</option>
+            <option value="school_registrar">School Registrar (School directory &amp; student/teacher rosters)</option>
+            <option value="curriculum_inspector">Curriculum Inspector (KCSE analytics, practical audits &amp; benchmarks)</option>
+            <option value="support_admin">Support Administrator (Account status toggles, password resets &amp; broadcasts)</option>
+            <option value="superadmin">Super Administrator (Full Access &amp; Administrative Governance)</option>
           </select>
+        </div>
+        <div class="form-group">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <label style="margin:0;">Granular Permissions &amp; Capabilities</label>
+            <span style="font-size:0.72rem; color:var(--text-muted);" id="addPermCountBadge">Customized</span>
+          </div>
+          <div id="addAdminPermsGrid" class="rbac-perm-grid">
+            <!-- Rendered dynamically -->
+          </div>
         </div>
         <div class="form-group">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
@@ -2027,6 +2039,62 @@
         <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px;">
           <button type="button" class="btn-secondary" onclick="closeAddAdminModal()">Cancel</button>
           <button type="submit" class="btn-primary-solid">Create Admin Account</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Edit Administrator Role & Granular Permissions -->
+<div id="editAdminRoleModal" class="modal-overlay" style="display:none;">
+  <div class="modal-box" style="max-width:540px;">
+    <div class="modal-header">
+      <h3 style="display:inline-flex;align-items:center;gap:8px;margin:0;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Edit Administrator Role &amp; Permissions
+      </h3>
+      <button class="modal-close-btn" onclick="closeEditAdminRoleModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form onsubmit="submitUpdateAdminRole(event)">
+        <input type="hidden" id="editAdminIdInput">
+        <div style="background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:10px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;gap:12px;">
+          <span class="avatar-circle admin" id="editAdminAvatar" style="width:36px;height:36px;font-size:0.85rem;">AD</span>
+          <div>
+            <div style="font-weight:800;color:var(--heading-color);" id="editAdminName">Administrator</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);font-family:var(--font-mono);" id="editAdminEmail">admin@virtulab.co.ke</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="editAdminRoleSelect">Administrative Role</label>
+          <select id="editAdminRoleSelect" class="form-control" onchange="onAdminRoleChange('edit')">
+            <option value="admin">General Administrator (Schools, Users, Broadcasts &amp; Analytics)</option>
+            <option value="school_registrar">School Registrar (School directory &amp; student/teacher rosters)</option>
+            <option value="curriculum_inspector">Curriculum Inspector (KCSE analytics, practical audits &amp; benchmarks)</option>
+            <option value="support_admin">Support Administrator (Account status toggles, password resets &amp; broadcasts)</option>
+            <option value="superadmin">Super Administrator (Full Access &amp; Administrative Governance)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <label style="margin:0;">Granular Permissions &amp; Capabilities</label>
+            <span style="font-size:0.72rem; color:var(--text-muted);" id="editPermCountBadge">0 selected</span>
+          </div>
+          <div id="editAdminPermsGrid" class="rbac-perm-grid">
+            <!-- Rendered dynamically -->
+          </div>
+          <small style="color:var(--text-muted);font-size:0.72rem;display:block;margin-top:6px;">
+            Super Administrators bypass permission checks automatically. For other roles, permissions grant explicit access to corresponding APIs.
+          </small>
+        </div>
+
+        <div id="editAdminRoleModalMsg" style="margin-bottom:12px;"></div>
+
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:18px;">
+          <button type="button" class="btn-secondary" onclick="closeEditAdminRoleModal()">Cancel</button>
+          <button type="submit" id="btnSaveAdminRole" class="btn-primary-solid">Save Role &amp; Permissions</button>
         </div>
       </form>
     </div>
@@ -2338,35 +2406,44 @@
       const dropBadge = document.getElementById('adminDropdownRoleBadge');
 
       const initials = getInitials(currentUser.name);
-      const isSuper = currentUser.adminRole === 'superadmin';
+      const roleMeta = getAdminRoleMeta(currentUser.adminRole);
 
       if (avatarCircle) {
         avatarCircle.textContent = initials;
-        avatarCircle.className = `avatar-circle ${isSuper ? 'superadmin' : 'admin'}`;
+        avatarCircle.className = `avatar-circle ${roleMeta.badgeClass}`;
       }
       if (dropAvatar) {
         dropAvatar.textContent = initials;
-        dropAvatar.className = `avatar-circle ${isSuper ? 'superadmin' : 'admin'} avatar-lg`;
+        dropAvatar.className = `avatar-circle ${roleMeta.badgeClass} avatar-lg`;
       }
       if (pill && nameDisp) {
         pill.style.display = 'inline-flex';
         nameDisp.textContent = `${currentUser.name || 'Admin'}`;
       }
       if (roleSub) {
-        roleSub.textContent = isSuper ? 'Superadmin' : 'Administrator';
+        roleSub.textContent = roleMeta.label;
       }
       if (roleBadge) {
-        roleBadge.textContent = isSuper ? 'Super Admin' : 'Admin Portal';
+        roleBadge.textContent = roleMeta.label;
       }
       if (dropName) dropName.textContent = currentUser.name || 'Administrator';
       if (dropEmail) dropEmail.textContent = currentUser.email || 'admin@virtulab.co.ke';
       if (dropBadge) {
-        dropBadge.textContent = isSuper ? 'Super Administrator' : 'Institutional Admin';
-        dropBadge.className = `role-badge ${isSuper ? 'superadmin' : 'admin'}`;
+        dropBadge.textContent = roleMeta.label;
+        dropBadge.className = `role-badge ${roleMeta.badgeClass}`;
       }
     }
 
     try {
+      try {
+        const rolesRes = await Admin.getRoles();
+        if (rolesRes && rolesRes.success) {
+          adminRolesCatalog = rolesRes;
+        }
+      } catch (rErr) {
+        console.warn('Roles catalog fetch failed:', rErr);
+      }
+
       const overviewRes = await Admin.getOverview();
       if (overviewRes.success) {
         document.getElementById('metricSchools').textContent = overviewRes.metrics.totalSchools;
@@ -3765,6 +3842,134 @@
     `).join('');
   }
 
+  let adminRolesCatalog = null;
+  let activeEditAdmin = null;
+
+  const DEFAULT_ROLE_PERMS = {
+    superadmin: ['*'],
+    school_registrar: ['schools:read', 'schools:write', 'users:read'],
+    curriculum_inspector: ['schools:read', 'users:read', 'analytics:read', 'telemetry:read'],
+    support_admin: ['users:read', 'users:status', 'users:reset_password', 'announcements:write'],
+    admin: ['schools:read', 'schools:write', 'users:read', 'announcements:write', 'analytics:read']
+  };
+
+  const ALL_PERMISSION_KEYS = [
+    'schools:read', 'schools:write', 'schools:delete',
+    'users:read', 'users:status', 'users:reset_password',
+    'announcements:write',
+    'analytics:read',
+    'licensing:manage',
+    'telemetry:read',
+    'team:manage'
+  ];
+
+  const PERMISSION_LABELS = {
+    'schools:read': 'View Schools Directory',
+    'schools:write': 'Register & Edit Schools',
+    'schools:delete': 'Delete School Records',
+    'users:read': 'View User Rosters',
+    'users:status': 'Suspend & Activate Users',
+    'users:reset_password': 'Reset User Passwords',
+    'announcements:write': 'Publish Broadcast Notices',
+    'analytics:read': 'KCSE & Practical Analytics',
+    'licensing:manage': 'Manage Licenses & Billing',
+    'telemetry:read': 'Telemetry, Health & Logs',
+    'team:manage': 'Team Governance & Roles'
+  };
+
+  function getAdminRoleMeta(roleKey) {
+    const norm = (roleKey || 'admin').toLowerCase();
+    switch (norm) {
+      case 'superadmin':
+        return { key: 'superadmin', label: 'Super Administrator', badgeClass: 'superadmin', icon: 'crown' };
+      case 'school_registrar':
+        return { key: 'school_registrar', label: 'School Registrar', badgeClass: 'registrar', icon: 'book' };
+      case 'curriculum_inspector':
+        return { key: 'curriculum_inspector', label: 'Curriculum Inspector', badgeClass: 'inspector', icon: 'award' };
+      case 'support_admin':
+        return { key: 'support_admin', label: 'Support Administrator', badgeClass: 'support', icon: 'users' };
+      case 'admin':
+      default:
+        return { key: 'admin', label: 'Administrator', badgeClass: 'admin', icon: 'shield' };
+    }
+  }
+
+  function getAdminEffectivePermissions(role, permissions) {
+    const norm = (role || 'admin').toLowerCase();
+    if (norm === 'superadmin') {
+      return [...ALL_PERMISSION_KEYS];
+    }
+    if (Array.isArray(permissions) && permissions.length > 0) {
+      return permissions;
+    }
+    if (adminRolesCatalog && adminRolesCatalog.definitions && adminRolesCatalog.definitions[norm]) {
+      return [...adminRolesCatalog.definitions[norm].defaultPermissions];
+    }
+    return DEFAULT_ROLE_PERMS[norm] ? [...DEFAULT_ROLE_PERMS[norm]] : [...DEFAULT_ROLE_PERMS.admin];
+  }
+
+  function renderPermissionsCheckboxes(containerId, selectedRole, currentPermissions = null) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const role = (selectedRole || 'admin').toLowerCase();
+    const isSuper = role === 'superadmin';
+
+    let permsToSelect = new Set();
+    if (Array.isArray(currentPermissions) && currentPermissions.length > 0) {
+      currentPermissions.forEach(p => permsToSelect.add(p));
+    } else {
+      const defaults = getAdminEffectivePermissions(role, []);
+      defaults.forEach(p => permsToSelect.add(p));
+    }
+
+    const prefix = containerId === 'addAdminPermsGrid' ? 'add_perm_' : 'edit_perm_';
+
+    container.innerHTML = ALL_PERMISSION_KEYS.map(p => {
+      const isChecked = isSuper || permsToSelect.has(p);
+      const label = PERMISSION_LABELS[p] || p;
+      return `
+        <label class="rbac-perm-item" title="${escapeHtml(p)}">
+          <input type="checkbox" id="${prefix}${p.replace(/[:]/g, '_')}" value="${p}" ${isChecked ? 'checked' : ''} ${isSuper ? 'disabled' : ''} onchange="updatePermCountBadge('${containerId}')">
+          <div>
+            <div><b>${escapeHtml(label)}</b></div>
+            <small style="color:var(--text-muted);font-family:var(--font-mono);font-size:0.68rem;">${p}</small>
+          </div>
+        </label>
+      `;
+    }).join('');
+
+    updatePermCountBadge(containerId);
+  }
+
+  function updatePermCountBadge(containerId) {
+    const roleSelectId = containerId === 'addAdminPermsGrid' ? 'adminRoleSelect' : 'editAdminRoleSelect';
+    const badgeId = containerId === 'addAdminPermsGrid' ? 'addPermCountBadge' : 'editPermCountBadge';
+    const role = document.getElementById(roleSelectId)?.value || 'admin';
+    const badge = document.getElementById(badgeId);
+    if (!badge) return;
+
+    if (role === 'superadmin') {
+      badge.textContent = 'All Privileges (Full Access)';
+      badge.style.color = 'var(--amber-accent)';
+      return;
+    }
+
+    const checkedCount = document.querySelectorAll(`#${containerId} input[type="checkbox"]:checked`).length;
+    badge.textContent = `${checkedCount} of ${ALL_PERMISSION_KEYS.length} enabled`;
+    badge.style.color = checkedCount > 0 ? 'var(--blue-accent)' : 'var(--red-accent)';
+  }
+
+  function onAdminRoleChange(mode) {
+    if (mode === 'add') {
+      const role = document.getElementById('adminRoleSelect').value;
+      renderPermissionsCheckboxes('addAdminPermsGrid', role);
+    } else {
+      const role = document.getElementById('editAdminRoleSelect').value;
+      renderPermissionsCheckboxes('editAdminPermsGrid', role);
+    }
+  }
+
   function renderAdmins(list) {
     const tbody = document.getElementById('adminsTableBody');
     if (!tbody) return;
@@ -3782,9 +3987,10 @@
         : '<span class="status-badge active">Active</span>';
 
       const isSuper = a.role === 'superadmin';
-      const roleBadge = isSuper
-        ? `<span class="role-badge superadmin">${VLKIcons.svg('crown', {size: 12})} Super Admin</span>`
-        : `<span class="role-badge admin">${VLKIcons.svg('shield', {size: 12})} Admin</span>`;
+      const roleMeta = getAdminRoleMeta(a.role);
+      const roleBadge = `<span class="role-badge ${roleMeta.badgeClass}">${VLKIcons.svg(roleMeta.icon, {size: 12})} ${escapeHtml(roleMeta.label)}</span>`;
+      const effectivePerms = getAdminEffectivePermissions(a.role, a.permissions);
+      const permChip = `<div style="margin-top:4px;"><span class="perm-chip" title="${effectivePerms.join(', ')}">${isSuper ? 'Full System Privileges' : effectivePerms.length + ' Granular Permissions'}</span></div>`;
 
       const toggleActionText = isSuspended ? 'Activate' : 'Suspend';
       const newStatus = isSuspended ? 'active' : 'suspended';
@@ -3797,7 +4003,7 @@
         <tr>
           <td>
             <div class="user-cell">
-              <span class="avatar-circle ${isSuper ? 'superadmin' : 'admin'}">${initials}</span>
+              <span class="avatar-circle ${roleMeta.badgeClass}">${initials}</span>
               <div>
                 <div style="font-weight:800;color:var(--heading-color);">${escapeHtml(a.name)} ${isMe ? '<small style="color:var(--blue-accent);font-weight:700;">(You)</small>' : ''}</div>
                 ${a.created_by_name ? `<small style="color:var(--text-muted);font-size:0.72rem;">Invited by ${escapeHtml(a.created_by_name)}</small>` : ''}
@@ -3805,15 +4011,19 @@
             </div>
           </td>
           <td style="font-family:var(--font-mono);font-size:0.82rem;">${escapeHtml(a.email)}</td>
-          <td>${roleBadge}</td>
+          <td>
+            ${roleBadge}
+            ${permChip}
+          </td>
           <td>${statusBadge}</td>
           <td style="font-family:var(--font-mono);font-size:0.78rem;color:var(--text-muted);">${lastLoginText}</td>
           <td style="font-family:var(--font-mono);font-size:0.78rem;color:var(--text-muted);">${createdText}</td>
           <td>
-            <div style="display:flex;gap:6px;">
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button type="button" onclick="openEditAdminRoleModal(${a.id})" class="btn-table-action">${VLKIcons.svg('shield', {size: 13})} Role</button>
               ${isMe ? '<span style="font-size:0.74rem;color:var(--text-muted);padding:4px;font-weight:600;">Active Session</span>' : `
-                <button onclick="toggleAdminStatus(${a.id}, '${newStatus}')" class="btn-table-action">${toggleActionText}</button>
-                <button onclick="resetAdminPw(${a.id}, '${escapeHtml(a.name).replace(/'/g, "\\'")}')" class="btn-table-action">${VLKIcons.svg('key', {size: 13})} Reset PW</button>
+                <button type="button" onclick="toggleAdminStatus(${a.id}, '${newStatus}')" class="btn-table-action">${toggleActionText}</button>
+                <button type="button" onclick="resetAdminPw(${a.id}, '${escapeHtml(a.name).replace(/'/g, "\\'")}')" class="btn-table-action">${VLKIcons.svg('key', {size: 13})} Reset PW</button>
               `}
             </div>
           </td>
@@ -3823,12 +4033,103 @@
   }
 
   function openAddAdminModal() {
-    document.getElementById('addAdminModal').style.display = 'flex';
+    const modal = document.getElementById('addAdminModal');
+    if (!modal) return;
     document.getElementById('addAdminModalMsg').innerHTML = '';
+    document.getElementById('adminNameInput').value = '';
+    document.getElementById('newAdminEmailInput').value = '';
+    document.getElementById('adminRoleSelect').value = 'admin';
+    document.getElementById('newAdminPasswordInput').value = '';
+    renderPermissionsCheckboxes('addAdminPermsGrid', 'admin');
+    modal.style.display = 'flex';
   }
 
   function closeAddAdminModal() {
-    document.getElementById('addAdminModal').style.display = 'none';
+    const modal = document.getElementById('addAdminModal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  function openEditAdminRoleModal(adminId) {
+    const admin = allAdmins.find(a => a.id === adminId);
+    if (!admin) return;
+
+    activeEditAdmin = admin;
+    const modal = document.getElementById('editAdminRoleModal');
+    if (!modal) return;
+
+    document.getElementById('editAdminIdInput').value = admin.id;
+    document.getElementById('editAdminName').textContent = admin.name;
+    document.getElementById('editAdminEmail').textContent = admin.email;
+    document.getElementById('editAdminRoleModalMsg').innerHTML = '';
+
+    const roleMeta = getAdminRoleMeta(admin.role);
+    const avatar = document.getElementById('editAdminAvatar');
+    if (avatar) {
+      avatar.className = `avatar-circle ${roleMeta.badgeClass}`;
+      avatar.textContent = getInitials(admin.name);
+    }
+
+    const select = document.getElementById('editAdminRoleSelect');
+    if (select) {
+      select.value = admin.role || 'admin';
+    }
+
+    renderPermissionsCheckboxes('editAdminPermsGrid', admin.role, admin.permissions || []);
+
+    const saveBtn = document.getElementById('btnSaveAdminRole');
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Save Role & Permissions';
+    }
+
+    modal.style.display = 'flex';
+  }
+
+  function closeEditAdminRoleModal() {
+    const modal = document.getElementById('editAdminRoleModal');
+    if (modal) modal.style.display = 'none';
+    activeEditAdmin = null;
+  }
+
+  async function submitUpdateAdminRole(e) {
+    e.preventDefault();
+    if (!activeEditAdmin) return;
+
+    const role = document.getElementById('editAdminRoleSelect').value;
+    let permissions = [];
+    if (role !== 'superadmin') {
+      document.querySelectorAll('#editAdminPermsGrid input[type="checkbox"]:checked').forEach(cb => {
+        permissions.push(cb.value);
+      });
+    }
+
+    const saveBtn = document.getElementById('btnSaveAdminRole');
+    const msg = document.getElementById('editAdminRoleModalMsg');
+
+    if (saveBtn) {
+      saveBtn.disabled = true;
+      saveBtn.textContent = 'Saving...';
+    }
+
+    try {
+      const res = await Admin.updateAdminRole(activeEditAdmin.id, { role, permissions });
+      if (res && res.success) {
+        if (msg) msg.innerHTML = '<div style="color:var(--green-accent);font-size:0.85rem;font-weight:700;">✓ Role and permissions updated successfully!</div>';
+        showToast(`Role updated for ${activeEditAdmin.name}`, 'success');
+        setTimeout(() => {
+          closeEditAdminRoleModal();
+          initAdminDashboard();
+        }, 700);
+      } else {
+        throw new Error(res?.error || 'Failed to update admin role');
+      }
+    } catch (err) {
+      if (msg) msg.innerHTML = `<div style="color:var(--red-accent);font-size:0.85rem;">Error: ${escapeHtml(err.message)}</div>`;
+      if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Retry Save';
+      }
+    }
   }
 
   function generateAdminPassword() {
@@ -3849,10 +4150,17 @@
     const password = document.getElementById('newAdminPasswordInput').value;
     const msg = document.getElementById('addAdminModalMsg');
 
+    let permissions = [];
+    if (role !== 'superadmin') {
+      document.querySelectorAll('#addAdminPermsGrid input[type="checkbox"]:checked').forEach(cb => {
+        permissions.push(cb.value);
+      });
+    }
+
     msg.innerHTML = '<span style="color:var(--blue-accent);font-weight:600;">Creating administrator account...</span>';
 
     try {
-      const res = await Admin.createAdmin({ name, email, password, role });
+      const res = await Admin.createAdmin({ name, email, password, role, permissions });
       if (res.success) {
         const emailMsg = res.emailSent
           ? `✓ Account created and credentials emailed to ${email}!`

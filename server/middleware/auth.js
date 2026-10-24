@@ -1,16 +1,9 @@
 // ============================================================
-//  VirtuLab Kenya — JWT Authentication Middleware
-//  Phase 1, Week 3
+//  VirtuLab Kenya — JWT Authentication & RBAC Middleware
 // ============================================================
-//
-// Reads the Authorization header, verifies the JWT, and attaches
-// the decoded payload to req.user as { id, role, name, email }.
-//
-// Tokens are issued at login (see routes/auth.js) and carry a
-// "role" field of either "student" or "teacher", since those
-// live in separate database tables but share this one middleware.
 
 const jwt = require('jsonwebtoken');
+const rbac = require('../config/rbac');
 
 module.exports = (req, res, next) => {
   let token = null;
@@ -32,7 +25,7 @@ module.exports = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // { id, role, name, email, iat, exp }
+    req.user = decoded; // { id, role, adminRole, permissions, name, email, iat, exp }
     next();
   } catch (err) {
     if (err.name === 'TokenExpiredError') {
@@ -42,12 +35,7 @@ module.exports = (req, res, next) => {
   }
 };
 
-// ── Optional: role-restricted guard ────────────────────────────
-// Use after the middleware above on routes that are teacher-only,
-// student-only, or admin-only, e.g.:
-//   router.get('/class', requireAuth, requireRole('teacher'), handler)
-//   router.get('/admin', requireAuth, requireRole('admin'), handler)
-//   router.get('/shared', requireAuth, requireRole(['teacher', 'admin']), handler)
+// ── Role-restricted guard ──────────────────────────────────────
 module.exports.requireRole = function requireRole(role) {
   return (req, res, next) => {
     if (!req.user) {
@@ -62,3 +50,31 @@ module.exports.requireRole = function requireRole(role) {
   };
 };
 
+// ── Granular Admin RBAC Permission guard ───────────────────────
+module.exports.requireAdminPermission = function requireAdminPermission(permission) {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({ error: 'Authentication required.' });
+    }
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ error: 'This action requires an administrative account.' });
+    }
+
+    const adminRole = req.user.adminRole || 'admin';
+    const permissions = req.user.permissions || [];
+
+    if (rbac.hasPermission({ adminRole, permissions }, permission)) {
+      return next();
+    }
+
+    const permMeta = rbac.PERMISSION_METADATA.find(p => p.id === permission);
+    const permLabel = permMeta ? permMeta.label : permission;
+
+    return res.status(403).json({
+      success: false,
+      error: `Access Denied: Your administrative role (${adminRole}) lacks the '${permLabel}' permission.`,
+      requiredPermission: permission,
+      currentRole: adminRole
+    });
+  };
+};

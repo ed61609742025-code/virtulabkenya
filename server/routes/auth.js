@@ -48,6 +48,7 @@ const { validateStudentRegister, validateTeacherRegister, validateLogin } = requ
 const asyncHandler = require('../utils/asyncHandler');
 const config = require('../config');
 const adminRepo = require('../repositories/adminRepo');
+const rbac = require('../config/rbac');
 
 const router = express.Router();
 
@@ -578,6 +579,7 @@ router.get('/me', authMiddleware, asyncHandler(async (req, res) => {
             email: admin.email,
             role: 'admin',
             adminRole: admin.role,
+            permissions: rbac.getEffectivePermissions(admin.role, admin.permissions),
             status: admin.status
           }
         });
@@ -589,7 +591,8 @@ router.get('/me', authMiddleware, asyncHandler(async (req, res) => {
         name: req.user.name || 'System Administrator',
         email: req.user.email,
         role: 'admin',
-        adminRole: req.user.adminRole || 'superadmin'
+        adminRole: req.user.adminRole || 'superadmin',
+        permissions: rbac.getEffectivePermissions(req.user.adminRole || 'superadmin')
       }
     });
   } else if (role === 'teacher') {
@@ -742,6 +745,7 @@ router.post('/admin/login', loginLimiter, validateLogin, asyncHandler(async (req
           id: dbAdmin.id,
           role: 'admin',
           adminRole: dbAdmin.role || 'admin',
+          permissions: rbac.getEffectivePermissions(dbAdmin.role, dbAdmin.permissions),
           name: dbAdmin.name,
           email: dbAdmin.email
         });
@@ -755,6 +759,7 @@ router.post('/admin/login', loginLimiter, validateLogin, asyncHandler(async (req
             email: dbAdmin.email,
             role: 'admin',
             adminRole: dbAdmin.role || 'admin',
+          permissions: rbac.getEffectivePermissions(dbAdmin.role, dbAdmin.permissions),
             status: dbAdmin.status
           }
         });
@@ -823,6 +828,7 @@ router.post('/admin/login', loginLimiter, validateLogin, asyncHandler(async (req
         id: adminId,
         role: 'admin',
         adminRole,
+        permissions: rbac.getEffectivePermissions(adminRole),
         name: adminName,
         email: configuredAdminEmail
       });
@@ -835,7 +841,8 @@ router.post('/admin/login', loginLimiter, validateLogin, asyncHandler(async (req
           name: adminName,
           email: configuredAdminEmail,
           role: 'admin',
-          adminRole
+          adminRole,
+          permissions: rbac.getEffectivePermissions(adminRole)
         }
       });
     }

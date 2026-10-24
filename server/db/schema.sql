@@ -44,7 +44,8 @@ CREATE TABLE IF NOT EXISTS admins (
   name VARCHAR(150) NOT NULL,
   email VARCHAR(200) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
-  role VARCHAR(50) DEFAULT 'admin',        -- 'superadmin' | 'admin'
+  role VARCHAR(50) DEFAULT 'admin',        -- 'superadmin' | 'school_registrar' | 'curriculum_inspector' | 'support_admin' | 'admin'
+  permissions TEXT[] DEFAULT '{}',         -- Granular permission overrides
   status VARCHAR(20) DEFAULT 'active',     -- 'active' | 'suspended'
   created_by INTEGER REFERENCES admins(id) ON DELETE SET NULL,
   last_login TIMESTAMP,

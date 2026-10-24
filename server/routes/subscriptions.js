@@ -16,7 +16,8 @@ const crypto = require('crypto');
 
 const pool = require('../db/pool');
 const requireAuth = require('../middleware/auth');
-const { requireRole } = require('../middleware/auth');
+const { requireRole, requireAdminPermission } = require('../middleware/auth');
+const rbac = require('../config/rbac');
 const paystackService = require('../services/paystackService');
 const subscriptionService = require('../services/subscriptionService');
 const auditRepo = require('../repositories/auditRepo');
@@ -262,7 +263,7 @@ router.get('/verify/:reference', requireAuth, async (req, res) => {
  * Admin-only: Manually activate an institutional or student license
  * (e.g. for Bank Transfer / RTGS / School Cheque payments)
  */
-router.post('/admin/activate', requireAuth, requireRole('admin'), async (req, res) => {
+router.post('/admin/activate', requireAuth, requireAdminPermission(rbac.PERMISSIONS.LICENSING_MANAGE), async (req, res) => {
   try {
     let { subscriberType, studentId, schoolId, planId, notes, referenceCode, studentEmail } = req.body;
 
@@ -340,7 +341,7 @@ router.post('/admin/activate', requireAuth, requireRole('admin'), async (req, re
  * GET /api/subscriptions/admin/overview
  * Overview of subscription metrics, revenue, active licenses, and recent transactions
  */
-router.get('/admin/overview', requireAuth, requireRole('admin'), async (req, res) => {
+router.get('/admin/overview', requireAuth, requireAdminPermission(rbac.PERMISSIONS.LICENSING_MANAGE), async (req, res) => {
   try {
     // 1. Total revenue & count
     let totalRevenue = 0;
@@ -443,7 +444,7 @@ router.get('/admin/overview', requireAuth, requireRole('admin'), async (req, res
  * GET /api/subscriptions/admin/plans
  * Returns all subscription plans with active subscriber statistics
  */
-router.get('/admin/plans', requireAuth, requireRole('admin'), async (req, res) => {
+router.get('/admin/plans', requireAuth, requireAdminPermission(rbac.PERMISSIONS.LICENSING_MANAGE), async (req, res) => {
   try {
     const plans = await subscriptionService.getAllPlansAdmin();
     res.json({ success: true, plans });
@@ -457,7 +458,7 @@ router.get('/admin/plans', requireAuth, requireRole('admin'), async (req, res) =
  * POST /api/subscriptions/admin/plans
  * Admin creates a new subscription plan
  */
-router.post('/admin/plans', requireAuth, requireRole('admin'), async (req, res) => {
+router.post('/admin/plans', requireAuth, requireAdminPermission(rbac.PERMISSIONS.LICENSING_MANAGE), async (req, res) => {
   try {
     const { name, plan_code, target_audience, price_kes, duration_days, max_students, description, features } = req.body;
     if (!name || !target_audience || price_kes === undefined || !duration_days) {
@@ -490,7 +491,7 @@ router.post('/admin/plans', requireAuth, requireRole('admin'), async (req, res) 
  * PATCH /api/subscriptions/admin/plans/:id/toggle
  * Toggle plan is_active state
  */
-router.patch('/admin/plans/:id/toggle', requireAuth, requireRole('admin'), async (req, res) => {
+router.patch('/admin/plans/:id/toggle', requireAuth, requireAdminPermission(rbac.PERMISSIONS.LICENSING_MANAGE), async (req, res) => {
   try {
     const planId = parseInt(req.params.id, 10);
     const updateRes = await pool.query(
@@ -523,7 +524,7 @@ router.patch('/admin/plans/:id/toggle', requireAuth, requireRole('admin'), async
  * POST /api/subscriptions/admin/extend
  * Extends active subscription term by X days
  */
-router.post('/admin/extend', requireAuth, requireRole('admin'), async (req, res) => {
+router.post('/admin/extend', requireAuth, requireAdminPermission(rbac.PERMISSIONS.LICENSING_MANAGE), async (req, res) => {
   try {
     const { subscriptionId, days, notes } = req.body;
     if (!subscriptionId || !days) {
@@ -567,7 +568,7 @@ router.post('/admin/extend', requireAuth, requireRole('admin'), async (req, res)
  * POST /api/subscriptions/admin/revoke
  * Cancel or revoke an active subscription
  */
-router.post('/admin/revoke', requireAuth, requireRole('admin'), async (req, res) => {
+router.post('/admin/revoke', requireAuth, requireAdminPermission(rbac.PERMISSIONS.LICENSING_MANAGE), async (req, res) => {
   try {
     const { subscriptionId, reason } = req.body;
     if (!subscriptionId) {

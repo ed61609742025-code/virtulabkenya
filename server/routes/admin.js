@@ -19,9 +19,22 @@ const { sendCsv, toCsvRow } = require('../utils/csv');
 const mailer = require('../utils/mailer');
 const pushService = require('../services/pushNotificationService');
 const config = require('../config');
+const rbac = require('../config/rbac');
+const { requireAdminPermission } = authMiddleware;
 
 // Guard all admin routes: Requires valid JWT token with role === 'admin'
 router.use(authMiddleware, authMiddleware.requireRole('admin'));
+
+// GET /api/admin/roles — List all admin roles, presets, and granular permissions catalog
+router.get('/roles', asyncHandler(async (req, res) => {
+  return res.json({
+    success: true,
+    roles: rbac.ROLES,
+    definitions: rbac.ROLE_DEFINITIONS,
+    permissions: rbac.PERMISSIONS,
+    permissionMetadata: rbac.PERMISSION_METADATA
+  });
+}));
 
 // GET /api/admin/overview — Platform high-level overview metrics
 router.get('/overview', asyncHandler(async (req, res) => {
@@ -75,20 +88,20 @@ router.get('/overview', asyncHandler(async (req, res) => {
 }));
 
 // GET /api/admin/schools — List all registered schools
-router.get('/schools', asyncHandler(async (req, res) => {
+router.get('/schools', requireAdminPermission(rbac.PERMISSIONS.SCHOOLS_READ), asyncHandler(async (req, res) => {
   const schools = await schoolRepo.getAllSchools();
   return res.json({ success: true, schools });
 }));
 
 // GET /api/admin/audit-logs — Retrieve system audit log history
-router.get('/audit-logs', asyncHandler(async (req, res) => {
+router.get('/audit-logs', requireAdminPermission(rbac.PERMISSIONS.TELEMETRY_READ), asyncHandler(async (req, res) => {
   const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 50, 1), 200);
   const logs = await auditRepo.getRecentAuditLogs(limit);
   return res.json({ success: true, logs });
 }));
 
 // POST /api/admin/schools — Register a new school
-router.post('/schools', validateSchoolCreate, asyncHandler(async (req, res) => {
+router.post('/schools', requireAdminPermission(rbac.PERMISSIONS.SCHOOLS_WRITE), validateSchoolCreate, asyncHandler(async (req, res) => {
   const { name, county, adminCode } = req.body;
   const school = await schoolRepo.createSchool({ name, county, adminCode });
 
@@ -103,7 +116,7 @@ router.post('/schools', validateSchoolCreate, asyncHandler(async (req, res) => {
 }));
 
 // PUT /api/admin/schools/:id — Update school details
-router.put('/schools/:id', asyncHandler(async (req, res) => {
+router.put('/schools/:id', requireAdminPermission(rbac.PERMISSIONS.SCHOOLS_WRITE), asyncHandler(async (req, res) => {
   const school = await schoolRepo.updateSchool(req.params.id, req.body);
   if (!school) {
     return res.status(404).json({ error: 'School not found' });
@@ -120,7 +133,7 @@ router.put('/schools/:id', asyncHandler(async (req, res) => {
 }));
 
 // GET /api/admin/schools/:id/details — Detailed roster and stats for a school
-router.get('/schools/:id/details', asyncHandler(async (req, res) => {
+router.get('/schools/:id/details', requireAdminPermission(rbac.PERMISSIONS.SCHOOLS_READ), asyncHandler(async (req, res) => {
   const schoolId = parseInt(req.params.id, 10);
   if (isNaN(schoolId)) {
     return res.status(400).json({ error: 'Valid numeric school ID is required.' });
@@ -171,7 +184,7 @@ router.get('/schools/:id/details', asyncHandler(async (req, res) => {
 }));
 
 // DELETE /api/admin/schools/:id — Remove a school
-router.delete('/schools/:id', asyncHandler(async (req, res) => {
+router.delete('/schools/:id', requireAdminPermission(rbac.PERMISSIONS.SCHOOLS_DELETE), asyncHandler(async (req, res) => {
   const deleted = await schoolRepo.deleteSchool(req.params.id);
   if (!deleted) {
     return res.status(404).json({ error: 'School not found' });
@@ -188,7 +201,7 @@ router.delete('/schools/:id', asyncHandler(async (req, res) => {
 }));
 
 // POST /api/admin/announcements — Create broadcast announcement
-router.post('/announcements', validateAnnouncementCreate, asyncHandler(async (req, res) => {
+router.post('/announcements', requireAdminPermission(rbac.PERMISSIONS.ANNOUNCEMENTS_WRITE), validateAnnouncementCreate, asyncHandler(async (req, res) => {
   const { title, message, type, target_role, targetRole, county, school_id, schoolId } = req.body;
   const cleanTargetRole = target_role || targetRole || 'all';
   const cleanCounty = county && county !== 'all' ? county.trim() : null;
@@ -265,7 +278,7 @@ router.post('/announcements', validateAnnouncementCreate, asyncHandler(async (re
 }));
 
 // GET /api/admin/users — List all system users (teachers + students) with DB-level pagination
-router.get('/users', asyncHandler(async (req, res) => {
+router.get('/users', requireAdminPermission(rbac.PERMISSIONS.USERS_READ), asyncHandler(async (req, res) => {
   const isAll = req.query.all === 'true' && req.user.adminRole === 'superadmin';
 
   if (!isAll) {
@@ -316,7 +329,7 @@ router.get('/users', asyncHandler(async (req, res) => {
 }));
 
 // PATCH /api/admin/users/:id/status — Toggle user active/suspended status
-router.patch('/users/:id/status', asyncHandler(async (req, res) => {
+router.patch('/users/:id/status', requireAdminPermission(rbac.PERMISSIONS.USERS_STATUS), asyncHandler(async (req, res) => {
   const { role, status } = req.body;
   const userId = parseInt(req.params.id, 10);
   if (isNaN(userId)) {
@@ -351,7 +364,7 @@ router.patch('/users/:id/status', asyncHandler(async (req, res) => {
 }));
 
 // POST /api/admin/users/:id/reset-password — Generate temporary or custom password for user
-router.post('/users/:id/reset-password', asyncHandler(async (req, res) => {
+router.post('/users/:id/reset-password', requireAdminPermission(rbac.PERMISSIONS.USERS_RESET_PASSWORD), asyncHandler(async (req, res) => {
   const { role, customPassword } = req.body;
   const userId = parseInt(req.params.id, 10);
   if (isNaN(userId)) {
@@ -409,14 +422,18 @@ router.post('/users/:id/reset-password', asyncHandler(async (req, res) => {
 // ── Admin Team Management (Multi-Admin & RBAC) ──────────────────
 
 // GET /api/admin/team — List all administrators
-router.get('/team', asyncHandler(async (req, res) => {
-  const admins = await adminRepo.getAllAdmins();
+router.get('/team', requireAdminPermission(rbac.PERMISSIONS.TEAM_MANAGE), asyncHandler(async (req, res) => {
+  const rawAdmins = await adminRepo.getAllAdmins();
+  const admins = rawAdmins.map(a => ({
+    ...a,
+    effectivePermissions: rbac.getEffectivePermissions(a.role, a.permissions)
+  }));
   return res.json({ success: true, admins });
 }));
 
 // POST /api/admin/team — Create a new administrator
-router.post('/team', asyncHandler(async (req, res) => {
-  const { name, email, password, role } = req.body;
+router.post('/team', requireAdminPermission(rbac.PERMISSIONS.TEAM_MANAGE), asyncHandler(async (req, res) => {
+  const { name, email, password, role, permissions } = req.body;
 
   if (!name || !email || !password) {
     return res.status(400).json({ error: 'Name, email, and password are required.' });
@@ -432,18 +449,26 @@ router.post('/team', asyncHandler(async (req, res) => {
     return res.status(409).json({ error: 'An administrator with this email already exists.' });
   }
 
-  const validRole = (role === 'superadmin') ? 'superadmin' : 'admin';
+  const normalizedRole = rbac.normalizeRole(role || 'admin');
+  if (!rbac.ROLE_DEFINITIONS[normalizedRole]) {
+    return res.status(400).json({ error: `Invalid role '${role}'. Supported roles: ${Object.keys(rbac.ROLE_DEFINITIONS).join(', ')}` });
+  }
 
-  if (validRole === 'superadmin' && req.user.adminRole !== 'superadmin') {
+  if (normalizedRole === 'superadmin' && req.user.adminRole !== 'superadmin') {
     return res.status(403).json({ error: 'Only a Super Administrator can assign the Super Admin role.' });
   }
+
+  const cleanPermissions = Array.isArray(permissions)
+    ? permissions.filter(p => Object.values(rbac.PERMISSIONS).includes(p))
+    : [];
 
   const passwordHash = await bcrypt.hash(password, 10);
   const newAdmin = await adminRepo.createAdmin({
     name: name.trim(),
     email: cleanEmail,
     passwordHash,
-    role: validRole,
+    role: normalizedRole,
+    permissions: cleanPermissions,
     createdBy: req.user.id || null
   });
 
@@ -464,14 +489,14 @@ router.post('/team', asyncHandler(async (req, res) => {
 
   return res.status(201).json({
     success: true,
-    admin: newAdmin,
+    admin: { ...newAdmin, effectivePermissions: rbac.getEffectivePermissions(newAdmin.role, newAdmin.permissions) },
     emailSent: mailResult.emailSent,
     temporaryPassword: password
   });
 }));
 
 // PATCH /api/admin/team/:id/status — Toggle admin status (active/suspended)
-router.patch('/team/:id/status', asyncHandler(async (req, res) => {
+router.patch('/team/:id/status', requireAdminPermission(rbac.PERMISSIONS.TEAM_MANAGE), asyncHandler(async (req, res) => {
   const adminId = parseInt(req.params.id, 10);
   const { status } = req.body;
 
@@ -511,8 +536,67 @@ router.patch('/team/:id/status', asyncHandler(async (req, res) => {
   return res.json({ success: true, admin: updated });
 }));
 
+// PATCH /api/admin/team/:id/role — Update an administrator's role and custom permissions
+router.patch('/team/:id/role', requireAdminPermission(rbac.PERMISSIONS.TEAM_MANAGE), asyncHandler(async (req, res) => {
+  const adminId = parseInt(req.params.id, 10);
+  const { role, permissions } = req.body;
+
+  if (isNaN(adminId)) {
+    return res.status(400).json({ error: 'Valid numeric administrator ID is required.' });
+  }
+
+  const targetAdmin = await adminRepo.findAdminById(adminId);
+  if (!targetAdmin) {
+    return res.status(404).json({ error: 'Administrator not found.' });
+  }
+
+  const normalizedRole = rbac.normalizeRole(role || targetAdmin.role);
+  if (!rbac.ROLE_DEFINITIONS[normalizedRole]) {
+    return res.status(400).json({ error: `Invalid role '${role}'. Supported roles: ${Object.keys(rbac.ROLE_DEFINITIONS).join(', ')}` });
+  }
+
+  // Prevent demoting the only remaining active superadmin
+  if (targetAdmin.role === 'superadmin' && normalizedRole !== 'superadmin') {
+    const superCount = await adminRepo.countSuperAdmins();
+    if (superCount <= 1) {
+      return res.status(400).json({ success: false, error: 'Cannot demote the only remaining active Super Administrator.' });
+    }
+  }
+
+  // Only superadmin can assign or modify superadmin roles
+  if ((normalizedRole === 'superadmin' || targetAdmin.role === 'superadmin') && req.user.adminRole !== 'superadmin') {
+    return res.status(403).json({ error: 'Only a Super Administrator can assign or modify the Super Administrator role.' });
+  }
+
+  const cleanPermissions = Array.isArray(permissions)
+    ? permissions.filter(p => Object.values(rbac.PERMISSIONS).includes(p))
+    : (targetAdmin.permissions || []);
+
+  const updated = await adminRepo.updateAdminRoleAndPermissions(adminId, {
+    role: normalizedRole,
+    permissions: cleanPermissions
+  });
+
+  const effectivePerms = rbac.getEffectivePermissions(updated.role, updated.permissions);
+
+  await auditRepo.logAuditEvent({
+    adminEmail: req.user.email,
+    action: `Updated role for admin ${targetAdmin.email}: ${targetAdmin.role} -> ${updated.role}`,
+    details: { adminId, oldRole: targetAdmin.role, newRole: updated.role, permissions: cleanPermissions },
+    ipAddress: req.ip
+  });
+
+  return res.json({
+    success: true,
+    admin: {
+      ...updated,
+      effectivePermissions: effectivePerms
+    }
+  });
+}));
+
 // POST /api/admin/team/:id/reset-password — Reset administrator password
-router.post('/team/:id/reset-password', asyncHandler(async (req, res) => {
+router.post('/team/:id/reset-password', requireAdminPermission(rbac.PERMISSIONS.TEAM_MANAGE), asyncHandler(async (req, res) => {
   const adminId = parseInt(req.params.id, 10);
   const targetAdmin = await adminRepo.findAdminById(adminId);
   if (!targetAdmin) {
@@ -558,7 +642,7 @@ router.get('/announcements', asyncHandler(async (req, res) => {
 }));
 
 // PATCH /api/admin/announcements/:id/toggle — Toggle active state
-router.patch('/announcements/:id/toggle', asyncHandler(async (req, res) => {
+router.patch('/announcements/:id/toggle', requireAdminPermission(rbac.PERMISSIONS.ANNOUNCEMENTS_WRITE), asyncHandler(async (req, res) => {
   const { isActive } = req.body;
   const announcement = await announcementRepo.toggleAnnouncement(req.params.id, isActive);
   if (!announcement) {
@@ -569,7 +653,7 @@ router.patch('/announcements/:id/toggle', asyncHandler(async (req, res) => {
 }));
 
 // DELETE /api/admin/announcements/:id — Delete broadcast announcement
-router.delete('/announcements/:id', asyncHandler(async (req, res) => {
+router.delete('/announcements/:id', requireAdminPermission(rbac.PERMISSIONS.ANNOUNCEMENTS_WRITE), asyncHandler(async (req, res) => {
   const deleted = await announcementRepo.deleteAnnouncement(req.params.id);
   if (!deleted) {
     return res.status(404).json({ error: 'Announcement not found' });
@@ -595,7 +679,7 @@ router.delete('/announcements/:id', asyncHandler(async (req, res) => {
 }));
 
 // GET /api/admin/analytics — Detailed performance & practical module breakdown
-router.get('/analytics', asyncHandler(async (req, res) => {
+router.get('/analytics', requireAdminPermission(rbac.PERMISSIONS.ANALYTICS_READ), asyncHandler(async (req, res) => {
   const titrationsRes = await pool.query('SELECT COUNT(*) AS total, SUM(CASE WHEN correct THEN 1 ELSE 0 END) AS correct_cnt, AVG(score) as avg_score FROM practical_sessions');
   const qualitativeRes = await pool.query('SELECT COUNT(*) AS total, SUM(CASE WHEN correct THEN 1 ELSE 0 END) AS correct_cnt, AVG(tests_correct) as avg_tests FROM qualitative_sessions');
   const organicRes = await pool.query('SELECT COUNT(*) AS total, SUM(CASE WHEN correct THEN 1 ELSE 0 END) AS correct_cnt, AVG(score_pct) as avg_score FROM organic_sessions');
@@ -799,7 +883,7 @@ router.get('/export/transactions', asyncHandler(async (req, res) => {
 }));
 
 // GET /api/admin/system/health — Infrastructure diagnostics & cluster service status
-router.get('/system/health', asyncHandler(async (req, res) => {
+router.get('/system/health', requireAdminPermission(rbac.PERMISSIONS.TELEMETRY_READ), asyncHandler(async (req, res) => {
   const startPing = Date.now();
   let dbStatus = 'healthy';
   let dbLatency = 0;

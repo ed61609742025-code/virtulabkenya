@@ -477,7 +477,8 @@ const migrations = [
   `CREATE INDEX IF NOT EXISTS idx_subscriptions_status_expires ON subscriptions(status, expires_at)`,
   `CREATE INDEX IF NOT EXISTS idx_payment_transactions_reference ON payment_transactions(reference_code)`,
   `CREATE INDEX IF NOT EXISTS idx_payment_transactions_paystack_ref ON payment_transactions(paystack_reference)`,
-  `CREATE INDEX IF NOT EXISTS idx_payment_transactions_user ON payment_transactions(user_type, user_id)`
+  `CREATE INDEX IF NOT EXISTS idx_payment_transactions_user ON payment_transactions(user_type, user_id)`,
+  `ALTER TABLE admins ADD COLUMN IF NOT EXISTS permissions TEXT[] DEFAULT '{}'`
 ];
 
 async function seedInitialAdmin(targetPool) {

@@ -1188,6 +1188,12 @@ const Admin = {
   async resetAdminPassword(adminId) {
     return apiRequest('POST', '/admin/team/' + adminId + '/reset-password');
   },
+  async getRoles() {
+    return apiRequest('GET', '/admin/roles');
+  },
+  async updateAdminRole(adminId, data) {
+    return apiRequest('PATCH', '/admin/team/' + adminId + '/role', data);
+  },
   exportSchoolsReport() {
     return downloadFile('/admin/export/schools', 'virtulab_schools_report.csv');
   },

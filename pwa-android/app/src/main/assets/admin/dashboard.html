@@ -309,18 +309,9 @@
         <span class="admin-hero-badge">Central Administration Console</span>
       </h1>
       <p class="admin-hero-desc">
-        Institutional oversight of secondary schools, verified STEM chemistry educators, real-time KCSE Paper 3 practical telemetry, and national accreditation telemetry across all 47 Counties.
+        Institutional oversight of secondary schools, verified STEM chemistry educators, real-time KCSE Paper 3 practical telemetry, and national accreditation across all 47 Counties.
       </p>
 
-      <!-- Live Rotating Announcement & System Bulletin -->
-      <div class="hero-live-bulletin" id="heroLiveBulletin">
-        <span class="bulletin-tag">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"/></svg>
-          Live Notice:
-        </span>
-        <span class="bulletin-text" id="heroBulletinText">Term III practical benchmarking active across 47 Counties · All regional nodes synchronized</span>
-      </div>
-      
       <div class="admin-hero-meta-row">
         <div class="hero-meta-item">
           <span class="meta-icon">
@@ -336,13 +327,6 @@
           <span class="meta-label">Node Status:</span>
           <span class="meta-val highlight-green">MoE Central · 99.98% SLA</span>
         </div>
-        <div class="hero-meta-item">
-          <span class="meta-icon">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          </span>
-          <span class="meta-label">Clock:</span>
-          <span class="meta-val font-mono" id="heroLiveClock">--:--:-- EAT</span>
-        </div>
       </div>
     </div>
 
@@ -353,17 +337,23 @@
         </span>
         <span>+ Register School</span>
       </button>
-      <button type="button" class="btn-hero-secondary" onclick="openMinistryReportModal()">
+      <button type="button" class="btn-hero-secondary" onclick="openManualLicenseModal()">
         <span class="btn-icon">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
         </span>
-        <span>MoE Official Report</span>
+        <span>+ Issue License</span>
       </button>
       <button type="button" class="btn-hero-secondary" onclick="openAnnouncementModal()">
         <span class="btn-icon">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"/></svg>
         </span>
         <span>Broadcast Notice</span>
+      </button>
+      <button type="button" class="btn-hero-secondary" onclick="openMinistryReportModal()">
+        <span class="btn-icon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        </span>
+        <span>MoE Report</span>
       </button>
     </div>
   </section>
@@ -450,19 +440,19 @@
       </span>
       <span class="tab-counter" id="tabCountAdmins">0</span>
     </button>
-    <button class="tab-btn" data-tab="announcementsTab" onclick="switchTab('announcementsTab', this)">
-      <span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"/></svg>
-        Broadcasts
-      </span>
-      <span class="tab-counter" id="tabCountAnn">0</span>
-    </button>
     <button class="tab-btn" data-tab="subscriptionsTab" onclick="switchTab('subscriptionsTab', this)">
       <span>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
         Licensing &amp; Billing
       </span>
       <span class="tab-counter" id="tabCountSubs">0</span>
+    </button>
+    <button class="tab-btn" data-tab="announcementsTab" onclick="switchTab('announcementsTab', this)">
+      <span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.1 19.1 19"/></svg>
+        Broadcasts
+      </span>
+      <span class="tab-counter" id="tabCountAnn">0</span>
     </button>
     <button class="tab-btn" data-tab="analyticsTab" onclick="switchTab('analyticsTab', this)">
       <span>
@@ -645,7 +635,166 @@
     </div>
   </div>
 
-  <!-- Tab 4: Broadcast Announcements -->
+  <!-- Tab 4: Subscription & Licensing Console -->
+  <div id="subscriptionsTab" class="card-panel" style="display:none;">
+    <!-- Panel Header with Actions -->
+    <div class="panel-header" style="flex-wrap:wrap;gap:12px;align-items:center;">
+      <div>
+        <h3 class="panel-title" style="margin:0;display:inline-flex;align-items:center;gap:6px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          Institutional Licensing &amp; Subscription Console
+        </h3>
+        <p style="margin:4px 0 0 0;font-size:0.8rem;color:var(--text-muted);">
+          Oversee secondary school institution licenses, candidate KCSE practical passes, subscription tier plans, and M-Pesa/Paystack reconciliation audit ledger.
+        </p>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <button type="button" class="btn-secondary" onclick="loadBillingOverview(true)" id="btnRefreshBilling" style="font-size:0.78rem;padding:6px 12px;display:inline-flex;align-items:center;gap:6px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          Refresh Ledger
+        </button>
+        <button type="button" class="btn-secondary" onclick="Admin.exportTransactionsReport()" style="font-size:0.78rem;padding:6px 12px;display:inline-flex;align-items:center;gap:6px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export CSV
+        </button>
+        <button type="button" class="btn-secondary" onclick="openCreatePlanModal()" style="font-size:0.78rem;padding:6px 12px;display:inline-flex;align-items:center;gap:6px;">
+          + Create Plan
+        </button>
+        <button type="button" class="btn-primary-solid" onclick="openManualLicenseModal()" style="font-size:0.78rem;padding:6px 14px;display:inline-flex;align-items:center;gap:6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Issue License
+        </button>
+      </div>
+    </div>
+
+    <!-- 4 Billing KPI Cards -->
+    <div class="metrics-grid" style="grid-template-columns:repeat(auto-fit, minmax(210px, 1fr));gap:14px;margin-bottom:20px;">
+      <div class="metric-card" style="border-left:4px solid var(--green-accent);">
+        <div class="metric-val" id="metricBillingRev" style="color:var(--green-accent);">KES 0</div>
+        <div class="metric-label">Total Verified Revenue</div>
+        <div class="metric-subtitle" id="metricBillingTxCount">0 successful transactions</div>
+      </div>
+      <div class="metric-card" style="border-left:4px solid var(--blue-accent);">
+        <div class="metric-val" id="metricBillingSchoolSubs" style="color:var(--blue-accent);">0</div>
+        <div class="metric-label">Active School Licenses</div>
+        <div class="metric-subtitle">Institutional Multi-Lab Passes</div>
+      </div>
+      <div class="metric-card" style="border-left:4px solid var(--violet-accent);">
+        <div class="metric-val" id="metricBillingStudentSubs" style="color:var(--violet-accent);">0</div>
+        <div class="metric-label">Active Candidate Passes</div>
+        <div class="metric-subtitle">Direct Student Subscriptions</div>
+      </div>
+      <div class="metric-card" style="border-left:4px solid var(--amber-accent);">
+        <div class="metric-val" id="metricBillingPlansCount" style="color:var(--amber-accent);">0</div>
+        <div class="metric-label">Active Tier Plans</div>
+        <div class="metric-subtitle">Curriculum Pricing Tiers</div>
+      </div>
+    </div>
+
+    <!-- Section 1: Active Entitlements & Institutional Licenses -->
+    <div class="panel-header" style="margin-top:10px;">
+      <div>
+        <h4 style="margin:0;font-size:0.95rem;color:var(--heading-color);display:inline-flex;align-items:center;gap:6px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          Active Institutional &amp; Candidate Licenses
+        </h4>
+        <p style="margin:2px 0 0 0;font-size:0.75rem;color:var(--text-muted);">
+          Real-time roster of secondary schools and student candidates with unexpired laboratory entitlements.
+        </p>
+      </div>
+      <div class="search-input-wrap" style="position:relative;display:inline-flex;align-items:center;">
+        <input type="text" id="licenseSearch" class="form-control search-control" style="padding-right:28px;" placeholder="Search school, candidate, plan..." oninput="handleSearchInput('licenseSearch', 'licenseSearchClear', filterLicenses)">
+        <button type="button" id="licenseSearchClear" class="search-clear-btn" onclick="clearSearch('licenseSearch', 'licenseSearchClear', filterLicenses)" style="display:none;position:absolute;right:8px;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.85rem;padding:2px 4px;" title="Clear search">&times;</button>
+      </div>
+    </div>
+    <div class="table-responsive" style="margin-bottom:24px;">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Subscriber Entity</th>
+            <th>Target Type</th>
+            <th>License Plan</th>
+            <th>Duration &amp; Expiry</th>
+            <th>Days Remaining</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="licensesTableBody">
+          <tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">Loading active licenses...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 2: Subscription Plans & Pricing Catalog -->
+    <div class="panel-header">
+      <div>
+        <h4 style="margin:0;font-size:0.95rem;color:var(--heading-color);display:inline-flex;align-items:center;gap:6px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+          Subscription Tier Plans &amp; Curriculum Catalog
+        </h4>
+        <p style="margin:2px 0 0 0;font-size:0.75rem;color:var(--text-muted);">
+          Active commercial tiers and institutional licenses offered on the platform.
+        </p>
+      </div>
+      <button type="button" class="btn-primary-solid" onclick="openCreatePlanModal()" style="font-size:0.75rem;padding:5px 12px;">+ Add New Plan</button>
+    </div>
+    <div class="plans-grid" id="billingPlansGrid">
+      <div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:20px;">Loading subscription plans...</div>
+    </div>
+
+    <!-- Section 3: Payment Transactions & Gateway Audit Ledger -->
+    <div class="panel-header" style="flex-wrap:wrap;gap:10px;align-items:center;">
+      <div>
+        <h4 style="margin:0;font-size:0.95rem;color:var(--heading-color);display:inline-flex;align-items:center;gap:6px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          Payment Transactions &amp; Reconciliation Audit Ledger
+        </h4>
+        <p style="margin:2px 0 0 0;font-size:0.75rem;color:var(--text-muted);">
+          Real-time transaction history from Paystack (M-Pesa / Card) and manual administrative approvals.
+        </p>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <select id="txFilterStatus" class="form-control filter-select" style="min-width:130px;" onchange="filterTransactions()">
+          <option value="all">All Statuses</option>
+          <option value="success">Success</option>
+          <option value="pending">Pending</option>
+          <option value="failed">Failed / Abandoned</option>
+        </select>
+        <select id="txFilterChannel" class="form-control filter-select" style="min-width:130px;" onchange="filterTransactions()">
+          <option value="all">All Channels</option>
+          <option value="mobile_money">M-Pesa / Mobile</option>
+          <option value="card">Debit / Credit Card</option>
+          <option value="manual">Manual Admin Issue</option>
+        </select>
+        <div class="search-input-wrap" style="position:relative;display:inline-flex;align-items:center;">
+          <input type="text" id="txSearch" class="form-control search-control" style="padding-right:28px;" placeholder="Search ref or institution..." oninput="handleSearchInput('txSearch', 'txSearchClear', filterTransactions)">
+          <button type="button" id="txSearchClear" class="search-clear-btn" onclick="clearSearch('txSearch', 'txSearchClear', filterTransactions)" style="display:none;position:absolute;right:8px;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.85rem;padding:2px 4px;" title="Clear search">&times;</button>
+        </div>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Reference Code</th>
+            <th>Subscriber / Entity</th>
+            <th>Plan Name</th>
+            <th>Channel / Gateway</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="transactionsTableBody">
+          <tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:24px;">Loading transactions ledger...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Tab 5: Broadcast Announcements -->
   <div id="announcementsTab" class="card-panel" style="display:none;">
     <div class="panel-header">
       <h3 class="panel-title">
@@ -674,7 +823,7 @@
     </div>
   </div>
 
-  <!-- Tab 5: Analytics -->
+  <!-- Tab 6: KCSE Practical Analytics -->
   <div id="analyticsTab" class="card-panel" style="display:none;">
     <div class="panel-header">
       <div>
@@ -1048,164 +1197,7 @@
     </div>
   </div>
 
-  <!-- Tab 6: Subscription & Licensing Console -->
-  <div id="subscriptionsTab" class="card-panel" style="display:none;">
-    <!-- Panel Header with Actions -->
-    <div class="panel-header" style="flex-wrap:wrap;gap:12px;align-items:center;">
-      <div>
-        <h3 class="panel-title" style="margin:0;display:inline-flex;align-items:center;gap:6px;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-          Institutional Licensing &amp; Subscription Console
-        </h3>
-        <p style="margin:4px 0 0 0;font-size:0.8rem;color:var(--text-muted);">
-          Oversee secondary school institution licenses, candidate KCSE practical passes, subscription tier plans, and M-Pesa/Paystack reconciliation audit ledger.
-        </p>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-        <button type="button" class="btn-secondary" onclick="loadBillingOverview(true)" id="btnRefreshBilling" style="font-size:0.78rem;padding:6px 12px;display:inline-flex;align-items:center;gap:6px;">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-          Refresh Ledger
-        </button>
-        <button type="button" class="btn-secondary" onclick="Admin.exportTransactionsReport()" style="font-size:0.78rem;padding:6px 12px;display:inline-flex;align-items:center;gap:6px;">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Export CSV
-        </button>
-        <button type="button" class="btn-secondary" onclick="openCreatePlanModal()" style="font-size:0.78rem;padding:6px 12px;display:inline-flex;align-items:center;gap:6px;">
-          + Create Plan
-        </button>
-        <button type="button" class="btn-primary-solid" onclick="openManualLicenseModal()" style="font-size:0.78rem;padding:6px 14px;display:inline-flex;align-items:center;gap:6px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Issue License
-        </button>
-      </div>
-    </div>
 
-    <!-- 4 Billing KPI Cards -->
-    <div class="metrics-grid" style="grid-template-columns:repeat(auto-fit, minmax(210px, 1fr));gap:14px;margin-bottom:20px;">
-      <div class="metric-card" style="border-left:4px solid var(--green-accent);">
-        <div class="metric-val" id="metricBillingRev" style="color:var(--green-accent);">KES 0</div>
-        <div class="metric-label">Total Verified Revenue</div>
-        <div class="metric-subtitle" id="metricBillingTxCount">0 successful transactions</div>
-      </div>
-      <div class="metric-card" style="border-left:4px solid var(--blue-accent);">
-        <div class="metric-val" id="metricBillingSchoolSubs" style="color:var(--blue-accent);">0</div>
-        <div class="metric-label">Active School Licenses</div>
-        <div class="metric-subtitle">Institutional Multi-Lab Passes</div>
-      </div>
-      <div class="metric-card" style="border-left:4px solid var(--violet-accent);">
-        <div class="metric-val" id="metricBillingStudentSubs" style="color:var(--violet-accent);">0</div>
-        <div class="metric-label">Active Candidate Passes</div>
-        <div class="metric-subtitle">Direct Student Subscriptions</div>
-      </div>
-      <div class="metric-card" style="border-left:4px solid var(--amber-accent);">
-        <div class="metric-val" id="metricBillingPlansCount" style="color:var(--amber-accent);">0</div>
-        <div class="metric-label">Active Tier Plans</div>
-        <div class="metric-subtitle">Curriculum Pricing Tiers</div>
-      </div>
-    </div>
-
-    <!-- Section 1: Active Entitlements & Institutional Licenses -->
-    <div class="panel-header" style="margin-top:10px;">
-      <div>
-        <h4 style="margin:0;font-size:0.95rem;color:var(--heading-color);display:inline-flex;align-items:center;gap:6px;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-          Active Institutional &amp; Candidate Licenses
-        </h4>
-        <p style="margin:2px 0 0 0;font-size:0.75rem;color:var(--text-muted);">
-          Real-time roster of secondary schools and student candidates with unexpired laboratory entitlements.
-        </p>
-      </div>
-      <div class="search-input-wrap" style="position:relative;display:inline-flex;align-items:center;">
-        <input type="text" id="licenseSearch" class="form-control search-control" style="padding-right:28px;" placeholder="Search school, candidate, plan..." oninput="handleSearchInput('licenseSearch', 'licenseSearchClear', filterLicenses)">
-        <button type="button" id="licenseSearchClear" class="search-clear-btn" onclick="clearSearch('licenseSearch', 'licenseSearchClear', filterLicenses)" style="display:none;position:absolute;right:8px;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.85rem;padding:2px 4px;" title="Clear search">&times;</button>
-      </div>
-    </div>
-    <div class="table-responsive" style="margin-bottom:24px;">
-      <table class="admin-table">
-        <thead>
-          <tr>
-            <th>Subscriber Entity</th>
-            <th>Target Type</th>
-            <th>License Plan</th>
-            <th>Duration &amp; Expiry</th>
-            <th>Days Remaining</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="licensesTableBody">
-          <tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">Loading active licenses...</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- Section 2: Subscription Plans & Pricing Catalog -->
-    <div class="panel-header">
-      <div>
-        <h4 style="margin:0;font-size:0.95rem;color:var(--heading-color);display:inline-flex;align-items:center;gap:6px;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
-          Subscription Tier Plans &amp; Curriculum Catalog
-        </h4>
-        <p style="margin:2px 0 0 0;font-size:0.75rem;color:var(--text-muted);">
-          Active commercial tiers and institutional licenses offered on the platform.
-        </p>
-      </div>
-      <button type="button" class="btn-primary-solid" onclick="openCreatePlanModal()" style="font-size:0.75rem;padding:5px 12px;">+ Add New Plan</button>
-    </div>
-    <div class="plans-grid" id="billingPlansGrid">
-      <div style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:20px;">Loading subscription plans...</div>
-    </div>
-
-    <!-- Section 3: Payment Transactions & Gateway Audit Ledger -->
-    <div class="panel-header" style="flex-wrap:wrap;gap:10px;align-items:center;">
-      <div>
-        <h4 style="margin:0;font-size:0.95rem;color:var(--heading-color);display:inline-flex;align-items:center;gap:6px;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-          Payment Transactions &amp; Reconciliation Audit Ledger
-        </h4>
-        <p style="margin:2px 0 0 0;font-size:0.75rem;color:var(--text-muted);">
-          Real-time transaction history from Paystack (M-Pesa / Card) and manual administrative approvals.
-        </p>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-        <select id="txFilterStatus" class="form-control filter-select" style="min-width:130px;" onchange="filterTransactions()">
-          <option value="all">All Statuses</option>
-          <option value="success">Success</option>
-          <option value="pending">Pending</option>
-          <option value="failed">Failed / Abandoned</option>
-        </select>
-        <select id="txFilterChannel" class="form-control filter-select" style="min-width:130px;" onchange="filterTransactions()">
-          <option value="all">All Channels</option>
-          <option value="mobile_money">M-Pesa / Mobile</option>
-          <option value="card">Debit / Credit Card</option>
-          <option value="manual">Manual Admin Issue</option>
-        </select>
-        <div class="search-input-wrap" style="position:relative;display:inline-flex;align-items:center;">
-          <input type="text" id="txSearch" class="form-control search-control" style="padding-right:28px;" placeholder="Search ref or institution..." oninput="handleSearchInput('txSearch', 'txSearchClear', filterTransactions)">
-          <button type="button" id="txSearchClear" class="search-clear-btn" onclick="clearSearch('txSearch', 'txSearchClear', filterTransactions)" style="display:none;position:absolute;right:8px;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.85rem;padding:2px 4px;" title="Clear search">&times;</button>
-        </div>
-      </div>
-    </div>
-    <div class="table-responsive">
-      <table class="admin-table">
-        <thead>
-          <tr>
-            <th>Timestamp</th>
-            <th>Reference Code</th>
-            <th>Subscriber / Entity</th>
-            <th>Plan Name</th>
-            <th>Channel / Gateway</th>
-            <th>Amount</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="transactionsTableBody">
-          <tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:24px;">Loading transactions ledger...</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
 
 </div>
 
@@ -2320,8 +2312,6 @@
     function tick() {
       const now = new Date();
       const timeStr = now.toLocaleTimeString('en-GB', { timeZone: 'Africa/Nairobi', hour12: false });
-      const heroClock = document.getElementById('heroLiveClock');
-      if (heroClock) heroClock.textContent = `${timeStr} EAT`;
       const navClock = document.getElementById('navTopLiveClock');
       if (navClock) navClock.textContent = `${timeStr} EAT`;
     }
@@ -2362,26 +2352,6 @@
       else if (h >= 12 && h < 17) greeting = 'Good afternoon, Administrator';
       else greeting = 'Good evening, Administrator';
       greetEl.textContent = greeting;
-    }
-
-    // Dynamic rotating hero bulletin
-    const bulletinEl = document.getElementById('heroBulletinText');
-    if (bulletinEl) {
-      const notices = [
-        'Term III practical benchmarking active across 47 Counties · All regional nodes synchronized',
-        'TSC-accredited Chemistry practical rubrics updated for 2026 KNEC Paper 3 series',
-        'National mock examinations schedule: Qualitative & Organic chemistry module pipelines online',
-        'Automated database snapshots completed · Central MoE cluster running smoothly'
-      ];
-      let bIdx = 0;
-      setInterval(() => {
-        bIdx = (bIdx + 1) % notices.length;
-        bulletinEl.style.opacity = '0';
-        setTimeout(() => {
-          bulletinEl.textContent = notices[bIdx];
-          bulletinEl.style.opacity = '1';
-        }, 220);
-      }, 6000);
     }
   }
 
@@ -4215,10 +4185,10 @@
     });
 
     const tabNames = {
-      'subscriptionsTab': 'Licensing & Subscriptions',
       'schoolsTab': 'Schools Directory',
       'usersTab': 'User Directory',
       'adminsTab': 'Admin Management',
+      'subscriptionsTab': 'Licensing & Subscriptions',
       'announcementsTab': 'Broadcast Bulletins',
       'analyticsTab': 'KCSE Analytics',
       'telemetryTab': 'Cluster Telemetry'
@@ -4233,7 +4203,7 @@
       }, 140);
     }
 
-    ['schoolsTab', 'usersTab', 'adminsTab', 'announcementsTab', 'subscriptionsTab', 'analyticsTab', 'telemetryTab'].forEach(id => {
+    ['schoolsTab', 'usersTab', 'adminsTab', 'subscriptionsTab', 'announcementsTab', 'analyticsTab', 'telemetryTab'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.style.display = (id === tabId) ? 'block' : 'none';
     });

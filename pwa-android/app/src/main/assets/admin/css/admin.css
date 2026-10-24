@@ -803,9 +803,9 @@ html, body {
 .admin-hero-bar {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
-  border-radius: 18px;
-  padding: 24px 28px;
-  margin-bottom: 24px;
+  border-radius: 16px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1009,11 +1009,11 @@ html, body {
 }
 
 .admin-hero-actions {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(140px, 1fr));
   gap: 8px;
   flex-shrink: 0;
-  min-width: 180px;
+  min-width: 300px;
 }
 
 .btn-hero-primary {
@@ -1075,12 +1075,13 @@ html, body {
   }
   .admin-hero-actions {
     width: 100%;
-    flex-direction: row;
-    flex-wrap: wrap;
+    min-width: 0;
   }
-  .admin-hero-actions button {
-    flex: 1;
-    min-width: 140px;
+}
+
+@media (max-width: 540px) {
+  .admin-hero-actions {
+    grid-template-columns: 1fr;
   }
 }
 

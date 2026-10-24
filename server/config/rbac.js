@@ -113,6 +113,11 @@ const ROLE_DEFINITIONS = {
   }
 };
 
+// Expose defaultPermissions alias for client compatibility
+Object.values(ROLE_DEFINITIONS).forEach(def => {
+  def.defaultPermissions = def.permissions;
+});
+
 /**
  * Normalizes input role string to canonical key or aliases.
  */

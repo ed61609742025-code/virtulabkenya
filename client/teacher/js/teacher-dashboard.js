@@ -3684,6 +3684,302 @@ let currentPage = 1;
   window.closeAutoAssignModal = closeAutoAssignModal;
   window.executeAutoAssign = executeAutoAssign;
 
+  /* ── Real-Time Laboratory Activity & Telemetry Monitor ── */
+  let telemetryPollTimer = null;
+  let isTelemetryPolling = false;
+  let lastTelemetryData = null;
+
+  function startTelemetryPolling() {
+    stopTelemetryPolling();
+    isTelemetryPolling = true;
+    updateTelemetryToggleBtn();
+    loadLiveTelemetry();
+    telemetryPollTimer = setInterval(() => {
+      loadLiveTelemetry();
+    }, 3500);
+  }
+
+  function stopTelemetryPolling() {
+    isTelemetryPolling = false;
+    if (telemetryPollTimer) {
+      clearInterval(telemetryPollTimer);
+      telemetryPollTimer = null;
+    }
+    updateTelemetryToggleBtn();
+  }
+
+  function toggleTelemetryPolling() {
+    if (isTelemetryPolling) {
+      stopTelemetryPolling();
+    } else {
+      startTelemetryPolling();
+    }
+  }
+
+  function updateTelemetryToggleBtn() {
+    const btn = document.getElementById('btnToggleTelemetryPoll');
+    if (btn) {
+      btn.textContent = isTelemetryPolling ? '⏸ Pause Auto-Refresh' : '▶ Resume Auto-Refresh';
+      btn.className = isTelemetryPolling ? 'btn btn-sm btn-outline' : 'btn btn-sm btn-success';
+    }
+  }
+
+  async function loadLiveTelemetry(manual = false) {
+    const grid = document.getElementById('telemetryBenchesGrid');
+    const syncTime = document.getElementById('telemetryLastSync');
+    const statStudents = document.getElementById('statLiveStudents');
+    const statBenches = document.getElementById('statLiveBenches');
+    const statSafety = document.getElementById('statLiveSafety');
+    const statCompliance = document.getElementById('statLiveCompliance');
+    const sidebarPill = document.getElementById('sidebarLivePill');
+    const overviewSub = document.getElementById('overviewTelemetrySub');
+
+    try {
+      const data = await Telemetry.getLive();
+      lastTelemetryData = data;
+
+      const m = data.metrics || { activeStudents: 0, activeBenches: 0, safetyAlertCount: 0, protocolCompliancePct: 100 };
+      if (statStudents) statStudents.textContent = m.activeStudents;
+      if (statBenches) statBenches.textContent = m.activeBenches;
+      if (statSafety) {
+        statSafety.textContent = m.safetyAlertCount;
+        statSafety.style.color = m.safetyAlertCount > 0 ? 'var(--red-accent)' : 'var(--green-accent)';
+      }
+      if (statCompliance) statCompliance.textContent = m.protocolCompliancePct + '%';
+
+      if (sidebarPill) {
+        sidebarPill.textContent = m.activeStudents > 0 ? `${m.activeStudents} LIVE` : 'LIVE';
+        sidebarPill.style.background = m.activeStudents > 0 ? 'var(--green-accent)' : 'var(--text-muted)';
+      }
+
+      if (overviewSub) {
+        overviewSub.textContent = m.activeStudents > 0
+          ? `Currently tracking ${m.activeStudents} student(s) across ${m.activeBenches} active practical bench(es) with ${m.safetyAlertCount} safety alert(s).`
+          : 'Monitoring active student simulation benches, apparatus sensor states & safety alerts.';
+      }
+
+      if (syncTime) {
+        syncTime.textContent = 'Last pulse: ' + new Date().toLocaleTimeString();
+      }
+
+      renderTelemetryBenches(data.benches || []);
+      renderTelemetryIncidents(data.recentIncidents || []);
+    } catch (err) {
+      if (manual && grid) {
+        grid.innerHTML = '<div class="empty" style="grid-column:1/-1; padding:32px; color:var(--red-accent);">Telemetry stream error: ' + escapeHtml(err.message) + '</div>';
+      }
+    }
+  }
+
+  function renderTelemetryBenches(benches) {
+    const grid = document.getElementById('telemetryBenchesGrid');
+    if (!grid) return;
+
+    if (!benches || benches.length === 0) {
+      grid.innerHTML = `
+        <div class="empty" style="grid-column:1/-1; padding:36px 20px;">
+          <div style="font-size:2.2rem; margin-bottom:8px;">📡</div>
+          <div style="font-weight:700; color:var(--heading-color); font-size:1.05rem;">No active laboratory telemetry feeds right now</div>
+          <p style="margin:6px 0 16px 0; color:var(--text-muted); font-size:0.86rem; max-width:440px; margin-left:auto; margin-right:auto;">
+            When students launch practical simulations (Titration, Qualitative, Organic, Thermochemistry), their apparatus telemetry appears here live.
+          </p>
+          <button class="btn btn-primary btn-sm" onclick="triggerSimulatedClassFeed()">
+            ⚡ Launch Demo Class Telemetry
+          </button>
+        </div>
+      `;
+      return;
+    }
+
+    grid.innerHTML = benches.map(b => {
+      const apparatus = b.apparatus_state || {};
+      const alerts = Array.isArray(b.safety_alerts) ? b.safety_alerts : [];
+      const hasSafetyIssue = alerts.length > 0;
+      const mod = (b.practical_type || 'titration').toLowerCase();
+
+      // Module-specific telemetry widget
+      let apparatusWidget = '';
+      if (mod === 'titration') {
+        const dispensed = parseFloat(apparatus.buretteVolumeDispensed || 0);
+        const target = parseFloat(apparatus.targetEquivalence || 20);
+        const pct = Math.min(100, Math.round((dispensed / 50.0) * 100));
+        const ph = apparatus.currentPH || '7.00';
+        const dps = apparatus.dropRateDps || 0;
+
+        apparatusWidget = `
+          <div style="background:var(--bg-card-subtle, rgba(0,0,0,0.02)); border-radius:8px; padding:10px; margin-top:8px;">
+            <div style="display:flex; justify-content:space-between; font-size:0.78rem; font-weight:700; margin-bottom:4px;">
+              <span>Burette Level: ${dispensed.toFixed(2)} / 50 cm³</span>
+              <span style="color:var(--blue-accent);">pH ${ph}</span>
+            </div>
+            <div style="width:100%; height:6px; background:var(--border-color); border-radius:3px; overflow:hidden;">
+              <div style="width:${pct}%; height:100%; background:var(--blue-accent); transition:width 0.4s ease;"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:0.74rem; color:var(--text-muted); margin-top:6px;">
+              <span>Drop Rate: ${dps} dps</span>
+              <span>Color: ${escapeHtml(apparatus.flaskColor || 'Clear')}</span>
+            </div>
+          </div>
+        `;
+      } else if (mod === 'qualitative') {
+        apparatusWidget = `
+          <div style="background:var(--bg-card-subtle, rgba(0,0,0,0.02)); border-radius:8px; padding:10px; margin-top:8px; font-size:0.78rem;">
+            <div style="font-weight:700; color:var(--heading-color); margin-bottom:2px;">${escapeHtml(apparatus.unknownSalt || 'Salt Sample')}</div>
+            <div style="color:var(--text-muted);">Reagent: <b>${escapeHtml(apparatus.reagentAdded || 'None')}</b></div>
+            <div style="color:var(--blue-accent); margin-top:3px; font-style:italic;">"${escapeHtml(apparatus.precipitate || 'Awaiting observation')}"</div>
+          </div>
+        `;
+      } else if (mod === 'energy') {
+        const liveT = apparatus.currentTempLive || apparatus.initialTempT1 || 20;
+        const deltaT = apparatus.deltaT || 0;
+        apparatusWidget = `
+          <div style="background:var(--bg-card-subtle, rgba(0,0,0,0.02)); border-radius:8px; padding:10px; margin-top:8px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <span style="font-size:1.15rem; font-weight:800; color:var(--amber-accent);">${liveT}°C</span>
+                <span style="font-size:0.75rem; color:var(--text-muted); margin-left:6px;">(ΔT: +${deltaT}°C)</span>
+              </div>
+              <span class="pill pill-muted" style="font-size:0.7rem;">${escapeHtml(apparatus.enthalpyDeltaHKJ || '0')} kJ/mol</span>
+            </div>
+            <div style="font-size:0.74rem; color:var(--text-muted); margin-top:4px;">${escapeHtml(apparatus.reaction || 'Enthalpy reaction')}</div>
+          </div>
+        `;
+      } else {
+        apparatusWidget = `
+          <div style="background:var(--bg-card-subtle, rgba(0,0,0,0.02)); border-radius:8px; padding:8px 10px; margin-top:8px; font-size:0.76rem; color:var(--text-muted);">
+            <div>Status: <b>${escapeHtml(b.status || 'Active')}</b></div>
+            <div style="margin-top:2px;">Practical: ${escapeHtml(b.practical_type || 'General')}</div>
+          </div>
+        `;
+      }
+
+      // Elapsed calculation
+      const elapsedMins = Math.floor((b.elapsed_seconds || 0) / 60);
+      const elapsedSecs = (b.elapsed_seconds || 0) % 60;
+      const elapsedStr = `${elapsedMins}m ${elapsedSecs < 10 ? '0' : ''}${elapsedSecs}s`;
+
+      return `
+        <div class="telemetry-bench-card" style="background:var(--card-bg, #fff); border:1px solid ${hasSafetyIssue ? 'var(--red-accent)' : 'var(--border-color)'}; border-radius:12px; padding:16px; box-shadow:0 2px 10px rgba(0,0,0,0.04); display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;">
+              <div>
+                <div style="font-size:0.72rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">${escapeHtml(b.effective_bench_name || b.bench_name)}</div>
+                <div style="font-size:0.98rem; font-weight:800; color:var(--heading-color);">${escapeHtml(b.student_name)}</div>
+                <div style="font-size:0.74rem; color:var(--text-muted);">${escapeHtml(b.form || 'Form 4')} • ${escapeHtml(b.student_role || 'Operator')}</div>
+              </div>
+              <span class="pill ${hasSafetyIssue ? 'pill-danger' : 'pill-success'}" style="font-size:0.68rem; padding:3px 8px;">
+                ${hasSafetyIssue ? '⚠️ Alert' : '● Live Pulse'}
+              </span>
+            </div>
+
+            ${apparatusWidget}
+
+            ${alerts.map(a => `
+              <div style="margin-top:8px; background:rgba(239,68,68,0.1); border-left:3px solid var(--red-accent); padding:5px 8px; border-radius:4px; font-size:0.75rem; color:var(--red-accent);">
+                <b>${escapeHtml(a.title || 'Safety Warning')}:</b> ${escapeHtml(a.message || '')}
+              </div>
+            `).join('')}
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:10px; border-top:1px solid var(--border-color);">
+            <span style="font-size:0.74rem; color:var(--text-muted);">⏱ Elapsed: ${elapsedStr}</span>
+            <button class="btn btn-sm btn-primary" onclick="openInterventionModal(${b.student_id}, '${escapeHtml(b.student_name).replace(/'/g, "\\'")}')" style="font-size:0.75rem; padding:3px 10px;">
+              📢 Intervene
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderTelemetryIncidents(incidents) {
+    const box = document.getElementById('telemetryEventStream');
+    if (!box) return;
+
+    if (!incidents || incidents.length === 0) {
+      box.innerHTML = '<div style="font-size:0.82rem; color:var(--text-muted); text-align:center; padding:16px;">✓ No laboratory safety protocol incidents recorded in the current session.</div>';
+      return;
+    }
+
+    box.innerHTML = incidents.map(inc => {
+      const time = inc.created_at ? new Date(inc.created_at).toLocaleTimeString() : 'Recent';
+      const isDanger = inc.severity === 'danger' || inc.severity === 'critical';
+      return `
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 12px; background:var(--bg-card-subtle, rgba(0,0,0,0.02)); border-left:3px solid ${isDanger ? 'var(--red-accent)' : 'var(--amber-accent)'}; border-radius:6px; font-size:0.82rem;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-weight:700; color:var(--heading-color);">[${time}]</span>
+            <span style="color:var(--heading-color); font-weight:600;">${escapeHtml(inc.student_name)}:</span>
+            <span style="color:${isDanger ? 'var(--red-accent)' : 'var(--heading-color)'};">${escapeHtml(inc.title)} — ${escapeHtml(inc.description || '')}</span>
+          </div>
+          <span class="pill ${isDanger ? 'pill-danger' : 'pill-warning'}" style="font-size:0.7rem;">${escapeHtml(inc.practical_type)}</span>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function openInterventionModal(studentId, studentName) {
+    const modal = document.getElementById('modalIntervention');
+    const idInput = document.getElementById('interveneStudentId');
+    const nameInput = document.getElementById('interveneStudentName');
+    const msgInput = document.getElementById('interveneMsg');
+
+    if (!modal) return;
+    if (idInput) idInput.value = studentId;
+    if (nameInput) nameInput.value = studentName;
+    if (msgInput) msgInput.value = '';
+
+    modal.style.display = 'flex';
+  }
+
+  function closeInterventionModal() {
+    const modal = document.getElementById('modalIntervention');
+    if (modal) modal.style.display = 'none';
+  }
+
+  function setInterventionPreset(text) {
+    const msg = document.getElementById('interveneMsg');
+    if (msg) msg.value = text;
+  }
+
+  async function sendInterventionSubmit() {
+    const studentId = document.getElementById('interveneStudentId')?.value;
+    const message = document.getElementById('interveneMsg')?.value;
+    const interventionType = document.getElementById('interveneType')?.value || 'guidance';
+
+    if (!message || !message.trim()) {
+      alert('Please enter an intervention message for the student.');
+      return;
+    }
+
+    try {
+      await Telemetry.intervene({ studentId, message, interventionType });
+      alert('✓ Guidance dispatch sent! The student will see your instructor tip in real time.');
+      closeInterventionModal();
+    } catch (err) {
+      alert('Could not deliver intervention: ' + (err.message || 'Server error'));
+    }
+  }
+
+  async function triggerSimulatedClassFeed() {
+    try {
+      const res = await Telemetry.simulateFeed();
+      alert('✓ ' + (res.message || 'Simulated chemistry laboratory feeds initiated!'));
+      await loadLiveTelemetry();
+    } catch (err) {
+      alert('Simulation trigger note: ' + (err.message || 'Server error'));
+    }
+  }
+
+  window.startTelemetryPolling = startTelemetryPolling;
+  window.stopTelemetryPolling = stopTelemetryPolling;
+  window.toggleTelemetryPolling = toggleTelemetryPolling;
+  window.loadLiveTelemetry = loadLiveTelemetry;
+  window.openInterventionModal = openInterventionModal;
+  window.closeInterventionModal = closeInterventionModal;
+  window.setInterventionPreset = setInterventionPreset;
+  window.sendInterventionSubmit = sendInterventionSubmit;
+  window.triggerSimulatedClassFeed = triggerSimulatedClassFeed;
+
   /* ── Student Performance Drill-Down Modal ── */
   async function openStudentDrilldown(studentId) {
     let modal = document.getElementById('studentDrilldownModal');

@@ -352,6 +352,10 @@ app.use('/api/admin', adminRoutes);
 const errorRoutes = require('./routes/errors');
 app.use('/api/errors', errorRoutes);
 
+// Real-Time Laboratory Telemetry & Classroom Monitor
+const telemetryRoutes = require('./routes/telemetry');
+app.use('/api/telemetry', telemetryRoutes);
+
 // Student notifications & assignment reminders
 const notificationsRoutes = require('./routes/notifications');
 app.use('/api/notifications', notificationsRoutes);

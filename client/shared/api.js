@@ -1132,6 +1132,23 @@ const Research = {
   }
 };
 
+
+// ── Real-Time Laboratory Telemetry API ───────────────────────
+const Telemetry = {
+  async getLive() {
+    return apiRequest('GET', '/telemetry/live');
+  },
+  async sendHeartbeat(payload) {
+    return apiRequest('POST', '/telemetry/heartbeat', payload);
+  },
+  async intervene(payload) {
+    return apiRequest('POST', '/telemetry/intervene', payload);
+  },
+  async simulateFeed() {
+    return apiRequest('POST', '/telemetry/simulate-feed');
+  }
+};
+
 // Top-level API convenience object
 const API = {
   saveGasSession: (data) => Gas.save(data),
@@ -1152,6 +1169,7 @@ if (typeof window !== 'undefined') {
   window.Gas = Gas;
   window.Research = Research;
   window.API = API;
+  window.Telemetry = Telemetry;
 }
 
 // ── System Admin Portal API ─────────────────────────────────

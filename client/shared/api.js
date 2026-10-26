@@ -1311,7 +1311,7 @@ function requireTeacherLogin() {
   const token = getToken();
   const payload = decodeTokenPayload(token);
   const role = payload?.role || user?.role;
-  if (!isLoggedIn() || role !== 'teacher') {
+  if (!isLoggedIn() || (role !== 'teacher' && role !== 'admin')) {
     clearToken();
     const path = (window.location.pathname || '').toLowerCase();
     if (!path.endsWith('/teacher/login.html') && !path.endsWith('login.html')) {

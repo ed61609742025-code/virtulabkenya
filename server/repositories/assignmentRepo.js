@@ -158,16 +158,26 @@ async function ensureAssignmentTables() {
   }
 }
 
-async function createAssignment(teacherId, data, dbClient = pool) {
+async function createAssignment(teacherId, data, dbClient = pool, userRole = 'teacher') {
   await ensureAssignmentTables();
   const q = (dbClient || pool);
+  let schoolId = null;
+  let finalTeacherId = teacherId;
+
   const teacherResult = await q.query(
     'SELECT school_id FROM teachers WHERE id = $1',
     [teacherId]
   );
-  if (teacherResult.rows.length === 0) return null;
+  if (teacherResult.rows.length > 0) {
+    schoolId = teacherResult.rows[0].school_id;
+  } else if (userRole === 'admin') {
+    finalTeacherId = null;
+    const schoolRes = await q.query('SELECT id FROM schools ORDER BY id ASC LIMIT 1');
+    schoolId = schoolRes.rows[0]?.id || null;
+  } else {
+    return null;
+  }
 
-  const schoolId = teacherResult.rows[0].school_id;
   const { title, titrationType, instructions, dueDate, examConfig } = data;
 
   const result = await q.query(
@@ -175,7 +185,7 @@ async function createAssignment(teacherId, data, dbClient = pool) {
      VALUES ($1, $2, $3, $4, $5, $6, $7)
      RETURNING *`,
     [
-      teacherId,
+      finalTeacherId,
       schoolId,
       title,
       titrationType || null,
@@ -356,8 +366,9 @@ async function getStudentAssignments(studentId) {
   }
 }
 
-async function getTeacherAssignments(teacherId) {
+async function getTeacherAssignments(teacherId, userRole = 'teacher') {
   await ensureAssignmentTables();
+  const isAdmin = userRole === 'admin';
   const query = `
     SELECT a.*,
            (
@@ -381,13 +392,13 @@ async function getTeacherAssignments(teacherId) {
                SELECT student_id AS s_id FROM gas_sessions WHERE assignment_id = a.id
              ) all_subs
            ) AS submitted_count,
-           (SELECT COUNT(*)::int FROM students WHERE teacher_id = a.teacher_id) AS total_students
+           (SELECT COUNT(*)::int FROM students WHERE (a.teacher_id IS NOT NULL AND teacher_id = a.teacher_id) OR (a.teacher_id IS NULL AND (a.school_id IS NULL OR school_id = a.school_id))) AS total_students
     FROM assignments a
-    WHERE a.teacher_id = $1
+    WHERE (a.teacher_id = $1 OR a.teacher_id IS NULL OR $2 = true)
     ORDER BY a.created_at DESC
   `;
   try {
-    const result = await pool.query(query, [teacherId]);
+    const result = await pool.query(query, [teacherId, isAdmin]);
     return result.rows;
   } catch (err) {
     console.warn('[getTeacherAssignments] Multi-discipline query failed, falling back to core query:', err.message);
@@ -401,24 +412,25 @@ async function getTeacherAssignments(teacherId) {
                    SELECT student_id AS s_id FROM practical_sessions WHERE assignment_id = a.id
                  ) all_subs
                ) AS submitted_count,
-               (SELECT COUNT(*)::int FROM students WHERE teacher_id = a.teacher_id) AS total_students
+               (SELECT COUNT(*)::int FROM students WHERE (a.teacher_id IS NOT NULL AND teacher_id = a.teacher_id) OR (a.teacher_id IS NULL AND (a.school_id IS NULL OR school_id = a.school_id))) AS total_students
         FROM assignments a
-        WHERE a.teacher_id = $1
+        WHERE (a.teacher_id = $1 OR a.teacher_id IS NULL OR $2 = true)
         ORDER BY a.created_at DESC
       `;
-      const fallbackResult = await pool.query(fallbackQuery, [teacherId]);
+      const fallbackResult = await pool.query(fallbackQuery, [teacherId, isAdmin]);
       return fallbackResult.rows;
     } catch (fErr) {
       console.error('[getTeacherAssignments] Critical fallback query failed:', fErr.message);
-      const bareQuery = `SELECT a.*, 0 AS submitted_count, 0 AS total_students FROM assignments a WHERE a.teacher_id = $1 ORDER BY a.created_at DESC`;
-      const bareResult = await pool.query(bareQuery, [teacherId]);
+      const bareQuery = `SELECT a.*, 0 AS submitted_count, 0 AS total_students FROM assignments a WHERE (a.teacher_id = $1 OR a.teacher_id IS NULL OR $2 = true) ORDER BY a.created_at DESC`;
+      const bareResult = await pool.query(bareQuery, [teacherId, isAdmin]);
       return bareResult.rows;
     }
   }
 }
 
-async function updateAssignment(assignmentId, teacherId, data) {
+async function updateAssignment(assignmentId, teacherId, data, userRole = 'teacher') {
   const { title, titrationType, instructions, dueDate, examConfig } = data;
+  const isAdmin = userRole === 'admin';
   const query = `
     UPDATE assignments
     SET title = COALESCE($1, title),
@@ -426,7 +438,7 @@ async function updateAssignment(assignmentId, teacherId, data) {
         instructions = COALESCE($3, instructions),
         due_date = COALESCE($4, due_date),
         exam_config = COALESCE($5, exam_config)
-    WHERE id = $6 AND teacher_id = $7
+    WHERE id = $6 AND (teacher_id = $7 OR teacher_id IS NULL OR $8 = true)
     RETURNING *
   `;
   const result = await pool.query(query, [
@@ -436,24 +448,27 @@ async function updateAssignment(assignmentId, teacherId, data) {
     dueDate || null,
     examConfig ? JSON.stringify(examConfig) : null,
     assignmentId,
-    teacherId
+    teacherId,
+    isAdmin
   ]);
   return result.rows[0] || null;
 }
 
-async function deleteAssignment(assignmentId, teacherId) {
+async function deleteAssignment(assignmentId, teacherId, userRole = 'teacher') {
+  const isAdmin = userRole === 'admin';
   const result = await pool.query(
-    'DELETE FROM assignments WHERE id = $1 AND teacher_id = $2 RETURNING id',
-    [assignmentId, teacherId]
+    'DELETE FROM assignments WHERE id = $1 AND (teacher_id = $2 OR teacher_id IS NULL OR $3 = true) RETURNING id',
+    [assignmentId, teacherId, isAdmin]
   );
   return result.rows.length > 0;
 }
 
-async function getAssignmentExportData(assignmentId, teacherId) {
+async function getAssignmentExportData(assignmentId, teacherId, userRole = 'teacher') {
   await ensureAssignmentTables();
+  const isAdmin = userRole === 'admin';
   const assignResult = await pool.query(
-    'SELECT id, title, titration_type FROM assignments WHERE id = $1 AND teacher_id = $2',
-    [assignmentId, teacherId]
+    'SELECT id, title, titration_type FROM assignments WHERE id = $1 AND (teacher_id = $2 OR teacher_id IS NULL OR $3 = true)',
+    [assignmentId, teacherId, isAdmin]
   );
   if (assignResult.rows.length === 0) return null;
 
@@ -526,8 +541,9 @@ async function getAssignmentExportData(assignmentId, teacherId) {
   }
 }
 
-async function getAllSubmissions(teacherId, { page = 1, limit = 50 } = {}) {
+async function getAllSubmissions(teacherId, { page = 1, limit = 50 } = {}, userRole = 'teacher') {
   const offset = (page - 1) * limit;
+  const isAdmin = userRole === 'admin';
 
   const query = `
     WITH all_candidates AS (
@@ -549,7 +565,7 @@ async function getAllSubmissions(teacherId, { page = 1, limit = 50 } = {}) {
         sub.gas_session_id
       FROM assignment_submissions sub
       JOIN assignments a ON a.id = sub.assignment_id
-      WHERE a.teacher_id = $1
+      WHERE (a.teacher_id = $1 OR a.teacher_id IS NULL OR $4 = true)
       
       UNION
       
@@ -571,7 +587,7 @@ async function getAllSubmissions(teacherId, { page = 1, limit = 50 } = {}) {
         NULL AS gas_session_id
       FROM practical_sessions ps
       JOIN assignments a ON a.id = ps.assignment_id
-      WHERE a.teacher_id = $1 AND ps.assignment_id IS NOT NULL
+      WHERE (a.teacher_id = $1 OR a.teacher_id IS NULL OR $4 = true) AND ps.assignment_id IS NOT NULL
         AND NOT EXISTS (SELECT 1 FROM assignment_submissions sub WHERE sub.assignment_id = ps.assignment_id AND sub.student_id = ps.student_id)
 
       UNION
@@ -594,7 +610,7 @@ async function getAllSubmissions(teacherId, { page = 1, limit = 50 } = {}) {
         NULL AS gas_session_id
       FROM qualitative_sessions qs
       JOIN assignments a ON a.id = qs.assignment_id
-      WHERE a.teacher_id = $1 AND qs.assignment_id IS NOT NULL
+      WHERE (a.teacher_id = $1 OR a.teacher_id IS NULL OR $4 = true) AND qs.assignment_id IS NOT NULL
         AND NOT EXISTS (SELECT 1 FROM assignment_submissions sub WHERE sub.assignment_id = qs.assignment_id AND sub.student_id = qs.student_id)
 
       UNION
@@ -617,7 +633,7 @@ async function getAllSubmissions(teacherId, { page = 1, limit = 50 } = {}) {
         NULL AS gas_session_id
       FROM organic_sessions os
       JOIN assignments a ON a.id = os.assignment_id
-      WHERE a.teacher_id = $1 AND os.assignment_id IS NOT NULL
+      WHERE (a.teacher_id = $1 OR a.teacher_id IS NULL OR $4 = true) AND os.assignment_id IS NOT NULL
         AND NOT EXISTS (SELECT 1 FROM assignment_submissions sub WHERE sub.assignment_id = os.assignment_id AND sub.student_id = os.student_id)
 
       UNION
@@ -640,7 +656,7 @@ async function getAllSubmissions(teacherId, { page = 1, limit = 50 } = {}) {
         NULL AS gas_session_id
       FROM composite_sessions cs
       JOIN assignments a ON a.id = cs.assignment_id
-      WHERE a.teacher_id = $1 AND cs.assignment_id IS NOT NULL
+      WHERE (a.teacher_id = $1 OR a.teacher_id IS NULL OR $4 = true) AND cs.assignment_id IS NOT NULL
         AND NOT EXISTS (SELECT 1 FROM assignment_submissions sub WHERE sub.assignment_id = cs.assignment_id AND sub.student_id = cs.student_id)
 
       UNION
@@ -663,7 +679,7 @@ async function getAllSubmissions(teacherId, { page = 1, limit = 50 } = {}) {
         NULL AS gas_session_id
       FROM solubility_sessions ss
       JOIN assignments a ON a.id = ss.assignment_id
-      WHERE a.teacher_id = $1 AND ss.assignment_id IS NOT NULL
+      WHERE (a.teacher_id = $1 OR a.teacher_id IS NULL OR $4 = true) AND ss.assignment_id IS NOT NULL
         AND NOT EXISTS (SELECT 1 FROM assignment_submissions sub WHERE sub.assignment_id = ss.assignment_id AND sub.student_id = ss.student_id)
 
       UNION
@@ -686,7 +702,7 @@ async function getAllSubmissions(teacherId, { page = 1, limit = 50 } = {}) {
         NULL AS gas_session_id
       FROM energy_sessions es
       JOIN assignments a ON a.id = es.assignment_id
-      WHERE a.teacher_id = $1 AND es.assignment_id IS NOT NULL
+      WHERE (a.teacher_id = $1 OR a.teacher_id IS NULL OR $4 = true) AND es.assignment_id IS NOT NULL
         AND NOT EXISTS (SELECT 1 FROM assignment_submissions sub WHERE sub.assignment_id = es.assignment_id AND sub.student_id = es.student_id)
 
       UNION
@@ -709,7 +725,7 @@ async function getAllSubmissions(teacherId, { page = 1, limit = 50 } = {}) {
         NULL AS gas_session_id
       FROM rates_sessions rs
       JOIN assignments a ON a.id = rs.assignment_id
-      WHERE a.teacher_id = $1 AND rs.assignment_id IS NOT NULL
+      WHERE (a.teacher_id = $1 OR a.teacher_id IS NULL OR $4 = true) AND rs.assignment_id IS NOT NULL
         AND NOT EXISTS (SELECT 1 FROM assignment_submissions sub WHERE sub.assignment_id = rs.assignment_id AND sub.student_id = rs.student_id)
 
       UNION
@@ -732,7 +748,7 @@ async function getAllSubmissions(teacherId, { page = 1, limit = 50 } = {}) {
         gs.id AS gas_session_id
       FROM gas_sessions gs
       JOIN assignments a ON a.id = gs.assignment_id
-      WHERE a.teacher_id = $1 AND gs.assignment_id IS NOT NULL
+      WHERE (a.teacher_id = $1 OR a.teacher_id IS NULL OR $4 = true) AND gs.assignment_id IS NOT NULL
         AND NOT EXISTS (SELECT 1 FROM assignment_submissions sub WHERE sub.assignment_id = gs.assignment_id AND sub.student_id = gs.student_id)
     )
     SELECT * FROM (
@@ -785,71 +801,71 @@ async function getAllSubmissions(teacherId, { page = 1, limit = 50 } = {}) {
       SELECT sub.assignment_id, sub.student_id
       FROM assignment_submissions sub
       JOIN assignments a ON a.id = sub.assignment_id
-      WHERE a.teacher_id = $1
+      WHERE (a.teacher_id = $1 OR a.teacher_id IS NULL OR $2 = true)
       
       UNION
       
       SELECT ps.assignment_id, ps.student_id
       FROM practical_sessions ps
       JOIN assignments a ON a.id = ps.assignment_id
-      WHERE a.teacher_id = $1 AND ps.assignment_id IS NOT NULL
+      WHERE (a.teacher_id = $1 OR a.teacher_id IS NULL OR $2 = true) AND ps.assignment_id IS NOT NULL
 
       UNION
       
       SELECT qs.assignment_id, qs.student_id
       FROM qualitative_sessions qs
       JOIN assignments a ON a.id = qs.assignment_id
-      WHERE a.teacher_id = $1 AND qs.assignment_id IS NOT NULL
+      WHERE (a.teacher_id = $1 OR a.teacher_id IS NULL OR $2 = true) AND qs.assignment_id IS NOT NULL
 
       UNION
       
       SELECT os.assignment_id, os.student_id
       FROM organic_sessions os
       JOIN assignments a ON a.id = os.assignment_id
-      WHERE a.teacher_id = $1 AND os.assignment_id IS NOT NULL
+      WHERE (a.teacher_id = $1 OR a.teacher_id IS NULL OR $2 = true) AND os.assignment_id IS NOT NULL
 
       UNION
       
       SELECT cs.assignment_id, cs.student_id
       FROM composite_sessions cs
       JOIN assignments a ON a.id = cs.assignment_id
-      WHERE a.teacher_id = $1 AND cs.assignment_id IS NOT NULL
+      WHERE (a.teacher_id = $1 OR a.teacher_id IS NULL OR $2 = true) AND cs.assignment_id IS NOT NULL
 
       UNION
       
       SELECT ss.assignment_id, ss.student_id
       FROM solubility_sessions ss
       JOIN assignments a ON a.id = ss.assignment_id
-      WHERE a.teacher_id = $1 AND ss.assignment_id IS NOT NULL
+      WHERE (a.teacher_id = $1 OR a.teacher_id IS NULL OR $2 = true) AND ss.assignment_id IS NOT NULL
 
       UNION
       
       SELECT es.assignment_id, es.student_id
       FROM energy_sessions es
       JOIN assignments a ON a.id = es.assignment_id
-      WHERE a.teacher_id = $1 AND es.assignment_id IS NOT NULL
+      WHERE (a.teacher_id = $1 OR a.teacher_id IS NULL OR $2 = true) AND es.assignment_id IS NOT NULL
 
       UNION
       
       SELECT rs.assignment_id, rs.student_id
       FROM rates_sessions rs
       JOIN assignments a ON a.id = rs.assignment_id
-      WHERE a.teacher_id = $1 AND rs.assignment_id IS NOT NULL
+      WHERE (a.teacher_id = $1 OR a.teacher_id IS NULL OR $2 = true) AND rs.assignment_id IS NOT NULL
 
       UNION
       
       SELECT gs.assignment_id, gs.student_id
       FROM gas_sessions gs
       JOIN assignments a ON a.id = gs.assignment_id
-      WHERE a.teacher_id = $1 AND gs.assignment_id IS NOT NULL
+      WHERE (a.teacher_id = $1 OR a.teacher_id IS NULL OR $2 = true) AND gs.assignment_id IS NOT NULL
     )
     SELECT COUNT(DISTINCT CONCAT(assignment_id, '_', student_id))::int AS count FROM all_candidates
   `;
 
   try {
     const [rowsRes, countRes] = await Promise.all([
-      pool.query(query, [teacherId, limit, offset]),
-      pool.query(countQuery, [teacherId])
+      pool.query(query, [teacherId, limit, offset, isAdmin]),
+      pool.query(countQuery, [teacherId, isAdmin])
     ]);
 
     const total = parseInt(countRes.rows[0] ? countRes.rows[0].count : 0, 10) || 0;
@@ -891,7 +907,7 @@ async function getAllSubmissions(teacherId, { page = 1, limit = 50 } = {}) {
         JOIN students s ON s.id = sub.student_id
         JOIN assignments a ON a.id = sub.assignment_id
         LEFT JOIN practical_sessions ps ON ps.id = sub.session_id
-        WHERE a.teacher_id = $1
+        WHERE (a.teacher_id = $1 OR a.teacher_id IS NULL OR $4 = true)
         ORDER BY sub.submitted_at DESC
         LIMIT $2 OFFSET $3
       `;
@@ -899,11 +915,11 @@ async function getAllSubmissions(teacherId, { page = 1, limit = 50 } = {}) {
         SELECT COUNT(*)::int AS count
         FROM assignment_submissions sub
         JOIN assignments a ON a.id = sub.assignment_id
-        WHERE a.teacher_id = $1
+        WHERE (a.teacher_id = $1 OR a.teacher_id IS NULL OR $2 = true)
       `;
       const [fRows, fCount] = await Promise.all([
-        pool.query(fallbackQuery, [teacherId, limit, offset]),
-        pool.query(fallbackCount, [teacherId])
+        pool.query(fallbackQuery, [teacherId, limit, offset, isAdmin]),
+        pool.query(fallbackCount, [teacherId, isAdmin])
       ]);
       const total = parseInt(fCount.rows[0] ? fCount.rows[0].count : 0, 10) || 0;
       return {
@@ -966,8 +982,9 @@ async function linkAssignmentSubmission({
   }
 }
 
-async function markSubmission(submissionId, teacherId, teacherFeedback, dbClient = pool) {
+async function markSubmission(submissionId, teacherId, teacherFeedback, dbClient = pool, userRole = 'teacher') {
   const q = (dbClient || pool);
+  const isAdmin = userRole === 'admin';
   // 1. Direct match on assignment_submissions.id
   const directQuery = `
     UPDATE assignment_submissions
@@ -975,11 +992,11 @@ async function markSubmission(submissionId, teacherId, teacherFeedback, dbClient
         teacher_feedback = COALESCE($1, teacher_feedback),
         marked_at = NOW()
     WHERE id = $2
-      AND assignment_id IN (SELECT id FROM assignments WHERE teacher_id = $3 OR teacher_id IS NULL)
+      AND assignment_id IN (SELECT id FROM assignments WHERE teacher_id = $3 OR teacher_id IS NULL OR $4 = true)
     RETURNING *
   `;
   try {
-    const result = await q.query(directQuery, [teacherFeedback || null, submissionId, teacherId]);
+    const result = await q.query(directQuery, [teacherFeedback || null, submissionId, teacherId, isAdmin]);
     if (result.rows[0]) return result.rows[0];
   } catch (e) {}
 
@@ -999,11 +1016,11 @@ async function markSubmission(submissionId, teacherId, teacherFeedback, dbClient
         }
       } catch (e) {}
 
-      // Verify assignment ownership for this teacher
+      // Verify assignment ownership for this teacher or admin
       try {
         const verifyOwnership = await q.query(
-          `SELECT 1 FROM assignments WHERE id = $1 AND (teacher_id = $2 OR teacher_id IS NULL)`,
-          [aId, teacherId]
+          `SELECT 1 FROM assignments WHERE id = $1 AND (teacher_id = $2 OR teacher_id IS NULL OR $3 = true)`,
+          [aId, teacherId, isAdmin]
         );
         if (verifyOwnership.rows && verifyOwnership.rows.length === 0) {
           return null;

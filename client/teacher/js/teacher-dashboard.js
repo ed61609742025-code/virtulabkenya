@@ -22,7 +22,7 @@ window.copyTeacherCode = copyTeacherCode;
 
 async function initTeacherProfile() {
   if (currentUser) {
-    if (currentUser.role && currentUser.role !== 'teacher') {
+    if (currentUser.role && currentUser.role !== 'teacher' && currentUser.role !== 'admin') {
       clearToken();
       window.location.href = `/teacher/login.html?mismatch=${encodeURIComponent(currentUser.role)}`;
       return;
@@ -35,7 +35,7 @@ async function initTeacherProfile() {
       ? await Auth.me()
       : (typeof apiRequest === 'function' ? await apiRequest('GET', '/auth/me') : null);
     if (res && res.user) {
-      if (res.user.role && res.user.role !== 'teacher') {
+      if (res.user.role && res.user.role !== 'teacher' && res.user.role !== 'admin') {
         clearToken();
         window.location.href = `/teacher/login.html?mismatch=${encodeURIComponent(res.user.role)}`;
         return;
@@ -2283,7 +2283,7 @@ let currentPage = 1;
       loadTeacherAssignments();
       loadSubmittedAssignments();
     } catch (err) {
-      if (err.message && err.message.includes('requires a teacher account')) {
+      if (err.message && (err.message.includes('requires a teacher account') || err.message.includes('requires a teacher or admin account'))) {
         msg.innerHTML = `
           <div class="msg msg-err" style="display:flex; flex-direction:column; gap:8px; padding:12px 14px; text-align:left;">
             <div>❌ <b>Session Mismatch:</b> Your browser currently has a <b>Student</b> session active.</div>

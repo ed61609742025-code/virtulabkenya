@@ -150,26 +150,31 @@ function getCsvConfigForAssignment(assignment, rows) {
 const pool = require('../db/pool');
 const { withTransaction } = require('../db/transaction');
 
-// POST /api/assignments — Create an assignment (teacher) with atomic transaction
-router.post('/', authMiddleware, authMiddleware.requireRole('teacher'), validateAssignmentCreate, asyncHandler(async (req, res) => {
+// POST /api/assignments — Create an assignment (teacher or admin) with atomic transaction
+router.post('/', authMiddleware, authMiddleware.requireRole(['teacher', 'admin']), validateAssignmentCreate, asyncHandler(async (req, res) => {
   let pushData = null;
 
   let assignment;
   try {
     assignment = await withTransaction(async (client) => {
-      const newAssign = await assignmentRepo.createAssignment(req.user.id, req.body, client);
+      const newAssign = await assignmentRepo.createAssignment(req.user.id, req.body, client, req.user.role);
       if (!newAssign) {
-        const err = new Error('Teacher account not found.');
+        const err = new Error('Teacher or school account not found.');
         err.statusCode = 404;
         throw err;
       }
 
-      // Auto-notify all students enrolled under this teacher inside same transaction
-      const studentsRes = await client.query('SELECT id FROM students WHERE teacher_id = $1', [req.user.id]);
+      // Auto-notify all students enrolled under this teacher (or school if admin) inside same transaction
+      const studentsRes = await client.query(
+        req.user.role === 'admin'
+          ? 'SELECT id FROM students WHERE ($1::int IS NULL OR school_id = $1)'
+          : 'SELECT id FROM students WHERE teacher_id = $1',
+        [req.user.role === 'admin' ? newAssign.school_id : req.user.id]
+      );
       if (studentsRes.rows.length > 0) {
         const dueFormatted = newAssign.due_date ? new Date(newAssign.due_date).toLocaleDateString() : 'No deadline';
         const title = `📝 New Assignment: ${newAssign.title}`;
-        const message = `Your chemistry teacher posted a new practical assignment: "${newAssign.title}". Due date: ${dueFormatted}.`;
+        const message = `Your chemistry instructor posted a new practical assignment: "${newAssign.title}". Due date: ${dueFormatted}.`;
         const studentIds = studentsRes.rows.map(s => s.id);
         await client.query(
           `INSERT INTO student_notifications (student_id, title, message, type, link)
@@ -200,43 +205,47 @@ router.post('/', authMiddleware, authMiddleware.requireRole('teacher'), validate
   return res.status(201).json({ assignment });
 }));
 
-// POST /api/assignments/:id/remind — Teacher sends due date reminder to unsubmitted students
-router.post('/:id/remind', authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
+// POST /api/assignments/:id/remind — Teacher/Admin sends due date reminder to unsubmitted students
+router.post('/:id/remind', authMiddleware, authMiddleware.requireRole(['teacher', 'admin']), asyncHandler(async (req, res) => {
   const assignmentId = req.params.id;
   const teacherId = req.user.id;
+  const isAdmin = req.user.role === 'admin';
 
   // Verify assignment ownership
-  const aRes = await pool.query('SELECT * FROM assignments WHERE id = $1 AND teacher_id = $2', [assignmentId, teacherId]);
+  const aRes = await pool.query(
+    'SELECT * FROM assignments WHERE id = $1 AND (teacher_id = $2 OR teacher_id IS NULL OR $3 = true)',
+    [assignmentId, teacherId, isAdmin]
+  );
   if (aRes.rows.length === 0) {
     return res.status(404).json({ error: 'Assignment not found or permission denied.' });
   }
   const assignment = aRes.rows[0];
 
-  // Find all students under this teacher who haven't submitted yet
+  // Find all students under this teacher (or school for admin / school-wide assignment) who haven't submitted yet
   const unsubmittedRes = await pool.query(
     `SELECT s.id, s.name, s.email
      FROM students s
-     WHERE s.teacher_id = $1
+     WHERE (${assignment.teacher_id ? 's.teacher_id = $1' : '($2 = true OR s.school_id = $3 OR $3 IS NULL)'})
        AND s.id NOT IN (
-         SELECT sub.student_id FROM assignment_submissions sub WHERE sub.assignment_id = $2
+         SELECT sub.student_id FROM assignment_submissions sub WHERE sub.assignment_id = $4
          UNION
-         SELECT ps.student_id FROM practical_sessions ps WHERE ps.assignment_id = $2
+         SELECT ps.student_id FROM practical_sessions ps WHERE ps.assignment_id = $4
          UNION
-         SELECT qs.student_id FROM qualitative_sessions qs WHERE qs.assignment_id = $2
+         SELECT qs.student_id FROM qualitative_sessions qs WHERE qs.assignment_id = $4
          UNION
-         SELECT os.student_id FROM organic_sessions os WHERE os.assignment_id = $2
+         SELECT os.student_id FROM organic_sessions os WHERE os.assignment_id = $4
          UNION
-         SELECT cs.student_id FROM composite_sessions cs WHERE cs.assignment_id = $2
+         SELECT cs.student_id FROM composite_sessions cs WHERE cs.assignment_id = $4
          UNION
-         SELECT ss.student_id FROM solubility_sessions ss WHERE ss.assignment_id = $2
+         SELECT ss.student_id FROM solubility_sessions ss WHERE ss.assignment_id = $4
          UNION
-         SELECT es.student_id FROM energy_sessions es WHERE es.assignment_id = $2
+         SELECT es.student_id FROM energy_sessions es WHERE es.assignment_id = $4
          UNION
-         SELECT rs.student_id FROM rates_sessions rs WHERE rs.assignment_id = $2
+         SELECT rs.student_id FROM rates_sessions rs WHERE rs.assignment_id = $4
          UNION
-         SELECT gs.student_id FROM gas_sessions gs WHERE gs.assignment_id = $2
+         SELECT gs.student_id FROM gas_sessions gs WHERE gs.assignment_id = $4
        )`,
-    [teacherId, assignmentId]
+    [assignment.teacher_id || teacherId, isAdmin, assignment.school_id, assignmentId]
   );
 
   const dueFormatted = assignment.due_date ? new Date(assignment.due_date).toLocaleDateString() : 'Soon';
@@ -245,7 +254,7 @@ router.post('/:id/remind', authMiddleware, authMiddleware.requireRole('teacher')
 
   if (notifiedCount > 0) {
     const title = `⏱️ Reminder: "${assignment.title}" Due Soon`;
-    const message = `Reminder from your teacher to complete your practical assignment "${assignment.title}". Due date: ${dueFormatted}.`;
+    const message = `Reminder from your chemistry instructor to complete your practical assignment "${assignment.title}". Due date: ${dueFormatted}.`;
     await pool.query(
       `INSERT INTO student_notifications (student_id, title, message, type, link)
        SELECT unnest($1::int[]), $2, $3, 'due_soon', '/student/home.html'`,
@@ -270,36 +279,36 @@ router.post('/:id/remind', authMiddleware, authMiddleware.requireRole('teacher')
 // GET /api/assignments/mine — Student's assignments (or teacher/admin preview)
 router.get('/mine', authMiddleware, asyncHandler(async (req, res) => {
   let assignments = [];
-  if (req.user.role === 'teacher') {
-    assignments = await assignmentRepo.getTeacherAssignments(req.user.id);
+  if (req.user.role === 'teacher' || req.user.role === 'admin') {
+    assignments = await assignmentRepo.getTeacherAssignments(req.user.id, req.user.role);
   } else {
     assignments = await assignmentRepo.getStudentAssignments(req.user.id);
   }
   return res.json({ assignments: assignments || [] });
 }));
 
-// GET /api/assignments/teacher — Teacher's assignments
-router.get('/teacher', authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
-  const assignments = await assignmentRepo.getTeacherAssignments(req.user.id);
+// GET /api/assignments/teacher — Teacher/Admin's assignments
+router.get('/teacher', authMiddleware, authMiddleware.requireRole(['teacher', 'admin']), asyncHandler(async (req, res) => {
+  const assignments = await assignmentRepo.getTeacherAssignments(req.user.id, req.user.role);
   return res.json({ assignments });
 }));
 
-// GET /api/assignments/submissions/all — Teacher's student submissions
-router.get('/submissions/all', authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
+// GET /api/assignments/submissions/all — Teacher/Admin's student submissions
+router.get('/submissions/all', authMiddleware, authMiddleware.requireRole(['teacher', 'admin']), asyncHandler(async (req, res) => {
   const page = parseInt(req.query.page, 10) || 1;
   const limit = parseInt(req.query.limit, 10) || 50;
-  const data = await assignmentRepo.getAllSubmissions(req.user.id, { page, limit });
+  const data = await assignmentRepo.getAllSubmissions(req.user.id, { page, limit }, req.user.role);
   return res.json(data);
 }));
 
-// POST /api/assignments/submissions/:id/mark — Teacher approves & marks submission with atomic transaction
-router.post('/submissions/:id/mark', authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
+// POST /api/assignments/submissions/:id/mark — Teacher/Admin approves & marks submission with atomic transaction
+router.post('/submissions/:id/mark', authMiddleware, authMiddleware.requireRole(['teacher', 'admin']), asyncHandler(async (req, res) => {
   const { teacherFeedback } = req.body || {};
 
   let submission;
   try {
     submission = await withTransaction(async (client) => {
-      const sub = await assignmentRepo.markSubmission(req.params.id, req.user.id, teacherFeedback, client);
+      const sub = await assignmentRepo.markSubmission(req.params.id, req.user.id, teacherFeedback, client, req.user.role);
       if (!sub) {
         const err = new Error('Submission not found or access denied.');
         err.statusCode = 404;
@@ -314,7 +323,7 @@ router.post('/submissions/:id/mark', authMiddleware, authMiddleware.requireRole(
           [
             sub.student_id,
             `🏆 Graded: Practical Feedback Released`,
-            `Your chemistry teacher has reviewed and released marks/feedback for your practical assignment.`
+            `Your chemistry instructor has reviewed and released marks/feedback for your practical assignment.`
           ]
         );
       }
@@ -331,18 +340,18 @@ router.post('/submissions/:id/mark', authMiddleware, authMiddleware.requireRole(
   return res.json({ success: true, submission });
 }));
 
-// PUT /api/assignments/:id — Edit an assignment (teacher creator)
-router.put('/:id', authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
-  const updated = await assignmentRepo.updateAssignment(req.params.id, req.user.id, req.body);
+// PUT /api/assignments/:id — Edit an assignment (teacher creator or admin)
+router.put('/:id', authMiddleware, authMiddleware.requireRole(['teacher', 'admin']), asyncHandler(async (req, res) => {
+  const updated = await assignmentRepo.updateAssignment(req.params.id, req.user.id, req.body, req.user.role);
   if (!updated) {
     return res.status(404).json({ error: 'Assignment not found or permission denied.' });
   }
   return res.json({ assignment: updated });
 }));
 
-// DELETE /api/assignments/:id — Delete an assignment (teacher creator)
-router.delete('/:id', authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
-  const deleted = await assignmentRepo.deleteAssignment(req.params.id, req.user.id);
+// DELETE /api/assignments/:id — Delete an assignment (teacher creator or admin)
+router.delete('/:id', authMiddleware, authMiddleware.requireRole(['teacher', 'admin']), asyncHandler(async (req, res) => {
+  const deleted = await assignmentRepo.deleteAssignment(req.params.id, req.user.id, req.user.role);
   if (!deleted) {
     return res.status(404).json({ error: 'Assignment not found or permission denied.' });
   }
@@ -350,8 +359,8 @@ router.delete('/:id', authMiddleware, authMiddleware.requireRole('teacher'), asy
 }));
 
 // GET /api/assignments/:id/export — Export CSV of submissions
-router.get('/:id/export', authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
-  const data = await assignmentRepo.getAssignmentExportData(req.params.id, req.user.id);
+router.get('/:id/export', authMiddleware, authMiddleware.requireRole(['teacher', 'admin']), asyncHandler(async (req, res) => {
+  const data = await assignmentRepo.getAssignmentExportData(req.params.id, req.user.id, req.user.role);
   if (!data) {
     return res.status(404).json({ error: 'Assignment not found or permission denied.' });
   }

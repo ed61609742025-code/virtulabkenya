@@ -3197,6 +3197,493 @@ let currentPage = 1;
   window.unlinkStudent = unlinkStudent;
   window.loadStudents = loadStudents;
 
+  /* ── Student Management Sub-Tabs (Roster, Attendance, Workgroups) ── */
+  let currentStudentSubTab = 'roster';
+  let attendanceRegisterData = [];
+  let currentWorkgroupsList = [];
+
+  function switchStudentSubTab(tab) {
+    currentStudentSubTab = tab;
+    const btnRoster = document.getElementById('subtabBtnRoster');
+    const btnAttendance = document.getElementById('subtabBtnAttendance');
+    const btnWorkgroups = document.getElementById('subtabBtnWorkgroups');
+
+    const viewRoster = document.getElementById('studentSubViewRoster');
+    const viewAttendance = document.getElementById('studentSubViewAttendance');
+    const viewWorkgroups = document.getElementById('studentSubViewWorkgroups');
+
+    if (btnRoster) btnRoster.className = tab === 'roster' ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline';
+    if (btnAttendance) btnAttendance.className = tab === 'attendance' ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline';
+    if (btnWorkgroups) btnWorkgroups.className = tab === 'workgroups' ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline';
+
+    if (viewRoster) viewRoster.style.display = tab === 'roster' ? 'block' : 'none';
+    if (viewAttendance) viewAttendance.style.display = tab === 'attendance' ? 'block' : 'none';
+    if (viewWorkgroups) viewWorkgroups.style.display = tab === 'workgroups' ? 'block' : 'none';
+
+    if (tab === 'attendance') {
+      const dateInput = document.getElementById('attDateInput');
+      if (dateInput && !dateInput.value) {
+        dateInput.value = new Date().toISOString().split('T')[0];
+      }
+      loadAttendanceRegister();
+    } else if (tab === 'workgroups') {
+      loadWorkgroups();
+    }
+  }
+
+  /* ── Practical Lab Attendance ── */
+  async function loadAttendanceRegister() {
+    const container = document.getElementById('attendanceContainer');
+    const dateInput = document.getElementById('attDateInput');
+    const practicalSelect = document.getElementById('attPracticalSelect');
+    const formFilter = document.getElementById('attFormFilter');
+    const badge = document.getElementById('attStatsBadge');
+
+    const date = dateInput ? dateInput.value : '';
+    const practicalType = practicalSelect ? practicalSelect.value : 'general';
+    const form = formFilter ? formFilter.value : '';
+
+    if (container) {
+      container.innerHTML = '<div class="empty" style="padding:28px;">Loading attendance records…</div>';
+    }
+
+    try {
+      const res = await Students.getAttendance({ date, practicalType, form });
+      attendanceRegisterData = res.records || [];
+
+      if (badge) {
+        const total = attendanceRegisterData.length;
+        const present = attendanceRegisterData.filter(r => r.status === 'present').length;
+        const late = attendanceRegisterData.filter(r => r.status === 'late').length;
+        const absent = attendanceRegisterData.filter(r => r.status === 'absent').length;
+        const pct = total > 0 ? Math.round(((present + late) / total) * 100) : 100;
+        badge.textContent = `Present: ${present}/${total} (${pct}%) • Late: ${late} • Absent: ${absent}`;
+      }
+
+      renderAttendanceRegisterTable();
+    } catch (err) {
+      if (container) {
+        container.innerHTML = '<div class="empty" style="padding:28px; color:var(--red-accent);">Could not load attendance: ' + escapeHtml(err.message) + '</div>';
+      }
+    }
+  }
+
+  function renderAttendanceRegisterTable() {
+    const container = document.getElementById('attendanceContainer');
+    if (!container) return;
+
+    if (!attendanceRegisterData || attendanceRegisterData.length === 0) {
+      container.innerHTML = `
+        <div class="empty" style="padding:32px 20px;">
+          <div style="font-size:1.8rem; margin-bottom:8px;">📋</div>
+          <div style="font-weight:700; color:var(--heading-color);">No students found for this class / form</div>
+          <p style="margin:4px 0 0 0; color:var(--text-muted); font-size:0.84rem;">Ensure you have students enrolled or change the form filter above.</p>
+        </div>
+      `;
+      return;
+    }
+
+    let rowsHtml = attendanceRegisterData.map((rec, idx) => {
+      const status = rec.status === 'unrecorded' ? 'present' : rec.status;
+      return `
+        <tr style="border-bottom:1px solid var(--border-color);">
+          <td style="padding:10px 14px; font-weight:700; font-size:0.86rem; color:var(--heading-color);">
+            ${escapeHtml(rec.student_name)}
+            <div style="font-size:0.75rem; font-weight:400; color:var(--text-muted);">${escapeHtml(rec.student_email)}</div>
+          </td>
+          <td style="padding:10px 14px; font-size:0.84rem;">
+            <span class="pill pill-muted" style="font-size:0.75rem;">${escapeHtml(rec.form || 'Form 4')}</span>
+          </td>
+          <td style="padding:10px 14px;">
+            <div class="status-btn-group" style="display:flex; gap:6px;">
+              <button type="button" class="btn btn-sm ${status === 'present' ? 'btn-primary' : 'btn-outline'}" 
+                onclick="setStudentAttendanceStatus(${idx}, 'present')" style="padding:4px 8px; font-size:0.75rem; ${status === 'present' ? 'background:var(--green-accent); border-color:var(--green-accent); color:#fff;' : ''}">
+                ✓ Present
+              </button>
+              <button type="button" class="btn btn-sm ${status === 'late' ? 'btn-primary' : 'btn-outline'}" 
+                onclick="setStudentAttendanceStatus(${idx}, 'late')" style="padding:4px 8px; font-size:0.75rem; ${status === 'late' ? 'background:var(--amber-accent); border-color:var(--amber-accent); color:#fff;' : ''}">
+                ⏱ Late
+              </button>
+              <button type="button" class="btn btn-sm ${status === 'absent' ? 'btn-primary' : 'btn-outline'}" 
+                onclick="setStudentAttendanceStatus(${idx}, 'absent')" style="padding:4px 8px; font-size:0.75rem; ${status === 'absent' ? 'background:var(--red-accent); border-color:var(--red-accent); color:#fff;' : ''}">
+                ✕ Absent
+              </button>
+              <button type="button" class="btn btn-sm ${status === 'excused' ? 'btn-primary' : 'btn-outline'}" 
+                onclick="setStudentAttendanceStatus(${idx}, 'excused')" style="padding:4px 8px; font-size:0.75rem; ${status === 'excused' ? 'background:#8B5CF6; border-color:#8B5CF6; color:#fff;' : ''}">
+                🛡 Excused
+              </button>
+            </div>
+          </td>
+          <td style="padding:10px 14px;">
+            <input type="text" class="form-control form-control-sm" value="${escapeHtml(rec.remarks || '')}" 
+              placeholder="e.g. Completed trial 1" 
+              oninput="attendanceRegisterData[${idx}].remarks = this.value"
+              style="font-size:0.8rem; padding:4px 8px; min-width:140px;">
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    container.innerHTML = `
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; text-align:left;">
+          <thead>
+            <tr style="background:var(--bg-card-subtle, rgba(0,0,0,0.02)); border-bottom:1px solid var(--border-color); font-size:0.8rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">
+              <th style="padding:10px 14px;">Student Name</th>
+              <th style="padding:10px 14px;">Form</th>
+              <th style="padding:10px 14px;">Attendance Status</th>
+              <th style="padding:10px 14px;">Laboratory Remarks</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsHtml}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  function setStudentAttendanceStatus(index, newStatus) {
+    if (attendanceRegisterData[index]) {
+      attendanceRegisterData[index].status = newStatus;
+      renderAttendanceRegisterTable();
+
+      const badge = document.getElementById('attStatsBadge');
+      if (badge) {
+        const total = attendanceRegisterData.length;
+        const present = attendanceRegisterData.filter(r => r.status === 'present').length;
+        const late = attendanceRegisterData.filter(r => r.status === 'late').length;
+        const absent = attendanceRegisterData.filter(r => r.status === 'absent').length;
+        const pct = total > 0 ? Math.round(((present + late) / total) * 100) : 100;
+        badge.textContent = `Present: ${present}/${total} (${pct}%) • Late: ${late} • Absent: ${absent}`;
+      }
+    }
+  }
+
+  function markAllAttendance(status) {
+    if (!attendanceRegisterData || attendanceRegisterData.length === 0) return;
+    for (const rec of attendanceRegisterData) {
+      rec.status = status;
+    }
+    renderAttendanceRegisterTable();
+    const badge = document.getElementById('attStatsBadge');
+    if (badge) {
+      const total = attendanceRegisterData.length;
+      badge.textContent = `All ${total} Marked ${status.toUpperCase()}`;
+    }
+  }
+
+  async function saveAttendanceRegister() {
+    const btn = document.getElementById('btnSaveAttendance');
+    const dateInput = document.getElementById('attDateInput');
+    const practicalSelect = document.getElementById('attPracticalSelect');
+
+    const date = dateInput ? dateInput.value : '';
+    const practicalType = practicalSelect ? practicalSelect.value : 'general';
+
+    if (!attendanceRegisterData || attendanceRegisterData.length === 0) {
+      alert('No students to save in attendance register.');
+      return;
+    }
+
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Saving…';
+    }
+
+    try {
+      const records = attendanceRegisterData.map(r => ({
+        studentId: r.student_id,
+        status: r.status === 'unrecorded' ? 'present' : r.status,
+        remarks: r.remarks || ''
+      }));
+
+      const res = await Students.saveAttendance({ date, practicalType, records });
+      alert(`✓ Practical attendance saved successfully (${res.savedCount || records.length} records updated)!`);
+    } catch (err) {
+      alert('Could not save attendance register: ' + (err.message || 'Server error'));
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = '💾 Save Register';
+      }
+    }
+  }
+
+  function exportAttendanceCSV() {
+    if (!attendanceRegisterData || attendanceRegisterData.length === 0) {
+      alert('No attendance data available to export.');
+      return;
+    }
+
+    const date = document.getElementById('attDateInput')?.value || new Date().toISOString().split('T')[0];
+    const practical = document.getElementById('attPracticalSelect')?.value || 'general';
+
+    const headers = ['Student ID', 'Student Name', 'Email', 'Form', 'Date', 'Practical Module', 'Status', 'Remarks'];
+    const rows = attendanceRegisterData.map(r => [
+      r.student_id,
+      `"${(r.student_name || '').replace(/"/g, '""')}"`,
+      `"${(r.student_email || '').replace(/"/g, '""')}"`,
+      `"${(r.form || '').replace(/"/g, '""')}"`,
+      date,
+      practical,
+      r.status === 'unrecorded' ? 'present' : r.status,
+      `"${(r.remarks || '').replace(/"/g, '""')}"`
+    ]);
+
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `VirtuLab_Attendance_${practical}_${date}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  /* ── Practical Lab Workgroups / Benches ── */
+  async function loadWorkgroups() {
+    const grid = document.getElementById('workgroupsGrid');
+    const formFilter = document.getElementById('wgFormFilter')?.value || '';
+
+    if (grid) {
+      grid.innerHTML = '<div class="empty" style="grid-column:1/-1; padding:32px;">Loading lab workgroups…</div>';
+    }
+
+    try {
+      const res = await Students.getWorkgroups({ form: formFilter });
+      currentWorkgroupsList = res.workgroups || [];
+      renderWorkgroupsGrid();
+    } catch (err) {
+      if (grid) {
+        grid.innerHTML = '<div class="empty" style="grid-column:1/-1; padding:32px; color:var(--red-accent);">Could not load workgroups: ' + escapeHtml(err.message) + '</div>';
+      }
+    }
+  }
+
+  function renderWorkgroupsGrid() {
+    const grid = document.getElementById('workgroupsGrid');
+    if (!grid) return;
+
+    if (!currentWorkgroupsList || currentWorkgroupsList.length === 0) {
+      grid.innerHTML = `
+        <div class="empty" style="grid-column:1/-1; padding:36px 20px;">
+          <div style="font-size:2rem; margin-bottom:8px;">🔬</div>
+          <div style="font-weight:700; color:var(--heading-color); font-size:1.05rem;">No lab workgroups configured yet</div>
+          <p style="margin:6px 0 16px 0; color:var(--text-muted); font-size:0.86rem; max-width:440px; margin-left:auto; margin-right:auto;">
+            Organize students into bench units to assign apparatus, track group titrations, and simulate collaborative laboratory experiments.
+          </p>
+          <div style="display:flex; justify-content:center; gap:10px;">
+            <button class="btn btn-outline" onclick="openAutoAssignModal()">⚡ Auto-Assign Benches</button>
+            <button class="btn btn-primary" onclick="openCreateWorkgroupModal()">➕ Create Workgroup</button>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    grid.innerHTML = currentWorkgroupsList.map(wg => {
+      const members = wg.members || [];
+      const memberRows = members.map(m => {
+        const roleIcon = m.role === 'Team Lead' ? '👑' : (m.role === 'Lab Technician' ? '🔬' : (m.role === 'Data Recorder' ? '📝' : '👤'));
+        return `
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px dashed var(--border-color); font-size:0.82rem;">
+            <span style="font-weight:600; color:var(--heading-color);">${escapeHtml(m.student_name)}</span>
+            <span class="pill pill-info" style="font-size:0.7rem; padding:2px 8px;">${roleIcon} ${escapeHtml(m.role || 'Member')}</span>
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <div class="workgroup-card" style="background:var(--card-bg, #fff); border:1px solid var(--border-color); border-radius:12px; padding:18px; box-shadow:0 2px 8px rgba(0,0,0,0.04); display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+              <div>
+                <h3 style="margin:0; font-size:1.02rem; font-weight:800; color:var(--heading-color);">${escapeHtml(wg.name)}</h3>
+                <span class="pill pill-muted" style="font-size:0.72rem; margin-top:4px; display:inline-block;">${escapeHtml(wg.form || 'Form 4')}</span>
+              </div>
+              <span class="badge-count" style="display:inline-block; font-size:0.75rem; font-weight:700;">${members.length} Members</span>
+            </div>
+            ${wg.description ? `<p style="font-size:0.8rem; color:var(--text-muted); margin:4px 0 12px 0;">${escapeHtml(wg.description)}</p>` : ''}
+            <div style="margin-top:10px; max-height:160px; overflow-y:auto;">
+              ${memberRows.length > 0 ? memberRows : '<div style="font-size:0.78rem; color:var(--text-muted); padding:6px 0;">No members assigned yet</div>'}
+            </div>
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:16px; padding-top:10px; border-top:1px solid var(--border-color);">
+            <button class="btn btn-sm btn-outline" onclick="openCreateWorkgroupModal(${JSON.stringify(wg).replace(/"/g, '&quot;')})">Edit</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteWorkgroup(${wg.id}, '${escapeHtml(wg.name)}')">Delete</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function openCreateWorkgroupModal(existingGroup = null) {
+    const modal = document.getElementById('modalWorkgroup');
+    const title = document.getElementById('modalWgTitle');
+    const editId = document.getElementById('wgEditId');
+    const nameInput = document.getElementById('wgNameInput');
+    const formSelect = document.getElementById('wgFormSelect');
+    const descInput = document.getElementById('wgDescInput');
+
+    if (!modal) return;
+
+    if (existingGroup) {
+      title.textContent = 'Edit Lab Workgroup';
+      editId.value = existingGroup.id;
+      nameInput.value = existingGroup.name || '';
+      formSelect.value = existingGroup.form || 'Form 4';
+      descInput.value = existingGroup.description || '';
+    } else {
+      title.textContent = 'Create Lab Workgroup';
+      editId.value = '';
+      nameInput.value = `Lab Bench ${currentWorkgroupsList.length + 1}`;
+      formSelect.value = 'Form 4';
+      descInput.value = '';
+    }
+
+    renderWgMemberSelectors(existingGroup ? (existingGroup.members || []) : []);
+    modal.style.display = 'flex';
+  }
+
+  function closeWorkgroupModal() {
+    const modal = document.getElementById('modalWorkgroup');
+    if (modal) modal.style.display = 'none';
+  }
+
+  function renderWgMemberSelectors(selectedMembers = []) {
+    const picker = document.getElementById('wgMembersPicker');
+    const formSelect = document.getElementById('wgFormSelect');
+    if (!picker) return;
+
+    const targetForm = formSelect ? formSelect.value : 'Form 4';
+    const students = (classStudentsList || []).filter(s => (s.form || '').toLowerCase() === targetForm.toLowerCase() || !targetForm);
+
+    if (students.length === 0) {
+      picker.innerHTML = '<div style="font-size:0.8rem; color:var(--text-muted); padding:8px;">No students found enrolled in ' + escapeHtml(targetForm) + '</div>';
+      return;
+    }
+
+    const selectedMap = new Map();
+    for (const sm of selectedMembers) {
+      selectedMap.set(sm.student_id || sm.studentId || sm.id, sm.role || 'Member');
+    }
+
+    picker.innerHTML = students.map(s => {
+      const isChecked = selectedMap.has(s.id);
+      const role = selectedMap.get(s.id) || 'Member';
+      return `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:4px 6px; background:var(--bg-card-subtle, rgba(0,0,0,0.02)); border-radius:6px; font-size:0.82rem;">
+          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; flex:1; margin:0;">
+            <input type="checkbox" class="wg-student-check" value="${s.id}" ${isChecked ? 'checked' : ''} onchange="toggleWgRoleSelect(this, ${s.id})">
+            <span><b>${escapeHtml(s.name)}</b> <span style="font-size:0.75rem; color:var(--text-muted);">(${escapeHtml(s.form || '')})</span></span>
+          </label>
+          <select id="wgRoleSelect_${s.id}" class="filter-select" style="padding:2px 6px; font-size:0.75rem; width:130px; ${isChecked ? '' : 'display:none;'}">
+            <option value="Team Lead" ${role === 'Team Lead' ? 'selected' : ''}>👑 Team Lead</option>
+            <option value="Lab Technician" ${role === 'Lab Technician' ? 'selected' : ''}>🔬 Lab Tech</option>
+            <option value="Data Recorder" ${role === 'Data Recorder' ? 'selected' : ''}>📝 Recorder</option>
+            <option value="Safety Officer" ${role === 'Safety Officer' ? 'selected' : ''}>🛡 Safety Officer</option>
+            <option value="Member" ${role === 'Member' ? 'selected' : ''}>👤 Member</option>
+          </select>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function toggleWgRoleSelect(checkbox, studentId) {
+    const sel = document.getElementById(`wgRoleSelect_${studentId}`);
+    if (sel) sel.style.display = checkbox.checked ? 'inline-block' : 'none';
+  }
+
+  async function saveWorkgroupModal() {
+    const editId = document.getElementById('wgEditId')?.value;
+    const name = document.getElementById('wgNameInput')?.value;
+    const form = document.getElementById('wgFormSelect')?.value;
+    const description = document.getElementById('wgDescInput')?.value;
+
+    if (!name || !name.trim()) {
+      alert('Please enter a workgroup name.');
+      return;
+    }
+
+    const checks = document.querySelectorAll('.wg-student-check:checked');
+    const members = [];
+    checks.forEach(chk => {
+      const studentId = parseInt(chk.value, 10);
+      const roleSel = document.getElementById(`wgRoleSelect_${studentId}`);
+      const role = roleSel ? roleSel.value : 'Member';
+      members.push({ studentId, role });
+    });
+
+    try {
+      if (editId) {
+        await Students.updateWorkgroup(editId, { name, form, description, members });
+        alert('✓ Workgroup updated successfully!');
+      } else {
+        await Students.createWorkgroup({ name, form, description, members });
+        alert('✓ Workgroup created successfully!');
+      }
+      closeWorkgroupModal();
+      await loadWorkgroups();
+    } catch (err) {
+      alert('Could not save workgroup: ' + (err.message || 'Server error'));
+    }
+  }
+
+  async function deleteWorkgroup(id, name) {
+    if (!confirm(`Are you sure you want to delete "${name}"? Assigned students will be released back to the general bench pool.`)) return;
+    try {
+      await Students.deleteWorkgroup(id);
+      alert('✓ Workgroup deleted successfully.');
+      await loadWorkgroups();
+    } catch (err) {
+      alert('Could not delete workgroup: ' + (err.message || 'Server error'));
+    }
+  }
+
+  function openAutoAssignModal() {
+    const modal = document.getElementById('modalAutoAssign');
+    if (modal) modal.style.display = 'flex';
+  }
+
+  function closeAutoAssignModal() {
+    const modal = document.getElementById('modalAutoAssign');
+    if (modal) modal.style.display = 'none';
+  }
+
+  async function executeAutoAssign() {
+    const form = document.getElementById('autoAssignForm')?.value || null;
+    const groupSize = document.getElementById('autoAssignSize')?.value || 4;
+    const namingPrefix = document.getElementById('autoAssignPrefix')?.value || 'Lab Bench';
+
+    try {
+      const res = await Students.autoAssignWorkgroups({ form, groupSize, namingPrefix });
+      alert(`✓ Successfully auto-assigned ${res.totalStudentsAssigned} students into ${res.groupsCreated} lab benches!`);
+      closeAutoAssignModal();
+      await loadWorkgroups();
+    } catch (err) {
+      alert('Auto-assign failed: ' + (err.message || 'Server error'));
+    }
+  }
+
+  window.switchStudentSubTab = switchStudentSubTab;
+  window.loadAttendanceRegister = loadAttendanceRegister;
+  window.renderAttendanceRegisterTable = renderAttendanceRegisterTable;
+  window.setStudentAttendanceStatus = setStudentAttendanceStatus;
+  window.markAllAttendance = markAllAttendance;
+  window.saveAttendanceRegister = saveAttendanceRegister;
+  window.exportAttendanceCSV = exportAttendanceCSV;
+  window.loadWorkgroups = loadWorkgroups;
+  window.openCreateWorkgroupModal = openCreateWorkgroupModal;
+  window.closeWorkgroupModal = closeWorkgroupModal;
+  window.renderWgMemberSelectors = renderWgMemberSelectors;
+  window.toggleWgRoleSelect = toggleWgRoleSelect;
+  window.saveWorkgroupModal = saveWorkgroupModal;
+  window.deleteWorkgroup = deleteWorkgroup;
+  window.openAutoAssignModal = openAutoAssignModal;
+  window.closeAutoAssignModal = closeAutoAssignModal;
+  window.executeAutoAssign = executeAutoAssign;
+
   /* ── Student Performance Drill-Down Modal ── */
   async function openStudentDrilldown(studentId) {
     let modal = document.getElementById('studentDrilldownModal');

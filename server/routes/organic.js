@@ -88,7 +88,7 @@ router.get('/mine', authMiddleware, authMiddleware.requireRole('student'), async
 }));
 
 // GET /api/organic/class — Teacher: fetch organic sessions for all students
-router.get('/class', authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
+router.get('/class', authMiddleware, authMiddleware.requireRole(['teacher', 'admin']), asyncHandler(async (req, res) => {
   try {
     const classSessions = await organicRepo.getClassSessions(req.user.id);
     return res.json({ sessions: classSessions || [] });

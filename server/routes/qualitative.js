@@ -127,7 +127,7 @@ router.get('/mine', authMiddleware, authMiddleware.requireRole('student'), async
 
 // GET /api/qualitative/class — Teacher class sessions
 router.get('/class', authMiddleware, asyncHandler(async (req, res) => {
-  if (req.user.role !== 'teacher') {
+  if (req.user.role !== 'teacher' && req.user.role !== 'admin') {
     return res.status(403).json({ error: 'Only teachers can access class qualitative sessions.' });
   }
 

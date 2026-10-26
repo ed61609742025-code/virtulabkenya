@@ -693,10 +693,11 @@ router.post('/change-password', authLimiter, authMiddleware, asyncHandler(async 
 }));
 
 // ── POST /api/auth/student/:id/reset-password ────────────────────
-router.post('/student/:id/reset-password', authLimiter, authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
+router.post('/student/:id/reset-password', authLimiter, authMiddleware, authMiddleware.requireRole(['teacher', 'admin']), asyncHandler(async (req, res) => {
+  const isAdmin = req.user.role === 'admin';
   const studentResult = await pool.query(
-    'SELECT id, name FROM students WHERE id = $1 AND teacher_id = $2',
-    [req.params.id, req.user.id]
+    'SELECT id, name FROM students WHERE id = $1 AND ($2 = true OR teacher_id = $3)',
+    [req.params.id, isAdmin, req.user.id]
   );
   if (studentResult.rows.length === 0) {
     return res.status(404).json({ error: 'Student not found in your class.' });

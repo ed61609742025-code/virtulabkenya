@@ -951,6 +951,41 @@ const Students = {
   },
   async unlink(id) {
     return apiRequest('POST', '/students/' + id + '/unlink');
+  },
+  async getAttendance(params = {}) {
+    const qs = new URLSearchParams();
+    if (params.date) qs.set('date', params.date);
+    if (params.practicalType) qs.set('practicalType', params.practicalType);
+    if (params.form) qs.set('form', params.form);
+    const query = qs.toString();
+    return apiRequest('GET', '/students/attendance' + (query ? '?' + query : ''));
+  },
+  async saveAttendance(payload) {
+    return apiRequest('POST', '/students/attendance', payload);
+  },
+  async getAttendanceSummary(params = {}) {
+    const qs = new URLSearchParams();
+    if (params.form) qs.set('form', params.form);
+    const query = qs.toString();
+    return apiRequest('GET', '/students/attendance/summary' + (query ? '?' + query : ''));
+  },
+  async getWorkgroups(params = {}) {
+    const qs = new URLSearchParams();
+    if (params.form) qs.set('form', params.form);
+    const query = qs.toString();
+    return apiRequest('GET', '/students/workgroups' + (query ? '?' + query : ''));
+  },
+  async createWorkgroup(payload) {
+    return apiRequest('POST', '/students/workgroups', payload);
+  },
+  async updateWorkgroup(id, payload) {
+    return apiRequest('PUT', '/students/workgroups/' + id, payload);
+  },
+  async deleteWorkgroup(id) {
+    return apiRequest('DELETE', '/students/workgroups/' + id);
+  },
+  async autoAssignWorkgroups(payload) {
+    return apiRequest('POST', '/students/workgroups/auto-assign', payload);
   }
 };
 

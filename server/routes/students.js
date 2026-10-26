@@ -2,10 +2,9 @@
 //  VirtuLab Kenya — Students Route
 // ============================================================
 //
-// GET /api/students/class — requires teacher token. Returns the
-// students linked to this teacher (students.teacher_id), for
-// display on the dashboard and as a prerequisite for teacher-
-// initiated password resets.
+// GET /api/students/class — requires teacher or admin token.
+// Returns the students linked to this teacher/institution,
+// for display on the dashboard, performance metrics, and roster management.
 
 const express = require('express');
 const bcrypt = require('bcrypt');
@@ -14,35 +13,28 @@ const { apiLimiter } = require('../middleware/rateLimiter');
 const asyncHandler = require('../utils/asyncHandler');
 const pool = require('../db/pool');
 const badgeRoutes = require('./badges');
+const studentRepo = require('../repositories/studentRepo');
 
 const router = express.Router();
 
-router.get('/class', authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
+router.get('/class', authMiddleware, authMiddleware.requireRole(['teacher', 'admin']), asyncHandler(async (req, res) => {
   try {
-    const result = await pool.query(
-      `SELECT 
-         s.id, s.name, s.email, s.form, s.status, s.created_at,
-         COUNT(p.id)::int AS total_sessions,
-         COALESCE(ROUND(AVG(CASE WHEN p.correct THEN 100.0 ELSE 0.0 END)), 0)::int AS avg_accuracy,
-         MAX(p.created_at) AS last_active
-       FROM students s
-       LEFT JOIN practical_sessions p ON p.student_id = s.id
-       WHERE s.teacher_id = $1
-       GROUP BY s.id, s.name, s.email, s.form, s.status, s.created_at
-       ORDER BY s.name ASC`,
-      [req.user.id]
-    );
-    return res.json({ students: result.rows || [] });
+    const students = await studentRepo.getClassStudents(req.user.id, req.user.role);
+    return res.json({ students: students || [] });
   } catch (err) {
     console.warn('[/api/students/class] Safe fallback:', err.message);
     try {
-      const fallbackResult = await pool.query(
-        `SELECT id, name, email, form, status, created_at, 0 AS total_sessions, 0 AS avg_accuracy, NULL AS last_active
-         FROM students
-         WHERE teacher_id = $1
-         ORDER BY name ASC`,
-        [req.user.id]
-      );
+      const isTeacher = req.user.role === 'teacher';
+      const fallbackQuery = isTeacher
+        ? `SELECT id, name, email, form, status, created_at, 0 AS total_sessions, 0 AS avg_accuracy, NULL AS last_active
+           FROM students
+           WHERE teacher_id = $1
+           ORDER BY name ASC`
+        : `SELECT id, name, email, form, status, created_at, 0 AS total_sessions, 0 AS avg_accuracy, NULL AS last_active
+           FROM students
+           ORDER BY name ASC`;
+      const fallbackParams = isTeacher ? [req.user.id] : [];
+      const fallbackResult = await pool.query(fallbackQuery, fallbackParams);
       return res.json({ students: fallbackResult.rows || [] });
     } catch (e2) {
       return res.json({ students: [] });
@@ -169,9 +161,78 @@ router.post('/link-teacher', apiLimiter, authMiddleware, authMiddleware.requireR
   });
 }));
 
-// POST /api/students/bulk-import — Bulk register students from CSV data (Teacher only)
-router.post('/bulk-import', apiLimiter, authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
-  const teacherId = req.user.id;
+// ── Practical Lab Attendance Endpoints ─────────────────────────
+
+// GET /api/students/attendance — Fetch attendance register for a specific date and practical type
+router.get('/attendance', authMiddleware, authMiddleware.requireRole(['teacher', 'admin']), asyncHandler(async (req, res) => {
+  const { date, practicalType, form } = req.query;
+  const result = await studentRepo.getAttendance(req.user.id, req.user.role, { date, practicalType, form });
+  return res.json({ success: true, ...result });
+}));
+
+// POST /api/students/attendance — Batch save or update attendance records
+router.post('/attendance', authMiddleware, authMiddleware.requireRole(['teacher', 'admin']), asyncHandler(async (req, res) => {
+  const { date, practicalType, records } = req.body || {};
+  if (!Array.isArray(records)) {
+    return res.status(400).json({ error: 'Please provide an array of attendance records.' });
+  }
+  const result = await studentRepo.saveAttendanceBatch(req.user.id, req.user.role, { date, practicalType, records });
+  return res.json(result);
+}));
+
+// GET /api/students/attendance/summary — Fetch attendance percentage & statistics
+router.get('/attendance/summary', authMiddleware, authMiddleware.requireRole(['teacher', 'admin']), asyncHandler(async (req, res) => {
+  const { form } = req.query;
+  const summary = await studentRepo.getAttendanceSummary(req.user.id, req.user.role, { form });
+  return res.json({ success: true, ...summary });
+}));
+
+// ── Practical Lab Workgroups / Benches Endpoints ───────────────
+
+// GET /api/students/workgroups — Fetch all lab workgroups with member students
+router.get('/workgroups', authMiddleware, authMiddleware.requireRole(['teacher', 'admin']), asyncHandler(async (req, res) => {
+  const { form } = req.query;
+  const workgroups = await studentRepo.getWorkgroups(req.user.id, req.user.role, { form });
+  return res.json({ success: true, workgroups: workgroups || [] });
+}));
+
+// POST /api/students/workgroups — Create a new workgroup
+router.post('/workgroups', authMiddleware, authMiddleware.requireRole(['teacher', 'admin']), asyncHandler(async (req, res) => {
+  const { name, description, form, members } = req.body || {};
+  if (!name || !name.trim()) {
+    return res.status(400).json({ error: 'Workgroup name is required.' });
+  }
+  const group = await studentRepo.createWorkgroup(req.user.id, req.user.role, { name, description, form, members });
+  return res.status(201).json({ success: true, workgroup: group });
+}));
+
+// PUT /api/students/workgroups/:id — Update a workgroup
+router.put('/workgroups/:id', authMiddleware, authMiddleware.requireRole(['teacher', 'admin']), asyncHandler(async (req, res) => {
+  const updated = await studentRepo.updateWorkgroup(req.params.id, req.user.id, req.user.role, req.body || {});
+  if (!updated) {
+    return res.status(404).json({ error: 'Workgroup not found or permission denied.' });
+  }
+  return res.json({ success: true, workgroup: updated });
+}));
+
+// DELETE /api/students/workgroups/:id — Delete a workgroup
+router.delete('/workgroups/:id', authMiddleware, authMiddleware.requireRole(['teacher', 'admin']), asyncHandler(async (req, res) => {
+  const deleted = await studentRepo.deleteWorkgroup(req.params.id, req.user.id, req.user.role);
+  if (!deleted) {
+    return res.status(404).json({ error: 'Workgroup not found or permission denied.' });
+  }
+  return res.json({ success: true, message: 'Workgroup deleted successfully.' });
+}));
+
+// POST /api/students/workgroups/auto-assign — Auto-distribute students into benches
+router.post('/workgroups/auto-assign', authMiddleware, authMiddleware.requireRole(['teacher', 'admin']), asyncHandler(async (req, res) => {
+  const { groupSize, form, namingPrefix } = req.body || {};
+  const result = await studentRepo.autoAssignWorkgroups(req.user.id, req.user.role, { groupSize, form, namingPrefix });
+  return res.json({ success: true, ...result });
+}));
+
+// POST /api/students/bulk-import — Bulk register students from CSV data (Teacher & Admin)
+router.post('/bulk-import', apiLimiter, authMiddleware, authMiddleware.requireRole(['teacher', 'admin']), asyncHandler(async (req, res) => {
   const { students, defaultForm, defaultPasswordOverride } = req.body;
 
   if (!Array.isArray(students) || students.length === 0) {
@@ -182,13 +243,23 @@ router.post('/bulk-import', apiLimiter, authMiddleware, authMiddleware.requireRo
     return res.status(400).json({ error: 'Bulk import is limited to a maximum of 100 students per batch.' });
   }
 
-  // Get teacher's school_id
-  const teacherRes = await pool.query(`SELECT school_id, name, teacher_code FROM teachers WHERE id = $1`, [teacherId]);
-  if (teacherRes.rows.length === 0) {
-    return res.status(404).json({ error: 'Teacher profile not found.' });
+  const isAdmin = req.user.role === 'admin';
+  let teacherId = null;
+  let schoolId = null;
+  let teacherCode = 'INSTITUTION';
+
+  if (isAdmin) {
+    const schoolRes = await pool.query('SELECT id FROM schools LIMIT 1');
+    schoolId = schoolRes.rows[0]?.id || null;
+  } else {
+    const teacherRes = await pool.query(`SELECT school_id, name, teacher_code FROM teachers WHERE id = $1`, [req.user.id]);
+    if (teacherRes.rows.length === 0) {
+      return res.status(404).json({ error: 'Teacher profile not found.' });
+    }
+    schoolId = teacherRes.rows[0].school_id;
+    teacherId = req.user.id;
+    teacherCode = teacherRes.rows[0].teacher_code;
   }
-  const schoolId = teacherRes.rows[0].school_id;
-  const teacherCode = teacherRes.rows[0].teacher_code;
 
   function normalizeForm(f, fallback = 'Form 4') {
     if (!f || typeof f !== 'string') return fallback;
@@ -349,9 +420,10 @@ router.post('/bulk-import', apiLimiter, authMiddleware, authMiddleware.requireRo
   });
 }));
 
-// POST /api/students/:id/unlink — Unlink student from teacher class
-router.post('/:id/unlink', authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
+// POST /api/students/:id/unlink — Unlink student from teacher class (Teacher & Admin)
+router.post('/:id/unlink', authMiddleware, authMiddleware.requireRole(['teacher', 'admin']), asyncHandler(async (req, res) => {
   const teacherId = req.user.id;
+  const isAdmin = req.user.role === 'admin';
   const studentId = parseInt(req.params.id, 10);
 
   if (isNaN(studentId)) {
@@ -361,9 +433,9 @@ router.post('/:id/unlink', authMiddleware, authMiddleware.requireRole('teacher')
   const result = await pool.query(
     `UPDATE students
      SET teacher_id = NULL
-     WHERE id = $1 AND teacher_id = $2
+     WHERE id = $1 AND ($2 = true OR teacher_id = $3)
      RETURNING id, name, email`,
-    [studentId, teacherId]
+    [studentId, isAdmin, teacherId]
   );
 
   if (result.rows.length === 0) {
@@ -378,116 +450,119 @@ router.post('/:id/unlink', authMiddleware, authMiddleware.requireRole('teacher')
 }));
 
 // GET /api/students/:id/drilldown — detailed performance profile for a specific student
-router.get('/:id/drilldown', authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
+router.get('/:id/drilldown', authMiddleware, authMiddleware.requireRole(['teacher', 'admin']), asyncHandler(async (req, res) => {
   const studentId = req.params.id;
+  const isAdmin = req.user.role === 'admin';
 
-    // Verify student belongs to this teacher
-    const studentResult = await pool.query(
-      `SELECT id, name, email, form, created_at FROM students WHERE id = $1 AND teacher_id = $2`,
-      [studentId, req.user.id]
-    );
+  // Verify student belongs to this teacher or user is admin
+  const studentResult = await pool.query(
+    `SELECT id, name, email, form, created_at 
+     FROM students 
+     WHERE id = $1 AND ($2 = true OR teacher_id = $3 OR teacher_id IS NULL)`,
+    [studentId, isAdmin, req.user.id]
+  );
 
-    if (studentResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Student not found in your class.' });
-    }
-    const student = studentResult.rows[0];
+  if (studentResult.rows.length === 0) {
+    return res.status(404).json({ error: 'Student not found in your class.' });
+  }
+  const student = studentResult.rows[0];
 
-    // Fetch all module practical sessions concurrently for high performance
-    const [
-      titrationResult,
-      qualitativeResult,
-      organicResult,
-      solubilityResult,
-      compositeResult,
-      energyResult,
-      ratesResult,
-      gasResult
-    ] = await Promise.all([
-      pool.query(`SELECT * FROM practical_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`, [studentId]),
-      pool.query(`SELECT * FROM qualitative_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`, [studentId]),
-      pool.query(`SELECT * FROM organic_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`, [studentId]),
-      pool.query(`SELECT * FROM solubility_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`, [studentId]),
-      pool.query(`SELECT * FROM composite_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`, [studentId]),
-      pool.query(`SELECT * FROM energy_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`, [studentId]),
-      pool.query(`SELECT * FROM rates_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`, [studentId]),
-      pool.query(`SELECT * FROM gas_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`, [studentId])
-    ]);
+  // Fetch all module practical sessions concurrently for high performance
+  const [
+    titrationResult,
+    qualitativeResult,
+    organicResult,
+    solubilityResult,
+    compositeResult,
+    energyResult,
+    ratesResult,
+    gasResult
+  ] = await Promise.all([
+    pool.query(`SELECT * FROM practical_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`, [studentId]),
+    pool.query(`SELECT * FROM qualitative_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`, [studentId]),
+    pool.query(`SELECT * FROM organic_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`, [studentId]),
+    pool.query(`SELECT * FROM solubility_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`, [studentId]),
+    pool.query(`SELECT * FROM composite_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`, [studentId]),
+    pool.query(`SELECT * FROM energy_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`, [studentId]),
+    pool.query(`SELECT * FROM rates_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`, [studentId]),
+    pool.query(`SELECT * FROM gas_sessions WHERE student_id = $1 ORDER BY created_at DESC LIMIT 50`, [studentId])
+  ]);
 
-    const titrationSessions = titrationResult.rows;
-    const qualitativeSessions = qualitativeResult.rows;
-    const organicSessions = organicResult.rows;
-    const solubilitySessions = solubilityResult.rows;
-    const compositeSessions = compositeResult.rows;
-    const energySessions = energyResult.rows;
-    const ratesSessions = ratesResult.rows;
-    const gasSessions = gasResult.rows;
+  const titrationSessions = titrationResult.rows;
+  const qualitativeSessions = qualitativeResult.rows;
+  const organicSessions = organicResult.rows;
+  const solubilitySessions = solubilityResult.rows;
+  const compositeSessions = compositeResult.rows;
+  const energySessions = energyResult.rows;
+  const ratesSessions = ratesResult.rows;
+  const gasSessions = gasResult.rows;
 
-    // Compute badges dynamically
-    const { badges } = badgeRoutes.computeBadges ? badgeRoutes.computeBadges(titrationSessions) : { badges: [] };
-    const unlockedBadges = badges.filter(b => b.unlocked).map(b => ({
-      badge_key: b.key,
-      badge_title: b.name,
-      icon: b.icon,
-      description: b.description
-    }));
+  // Compute badges dynamically
+  const { badges } = badgeRoutes.computeBadges ? badgeRoutes.computeBadges(titrationSessions) : { badges: [] };
+  const unlockedBadges = badges.filter(b => b.unlocked).map(b => ({
+    badge_key: b.key,
+    badge_title: b.name,
+    icon: b.icon,
+    description: b.description
+  }));
 
-    const totalTitration = titrationSessions.length;
-    const correctTitration = titrationSessions.filter(s => s.correct).length;
+  const totalTitration = titrationSessions.length;
+  const correctTitration = titrationSessions.filter(s => s.correct).length;
 
-    const totalQualitative = qualitativeSessions.length;
-    const correctQualitative = qualitativeSessions.filter(s => s.correct).length;
+  const totalQualitative = qualitativeSessions.length;
+  const correctQualitative = qualitativeSessions.filter(s => s.correct).length;
 
-    const totalOrganic = organicSessions.length;
-    const correctOrganic = organicSessions.filter(s => s.correct || s.functional_group_correct || s.score_pct >= 60).length;
+  const totalOrganic = organicSessions.length;
+  const correctOrganic = organicSessions.filter(s => s.correct || s.functional_group_correct || s.score_pct >= 60).length;
 
-    const totalSolubility = solubilitySessions.length;
-    const correctSolubility = solubilitySessions.filter(s => parseFloat(s.total_score || 0) >= 3.0).length;
+  const totalSolubility = solubilitySessions.length;
+  const correctSolubility = solubilitySessions.filter(s => parseFloat(s.total_score || 0) >= 3.0).length;
 
-    const totalEnergy = energySessions.length;
-    const correctEnergy = energySessions.filter(s => parseFloat(s.total_score || 0) >= 8.0).length;
+  const totalEnergy = energySessions.length;
+  const correctEnergy = energySessions.filter(s => parseFloat(s.total_score || 0) >= 8.0).length;
 
-    const totalRates = ratesSessions.length;
-    const correctRates = ratesSessions.filter(s => parseFloat(s.total_score || 0) >= 8.0).length;
+  const totalRates = ratesSessions.length;
+  const correctRates = ratesSessions.filter(s => parseFloat(s.total_score || 0) >= 8.0).length;
 
-    const totalComposite = compositeSessions.length;
-    const correctComposite = compositeSessions.filter(s => parseFloat(s.total_score || 0) >= 20.0).length;
+  const totalComposite = compositeSessions.length;
+  const correctComposite = compositeSessions.filter(s => parseFloat(s.total_score || 0) >= 20.0).length;
 
-    const totalGas = gasSessions.length;
-    const correctGas = gasSessions.filter(s => s.correct || parseFloat(s.total_score || 0) >= 6.0).length;
+  const totalGas = gasSessions.length;
+  const correctGas = gasSessions.filter(s => s.correct || parseFloat(s.total_score || 0) >= 6.0).length;
 
-    const totalSessions = totalTitration + totalQualitative + totalOrganic + totalSolubility + totalEnergy + totalRates + totalComposite + totalGas;
-    const totalCorrect = correctTitration + correctQualitative + correctOrganic + correctSolubility + correctEnergy + correctRates + correctComposite + correctGas;
-    const overallAccuracy = totalSessions > 0 ? Math.round((totalCorrect / totalSessions) * 100) : 0;
-    const totalDuration = titrationSessions.reduce((acc, s) => acc + (s.duration_seconds || 0), 0) +
-                          compositeSessions.reduce((acc, s) => acc + (s.duration_seconds || 0), 0) +
-                          gasSessions.reduce((acc, s) => acc + (s.duration_seconds || 0), 0);
+  const totalSessions = totalTitration + totalQualitative + totalOrganic + totalSolubility + totalEnergy + totalRates + totalComposite + totalGas;
+  const totalCorrect = correctTitration + correctQualitative + correctOrganic + correctSolubility + correctEnergy + correctRates + correctComposite + correctGas;
+  const overallAccuracy = totalSessions > 0 ? Math.round((totalCorrect / totalSessions) * 100) : 0;
+  const totalDuration = titrationSessions.reduce((acc, s) => acc + (s.duration_seconds || 0), 0) +
+                        compositeSessions.reduce((acc, s) => acc + (s.duration_seconds || 0), 0) +
+                        gasSessions.reduce((acc, s) => acc + (s.duration_seconds || 0), 0);
 
-    return res.json({
-      student,
-      metrics: {
-        totalSessions,
-        totalTitration,
-        totalQualitative,
-        totalOrganic,
-        totalSolubility,
-        totalEnergy,
-        totalRates,
-        totalComposite,
-        totalGas,
-        overallAccuracy,
-        totalDurationSeconds: totalDuration,
-        badgesCount: unlockedBadges.length
-      },
-      titrationSessions,
-      qualitativeSessions,
-      organicSessions,
-      solubilitySessions,
-      energySessions,
-      ratesSessions,
-      compositeSessions,
-      gasSessions,
-      badges: unlockedBadges
-    });
+  return res.json({
+    student,
+    metrics: {
+      totalSessions,
+      totalTitration,
+      totalQualitative,
+      totalOrganic,
+      totalSolubility,
+      totalEnergy,
+      totalRates,
+      totalComposite,
+      totalGas,
+      overallAccuracy,
+      totalDurationSeconds: totalDuration,
+      badgesCount: unlockedBadges.length
+    },
+    titrationSessions,
+    qualitativeSessions,
+    organicSessions,
+    solubilitySessions,
+    energySessions,
+    ratesSessions,
+    compositeSessions,
+    gasSessions,
+    badges: unlockedBadges
+  });
 }));
 
 module.exports = router;

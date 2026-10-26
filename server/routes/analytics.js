@@ -10,7 +10,7 @@ const analyticsRepo = require('../repositories/analyticsRepo');
 const router = express.Router();
 
 // GET /api/analytics/class — Teacher class analytics dashboard data
-router.get('/class', authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
+router.get('/class', authMiddleware, authMiddleware.requireRole(['teacher', 'admin']), asyncHandler(async (req, res) => {
   try {
     const analyticsData = await analyticsRepo.getClassAnalytics(req.user.id);
     return res.json(analyticsData);

@@ -82,7 +82,7 @@ router.get('/mine', authMiddleware, authMiddleware.requireRole('student'), async
 }));
 
 // GET /api/sessions/class — Teacher: fetch class session history
-router.get('/class', authMiddleware, authMiddleware.requireRole('teacher'), asyncHandler(async (req, res) => {
+router.get('/class', authMiddleware, authMiddleware.requireRole(['teacher', 'admin']), asyncHandler(async (req, res) => {
   const { page, limit } = parsePagination(req.query);
   try {
     const result = await sessionRepo.getClassSessions(req.user.id, {

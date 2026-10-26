@@ -44,7 +44,7 @@ module.exports = {
     ]
   },
   gemini: {
-    defaultModel: process.env.GEMINI_MODEL || 'gemini-3.8-flash',
+    defaultModel: process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite',
     maxOutputTokens: parseInt(process.env.GEMINI_MAX_OUTPUT_TOKENS, 10) || 8192,
     temperature: 0.6,
     examAssistantMaxTokens: parseInt(process.env.GEMINI_EXAM_MAX_TOKENS, 10) || 8192

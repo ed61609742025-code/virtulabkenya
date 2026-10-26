@@ -7,7 +7,7 @@ const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 const config = require('../config');
 
-const DEFAULT_MODEL = config.gemini?.defaultModel || 'gemini-3.8-flash';
+const DEFAULT_MODEL = config.gemini?.defaultModel || 'gemini-3.5-flash-lite';
 const EXAM_MAX_TOKENS = config.gemini?.examAssistantMaxTokens || 8192;
 
 /**
@@ -930,9 +930,9 @@ async function callGeminiAssistant({ prompt, files = [], fileData = null, mimeTy
 
   const primaryModel = (process.env.GEMINI_MODEL || DEFAULT_MODEL).replace(/^models\//, '');
   const candidateModels = Array.from(new Set([
+    'gemini-3.5-flash-lite',
     primaryModel,
     'gemini-3.8-flash',
-    'gemini-3.5-flash-lite',
     'gemini-3.5-flash'
   ]));
 
@@ -975,13 +975,24 @@ async function callGeminiAssistant({ prompt, files = [], fileData = null, mimeTy
     });
   }
 
-  // Timeout configurable via GEMINI_TIMEOUT_MS, default 75s for multimodal PDF exam paper synthesis
-  const timeoutMs = parseInt(process.env.GEMINI_TIMEOUT_MS, 10) || 75000;
+  // Timeout per candidate model, default 30s to keep web synthesis snappy and prevent hanging
+  const timeoutMs = parseInt(process.env.GEMINI_TIMEOUT_MS, 10) || 30000;
   let lastError = null;
 
   for (const model of candidateModels) {
     try {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
+      const genConfig = {
+        maxOutputTokens: Math.min(maxTokens || EXAM_MAX_TOKENS, 8192),
+        temperature: 0.2,
+        responseMimeType: 'application/json'
+      };
+
+      // Explicitly disable extended reasoning latency on thinking-capable models
+      if (model.includes('3.8') || model.includes('2.5') || model.includes('thinking')) {
+        genConfig.thinkingConfig = { thinkingBudget: 0 };
+      }
+
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -991,11 +1002,7 @@ async function callGeminiAssistant({ prompt, files = [], fileData = null, mimeTy
         signal: AbortSignal.timeout(timeoutMs),
         body: JSON.stringify({
           contents: [{ parts }],
-          generationConfig: {
-            maxOutputTokens: Math.min(maxTokens || EXAM_MAX_TOKENS, 8192),
-            temperature: 0.2,
-            responseMimeType: 'application/json'
-          }
+          generationConfig: genConfig
         })
       });
 
@@ -1031,7 +1038,9 @@ async function callGeminiAssistant({ prompt, files = [], fileData = null, mimeTy
       return text;
     } catch (err) {
       if (err.name === 'AbortError' || err.name === 'TimeoutError') {
-        throw new Error(`AI request timed out after ${timeoutMs}ms.`);
+        console.warn(`[Gemini Exam Assistant Warning] Model ${model} timed out after ${timeoutMs}ms, trying next model...`);
+        lastError = new Error(`AI request timed out after ${timeoutMs}ms.`);
+        continue;
       }
       lastError = err;
       console.warn(`[Gemini Exam Assistant Warning] Model ${model} failed:`, err.message);

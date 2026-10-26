@@ -243,6 +243,472 @@ const FALLBACK_PRESETS = {
 - **Solution B:** 0.100 M NaOH (prepared by dissolving 4.00 g NaOH pellets in 1000 cm³ distilled water).
 - **Solid Y:** 2.0 g Lead(II) Nitrate per student.
 - **Liquid Z:** 10 cm³ Ethanol (95% methylated spirit or absolute alcohol) per student.`
+  },
+
+  energy: {
+    title: 'KCSE Chemistry Practical Mock — Thermochemistry & Enthalpy of Neutralization',
+    formLevel: 'Form 3',
+    titrationType: 'energy',
+    instructions: 'You are provided with 1.0 M Hydrochloric acid (Solution A), 1.0 M Sodium hydroxide (Solution B), and Solid C. Determine the molar enthalpy of neutralization and carry out qualitative tests on Solid C.',
+    durationMinutes: 90,
+    examConfig: {
+      presetKey: 'energy_neutralization',
+      q1: {
+        simulationType: 'energy',
+        calcType: 'molar_enthalpy_neutralization',
+        solutionA: '1.0 M Hydrochloric Acid (HCl)',
+        solutionB: '1.0 M Sodium Hydroxide (NaOH)',
+        volumeA: 50.0,
+        volumeB: 50.0,
+        initialTempA: 22.0,
+        initialTempB: 22.0,
+        meanInitialTemp: 22.0,
+        maxTemp: 28.5,
+        deltaT: 6.5,
+        heatEvolvedJoules: 2730,
+        molesWater: 0.050,
+        molarEnthalpyKj: -54.6,
+        marks: 15,
+        instructions: 'Measure 50 cm³ of Solution A into a plastic cup and record its initial temperature T₁. Measure 50 cm³ of Solution B into a clean measuring cylinder and record its initial temperature T₂. Add Solution B to Solution A, stir with thermometer and record highest temperature T₃.'
+      },
+      q2: {
+        sampleName: 'Solid C',
+        sampleDesc: 'A green inorganic basic carbonate powder.',
+        trueSaltKey: 'CuCO3',
+        trueSaltName: 'Copper(II) Carbonate — CuCO₃',
+        trueCation: 'Cu2+',
+        trueAnion: 'CO32-',
+        marks: 15,
+        tests: [
+          {
+            id: 'c1_heat',
+            prompt: '(i) Heat a half-spatula of Solid C strongly in a dry test tube and test the gas evolved with calcium hydroxide solution (lime water).',
+            correctObs: 'Green powder turns into a black residue; colorless odorless gas evolved forms a white precipitate in lime water.',
+            correctInf: 'CO₃²⁻ present / thermal decomposition to black copper(II) oxide (CuO); Cu²⁺ present.'
+          },
+          {
+            id: 'c2_acid',
+            prompt: '(ii) Add 5 cm³ of 2M dilute HNO₃ to the black residue after cooling.',
+            correctObs: 'Black residue dissolves with effervescence to form a clear sky-blue solution.',
+            correctInf: 'Cu²⁺ confirmed present (formation of Cu(NO₃)₂ solution).'
+          },
+          {
+            id: 'c3_naoh',
+            prompt: '(iii) To 2 cm³ of the blue solution, add 2M NaOH dropwise until in excess.',
+            correctObs: 'Pale blue precipitate formed, insoluble in excess sodium hydroxide.',
+            correctInf: 'Cu²⁺ confirmed present (Cu(OH)₂ formed, insoluble in excess NaOH).'
+          },
+          {
+            id: 'c4_nh3',
+            prompt: '(iv) To 2 cm³ of the blue solution, add 2M aqueous NH₃ dropwise until in excess.',
+            correctObs: 'Pale blue precipitate formed, dissolves in excess aqueous ammonia to give a deep royal blue solution.',
+            correctInf: 'Cu²⁺ confirmed (formation of tetraamminecopper(II) complex [Cu(NH₃)₄]²⁺).'
+          }
+        ]
+      }
+    },
+    markingScheme: `### Official KNEC Paper 3 Marking Scheme & Scoring Rubric
+- **Question 1: Thermochemistry (15 Marks)**
+  - Table of temperature readings: 5.0 Marks (CT: Complete table 1M, D: Temperatures to 1 d.p. ending in .0 or .5 1M, A: Accuracy of T₃ within ±1.0°C 1M, Mean T₀ calculation 1M, ΔT calculation 1M).
+  - Temperature rise ΔT: 1.0 Mark (ΔT = T₃ - T₀ = 28.5 - 22.0 = 6.5°C).
+  - Heat evolved Q = mcΔT: 3.0 Marks (Substitution: 100 g × 4.2 J/g/K × 6.5 K = 2,730 J / 2.73 kJ).
+  - Moles of water formed: 2.0 Marks (Moles = (1.0 × 50)/1000 = 0.050 mol).
+  - Molar enthalpy of neutralization: 4.0 Marks (ΔH = -(2.73 kJ / 0.050 mol) = -54.6 kJ/mol. Deduct 1/2 mark if negative sign is omitted; deduct 1/2 mark for incorrect units).
+- **Question 2: Qualitative Basic Carbonate (15 Marks)**
+  - Action of heat: 4.0 Marks (2 mk Obs: green solid turns black, lime water milky; 2 mk Inf: CO₃²⁻ present).
+  - Addition of dilute HNO₃: 3.0 Marks (1 mk Obs: black solid dissolves to blue solution; 2 mk Inf: Cu²⁺ present).
+  - NaOH dropwise & excess: 4.0 Marks (2 mk Obs: pale blue ppt insoluble; 2 mk Inf: Cu²⁺ confirmed).
+  - Aqueous NH₃ dropwise & excess: 4.0 Marks (2 mk Obs: pale blue ppt soluble to deep blue solution; 2 mk Inf: Cu²⁺ confirmed).`,
+    confidentialPrepGuide: `### Confidential Instructions to School Science Laboratory Technicians
+**1. Thermochemistry Reagents per Candidate:**
+- 100 cm³ of 1.0 M Hydrochloric acid (HCl) labeled **Solution A**.
+- 100 cm³ of 1.0 M Sodium hydroxide (NaOH) labeled **Solution B**.
+- 1 × Plastic beaker / calorimeter (150-250 cm³).
+- 1 × Thermometer (0–100°C graduated to 0.5°C or 1.0°C).
+- 1 × 50 cm³ or 100 cm³ measuring cylinder.
+**2. Qualitative Reagents per Candidate:**
+- About 2.0 g of Copper(II) carbonate in a stoppered tube labeled **Solid C**.
+- Access to: 2M dilute HNO₃, 2M NaOH, 2M aqueous NH₃, lime water in a dropper bottle, Bunsen burner, test tubes (5), and test tube holder.`
+  },
+
+  rates: {
+    title: 'KCSE Chemistry Practical Mock — Reaction Kinetics (Disappearing Cross Practical)',
+    formLevel: 'Form 3',
+    titrationType: 'rates',
+    instructions: 'You are provided with 0.20 M Sodium thiosulfate (Solution A), 2.0 M Hydrochloric acid (Solution B), and Solid D. You are required to investigate the effect of concentration on reaction rate and identify Solid D.',
+    durationMinutes: 90,
+    examConfig: {
+      presetKey: 'rates_disappearing_cross',
+      q1: {
+        simulationType: 'rates',
+        reactionType: 'disappearing_cross',
+        solutionA: '0.20 M Sodium Thiosulfate (Na₂S₂O₃)',
+        solutionB: '2.0 M Hydrochloric Acid (HCl)',
+        dataPoints: [
+          { exp: 1, volThio: 50, volWater: 0, timeSec: 18.0, rate: 0.056 },
+          { exp: 2, volThio: 40, volWater: 10, timeSec: 23.0, rate: 0.043 },
+          { exp: 3, volThio: 30, volWater: 20, timeSec: 32.0, rate: 0.031 },
+          { exp: 4, volThio: 20, volWater: 30, timeSec: 49.0, rate: 0.020 },
+          { exp: 5, volThio: 10, volWater: 40, timeSec: 102.0, rate: 0.010 }
+        ],
+        marks: 15,
+        instructions: 'Measure the indicated volumes of Solution A and water into a 100 cm³ beaker placed on top of a white card marked with a black cross. Add 10 cm³ of Solution B, swirl and start the stopwatch. Record the time taken for the cross to be completely obscured.'
+      },
+      q2: {
+        sampleName: 'Solid D',
+        sampleDesc: 'A pure white crystalline inorganic chloride salt.',
+        trueSaltKey: 'BaCl2',
+        trueSaltName: 'Barium Chloride — BaCl₂',
+        trueCation: 'Ba2+',
+        trueAnion: 'Cl-',
+        marks: 15,
+        tests: [
+          {
+            id: 'd1_sol',
+            prompt: '(i) Describe the appearance of Solid D and dissolve in about 10 cm³ of distilled water.',
+            correctObs: 'White crystalline solid dissolves completely to give a clear colorless solution.',
+            correctInf: 'Soluble salt; absence of colored transition metal ions.'
+          },
+          {
+            id: 'd2_flame',
+            prompt: '(ii) Clean a glass rod or nichrome wire with conc. HCl and perform a flame test on the solution.',
+            correctObs: 'Pale apple-green persistent flame coloration observed.',
+            correctInf: 'Ba²⁺ confirmed present.'
+          },
+          {
+            id: 'd3_sulfate',
+            prompt: '(iii) To 2 cm³ of solution D, add 3 drops of dilute H₂SO₄ or Na₂SO₄ solution.',
+            correctObs: 'Dense white precipitate formed, insoluble in dilute HCl or HNO₃.',
+            correctInf: 'Ba²⁺ confirmed (formation of insoluble BaSO₄).'
+          },
+          {
+            id: 'd4_chloride',
+            prompt: '(iv) To 2 cm³ of solution D, add 3 drops of dilute HNO₃ followed by 3 drops of AgNO₃ solution.',
+            correctObs: 'White precipitate formed, soluble in excess aqueous ammonia.',
+            correctInf: 'Cl⁻ confirmed present (formation of AgCl).'
+          }
+        ]
+      }
+    },
+    markingScheme: `### Official KNEC Paper 3 Marking Scheme & Scoring Rubric
+- **Question 1: Reaction Rates Table & Graph (15 Marks)**
+  - Table of results (5 Marks): CT: Complete table 1M, D: Time in whole seconds or to 1 d.p. 1M, A: Trend accuracy (time increases as thiosulfate volume decreases) 1M, Reciprocal 1/t computed to 3 decimal places 2M.
+  - Graph of 1/t against Volume of Na₂S₂O₃ (5 Marks):
+    - Scale (S - 1 Mark): Uniform scale on both axes covering at least 50% of the grid.
+    - Axes (A - 1 Mark): Correctly labeled with quantity and units [Volume (cm³), 1/t (s⁻¹)].
+    - Plotting (P - 2 Marks): All 5 points accurately plotted within 1/2 of a small square.
+    - Curve / Line (C - 1 Mark): Smooth straight line passing through the origin (0,0).
+  - Rate deductions (5 Marks):
+    - Explaining trend (2 Marks): Rate of reaction is directly proportional to concentration of sodium thiosulfate.
+    - Reading from graph (2 Marks): Value read correctly from candidate's graph for specified volume.
+    - Time calculation (1 Mark): Reciprocal t = 1 / (rate from graph).
+- **Question 2: Qualitative Salt Analysis (15 Marks)**
+  - Physical appearance & solubility: 2.0 Marks (1 mk Obs, 1 mk Inf).
+  - Flame test: 4.0 Marks (2 mk Obs: apple-green flame; 2 mk Inf: Ba²⁺ confirmed).
+  - Dilute H₂SO₄ test: 4.0 Marks (2 mk Obs: dense white ppt; 2 mk Inf: Ba²⁺ confirmed).
+  - AgNO₃ + HNO₃ test: 5.0 Marks (2 mk Obs: white ppt; 3 mk Inf: Cl⁻ confirmed).`,
+    confidentialPrepGuide: `### Confidential Instructions to School Science Laboratory Technicians
+**1. Reaction Rates Reagents per Candidate:**
+- 200 cm³ of 0.20 M Sodium thiosulfate (Na₂S₂O₃) labeled **Solution A** (prepared by dissolving 31.6 g of Na₂S₂O₃·5H₂O in 1 dm³ of distilled water).
+- 100 cm³ of 2.0 M Hydrochloric acid (HCl) labeled **Solution B**.
+- 1 × White card or paper marked with a distinct black cross (X) with 0.5 mm ballpoint or marker pen.
+- 1 × 100 cm³ glass beaker (must have clean, clear, unetched flat bottom).
+- 1 × Stopwatch or stop clock readable to 0.1 second.
+- 1 × 50 cm³ measuring cylinder and 1 × 10 cm³ measuring cylinder.
+**2. Qualitative Reagents per Candidate:**
+- About 2.0 g of Barium chloride crystals in a stoppered tube labeled **Solid D**.
+- Access to: Dilute 2M H₂SO₄, 0.1M AgNO₃, 2M dilute HNO₃, concentrated HCl for cleaning wire, nichrome wire / glass rod, Bunsen burner.`
+  },
+
+  gas: {
+    title: 'KCSE Chemistry Practical Mock — Gas Preparation, Purification & Chemical Properties',
+    formLevel: 'Form 2',
+    titrationType: 'gas',
+    instructions: 'You are provided with marble chips (Solid E), 2.0 M Hydrochloric acid (Solution F), and testing reagents. You are required to prepare carbon(IV) oxide gas and examine its physical and chemical properties.',
+    durationMinutes: 60,
+    examConfig: {
+      presetKey: 'gas_co2',
+      q1: {
+        simulationType: 'gas',
+        gasKey: 'CO2',
+        gasName: 'Carbon(IV) Oxide — CO₂',
+        reagentSolid: 'Calcium Carbonate (CaCO₃) marble chips',
+        reagentLiquid: '2.0 M Hydrochloric Acid (HCl)',
+        dryingAgent: 'Concentrated Sulfuric(VI) Acid (H₂SO₄)',
+        collectionMethod: 'Downward delivery (upward displacement of air)',
+        marks: 15,
+        instructions: 'Assemble the gas generation apparatus using the flat-bottomed flask and thistle funnel. Add Solid E into the flask, run Solution F through the thistle funnel, pass the gas through the drying agent, and collect two gas jars of dry gas.'
+      },
+      q2: {
+        sampleName: 'Solution E',
+        sampleDesc: 'Clear colorless solution remaining in the reaction flask after reaction ceases.',
+        trueSaltKey: 'CaCl2',
+        trueSaltName: 'Calcium Chloride — CaCl₂',
+        trueCation: 'Ca2+',
+        trueAnion: 'Cl-',
+        marks: 15,
+        tests: [
+          {
+            id: 'e1_litmus',
+            prompt: '(i) Test 2 cm³ of Solution E with red and blue litmus paper.',
+            correctObs: 'Both red and blue litmus paper remain unchanged / neutral pH ~ 6-7.',
+            correctInf: 'Neutral salt solution formed.'
+          },
+          {
+            id: 'e2_naoh',
+            prompt: '(ii) To 2 cm³ of Solution E, add 2M NaOH dropwise until in excess.',
+            correctObs: 'White precipitate formed, insoluble in excess sodium hydroxide.',
+            correctInf: 'Ca²⁺ or Mg²⁺ present (Ca(OH)₂ formed).'
+          },
+          {
+            id: 'e3_nh3',
+            prompt: '(iii) To 2 cm³ of Solution E, add 2M aqueous ammonia dropwise until in excess.',
+            correctObs: 'No precipitate formed with aqueous ammonia in drops or excess.',
+            correctInf: 'Ca²⁺ confirmed present (Mg²⁺ gives white precipitate with NH₃).'
+          },
+          {
+            id: 'e4_chloride',
+            prompt: '(iv) To 2 cm³ of Solution E, add 3 drops of dilute HNO₃ followed by 3 drops of AgNO₃.',
+            correctObs: 'White precipitate formed, dissolves readily in aqueous ammonia.',
+            correctInf: 'Cl⁻ confirmed present.'
+          }
+        ]
+      }
+    },
+    markingScheme: `### Official KNEC Paper 3 Marking Scheme & Scoring Rubric
+- **Question 1: Gas Preparation & Properties (15 Marks)**
+  - Balanced equation: 2.0 Marks (CaCO₃(s) + 2HCl(aq) → CaCl₂(aq) + H₂O(l) + CO₂(g). Deduct 1/2 mark for missing state symbols).
+  - Drying agent selection: 2.0 Marks (Concentrated H₂SO₄ or anhydrous CaCl₂; Calcium oxide (CaO) cannot be used because CaO is a basic oxide that reacts with acidic CO₂ to form CaCO₃).
+  - Method of collection: 2.0 Marks (Downward delivery / upward displacement of air because CO₂ is denser than air).
+  - Confirmatory test 1 (Lime water): 3.0 Marks (White precipitate formed due to insoluble CaCO₃; with excess CO₂, precipitate dissolves to give a colorless solution due to soluble Ca(HCO₃)₂).
+  - Confirmatory test 2 (Burning splint): 2.0 Marks (Flame extinguished / burning splint goes off because CO₂ does not support combustion).
+  - Acidic property (Moist litmus): 2.0 Marks (Moist blue litmus paper turns red because CO₂ dissolves to form weak carbonic acid H₂CO₃).
+  - Diagram labeling & setup: 2.0 Marks (Airtight thistle funnel dipping below liquid level, delivery tube correctly aligned).
+- **Question 2: Qualitative Salt Analysis (15 Marks)**
+  - Litmus test: 2.0 Marks (1 mk Obs, 1 mk Inf).
+  - 2M NaOH test: 4.0 Marks (2 mk Obs: white ppt insoluble; 2 mk Inf: Ca²⁺/Mg²⁺ present).
+  - Aqueous NH₃ test: 4.0 Marks (2 mk Obs: no ppt; 2 mk Inf: Ca²⁺ confirmed).
+  - AgNO₃ + HNO₃ test: 5.0 Marks (2 mk Obs: white ppt; 3 mk Inf: Cl⁻ confirmed).`,
+    confidentialPrepGuide: `### Confidential Instructions to School Science Laboratory Technicians
+**1. Gas Chemistry Apparatus per Candidate:**
+- 1 × Flat-bottomed flask (250 cm³) with 2-hole rubber bung.
+- 1 × Thistle funnel and glass delivery tubes.
+- 1 × Gas wash bottle containing 50 cm³ concentrated H₂SO₄ (or U-tube with anhydrous CaCl₂).
+- 2 × Clean gas jars with cover slips.
+- 100 cm³ of 2.0 M Hydrochloric acid labeled **Solution F**.
+- About 20 g of marble chips (CaCO₃) labeled **Solid E**.
+- Access to: Calcium hydroxide solution (lime water) in dropper bottle, wooden splints, Bunsen burner, red and blue litmus paper.
+**2. Qualitative Analysis Reagents per Candidate:**
+- Access to: 2M NaOH, 2M aqueous NH₃, 0.1M AgNO₃, 2M dilute HNO₃, test tubes and rack.`
+  },
+
+  solubility: {
+    title: 'KCSE Chemistry Practical Mock — Solubility Curve & Crystallization of Potassium Salts',
+    formLevel: 'Form 3',
+    titrationType: 'solubility',
+    instructions: 'You are provided with 5.00 g of Potassium chlorate (Solid G), boiling tube, thermometer, and distilled water. You are required to determine the crystallization temperature with varying water volumes and plot a solubility curve.',
+    durationMinutes: 90,
+    examConfig: {
+      presetKey: 'solubility_kclo3',
+      q1: {
+        simulationType: 'solubility',
+        soluteName: 'Potassium Chlorate (KClO₃)',
+        soluteMassGrams: 5.00,
+        dataPoints: [
+          { volWater: 10.0, tempCryst: 82.0, solubilityGramsPer100g: 50.0 },
+          { volWater: 14.0, tempCryst: 68.0, solubilityGramsPer100g: 35.7 },
+          { volWater: 18.0, tempCryst: 56.0, solubilityGramsPer100g: 27.8 },
+          { volWater: 22.0, tempCryst: 44.0, solubilityGramsPer100g: 22.7 }
+        ],
+        marks: 15,
+        instructions: 'Place 5.00 g of Solid G in a clean boiling tube. Add 10.0 cm³ of distilled water from a burette. Warm the mixture gently with stirring until all crystals dissolve. Allow to cool while stirring with the thermometer and record the exact temperature at which the first crystals appear. Add 4.0 cm³ more water and repeat.'
+      },
+      q2: {
+        sampleName: 'Solid G',
+        sampleDesc: 'A pure white crystalline inorganic potassium salt.',
+        trueSaltKey: 'KClO3',
+        trueSaltName: 'Potassium Chlorate — KClO₃',
+        trueCation: 'K+',
+        trueAnion: 'ClO3-',
+        marks: 15,
+        tests: [
+          {
+            id: 'g1_flame',
+            prompt: '(i) Clean a nichrome wire with conc. HCl and perform a flame test on Solid G, viewing through cobalt blue glass.',
+            correctObs: 'Lilac / purple flame coloration observed clearly through cobalt blue glass.',
+            correctInf: 'K⁺ confirmed present.'
+          },
+          {
+            id: 'g2_heat',
+            prompt: '(ii) Heat a half-spatula of Solid G in a dry test tube and test the gas evolved with a glowing splint.',
+            correctObs: 'Solid decrepitates and melts; colorless odorless gas evolved rekindles / relights a glowing splint.',
+            correctInf: 'O₂ gas evolved; chlorate salt decomposes to chloride and oxygen (ClO₃⁻ present).'
+          },
+          {
+            id: 'g3_residue_chloride',
+            prompt: '(iii) Dissolve the residue from (ii) in 5 cm³ distilled water, add 3 drops of dilute HNO₃ followed by 3 drops of AgNO₃.',
+            correctObs: 'Dense white precipitate formed on addition of silver nitrate.',
+            correctInf: 'Cl⁻ confirmed present (formed from decomposition of chlorate KClO₃ → KCl + 1.5 O₂).'
+          }
+        ]
+      }
+    },
+    markingScheme: `### Official KNEC Paper 3 Marking Scheme & Scoring Rubric
+- **Question 1: Solubility Curve & Calculations (15 Marks)**
+  - Table of crystallization temperatures (5 Marks): CT: Complete table 1M, D: Temperatures recorded to 1 d.p. 1M, A: Trend accuracy (crystallization temp drops with increasing water volume) 1M, Solubility in g/100g water correctly calculated 2M.
+  - Graph of Solubility against Temperature (5 Marks):
+    - Scale (S - 1 Mark): Uniform scale on both axes covering >= 50% grid.
+    - Axes (A - 1 Mark): Correctly labeled with units [Temperature (°C), Solubility (g/100g water)].
+    - Plotting (P - 2 Marks): All points plotted accurately within 1/2 of a small square.
+    - Curve (C - 1 Mark): Smooth curve drawn through plotted points.
+  - Deductions from graph (5 Marks):
+    - Solubility from graph at specified temp (2 Marks): Value read with showing on graph.
+    - Calculation of crystal yield (3 Marks): Yield = Solubility at T_high - Solubility at T_low.
+- **Question 2: Qualitative Analysis (15 Marks)**
+  - Flame test: 5.0 Marks (2 mk Obs: lilac flame through cobalt glass; 3 mk Inf: K⁺ confirmed).
+  - Thermal decomposition: 5.0 Marks (2 mk Obs: glowing splint relit; 3 mk Inf: O₂ evolved / chlorate present).
+  - Confirmatory chloride test on residue: 5.0 Marks (2 mk Obs: white ppt with AgNO₃; 3 mk Inf: Cl⁻ confirmed).`,
+    confidentialPrepGuide: `### Confidential Instructions to School Science Laboratory Technicians
+**1. Solubility Reagents per Candidate:**
+- Exactly 5.00 g of Potassium chlorate (KClO₃) crystals weighed into a dry boiling tube labeled **Solid G**.
+- 1 × Clean boiling tube (25 × 150 mm) with clamp and retort stand.
+- 1 × Thermometer (-10 to 110°C graduated to 0.5°C or 1.0°C).
+- 1 × 50 cm³ burette filled with distilled water for accurate aliquot dispensing.
+- 1 × 400 cm³ beaker for hot water bath and Bunsen burner with tripod and wire gauze.
+**2. Qualitative Analysis Reagents per Candidate:**
+- Access to: Nichrome wire, cobalt blue glass, concentrated HCl, wooden splints, 0.1M AgNO₃, 2M dilute HNO₃.`
+  },
+
+  twosalt: {
+    title: 'KCSE Chemistry Paper 3 Mock — Advanced Two-Salt Mixture Separation (Merit Challenge)',
+    formLevel: 'Form 4',
+    titrationType: 'kcseComposite',
+    instructions: 'You are provided with 0.050 M Sulfuric(VI) acid (Solution A), 0.100 M Sodium hydroxide (Solution B), Solid Mixture P (containing two salts), and Liquid Q. Complete all experiments according to KNEC instructions.',
+    durationMinutes: 135,
+    examConfig: {
+      presetKey: 'merit_twosalt',
+      q1: {
+        calcType: 'dibasic_acid',
+        solutionA: '0.050 M Sulfuric(VI) Acid (H₂SO₄)',
+        solutionB: '0.100 M Sodium Hydroxide (NaOH)',
+        ratioA: 1,
+        ratioB: 2,
+        pipetteVolume: 25.0,
+        indicator: 'phenolphthalein',
+        equation: 'H₂SO₄(aq) + 2NaOH(aq) → Na₂SO₄(aq) + 2H₂O(l)',
+        trueAcidMolarity: 0.050,
+        trueBaseMolarity: 0.100,
+        trueTitre: 25.00,
+        marks: 15,
+        instructions: 'Pipette 25.0 cm³ of Solution B into a conical flask, add 2 drops of phenolphthalein indicator, and titrate with Solution A from the burette.'
+      },
+      q2: {
+        sampleName: 'Solid Mixture P',
+        sampleDesc: 'White crystalline solid mixture containing one soluble and one insoluble salt.',
+        trueSaltKey: 'ZnSO4 + BaSO4',
+        trueSaltName: 'Zinc Sulfate + Barium Sulfate Mixture',
+        trueCation: 'Zn2+, Ba2+',
+        trueAnion: 'SO42-',
+        marks: 15,
+        tests: [
+          {
+            id: 'm1_sep',
+            prompt: '(i) Place Solid Mixture P in a 100 cm³ beaker, add 15 cm³ distilled water, stir thoroughly and filter. Retain both filtrate and residue.',
+            correctObs: 'White residue remains on the filter paper; clear colorless filtrate collected in the boiling tube.',
+            correctInf: 'Mixture contains an insoluble salt (residue) and a soluble salt (filtrate).'
+          },
+          {
+            id: 'm2_naoh_filtrate',
+            prompt: '(ii) To 2 cm³ of the filtrate, add 2M NaOH dropwise until in excess.',
+            correctObs: 'White precipitate formed, dissolves in excess NaOH to form a colorless solution.',
+            correctInf: 'Zn²⁺, Al³⁺, or Pb²⁺ present in filtrate.'
+          },
+          {
+            id: 'm3_nh3_filtrate',
+            prompt: '(iii) To 2 cm³ of the filtrate, add 2M aqueous NH₃ dropwise until in excess.',
+            correctObs: 'White precipitate formed, dissolves completely in excess aqueous NH₃.',
+            correctInf: 'Zn²⁺ confirmed present in filtrate (Al³⁺ and Pb²⁺ are insoluble in excess NH₃).'
+          },
+          {
+            id: 'm4_anion_filtrate',
+            prompt: '(iv) To 2 cm³ of the filtrate, add 3 drops of dilute HNO₃ followed by 3 drops of Ba(NO₃)₂ solution.',
+            correctObs: 'Dense white precipitate formed, insoluble in dilute nitric acid.',
+            correctInf: 'SO₄²⁻ confirmed present in filtrate.'
+          },
+          {
+            id: 'm5_residue_acid',
+            prompt: '(v) Transfer a half-spatula of the residue into a test tube and add 2 cm³ of 2M dilute HCl.',
+            correctObs: 'Residue remains completely insoluble in dilute hydrochloric acid; no effervescence observed.',
+            correctInf: 'Insoluble barium sulfate (BaSO₄) confirmed in residue; carbonate absent.'
+          }
+        ]
+      },
+      q3: {
+        sampleName: 'Liquid Q',
+        sampleDesc: 'A clear colorless pungent organic liquid.',
+        trueOrganicKey: 'Ethanoic Acid',
+        trueOrganicName: 'Ethanoic Acid — CH₃COOH',
+        trueFunctionalGroup: 'Carboxylic Acid (-COOH)',
+        marks: 10,
+        tests: [
+          {
+            id: 'q3_litmus',
+            prompt: '(a) Place 2 cm³ of Liquid Q in a test tube and test with red and blue litmus paper.',
+            correctObs: 'Blue litmus paper turns red; red litmus paper remains red.',
+            correctInf: 'Acidic organic compound / contains H⁺ ions / -COOH group.'
+          },
+          {
+            id: 'q3_nahco3',
+            prompt: '(b) To 2 cm³ of Liquid Q, add half a spatula of solid NaHCO₃.',
+            correctObs: 'Rapid effervescence / bubbling of a colorless gas that turns lime water milky.',
+            correctInf: '-COOH / Carboxylic acid group confirmed.'
+          },
+          {
+            id: 'q3_kmno4',
+            prompt: '(c) To 2 cm³ of Liquid Q, add 3 drops of acidified KMnO₄ and warm gently.',
+            correctObs: 'Purple color of acidified KMnO₄ persists / is not decolorized.',
+            correctInf: 'Absence of easily oxidizable -OH group / unsaturation.'
+          },
+          {
+            id: 'q3_ignition',
+            prompt: '(d) Ignite 3 drops of Liquid Q on a clean metallic spatula in a Bunsen burner flame.',
+            correctObs: 'Burns with a non-luminous, clear blue flame without smoke.',
+            correctInf: 'Short-chain saturated aliphatic compound with low carbon-to-hydrogen ratio.'
+          }
+        ]
+      }
+    },
+    markingScheme: `### Official KNEC Paper 3 Marking Scheme & Scoring Rubric
+- **Question 1: Dibasic Acid Neutralization (15 Marks)**
+  - Table of readings: 5.0 Marks (CT 1M, D 1M, A within ±0.20 cm³ 1M, PA 1M, FA 1M).
+  - Average titre calculation: 1.0 Mark.
+  - Moles of NaOH pipetted: 2.0 Marks (Moles = (0.100 × 25.0)/1000 = 0.00250 mol).
+  - Stoichiometry & mole ratio: 2.0 Marks (Mole ratio H₂SO₄ : NaOH = 1 : 2).
+  - Moles of H₂SO₄ reacting: 2.0 Marks (Moles = 0.00250 / 2 = 0.00125 mol).
+  - Concentration / Molarity of H₂SO₄: 3.0 Marks (M = (0.00125 × 1000) / 25.00 = 0.050 M).
+- **Question 2: Two-Salt Separation & Identification (15 Marks)**
+  - Separation procedure: 2.0 Marks (Residue + filtrate identified).
+  - NaOH test on filtrate: 3.0 Marks (Zn²⁺, Al³⁺, Pb²⁺ present).
+  - NH₃ test on filtrate: 4.0 Marks (Zn²⁺ confirmed).
+  - Ba(NO₃)₂ test on filtrate: 3.0 Marks (SO₄²⁻ confirmed).
+  - Insoluble residue test: 3.0 Marks (BaSO₄ confirmed).
+- **Question 3: Organic Functional Group (10 Marks)**
+  - Litmus test: 2.5 Marks (Turns blue litmus red -> acidic / -COOH).
+  - NaHCO₃ effervescence: 3.0 Marks (CO₂ gas evolved -> -COOH confirmed).
+  - KMnO₄ test: 2.0 Marks (Color persists -> saturated).
+  - Spatula flame: 2.5 Marks (Clean blue flame -> low C:H ratio).`,
+    confidentialPrepGuide: `### Confidential Instructions to School Science Laboratory Technicians
+**1. Volumetric Reagents per Candidate:**
+- 150 cm³ of 0.050 M Sulfuric(VI) acid labeled **Solution A**.
+- 150 cm³ of 0.100 M Sodium hydroxide labeled **Solution B**.
+- Phenolphthalein indicator, burette (50 cm³), pipette (25 cm³), 2 conical flasks (250 cm³).
+**2. Qualitative Analysis Reagents per Candidate:**
+- 2.0 g of a homogeneous 1:1 mixture of Zinc sulfate and Barium sulfate labeled **Solid Mixture P**.
+- Filter funnel and 2 filter papers, 100 cm³ beaker, wash bottle with distilled water.
+- Access to: 2M NaOH, 2M aqueous NH₃, 0.5M Ba(NO₃)₂, 2M dilute HNO₃, 2M dilute HCl.
+**3. Organic Analysis Reagents per Candidate:**
+- 10 cm³ of glacial / pure Ethanoic acid labeled **Liquid Q**.
+- Access to: Red and blue litmus paper, solid NaHCO₃, acidified KMnO₄, Bunsen burner, metallic spatula.`
   }
 };
 
@@ -447,9 +913,10 @@ function normalizeQuestionsArray(parsed) {
   return questions;
 }
 
-// Pre-populate questions[] array on fallback presets
-FALLBACK_PRESETS.classic.questions = normalizeQuestionsArray(FALLBACK_PRESETS.classic);
-FALLBACK_PRESETS.redox.questions = normalizeQuestionsArray(FALLBACK_PRESETS.redox);
+// Pre-populate questions[] array on all fallback presets
+Object.keys(FALLBACK_PRESETS).forEach(key => {
+  FALLBACK_PRESETS[key].questions = normalizeQuestionsArray(FALLBACK_PRESETS[key]);
+});
 
 /**
  * Call Gemini REST API with optional multimodal parts (base64 documents / images).
@@ -955,9 +1422,24 @@ ${textContent ? `Extracted Paper Text:\n${textContent}` : ''}`;
     return normalizeExamStructure(parsed, { source: 'document_upload' });
   } catch (err) {
     console.warn('[parseExamPaper] AI parsing failed or not configured, using smart fallback preset:', err.message);
-    const fallback = teacherNotes.toLowerCase().includes('redox') || (textContent && textContent.toLowerCase().includes('manganate'))
-      ? FALLBACK_PRESETS.redox
-      : FALLBACK_PRESETS.classic;
+    const combined = `${teacherNotes || ''} ${textContent || ''}`.toLowerCase();
+    let fallbackKey = 'classic';
+
+    if (combined.includes('enthalpy') || combined.includes('thermochem') || combined.includes('temperature rise') || combined.includes('calorimeter') || combined.includes('heat of')) {
+      fallbackKey = 'energy';
+    } else if (combined.includes('kinetics') || combined.includes('disappearing cross') || combined.includes('rate of reaction') || combined.includes('rates')) {
+      fallbackKey = 'rates';
+    } else if (combined.includes('gas') && (combined.includes('preparation') || combined.includes('collection') || combined.includes('carbon(iv) oxide') || combined.includes('co2'))) {
+      fallbackKey = 'gas';
+    } else if (combined.includes('solubility') || combined.includes('crystalliz')) {
+      fallbackKey = 'solubility';
+    } else if (combined.includes('two-salt') || combined.includes('mixture') || combined.includes('residue and filtrate') || combined.includes('separation')) {
+      fallbackKey = 'twosalt';
+    } else if (combined.includes('redox') || combined.includes('manganate') || combined.includes('iron') || combined.includes('kmno4')) {
+      fallbackKey = 'redox';
+    }
+
+    const fallback = FALLBACK_PRESETS[fallbackKey] || FALLBACK_PRESETS.classic;
 
     const isNotConfigured = err.message === 'AI_NOT_CONFIGURED';
     const warning = isNotConfigured
@@ -977,6 +1459,64 @@ ${textContent ? `Extracted Paper Text:\n${textContent}` : ''}`;
  * 2. Generate complete exam from an idea / prompt
  */
 async function generateExamFromIdea({ prompt, formLevel = 'Form 4', moduleType = 'kcseComposite', difficulty = 'standard', durationMinutes = 135 }) {
+  // Build domain-specific KNEC syllabus guidelines based on target module
+  let moduleSpecificGuidelines = '';
+  const mTypeLower = (moduleType || '').toLowerCase();
+
+  if (mTypeLower === 'energy') {
+    moduleSpecificGuidelines = `
+KNEC Thermochemistry (Energy Changes in Chemical & Physical Processes) Standards:
+- Focus: Calorimetry, Heat of Neutralization, Displacement, or Solution.
+- Candidate must record initial temperatures (T₁ of acid, T₂ of alkali, calculate mean T₀) and maximum temperature T₃ to determine temperature rise ΔT = T₃ - T₀.
+- Calculations must follow KNEC specifications: Heat evolved Q = mcΔT (c = 4.2 J/g/K, density = 1.0 g/cm³, total volume in cm³ = mass in g), moles of limiting reagent/water formed, and molar enthalpy ΔH = -(Q / moles) in kJ/mol with mandatory negative sign for exothermic processes.
+- Question 2: Accompanying inorganic qualitative salt analysis or thermal decomposition (e.g. basic carbonate or hydrated salt).`;
+  } else if (mTypeLower === 'rates') {
+    moduleSpecificGuidelines = `
+KNEC Reaction Kinetics & Rates Standards:
+- Focus: Effect of concentration or temperature on reaction rate (e.g. disappearing cross with sodium thiosulfate and HCl, or gas evolution volume with Mg ribbon and acid).
+- Systematic data table: 4–5 runs with varied concentrations/volumes, recorded time (t in seconds), and reciprocal (1/t in s⁻¹).
+- Graph plotting criteria: Scale (S - 1mk, >=50% grid area), Axes (A - 1mk, quantity and units), Plotting (P - 2mk, within 1/2 small square), Curve/Line (C - 1mk, smooth line through origin).
+- Kinetic deduction: Explaining proportionality between concentration and rate (1/t), and reading values from graph.
+- Question 2: Accompanying qualitative analysis of sulfur/halide salts.`;
+  } else if (mTypeLower === 'gas') {
+    moduleSpecificGuidelines = `
+KNEC Gas Chemistry Practical Standards:
+- Focus: Laboratory preparation, drying, and collection of a gas (e.g. CO₂, SO₂, O₂, NH₃, or H₂).
+- Balanced chemical equation with state symbols, identification of suitable drying agent (e.g. why CaO cannot dry acidic gases like CO₂/SO₂), collection method (downward delivery / displacement of water) justified by gas density and solubility.
+- Chemical confirmatory tests with observations and inferences (e.g. lime water, acidified K₂Cr₂O₇/KMnO₄, burning/glowing splint).
+- Question 2: Qualitative analysis of reaction residue/filtrate.`;
+  } else if (mTypeLower === 'solubility') {
+    moduleSpecificGuidelines = `
+KNEC Solubility & Crystallization Practical Standards:
+- Focus: Solubility curve determination (e.g. KClO₃ or KNO₃) with temperature measurement on cooling.
+- Table: Volume of water, crystallization temperature (°C), and calculated solubility (g solute / 100 g water).
+- Graph plotting criteria: Solubility vs Temperature smooth curve.
+- Deductions: Reading solubility at a target temperature (e.g. 50°C), and calculating mass of crystals deposited upon cooling from T_high to T_low.
+- Question 2: Qualitative flame test (lilac for K⁺) and anion confirmatory test.`;
+  } else if (mTypeLower === 'qualitative') {
+    moduleSpecificGuidelines = `
+KNEC Inorganic Qualitative Analysis Standards:
+- Pure 15–20 mark systematic inorganic salt analysis with Solid/Solution P and Q.
+- Steps: physical appearance, action of heat, solubility, reaction with 2M NaOH (dropwise and excess), 2M aqueous NH₃ (dropwise and excess), confirmatory cation tests (KI, H₂SO₄, flame), and confirmatory anion tests (Ba(NO₃)₂ + HNO₃, AgNO₃ + HNO₃).
+- Strict KNEC grouping notation in inferences: (Pb²⁺, Al³⁺, or Zn²⁺ present in excess NaOH; Pb²⁺ or Al³⁺ present in excess NH₃; Zn²⁺ confirmed in excess NH₃).`;
+  } else if (mTypeLower === 'organic') {
+    moduleSpecificGuidelines = `
+KNEC Organic Qualitative Analysis Standards:
+- Pure systematic identification of organic functional groups with Liquid/Solid Z.
+- Steps: Metallic spatula ignition (sooty/luminous vs clean blue flame -> C:H ratio / unsaturation), litmus test (neutral, acidic, basic), unsaturation test (bromine water, acidified KMnO₄), carboxylic acid test (solid NaHCO₃ effervescence).`;
+  } else {
+    moduleSpecificGuidelines = `
+KNEC Composite Mock Standards (40 Marks Total):
+1. Question 1 (Volumetric Analysis - 15 Marks):
+   - Calculation framework ('standard_molarity', 'water_of_crystallization', 'percentage_purity', 'ram_metal', 'redox_stoichiometry', or 'dibasic_acid').
+   - Realistic stoichiometric parameters, molar concentrations, and balanced equations with state symbols.
+2. Question 2 (Inorganic Qualitative Analysis - 15 Marks):
+   - Multi-step experimental sequence (appearance, dissolving, portioning, 2M NaOH & 2M aqueous NH₃ dropwise until in excess, anion confirmatory test).
+   - Inferences must strictly enforce KNEC grouping notation (e.g. "Pb²⁺, Al³⁺, or Zn²⁺ present" in excess NaOH; "Pb²⁺ or Al³⁺ present" in excess NH₃).
+3. Question 3 (Organic Qualitative Analysis - 10 Marks):
+   - Sequence: Spatula ignition flame test, litmus test, unsaturation/redox test (acidified KMnO₄ or Bromine water), and carbonate/hydrogen carbonate effervescence.`;
+  }
+
   const aiPrompt = `You are a Senior KNEC Chemistry Chief Examiner & Curriculum Specialist designing a secondary school chemistry practical exam for Kenyan learners.
 
 Teacher's Idea / Request:
@@ -987,34 +1527,34 @@ Exam Module: ${moduleType}
 Target Difficulty: ${difficulty}
 Allotted Time: ${durationMinutes} minutes
 
+${moduleSpecificGuidelines}
+
 KNEC Setting & Pedagogical Standards to Enforce:
 1. Cognitive Taxonomy: Balance across Recall, Comprehension, Application, and Analysis. Use authentic KNEC command words (State, Name, Determine, Calculate, Deduce, Explain).
-2. Question 1 (Volumetric Analysis - 15 Marks):
-   - Choose or detect the calculation framework ("calcType"): 'standard_molarity', 'water_of_crystallization', 'percentage_purity', 'ram_metal', 'redox_stoichiometry', or 'dibasic_acid'.
-   - Include realistic stoichiometric parameters, molar concentrations, and balanced equations with state symbols.
-3. Question 2 (Inorganic Qualitative Analysis - 15 Marks):
-   - Multi-step experimental sequence (heating dry solid, dissolving, portioning, 2M NaOH & 2M aqueous NH3 dropwise until in excess, anion confirmatory test).
-   - Inferences must strictly enforce KNEC grouping notation (e.g. "Pb²⁺, Al³⁺, or Zn²⁺ present" in excess NaOH; "Pb²⁺ or Al³⁺ present" in excess NH3).
-   - FINAL DEDUCTION: Set "hasDeduction": true ONLY if the user/teacher prompt explicitly asks for final cation/anion deduction; otherwise false.
-4. Question 3 (Organic Qualitative Analysis - 10 Marks):
-   - Sequence: Spatula ignition flame test, litmus test, unsaturation/redox test (acidified KMnO4 or Bromine water), and carbonate/hydrogen carbonate effervescence.
-5. Marking Scheme:
-   - Formatted in Markdown with point-by-point method marks (M) and accuracy marks (A), and explicit Error Carried Forward (e.c.f.) instructions.
+2. KNEC Official Scoring Rubrics to Enforce in "markingScheme":
+   - Use authentic KNEC examiner award codes:
+     - CT (Complete Table - 1.0 Mark): Awarded if all required trials/readings are filled realistically.
+     - D (Decimals - 1.0 Mark): Consistency to 1 or 2 d.p. throughout the table. Burette readings must terminate in .0 or .5.
+     - A (Accuracy - 1.0 Mark): Comparison with teacher/standard value. Within ±0.10 cm³ (1 mk), within ±0.20 cm³ (1/2 mk), beyond (0 mk).
+     - PA (Principles of Averaging - 1.0 Mark): Candidate averages concordant values within ±0.20 cm³. Correct working must be shown.
+     - FA (Final Accuracy - 1.0 Mark): Average computed correctly to 2 d.p.
+   - For calculations: Award Method marks (M) and Accuracy marks (A), with explicit Error Carried Forward (e.c.f.) rules. Deduct 1/2 mark for missing or incorrect units.
+   - For qualitative tables: Strict 2-column format (Observations | Inferences) using authentic KNEC ionic formulas. Contradictory ions written in the inference column lose marks.
 
 Strict Response JSON Schema:
 {
   "title": "<Concise official title, e.g. Form 4 Chemistry Paper 3 Term 2 Mock Practical>",
   "formLevel": "${formLevel}",
-  "titrationType": "kcseComposite",
+  "titrationType": "${moduleType === 'kcseComposite' ? 'kcseComposite' : moduleType}",
   "instructions": "<Standard KNEC examination laboratory instructions>",
   "durationMinutes": ${durationMinutes},
   "questions": [
     {
       "number": <integer starting at 1>,
-      "title": "<question title, e.g. 'Volumetric Analysis'>",
+      "title": "<question title, e.g. 'Volumetric Analysis' or 'Thermochemistry'>",
       "simulationType": "<one of: titration, qualitative, organic, energy, rates, gas, solubility, written>",
       "marks": <number>,
-      "config": { <for simulated types: include calcType, solutionA, solutionB, ratioA, ratioB, pipetteVolume, indicator, equation, trueAcidMolarity, trueBaseMolarity, trueTitre, marks, instructions for titration; trueSaltKey, trueSaltName, trueCation, trueAnion, sampleName, sampleDesc, marks, tests[] for qualitative; trueOrganicKey, trueOrganicName, trueFunctionalGroup, sampleName, sampleDesc, marks, tests[] for organic. For 'written' set to null.> },
+      "config": { <for simulated types: include appropriate parameters for titration, qualitative, organic, energy, rates, gas, or solubility. For 'written' set to null.> },
       "prompt": "<for 'written' type: full question text; empty string for simulated types>",
       "subQuestions": [
         {
@@ -1029,11 +1569,11 @@ Strict Response JSON Schema:
   "examConfig": {
     "presetKey": "custom",
     "q1": { <copy of questions[0].config — required for backward compat with simulation engine> },
-    "q2": { <copy of questions[1].config if qualitative> },
-    "q3": { <copy of questions[2].config if simulated, whether qualitative salt analysis or organic functional group analysis> }
+    "q2": { <copy of questions[1].config if present> },
+    "q3": { <copy of questions[2].config if present> }
   },
-  "markingScheme": "<Markdown KNEC marking scheme with M and A marks, and e.c.f. instructions>",
-  "confidentialPrepGuide": "<Markdown Lab Technician preparation instructions>"
+  "markingScheme": "<Markdown KNEC marking scheme with CT/D/A/PA/FA rubrics, M and A marks, and e.c.f. instructions>",
+  "confidentialPrepGuide": "<Markdown Lab Technician preparation instructions detailing reagents, concentrations, volumes per candidate, and apparatus checklist>"
 }`;
 
   try {
@@ -1042,14 +1582,32 @@ Strict Response JSON Schema:
     return normalizeExamStructure(parsed, { source: 'idea_prompt', promptText: prompt });
   } catch (err) {
     console.warn('[generateExamFromIdea] AI generation failed or not configured, using smart fallback preset:', err.message);
-    const fallback = prompt.toLowerCase().includes('redox') || prompt.toLowerCase().includes('manganate') || prompt.toLowerCase().includes('iron')
-      ? FALLBACK_PRESETS.redox
-      : FALLBACK_PRESETS.classic;
+    
+    // Domain-aware fallback resolution
+    let fallbackKey = 'classic';
+    const lowerPrompt = (prompt || '').toLowerCase();
+    const mType = (moduleType || '').toLowerCase();
+
+    if (mType === 'energy' || lowerPrompt.includes('enthalpy') || lowerPrompt.includes('thermochem') || lowerPrompt.includes('heat of') || lowerPrompt.includes('calorimeter')) {
+      fallbackKey = 'energy';
+    } else if (mType === 'rates' || lowerPrompt.includes('rates') || lowerPrompt.includes('kinetics') || lowerPrompt.includes('disappearing cross')) {
+      fallbackKey = 'rates';
+    } else if (mType === 'gas' || lowerPrompt.includes('gas prep') || lowerPrompt.includes('collection of gas') || lowerPrompt.includes('carbon(iv) oxide') || lowerPrompt.includes('co2')) {
+      fallbackKey = 'gas';
+    } else if (mType === 'solubility' || lowerPrompt.includes('solubility') || lowerPrompt.includes('crystalliz')) {
+      fallbackKey = 'solubility';
+    } else if (lowerPrompt.includes('two-salt') || lowerPrompt.includes('mixture') || lowerPrompt.includes('separation') || mType === 'twosalt') {
+      fallbackKey = 'twosalt';
+    } else if (lowerPrompt.includes('redox') || lowerPrompt.includes('manganate') || lowerPrompt.includes('iron') || lowerPrompt.includes('kmno4')) {
+      fallbackKey = 'redox';
+    }
+
+    const fallback = FALLBACK_PRESETS[fallbackKey] || FALLBACK_PRESETS.classic;
 
     const modified = JSON.parse(JSON.stringify(fallback));
     modified.formLevel = formLevel;
     modified.durationMinutes = durationMinutes;
-    if (prompt) modified.title = `KCSE Chemistry Practical Exam — ${prompt.slice(0, 45)}...`;
+    if (prompt) modified.title = `${fallback.title.split('—')[0]}— ${prompt.slice(0, 45)}...`;
 
     const isNotConfigured = err.message === 'AI_NOT_CONFIGURED';
     const warning = isNotConfigured
@@ -1211,6 +1769,172 @@ function generateSynchronizedMarkingScheme(exam) {
   const q2 = cfg.q2 || {};
   const q3 = cfg.q3 || {};
 
+  // 1. Thermochemistry (Energy Changes) Marking Scheme
+  if (q1.simulationType === 'energy' || exam.titrationType === 'energy') {
+    const deltaT = Number(q1.deltaT || (Number(q1.maxTemp || 28.5) - Number(q1.meanInitialTemp || 22.0))).toFixed(1);
+    const heatJ = Number(q1.heatEvolvedJoules || 2730);
+    const moles = Number(q1.molesWater || 0.05);
+    const molarH = Number(q1.molarEnthalpyKj || -54.6).toFixed(1);
+
+    return `# KNEC KCSE CHEMISTRY PRACTICAL MARKING SCHEME (233/3)
+**Paper Title:** ${exam.title || 'KCSE Chemistry Practical Mock — Thermochemistry'}  
+**Target Level:** ${exam.formLevel || 'Form 3'} · **Time:** ${exam.durationMinutes || 90} Minutes  
+
+---
+
+### QUESTION 1: THERMOCHEMISTRY & ENTHALPY OF NEUTRALIZATION (15 MARKS)
+- **Reagents:** ${q1.solutionA || '1.0 M Hydrochloric Acid'} vs ${q1.solutionB || '1.0 M Sodium Hydroxide'}
+- **Volume Ratio:** ${q1.volumeA || 50} cm³ Solution A + ${q1.volumeB || 50} cm³ Solution B
+- **Expected ΔT:** **${deltaT} °C** · **Molar Enthalpy ΔH:** **${molarH} kJ/mol**
+
+#### 1. Table 1 Scoring Criteria (5 Marks):
+| Parameter | Mark Breakdown |
+|---|---|
+| Complete Table | 1 Mark (Initial temperatures T₁, T₂ and highest temperature T₃ recorded) |
+| Decimals | 1 Mark (All thermometer readings consistently to 1 d.p. ending in .0 or .5) |
+| Accuracy | 1 Mark (T₃ within ±1.0 °C of teacher's value / standard: **${Number(q1.maxTemp || 28.5).toFixed(1)} °C**) |
+| Mean Initial Temp T₀ | 1 Mark (Correct average T₀ = (T₁ + T₂) / 2) |
+| Temperature Rise ΔT | 1 Mark (Correct calculation ΔT = T₃ - T₀) |
+
+#### 2. Calculations (10 Marks):
+- **(a) Heat evolved, Q = mcΔT:**
+  $$Q = 100\\text{ g} \\times 4.2\\text{ J/g/K} \\times ${deltaT}\\text{ K} = ${heatJ}\\text{ Joules (${(heatJ/1000).toFixed(2)} kJ)}$$  (3 Marks: Substitution 2M, Accuracy 1M)
+- **(b) Moles of water formed in reaction:**
+  $$\\text{Moles} = \\frac{1.0\\text{ M} \\times 50\\text{ cm}^3}{1000} = ${moles.toFixed(3)}\\text{ moles}$$  (2 Marks)
+- **(c) Molar enthalpy of neutralization, ΔH_neut:**
+  $$\\Delta H_{neut} = -\\frac{${(heatJ/1000).toFixed(2)}\\text{ kJ}}{${moles.toFixed(3)}\\text{ mol}} = ${molarH}\\text{ kJ/mol}$$  (5 Marks: Working 3M, Sign and units 2M. **Deduct 1/2 mark if negative sign is omitted; deduct 1/2 mark if units missing.**)
+
+---
+
+### QUESTION 2: INORGANIC QUALITATIVE SALT ANALYSIS (15 MARKS)
+**Sample:** ${q2.sampleName || 'Solid C'} (${q2.trueSaltName || 'Copper(II) Carbonate — CuCO₃'})  
+**Confirmed Cation:** \`${q2.trueCation || 'Cu²⁺'}\` · **Confirmed Anion:** \`${q2.trueAnion || 'CO₃²⁻'}\`  
+
+| Step & Procedure | Expected Observation | Deduction / Inference | Marks |
+|---|---|---|:---:|
+${(q2.tests || []).map(t => `| ${t.prompt} | ${t.correctObs} | ${t.correctInf} | 2-3 Marks |`).join('\n')}
+`;
+  }
+
+  // 2. Reaction Rates & Kinetics Marking Scheme
+  if (q1.simulationType === 'rates' || exam.titrationType === 'rates') {
+    return `# KNEC KCSE CHEMISTRY PRACTICAL MARKING SCHEME (233/3)
+**Paper Title:** ${exam.title || 'KCSE Chemistry Practical Mock — Reaction Kinetics'}  
+**Target Level:** ${exam.formLevel || 'Form 3'} · **Time:** ${exam.durationMinutes || 90} Minutes  
+
+---
+
+### QUESTION 1: REACTION KINETICS & RATES OF REACTION (15 MARKS)
+- **Investigation:** Effect of concentration on rate of reaction (Disappearing Cross)
+- **Reagents:** ${q1.solutionA || '0.20 M Sodium Thiosulfate'} + ${q1.solutionB || '2.0 M Hydrochloric Acid'}
+
+#### 1. Table 1 Scoring Criteria (5 Marks):
+| Parameter | Mark Breakdown |
+|---|---|
+| Complete Table | 1 Mark (All 5 experimental runs recorded) |
+| Decimals | 1 Mark (Time recorded in whole seconds or consistent 1 d.p.) |
+| Accuracy | 1 Mark (Trend accuracy: time increases as thiosulfate volume decreases) |
+| Reciprocal Calculation | 2 Marks (All 1/t values calculated correctly to 3 d.p.) |
+
+#### 2. Graph & Deductions (10 Marks):
+- **Graph of 1/t against Volume of Na₂S₂O₃ (5 Marks):**
+  - **Scale (S - 1 Mark):** Uniform scale on both axes covering at least 50% grid.
+  - **Axes (A - 1 Mark):** Correctly labeled with units [Volume (cm³), 1/t (s⁻¹)].
+  - **Plotting (P - 2 Marks):** Points accurately plotted within 1/2 small square.
+  - **Line / Curve (C - 1 Mark):** Smooth straight line drawn through origin (0,0).
+- **Deductions & Interpretation (5 Marks):**
+  - Relationship: Rate of reaction (1/t) is directly proportional to concentration of thiosulfate (2 Marks).
+  - Graph value reading with construction lines (2 Marks).
+  - Reaction time calculation t = 1 / rate (1 Mark).
+
+---
+
+### QUESTION 2: INORGANIC QUALITATIVE SALT ANALYSIS (15 MARKS)
+**Sample:** ${q2.sampleName || 'Solid D'} (${q2.trueSaltName || 'Barium Chloride — BaCl₂'})  
+**Confirmed Cation:** \`${q2.trueCation || 'Ba²⁺'}\` · **Confirmed Anion:** \`${q2.trueAnion || 'Cl⁻'}\`  
+
+| Step & Procedure | Expected Observation | Deduction / Inference | Marks |
+|---|---|---|:---:|
+${(q2.tests || []).map(t => `| ${t.prompt} | ${t.correctObs} | ${t.correctInf} | 2-3 Marks |`).join('\n')}
+`;
+  }
+
+  // 3. Gas Preparation & Identification Marking Scheme
+  if (q1.simulationType === 'gas' || exam.titrationType === 'gas') {
+    return `# KNEC KCSE CHEMISTRY PRACTICAL MARKING SCHEME (233/3)
+**Paper Title:** ${exam.title || 'KCSE Chemistry Practical Mock — Gas Chemistry'}  
+**Target Level:** ${exam.formLevel || 'Form 2'} · **Time:** ${exam.durationMinutes || 60} Minutes  
+
+---
+
+### QUESTION 1: GAS PREPARATION, PURIFICATION & IDENTIFICATION (15 MARKS)
+- **Target Gas:** ${q1.gasName || 'Carbon(IV) Oxide — CO₂'}
+- **Reagents:** ${q1.reagentSolid || 'Calcium Carbonate'} + ${q1.reagentLiquid || '2.0 M Hydrochloric Acid'}
+- **Drying Agent:** ${q1.dryingAgent || 'Concentrated H₂SO₄'} · **Collection:** ${q1.collectionMethod || 'Downward delivery'}
+
+#### Scoring Breakdown (15 Marks):
+- **(a) Balanced chemical equation:** 2 Marks (\`CaCO₃(s) + 2HCl(aq) → CaCl₂(aq) + H₂O(l) + CO₂(g)\`. Deduct 1/2 mark for missing state symbols).
+- **(b) Drying agent rationale:** 2 Marks (Concentrated H₂SO₄ or anhydrous CaCl₂; CaO cannot be used as it is basic and reacts with acidic CO₂).
+- **(c) Method of collection:** 2 Marks (Downward delivery / upward displacement of air because CO₂ is denser than air).
+- **(d) Confirmatory test with lime water:** 3 Marks (Forms white precipitate of insoluble CaCO₃; dissolves in excess to form colorless Ca(HCO₃)₂).
+- **(e) Combustion & litmus test:** 3 Marks (Extinguishes burning splint; moist blue litmus turns red due to weak carbonic acid).
+- **(f) Apparatus diagram & setup:** 3 Marks (Airtight thistle funnel dipping below liquid level, delivery tube correctly aligned).
+
+---
+
+### QUESTION 2: INORGANIC QUALITATIVE SALT ANALYSIS (15 MARKS)
+**Sample:** ${q2.sampleName || 'Solution E'} (${q2.trueSaltName || 'Calcium Chloride — CaCl₂'})  
+**Confirmed Cation:** \`${q2.trueCation || 'Ca²⁺'}\` · **Confirmed Anion:** \`${q2.trueAnion || 'Cl⁻'}\`  
+
+| Step & Procedure | Expected Observation | Deduction / Inference | Marks |
+|---|---|---|:---:|
+${(q2.tests || []).map(t => `| ${t.prompt} | ${t.correctObs} | ${t.correctInf} | 2-3 Marks |`).join('\n')}
+`;
+  }
+
+  // 4. Solubility Curve Marking Scheme
+  if (q1.simulationType === 'solubility' || exam.titrationType === 'solubility') {
+    return `# KNEC KCSE CHEMISTRY PRACTICAL MARKING SCHEME (233/3)
+**Paper Title:** ${exam.title || 'KCSE Chemistry Practical Mock — Solubility Curve'}  
+**Target Level:** ${exam.formLevel || 'Form 3'} · **Time:** ${exam.durationMinutes || 90} Minutes  
+
+---
+
+### QUESTION 1: SOLUBILITY CURVE & CRYSTALLIZATION (15 MARKS)
+- **Solute:** ${q1.soluteName || 'Potassium Chlorate (KClO₃)'} (${q1.soluteMassGrams || 5.0} g)
+- **Investigation:** Crystallization temperature vs volume of water
+
+#### 1. Table 1 Scoring Criteria (5 Marks):
+| Parameter | Mark Breakdown |
+|---|---|
+| Complete Table | 1 Mark (All 4 dilution runs recorded) |
+| Decimals | 1 Mark (Temperatures recorded consistently to 1 d.p.) |
+| Accuracy | 1 Mark (Trend: crystallization temperature decreases with water volume) |
+| Solubility Calculation | 2 Marks (Solubility in g/100g water calculated correctly) |
+
+#### 2. Graph & Yield Calculation (10 Marks):
+- **Graph of Solubility against Temperature (5 Marks):**
+  - **Scale (S - 1 Mark):** Uniform scale on both axes covering >= 50% grid.
+  - **Axes (A - 1 Mark):** Labeled with units [Temperature (°C), Solubility (g/100g water)].
+  - **Plotting (P - 2 Marks):** Points accurately plotted within 1/2 small square.
+  - **Curve (C - 1 Mark):** Smooth curve drawn through plotted points.
+- **Deductions (5 Marks):**
+  - Solubility read from graph at specified temperature (2 Marks).
+  - Crystal yield calculation: Yield = Solubility at T_high - Solubility at T_low (3 Marks).
+
+---
+
+### QUESTION 2: INORGANIC QUALITATIVE SALT ANALYSIS (15 MARKS)
+**Sample:** ${q2.sampleName || 'Solid G'} (${q2.trueSaltName || 'Potassium Chlorate — KClO₃'})  
+**Confirmed Cation:** \`${q2.trueCation || 'K⁺'}\` · **Confirmed Anion:** \`${q2.trueAnion || 'ClO₃⁻'}\`  
+
+| Step & Procedure | Expected Observation | Deduction / Inference | Marks |
+|---|---|---|:---:|
+${(q2.tests || []).map(t => `| ${t.prompt} | ${t.correctObs} | ${t.correctInf} | 2-3 Marks |`).join('\n')}
+`;
+  }
+
+  // 5. Classic / Composite Volumetric Titration Marking Scheme
   const molesB = (Number(q1.trueBaseMolarity || 0.1) * Number(q1.pipetteVolume || 25.0)) / 1000;
   const molesA = molesB * (Number(q1.ratioA || 1) / Number(q1.ratioB || 1));
 
@@ -1228,11 +1952,11 @@ function generateSynchronizedMarkingScheme(exam) {
 #### 1. Table 1 Scoring Criteria (5 Marks):
 | Parameter | Mark Breakdown |
 |---|---|
-| Complete Table | 1 Mark (3 trials completed within realistic volume boundaries) |
-| Use of Decimals | 1 Mark (Readings recorded consistently to 1 or 2 decimal places) |
-| Accuracy | 1 Mark (Within $\\pm 0.20\\text{ cm}^3$ of teacher / theoretical titre: **${Number(q1.trueTitre || 25.0).toFixed(2)} cm³**) |
-| Concordancy | 1 Mark (Student selects concordant readings within $\\pm 0.20\\text{ cm}^3$) |
-| Average Titre Calculation | 1 Mark (Correct algebraic average calculation shown) |
+| Complete Table (CT) | 1 Mark (3 trials completed within realistic volume boundaries) |
+| Use of Decimals (D) | 1 Mark (Readings recorded consistently to 1 or 2 decimal places) |
+| Accuracy (A) | 1 Mark (Within $\\pm 0.20\\text{ cm}^3$ of teacher / theoretical titre: **${Number(q1.trueTitre || 25.0).toFixed(2)} cm³**) |
+| Concordancy / PA | 1 Mark (Student selects concordant readings within $\\pm 0.20\\text{ cm}^3$) |
+| Final Accuracy (FA) | 1 Mark (Correct algebraic average calculation shown to 2 d.p.) |
 
 #### 2. Calculations (10 Marks):
 - **(a) Moles of Solution B pipetted:**
@@ -1244,6 +1968,7 @@ function generateSynchronizedMarkingScheme(exam) {
   $$\\text{Moles of A} = \\text{Moles of B} \\times \\frac{${q1.ratioA || 1}}{${q1.ratioB || 1}} = ${molesA.toExponential(3)}\\text{ moles}$$  (2 Marks)
 - **(d) Concentration / Molarity of Solution A:**
   $$\\text{Molarity of A} = \\frac{\\text{Moles of A} \\times 1000}{\\text{Average Titre (${Number(q1.trueTitre || 25.0).toFixed(2)} cm³)}} = ${Number(q1.trueAcidMolarity || 0.1).toFixed(3)}\\text{ M}$$  (3 Marks)
+- **(e) Units Penalty Note:** Deduct 1/2 mark for missing or incorrect units.
 
 ---
 
@@ -1276,6 +2001,99 @@ function generateSynchronizedPrepGuide(exam) {
   const q2 = cfg.q2 || {};
   const q3 = cfg.q3 || {};
 
+  // 1. Thermochemistry Prep Guide
+  if (q1.simulationType === 'energy' || exam.titrationType === 'energy') {
+    return `# CONFIDENTIAL INSTRUCTIONS TO LABORATORY TECHNICIANS
+**Paper:** ${exam.title || 'KCSE Chemistry Paper 3 Mock — Thermochemistry'}  
+**Target Level:** ${exam.formLevel || 'Form 3'} · **Time:** ${exam.durationMinutes || 90} Minutes  
+
+> **CONFIDENTIAL:** These instructions must not fall into candidate hands prior to examination commencement.
+
+---
+
+### 1. QUESTION 1 PREPARATIONS (THERMOCHEMISTRY)
+- **Solution A (${q1.solutionA || '1.0 M HCl'}):**
+  - Allocate **100 cm³** per candidate in a clean reagent bottle labeled "SOLUTION A".
+  - Prepared at **1.000 M**.
+- **Solution B (${q1.solutionB || '1.0 M NaOH'}):**
+  - Allocate **100 cm³** per candidate in a bottle labeled "SOLUTION B".
+  - Prepared at **1.000 M**.
+- **Apparatus:** 1 × plastic beaker / calorimeter (150–250 cm³), 1 × thermometer (0–100 °C graduated to 0.5 °C), 1 × 50 cm³ measuring cylinder.
+- **Expected ΔT Range:** **6.0 °C to 7.0 °C**.
+
+### 2. QUESTION 2 PREPARATIONS (SALT ANALYSIS)
+- **Target Substance:** ${q2.trueSaltName || 'Copper(II) Carbonate'} (${q2.trueSaltKey || 'CuCO3'})
+- **Quantity per candidate:** **2.0 g** of ${q2.sampleName || 'Solid C'} in a dry stoppered tube.
+- **Bench reagents:** 2M dilute HNO₃, 2M NaOH, 2M aqueous NH₃, lime water in dropper bottle, Bunsen burner, test tubes (5), and test tube holder.
+`;
+  }
+
+  // 2. Reaction Rates Prep Guide
+  if (q1.simulationType === 'rates' || exam.titrationType === 'rates') {
+    return `# CONFIDENTIAL INSTRUCTIONS TO LABORATORY TECHNICIANS
+**Paper:** ${exam.title || 'KCSE Chemistry Paper 3 Mock — Reaction Kinetics'}  
+**Target Level:** ${exam.formLevel || 'Form 3'} · **Time:** ${exam.durationMinutes || 90} Minutes  
+
+> **CONFIDENTIAL:** These instructions must not fall into candidate hands prior to examination commencement.
+
+---
+
+### 1. QUESTION 1 PREPARATIONS (REACTION RATES)
+- **Solution A (${q1.solutionA || '0.20 M Sodium thiosulfate'}):**
+  - Allocate **200 cm³** per candidate (prepared by dissolving 31.6 g of Na₂S₂O₃·5H₂O in 1 dm³ distilled water).
+- **Solution B (${q1.solutionB || '2.0 M Hydrochloric acid'}):**
+  - Allocate **100 cm³** per candidate.
+- **Apparatus:** 1 × white paper card with printed 0.5 mm black cross (X), 1 × 100 cm³ flat-bottom glass beaker, 1 × stopwatch readable to 0.1s, 1 × 50 cm³ measuring cylinder, 1 × 10 cm³ measuring cylinder.
+
+### 2. QUESTION 2 PREPARATIONS (SALT ANALYSIS)
+- **Target Substance:** ${q2.trueSaltName || 'Barium Chloride'} (${q2.trueSaltKey || 'BaCl2'})
+- **Quantity per candidate:** **2.0 g** of ${q2.sampleName || 'Solid D'} in a dry stoppered tube.
+- **Bench reagents:** 2M dilute H₂SO₄, 0.1M AgNO₃, 2M dilute HNO₃, concentrated HCl for wire cleaning, nichrome wire / glass rod, Bunsen burner.
+`;
+  }
+
+  // 3. Gas Preparation Prep Guide
+  if (q1.simulationType === 'gas' || exam.titrationType === 'gas') {
+    return `# CONFIDENTIAL INSTRUCTIONS TO LABORATORY TECHNICIANS
+**Paper:** ${exam.title || 'KCSE Chemistry Paper 3 Mock — Gas Chemistry'}  
+**Target Level:** ${exam.formLevel || 'Form 2'} · **Time:** ${exam.durationMinutes || 60} Minutes  
+
+> **CONFIDENTIAL:** These instructions must not fall into candidate hands prior to examination commencement.
+
+---
+
+### 1. QUESTION 1 PREPARATIONS (GAS PREPARATION)
+- **Apparatus per workstation:** 1 × flat-bottomed flask (250 cm³) with 2-hole bung, thistle funnel, delivery tubes, wash bottle with conc. H₂SO₄, 2 × clean gas jars with cover slips.
+- **Reagents:** 20 g of marble chips (CaCO₃) labeled "SOLID E", 100 cm³ of 2.0 M HCl labeled "SOLUTION F".
+- **Testing:** Lime water in dropper bottle, wooden splints, Bunsen burner.
+
+### 2. QUESTION 2 PREPARATIONS (SALT ANALYSIS)
+- **Target Substance:** ${q2.trueSaltName || 'Calcium Chloride'} (${q2.trueSaltKey || 'CaCl2'})
+- **Bench reagents:** 2M NaOH, 2M aqueous NH₃, 0.1M AgNO₃, 2M dilute HNO₃, test tubes and rack.
+`;
+  }
+
+  // 4. Solubility Prep Guide
+  if (q1.simulationType === 'solubility' || exam.titrationType === 'solubility') {
+    return `# CONFIDENTIAL INSTRUCTIONS TO LABORATORY TECHNICIANS
+**Paper:** ${exam.title || 'KCSE Chemistry Paper 3 Mock — Solubility Curve'}  
+**Target Level:** ${exam.formLevel || 'Form 3'} · **Time:** ${exam.durationMinutes || 90} Minutes  
+
+> **CONFIDENTIAL:** These instructions must not fall into candidate hands prior to examination commencement.
+
+---
+
+### 1. QUESTION 1 PREPARATIONS (SOLUBILITY)
+- **Substance:** Exactly **5.00 g** of Potassium chlorate (KClO₃) weighed into a dry boiling tube labeled "SOLID G".
+- **Apparatus:** 1 × clean boiling tube with clamp and stand, 1 × thermometer (-10 to 110 °C graduated to 0.5 °C), 1 × 50 cm³ burette filled with distilled water, 1 × 400 cm³ beaker for water bath, tripod, wire gauze, Bunsen burner.
+
+### 2. QUESTION 2 PREPARATIONS (SALT ANALYSIS)
+- **Target Substance:** ${q2.trueSaltName || 'Potassium Chlorate'} (${q2.trueSaltKey || 'KClO3'})
+- **Bench reagents:** Nichrome wire, cobalt blue glass, concentrated HCl, wooden splints, 0.1M AgNO₃, 2M dilute HNO₃.
+`;
+  }
+
+  // 5. Classic / Composite Volumetric Prep Guide
   return `# CONFIDENTIAL INSTRUCTIONS TO LABORATORY TECHNICIANS
 **Paper:** ${exam.title || 'KCSE Chemistry Paper 3 Mock'}  
 **Target Level:** ${exam.formLevel || 'Form 4'} · **Time:** ${exam.durationMinutes || 135} Minutes  

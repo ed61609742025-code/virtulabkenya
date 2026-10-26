@@ -1473,6 +1473,9 @@
           <p class="hint" style="margin:0;">Full-scale national mock exam submissions with volumetric titration, inorganic salts, and organic qualitative analysis.</p>
         </div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button type="button" class="btn btn-secondary" onclick="openSupervisorCalibrationModal()" style="font-size:0.8rem; padding:7px 14px; border-color:var(--amber-accent); color:var(--amber-accent);">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:middle;margin-right:4px;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>⚙️ Calibrate Supervisor Titre
+          </button>
           <button type="button" class="btn btn-secondary" onclick="exportTeacherCompositeCsv()" style="font-size:0.8rem; padding:7px 14px;">
             <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;vertical-align:middle;margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export All CSV
           </button>
@@ -1570,6 +1573,116 @@
 
       <!-- Candidate Submissions Ledger Box -->
       <div id="compositeSessionsBox"><div class="empty">Loading composite exam sessions…</div></div>
+    </div>
+
+    <!-- Teacher KNEC Supervisor Titre Calibration Modal -->
+    <div id="supervisorCalibrationModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); backdrop-filter:blur(6px); z-index:20000; align-items:center; justify-content:center; padding:16px;">
+      <div style="background:var(--card-bg); border:1px solid var(--card-border); border-radius:16px; max-width:760px; width:100%; max-height:92vh; overflow-y:auto; padding:24px; box-shadow:var(--shadow-lg); color:var(--text-main);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid var(--card-border); padding-bottom:14px; margin-bottom:16px;">
+          <div>
+            <span style="background:var(--amber-accent); color:#fff; font-size:0.68rem; font-weight:800; padding:2px 8px; border-radius:4px; font-family:var(--font-mono);">KNEC PRACTICAL STANDARDS</span>
+            <h3 style="font-size:1.2rem; font-weight:800; margin-top:4px; color:var(--heading-color);">⚙️ Supervisor Titre &amp; Marking Scheme Calibration</h3>
+            <div style="font-size:0.8rem; color:var(--text-muted);">Calibrate School Supervisor morning values (KCSE 233/3) and synchronize candidate cohort scores.</div>
+          </div>
+          <button type="button" class="btn btn-secondary" onclick="closeSupervisorCalibrationModal()" style="padding:4px 10px; font-size:0.85rem;">✕ Close</button>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          <!-- Assignment Selector -->
+          <div style="background:var(--bg-dark); border:1px solid var(--card-border); border-radius:10px; padding:12px;">
+            <label style="display:block; font-size:0.8rem; font-weight:700; margin-bottom:6px; color:var(--heading-color);">Select Practical Assignment to Calibrate</label>
+            <select id="calibAssignmentSelect" class="form-control" onchange="onCalibrationAssignmentChange()" style="font-size:0.85rem; padding:8px 12px; width:100%;">
+              <option value="">-- Choose an Assignment --</option>
+            </select>
+          </div>
+
+          <!-- Quantitative Titration Calibration (Question 1) -->
+          <div style="background:var(--bg-dark); border:1px solid var(--card-border); border-radius:10px; padding:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+              <span style="font-weight:800; font-size:0.85rem; color:var(--cyan-accent); text-transform:uppercase;">🧪 Question 1: Volumetric Analysis (Table 1)</span>
+              <span class="badge" style="background:rgba(56,189,248,0.12); color:#0284C7; font-size:0.7rem; font-weight:700;">Table 1 (5 Marks)</span>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div>
+                <label style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-muted); margin-bottom:4px;">Supervisor Titre (V_t in cm³)</label>
+                <input type="number" id="calibSupervisorTitre" class="form-control" step="0.05" min="1.0" max="50.0" value="20.00" style="font-family:var(--font-mono); font-size:0.9rem; font-weight:700; padding:8px 12px;">
+                <span style="font-size:0.7rem; color:var(--text-muted);">Morning teacher titration value. Strict 2 d.p.</span>
+              </div>
+              <div>
+                <label style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-muted); margin-bottom:4px;">KNEC Accuracy Tolerance</label>
+                <select id="calibTolerance" class="form-control" style="font-size:0.85rem; padding:8px 12px;">
+                  <option value="0.20">±0.20 cm³ (Standard KCSE Window)</option>
+                  <option value="0.10">±0.10 cm³ (Strict Marking Scheme)</option>
+                </select>
+                <span style="font-size:0.7rem; color:var(--text-muted);">±0.10 cm³ = 1.0 mk; ±0.20 cm³ = 0.5 mk</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Qualitative Analysis Calibration (Questions 2 & 3) -->
+          <div style="background:var(--bg-dark); border:1px solid var(--card-border); border-radius:10px; padding:14px;">
+            <div style="font-weight:800; font-size:0.85rem; color:var(--amber-accent); text-transform:uppercase; margin-bottom:10px;">
+              🔬 Questions 2 &amp; 3: Qualitative Chemistry Standards
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+              <div>
+                <label style="display:block; font-size:0.76rem; font-weight:700; color:var(--text-muted); margin-bottom:4px;">True Cation</label>
+                <select id="calibTrueCation" class="form-control" style="font-size:0.82rem; padding:6px 10px;">
+                  <option value="Fe2+">Fe²⁺ (Iron II)</option>
+                  <option value="Fe3+">Fe³⁺ (Iron III)</option>
+                  <option value="Al3+">Al³⁺ (Aluminium)</option>
+                  <option value="Zn2+">Zn²⁺ (Zinc)</option>
+                  <option value="Pb2+">Pb²⁺ (Lead)</option>
+                  <option value="Cu2+">Cu²⁺ (Copper II)</option>
+                  <option value="Ca2+">Ca²⁺ (Calcium)</option>
+                  <option value="NH4+">NH₄⁺ (Ammonium)</option>
+                </select>
+              </div>
+              <div>
+                <label style="display:block; font-size:0.76rem; font-weight:700; color:var(--text-muted); margin-bottom:4px;">True Anion</label>
+                <select id="calibTrueAnion" class="form-control" style="font-size:0.82rem; padding:6px 10px;">
+                  <option value="SO4 2-">SO₄²⁻ (Sulphate)</option>
+                  <option value="SO3 2-">SO₃²⁻ (Sulphite)</option>
+                  <option value="CO3 2-">CO₃²⁻ (Carbonate)</option>
+                  <option value="Cl-">Cl⁻ (Chloride)</option>
+                  <option value="NO3-">NO₃⁻ (Nitrate)</option>
+                </select>
+              </div>
+              <div>
+                <label style="display:block; font-size:0.76rem; font-weight:700; color:var(--text-muted); margin-bottom:4px;">Organic Group</label>
+                <select id="calibTrueOrg" class="form-control" style="font-size:0.82rem; padding:6px 10px;">
+                  <option value="Alkanol">R-OH (Alkanol / Alcohol)</option>
+                  <option value="Carboxylic Acid">R-COOH (Carboxylic Acid)</option>
+                  <option value="Alkene">C=C (Alkene / Unsaturated)</option>
+                  <option value="Saturated Hydrocarbon">C-C (Saturated Hydrocarbon)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div>
+            <label style="display:block; font-size:0.78rem; font-weight:700; color:var(--text-muted); margin-bottom:4px;">Examiner Observation Guidelines &amp; Notes</label>
+            <textarea id="calibNotes" class="form-control" rows="2" placeholder="e.g. Solution A turns pale green; indicator end point sharp faint pink at 20.10 cm³..." style="font-size:0.82rem; padding:8px;"></textarea>
+          </div>
+
+          <!-- Status Message Strip -->
+          <div id="calibStatusMsg" style="display:none; padding:10px 14px; border-radius:8px; font-size:0.82rem; font-weight:700;"></div>
+        </div>
+
+        <!-- Action Strip -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px; border-top:1px solid var(--card-border); padding-top:14px; flex-wrap:wrap; gap:10px;">
+          <button type="button" class="btn btn-secondary" onclick="closeSupervisorCalibrationModal()">Cancel</button>
+          <div style="display:flex; gap:10px;">
+            <button type="button" class="btn btn-secondary" id="btnSyncScores" onclick="syncSupervisorScores()" style="border-color:var(--cyan-accent); color:var(--cyan-accent); font-weight:700;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>🔄 Re-evaluate &amp; Sync Cohort Scores
+            </button>
+            <button type="button" class="btn btn-primary" id="btnSaveCalibration" onclick="saveSupervisorCalibration()" style="font-weight:800; background:linear-gradient(135deg, #0284C7, #0369A1);">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;vertical-align:middle;margin-right:4px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Save Calibration
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Interactive Teacher Marked Script Review Modal -->

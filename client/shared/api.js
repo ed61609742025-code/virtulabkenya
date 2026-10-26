@@ -1297,6 +1297,24 @@ const Composite = {
   async getTeacherSessions() {
     return apiRequest('GET', '/composite/teacher');
   },
+  async getSummary() {
+    return apiRequest('GET', '/composite/teacher/summary');
+  },
+  async getSession(id) {
+    return apiRequest('GET', '/composite/session/' + id);
+  },
+  async calibrate(data) {
+    return apiRequest('POST', '/composite/calibrate', data);
+  },
+  async getCalibration(assignmentId) {
+    return apiRequest('GET', '/composite/calibrate/' + assignmentId);
+  },
+  async getBenchmarks() {
+    return apiRequest('GET', '/composite/benchmarks');
+  },
+  async syncScores(assignmentId) {
+    return apiRequest('POST', '/composite/sync-scores', { assignmentId });
+  },
   async exportCsv(assignmentId, filename) {
     return downloadFile('/composite/export/' + assignmentId, filename);
   }

@@ -117,14 +117,14 @@ router.get('/mine', authMiddleware, authMiddleware.requireRole('student'), async
   return res.json({ sessions });
 }));
 
-// GET /api/composite/teacher — Teacher: fetch class composite exam attempts
+// GET /api/composite/teacher — Teacher/Admin: fetch class composite exam attempts
 router.get('/teacher', authMiddleware, asyncHandler(async (req, res) => {
-  if (req.user.role !== 'teacher') {
-    return res.status(403).json({ error: 'Only teachers can access class composite exam results.' });
+  if (req.user.role !== 'teacher' && req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Only teachers and administrators can access class composite exam results.' });
   }
 
   try {
-    const sessions = await compositeRepo.getTeacherSessions(req.user.id);
+    const sessions = await compositeRepo.getTeacherSessions(req.user.id, req.user.role);
     return res.json({ sessions: sessions || [] });
   } catch (err) {
     console.warn('[/api/composite/teacher] Safe fallback:', err.message);
@@ -134,12 +134,12 @@ router.get('/teacher', authMiddleware, asyncHandler(async (req, res) => {
 
 // GET /api/composite/teacher/summary — Aggregated class analytics, grade distribution & radar baselines
 router.get('/teacher/summary', authMiddleware, asyncHandler(async (req, res) => {
-  if (req.user.role !== 'teacher') {
-    return res.status(403).json({ error: 'Only teachers can access class composite summaries.' });
+  if (req.user.role !== 'teacher' && req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Only teachers and administrators can access class composite summaries.' });
   }
 
   try {
-    const summary = await compositeRepo.getTeacherSummary(req.user.id);
+    const summary = await compositeRepo.getTeacherSummary(req.user.id, req.user.role);
     return res.json({ summary });
   } catch (err) {
     console.warn('[/api/composite/teacher/summary] Safe fallback:', err.message);
@@ -173,11 +173,11 @@ router.get('/session/:id', authMiddleware, asyncHandler(async (req, res) => {
 
 // GET /api/composite/export/:assignmentId — Export CSV of assignment composite results
 router.get('/export/:assignmentId', authMiddleware, asyncHandler(async (req, res) => {
-  if (req.user.role !== 'teacher') {
-    return res.status(403).json({ error: 'Only teachers can export exam results.' });
+  if (req.user.role !== 'teacher' && req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Only teachers and administrators can export exam results.' });
   }
 
-  const exportData = await compositeRepo.getExportData(req.params.assignmentId, req.user.id);
+  const exportData = await compositeRepo.getExportData(req.params.assignmentId, req.user.id, req.user.role);
   if (!exportData) {
     return res.status(404).json({ error: 'Assignment not found or permission denied.' });
   }
@@ -199,6 +199,57 @@ router.get('/export/:assignmentId', authMiddleware, asyncHandler(async (req, res
 
   const filename = `composite_exam_${exportData.assignment.id}_results.csv`;
   sendCsv(res, filename, headerRow, dataRows);
+}));
+
+// POST /api/composite/calibrate — Save supervisor titre and chemical values for an assignment
+router.post('/calibrate', authMiddleware, asyncHandler(async (req, res) => {
+  if (req.user.role !== 'teacher' && req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Only teachers and administrators can configure supervisor calibrations.' });
+  }
+
+  const { assignmentId, supervisorTitre, tolerance, trueCation, trueAnion, trueFunctionalGroup, notes } = req.body;
+  if (!assignmentId) {
+    return res.status(400).json({ error: 'Assignment ID is required.' });
+  }
+
+  const calibration = await compositeRepo.saveCalibration(req.user.id, req.user.role, {
+    assignmentId,
+    supervisorTitre,
+    tolerance,
+    trueCation,
+    trueAnion,
+    trueFunctionalGroup,
+    notes
+  });
+
+  return res.json({ message: 'Supervisor calibration saved successfully.', calibration });
+}));
+
+// GET /api/composite/calibrate/:assignmentId — Retrieve supervisor calibration
+router.get('/calibrate/:assignmentId', authMiddleware, asyncHandler(async (req, res) => {
+  const calibration = await compositeRepo.getCalibration(req.params.assignmentId);
+  return res.json({ calibration });
+}));
+
+// GET /api/composite/benchmarks — National KCSE 233/3 Practical Benchmarks and Rubrics
+router.get('/benchmarks', authMiddleware, asyncHandler(async (req, res) => {
+  const benchmarks = compositeRepo.getNationalBenchmarks();
+  return res.json({ benchmarks });
+}));
+
+// POST /api/composite/sync-scores — Recalculate candidate scores against supervisor titre calibration
+router.post('/sync-scores', authMiddleware, asyncHandler(async (req, res) => {
+  if (req.user.role !== 'teacher' && req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Only teachers and administrators can synchronize cohort scores.' });
+  }
+
+  const { assignmentId } = req.body;
+  if (!assignmentId) {
+    return res.status(400).json({ error: 'Assignment ID is required.' });
+  }
+
+  const syncResult = await compositeRepo.syncCohortScores(assignmentId);
+  return res.json({ message: 'Cohort scores synchronized with supervisor calibration.', ...syncResult });
 }));
 
 module.exports = router;

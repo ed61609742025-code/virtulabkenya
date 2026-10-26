@@ -819,7 +819,190 @@
     closeTeacherDrillPreview();
   }
 
+  async function openSupervisorCalibrationModal() {
+    const modal = document.getElementById('supervisorCalibrationModal');
+    if (!modal) return;
+    const select = document.getElementById('calibAssignmentSelect');
+    const msg = document.getElementById('calibStatusMsg');
+    if (msg) msg.style.display = 'none';
+
+    if (select) {
+      select.innerHTML = '<option value="">Loading assignments…</option>';
+      try {
+        let assignRes;
+        if (window.Assignments && typeof window.Assignments.getTeacherList === 'function') {
+          assignRes = await window.Assignments.getTeacherList();
+        } else if (window.apiRequest) {
+          assignRes = await window.apiRequest('GET', '/assignments/teacher');
+        } else {
+          assignRes = await fetchWithAuth('/api/assignments/teacher');
+        }
+        const assignments = (assignRes && assignRes.assignments) ? assignRes.assignments : [];
+        if (assignments.length === 0) {
+          select.innerHTML = '<option value="1">KCSE Chemistry Practical Mock Series (Default Assignment #1)</option>';
+        } else {
+          select.innerHTML = assignments.map(a => `<option value="${a.id}">#${a.id} — ${escapeHtml(a.title)} (${escapeHtml(a.form || 'KCSE Form 4')})</option>`).join('');
+        }
+        onCalibrationAssignmentChange();
+      } catch (e) {
+        select.innerHTML = '<option value="1">KCSE Chemistry Practical Mock Series (Default Assignment #1)</option>';
+        onCalibrationAssignmentChange();
+      }
+    }
+    modal.style.display = 'flex';
+  }
+
+  function closeSupervisorCalibrationModal() {
+    const modal = document.getElementById('supervisorCalibrationModal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  async function onCalibrationAssignmentChange() {
+    const select = document.getElementById('calibAssignmentSelect');
+    if (!select || !select.value) return;
+    const assignmentId = select.value;
+
+    try {
+      let calibRes;
+      if (window.Composite && typeof window.Composite.getCalibration === 'function') {
+        calibRes = await window.Composite.getCalibration(assignmentId);
+      } else if (window.apiRequest) {
+        calibRes = await window.apiRequest('GET', `/composite/calibrate/${assignmentId}`);
+      } else {
+        calibRes = await fetchWithAuth(`/api/composite/calibrate/${assignmentId}`);
+      }
+
+      const c = (calibRes && calibRes.calibration) ? calibRes.calibration : null;
+      if (c) {
+        if (document.getElementById('calibSupervisorTitre')) document.getElementById('calibSupervisorTitre').value = parseFloat(c.supervisor_titre || 20.00).toFixed(2);
+        if (document.getElementById('calibTolerance')) document.getElementById('calibTolerance').value = parseFloat(c.tolerance || 0.20).toFixed(2);
+        if (document.getElementById('calibTrueCation') && c.true_cation) document.getElementById('calibTrueCation').value = c.true_cation;
+        if (document.getElementById('calibTrueAnion') && c.true_anion) document.getElementById('calibTrueAnion').value = c.true_anion;
+        if (document.getElementById('calibTrueOrg') && c.true_functional_group) document.getElementById('calibTrueOrg').value = c.true_functional_group;
+        if (document.getElementById('calibNotes')) document.getElementById('calibNotes').value = c.notes || '';
+      }
+    } catch (e) {
+      console.warn('[TeacherComposite] load calibration note:', e.message);
+    }
+  }
+
+  async function saveSupervisorCalibration() {
+    const select = document.getElementById('calibAssignmentSelect');
+    const assignmentId = select ? select.value : '1';
+    if (!assignmentId) {
+      alert('Please select an assignment first.');
+      return;
+    }
+
+    const supervisorTitre = parseFloat(document.getElementById('calibSupervisorTitre')?.value || 20.00);
+    const tolerance = parseFloat(document.getElementById('calibTolerance')?.value || 0.20);
+    const trueCation = document.getElementById('calibTrueCation')?.value || 'Fe2+';
+    const trueAnion = document.getElementById('calibTrueAnion')?.value || 'SO4 2-';
+    const trueFunctionalGroup = document.getElementById('calibTrueOrg')?.value || 'Alkanol';
+    const notes = document.getElementById('calibNotes')?.value || '';
+
+    const btn = document.getElementById('btnSaveCalibration');
+    const msg = document.getElementById('calibStatusMsg');
+    if (btn) btn.disabled = true;
+
+    try {
+      const payload = {
+        assignmentId,
+        supervisorTitre,
+        tolerance,
+        trueCation,
+        trueAnion,
+        trueFunctionalGroup,
+        notes
+      };
+
+      if (window.Composite && typeof window.Composite.calibrate === 'function') {
+        await window.Composite.calibrate(payload);
+      } else if (window.apiRequest) {
+        await window.apiRequest('POST', '/composite/calibrate', payload);
+      } else {
+        await fetchWithAuth('/api/composite/calibrate', {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+      }
+
+      if (msg) {
+        msg.style.display = 'block';
+        msg.style.background = 'rgba(16,185,129,0.15)';
+        msg.style.color = '#10B981';
+        msg.style.border = '1px solid rgba(16,185,129,0.3)';
+        msg.innerHTML = `✓ Supervisor titration value calibrated to <b>${supervisorTitre.toFixed(2)} cm³</b> (±${tolerance.toFixed(2)} cm³). Click "Re-evaluate &amp; Sync Cohort Scores" to update candidate marks.`;
+      }
+    } catch (err) {
+      if (msg) {
+        msg.style.display = 'block';
+        msg.style.background = 'rgba(239,68,68,0.15)';
+        msg.style.color = '#EF4444';
+        msg.style.border = '1px solid rgba(239,68,68,0.3)';
+        msg.textContent = 'Failed to save calibration: ' + (err.message || 'Unknown error');
+      }
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  }
+
+  async function syncSupervisorScores() {
+    const select = document.getElementById('calibAssignmentSelect');
+    const assignmentId = select ? select.value : '1';
+    if (!assignmentId) {
+      alert('Please select an assignment first.');
+      return;
+    }
+
+    const btn = document.getElementById('btnSyncScores');
+    const msg = document.getElementById('calibStatusMsg');
+    if (btn) btn.disabled = true;
+
+    try {
+      let res;
+      if (window.Composite && typeof window.Composite.syncScores === 'function') {
+        res = await window.Composite.syncScores(assignmentId);
+      } else if (window.apiRequest) {
+        res = await window.apiRequest('POST', '/composite/sync-scores', { assignmentId });
+      } else {
+        res = await fetchWithAuth('/api/composite/sync-scores', {
+          method: 'POST',
+          body: JSON.stringify({ assignmentId })
+        });
+      }
+
+      const updated = res?.updatedCount ?? 0;
+      const titre = res?.supervisorTitre ? Number(res.supervisorTitre).toFixed(2) : '20.00';
+
+      if (msg) {
+        msg.style.display = 'block';
+        msg.style.background = 'rgba(2,132,199,0.15)';
+        msg.style.color = '#0284C7';
+        msg.style.border = '1px solid rgba(2,132,199,0.3)';
+        msg.innerHTML = `🔄 Synchronized <b>${updated}</b> candidate script(s) against supervisor titre <b>${titre} cm³</b>. Table 1 marks &amp; 12-point KNEC grades updated!`;
+      }
+
+      await loadTeacherCompositeSessions();
+    } catch (err) {
+      if (msg) {
+        msg.style.display = 'block';
+        msg.style.background = 'rgba(239,68,68,0.15)';
+        msg.style.color = '#EF4444';
+        msg.style.border = '1px solid rgba(239,68,68,0.3)';
+        msg.textContent = 'Sync failed: ' + (err.message || 'Unknown error');
+      }
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  }
+
   // Export functions to global scope
+  window.openSupervisorCalibrationModal = openSupervisorCalibrationModal;
+  window.closeSupervisorCalibrationModal = closeSupervisorCalibrationModal;
+  window.onCalibrationAssignmentChange = onCalibrationAssignmentChange;
+  window.saveSupervisorCalibration = saveSupervisorCalibration;
+  window.syncSupervisorScores = syncSupervisorScores;
   window.loadTeacherCompositeSessions = loadTeacherCompositeSessions;
   window.filterTeacherCompositeSessions = filterTeacherCompositeSessions;
   window.reviewTeacherScript = reviewTeacherScript;

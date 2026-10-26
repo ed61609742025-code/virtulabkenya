@@ -990,7 +990,7 @@ router.get('/system/health', requireAdminPermission(rbac.PERMISSIONS.TELEMETRY_R
   const instanceId = process.env.RENDER_INSTANCE_ID ? process.env.RENDER_INSTANCE_ID.substring(0, 8) : 'srv-node-01';
 
   const hasGeminiKey = Boolean(process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim());
-  const geminiModel = process.env.GEMINI_MODEL || (config.gemini && config.gemini.defaultModel) || 'gemini-3.5-flash-lite';
+  const geminiModel = process.env.GEMINI_MODEL || (config.gemini && config.gemini.defaultModel) || 'gemini-3.8-flash';
   const geminiStatus = hasGeminiKey ? 'operational' : 'blueprint_fallback';
 
   const hasVapid = Boolean(config.push && config.push.vapidPublicKey && config.push.vapidPrivateKey);

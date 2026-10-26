@@ -7,7 +7,7 @@ const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 const config = require('../config');
 
-const DEFAULT_MODEL = config.gemini?.defaultModel || 'gemini-2.5-flash';
+const DEFAULT_MODEL = config.gemini?.defaultModel || 'gemini-3.8-flash';
 const EXAM_MAX_TOKENS = config.gemini?.examAssistantMaxTokens || 8192;
 
 /**
@@ -928,8 +928,13 @@ async function callGeminiAssistant({ prompt, files = [], fileData = null, mimeTy
     throw new Error('AI_NOT_CONFIGURED');
   }
 
-  const model = process.env.GEMINI_MODEL || DEFAULT_MODEL;
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+  const primaryModel = (process.env.GEMINI_MODEL || DEFAULT_MODEL).replace(/^models\//, '');
+  const candidateModels = Array.from(new Set([
+    primaryModel,
+    'gemini-3.8-flash',
+    'gemini-3.5-flash-lite',
+    'gemini-3.5-flash'
+  ]));
 
   const parts = [{ text: prompt }];
 
@@ -972,47 +977,68 @@ async function callGeminiAssistant({ prompt, files = [], fileData = null, mimeTy
 
   // Timeout configurable via GEMINI_TIMEOUT_MS, default 75s for multimodal PDF exam paper synthesis
   const timeoutMs = parseInt(process.env.GEMINI_TIMEOUT_MS, 10) || 75000;
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-goog-api-key': apiKey
-    },
-    signal: AbortSignal.timeout(timeoutMs),
-    body: JSON.stringify({
-      contents: [{ parts }],
-      generationConfig: {
-        maxOutputTokens: Math.min(maxTokens || EXAM_MAX_TOKENS, 8192),
-        temperature: 0.2,
-        responseMimeType: 'application/json'
-      }
-    })
-  });
+  let lastError = null;
 
-  if (!response.ok) {
-    const errText = await response.text();
-    console.error('[Gemini Exam Assistant Error]:', response.status, errText);
-    let detailedMsg = `GEMINI_API_ERROR (${response.status})`;
+  for (const model of candidateModels) {
     try {
-      const errJson = JSON.parse(errText);
-      if (errJson.error && errJson.error.message) {
-        detailedMsg = errJson.error.message;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': apiKey
+        },
+        signal: AbortSignal.timeout(timeoutMs),
+        body: JSON.stringify({
+          contents: [{ parts }],
+          generationConfig: {
+            maxOutputTokens: Math.min(maxTokens || EXAM_MAX_TOKENS, 8192),
+            temperature: 0.2,
+            responseMimeType: 'application/json'
+          }
+        })
+      });
+
+      if (!response.ok) {
+        const errText = await response.text();
+        console.warn(`[Gemini Exam Assistant Warning] Model ${model} returned ${response.status}:`, errText.slice(0, 180));
+        let detailedMsg = `GEMINI_API_ERROR (${response.status})`;
+        try {
+          const errJson = JSON.parse(errText);
+          if (errJson.error && errJson.error.message) {
+            detailedMsg = errJson.error.message;
+          }
+        } catch (_) {}
+        lastError = new Error(detailedMsg);
+
+        // If model not found (404), deprecated, or invalid model argument, continue to next candidate model
+        if (response.status === 404 || response.status === 400 || response.status === 410) {
+          continue;
+        }
+        throw lastError;
       }
-    } catch (_) {}
-    throw new Error(detailedMsg);
+
+      const data = await response.json();
+      const candidate = data.candidates && data.candidates[0];
+      const text = candidate && candidate.content && candidate.content.parts
+        ? candidate.content.parts.map(p => p.text || '').join('').trim()
+        : '';
+
+      if (!text) {
+        throw new Error('GEMINI_EMPTY_RESPONSE');
+      }
+
+      return text;
+    } catch (err) {
+      if (err.name === 'AbortError' || err.name === 'TimeoutError') {
+        throw new Error(`AI request timed out after ${timeoutMs}ms.`);
+      }
+      lastError = err;
+      console.warn(`[Gemini Exam Assistant Warning] Model ${model} failed:`, err.message);
+    }
   }
 
-  const data = await response.json();
-  const candidate = data.candidates && data.candidates[0];
-  const text = candidate && candidate.content && candidate.content.parts
-    ? candidate.content.parts.map(p => p.text || '').join('').trim()
-    : '';
-
-  if (!text) {
-    throw new Error('GEMINI_EMPTY_RESPONSE');
-  }
-
-  return text;
+  throw lastError || new Error('GEMINI_API_ERROR');
 }
 
 /**

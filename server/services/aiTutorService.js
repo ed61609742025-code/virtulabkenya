@@ -4,7 +4,7 @@
 
 const config = require('../config');
 
-const DEFAULT_MODEL = config.gemini?.defaultModel || 'gemini-2.5-flash';
+const DEFAULT_MODEL = config.gemini?.defaultModel || 'gemini-3.8-flash';
 
 /**
  * Context-aware pedagogical rule engine for KNEC Paper 3.
@@ -135,7 +135,7 @@ async function callGemini(prompt, maxTokens = 2048) {
   }
 
   const primaryModel = process.env.GEMINI_MODEL || DEFAULT_MODEL;
-  const candidateModels = [primaryModel, 'gemini-2.0-flash', 'gemini-1.5-flash'];
+  const candidateModels = [primaryModel, 'gemini-3.8-flash', 'gemini-3.5-flash-lite', 'gemini-3.5-flash'];
   const models = [...new Set(candidateModels.filter(Boolean))];
 
   let lastError = null;

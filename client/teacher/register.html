@@ -2,14 +2,18 @@
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Teacher Registration — VirtuLab Kenya</title>
 <script>
   var t = localStorage.getItem('vlk_theme') || 'dark';
   document.documentElement.setAttribute('data-theme', t);
 </script>
+<meta name="theme-color" content="#0F172A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/shared/style.css">
 <link rel="stylesheet" href="/shared/auth.css">
 </head>
@@ -23,10 +27,16 @@
 </div>
 
 <!-- Teacher Register Box -->
-<div class="auth-card">
+<div class="auth-card portal-teacher">
   <div class="auth-header">
+    <div class="vlk-brand-logo-wrap lg" style="margin: 0 auto 12px auto; display:flex; justify-content:center;">
+      <img src="/shared/virtulab-logo.svg" alt="VirtuLab Kenya Logo" class="vlk-brand-logo-img" width="56" height="56">
+    </div>
+    <div style="margin-bottom: 8px;">
+      <span class="auth-badge auth-badge-teacher">👩‍🏫 Teacher Portal · Class &amp; Practicals Registration</span>
+    </div>
     <h1 class="auth-logo-title">VirtuLab Kenya</h1>
-    <p class="auth-sub">Teacher Registration — Create an account to set up classes and track practical exercises.</p>
+    <p class="auth-sub">Teacher Registration — Create an account to set up classes, configure practical benches, and track student grades.</p>
   </div>
 
   <div id="registerForm">
@@ -35,8 +45,7 @@
       <div>
         <label for="name" class="field-label">Full Name</label>
         <div class="input-wrapper">
-          
-          <input type="text" id="name" class="auth-input" placeholder="Full name">
+          <input type="text" id="name" class="auth-input" placeholder="e.g. Mwalimu Grace Wanjiku" required>
         </div>
       </div>
 
@@ -44,8 +53,7 @@
       <div>
         <label for="email" class="field-label">School Email Address</label>
         <div class="input-wrapper">
-          
-          <input type="email" id="email" class="auth-input" placeholder="teacher@school.ac.ke" name="username" autocomplete="username">
+          <input type="email" id="email" class="auth-input" placeholder="teacher@school.ac.ke" name="username" autocomplete="username" required>
         </div>
       </div>
 
@@ -53,8 +61,7 @@
       <div>
         <label for="password" class="field-label">Password</label>
         <div class="input-wrapper">
-          
-          <input type="password" id="password" class="auth-input" placeholder="At least 6 characters" autocomplete="new-password">
+          <input type="password" id="password" class="auth-input" placeholder="At least 6 characters" autocomplete="new-password" required>
           <button type="button" class="toggle-pw-btn" onclick="togglePasswordVisibility()" title="Toggle password">Show</button>
         </div>
       </div>
@@ -63,14 +70,15 @@
       <div>
         <label for="schoolCode" class="field-label">School Registration Code</label>
         <div class="input-wrapper">
-          <input type="text" id="schoolCode" class="auth-input" placeholder="e.g. DEMO001" style="text-transform:uppercase;">
+          <input type="text" id="schoolCode" class="auth-input" placeholder="e.g. DEMO001" style="text-transform:uppercase;" required>
         </div>
         <p style="margin: 4px 0 0 0; font-size: 0.76rem; color: var(--text-muted);">
           Testing? Use verified school code: <code style="color:var(--teal, #38BDF8); font-weight:700;">DEMO001</code>
         </p>
       </div>
-        <!-- Teacher / School Authorization Agreement -->
-      <div style="margin-top: 14px; padding: 12px 14px; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 8px; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
+
+      <!-- Teacher / School Authorization Agreement -->
+      <div style="margin-top: 14px; padding: 12px 14px; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 10px; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
         <label style="display: flex; align-items: flex-start; gap: 9px; cursor: pointer; text-align: left;">
           <input type="checkbox" id="teacherLegalConsent" style="margin-top: 3px; accent-color: var(--teal, #38BDF8); width: 16px; height: 16px; flex-shrink: 0;" required>
           <span>
@@ -81,7 +89,7 @@
     </div>
 
     <!-- Submit Button -->
-    <button type="button" class="btn-submit-teacher" onclick="doRegister()">
+    <button type="button" class="btn-submit-teacher" id="regSubmitBtn" onclick="doRegister()">
       <span>Register Teacher Account</span>
       <span>→</span>
     </button>
@@ -97,7 +105,7 @@
       <div style="font-size:0.82rem; color:var(--text-muted); margin-top:6px; line-height:1.5;">
         Share this unique Teacher Code with your students during registration so they link directly to your class roster:
       </div>
-      <div class="teacher-code-val" id="dispTeacherCode">TCH-XXXX</div>
+      <div class="teacher-code-display" id="dispTeacherCode">TCH-XXXX</div>
       <button type="button" class="btn-submit-teacher" onclick="window.location.href='dashboard.html'" style="margin-top:12px;">
         Go to Teacher Dashboard →
       </button>
@@ -107,36 +115,24 @@
   <!-- Footer Navigation Links -->
   <div class="auth-footer">
     <p style="margin: 0 0 8px 0;">Already have a teacher account? <a href="login.html">Teacher Login →</a></p>
-    <p style="margin: 0;">Are you a student? <a href="../student/register.html">Student Registration</a></p>
+    <p style="margin: 0 0 8px 0;">Are you a student? <a href="/student/register.html">Student Registration →</a></p>
+    <p style="margin: 0;">MoE System Administrator? <a href="/admin/login.html">Admin Portal Login →</a></p>
   </div>
 </div>
 
+<script src="/shared/theme.js"></script>
+<script src="/shared/auth-forms.js"></script>
 <script src="/shared/api.js"></script>
 <script>
-  function setTheme(theme) {
-    localStorage.setItem('vlk_theme', theme);
-    document.documentElement.setAttribute('data-theme', theme);
-    updateThemeButtons();
-  }
-
-  function updateThemeButtons() {
-    const currentTheme = localStorage.getItem('vlk_theme') || 'dark';
-    document.querySelectorAll('.theme-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.getAttribute('data-theme') === currentTheme);
-    });
-  }
-  updateThemeButtons();
-
   // Redirect if already logged in
   if (isLoggedIn()) window.location.href = 'dashboard.html';
 
   function togglePasswordVisibility() {
     const pwInput = document.getElementById('password');
-    if (pwInput.type === 'password') {
-      pwInput.type = 'text';
-    } else {
-      pwInput.type = 'password';
-    }
+    const isPw = pwInput.type === 'password';
+    pwInput.type = isPw ? 'text' : 'password';
+    const btn = document.querySelector('.toggle-pw-btn');
+    if (btn) btn.textContent = isPw ? 'Hide' : 'Show';
   }
 
   async function doRegister() {
@@ -146,6 +142,7 @@
     const schoolCode = document.getElementById('schoolCode').value.trim().toUpperCase();
 
     const msg = document.getElementById('msg');
+    const submitBtn = document.getElementById('regSubmitBtn');
     msg.innerHTML = '';
 
     const teacherLegalConsent = document.getElementById('teacherLegalConsent');
@@ -165,21 +162,28 @@
       return;
     }
 
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>Registering teacher account…</span> <span>⏳</span>';
+    }
+
     try {
-      msg.innerHTML = '<div class="msg-alert info">🧪 Registering teacher account…</div>';
+      msg.innerHTML = '<div class="msg-alert info">Registering teacher account…</div>';
       const res = await Auth.teacherRegister(name, email, password, schoolCode);
 
       document.getElementById('registerForm').style.display = 'none';
       document.getElementById('dispTeacherCode').textContent = res.user.teacherCode || 'TCH001';
       document.getElementById('successCard').style.display = 'block';
     } catch (err) {
-      msg.innerHTML = '<div class="msg-alert err">' + (err.message || 'Registration failed. Please try again.') + '</div>';
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>Register Teacher Account</span> <span>→</span>';
+      }
+      msg.innerHTML = '<div class="msg-alert err">' + escapeHtml(err.message || 'Registration failed. Please try again.') + '</div>';
     }
   }
 
-  document.getElementById('password').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') doRegister();
-  });
+  setupFormKeyListeners('registerForm', doRegister);
 </script>
 </body>
 </html>

@@ -13,68 +13,13 @@
   }
 </script>
 <meta name="theme-color" content="#0F172A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/shared/style.css">
 <link rel="stylesheet" href="/shared/auth.css">
-<style>
-  .auth-card {
-    position: relative;
-    overflow: hidden;
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid var(--card-border);
-    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.35);
-  }
-  .auth-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, #0284C7 0%, #10B981 50%, #F59E0B 100%);
-  }
-  .admin-auth-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 5px 14px;
-    background: rgba(2, 132, 199, 0.12);
-    border: 1px solid rgba(2, 132, 199, 0.35);
-    color: var(--teal, #38BDF8);
-    border-radius: 9999px;
-    font-size: 0.74rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 12px;
-  }
-  .btn-submit-admin {
-    width: 100%;
-    padding: 13px 18px;
-    background: linear-gradient(135deg, #0284C7, #0369A1);
-    color: #FFFFFF;
-    font-weight: 800;
-    font-size: 0.95rem;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .btn-submit-admin:hover {
-    background: linear-gradient(135deg, #0369A1, #075985);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 22px rgba(2, 132, 199, 0.5);
-    filter: brightness(1.06);
-  }
-</style>
 </head>
 <body class="auth-page">
 
@@ -86,16 +31,17 @@
 </div>
 
 <!-- Admin Login Card -->
-<div class="auth-card">
+<div class="auth-card portal-admin">
   <div class="auth-header">
     <div class="vlk-brand-logo-wrap lg" style="margin: 0 auto 12px auto; display:flex; justify-content:center;">
       <img src="/shared/virtulab-logo.svg" alt="VirtuLab Kenya Logo" class="vlk-brand-logo-img" width="56" height="56">
     </div>
-    <div style="margin-bottom: 6px;">
-      <span class="admin-auth-badge">🛡️ MoE Central Node · Restricted Admin Access</span>
+    <div style="margin-bottom: 8px;">
+      <span class="auth-badge auth-badge-admin">🛡️ MoE Central Node · Restricted Admin Access</span>
     </div>
     <h1 class="auth-logo-title">VirtuLab Kenya</h1>
     <p class="auth-sub">National Admin Portal — Sign in with institutional administrator credentials to manage schools, teacher certifications, and national practical analytics.</p>
+    <div id="serverStatusWrap" style="display:flex; justify-content:center; margin-top:10px;"></div>
   </div>
 
   <form id="adminLoginForm" onsubmit="event.preventDefault(); doAdminLogin();">
@@ -129,17 +75,24 @@
     </button>
   </form>
 
+  <!-- Quick Demo Admin Fill -->
+  <div style="margin-top: 12px;">
+    <button type="button" class="btn-quick-demo btn-quick-demo-admin" onclick="quickAdminDemoFill()">
+      <span>⚡ Quick Fill Admin Demo Credentials</span>
+    </button>
+  </div>
+
   <!-- Error / Status Feedback Box -->
   <div id="msg"></div>
 
   <!-- Security Reassurance Notice -->
-  <div style="margin-top:14px; padding:8px 12px; background:rgba(15,23,42,0.35); border:1px solid var(--card-border); border-radius:8px; font-size:0.74rem; color:var(--text-muted); text-align:center; display:flex; align-items:center; justify-content:center; gap:6px;">
+  <div style="margin-top:16px; padding:9px 14px; background:rgba(15,23,42,0.35); border:1px solid var(--card-border); border-radius:10px; font-size:0.75rem; color:var(--text-muted); text-align:center; display:flex; align-items:center; justify-content:center; gap:8px;">
     <span>🔒</span>
     <span>AES-256 GCM Session Encryption · Republic of Kenya MoE Node</span>
   </div>
 
   <!-- Footer Navigation Links -->
-  <div class="auth-footer" style="margin-top:16px;">
+  <div class="auth-footer" style="margin-top:18px;">
     <p style="margin: 0 0 8px 0;">Are you a chemistry teacher? <a href="/teacher/login.html">Teacher Portal →</a></p>
     <p style="margin: 0;">Are you a student? <a href="/student/login.html">Student Login →</a></p>
   </div>
@@ -149,6 +102,10 @@
 <script src="/shared/auth-forms.js"></script>
 <script src="/shared/api.js"></script>
 <script>
+  if (window.VLKServer) {
+    VLKServer.mountStatusPill('serverStatusWrap');
+  }
+
   // Display alerts for role mismatch, returnUrl, or expired session
   const urlParams = new URLSearchParams(window.location.search);
   const mismatch = urlParams.get('mismatch');
@@ -158,11 +115,11 @@
 
   if (msgEl) {
     if (expired) {
-      msgEl.innerHTML = `<div class="msg-alert err" style="margin-top:14px;">⏱️ Your administrator session has expired. Please sign in again.</div>`;
+      msgEl.innerHTML = `<div class="msg-alert err">⏱️ Your administrator session has expired. Please sign in again.</div>`;
     } else if (mismatch) {
-      msgEl.innerHTML = `<div class="msg-alert warn" style="margin-top:14px;">⚠️ Access restricted: You are signed in as <b>${escapeHtml(mismatch)}</b>. System Administrator credentials are required to enter the Admin Portal.</div>`;
+      msgEl.innerHTML = `<div class="msg-alert warn">⚠️ Access Restricted: You are signed in as <b>${escapeHtml(mismatch)}</b>. System Administrator credentials are required to enter the Admin Portal.</div>`;
     } else if (returnUrl) {
-      msgEl.innerHTML = `<div class="msg-alert info" style="margin-top:14px;">🔐 <b>Administrator Authentication Required:</b> Sign in to proceed to the administrative console.</div>`;
+      msgEl.innerHTML = `<div class="msg-alert info">🔐 <b>Administrator Authentication Required:</b> Sign in to proceed to the administrative console.</div>`;
     }
   }
 
@@ -174,19 +131,30 @@
     if (btn) btn.textContent = isPw ? 'Hide' : 'Show';
   }
 
+  function quickAdminDemoFill() {
+    document.getElementById('adminEmail').value = 'admin@virtulab.co.ke';
+    document.getElementById('adminPassword').value = 'admin123';
+  }
+
   async function doAdminLogin() {
     const email = document.getElementById('adminEmail').value.trim();
     const password = document.getElementById('adminPassword').value;
     const msg = document.getElementById('msg');
+    const submitBtn = document.getElementById('submitBtn');
     msg.innerHTML = '';
 
     if (!email || !password) {
-      msg.innerHTML = '<div class="msg-alert err" style="margin-top:14px;">Please enter both your admin email and password.</div>';
+      msg.innerHTML = '<div class="msg-alert err">Please enter both your admin email and password.</div>';
       return;
     }
 
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>Verifying credentials…</span> <span>⏳</span>';
+    }
+
     try {
-      msg.innerHTML = '<div class="msg-alert info" style="margin-top:14px;">Verifying administrator credentials…</div>';
+      msg.innerHTML = '<div class="msg-alert info">Verifying administrator credentials…</div>';
       await Auth.adminLogin(email, password);
 
       const params = new URLSearchParams(window.location.search);
@@ -197,7 +165,15 @@
         window.location.href = 'dashboard.html';
       }
     } catch (err) {
-      msg.innerHTML = '<div class="msg-alert err" style="margin-top:14px;">' + escapeHtml(err.message || 'Invalid administrator email or password') + '</div>';
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>Unlock Admin Console</span> <span>🔐</span>';
+      }
+      let errText = err.message || 'Invalid administrator email or password';
+      if (errText.includes('Failed to fetch') || errText.includes('fetch')) {
+        errText = 'Could not reach server. Tap the server connection pill above to verify your PostgreSQL / API host connection.';
+      }
+      msg.innerHTML = '<div class="msg-alert err">' + escapeHtml(errText) + '</div>';
     }
   }
 

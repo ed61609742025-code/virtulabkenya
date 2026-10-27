@@ -2,14 +2,18 @@
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Student Registration — VirtuLab Kenya</title>
 <script>
   var t = localStorage.getItem('vlk_theme') || 'dark';
   document.documentElement.setAttribute('data-theme', t);
 </script>
+<meta name="theme-color" content="#0F172A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/shared/style.css">
 <link rel="stylesheet" href="/shared/auth.css">
 </head>
@@ -23,13 +27,16 @@
 </div>
 
 <!-- Student Register Box -->
-<div class="auth-card">
+<div class="auth-card portal-student">
   <div class="auth-header">
-    <div class="vlk-brand-logo-wrap lg" style="margin: 0 auto 14px auto;">
-      <img src="/shared/virtulab-logo.svg" alt="VirtuLab Kenya Logo" class="vlk-brand-logo-img" width="52" height="52">
+    <div class="vlk-brand-logo-wrap lg" style="margin: 0 auto 12px auto; display:flex; justify-content:center;">
+      <img src="/shared/virtulab-logo.svg" alt="VirtuLab Kenya Logo" class="vlk-brand-logo-img" width="56" height="56">
+    </div>
+    <div style="margin-bottom: 8px;">
+      <span class="auth-badge auth-badge-student">🧪 Student Portal · Account Registration</span>
     </div>
     <h1 class="auth-logo-title">VirtuLab Kenya</h1>
-    <p class="auth-sub">Student Registration — Create an account to run chemistry practicals and track your progress.</p>
+    <p class="auth-sub">Student Registration — Create an account to run chemistry practicals, track bench accuracy, and prepare for KCSE Paper 3.</p>
   </div>
 
   <div class="auth-form-group">
@@ -37,8 +44,7 @@
     <div>
       <label for="name" class="field-label">Full Name</label>
       <div class="input-wrapper">
-        
-        <input type="text" id="name" class="auth-input" placeholder="Full name">
+        <input type="text" id="name" class="auth-input" placeholder="e.g. Joy Muthoni" required>
       </div>
     </div>
 
@@ -46,8 +52,7 @@
     <div>
       <label for="email" class="field-label">School Email Address</label>
       <div class="input-wrapper">
-        
-        <input type="email" id="email" class="auth-input" placeholder="student@school.ac.ke" name="username" autocomplete="username">
+        <input type="email" id="email" class="auth-input" placeholder="student@school.ac.ke" name="username" autocomplete="username" required>
       </div>
     </div>
 
@@ -55,13 +60,12 @@
     <div>
       <label for="form" class="field-label">Form / Class</label>
       <div class="input-wrapper">
-        
-        <select id="form" class="auth-select">
+        <select id="form" class="auth-select" required>
           <option value="">Select your Form / Class</option>
           <option value="Form 1">Form 1</option>
           <option value="Form 2">Form 2</option>
           <option value="Form 3">Form 3</option>
-          <option value="Form 4">Form 4</option>
+          <option value="Form 4" selected>Form 4</option>
         </select>
       </div>
     </div>
@@ -70,17 +74,18 @@
     <div>
       <label for="schoolCode" class="field-label">School Registration Code</label>
       <div class="input-wrapper">
-        
-        <input type="text" id="schoolCode" class="auth-input" placeholder="e.g. SCH001" style="text-transform:uppercase;">
+        <input type="text" id="schoolCode" class="auth-input" placeholder="e.g. DEMO001" style="text-transform:uppercase;" required>
       </div>
+      <p style="margin: 4px 0 0 0; font-size: 0.76rem; color: var(--text-muted);">
+        Testing? Use demo school code: <code style="color:var(--teal, #38BDF8); font-weight:700;">DEMO001</code>
+      </p>
     </div>
 
     <!-- Teacher Code (Optional) -->
     <div>
       <label for="teacherCode" class="field-label">Teacher Code <span style="font-weight:400; text-transform:none; color:var(--text-muted);">(Optional)</span></label>
       <div class="input-wrapper">
-        
-        <input type="text" id="teacherCode" class="auth-input" placeholder="e.g. TCH001 (Optional)" style="text-transform:uppercase;">
+        <input type="text" id="teacherCode" class="auth-input" placeholder="e.g. MWALIMU01 (Optional)" style="text-transform:uppercase;">
       </div>
     </div>
 
@@ -88,15 +93,14 @@
     <div>
       <label for="password" class="field-label">Create Password</label>
       <div class="input-wrapper">
-        
-        <input type="password" id="password" class="auth-input" placeholder="At least 6 characters" autocomplete="new-password">
+        <input type="password" id="password" class="auth-input" placeholder="At least 6 characters" autocomplete="new-password" required>
         <button type="button" class="toggle-pw-btn" onclick="togglePasswordVisibility()" title="Toggle password">Show</button>
       </div>
     </div>
   </div>
 
   <!-- Legal Consent & KDPA Minor Verification -->
-  <div style="margin-top: 14px; padding: 12px 14px; background: rgba(2, 132, 199, 0.06); border: 1px solid rgba(2, 132, 199, 0.2); border-radius: 8px; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
+  <div style="margin-top: 14px; padding: 12px 14px; background: rgba(2, 132, 199, 0.08); border: 1px solid rgba(2, 132, 199, 0.25); border-radius: 10px; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
     <label style="display: flex; align-items: flex-start; gap: 9px; cursor: pointer; text-align: left;">
       <input type="checkbox" id="legalConsent" style="margin-top: 3px; accent-color: var(--teal, #0284C7); width: 16px; height: 16px; flex-shrink: 0;" required>
       <span>
@@ -106,7 +110,7 @@
   </div>
 
   <!-- Submit Registration Button -->
-  <button type="button" class="btn-submit-login" onclick="doRegister()">
+  <button type="button" class="btn-submit-login" id="regSubmitBtn" style="margin-top:16px;" onclick="doRegister()">
     <span>Create Student Account</span>
     <span>→</span>
   </button>
@@ -118,7 +122,7 @@
 
   <div style="display:flex; justify-content:center;">
     <a href="login.html" class="btn-google" style="text-decoration:none; justify-content:center;">
-      <svg viewBox="0 0 24 24">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
         <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
         <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
@@ -134,34 +138,20 @@
   <!-- Footer Navigation Links -->
   <div class="auth-footer">
     <p style="margin: 0 0 8px 0;">Already have an account? <a href="login.html">Log in →</a></p>
-    <p style="margin: 0;">Are you a teacher? <a href="../teacher/register.html">Teacher Registration</a></p>
+    <p style="margin: 0;">Are you a teacher? <a href="/teacher/register.html">Teacher Registration →</a></p>
   </div>
 </div>
 
+<script src="/shared/theme.js"></script>
+<script src="/shared/auth-forms.js"></script>
 <script src="/shared/api.js"></script>
-<script src="/shared/page-transitions.js"></script>
 <script>
-  function setTheme(theme) {
-    localStorage.setItem('vlk_theme', theme);
-    document.documentElement.setAttribute('data-theme', theme);
-    updateThemeButtons();
-  }
-
-  function updateThemeButtons() {
-    const currentTheme = localStorage.getItem('vlk_theme') || 'dark';
-    document.querySelectorAll('.theme-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.getAttribute('data-theme') === currentTheme);
-    });
-  }
-  updateThemeButtons();
-
   function togglePasswordVisibility() {
     const pwInput = document.getElementById('password');
-    if (pwInput.type === 'password') {
-      pwInput.type = 'text';
-    } else {
-      pwInput.type = 'password';
-    }
+    const isPw = pwInput.type === 'password';
+    pwInput.type = isPw ? 'text' : 'password';
+    const btn = document.querySelector('.toggle-pw-btn');
+    if (btn) btn.textContent = isPw ? 'Hide' : 'Show';
   }
 
   async function doRegister() {
@@ -173,6 +163,7 @@
     const password = document.getElementById('password').value;
     const legalConsent = document.getElementById('legalConsent');
     const msg = document.getElementById('msg');
+    const submitBtn = document.getElementById('regSubmitBtn');
     msg.innerHTML = '';
 
     if (!name || !email || !form || !schoolCode || !password) {
@@ -184,24 +175,35 @@
       return;
     }
     if (!legalConsent || !legalConsent.checked) {
-      msg.innerHTML = '<div class="msg-alert err">⚠️ Please agree to the Terms of Service &amp; Privacy Policy and confirm parental/teacher permission to continue.</div>';
+      msg.innerHTML = '<div class="msg-alert err">⚠️ Please agree to the Terms of Service &amp; Privacy Policy to continue.</div>';
       return;
     }
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>Creating account…</span> <span>⏳</span>';
+    }
+
     try {
-      msg.innerHTML = '<div class="msg-alert info">⚗️ Creating your student account…</div>';
+      msg.innerHTML = '<div class="msg-alert info">Creating your student account…</div>';
       const regRes = await Auth.studentRegister(name, email, password, form, schoolCode, teacherCode || undefined);
       if (regRes && regRes.token) {
-        msg.innerHTML = '<div class="msg-alert info">🎉 Account created! Entering laboratory workbench…</div>';
+        msg.innerHTML = '<div class="msg-alert success">🎉 Account created! Entering laboratory workbench…</div>';
         setTimeout(() => window.location.href = 'home.html', 800);
       } else {
-        msg.innerHTML = '<div class="msg-alert info">🎉 Account created successfully! Redirecting to login…</div>';
+        msg.innerHTML = '<div class="msg-alert success">🎉 Account created successfully! Redirecting to login…</div>';
         setTimeout(() => window.location.href = 'login.html', 1200);
       }
     } catch (err) {
-      msg.innerHTML = '<div class="msg-alert err">' + (err.message || 'Registration failed. Please check your school code and try again.') + '</div>';
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>Create Student Account</span> <span>→</span>';
+      }
+      msg.innerHTML = '<div class="msg-alert err">' + escapeHtml(err.message || 'Registration failed. Please check your school code and try again.') + '</div>';
     }
   }
 
+  setupFormKeyListeners('studentLoginForm', doRegister);
   document.getElementById('password').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') doRegister();
   });

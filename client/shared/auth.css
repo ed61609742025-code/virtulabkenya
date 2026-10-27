@@ -74,28 +74,34 @@ body.auth-page {
 /* Floating Theme Toggle */
 .theme-toggle-float {
   position: fixed;
-  top: 16px;
-  right: 16px;
+  top: max(16px, env(safe-area-inset-top, 16px));
+  right: max(16px, env(safe-area-inset-right, 16px));
   z-index: 100;
   display: flex;
   background: var(--card-bg);
   border: 1px solid var(--card-border);
-  border-radius: 6px;
-  padding: 2px;
-  gap: 2px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 3px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .theme-btn {
   border: none;
   background: transparent;
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 5px 10px;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-muted);
   transition: all 0.15s ease;
+}
+
+.theme-btn:hover {
+  color: var(--text-main);
 }
 
 .theme-btn.active {
@@ -107,12 +113,72 @@ body.auth-page {
 .auth-card {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
-  border-radius: 10px;
-  padding: 32px 28px;
+  border-radius: 16px;
+  padding: 34px 30px;
   width: 100%;
-  max-width: 420px;
+  max-width: 440px;
   box-shadow: var(--shadow-auth);
   position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+/* Portal top accent stripe */
+.auth-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #0284C7 0%, #38BDF8 50%, #10B981 100%);
+}
+
+.auth-card.portal-student::before {
+  background: linear-gradient(90deg, #0284C7 0%, #38BDF8 50%, #10B981 100%);
+}
+
+.auth-card.portal-teacher::before {
+  background: linear-gradient(90deg, #059669 0%, #10B981 50%, #34D399 100%);
+}
+
+.auth-card.portal-admin::before {
+  background: linear-gradient(90deg, #0284C7 0%, #10B981 50%, #F59E0B 100%);
+}
+
+/* Portal Badges */
+.auth-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 5px 14px;
+  border-radius: 9999px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+}
+
+.auth-badge-student {
+  background: rgba(2, 132, 199, 0.12);
+  border: 1px solid rgba(2, 132, 199, 0.35);
+  color: var(--teal, #38BDF8);
+}
+
+.auth-badge-teacher {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #10B981;
+}
+
+.auth-badge-admin {
+  background: rgba(2, 132, 199, 0.14);
+  border: 1px solid rgba(2, 132, 199, 0.38);
+  color: #38BDF8;
 }
 
 .auth-header {
@@ -175,82 +241,187 @@ body.auth-page {
 
 .auth-input, .auth-select {
   width: 100%;
-  height: 42px;
+  height: 44px;
   background: var(--bg-dark);
-  border: 1px solid var(--card-border);
-  border-radius: 6px;
-  padding: 0 12px;
+  border: 1.5px solid var(--card-border);
+  border-radius: 10px;
+  padding: 0 14px;
   color: var(--text-main);
   font-family: inherit;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   font-weight: 500;
   outline: none;
-  transition: border-color 0.15s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .auth-input::placeholder {
   color: var(--text-muted);
   opacity: 0.75;
-  font-size: 0.84rem;
+  font-size: 0.86rem;
 }
 
 .auth-input:focus, .auth-select:focus {
   border-color: var(--card-border-focus);
   background: var(--card-bg);
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2);
+}
+
+/* Ensure password input text never overlaps the Show/Hide button */
+.input-wrapper input[type="password"],
+.input-wrapper input[name*="password"],
+.input-wrapper input#password,
+.input-wrapper input#adminPassword {
+  padding-right: 64px;
 }
 
 .toggle-pw-btn {
   position: absolute;
   right: 10px;
-  background: none;
-  border: none;
+  background: rgba(148, 163, 184, 0.12);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
   color: var(--text-muted);
   cursor: pointer;
-  font-size: 0.78rem;
-  font-weight: 600;
-  padding: 4px 6px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  transition: all 0.15s ease;
 }
 
-/* Buttons */
-.btn-submit-login, .btn-submit-teacher {
+.toggle-pw-btn:hover {
+  background: rgba(148, 163, 184, 0.24);
+  color: var(--text-main);
+}
+
+/* Modern Primary Buttons */
+.btn-submit-login, .btn-submit-teacher, .btn-submit-admin {
   width: 100%;
-  height: 44px;
-  background: var(--cyan-btn-bg);
+  min-height: 46px;
+  padding: 12px 18px;
   color: #FFFFFF;
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
   font-family: inherit;
-  font-size: 0.92rem;
-  font-weight: 700;
+  font-size: 0.95rem;
+  font-weight: 800;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: background 0.15s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+}
+
+.btn-submit-login {
+  background: linear-gradient(135deg, #0284C7, #0369A1);
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+}
+
+.btn-submit-login:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0369A1, #075985);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(2, 132, 199, 0.45);
 }
 
 .btn-submit-teacher {
-  background: var(--teacher-btn-bg);
+  background: linear-gradient(135deg, #059669, #047857);
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35);
 }
 
-.btn-submit-login:hover {
-  background: var(--cyan-btn-hover);
+.btn-submit-teacher:hover:not(:disabled) {
+  background: linear-gradient(135deg, #047857, #065F46);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(5, 150, 105, 0.45);
 }
 
-.btn-submit-teacher:hover {
-  background: var(--teacher-btn-hover);
+.btn-submit-admin {
+  background: linear-gradient(135deg, #0284C7, #0369A1);
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+}
+
+.btn-submit-admin:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0369A1, #075985);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(2, 132, 199, 0.5);
+  filter: brightness(1.06);
+}
+
+.btn-submit-login:active:not(:disabled),
+.btn-submit-teacher:active:not(:disabled),
+.btn-submit-admin:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-submit-login:disabled,
+.btn-submit-teacher:disabled,
+.btn-submit-admin:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Quick Demo Sign-In Buttons */
+.btn-quick-demo {
+  width: 100%;
+  padding: 10px 14px;
+  font-weight: 700;
+  font-size: 0.84rem;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  background: transparent;
+  text-decoration: none;
+}
+
+.btn-quick-demo-student {
+  background: rgba(2, 132, 199, 0.1);
+  border: 1.5px dashed var(--accent, #0284C7);
+  color: var(--teal, #38BDF8);
+}
+
+.btn-quick-demo-student:hover {
+  background: rgba(2, 132, 199, 0.18);
+  transform: translateY(-1px);
+}
+
+.btn-quick-demo-teacher {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1.5px dashed #10B981;
+  color: #10B981;
+}
+
+.btn-quick-demo-teacher:hover {
+  background: rgba(16, 185, 129, 0.18);
+  transform: translateY(-1px);
+}
+
+.btn-quick-demo-admin {
+  background: rgba(2, 132, 199, 0.1);
+  border: 1.5px dashed #0284C7;
+  color: #38BDF8;
+}
+
+.btn-quick-demo-admin:hover {
+  background: rgba(2, 132, 199, 0.18);
+  transform: translateY(-1px);
 }
 
 /* OAuth Divider & Google Button */
 .oauth-divider {
   display: flex;
   align-items: center;
-  margin: 16px 0 14px;
+  margin: 18px 0 14px;
   color: var(--text-muted);
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: 0.74rem;
+  font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .oauth-divider::before,
@@ -261,31 +432,33 @@ body.auth-page {
 }
 
 .oauth-divider span {
-  padding: 0 10px;
+  padding: 0 12px;
 }
 
 .btn-google {
   width: 100%;
-  height: 42px;
+  height: 44px;
   background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 6px;
+  border: 1.5px solid var(--card-border);
+  border-radius: 10px;
   color: var(--text-main);
   font-family: inherit;
   font-size: 0.88rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   text-decoration: none;
 }
 
 .btn-google:hover {
   background: var(--card-bg-hover);
   border-color: var(--card-border-focus);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .btn-google svg {
@@ -296,24 +469,39 @@ body.auth-page {
 
 /* Status / Alert Messages */
 .msg-alert {
-  padding: 10px 12px;
-  border-radius: 6px;
-  font-size: 0.82rem;
+  padding: 11px 14px;
+  border-radius: 10px;
+  font-size: 0.83rem;
   font-weight: 600;
   margin-top: 14px;
-  line-height: 1.45;
+  line-height: 1.5;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .msg-alert.err {
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid #EF4444;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.45);
   color: #EF4444;
 }
 
+.msg-alert.warn {
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  color: #F59E0B;
+}
+
 .msg-alert.info {
-  background: rgba(2, 132, 199, 0.1);
-  border: 1px solid #0284C7;
+  background: rgba(2, 132, 199, 0.12);
+  border: 1px solid rgba(2, 132, 199, 0.45);
   color: var(--cyan-accent);
+}
+
+.msg-alert.success {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.45);
+  color: #10B981;
 }
 
 /* Footer Navigation Links */
@@ -341,7 +529,9 @@ body.auth-page {
   position: fixed;
   top: 0; left: 0;
   width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -352,11 +542,12 @@ body.auth-page {
 .modal-reset-card {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
-  border-radius: 8px;
-  padding: 24px;
-  max-width: 380px;
+  border-radius: 16px;
+  padding: 26px;
+  max-width: 420px;
   width: 100%;
-  box-shadow: var(--shadow-auth);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+  position: relative;
 }
 
 .teacher-code-card {

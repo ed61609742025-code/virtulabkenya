@@ -790,7 +790,21 @@ const Auth = {
   async getAuthConfig() {
     return apiRequest('GET', '/auth/config');
   },
+  async googleStudentAuth(credentialOrPayload) {
+    const payload = typeof credentialOrPayload === 'string'
+      ? { credential: credentialOrPayload }
+      : (credentialOrPayload && typeof credentialOrPayload === 'object' ? credentialOrPayload : { credential: credentialOrPayload });
+    const data = await apiRequest('POST', '/auth/student/google', payload);
+    if (data.token) {
+      setToken(data.token);
+      setUser(data.user);
+    }
+    return data;
+  },
   async studentGoogleAuth(payload) {
+    return this.googleStudentAuth(payload);
+  },
+  async googleStudentComplete(payload) {
     const data = await apiRequest('POST', '/auth/student/google', payload);
     if (data.token) {
       setToken(data.token);

@@ -20,11 +20,11 @@
 <link rel="apple-touch-icon" href="/shared/apple-touch-icon.png">
 <link rel="manifest" href="/manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/shared/style.css">
 <link rel="stylesheet" href="/shared/auth.css">
 <link rel="stylesheet" href="/shared/pwa-installer.css">
-
 </head>
 <body class="auth-page">
 
@@ -36,18 +36,20 @@
 </div>
 
 <!-- Student Login Box -->
-<div class="auth-card">
+<div class="auth-card portal-student">
   <div class="auth-header">
-    <div class="vlk-brand-logo-wrap lg" style="margin: 0 auto 14px auto;">
-      <img src="/shared/virtulab-logo.svg" alt="VirtuLab Kenya Logo" class="vlk-brand-logo-img" width="52" height="52">
+    <div class="vlk-brand-logo-wrap lg" style="margin: 0 auto 12px auto; display:flex; justify-content:center;">
+      <img src="/shared/virtulab-logo.svg" alt="VirtuLab Kenya Logo" class="vlk-brand-logo-img" width="56" height="56">
+    </div>
+    <div style="margin-bottom: 8px;">
+      <span class="auth-badge auth-badge-student">🧪 Student Portal · Chemistry Workbench</span>
     </div>
     <h1 class="auth-logo-title">VirtuLab Kenya</h1>
-    <p class="auth-sub">Student Login — Sign in to access your laboratory workbench.</p>
-    <div id="serverStatusWrap" style="display:flex; justify-content:center; margin-top:10px;"></div>
+    <p class="auth-sub">Student Portal — Sign in to access your practical bench, mock exams, and analytics.</p>
   </div>
 
   <!-- Dynamic Authentication Lead Notice -->
-  <div id="loginLeadNotice" style="display:none; margin: 0 0 16px 0; padding: 11px 14px; border-radius: 8px; font-size: 0.84rem; line-height: 1.45;"></div>
+  <div id="loginLeadNotice" style="display:none; margin: 0 0 16px 0;"></div>
 
   <form id="studentLoginForm" onsubmit="event.preventDefault(); doLogin();">
     <div class="auth-form-group">
@@ -75,7 +77,7 @@
     </div>
 
     <!-- Login Button -->
-    <button type="submit" class="btn-submit-login">
+    <button type="submit" class="btn-submit-login" id="submitBtn">
       <span>Log in to Lab</span>
       <span>→</span>
     </button>
@@ -90,7 +92,7 @@
   <div id="googleBtnWrapper" style="display:flex; justify-content:center; min-height:48px;">
     <div id="g_id_signin"></div>
     <button type="button" id="customGoogleBtn" class="btn-google" onclick="triggerGoogleSignIn()">
-      <svg viewBox="0 0 24 24">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
         <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
         <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
@@ -101,8 +103,8 @@
   </div>
 
   <!-- Quick Demo / Offline Candidate Sign-In -->
-  <div style="margin-top: 10px;">
-    <button type="button" class="btn-tactile btn-tactile-surface" onclick="quickOfflineLogin()" style="width:100%; padding:10px 14px; font-weight:700; font-size:0.84rem; background:rgba(2,132,199,0.12); border:1.5px solid var(--accent, #0284C7); color:var(--teal, #38BDF8); border-radius:10px; display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer;">
+  <div style="margin-top: 12px;">
+    <button type="button" class="btn-quick-demo btn-quick-demo-student" onclick="quickOfflineLogin()">
       <span>⚡ Quick Demo / Offline Candidate Sign-In</span>
     </button>
   </div>
@@ -113,7 +115,8 @@
   <!-- Footer Navigation Links -->
   <div class="auth-footer">
     <p style="margin: 0 0 8px 0;">New student? <a href="register.html">Register an Account</a></p>
-    <p style="margin: 0;">Are you a teacher? <a href="../teacher/login.html">Teacher Portal →</a></p>
+    <p style="margin: 0 0 8px 0;">Are you a chemistry teacher? <a href="/teacher/login.html">Teacher Portal →</a></p>
+    <p style="margin: 0;">MoE System Administrator? <a href="/admin/login.html">Admin Console Login →</a></p>
   </div>
 </div>
 
@@ -121,8 +124,8 @@
 <div id="forgotModal" class="modal-overlay" style="display:none;">
   <div class="modal-reset-card">
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
-      <h3 style="margin:0; font-size:1.1rem; color:var(--heading-color);">Reset Password</h3>
-      <button onclick="closeForgotModal()" style="background:none; border:none; color:var(--text-muted); font-size:1.4rem; cursor:pointer;">&times;</button>
+      <h3 style="margin:0; font-size:1.15rem; color:var(--heading-color);">Reset Password</h3>
+      <button onclick="closeForgotModal()" style="background:none; border:none; color:var(--text-muted); font-size:1.4rem; cursor:pointer;" aria-label="Close modal">&times;</button>
     </div>
     <p style="font-size:0.86rem; color:var(--text-muted); margin-bottom:16px; line-height:1.5;">
       Enter your school email address below. We will send a secure password reset link to your email.
@@ -141,8 +144,8 @@
 <div id="googleRegisterModal" class="modal-overlay" style="display:none;">
   <div class="modal-reset-card">
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
-      <h3 style="margin:0; font-size:1.1rem; color:var(--heading-color);">Complete Registration</h3>
-      <button onclick="closeGoogleRegModal()" style="background:none; border:none; color:var(--text-muted); font-size:1.4rem; cursor:pointer;">&times;</button>
+      <h3 style="margin:0; font-size:1.15rem; color:var(--heading-color);">Complete Registration</h3>
+      <button onclick="closeGoogleRegModal()" style="background:none; border:none; color:var(--text-muted); font-size:1.4rem; cursor:pointer;" aria-label="Close modal">&times;</button>
     </div>
     <p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:14px; line-height:1.45;">
       Welcome to VirtuLab! Please complete your school details to finish signing up with Google.
@@ -183,23 +186,10 @@
   </div>
 </div>
 
-<script src="/shared/api.js"></script>
+<script src="/shared/theme.js"></script>
 <script src="/shared/auth-forms.js"></script>
+<script src="/shared/api.js"></script>
 <script>
-  function setTheme(theme) {
-    localStorage.setItem('vlk_theme', theme);
-    document.documentElement.setAttribute('data-theme', theme);
-    document.querySelectorAll('.theme-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.getAttribute('data-theme') === theme);
-    });
-  }
-  const currentTheme = localStorage.getItem('vlk_theme') || 'dark';
-  setTheme(currentTheme);
-
-  if (window.VLKServer) {
-    VLKServer.mountStatusPill('serverStatusWrap');
-  }
-
   const urlParams = new URLSearchParams(window.location.search);
   const returnUrl = urlParams.get('returnUrl');
   const expired = urlParams.get('expired');
@@ -208,23 +198,17 @@
 
   if (noticeEl) {
     if (expired) {
+      noticeEl.className = 'msg-alert err';
       noticeEl.style.display = 'block';
-      noticeEl.style.background = 'rgba(239, 68, 68, 0.12)';
-      noticeEl.style.border = '1px solid rgba(239, 68, 68, 0.35)';
-      noticeEl.style.color = '#EF4444';
       noticeEl.innerHTML = '<b>Session Expired:</b> Please log in again to continue your session.';
     } else if (mismatch) {
+      noticeEl.className = 'msg-alert warn';
       noticeEl.style.display = 'block';
-      noticeEl.style.background = 'rgba(245, 158, 11, 0.12)';
-      noticeEl.style.border = '1px solid rgba(245, 158, 11, 0.35)';
-      noticeEl.style.color = '#F59E0B';
-      noticeEl.innerHTML = `You were signed in with a <b>${escapeHtml(mismatch)}</b> account. Please sign in with your <b>Student</b> account.`;
+      noticeEl.innerHTML = `⚠️ Access Mismatch: You were signed in with a <b>${escapeHtml(mismatch)}</b> account. Please sign in with your <b>Student</b> credentials.`;
     } else if (returnUrl) {
+      noticeEl.className = 'msg-alert info';
       noticeEl.style.display = 'block';
-      noticeEl.style.background = 'rgba(56, 189, 248, 0.12)';
-      noticeEl.style.border = '1px solid rgba(56, 189, 248, 0.35)';
-      noticeEl.style.color = 'var(--teal, #38BDF8)';
-      noticeEl.innerHTML = '<b>Authentication Required:</b> Please log in to enter your laboratory workbench.';
+      noticeEl.innerHTML = '🔐 <b>Authentication Required:</b> Please log in to enter your laboratory workbench.';
     }
   }
 
@@ -267,14 +251,21 @@
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
     const msg = document.getElementById('msg');
+    const submitBtn = document.getElementById('submitBtn');
     msg.innerHTML = '';
 
     if (!email || !password) {
       msg.innerHTML = '<div class="msg-alert err">Please enter both your school email and password.</div>';
       return;
     }
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>Signing in…</span> <span>⏳</span>';
+    }
+
     try {
-      msg.innerHTML = '<div class="msg-alert info">Signing in…</div>';
+      msg.innerHTML = '<div class="msg-alert info">Signing in to your laboratory…</div>';
       await Auth.studentLogin(email, password);
 
       const params = new URLSearchParams(window.location.search);
@@ -285,9 +276,13 @@
         window.location.href = 'home.html';
       }
     } catch (err) {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>Log in to Lab</span> <span>→</span>';
+      }
       let errText = err.message || 'Invalid credentials';
       if (errText.includes('Failed to fetch') || errText.includes('fetch')) {
-        errText = 'Offline Mode Active: Enter any email & password to create your offline account, or tap "Quick Demo Sign-In" above.';
+        errText = 'Offline Mode Active: Enter any email & password to create your offline account, or tap "Quick Demo / Offline Candidate Sign-In" above.';
       }
       msg.innerHTML = '<div class="msg-alert err">' + escapeHtml(errText) + '</div>';
     }
@@ -357,7 +352,7 @@
 
     try {
       const res = await Auth.googleStudentAuth(idToken);
-      if (res && res.needsRegistration) {
+      if (res && (res.needsProfileCompletion || res.needsRegistration)) {
         googleCredentialCache = idToken;
         document.getElementById('gRegName').value = res.name || '';
         document.getElementById('gRegEmail').value = res.email || '';
@@ -382,7 +377,6 @@
   }
 
   async function submitGoogleRegistration() {
-    const name = document.getElementById('gRegName').value.trim();
     const form = document.getElementById('gRegForm').value;
     const schoolCode = document.getElementById('gRegSchoolCode').value.trim();
     const teacherCode = document.getElementById('gRegTeacherCode').value.trim();
@@ -409,11 +403,6 @@
   }
 
   window.addEventListener('DOMContentLoaded', initGoogleAuth);
-
-  function escapeHtml(str) {
-    if (!str) return '';
-    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  }
 </script>
 <script src="/shared/pwa-installer.js"></script>
 </body>

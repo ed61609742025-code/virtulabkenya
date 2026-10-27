@@ -2,7 +2,7 @@
 <html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Teacher Login — VirtuLab Kenya</title>
 <script src="/shared/auth-guard.js"></script>
 <script>
@@ -12,8 +12,12 @@
     VLKAuthGuard.guardLoginPage('teacher');
   }
 </script>
+<meta name="theme-color" content="#0F172A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/shared/style.css">
 <link rel="stylesheet" href="/shared/auth.css">
 </head>
@@ -27,10 +31,17 @@
 </div>
 
 <!-- Teacher Login Box -->
-<div class="auth-card">
+<div class="auth-card portal-teacher">
   <div class="auth-header">
+    <div class="vlk-brand-logo-wrap lg" style="margin: 0 auto 12px auto; display:flex; justify-content:center;">
+      <img src="/shared/virtulab-logo.svg" alt="VirtuLab Kenya Logo" class="vlk-brand-logo-img" width="56" height="56">
+    </div>
+    <div style="margin-bottom: 8px;">
+      <span class="auth-badge auth-badge-teacher">👩‍🏫 Teacher Portal · Class &amp; Practicals Management</span>
+    </div>
     <h1 class="auth-logo-title">VirtuLab Kenya</h1>
-    <p class="auth-sub">Teacher Portal — Sign in to manage class practicals, assignments, and student grades.</p>
+    <p class="auth-sub">Teacher Portal — Sign in to assign practicals, monitor bench accuracy, and track student grades.</p>
+    <div id="serverStatusWrap" style="display:flex; justify-content:center; margin-top:10px;"></div>
   </div>
 
   <form id="teacherLoginForm" onsubmit="event.preventDefault(); doLogin();">
@@ -38,10 +49,9 @@
       <!-- Email Field -->
       <div>
         <div class="field-label-row">
-          <label for="email" class="field-label">Email Address</label>
+          <label for="email" class="field-label">Educator Email Address</label>
         </div>
         <div class="input-wrapper">
-          
           <input type="email" id="email" class="auth-input" placeholder="teacher@school.ac.ke" name="username" autocomplete="username" required>
         </div>
       </div>
@@ -53,7 +63,6 @@
           <a href="#" onclick="openForgotModal(event)" class="forgot-link">Forgot Password?</a>
         </div>
         <div class="input-wrapper">
-          
           <input type="password" id="password" class="auth-input" placeholder="Enter your password" autocomplete="current-password" required>
           <button type="button" class="toggle-pw-btn" onclick="togglePasswordVisibility()" title="Toggle password">Show</button>
         </div>
@@ -61,13 +70,18 @@
     </div>
 
     <!-- Primary Login Button -->
-    <button type="submit" class="btn-submit-teacher">
+    <button type="submit" class="btn-submit-teacher" id="submitBtn">
       <span>Log in to Teacher Portal</span>
       <span>→</span>
     </button>
   </form>
 
-
+  <!-- Quick Demo Teacher Sign-In -->
+  <div style="margin-top: 12px;">
+    <button type="button" class="btn-quick-demo btn-quick-demo-teacher" onclick="quickTeacherDemoLogin()">
+      <span>⚡ Quick Demo Teacher Sign-In</span>
+    </button>
+  </div>
 
   <!-- Error / Status Feedback Box -->
   <div id="msg"></div>
@@ -75,8 +89,8 @@
   <!-- Footer Navigation Links -->
   <div class="auth-footer">
     <p style="margin: 0 0 8px 0;">New teacher? <a href="register.html">Register your Class Account</a></p>
-    <p style="margin: 0 0 8px 0;">Are you a student? <a href="../student/login.html">Student Login →</a></p>
-    <p style="margin: 0;">System Administrator? <a href="../admin/login.html">Admin Portal Login →</a></p>
+    <p style="margin: 0 0 8px 0;">Are you a student? <a href="/student/login.html">Student Login →</a></p>
+    <p style="margin: 0;">MoE System Administrator? <a href="/admin/login.html">Admin Portal Login →</a></p>
   </div>
 </div>
 
@@ -84,17 +98,16 @@
 <div id="forgotModal" class="modal-overlay" style="display:none;">
   <div class="modal-reset-card">
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
-      <h3 style="margin:0; font-family:'Space Grotesk', sans-serif; color:var(--heading-color); font-size:1.15rem;">Reset Password</h3>
-      <button onclick="closeForgotModal()" style="background:none; border:none; color:var(--text-muted); font-size:1.4rem; cursor:pointer;">&times;</button>
+      <h3 style="margin:0; color:var(--heading-color); font-size:1.15rem;">Reset Teacher Password</h3>
+      <button onclick="closeForgotModal()" style="background:none; border:none; color:var(--text-muted); font-size:1.4rem; cursor:pointer;" aria-label="Close modal">&times;</button>
     </div>
     <p style="font-size:0.86rem; color:var(--text-muted); margin-bottom:16px; line-height:1.5;">
-      Enter your school email address below. We will send a secure password reset link to your email.
+      Enter your registered school email address below. We will send a secure password reset link to your email.
     </p>
     <div class="input-wrapper" style="margin-bottom:16px;">
-      
       <input type="email" id="resetEmail" class="auth-input" placeholder="teacher@school.ac.ke">
     </div>
-    <button type="button" class="btn-submit-teacher" style="height:44px; font-size:0.92rem;" onclick="submitResetPassword()">
+    <button type="button" class="btn-submit-teacher" style="min-height:44px;" onclick="submitResetPassword()">
       Send Password Reset Request
     </button>
     <div id="resetMsg"></div>
@@ -105,7 +118,11 @@
 <script src="/shared/auth-forms.js"></script>
 <script src="/shared/api.js"></script>
 <script>
-  // Display role mismatch or returnUrl alert
+  if (window.VLKServer) {
+    VLKServer.mountStatusPill('serverStatusWrap');
+  }
+
+  // Display role mismatch, expired, or returnUrl alerts
   const urlParams = new URLSearchParams(window.location.search);
   const mismatch = urlParams.get('mismatch');
   const returnUrl = urlParams.get('returnUrl');
@@ -114,11 +131,11 @@
 
   if (msgEl) {
     if (expired) {
-      msgEl.innerHTML = `<div class="msg-alert err" style="margin-bottom:14px;">⏱️ Your session has expired. Please log in again to continue.</div>`;
+      msgEl.innerHTML = `<div class="msg-alert err">⏱️ Your session has expired. Please log in again to continue.</div>`;
     } else if (mismatch) {
-      msgEl.innerHTML = `<div class="msg-alert warn" style="margin-bottom:14px;">⚠️ You were signed in with a <b>${escapeHtml(mismatch)}</b> account. Please log in with your <b>Teacher</b> account to access the Teacher Portal.</div>`;
+      msgEl.innerHTML = `<div class="msg-alert warn">⚠️ Role Mismatch: You were signed in with a <b>${escapeHtml(mismatch)}</b> account. Please log in with your <b>Teacher</b> credentials to access the Teacher Portal.</div>`;
     } else if (returnUrl) {
-      msgEl.innerHTML = `<div class="msg-alert info" style="margin-bottom:14px;">🔐 <b>Authentication Required:</b> Please sign in to access the Teacher Console.</div>`;
+      msgEl.innerHTML = `<div class="msg-alert info">🔐 <b>Authentication Required:</b> Please sign in to access the Teacher Console.</div>`;
     }
   }
 
@@ -151,11 +168,17 @@
     }, 2500);
   }
 
+  async function quickTeacherDemoLogin() {
+    document.getElementById('email').value = 'teacher@demo.ac.ke';
+    document.getElementById('password').value = 'password123';
+    await doLogin();
+  }
 
   async function doLogin() {
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
     const msg = document.getElementById('msg');
+    const submitBtn = document.getElementById('submitBtn');
     msg.innerHTML = '';
 
     if (!email || !password) {
@@ -165,6 +188,11 @@
 
     const cleanEmail = email.toLowerCase();
     const isAdminEmail = cleanEmail === 'admin@virtulab.co.ke' || cleanEmail.startsWith('admin@');
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>Signing in…</span> <span>⏳</span>';
+    }
 
     try {
       msg.innerHTML = '<div class="msg-alert info">Signing in…</div>';
@@ -199,11 +227,19 @@
         window.location.href = 'dashboard.html';
       }
     } catch (err) {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>Log in to Teacher Portal</span> <span>→</span>';
+      }
       if (isAdminEmail) {
         msg.innerHTML = '<div class="msg-alert err">' + escapeHtml(err.message || 'Invalid administrator password') +
           '<div style="margin-top:8px;"><a href="/admin/login.html" style="color:var(--teal,#38BDF8);font-weight:700;text-decoration:underline;">Go to dedicated Admin Login Portal →</a></div></div>';
       } else {
-        msg.innerHTML = '<div class="msg-alert err">' + escapeHtml(err.message || 'Wrong email or password') + '</div>';
+        let errText = err.message || 'Wrong email or password';
+        if (errText.includes('Failed to fetch') || errText.includes('fetch')) {
+          errText = 'Offline Mode Active: Could not reach the backend database server. Tap the server connection pill above to configure your local Wi-Fi / LAN IP.';
+        }
+        msg.innerHTML = '<div class="msg-alert err">' + escapeHtml(errText) + '</div>';
       }
     }
   }

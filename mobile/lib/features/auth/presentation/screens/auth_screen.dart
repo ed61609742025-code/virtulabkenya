@@ -17,6 +17,7 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _isLogin = true;
   bool _isOfflineMode = false;
   bool _isLoading = false;
+  bool _obscurePassword = true;
   String? _errorMessage;
 
   final _admissionCtrl = TextEditingController(text: 'STU/2026/042');
@@ -200,23 +201,33 @@ class _AuthScreenState extends State<AuthScreen> {
                         const SizedBox(height: 12),
                         TextField(
                           controller: _passwordCtrl,
-                          obscureText: true,
-                          decoration: const InputDecoration(
+                          obscureText: _obscurePassword,
+                          decoration: InputDecoration(
                             labelText: 'Password',
-                            prefixIcon: Icon(Icons.lock, color: StemColors.secondary),
+                            prefixIcon: const Icon(Icons.lock, color: StemColors.secondary),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                                color: StemColors.secondary,
+                                size: 20,
+                              ),
+                              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 12),
-                        TextField(
-                          controller: _offlinePinCtrl,
-                          keyboardType: TextInputType.number,
-                          maxLength: 4,
-                          decoration: const InputDecoration(
-                            labelText: 'Set 4-Digit Offline PIN',
-                            prefixIcon: Icon(Icons.pin, color: StemColors.secondary),
-                            helperText: 'Used to access the lab offline without data',
+                        if (!_isLogin) ...[
+                          const SizedBox(height: 12),
+                          TextField(
+                            controller: _offlinePinCtrl,
+                            keyboardType: TextInputType.number,
+                            maxLength: 4,
+                            decoration: const InputDecoration(
+                              labelText: 'Set 4-Digit Offline PIN',
+                              prefixIcon: Icon(Icons.pin, color: StemColors.secondary),
+                              helperText: 'Used to access the lab offline without data',
+                            ),
                           ),
-                        ),
+                        ],
                         const SizedBox(height: 16),
                         StemButton(
                           label: _isLogin ? 'Sign In to Laboratory' : 'Create Student Account',
@@ -224,6 +235,24 @@ class _AuthScreenState extends State<AuthScreen> {
                           isLoading: _isLoading,
                           onPressed: _handleOnlineAuth,
                         ),
+                        if (_isLogin) ...[
+                          const SizedBox(height: 10),
+                          TextButton.icon(
+                            onPressed: () {
+                              _admissionCtrl.text = 'candidate@virtulab.ke';
+                              _passwordCtrl.text = 'knec2026';
+                            },
+                            icon: const Icon(Icons.flash_on, size: 16, color: StemColors.primary),
+                            label: const Text(
+                              'Quick Demo Candidate Fill',
+                              style: TextStyle(
+                                color: StemColors.primary,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
                       ],
                     ],
                   ),

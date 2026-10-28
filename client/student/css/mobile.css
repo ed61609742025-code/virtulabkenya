@@ -665,79 +665,91 @@
 /* ── H. Compact Daily Challenge Card on Mobile ────────────── */
 @media (max-width: 768px) {
   .daily-challenge-card {
-    padding: 10px 12px !important;
+    padding: 12px 14px !important;
     display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    gap: 8px !important;
-    margin-bottom: 10px !important;
-    border-radius: 12px !important;
-    min-height: 50px !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    gap: 10px !important;
+    margin-bottom: 12px !important;
+    border-radius: 14px !important;
+    min-height: auto !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
   }
 
   .daily-challenge-left {
-    flex: 1 !important;
+    flex: 1 1 auto !important;
     min-width: 0 !important;
+    width: 100% !important;
   }
 
   .daily-tag-row {
     display: flex !important;
     align-items: center !important;
-    gap: 5px !important;
-    margin-bottom: 2px !important;
+    gap: 6px !important;
+    margin-bottom: 4px !important;
+    flex-wrap: wrap !important;
   }
 
   .daily-pill-badge {
-    font-size: 0.62rem !important;
-    padding: 1px 6px !important;
+    font-size: 0.65rem !important;
+    padding: 2px 8px !important;
   }
 
   .daily-xp-badge {
-    font-size: 0.62rem !important;
-    padding: 1px 6px !important;
+    font-size: 0.65rem !important;
+    padding: 2px 8px !important;
   }
 
   .daily-timer-text {
-    display: none !important;
+    font-size: 0.68rem !important;
+    opacity: 0.85 !important;
+    display: inline-block !important;
   }
 
   .daily-title {
-    font-size: 0.88rem !important;
+    font-size: 0.95rem !important;
+    font-weight: 800 !important;
     margin: 0 !important;
-    line-height: 1.25 !important;
+    line-height: 1.3 !important;
     white-space: normal !important;
-    overflow: hidden !important;
-    display: -webkit-box !important;
-    -webkit-line-clamp: 2 !important;
-    -webkit-box-orient: vertical !important;
-    text-overflow: ellipsis !important;
+    word-break: break-word !important;
+    overflow: visible !important;
+    display: block !important;
+    -webkit-line-clamp: unset !important;
   }
 
   .daily-desc {
+    font-size: 0.76rem !important;
+    margin: 4px 0 0 !important;
+    line-height: 1.35 !important;
     display: -webkit-box !important;
-    -webkit-line-clamp: 1 !important;
+    -webkit-line-clamp: 2 !important;
     -webkit-box-orient: vertical !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
-    font-size: 0.72rem !important;
-    margin: 3px 0 0 !important;
-    line-height: 1.2 !important;
-    opacity: 0.9 !important;
+    opacity: 0.92 !important;
   }
 
   .daily-challenge-right {
+    width: 100% !important;
     flex-shrink: 0 !important;
   }
 
   .daily-launch-btn {
-    width: auto !important;
-    min-height: 32px !important;
-    height: 32px !important;
-    padding: 4px 12px !important;
-    font-size: 0.78rem !important;
+    width: 100% !important;
+    min-height: 40px !important;
+    height: 40px !important;
+    padding: 8px 16px !important;
+    font-size: 0.82rem !important;
     font-weight: 800 !important;
     white-space: nowrap !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 10px !important;
+    box-sizing: border-box !important;
   }
 }
 
@@ -751,6 +763,68 @@
   .coaching-grid {
     grid-template-columns: 1fr !important;
     gap: 10px !important;
+  }
+
+  .guidance-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .tip-header-left,
+  .rec-header-left {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex-wrap: wrap !important;
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+  }
+
+  .tip-category-badge,
+  .rec-badge,
+  .guidance-badge {
+    font-size: 0.65rem !important;
+    padding: 2px 7px !important;
+    border-radius: 5px !important;
+  }
+
+  .tip-counter,
+  .rec-counter {
+    font-size: 0.66rem !important;
+  }
+
+  .tip-header-actions,
+  .rec-header-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    flex-shrink: 0 !important;
+    margin-left: auto !important;
+  }
+
+  .tip-tool-btn,
+  .rec-tool-btn {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    font-size: 0.82rem !important;
+    border-radius: 7px !important;
+  }
+
+  .tip-title,
+  .rec-title {
+    font-size: 0.96rem !important;
+    line-height: 1.3 !important;
+  }
+
+  .tip-text,
+  .rec-desc-text {
+    font-size: 0.79rem !important;
+    line-height: 1.45 !important;
   }
 
 /* ── I. Smart Assignment Quick Alert Strip ─────────────────── */
@@ -951,23 +1025,27 @@
 
 /* ── L. Mobile Sub-Tabs Segmented Pill Track ──────────────── */
 @media (max-width: 768px) {
+  /* Hide duplicate external links on mobile; they are anchored in the bottom navigation bar */
+  #tabBtn_reference,
+  #tabBtn_achievements {
+    display: none !important;
+  }
+
   .student-subtabs-nav {
     display: flex !important;
     align-items: center !important;
-    justify-content: space-between !important;
-    gap: 4px !important;
-    padding: 4px 6px !important;
+    justify-content: stretch !important;
+    gap: 6px !important;
+    padding: 4px !important;
     margin-bottom: 14px !important;
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
+    overflow: hidden !important;
     white-space: nowrap !important;
-    -webkit-overflow-scrolling: touch !important;
-    scrollbar-width: none !important;
-    scroll-padding: 4px !important;
     background: var(--card-bg-hover, rgba(238, 242, 246, 0.95)) !important;
     border: 1.5px solid var(--card-border, #CBD5E1) !important;
     border-radius: 14px !important;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
     -webkit-mask-image: none !important;
     mask-image: none !important;
   }
@@ -1000,24 +1078,25 @@
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    gap: 5px !important;
-    padding: 7px 8px !important;
-    min-height: 36px !important;
-    border-radius: 9px !important;
+    gap: 6px !important;
+    padding: 8px 12px !important;
+    min-height: 38px !important;
+    border-radius: 10px !important;
     border: 1px solid transparent !important;
-    font-size: 0.76rem !important;
+    font-size: 0.82rem !important;
     font-weight: 700 !important;
-    flex: 1 1 auto !important;
+    flex: 1 1 50% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
     color: var(--text-muted, #475569) !important;
     background: transparent !important;
     transition: all 0.15s ease !important;
     cursor: pointer !important;
     -webkit-tap-highlight-color: transparent !important;
-    min-width: 0 !important;
   }
 
   .student-subtab-btn:active {
-    transform: scale(0.95) !important;
+    transform: scale(0.97) !important;
   }
 
   .student-subtab-btn.active {
@@ -1342,3 +1421,83 @@
     transform: scale(0.96);
   }
 }
+
+/* ── Q. Continuous Assessment Empty Showcase & Search Filter Compaction ── */
+@media (max-width: 768px) {
+  .ca-empty-showcase {
+    padding: 12px 14px !important;
+    gap: 10px !important;
+    border-radius: 12px !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .ca-empty-icon-ring {
+    width: 38px !important;
+    height: 38px !important;
+    font-size: 1.15rem !important;
+    border-radius: 10px !important;
+    align-self: flex-start !important;
+  }
+
+  .ca-empty-icon-ring svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  .ca-empty-content {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+  }
+
+  .ca-empty-title {
+    font-size: 0.88rem !important;
+    margin: 0 0 3px 0 !important;
+    line-height: 1.3 !important;
+  }
+
+  .ca-empty-desc {
+    font-size: 0.74rem !important;
+    line-height: 1.35 !important;
+    margin: 0 0 6px 0 !important;
+  }
+
+  .ca-empty-features {
+    gap: 5px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .ca-feature-pill {
+    font-size: 0.65rem !important;
+    padding: 2px 6px !important;
+  }
+
+  .ca-empty-cta-btn {
+    width: 100% !important;
+    min-height: 38px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 8px 14px !important;
+    font-size: 0.78rem !important;
+    box-sizing: border-box !important;
+    text-align: center !important;
+  }
+
+  /* Filter chips smooth horizontal touch swiping */
+  .filter-chips {
+    -webkit-overflow-scrolling: touch !important;
+    padding-bottom: 4px !important;
+    gap: 6px !important;
+  }
+
+  .filter-chip {
+    font-size: 0.76rem !important;
+    padding: 6px 12px !important;
+    min-height: 36px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
+

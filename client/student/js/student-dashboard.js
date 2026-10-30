@@ -3251,6 +3251,8 @@ requireStudentLogin();
     }
   ];
 
+  let currentSelectedRoadmapStageId = 'branch-volumetric';
+
   function renderSyllabusRoadmap(sessions) {
     const grid = document.getElementById('roadmapStagesGrid');
     if (!grid) return;
@@ -3287,6 +3289,9 @@ requireStudentLogin();
         badgeHtml = '<span class="stage-status-badge badge-active">🔄 In Progress</span>';
         activeStageFound = true;
         activeStageNumber = idx + 1;
+        if (!currentSelectedRoadmapStageId) {
+          currentSelectedRoadmapStageId = stage.id;
+        }
       } else if (completedCount > 0) {
         stateClass = 'is-active';
         badgeHtml = '<span class="stage-status-badge badge-active">🔄 In Progress</span>';
@@ -3295,10 +3300,14 @@ requireStudentLogin();
         badgeHtml = '<span class="stage-status-badge badge-locked">🔒 Locked</span>';
       }
 
+      if (stage.id === currentSelectedRoadmapStageId) {
+        stateClass += ' is-selected';
+      }
+
       const progressPct = Math.min(100, Math.round((completedCount / stage.totalPracticals) * 100));
 
       return `
-        <div class="roadmap-stage-card ${stateClass}" onclick="selectRoadmapStage('${stage.id}')" role="button" tabindex="0" title="Click to open ${stage.title} in learning pathway">
+        <div class="roadmap-stage-card ${stateClass}" id="stageCard_${stage.id}" onclick="selectRoadmapStage('${stage.id}')" role="button" tabindex="0" title="Click to focus ${stage.title}">
           <div class="stage-top-row">
             <span class="stage-num-badge">STAGE ${stage.number}</span>
             ${badgeHtml}
@@ -3326,14 +3335,64 @@ requireStudentLogin();
     }
   }
 
+  const STAGE_GRID_FILTER_MAP = {
+    'branch-volumetric': 'acidBase',
+    'branch-qualitative': 'qualitative',
+    'branch-kinetics': 'rates',
+    'branch-organic-gas': 'organic',
+    'branch-capstone': 'all'
+  };
+
   window.selectRoadmapStage = function(stageId) {
-    if (window.SkillTree && typeof window.SkillTree.selectBranch === 'function') {
-      window.SkillTree.switchView('tree');
-      window.SkillTree.selectBranch(stageId);
-      const targetEl = document.getElementById(stageId) || document.getElementById('skillTreeContainer');
+    currentSelectedRoadmapStageId = stageId;
+
+    // Synchronize UI highlight across roadmap cards
+    document.querySelectorAll('.roadmap-stage-card').forEach(card => {
+      const isTarget = card.id === `stageCard_${stageId}`;
+      card.classList.toggle('is-selected', isTarget);
+    });
+
+    const isGridActive = document.getElementById('practiceGridWrap') && document.getElementById('practiceGridWrap').style.display !== 'none';
+
+    if (isGridActive) {
+      // In Grid view: filter the discipline cards directly
+      const filterKey = STAGE_GRID_FILTER_MAP[stageId] || 'all';
+      if (typeof setPracticeFilter === 'function') {
+        setPracticeFilter(filterKey);
+      }
+      const gridWrap = document.getElementById('practiceGridWrap');
+      if (gridWrap) {
+        gridWrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    } else {
+      // In Pathway Tree view: focus the selected branch
+      if (window.SkillTree && typeof window.SkillTree.selectBranch === 'function') {
+        window.SkillTree.selectBranch(stageId);
+      }
+      const targetEl = document.getElementById('skillTreeContainer');
       if (targetEl) {
         targetEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
+    }
+
+    if (window.BrilliantUI && window.BrilliantUI.audio) {
+      window.BrilliantUI.audio.playClick();
+    }
+  };
+
+  window.toggleRoadmapTreeAll = function() {
+    if (!window.SkillTree) return;
+    if (typeof window.SkillTree.switchView === 'function') {
+      window.SkillTree.switchView('tree');
+    }
+    const currentMode = localStorage.getItem('vlk_skilltree_mode') || 'focus';
+    const nextShowAll = (currentMode === 'focus');
+    if (typeof window.SkillTree.toggleFullTree === 'function') {
+      window.SkillTree.toggleFullTree(nextShowAll);
+    }
+    const btnText = document.getElementById('roadmapToggleTreeText');
+    if (btnText) {
+      btnText.textContent = nextShowAll ? 'Focus Selected Stage' : 'View Full Tree (5)';
     }
   };
 

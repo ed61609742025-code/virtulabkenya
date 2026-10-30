@@ -4261,7 +4261,7 @@ requireStudentLogin();
     if (pulseNextXPVal) pulseNextXPVal.textContent = xp.nextLevelXP.toLocaleString();
     if (pulseXPSub) {
       const remainingXP = Math.max(0, xp.nextLevelXP - xp.totalXP);
-      pulseXPSub.innerHTML = `<span>${xp.totalXP.toLocaleString()} / ${xp.nextLevelXP.toLocaleString()} XP</span> <span style="opacity:0.75;">(${remainingXP} XP to Level ${xp.level + 1})</span>`;
+      pulseXPSub.innerHTML = `<span>${xp.totalXP.toLocaleString()} / ${xp.nextLevelXP.toLocaleString()} XP</span> &middot; <span style="opacity:0.85;">${remainingXP.toLocaleString()} XP to Level ${xp.level + 1}</span>`;
     }
 
     const pulseRewardText = document.getElementById('pulseXPRewardText');

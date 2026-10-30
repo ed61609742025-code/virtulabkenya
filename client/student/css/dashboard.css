@@ -352,7 +352,7 @@ html, body {
     /* Warm streak accent aura in top-right */
     radial-gradient(circle 500px at 95% 15%, rgba(245, 158, 11, 0.05) 0%, transparent 60%),
     /* Molecular Lattice Dot Matrix (24px spacing) */
-    radial-gradient(circle, rgba(2, 132, 199, 0.12) 1.5px, transparent 1.5px);
+    radial-gradient(circle, rgba(2, 132, 199, 0.16) 2px, transparent 2px);
   background-size: 100% 100%, 100% 100%, 24px 24px;
   background-attachment: fixed;
 }
@@ -365,7 +365,7 @@ html, body {
     /* Warm amber streak glow */
     radial-gradient(circle 500px at 95% 15%, rgba(245, 158, 11, 0.06) 0%, transparent 60%),
     /* Phosphor Molecular Dot Matrix (24px spacing) */
-    radial-gradient(circle, rgba(56, 189, 248, 0.13) 1.5px, transparent 1.5px);
+    radial-gradient(circle, rgba(56, 189, 248, 0.22) 2px, transparent 2px);
   background-size: 100% 100%, 100% 100%, 24px 24px;
   background-attachment: fixed;
 }
@@ -376,7 +376,7 @@ html, body {
     /* Emerald Luminescence Apex Glow */
     radial-gradient(circle 850px at 50% 0%, rgba(52, 211, 153, 0.12) 0%, transparent 65%),
     /* Emerald Molecular Dot Matrix (24px spacing) */
-    radial-gradient(circle, rgba(52, 211, 153, 0.13) 1.5px, transparent 1.5px);
+    radial-gradient(circle, rgba(52, 211, 153, 0.22) 2px, transparent 2px);
   background-size: 100% 100%, 24px 24px;
   background-attachment: fixed;
 }
@@ -8662,5 +8662,17 @@ html, body {
   }
   .readiness-kpi-card {
     justify-content: flex-start;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .resume-flask-watermark {
+    width: 95px !important;
+    height: 95px !important;
+    right: 12px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    opacity: 0.10 !important;
   }
 }

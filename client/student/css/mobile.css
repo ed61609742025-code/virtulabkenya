@@ -315,13 +315,22 @@
     font-weight: 900 !important;
   }
 
-  /* 2-Column Metrics Grid: Streak & XP */
+  /* Mobile Background Dot Matrix Tiling: Use scroll for hardware-accelerated crispness */
+  html, body {
+    background-attachment: scroll !important;
+  }
+
+  /* Streamlined Mobile Hero Bar: Hide duplicate streak/XP (prominently featured in Pulse strip below) */
+  #heroStreakPill,
+  .mini-hero-right .xp-metric-card {
+    display: none !important;
+  }
+
   .mini-hero-right {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 8px !important;
+    display: flex !important;
+    flex-direction: column !important;
     width: 100% !important;
-    margin: 0 !important;
+    margin: 4px 0 0 !important;
     padding: 0 !important;
     box-sizing: border-box !important;
   }

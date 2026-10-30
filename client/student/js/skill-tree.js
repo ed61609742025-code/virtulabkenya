@@ -732,11 +732,6 @@
     try {
       localStorage.setItem('vlk_skilltree_mode', 'focus');
     } catch (e) {}
-    try {
-      document.querySelectorAll('.roadmap-stage-card').forEach(card => {
-        card.classList.toggle('is-selected', card.id === `stageCard_${branchId}`);
-      });
-    } catch (e) {}
     renderSkillTree();
   }
 

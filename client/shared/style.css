@@ -1200,12 +1200,13 @@ button:not(:disabled):active {
 
 /* ══════════════════════════════════════════════════════════════════════════
    UNIFIED RESPONSIVE TOP NAVBAR & KNEC EXAM SUBBAR (ALL PRACTICAL BENCHES)
+   Strictly scoped to practical workbenches (.academic-top-header) so the
+   student workstation dashboard (home.html) remains completely unaffected.
    Optimized for mobile viewports (320px - 768px portrait & landscape)
    ══════════════════════════════════════════════════════════════════════════ */
 
 @media (max-width: 768px) {
-  /* Prevent full-page horizontal overflow */
-  body {
+  body:has(.academic-top-header) {
     overflow-x: hidden !important;
   }
 
@@ -1217,7 +1218,7 @@ button:not(:disabled):active {
   }
 
   /* 1. TOP NAVBAR CONTAINER: Strictly single row, never wraps */
-  .top-navbar {
+  .academic-top-header .top-navbar {
     display: flex !important;
     flex-direction: row !important;
     flex-wrap: nowrap !important;
@@ -1235,7 +1236,7 @@ button:not(:disabled):active {
   }
 
   /* 2. BRAND LOGO & TITLE: Compact, never wrap */
-  .nav-brand-academic {
+  .academic-top-header .nav-brand-academic {
     display: inline-flex !important;
     align-items: center !important;
     gap: 6px !important;
@@ -1244,16 +1245,16 @@ button:not(:disabled):active {
     text-decoration: none !important;
   }
 
-  .vlk-brand-logo-wrap {
+  .academic-top-header .vlk-brand-logo-wrap {
     flex-shrink: 0 !important;
   }
 
-  .vlk-brand-logo-img {
+  .academic-top-header .vlk-brand-logo-img {
     width: 26px !important;
     height: 26px !important;
   }
 
-  .nav-brand-academic .brand-title {
+  .academic-top-header .nav-brand-academic .brand-title {
     font-size: 0.95rem !important;
     font-weight: 800 !important;
     line-height: 1.1 !important;
@@ -1262,19 +1263,19 @@ button:not(:disabled):active {
   }
 
   /* Hide verbose bench subtitle on mobile screens to save horizontal space */
-  .nav-brand-academic .brand-subtagline,
-  .brand-subtagline {
+  .academic-top-header .nav-brand-academic .brand-subtagline,
+  .academic-top-header .brand-subtagline {
     display: none !important;
   }
 
   /* 3. WORKBENCH SWITCHER: Compact trigger, full-width modal dropdown */
-  .workbench-dropdown-wrap {
+  .academic-top-header .workbench-dropdown-wrap {
     position: relative !important;
     flex-shrink: 1 !important;
     min-width: 0 !important;
   }
 
-  .workbench-dropdown-trigger {
+  .academic-top-header .workbench-dropdown-trigger {
     display: inline-flex !important;
     align-items: center !important;
     gap: 4px !important;
@@ -1290,13 +1291,13 @@ button:not(:disabled):active {
     white-space: nowrap !important;
   }
 
-  .workbench-trigger-icon {
+  .academic-top-header .workbench-trigger-icon {
     width: 15px !important;
     height: 15px !important;
     flex-shrink: 0 !important;
   }
 
-  .workbench-trigger-content {
+  .academic-top-header .workbench-trigger-content {
     display: inline-flex !important;
     align-items: center !important;
     gap: 4px !important;
@@ -1304,7 +1305,7 @@ button:not(:disabled):active {
     flex-shrink: 1 !important;
   }
 
-  .workbench-trigger-content span:last-child {
+  .academic-top-header .workbench-trigger-content span:last-child {
     max-width: 85px !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
@@ -1313,11 +1314,11 @@ button:not(:disabled):active {
   }
 
   /* Hide bench pill (Bench 1/3) on mobile */
-  .workbench-trigger-pill {
+  .academic-top-header .workbench-trigger-pill {
     display: none !important;
   }
 
-  .workbench-trigger-chevron {
+  .academic-top-header .workbench-trigger-chevron {
     width: 12px !important;
     height: 12px !important;
     flex-shrink: 0 !important;
@@ -1355,7 +1356,7 @@ button:not(:disabled):active {
   }
 
   /* 4. NAV ACTIONS: Strictly single row, clean icons, no line-breaking */
-  .nav-actions {
+  .academic-top-header .nav-actions {
     display: flex !important;
     flex-direction: row !important;
     flex-wrap: nowrap !important;
@@ -1364,28 +1365,28 @@ button:not(:disabled):active {
     flex-shrink: 0 !important;
   }
 
-  .nav-actions > * {
+  .academic-top-header .nav-actions > * {
     flex-shrink: 0 !important;
   }
 
   /* Hide long button labels on mobile; rely on recognizable icons */
-  .btn-text-full {
+  .academic-top-header .btn-text-full {
     display: none !important;
   }
 
-  .btn-text-short {
+  .academic-top-header .btn-text-short {
     display: none !important;
   }
 
   /* Nav action buttons (Theory, SDS, Settings, Exit, Back) */
-  .nav-actions .nav-btn,
-  .nav-actions .nav-btn-settings,
-  .nav-actions .nav-btn-safety,
-  .nav-actions .nav-btn-exit,
-  .nav-actions .theme-btn-chip,
-  .nav-actions .rate-nav-back-btn,
-  .nav-actions .btn-back-link,
-  .nav-actions .btn-tactile {
+  .academic-top-header .nav-actions .nav-btn,
+  .academic-top-header .nav-actions .nav-btn-settings,
+  .academic-top-header .nav-actions .nav-btn-safety,
+  .academic-top-header .nav-actions .nav-btn-exit,
+  .academic-top-header .nav-actions .theme-btn-chip,
+  .academic-top-header .nav-actions .rate-nav-back-btn,
+  .academic-top-header .nav-actions .btn-back-link,
+  .academic-top-header .nav-actions .btn-tactile {
     min-height: 32px !important;
     height: 32px !important;
     min-width: 32px !important;
@@ -1400,14 +1401,14 @@ button:not(:disabled):active {
     gap: 3px !important;
   }
 
-  .nav-actions svg.vlk-icon {
+  .academic-top-header .nav-actions svg.vlk-icon {
     width: 15px !important;
     height: 15px !important;
     flex-shrink: 0 !important;
   }
 
   /* Session timer badge */
-  .session-timer-badge {
+  .academic-top-header .session-timer-badge {
     min-height: 32px !important;
     height: 32px !important;
     padding: 2px 6px !important;
@@ -1420,14 +1421,14 @@ button:not(:disabled):active {
     align-items: center !important;
   }
 
-  .session-timer-badge svg.vlk-icon {
+  .academic-top-header .session-timer-badge svg.vlk-icon {
     width: 13px !important;
     height: 13px !important;
     flex-shrink: 0 !important;
   }
 
   /* Practice / Exam mode switch */
-  .nav-actions .theme-toggle-group {
+  .academic-top-header .nav-actions .theme-toggle-group {
     height: 32px !important;
     border-radius: 6px !important;
     padding: 1px !important;
@@ -1436,7 +1437,7 @@ button:not(:disabled):active {
     flex-shrink: 0 !important;
   }
 
-  .nav-actions .theme-toggle-group .theme-btn-chip {
+  .academic-top-header .nav-actions .theme-toggle-group .theme-btn-chip {
     height: 28px !important;
     min-height: 28px !important;
     min-width: auto !important;
@@ -1446,7 +1447,7 @@ button:not(:disabled):active {
   }
 
   /* Hide quick theme toggle button on mobile since it is inside the settings dropdown */
-  #btnQuickThemeToggle {
+  .academic-top-header #btnQuickThemeToggle {
     display: none !important;
   }
 
@@ -1521,38 +1522,38 @@ button:not(:disabled):active {
 
 /* 6. ULTRA-COMPACT SCREENS (<= 380px, e.g. iPhone SE, budget Android phones) */
 @media (max-width: 380px) {
-  .top-navbar {
+  .academic-top-header .top-navbar {
     padding: 4px 6px !important;
     gap: 3px !important;
   }
 
-  .nav-brand-academic .brand-title {
+  .academic-top-header .nav-brand-academic .brand-title {
     font-size: 0.88rem !important;
   }
 
-  .workbench-trigger-content span:last-child {
+  .academic-top-header .workbench-trigger-content span:last-child {
     max-width: 58px !important;
     font-size: 0.68rem !important;
   }
 
-  .nav-actions {
+  .academic-top-header .nav-actions {
     gap: 2px !important;
   }
 
-  .nav-actions .nav-btn,
-  .nav-actions .nav-btn-settings,
-  .nav-actions .nav-btn-safety,
-  .nav-actions .nav-btn-exit,
-  .nav-actions .theme-btn-chip,
-  .nav-actions .rate-nav-back-btn,
-  .nav-actions .btn-back-link {
+  .academic-top-header .nav-actions .nav-btn,
+  .academic-top-header .nav-actions .nav-btn-settings,
+  .academic-top-header .nav-actions .nav-btn-safety,
+  .academic-top-header .nav-actions .nav-btn-exit,
+  .academic-top-header .nav-actions .theme-btn-chip,
+  .academic-top-header .nav-actions .rate-nav-back-btn,
+  .academic-top-header .nav-actions .btn-back-link {
     min-height: 30px !important;
     height: 30px !important;
     min-width: 30px !important;
     padding: 2px 4px !important;
   }
 
-  .session-timer-badge {
+  .academic-top-header .session-timer-badge {
     min-height: 30px !important;
     height: 30px !important;
     padding: 2px 4px !important;
@@ -1566,41 +1567,41 @@ button:not(:disabled):active {
     position: relative !important; /* Non-sticky so apparatus gets 100% viewport */
   }
 
-  .top-navbar {
+  .academic-top-header .top-navbar {
     min-height: 36px !important;
     height: 36px !important;
     padding: 2px 8px !important;
     gap: 6px !important;
   }
 
-  .vlk-brand-logo-img {
+  .academic-top-header .vlk-brand-logo-img {
     width: 22px !important;
     height: 22px !important;
   }
 
-  .nav-brand-academic .brand-title {
+  .academic-top-header .nav-brand-academic .brand-title {
     font-size: 0.86rem !important;
   }
 
-  .brand-subtagline {
+  .academic-top-header .brand-subtagline {
     display: none !important;
   }
 
-  .workbench-dropdown-trigger {
+  .academic-top-header .workbench-dropdown-trigger {
     min-height: 28px !important;
     height: 28px !important;
     padding: 2px 6px !important;
     font-size: 0.68rem !important;
   }
 
-  .nav-actions .nav-btn,
-  .nav-actions .nav-btn-settings,
-  .nav-actions .nav-btn-safety,
-  .nav-actions .nav-btn-exit,
-  .nav-actions .theme-btn-chip,
-  .nav-actions .rate-nav-back-btn,
-  .nav-actions .btn-back-link,
-  .session-timer-badge {
+  .academic-top-header .nav-actions .nav-btn,
+  .academic-top-header .nav-actions .nav-btn-settings,
+  .academic-top-header .nav-actions .nav-btn-safety,
+  .academic-top-header .nav-actions .nav-btn-exit,
+  .academic-top-header .nav-actions .theme-btn-chip,
+  .academic-top-header .nav-actions .rate-nav-back-btn,
+  .academic-top-header .nav-actions .btn-back-link,
+  .academic-top-header .session-timer-badge {
     min-height: 28px !important;
     height: 28px !important;
     min-width: 28px !important;

@@ -790,6 +790,7 @@ body {
 .rate-sim-viewport {
   position: relative;
   width: 100%;
+  min-height: 280px;
   border-radius: 10px;
   background: #020617;
   overflow: hidden;
@@ -802,6 +803,7 @@ body {
 .rate-sim-canvas {
   width: 100%;
   max-width: 560px;
+  min-height: 280px;
   height: auto;
   display: block;
 }
@@ -1159,6 +1161,7 @@ body {
 
 .rate-graph-container {
   width: 100%;
+  min-height: 260px;
   background: var(--card-bg-hover);
   border: 1px solid var(--card-border);
   border-radius: 10px;
@@ -1171,6 +1174,7 @@ body {
 .rate-graph-canvas {
   width: 100%;
   max-width: 560px;
+  min-height: 260px;
   height: auto;
   display: block;
 }
@@ -1443,6 +1447,54 @@ textarea.rate-input-field {
 @media (min-width: 769px) {
   .btn-text-short {
     display: none;
+  }
+}
+
+/* Landscape Mode Optimization (Mobile / Tablet in Landscape) */
+@media (orientation: landscape) and (max-height: 640px) {
+  .rate-page-wrap {
+    padding: 10px 14px 30px 14px;
+    gap: 12px;
+  }
+
+  .academic-top-header {
+    position: relative; /* Avoid consuming precious screen height in shallow landscape */
+  }
+
+  .bench-layout-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .bench-center-rig {
+    order: -1; /* Place simulation apparatus rig FIRST so it's instantly prominent without scrolling */
+    min-height: 330px;
+    width: 100%;
+  }
+
+  .rate-sim-viewport {
+    min-height: 300px;
+  }
+
+  .rate-sim-canvas {
+    min-height: 300px;
+  }
+
+  .rate-analysis-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .rate-graph-card {
+    min-height: 310px;
+  }
+
+  .rate-graph-container {
+    min-height: 280px;
+  }
+
+  .rate-graph-canvas {
+    min-height: 280px;
   }
 }
 

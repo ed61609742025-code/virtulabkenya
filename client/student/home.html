@@ -141,8 +141,8 @@
 
 <!-- Critical Layout & Dashboard Stylesheets (Render-Critical) -->
 <link rel="stylesheet" href="../shared/style.css?v=167">
-<link rel="stylesheet" href="css/dashboard.css?v=172">
-<link rel="stylesheet" href="css/skill-tree.css?v=167">
+<link rel="stylesheet" href="css/dashboard.css?v=173">
+<link rel="stylesheet" href="css/skill-tree.css?v=173">
 <link rel="stylesheet" href="css/mobile.css?v=167">
 
 <!-- Non-Critical Stylesheets (Asynchronously loaded to unblock LCP) -->
@@ -627,17 +627,17 @@
             </div>
           </div>
           <div class="pulse-card-value-row">
-            <span class="pulse-card-val" id="pulseRankTitle">Level 1: Apprentice</span>
+            <span class="pulse-card-val" id="pulseRankTitle">Level 4: Form 4 Master Chemist</span>
           </div>
           <div class="pulse-bar-wrap" role="progressbar" aria-label="XP progress to next level">
-            <div class="pulse-bar-fill xp-fill" id="pulseXPBarFill" style="width: 48%;"></div>
+            <div class="pulse-bar-fill xp-fill" id="pulseXPBarFill" style="width: 81%;"></div>
           </div>
           <div class="pulse-card-sub" id="pulseXPSub">
-            <span id="pulseXPVal">120</span> / <span id="pulseNextXPVal">250</span> XP
+            <span id="pulseXPVal">2,450</span> / <span id="pulseNextXPVal">3,000</span> XP &middot; 81% to Next Level
           </div>
           <div class="pulse-xp-reward-preview" id="pulseXPRewardPreview">
             <span class="reward-gift-icon" aria-hidden="true">🎁</span>
-            <span class="reward-preview-text" id="pulseXPRewardText">Next Unlock: Precision Burette &amp; Solubility Bench at Level 2</span>
+            <span class="reward-preview-text" id="pulseXPRewardText">Next Unlock: 40-Mark Mock Practical Exam &amp; Official KCSE Distinction Certificate</span>
           </div>
         </div>
 
@@ -645,7 +645,7 @@
         <div class="pulse-card pulse-readiness-card" id="pulseCardReadiness" onclick="openMasteryChartsModal()" role="button" tabindex="0" data-tooltip="Click to view full syllabus mastery charts &amp; weekly trajectory" data-tooltip-pos="bottom">
           <div class="pulse-card-header">
             <span class="pulse-card-label">KCSE Readiness</span>
-            <span class="pulse-mastery-chip chip-practice" id="pulseMasteryBadge">🔴 Needs Practice</span>
+            <span class="pulse-mastery-chip chip-improving" id="pulseMasteryBadge">🟡 Improving</span>
           </div>
           
           <div class="pulse-readiness-body">
@@ -653,19 +653,19 @@
             <div class="pulse-radial-gauge" id="pulseRadialGauge" aria-hidden="true">
               <svg viewBox="0 0 52 52" class="radial-gauge-svg">
                 <circle class="radial-gauge-track" cx="26" cy="26" r="21" fill="none" stroke-width="4.5"/>
-                <circle class="radial-gauge-fill" id="pulseRadialFill" cx="26" cy="26" r="21" fill="none" stroke-width="4.5" stroke-dasharray="131.95" stroke-dashoffset="131.95"/>
+                <circle class="radial-gauge-fill" id="pulseRadialFill" cx="26" cy="26" r="21" fill="none" stroke-width="4.5" stroke-dasharray="131.95" stroke-dashoffset="34.31"/>
               </svg>
               <div class="radial-gauge-center">
-                <span class="radial-gauge-num" id="pulseReadinessVal">0%</span>
+                <span class="radial-gauge-num" id="pulseReadinessVal">74%</span>
               </div>
             </div>
 
             <!-- Target & Topics Col -->
             <div class="pulse-readiness-info-col">
               <div class="pulse-card-target-text">Goal: &ge;80% Distinction</div>
-              <div class="pulse-card-sub" id="pulseReadinessSub">0 / 10 practical topics covered</div>
+              <div class="pulse-card-sub" id="pulseReadinessSub">7 / 10 practical topics explored</div>
               <div class="pulse-charts-cta">
-                <span>View Mastery Charts</span>
+                <span>View Detailed Charts</span>
                 <span class="pulse-cta-arrow">&rarr;</span>
               </div>
             </div>
@@ -674,23 +674,23 @@
           <!-- 5-Discipline Mini-Bar Visualizer -->
           <div class="pulse-mini-disciplines" id="pulseMiniDisciplines" aria-label="Discipline Mastery Preview">
             <div class="mini-disc-col" title="Volumetric: 0%">
-              <div class="mini-disc-bar-track"><div class="mini-disc-bar-fill disc-volumetric" id="miniDisc_volumetric" style="height:0%;"></div></div>
+              <div class="mini-disc-bar-track"><div class="mini-disc-bar-fill disc-volumetric" id="miniDisc_volumetric" style="height:85%;"></div></div>
               <span class="mini-disc-label">Vol</span>
             </div>
             <div class="mini-disc-col" title="Qualitative Salts: 0%">
-              <div class="mini-disc-bar-track"><div class="mini-disc-bar-fill disc-qualitative" id="miniDisc_qualitative" style="height:0%;"></div></div>
+              <div class="mini-disc-bar-track"><div class="mini-disc-bar-fill disc-qualitative" id="miniDisc_qualitative" style="height:70%;"></div></div>
               <span class="mini-disc-label">Salt</span>
             </div>
             <div class="mini-disc-col" title="Kinetics: 0%">
-              <div class="mini-disc-bar-track"><div class="mini-disc-bar-fill disc-rates" id="miniDisc_rates" style="height:0%;"></div></div>
+              <div class="mini-disc-bar-track"><div class="mini-disc-bar-fill disc-rates" id="miniDisc_rates" style="height:60%;"></div></div>
               <span class="mini-disc-label">Rate</span>
             </div>
             <div class="mini-disc-col" title="Thermochemistry: 0%">
-              <div class="mini-disc-bar-track"><div class="mini-disc-bar-fill disc-energy" id="miniDisc_energy" style="height:0%;"></div></div>
+              <div class="mini-disc-bar-track"><div class="mini-disc-bar-fill disc-energy" id="miniDisc_energy" style="height:80%;"></div></div>
               <span class="mini-disc-label">Heat</span>
             </div>
             <div class="mini-disc-col" title="Organic & Gases: 0%">
-              <div class="mini-disc-bar-track"><div class="mini-disc-bar-fill disc-organic" id="miniDisc_organic" style="height:0%;"></div></div>
+              <div class="mini-disc-bar-track"><div class="mini-disc-bar-fill disc-organic" id="miniDisc_organic" style="height:75%;"></div></div>
               <span class="mini-disc-label">Org</span>
             </div>
           </div>
@@ -711,15 +711,15 @@
             <span class="daily-timer-text" id="dailyChallengeTimer" data-i18n="daily_bite_timer">Resets at midnight</span>
           </div>
           <h3 id="dailyChallengeTitle" class="daily-title">
-            Monday Volumetric Standardisation Blitz
+            Friday Organic Functional Group Blitz
           </h3>
           <p id="dailyChallengeDesc" class="daily-desc">
-            Concordancy, meniscus alignment, and stoichiometric calculations. (Acid-Base &amp; Redox Titrations)
+            Test for unsaturation (bromine water &amp; acidified KMnO₄), esterification aromas, and sodium carbonate effervescence.
           </p>
         </div>
         <div class="daily-challenge-right">
           <a id="dailyChallengeLaunchBtn" href="speed_battle.html?mode=daily_bite" class="daily-launch-btn">
-            <span data-i18n="daily_bite_launch">Start Quiz &rarr;</span>
+            <span data-i18n="daily_bite_launch">Start Quiz ▶</span>
           </a>
         </div>
       </div>
@@ -753,10 +753,10 @@
                     </div>
                     <div class="mwalimu-identity-text">
                       <div class="mwalimu-name">Mwalimu AI <span class="mwalimu-badge-tag">TUTOR</span></div>
-                      <div class="mwalimu-source-line" id="mwalimuSourceLine">Diagnostic Lab Guidance</div>
+                      <div class="mwalimu-source-line" id="mwalimuSourceLine">PERSONALIZED EXAMINER DIAGNOSTIC SCAN</div>
                     </div>
                   </div>
-                  <span class="tip-category-badge badge-warning" id="stCategoryBadge" style="display:inline-flex; align-items:center; gap:4px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> KNEC MARKING TRAP</span>
+                  <span class="tip-category-badge badge-warning" id="stCategoryBadge" style="display:inline-flex; align-items:center; gap:4px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Concordance &amp; Accuracy Trap &#9662;</span>
                   <span class="tip-counter" id="stCounter">Tip 1/12</span>
                 </div>
                 <div class="tip-header-actions">
@@ -787,7 +787,7 @@
               <!-- Interactive Active Recall Micro-Quiz -->
               <div class="tip-quiz-box" id="stQuizBox">
                 <button type="button" class="tip-quiz-toggle-btn" id="stQuizToggleBtn" onclick="toggleTipQuiz()">
-                  <span class="quiz-btn-label" id="stQuizBtnLabel" style="display:inline-flex; align-items:center; gap:5px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Quick Recall Test (+10 XP)</span>
+                  <span class="quiz-btn-label" id="stQuizBtnLabel" style="display:inline-flex; align-items:center; gap:5px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Quick Recall Question (+10 XP)</span>
                   <span class="quiz-chevron" id="stQuizChevron">▼</span>
                 </button>
                 <div class="tip-quiz-content" id="stQuizContent" style="display:none;">
@@ -800,7 +800,7 @@
               <!-- Action & Navigation Bar -->
               <div class="tip-action-bar">
                 <a id="stActionBtn" href="lab.html?studyMode=guided" class="tip-action-btn" data-tooltip="Practice this specific technique now" data-tooltip-pos="top">
-                  <span id="stActionText">Practice Burette Drill &rarr;</span>
+                  <span id="stActionText">Practice Concordancy Drill ▶</span>
                 </a>
                 <button type="button" class="tip-next-chip" onclick="cycleStudyTip(1)">
                   <span>Next Tip &rarr;</span>
@@ -814,7 +814,7 @@
             <div class="guidance-card rec-card upgraded-rec-card">
               <div class="guidance-header">
                 <div class="rec-header-left">
-                  <span class="guidance-badge rec-badge" id="recReasonBadge" style="display:inline-flex; align-items:center; gap:4px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> New Syllabus Topic</span>
+                  <span class="guidance-badge rec-badge" id="recReasonBadge" style="display:inline-flex; align-items:center; gap:4px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> TARGETED REVISION</span>
                   <span class="rec-counter" id="recCounter">1/4</span>
                 </div>
                 <div class="rec-header-actions">
@@ -827,16 +827,16 @@
                 <div class="rec-title-row">
                   <span class="rec-icon-badge" id="recIcon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg></span>
                   <div style="min-width:0; flex:1;">
-                    <h4 class="rec-title" id="recTitle">Redox Titration (Fe²⁺ vs KMnO₄)</h4>
+                    <h4 class="rec-title" id="recTitle">Qualitative Inorganic Salt Analysis</h4>
                     <div class="rec-meta-pills" id="recMetaPills">
-                      <span class="rec-meta-pill" id="recPaperTag" style="display:inline-flex; align-items:center; gap:4px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg> Paper 3 · Q1 (15 Marks)</span>
+                      <span class="rec-meta-pill" id="recPaperTag" style="display:inline-flex; align-items:center; gap:4px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg> Paper 3 · Q2 (15 Marks)</span>
                       <span class="rec-meta-pill" id="recTimeTag" style="display:inline-flex; align-items:center; gap:4px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M10 2h4"/><path d="M19 5l-1.5 1.5"/></svg> ~15 mins</span>
-                      <span class="rec-meta-pill rec-xp-pill" id="recXpTag" style="display:inline-flex; align-items:center; gap:4px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3Z"/><path d="M5 3v4M3 5h4M19 17v4M17 19h4"/></svg> +50 XP</span>
+                      <span class="rec-meta-pill rec-guided-pill" id="recGuidedTag" style="display:inline-flex; align-items:center; gap:4px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Guided</span>
                     </div>
                   </div>
                 </div>
                 <p class="guidance-body rec-desc-text" id="recDesc">
-                  Practice self-indicating KMnO₄ endpoints (first permanent pale pink tint) and 5:1 Fe²⁺:MnO₄⁻ stoichiometric calculations.
+                  Systematic bench identification: Cations (Fe²⁺, Fe³⁺, Cu²⁺, Al³⁺, Pb²⁺, Zn²⁺) with NaOH / NH₃ and Anions (SO₄²⁻, SO₃²⁻, CO₃²⁻, Cl⁻).
                 </p>
               </div>
 
@@ -847,7 +847,7 @@
                   <span class="rec-mastery-goal" id="recMasteryGoal">Goal: &ge;80% (Distinction)</span>
                 </div>
                 <div class="rec-mastery-track">
-                  <div class="rec-mastery-fill" id="recMasteryFill" style="width: 8%;"></div>
+                  <div class="rec-mastery-fill" id="recMasteryFill" style="width: 45%; background: linear-gradient(90deg, #0284C7, #38BDF8);"></div>
                 </div>
               </div>
 
@@ -858,7 +858,7 @@
                 </a>
                 <div class="rec-secondary-actions">
                   <button type="button" class="rec-cycle-chip" onclick="cycleRecommendedPractical(1)" title="View next suggested practical">
-                    <span>Next Lab &#8635;</span>
+                    <span>Reset Lab &#8635;</span>
                   </button>
                 </div>
               </div>
@@ -876,7 +876,7 @@
             <div>
               <div class="ca-title-cluster">
                 <h2 class="section-heading-academic" data-i18n="prescribed_ca">Teacher Assignments</h2>
-                <span class="dash-section-badge badge-cyan" id="caProgressPercentBadge">0% Complete</span>
+                <span class="dash-section-badge badge-green" id="caProgressPercentBadge">All (1) Graded</span>
               </div>
               <div class="ca-subtitle-row">
                 <span class="section-subheading">Prescribed KCSE Paper 3 practical assessments &amp; rubric evaluations</span>
@@ -1427,8 +1427,8 @@
   <script defer src="../shared/pwa-installer.js?v=167"></script>
   <script defer src="../shared/brilliant-ui.js?v=167"></script>
   <script defer src="../shared/gamification-engine.js?v=167"></script>
-  <script defer src="js/skill-tree.js?v=171"></script>
-  <script defer src="js/student-dashboard.js?v=172"></script>
+  <script defer src="js/skill-tree.js?v=173"></script>
+  <script defer src="js/student-dashboard.js?v=173"></script>
   <script defer src="../shared/subscription-ui.js?v=167"></script>
 
   

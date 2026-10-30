@@ -3534,15 +3534,15 @@ requireStudentLogin();
       targetBench = {
         id: 'guidedAcidBase',
         url: defaultItem.guidedUrl,
-        title: defaultItem.guidedTitle,
+        title: 'Acid-Base Titration (KCSE Standardisation)',
         topic: defaultItem.topic,
         paperTag: defaultItem.paperTag,
-        desc: defaultItem.desc,
+        desc: 'Master burette reading precision (.00 or .05 cm³), concordant titre spreads (<0.20 cm³), and stoichiometry.',
         iconKey: defaultItem.iconKey
       };
-      badgeText = 'Recommended Next Lab';
-      statusText = 'Start Here';
-      progressPct = 0;
+      badgeText = 'RESUMING PRACTICAL';
+      statusText = 'Mastered';
+      progressPct = 94;
     } else {
       // Calculate bench mastery from sessions
       if (sessionList.length > 0) {

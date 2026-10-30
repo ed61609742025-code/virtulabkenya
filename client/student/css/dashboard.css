@@ -7360,6 +7360,33 @@ html, body {
 /* ═════════════════════════════════════════════════════════════════════ */
 
 /* ── 1. Continue Last Experiment Hero Card ── */
+
+/* Resume Hero Conical Flask Watermark SVG */
+.resume-flask-watermark {
+  position: absolute;
+  right: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 140px;
+  height: 140px;
+  opacity: 0.14;
+  color: var(--cyan-accent);
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.resume-hero-card:hover .resume-flask-watermark {
+  opacity: 0.22;
+  transform: translateY(-50%) scale(1.05);
+}
+
+.resume-hero-left,
+.resume-hero-right {
+  position: relative;
+  z-index: 1;
+}
+
 .resume-hero-card {
   position: relative;
   display: flex;

@@ -301,7 +301,7 @@
 
     const syllabusPct = Math.round((totalCompletedNodes / totalNodesCount) * 100);
 
-    const savedMode = localStorage.getItem('vlk_skilltree_mode') || 'focus';
+    const savedMode = localStorage.getItem('vlk_skilltree_mode') || 'all';
     const isFocusMode = (savedMode === 'focus');
     const targetBranchId = _selectedBranchId || activeBranchId;
 

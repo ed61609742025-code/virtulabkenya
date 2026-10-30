@@ -7353,3 +7353,566 @@ html, body {
   color: #F59E0B;
   border: 1px solid rgba(245, 158, 11, 0.3);
 }
+
+
+/* ═════════════════════════════════════════════════════════════════════ */
+/* PHASE 1: GOAL-FOCUSED RESUME EXPERIMENT HERO & 3-METRIC PROGRESS PULSE */
+/* ═════════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Continue Last Experiment Hero Card ── */
+.resume-hero-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.05) 0%, rgba(255, 255, 255, 0.98) 60%, rgba(16, 185, 129, 0.05) 100%);
+  border: 1.5px solid var(--card-border);
+  border-radius: 18px;
+  padding: 24px 28px;
+  margin-bottom: 18px;
+  box-shadow: 0 4px 20px rgba(11, 37, 69, 0.06);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .resume-hero-card {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.1) 0%, #0F1A2E 55%, rgba(16, 185, 129, 0.07) 100%);
+  border-color: rgba(56, 189, 248, 0.22);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+}
+
+[data-theme="green"] .resume-hero-card {
+  background: linear-gradient(135deg, rgba(52, 211, 153, 0.12) 0%, #102617 55%, rgba(5, 150, 105, 0.08) 100%);
+  border-color: rgba(52, 211, 153, 0.25);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+}
+
+.resume-hero-card:hover {
+  border-color: var(--cyan-accent);
+  box-shadow: 0 8px 30px rgba(2, 132, 199, 0.12);
+}
+
+[data-theme="dark"] .resume-hero-card:hover {
+  box-shadow: 0 8px 30px rgba(56, 189, 248, 0.18);
+}
+
+.resume-hero-left {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.resume-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.resume-badge-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(2, 132, 199, 0.12);
+  color: var(--cyan-accent);
+  border: 1px solid rgba(2, 132, 199, 0.28);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 999px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+[data-theme="dark"] .resume-badge-primary {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: rgba(56, 189, 248, 0.35);
+}
+
+[data-theme="green"] .resume-badge-primary {
+  color: #34D399;
+  background: rgba(52, 211, 153, 0.15);
+  border-color: rgba(52, 211, 153, 0.35);
+}
+
+.resume-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+  animation: resumePulseAnimation 2s infinite ease-in-out;
+}
+
+@keyframes resumePulseAnimation {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.5; }
+}
+
+.resume-syllabus-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--card-bg-hover, rgba(0,0,0,0.04));
+  border: 1px solid var(--card-border);
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.resume-topic-pill {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--green-accent, #059669);
+  background: rgba(16, 185, 129, 0.1);
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.resume-title {
+  font-family: 'Outfit', 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: var(--heading-color);
+  letter-spacing: -0.025em;
+  margin: 0;
+  line-height: 1.25;
+}
+
+.resume-desc {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.90rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0;
+  max-width: 640px;
+}
+
+.resume-progress-container {
+  margin-top: 6px;
+  max-width: 460px;
+}
+
+.resume-progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  font-size: 0.75rem;
+}
+
+.resume-progress-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.resume-status-highlight {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--cyan-accent);
+}
+
+.resume-progress-pct {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  color: var(--heading-color);
+}
+
+.resume-progress-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(148, 163, 184, 0.2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.resume-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0284C7 0%, #10B981 100%);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.resume-hero-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.resume-icon-badge {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%);
+  border: 1px solid var(--card-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cyan-accent);
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.resume-icon-badge .resume-svg-icon {
+  width: 28px;
+  height: 28px;
+}
+
+.resume-hero-card:hover .resume-icon-badge {
+  transform: scale(1.08) rotate(4deg);
+}
+
+.resume-action-btns {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-resume-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 10px 22px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0284C7 0%, #2563EB 100%);
+  color: #FFFFFF !important;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 800;
+  text-decoration: none !important;
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+  border: 1.5px solid transparent;
+  transition: all 0.16s ease;
+  white-space: nowrap;
+}
+
+[data-theme="green"] .btn-resume-primary {
+  background: linear-gradient(135deg, #059669 0%, #10B981 100%);
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35);
+}
+
+.btn-resume-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.45);
+  filter: brightness(1.08);
+}
+
+.btn-resume-primary:active {
+  transform: translateY(0);
+}
+
+.btn-resume-primary .btn-play-icon {
+  font-size: 0.8rem;
+  color: #F8FAFC;
+}
+
+.btn-resume-primary .btn-arrow {
+  font-size: 1.05rem;
+  transition: transform 0.16s ease;
+}
+
+.btn-resume-primary:hover .btn-arrow {
+  transform: translateX(3px);
+}
+
+.btn-resume-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text-main) !important;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-decoration: none !important;
+  border: 1.5px solid var(--card-border);
+  transition: all 0.16s ease;
+  white-space: nowrap;
+}
+
+.btn-resume-secondary:hover {
+  border-color: var(--cyan-accent);
+  color: var(--cyan-accent) !important;
+  background: var(--card-bg-hover);
+  transform: translateY(-1px);
+}
+
+/* ── 2. Today's Progress 3-Metric Pulse Strip ── */
+.todays-pulse-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.pulse-card {
+  position: relative;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  cursor: pointer;
+  user-select: none;
+}
+
+.pulse-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--cyan-accent);
+  box-shadow: var(--shadow-md);
+}
+
+.pulse-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.pulse-card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pulse-icon-box {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pulse-icon-flame {
+  background: rgba(245, 158, 11, 0.14);
+  color: #D97706;
+}
+
+[data-theme="dark"] .pulse-icon-flame {
+  color: #F59E0B;
+}
+
+.pulse-icon-award {
+  background: rgba(2, 132, 199, 0.12);
+  color: var(--cyan-accent);
+}
+
+.pulse-card-value-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pulse-card-val {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--heading-color);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.pulse-sub-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+.pulse-sub-chip.streak-chip {
+  background: rgba(245, 158, 11, 0.14);
+  color: #D97706;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+[data-theme="dark"] .pulse-sub-chip.streak-chip {
+  color: #F59E0B;
+}
+
+.pulse-card-target-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.pulse-bar-wrap {
+  width: 100%;
+  height: 6px;
+  background: rgba(148, 163, 184, 0.2);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 2px 0;
+}
+
+.pulse-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.pulse-bar-fill.xp-fill {
+  background: linear-gradient(90deg, #0284C7 0%, #38BDF8 100%);
+}
+
+.pulse-bar-fill.readiness-fill {
+  background: linear-gradient(90deg, #D97706 0%, #10B981 100%);
+}
+
+.pulse-card-sub {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+/* ── 3-Tier Colored Mastery Indicators ── */
+.pulse-mastery-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.70rem;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+/* 🟢 Mastered (80–100%) */
+.pulse-mastery-chip.chip-mastered {
+  color: #059669;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+[data-theme="dark"] .pulse-mastery-chip.chip-mastered {
+  color: #10B981;
+  background: rgba(16, 185, 129, 0.2);
+  border-color: rgba(16, 185, 129, 0.45);
+}
+
+/* 🟡 Improving (50–79%) */
+.pulse-mastery-chip.chip-improving {
+  color: #D97706;
+  background: rgba(245, 158, 11, 0.14);
+  border: 1px solid rgba(245, 158, 11, 0.38);
+}
+
+[data-theme="dark"] .pulse-mastery-chip.chip-improving {
+  color: #F59E0B;
+  background: rgba(245, 158, 11, 0.2);
+  border-color: rgba(245, 158, 11, 0.45);
+}
+
+/* 🔴 Needs Practice (<50%) */
+.pulse-mastery-chip.chip-practice {
+  color: #DC2626;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+}
+
+[data-theme="dark"] .pulse-mastery-chip.chip-practice {
+  color: #EF4444;
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.45);
+}
+
+/* ── Responsive Adaptations ── */
+@media (max-width: 960px) {
+  .todays-pulse-strip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .pulse-card.pulse-readiness-card {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 860px) {
+  .resume-hero-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+    padding: 20px;
+  }
+  .resume-hero-right {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .resume-icon-badge {
+    width: 48px;
+    height: 48px;
+  }
+  .resume-action-btns {
+    flex: 1;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 640px) {
+  .todays-pulse-strip {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .pulse-card.pulse-readiness-card {
+    grid-column: auto;
+  }
+  .resume-hero-card {
+    padding: 16px;
+    border-radius: 14px;
+  }
+  .resume-title {
+    font-size: 1.2rem;
+  }
+  .resume-hero-right {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .resume-icon-badge {
+    display: none;
+  }
+  .resume-action-btns {
+    flex-direction: column;
+    width: 100%;
+  }
+  .btn-resume-primary,
+  .btn-resume-secondary {
+    width: 100%;
+    min-height: 48px;
+  }
+}

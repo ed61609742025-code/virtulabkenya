@@ -1712,6 +1712,31 @@ requireStudentLogin();
     else if (totalReadiness >= 40) statusText = 'Developing';
     if (statusEl) statusEl.textContent = statusText;
 
+    // Update Pulse Strip: KCSE Readiness
+    const pulseReadinessVal = document.getElementById('pulseReadinessVal');
+    const pulseReadinessBarFill = document.getElementById('pulseReadinessBarFill');
+    const pulseReadinessSub = document.getElementById('pulseReadinessSub');
+    const pulseMasteryBadge = document.getElementById('pulseMasteryBadge');
+
+    if (pulseReadinessVal) pulseReadinessVal.textContent = totalReadiness + '%';
+    if (pulseReadinessBarFill) pulseReadinessBarFill.style.width = totalReadiness + '%';
+    if (pulseReadinessSub) {
+      pulseReadinessSub.textContent = `${coveredTopics} / 10 practical topics covered`;
+    }
+    if (pulseMasteryBadge) {
+      pulseMasteryBadge.classList.remove('chip-mastered', 'chip-improving', 'chip-practice');
+      if (totalReadiness >= 80) {
+        pulseMasteryBadge.classList.add('chip-mastered');
+        pulseMasteryBadge.textContent = '🟢 Mastered';
+      } else if (totalReadiness >= 50) {
+        pulseMasteryBadge.classList.add('chip-improving');
+        pulseMasteryBadge.textContent = '🟡 Improving';
+      } else {
+        pulseMasteryBadge.classList.add('chip-practice');
+        pulseMasteryBadge.textContent = '🔴 Needs Practice';
+      }
+    }
+
     for (const [key, count] of Object.entries(topicCounts)) {
       const el = document.getElementById('topicStatus-' + key);
       const item = document.querySelector(`.topic-item[data-topic="${key}"]`);
@@ -2938,6 +2963,241 @@ requireStudentLogin();
     }
   }
 
+  const BENCH_REGISTRY = {
+    'acidBase': {
+      id: 'acidBase',
+      title: 'Volumetric Analysis Workbench',
+      guidedTitle: 'Guided Volumetric Analysis (Acid-Base Standardisation)',
+      url: 'lab.html?type=acidBase',
+      guidedUrl: 'lab.html?studyMode=guided',
+      topic: 'Volumetric Analysis',
+      paperTag: 'Paper 3 · Q1 (15 Marks)',
+      desc: 'Master burette reading precision (.00 or .05 cm³), concordant titres within ±0.20 cm³, and stoichiometry.',
+      iconKey: 'burette'
+    },
+    'redox': {
+      id: 'redox',
+      title: 'Redox Titration (Fe²⁺ vs KMnO₄)',
+      url: 'lab.html?type=redox',
+      topic: 'Redox Volumetric',
+      paperTag: 'Paper 3 · Q1 (15 Marks)',
+      desc: 'Master self-indicating permanganate endpoints and 5:1 Fe²⁺:MnO₄⁻ stoichiometric ratios.',
+      iconKey: 'flask'
+    },
+    'qualitative': {
+      id: 'qualitative',
+      title: 'Systematic Qualitative Analysis',
+      url: 'qualitative.html',
+      topic: 'Qualitative Salts',
+      paperTag: 'Paper 3 · Q2 (15 Marks)',
+      desc: 'Identify unknown cations and anions via aqueous NaOH, NH₃, Ba(NO₃)₂, AgNO₃, and flame tests.',
+      iconKey: 'microscope'
+    },
+    'rates': {
+      id: 'rates',
+      title: 'Reaction Rates & Kinetics',
+      url: 'rates.html',
+      topic: 'Reaction Kinetics',
+      paperTag: 'Paper 3 · Q1/Q3 (12 Marks)',
+      desc: 'Disappearing cross experiment, Na₂S₂O₃ vs HCl rate curves (1/t vs conc), and activation energy.',
+      iconKey: 'timer'
+    },
+    'energy': {
+      id: 'energy',
+      title: 'Thermochemistry & Energy Changes',
+      url: 'energy.html',
+      topic: 'Thermochemistry',
+      paperTag: 'Paper 3 · Q1/Q3 (15 Marks)',
+      desc: 'Calorimetric cooling curve extrapolation and molar enthalpies of solution, neutralisation & displacement.',
+      iconKey: 'flame'
+    },
+    'solubility': {
+      id: 'solubility',
+      title: 'Solubility Curves & Crystallization',
+      url: 'solubility.html',
+      topic: 'Solubility Curves',
+      paperTag: 'Paper 3 · Q1/Q3 (12 Marks)',
+      desc: 'Determine crystallization inception temperatures for KCSE salt curves and solubility calculations.',
+      iconKey: 'target'
+    },
+    'organic': {
+      id: 'organic',
+      title: 'Organic Chemistry & Functional Groups',
+      url: 'organic.html',
+      topic: 'Organic Chemistry',
+      paperTag: 'Paper 3 · Q3 (10 Marks)',
+      desc: 'Unsaturation tests with Br₂(aq) & acidified KMnO₄, acidified K₂Cr₂O₇ oxidation, and esterification.',
+      iconKey: 'flask'
+    },
+    'gas': {
+      id: 'gas',
+      title: 'Gas Preparation & Analysis',
+      url: 'gas_prep.html',
+      topic: 'Inorganic Gases',
+      paperTag: 'Paper 3 · Qualitative (10 Marks)',
+      desc: 'Laboratory generation, drying methods, and confirmatory tests for H₂, O₂, CO₂, Cl₂, NH₃, SO₂.',
+      iconKey: 'flask'
+    }
+  };
+
+  function initResumeExperimentHero(sessions) {
+    const heroCard = document.getElementById('resumeHeroCard');
+    if (!heroCard) return;
+
+    let targetBench = null;
+    let badgeText = 'Continue Learning';
+    let statusText = 'In Progress';
+    let progressPct = 0;
+
+    // 1. Check local storage for explicitly saved last active bench
+    try {
+      const stored = localStorage.getItem('vlk_last_active_bench');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed && (parsed.url || parsed.id)) {
+          targetBench = parsed;
+          badgeText = 'Resume Last Lab';
+        }
+      }
+    } catch (e) {}
+
+    // 2. If no explicit last active bench, inspect the most recent session
+    const sessionList = (Array.isArray(sessions) && sessions.length > 0)
+      ? sessions
+      : (cachedStudentSessions || []);
+
+    if (!targetBench && sessionList.length > 0) {
+      const lastSession = sessionList[0];
+      const rawType = (
+        lastSession.titration_title ||
+        lastSession.titration_type ||
+        lastSession.titrationKey ||
+        lastSession.salt_key ||
+        lastSession.salt_name ||
+        lastSession.compound_name ||
+        lastSession.solute_key ||
+        lastSession.solute_name ||
+        lastSession.system_id ||
+        lastSession.experiment_type ||
+        lastSession.gas_key ||
+        ''
+      ).toLowerCase();
+
+      let detectedKey = 'acidBase';
+      if (rawType.includes('redox') || rawType.includes('kmno4')) detectedKey = 'redox';
+      else if (rawType.includes('qualitative') || lastSession.salt_key || lastSession.salt_name) detectedKey = 'qualitative';
+      else if (rawType.includes('rate') || lastSession.experiment_type) detectedKey = 'rates';
+      else if (rawType.includes('energy') || lastSession.system_id) detectedKey = 'energy';
+      else if (rawType.includes('solubility') || lastSession.solute_key) detectedKey = 'solubility';
+      else if (rawType.includes('organic') || lastSession.compound_name) detectedKey = 'organic';
+      else if (rawType.includes('gas') || lastSession.gas_key) detectedKey = 'gas';
+
+      const registryItem = BENCH_REGISTRY[detectedKey];
+      if (registryItem) {
+        targetBench = {
+          id: registryItem.id,
+          url: registryItem.url,
+          title: lastSession.titration_title || lastSession.salt_name || registryItem.title,
+          topic: registryItem.topic,
+          paperTag: registryItem.paperTag,
+          desc: registryItem.desc,
+          iconKey: registryItem.iconKey
+        };
+        badgeText = 'Resume Practical';
+      }
+    }
+
+    // 3. Fallback for new students or clean state: Guided Volumetric Analysis
+    if (!targetBench) {
+      const defaultItem = BENCH_REGISTRY['acidBase'];
+      targetBench = {
+        id: 'guidedAcidBase',
+        url: defaultItem.guidedUrl,
+        title: defaultItem.guidedTitle,
+        topic: defaultItem.topic,
+        paperTag: defaultItem.paperTag,
+        desc: defaultItem.desc,
+        iconKey: defaultItem.iconKey
+      };
+      badgeText = 'Recommended Next Lab';
+      statusText = 'Start Here';
+      progressPct = 0;
+    } else {
+      // Calculate bench mastery from sessions
+      if (sessionList.length > 0) {
+        const matchingSessions = sessionList.filter(s => {
+          const sText = JSON.stringify(s).toLowerCase();
+          return sText.includes((targetBench.id || '').toLowerCase()) || sText.includes((targetBench.topic || '').toLowerCase().slice(0, 5));
+        });
+        if (matchingSessions.length > 0) {
+          const correct = matchingSessions.filter(s => s.correct || (s.score_pct != null && s.score_pct >= 50)).length;
+          progressPct = Math.round((correct / matchingSessions.length) * 100);
+          statusText = progressPct >= 80 ? 'Mastered' : (progressPct >= 50 ? 'Improving' : 'Practicing');
+        } else {
+          progressPct = 35;
+        }
+      } else {
+        progressPct = 25;
+      }
+    }
+
+    // Update DOM
+    const badgeTextEl = document.getElementById('resumeBadgeText');
+    const paperTagEl = document.getElementById('resumePaperTag');
+    const topicPillEl = document.getElementById('resumeTopicPill');
+    const titleEl = document.getElementById('resumeTitle');
+    const descEl = document.getElementById('resumeDesc');
+    const statusHighlightEl = document.getElementById('resumeStatusHighlight');
+    const progressPctEl = document.getElementById('resumeProgressPct');
+    const progressFillEl = document.getElementById('resumeProgressFill');
+    const launchBtnEl = document.getElementById('resumeLaunchBtn');
+    const launchBtnTextEl = document.getElementById('resumeLaunchBtnText');
+    const iconBadgeEl = document.getElementById('resumeIconBadge');
+
+    if (badgeTextEl) badgeTextEl.textContent = badgeText;
+    if (paperTagEl && targetBench.paperTag) paperTagEl.textContent = targetBench.paperTag;
+    if (topicPillEl && targetBench.topic) topicPillEl.textContent = targetBench.topic;
+    if (titleEl && targetBench.title) titleEl.textContent = targetBench.title;
+    if (descEl && targetBench.desc) descEl.textContent = targetBench.desc;
+    if (statusHighlightEl) statusHighlightEl.textContent = statusText;
+    if (progressPctEl) progressPctEl.textContent = progressPct + '%';
+    if (progressFillEl) progressFillEl.style.width = progressPct + '%';
+    if (launchBtnEl && targetBench.url) launchBtnEl.href = targetBench.url;
+    if (launchBtnTextEl) {
+      launchBtnTextEl.textContent = sessionList.length > 0 ? 'Resume Lab Session' : 'Start First Practical';
+    }
+
+    if (iconBadgeEl && targetBench.iconKey && window.VLKIcons && typeof window.VLKIcons.svg === 'function') {
+      iconBadgeEl.innerHTML = window.VLKIcons.svg(targetBench.iconKey, { size: 28, strokeWidth: 1.75 });
+    }
+  }
+
+  function initBenchCardClickTracker() {
+    document.querySelectorAll('.practice-banner-card').forEach(card => {
+      card.addEventListener('click', () => {
+        try {
+          const href = card.getAttribute('href');
+          const titleEl = card.querySelector('.practice-text-title');
+          const descEl = card.querySelector('.practice-text-desc');
+          const type = card.getAttribute('data-type') || 'acidBase';
+          const regItem = BENCH_REGISTRY[type] || {};
+
+          const benchData = {
+            id: type,
+            url: href,
+            title: titleEl ? titleEl.textContent.trim() : regItem.title || 'Practical Lab',
+            desc: descEl ? descEl.textContent.trim() : regItem.desc || '',
+            topic: regItem.topic || 'Chemistry Practical',
+            paperTag: regItem.paperTag || 'Paper 3 (KCSE)',
+            iconKey: regItem.iconKey || 'flask',
+            timestamp: Date.now()
+          };
+          localStorage.setItem('vlk_last_active_bench', JSON.stringify(benchData));
+        } catch (e) {}
+      });
+    });
+  }
+
   async function loadSessions() {
     const box = document.getElementById('sessionsList');
     try {
@@ -2958,6 +3218,7 @@ requireStudentLogin();
       updateReadinessScore(sessions);
       updateMwalimuAdvice(sessions);
       renderAdaptiveRecommendation(sessions);
+      initResumeExperimentHero(sessions);
       try {
         renderStudentCharts(sessions, analytics);
       } catch (chartErr) {
@@ -2999,6 +3260,7 @@ requireStudentLogin();
       cachedStudentSessions = fallbackSessions;
       updateReadinessScore(fallbackSessions);
       updateMwalimuAdvice(fallbackSessions);
+      initResumeExperimentHero(fallbackSessions);
       try {
         renderStudentCharts(fallbackSessions, null);
       } catch (chartErr) {
@@ -3520,6 +3782,7 @@ requireStudentLogin();
     window.exportLabHistoryCSV = exportLabHistoryCSV;
     window.dismissAnnouncement = dismissAnnouncement;
     window.updateGamificationDashboardUI = updateGamificationDashboardUI;
+    window.initResumeExperimentHero = initResumeExperimentHero;
     window.openXPPerksModal = openXPPerksModal;
     window.closeXPPerksModal = closeXPPerksModal;
   }
@@ -3556,6 +3819,26 @@ requireStudentLogin();
       } else {
         levelIconEl.textContent = '';
       }
+    }
+
+    // Update Pulse Strip: Streak
+    const pulseStreakVal = document.getElementById('pulseStreakVal');
+    if (pulseStreakVal) pulseStreakVal.textContent = streak.count;
+
+    // Update Pulse Strip: Rank & XP
+    const pulseRankTitle = document.getElementById('pulseRankTitle');
+    const pulseXPBarFill = document.getElementById('pulseXPBarFill');
+    const pulseXPVal = document.getElementById('pulseXPVal');
+    const pulseNextXPVal = document.getElementById('pulseNextXPVal');
+    const pulseXPSub = document.getElementById('pulseXPSub');
+
+    if (pulseRankTitle) pulseRankTitle.textContent = `Level ${xp.level}: ${xp.title.replace('Form ', 'F').replace('KCSE ', '')}`;
+    if (pulseXPBarFill) pulseXPBarFill.style.width = `${xp.progressPercent}%`;
+    if (pulseXPVal) pulseXPVal.textContent = xp.totalXP.toLocaleString();
+    if (pulseNextXPVal) pulseNextXPVal.textContent = xp.nextLevelXP.toLocaleString();
+    if (pulseXPSub) {
+      const remainingXP = Math.max(0, xp.nextLevelXP - xp.totalXP);
+      pulseXPSub.innerHTML = `<span>${xp.totalXP.toLocaleString()} / ${xp.nextLevelXP.toLocaleString()} XP</span> <span style="opacity:0.75;">(${remainingXP} XP to Level ${xp.level + 1})</span>`;
     }
 
     // 3. Daily Challenge Card
@@ -3737,6 +4020,8 @@ requireStudentLogin();
   renderStudyTipByIndex(0);
   renderSavedTipsPocket();
   renderAdaptiveRecommendation([]);
+  initResumeExperimentHero([]);
+  initBenchCardClickTracker();
   loadBadges();
   loadLeaderboard();
   loadAssignments();

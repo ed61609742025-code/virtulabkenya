@@ -4268,7 +4268,7 @@ requireStudentLogin();
     if (pulseRewardText) {
       const nextTier = LEVEL_TIER_PERKS.find(t => t.level === xp.level + 1);
       if (nextTier) {
-        pulseRewardText.innerHTML = `Next Unlock: <strong>${nextTier.unlocks}</strong> at Level ${nextTier.level}`;
+        pulseRewardText.innerHTML = `<strong>${remainingXP.toLocaleString()} XP TO UNLOCK:</strong> 🏆 ${nextTier.unlocks}`;
       } else {
         pulseRewardText.innerHTML = '🏆 <strong>Top Rank:</strong> All Practical Benches & Examiner Rubrics Unlocked';
       }

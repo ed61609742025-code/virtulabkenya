@@ -1510,3 +1510,16 @@
   }
 }
 
+
+
+/* ── F. Mobile Card Padding & Radius Optimization (Above-the-fold) ── */
+@media (max-width: 768px) {
+  .resume-hero-card,
+  .guidance-card,
+  .pulse-card,
+  .daily-challenge-card,
+  .zone-assignments-upgraded {
+    padding: 16px !important;
+    border-radius: 16px !important;
+  }
+}

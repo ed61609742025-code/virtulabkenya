@@ -141,7 +141,7 @@
 
 <!-- Critical Layout & Dashboard Stylesheets (Render-Critical) -->
 <link rel="stylesheet" href="../shared/style.css?v=167">
-<link rel="stylesheet" href="css/dashboard.css?v=168">
+<link rel="stylesheet" href="css/dashboard.css?v=169">
 <link rel="stylesheet" href="css/skill-tree.css?v=167">
 <link rel="stylesheet" href="css/mobile.css?v=167">
 
@@ -635,6 +635,10 @@
           <div class="pulse-card-sub" id="pulseXPSub">
             <span id="pulseXPVal">120</span> / <span id="pulseNextXPVal">250</span> XP
           </div>
+          <div class="pulse-xp-reward-preview" id="pulseXPRewardPreview">
+            <span class="reward-gift-icon" aria-hidden="true">🎁</span>
+            <span class="reward-preview-text" id="pulseXPRewardText">Next Unlock: Precision Burette &amp; Solubility Bench at Level 2</span>
+          </div>
         </div>
 
         <!-- 3. KCSE Paper 3 Readiness -->
@@ -878,6 +882,25 @@
                 <span data-i18n="btn_discipline_grid">Grid View</span>
               </button>
             </div>
+          </div>
+        </div>
+
+        <!-- Visual Syllabus Learning Roadmap (5 Progression Stages) -->
+        <div class="syllabus-roadmap-strip" id="syllabusRoadmapStrip" role="region" aria-label="KCSE Practical Syllabus Learning Journey">
+          <div class="roadmap-track-header">
+            <div class="roadmap-header-left">
+              <span class="roadmap-beacon-dot"></span>
+              <span class="roadmap-header-title">KCSE Practical Progression Roadmap</span>
+              <span class="roadmap-stage-counter" id="roadmapStageCounter">Stage 1 of 5 Active</span>
+            </div>
+            <div class="roadmap-header-right">
+              <span class="roadmap-unlock-hint" id="roadmapUnlockHint">Progress sequentially through all 5 Paper 3 domains</span>
+            </div>
+          </div>
+
+          <!-- 5-Stage Roadmap Cards Grid -->
+          <div class="roadmap-stages-grid" id="roadmapStagesGrid">
+            <!-- Dynamically populated by student-dashboard.js -->
           </div>
         </div>
 
@@ -1230,7 +1253,7 @@
   <script defer src="../shared/brilliant-ui.js?v=167"></script>
   <script defer src="../shared/gamification-engine.js?v=167"></script>
   <script defer src="js/skill-tree.js?v=167"></script>
-  <script defer src="js/student-dashboard.js?v=168"></script>
+  <script defer src="js/student-dashboard.js?v=169"></script>
   <script defer src="../shared/subscription-ui.js?v=167"></script>
 
   

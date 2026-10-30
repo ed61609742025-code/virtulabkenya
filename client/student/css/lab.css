@@ -216,6 +216,38 @@
   box-sizing: border-box;
 }
 
+
+/* ── Laboratory Graph Paper Blueprint (Technical Practical Exam Grid) ── */
+[data-theme="light"] body {
+  background-color: #F4F7FB;
+  background-image:
+    radial-gradient(circle 800px at 50% 0%, rgba(2, 132, 199, 0.08) 0%, transparent 65%),
+    linear-gradient(to right, rgba(2, 132, 199, 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(2, 132, 199, 0.055) 1px, transparent 1px);
+  background-size: 100% 100%, 24px 24px, 24px 24px;
+  background-attachment: fixed;
+}
+
+[data-theme="dark"] body {
+  background-color: #080D1A;
+  background-image:
+    radial-gradient(circle 850px at 50% 0%, rgba(56, 189, 248, 0.12) 0%, transparent 65%),
+    linear-gradient(to right, rgba(56, 189, 248, 0.065) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(56, 189, 248, 0.065) 1px, transparent 1px);
+  background-size: 100% 100%, 24px 24px, 24px 24px;
+  background-attachment: fixed;
+}
+
+[data-theme="green"] body {
+  background-color: #041008;
+  background-image:
+    radial-gradient(circle 850px at 50% 0%, rgba(52, 211, 153, 0.12) 0%, transparent 65%),
+    linear-gradient(to right, rgba(52, 211, 153, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(52, 211, 153, 0.06) 1px, transparent 1px);
+  background-size: 100% 100%, 24px 24px, 24px 24px;
+  background-attachment: fixed;
+}
+
 html, body {
   background-color: var(--bg-dark);
   color: var(--text-main);

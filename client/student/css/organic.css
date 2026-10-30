@@ -163,6 +163,35 @@
   box-sizing: border-box;
 }
 
+
+/* ── Hexagonal Carbon Lattice (Molecular Benzene / Hydrocarbon Geometry) ── */
+[data-theme="light"] body {
+  background-color: #F8FAFC;
+  background-image:
+    radial-gradient(circle 800px at 50% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 65%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='48.5' viewBox='0 0 28 48.5'%3E%3Cpath d='M14 0l14 8.08v16.17L14 32.33 0 24.25V8.08zM14 48.5L0 40.42V24.25l14 8.08 14-8.08v16.17z' fill='none' stroke='rgba(2,132,199,0.06)' stroke-width='1'/%3E%3C/svg%3E");
+  background-size: 100% 100%, 28px 48.5px;
+  background-attachment: fixed;
+}
+
+[data-theme="dark"] body {
+  background-color: #070E18;
+  background-image:
+    radial-gradient(circle 850px at 50% 0%, rgba(52, 211, 153, 0.11) 0%, transparent 65%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='48.5' viewBox='0 0 28 48.5'%3E%3Cpath d='M14 0l14 8.08v16.17L14 32.33 0 24.25V8.08zM14 48.5L0 40.42V24.25l14 8.08 14-8.08v16.17z' fill='none' stroke='rgba(56,189,248,0.07)' stroke-width='1'/%3E%3C/svg%3E");
+  background-size: 100% 100%, 28px 48.5px;
+  background-attachment: fixed;
+}
+
+[data-theme="green"] body {
+  background-color: #05130A;
+  background-image:
+    radial-gradient(circle 850px at 50% 0%, rgba(52, 211, 153, 0.13) 0%, transparent 65%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='48.5' viewBox='0 0 28 48.5'%3E%3Cpath d='M14 0l14 8.08v16.17L14 32.33 0 24.25V8.08zM14 48.5L0 40.42V24.25l14 8.08 14-8.08v16.17z' fill='none' stroke='rgba(52,211,153,0.08)' stroke-width='1'/%3E%3C/svg%3E");
+  background-size: 100% 100%, 28px 48.5px;
+  background-attachment: fixed;
+}
+
 html, body {
   background-color: var(--bg-dark);
   color: var(--text-main);

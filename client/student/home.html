@@ -141,7 +141,7 @@
 
 <!-- Critical Layout & Dashboard Stylesheets (Render-Critical) -->
 <link rel="stylesheet" href="../shared/style.css?v=167">
-<link rel="stylesheet" href="css/dashboard.css?v=171">
+<link rel="stylesheet" href="css/dashboard.css?v=172">
 <link rel="stylesheet" href="css/skill-tree.css?v=167">
 <link rel="stylesheet" href="css/mobile.css?v=167">
 
@@ -641,21 +641,63 @@
           </div>
         </div>
 
-        <!-- 3. KCSE Paper 3 Readiness -->
-        <div class="pulse-card pulse-readiness-card" id="pulseCardReadiness" data-tooltip="Overall KCSE practical syllabus readiness score" data-tooltip-pos="bottom">
+        <!-- 3. KCSE Paper 3 Readiness with Radial Mastery Ring & Breakdown -->
+        <div class="pulse-card pulse-readiness-card" id="pulseCardReadiness" onclick="openMasteryChartsModal()" role="button" tabindex="0" data-tooltip="Click to view full syllabus mastery charts &amp; weekly trajectory" data-tooltip-pos="bottom">
           <div class="pulse-card-header">
             <span class="pulse-card-label">KCSE Readiness</span>
             <span class="pulse-mastery-chip chip-practice" id="pulseMasteryBadge">🔴 Needs Practice</span>
           </div>
-          <div class="pulse-card-value-row">
-            <span class="pulse-card-val" id="pulseReadinessVal">0%</span>
-            <span class="pulse-card-target-text">Goal: &ge;80% Distinction</span>
+          
+          <div class="pulse-readiness-body">
+            <!-- Circular Radial SVG Gauge -->
+            <div class="pulse-radial-gauge" id="pulseRadialGauge" aria-hidden="true">
+              <svg viewBox="0 0 52 52" class="radial-gauge-svg">
+                <circle class="radial-gauge-track" cx="26" cy="26" r="21" fill="none" stroke-width="4.5"/>
+                <circle class="radial-gauge-fill" id="pulseRadialFill" cx="26" cy="26" r="21" fill="none" stroke-width="4.5" stroke-dasharray="131.95" stroke-dashoffset="131.95"/>
+              </svg>
+              <div class="radial-gauge-center">
+                <span class="radial-gauge-num" id="pulseReadinessVal">0%</span>
+              </div>
+            </div>
+
+            <!-- Target & Topics Col -->
+            <div class="pulse-readiness-info-col">
+              <div class="pulse-card-target-text">Goal: &ge;80% Distinction</div>
+              <div class="pulse-card-sub" id="pulseReadinessSub">0 / 10 practical topics covered</div>
+              <div class="pulse-charts-cta">
+                <span>View Mastery Charts</span>
+                <span class="pulse-cta-arrow">&rarr;</span>
+              </div>
+            </div>
           </div>
-          <div class="pulse-bar-wrap" role="progressbar" aria-label="Syllabus readiness percentage">
+
+          <!-- 5-Discipline Mini-Bar Visualizer -->
+          <div class="pulse-mini-disciplines" id="pulseMiniDisciplines" aria-label="Discipline Mastery Preview">
+            <div class="mini-disc-col" title="Volumetric: 0%">
+              <div class="mini-disc-bar-track"><div class="mini-disc-bar-fill disc-volumetric" id="miniDisc_volumetric" style="height:0%;"></div></div>
+              <span class="mini-disc-label">Vol</span>
+            </div>
+            <div class="mini-disc-col" title="Qualitative Salts: 0%">
+              <div class="mini-disc-bar-track"><div class="mini-disc-bar-fill disc-qualitative" id="miniDisc_qualitative" style="height:0%;"></div></div>
+              <span class="mini-disc-label">Salt</span>
+            </div>
+            <div class="mini-disc-col" title="Kinetics: 0%">
+              <div class="mini-disc-bar-track"><div class="mini-disc-bar-fill disc-rates" id="miniDisc_rates" style="height:0%;"></div></div>
+              <span class="mini-disc-label">Rate</span>
+            </div>
+            <div class="mini-disc-col" title="Thermochemistry: 0%">
+              <div class="mini-disc-bar-track"><div class="mini-disc-bar-fill disc-energy" id="miniDisc_energy" style="height:0%;"></div></div>
+              <span class="mini-disc-label">Heat</span>
+            </div>
+            <div class="mini-disc-col" title="Organic & Gases: 0%">
+              <div class="mini-disc-bar-track"><div class="mini-disc-bar-fill disc-organic" id="miniDisc_organic" style="height:0%;"></div></div>
+              <span class="mini-disc-label">Org</span>
+            </div>
+          </div>
+
+          <!-- Hidden fallback progress bar element for backwards script compatibility -->
+          <div class="pulse-bar-wrap" style="display:none;" role="progressbar" aria-label="Syllabus readiness percentage">
             <div class="pulse-bar-fill readiness-fill" id="pulseReadinessBarFill" style="width: 0%;"></div>
-          </div>
-          <div class="pulse-card-sub" id="pulseReadinessSub">
-            0 / 10 practical topics covered
           </div>
         </div>
       </section>
@@ -695,10 +737,25 @@
               </button>
             </div>
 
-            <!-- Upgraded Interactive Examiner Study Tip Card -->
-            <div class="guidance-card tip-card upgraded-tip-card" id="studyTipCard">
+            <!-- Personalized Mwalimu AI Smart Guidance Card -->
+            <div class="guidance-card tip-card upgraded-tip-card mwalimu-ai-card" id="studyTipCard">
               <div class="guidance-header">
                 <div class="tip-header-left">
+                  <div class="mwalimu-tutor-identity">
+                    <div class="mwalimu-ai-avatar" aria-hidden="true">
+                      <svg class="vlk-icon mwalimu-avatar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.58-3.25 3.93"/>
+                        <path d="M8.24 9.93A4 4 0 0 1 12 2"/>
+                        <path d="M6 18c0-3.3 2.7-6 6-6s6 2.7 6 6v2H6v-2z"/>
+                        <circle cx="12" cy="7" r="1" fill="currentColor"/>
+                      </svg>
+                      <span class="mwalimu-pulse-spark"></span>
+                    </div>
+                    <div class="mwalimu-identity-text">
+                      <div class="mwalimu-name">Mwalimu AI <span class="mwalimu-badge-tag">TUTOR</span></div>
+                      <div class="mwalimu-source-line" id="mwalimuSourceLine">Diagnostic Lab Guidance</div>
+                    </div>
+                  </div>
                   <span class="tip-category-badge badge-warning" id="stCategoryBadge" style="display:inline-flex; align-items:center; gap:4px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> KNEC MARKING TRAP</span>
                   <span class="tip-counter" id="stCounter">Tip 1/12</span>
                 </div>
@@ -712,6 +769,12 @@
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="18" x2="18" y2="18"></line></svg>
                   </button>
                 </div>
+              </div>
+
+              <!-- AI Diagnostic Callout Pill -->
+              <div class="mwalimu-diagnostic-banner" id="mwalimuDiagnosticBanner">
+                <span class="diagnostic-beacon-icon">✨</span>
+                <span class="diagnostic-text" id="mwalimuDiagnosticText">Analyzing your recent practical sessions for examiner deductions…</span>
               </div>
 
               <div class="tip-content-body">
@@ -1222,6 +1285,135 @@
     </div>
   </div>
 
+  <!-- KCSE Performance & Practical Mastery Charts Modal -->
+  <div class="mastery-modal-backdrop" id="masteryChartsModal" onclick="if(event.target === this) closeMasteryChartsModal()" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="masteryModalTitle">
+    <div class="mastery-modal-card">
+      
+      <!-- Modal Header -->
+      <div class="mastery-modal-header">
+        <div class="mastery-modal-header-left">
+          <div class="mastery-modal-icon-badge">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 20V10"/>
+              <path d="M12 20V4"/>
+              <path d="M6 20v-6"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="mastery-modal-title" id="masteryModalTitle">KCSE Practical Mastery Dashboard</h3>
+            <div class="mastery-modal-sub">Multi-discipline accuracy, syllabus coverage &amp; weekly practice trajectory</div>
+          </div>
+        </div>
+        <button type="button" class="mastery-modal-close-btn" onclick="closeMasteryChartsModal()" aria-label="Close modal" title="Close (Esc)">&times;</button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="mastery-modal-body">
+        
+        <!-- Top 3 Key KPI Rings / Cards Strip -->
+        <div class="mastery-kpi-grid">
+          <!-- 1. Overall KCSE Readiness Radial Gauge -->
+          <div class="mastery-kpi-card readiness-kpi-card">
+            <div class="mastery-kpi-radial-wrap">
+              <svg viewBox="0 0 64 64" class="mastery-radial-svg">
+                <circle class="mastery-radial-track" cx="32" cy="32" r="26" fill="none" stroke-width="5"/>
+                <circle class="mastery-radial-fill" id="modalReadinessRadialFill" cx="32" cy="32" r="26" fill="none" stroke-width="5" stroke-dasharray="163.36" stroke-dashoffset="163.36"/>
+              </svg>
+              <div class="mastery-radial-center">
+                <span class="mastery-radial-val" id="modalReadinessScoreVal">0%</span>
+                <span class="mastery-radial-sub">Readiness</span>
+              </div>
+            </div>
+            <div class="mastery-kpi-meta">
+              <div class="mastery-kpi-title">KCSE Paper 3 Score</div>
+              <div class="mastery-kpi-badge" id="modalMasteryBadge">🔴 Needs Practice</div>
+              <div class="mastery-kpi-target">Goal: &ge;80% Distinction</div>
+            </div>
+          </div>
+
+          <!-- 2. Syllabus Coverage -->
+          <div class="mastery-kpi-card">
+            <div class="mastery-kpi-icon-box icon-cyan">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+              </svg>
+            </div>
+            <div class="mastery-kpi-val" id="modalTopicsCoveredVal">0 / 10</div>
+            <div class="mastery-kpi-label">Topics Explored</div>
+            <div class="mastery-kpi-progress-wrap">
+              <div class="mastery-kpi-progress-fill" id="modalTopicsProgressFill" style="width: 0%;"></div>
+            </div>
+            <div class="mastery-kpi-foot" id="modalTopicsFoot">0% of 40-mark syllabus</div>
+          </div>
+
+          <!-- 3. Overall Practical Accuracy -->
+          <div class="mastery-kpi-card">
+            <div class="mastery-kpi-icon-box icon-green">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+            </div>
+            <div class="mastery-kpi-val" id="modalAccuracyRateVal">0%</div>
+            <div class="mastery-kpi-label">Average Lab Accuracy</div>
+            <div class="mastery-kpi-progress-wrap">
+              <div class="mastery-kpi-progress-fill accuracy-fill" id="modalAccuracyProgressFill" style="width: 0%;"></div>
+            </div>
+            <div class="mastery-kpi-foot" id="modalAccuracyFoot">Based on completed sessions</div>
+          </div>
+        </div>
+
+        <!-- Section: Discipline-by-Discipline Progress Bars -->
+        <div class="mastery-section-title-row">
+          <h4 class="mastery-section-title">
+            <span class="section-spark">📊</span> Practical Discipline Breakdown
+          </h4>
+          <span class="mastery-section-sub">KNEC Paper 3 Question Weightings</span>
+        </div>
+
+        <div class="discipline-mastery-list" id="disciplineMasteryList">
+          <!-- Dynamically populated by student-dashboard.js -->
+        </div>
+
+        <!-- Section: 7-Day Weekly Practice Trajectory (Interactive SVG Area Graph) -->
+        <div class="mastery-section-title-row" style="margin-top: 22px;">
+          <h4 class="mastery-section-title">
+            <span class="section-spark">📈</span> 7-Day Activity &amp; Trajectory Trend
+          </h4>
+          <span class="mastery-section-sub" id="trajectorySummaryText">Sessions completed this week</span>
+        </div>
+
+        <div class="trajectory-chart-container">
+          <div class="trajectory-svg-wrap" id="trajectorySvgWrap">
+            <!-- Dynamically populated SVG sparkline/curve -->
+          </div>
+        </div>
+
+        <!-- Mwalimu AI Comprehensive Diagnostic Summary -->
+        <div class="mastery-coach-verdict" id="masteryCoachVerdict">
+          <div class="verdict-icon">👨‍🏫</div>
+          <div class="verdict-text-wrap">
+            <div class="verdict-title">Mwalimu AI Recommendation</div>
+            <div class="verdict-body" id="masteryCoachVerdictText">
+              Loading examiner diagnostic recommendations…
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="mastery-modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeMasteryChartsModal()">Close</button>
+        <a href="lab.html?studyMode=guided" class="btn btn-primary" id="modalMasteryDrillBtn">
+          Practice Recommended Bench &rarr;
+        </a>
+      </div>
+
+    </div>
+  </div>
+
   <script defer src="../shared/auth-guard.js?v=167"></script>
   <script defer src="../shared/api.js?v=167"></script>
   <script defer src="../shared/auth-forms.js?v=167"></script>
@@ -1236,7 +1428,7 @@
   <script defer src="../shared/brilliant-ui.js?v=167"></script>
   <script defer src="../shared/gamification-engine.js?v=167"></script>
   <script defer src="js/skill-tree.js?v=171"></script>
-  <script defer src="js/student-dashboard.js?v=171"></script>
+  <script defer src="js/student-dashboard.js?v=172"></script>
   <script defer src="../shared/subscription-ui.js?v=167"></script>
 
   

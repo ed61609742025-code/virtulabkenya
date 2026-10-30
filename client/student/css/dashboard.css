@@ -7975,3 +7975,671 @@ html, body {
 [data-theme="dark"] .xp-tier-card.tier-completed .xp-tier-reward-highlight {
   color: #34D399;
 }
+
+/* ═════════════════════════════════════════════════════════════════════ */
+/* PERSONALIZED MWALIMU AI TUTOR & VISUAL MASTERY CHARTS              */
+/* ═════════════════════════════════════════════════════════════════════ */
+
+/* ── Mwalimu AI Identity in Study Tip Card ── */
+.mwalimu-tutor-identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mwalimu-ai-avatar {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.15) 0%, rgba(99, 102, 241, 0.2) 100%);
+  border: 1.5px solid var(--cyan-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cyan-accent);
+  flex-shrink: 0;
+}
+
+[data-theme="dark"] .mwalimu-ai-avatar {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(129, 140, 248, 0.25) 100%);
+  border-color: #38BDF8;
+  color: #38BDF8;
+}
+
+.mwalimu-pulse-spark {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #10B981;
+  border: 2px solid var(--card-bg);
+  box-shadow: 0 0 8px #10B981;
+  animation: resumePulseAnimation 2s infinite ease-in-out;
+}
+
+.mwalimu-identity-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.mwalimu-name {
+  font-family: 'Outfit', 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--heading-color);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.mwalimu-badge-tag {
+  font-size: 0.62rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 900;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(2, 132, 199, 0.14);
+  color: var(--cyan-accent);
+  letter-spacing: 0.04em;
+}
+
+.mwalimu-source-line {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.70rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* AI Diagnostic Banner */
+.mwalimu-diagnostic-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(2, 132, 199, 0.07);
+  border: 1px solid rgba(2, 132, 199, 0.2);
+  margin-top: 4px;
+  margin-bottom: 2px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.78rem;
+  color: var(--heading-color);
+  line-height: 1.4;
+}
+
+[data-theme="dark"] .mwalimu-diagnostic-banner {
+  background: rgba(56, 189, 248, 0.1);
+  border-color: rgba(56, 189, 248, 0.25);
+}
+
+.mwalimu-diagnostic-banner .diagnostic-beacon-icon {
+  font-size: 0.92rem;
+  flex-shrink: 0;
+  line-height: 1.2;
+}
+
+/* ── Pulse Card Circular Radial Mastery Meter ── */
+.pulse-readiness-body {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 6px;
+  margin-bottom: 8px;
+}
+
+.pulse-radial-gauge {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+}
+
+.radial-gauge-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.radial-gauge-track {
+  stroke: rgba(148, 163, 184, 0.2);
+}
+
+.radial-gauge-fill {
+  stroke: #EF4444;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.6s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.3s ease;
+}
+
+.radial-gauge-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.radial-gauge-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: var(--heading-color);
+}
+
+.pulse-readiness-info-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.pulse-charts-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--cyan-accent);
+  margin-top: 4px;
+  transition: gap 0.15s ease;
+}
+
+.pulse-card.pulse-readiness-card:hover .pulse-charts-cta {
+  gap: 7px;
+}
+
+/* ── 5-Discipline Mini-Bar Visualizer on Card 3 ── */
+.pulse-mini-disciplines {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--card-border);
+  margin-top: 4px;
+}
+
+.mini-disc-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.mini-disc-bar-track {
+  width: 100%;
+  height: 24px;
+  background: rgba(148, 163, 184, 0.15);
+  border-radius: 4px;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  padding: 1px;
+}
+
+.mini-disc-bar-fill {
+  width: 100%;
+  border-radius: 3px;
+  transition: height 0.4s ease;
+}
+
+.mini-disc-bar-fill.disc-volumetric {
+  background: linear-gradient(180deg, #38BDF8 0%, #0284C7 100%);
+}
+.mini-disc-bar-fill.disc-qualitative {
+  background: linear-gradient(180deg, #FBBF24 0%, #D97706 100%);
+}
+.mini-disc-bar-fill.disc-rates {
+  background: linear-gradient(180deg, #A78BFA 0%, #7C3AED 100%);
+}
+.mini-disc-bar-fill.disc-energy {
+  background: linear-gradient(180deg, #FB7185 0%, #E11D48 100%);
+}
+.mini-disc-bar-fill.disc-organic {
+  background: linear-gradient(180deg, #34D399 0%, #059669 100%);
+}
+
+.mini-disc-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+/* ── PERFORMANCE MASTERY MODAL ── */
+.mastery-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(6px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: modalFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mastery-modal-card {
+  width: 100%;
+  max-width: 720px;
+  max-height: 90vh;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border-strong);
+  border-radius: 20px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalScaleUp 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mastery-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--card-border);
+  background: var(--card-bg);
+  flex-shrink: 0;
+}
+
+.mastery-modal-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mastery-modal-icon-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(2, 132, 199, 0.12);
+  border: 1px solid rgba(2, 132, 199, 0.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--cyan-accent);
+}
+
+.mastery-modal-title {
+  font-family: 'Outfit', 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.12rem;
+  font-weight: 800;
+  color: var(--heading-color);
+  margin: 0;
+}
+
+.mastery-modal-sub {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+.mastery-modal-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.mastery-modal-close-btn:hover {
+  background: var(--card-bg-hover);
+  color: var(--heading-color);
+}
+
+.mastery-modal-body {
+  padding: 20px 22px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 3-Card KPI Strip in Modal */
+.mastery-kpi-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr;
+  gap: 12px;
+}
+
+.mastery-kpi-card {
+  background: var(--card-bg-hover);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.readiness-kpi-card {
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.08) 0%, var(--card-bg-hover) 100%);
+  border-color: rgba(2, 132, 199, 0.28);
+}
+
+.mastery-kpi-radial-wrap {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+}
+
+.mastery-radial-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.mastery-radial-track {
+  stroke: rgba(148, 163, 184, 0.2);
+}
+
+.mastery-radial-fill {
+  stroke: #EF4444;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.6s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.3s ease;
+}
+
+.mastery-radial-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.mastery-radial-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: var(--heading-color);
+  line-height: 1;
+}
+
+.mastery-radial-sub {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+
+.mastery-kpi-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.mastery-kpi-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.mastery-kpi-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.mastery-kpi-target {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.mastery-kpi-icon-box {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mastery-kpi-icon-box.icon-cyan {
+  background: rgba(2, 132, 199, 0.14);
+  color: var(--cyan-accent);
+}
+
+.mastery-kpi-icon-box.icon-green {
+  background: rgba(16, 185, 129, 0.14);
+  color: #10B981;
+}
+
+.mastery-kpi-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--heading-color);
+  line-height: 1.1;
+}
+
+.mastery-kpi-label {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.mastery-kpi-progress-wrap {
+  width: 100%;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.2);
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.mastery-kpi-progress-fill {
+  height: 100%;
+  background: var(--cyan-accent);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.mastery-kpi-progress-fill.accuracy-fill {
+  background: linear-gradient(90deg, #10B981 0%, #059669 100%);
+}
+
+.mastery-kpi-foot {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.66rem;
+  color: var(--text-muted);
+}
+
+/* Modal Section Titles */
+.mastery-section-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.mastery-section-title {
+  font-family: 'Outfit', 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--heading-color);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mastery-section-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.70rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* Discipline Mastery Items */
+.discipline-mastery-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.discipline-mastery-item {
+  background: var(--card-bg-hover);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: border-color 0.15s ease;
+}
+
+.discipline-mastery-item:hover {
+  border-color: var(--cyan-accent);
+}
+
+.discipline-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.discipline-item-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.discipline-item-icon {
+  font-size: 1rem;
+}
+
+.discipline-item-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--heading-color);
+}
+
+.discipline-paper-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.66rem;
+  color: var(--text-muted);
+  background: rgba(148, 163, 184, 0.15);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.discipline-bar-wrap {
+  width: 100%;
+  height: 6px;
+  background: rgba(148, 163, 184, 0.2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.discipline-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.discipline-item-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+/* 7-Day Trajectory Area Chart Container */
+.trajectory-chart-container {
+  background: var(--card-bg-hover);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.trajectory-svg-wrap {
+  width: 100%;
+  height: 130px;
+}
+
+.trajectory-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Coach Verdict Box */
+.mastery-coach-verdict {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(2, 132, 199, 0.08) 0%, rgba(16, 185, 129, 0.08) 100%);
+  border: 1px solid rgba(2, 132, 199, 0.25);
+}
+
+.mastery-coach-verdict .verdict-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.mastery-coach-verdict .verdict-title {
+  font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: var(--heading-color);
+  margin-bottom: 2px;
+}
+
+.mastery-coach-verdict .verdict-body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.mastery-modal-footer {
+  padding: 14px 22px;
+  border-top: 1px solid var(--card-border);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  background: var(--card-bg);
+  flex-shrink: 0;
+}
+
+@media (max-width: 680px) {
+  .mastery-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+  .readiness-kpi-card {
+    justify-content: flex-start;
+  }
+}

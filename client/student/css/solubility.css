@@ -450,8 +450,6 @@ html, body {
     -webkit-overflow-scrolling: touch;
   }
 }
-  text-decoration: none;
-}
 .theme-btn-chip:hover {
   color: var(--text-main);
 }

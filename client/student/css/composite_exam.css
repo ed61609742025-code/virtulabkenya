@@ -1663,8 +1663,8 @@ iframe.lab-frame {
     border-radius: 8px !important;
   }
   .top-navbar .nav-actions {
-    flex-wrap: wrap;
-    gap: 6px;
+    flex-wrap: nowrap !important;
+    gap: 4px;
   }
   .exam-timer-chip {
     font-size: 1.1rem;

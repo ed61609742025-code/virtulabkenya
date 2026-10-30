@@ -1197,3 +1197,429 @@ button:not(:disabled):active {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   UNIFIED RESPONSIVE TOP NAVBAR & KNEC EXAM SUBBAR (ALL PRACTICAL BENCHES)
+   Optimized for mobile viewports (320px - 768px portrait & landscape)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  /* Prevent full-page horizontal overflow */
+  body {
+    overflow-x: hidden !important;
+  }
+
+  .academic-top-header {
+    width: 100% !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+    z-index: 9999 !important;
+  }
+
+  /* 1. TOP NAVBAR CONTAINER: Strictly single row, never wraps */
+  .top-navbar {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    min-height: 42px !important;
+    height: 42px !important;
+    padding: 4px 8px !important;
+    padding-top: calc(max(6px, env(safe-area-inset-top, 0px))) !important;
+    gap: 5px !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+  }
+
+  /* 2. BRAND LOGO & TITLE: Compact, never wrap */
+  .nav-brand-academic {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+    min-width: 0 !important;
+    text-decoration: none !important;
+  }
+
+  .vlk-brand-logo-wrap {
+    flex-shrink: 0 !important;
+  }
+
+  .vlk-brand-logo-img {
+    width: 26px !important;
+    height: 26px !important;
+  }
+
+  .nav-brand-academic .brand-title {
+    font-size: 0.95rem !important;
+    font-weight: 800 !important;
+    line-height: 1.1 !important;
+    letter-spacing: -0.02em !important;
+    white-space: nowrap !important;
+  }
+
+  /* Hide verbose bench subtitle on mobile screens to save horizontal space */
+  .nav-brand-academic .brand-subtagline,
+  .brand-subtagline {
+    display: none !important;
+  }
+
+  /* 3. WORKBENCH SWITCHER: Compact trigger, full-width modal dropdown */
+  .workbench-dropdown-wrap {
+    position: relative !important;
+    flex-shrink: 1 !important;
+    min-width: 0 !important;
+  }
+
+  .workbench-dropdown-trigger {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    min-height: 32px !important;
+    height: 32px !important;
+    padding: 3px 7px !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    border-radius: 7px !important;
+    flex-shrink: 1 !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+    white-space: nowrap !important;
+  }
+
+  .workbench-trigger-icon {
+    width: 15px !important;
+    height: 15px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .workbench-trigger-content {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    min-width: 0 !important;
+    flex-shrink: 1 !important;
+  }
+
+  .workbench-trigger-content span:last-child {
+    max-width: 85px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    font-size: 0.72rem !important;
+  }
+
+  /* Hide bench pill (Bench 1/3) on mobile */
+  .workbench-trigger-pill {
+    display: none !important;
+  }
+
+  .workbench-trigger-chevron {
+    width: 12px !important;
+    height: 12px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Full-bleed responsive mobile dropdown menu */
+  .workbench-dropdown-menu {
+    position: fixed !important;
+    top: calc(max(8px, env(safe-area-inset-top, 0px)) + 44px) !important;
+    left: 8px !important;
+    right: 8px !important;
+    width: auto !important;
+    max-width: calc(100vw - 16px) !important;
+    max-height: calc(100vh - 65px) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    border-radius: 12px !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45) !important;
+    z-index: 999999 !important;
+    margin: 0 !important;
+    padding: 10px !important;
+  }
+
+  .workbench-menu-grid {
+    max-height: calc(100vh - 130px) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    gap: 4px !important;
+  }
+
+  .workbench-menu-item {
+    padding: 8px 10px !important;
+    border-radius: 8px !important;
+    min-height: 44px !important;
+  }
+
+  /* 4. NAV ACTIONS: Strictly single row, clean icons, no line-breaking */
+  .nav-actions {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 3px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .nav-actions > * {
+    flex-shrink: 0 !important;
+  }
+
+  /* Hide long button labels on mobile; rely on recognizable icons */
+  .btn-text-full {
+    display: none !important;
+  }
+
+  .btn-text-short {
+    display: none !important;
+  }
+
+  /* Nav action buttons (Theory, SDS, Settings, Exit, Back) */
+  .nav-actions .nav-btn,
+  .nav-actions .nav-btn-settings,
+  .nav-actions .nav-btn-safety,
+  .nav-actions .nav-btn-exit,
+  .nav-actions .theme-btn-chip,
+  .nav-actions .rate-nav-back-btn,
+  .nav-actions .btn-back-link,
+  .nav-actions .btn-tactile {
+    min-height: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    padding: 2px 6px !important;
+    font-size: 0.72rem !important;
+    border-radius: 6px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    flex-shrink: 0 !important;
+    gap: 3px !important;
+  }
+
+  .nav-actions svg.vlk-icon {
+    width: 15px !important;
+    height: 15px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Session timer badge */
+  .session-timer-badge {
+    min-height: 32px !important;
+    height: 32px !important;
+    padding: 2px 6px !important;
+    font-size: 0.70rem !important;
+    gap: 3px !important;
+    border-radius: 6px !important;
+    box-sizing: border-box !important;
+    flex-shrink: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+  }
+
+  .session-timer-badge svg.vlk-icon {
+    width: 13px !important;
+    height: 13px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Practice / Exam mode switch */
+  .nav-actions .theme-toggle-group {
+    height: 32px !important;
+    border-radius: 6px !important;
+    padding: 1px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    flex-shrink: 0 !important;
+  }
+
+  .nav-actions .theme-toggle-group .theme-btn-chip {
+    height: 28px !important;
+    min-height: 28px !important;
+    min-width: auto !important;
+    padding: 0 5px !important;
+    font-size: 0.65rem !important;
+    border-radius: 5px !important;
+  }
+
+  /* Hide quick theme toggle button on mobile since it is inside the settings dropdown */
+  #btnQuickThemeToggle {
+    display: none !important;
+  }
+
+  /* Settings dropdown menu positioning on mobile */
+  #settingsDropdownMenu,
+  #benchSettingsDropdown {
+    position: fixed !important;
+    top: calc(max(8px, env(safe-area-inset-top, 0px)) + 44px) !important;
+    right: 8px !important;
+    left: auto !important;
+    width: min(280px, calc(100vw - 16px)) !important;
+    max-width: calc(100vw - 16px) !important;
+    max-height: calc(100vh - 65px) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    border-radius: 12px !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45) !important;
+    z-index: 999999 !important;
+  }
+
+  /* 5. KNEC EXAM SUB-BAR: Horizontal scrolling single strip */
+  .knec-exam-subbar {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    white-space: nowrap !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+    min-height: 28px !important;
+    height: 28px !important;
+    padding: 2px 8px !important;
+    gap: 6px !important;
+    font-size: 0.66rem !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+    border-top: 1px solid var(--card-border) !important;
+  }
+
+  .knec-exam-subbar::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  .knec-candidate-meta {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .knec-tag-pill,
+  .knec-q-badge,
+  .knec-cand-name,
+  .knec-cand-index,
+  .knec-sensor-status,
+  .knec-subbar-item {
+    flex-shrink: 0 !important;
+    font-size: 0.65rem !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+    white-space: nowrap !important;
+  }
+}
+
+/* 6. ULTRA-COMPACT SCREENS (<= 380px, e.g. iPhone SE, budget Android phones) */
+@media (max-width: 380px) {
+  .top-navbar {
+    padding: 4px 6px !important;
+    gap: 3px !important;
+  }
+
+  .nav-brand-academic .brand-title {
+    font-size: 0.88rem !important;
+  }
+
+  .workbench-trigger-content span:last-child {
+    max-width: 58px !important;
+    font-size: 0.68rem !important;
+  }
+
+  .nav-actions {
+    gap: 2px !important;
+  }
+
+  .nav-actions .nav-btn,
+  .nav-actions .nav-btn-settings,
+  .nav-actions .nav-btn-safety,
+  .nav-actions .nav-btn-exit,
+  .nav-actions .theme-btn-chip,
+  .nav-actions .rate-nav-back-btn,
+  .nav-actions .btn-back-link {
+    min-height: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    padding: 2px 4px !important;
+  }
+
+  .session-timer-badge {
+    min-height: 30px !important;
+    height: 30px !important;
+    padding: 2px 4px !important;
+    font-size: 0.66rem !important;
+  }
+}
+
+/* 7. LANDSCAPE MOBILE (phones / small tablets rotated sideways) */
+@media (orientation: landscape) and (max-height: 520px) {
+  .academic-top-header {
+    position: relative !important; /* Non-sticky so apparatus gets 100% viewport */
+  }
+
+  .top-navbar {
+    min-height: 36px !important;
+    height: 36px !important;
+    padding: 2px 8px !important;
+    gap: 6px !important;
+  }
+
+  .vlk-brand-logo-img {
+    width: 22px !important;
+    height: 22px !important;
+  }
+
+  .nav-brand-academic .brand-title {
+    font-size: 0.86rem !important;
+  }
+
+  .brand-subtagline {
+    display: none !important;
+  }
+
+  .workbench-dropdown-trigger {
+    min-height: 28px !important;
+    height: 28px !important;
+    padding: 2px 6px !important;
+    font-size: 0.68rem !important;
+  }
+
+  .nav-actions .nav-btn,
+  .nav-actions .nav-btn-settings,
+  .nav-actions .nav-btn-safety,
+  .nav-actions .nav-btn-exit,
+  .nav-actions .theme-btn-chip,
+  .nav-actions .rate-nav-back-btn,
+  .nav-actions .btn-back-link,
+  .session-timer-badge {
+    min-height: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    padding: 2px 5px !important;
+    font-size: 0.68rem !important;
+  }
+
+  .knec-exam-subbar {
+    min-height: 22px !important;
+    height: 22px !important;
+    padding: 2px 8px !important;
+    font-size: 0.60rem !important;
+  }
+
+  .workbench-dropdown-menu,
+  #settingsDropdownMenu,
+  #benchSettingsDropdown {
+    top: 38px !important;
+    max-height: calc(100vh - 44px) !important;
+  }
+}
+

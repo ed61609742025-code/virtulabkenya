@@ -846,9 +846,11 @@
       const menu = document.getElementById('settingsDropdownMenu');
       if (menu) menu.style.display = menu.style.display === 'flex' ? 'none' : 'flex';
     }
-    document.addEventListener('click', () => {
+    document.addEventListener('click', (e) => {
       const menu = document.getElementById('settingsDropdownMenu');
-      if (menu) menu.style.display = 'none';
+      if (menu && menu.style.display === 'flex' && !menu.contains(e.target)) {
+        menu.style.display = 'none';
+      }
     });
     function openSafetyModal() {
       const m = document.getElementById('safetyModal');

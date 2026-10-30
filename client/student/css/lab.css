@@ -2772,28 +2772,31 @@ html, body {
     white-space: nowrap !important;
   }
 
-  /* Balanced 2x2 Grid KNEC Practical Ledger Subbar */
+  /* Harmonized Single-Row KNEC Practical Ledger Subbar */
   .knec-exam-subbar {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 6px 10px !important;
-    padding: 8px 10px !important;
-    border-radius: 0 !important;
-    white-space: normal !important;
-    overflow-x: visible !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    white-space: nowrap !important;
+    scrollbar-width: none !important;
+    padding: 3px 8px !important;
+    gap: 6px !important;
   }
   .knec-subbar-item {
-    display: flex !important;
+    display: inline-flex !important;
     align-items: center !important;
-    justify-content: space-between !important;
-    padding: 4px 8px !important;
+    gap: 4px !important;
+    padding: 2px 6px !important;
     background: var(--card-bg) !important;
     border: 1px solid var(--card-border) !important;
-    border-radius: 6px !important;
+    border-radius: 4px !important;
     margin: 0 !important;
-    font-size: 0.72rem !important;
-    flex: none !important;
-    width: 100% !important;
+    font-size: 0.66rem !important;
+    flex-shrink: 0 !important;
+    width: auto !important;
     box-sizing: border-box !important;
   }
 

@@ -1175,16 +1175,17 @@ body {
   display: block;
 }
 
-/* ── 10. KNEC EXAM CARD ── */
+/* ── 10. KNEC EXAM CARD & QUESTIONS ── */
 .rate-knec-exam-card {
   background: var(--card-bg);
   border: 1.5px solid var(--card-border);
   border-radius: 14px;
-  padding: 20px;
+  padding: 22px 24px;
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .rate-exam-card-header {
@@ -1192,14 +1193,165 @@ body {
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 14px;
   border-bottom: 1.5px solid var(--card-border);
-  padding-bottom: 14px;
+  padding-bottom: 16px;
+}
+
+.rate-exam-card-header h2 {
+  margin: 6px 0 0;
+  font-size: 1.15rem;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  color: var(--heading-color);
+  letter-spacing: -0.01em;
 }
 
 .rate-btn-grade-exam {
+  background: linear-gradient(135deg, var(--rate-amber), #B45309) !important;
+  color: #FFFFFF !important;
   font-size: 0.88rem !important;
-  padding: 10px 18px !important;
+  font-weight: 800 !important;
+  padding: 10px 20px !important;
+  border-radius: 8px !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  box-shadow: 0 2px 10px rgba(217, 119, 6, 0.35) !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.rate-btn-grade-exam:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 16px rgba(217, 119, 6, 0.5) !important;
+  filter: brightness(1.08) !important;
+}
+
+.rate-btn-grade-exam:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 1px 4px rgba(217, 119, 6, 0.3) !important;
+}
+
+#knecQuestionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rate-question-box {
+  background: var(--card-bg-hover);
+  border: 1.5px solid var(--card-border);
+  border-left: 4px solid var(--rate-amber);
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.rate-question-box:hover,
+.rate-question-box:focus-within {
+  border-color: var(--rate-amber);
+  border-left-color: var(--rate-amber);
+  box-shadow: var(--shadow-md);
+  background: var(--card-bg);
+}
+
+.rate-q-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.rate-q-header > span:first-child {
+  font-family: var(--font-heading);
+  font-size: 0.94rem;
+  font-weight: 800;
+  color: var(--heading-color);
+  letter-spacing: -0.01em;
+}
+
+.rate-q-marks {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 800;
+  background: var(--acad-gold-bg);
+  color: var(--rate-amber);
+  border: 1px solid rgba(217, 119, 6, 0.35);
+  padding: 2.5px 8.5px;
+  border-radius: 6px;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.rate-q-desc {
+  font-size: 0.86rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin: 0;
+}
+
+.rate-exam-paper-tag {
+  background: var(--rate-amber);
+  color: #FFFFFF;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  letter-spacing: 0.03em;
+  display: inline-block;
+}
+
+.rate-input-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+  display: block;
+}
+
+.rate-input-field {
+  width: 100%;
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: var(--text-main);
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  font-weight: 600;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.rate-input-field:focus {
+  border-color: var(--rate-amber);
+  box-shadow: 0 0 0 3px var(--acad-gold-bg);
+  background: var(--card-bg);
+}
+
+.rate-input-field::placeholder {
+  color: var(--text-tertiary);
+  font-weight: 400;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+}
+
+textarea.rate-input-field {
+  resize: vertical;
+  min-height: 72px;
+  line-height: 1.55;
+  font-family: var(--font-body);
 }
 
 /* ── 11. MODALS ── */
@@ -1266,6 +1418,26 @@ body {
   .btn-text-short {
     display: inline;
   }
+
+  .rate-knec-exam-card {
+    padding: 16px;
+    gap: 14px;
+  }
+
+  .rate-exam-card-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .rate-btn-grade-exam {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .rate-question-box {
+    padding: 14px 16px;
+  }
 }
 
 @media (min-width: 769px) {
@@ -1308,5 +1480,19 @@ body {
     box-shadow: none !important;
     page-break-inside: avoid !important;
     margin-bottom: 20px !important;
+  }
+
+  .rate-question-box {
+    border: 1px solid #000000 !important;
+    border-left: 4px solid #000000 !important;
+    background: #FFFFFF !important;
+    page-break-inside: avoid !important;
+    margin-bottom: 12px !important;
+  }
+
+  .rate-input-field {
+    border: 1px solid #666666 !important;
+    background: #FFFFFF !important;
+    color: #000000 !important;
   }
 }

@@ -266,6 +266,62 @@
   width: 100%;
 }
 
+.dash-sidebar-col > * {
+  min-width: 0;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.dash-sidebar-col .daily-challenge-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  padding: 18px 20px !important;
+  margin: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  gap: 12px !important;
+}
+
+.dash-sidebar-col .daily-challenge-left {
+  flex: none !important;
+  width: 100% !important;
+}
+
+.dash-sidebar-col .daily-challenge-right {
+  width: 100% !important;
+  margin-top: 4px !important;
+}
+
+.dash-sidebar-col .daily-launch-btn {
+  width: 100% !important;
+  justify-content: center !important;
+  text-align: center !important;
+  box-sizing: border-box !important;
+}
+
+.dash-sidebar-col #adaptiveRecCard,
+.dash-sidebar-col .coaching-col {
+  margin: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  height: auto !important;
+}
+
+.dash-sidebar-col .upgraded-rec-card {
+  margin: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.dash-sidebar-col #studyTipCard,
+.dash-sidebar-col .upgraded-tip-card {
+  margin: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
 @media (max-width: 1100px) {
   .dashboard-workspace-grid {
     grid-template-columns: minmax(0, 1fr) 340px;
@@ -587,10 +643,11 @@
 
 /* ── 8. Sidebar Cards: Streak & XP Compact HUD + KCSE Exam Readiness HUD ── */
 .pulse-compact-hud {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  width: 100%;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 12px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 
 .pulse-compact-hud .pulse-card {
@@ -604,7 +661,9 @@
   box-shadow: var(--vlk-card-shadow) !important;
   cursor: pointer;
   transition: all 0.18s ease !important;
-  min-width: 0;
+  min-width: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
 }
 
 .pulse-compact-hud .pulse-card:hover {
@@ -613,13 +672,42 @@
   box-shadow: var(--vlk-card-shadow-hover) !important;
 }
 
+.pulse-compact-hud .pulse-card-label {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 0.68rem !important;
+  font-weight: 800 !important;
+  color: var(--text-muted) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
 .pulse-compact-hud .pulse-card-val {
-  font-size: 0.92rem !important;
+  font-size: 0.88rem !important;
   font-weight: 800 !important;
   color: var(--heading-color) !important;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.pulse-compact-hud .pulse-card-sub {
+  font-size: 0.70rem !important;
+  color: var(--text-muted) !important;
+  line-height: 1.35 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.pulse-compact-hud .pulse-xp-reward-preview {
+  display: none !important;
+}
+
+.pulse-compact-hud .pulse-bar-wrap {
+  margin-top: 2px !important;
 }
 
 .pulse-compact-hud .pulse-icon-box {

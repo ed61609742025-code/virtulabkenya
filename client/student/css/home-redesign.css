@@ -583,6 +583,92 @@
   box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 
+/* ── 6b. Skill Tree Theming & Modern Integration ── */
+#skillTreeContainer {
+  width: 100%;
+  margin-top: 6px;
+}
+
+.st-stats-banner {
+  background: var(--card-bg, #FFFFFF) !important;
+  border: 1px solid var(--card-border, #E2E8F0) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+}
+
+.st-branch {
+  background: var(--card-bg, #FFFFFF) !important;
+  border: 1px solid var(--card-border, #E2E8F0) !important;
+  border-radius: var(--vlk-radius-card) !important;
+  box-shadow: var(--vlk-card-shadow) !important;
+  transition: all 0.2s ease !important;
+}
+
+.st-branch:hover {
+  box-shadow: var(--vlk-card-shadow-hover) !important;
+  border-color: rgba(2, 132, 199, 0.35) !important;
+}
+
+[data-theme="dark"] .st-branch {
+  background: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+}
+
+[data-theme="green"] .st-branch {
+  background: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+}
+
+.st-branch-header {
+  border-bottom: 1px solid var(--card-border, #E2E8F0) !important;
+}
+
+.st-branch-title {
+  color: var(--heading-color) !important;
+  font-weight: 800 !important;
+}
+
+.st-branch-chip {
+  background: var(--card-bg, #FFFFFF) !important;
+  border: 1.5px solid var(--card-border, #E2E8F0) !important;
+  color: var(--text-muted) !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+
+.st-branch-chip:hover {
+  border-color: var(--cyan-accent, #0284C7) !important;
+  color: var(--heading-color) !important;
+}
+
+.st-branch-chip.active {
+  background: rgba(2, 132, 199, 0.1) !important;
+  border-color: var(--cyan-accent, #0284C7) !important;
+  color: var(--cyan-accent, #0284C7) !important;
+}
+
+[data-theme="dark"] .st-branch-chip.active {
+  background: rgba(56, 189, 248, 0.15) !important;
+  border-color: #38BDF8 !important;
+  color: #38BDF8 !important;
+}
+
+[data-theme="green"] .st-branch-chip.active {
+  background: rgba(52, 211, 153, 0.15) !important;
+  border-color: #34D399 !important;
+  color: #34D399 !important;
+}
+
+.st-expand-pathway-btn {
+  background: var(--card-bg, #FFFFFF) !important;
+  border: 1.5px solid var(--card-border, #E2E8F0) !important;
+  color: var(--heading-color) !important;
+}
+
+.st-expand-pathway-btn:hover {
+  border-color: var(--cyan-accent, #0284C7) !important;
+  color: var(--cyan-accent, #0284C7) !important;
+}
+
 /* ── 7. Teacher Assignments Section Modernization ── */
 .zone-assignments-upgraded {
   background: var(--card-bg, #FFFFFF);
@@ -2024,17 +2110,34 @@
     display: none !important;
   }
 
-  /* 4. Practical Topics: Bypass Desktop SVG Skill Tree and Default to Direct Touch Grid */
+  /* 4. Practical Chemistry Topics: Enable Interactive Skill Tree on Mobile & Tablets */
   .pathway-view-toggle {
-    display: none !important;
+    display: inline-flex !important;
   }
 
   #skillTreeContainer {
-    display: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
   }
 
-  #practiceGridWrap {
-    display: block !important;
+  /* Optimize Skill Tree Branch Chips for Touch Swiping */
+  .st-branch-nav-chips {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding-bottom: 8px !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+  }
+
+  .st-branch-chip {
+    flex-shrink: 0 !important;
+    padding: 7px 14px !important;
+    font-size: 0.78rem !important;
   }
 
   /* Streamline Practical Topics Filter Bar on Mobile */

@@ -458,27 +458,27 @@
       </div>
 
       <div class="mini-hero-right">
-        <!-- Daily Streak Pill -->
-        <div id="heroStreakPill" class="hero-metric-card mini-metric-card" onclick="window.GamificationEngine && window.GamificationEngine.showStreakToast('Keep practicing daily to build your streak!')" data-tooltip="Daily study streak" data-tooltip-pos="bottom">
-          <div class="metric-icon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A3.5 3.5 0 0 0 12 18a3.5 3.5 0 0 0 3.5-3.5c0-2-1.5-3.5-2.5-5-.5-1-1-2.5-1-3.5 0 0-2.5 2.5-2.5 5 0 1-.5 1.5-1 2.5z"/><path d="M12 2c5 4.5 7 9 7 13a7 7 0 1 1-14 0c0-4 3-7.5 7-13z"/></svg></div>
+        <!-- Daily Streak Pill (Single Source of Truth) -->
+        <div id="heroStreakPill" class="hero-metric-card mini-metric-card streak-metric-card" onclick="window.GamificationEngine && window.GamificationEngine.showStreakToast('Keep practicing daily to build your streak!')" data-tooltip="Daily study streak bonus" data-tooltip-pos="bottom" role="button" tabindex="0" aria-label="Daily study streak">
+          <div class="metric-icon" aria-hidden="true"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A3.5 3.5 0 0 0 12 18a3.5 3.5 0 0 0 3.5-3.5c0-2-1.5-3.5-2.5-5-.5-1-1-2.5-1-3.5 0 0-2.5 2.5-2.5 5 0 1-.5 1.5-1 2.5z"/><path d="M12 2c5 4.5 7 9 7 13a7 7 0 1 1-14 0c0-4 3-7.5 7-13z"/></svg></div>
           <div class="metric-body">
-            <div class="metric-val"><span id="streakCount">1</span>-Day</div>
-            <div class="metric-lbl">Daily Streak</div>
+            <div class="metric-val"><span id="streakCount">1</span>-Day Streak</div>
+            <div class="metric-lbl">Practice Active</div>
           </div>
           <span id="streakCountMobile" style="display:none;">1</span>
         </div>
 
-        <!-- Compact XP & Level Chip -->
-        <div class="hero-metric-card mini-metric-card xp-metric-card" onclick="openXPPerksModal()" data-tooltip="View XP perks &amp; syllabus rank roadmap" data-tooltip-pos="bottom" role="button" tabindex="0">
-          <div class="metric-icon" style="color:var(--cyan-accent);"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg></div>
+        <!-- Candidate Rank & XP Chip (Single Source of Truth) -->
+        <div class="hero-metric-card mini-metric-card xp-metric-card" onclick="openXPPerksModal()" data-tooltip="View syllabus rank perks &amp; XP roadmap" data-tooltip-pos="bottom" role="button" tabindex="0" aria-label="Candidate rank and syllabus XP">
+          <div class="metric-icon" aria-hidden="true"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15l-2 5l4-2l4 2l-2-5"/><circle cx="12" cy="8" r="7"/></svg></div>
           <div class="metric-body">
             <div class="metric-val">
-              <span class="hero-lvl-full" id="heroLevelTitle">Level 1</span>
-              <span class="hero-lvl-short" id="heroLevelTitleShort">Level 1</span>
+              <span class="hero-lvl-full" id="heroLevelTitle">Level 4: Form 4 Master Chemist</span>
+              <span class="hero-lvl-short" id="heroLevelTitleShort">Level 4</span>
             </div>
-            <div class="metric-lbl" id="heroXPText">120 / 250 XP</div>
+            <div class="metric-lbl" id="heroXPText">2,450 / 3,000 XP</div>
+            <div class="xp-track-bar"><div class="xp-track-fill" id="heroXPBar" style="width: 81%;"></div></div>
           </div>
-          <div class="xp-track-bar" style="display:none;"><div class="xp-track-fill" id="heroXPBar" style="width: 48%;"></div></div>
         </div>
 
         <!-- Pre-Lab Quick Drill CTA -->
@@ -804,7 +804,7 @@
         <aside class="dash-sidebar-col" aria-label="Candidate Coaching & Diagnostics">
 
           <!-- Candidate Progress Strip (Streak & Rank HUD) -->
-          <div class="pulse-compact-hud" id="pulseCompactHud">
+          <div class="pulse-compact-hud" id="pulseCompactHud" style="display:none !important;" aria-hidden="true">
             <!-- 1. Daily Study Streak -->
         <div class="pulse-card pulse-streak-card" id="pulseCardStreak" onclick="window.GamificationEngine &amp;&amp; window.GamificationEngine.showStreakToast('Keep practicing daily to build your streak!')" role="button" tabindex="0" data-tooltip="Daily practice streak bonus" data-tooltip-pos="bottom">
           <div class="pulse-card-header">

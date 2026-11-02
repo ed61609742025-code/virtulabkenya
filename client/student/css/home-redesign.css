@@ -642,12 +642,9 @@
 }
 
 /* ── 8. Sidebar Cards: Streak & XP Compact HUD + KCSE Exam Readiness HUD ── */
+/* ── 8. Redundant Compact HUD Suppression (Single Source of Truth in Command Bar) ── */
 .pulse-compact-hud {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  gap: 12px !important;
-  width: 100% !important;
-  box-sizing: border-box !important;
+  display: none !important;
 }
 
 .pulse-compact-hud .pulse-card {
@@ -1314,4 +1311,21 @@
   font-weight: 700;
   color: var(--text-muted);
   cursor: pointer;
+}
+
+.xp-metric-card .xp-track-bar {
+  display: block !important;
+  width: 100%;
+  height: 4px;
+  background: rgba(148, 163, 184, 0.2);
+  border-radius: 999px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.xp-metric-card .xp-track-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #0284C7 0%, #10B981 100%);
+  border-radius: 999px;
+  transition: width 0.4s ease;
 }

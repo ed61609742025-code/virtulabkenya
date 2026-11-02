@@ -320,15 +320,11 @@
     background-attachment: scroll !important;
   }
 
-  /* Streamlined Mobile Hero Bar: Hide duplicate streak/XP (prominently featured in Pulse strip below) */
-  #heroStreakPill,
-  .mini-hero-right .xp-metric-card {
-    display: none !important;
-  }
-
+  /* Streamlined Mobile Hero Bar: 2-Card Gamification Row */
   .mini-hero-right {
-    display: flex !important;
-    flex-direction: column !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
     width: 100% !important;
     margin: 4px 0 0 !important;
     padding: 0 !important;

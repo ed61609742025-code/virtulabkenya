@@ -272,28 +272,27 @@
 
   <!-- Page Header -->
   <div class="page-header">
-    <div>
+    <div class="page-header-text">
       <h1 class="page-header-title">
-        <span>Inorganic Salt Analysis (KCSE Paper 3, Question 2)</span>
-        <span id="timerDisplay" class="timer-chip tabular-nums" style="display:inline-flex; align-items:center; gap:5px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M10 2h4"/><path d="M19 5l-1.5 1.5"/></svg> 45:00</span>
+        <span style="display:inline-flex;align-items:center;gap:8px;">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:26px;height:26px;color:var(--cyan-accent);"><path d="M6 18h8M3 22h18M14 22a7 7 0 1 0 0-14h-1M9 14h2M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2M12 6V3a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3"/></svg>
+          Inorganic Salt Qualitative Analysis (Question 2)
+        </span>
       </h1>
-      <p class="page-header-subtitle">Carry out systematic reagent tests on the unknown inorganic salt sample. Record precise observations using KNEC examination terminology and make deductions for each step.</p>
+      <p class="page-header-subtitle">Carry out systematic reagent and flame tests on the unknown inorganic salt sample. Record precise observations using KCSE terminology and deduce the cation and anion.</p>
     </div>
     <div class="header-actions">
-      <button id="examTimerBtn" class="btn-secondary btn-header-timer" onclick="toggleExamTimer()">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M10 2h4"/><path d="M19 5l-1.5 1.5"/></svg> <span class="btn-text-full">Start 45-Min Timer</span><span class="btn-text-short">Timer</span>
+      <button class="btn-secondary" onclick="openFlowchartModal()" style="display:inline-flex;align-items:center;gap:6px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+        <span class="btn-text-full">Systematic Flowchart</span><span class="btn-text-short">Flowchart</span>
       </button>
-      <button class="btn-secondary btn-header-tips" onclick="openExaminerTipsModal()">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg> <span class="btn-text-full">Examiner Tips</span><span class="btn-text-short">Tips</span>
+      <button class="btn-secondary btn-autoscore" onclick="evaluateKnecMarking()" style="display:inline-flex;align-items:center;gap:6px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <span class="btn-text-full">Auto-Score KCSE Marks</span><span class="btn-text-short">Score</span>
       </button>
-      <button class="btn-secondary btn-autoscore" onclick="evaluateKnecMarking()" title="Auto-score your observations and deductions against official KNEC marking scheme">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> <span class="btn-text-full">Auto-Score KCSE Marks</span><span class="btn-text-short">Auto-Score</span>
-      </button>
-      <button class="btn-secondary btn-header-flowchart" onclick="openFlowchartModal()">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg> <span class="btn-text-full">Systematic Flowchart</span><span class="btn-text-short">Flowchart</span>
-      </button>
-      <button class="btn-primary-solid btn-header-newsample" id="newSampleBtn" onclick="newSample()">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> <span class="btn-text-full">New Sample</span><span class="btn-text-short">New Sample</span>
+      <button class="btn-primary-solid" id="newSampleBtn" onclick="newSample()" style="display:inline-flex;align-items:center;gap:6px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        <span class="btn-text-full">New Sample</span><span class="btn-text-short">Sample</span>
       </button>
     </div>
   </div>
@@ -357,88 +356,19 @@
 
 
 
-  <!-- KNEC Question 2 Specimen Solid S Station Card -->
-  <section class="specimen-station-card">
-    <div class="specimen-station-main">
-      <!-- Interactive Watch Glass Viewport -->
-      <div class="watchglass-viewport" title="Watch glass holding solid sample S">
-        <svg id="watchglassSvg" width="130" height="90" viewBox="0 0 130 90" class="watchglass-dish-svg">
-          <defs>
-            <radialGradient id="dishGlassGrad" cx="50%" cy="30%" r="70%">
-              <stop offset="0%" stop-color="rgba(255,255,255,0.4)" />
-              <stop offset="45%" stop-color="rgba(255,255,255,0.08)" />
-              <stop offset="90%" stop-color="rgba(148,163,184,0.3)" />
-              <stop offset="100%" stop-color="rgba(56,189,248,0.35)" />
-            </radialGradient>
-            <linearGradient id="dishRimGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="rgba(255,255,255,0.6)" />
-              <stop offset="50%" stop-color="rgba(255,255,255,0.15)" />
-              <stop offset="100%" stop-color="rgba(255,255,255,0.5)" />
-            </linearGradient>
-            <filter id="crystalShadow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="rgba(0,0,0,0.45)"/>
-            </filter>
-          </defs>
-
-          <!-- Watch Glass Shadow -->
-          <ellipse cx="65" cy="58" rx="56" ry="24" fill="rgba(15,23,42,0.14)" filter="blur(4px)" />
-
-          <!-- Outer Concave Dish -->
-          <path d="M 12,42 C 12,74 118,74 118,42" fill="url(#dishGlassGrad)" stroke="url(#dishRimGrad)" stroke-width="1.8"/>
-          <!-- Inner Dish Oval -->
-          <ellipse cx="65" cy="42" rx="53" ry="18" fill="rgba(255,255,255,0.05)" stroke="url(#dishRimGrad)" stroke-width="1.2"/>
-          
-          <!-- Dynamic Salt Crystals Group rendered by JS -->
-          <g id="specimenCrystalsGroup" filter="url(#crystalShadow)">
-            <!-- Rendered by renderSpecimenWatchglass() -->
-          </g>
-
-          <!-- Dish Reflection Sheen -->
-          <path d="M 24,42 C 34,54 96,54 106,42" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.2" stroke-linecap="round"/>
-        </svg>
-        <span class="watchglass-label">Watch Glass: Solid S</span>
+  <!-- Task Card -->
+  <div class="task-card">
+    <div class="task-row">
+      <div class="task-icon-box" style="display:inline-flex;align-items:center;justify-content:center;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:24px;height:24px;"><path d="M6 18h8M3 22h18M14 22a7 7 0 1 0 0-14h-1M9 14h2M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2M12 6V3a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3"/></svg>
       </div>
-
-      <!-- Specimen Details & Preliminary Observational Metadata -->
-      <div class="specimen-info-col">
-        <div class="specimen-header-line">
-          <span class="sample-badge specimen-badge" id="sampleIdBadge">Specimen Solid: S-01</span>
-          <span class="knec-q-tag">KNEC 233/3 · Q2(a)</span>
-        </div>
-        <h2 class="specimen-title" id="specimenTitle">Unknown Inorganic Salt Sample S</h2>
-        <p class="specimen-instruction">
-          Observe the physical appearance of solid S on the watch glass. Prepare a stock solution by dissolving the solid in distilled water, then carry out systematic ion-precipitation tests below.
-        </p>
-
-        <!-- Preliminary Physical Properties Grid -->
-        <div class="specimen-props-row">
-          <div class="specimen-prop-chip">
-            <span class="prop-lbl">Appearance (Part a):</span>
-            <span class="prop-val" id="specimenAppearancePill">White crystalline solid</span>
-          </div>
-          <div class="specimen-prop-chip" style="display:none !important;">
-            <span class="prop-lbl">Water Solubility:</span>
-            <span class="prop-val" id="specimenSolubilityPill">Readily soluble (clear stock solution)</span>
-          </div>
-        </div>
+      <div class="task-text">
+        <h2>Your Unknown Inorganic Salt Sample</h2>
+        <p>Inspect solid S, dissolve in approx. 10 cm³ distilled water to prepare stock solution, and perform the diagnostic precipitation &amp; flame tests below. Deduce the cation and anion at the bottom.</p>
       </div>
     </div>
-
-    <!-- Stock Solution Quick Preparation Callout -->
-    <div class="specimen-prep-callout">
-      <div class="prep-callout-icon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:24px; height:24px;"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg></div>
-      <div class="prep-callout-text">
-        <strong>Stock Solution Preparation:</strong> Dissolve the provided solid S in approx. 10 cm³ of distilled water in a boiling tube. Divide the solution into six portions for subsequent tests (b) to (g).
-      </div>
-    </div>
-  </section>
-
-  <!-- Progress Strip -->
-  <div class="progress-strip">
-    <span class="progress-label">Tests Performed</span>
-    <div class="progress-track">
-      <div class="progress-fill" id="progressFill"></div>
-    </div>
+    <span class="sample-badge" id="sampleIdBadge">Sample: Solid S (White crystalline solid)</span>
+  </div>
     <span class="progress-count tabular-nums" id="progressCount">0 / 6 Tests</span>
   </div>
 
@@ -485,10 +415,10 @@
           <option value="NO3-">NO₃⁻ (Nitrate)</option>
         </select>
       </div>
-      <div class="id-group id-actions-group">
-        <button id="submitIdBtn" class="btn-submit-id" onclick="submitIdentification()" data-i18n="submit_id_btn">Submit Identification</button>
-        <button type="button" class="btn-secondary btn-id-autoscore" onclick="evaluateKnecMarking()" title="Auto-score observations and deductions">
-          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Auto-Score Marks
+      <div class="id-group">
+        <button id="submitIdBtn" class="btn-submit-id" onclick="submitIdentification()" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Submit Identification
         </button>
       </div>
     </div>

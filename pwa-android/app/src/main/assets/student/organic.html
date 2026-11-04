@@ -32,7 +32,7 @@
 <link rel="stylesheet" href="../shared/style.css">
 <link rel="stylesheet" href="../shared/brilliant-theme.css">
 <link rel="stylesheet" href="../shared/tutorial-engine.css">
-<link rel="stylesheet" href="css/organic.css?v=174">
+<link rel="stylesheet" href="css/organic.css?v=180">
 <link rel="stylesheet" href="../shared/ai-tutor.css">
 <link rel="stylesheet" href="../shared/pwa-installer.css">
 </head>
@@ -243,23 +243,38 @@
     </div>
   </nav>
 
-    <!-- Official KNEC Examination Sub-Bar -->
-  <div class="knec-exam-subbar" aria-label="Examination Details">
-    <div class="knec-candidate-meta">
+  <!-- Official KNEC Examination Sub-Bar -->
+  <div class="knec-exam-subbar" style="display:flex !important; align-items:center !important; justify-content:space-between !important; flex-wrap:nowrap !important; overflow-x:auto !important; white-space:nowrap !important; gap:12px !important; padding:6px 18px !important; border-top:1px solid var(--card-border) !important; background:var(--card-bg) !important;" aria-label="Examination Details">
+    <div class="knec-candidate-meta" style="display:flex !important; align-items:center !important; gap:10px !important; flex-wrap:nowrap !important; white-space:nowrap !important; flex-shrink:0 !important;">
       <span class="knec-tag-pill">KNEC PAPER 233/3</span>
       <span class="knec-q-badge">QUESTION 3 (10.0 MARKS)</span>
       <span class="knec-cand-name" id="knecCandidateName">CANDIDATE: PRACTICE MODE</span>
-      <span class="knec-index-num" id="knecCandidateIndex">INDEX: 00000000/001</span>
+      <span class="knec-index-num" id="knecCandidateIndex">INDEX: 00000001</span>
     </div>
-    <div class="knec-live-status-group">
+    <div class="knec-live-status-group" style="display:flex !important; align-items:center !important; gap:7px !important; flex-shrink:0 !important; white-space:nowrap !important; margin-left:auto !important;">
       <span class="knec-status-dot pulse" id="knecLiveStatusDot"></span>
       <span class="knec-status-label" id="knecLiveStatusText">ORGANIC BENCH READY • SAMPLE ACTIVE</span>
     </div>
   </div>
 </header>
+<script>
+  (function() {
+    try {
+      var u = JSON.parse(localStorage.getItem('vlk_user') || sessionStorage.getItem('vlk_user') || '{}');
+      if (u && (u.name || u.full_name || u.username)) {
+        var nameEl = document.getElementById('knecCandidateName');
+        var idxEl = document.getElementById('knecCandidateIndex');
+        if (nameEl) nameEl.textContent = 'CANDIDATE: ' + (u.name || u.full_name || u.username).toUpperCase();
+        if (idxEl && (u.index_number || u.indexNumber || u.admission_number || u.id)) {
+          idxEl.textContent = 'INDEX: ' + String(u.index_number || u.indexNumber || u.admission_number || u.id).padStart(8, '0');
+        }
+      }
+    } catch(e) {}
+  })();
+</script>
 
 <!-- Collapsible Scratchpad Drawer (Hidden by default) -->
-<div id="scratchpadDrawer" style="display:none;background:var(--card-bg);border:1px solid var(--cyan-accent);border-radius:12px;padding:16px;margin:16px 20px 0;box-shadow:0 4px 20px rgba(0,0,0,0.4);">
+<div id="scratchpadDrawer" style="display:none;background:var(--card-bg);border:1px solid var(--cyan-accent);border-radius:12px;padding:16px;max-width:1240px;margin:16px auto 0;width:calc(100% - 32px);box-sizing:border-box;box-shadow:0 4px 20px rgba(0,0,0,0.4);">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
     <div style="font-size:0.88rem;font-weight:700;color:var(--heading-color);display:inline-flex;align-items:center;gap:6px;">
       <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
@@ -517,7 +532,7 @@
 <script src="/shared/organic-bench-core.js?v=167"></script>
 <script src="/shared/knec-pedagogy.js?v=167"></script>
 <script defer src="/shared/knec-remediation-drills.js?v=167"></script>
-<script src="js/organic-engine.js?v=167"></script>
+<script src="js/organic-engine.js?v=180"></script>
 <script src="../shared/ai-tutor.js"></script>
 <script src="../shared/pwa-installer.js"></script>
 <script src="../shared/page-transitions.js"></script>

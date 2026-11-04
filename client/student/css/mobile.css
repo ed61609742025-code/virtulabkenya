@@ -10,21 +10,30 @@
   display: none;
 }
 
+@media print {
+  .vlk-bottom-nav {
+    display: none !important;
+  }
+}
+
 @media (max-width: 768px) {
   .vlk-bottom-nav {
-    display: flex;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 62px;
-    padding-bottom: max(env(safe-area-inset-bottom, 0px), 6px);
-    background: rgba(255, 255, 255, 0.98);
-    border-top: 1.5px solid var(--card-border, #E2E8F0);
-    box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.08);
-    z-index: 9000;
-    align-items: stretch;
-    justify-content: space-around;
+    display: flex !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 60px !important;
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 6px) !important;
+    background: rgba(255, 255, 255, 0.98) !important;
+    border-top: 1.5px solid var(--card-border, #E2E8F0) !important;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08) !important;
+    z-index: 99999 !important;
+    align-items: center !important;
+    justify-content: space-around !important;
+    contain: layout style !important;
+    transform: translateZ(0) !important;
+    -webkit-transform: translateZ(0) !important;
   }
 
   [data-theme="dark"] .vlk-bottom-nav {
@@ -111,9 +120,9 @@
     transform: translateY(-1px);
   }
 
-  /* body padding-bottom extended for safe area */
+  /* body padding-bottom extended for safe area and bottom nav bar */
   body {
-    padding-bottom: calc(68px + env(safe-area-inset-bottom, 0px)) !important;
+    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
   }
 }
 
@@ -744,10 +753,10 @@
 
   .daily-launch-btn {
     width: 100% !important;
-    min-height: 40px !important;
-    height: 40px !important;
+    min-height: 42px !important;
+    height: 42px !important;
     padding: 8px 16px !important;
-    font-size: 0.82rem !important;
+    font-size: 0.84rem !important;
     font-weight: 800 !important;
     white-space: nowrap !important;
     display: flex !important;
@@ -755,6 +764,16 @@
     justify-content: center !important;
     border-radius: 10px !important;
     box-sizing: border-box !important;
+    background: linear-gradient(135deg, #0284C7 0%, #38BDF8 100%) !important;
+    color: #FFFFFF !important;
+    border: 1px solid rgba(255, 255, 255, 0.35) !important;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.5) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+    cursor: pointer !important;
+  }
+  .daily-launch-btn:active {
+    transform: scale(0.97) !important;
+    background: #0284C7 !important;
   }
 }
 
@@ -1437,6 +1456,63 @@
     align-items: stretch !important;
   }
 
+  /* Compact celebratory empty state on mobile: single-row badge */
+  .ca-empty-showcase.is-celebrate {
+    padding: 10px 14px !important;
+    gap: 10px !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    border-radius: 12px !important;
+    background: rgba(16, 185, 129, 0.08) !important;
+    border: 1.5px solid rgba(16, 185, 129, 0.3) !important;
+  }
+
+  .ca-empty-showcase.is-celebrate .ca-empty-icon-ring {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 8px !important;
+    align-self: center !important;
+    flex-shrink: 0 !important;
+  }
+
+  .ca-empty-showcase.is-celebrate .ca-empty-icon-ring svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  .ca-empty-showcase.is-celebrate .ca-empty-content {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+
+  .ca-empty-showcase.is-celebrate .ca-empty-title {
+    font-size: 0.82rem !important;
+    font-weight: 800 !important;
+    margin: 0 !important;
+    line-height: 1.25 !important;
+    color: var(--heading-color) !important;
+  }
+
+  .ca-empty-showcase.is-celebrate .ca-empty-desc {
+    display: none !important;
+  }
+
+  .ca-empty-showcase.is-celebrate .ca-empty-features {
+    display: flex !important;
+    gap: 5px !important;
+    margin-top: 4px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .ca-empty-showcase.is-celebrate .ca-feature-pill {
+    font-size: 0.62rem !important;
+    padding: 2px 6px !important;
+  }
+
+  .ca-empty-showcase.is-celebrate .ca-empty-cta-btn {
+    display: none !important;
+  }
+
   .ca-empty-icon-ring {
     width: 38px !important;
     height: 38px !important;
@@ -1515,7 +1591,18 @@
   .pulse-card,
   .daily-challenge-card,
   .zone-assignments-upgraded {
-    padding: 16px !important;
-    border-radius: 16px !important;
+    padding: 14px 14px !important;
+    border-radius: 14px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .zone-assignments-upgraded {
+    margin-top: 4px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .zone-pathway {
+    margin-top: 0 !important;
+    margin-bottom: 16px !important;
   }
 }

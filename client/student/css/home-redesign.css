@@ -1599,10 +1599,10 @@
     display: flex !important;
     flex-direction: row !important;
     align-items: center !important;
-    gap: 8px !important;
-    padding: 8px 10px !important;
+    gap: 6px !important;
+    padding: 6px 8px !important;
     border-radius: 12px !important;
-    min-height: 52px !important;
+    min-height: 50px !important;
     min-width: 0 !important;
     box-sizing: border-box !important;
     margin: 0 !important;
@@ -1618,9 +1618,9 @@
   }
 
   .mini-metric-card .metric-icon {
-    width: 32px !important;
-    height: 32px !important;
-    border-radius: 8px !important;
+    width: 26px !important;
+    height: 26px !important;
+    border-radius: 7px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -1628,8 +1628,8 @@
   }
 
   .mini-metric-card .metric-icon svg {
-    width: 18px !important;
-    height: 18px !important;
+    width: 15px !important;
+    height: 15px !important;
   }
 
   .mini-metric-card .metric-body {
@@ -1639,23 +1639,34 @@
   }
 
   .mini-metric-card .metric-val {
-    font-size: 0.82rem !important;
+    font-size: 0.78rem !important;
     font-weight: 800 !important;
     line-height: 1.15 !important;
     white-space: nowrap !important;
     overflow: hidden !important;
-    text-overflow: ellipsis !important;
+    text-overflow: clip !important;
+    letter-spacing: -0.01em !important;
   }
 
   .mini-metric-card .metric-lbl {
-    font-size: 0.65rem !important;
+    font-size: 0.62rem !important;
     font-weight: 700 !important;
     color: var(--text-muted) !important;
     line-height: 1.1 !important;
-    margin-top: 2px !important;
+    margin-top: 1px !important;
     white-space: nowrap !important;
     overflow: hidden !important;
-    text-overflow: ellipsis !important;
+    text-overflow: clip !important;
+    letter-spacing: -0.01em !important;
+  }
+
+  @media (max-width: 360px) {
+    .mini-metric-card .metric-val {
+      font-size: 0.72rem !important;
+    }
+    .mini-metric-card .metric-lbl {
+      font-size: 0.58rem !important;
+    }
   }
 
   .hero-lvl-full {

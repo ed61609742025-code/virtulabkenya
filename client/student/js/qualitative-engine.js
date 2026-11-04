@@ -168,14 +168,16 @@ function startSessionTimer() {
 }
 
 function updateKnecCandidateMeta() {
+
   try {
     const u = typeof getUser === 'function' ? getUser() : (JSON.parse(localStorage.getItem('vlk_user') || '{}'));
     const nameEl = document.getElementById('knecCandidateName');
     const idxEl = document.getElementById('knecCandidateIndex');
     if (nameEl) nameEl.textContent = 'CANDIDATE: ' + ((u && (u.name || u.full_name || u.username)) ? (u.name || u.full_name || u.username).toUpperCase() : 'PRACTICE MODE');
-    if (idxEl) idxEl.textContent = 'INDEX: ' + ((u && (u.index_number || u.indexNumber || u.admission_number || u.id)) ? String(u.index_number || u.indexNumber || u.admission_number || u.id).padStart(8, '0') : '23330101/001');
+    if (idxEl) idxEl.textContent = 'INDEX: ' + ((u && (u.index_number || u.indexNumber || u.admission_number || u.id)) ? String(u.index_number || u.indexNumber || u.admission_number || u.id).padStart(8, '0') : '00000001');
   } catch(e) {}
 }
+window.updateKnecCandidateMeta = updateKnecCandidateMeta;
 
 
 
@@ -4113,6 +4115,7 @@ if (typeof window !== 'undefined') {
 
   /* Boot */
   if (typeof document !== 'undefined' && document.getElementById('testGrid')) {
+    updateKnecCandidateMeta();
     newSample();
     initAssignmentBanner();
   }

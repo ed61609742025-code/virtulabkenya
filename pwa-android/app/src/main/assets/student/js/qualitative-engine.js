@@ -60,6 +60,127 @@ function triggerQualHaptic(pattern = 15) {
 }
 window.triggerQualHaptic = triggerQualHaptic;
 
+/* ══════════════════════════════════════════════════════════
+   QUALITATIVE PRACTICAL WORKFLOW STEPPER & KNEC TELEMETRY
+══════════════════════════════════════════════════════════ */
+let currentWorkflowStep = 0;
+
+function jumpToStep(stepIdx) {
+  if (typeof triggerQualHaptic === 'function') triggerQualHaptic(15);
+  updateWorkflowStepper(stepIdx);
+  if (stepIdx === 0) {
+    document.querySelector('.specimen-station-card')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else if (stepIdx === 1) {
+    const prep = document.querySelector('.specimen-prep-callout') || document.querySelector('.specimen-station-card');
+    prep?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else if (stepIdx === 2) {
+    const flameModal = document.getElementById('flameModal');
+    if (flameModal && (flameModal.style.display === 'none' || !flameModal.classList.contains('active'))) {
+      if (typeof openFlameModal === 'function') {
+        openFlameModal();
+      } else if (typeof performFlameTestOnScreen === 'function') {
+        performFlameTestOnScreen();
+      }
+    } else {
+      document.getElementById('burnerSvg')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  } else if (stepIdx === 3) {
+    const testGrid = document.getElementById('testGrid');
+    if (testGrid) {
+      testGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const card = document.querySelector('[data-test-key="naoh"]') || testGrid;
+      card?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  } else if (stepIdx === 4) {
+    const testGrid = document.getElementById('testGrid');
+    if (testGrid) {
+      testGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const card = document.querySelector('[data-test-key="barium"]') || document.querySelector('[data-test-key="acid"]') || testGrid;
+      card?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  } else if (stepIdx === 5) {
+    const idPanel = document.querySelector('.id-panel');
+    if (idPanel) {
+      idPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const cat = document.getElementById('cationSelect');
+      if (cat) cat.focus();
+    }
+  }
+}
+window.jumpToStep = jumpToStep;
+
+function updateWorkflowStepper(forcedStep) {
+  if (typeof forcedStep === 'number') currentWorkflowStep = forcedStep;
+  const badge = document.getElementById('qualStepBadge');
+  const fill = document.getElementById('qualProgressFill');
+  const dockBadge = document.getElementById('dockProgressText');
+
+  const stepLabels = [
+    'Step 1 of 6: Specimen Solid S & Appearance',
+    'Step 2 of 6: Prepare Stock Solution in Boiling Tube',
+    'Step 3 of 6: Non-Luminous Flame Test with Cobalt Glass',
+    'Step 4 of 6: Cation Precipitation Tests (NaOH & NH₃)',
+    'Step 5 of 6: Anion Confirmatory Tests (Ba²⁺, Ag⁺, Acid)',
+    'Step 6 of 6: Systematic Salt Deduction & KNEC Scoring'
+  ];
+
+  if (badge && stepLabels[currentWorkflowStep]) {
+    badge.textContent = stepLabels[currentWorkflowStep];
+  }
+  if (fill) {
+    fill.style.width = Math.round(((currentWorkflowStep + 1) / 6) * 100) + '%';
+  }
+  if (dockBadge) {
+    dockBadge.textContent = `${currentWorkflowStep + 1}/6 Step`;
+  }
+
+  for (let i = 0; i < 6; i++) {
+    const stepEl = document.getElementById('qualWfStep' + i);
+    if (stepEl) {
+      if (i < currentWorkflowStep) {
+        stepEl.className = 'workflow-step-item completed';
+        stepEl.removeAttribute('aria-current');
+      } else if (i === currentWorkflowStep) {
+        stepEl.className = 'workflow-step-item active';
+        stepEl.setAttribute('aria-current', 'step');
+      } else {
+        stepEl.className = 'workflow-step-item upcoming';
+        stepEl.removeAttribute('aria-current');
+      }
+    }
+  }
+}
+window.updateWorkflowStepper = updateWorkflowStepper;
+
+/* Session Timer Interval */
+let sessionSeconds = 0;
+let sessionTimerInterval = null;
+function startSessionTimer() {
+  if (sessionTimerInterval) clearInterval(sessionTimerInterval);
+  sessionSeconds = 0;
+  sessionTimerInterval = setInterval(() => {
+    sessionSeconds++;
+    const m = Math.floor(sessionSeconds / 60).toString().padStart(2, '0');
+    const s = (sessionSeconds % 60).toString().padStart(2, '0');
+    const el = document.getElementById('sessionTimerText');
+    if (el) el.textContent = `${m}:${s}`;
+  }, 1000);
+}
+
+function updateKnecCandidateMeta() {
+
+  try {
+    const u = typeof getUser === 'function' ? getUser() : (JSON.parse(localStorage.getItem('vlk_user') || '{}'));
+    const nameEl = document.getElementById('knecCandidateName');
+    const idxEl = document.getElementById('knecCandidateIndex');
+    if (nameEl) nameEl.textContent = 'CANDIDATE: ' + ((u && (u.name || u.full_name || u.username)) ? (u.name || u.full_name || u.username).toUpperCase() : 'PRACTICE MODE');
+    if (idxEl) idxEl.textContent = 'INDEX: ' + ((u && (u.index_number || u.indexNumber || u.admission_number || u.id)) ? String(u.index_number || u.indexNumber || u.admission_number || u.id).padStart(8, '0') : '00000001');
+  } catch(e) {}
+}
+window.updateKnecCandidateMeta = updateKnecCandidateMeta;
+
+
+
 
 
 /* ── Notifications ── */
@@ -277,7 +398,7 @@ if (typeof window !== 'undefined') {
   const TESTS = [
     {
       key:'heat_solid',
-      label:'Dry Thermal Heating of Solid in Hard-Glass Tube (Bunsen Flame)',
+      label:'Dry Thermal Heating of Solid S in Hard-Glass Tube', marks:'1.5 Marks',
       reagent:'Hard-glass boiling tube + Bunsen flame',
       isHeat:true,
       procedure:'Place about one-third of the solid salt sample into a clean, dry hard-glass boiling tube. Clamp the tube at approx. 35° and heat gently, then strongly in a non-luminous Bunsen flame. Test any evolved gas with moist red/blue litmus papers or a glowing wooden splint, and observe any condensation or residue color transitions.',
@@ -301,7 +422,7 @@ if (typeof window !== 'undefined') {
     },
     {
       key:'naoh',
-      label:'Test with 2M Sodium Hydroxide Solution (NaOH)',
+      label:'Test with 2M Sodium Hydroxide [NaOH(aq)]', marks:'1.5 Marks',
       reagent:'2M NaOH(aq)',
       procedure:'To about 2 cm³ of the aqueous solution of the unknown salt in a clean test tube, add 2M sodium hydroxide solution dropwise (2–3 drops) until in excess (approx. 5 cm³), shaking the test tube gently after each addition. Observe whether a precipitate forms and whether it dissolves in excess.',
       options: [
@@ -320,7 +441,7 @@ if (typeof window !== 'undefined') {
     },
     {
       key:'nh3',
-      label:'Test with 2M Aqueous Ammonia [NH₃(aq)]',
+      label:'Test with 2M Aqueous Ammonia [NH₃(aq)]', marks:'1.5 Marks',
       reagent:'2M NH₃(aq)',
       procedure:'To about 2 cm³ of the aqueous solution of the unknown salt in a clean test tube, add 2M aqueous ammonia dropwise (2–3 drops) until in excess (approx. 5 cm³), shaking thoroughly after each addition. Observe if any precipitate dissolves to form a complex ion.',
       options: [
@@ -339,7 +460,7 @@ if (typeof window !== 'undefined') {
     },
     {
       key:'flame',
-      label:'Clean Glass Rod Flame Emission Test (KICD Standard)',
+      label:'Flame Emission Test (Non-Luminous Bunsen Flame)', marks:'1.5 Marks',
       reagent:'Clean glass rod + salt solution',
       isFlame:true,
       procedure:'Dip a clean glass rod into the aqueous solution of the unknown salt and place it into the non-luminous Bunsen burner flame. Observe the characteristic flame emission colour (and through cobalt blue glass for potassium).',
@@ -359,7 +480,7 @@ if (typeof window !== 'undefined') {
     },
     {
       key:'hcl',
-      label:'Test with Dilute Hydrochloric Acid [2M HCl(aq)]',
+      label:'Test with Dilute Hydrochloric Acid [2M HCl(aq)]', marks:'1.5 Marks',
       reagent:'2M HCl(aq)',
       procedure:'To about 2 cm³ of the aqueous solution of the unknown salt in a clean test tube, add 3–4 drops of 2M hydrochloric acid. Warm gently if necessary and test any evolved gas with calcium hydroxide solution (limewater) or moist litmus papers.',
       options: [
@@ -376,7 +497,7 @@ if (typeof window !== 'undefined') {
     },
     {
       key:'agno3',
-      label:'Test with Acidified Silver Nitrate Solution [AgNO₃(aq)]',
+      label:'Test with Acidified Silver Nitrate [AgNO₃(aq)]', marks:'1.5 Marks',
       reagent:'Dil. HNO₃ + AgNO₃(aq)',
       procedure:'To about 2 cm³ of the aqueous solution of the unknown salt in a clean test tube, add 3–4 drops of dilute nitric(V) acid, followed by 3–4 drops of silver nitrate solution. If a precipitate forms, test its solubility with dilute aqueous ammonia.',
       options: [
@@ -393,7 +514,7 @@ if (typeof window !== 'undefined') {
     },
     {
       key:'pb_no3',
-      label:'Test with Lead(II) Nitrate Solution [Pb(NO₃)₂(aq)] & Warm (KCSE Standard)',
+      label:'Test with Lead(II) Nitrate [Pb(NO₃)₂(aq)] & Warm', marks:'1.5 Marks',
       reagent:'0.5M Pb(NO₃)₂(aq) + Bunsen warming',
       procedure:'To about 2 cm³ of the aqueous solution of the unknown salt in a clean test tube, add 3–4 drops of lead(II) nitrate solution. Warm the mixture gently over a Bunsen flame and allow it to cool.',
       options: [
@@ -410,7 +531,7 @@ if (typeof window !== 'undefined') {
     },
     {
       key:'bacl2',
-      label:'Test with Acidified Barium Chloride Solution [BaCl₂(aq)]',
+      label:'Test with Acidified Barium Chloride [BaCl₂(aq)]', marks:'1.5 Marks',
       reagent:'Dil. HCl + BaCl₂(aq)',
       procedure:'To about 2 cm³ of the aqueous solution of the unknown salt in a clean test tube, add 3–4 drops of dilute hydrochloric acid, followed by 3–4 drops of barium chloride solution. Observe whether a dense, acid-insoluble white precipitate forms.',
       options: [
@@ -426,7 +547,7 @@ if (typeof window !== 'undefined') {
     },
     {
       key:'ki',
-      label:'Test with Potassium Iodide Solution [1M KI(aq)]',
+      label:'Test with Potassium Iodide [1M KI(aq)]', marks:'1.5 Marks',
       reagent:'1M KI(aq)',
       procedure:'To about 2 cm³ of the aqueous solution of the unknown salt in a clean test tube, add 3–4 drops of 1M potassium iodide solution. Heat the mixture gently in a water bath, then allow it to cool under tap water to observe golden spangles.',
       options: [
@@ -441,7 +562,7 @@ if (typeof window !== 'undefined') {
     },
     {
       key:'brown_ring',
-      label:'Brown Ring Test for Nitrates [NO₃⁻]',
+      label:'Brown Ring Test for Nitrates [NO₃⁻]', marks:'1.5 Marks',
       reagent:'FeSO₄(aq) + conc. H₂SO₄',
       isBrownRing:true,
       procedure:'To about 2 cm³ of the aqueous solution of the unknown salt in a clean test tube, add 2 cm³ of freshly prepared iron(II) sulfate solution. Slant the test tube at 45°, and carefully trickle concentrated sulfuric(VI) acid down the inside wall of the tube without shaking.',
@@ -512,6 +633,7 @@ if (typeof window !== 'undefined') {
   }
 
   function newSample() {
+    if (typeof updateWorkflowStepper === "function") updateWorkflowStepper(0);
     const keys = Object.keys(SALTS);
     currentSaltKey = keys[Math.floor(Math.random() * keys.length)];
     sampleCounter++;
@@ -527,7 +649,7 @@ if (typeof window !== 'undefined') {
 
     const sampleNumStr = String(sampleCounter).padStart(2, '0');
     const saltBadge = document.getElementById('sampleIdBadge') || document.getElementById('saltBadge');
-    if (saltBadge) saltBadge.textContent = `Specimen Solid: S-${sampleNumStr}`;
+    if (saltBadge) saltBadge.textContent = `Sample: Solid S (${salt.appearance || 'White crystalline solid'})`;
 
     const titleEl = document.getElementById('specimenTitle');
     if (titleEl) titleEl.textContent = `Unknown Inorganic Salt Sample S (${salt.appearance})`;
@@ -573,6 +695,19 @@ if (typeof window !== 'undefined') {
     const txt = document.getElementById('progressCount') || document.getElementById('qualProgressCount');
     if (fill) fill.style.width = `${pct}%`;
     if (txt) txt.textContent = `${performedCount} / ${totalTests} Tests Performed (${filledCount} Recorded)`;
+    const dockTxt = document.getElementById('dockProgressText');
+    if (dockTxt) dockTxt.textContent = `${performedCount}/${totalTests} Done`;
+
+    if (typeof currentWorkflowStep !== 'undefined' && typeof updateWorkflowStepper === 'function') {
+      const isCationDone = Boolean(testStates['naoh']?.performed || testStates['nh3']?.performed);
+      const isAnionDone = Boolean(testStates['barium']?.performed || testStates['silver']?.performed || testStates['acid']?.performed);
+      if (isAnionDone && currentWorkflowStep < 4) {
+        updateWorkflowStepper(4);
+      } else if (isCationDone && currentWorkflowStep < 3) {
+        updateWorkflowStepper(3);
+      }
+    }
+
   }
 
   function getObsSuggestionChips(testKey) {
@@ -604,6 +739,7 @@ if (typeof window !== 'undefined') {
   }
 
   window.insertSuggestion = function(elemId, text) {
+    triggerQualHaptic(12);
     const elem = document.getElementById(elemId);
     if (!elem) return;
     const start = elem.selectionStart !== undefined ? elem.selectionStart : elem.value.length;
@@ -1887,9 +2023,9 @@ if (typeof window !== 'undefined') {
             <div class="knec-answer-card" style="margin-top:10px; background:var(--card-bg-hover, rgba(255,255,255,0.03)); border:1.5px solid var(--cyan-accent); border-radius:8px; padding:12px 14px; font-size:0.83rem; line-height:1.5;">
               <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; border-bottom:1px solid var(--card-border); padding-bottom:6px;">
                 <span style="font-weight:800; color:var(--cyan-accent); text-transform:uppercase; font-size:0.75rem; letter-spacing:0.04em;">Official KNEC Marking Scheme — ${esc(salt.name)} (${esc(salt.formula)})</span>
-                <span style="font-family:var(--font-mono); font-size:0.75rem; color:var(--text-muted); font-weight:700;">1.1 Marks Total</span>
+                <span style="font-family:var(--font-mono); font-size:0.75rem; color:var(--text-muted); font-weight:700;">${test.marks || '1.5 Marks'} Total</span>
               </div>
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:8px;">
+              <div class="knec-answer-grid">
                 <div style="background:var(--card-bg); padding:8px 10px; border-radius:6px; border:1px solid var(--card-border);">
                   <div style="font-weight:800; font-size:0.76rem; text-transform:uppercase; margin-bottom:3px; color:var(--blue-accent);">Expected Observation (0.55 Mk):</div>
                   <div style="color:var(--text-main); font-size:0.82rem; font-weight:600;">${expectedObs}</div>
@@ -1908,13 +2044,13 @@ if (typeof window !== 'undefined') {
       `;
 
       return `
-        <div class="kcse-question-block">
+        <div class="kcse-question-block" id="block_${test.key}">
           <div class="test-card-top">
             <div class="test-header-left">
               <span class="test-step-badge">(${testLetter})</span>
               <h3 class="test-title-text">${test.label}</h3>
             </div>
-            <span class="timer-chip" style="font-size:0.75rem; padding:2px 8px;">1.1 Marks</span>
+            <span class="timer-chip" style="font-size:0.75rem; padding:2px 8px;">${test.marks || '1.5 Marks'}</span>
           </div>
 
           <div class="test-layout-grid">
@@ -1929,8 +2065,9 @@ if (typeof window !== 'undefined') {
             <!-- Right Column: Procedure & 2-Column KCSE Table -->
             <div>
               <!-- Official KCSE Procedure Callout -->
-              <div style="font-size:0.84rem; color:var(--text-main); line-height:1.5; margin-bottom:12px; background:var(--card-bg-hover); padding:10px 14px; border-radius:8px; border:1px solid var(--card-border); border-left:3.5px solid var(--blue-accent);">
+              <div style="font-size:0.84rem; color:var(--text-main); line-height:1.5; margin-bottom:12px; background:var(--bg-dark); padding:10px 14px; border-radius:8px; border-left:3px solid var(--violet-accent); border:1px solid var(--card-border); border-left-width:3px;">
                 <span style="font-weight:800; color:var(--heading-color); display:flex; align-items:center; gap:6px; margin-bottom:3px;">
+                  <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:15px;height:15px;color:var(--cyan-accent);"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg>
                   Procedure / Instructions:
                 </span>
                 <span>${test.procedure}</span>
@@ -1943,14 +2080,15 @@ if (typeof window !== 'undefined') {
               ${sensoryCalloutHtml}
 
               <!-- KCSE Observation & Inference Table -->
-              <table class="knec-table">
+              <div class="table-responsive">
+                <table class="knec-table">
                 <thead>
                   <tr>
                     <th style="width:50%;">
-                      <span class="sci-tooltip">Observations <span class="sci-tip-text">Observations: Record sharp visual changes — color, effervescence, precipitate formation, or dissolving in excess.</span></span> (0.55 Mark)
+                      <span class="sci-tooltip">Observations <span class="sci-tip-text">Observations: Record sharp visual changes — color, effervescence, precipitate formation, or dissolving in excess.</span></span> (0.75 Mark)
                     </th>
                     <th style="width:50%;">
-                      <span class="sci-tooltip">Inferences <span class="sci-tip-text">Inferences: Deduce present/absent ions (e.g. Cu²⁺, Fe²⁺, Fe³⁺, Al³⁺, Zn²⁺, Pb²⁺, SO₄²⁻, CO₃²⁻, Cl⁻, NO₃⁻).</span></span> (0.55 Mark)
+                      <span class="sci-tooltip">Inferences <span class="sci-tip-text">Inferences: Deduce present/absent ions (e.g. Cu²⁺, Fe²⁺, Fe³⁺, Al³⁺, Zn²⁺, Pb²⁺, SO₄²⁻, CO₃²⁻, Cl⁻, NO₃⁻).</span></span> (0.75 Mark)
                     </th>
                   </tr>
                 </thead>
@@ -1977,8 +2115,8 @@ if (typeof window !== 'undefined') {
                     </td>
                   </tr>
                 </tbody>
-              </table>
-              ${rubricRevealHtml}
+                </table>
+              </div>
             </div>
           </div>
         </div>`;
@@ -3122,6 +3260,7 @@ if (typeof window !== 'undefined') {
   };
 
   function openFlameModal() {
+    if (typeof currentWorkflowStep !== "undefined" && currentWorkflowStep < 2 && typeof updateWorkflowStepper === "function") updateWorkflowStepper(2);
     performFlameTestOnScreen();
   }
 
@@ -3748,6 +3887,7 @@ if (typeof window !== 'undefined') {
 
   /* KNEC Auto-Marking Evaluator Handler */
   window.evaluateKnecMarking = function() {
+    if (typeof updateWorkflowStepper === "function") updateWorkflowStepper(5);
     let totalScore = 0;
     const feedbackItems = [];
     const salt = SALTS[currentSaltKey] || {};
@@ -3975,6 +4115,7 @@ if (typeof window !== 'undefined') {
 
   /* Boot */
   if (typeof document !== 'undefined' && document.getElementById('testGrid')) {
+    updateKnecCandidateMeta();
     newSample();
     initAssignmentBanner();
   }

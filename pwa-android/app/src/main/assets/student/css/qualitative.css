@@ -345,19 +345,37 @@ html, body {
   flex-shrink: 0;
 }
 
-.nav-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-family: inherit;
-  font-size: 0.78rem;
-  font-weight: 700;
-  cursor: pointer;
-  border: 1px solid transparent;
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-  white-space: nowrap;
+.nav-btn,
+.nav-btn-settings,
+.nav-btn-safety,
+.nav-btn-exit {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  padding: 6px 12px !important;
+  border-radius: 8px !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  border: 1.5px solid var(--card-border) !important;
+  background: var(--card-bg-hover) !important;
+  color: var(--heading-color) !important;
+  transition: all 0.15s ease !important;
+  white-space: nowrap !important;
+  height: 36px !important;
+  box-sizing: border-box !important;
+  text-decoration: none !important;
+}
+
+.nav-btn:hover,
+.nav-btn-settings:hover,
+.nav-btn-safety:hover,
+.nav-btn-exit:hover {
+  background: var(--card-bg) !important;
+  border-color: var(--acad-oxford) !important;
+  color: var(--heading-color) !important;
 }
 
 .nav-btn-tips {
@@ -368,25 +386,6 @@ html, body {
 .nav-btn-tips:hover {
   background: var(--blue-accent);
   color: #FFFFFF;
-}
-
-.nav-btn-safety {
-  background: var(--red-bg);
-  border-color: var(--red-border);
-  color: var(--red-accent);
-}
-.nav-btn-safety:hover {
-  background: var(--red-accent);
-  color: #FFFFFF;
-}
-
-.nav-btn-settings {
-  background: var(--card-bg);
-  border-color: var(--card-border);
-  color: var(--text-main);
-}
-.nav-btn-settings:hover {
-  background: var(--card-bg-hover);
 }
 
 @media (max-width: 860px) {
@@ -3240,76 +3239,96 @@ html, body {
 
 
 /* ══════════════════════════════════════════════════════════
-   KNEC EXAMINATION SUB-BAR & CANDIDATE METADATA
+   KNEC EXAMINATION SUB-BAR & CANDIDATE METADATA (ORGANIC MATCH)
 ══════════════════════════════════════════════════════════ */
 .knec-exam-subbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 6px 18px;
-  background: var(--card-bg);
-  border-top: 1px solid var(--card-border);
-  max-width: 1440px;
-  margin: 0 auto;
-  font-size: 0.74rem;
-  flex-wrap: wrap;
-  gap: 8px;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 5px 18px !important;
+  background: var(--card-bg) !important;
+  border-top: 1px solid var(--card-border) !important;
+  max-width: 1440px !important;
+  margin: 0 auto !important;
+  font-size: 0.72rem !important;
+  flex-wrap: nowrap !important;
+  gap: 12px !important;
+  overflow-x: auto !important;
+  scrollbar-width: none !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+.knec-exam-subbar::-webkit-scrollbar {
+  display: none !important;
 }
 
 .knec-candidate-meta {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  flex-wrap: nowrap !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
 }
 
 .knec-tag-pill {
-  background: rgba(6, 182, 212, 0.15);
-  color: var(--cyan-accent);
-  font-weight: 800;
-  padding: 2px 7px;
-  border-radius: 4px;
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  border: 1px solid rgba(6, 182, 212, 0.3);
+  background: rgba(139, 92, 246, 0.15) !important;
+  color: var(--violet-accent, #A78BFA) !important;
+  font-weight: 800 !important;
+  padding: 2px 7px !important;
+  border-radius: 4px !important;
+  font-family: var(--font-mono) !important;
+  font-size: 0.68rem !important;
+  border: 1px solid rgba(139, 92, 246, 0.3) !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
 }
 
 .knec-q-badge {
-  background: var(--card-bg-hover);
-  color: var(--text-main);
-  font-weight: 800;
-  padding: 2px 7px;
-  border-radius: 4px;
-  border: 1px solid var(--card-border);
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
+  background: var(--card-bg-hover) !important;
+  color: var(--text-main) !important;
+  font-weight: 800 !important;
+  padding: 2px 7px !important;
+  border-radius: 4px !important;
+  border: 1px solid var(--card-border) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 0.68rem !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
 }
 
 .knec-cand-name, .knec-index-num {
-  font-weight: 700;
-  color: var(--text-muted);
-  font-family: var(--font-mono);
+  font-weight: 700 !important;
+  color: var(--text-muted) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 0.72rem !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
 }
 
 .knec-live-status-group {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--text-muted);
+  display: flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  font-family: var(--font-mono) !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  color: var(--text-muted) !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  margin-left: auto !important;
 }
 
 .knec-status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #10B981;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  background: #10B981 !important;
+  flex-shrink: 0 !important;
 }
 
 .knec-status-dot.pulse {
-  animation: pulse-dot 1.5s infinite;
+  animation: pulse-dot 1.5s infinite !important;
 }
 
 @keyframes pulse-dot {

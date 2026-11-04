@@ -289,7 +289,7 @@
       <span class="knec-tag-pill">KNEC PAPER 233/3</span>
       <span class="knec-q-badge">QUESTION 2 (15.0 MARKS)</span>
       <span class="knec-cand-name" id="knecCandidateName">CANDIDATE: PRACTICE MODE</span>
-      <span class="knec-index-num" id="knecCandidateIndex">INDEX: 00000000/001</span>
+      <span class="knec-index-num" id="knecCandidateIndex">INDEX: 00000001</span>
     </div>
     <div class="knec-live-status-group">
       <span class="knec-status-dot pulse" id="knecLiveStatusDot"></span>
@@ -297,6 +297,21 @@
     </div>
   </div>
 </header>
+<script>
+  (function() {
+    try {
+      var u = JSON.parse(localStorage.getItem('vlk_user') || sessionStorage.getItem('vlk_user') || '{}');
+      if (u && (u.name || u.full_name || u.username)) {
+        var nameEl = document.getElementById('knecCandidateName');
+        var idxEl = document.getElementById('knecCandidateIndex');
+        if (nameEl) nameEl.textContent = 'CANDIDATE: ' + (u.name || u.full_name || u.username).toUpperCase();
+        if (idxEl && (u.index_number || u.indexNumber || u.admission_number || u.id)) {
+          idxEl.textContent = 'INDEX: ' + String(u.index_number || u.indexNumber || u.admission_number || u.id).padStart(8, '0');
+        }
+      }
+    } catch(e) {}
+  })();
+</script>
 
 <!-- Collapsible Scratchpad Drawer (Hidden by default) -->
 <div id="scratchpadDrawer" style="display:none;background:var(--card-bg);border:1px solid var(--cyan-accent);border-radius:12px;padding:16px;margin:16px 20px 0;box-shadow:0 4px 20px rgba(0,0,0,0.4);">

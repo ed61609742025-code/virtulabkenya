@@ -279,6 +279,45 @@ html, body {
   flex-wrap: nowrap;
 }
 
+
+.nav-brand-text {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  line-height: 1.15 !important;
+}
+
+.nav-brand-academic .brand-title {
+  font-weight: 800 !important;
+  font-family: var(--font-academic, 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif) !important;
+  font-size: 1.10rem !important;
+  line-height: 1.1 !important;
+  color: var(--heading-color) !important;
+  letter-spacing: -0.01em !important;
+}
+
+.nav-brand-text .brand-subtagline {
+  display: block !important;
+  font-size: 0.78rem !important;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-style: normal !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em !important;
+  line-height: 1.2 !important;
+  color: var(--cyan-accent, #0284C7) !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  max-width: none !important;
+  opacity: 1 !important;
+}
+[data-theme="dark"] .nav-brand-text .brand-subtagline {
+  color: #38BDF8 !important;
+}
+[data-theme="green"] .nav-brand-text .brand-subtagline {
+  color: #34D399 !important;
+}
+
 .nav-brand-academic {
   display: flex;
   align-items: center;

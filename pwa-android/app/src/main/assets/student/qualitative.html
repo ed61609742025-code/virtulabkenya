@@ -61,11 +61,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <!-- Precision Vector Icon System -->
-<script src="/shared/vlk-icons.js?v=165"></script>
+<script src="/shared/vlk-icons.js?v=167"></script>
 <!-- Critical Workbench Stylesheets -->
 <link rel="stylesheet" href="../shared/style.css">
 <link rel="stylesheet" href="../shared/brilliant-theme.css">
-<link rel="stylesheet" href="css/qualitative.css?v=152">
+<link rel="stylesheet" href="css/qualitative.css?v=174">
 <!-- Non-Critical Dialog & Overlay Stylesheets -->
 <link rel="stylesheet" href="../shared/tutorial-engine.css" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="../shared/ai-tutor.css" media="print" onload="this.media='all'">
@@ -78,7 +78,7 @@
 </head>
 <body>
 
-<!-- Unified Sticky Academic Header -->
+<!-- Unified Sticky Academic Header (Matches Organic Bench) -->
 <header class="academic-top-header">
   <!-- Topbar Navigation Bar -->
   <nav class="top-navbar">
@@ -86,51 +86,167 @@
       <div class="vlk-brand-logo-wrap">
         <img src="/shared/virtulab-logo.svg" alt="VirtuLab Kenya Logo" class="vlk-brand-logo-img" width="34" height="34">
       </div>
-      <div style="display:flex; flex-direction:column;">
-        <span class="brand-title" style="font-weight:800; font-family:'Plus Jakarta Sans', sans-serif; font-size:1.05rem; line-height:1.1; color:var(--heading-color);">VirtuLab</span>
-        <span class="brand-subtagline" style="font-size:0.65rem; font-family:'JetBrains Mono', monospace; font-weight:700; text-transform:uppercase; color:var(--cyan-accent); letter-spacing:0.04em;">Qualitative Bench</span>
+      <div class="nav-brand-text">
+        <span class="brand-title">VirtuLab</span>
+        <span class="brand-subtagline">Qualitative Work Bench</span>
       </div>
     </a>
 
-    <!-- Desktop Workbench Switcher (Hidden on Mobile) -->
-    <div class="nav-modules-pill">
-      <a href="lab.html" class="theme-btn-chip"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg> Titration</a>
-      <a href="qualitative.html" class="theme-btn-chip active"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18h8M3 22h18M14 22a7 7 0 1 0 0-14h-1M9 14h2M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2M12 6V3a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3"/></svg> Qualitative</a>
-      <a href="organic.html" class="theme-btn-chip"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg> Organic</a>
-      <a href="solubility.html" class="theme-btn-chip"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="2" x2="12" y2="22"/><line x1="20" y1="7" x2="4" y2="17"/><line x1="4" y1="7" x2="20" y2="17"/><line x1="12" y1="6" x2="15" y2="3"/><line x1="12" y1="6" x2="9" y2="3"/><line x1="12" y1="18" x2="15" y2="21"/><line x1="12" y1="18" x2="9" y2="21"/></svg> Solubility</a>
-      <a href="energy.html" class="theme-btn-chip"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A3.5 3.5 0 0 0 12 18a3.5 3.5 0 0 0 3.5-3.5c0-2-1.5-3.5-2.5-5-.5-1-1-2.5-1-3.5 0 0-2.5 2.5-2.5 5 0 1-.5 1.5-1 2.5z"/><path d="M12 2c5 4.5 7 9 7 13a7 7 0 1 1-14 0c0-4 3-7.5 7-13z"/></svg> Energy</a>
-      <a href="rates.html" class="theme-btn-chip"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Rates</a>
-      <a href="mock_exams.html" class="theme-btn-chip"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg> Mock Hub</a>
+    <!-- Workbench Switcher Dropdown (Replaces horizontal nav-modules-pill) -->
+    <div class="workbench-dropdown-wrap">
+      <button type="button" class="workbench-dropdown-trigger" id="workbenchDropdownTrigger" onclick="toggleWorkbenchDropdown(event)" aria-haspopup="true" aria-expanded="false" title="Switch Practical Lab Bench">
+        <span class="workbench-trigger-content">
+          <svg class="vlk-icon workbench-trigger-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18h8M3 22h18M14 22a7 7 0 1 0 0-14h-1M9 14h2M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2M12 6V3a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3"/></svg>
+          <span>Qualitative Salt Analysis</span>
+        </span>
+        <span class="workbench-trigger-pill">Bench 2/3</span>
+        <svg class="vlk-icon workbench-trigger-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+
+      <div id="workbenchDropdownMenu" class="workbench-dropdown-menu" style="display:none;" role="menu" aria-label="Practical Lab Benches">
+        <div class="workbench-menu-header">
+          <span class="workbench-menu-title">KCSE PRACTICAL BENCHES</span>
+          <span class="workbench-menu-tag">Paper 233/3</span>
+        </div>
+
+        <div class="workbench-menu-grid">
+          <a href="lab.html" class="workbench-menu-item" role="menuitem">
+            <div class="workbench-item-icon">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg>
+            </div>
+            <div class="workbench-item-text">
+              <div class="workbench-item-header">
+                <span class="workbench-item-name">Titration Bench</span>
+                <span class="workbench-item-qbadge">Q1</span>
+              </div>
+              <span class="workbench-item-desc">Volumetric analysis &amp; neutralization</span>
+            </div>
+          </a>
+
+          <a href="qualitative.html" class="workbench-menu-item active" role="menuitem">
+            <div class="workbench-item-icon">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18h8M3 22h18M14 22a7 7 0 1 0 0-14h-1M9 14h2M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2M12 6V3a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3"/></svg>
+            </div>
+            <div class="workbench-item-text">
+              <div class="workbench-item-header">
+                <span class="workbench-item-name">Qualitative Salt Analysis</span>
+                <span class="workbench-item-current-tag">Active</span>
+              </div>
+              <span class="workbench-item-desc">Inorganic salt ions &amp; flame tests</span>
+            </div>
+          </a>
+
+          <a href="organic.html" class="workbench-menu-item" role="menuitem">
+            <div class="workbench-item-icon">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+            </div>
+            <div class="workbench-item-text">
+              <div class="workbench-item-header">
+                <span class="workbench-item-name">Organic Chemistry</span>
+                <span class="workbench-item-qbadge">Q3</span>
+              </div>
+              <span class="workbench-item-desc">Functional groups, unsaturation &amp; esters</span>
+            </div>
+          </a>
+
+          <a href="solubility.html" class="workbench-menu-item" role="menuitem">
+            <div class="workbench-item-icon">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="2" x2="12" y2="22"/><line x1="20" y1="7" x2="4" y2="17"/><line x1="4" y1="7" x2="20" y2="17"/><line x1="12" y1="6" x2="15" y2="3"/><line x1="12" y1="6" x2="9" y2="3"/><line x1="12" y1="18" x2="15" y2="21"/><line x1="12" y1="18" x2="9" y2="21"/></svg>
+            </div>
+            <div class="workbench-item-text">
+              <div class="workbench-item-header">
+                <span class="workbench-item-name">Solubility &amp; Curves</span>
+                <span class="workbench-item-qbadge">Q1/2</span>
+              </div>
+              <span class="workbench-item-desc">Crystal saturation &amp; solubility curves</span>
+            </div>
+          </a>
+
+          <a href="energy.html" class="workbench-menu-item" role="menuitem">
+            <div class="workbench-item-icon">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A3.5 3.5 0 0 0 12 18a3.5 3.5 0 0 0 3.5-3.5c0-2-1.5-3.5-2.5-5-.5-1-1-2.5-1-3.5 0 0-2.5 2.5-2.5 5 0 1-.5 1.5-1 2.5z"/><path d="M12 2c5 4.5 7 9 7 13a7 7 0 1 1-14 0c0-4 3-7.5 7-13z"/></svg>
+            </div>
+            <div class="workbench-item-text">
+              <div class="workbench-item-header">
+                <span class="workbench-item-name">Thermochemistry &amp; Energy</span>
+                <span class="workbench-item-qbadge">Q1/2</span>
+              </div>
+              <span class="workbench-item-desc">Enthalpy of displacement &amp; neutralization</span>
+            </div>
+          </a>
+
+          <a href="rates.html" class="workbench-menu-item" role="menuitem">
+            <div class="workbench-item-icon">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <div class="workbench-item-text">
+              <div class="workbench-item-header">
+                <span class="workbench-item-name">Reaction Rates &amp; Kinetics</span>
+                <span class="workbench-item-qbadge">Q1/2</span>
+              </div>
+              <span class="workbench-item-desc">Disappearing cross, gas syringe &amp; tangents</span>
+            </div>
+          </a>
+
+          <a href="mock_exams.html" class="workbench-menu-item" role="menuitem">
+            <div class="workbench-item-icon">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+            </div>
+            <div class="workbench-item-text">
+              <div class="workbench-item-header">
+                <span class="workbench-item-name">Mock Examination Hub</span>
+                <span class="workbench-item-qbadge">Exam</span>
+              </div>
+              <span class="workbench-item-desc">Full 3-question timed composite papers</span>
+            </div>
+          </a>
+        </div>
+      </div>
     </div>
 
     <div class="nav-actions">
-      <!-- Diagnostic Drills & KNEC Rubric Button -->
-      <button type="button" class="theme-btn-chip" onclick="window.KnecRemediation && window.KnecRemediation.openWorkbenchDrillsMenu('qualitative')" title="KNEC Inorganic Cation/Anion Micro-Drills & Qualitative Sprint" style="padding:4px 8px; font-size:0.75rem; border:1px solid rgba(16,185,129,0.35); background:rgba(16,185,129,0.1); color:#10B981; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:5px;">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> <span class="btn-text-full">Diagnostic Drills</span>
-      </button>
-
-      <!-- Guided Tutorial Button -->
-      <button type="button" class="btn-tactile btn-tactile-primary btn-tactile-sm" onclick="TutorialEngine.start('qualitative')" style="padding:4px 8px; font-size:0.75rem; white-space:nowrap; display:inline-flex; align-items:center; gap:5px;">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg> <span class="btn-text-full">Guided Tutorial</span><span class="btn-text-short">Tutorial</span>
-      </button>
+      <!-- Session Timer Badge -->
+      <div class="session-timer-badge" id="sessionTimerBadge" style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:6px;padding:6px 12px;min-height:38px;font-size:0.8rem;font-weight:700;color:var(--cyan-accent);display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;" title="Current Bench Practical Duration">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M10 2h4"/><path d="M19 5l-1.5 1.5"/></svg>
+        <span id="sessionTimerText" class="tabular-nums">00:00</span>
+      </div>
 
       <!-- Reagent Safety (SDS) Button -->
-      <button class="nav-btn nav-btn-safety" onclick="window.VLKSafety && window.VLKSafety.openSDSModal('NaOH')" title="View Chemical Safety & SDS Hazards" style="padding:4px 8px; font-size:0.75rem; display:inline-flex; align-items:center; gap:5px;">
+      <button class="nav-btn nav-btn-safety" onclick="window.VLKSafety && window.VLKSafety.openSDSModal('NaOH')" title="View Chemical Safety & SDS Hazards" style="display:inline-flex; align-items:center; gap:4px;">
         <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> <span class="btn-text-full">SDS Hazards</span><span class="btn-text-short">SDS</span>
       </button>
 
-      <!-- Compact Settings Dropdown -->
-      <div style="position:relative;">
-        <button type="button" class="nav-btn nav-btn-settings" onclick="toggleBenchSettings(event)" title="Workbench Settings" style="padding:4px 8px; font-size:0.75rem; display:inline-flex; align-items:center; gap:5px;">
+      <!-- Settings Dropdown Button -->
+      <div style="position:relative; display:inline-flex; align-items:center;">
+        <button type="button" class="nav-btn nav-btn-settings" onclick="toggleBenchSettings(event)" title="Workbench Settings & Tools" style="display:inline-flex; align-items:center; gap:4px;">
           <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg> <span class="btn-text-full">Settings</span>
         </button>
         
-        <div id="benchSettingsDropdown" style="display:none; position:absolute; right:0; top:36px; width:240px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; box-shadow:var(--shadow-lg); z-index:10000; padding:12px; flex-direction:column; gap:10px; text-align:left;">
-          <!-- Sound Toggle Row -->
+        <div id="benchSettingsDropdown" style="display:none; position:absolute; right:0; top:42px; width:250px; background:var(--card-bg); border:1px solid var(--card-border); border-radius:12px; box-shadow:var(--shadow-lg); z-index:100000; padding:12px; flex-direction:column; gap:10px; text-align:left;">
+          <!-- Sound Toggle -->
           <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
             <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Sound Effects</span>
-            <button type="button" id="soundToggleBtn" onclick="toggleSound()" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border); display:inline-flex; align-items:center; gap:5px;">
-              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg> Sound ON
+            <button type="button" id="soundToggleBtn" onclick="toggleSound()" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border); display:inline-flex; align-items:center; gap:4px;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+              <span>Sound ON</span>
+            </button>
+          </div>
+
+          <!-- Scratchpad Toggle -->
+          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Scratchpad</span>
+            <button type="button" onclick="toggleScratchpad()" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border); display:inline-flex; align-items:center; gap:4px;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+              <span>Rough Work</span>
+            </button>
+          </div>
+
+          <!-- Examiner Tips Option -->
+          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
+            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">KNEC Tips</span>
+            <button type="button" onclick="openExaminerTipsModal()" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border); color:var(--violet-accent); display:inline-flex; align-items:center; gap:4px;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5.76.76 1.23 1.52 1.41 2.5"/></svg>
+              <span>View Tips</span>
             </button>
           </div>
 
@@ -144,7 +260,7 @@
           </div>
 
           <!-- Theme Selector Row -->
-          <div style="display:flex; flex-direction:column; gap:6px;">
+          <div style="display:flex; flex-direction:column; gap:6px; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
             <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Appearance Theme</span>
             <div class="theme-toggle-group" style="width:100%;">
               <button class="theme-btn-chip active" style="flex:1;" data-theme="light" onclick="setTheme('light')">Light</button>
@@ -152,47 +268,97 @@
               <button class="theme-btn-chip" style="flex:1;" data-theme="green" onclick="setTheme('green')">Lab</button>
             </div>
           </div>
+
+          <button onclick="window.print()" style="background:var(--card-bg-hover);border:1px solid var(--card-border);color:var(--text-main);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.75rem;font-weight:700;text-align:left;display:inline-flex;align-items:center;gap:6px;">
+            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Print Practical Booklet
+          </button>
         </div>
       </div>
+
+      <!-- Exit Button -->
+      <a href="/student/home.html" class="nav-btn nav-btn-exit" title="Exit to Workstation" style="display:inline-flex; align-items:center; gap:4px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> <span class="btn-text-full">Exit</span>
+      </a>
     </div>
   </nav>
+
+  <!-- Official KNEC Examination Sub-Bar -->
+  <div class="knec-exam-subbar" aria-label="Examination Details">
+    <div class="knec-candidate-meta">
+      <span class="knec-tag-pill">KNEC PAPER 233/3</span>
+      <span class="knec-q-badge">QUESTION 2 (15.0 MARKS)</span>
+      <span class="knec-cand-name" id="knecCandidateName">CANDIDATE: PRACTICE MODE</span>
+      <span class="knec-index-num" id="knecCandidateIndex">INDEX: 00000000/001</span>
+    </div>
+    <div class="knec-live-status-group">
+      <span class="knec-status-dot pulse" id="knecLiveStatusDot"></span>
+      <span class="knec-status-label" id="knecLiveStatusText">INORGANIC BENCH READY • SAMPLE ACTIVE</span>
+    </div>
+  </div>
 </header>
+
+<!-- Collapsible Scratchpad Drawer (Hidden by default) -->
+<div id="scratchpadDrawer" style="display:none;background:var(--card-bg);border:1px solid var(--cyan-accent);border-radius:12px;padding:16px;margin:16px 20px 0;box-shadow:0 4px 20px rgba(0,0,0,0.4);">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+    <div style="font-size:0.88rem;font-weight:700;color:var(--heading-color);display:inline-flex;align-items:center;gap:6px;">
+      <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+      Rough Work Scratchpad (KNEC Candidate Working)
+    </div>
+    <button type="button" class="btn-pill-action" style="padding:2px 8px;font-size:0.7rem;" onclick="toggleScratchpad()">Close</button>
+  </div>
+  <textarea id="scratchpadText" placeholder="Draft your sensory observations, flame test notes, or precipitate deductions here..." style="width:100%;height:90px;background:var(--card-bg-hover);border:1px solid var(--card-border);border-radius:8px;padding:10px;color:var(--text-main);font-family:'JetBrains Mono',monospace;font-size:0.82rem;outline:none;resize:vertical;"></textarea>
+</div>
 
 <!-- ══════════════════════════════════════
      MAIN PAGE CONTENT
 ══════════════════════════════════════ -->
 <div class="page-container">
-
-  <!-- Interactive Step-by-Step Tutorial Container -->
-  <div id="tutorialDrawer" style="display:none;"></div>
-
-  <!-- Page Header -->
-  <div class="page-header">
-    <div>
-      <h1 class="page-header-title">
-        <span>Inorganic Salt Analysis (KCSE Paper 3, Question 2)</span>
-        <span id="timerDisplay" class="timer-chip tabular-nums" style="display:inline-flex; align-items:center; gap:5px;"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M10 2h4"/><path d="M19 5l-1.5 1.5"/></svg> 45:00</span>
-      </h1>
-      <p class="page-header-subtitle">Carry out systematic reagent tests on the unknown inorganic salt sample. Record precise observations using KNEC examination terminology and make deductions for each step.</p>
+  <!-- Interactive Practical Workflow Stepper & Breadcrumbs -->
+  <nav class="workflow-stepper-card" id="qualitativeWorkflowStepper" aria-label="Practical Examination Workflow">
+    <div class="workflow-stepper-top">
+      <div class="workflow-title-wrap">
+        <span class="workflow-title-label" style="display:flex;align-items:center;gap:6px;">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg> PRACTICAL WORKFLOW
+        </span>
+        <span id="qualStepBadge" class="workflow-step-badge">Step 1 of 6: Specimen Solid S &amp; Appearance</span>
+      </div>
+      <div class="workflow-jump-hint" id="qualProgressHint" style="display:flex;align-items:center;gap:6px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>Progress auto-advances on practical actions</span>
+      </div>
     </div>
-    <div class="header-actions">
-      <button id="examTimerBtn" class="btn-secondary" onclick="toggleExamTimer()" style="display:inline-flex; align-items:center; gap:6px;">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M10 2h4"/><path d="M19 5l-1.5 1.5"/></svg> Start 45-Min Timer
+    
+    <div class="workflow-stepper-track" role="list">
+      <button type="button" class="workflow-step-item active" id="qualWfStep0" onclick="jumpToStep(0)" role="listitem" aria-current="step" title="Step 1: Inspect Solid Specimen S &amp; Physical Appearance">
+        <span class="step-num">1</span>
+        <span class="step-info"><span class="step-name">Solid S</span><span class="step-sub">Appearance</span></span>
       </button>
-      <button class="btn-secondary" onclick="openExaminerTipsModal()" style="border-color:var(--amber-accent); color:var(--amber-accent); display:inline-flex; align-items:center; gap:6px;">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg> Examiner Tips
+      <button type="button" class="workflow-step-item upcoming" id="qualWfStep1" onclick="jumpToStep(1)" role="listitem" title="Step 2: Prepare Stock Solution in Boiling Tube">
+        <span class="step-num">2</span>
+        <span class="step-info"><span class="step-name">Solution</span><span class="step-sub">Portioning</span></span>
       </button>
-      <button class="btn-secondary btn-autoscore" onclick="evaluateKnecMarking()" style="border-color:var(--green-accent); color:var(--green-accent); font-weight:700; display:inline-flex; align-items:center; gap:6px;" title="Auto-score your observations and deductions against official KNEC marking scheme">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Auto-Score KCSE Marks
+      <button type="button" class="workflow-step-item upcoming" id="qualWfStep2" onclick="jumpToStep(2)" role="listitem" title="Step 3: Non-Luminous Flame Test with Cobalt Glass">
+        <span class="step-num">3</span>
+        <span class="step-info"><span class="step-name">Flame Test</span><span class="step-sub">Burner &amp; Glass</span></span>
       </button>
-      <button class="btn-secondary" onclick="openFlowchartModal()" style="display:inline-flex; align-items:center; gap:6px;">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg> Systematic Flowchart
+      <button type="button" class="workflow-step-item upcoming" id="qualWfStep3" onclick="jumpToStep(3)" role="listitem" title="Step 4: Cation Precipitation Tests (NaOH &amp; NH3)">
+        <span class="step-num">4</span>
+        <span class="step-info"><span class="step-name">Cations</span><span class="step-sub">NaOH &amp; NH₃</span></span>
       </button>
-      <button class="btn-primary-solid" id="newSampleBtn" onclick="newSample()" style="display:inline-flex; align-items:center; gap:6px;">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> New Sample
+      <button type="button" class="workflow-step-item upcoming" id="qualWfStep4" onclick="jumpToStep(4)" role="listitem" title="Step 5: Anion Confirmatory Tests (Ba²⁺, Ag⁺, Acid)">
+        <span class="step-num">5</span>
+        <span class="step-info"><span class="step-name">Anions</span><span class="step-sub">Ba²⁺, Ag⁺, Acid</span></span>
+      </button>
+      <button type="button" class="workflow-step-item upcoming" id="qualWfStep5" onclick="jumpToStep(5)" role="listitem" title="Step 6: Systematic Salt Deduction &amp; KNEC Scoring">
+        <span class="step-num">6</span>
+        <span class="step-info"><span class="step-name">Deduction</span><span class="step-sub">Grade 15M</span></span>
       </button>
     </div>
-  </div>
+    <div class="workflow-stepper-progress" aria-hidden="true">
+      <div class="workflow-progress-fill" id="qualProgressFill" style="width:16.6%;"></div>
+    </div>
+  </nav>
 
   <!-- Prescribed Continuous Assessment Banner (Shown when assignmentId is present) -->
   <div id="assignmentHeaderBanner" style="display:none; background:rgba(6,182,212,0.15); border:1.5px solid var(--cyan-accent); border-radius:12px; padding:12px 18px; margin-bottom:16px; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
@@ -206,89 +372,45 @@
     <span style="font-size:0.76rem; font-family:var(--font-mono); font-weight:700; background:var(--card-bg); padding:4px 10px; border-radius:6px; border:1px solid var(--card-border);" id="assignBannerDue">Active Practical Assignment</span>
   </div>
 
-  <!-- KNEC Question 2 Specimen Solid S Station Card -->
-  <section class="specimen-station-card">
-    <div class="specimen-station-main">
-      <!-- Interactive Watch Glass Viewport -->
-      <div class="watchglass-viewport" title="Watch glass holding solid sample S">
-        <svg id="watchglassSvg" width="130" height="90" viewBox="0 0 130 90" class="watchglass-dish-svg">
-          <defs>
-            <radialGradient id="dishGlassGrad" cx="50%" cy="30%" r="70%">
-              <stop offset="0%" stop-color="rgba(255,255,255,0.4)" />
-              <stop offset="45%" stop-color="rgba(255,255,255,0.08)" />
-              <stop offset="90%" stop-color="rgba(148,163,184,0.3)" />
-              <stop offset="100%" stop-color="rgba(56,189,248,0.35)" />
-            </radialGradient>
-            <linearGradient id="dishRimGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="rgba(255,255,255,0.6)" />
-              <stop offset="50%" stop-color="rgba(255,255,255,0.15)" />
-              <stop offset="100%" stop-color="rgba(255,255,255,0.5)" />
-            </linearGradient>
-            <filter id="crystalShadow" x="-20%" y="-20%" width="140%" height="140%">
-              <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="rgba(0,0,0,0.45)"/>
-            </filter>
-          </defs>
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-header-text">
+      <h1 class="page-header-title">
+        <span style="display:inline-flex;align-items:center;gap:8px;">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:26px;height:26px;color:var(--cyan-accent);"><path d="M6 18h8M3 22h18M14 22a7 7 0 1 0 0-14h-1M9 14h2M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2M12 6V3a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3"/></svg>
+          Inorganic Salt Qualitative Analysis (Question 2)
+        </span>
+      </h1>
+      <p class="page-header-subtitle">Carry out systematic reagent and flame tests on the unknown inorganic salt sample. Record precise observations using KCSE terminology and deduce the cation and anion.</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-secondary" onclick="openFlowchartModal()" style="display:inline-flex;align-items:center;gap:6px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+        <span class="btn-text-full">Systematic Flowchart</span><span class="btn-text-short">Flowchart</span>
+      </button>
+      <button class="btn-secondary btn-autoscore" onclick="evaluateKnecMarking()" style="display:inline-flex;align-items:center;gap:6px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        <span class="btn-text-full">Auto-Score KCSE Marks</span><span class="btn-text-short">Score</span>
+      </button>
+      <button class="btn-primary-solid" id="newSampleBtn" onclick="newSample()" style="display:inline-flex;align-items:center;gap:6px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        <span class="btn-text-full">New Sample</span><span class="btn-text-short">Sample</span>
+      </button>
+    </div>
+  </div>
 
-          <!-- Watch Glass Shadow -->
-          <ellipse cx="65" cy="58" rx="56" ry="24" fill="rgba(15,23,42,0.14)" filter="blur(4px)" />
-
-          <!-- Outer Concave Dish -->
-          <path d="M 12,42 C 12,74 118,74 118,42" fill="url(#dishGlassGrad)" stroke="url(#dishRimGrad)" stroke-width="1.8"/>
-          <!-- Inner Dish Oval -->
-          <ellipse cx="65" cy="42" rx="53" ry="18" fill="rgba(255,255,255,0.05)" stroke="url(#dishRimGrad)" stroke-width="1.2"/>
-          
-          <!-- Dynamic Salt Crystals Group rendered by JS -->
-          <g id="specimenCrystalsGroup" filter="url(#crystalShadow)">
-            <!-- Rendered by renderSpecimenWatchglass() -->
-          </g>
-
-          <!-- Dish Reflection Sheen -->
-          <path d="M 24,42 C 34,54 96,54 106,42" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.2" stroke-linecap="round"/>
-        </svg>
-        <span class="watchglass-label">Watch Glass: Solid S</span>
+  <!-- Task Card -->
+  <div class="task-card">
+    <div class="task-row">
+      <div class="task-icon-box" style="display:inline-flex;align-items:center;justify-content:center;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:24px;height:24px;"><path d="M6 18h8M3 22h18M14 22a7 7 0 1 0 0-14h-1M9 14h2M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2M12 6V3a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3"/></svg>
       </div>
-
-      <!-- Specimen Details & Preliminary Observational Metadata -->
-      <div class="specimen-info-col">
-        <div class="specimen-header-line">
-          <span class="sample-badge specimen-badge" id="sampleIdBadge">Specimen Solid: S-01</span>
-          <span class="knec-q-tag">KNEC 233/3 · Q2(a)</span>
-        </div>
-        <h2 class="specimen-title" id="specimenTitle">Unknown Inorganic Salt Sample S</h2>
-        <p class="specimen-instruction">
-          Observe the physical appearance of solid S on the watch glass. Prepare a stock solution by dissolving the solid in distilled water, then carry out systematic ion-precipitation tests below.
-        </p>
-
-        <!-- Preliminary Physical Properties Grid -->
-        <div class="specimen-props-row">
-          <div class="specimen-prop-chip">
-            <span class="prop-lbl">Appearance (Part a):</span>
-            <span class="prop-val" id="specimenAppearancePill">White crystalline solid</span>
-          </div>
-          <div class="specimen-prop-chip" style="display:none !important;">
-            <span class="prop-lbl">Water Solubility:</span>
-            <span class="prop-val" id="specimenSolubilityPill">Readily soluble (clear stock solution)</span>
-          </div>
-        </div>
+      <div class="task-text">
+        <h2>Your Unknown Inorganic Salt Sample</h2>
+        <p>Inspect solid S, dissolve in approx. 10 cm³ distilled water to prepare stock solution, and perform the diagnostic precipitation &amp; flame tests below. Deduce the cation and anion at the bottom.</p>
       </div>
     </div>
-
-    <!-- Stock Solution Quick Preparation Callout -->
-    <div class="specimen-prep-callout">
-      <div class="prep-callout-icon"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width:24px; height:24px;"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg></div>
-      <div class="prep-callout-text">
-        <strong>Stock Solution Preparation:</strong> Dissolve the provided solid S in approx. 10 cm³ of distilled water in a boiling tube. Divide the solution into six portions for subsequent tests (b) to (g).
-      </div>
-    </div>
-  </section>
-
-  <!-- Progress Strip -->
-  <div class="progress-strip">
-    <span class="progress-label">Tests Performed</span>
-    <div class="progress-track">
-      <div class="progress-fill" id="progressFill"></div>
-    </div>
-    <span class="progress-count tabular-nums" id="progressCount">0 / 6 Tests</span>
+    <span class="sample-badge" id="sampleIdBadge">Sample: Solid S (White crystalline solid)</span>
   </div>
 
   <!-- Test Grid -->
@@ -334,10 +456,10 @@
           <option value="NO3-">NO₃⁻ (Nitrate)</option>
         </select>
       </div>
-      <div class="id-group" style="display:flex; gap:8px; align-items:flex-end;">
-        <button id="submitIdBtn" class="btn-submit-id" onclick="submitIdentification()" data-i18n="submit_id_btn">Submit Identification</button>
-        <button type="button" class="btn-secondary" onclick="evaluateKnecMarking()" style="border-color:var(--green-accent); color:var(--green-accent); font-weight:700; padding:10px 16px; border-radius:8px; white-space:nowrap; display:inline-flex; align-items:center; gap:6px;" title="Auto-score observations and deductions">
-          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Auto-Score Marks
+      <div class="id-group">
+        <button id="submitIdBtn" class="btn-submit-id" onclick="submitIdentification()" style="display:inline-flex;align-items:center;justify-content:center;gap:6px;">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          Submit Identification
         </button>
       </div>
     </div>
@@ -551,20 +673,47 @@
 <script defer src="../shared/i18n.js"></script>
 <script defer src="../shared/brilliant-ui.js"></script>
 <script defer src="../shared/tutorial-engine.js"></script>
-<script defer src="/shared/qualitative-bench-core.js?v=155"></script>
-<script defer src="/shared/knec-pedagogy.js?v=155"></script>
-<script defer src="/shared/knec-remediation-drills.js?v=163"></script>
-<script defer src="js/qualitative-engine.js?v=163"></script>
+<script defer src="/shared/qualitative-bench-core.js?v=167"></script>
+<script defer src="/shared/knec-pedagogy.js?v=167"></script>
+<script defer src="/shared/knec-remediation-drills.js?v=167"></script>
+<script defer src="js/qualitative-engine.js?v=167"></script>
 <script defer src="../shared/ai-tutor.js"></script>
 <script defer src="../shared/pwa-installer.js"></script>
 <script defer src="../shared/page-transitions.js"></script>
 <script>
-  if (window.TutorialEngine) {
-    window.TutorialEngine.init({
-      discipline: 'qualitative',
-      containerId: 'tutorialDrawer'
-    });
+
+  
+  function toggleWorkbenchDropdown(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('workbenchDropdownMenu');
+    const btn = document.getElementById('workbenchDropdownTrigger');
+    if (!menu) return;
+    const isHidden = menu.style.display === 'none' || !menu.style.display;
+    menu.style.display = isHidden ? 'flex' : 'none';
+    if (btn) btn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
   }
+
+  document.addEventListener('click', function(e) {
+    const menu = document.getElementById('workbenchDropdownMenu');
+    const btn = document.getElementById('workbenchDropdownTrigger');
+    if (menu && menu.style.display === 'flex') {
+      if (!menu.contains(e.target) && (!btn || !btn.contains(e.target))) {
+        menu.style.display = 'none';
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+      }
+    }
+  });
+
+  function toggleScratchpad() {
+    const drawer = document.getElementById('scratchpadDrawer');
+    if (!drawer) return;
+    drawer.style.display = drawer.style.display === 'none' || !drawer.style.display ? 'block' : 'none';
+    if (drawer.style.display === 'block') {
+      const text = document.getElementById('scratchpadText');
+      if (text) text.focus();
+    }
+  }
+  window.toggleScratchpad = toggleScratchpad;
 
   function toggleBenchSettings(e) {
     if (e) e.stopPropagation();
@@ -581,6 +730,43 @@
       }
     }
   });
+</script>
+<!-- Mobile Thumb-Zone Quick Action Dock (< 768px) -->
+<div id="mobileQualDock" class="mobile-qual-dock" role="toolbar" aria-label="Quick Workbench Controls">
+  <div class="dock-telemetry">
+    <div class="dock-badge-pulse" id="dockQualProgressBadge">
+      <span class="dock-dot"></span>
+      <span id="dockProgressText" class="tabular-nums">0/6 Done</span>
+    </div>
+  </div>
+  <div class="dock-actions">
+    <button type="button" class="dock-btn dock-btn-autoscore" onclick="evaluateKnecMarking()" title="Auto-score KCSE Marks" aria-label="Auto-score marks">
+      <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <span>Score</span>
+    </button>
+    <button type="button" class="dock-btn dock-btn-sample" onclick="newSample()" title="Get new salt sample" aria-label="New Salt Sample">
+      <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      <span>Sample</span>
+    </button>
+    <button type="button" class="dock-btn dock-btn-identify" onclick="scrollToIdentification()" title="Scroll to Final Salt Identification" aria-label="Identify Salt">
+      <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4"/><path d="M12 16V8"/></svg>
+      <span>Identify</span>
+    </button>
+  </div>
+</div>
+
+<script>
+  window.scrollToIdentification = function() {
+    if (window.triggerQualHaptic) window.triggerQualHaptic(15);
+    const idPanel = document.querySelector('.id-panel');
+    if (idPanel) {
+      idPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const select = document.getElementById('cationSelect');
+      if (select) {
+        setTimeout(function() { select.focus(); }, 350);
+      }
+    }
+  };
 </script>
 </body>
 </html>

@@ -548,6 +548,17 @@
     }
   });
 
+  function toggleScratchpad() {
+    const drawer = document.getElementById('scratchpadDrawer');
+    if (!drawer) return;
+    drawer.style.display = drawer.style.display === 'none' || !drawer.style.display ? 'block' : 'none';
+    if (drawer.style.display === 'block') {
+      const text = document.getElementById('scratchpadText');
+      if (text) text.focus();
+    }
+  }
+  window.toggleScratchpad = toggleScratchpad;
+
   function toggleBenchSettings(e) {
     if (e) e.stopPropagation();
     const dropdown = document.getElementById('benchSettingsDropdown');

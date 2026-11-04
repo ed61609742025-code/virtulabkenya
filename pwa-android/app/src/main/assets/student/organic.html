@@ -28,11 +28,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="/shared/vlk-icons.js?v=164"></script>
+<script src="/shared/vlk-icons.js?v=167"></script>
 <link rel="stylesheet" href="../shared/style.css">
 <link rel="stylesheet" href="../shared/brilliant-theme.css">
 <link rel="stylesheet" href="../shared/tutorial-engine.css">
-<link rel="stylesheet" href="css/organic.css?v=152">
+<link rel="stylesheet" href="css/organic.css?v=174">
 <link rel="stylesheet" href="../shared/ai-tutor.css">
 <link rel="stylesheet" href="../shared/pwa-installer.css">
 </head>
@@ -52,47 +52,128 @@
       </div>
     </a>
 
-    <!-- Desktop Workbench Switcher (Hidden on Mobile) -->
-    <div class="nav-modules-pill">
-      <a href="lab.html" class="theme-btn-chip"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg> Titration</a>
-      <a href="qualitative.html" class="theme-btn-chip"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18h8M3 22h18M14 22a7 7 0 1 0 0-14h-1M9 14h2M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2M12 6V3a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3"/></svg> Qualitative</a>
-      <a href="organic.html" class="theme-btn-chip active"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg> Organic</a>
-      <a href="solubility.html" class="theme-btn-chip"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="2" x2="12" y2="22"/><line x1="20" y1="7" x2="4" y2="17"/><line x1="4" y1="7" x2="20" y2="17"/><line x1="12" y1="6" x2="15" y2="3"/><line x1="12" y1="6" x2="9" y2="3"/><line x1="12" y1="18" x2="15" y2="21"/><line x1="12" y1="18" x2="9" y2="21"/></svg> Solubility</a>
-      <a href="energy.html" class="theme-btn-chip"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A3.5 3.5 0 0 0 12 18a3.5 3.5 0 0 0 3.5-3.5c0-2-1.5-3.5-2.5-5-.5-1-1-2.5-1-3.5 0 0-2.5 2.5-2.5 5 0 1-.5 1.5-1 2.5z"/><path d="M12 2c5 4.5 7 9 7 13a7 7 0 1 1-14 0c0-4 3-7.5 7-13z"/></svg> Energy</a>
-      <a href="rates.html" class="theme-btn-chip"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Rates</a>
-      <a href="mock_exams.html" class="theme-btn-chip"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg> Mock Hub</a>
+        <!-- Workbench Switcher Dropdown (Replaces horizontal nav-modules-pill) -->
+    <div class="workbench-dropdown-wrap">
+      <button type="button" class="workbench-dropdown-trigger" id="workbenchDropdownTrigger" onclick="toggleWorkbenchDropdown(event)" aria-haspopup="true" aria-expanded="false" title="Switch Practical Lab Bench">
+        <span class="workbench-trigger-content">
+          <svg class="vlk-icon workbench-trigger-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+          <span>Organic Chemistry</span>
+        </span>
+        <span class="workbench-trigger-pill">Bench 3/3</span>
+        <svg class="vlk-icon workbench-trigger-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+
+      <div id="workbenchDropdownMenu" class="workbench-dropdown-menu" style="display:none;" role="menu" aria-label="Practical Lab Benches">
+        <div class="workbench-menu-header">
+          <span class="workbench-menu-title">KCSE PRACTICAL BENCHES</span>
+          <span class="workbench-menu-tag">Paper 233/3</span>
+        </div>
+
+        <div class="workbench-menu-grid">
+          <a href="lab.html" class="workbench-menu-item" role="menuitem">
+            <div class="workbench-item-icon">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31L4.75 18.1A2 2 0 0 0 6.47 21h11.06a2 2 0 0 0 1.72-2.9L14 9.31V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg>
+            </div>
+            <div class="workbench-item-text">
+              <div class="workbench-item-header">
+                <span class="workbench-item-name">Titration Bench</span>
+                <span class="workbench-item-qbadge">Q1</span>
+              </div>
+              <span class="workbench-item-desc">Volumetric analysis &amp; neutralization</span>
+            </div>
+          </a>
+
+          <a href="qualitative.html" class="workbench-menu-item" role="menuitem">
+            <div class="workbench-item-icon">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18h8M3 22h18M14 22a7 7 0 1 0 0-14h-1M9 14h2M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2M12 6V3a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3"/></svg>
+            </div>
+            <div class="workbench-item-text">
+              <div class="workbench-item-header">
+                <span class="workbench-item-name">Qualitative Salt Analysis</span>
+                <span class="workbench-item-qbadge">Q2</span>
+              </div>
+              <span class="workbench-item-desc">Inorganic salt ions &amp; flame tests</span>
+            </div>
+          </a>
+
+          <a href="organic.html" class="workbench-menu-item active" role="menuitem">
+            <div class="workbench-item-icon">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+            </div>
+            <div class="workbench-item-text">
+              <div class="workbench-item-header">
+                <span class="workbench-item-name">Organic Chemistry</span>
+                <span class="workbench-item-current-tag">Active</span>
+              </div>
+              <span class="workbench-item-desc">Functional groups, unsaturation &amp; esters</span>
+            </div>
+          </a>
+
+          <a href="solubility.html" class="workbench-menu-item" role="menuitem">
+            <div class="workbench-item-icon">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="2" x2="12" y2="22"/><line x1="20" y1="7" x2="4" y2="17"/><line x1="4" y1="7" x2="20" y2="17"/><line x1="12" y1="6" x2="15" y2="3"/><line x1="12" y1="6" x2="9" y2="3"/><line x1="12" y1="18" x2="15" y2="21"/><line x1="12" y1="18" x2="9" y2="21"/></svg>
+            </div>
+            <div class="workbench-item-text">
+              <div class="workbench-item-header">
+                <span class="workbench-item-name">Solubility &amp; Curves</span>
+                <span class="workbench-item-qbadge">Q1/2</span>
+              </div>
+              <span class="workbench-item-desc">Crystal saturation &amp; solubility curves</span>
+            </div>
+          </a>
+
+          <a href="energy.html" class="workbench-menu-item" role="menuitem">
+            <div class="workbench-item-icon">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A3.5 3.5 0 0 0 12 18a3.5 3.5 0 0 0 3.5-3.5c0-2-1.5-3.5-2.5-5-.5-1-1-2.5-1-3.5 0 0-2.5 2.5-2.5 5 0 1-.5 1.5-1 2.5z"/><path d="M12 2c5 4.5 7 9 7 13a7 7 0 1 1-14 0c0-4 3-7.5 7-13z"/></svg>
+            </div>
+            <div class="workbench-item-text">
+              <div class="workbench-item-header">
+                <span class="workbench-item-name">Thermochemistry &amp; Energy</span>
+                <span class="workbench-item-qbadge">Q1/2</span>
+              </div>
+              <span class="workbench-item-desc">Enthalpy of displacement &amp; neutralization</span>
+            </div>
+          </a>
+
+          <a href="rates.html" class="workbench-menu-item" role="menuitem">
+            <div class="workbench-item-icon">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <div class="workbench-item-text">
+              <div class="workbench-item-header">
+                <span class="workbench-item-name">Reaction Rates &amp; Kinetics</span>
+                <span class="workbench-item-qbadge">Q1/2</span>
+              </div>
+              <span class="workbench-item-desc">Disappearing cross, gas syringe &amp; tangents</span>
+            </div>
+          </a>
+
+          <a href="mock_exams.html" class="workbench-menu-item" role="menuitem">
+            <div class="workbench-item-icon">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"/><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+            </div>
+            <div class="workbench-item-text">
+              <div class="workbench-item-header">
+                <span class="workbench-item-name">Mock Examination Hub</span>
+                <span class="workbench-item-qbadge">Exam</span>
+              </div>
+              <span class="workbench-item-desc">Full 3-question timed composite papers</span>
+            </div>
+          </a>
+        </div>
+      </div>
     </div>
 
-    <div class="nav-actions">
-      <!-- Diagnostic Drills & KNEC Rubric Button -->
-      <button type="button" class="theme-btn-chip" onclick="window.KnecRemediation && window.KnecRemediation.openWorkbenchDrillsMenu('organic')" title="KNEC Organic Functional Group Micro-Drills & Organic Sprint" style="padding:4px 8px; font-size:0.75rem; border:1px solid rgba(139,92,246,0.35); background:rgba(139,92,246,0.1); color:#A78BFA; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:4px;">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> <span class="btn-text-full">Diagnostic Drills</span>
-      </button>
-
-      <!-- Tutorial Button (Enlarged for readability on phones & desktop) -->
-      <button type="button" class="btn-tactile btn-tactile-primary nav-btn-tutorial" onclick="TutorialEngine.start('organic')" title="Start Step-by-Step Tutorial" style="display:inline-flex; align-items:center; gap:4px;">
-        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg> <span class="tutorial-btn-text">Tutorial</span>
-      </button>
-
-      <!-- Theme Switcher: 3-chip switcher for desktop (Matches Home Page) -->
-      <div class="theme-toggle-group theme-multi-btn-group" aria-label="Visual Theme Switcher">
-        <button class="theme-btn-chip active" data-theme="light" data-theme-val="light" onclick="setTheme('light')" data-tooltip="Light mode" data-tooltip-pos="bottom" aria-label="Light Theme">
-          <svg class="theme-icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-          <span class="theme-label">Light</span>
-        </button>
-        <button class="theme-btn-chip" data-theme="dark" data-theme-val="dark" onclick="setTheme('dark')" data-tooltip="Dark mode" data-tooltip-pos="bottom" aria-label="Dark Theme">
-          <svg class="theme-icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-          <span class="theme-label">Dark</span>
-        </button>
-        <button class="theme-btn-chip" data-theme="green" data-theme-val="green" onclick="setTheme('green')" data-tooltip="Lab mode" data-tooltip-pos="bottom" aria-label="Lab Theme">
-          <svg class="theme-icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31M14 2v7.31M8.5 2h7M14 9.3a6.5 6.5 0 1 1-4 0"></path><line x1="6" y1="16" x2="18" y2="16"></line></svg>
-          <span class="theme-label">Lab</span>
-        </button>
+        <div class="nav-actions">
+      <!-- Session Timer Badge -->
+      <div class="session-timer-badge" id="sessionTimerBadge" style="background:var(--card-bg);border:1px solid var(--card-border);border-radius:6px;padding:6px 12px;min-height:38px;font-size:0.8rem;font-weight:700;color:var(--cyan-accent);display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;" title="Current Bench Practical Duration">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5"/><path d="M10 2h4"/><path d="M19 5l-1.5 1.5"/></svg>
+        <span id="sessionTimerText" class="tabular-nums">00:00</span>
       </div>
 
-      <!-- Single Theme Toggle Button (Mobile / Small Screens) -->
-      <button type="button" class="theme-single-toggle-btn" id="themeToggleSingleBtn" onclick="cycleTheme()" data-tooltip="Theme: Light (Tap to switch)" data-tooltip-pos="bottom" aria-label="Toggle visual theme" title="Toggle visual theme">
-        <svg class="theme-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+      <!-- Reagent Safety (SDS) Button -->
+      <button class="nav-btn nav-btn-safety" onclick="window.VLKSafety && window.VLKSafety.openSDSModal('Ethanol')" title="View Chemical Safety & SDS Hazards" style="display:inline-flex; align-items:center; gap:4px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> <span class="btn-text-full">SDS Hazards</span><span class="btn-text-short">SDS</span>
       </button>
 
       <!-- Settings Dropdown Button -->
@@ -129,15 +210,6 @@
             </button>
           </div>
 
-          <!-- Safety SDS Option -->
-          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
-            <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Chemical Safety</span>
-            <button type="button" onclick="window.VLKSafety && window.VLKSafety.openSDSModal('Ethanol')" class="theme-btn-chip" style="background:var(--card-bg-hover); padding:4px 10px; border:1px solid var(--card-border); color:var(--red-accent); display:inline-flex; align-items:center; gap:4px;">
-              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-              <span>View SDS</span>
-            </button>
-          </div>
-
           <!-- Language Selector Row -->
           <div style="display:flex; flex-direction:column; gap:6px; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
             <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Language / Lugha</span>
@@ -151,18 +223,9 @@
           <div style="display:flex; flex-direction:column; gap:6px; border-bottom:1px solid var(--card-border); padding-bottom:8px;">
             <span style="font-size:0.8rem; font-weight:700; color:var(--text-main);">Appearance Theme</span>
             <div class="theme-toggle-group" style="width:100%;">
-              <button class="theme-btn-chip" style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:4px;" data-theme="light" onclick="setTheme('light')">
-                <svg class="theme-icon-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-                Light
-              </button>
-              <button class="theme-btn-chip active" style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:4px;" data-theme="dark" onclick="setTheme('dark')">
-                <svg class="theme-icon-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                Dark
-              </button>
-              <button class="theme-btn-chip" style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:4px;" data-theme="green" onclick="setTheme('green')">
-                <svg class="theme-icon-svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 2v7.31M14 2v7.31M8.5 2h7M14 9.3a6.5 6.5 0 1 1-4 0"/><line x1="6" y1="16" x2="18" y2="16"/></svg>
-                Lab
-              </button>
+              <button class="theme-btn-chip active" style="flex:1;" data-theme="light" onclick="setTheme('light')">Light</button>
+              <button class="theme-btn-chip" style="flex:1;" data-theme="dark" onclick="setTheme('dark')">Dark</button>
+              <button class="theme-btn-chip" style="flex:1;" data-theme="green" onclick="setTheme('green')">Lab</button>
             </div>
           </div>
 
@@ -170,33 +233,27 @@
             <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
             Print Practical Booklet
           </button>
-
-          <a href="/student/home.html" style="background:var(--card-bg-hover);border:1px solid var(--card-border);color:var(--text-main);padding:6px 10px;border-radius:6px;text-decoration:none;font-size:0.75rem;font-weight:700;display:flex;align-items:center;gap:6px;">
-            <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-            Exit to Workstation
-          </a>
         </div>
       </div>
+
+      <!-- Exit Button -->
+      <a href="/student/home.html" class="nav-btn nav-btn-exit" title="Exit to Workstation" style="display:inline-flex; align-items:center; gap:4px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> <span class="btn-text-full">Exit</span>
+      </a>
     </div>
   </nav>
 
-  <!-- Official KNEC Practical Ledger Sub-Header -->
-  <div class="knec-exam-subbar">
-    <div class="knec-subbar-item">
-      <span class="knec-subbar-label">Examination:</span>
-      <span class="knec-subbar-val">KCSE Chemistry Paper 3</span>
+    <!-- Official KNEC Examination Sub-Bar -->
+  <div class="knec-exam-subbar" aria-label="Examination Details">
+    <div class="knec-candidate-meta">
+      <span class="knec-tag-pill">KNEC PAPER 233/3</span>
+      <span class="knec-q-badge">QUESTION 3 (10.0 MARKS)</span>
+      <span class="knec-cand-name" id="knecCandidateName">CANDIDATE: PRACTICE MODE</span>
+      <span class="knec-index-num" id="knecCandidateIndex">INDEX: 00000000/001</span>
     </div>
-    <div class="knec-subbar-item">
-      <span class="knec-subbar-label">Section:</span>
-      <span class="knec-subbar-val">Question 3 (Organic Bench)</span>
-    </div>
-    <div class="knec-subbar-item">
-      <span class="knec-subbar-label">Sample:</span>
-      <span class="knec-subbar-val" id="knecSubbarSample">Unknown Liquid</span>
-    </div>
-    <div class="knec-subbar-item knec-score-item">
-      <span class="knec-subbar-label">Max Score:</span>
-      <span class="knec-subbar-val" style="color:var(--amber-accent); font-weight:800;">10.0 Marks</span>
+    <div class="knec-live-status-group">
+      <span class="knec-status-dot pulse" id="knecLiveStatusDot"></span>
+      <span class="knec-status-label" id="knecLiveStatusText">ORGANIC BENCH READY • SAMPLE ACTIVE</span>
     </div>
   </div>
 </header>
@@ -218,17 +275,51 @@
 ══════════════════════════════════════ -->
 <div class="page-container">
 
-  <!-- Interactive Step-by-Step Tutorial Container -->
-  <div id="tutorialDrawer" style="display:none;"></div>
-
-  <!-- Brilliant Segmented Practical Workflow Progress Bar -->
-  <div class="workflow-progress-card">
-    <div class="workflow-progress-label">
-      <span class="workflow-progress-title">PRACTICAL WORKFLOW</span>
-      <span id="organicStepBadge" class="badge">Diagnostic Tests</span>
+    <!-- Interactive Practical Workflow Stepper & Breadcrumbs -->
+  <nav class="workflow-stepper-card" id="organicWorkflowStepper" aria-label="Practical Examination Workflow">
+    <div class="workflow-stepper-top">
+      <div class="workflow-title-wrap">
+        <span class="workflow-title-label" style="display:flex;align-items:center;gap:6px;">
+          <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 12h6"/><path d="M9 16h6"/></svg> PRACTICAL WORKFLOW
+        </span>
+        <span id="organicStepBadge" class="workflow-step-badge">Step 1 of 6: Physical State, Solubility &amp; Litmus</span>
+      </div>
+      <div class="workflow-jump-hint" id="organicProgressHint" style="display:flex;align-items:center;gap:6px;">
+        <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>Progress auto-advances on practical actions</span>
+      </div>
     </div>
-    <div class="workflow-progress-bar-wrap" id="organicStepProgress"></div>
-  </div>
+    
+    <div class="workflow-stepper-track" role="list">
+      <button type="button" class="workflow-step-item active" id="organicWfStep0" onclick="jumpToStep(0)" role="listitem" aria-current="step" title="Step 1: Physical State, Solubility in H2O &amp; Litmus Test">
+        <span class="step-num">1</span>
+        <span class="step-info"><span class="step-name">Physical</span><span class="step-sub">Solubility &amp; pH</span></span>
+      </button>
+      <button type="button" class="workflow-step-item upcoming" id="organicWfStep1" onclick="jumpToStep(1)" role="listitem" title="Step 2: Ignition &amp; Flame Test (Sootiness / C:H Ratio)">
+        <span class="step-num">2</span>
+        <span class="step-info"><span class="step-name">Combustion</span><span class="step-sub">Flame &amp; Soot</span></span>
+      </button>
+      <button type="button" class="workflow-step-item upcoming" id="organicWfStep2" onclick="jumpToStep(2)" role="listitem" title="Step 3: Unsaturation Testing with Bromine Water">
+        <span class="step-num">3</span>
+        <span class="step-info"><span class="step-name">Unsaturation</span><span class="step-sub">Bromine Water</span></span>
+      </button>
+      <button type="button" class="workflow-step-item upcoming" id="organicWfStep3" onclick="jumpToStep(3)" role="listitem" title="Step 4: Alkanol Oxidation with Acidified K2Cr2O7">
+        <span class="step-num">4</span>
+        <span class="step-info"><span class="step-name">Oxidation</span><span class="step-sub">K₂Cr₂O₇ / Alkanol</span></span>
+      </button>
+      <button type="button" class="workflow-step-item upcoming" id="organicWfStep4" onclick="jumpToStep(4)" role="listitem" title="Step 5: Carboxylic Acid Effervescence (Na2CO3) &amp; Esterification">
+        <span class="step-num">5</span>
+        <span class="step-info"><span class="step-name">Carboxylic</span><span class="step-sub">Na₂CO₃ &amp; Esters</span></span>
+      </button>
+      <button type="button" class="workflow-step-item upcoming" id="organicWfStep5" onclick="jumpToStep(5)" role="listitem" title="Step 6: Functional Group Deduction &amp; KNEC Scoring (10.0 Marks)">
+        <span class="step-num">6</span>
+        <span class="step-info"><span class="step-name">Deduction</span><span class="step-sub">Grade 10M</span></span>
+      </button>
+    </div>
+    <div class="workflow-stepper-progress" aria-hidden="true">
+      <div class="workflow-progress-fill" id="organicProgressFill" style="width:16.6%;"></div>
+    </div>
+  </nav>
 
   <!-- Prescribed Continuous Assessment Banner (Shown when assignmentId is present) -->
   <div id="assignmentHeaderBanner" style="display:none; background:rgba(6,182,212,0.15); border:1.5px solid var(--cyan-accent); border-radius:12px; padding:12px 18px; margin-bottom:16px; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
@@ -256,15 +347,15 @@
     <div class="header-actions">
       <button class="btn-secondary" onclick="openFlowchartModal()" style="display:inline-flex;align-items:center;gap:6px;">
         <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-        Systematic Flowchart
+        <span class="btn-text-full">Systematic Flowchart</span><span class="btn-text-short">Flowchart</span>
       </button>
       <button class="btn-secondary btn-autoscore" onclick="evaluateKnecMarking()" style="display:inline-flex;align-items:center;gap:6px;">
         <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-        Auto-Score KCSE Marks
+        <span class="btn-text-full">Auto-Score KCSE Marks</span><span class="btn-text-short">Score</span>
       </button>
       <button class="btn-primary-solid" id="newSampleBtn" onclick="newSample()" style="display:inline-flex;align-items:center;gap:6px;">
         <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        New Sample
+        <span class="btn-text-full">New Sample</span><span class="btn-text-short">Sample</span>
       </button>
     </div>
   </div>
@@ -423,10 +514,10 @@
 <script src="../shared/i18n.js"></script>
 <script src="../shared/brilliant-ui.js"></script>
 <script src="../shared/tutorial-engine.js"></script>
-<script src="/shared/organic-bench-core.js?v=155"></script>
-<script src="/shared/knec-pedagogy.js?v=155"></script>
-<script defer src="/shared/knec-remediation-drills.js?v=163"></script>
-<script src="js/organic-engine.js?v=155"></script>
+<script src="/shared/organic-bench-core.js?v=167"></script>
+<script src="/shared/knec-pedagogy.js?v=167"></script>
+<script defer src="/shared/knec-remediation-drills.js?v=167"></script>
+<script src="js/organic-engine.js?v=167"></script>
 <script src="../shared/ai-tutor.js"></script>
 <script src="../shared/pwa-installer.js"></script>
 <script src="../shared/page-transitions.js"></script>
@@ -435,12 +526,38 @@
     window.BrilliantUI.renderSegmentedProgress('organicStepProgress', 7, 0);
   }
 
-  if (window.TutorialEngine) {
-    window.TutorialEngine.init({
-      discipline: 'organic',
-      containerId: 'tutorialDrawer'
-    });
+  
+  function toggleWorkbenchDropdown(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('workbenchDropdownMenu');
+    const btn = document.getElementById('workbenchDropdownTrigger');
+    if (!menu) return;
+    const isHidden = menu.style.display === 'none' || !menu.style.display;
+    menu.style.display = isHidden ? 'flex' : 'none';
+    if (btn) btn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
   }
+
+  document.addEventListener('click', function(e) {
+    const menu = document.getElementById('workbenchDropdownMenu');
+    const btn = document.getElementById('workbenchDropdownTrigger');
+    if (menu && menu.style.display === 'flex') {
+      if (!menu.contains(e.target) && (!btn || !btn.contains(e.target))) {
+        menu.style.display = 'none';
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+      }
+    }
+  });
+
+  function toggleScratchpad() {
+    const drawer = document.getElementById('scratchpadDrawer');
+    if (!drawer) return;
+    drawer.style.display = drawer.style.display === 'none' || !drawer.style.display ? 'block' : 'none';
+    if (drawer.style.display === 'block') {
+      const text = document.getElementById('scratchpadText');
+      if (text) text.focus();
+    }
+  }
+  window.toggleScratchpad = toggleScratchpad;
 
   function toggleBenchSettings(e) {
     if (e) e.stopPropagation();
@@ -457,6 +574,43 @@
       }
     }
   });
+</script>
+<!-- Mobile Thumb-Zone Quick Action Dock (< 768px) -->
+<div id="mobileOrganicDock" class="mobile-organic-dock" role="toolbar" aria-label="Quick Workbench Controls">
+  <div class="dock-telemetry">
+    <div class="dock-badge-pulse" id="dockOrganicProgressBadge">
+      <span class="dock-dot"></span>
+      <span id="dockProgressText" class="tabular-nums">0/7 Done</span>
+    </div>
+  </div>
+  <div class="dock-actions">
+    <button type="button" class="dock-btn dock-btn-autoscore" onclick="evaluateKnecMarking()" title="Auto-score KCSE Marks" aria-label="Auto-score marks">
+      <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <span>Score</span>
+    </button>
+    <button type="button" class="dock-btn dock-btn-sample" onclick="newSample()" title="Get new organic sample" aria-label="New Organic Sample">
+      <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      <span>Sample</span>
+    </button>
+    <button type="button" class="dock-btn dock-btn-identify" onclick="scrollToIdentification()" title="Scroll to Final Organic Identification" aria-label="Identify Compound">
+      <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m16 12-4-4-4 4"/><path d="M12 16V8"/></svg>
+      <span>Identify</span>
+    </button>
+  </div>
+</div>
+
+<script>
+  window.scrollToIdentification = function() {
+    if (window.triggerOrganicHaptic) window.triggerOrganicHaptic(15);
+    const idPanel = document.querySelector('.id-panel');
+    if (idPanel) {
+      idPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const select = document.getElementById('fgSelect');
+      if (select) {
+        setTimeout(function() { select.focus(); }, 350);
+      }
+    }
+  };
 </script>
 </body>
 </html>

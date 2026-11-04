@@ -1153,13 +1153,13 @@ requireStudentLogin();
       category: 'KNEC MARKING TRAP',
       badgeClass: 'badge-danger',
       title: 'Burette Reading Precision (Table 1)',
-      body: 'KNEC Paper 3 penalizes any burette reading recorded to only 1 decimal place. Always record initial and final titres to 2 decimal places ending strictly in .00 or .50 (e.g. 24.50 cm³, not 24.5 cm³).',
+      body: 'KNEC Paper 3 penalizes any burette reading recorded to only 1 decimal place. Always record initial and final titres to 2 decimal places ending strictly in .00 or .05 cm³ (e.g. 24.00, 24.05, 24.50 cm³, not 24.5 cm³).',
       actionText: 'Practice Titration Bench →',
       actionUrl: 'lab.html?type=acidBase&studyMode=guided',
       quickCheck: {
         question: 'Which burette reading forfeits accuracy marks on KCSE Table 1?',
         options: [
-          { text: 'A) 22.50 cm³', correct: false, explanation: 'Valid! Recorded to 2 decimal places ending in .50.' },
+          { text: 'A) 22.50 cm³', correct: false, explanation: 'Valid! Recorded to 2 decimal places ending in .50 (acceptable .00 or .05 ending).' },
           { text: 'B) 18.4 cm³', correct: true, explanation: 'Correct! Recording to 1 decimal place loses the Table 1 decimal precision mark.' },
           { text: 'C) 0.00 cm³', correct: false, explanation: 'Valid! Initial zero reading properly formatted to 2 decimal places.' }
         ]
@@ -3537,7 +3537,7 @@ requireStudentLogin();
         title: 'Acid-Base Titration (KCSE Standardisation)',
         topic: defaultItem.topic,
         paperTag: defaultItem.paperTag,
-        desc: 'Master burette reading precision (.00 or .05 cm³), concordant titre spreads (<0.20 cm³), and stoichiometry.',
+        desc: 'Master burette reading precision (.00 or .05 cm³), concordant titre spread (≤ 0.20 cm³), and stoichiometry.',
         iconKey: defaultItem.iconKey
       };
       badgeText = 'RESUMING PRACTICAL';

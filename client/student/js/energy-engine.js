@@ -928,7 +928,7 @@ const EnergyEngine = (() => {
           <td style="font-weight:700;">${t}</td>
           <td>
             ${isMixTime ? '<span style="color:var(--en-primary);font-weight:900;">[ MIX REACTANTS ]</span>' : 
-            `<input type="text" class="en-table-input" id="tbl_temp_${t}" placeholder="—" onchange="EnergyEngine.onTableInputChange(${t})">`}
+            `<input type="text" class="en-table-input" id="tbl_temp_${t}" placeholder="—" oninput="EnergyEngine.onTableInputChange(${t}, this.value)">`}
           </td>
           <td>
             ${isMixTime ? '—' : `<button type="button" class="table-row-log-btn" onclick="EnergyEngine.logRowTemp(${t})">Log</button>`}
@@ -939,11 +939,11 @@ const EnergyEngine = (() => {
     } else {
       // Combustion Table
       tableBody.innerHTML = `
-        <tr><td>Initial mass of spirit lamp + fuel (g)</td><td>—</td><td><input type="text" class="en-table-input" id="tbl_m1" placeholder="e.g. 184.50" value="${currentBurnerMass.toFixed(2)}"></td><td><button type="button" class="table-row-log-btn" onclick="EnergyEngine.weighBurner()">Weigh</button></td></tr>
-        <tr><td>Final mass of spirit lamp + fuel (g)</td><td>—</td><td><input type="text" class="en-table-input" id="tbl_m2" placeholder="—"></td><td><button type="button" class="table-row-log-btn" onclick="EnergyEngine.weighBurner()">Weigh</button></td></tr>
+        <tr><td>Initial mass of spirit lamp + fuel (g)</td><td>—</td><td><input type="text" class="en-table-input" id="tbl_m1" placeholder="e.g. 184.50" value="${currentBurnerMass.toFixed(2)}" oninput="EnergyEngine.calcCombustionTable()"></td><td><button type="button" class="table-row-log-btn" onclick="EnergyEngine.weighBurner()">Weigh</button></td></tr>
+        <tr><td>Final mass of spirit lamp + fuel (g)</td><td>—</td><td><input type="text" class="en-table-input" id="tbl_m2" placeholder="—" oninput="EnergyEngine.calcCombustionTable()"></td><td><button type="button" class="table-row-log-btn" onclick="EnergyEngine.weighBurner()">Weigh</button></td></tr>
         <tr><td>Mass of fuel burned, Δm (g)</td><td>—</td><td><input type="text" class="en-table-input" id="tbl_dm" placeholder="—" readonly></td><td>—</td></tr>
-        <tr><td>Initial temperature of water, T₁ (°C)</td><td>0</td><td><input type="text" class="en-table-input" id="tbl_t1" placeholder="e.g. 22.0" value="${currentTemp.toFixed(1)}"></td><td><button type="button" class="table-row-log-btn" onclick="EnergyEngine.logCombustionT1()">Log</button></td></tr>
-        <tr><td>Final highest temperature of water, T₂ (°C)</td><td>—</td><td><input type="text" class="en-table-input" id="tbl_t2" placeholder="—"></td><td><button type="button" class="table-row-log-btn" onclick="EnergyEngine.logCombustionT2()">Log</button></td></tr>
+        <tr><td>Initial temperature of water, T₁ (°C)</td><td>0</td><td><input type="text" class="en-table-input" id="tbl_t1" placeholder="e.g. 22.0" value="${currentTemp.toFixed(1)}" oninput="EnergyEngine.calcCombustionTable()"></td><td><button type="button" class="table-row-log-btn" onclick="EnergyEngine.logCombustionT1()">Log</button></td></tr>
+        <tr><td>Final highest temperature of water, T₂ (°C)</td><td>—</td><td><input type="text" class="en-table-input" id="tbl_t2" placeholder="—" oninput="EnergyEngine.calcCombustionTable()"></td><td><button type="button" class="table-row-log-btn" onclick="EnergyEngine.logCombustionT2()">Log</button></td></tr>
         <tr><td>Temperature change, ΔT (°C)</td><td>—</td><td><input type="text" class="en-table-input" id="tbl_dt" placeholder="—" readonly></td><td>—</td></tr>
       `;
     }
@@ -2212,6 +2212,40 @@ const EnergyEngine = (() => {
   // ──────────────────────────────────────────────
   // 5. INTERACTIVE KNEC GRAPH PLOTTING SUITE
   // ──────────────────────────────────────────────
+  function getGraphBounds() {
+    let timeMax = currentScenario.totalTimeSec || 360;
+    let tempMin = 15;
+    let tempMax = 50;
+
+    if (currentScenario.apparatusType === 'COOLING') {
+      tempMin = 40;
+      tempMax = 90;
+    } else if (currentScenario.id === 'KCSE_2020_SOLUTION_ENDOTHERMIC') {
+      tempMin = 10;
+      tempMax = 35;
+    } else {
+      tempMin = 15;
+      const refMax = Math.max(maxRecordedTemp || 35, 45);
+      tempMax = Math.ceil(refMax / 5) * 5 + 5;
+    }
+
+    if (studentPlottedPoints && studentPlottedPoints.length > 0) {
+      studentPlottedPoints.forEach(p => {
+        if (typeof p.temp === 'number' && !isNaN(p.temp)) {
+          if (p.temp < tempMin) tempMin = Math.max(0, Math.floor((p.temp - 5) / 5) * 5);
+          if (p.temp > tempMax) tempMax = Math.ceil((p.temp + 5) / 5) * 5;
+        }
+      });
+    }
+
+    return {
+      margin: { left: 48, right: 20, top: 24, bottom: 38 },
+      timeMax,
+      tempMin,
+      tempMax
+    };
+  }
+
   function setupGraphEvents() {
     if (!graphCanvas) return;
 
@@ -2222,24 +2256,32 @@ const EnergyEngine = (() => {
 
       const w = graphCanvas.width;
       const h = graphCanvas.height;
-      const margin = { left: 45, right: 20, top: 20, bottom: 35 };
+      const { margin, timeMax, tempMin, tempMax } = getGraphBounds();
 
-      const timeMax = currentScenario.totalTimeSec || 360;
-      const tempMin = 15;
-      const tempMax = Math.max(50, Math.ceil(maxRecordedTemp / 5) * 5 + 5);
+      const tooltip = document.getElementById('energyGraphTooltip');
 
       if (clickX >= margin.left && clickX <= w - margin.right && clickY >= margin.top && clickY <= h - margin.bottom) {
         const timeVal = ((clickX - margin.left) / (w - margin.left - margin.right)) * timeMax;
         const tempVal = tempMax - ((clickY - margin.top) / (h - margin.top - margin.bottom)) * (tempMax - tempMin);
         graphHoverCoords = { time: Math.round(timeVal), temp: tempVal.toFixed(1), x: clickX, y: clickY };
+
+        if (tooltip) {
+          tooltip.style.display = 'block';
+          tooltip.style.left = `${clickX + 12}px`;
+          tooltip.style.top = `${clickY - 26}px`;
+          tooltip.innerHTML = `<strong>${Math.round(timeVal)}s</strong>, <strong>${tempVal.toFixed(1)}°C</strong>`;
+        }
       } else {
         graphHoverCoords = null;
+        if (tooltip) tooltip.style.display = 'none';
       }
       renderGraph();
     });
 
     graphCanvas.addEventListener('mouseleave', () => {
       graphHoverCoords = null;
+      const tooltip = document.getElementById('energyGraphTooltip');
+      if (tooltip) tooltip.style.display = 'none';
       renderGraph();
     });
 
@@ -2250,11 +2292,7 @@ const EnergyEngine = (() => {
 
       const w = graphCanvas.width;
       const h = graphCanvas.height;
-      const margin = { left: 45, right: 20, top: 20, bottom: 35 };
-
-      const timeMax = currentScenario.totalTimeSec || 360;
-      const tempMin = 15;
-      const tempMax = Math.max(50, Math.ceil(maxRecordedTemp / 5) * 5 + 5);
+      const { margin, timeMax, tempMin, tempMax } = getGraphBounds();
 
       if (clickX >= margin.left && clickX <= w - margin.right && clickY >= margin.top && clickY <= h - margin.bottom) {
         const timeVal = ((clickX - margin.left) / (w - margin.left - margin.right)) * timeMax;
@@ -2263,13 +2301,18 @@ const EnergyEngine = (() => {
         const snapTime = Math.round(timeVal / 30) * 30;
         const snapTemp = Math.round(tempVal * 2) / 2;
 
-        // Toggle or add point
+        const tblInput = document.getElementById(`tbl_temp_${snapTime}`);
+        if (tblInput) {
+          tblInput.value = snapTemp.toFixed(1);
+        }
+
         const existingIdx = studentPlottedPoints.findIndex(p => p.time === snapTime);
         if (existingIdx >= 0) {
           studentPlottedPoints[existingIdx].temp = snapTemp;
         } else {
           studentPlottedPoints.push({ time: snapTime, temp: snapTemp });
         }
+        studentPlottedPoints.sort((a, b) => a.time - b.time);
 
         playBeep(700, 0.05);
         renderGraph();
@@ -2284,15 +2327,11 @@ const EnergyEngine = (() => {
     const h = graphCanvas.height || 320;
     gCtx.clearRect(0, 0, w, h);
 
-    const margin = { left: 48, right: 20, top: 22, bottom: 35 };
+    const { margin, timeMax, tempMin, tempMax } = getGraphBounds();
     const pw = w - margin.left - margin.right;
     const ph = h - margin.top - margin.bottom;
 
-    const timeMax = currentScenario.totalTimeSec || 360;
-    const tempMin = 15;
-    const tempMax = Math.max(50, Math.ceil(maxRecordedTemp / 5) * 5 + 5);
-
-    // Millimeter Grid Paper
+    // 1. Millimeter Grid Paper
     gCtx.fillStyle = colors.gridPaper;
     gCtx.fillRect(margin.left, margin.top, pw, ph);
 
@@ -2312,7 +2351,7 @@ const EnergyEngine = (() => {
       gCtx.stroke();
     }
 
-    // Axes
+    // 2. Axes
     gCtx.strokeStyle = colors.textMain;
     gCtx.lineWidth = 1.5;
     gCtx.beginPath();
@@ -2321,23 +2360,43 @@ const EnergyEngine = (() => {
     gCtx.lineTo(margin.left + pw, margin.top + ph);
     gCtx.stroke();
 
-    // Axis Labels
+    // 3. X-Axis Ticks & Labels
     gCtx.font = '600 9.5px JetBrains Mono';
     gCtx.fillStyle = colors.textMain;
     gCtx.textAlign = 'center';
 
-    for (let t = 0; t <= timeMax; t += 60) {
+    const xTickStep = 30;
+    for (let t = 0; t <= timeMax; t += xTickStep) {
       const x = margin.left + (t / timeMax) * pw;
-      gCtx.fillText(`${t}`, x, margin.top + ph + 14);
+      const isMajor = (t % 60 === 0);
+      gCtx.beginPath();
+      gCtx.moveTo(x, margin.top + ph);
+      gCtx.lineTo(x, margin.top + ph + (isMajor ? 6 : 3));
+      gCtx.strokeStyle = colors.textMain;
+      gCtx.lineWidth = 1;
+      gCtx.stroke();
+
+      if (isMajor) {
+        gCtx.fillText(`${t}`, x, margin.top + ph + 16);
+      }
     }
     gCtx.font = '700 9.5px Plus Jakarta Sans';
-    gCtx.fillText('Time (seconds) →', margin.left + pw * 0.5, margin.top + ph + 28);
+    gCtx.fillText('Time (seconds) →', margin.left + pw * 0.5, margin.top + ph + 30);
 
+    // 4. Y-Axis Ticks & Labels
     gCtx.textAlign = 'right';
     gCtx.font = '600 9.5px JetBrains Mono';
-    for (let temp = tempMin; temp <= tempMax; temp += 5) {
+    const yTickStep = 5;
+    for (let temp = tempMin; temp <= tempMax; temp += yTickStep) {
       const y = margin.top + ph - ((temp - tempMin) / (tempMax - tempMin)) * ph;
-      gCtx.fillText(`${temp}`, margin.left - 6, y + 3.5);
+      gCtx.beginPath();
+      gCtx.moveTo(margin.left, y);
+      gCtx.lineTo(margin.left - 5, y);
+      gCtx.strokeStyle = colors.textMain;
+      gCtx.lineWidth = 1;
+      gCtx.stroke();
+
+      gCtx.fillText(`${temp}`, margin.left - 7, y + 3.5);
     }
     gCtx.save();
     gCtx.translate(14, margin.top + ph * 0.5);
@@ -2347,10 +2406,10 @@ const EnergyEngine = (() => {
     gCtx.fillText('Temperature (°C) →', 0, 0);
     gCtx.restore();
 
-    // Mixing Time Marker Line (t = 150s)
+    // 5. Mixing Time Marker Line (t = 150s)
     if (currentScenario.mixingTimeSec) {
       const mixX = margin.left + (currentScenario.mixingTimeSec / timeMax) * pw;
-      gCtx.strokeStyle = 'rgba(249, 115, 22, 0.7)';
+      gCtx.strokeStyle = 'rgba(249, 115, 22, 0.75)';
       gCtx.lineWidth = 1.5;
       gCtx.setLineDash([4, 4]);
       gCtx.beginPath();
@@ -2362,16 +2421,48 @@ const EnergyEngine = (() => {
       gCtx.font = '800 9px Outfit';
       gCtx.fillStyle = colors.primary;
       gCtx.textAlign = 'center';
-      gCtx.fillText('Mixing (2.5 min)', mixX, margin.top - 6);
+      gCtx.fillText('Mixing (2.5 min) ⤓', mixX, margin.top - 7);
     }
 
-    // Plot Student Points (KNEC Red 'X' markers)
+    // 6. Empty State Prompt if 0 points plotted
+    if (studentPlottedPoints.length === 0) {
+      const boxW = Math.min(pw - 20, 310);
+      const boxH = 58;
+      const boxX = margin.left + (pw - boxW) / 2;
+      const boxY = margin.top + (ph - boxH) / 2;
+
+      gCtx.save();
+      gCtx.fillStyle = (document.documentElement.getAttribute('data-theme') === 'light') ? 'rgba(255,255,255,0.94)' : 'rgba(15,23,42,0.90)';
+      gCtx.strokeStyle = 'rgba(234, 88, 12, 0.4)';
+      gCtx.lineWidth = 1.5;
+      if (gCtx.roundRect) {
+        gCtx.beginPath();
+        gCtx.roundRect(boxX, boxY, boxW, boxH, 10);
+        gCtx.fill();
+        gCtx.stroke();
+      } else {
+        gCtx.fillRect(boxX, boxY, boxW, boxH);
+        gCtx.strokeRect(boxX, boxY, boxW, boxH);
+      }
+
+      gCtx.font = '800 11px Outfit, Plus Jakarta Sans';
+      gCtx.fillStyle = colors.primary;
+      gCtx.textAlign = 'center';
+      gCtx.fillText('📊 No Temperature Readings Plotted Yet', boxX + boxW / 2, boxY + 22);
+
+      gCtx.font = '600 9.5px Plus Jakarta Sans';
+      gCtx.fillStyle = colors.textMuted;
+      gCtx.fillText('Click "Load Sample Data" or record readings to plot', boxX + boxW / 2, boxY + 42);
+      gCtx.restore();
+    }
+
+    // 7. Plot Student Points (KNEC Red 'X' markers)
     studentPlottedPoints.forEach(pt => {
       const px = margin.left + (pt.time / timeMax) * pw;
       const py = margin.top + ph - ((pt.temp - tempMin) / (tempMax - tempMin)) * ph;
 
       gCtx.strokeStyle = '#EF4444';
-      gCtx.lineWidth = 2;
+      gCtx.lineWidth = 2.2;
       gCtx.beginPath();
       gCtx.moveTo(px - 4.5, py - 4.5);
       gCtx.lineTo(px + 4.5, py + 4.5);
@@ -2380,30 +2471,103 @@ const EnergyEngine = (() => {
       gCtx.stroke();
     });
 
-    // KNEC Dual-Line Extrapolation Tool
+    // 8. KNEC Dual-Line Extrapolation Tool
     if (showExtrapolationLine && currentScenario.mixingTimeSec) {
       drawKNECDualExtrapolation(margin, pw, ph, timeMax, tempMin, tempMax);
     } else if (showExtrapolationLine && currentScenario.apparatusType === 'COOLING') {
       drawCoolingPlateauGuideline(margin, pw, ph, timeMax, tempMin, tempMax);
     }
 
-    // Line of Best Fit
+    // 9. Line of Best Fit
     if (showBestFitLine && studentPlottedPoints.length >= 3) {
       drawBestFitLine(margin, pw, ph, timeMax, tempMin, tempMax);
     }
 
-    // Hover Coordinates Tooltip
+    // 10. Hover Crosshair & Tooltip
     if (graphHoverCoords) {
+      gCtx.save();
+      gCtx.strokeStyle = 'rgba(6, 182, 212, 0.4)';
+      gCtx.setLineDash([2, 2]);
+      gCtx.beginPath();
+      gCtx.moveTo(graphHoverCoords.x, margin.top);
+      gCtx.lineTo(graphHoverCoords.x, margin.top + ph);
+      gCtx.moveTo(margin.left, graphHoverCoords.y);
+      gCtx.lineTo(margin.left + pw, graphHoverCoords.y);
+      gCtx.stroke();
+      gCtx.restore();
+
       gCtx.fillStyle = colors.cardBg;
       gCtx.strokeStyle = colors.primary;
       gCtx.lineWidth = 1;
-      gCtx.fillRect(graphHoverCoords.x + 8, graphHoverCoords.y - 24, 90, 20);
-      gCtx.strokeRect(graphHoverCoords.x + 8, graphHoverCoords.y - 24, 90, 20);
+      gCtx.fillRect(graphHoverCoords.x + 8, graphHoverCoords.y - 24, 96, 20);
+      gCtx.strokeRect(graphHoverCoords.x + 8, graphHoverCoords.y - 24, 96, 20);
 
       gCtx.font = '700 9px JetBrains Mono';
       gCtx.fillStyle = colors.textMain;
       gCtx.textAlign = 'left';
       gCtx.fillText(`${graphHoverCoords.time}s, ${graphHoverCoords.temp}°C`, graphHoverCoords.x + 12, graphHoverCoords.y - 10);
+    }
+
+    // 11. Update Interactive Meta Pill
+    updateGraphMetaPill();
+  }
+
+  function updateGraphMetaPill() {
+    let expectedCount = 12;
+    if (currentScenario.apparatusType === 'COOLING') expectedCount = 15;
+    else if (currentScenario.apparatusType === 'COMBUSTION') expectedCount = 2;
+    else if (currentScenario.totalTimeSec && currentScenario.timeStepSec) {
+      expectedCount = Math.floor(currentScenario.totalTimeSec / currentScenario.timeStepSec) + 1;
+      if (currentScenario.mixingTimeSec) expectedCount -= 1;
+    }
+
+    const countEl = document.getElementById('energyGraphPointsCount');
+    if (countEl) {
+      countEl.innerHTML = `<strong style="color:var(--heading-color);">Points:</strong> ${studentPlottedPoints.length} / ${expectedCount} plotted`;
+    }
+
+    const analysisEl = document.getElementById('energyGraphAnalysis');
+    if (analysisEl) {
+      if (studentPlottedPoints.length === 0) {
+        analysisEl.innerHTML = 'Awaiting readings — click &quot;Load Sample Data&quot; or log points';
+        analysisEl.style.color = 'var(--amber-accent)';
+      } else if (currentScenario.apparatusType === 'COOLING') {
+        const fp = currentScenario.freezingPoint || 69.0;
+        analysisEl.innerHTML = `Solidification Plateau: <strong style="color:var(--cyan-accent);">${fp.toFixed(1)} °C</strong> (Freezing Point of Solid D)`;
+        analysisEl.style.color = 'var(--cyan-accent)';
+      } else if (currentScenario.mixingTimeSec) {
+        const mixTime = currentScenario.mixingTimeSec;
+        const basePoints = studentPlottedPoints.filter(p => p.time < mixTime);
+        let tInitial = currentScenario.initialTemp || 22.0;
+        if (basePoints.length > 0) {
+          tInitial = basePoints.reduce((s, p) => s + p.temp, 0) / basePoints.length;
+        }
+        const coolingPoints = studentPlottedPoints.filter(p => p.time >= 210);
+        if (coolingPoints.length >= 2) {
+          let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+          const n = coolingPoints.length;
+          coolingPoints.forEach(p => {
+            sumX += p.time; sumY += p.temp; sumXY += p.time * p.temp; sumXX += p.time * p.time;
+          });
+          const denom = n * sumXX - sumX * sumX;
+          if (Math.abs(denom) > 1e-6) {
+            const slope = (n * sumXY - sumX * sumY) / denom;
+            const intercept = (sumY - slope * sumX) / n;
+            const tExtrap = slope * mixTime + intercept;
+            const dtExtrap = tExtrap - tInitial;
+            const sign = dtExtrap >= 0 ? '+' : '';
+            const labelT = (tExtrap < tInitial) ? 'Extrap. T_min' : 'Extrap. T_max';
+            analysisEl.innerHTML = `T₀: <strong>${tInitial.toFixed(1)}°C</strong> | ${labelT}: <strong style="color:var(--emerald-accent);">${tExtrap.toFixed(1)}°C</strong> | ΔT: <strong style="color:var(--en-primary);">${sign}${dtExtrap.toFixed(1)}°C</strong>`;
+            analysisEl.style.color = 'var(--emerald-accent)';
+          }
+        } else {
+          analysisEl.innerHTML = `T₀: <strong>${tInitial.toFixed(1)}°C</strong> | Log ≥2 cooling points (t ≥ 210s) to extrapolate T_max`;
+          analysisEl.style.color = 'var(--amber-accent)';
+        }
+      } else {
+        analysisEl.innerHTML = `${studentPlottedPoints.length} points plotted successfully`;
+        analysisEl.style.color = 'var(--emerald-accent)';
+      }
     }
   }
 
@@ -2478,9 +2642,12 @@ const EnergyEngine = (() => {
       gCtx.font = '800 10px JetBrains Mono';
       gCtx.fillStyle = '#10B981';
       gCtx.textAlign = 'left';
-      gCtx.fillText(`Extrapolated T_max = ${tMaxExtrapolated.toFixed(1)} °C`, x1 + 8, y1 - 4);
+      const isEndo = (tMaxExtrapolated < tInitial);
+      const labelT = isEndo ? `Extrapolated T_min = ${tMaxExtrapolated.toFixed(1)} °C` : `Extrapolated T_max = ${tMaxExtrapolated.toFixed(1)} °C`;
+      const signT = isEndo ? "-" : "+";
+      gCtx.fillText(labelT, x1 + 8, y1 - 4);
       gCtx.fillStyle = '#EA580C';
-      gCtx.fillText(`ΔT = ${dtExtrap.toFixed(1)} °C`, x1 + 8, (baseY1 + y1) * 0.5 + 3);
+      gCtx.fillText(`ΔT = ${signT}${dtExtrap.toFixed(1)} °C`, x1 + 8, (baseY1 + y1) * 0.5 + 3);
     }
   }
 
@@ -2568,7 +2735,255 @@ const EnergyEngine = (() => {
 
   function clearGraph() {
     studentPlottedPoints = [];
+    if (currentScenario.apparatusType === 'CALORIMETER' || currentScenario.apparatusType === 'COOLING') {
+      const totalSec = currentScenario.totalTimeSec || 360;
+      const stepSec = currentScenario.timeStepSec || 30;
+      for (let t = 0; t <= totalSec; t += stepSec) {
+        const inp = document.getElementById(`tbl_temp_${t}`);
+        if (inp) inp.value = '';
+      }
+    } else {
+      ['tbl_m1', 'tbl_m2', 'tbl_dm', 'tbl_t1', 'tbl_t2', 'tbl_dt'].forEach(id => {
+        const inp = document.getElementById(id);
+        if (inp) inp.value = '';
+      });
+    }
+    ['calc_dt', 'calc_q', 'calc_moles', 'calc_deltah', 'calc_equation'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
     renderGraph();
+  }
+
+  function loadSampleData() {
+    playBeep(800, 0.08);
+    const id = currentScenario.id;
+    studentPlottedPoints = [];
+
+    if (id === 'KCSE_2022_DISPLACEMENT' || currentScenario.category === 'displacement') {
+      const sample = [
+        { t: 0, temp: 22.0 },
+        { t: 30, temp: 22.0 },
+        { t: 60, temp: 22.0 },
+        { t: 90, temp: 22.0 },
+        { t: 120, temp: 22.0 },
+        { t: 180, temp: 33.0 },
+        { t: 210, temp: 36.5 },
+        { t: 240, temp: 36.0 },
+        { t: 270, temp: 35.5 },
+        { t: 300, temp: 35.0 },
+        { t: 330, temp: 34.5 },
+        { t: 360, temp: 34.0 }
+      ];
+      sample.forEach(item => {
+        const inp = document.getElementById(`tbl_temp_${item.t}`);
+        if (inp) inp.value = item.temp.toFixed(1);
+        studentPlottedPoints.push({ time: item.t, temp: item.temp });
+      });
+
+      const dt = 15.5;
+      const q = (25.0 * 4.2 * dt).toFixed(1);
+      const moles = (25.0 * 0.5 / 1000).toFixed(4);
+      const dh = (-((25.0 * 4.2 * dt) / (0.0125 * 1000))).toFixed(1);
+
+      const dtEl = document.getElementById('calc_dt');
+      if (dtEl) dtEl.value = dt.toFixed(1);
+      const qEl = document.getElementById('calc_q');
+      if (qEl) qEl.value = q;
+      const molesEl = document.getElementById('calc_moles');
+      if (molesEl) molesEl.value = moles;
+      const dhEl = document.getElementById('calc_deltah');
+      if (dhEl) dhEl.value = dh;
+      const eqEl = document.getElementById('calc_equation');
+      if (eqEl) eqEl.value = 'Zn(s) + Cu²⁺(aq) → Zn²⁺(aq) + Cu(s)  ΔH = -130.2 kJ/mol';
+
+      currentTemp = 34.0;
+      maxRecordedTemp = 37.5;
+    } else if (id === 'KCSE_2023_NEUTRALIZATION' || id === 'KCSE_2005_NEUTRALIZATION' || currentScenario.category === 'neutralization') {
+      const isCitric = (id === 'KCSE_2005_NEUTRALIZATION');
+      const t0 = isCitric ? 23.5 : 21.5;
+      const sample = [
+        { t: 0, temp: t0 },
+        { t: 30, temp: t0 },
+        { t: 60, temp: t0 },
+        { t: 90, temp: t0 },
+        { t: 120, temp: t0 },
+        { t: 180, temp: isCitric ? 27.0 : 32.0 },
+        { t: 210, temp: isCitric ? 28.5 : 35.0 },
+        { t: 240, temp: isCitric ? 28.2 : 34.5 },
+        { t: 270, temp: isCitric ? 27.9 : 34.0 },
+        { t: 300, temp: isCitric ? 27.6 : 33.5 },
+        { t: 330, temp: isCitric ? 27.3 : 33.0 },
+        { t: 360, temp: isCitric ? 27.0 : 32.5 }
+      ];
+      sample.forEach(item => {
+        const inp = document.getElementById(`tbl_temp_${item.t}`);
+        if (inp) inp.value = item.temp.toFixed(1);
+        studentPlottedPoints.push({ time: item.t, temp: item.temp });
+      });
+
+      const dt = isCitric ? 5.5 : 14.5;
+      const totalVol = 50.0;
+      const q = (totalVol * 4.2 * dt).toFixed(1);
+      const moles = isCitric ? (25.0 * 0.3125 / 1000).toFixed(4) : (25.0 * 2.0 / 1000).toFixed(4);
+      const dh = (-((totalVol * 4.2 * dt) / (parseFloat(moles) * 1000))).toFixed(1);
+
+      const dtEl = document.getElementById('calc_dt');
+      if (dtEl) dtEl.value = dt.toFixed(1);
+      const qEl = document.getElementById('calc_q');
+      if (qEl) qEl.value = q;
+      const molesEl = document.getElementById('calc_moles');
+      if (molesEl) molesEl.value = moles;
+      const dhEl = document.getElementById('calc_deltah');
+      if (dhEl) dhEl.value = dh;
+      const eqEl = document.getElementById('calc_equation');
+      if (eqEl) eqEl.value = 'H⁺(aq) + OH⁻(aq) → H₂O(l)  ΔH = -58.0 kJ/mol';
+
+      currentTemp = isCitric ? 27.0 : 32.5;
+      maxRecordedTemp = isCitric ? 29.0 : 36.0;
+    } else if (currentScenario.apparatusType === 'COOLING') {
+      const sample = [
+        { t: 0, temp: 85.0 },
+        { t: 30, temp: 81.0 },
+        { t: 60, temp: 76.5 },
+        { t: 90, temp: 72.0 },
+        { t: 120, temp: 69.0 },
+        { t: 150, temp: 69.0 },
+        { t: 180, temp: 69.0 },
+        { t: 210, temp: 69.0 },
+        { t: 240, temp: 69.0 },
+        { t: 270, temp: 68.5 },
+        { t: 300, temp: 64.0 },
+        { t: 330, temp: 59.5 },
+        { t: 360, temp: 55.0 },
+        { t: 390, temp: 51.5 },
+        { t: 420, temp: 48.0 }
+      ];
+      sample.forEach(item => {
+        const inp = document.getElementById(`tbl_temp_${item.t}`);
+        if (inp) inp.value = item.temp.toFixed(1);
+        studentPlottedPoints.push({ time: item.t, temp: item.temp });
+      });
+
+      const dtEl = document.getElementById('calc_dt');
+      if (dtEl) dtEl.value = '69.0';
+      const qEl = document.getElementById('calc_q');
+      if (qEl) qEl.value = '1980';
+      const molesEl = document.getElementById('calc_moles');
+      if (molesEl) molesEl.value = '0.0352';
+      const dhEl = document.getElementById('calc_deltah');
+      if (dhEl) dhEl.value = '-198.0';
+      const eqEl = document.getElementById('calc_equation');
+      if (eqEl) eqEl.value = 'Solid D(l) ⇌ Solid D(s) at 69.0°C (Freezing Point)';
+
+      currentTemp = 48.0;
+      maxRecordedTemp = 85.0;
+    } else if (id === 'KCSE_2020_SOLUTION_ENDOTHERMIC') {
+      const sample = [
+        { t: 0, temp: 23.0 },
+        { t: 30, temp: 23.0 },
+        { t: 60, temp: 23.0 },
+        { t: 90, temp: 23.0 },
+        { t: 120, temp: 23.0 },
+        { t: 180, temp: 19.5 },
+        { t: 210, temp: 17.5 },
+        { t: 240, temp: 18.0 },
+        { t: 270, temp: 18.5 },
+        { t: 300, temp: 19.0 },
+        { t: 330, temp: 19.5 },
+        { t: 360, temp: 20.0 }
+      ];
+      sample.forEach(item => {
+        const inp = document.getElementById(`tbl_temp_${item.t}`);
+        if (inp) inp.value = item.temp.toFixed(1);
+        studentPlottedPoints.push({ time: item.t, temp: item.temp });
+      });
+
+      const dt = -6.5;
+      const q = (50.0 * 4.2 * Math.abs(dt)).toFixed(1);
+      const moles = (5.00 / 80.04).toFixed(4);
+      const dh = (+((50.0 * 4.2 * Math.abs(dt)) / (0.0625 * 1000))).toFixed(1);
+
+      const dtEl = document.getElementById('calc_dt');
+      if (dtEl) dtEl.value = dt.toFixed(1);
+      const qEl = document.getElementById('calc_q');
+      if (qEl) qEl.value = q;
+      const molesEl = document.getElementById('calc_moles');
+      if (molesEl) molesEl.value = moles;
+      const dhEl = document.getElementById('calc_deltah');
+      if (dhEl) dhEl.value = '+' + dh;
+      const eqEl = document.getElementById('calc_equation');
+      if (eqEl) eqEl.value = 'NH₄NO₃(s) + aq → NH₄⁺(aq) + NO₃⁻(aq)  ΔH = +21.8 kJ/mol';
+
+      currentTemp = 20.0;
+      minRecordedTemp = 17.5;
+    } else if (currentScenario.apparatusType === 'COMBUSTION') {
+      const m1 = 184.50;
+      const m2 = 183.92;
+      const dm = (m1 - m2).toFixed(2);
+      const t1 = 22.0;
+      const t2 = 42.5;
+      const dt = (t2 - t1).toFixed(1);
+
+      const m1El = document.getElementById('tbl_m1');
+      if (m1El) m1El.value = m1.toFixed(2);
+      const m2El = document.getElementById('tbl_m2');
+      if (m2El) m2El.value = m2.toFixed(2);
+      const dmEl = document.getElementById('tbl_dm');
+      if (dmEl) dmEl.value = dm;
+      const t1El = document.getElementById('tbl_t1');
+      if (t1El) t1El.value = t1.toFixed(1);
+      const t2El = document.getElementById('tbl_t2');
+      if (t2El) t2El.value = t2.toFixed(1);
+      const dtTableEl = document.getElementById('tbl_dt');
+      if (dtTableEl) dtTableEl.value = dt;
+
+      const qVal = ((100.0 * 4.2 + 45.0 * 0.385) * parseFloat(dt)).toFixed(1);
+      const molesVal = (parseFloat(dm) / 46.07).toFixed(4);
+      const dhVal = (-((parseFloat(qVal) / (parseFloat(molesVal) * 1000)))).toFixed(1);
+
+      const dtEl = document.getElementById('calc_dt');
+      if (dtEl) dtEl.value = dt;
+      const qEl = document.getElementById('calc_q');
+      if (qEl) qEl.value = qVal;
+      const molesEl = document.getElementById('calc_moles');
+      if (molesEl) molesEl.value = molesVal;
+      const dhEl = document.getElementById('calc_deltah');
+      if (dhEl) dhEl.value = dhVal;
+      const eqEl = document.getElementById('calc_equation');
+      if (eqEl) eqEl.value = 'C₂H₅OH(l) + 3O₂(g) → 2CO₂(g) + 3H₂O(l)  ΔH = -712 kJ/mol';
+
+      currentBurnerMass = m2;
+      currentTemp = t2;
+      maxRecordedTemp = t2;
+    }
+
+    updateTelemetry();
+    renderGraph();
+    updateWorkflowStepper(4);
+  }
+
+  function calcCombustionTable() {
+    const m1 = parseFloat(document.getElementById('tbl_m1')?.value);
+    const m2 = parseFloat(document.getElementById('tbl_m2')?.value);
+    const dmEl = document.getElementById('tbl_dm');
+    if (!isNaN(m1) && !isNaN(m2) && dmEl) {
+      dmEl.value = (m1 - m2).toFixed(2);
+    }
+    const t1 = parseFloat(document.getElementById('tbl_t1')?.value);
+    const t2 = parseFloat(document.getElementById('tbl_t2')?.value);
+    const dtEl = document.getElementById('tbl_dt');
+    if (!isNaN(t1) && !isNaN(t2) && dtEl) {
+      dtEl.value = (t2 - t1).toFixed(1);
+    }
+  }
+
+  function getCurrentScenario() {
+    return currentScenario;
+  }
+
+  function getStudentPlottedPoints() {
+    return studentPlottedPoints;
   }
 
   function exportGraphImage() {
@@ -2907,16 +3322,18 @@ const EnergyEngine = (() => {
     });
   }
 
-  function onTableInputChange(t) {
-    const inp = document.getElementById(`tbl_temp_${t}`);
-    if (inp && inp.value) {
-      const val = parseFloat(inp.value);
-      if (!isNaN(val)) {
-        studentPlottedPoints = studentPlottedPoints.filter(p => p.time !== t);
-        studentPlottedPoints.push({ time: t, temp: val });
-        renderGraph();
-      }
+  function onTableInputChange(t, val) {
+    if (val === undefined) {
+      const inp = document.getElementById(`tbl_temp_${t}`);
+      val = inp ? inp.value : '';
     }
+    const parsed = parseFloat(val);
+    studentPlottedPoints = studentPlottedPoints.filter(p => p.time !== t);
+    if (!isNaN(parsed) && val.toString().trim() !== '') {
+      studentPlottedPoints.push({ time: t, temp: parsed });
+      studentPlottedPoints.sort((a, b) => a.time - b.time);
+    }
+    renderGraph();
   }
 
   // ============================================================
@@ -3023,6 +3440,8 @@ const EnergyEngine = (() => {
   return {
     init,
     applyScenario,
+    getCurrentScenario,
+    getStudentPlottedPoints,
     toggleTimer,
     mixReactants,
     toggleStirrer,
@@ -3041,6 +3460,8 @@ const EnergyEngine = (() => {
     autoPlotFromTable,
     toggleExtrapolation,
     clearGraph,
+    loadSampleData,
+    calcCombustionTable,
     exportGraphImage,
     submitWorksheet,
     setStudyMode,
@@ -3053,8 +3474,7 @@ const EnergyEngine = (() => {
     openSafetyModal,
     closeSafetyModal,
     jumpToStep,
-    updateWorkflowStepper
-  };
+    updateWorkflowStepper  };
 })();
 
 if (typeof window !== 'undefined') {

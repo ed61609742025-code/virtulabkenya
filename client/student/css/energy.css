@@ -1000,6 +1000,30 @@ html, body {
   gap: 6px;
 }
 
+.energy-graph-meta-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 6px 12px;
+  margin-bottom: 10px;
+  background: var(--card-bg-hover);
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  border: 1px solid var(--card-border);
+}
+
+.energy-apparatus-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
 .energy-graph-btn-group {
   display: flex;
   gap: 4px;

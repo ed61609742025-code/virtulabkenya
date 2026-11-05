@@ -708,16 +708,30 @@
             <h3 style="font-size:0.98rem; font-family:var(--font-heading); margin:4px 0 0 0; color:var(--heading-color);">KNEC Reaction Rate Graph</h3>
           </div>
           <div class="rate-graph-toolbar">
+            <button type="button" id="btnLoadSampleData" class="rate-tangent-chip" onclick="RatesEngine.loadSampleData()" title="Populate realistic KNEC KCSE practical data" style="display:inline-flex; align-items:center; gap:4px;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Load Sample Data
+            </button>
+            <button type="button" id="btnClearData" class="rate-tangent-chip" onclick="RatesEngine.clearData()" title="Clear plotted readings" style="display:inline-flex; align-items:center; gap:4px;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Clear
+            </button>
+            <button type="button" id="btnExportGraphPng" class="rate-tangent-chip" onclick="RatesEngine.exportGraphPng()" title="Download graph image" style="display:inline-flex; align-items:center; gap:4px;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg> Export PNG
+            </button>
             <button type="button" id="btnTangentTool" class="rate-tangent-chip" onclick="RatesEngine.toggleTangent()" style="display:inline-flex; align-items:center; gap:4px;">
               <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Tangent Tool (dy/dx)
             </button>
-            <button type="button" id="btnOpenKnecPlotter" class="rate-tangent-chip" onclick="toggleKnecPlotterModal()" style="margin-left:6px; display:inline-flex; align-items:center; gap:4px;">
-              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg> KNEC Millimeter Sheet
+            <button type="button" id="btnOpenKnecPlotter" class="rate-tangent-chip" onclick="toggleKnecPlotterModal()" style="display:inline-flex; align-items:center; gap:4px;">
+              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg> Millimeter Sheet
             </button>
           </div>
         </div>
-        <div class="rate-graph-container">
+        <div id="rateGraphMetaPill" class="rate-graph-meta-pill" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; padding:6px 12px; background:var(--card-bg-hover); border-radius:8px; font-size:0.75rem; font-family:var(--font-mono); color:var(--text-muted); border:1px solid var(--card-border);">
+          <span id="rateGraphPointsCount"><strong style="color:var(--heading-color);">Points:</strong> 0 recorded</span>
+          <span id="rateGraphEquation" style="color:var(--rate-amber); font-weight:700;">Awaiting data...</span>
+        </div>
+        <div class="rate-graph-container" style="position:relative;">
           <canvas id="rateGraphCanvas" class="rate-graph-canvas" width="560" height="340"></canvas>
+          <div id="rateGraphTooltip" style="display:none; position:absolute; pointer-events:none; background:rgba(15,23,42,0.92); color:#F8FAFC; border:1px solid var(--cyan-accent); border-radius:6px; padding:4px 8px; font-family:var(--font-mono); font-size:0.72rem; z-index:10; white-space:nowrap; box-shadow:0 4px 12px rgba(0,0,0,0.3);"></div>
         </div>
       </div>
 
@@ -862,22 +876,66 @@
       const isOpening = m.style.display === 'none';
       m.style.display = isOpening ? 'flex' : 'none';
 
-      if (isOpening && !ratesPlotterInstance && window.KNECGraphPlotter) {
-        ratesPlotterInstance = new KNECGraphPlotter({
+      if (isOpening && window.KNECGraphPlotter) {
+        const st = (window.RatesEngine && typeof window.RatesEngine.getState === 'function') ? window.RatesEngine.getState() : null;
+        const currentExp = st ? st.currentExp : 'cross';
+
+        let config = {
           container: 'knecRatesPlotterContainer',
-          title: 'KNEC 233/3 Kinetics Graph (Volume vs Time)',
-          xLabel: 'Time (seconds)',
-          yLabel: 'Volume of Gas (cm³)',
-          xUnit: 's',
-          yUnit: 'cm³',
+          title: 'KNEC 233/3 Kinetics: Rate 1/t vs Volume Na₂S₂O₃',
+          xLabel: 'Volume of Na₂S₂O₃ (cm³)',
+          yLabel: 'Rate 1/t (s⁻¹)',
+          xUnit: 'cm³',
+          yUnit: 's⁻¹',
           xMin: 0,
-          xMax: 120,
-          xStep: 20,
+          xMax: 60,
+          xStep: 10,
           yMin: 0,
-          yMax: 60,
-          yStep: 10,
-          defaultMode: 'curve'
-        });
+          yMax: 0.06,
+          yStep: 0.01,
+          defaultMode: 'line',
+          initialPoints: []
+        };
+
+        if (currentExp === 'cross' && st) {
+          config.initialPoints = (st.cross.recordedData || [])
+            .filter(d => d.vThio > 0 && d.rate > 0)
+            .map(d => ({ x: parseFloat(d.vThio.toFixed(1)), y: parseFloat(d.rate.toFixed(4)) }));
+        } else if (currentExp === 'syringe' && st) {
+          config.title = 'KNEC 233/3 Kinetics: Volume of Gas vs Time';
+          config.xLabel = 'Time (seconds)';
+          config.yLabel = 'Volume of CO₂ (cm³)';
+          config.xUnit = 's';
+          config.yUnit = 'cm³';
+          config.xMin = 0;
+          config.xMax = 210;
+          config.xStep = 30;
+          config.yMin = 0;
+          config.yMax = 80;
+          config.yStep = 10;
+          config.defaultMode = 'curve';
+          config.initialPoints = (st.syringe.recordedData || [])
+            .map(d => ({ x: parseFloat(d.time.toFixed(1)), y: parseFloat(d.volume.toFixed(1)) }));
+        } else if (currentExp === 'mass' && st) {
+          config.title = 'KNEC 233/3 Kinetics: Mass of CO₂ Lost (Δm) vs Time';
+          config.xLabel = 'Time (seconds)';
+          config.yLabel = 'Mass of CO₂ Lost Δm (g)';
+          config.xUnit = 's';
+          config.yUnit = 'g';
+          config.xMin = 0;
+          config.xMax = 240;
+          config.xStep = 30;
+          config.yMin = 0;
+          config.yMax = 1.0;
+          config.yStep = 0.2;
+          config.defaultMode = 'curve';
+          config.initialPoints = (st.massLoss.recordedData || [])
+            .map(d => ({ x: parseFloat(d.time.toFixed(1)), y: parseFloat(d.loss.toFixed(3)) }));
+        }
+
+        const container = document.getElementById('knecRatesPlotterContainer');
+        if (container) container.innerHTML = '';
+        ratesPlotterInstance = new KNECGraphPlotter(config);
       }
     }
 

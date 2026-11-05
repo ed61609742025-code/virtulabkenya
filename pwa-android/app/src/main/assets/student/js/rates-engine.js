@@ -765,7 +765,7 @@ const RatesEngine = (function () {
   }
 
   // ══════════════════════════════════════════════════════════
-  // RECORDING READINGS & KNEC TABLE RENDERING
+  // RECORDING READINGS, DATA BINDING & KNEC TABLE RENDERING
   // ══════════════════════════════════════════════════════════
   function recordReading() {
     updateWorkflowStepper(3);
@@ -774,33 +774,239 @@ const RatesEngine = (function () {
       if (time <= 0.5) return;
 
       const rateProxy = 1.0 / time;
-      state.cross.recordedData.push({
+      const existingIdx = state.cross.recordedData.findIndex(d => Math.abs(d.vThio - state.cross.volumeThio) < 1.0);
+      const entry = {
         vThio: state.cross.volumeThio,
         vWater: state.cross.volumeWater,
         time: time,
         rate: rateProxy
-      });
+      };
+      if (existingIdx >= 0) {
+        state.cross.recordedData[existingIdx] = entry;
+      } else {
+        state.cross.recordedData.push(entry);
+      }
       playSynthSound('tick');
 
     } else if (state.currentExp === 'syringe') {
-      state.syringe.recordedData.push({
+      const existingIdx = state.syringe.recordedData.findIndex(d => Math.abs(d.time - state.timer) < 3.0);
+      const entry = {
         time: state.timer,
         volume: state.syringe.currentVol
-      });
+      };
+      if (existingIdx >= 0) {
+        state.syringe.recordedData[existingIdx] = entry;
+      } else {
+        state.syringe.recordedData.push(entry);
+      }
       playSynthSound('tick');
 
     } else if (state.currentExp === 'mass') {
-      state.massLoss.recordedData.push({
+      const loss = Math.max(0, state.massLoss.initialMass - state.massLoss.currentMass);
+      const existingIdx = state.massLoss.recordedData.findIndex(d => Math.abs(d.time - state.timer) < 3.0);
+      const entry = {
         form: state.massLoss.form,
         time: state.timer,
         mass: state.massLoss.currentMass,
-        loss: (state.massLoss.initialMass - state.massLoss.currentMass)
-      });
+        loss: loss
+      };
+      if (existingIdx >= 0) {
+        state.massLoss.recordedData[existingIdx] = entry;
+      } else {
+        state.massLoss.recordedData.push(entry);
+      }
+      playSynthSound('tick');
+
+    } else if (state.currentExp === 'catalyst') {
+      const existingIdx = state.catalyst.recordedData.findIndex(d => d.cat === state.catalyst.selectedCat);
+      const entry = {
+        cat: state.catalyst.selectedCat,
+        time: state.timer,
+        gas: state.catalyst.gasEvolved
+      };
+      if (existingIdx >= 0) {
+        state.catalyst.recordedData[existingIdx] = entry;
+      } else {
+        state.catalyst.recordedData.push(entry);
+      }
       playSynthSound('tick');
     }
 
     renderKnecTable();
     drawGraph();
+  }
+
+  function onTableTimeInput(expType, idx, val) {
+    const num = parseFloat(val);
+    if (expType === 'cross') {
+      const standardRows = [
+        { vThio: 50.0, vWater: 0.0 },
+        { vThio: 40.0, vWater: 10.0 },
+        { vThio: 30.0, vWater: 20.0 },
+        { vThio: 20.0, vWater: 30.0 },
+        { vThio: 10.0, vWater: 40.0 }
+      ];
+      const targetRow = standardRows[idx];
+      if (!targetRow) return;
+
+      const rateEl = document.getElementById(`tblRate_${idx}`);
+      if (!isNaN(num) && num > 0) {
+        const rate = 1.0 / num;
+        if (rateEl) rateEl.textContent = rate.toFixed(4);
+
+        const existingIdx = state.cross.recordedData.findIndex(d => Math.abs(d.vThio - targetRow.vThio) < 1.0);
+        const entry = {
+          vThio: targetRow.vThio,
+          vWater: targetRow.vWater,
+          time: num,
+          rate: rate
+        };
+        if (existingIdx >= 0) {
+          state.cross.recordedData[existingIdx] = entry;
+        } else {
+          state.cross.recordedData.push(entry);
+        }
+      } else {
+        if (rateEl) rateEl.textContent = '-';
+        state.cross.recordedData = state.cross.recordedData.filter(d => Math.abs(d.vThio - targetRow.vThio) >= 1.0);
+      }
+      drawGraph();
+
+    } else if (expType === 'syringe') {
+      const times = [0, 30, 60, 90, 120, 150, 180, 210];
+      const t = times[idx];
+      if (t === undefined) return;
+
+      if (!isNaN(num) && num >= 0) {
+        const existingIdx = state.syringe.recordedData.findIndex(d => Math.abs(d.time - t) < 5.0);
+        const entry = { time: t, volume: num };
+        if (existingIdx >= 0) {
+          state.syringe.recordedData[existingIdx] = entry;
+        } else {
+          state.syringe.recordedData.push(entry);
+        }
+      } else {
+        state.syringe.recordedData = state.syringe.recordedData.filter(d => Math.abs(d.time - t) >= 5.0);
+      }
+      drawGraph();
+
+    } else if (expType === 'mass') {
+      const times = [0, 30, 60, 90, 120, 150, 180, 210, 240];
+      const t = times[idx];
+      if (t === undefined) return;
+
+      const lossEl = document.getElementById(`tblMassLoss_${idx}`);
+      const m0 = state.massLoss.initialMass;
+      if (!isNaN(num) && num > 0) {
+        const loss = Math.max(0, m0 - num);
+        if (lossEl) lossEl.innerHTML = `<strong style="color:var(--rate-amber); font-family:var(--font-mono);">${loss.toFixed(2)}</strong>`;
+        const existingIdx = state.massLoss.recordedData.findIndex(d => Math.abs(d.time - t) < 5.0);
+        const entry = { form: state.massLoss.form, time: t, mass: num, loss: loss };
+        if (existingIdx >= 0) {
+          state.massLoss.recordedData[existingIdx] = entry;
+        } else {
+          state.massLoss.recordedData.push(entry);
+        }
+      } else {
+        if (lossEl) lossEl.innerHTML = `<strong style="color:var(--rate-amber); font-family:var(--font-mono);">-</strong>`;
+        state.massLoss.recordedData = state.massLoss.recordedData.filter(d => Math.abs(d.time - t) >= 5.0);
+      }
+      drawGraph();
+
+    } else if (expType === 'catalyst') {
+      const catList = ['MnO2', 'CuO', 'Fe2O3', 'NONE'];
+      const catCode = catList[idx];
+      if (!catCode) return;
+      const rateEl = document.getElementById(`tblCatRate_${idx}`);
+      if (!isNaN(num) && num > 0) {
+        const rate = 50.0 / num;
+        if (rateEl) rateEl.textContent = rate.toFixed(3) + ' cm³/s';
+        const existingIdx = state.catalyst.recordedData.findIndex(d => d.cat === catCode);
+        const entry = { cat: catCode, time: num, gas: 50.0 };
+        if (existingIdx >= 0) {
+          state.catalyst.recordedData[existingIdx] = entry;
+        } else {
+          state.catalyst.recordedData.push(entry);
+        }
+      } else {
+        if (rateEl) rateEl.textContent = '-';
+        state.catalyst.recordedData = state.catalyst.recordedData.filter(d => d.cat !== catCode);
+      }
+      drawGraph();
+    }
+  }
+
+  function loadSampleData() {
+    if (state.currentExp === 'cross') {
+      state.cross.recordedData = [
+        { vThio: 50.0, vWater: 0.0, time: 20.8, rate: 1.0 / 20.8 },
+        { vThio: 40.0, vWater: 10.0, time: 26.3, rate: 1.0 / 26.3 },
+        { vThio: 30.0, vWater: 20.0, time: 34.5, rate: 1.0 / 34.5 },
+        { vThio: 20.0, vWater: 30.0, time: 52.6, rate: 1.0 / 52.6 },
+        { vThio: 10.0, vWater: 40.0, time: 105.3, rate: 1.0 / 105.3 }
+      ];
+    } else if (state.currentExp === 'syringe') {
+      state.syringe.recordedData = [
+        { time: 0, volume: 0.0 },
+        { time: 30, volume: 31.0 },
+        { time: 60, volume: 50.5 },
+        { time: 90, volume: 61.5 },
+        { time: 120, volume: 67.0 },
+        { time: 150, volume: 70.0 },
+        { time: 180, volume: 71.5 },
+        { time: 210, volume: 72.0 }
+      ];
+    } else if (state.currentExp === 'mass') {
+      state.massLoss.recordedData = [
+        { form: 'CHIPS', time: 0, mass: 154.50, loss: 0.00 },
+        { form: 'CHIPS', time: 30, mass: 154.12, loss: 0.38 },
+        { form: 'CHIPS', time: 60, mass: 153.88, loss: 0.62 },
+        { form: 'CHIPS', time: 90, mass: 153.74, loss: 0.76 },
+        { form: 'CHIPS', time: 120, mass: 153.67, loss: 0.83 },
+        { form: 'CHIPS', time: 150, mass: 153.64, loss: 0.86 },
+        { form: 'CHIPS', time: 180, mass: 153.63, loss: 0.87 },
+        { form: 'CHIPS', time: 210, mass: 153.62, loss: 0.88 },
+        { form: 'CHIPS', time: 240, mass: 153.62, loss: 0.88 }
+      ];
+    } else if (state.currentExp === 'catalyst') {
+      state.catalyst.recordedData = [
+        { cat: 'MnO2', time: 38.0, gas: 50.0 },
+        { cat: 'CuO', time: 85.0, gas: 50.0 },
+        { cat: 'Fe2O3', time: 140.0, gas: 50.0 },
+        { cat: 'NONE', time: 620.0, gas: 50.0 }
+      ];
+    }
+    renderKnecTable();
+    drawGraph();
+    playSynthSound('tick');
+  }
+
+  function clearData() {
+    if (state.currentExp === 'cross') {
+      state.cross.recordedData = [];
+    } else if (state.currentExp === 'syringe') {
+      state.syringe.recordedData = [];
+    } else if (state.currentExp === 'mass') {
+      state.massLoss.recordedData = [];
+    } else if (state.currentExp === 'catalyst') {
+      state.catalyst.recordedData = [];
+    }
+    renderKnecTable();
+    drawGraph();
+  }
+
+  function exportGraphPng() {
+    if (!gCanvas) return;
+    try {
+      const link = document.createElement('a');
+      link.download = `KNEC_Rates_${state.currentExp}_Graph_${Date.now()}.png`;
+      link.href = gCanvas.toDataURL('image/png');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (e) {
+      console.error('Export PNG failed:', e);
+    }
   }
 
   function renderKnecTable() {
@@ -830,15 +1036,15 @@ const RatesEngine = (function () {
 
       tableBody.innerHTML = standardRows.map((row, idx) => {
         const found = state.cross.recordedData.find(d => Math.abs(d.vThio - row.vThio) < 1.0);
-        const timeStr = found ? found.time.toFixed(1) : '-';
+        const timeStr = found ? found.time.toFixed(1) : '';
         const rateStr = found ? found.rate.toFixed(4) : '-';
         return `
           <tr>
             <td>${idx + 1}</td>
             <td>${row.vThio.toFixed(1)}</td>
             <td>${row.vWater.toFixed(1)}</td>
-            <td><input type="text" class="rate-table-input" id="tblTime_${idx}" value="${timeStr}" placeholder="--"></td>
-            <td><strong style="color:var(--rate-amber);" id="tblRate_${idx}">${rateStr}</strong></td>
+            <td><input type="number" step="0.1" min="1" max="500" class="rate-table-input" id="tblTime_${idx}" value="${timeStr}" placeholder="--" oninput="RatesEngine.onTableTimeInput('cross', ${idx}, this.value)"></td>
+            <td><strong style="color:var(--rate-amber); font-family:var(--font-mono);" id="tblRate_${idx}">${rateStr}</strong></td>
           </tr>
         `;
       }).join('');
@@ -862,11 +1068,95 @@ const RatesEngine = (function () {
       tableBody.innerHTML = `
         <tr>
           <th>Vol CO₂ (cm³)</th>
-          ${times.map(t => {
+          ${times.map((t, idx) => {
             const found = state.syringe.recordedData.find(d => Math.abs(d.time - t) < 5.0);
-            const val = (t === 0) ? '0.0' : (found ? found.volume.toFixed(1) : '-');
-            return `<td><input type="text" class="rate-table-input" style="max-width:55px;" value="${val}"></td>`;
+            const val = (t === 0) ? '0.0' : (found ? found.volume.toFixed(1) : '');
+            return `<td><input type="number" step="0.5" min="0" max="100" class="rate-table-input" style="max-width:55px;" id="tblSyrVol_${idx}" value="${val}" ${t === 0 ? 'readonly' : `oninput="RatesEngine.onTableTimeInput('syringe', ${idx}, this.value)"`} placeholder="--"></td>`;
           }).join('')}
+        </tr>
+      `;
+
+    } else if (state.currentExp === 'mass') {
+      tableHead.innerHTML = `
+        <tr>
+          <th>Time (s)</th>
+          <th>0</th>
+          <th>30</th>
+          <th>60</th>
+          <th>90</th>
+          <th>120</th>
+          <th>150</th>
+          <th>180</th>
+          <th>210</th>
+          <th>240</th>
+        </tr>
+      `;
+      const times = [0, 30, 60, 90, 120, 150, 180, 210, 240];
+      const m0 = state.massLoss.initialMass;
+      tableBody.innerHTML = `
+        <tr>
+          <th>Mass (g)</th>
+          ${times.map((t, idx) => {
+            const found = state.massLoss.recordedData.find(d => Math.abs(d.time - t) < 5.0);
+            const mVal = (t === 0) ? m0.toFixed(2) : (found ? found.mass.toFixed(2) : '');
+            return `<td><input type="number" step="0.01" class="rate-table-input" style="max-width:65px;" id="tblMass_${idx}" value="${mVal}" ${t === 0 ? 'readonly' : `oninput="RatesEngine.onTableTimeInput('mass', ${idx}, this.value)"`} placeholder="--"></td>`;
+          }).join('')}
+        </tr>
+        <tr>
+          <th>Loss Δm (g)</th>
+          ${times.map((t, idx) => {
+            const found = state.massLoss.recordedData.find(d => Math.abs(d.time - t) < 5.0);
+            const lossVal = (t === 0) ? '0.00' : (found ? found.loss.toFixed(2) : '-');
+            return `<td id="tblMassLoss_${idx}"><strong style="color:var(--rate-amber); font-family:var(--font-mono);">${lossVal}</strong></td>`;
+          }).join('')}
+        </tr>
+      `;
+
+    } else if (state.currentExp === 'catalyst') {
+      tableHead.innerHTML = `
+        <tr>
+          <th>Catalyst</th>
+          <th>Time to 50 cm³ (s)</th>
+          <th>Rate of O₂ Evolution</th>
+          <th>Relative Activity</th>
+        </tr>
+      `;
+      const catList = [
+        { code: 'MnO2', name: 'Manganese(IV) Oxide (MnO₂)', t: 38.0, rel: 'Highest (Very Fast)' },
+        { code: 'CuO', name: 'Copper(II) Oxide (CuO)', t: 85.0, rel: 'Moderate' },
+        { code: 'Fe2O3', name: 'Iron(III) Oxide (Fe₂O₃)', t: 140.0, rel: 'Slow' },
+        { code: 'NONE', name: 'No Catalyst (Control)', t: 620.0, rel: 'Extremely Slow' }
+      ];
+      tableBody.innerHTML = catList.map((c, idx) => {
+        const found = state.catalyst.recordedData.find(d => d.cat === c.code);
+        const tVal = found ? found.time.toFixed(1) : '';
+        const rateVal = found && found.time > 0 ? (50.0 / found.time).toFixed(3) + ' cm³/s' : (tVal ? (50.0 / parseFloat(tVal)).toFixed(3) + ' cm³/s' : '-');
+        return `
+          <tr>
+            <td><strong>${c.name}</strong></td>
+            <td><input type="number" step="0.5" class="rate-table-input" style="max-width:70px;" id="tblCatTime_${idx}" value="${tVal}" placeholder="${c.t}" oninput="RatesEngine.onTableTimeInput('catalyst', ${idx}, this.value)"></td>
+            <td><strong style="color:var(--rate-amber); font-family:var(--font-mono);" id="tblCatRate_${idx}">${rateVal}</strong></td>
+            <td><span style="font-size:0.75rem; color:var(--text-muted);">${c.rel}</span></td>
+          </tr>
+        `;
+      }).join('');
+
+    } else if (state.currentExp === 'collision') {
+      tableHead.innerHTML = `
+        <tr>
+          <th>Condition</th>
+          <th>Temperature (K)</th>
+          <th>Activation Energy Eₐ (kJ/mol)</th>
+          <th>% Effective Collisions</th>
+        </tr>
+      `;
+      const effPct = ((Math.exp(-state.collision.activationEnergy * 1000 / (8.314 * state.collision.temp))) * 100);
+      tableBody.innerHTML = `
+        <tr>
+          <td>Current Sandbox Conditions</td>
+          <td>${state.collision.temp} K</td>
+          <td>${state.collision.activationEnergy} kJ/mol</td>
+          <td><strong style="color:#10B981; font-family:var(--font-mono);">${effPct.toFixed(3)}%</strong></td>
         </tr>
       `;
     }
@@ -1447,7 +1737,7 @@ const RatesEngine = (function () {
   }
 
   // ══════════════════════════════════════════════════════════
-  // KNEC SAPC GRAPH PLOTTING & TANGENT TOOL
+  // KNEC SAPC GRAPH PLOTTING, DATA REGRESSION & TANGENT TOOL
   // ══════════════════════════════════════════════════════════
   let gCanvas, gCtx;
   function setupGraphCanvas() {
@@ -1456,22 +1746,103 @@ const RatesEngine = (function () {
       gCtx = gCanvas.getContext('2d');
       updateCanvasDimensions();
 
-      // Click to place tangent point
       gCanvas.addEventListener('click', onGraphClick);
+      gCanvas.addEventListener('mousemove', onGraphMouseMove);
+      gCanvas.addEventListener('mouseleave', onGraphMouseLeave);
     }
   }
 
-  function onGraphClick(e) {
-    if (!state.tangent.active || !gCanvas) return;
+  function onGraphMouseMove(e) {
+    if (!gCanvas) return;
     const rect = gCanvas.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    // Map clickX to time
-    const margin = 50;
-    const plotW = gCanvas.width - margin * 2;
-    const t = ((clickX - margin) / plotW) * 210.0;
-    if (t >= 10 && t <= 200) {
-      state.tangent.pointTime = t;
-      drawGraph();
+    const clientX = e.clientX - rect.left;
+    const clientY = e.clientY - rect.top;
+
+    const scaleX = gCanvas.width / rect.width;
+    const scaleY = gCanvas.height / rect.height;
+    const canvasX = clientX * scaleX;
+    const canvasY = clientY * scaleY;
+
+    const padLeft = gCanvas.width < 420 ? 46 : 56;
+    const padBottom = gCanvas.width < 420 ? 38 : 42;
+    const padTop = 22;
+    const padRight = 20;
+    const plotW = Math.max(10, gCanvas.width - padLeft - padRight);
+    const plotH = Math.max(10, gCanvas.height - padTop - padBottom);
+
+    const tip = document.getElementById('rateGraphTooltip');
+    if (!tip) return;
+
+    if (canvasX >= padLeft && canvasX <= padLeft + plotW && canvasY >= padTop && canvasY <= padTop + plotH) {
+      const normX = (canvasX - padLeft) / plotW;
+      const normY = (padTop + plotH - canvasY) / plotH;
+
+      let xText = '', yText = '';
+      if (state.currentExp === 'cross') {
+        const valX = (normX * 60.0).toFixed(1);
+        const valY = (normY * 0.060).toFixed(4);
+        xText = `Vol: ${valX} cm³`;
+        yText = `Rate: ${valY} s⁻¹`;
+      } else if (state.currentExp === 'syringe') {
+        const valX = (normX * 210.0).toFixed(1);
+        const valY = (normY * 80.0).toFixed(1);
+        xText = `Time: ${valX} s`;
+        yText = `Vol: ${valY} cm³`;
+      } else if (state.currentExp === 'mass') {
+        const valX = (normX * 240.0).toFixed(1);
+        const valY = (normY * 1.0).toFixed(3);
+        xText = `Time: ${valX} s`;
+        yText = `Δm: ${valY} g`;
+      } else if (state.currentExp === 'catalyst') {
+        const valX = (normX * 180.0).toFixed(1);
+        const valY = (normY * 60.0).toFixed(1);
+        xText = `Time: ${valX} s`;
+        yText = `Vol O₂: ${valY} cm³`;
+      } else if (state.currentExp === 'collision') {
+        const valX = (normX * 100.0).toFixed(1);
+        const valY = (normY * 1.0).toFixed(2);
+        xText = `E: ${valX} kJ/mol`;
+        yText = `N(E): ${valY}`;
+      }
+
+      tip.style.display = 'block';
+      tip.style.left = `${clientX + 12}px`;
+      tip.style.top = `${clientY - 28}px`;
+      tip.innerHTML = `${xText} &nbsp;|&nbsp; <strong>${yText}</strong>`;
+    } else {
+      tip.style.display = 'none';
+    }
+  }
+
+  function onGraphMouseLeave() {
+    const tip = document.getElementById('rateGraphTooltip');
+    if (tip) tip.style.display = 'none';
+  }
+
+  function onGraphClick(e) {
+    if (!gCanvas) return;
+    const rect = gCanvas.getBoundingClientRect();
+    const scaleX = gCanvas.width / rect.width;
+    const canvasX = (e.clientX - rect.left) * scaleX;
+
+    const padLeft = gCanvas.width < 420 ? 46 : 56;
+    const padRight = 20;
+    const plotW = Math.max(10, gCanvas.width - padLeft - padRight);
+
+    if (state.tangent.active) {
+      if (state.currentExp === 'syringe') {
+        const t = ((canvasX - padLeft) / plotW) * 210.0;
+        if (t >= 10 && t <= 200) {
+          state.tangent.pointTime = t;
+          drawGraph();
+        }
+      } else if (state.currentExp === 'mass') {
+        const t = ((canvasX - padLeft) / plotW) * 240.0;
+        if (t >= 10 && t <= 230) {
+          state.tangent.pointTime = t;
+          drawGraph();
+        }
+      }
     }
   }
 
@@ -1487,9 +1858,14 @@ const RatesEngine = (function () {
     if (!gCtx || !gCanvas) return;
     const w = gCanvas.width;
     const h = gCanvas.height;
-    const margin = w < 420 ? 38 : 50;
-    const plotW = w - margin * 2;
-    const plotH = h - margin * 2;
+    if (w <= 0 || h <= 0) return;
+
+    const padLeft = w < 420 ? 46 : 56;
+    const padBottom = w < 420 ? 38 : 42;
+    const padTop = 22;
+    const padRight = 20;
+    const plotW = Math.max(10, w - padLeft - padRight);
+    const plotH = Math.max(10, h - padTop - padBottom);
 
     const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
     const isLight = currentTheme !== 'dark' && currentTheme !== 'green';
@@ -1500,62 +1876,215 @@ const RatesEngine = (function () {
     gCtx.fillStyle = isLight ? '#FFFFFF' : (currentTheme === 'green' ? '#06150B' : '#0B1120');
     gCtx.fillRect(0, 0, w, h);
 
-    // KNEC Grid Background (5mm / 10mm grid lines like authentic millimeter graph paper)
-    gCtx.strokeStyle = isLight ? 'rgba(15, 23, 42, 0.08)' : 'rgba(255, 255, 255, 0.06)';
+    // Authentic KNEC Millimeter Paper Grid
+    const minorStep = 10;
+    const majorInterval = 5;
+
+    // Minor grid
     gCtx.lineWidth = 1;
-    for (let x = margin; x <= w - margin; x += 20) {
-      gCtx.beginPath();
-      gCtx.moveTo(x, margin);
-      gCtx.lineTo(x, h - margin);
-      gCtx.stroke();
+    gCtx.strokeStyle = isLight ? 'rgba(16, 185, 129, 0.09)' : 'rgba(16, 185, 129, 0.06)';
+    gCtx.beginPath();
+    let colIdx = 0;
+    for (let x = padLeft; x <= w - padRight; x += minorStep) {
+      if (colIdx % majorInterval !== 0) {
+        gCtx.moveTo(x, padTop);
+        gCtx.lineTo(x, h - padBottom);
+      }
+      colIdx++;
     }
-    for (let y = margin; y <= h - margin; y += 20) {
-      gCtx.beginPath();
-      gCtx.moveTo(margin, y);
-      gCtx.lineTo(w - margin, y);
-      gCtx.stroke();
+    let rowIdx = 0;
+    for (let y = h - padBottom; y >= padTop; y -= minorStep) {
+      if (rowIdx % majorInterval !== 0) {
+        gCtx.moveTo(padLeft, y);
+        gCtx.lineTo(w - padRight, y);
+      }
+      rowIdx++;
     }
+    gCtx.stroke();
+
+    // Major grid
+    gCtx.strokeStyle = isLight ? 'rgba(16, 185, 129, 0.22)' : 'rgba(16, 185, 129, 0.16)';
+    gCtx.beginPath();
+    colIdx = 0;
+    for (let x = padLeft; x <= w - padRight; x += minorStep) {
+      if (colIdx % majorInterval === 0) {
+        gCtx.moveTo(x, padTop);
+        gCtx.lineTo(x, h - padBottom);
+      }
+      colIdx++;
+    }
+    rowIdx = 0;
+    for (let y = h - padBottom; y >= padTop; y -= minorStep) {
+      if (rowIdx % majorInterval === 0) {
+        gCtx.moveTo(padLeft, y);
+        gCtx.lineTo(w - padRight, y);
+      }
+      rowIdx++;
+    }
+    gCtx.stroke();
 
     // Axes Lines
     gCtx.strokeStyle = isLight ? '#334155' : '#94A3B8';
     gCtx.lineWidth = 2;
     gCtx.beginPath();
-    gCtx.moveTo(margin, margin);
-    gCtx.lineTo(margin, h - margin); // Y-axis
-    gCtx.lineTo(w - margin, h - margin); // X-axis
+    gCtx.moveTo(padLeft, padTop);
+    gCtx.lineTo(padLeft, h - padBottom); // Y-axis
+    gCtx.lineTo(w - padRight, h - padBottom); // X-axis
     gCtx.stroke();
 
-    // Axis Labels with Units (KNEC SAPC criteria)
-    gCtx.fillStyle = isLight ? '#0F172A' : '#CBD5E1';
-    gCtx.font = 'bold 11px sans-serif';
-    gCtx.textAlign = 'center';
+    const pointsCountEl = document.getElementById('rateGraphPointsCount');
+    const eqEl = document.getElementById('rateGraphEquation');
 
+    // ────────────────────────────────────────────────────────
+    // EXPERIMENT 1: DISAPPEARING CROSS (Rate 1/t vs Vol Na₂S₂O₃)
+    // ────────────────────────────────────────────────────────
     if (state.currentExp === 'cross') {
-      gCtx.fillText('Volume of Na₂S₂O₃ (cm³)', margin + plotW / 2, h - 14);
+      const xMax = 60.0;
+      const yMax = 0.060;
+
+      // X-Axis Graduations & Ticks (0, 10, 20, 30, 40, 50, 60)
+      const xTicks = [0, 10, 20, 30, 40, 50, 60];
+      gCtx.fillStyle = isLight ? '#475569' : '#94A3B8';
+      gCtx.font = '10px monospace';
+      gCtx.textAlign = 'center';
+      gCtx.textBaseline = 'top';
+      xTicks.forEach(tick => {
+        const tx = padLeft + (tick / xMax) * plotW;
+        gCtx.strokeStyle = isLight ? '#334155' : '#94A3B8';
+        gCtx.lineWidth = 1.5;
+        gCtx.beginPath();
+        gCtx.moveTo(tx, h - padBottom);
+        gCtx.lineTo(tx, h - padBottom + 4);
+        gCtx.stroke();
+        gCtx.fillText(String(tick), tx, h - padBottom + 6);
+      });
+
+      // Y-Axis Graduations & Ticks (0.00, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06)
+      const yTicks = [0.00, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06];
+      gCtx.textAlign = 'right';
+      gCtx.textBaseline = 'middle';
+      yTicks.forEach(tick => {
+        const ty = (h - padBottom) - (tick / yMax) * plotH;
+        gCtx.strokeStyle = isLight ? '#334155' : '#94A3B8';
+        gCtx.lineWidth = 1.5;
+        gCtx.beginPath();
+        gCtx.moveTo(padLeft - 4, ty);
+        gCtx.lineTo(padLeft, ty);
+        gCtx.stroke();
+        gCtx.fillText(tick.toFixed(2), padLeft - 6, ty);
+      });
+
+      // Axis Titles with Units
+      gCtx.fillStyle = isLight ? '#0F172A' : '#E2E8F0';
+      gCtx.font = 'bold 11px sans-serif';
+      gCtx.textAlign = 'center';
+      gCtx.textBaseline = 'bottom';
+      gCtx.fillText('Volume of Na₂S₂O₃ (cm³)', padLeft + plotW / 2, h - 2);
+
       gCtx.save();
-      gCtx.translate(14, margin + plotH / 2);
+      gCtx.translate(13, padTop + plotH / 2);
       gCtx.rotate(-Math.PI / 2);
+      gCtx.textBaseline = 'top';
       gCtx.fillText('Rate 1/t (s⁻¹)', 0, 0);
       gCtx.restore();
 
-      // Plot Origin (0,0) Rule for Rate Curves
+      // Plot (0,0) Label
       gCtx.fillStyle = isLight ? '#B45309' : '#F59E0B';
-      gCtx.fillText('(0,0)', margin - 10, h - margin + 14);
+      gCtx.font = 'bold 9px sans-serif';
+      gCtx.textAlign = 'right';
+      gCtx.textBaseline = 'top';
+      gCtx.fillText('(0,0)', padLeft - 4, h - padBottom + 4);
 
-      // Best Fit Straight Line passing through (0,0)
-      gCtx.strokeStyle = isLight ? '#D97706' : '#F59E0B';
-      gCtx.lineWidth = 2.5;
-      gCtx.beginPath();
-      gCtx.moveTo(margin, h - margin);
-      gCtx.lineTo(margin + plotW * 0.95, h - margin - plotH * 0.9);
-      gCtx.stroke();
+      // Data Points from student readings
+      const validPoints = state.cross.recordedData.filter(d => d.vThio > 0 && d.time > 0 && d.rate > 0);
 
-      // Plot Points from Table
-      state.cross.recordedData.forEach(pt => {
-        const px = margin + (pt.vThio / 50.0) * (plotW * 0.95);
-        const py = h - margin - (pt.rate / 0.06) * (plotH * 0.9);
+      if (pointsCountEl) {
+        pointsCountEl.innerHTML = `<strong style="color:var(--heading-color);">Points:</strong> ${validPoints.length} / 5 recorded`;
+      }
 
-        // Small cross 'x' mark (KNEC convention)
+      if (validPoints.length === 0) {
+        gCtx.fillStyle = isLight ? 'rgba(15, 23, 42, 0.45)' : 'rgba(255, 255, 255, 0.45)';
+        gCtx.font = 'bold 12px sans-serif';
+        gCtx.textAlign = 'center';
+        gCtx.textBaseline = 'middle';
+        gCtx.fillText('📊 No experimental data plotted yet', padLeft + plotW / 2, padTop + plotH / 2 - 10);
+        gCtx.font = '11px sans-serif';
+        gCtx.fillText('Perform practical trials or click "Load Sample Data" above', padLeft + plotW / 2, padTop + plotH / 2 + 12);
+
+        if (eqEl) {
+          eqEl.textContent = 'Awaiting dilution data...';
+          eqEl.style.color = 'var(--text-muted)';
+        }
+        return;
+      }
+
+      // Linear Regression through Origin (0,0) [KNEC KCSE Requirement]
+      if (validPoints.length >= 2) {
+        let sumXY = 0;
+        let sumX2 = 0;
+        let sumY = 0;
+        validPoints.forEach(pt => {
+          sumXY += pt.vThio * pt.rate;
+          sumX2 += pt.vThio * pt.vThio;
+          sumY += pt.rate;
+        });
+        const m = sumX2 > 0 ? (sumXY / sumX2) : 0;
+        const meanY = sumY / validPoints.length;
+
+        let ssTot = 0;
+        let ssRes = 0;
+        validPoints.forEach(pt => {
+          ssTot += (pt.rate - meanY) * (pt.rate - meanY);
+          const predY = m * pt.vThio;
+          ssRes += (pt.rate - predY) * (pt.rate - predY);
+        });
+        const r2 = ssTot > 0 ? Math.max(0, 1 - ssRes / ssTot) : 1.0;
+
+        const lineEndX = Math.min(xMax, 55.0);
+        const lineEndY = m * lineEndX;
+        const pEndX = padLeft + (lineEndX / xMax) * plotW;
+        const pEndY = (h - padBottom) - (lineEndY / yMax) * plotH;
+
+        // Best fit straight line passing through (0,0)
+        gCtx.strokeStyle = isLight ? '#D97706' : '#F59E0B';
+        gCtx.lineWidth = 2.5;
+        gCtx.beginPath();
+        gCtx.moveTo(padLeft, h - padBottom);
+        gCtx.lineTo(pEndX, pEndY);
+        gCtx.stroke();
+
+        const eqStr = `1/t = ${(m * 1000).toFixed(3)}×10⁻³ · V  (R² = ${r2.toFixed(3)})`;
+        if (eqEl) {
+          eqEl.textContent = eqStr;
+          eqEl.style.color = isLight ? '#D97706' : '#F59E0B';
+        }
+
+        gCtx.fillStyle = isLight ? '#B45309' : '#F59E0B';
+        gCtx.font = 'bold 10px monospace';
+        gCtx.textAlign = 'left';
+        gCtx.textBaseline = 'top';
+        gCtx.fillText(`Line of Best Fit: ${eqStr}`, padLeft + 12, padTop + 8);
+        gCtx.fillStyle = isLight ? '#64748B' : '#94A3B8';
+        gCtx.font = '9px sans-serif';
+        gCtx.fillText('Passes through (0,0) [KNEC KCSE Criteria]', padLeft + 12, padTop + 22);
+
+      } else {
+        if (eqEl) {
+          eqEl.textContent = '1 point logged (minimum 2 needed for regression)';
+          eqEl.style.color = 'var(--text-muted)';
+        }
+      }
+
+      // Plot Points with Authentic KNEC 'x' marks
+      validPoints.forEach(pt => {
+        const px = padLeft + (pt.vThio / xMax) * plotW;
+        const py = (h - padBottom) - (pt.rate / yMax) * plotH;
+
+        gCtx.fillStyle = isLight ? 'rgba(2, 132, 199, 0.18)' : 'rgba(56, 189, 248, 0.2)';
+        gCtx.beginPath();
+        gCtx.arc(px, py, 7, 0, Math.PI * 2);
+        gCtx.fill();
+
         gCtx.strokeStyle = isLight ? '#0284C7' : '#38BDF8';
         gCtx.lineWidth = 2;
         gCtx.beginPath();
@@ -1566,48 +2095,145 @@ const RatesEngine = (function () {
         gCtx.stroke();
       });
 
+    // ────────────────────────────────────────────────────────
+    // EXPERIMENT 2: GAS SYRINGE (Volume of CO₂ vs Time t)
+    // ────────────────────────────────────────────────────────
     } else if (state.currentExp === 'syringe') {
-      gCtx.fillText('Time t (seconds)', margin + plotW / 2, h - 14);
+      const xMax = 210.0;
+      const yMax = 80.0;
+
+      // X-Axis Graduations (0, 30, 60, 90, 120, 150, 180, 210)
+      const xTicks = [0, 30, 60, 90, 120, 150, 180, 210];
+      gCtx.fillStyle = isLight ? '#475569' : '#94A3B8';
+      gCtx.font = '10px monospace';
+      gCtx.textAlign = 'center';
+      gCtx.textBaseline = 'top';
+      xTicks.forEach(tick => {
+        const tx = padLeft + (tick / xMax) * plotW;
+        gCtx.strokeStyle = isLight ? '#334155' : '#94A3B8';
+        gCtx.lineWidth = 1.5;
+        gCtx.beginPath();
+        gCtx.moveTo(tx, h - padBottom);
+        gCtx.lineTo(tx, h - padBottom + 4);
+        gCtx.stroke();
+        gCtx.fillText(String(tick), tx, h - padBottom + 6);
+      });
+
+      // Y-Axis Graduations (0, 20, 40, 60, 80)
+      const yTicks = [0, 20, 40, 60, 80];
+      gCtx.textAlign = 'right';
+      gCtx.textBaseline = 'middle';
+      yTicks.forEach(tick => {
+        const ty = (h - padBottom) - (tick / yMax) * plotH;
+        gCtx.strokeStyle = isLight ? '#334155' : '#94A3B8';
+        gCtx.lineWidth = 1.5;
+        gCtx.beginPath();
+        gCtx.moveTo(padLeft - 4, ty);
+        gCtx.lineTo(padLeft, ty);
+        gCtx.stroke();
+        gCtx.fillText(String(tick), padLeft - 6, ty);
+      });
+
+      // Axis Titles
+      gCtx.fillStyle = isLight ? '#0F172A' : '#E2E8F0';
+      gCtx.font = 'bold 11px sans-serif';
+      gCtx.textAlign = 'center';
+      gCtx.textBaseline = 'bottom';
+      gCtx.fillText('Time t (seconds)', padLeft + plotW / 2, h - 2);
+
       gCtx.save();
-      gCtx.translate(14, margin + plotH / 2);
+      gCtx.translate(13, padTop + plotH / 2);
       gCtx.rotate(-Math.PI / 2);
+      gCtx.textBaseline = 'top';
       gCtx.fillText('Volume of CO₂ (cm³)', 0, 0);
       gCtx.restore();
 
-      // Smooth Curve
+      const recorded = [...state.syringe.recordedData].sort((a, b) => a.time - b.time);
+      if (pointsCountEl) {
+        pointsCountEl.innerHTML = `<strong style="color:var(--heading-color);">Points:</strong> ${recorded.length} recorded`;
+      }
+
+      if (recorded.length === 0) {
+        gCtx.fillStyle = isLight ? 'rgba(15, 23, 42, 0.45)' : 'rgba(255, 255, 255, 0.45)';
+        gCtx.font = 'bold 12px sans-serif';
+        gCtx.textAlign = 'center';
+        gCtx.textBaseline = 'middle';
+        gCtx.fillText('📊 No gas volume readings logged yet', padLeft + plotW / 2, padTop + plotH / 2 - 10);
+        gCtx.font = '11px sans-serif';
+        gCtx.fillText('Run experiment & record readings, or click "Load Sample Data"', padLeft + plotW / 2, padTop + plotH / 2 + 12);
+        if (eqEl) {
+          eqEl.textContent = 'Awaiting syringe readings...';
+          eqEl.style.color = 'var(--text-muted)';
+        }
+        return;
+      }
+
+      // Smooth Curve Estimation
+      const maxRecordedVol = Math.max(...recorded.map(d => d.volume), 0);
+      const vMaxEst = Math.max(state.syringe.maxVol, maxRecordedVol);
+      let kSum = 0, kCount = 0;
+      recorded.forEach(pt => {
+        if (pt.time > 0 && pt.volume > 0 && pt.volume < vMaxEst * 0.98) {
+          const kEst = -Math.log(1 - pt.volume / vMaxEst) / pt.time;
+          if (!isNaN(kEst) && kEst > 0) {
+            kSum += kEst;
+            kCount++;
+          }
+        }
+      });
+      const k = kCount > 0 ? (kSum / kCount) : (0.035 * (state.syringe.acidConc / 2.0));
+
+      // Draw Smooth Kinetic Rate Curve
       gCtx.strokeStyle = isLight ? '#047857' : '#10B981';
       gCtx.lineWidth = 2.5;
       gCtx.beginPath();
-      gCtx.moveTo(margin, h - margin);
-
-      const k = 0.035 * (state.syringe.acidConc / 2.0);
-      for (let t = 0; t <= 210; t += 5) {
-        const vol = state.syringe.maxVol * (1 - Math.exp(-k * t));
-        const px = margin + (t / 210.0) * plotW;
-        const py = h - margin - (vol / 80.0) * plotH;
+      gCtx.moveTo(padLeft, h - padBottom);
+      for (let t = 0; t <= 210; t += 3) {
+        const vol = vMaxEst * (1 - Math.exp(-k * t));
+        const px = padLeft + (t / xMax) * plotW;
+        const py = (h - padBottom) - (vol / yMax) * plotH;
         gCtx.lineTo(px, py);
       }
       gCtx.stroke();
 
+      // Plot Circled Dot Points
+      recorded.forEach(pt => {
+        const px = padLeft + (pt.time / xMax) * plotW;
+        const py = (h - padBottom) - (pt.volume / yMax) * plotH;
+
+        gCtx.fillStyle = isLight ? '#047857' : '#34D399';
+        gCtx.beginPath();
+        gCtx.arc(px, py, 4, 0, Math.PI * 2);
+        gCtx.fill();
+
+        gCtx.strokeStyle = isLight ? '#FFFFFF' : '#0F172A';
+        gCtx.lineWidth = 1.5;
+        gCtx.stroke();
+      });
+
       // Tangent Construction Tool
       if (state.tangent.active) {
-        const t0 = state.tangent.pointTime;
-        const v0 = state.syringe.maxVol * (1 - Math.exp(-k * t0));
-        const slope = state.syringe.maxVol * k * Math.exp(-k * t0); // dV/dt in cm³/s
+        const t0 = Math.max(10, Math.min(200, state.tangent.pointTime));
+        const v0 = vMaxEst * (1 - Math.exp(-k * t0));
+        const slope = vMaxEst * k * Math.exp(-k * t0);
         state.tangent.slope = slope;
 
-        const px0 = margin + (t0 / 210.0) * plotW;
-        const py0 = h - margin - (v0 / 80.0) * plotH;
-
+        const px0 = padLeft + (t0 / xMax) * plotW;
+        const py0 = (h - padBottom) - (v0 / yMax) * plotH;
         const tangentColor = isLight ? '#6D28D9' : '#C084FC';
 
-        // Tangent Line
-        const dt = 40;
-        const x1 = margin + ((t0 - dt) / 210.0) * plotW;
-        const y1 = h - margin - ((v0 - slope * dt) / 80.0) * plotH;
-        const x2 = margin + ((t0 + dt) / 210.0) * plotW;
-        const y2 = h - margin - ((v0 + slope * dt) / 80.0) * plotH;
+        const dt = 38;
+        const t1 = t0 - dt;
+        const t2 = t0 + dt;
+        const v1 = v0 - slope * dt;
+        const v2 = v0 + slope * dt;
 
+        const x1 = padLeft + (t1 / xMax) * plotW;
+        const y1 = (h - padBottom) - (v1 / yMax) * plotH;
+        const x2 = padLeft + (t2 / xMax) * plotW;
+        const y2 = (h - padBottom) - (v2 / yMax) * plotH;
+
+        // Tangent Line
         gCtx.strokeStyle = tangentColor;
         gCtx.lineWidth = 2.5;
         gCtx.beginPath();
@@ -1615,7 +2241,7 @@ const RatesEngine = (function () {
         gCtx.lineTo(x2, y2);
         gCtx.stroke();
 
-        // Tangent Point Circle
+        // Tangent Point Marker
         gCtx.fillStyle = tangentColor;
         gCtx.beginPath();
         gCtx.arc(px0, py0, 5, 0, Math.PI * 2);
@@ -1626,15 +2252,345 @@ const RatesEngine = (function () {
         gCtx.strokeStyle = isLight ? 'rgba(109, 40, 217, 0.7)' : 'rgba(192, 132, 252, 0.7)';
         gCtx.beginPath();
         gCtx.moveTo(px0, py0);
-        gCtx.lineTo(px0, h - margin); // Down to x-axis
+        gCtx.lineTo(px0, h - padBottom);
         gCtx.moveTo(px0, py0);
-        gCtx.lineTo(margin, py0); // Left to y-axis
+        gCtx.lineTo(padLeft, py0);
         gCtx.stroke();
         gCtx.setLineDash([]);
 
-        // Slope Tag
+        const tagText = `Tangent at t=${t0.toFixed(0)}s: Rate = ${slope.toFixed(3)} cm³/s`;
         gCtx.fillStyle = tangentColor;
-        gCtx.fillText(`Tangent at t=${t0.toFixed(0)}s: Rate = ${slope.toFixed(3)} cm³/s`, px0 + 10, py0 - 15);
+        gCtx.font = 'bold 10px sans-serif';
+        gCtx.textAlign = 'left';
+        gCtx.fillText(tagText, Math.min(px0 + 10, w - padRight - 180), Math.max(py0 - 14, padTop + 14));
+
+        if (eqEl) {
+          eqEl.textContent = `Tangent Rate at ${t0.toFixed(0)}s: ${slope.toFixed(3)} cm³/s`;
+          eqEl.style.color = tangentColor;
+        }
+      } else {
+        if (eqEl) {
+          eqEl.textContent = `Asymptotic Curve: V(t) = ${vMaxEst.toFixed(0)}(1 - e^(-${k.toFixed(4)}t))`;
+          eqEl.style.color = isLight ? '#047857' : '#10B981';
+        }
+      }
+
+    // ────────────────────────────────────────────────────────
+    // EXPERIMENT 3: MASS LOSS BALANCE (Δm vs Time t)
+    // ────────────────────────────────────────────────────────
+    } else if (state.currentExp === 'mass') {
+      const xMax = 240.0;
+      const yMax = 1.00;
+
+      // X-Axis Graduations
+      const xTicks = [0, 30, 60, 90, 120, 150, 180, 210, 240];
+      gCtx.fillStyle = isLight ? '#475569' : '#94A3B8';
+      gCtx.font = '10px monospace';
+      gCtx.textAlign = 'center';
+      gCtx.textBaseline = 'top';
+      xTicks.forEach(tick => {
+        const tx = padLeft + (tick / xMax) * plotW;
+        gCtx.strokeStyle = isLight ? '#334155' : '#94A3B8';
+        gCtx.lineWidth = 1.5;
+        gCtx.beginPath();
+        gCtx.moveTo(tx, h - padBottom);
+        gCtx.lineTo(tx, h - padBottom + 4);
+        gCtx.stroke();
+        gCtx.fillText(String(tick), tx, h - padBottom + 6);
+      });
+
+      // Y-Axis Graduations
+      const yTicks = [0.00, 0.20, 0.40, 0.60, 0.80, 1.00];
+      gCtx.textAlign = 'right';
+      gCtx.textBaseline = 'middle';
+      yTicks.forEach(tick => {
+        const ty = (h - padBottom) - (tick / yMax) * plotH;
+        gCtx.strokeStyle = isLight ? '#334155' : '#94A3B8';
+        gCtx.lineWidth = 1.5;
+        gCtx.beginPath();
+        gCtx.moveTo(padLeft - 4, ty);
+        gCtx.lineTo(padLeft, ty);
+        gCtx.stroke();
+        gCtx.fillText(tick.toFixed(2), padLeft - 6, ty);
+      });
+
+      // Axis Titles
+      gCtx.fillStyle = isLight ? '#0F172A' : '#E2E8F0';
+      gCtx.font = 'bold 11px sans-serif';
+      gCtx.textAlign = 'center';
+      gCtx.textBaseline = 'bottom';
+      gCtx.fillText('Time t (seconds)', padLeft + plotW / 2, h - 2);
+
+      gCtx.save();
+      gCtx.translate(13, padTop + plotH / 2);
+      gCtx.rotate(-Math.PI / 2);
+      gCtx.textBaseline = 'top';
+      gCtx.fillText('Mass of CO₂ Lost Δm (g)', 0, 0);
+      gCtx.restore();
+
+      const recorded = [...state.massLoss.recordedData].sort((a, b) => a.time - b.time);
+      if (pointsCountEl) {
+        pointsCountEl.innerHTML = `<strong style="color:var(--heading-color);">Points:</strong> ${recorded.length} recorded`;
+      }
+
+      if (recorded.length === 0) {
+        gCtx.fillStyle = isLight ? 'rgba(15, 23, 42, 0.45)' : 'rgba(255, 255, 255, 0.45)';
+        gCtx.font = 'bold 12px sans-serif';
+        gCtx.textAlign = 'center';
+        gCtx.textBaseline = 'middle';
+        gCtx.fillText('📊 No mass loss readings logged yet', padLeft + plotW / 2, padTop + plotH / 2 - 10);
+        gCtx.font = '11px sans-serif';
+        gCtx.fillText('Monitor balance & record readings, or click "Load Sample Data"', padLeft + plotW / 2, padTop + plotH / 2 + 12);
+        if (eqEl) {
+          eqEl.textContent = 'Awaiting mass loss readings...';
+          eqEl.style.color = 'var(--text-muted)';
+        }
+        return;
+      }
+
+      const maxLoss = Math.max(...recorded.map(d => d.loss), state.massLoss.totalLossMax);
+      const k = 0.022;
+      gCtx.strokeStyle = isLight ? '#2563EB' : '#60A5FA';
+      gCtx.lineWidth = 2.5;
+      gCtx.beginPath();
+      gCtx.moveTo(padLeft, h - padBottom);
+      for (let t = 0; t <= 240; t += 4) {
+        const loss = maxLoss * (1 - Math.exp(-k * t));
+        const px = padLeft + (t / xMax) * plotW;
+        const py = (h - padBottom) - (loss / yMax) * plotH;
+        gCtx.lineTo(px, py);
+      }
+      gCtx.stroke();
+
+      // Plot Points
+      recorded.forEach(pt => {
+        const px = padLeft + (pt.time / xMax) * plotW;
+        const py = (h - padBottom) - (pt.loss / yMax) * plotH;
+
+        gCtx.fillStyle = isLight ? '#2563EB' : '#93C5FD';
+        gCtx.beginPath();
+        gCtx.arc(px, py, 4, 0, Math.PI * 2);
+        gCtx.fill();
+
+        gCtx.strokeStyle = isLight ? '#FFFFFF' : '#0F172A';
+        gCtx.lineWidth = 1.5;
+        gCtx.stroke();
+      });
+
+      if (eqEl) {
+        eqEl.textContent = `Max Mass Loss: ${maxLoss.toFixed(2)} g | Form: ${state.massLoss.form}`;
+        eqEl.style.color = isLight ? '#2563EB' : '#60A5FA';
+      }
+
+    // ────────────────────────────────────────────────────────
+    // EXPERIMENT 4: CATALYTIC DECOMPOSITION (Volume O₂ vs Time)
+    // ────────────────────────────────────────────────────────
+    } else if (state.currentExp === 'catalyst') {
+      const xMax = 180.0;
+      const yMax = 60.0;
+
+      // X-Axis Graduations
+      const xTicks = [0, 30, 60, 90, 120, 150, 180];
+      gCtx.fillStyle = isLight ? '#475569' : '#94A3B8';
+      gCtx.font = '10px monospace';
+      gCtx.textAlign = 'center';
+      gCtx.textBaseline = 'top';
+      xTicks.forEach(tick => {
+        const tx = padLeft + (tick / xMax) * plotW;
+        gCtx.strokeStyle = isLight ? '#334155' : '#94A3B8';
+        gCtx.lineWidth = 1.5;
+        gCtx.beginPath();
+        gCtx.moveTo(tx, h - padBottom);
+        gCtx.lineTo(tx, h - padBottom + 4);
+        gCtx.stroke();
+        gCtx.fillText(String(tick), tx, h - padBottom + 6);
+      });
+
+      // Y-Axis Graduations
+      const yTicks = [0, 10, 20, 30, 40, 50, 60];
+      gCtx.textAlign = 'right';
+      gCtx.textBaseline = 'middle';
+      yTicks.forEach(tick => {
+        const ty = (h - padBottom) - (tick / yMax) * plotH;
+        gCtx.strokeStyle = isLight ? '#334155' : '#94A3B8';
+        gCtx.lineWidth = 1.5;
+        gCtx.beginPath();
+        gCtx.moveTo(padLeft - 4, ty);
+        gCtx.lineTo(padLeft, ty);
+        gCtx.stroke();
+        gCtx.fillText(String(tick), padLeft - 6, ty);
+      });
+
+      // Axis Titles
+      gCtx.fillStyle = isLight ? '#0F172A' : '#E2E8F0';
+      gCtx.font = 'bold 11px sans-serif';
+      gCtx.textAlign = 'center';
+      gCtx.textBaseline = 'bottom';
+      gCtx.fillText('Time t (seconds)', padLeft + plotW / 2, h - 2);
+
+      gCtx.save();
+      gCtx.translate(13, padTop + plotH / 2);
+      gCtx.rotate(-Math.PI / 2);
+      gCtx.textBaseline = 'top';
+      gCtx.fillText('Volume of O₂ (cm³)', 0, 0);
+      gCtx.restore();
+
+      const catalysts = [
+        { code: 'MnO2', name: 'MnO₂', color: '#8B5CF6', k: 0.08 },
+        { code: 'CuO', name: 'CuO', color: '#06B6D4', k: 0.035 },
+        { code: 'Fe2O3', name: 'Fe₂O₃', color: '#F97316', k: 0.018 },
+        { code: 'NONE', name: 'No Catalyst', color: '#64748B', k: 0.003 }
+      ];
+
+      catalysts.forEach((cat, idx) => {
+        gCtx.strokeStyle = cat.color;
+        gCtx.lineWidth = 2;
+        gCtx.beginPath();
+        gCtx.moveTo(padLeft, h - padBottom);
+        for (let t = 0; t <= 180; t += 3) {
+          const vol = 50.0 * (1 - Math.exp(-cat.k * t));
+          const px = padLeft + (t / xMax) * plotW;
+          const py = (h - padBottom) - (vol / yMax) * plotH;
+          gCtx.lineTo(px, py);
+        }
+        gCtx.stroke();
+
+        const legX = padLeft + 14 + (idx % 2) * 110;
+        const legY = padTop + 8 + Math.floor(idx / 2) * 14;
+        gCtx.fillStyle = cat.color;
+        gCtx.fillRect(legX, legY, 12, 3);
+        gCtx.fillStyle = isLight ? '#334155' : '#CBD5E1';
+        gCtx.font = 'bold 9px sans-serif';
+        gCtx.textAlign = 'left';
+        gCtx.textBaseline = 'middle';
+        gCtx.fillText(cat.name, legX + 16, legY + 2);
+      });
+
+      if (pointsCountEl) {
+        pointsCountEl.innerHTML = `<strong style="color:var(--heading-color);">System:</strong> 4 Catalyst Curves`;
+      }
+      if (eqEl) {
+        eqEl.textContent = 'MnO₂ > CuO > Fe₂O₃ > No Catalyst';
+        eqEl.style.color = '#8B5CF6';
+      }
+
+    // ────────────────────────────────────────────────────────
+    // EXPERIMENT 5: 2D COLLISION THEORY & MAXWELL-BOLTZMANN
+    // ────────────────────────────────────────────────────────
+    } else if (state.currentExp === 'collision') {
+      const xMax = 100.0;
+      const T = state.collision.temp;
+      const Ea = state.collision.activationEnergy;
+
+      // X-Axis Graduations
+      const xTicks = [0, 20, 40, 60, 80, 100];
+      gCtx.fillStyle = isLight ? '#475569' : '#94A3B8';
+      gCtx.font = '10px monospace';
+      gCtx.textAlign = 'center';
+      gCtx.textBaseline = 'top';
+      xTicks.forEach(tick => {
+        const tx = padLeft + (tick / xMax) * plotW;
+        gCtx.strokeStyle = isLight ? '#334155' : '#94A3B8';
+        gCtx.lineWidth = 1.5;
+        gCtx.beginPath();
+        gCtx.moveTo(tx, h - padBottom);
+        gCtx.lineTo(tx, h - padBottom + 4);
+        gCtx.stroke();
+        gCtx.fillText(String(tick), tx, h - padBottom + 6);
+      });
+
+      // Y-Axis Graduations (Fraction)
+      const yTicks = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0];
+      gCtx.textAlign = 'right';
+      gCtx.textBaseline = 'middle';
+      yTicks.forEach(tick => {
+        const ty = (h - padBottom) - tick * plotH;
+        gCtx.strokeStyle = isLight ? '#334155' : '#94A3B8';
+        gCtx.lineWidth = 1.5;
+        gCtx.beginPath();
+        gCtx.moveTo(padLeft - 4, ty);
+        gCtx.lineTo(padLeft, ty);
+        gCtx.stroke();
+        gCtx.fillText(tick.toFixed(1), padLeft - 6, ty);
+      });
+
+      // Axis Titles
+      gCtx.fillStyle = isLight ? '#0F172A' : '#E2E8F0';
+      gCtx.font = 'bold 11px sans-serif';
+      gCtx.textAlign = 'center';
+      gCtx.textBaseline = 'bottom';
+      gCtx.fillText('Kinetic Energy E (kJ/mol)', padLeft + plotW / 2, h - 2);
+
+      gCtx.save();
+      gCtx.translate(13, padTop + plotH / 2);
+      gCtx.rotate(-Math.PI / 2);
+      gCtx.textBaseline = 'top';
+      gCtx.fillText('Fraction of Molecules N(E)/N', 0, 0);
+      gCtx.restore();
+
+      const peakE = (T / 300.0) * 18.0;
+      const fPeak = Math.sqrt(peakE) * Math.exp(-peakE / peakE);
+
+      function mbDist(E) {
+        if (E <= 0) return 0;
+        const val = Math.sqrt(E) * Math.exp(-E / peakE);
+        return Math.max(0, (val / fPeak) * 0.82);
+      }
+
+      // Shaded Effective Collision Area for E >= Ea
+      gCtx.fillStyle = isLight ? 'rgba(16, 185, 129, 0.28)' : 'rgba(52, 211, 153, 0.35)';
+      gCtx.beginPath();
+      const pxEa = padLeft + (Ea / xMax) * plotW;
+      gCtx.moveTo(pxEa, h - padBottom);
+      for (let E = Ea; E <= 100; E += 1) {
+        const yVal = mbDist(E);
+        const px = padLeft + (E / xMax) * plotW;
+        const py = (h - padBottom) - yVal * plotH;
+        gCtx.lineTo(px, py);
+      }
+      gCtx.lineTo(padLeft + plotW, h - padBottom);
+      gCtx.closePath();
+      gCtx.fill();
+
+      // Main Maxwell-Boltzmann Curve
+      gCtx.strokeStyle = isLight ? '#0284C7' : '#38BDF8';
+      gCtx.lineWidth = 2.5;
+      gCtx.beginPath();
+      gCtx.moveTo(padLeft, h - padBottom);
+      for (let E = 0; E <= 100; E += 1) {
+        const yVal = mbDist(E);
+        const px = padLeft + (E / xMax) * plotW;
+        const py = (h - padBottom) - yVal * plotH;
+        gCtx.lineTo(px, py);
+      }
+      gCtx.stroke();
+
+      // Activation Energy Barrier Line
+      gCtx.strokeStyle = '#EF4444';
+      gCtx.lineWidth = 2;
+      gCtx.setLineDash([5, 4]);
+      gCtx.beginPath();
+      gCtx.moveTo(pxEa, padTop);
+      gCtx.lineTo(pxEa, h - padBottom);
+      gCtx.stroke();
+      gCtx.setLineDash([]);
+
+      gCtx.fillStyle = '#EF4444';
+      gCtx.font = 'bold 10px sans-serif';
+      gCtx.textAlign = 'center';
+      gCtx.fillText(`Eₐ = ${Ea.toFixed(0)} kJ/mol`, pxEa, padTop - 6);
+
+      gCtx.fillStyle = isLight ? '#047857' : '#6EE7B7';
+      gCtx.font = 'bold 9px sans-serif';
+      gCtx.textAlign = 'left';
+      gCtx.fillText('Effective Collisions (E ≥ Eₐ)', Math.min(pxEa + 8, w - padRight - 140), h - padBottom - 25);
+
+      if (pointsCountEl) {
+        pointsCountEl.innerHTML = `<strong style="color:var(--heading-color);">T:</strong> ${T} K &nbsp;|&nbsp; <strong style="color:var(--heading-color);">Eₐ:</strong> ${Ea} kJ/mol`;
+      }
+      if (eqEl) {
+        eqEl.textContent = state.collision.hasCatalyst ? '⚡ Catalyst Active: Lower Barrier Eₐ' : 'Standard Activation Energy Barrier';
+        eqEl.style.color = state.collision.hasCatalyst ? '#10B981' : 'var(--text-muted)';
       }
     }
   }
@@ -1706,12 +2662,24 @@ const RatesEngine = (function () {
     tableScore += 1.0; // Trend: Time increases as volume thiosulfate decreases
     feedback.push('✓ Table Consistency & Trend: Correct increasing time trend with dilution (3.0m)');
 
-    // 2. Graph Grading (4.0 Marks)
-    graphScore += 1.0; // Scale
-    graphScore += 0.5; // Axes labeled with units
-    graphScore += 1.0; // Plotting
-    graphScore += 1.5; // Straight line through (0,0)
-    feedback.push('✓ SAPC Graph: Scales, axes with units, point accuracy & line through (0,0) (4.0m)');
+    // 2. Graph Grading (4.0 Marks - SAPC Rubric)
+    const pointsCount = state.cross.recordedData.length;
+    if (pointsCount >= 4) {
+      graphScore += 1.0; // Scale: suitable range chosen
+      graphScore += 0.5; // Axes: labeled with correct units
+      graphScore += 1.0; // Plotting: all points accurately plotted
+      graphScore += 1.5; // Line through origin (0,0)
+      feedback.push('✓ SAPC Graph: Scale, axes with units, point accuracy & best-fit line through (0,0) (4.0/4.0m)');
+    } else if (pointsCount >= 2) {
+      graphScore += 1.0; // Scale
+      graphScore += 0.5; // Axes
+      graphScore += 0.5; // Plotting
+      graphScore += 0.5; // Partial line
+      feedback.push('△ SAPC Graph: Partial marks awarded (minimum 4 dilution runs needed for full mark) (2.5/4.0m)');
+    } else {
+      graphScore = 0.5; // Axes only
+      feedback.push('✗ SAPC Graph: Insufficient points plotted to construct line of best fit through origin (0.5/4.0m)');
+    }
 
     // 3. Questions Grading (6.0 Marks)
     const q1 = (document.getElementById('qAnsTime35')?.value || '').toLowerCase();
@@ -1954,11 +2922,16 @@ const RatesEngine = (function () {
     }
   }
 
+  function getState() {
+    return state;
+  }
+
   // ══════════════════════════════════════════════════════════
   // PUBLIC API
   // ══════════════════════════════════════════════════════════
   return {
     init,
+    getState,
     setExperiment,
     setStudyMode,
     setSimSpeed,
@@ -1967,6 +2940,10 @@ const RatesEngine = (function () {
     toggleSimulation,
     resetCurrentExperiment,
     recordReading,
+    onTableTimeInput,
+    loadSampleData,
+    clearData,
+    exportGraphPng,
     setVolumeThio,
     setCrossTemp,
     setSyringeReactant,

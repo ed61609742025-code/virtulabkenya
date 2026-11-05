@@ -810,8 +810,8 @@ html, body {
 
 .bench-layout-grid {
   display: grid;
-  grid-template-columns: minmax(180px, 220px) 1fr minmax(180px, 220px);
-  gap: 18px;
+  grid-template-columns: minmax(180px, 205px) 1fr;
+  gap: 16px;
   align-items: stretch;
   width: 100%;
 }
@@ -838,21 +838,157 @@ html, body {
               linear-gradient(180deg, rgba(15, 23, 42, 0.7) 0%, rgba(11, 19, 43, 0.85) 100%);
   border: 1.5px solid var(--card-border);
   border-radius: 16px;
-  padding: 16px 12px 14px;
+  padding: 16px 14px 14px;
   box-shadow: inset 0 2px 16px rgba(0, 0, 0, 0.6), 0 4px 20px rgba(0, 0, 0, 0.3);
   position: relative;
 }
 
-.bench-right-wing {
+/* ── Titration Delivery Control Dock (Relocated beside Burette & Meniscus Loupe) ── */
+.bench-control-pod {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  background: var(--card-bg-hover);
-  border: 1px solid var(--card-border);
-  border-radius: 14px;
-  padding: 14px;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.78);
+  border: 1.5px solid var(--card-border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  width: 220px;
+  min-width: 200px;
+  max-width: 240px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 10;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.bench-control-pod .control-pod-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--card-border);
+  padding-bottom: 5px;
+  margin-bottom: 2px;
+}
+
+.bench-control-pod .control-pod-title {
+  font-weight: 800;
+  font-size: 0.76rem;
+  color: var(--heading-color);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-body);
+}
+
+.bench-control-pod .control-pod-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--cyan-accent-strong);
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+
+.bench-control-pod .titration-btn-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.bench-control-pod .titration-btn-grid button {
+  padding: 8px 4px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  min-height: 40px;
+  touch-action: manipulation;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.bench-control-pod .btn-action-halfdrop {
   width: 100%;
-  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.03);
+  margin-top: 6px;
+  padding: 8px 4px;
+  font-size: 0.73rem;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  touch-action: manipulation;
+}
+
+.bench-control-pod .control-pod-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--card-border);
+}
+
+.bench-control-pod .control-pod-actions button {
+  width: 100%;
+  padding: 8px 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 38px;
+  touch-action: manipulation;
+}
+
+.bench-control-pod .keyboard-helper-pill {
+  font-size: 0.70rem;
+  color: var(--text-tertiary);
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--card-border);
+  border-radius: 5px;
+  padding: 3px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  margin-top: 2px;
+}
+
+.bench-control-pod .keyboard-helper-pill kbd {
+  background: var(--card-bg-hover);
+  padding: 1px 4px;
+  border-radius: 3px;
+  border: 1px solid var(--card-border);
+  color: var(--text-main);
+}
+
+.bench-control-pod .pod-status-text {
+  font-size: 0.73rem;
+  color: var(--text-secondary);
+  text-align: center;
+  font-weight: 600;
+  font-family: var(--font-body);
+  padding: 2px 0 0;
+  min-height: 18px;
+}
+
+/* Approaching endpoint highlight on the pod */
+#titrationControls.approaching-endpoint {
+  border-color: #F59E0B !important;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.35) !important;
+  border-radius: 8px;
 }
 
 /* ── Bench Reagents Shelf ── */
@@ -896,11 +1032,11 @@ html, body {
 .apparatus-interactive-stage {
   position: relative;
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   width: 100%;
-  min-height: 330px;
+  min-height: 320px;
 }
 
 .burette-loupe-mount {
@@ -1200,14 +1336,17 @@ html, body {
   animation: flaskTipTouch 0.85s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 860px) {
   .bench-layout-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
   .bench-center-rig {
-    grid-column: 1 / -1;
-    order: -1;
-    margin-bottom: 10px;
+    order: 1;
+    margin-bottom: 0;
+  }
+  .bench-left-wing {
+    order: 2;
   }
 }
 
@@ -1299,37 +1438,33 @@ html, body {
   }
 
   .bench-layout-grid {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    gap: 10px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
   }
 
   .bench-center-rig {
-    grid-column: 1 / -1 !important;
     order: 1 !important;
-    padding: 12px 8px 10px !important;
+    padding: 10px 8px !important;
     width: 100% !important;
     box-sizing: border-box !important;
   }
 
   .apparatus-interactive-stage {
-    min-height: 245px !important;
-    gap: 4px !important;
-    justify-content: center !important;
+    min-height: 250px !important;
+    gap: 8px !important;
+    justify-content: space-around !important;
+    align-items: center !important;
+  }
+
+  .bench-control-pod {
+    width: 190px !important;
+    min-width: 175px !important;
+    padding: 8px 10px !important;
   }
 
   .bench-left-wing {
-    grid-column: 1 !important;
     order: 2 !important;
-    width: 100% !important;
-    padding: 10px 8px !important;
-    gap: 8px !important;
-    box-sizing: border-box !important;
-  }
-
-  .bench-right-wing {
-    grid-column: 2 !important;
-    order: 3 !important;
     width: 100% !important;
     padding: 10px 8px !important;
     gap: 8px !important;
@@ -2997,14 +3132,14 @@ html, body {
     box-sizing: border-box !important;
   }
   .apparatus-interactive-stage {
-    min-height: 230px !important;
+    min-height: auto !important;
     display: flex !important;
     flex-direction: row !important;
+    flex-wrap: wrap !important;
     align-items: center !important;
     justify-content: center !important;
     gap: 8px !important;
     padding: 6px 2px !important;
-    overflow: hidden !important;
   }
   .rig-svg {
     width: 110px !important;
@@ -3092,10 +3227,10 @@ html, body {
     font-size: 0.74rem !important;
   }
 
-  /* Titration Keypad: Right Wing on Mobile */
-  .bench-right-wing {
-    order: 3 !important;
+  /* Titration Keypad: Control Pod on Mobile */
+  .bench-control-pod {
     width: 100% !important;
+    max-width: 100% !important;
     padding: 10px 10px !important;
     gap: 8px !important;
     background: var(--card-bg-hover) !important;
@@ -3103,17 +3238,14 @@ html, body {
     border-radius: 10px !important;
     box-sizing: border-box !important;
   }
-  .bench-right-wing .bench-wing-title,
-  .bench-right-wing .bench-wing-helper {
-    display: none !important;
-  }
-  .keyboard-helper-pill {
+  .bench-control-pod .keyboard-helper-pill {
     display: none !important;
   }
   #titrationControls {
     gap: 6px !important;
     width: 100% !important;
   }
+  #titrationControls .titration-btn-grid,
   #titrationControls > div[style*="grid-template-columns"] {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
@@ -3122,8 +3254,8 @@ html, body {
   }
   #titrationControls .btn-pill-action {
     width: 100% !important;
-    min-height: 46px !important;
-    font-size: 0.84rem !important;
+    min-height: 44px !important;
+    font-size: 0.82rem !important;
     font-weight: 800 !important;
     border-radius: 8px !important;
     touch-action: manipulation !important;

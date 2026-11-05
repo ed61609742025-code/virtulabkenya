@@ -805,9 +805,50 @@
                       Read at <b>bottom of meniscus</b>
                     </div>
                   </div>
-
-                  </div>
                 </div>
+              </div>
+
+              <!-- CIRCLED REGION IN RED: Titrant Delivery & Trial Controls Dock (Relocated next to Meniscus Loupe) -->
+              <div class="bench-control-pod" id="benchControlPod">
+                <div class="control-pod-header">
+                  <span class="control-pod-title">
+                    <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="10" y="2" width="4" height="18" rx="1"/><path d="M10 5h4M10 8h2M10 11h4M10 14h2M10 17h4"/><path d="M12 20v2"/><circle cx="12" cy="18" r="1.5"/></svg>
+                    <span>Add Titrant</span>
+                  </span>
+                  <span class="control-pod-badge" id="podDeliveryBadge">Stopcock</span>
+                </div>
+
+                <!-- Stopcock Volume Addition Buttons -->
+                <div id="titrationControls" class="is-locked">
+                  <div class="titration-btn-grid">
+                    <button type="button" class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(1.0)" title="Add 1.00 cm³ titrant (Coarse delivery)" aria-label="Add 1.00 cm³ titrant">+1 cm³</button>
+                    <button type="button" class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(0.5)" title="Add 0.50 cm³ titrant" aria-label="Add 0.50 cm³ titrant">+0.5 cm³</button>
+                    <button type="button" class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(0.1)" title="Add 0.10 cm³ titrant" aria-label="Add 0.10 cm³ titrant">+0.1 cm³</button>
+                    <button type="button" class="btn-tactile btn-tactile-cyan btn-tactile-sm btn-pill-action" onclick="addVolume(0.05)" title="Add single drop (0.05 cm³)" aria-label="Add single drop of 0.05 cm³"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg> <span>+0.05 cm³</span></button>
+                  </div>
+                  <button type="button" class="btn-tactile btn-tactile-cyan btn-tactile-sm btn-action-halfdrop" id="btnHalfDrop" onclick="addHalfDrop()" title="Split a half-drop on burette tip and touch inner flask wall (+0.025 cm³)" aria-label="Add half-drop (+0.025 cm³) touching tip to flask">
+                    <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8" stroke-dasharray="3 3"/></svg>
+                    <span>Half-Drop (+0.025 cm³ · Touch Tip)</span>
+                  </button>
+                </div>
+
+                <!-- Trial Actions: Record & Reset -->
+                <div class="control-pod-actions">
+                  <button type="button" class="btn-tactile btn-tactile-success btn-action-record" onclick="recordTrial()" data-i18n="record_endpoint" title="Record the current burette volume in the KCSE Results Table once permanent endpoint is reached" aria-label="Record titration endpoint">
+                    <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    <span>Record Endpoint</span>
+                  </button>
+                  <button type="button" class="btn-tactile btn-tactile-surface btn-action-reset" onclick="resetBurette()" data-i18n="reset_burette" title="Refill burette to 0.00 cm³ and prepare a fresh conical flask aliquot for the next trial" aria-label="Reset burette and flask">
+                    <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                    <span>Reset Burette</span>
+                  </button>
+                </div>
+
+                <div class="keyboard-helper-pill" title="Keyboard shortcuts available when not typing">
+                  <span><kbd>Space</kbd> Drop · <kbd>S</kbd> Swirl · <kbd>R</kbd> Record</span>
+                </div>
+
+                <div id="statusText" class="pod-status-text">Waiting to start…</div>
               </div>
 
             </div>
@@ -827,45 +868,6 @@
                 <span id="pillIndicatorChip">Indicator Dropper</span>
               </div>
             </div>
-          </div>
-
-          <!-- RIGHT SIDE: Titrant Stopcock & Trial Actions -->
-          <div class="bench-right-wing" style="display:flex;flex-direction:column;gap:10px;background:var(--card-bg-hover);border:1.5px solid var(--card-border);border-radius:12px;padding:14px;">
-            
-            <!-- Stopcock Titrant Controls -->
-            <div class="bench-wing-title" style="font-weight:800;font-size:0.78rem;color:var(--heading-color);text-transform:uppercase;letter-spacing:0.04em;display:flex;align-items:center;gap:6px;font-family:var(--font-body);letter-spacing:0.04em;border-bottom:1px solid var(--card-border);padding-bottom:6px;">
-              <svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="10" y="2" width="4" height="18" rx="1"/><path d="M10 5h4M10 8h2M10 11h4M10 14h2M10 17h4"/><path d="M12 20v2"/><circle cx="12" cy="18" r="1.5"/></svg>
-              <span>Add Titrant</span>
-            </div>
-            <div class="bench-wing-helper" style="font-size:0.72rem; color:var(--text-secondary); line-height:1.45; background:var(--card-bg); border:1px solid var(--card-border); border-radius:6px; padding:6px 8px;">
-              Coarse additions early; use single drops (+0.05 cm³) near endpoint.
-            </div>
-
-            <div class="keyboard-helper-pill" style="font-size:0.75rem;color:var(--text-tertiary);background:var(--card-bg);border:1px solid var(--card-border);border-radius:6px;padding:4px 6px;display:flex;align-items:center;justify-content:center;gap:4px;font-family:var(--font-mono);margin-bottom:2px;" title="Keyboard shortcuts available when not typing">
-              <span><kbd style="background:var(--card-bg-hover);padding:1px 4px;border-radius:3px;border:1px solid var(--card-border);color:var(--text-main);">Space</kbd> Drop · <kbd style="background:var(--card-bg-hover);padding:1px 4px;border-radius:3px;border:1px solid var(--card-border);color:var(--text-main);">S</kbd> Swirl · <kbd style="background:var(--card-bg-hover);padding:1px 4px;border-radius:3px;border:1px solid var(--card-border);color:var(--text-main);">R</kbd> Record</span>
-            </div>
-
-            <div id="titrationControls" class="is-locked" style="display:flex;flex-direction:column;gap:6px;">
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-                <button class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(1.0)" style="padding:10px 4px;font-size:0.78rem;font-weight:700;font-family:'JetBrains Mono',monospace;min-height:44px;touch-action:manipulation;" title="Add 1.00 cm³ titrant (Coarse delivery)" aria-label="Add 1.00 cm³ titrant">+1 cm³</button>
-                <button class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(0.5)" style="padding:10px 4px;font-size:0.78rem;font-weight:700;font-family:'JetBrains Mono',monospace;min-height:44px;touch-action:manipulation;" title="Add 0.50 cm³ titrant" aria-label="Add 0.50 cm³ titrant">+0.5 cm³</button>
-              </div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-                <button class="btn-tactile btn-tactile-amber btn-tactile-sm btn-pill-action" onclick="addVolume(0.1)" style="padding:10px 4px;font-size:0.78rem;font-weight:700;font-family:'JetBrains Mono',monospace;min-height:44px;touch-action:manipulation;" title="Add 0.10 cm³ titrant" aria-label="Add 0.10 cm³ titrant">+0.1 cm³</button>
-                <button class="btn-tactile btn-tactile-cyan btn-tactile-sm btn-pill-action" onclick="addVolume(0.05)" style="padding:10px 4px;font-size:0.78rem;font-weight:700;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;justify-content:center;gap:4px;min-height:44px;touch-action:manipulation;" title="Add single drop (0.05 cm³)" aria-label="Add single drop of 0.05 cm³"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg> <span>+0.05 cm³</span></button>
-              </div>
-              <button type="button" class="btn-tactile btn-tactile-cyan btn-tactile-sm btn-action-halfdrop" id="btnHalfDrop" onclick="addHalfDrop()" style="width:100%;padding:10px 4px;font-size:0.75rem;font-weight:700;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;touch-action:manipulation;" title="Split a half-drop on burette tip and touch inner flask wall (+0.025 cm³)" aria-label="Add half-drop (+0.025 cm³) touching tip to flask"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8" stroke-dasharray="3 3"/></svg> <span>Half-Drop (+0.025 cm³ · Touch Tip)</span></button>
-            </div>
-
-            <div style="border-top:1px dashed var(--card-border);margin:4px 0;"></div>
-
-            <!-- Endpoint & Reset -->
-            <div style="display:flex;flex-direction:column;gap:8px;">
-              <button class="btn-tactile btn-tactile-success btn-action-record" onclick="recordTrial()" style="width:100%;padding:10px 6px;font-size:0.80rem;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;touch-action:manipulation;" data-i18n="record_endpoint" title="Record the current burette volume in the KCSE Results Table once permanent endpoint is reached" aria-label="Record titration endpoint"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> <span>Record Endpoint</span></button>
-              <button class="btn-tactile btn-tactile-surface btn-action-reset" onclick="resetBurette()" style="width:100%;padding:10px 6px;font-size:0.78rem;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;touch-action:manipulation;" data-i18n="reset_burette" title="Refill burette to 0.00 cm³ and prepare a fresh conical flask aliquot for the next trial" aria-label="Reset burette and flask"><svg class="vlk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> <span>Reset Burette</span></button>
-            </div>
-            
-            <div id="statusText" style="font-size:0.75rem;color:var(--text-secondary);text-align:center;font-weight:600;font-family:var(--font-body);padding:2px 0;">Waiting to start…</div>
           </div>
 
         </div>
